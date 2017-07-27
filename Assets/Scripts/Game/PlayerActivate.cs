@@ -91,9 +91,16 @@ namespace DaggerfallWorkshop.Game
                             {
                                 hitBuilding = true;
 
-                                // Show building info
-                                if (currentMode == PlayerActivateModes.Info)
-                                    PresentBuildingInfo(building);
+                                // Discover building
+                                GameManager.Instance.PlayerGPS.DiscoverBuilding(building.buildingKey);
+
+                                // Get discovered building
+                                PlayerGPS.DiscoveredBuilding db;
+                                if (GameManager.Instance.PlayerGPS.GetDiscoveredBuilding(building.buildingKey, out db))
+                                {
+                                    // TODO: Check against quest system for an overriding quest-assigned display name for this building
+                                    DaggerfallUI.AddHUDText(db.displayName);
+                                }
                             }
                         }
 
@@ -472,48 +479,6 @@ namespace DaggerfallWorkshop.Game
 
             // Present new mode to player
             DaggerfallUI.SetMidScreenText(HardStrings.interactionIsNowInMode.Replace("%s", modeText));
-        }
-
-        // Output building info to HUD
-        private void PresentBuildingInfo(StaticBuilding building)
-        {
-            // Get building directory for location
-            BuildingDirectory buildingDirectory = GameManager.Instance.StreamingWorld.GetCurrentBuildingDirectory();
-            if (!buildingDirectory)
-                return;
-
-            // Get detailed building data from directory
-            BuildingSummary buildingSummary;
-            if (!buildingDirectory.GetBuildingSummary(building.buildingKey, out buildingSummary))
-            {
-                int layoutX, layoutY, recordIndex;
-                BuildingDirectory.ReverseBuildingKey(building.buildingKey, out layoutX, out layoutY, out recordIndex);
-                Debug.LogFormat("Unable to find expected building key {0} in {1}.{2}", building.buildingKey, buildingDirectory.LocationData.RegionName, buildingDirectory.LocationData.Name);
-                Debug.LogFormat("LayoutX={0}, LayoutY={1}, RecordIndex={2}", layoutX, layoutY, recordIndex);
-                throw new Exception("Error finding building key in directory.");
-            }
-
-            // Resolve name by building type
-            string buildingName;
-            if (RMBLayout.IsResidence(buildingSummary.BuildingType))
-            {
-                // Residence
-                // TODO: Link to quest system active sites
-                buildingName = HardStrings.residence;
-            }
-            else
-            {
-                // Fixed building name
-                buildingName = BuildingNames.GetName(
-                    buildingSummary.NameSeed,
-                    buildingSummary.BuildingType,
-                    buildingSummary.FactionId,
-                    buildingDirectory.LocationData.Name,
-                    buildingDirectory.LocationData.RegionName);
-            }
-
-            // Output building name to HUD
-            DaggerfallUI.AddHUDText(buildingName);
         }
 
         // Output NPC info to HUD

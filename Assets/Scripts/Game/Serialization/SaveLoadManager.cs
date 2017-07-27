@@ -41,6 +41,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         const string factionDataFilename = "FactionData.txt";
         const string containerDataFilename = "ContainerData.txt";
         const string questDataFilename = "QuestData.txt";
+        const string discoveryDataFilename = "DiscoveryData.txt";
         const string automapDataFilename = "AutomapData.txt";
         const string screenshotFilename = "Screenshot.jpg";
         const string notReadyExceptionText = "SaveLoad not ready.";
@@ -1096,11 +1097,15 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Build quest data
             QuestMachine.QuestMachineData_v1 questData = QuestMachine.Instance.GetSaveData();
 
+            // Get discovery data
+            Dictionary<int, PlayerGPS.DiscoveredLocation> discoveryData = GameManager.Instance.PlayerGPS.GetDiscoverySaveData();
+
             // Serialize save data to JSON strings
             string saveDataJson = Serialize(saveData.GetType(), saveData);
             string saveInfoJson = Serialize(saveInfo.GetType(), saveInfo);
             string factionDataJson = Serialize(factionData.GetType(), factionData);
             string questDataJson = Serialize(questData.GetType(), questData);
+            string discoveryDataJson = Serialize(discoveryData.GetType(), discoveryData);
 
             // Create screenshot for save
             // TODO: Hide UI for screenshot or use a different method
@@ -1114,6 +1119,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             WriteSaveFile(Path.Combine(path, saveInfoFilename), saveInfoJson);
             WriteSaveFile(Path.Combine(path, factionDataFilename), factionDataJson);
             WriteSaveFile(Path.Combine(path, questDataFilename), questDataJson);
+            WriteSaveFile(Path.Combine(path, discoveryDataFilename), discoveryDataJson);
 
             // Save automap state
             try
@@ -1150,9 +1156,11 @@ namespace DaggerfallWorkshop.Game.Serialization
             string saveDataJson = ReadSaveFile(Path.Combine(path, saveDataFilename));
             string factionDataJson = ReadSaveFile(Path.Combine(path, factionDataFilename));
             string questDataJson = ReadSaveFile(Path.Combine(path, questDataFilename));
+            string discoveryDataJson = ReadSaveFile(Path.Combine(path, discoveryDataFilename));
 
             // Deserialize JSON strings
             SaveData_v1 saveData = Deserialize(typeof(SaveData_v1), saveDataJson) as SaveData_v1;
+            Dictionary<int, PlayerGPS.DiscoveredLocation> discoveryData = Deserialize(typeof(Dictionary<int, PlayerGPS.DiscoveredLocation>), discoveryDataJson) as Dictionary<int, PlayerGPS.DiscoveredLocation>;
 
             // Must have a serializable player
             if (!serializablePlayer)
@@ -1163,6 +1171,9 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             // Immediately set date so world is loaded with correct season
             RestoreDateTimeData(saveData.dateAndTime);
+
+            // Restore discovery data
+            GameManager.Instance.PlayerGPS.RestoreDiscoveryData(discoveryData);
 
             // Must have PlayerEnterExit to respawn player at saved location
             PlayerEnterExit playerEnterExit = serializablePlayer.GetComponent<PlayerEnterExit>();

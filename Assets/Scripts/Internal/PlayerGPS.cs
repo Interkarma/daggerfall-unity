@@ -20,6 +20,8 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.Questing;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop
 {
@@ -29,6 +31,8 @@ namespace DaggerfallWorkshop
     /// </summary>
     public class PlayerGPS : MonoBehaviour
     {
+        #region Fields
+
         // Default location is outside Privateer's Hold
         [Range(0, 32735232)]
         public int WorldX;                      // Player X coordinate in Daggerfall world units
@@ -56,6 +60,33 @@ namespace DaggerfallWorkshop
         int lastRegionIndex;
         int lastClimateIndex;
         int lastPoliticIndex;
+
+        Dictionary<int, DiscoveredLocation> discoveredLocations = new Dictionary<int, DiscoveredLocation>();
+
+        #endregion
+
+        #region Structs & Enums
+
+        public struct DiscoveredLocation
+        {
+            public int mapID;
+            public string regionName;
+            public string locationName;
+            public Dictionary<int, DiscoveredBuilding> discoveredBuildings;
+        }
+
+        public struct DiscoveredBuilding
+        {
+            public int buildingKey;
+            public string displayName;
+            public int factionID;
+            public int quality;
+            public DFLocation.BuildingTypes buildingType;
+        }
+
+        #endregion
+
+        #region Properties
 
         /// <summary>
         /// Gets current player map pixel.
@@ -183,6 +214,10 @@ namespace DaggerfallWorkshop
             get { return new RectOffset(locationWorldRectMinX, locationWorldRectMaxX, locationWorldRectMinZ, locationWorldRectMaxZ); }
         }
 
+        #endregion
+
+        #region Unity
+
         void Awake()
         {
             dfUnity = DaggerfallUnity.Instance;
@@ -219,6 +254,8 @@ namespace DaggerfallWorkshop
             // Check if player is inside actual location rect
             PlayerLocationRectCheck();
         }
+
+        #endregion
 
         #region Public Methods
 
@@ -493,6 +530,9 @@ namespace DaggerfallWorkshop
             {
                 // Player has entered location rect
                 RaiseOnEnterLocationRectEvent(CurrentLocation);
+
+                // Perform location discovery
+                DiscoverCurrentLocation();
             }
             else if (!check && isPlayerInLocationRect)
             {
@@ -515,6 +555,197 @@ namespace DaggerfallWorkshop
             // Do nothing until DaggerfallUnity is ready
             if (!dfUnity.IsReady)
                 return false;
+
+            return true;
+        }
+
+        #endregion
+
+        #region Location Discovery
+
+        /// <summary>
+        /// Discover current location.
+        /// Does nothing if player in wilderness or location already dicovered.
+        /// This is performed automatically by PlayerGPS when player enters a location rect.
+        /// </summary>
+        void DiscoverCurrentLocation()
+        {
+            // Must have a location loaded
+            if (!CurrentLocation.Loaded)
+                return;
+
+            // Check if already discovered
+            int mapID = CurrentLocation.MapTableData.MapId;
+            if (HasDiscoveredLocation(mapID))
+                return;
+
+            // Add to discovered locations dict
+            DiscoveredLocation dl = new DiscoveredLocation();
+            dl.mapID = mapID;
+            dl.regionName = CurrentLocation.RegionName;
+            dl.locationName = CurrentLocation.Name;
+            discoveredLocations.Add(mapID, dl);
+        }
+
+        /// <summary>
+        /// Discover the specified building in current location.
+        /// Does nothing if player not inside a location or building already discovered.
+        /// </summary>
+        /// <param name="buildingKey"></param>
+        public void DiscoverBuilding(int buildingKey)
+        {
+            // Must have a location loaded
+            if (!CurrentLocation.Loaded)
+                return;
+
+            // Do nothing if building already discovered
+            if (HasDiscoveredBuilding(buildingKey))
+                return;
+
+            // Get building information
+            DiscoveredBuilding db;
+            if (!GetBuildingDiscoveryData(buildingKey, out db))
+                return;
+
+            // Get location discovery
+            int mapID = CurrentLocation.MapTableData.MapId;
+            DiscoveredLocation dl = discoveredLocations[mapID];
+
+            // Ensure the building dict is created
+            if (dl.discoveredBuildings == null)
+                dl.discoveredBuildings = new Dictionary<int, DiscoveredBuilding>();
+
+            // Add the building and store back to discovered location
+            dl.discoveredBuildings.Add(db.buildingKey, db);
+            discoveredLocations[mapID] = dl;
+        }
+
+        /// <summary>
+        /// Check if player has discovered location.
+        /// </summary>
+        /// <param name="mapID">MapID of location.</param>
+        /// <returns>True if already discovered.</returns>
+        public bool HasDiscoveredLocation(int mapID)
+        {
+            return discoveredLocations.ContainsKey(mapID);
+        }
+
+        /// <summary>
+        /// Check if player has discovered building in current location.
+        /// </summary>
+        /// <param name="buildingKey">Building key to check.</param>
+        /// <returns>True if building discovered.</returns>
+        public bool HasDiscoveredBuilding(int buildingKey)
+        {
+            // Must have a location loaded
+            if (!CurrentLocation.Loaded)
+                return false;
+
+            // Must have discovered current location before building
+            int mapID = CurrentLocation.MapTableData.MapId;
+            if (!HasDiscoveredLocation(mapID))
+                return false;
+
+            // Get the location discovery for this mapID
+            DiscoveredLocation dl = discoveredLocations[mapID];
+            if (dl.discoveredBuildings == null)
+                return false;
+
+            return dl.discoveredBuildings.ContainsKey(buildingKey);
+        }
+
+        /// <summary>
+        /// Gets discovered building data for current location.
+        /// </summary>
+        /// <param name="buildingKey">Building key in current location.</param>
+        /// <param name="discoveredBuildingOut">Building discovery data out.</param>
+        /// <returns>True if building discovered, false if building not discovered.</returns>
+        public bool GetDiscoveredBuilding(int buildingKey, out DiscoveredBuilding discoveredBuildingOut)
+        {
+            discoveredBuildingOut = new DiscoveredBuilding();
+
+            // Must have discovered building
+            if (!HasDiscoveredBuilding(buildingKey))
+                return false;
+
+            // Get the location discovery for this mapID
+            int mapID = CurrentLocation.MapTableData.MapId;
+            DiscoveredLocation dl = discoveredLocations[mapID];
+            if (dl.discoveredBuildings == null)
+                return false;
+
+            // Get discovery data for building
+            discoveredBuildingOut = dl.discoveredBuildings[buildingKey];
+
+            return true;
+        }
+
+        /// <summary>
+        /// Gets discovery dictionary for save.
+        /// </summary>
+        public Dictionary<int, DiscoveredLocation> GetDiscoverySaveData()
+        {
+            return discoveredLocations;
+        }
+
+        /// <summary>
+        /// Restores discovery dictionary for load.
+        /// </summary>
+        public void RestoreDiscoveryData(Dictionary<int, DiscoveredLocation> data)
+        {
+            discoveredLocations = data;
+        }
+
+        /// <summary>
+        /// Gets building information from current location.
+        /// Does not change discovery state for building.
+        /// </summary>
+        /// <param name="buildingKey">Key of building to query.</param>
+        bool GetBuildingDiscoveryData(int buildingKey, out DiscoveredBuilding buildingDiscoveryData)
+        {
+            buildingDiscoveryData = new DiscoveredBuilding();
+
+            // Get building directory for location
+            BuildingDirectory buildingDirectory = GameManager.Instance.StreamingWorld.GetCurrentBuildingDirectory();
+            if (!buildingDirectory)
+                return false;
+
+            // Get detailed building data from directory
+            BuildingSummary buildingSummary;
+            if (!buildingDirectory.GetBuildingSummary(buildingKey, out buildingSummary))
+            {
+                int layoutX, layoutY, recordIndex;
+                BuildingDirectory.ReverseBuildingKey(buildingKey, out layoutX, out layoutY, out recordIndex);
+                Debug.LogFormat("Unable to find expected building key {0} in {1}.{2}", buildingKey, buildingDirectory.LocationData.RegionName, buildingDirectory.LocationData.Name);
+                Debug.LogFormat("LayoutX={0}, LayoutY={1}, RecordIndex={2}", layoutX, layoutY, recordIndex);
+                throw new Exception("Error finding building key in directory.");
+            }
+
+            // Resolve name by building type
+            string buildingName;
+            if (RMBLayout.IsResidence(buildingSummary.BuildingType))
+            {
+                // Residence
+                // TODO: Link to quest system active sites
+                buildingName = HardStrings.residence;
+            }
+            else
+            {
+                // Fixed building name
+                buildingName = BuildingNames.GetName(
+                    buildingSummary.NameSeed,
+                    buildingSummary.BuildingType,
+                    buildingSummary.FactionId,
+                    buildingDirectory.LocationData.Name,
+                    buildingDirectory.LocationData.RegionName);
+            }
+
+            // Add to data
+            buildingDiscoveryData.buildingKey = buildingKey;
+            buildingDiscoveryData.displayName = buildingName;
+            buildingDiscoveryData.factionID = buildingSummary.FactionId;
+            buildingDiscoveryData.quality = buildingSummary.Quality;
+            buildingDiscoveryData.buildingType = buildingSummary.BuildingType;
 
             return true;
         }

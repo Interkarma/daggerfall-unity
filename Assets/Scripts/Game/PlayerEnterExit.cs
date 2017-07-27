@@ -568,6 +568,9 @@ namespace DaggerfallWorkshop.Game
             if (!ReferenceComponents())
                 return;
 
+            // Discover building
+            GameManager.Instance.PlayerGPS.DiscoverBuilding(exteriorDoor.buildingKey);
+
             TransitionInterior(null, exteriorDoor);
         }
 
