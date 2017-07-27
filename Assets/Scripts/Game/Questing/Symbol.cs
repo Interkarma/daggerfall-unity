@@ -20,7 +20,7 @@ namespace DaggerfallWorkshop.Game.Questing
     /// Manages a text symbol used by quest system.
     /// Symbols are used by resources, tasks, and text replacement.
     /// </summary>
-    public class Symbol : IComparable
+    public class Symbol
     {
         [SerializeField]
         string original;
@@ -93,18 +93,23 @@ namespace DaggerfallWorkshop.Game.Questing
             return clone;
         }
 
-        #region IComparable
-
         /// <summary>
-        /// Compare name value with other symbol.
+        /// Compare value equality with another symbol.
         /// </summary>
-        /// <param name="other">Other symbol to compare name value. Case sensitive.</param>
-        /// <returns>Compare result. 0 means equal.</returns>
-        public int CompareTo(object other)
+        /// <param name="other">Other symbol.</param>
+        /// <returns>True is values match.</returns>
+        public override bool Equals(object other)
         {
-            return string.Compare(name, (other as Symbol).Name);
-        }
+            if (other == null)
+                return false;
 
-        #endregion
+            if ((other as Symbol).name == name &&
+                (other as Symbol).original == original)
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 }

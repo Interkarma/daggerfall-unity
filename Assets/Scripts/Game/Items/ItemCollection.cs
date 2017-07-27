@@ -94,8 +94,10 @@ namespace DaggerfallWorkshop.Game.Items
                 if (item.IsQuestItem)
                 {
                     if (item.QuestUID == questItem.ParentQuest.UID &&
-                        item.QuestItemSymbol == questItem.Symbol)
+                        item.QuestItemSymbol.Equals(questItem.Symbol))
+                    {
                         return true;
+                    }
                 }
             }
 
