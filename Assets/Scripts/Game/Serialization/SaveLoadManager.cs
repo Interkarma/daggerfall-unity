@@ -1160,7 +1160,6 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             // Deserialize JSON strings
             SaveData_v1 saveData = Deserialize(typeof(SaveData_v1), saveDataJson) as SaveData_v1;
-            Dictionary<int, PlayerGPS.DiscoveredLocation> discoveryData = Deserialize(typeof(Dictionary<int, PlayerGPS.DiscoveredLocation>), discoveryDataJson) as Dictionary<int, PlayerGPS.DiscoveredLocation>;
 
             // Must have a serializable player
             if (!serializablePlayer)
@@ -1173,7 +1172,11 @@ namespace DaggerfallWorkshop.Game.Serialization
             RestoreDateTimeData(saveData.dateAndTime);
 
             // Restore discovery data
-            GameManager.Instance.PlayerGPS.RestoreDiscoveryData(discoveryData);
+            if (!string.IsNullOrEmpty(discoveryDataJson))
+            {
+                Dictionary<int, PlayerGPS.DiscoveredLocation> discoveryData = Deserialize(typeof(Dictionary<int, PlayerGPS.DiscoveredLocation>), discoveryDataJson) as Dictionary<int, PlayerGPS.DiscoveredLocation>;
+                GameManager.Instance.PlayerGPS.RestoreDiscoveryData(discoveryData);
+            }
 
             // Must have PlayerEnterExit to respawn player at saved location
             PlayerEnterExit playerEnterExit = serializablePlayer.GetComponent<PlayerEnterExit>();
