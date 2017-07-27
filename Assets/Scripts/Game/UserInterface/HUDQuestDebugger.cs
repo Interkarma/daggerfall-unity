@@ -334,6 +334,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void SetCurrentQuest(Quest quest)
         {
+            ClearCurrentQuest();
+
             currentQuest = quest;
             RefreshQuestsList();
 
