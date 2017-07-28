@@ -111,5 +111,16 @@ namespace DaggerfallWorkshop.Game.Questing
 
             return false;
         }
+
+        /// <summary>
+        /// Override of GetHashCode.
+        /// Name is most important value.
+        /// Original is only serialized for reference.
+        /// </summary>
+        /// <returns>Name.GetHashCode()</returns>
+        public override int GetHashCode()
+        {
+            return name.GetHashCode();
+        }
     }
 }
