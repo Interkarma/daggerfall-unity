@@ -229,6 +229,9 @@ namespace DaggerfallWorkshop.Game
             gameObjectCameraExteriorAutomap.transform.rotation = cameraTransformRotationSaved;
             cameraExteriorAutomap.orthographicSize = cameraOrthographicSizeSaved;
 
+            // recreate building nameplates (since a discovery could have happened since exterior automap has been opened last time)
+            createBuildingNameplates(location);
+
             // focus player position
             cameraExteriorAutomap.transform.position = GameobjectPlayerMarkerArrow.transform.position + new Vector3(0.0f, 10.0f, 0.0f);
 
@@ -722,7 +725,20 @@ namespace DaggerfallWorkshop.Game
                         BuildingNameplate newBuildingNameplate;
                         try
                         {
-                            newBuildingNameplate.name = BuildingNames.GetName(buildingSummary.NameSeed, buildingSummary.BuildingType, buildingSummary.FactionId, location.Name, location.RegionName);
+                            // newBuildingNameplate.name = BuildingNames.GetName(buildingSummary.NameSeed, buildingSummary.BuildingType, buildingSummary.FactionId, location.Name, location.RegionName);
+
+                            PlayerGPS.DiscoveredBuilding discoveredBuilding;
+                            if (GameManager.Instance.PlayerGPS.GetDiscoveredBuilding(buildingSummary.buildingKey, out discoveredBuilding))
+                            {
+                                // Player has discovered building and 'discoveredBuilding' contains more information
+                                newBuildingNameplate.name = discoveredBuilding.displayName;
+                            }
+                            else
+                            {
+                                // Player has not discovered location or building yet
+                                newBuildingNameplate.name = "";
+                            }
+                            
                         }
                         catch (Exception e)
                         {
