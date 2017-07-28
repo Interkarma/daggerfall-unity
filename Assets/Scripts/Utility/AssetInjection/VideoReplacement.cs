@@ -38,7 +38,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 Mod[] mods = ModManager.Instance.GetAllMods(true);
                 for (int i = mods.Length; i-- > 0;)
                 {
-                    if (mods[i].AssetBundle.Contains(name))
+                    AssetBundle bundle = mods[i].AssetBundle;
+                    if (bundle && bundle.Contains(name))
                     {
                         video = mods[i].GetAsset<MovieTexture>(name, true);
                         if (video != null)

@@ -77,14 +77,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             Mod[] mods = ModManager.Instance.GetAllMods(true);
             for (int i = mods.Length; i-- > 0;)
             {
-                if (mods[i].AssetBundle.Contains(modelName))
+                AssetBundle bundle = mods[i].AssetBundle;
+                if (bundle && bundle.Contains(modelName))
                 {
                     // Assign the name according to the current season
-                    if (IsWinter())
-                    {
-                        if (mods[i].AssetBundle.Contains(modelName + winterTag))
+                    if (IsWinter() && bundle.Contains(modelName + winterTag))
                             modelName += winterTag;
-                    }
 
                     GameObject go = mods[i].GetAsset<GameObject>(modelName, true);
                     if (go != null)
@@ -136,7 +134,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             Mod[] mods = ModManager.Instance.GetAllMods(true);
             for (int i = mods.Length; i-- > 0;)
             {
-                if (mods[i].AssetBundle.Contains(modelName))
+                AssetBundle bundle = mods[i].AssetBundle;
+                if (bundle && bundle.Contains(modelName))
                 {
                     GameObject go = mods[i].GetAsset<GameObject>(modelName, true);
                     if (go != null)
