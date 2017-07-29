@@ -1882,7 +1882,7 @@ namespace DaggerfallWorkshop.Game
             private static class RevealBuildings
             {
                 public static readonly string name = "map_revealbuildings";
-                public static readonly string description = "Reveals undiscovered buildings on exterior automap (temporarly)";
+                public static readonly string description = "Reveals undiscovered buildings on exterior automap (temporary)";
                 public static readonly string usage = "map_revealbuildings";
 
 
@@ -1900,7 +1900,7 @@ namespace DaggerfallWorkshop.Game
                     }
 
                     daggerfallExteriorAutomap.RevealUndiscoveredBuildings = true;
-                    return "undiscovered buildings have been revealed (temporarly) on the exterior automap";
+                    return "undiscovered buildings have been revealed (temporary) on the exterior automap";
                 }
             }
 
