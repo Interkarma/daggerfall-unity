@@ -681,6 +681,28 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
+        /// Gets discovery information from any building in current location.
+        /// Does not change discovery state, simply returns data as if building is always discovered.
+        /// </summary>
+        /// <param name="buildingKey">Building key in current location.</param>
+        /// <param name="discoveredBuildingOut">Discovered building data.</param>
+        /// <returns>True if successful.</returns>
+        public bool GetAnyBuilding(int buildingKey, out DiscoveredBuilding discoveredBuildingOut)
+        {
+            discoveredBuildingOut = new DiscoveredBuilding();
+
+            // Must have a location loaded
+            if (!CurrentLocation.Loaded)
+                return false;
+
+            // Get building discovery data only
+            if (GetBuildingDiscoveryData(buildingKey, out discoveredBuildingOut))
+                return true;
+
+            return false;
+        }
+
+        /// <summary>
         /// Gets discovery dictionary for save.
         /// </summary>
         public Dictionary<int, DiscoveredLocation> GetDiscoverySaveData()
