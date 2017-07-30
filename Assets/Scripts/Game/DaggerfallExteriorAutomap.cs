@@ -164,6 +164,8 @@ namespace DaggerfallWorkshop.Game
 
         Texture2D exteriorLayoutTexture = null;
 
+        bool revealUndiscoveredBuildings = false;
+
         #endregion
 
         #region Properties
@@ -213,6 +215,16 @@ namespace DaggerfallWorkshop.Game
             set { resetAutomapSettingsFromExternalScript = value; }
         }
 
+        /// <summary>
+        /// property for flag for console debug mode for revealing undiscovered buildings
+        /// </summary>
+        public bool RevealUndiscoveredBuildings
+        {
+            get { return (revealUndiscoveredBuildings); }
+            set { revealUndiscoveredBuildings = value; }
+        }
+        
+
         #endregion
 
         #region Public Methods
@@ -228,6 +240,9 @@ namespace DaggerfallWorkshop.Game
             // restore camera rotation and zoom
             gameObjectCameraExteriorAutomap.transform.rotation = cameraTransformRotationSaved;
             cameraExteriorAutomap.orthographicSize = cameraOrthographicSizeSaved;
+
+            // recreate building nameplates (since a discovery could have happened since exterior automap has been opened last time)
+            createBuildingNameplates(location);
 
             // focus player position
             cameraExteriorAutomap.transform.position = GameobjectPlayerMarkerArrow.transform.position + new Vector3(0.0f, 10.0f, 0.0f);
@@ -381,6 +396,17 @@ namespace DaggerfallWorkshop.Game
             customFont = new DaggerfallFont();
             // Reloads glyphs to Daggerfall's default yellowish text colour
             customFont.ReloadFont(DaggerfallUI.DaggerfallDefaultTextColor);
+
+            // register console commands
+            try
+            {
+                ExteriorAutoMapConsoleCommands.RegisterCommands();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError(string.Format("Error Registering Exterior Automap Console commands: {0}", ex.Message));
+
+            }
         }
 
         void Awake()
@@ -710,7 +736,7 @@ namespace DaggerfallWorkshop.Game
                 for (int x = 0; x < width; x++)
                 {
                     int index = y * width + x;
-                    BuildingSummary[] buildingsInBlock = RMBLayout.GetBuildingData(blocks[index]);
+                    BuildingSummary[] buildingsInBlock = RMBLayout.GetBuildingData(blocks[index], x, y);
                     BlockLayout layout = exteriorLayout[index];
 
                     foreach (BuildingSummary buildingSummary in buildingsInBlock)
@@ -722,7 +748,20 @@ namespace DaggerfallWorkshop.Game
                         BuildingNameplate newBuildingNameplate;
                         try
                         {
-                            newBuildingNameplate.name = BuildingNames.GetName(buildingSummary.NameSeed, buildingSummary.BuildingType, buildingSummary.FactionId, location.Name, location.RegionName);
+                            newBuildingNameplate.name = ""; // default value for player has not discovered location or building yet
+
+                            // now check if building has been discovered already
+                            PlayerGPS.DiscoveredBuilding discoveredBuilding;
+                            if (GameManager.Instance.PlayerGPS.GetDiscoveredBuilding(buildingSummary.buildingKey, out discoveredBuilding))
+                            {
+                                // only create nameplates for buildings different than "Residence"
+                                if (discoveredBuilding.displayName != "Residence")
+                                    newBuildingNameplate.name = discoveredBuilding.displayName;
+                            }
+                            else if (this.revealUndiscoveredBuildings)
+                            {
+                                newBuildingNameplate.name = BuildingNames.GetName(buildingSummary.NameSeed, buildingSummary.BuildingType, buildingSummary.FactionId, location.Name, location.RegionName);
+                            }                  
                         }
                         catch (Exception e)
                         {
@@ -1821,6 +1860,78 @@ namespace DaggerfallWorkshop.Game
                 gameobjectExteriorAutomap.SetActive(false);
             }
         }
+        #endregion
+
+        #region console_commands
+
+        public static class ExteriorAutoMapConsoleCommands
+        {
+            public static void RegisterCommands()
+            {
+                try
+                {
+                    ConsoleCommandsDatabase.RegisterCommand(RevealBuildings.name, RevealBuildings.description, RevealBuildings.usage, RevealBuildings.Execute);
+                    ConsoleCommandsDatabase.RegisterCommand(HideBuildings.name, HideBuildings.description, HideBuildings.usage, HideBuildings.Execute);
+                }
+                catch (System.Exception ex)
+                {
+                    DaggerfallUnity.LogMessage(ex.Message, true);
+                }
+            }
+
+            private static class RevealBuildings
+            {
+                public static readonly string name = "map_revealbuildings";
+                public static readonly string description = "Reveals undiscovered buildings on exterior automap (temporary)";
+                public static readonly string usage = "map_revealbuildings";
+
+
+                public static string Execute(params string[] args)
+                {
+                    if (GameManager.Instance.IsPlayerInside)
+                    {
+                        return "this command only has an effect when outside and at a location";
+                    }
+
+                    DaggerfallExteriorAutomap daggerfallExteriorAutomap = DaggerfallExteriorAutomap.instance;
+                    if (daggerfallExteriorAutomap == null)
+                    {
+                        return "DaggerfallExteriorAutomap instance not found";
+                    }
+
+                    daggerfallExteriorAutomap.RevealUndiscoveredBuildings = true;
+                    return "undiscovered buildings have been revealed (temporary) on the exterior automap";
+                }
+            }
+
+            private static class HideBuildings
+            {
+                public static readonly string name = "map_hidebuildings";
+                public static readonly string description = "Hides undiscovered buildings on exterior automap";
+                public static readonly string usage = "map_hidebuildings";
+
+
+                public static string Execute(params string[] args)
+                {
+                    if (GameManager.Instance.IsPlayerInside)
+                    {
+                        return "this command only has an effect when outside and at a location";
+                    }
+
+                    DaggerfallExteriorAutomap daggerfallExteriorAutomap = DaggerfallExteriorAutomap.instance;
+                    if (daggerfallExteriorAutomap == null)
+                    {
+                        return "DaggerfallExteriorAutomap instance not found";
+                    }
+
+                    daggerfallExteriorAutomap.RevealUndiscoveredBuildings = false;
+
+                    return "undiscovered buildings have been hidden on the exterior automap again";
+                }
+
+            }
+        }
+
         #endregion
     }
 }
