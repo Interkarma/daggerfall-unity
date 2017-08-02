@@ -43,10 +43,26 @@ namespace DaggerfallWorkshop.Game
         bool isAttackFollowsPlayerSet;              // For setting if the enemy will follow the player or not during an attack
         bool attackFollowsPlayer;                   // For setting if the enemy will follow the player or not during an attack
 
+        float classicUpdateTimer = 0f;      // Just used for knockback processing currently
+        float knockBackSpeed;                         // While non-zero, this enemy will be knocked backwards at this speed
+        Vector3 knockBackDirection;                 // Direction to travel while being knocked back
+
         public bool IsHostile
         {
             get { return isHostile; }
             set { isHostile = value; }
+        }
+
+        public float KnockBackSpeed
+        {
+            get { return knockBackSpeed; }
+            set { knockBackSpeed = value; }
+        }
+
+        public Vector3 KnockBackDirection
+        {
+            get { return knockBackDirection; }
+            set { knockBackDirection = value; }
         }
 
         void Start()
@@ -142,6 +158,43 @@ namespace DaggerfallWorkshop.Game
 
         private void Move()
         {
+            // If hit, get knocked back
+            if (knockBackSpeed > 0)
+            {
+                // Limit knockBackSpeed. This can be higher than what is actually used for the speed of motion,
+                // making it last longer and do more damage if the enemy collides with something.
+                if (knockBackSpeed > (40 / (PlayerMotor.classicToUnitySpeedUnitRatio / 10)))
+                    knockBackSpeed = (40 / (PlayerMotor.classicToUnitySpeedUnitRatio / 10));
+
+                if (knockBackSpeed > (5 / (PlayerMotor.classicToUnitySpeedUnitRatio / 10)) &&
+                    mobile.Summary.EnemyState != MobileStates.PrimaryAttack)
+                    mobile.ChangeEnemyState(MobileStates.Hurt);
+
+                // Actual speed of motion is limited
+                Vector3 motion;
+                if (knockBackSpeed <= (25 / (PlayerMotor.classicToUnitySpeedUnitRatio / 10)))
+                    motion = knockBackDirection * knockBackSpeed;
+                else
+                    motion = knockBackDirection * (25 / (PlayerMotor.classicToUnitySpeedUnitRatio / 10));
+
+                if (flies)
+                    controller.Move(motion * Time.deltaTime);
+                else
+                    controller.SimpleMove(motion);
+
+                classicUpdateTimer += Time.deltaTime;
+                if (classicUpdateTimer >= PlayerEntity.ClassicUpdateInterval)
+                {
+                    classicUpdateTimer = 0;
+                    knockBackSpeed -= (5 / (PlayerMotor.classicToUnitySpeedUnitRatio / 10));
+                    if (knockBackSpeed <= (5 / (PlayerMotor.classicToUnitySpeedUnitRatio / 10)) &&
+                        mobile.Summary.EnemyState != MobileStates.PrimaryAttack)
+                        mobile.ChangeEnemyState(MobileStates.Move);
+                }
+
+                return;
+            }
+
             // Monster speed of movement follows the same formula as for when the player walks
             EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
             float moveSpeed = ((entity.Stats.LiveSpeed + PlayerMotor.dfWalkBase) / PlayerMotor.classicToUnitySpeedUnitRatio);

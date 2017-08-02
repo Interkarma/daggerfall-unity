@@ -77,8 +77,8 @@ namespace DaggerfallWorkshop.Game.Entity
         public const int SwimmingFatigueLoss = 44;
 
         private float classicUpdateTimer = 0f;
-        private float classicUpdateInterval = 0.0625f; // Update every 1/16 of a second. An approximation of classic's update loop, which
-                                                       // varies with framerate.
+        public const float ClassicUpdateInterval = 0.0625f; // Update every 1/16 of a second. An approximation of classic's update loop, which
+                                                            // varies with framerate.
         private int breathUpdateTally = 0;
 
         private int JumpingFatigueLoss = 11;        // According to DF Chronicles and verified in classic
@@ -146,7 +146,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
             bool classicUpdate = false;
 
-            if (classicUpdateTimer < classicUpdateInterval)
+            if (classicUpdateTimer < ClassicUpdateInterval)
                 classicUpdateTimer += Time.deltaTime;
             else
             {

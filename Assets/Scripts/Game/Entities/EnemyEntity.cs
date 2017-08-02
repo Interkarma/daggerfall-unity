@@ -336,6 +336,21 @@ namespace DaggerfallWorkshop.Game.Entity
             }
         }
 
+        public int GetWeightInClassicUnits()
+        {
+            int itemWeightsClassic = (int)(Items.GetWeight() * 4);
+            int baseWeight;
+
+            if (entityType == EntityTypes.EnemyMonster)
+                baseWeight = mobileEnemy.Weight;
+            else if (mobileEnemy.Gender == MobileGender.Female)
+                baseWeight = 240;
+            else
+                baseWeight = 350;
+
+            return itemWeightsClassic + baseWeight;
+        }
+
         #endregion
     }
 }
