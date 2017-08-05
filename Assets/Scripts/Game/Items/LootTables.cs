@@ -98,7 +98,7 @@ namespace DaggerfallWorkshop.Game.Items
             List<DaggerfallUnityItem> items = new List<DaggerfallUnityItem>();
 
             // Random gold
-            int goldCount = Random.Range(matrix.MinGold, matrix.MaxGold) * playerEntity.Level;
+            int goldCount = Random.Range(matrix.MinGold, matrix.MaxGold + 1) * playerEntity.Level;
             if (goldCount > 0)
             {
                 items.Add(ItemBuilder.CreateGoldPieces(goldCount));
@@ -106,7 +106,7 @@ namespace DaggerfallWorkshop.Game.Items
 
             // Random weapon
             chance = matrix.WP;
-            while (Random.Range(1, 100) < chance)
+            while (Random.Range(0, 100) < chance)
             {
                 items.Add(ItemBuilder.CreateRandomWeapon(playerEntity.Level));
                 chance *= 0.5f;
@@ -114,7 +114,7 @@ namespace DaggerfallWorkshop.Game.Items
 
             // Random armor
             chance = matrix.AM;
-            while (Random.Range(1, 100) < chance)
+            while (Random.Range(0, 100) < chance)
             {
                 items.Add(ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race));
                 chance *= 0.5f;
@@ -131,7 +131,7 @@ namespace DaggerfallWorkshop.Game.Items
 
             // TEMP: Magic item chance is just another shot at armor or weapon for now
             chance = matrix.MI;
-            while (Random.Range(1, 100) < chance)
+            while (Random.Range(0, 100) < chance)
             {
                 if (Random.value < 0.5f)
                     items.Add(ItemBuilder.CreateRandomWeapon(playerEntity.Level));
@@ -143,7 +143,7 @@ namespace DaggerfallWorkshop.Game.Items
 
             // Random clothes
             chance = matrix.CL;
-            while (Random.Range(1, 100) < chance)
+            while (Random.Range(0, 100) < chance)
             {
                 items.Add(ItemBuilder.CreateRandomClothing(playerEntity.Gender));
                 chance *= 0.5f;
@@ -151,7 +151,7 @@ namespace DaggerfallWorkshop.Game.Items
 
             // Random books
             chance = matrix.BK;
-            while (Random.Range(1, 100) < chance)
+            while (Random.Range(0, 100) < chance)
             {
                 items.Add(ItemBuilder.CreateRandomBook());
                 chance *= 0.5f;
@@ -159,7 +159,7 @@ namespace DaggerfallWorkshop.Game.Items
 
             // Random religious item
             chance = matrix.RL;
-            while (Random.Range(1, 100) < chance)
+            while (Random.Range(0, 100) < chance)
             {
                 items.Add(ItemBuilder.CreateRandomReligiousItem());
                 chance *= 0.5f;
@@ -193,7 +193,7 @@ namespace DaggerfallWorkshop.Game.Items
 
         static void RandomIngredient(float chance, ItemGroups ingredientGroup, List<DaggerfallUnityItem> targetItems)
         {
-            while (Random.Range(1, 100) < chance)
+            while (Random.Range(0, 100) < chance)
             {
                 targetItems.Add(ItemBuilder.CreateRandomIngredient(ingredientGroup));
                 chance *= 0.5f;
