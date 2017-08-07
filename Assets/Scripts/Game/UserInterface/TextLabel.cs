@@ -155,7 +155,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // First pass encodes ASCII and calculates final dimensions
             int width = 0;
+            int greatestWidthFound = 0;
+            int lastEndOfRowByte = 0;
             asciiBytes = Encoding.ASCII.GetBytes(text);
+            List<byte[]> rows = new List<byte[]>();
+
             for (int i = 0; i < asciiBytes.Length; i++)
             {
                 // Invalid ASCII bytes are cast to a space character
@@ -164,30 +168,62 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                 // Calculate total width
                 PixelFont.GlyphInfo glyph = font.GetGlyph(asciiBytes[i]);
-                width += glyph.width + font.GlyphSpacing;
+
+                // If maxWidth is set, don't allow the label texture to exceed it
+                if ((maxWidth <= 0) || (width + glyph.width + font.GlyphSpacing) <= maxWidth)
+                    width += glyph.width + font.GlyphSpacing;
+                else
+                {
+                    // The row of glyphs exceeded maxWidth. Add it to the list of rows and start
+                    // counting width again with the remainder of the ASCII bytes.
+                    byte[] trimmed = new List<byte>(asciiBytes).GetRange(lastEndOfRowByte, i - lastEndOfRowByte).ToArray();
+                    rows.Add(trimmed);
+                    if (greatestWidthFound < width)
+                        greatestWidthFound = width;
+                    width = 0;
+                    lastEndOfRowByte = i;
+
+                    // Resume interation over remainder of ASCII bytes
+                    //asciiBytes = new List<byte>(asciiBytes).GetRange(i, asciiBytes.Length - i).ToArray();
+                    //i = 0;
+                }
             }
 
-            if (maxWidth > 0 && width > maxWidth)
-                width = maxWidth;
+            if (lastEndOfRowByte > 0)
+                asciiBytes = new List<byte>(asciiBytes).GetRange(lastEndOfRowByte, asciiBytes.Length - lastEndOfRowByte).ToArray();
+
+            rows.Add(asciiBytes);
+
+            if (width < greatestWidthFound)
+                width = greatestWidthFound;
 
             // Create target label texture
             totalWidth = width;
-            totalHeight = font.GlyphHeight;
+            totalHeight = rows.Count * font.GlyphHeight;
+
             labelTexture = CreateLabelTexture(totalWidth, totalHeight);
             if (labelTexture == null)
                 throw new Exception("TextLabel failed to create labelTexture.");
 
             // Second pass adds glyphs to label texture
             int xpos = 0;
-            for (int i = 0; i < asciiBytes.Length; i++)
-            {
-                PixelFont.GlyphInfo glyph = font.GetGlyph(asciiBytes[i]);
-                if (xpos + glyph.width >= totalWidth)
-                    break;
+            int ypos = totalHeight - font.GlyphHeight;
 
-                labelTexture.SetPixels32(xpos, 0, glyph.width, totalHeight, glyph.colors);
-                xpos += glyph.width + font.GlyphSpacing;
+            foreach (byte[] row in rows)
+            {
+                xpos = 0;
+                for (int i = 0; i < row.Length; i++)
+                {
+                    PixelFont.GlyphInfo glyph = font.GetGlyph(row[i]);
+                    if (xpos + glyph.width >= totalWidth)
+                        break;
+
+                    labelTexture.SetPixels32(xpos, ypos, glyph.width, font.GlyphHeight, glyph.colors);
+                    xpos += glyph.width + font.GlyphSpacing;
+                }
+                ypos -= font.GlyphHeight;
             }
+
             labelTexture.Apply(false, true);
             labelTexture.filterMode = font.FilterMode;
             this.Size = new Vector2(totalWidth, totalHeight);
