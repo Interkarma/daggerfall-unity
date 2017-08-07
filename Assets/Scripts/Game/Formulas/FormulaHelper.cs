@@ -205,6 +205,14 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (attacker != player)
             {
                 AIAttacker = attacker as Entity.EnemyEntity;
+                weapon = attacker.ItemEquipTable.GetItem(Items.EquipSlots.RightHand);
+                if (weapon == null)
+                    weapon = attacker.ItemEquipTable.GetItem(Items.EquipSlots.LeftHand);
+            }
+            else
+            {
+                if (GameManager.Instance.WeaponManager.UsingRightHand)
+                    weapon = attacker.ItemEquipTable.GetItem(Items.EquipSlots.RightHand);
             }
 
             if (target != player)
@@ -212,31 +220,25 @@ namespace DaggerfallWorkshop.Game.Formulas
                 AITarget = target as Entity.EnemyEntity;
             }
 
-            // TODO: Get weapons of enemy classes and monsters.
-            if (attacker == player)
+            if (weapon == null)
             {
-                if (GameManager.Instance.WeaponManager.UsingRightHand)
-                    weapon = attacker.ItemEquipTable.GetItem(Items.EquipSlots.RightHand);
-                else
-                    weapon = attacker.ItemEquipTable.GetItem(Items.EquipSlots.LeftHand);
+                // If the player is attacking with no weapon equipped, use hand-to-hand skill for damage
+                if (attacker == player)
+                {
+                    damageLow = CalculateHandToHandMinDamage(attacker.Skills.HandToHand);
+                    damageHigh = CalculateHandToHandMaxDamage(attacker.Skills.HandToHand);
+                    chanceToHitMod = attacker.Skills.HandToHand;
+                }
+                // If a monster is attacking, use damage values from enemy definitions
+                else if (AIAttacker != null)
+                {
+                    damageLow = AIAttacker.MobileEnemy.MinDamage;
+                    damageHigh = AIAttacker.MobileEnemy.MaxDamage;
+                    chanceToHitMod = attacker.Skills.HandToHand;
+                }
             }
-
-            // If the player is attacking with no weapon equipped, use hand-to-hand skill for damage
-            if (weapon == null && attacker == player)
-            {
-                damageLow = CalculateHandToHandMinDamage(attacker.Skills.HandToHand);
-                damageHigh = CalculateHandToHandMaxDamage(attacker.Skills.HandToHand);
-                chanceToHitMod = attacker.Skills.HandToHand;
-            }
-            // If a monster is attacking, use damage values from enemy definitions
-            else if (weapon == null && AIAttacker != null)
-            {
-                damageLow = AIAttacker.MobileEnemy.MinDamage;
-                damageHigh = AIAttacker.MobileEnemy.MaxDamage;
-                chanceToHitMod = attacker.Skills.HandToHand;
-            }
-            // If the player is attacking with a weapon equipped, use the weapon's damage
-            else if (attacker == player)
+            // If the a weapon is being used, use the weapon's damage
+            else
             {
                 damageLow = weapon.GetBaseDamageMin();
                 damageHigh = weapon.GetBaseDamageMax();

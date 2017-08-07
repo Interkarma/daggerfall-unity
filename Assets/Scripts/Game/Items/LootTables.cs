@@ -74,12 +74,6 @@ namespace DaggerfallWorkshop.Game.Items
             new LootChanceMatrix() {key = "S", MinGold = 50, MaxGold = 125, P1 = 5, P2 = 5, C1 = 5, C2 = 5, C3 = 5, M1 = 15, AM = 10, WP = 10, MI = 3, CL = 0, BK = 5, M2 = 5, RL = 0 },
             new LootChanceMatrix() {key = "T", MinGold = 20, MaxGold = 80, P1 = 0, P2 = 0, C1 = 0, C2 = 0, C3 = 0, M1 = 0, AM = 100, WP = 100, MI = 1, CL = 0, BK = 0, M2 = 0, RL = 0},
             new LootChanceMatrix() {key = "U", MinGold = 7, MaxGold = 30, P1 = 5, P2 = 5, C1 = 5, C2 = 5, C3 = 5, M1 = 10, AM = 10, WP = 10, MI = 2, CL = 0, BK = 2, M2 = 2, RL = 10 },
-
-            // Special humanoid loot table - not 100% sure how Daggerfall handles random loot for humanoids but appears different to monsters
-            // Seems to always deliver 1-3 weapons and 2-5 armor pieces regardless of level
-            // Other items are random as usual
-            // Creating special handling for this loot table in GenerateRandomLoot()
-            new LootChanceMatrix() {key = "HM", MinGold = 5, MaxGold = 50, P1 = 3, P2 = 3, C1 = 3, C2 = 3, C3 = 3, M1 = 3, AM = 0, WP = 0, MI = 5, CL = 5, BK = 5, M2 = 3, RL = 3 },
         };
 
         /// <summary>
@@ -186,27 +180,6 @@ namespace DaggerfallWorkshop.Game.Items
             {
                 items.Add(ItemBuilder.CreateRandomReligiousItem());
                 chance *= 0.5f;
-            }
-
-            // Special humanoid handling
-            // Daggerfall seems to always drop between 1-3 weapons and 2-5 armor pieces regardless of player level
-            // This is probably totally off track, but for now generating closer results than loot table alone
-            // TODO: Revisit humanoid loot tables later
-            if (key == "HM")
-            {
-                // Create 1-3 weapons
-                int count = Random.Range(1, 3);
-                for (int i = 0; i < count; i++)
-                {
-                    items.Add(ItemBuilder.CreateRandomWeapon(playerEntity.Level));
-                }
-
-                // Create 2-5 armor pieces
-                count = Random.Range(2, 5);
-                for (int i = 0; i < count; i++)
-                {
-                    items.Add(ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race));
-                }
             }
 
             return items.ToArray();
