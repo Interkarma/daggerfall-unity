@@ -340,8 +340,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxHealth = 34,
                 Level = 5,
                 ArmorValue = 7,
-                LootTableKey = "A",
                 ParrySounds = true,
+                LootTableKey = "A",
             },
 
             // Centaur
@@ -368,8 +368,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxHealth = 46,
                 Level = 5,
                 ArmorValue = 6,
-                LootTableKey = "C",
                 ParrySounds = true,
+                LootTableKey = "C",
             },
 
             // Werewolf
@@ -539,8 +539,8 @@ namespace DaggerfallWorkshop.Utility
                 MinHealth = 17,
                 MaxHealth = 66,
                 Level = 8,
-                ParrySounds = false,
                 ArmorValue = 3,
+                ParrySounds = false,
             },
 
             // Skeletal Warrior
@@ -624,7 +624,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 10,
                 ArmorValue = 0,
                 ParrySounds = false,
-                LootTableKey = "E",     // TODO: Not in Chronicles, check
+                LootTableKey = "G",
             },
 
             // Ghost
@@ -683,11 +683,11 @@ namespace DaggerfallWorkshop.Utility
                 LootTableKey = "E",
             },
 
-            // Giant Scorpian
+            // Giant Scorpion
             new MobileEnemy()
             {
                 ID = 20,
-                Name = "Giant Scorpian",
+                Name = "Giant Scorpion",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Animal,
                 MaleTexture = 275,
@@ -705,8 +705,8 @@ namespace DaggerfallWorkshop.Utility
                 MinHealth = 18,
                 MaxHealth = 74,
                 Level = 12,
-                ParrySounds = false,
                 ArmorValue = 0,
+                ParrySounds = false,
             },
 
             // Orc Shaman
@@ -1012,7 +1012,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 20,
                 ArmorValue = -10,
                 ParrySounds = true,
-                LootTableKey = "T",
+                LootTableKey = "S",
             },
 
             // Lich
@@ -1041,7 +1041,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 20,
                 ArmorValue = -10,
                 ParrySounds = false,
-                LootTableKey = "T",
+                LootTableKey = "S",
             },
 
             // Ancient Lich
@@ -1070,7 +1070,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 21,
                 ArmorValue = -12,
                 ParrySounds = false,
-                LootTableKey = "T",
+                LootTableKey = "S",
             },
 
             // Dragonling
@@ -1250,10 +1250,10 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 15,
                 MinHealth = 13,
                 MaxHealth = 34,
-                LootTableKey = "S",
                 Level = 16,
                 ArmorValue = 6,
                 ParrySounds = false,
+                LootTableKey = "R",
             },
 
             // Lamia
@@ -1280,7 +1280,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 16,
                 ArmorValue = 6,
                 ParrySounds = false,
-                LootTableKey = "S",
+                LootTableKey = "R",
             },
 
             // Mage
