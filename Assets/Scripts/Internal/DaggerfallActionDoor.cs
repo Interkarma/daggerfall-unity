@@ -108,15 +108,15 @@ namespace DaggerfallWorkshop
                 Open(0, true);
         }
 
-        public void ToggleDoor()
+        public void ToggleDoor(bool activatedByPlayer = false)
         {
             if (IsMoving)
                 return;
 
             if (IsOpen)
-                Close(OpenDuration);
+                Close(OpenDuration, activatedByPlayer);
             else
-                Open(OpenDuration);
+                Open(OpenDuration, false, activatedByPlayer);
         }
 
         public void SetOpen(bool open, bool instant = false, bool ignoreLocks = false)
@@ -190,7 +190,7 @@ namespace DaggerfallWorkshop
                         if (dfAudioSource != null)
                             dfAudioSource.PlayOneShot(PickedLockSound);
                     }
-                    ToggleDoor();
+                    ToggleDoor(true);
                 }
             }
             else
@@ -220,7 +220,7 @@ namespace DaggerfallWorkshop
                     if (roll >= (1f - ChanceToBash))
                     {
                         CurrentLockValue = 0;
-                        ToggleDoor();
+                        ToggleDoor(true);
                     }
                 }
             }
@@ -257,7 +257,7 @@ namespace DaggerfallWorkshop
 
         #region Private Methods
 
-        private void Open(float duration, bool ignoreLocks = false)
+        private void Open(float duration, bool ignoreLocks = false, bool activatedByPlayer = false)
         {
             // Do nothing if door cannot be opened right now
             if ((IsLocked && !ignoreLocks) || IsOpen)
@@ -297,15 +297,18 @@ namespace DaggerfallWorkshop
                     dfAudioSource.PlayOneShot(OpenSound);
             }
 
-            //For Doors that are also action objects, executes action when door opened / closed
-            ExecuteActionOnToggle();
+            // For doors that are also action objects, execute action when door opened / closed
+            // Only doing so if player was the activator, to keep DoorText actions from running
+            // when enemies open doors.
+            if (activatedByPlayer)
+                ExecuteActionOnToggle();
 
             // Set flag
             //IsMagicallyHeld = false;
             CurrentLockValue = 0;
         }
 
-        private void Close(float duration)
+        private void Close(float duration, bool activatedByPlayer = false)
         {
             // Do nothing if door cannot be closed right now
             if (IsClosed)
@@ -321,8 +324,11 @@ namespace DaggerfallWorkshop
             __ExternalAssets.iTween.RotateTo(gameObject, rotateParams);
             currentState = ActionState.PlayingReverse;
 
-            //For Doors that are also action objects, executes action when door opened / closed
-            ExecuteActionOnToggle();
+            // For doors that are also action objects, execute action when door opened / closed
+            // Only doing so if player was the activator, to keep DoorText actions from running
+            // when enemies open doors.
+            if (activatedByPlayer)
+                ExecuteActionOnToggle();
         }
 
         private void OnCompleteOpen()
