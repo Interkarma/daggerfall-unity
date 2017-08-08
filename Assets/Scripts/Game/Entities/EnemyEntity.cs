@@ -114,6 +114,24 @@ namespace DaggerfallWorkshop.Game.Entity
                 return;
             }
 
+            // Enemy classes and some monsters use equipment
+            if (careerIndex == (int)MonsterCareers.Orc || careerIndex == (int)MonsterCareers.OrcShaman)
+            {
+                SetEnemyEquipment(0);
+            }
+            else if (careerIndex == (int)MonsterCareers.Centaur || careerIndex == (int)MonsterCareers.OrcSergeant)
+            {
+                SetEnemyEquipment(1);
+            }
+            else if (careerIndex == (int)MonsterCareers.OrcWarlord)
+            {
+                SetEnemyEquipment(2);
+            }
+            else if (entityType == EntityTypes.EnemyClass)
+            {
+                SetEnemyEquipment(UnityEngine.Random.Range(0, 2)); // 0 or 1
+            }
+
             this.mobileEnemy = mobileEnemy;
             this.entityType = entityType;
             name = career.Name;
@@ -130,6 +148,88 @@ namespace DaggerfallWorkshop.Game.Entity
             }
 
             FillVitalSigns();
+        }
+
+        public void SetEnemyEquipment(int variant)
+        {
+            // TODO: Calculate armor value from equipped armor
+            PlayerEntity player = GameManager.Instance.PlayerEntity;
+            int itemLevel = player.Level;
+            Genders gender = player.Gender;
+            Races race = player.Race;
+            int chance = 0;
+            if (variant == 0)
+            {
+                // right-hand weapon
+                int item = UnityEngine.Random.Range((int)Game.Items.Weapons.Broadsword, (int)(Game.Items.Weapons.Longsword) + 1);
+                Items.DaggerfallUnityItem weapon = Game.Items.ItemBuilder.CreateWeapon((Items.Weapons)item, Game.Items.ItemBuilder.RandomWeaponMaterial(itemLevel));
+                ItemEquipTable.EquipItem(weapon, true, false);
+
+                chance = 50;
+
+                // left-hand shield
+                item = UnityEngine.Random.Range((int)Game.Items.Armor.Buckler, (int)(Game.Items.Armor.Round_Shield) + 1);
+                if (UnityEngine.Random.Range(1, 101) <= chance)
+                {
+                    Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(gender, race, (Items.Armor)item, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
+                    ItemEquipTable.EquipItem(armor, true, false);
+                }
+                // left-hand weapon
+                else if (UnityEngine.Random.Range(1, 101) <= chance)
+                {
+                    item = UnityEngine.Random.Range((int)Game.Items.Weapons.Dagger, (int)(Game.Items.Weapons.Shortsword) + 1);
+                    weapon = Game.Items.ItemBuilder.CreateWeapon((Items.Weapons)item, Game.Items.ItemBuilder.RandomWeaponMaterial(itemLevel));
+                    ItemEquipTable.EquipItem(weapon, true, false);
+                }
+            }
+            else
+            {
+                // right-hand weapon
+                int item = UnityEngine.Random.Range((int)Game.Items.Weapons.Claymore, (int)(Game.Items.Weapons.Battle_Axe) + 1);
+                Items.DaggerfallUnityItem weapon = Game.Items.ItemBuilder.CreateWeapon((Items.Weapons)item, Game.Items.ItemBuilder.RandomWeaponMaterial(itemLevel));
+                ItemEquipTable.EquipItem(weapon, true, false);
+
+                if (variant == 1)
+                    chance = 75;
+                else if (variant == 2)
+                    chance = 90;
+            }
+            // helm
+            if (UnityEngine.Random.Range(1, 101) <= chance)
+            {
+                Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(gender, race, Game.Items.Armor.Helm, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
+                ItemEquipTable.EquipItem(armor, true, false);
+            }
+            // right pauldron
+            if (UnityEngine.Random.Range(1, 101) <= chance)
+            {
+                Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(gender, race, Game.Items.Armor.Right_Pauldron, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
+                ItemEquipTable.EquipItem(armor, true, false);
+            }
+            // left pauldron
+            if (UnityEngine.Random.Range(1, 101) <= chance)
+            {
+                Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(gender, race, Game.Items.Armor.Left_Pauldron, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
+                ItemEquipTable.EquipItem(armor, true, false);
+            }
+            // cuirass
+            if (UnityEngine.Random.Range(1, 101) <= chance)
+            {
+                Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(gender, race, Game.Items.Armor.Cuirass, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
+                ItemEquipTable.EquipItem(armor, true, false);
+            }
+            // greaves
+            if (UnityEngine.Random.Range(1, 101) <= chance)
+            {
+                Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(gender, race, Game.Items.Armor.Greaves, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
+                ItemEquipTable.EquipItem(armor, true, false);
+            }
+            // boots
+            if (UnityEngine.Random.Range(1, 101) <= chance)
+            {
+                Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(gender, race, Game.Items.Armor.Boots, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
+                ItemEquipTable.EquipItem(armor, true, false);
+            }
         }
 
         public DFCareer.EnemyGroups GetEnemyGroup()

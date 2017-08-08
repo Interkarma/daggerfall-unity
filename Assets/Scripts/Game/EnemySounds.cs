@@ -108,13 +108,13 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        public void PlayMissSound()
+        public void PlayMissSound(Items.DaggerfallUnityItem weapon)
         {
             if (IsReady())
             {
-                if (mobile.Summary.Enemy.ID > 127)
+                if (weapon != null)
                 {
-                    dfAudioSource.PlayOneShot(SoundClips.SwingMediumPitch);
+                    dfAudioSource.PlayOneShot(weapon.GetSwingSound());
                 }
                 else
                 {

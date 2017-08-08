@@ -102,15 +102,16 @@ namespace DaggerfallWorkshop.Game
                 if (senses.DistanceToPlayer < MeleeDistance && senses.PlayerInSight)
                 {
                     // Calculate damage
-                    // TODO: Implement enemy use of weapons. Play hit or miss sounds.
                     int damage = Game.Formulas.FormulaHelper.CalculateWeaponDamage(entity, GameManager.Instance.PlayerEntity, null);
                     if (damage > 0)
                     {
                         GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", damage);
+                        // TODO: Play hit sound
                     }
                     else if (sounds)
                     {
-                        sounds.PlayMissSound();
+                        Items.DaggerfallUnityItem weapon = entity.ItemEquipTable.GetItem(Items.EquipSlots.RightHand);
+                        sounds.PlayMissSound(weapon);
                     }
 
                     // Tally player's dodging skill

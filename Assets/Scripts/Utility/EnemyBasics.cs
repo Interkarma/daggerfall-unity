@@ -1301,7 +1301,7 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
                 ParrySounds = false,
-                LootTableKey = "HM",
+                LootTableKey = "U",
             },
 
             // Spellsword
@@ -1322,7 +1322,7 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
                 ParrySounds = true,
-                LootTableKey = "HM",
+                LootTableKey = "P",
             },
 
             // Battlemage
@@ -1343,7 +1343,7 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
                 ParrySounds = true,
-                LootTableKey = "HM",
+                LootTableKey = "U",
             },
 
             // Sorcerer
@@ -1364,7 +1364,7 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
                 ParrySounds = false,
-                LootTableKey = "HM",
+                LootTableKey = "U",
             },
 
             // Healer
@@ -1385,7 +1385,7 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
                 ParrySounds = false,
-                LootTableKey = "HM",
+                LootTableKey = "U",
             },
 
             // Nightblade
@@ -1406,7 +1406,7 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
                 ParrySounds = true,
-                LootTableKey = "HM",
+                LootTableKey = "U",
             },
 
             // Bard
@@ -1427,7 +1427,7 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
                 ParrySounds = true,
-                LootTableKey = "HM",
+                LootTableKey = "O",
             },
 
             // Burglar
@@ -1448,7 +1448,7 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
                 ParrySounds = true,
-                LootTableKey = "HM",
+                LootTableKey = "O",
             },
 
             // Rogue
@@ -1469,7 +1469,7 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
                 ParrySounds = true,
-                LootTableKey = "HM",
+                LootTableKey = "O",
             },
 
             // Acrobat
@@ -1490,7 +1490,7 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
                 ParrySounds = true,
-                LootTableKey = "HM",
+                LootTableKey = "O",
             },
 
             // Thief
@@ -1511,7 +1511,7 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
                 ParrySounds = true,
-                LootTableKey = "HM",
+                LootTableKey = "O",
             },
 
             // Assassin
@@ -1532,7 +1532,7 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
                 ParrySounds = true,
-                LootTableKey = "HM",
+                LootTableKey = "O",
             },
 
             // Monk
@@ -1553,7 +1553,7 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
                 ParrySounds = true,
-                LootTableKey = "HM",
+                LootTableKey = "T",
             },
 
             // Archer
@@ -1575,7 +1575,7 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
                 ParrySounds = true,
-                LootTableKey = "HM",
+                LootTableKey = "C",
             },
 
             // Ranger
@@ -1596,7 +1596,7 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
                 ParrySounds = true,
-                LootTableKey = "HM",
+                LootTableKey = "C",
             },
 
             // Barbarian
@@ -1617,7 +1617,7 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
                 ParrySounds = true,
-                LootTableKey = "HM",
+                LootTableKey = "T",
             },
 
             // Warrior
@@ -1638,7 +1638,7 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
                 ParrySounds = true,
-                LootTableKey = "HM",
+                LootTableKey = "T",
             },
 
             // Knight
@@ -1659,7 +1659,7 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
                 ParrySounds = true,
-                LootTableKey = "HM",
+                LootTableKey = "T",
             },
 
             // City Watch - The Haltmeister
@@ -1680,7 +1680,6 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.Halt,
                 AttackSound = (int)SoundClips.None,
                 ParrySounds = true,
-                LootTableKey = "HM",
             },
         };
 
