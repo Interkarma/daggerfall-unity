@@ -10,12 +10,13 @@
 //
 
 using System.Text.RegularExpressions;
-using System;
-using DaggerfallConnect.Arena2;
 using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
+    /// <summary>
+    /// Changes reputation with an NPC by specified amount.
+    /// </summary>
     public class ChangeReputeWith : ActionTemplate
     {
         Symbol target;
@@ -23,7 +24,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public override string Pattern
         {
-            get { return @"change repute with (?<target>[a-zA-Z0-9_.-]+) by (?<amount>\d+)"; }
+            get { return @"change repute with (?<target>[a-zA-Z0-9_.-]+) by (?<sign>[+-])(?<amount>\d+)"; }
         }
 
         public ChangeReputeWith(Quest parentQuest)
@@ -38,17 +39,37 @@ namespace DaggerfallWorkshop.Game.Questing
             if (!match.Success)
                 return null;
 
+            // Get signed value
+            int value;
+            string sign = match.Groups["sign"].Value;
+            if (sign == "+")
+                value = Parser.ParseInt(match.Groups["amount"].Value);
+            else if (sign == "-")
+                value = -Parser.ParseInt(match.Groups["amount"].Value);
+            else
+                throw new System.Exception("Invalid sign encountered by ChangeReputeWith action");
+
             // Factory new action
             ChangeReputeWith action = new ChangeReputeWith(parentQuest);
             action.target = new Symbol(match.Groups["target"].Value);
-            action.amount = Parser.ParseInt(match.Groups["amount"].Value);
+            action.amount = value;
 
             return action;
         }
 
         public override void Update(Task caller)
         {
-            // TODO: Perform action changes
+            // Get related Person resource
+            Person person = ParentQuest.GetPerson(target);
+            if (person == null)
+            {
+                // Stop if Person does not exist
+                SetComplete();
+                return;
+            }
+
+            // Change reputation with target
+            GameManager.Instance.PlayerEntity.FactionData.ChangeReputation(person.FactionData.id, amount, true);
 
             SetComplete();
         }

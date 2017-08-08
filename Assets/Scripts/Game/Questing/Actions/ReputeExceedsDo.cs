@@ -15,13 +15,19 @@ using FullSerializer;
 namespace DaggerfallWorkshop.Game.Questing
 {
     /// <summary>
-    /// Incomplete. Just stubbing out action for now so quest will compile.
+    /// Executes a task when reputation with NPC exceeds value.
+    /// This is not a trigger condition and will not trigger parent task.
+    /// Owning task must be made active before this action starts checking condition each tick.
     /// </summary>
     public class ReputeExceedsDo : ActionTemplate
     {
+        Symbol npcSymbol;
+        Symbol taskSymbol;
+        int minReputation;
+
         public override string Pattern
         {
-            get { return @"repute with"; }
+            get { return @"repute with (?<npcSymbol>[a-zA-Z0-9_.-]+) exceeds (?<minReputation>\d+) do (?<taskSymbol>[a-zA-Z0-9_.]+)"; }
         }
 
         public ReputeExceedsDo(Quest parentQuest)
@@ -38,13 +44,27 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // Factory new action
             ReputeExceedsDo action = new ReputeExceedsDo(parentQuest);
+            action.npcSymbol = new Symbol(match.Groups["npcSymbol"].Value);
+            action.taskSymbol = new Symbol(match.Groups["taskSymbol"].Value);
+            action.minReputation = Parser.ParseInt(match.Groups["minReputation"].Value);
 
             return action;
         }
 
         public override void Update(Task caller)
         {
-            // TODO: Perform action changes
+            // Get related Person resource
+            Person person = ParentQuest.GetPerson(npcSymbol);
+            if (person == null)
+                return;
+
+            // Check faction with this NPC
+            // Note: Believe this should be >= check despite name of action - to confirm
+            if (GameManager.Instance.PlayerEntity.FactionData.GetReputation(person.FactionData.id) < minReputation)
+                return;
+
+            // Start target task
+            ParentQuest.StartTask(taskSymbol);
 
             SetComplete();
         }
@@ -54,11 +74,17 @@ namespace DaggerfallWorkshop.Game.Questing
         [fsObject("v1")]
         public struct SaveData_v1
         {
+            public Symbol npcSymbol;
+            public Symbol taskSymbol;
+            public int minReputation;
         }
 
         public override object GetSaveData()
         {
             SaveData_v1 data = new SaveData_v1();
+            data.npcSymbol = npcSymbol;
+            data.taskSymbol = taskSymbol;
+            data.minReputation = minReputation;
 
             return data;
         }
@@ -68,6 +94,10 @@ namespace DaggerfallWorkshop.Game.Questing
             SaveData_v1 data = (SaveData_v1)dataIn;
             if (dataIn == null)
                 return;
+
+            npcSymbol = data.npcSymbol;
+            taskSymbol = data.taskSymbol;
+            minReputation = data.minReputation;
         }
 
         #endregion

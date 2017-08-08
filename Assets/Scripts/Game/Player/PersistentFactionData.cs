@@ -275,7 +275,7 @@ namespace DaggerfallWorkshop.Game.Player
         /// <summary>
         /// Change reputation value by amount.
         /// </summary>
-        public bool ChangeReputation(int factionID, int amount)
+        public bool ChangeReputation(int factionID, int amount, bool propagate = false)
         {
             if (factionDict.ContainsKey(factionID))
             {
@@ -283,6 +283,11 @@ namespace DaggerfallWorkshop.Game.Player
                 factionData.rep = Mathf.Clamp(factionData.rep + amount, minReputation, maxReputation);
                 factionDict[factionID] = factionData;
                 return true;
+            }
+
+            if (propagate)
+            {
+                // TODO: Propagate reputation changes to related factions
             }
 
             return false;
