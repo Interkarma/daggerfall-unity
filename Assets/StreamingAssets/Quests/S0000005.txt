@@ -3,6 +3,7 @@
 -- QuestId: 5
 Messages: 12
 Quest: S0000005
+DisplayName: Concern for Nulfaga
 -- Message panels
 QRC:
 

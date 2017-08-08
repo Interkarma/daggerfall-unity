@@ -3,6 +3,7 @@
 -- QuestId: 977
 Messages: 10
 Quest: S0000977
+DisplayName: Curse of Daggerfall
 -- Message panels
 QRC:
 

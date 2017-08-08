@@ -3,6 +3,7 @@
 -- QuestId: 13
 Messages: 21
 Quest: S0000013
+DisplayName: Mynisera's Letters
 -- Message panels
 QRC:
 

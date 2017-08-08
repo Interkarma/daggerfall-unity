@@ -313,17 +313,18 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new StartQuest(null));
             RegisterAction(new UnsetTask(null));
 
+            // In progress - these actions are being actively developed
+            RegisterAction(new RevealLocation(null));
+            RegisterAction(new ChangeReputeWith(null));
+            RegisterAction(new ReputeExceedsDo(null));
+
             // Stubs - these actions are not complete yet
             // Just setting up so certains quests compile for now
-            //RegisterAction(new ChangeReputeWith(null));
             //RegisterAction(new DialogLink(null));
             //RegisterAction(new AddDialog(null));
-            //RegisterAction(new RevealLocation(null));
-            //RegisterAction(new ReputeExceedsDo(null));
             //RegisterAction(new MuteNpc(null));
             //RegisterAction(new AddAsQuestor(null));
             //RegisterAction(new DropAsQuestor(null));
-            //RegisterAction(new RevealLocation(null));
             //RegisterAction(new LegalRepute(null));
 
             // Raise event for custom actions to be registered
@@ -1088,6 +1089,42 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             return false;
+        }
+
+        public void ClearMainQuestState()
+        {
+            // Reset current state
+            Instance.PurgeAllQuests();
+            GameManager.Instance.PlayerEntity.FactionData.ZeroAllReputations();
+            GameManager.Instance.PlayerEntity.GlobalVars.ZeroAllGlobalVars();
+        }
+
+        /// <summary>
+        /// Sets main quest stage from 1-2 (currently).
+        /// </summary>
+        /// <param name="stage">Stage value.</param>
+        public int SetMainQuestStage(int stage)
+        {
+            // Clamp to valid range
+            stage = Mathf.Clamp(stage, 1, 2);
+
+            // Setup current stage
+            ClearMainQuestState();
+            if (stage == 1)
+            {
+                GameManager.Instance.PlayerEntity.Level = 1;
+                InstantiateQuest("_BRISIEN"); // Also starts backbone S0000999
+                InstantiateQuest("S0000977"); // Normally started by tutorial
+            }
+            else if (stage == 2)
+            {
+                GameManager.Instance.PlayerEntity.GlobalVars.SetGlobalVar(31, true);
+                GameManager.Instance.PlayerEntity.Level = 3;
+                InstantiateQuest("S0000999");
+                InstantiateQuest("S0000977");
+            }
+
+            return stage;
         }
 
         #endregion

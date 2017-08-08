@@ -3,6 +3,7 @@
 -- QuestId: 4
 Messages: 16
 Quest: S0000004
+DisplayName: Morgiah's Wedding
 -- Message panels
 QRC:
 
