@@ -220,30 +220,38 @@ namespace DaggerfallWorkshop.Game.Formulas
                 AITarget = target as Entity.EnemyEntity;
             }
 
-            if (weapon == null)
+            if (weapon != null)
+            {
+                // If the attacker has a weapon equipped, get the weapon's damage
+                damageLow = weapon.GetBaseDamageMin();
+                damageHigh = weapon.GetBaseDamageMax();
+                short skillID = weapon.GetWeaponSkillID();
+                chanceToHitMod = attacker.Skills.GetSkillValue(skillID);
+            }
+            else if (attacker == player)
             {
                 // If the player is attacking with no weapon equipped, use hand-to-hand skill for damage
-                if (attacker == player)
-                {
-                    damageLow = CalculateHandToHandMinDamage(attacker.Skills.HandToHand);
-                    damageHigh = CalculateHandToHandMaxDamage(attacker.Skills.HandToHand);
-                    chanceToHitMod = attacker.Skills.HandToHand;
-                }
-                // If a monster is attacking, use damage values from enemy definitions
-                else if (AIAttacker != null)
+                damageLow = CalculateHandToHandMinDamage(attacker.Skills.HandToHand);
+                damageHigh = CalculateHandToHandMaxDamage(attacker.Skills.HandToHand);
+                chanceToHitMod = attacker.Skills.HandToHand;
+            }
+
+            if (AIAttacker != null)
+            {
+                // Note: In classic, for enemies that have weapons, the damage values in the enemy
+                // definitions are overridden by the weapon stats. This is fine for enemy classes,
+                // who have non-weapon damage values of 0, but for the monsters that use weapons,
+                // they may have a better attack if they don't use a weapon.
+                // In DF Unity, enemies are using whichever is more damaging, the weapon or non-weapon attack.
+                int weaponAverage = ((damageLow + damageHigh) / 2);
+                int noWeaponAverage = ((AIAttacker.MobileEnemy.MinDamage + AIAttacker.MobileEnemy.MaxDamage) / 2);
+
+                if (noWeaponAverage > weaponAverage)
                 {
                     damageLow = AIAttacker.MobileEnemy.MinDamage;
                     damageHigh = AIAttacker.MobileEnemy.MaxDamage;
                     chanceToHitMod = attacker.Skills.HandToHand;
                 }
-            }
-            // If the a weapon is being used, use the weapon's damage
-            else
-            {
-                damageLow = weapon.GetBaseDamageMin();
-                damageHigh = weapon.GetBaseDamageMax();
-                short skillID = weapon.GetWeaponSkillID();
-                chanceToHitMod = attacker.Skills.GetSkillValue(skillID);
             }
 
             baseDamage = UnityEngine.Random.Range(damageLow, damageHigh + 1);

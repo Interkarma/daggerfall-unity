@@ -74,11 +74,10 @@ namespace DaggerfallWorkshop.Game.Entity
                 career = GetMonsterCareerTemplate((MonsterCareers)careerIndex);
                 stats.SetFromCareer(career);
 
-                // Enemy monster has predefined level, health and armor values
+                // Enemy monster has predefined level, health and armor values.
+                // Armor values can be modified below by equipment.
                 level = mobileEnemy.Level;
                 maxHealth = UnityEngine.Random.Range(mobileEnemy.MinHealth, mobileEnemy.MaxHealth + 1);
-
-                // Monsters have the same armor value for all body parts
                 for (int i = 0; i < ArmorValues.Length; i++)
                 {
                     ArmorValues[i] = (sbyte)(mobileEnemy.ArmorValue * 5);
@@ -93,25 +92,27 @@ namespace DaggerfallWorkshop.Game.Entity
                 // Enemy class is levelled to player and uses similar health rules
                 level = GameManager.Instance.PlayerEntity.Level;
                 maxHealth = FormulaHelper.RollEnemyClassMaxHealth(level, career.HitPointsPerLevel);
-
-                // Enemy classes may be able to equip armor. Not sure yet how classic does this.
-                // For now, using fudge value of 60.
-                for (int i = 0; i < ArmorValues.Length; i++)
-                {
-                    ArmorValues[i] = 60;
-                }
-
-                // Enemy class damage is temporarily set by a fudged level multiplier
-                // This will change once full entity setup and items are available
-                const float damageMultiplier = 4f;
-                mobileEnemy.MinDamage = (int)(level * damageMultiplier);
-                mobileEnemy.MaxDamage = (int)((level + 2) * damageMultiplier);
             }
             else
             {
                 career = new DFCareer();
                 careerIndex = -1;
                 return;
+            }
+
+            this.mobileEnemy = mobileEnemy;
+            this.entityType = entityType;
+            name = career.Name;
+
+            short skillsLevel = (short)((level * 5) + 30);
+            if (skillsLevel > 100)
+            {
+                skillsLevel = 100;
+            }
+
+            for (int i = 0; i <= DaggerfallSkills.Count; i++)
+            {
+                skills.SetSkillValue(i, skillsLevel);
             }
 
             // Enemy classes and some monsters use equipment
@@ -132,27 +133,11 @@ namespace DaggerfallWorkshop.Game.Entity
                 SetEnemyEquipment(UnityEngine.Random.Range(0, 2)); // 0 or 1
             }
 
-            this.mobileEnemy = mobileEnemy;
-            this.entityType = entityType;
-            name = career.Name;
-
-            short skillsLevel = (short)((level * 5) + 30);
-            if (skillsLevel > 100)
-            {
-                skillsLevel = 100;
-            }
-
-            for (int i = 0; i <= DaggerfallSkills.Count; i++)
-            {
-                skills.SetSkillValue(i, skillsLevel);
-            }
-
             FillVitalSigns();
         }
 
         public void SetEnemyEquipment(int variant)
         {
-            // TODO: Calculate armor value from equipped armor
             PlayerEntity player = GameManager.Instance.PlayerEntity;
             int itemLevel = player.Level;
             Genders gender = player.Gender;
@@ -229,6 +214,49 @@ namespace DaggerfallWorkshop.Game.Entity
             {
                 Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(gender, race, Game.Items.Armor.Boots, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
                 ItemEquipTable.EquipItem(armor, true, false);
+            }
+
+            // Initialize armor values to 100 (no armor)
+            for (int i = 0; i < ArmorValues.Length; i++)
+            {
+                ArmorValues[i] = 100;
+            }
+            // Calculate armor values from equipment
+            for (int i = (int)Game.Items.EquipSlots.Head; i < (int)Game.Items.EquipSlots.Feet; i++)
+            {
+                Items.DaggerfallUnityItem item = ItemEquipTable.GetItem((Items.EquipSlots)i);
+                if (item != null && item.ItemGroup == Game.Items.ItemGroups.Armor)
+                {
+                    UpdateEquippedArmorValues(item, true);
+                }
+            }
+
+            if (entityType == EntityTypes.EnemyClass)
+            {
+                // Clamp to maximum armor value of 60. In classic this also applies for monsters.
+                // Note: Classic sets the value to 60 if it is > 50, which seems like an oversight.
+                for (int i = 0; i < ArmorValues.Length; i++)
+                {
+                    if (ArmorValues[i] > 60)
+                    {
+                        ArmorValues[i] = 60;
+                    }
+                }
+            }
+            else
+            {
+                // Note: In classic, the above applies for equipment-using monsters as well as enemy classes.
+                // The resulting armor values are often 60. Due to the +40 to hit against monsters this makes
+                // monsters with equipment very easy to hit, and 60 is a worse value than any value monsters
+                // have in their definition. To avoid this, in DF Unity the equipment valuesare only used if
+                // they are better than the value in the definition.
+                for (int i = 0; i < ArmorValues.Length; i++)
+                {
+                    if (ArmorValues[i] > (sbyte)(mobileEnemy.ArmorValue * 5))
+                    {
+                        ArmorValues[i] = (sbyte)(mobileEnemy.ArmorValue * 5);
+                    }
+                }
             }
         }
 
