@@ -38,6 +38,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Color shadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
 
         int maxWidth = -1;
+        bool wrapText = false;
 
         /// <summary>
         /// Maximum length of label string.
@@ -100,6 +101,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set { maxWidth = value; }
         }
 
+        public bool WrapText
+        {
+            get { return wrapText; }
+            set { wrapText = value; }
+        }
+
         public TextLabel(DaggerfallFont font = null)
         {
             if (font != null)
@@ -149,6 +156,59 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         protected virtual void CreateLabelTexture()
+        {
+            if (!wrapText)
+                CreateLabelTextureSingleLine();
+            else
+                CreateLabelTextureWrapped();
+        }
+
+        void CreateLabelTextureSingleLine()
+        {
+            if (font == null)
+                font = DaggerfallUI.DefaultFont;
+
+            // First pass encodes ASCII and calculates final dimensions
+            int width = 0;
+            asciiBytes = Encoding.ASCII.GetBytes(text);
+            for (int i = 0; i < asciiBytes.Length; i++)
+            {
+                // Invalid ASCII bytes are cast to a space character
+                if (!font.HasGlyph(asciiBytes[i]))
+                    asciiBytes[i] = PixelFont.SpaceASCII;
+
+                // Calculate total width
+                PixelFont.GlyphInfo glyph = font.GetGlyph(asciiBytes[i]);
+                width += glyph.width + font.GlyphSpacing;
+            }
+
+            if (maxWidth > 0 && width > maxWidth)
+                width = maxWidth;
+
+            // Create target label texture
+            totalWidth = width;
+            totalHeight = font.GlyphHeight;
+            labelTexture = CreateLabelTexture(totalWidth, totalHeight);
+            if (labelTexture == null)
+                throw new Exception("TextLabel failed to create labelTexture.");
+
+            // Second pass adds glyphs to label texture
+            int xpos = 0;
+            for (int i = 0; i < asciiBytes.Length; i++)
+            {
+                PixelFont.GlyphInfo glyph = font.GetGlyph(asciiBytes[i]);
+                if (xpos + glyph.width >= totalWidth)
+                    break;
+
+                labelTexture.SetPixels32(xpos, 0, glyph.width, totalHeight, glyph.colors);
+                xpos += glyph.width + font.GlyphSpacing;
+            }
+            labelTexture.Apply(false, true);
+            labelTexture.filterMode = font.FilterMode;
+            this.Size = new Vector2(totalWidth, totalHeight);
+        }
+
+        void CreateLabelTextureWrapped()
         {
             if (font == null)
                 font = DaggerfallUI.DefaultFont;

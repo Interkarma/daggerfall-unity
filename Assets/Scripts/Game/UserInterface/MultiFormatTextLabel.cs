@@ -145,6 +145,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             textLabel.Font = font;
             textLabel.Position = new Vector2(cursorX, cursorY);
             textLabel.MaxWidth = 288;
+            textLabel.WrapText = true;
             textLabel.Text = text;
             textLabel.Parent = this;
 
