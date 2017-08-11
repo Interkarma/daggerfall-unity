@@ -143,6 +143,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 1,
                 ArmorValue = 6,
                 ParrySounds = false,
+                MapChance = 0,
             },
 
             // Imp
@@ -170,6 +171,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 2,
                 ArmorValue = 3,
                 ParrySounds = false,
+                MapChance = 1,
                 LootTableKey = "D",
             },
 
@@ -201,6 +203,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 3,
                 ArmorValue = -4,
                 ParrySounds = false,
+                MapChance = 0,
                 LootTableKey = "B",
             },
 
@@ -228,6 +231,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 3,
                 ArmorValue = 6,
                 ParrySounds = false,
+                MapChance = 0,
             },
 
             // Grizzly Bear
@@ -258,6 +262,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 4,
                 ArmorValue = 6,
                 ParrySounds = false,
+                MapChance = 0,
             },
 
             // Sabertooth Tiger
@@ -288,6 +293,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 4,
                 ArmorValue = 6,
                 ParrySounds = false,
+                MapChance = 0,
             },
 
             // Spider
@@ -314,6 +320,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 4,
                 ArmorValue = 5,
                 ParrySounds = false,
+                MapChance = 0,
             },
 
             // Orc
@@ -341,6 +348,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 5,
                 ArmorValue = 7,
                 ParrySounds = true,
+                MapChance = 0,
                 LootTableKey = "A",
             },
 
@@ -369,6 +377,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 5,
                 ArmorValue = 6,
                 ParrySounds = true,
+                MapChance = 1,
                 LootTableKey = "C",
             },
 
@@ -400,6 +409,7 @@ namespace DaggerfallWorkshop.Utility
                 MaxHealth = 66,
                 Level = 6,
                 ArmorValue = 5,
+                MapChance = 0,
                 ParrySounds = false,
             },
 
@@ -428,6 +438,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 6,
                 ArmorValue = 0,
                 ParrySounds = false,
+                MapChance = 1,
                 LootTableKey = "C",
             },
 
@@ -454,6 +465,7 @@ namespace DaggerfallWorkshop.Utility
                 MaxHealth = 50,
                 Level = 7,
                 ArmorValue = 6,
+                MapChance = 0,
                 ParrySounds = false,
             },
 
@@ -482,6 +494,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 7,
                 ArmorValue = 5,
                 ParrySounds = true,
+                MapChance = 1,
                 LootTableKey = "A",
             },
 
@@ -509,6 +522,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 8,
                 ArmorValue = 2,
                 ParrySounds = false,
+                MapChance = 0,
                 LootTableKey = "D",
             },
 
@@ -540,6 +554,7 @@ namespace DaggerfallWorkshop.Utility
                 MaxHealth = 66,
                 Level = 8,
                 ArmorValue = 3,
+                MapChance = 0,
                 ParrySounds = false,
             },
 
@@ -569,6 +584,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 9,
                 ArmorValue = 2,
                 ParrySounds = true,
+                MapChance = 1,
                 LootTableKey = "H",
             },
 
@@ -597,6 +613,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 10,
                 ArmorValue = 3,
                 ParrySounds = false,
+                MapChance = 1,
                 LootTableKey = "F",
             },
 
@@ -624,6 +641,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 10,
                 ArmorValue = 0,
                 ParrySounds = false,
+                MapChance = 1,
                 LootTableKey = "G",
             },
 
@@ -652,6 +670,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 11,
                 ArmorValue = 0,
                 ParrySounds = false,
+                MapChance = 1,
                 LootTableKey = "I",
             },
 
@@ -680,6 +699,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 11,
                 ArmorValue = 2,
                 ParrySounds = false,
+                MapChance = 1,
                 LootTableKey = "E",
             },
 
@@ -706,6 +726,7 @@ namespace DaggerfallWorkshop.Utility
                 MaxHealth = 74,
                 Level = 12,
                 ArmorValue = 0,
+                MapChance = 0,
                 ParrySounds = false,
             },
 
@@ -734,6 +755,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 13,
                 ArmorValue = 7,
                 ParrySounds = true,
+                MapChance = 3,
                 LootTableKey = "U",
             },
 
@@ -761,6 +783,7 @@ namespace DaggerfallWorkshop.Utility
                 MaxHealth = 82,
                 Level = 14,
                 ArmorValue = 0,
+                MapChance = 0,
                 ParrySounds = false,
             },
 
@@ -789,6 +812,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 15,
                 ArmorValue = 0,
                 ParrySounds = false,
+                MapChance = 1,
                 LootTableKey = "I",
             },
 
@@ -817,6 +841,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 16,
                 ArmorValue = 0,
                 ParrySounds = true,
+                MapChance = 2,
                 LootTableKey = "T",
             },
 
@@ -845,6 +870,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 17,
                 ArmorValue = -5,
                 ParrySounds = true,
+                MapChance = 0,
                 LootTableKey = "J",
             },
 
@@ -873,6 +899,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 17,
                 ArmorValue = 1,
                 ParrySounds = true,
+                MapChance = 0,
                 LootTableKey = "J",
             },
 
@@ -900,6 +927,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 18,
                 ArmorValue = 1,
                 ParrySounds = true,
+                MapChance = 0,
                 LootTableKey = "E",
             },
 
@@ -928,6 +956,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 19,
                 ArmorValue = -2,
                 ParrySounds = false,
+                MapChance = 3,
                 LootTableKey = "Q",
             },
 
@@ -956,6 +985,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 19,
                 ArmorValue = 1,
                 ParrySounds = false,
+                MapChance = 1,
                 LootTableKey = "Q",
             },
 
@@ -984,6 +1014,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 20,
                 ArmorValue = -5,
                 ParrySounds = false,
+                MapChance = 3,
                 LootTableKey = "Q",
             },
 
@@ -1012,6 +1043,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 20,
                 ArmorValue = -10,
                 ParrySounds = true,
+                MapChance = 0,
                 LootTableKey = "S",
             },
 
@@ -1041,6 +1073,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 20,
                 ArmorValue = -10,
                 ParrySounds = false,
+                MapChance = 4,
                 LootTableKey = "S",
             },
 
@@ -1070,6 +1103,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 21,
                 ArmorValue = -12,
                 ParrySounds = false,
+                MapChance = 4,
                 LootTableKey = "S",
             },
 
@@ -1097,6 +1131,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 16,
                 ArmorValue = 6,
                 ParrySounds = false,
+                MapChance = 0,
             },
 
             // Fire Atronach
@@ -1123,6 +1158,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 16,
                 ArmorValue = 6,
                 ParrySounds = false,
+                MapChance = 0,
             },
 
             // Iron Atronach
@@ -1149,6 +1185,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 16,
                 ArmorValue = 6,
                 ParrySounds = true,
+                MapChance = 0,
             },
 
             // Flesh Atronach
@@ -1175,6 +1212,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 16,
                 ArmorValue = 6,
                 ParrySounds = false,
+                MapChance = 0,
             },
 
             // Ice Atronach
@@ -1201,6 +1239,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 16,
                 ArmorValue = 6,
                 ParrySounds = true,
+                MapChance = 0,
             },
 
             // Dragonling
@@ -1227,6 +1266,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 16,
                 ArmorValue = 6,
                 ParrySounds = false,
+                MapChance = 0,
             },
 
             // Dreugh
@@ -1253,6 +1293,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 16,
                 ArmorValue = 6,
                 ParrySounds = false,
+                MapChance = 0,
                 LootTableKey = "R",
             },
 
@@ -1280,6 +1321,7 @@ namespace DaggerfallWorkshop.Utility
                 Level = 16,
                 ArmorValue = 6,
                 ParrySounds = false,
+                MapChance = 0,
                 LootTableKey = "R",
             },
 
@@ -1301,6 +1343,7 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
                 ParrySounds = false,
+                MapChance = 3,
                 LootTableKey = "U",
             },
 
@@ -1322,6 +1365,7 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
                 ParrySounds = true,
+                MapChance = 1,
                 LootTableKey = "P",
             },
 
@@ -1343,6 +1387,7 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
                 ParrySounds = true,
+                MapChance = 2,
                 LootTableKey = "U",
             },
 
@@ -1364,6 +1409,7 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
                 ParrySounds = false,
+                MapChance = 3,
                 LootTableKey = "U",
             },
 
@@ -1385,6 +1431,7 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
                 ParrySounds = false,
+                MapChance = 1,
                 LootTableKey = "U",
             },
 
@@ -1406,6 +1453,7 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
                 ParrySounds = true,
+                MapChance = 1,
                 LootTableKey = "U",
             },
 
@@ -1427,6 +1475,7 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
                 ParrySounds = true,
+                MapChance = 2,
                 LootTableKey = "O",
             },
 
@@ -1448,6 +1497,7 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
                 ParrySounds = true,
+                MapChance = 1,
                 LootTableKey = "O",
             },
 
@@ -1469,6 +1519,7 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
                 ParrySounds = true,
+                MapChance = 1,
                 LootTableKey = "O",
             },
 
@@ -1490,6 +1541,7 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
                 ParrySounds = true,
+                MapChance = 0,
                 LootTableKey = "O",
             },
 
@@ -1511,6 +1563,7 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
                 ParrySounds = true,
+                MapChance = 2,
                 LootTableKey = "O",
             },
 
@@ -1532,6 +1585,7 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
                 ParrySounds = true,
+                MapChance = 0,
                 LootTableKey = "O",
             },
 
@@ -1553,6 +1607,7 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
                 ParrySounds = true,
+                MapChance = 1,
                 LootTableKey = "T",
             },
 
@@ -1575,6 +1630,7 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
                 ParrySounds = true,
+                MapChance = 0,
                 LootTableKey = "C",
             },
 
@@ -1596,6 +1652,7 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
                 ParrySounds = true,
+                MapChance = 1,
                 LootTableKey = "C",
             },
 
@@ -1617,6 +1674,7 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
                 ParrySounds = true,
+                MapChance = 0,
                 LootTableKey = "T",
             },
 
@@ -1638,6 +1696,7 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
                 ParrySounds = true,
+                MapChance = 0,
                 LootTableKey = "T",
             },
 
@@ -1659,6 +1718,7 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
                 ParrySounds = true,
+                MapChance = 1,
                 LootTableKey = "T",
             },
 
@@ -1680,6 +1740,7 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.Halt,
                 AttackSound = (int)SoundClips.None,
                 ParrySounds = true,
+                MapChance = 0,
             },
         };
 

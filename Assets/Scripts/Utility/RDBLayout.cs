@@ -370,6 +370,7 @@ namespace DaggerfallWorkshop.Utility
             GameObject go,
             DFBlock.RdbObject[] editorObjects,
             ref DFBlock blockData,
+            DFRegion.DungeonTypes dungeonType,
             bool serialize = true)
         {
             const int randomTreasureFlatIndex = 19;
@@ -391,7 +392,7 @@ namespace DaggerfallWorkshop.Utility
             {
                 // Add treasure flat
                 if (editorObjects[i].Resources.FlatResource.TextureRecord == randomTreasureFlatIndex)
-                    AddRandomTreasure(editorObjects[i], randomTreasureNode.transform, ref blockData, serialize);
+                    AddRandomTreasure(editorObjects[i], randomTreasureNode.transform, ref blockData, dungeonType, serialize);
             }
         }
 
@@ -1284,7 +1285,7 @@ namespace DaggerfallWorkshop.Utility
             }
         }
 
-        private static void AddRandomTreasure(DFBlock.RdbObject obj, Transform parent, ref DFBlock blockData, bool serialize)
+        private static void AddRandomTreasure(DFBlock.RdbObject obj, Transform parent, ref DFBlock blockData, DFRegion.DungeonTypes dungeonType, bool serialize)
         {
             // Create unique LoadID for save sytem
             ulong loadID = 0;
@@ -1310,9 +1311,52 @@ namespace DaggerfallWorkshop.Utility
                 iconRecord,
                 loadID);
 
-            // Set random treasure key
-            loot.LootTableKey = "O";
-            loot.GenerateItems();
+            // Get dungeon type index
+            int dungeonIndex = (int)dungeonType >> 8;
+
+            string[] lootTableKeys = {
+            "K", // Crypt
+            "N", // Orc Stronghold
+            "N", // Human Stronghold
+            "N", // Prison
+            "K", // Desecrated Temple
+            "M", // Mine
+            "M", // Natural Cave
+            "Q", // Coven
+            "K", // Vampire Haunt
+            "U", // Laboratory
+            "D", // Harpy Nest
+            "N", // Ruined Castle
+            "L", // Spider Nest
+            "F", // Giant Stronghold
+            "S", // Dragon's Den
+            "N", // Barbarian Stronghold
+            "M", // Volcanic Caves
+            "L", // Scorpion Nest
+            "N", // Cemetery
+            };
+
+            // Get loot table key
+            if (dungeonIndex < lootTableKeys.Length)
+            {
+                loot.LootTableKey = lootTableKeys[dungeonIndex];
+                loot.GenerateItems();
+
+                // Randomly add map
+                char key = lootTableKeys[dungeonIndex][0];
+                int alphabetIndex = key - 64;
+
+                if ( alphabetIndex >= 10 && alphabetIndex <= 15 ) // between keys J and 0
+                {
+                    int[] mapChances = { 2, 1, 1, 2, 2, 15 };
+                    int mapChance = mapChances[alphabetIndex - 10];
+                    loot.RandomlyAddMap(mapChance);
+                }
+            }
+            else
+            {
+                DaggerfallUnity.LogMessage(string.Format("RDBLayout: Dungeon type {0} is out of range or unknown.", dungeonType), true);
+            }
         }
 
         #endregion

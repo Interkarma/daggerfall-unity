@@ -73,6 +73,18 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
+        /// Randomly add a map
+        /// </summary>
+        public void RandomlyAddMap(int chance)
+        {
+            if (Random.Range(1, 101) <= chance)
+            {
+                DaggerfallUnityItem map = new DaggerfallUnityItem(ItemGroups.MiscItems, 8);
+                items.AddItem(map);
+            }
+        }
+
+        /// <summary>
         /// Called when this loot collection is opened by inventory window
         /// </summary>
         public void OnInventoryOpen()

@@ -105,6 +105,9 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
+            // Chance of adding map
+            loot.RandomlyAddMap(mobile.Summary.Enemy.MapChance);
+
             entityBehaviour.CorpseLootContainer = loot;
 
             // Transfer any items owned by entity to loot container
