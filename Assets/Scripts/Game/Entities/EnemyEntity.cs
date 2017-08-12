@@ -147,7 +147,7 @@ namespace DaggerfallWorkshop.Game.Entity
             {
                 // right-hand weapon
                 int item = UnityEngine.Random.Range((int)Game.Items.Weapons.Broadsword, (int)(Game.Items.Weapons.Longsword) + 1);
-                Items.DaggerfallUnityItem weapon = Game.Items.ItemBuilder.CreateWeapon((Items.Weapons)item, Game.Items.ItemBuilder.RandomWeaponMaterial(itemLevel));
+                Items.DaggerfallUnityItem weapon = Game.Items.ItemBuilder.CreateWeapon((Items.Weapons)item, Game.Items.ItemBuilder.RandomMaterial(itemLevel));
                 ItemEquipTable.EquipItem(weapon, true, false);
 
                 chance = 50;
@@ -163,7 +163,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 else if (UnityEngine.Random.Range(1, 101) <= chance)
                 {
                     item = UnityEngine.Random.Range((int)Game.Items.Weapons.Dagger, (int)(Game.Items.Weapons.Shortsword) + 1);
-                    weapon = Game.Items.ItemBuilder.CreateWeapon((Items.Weapons)item, Game.Items.ItemBuilder.RandomWeaponMaterial(itemLevel));
+                    weapon = Game.Items.ItemBuilder.CreateWeapon((Items.Weapons)item, Game.Items.ItemBuilder.RandomMaterial(itemLevel));
                     ItemEquipTable.EquipItem(weapon, true, false);
                 }
             }
@@ -171,7 +171,7 @@ namespace DaggerfallWorkshop.Game.Entity
             {
                 // right-hand weapon
                 int item = UnityEngine.Random.Range((int)Game.Items.Weapons.Claymore, (int)(Game.Items.Weapons.Battle_Axe) + 1);
-                Items.DaggerfallUnityItem weapon = Game.Items.ItemBuilder.CreateWeapon((Items.Weapons)item, Game.Items.ItemBuilder.RandomWeaponMaterial(itemLevel));
+                Items.DaggerfallUnityItem weapon = Game.Items.ItemBuilder.CreateWeapon((Items.Weapons)item, Game.Items.ItemBuilder.RandomMaterial(itemLevel));
                 ItemEquipTable.EquipItem(weapon, true, false);
 
                 if (variant == 1)
