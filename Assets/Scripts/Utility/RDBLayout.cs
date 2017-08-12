@@ -1351,6 +1351,8 @@ namespace DaggerfallWorkshop.Utility
                     int[] mapChances = { 2, 1, 1, 2, 2, 15 };
                     int mapChance = mapChances[alphabetIndex - 10];
                     loot.RandomlyAddMap(mapChance);
+                    loot.RandomlyAddPotion(4);
+                    loot.RandomlyAddPotionRecipe(2);
                 }
             }
             else
