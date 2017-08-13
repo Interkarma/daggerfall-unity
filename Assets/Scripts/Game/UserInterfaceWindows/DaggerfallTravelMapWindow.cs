@@ -952,6 +952,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                             ContentReader.MapSummary summary;
                             if (DaggerfallUnity.Instance.ContentReader.HasLocation(originX + x, originY + y, out summary))
                             {
+                                // TEMP: Check if location discovered
+                                // This does not correctly account for locations that should always be shown
+                                // Purpose is only to test ID matching with discovery system
+                                // This is to be removed once proper discovery implemented
+                                //if (!GameManager.Instance.PlayerGPS.HasDiscoveredLocation(summary.ID))
+                                //    continue;
+
                                 int index = GetPixelColorIndex(summary.LocationType);
                                 if (index == -1)
                                     continue;

@@ -70,6 +70,7 @@ namespace DaggerfallWorkshop
         public struct DiscoveredLocation
         {
             public int mapID;
+            public int mapPixelID;
             public string regionName;
             public string locationName;
             public Dictionary<int, DiscoveredBuilding> discoveredBuildings;
@@ -575,16 +576,18 @@ namespace DaggerfallWorkshop
                 return;
 
             // Check if already discovered
-            int mapID = CurrentLocation.MapTableData.MapId;
-            if (HasDiscoveredLocation(mapID))
+            int mapPixelID = MapsFile.GetMapPixelIDFromLongitudeLatitude((int)CurrentLocation.MapTableData.Longitude, CurrentLocation.MapTableData.Latitude);
+            if (HasDiscoveredLocation(mapPixelID))
                 return;
 
             // Add to discovered locations dict
             DiscoveredLocation dl = new DiscoveredLocation();
-            dl.mapID = mapID;
+
+            dl.mapID = CurrentLocation.MapTableData.MapId;
+            dl.mapPixelID = mapPixelID;
             dl.regionName = CurrentLocation.RegionName;
             dl.locationName = CurrentLocation.Name;
-            discoveredLocations.Add(mapID, dl);
+            discoveredLocations.Add(mapPixelID, dl);
         }
 
         /// <summary>
@@ -622,12 +625,14 @@ namespace DaggerfallWorkshop
 
         /// <summary>
         /// Check if player has discovered location.
+        /// MapPixelID is derived from longitude/latitude or MapPixelX, MapPixelY.
+        /// See MapsFile.GetMapPixelID() and MapsFile.GetMapPixelIDFromLongitudeLatitude().
         /// </summary>
-        /// <param name="mapID">MapID of location.</param>
+        /// <param name="mapPixelID">ID of location pixel.</param>
         /// <returns>True if already discovered.</returns>
-        public bool HasDiscoveredLocation(int mapID)
+        public bool HasDiscoveredLocation(int mapPixelID)
         {
-            return discoveredLocations.ContainsKey(mapID);
+            return discoveredLocations.ContainsKey(mapPixelID);
         }
 
         /// <summary>
@@ -716,6 +721,21 @@ namespace DaggerfallWorkshop
         public void RestoreDiscoveryData(Dictionary<int, DiscoveredLocation> data)
         {
             discoveredLocations = data;
+
+            // Purge any entries with MapPixelID of 0
+            // These are from a previous save format keyed to MapID
+            List<int> keysToRemove = new List<int>();
+            foreach(var kvp in discoveredLocations)
+            {
+                if (kvp.Value.mapPixelID == 0)
+                    keysToRemove.Add(kvp.Key);
+            }
+
+            // Remove legacy entries
+            foreach(int key in keysToRemove)
+            {
+                discoveredLocations.Remove(key);
+            }
         }
 
         /// <summary>
