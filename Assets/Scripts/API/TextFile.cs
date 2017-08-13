@@ -364,6 +364,25 @@ namespace DaggerfallConnect.Arena2
             return tokens.ToArray();
         }
 
+        /// <summary>
+        /// Simple method to split tokens into text array, one entry per text token.
+        /// Other formatting tokens are ignored.
+        /// This is best used for multi-line popup HUD text.
+        /// </summary>
+        /// <param name="tokens">Tokens.</param>
+        /// <returns>String array.</returns>
+        public static string[] GetTokenLines(Token[] tokens)
+        {
+            List<string> lines = new List<string>();
+            foreach(Token token in tokens)
+            {
+                if (token.formatting == Formatting.Text)
+                    lines.Add(token.text);
+            }
+
+            return lines.ToArray();
+        }
+
         private static Token ReadFormattingToken(ref byte[] buffer, int position, out int endPosition)
         {
             Formatting formatting = (Formatting)buffer[position++];

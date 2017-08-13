@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -96,6 +97,23 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             AddText(text);
             nextPopDelay = delayInSeconds;
+        }
+
+        /// <summary>
+        /// Add text from tokens with a custom delay.
+        /// </summary>
+        /// <param name="tokens">Tokens. One line added per text token.</param>
+        /// <param name="delayInSeconds">Delay per line.</param>
+        public void AddText(TextFile.Token[] tokens, float delayInSeconds)
+        {
+            string[] lines = TextFile.GetTokenLines(tokens);
+            if (lines != null && lines.Length > 0)
+            {
+                foreach(string line in lines)
+                {
+                    AddText(line, delayInSeconds);
+                }
+            }
         }
     }
 }

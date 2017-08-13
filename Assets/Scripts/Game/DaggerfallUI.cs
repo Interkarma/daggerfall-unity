@@ -386,6 +386,14 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        public static void AddHUDText(TextFile.Token[] tokens, float delay)
+        {
+            if (Instance.dfHUD != null)
+            {
+                Instance.dfHUD.PopupText.AddText(tokens, delay);
+            }
+        }
+
         public static void SetMidScreenText(string message, float delay = 1.5f)
         {
             if (Instance.dfHUD != null)
