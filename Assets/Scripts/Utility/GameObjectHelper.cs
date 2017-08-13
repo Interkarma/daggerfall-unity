@@ -498,7 +498,7 @@ namespace DaggerfallWorkshop.Utility
                 dfBlock.SetMarkers(startMarkers, enterMarkers);
 
             // Add treasure
-            RDBLayout.AddTreasure(go, editorObjects, ref blockData);
+            RDBLayout.AddTreasure(go, editorObjects, ref blockData, dungeonType);
 
             // Add enemies
             RDBLayout.AddFixedEnemies(go, editorObjects, ref blockData);
