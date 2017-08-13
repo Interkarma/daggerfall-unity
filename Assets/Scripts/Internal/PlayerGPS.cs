@@ -611,8 +611,8 @@ namespace DaggerfallWorkshop
                 return;
 
             // Get location discovery
-            int mapID = CurrentLocation.MapTableData.MapId;
-            DiscoveredLocation dl = discoveredLocations[mapID];
+            int mapPixelID = MapsFile.GetMapPixelIDFromLongitudeLatitude((int)CurrentLocation.MapTableData.Longitude, CurrentLocation.MapTableData.Latitude);
+            DiscoveredLocation dl = discoveredLocations[mapPixelID];
 
             // Ensure the building dict is created
             if (dl.discoveredBuildings == null)
@@ -620,7 +620,7 @@ namespace DaggerfallWorkshop
 
             // Add the building and store back to discovered location
             dl.discoveredBuildings.Add(db.buildingKey, db);
-            discoveredLocations[mapID] = dl;
+            discoveredLocations[mapPixelID] = dl;
         }
 
         /// <summary>
@@ -647,12 +647,12 @@ namespace DaggerfallWorkshop
                 return false;
 
             // Must have discovered current location before building
-            int mapID = CurrentLocation.MapTableData.MapId;
-            if (!HasDiscoveredLocation(mapID))
+            int mapPixelID = MapsFile.GetMapPixelIDFromLongitudeLatitude((int)CurrentLocation.MapTableData.Longitude, CurrentLocation.MapTableData.Latitude);
+            if (!HasDiscoveredLocation(mapPixelID))
                 return false;
 
             // Get the location discovery for this mapID
-            DiscoveredLocation dl = discoveredLocations[mapID];
+            DiscoveredLocation dl = discoveredLocations[mapPixelID];
             if (dl.discoveredBuildings == null)
                 return false;
 
@@ -674,8 +674,8 @@ namespace DaggerfallWorkshop
                 return false;
 
             // Get the location discovery for this mapID
-            int mapID = CurrentLocation.MapTableData.MapId;
-            DiscoveredLocation dl = discoveredLocations[mapID];
+            int mapPixelID = MapsFile.GetMapPixelIDFromLongitudeLatitude((int)CurrentLocation.MapTableData.Longitude, CurrentLocation.MapTableData.Latitude);
+            DiscoveredLocation dl = discoveredLocations[mapPixelID];
             if (dl.discoveredBuildings == null)
                 return false;
 
