@@ -40,6 +40,11 @@ namespace DaggerfallWorkshop.Game
 
         public float RayDistance = 2.4f;        // Distance of ray check, tune this to your scale and preference
 
+        public PlayerActivateModes CurrentMode
+        {
+            get { return currentMode; }
+        }
+
         void Start()
         {
             playerGPS = GetComponent<PlayerGPS>();
@@ -165,7 +170,7 @@ namespace DaggerfallWorkshop.Game
                                 actionDoor.AttemptLockpicking();
                             }
                             else
-                                actionDoor.ToggleDoor();
+                                actionDoor.ToggleDoor(true);
                         }
 
                         // Check for action record hit
