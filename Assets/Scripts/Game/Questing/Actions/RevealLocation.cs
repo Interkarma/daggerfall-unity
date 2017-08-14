@@ -15,13 +15,15 @@ using FullSerializer;
 namespace DaggerfallWorkshop.Game.Questing
 {
     /// <summary>
-    /// Incomplete. Just stubbing out action for now so quest will compile.
+    /// Reveals location on travelmap
     /// </summary>
     public class RevealLocation : ActionTemplate
     {
+        Symbol placeSymbol;
+
         public override string Pattern
         {
-            get { return @"reveal"; }
+            get { return @"reveal (?<aPlace>\w+)"; }
         }
 
         public RevealLocation(Quest parentQuest)
@@ -39,12 +41,24 @@ namespace DaggerfallWorkshop.Game.Questing
             // Factory new action
             RevealLocation action = new RevealLocation(parentQuest);
 
+            action.placeSymbol = new Symbol(match.Groups["aPlace"].Value);
+
             return action;
         }
 
         public override void Update(Task caller)
         {
             // TODO: Perform action changes
+
+            // Get place resource
+            Place place = ParentQuest.GetPlace(placeSymbol);
+            if (place == null)
+                return;
+
+            if (place.SiteDetails.siteType == SiteTypes.Dungeon)
+            {
+                GameManager.Instance.PlayerGPS.DiscoverLocation(place.SiteDetails.regionName, place.SiteDetails.locationName);            
+            }
 
             SetComplete();
         }
