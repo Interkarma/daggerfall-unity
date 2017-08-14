@@ -744,7 +744,7 @@ namespace DaggerfallWorkshop.Game.Items
 
             // Randomise shirt dye and pants variant
             shortShirt.dyeColor = ItemBuilder.RandomClothingDye();
-            ItemBuilder.RandomizeVariant(casualPants);
+            ItemBuilder.RandomizeClothingVariant(casualPants);
 
             // Add a wagon
             // This is required for now as shops not currently implemented

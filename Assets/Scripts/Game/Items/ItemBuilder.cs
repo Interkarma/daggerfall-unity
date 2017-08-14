@@ -300,9 +300,9 @@ namespace DaggerfallWorkshop.Game.Items
         /// <param name="race">Race armor is created for.</param>
         /// <param name="armor">Type of armor item to create.</param>
         /// <param name="material">Material of armor.</param>
-        /// <param name="variant">Visual variant of armor.</param>
+        /// <param name="variant">Visual variant of armor. If -1, a random variant is chosen.</param>
         /// <returns>DaggerfallUnityItem</returns>
-        public static DaggerfallUnityItem CreateArmor(Genders gender, Races race, Armor armor, ArmorMaterialTypes material, int variant = 0)
+        public static DaggerfallUnityItem CreateArmor(Genders gender, Races race, Armor armor, ArmorMaterialTypes material, int variant = -1)
         {
             // Create item
             int groupIndex = DaggerfallUnity.Instance.ItemHelper.GetGroupIndex(ItemGroups.Armor, (int)armor);
@@ -333,9 +333,13 @@ namespace DaggerfallWorkshop.Game.Items
             }
 
             newItem.dyeColor = DaggerfallUnity.Instance.ItemHelper.GetArmorDyeColor((ArmorMaterialTypes)newItem.nativeMaterialValue);
+            FixLeatherHelm(newItem);
 
             // Adjust for variant
-            SetVariant(newItem, variant);
+            if (variant >= 0)
+                SetVariant(newItem, variant);
+            else
+                RandomizeArmorVariant(newItem);
 
             return newItem;
         }
@@ -380,6 +384,8 @@ namespace DaggerfallWorkshop.Game.Items
             }
 
             newItem.dyeColor = DaggerfallUnity.Instance.ItemHelper.GetArmorDyeColor(material);
+            FixLeatherHelm(newItem);
+            RandomizeArmorVariant(newItem);
 
             return newItem;
         }
@@ -498,32 +504,56 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
-        /// Sets a random variant of item.
+        /// Sets a random variant of clothing item.
         /// </summary>
         /// <param name="item">Item to randomize variant.</param>
-        public static void RandomizeVariant(DaggerfallUnityItem item)
+        public static void RandomizeClothingVariant(DaggerfallUnityItem item)
         {
             int totalVariants = item.ItemTemplate.variants;
             SetVariant(item, UnityEngine.Random.Range(0, totalVariants));
         }
 
         /// <summary>
-        /// Promote leather helms to chain.
+        /// Sets a random variant of armor item.
+        /// </summary>
+        /// <param name="item">Item to randomize variant.</param>
+        public static void RandomizeArmorVariant(DaggerfallUnityItem item)
+        {
+            int variant = 0;
+
+            // We only need to pick randomly where there is more than one possible variant. Otherwise we can just pass in 0 to SetVariant and
+            // the correct variant will still be chosen.
+            if (item.IsOfTemplate(ItemGroups.Armor, (int)Armor.Cuirass) && (item.nativeMaterialValue >= (int)ArmorMaterialTypes.Iron))
+            {
+                variant = UnityEngine.Random.Range(1, 4);
+            }
+            else if (item.IsOfTemplate(ItemGroups.Armor, (int)Armor.Greaves))
+            {
+                if (item.nativeMaterialValue == (int)ArmorMaterialTypes.Leather)
+                    variant = UnityEngine.Random.Range(0, 2);
+                else if (item.nativeMaterialValue >= (int)ArmorMaterialTypes.Iron)
+                    variant = UnityEngine.Random.Range(2, 6);
+            }
+            else if (item.IsOfTemplate(ItemGroups.Armor, (int)Armor.Left_Pauldron) || item.IsOfTemplate(ItemGroups.Armor, (int)Armor.Right_Pauldron))
+            {
+                if (item.nativeMaterialValue >= (int)ArmorMaterialTypes.Iron)
+                    variant = UnityEngine.Random.Range(1, 4);
+            }
+            else if (item.IsOfTemplate(ItemGroups.Armor, (int)Armor.Helm))
+                variant = UnityEngine.Random.Range(0, item.ItemTemplate.variants);
+
+            SetVariant(item, variant);
+        }
+
+        /// <summary>
+        /// Set leather helms to use chain dye.
         /// Daggerfall seems to do this also as "leather" helms have the chain tint in-game.
-        /// Is this why Daggerfall intentionally leaves off the material type from helms and shields?
         /// Might need to revisit this later.
         /// </summary>
         public static void FixLeatherHelm(DaggerfallUnityItem item)
         {
             if (item.TemplateIndex == (int)Armor.Helm && (ArmorMaterialTypes)item.nativeMaterialValue == ArmorMaterialTypes.Leather)
-            {
-                // Change material to chain and leave other stats the same
-                item.nativeMaterialValue = (int)ArmorMaterialTypes.Chain;
-
-                // Change dye to chain if not set
-                if (item.dyeColor == DyeColors.Unchanged)
-                    item.dyeColor = DyeColors.Chain;
-            }
+                item.dyeColor = DyeColors.Chain;
         }
 
         #endregion
@@ -583,7 +613,7 @@ namespace DaggerfallWorkshop.Game.Items
                 if (item.nativeMaterialValue == (int)ArmorMaterialTypes.Leather)
                     variant = 0;
                 else
-                    variant = Mathf.Clamp(variant, 1, 2);
+                    variant = 1;
             }
 
             // Store variant
