@@ -1132,19 +1132,26 @@ namespace DaggerfallWorkshop.Game.Items
         // Many inventory item types have this setup and more may need to be added
         bool UseWorldTexture()
         {
+            // Handle uselessitems1
+            if (itemGroup == ItemGroups.UselessItems1)
+                return true;
+
             // Handle ingredients
             if (IsIngredient)
                 return true;
 
-            // Handle unique items
-            if (IsOfTemplate(ItemGroups.MiscItems, (int)MiscItems.Spellbook) ||
-                IsOfTemplate(ItemGroups.Weapons, (int)Weapons.Arrow))
+            // Handle arrows
+            if (IsOfTemplate(ItemGroups.Weapons, (int)Weapons.Arrow))
             {
                 return true;
             }
 
             // Handle religious items
             if (itemGroup == ItemGroups.ReligiousItems)
+                return true;
+
+            // Handle misc items
+            if (itemGroup == ItemGroups.MiscItems)
                 return true;
 
             return false;

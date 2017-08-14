@@ -714,8 +714,9 @@ namespace DaggerfallConnect
             ///<summary>50 Unknown </summary>
             Unknown50 = 0x32,
 
-            ///<summary>99 Unknown - seems to be releated to enemy hostility in special blocks</summary>
-            Unknown99 = 0x63,
+            ///<summary>99 Displays text at the top of the screen when clicked in info mode.
+            ///            Can cause castle guards to go hostile if clicked outside of info mode.</summary>
+            DoorText = 0x63,
 
             ///<summary>100 Unknown, only on 2 objects</summary>
             Unknown100 = 0x64,

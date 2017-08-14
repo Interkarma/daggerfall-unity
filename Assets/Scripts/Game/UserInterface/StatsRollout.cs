@@ -32,7 +32,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
     public class StatsRollout : Panel
     {
         const int minWorkingValue = 0;
-        const int maxWorkingValue = 95;
+        const int maxWorkingValue = 100;
         const int minBonusRoll = 0;         // The minimum number of points added to each base class stat
         const int maxBonusRoll = 10;        // The maximum number of points added to each base class stat
         const int minBonusPool = 6;         // The minimum number of free points to allocate

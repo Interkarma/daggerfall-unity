@@ -14,6 +14,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Entity;
@@ -28,6 +29,7 @@ namespace DaggerfallWorkshop
         public const int TYPE_11_TEXT_INDEX = 8600;
         public const int TYPE_12_TEXT_INDEX = 5400;
         public const int ANSWER_TEXT_INDEX = 5656;
+        public const int TYPE_99_TEXT_INDEX = 7700;
 
         public bool ActionEnabled = false;                                          // Enable/disable action - not currently being used, but some objects are single activate
         public bool PlaySound = true;                                               // Play sound if present (ActionSound > 0)
@@ -133,6 +135,7 @@ namespace DaggerfallWorkshop
         {DFBlock.RdbActionFlags.Poison,     new ActionDelegate(Poison)},
         {DFBlock.RdbActionFlags.DrainMagicka, new ActionDelegate(DrainMagicka)},
         {DFBlock.RdbActionFlags.Activate,   new ActionDelegate(Activate)},
+        {DFBlock.RdbActionFlags.DoorText, new ActionDelegate(DoorText)},
         };
 
         public enum TriggerTypes
@@ -161,7 +164,6 @@ namespace DaggerfallWorkshop
 
             if (IsPlaying())
                 return;
-
 
             //assume actions triggered by other action objects are always valid, 
             //otherwise make sure trigger type is valid for this action
@@ -678,7 +680,8 @@ namespace DaggerfallWorkshop
         }
 
 
-        // <summary>
+        /// <summary>
+        /// 30
         /// Just activates next object in chain.
         /// </summary>
         public static void Activate(GameObject triggerObj, DaggerfallAction thisAction)
@@ -686,7 +689,72 @@ namespace DaggerfallWorkshop
             return;
         }
 
+        /// <summary>
+        /// 32
+        /// Shows text at the top of the screen when player clicks on associated door in info mode.
+        /// TODO: Can cause castle guards to go hostile if player clicked door outside of info mode.
+        /// </summary>
+        public static void DoorText(GameObject triggerObj, DaggerfallAction thisAction)
+        {
+            if (GameManager.Instance.PlayerActivate.CurrentMode == PlayerActivateModes.Info)
+            {
+                if (thisAction.Index != 0)
+                {
+                    int DoorTextID = TYPE_99_TEXT_INDEX + thisAction.Index;
 
+                    // Patch some textID lookups. Cases 7706, 7715 and 7719 cause "Bad DAGTEXT number requested : %d." to display in classic.
+                    switch (DoorTextID)
+                    {
+                        case 7701:
+                        case 7702:
+                        case 7703:
+                        case 7704:
+                            {
+                                DoorTextID = 7705; // All of these are the same except that only 7705 correctly has "allowed" instead of "allow"
+                            }
+                            break;
+                        case 7706: // This is on a door in Castle Wayrest to a room with some potions, bookshelves, weighting scales and a telescope.
+                                   // TextID 7764 "Chanting and odd, alien noises seep under the door. The smell of sulphur and noxious potions invades your nose"
+                                   // was maybe supposed to be used here, but not sure.
+                            {
+                                return;
+                            }
+                        case 7715: // Doors in back of Orsinium throne room. It seems likely this is supposed to be TextID 7717:
+                                   // "A strong, orcish voice in the back of the hall snarls "All who enter must face the trial by arms.""
+                                   // Unlike all the other door texts this one lacks a justify center line break.
+                                   // Rather than implement text wrapping for just this message, two replacement strings are being used here.
+                            {
+                                const string Text7717First = "A strong, orcish voice in the back of the";
+                                const string Text7717Second = "hall snarls \"All who enter must face the trial by arms.\"";
+                                DaggerfallUI.AddHUDText(Text7717First, 2.0f);
+                                DaggerfallUI.AddHUDText(Text7717Second, 2.0f);
+                                return;
+                            }
+                        case 7719: // This is on the doors to a room near the start of the Orsinium dungeon area with a long table lined with chairs and a fireplace.
+                                   // Soon after this room is a large open room.
+                                   // "Bold, brash male voices echo from behind the door. Faint clatters of metal, obviously made by men in armor moving about, can be heard."
+                                   // was maybe supposed to be used here, but not sure.
+                            {
+                                return;
+                            }
+                    }
+
+                    TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(DoorTextID);
+                    if (tokens != null)
+                    {
+                        DaggerfallUI.AddHUDText(tokens, 2.0f);
+                    }
+                    else
+                    {
+                        throw new System.Exception(string.Format("DaggerfallAction: Bad DoorTextID requested: {0}.", DoorTextID));
+                    }
+                }
+                else
+                {
+                    // TODO: Fourth byte of thisAction determines if guards turn hostile.
+                }
+            }
+        }
 
         #endregion
     }

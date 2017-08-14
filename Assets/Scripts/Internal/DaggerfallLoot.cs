@@ -73,6 +73,45 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
+        /// Randomly add a map
+        /// </summary>
+        public void RandomlyAddMap(int chance)
+        {
+            if (Random.Range(1, 101) <= chance)
+            {
+                DaggerfallUnityItem map = new DaggerfallUnityItem(ItemGroups.MiscItems, 8);
+                items.AddItem(map);
+            }
+        }
+
+        /// <summary>
+        /// Randomly add a potion
+        /// TODO: Add potion contents. Just a glass bottle for now.
+        /// </summary>
+        public void RandomlyAddPotion(int chance)
+        {
+            if (Random.Range(1, 101) < chance)
+            {
+                DaggerfallUnityItem potion = new DaggerfallUnityItem(ItemGroups.UselessItems1, 1);
+                items.AddItem(potion);
+            }
+        }
+
+        /// <summary>
+        /// Randomly add a potion recipe
+        /// </summary>
+        public void RandomlyAddPotionRecipe(int chance)
+        {
+            if (Random.Range(1, 101) < chance)
+            {
+                DaggerfallUnityItem potionRecipe = new DaggerfallUnityItem(ItemGroups.MiscItems, 4);
+                byte recipe = (byte)Random.Range(0, 20);
+                potionRecipe.typeDependentData = recipe;
+                items.AddItem(potionRecipe);
+            }
+        }
+
+        /// <summary>
         /// Called when this loot collection is opened by inventory window
         /// </summary>
         public void OnInventoryOpen()
