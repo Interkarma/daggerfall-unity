@@ -564,6 +564,25 @@ namespace DaggerfallWorkshop
 
         #region Location Discovery
 
+        public static bool checkIfLocationTypeAlwaysKnown(DFRegion.LocationTypes locationType)
+        {
+            if (locationType == DFRegion.LocationTypes.GraveyardCommon ||
+                // locationType == DFRegion.LocationTypes.GraveyardForgotten && // not sure about forgotten graveyards - if i understand it right here http://en.uesp.net/wiki/Daggerfall:Location_types - it should not be shown on default
+                locationType == DFRegion.LocationTypes.HomeFarms ||
+                locationType == DFRegion.LocationTypes.HomePoor ||
+                locationType == DFRegion.LocationTypes.HomeWealthy ||
+                locationType == DFRegion.LocationTypes.ReligionCult ||
+                locationType == DFRegion.LocationTypes.ReligionTemple ||
+                locationType == DFRegion.LocationTypes.Tavern ||
+                locationType == DFRegion.LocationTypes.TownCity ||
+                locationType == DFRegion.LocationTypes.TownHamlet ||
+                locationType == DFRegion.LocationTypes.TownVillage)
+            {
+                return true;
+            }
+            return false;
+        }
+
         /// <summary>
         /// Discover current location.
         /// Does nothing if player in wilderness or location already dicovered.
@@ -578,6 +597,11 @@ namespace DaggerfallWorkshop
             // Check if already discovered
             int mapPixelID = MapsFile.GetMapPixelIDFromLongitudeLatitude((int)CurrentLocation.MapTableData.Longitude, CurrentLocation.MapTableData.Latitude);
             if (HasDiscoveredLocation(mapPixelID))
+                return;
+
+            // only discover location with locationType that should not be automatically known (like towns, villages, temples, graveyards - behaviour of vanilla daggerfall)
+            // don't discover these to reduce savegame size
+            if (checkIfLocationTypeAlwaysKnown(CurrentLocation.MapTableData.LocationType))
                 return;
 
             // Add to discovered locations dict
