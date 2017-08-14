@@ -615,6 +615,28 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
+        /// Discover location with regionName and locationName.
+        /// </summary>
+        public void DiscoverLocation(string regionName, string locationName)
+        {
+            DFLocation location;        
+            dfUnity.ContentReader.GetLocation(regionName, locationName, out location);
+
+            // Check if already discovered
+            int mapPixelID = MapsFile.GetMapPixelIDFromLongitudeLatitude((int)location.MapTableData.Longitude, location.MapTableData.Latitude);
+            if (HasDiscoveredLocation(mapPixelID))
+                return;
+
+            // Add to discovered locations dict
+            DiscoveredLocation dl = new DiscoveredLocation();
+            dl.mapID = location.MapTableData.MapId;
+            dl.mapPixelID = mapPixelID;
+            dl.regionName = location.RegionName;
+            dl.locationName = location.Name;
+            discoveredLocations.Add(mapPixelID, dl);
+        }
+
+        /// <summary>
         /// Discover the specified building in current location.
         /// Does nothing if player not inside a location or building already discovered.
         /// </summary>
@@ -636,7 +658,11 @@ namespace DaggerfallWorkshop
 
             // Get location discovery
             int mapPixelID = MapsFile.GetMapPixelIDFromLongitudeLatitude((int)CurrentLocation.MapTableData.Longitude, CurrentLocation.MapTableData.Latitude);
-            DiscoveredLocation dl = discoveredLocations[mapPixelID];
+            DiscoveredLocation dl = new DiscoveredLocation();
+            if (discoveredLocations.ContainsKey(mapPixelID))
+            {
+                dl = discoveredLocations[mapPixelID];
+            }
 
             // Ensure the building dict is created
             if (dl.discoveredBuildings == null)
