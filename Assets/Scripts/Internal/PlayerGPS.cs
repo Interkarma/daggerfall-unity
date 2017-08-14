@@ -567,7 +567,7 @@ namespace DaggerfallWorkshop
         public static bool checkIfLocationTypeAlwaysKnown(DFRegion.LocationTypes locationType)
         {
             if (locationType == DFRegion.LocationTypes.GraveyardCommon ||
-                // locationType == DFRegion.LocationTypes.GraveyardForgotten && // not sure about forgotten graveyards - if i understand it right here http://en.uesp.net/wiki/Daggerfall:Location_types - it should not be shown on default
+                locationType == DFRegion.LocationTypes.GraveyardForgotten ||
                 locationType == DFRegion.LocationTypes.HomeFarms ||
                 locationType == DFRegion.LocationTypes.HomePoor ||
                 locationType == DFRegion.LocationTypes.HomeWealthy ||
