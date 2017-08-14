@@ -1285,7 +1285,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     locationInfo = currentDFRegion.MapTable[index];
                     DFPosition pos = MapsFile.LongitudeLatitudeToMapPixel((int)locationInfo.Longitude, (int)locationInfo.Latitude);
                     if (DaggerfallUnity.ContentReader.HasLocation(pos.X, pos.Y, out locationSummary))
+                    {
+                        // only make location searchable if it is already discovered
+                        if (!checkLocationDiscovered(locationSummary))
+                            continue;
+
                         return true;
+                    }
                 }
             }
 
@@ -1303,9 +1309,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     locationInfo = currentDFRegion.MapTable[index];
                     DFPosition pos = MapsFile.LongitudeLatitudeToMapPixel((int)locationInfo.Longitude, (int)locationInfo.Latitude);
                     if (DaggerfallUnity.ContentReader.HasLocation(pos.X, pos.Y, out locationSummary))
+                    {
+                        // only make location searchable if it is already discovered
+                        if (!checkLocationDiscovered(locationSummary))
+                            continue;
+
                         return true;
+                    }
                     else
+                    {
                         return false;
+                    }
                 }
                 else if (locations[i][0] > name[0])
                     return false;
