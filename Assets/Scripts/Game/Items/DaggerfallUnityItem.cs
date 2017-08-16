@@ -367,9 +367,6 @@ namespace DaggerfallWorkshop.Game.Items
             enchantmentPoints = itemTemplate.enchantmentPoints;
             message = 0;
             stackCount = 1;
-
-            // Fix leather helms
-            ItemBuilder.FixLeatherHelm(this);
         }
         
         /// <summary>
@@ -965,12 +962,12 @@ namespace DaggerfallWorkshop.Game.Items
             if (!foundEnchantment)
                 legacyMagic = null;
 
-            // Fix leather helms
-            ItemBuilder.FixLeatherHelm(this);
-
             // TEST: Force dye color to match material of imported weapons & armor
             // This is to fix cases where dye colour may be set incorrectly on imported item
             dyeColor = DaggerfallUnity.Instance.ItemHelper.GetDyeColor(this);
+
+            // Fix leather helms
+            ItemBuilder.FixLeatherHelm(this);
         }
 
         /// <summary>
