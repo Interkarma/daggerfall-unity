@@ -564,6 +564,25 @@ namespace DaggerfallWorkshop
 
         #region Location Discovery
 
+        public static bool checkIfLocationTypeAlwaysKnown(DFRegion.LocationTypes locationType)
+        {
+            if (locationType == DFRegion.LocationTypes.GraveyardCommon ||
+                locationType == DFRegion.LocationTypes.GraveyardForgotten ||
+                locationType == DFRegion.LocationTypes.HomeFarms ||
+                locationType == DFRegion.LocationTypes.HomePoor ||
+                locationType == DFRegion.LocationTypes.HomeWealthy ||
+                locationType == DFRegion.LocationTypes.ReligionCult ||
+                locationType == DFRegion.LocationTypes.ReligionTemple ||
+                locationType == DFRegion.LocationTypes.Tavern ||
+                locationType == DFRegion.LocationTypes.TownCity ||
+                locationType == DFRegion.LocationTypes.TownHamlet ||
+                locationType == DFRegion.LocationTypes.TownVillage)
+            {
+                return true;
+            }
+            return false;
+        }
+
         /// <summary>
         /// Discover current location.
         /// Does nothing if player in wilderness or location already dicovered.
@@ -580,6 +599,11 @@ namespace DaggerfallWorkshop
             if (HasDiscoveredLocation(mapPixelID))
                 return;
 
+            // only discover location with locationType that should not be automatically known (like towns, villages, temples, graveyards - behaviour of vanilla daggerfall)
+            // don't discover these to reduce savegame size
+            if (checkIfLocationTypeAlwaysKnown(CurrentLocation.MapTableData.LocationType))
+                return;
+
             // Add to discovered locations dict
             DiscoveredLocation dl = new DiscoveredLocation();
 
@@ -587,6 +611,28 @@ namespace DaggerfallWorkshop
             dl.mapPixelID = mapPixelID;
             dl.regionName = CurrentLocation.RegionName;
             dl.locationName = CurrentLocation.Name;
+            discoveredLocations.Add(mapPixelID, dl);
+        }
+
+        /// <summary>
+        /// Discover location with regionName and locationName.
+        /// </summary>
+        public void DiscoverLocation(string regionName, string locationName)
+        {
+            DFLocation location;        
+            dfUnity.ContentReader.GetLocation(regionName, locationName, out location);
+
+            // Check if already discovered
+            int mapPixelID = MapsFile.GetMapPixelIDFromLongitudeLatitude((int)location.MapTableData.Longitude, location.MapTableData.Latitude);
+            if (HasDiscoveredLocation(mapPixelID))
+                return;
+
+            // Add to discovered locations dict
+            DiscoveredLocation dl = new DiscoveredLocation();
+            dl.mapID = location.MapTableData.MapId;
+            dl.mapPixelID = mapPixelID;
+            dl.regionName = location.RegionName;
+            dl.locationName = location.Name;
             discoveredLocations.Add(mapPixelID, dl);
         }
 
@@ -612,7 +658,11 @@ namespace DaggerfallWorkshop
 
             // Get location discovery
             int mapPixelID = MapsFile.GetMapPixelIDFromLongitudeLatitude((int)CurrentLocation.MapTableData.Longitude, CurrentLocation.MapTableData.Latitude);
-            DiscoveredLocation dl = discoveredLocations[mapPixelID];
+            DiscoveredLocation dl = new DiscoveredLocation();
+            if (discoveredLocations.ContainsKey(mapPixelID))
+            {
+                dl = discoveredLocations[mapPixelID];
+            }
 
             // Ensure the building dict is created
             if (dl.discoveredBuildings == null)

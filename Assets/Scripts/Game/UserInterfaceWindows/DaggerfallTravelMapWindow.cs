@@ -20,6 +20,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
 using System.Collections.Generic;
+using Wenzil.Console;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -123,6 +124,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool draw                   = true;     //draws textures to panel
         bool loadNewImage           = true;     //loads current map image
 
+        static bool revealUndiscoveredLocations; // flag used to indicate cheat/debugging mode for revealing undiscovered locations
+
         static bool filterDungeons  = false;
         static bool filterTemples   = false;
         static bool filterHomes     = false;
@@ -167,6 +170,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             get { return identifying && findingLocation && RegionSelected; }
         }
+
         #endregion
 
 
@@ -244,6 +248,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             loadNewImage = true;
             draw = true;
             StartIdentify();
+
+            // register console commands
+            try
+            {
+                TravelMapConsoleCommands.RegisterCommands();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError(string.Format("Error Registering Travelmap Console commands: {0}", ex.Message));
+
+            }
         }
 
         public override void OnPush()
@@ -918,6 +933,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             StartIdentify();
         }
 
+        // checks if location with MapSummary summary is already discovered
+        bool checkLocationDiscovered(ContentReader.MapSummary summary)
+        {
+            if (GameManager.Instance.PlayerGPS.HasDiscoveredLocation(summary.ID) ||
+                PlayerGPS.checkIfLocationTypeAlwaysKnown(summary.LocationType) ||
+                revealUndiscoveredLocations == true)
+            {
+                return true;
+            }
+            return false;
+        }
+
         // Sets pixels for selected region
         void SetLocationPixels()
         {
@@ -956,8 +983,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                                 // This does not correctly account for locations that should always be shown
                                 // Purpose is only to test ID matching with discovery system
                                 // This is to be removed once proper discovery implemented
-                                //if (!GameManager.Instance.PlayerGPS.HasDiscoveredLocation(summary.ID))
-                                //    continue;
+                                if (!checkLocationDiscovered(summary))
+                                    continue;
 
                                 int index = GetPixelColorIndex(summary.LocationType);
                                 if (index == -1)
@@ -1043,6 +1070,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     int index = GetPixelColorIndex(locationSummary.LocationType);
                     if (index == -1)
                         return;
+
+                    // only make location selectable if it is already discovered
+                    if (!checkLocationDiscovered(locationSummary))
+                        return;
+
                     locationSelected = true;
                 }
             }
@@ -1253,7 +1285,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     locationInfo = currentDFRegion.MapTable[index];
                     DFPosition pos = MapsFile.LongitudeLatitudeToMapPixel((int)locationInfo.Longitude, (int)locationInfo.Latitude);
                     if (DaggerfallUnity.ContentReader.HasLocation(pos.X, pos.Y, out locationSummary))
+                    {
+                        // only make location searchable if it is already discovered
+                        if (!checkLocationDiscovered(locationSummary))
+                            continue;
+
                         return true;
+                    }
                 }
             }
 
@@ -1271,9 +1309,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     locationInfo = currentDFRegion.MapTable[index];
                     DFPosition pos = MapsFile.LongitudeLatitudeToMapPixel((int)locationInfo.Longitude, (int)locationInfo.Latitude);
                     if (DaggerfallUnity.ContentReader.HasLocation(pos.X, pos.Y, out locationSummary))
+                    {
+                        // only make location searchable if it is already discovered
+                        if (!checkLocationDiscovered(locationSummary))
+                            continue;
+
                         return true;
+                    }
                     else
+                    {
                         return false;
+                    }
                 }
                 else if (locations[i][0] > name[0])
                     return false;
@@ -1466,5 +1512,65 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         #endregion
+
+        #region console_commands
+
+        public static class TravelMapConsoleCommands
+        {
+            public static void RegisterCommands()
+            {
+                try
+                {
+                    ConsoleCommandsDatabase.RegisterCommand(RevealLocations.name, RevealLocations.description, RevealLocations.usage, RevealLocations.Execute);
+                    ConsoleCommandsDatabase.RegisterCommand(HideLocations.name, HideLocations.description, HideLocations.usage, HideLocations.Execute);
+                }
+                catch (System.Exception ex)
+                {
+                    DaggerfallUnity.LogMessage(ex.Message, true);
+                }
+            }
+
+            private static class RevealLocations
+            {
+                public static readonly string name = "map_reveallocations";
+                public static readonly string description = "Reveals undiscovered locations on travelmap (temporary)";
+                public static readonly string usage = "map_reveallocations";
+
+
+                public static string Execute(params string[] args)
+                {
+                    if (GameManager.Instance.IsPlayerInside)
+                    {
+                        return "this command only has an effect when outside";
+                    }
+
+                    revealUndiscoveredLocations = true;
+                    return "undiscovered locations have been revealed (temporary) on the travelmap";
+                }
+            }
+
+            private static class HideLocations
+            {
+                public static readonly string name = "map_hidelocations";
+                public static readonly string description = "Hides undiscovered locations on travelmap";
+                public static readonly string usage = "map_hidelocations";
+
+
+                public static string Execute(params string[] args)
+                {
+                    if (GameManager.Instance.IsPlayerInside)
+                    {
+                        return "this command only has an effect when outside";
+                    }
+
+                    revealUndiscoveredLocations = false;
+                    return "undiscovered locations have been hidden on the travelmap again";
+                }
+
+            }
+        }
+
+        #endregion
+
     }
 }
