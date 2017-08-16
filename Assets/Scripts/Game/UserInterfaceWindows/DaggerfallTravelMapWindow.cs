@@ -21,6 +21,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
 using System.Collections.Generic;
 using Wenzil.Console;
+using Wenzil.Console.Commands;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -179,6 +180,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public DaggerfallTravelMapWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
         {
+            // register console commands
+            try
+            {
+                TravelMapConsoleCommands.RegisterCommands();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError(string.Format("Error Registering Travelmap Console commands: {0}", ex.Message));
+
+            }
         }
 
         #endregion
@@ -248,17 +259,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             loadNewImage = true;
             draw = true;
             StartIdentify();
-
-            // register console commands
-            try
-            {
-                TravelMapConsoleCommands.RegisterCommands();
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError(string.Format("Error Registering Travelmap Console commands: {0}", ex.Message));
-
-            }
         }
 
         public override void OnPush()
@@ -1523,6 +1523,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     ConsoleCommandsDatabase.RegisterCommand(RevealLocations.name, RevealLocations.description, RevealLocations.usage, RevealLocations.Execute);
                     ConsoleCommandsDatabase.RegisterCommand(HideLocations.name, HideLocations.description, HideLocations.usage, HideLocations.Execute);
+                    ConsoleCommandsDatabase.RegisterCommand(RevealLocation.name, RevealLocation.description, RevealLocation.usage, RevealLocation.Execute);
                 }
                 catch (System.Exception ex)
                 {
@@ -1567,6 +1568,46 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     return "undiscovered locations have been hidden on the travelmap again";
                 }
 
+            }
+
+            private static class RevealLocation
+            {
+                public static readonly string name = "map_reveallocation";
+                public static readonly string error = "Failed to reveal location with given regionName and locatioName on travelmap";
+                public static readonly string description = "Permanently reveals the location with [locationName] in region [regionName] on travelmap";
+                public static readonly string usage = "map_reveallocation [regionName] [locationName] - inside the name strings use underscores instead of spaces, e.g Dragontail_Mountains";
+
+                public static string Execute(params string[] args)
+                {                    
+                    if (args == null || args.Length < 2)
+                    {
+                        try
+                        {
+                            Wenzil.Console.Console.Log("please provide both a region name as well as a location name");
+                            return HelpCommand.Execute(RevealLocation.name);
+                        }
+                        catch
+                        {
+                            return HelpCommand.Execute(RevealLocation.name);
+                        }
+                    }
+                    else
+                    {
+                        string regionName = args[0];
+                        string locationName = args[1];
+                        regionName = regionName.Replace("_", " ");
+                        locationName = locationName.Replace("_", " ");
+                        try
+                        {
+                            GameManager.Instance.PlayerGPS.DiscoverLocation(regionName, locationName);
+                            return String.Format("revealed location {0} : {1} on the travelmap", regionName, locationName);
+                        }
+                        catch (Exception ex)
+                        {
+                            return string.Format("Could not reveal location: {0}", ex.Message);
+                        }                        
+                    }
+                }
             }
         }
 
