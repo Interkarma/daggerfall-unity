@@ -566,8 +566,7 @@ namespace DaggerfallWorkshop
 
         public static bool checkIfLocationTypeAlwaysKnown(DFRegion.LocationTypes locationType)
         {
-            if (locationType == DFRegion.LocationTypes.GraveyardCommon ||
-                locationType == DFRegion.LocationTypes.GraveyardForgotten ||
+            if (locationType == DFRegion.LocationTypes.GraveyardCommon ||                
                 locationType == DFRegion.LocationTypes.HomeFarms ||
                 locationType == DFRegion.LocationTypes.HomePoor ||
                 locationType == DFRegion.LocationTypes.HomeWealthy ||
@@ -620,8 +619,9 @@ namespace DaggerfallWorkshop
         public void DiscoverLocation(string regionName, string locationName)
         {
             DFLocation location;        
-            dfUnity.ContentReader.GetLocation(regionName, locationName, out location);
-
+            bool found = dfUnity.ContentReader.GetLocation(regionName, locationName, out location);
+            if (!found)
+                throw new Exception(String.Format("Error finding location {0} : {1}", regionName, locationName));
             // Check if already discovered
             int mapPixelID = MapsFile.GetMapPixelIDFromLongitudeLatitude((int)location.MapTableData.Longitude, location.MapTableData.Latitude);
             if (HasDiscoveredLocation(mapPixelID))
