@@ -21,13 +21,16 @@ namespace DaggerfallWorkshop.Game
         Quaternion activeLocalPlatformRotation;
         Quaternion activeGlobalPlatformRotation;
 
-        public float walkSpeed = 6.0f;
+        public float walkSpeedOverride = 6.0f;
+        public bool useWalkSpeedOverride = false;
 
-        public float runSpeed = 11.0f;
+        public float runSpeedOverride = 11.0f;
+        public bool useRunSpeedOverride = false;
+
+        public float classicToUnitySpeedUnitRatio = 39.5f; // was estimated from comparing a walk over the same distance in classic and DF Unity
 
         public float standingHeight = 1.78f;
         public float crouchingHeight = 0.45f;
-        public float crouchingSpeedDelta = 0.5f;
         public float crouchingJumpDelta = 0.8f;
         bool isCrouching = false;
         bool wasCrouching = false;
@@ -95,7 +98,7 @@ namespace DaggerfallWorkshop.Game
 
         public bool IsRunning
         {
-            get { return (speed == runSpeed); }
+            get { return speed == GetRunSpeed(GetBaseSpeed()); }
         }
 
         public bool IsStandingStill
@@ -139,7 +142,7 @@ namespace DaggerfallWorkshop.Game
         {
             controller = GetComponent<CharacterController>();
             myTransform = transform;
-            speed = walkSpeed;
+            speed = GetBaseSpeed();
             rayDistance = controller.height * .5f + controller.radius;
             slideLimit = controller.slopeLimit - .1f;
             jumpTimer = antiBunnyHopFactor;
@@ -205,22 +208,22 @@ namespace DaggerfallWorkshop.Game
                     //    FallingDamageAlert(fallDistance);
                 }
 
+                // Get walking/crouching speed
+                speed = GetBaseSpeed();
+
+                if (!isCrouching)                    
+                    controller.height = standingHeight;
+
                 try
                 {
                     // If running isn't on a toggle, then use the appropriate speed depending on whether the run button is down
-                    if (!toggleRun)
-                        speed = InputManager.Instance.HasAction(InputManager.Actions.Run) ? runSpeed : walkSpeed;
+                    if (!toggleRun && InputManager.Instance.HasAction(InputManager.Actions.Run))
+                        speed = GetRunSpeed(speed);
                 }
                 catch
                 {
-                    speed = runSpeed;
+                    speed = GetRunSpeed(speed);
                 }
-
-                // Manage crouching speed
-                if (isCrouching)
-                    speed *= crouchingSpeedDelta;
-                else
-                    controller.height = standingHeight;
 
                 // If sliding (and it's allowed), or if we're on an object tagged "Slide", get a vector pointing down the slope we're on
                 if ((sliding && slideWhenOverSlopeLimit) || (slideOnTaggedObjects && hit.collider.tag == "Slide"))
@@ -388,13 +391,13 @@ namespace DaggerfallWorkshop.Game
                 // If the run button is set to toggle, then switch between walk/run speed. (We use Update for this...
                 // FixedUpdate is a poor place to use GetButtonDown, since it doesn't necessarily run every frame and can miss the event)
                 if (toggleRun && grounded && InputManager.Instance.HasAction(InputManager.Actions.Run))
-                    speed = (speed == walkSpeed ? runSpeed : walkSpeed);
+                    speed = (speed == GetBaseSpeed() ? GetRunSpeed(speed) : GetBaseSpeed());
                 //if (toggleRun && grounded && Input.GetButtonDown("Run"))
                 //    speed = (speed == walkSpeed ? runSpeed : walkSpeed);
             }
             catch
             {
-                speed = runSpeed;
+                speed = GetRunSpeed(speed);
             }
 
             // Toggle crouching
@@ -423,7 +426,7 @@ namespace DaggerfallWorkshop.Game
             {
                 float distanceMoved = Vector3.Distance(smoothFollowerPrevWorldPos, smoothFollower.position);        // Assuming the follower is a child of this motor transform we can get the distance travelled.
                 float maxPossibleDistanceByMotorVelocity = controller.velocity.magnitude * 2.0f * Time.deltaTime;   // Theoretically the max distance the motor can carry the player with a generous margin.
-                float speedThreshold = runSpeed * Time.deltaTime;                                                   // Without question any distance travelled less than the running speed is legal.
+                float speedThreshold = GetRunSpeed(speed) * Time.deltaTime;                                         // Without question any distance travelled less than the running speed is legal.
 
                 // NOTE: Maybe the min distance should also include the height different between crouching / standing.
                 if(distanceMoved > speedThreshold && distanceMoved > maxPossibleDistanceByMotorVelocity)
@@ -478,5 +481,33 @@ namespace DaggerfallWorkshop.Game
             fallStartLevel = transform.position.y;
         }
 
+        public float GetBaseSpeed()
+        {
+            Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
+            float baseSpeed = 0;
+            float playerSpeed = player.Stats.Speed;
+            if (isCrouching)
+                baseSpeed = (playerSpeed + 50) / classicToUnitySpeedUnitRatio;
+            else
+                baseSpeed = GetWalkSpeed(player);
+            return baseSpeed;
+        }
+
+        public float GetWalkSpeed(Entity.PlayerEntity player)
+        {
+            if (useWalkSpeedOverride == true)
+                return walkSpeedOverride;
+            else
+                return (player.Stats.Speed + 150f) / classicToUnitySpeedUnitRatio;
+        }
+
+        public float GetRunSpeed(float baseSpeed)
+        {
+            if (useRunSpeedOverride)
+                return runSpeedOverride;
+            Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
+            float runSpeed = baseSpeed * (1.25f + (player.Skills.Running / 200f));
+            return runSpeed;
+        }
     }
 }
