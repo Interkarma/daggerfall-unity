@@ -280,6 +280,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 yield return new WaitForSecondsRealtime(0.05f);
             }
             inProgressCountdownTravelTime = false;
+
+            coroutineHandlerFastTravel.StartCoroutineFastTravelActions();
         }
 
 
@@ -341,7 +343,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             coroutineHandlerFastTravel.setDaggerfallTravelPopUp(this);
             coroutineHandlerFastTravel.StartCoroutineFastTravelCountdown();
-            coroutineHandlerFastTravel.StartCoroutineFastTravelActions();
+            //coroutineHandlerFastTravel.StartCoroutineFastTravelActions();
             coroutineHandlerFastTravel.StartCoroutineCheckFinishedFastTravel();
         }
 
