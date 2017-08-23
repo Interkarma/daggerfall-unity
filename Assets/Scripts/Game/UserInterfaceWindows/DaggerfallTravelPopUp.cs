@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using DaggerfallWorkshop.Game.UserInterface;
+using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
@@ -27,6 +28,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         DaggerfallTravelMapWindow travelWindow = null;
 
         const string nativeImgName = "TRAV0I04.IMG";
+
+        const float secondsCountdownTickFastTravel = 0.05f; // time used for fast travel countdown for one tick
 
         TravelTimeCalculator travelTimeCalculator = new TravelTimeCalculator();
 
@@ -66,6 +69,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextLabel availableGoldLabel;
         TextLabel tripCostLabel;
         TextLabel travelTimeLabel;
+
+        int countdownValueTravelTimeDays; // used for remaining days in fast travel countdown
+        GameObject goCoroutineHandlerFastTravel; // gameobject which is used to attach CoroutineHandlerFastTravel
+        CoroutineHandlerFastTravel coroutineHandlerFastTravel; // used for coroutines
+        bool inProgressCountdownTravelTime = false;
+        bool inProgressFastTravel = false;
 
         bool speedCautious  = true;
         bool travelFoot     = true;
@@ -135,6 +144,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             SetupButtons();
             Refresh();
+
+            goCoroutineHandlerFastTravel = GameObject.Find("GameManager"); // set gameobject to attach CoroutineHandlerFastTravel to to "GameManager"
         }
 
 
@@ -225,6 +236,67 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             travelTimeLabel.Text = string.Format("{0}", travelTimeDaysTotal);
             tripCostLabel.Text = tripCost.ToString();
+
+            countdownValueTravelTimeDays = travelTimeDaysTotal;
+        }
+
+        public class CoroutineHandlerFastTravel : MonoBehaviour
+        {
+            DaggerfallTravelPopUp popupWindow;
+
+            //public UpdateTravelTimeEventHandler(DaggerfallTravelPopUp popupWindow)
+            public void setDaggerfallTravelPopUp(DaggerfallTravelPopUp popupWindow)
+            {
+                this.popupWindow = popupWindow;
+            }
+
+            public void StartCoroutineFastTravelCountdown()
+            {
+                StartCoroutine(popupWindow.StartCoroutineFastTravelCountdown());
+            }
+
+            public void StartCoroutineFastTravelActions()
+            {
+                StartCoroutine(popupWindow.StartCoroutineFastTravel());
+            }
+
+            public void StartCoroutineCheckFinishedFastTravel()
+            {
+                StartCoroutine(popupWindow.StartCoroutineCheckFinishedFastTravel());
+            }
+        }
+
+        private IEnumerator StartCoroutineFastTravelCountdown()
+        {
+            inProgressCountdownTravelTime = true;
+            while(countdownValueTravelTimeDays > 0)
+            {
+                countdownValueTravelTimeDays--;
+                travelTimeLabel.Text = string.Format("{0}", countdownValueTravelTimeDays);
+                //Debug.Log(travelTimeLabel.Text);
+                travelTimeLabel.Update();
+                //yield return new WaitForSeconds(0.1f);  // WON'T WORK since timescale in pause is 0.0
+                //yield return new WaitForEndOfFrame(); // works but linked to frame rate
+                yield return new WaitForSecondsRealtime(0.05f);
+            }
+            inProgressCountdownTravelTime = false;
+        }
+
+
+        private IEnumerator StartCoroutineFastTravel()
+        {
+            inProgressFastTravel = true;
+            performFastTravel();
+            yield return new WaitForSecondsRealtime(0.0f);
+            inProgressFastTravel = false;
+        }
+
+        private IEnumerator StartCoroutineCheckFinishedFastTravel()
+        {
+            while (inProgressCountdownTravelTime || inProgressFastTravel)
+                yield return new WaitForSecondsRealtime(0.1f);
+
+            finishFastTravel();
         }
 
         // Return whether player has enough gold for the selected travel options
@@ -263,7 +335,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else
                 GameManager.Instance.PlayerEntity.GoldPieces -= tripCost;
 
+            if (!coroutineHandlerFastTravel)
+            {
+                coroutineHandlerFastTravel = goCoroutineHandlerFastTravel.AddComponent<CoroutineHandlerFastTravel>();
+            }
+            coroutineHandlerFastTravel.setDaggerfallTravelPopUp(this);
+            coroutineHandlerFastTravel.StartCoroutineFastTravelCountdown();
+            coroutineHandlerFastTravel.StartCoroutineFastTravelActions();
+            coroutineHandlerFastTravel.StartCoroutineCheckFinishedFastTravel();
+        }
+
+        private void performFastTravel()
+        {
             GameManager.Instance.StreamingWorld.TeleportToCoordinates((int)endPos.X, (int)endPos.Y, StreamingWorld.RepositionMethods.RandomStartMarker);
+
             if (speedCautious)
             {
                 GameManager.Instance.PlayerEntity.CurrentHealth = GameManager.Instance.PlayerEntity.MaxHealth;
@@ -294,7 +379,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime(raiseTime);
                 }
             }
+        }
 
+        public void finishFastTravel()
+        {
             travelTimeCalculator.ClearPath();
             DaggerfallUI.Instance.UserInterfaceManager.PopWindow();
             travelWindow.CloseTravelWindows(true);
