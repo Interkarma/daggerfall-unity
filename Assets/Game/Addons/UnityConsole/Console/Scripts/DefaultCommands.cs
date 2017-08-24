@@ -178,31 +178,27 @@ namespace Wenzil.Console
         {
             public static readonly string name = "set_weather";
             public static readonly string description = "Sets the weather to indicated type";
-            public static readonly string usage = "set_weather [#] \n0 = none \n1 = rain \n2 = storm \n3 = snow";
+            public static readonly string usage = "set_weather [#] \n0 = Sunny \n1 = Cloudy \n2 = Overcast \n3 = Fog \n4 = Rain \n5 = Thunder \n6 = Snow";
 
             public static string Execute(params string[] args)
             {
                 WeatherManager weatherManager = GameManager.Instance.WeatherManager;
-                int weatherCode = 0;
+                int weatherCode;
 
                 if (args == null || args.Length < 1)
                     return HelpCommand.Execute(SetWeather.name);
 
-                else if (weatherManager == null)
-                {
+                if (weatherManager == null)
                     return HelpCommand.Execute(SetWeather.name);
 
-                }
-                else if (int.TryParse(args[0], out weatherCode))
+                if (int.TryParse(args[0], out weatherCode) && weatherCode >= 0 && weatherCode <= 6)
                 {
                     var type = (WeatherType)weatherCode;
                     weatherManager.SetWeather(type);
-                    return "Set weather.";
-
+                    return "Set weather: " + type.ToString();
                 }
 
                 return HelpCommand.Execute(SetWeather.name);
-
             }
         }
 
