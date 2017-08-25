@@ -40,6 +40,10 @@ namespace DaggerfallWorkshop.Game
 
         public float RayDistance = 2.4f;        // Distance of ray check, tune this to your scale and preference
 
+        // Opening and closing hours by building type
+        byte[] openHours = { 7, 8, 9, 8, 0, 9, 10, 10, 9, 6, 9, 11, 9, 9, 0, 0, 10, 0 };
+        byte[] closeHours = { 22, 16, 19, 15, 25, 21, 19, 20, 18, 23, 23, 23, 20, 20, 25, 25, 16, 0 };
+
         public PlayerActivateModes CurrentMode
         {
             get { return currentMode; }
@@ -82,7 +86,10 @@ namespace DaggerfallWorkshop.Game
                 {
                     // Check each hit in range for action, exit on first valid action processed
                     bool hitBuilding = false;
+                    bool buildingUnlocked = false;
+                    DFLocation.BuildingTypes buildingType = DFLocation.BuildingTypes.AllValid;
                     StaticBuilding building = new StaticBuilding();
+
                     for (int i = 0; i < hits.Length; i++)
                     {
                         #region Hit Checks
@@ -96,6 +103,22 @@ namespace DaggerfallWorkshop.Game
                             {
                                 hitBuilding = true;
 
+                                // Get building directory for location
+                                BuildingDirectory buildingDirectory = GameManager.Instance.StreamingWorld.GetCurrentBuildingDirectory();
+                                if (!buildingDirectory)
+                                    return;
+
+                                // Get detailed building data from directory
+                                BuildingSummary buildingSummary;
+                                if (!buildingDirectory.GetBuildingSummary(building.buildingKey, out buildingSummary))
+                                    return;
+
+                                // Check if door is unlocked
+                                buildingUnlocked = BuildingIsUnlocked(buildingSummary);
+
+                                // Store building type
+                                buildingType = buildingSummary.BuildingType;
+
                                 // Discover building
                                 GameManager.Instance.PlayerGPS.DiscoverBuilding(building.buildingKey);
 
@@ -105,6 +128,15 @@ namespace DaggerfallWorkshop.Game
                                 {
                                     // TODO: Check against quest system for an overriding quest-assigned display name for this building
                                     DaggerfallUI.AddHUDText(db.displayName);
+
+                                    if (!buildingUnlocked && buildingType < DFLocation.BuildingTypes.Temple
+                                        && buildingType != DFLocation.BuildingTypes.HouseForSale)
+                                    {
+                                        string storeClosedMessage = HardStrings.storeClosed;
+                                        storeClosedMessage = storeClosedMessage.Replace("%d1", openHours[(int)buildingType].ToString());
+                                        storeClosedMessage = storeClosedMessage.Replace("%d2", closeHours[(int)buildingType].ToString());
+                                        DaggerfallUI.Instance.PopupMessage(storeClosedMessage);
+                                    }
                                 }
                             }
                         }
@@ -119,16 +151,38 @@ namespace DaggerfallWorkshop.Game
                             {
                                 if (door.doorType == DoorTypes.Building && !playerEnterExit.IsPlayerInside)
                                 {
+                                    // TODO: Implement lockpicking and door bashing for exterior doors
+                                    // For now, any locked building door can be entered by using steal mode
+                                    if (!buildingUnlocked && (currentMode != PlayerActivateModes.Steal))
+                                    {
+                                        string Locked = "Locked.";
+                                        DaggerfallUI.Instance.PopupMessage(Locked);
+                                        return;
+                                    }
+
                                     // If entering a shop let player know the quality level
+                                    // If entering an open home, show greeting
                                     if (hitBuilding)
                                     {
-                                        DaggerfallMessageBox mb = PresentShopQuality(building);
+                                        const int houseGreetingsTextId = 256;
+
+                                        DaggerfallMessageBox mb;
+
+                                        if (buildingUnlocked && buildingType >= DFLocation.BuildingTypes.House1
+                                            && buildingType <= DFLocation.BuildingTypes.House4)
+                                        {
+                                            string greetingText = DaggerfallUnity.Instance.TextProvider.GetRandomText(houseGreetingsTextId);
+                                            mb = DaggerfallUI.MessageBox(greetingText);
+                                        }
+                                        else
+                                            mb = PresentShopQuality(building);
+
                                         if (mb != null)
                                         {
                                             // Defer transition to interior to after user closes messagebox
                                             deferredInteriorDoorOwner = doorOwner;
                                             deferredInteriorDoor = door;
-                                            mb.OnClose += ShopQualityPopup_OnClose;
+                                            mb.OnClose += Popup_OnClose;
                                             return;
                                         }
                                     }
@@ -266,8 +320,8 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        // Shop quality message box closed, move to interior
-        private void ShopQualityPopup_OnClose()
+        // Message box closed, move to interior
+        private void Popup_OnClose()
         {
             playerEnterExit.TransitionInterior(deferredInteriorDoorOwner, deferredInteriorDoor, true);
         }
@@ -389,6 +443,31 @@ namespace DaggerfallWorkshop.Game
                 return true;
             else
                 return false;
+        }
+
+        // Check if non-house building is unlocked and enterable
+        private bool BuildingIsUnlocked(BuildingSummary buildingSummary)
+        {
+            bool unlocked = false;
+
+            DFLocation.BuildingTypes type = buildingSummary.BuildingType;
+
+            // TODO: Guild structures can become unlocked 24hr depending on player rank
+
+            // Handle House1 through House4
+            // TODO: Figure out the rest of house door calculations.
+            if (type >= DFLocation.BuildingTypes.House1 && type <= DFLocation.BuildingTypes.House4
+                && DaggerfallUnity.Instance.WorldTime.Now.IsDay)
+            {
+                unlocked = true;
+            }
+            // Handle other structures (stores, temples, taverns, palaces)
+            else if (type <= DFLocation.BuildingTypes.Palace)
+            {
+                unlocked = (openHours[(int)type] <= DaggerfallUnity.Instance.WorldTime.Now.Hour
+                    && closeHours[(int)type] > DaggerfallUnity.Instance.WorldTime.Now.Hour);
+            }
+            return unlocked;
         }
 
         // Display a shop quality level

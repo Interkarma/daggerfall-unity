@@ -53,6 +53,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public const string youAreEntering = "You are entering %s";
 
+        public const string storeClosed = "Store is closed. Open from %d1:00 to %d2:00.";
+
         public const string interactionIsNowInMode = "Interaction is now in %s mode.";
         public const string steal = "steal";
         public const string grab = "grab";
