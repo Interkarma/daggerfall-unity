@@ -1096,7 +1096,7 @@ namespace DaggerfallWorkshop.Utility
             }
 
             // Special handling for individual NPCs found in layout data
-            // TODO: Move this handling to StaticNPC behaviour
+            // This NPC may be used in 0 or more active quests at home
             int factionID = obj.Resources.FlatResource.FactionOrMobileId;
             if (QuestMachine.Instance.IsIndividualNPC(factionID))
             {
@@ -1109,10 +1109,21 @@ namespace DaggerfallWorkshop.Utility
                 else
                 {
                     // Assign SpecialNPCClickHandler to individual NPCs
-                    // This NPC may be used in 0 or several active quests at home
-                    // When not at home the usual QuestResourceBehaviour will be applied
+                    // TODO: Move this handling to StaticNPC behaviour
                     SpecialNPCClickHandler specialNPCClickHandler = go.AddComponent<SpecialNPCClickHandler>();
                     specialNPCClickHandler.IndividualFactionID = factionID;
+
+                    // Add QuestResourceBehaviour to GameObject for each Person resource
+                    // TODO: Need to handle this when infividual NPC is used in multiple quests
+                    // Currently only first quest resource will be linked
+                    Person[] activePersonResources = QuestMachine.Instance.ActiveFactionPersons(factionID);
+                    if (activePersonResources != null && activePersonResources.Length > 0)
+                    {
+                        Person person = activePersonResources[0];
+                        QuestResourceBehaviour questResourceBehaviour = go.AddComponent<QuestResourceBehaviour>();
+                        questResourceBehaviour.AssignResource(person);
+                        person.QuestResourceBehaviour = questResourceBehaviour;
+                    }
                 }
             }
 
