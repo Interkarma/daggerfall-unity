@@ -162,11 +162,13 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="settings">Get texture settings.</param>
         /// <param name="alphaTextureFormat">Alpha TextureFormat.</param>
         /// <param name="nonAlphaFormat">Non-alpha TextureFormat.</param>
+        /// <param name="allowImport">Import texture from disk if present.</param>
         /// <returns>GetTextureResults.</returns>
         public GetTextureResults GetTexture2D(
             GetTextureSettings settings,
             SupportedAlphaTextureFormats alphaTextureFormat = SupportedAlphaTextureFormats.RGBA32,
-            SupportedNonAlphaTextureFormats nonAlphaFormat = SupportedNonAlphaTextureFormats.RGB24)
+            SupportedNonAlphaTextureFormats nonAlphaFormat = SupportedNonAlphaTextureFormats.RGB24,
+            bool allowImport = true)
         {
             GetTextureResults results = new GetTextureResults();
 
@@ -204,20 +206,35 @@ namespace DaggerfallWorkshop.Utility
             if (settings.borderSize > 0 && settings.copyToOppositeBorder)
                 ImageProcessing.WrapBorder(ref albedoColors, sz, settings.borderSize);
 
-            // Create albedo texture
+            // Set albedo texture
             Texture2D albedoMap = null;
-            if (settings.alphaIndex < 0)
-                albedoMap = new Texture2D(sz.Width, sz.Height, ParseTextureFormat(nonAlphaFormat), MipMaps);
-            else
-                albedoMap = new Texture2D(sz.Width, sz.Height, ParseTextureFormat(alphaTextureFormat), MipMaps);
-            albedoMap.SetPixels32(albedoColors);
-            albedoMap.Apply(true, !settings.stayReadable);
-
-            // Create normal texture - must be ARGB32
-            // Normal maps are bypassed for solid-colour textures
-            Texture2D normalMap = null;
-            if (settings.createNormalMap && textureFile.SolidType == TextureFile.SolidTypes.None)
+            if (allowImport && TextureReplacement.CustomTextureExist(settings.archive, settings.record, settings.frame))
             {
+                // Import albedo texture
+                albedoMap = TextureReplacement.LoadCustomTexture(settings.archive, settings.record, settings.frame);
+            }
+            else
+            {
+                // Create albedo texture
+                if (settings.alphaIndex < 0)
+                    albedoMap = new Texture2D(sz.Width, sz.Height, ParseTextureFormat(nonAlphaFormat), MipMaps);
+                else
+                    albedoMap = new Texture2D(sz.Width, sz.Height, ParseTextureFormat(alphaTextureFormat), MipMaps);
+                albedoMap.SetPixels32(albedoColors);
+                albedoMap.Apply(true, !settings.stayReadable);
+            }
+
+            // Set normal texture
+            Texture2D normalMap = null;
+            if (allowImport && TextureReplacement.CustomNormalExist(settings.archive, settings.record, settings.frame))
+            {
+                // Always import normal if present on disk
+                normalMap = TextureReplacement.LoadCustomNormal(settings.archive, settings.record, settings.frame);
+            }
+            else if (settings.createNormalMap && textureFile.SolidType == TextureFile.SolidTypes.None)
+            {
+                // Create normal texture - must be ARGB32
+                // Normal maps are bypassed for solid-colour textures
                 Color32[] normalColors;
                 normalColors = ImageProcessing.GetBumpMap(ref albedoColors, sz.Width, sz.Height);
                 normalColors = ImageProcessing.ConvertBumpToNormals(ref normalColors, sz.Width, sz.Height, settings.normalStrength);
@@ -226,39 +243,49 @@ namespace DaggerfallWorkshop.Utility
                 normalMap.Apply(true, !settings.stayReadable);
             }
 
-            // Create basic emissive texture
+            // Import emission map or create basic emissive texture
             Texture2D emissionMap = null;
             bool resultEmissive = false;
-            if (settings.createEmissionMap || (settings.autoEmission && isEmissive) && !isWindow)
+            if (allowImport && TextureReplacement.CustomEmissionExist(settings.archive, settings.record, settings.frame))
             {
-                // Just reuse albedo map for basic colour emission
-                emissionMap = albedoMap;
+                // Always import emission if present on disk
+                emissionMap = TextureReplacement.LoadCustomEmission(settings.archive, settings.record, settings.frame);
                 resultEmissive = true;
+                isWindow = false;
             }
-
-            // Windows need special handling as only glass parts are emissive
-            if ((settings.createEmissionMap || settings.autoEmissionForWindows) && isWindow)
+            else
             {
-                // Create custom emission texture for glass area of windows
-                Color32[] emissionColors = textureFile.GetWindowColors32(srcBitmap);
-                emissionMap = new Texture2D(sz.Width, sz.Height, ParseTextureFormat(alphaTextureFormat), MipMaps);
-                emissionMap.SetPixels32(emissionColors);
-                emissionMap.Apply(true, !settings.stayReadable);
-                resultEmissive = true;
-            }
-
-            // Lights need special handling as this archive contains a mix of emissive and non-emissive flats
-            // This can cause problems with atlas packing due to mismatch between albedo and emissive texture counts
-            if ((settings.createEmissionMap || settings.autoEmission) && settings.archive == LightsTextureArchive)
-            {
-                // For the unlit flats we create a null-emissive black texture
-                if (!isEmissive)
+                if (settings.createEmissionMap || (settings.autoEmission && isEmissive) && !isWindow)
                 {
-                    Color32[] emissionColors = new Color32[sz.Width * sz.Height];
+                    // Just reuse albedo map for basic colour emission
+                    emissionMap = albedoMap;
+                    resultEmissive = true;
+                }
+
+                // Windows need special handling as only glass parts are emissive
+                if ((settings.createEmissionMap || settings.autoEmissionForWindows) && isWindow)
+                {
+                    // Create custom emission texture for glass area of windows
+                    Color32[] emissionColors = textureFile.GetWindowColors32(srcBitmap);
                     emissionMap = new Texture2D(sz.Width, sz.Height, ParseTextureFormat(alphaTextureFormat), MipMaps);
                     emissionMap.SetPixels32(emissionColors);
                     emissionMap.Apply(true, !settings.stayReadable);
                     resultEmissive = true;
+                }
+
+                // Lights need special handling as this archive contains a mix of emissive and non-emissive flats
+                // This can cause problems with atlas packing due to mismatch between albedo and emissive texture counts
+                if ((settings.createEmissionMap || settings.autoEmission) && settings.archive == LightsTextureArchive)
+                {
+                    // For the unlit flats we create a null-emissive black texture
+                    if (!isEmissive)
+                    {
+                        Color32[] emissionColors = new Color32[sz.Width * sz.Height];
+                        emissionMap = new Texture2D(sz.Width, sz.Height, ParseTextureFormat(alphaTextureFormat), MipMaps);
+                        emissionMap.SetPixels32(emissionColors);
+                        emissionMap.Apply(true, !settings.stayReadable);
+                        resultEmissive = true;
+                    }
                 }
             }
 
@@ -323,6 +350,7 @@ namespace DaggerfallWorkshop.Utility
             bool hasNormalMaps = false;
             bool hasEmissionMaps = false;
             bool hasAnimation = false;
+            bool allowImport = (settings.atlasMaxSize == 4096);
             List<Texture2D> albedoTextures = new List<Texture2D>();
             List<Texture2D> normalTextures = new List<Texture2D>();
             List<Texture2D> emissionTextures = new List<Texture2D>();
@@ -350,7 +378,7 @@ namespace DaggerfallWorkshop.Utility
                 for (int frame = 0; frame < frames; frame++)
                 {
                     settings.frame = frame;
-                    GetTextureResults nextTextureResults = GetTexture2D(settings, alphaTextureFormat, nonAlphaFormat);
+                    GetTextureResults nextTextureResults = GetTexture2D(settings, alphaTextureFormat, nonAlphaFormat, allowImport);
 
                     albedoTextures.Add(nextTextureResults.albedoMap);
                     if (nextTextureResults.normalMap != null)

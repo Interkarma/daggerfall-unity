@@ -317,10 +317,6 @@ namespace DaggerfallWorkshop
 
             // Get texture
             GetTextureResults results = textureReader.GetTexture2D(settings, AlphaTextureFormat, NonAlphaTextureFormat);
-
-            // Import custom textures
-            TextureReplacement.LoadCustomTextureResults(archive, record, frame, ref results, ref GenerateNormals);
-
             rectOut = results.singleRect;
 
             // Create material
@@ -336,7 +332,8 @@ namespace DaggerfallWorkshop
             material.mainTexture.filterMode = MainFilterMode;
 
             // Setup normal map
-            if (GenerateNormals && results.normalMap != null)
+            bool importedNormals = TextureReplacement.CustomNormalExist(settings.archive, settings.record, settings.frame);
+            if ((GenerateNormals || importedNormals) && results.normalMap != null)
             {
                 results.normalMap.filterMode = MainFilterMode;
                 material.SetTexture("_BumpMap", results.normalMap);
