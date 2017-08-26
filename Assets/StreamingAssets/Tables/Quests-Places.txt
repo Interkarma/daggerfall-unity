@@ -13,6 +13,7 @@ schema: *name,p1,p2,p3
 AlcaireCoven,       0xc35a, 0x0001, -1
 BeldamaCoven,       0xc356, 0x0001, -1
 BluffCoven,         0xc360, 0x0001, -1
+Castle_Necromoghan, 0x4587, 0x0001, -1
 Coven_in_the_Marsh, 0xc374, 0x0001, -1
 Coven_of_Dust,      0xc376, 0x0001, -1
 Coven_of_the_Peaks, 0xc37a, 0x0001, -1

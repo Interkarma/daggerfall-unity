@@ -202,7 +202,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     // Get a remote site in same region quest was issued
                     SetupRemoteSite();
                 }
-                else if (scope == Scopes.Fixed && p1 > 0xc300)
+                else if (scope == Scopes.Fixed && p1 > 0x4500)
                 {
                     // Get a fixed site, such as a capital city or dungeon
                     SetupFixedLocation();
