@@ -63,7 +63,7 @@ namespace DaggerfallWorkshop.Game.Questing
             // Check item clicked flag
             if (item.HasPlayerClicked)
             {
-                item.RearmPlayerClick();
+                //item.RearmPlayerClick();
                 return true;
             }
 
