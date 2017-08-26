@@ -34,6 +34,9 @@ namespace DaggerfallWorkshop.Utility
             DFRandom.srand(seed);
             switch (type)
             {
+                case DFLocation.BuildingTypes.HouseForSale:
+                    return "House for sale";
+
                 case DFLocation.BuildingTypes.Tavern:
                     b = TavernsB[DFRandom.random_range(0, TavernsB.Length)];
                     a = TavernsA[DFRandom.random_range(0, TavernsA.Length)];
