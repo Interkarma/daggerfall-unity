@@ -216,6 +216,12 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 task.Update();
             }
+
+            // PostTick resources
+            foreach (QuestResource resource in resources.Values)
+            {
+                resource.PostTick(this);
+            }
         }
 
         public void EndQuest()

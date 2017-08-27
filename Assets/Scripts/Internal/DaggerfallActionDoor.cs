@@ -29,7 +29,6 @@ namespace DaggerfallWorkshop
         public float OpenAngle = -90f;                  // Angle to swing door on axis when opening
         public float OpenDuration = 1.5f;               // How long in seconds for door to open
         public bool IsTriggerWhenOpen = true;           // Collider is disabled when door opens
-        public float ChanceToBash = 0.25f;              // Chance of successfully bashing open door (0=no chance, 1=first time)
         public bool PlaySounds = true;                  // Play open and close sounds if present (OpenSound > 0, CloseSound > 0)
         public short FailedSkillLevel = 0;              // Lockpicking skill of player when they failed to pick lock (TODO: persist across save and load)
 
@@ -214,10 +213,12 @@ namespace DaggerfallWorkshop
                 // Cannot bash magically held doors
                 if (!IsMagicallyHeld)
                 {
+                    PlayerEntity player = Game.GameManager.Instance.PlayerEntity;
+                    player.TallySkill((short)Skills.Stealth, 1);
                     // Roll for chance to open
-                    UnityEngine.Random.InitState(Time.frameCount);
-                    float roll = UnityEngine.Random.Range(0f, 1f);
-                    if (roll >= (1f - ChanceToBash))
+                    int chance = 20 - CurrentLockValue;
+                    int roll = UnityEngine.Random.Range(1, 101);
+                    if (roll <= chance)
                     {
                         CurrentLockValue = 0;
                         ToggleDoor(true);

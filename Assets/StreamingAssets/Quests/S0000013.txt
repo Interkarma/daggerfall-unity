@@ -154,7 +154,7 @@ Item letter48 letter used 1020
 Person _aubki_ named Queen_Aubk-i atHome
 Person _mynisera_ face 184 named Mynisera
 
-Place _myndung_ remote dungeon2
+Place _myndung_ permanent Castle_Necromoghan
 
 Clock _2myndung_ 00:00 0 flag 17 range 0 2
 Clock _S.04_ 10.00:00 20.00:00

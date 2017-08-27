@@ -178,31 +178,27 @@ namespace Wenzil.Console
         {
             public static readonly string name = "set_weather";
             public static readonly string description = "Sets the weather to indicated type";
-            public static readonly string usage = "set_weather [#] \n0 = none \n1 = rain \n2 = storm \n3 = snow";
+            public static readonly string usage = "set_weather [#] \n0 = Sunny \n1 = Cloudy \n2 = Overcast \n3 = Fog \n4 = Rain \n5 = Thunder \n6 = Snow";
 
             public static string Execute(params string[] args)
             {
                 WeatherManager weatherManager = GameManager.Instance.WeatherManager;
-                int weatherCode = 0;
+                int weatherCode;
 
                 if (args == null || args.Length < 1)
                     return HelpCommand.Execute(SetWeather.name);
 
-                else if (weatherManager == null)
-                {
+                if (weatherManager == null)
                     return HelpCommand.Execute(SetWeather.name);
 
-                }
-                else if (int.TryParse(args[0], out weatherCode))
+                if (int.TryParse(args[0], out weatherCode) && weatherCode >= 0 && weatherCode <= 6)
                 {
                     var type = (WeatherType)weatherCode;
                     weatherManager.SetWeather(type);
-                    return "Set weather.";
-
+                    return "Set weather: " + type.ToString();
                 }
 
                 return HelpCommand.Execute(SetWeather.name);
-
             }
         }
 
@@ -210,7 +206,7 @@ namespace Wenzil.Console
         {
             public static readonly string name = "set_walkspeed";
             public static readonly string error = "Failed to set walk speed - invalid setting or PlayerMotor object not found";
-            public static readonly string description = "Set walk speed. Default is 3";
+            public static readonly string description = "Set walk speed. Set to -1 to return to default speed.";
             public static readonly string usage = "set_walkspeed [#]";
 
             public static string Execute(params string[] args)
@@ -225,7 +221,7 @@ namespace Wenzil.Console
                 {
                     try
                     {
-                        Console.Log(string.Format("Current Walk Speed: {0}", playerMotor.walkSpeed));
+                        Console.Log(string.Format("Current Walk Speed: {0}", playerMotor.GetWalkSpeed(GameManager.Instance.PlayerEntity)));
                         return HelpCommand.Execute(SetWalkSpeed.name);
 
                     }
@@ -237,9 +233,15 @@ namespace Wenzil.Console
                 }
                 else if (!int.TryParse(args[0], out speed))
                     return error;
+                else if (speed == -1)
+                {
+                    playerMotor.useWalkSpeedOverride = false;
+                    return string.Format("Walk speed set to default.");
+                }
                 else
                 {
-                    playerMotor.walkSpeed = speed;
+                    playerMotor.useWalkSpeedOverride = true;
+                    playerMotor.walkSpeedOverride = speed;
                     return string.Format("Walk speed set to: {0}", speed);
                 }
 
@@ -250,7 +252,7 @@ namespace Wenzil.Console
         {
             public static readonly string name = "set_runspeed";
             public static readonly string error = "Failed to set run speed - invalid setting or PlayerMotor object not found";
-            public static readonly string description = "Set run speed. Default is 7";
+            public static readonly string description = "Set run speed. Set to -1 to return to default speed.";
             public static readonly string usage = "set_runspeed [#]";
 
             public static string Execute(params string[] args)
@@ -265,7 +267,7 @@ namespace Wenzil.Console
                 {
                     try
                     {
-                        Console.Log(string.Format("Current RunSpeed: {0}", playerMotor.runSpeed));
+                        Console.Log(string.Format("Current RunSpeed: {0}", playerMotor.GetRunSpeed(playerMotor.GetWalkSpeed(GameManager.Instance.PlayerEntity))));
                         return HelpCommand.Execute(SetRunSpeed.name);
 
                     }
@@ -280,9 +282,15 @@ namespace Wenzil.Console
                 {
                     return error;
                 }
+                else if (speed == -1)
+                {
+                    playerMotor.useRunSpeedOverride = false;
+                    return string.Format("Run speed set to default.");
+                }
                 else
                 {
-                    playerMotor.runSpeed = speed;
+                    playerMotor.runSpeedOverride = speed;
+                    playerMotor.useRunSpeedOverride = true;
                     return string.Format("Run speed set to: {0}", speed);
                 }
             }

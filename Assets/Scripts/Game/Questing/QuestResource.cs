@@ -155,6 +155,15 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
+        /// Called at the end of every quest tick.
+        /// Allows quest resources to perform some cleanup action after actions have run for this tick.
+        /// </summary>
+        public virtual void PostTick(Quest caller)
+        {
+            RearmPlayerClick();
+        }
+
+        /// <summary>
         /// Parse optional message tags from this resource.
         /// </summary>
         /// <param name="line"></param>
@@ -206,7 +215,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <summary>
         /// Rearm click so player can click again if quest allows it.
         /// </summary>
-        public void RearmPlayerClick()
+        private void RearmPlayerClick()
         {
             hasPlayerClicked = false;
         }

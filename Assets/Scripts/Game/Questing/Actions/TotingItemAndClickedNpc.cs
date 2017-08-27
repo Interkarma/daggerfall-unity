@@ -83,7 +83,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // Check player clicked flag
             if (person.HasPlayerClicked)
             {
-                person.RearmPlayerClick();
+                //person.RearmPlayerClick();
                 if (GameManager.Instance.PlayerEntity.Items.Contains(item))
                 {
                     ParentQuest.ShowMessagePopup(id);
