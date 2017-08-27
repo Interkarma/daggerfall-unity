@@ -176,6 +176,9 @@ namespace DaggerfallWorkshop
             if (archive == currentArchive && !force)
                 return;
 
+            // Get atlas size
+            int size = DaggerfallUnity.Settings.MeshAndTextureReplacement ? 4096 : 2048;
+
             // Get standard atlas material
             // Just going to steal texture and settings
             // TODO: Revise material loading for custom shaders
@@ -185,7 +188,7 @@ namespace DaggerfallWorkshop
                     archive,
                     0,
                     4,
-                    2048,
+                    size,
                     out atlasRects,
                     out atlasIndices,
                     4,
