@@ -145,7 +145,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetupButtons();
             Refresh();
 
-            goCoroutineHandlerFastTravel = GameObject.Find("GameManager"); // set gameobject to attach CoroutineHandlerFastTravel to to "GameManager"
+            goCoroutineHandlerFastTravel = GameObject.Find("Automap"); // set gameobject to attach CoroutineHandlerFastTravel to to "Automap" gameobject (since there is no worldmap gameobject this one is hijacked)
         }
 
 
@@ -240,11 +240,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             countdownValueTravelTimeDays = travelTimeDaysTotal;
         }
 
+        // this is a helper class to allow fast travel countdown to be done in a coroutine
+        // derived from MonoBehaviour so that coroutine will work
+        // since DaggerfallTravelPopUp is a gui class it is not derived from MonoBehaviour
+        // and cannot run coroutines by itself - so we need this helper class        
+        // this script is attached as component to gameobject goCoroutineHandlerFastTravel
         public class CoroutineHandlerFastTravel : MonoBehaviour
         {
             DaggerfallTravelPopUp popupWindow;
 
-            //public UpdateTravelTimeEventHandler(DaggerfallTravelPopUp popupWindow)
+            // registers popupWindow to allow communication with DaggerfallTravelPopUp class
             public void setDaggerfallTravelPopUp(DaggerfallTravelPopUp popupWindow)
             {
                 this.popupWindow = popupWindow;
@@ -257,7 +262,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             public void StartCoroutineFastTravelActions()
             {
-                StartCoroutine(popupWindow.StartCoroutineFastTravel());
+                StartCoroutine(popupWindow.StartCoroutineFastTravelActions());
             }
 
             public void StartCoroutineCheckFinishedFastTravel()
@@ -266,6 +271,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        // coroutine for fast travel countdown
         private IEnumerator StartCoroutineFastTravelCountdown()
         {
             inProgressCountdownTravelTime = true;
@@ -273,19 +279,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 countdownValueTravelTimeDays--;
                 travelTimeLabel.Text = string.Format("{0}", countdownValueTravelTimeDays);
-                //Debug.Log(travelTimeLabel.Text);
                 travelTimeLabel.Update();
-                //yield return new WaitForSeconds(0.1f);  // WON'T WORK since timescale in pause is 0.0
-                //yield return new WaitForEndOfFrame(); // works but linked to frame rate
-                yield return new WaitForSecondsRealtime(0.05f);
+                //yield return new WaitForSeconds(secondsCountdownTickFastTravel);  // WON'T WORK since timescale in pause is 0.0
+                yield return new WaitForSecondsRealtime(secondsCountdownTickFastTravel);
             }
             inProgressCountdownTravelTime = false;
 
+            // start fast travel actions after countdown
             coroutineHandlerFastTravel.StartCoroutineFastTravelActions();
         }
 
-
-        private IEnumerator StartCoroutineFastTravel()
+        // coroutine for fast travel actions
+        private IEnumerator StartCoroutineFastTravelActions()
         {
             inProgressFastTravel = true;
             performFastTravel();
@@ -293,12 +298,59 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             inProgressFastTravel = false;
         }
 
+        // coroutine waiting for completion of fast travel
         private IEnumerator StartCoroutineCheckFinishedFastTravel()
         {
             while (inProgressCountdownTravelTime || inProgressFastTravel)
                 yield return new WaitForSecondsRealtime(0.1f);
 
             finishFastTravel();
+        }
+
+        // perform fast traveling actions
+        private void performFastTravel()
+        {
+            GameManager.Instance.StreamingWorld.TeleportToCoordinates((int)endPos.X, (int)endPos.Y, StreamingWorld.RepositionMethods.RandomStartMarker);
+
+            if (speedCautious)
+            {
+                GameManager.Instance.PlayerEntity.CurrentHealth = GameManager.Instance.PlayerEntity.MaxHealth;
+                GameManager.Instance.PlayerEntity.CurrentFatigue = GameManager.Instance.PlayerEntity.MaxFatigue;
+                GameManager.Instance.PlayerEntity.CurrentMagicka = GameManager.Instance.PlayerEntity.MaxMagicka;
+            }
+
+            DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime((travelTimeCalculator.TravelTimeTotalLand + travelTimeCalculator.TravelTimeTotalWater) * 60);
+
+            // Raise arrival time to just after 7am if cautious travel would otherwise arrive at night
+            // Increasing this from 6am to 7am as game is quite dark on at 6am (in Daggerfall Unity, Daggerfall is lighter)
+            // Will consider retuning lighting so this can be like classic, although +1 hours to travel time isn't likely to be a problem for now
+            if (speedCautious)
+            {
+                if ((DaggerfallUnity.WorldTime.DaggerfallDateTime.Hour < 7)
+                    || ((DaggerfallUnity.WorldTime.DaggerfallDateTime.Hour == 7) && (DaggerfallUnity.WorldTime.DaggerfallDateTime.Minute < 10)))
+                {
+                    float raiseTime = (((7 - DaggerfallUnity.WorldTime.DaggerfallDateTime.Hour) * 3600)
+                                        + ((10 - DaggerfallUnity.WorldTime.DaggerfallDateTime.Minute) * 60)
+                                        - DaggerfallUnity.WorldTime.DaggerfallDateTime.Second);
+                    DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime(raiseTime);
+                }
+                else if (DaggerfallUnity.WorldTime.DaggerfallDateTime.Hour > 17)
+                {
+                    float raiseTime = (((31 - DaggerfallUnity.WorldTime.DaggerfallDateTime.Hour) * 3600)
+                    + ((10 - DaggerfallUnity.WorldTime.DaggerfallDateTime.Minute) * 60)
+                    - DaggerfallUnity.WorldTime.DaggerfallDateTime.Second);
+                    DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime(raiseTime);
+                }
+            }
+        }
+
+        // finish fast traveling (close window and final actions)
+        private void finishFastTravel()
+        {
+            travelTimeCalculator.ClearPath();
+            DaggerfallUI.Instance.UserInterfaceManager.PopWindow();
+            travelWindow.CloseTravelWindows(true);
+            GameManager.Instance.PlayerEntity.RaiseSkills();
         }
 
         // Return whether player has enough gold for the selected travel options
@@ -341,54 +393,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 coroutineHandlerFastTravel = goCoroutineHandlerFastTravel.AddComponent<CoroutineHandlerFastTravel>();
             }
-            coroutineHandlerFastTravel.setDaggerfallTravelPopUp(this);
-            coroutineHandlerFastTravel.StartCoroutineFastTravelCountdown();
-            //coroutineHandlerFastTravel.StartCoroutineFastTravelActions();
-            coroutineHandlerFastTravel.StartCoroutineCheckFinishedFastTravel();
-        }
-
-        private void performFastTravel()
-        {
-            GameManager.Instance.StreamingWorld.TeleportToCoordinates((int)endPos.X, (int)endPos.Y, StreamingWorld.RepositionMethods.RandomStartMarker);
-
-            if (speedCautious)
-            {
-                GameManager.Instance.PlayerEntity.CurrentHealth = GameManager.Instance.PlayerEntity.MaxHealth;
-                GameManager.Instance.PlayerEntity.CurrentFatigue = GameManager.Instance.PlayerEntity.MaxFatigue;
-                GameManager.Instance.PlayerEntity.CurrentMagicka = GameManager.Instance.PlayerEntity.MaxMagicka;
-            }
-
-            DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime((travelTimeCalculator.TravelTimeTotalLand + travelTimeCalculator.TravelTimeTotalWater) * 60);
-
-            // Raise arrival time to just after 7am if cautious travel would otherwise arrive at night
-            // Increasing this from 6am to 7am as game is quite dark on at 6am (in Daggerfall Unity, Daggerfall is lighter)
-            // Will consider retuning lighting so this can be like classic, although +1 hours to travel time isn't likely to be a problem for now
-            if (speedCautious)
-            {
-                if ((DaggerfallUnity.WorldTime.DaggerfallDateTime.Hour < 7)
-                    || ((DaggerfallUnity.WorldTime.DaggerfallDateTime.Hour == 7) && (DaggerfallUnity.WorldTime.DaggerfallDateTime.Minute < 10)))
-                {
-                    float raiseTime = (((7 - DaggerfallUnity.WorldTime.DaggerfallDateTime.Hour) * 3600)
-                                        + ((10 - DaggerfallUnity.WorldTime.DaggerfallDateTime.Minute) * 60)
-                                        - DaggerfallUnity.WorldTime.DaggerfallDateTime.Second);
-                    DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime(raiseTime);
-                }
-                else if (DaggerfallUnity.WorldTime.DaggerfallDateTime.Hour > 17)
-                {
-                    float raiseTime = (((31 - DaggerfallUnity.WorldTime.DaggerfallDateTime.Hour) * 3600)
-                    + ((10 - DaggerfallUnity.WorldTime.DaggerfallDateTime.Minute) * 60)
-                    - DaggerfallUnity.WorldTime.DaggerfallDateTime.Second);
-                    DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime(raiseTime);
-                }
-            }
-        }
-
-        public void finishFastTravel()
-        {
-            travelTimeCalculator.ClearPath();
-            DaggerfallUI.Instance.UserInterfaceManager.PopWindow();
-            travelWindow.CloseTravelWindows(true);
-            GameManager.Instance.PlayerEntity.RaiseSkills();
+            coroutineHandlerFastTravel.setDaggerfallTravelPopUp(this);            
+            coroutineHandlerFastTravel.StartCoroutineFastTravelCountdown(); // will start fast travel actions after countdown is finished            
+            coroutineHandlerFastTravel.StartCoroutineCheckFinishedFastTravel(); // wait for finished fast travel actions
         }
 
         public void ExitButtonOnClickHandler(BaseScreenComponent sender, Vector2 position)
