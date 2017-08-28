@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using DaggerfallWorkshop.Game.UserInterface;
+using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
@@ -27,6 +28,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         DaggerfallTravelMapWindow travelWindow = null;
 
         const string nativeImgName = "TRAV0I04.IMG";
+
+        const float secondsCountdownTickFastTravel = 0.05f; // time used for fast travel countdown for one tick
 
         TravelTimeCalculator travelTimeCalculator = new TravelTimeCalculator();
 
@@ -66,6 +69,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextLabel availableGoldLabel;
         TextLabel tripCostLabel;
         TextLabel travelTimeLabel;
+
+        int countdownValueTravelTimeDays; // used for remaining days in fast travel countdown
+        bool doFastTravel = false; // flag used to indicate Update() function that fast travel should happen
+        float waitTimer = 0;
 
         bool speedCautious  = true;
         bool travelFoot     = true;
@@ -171,6 +178,29 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #endregion
 
+        #region Overrides
+
+        public override void Update()
+        {
+            base.Update();
+
+            if (doFastTravel)
+            {
+                if (countdownValueTravelTimeDays > 0)
+                {
+                    TickCountdown();
+                }
+                else
+                {
+                    doFastTravel = false;
+                    performFastTravel();
+                }
+
+            }
+        }
+
+        #endregion
+
 
         #region Methods
 
@@ -225,6 +255,68 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             travelTimeLabel.Text = string.Format("{0}", travelTimeDaysTotal);
             tripCostLabel.Text = tripCost.ToString();
+
+            countdownValueTravelTimeDays = travelTimeDaysTotal;
+        }
+
+        bool TickCountdown()
+        {
+            bool finished = false;
+
+            if (Time.realtimeSinceStartup > waitTimer + secondsCountdownTickFastTravel)
+            {
+                waitTimer = Time.realtimeSinceStartup;
+
+                countdownValueTravelTimeDays--;
+                travelTimeLabel.Text = string.Format("{0}", countdownValueTravelTimeDays);
+                travelTimeLabel.Update();
+
+                finished = true;
+            }
+
+            return finished;
+        }
+
+        // perform fast travel actions
+        private void performFastTravel()
+        {
+            GameManager.Instance.StreamingWorld.TeleportToCoordinates((int)endPos.X, (int)endPos.Y, StreamingWorld.RepositionMethods.RandomStartMarker);
+
+            if (speedCautious)
+            {
+                GameManager.Instance.PlayerEntity.CurrentHealth = GameManager.Instance.PlayerEntity.MaxHealth;
+                GameManager.Instance.PlayerEntity.CurrentFatigue = GameManager.Instance.PlayerEntity.MaxFatigue;
+                GameManager.Instance.PlayerEntity.CurrentMagicka = GameManager.Instance.PlayerEntity.MaxMagicka;
+            }
+
+            DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime((travelTimeCalculator.TravelTimeTotalLand + travelTimeCalculator.TravelTimeTotalWater) * 60);
+
+            // Raise arrival time to just after 7am if cautious travel would otherwise arrive at night
+            // Increasing this from 6am to 7am as game is quite dark on at 6am (in Daggerfall Unity, Daggerfall is lighter)
+            // Will consider retuning lighting so this can be like classic, although +1 hours to travel time isn't likely to be a problem for now
+            if (speedCautious)
+            {
+                if ((DaggerfallUnity.WorldTime.DaggerfallDateTime.Hour < 7)
+                    || ((DaggerfallUnity.WorldTime.DaggerfallDateTime.Hour == 7) && (DaggerfallUnity.WorldTime.DaggerfallDateTime.Minute < 10)))
+                {
+                    float raiseTime = (((7 - DaggerfallUnity.WorldTime.DaggerfallDateTime.Hour) * 3600)
+                                        + ((10 - DaggerfallUnity.WorldTime.DaggerfallDateTime.Minute) * 60)
+                                        - DaggerfallUnity.WorldTime.DaggerfallDateTime.Second);
+                    DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime(raiseTime);
+                }
+                else if (DaggerfallUnity.WorldTime.DaggerfallDateTime.Hour > 17)
+                {
+                    float raiseTime = (((31 - DaggerfallUnity.WorldTime.DaggerfallDateTime.Hour) * 3600)
+                    + ((10 - DaggerfallUnity.WorldTime.DaggerfallDateTime.Minute) * 60)
+                    - DaggerfallUnity.WorldTime.DaggerfallDateTime.Second);
+                    DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime(raiseTime);
+                }
+            }
+
+            travelTimeCalculator.ClearPath();
+            DaggerfallUI.Instance.UserInterfaceManager.PopWindow();
+            travelWindow.CloseTravelWindows(true);
+            GameManager.Instance.PlayerEntity.RaiseSkills();
         }
 
         // Return whether player has enough gold for the selected travel options
@@ -263,42 +355,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else
                 GameManager.Instance.PlayerEntity.GoldPieces -= tripCost;
 
-            GameManager.Instance.StreamingWorld.TeleportToCoordinates((int)endPos.X, (int)endPos.Y, StreamingWorld.RepositionMethods.RandomStartMarker);
-            if (speedCautious)
-            {
-                GameManager.Instance.PlayerEntity.CurrentHealth = GameManager.Instance.PlayerEntity.MaxHealth;
-                GameManager.Instance.PlayerEntity.CurrentFatigue = GameManager.Instance.PlayerEntity.MaxFatigue;
-                GameManager.Instance.PlayerEntity.CurrentMagicka = GameManager.Instance.PlayerEntity.MaxMagicka;
-            }
-
-            DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime((travelTimeCalculator.TravelTimeTotalLand + travelTimeCalculator.TravelTimeTotalWater) * 60);
-
-            // Raise arrival time to just after 7am if cautious travel would otherwise arrive at night
-            // Increasing this from 6am to 7am as game is quite dark on at 6am (in Daggerfall Unity, Daggerfall is lighter)
-            // Will consider retuning lighting so this can be like classic, although +1 hours to travel time isn't likely to be a problem for now
-            if (speedCautious)
-            {
-                if ((DaggerfallUnity.WorldTime.DaggerfallDateTime.Hour < 7)
-                    || ((DaggerfallUnity.WorldTime.DaggerfallDateTime.Hour == 7) && (DaggerfallUnity.WorldTime.DaggerfallDateTime.Minute < 10)))
-                {
-                    float raiseTime = (((7 - DaggerfallUnity.WorldTime.DaggerfallDateTime.Hour) * 3600)
-                                        + ((10 - DaggerfallUnity.WorldTime.DaggerfallDateTime.Minute) * 60)
-                                        - DaggerfallUnity.WorldTime.DaggerfallDateTime.Second);
-                    DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime(raiseTime);
-                }
-                else if (DaggerfallUnity.WorldTime.DaggerfallDateTime.Hour > 17)
-                {
-                    float raiseTime = (((31 - DaggerfallUnity.WorldTime.DaggerfallDateTime.Hour) * 3600)
-                    + ((10 - DaggerfallUnity.WorldTime.DaggerfallDateTime.Minute) * 60)
-                    - DaggerfallUnity.WorldTime.DaggerfallDateTime.Second);
-                    DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime(raiseTime);
-                }
-            }
-
-            travelTimeCalculator.ClearPath();
-            DaggerfallUI.Instance.UserInterfaceManager.PopWindow();
-            travelWindow.CloseTravelWindows(true);
-            GameManager.Instance.PlayerEntity.RaiseSkills();
+            doFastTravel = true; // initiate fast travel (Update() function will perform fast travel when this flag is true)
         }
 
         public void ExitButtonOnClickHandler(BaseScreenComponent sender, Vector2 position)

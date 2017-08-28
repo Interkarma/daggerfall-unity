@@ -604,6 +604,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (pixelBuffer == null)
                     pixelBuffer = new Color32[width * height];
 
+                // note by Nystul: check necessary to prevent exception which could happen if pixelBuffer is 320x160 instead of 320x200 -
+                // otherwise marked line below will throw exception (e.g. after fast travel to a location in Wrothgarian Mountains and reopening map)
+                // not sure why this happens, but it happens, maybe Lypyl can take a look
+                if (pixelBuffer.GetLength(0) != width * height)
+                    return;
+
                 for (int y = 0; y < height; y++)
                 {
                     for (int x = 0; x < width; x++)
@@ -612,7 +618,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         int dstOffset = ((height - y - 1) * width) + x;
                         int sampleRegion = regionPickerBitmap.Data[srcOffset] - 128;
                         if (sampleRegion == playerRegion)
-                            pixelBuffer[dstOffset] = identifyFlashColor;
+                            pixelBuffer[dstOffset] = identifyFlashColor; // this is the line that might throw exception sometimes
                     }
                 }
             }

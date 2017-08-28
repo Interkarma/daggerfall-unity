@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -660,9 +660,8 @@ namespace DaggerfallWorkshop.Utility
             Texture2DArray textureArray;           
             if (TextureReplacement.CustomTextureExist(archive, 0, 0))
             {
-                GetTextureResults results = new GetTextureResults();
-                TextureReplacement.LoadCustomTextureResults(archive, 0, 0, ref results, ref DaggerfallUnity.Instance.MaterialReader.GenerateNormals);
-                textureArray = new Texture2DArray(results.albedoMap.width, results.albedoMap.height, numSlices, ParseTextureFormat(nonAlphaFormat), MipMaps);
+                Texture2D albedoMap = TextureReplacement.LoadCustomTexture(archive, 0, 0);
+                textureArray = new Texture2DArray(albedoMap.width, albedoMap.height, numSlices, ParseTextureFormat(nonAlphaFormat), MipMaps);
             }
             else
             {
@@ -672,17 +671,19 @@ namespace DaggerfallWorkshop.Utility
             // Rollout tiles into texture array
             for (int record = 0; record < textureFile.RecordCount; record++)
             {
-                // Create base image with gutter
-                DFSize sz;
-                Color32[] albedo = textureFile.GetColor32(record, 0, -1, 0, out sz);
+                Color32[] albedo;
 
-
-                // Import custom texture(s)
-                GetTextureResults resultsTile = new GetTextureResults();
                 if (TextureReplacement.CustomTextureExist(archive, record, 0))
                 {
-                    TextureReplacement.LoadCustomTextureResults(archive, record, 0, ref resultsTile, ref DaggerfallUnity.Instance.MaterialReader.GenerateNormals);
-                    albedo = resultsTile.albedoMap.GetPixels32();
+                    // Import custom texture
+                    Texture2D albedoMap = TextureReplacement.LoadCustomTexture(archive, record, 0);
+                    albedo = albedoMap.GetPixels32();
+                }
+                else
+                {
+                    // Create base image with gutter
+                    DFSize sz;
+                    albedo = textureFile.GetColor32(record, 0, -1, 0, out sz);
                 }
 
                 // Insert into texture array
@@ -751,12 +752,16 @@ namespace DaggerfallWorkshop.Utility
                 }
                 else // if current texture does not exist
                 {
+                    Debug.LogErrorFormat("Terrain: imported archive {0} does not contain normal for record {1}.", archive, record);
                     return null;
                 }
 
                 // enforce that all custom normal map textures have the same dimension (requirement of Texture2DArray)
                 if ((normalMap.width != width) || (normalMap.height != height))
+                {
+                    Debug.LogErrorFormat("Terrain: failed to inject normal maps for archive {0}, incorrect size at record {1}.", archive, record);
                     return null;
+                }
 
                 // Insert into texture array
                 textureArray.SetPixels32(normalMap.GetPixels32(), record, 0);
@@ -820,8 +825,7 @@ namespace DaggerfallWorkshop.Utility
             for (int i = 0; i < width * height; i++)
             {
                 defaultMetallicGlossMap[i] = new Color32(0, 0, 0, 255);
-            }
-            
+            }        
 
             // Rollout tiles into texture array
             for (int record = 0; record < textureFile.RecordCount; record++)
@@ -841,7 +845,10 @@ namespace DaggerfallWorkshop.Utility
 
                 // enforce that all custom metallicgloss map textures have the same dimension (requirement of Texture2DArray)
                 if ((metallicGlossMap.width != width) || (metallicGlossMap.height != height))
+                {
+                    Debug.LogErrorFormat("Terrain: failed to inject metallicgloss maps for archive {0}, incorrect size at record {1}.", archive, record);
                     return null;
+                }
 
                 // Insert into texture array
                 textureArray.SetPixels32(metallicGlossMap.GetPixels32(), record, 0);

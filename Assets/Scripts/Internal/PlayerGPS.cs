@@ -598,11 +598,6 @@ namespace DaggerfallWorkshop
             if (HasDiscoveredLocation(mapPixelID))
                 return;
 
-            // only discover location with locationType that should not be automatically known (like towns, villages, temples, graveyards - behaviour of vanilla daggerfall)
-            // don't discover these to reduce savegame size
-            if (checkIfLocationTypeAlwaysKnown(CurrentLocation.MapTableData.LocationType))
-                return;
-
             // Add to discovered locations dict
             DiscoveredLocation dl = new DiscoveredLocation();
 
