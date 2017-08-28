@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -49,6 +49,7 @@ namespace DaggerfallWorkshop.Game
         public const string dfuiOpenMouseControlsWindow = "dfuiOpenMouseControlsWindow";
         public const string dfuiOpenTravelMapWindow = "dfuiOpenTravelMapWindow";
         public const string dfuiOpenRestWindow = "dfuiOpenRestWindow";
+        public const string dfuiOpenTransportWindow = "dfuiOpenTransportWindow";
         public const string dfuiOpenAutomap = "dfuiOpenAutomap";
         public const string dfuiOpenQuestJournalWindow = "dfuiOpenQuestJournalWindow";
 
