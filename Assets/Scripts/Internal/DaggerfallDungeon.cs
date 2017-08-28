@@ -163,6 +163,9 @@ namespace DaggerfallWorkshop
                 case 207828842:         // Menevia/Lysandus' Tomb
                     DungeonTextureTable = StaticTextureTables.LysandusTomb;
                     break;
+                case 9570447:           // Daggerfall/Castle Necromoghan
+                    DungeonTextureTable = StaticTextureTables.CastleNecromoghan;
+                    break;
                 default:                // Everywhere else - random table seeded from ID
                     DungeonTextureTable = StaticTextureTables.RandomTextureTable(Summary.ID);
                     break;

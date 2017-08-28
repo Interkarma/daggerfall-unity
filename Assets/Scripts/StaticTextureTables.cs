@@ -34,6 +34,7 @@ namespace DaggerfallWorkshop
         public static int[] MantellanCrux = new int[] { 123, 123, 123, 120, 120, 168 };
         public static int[] LysandusTomb = new int[] { 23, 23, 23, 23, 23, 168 };
         public static int[] DirenniTower = new int[] { 19, 20, 23, 19, 20, 168 };
+        public static int[] CastleNecromoghan = new int[] { 20, 23, 23, 19, 19, 168 };
 
         // Default texture table at linear offset 0x28617C
         public static int[] DefaultTextureTable = new int[] { 119, 120, 122, 123, 124, 168 };
