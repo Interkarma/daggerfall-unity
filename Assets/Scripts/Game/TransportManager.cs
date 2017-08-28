@@ -79,7 +79,6 @@ namespace DaggerfallWorkshop.Game
             neighClip = dfAudioSource.GetAudioClip((int) horseSound);
 
             // Init event listener for transitions.
-            PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
             PlayerEnterExit.OnPreTransition += new PlayerEnterExit.OnPreTransitionEventHandler(HandleTransition);
         }
 
