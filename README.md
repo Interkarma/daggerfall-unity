@@ -12,8 +12,6 @@
 + Quality of life enhancements
 + Mod support
 
-![Classic Daggerfall Plus](http://www.dfworkshop.net/wp-content/uploads/2016/07/git-comparison.jpg)
-
 ## Free Addon To Free Daggerfall
 
 + Runs using a free copy of Daggerfall
@@ -27,8 +25,6 @@
 + Quality contributions are welcome
 + Newcomers welcome and helped to learn
 + Friendly community
-
-![Classic Daggerfall Plus](http://www.dfworkshop.net/wp-content/uploads/2016/07/git-dragontailmountains.jpg)
 
 ## Available Now
 

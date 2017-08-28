@@ -539,11 +539,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c9bfb03a8545a343883f7d2606b5814, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkSpeed: 3.5
-  runSpeed: 7
+  walkSpeedOverride: 6
+  useWalkSpeedOverride: 0
+  runSpeedOverride: 11
+  useRunSpeedOverride: 0
+  classicToUnitySpeedUnitRatio: 39.5
   standingHeight: 1.78
   crouchingHeight: 0.45
-  crouchingSpeedDelta: 0.5
   crouchingJumpDelta: 0.8
   limitDiagonalSpeed: 1
   toggleRun: 0
@@ -1037,6 +1039,7 @@ MonoBehaviour:
   ExteriorNoonAmbientLight: {r: 0.627451, g: 0.627451, b: 0.627451, a: 1}
   ExteriorNightAmbientLight: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   InteriorAmbientLight: {r: 0.50980395, g: 0.50980395, b: 0.50980395, a: 1}
+  InteriorNightAmbientLight: {r: 0.2, g: 0.18, b: 0.2, a: 1}
   DungeonAmbientLight: {r: 0.23529412, g: 0.23529412, b: 0.23529412, a: 1}
   CastleAmbientLight: {r: 0.64705884, g: 0.64705884, b: 0.64705884, a: 1}
   FadeDuration: 3

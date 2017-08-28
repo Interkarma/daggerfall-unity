@@ -119,23 +119,26 @@ namespace DaggerfallWorkshop.Game
                                 // Store building type
                                 buildingType = buildingSummary.BuildingType;
 
-                                // Discover building
-                                GameManager.Instance.PlayerGPS.DiscoverBuilding(building.buildingKey);
-
-                                // Get discovered building
-                                PlayerGPS.DiscoveredBuilding db;
-                                if (GameManager.Instance.PlayerGPS.GetDiscoveredBuilding(building.buildingKey, out db))
+                                if (currentMode == PlayerActivateModes.Info)
                                 {
-                                    // TODO: Check against quest system for an overriding quest-assigned display name for this building
-                                    DaggerfallUI.AddHUDText(db.displayName);
+                                    // Discover building
+                                    GameManager.Instance.PlayerGPS.DiscoverBuilding(building.buildingKey);
 
-                                    if (!buildingUnlocked && buildingType < DFLocation.BuildingTypes.Temple
-                                        && buildingType != DFLocation.BuildingTypes.HouseForSale)
+                                    // Get discovered building
+                                    PlayerGPS.DiscoveredBuilding db;
+                                    if (GameManager.Instance.PlayerGPS.GetDiscoveredBuilding(building.buildingKey, out db))
                                     {
-                                        string storeClosedMessage = HardStrings.storeClosed;
-                                        storeClosedMessage = storeClosedMessage.Replace("%d1", openHours[(int)buildingType].ToString());
-                                        storeClosedMessage = storeClosedMessage.Replace("%d2", closeHours[(int)buildingType].ToString());
-                                        DaggerfallUI.Instance.PopupMessage(storeClosedMessage);
+                                        // TODO: Check against quest system for an overriding quest-assigned display name for this building
+                                        DaggerfallUI.AddHUDText(db.displayName);
+
+                                        if (!buildingUnlocked && buildingType < DFLocation.BuildingTypes.Temple
+                                            && buildingType != DFLocation.BuildingTypes.HouseForSale)
+                                        {
+                                            string storeClosedMessage = HardStrings.storeClosed;
+                                            storeClosedMessage = storeClosedMessage.Replace("%d1", openHours[(int)buildingType].ToString());
+                                            storeClosedMessage = storeClosedMessage.Replace("%d2", closeHours[(int)buildingType].ToString());
+                                            DaggerfallUI.Instance.PopupMessage(storeClosedMessage);
+                                        }
                                     }
                                 }
                             }
@@ -151,6 +154,9 @@ namespace DaggerfallWorkshop.Game
                             {
                                 if (door.doorType == DoorTypes.Building && !playerEnterExit.IsPlayerInside)
                                 {
+                                    // Discover building
+                                    GameManager.Instance.PlayerGPS.DiscoverBuilding(building.buildingKey);
+
                                     // TODO: Implement lockpicking and door bashing for exterior doors
                                     // For now, any locked building door can be entered by using steal mode
                                     if (!buildingUnlocked && (currentMode != PlayerActivateModes.Steal))
