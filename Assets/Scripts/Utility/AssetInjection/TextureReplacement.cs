@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -11,10 +11,8 @@
 
 /*
  * TODO:
- * 1. StreamingWorld billboards (Use CreateTextureSettings() and GetTexture2DAtlas() with a 4096x4096 atlas)
- * 2. PaperDoll CharacterLayer textures works only if resolution is the same as vanilla 
+ * - PaperDoll CharacterLayer textures works only if resolution is the same as vanilla 
  *        (http://forums.dfworkshop.net/viewtopic.php?f=22&p=3547&sid=6a99dbcffad1a15b08dd5e157274b772#p3547)
- * 3. Terrain textures (Texture arrays)
  */
 
 using System;
@@ -423,54 +421,6 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         #endregion
 
         #region Texture Injection
-
-        /// <summary>
-        /// Import texture(s) used on models.
-        /// </summary>
-        /// <param name="archive">Archive index</param>
-        /// <param name="record">Record index</param>
-        /// <param name="frame">Texture frame</param>
-        /// <param name="results">Texture Results</param>
-        /// <param name="GenerateNormals">Will create normal map</param>
-        static public void LoadCustomTextureResults(int archive, int record, int frame, ref GetTextureResults results, ref bool GenerateNormals)
-        {
-            // Main texture
-            if (CustomTextureExist(archive, record, frame))
-            {
-                results.albedoMap = LoadCustomTexture(archive, record, frame);
-            }
-
-            // Normal map
-            if (CustomNormalExist(archive, record, frame))
-            {
-                results.normalMap = LoadCustomNormal(archive, record, frame);
-                GenerateNormals = true;
-            }
-
-            // Emission map
-            // windowed walls use a custom emission map or stick with vanilla
-            // non-window use the main texture as emission, unless a custom map is provided
-            if (results.isEmissive)
-            {
-                if (CustomEmissionExist(archive, record, frame))
-                {
-                    // Import emission texture
-                    results.emissionMap = LoadCustomEmission(archive, record, frame);
-                }
-                else if (!results.isWindow && CustomTextureExist(archive, record, frame)) 
-                {
-                    // Reuse albedo map for basic colour emission
-                    results.emissionMap = results.albedoMap;
-                }
-            }
-            else if (CustomEmissionExist(archive, record, frame))
-            {
-                // Force emission map
-                results.emissionMap = LoadCustomEmission(archive, record, frame);
-                results.isEmissive = true;
-                results.isWindow = false;
-            }
-        }
 
         /// <summary>
         /// Import additional custom components of material.
