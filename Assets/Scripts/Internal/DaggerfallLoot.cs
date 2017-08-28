@@ -29,13 +29,13 @@ namespace DaggerfallWorkshop
         // Used to align random icon to surface marker is placed on
         public const int randomTreasureMarkerDim = 40;
 
-        // Default icon range for random treasure piles
+        // Default icon range for random treasure piles in dungeons and when items are dropped by the player
         // Random treasure is generated only when clicked on and icon has no bearing
         // Only a subset of loot icons from TEXTURE.216 are used
-        // May be expanded later
+        // These are matched to classic
         public static int[] randomTreasureIconIndices = new int[]
         {
-            0, 1, 20, 22, 23, 24, 25, 26, 27, 28, 30, 37, 46, 47
+            0, 20, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 37, 43, 44, 45, 46, 47
         };
 
         public LootContainerTypes ContainerType = LootContainerTypes.Nothing;
