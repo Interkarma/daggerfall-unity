@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -347,6 +347,17 @@ namespace DaggerfallWorkshop.Game
                     else if (GameManager.Instance.PlayerController.isGrounded)
                     {
                         uiManager.PushWindow(new DaggerfallRestWindow(uiManager));
+                    }
+                    break;
+                case DaggerfallUIMessages.dfuiOpenTransportWindow:
+                    if (GameManager.Instance.PlayerEnterExit.IsPlayerInside)
+                    {
+                        DaggerfallUI.AddHUDText(HardStrings.cannotChangeTransportationIndoors);
+                    }
+                    else
+                    {
+                        if (GameManager.Instance.PlayerController.isGrounded)
+                            uiManager.PushWindow(new DaggerfallTransportWindow(uiManager));
                     }
                     break;
                 case DaggerfallUIMessages.dfuiOpenQuestInspector:

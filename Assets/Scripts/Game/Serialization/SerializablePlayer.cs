@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -29,6 +29,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         PlayerMotor playerMotor;
         DaggerfallEntityBehaviour playerEntityBehaviour;
         WeaponManager weaponManager;
+        TransportManager transportManager;
 
         #endregion
 
@@ -68,6 +69,10 @@ namespace DaggerfallWorkshop.Game.Serialization
             weaponManager = GetComponent<WeaponManager>();
             if (!weaponManager)
                 throw new Exception("WeaponManager not found.");
+
+            transportManager = GetComponent<TransportManager>();
+            if (!transportManager)
+                throw new Exception("TransportManager not found.");
 
             SaveLoadManager.RegisterSerializableGameObject(this);
         }
@@ -133,6 +138,8 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             // Store weapon state
             data.weaponDrawn = !weaponManager.Sheathed;
+            // Store transport mode
+            data.transportMode = transportManager.TransportMode;
 
             // Store building exterior door data
             if (playerEnterExit.IsPlayerInsideBuilding)
@@ -250,6 +257,8 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             // Restore sheath state
             weaponManager.Sheathed = !data.weaponDrawn;
+            // Restore transport mode
+            transportManager.TransportMode = data.transportMode;
         }
 
         #endregion

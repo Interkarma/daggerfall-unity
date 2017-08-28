@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -98,5 +98,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string pronounHers = "hers";
         public const string pronounHimself = "himself";
         public const string pronounHerself = "herself";
+
+        public const string cannotChangeTransportationIndoors = "You cannot change transportation indoors.";
     }
 }

@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -89,7 +89,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// <returns>True if player holding this quest item.</returns>
         public bool Contains(Item questItem)
         {
-            foreach(DaggerfallUnityItem item in items.Values)
+            foreach (DaggerfallUnityItem item in items.Values)
             {
                 if (item.IsQuestItem)
                 {
@@ -101,6 +101,23 @@ namespace DaggerfallWorkshop.Game.Items
                 }
             }
 
+            return false;
+        }
+
+        /// <summary>
+        /// Check if item type is held by player.
+        /// </summary>
+        /// <param name="itemGroup">Item group.</param>
+        /// <param name="itemIndex">Template index.</param>
+        /// <returns>True if player holding an item of this type.</returns>
+        public bool Contains(ItemGroups itemGroup, int itemIndex)
+        {
+            int groupIndex = DaggerfallUnity.Instance.ItemHelper.GetGroupIndex(itemGroup, itemIndex);
+            foreach (DaggerfallUnityItem item in items.Values)
+            {
+                if (item.ItemGroup == itemGroup && item.GroupIndex == groupIndex)
+                    return true;
+            }
             return false;
         }
 

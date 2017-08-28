@@ -36,6 +36,7 @@ namespace DaggerfallWorkshop.Game
         PlayerEnterExit playerEnterExit;
         DaggerfallAudioSource dfAudioSource;
         PlayerMotor playerMotor;
+        TransportManager transportManager;
         AudioSource customAudioSource;
         AudioClip clip;
         Vector3 lastPosition;
@@ -53,6 +54,7 @@ namespace DaggerfallWorkshop.Game
             dfAudioSource = GetComponent<DaggerfallAudioSource>();
             playerMotor = GetComponent<PlayerMotor>();
             playerEnterExit = GetComponent<PlayerEnterExit>();
+            transportManager = GetComponent<TransportManager>();
 
             // Add our own custom audio source at runtime as we need to change the pitch of footsteps.
             // We don't want that affecting to other sounds on this game object.
@@ -93,6 +95,13 @@ namespace DaggerfallWorkshop.Game
             if (clip == null)
             {
                 clip = dfAudioSource.GetAudioClip((int)currentFootstepSound);
+            }
+
+            // Check whether player is on foot and abort paying footsteps if not.
+            if (!transportManager.IsOnFoot)
+            {
+                distance = 0f;
+                return;
             }
 
             // Check if player is grounded

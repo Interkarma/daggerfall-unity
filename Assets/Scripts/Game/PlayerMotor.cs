@@ -35,6 +35,12 @@ namespace DaggerfallWorkshop.Game
         bool isCrouching = false;
         bool wasCrouching = false;
 
+        // TODO: Placeholder integration of horse & cart riding - using same speed for cart to simplify PlayerMotor integration
+        // and avoid adding any references TransportManager.
+        public float ridingHeight = 3.78f;  // DF uses roughly (by eye) 2.4m as height of a horse, I've used 2m as a more realistic height (still a big horse)
+        public float ridingSpeed = 12f;     // Approximate same speed as DF horse. 
+        bool isRiding = false;
+
         // If true, diagonal speed (when strafing + moving forward or back) can't exceed normal move speed; otherwise it's about 1.4 times faster
         public bool limitDiagonalSpeed = true;
 
@@ -115,6 +121,12 @@ namespace DaggerfallWorkshop.Game
         {
             get { return isCrouching; }
             set { isCrouching = value; }
+        }
+
+        public bool IsRiding
+        {
+            get { return isRiding; }
+            set { isRiding = value; }
         }
 
         public Transform ActivePlatform
@@ -214,15 +226,23 @@ namespace DaggerfallWorkshop.Game
                 if (!isCrouching)                    
                     controller.height = standingHeight;
 
-                try
+                if (isRiding)
                 {
-                    // If running isn't on a toggle, then use the appropriate speed depending on whether the run button is down
-                    if (!toggleRun && InputManager.Instance.HasAction(InputManager.Actions.Run))
-                        speed = GetRunSpeed(speed);
+                    controller.height = ridingHeight;
+                    speed = ridingSpeed;
                 }
-                catch
+                else
                 {
-                    speed = GetRunSpeed(speed);
+                    try
+                    {
+                        // If running isn't on a toggle, then use the appropriate speed depending on whether the run button is down
+                        if (!toggleRun && InputManager.Instance.HasAction(InputManager.Actions.Run))
+                            speed = GetRunSpeed(speed);
+                    }
+                    catch
+                    {
+                        speed = GetRunSpeed(speed);
+                    }
                 }
 
                 // If sliding (and it's allowed), or if we're on an object tagged "Slide", get a vector pointing down the slope we're on
@@ -386,40 +406,47 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
-            try
+            if (isRiding)
             {
-                // If the run button is set to toggle, then switch between walk/run speed. (We use Update for this...
-                // FixedUpdate is a poor place to use GetButtonDown, since it doesn't necessarily run every frame and can miss the event)
-                if (toggleRun && grounded && InputManager.Instance.HasAction(InputManager.Actions.Run))
-                    speed = (speed == GetBaseSpeed() ? GetRunSpeed(speed) : GetBaseSpeed());
-                //if (toggleRun && grounded && Input.GetButtonDown("Run"))
-                //    speed = (speed == walkSpeed ? runSpeed : walkSpeed);
+                isCrouching = false;
             }
-            catch
+            else
             {
-                speed = GetRunSpeed(speed);
-            }
+                try
+                {
+                    // If the run button is set to toggle, then switch between walk/run speed. (We use Update for this...
+                    // FixedUpdate is a poor place to use GetButtonDown, since it doesn't necessarily run every frame and can miss the event)
+                    if (toggleRun && grounded && InputManager.Instance.HasAction(InputManager.Actions.Run))
+                        speed = (speed == GetBaseSpeed() ? GetRunSpeed(speed) : GetBaseSpeed());
+                    //if (toggleRun && grounded && Input.GetButtonDown("Run"))
+                    //    speed = (speed == walkSpeed ? runSpeed : walkSpeed);
+                }
+                catch
+                {
+                    speed = GetRunSpeed(speed);
+                }
 
-            // Toggle crouching
-            if (InputManager.Instance.ActionComplete(InputManager.Actions.Crouch))
-                isCrouching = !isCrouching;
+                // Toggle crouching
+                if (InputManager.Instance.ActionComplete(InputManager.Actions.Crouch))
+                    isCrouching = !isCrouching;
 
-            // Manage crouching height
-            if (isCrouching && !wasCrouching)
-            {
-                controller.height = crouchingHeight;
-                Vector3 pos = controller.transform.position;
-                pos.y -= (standingHeight - crouchingHeight) / 2.0f;
-                controller.transform.position = pos;
-                wasCrouching = isCrouching;
-            }
-            else if (!isCrouching && wasCrouching)
-            {
-                controller.height = standingHeight;
-                Vector3 pos = controller.transform.position;
-                pos.y += (standingHeight - crouchingHeight) / 2.0f;
-                controller.transform.position = pos;
-                wasCrouching = isCrouching;
+                // Manage crouching height
+                if (isCrouching && !wasCrouching)
+                {
+                    controller.height = crouchingHeight;
+                    Vector3 pos = controller.transform.position;
+                    pos.y -= (standingHeight - crouchingHeight) / 2.0f;
+                    controller.transform.position = pos;
+                    wasCrouching = isCrouching;
+                }
+                else if (!isCrouching && wasCrouching)
+                {
+                    controller.height = standingHeight;
+                    Vector3 pos = controller.transform.position;
+                    pos.y += (standingHeight - crouchingHeight) / 2.0f;
+                    controller.transform.position = pos;
+                    wasCrouching = isCrouching;
+                }
             }
 
             if(smoothFollower != null)

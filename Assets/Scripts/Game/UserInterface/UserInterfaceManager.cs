@@ -162,7 +162,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         /// <summary>
-        /// Peek message at front of queue with removing.
+        /// Peek message at front of queue without removing.
         /// </summary>
         public string PeekMessage()
         {
