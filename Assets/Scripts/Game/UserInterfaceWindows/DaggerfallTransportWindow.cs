@@ -73,10 +73,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ItemCollection inventory = GameManager.Instance.PlayerEntity.Items;
             bool hasHorse = inventory.Contains(ItemGroups.Transportation, (int) Transportation.Horse);
             bool hasCart = inventory.Contains(ItemGroups.Transportation, (int) Transportation.Small_cart);
-            bool hasShip = false; //inventory.Contains((int) Transportation.Large_boat) ||
-                            //inventory.Contains((int) Transportation.Large_Galley) ||
-                            //inventory.Contains((int) Transportation.Small_ship) ||
-                            //inventory.Contains((int) Transportation.Rowboat);
+            bool hasShip = false;
 
             // Load all textures
             LoadTextures();
@@ -144,7 +141,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void FootButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             // Reset to normal on foot walking.
-            DaggerfallUI.AddHUDText("Walking..");
             GameManager.Instance.TransportManager.TransportMode = TransportModes.Foot;
             CloseWindow();
         }
@@ -152,13 +148,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void HorseButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             // Change to riding a horse.
-            DaggerfallUI.AddHUDText("Riding..");
             GameManager.Instance.TransportManager.TransportMode = TransportModes.Horse;
             CloseWindow();
         }
 
         private void CartButton_OnMouseClick(BaseScreenComponent sender, Vector2 position) {
-            DaggerfallUI.AddHUDText("Carting..");
             GameManager.Instance.TransportManager.TransportMode = TransportModes.Cart;
             CloseWindow();
         }

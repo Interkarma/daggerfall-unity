@@ -36,23 +36,30 @@ namespace DaggerfallWorkshop.Game
 
         private TransportModes mode = TransportModes.Foot;
 
-        DaggerfallAudioSource dfAudioSource;
-        PlayerMotor playerMotor;
-        AudioSource ridingAudioSource;
-
-        Texture2D ridingTexure;
-        AudioClip neighClip;
-        float neighTime = 0;
+        const string horseTextureName = "MRED00I0.CFA";
+        const string cartTextureName = "MRED01I0.CFA";
+        const float animFrameTime = 0.125f;  // Time between animation frames in seconds.
 
         const SoundClips horseSound = SoundClips.AnimalHorse;
         const SoundClips horseRidingSound = SoundClips.HorseClop2;
         const SoundClips cartRidingSound = SoundClips.HorseAndCart;
-        const string horseTextureName = "MRED00I0.IMG";
-        const string cartTextureName = "MRED01I0.IMG";
 
-        // TODO: Move into ImageHelper? (they're duplicated in FPSWeapon & DaggerfallVidPlayerWindow)
-        const int nativeScreenWidth = 320;
+        // TODO: Move into ImageHelper? (duplicated in FPSWeapon & DaggerfallVidPlayerWindow)
         const int nativeScreenHeight = 200;
+
+        // TODO: It would be better to define an event and have PlayerMotor listen, instead of having this dependency. (again, promised light touch on PM)
+        PlayerMotor playerMotor;
+        DaggerfallAudioSource dfAudioSource;
+        AudioSource ridingAudioSource;
+
+        Texture2D ridingTexure;
+        Texture2D[] ridingTexures = new Texture2D[4];
+        float lastFrameTime = 0;
+        int frameIdx = 0;
+
+        AudioClip neighClip;
+        float neighTime = 0;
+
 
         // Use this for initialization
         void Start()
@@ -60,7 +67,7 @@ namespace DaggerfallWorkshop.Game
             dfAudioSource = GetComponent<DaggerfallAudioSource>();
             playerMotor = GetComponent<PlayerMotor>();
 
-            // Use custom audio source as we don't want to affect other sounds.
+            // Use custom audio source as we don't want to affect other sounds while riding.
             ridingAudioSource = gameObject.AddComponent<AudioSource>();
             ridingAudioSource.hideFlags = HideFlags.HideInInspector;
             ridingAudioSource.playOnAwake = false;
@@ -70,53 +77,74 @@ namespace DaggerfallWorkshop.Game
             ridingAudioSource.volume = RidingVolumeScale;
 
             neighClip = dfAudioSource.GetAudioClip((int) horseSound);
+
+            // Init event listener for transitions.
+            PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
+            PlayerEnterExit.OnPreTransition += new PlayerEnterExit.OnPreTransitionEventHandler(HandleTransition);
+        }
+
+        // Handle interior/exterior transition events by setting transport mode to Foot.
+        void HandleTransition(PlayerEnterExit.TransitionEventArgs args)
+        {
+            if (args.TransitionType == PlayerEnterExit.TransitionType.ToBuildingInterior ||
+                args.TransitionType == PlayerEnterExit.TransitionType.ToDungeonInterior)
+            {
+                UpdateMode(TransportModes.Foot);
+            }
         }
 
         // Update is called once per frame
         void Update()
         {
-            // Handle horse & cart riding sounds
+            // Handle horse & cart riding animation & sounds.
             if (mode == TransportModes.Horse || mode == TransportModes.Cart)
             {
-                if (playerMotor.IsStandingStill)
-                {
+                if (playerMotor.IsStandingStill || !playerMotor.IsGrounded)
+                {   // Stop animation frames and sound playing.
+                    lastFrameTime = 0;
+                    ridingTexure = ridingTexures[0];
                     ridingAudioSource.Stop();
                 }
                 else
-                {
-                    if (!ridingAudioSource.isPlaying) {
+                {   // Update Animation frame?
+                    if (lastFrameTime == 0)
+                    {
+                        lastFrameTime = Time.time;
+                    }
+                    else if (Time.time > lastFrameTime + animFrameTime)
+                    {
+                        lastFrameTime = Time.time;
+                        frameIdx = (frameIdx == 3) ? 0 : frameIdx + 1;
+                        ridingTexure = ridingTexures[frameIdx];
+                    }
+                    // Play hoof-fall (clip-clop) sounds.
+                    if (!ridingAudioSource.isPlaying)
                         ridingAudioSource.Play();
-                        Debug.Log("Transport manager: playing horse sound");
-                     }
                 }
                 // Time for a whinney?
                 if (neighTime < Time.time)
                 {
                     dfAudioSource.AudioSource.PlayOneShot(neighClip, RidingVolumeScale);
                     neighTime = Time.time + Random.Range(2, 30);
-                    Debug.Log("Transport manager: playing whinney. time next = " + neighTime);
                 }
             }
-
         }
 
         void OnGUI()
         {
             if (Event.current.type.Equals(EventType.Repaint))
             {
-
                 if ((mode == TransportModes.Horse || mode == TransportModes.Cart) && ridingTexure != null)
                 {
                     // Draw horse texture behind other HUD elements & weapons.
                     GUI.depth = 2;
-                    // Get horse texture scaling factors.
-                    float horseScaleX = (float) Screen.width / (float) nativeScreenWidth;
+                    // Get horse texture scaling factor. (only use height to avoid aspect ratio issues like fat horses)
                     float horseScaleY = (float) Screen.height / (float) nativeScreenHeight;
                     // Calculate position for horse texture and draw it.
                     Rect pos = new Rect(
-                                    Screen.width / 2f - (ridingTexure.width * horseScaleX) / 2f,
+                                    Screen.width / 2f - (ridingTexure.width * horseScaleY) / 2f,
                                     Screen.height - (ridingTexure.height * horseScaleY),
-                                    ridingTexure.width * horseScaleX,
+                                    ridingTexure.width * horseScaleY,
                                     ridingTexure.height * horseScaleY);
                     GUI.DrawTexture(pos, ridingTexure);
                 }
@@ -141,7 +169,9 @@ namespace DaggerfallWorkshop.Game
 
                 // Setup appropriate riding textures.
                 string textureName = (mode == TransportModes.Horse) ? horseTextureName : cartTextureName;
-                ridingTexure = ImageReader.GetTexture(textureName, 0, 0, true);
+                for (int i = 0; i < 4; i++)
+                    ridingTexures[i] = ImageReader.GetTexture(textureName, 0, i, true);
+                ridingTexure = ridingTexures[0];
 
                 // Initialise neighing timer.
                 neighTime = Time.time + Random.Range(1, 5);

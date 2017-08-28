@@ -127,10 +127,6 @@ namespace DaggerfallConnect.Arena2
             if (!managedFile.Load(filePath, usage, readOnly))
                 return false;
 
-            // Attempt to load palette file from same path
-            string arena2Path = Path.GetDirectoryName(filePath);
-            LoadPalette(Path.Combine(arena2Path, PaletteName));
-
             // Read file
             if (!Read())
                 return false;
@@ -185,6 +181,7 @@ namespace DaggerfallConnect.Arena2
             // Create bitmap
             DFBitmap bitmap = new DFBitmap(header.WidthUncompressed, header.Height);
             bitmap.Data = new byte[bitmap.Width * bitmap.Height];
+            bitmap.Palette = Palette;
 
             // Copy rows of image data
             int offset = bitmap.Width * bitmap.Height * frame;
