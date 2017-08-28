@@ -71,10 +71,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextLabel travelTimeLabel;
 
         int countdownValueTravelTimeDays; // used for remaining days in fast travel countdown
-        GameObject goCoroutineHandlerFastTravel; // gameobject which is used to attach CoroutineHandlerFastTravel
-        CoroutineHandlerFastTravel coroutineHandlerFastTravel; // used for coroutines
-        bool inProgressCountdownTravelTime = false;
-        bool inProgressFastTravel = false;
+        bool doFastTravel = false; // flag used to indicate Update() function that fast travel should happen
+        float waitTimer = 0;
 
         bool speedCautious  = true;
         bool travelFoot     = true;
@@ -144,8 +142,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             SetupButtons();
             Refresh();
-
-            goCoroutineHandlerFastTravel = GameObject.Find("Automap"); // set gameobject to attach CoroutineHandlerFastTravel to to "Automap" gameobject (since there is no worldmap gameobject this one is hijacked)
         }
 
 
@@ -178,6 +174,29 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             travelTimeCalculator.GeneratePath(endPos);
             if (base.IsSetup)
                 Refresh();
+        }
+
+        #endregion
+
+        #region Overrides
+
+        public override void Update()
+        {
+            base.Update();
+
+            if (doFastTravel)
+            {
+                if (countdownValueTravelTimeDays > 0)
+                {
+                    TickCountdown();
+                }
+                else
+                {
+                    doFastTravel = false;
+                    performFastTravel();
+                }
+
+            }
         }
 
         #endregion
@@ -240,74 +259,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             countdownValueTravelTimeDays = travelTimeDaysTotal;
         }
 
-        // this is a helper class to allow fast travel countdown to be done in a coroutine
-        // derived from MonoBehaviour so that coroutine will work
-        // since DaggerfallTravelPopUp is a gui class it is not derived from MonoBehaviour
-        // and cannot run coroutines by itself - so we need this helper class        
-        // this script is attached as component to gameobject goCoroutineHandlerFastTravel
-        public class CoroutineHandlerFastTravel : MonoBehaviour
+        bool TickCountdown()
         {
-            DaggerfallTravelPopUp popupWindow;
+            bool finished = false;
 
-            // registers popupWindow to allow communication with DaggerfallTravelPopUp class
-            public void setDaggerfallTravelPopUp(DaggerfallTravelPopUp popupWindow)
+            if (Time.realtimeSinceStartup > waitTimer + secondsCountdownTickFastTravel)
             {
-                this.popupWindow = popupWindow;
-            }
+                waitTimer = Time.realtimeSinceStartup;
 
-            public void StartCoroutineFastTravelCountdown()
-            {
-                StartCoroutine(popupWindow.StartCoroutineFastTravelCountdown());
-            }
-
-            public void StartCoroutineFastTravelActions()
-            {
-                StartCoroutine(popupWindow.StartCoroutineFastTravelActions());
-            }
-
-            public void StartCoroutineCheckFinishedFastTravel()
-            {
-                StartCoroutine(popupWindow.StartCoroutineCheckFinishedFastTravel());
-            }
-        }
-
-        // coroutine for fast travel countdown
-        private IEnumerator StartCoroutineFastTravelCountdown()
-        {
-            inProgressCountdownTravelTime = true;
-            while(countdownValueTravelTimeDays > 0)
-            {
                 countdownValueTravelTimeDays--;
                 travelTimeLabel.Text = string.Format("{0}", countdownValueTravelTimeDays);
                 travelTimeLabel.Update();
-                //yield return new WaitForSeconds(secondsCountdownTickFastTravel);  // WON'T WORK since timescale in pause is 0.0
-                yield return new WaitForSecondsRealtime(secondsCountdownTickFastTravel);
+
+                finished = true;
             }
-            inProgressCountdownTravelTime = false;
 
-            // start fast travel actions after countdown
-            coroutineHandlerFastTravel.StartCoroutineFastTravelActions();
+            return finished;
         }
 
-        // coroutine for fast travel actions
-        private IEnumerator StartCoroutineFastTravelActions()
-        {
-            inProgressFastTravel = true;
-            performFastTravel();
-            yield return new WaitForSecondsRealtime(0.0f);
-            inProgressFastTravel = false;
-        }
-
-        // coroutine waiting for completion of fast travel
-        private IEnumerator StartCoroutineCheckFinishedFastTravel()
-        {
-            while (inProgressCountdownTravelTime || inProgressFastTravel)
-                yield return new WaitForSecondsRealtime(0.1f);
-
-            finishFastTravel();
-        }
-
-        // perform fast traveling actions
+        // perform fast travel actions
         private void performFastTravel()
         {
             GameManager.Instance.StreamingWorld.TeleportToCoordinates((int)endPos.X, (int)endPos.Y, StreamingWorld.RepositionMethods.RandomStartMarker);
@@ -342,11 +312,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime(raiseTime);
                 }
             }
-        }
 
-        // finish fast traveling (close window and final actions)
-        private void finishFastTravel()
-        {
             travelTimeCalculator.ClearPath();
             DaggerfallUI.Instance.UserInterfaceManager.PopWindow();
             travelWindow.CloseTravelWindows(true);
@@ -389,13 +355,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else
                 GameManager.Instance.PlayerEntity.GoldPieces -= tripCost;
 
-            if (!coroutineHandlerFastTravel)
-            {
-                coroutineHandlerFastTravel = goCoroutineHandlerFastTravel.AddComponent<CoroutineHandlerFastTravel>();
-            }
-            coroutineHandlerFastTravel.setDaggerfallTravelPopUp(this);            
-            coroutineHandlerFastTravel.StartCoroutineFastTravelCountdown(); // will start fast travel actions after countdown is finished            
-            coroutineHandlerFastTravel.StartCoroutineCheckFinishedFastTravel(); // wait for finished fast travel actions
+            doFastTravel = true; // initiate fast travel (Update() function will perform fast travel when this flag is true)
         }
 
         public void ExitButtonOnClickHandler(BaseScreenComponent sender, Vector2 position)
