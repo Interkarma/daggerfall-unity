@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Collections;
 
@@ -13,6 +13,13 @@ namespace DaggerfallWorkshop.Game
     [RequireComponent(typeof(CharacterController))]
     public class PlayerMotor : MonoBehaviour
     {
+        // Daggerfall base speed constants. (courtesy Allofich)
+        public const float classicToUnitySpeedUnitRatio = 39.5f; // was estimated from comparing a walk over the same distance in classic and DF Unity
+        private const float dfWalkBase = 150f;
+        private const float dfCrouchBase = 50f;
+        private const float dfRideBase = dfWalkBase + 225f;
+        private const float dfCartBase = dfWalkBase + 100f;
+
         // Moving platform support
         Transform activePlatform;
         Vector3 activeLocalPlatformPoint;
@@ -27,19 +34,18 @@ namespace DaggerfallWorkshop.Game
         public float runSpeedOverride = 11.0f;
         public bool useRunSpeedOverride = false;
 
-        public float classicToUnitySpeedUnitRatio = 39.5f; // was estimated from comparing a walk over the same distance in classic and DF Unity
-
         public float standingHeight = 1.78f;
+        public float eyeHeight = 0.09f;         // Eye height is 9cm below top of capsule.
         public float crouchingHeight = 0.45f;
         public float crouchingJumpDelta = 0.8f;
         bool isCrouching = false;
         bool wasCrouching = false;
 
         // TODO: Placeholder integration of horse & cart riding - using same speed for cart to simplify PlayerMotor integration
-        // and avoid adding any references TransportManager.
-        public float ridingHeight = 3.78f;  // DF uses roughly (by eye) 2.4m as height of a horse, I've used 2m as a more realistic height (still a big horse)
-        public float ridingSpeed = 12f;     // Approximate same speed as DF horse. 
+        // and avoid adding any references to TransportManager.
+        public float ridingHeight = 2.6f;   // Height of a horse plus seated rider. (1.6m + 1m)
         bool isRiding = false;
+        private bool riding = false;
 
         // If true, diagonal speed (when strafing + moving forward or back) can't exceed normal move speed; otherwise it's about 1.4 times faster
         public bool limitDiagonalSpeed = true;
@@ -79,6 +85,9 @@ namespace DaggerfallWorkshop.Game
 
         [HideInInspector, NonSerialized]
         public CharacterController controller;
+
+        private Camera mainCamera;
+        private float defaultCameraHeight;
 
         private Vector3 moveDirection = Vector3.zero;
         private bool grounded = false;
@@ -158,6 +167,7 @@ namespace DaggerfallWorkshop.Game
             rayDistance = controller.height * .5f + controller.radius;
             slideLimit = controller.slopeLimit - .1f;
             jumpTimer = antiBunnyHopFactor;
+            mainCamera = GameManager.Instance.MainCamera;
         }
 
         void FixedUpdate()
@@ -220,19 +230,14 @@ namespace DaggerfallWorkshop.Game
                     //    FallingDamageAlert(fallDistance);
                 }
 
-                // Get walking/crouching speed
+                // Get walking/crouching/riding speed
                 speed = GetBaseSpeed();
 
-                if (!isCrouching)                    
-                    controller.height = standingHeight;
+                if (!riding)
+                {
+                    if (!isCrouching)                    
+                        controller.height = standingHeight;
 
-                if (isRiding)
-                {
-                    controller.height = ridingHeight;
-                    speed = ridingSpeed;
-                }
-                else
-                {
                     try
                     {
                         // If running isn't on a toggle, then use the appropriate speed depending on whether the run button is down
@@ -406,9 +411,21 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
-            if (isRiding)
+            if (isRiding && !riding)
             {
-                isCrouching = false;
+                Vector3 pos = mainCamera.transform.localPosition;
+                pos.y = (ridingHeight / 2) - eyeHeight;
+                mainCamera.transform.localPosition = pos;
+                controller.height = ridingHeight;
+                riding = true;
+            }
+            else if (!isRiding && riding)
+            {
+                Vector3 pos = mainCamera.transform.localPosition;
+                pos.y = (standingHeight / 2) - eyeHeight;
+                mainCamera.transform.localPosition = pos;
+                controller.height = standingHeight;
+                riding = false;
             }
             else
             {
@@ -449,19 +466,19 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
-            if(smoothFollower != null)
+            if (smoothFollower != null)
             {
                 float distanceMoved = Vector3.Distance(smoothFollowerPrevWorldPos, smoothFollower.position);        // Assuming the follower is a child of this motor transform we can get the distance travelled.
                 float maxPossibleDistanceByMotorVelocity = controller.velocity.magnitude * 2.0f * Time.deltaTime;   // Theoretically the max distance the motor can carry the player with a generous margin.
                 float speedThreshold = GetRunSpeed(speed) * Time.deltaTime;                                         // Without question any distance travelled less than the running speed is legal.
 
                 // NOTE: Maybe the min distance should also include the height different between crouching / standing.
-                if(distanceMoved > speedThreshold && distanceMoved > maxPossibleDistanceByMotorVelocity)
+                if (distanceMoved > speedThreshold && distanceMoved > maxPossibleDistanceByMotorVelocity)
                 {
                     smoothFollowerReset = true;
                 }
             
-                if(smoothFollowerReset) 
+                if (smoothFollowerReset) 
                 {
                     smoothFollowerPrevWorldPos = transform.position;
                     smoothFollowerReset = false;
@@ -514,7 +531,9 @@ namespace DaggerfallWorkshop.Game
             float baseSpeed = 0;
             float playerSpeed = player.Stats.Speed;
             if (isCrouching)
-                baseSpeed = (playerSpeed + 50) / classicToUnitySpeedUnitRatio;
+                baseSpeed = (playerSpeed + dfCrouchBase) / classicToUnitySpeedUnitRatio;
+            else if (riding)
+                baseSpeed = (playerSpeed + dfRideBase) / classicToUnitySpeedUnitRatio;
             else
                 baseSpeed = GetWalkSpeed(player);
             return baseSpeed;
@@ -525,7 +544,7 @@ namespace DaggerfallWorkshop.Game
             if (useWalkSpeedOverride == true)
                 return walkSpeedOverride;
             else
-                return (player.Stats.Speed + 150f) / classicToUnitySpeedUnitRatio;
+                return (player.Stats.Speed + dfWalkBase) / classicToUnitySpeedUnitRatio;
         }
 
         public float GetRunSpeed(float baseSpeed)

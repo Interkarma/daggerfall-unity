@@ -98,7 +98,7 @@ namespace DaggerfallWorkshop.Game
             // Handle horse & cart riding animation & sounds.
             if (mode == TransportModes.Horse || mode == TransportModes.Cart)
             {
-                if (playerMotor.IsStandingStill || !playerMotor.IsGrounded)
+                if (playerMotor.IsStandingStill || !playerMotor.IsGrounded || GameManager.IsGamePaused)
                 {   // Stop animation frames and sound playing.
                     lastFrameTime = 0;
                     ridingTexure = ridingTexures[0];
@@ -131,7 +131,7 @@ namespace DaggerfallWorkshop.Game
 
         void OnGUI()
         {
-            if (Event.current.type.Equals(EventType.Repaint))
+            if (Event.current.type.Equals(EventType.Repaint) && !GameManager.IsGamePaused)
             {
                 if ((mode == TransportModes.Horse || mode == TransportModes.Cart) && ridingTexure != null)
                 {
@@ -159,7 +159,7 @@ namespace DaggerfallWorkshop.Game
 
             if (mode == TransportModes.Horse || mode == TransportModes.Cart)
             {
-                // Tell player motor we're riding.
+                // Tell player motor we're riding. TODO: Change to event system so other classes can listen for transport changes.
                 playerMotor.IsRiding = true;
 
                 // Setup appropriate riding sounds.
