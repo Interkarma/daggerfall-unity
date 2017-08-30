@@ -920,7 +920,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             findButton.Enabled = true;
             currentDFRegion = DaggerfallUnity.ContentReader.MapFileReader.GetRegion(region);
             StartIdentify();
-            SetupArrowButtons();            
+            SetupArrowButtons();
         }
 
         // Close region panel and reset values
@@ -938,8 +938,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             loadNewImage = true;
             draw = true;
             zoom = false;
-            pixelBuffer = null;            
-            StartIdentify();            
+            pixelBuffer = null;
+            StartIdentify();
         }
 
         // checks if location with MapSummary summary is already discovered
