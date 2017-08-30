@@ -254,6 +254,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             borderTexture = DaggerfallUI.GetTextureFromImg(regionBorderImgName);
             borderPanel = DaggerfallUI.AddPanel(new Rect(new Vector2(0, regionTextureOverlayPanelRect.position.y), regionTextureOverlayPanelRect.size), NativePanel);
             borderPanel.BackgroundTexture = borderTexture;
+            borderPanel.Enabled = false;
 
             selectedRegionMapNames = GetRegionMapNames(GetPlayerRegion());
             loadNewImage = true;
@@ -912,6 +913,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             selectedRegion = region;
             selectedRegionMapNames = mapNames;
             regionTextureOverlayPanel.Enabled = true;
+            borderPanel.Enabled = true;
             pixelBuffer = null;
             loadNewImage = true;
             draw = true;
@@ -929,6 +931,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             locationSelected = false;
             mapIndex = 0;
             regionTextureOverlayPanel.Enabled = false;
+            borderPanel.Enabled = false;
             horizontalArrowButton.Enabled = false;
             verticalArrowButton.Enabled = false;
             findButton.Enabled = false;
