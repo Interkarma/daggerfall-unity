@@ -91,13 +91,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             // Restore billboard appearance if present
             if (billboard)
-            {
                 billboard.SetMaterial(data.textureArchive, data.textureRecord);
-
-                // Setup custom material if available
-                if (TextureReplacement.CustomTextureExist(data.textureArchive, data.textureRecord))
-                    TextureReplacement.SetBillboardCustomMaterial(billboard.gameObject, data.textureArchive, data.textureRecord);
-            }
 
             // Restore items
             loot.Items.DeserializeItems(data.items);

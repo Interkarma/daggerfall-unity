@@ -134,7 +134,7 @@ namespace DaggerfallWorkshop
                     summary.CurrentFrame++;
 
                     // Original Daggerfall textures
-                    if (!TextureReplacement.CustomTextureExist(summary.Archive, summary.Record))
+                    if (!summary.CustomBillboard.isCustomAnimated)
                     {
                         if (summary.CurrentFrame >= summary.AtlasIndices[summary.Record].frameCount)
                         {
@@ -327,6 +327,10 @@ namespace DaggerfallWorkshop
 #endif
             }
 
+            // Import custom textures
+            if (TextureReplacement.CustomTextureExist(archive, record))
+                TextureReplacement.SetBillboardCustomMaterial(gameObject, ref summary);
+
             // Standalone billboards never cast shadows
             meshRenderer.shadowCastingMode = ShadowCastingMode.Off;
 
@@ -338,31 +342,6 @@ namespace DaggerfallWorkshop
             }
 
             return material;
-        }
-
-        /// <summary>
-        /// Set custom textures and properties for billboard.
-        /// </summary>
-        public void SetCustomMaterial(TextureReplacement.CustomBillboard customBillboard)
-        {
-            // Get DaggerfallUnity
-            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
-            if (!dfUnity.IsReady)
-                return;
-
-            // Save summary
-            summary.CustomBillboard = customBillboard;
-        }
-
-        /// <summary>
-        /// Set new Y size for correct positioning.
-        /// </summary>
-        /// <param name="archive">Texture archive index.</param>
-        /// <param name="record">Texture record index.</param>
-        /// <param name="scaleY">height scale</param>
-        public void SetCustomSize(int archive, int record, float scaleY)
-        {
-            summary.Size.y *= scaleY;
         }
 
         /// <summary>

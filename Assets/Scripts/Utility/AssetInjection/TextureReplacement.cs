@@ -66,10 +66,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// </summary>
         public struct CustomBillboard
         {
+            public bool isCustomAnimated;                // Is custom and animated?
             public List<Texture2D> MainTexture;          // List of custom albedo maps
             public List<Texture2D> EmissionMap;          // List of custom emission maps
             public bool isEmissive;                      // True if billboard is emissive
-            public int NumberOfFrames;                   // number of frame textures avilable on disk
+            public int NumberOfFrames;                   // Number of frames
         }
 
         // Enemy will use custom textures if [archive, enemyDefaultRecord, enemyDefaultFrame] is found.
@@ -460,18 +461,18 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <paran name="go">Billboard gameobject.</param>
         /// <param name="archive">Archive index.</param>
         /// <param name="record">Record index.</param>
-        static public void SetBillboardCustomMaterial(GameObject go, int archive, int record)
+        static public void SetBillboardCustomMaterial(GameObject go, ref DaggerfallBillboard.BillboardSummary summary)
         {
+            // Variables
             int numberOfFrames;
+            int archive = summary.Archive;
+            int record = summary.Record;
             string name = GetName(archive, record);
-            var meshRenderer = go.GetComponent<MeshRenderer>();
-            var daggerfallBillboard = go.GetComponent<DaggerfallBillboard>();
+            var meshRenderer = go.GetComponent<MeshRenderer>();           
             Texture2D albedoTexture, emissionMap;
 
             // Check if billboard is emissive
-            bool isEmissive = false;
-            if (meshRenderer.material.GetTexture("_EmissionMap") != null)
-                isEmissive = true;
+            bool isEmissive = meshRenderer.material.GetTexture("_EmissionMap");
 
             // UVs
             Vector2 uv = Vector2.zero;
@@ -482,7 +483,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 // Customize billboard size (scale)
                 Transform transform = go.GetComponent<Transform>();
                 transform.localScale = XMLManager.GetScale(name, texturesPath, transform.localScale);
-                daggerfallBillboard.SetCustomSize(archive, record, transform.localScale.y);
+                summary.Size.x *= transform.localScale.x;
+                summary.Size.y *= transform.localScale.y;
 
                 // Get UV
                 uv = XMLManager.GetUv(name, texturesPath, uv.x, uv.y);
@@ -531,7 +533,9 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             }
 
             // Import textures for each frame if billboard is animated
-            if (numberOfFrames > 1)
+            summary.CustomBillboard = new CustomBillboard();
+            summary.CustomBillboard.isCustomAnimated = numberOfFrames > 1;
+            if (summary.CustomBillboard.isCustomAnimated)
             {
                 List<Texture2D> albedoTextures = new List<Texture2D>();
                 List<Texture2D> emissionmaps = new List<Texture2D>();
@@ -570,14 +574,10 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 }
 
                 // Set textures and properties
-                CustomBillboard customBillboard = new CustomBillboard()
-                {
-                    MainTexture = albedoTextures,
-                    EmissionMap = emissionmaps,
-                    NumberOfFrames = numberOfFrames,
-                    isEmissive = isEmissive
-                };
-                daggerfallBillboard.SetCustomMaterial(customBillboard);
+                summary.CustomBillboard.MainTexture = albedoTextures;
+                summary.CustomBillboard.EmissionMap = emissionmaps;
+                summary.CustomBillboard.NumberOfFrames = numberOfFrames;
+                summary.CustomBillboard.isEmissive = isEmissive;
             }
         }
 

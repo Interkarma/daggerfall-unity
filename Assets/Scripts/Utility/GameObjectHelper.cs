@@ -260,10 +260,6 @@ namespace DaggerfallWorkshop.Utility
             DaggerfallBillboard dfBillboard = go.AddComponent<DaggerfallBillboard>();
             dfBillboard.SetMaterial(archive, record);
 
-            // Import custom texture(s)
-            if (AssetInjection.TextureReplacement.CustomTextureExist(archive, record))
-                AssetInjection.TextureReplacement.SetBillboardCustomMaterial(go, archive, record);
-
             return go;
         }
 
@@ -540,10 +536,6 @@ namespace DaggerfallWorkshop.Utility
             // Setup billboard component
             DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
             dfBillboard.SetMaterial(textureArchive, textureRecord);
-
-            // Setup custom material if available
-            if (AssetInjection.TextureReplacement.CustomTextureExist(textureArchive, textureRecord))
-                AssetInjection.TextureReplacement.SetBillboardCustomMaterial(go, textureArchive, textureRecord);
 
             // Setup DaggerfallLoot component to make lootable
             DaggerfallLoot loot = go.GetComponent<DaggerfallLoot>();
@@ -917,10 +909,6 @@ namespace DaggerfallWorkshop.Utility
 
             // Set name
             go.name = string.Format("Quest Item [{0} | {1}]", item.Symbol.Original, item.DaggerfallUnityItem.LongName);
-
-            // Setup custom material if available
-            if (AssetInjection.TextureReplacement.CustomTextureExist(textureArchive, textureRecord))
-                AssetInjection.TextureReplacement.SetBillboardCustomMaterial(go, textureArchive, textureRecord);
 
             // Marker position
             Vector3 position;
