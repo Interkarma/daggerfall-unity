@@ -544,10 +544,11 @@ MonoBehaviour:
   useWalkSpeedOverride: 0
   runSpeedOverride: 11
   useRunSpeedOverride: 0
-  classicToUnitySpeedUnitRatio: 39.5
   standingHeight: 1.78
+  eyeHeight: 0.09
   crouchingHeight: 0.45
   crouchingJumpDelta: 0.8
+  ridingHeight: 2.6
   limitDiagonalSpeed: 1
   toggleRun: 0
   jumpSpeed: 8
