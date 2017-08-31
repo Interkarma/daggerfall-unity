@@ -1310,17 +1310,106 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void ShowInfoPopup(DaggerfallUnityItem item)
         {
+            const int paintingTextId = 250;
             const int armorTextId = 1000;
             const int weaponTextId = 1001;
             const int miscTextId = 1003;
+            const int soulTrapTextId = 1004;
+            const int letterOfCreditTextId = 1007;
+            //const int potionTextId = 1008;
+            const int bookTextId = 1009;
+            const int arrowTextId = 1011;
+            const int armorNoMaterialTextId = 1014;
+            const int oghmaInfiniumTextId = 1015;
+            const int houseDeedTextId = 1073;
 
             TextFile.Token[] tokens = null;
-            if (item.ItemGroup == ItemGroups.Armor)
-                tokens = DaggerfallUnity.TextProvider.GetRSCTokens(armorTextId);
-            else if (item.ItemGroup == ItemGroups.Weapons)
-                tokens = DaggerfallUnity.TextProvider.GetRSCTokens(weaponTextId);
-            else
-                tokens = DaggerfallUnity.TextProvider.GetRSCTokens(miscTextId);
+
+            // Handle by item group
+            switch (item.ItemGroup)
+            {
+                case (ItemGroups.Armor):
+                    if (item.IsShield || item.TemplateIndex == (int)Armor.Helm)
+                        tokens = DaggerfallUnity.TextProvider.GetRSCTokens(armorNoMaterialTextId);
+                    else
+                        tokens = DaggerfallUnity.TextProvider.GetRSCTokens(armorTextId);
+                    break;
+
+                case (ItemGroups.Weapons):
+                    if (item.TemplateIndex == (int)Weapons.Arrow)
+                        tokens = DaggerfallUnity.TextProvider.GetRSCTokens(arrowTextId);
+                    else
+                        tokens = DaggerfallUnity.TextProvider.GetRSCTokens(weaponTextId);
+                    break;
+
+                case (ItemGroups.Books):
+                    // Handle Oghma Infinium
+                    if (item.legacyMagic != null && item.legacyMagic[0] == 26)
+                    {
+                        tokens = DaggerfallUnity.TextProvider.GetRSCTokens(oghmaInfiniumTextId);
+                    }
+                    // Handle other books
+                    else
+                    {
+                        tokens = DaggerfallUnity.TextProvider.GetRSCTokens(bookTextId);
+                    }
+                    break;
+
+                //case (ItemGroups.UselessItems1):
+                // TODO: Check for potion in glass bottle.
+                // In classic, check is whether RecordRoot.SublistHead is non-null
+                // and of PotionMix type.
+                //if (item.TemplateIndex == (int)UselessItems1.Glass_Bottle)
+                //{
+                //    tokens = DaggerfallUnity.TextProvider.GetRSCTokens(potionTextId);
+                //}
+                //break;
+
+                case (ItemGroups.Paintings):
+                    // TODO: Show painting. Uses file paint.dat.
+                    tokens = DaggerfallUnity.TextProvider.GetRSCTokens(paintingTextId);
+                    break;
+
+                default:
+                    // A few items in the MiscItems group have their own text display
+                    if (item.ItemGroup == ItemGroups.MiscItems)
+                    {
+                        // Handle potion recipes
+                        if (item.TemplateIndex == (int)MiscItems.Potion_recipe)
+                        {
+                            DaggerfallPotionRecipeWindow readerWindow = new DaggerfallPotionRecipeWindow(uiManager, item.typeDependentData, this);
+                            uiManager.PushWindow(readerWindow);
+                            return;
+                        }
+                        // Handle house deeds
+                        else if (item.TemplateIndex == (int)MiscItems.House_Deed)
+                        {
+                            tokens = DaggerfallUnity.TextProvider.GetRSCTokens(houseDeedTextId);
+                        }
+                        // Handle soul traps and Azura's Star
+                        else if (item.TemplateIndex == (int)MiscItems.Soul_trap)
+                        {
+                            tokens = DaggerfallUnity.TextProvider.GetRSCTokens(soulTrapTextId);
+                        }
+                        else if (item.TemplateIndex == (int)MiscItems.Letter_of_credit)
+                        {
+                            tokens = DaggerfallUnity.TextProvider.GetRSCTokens(letterOfCreditTextId);
+                        }
+                        if (tokens != null)
+                            break;
+                    }
+
+                    // Handle Azura's Star
+                    if (item.legacyMagic != null && item.legacyMagic[0] == 26 && item.legacyMagic[1] == 9)
+                    {
+                        tokens = DaggerfallUnity.TextProvider.GetRSCTokens(soulTrapTextId);
+                        break;
+                    }
+
+                    // Default fallback if none of the above applied
+                    tokens = DaggerfallUnity.TextProvider.GetRSCTokens(miscTextId);
+                    break;
+            }
 
             if (tokens != null && tokens.Length > 0)
             {
@@ -1478,13 +1567,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else if (selectedActionMode == ActionModes.Info)
             {
-                if (item.ItemGroup == ItemGroups.MiscItems && item.TemplateIndex == (int)MiscItems.Potion_recipe)
-                {
-                    DaggerfallPotionRecipeWindow readerWindow = new DaggerfallPotionRecipeWindow(uiManager, item.typeDependentData, this);
-                    uiManager.PushWindow(readerWindow);
-                }
-                else
-                    ShowInfoPopup(item);
+                ShowInfoPopup(item);
             }
         }
 
