@@ -27,6 +27,7 @@ GameObject:
   - component: {fileID: 114374306957635026}
   - component: {fileID: 114683130944510392}
   - component: {fileID: 114121517922970790}
+  - component: {fileID: 114764040474619316}
   m_Layer: 0
   m_Name: PlayerAdvanced
   m_TagString: Player
@@ -1106,6 +1107,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PlayerTorch: {fileID: 100004}
+--- !u!114 &114764040474619316
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e59a84727916a12479a199612a450dcb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RidingVolumeScale: 1
 --- !u!198 &198167633220797900
 ParticleSystem:
   m_ObjectHideFlags: 1

@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -248,6 +248,19 @@ namespace DaggerfallWorkshop.Utility
 
                     break;
 
+                case ImageTypes.CFA:
+                    CfaFile cfaFile = new CfaFile(Path.Combine(dfUnity.Arena2Path, filename), FileUsage.UseMemory, true);
+                    cfaFile.LoadPalette(Path.Combine(dfUnity.Arena2Path, cfaFile.PaletteName));
+
+                    dfBitmap = cfaFile.GetDFBitmap(record, frame);
+                    imageData.offset = new DFPosition(0, 0);
+                    imageData.scale = new DFSize();
+                    imageData.size = cfaFile.GetSize(record);
+
+                    // TODO: texture pack support?
+
+                    break;
+
                 default:
                     return new ImageData();
             }
@@ -318,6 +331,8 @@ namespace DaggerfallWorkshop.Utility
                 return ImageTypes.CIF;
             else if (filename.EndsWith(".RCI", StringComparison.InvariantCultureIgnoreCase))
                 return ImageTypes.RCI;
+            else if (filename.EndsWith(".CFA", StringComparison.InvariantCultureIgnoreCase))
+                return ImageTypes.CFA;
             else
                 throw new Exception("ParseFileType could not match filename with a supported image type.");
         }

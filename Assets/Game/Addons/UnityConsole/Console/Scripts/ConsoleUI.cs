@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System;
@@ -45,7 +45,7 @@ namespace Wenzil.Console
             if (!DaggerfallWorkshop.Game.GameManager.Instance.IsPlayerOnHUD && !force)
                 return;
 
-            // Do nothing if HUD not enabled in settings
+            // Do nothing if console not enabled in settings
             if (!DaggerfallWorkshop.DaggerfallUnity.Settings.LypyL_GameConsole && !force)
                 return;
 

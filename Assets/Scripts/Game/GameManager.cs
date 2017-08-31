@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -68,6 +68,7 @@ namespace DaggerfallWorkshop.Game
         StateManager stateManager = null;
         DaggerfallAutomap interiorAutomap = null;
         QuestMachine questMachine = null;
+		TransportManager transportManager = null;
 
         #endregion
 
@@ -265,6 +266,12 @@ namespace DaggerfallWorkshop.Game
             set { questMachine = value; }
         }
 
+        public TransportManager TransportManager
+        {
+            get { return (transportManager) ? transportManager : transportManager = GetComponentFromObject<TransportManager>(PlayerObject); }
+            set { transportManager = value; }
+        }
+
         public bool IsPlayerOnHUD
         {
             get { return IsHUDTopWindow(); }
@@ -369,6 +376,10 @@ namespace DaggerfallWorkshop.Game
             else if (InputManager.Instance.ActionComplete(InputManager.Actions.Rest))
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenRestWindow);
+            }
+            else if (InputManager.Instance.ActionComplete(InputManager.Actions.Transport))
+            {
+	            DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenTransportWindow);
             }
             else if (InputManager.Instance.ActionComplete(InputManager.Actions.LogBook))
             {
