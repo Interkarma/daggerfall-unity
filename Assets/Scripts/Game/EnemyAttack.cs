@@ -98,24 +98,41 @@ namespace DaggerfallWorkshop.Game
                 EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
                 MobileEnemy enemy = entity.MobileEnemy;
 
+                int damage = 0;
+
                 // Are we still in range and facing player? Then apply melee damage.
                 if (senses.DistanceToPlayer < MeleeDistance && senses.PlayerInSight)
                 {
                     // Calculate damage
-                    int damage = Game.Formulas.FormulaHelper.CalculateWeaponDamage(entity, GameManager.Instance.PlayerEntity, null);
+                    damage = Game.Formulas.FormulaHelper.CalculateWeaponDamage(entity, GameManager.Instance.PlayerEntity, null);
                     if (damage > 0)
                     {
                         GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", damage);
-                        // TODO: Play hit sound
-                    }
-                    else if (sounds)
-                    {
-                        Items.DaggerfallUnityItem weapon = entity.ItemEquipTable.GetItem(Items.EquipSlots.RightHand);
-                        sounds.PlayMissSound(weapon);
                     }
 
                     // Tally player's dodging skill
                     GameManager.Instance.PlayerEntity.TallySkill((short)Skills.Dodging, 1);
+                }
+
+                if (sounds)
+                {
+                    Items.DaggerfallUnityItem weapon = entity.ItemEquipTable.GetItem(Items.EquipSlots.RightHand);
+                    if (weapon == null)
+                        weapon = entity.ItemEquipTable.GetItem(Items.EquipSlots.LeftHand);
+                    if (damage > 0)
+                    {
+                        // TODO: Play hit and parry sounds on other AI characters once attacks against other AI are possible
+                        DaggerfallAudioSource dfAudioSource = GetComponent<DaggerfallAudioSource>();
+                        if (dfAudioSource)
+                        {
+                            if (weapon == null)
+                                dfAudioSource.PlayOneShot((int)SoundClips.Hit1 + UnityEngine.Random.Range(2, 4), 0);
+                            else
+                                dfAudioSource.PlayOneShot((int)SoundClips.Hit1 + UnityEngine.Random.Range(0, 5), 0);
+                        }
+                    }
+                    else
+                        sounds.PlayMissSound(weapon);
                 }
             }
         }
