@@ -100,5 +100,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string pronounHerself = "herself";
 
         public const string cannotChangeTransportationIndoors = "You cannot change transportation indoors.";
+        public const string cannotTravelWithEnemiesNearby = "You cannot travel with enemies nearby.";
     }
 }
