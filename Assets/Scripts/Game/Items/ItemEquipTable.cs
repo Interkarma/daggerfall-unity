@@ -110,7 +110,8 @@ namespace DaggerfallWorkshop.Game.Items
             if (item.ItemGroup == ItemGroups.Armor &&
                 (item.TemplateIndex == (int)Armor.Kite_Shield ||
                 item.TemplateIndex == (int)Armor.Round_Shield ||
-                item.TemplateIndex == (int)Armor.Tower_Shield))
+                item.TemplateIndex == (int)Armor.Tower_Shield ||
+                item.TemplateIndex == (int)Armor.Buckler))
             {
                 // If holding a 2H weapon then unequip
                 DaggerfallUnityItem rightHandItem = equipTable[(int)EquipSlots.RightHand];
