@@ -417,6 +417,10 @@ namespace DaggerfallWorkshop.Game
                 pos.y = (ridingHeight / 2) - eyeHeight;
                 mainCamera.transform.localPosition = pos;
                 controller.height = ridingHeight;
+                pos = controller.transform.position;
+                float prevHeight = isCrouching ? crouchingHeight : standingHeight;
+                pos.y += (ridingHeight - prevHeight) / 2.0f;
+                controller.transform.position = pos;
                 riding = true;
             }
             else if (!isRiding && riding)
@@ -425,9 +429,12 @@ namespace DaggerfallWorkshop.Game
                 pos.y = (standingHeight / 2) - eyeHeight;
                 mainCamera.transform.localPosition = pos;
                 controller.height = standingHeight;
+                pos = controller.transform.position;
+                pos.y -= (ridingHeight - standingHeight) / 2.0f;
+                controller.transform.position = pos;
                 riding = false;
             }
-            else
+            else if (!isRiding)
             {
                 try
                 {
