@@ -126,9 +126,9 @@ namespace DaggerfallWorkshop.Game
                         if (dfAudioSource)
                         {
                             if (weapon == null)
-                                dfAudioSource.PlayOneShot((int)SoundClips.Hit1 + UnityEngine.Random.Range(2, 4), 0);
+                                dfAudioSource.PlayOneShot((int)SoundClips.Hit1 + UnityEngine.Random.Range(2, 4), 0, 1.1f);
                             else
-                                dfAudioSource.PlayOneShot((int)SoundClips.Hit1 + UnityEngine.Random.Range(0, 5), 0);
+                                dfAudioSource.PlayOneShot((int)SoundClips.Hit1 + UnityEngine.Random.Range(0, 5), 0, 1.1f);
                         }
                     }
                     else

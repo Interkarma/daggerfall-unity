@@ -72,7 +72,7 @@ namespace DaggerfallWorkshop.Game
             if (DaggerfallUI.Instance.DaggerfallAudioSource)
             {
                 AudioClip collapseSound = DaggerfallUI.Instance.DaggerfallAudioSource.GetAudioClip((int)SoundClips.BodyFall);
-                AudioSource.PlayClipAtPoint(collapseSound, entityBehaviour.transform.position);
+                AudioSource.PlayClipAtPoint(collapseSound, entityBehaviour.transform.position, 1.05f);
             }
 
             // Disable enemy gameobject
