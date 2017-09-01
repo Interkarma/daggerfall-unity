@@ -48,17 +48,13 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public override void Update(Task caller)
         {
-            // TODO: Perform action changes
-
             // Get place resource
             Place place = ParentQuest.GetPlace(placeSymbol);
             if (place == null)
                 return;
 
-            if (place.SiteDetails.siteType == SiteTypes.Dungeon)
-            {
-                GameManager.Instance.PlayerGPS.DiscoverLocation(place.SiteDetails.regionName, place.SiteDetails.locationName);            
-            }
+            // Discover location
+            GameManager.Instance.PlayerGPS.DiscoverLocation(place.SiteDetails.regionName, place.SiteDetails.locationName);
 
             SetComplete();
         }
