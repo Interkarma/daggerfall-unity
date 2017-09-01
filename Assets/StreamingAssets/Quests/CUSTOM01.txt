@@ -72,7 +72,7 @@ Foe _necromancer_ is Battle_mage
 
 --	Quest start-up:
 	start timer _timeLimit_
-	reveal _dungeon_
+	reveal _graveyard_
 	pc at _graveyard_ set _onsite_
 	log 1040 step 0
 
