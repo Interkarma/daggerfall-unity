@@ -157,7 +157,7 @@ namespace DaggerfallWorkshop.Game.Questing
             // Expand macros
             if (expandMacros)
             {
-                MacroHelper macroHelper = new MacroHelper();
+                QuestMacroHelper macroHelper = new QuestMacroHelper();
                 macroHelper.ExpandQuestMessage(ParentQuest, ref tokens);
             }
 

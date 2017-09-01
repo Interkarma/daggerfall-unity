@@ -25,7 +25,7 @@ namespace DaggerfallWorkshop.Utility
     /// Caller will need to supply related objects (e.g. quest) as needed.
     /// NOTE: This class will expand over time.
     /// </summary>
-    public class MacroHelper
+    public class QuestMacroHelper
     {
         #region Fields
         #endregion
