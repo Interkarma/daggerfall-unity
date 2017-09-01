@@ -171,7 +171,7 @@ namespace DaggerfallWorkshop.Game
             if (dfAudioSource)
             {
                 dfAudioSource.AudioSource.pitch = 1f * AttackSpeedScale;
-                dfAudioSource.PlayOneShot(SwingWeaponSound, 0);
+                dfAudioSource.PlayOneShot(SwingWeaponSound, 0, 1.1f);
             }
         }
 
