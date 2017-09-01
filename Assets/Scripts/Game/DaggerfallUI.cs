@@ -316,8 +316,15 @@ namespace DaggerfallWorkshop.Game
                     uiManager.PushWindow(dfUnityMouseControlsWindow);
                     break;
                 case DaggerfallUIMessages.dfuiOpenTravelMapWindow:
-                    if (!GameManager.Instance.IsPlayerInside)        //TODO: pop-up when try to travel near enemies
-                        uiManager.PushWindow(dfTravelMapWindow);
+                    if (!GameManager.Instance.IsPlayerInside)
+                    {
+                        if (GameManager.Instance.AreEnemiesNearby())
+                        {
+                            MessageBox(HardStrings.cannotTravelWithEnemiesNearby);
+                        }
+                        else
+                            uiManager.PushWindow(dfTravelMapWindow);
+                    }
                     break;
                 case DaggerfallUIMessages.dfuiOpenAutomap:
                     if (GameManager.Instance.PlayerEnterExit.IsPlayerInside) // open automap only if player is in interior or dungeon - TODO: location automap for exterior locations

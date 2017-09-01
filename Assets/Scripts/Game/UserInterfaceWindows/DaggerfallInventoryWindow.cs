@@ -1355,15 +1355,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     }
                     break;
 
-                //case (ItemGroups.UselessItems1):
                 // TODO: Check for potion in glass bottle.
-                // In classic, check is whether RecordRoot.SublistHead is non-null
+                // In classic, the check is whether RecordRoot.SublistHead is non-null
                 // and of PotionMix type.
-                //if (item.TemplateIndex == (int)UselessItems1.Glass_Bottle)
-                //{
-                //    tokens = DaggerfallUnity.TextProvider.GetRSCTokens(potionTextId);
-                //}
-                //break;
 
                 case (ItemGroups.Paintings):
                     // TODO: Show painting. Uses file paint.dat.
@@ -1386,7 +1380,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         {
                             tokens = DaggerfallUnity.TextProvider.GetRSCTokens(houseDeedTextId);
                         }
-                        // Handle soul traps and Azura's Star
+                        // Handle soul traps
                         else if (item.TemplateIndex == (int)MiscItems.Soul_trap)
                         {
                             tokens = DaggerfallUnity.TextProvider.GetRSCTokens(soulTrapTextId);
