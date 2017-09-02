@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -15,13 +15,14 @@ using DaggerfallConnect.FallExe;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Questing;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.Items
 {
     /// <summary>
     /// Parent class for any individual item in Daggerfall Unity.
     /// </summary>
-    public class DaggerfallUnityItem
+    public partial class DaggerfallUnityItem : MacroDataSource
     {
         #region Fields
 
