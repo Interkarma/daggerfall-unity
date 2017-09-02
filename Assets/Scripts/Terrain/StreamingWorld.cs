@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -1233,7 +1233,8 @@ namespace DaggerfallWorkshop
                 origin,
                 width,
                 height,
-                (currentLocation.Summary.LocationType == DFRegion.LocationTypes.TownCity));
+                (currentLocation.Summary.LocationType == DFRegion.LocationTypes.TownCity ||
+                currentLocation.Summary.LocationType == DFRegion.LocationTypes.HomeYourShips));
         }
 
         // Sets player to ground level near a location

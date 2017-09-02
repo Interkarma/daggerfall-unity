@@ -73,7 +73,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ItemCollection inventory = GameManager.Instance.PlayerEntity.Items;
             bool hasHorse = inventory.Contains(ItemGroups.Transportation, (int) Transportation.Horse);
             bool hasCart = inventory.Contains(ItemGroups.Transportation, (int) Transportation.Small_cart);
-            bool hasShip = false;
+            bool hasShip = true;    // Does ship deed go in inventory, or is it a global var?
 
             // Load all textures
             LoadTextures();
@@ -110,7 +110,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             } else {
                 shipButton.BackgroundTexture = ImageReader.GetSubTexture(disabledTexture, shipDisabledRect);
             }
-            shipButton.BackgroundColor = DaggerfallUI.DaggerfallUnityNotImplementedColor;
 
             // Exit button
             exitButton = DaggerfallUI.AddButton(exitButtonRect, mainPanel);
@@ -153,11 +152,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         private void CartButton_OnMouseClick(BaseScreenComponent sender, Vector2 position) {
+            // Change to riding a cart.
             GameManager.Instance.TransportManager.TransportMode = TransportModes.Cart;
             CloseWindow();
         }
 
         private void ShipButton_OnMouseClick(BaseScreenComponent sender, Vector2 position) {
+            // Teleport to your ship, or back.
+            GameManager.Instance.TransportManager.TransportMode = TransportModes.Ship;
             CloseWindow();
         }
 

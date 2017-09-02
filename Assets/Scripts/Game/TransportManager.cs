@@ -7,6 +7,9 @@
 
 using UnityEngine;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallConnect.Arena2;
+using DaggerfallConnect.Utility;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -15,7 +18,7 @@ namespace DaggerfallWorkshop.Game
         Foot,
         Horse,
         Cart,
-//        Ship  // (not a real player transport mode)
+        Ship  // (not a real player transport mode)
     }
 
     public class TransportManager : MonoBehaviour
@@ -34,7 +37,15 @@ namespace DaggerfallWorkshop.Game
             get { return mode == TransportModes.Foot; }
         }
 
+        public PlayerPositionData_v1 BoardShipPosition
+        {
+            get { return boardShipPosition; }
+            set { boardShipPosition = value; }
+        }
+
         private TransportModes mode = TransportModes.Foot;
+        private PlayerPositionData_v1 boardShipPosition;    // Holds the player position from before boarding a ship.
+
 
         const string horseTextureName = "MRED00I0.CFA";
         const string cartTextureName = "MRED01I0.CFA";
@@ -179,6 +190,36 @@ namespace DaggerfallWorkshop.Game
             {
                 // Tell player motor we're not riding.
                 playerMotor.IsRiding = false;
+            }
+
+            if (mode == TransportModes.Ship)
+            {
+                GameManager.Instance.PlayerMotor.CancelMovement = true;
+                SerializablePlayer serializablePlayer = GetComponent<SerializablePlayer>();
+                DaggerfallUI.Instance.SmashHUDToBlack();
+
+                // Is player on board ship?
+                if (boardShipPosition != null)
+                {
+                    // Restore player position from before boarding ship.
+                    DFPosition mapPixel = MapsFile.WorldCoordToMapPixel(boardShipPosition.worldPosX, boardShipPosition.worldPosZ);
+                    GameManager.Instance.StreamingWorld.TeleportToCoordinates(mapPixel.X, mapPixel.Y, StreamingWorld.RepositionMethods.None);
+                    serializablePlayer.RestorePosition(boardShipPosition);
+                    boardShipPosition = null;
+                    // Alternate method:
+                    //PlayerEnterExit playerEnterExit = GetComponent<PlayerEnterExit>();
+                    //playerEnterExit.RespawnPlayer(boardShipPosition.worldPosX, boardShipPosition.worldPosZ, false, false);
+                }
+                else
+                {
+                    // Record current player position before boarding ship.
+                    boardShipPosition = serializablePlayer.GetPlayerPositionData();
+
+                    // Teleport to ship
+                    GameManager.Instance.StreamingWorld.TeleportToCoordinates(2, 2, StreamingWorld.RepositionMethods.RandomStartMarker);
+                }
+                DaggerfallUI.Instance.FadeHUDFromBlack();
+                mode = TransportModes.Foot;
             }
         }
     }

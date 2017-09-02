@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -106,6 +106,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public PlayerEntityData_v1 playerEntity;
         public bool weaponDrawn;
         public TransportModes transportMode;
+        public PlayerPositionData_v1 boardShipPosition;  // Holds the player position from before boarding a ship.
     }
 
     [fsObject("v1")]
