@@ -810,6 +810,127 @@ namespace DaggerfallWorkshop.Game.Items
             }
         }
 
+        public int GetShieldArmorValue()
+        {
+            switch (TemplateIndex)
+            {
+                case (int)Armor.Buckler:
+                    return 1;
+                case (int)Armor.Round_Shield:
+                    return 2;
+                case (int)Armor.Kite_Shield:
+                    return 3;
+                case (int)Armor.Tower_Shield:
+                    return 4;
+
+                default:
+                    return 0;
+            }
+        }
+
+        /// <summary>
+        /// Get body parts protected by a shield.
+        /// </summary>
+        public BodyParts[] GetShieldProtectedBodyParts()
+        {
+            switch (TemplateIndex)
+            {
+                case (int)Armor.Buckler:
+                    return new BodyParts[] { BodyParts.LeftArm, BodyParts.Hands };
+                case (int)Armor.Round_Shield:
+                case (int)Armor.Kite_Shield:
+                    return new BodyParts[] { BodyParts.LeftArm, BodyParts.Hands, BodyParts.Legs };
+                case (int)Armor.Tower_Shield:
+                    return new BodyParts[] { BodyParts.Head, BodyParts.LeftArm, BodyParts.Hands, BodyParts.Legs };
+
+                default:
+                    return new BodyParts[] { };
+            }
+        }
+
+        /// <summary>
+        /// Get the equip slot that matches to a body part.
+        /// Used in armor calculations.
+        /// </summary>
+        public static EquipSlots GetEquipSlotForBodyPart(BodyParts bodyPart)
+        {
+            switch (bodyPart)
+            {
+                case BodyParts.Head:
+                    return EquipSlots.Head;
+                case BodyParts.RightArm:
+                    return EquipSlots.RightArm;
+                case BodyParts.LeftArm:
+                    return EquipSlots.LeftArm;
+                case BodyParts.Chest:
+                    return EquipSlots.ChestArmor;
+                case BodyParts.Hands:
+                    return EquipSlots.Gloves;
+                case BodyParts.Legs:
+                    return EquipSlots.LegsArmor;
+                case BodyParts.Feet:
+                    return EquipSlots.Feet;
+
+                default:
+                    return EquipSlots.None;
+            }
+        }
+
+        /// <summary>
+        /// Get the body part that matches to an equip slot.
+        /// Used in armor calculations.
+        /// </summary>
+        public static BodyParts GetBodyPartForEquipSlot(EquipSlots equipSlot)
+        {
+            switch (equipSlot)
+            {
+                case EquipSlots.Head:
+                    return BodyParts.Head;
+                case EquipSlots.RightArm:
+                    return BodyParts.RightArm;
+                case EquipSlots.LeftArm:
+                    return BodyParts.LeftArm;
+                case EquipSlots.ChestArmor:
+                    return BodyParts.Chest;
+                case EquipSlots.Gloves:
+                    return BodyParts.Hands;
+                case EquipSlots.LegsArmor:
+                    return BodyParts.Legs;
+                case EquipSlots.Feet:
+                    return BodyParts.Feet;
+
+                default:
+                    return BodyParts.None;
+            }
+        }
+
+        public void DamageThroughPhysicalHit(int damage, DaggerfallEntity owner)
+        {
+            int amount = (10 * damage + 50) / 100;
+            if ((amount == 0) && UnityEngine.Random.Range(1, 100 + 1) < 20)
+                amount = 1;
+            currentCondition -= amount;
+            if (currentCondition <= 0)
+            {
+                ItemBreaks(owner);
+            }
+        }
+
+        public void ItemBreaks(DaggerfallEntity owner)
+        {
+            // Classic does not have the plural version of this string, and uses the short name rather than the long one.
+            // Also the classic string says "is" instead of "has"
+            string itemBroke = "";
+            if (TemplateIndex == (int)Armor.Boots || TemplateIndex == (int)Armor.Gauntlets || TemplateIndex == (int)Armor.Greaves)
+                itemBroke = UserInterfaceWindows.HardStrings.itemHasBrokenPlural;
+            else
+                itemBroke = UserInterfaceWindows.HardStrings.itemHasBroken;
+            itemBroke = itemBroke.Replace("%s", LongName);
+            DaggerfallUI.Instance.PopupMessage(itemBroke);
+            EquipSlots slot = owner.ItemEquipTable.GetEquipSlot(this);
+            if (owner.ItemEquipTable.GetItem(slot) == this)
+                owner.ItemEquipTable.UnequipItem(slot);
+        }
 
         /// <summary>
         /// Link this DaggerfallUnityItem to a quest Item resource.

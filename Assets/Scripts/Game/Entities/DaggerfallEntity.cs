@@ -250,14 +250,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 // Get slot used by this armor
                 EquipSlots slot = ItemEquipTable.GetEquipSlot(armor);
 
-                // This array maps equip slots to the order of the 7 armor values
-                EquipSlots[] equipSlots = { EquipSlots.Head, EquipSlots.RightArm, EquipSlots.LeftArm,
-                                            EquipSlots.ChestArmor, EquipSlots.Gloves, EquipSlots.LegsArmor,
-                                            EquipSlots.Feet };
-
-                // Get the index for the correct armor value and update the armor value.
-                // Armor value is 100 when no armor is equipped. For every point of armor as shown on the inventory screen, 5 is subtracted.
-                int index = System.Array.IndexOf(equipSlots, slot);
+                int index = (int)DaggerfallUnityItem.GetBodyPartForEquipSlot(slot);
 
                 if (equipping)
                 {
@@ -272,30 +265,12 @@ namespace DaggerfallWorkshop.Game.Entity
             {
                 // Shields armor values in classic are unaffected by their material type.
                 int[] values = { 0, 0, 0, 0, 0, 0, 0 }; // shield's effect on the 7 armor values
+                int armorBonus = armor.GetShieldArmorValue();
+                BodyParts[] protectedBodyParts = armor.GetShieldProtectedBodyParts();
 
-                if (armor.TemplateIndex == (int)Armor.Buckler)
+                foreach (var BodyParts in protectedBodyParts)
                 {
-                    values[2] = 1; // left arm
-                    values[4] = 1; // gloves
-                }
-                else if (armor.TemplateIndex == (int)Armor.Round_Shield)
-                {
-                    values[2] = 2; // left arm
-                    values[4] = 2; // gloves
-                    values[5] = 2; // legs armor
-                }
-                else if (armor.TemplateIndex == (int)Armor.Kite_Shield)
-                {
-                    values[2] = 3; // left arm
-                    values[4] = 3; // gloves
-                    values[5] = 3; // legs armor
-                }
-                else if (armor.TemplateIndex == (int)Armor.Tower_Shield)
-                {
-                    values[0] = 4; // head
-                    values[2] = 4; // left arm
-                    values[4] = 4; // gloves
-                    values[5] = 4; // legs armor
+                    values[(int)BodyParts] = armorBonus;
                 }
 
                 for (int i = 0; i < armorValues.Length; i++)

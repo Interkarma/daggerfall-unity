@@ -1258,6 +1258,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void EquipItem(DaggerfallUnityItem item)
         {
+            const int itemBrokenTextId = 29;
+
+            if (item.currentCondition < 1)
+            {
+                TextFile.Token[] tokens = DaggerfallUnity.TextProvider.GetRSCTokens(itemBrokenTextId);
+                if (tokens != null && tokens.Length > 0)
+                {
+                    DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
+                    messageBox.SetTextTokens(tokens);
+                    messageBox.ClickAnywhereToClose = true;
+                    messageBox.Show();
+                }
+                return;
+            }
+
             if (playerEntity.ItemEquipTable.EquipItem(item) && item.ItemGroup == ItemGroups.Armor)
             {
                 playerEntity.UpdateEquippedArmorValues(item, true);
