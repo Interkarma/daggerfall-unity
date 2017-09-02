@@ -136,6 +136,21 @@ namespace DaggerfallWorkshop.Game.Items
         Feet = 26,              // Boots / Shoes / Sandals / etc.
     }
 
+    /// <summary>
+    /// Body parts, used for armor value calculations.
+    /// </summary>
+    public enum BodyParts
+    {
+        None = -1,
+        Head = 0,
+        RightArm = 1,
+        LeftArm = 2,
+        Chest = 3,
+        Hands = 4,
+        Legs = 5,
+        Feet = 6,
+    }
+
     public enum Drugs //checked
     {
         Indulcet = 78,
