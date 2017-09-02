@@ -58,7 +58,6 @@ namespace DaggerfallWorkshop.Game
         // TODO: Move into ImageHelper? (duplicated in FPSWeapon & DaggerfallVidPlayerWindow)
         const int nativeScreenHeight = 200;
 
-        // TODO: It would be better to define an event and have PlayerMotor listen, instead of having this dependency. (again, promised light touch on PM)
         PlayerMotor playerMotor;
         DaggerfallAudioSource dfAudioSource;
         AudioSource ridingAudioSource;
@@ -201,14 +200,20 @@ namespace DaggerfallWorkshop.Game
                 // Is player on board ship?
                 if (boardShipPosition != null)
                 {
+                    // Check for terrain sampler changes. (so don't fall through floor)
+                    StreamingWorld.RepositionMethods reposition = StreamingWorld.RepositionMethods.None;
+                    if (boardShipPosition.terrainSamplerName != DaggerfallUnity.Instance.TerrainSampler.ToString() ||
+                        boardShipPosition.terrainSamplerVersion != DaggerfallUnity.Instance.TerrainSampler.Version)
+                    {
+                        reposition = StreamingWorld.RepositionMethods.RandomStartMarker;
+                        if (DaggerfallUI.Instance.DaggerfallHUD != null)
+                            DaggerfallUI.Instance.DaggerfallHUD.PopupText.AddText("Terrain sampler changed. Repositioning player.");
+                    }
                     // Restore player position from before boarding ship.
                     DFPosition mapPixel = MapsFile.WorldCoordToMapPixel(boardShipPosition.worldPosX, boardShipPosition.worldPosZ);
-                    GameManager.Instance.StreamingWorld.TeleportToCoordinates(mapPixel.X, mapPixel.Y, StreamingWorld.RepositionMethods.None);
+                    GameManager.Instance.StreamingWorld.TeleportToCoordinates(mapPixel.X, mapPixel.Y, reposition);
                     serializablePlayer.RestorePosition(boardShipPosition);
                     boardShipPosition = null;
-                    // Alternate method:
-                    //PlayerEnterExit playerEnterExit = GetComponent<PlayerEnterExit>();
-                    //playerEnterExit.RespawnPlayer(boardShipPosition.worldPosX, boardShipPosition.worldPosZ, false, false);
                 }
                 else
                 {

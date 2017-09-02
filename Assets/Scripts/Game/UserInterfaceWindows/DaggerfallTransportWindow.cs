@@ -9,6 +9,7 @@ using UnityEngine;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Game.Banking;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -73,7 +74,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ItemCollection inventory = GameManager.Instance.PlayerEntity.Items;
             bool hasHorse = inventory.Contains(ItemGroups.Transportation, (int) Transportation.Horse);
             bool hasCart = inventory.Contains(ItemGroups.Transportation, (int) Transportation.Small_cart);
-            bool hasShip = true;    // Does ship deed go in inventory, or is it a global var?
+            bool hasShip = DaggerfallBankManager.OwnsShip;
 
             // Load all textures
             LoadTextures();
