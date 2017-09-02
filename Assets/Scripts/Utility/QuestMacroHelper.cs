@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -70,74 +70,7 @@ namespace DaggerfallWorkshop.Utility
                     Macro macro = GetMacro(words[word]);
                     if (macro.type == MacroTypes.ContextMacro)
                     {
-                        // TODO: Get a quest context macro like %qdt
-
-                        // Quick support for common tokens
-                        // Will rework this later
-                        if (macro.token == "%pcn")
-                        {
-                            // Full name
-                            words[word] = words[word].Replace(macro.token, GameManager.Instance.PlayerEntity.Name);
-                        }
-                        else if (macro.token == "%pcf")
-                        {
-                            // First name
-                            string[] parts = GameManager.Instance.PlayerEntity.Name.Split(' ');
-                            if (parts != null && parts.Length >= 1)
-                                words[word] = words[word].Replace(macro.token, parts[0]);
-                        }
-                        else if (macro.token == "%qdt")
-                        {
-                            // Quest date time
-                            words[word] = words[word].Replace(macro.token, parentQuest.QuestStartTime.DateString());
-                        }
-                        else if (macro.token == "%ra")
-                        {
-                            // Race
-                            words[word] = words[word].Replace(macro.token, GameManager.Instance.PlayerEntity.RaceTemplate.Name);
-                        }
-                        else if (macro.token == "%pct")
-                        {
-                            // Just use "Apprentice" for all %pct guild titles for now
-                            // Guilds are not implemented yet
-                            words[word] = words[word].Replace(macro.token, "Apprentice");
-                        }
-                        else if (macro.token == "%oth")
-                        {
-                            // Generate an oath
-                            // TODO: Need a way of passing NPC race to oath generator
-                            words[word] = words[word].Replace(macro.token, GetOath());
-                        }
-                        else if (macro.token == "%reg")
-                        {
-                            // Get current region
-                            words[word] = words[word].Replace(macro.token, GetRegionName());
-                        }
-                        else if (macro.token == "%god")
-                        {
-                            // Get god of last NPC
-                            words[word] = words[word].Replace(macro.token, GetGod(parentQuest));
-                        }
-                        else if (macro.token == "%g" || macro.token == "%g1")
-                        {
-                            // He/She
-                            words[word] = words[word].Replace(macro.token, GetPronoun1(parentQuest));
-                        }
-                        else if (macro.token == "%g2")
-                        {
-                            // Him/Her
-                            words[word] = words[word].Replace(macro.token, GetPronoun2(parentQuest));
-                        }
-                        else if (macro.token == "%g2self")
-                        {
-                            // Himself/Herself
-                            words[word] = words[word].Replace(macro.token, GetPronoun2self(parentQuest));
-                        }
-                        else if (macro.token == "%g3")
-                        {
-                            // His/Hers
-                            words[word] = words[word].Replace(macro.token, GetPronoun3(parentQuest));
-                        }
+                        words[word] = words[word].Replace(macro.token, MacroHelper.GetValue(macro.token, parentQuest));
                     }
                     else
                     {
@@ -167,111 +100,6 @@ namespace DaggerfallWorkshop.Utility
 
                 // Store result back into token
                 tokens[token].text = final;
-            }
-        }
-
-        /// <summary>
-        /// Oaths by race.
-        /// </summary>
-        enum RacialOaths
-        {
-            None = 0,
-            Nord = 201,
-            Khajiit = 202,
-            Redguard = 203,
-            Breton = 204,
-            Argonian = 205,
-            Bosmer = 206,
-            Altmer = 207,
-            Dunmer = 208,
-        }
-
-        // Oaths seem to be declared by NPC race
-        // Daggerfall NPCs have a limited range of races (usually Breton or Redguard).
-        // Have seen Nord oaths used in Daggerfall (e.g. Mages guild questor in Gothway Garden)
-        // Suspect NPCs with race: -1 (e.g. #63) get a random humanoid race within reason
-        // Just returning Nord oaths for now until ready to build this out properly
-        // https://www.imperial-library.info/content/daggerfall-oaths-and-expletives
-        string GetOath()
-        {
-            return DaggerfallUnity.Instance.TextProvider.GetRandomText((int)RacialOaths.Nord);
-        }
-
-        string GetRegionName()
-        {
-            return GameManager.Instance.PlayerGPS.CurrentRegionName;
-        }
-
-        string GetGod(Quest quest)
-        {
-            // Get god of current NPC or fallback
-            if (quest.LastPersonReferenced != null)
-                return quest.LastPersonReferenced.GodName;
-            else
-                return "Arkay";
-        }
-
-        // He/She
-        string GetPronoun1(Quest quest)
-        {
-            if (quest.LastPersonReferenced == null)
-                return HardStrings.pronounHe;
-
-            switch (quest.LastPersonReferenced.Gender)
-            {
-                default:
-                case Game.Entity.Genders.Male:
-                    return HardStrings.pronounHe;
-                case Game.Entity.Genders.Female:
-                    return HardStrings.pronounShe;
-            }
-        }
-
-        // Him/Her
-        string GetPronoun2(Quest quest)
-        {
-            if (quest.LastPersonReferenced == null)
-                return HardStrings.pronounHim;
-
-            switch (quest.LastPersonReferenced.Gender)
-            {
-                default:
-                case Game.Entity.Genders.Male:
-                    return HardStrings.pronounHim;
-                case Game.Entity.Genders.Female:
-                    return HardStrings.pronounHer;
-            }
-        }
-
-        // Himself/Herself
-        string GetPronoun2self(Quest quest)
-        {
-            if (quest.LastPersonReferenced == null)
-                return HardStrings.pronounHimself;
-
-            switch (quest.LastPersonReferenced.Gender)
-            {
-                default:
-                case Game.Entity.Genders.Male:
-                    return HardStrings.pronounHimself;
-                case Game.Entity.Genders.Female:
-                    return HardStrings.pronounHerself;
-            }
-        }
-
-        // His/Hers
-        string GetPronoun3(Quest quest)
-        {
-            if (quest.LastPersonReferenced == null)
-                return HardStrings.pronounHis;
-
-            switch (quest.LastPersonReferenced.Gender)
-            {
-                default:
-                case Game.Entity.Genders.Male:
-                    return HardStrings.pronounHis;
-                case Game.Entity.Genders.Female:
-                    return HardStrings.pronounHers;
             }
         }
 
