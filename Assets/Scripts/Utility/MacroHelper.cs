@@ -405,7 +405,7 @@ namespace DaggerfallWorkshop.Utility
 
         private static string DmgMod(IMacroContextProvider mcp)
         {   // %dam
-            return GameManager.Instance.PlayerEntity.DamageModifier.ToString();
+            return GameManager.Instance.PlayerEntity.DamageModifier.ToString("+0;-0;0");
         }
         private static string EncumbranceMax(IMacroContextProvider mcp)
         {   // %enc
@@ -427,7 +427,7 @@ namespace DaggerfallWorkshop.Utility
         }
         private static string ToHitMod(IMacroContextProvider mcp)
         {   // %thd
-            return GameManager.Instance.PlayerEntity.ToHitModifier.ToString();
+            return GameManager.Instance.PlayerEntity.ToHitModifier.ToString("+0;-0;0");
         }
         private static string HpMod(IMacroContextProvider mcp)
         {   // %hea
