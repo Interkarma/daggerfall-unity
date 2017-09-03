@@ -27,7 +27,7 @@ namespace DaggerfallWorkshop.Game.Questing
     /// such as a basic fetch quest to two different dungeons. The name of quest cannot not be used for unique identification.
     /// Child resources generally will not care about quest UID, but this is used by quest machine.
     /// </summary>
-    public partial class Quest : MacroDataSource, IDisposable
+    public partial class Quest : IDisposable
     {
         #region Fields
 

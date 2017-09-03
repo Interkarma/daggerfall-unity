@@ -880,7 +880,7 @@ namespace DaggerfallWorkshop.Game
             return texture;
         }
 
-        public static DaggerfallMessageBox MessageBox(string message, MacroDataSource mds = null)
+        public static DaggerfallMessageBox MessageBox(string message, IMacroContextProvider mds = null)
         {
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(Instance.uiManager, Instance.uiManager.TopWindow);
             messageBox.SetText(message);
@@ -889,7 +889,7 @@ namespace DaggerfallWorkshop.Game
             return messageBox;
         }
 
-        public static DaggerfallMessageBox MessageBox(string[] message, MacroDataSource mds = null)
+        public static DaggerfallMessageBox MessageBox(string[] message, IMacroContextProvider mds = null)
         {
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(Instance.uiManager, Instance.uiManager.TopWindow);
             messageBox.SetText(message);
@@ -898,7 +898,7 @@ namespace DaggerfallWorkshop.Game
             return messageBox;
         }
 
-        public static DaggerfallMessageBox MessageBox(int id, MacroDataSource mds = null)
+        public static DaggerfallMessageBox MessageBox(int id, IMacroContextProvider mds = null)
         {
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(Instance.uiManager, Instance.uiManager.TopWindow);
             messageBox.SetTextTokens(id);

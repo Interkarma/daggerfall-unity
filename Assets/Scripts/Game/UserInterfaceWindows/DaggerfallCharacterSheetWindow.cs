@@ -400,7 +400,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (!leveling)
             {
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
-                messageBox.SetTextTokens((int)sender.Tag);
+                messageBox.SetTextTokens((int)sender.Tag, playerEntity.Stats);
                 messageBox.ClickAnywhereToClose = true;
                 messageBox.Show();
             }

@@ -189,12 +189,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return button;
         }
 
-        public void SetText(string text, MacroDataSource mds = null)
+        public void SetText(string text, IMacroContextProvider mcp = null)
         {
-            SetText(new string[] { text }, mds);
+            SetText(new string[] { text }, mcp);
         }
 
-        public void SetText(string[] rows, MacroDataSource mds = null)
+        public void SetText(string[] rows, IMacroContextProvider mcp = null)
         {
             // Tokenize rows
             List<TextFile.Token> tokenList = new List<TextFile.Token>();
@@ -216,23 +216,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetTextTokens(tokenList.ToArray());
         }
 
-        public void SetTextTokens(TextFile.Token[] tokens, MacroDataSource mds = null)
+        public void SetTextTokens(TextFile.Token[] tokens, IMacroContextProvider mcp = null)
         {
             if (!IsSetup)
                 Setup();
 
-            MacroHelper.ExpandMacros(ref tokens, mds);
+            MacroHelper.ExpandMacros(ref tokens, mcp);
             label.SetText(tokens);
             UpdatePanelSizes();
         }
 
-        public void SetTextTokens(int id, MacroDataSource mds = null)
+        public void SetTextTokens(int id, IMacroContextProvider mcp = null)
         {
             if (!IsSetup)
                 Setup();
 
             TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(id);
-            SetTextTokens(tokens, mds);
+            SetTextTokens(tokens, mcp);
         }
 
         #endregion
