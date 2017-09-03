@@ -79,7 +79,7 @@ namespace DaggerfallWorkshop.Game.Items
                 return String.Format("{0} - {1}", parent.GetBaseDamageMin() + matMod, parent.GetBaseDamageMax() + matMod);
             }
 
-            // Armour mod not correct yet.. need to refactor DaggerfallEntity.UpdateEquippedArmorValues()
+            // Armour mod is double what classic displays, but this is correct according to Allofich.
             public override string Modification()
             {   // %mod
                 return '+' + parent.GetMaterialArmorValue().ToString();

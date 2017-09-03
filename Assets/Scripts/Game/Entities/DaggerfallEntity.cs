@@ -81,6 +81,12 @@ namespace DaggerfallWorkshop.Game.Entity
         public int MaxMagicka { get { return FormulaHelper.SpellPoints(stats.Intelligence, career.SpellPointMultiplierValue); } }
         public int CurrentMagicka { get { return currentMagicka; } set { SetMagicka(value); } }
         public sbyte[] ArmorValues { get { return armorValues; } set { armorValues = value; } }
+        public int DamageModifier { get { return FormulaHelper.DamageModifier(stats.Strength); } }
+        public int MaxEncumbrance { get { return FormulaHelper.MaxEncumbrance(stats.Strength); } }
+        public int MagicResist { get { return FormulaHelper.MagicResist(stats.Willpower); } }
+        public int ToHitModifier { get { return FormulaHelper.ToHitModifier(stats.Agility); } }
+        public int HitPointsModifier { get { return FormulaHelper.HitPointsModifier(stats.Endurance); } }
+        public int HealingRateModifier { get { return FormulaHelper.HealingRateModifier(stats.Endurance); } }
 
         #endregion
 
@@ -270,32 +276,33 @@ namespace DaggerfallWorkshop.Game.Entity
             }
             else
             {
-                // Shields armor values in classic are unaffected by their material type.
+                // Shield armor values in classic are unaffected by their material type.
+                int shieldValue = armor.GetMaterialArmorValue();
                 int[] values = { 0, 0, 0, 0, 0, 0, 0 }; // shield's effect on the 7 armor values
 
                 if (armor.TemplateIndex == (int)Armor.Buckler)
                 {
-                    values[2] = 1; // left arm
-                    values[4] = 1; // gloves
+                    values[2] = shieldValue; // left arm
+                    values[4] = shieldValue; // gloves
                 }
                 else if (armor.TemplateIndex == (int)Armor.Round_Shield)
                 {
-                    values[2] = 2; // left arm
-                    values[4] = 2; // gloves
-                    values[5] = 2; // legs armor
+                    values[2] = shieldValue; // left arm
+                    values[4] = shieldValue; // gloves
+                    values[5] = shieldValue; // legs armor
                 }
                 else if (armor.TemplateIndex == (int)Armor.Kite_Shield)
                 {
-                    values[2] = 3; // left arm
-                    values[4] = 3; // gloves
-                    values[5] = 3; // legs armor
+                    values[2] = shieldValue; // left arm
+                    values[4] = shieldValue; // gloves
+                    values[5] = shieldValue; // legs armor
                 }
                 else if (armor.TemplateIndex == (int)Armor.Tower_Shield)
                 {
-                    values[0] = 4; // head
-                    values[2] = 4; // left arm
-                    values[4] = 4; // gloves
-                    values[5] = 4; // legs armor
+                    values[0] = shieldValue; // head
+                    values[2] = shieldValue; // left arm
+                    values[4] = shieldValue; // gloves
+                    values[5] = shieldValue; // legs armor
                 }
 
                 for (int i = 0; i < armorValues.Length; i++)

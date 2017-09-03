@@ -5,11 +5,13 @@
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Hazelnut
 
+using UnityEngine;
 using DaggerfallWorkshop.Game;
 using DaggerfallConnect.Arena2;
 using System.Collections.Generic;
 using System;
 using DaggerfallWorkshop.Game.Player;
+
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -85,9 +87,9 @@ namespace DaggerfallWorkshop.Utility
             { "%a", null },   // Cost of somthing.
             { "%ach", null }, // + Chance per
             { "%adr", null }, // + Duration per
-            { "%agi", null }, //  Amount of Agility
+            { "%agi", Agi }, //  Amount of Agility
             { "%arm", ItemName }, //  Armour
-            { "%ark", null }, // ?
+            { "%ark", AttributeRating }, // What property attribute is considered
             { "%ba", null },  // Book Author
             { "%bch", null }, // Base chance
             { "%bdr", null }, // Base Duration
@@ -103,7 +105,7 @@ namespace DaggerfallWorkshop.Utility
             { "%cri", null }, // Accused crime
             { "%crn", CurrentRegion }, // Current Region
             { "%dae", null }, // A daedra
-            { "%dam", null }, // Damage modifyer
+            { "%dam", DmgMod }, // Damage modifyer
             { "%dat", Date }, // Date
             { "%di", null },  // Direction
             { "%dip", null }, // Days in prison
@@ -111,8 +113,8 @@ namespace DaggerfallWorkshop.Utility
             { "%dts", null }, // Daedra
             { "%dwr", null }, // Days (hours) with room remaining?
             { "%ef", null },  // Local shop name
-            { "%enc", null }, // Encumberence
-            { "%end", null }, // Amount of Endurance
+            { "%enc", EncumbranceMax }, // Encumbrance
+            { "%end", End }, // Amount of Endurance
             { "%fcn", null }, // Another city
             { "%fe", null },  // ?
             { "%fea", null }, // ?
@@ -134,8 +136,8 @@ namespace DaggerfallWorkshop.Utility
             { "%gii", null }, // Amount of gold in hand
             { "%god", God }, // Some god (listed in TEXT.RSC)
             { "%gtp", null }, // Amount of fine
-            { "%hea", null }, // HP Modifier
-            { "%hmd", null }, // Healing rate modifer
+            { "%hea", HpMod }, // HP Modifier
+            { "%hmd", HealRateMod }, // Healing rate modifer
             { "%hnr", null }, // Honorific
             { "%hnt", null }, // Direction of location.
             { "%hnt2", null },// ?
@@ -146,7 +148,7 @@ namespace DaggerfallWorkshop.Utility
             { "%hs", null },  //  Holding Soul type
             { "%htwn", null },// House town
             { "%imp", null }, // ?
-            { "%int", null }, // Amount of Intelligence
+            { "%int", Int }, // Amount of Intelligence
             { "%it", ItemName },  //  Item
             { "%jok", null }, // A joke
             { "%key", null }, // A location (?)
@@ -158,9 +160,9 @@ namespace DaggerfallWorkshop.Utility
             { "%loc", null }, // Location marked on map
             { "%lt1", null }, // Title of _fl1
             { "%ltn", LocalReputation }, // In the eyes of the law you are.......
-            { "%luc", null }, // Luck
+            { "%luc", Luck }, // Luck
             { "%map", null }, // ?
-            { "%mad", null }, // Resistance
+            { "%mad", MagicResist }, // Resistance
             { "%mat", Material }, // Material
             { "%mit", null }, // Item
             { "%mn", null },  // Random First(?) name (Male?)
@@ -181,7 +183,7 @@ namespace DaggerfallWorkshop.Utility
             { "%pct", GuildTitle }, // Player guild title/rank
             { "%pdg", null }, // Days in jail
             { "%pen", null }, // Prison sentence
-            { "%per", null }, // Amount of Personality
+            { "%per", Per }, // Amount of Personality
             { "%plq", null }, // Place of something in log.
             { "%pnq", null }, // Person of something in log
             { "%pp1", null }, // ?
@@ -214,22 +216,22 @@ namespace DaggerfallWorkshop.Utility
             { "%reg", Region }, // Region
             { "%rn", null },  // Regent's Name
             { "%rt", null },  // Regent's Title
-            { "%spc", null }, // Current Spell Points
+            { "%spc", Magicka }, // Current Spell Points
             { "%ski", null }, // Skill
-            { "%spd", null }, // Speed
-            { "%spt", null }, // ?
-            { "%str", null }, // Amount of strength
+            { "%spd", Spd }, // Speed
+            { "%spt", MagickaMax }, // Max spell points
+            { "%str", Str }, // Amount of strength
             { "%sub", null }, // ?
             { "%t", null },   // Regent's Title
             { "%tcn", null }, // Travel city name
-            { "%thd", null }, // Combat odds
+            { "%thd", ToHitMod }, // Combat odds
             { "%tim", Time }, // Time
             { "%vam", null }, // PC's vampire clan
             { "%vcn", null }, // Vampire's Clan
             { "%vn", null },  // ?
             { "%wdm", WeaponDamage }, // Weapon damage
             { "%wep", ItemName }, // Weapon
-            { "%wil", null }, // ?
+            { "%wil", Wil }, // ?
             { "%wpn", null }, // Poison (?)
             { "%wth", Worth }, // Worth
         };
@@ -270,6 +272,10 @@ namespace DaggerfallWorkshop.Utility
                             {
                                 words[wordIdx] = GetValue(words[wordIdx], mcp);
                             }
+                        }
+                        else if (words[wordIdx].StartsWith("+%"))
+                        {   // Support willpower message which erroneously has the + just before the %. 
+                            words[wordIdx] = '+' + GetValue(words[wordIdx].Substring(1), mcp);
                         }
                     }
 
@@ -319,7 +325,9 @@ namespace DaggerfallWorkshop.Utility
             }
         }
 
+        //
         // Global macro handlers - not context sensitive. (mcp will be null, and should not be used)
+        //
         #region global macro handlers
 
         private static string CityName(IMacroContextProvider mcp)
@@ -395,6 +403,43 @@ namespace DaggerfallWorkshop.Utility
             return (parts != null && parts.Length > 0) ? parts[0] : name;
         }
 
+        private static string DmgMod(IMacroContextProvider mcp)
+        {   // %dam
+            return GameManager.Instance.PlayerEntity.DamageModifier.ToString();
+        }
+        private static string EncumbranceMax(IMacroContextProvider mcp)
+        {   // %enc
+            return GameManager.Instance.PlayerEntity.MaxEncumbrance.ToString();
+        }
+
+        private static string MagickaMax(IMacroContextProvider mcp)
+        {   // %spc
+            return GameManager.Instance.PlayerEntity.CurrentMagicka.ToString();
+        }
+        private static string Magicka(IMacroContextProvider mcp)
+        {   // %spt
+            return GameManager.Instance.PlayerEntity.MaxMagicka.ToString();
+        }
+
+        private static string MagicResist(IMacroContextProvider mcp)
+        {   // %mad
+            Debug.Log(GameManager.Instance.PlayerEntity.MagicResist);
+            return GameManager.Instance.PlayerEntity.MagicResist.ToString();
+        }
+        private static string ToHitMod(IMacroContextProvider mcp)
+        {   // %thd
+            return GameManager.Instance.PlayerEntity.ToHitModifier.ToString();
+        }
+        private static string HpMod(IMacroContextProvider mcp)
+        {   // %hea
+            return '+' + GameManager.Instance.PlayerEntity.HitPointsModifier.ToString();
+        }
+        private static string HealRateMod(IMacroContextProvider mcp)
+        {   // %hmd
+            return '+' + GameManager.Instance.PlayerEntity.HealingRateModifier.ToString();
+        }
+
+
         private static string PlayerRace(IMacroContextProvider mcp)
         {   // %ra
             return GameManager.Instance.PlayerEntity.RaceTemplate.Name;
@@ -409,8 +454,48 @@ namespace DaggerfallWorkshop.Utility
 
         #endregion
 
+        //
         // Contextual macro handlers - delegate to the macro data source provided by macro context provider.
+        //
         #region contextual macro handlers
+
+        private static string Str(IMacroContextProvider mcp)
+        {   // %str
+            return mcp.GetMacroDataSource().Str();
+        }
+        private static string Int(IMacroContextProvider mcp)
+        {   // %int
+            return mcp.GetMacroDataSource().Int();
+        }
+        private static string Wil(IMacroContextProvider mcp)
+        {   // %wil
+            return mcp.GetMacroDataSource().Wil();
+        }
+        private static string Agi(IMacroContextProvider mcp)
+        {   // %agi
+            return mcp.GetMacroDataSource().Agi();
+        }
+        private static string End(IMacroContextProvider mcp)
+        {   // %end
+            return mcp.GetMacroDataSource().End();
+        }
+        private static string Per(IMacroContextProvider mcp)
+        {   // %per
+            return mcp.GetMacroDataSource().Per();
+        }
+        private static string Spd(IMacroContextProvider mcp)
+        {   // %spd
+            return mcp.GetMacroDataSource().Spd();
+        }
+        private static string Luck(IMacroContextProvider mcp)
+        {   // %luc
+            return mcp.GetMacroDataSource().Luck();
+        }
+
+        private static string AttributeRating(IMacroContextProvider mcp)
+        {   // %ark
+            return mcp.GetMacroDataSource().AttributeRating();
+        }
 
         public static string ItemName(IMacroContextProvider mcp)
         {   // %wep, %arm, %it
