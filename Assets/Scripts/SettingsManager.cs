@@ -164,7 +164,7 @@ namespace DaggerfallWorkshop
             MouseLookSensitivity = GetFloat(sectionControls, "MouseLookSensitivity", 0.1f, 4.0f);
             HeadBobbing = GetBool(sectionControls, "HeadBobbing");
             Handedness = GetInt(sectionControls, "Handedness", 0, 3);
-            WeaponAttackThreshold = GetFloat(sectionControls, "WeaponAttackThreshold", 0.01f, 1.0f);
+            WeaponAttackThreshold = GetFloat(sectionControls, "WeaponAttackThreshold", 0.001f, 1.0f);
             WeaponSensitivity = GetFloat(sectionControls, "WeaponSensitivity", 0.1f, 10.0f);
             StartCellX = GetInt(sectionStartup, "StartCellX", 2, 997);
             StartCellY = GetInt(sectionStartup, "StartCellY", 2, 497);
