@@ -5,8 +5,6 @@
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Hazelnut
 
-using DaggerfallConnect;
-using DaggerfallWorkshop.Game;
 using System;
 
 namespace DaggerfallWorkshop.Utility
@@ -92,7 +90,7 @@ namespace DaggerfallWorkshop.Utility
             throw new NotImplementedException();
         }
 
-        public virtual string Modification()
+        public virtual string ArmourMod()
         {   // %mod
             throw new NotImplementedException();
         }

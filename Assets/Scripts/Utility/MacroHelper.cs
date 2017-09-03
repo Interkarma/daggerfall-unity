@@ -167,7 +167,7 @@ namespace DaggerfallWorkshop.Utility
             { "%mit", null }, // Item
             { "%mn", null },  // Random First(?) name (Male?)
             { "%mn2", null }, // Same as _mn (?)
-            { "%mod", Modification }, // Modification
+            { "%mod", ArmourMod }, // Modification
             { "%mpw", null }, // Magic powers
             { "%n", null },   // A random female first name
             { "%nam", null }, // A random full name
@@ -423,7 +423,6 @@ namespace DaggerfallWorkshop.Utility
 
         private static string MagicResist(IMacroContextProvider mcp)
         {   // %mad
-            Debug.Log(GameManager.Instance.PlayerEntity.MagicResist);
             return GameManager.Instance.PlayerEntity.MagicResist.ToString();
         }
         private static string ToHitMod(IMacroContextProvider mcp)
@@ -432,11 +431,11 @@ namespace DaggerfallWorkshop.Utility
         }
         private static string HpMod(IMacroContextProvider mcp)
         {   // %hea
-            return '+' + GameManager.Instance.PlayerEntity.HitPointsModifier.ToString();
+            return GameManager.Instance.PlayerEntity.HitPointsModifier.ToString("+0;-0;0");
         }
         private static string HealRateMod(IMacroContextProvider mcp)
         {   // %hmd
-            return '+' + GameManager.Instance.PlayerEntity.HealingRateModifier.ToString();
+            return GameManager.Instance.PlayerEntity.HealingRateModifier.ToString("+0;-0;0");
         }
 
 
@@ -527,9 +526,9 @@ namespace DaggerfallWorkshop.Utility
             return mcp.GetMacroDataSource().WeaponDamage();
         }
 
-        public static string Modification(IMacroContextProvider mcp)
+        public static string ArmourMod(IMacroContextProvider mcp)
         {   // %mod
-            return mcp.GetMacroDataSource().Modification();
+            return mcp.GetMacroDataSource().ArmourMod();
         }
 
         public static string Pronoun(IMacroContextProvider mcp)
