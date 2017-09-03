@@ -1,5 +1,5 @@
-﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Project:         Daggerfall Tools For Unity
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -43,7 +43,7 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
     Color unselectedTextColor = new Color(0.6f, 0.6f, 0.6f, 1f);
     Color selectedTextColor = new Color(0.0f, 0.8f, 0.0f, 1.0f);
     Color listBoxBackgroundColor = new Color(0.1f, 0.1f, 0.1f, 0.5f);
-    Color scrollBarBackgroundColor = new Color(0.2f, 0.2f, 0.2f, 0.7f);
+    Color scrollBarBackgroundColor = new Color(0.0f, 0.5f, 0.0f, 0.4f);
 
     // Settings
     Checkbox DungeonLightShadows;
@@ -55,13 +55,13 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
 
     Checkbox StartInDungeon;
 
-    VerticalScrollBar fovScroll;
+    HorizontalSlider fovSlider;
     TextLabel fovNumberLabel;
 
-    VerticalScrollBar mouseSensitivityScroll;
+    HorizontalSlider mouseSensitivitySlider;
     TextLabel mouseSensitivityNumberLabel;
 
-    VerticalScrollBar terrainDistanceScroll;
+    HorizontalSlider terrainDistanceSlider;
     TextLabel terrainDistanceNumberLabel;
 
     ListBox ShadowResolutionMode;
@@ -184,41 +184,20 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
 
         // FOV
         y = 20f;
-        fovScroll = AddVerticalScrollBar(centerPanel, fovMin, fovMax, fovScroll_OnScroll);
-        fovScroll.Size = new Vector2(5.0f, 30.0f);
-        fovScroll.Update();
-        TextLabel fovLabel = AddTextlabel(centerPanel, "Field Of View", HorizontalAlignment.None);
-        fovLabel.Position = new Vector2(ScrollLeftMargin, fovLabel.Position.y);
-        AddToolTipToTextLabel(fovLabel, "The observable world that is seen at any given moment");
-        y += 1;
-        fovNumberLabel = AddTextlabel(centerPanel, DaggerfallUnity.Settings.FieldOfView.ToString());
-        fovScroll.ScrollIndex = DaggerfallUnity.Settings.FieldOfView - fovMin;
+        int fovStartValue = DaggerfallUnity.Settings.FieldOfView;
+        string fovToolTip = "The observable world that is seen at any given moment";
+        AddSlider(centerPanel, fovMin, fovMax, fovStartValue, "Field Of View", fovToolTip, fovScroll_OnScroll, out fovSlider, out fovNumberLabel);
 
         // Mouse
-        y += 9;
-        mouseSensitivityScroll = AddVerticalScrollBar(centerPanel, sensitivityMin, sensitivityMax, mouseSensitivityScroll_OnScroll);
-        mouseSensitivityScroll.Size = new Vector2(5.0f, 30.0f);
-        mouseSensitivityScroll.Update();
-        TextLabel mouseSensitivityLabel = AddTextlabel(centerPanel, "Mouse Sensitivity", HorizontalAlignment.None);
-        mouseSensitivityLabel.Position = new Vector2(ScrollLeftMargin, mouseSensitivityLabel.Position.y);
-        AddToolTipToTextLabel(mouseSensitivityLabel, "Mouse Sensitivity");
-        y += 1;
-        mouseSensitivityNumberLabel = AddTextlabel(centerPanel, DaggerfallUnity.Settings.MouseLookSensitivity.ToString());
-        mouseSensitivityScroll.ScrollIndex = (int)(DaggerfallUnity.Settings.MouseLookSensitivity * 10 - sensitivityMin);
+        int sensitivityStartValue = (int)(DaggerfallUnity.Settings.MouseLookSensitivity * 10);
+        AddSlider(centerPanel, sensitivityMin, sensitivityMax, sensitivityStartValue, "Mouse Sensitivity", "Mouse Sensitivity", mouseSensitivityScroll_OnScroll, out mouseSensitivitySlider, out mouseSensitivityNumberLabel);
 
         // Terrain distance
-        y += 9;
-        terrainDistanceScroll = AddVerticalScrollBar(centerPanel, terrainDistanceMin, terrainDistanceMax, terrainDistanceScroll_OnScroll);
-        terrainDistanceScroll.Size = new Vector2(5.0f, 20.0f);
-        terrainDistanceScroll.Update();
-        TextLabel terrainDistanceTitleLabel = AddTextlabel(centerPanel, "Terrain Distance", HorizontalAlignment.None);
-        terrainDistanceTitleLabel.Position = new Vector2(ScrollLeftMargin, terrainDistanceTitleLabel.Position.y);
-        AddToolTipToTextLabel(terrainDistanceTitleLabel, "Terrain Distance");
-        y += 1;
-        terrainDistanceNumberLabel = AddTextlabel(centerPanel, DaggerfallUnity.Settings.TerrainDistance.ToString());
-        terrainDistanceScroll.ScrollIndex = DaggerfallUnity.Settings.TerrainDistance - terrainDistanceMin;
+        int terraindDistanceStartValue = DaggerfallUnity.Settings.TerrainDistance;
+        AddSlider(centerPanel, terrainDistanceMin, terrainDistanceMax, terraindDistanceStartValue, "Terrain Distance", "Terrain Distance", terrainDistanceScroll_OnScroll, out terrainDistanceSlider, out terrainDistanceNumberLabel);
 
-        // shadow resolution
+        // Shadow resolution
+        y = 111;
         AddTextlabel(centerPanel, "Shadow Resolution");
         ShadowResolutionMode = AddListbox(centerPanel, ShadowResolutionModes(), DaggerfallUnity.Settings.ShadowResolutionMode);
         ShadowResolutionMode.Position += new Vector2(30.0f, 0.0f);
@@ -338,25 +317,52 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
     }
 
     /// <summary>
-    /// Add a ScrollBar.
+    /// Add a slider with a numerical indicator.
     /// </summary>
     /// <param name="panel">leftPanel, centerPanel or rightPanel.</param>
-    /// <param name="minValue">Minimum value on scroll.</param>
-    /// <param name="maxValue">Maximum value on scroll.</param>
-    /// <param name="action">Action to execute on scroll.</param>
-    /// <returns></returns>
-    VerticalScrollBar AddVerticalScrollBar (Panel panel, int minValue, int maxValue, VerticalScrollBar.OnScrollHandler action)
+    /// <param name="minValue">Minimum value on slider.</param>
+    /// <param name="maxValue">Maximum value on slider.</param>
+    /// <param name="startValue">Initial value on slider.</param>
+    /// <param name="title">Descriptive name of settings.</param>
+    /// <param name="toolTip">Description of setting.</param>
+    /// <param name="updateIndicator">Action to execute on scroll.</param>
+    /// <param name="slider">Slider bar.</param>
+    /// <param name="indicator">Slider value indicator.</param>
+    void AddSlider(
+        Panel panel,
+        int minValue,
+        int maxValue,
+        int startValue,
+        string title,
+        string toolTip,
+        HorizontalSlider.OnScrollHandler updateIndicator,
+        out HorizontalSlider slider,
+        out TextLabel indicator)
     {
-        VerticalScrollBar scrollBar = new VerticalScrollBar();
-        scrollBar.Position = new Vector2(18f, y);
-        scrollBar.Size = new Vector2(5, 40);
-        scrollBar.DisplayUnits = 20;
-        scrollBar.TotalUnits = (maxValue - minValue) + 20;
-        scrollBar.BackgroundColor = scrollBarBackgroundColor;
-        scrollBar.OnScroll += action;
-        panel.Components.Add(scrollBar);
+        // Title
+        TextLabel label = AddTextlabel(panel, title, HorizontalAlignment.None);
+        label.Position = new Vector2(ScrollLeftMargin, label.Position.y);
+        AddToolTipToTextLabel(label, toolTip);
 
-        return scrollBar;
+        // Slider
+        slider = new HorizontalSlider();
+        slider.Position = new Vector2(16f, y);
+        slider.Size = new Vector2(70.0f, 5.0f);
+        slider.DisplayUnits = 20;
+        slider.TotalUnits = (maxValue - minValue) + 20;
+        slider.ScrollIndex = startValue - minValue;
+        slider.BackgroundColor = scrollBarBackgroundColor;
+        slider.TintColor = new Color(153, 153, 0);
+        slider.OnScroll += updateIndicator;
+        panel.Components.Add(slider);
+
+        // Indicator
+        indicator = new TextLabel();
+        indicator.Position = new Vector2(slider.Size.x + 26, y);
+        updateIndicator();
+        panel.Components.Add(indicator);
+
+        y += 9;
     }
 
     #endregion
@@ -404,7 +410,7 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
     /// </summary>
     private void fovScroll_OnScroll()
     {
-        fovLabel = fovScroll.ScrollIndex + fovMin;
+        fovLabel = fovSlider.ScrollIndex + fovMin;
         fovNumberLabel.Text = fovLabel.ToString();
     }
 
@@ -413,7 +419,7 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
     /// </summary>
     private void mouseSensitivityScroll_OnScroll()
     {
-        sensitivityLabel = mouseSensitivityScroll.ScrollIndex + sensitivityMin;
+        sensitivityLabel = mouseSensitivitySlider.ScrollIndex + sensitivityMin;
         sensitivityLabel /= 10;
         mouseSensitivityNumberLabel.Text = sensitivityLabel.ToString();
     }
@@ -423,7 +429,7 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
     /// </summary>
     private void terrainDistanceScroll_OnScroll()
     {
-        terrainDistanceLabel = terrainDistanceScroll.ScrollIndex + terrainDistanceMin;
+        terrainDistanceLabel = terrainDistanceSlider.ScrollIndex + terrainDistanceMin;
         terrainDistanceNumberLabel.Text = terrainDistanceLabel.ToString();
     }
 
