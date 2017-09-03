@@ -13,12 +13,22 @@ namespace DaggerfallWorkshop.Utility
 {
     /// <summary>
     /// Macro data source base class. Extend this to provide context for macros.
-    /// This abstract class provides default implementations so only applicable
+    /// This abstract class provides default implementations so that only applicable
     /// handlers need to be implemented.
     /// </summary>
     public abstract class MacroDataSource   
     // TODO: extract interface when complete set of handlers done? : IMacroDataSource
     {
+        public virtual string ItemName()
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual string Worth()
+        {
+            throw new NotImplementedException();
+        }
+
         public virtual string Material()
         {   // %mat
             throw new NotImplementedException();
@@ -41,11 +51,6 @@ namespace DaggerfallWorkshop.Utility
 
         public virtual string Weapon()
         {   // %wep
-            throw new NotImplementedException();
-        }
-
-        public virtual string ItemName()
-        {
             throw new NotImplementedException();
         }
 

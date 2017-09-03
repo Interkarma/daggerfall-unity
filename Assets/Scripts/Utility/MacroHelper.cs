@@ -13,17 +13,65 @@ using DaggerfallWorkshop.Game.Player;
 
 namespace DaggerfallWorkshop.Utility
 {
-    /// <summary>
-    /// Helper class for context sensitive macros like '%abc' that're used in following Daggerfall files:
-    /// arena2\text.rsc, fall.exe, arena2\*.qrc, or arena2\bio*.txt
-    /// </summary>
+    /**
+     * <summary>
+     * Helper class for context sensitive macros like '%abc' that're used in following Daggerfall files:
+     * arena2\text.rsc, fall.exe, arena2\*.qrc, or arena2\bio*.txt
+     * </summary>
+     * 
+     * If any messages displayed in game contain the following markup, this is what needs adding:
+     * %abc[undefined]      -> macro needs adding to <c>macroHandlers</c> list
+     * %abc[unhandled]      -> macro requires handler method name in <c>macroHandlers</c> list
+     * %abc[srcDataUnknown] -> macro context provider object needs handler method adding
+     * 
+     * Adding new macro handlers:
+     * 
+     * Open the file <c>DaggerfallWorkshop.Utility.MacroHelper</c>.
+     * Does the macro need an object instance to provide context? (e.g. item, quest)
+     * 
+     * If no context required:
+     * 1) Find the macro in <c>macroHandlers</c>, if the macro isn't in the list then add it at the bottom. e.g. '%ra'
+     * 2) Define the handler method name, replacing 'null' with it. e.g. 'PlayerRace'
+     * 3) Add a suitable handler method to the region <c>global macro handlers</c>. (mcp will be null so don't use it) e.g.
+     * <code>
+     * private static string PlayerRace(IMacroContextProvider mcp)
+     * {   // %ra
+     *     return GameManager.Instance.PlayerEntity.RaceTemplate.Name;
+     * }
+     * </code>
+     *      
+     * If context required:
+     * 1) Find the macro in <c>macroHandlers</c>, if the macro isn't in the list then add it at the bottom. e.g. '%ra'
+     * 2) Define the handler method name, replacing 'null' with it. e.g. 'PlayerRace'
+     * 3) Add a suitable handler method that delegates to the an <c>MacroDataSource</c> to the region <c>contextual macro handlers</c>. e.g.
+     * <code>
+     * public static string Region(IMacroContextProvider mcp)
+     * {   // %reg
+     *     return mcp.GetMacroDataSource().Region();
+     * }
+     * </code>
+     * 4) Add an unimplemented implementation to the <c>MacroDataSource</c> base class. e.g.
+     * <code>
+     * public virtual string Region()
+     * {   // %reg
+     *     throw new NotImplementedException();
+     * }
+     * </code>
+     * 5) Find the class that will provide the context (named using suffix 'MCP') and override the handler method. (<c>parent</c> refers to the context providing class) e.g.
+     * <code>
+     * public override string Region()
+     * {
+     *     return (parent.LastPersonReferenced != null) ? parent.LastPersonReferenced.HomeRegionName : "";
+     * }
+     * 
+     */
     public static class MacroHelper
     {
         public delegate string MacroHandler(IMacroContextProvider mcp = null);
 
         #region macro definitions and handler mapping
 
-        static Dictionary<string, MacroHandler> macros = new Dictionary<string, MacroHandler>()
+        static Dictionary<string, MacroHandler> macroHandlers = new Dictionary<string, MacroHandler>()
         {
             { "%1am", null }, // 1st + Magnitude
             { "%1bm", null }, // 1st base Magnitude
@@ -183,12 +231,18 @@ namespace DaggerfallWorkshop.Utility
             { "%wep", ItemName }, // Weapon
             { "%wil", null }, // ?
             { "%wpn", null }, // Poison (?)
-            { "%wth", null }, // Worth
+            { "%wth", Worth }, // Worth
         };
         #endregion
 
+        // Any punctuation characters that can be on the end of a macro symbol need adding here.
         static char[] PUNCTUATION = { '.', ',', '\'' };
 
+        /// <summary>
+        /// Expands any macros in the textfile tokens.
+        /// </summary>
+        /// <param name="tokens">a reference to textfile tokens to have macros expanded.</param>
+        /// <param name="mcp">an object instance to provide context for macro expansion. (optional)</param>
         public static void ExpandMacros(ref TextFile.Token[] tokens, IMacroContextProvider mcp = null)
         {
             // Iterate message tokens
@@ -232,11 +286,17 @@ namespace DaggerfallWorkshop.Utility
             }
         }
 
+        /// <summary>
+        /// Gets the value for a single macro symbol string.
+        /// </summary>
+        /// <returns>The expanded macro value.</returns>
+        /// <param name="symbolStr">macro symbol string.</param>
+        /// <param name="mcp">an object instance providing context for macro expansion. (optional)</param>
         public static string GetValue(string symbolStr, IMacroContextProvider mcp)
         {
-            if (macros.ContainsKey(symbolStr))
+            if (macroHandlers.ContainsKey(symbolStr))
             {
-                MacroHandler svp = macros[symbolStr];
+                MacroHandler svp = macroHandlers[symbolStr];
                 if (svp != null)
                 {
                     try
@@ -259,8 +319,8 @@ namespace DaggerfallWorkshop.Utility
             }
         }
 
-        // Global symbol value providers - not context sensitive. (mcp will be null, and should not be used)
-        #region global symbol value providers
+        // Global macro handlers - not context sensitive. (mcp will be null, and should not be used)
+        #region global macro handlers
 
         private static string CityName(IMacroContextProvider mcp)
         {   // %cn
@@ -349,8 +409,18 @@ namespace DaggerfallWorkshop.Utility
 
         #endregion
 
-        // Context sensitive symbol value providers - delegate to the passed context symbol data source.
-        #region context sensitive symbol value providers
+        // Contextual macro handlers - delegate to the macro data source provided by macro context provider.
+        #region contextual macro handlers
+
+        public static string ItemName(IMacroContextProvider mcp)
+        {   // %wep, %arm, %it
+            return mcp.GetMacroDataSource().ItemName();
+        }
+
+        public static string Worth(IMacroContextProvider mcp)
+        {   // %wth
+            return mcp.GetMacroDataSource().Worth();
+        }
 
         public static string Material(IMacroContextProvider mcp)
         {   // %mat
@@ -370,11 +440,6 @@ namespace DaggerfallWorkshop.Utility
         public static string WeaponDamage(IMacroContextProvider mcp)
         {   // %wdm
             return mcp.GetMacroDataSource().WeaponDamage();
-        }
-
-        public static string ItemName(IMacroContextProvider mcp)
-        {   // %wep, %arm, %it
-            return mcp.GetMacroDataSource().ItemName();
         }
 
         public static string Modification(IMacroContextProvider mcp)

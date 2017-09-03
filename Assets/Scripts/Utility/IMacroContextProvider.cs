@@ -8,8 +8,8 @@
 namespace DaggerfallWorkshop.Utility
 {
     /// <summary>
-    /// Macro context provider interface to be implemented by object that needs to provide
-    /// context for macros. Returns a macro data source containing applicable handler methods.
+    /// Macro context provider interface to be implemented by any object that needs to provide
+    /// context for macro expansions. Returns a macro data source containing applicable handler methods.
     /// </summary>
     public interface IMacroContextProvider
     {

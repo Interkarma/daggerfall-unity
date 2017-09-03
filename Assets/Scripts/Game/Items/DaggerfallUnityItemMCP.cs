@@ -22,10 +22,23 @@ namespace DaggerfallWorkshop.Game.Items
         /// </summary>
         private class ItemMacroDataSource : MacroDataSource
         {
+            private string[] conditions = new string[] { "Broken", "Useless", "Battered", "Worn", "Used", "Slightly Used", "Almost New", "New" };
+            private int[] conditionThresholds = new int[] {1, 5, 15, 40, 60, 75, 91, 101};
+
             private DaggerfallUnityItem parent;
             public ItemMacroDataSource(DaggerfallUnityItem item)
             {
                 this.parent = item;
+            }
+
+            public override string ItemName()
+            {
+                return parent.shortName;
+            }
+
+            public override string Worth()
+            {
+                return parent.value.ToString();
             }
 
             public override string Material()
@@ -43,10 +56,15 @@ namespace DaggerfallWorkshop.Game.Items
 
             public override string Condition()
             {   // %qua
-                if (parent.currentCondition == parent.maxCondition)
-                    return "New";
+                if (parent.maxCondition > 0 && parent.currentCondition <= parent.maxCondition)
+                {
+                    int conditionPercentage = 100 * parent.currentCondition / parent.maxCondition;
+                    int i = 0;
+                    while (conditionPercentage > conditionThresholds[i])
+                        i++;
+                    return conditions[i];
+                }
                 else
-                    // TODO: map to condition strings.
                     return parent.currentCondition.ToString();
             }
 
@@ -61,16 +79,11 @@ namespace DaggerfallWorkshop.Game.Items
                 return String.Format("{0} - {1}", parent.GetBaseDamageMin() + matMod, parent.GetBaseDamageMax() + matMod);
             }
 
-            public override string ItemName()
-            {
-                return parent.shortName;
+            // Armour mod not correct yet.. need to refactor DaggerfallEntity.UpdateEquippedArmorValues()
+            public override string Modification()
+            {   // %mod
+                return '+' + parent.GetMaterialArmorValue().ToString();
             }
-
-            // Armour not fully implemented yet.
-            //public override string Modification()
-            //{   // %mod
-            //    return shortName;
-            //}
         }
     }
 }
