@@ -11,7 +11,13 @@ using System;
 
 namespace DaggerfallWorkshop.Utility
 {
-    public abstract class MacroDataSource
+    /// <summary>
+    /// Macro data source base class. Extend this to provide context for macros.
+    /// This abstract class provides default implementations so only applicable
+    /// handlers need to be implemented.
+    /// </summary>
+    public abstract class MacroDataSource   
+    // TODO: extract interface when complete set of handlers done? : IMacroDataSource
     {
         public virtual string Material()
         {   // %mat

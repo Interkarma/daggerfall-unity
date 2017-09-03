@@ -22,7 +22,7 @@ namespace DaggerfallWorkshop.Game.Items
     /// <summary>
     /// Parent class for any individual item in Daggerfall Unity.
     /// </summary>
-    public partial class DaggerfallUnityItem : MacroDataSource
+    public partial class DaggerfallUnityItem
     {
         #region Fields
 

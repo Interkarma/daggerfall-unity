@@ -14,14 +14,16 @@ using DaggerfallWorkshop.Game.Player;
 namespace DaggerfallWorkshop.Utility
 {
     /// <summary>
-    /// Context sensitive macros like '%abc' are used in following Daggerfall files:
+    /// Helper class for context sensitive macros like '%abc' that're used in following Daggerfall files:
     /// arena2\text.rsc, fall.exe, arena2\*.qrc, or arena2\bio*.txt
     /// </summary>
     public static class MacroHelper
     {
-        public delegate string MacroValueProvider(MacroDataSource mds = null);
+        public delegate string MacroHandler(IMacroContextProvider mcp = null);
 
-        static Dictionary<string, MacroValueProvider> macros = new Dictionary<string, MacroValueProvider>()
+        #region macro definitions and handler mapping
+
+        static Dictionary<string, MacroHandler> macros = new Dictionary<string, MacroHandler>()
         {
             { "%1am", null }, // 1st + Magnitude
             { "%1bm", null }, // 1st base Magnitude
@@ -183,10 +185,11 @@ namespace DaggerfallWorkshop.Utility
             { "%wpn", null }, // Poison (?)
             { "%wth", null }, // Worth
         };
+        #endregion
 
         static char[] PUNCTUATION = { '.', ',', '\'' };
 
-        public static void ExpandMacros(ref TextFile.Token[] tokens, MacroDataSource mds = null)
+        public static void ExpandMacros(ref TextFile.Token[] tokens, IMacroContextProvider mcp = null)
         {
             // Iterate message tokens
             string tokenText;
@@ -207,11 +210,11 @@ namespace DaggerfallWorkshop.Utility
                             if (words[wordIdx].IndexOfAny(PUNCTUATION) == wordLen)
                             {
                                 string symbolStr = words[wordIdx].Substring(0, wordLen);
-                                words[wordIdx] = GetValue(symbolStr, mds) + words[wordIdx].Substring(wordLen);
+                                words[wordIdx] = GetValue(symbolStr, mcp) + words[wordIdx].Substring(wordLen);
                             }
                             else
                             {
-                                words[wordIdx] = GetValue(words[wordIdx], mds);
+                                words[wordIdx] = GetValue(words[wordIdx], mcp);
                             }
                         }
                     }
@@ -229,16 +232,16 @@ namespace DaggerfallWorkshop.Utility
             }
         }
 
-        public static string GetValue(string symbolStr, MacroDataSource mds)
+        public static string GetValue(string symbolStr, IMacroContextProvider mcp)
         {
             if (macros.ContainsKey(symbolStr))
             {
-                MacroValueProvider svp = macros[symbolStr];
+                MacroHandler svp = macros[symbolStr];
                 if (svp != null)
                 {
                     try
                     {
-                        return svp.Invoke(mds);
+                        return svp.Invoke(mcp);
                     }
                     catch (NotImplementedException)
                     {
@@ -256,11 +259,10 @@ namespace DaggerfallWorkshop.Utility
             }
         }
 
+        // Global symbol value providers - not context sensitive. (mcp will be null, and should not be used)
         #region global symbol value providers
 
-        // Global symbol value providers - not context sensitive. (mds will be null, and should not be used)
-
-        private static string CityName(MacroDataSource mds)
+        private static string CityName(IMacroContextProvider mcp)
         {   // %cn
             PlayerGPS gps = GameManager.Instance.PlayerGPS;
             if (gps.HasCurrentLocation)
@@ -269,17 +271,17 @@ namespace DaggerfallWorkshop.Utility
                 return gps.CurrentRegion.Name;
         }
 
-        private static string CityName2(MacroDataSource mds)
+        private static string CityName2(IMacroContextProvider mcp)
         {   // %cn2 (only used in msg #200)
             throw new NotImplementedException();
         }
 
-        private static string CurrentRegion(MacroDataSource mds)
+        private static string CurrentRegion(IMacroContextProvider mcp)
         {   // %crn
             return GameManager.Instance.PlayerGPS.CurrentRegion.Name;
         }
 
-        private static string LocalReputation(MacroDataSource mds)
+        private static string LocalReputation(IMacroContextProvider mcp)
         {   // %ltn
             PlayerGPS gps = GameManager.Instance.PlayerGPS;
             PersistentFactionData factionData = Game.GameManager.Instance.PlayerEntity.FactionData;
@@ -311,34 +313,34 @@ namespace DaggerfallWorkshop.Utility
             return "Unknown";
         }
 
-        private static string Time(MacroDataSource mds)
+        private static string Time(IMacroContextProvider mcp)
         {   // %tim
             return DaggerfallUnity.Instance.WorldTime.Now.MinTimeString();
         }
 
-        private static string Date(MacroDataSource mds)
+        private static string Date(IMacroContextProvider mcp)
         {   // %dat
             return DaggerfallUnity.Instance.WorldTime.Now.DateString();
         }
 
-        private static string PlayerName(MacroDataSource mds)
+        private static string PlayerName(IMacroContextProvider mcp)
         {   // %pcn
             return GameManager.Instance.PlayerEntity.Name;
         }
 
-        private static string PlayerFirstname(MacroDataSource mds)
+        private static string PlayerFirstname(IMacroContextProvider mcp)
         {   // %pcf
             string name = GameManager.Instance.PlayerEntity.Name;
             string[] parts = name.Split(' ');
             return (parts != null && parts.Length > 0) ? parts[0] : name;
         }
 
-        private static string PlayerRace(MacroDataSource mds)
+        private static string PlayerRace(IMacroContextProvider mcp)
         {   // %ra
             return GameManager.Instance.PlayerEntity.RaceTemplate.Name;
         }
 
-        private static string GuildTitle(MacroDataSource mds)
+        private static string GuildTitle(IMacroContextProvider mcp)
         {   // %pct
             // Just use "Apprentice" for all %pct guild titles for now
             // Guilds are not implemented yet, will need to move into MacroDataSource
@@ -347,74 +349,74 @@ namespace DaggerfallWorkshop.Utility
 
         #endregion
 
-        #region context sensitive symbol value providers
         // Context sensitive symbol value providers - delegate to the passed context symbol data source.
+        #region context sensitive symbol value providers
 
-        public static string Material(MacroDataSource mds)
+        public static string Material(IMacroContextProvider mcp)
         {   // %mat
-            return mds.Material();
+            return mcp.GetMacroDataSource().Material();
         }
 
-        public static string Condition(MacroDataSource mds)
+        public static string Condition(IMacroContextProvider mcp)
         {   // %qua
-            return mds.Condition();
+            return mcp.GetMacroDataSource().Condition();
         }
 
-        public static string Weight(MacroDataSource mds)
+        public static string Weight(IMacroContextProvider mcp)
         {   // %kg
-            return mds.Weight();
+            return mcp.GetMacroDataSource().Weight();
         }
 
-        public static string WeaponDamage(MacroDataSource mds)
+        public static string WeaponDamage(IMacroContextProvider mcp)
         {   // %wdm
-            return mds.WeaponDamage();
+            return mcp.GetMacroDataSource().WeaponDamage();
         }
 
-        public static string ItemName(MacroDataSource mds)
+        public static string ItemName(IMacroContextProvider mcp)
         {   // %wep, %arm, %it
-            return mds.ItemName();
+            return mcp.GetMacroDataSource().ItemName();
         }
 
-        public static string Modification(MacroDataSource mds)
+        public static string Modification(IMacroContextProvider mcp)
         {   // %mod
-            return mds.Modification();
+            return mcp.GetMacroDataSource().Modification();
         }
 
-        public static string Pronoun(MacroDataSource mds)
+        public static string Pronoun(IMacroContextProvider mcp)
         {   // %g & %g1
-            return mds.Pronoun();
+            return mcp.GetMacroDataSource().Pronoun();
         }
-        public static string Pronoun2(MacroDataSource mds)
+        public static string Pronoun2(IMacroContextProvider mcp)
         {   // %g2
-            return mds.Pronoun2();
+            return mcp.GetMacroDataSource().Pronoun2();
         }
-        public static string Pronoun2self(MacroDataSource mds)
+        public static string Pronoun2self(IMacroContextProvider mcp)
         {   // %g2self
-            return mds.Pronoun2self();
+            return mcp.GetMacroDataSource().Pronoun2self();
         }
-        public static string Pronoun3(MacroDataSource mds)
+        public static string Pronoun3(IMacroContextProvider mcp)
         {   // %g3
-            return mds.Pronoun3();
+            return mcp.GetMacroDataSource().Pronoun3();
         }
 
-        public static string QuestDate(MacroDataSource mds)
+        public static string QuestDate(IMacroContextProvider mcp)
         {   // %qdt
-            return mds.QuestDate();
+            return mcp.GetMacroDataSource().QuestDate();
         }
 
-        public static string Oath(MacroDataSource mds)
+        public static string Oath(IMacroContextProvider mcp)
         {   // %oth
-            return mds.Oath();
+            return mcp.GetMacroDataSource().Oath();
         }
 
-        public static string Region(MacroDataSource mds)
+        public static string Region(IMacroContextProvider mcp)
         {   // %reg
-            return mds.Region();
+            return mcp.GetMacroDataSource().Region();
         }
 
-        public static string God(MacroDataSource mds)
+        public static string God(IMacroContextProvider mcp)
         {   // %god
-            return mds.God();
+            return mcp.GetMacroDataSource().God();
         }
 
         #endregion
