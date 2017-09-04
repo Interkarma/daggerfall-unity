@@ -33,6 +33,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string leftHandEquipped = "Left hand equipped.";
         public const string usingRightHand = "Using weapon in right hand.";
         public const string usingLeftHand = "Using weapon in left hand.";
+        public const string itemHasBroken = "%s has broken.";
+        public const string itemHasBrokenPlural = "%s have broken.";
 
         public const string enterSaveName = "Enter save name";
         public const string selectSaveName = "Select a save";

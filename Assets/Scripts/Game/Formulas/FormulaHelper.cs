@@ -398,11 +398,47 @@ namespace DaggerfallWorkshop.Game.Formulas
                 damageModifiers += weapon.GetWeaponMaterialModifier();
             }
 
+            // Choose struck body part
+            int[] bodyParts = { 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 6 };
+            int struckBodyPart = bodyParts[UnityEngine.Random.Range(0, bodyParts.Length)];
+
             // Check for a successful hit.
-            if (CalculateSuccessfulHit(attacker, target, chanceToHitMod, weapon) == true)
+            if (CalculateSuccessfulHit(attacker, target, chanceToHitMod, weapon, struckBodyPart) == true)
             {
                 // 0 damage is possible. Creates no blood splash.
                 damageResult = Mathf.Max(0, (baseDamage + damageModifiers));
+            }
+
+            // If damage was done by a weapon, damage condition of weapon and armor of hit body part
+            // In classic, shields are never damaged because the item in the equip slot of the hit
+            // body part is all that is handled.
+            // Here, if an equipped shield covered the hit body part, it takes damage instead.
+            if (weapon != null && damageResult > 0)
+            {
+                weapon.DamageThroughPhysicalHit(damageResult, attacker);
+
+                Items.DaggerfallUnityItem shield = target.ItemEquipTable.GetItem(Items.EquipSlots.LeftHand);
+                bool shieldTakesDamage = false;
+                if (shield != null)
+                {
+                    Items.BodyParts[] protectedBodyParts = shield.GetShieldProtectedBodyParts();
+
+                    for (int i = 0; (i < protectedBodyParts.Length) && !shieldTakesDamage; i++)
+                    {
+                        if (protectedBodyParts[i] == (Items.BodyParts)struckBodyPart)
+                            shieldTakesDamage = true;
+                    }
+                }
+
+                if (shieldTakesDamage)
+                    shield.DamageThroughPhysicalHit(damageResult, target);
+                else
+                {
+                    Items.EquipSlots hitSlot = Items.DaggerfallUnityItem.GetEquipSlotForBodyPart((Items.BodyParts)struckBodyPart);
+                    Items.DaggerfallUnityItem armor = target.ItemEquipTable.GetItem(hitSlot);
+                    if (armor != null)
+                        armor.DamageThroughPhysicalHit(damageResult, target);
+                }
             }
 
             // If attack was by player or weapon-based, end here
@@ -413,12 +449,12 @@ namespace DaggerfallWorkshop.Game.Formulas
             // Handle multiple attacks by AI characters.
             else
             {
-                if (AIAttacker.MobileEnemy.MaxDamage2 != 0 && (CalculateSuccessfulHit(attacker, target, chanceToHitMod, weapon) == true))
+                if (AIAttacker.MobileEnemy.MaxDamage2 != 0 && (CalculateSuccessfulHit(attacker, target, chanceToHitMod, weapon, struckBodyPart) == true))
                 {
                     baseDamage = UnityEngine.Random.Range(AIAttacker.MobileEnemy.MinDamage2, AIAttacker.MobileEnemy.MaxDamage2 + 1);
                     damageResult += Mathf.Max(0, (baseDamage + damageModifiers));
                 }
-                if (AIAttacker.MobileEnemy.MaxDamage3 != 0 && (CalculateSuccessfulHit(attacker, target, chanceToHitMod, weapon) == true))
+                if (AIAttacker.MobileEnemy.MaxDamage3 != 0 && (CalculateSuccessfulHit(attacker, target, chanceToHitMod, weapon, struckBodyPart) == true))
                 {
                     baseDamage = UnityEngine.Random.Range(AIAttacker.MobileEnemy.MinDamage3, AIAttacker.MobileEnemy.MaxDamage3 + 1);
                     damageResult += Mathf.Max(0, (baseDamage + damageModifiers));
@@ -427,7 +463,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             }
         }
 
-        public static bool CalculateSuccessfulHit(Entity.DaggerfallEntity attacker, Entity.DaggerfallEntity target, int chanceToHitMod, Items.DaggerfallUnityItem weapon)
+        public static bool CalculateSuccessfulHit(Entity.DaggerfallEntity attacker, Entity.DaggerfallEntity target, int chanceToHitMod, Items.DaggerfallUnityItem weapon, int struckBodyPart)
         {
             if (attacker == null || target == null)
                 return false;
@@ -437,10 +473,6 @@ namespace DaggerfallWorkshop.Game.Formulas
             Entity.EnemyEntity AITarget = target as Entity.EnemyEntity;
 
             int armorValue = 0;
-
-            // Choose struck body part
-            int[] bodyParts = { 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 6 };
-            int struckBodyPart = bodyParts[UnityEngine.Random.Range(0, bodyParts.Length)];
 
             // Get armor value for struck body part
             if (struckBodyPart <= target.ArmorValues.Length)
@@ -493,25 +525,14 @@ namespace DaggerfallWorkshop.Game.Formulas
             // DF Chronicles says -60 is applied at the end, but it actually seems to be -50.
             chanceToHit -= 50;
 
-            if (chanceToHit > 97)
-            {
-                chanceToHit = 97;
-            }
-            if (chanceToHit < 3)
-            {
-                chanceToHit = 3;
-            }
+            Mathf.Clamp(chanceToHit, 3, 97);
 
             int roll = UnityEngine.Random.Range(0, 100 + 1);
 
             if (roll <= chanceToHit)
-            {
                 return true;
-            }
             else
-            {
                 return false;
-            }
         }
 
         #endregion

@@ -256,14 +256,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 // Get slot used by this armor
                 EquipSlots slot = ItemEquipTable.GetEquipSlot(armor);
 
-                // This array maps equip slots to the order of the 7 armor values
-                EquipSlots[] equipSlots = { EquipSlots.Head, EquipSlots.RightArm, EquipSlots.LeftArm,
-                                            EquipSlots.ChestArmor, EquipSlots.Gloves, EquipSlots.LegsArmor,
-                                            EquipSlots.Feet };
-
-                // Get the index for the correct armor value and update the armor value.
-                // Armor value is 100 when no armor is equipped. For every point of armor as shown on the inventory screen, 5 is subtracted.
-                int index = System.Array.IndexOf(equipSlots, slot);
+                int index = (int)DaggerfallUnityItem.GetBodyPartForEquipSlot(slot);
 
                 if (equipping)
                 {
@@ -279,6 +272,14 @@ namespace DaggerfallWorkshop.Game.Entity
                 // Shield armor values in classic are unaffected by their material type.
                 int shieldValue = armor.GetMaterialArmorValue();
                 int[] values = { 0, 0, 0, 0, 0, 0, 0 }; // shield's effect on the 7 armor values
+                int armorBonus = armor.GetShieldArmorValue();
+                BodyParts[] protectedBodyParts = armor.GetShieldProtectedBodyParts();
+
+                // Note: Resolving conflict during merge - is this code still required?
+                foreach (var BodyParts in protectedBodyParts)
+                {
+                    values[(int)BodyParts] = armorBonus;
+                }
 
                 if (armor.TemplateIndex == (int)Armor.Buckler)
                 {

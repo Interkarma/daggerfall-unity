@@ -123,23 +123,14 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.playerEntity.globalVars = entity.GlobalVars.SerializeGlobalVars();
 
             // Store player position data
-            data.playerPosition = new PlayerPositionData_v1();
-            data.playerPosition.position = transform.position;
-            data.playerPosition.yaw = playerMouseLook.Yaw;
-            data.playerPosition.pitch = playerMouseLook.Pitch;
-            data.playerPosition.isCrouching = playerMotor.IsCrouching;
-            data.playerPosition.worldPosX = StreamingWorld.LocalPlayerGPS.WorldX;
-            data.playerPosition.worldPosZ = StreamingWorld.LocalPlayerGPS.WorldZ;
-            data.playerPosition.insideDungeon = playerEnterExit.IsPlayerInsideDungeon;
-            data.playerPosition.insideBuilding = playerEnterExit.IsPlayerInsideBuilding;
-            data.playerPosition.terrainSamplerName = DaggerfallUnity.Instance.TerrainSampler.ToString();
-            data.playerPosition.terrainSamplerVersion = DaggerfallUnity.Instance.TerrainSampler.Version;
-            data.playerPosition.weather = GameManager.Instance.WeatherManager.PlayerWeather.WeatherType;
+            data.playerPosition = GetPlayerPositionData();
 
             // Store weapon state
             data.weaponDrawn = !weaponManager.Sheathed;
             // Store transport mode
             data.transportMode = transportManager.TransportMode;
+            // Store pre boarding ship position
+            data.boardShipPosition = transportManager.BoardShipPosition;
 
             // Store building exterior door data
             if (playerEnterExit.IsPlayerInsideBuilding)
@@ -148,6 +139,23 @@ namespace DaggerfallWorkshop.Game.Serialization
             }
 
             return data;
+        }
+
+        public PlayerPositionData_v1 GetPlayerPositionData()
+        {
+            PlayerPositionData_v1 playerPosition = new PlayerPositionData_v1();
+            playerPosition.position = transform.position;
+            playerPosition.yaw = playerMouseLook.Yaw;
+            playerPosition.pitch = playerMouseLook.Pitch;
+            playerPosition.isCrouching = playerMotor.IsCrouching;
+            playerPosition.worldPosX = StreamingWorld.LocalPlayerGPS.WorldX;
+            playerPosition.worldPosZ = StreamingWorld.LocalPlayerGPS.WorldZ;
+            playerPosition.insideDungeon = playerEnterExit.IsPlayerInsideDungeon;
+            playerPosition.insideBuilding = playerEnterExit.IsPlayerInsideBuilding;
+            playerPosition.terrainSamplerName = DaggerfallUnity.Instance.TerrainSampler.ToString();
+            playerPosition.terrainSamplerVersion = DaggerfallUnity.Instance.TerrainSampler.Version;
+            playerPosition.weather = GameManager.Instance.WeatherManager.PlayerWeather.WeatherType;
+            return playerPosition;
         }
 
         public object GetFactionSaveData()
@@ -249,16 +257,23 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Restore player position
             if (restorePlayerPosition)
             {
-                transform.position = data.playerPosition.position;
-                playerMouseLook.Yaw = data.playerPosition.yaw;
-                playerMouseLook.Pitch = data.playerPosition.pitch;
-                playerMotor.IsCrouching = data.playerPosition.isCrouching;
+                RestorePosition(data.playerPosition);
             }
 
             // Restore sheath state
             weaponManager.Sheathed = !data.weaponDrawn;
             // Restore transport mode
             transportManager.TransportMode = data.transportMode;
+            // Restore pre boarding ship position
+            transportManager.BoardShipPosition = data.boardShipPosition;
+        }
+
+        public void RestorePosition(PlayerPositionData_v1 positionData)
+        {
+            transform.position = positionData.position;
+            playerMouseLook.Yaw = positionData.yaw;
+            playerMouseLook.Pitch = positionData.pitch;
+            playerMotor.IsCrouching = positionData.isCrouching;
         }
 
         #endregion
