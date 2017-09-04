@@ -10,6 +10,7 @@
 //
 
 using UnityEngine;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -23,8 +24,6 @@ namespace DaggerfallWorkshop.Game
     [RequireComponent(typeof(CharacterController))]
     public class EnemyMotor : MonoBehaviour
     {
-        public float MoveSpeed = 5f;                // Speed enemy can move towards target using SimpleMove()
-        public float FlySpeed = 5f;                 // Speed enemy can fly towards target using Move()
         public float OpenDoorDistance = 2f;         // Maximum distance to open door
         public float GiveUpTime = 4f;               // Time in seconds enemy will give up if target is unreachable
 
@@ -32,6 +31,7 @@ namespace DaggerfallWorkshop.Game
         Vector3 targetPos;
         CharacterController controller;
         DaggerfallMobileUnit mobile;
+        DaggerfallEntityBehaviour entityBehaviour;
 
         float stopDistance = 1.7f;                  // Used to prevent orbiting
         Vector3 lastTargetPos;                      // Target from previous update
@@ -55,6 +55,7 @@ namespace DaggerfallWorkshop.Game
             flies = mobile.Summary.Enemy.Behaviour == MobileBehaviour.Flying ||
                     mobile.Summary.Enemy.Behaviour == MobileBehaviour.Spectral;
             enemyLayerMask = LayerMask.GetMask("Enemies");
+            entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
         }
 
         void Update()
@@ -191,7 +192,10 @@ namespace DaggerfallWorkshop.Game
             if (distance > stopDistance)
             {
                 mobile.ChangeEnemyState(MobileStates.Move);
-                var motion = transform.forward * (flies ? FlySpeed : MoveSpeed);
+
+                // Monster speed of movement follows the same formula as for when the player walks
+                EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
+                var motion = transform.forward * ((entity.Stats.Speed + PlayerMotor.dfWalkBase) / PlayerMotor.classicToUnitySpeedUnitRatio);
 
                 // Prevent rat stacks (enemies don't stand on shorter enemies)
                 AvoidEnemies(ref motion);

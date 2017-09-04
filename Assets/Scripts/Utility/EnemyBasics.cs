@@ -24,7 +24,7 @@ namespace DaggerfallWorkshop.Utility
 
         // Speeds in frames-per-second
         public static int MoveAnimSpeed = 7;
-        public static int PrimaryAttackAnimSpeed = 6;
+        public static int PrimaryAttackAnimSpeed = 8;
         public static int HurtAnimSpeed = 4;
         public static int IdleAnimSpeed = 4;
         public static int RangedAttack1AnimSpeed = 6;
