@@ -85,6 +85,7 @@ namespace DaggerfallWorkshop.Game
         DaggerfallBookReaderWindow dfBookReaderWindow;
         DaggerfallQuestJournalWindow dfQuestJournalWindow;
         QuestMachineInspectorWindow dfQuestInspector;
+        DaggerfallMessageBox dfStatusBox;
 
         DaggerfallFontPlus fontPetrock32;
 
@@ -377,7 +378,7 @@ namespace DaggerfallWorkshop.Game
                     uiManager.PushWindow(dfQuestJournalWindow);
                     break;
                 case DaggerfallUIMessages.dfuiStatusInfo:
-                    MessageBox(22);
+                    DisplayStatusInfo();
                     break;
                 case DaggerfallUIMessages.dfuiExitGame:
 #if UNITY_EDITOR
@@ -966,6 +967,21 @@ namespace DaggerfallWorkshop.Game
         #endregion
 
         #region Private Methods
+
+        void DisplayStatusInfo()
+        {
+            // Setup status info as the first message box.
+            DaggerfallMessageBox statusBox = new DaggerfallMessageBox(Instance.uiManager, Instance.uiManager.TopWindow);
+            statusBox.SetTextTokens(22);
+
+            // Setup health info as the second message box.
+            DaggerfallMessageBox healthBox = new DaggerfallMessageBox(uiManager, statusBox);
+            healthBox.SetTextTokens(18);    // TODO: Various diseases are in msgs 100-117
+            healthBox.ClickAnywhereToClose = true;
+            statusBox.AddNextMessageBox(healthBox);
+
+            statusBox.Show();
+        }
 
         void TickFade()
         {

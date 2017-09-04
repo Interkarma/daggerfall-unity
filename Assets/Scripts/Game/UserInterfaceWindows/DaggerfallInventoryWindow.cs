@@ -1417,8 +1417,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
                 messageBox.SetTextTokens(tokens, item);
-                messageBox.ClickAnywhereToClose = true;
-                messageBox.Show();
+                if (item.legacyMagic == null)
+                {
+                    messageBox.ClickAnywhereToClose = true;
+                    messageBox.Show();
+                }
+                else
+                {   // Setup the next message box with the magic effect info.
+                    DaggerfallMessageBox messageBoxMagic = new DaggerfallMessageBox(uiManager, messageBox);
+                    messageBoxMagic.SetTextTokens(1016, item);
+                    messageBoxMagic.ClickAnywhereToClose = true;
+
+                    messageBox.AddNextMessageBox(messageBoxMagic);
+                    messageBox.Show();
+                }
             }
         }
 

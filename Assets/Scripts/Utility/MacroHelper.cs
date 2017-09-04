@@ -5,13 +5,11 @@
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Hazelnut
 
-using UnityEngine;
-using DaggerfallWorkshop.Game;
-using DaggerfallConnect.Arena2;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
+using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Player;
-
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -21,50 +19,7 @@ namespace DaggerfallWorkshop.Utility
      * arena2\text.rsc, fall.exe, arena2\*.qrc, or arena2\bio*.txt
      * </summary>
      * 
-     * If any messages displayed in game contain the following markup, this is what needs adding:
-     * %abc[undefined]      -> macro needs adding to <c>macroHandlers</c> list
-     * %abc[unhandled]      -> macro requires handler method name in <c>macroHandlers</c> list
-     * %abc[srcDataUnknown] -> macro context provider object needs handler method adding
-     * 
-     * Adding new macro handlers:
-     * 
-     * Open the file <c>DaggerfallWorkshop.Utility.MacroHelper</c>.
-     * Does the macro need an object instance to provide context? (e.g. item, quest)
-     * 
-     * If no context required:
-     * 1) Find the macro in <c>macroHandlers</c>, if the macro isn't in the list then add it at the bottom. e.g. '%ra'
-     * 2) Define the handler method name, replacing 'null' with it. e.g. 'PlayerRace'
-     * 3) Add a suitable handler method to the region <c>global macro handlers</c>. (mcp will be null so don't use it) e.g.
-     * <code>
-     * private static string PlayerRace(IMacroContextProvider mcp)
-     * {   // %ra
-     *     return GameManager.Instance.PlayerEntity.RaceTemplate.Name;
-     * }
-     * </code>
-     *      
-     * If context required:
-     * 1) Find the macro in <c>macroHandlers</c>, if the macro isn't in the list then add it at the bottom. e.g. '%ra'
-     * 2) Define the handler method name, replacing 'null' with it. e.g. 'PlayerRace'
-     * 3) Add a suitable handler method that delegates to the an <c>MacroDataSource</c> to the region <c>contextual macro handlers</c>. e.g.
-     * <code>
-     * public static string Region(IMacroContextProvider mcp)
-     * {   // %reg
-     *     return mcp.GetMacroDataSource().Region();
-     * }
-     * </code>
-     * 4) Add an unimplemented implementation to the <c>MacroDataSource</c> base class. e.g.
-     * <code>
-     * public virtual string Region()
-     * {   // %reg
-     *     throw new NotImplementedException();
-     * }
-     * </code>
-     * 5) Find the class that will provide the context (named using suffix 'MCP') and override the handler method. (<c>parent</c> refers to the context providing class) e.g.
-     * <code>
-     * public override string Region()
-     * {
-     *     return (parent.LastPersonReferenced != null) ? parent.LastPersonReferenced.HomeRegionName : "";
-     * }
+     * See http://forums.dfworkshop.net/viewtopic.php?f=23&t=673 for details about adding new macro handlers.
      * 
      */
     public static class MacroHelper
@@ -297,7 +252,7 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         /// <returns>The expanded macro value.</returns>
         /// <param name="symbolStr">macro symbol string.</param>
-        /// <param name="mcp">an object instance providing context for macro expansion. (optional)</param>
+        /// <param name="mcp">an object instance providing context for macro expansion.</param>
         public static string GetValue(string symbolStr, IMacroContextProvider mcp)
         {
             if (macroHandlers.ContainsKey(symbolStr))
@@ -447,7 +402,7 @@ namespace DaggerfallWorkshop.Utility
         private static string GuildTitle(IMacroContextProvider mcp)
         {   // %pct
             // Just use "Apprentice" for all %pct guild titles for now
-            // Guilds are not implemented yet, will need to move into MacroDataSource
+            // Guilds are not implemented yet, will need to move into a MacroDataSource
             return "Apprentice";
         }
 

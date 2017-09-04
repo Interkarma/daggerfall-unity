@@ -36,6 +36,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         int buttonTextDistance = 4;
         MessageBoxButtons selectedButton = MessageBoxButtons.Cancel;
         bool clickAnywhereToClose = false;
+        DaggerfallMessageBox nextMessageBox;
 
         /// <summary>
         /// Default message box buttons are indices into BUTTONS.RCI.
@@ -150,9 +151,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.OnPop();
             parentPanel.OnMouseClick -= ParentPanel_OnMouseClick;
+
+            // Check if any previous message boxes need to be closed as well.
+            DaggerfallMessageBox prevWindow = PreviousWindow as DaggerfallMessageBox;
+            if (prevWindow != null && prevWindow.nextMessageBox != null)
+                prevWindow.nextMessageBox.CloseWindow();
         }
 
         #region Public Methods
+
+        /// <summary>
+        /// Adds another nested message box to be displayed next when click detected.
+        /// </summary>
+        /// <param name="nextMessageBox">Next message box.</param>
+        public void AddNextMessageBox(DaggerfallMessageBox nextMessageBox)
+        {
+            this.nextMessageBox = nextMessageBox;
+        }
 
         public void Show()
         {
@@ -335,8 +350,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ParentPanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (uiManager.TopWindow == this && clickAnywhereToClose)
-                CloseWindow();
+            if (uiManager.TopWindow == this)
+            {
+                if (nextMessageBox != null)
+                    nextMessageBox.Show();
+                else if (clickAnywhereToClose)
+                    CloseWindow();
+            }
         }
 
         #endregion
