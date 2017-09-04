@@ -282,6 +282,7 @@ namespace DaggerfallWorkshop.Game
                                 case PlayerActivateModes.Info:
                                 case PlayerActivateModes.Grab:
                                 case PlayerActivateModes.Talk:
+                                    Talk();
                                     break;
                                 case PlayerActivateModes.Steal:
                                     Pickpocket();
@@ -683,5 +684,12 @@ namespace DaggerfallWorkshop.Game
                 DaggerfallUI.Instance.PopupMessage(notSuccessfulMessage);
             }
         }
+
+        // Player has clicked on a talk target
+        void Talk(DaggerfallEntityBehaviour target = null)
+        {
+            DaggerfallUI.UIManager.PushWindow(DaggerfallUI.Instance.TalkWindow);
+        }
+
     }
 }

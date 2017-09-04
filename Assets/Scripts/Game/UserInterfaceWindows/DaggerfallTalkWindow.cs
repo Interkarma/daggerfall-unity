@@ -14,7 +14,6 @@ using System;
 using System.Collections;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
-using Wenzil.Console;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -31,16 +30,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public DaggerfallTalkWindow(IUserInterfaceManager uiManager, DaggerfallBaseWindow previous = null)
             : base(uiManager, previous)
         {
-            // register console commands
-            try
-            {
-                TalkConsoleCommands.RegisterCommands();
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError(string.Format("Error Registering Talk Window Console commands: {0}", ex.Message));
-
-            }
         }
 
         protected override void Setup()
@@ -115,38 +104,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         void goodbyeButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             CloseWindow();
-        }
-
-        #endregion
-
-        #region console_commands
-
-        public static class TalkConsoleCommands
-        {
-            public static void RegisterCommands()
-            {
-                try
-                {
-                    ConsoleCommandsDatabase.RegisterCommand(OpenTalkWindow.name, OpenTalkWindow.description, OpenTalkWindow.usage, OpenTalkWindow.Execute);
-                }
-                catch (System.Exception ex)
-                {
-                    DaggerfallUnity.LogMessage(ex.Message, true);
-                }
-            }
-
-            private static class OpenTalkWindow
-            {
-                public static readonly string name = "openTalkWindow";
-                public static readonly string description = "opens talk window";
-                public static readonly string usage = "openTalkWindow";
-
-                public static string Execute(params string[] args)
-                {
-                    DaggerfallUI.UIManager.PushWindow(DaggerfallUI.Instance.TalkWindow);
-                    return "talk window opened";
-                }
-            }
         }
 
         #endregion
