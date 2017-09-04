@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -451,7 +451,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (key != -1)
                 {
                     DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
-                    messageBox.SetText(HardStrings.confirmOverwriteSave, "");
+                    messageBox.SetText(new string[] { HardStrings.confirmOverwriteSave, "" });
                     messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
                     messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
                     messageBox.OnButtonClick += ConfirmOverwrite_OnButtonClick;
@@ -518,7 +518,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Confirmation
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
-            messageBox.SetText(HardStrings.confirmDeleteSave, "");
+            messageBox.SetText(new string[] { HardStrings.confirmDeleteSave, "" });
             messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Delete);
             messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Cancel);
             messageBox.OnButtonClick += ConfirmDelete_OnButtonClick;

@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -15,13 +15,14 @@ using DaggerfallConnect.FallExe;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Questing;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.Items
 {
     /// <summary>
     /// Parent class for any individual item in Daggerfall Unity.
     /// </summary>
-    public class DaggerfallUnityItem
+    public partial class DaggerfallUnityItem
     {
         #region Fields
 
@@ -779,34 +780,54 @@ namespace DaggerfallWorkshop.Game.Items
 
         public int GetMaterialArmorValue()
         {
-            switch (nativeMaterialValue)
+            if (!IsShield)
             {
-                case (int)ArmorMaterialTypes.Leather:
-                    return 3;
-                case (int)ArmorMaterialTypes.Chain:
-                case (int)ArmorMaterialTypes.Chain2:
-                    return 6;
-                case (int)ArmorMaterialTypes.Iron:
-                    return 7;
-                case (int)ArmorMaterialTypes.Steel:
-                case (int)ArmorMaterialTypes.Silver:
-                    return 9;
-                case (int)ArmorMaterialTypes.Elven:
-                    return 11;
-                case (int)ArmorMaterialTypes.Dwarven:
-                    return 13;
-                case (int)ArmorMaterialTypes.Mithril:
-                case (int)ArmorMaterialTypes.Adamantium:
-                    return 15;
-                case (int)ArmorMaterialTypes.Ebony:
-                    return 17;
-                case (int)ArmorMaterialTypes.Orcish:
-                    return 19;
-                case (int)ArmorMaterialTypes.Daedric:
-                    return 21;
+                switch (nativeMaterialValue)
+                {
+                    case (int)ArmorMaterialTypes.Leather:
+                        return 3;
+                    case (int)ArmorMaterialTypes.Chain:
+                    case (int)ArmorMaterialTypes.Chain2:
+                        return 6;
+                    case (int)ArmorMaterialTypes.Iron:
+                        return 7;
+                    case (int)ArmorMaterialTypes.Steel:
+                    case (int)ArmorMaterialTypes.Silver:
+                        return 9;
+                    case (int)ArmorMaterialTypes.Elven:
+                        return 11;
+                    case (int)ArmorMaterialTypes.Dwarven:
+                        return 13;
+                    case (int)ArmorMaterialTypes.Mithril:
+                    case (int)ArmorMaterialTypes.Adamantium:
+                        return 15;
+                    case (int)ArmorMaterialTypes.Ebony:
+                        return 17;
+                    case (int)ArmorMaterialTypes.Orcish:
+                        return 19;
+                    case (int)ArmorMaterialTypes.Daedric:
+                        return 21;
 
+                    default:
+                        return 0;
+                }
+            }
+            else
+            {
+                // Shield armor values in classic are unaffected by their material type.
+                switch ((Armor) TemplateIndex)
+                {
+                case Armor.Buckler:
+                    return 1;
+                case Armor.Round_Shield:
+                    return 2;
+                case Armor.Kite_Shield:
+                    return 3;
+                case Armor.Tower_Shield:
+                    return 4;
                 default:
                     return 0;
+                }
             }
         }
 

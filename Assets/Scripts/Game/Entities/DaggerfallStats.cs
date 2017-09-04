@@ -21,7 +21,7 @@ namespace DaggerfallWorkshop.Game.Entity
     /// Daggerfall stats collection for every entity.
     /// </summary>
     [Serializable]
-    public struct DaggerfallStats
+    public partial struct DaggerfallStats
     {
         public const int Count = 8;
 

@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -188,7 +189,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return button;
         }
 
-        public void SetText(params string[] rows)
+        public void SetText(string text, IMacroContextProvider mcp = null)
+        {
+            SetText(new string[] { text }, mcp);
+        }
+
+        public void SetText(string[] rows, IMacroContextProvider mcp = null)
         {
             // Tokenize rows
             List<TextFile.Token> tokenList = new List<TextFile.Token>();
@@ -210,22 +216,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetTextTokens(tokenList.ToArray());
         }
 
-        public void SetTextTokens(TextFile.Token[] tokens)
+        public void SetTextTokens(TextFile.Token[] tokens, IMacroContextProvider mcp = null)
         {
             if (!IsSetup)
                 Setup();
 
+            MacroHelper.ExpandMacros(ref tokens, mcp);
             label.SetText(tokens);
             UpdatePanelSizes();
         }
 
-        public void SetTextTokens(int id)
+        public void SetTextTokens(int id, IMacroContextProvider mcp = null)
         {
             if (!IsSetup)
                 Setup();
 
             TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(id);
-            SetTextTokens(tokens);
+            SetTextTokens(tokens, mcp);
         }
 
         #endregion

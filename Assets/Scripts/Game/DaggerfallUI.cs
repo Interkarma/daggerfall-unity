@@ -376,6 +376,9 @@ namespace DaggerfallWorkshop.Game
                 case DaggerfallUIMessages.dfuiOpenQuestJournalWindow:
                     uiManager.PushWindow(dfQuestJournalWindow);
                     break;
+                case DaggerfallUIMessages.dfuiStatusInfo:
+                    MessageBox(22);
+                    break;
                 case DaggerfallUIMessages.dfuiExitGame:
 #if UNITY_EDITOR
                     UnityEditor.EditorApplication.isPlaying = false;
@@ -877,7 +880,7 @@ namespace DaggerfallWorkshop.Game
             return texture;
         }
 
-        public static DaggerfallMessageBox MessageBox(string message)
+        public static DaggerfallMessageBox MessageBox(string message, IMacroContextProvider mds = null)
         {
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(Instance.uiManager, Instance.uiManager.TopWindow);
             messageBox.SetText(message);
@@ -886,7 +889,7 @@ namespace DaggerfallWorkshop.Game
             return messageBox;
         }
 
-        public static DaggerfallMessageBox MessageBox(string[] message)
+        public static DaggerfallMessageBox MessageBox(string[] message, IMacroContextProvider mds = null)
         {
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(Instance.uiManager, Instance.uiManager.TopWindow);
             messageBox.SetText(message);
@@ -895,7 +898,7 @@ namespace DaggerfallWorkshop.Game
             return messageBox;
         }
 
-        public static DaggerfallMessageBox MessageBox(int id)
+        public static DaggerfallMessageBox MessageBox(int id, IMacroContextProvider mds = null)
         {
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(Instance.uiManager, Instance.uiManager.TopWindow);
             messageBox.SetTextTokens(id);
