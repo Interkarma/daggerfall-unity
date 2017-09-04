@@ -83,6 +83,7 @@ namespace DaggerfallWorkshop.Game
         DaggerfallAutomapWindow dfAutomapWindow;
         DaggerfallExteriorAutomapWindow dfExteriorAutomapWindow;
         DaggerfallBookReaderWindow dfBookReaderWindow;
+        DaggerfallTalkWindow dfTalkWindow;
         DaggerfallQuestJournalWindow dfQuestJournalWindow;
         QuestMachineInspectorWindow dfQuestInspector;
 
@@ -166,10 +167,16 @@ namespace DaggerfallWorkshop.Game
             get { return dfBookReaderWindow; }
         }
 
+        public DaggerfallTalkWindow TalkWindow
+        {
+            get { return dfTalkWindow; }
+        }
+
         public DaggerfallAutomapWindow AutomapWindow
         {
             get { return dfAutomapWindow; }
         }
+
         public DaggerfallExteriorAutomapWindow ExteriorAutomapWindow
         {
             get { return dfExteriorAutomapWindow; }
@@ -203,6 +210,7 @@ namespace DaggerfallWorkshop.Game
             dfAutomapWindow = new DaggerfallAutomapWindow(uiManager);
             dfBookReaderWindow = new DaggerfallBookReaderWindow(uiManager);
             dfQuestJournalWindow = new DaggerfallQuestJournalWindow(uiManager);
+            dfTalkWindow = new DaggerfallTalkWindow(uiManager);
 
             dfExteriorAutomapWindow = new DaggerfallExteriorAutomapWindow(uiManager);
 
