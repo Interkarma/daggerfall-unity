@@ -163,11 +163,19 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
-        /// Resolve this item's full name.
+        /// Resolve this item's full name (mainly for tooltips).
         /// </summary>
         public string LongName
         {
             get { return DaggerfallUnity.Instance.ItemHelper.ResolveItemName(this); }
+        }
+
+        /// <summary>
+        /// Resolve this item's title name (mainly for info popups).
+        /// </summary>
+        public string TitleName
+        {
+            get { return DaggerfallUnity.Instance.ItemHelper.ResolveItemTitleName(this); }
         }
 
         /// <summary>

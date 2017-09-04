@@ -165,6 +165,23 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
+        /// Resolves item title name using parameters like %it, but does not prepend material name.
+        /// </summary>
+        public string ResolveItemTitleName(DaggerfallUnityItem item)
+        {
+            // Start with base name
+            string result = item.shortName;
+
+            // Get item template
+            ItemTemplate template = item.ItemTemplate;
+
+            // Resolve %it parameter
+            result = result.Replace("%it", template.name);
+
+            return result;
+        }
+
+        /// <summary>
         /// Gets inventory/equip image for specified item.
         /// Image will be cached based on material and hand for faster subsequent fetches.
         /// </summary>

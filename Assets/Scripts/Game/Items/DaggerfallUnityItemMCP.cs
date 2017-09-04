@@ -33,7 +33,7 @@ namespace DaggerfallWorkshop.Game.Items
 
             public override string ItemName()
             {
-                return parent.LongName;
+                return parent.TitleName;
             }
 
             public override string Worth()
