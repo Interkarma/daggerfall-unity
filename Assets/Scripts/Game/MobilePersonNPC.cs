@@ -12,7 +12,7 @@
 using UnityEngine;
 using DaggerfallWorkshop.Game.Entity;
 
-namespace DaggerfallWorkshop
+namespace DaggerfallWorkshop.Game
 {
     /// <summary>
     /// This will contain the actual NPC data for mobile NPCs.
@@ -20,8 +20,17 @@ namespace DaggerfallWorkshop
     /// </summary>
     public class MobilePersonNPC : MonoBehaviour
     {
-        public DisplayRaces race = DisplayRaces.Breton;
+        const int numPersonOutfitVariants = 4;
+
+        public Races race = Races.Breton;
+        public DisplayRaces displayRace = DisplayRaces.Breton;
         public Genders gender = Genders.Male;
+        public string nameNPC;
+        public int personOutfitVariant; // which basic outfit does the person wear
+        public int personVariant; // used for portrait in talk window
+
+        public MobilePersonBillboard billboard;
+        public MobilePersonMotor motor;
 
         public enum DisplayRaces
         {
@@ -29,19 +38,62 @@ namespace DaggerfallWorkshop
             Redguard = 2,
             Nord = 3,
         }
-
+        
         public void ApplyPersonSettings()
         {
-            MobilePersonBillboard mobilePerson = GetMobilePersonChildScript();
-            if (mobilePerson)
-            {
-                mobilePerson.SetPerson((Races)race, gender);
-            }
+            billboard = GetComponentInChildren<MobilePersonBillboard>();
+            motor = GetComponentInChildren<MobilePersonMotor>();
+            RandomiseNPC();
+            SetPerson(race, gender, true);
+            billboard.SetPerson(race, gender, personOutfitVariant);
         }
+        
 
-        public MobilePersonBillboard GetMobilePersonChildScript()
+        public MobilePersonBillboard GetMobilePersonBillboardChildScript()
         {
             return GetComponentInChildren<MobilePersonBillboard>();
+        }
+        
+        public MobilePersonMotor GetMobilePersonMotorChildScript()
+        {
+            return GetComponent<MobilePersonMotor>();
+        }
+
+        /// <summary>
+        /// Setup a new random NPC inside this motor.
+        /// </summary>
+        /// <param name="race">Entity race of NPC in current location.</param>
+        public void RandomiseNPC()
+        {
+            Genders gender = (Random.Range(0f, 1f) > 0.5f) ? gender = Genders.Female : gender = Genders.Male;
+            SetPerson(race, gender);
+        }
+
+
+        void SetRace(Races race)
+        {
+            if (race == Races.Redguard || race == Races.Nord || race == Races.Breton)
+                this.race = race;
+            else
+                this.race = Races.Breton;
+        }
+
+        /// <summary>
+        /// Setup this person based on race and gender.
+        /// </summary>
+        public void SetPerson(Races race, Genders gender, bool newVariant = false)
+        {
+            // Allow for new random variant if specified
+            if (newVariant)
+                personOutfitVariant = -1;
+
+            // Store values
+            this.race = race;
+            this.gender = gender;
+
+            // Set texture archive at random if not already set
+            if (personOutfitVariant == -1)
+                personOutfitVariant = Random.Range(0, numPersonOutfitVariants);
         }
     }
 }

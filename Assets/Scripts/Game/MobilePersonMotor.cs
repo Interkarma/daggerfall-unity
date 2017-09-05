@@ -51,7 +51,7 @@ namespace DaggerfallWorkshop.Game
         int seekCount;
 
         // TEMP: NPC settings
-        Races race = Races.Breton;
+        //Races race = Races.Breton;
 
         // References
         MobilePersonBillboard mobileBillboard;
@@ -86,16 +86,6 @@ namespace DaggerfallWorkshop.Game
         #endregion
 
         #region Properties
-
-        /// <summary>
-        /// Gets or sets mobile race.
-        /// Only accepts Redguard, Nord, Breton.
-        /// </summary>
-        public Races Race
-        {
-            get { return race; }
-            set { SetRace(value); }
-        }
 
         /// <summary>
         /// Gets current mobile facing and direction of movement.
@@ -171,7 +161,6 @@ namespace DaggerfallWorkshop.Game
         {
             // Init mobile
             SetFacing(currentDirection);
-            RandomiseNPC();
         }
 
         private void Update()
@@ -262,22 +251,6 @@ namespace DaggerfallWorkshop.Game
         public void ClearMotor()
         {
             cityNavigation.ClearFlags(targetNavPosition, CityNavigation.TileFlags.Occupied);
-        }
-
-        /// <summary>
-        /// Setup a new random NPC inside this motor.
-        /// </summary>
-        /// <param name="race">Entity race of NPC in current location.</param>
-        public void RandomiseNPC()
-        {
-            if (!mobileBillboard)
-                return;
-
-            Genders gender = (Random.Range(0f, 1f) > 0.5f) ? gender = Genders.Female : gender = Genders.Male;
-            mobileBillboard.SetPerson(race, gender);
-
-            // TODO: Split NPC setup and data to own component - motor should just drive mobile around scene
-            // Proper NPC setup is scheduled for a later date, this work is intended only to deploy populations
         }
 
         #endregion
@@ -482,14 +455,6 @@ namespace DaggerfallWorkshop.Game
                 return 0;
 
             return cityNavigation.GetNavGridWeightLocal(nextPosition);
-        }
-
-        void SetRace(Races race)
-        {
-            if (race == Races.Redguard || race == Races.Nord || race == Races.Breton)
-                this.race = race;
-            else
-                this.race = Races.Breton;
         }
 
         #endregion

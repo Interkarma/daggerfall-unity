@@ -274,7 +274,7 @@ namespace DaggerfallWorkshop.Game
                         }
 
                         // Check for mobile NPC hit
-                        MobilePersonMotor mobileNpc;
+                        MobilePersonNPC mobileNpc = null;
                         if (MobilePersonMotorCheck(hits[i], out mobileNpc))
                         {
                             switch (currentMode)
@@ -423,9 +423,9 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Check if raycast hit a mobile NPC
-        private bool MobilePersonMotorCheck(RaycastHit hitInfo, out MobilePersonMotor mobileNPC)
+        private bool MobilePersonMotorCheck(RaycastHit hitInfo, out MobilePersonNPC mobileNPC)
         {
-            mobileNPC = hitInfo.transform.GetComponent<MobilePersonMotor>();
+            mobileNPC = hitInfo.transform.GetComponent<MobilePersonNPC>();
             if (mobileNPC != null)
                 return true;
             else
@@ -684,12 +684,12 @@ namespace DaggerfallWorkshop.Game
                 DaggerfallUI.Instance.PopupMessage(notSuccessfulMessage);
             }
         }
-
+        
         // Player has clicked on a talk target
-        void Talk(DaggerfallEntityBehaviour target = null)
+        void Talk() //MobilePersonNPC target = null)
         {
             DaggerfallUI.UIManager.PushWindow(DaggerfallUI.Instance.TalkWindow);
-            DaggerfallUI.Instance.TalkWindow.setNPCPortraitAndName(0, 0, "test name");
+            DaggerfallUI.Instance.TalkWindow.setNPCPortraitAndName(0, 0, "");
         }
 
     }
