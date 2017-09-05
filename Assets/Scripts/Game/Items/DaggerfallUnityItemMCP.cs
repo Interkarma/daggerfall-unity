@@ -7,6 +7,7 @@
 
 using System;
 using DaggerfallWorkshop.Utility;
+using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -83,6 +84,14 @@ namespace DaggerfallWorkshop.Game.Items
             public override string ArmourMod()
             {   // %mod
                 return parent.GetMaterialArmorValue().ToString("+0;-0;0");
+            }
+
+            public override string BookAuthor()
+            {   // %ba
+                BookFile bookFile = new BookFile();
+                bookFile.OpenBook(DaggerfallUnity.Instance.Arena2Path, BookFile.messageToBookFilename(parent.message));
+                // Should the bookfile get closed?
+                return bookFile.Author;
             }
         }
     }

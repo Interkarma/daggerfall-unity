@@ -951,14 +951,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     remoteItemsStackLabels[i].Text = item.stackCount.ToString();
 
                 // Tooltip text
-                string text;
-                if (item.ItemGroup == ItemGroups.Books)
-                {
-                    text = DaggerfallUnity.Instance.ItemHelper.getBookNameByMessage(item.message, item.LongName);
-                } else {
-                    text = item.LongName;
-                }
-                remoteItemsButtons[i].ToolTipText = text;
+                remoteItemsButtons[i].ToolTipText = item.LongName;
             }
         }
 

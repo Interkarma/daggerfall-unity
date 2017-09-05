@@ -95,6 +95,11 @@ namespace DaggerfallWorkshop.Utility
             throw new NotImplementedException();
         }
 
+        public virtual string BookAuthor()
+        {   // %ba
+            throw new NotImplementedException();
+        }
+
         public virtual string Pronoun()
         {   // %g & %g1
             throw new NotImplementedException();

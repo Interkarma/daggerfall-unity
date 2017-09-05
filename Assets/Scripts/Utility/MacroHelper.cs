@@ -90,11 +90,11 @@ namespace DaggerfallWorkshop.Utility
             { "%agi", Agi }, //  Amount of Agility
             { "%arm", ItemName }, //  Armour
             { "%ark", AttributeRating }, // What property attribute is considered
-            { "%ba", null },  // Book Author
+            { "%ba", BookAuthor },  // Book Author
             { "%bch", null }, // Base chance
             { "%bdr", null }, // Base Duration
             { "%bn", null },  // ?
-            { "%bt", null },  // Book title
+            { "%bt", ItemName },  // Book title
             { "%cbl", null }, // Cash balance in current region
             { "%clc", null }, // Per level (Chance)
             { "%cld", null }, // Per level (Duration)
@@ -529,6 +529,11 @@ namespace DaggerfallWorkshop.Utility
         public static string ArmourMod(IMacroContextProvider mcp)
         {   // %mod
             return mcp.GetMacroDataSource().ArmourMod();
+        }
+
+        public static string BookAuthor(IMacroContextProvider mcp)
+        {   // %ba
+            return mcp.GetMacroDataSource().BookAuthor();
         }
 
         public static string Pronoun(IMacroContextProvider mcp)

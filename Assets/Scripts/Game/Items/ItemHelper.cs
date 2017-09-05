@@ -139,10 +139,14 @@ namespace DaggerfallWorkshop.Game.Items
             // Get item template
             ItemTemplate template = item.ItemTemplate;
 
-            // Return just the template name if item is unidentified.
-            if (!item.IsIdentified)
+            // Return just the template name if item is unidentified or an Artifact.
+            if (!item.IsIdentified || item.ItemGroup == ItemGroups.Artifacts)
                 return template.name;
-            
+
+            // Books are handled differently
+            if (item.ItemGroup == ItemGroups.Books)
+                return DaggerfallUnity.Instance.ItemHelper.getBookNameByMessage(item.message, item.shortName);
+
             // Start with base name
             string result = item.shortName;
 
