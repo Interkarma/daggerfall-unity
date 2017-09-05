@@ -1424,8 +1424,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
                 else
                 {   // Setup the next message box with the magic effect info.
+                    int msgId = 1016;
+                    if (item.ItemGroup == ItemGroups.Artifacts)
+                    {
+                        // Use appropriate artifact description message. (8700-8721)
+                        msgId = 8700 + item.GroupIndex;
+                    }
                     DaggerfallMessageBox messageBoxMagic = new DaggerfallMessageBox(uiManager, messageBox);
-                    messageBoxMagic.SetTextTokens(1016, item);
+                    messageBoxMagic.SetTextTokens(msgId, item);
                     messageBoxMagic.ClickAnywhereToClose = true;
 
                     messageBox.AddNextMessageBox(messageBoxMagic);

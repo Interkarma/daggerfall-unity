@@ -9,6 +9,7 @@ using System;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect.Arena2;
 using System.Collections.Generic;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -95,23 +96,37 @@ namespace DaggerfallWorkshop.Game.Items
                 return bookFile.Author;
             }
 
-            // TODO: Update once magic effects have been implemented. (just puts "Power number N" for now)
             public override TextFile.Token[] MagicPowers(TextFile.Formatting format)
             {   // %mpw
-                List<TextFile.Token> magicPowersTokens = new List<TextFile.Token>();
-                for (int i = 0; i < parent.legacyMagic.Length; i++)
+                if (!parent.IsIdentified)
                 {
-                    if (parent.legacyMagic[i] == 0xffff)
-                        break;
-                    TextFile.Token powerToken = new TextFile.Token();
-                    powerToken.text = "Power number " + parent.legacyMagic[i];
-                    powerToken.formatting = TextFile.Formatting.Text;
-                    magicPowersTokens.Add(powerToken);
-                    TextFile.Token formatToken = new TextFile.Token();
-                    formatToken.formatting = format;
-                    magicPowersTokens.Add(formatToken);
+                    // Powers unknown.
+                    TextFile.Token nopowersToken = new TextFile.Token();
+                    nopowersToken.text = HardStrings.powersUnknown;
+                    nopowersToken.formatting = TextFile.Formatting.Text;
+                    return new TextFile.Token[] { nopowersToken };
                 }
-                return magicPowersTokens.ToArray();
+                else
+                {
+                    // List item powers. 
+                    // TODO: Update once magic effects have been implemented. (just puts "Power number N" for now)
+                    // Pretty sure low numbers are type of application, and higher ones are effects.
+                    // e.g. shield of fortitude is [1, 87] which maps to "Cast when held: Fortitude" in classic.
+                    List<TextFile.Token> magicPowersTokens = new List<TextFile.Token>();
+                    for (int i = 0; i < parent.legacyMagic.Length; i++)
+                    {
+                        if (parent.legacyMagic[i] == 0xffff)
+                            break;
+                        TextFile.Token powerToken = new TextFile.Token();
+                        powerToken.text = "Power number " + parent.legacyMagic[i];
+                        powerToken.formatting = TextFile.Formatting.Text;
+                        magicPowersTokens.Add(powerToken);
+                        TextFile.Token formatToken = new TextFile.Token();
+                        formatToken.formatting = format;
+                        magicPowersTokens.Add(formatToken);
+                    }
+                    return magicPowersTokens.ToArray();
+                }
             }
 
         }
