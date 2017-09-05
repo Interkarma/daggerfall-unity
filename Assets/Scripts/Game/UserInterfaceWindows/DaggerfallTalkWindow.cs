@@ -32,13 +32,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const string talkCategoriesImgName = "TALK02I0.IMG";
         const string highlightedOptionsImgName = "TALK03I0.IMG";
 
-        enum SelectedTalkOption { 
+        enum TalkOption { 
             TellMeAbout,
             WhereIs
         };
-        SelectedTalkOption selectedTalkOption = SelectedTalkOption.TellMeAbout;
+        TalkOption selectedTalkOption = TalkOption.TellMeAbout;
 
-        enum SelectedTalkCategory
+        enum TalkCategory
         {
             None,
             Location,
@@ -46,7 +46,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Things,
             Work
         };
-        SelectedTalkCategory selectedTalkCategory = SelectedTalkCategory.Location;
+        TalkCategory selectedTalkCategory = TalkCategory.Location;
+
+        enum TalkTone
+        {
+            Polite,
+            Normal,
+            Blunt
+        };
+        TalkTone selectedTalkTone = TalkTone.Polite;
 
         Texture2D textureBackground;
         Texture2D textureHighlightedOptions;
@@ -70,12 +78,27 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         TextLabel pcSay;
 
+        Panel panelTone; // used as selection marker
+        Vector2 panelTonePolitePos = new Vector2(258, 18);
+        Vector2 panelToneNormalPos = new Vector2(258, 28);
+        Vector2 panelToneBluntPos = new Vector2(258, 38);
+        Vector2 panelToneSize = new Vector2(6f, 6f);
+        Color32 toggleColor = new Color32(162, 36, 12, 255);
+
+        Rect rectButtonTonePolite = new Rect(258, 18, 6, 6);
+        Rect rectButtonToneNormal = new Rect(258, 28, 6, 6);
+        Rect rectButtonToneBlunt = new Rect(258, 38, 6, 6);
+
         Button buttonTellMeAbout;
         Button buttonWhereIs;
         Button buttonCategoryLocation;
         Button buttonCategoryPeople;
         Button buttonCategoryThings;
         Button buttonCategoryWork;
+        Button buttonTonePolite;
+        Button buttonToneNormal;
+        Button buttonToneBlunt;
+
         Button buttonGoodbye;
 
         public DaggerfallTalkWindow(IUserInterfaceManager uiManager, DaggerfallBaseWindow previous = null)
@@ -208,12 +231,22 @@ namespace DaggerfallWorkshop.Game.UserInterface
             buttonCategoryWork.OnMouseClick += buttonCategoryWork_OnMouseClick;
             mainPanel.Components.Add(buttonCategoryWork);
 
+            buttonTonePolite = DaggerfallUI.AddButton(rectButtonTonePolite, NativePanel);
+            buttonTonePolite.OnMouseClick += buttonTonePolite_OnClickHandler;
+            buttonToneNormal = DaggerfallUI.AddButton(rectButtonToneNormal, NativePanel);
+            buttonToneNormal.OnMouseClick += buttonToneNormal_OnClickHandler;
+            buttonToneBlunt = DaggerfallUI.AddButton(rectButtonToneBlunt, NativePanel);
+            buttonToneBlunt.OnMouseClick += buttonToneBlunt_OnClickHandler;
+
             buttonGoodbye = new Button();
             buttonGoodbye.Position = new Vector2(118, 183);
             buttonGoodbye.Size = new Vector2(67, 10);
             buttonGoodbye.Name = "button_goodbye";
             buttonGoodbye.OnMouseClick += buttonGoodbye_OnMouseClick;
             mainPanel.Components.Add(buttonGoodbye);
+
+            panelTone = DaggerfallUI.AddPanel(new Rect(panelTonePolitePos, panelToneSize), NativePanel);
+            panelTone.BackgroundColor = toggleColor;
 
             UpdateLabels();
             UpdateButtons();
@@ -303,26 +336,28 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void UpdateButtons()
         {
+            // update talk option selection and talk category selection
             switch (selectedTalkOption)
             {
-                case SelectedTalkOption.TellMeAbout:
+                case TalkOption.TellMeAbout:
+                default:
                     setTalkModeTellMeAbout();
                     setTalkCategoryNone();
                     break;
-                case SelectedTalkOption.WhereIs:
+                case TalkOption.WhereIs:
                     setTalkModeWhereIs();
                     switch (selectedTalkCategory)
                     {
-                        case SelectedTalkCategory.Location:
+                        case TalkCategory.Location:
                             setTalkCategoryLocation();
                             break;
-                        case SelectedTalkCategory.People:
+                        case TalkCategory.People:
                             setTalkCategoryPeople();
                             break;
-                        case SelectedTalkCategory.Things:
+                        case TalkCategory.Things:
                             setTalkCategoryThings();
                             break;
-                        case SelectedTalkCategory.Work:
+                        case TalkCategory.Work:
                             setTalkCategoryWork();
                             break;
                         default:
@@ -330,62 +365,92 @@ namespace DaggerfallWorkshop.Game.UserInterface
                             break;
                     }
                     break;
+            }
+
+            //update tone selection
+            switch (selectedTalkTone)
+            {
+                case TalkTone.Polite:
                 default:
-                    setTalkModeTellMeAbout();
-                    setTalkCategoryNone();
+                    panelTone.Position = panelTonePolitePos;
+                    break;
+                case TalkTone.Normal:
+                    panelTone.Position = panelToneNormalPos;
+                    break;
+                case TalkTone.Blunt:
+                    panelTone.Position = panelToneBluntPos;
                     break;
             }
+            
         }
 
         #region event handlers
 
         void buttonTellMeAbout_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            selectedTalkOption = SelectedTalkOption.TellMeAbout;
+            selectedTalkOption = TalkOption.TellMeAbout;
             UpdateButtons();
         }
 
         void buttonWhereIs_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            selectedTalkOption = SelectedTalkOption.WhereIs;
+            selectedTalkOption = TalkOption.WhereIs;
             UpdateButtons();
         }
 
         void buttonCategoryLocation_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (selectedTalkOption == SelectedTalkOption.WhereIs)
+            if (selectedTalkOption == TalkOption.WhereIs)
             {
-                selectedTalkCategory = SelectedTalkCategory.Location;
+                selectedTalkCategory = TalkCategory.Location;
                 UpdateButtons();
             }
         }
 
         void buttonCategoryPeople_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (selectedTalkOption == SelectedTalkOption.WhereIs)
+            if (selectedTalkOption == TalkOption.WhereIs)
             {
-                selectedTalkCategory = SelectedTalkCategory.People;
+                selectedTalkCategory = TalkCategory.People;
                 UpdateButtons();
             }
         }
 
         void buttonCategoryThings_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (selectedTalkOption == SelectedTalkOption.WhereIs)
+            if (selectedTalkOption == TalkOption.WhereIs)
             {
-                selectedTalkCategory = SelectedTalkCategory.Things;
+                selectedTalkCategory = TalkCategory.Things;
                 UpdateButtons();
             }
         }
 
         void buttonCategoryWork_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (selectedTalkOption == SelectedTalkOption.WhereIs)
+            if (selectedTalkOption == TalkOption.WhereIs)
             {
-                selectedTalkCategory = SelectedTalkCategory.Work;
+                selectedTalkCategory = TalkCategory.Work;
                 UpdateButtons();
             }
-        }       
+        }
+
+        void buttonTonePolite_OnClickHandler(BaseScreenComponent sender, Vector2 position)
+        {
+            selectedTalkTone = TalkTone.Polite;
+            UpdateButtons();
+        }
+
+        void buttonToneNormal_OnClickHandler(BaseScreenComponent sender, Vector2 position)
+        {
+            selectedTalkTone = TalkTone.Normal;
+            UpdateButtons();
+        }
+
+        void buttonToneBlunt_OnClickHandler(BaseScreenComponent sender, Vector2 position)
+        {
+            selectedTalkTone = TalkTone.Blunt;
+            UpdateButtons();
+        }
 
         void buttonGoodbye_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
