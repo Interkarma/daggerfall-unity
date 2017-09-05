@@ -296,12 +296,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             UpdateLabels();
         }
 
-        public void setNPCPortraitAndName(int typeId, int variationId, string name)
+        public void setNPCPortraitAndName(int recordId, string name)
         {
             // Load npc portrait           
             CifRciFile rciFile = new CifRciFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, portraitImgName), FileUsage.UseMemory, false);
             rciFile.LoadPalette(Path.Combine(DaggerfallUnity.Instance.Arena2Path, rciFile.PaletteName));
-            DFBitmap bitmap = rciFile.GetDFBitmap(typeId * 24 + variationId, 0);
+            DFBitmap bitmap = rciFile.GetDFBitmap(recordId, 0);
             texturePortrait = new Texture2D(bitmap.Width, bitmap.Height, TextureFormat.ARGB32, false);
             texturePortrait.SetPixels32(rciFile.GetColor32(bitmap, 0));
             texturePortrait.Apply(false, false); // make readable
@@ -324,6 +324,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (textureBackground)
             {
                 textureBackground.SetPixels(119, textureBackground.height - 65 - 64, 64, 64, texturePortrait.GetPixels());
+                textureBackground.Apply(false);
             }
         }
 

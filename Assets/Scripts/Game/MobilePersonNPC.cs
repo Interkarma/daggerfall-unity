@@ -21,13 +21,23 @@ namespace DaggerfallWorkshop.Game
     public class MobilePersonNPC : MonoBehaviour
     {
         const int numPersonOutfitVariants = 4;
+        const int numPersonFaceVariants = 24;
+
+        int[] maleRedguardFaceRecordIndex = new int[] { 336, 312, 336, 312 }; // matching textures 381, 382, 383, 384 from MobilePersonBillboard class texture definition
+        int[] femaleRedguardFaceRecordIndex = new int[] { 144, 144, 120, 96 }; // matching texture 395, 396, 397, 398 from MobilePersonBillboard class texture definition
+
+        int[] maleNordFaceRecordIndex = new int[] { 240, 264, 264, 216 }; // matching texture 387, 388, 389, 390 from MobilePersonBillboard class texture definition
+        int[] femaleNordFaceRecordIndex = new int[] { 72, 0, 48, 72 }; // matching texture 392, 393, 451, 452 from MobilePersonBillboard class texture definition
+
+        int[] maleBretonFaceRecordIndex = new int[] { 192, 216, 240, 240 }; // matching texture 385, 386, 391, 394 from MobilePersonBillboard class texture definition
+        int[] femaleBretonFaceRecordIndex = new int[] { 72, 72, 24, 72 }; // matching texture 453, 454, 455, 456 from MobilePersonBillboard class texture definition
 
         public Races race = Races.Breton;
         public DisplayRaces displayRace = DisplayRaces.Breton;
         public Genders gender = Genders.Male;
         public string nameNPC;
         public int personOutfitVariant; // which basic outfit does the person wear
-        public int personVariant; // used for portrait in talk window
+        public int personFaceRecordId; // used for portrait in talk window
 
         public MobilePersonBillboard billboard;
         public MobilePersonMotor motor;
@@ -44,7 +54,7 @@ namespace DaggerfallWorkshop.Game
             billboard = GetComponentInChildren<MobilePersonBillboard>();
             motor = GetComponentInChildren<MobilePersonMotor>();
             RandomiseNPC();
-            SetPerson(race, gender, true);
+            //SetPerson(race, gender, true);
             billboard.SetPerson(race, gender, personOutfitVariant);
         }
         
@@ -66,7 +76,7 @@ namespace DaggerfallWorkshop.Game
         public void RandomiseNPC()
         {
             Genders gender = (Random.Range(0f, 1f) > 0.5f) ? gender = Genders.Female : gender = Genders.Male;
-            SetPerson(race, gender);
+            SetPerson(race, gender, true);
         }
 
 
@@ -85,15 +95,30 @@ namespace DaggerfallWorkshop.Game
         {
             // Allow for new random variant if specified
             if (newVariant)
-                personOutfitVariant = -1;
+            {
+                personOutfitVariant = Random.Range(0, numPersonOutfitVariants);                
 
-            // Store values
+                // Get person's face texture record index for this race and gender and outfit variant
+                int[] recordIndices = null;
+                switch (race)
+                {
+                    case Races.Redguard:
+                        recordIndices = (gender == Genders.Male) ? maleRedguardFaceRecordIndex : femaleRedguardFaceRecordIndex;
+                        break;
+                    case Races.Nord:
+                        recordIndices = (gender == Genders.Male) ? maleNordFaceRecordIndex : femaleNordFaceRecordIndex;
+                        break;
+                    case Races.Breton:
+                    default:
+                        recordIndices = (gender == Genders.Male) ? maleBretonFaceRecordIndex : femaleBretonFaceRecordIndex;
+                        break;
+                }
+                int personFaceVariant = Random.Range(0, numPersonFaceVariants);
+                this.personFaceRecordId = recordIndices[personOutfitVariant] + personFaceVariant;
+            }
             this.race = race;
             this.gender = gender;
-
-            // Set texture archive at random if not already set
-            if (personOutfitVariant == -1)
-                personOutfitVariant = Random.Range(0, numPersonOutfitVariants);
+            this.nameNPC = "dummy name";
         }
     }
 }

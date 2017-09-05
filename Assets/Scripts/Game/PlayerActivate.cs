@@ -282,7 +282,7 @@ namespace DaggerfallWorkshop.Game
                                 case PlayerActivateModes.Info:
                                 case PlayerActivateModes.Grab:
                                 case PlayerActivateModes.Talk:
-                                    Talk();
+                                    Talk(mobileNpc);
                                     break;
                                 case PlayerActivateModes.Steal:
                                     Pickpocket();
@@ -686,10 +686,10 @@ namespace DaggerfallWorkshop.Game
         }
         
         // Player has clicked on a talk target
-        void Talk() //MobilePersonNPC target = null)
+        void Talk(MobilePersonNPC targetNPC = null)
         {
             DaggerfallUI.UIManager.PushWindow(DaggerfallUI.Instance.TalkWindow);
-            DaggerfallUI.Instance.TalkWindow.setNPCPortraitAndName(0, 0, "");
+            DaggerfallUI.Instance.TalkWindow.setNPCPortraitAndName(targetNPC.personFaceRecordId, targetNPC.nameNPC);
         }
 
     }
