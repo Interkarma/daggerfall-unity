@@ -32,6 +32,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const string talkCategoriesImgName = "TALK02I0.IMG";
         const string highlightedOptionsImgName = "TALK03I0.IMG";
 
+        const string portraitImgName = "TFAC00I0.RCI";
+
         enum TalkOption { 
             TellMeAbout,
             WhereIs
@@ -59,6 +61,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Texture2D textureBackground;
         Texture2D textureHighlightedOptions;
         Texture2D textureGrayedOutCategories;
+        Texture2D texturePortrait;
+
+        Panel panelNameNPC;
+        TextLabel labelNameNPC = null;
+        string nameNPC = "";
 
         Color[] textureTellMeAboutNormal;
         Color[] textureTellMeAboutHighlighted;
@@ -113,6 +120,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             ImgFile imgFile = null;
             DFBitmap bitmap = null;
 
+            ParentPanel.BackgroundColor = ScreenDimColor;
+
             // Load background texture of talk window
             imgFile = new ImgFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, talkWindowImgName), FileUsage.UseMemory, false);
             imgFile.LoadPalette(Path.Combine(DaggerfallUnity.Instance.Arena2Path, imgFile.PaletteName));
@@ -127,6 +136,32 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 CloseWindow();
                 return;
             }
+
+            mainPanel = DaggerfallUI.AddPanel(NativePanel, AutoSizeModes.None);
+            mainPanel.BackgroundTexture = textureBackground;
+            mainPanel.Size = new Vector2(textureBackground.width, textureBackground.height);
+            mainPanel.HorizontalAlignment = HorizontalAlignment.Center;
+            mainPanel.VerticalAlignment = VerticalAlignment.Middle;
+
+            if (texturePortrait)
+            {
+                updatePortrait();
+            }
+
+            panelNameNPC = DaggerfallUI.AddPanel(mainPanel, AutoSizeModes.None);
+            panelNameNPC.Position = new Vector2(117, 52);
+            panelNameNPC.Size = new Vector2(197, 10);
+
+            labelNameNPC = new TextLabel();
+            labelNameNPC.Position = new Vector2(0, 0);
+            labelNameNPC.Size = new Vector2(197, 10);
+            labelNameNPC.Name = "label_npcName";
+            labelNameNPC.MaxCharacters = 32;
+            labelNameNPC.HorizontalAlignment = HorizontalAlignment.Center;
+            labelNameNPC.VerticalAlignment = VerticalAlignment.Middle;
+            panelNameNPC.Components.Add(labelNameNPC);
+
+            updateNameNPC();
 
             // Load talk options highlight texture
             imgFile = new ImgFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, highlightedOptionsImgName), FileUsage.UseMemory, false);
@@ -171,14 +206,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             textureCategoryThingsGrayedOut = textureGrayedOutCategories.GetPixels(0, 10, 107, 10);
             textureCategoryWorkHighlighted = textureBackground.GetPixels(4, textureBackground.height - 56 - 10, 107, 10);
             textureCategoryWorkGrayedOut = textureGrayedOutCategories.GetPixels(0, 0, 107, 10);
-
-            ParentPanel.BackgroundColor = ScreenDimColor;
-
-            mainPanel                       = DaggerfallUI.AddPanel(NativePanel, AutoSizeModes.None);
-            mainPanel.BackgroundTexture = textureBackground;
-            mainPanel.Size = new Vector2(textureBackground.width, textureBackground.height);
-            mainPanel.HorizontalAlignment   = HorizontalAlignment.Center;
-            mainPanel.VerticalAlignment     = VerticalAlignment.Middle;
 
             /*
             pcSay = new TextLabel();
@@ -269,9 +296,97 @@ namespace DaggerfallWorkshop.Game.UserInterface
             UpdateLabels();
         }
 
+        public void setNPCPortraitAndName(int typeId, int variationId, string name)
+        {
+            // Load npc portrait           
+            CifRciFile rciFile = new CifRciFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, portraitImgName), FileUsage.UseMemory, false);
+            rciFile.LoadPalette(Path.Combine(DaggerfallUnity.Instance.Arena2Path, rciFile.PaletteName));
+            DFBitmap bitmap = rciFile.GetDFBitmap(typeId * 24 + variationId, 0);
+            texturePortrait = new Texture2D(bitmap.Width, bitmap.Height, TextureFormat.ARGB32, false);
+            texturePortrait.SetPixels32(rciFile.GetColor32(bitmap, 0));
+            texturePortrait.Apply(false, false); // make readable
+            texturePortrait.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
+            if (!texturePortrait)
+            {
+                Debug.LogError(string.Format("Failed to load portrait image {0} for talk window", texturePortrait));
+                CloseWindow();
+                return;
+            }
+
+            updatePortrait();
+
+            nameNPC = name;
+            updateNameNPC();
+        }
+
+        void updatePortrait()
+        {
+            if (textureBackground)
+            {
+                textureBackground.SetPixels(119, textureBackground.height - 65 - 64, 64, 64, texturePortrait.GetPixels());
+            }
+        }
+
+        void updateNameNPC()
+        {
+            if (labelNameNPC != null)
+            {
+                labelNameNPC.Text = nameNPC;
+            }
+        }
 
         void UpdateLabels()
         {
+
+        }
+
+        void UpdateButtons()
+        {
+            // update talk option selection and talk category selection
+            switch (selectedTalkOption)
+            {
+                case TalkOption.TellMeAbout:
+                default:
+                    setTalkModeTellMeAbout();
+                    setTalkCategoryNone();
+                    break;
+                case TalkOption.WhereIs:
+                    setTalkModeWhereIs();
+                    switch (selectedTalkCategory)
+                    {
+                        case TalkCategory.Location:
+                            setTalkCategoryLocation();
+                            break;
+                        case TalkCategory.People:
+                            setTalkCategoryPeople();
+                            break;
+                        case TalkCategory.Things:
+                            setTalkCategoryThings();
+                            break;
+                        case TalkCategory.Work:
+                            setTalkCategoryWork();
+                            break;
+                        default:
+                            setTalkCategoryNone();
+                            break;
+                    }
+                    break;
+            }
+
+            //update tone selection
+            switch (selectedTalkTone)
+            {
+                case TalkTone.Polite:
+                default:
+                    panelTone.Position = panelTonePolitePos;
+                    break;
+                case TalkTone.Normal:
+                    panelTone.Position = panelToneNormalPos;
+                    break;
+                case TalkTone.Blunt:
+                    panelTone.Position = panelToneBluntPos;
+                    break;
+            }
 
         }
 
@@ -332,56 +447,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             textureBackground.SetPixels(4, textureBackground.height - 46 - 10, 107, 10, textureCategoryThingsGrayedOut);
             textureBackground.SetPixels(4, textureBackground.height - 56 - 10, 107, 10, textureCategoryWorkHighlighted);
             textureBackground.Apply(false);
-        }
-
-        void UpdateButtons()
-        {
-            // update talk option selection and talk category selection
-            switch (selectedTalkOption)
-            {
-                case TalkOption.TellMeAbout:
-                default:
-                    setTalkModeTellMeAbout();
-                    setTalkCategoryNone();
-                    break;
-                case TalkOption.WhereIs:
-                    setTalkModeWhereIs();
-                    switch (selectedTalkCategory)
-                    {
-                        case TalkCategory.Location:
-                            setTalkCategoryLocation();
-                            break;
-                        case TalkCategory.People:
-                            setTalkCategoryPeople();
-                            break;
-                        case TalkCategory.Things:
-                            setTalkCategoryThings();
-                            break;
-                        case TalkCategory.Work:
-                            setTalkCategoryWork();
-                            break;
-                        default:
-                            setTalkCategoryNone();
-                            break;
-                    }
-                    break;
-            }
-
-            //update tone selection
-            switch (selectedTalkTone)
-            {
-                case TalkTone.Polite:
-                default:
-                    panelTone.Position = panelTonePolitePos;
-                    break;
-                case TalkTone.Normal:
-                    panelTone.Position = panelToneNormalPos;
-                    break;
-                case TalkTone.Blunt:
-                    panelTone.Position = panelToneBluntPos;
-                    break;
-            }
-            
         }
 
         #region event handlers

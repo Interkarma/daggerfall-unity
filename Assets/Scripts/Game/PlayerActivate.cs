@@ -689,6 +689,7 @@ namespace DaggerfallWorkshop.Game
         void Talk(DaggerfallEntityBehaviour target = null)
         {
             DaggerfallUI.UIManager.PushWindow(DaggerfallUI.Instance.TalkWindow);
+            DaggerfallUI.Instance.TalkWindow.setNPCPortraitAndName(0, 0, "test name");
         }
 
     }
