@@ -132,51 +132,48 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
-        /// Resolves full item name using parameters like %it and material type.
+        /// Resolves full item name using parameters like %it.
         /// </summary>
         public string ResolveItemName(DaggerfallUnityItem item)
         {
-            // Start with base name
-            string result = item.shortName;
-
             // Get item template
             ItemTemplate template = item.ItemTemplate;
 
+            // Return just the template name if item is unidentified.
+            if (!item.IsIdentified)
+                return template.name;
+            
+            // Start with base name
+            string result = item.shortName;
+
             // Resolve %it parameter
             result = result.Replace("%it", template.name);
-
-            // Resolve weapon material
-            if (item.ItemGroup == ItemGroups.Weapons)
-            {
-                WeaponMaterialTypes weaponMaterial = (WeaponMaterialTypes)item.nativeMaterialValue;
-                string materialName = DaggerfallUnity.Instance.TextProvider.GetWeaponMaterialName(weaponMaterial);
-                result = string.Format("{0} {1}", materialName, result);
-            }
-
-            // Resolve armor material
-            if (item.ItemGroup == ItemGroups.Armor)
-            {
-                ArmorMaterialTypes armorMaterial = (ArmorMaterialTypes)item.nativeMaterialValue;
-                string materialName = DaggerfallUnity.Instance.TextProvider.GetArmorMaterialName(armorMaterial);
-                result = string.Format("{0} {1}", materialName, result);
-            }
 
             return result;
         }
 
         /// <summary>
-        /// Resolves item title name using parameters like %it, but does not prepend material name.
+        /// Resolves full item name using parameters like %it and material type.
         /// </summary>
-        public string ResolveItemTitleName(DaggerfallUnityItem item)
+        public string ResolveItemLongName(DaggerfallUnityItem item)
         {
-            // Start with base name
-            string result = item.shortName;
+            string result = ResolveItemName(item);
 
-            // Get item template
-            ItemTemplate template = item.ItemTemplate;
+            // Resolve weapon material
+            if (item.ItemGroup == ItemGroups.Weapons && item.TemplateIndex != (int) Weapons.Arrow)
+            {
+                WeaponMaterialTypes weaponMaterial = (WeaponMaterialTypes) item.nativeMaterialValue;
+                string materialName = DaggerfallUnity.Instance.TextProvider.GetWeaponMaterialName(weaponMaterial);
+                result = string.Format("{0} {1}", materialName, result);
+            }
 
-            // Resolve %it parameter
-            result = result.Replace("%it", template.name);
+            // Resolve armor material
+            if (item.ItemGroup == ItemGroups.Armor && !item.IsShield && item.TemplateIndex != (int) Armor.Helm)
+            {
+                ArmorMaterialTypes armorMaterial = (ArmorMaterialTypes) item.nativeMaterialValue;
+                string materialName = DaggerfallUnity.Instance.TextProvider.GetArmorMaterialName(armorMaterial);
+                result = string.Format("{0} {1}", materialName, result);
+            }
 
             return result;
         }

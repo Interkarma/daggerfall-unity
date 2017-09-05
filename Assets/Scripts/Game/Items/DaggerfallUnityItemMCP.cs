@@ -33,7 +33,7 @@ namespace DaggerfallWorkshop.Game.Items
 
             public override string ItemName()
             {
-                return parent.TitleName;
+                return parent.ItemName;
             }
 
             public override string Worth()
@@ -46,9 +46,9 @@ namespace DaggerfallWorkshop.Game.Items
                 switch (parent.itemGroup)
                 {
                     case ItemGroups.Armor:
-                        return ((ArmorMaterialTypes)parent.nativeMaterialValue).ToString();
+                        return DaggerfallUnity.Instance.TextProvider.GetArmorMaterialName((ArmorMaterialTypes) parent.nativeMaterialValue);
                     case ItemGroups.Weapons:
-                        return ((WeaponMaterialTypes)parent.nativeMaterialValue).ToString();
+                        return DaggerfallUnity.Instance.TextProvider.GetWeaponMaterialName((WeaponMaterialTypes) parent.nativeMaterialValue);
                     default:
                         return base.Material();
                 }
@@ -70,7 +70,7 @@ namespace DaggerfallWorkshop.Game.Items
 
             public override string Weight()
             {   // %kg
-                return parent.weightInKg.ToString();
+                return (parent.weightInKg * parent.stackCount).ToString();
             }
 
             public override string WeaponDamage()
