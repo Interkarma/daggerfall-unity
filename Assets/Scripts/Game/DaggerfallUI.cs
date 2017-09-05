@@ -85,7 +85,6 @@ namespace DaggerfallWorkshop.Game
         DaggerfallBookReaderWindow dfBookReaderWindow;
         DaggerfallQuestJournalWindow dfQuestJournalWindow;
         QuestMachineInspectorWindow dfQuestInspector;
-        DaggerfallMessageBox dfStatusBox;
 
         DaggerfallFontPlus fontPetrock32;
 
