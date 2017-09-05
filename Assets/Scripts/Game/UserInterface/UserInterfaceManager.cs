@@ -191,8 +191,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             UserInterfaceWindow oldWindow = TopWindow;
             if (oldWindow != null)
             {
-                oldWindow.OnPop();
                 windows.Pop();
+                oldWindow.OnPop();
                 if (TopWindow != null)
                     TopWindow.OnReturn();
             }

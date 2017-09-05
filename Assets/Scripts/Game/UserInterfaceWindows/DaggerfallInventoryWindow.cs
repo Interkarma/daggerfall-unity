@@ -951,14 +951,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     remoteItemsStackLabels[i].Text = item.stackCount.ToString();
 
                 // Tooltip text
-                string text;
-                if (item.ItemGroup == ItemGroups.Books)
-                {
-                    text = DaggerfallUnity.Instance.ItemHelper.getBookNameByMessage(item.message, item.LongName);
-                } else {
-                    text = item.LongName;
-                }
-                remoteItemsButtons[i].ToolTipText = text;
+                remoteItemsButtons[i].ToolTipText = item.LongName;
             }
         }
 
@@ -1424,8 +1417,26 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
                 messageBox.SetTextTokens(tokens, item);
-                messageBox.ClickAnywhereToClose = true;
-                messageBox.Show();
+                if (item.legacyMagic == null)
+                {
+                    messageBox.ClickAnywhereToClose = true;
+                    messageBox.Show();
+                }
+                else
+                {   // Setup the next message box with the magic effect info.
+                    int msgId = 1016;
+                    if (item.ItemGroup == ItemGroups.Artifacts)
+                    {
+                        // Use appropriate artifact description message. (8700-8721)
+                        msgId = 8700 + item.GroupIndex;
+                    }
+                    DaggerfallMessageBox messageBoxMagic = new DaggerfallMessageBox(uiManager, messageBox);
+                    messageBoxMagic.SetTextTokens(msgId, item);
+                    messageBoxMagic.ClickAnywhereToClose = true;
+
+                    messageBox.AddNextMessageBox(messageBoxMagic);
+                    messageBox.Show();
+                }
             }
         }
 
