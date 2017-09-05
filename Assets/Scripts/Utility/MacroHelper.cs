@@ -26,7 +26,9 @@ namespace DaggerfallWorkshop.Utility
     {
         public delegate string MacroHandler(IMacroContextProvider mcp = null);
 
-        #region macro definitions and handler mapping
+        public delegate TextFile.Token[] MultilineMacroHandler(IMacroContextProvider mcp, TextFile.Formatting format);
+
+        #region macro definitions and handler mappings
 
         static Dictionary<string, MacroHandler> macroHandlers = new Dictionary<string, MacroHandler>()
         {
@@ -123,7 +125,6 @@ namespace DaggerfallWorkshop.Utility
             { "%mn", null },  // Random First(?) name (Male?)
             { "%mn2", null }, // Same as _mn (?)
             { "%mod", ArmourMod }, // Modification
-            { "%mpw", null }, // Magic powers
             { "%n", null },   // A random female first name
             { "%nam", null }, // A random full name
             { "%nrn", null }, // Noble of the current region
@@ -190,6 +191,13 @@ namespace DaggerfallWorkshop.Utility
             { "%wpn", null }, // Poison (?)
             { "%wth", Worth }, // Worth
         };
+
+        // Multi-line macro handlers, returns tokens.
+        static Dictionary<string, MultilineMacroHandler> multilineMacroHandlers = new Dictionary<string, MultilineMacroHandler>()
+        {
+            { "%mpw", MagicPowers }, // Magic powers - multi line (token) message
+        };
+
         #endregion
 
         // Any punctuation characters that can be on the end of a macro symbol need adding here.
@@ -204,46 +212,67 @@ namespace DaggerfallWorkshop.Utility
         {
             // Iterate message tokens
             string tokenText;
+            int multilineIdx = 0;
+            TextFile.Token[] multilineTokens = null;
+
             for (int tokenIdx = 0; tokenIdx < tokens.Length; tokenIdx++)
             {
                 tokenText = tokens[tokenIdx].text;
                 if (tokenText != null && tokenText.IndexOf('%') >= 0)
                 {
-                    // Split token text into individual words
-                    string[] words = tokenText.Split(' ');
-
-                    // Iterate words to find macros
-                    for (int wordIdx = 0; wordIdx < words.Length; wordIdx++)
+                    // Handle multiline macros. (only handles the last one & must be only thing in this token)
+                    if (multilineMacroHandlers.ContainsKey(tokenText.Trim()))
                     {
-                        if (words[wordIdx].StartsWith("%"))
+                        multilineTokens = GetMultilineValue(tokenText.Trim(), mcp, tokens[tokenIdx + 1].formatting);
+                        multilineIdx = tokenIdx;
+                    }
+                    else
+                    {
+                        // Split token text into individual words
+                        string[] words = tokenText.Split(' ');
+
+                        // Iterate words to find macros
+                        for (int wordIdx = 0; wordIdx < words.Length; wordIdx++)
                         {
-                            int wordLen = words[wordIdx].Length - 1;
-                            if (words[wordIdx].IndexOfAny(PUNCTUATION) == wordLen)
+                            if (words[wordIdx].StartsWith("%"))
                             {
-                                string symbolStr = words[wordIdx].Substring(0, wordLen);
-                                words[wordIdx] = GetValue(symbolStr, mcp) + words[wordIdx].Substring(wordLen);
+                                int wordLen = words[wordIdx].Length - 1;
+                                if (words[wordIdx].IndexOfAny(PUNCTUATION) == wordLen)
+                                {
+                                    string symbolStr = words[wordIdx].Substring(0, wordLen);
+                                    words[wordIdx] = GetValue(symbolStr, mcp) + words[wordIdx].Substring(wordLen);
+                                }
+                                else
+                                {
+                                    words[wordIdx] = GetValue(words[wordIdx], mcp);
+                                }
                             }
-                            else
-                            {
-                                words[wordIdx] = GetValue(words[wordIdx], mcp);
+                            else if (words[wordIdx].StartsWith("+%"))
+                            {   // Support willpower message which erroneously has the + just before the %. 
+                                words[wordIdx] = '+' + GetValue(words[wordIdx].Substring(1), mcp);
                             }
                         }
-                        else if (words[wordIdx].StartsWith("+%"))
-                        {   // Support willpower message which erroneously has the + just before the %. 
-                            words[wordIdx] = '+' + GetValue(words[wordIdx].Substring(1), mcp);
-                        }
-                    }
 
-                    // Re-assemble.
-                    tokenText = string.Empty;
-                    for (int wordIdx = 0; wordIdx < words.Length; wordIdx++)
-                    {
-                        tokenText += words[wordIdx];
-                        if (wordIdx != words.Length - 1)
-                            tokenText += " ";
+                        // Re-assemble words and update token.
+                        tokenText = string.Empty;
+                        for (int wordIdx = 0; wordIdx < words.Length; wordIdx++)
+                        {
+                            tokenText += words[wordIdx];
+                            if (wordIdx != words.Length - 1)
+                                tokenText += " ";
+                        }
+                        tokens[tokenIdx].text = tokenText;
                     }
-                    tokens[tokenIdx].text = tokenText;
                 }
+            }
+            // Insert multiline tokens if generated.
+            if (multilineTokens != null && multilineTokens.Length > 0)
+            {
+                TextFile.Token[] newTokens = new TextFile.Token[tokens.Length + multilineTokens.Length - 1];
+                Array.Copy(tokens, newTokens, multilineIdx);
+                Array.Copy(multilineTokens, 0, newTokens, multilineIdx, multilineTokens.Length);
+                Array.Copy(tokens, multilineIdx + 1, newTokens, multilineIdx + multilineTokens.Length, tokens.Length - multilineIdx - 1);
+                tokens = newTokens;
             }
         }
 
@@ -279,6 +308,35 @@ namespace DaggerfallWorkshop.Utility
                 return symbolStr + "[undefined]";
             }
         }
+
+        /// <summary>
+        /// Gets a multiline value for a single macro symbol string.
+        /// </summary>
+        /// <returns>The multiline expanded macro value as a Token array.</returns>
+        /// <param name="symbolStr">macro symbol string.</param>
+        /// <param name="mcp">an object instance providing context for macro expansion.</param>
+        /// <param name="format">the format tag to follow each line. (can be null)</param>
+        public static TextFile.Token[] GetMultilineValue(string symbolStr, IMacroContextProvider mcp, TextFile.Formatting format)
+        {
+            string error;
+            if (format == TextFile.Formatting.Text)
+                format = TextFile.Formatting.NewLine;
+            MultilineMacroHandler svp = multilineMacroHandlers[symbolStr];
+            if (svp != null) {
+                try {
+                    return svp.Invoke(mcp, format);
+                } catch (NotImplementedException) {
+                    error = symbolStr + "[srcDataUnknown]";
+                }
+            } else {
+                error = symbolStr + "[unhandled]";
+            }
+            TextFile.Token errorToken = new TextFile.Token();
+            errorToken.text = error;
+            errorToken.formatting = TextFile.Formatting.Text;
+            return new TextFile.Token[] { errorToken };
+        }
+
 
         //
         // Global macro handlers - not context sensitive. (mcp will be null, and should not be used)
@@ -526,6 +584,18 @@ namespace DaggerfallWorkshop.Utility
         public static string God(IMacroContextProvider mcp)
         {   // %god
             return mcp.GetMacroDataSource().God();
+        }
+
+        #endregion
+
+        //
+        // Multiline macro handlers - not sure if there are any others.
+        //
+        #region multiline macro handlers
+
+        public static TextFile.Token[] MagicPowers(IMacroContextProvider mcp, TextFile.Formatting format)
+        {   // %mpw
+            return mcp.GetMacroDataSource().MagicPowers(format);
         }
 
         #endregion

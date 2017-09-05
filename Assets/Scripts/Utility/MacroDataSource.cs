@@ -6,6 +6,7 @@
 // Original Author: Hazelnut
 
 using System;
+using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -134,6 +135,11 @@ namespace DaggerfallWorkshop.Utility
 
         public virtual string God()
         {   // %god
+            throw new NotImplementedException();
+        }
+
+        public virtual TextFile.Token[] MagicPowers(TextFile.Formatting format)
+        {   // %mpw
             throw new NotImplementedException();
         }
 

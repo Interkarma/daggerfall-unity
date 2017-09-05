@@ -8,6 +8,7 @@
 using System;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect.Arena2;
+using System.Collections.Generic;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -93,6 +94,26 @@ namespace DaggerfallWorkshop.Game.Items
                 // Should the bookfile get closed?
                 return bookFile.Author;
             }
+
+            // TODO: Update once magic effects have been implemented. (just puts "Power number N" for now)
+            public override TextFile.Token[] MagicPowers(TextFile.Formatting format)
+            {   // %mpw
+                List<TextFile.Token> magicPowersTokens = new List<TextFile.Token>();
+                for (int i = 0; i < parent.legacyMagic.Length; i++)
+                {
+                    if (parent.legacyMagic[i] == 0xffff)
+                        break;
+                    TextFile.Token powerToken = new TextFile.Token();
+                    powerToken.text = "Power number " + parent.legacyMagic[i];
+                    powerToken.formatting = TextFile.Formatting.Text;
+                    magicPowersTokens.Add(powerToken);
+                    TextFile.Token formatToken = new TextFile.Token();
+                    formatToken.formatting = format;
+                    magicPowersTokens.Add(formatToken);
+                }
+                return magicPowersTokens.ToArray();
+            }
+
         }
     }
 }
