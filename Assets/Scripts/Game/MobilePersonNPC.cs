@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -92,33 +93,43 @@ namespace DaggerfallWorkshop.Game
         /// Setup this person based on race and gender.
         /// </summary>
         public void SetPerson(Races race, Genders gender, bool newVariant = false)
-        {
+        {      
             // Allow for new random variant if specified
             if (newVariant)
             {
-                personOutfitVariant = Random.Range(0, numPersonOutfitVariants);                
+                personOutfitVariant = Random.Range(0, numPersonOutfitVariants);
 
-                // Get person's face texture record index for this race and gender and outfit variant
+                // do these steps:
+                // get person's face texture record index for this race and gender and outfit variant
+                // get correct nameBankType for this race
                 int[] recordIndices = null;
+                NameHelper.BankTypes nameBankType;
                 switch (race)
                 {
                     case Races.Redguard:
                         recordIndices = (gender == Genders.Male) ? maleRedguardFaceRecordIndex : femaleRedguardFaceRecordIndex;
+                        nameBankType = NameHelper.BankTypes.Redguard;
                         break;
                     case Races.Nord:
                         recordIndices = (gender == Genders.Male) ? maleNordFaceRecordIndex : femaleNordFaceRecordIndex;
+                        nameBankType = NameHelper.BankTypes.Nord;
                         break;
                     case Races.Breton:
                     default:
                         recordIndices = (gender == Genders.Male) ? maleBretonFaceRecordIndex : femaleBretonFaceRecordIndex;
+                        nameBankType = NameHelper.BankTypes.Breton;
                         break;
                 }
+
+                // get face record id to use
                 int personFaceVariant = Random.Range(0, numPersonFaceVariants);
                 this.personFaceRecordId = recordIndices[personOutfitVariant] + personFaceVariant;
+
+                // create name for npc
+                this.nameNPC = DaggerfallUnity.Instance.NameHelper.FullName(nameBankType, gender);
             }
             this.race = race;
-            this.gender = gender;
-            this.nameNPC = "dummy name";
+            this.gender = gender;           
         }
     }
 }
