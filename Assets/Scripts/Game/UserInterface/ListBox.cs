@@ -34,6 +34,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         PixelFont font;
         int selectedIndex = 0;
         int scrollIndex = 0;
+        bool enabledHorizontalScroll = false;
+        int horizontalScrollIndex = 0;
+        int maxHorizontalScrollIndex = 0;
         int rowsDisplayed = 9;
         int rowSpacing = 1;
         HorizontalAlignment rowAlignment = HorizontalAlignment.Left;
@@ -69,6 +72,28 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             get { return scrollIndex; }
             set { scrollIndex = value; }
+        }
+
+        public bool EnabledHorizontalScroll
+        {
+            get { return enabledHorizontalScroll; }
+            set { enabledHorizontalScroll = value; }
+        }
+
+        public int HorizontalScrollIndex
+        {
+            get { return horizontalScrollIndex; }
+            set
+            {
+                horizontalScrollIndex = value;
+                horizontalScrollIndex = Math.Min(maxHorizontalScrollIndex, horizontalScrollIndex);
+            }
+        }
+
+        public int MaxHorizontalScrollIndex
+        {
+            get { return maxHorizontalScrollIndex; }
+            set { maxHorizontalScrollIndex = value; }
         }
 
         public int SelectedIndex
@@ -155,6 +180,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     SelectPrevious();
                 else if (DaggerfallUI.Instance.LastKeyCode == KeyCode.DownArrow)
                     SelectNext();
+                else if (DaggerfallUI.Instance.LastKeyCode == KeyCode.LeftArrow)
+                    HorizontalScrollLeft();
+                else if (DaggerfallUI.Instance.LastKeyCode == KeyCode.RightArrow)
+                    HorizontalScrollRight();
                 else if (DaggerfallUI.Instance.LastKeyCode == KeyCode.Return)
                     UseSelectedItem();
             }
@@ -171,6 +200,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     continue;
 
                 TextLabel label = listItems[i];
+                label.StartCharacterIndex = horizontalScrollIndex;
+                label.UpdateLabelTexture();
                 if (i == selectedIndex)
                 {
                     label.TextColor = selectedTextColor;
@@ -316,6 +347,24 @@ namespace DaggerfallWorkshop.Game.UserInterface
             RaiseOnSelectNextEvent();
             RaiseOnSelectItemEvent();
             RaiseOnScrollEvent();
+        }
+
+        public void HorizontalScrollLeft()
+        {
+            if (!enabledHorizontalScroll)
+                return;
+
+            horizontalScrollIndex--;
+            horizontalScrollIndex = Math.Max(0, horizontalScrollIndex);
+        }
+
+        public void HorizontalScrollRight()
+        {
+            if (!enabledHorizontalScroll)
+                return;
+
+            horizontalScrollIndex++;
+            horizontalScrollIndex = Math.Min(maxHorizontalScrollIndex, horizontalScrollIndex);
         }
 
         public void SelectIndex(int index)
