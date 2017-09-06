@@ -321,6 +321,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
+        public int LengthOfLongestItem()
+        {
+            int maxLength = 0;
+            for (int i = 0; i < listItems.Count; i++)
+            {
+                maxLength = Math.Max(maxLength, listItems[i].Text.Length);
+            }
+            return maxLength;
+        }
+
         public void SelectPrevious()
         {
             if (selectedIndex > 0)

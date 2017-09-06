@@ -42,9 +42,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Rect rectButtonTopicLeft = new Rect(5, 177, 15, 8);
         Rect rectButtonTopicRight = new Rect(87, 177, 15, 8);
 
-        const int maxNumListTopics = 13; // max number of items displayed in scrolling area of topics list
-
-        const int maxHorizontalScrollIndex = 15;
+        const int maxNumTopicsShown = 13; // max number of items displayed in scrolling area of topics list
+        const int maxNumCharactersOfTopicShown = 20; // max number of characters of a topic displayed in scrolling area of topics list
 
         enum TalkOption { 
             TellMeAbout,
@@ -118,9 +117,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Button buttonToneNormal;
         Button buttonToneBlunt;
 
-        ListBox listBoxTopicLocation;
+        ListBox listBoxTopic;
         VerticalScrollBar verticalScrollBarTopicWindow;
         HorizontalSlider horizontalSliderTopicWindow;
+
+        List<string> listTopicLocation;
+        List<string> listTopicPeople;
+        List<string> listTopicThings;
+        int lengthOfLongestItemInListBox;
 
         Rect upArrowRect = new Rect(0, 0, 9, 16);
         Rect downArrowRect = new Rect(0, 136, 9, 16);
@@ -144,6 +148,51 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public DaggerfallTalkWindow(IUserInterfaceManager uiManager, DaggerfallBaseWindow previous = null)
             : base(uiManager, previous)
         {
+        }
+
+
+        public override void OnPush()
+        {
+            base.OnPush();
+
+            // Reset scrollbars
+            if (verticalScrollBarTopicWindow != null)
+                verticalScrollBarTopicWindow.ScrollIndex = 0;
+        }
+
+        public override void OnPop()
+        {
+            base.OnPop();
+        }
+
+        public override void Update()
+        {
+            base.Update();
+
+            UpdateLabels();
+        }
+
+        public void setNPCPortraitAndName(int recordId, string name)
+        {
+            // Load npc portrait           
+            CifRciFile rciFile = new CifRciFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, portraitImgName), FileUsage.UseMemory, false);
+            rciFile.LoadPalette(Path.Combine(DaggerfallUnity.Instance.Arena2Path, rciFile.PaletteName));
+            DFBitmap bitmap = rciFile.GetDFBitmap(recordId, 0);
+            texturePortrait = new Texture2D(bitmap.Width, bitmap.Height, TextureFormat.ARGB32, false);
+            texturePortrait.SetPixels32(rciFile.GetColor32(bitmap, 0));
+            texturePortrait.Apply(false, false); // make readable
+            texturePortrait.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
+            if (!texturePortrait)
+            {
+                Debug.LogError(string.Format("Failed to load portrait image {0} for talk window", texturePortrait));
+                CloseWindow();
+                return;
+            }
+
+            updatePortrait();
+
+            nameNPC = name;
+            updateNameNPC();
         }
 
         protected override void Setup()
@@ -308,21 +357,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
             panelTone = DaggerfallUI.AddPanel(new Rect(panelTonePolitePos, panelToneSize), NativePanel);
             panelTone.BackgroundColor = toggleColor;
 
-            listBoxTopicLocation = new ListBox();
-            listBoxTopicLocation.Position = new Vector2(6, 71);
-            listBoxTopicLocation.Size = new Vector2(94, 104);
-            listBoxTopicLocation.RowsDisplayed = maxNumListTopics;
-            listBoxTopicLocation.MaxCharacters = -1;
-            listBoxTopicLocation.Name = "list_topic_location";
-            listBoxTopicLocation.EnabledHorizontalScroll = true;
-            listBoxTopicLocation.MaxHorizontalScrollIndex = maxHorizontalScrollIndex;
-            //listBoxTopicLocation.OnMouseClick += listBoxTopicLocation_OnMouseClickHandler;
-            mainPanel.Components.Add(listBoxTopicLocation);
+            PrepareTestTopicLists();
 
-            for (int i = 0; i < 50; i++)
-            {
-                listBoxTopicLocation.AddItem("location " + i + " test string");
-            }
+            listBoxTopic = new ListBox();
+            listBoxTopic.Position = new Vector2(6, 71);
+            listBoxTopic.Size = new Vector2(94, 104);
+            listBoxTopic.RowsDisplayed = maxNumTopicsShown;
+            listBoxTopic.MaxCharacters = -1;
+            listBoxTopic.Name = "list_topic";
+            listBoxTopic.EnabledHorizontalScroll = true;
+            //SetListItems(ref listBoxTopic, ref listTopicLocation);
+            //listBoxTopic.OnMouseClick += listBoxTopic_OnMouseClickHandler;
+            mainPanel.Components.Add(listBoxTopic);
 
             // Cut out red up/down arrows
             Texture2D redArrowsTexture = ImageReader.GetTexture(redArrowsTextureName);
@@ -337,34 +383,39 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Color32[] colors;
             Color32[] rotated;
             colors = redUpArrow.GetPixels32();
-            rotated = ImageProcessing.RotateColors(ref colors, redUpArrow.width, redUpArrow.height);
-            redLeftArrow = new Texture2D(redUpArrow.height, redUpArrow.width);
-            redLeftArrow.SetPixels32(rotated);
+            rotated = ImageProcessing.RotateColors(ref colors, redUpArrow.height, redUpArrow.width);
+            redLeftArrow = new Texture2D(redUpArrow.height, redUpArrow.width, TextureFormat.ARGB32, false);
+            redLeftArrow.SetPixels32(rotated, 0);
             redLeftArrow.Apply(false);
+            redLeftArrow.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
 
             colors = redDownArrow.GetPixels32();
-            rotated = ImageProcessing.RotateColors(ref colors, redUpArrow.width, redUpArrow.height);
-            redRightArrow = new Texture2D(redUpArrow.height, redUpArrow.width);
+            rotated = ImageProcessing.RotateColors(ref colors, redDownArrow.height, redDownArrow.width);
+            redRightArrow = new Texture2D(redUpArrow.height, redUpArrow.width, TextureFormat.ARGB32, false);
             redRightArrow.SetPixels32(rotated);
             redRightArrow.Apply(false);
+            redRightArrow.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
 
             colors = greenUpArrow.GetPixels32();
-            rotated = ImageProcessing.RotateColors(ref colors, greenUpArrow.width, greenUpArrow.height);
-            greenLeftArrow = new Texture2D(greenUpArrow.height, greenUpArrow.width);
+            rotated = ImageProcessing.RotateColors(ref colors, greenUpArrow.height, greenUpArrow.width);
+            greenLeftArrow = new Texture2D(greenUpArrow.height, greenUpArrow.width, TextureFormat.ARGB32, false);
             greenLeftArrow.SetPixels32(rotated);
             greenLeftArrow.Apply(false);
+            greenLeftArrow.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
 
             colors = greenDownArrow.GetPixels32();
-            rotated = ImageProcessing.RotateColors(ref colors, greenDownArrow.width, greenDownArrow.height);
-            greenRightArrow = new Texture2D(greenDownArrow.height, greenDownArrow.width);
+            rotated = ImageProcessing.RotateColors(ref colors, greenDownArrow.height, greenDownArrow.width);
+            greenRightArrow = new Texture2D(greenDownArrow.height, greenDownArrow.width, TextureFormat.ARGB32, false);
             greenRightArrow.SetPixels32(rotated);
             greenRightArrow.Apply(false);
-
-            SetupScrollBars();
-            SetupScrollButtons();
+            greenRightArrow.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
 
             UpdateLabels();
             UpdateButtons();
+            UpdateCheckboxes();
+
+            SetupScrollBars();
+            SetupScrollButtons();
         }
 
         void SetupScrollBars()
@@ -373,18 +424,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
             verticalScrollBarTopicWindow = new VerticalScrollBar();
             verticalScrollBarTopicWindow.Position = new Vector2(104, 87);
             verticalScrollBarTopicWindow.Size = new Vector2(5, 73);
-            verticalScrollBarTopicWindow.DisplayUnits = Math.Min(maxNumListTopics, listBoxTopicLocation.Count);
-            verticalScrollBarTopicWindow.TotalUnits = listBoxTopicLocation.Count;
             verticalScrollBarTopicWindow.OnScroll += verticalScrollBarTopicWindow_OnScroll;
             NativePanel.Components.Add(verticalScrollBarTopicWindow);
 
             horizontalSliderTopicWindow = new HorizontalSlider();
             horizontalSliderTopicWindow.Position = new Vector2(21, 178);
             horizontalSliderTopicWindow.Size = new Vector2(62, 5);
-            horizontalSliderTopicWindow.DisplayUnits = 11;
-            horizontalSliderTopicWindow.TotalUnits = maxHorizontalScrollIndex;
             horizontalSliderTopicWindow.OnScroll += horizontalSliderTopicWindow_OnScroll;
             NativePanel.Components.Add(horizontalSliderTopicWindow);
+
+            UpdateScrollBars();
         }
 
         void SetupScrollButtons()
@@ -405,57 +454,68 @@ namespace DaggerfallWorkshop.Game.UserInterface
             buttonTopicRight.BackgroundTexture = redRightArrow;
             buttonTopicRight.OnMouseClick += ButtonTopicRight_OnMouseClick;
 
+            UpdateScrollButtons();
+        }
+
+        void UpdateScrollBars()
+        {
+            verticalScrollBarTopicWindow.DisplayUnits = Math.Min(maxNumTopicsShown, listBoxTopic.Count);
+            verticalScrollBarTopicWindow.TotalUnits = listBoxTopic.Count;
+            verticalScrollBarTopicWindow.Update();
+
+            horizontalSliderTopicWindow.DisplayUnits = maxNumCharactersOfTopicShown;
+            horizontalSliderTopicWindow.TotalUnits = lengthOfLongestItemInListBox;
+            horizontalSliderTopicWindow.Update();
+        }
+
+        void UpdateScrollButtons()
+        {
             int scrollIndex = GetSafeScrollIndex(verticalScrollBarTopicWindow);
             // Update scroller buttons
-            UpdateListScrollerButtons(scrollIndex, listBoxTopicLocation.Count, buttonTopicUp, buttonTopicDown);
+            UpdateListScrollerButtons(scrollIndex, listBoxTopic.Count, buttonTopicUp, buttonTopicDown);
+            buttonTopicUp.Update();
+            buttonTopicDown.Update();
 
             int horizontalScrollIndex = horizontalSliderTopicWindow.ScrollIndex;
             // Update scroller buttons
-            UpdateListScrollerButtonsLeftRight(horizontalScrollIndex, maxHorizontalScrollIndex + 1, buttonTopicLeft, buttonTopicRight);
+            UpdateListScrollerButtonsLeftRight(horizontalScrollIndex, lengthOfLongestItemInListBox, buttonTopicLeft, buttonTopicRight);
+            buttonTopicLeft.Update();
+            buttonTopicRight.Update();
         }
 
-        public override void OnPush()
+        void SetListItems(ref ListBox listBoxTopic, ref List<string> listTopicLocation)
         {
-            base.OnPush();
-
-            // Reset scrollbars
-            if (verticalScrollBarTopicWindow != null)
-                verticalScrollBarTopicWindow.ScrollIndex = 0;
-        }
-
-        public override void OnPop()
-        {
-            base.OnPop();
-        }
-
-        public override void Update()
-        {
-            base.Update();
-
-            UpdateLabels();
-        }
-
-        public void setNPCPortraitAndName(int recordId, string name)
-        {
-            // Load npc portrait           
-            CifRciFile rciFile = new CifRciFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, portraitImgName), FileUsage.UseMemory, false);
-            rciFile.LoadPalette(Path.Combine(DaggerfallUnity.Instance.Arena2Path, rciFile.PaletteName));
-            DFBitmap bitmap = rciFile.GetDFBitmap(recordId, 0);
-            texturePortrait = new Texture2D(bitmap.Width, bitmap.Height, TextureFormat.ARGB32, false);
-            texturePortrait.SetPixels32(rciFile.GetColor32(bitmap, 0));
-            texturePortrait.Apply(false, false); // make readable
-            texturePortrait.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
-            if (!texturePortrait)
+            listBoxTopic.ClearItems();
+            for (int i = 0; i < listTopicLocation.Count; i++)
             {
-                Debug.LogError(string.Format("Failed to load portrait image {0} for talk window", texturePortrait));
-                CloseWindow();
-                return;
+                listBoxTopic.AddItem(listTopicLocation[i]);
             }
 
-            updatePortrait();
+            // compute length of longest item in listbox from current list items...
+            lengthOfLongestItemInListBox = listBoxTopic.LengthOfLongestItem();
+            // update listBoxTopic.MaxHorizontalScrollIndex
+            listBoxTopic.MaxHorizontalScrollIndex = lengthOfLongestItemInListBox - maxNumCharactersOfTopicShown;
+        }
 
-            nameNPC = name;
-            updateNameNPC();
+        void PrepareTestTopicLists()
+        {
+            listTopicLocation = new List<string>();
+            for (int i = 0; i < 50; i++)
+            {
+                listTopicLocation.Add("location " + i + " test string");
+            }
+
+            listTopicPeople = new List<string>();
+            for (int i = 0; i < 12; i++)
+            {
+                listTopicPeople.Add("dummy person " + i + " (here will be the name of the person later on)");
+            }
+
+            listTopicThings = new List<string>();
+            for (int i = 0; i < 30; i++)
+            {
+                listTopicThings.Add("thing " + i);
+            }
         }
 
         void updatePortrait()
@@ -512,7 +572,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     }
                     break;
             }
+        }
 
+        void UpdateCheckboxes()
+        {
             //update tone selection
             switch (selectedTalkTone)
             {
@@ -560,6 +623,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             textureBackground.SetPixels(4, textureBackground.height - 46 - 10, 107, 10, textureCategoryThingsGrayedOut);
             textureBackground.SetPixels(4, textureBackground.height - 56 - 10, 107, 10, textureCategoryWorkGrayedOut);
             textureBackground.Apply(false);
+
+            SetListItems(ref listBoxTopic, ref listTopicLocation);
+            listBoxTopic.Update();
+
+            UpdateScrollBars();
         }
 
         void setTalkCategoryPeople()
@@ -569,6 +637,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             textureBackground.SetPixels(4, textureBackground.height - 46 - 10, 107, 10, textureCategoryThingsGrayedOut);
             textureBackground.SetPixels(4, textureBackground.height - 56 - 10, 107, 10, textureCategoryWorkGrayedOut);
             textureBackground.Apply(false);
+
+            SetListItems(ref listBoxTopic, ref listTopicPeople);
+            listBoxTopic.Update();
+
+            UpdateScrollBars();
         }
 
         void setTalkCategoryThings()
@@ -578,6 +651,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             textureBackground.SetPixels(4, textureBackground.height - 46 - 10, 107, 10, textureCategoryThingsHighlighted);
             textureBackground.SetPixels(4, textureBackground.height - 56 - 10, 107, 10, textureCategoryWorkGrayedOut);
             textureBackground.Apply(false);
+
+            SetListItems(ref listBoxTopic, ref listTopicThings);
+            listBoxTopic.Update();
+
+            UpdateScrollBars();
         }
 
         void setTalkCategoryWork()
@@ -587,6 +665,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             textureBackground.SetPixels(4, textureBackground.height - 46 - 10, 107, 10, textureCategoryThingsGrayedOut);
             textureBackground.SetPixels(4, textureBackground.height - 56 - 10, 107, 10, textureCategoryWorkHighlighted);
             textureBackground.Apply(false);
+
+            listBoxTopic.ClearItems();
+
+            lengthOfLongestItemInListBox = 0;
+            listBoxTopic.MaxHorizontalScrollIndex = 0;
+            listBoxTopic.Update();
+
+            UpdateScrollBars();
         }
 
         /// <summary>
@@ -609,6 +695,28 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
 
             return scrollIndex;
+        }
+
+        /// <summary>
+        /// Gets safe scroll index.
+        /// Scroller will be adjust to always be inside display range where possible.
+        /// </summary>
+        int GetSafeScrollIndex(HorizontalSlider slider)
+        {
+            // Get current scroller index
+            int sliderIndex = slider.ScrollIndex;
+            if (sliderIndex < 0)
+                sliderIndex = 0;
+
+            // Ensure scroll index within current range
+            if (sliderIndex + slider.DisplayUnits > slider.TotalUnits)
+            {
+                sliderIndex = slider.TotalUnits - slider.DisplayUnits;
+                if (sliderIndex < 0) sliderIndex = 0;
+                slider.Reset(slider.DisplayUnits, slider.TotalUnits, sliderIndex);
+            }
+
+            return sliderIndex;
         }
 
         // Updates red/green state of scroller buttons
@@ -662,27 +770,27 @@ namespace DaggerfallWorkshop.Game.UserInterface
         private void verticalScrollBarTopicWindow_OnScroll()
         {
             // Update scroller
-            verticalScrollBarTopicWindow.TotalUnits = listBoxTopicLocation.Count;
+            verticalScrollBarTopicWindow.TotalUnits = listBoxTopic.Count;
             int scrollIndex = GetSafeScrollIndex(verticalScrollBarTopicWindow);
             
             // Update scroller buttons
-            UpdateListScrollerButtons(scrollIndex, listBoxTopicLocation.Count, buttonTopicUp, buttonTopicDown);
+            UpdateListScrollerButtons(scrollIndex, listBoxTopic.Count, buttonTopicUp, buttonTopicDown);
 
-            listBoxTopicLocation.ScrollIndex = scrollIndex;
-            listBoxTopicLocation.Update();
+            listBoxTopic.ScrollIndex = scrollIndex;
+            listBoxTopic.Update();
         }
 
         private void horizontalSliderTopicWindow_OnScroll()
         {
             // Update scroller
-            horizontalSliderTopicWindow.TotalUnits = maxHorizontalScrollIndex;
-            int horizontalScrollIndex = horizontalSliderTopicWindow.ScrollIndex;
+            horizontalSliderTopicWindow.TotalUnits = lengthOfLongestItemInListBox;
+            int horizontalScrollIndex = GetSafeScrollIndex(horizontalSliderTopicWindow); // horizontalSliderTopicWindow.ScrollIndex;
 
             // Update scroller buttons
-            UpdateListScrollerButtonsLeftRight(horizontalScrollIndex, maxHorizontalScrollIndex, buttonTopicLeft, buttonTopicRight);
+            UpdateListScrollerButtonsLeftRight(horizontalScrollIndex, lengthOfLongestItemInListBox, buttonTopicLeft, buttonTopicRight);
 
-            listBoxTopicLocation.HorizontalScrollIndex = horizontalScrollIndex;
-            listBoxTopicLocation.Update();
+            listBoxTopic.HorizontalScrollIndex = horizontalScrollIndex;
+            listBoxTopic.Update();
         }
 
         private void ButtonTopicUp_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -722,7 +830,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (selectedTalkOption == TalkOption.WhereIs)
             {
                 selectedTalkCategory = TalkCategory.Location;
-                UpdateButtons();
+                UpdateButtons(); //setTalkCategoryLocation();
+
+                UpdateScrollBars();
+                UpdateScrollButtons();
             }
         }
 
@@ -731,7 +842,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (selectedTalkOption == TalkOption.WhereIs)
             {
                 selectedTalkCategory = TalkCategory.People;
-                UpdateButtons();
+                UpdateButtons(); //setTalkCategoryPeople();
+
+                UpdateScrollBars();
+                UpdateScrollButtons();
             }
         }
 
@@ -740,7 +854,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (selectedTalkOption == TalkOption.WhereIs)
             {
                 selectedTalkCategory = TalkCategory.Things;
-                UpdateButtons();
+                UpdateButtons(); //setTalkCategoryThings();
+
+                UpdateScrollBars();
+                UpdateScrollButtons();
             }
         }
 
@@ -749,26 +866,29 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (selectedTalkOption == TalkOption.WhereIs)
             {
                 selectedTalkCategory = TalkCategory.Work;
-                UpdateButtons();
+                UpdateButtons(); //setTalkCategoryWork();
+
+                UpdateScrollBars();
+                UpdateScrollButtons();
             }
         }
 
         private void buttonTonePolite_OnClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             selectedTalkTone = TalkTone.Polite;
-            UpdateButtons();
+            UpdateCheckboxes();
         }
 
         private void buttonToneNormal_OnClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             selectedTalkTone = TalkTone.Normal;
-            UpdateButtons();
+            UpdateCheckboxes();
         }
 
         private void buttonToneBlunt_OnClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             selectedTalkTone = TalkTone.Blunt;
-            UpdateButtons();
+            UpdateCheckboxes();
         }
 
         private void buttonGoodbye_OnMouseClick(BaseScreenComponent sender, Vector2 position)
