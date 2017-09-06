@@ -50,9 +50,6 @@ namespace DaggerfallWorkshop.Game
         float distanceToPlayer;
         int seekCount;
 
-        // TEMP: NPC settings
-        //Races race = Races.Breton;
-
         // References
         MobilePersonBillboard mobileBillboard;
 
