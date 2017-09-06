@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Player;
+using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -190,6 +192,12 @@ namespace DaggerfallWorkshop.Utility
             { "%wil", Wil }, // ?
             { "%wpn", null }, // Poison (?)
             { "%wth", Worth }, // Worth
+        // DF Unity - new macros:
+            { "%pg", PlayerPronoun },   // He/She (player)
+            { "%pg1", PlayerPronoun },  // His/Her (player)
+            { "%pg2", PlayerPronoun2 }, // Him/Her (player)
+            { "%pg2self", PlayerPronoun2self },// Himself/Herself (player)
+            { "%pg3", PlayerPronoun3 },  // His/Hers (player)
         };
 
         // Multi-line macro handlers, returns tokens.
@@ -341,7 +349,7 @@ namespace DaggerfallWorkshop.Utility
         //
         // Global macro handlers - not context sensitive. (mcp will be null, and should not be used)
         //
-        #region global macro handlers
+        #region Global macro handlers
 
         private static string CityName(IMacroContextProvider mcp)
         {   // %cn
@@ -367,31 +375,33 @@ namespace DaggerfallWorkshop.Utility
             PlayerGPS gps = GameManager.Instance.PlayerGPS;
             PersistentFactionData factionData = Game.GameManager.Instance.PlayerEntity.FactionData;
             int rep = factionData.GetLegalReputation(gps.CurrentRegionIndex).value;
-            if (rep > 60)
-                return "Esteemed";
+            if (rep > 80)
+                return "revered";
+            else if (rep > 60)
+                return "esteemed";
             else if (rep > 40)
-                return "Honored";
+                return "honored";
             else if (rep > 20)
-                return "Admired";
+                return "admired";
             else if (rep > 10)
-                return "Respected";
+                return "respected";
             else if (rep > 0)
-                return "Dependable";
+                return "dependable";
             else if (rep == 0)
-                return "Common Citizen";
+                return "a common citizen";
             else if (rep < 0)
-                return "Undependable";
+                return "undependable";
             else if (rep < -10)
-                return "Scoundrel";
+                return "a scoundrel";
             else if (rep < -20)
-                return "Criminal";
+                return "a criminal";
             else if (rep < -40)
-                return "Villain";
+                return "a villain";
             else if (rep < -60)
-                return "Pond Scum";
+                return "pond Scum";
             else if (rep < -80)
-                return "Hated";
-            return "Unknown";
+                return "hated";
+            return "unknown";
         }
 
         private static string Time(IMacroContextProvider mcp)
@@ -414,6 +424,26 @@ namespace DaggerfallWorkshop.Utility
             string name = GameManager.Instance.PlayerEntity.Name;
             string[] parts = name.Split(' ');
             return (parts != null && parts.Length > 0) ? parts[0] : name;
+        }
+        public static string PlayerPronoun(IMacroContextProvider mcp)
+        {   // %pg
+            return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? HardStrings.pronounShe : HardStrings.pronounHe;
+        }
+        public static string PlayerPronoun1(IMacroContextProvider mcp)
+        {   // %pg1
+            return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? HardStrings.pronounHer : HardStrings.pronounHis;
+        }
+        public static string PlayerPronoun2(IMacroContextProvider mcp)
+        {   // %pg2
+            return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? HardStrings.pronounHer : HardStrings.pronounHim;
+        }
+        public static string PlayerPronoun2self(IMacroContextProvider mcp)
+        {   // %pg2self
+            return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? HardStrings.pronounHerself : HardStrings.pronounHimself;
+        }
+        public static string PlayerPronoun3(IMacroContextProvider mcp)
+        {   // %pg3
+            return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? HardStrings.pronounHers : HardStrings.pronounHis;
         }
 
         private static string DmgMod(IMacroContextProvider mcp)
