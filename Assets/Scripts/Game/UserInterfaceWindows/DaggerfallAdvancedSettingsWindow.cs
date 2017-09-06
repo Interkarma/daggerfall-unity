@@ -46,20 +46,20 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
     Color scrollBarBackgroundColor = new Color(0.0f, 0.5f, 0.0f, 0.4f);
 
     // Settings
-    Checkbox DungeonLightShadows;
-    Checkbox UseLegacyDeferred;
+    Checkbox StartInDungeon;
 
     Checkbox EnableToolTips;
     Checkbox HQTooltips;
     Checkbox Crosshair;
 
-    Checkbox StartInDungeon;
+    HorizontalSlider mouseSensitivitySlider;
+    TextLabel mouseSensitivityNumberLabel;
+
+    Checkbox DungeonLightShadows;
+    Checkbox UseLegacyDeferred;
 
     HorizontalSlider fovSlider;
     TextLabel fovNumberLabel;
-
-    HorizontalSlider mouseSensitivitySlider;
-    TextLabel mouseSensitivityNumberLabel;
 
     HorizontalSlider terrainDistanceSlider;
     TextLabel terrainDistanceNumberLabel;
@@ -81,28 +81,28 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
     const string guiText = "GUI";
     const string gameplayOptionsText = "Gameplay";
     const string infoText = "Info";
+    const string controlsText = "Controls";
     const string filterModesText = "Filter Modes";
 
-    // Options position
-    const float TextLabelSpacing = 12f;
-    const float CheckboxSpacing = 12f;
-    const float ScrollLeftMargin = 33f;
-    float y = 2f;
+    // Position controls
+    const float spacing = 12f; // Space between items
+    const float nextPanel = 20f; // Vertical offset for panels
+    float y = 2f; // Current position
 
     // Fov
     const int fovMin = 60;
     const int fovMax = 80;
-    int fovLabel = DaggerfallUnity.Settings.FieldOfView;
+    int fovLabel;
 
     // Mouse Sensitivity
     const int sensitivityMin = 1; /* 0.1 */
     const int sensitivityMax = 40; /* 4.0 */
-    float sensitivityLabel = DaggerfallUnity.Settings.MouseLookSensitivity;
+    float sensitivityLabel;
 
     // Terrain Distance
     const int terrainDistanceMin = 1;
     const int terrainDistanceMax = 4;
-    int terrainDistanceLabel = DaggerfallUnity.Settings.TerrainDistance;
+    int terrainDistanceLabel;
 
     #endregion
 
@@ -123,19 +123,19 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
 
         // Add left Panel
         leftPanel.Outline.Enabled = false;
-        leftPanel.Position = new Vector2(8, 0);
+        leftPanel.Position = new Vector2(4, 0);
         leftPanel.Size = new Vector2(112, 160);
         advancedSettingsPanel.Components.Add(leftPanel);
 
         // Add centre Panel
         centerPanel.Outline.Enabled = false;
-        centerPanel.Position = new Vector2(120, 0);
-        centerPanel.Size = new Vector2(120, 160);
+        centerPanel.Position = new Vector2(124, 0);
+        centerPanel.Size = new Vector2(112, 160);
         advancedSettingsPanel.Components.Add(centerPanel);
 
         // Add right Panel
         rightPanel.Outline.Enabled = false;
-        rightPanel.Position = new Vector2(240, 0);
+        rightPanel.Position = new Vector2(244, 0);
         rightPanel.Size = new Vector2(70, 160);
         advancedSettingsPanel.Components.Add(rightPanel);
 
@@ -145,66 +145,64 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
 
         // Add advanced settings title text
         TextLabel titleLabel = AddTextlabel (advancedSettingsPanel, mainTitleText);
-        titleLabel.HorizontalAlignment = HorizontalAlignment.Center;
 
-        // Graphic Quality
-        y = 20f;
-        /*TextLabel qualityOptions = */AddTextlabel (leftPanel, graphicQualityText);
-        DungeonLightShadows = AddCheckbox(leftPanel, "Dungeon Light Shadows", "Dungeon lights cast shadows", DaggerfallUnity.Settings.DungeonLightShadows);
-        UseLegacyDeferred = AddCheckbox(leftPanel, "Use Legacy Deferred", "Use Legacy Deferred", DaggerfallUnity.Settings.UseLegacyDeferred);
+        y = nextPanel;
+
+        // Gameplay
+        AddTextlabel(leftPanel, gameplayOptionsText);
+        StartInDungeon = AddCheckbox(leftPanel, "Start In Dungeon", "Start new game inside the first dungeon", DaggerfallUnity.Settings.StartInDungeon);
 
         // GUI
-        /*TextLabel guiOptions = */AddTextlabel(leftPanel, guiText);
-        EnableToolTips = AddCheckbox(leftPanel, "Tool Tips", "Enable Tool Tips", DaggerfallUnity.Settings.EnableToolTips);
-        HQTooltips = AddCheckbox(leftPanel, "HQ Tool Tips", "Use High Quality Tool Tips", DaggerfallUnity.Settings.HQTooltips);
+        AddTextlabel(leftPanel, guiText);
+        EnableToolTips = AddCheckbox(leftPanel, "Tool Tips", "Show description when mouse is over an item in GUI", DaggerfallUnity.Settings.EnableToolTips);
+        HQTooltips = AddCheckbox(leftPanel, "HQ Tool Tips", "Use High Quality Font for Tool Tips", DaggerfallUnity.Settings.HQTooltips);
         if (!DaggerfallUnity.Settings.EnableToolTips)
             HQTooltips.IsChecked = false;
         Crosshair = AddCheckbox(leftPanel, "Crosshair", "Enable Crosshair on HUD", DaggerfallUnity.Settings.Crosshair);
 
-        // Gameplay
-        /*TextLabel gameplayOptions = */AddTextlabel(leftPanel, gameplayOptionsText);
-        StartInDungeon = AddCheckbox(leftPanel, "Start In Dungeon", "Start new game inside the first dungeon", DaggerfallUnity.Settings.StartInDungeon);
-
-        // Info
-        /*TextLabel info = */AddTextlabel(leftPanel, infoText);
-        /*TextLabel qualityLevel = */AddTextlabel(leftPanel, "Quality Level: " + ((QualityLevel)DaggerfallUnity.Settings.QualityLevel).ToString(), HorizontalAlignment.Left);
-        string textureArrayLabel = "Texture Arrays (";
-        if (SystemInfo.supports2DArrayTextures == true)
-            textureArrayLabel += "yes";
-        else
-            textureArrayLabel += "no";
-        textureArrayLabel += "): ";
-        if (DaggerfallUnity.Settings.EnableTextureArrays == true)        
-            textureArrayLabel += "enabled";
-        else
-            textureArrayLabel += "disabled";
-        TextLabel labelTextureArrayUsage = AddTextlabel(leftPanel, textureArrayLabel, HorizontalAlignment.Left);
-        labelTextureArrayUsage.ToolTip = defaultToolTip;
-        labelTextureArrayUsage.ToolTipText = "shows if texture arrays are supported on this system and if they are enabled\renabling/disabling can only be done in the settings.ini file";
-
-        // FOV
-        y = 20f;
-        int fovStartValue = DaggerfallUnity.Settings.FieldOfView;
-        string fovToolTip = "The observable world that is seen at any given moment";
-        AddSlider(centerPanel, fovMin, fovMax, fovStartValue, "Field Of View", fovToolTip, fovScroll_OnScroll, out fovSlider, out fovNumberLabel);
+        // Controls
+        AddTextlabel(leftPanel, controlsText);
 
         // Mouse
         int sensitivityStartValue = (int)(DaggerfallUnity.Settings.MouseLookSensitivity * 10);
-        AddSlider(centerPanel, sensitivityMin, sensitivityMax, sensitivityStartValue, "Mouse Sensitivity", "Mouse Sensitivity", mouseSensitivityScroll_OnScroll, out mouseSensitivitySlider, out mouseSensitivityNumberLabel);
+        AddSlider(leftPanel, sensitivityMin, sensitivityMax, sensitivityStartValue, "Mouse Sensitivity", "Mouse look sensitivity.", mouseSensitivityScroll_OnScroll, out mouseSensitivitySlider, out mouseSensitivityNumberLabel);
+
+        // Info
+        AddTextlabel(leftPanel, infoText);
+        AddTextItem(leftPanel, "Quality Level: " + ((QualityLevel)DaggerfallUnity.Settings.QualityLevel).ToString(), "General graphic quality");
+
+        string textureArrayLabel = "Texture Arrays: ";
+        if (!SystemInfo.supports2DArrayTextures)
+            textureArrayLabel += "Unsupported";
+        else
+            textureArrayLabel += DaggerfallUnity.Settings.EnableTextureArrays ? "Enabled" : "Disabled";
+        const string textureArrayToolTip = "Improved implementation of terrain textures, with better performance and modding support";
+        TextLabel labelTextureArrayUsage = AddTextItem(leftPanel, textureArrayLabel, textureArrayToolTip);
+
+        y = nextPanel;
+
+        // Graphic Quality
+        AddTextlabel(centerPanel, graphicQualityText);
+        DungeonLightShadows = AddCheckbox(centerPanel, "Dungeon Light Shadows", "Dungeon lights cast shadows", DaggerfallUnity.Settings.DungeonLightShadows);
+        UseLegacyDeferred = AddCheckbox(centerPanel, "Use Legacy Deferred", "Use Legacy Deferred", DaggerfallUnity.Settings.UseLegacyDeferred);
+
+        // FOV
+        int fovStartValue = DaggerfallUnity.Settings.FieldOfView;
+        const string fovToolTip = "The observable world that is seen at any given moment";
+        AddSlider(centerPanel, fovMin, fovMax, fovStartValue, "Field Of View", fovToolTip, fovScroll_OnScroll, out fovSlider, out fovNumberLabel);
 
         // Terrain distance
         int terraindDistanceStartValue = DaggerfallUnity.Settings.TerrainDistance;
-        AddSlider(centerPanel, terrainDistanceMin, terrainDistanceMax, terraindDistanceStartValue, "Terrain Distance", "Terrain Distance", terrainDistanceScroll_OnScroll, out terrainDistanceSlider, out terrainDistanceNumberLabel);
+        const string terrainDistanceToolTiP = "Maximum distance of active terrains from player position";
+        AddSlider(centerPanel, terrainDistanceMin, terrainDistanceMax, terraindDistanceStartValue, "Terrain Distance", terrainDistanceToolTiP, terrainDistanceScroll_OnScroll, out terrainDistanceSlider, out terrainDistanceNumberLabel);
 
         // Shadow resolution
-        y = 111;
         AddTextlabel(centerPanel, "Shadow Resolution");
         ShadowResolutionMode = AddListbox(centerPanel, ShadowResolutionModes(), DaggerfallUnity.Settings.ShadowResolutionMode);
-        ShadowResolutionMode.Position += new Vector2(30.0f, 0.0f);
-        ShadowResolutionMode.Update();
+
+        y = nextPanel;
 
         // Filter modes
-        y = 20f;
         TextLabel filterModes = AddTextlabel (rightPanel, filterModesText);
         AddToolTipToTextLabel(filterModes, "Many users want Point filter with vanilla textures.");
         /*TextLabel mainFilterMode = */AddTextlabel (rightPanel, "Main Filter");
@@ -244,7 +242,23 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
         textLabel.Position = new Vector2(0, y);
         textLabel.HorizontalAlignment = alignment;
         panel.Components.Add(textLabel);
-        y += TextLabelSpacing;
+        y += spacing;
+
+        return textLabel;
+    }
+
+    /// <summary>
+    /// Add a text label with child item settings.
+    /// </summary>
+    /// <param name="panel">leftPanel, centerPanel or rightPanel.</param>
+    /// <param name="text">Label.</param>
+    /// <returns></returns>
+    TextLabel AddTextItem (Panel panel, string name, string description)
+    {
+        var textLabel = AddTextlabel(panel, name, HorizontalAlignment.Left);
+        textLabel.ShadowColor = Color.clear;
+        textLabel.TextColor = selectedTextColor;
+        AddToolTipToTextLabel(textLabel, description);
 
         return textLabel;
     }
@@ -278,7 +292,7 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
         checkbox.IsChecked = isChecked;
         checkbox.Position = new Vector2(0, y);
         panel.Components.Add(checkbox);
-        y += CheckboxSpacing;
+        y += spacing;
 
         return checkbox;
     }
@@ -301,8 +315,9 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
         listBox.ShadowPosition = Vector2.zero;
         listBox.RowsDisplayed = displayed;
         listBox.RowAlignment = HorizontalAlignment.Center;
+        listBox.HorizontalAlignment = HorizontalAlignment.Center;
         listBox.Position = new Vector2(0, y);
-        listBox.Size = new Vector2(75, spacing);
+        listBox.Size = new Vector2(panel.Size.x, spacing);
         listBox.SelectedShadowPosition = DaggerfallUI.DaggerfallDefaultShadowPos;
         listBox.SelectedShadowColor = Color.black;
         panel.Components.Add(listBox);
@@ -340,14 +355,20 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
         out TextLabel indicator)
     {
         // Title
-        TextLabel label = AddTextlabel(panel, title, HorizontalAlignment.None);
-        label.Position = new Vector2(ScrollLeftMargin, label.Position.y);
-        AddToolTipToTextLabel(label, toolTip);
+        TextLabel titleLabel = new TextLabel();
+        titleLabel.Position = new Vector2(0, y);
+        titleLabel.Text = title;
+        titleLabel.TextColor = selectedTextColor;
+        titleLabel.ShadowColor = Color.clear;
+        AddToolTipToTextLabel(titleLabel, toolTip);
+        panel.Components.Add(titleLabel);
+
+        y += 8;
 
         // Slider
         slider = new HorizontalSlider();
-        slider.Position = new Vector2(16f, y);
-        slider.Size = new Vector2(70.0f, 5.0f);
+        slider.Position = new Vector2(0, y);
+        slider.Size = new Vector2(80.0f, 5.0f);
         slider.DisplayUnits = 20;
         slider.TotalUnits = (maxValue - minValue) + 20;
         slider.ScrollIndex = startValue - minValue;
@@ -358,11 +379,11 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
 
         // Indicator
         indicator = new TextLabel();
-        indicator.Position = new Vector2(slider.Size.x + 26, y);
+        indicator.Position = new Vector2(slider.Size.x + 15, y);
         updateIndicator();
         panel.Components.Add(indicator);
 
-        y += 9;
+        y += spacing;
     }
 
     #endregion
@@ -374,17 +395,18 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
     /// </summary>
     private void CloseButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
     {
-        DaggerfallUnity.Settings.DungeonLightShadows = DungeonLightShadows.IsChecked;
-        DaggerfallUnity.Settings.UseLegacyDeferred = UseLegacyDeferred.IsChecked;
+        DaggerfallUnity.Settings.StartInDungeon = StartInDungeon.IsChecked;
 
         DaggerfallUnity.Settings.EnableToolTips = EnableToolTips.IsChecked;
         DaggerfallUnity.Settings.HQTooltips = HQTooltips.IsChecked;
         DaggerfallUnity.Settings.Crosshair = Crosshair.IsChecked;
 
-        DaggerfallUnity.Settings.StartInDungeon = StartInDungeon.IsChecked;
+        DaggerfallUnity.Settings.MouseLookSensitivity = sensitivityLabel;
+
+        DaggerfallUnity.Settings.DungeonLightShadows = DungeonLightShadows.IsChecked;
+        DaggerfallUnity.Settings.UseLegacyDeferred = UseLegacyDeferred.IsChecked;
 
         DaggerfallUnity.Settings.FieldOfView = fovLabel;
-        DaggerfallUnity.Settings.MouseLookSensitivity = sensitivityLabel;
         DaggerfallUnity.Settings.TerrainDistance = terrainDistanceLabel;
 
         DaggerfallUnity.Settings.ShadowResolutionMode = ShadowResolutionMode.SelectedIndex;
