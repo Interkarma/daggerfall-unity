@@ -54,10 +54,10 @@ namespace DaggerfallWorkshop.Game
 
         // these public fields are used for setting person attributes through Unity Inspector Window with function ApplyPersonSettings
         // (properties not available) as fields are randomized (e.g. name and face variant)
-        public Races raceToBeSet = Races.Breton; // race used for ApplyCustomPersonSettings function (which can be used for testing through Unity Inspector Window)
-        public Genders genderToBeSet = Genders.Male; // gender used for ApplyCustomPersonSettings function (which can be used for testing through Unity Inspector Window)
+        public Races raceToBeSet = Races.Breton;        // race used for ApplyCustomPersonSettings function (which can be used for testing through Unity Inspector Window)
+        public Genders genderToBeSet = Genders.Male;    // gender used for ApplyCustomPersonSettings function (which can be used for testing through Unity Inspector Window)
         [Range(-1, numPersonOutfitVariants)]
-        public int outfitVariantToBeSet = -1; // person outfit variant used for ApplyCustomPersonSettings function (which can be used for testing through Unity Inspector Window)        
+        public int outfitVariantToBeSet = -1;           // person outfit variant used for ApplyCustomPersonSettings function (which can be used for testing through Unity Inspector Window)        
 
         #endregion
 
