@@ -3,7 +3,7 @@
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
-// Original Author: Nystul
+// Original Author: Michael Rauter (Nystul)
 // Contributors:    
 // 
 // Notes:
@@ -11,7 +11,9 @@
 
 using UnityEngine;
 using System;
+using System.IO;
 using System.Collections;
+using System.Collections.Generic;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
@@ -21,8 +23,6 @@ using DaggerfallConnect.Utility;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility;
 
-using System.IO;
-using System.Collections.Generic;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -37,13 +37,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const string greenArrowsTextureName = "INVE06I0.IMG";       // Green up/down arrows when more items available
         const string redArrowsTextureName = "INVE07I0.IMG";         // Red up/down arrows when no more items available
 
-        Rect rectButtonTopicUp = new Rect(102, 68, 9, 16);
-        Rect rectButtonTopicDown = new Rect(102, 161, 9, 16);
-        Rect rectButtonTopicLeft = new Rect(5, 177, 16, 8);
-        Rect rectButtonTopicRight = new Rect(87, 177, 16, 8);
-
         const int maxNumTopicsShown = 13; // max number of items displayed in scrolling area of topics list
         const int maxNumCharactersOfTopicShown = 20; // max number of characters of a topic displayed in scrolling area of topics list
+
+        const int maxNumAnswerLinesShown = 15; // max number of lines displayed in scrolling area of answers
 
         enum TalkOption { 
             TellMeAbout,
@@ -116,39 +113,42 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Button buttonCategoryPeople;
         Button buttonCategoryThings;
         Button buttonCategoryWork;
+        Button buttonTopicUp;
+        Button buttonTopicDown;
+        Button buttonTopicLeft;
+        Button buttonTopicRight;
+        Button buttonOkay;
+        Button buttonGoodbye;
 
         // checkbox buttons
         Button buttonCheckboxTonePolite;
         Button buttonCheckboxToneNormal;
         Button buttonCheckboxToneBlunt;
 
+        // topic listbox and layout, scrollbar/slider and parameters
         ListBox listboxTopic;
+        Rect rectButtonTopicUp = new Rect(102, 68, 9, 16);
+        Rect rectButtonTopicDown = new Rect(102, 161, 9, 16);
+        Rect rectButtonTopicLeft = new Rect(5, 177, 16, 8);
+        Rect rectButtonTopicRight = new Rect(87, 177, 16, 8);
         VerticalScrollBar verticalScrollBarTopicWindow;
         HorizontalSlider horizontalSliderTopicWindow;
-
-        List<string> listTopicLocation;
-        List<string> listTopicPeople;
-        List<string> listTopicThings;
         int lengthOfLongestItemInListBox;
 
-        Rect upArrowRect = new Rect(0, 0, 9, 16);
-        Rect downArrowRect = new Rect(0, 136, 9, 16);
-        Texture2D redUpArrow;
-        Texture2D greenUpArrow;
-        Texture2D redDownArrow;
-        Texture2D greenDownArrow;
+        // answers listbox
+        ListBox listboxAnswers;
 
-        Texture2D redLeftArrow;
-        Texture2D greenLeftArrow;
-        Texture2D redRightArrow;
-        Texture2D greenRightArrow;
-
-        Button buttonTopicUp;
-        Button buttonTopicDown;
-        Button buttonTopicLeft;
-        Button buttonTopicRight;
-
-        Button buttonGoodbye;
+        // green/red arrow buttons (parameters for creation and textures)
+        Rect upArrowRectInSrcImg = new Rect(0, 0, 9, 16);
+        Rect downArrowRectInSrcImg = new Rect(0, 136, 9, 16);
+        Texture2D arrowTopicUpRed;
+        Texture2D arrowTopicUpGreen;
+        Texture2D arrowTopicDownRed;
+        Texture2D arrowTopicDownGreen;
+        Texture2D arrowTopicLeftRed;
+        Texture2D arrowTopicLeftGreen;
+        Texture2D arrowTopicRightRed;
+        Texture2D arrowTopicRightGreen;
 
         public DaggerfallTalkWindow(IUserInterfaceManager uiManager, DaggerfallBaseWindow previous = null)
             : base(uiManager, previous)
@@ -301,9 +301,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             pcSay.Name = "accnt_total_label";
             pcSay.MaxCharacters = 13;
             mainPanel.Components.Add(pcSay);
-            */
-
-            PrepareTestTopicLists();
+            */          
 
             listboxTopic = new ListBox();
             listboxTopic.Position = new Vector2(6, 71);
@@ -318,43 +316,53 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Cut out red up/down arrows
             Texture2D redArrowsTexture = ImageReader.GetTexture(redArrowsTextureName);
-            redUpArrow = ImageReader.GetSubTexture(redArrowsTexture, upArrowRect);
-            redDownArrow = ImageReader.GetSubTexture(redArrowsTexture, downArrowRect);
+            arrowTopicUpRed = ImageReader.GetSubTexture(redArrowsTexture, upArrowRectInSrcImg);
+            arrowTopicDownRed = ImageReader.GetSubTexture(redArrowsTexture, downArrowRectInSrcImg);
 
             // Cut out green up/down arrows
             Texture2D greenArrowsTexture = ImageReader.GetTexture(greenArrowsTextureName);
-            greenUpArrow = ImageReader.GetSubTexture(greenArrowsTexture, upArrowRect);
-            greenDownArrow = ImageReader.GetSubTexture(greenArrowsTexture, downArrowRect);
+            arrowTopicUpGreen = ImageReader.GetSubTexture(greenArrowsTexture, upArrowRectInSrcImg);
+            arrowTopicDownGreen = ImageReader.GetSubTexture(greenArrowsTexture, downArrowRectInSrcImg);
 
             Color32[] colors;
             Color32[] rotated;
-            colors = redDownArrow.GetPixels32();
-            rotated = ImageProcessing.RotateColors(ref colors, redUpArrow.height, redUpArrow.width);
-            redLeftArrow = new Texture2D(redUpArrow.height, redUpArrow.width, TextureFormat.ARGB32, false);
-            redLeftArrow.SetPixels32(ImageProcessing.FlipHorizontallyColors(ref rotated, redLeftArrow.width, redLeftArrow.height), 0);
-            redLeftArrow.Apply(false);
-            redLeftArrow.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
+            colors = arrowTopicDownRed.GetPixels32();
+            rotated = ImageProcessing.RotateColors(ref colors, arrowTopicUpRed.height, arrowTopicUpRed.width);
+            arrowTopicLeftRed = new Texture2D(arrowTopicUpRed.height, arrowTopicUpRed.width, TextureFormat.ARGB32, false);
+            arrowTopicLeftRed.SetPixels32(ImageProcessing.FlipHorizontallyColors(ref rotated, arrowTopicLeftRed.width, arrowTopicLeftRed.height), 0);
+            arrowTopicLeftRed.Apply(false);
+            arrowTopicLeftRed.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
 
-            colors = redUpArrow.GetPixels32();
-            rotated = ImageProcessing.RotateColors(ref colors, redDownArrow.height, redDownArrow.width);
-            redRightArrow = new Texture2D(redUpArrow.height, redUpArrow.width, TextureFormat.ARGB32, false);
-            redRightArrow.SetPixels32(ImageProcessing.FlipHorizontallyColors(ref rotated, redRightArrow.width, redRightArrow.height));
-            redRightArrow.Apply(false);
-            redRightArrow.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
+            colors = arrowTopicUpRed.GetPixels32();
+            rotated = ImageProcessing.RotateColors(ref colors, arrowTopicDownRed.height, arrowTopicDownRed.width);
+            arrowTopicRightRed = new Texture2D(arrowTopicUpRed.height, arrowTopicUpRed.width, TextureFormat.ARGB32, false);
+            arrowTopicRightRed.SetPixels32(ImageProcessing.FlipHorizontallyColors(ref rotated, arrowTopicRightRed.width, arrowTopicRightRed.height));
+            arrowTopicRightRed.Apply(false);
+            arrowTopicRightRed.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
 
-            colors = greenDownArrow.GetPixels32();
-            rotated = ImageProcessing.RotateColors(ref colors, greenUpArrow.height, greenUpArrow.width);
-            greenLeftArrow = new Texture2D(greenUpArrow.height, greenUpArrow.width, TextureFormat.ARGB32, false);
-            greenLeftArrow.SetPixels32(ImageProcessing.FlipHorizontallyColors(ref rotated, greenLeftArrow.width, greenLeftArrow.height));
-            greenLeftArrow.Apply(false);
-            greenLeftArrow.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
+            colors = arrowTopicDownGreen.GetPixels32();
+            rotated = ImageProcessing.RotateColors(ref colors, arrowTopicUpGreen.height, arrowTopicUpGreen.width);
+            arrowTopicLeftGreen = new Texture2D(arrowTopicUpGreen.height, arrowTopicUpGreen.width, TextureFormat.ARGB32, false);
+            arrowTopicLeftGreen.SetPixels32(ImageProcessing.FlipHorizontallyColors(ref rotated, arrowTopicLeftGreen.width, arrowTopicLeftGreen.height));
+            arrowTopicLeftGreen.Apply(false);
+            arrowTopicLeftGreen.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
 
-            colors = greenUpArrow.GetPixels32();
-            rotated = ImageProcessing.RotateColors(ref colors, greenDownArrow.height, greenDownArrow.width);
-            greenRightArrow = new Texture2D(greenDownArrow.height, greenDownArrow.width, TextureFormat.ARGB32, false);
-            greenRightArrow.SetPixels32(ImageProcessing.FlipHorizontallyColors(ref rotated, greenRightArrow.width, greenRightArrow.height));
-            greenRightArrow.Apply(false);
-            greenRightArrow.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
+            colors = arrowTopicUpGreen.GetPixels32();
+            rotated = ImageProcessing.RotateColors(ref colors, arrowTopicDownGreen.height, arrowTopicDownGreen.width);
+            arrowTopicRightGreen = new Texture2D(arrowTopicDownGreen.height, arrowTopicDownGreen.width, TextureFormat.ARGB32, false);
+            arrowTopicRightGreen.SetPixels32(ImageProcessing.FlipHorizontallyColors(ref rotated, arrowTopicRightGreen.width, arrowTopicRightGreen.height));
+            arrowTopicRightGreen.Apply(false);
+            arrowTopicRightGreen.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
+
+            listboxAnswers = new ListBox();
+            listboxAnswers.Position = new Vector2(188, 64);
+            listboxAnswers.Size = new Vector2(115, 128);
+            //listboxAnswers.RowSpacing = 1;
+            listboxAnswers.RowsDisplayed = maxNumAnswerLinesShown;
+            listboxAnswers.MaxCharacters = -1; // text is wrapped, so no max characters defined
+            listboxAnswers.Name = "list_answers";
+            listboxAnswers.WrapTextItems = true;
+            mainPanel.Components.Add(listboxAnswers);
 
             SetupButtons();
             SetupCheckboxes();
@@ -415,6 +423,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             buttonCategoryWork.OnMouseClick += ButtonCategoryWork_OnMouseClick;
             mainPanel.Components.Add(buttonCategoryWork);
 
+            buttonOkay = new Button();
+            buttonOkay.Position = new Vector2(4, 186);
+            buttonOkay.Size = new Vector2(107, 10);
+            buttonOkay.Name = "button_okay";
+            buttonOkay.OnMouseClick += ButtonOkay_OnMouseClick;
+            mainPanel.Components.Add(buttonOkay);
+
             buttonGoodbye = new Button();
             buttonGoodbye.Position = new Vector2(118, 183);
             buttonGoodbye.Size = new Vector2(67, 10);
@@ -455,19 +470,19 @@ namespace DaggerfallWorkshop.Game.UserInterface
         void SetupScrollButtons()
         {
             buttonTopicUp = DaggerfallUI.AddButton(rectButtonTopicUp, NativePanel);
-            buttonTopicUp.BackgroundTexture = redUpArrow;
+            buttonTopicUp.BackgroundTexture = arrowTopicUpRed;
             buttonTopicUp.OnMouseClick += ButtonTopicUp_OnMouseClick;
 
             buttonTopicDown = DaggerfallUI.AddButton(rectButtonTopicDown, NativePanel);
-            buttonTopicDown.BackgroundTexture = redDownArrow;
+            buttonTopicDown.BackgroundTexture = arrowTopicDownRed;
             buttonTopicDown.OnMouseClick += ButtonTopicDown_OnMouseClick;
 
             buttonTopicLeft = DaggerfallUI.AddButton(rectButtonTopicLeft, NativePanel);
-            buttonTopicLeft.BackgroundTexture = redLeftArrow;
+            buttonTopicLeft.BackgroundTexture = arrowTopicLeftRed;
             buttonTopicLeft.OnMouseClick += ButtonTopicLeft_OnMouseClick;
 
             buttonTopicRight = DaggerfallUI.AddButton(rectButtonTopicRight, NativePanel);
-            buttonTopicRight.BackgroundTexture = redRightArrow;
+            buttonTopicRight.BackgroundTexture = arrowTopicRightRed;
             buttonTopicRight.OnMouseClick += ButtonTopicRight_OnMouseClick;
         }
 
@@ -499,7 +514,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             buttonTopicRight.Update();
         }
 
-        void SetListboxTopics(ref ListBox listboxTopic, ref List<string> listTopicLocation)
+        void SetListboxTopics(ref ListBox listboxTopic, List<string> listTopicLocation)
         {
             listboxTopic.ClearItems();
             for (int i = 0; i < listTopicLocation.Count; i++)
@@ -518,27 +533,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             listboxTopic.ClearItems();
             lengthOfLongestItemInListBox = 0;
             listboxTopic.MaxHorizontalScrollIndex = 0;
-        }
-
-        void PrepareTestTopicLists()
-        {
-            listTopicLocation = new List<string>();
-            for (int i = 0; i < 50; i++)
-            {
-                listTopicLocation.Add("location " + i + " test string");
-            }
-
-            listTopicPeople = new List<string>();
-            for (int i = 0; i < 12; i++)
-            {
-                listTopicPeople.Add("dummy person " + i + " (here will be the name of the person later on)");
-            }
-
-            listTopicThings = new List<string>();
-            for (int i = 0; i < 30; i++)
-            {
-                listTopicThings.Add("thing " + i);
-            }
         }
 
         void UpdatePortrait()
@@ -562,42 +556,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
 
         }
-
-        /*
-        void UpdateButtonState()
-        {
-            // update talk option selection and talk category selection
-            switch (selectedTalkOption)
-            {
-                case TalkOption.TellMeAbout:
-                default:
-                    SetTalkModeTellMeAbout();
-                    SetTalkCategoryNone();
-                    break;
-                case TalkOption.WhereIs:
-                    SetTalkModeWhereIs();
-                    switch (selectedTalkCategory)
-                    {
-                        case TalkCategory.Location:
-                            SetTalkCategoryLocation();
-                            break;
-                        case TalkCategory.People:
-                            SetTalkCategoryPeople();
-                            break;
-                        case TalkCategory.Things:
-                            SetTalkCategoryThings();
-                            break;
-                        case TalkCategory.Work:
-                            SetTalkCategoryWork();
-                            break;
-                        default:
-                            SetTalkCategoryNone();
-                            break;
-                    }
-                    break;
-            }
-        }
-        */
 
         void UpdateCheckboxes()
         {
@@ -701,7 +659,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             textureBackground.SetPixels(4, textureBackground.height - 56 - 10, 107, 10, textureCategoryWorkGrayedOut);
             textureBackground.Apply(false);
 
-            SetListboxTopics(ref listboxTopic, ref listTopicLocation);
+            SetListboxTopics(ref listboxTopic, TalkManager.Instance.ListTopicLocation);
             listboxTopic.Update();
 
             UpdateScrollBars();
@@ -718,7 +676,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             textureBackground.SetPixels(4, textureBackground.height - 56 - 10, 107, 10, textureCategoryWorkGrayedOut);
             textureBackground.Apply(false);
 
-            SetListboxTopics(ref listboxTopic, ref listTopicPeople);
+            SetListboxTopics(ref listboxTopic, TalkManager.Instance.ListTopicPeople);
             listboxTopic.Update();
 
             UpdateScrollBars();
@@ -735,7 +693,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             textureBackground.SetPixels(4, textureBackground.height - 56 - 10, 107, 10, textureCategoryWorkGrayedOut);
             textureBackground.Apply(false);
 
-            SetListboxTopics(ref listboxTopic, ref listTopicThings);
+            SetListboxTopics(ref listboxTopic, TalkManager.Instance.ListTopicThings);
             listboxTopic.Update();
 
             UpdateScrollBars();
@@ -808,21 +766,21 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             // Update up button
             if (index > 0)
-                upButton.BackgroundTexture = greenUpArrow;
+                upButton.BackgroundTexture = arrowTopicUpGreen;
             else
-                upButton.BackgroundTexture = redUpArrow;
+                upButton.BackgroundTexture = arrowTopicUpRed;
 
             // Update down button
             if (index < (count - verticalScrollBarTopicWindow.DisplayUnits))
-                downButton.BackgroundTexture = greenDownArrow;
+                downButton.BackgroundTexture = arrowTopicDownGreen;
             else
-                downButton.BackgroundTexture = redDownArrow;
+                downButton.BackgroundTexture = arrowTopicDownRed;
 
             // No items above or below
             if (count <= verticalScrollBarTopicWindow.DisplayUnits)
             {
-                upButton.BackgroundTexture = redUpArrow;
-                downButton.BackgroundTexture = redDownArrow;
+                upButton.BackgroundTexture = arrowTopicUpRed;
+                downButton.BackgroundTexture = arrowTopicDownRed;
             }
         }
 
@@ -831,21 +789,21 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             // Update up button
             if (index > 0)
-                leftButton.BackgroundTexture = greenLeftArrow;
+                leftButton.BackgroundTexture = arrowTopicLeftGreen;
             else
-                leftButton.BackgroundTexture = redLeftArrow;
+                leftButton.BackgroundTexture = arrowTopicLeftRed;
 
             // Update down button
             if (index < (count - horizontalSliderTopicWindow.DisplayUnits))
-                rightButton.BackgroundTexture = greenRightArrow;
+                rightButton.BackgroundTexture = arrowTopicRightGreen;
             else
-                rightButton.BackgroundTexture = redRightArrow;
+                rightButton.BackgroundTexture = arrowTopicRightRed;
 
             // No items above or below
             if (count <= horizontalSliderTopicWindow.DisplayUnits)
             {
-                leftButton.BackgroundTexture = redLeftArrow;
-                rightButton.BackgroundTexture = redRightArrow;
+                leftButton.BackgroundTexture = arrowTopicLeftRed;
+                rightButton.BackgroundTexture = arrowTopicRightRed;
             }
         }
 
@@ -955,6 +913,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             selectedTalkTone = TalkTone.Blunt;
             UpdateCheckboxes();
+        }
+
+        private void ButtonOkay_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            string answer = "This is a long test string as placeholder for an actual answer. In the future in this scrolling area there will be the correct answers. Right now it is just a dummy text!";
+            listboxAnswers.AddItem(answer);
         }
 
         private void ButtonGoodbye_OnMouseClick(BaseScreenComponent sender, Vector2 position)
