@@ -37,6 +37,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         bool enabledHorizontalScroll = false;
         int horizontalScrollIndex = 0;
         int maxHorizontalScrollIndex = 0;
+        bool wrapTextItems = false;
         int rowsDisplayed = 9;
         int rowSpacing = 1;
         HorizontalAlignment rowAlignment = HorizontalAlignment.Left;
@@ -110,6 +111,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public int Count
         {
             get { return listItems.Count; }
+        }
+
+        public bool WrapTextItems
+        {
+            get { return wrapTextItems; }
+            set { wrapTextItems = value; }
         }
 
         public int RowsDisplayed
@@ -194,10 +201,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             base.Draw();
 
             float x = 0, y = 0;
+            float currentLine = 0;
             for (int i = 0; i < listItems.Count; i++)
             {
-                if (i < scrollIndex || i >= scrollIndex + rowsDisplayed)
+                if (currentLine < scrollIndex || currentLine >= scrollIndex + rowsDisplayed)
                     continue;
+
+                currentLine += listItems[i].NumTextLines;
 
                 TextLabel label = listItems[i];
                 label.StartCharacterIndex = horizontalScrollIndex;
@@ -219,8 +229,39 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 label.HorizontalAlignment = rowAlignment;
                 label.Draw();
 
-                y += label.Font.GlyphHeight + rowSpacing;
+                //y += label.Font.GlyphHeight + rowSpacing; 
+                y += label.TextHeight + rowSpacing;
             }
+
+            //float x = 0, y = 0;
+            //for (int i = 0; i < listItems.Count; i++)
+            //{
+            //    if (i < scrollIndex || i >= scrollIndex + rowsDisplayed)
+            //        continue;
+
+            //    TextLabel label = listItems[i];
+            //    label.StartCharacterIndex = horizontalScrollIndex;
+            //    label.UpdateLabelTexture();
+            //    if (i == selectedIndex)
+            //    {
+            //        label.TextColor = selectedTextColor;
+            //        label.ShadowPosition = selectedShadowPosition;
+            //        label.ShadowColor = selectedShadowColor;
+            //    }
+            //    else
+            //    {
+            //        label.TextColor = textColor;
+            //        label.ShadowPosition = shadowPosition;
+            //        label.ShadowColor = shadowColor;
+            //    }
+
+            //    label.Position = new Vector2(x, y);
+            //    label.HorizontalAlignment = rowAlignment;
+            //    label.Draw();
+
+            //    //y += label.Font.GlyphHeight + rowSpacing; 
+            //    y += label.TextHeight + rowSpacing;
+            //}
         }
 
         protected override void MouseClick(Vector2 clickPosition)
@@ -284,6 +325,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             textLabel.MaxCharacters = maxCharacters;
             textLabel.Text = text;
             textLabel.Parent = this;
+            textLabel.WrapText = wrapTextItems;
 
             if (position < 0)
                 listItems.Add(textLabel);

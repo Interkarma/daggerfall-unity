@@ -33,6 +33,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         int totalHeight;
         int textureWidth;
         int textureHeight;
+        int numTextLines; // 1 in unwrapped, n in wrapped
         Texture2D labelTexture;
         Vector2 shadowPosition = DaggerfallUI.DaggerfallDefaultShadowPos;
         Color textColor = DaggerfallUI.DaggerfallDefaultTextColor;
@@ -100,6 +101,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public int TextHeight
         {
             get { return totalHeight; }
+        }
+
+        public int NumTextLines
+        {
+            get { return numTextLines; }
         }
 
         public int MaxWidth
@@ -200,6 +206,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Create target label texture
             totalWidth = width;
             totalHeight = font.GlyphHeight;
+            numTextLines = 1;
             labelTexture = CreateLabelTexture(totalWidth, totalHeight);
             if (labelTexture == null)
                 throw new Exception("TextLabel failed to create labelTexture.");
@@ -272,7 +279,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Create target label texture
             totalWidth = width;
             totalHeight = rows.Count * font.GlyphHeight;
-
+            numTextLines = rows.Count;
             labelTexture = CreateLabelTexture(totalWidth, totalHeight);
             if (labelTexture == null)
                 throw new Exception("TextLabel failed to create labelTexture.");
