@@ -327,12 +327,15 @@ namespace DaggerfallWorkshop
             // Assign mesh
             meshFilter.sharedMesh = mesh;
 
+            // Get atlas size
+            int size = DaggerfallUnity.Settings.MeshAndTextureReplacement ? 4096 : 1024;
+
             // Load material atlas
             Material material = DaggerfallUnity.Instance.MaterialReader.GetMaterialAtlas(
                 textureArchive,
                 0,
                 4,
-                1024,
+                size,
                 out atlasRects,
                 out atlasIndices,
                 4,
