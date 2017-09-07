@@ -54,7 +54,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public int StartCharacterIndex
         {
             get { return startCharacterIndex; }
-            set { startCharacterIndex = value; }
+            set { startCharacterIndex = Math.Max(0, value); }
         }    
 
         public PixelFont Font
