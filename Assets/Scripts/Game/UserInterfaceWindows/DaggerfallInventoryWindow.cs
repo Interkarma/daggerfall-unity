@@ -1327,6 +1327,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             //const int potionTextId = 1008;
             const int bookTextId = 1009;
             const int arrowTextId = 1011;
+            const int weaponNoMaterialTextId = 1012;
             const int armorNoMaterialTextId = 1014;
             const int oghmaInfiniumTextId = 1015;
             const int houseDeedTextId = 1073;
@@ -1337,7 +1338,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             switch (item.ItemGroup)
             {
                 case (ItemGroups.Armor):
-                    if (item.IsShield || item.TemplateIndex == (int)Armor.Helm)
+                    if (item.IsShield || item.TemplateIndex == (int)Armor.Helm || item.IsArtifact)
                         tokens = DaggerfallUnity.TextProvider.GetRSCTokens(armorNoMaterialTextId);
                     else
                         tokens = DaggerfallUnity.TextProvider.GetRSCTokens(armorTextId);
@@ -1346,6 +1347,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 case (ItemGroups.Weapons):
                     if (item.TemplateIndex == (int)Weapons.Arrow)
                         tokens = DaggerfallUnity.TextProvider.GetRSCTokens(arrowTextId);
+                    else if (item.IsArtifact)
+                        tokens = DaggerfallUnity.TextProvider.GetRSCTokens(weaponNoMaterialTextId);
                     else
                         tokens = DaggerfallUnity.TextProvider.GetRSCTokens(weaponTextId);
                     break;
@@ -1424,14 +1427,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
                 else
                 {   // Setup the next message box with the magic effect info.
-                    int msgId = 1016;
-                    if (item.ItemGroup == ItemGroups.Artifacts)
-                    {
-                        // Use appropriate artifact description message. (8700-8721)
-                        msgId = 8700 + item.GroupIndex;
-                    }
                     DaggerfallMessageBox messageBoxMagic = new DaggerfallMessageBox(uiManager, messageBox);
-                    messageBoxMagic.SetTextTokens(msgId, item);
+                    messageBoxMagic.SetTextTokens(1016, item);
                     messageBoxMagic.ClickAnywhereToClose = true;
 
                     messageBox.AddNextMessageBox(messageBoxMagic);
