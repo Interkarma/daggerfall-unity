@@ -764,6 +764,11 @@ namespace DaggerfallWorkshop.Game.Items
             shortShirt.dyeColor = ItemBuilder.RandomClothingDye();
             ItemBuilder.RandomizeClothingVariant(casualPants);
 
+            // Add a horse
+            // This helps player get around
+            // Free horse will be removed once shops are implemented
+            items.AddItem(ItemBuilder.CreateItem(ItemGroups.Transportation, (int)Transportation.Horse));
+
             // Add a wagon
             // This is required for now as shops not currently implemented
             // Wagon is easy to obtain anyway (150g) and most player can affored right out of Privateer's Hold
