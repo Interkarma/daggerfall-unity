@@ -6,6 +6,7 @@
 // Original Author: Hazelnut
 
 using System;
+using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -95,6 +96,11 @@ namespace DaggerfallWorkshop.Utility
             throw new NotImplementedException();
         }
 
+        public virtual string BookAuthor()
+        {   // %ba
+            throw new NotImplementedException();
+        }
+
         public virtual string Pronoun()
         {   // %g & %g1
             throw new NotImplementedException();
@@ -129,6 +135,11 @@ namespace DaggerfallWorkshop.Utility
 
         public virtual string God()
         {   // %god
+            throw new NotImplementedException();
+        }
+
+        public virtual TextFile.Token[] MagicPowers(TextFile.Formatting format)
+        {   // %mpw
             throw new NotImplementedException();
         }
 

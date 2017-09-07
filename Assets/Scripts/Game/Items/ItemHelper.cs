@@ -132,31 +132,49 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
-        /// Resolves full item name using parameters like %it and material type.
+        /// Resolves full item name using parameters like %it.
         /// </summary>
         public string ResolveItemName(DaggerfallUnityItem item)
         {
-            // Start with base name
-            string result = item.shortName;
-
             // Get item template
             ItemTemplate template = item.ItemTemplate;
+
+            // Return just the template name if item is unidentified or an Artifact.
+            if (!item.IsIdentified || item.ItemGroup == ItemGroups.Artifacts)
+                return template.name;
+
+            // Books are handled differently
+            if (item.ItemGroup == ItemGroups.Books)
+                return DaggerfallUnity.Instance.ItemHelper.getBookNameByMessage(item.message, item.shortName);
+
+            // Start with base name
+            string result = item.shortName;
 
             // Resolve %it parameter
             result = result.Replace("%it", template.name);
 
+            return result;
+        }
+
+        /// <summary>
+        /// Resolves full item name using parameters like %it and material type.
+        /// </summary>
+        public string ResolveItemLongName(DaggerfallUnityItem item)
+        {
+            string result = ResolveItemName(item);
+
             // Resolve weapon material
-            if (item.ItemGroup == ItemGroups.Weapons)
+            if (item.ItemGroup == ItemGroups.Weapons && item.TemplateIndex != (int) Weapons.Arrow)
             {
-                WeaponMaterialTypes weaponMaterial = (WeaponMaterialTypes)item.nativeMaterialValue;
+                WeaponMaterialTypes weaponMaterial = (WeaponMaterialTypes) item.nativeMaterialValue;
                 string materialName = DaggerfallUnity.Instance.TextProvider.GetWeaponMaterialName(weaponMaterial);
                 result = string.Format("{0} {1}", materialName, result);
             }
 
             // Resolve armor material
-            if (item.ItemGroup == ItemGroups.Armor)
+            if (item.ItemGroup == ItemGroups.Armor && !item.IsShield && item.TemplateIndex != (int) Armor.Helm)
             {
-                ArmorMaterialTypes armorMaterial = (ArmorMaterialTypes)item.nativeMaterialValue;
+                ArmorMaterialTypes armorMaterial = (ArmorMaterialTypes) item.nativeMaterialValue;
                 string materialName = DaggerfallUnity.Instance.TextProvider.GetArmorMaterialName(armorMaterial);
                 result = string.Format("{0} {1}", materialName, result);
             }
@@ -745,6 +763,11 @@ namespace DaggerfallWorkshop.Game.Items
             // Randomise shirt dye and pants variant
             shortShirt.dyeColor = ItemBuilder.RandomClothingDye();
             ItemBuilder.RandomizeClothingVariant(casualPants);
+
+            // Add a horse
+            // This helps player get around
+            // Free horse will be removed once shops are implemented
+            items.AddItem(ItemBuilder.CreateItem(ItemGroups.Transportation, (int)Transportation.Horse));
 
             // Add a wagon
             // This is required for now as shops not currently implemented

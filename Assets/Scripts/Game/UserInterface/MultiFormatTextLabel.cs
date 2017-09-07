@@ -135,7 +135,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// <param name="text">Text for this label.</param>
         /// <param name="font">Font for this label.</param>
         /// <returns>TextLabel.</returns>
-        public TextLabel AddTextLabel(string text, PixelFont font = null)
+        public TextLabel AddTextLabel(string text, PixelFont font = null, bool wrapText = false, int maxWidth = 0)
         {
             if (font == null)
                 font = GetFont();
@@ -144,10 +144,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             textLabel.AutoSize = AutoSizeModes.None;
             textLabel.Font = font;
             textLabel.Position = new Vector2(cursorX, cursorY);
-            textLabel.MaxWidth = 288;
-            textLabel.WrapText = true;
             textLabel.Text = text;
             textLabel.Parent = this;
+            textLabel.WrapText = wrapText;
+
+            // Optionally specify max width
+            if (maxWidth > 0)
+                textLabel.MaxWidth = maxWidth;
 
             textLabel.TextColor = TextColor;
             textLabel.ShadowColor = ShadowColor;

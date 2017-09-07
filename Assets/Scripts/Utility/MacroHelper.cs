@@ -5,13 +5,13 @@
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Hazelnut
 
-using UnityEngine;
-using DaggerfallWorkshop.Game;
-using DaggerfallConnect.Arena2;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
+using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Player;
-
+using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -21,57 +21,16 @@ namespace DaggerfallWorkshop.Utility
      * arena2\text.rsc, fall.exe, arena2\*.qrc, or arena2\bio*.txt
      * </summary>
      * 
-     * If any messages displayed in game contain the following markup, this is what needs adding:
-     * %abc[undefined]      -> macro needs adding to <c>macroHandlers</c> list
-     * %abc[unhandled]      -> macro requires handler method name in <c>macroHandlers</c> list
-     * %abc[srcDataUnknown] -> macro context provider object needs handler method adding
-     * 
-     * Adding new macro handlers:
-     * 
-     * Open the file <c>DaggerfallWorkshop.Utility.MacroHelper</c>.
-     * Does the macro need an object instance to provide context? (e.g. item, quest)
-     * 
-     * If no context required:
-     * 1) Find the macro in <c>macroHandlers</c>, if the macro isn't in the list then add it at the bottom. e.g. '%ra'
-     * 2) Define the handler method name, replacing 'null' with it. e.g. 'PlayerRace'
-     * 3) Add a suitable handler method to the region <c>global macro handlers</c>. (mcp will be null so don't use it) e.g.
-     * <code>
-     * private static string PlayerRace(IMacroContextProvider mcp)
-     * {   // %ra
-     *     return GameManager.Instance.PlayerEntity.RaceTemplate.Name;
-     * }
-     * </code>
-     *      
-     * If context required:
-     * 1) Find the macro in <c>macroHandlers</c>, if the macro isn't in the list then add it at the bottom. e.g. '%ra'
-     * 2) Define the handler method name, replacing 'null' with it. e.g. 'PlayerRace'
-     * 3) Add a suitable handler method that delegates to the an <c>MacroDataSource</c> to the region <c>contextual macro handlers</c>. e.g.
-     * <code>
-     * public static string Region(IMacroContextProvider mcp)
-     * {   // %reg
-     *     return mcp.GetMacroDataSource().Region();
-     * }
-     * </code>
-     * 4) Add an unimplemented implementation to the <c>MacroDataSource</c> base class. e.g.
-     * <code>
-     * public virtual string Region()
-     * {   // %reg
-     *     throw new NotImplementedException();
-     * }
-     * </code>
-     * 5) Find the class that will provide the context (named using suffix 'MCP') and override the handler method. (<c>parent</c> refers to the context providing class) e.g.
-     * <code>
-     * public override string Region()
-     * {
-     *     return (parent.LastPersonReferenced != null) ? parent.LastPersonReferenced.HomeRegionName : "";
-     * }
+     * See http://forums.dfworkshop.net/viewtopic.php?f=23&t=673 for details about adding new macro handlers.
      * 
      */
     public static class MacroHelper
     {
         public delegate string MacroHandler(IMacroContextProvider mcp = null);
 
-        #region macro definitions and handler mapping
+        public delegate TextFile.Token[] MultilineMacroHandler(IMacroContextProvider mcp, TextFile.Formatting format);
+
+        #region macro definitions and handler mappings
 
         static Dictionary<string, MacroHandler> macroHandlers = new Dictionary<string, MacroHandler>()
         {
@@ -90,11 +49,11 @@ namespace DaggerfallWorkshop.Utility
             { "%agi", Agi }, //  Amount of Agility
             { "%arm", ItemName }, //  Armour
             { "%ark", AttributeRating }, // What property attribute is considered
-            { "%ba", null },  // Book Author
+            { "%ba", BookAuthor },  // Book Author
             { "%bch", null }, // Base chance
             { "%bdr", null }, // Base Duration
             { "%bn", null },  // ?
-            { "%bt", null },  // Book title
+            { "%bt", ItemName },  // Book title
             { "%cbl", null }, // Cash balance in current region
             { "%clc", null }, // Per level (Chance)
             { "%cld", null }, // Per level (Duration)
@@ -168,7 +127,6 @@ namespace DaggerfallWorkshop.Utility
             { "%mn", null },  // Random First(?) name (Male?)
             { "%mn2", null }, // Same as _mn (?)
             { "%mod", ArmourMod }, // Modification
-            { "%mpw", null }, // Magic powers
             { "%n", null },   // A random female first name
             { "%nam", null }, // A random full name
             { "%nrn", null }, // Noble of the current region
@@ -234,7 +192,20 @@ namespace DaggerfallWorkshop.Utility
             { "%wil", Wil }, // ?
             { "%wpn", null }, // Poison (?)
             { "%wth", Worth }, // Worth
+        // DF Unity - new macros:
+            { "%pg", PlayerPronoun },   // He/She (player)
+            { "%pg1", PlayerPronoun },  // His/Her (player)
+            { "%pg2", PlayerPronoun2 }, // Him/Her (player)
+            { "%pg2self", PlayerPronoun2self },// Himself/Herself (player)
+            { "%pg3", PlayerPronoun3 },  // His/Hers (player)
         };
+
+        // Multi-line macro handlers, returns tokens.
+        static Dictionary<string, MultilineMacroHandler> multilineMacroHandlers = new Dictionary<string, MultilineMacroHandler>()
+        {
+            { "%mpw", MagicPowers }, // Magic powers - multi line (token) message
+        };
+
         #endregion
 
         // Any punctuation characters that can be on the end of a macro symbol need adding here.
@@ -249,46 +220,67 @@ namespace DaggerfallWorkshop.Utility
         {
             // Iterate message tokens
             string tokenText;
+            int multilineIdx = 0;
+            TextFile.Token[] multilineTokens = null;
+
             for (int tokenIdx = 0; tokenIdx < tokens.Length; tokenIdx++)
             {
                 tokenText = tokens[tokenIdx].text;
                 if (tokenText != null && tokenText.IndexOf('%') >= 0)
                 {
-                    // Split token text into individual words
-                    string[] words = tokenText.Split(' ');
-
-                    // Iterate words to find macros
-                    for (int wordIdx = 0; wordIdx < words.Length; wordIdx++)
+                    // Handle multiline macros. (only handles the last one & must be only thing in this token)
+                    if (multilineMacroHandlers.ContainsKey(tokenText.Trim()))
                     {
-                        if (words[wordIdx].StartsWith("%"))
+                        multilineTokens = GetMultilineValue(tokenText.Trim(), mcp, tokens[tokenIdx + 1].formatting);
+                        multilineIdx = tokenIdx;
+                    }
+                    else
+                    {
+                        // Split token text into individual words
+                        string[] words = tokenText.Split(' ');
+
+                        // Iterate words to find macros
+                        for (int wordIdx = 0; wordIdx < words.Length; wordIdx++)
                         {
-                            int wordLen = words[wordIdx].Length - 1;
-                            if (words[wordIdx].IndexOfAny(PUNCTUATION) == wordLen)
+                            if (words[wordIdx].StartsWith("%"))
                             {
-                                string symbolStr = words[wordIdx].Substring(0, wordLen);
-                                words[wordIdx] = GetValue(symbolStr, mcp) + words[wordIdx].Substring(wordLen);
+                                int wordLen = words[wordIdx].Length - 1;
+                                if (words[wordIdx].IndexOfAny(PUNCTUATION) == wordLen)
+                                {
+                                    string symbolStr = words[wordIdx].Substring(0, wordLen);
+                                    words[wordIdx] = GetValue(symbolStr, mcp) + words[wordIdx].Substring(wordLen);
+                                }
+                                else
+                                {
+                                    words[wordIdx] = GetValue(words[wordIdx], mcp);
+                                }
                             }
-                            else
-                            {
-                                words[wordIdx] = GetValue(words[wordIdx], mcp);
+                            else if (words[wordIdx].StartsWith("+%"))
+                            {   // Support willpower message which erroneously has the + just before the %. 
+                                words[wordIdx] = '+' + GetValue(words[wordIdx].Substring(1), mcp);
                             }
                         }
-                        else if (words[wordIdx].StartsWith("+%"))
-                        {   // Support willpower message which erroneously has the + just before the %. 
-                            words[wordIdx] = '+' + GetValue(words[wordIdx].Substring(1), mcp);
-                        }
-                    }
 
-                    // Re-assemble.
-                    tokenText = string.Empty;
-                    for (int wordIdx = 0; wordIdx < words.Length; wordIdx++)
-                    {
-                        tokenText += words[wordIdx];
-                        if (wordIdx != words.Length - 1)
-                            tokenText += " ";
+                        // Re-assemble words and update token.
+                        tokenText = string.Empty;
+                        for (int wordIdx = 0; wordIdx < words.Length; wordIdx++)
+                        {
+                            tokenText += words[wordIdx];
+                            if (wordIdx != words.Length - 1)
+                                tokenText += " ";
+                        }
+                        tokens[tokenIdx].text = tokenText;
                     }
-                    tokens[tokenIdx].text = tokenText;
                 }
+            }
+            // Insert multiline tokens if generated.
+            if (multilineTokens != null && multilineTokens.Length > 0)
+            {
+                TextFile.Token[] newTokens = new TextFile.Token[tokens.Length + multilineTokens.Length - 1];
+                Array.Copy(tokens, newTokens, multilineIdx);
+                Array.Copy(multilineTokens, 0, newTokens, multilineIdx, multilineTokens.Length);
+                Array.Copy(tokens, multilineIdx + 1, newTokens, multilineIdx + multilineTokens.Length, tokens.Length - multilineIdx - 1);
+                tokens = newTokens;
             }
         }
 
@@ -297,7 +289,7 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         /// <returns>The expanded macro value.</returns>
         /// <param name="symbolStr">macro symbol string.</param>
-        /// <param name="mcp">an object instance providing context for macro expansion. (optional)</param>
+        /// <param name="mcp">an object instance providing context for macro expansion.</param>
         public static string GetValue(string symbolStr, IMacroContextProvider mcp)
         {
             if (macroHandlers.ContainsKey(symbolStr))
@@ -325,10 +317,39 @@ namespace DaggerfallWorkshop.Utility
             }
         }
 
+        /// <summary>
+        /// Gets a multiline value for a single macro symbol string.
+        /// </summary>
+        /// <returns>The multiline expanded macro value as a Token array.</returns>
+        /// <param name="symbolStr">macro symbol string.</param>
+        /// <param name="mcp">an object instance providing context for macro expansion.</param>
+        /// <param name="format">the format tag to follow each line. (can be null)</param>
+        public static TextFile.Token[] GetMultilineValue(string symbolStr, IMacroContextProvider mcp, TextFile.Formatting format)
+        {
+            string error;
+            if (format == TextFile.Formatting.Text)
+                format = TextFile.Formatting.NewLine;
+            MultilineMacroHandler svp = multilineMacroHandlers[symbolStr];
+            if (svp != null) {
+                try {
+                    return svp.Invoke(mcp, format);
+                } catch (NotImplementedException) {
+                    error = symbolStr + "[srcDataUnknown]";
+                }
+            } else {
+                error = symbolStr + "[unhandled]";
+            }
+            TextFile.Token errorToken = new TextFile.Token();
+            errorToken.text = error;
+            errorToken.formatting = TextFile.Formatting.Text;
+            return new TextFile.Token[] { errorToken };
+        }
+
+
         //
         // Global macro handlers - not context sensitive. (mcp will be null, and should not be used)
         //
-        #region global macro handlers
+        #region Global macro handlers
 
         private static string CityName(IMacroContextProvider mcp)
         {   // %cn
@@ -354,31 +375,33 @@ namespace DaggerfallWorkshop.Utility
             PlayerGPS gps = GameManager.Instance.PlayerGPS;
             PersistentFactionData factionData = Game.GameManager.Instance.PlayerEntity.FactionData;
             int rep = factionData.GetLegalReputation(gps.CurrentRegionIndex).value;
-            if (rep > 60)
-                return "Esteemed";
+            if (rep > 80)
+                return "revered";
+            else if (rep > 60)
+                return "esteemed";
             else if (rep > 40)
-                return "Honored";
+                return "honored";
             else if (rep > 20)
-                return "Admired";
+                return "admired";
             else if (rep > 10)
-                return "Respected";
+                return "respected";
             else if (rep > 0)
-                return "Dependable";
+                return "dependable";
             else if (rep == 0)
-                return "Common Citizen";
+                return "a common citizen";
             else if (rep < 0)
-                return "Undependable";
+                return "undependable";
             else if (rep < -10)
-                return "Scoundrel";
+                return "a scoundrel";
             else if (rep < -20)
-                return "Criminal";
+                return "a criminal";
             else if (rep < -40)
-                return "Villain";
+                return "a villain";
             else if (rep < -60)
-                return "Pond Scum";
+                return "pond Scum";
             else if (rep < -80)
-                return "Hated";
-            return "Unknown";
+                return "hated";
+            return "unknown";
         }
 
         private static string Time(IMacroContextProvider mcp)
@@ -401,6 +424,26 @@ namespace DaggerfallWorkshop.Utility
             string name = GameManager.Instance.PlayerEntity.Name;
             string[] parts = name.Split(' ');
             return (parts != null && parts.Length > 0) ? parts[0] : name;
+        }
+        public static string PlayerPronoun(IMacroContextProvider mcp)
+        {   // %pg
+            return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? HardStrings.pronounShe : HardStrings.pronounHe;
+        }
+        public static string PlayerPronoun1(IMacroContextProvider mcp)
+        {   // %pg1
+            return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? HardStrings.pronounHer : HardStrings.pronounHis;
+        }
+        public static string PlayerPronoun2(IMacroContextProvider mcp)
+        {   // %pg2
+            return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? HardStrings.pronounHer : HardStrings.pronounHim;
+        }
+        public static string PlayerPronoun2self(IMacroContextProvider mcp)
+        {   // %pg2self
+            return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? HardStrings.pronounHerself : HardStrings.pronounHimself;
+        }
+        public static string PlayerPronoun3(IMacroContextProvider mcp)
+        {   // %pg3
+            return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? HardStrings.pronounHers : HardStrings.pronounHis;
         }
 
         private static string DmgMod(IMacroContextProvider mcp)
@@ -447,7 +490,7 @@ namespace DaggerfallWorkshop.Utility
         private static string GuildTitle(IMacroContextProvider mcp)
         {   // %pct
             // Just use "Apprentice" for all %pct guild titles for now
-            // Guilds are not implemented yet, will need to move into MacroDataSource
+            // Guilds are not implemented yet, will need to move into a MacroDataSource
             return "Apprentice";
         }
 
@@ -531,6 +574,11 @@ namespace DaggerfallWorkshop.Utility
             return mcp.GetMacroDataSource().ArmourMod();
         }
 
+        public static string BookAuthor(IMacroContextProvider mcp)
+        {   // %ba
+            return mcp.GetMacroDataSource().BookAuthor();
+        }
+
         public static string Pronoun(IMacroContextProvider mcp)
         {   // %g & %g1
             return mcp.GetMacroDataSource().Pronoun();
@@ -566,6 +614,18 @@ namespace DaggerfallWorkshop.Utility
         public static string God(IMacroContextProvider mcp)
         {   // %god
             return mcp.GetMacroDataSource().God();
+        }
+
+        #endregion
+
+        //
+        // Multiline macro handlers - not sure if there are any others.
+        //
+        #region multiline macro handlers
+
+        public static TextFile.Token[] MagicPowers(IMacroContextProvider mcp, TextFile.Formatting format)
+        {   // %mpw
+            return mcp.GetMacroDataSource().MagicPowers(format);
         }
 
         #endregion

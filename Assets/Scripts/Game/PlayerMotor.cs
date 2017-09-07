@@ -15,7 +15,7 @@ namespace DaggerfallWorkshop.Game
     {
         // Daggerfall base speed constants. (courtesy Allofich)
         public const float classicToUnitySpeedUnitRatio = 39.5f; // was estimated from comparing a walk over the same distance in classic and DF Unity
-        private const float dfWalkBase = 150f;
+        public const float dfWalkBase = 150f;
         private const float dfCrouchBase = 50f;
         private const float dfRideBase = dfWalkBase + 225f;
         private const float dfCartBase = dfWalkBase + 100f;

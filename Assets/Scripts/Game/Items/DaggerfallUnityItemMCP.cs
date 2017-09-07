@@ -7,6 +7,9 @@
 
 using System;
 using DaggerfallWorkshop.Utility;
+using DaggerfallConnect.Arena2;
+using System.Collections.Generic;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -33,7 +36,7 @@ namespace DaggerfallWorkshop.Game.Items
 
             public override string ItemName()
             {
-                return parent.shortName;
+                return parent.ItemName;
             }
 
             public override string Worth()
@@ -46,9 +49,9 @@ namespace DaggerfallWorkshop.Game.Items
                 switch (parent.itemGroup)
                 {
                     case ItemGroups.Armor:
-                        return ((ArmorMaterialTypes)parent.nativeMaterialValue).ToString();
+                        return DaggerfallUnity.Instance.TextProvider.GetArmorMaterialName((ArmorMaterialTypes) parent.nativeMaterialValue);
                     case ItemGroups.Weapons:
-                        return ((WeaponMaterialTypes)parent.nativeMaterialValue).ToString();
+                        return DaggerfallUnity.Instance.TextProvider.GetWeaponMaterialName((WeaponMaterialTypes) parent.nativeMaterialValue);
                     default:
                         return base.Material();
                 }
@@ -70,7 +73,7 @@ namespace DaggerfallWorkshop.Game.Items
 
             public override string Weight()
             {   // %kg
-                return parent.weightInKg.ToString();
+                return (parent.weightInKg * parent.stackCount).ToString();
             }
 
             public override string WeaponDamage()
@@ -84,6 +87,48 @@ namespace DaggerfallWorkshop.Game.Items
             {   // %mod
                 return parent.GetMaterialArmorValue().ToString("+0;-0;0");
             }
+
+            public override string BookAuthor()
+            {   // %ba
+                BookFile bookFile = new BookFile();
+                bookFile.OpenBook(DaggerfallUnity.Instance.Arena2Path, BookFile.messageToBookFilename(parent.message));
+                // Should the bookfile get closed?
+                return bookFile.Author;
+            }
+
+            public override TextFile.Token[] MagicPowers(TextFile.Formatting format)
+            {   // %mpw
+                if (!parent.IsIdentified)
+                {
+                    // Powers unknown.
+                    TextFile.Token nopowersToken = new TextFile.Token();
+                    nopowersToken.text = HardStrings.powersUnknown;
+                    nopowersToken.formatting = TextFile.Formatting.Text;
+                    return new TextFile.Token[] { nopowersToken };
+                }
+                else
+                {
+                    // List item powers. 
+                    // TODO: Update once magic effects have been implemented. (just puts "Power number N" for now)
+                    // Pretty sure low numbers are type of application, and higher ones are effects.
+                    // e.g. shield of fortitude is [1, 87] which maps to "Cast when held: Fortitude" in classic.
+                    List<TextFile.Token> magicPowersTokens = new List<TextFile.Token>();
+                    for (int i = 0; i < parent.legacyMagic.Length; i++)
+                    {
+                        if (parent.legacyMagic[i] == 0xffff)
+                            break;
+                        TextFile.Token powerToken = new TextFile.Token();
+                        powerToken.text = "Power number " + parent.legacyMagic[i];
+                        powerToken.formatting = TextFile.Formatting.Text;
+                        magicPowersTokens.Add(powerToken);
+                        TextFile.Token formatToken = new TextFile.Token();
+                        formatToken.formatting = format;
+                        magicPowersTokens.Add(formatToken);
+                    }
+                    return magicPowersTokens.ToArray();
+                }
+            }
+
         }
     }
 }

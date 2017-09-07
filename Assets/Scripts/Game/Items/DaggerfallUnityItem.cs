@@ -163,11 +163,19 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
-        /// Resolve this item's full name.
+        /// Resolve this item's name.
+        /// </summary>
+        public string ItemName
+        {
+            get { return DaggerfallUnity.Instance.ItemHelper.ResolveItemName(this); }
+        }
+
+        /// <summary>
+        /// Resolve this item's full name (mainly for tooltips).
         /// </summary>
         public string LongName
         {
-            get { return DaggerfallUnity.Instance.ItemHelper.ResolveItemName(this); }
+            get { return DaggerfallUnity.Instance.ItemHelper.ResolveItemLongName(this); }
         }
 
         /// <summary>
@@ -226,6 +234,14 @@ namespace DaggerfallWorkshop.Game.Items
         public bool IsShield
         {
             get { return GetIsShield(); }
+        }
+
+        /// <summary>
+        /// Checks if this item is identified.
+        /// </summary>
+        public bool IsIdentified
+        {
+            get { return GetIsIdentified(); }
         }
 
         /// <summary>
@@ -1265,6 +1281,15 @@ namespace DaggerfallWorkshop.Game.Items
             }
 
             return false;
+        }
+
+        // Check if this item is identified. (only relevant if legacymagic != null)
+        bool GetIsIdentified()
+        {
+            if (legacyMagic == null)
+                return true;
+            const ushort identifiedMask = 32;
+            return (flags & identifiedMask) > 0;
         }
 
         // Determines if world texture should be displayed in place of player texture
