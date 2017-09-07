@@ -39,8 +39,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         Rect rectButtonTopicUp = new Rect(102, 68, 9, 16);
         Rect rectButtonTopicDown = new Rect(102, 161, 9, 16);
-        Rect rectButtonTopicLeft = new Rect(5, 177, 15, 8);
-        Rect rectButtonTopicRight = new Rect(87, 177, 15, 8);
+        Rect rectButtonTopicLeft = new Rect(5, 177, 16, 8);
+        Rect rectButtonTopicRight = new Rect(87, 177, 16, 8);
 
         const int maxNumTopicsShown = 13; // max number of items displayed in scrolling area of topics list
         const int maxNumCharactersOfTopicShown = 20; // max number of characters of a topic displayed in scrolling area of topics list
@@ -96,6 +96,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         TextLabel pcSay;
 
+        // alignment stuff for checkbox buttons
         Panel panelTone; // used as selection marker
         Vector2 panelTonePolitePos = new Vector2(258, 18);
         Vector2 panelToneNormalPos = new Vector2(258, 28);
@@ -103,21 +104,25 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Vector2 panelToneSize = new Vector2(6f, 6f);
         Color32 toggleColor = new Color32(162, 36, 12, 255);
 
+        // positioning rects for checkbox buttons
         Rect rectButtonTonePolite = new Rect(258, 18, 6, 6);
         Rect rectButtonToneNormal = new Rect(258, 28, 6, 6);
         Rect rectButtonToneBlunt = new Rect(258, 38, 6, 6);
 
+        // normal buttons
         Button buttonTellMeAbout;
         Button buttonWhereIs;
         Button buttonCategoryLocation;
         Button buttonCategoryPeople;
         Button buttonCategoryThings;
         Button buttonCategoryWork;
-        Button buttonTonePolite;
-        Button buttonToneNormal;
-        Button buttonToneBlunt;
 
-        ListBox listBoxTopic;
+        // checkbox buttons
+        Button buttonCheckboxTonePolite;
+        Button buttonCheckboxToneNormal;
+        Button buttonCheckboxToneBlunt;
+
+        ListBox listboxTopic;
         VerticalScrollBar verticalScrollBarTopicWindow;
         HorizontalSlider horizontalSliderTopicWindow;
 
@@ -189,10 +194,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 return;
             }
 
-            updatePortrait();
+            UpdatePortrait();
 
             nameNPC = name;
-            updateNameNPC();
+            UpdateNameNPC();
         }
 
         protected override void Setup()
@@ -227,7 +232,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             if (texturePortrait)
             {
-                updatePortrait();
+                UpdatePortrait();
             }
 
             panelNameNPC = DaggerfallUI.AddPanel(mainPanel, AutoSizeModes.None);
@@ -243,7 +248,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             labelNameNPC.VerticalAlignment = VerticalAlignment.Middle;
             panelNameNPC.Components.Add(labelNameNPC);
 
-            updateNameNPC();
+            UpdateNameNPC();
 
             // Load talk options highlight texture
             imgFile = new ImgFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, highlightedOptionsImgName), FileUsage.UseMemory, false);
@@ -298,77 +303,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
             mainPanel.Components.Add(pcSay);
             */
 
-            buttonTellMeAbout = new Button();
-            buttonTellMeAbout.Position = new Vector2(4, 4);
-            buttonTellMeAbout.Size = new Vector2(107, 10);
-            buttonTellMeAbout.Name = "button_tellmeabout";
-            buttonTellMeAbout.OnMouseClick += buttonTellMeAbout_OnMouseClick;
-            mainPanel.Components.Add(buttonTellMeAbout);
-
-            buttonWhereIs = new Button();
-            buttonWhereIs.Position = new Vector2(4, 14);
-            buttonWhereIs.Size = new Vector2(107, 10);
-            buttonWhereIs.Name = "button_whereis";
-            buttonWhereIs.OnMouseClick += buttonWhereIs_OnMouseClick;
-            mainPanel.Components.Add(buttonWhereIs);
-
-            buttonCategoryLocation = new Button();
-            buttonCategoryLocation.Position = new Vector2(4, 26);
-            buttonCategoryLocation.Size = new Vector2(107, 10);
-            buttonCategoryLocation.Name = "button_categoryLocation";
-            buttonCategoryLocation.OnMouseClick += buttonCategoryLocation_OnMouseClick;
-            mainPanel.Components.Add(buttonCategoryLocation);
-
-            buttonCategoryPeople = new Button();
-            buttonCategoryPeople.Position = new Vector2(4, 36);
-            buttonCategoryPeople.Size = new Vector2(107, 10);
-            buttonCategoryPeople.Name = "button_categoryPeople";
-            buttonCategoryPeople.OnMouseClick += buttonCategoryPeople_OnMouseClick;
-            mainPanel.Components.Add(buttonCategoryPeople);
-
-            buttonCategoryThings = new Button();
-            buttonCategoryThings.Position = new Vector2(4, 46);
-            buttonCategoryThings.Size = new Vector2(107, 10);
-            buttonCategoryThings.Name = "button_categoryThings";
-            buttonCategoryThings.OnMouseClick += buttonCategoryThings_OnMouseClick;
-            mainPanel.Components.Add(buttonCategoryThings);
-
-            buttonCategoryWork = new Button();
-            buttonCategoryWork.Position = new Vector2(4, 56);
-            buttonCategoryWork.Size = new Vector2(107, 10);
-            buttonCategoryWork.Name = "button_categoryWork";
-            buttonCategoryWork.OnMouseClick += buttonCategoryWork_OnMouseClick;
-            mainPanel.Components.Add(buttonCategoryWork);
-
-            buttonTonePolite = DaggerfallUI.AddButton(rectButtonTonePolite, NativePanel);
-            buttonTonePolite.OnMouseClick += buttonTonePolite_OnClickHandler;
-            buttonToneNormal = DaggerfallUI.AddButton(rectButtonToneNormal, NativePanel);
-            buttonToneNormal.OnMouseClick += buttonToneNormal_OnClickHandler;
-            buttonToneBlunt = DaggerfallUI.AddButton(rectButtonToneBlunt, NativePanel);
-            buttonToneBlunt.OnMouseClick += buttonToneBlunt_OnClickHandler;
-
-            buttonGoodbye = new Button();
-            buttonGoodbye.Position = new Vector2(118, 183);
-            buttonGoodbye.Size = new Vector2(67, 10);
-            buttonGoodbye.Name = "button_goodbye";
-            buttonGoodbye.OnMouseClick += buttonGoodbye_OnMouseClick;
-            mainPanel.Components.Add(buttonGoodbye);
-
-            panelTone = DaggerfallUI.AddPanel(new Rect(panelTonePolitePos, panelToneSize), NativePanel);
-            panelTone.BackgroundColor = toggleColor;
-
             PrepareTestTopicLists();
 
-            listBoxTopic = new ListBox();
-            listBoxTopic.Position = new Vector2(6, 71);
-            listBoxTopic.Size = new Vector2(94, 104);
-            listBoxTopic.RowsDisplayed = maxNumTopicsShown;
-            listBoxTopic.MaxCharacters = -1;
-            listBoxTopic.Name = "list_topic";
-            listBoxTopic.EnabledHorizontalScroll = true;
-            //SetListItems(ref listBoxTopic, ref listTopicLocation);
-            //listBoxTopic.OnMouseClick += listBoxTopic_OnMouseClickHandler;
-            mainPanel.Components.Add(listBoxTopic);
+            listboxTopic = new ListBox();
+            listboxTopic.Position = new Vector2(6, 71);
+            listboxTopic.Size = new Vector2(94, 104);
+            listboxTopic.RowsDisplayed = maxNumTopicsShown;
+            listboxTopic.MaxCharacters = -1;
+            listboxTopic.Name = "list_topic";
+            listboxTopic.EnabledHorizontalScroll = true;
+            //SetListItems(ref listboxTopic, ref listTopicLocation);
+            //listboxTopic.OnMouseClick += listboxTopic_OnMouseClickHandler;
+            mainPanel.Components.Add(listboxTopic);
 
             // Cut out red up/down arrows
             Texture2D redArrowsTexture = ImageReader.GetTexture(redArrowsTextureName);
@@ -410,12 +356,84 @@ namespace DaggerfallWorkshop.Game.UserInterface
             greenRightArrow.Apply(false);
             greenRightArrow.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
 
-            UpdateLabels();
-            UpdateButtons();
-            UpdateCheckboxes();
-
+            SetupButtons();
+            SetupCheckboxes();
             SetupScrollBars();
             SetupScrollButtons();
+
+            SetTalkModeTellMeAbout();
+
+            //UpdateButtonState();
+            UpdateCheckboxes();
+            UpdateScrollBars();
+            UpdateScrollButtons();
+
+            UpdateLabels();
+        }
+
+        void SetupButtons()
+        {
+            buttonTellMeAbout = new Button();
+            buttonTellMeAbout.Position = new Vector2(4, 4);
+            buttonTellMeAbout.Size = new Vector2(107, 10);
+            buttonTellMeAbout.Name = "button_tellmeabout";
+            buttonTellMeAbout.OnMouseClick += ButtonTellMeAbout_OnMouseClick;
+            mainPanel.Components.Add(buttonTellMeAbout);
+
+            buttonWhereIs = new Button();
+            buttonWhereIs.Position = new Vector2(4, 14);
+            buttonWhereIs.Size = new Vector2(107, 10);
+            buttonWhereIs.Name = "button_whereis";
+            buttonWhereIs.OnMouseClick += ButtonWhereIs_OnMouseClick;
+            mainPanel.Components.Add(buttonWhereIs);
+
+            buttonCategoryLocation = new Button();
+            buttonCategoryLocation.Position = new Vector2(4, 26);
+            buttonCategoryLocation.Size = new Vector2(107, 10);
+            buttonCategoryLocation.Name = "button_categoryLocation";
+            buttonCategoryLocation.OnMouseClick += ButtonCategoryLocation_OnMouseClick;
+            mainPanel.Components.Add(buttonCategoryLocation);
+
+            buttonCategoryPeople = new Button();
+            buttonCategoryPeople.Position = new Vector2(4, 36);
+            buttonCategoryPeople.Size = new Vector2(107, 10);
+            buttonCategoryPeople.Name = "button_categoryPeople";
+            buttonCategoryPeople.OnMouseClick += ButtonCategoryPeople_OnMouseClick;
+            mainPanel.Components.Add(buttonCategoryPeople);
+
+            buttonCategoryThings = new Button();
+            buttonCategoryThings.Position = new Vector2(4, 46);
+            buttonCategoryThings.Size = new Vector2(107, 10);
+            buttonCategoryThings.Name = "button_categoryThings";
+            buttonCategoryThings.OnMouseClick += ButtonCategoryThings_OnMouseClick;
+            mainPanel.Components.Add(buttonCategoryThings);
+
+            buttonCategoryWork = new Button();
+            buttonCategoryWork.Position = new Vector2(4, 56);
+            buttonCategoryWork.Size = new Vector2(107, 10);
+            buttonCategoryWork.Name = "button_categoryWork";
+            buttonCategoryWork.OnMouseClick += ButtonCategoryWork_OnMouseClick;
+            mainPanel.Components.Add(buttonCategoryWork);
+
+            buttonGoodbye = new Button();
+            buttonGoodbye.Position = new Vector2(118, 183);
+            buttonGoodbye.Size = new Vector2(67, 10);
+            buttonGoodbye.Name = "button_goodbye";
+            buttonGoodbye.OnMouseClick += ButtonGoodbye_OnMouseClick;
+            mainPanel.Components.Add(buttonGoodbye);
+        }
+
+        void SetupCheckboxes()
+        {
+            buttonCheckboxTonePolite = DaggerfallUI.AddButton(rectButtonTonePolite, NativePanel);
+            buttonCheckboxTonePolite.OnMouseClick += ButtonTonePolite_OnClickHandler;
+            buttonCheckboxToneNormal = DaggerfallUI.AddButton(rectButtonToneNormal, NativePanel);
+            buttonCheckboxToneNormal.OnMouseClick += ButtonToneNormal_OnClickHandler;
+            buttonCheckboxToneBlunt = DaggerfallUI.AddButton(rectButtonToneBlunt, NativePanel);
+            buttonCheckboxToneBlunt.OnMouseClick += ButtonToneBlunt_OnClickHandler;
+
+            panelTone = DaggerfallUI.AddPanel(new Rect(panelTonePolitePos, panelToneSize), NativePanel);
+            panelTone.BackgroundColor = toggleColor;
         }
 
         void SetupScrollBars()
@@ -424,16 +442,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             verticalScrollBarTopicWindow = new VerticalScrollBar();
             verticalScrollBarTopicWindow.Position = new Vector2(104, 87);
             verticalScrollBarTopicWindow.Size = new Vector2(5, 73);
-            verticalScrollBarTopicWindow.OnScroll += verticalScrollBarTopicWindow_OnScroll;
+            verticalScrollBarTopicWindow.OnScroll += VerticalScrollBarTopicWindow_OnScroll;
             NativePanel.Components.Add(verticalScrollBarTopicWindow);
 
             horizontalSliderTopicWindow = new HorizontalSlider();
-            horizontalSliderTopicWindow.Position = new Vector2(21, 178);
+            horizontalSliderTopicWindow.Position = new Vector2(22, 178);
             horizontalSliderTopicWindow.Size = new Vector2(62, 5);
-            horizontalSliderTopicWindow.OnScroll += horizontalSliderTopicWindow_OnScroll;
+            horizontalSliderTopicWindow.OnScroll += HorizontalSliderTopicWindow_OnScroll;
             NativePanel.Components.Add(horizontalSliderTopicWindow);
-
-            UpdateScrollBars();
         }
 
         void SetupScrollButtons()
@@ -453,18 +469,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
             buttonTopicRight = DaggerfallUI.AddButton(rectButtonTopicRight, NativePanel);
             buttonTopicRight.BackgroundTexture = redRightArrow;
             buttonTopicRight.OnMouseClick += ButtonTopicRight_OnMouseClick;
-
-            UpdateScrollButtons();
         }
 
         void UpdateScrollBars()
         {
-            verticalScrollBarTopicWindow.DisplayUnits = Math.Min(maxNumTopicsShown, listBoxTopic.Count);
-            verticalScrollBarTopicWindow.TotalUnits = listBoxTopic.Count;
+            verticalScrollBarTopicWindow.DisplayUnits = Math.Min(maxNumTopicsShown, listboxTopic.Count);
+            verticalScrollBarTopicWindow.TotalUnits = listboxTopic.Count;
+            verticalScrollBarTopicWindow.ScrollIndex = 0;
             verticalScrollBarTopicWindow.Update();
 
             horizontalSliderTopicWindow.DisplayUnits = maxNumCharactersOfTopicShown;
             horizontalSliderTopicWindow.TotalUnits = lengthOfLongestItemInListBox;
+            horizontalSliderTopicWindow.ScrollIndex = 0;
             horizontalSliderTopicWindow.Update();
         }
 
@@ -472,7 +488,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             int scrollIndex = GetSafeScrollIndex(verticalScrollBarTopicWindow);
             // Update scroller buttons
-            UpdateListScrollerButtons(scrollIndex, listBoxTopic.Count, buttonTopicUp, buttonTopicDown);
+            UpdateListScrollerButtons(scrollIndex, listboxTopic.Count, buttonTopicUp, buttonTopicDown);
             buttonTopicUp.Update();
             buttonTopicDown.Update();
 
@@ -483,18 +499,25 @@ namespace DaggerfallWorkshop.Game.UserInterface
             buttonTopicRight.Update();
         }
 
-        void SetListItems(ref ListBox listBoxTopic, ref List<string> listTopicLocation)
+        void SetListboxTopics(ref ListBox listboxTopic, ref List<string> listTopicLocation)
         {
-            listBoxTopic.ClearItems();
+            listboxTopic.ClearItems();
             for (int i = 0; i < listTopicLocation.Count; i++)
             {
-                listBoxTopic.AddItem(listTopicLocation[i]);
+                listboxTopic.AddItem(listTopicLocation[i]);
             }
 
             // compute length of longest item in listbox from current list items...
-            lengthOfLongestItemInListBox = listBoxTopic.LengthOfLongestItem();
-            // update listBoxTopic.MaxHorizontalScrollIndex
-            listBoxTopic.MaxHorizontalScrollIndex = lengthOfLongestItemInListBox - maxNumCharactersOfTopicShown;
+            lengthOfLongestItemInListBox = listboxTopic.LengthOfLongestItem();
+            // update listboxTopic.MaxHorizontalScrollIndex            
+            listboxTopic.MaxHorizontalScrollIndex = Math.Max(0, lengthOfLongestItemInListBox - maxNumCharactersOfTopicShown);
+        }
+
+        void ClearListboxTopics()
+        {
+            listboxTopic.ClearItems();
+            lengthOfLongestItemInListBox = 0;
+            listboxTopic.MaxHorizontalScrollIndex = 0;
         }
 
         void PrepareTestTopicLists()
@@ -518,7 +541,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
-        void updatePortrait()
+        void UpdatePortrait()
         {
             if (textureBackground)
             {
@@ -527,7 +550,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
-        void updateNameNPC()
+        void UpdateNameNPC()
         {
             if (labelNameNPC != null)
             {
@@ -540,39 +563,41 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         }
 
-        void UpdateButtons()
+        /*
+        void UpdateButtonState()
         {
             // update talk option selection and talk category selection
             switch (selectedTalkOption)
             {
                 case TalkOption.TellMeAbout:
                 default:
-                    setTalkModeTellMeAbout();
-                    setTalkCategoryNone();
+                    SetTalkModeTellMeAbout();
+                    SetTalkCategoryNone();
                     break;
                 case TalkOption.WhereIs:
-                    setTalkModeWhereIs();
+                    SetTalkModeWhereIs();
                     switch (selectedTalkCategory)
                     {
                         case TalkCategory.Location:
-                            setTalkCategoryLocation();
+                            SetTalkCategoryLocation();
                             break;
                         case TalkCategory.People:
-                            setTalkCategoryPeople();
+                            SetTalkCategoryPeople();
                             break;
                         case TalkCategory.Things:
-                            setTalkCategoryThings();
+                            SetTalkCategoryThings();
                             break;
                         case TalkCategory.Work:
-                            setTalkCategoryWork();
+                            SetTalkCategoryWork();
                             break;
                         default:
-                            setTalkCategoryNone();
+                            SetTalkCategoryNone();
                             break;
                     }
                     break;
             }
         }
+        */
 
         void UpdateCheckboxes()
         {
@@ -593,86 +618,145 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         }
 
-        void setTalkModeTellMeAbout()
+        void SetTalkModeTellMeAbout()
         {
+            selectedTalkOption = TalkOption.TellMeAbout;
+            
             textureBackground.SetPixels(4, textureBackground.height - 4 - 10, 107, 10, textureTellMeAboutHighlighted);
             textureBackground.SetPixels(4, textureBackground.height - 14 - 10, 107, 10, textureWhereIsNormal);
-            textureBackground.Apply(false);
-        }
-
-        void setTalkModeWhereIs()
-        {
-            textureBackground.SetPixels(4, textureBackground.height - 4 - 10, 107, 10, textureTellMeAboutNormal);
-            textureBackground.SetPixels(4, textureBackground.height - 14 - 10, 107, 10, textureWhereIsHighlighted);
-            textureBackground.Apply(false);
-        }
-
-        void setTalkCategoryNone()
-        {
             textureBackground.SetPixels(4, textureBackground.height - 26 - 10, 107, 10, textureCategoryLocationGrayedOut);
             textureBackground.SetPixels(4, textureBackground.height - 36 - 10, 107, 10, textureCategoryPeopleGrayedOut);
             textureBackground.SetPixels(4, textureBackground.height - 46 - 10, 107, 10, textureCategoryThingsGrayedOut);
             textureBackground.SetPixels(4, textureBackground.height - 56 - 10, 107, 10, textureCategoryWorkGrayedOut);
             textureBackground.Apply(false);
+
+            ClearListboxTopics();
+            listboxTopic.Update();
+
+            UpdateScrollBars();
+            UpdateScrollButtons();
         }
 
-        void setTalkCategoryLocation()
+        void SetTalkModeWhereIs()
         {
+            selectedTalkOption = TalkOption.WhereIs;
+
+            textureBackground.SetPixels(4, textureBackground.height - 4 - 10, 107, 10, textureTellMeAboutNormal);
+            textureBackground.SetPixels(4, textureBackground.height - 14 - 10, 107, 10, textureWhereIsHighlighted);            
+            textureBackground.Apply(false);
+
+            SetTalkCategory(selectedTalkCategory);
+
+            UpdateScrollBars();
+            UpdateScrollButtons();
+        }
+
+        void SetTalkCategory(TalkCategory talkCategory)
+        {
+            switch (talkCategory)
+            {
+                case TalkCategory.Location:
+                default:
+                    SetTalkCategoryLocation();
+                    break;
+                case TalkCategory.People:
+                    SetTalkCategoryPeople();
+                    break;
+                case TalkCategory.Things:
+                    SetTalkCategoryThings();
+                    break;
+                case TalkCategory.Work:
+                    SetTalkCategoryWork();
+                    break;
+                case TalkCategory.None:
+                    SetTalkCategoryNone();
+                    break;
+            }
+        }
+
+        void SetTalkCategoryNone()
+        {
+            selectedTalkCategory = TalkCategory.None;
+
+            textureBackground.SetPixels(4, textureBackground.height - 26 - 10, 107, 10, textureCategoryLocationGrayedOut);
+            textureBackground.SetPixels(4, textureBackground.height - 36 - 10, 107, 10, textureCategoryPeopleGrayedOut);
+            textureBackground.SetPixels(4, textureBackground.height - 46 - 10, 107, 10, textureCategoryThingsGrayedOut);
+            textureBackground.SetPixels(4, textureBackground.height - 56 - 10, 107, 10, textureCategoryWorkGrayedOut);
+            textureBackground.Apply(false);
+
+            ClearListboxTopics();
+            listboxTopic.Update();
+
+            UpdateScrollBars();
+            UpdateScrollButtons();
+        }
+
+        void SetTalkCategoryLocation()
+        {
+            selectedTalkCategory = TalkCategory.Location;
+
             textureBackground.SetPixels(4, textureBackground.height - 26 - 10, 107, 10, textureCategoryLocationHighlighted);
             textureBackground.SetPixels(4, textureBackground.height - 36 - 10, 107, 10, textureCategoryPeopleGrayedOut);
             textureBackground.SetPixels(4, textureBackground.height - 46 - 10, 107, 10, textureCategoryThingsGrayedOut);
             textureBackground.SetPixels(4, textureBackground.height - 56 - 10, 107, 10, textureCategoryWorkGrayedOut);
             textureBackground.Apply(false);
 
-            SetListItems(ref listBoxTopic, ref listTopicLocation);
-            listBoxTopic.Update();
+            SetListboxTopics(ref listboxTopic, ref listTopicLocation);
+            listboxTopic.Update();
 
             UpdateScrollBars();
+            UpdateScrollButtons();
         }
 
-        void setTalkCategoryPeople()
+        void SetTalkCategoryPeople()
         {
+            selectedTalkCategory = TalkCategory.People;
+
             textureBackground.SetPixels(4, textureBackground.height - 26 - 10, 107, 10, textureCategoryLocationGrayedOut);
             textureBackground.SetPixels(4, textureBackground.height - 36 - 10, 107, 10, textureCategoryPeopleHighlighted);
             textureBackground.SetPixels(4, textureBackground.height - 46 - 10, 107, 10, textureCategoryThingsGrayedOut);
             textureBackground.SetPixels(4, textureBackground.height - 56 - 10, 107, 10, textureCategoryWorkGrayedOut);
             textureBackground.Apply(false);
 
-            SetListItems(ref listBoxTopic, ref listTopicPeople);
-            listBoxTopic.Update();
+            SetListboxTopics(ref listboxTopic, ref listTopicPeople);
+            listboxTopic.Update();
 
             UpdateScrollBars();
+            UpdateScrollButtons();
         }
 
-        void setTalkCategoryThings()
+        void SetTalkCategoryThings()
         {
+            selectedTalkCategory = TalkCategory.Things;
+
             textureBackground.SetPixels(4, textureBackground.height - 26 - 10, 107, 10, textureCategoryLocationGrayedOut);
             textureBackground.SetPixels(4, textureBackground.height - 36 - 10, 107, 10, textureCategoryPeopleGrayedOut);
             textureBackground.SetPixels(4, textureBackground.height - 46 - 10, 107, 10, textureCategoryThingsHighlighted);
             textureBackground.SetPixels(4, textureBackground.height - 56 - 10, 107, 10, textureCategoryWorkGrayedOut);
             textureBackground.Apply(false);
 
-            SetListItems(ref listBoxTopic, ref listTopicThings);
-            listBoxTopic.Update();
+            SetListboxTopics(ref listboxTopic, ref listTopicThings);
+            listboxTopic.Update();
 
             UpdateScrollBars();
+            UpdateScrollButtons();
         }
 
-        void setTalkCategoryWork()
+        void SetTalkCategoryWork()
         {
+            selectedTalkCategory = TalkCategory.Work;
+
             textureBackground.SetPixels(4, textureBackground.height - 26 - 10, 107, 10, textureCategoryLocationGrayedOut);
             textureBackground.SetPixels(4, textureBackground.height - 36 - 10, 107, 10, textureCategoryPeopleGrayedOut);
             textureBackground.SetPixels(4, textureBackground.height - 46 - 10, 107, 10, textureCategoryThingsGrayedOut);
             textureBackground.SetPixels(4, textureBackground.height - 56 - 10, 107, 10, textureCategoryWorkHighlighted);
             textureBackground.Apply(false);
 
-            listBoxTopic.ClearItems();
-
-            lengthOfLongestItemInListBox = 0;
-            listBoxTopic.MaxHorizontalScrollIndex = 0;
-            listBoxTopic.Update();
+            ClearListboxTopics();
+            listboxTopic.Update();
 
             UpdateScrollBars();
+            UpdateScrollButtons();
         }
 
         /// <summary>
@@ -767,20 +851,20 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #region event handlers
 
-        private void verticalScrollBarTopicWindow_OnScroll()
+        private void VerticalScrollBarTopicWindow_OnScroll()
         {
             // Update scroller
-            verticalScrollBarTopicWindow.TotalUnits = listBoxTopic.Count;
+            verticalScrollBarTopicWindow.TotalUnits = listboxTopic.Count;
             int scrollIndex = GetSafeScrollIndex(verticalScrollBarTopicWindow);
             
             // Update scroller buttons
-            UpdateListScrollerButtons(scrollIndex, listBoxTopic.Count, buttonTopicUp, buttonTopicDown);
+            UpdateListScrollerButtons(scrollIndex, listboxTopic.Count, buttonTopicUp, buttonTopicDown);
 
-            listBoxTopic.ScrollIndex = scrollIndex;
-            listBoxTopic.Update();
+            listboxTopic.ScrollIndex = scrollIndex;
+            listboxTopic.Update();
         }
 
-        private void horizontalSliderTopicWindow_OnScroll()
+        private void HorizontalSliderTopicWindow_OnScroll()
         {
             // Update scroller
             horizontalSliderTopicWindow.TotalUnits = lengthOfLongestItemInListBox;
@@ -789,8 +873,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Update scroller buttons
             UpdateListScrollerButtonsLeftRight(horizontalScrollIndex, lengthOfLongestItemInListBox, buttonTopicLeft, buttonTopicRight);
 
-            listBoxTopic.HorizontalScrollIndex = horizontalScrollIndex;
-            listBoxTopic.Update();
+            listboxTopic.HorizontalScrollIndex = horizontalScrollIndex;
+            listboxTopic.Update();
         }
 
         private void ButtonTopicUp_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -813,85 +897,67 @@ namespace DaggerfallWorkshop.Game.UserInterface
             horizontalSliderTopicWindow.ScrollIndex++;
         }
 
-        private void buttonTellMeAbout_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void ButtonTellMeAbout_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            selectedTalkOption = TalkOption.TellMeAbout;
-            UpdateButtons();
+            SetTalkModeTellMeAbout();
         }
 
-        private void buttonWhereIs_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void ButtonWhereIs_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            selectedTalkOption = TalkOption.WhereIs;
-            UpdateButtons();
+            SetTalkModeWhereIs();
         }
 
-        private void buttonCategoryLocation_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void ButtonCategoryLocation_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             if (selectedTalkOption == TalkOption.WhereIs)
             {
-                selectedTalkCategory = TalkCategory.Location;
-                UpdateButtons(); //setTalkCategoryLocation();
-
-                UpdateScrollBars();
-                UpdateScrollButtons();
+                SetTalkCategoryLocation();
             }
         }
 
-        private void buttonCategoryPeople_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void ButtonCategoryPeople_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             if (selectedTalkOption == TalkOption.WhereIs)
             {
-                selectedTalkCategory = TalkCategory.People;
-                UpdateButtons(); //setTalkCategoryPeople();
-
-                UpdateScrollBars();
-                UpdateScrollButtons();
+                SetTalkCategoryPeople();
             }
         }
 
-        private void buttonCategoryThings_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void ButtonCategoryThings_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             if (selectedTalkOption == TalkOption.WhereIs)
             {
-                selectedTalkCategory = TalkCategory.Things;
-                UpdateButtons(); //setTalkCategoryThings();
-
-                UpdateScrollBars();
-                UpdateScrollButtons();
+                SetTalkCategoryThings();
             }
         }
 
-        private void buttonCategoryWork_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void ButtonCategoryWork_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             if (selectedTalkOption == TalkOption.WhereIs)
             {
-                selectedTalkCategory = TalkCategory.Work;
-                UpdateButtons(); //setTalkCategoryWork();
-
-                UpdateScrollBars();
-                UpdateScrollButtons();
+                SetTalkCategoryWork();
             }
         }
 
-        private void buttonTonePolite_OnClickHandler(BaseScreenComponent sender, Vector2 position)
+        private void ButtonTonePolite_OnClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             selectedTalkTone = TalkTone.Polite;
             UpdateCheckboxes();
         }
 
-        private void buttonToneNormal_OnClickHandler(BaseScreenComponent sender, Vector2 position)
+        private void ButtonToneNormal_OnClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             selectedTalkTone = TalkTone.Normal;
             UpdateCheckboxes();
         }
 
-        private void buttonToneBlunt_OnClickHandler(BaseScreenComponent sender, Vector2 position)
+        private void ButtonToneBlunt_OnClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             selectedTalkTone = TalkTone.Blunt;
             UpdateCheckboxes();
         }
 
-        private void buttonGoodbye_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void ButtonGoodbye_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             CloseWindow();
         }
