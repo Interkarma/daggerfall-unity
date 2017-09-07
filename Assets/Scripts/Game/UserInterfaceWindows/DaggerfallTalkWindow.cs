@@ -328,31 +328,31 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             Color32[] colors;
             Color32[] rotated;
-            colors = redUpArrow.GetPixels32();
+            colors = redDownArrow.GetPixels32();
             rotated = ImageProcessing.RotateColors(ref colors, redUpArrow.height, redUpArrow.width);
             redLeftArrow = new Texture2D(redUpArrow.height, redUpArrow.width, TextureFormat.ARGB32, false);
-            redLeftArrow.SetPixels32(rotated, 0);
+            redLeftArrow.SetPixels32(ImageProcessing.FlipHorizontallyColors(ref rotated, redLeftArrow.width, redLeftArrow.height), 0);
             redLeftArrow.Apply(false);
             redLeftArrow.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
 
-            colors = redDownArrow.GetPixels32();
+            colors = redUpArrow.GetPixels32();
             rotated = ImageProcessing.RotateColors(ref colors, redDownArrow.height, redDownArrow.width);
             redRightArrow = new Texture2D(redUpArrow.height, redUpArrow.width, TextureFormat.ARGB32, false);
-            redRightArrow.SetPixels32(rotated);
+            redRightArrow.SetPixels32(ImageProcessing.FlipHorizontallyColors(ref rotated, redRightArrow.width, redRightArrow.height));
             redRightArrow.Apply(false);
             redRightArrow.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
 
-            colors = greenUpArrow.GetPixels32();
+            colors = greenDownArrow.GetPixels32();
             rotated = ImageProcessing.RotateColors(ref colors, greenUpArrow.height, greenUpArrow.width);
             greenLeftArrow = new Texture2D(greenUpArrow.height, greenUpArrow.width, TextureFormat.ARGB32, false);
-            greenLeftArrow.SetPixels32(rotated);
+            greenLeftArrow.SetPixels32(ImageProcessing.FlipHorizontallyColors(ref rotated, greenLeftArrow.width, greenLeftArrow.height));
             greenLeftArrow.Apply(false);
             greenLeftArrow.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
 
-            colors = greenDownArrow.GetPixels32();
+            colors = greenUpArrow.GetPixels32();
             rotated = ImageProcessing.RotateColors(ref colors, greenDownArrow.height, greenDownArrow.width);
             greenRightArrow = new Texture2D(greenDownArrow.height, greenDownArrow.width, TextureFormat.ARGB32, false);
-            greenRightArrow.SetPixels32(rotated);
+            greenRightArrow.SetPixels32(ImageProcessing.FlipHorizontallyColors(ref rotated, greenRightArrow.width, greenRightArrow.height));
             greenRightArrow.Apply(false);
             greenRightArrow.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
 
