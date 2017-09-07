@@ -86,7 +86,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set
             {
                 horizontalScrollIndex = value;
-                horizontalScrollIndex = Math.Min(maxHorizontalScrollIndex, horizontalScrollIndex);
+                horizontalScrollIndex = Math.Max(0, Math.Min(maxHorizontalScrollIndex, horizontalScrollIndex));
             }
         }
 
