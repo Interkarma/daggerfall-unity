@@ -65,6 +65,11 @@ namespace AssetInjection
         {
         }
 
+        void OnDisable()
+        {
+            lastFlag = !lastFlag;
+        }
+
         void Update()
         {
             if (ReadyCheck() && lastFlag != dfUnity.WorldTime.Now.IsCityLightsOn)
