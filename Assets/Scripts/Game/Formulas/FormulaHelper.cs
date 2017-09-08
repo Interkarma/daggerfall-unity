@@ -474,6 +474,12 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             int armorValue = 0;
 
+            // Apply hit mod from character biography
+            if (target == player)
+            {
+                chanceToHit -= player.BiographyAvoidHitMod;
+            }
+
             // Get armor value for struck body part
             if (struckBodyPart <= target.ArmorValues.Length)
             {
