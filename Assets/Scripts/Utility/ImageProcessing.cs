@@ -121,6 +121,44 @@ namespace DaggerfallWorkshop.Utility
             return dst;
         }
 
+        // Flips a Color32 array horizontally
+        public static Color32[] FlipHorizontallyColors(ref Color32[] src, int width, int height)
+        {
+            Color32[] dst = new Color32[src.Length];
+
+            // Flip image data horizontally
+            int srcPos = 0;
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = width - 1; x >= 0; x--)
+                {
+                    Color32 col = src[srcPos++];
+                    dst[y * width + x] = col;
+                }
+            }
+
+            return dst;
+        }
+
+        // Flips a Color32 array vertically
+        public static Color32[] FlipVerticallyColors(ref Color32[] src, int width, int height)
+        {
+            Color32[] dst = new Color32[src.Length];
+
+            // Flip image data vertically
+            int srcPos = 0;
+            for (int y = height - 1; y >= 0; y--)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    Color32 col = src[srcPos++];
+                    dst[y * width + x] = col;
+                }
+            }
+
+            return dst;
+        }
+
         // Flips a Color32 array horizontally and vertically
         public static Color32[] FlipColors(ref Color32[] src, int width, int height)
         {

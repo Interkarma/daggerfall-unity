@@ -35,10 +35,6 @@ namespace DaggerfallWorkshop
     {
         #region Fields
 
-        public Races race = Races.Breton;
-        public Genders gender = Genders.Male;
-        public int personVariant = -1;
-
         Vector3 cameraPosition;
         Camera mainCamera = null;
         MeshFilter meshFilter = null;
@@ -127,9 +123,6 @@ namespace DaggerfallWorkshop
                 // Get component references
                 mainCamera = GameManager.Instance.MainCamera;
                 meshFilter = GetComponent<MeshFilter>();
-
-                // Setup person
-                SetPerson(race, gender);
             }
         }
 
@@ -166,15 +159,11 @@ namespace DaggerfallWorkshop
         /// <summary>
         /// Setup this person based on race and gender.
         /// </summary>
-        public void SetPerson(Races race, Genders gender, bool newVariant = false)
+        public void SetPerson(Races race, Genders gender, int personVariant)
         {
             // Must specify a race
             if (race == Races.None)
                 return;
-
-            // Allow for new random variant if specified
-            if (newVariant)
-                personVariant = -1;
 
             // Get texture range for this race and gender
             int[] textures = null;
@@ -191,14 +180,6 @@ namespace DaggerfallWorkshop
                     textures = (gender == Genders.Male) ? maleBretonTextures : femaleBretonTextures;
                     break;
             }
-
-            // Store values
-            this.race = race;
-            this.gender = gender;
-
-            // Set texture archive at random if not already set
-            if (personVariant == -1)
-                personVariant = Random.Range(0, textures.Length);
 
             // Setup person rendering
             CacheRecordSizesAndFrames(textures[personVariant]);

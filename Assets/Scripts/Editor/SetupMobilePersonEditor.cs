@@ -38,7 +38,7 @@ namespace DaggerfallWorkshop
             DrawDefaultInspector();
             if (GUILayout.Button("Apply Person Type"))
             {
-                setupMobilePerson.ApplyPersonSettings();
+                setupMobilePerson.ApplyPersonSettingsViaInspector();
             }
             if (GUILayout.Button("Align To Ground"))
             {

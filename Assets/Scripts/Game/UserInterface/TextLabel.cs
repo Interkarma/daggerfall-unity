@@ -25,6 +25,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const int minTextureDim = 8;
 
         int maxCharacters = -1;
+        int startCharacterIndex = 0;
         PixelFont font;
         string text = string.Empty;
         byte[] asciiBytes;
@@ -49,6 +50,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             get { return maxCharacters; }
             set { maxCharacters = value; }
         }
+
+        public int StartCharacterIndex
+        {
+            get { return startCharacterIndex; }
+            set { startCharacterIndex = Math.Max(0, value); }
+        }    
 
         public PixelFont Font
         {
@@ -143,6 +150,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             GUI.color = guiColor;
         }
 
+        public virtual void UpdateLabelTexture()
+        {
+            CreateLabelTexture();
+        }
+
         #region Protected Methods
 
         protected virtual void SetText(string value)
@@ -171,7 +183,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // First pass encodes ASCII and calculates final dimensions
             int width = 0;
             asciiBytes = Encoding.ASCII.GetBytes(text);
-            for (int i = 0; i < asciiBytes.Length; i++)
+            for (int i = startCharacterIndex; i < asciiBytes.Length; i++)
             {
                 // Invalid ASCII bytes are cast to a space character
                 if (!font.HasGlyph(asciiBytes[i]))
@@ -194,7 +206,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Second pass adds glyphs to label texture
             int xpos = 0;
-            for (int i = 0; i < asciiBytes.Length; i++)
+            for (int i = startCharacterIndex; i < asciiBytes.Length; i++)
             {
                 PixelFont.GlyphInfo glyph = font.GetGlyph(asciiBytes[i]);
                 if (xpos + glyph.width >= totalWidth)

@@ -17,9 +17,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
     {
         #region Fields
 
-        Texture2D vScrollThumbLeft;
-        Texture2D vScrollThumbBody;
-        Texture2D vScrollThumbRight;
+        Texture2D hScrollThumbLeft;
+        Texture2D hScrollThumbBody;
+        Texture2D hScrollThumbRight;
 
         int totalUnits;
         int displayUnits;
@@ -81,9 +81,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public HorizontalSlider()
             : base()
         {
-            vScrollThumbLeft = Resources.Load<Texture2D>("HSliderThumbLeft");
-            vScrollThumbBody = Resources.Load<Texture2D>("HSliderThumbBody");
-            vScrollThumbRight = Resources.Load<Texture2D>("HSliderThumbRight");
+            hScrollThumbLeft = Resources.Load<Texture2D>("HSliderThumbLeft");
+            hScrollThumbBody = Resources.Load<Texture2D>("HSliderThumbBody");
+            hScrollThumbRight = Resources.Load<Texture2D>("HSliderThumbRight");
         }
 
         #endregion
@@ -135,9 +135,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             base.MouseClick(clickPosition);
 
-            if (clickPosition.y < thumbRect.yMin)
+            if (clickPosition.x < thumbRect.xMin)
                 ScrollIndex -= 1;
-            else if (clickPosition.y > thumbRect.yMax)
+            else if (clickPosition.x > thumbRect.xMax)
                 ScrollIndex += 1;
         }
 
@@ -194,11 +194,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             float thumbWidth = totalRect.width * ((float)displayUnits / (float)totalUnits);
             if (thumbWidth < 10) thumbWidth = 10;
             float thumbX = scrollIndex * (totalRect.width - thumbWidth) / (totalUnits - displayUnits);
-            thumbRect = ScreenToLocal(new Rect(totalRect.x + thumbX, totalRect.y, thumbX, totalRect.height));
+            thumbRect = ScreenToLocal(new Rect(totalRect.x + thumbX, totalRect.y, thumbWidth, totalRect.height));
 
             // Get rects
-            float leftTextureWidth = vScrollThumbLeft.width * LocalScale.x;
-            float rightTextureWidth = vScrollThumbRight.width * LocalScale.x;
+            float leftTextureWidth = hScrollThumbLeft.width * LocalScale.x;
+            float rightTextureWidth = hScrollThumbRight.width * LocalScale.x;
             Rect leftRect = new Rect(totalRect.x + thumbX, totalRect.y, leftTextureWidth, totalRect.height);
             Rect bodyRect = new Rect(leftRect.xMax, totalRect.y, thumbWidth - leftTextureWidth - rightTextureWidth, totalRect.height);
             Rect rightRect = new Rect(bodyRect.xMax, totalRect.y, rightTextureWidth, totalRect.height);
@@ -207,9 +207,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Color color = GUI.color;
             if (TintColor.HasValue)
                 GUI.color = TintColor.Value;
-            GUI.DrawTexture(leftRect, vScrollThumbLeft, ScaleMode.StretchToFill);
-            GUI.DrawTexture(bodyRect, vScrollThumbBody, ScaleMode.StretchToFill);
-            GUI.DrawTexture(rightRect, vScrollThumbRight, ScaleMode.StretchToFill);
+            GUI.DrawTexture(leftRect, hScrollThumbLeft, ScaleMode.StretchToFill);
+            GUI.DrawTexture(bodyRect, hScrollThumbBody, ScaleMode.StretchToFill);
+            GUI.DrawTexture(rightRect, hScrollThumbRight, ScaleMode.StretchToFill);
             GUI.color = color;
         }
 

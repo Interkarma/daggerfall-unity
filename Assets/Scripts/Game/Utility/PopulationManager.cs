@@ -59,7 +59,7 @@ namespace DaggerfallWorkshop.Game.Utility
             public bool scheduleEnable;                     // NPC is active and waiting to be made visible
             public bool scheduleRecycle;                    // NPC is active and waiting to be hidden for recycling
             public float distanceToPlayer;                  // Distance to player
-            public MobilePersonMotor motor;                 // NPC motor
+            public MobilePersonNPC npc;                     // NPC motor
         }
 
         #endregion
@@ -149,9 +149,9 @@ namespace DaggerfallWorkshop.Game.Utility
 
                 // Setup spawn position
                 DFPosition worldPosition = cityNavigation.NavGridToWorldPosition(spawnPosition);
-                Vector3 scenePosition = cityNavigation.WorldToScenePosition(worldPosition);
-                poolItem.motor.transform.position = scenePosition;
-                GameObjectHelper.AlignBillboardToGround(poolItem.motor.gameObject, new Vector2(0, 2f));
+                Vector3 scenePosition = cityNavigation.WorldToScenePosition(worldPosition);                
+                poolItem.npc.Motor.transform.position = scenePosition;
+                GameObjectHelper.AlignBillboardToGround(poolItem.npc.Motor.gameObject, new Vector2(0, 2f));
 
                 // Schedule for enabling
                 poolItem.active = true;
@@ -177,18 +177,17 @@ namespace DaggerfallWorkshop.Game.Utility
                     AllowMobileActivationChange(ref poolItem) &&
                     isDaytime)
                 {
-                    poolItem.motor.gameObject.SetActive(true);
+                    poolItem.npc.Motor.gameObject.SetActive(true);
                     poolItem.scheduleEnable = false;
-                    poolItem.motor.Race = GetEntityRace();
-                    poolItem.motor.RandomiseNPC();
-                    poolItem.motor.InitMotor();
+                    poolItem.npc.RandomiseNPC(GetEntityRace());
+                    poolItem.npc.Motor.InitMotor();
                 }
 
                 // Get distance to player
-                poolItem.distanceToPlayer = Vector3.Distance(playerGPS.transform.position, poolItem.motor.transform.position);
+                poolItem.distanceToPlayer = Vector3.Distance(playerGPS.transform.position, poolItem.npc.Motor.transform.position);
 
                 // Mark for recycling
-                if (poolItem.motor.SeekCount > 4 ||
+                if (poolItem.npc.Motor.SeekCount > 4 ||
                     poolItem.distanceToPlayer > recycleDistance ||
                     !isDaytime)
                 {
@@ -198,7 +197,7 @@ namespace DaggerfallWorkshop.Game.Utility
                 // Recycle pending mobiles when available
                 if (poolItem.active && poolItem.scheduleRecycle && AllowMobileActivationChange(ref poolItem))
                 {
-                    poolItem.motor.gameObject.SetActive(false);
+                    poolItem.npc.Motor.gameObject.SetActive(false);
                     poolItem.active = false;
                     poolItem.scheduleEnable = false;
                     poolItem.scheduleRecycle = false;
@@ -238,6 +237,9 @@ namespace DaggerfallWorkshop.Game.Utility
             GameObject go = GameObjectHelper.InstantiatePrefab(DaggerfallUnity.Instance.Option_MobileNPCPrefab.gameObject, mobileNPCName, dfLocation.transform, Vector3.zero);
             go.SetActive(false);
 
+            // Get MobilePersonNPC reference
+            MobilePersonNPC npc = go.GetComponent<MobilePersonNPC>();
+
             // Get motor and set reference to navgrid
             MobilePersonMotor motor = go.GetComponent<MobilePersonMotor>();
             motor.cityNavigation = cityNavigation;
@@ -245,7 +247,8 @@ namespace DaggerfallWorkshop.Game.Utility
             // Create the pool item and assign new GameObject
             // This pool item starts inactive and can be used later
             PoolItem poolItem = new PoolItem();
-            poolItem.motor = motor;
+            poolItem.npc = npc;
+            poolItem.npc.Motor = motor;
 
             // Add to pool
             populationPool.Add(poolItem);
@@ -262,7 +265,7 @@ namespace DaggerfallWorkshop.Game.Utility
                 return true;
 
             // Check if outside player's main field of view
-            Vector3 directionToMobile = poolItem.motor.transform.position - playerGPS.transform.position;
+            Vector3 directionToMobile = poolItem.npc.Motor.transform.position - playerGPS.transform.position;
             float angle = Vector3.Angle(directionToMobile, playerGPS.transform.forward);
             if (angle > fieldOfView * 0.5f)
             {
