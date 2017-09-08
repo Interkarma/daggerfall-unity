@@ -20,6 +20,7 @@ using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -533,9 +534,22 @@ namespace DaggerfallWorkshop.Utility
             // Setup initial loot container prefab
             GameObject go = InstantiatePrefab(DaggerfallUnity.Instance.Option_LootContainerPrefab.gameObject, containerType.ToString(), parent, position);
 
-            // Setup billboard component
-            DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
-            dfBillboard.SetMaterial(textureArchive, textureRecord);
+            // Setup appearance
+            if (MeshReplacement.ImportCustomFlatGameobject(textureArchive, textureRecord, Vector3.zero, go.transform))
+            {
+                // Use imported model instead of billboard
+                GameObject.Destroy(go.GetComponent<DaggerfallBillboard>());
+                GameObject.Destroy(go.GetComponent<MeshRenderer>());
+            }
+            else
+            {
+                // Setup billboard component
+                DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
+                dfBillboard.SetMaterial(textureArchive, textureRecord);
+
+                // Now move up loot icon by half own size so bottom is aligned with position
+                position.y += (dfBillboard.Summary.Size.y / 2f);
+            }
 
             // Setup DaggerfallLoot component to make lootable
             DaggerfallLoot loot = go.GetComponent<DaggerfallLoot>();
@@ -548,8 +562,6 @@ namespace DaggerfallWorkshop.Utility
                 loot.TextureRecord = textureRecord;
             }
 
-            // Now move up loot icon by half own size so bottom is aligned with position
-            position.y += (dfBillboard.Summary.Size.y / 2f);
             loot.transform.position = position;
 
             return loot;
