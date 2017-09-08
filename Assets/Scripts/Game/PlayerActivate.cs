@@ -675,7 +675,7 @@ namespace DaggerfallWorkshop.Game
                 else
                 {
                     string noGoldFound = DaggerfallUnity.Instance.TextProvider.GetRandomText(foundNothingValuableTextId);
-                    DaggerfallUI.MessageBox(noGoldFound);
+                    DaggerfallUI.MessageBox(noGoldFound, null, true);
                 }
             }
             else
