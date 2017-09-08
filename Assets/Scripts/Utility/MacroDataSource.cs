@@ -128,8 +128,8 @@ namespace DaggerfallWorkshop.Utility
             throw new NotImplementedException();
         }
 
-        public virtual string Region()
-        {   // %reg
+        public virtual string HomeRegion()
+        {   // %hrg
             throw new NotImplementedException();
         }
 

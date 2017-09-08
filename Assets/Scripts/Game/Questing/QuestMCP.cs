@@ -124,7 +124,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 return DaggerfallUnity.Instance.TextProvider.GetRandomText((int)RacialOaths.Nord);
             }
 
-            public override string Region()
+            public override string HomeRegion()
             {
                 return (parent.LastPersonReferenced != null) ? parent.LastPersonReferenced.HomeRegionName : "";
             }
