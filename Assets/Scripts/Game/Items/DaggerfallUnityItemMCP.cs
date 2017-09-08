@@ -73,7 +73,8 @@ namespace DaggerfallWorkshop.Game.Items
 
             public override string Weight()
             {   // %kg
-                return (parent.weightInKg * parent.stackCount).ToString();
+                float weight = parent.weightInKg * parent.stackCount;
+                return String.Format(weight % 1 == 0 ? "{0:F0}" : "{0:F2}", weight);
             }
 
             public override string WeaponDamage()
@@ -98,7 +99,13 @@ namespace DaggerfallWorkshop.Game.Items
 
             public override TextFile.Token[] MagicPowers(TextFile.Formatting format)
             {   // %mpw
-                if (!parent.IsIdentified)
+                if (parent.IsArtifact)
+                {
+                    // Use appropriate artifact description message. (8700-8721)
+                    ArtifactsSubTypes artifactType = ItemHelper.GetArtifactSubType(parent.shortName);
+                    return DaggerfallUnity.Instance.TextProvider.GetRSCTokens(8700 + (int)artifactType);
+                }
+                else if (!parent.IsIdentified)
                 {
                     // Powers unknown.
                     TextFile.Token nopowersToken = new TextFile.Token();

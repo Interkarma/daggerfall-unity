@@ -398,7 +398,7 @@ namespace DaggerfallWorkshop.Utility
             else if (rep < -40)
                 return "a villain";
             else if (rep < -60)
-                return "pond Scum";
+                return "pond scum";
             else if (rep < -80)
                 return "hated";
             return "unknown";
