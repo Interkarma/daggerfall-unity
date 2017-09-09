@@ -19,6 +19,7 @@ using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Questing;
+using DaggerfallWorkshop.Game.Banking;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -100,6 +101,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         PaperDoll paperDoll = new PaperDoll();
         //Panel localTargetIconPanel;
         Panel remoteTargetIconPanel;
+        TextLabel remoteTargetIconLabel;
 
         Color questItemBackgroundColor = new Color(0f, 0.25f, 0f, 0.5f);
 
@@ -265,6 +267,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Setup local and remote target icon panels
             //localTargetIconPanel = DaggerfallUI.AddPanel(localTargetIconRect, NativePanel);
             remoteTargetIconPanel = DaggerfallUI.AddPanel(remoteTargetIconRect, NativePanel);
+            remoteTargetIconLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(1, 2), remoteTargetIconPanel);
 
             // Setup initial state
             SelectTabPage(TabPages.WeaponsAndArmor);
@@ -707,6 +710,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void UpdateRemoteTargetIcon()
         {
             ImageData containerImage;
+            remoteTargetIconLabel.Text = "";
             switch (remoteTargetType)
             {
                 default:
@@ -715,6 +719,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     break;
                 case RemoteTargetTypes.Wagon:
                     containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(InventoryContainerImages.Wagon);
+                    float weight = PlayerEntity.WagonWeight;
+                    remoteTargetIconLabel.Text = String.Format(weight % 1 == 0 ? "{0:F0} / {1}" : "{0:F2} / {1}", weight, ItemHelper.wagonKgLimit);
                     break;
                 case RemoteTargetTypes.Loot:
                     containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(lootTarget.ContainerImage);
@@ -1145,17 +1151,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void GoldButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            const int goldToDropTextId = 25;
-
-            // Get text tokens
-            TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(goldToDropTextId);
-
-            // Hack to set gold pieces in text token for now
-            textTokens[0].text = textTokens[0].text.Replace("%gii", GameManager.Instance.PlayerEntity.GoldPieces.ToString());
-
             // Show message box
+            const int goldToDropTextId = 25;
             DaggerfallInputMessageBox mb = new DaggerfallInputMessageBox(uiManager, this);
-            mb.SetTextTokens(textTokens);
+            mb.SetTextTokens(goldToDropTextId);
             mb.TextPanelDistanceY = 0;
             mb.InputDistanceX = 15;
             mb.InputDistanceY = -6;
@@ -1175,6 +1174,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             int goldToDrop = 0;
             bool result = int.TryParse(input, out goldToDrop);
             if (!result || goldToDrop < 1 || goldToDrop > playerGold)
+                return;
+            // Check wagon weight limit
+            if (usingWagon && (remoteItems.GetWeight() + (goldToDrop / DaggerfallBankManager.gold1kg) > ItemHelper.wagonKgLimit))
                 return;
 
             // Create new item for gold pieces and add to other container
@@ -1290,6 +1292,34 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 paperDoll.Refresh();
             else
                 Refresh(false);
+        }
+
+        bool CanCarry(DaggerfallUnityItem item)
+        {
+            // Check weight limit
+            if (playerEntity.CarriedWeight + item.weightInKg > playerEntity.MaxEncumbrance)
+            {
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
+                messageBox.SetText(HardStrings.cannotCarryAnymore);
+                messageBox.ClickAnywhereToClose = true;
+                messageBox.Show();
+                return false;
+            }
+            return true;
+        }
+
+        bool WagonCanHold(DaggerfallUnityItem item)
+        {
+            // Check cart weight limit
+            if (remoteItems.GetWeight() + item.weightInKg > ItemHelper.wagonKgLimit)
+            {
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
+                messageBox.SetText(HardStrings.cannotHoldAnymore);
+                messageBox.ClickAnywhereToClose = true;
+                messageBox.Show();
+                return false;
+            }
+            return true;
         }
 
         void TransferItem(DaggerfallUnityItem item, ItemCollection from, ItemCollection to)
@@ -1579,7 +1609,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Transfer to remote items
                 if (remoteItems != null)
                 {
-                    TransferItem(item, localItems, remoteItems);
+                    // Check wagon weight limit
+                    if (!usingWagon || WagonCanHold(item))
+                        TransferItem(item, localItems, remoteItems);
                 }
             }
             else if (selectedActionMode == ActionModes.Info)
@@ -1613,7 +1645,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             // Handle click based on action
-            if (selectedActionMode == ActionModes.Equip)
+            if (selectedActionMode == ActionModes.Equip && CanCarry(item))
             {
                 // Transfer to local items
                 if (localItems != null)
@@ -1625,7 +1657,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 UseItem(item);
             }
-            else if (selectedActionMode == ActionModes.Remove)
+            else if (selectedActionMode == ActionModes.Remove && CanCarry(item))
             {
                 TransferItem(item, remoteItems, localItems);
             }

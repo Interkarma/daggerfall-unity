@@ -304,7 +304,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
             messageBox.ClickAnywhereToClose = true;
-            messageBox.SetTextTokens((int)result);
+
+            if (result == TransactionResult.TOO_HEAVY)
+                messageBox.SetText(HardStrings.cannotCarryGold);
+            else
+                messageBox.SetTextTokens((int)result);
 
             if (result == TransactionResult.DEPOSIT_LOC) //show messagebox window w/ yes no buttons
             {

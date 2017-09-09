@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -42,7 +42,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextLabel goldLabel = new TextLabel();
         TextLabel fatigueLabel = new TextLabel();
         TextLabel healthLabel = new TextLabel();
-        //TextLabel encumbranceLabel = new TextLabel();
+        TextLabel encumbranceLabel = new TextLabel();
         TextLabel[] statLabels = new TextLabel[DaggerfallStats.Count];
         PaperDoll characterPortrait = new PaperDoll();
 
@@ -90,7 +90,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             goldLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(39, 44), NativePanel);
             fatigueLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(57, 54), NativePanel);
             healthLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(52, 64), NativePanel);
-            //encumbranceLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(90, 74), NativePanel);
+            encumbranceLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(90, 74), NativePanel);
 
             // Setup stat labels
             Vector2 pos = new Vector2(150, 17);
@@ -322,6 +322,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             goldLabel.Text = PlayerEntity.GoldPieces.ToString();
             fatigueLabel.Text = string.Format("{0}/{1}", PlayerEntity.CurrentFatigue / 64, PlayerEntity.MaxFatigue / 64);
             healthLabel.Text = string.Format("{0}/{1}", PlayerEntity.CurrentHealth, PlayerEntity.MaxHealth);
+            encumbranceLabel.Text = string.Format("{0}/{1}", (int)PlayerEntity.CarriedWeight, PlayerEntity.MaxEncumbrance);
 
             // Update stat labels
             for (int i = 0; i < DaggerfallStats.Count; i++)
@@ -429,7 +430,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             DaggerfallStats workingStats = statsRollout.WorkingStats;
             fatigueLabel.Text = string.Format("{0}/{1}", PlayerEntity.CurrentFatigue / 64, workingStats.Strength + workingStats.Endurance);
-            // TODO: Update encumbrance label
+            encumbranceLabel.Text = string.Format("{0}/{1}", (int)PlayerEntity.CarriedWeight, PlayerEntity.MaxEncumbrance);
         }
 
         #endregion

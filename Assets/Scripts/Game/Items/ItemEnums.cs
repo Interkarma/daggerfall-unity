@@ -240,7 +240,7 @@ namespace DaggerfallWorkshop.Game.Items
         Ebony_Mail = 18,
         Auriels_Shield = 19,
         Spell_Breaker = 20,
-        Skeleton_Key = 21,
+        Skeletons_Key = 21,
         Ebony_Blade = 22,
     }
 

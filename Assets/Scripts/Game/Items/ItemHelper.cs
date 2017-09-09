@@ -26,6 +26,8 @@ namespace DaggerfallWorkshop.Game.Items
     /// </summary>
     public class ItemHelper
     {
+        public const int wagonKgLimit = 750;
+
         #region Fields
 
         // This array is in order of ItemEnums.ArtifactsSubTypes
@@ -318,7 +320,7 @@ namespace DaggerfallWorkshop.Game.Items
                 if (itemShortName.Contains(artifactName))
                     return (ArtifactsSubTypes)Enum.Parse(typeof(ArtifactsSubTypes), artifactName);
             }
-            throw new KeyNotFoundException();
+            throw new KeyNotFoundException("No match found for: " + itemShortName);
         }
 
         /// <summary>

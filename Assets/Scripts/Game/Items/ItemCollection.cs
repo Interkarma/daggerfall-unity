@@ -60,6 +60,22 @@ namespace DaggerfallWorkshop.Game.Items
         #region Public Methods
 
         /// <summary>
+        /// Gets the combined weight of all the items in this collection. (ignoring arrows like classic)
+        /// </summary>
+        /// <returns>Weight in kg</returns>
+        public float GetWeight()
+        {
+            float weight = 0;
+            foreach (DaggerfallUnityItem item in items.Values)
+            {
+                // Horses, carts and arrows are not counted against encumbrance.
+                if (item.ItemGroup != ItemGroups.Transportation && item.TemplateIndex != (int)Weapons.Arrow)
+                    weight += item.weightInKg * item.stackCount;
+            }
+            return weight;
+        }
+
+        /// <summary>
         /// Check if item exists in this collection.
         /// </summary>
         /// <param name="item">Item to check.</param>
@@ -105,11 +121,11 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
-        /// Check if item type is held by player.
+        /// Check if item type exists in this collection.
         /// </summary>
         /// <param name="itemGroup">Item group.</param>
         /// <param name="itemIndex">Template index.</param>
-        /// <returns>True if player holding an item of this type.</returns>
+        /// <returns>True if collection contains an item of this type.</returns>
         public bool Contains(ItemGroups itemGroup, int itemIndex)
         {
             int groupIndex = DaggerfallUnity.Instance.ItemHelper.GetGroupIndex(itemGroup, itemIndex);

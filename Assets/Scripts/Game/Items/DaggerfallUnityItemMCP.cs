@@ -10,6 +10,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallConnect.Arena2;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using UnityEngine;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -102,8 +103,13 @@ namespace DaggerfallWorkshop.Game.Items
                 if (parent.IsArtifact)
                 {
                     // Use appropriate artifact description message. (8700-8721)
-                    ArtifactsSubTypes artifactType = ItemHelper.GetArtifactSubType(parent.shortName);
-                    return DaggerfallUnity.Instance.TextProvider.GetRSCTokens(8700 + (int)artifactType);
+                    try {
+                        ArtifactsSubTypes artifactType = ItemHelper.GetArtifactSubType(parent.shortName);
+                        return DaggerfallUnity.Instance.TextProvider.GetRSCTokens(8700 + (int)artifactType);
+                    } catch (KeyNotFoundException e) {
+                        Debug.Log(e.Message);
+                        return null;
+                    }
                 }
                 else if (!parent.IsIdentified)
                 {
