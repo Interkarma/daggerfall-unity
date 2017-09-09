@@ -89,9 +89,18 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Restore position
             loot.transform.position = data.currentPosition;
 
-            // Restore billboard appearance if present
-            if (billboard)
+            // Restore appearance
+            if (MeshReplacement.ImportCustomFlatGameobject(data.textureArchive, data.textureRecord, Vector3.zero, loot.transform))
+            {
+                // Use imported model instead of billboard
+                if (billboard) Destroy(billboard);
+                Destroy(GetComponent<MeshRenderer>());
+            }
+            else if (billboard)
+            {
+                // Restore billboard appearance if present
                 billboard.SetMaterial(data.textureArchive, data.textureRecord);
+            }
 
             // Restore items
             loot.Items.DeserializeItems(data.items);
