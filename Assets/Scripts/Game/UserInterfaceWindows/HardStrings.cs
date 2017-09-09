@@ -45,6 +45,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string noSavesFound = "No saves found. Load a Classic save?";
 
         public const string theBodyHasNoTreasure = "The body has no treasure.";
+        public const string youAreTooFarAway = "You are too far away...";
+        public const string youSeeAn = "You see an %s.";
+        public const string youSeeA = "You see a %s.";
 
         public const string loiterHowManyHours = "Loiter how many hours : ";
         public const string restHowManyHours = "Rest how many hours : ";

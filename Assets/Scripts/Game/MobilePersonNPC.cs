@@ -48,6 +48,7 @@ namespace DaggerfallWorkshop.Game
         private string nameNPC;                                 // name of the npc
         private int personOutfitVariant;                        // which basic outfit does the person wear
         private int personFaceRecordId;                         // used for portrait in talk window
+        private bool pickpocketByPlayerAttempted = false;       // player can only attempt pickpocket on a mobile NPC once
 
         private MobilePersonBillboard billboard;    // billboard for npc
         private MobilePersonMotor motor;            // motor for npc
@@ -91,6 +92,12 @@ namespace DaggerfallWorkshop.Game
         public int PersonFaceRecordId
         {
             get { return (personFaceRecordId); }
+        }
+
+        public bool PickpocketByPlayerAttempted
+        {
+            get { return (pickpocketByPlayerAttempted); }
+            set { pickpocketByPlayerAttempted = value; }
         }
 
         public MobilePersonBillboard Billboard
