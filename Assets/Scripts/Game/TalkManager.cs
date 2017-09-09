@@ -147,11 +147,9 @@ namespace DaggerfallWorkshop.Game
 
         #endregion
 
-
         #region Public Methods
 
         #endregion
-
 
         #region Private Methods
 
@@ -177,7 +175,6 @@ namespace DaggerfallWorkshop.Game
         }
 
         #endregion
-
 
         #region event handlers
 

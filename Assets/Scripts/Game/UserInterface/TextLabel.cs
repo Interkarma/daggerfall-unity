@@ -33,7 +33,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         int totalHeight;
         int textureWidth;
         int textureHeight;
-        int numTextLines; // 1 in unwrapped, n in wrapped
+        int numTextLines = 1; // 1 in unwrapped, n in wrapped
         Texture2D labelTexture;
         Vector2 shadowPosition = DaggerfallUI.DaggerfallDefaultShadowPos;
         Color textColor = DaggerfallUI.DaggerfallDefaultTextColor;
@@ -41,6 +41,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         int maxWidth = -1;
         bool wrapText = false;
+
+        bool makeTextureNoLongerReadable = true;
+
+        // restricted render area can be used to force label rendering inside this rect (used for text rendering in window frames where text is larger than frame)
+        bool useRestrictedRenderArea = false;
+        Rect rectRestrictedRenderArea;
 
         /// <summary>
         /// Maximum length of label string.
@@ -120,6 +126,22 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set { wrapText = value; }
         }
 
+        public Rect RectRestrictedRenderArea
+        {
+            get { return rectRestrictedRenderArea; }
+            set
+            {
+                rectRestrictedRenderArea = value;
+                useRestrictedRenderArea = true;
+                makeTextureNoLongerReadable = false;
+            }
+        }
+        
+        public void setPosition(Vector2 newPos)
+        {
+            this.Position = newPos;
+        }
+
         public TextLabel(DaggerfallFont font = null)
         {
             if (font != null)
@@ -136,21 +158,68 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Store starting colour
             Color guiColor = GUI.color;
 
-            // Draw shadow
-            Rect totalRect = Rectangle;
-            Rect innerRect = new Rect(0, 0, (float)totalWidth / (float)textureWidth, (float)totalHeight / (float)textureHeight);
+            Rect totalRect;
+            Rect innerRect;
+            Texture2D textureToDraw;
+            if (useRestrictedRenderArea)
+            {
+                Rect rectLabel = new Rect(this.Parent.Position + this.Position, this.Size);               
+
+                float leftCut = Math.Max(0, rectRestrictedRenderArea.xMin - rectLabel.xMin);
+                float rightCut = Math.Max(0, rectLabel.xMax - rectRestrictedRenderArea.xMax);
+                float topCut = Math.Max(0, rectRestrictedRenderArea.yMin - rectLabel.yMin);
+                float bottomCut = Math.Max(0, rectLabel.yMax - rectRestrictedRenderArea.yMax);
+
+                if ((leftCut == 0) && (rightCut == 0) && (topCut == 0) && (bottomCut == 0))
+                {
+                    totalRect = Rectangle;
+                    innerRect = new Rect(0, 0, (float)totalWidth / (float)textureWidth, (float)totalHeight / (float)textureHeight);
+                    textureToDraw = labelTexture;
+                }
+                else
+                {
+                    int newWidth = (int)(labelTexture.width - leftCut - rightCut);
+                    int newHeight = (int)(labelTexture.height - topCut - bottomCut);
+
+                    if ((newWidth <= 0) || (newHeight <= 0))
+                        return;
+
+                    Color[] subColors = labelTexture.GetPixels((int)leftCut, (int)(bottomCut), newWidth, newHeight);
+                    Texture2D subTex = new Texture2D(newWidth, newHeight, labelTexture.format, false);
+                    subTex.SetPixels(subColors, 0);
+                    subTex.Apply(false);
+                    subTex.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
+
+
+                    float xMinScreen = (rectLabel.xMin + leftCut) * LocalScale.x + this.Parent.Parent.Rectangle.x;
+                    float yMinScreen = (rectLabel.yMin + topCut) * LocalScale.y + this.Parent.Parent.Rectangle.y;
+                    float xMaxScreen = (rectLabel.xMax - rightCut) * LocalScale.x + this.Parent.Parent.Rectangle.x;
+                    float yMaxScreen = (rectLabel.yMax - bottomCut) * LocalScale.y + this.Parent.Parent.Rectangle.y;
+                    totalRect = Rect.MinMaxRect(xMinScreen, yMinScreen, xMaxScreen, yMaxScreen);
+                    innerRect = new Rect(0, 0, 1, 1); //(float)newWidth / (float)textureWidth, (float)newHeight / (float)textureHeight);
+                    textureToDraw = subTex;
+                }
+            }
+            else
+            {
+                totalRect = Rectangle;
+                innerRect = new Rect(0, 0, (float)totalWidth / (float)textureWidth, (float)totalHeight / (float)textureHeight);
+                textureToDraw = labelTexture;
+            }
+
+            // Draw shadow            
             if (shadowPosition != Vector2.zero)
             {
                 Rect shadowRect = totalRect;
                 shadowRect.x += shadowPosition.x * LocalScale.x;
                 shadowRect.y += shadowPosition.y * LocalScale.y;
                 GUI.color = shadowColor;
-                GUI.DrawTextureWithTexCoords(shadowRect, labelTexture, innerRect);
+                GUI.DrawTextureWithTexCoords(shadowRect, textureToDraw, innerRect);
             }
 
             // Draw text
             GUI.color = textColor;
-            GUI.DrawTextureWithTexCoords(totalRect, labelTexture, innerRect);
+            GUI.DrawTextureWithTexCoords(totalRect, textureToDraw, innerRect);
 
             // Restore starting colour
             GUI.color = guiColor;
@@ -222,7 +291,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 labelTexture.SetPixels32(xpos, 0, glyph.width, totalHeight, glyph.colors);
                 xpos += glyph.width + font.GlyphSpacing;
             }
-            labelTexture.Apply(false, true);
+            labelTexture.Apply(false, makeTextureNoLongerReadable);
             labelTexture.filterMode = font.FilterMode;
             this.Size = new Vector2(totalWidth, totalHeight);
         }
@@ -303,7 +372,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 ypos -= font.GlyphHeight;
             }
 
-            labelTexture.Apply(false, true);
+            labelTexture.Apply(false, makeTextureNoLongerReadable);
             labelTexture.filterMode = font.FilterMode;
             this.Size = new Vector2(totalWidth, totalHeight);
         }
