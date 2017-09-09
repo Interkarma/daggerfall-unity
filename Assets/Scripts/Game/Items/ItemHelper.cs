@@ -26,6 +26,8 @@ namespace DaggerfallWorkshop.Game.Items
     /// </summary>
     public class ItemHelper
     {
+        public const int wagonKgLimit = 750;
+
         #region Fields
 
         // This array is in order of ItemEnums.ArtifactsSubTypes

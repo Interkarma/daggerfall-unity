@@ -19,6 +19,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.UserInterface;
 using UnityEngine;
 using System;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -185,16 +186,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 SetTextTokens(tokens);
         }
 
-        public void SetTextTokens(TextFile.Token[] tokens)
+        public void SetTextTokens(TextFile.Token[] tokens, IMacroContextProvider mcp = null)
         {
+            MacroHelper.ExpandMacros(ref tokens, mcp);
             multiLineLabel.SetText(tokens);
         }
 
-        public void SetTextTokens(int id)
+        public void SetTextTokens(int id, IMacroContextProvider mcp = null)
         {
 
             TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(id);
-            SetTextTokens(tokens);
+            SetTextTokens(tokens, mcp);
         }
 
         public void SetTextBoxLabel(string label)

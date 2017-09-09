@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -9,16 +9,17 @@
 // Notes:
 //
 
-using UnityEngine;
 using System.Collections.Generic;
+using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Save;
+using DaggerfallWorkshop.Game.Banking;
 using DaggerfallWorkshop.Game.Formulas;
-using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Game.Player;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Utility;
-using DaggerfallConnect.Arena2;
-using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using UnityEngine;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
@@ -80,6 +81,8 @@ namespace DaggerfallWorkshop.Game.Entity
         public int BiographyAvoidHitMod { get { return biographyAvoidHitMod; } set { biographyAvoidHitMod = value; } }
         public int BiographyResistPoisonMod { get { return biographyResistPoisonMod; } set { biographyResistPoisonMod = value; } }
         public int BiographyFatigueMod { get { return biographyFatigueMod; } set { biographyFatigueMod = value; } }
+        public float CarriedWeight { get { return Items.GetWeight() + ((float)goldPieces / DaggerfallBankManager.gold1kg); } }
+        public float WagonWeight { get { return WagonItems.GetWeight(); } }
 
         #endregion
 

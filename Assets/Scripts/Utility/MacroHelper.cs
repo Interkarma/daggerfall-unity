@@ -92,7 +92,7 @@ namespace DaggerfallWorkshop.Utility
             { "%g2", Pronoun2 },  // Him/Her etc...
             { "%g2self", Pronoun2self },// Himself/Herself etc...
             { "%g3", Pronoun3 },  // His/Hers/Theirs etc...
-            { "%gii", null }, // Amount of gold in hand
+            { "%gii", GoldCarried }, // Amount of gold in hand
             { "%god", God }, // Some god (listed in TEXT.RSC)
             { "%gtp", null }, // Amount of fine
             { "%hea", HpMod }, // HP Modifier
@@ -493,6 +493,11 @@ namespace DaggerfallWorkshop.Utility
             // Just use "Apprentice" for all %pct guild titles for now
             // Guilds are not implemented yet, will need to move into a MacroDataSource
             return "Apprentice";
+        }
+
+        private static string GoldCarried(IMacroContextProvider mcp)
+        {   // %gii
+            return GameManager.Instance.PlayerEntity.GoldPieces.ToString();
         }
 
         #endregion
