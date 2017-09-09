@@ -1307,7 +1307,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             return true;
         }
-        
+
+        bool WagonCanHold(DaggerfallUnityItem item)
+        {
+            // Check cart weight limit
+            if (remoteItems.GetWeight() + item.weightInKg > ItemHelper.wagonKgLimit)
+            {
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
+                messageBox.SetText(HardStrings.cannotHoldAnymore);
+                messageBox.ClickAnywhereToClose = true;
+                messageBox.Show();
+                return false;
+            }
+            return true;
+        }
+
         void TransferItem(DaggerfallUnityItem item, ItemCollection from, ItemCollection to)
         {
             // Block transfer of horse or cart
@@ -1596,7 +1610,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (remoteItems != null)
                 {
                     // Check wagon weight limit
-                    if (!usingWagon || (remoteItems.GetWeight() + item.weightInKg < ItemHelper.wagonKgLimit))
+                    if (!usingWagon || WagonCanHold(item))
                         TransferItem(item, localItems, remoteItems);
                 }
             }
