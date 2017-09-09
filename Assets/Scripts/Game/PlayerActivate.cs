@@ -87,31 +87,28 @@ namespace DaggerfallWorkshop.Game
             {
                 // TODO: Clean all this up
 
-                // Using RaycastAll as hits can be blocked by decorations or other models
-                // When this happens activation feels unresponsive to player
-                // Also processing hit detection in order of priority
+                // Was using RayCastAll here to avoid unresponsive feeling when objects block ray,
+                // but this did not allow for a long raycast, since it would find things through walls, etc.
+                // Also even with a short raycast, RayCastAll allowed accessing things through walls, etc.
                 Ray ray = new Ray(mainCamera.transform.position, mainCamera.transform.forward);
-                RaycastHit[] hits;
+                RaycastHit hit;
                 RayDistance = 75f; // Approximates classic at full view distance (default setting). Classic seems to do raycasts for as far as it can render objects.
-                hits = Physics.RaycastAll(ray, RayDistance);
-                if (hits != null)
+                bool hitSomething = Physics.Raycast(ray, out hit, RayDistance);
+                if (hitSomething)
                 {
-                    // Check each hit in range for action, exit on first valid action processed
                     bool hitBuilding = false;
                     bool buildingUnlocked = false;
                     DFLocation.BuildingTypes buildingType = DFLocation.BuildingTypes.AllValid;
                     StaticBuilding building = new StaticBuilding();
 
-                    for (int i = 0; i < hits.Length; i++)
-                    {
-                        #region Hit Checks
+                    #region Hit Checks
 
                         // Check for a static building hit
                         Transform buildingOwner;
-                        DaggerfallStaticBuildings buildings = GetBuildings(hits[i].transform, out buildingOwner);
+                        DaggerfallStaticBuildings buildings = GetBuildings(hit.transform, out buildingOwner);
                         if (buildings)
                         {
-                            if (buildings.HasHit(hits[i].point, out building))
+                            if (buildings.HasHit(hit.point, out building))
                             {
                                 hitBuilding = true;
 
@@ -158,14 +155,14 @@ namespace DaggerfallWorkshop.Game
 
                         // Check for a static door hit
                         Transform doorOwner;
-                        DaggerfallStaticDoors doors = GetDoors(hits[i].transform, out doorOwner);
+                        DaggerfallStaticDoors doors = GetDoors(hit.transform, out doorOwner);
                         if (doors && playerEnterExit)
                         {
                             StaticDoor door;
-                            if (doors.HasHit(hits[i].point, out door))
+                            if (doors.HasHit(hit.point, out door))
                             {
                                 // Check if close enough to activate
-                                if (hits[i].distance > (DoorActivationDistance * MeshReader.GlobalScale))
+                                if (hit.distance > (DoorActivationDistance * MeshReader.GlobalScale))
                                 {
                                     DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
                                     return;
@@ -242,10 +239,10 @@ namespace DaggerfallWorkshop.Game
 
                         // Check for an action door hit
                         DaggerfallActionDoor actionDoor;
-                        if (ActionDoorCheck(hits[i], out actionDoor))
+                        if (ActionDoorCheck(hit, out actionDoor))
                         {
                             // Check if close enough to activate
-                            if (hits[i].distance > (DoorActivationDistance * MeshReader.GlobalScale))
+                            if (hit.distance > (DoorActivationDistance * MeshReader.GlobalScale))
                             {
                                 DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
                                 return;
@@ -261,9 +258,9 @@ namespace DaggerfallWorkshop.Game
 
                         // Check for action record hit
                         DaggerfallAction action;
-                        if (ActionCheck(hits[i], out action))
+                        if (ActionCheck(hit, out action))
                         {
-                            if (hits[i].distance <= (DefaultActivationDistance * MeshReader.GlobalScale))
+                            if (hit.distance <= (DefaultActivationDistance * MeshReader.GlobalScale))
                             {
                                 action.Receive(this.gameObject, DaggerfallAction.TriggerTypes.Direct);
                             }
@@ -271,7 +268,7 @@ namespace DaggerfallWorkshop.Game
 
                         // Check for lootable object hit
                         DaggerfallLoot loot;
-                        if (LootCheck(hits[i], out loot))
+                        if (LootCheck(hit, out loot))
                         {
                             switch (currentMode)
                             {
@@ -284,13 +281,13 @@ namespace DaggerfallWorkshop.Game
                                     // Check if close enough to activate
                                     if (loot.ContainerType == LootContainerTypes.CorpseMarker)
                                     {
-                                        if (hits[i].distance > CorpseActivationDistance * MeshReader.GlobalScale)
+                                        if (hit.distance > CorpseActivationDistance * MeshReader.GlobalScale)
                                         {
                                             DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
                                             break;
                                         }
                                     }
-                                    else if (hits[i].distance > TreasureActivationDistance * MeshReader.GlobalScale)
+                                    else if (hit.distance > TreasureActivationDistance * MeshReader.GlobalScale)
                                     {
                                         DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
                                         break;
@@ -312,7 +309,7 @@ namespace DaggerfallWorkshop.Game
 
                         // Check for static NPC hit
                         StaticNPC npc;
-                        if (NPCCheck(hits[i], out npc))
+                        if (NPCCheck(hit, out npc))
                         {
                             switch (currentMode)
                             {
@@ -322,7 +319,7 @@ namespace DaggerfallWorkshop.Game
                                 case PlayerActivateModes.Grab:
                                 case PlayerActivateModes.Talk:
                                 case PlayerActivateModes.Steal:
-                                    if (hits[i].distance > (StaticNPCActivationDistance * MeshReader.GlobalScale))
+                                    if (hit.distance > (StaticNPCActivationDistance * MeshReader.GlobalScale))
                                     {
                                         DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
                                         break;
@@ -334,14 +331,14 @@ namespace DaggerfallWorkshop.Game
 
                         // Check for mobile NPC hit
                         MobilePersonNPC mobileNpc = null;
-                        if (MobilePersonMotorCheck(hits[i], out mobileNpc))
+                        if (MobilePersonMotorCheck(hit, out mobileNpc))
                         {
                             switch (currentMode)
                             {
                                 case PlayerActivateModes.Info:
                                 case PlayerActivateModes.Grab:
                                 case PlayerActivateModes.Talk:
-                                    if (hits[i].distance > (MobileNPCActivationDistance * MeshReader.GlobalScale))
+                                    if (hit.distance > (MobileNPCActivationDistance * MeshReader.GlobalScale))
                                     {
                                         DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
                                         break;
@@ -349,7 +346,7 @@ namespace DaggerfallWorkshop.Game
                                     Talk(mobileNpc);
                                     break;
                                 case PlayerActivateModes.Steal:
-                                    if (hits[i].distance > (PickpocketDistance * MeshReader.GlobalScale))
+                                    if (hit.distance > (PickpocketDistance * MeshReader.GlobalScale))
                                     {
                                         DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
                                         break;
@@ -361,7 +358,7 @@ namespace DaggerfallWorkshop.Game
 
                         // Check for mobile enemy hit
                         DaggerfallEntityBehaviour mobileEnemyBehaviour;
-                        if (MobileEnemyCheck(hits[i], out mobileEnemyBehaviour))
+                        if (MobileEnemyCheck(hit, out mobileEnemyBehaviour))
                         {
                             switch (currentMode)
                             {
@@ -389,7 +386,7 @@ namespace DaggerfallWorkshop.Game
                                     // For now, the only enemy mobiles being allowed by DF Unity are classes.
                                     if (mobileEnemyBehaviour && (mobileEnemyBehaviour.EntityType != EntityTypes.EnemyClass))
                                         break;
-                                    if (hits[i].distance > (PickpocketDistance * MeshReader.GlobalScale))
+                                    if (hit.distance > (PickpocketDistance * MeshReader.GlobalScale))
                                     {
                                         DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
                                         break;
@@ -402,9 +399,9 @@ namespace DaggerfallWorkshop.Game
                         // Trigger general quest resource behaviour click
                         // Note: This will cause a second click on special NPCs, look into a way to unify this handling
                         QuestResourceBehaviour questResourceBehaviour;
-                        if (QuestResourceBehaviourCheck(hits[i], out questResourceBehaviour))
+                        if (QuestResourceBehaviourCheck(hit, out questResourceBehaviour))
                         {
-                            if (hits[i].distance > (DefaultActivationDistance * MeshReader.GlobalScale))
+                            if (hit.distance > (DefaultActivationDistance * MeshReader.GlobalScale))
                             {
                                 DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
                                 return;
@@ -414,10 +411,10 @@ namespace DaggerfallWorkshop.Game
                         }
 
                         // Trigger ladder hit
-                        DaggerfallLadder ladder = hits[i].transform.GetComponent<DaggerfallLadder>();
+                        DaggerfallLadder ladder = hit.transform.GetComponent<DaggerfallLadder>();
                         if (ladder)
                         {
-                            if (hits[i].distance > (DefaultActivationDistance * MeshReader.GlobalScale))
+                            if (hit.distance > (DefaultActivationDistance * MeshReader.GlobalScale))
                             {
                                 DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
                                 return;
@@ -427,7 +424,6 @@ namespace DaggerfallWorkshop.Game
                         }
 
                         #endregion
-                    }
                 }
             }
         }
