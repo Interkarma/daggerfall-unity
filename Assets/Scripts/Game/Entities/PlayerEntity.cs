@@ -50,6 +50,12 @@ namespace DaggerfallWorkshop.Game.Entity
         protected int currentLevelUpSkillSum = 0;
         protected bool readyToLevelUp = false;
 
+        protected int biographyResistDiseaseMod = 0;
+        protected int biographyResistMagicMod = 0;
+        protected int biographyAvoidHitMod = 0;
+        protected int biographyResistPoisonMod = 0;
+        protected int biographyFatigueMod = 0;
+
         #endregion
 
         #region Properties
@@ -69,6 +75,11 @@ namespace DaggerfallWorkshop.Game.Entity
         public int StartingLevelUpSkillSum { get { return startingLevelUpSkillSum; } set { startingLevelUpSkillSum = value; } }
         public int CurrentLevelUpSkillSum {  get { return currentLevelUpSkillSum; } }
         public bool ReadyToLevelUp { get { return readyToLevelUp; } set { readyToLevelUp = value; } }
+        public int BiographyResistDiseaseMod { get { return biographyResistDiseaseMod; } set { biographyResistDiseaseMod = value; } }
+        public int BiographyResistMagicMod { get { return biographyResistMagicMod; } set { biographyResistMagicMod = value; } }
+        public int BiographyAvoidHitMod { get { return biographyAvoidHitMod; } set { biographyAvoidHitMod = value; } }
+        public int BiographyResistPoisonMod { get { return biographyResistPoisonMod; } set { biographyResistPoisonMod = value; } }
+        public int BiographyFatigueMod { get { return biographyFatigueMod; } set { biographyFatigueMod = value; } }
 
         #endregion
 
