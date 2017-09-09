@@ -346,12 +346,16 @@ namespace DaggerfallWorkshop.Game
                                     Talk(mobileNpc);
                                     break;
                                 case PlayerActivateModes.Steal:
-                                    if (hit.distance > (PickpocketDistance * MeshReader.GlobalScale))
+                                    if (!mobileNpc.PickpocketByPlayerAttempted)
                                     {
-                                        DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
-                                        break;
+                                        if (hit.distance > (PickpocketDistance * MeshReader.GlobalScale))
+                                        {
+                                            DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
+                                            break;
+                                        }
+                                        mobileNpc.PickpocketByPlayerAttempted = true;
+                                        Pickpocket();
                                     }
-                                    Pickpocket();
                                     break;
                             }
                         }
@@ -360,12 +364,12 @@ namespace DaggerfallWorkshop.Game
                         DaggerfallEntityBehaviour mobileEnemyBehaviour;
                         if (MobileEnemyCheck(hit, out mobileEnemyBehaviour))
                         {
+                            EnemyEntity enemyEntity = mobileEnemyBehaviour.Entity as EnemyEntity;
                             switch (currentMode)
                             {
                                 case PlayerActivateModes.Info:
                                 case PlayerActivateModes.Grab:
                                 case PlayerActivateModes.Talk:
-                                    EnemyEntity enemyEntity = mobileEnemyBehaviour.Entity as EnemyEntity;
                                     if (enemyEntity != null)
                                     {
                                         MobileEnemy mobileEnemy = enemyEntity.MobileEnemy;
@@ -386,12 +390,17 @@ namespace DaggerfallWorkshop.Game
                                     // For now, the only enemy mobiles being allowed by DF Unity are classes.
                                     if (mobileEnemyBehaviour && (mobileEnemyBehaviour.EntityType != EntityTypes.EnemyClass))
                                         break;
-                                    if (hit.distance > (PickpocketDistance * MeshReader.GlobalScale))
+                                    // Classic doesn't set any flag when pickpocketing enemy mobiles, so infinite attempts are possible
+                                    if (enemyEntity != null && !enemyEntity.PickpocketByPlayerAttempted)
                                     {
-                                        DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
-                                        break;
+                                        if (hit.distance > (PickpocketDistance * MeshReader.GlobalScale))
+                                        {
+                                            DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
+                                            break;
+                                        }
+                                        enemyEntity.PickpocketByPlayerAttempted = true;
+                                        Pickpocket(enemyEntity);
                                     }
-                                    Pickpocket(mobileEnemyBehaviour);
                                     break;
                             }
                         }
@@ -738,7 +747,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Player has clicked on a pickpocket target in steal mode
-        void Pickpocket(DaggerfallEntityBehaviour target = null)
+        void Pickpocket(EnemyEntity target = null)
         {
             const int foundNothingValuableTextId = 8999;
 

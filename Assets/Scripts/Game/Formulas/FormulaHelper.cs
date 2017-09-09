@@ -132,14 +132,13 @@ namespace DaggerfallWorkshop.Game.Formulas
         }
 
         // Calculate chance of successfully pickpocketing a target
-        public static int CalculatePickpocketingChance(Entity.PlayerEntity player, Entity.DaggerfallEntityBehaviour target)
+        public static int CalculatePickpocketingChance(Entity.PlayerEntity player, Entity.EnemyEntity target)
         {
             int chance = player.Skills.Pickpocket;
             // If target is an enemy mobile, apply level modifier.
-            if (target)
+            if (target != null)
             {
-                Entity.EnemyEntity enemyEntity = target.Entity as Entity.EnemyEntity;
-                chance += 5 * ((player.Level) - (enemyEntity.Level));
+                chance += 5 * ((player.Level) - (target.Level));
             }
             return Mathf.Clamp(chance, 5, 95);
         }
