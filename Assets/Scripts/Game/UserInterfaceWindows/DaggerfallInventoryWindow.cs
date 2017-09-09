@@ -1297,7 +1297,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool CanCarry(DaggerfallUnityItem item)
         {
             // Check weight limit
-            if (playerEntity.CarriedWeight + item.weightInKg > (float)playerEntity.MaxEncumbrance)
+            if (playerEntity.CarriedWeight + item.weightInKg > playerEntity.MaxEncumbrance)
             {
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
                 messageBox.SetText(HardStrings.cannotCarryAnymore);
