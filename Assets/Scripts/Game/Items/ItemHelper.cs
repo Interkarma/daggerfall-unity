@@ -318,7 +318,7 @@ namespace DaggerfallWorkshop.Game.Items
                 if (itemShortName.Contains(artifactName))
                     return (ArtifactsSubTypes)Enum.Parse(typeof(ArtifactsSubTypes), artifactName);
             }
-            throw new KeyNotFoundException();
+            throw new KeyNotFoundException("No match found for: " + itemShortName);
         }
 
         /// <summary>
