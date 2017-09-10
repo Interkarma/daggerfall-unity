@@ -529,7 +529,8 @@ namespace DaggerfallWorkshop.Utility
             Transform parent,
             int textureArchive,
             int textureRecord,
-            ulong loadID = 0)
+            ulong loadID = 0,
+            EnemyEntity enemyEntity = null)
         {
             // Setup initial loot container prefab
             GameObject go = InstantiatePrefab(DaggerfallUnity.Instance.Option_LootContainerPrefab.gameObject, containerType.ToString(), parent, position);
@@ -560,6 +561,7 @@ namespace DaggerfallWorkshop.Utility
                 loot.ContainerImage = containerImage;
                 loot.TextureArchive = textureArchive;
                 loot.TextureRecord = textureRecord;
+                loot.EnemyEntity = enemyEntity;
             }
 
             loot.transform.position = position;
@@ -680,7 +682,8 @@ namespace DaggerfallWorkshop.Utility
                 parent,
                 archive,
                 record,
-                loadID);
+                loadID,
+                enemyEntity);
 
             // Set properties
             loot.LoadID = loadID;
