@@ -55,7 +55,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public enum VerticalScrollModes
         {
             EntryWise,
-            Pixelwise
+            PixelWise
         }
         VerticalScrollModes verticalScrollMode = VerticalScrollModes.EntryWise;
 
@@ -247,16 +247,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 float x = 0, y = 0;
                 float currentLine = 0;
                 for (int i = 0; i < listItems.Count; i++)
-                {                    
+                {
+                    TextLabel label = listItems[i].textLabel;
+
                     if (currentLine < scrollIndex || currentLine >= scrollIndex + rowsDisplayed)
                     {
-                        currentLine += listItems[i].textLabel.NumTextLines;
+                        currentLine += label.NumTextLines;
                         continue;
                     }                    
 
-                    currentLine += listItems[i].textLabel.NumTextLines;
-
-                    TextLabel label = listItems[i].textLabel;
+                    currentLine += label.NumTextLines;                  
                     label.StartCharacterIndex = horizontalScrollIndex;
                     label.UpdateLabelTexture();
                     if (i == selectedIndex)
@@ -279,13 +279,20 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     y += label.TextHeight + rowSpacing;
                 }
             }
-            else
+            else if (verticalScrollMode == VerticalScrollModes.PixelWise)
             {
                 int x = 0;
                 int y = -scrollIndex;
                 for (int i = 0; i < listItems.Count; i++)
                 {
-                    TextLabel label = listItems[i].textLabel;                  
+                    TextLabel label = listItems[i].textLabel;
+                    
+                    if (y + label.TextHeight < 0 || y >= this.Size.y)
+                    {
+                        y += label.TextHeight + rowSpacing;
+                        continue;
+                    }
+                               
                     label.StartCharacterIndex = horizontalScrollIndex;
                     label.UpdateLabelTexture();
                     if (i == selectedIndex)
@@ -307,7 +314,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                     y += label.TextHeight + rowSpacing;
                 }
-            }
+            }           
         }
 
         protected override void MouseClick(Vector2 clickPosition)

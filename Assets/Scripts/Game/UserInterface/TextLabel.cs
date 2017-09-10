@@ -136,7 +136,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 makeTextureNoLongerReadable = false;
             }
         }
-        
+
         public void setPosition(Vector2 newPos)
         {
             this.Position = newPos;

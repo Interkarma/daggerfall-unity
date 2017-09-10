@@ -386,12 +386,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             listboxConversation.Position = new Vector2(188, 64);
             listboxConversation.Size = new Vector2(115, 128);
             //listboxConversation.RowSpacing = 1;
-            //listboxConversation.RowsDisplayed = maxNumAnswerLinesShown;
             listboxConversation.MaxCharacters = -1; // text is wrapped, so no max characters defined
             listboxConversation.Name = "list_answers";
             listboxConversation.WrapTextItems = true;
             listboxConversation.RectRestrictedRenderArea = new Rect(listboxConversation.Position, listboxConversation.Size);
-            listboxConversation.VerticalScrollMode = ListBox.VerticalScrollModes.Pixelwise;
+            listboxConversation.VerticalScrollMode = ListBox.VerticalScrollModes.PixelWise;            
             mainPanel.Components.Add(listboxConversation);
 
             SetupButtons();
@@ -902,7 +901,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Update scroller buttons
             UpdateListScrollerButtons(scrollIndex, listboxConversation.HeightContent(), buttonConversationUp, buttonConversationDown);
 
-            listboxConversation.ScrollIndex = scrollIndex;
+            listboxConversation.ScrollIndex = scrollIndex;            
             listboxConversation.Update();
         }
 
@@ -1005,7 +1004,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             listboxConversation.AddItem(question, out textLabelQuestion);
             textLabelQuestion.textColor = textcolorQuestion;
             //textLabelQuestion.selectedTextColor = textcolorQuestionHighlighted;
-            listboxConversation.AddItem(answer, out textLabelAnswer);
+            listboxConversation.AddItem(answer, out textLabelAnswer);            
         }
 
         private void ButtonGoodbye_OnMouseClick(BaseScreenComponent sender, Vector2 position)
