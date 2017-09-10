@@ -38,6 +38,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         int horizontalScrollIndex = 0;
         int maxHorizontalScrollIndex = 0;
         bool wrapTextItems = false;
+        bool wrapWords = false;
         int rowsDisplayed = 9;
         int rowSpacing = 1;
         HorizontalAlignment rowAlignment = HorizontalAlignment.Left;
@@ -145,6 +146,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set { wrapTextItems = value; }
         }
 
+        public bool WrapWords
+        {
+            get { return wrapWords; }
+            set { wrapWords = value; }
+        }
+        
         public int RowsDisplayed
         {
             get { return rowsDisplayed; }
@@ -383,6 +390,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             textLabel.Text = text;
             textLabel.Parent = this;
             textLabel.WrapText = wrapTextItems;
+            textLabel.WrapWords = wrapWords;
 
             itemOut = new ListItem(textLabel);
             if (position < 0)

@@ -40,7 +40,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Color shadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
 
         int maxWidth = -1;
-        bool wrapText = false;
+        bool wrapText = false; // wrap text - but will tear words that are reaching
+        bool wrapWords = false; // wrap words - no word tearing
 
         bool makeTextureNoLongerReadable = true;
 
@@ -124,6 +125,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             get { return wrapText; }
             set { wrapText = value; }
+        }
+
+        public bool WrapWords
+        {
+            get { return wrapWords; }
+            set { wrapWords = value; }
         }
 
         public Rect RectRestrictedRenderArea
@@ -322,6 +329,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     width += glyph.width + font.GlyphSpacing;
                 else
                 {
+                    if (wrapWords)
+                    {
+                        int j;
+                        for (j = i; j >= lastEndOfRowByte; j--)
+                        {
+                            if (asciiBytes[j] == PixelFont.SpaceASCII)
+                                break;
+                        }
+                        if (j > lastEndOfRowByte)
+                            i = j+1;
+                    }
                     // The row of glyphs exceeded maxWidth. Add it to the list of rows and start
                     // counting width again with the remainder of the ASCII bytes.
                     byte[] trimmed = new List<byte>(asciiBytes).GetRange(lastEndOfRowByte, i - lastEndOfRowByte).ToArray();
@@ -333,7 +351,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                     // Resume interation over remainder of ASCII bytes
                     //asciiBytes = new List<byte>(asciiBytes).GetRange(i, asciiBytes.Length - i).ToArray();
-                    //i = 0;
+                    //i = 0;                    
                 }
             }
 

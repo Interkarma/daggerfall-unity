@@ -383,12 +383,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             arrowConversationDownGreen = ImageReader.GetSubTexture(greenArrowsTexture, downArrowRectInSrcImg);
 
             listboxConversation = new ListBox();
-            listboxConversation.Position = new Vector2(188, 64);
-            listboxConversation.Size = new Vector2(115, 128);
-            //listboxConversation.RowSpacing = 1;
+            listboxConversation.Position = new Vector2(189, 65);
+            listboxConversation.Size = new Vector2(114, 126);
+            listboxConversation.RowSpacing = 4;
             listboxConversation.MaxCharacters = -1; // text is wrapped, so no max characters defined
             listboxConversation.Name = "list_answers";
             listboxConversation.WrapTextItems = true;
+            listboxConversation.WrapWords = true;
             listboxConversation.RectRestrictedRenderArea = new Rect(listboxConversation.Position, listboxConversation.Size);
             listboxConversation.VerticalScrollMode = ListBox.VerticalScrollModes.PixelWise;            
             mainPanel.Components.Add(listboxConversation);
@@ -402,8 +403,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             //UpdateButtonState();
             UpdateCheckboxes();
-            UpdateScrollBars();
-            UpdateScrollButtons();
+            UpdateScrollBarsTopic();
+            UpdateScrollButtonsTopic();
+            UpdateScrollBarConversation();
+            UpdateScrollButtonsConversation();
 
             UpdateLabels();
         }
@@ -532,7 +535,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             buttonConversationDown.OnMouseClick += ButtonConversationDown_OnMouseClick;
         }
 
-        void UpdateScrollBars()
+        void UpdateScrollBarsTopic()
         {
             verticalScrollBarTopic.DisplayUnits = Math.Min(maxNumTopicsShown, listboxTopic.Count);
             verticalScrollBarTopic.TotalUnits = listboxTopic.Count;
@@ -543,18 +546,21 @@ namespace DaggerfallWorkshop.Game.UserInterface
             horizontalSliderTopic.TotalUnits = lengthOfLongestItemInListBox;
             horizontalSliderTopic.ScrollIndex = 0;
             horizontalSliderTopic.Update();
+        }
 
+        void UpdateScrollBarConversation()
+        {
             verticalScrollBarConversation.DisplayUnits = listboxConversation.HeightContent() / 2;
             verticalScrollBarConversation.TotalUnits = listboxConversation.HeightContent();
             verticalScrollBarConversation.ScrollIndex = 0;
             verticalScrollBarConversation.Update();
         }
 
-        void UpdateScrollButtons()
+        void UpdateScrollButtonsTopic()
         {
-            int scrollIndex = GetSafeScrollIndex(verticalScrollBarTopic);
+            int verticalScrollIndex = GetSafeScrollIndex(verticalScrollBarTopic);
             // Update scroller buttons
-            UpdateListScrollerButtons(scrollIndex, listboxTopic.Count, buttonTopicUp, buttonTopicDown);
+            UpdateListScrollerButtons(verticalScrollIndex, listboxTopic.Count, buttonTopicUp, buttonTopicDown);
             buttonTopicUp.Update();
             buttonTopicDown.Update();
 
@@ -563,8 +569,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             UpdateListScrollerButtonsLeftRight(horizontalScrollIndex, lengthOfLongestItemInListBox, buttonTopicLeft, buttonTopicRight);
             buttonTopicLeft.Update();
             buttonTopicRight.Update();
+        }
 
-            scrollIndex = GetSafeScrollIndex(verticalScrollBarConversation);
+        void UpdateScrollButtonsConversation()
+        {
+            int scrollIndex = GetSafeScrollIndex(verticalScrollBarConversation);
             // Update scroller buttons
             UpdateListScrollerButtons(scrollIndex, listboxConversation.Count, buttonConversationUp, buttonConversationDown);
             buttonConversationUp.Update();
@@ -648,8 +657,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             ClearListboxTopics();
             listboxTopic.Update();
 
-            UpdateScrollBars();
-            UpdateScrollButtons();
+            UpdateScrollBarsTopic();
+            UpdateScrollButtonsTopic();
         }
 
         void SetTalkModeWhereIs()
@@ -662,8 +671,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             SetTalkCategory(selectedTalkCategory);
 
-            UpdateScrollBars();
-            UpdateScrollButtons();
+            UpdateScrollBarsTopic();
+            UpdateScrollButtonsTopic();
         }
 
         void SetTalkCategory(TalkCategory talkCategory)
@@ -702,8 +711,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             ClearListboxTopics();
             listboxTopic.Update();
 
-            UpdateScrollBars();
-            UpdateScrollButtons();
+            UpdateScrollBarsTopic();
+            UpdateScrollButtonsTopic();
         }
 
         void SetTalkCategoryLocation()
@@ -719,8 +728,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             SetListboxTopics(ref listboxTopic, TalkManager.Instance.ListTopicLocation);
             listboxTopic.Update();
 
-            UpdateScrollBars();
-            UpdateScrollButtons();
+            UpdateScrollBarsTopic();
+            UpdateScrollButtonsTopic();
         }
 
         void SetTalkCategoryPeople()
@@ -736,8 +745,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             SetListboxTopics(ref listboxTopic, TalkManager.Instance.ListTopicPeople);
             listboxTopic.Update();
 
-            UpdateScrollBars();
-            UpdateScrollButtons();
+            UpdateScrollBarsTopic();
+            UpdateScrollButtonsTopic();
         }
 
         void SetTalkCategoryThings()
@@ -753,8 +762,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             SetListboxTopics(ref listboxTopic, TalkManager.Instance.ListTopicThings);
             listboxTopic.Update();
 
-            UpdateScrollBars();
-            UpdateScrollButtons();
+            UpdateScrollBarsTopic();
+            UpdateScrollButtonsTopic();
         }
 
         void SetTalkCategoryWork()
@@ -770,8 +779,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             ClearListboxTopics();
             listboxTopic.Update();
 
-            UpdateScrollBars();
-            UpdateScrollButtons();
+            UpdateScrollBarsTopic();
+            UpdateScrollButtonsTopic();
         }
 
         /// <summary>
@@ -1004,7 +1013,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             listboxConversation.AddItem(question, out textLabelQuestion);
             textLabelQuestion.textColor = textcolorQuestion;
             //textLabelQuestion.selectedTextColor = textcolorQuestionHighlighted;
-            listboxConversation.AddItem(answer, out textLabelAnswer);            
+            listboxConversation.AddItem(answer, out textLabelAnswer);
+
+            UpdateScrollBarConversation();
+            UpdateScrollButtonsConversation();
         }
 
         private void ButtonGoodbye_OnMouseClick(BaseScreenComponent sender, Vector2 position)
