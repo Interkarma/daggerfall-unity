@@ -273,7 +273,18 @@ namespace DaggerfallWorkshop.Game
                             switch (currentMode)
                             {
                                 case PlayerActivateModes.Info:
-                                    // TODO: "You see a dead..." Need to be able to get enemy type from loot object.
+                                    if (loot.ContainerType == LootContainerTypes.CorpseMarker && loot.EnemyEntity != null)
+                                    {
+                                        string message = string.Empty;
+                                        if (loot.EnemyEntity.EntityType == EntityTypes.EnemyClass)
+                                            message = HardStrings.youSeeADeadPerson;
+                                        else
+                                        {
+                                            message = HardStrings.youSeeADead;
+                                            message = message.Replace("%s", loot.EnemyEntity.MobileEnemy.Name);
+                                        }
+                                        DaggerfallUI.Instance.PopupMessage(message);
+                                    }
                                     break;
                                 case PlayerActivateModes.Grab:
                                 case PlayerActivateModes.Talk:
