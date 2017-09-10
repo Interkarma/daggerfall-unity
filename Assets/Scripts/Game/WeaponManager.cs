@@ -654,7 +654,7 @@ namespace DaggerfallWorkshop.Game
                     // TODO: Create blood splash.
                     weapon.PlayHitSound();
                     mobileNpc.Motor.gameObject.SetActive(false);
-                    GameManager.Instance.PlayerEntity.TallyCrimeGuildRequirements(false, 5);
+                    //GameManager.Instance.PlayerEntity.TallyCrimeGuildRequirements(false, 5);
                 }
             }
         }

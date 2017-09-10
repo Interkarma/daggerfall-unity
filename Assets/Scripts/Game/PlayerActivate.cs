@@ -186,7 +186,7 @@ namespace DaggerfallWorkshop.Game
                                         else // Breaking into building
                                         {
                                             PlayerEntity player = GameManager.Instance.PlayerEntity;
-                                            player.TallyCrimeGuildRequirements(true, 1);
+                                            //player.TallyCrimeGuildRequirements(true, 1);
                                         }
                                     }
 
@@ -793,7 +793,7 @@ namespace DaggerfallWorkshop.Game
                         gotGold = gotGold.Replace("%d", pinchedGoldPieces.ToString());
                     }
                     DaggerfallUI.MessageBox(gotGold);
-                    player.TallyCrimeGuildRequirements(true, 1);
+                    //player.TallyCrimeGuildRequirements(true, 1);
                 }
                 else
                 {

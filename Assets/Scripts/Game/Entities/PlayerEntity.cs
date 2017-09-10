@@ -56,11 +56,12 @@ namespace DaggerfallWorkshop.Game.Entity
         protected int biographyAvoidHitMod = 0;
         protected int biographyResistPoisonMod = 0;
         protected int biographyFatigueMod = 0;
+        protected int biographyReactionMod = 0;
 
         protected uint timeForThievesGuildLetter = 0;
         protected uint timeForDarkBrotherhoodLetter = 0;
-        protected byte thievesGuildRequirementTally = 0;
-        protected byte darkBrotherhoodRequirementTally = 0;
+        protected int thievesGuildRequirementTally = 0;
+        protected int darkBrotherhoodRequirementTally = 0;
 
         #endregion
 
@@ -86,10 +87,11 @@ namespace DaggerfallWorkshop.Game.Entity
         public int BiographyAvoidHitMod { get { return biographyAvoidHitMod; } set { biographyAvoidHitMod = value; } }
         public int BiographyResistPoisonMod { get { return biographyResistPoisonMod; } set { biographyResistPoisonMod = value; } }
         public int BiographyFatigueMod { get { return biographyFatigueMod; } set { biographyFatigueMod = value; } }
+        public int BiographyReactionMod { get { return biographyReactionMod; } set { biographyReactionMod = value; } }
         public uint TimeForThievesGuildLetter { get { return timeForThievesGuildLetter; } set { timeForThievesGuildLetter = value; } }
         public uint TimeForDarkBrotherhoodLetter { get { return timeForDarkBrotherhoodLetter; } set { timeForDarkBrotherhoodLetter = value; } }
-        public byte ThievesGuildRequirementTally { get { return thievesGuildRequirementTally; } set { thievesGuildRequirementTally = value; } }
-        public byte DarkBrotherhoodRequirementTally { get { return darkBrotherhoodRequirementTally; } set { darkBrotherhoodRequirementTally = value; } }
+        public int ThievesGuildRequirementTally { get { return thievesGuildRequirementTally; } set { thievesGuildRequirementTally = value; } }
+        public int DarkBrotherhoodRequirementTally { get { return darkBrotherhoodRequirementTally; } set { darkBrotherhoodRequirementTally = value; } }
         public float CarriedWeight { get { return Items.GetWeight() + ((float)goldPieces / DaggerfallBankManager.gold1kg); } }
         public float WagonWeight { get { return WagonItems.GetWeight(); } }
 

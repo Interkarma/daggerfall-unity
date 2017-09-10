@@ -131,7 +131,7 @@ namespace DaggerfallWorkshop.Game.Entity
                     CheckedCurrentJump = false;
                 }
 
-                HandleStartingCrimeGuildQuests(Entity as PlayerEntity);
+                //HandleStartingCrimeGuildQuests(Entity as PlayerEntity);
             }
         }
 
