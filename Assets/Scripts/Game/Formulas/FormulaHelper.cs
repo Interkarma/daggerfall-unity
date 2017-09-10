@@ -221,6 +221,16 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             if (weapon != null)
             {
+                // If the attacker has a weapon equipped, check if the material is high enough to damage the target
+                if (target.MinMetalToHit > (Items.WeaponMaterialTypes)weapon.NativeMaterialValue)
+                {
+                    if (attacker == player)
+                    {
+                        DaggerfallUI.Instance.PopupMessage(UserInterfaceWindows.HardStrings.materialIneffective);
+                    }
+                    return 0;
+                }
+
                 // If the attacker has a weapon equipped, get the weapon's damage
                 damageLow = weapon.GetBaseDamageMin();
                 damageHigh = weapon.GetBaseDamageMax();

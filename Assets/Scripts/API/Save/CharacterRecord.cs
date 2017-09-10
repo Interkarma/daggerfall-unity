@@ -70,6 +70,7 @@ namespace DaggerfallConnect.Save
             doc.currentFatigue = parsedData.currentFatigue;
             doc.skillUses = parsedData.skillUses;
             doc.startingLevelUpSkillSum = parsedData.startingLevelUpSkillSum;
+            doc.minMetalToHit = parsedData.minMetalToHit;
             doc.armorValues = parsedData.armorValues;
 
             return doc;

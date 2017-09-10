@@ -145,6 +145,7 @@ namespace DaggerfallWorkshop.Game.Entity
             this.currentFatigue = character.currentFatigue;
             this.skillUses = character.skillUses;
             this.startingLevelUpSkillSum = character.startingLevelUpSkillSum;
+            this.minMetalToHit = (WeaponMaterialTypes)character.minMetalToHit; // DF Unity enums are classic enums + 1
             this.ArmorValues = character.armorValues;
 
             SetCurrentLevelUpSkillSum();
