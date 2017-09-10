@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -730,6 +730,19 @@ namespace DaggerfallWorkshop.Game
         // Player has clicked on a static NPC
         void StaticNPCClick(StaticNPC npc)
         {
+            Debug.Log(String.Format("{0}, {1} ", npc.DisplayName, npc.Data.factionID));
+            if (playerEnterExit.IsPlayerInsideBuilding)
+            {
+                FactionFile.FactionData factionData;
+                if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(npc.Data.factionID, out factionData))
+                {
+                    // Check if this NPC is a merchant.
+                    if (MerchantCheck(npc, factionData))
+                        return;
+                    // TODO - more checks for npc types... guild services etc
+                }
+            }
+
             // Store the NPC just clicked in quest engine
             QuestMachine.Instance.LastNPCClicked = npc;
 
@@ -740,6 +753,31 @@ namespace DaggerfallWorkshop.Game
             SpecialNPCClickHandler specialNPCClickHandler = npc.gameObject.GetComponent<SpecialNPCClickHandler>();
             if (specialNPCClickHandler)
                 specialNPCClickHandler.DoClick();
+        }
+
+        bool MerchantCheck(StaticNPC npc, FactionFile.FactionData factionData)
+        {
+            Debug.Log(String.Format("{0}, {1} ", factionData.ToString(), factionData.sgroup));
+
+            if ((FactionFile.SocialGroups)factionData.sgroup == FactionFile.SocialGroups.Merchants)
+            {
+                DFLocation.BuildingTypes buildingType = playerEnterExit.Interior.BuildingData.BuildingType;
+
+                Debug.Log("A merchant! " + buildingType.ToString());
+
+                if (buildingType == DFLocation.BuildingTypes.Armorer ||
+                    buildingType == DFLocation.BuildingTypes.GeneralStore ||
+                    buildingType == DFLocation.BuildingTypes.WeaponSmith)
+                {
+                    DaggerfallMerchantPopupWindow merchantWindow = new DaggerfallMerchantPopupWindow(DaggerfallUI.Instance.UserInterfaceManager);
+                    merchantWindow.BuildingType = buildingType;
+                    DaggerfallUI.Instance.UserInterfaceManager.PushWindow(merchantWindow);
+
+                }
+
+                return true;
+            }
+            return false;
         }
 
         // Check if NPC is a Questor
