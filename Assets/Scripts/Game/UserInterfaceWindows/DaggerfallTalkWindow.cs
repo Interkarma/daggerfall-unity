@@ -40,10 +40,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const int maxNumTopicsShown = 13; // max number of items displayed in scrolling area of topics list
         const int maxNumCharactersOfTopicShown = 20; // max number of characters of a topic displayed in scrolling area of topics list
 
-        const int maxNumAnswerLinesShown = 15; // max number of lines displayed in scrolling area of answers
+        //const int maxNumAnswerLinesShown = 15; // max number of lines displayed in scrolling area of answers
 
         Color textcolorQuestion = new Color(0.698f, 0.812f, 1.0f);
         Color textcolorQuestionHighlighted = new Color(0.8f, 0.9f, 1.0f);
+        Color textcolorHighlighted = Color.white;
 
         enum TalkOption { 
             TellMeAbout,
@@ -140,8 +141,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Rect rectButtonTopicDown = new Rect(102, 161, 9, 16);
         Rect rectButtonTopicLeft = new Rect(4, 177, 16, 9);
         Rect rectButtonTopicRight = new Rect(86, 177, 16, 9);
-        VerticalScrollBar verticalScrollBarTopic;
-        HorizontalSlider horizontalSliderTopic;
+        VerticalScrollBar verticalScrollBarTopic = null;
+        HorizontalSlider horizontalSliderTopic = null;
         int lengthOfLongestItemInListBox;
 
         // textures of green/red arrow buttons for topic frame
@@ -155,10 +156,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Texture2D arrowTopicRightGreen;
 
         // conversation listbox and layout, scrollbar
-        ListBox listboxConversation;
+        ListBox listboxConversation = null;
         Rect rectButtonConversationUp = new Rect(303, 64, 9, 16);
         Rect rectButtonConversationDown = new Rect(303, 176, 9, 16);
-        VerticalScrollBar verticalScrollBarConversation;
+        VerticalScrollBar verticalScrollBarConversation = null;
 
         // green/red arrow buttons for conversation frame
         Texture2D arrowConversationUpRed;
@@ -176,11 +177,21 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             base.OnPush();
 
+            if (listboxConversation != null)
+                listboxConversation.ClearItems();
+
             // Reset scrollbars
             if (verticalScrollBarTopic != null)
                 verticalScrollBarTopic.ScrollIndex = 0;
             if (horizontalSliderTopic != null)
                 horizontalSliderTopic.ScrollIndex = 0;
+            if (verticalScrollBarTopic != null && horizontalSliderTopic != null)
+                UpdateScrollBarsTopic();
+            if (verticalScrollBarConversation != null)
+            {
+                verticalScrollBarConversation.ScrollIndex = 0;
+                UpdateScrollBarConversation();
+            }            
         }
 
         public override void OnPop()
@@ -322,6 +333,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             */          
 
             listboxTopic = new ListBox();
+            listboxTopic.OnScroll += ListBoxTopic_OnScroll;
             listboxTopic.Position = new Vector2(6, 71);
             listboxTopic.Size = new Vector2(94, 104);
             listboxTopic.RowsDisplayed = maxNumTopicsShown;
@@ -383,6 +395,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             arrowConversationDownGreen = ImageReader.GetSubTexture(greenArrowsTexture, downArrowRectInSrcImg);
 
             listboxConversation = new ListBox();
+            listboxConversation.OnScroll += ListBoxConversation_OnScroll;
             listboxConversation.Position = new Vector2(189, 65);
             listboxConversation.Size = new Vector2(114, 126);
             listboxConversation.RowSpacing = 4;
@@ -391,13 +404,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             listboxConversation.WrapTextItems = true;
             listboxConversation.WrapWords = true;
             listboxConversation.RectRestrictedRenderArea = new Rect(listboxConversation.Position, listboxConversation.Size);
-            listboxConversation.VerticalScrollMode = ListBox.VerticalScrollModes.PixelWise;            
+            listboxConversation.VerticalScrollMode = ListBox.VerticalScrollModes.PixelWise;        
             mainPanel.Components.Add(listboxConversation);
 
             SetupButtons();
             SetupCheckboxes();
             SetupScrollBars();
-            SetupScrollButtons();
+            SetupScrollButtons();                                   
 
             SetTalkModeTellMeAbout();
 
@@ -502,9 +515,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             verticalScrollBarConversation = new VerticalScrollBar();
             verticalScrollBarConversation.Position = new Vector2(305, 81);
             verticalScrollBarConversation.Size = new Vector2(5, 94);
-            verticalScrollBarConversation.OnScroll += verticalScrollBarConversation_OnScroll;
-            NativePanel.Components.Add(verticalScrollBarConversation);
-            
+            verticalScrollBarConversation.OnScroll += VerticalScrollBarConversation_OnScroll;
+            NativePanel.Components.Add(verticalScrollBarConversation);         
         }
 
         void SetupScrollButtons()
@@ -550,9 +562,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void UpdateScrollBarConversation()
         {
-            verticalScrollBarConversation.DisplayUnits = listboxConversation.HeightContent() / 2;
+            verticalScrollBarConversation.DisplayUnits = (int)listboxConversation.Size.y; //Math.Max(5, listboxConversation.HeightContent() / 10);
             verticalScrollBarConversation.TotalUnits = listboxConversation.HeightContent();
             verticalScrollBarConversation.ScrollIndex = 0;
+            if (listboxConversation.Count > 0)
+                verticalScrollBarConversation.ScrollIndex = listboxConversation.HeightContent() - (int)listboxConversation.Size.y; //listboxConversation.GetItem(listboxConversation.Count - 1).textLabel.TextHeight;
             verticalScrollBarConversation.Update();
         }
 
@@ -560,7 +574,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             int verticalScrollIndex = GetSafeScrollIndex(verticalScrollBarTopic);
             // Update scroller buttons
-            UpdateListScrollerButtons(verticalScrollIndex, listboxTopic.Count, buttonTopicUp, buttonTopicDown);
+            UpdateListScrollerButtons(verticalScrollBarTopic, verticalScrollIndex, listboxTopic.Count, buttonTopicUp, buttonTopicDown);
             buttonTopicUp.Update();
             buttonTopicDown.Update();
 
@@ -575,7 +589,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             int scrollIndex = GetSafeScrollIndex(verticalScrollBarConversation);
             // Update scroller buttons
-            UpdateListScrollerButtons(scrollIndex, listboxConversation.Count, buttonConversationUp, buttonConversationDown);
+            UpdateListScrollerButtons(verticalScrollBarConversation, scrollIndex, listboxConversation.HeightContent(), buttonConversationUp, buttonConversationDown);
             buttonConversationUp.Update();
             buttonConversationDown.Update();
         }
@@ -828,7 +842,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         // Updates red/green state of scroller buttons
-        void UpdateListScrollerButtons(int index, int count, Button upButton, Button downButton)
+        void UpdateListScrollerButtons(VerticalScrollBar verticalScrollBar, int index, int count, Button upButton, Button downButton)
         {
             // Update up button
             if (index > 0)
@@ -837,13 +851,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 upButton.BackgroundTexture = arrowTopicUpRed;
 
             // Update down button
-            if (index < (count - verticalScrollBarTopic.DisplayUnits))
+            if (index < (count - verticalScrollBar.DisplayUnits))
                 downButton.BackgroundTexture = arrowTopicDownGreen;
             else
                 downButton.BackgroundTexture = arrowTopicDownRed;
 
             // No items above or below
-            if (count <= verticalScrollBarTopic.DisplayUnits)
+            if (count <= verticalScrollBar.DisplayUnits)
             {
                 upButton.BackgroundTexture = arrowTopicUpRed;
                 downButton.BackgroundTexture = arrowTopicDownRed;
@@ -882,7 +896,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             int scrollIndex = GetSafeScrollIndex(verticalScrollBarTopic);
             
             // Update scroller buttons
-            UpdateListScrollerButtons(scrollIndex, listboxTopic.Count, buttonTopicUp, buttonTopicDown);
+            UpdateListScrollerButtons(verticalScrollBarTopic, scrollIndex, listboxTopic.Count, buttonTopicUp, buttonTopicDown);
 
             listboxTopic.ScrollIndex = scrollIndex;
             listboxTopic.Update();
@@ -901,17 +915,41 @@ namespace DaggerfallWorkshop.Game.UserInterface
             listboxTopic.Update();
         }
 
-        private void verticalScrollBarConversation_OnScroll()
+        private void VerticalScrollBarConversation_OnScroll()
         {
             // Update scroller
             verticalScrollBarConversation.TotalUnits = listboxConversation.HeightContent();
             int scrollIndex = GetSafeScrollIndex(verticalScrollBarConversation);
+            
+            // Update scroller buttons
+            UpdateListScrollerButtons(verticalScrollBarConversation, scrollIndex, listboxConversation.HeightContent(), buttonConversationUp, buttonConversationDown);
+
+            listboxConversation.ScrollIndex = scrollIndex;
+            listboxConversation.Update();
+        }
+
+        private void ListBoxTopic_OnScroll()
+        {
+            int scrollIndex = listboxTopic.ScrollIndex;
+
+            // Update scroller
+            verticalScrollBarTopic.SetScrollIndexWithoutRaisingScrollEvent(scrollIndex); // important to use this function here to prevent creating infinite callback loop
+            verticalScrollBarTopic.Update();
 
             // Update scroller buttons
-            UpdateListScrollerButtons(scrollIndex, listboxConversation.HeightContent(), buttonConversationUp, buttonConversationDown);
+            UpdateListScrollerButtons(verticalScrollBarTopic, scrollIndex, listboxTopic.HeightContent(), buttonTopicUp, buttonTopicDown);
+        }
 
-            listboxConversation.ScrollIndex = scrollIndex;            
-            listboxConversation.Update();
+        private void ListBoxConversation_OnScroll()
+        {
+            int scrollIndex = listboxConversation.ScrollIndex;
+
+            // Update scroller
+            verticalScrollBarConversation.SetScrollIndexWithoutRaisingScrollEvent(scrollIndex); // important to use this function here to prevent creating infinite callback loop
+            verticalScrollBarConversation.Update();
+
+            // Update scroller buttons
+            UpdateListScrollerButtons(verticalScrollBarConversation, scrollIndex, listboxConversation.HeightContent(), buttonConversationUp, buttonConversationDown);
         }
 
         private void ButtonTopicUp_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -936,12 +974,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private void ButtonConversationUp_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            verticalScrollBarConversation.ScrollIndex--;
+            verticalScrollBarConversation.ScrollIndex -= 5;
         }
 
         private void ButtonConversationDown_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            verticalScrollBarConversation.ScrollIndex++;
+            verticalScrollBarConversation.ScrollIndex += 5;
         }
 
         private void ButtonTellMeAbout_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -1012,8 +1050,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             ListBox.ListItem textLabelAnswer;
             listboxConversation.AddItem(question, out textLabelQuestion);
             textLabelQuestion.textColor = textcolorQuestion;
-            //textLabelQuestion.selectedTextColor = textcolorQuestionHighlighted;
+            textLabelQuestion.selectedTextColor = textcolorHighlighted; // textcolorQuestionHighlighted
             listboxConversation.AddItem(answer, out textLabelAnswer);
+            textLabelAnswer.selectedTextColor = textcolorHighlighted;
+
+            listboxConversation.SelectedIndex = listboxConversation.Count - 1; // always highlight the new answer
 
             UpdateScrollBarConversation();
             UpdateScrollButtonsConversation();
