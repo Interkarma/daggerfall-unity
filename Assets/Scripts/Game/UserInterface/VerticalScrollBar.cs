@@ -175,11 +175,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
             this.scrollIndex = scrollIndex;
         }
 
+        public void SetScrollIndexWithoutRaisingScrollEvent(int value)
+        {
+            SetScrollIndex(value, true);
+        }
+
         #endregion
 
-        #region Private Methods
+            #region Private Methods
 
-        void SetScrollIndex(int value)
+        void SetScrollIndex(int value, bool doNotRaiseScrollEvent = false)
         {
             int maxScroll = totalUnits - displayUnits;
             if (maxScroll < 0)
@@ -192,7 +197,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (scrollIndex > maxScroll)
                 scrollIndex = maxScroll;
 
-            RaiseOnScrollEvent();
+            if (!doNotRaiseScrollEvent)
+                RaiseOnScrollEvent();
         }
 
         void DrawScrollBar()
