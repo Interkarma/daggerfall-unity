@@ -646,6 +646,16 @@ namespace DaggerfallWorkshop.Game
                         hitEnemy = true;
                     }
                 }
+
+                // Check if hit a mobile NPC
+                MobilePersonNPC mobileNpc = hit.transform.GetComponent<MobilePersonNPC>();
+                if (mobileNpc)
+                {
+                    // TODO: Create blood splash.
+                    weapon.PlayHitSound();
+                    mobileNpc.Motor.gameObject.SetActive(false);
+                    GameManager.Instance.PlayerEntity.TallyCrimeGuildRequirements(false, 5);
+                }
             }
         }
 
