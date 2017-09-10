@@ -331,12 +331,33 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (listItems.Count == 0)
                 return;
 
-            int row = (int)(clickPosition.y / (font.GlyphHeight + rowSpacing));
-            int index = scrollIndex + row;
-            if (index >= 0 && index < Count)
+            if (verticalScrollMode == VerticalScrollModes.EntryWise)
             {
-                selectedIndex = index;
-                RaiseOnSelectItemEvent();
+                int row = (int)(clickPosition.y / (font.GlyphHeight + rowSpacing));
+                int index = scrollIndex + row;
+                if (index >= 0 && index < Count)
+                {
+                    selectedIndex = index;
+                    RaiseOnSelectItemEvent();
+                }
+            }
+            else if (verticalScrollMode == VerticalScrollModes.PixelWise)
+            {
+                int yCurrentItem = 0;
+                int yNextItem = 0;
+                for (int i = 0; i < listItems.Count; i++)
+                {
+                    yNextItem = yCurrentItem + listItems[i].textLabel.TextHeight + rowSpacing;
+                    int y = scrollIndex + (int)(clickPosition.y);
+                    if (y >= yCurrentItem - rowSpacing * 0.5 && y < yNextItem - rowSpacing * 0.5)
+                    {
+                        selectedIndex = i;
+                        RaiseOnSelectItemEvent();
+                        break;
+                    }
+                    yCurrentItem = yNextItem;
+                }
+                
             }
         }
 
@@ -435,6 +456,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
+        public ListItem GetItem(int index)
+        {
+            return listItems[index];
+        }
+
         public int LengthOfLongestItem()
         {
             int maxLength = 0;
@@ -450,10 +476,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             int sumHeight = 0;
             for (int i = 0; i < listItems.Count; i++)
             {
-                if (i > 0)
-                    sumHeight += rowSpacing;
-
                 sumHeight += listItems[i].textLabel.TextHeight;
+
+                if (i < listItems.Count - 1)
+                    sumHeight += rowSpacing;
             }
             return sumHeight;
         }
@@ -463,8 +489,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (selectedIndex > 0)
             {
                 selectedIndex--;
-                if (selectedIndex < scrollIndex)
-                    scrollIndex = selectedIndex;
+                if (verticalScrollMode == VerticalScrollModes.EntryWise)
+                {
+                    if (selectedIndex < scrollIndex)
+                        scrollIndex = selectedIndex;
+                }
             }
 
             RaiseOnSelectPreviousEvent();
@@ -477,8 +506,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (selectedIndex < listItems.Count - 1)
             {
                 selectedIndex++;
-                if (selectedIndex > scrollIndex + (rowsDisplayed - 1))
-                    scrollIndex++;
+                if (verticalScrollMode == VerticalScrollModes.EntryWise)
+                {
+                    if (selectedIndex > scrollIndex + (rowsDisplayed - 1))
+                        scrollIndex++;
+                }
             }
 
             RaiseOnSelectNextEvent();
@@ -540,9 +572,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public void ScrollDown()
         {
-            if (scrollIndex < listItems.Count - rowsDisplayed)
-                scrollIndex++;
-
+            if (verticalScrollMode == VerticalScrollModes.EntryWise)
+            {
+                if (scrollIndex < listItems.Count - rowsDisplayed)
+                    scrollIndex++;
+            }
+            else if (verticalScrollMode == VerticalScrollModes.PixelWise)
+            {
+                if (scrollIndex < this.HeightContent() - this.Size.y)
+                    scrollIndex++;
+            }
             RaiseOnScrollEvent();
         }
 
