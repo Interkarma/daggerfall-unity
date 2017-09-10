@@ -124,13 +124,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public bool WrapText
         {
             get { return wrapText; }
-            set { wrapText = value; }
+            set { wrapText = value; CreateLabelTexture(); }
         }
 
         public bool WrapWords
         {
             get { return wrapWords; }
-            set { wrapWords = value; }
+            set { wrapWords = value; CreateLabelTexture(); }
         }
 
         public Rect RectRestrictedRenderArea
