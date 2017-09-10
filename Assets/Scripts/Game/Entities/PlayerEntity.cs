@@ -57,6 +57,11 @@ namespace DaggerfallWorkshop.Game.Entity
         protected int biographyResistPoisonMod = 0;
         protected int biographyFatigueMod = 0;
 
+        protected uint timeForThievesGuildLetter = 0;
+        protected uint timeForDarkBrotherhoodLetter = 0;
+        protected byte thievesGuildRequirementTally = 0;
+        protected byte darkBrotherhoodRequirementTally = 0;
+
         #endregion
 
         #region Properties
@@ -81,6 +86,10 @@ namespace DaggerfallWorkshop.Game.Entity
         public int BiographyAvoidHitMod { get { return biographyAvoidHitMod; } set { biographyAvoidHitMod = value; } }
         public int BiographyResistPoisonMod { get { return biographyResistPoisonMod; } set { biographyResistPoisonMod = value; } }
         public int BiographyFatigueMod { get { return biographyFatigueMod; } set { biographyFatigueMod = value; } }
+        public uint TimeForThievesGuildLetter { get { return timeForThievesGuildLetter; } set { timeForThievesGuildLetter = value; } }
+        public uint TimeForDarkBrotherhoodLetter { get { return timeForDarkBrotherhoodLetter; } set { timeForDarkBrotherhoodLetter = value; } }
+        public byte ThievesGuildRequirementTally { get { return thievesGuildRequirementTally; } set { thievesGuildRequirementTally = value; } }
+        public byte DarkBrotherhoodRequirementTally { get { return darkBrotherhoodRequirementTally; } set { darkBrotherhoodRequirementTally = value; } }
         public float CarriedWeight { get { return Items.GetWeight() + ((float)goldPieces / DaggerfallBankManager.gold1kg); } }
         public float WagonWeight { get { return WagonItems.GetWeight(); } }
 
@@ -146,6 +155,10 @@ namespace DaggerfallWorkshop.Game.Entity
             this.skillUses = character.skillUses;
             this.startingLevelUpSkillSum = character.startingLevelUpSkillSum;
             this.ArmorValues = character.armorValues;
+            this.TimeForThievesGuildLetter = character.timeForThievesGuildLetter;
+            this.TimeForDarkBrotherhoodLetter = character.timeForDarkBrotherhoodLetter;
+            this.DarkBrotherhoodRequirementTally = character.darkBrotherhoodRequirementTally;
+            this.ThievesGuildRequirementTally = character.thievesGuildRequirementTally;
 
             SetCurrentLevelUpSkillSum();
 
@@ -281,6 +294,44 @@ namespace DaggerfallWorkshop.Game.Entity
                 skillUses[skillId] = 0;
             }
         }
+
+        /// <summary>
+        /// Tally thefts/break-ins and murders for starting Thieves Guild and Dark Brotherhood quests
+        /// </summary>
+        public void TallyCrimeGuildRequirements(bool thievingCrime, byte amount)
+        {
+            if (thievingCrime)
+            {
+                if (timeForThievesGuildLetter == 0)
+                {
+                    if (thievesGuildRequirementTally != 100) // Tally is set to 100 when the thieves guild quest line has already started
+                    {
+                        thievesGuildRequirementTally += amount;
+                        if (thievesGuildRequirementTally >= 10)
+                        {
+                            uint currentMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+                            timeForThievesGuildLetter = currentMinutes + 4320; // 3 days
+                       }
+                    }
+                }
+            }
+            else // murder
+            {
+                if (timeForDarkBrotherhoodLetter == 0)
+                {
+                    if (darkBrotherhoodRequirementTally != 100) // Tally is set to 100 when the thieves guild quest line has already started
+                    {
+                        darkBrotherhoodRequirementTally += amount;
+                        if (darkBrotherhoodRequirementTally >= 15)
+                        {
+                            uint currentMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+                            timeForDarkBrotherhoodLetter = currentMinutes + 4320; // 3 days
+                        }
+                    }
+                }
+            }
+        }
+
 
         /// <summary>
         /// Raise skills if conditions are met.

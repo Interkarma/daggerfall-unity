@@ -175,11 +175,19 @@ namespace DaggerfallWorkshop.Game
 
                                     // TODO: Implement lockpicking and door bashing for exterior doors
                                     // For now, any locked building door can be entered by using steal mode
-                                    if (!buildingUnlocked && (currentMode != PlayerActivateModes.Steal))
+                                    if (!buildingUnlocked)
                                     {
-                                        string Locked = "Locked.";
-                                        DaggerfallUI.Instance.PopupMessage(Locked);
-                                        return;
+                                        if (currentMode != PlayerActivateModes.Steal)
+                                        {
+                                            string Locked = "Locked.";
+                                            DaggerfallUI.Instance.PopupMessage(Locked);
+                                            return;
+                                        }
+                                        else // Breaking into building
+                                        {
+                                            PlayerEntity player = GameManager.Instance.PlayerEntity;
+                                            player.TallyCrimeGuildRequirements(true, 1);
+                                        }
                                     }
 
                                     // If entering a shop let player know the quality level
@@ -785,6 +793,7 @@ namespace DaggerfallWorkshop.Game
                         gotGold = gotGold.Replace("%d", pinchedGoldPieces.ToString());
                     }
                     DaggerfallUI.MessageBox(gotGold);
+                    player.TallyCrimeGuildRequirements(true, 1);
                 }
                 else
                 {

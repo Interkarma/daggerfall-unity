@@ -130,6 +130,8 @@ namespace DaggerfallWorkshop.Game.Entity
                 {
                     CheckedCurrentJump = false;
                 }
+
+                HandleStartingCrimeGuildQuests(Entity as PlayerEntity);
             }
         }
 
@@ -159,6 +161,28 @@ namespace DaggerfallWorkshop.Game.Entity
         {
             RaiseOnSetEntityHandler(entity, value);
             entity = value;
+        }
+
+        void HandleStartingCrimeGuildQuests(PlayerEntity player)
+        {
+            if (player.ThievesGuildRequirementTally != 100
+                && player.TimeForThievesGuildLetter > 0
+                && player.TimeForThievesGuildLetter < DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime()
+                && !GameManager.Instance.PlayerGPS.GetComponent<PlayerEnterExit>().IsPlayerInside)
+            {
+                player.ThievesGuildRequirementTally = 100;
+                player.TimeForThievesGuildLetter = 0;
+                Questing.QuestMachine.Instance.InstantiateQuest("O0A0AL00");
+            }
+            if (player.DarkBrotherhoodRequirementTally != 100
+                && player.TimeForDarkBrotherhoodLetter > 0
+                && player.TimeForDarkBrotherhoodLetter < DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime()
+                && !GameManager.Instance.PlayerGPS.GetComponent<PlayerEnterExit>().IsPlayerInside)
+            {
+                player.DarkBrotherhoodRequirementTally = 100;
+                player.TimeForDarkBrotherhoodLetter = 0;
+                Questing.QuestMachine.Instance.InstantiateQuest("L0A01L00");
+            }
         }
 
         #endregion
