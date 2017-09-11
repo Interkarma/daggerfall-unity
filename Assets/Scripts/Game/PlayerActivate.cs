@@ -281,15 +281,15 @@ namespace DaggerfallWorkshop.Game
                             switch (currentMode)
                             {
                                 case PlayerActivateModes.Info:
-                                    if (loot.ContainerType == LootContainerTypes.CorpseMarker && loot.EnemyEntity != null)
+                                    if (loot.ContainerType == LootContainerTypes.CorpseMarker && !string.IsNullOrEmpty(loot.entityName))
                                     {
                                         string message = string.Empty;
-                                        if (loot.EnemyEntity.EntityType == EntityTypes.EnemyClass)
+                                        if (loot.isEnemyClass)
                                             message = HardStrings.youSeeADeadPerson;
                                         else
                                         {
                                             message = HardStrings.youSeeADead;
-                                            message = message.Replace("%s", loot.EnemyEntity.MobileEnemy.Name);
+                                            message = message.Replace("%s", loot.entityName);
                                         }
                                         DaggerfallUI.Instance.PopupMessage(message);
                                     }
