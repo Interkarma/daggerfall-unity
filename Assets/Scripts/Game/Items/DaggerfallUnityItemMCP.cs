@@ -98,6 +98,12 @@ namespace DaggerfallWorkshop.Game.Items
                 return bookFile.Author;
             }
 
+            //public override string HeldSoul()
+            //{   // %hs
+            //    return ;
+            //}
+
+
             public override TextFile.Token[] MagicPowers(TextFile.Formatting format)
             {   // %mpw
                 if (parent.IsArtifact)

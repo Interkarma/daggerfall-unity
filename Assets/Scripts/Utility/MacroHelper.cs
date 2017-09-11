@@ -105,7 +105,7 @@ namespace DaggerfallWorkshop.Utility
             { "%hpn", null }, // ?
             { "%hpw", null }, // ?
             { "%hrg", null }, // House region
-            { "%hs", null },  //  Holding Soul type
+            { "%hs", HeldSoul },  //  Holding Soul type
             { "%htwn", null },// House town
             { "%imp", null }, // ?
             { "%int", Int }, // Amount of Intelligence
@@ -599,6 +599,11 @@ namespace DaggerfallWorkshop.Utility
         public static string BookAuthor(IMacroContextProvider mcp)
         {   // %ba
             return mcp.GetMacroDataSource().BookAuthor();
+        }
+
+        public static string HeldSoul(IMacroContextProvider mcp)
+        {   // %hs
+            return mcp.GetMacroDataSource().HeldSoul();
         }
 
         public static string Pronoun(IMacroContextProvider mcp)

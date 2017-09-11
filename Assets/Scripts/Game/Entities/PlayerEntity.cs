@@ -20,6 +20,7 @@ using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Utility;
 using UnityEngine;
+using System;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
@@ -207,6 +208,15 @@ namespace DaggerfallWorkshop.Game.Entity
 
                 // Add to local inventory or wagon
                 DaggerfallUnityItem newItem = new DaggerfallUnityItem((ItemRecord)record);
+                if (newItem.ItemGroup == ItemGroups.MiscItems && newItem.GroupIndex == 1)
+                {
+                    UInt32 subList = record.RecordRoot.SublistHead;
+                    SaveTreeBaseRecord subrec = record.Children[0];
+                    string str = "";
+                    for (int i = 0; i < subrec.StreamLength; i++)
+                        str += subrec.StreamData[i] + ", ";
+                    Debug.Log(str);
+                }
                 if (containerRecord.IsWagon)
                     wagonItems.AddItem(newItem);
                 else

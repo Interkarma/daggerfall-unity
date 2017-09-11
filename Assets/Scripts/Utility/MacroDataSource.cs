@@ -114,6 +114,11 @@ namespace DaggerfallWorkshop.Utility
             throw new NotImplementedException();
         }
 
+        public virtual string HeldSoul()
+        {   // %hs
+            throw new NotImplementedException();
+        }
+
         public virtual string Pronoun()
         {   // %g & %g1
             throw new NotImplementedException();
