@@ -101,6 +101,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string mustDistributeBonusPoints = "You must distribute all bonus points.";
 
         public const string getQuest = "Get Quest";
+        public const string menuSell = "Sell";
 
         public const string pronounHe = "he";
         public const string pronounShe = "she";

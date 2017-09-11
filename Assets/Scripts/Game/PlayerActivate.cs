@@ -769,10 +769,16 @@ namespace DaggerfallWorkshop.Game
                     buildingType == DFLocation.BuildingTypes.GeneralStore ||
                     buildingType == DFLocation.BuildingTypes.WeaponSmith)
                 {
-                    DaggerfallMerchantPopupWindow merchantWindow = new DaggerfallMerchantPopupWindow(DaggerfallUI.Instance.UserInterfaceManager);
+                    DaggerfallMerchantRepairPopupWindow merchantWindow = new DaggerfallMerchantRepairPopupWindow(DaggerfallUI.Instance.UserInterfaceManager);
                     merchantWindow.BuildingType = buildingType;
                     DaggerfallUI.Instance.UserInterfaceManager.PushWindow(merchantWindow);
 
+                }
+                else
+                {
+                    DaggerfallMerchantPopupWindow merchantWindow = new DaggerfallMerchantPopupWindow(DaggerfallUI.Instance.UserInterfaceManager);
+                    merchantWindow.BuildingType = buildingType;
+                    DaggerfallUI.Instance.UserInterfaceManager.PushWindow(merchantWindow);
                 }
 
                 return true;
