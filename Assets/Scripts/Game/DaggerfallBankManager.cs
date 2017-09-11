@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -12,10 +12,9 @@
 using UnityEngine;
 using System;
 using System.IO;
-using System.Collections;
+using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect.Save;
-using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Serialization;
 
 /*
@@ -24,6 +23,7 @@ using DaggerfallWorkshop.Game.Serialization;
  * buying & selling ships/houses
  * events
 */
+
 namespace DaggerfallWorkshop.Game.Banking
 {
     //Banking dialogue
@@ -31,6 +31,7 @@ namespace DaggerfallWorkshop.Game.Banking
     public enum TransactionResult
     {
         NONE                    = 0,
+        TOO_HEAVY               = 1,
         PURCHASED_HOUSE         = 0282,
         PURCHASED_SHIP          = 0283,
         ALREADY_OWN_SHIP        = 0284,
@@ -69,6 +70,8 @@ namespace DaggerfallWorkshop.Game.Banking
 
     public static class DaggerfallBankManager
     {
+        public const int gold1kg = 400;
+
         private static int loanMaxPerLevel = 50000;
 
         private static DaggerfallDateTime dateTime;
@@ -206,10 +209,13 @@ namespace DaggerfallWorkshop.Game.Banking
 
         public static TransactionResult WithdrawGold(int amount, int regionIndex)
         {
-
             if (amount > BankAccounts[regionIndex].accountGold)
                 return TransactionResult.NOT_ENOUGH_ACCOUNT;
-            //##TODO - else if too much to carry
+
+            // Check weight limit
+            PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+            if (playerEntity.CarriedWeight + (amount / gold1kg) > playerEntity.MaxEncumbrance)
+                return TransactionResult.TOO_HEAVY;
 
             BankAccounts[regionIndex].accountGold -= amount;
             GameManager.Instance.PlayerEntity.GoldPieces += (int)amount;

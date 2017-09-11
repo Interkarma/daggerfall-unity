@@ -103,6 +103,7 @@ namespace DaggerfallConnect.Save
                 return false;
 
             // If first byte is 150, this seems to indicate wagon container
+            // NOTE: I have a downloaded save where wagon is 122 for unknown reason. Newly created chars buying wagon is 150 always. (Hazelnut)
             if (parsedData.unknown[0] == 150)
                 return true;
             else

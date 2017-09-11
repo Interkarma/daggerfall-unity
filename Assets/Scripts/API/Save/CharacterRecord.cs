@@ -70,7 +70,12 @@ namespace DaggerfallConnect.Save
             doc.currentFatigue = parsedData.currentFatigue;
             doc.skillUses = parsedData.skillUses;
             doc.startingLevelUpSkillSum = parsedData.startingLevelUpSkillSum;
+            doc.minMetalToHit = parsedData.minMetalToHit;
             doc.armorValues = parsedData.armorValues;
+            doc.timeForThievesGuildLetter = parsedData.timeForThievesGuildLetter;
+            doc.timeForDarkBrotherhoodLetter = parsedData.timeForDarkBrotherhoodLetter;
+            doc.darkBrotherhoodRequirementTally = parsedData.darkBrotherhoodRequirementTally;
+            doc.thievesGuildRequirementTally = parsedData.thievesGuildRequirementTally;
 
             return doc;
         }
@@ -156,6 +161,16 @@ namespace DaggerfallConnect.Save
 
             reader.BaseStream.Position = 0x1fd;
             parsedData.timeStamp = reader.ReadUInt32();
+
+            reader.BaseStream.Position = 0x211;
+            parsedData.timeForThievesGuildLetter = reader.ReadUInt32();
+            parsedData.timeForDarkBrotherhoodLetter = reader.ReadUInt32();
+
+            reader.BaseStream.Position = 0x21f;
+            parsedData.darkBrotherhoodRequirementTally = reader.ReadByte();
+
+            reader.BaseStream.Position = 0x222;
+            parsedData.thievesGuildRequirementTally = reader.ReadByte();
 
             reader.BaseStream.Position = 0x230;
             parsedData.career = ReadCareer(reader);
@@ -315,8 +330,12 @@ namespace DaggerfallConnect.Save
             public UInt32 lastTimePlayerCastLycanthropy;
             public UInt32 lastTimePlayerAteOrDrankAtTavern;
             public UInt32 lastTimePlayerBoughtTraining;
+            public UInt32 timeForThievesGuildLetter;
+            public UInt32 timeForDarkBrotherhoodLetter;
             public Byte vampireClan;
             public Byte effectStrength; // Used for Open and Shade effects at least.
+            public Byte darkBrotherhoodRequirementTally;
+            public Byte thievesGuildRequirementTally;
             public DFCareer career;
         }
 

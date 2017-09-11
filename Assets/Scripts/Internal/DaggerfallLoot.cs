@@ -49,6 +49,8 @@ namespace DaggerfallWorkshop
         ulong loadID = 0;
         ItemCollection items = new ItemCollection();
 
+        Game.Entity.EnemyEntity enemyEntity = null;
+
         public ulong LoadID
         {
             get { return loadID; }
@@ -58,6 +60,12 @@ namespace DaggerfallWorkshop
         public ItemCollection Items
         {
             get { return items; }
+        }
+
+        public Game.Entity.EnemyEntity EnemyEntity
+        {
+            get { return enemyEntity; }
+            set { enemyEntity = value; }
         }
 
         /// <summary>

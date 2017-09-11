@@ -95,9 +95,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             set { clickAnywhereToClose = value; }
         }
 
-        public DaggerfallMessageBox(IUserInterfaceManager uiManager, IUserInterfaceWindow previous = null)
+        public DaggerfallMessageBox(IUserInterfaceManager uiManager, IUserInterfaceWindow previous = null, bool wrapText = false)
             : base(uiManager, previous)
         {
+            if (wrapText)
+            {
+                label.WrapText = true;
+                // If wrapping text, set maxWidth to 288. This is just an aesthetically chosen value, as
+                // it is the widest text can be without making the parchment textures expand off the edges of the screen.
+                label.MaxTextWidth = 288;
+            }
         }
 
         public DaggerfallMessageBox(IUserInterfaceManager uiManager, CommonMessageBoxButtons buttons, TextFile.Token[] tokens, IUserInterfaceWindow previous = null)

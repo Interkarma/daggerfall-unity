@@ -45,6 +45,7 @@ namespace DaggerfallWorkshop.Game.Entity
         protected int currentHealth;
         protected int currentFatigue;
         protected int currentMagicka;
+        protected WeaponMaterialTypes minMetalToHit;
         protected sbyte[] armorValues = new sbyte[ArmorValuesArrayLength];
 
         bool quiesce = false;
@@ -80,6 +81,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public int CurrentFatigue { get { return currentFatigue; } set { SetFatigue(value); } }
         public int MaxMagicka { get { return FormulaHelper.SpellPoints(stats.Intelligence, career.SpellPointMultiplierValue); } }
         public int CurrentMagicka { get { return currentMagicka; } set { SetMagicka(value); } }
+        public WeaponMaterialTypes MinMetalToHit { get { return minMetalToHit; } set { minMetalToHit = value; } }
         public sbyte[] ArmorValues { get { return armorValues; } set { armorValues = value; } }
         public int DamageModifier { get { return FormulaHelper.DamageModifier(stats.Strength); } }
         public int MaxEncumbrance { get { return FormulaHelper.MaxEncumbrance(stats.Strength); } }

@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -26,6 +26,8 @@ namespace DaggerfallWorkshop.Game.Items
     /// </summary>
     public class ItemHelper
     {
+        public const int wagonKgLimit = 750;
+
         #region Fields
 
         // This array is in order of ItemEnums.ArtifactsSubTypes
@@ -140,7 +142,7 @@ namespace DaggerfallWorkshop.Game.Items
             ItemTemplate template = item.ItemTemplate;
 
             // Return just the template name if item is unidentified or an Artifact.
-            if (!item.IsIdentified || item.ItemGroup == ItemGroups.Artifacts)
+            if (!item.IsIdentified)
                 return template.name;
 
             // Books are handled differently
@@ -162,6 +164,10 @@ namespace DaggerfallWorkshop.Game.Items
         public string ResolveItemLongName(DaggerfallUnityItem item)
         {
             string result = ResolveItemName(item);
+
+            // Return result without material prefix if item is unidentified or an Artifact.
+            if (!item.IsIdentified || item.IsArtifact)
+                return result;
 
             // Resolve weapon material
             if (item.ItemGroup == ItemGroups.Weapons && item.TemplateIndex != (int) Weapons.Arrow)
@@ -299,6 +305,22 @@ namespace DaggerfallWorkshop.Game.Items
         {
             textureArchiveOut = (GameManager.Instance.PlayerEntity.Gender == Genders.Male) ? artifactMaleTextureArchive : artifactFemaleTextureArchive;
             textureRecordOut = artifactTextureIndexMappings[(int)type];
+        }
+
+        /// <summary>
+        /// Gets an artifact sub type from an items' short name. (throws exception if no match)
+        /// </summary>
+        /// <param name="itemShortName">Item short name</param>
+        /// <returns>Artifact sub type.</returns>
+        public static ArtifactsSubTypes GetArtifactSubType(string itemShortName)
+        {
+            itemShortName = itemShortName.Replace("\'", "").Replace(' ', '_');
+            foreach (var artifactName in Enum.GetNames(typeof(ArtifactsSubTypes)))
+            {
+                if (itemShortName.Contains(artifactName))
+                    return (ArtifactsSubTypes)Enum.Parse(typeof(ArtifactsSubTypes), artifactName);
+            }
+            throw new KeyNotFoundException("No match found for: " + itemShortName);
         }
 
         /// <summary>

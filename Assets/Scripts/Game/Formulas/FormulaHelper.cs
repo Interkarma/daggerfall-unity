@@ -132,14 +132,13 @@ namespace DaggerfallWorkshop.Game.Formulas
         }
 
         // Calculate chance of successfully pickpocketing a target
-        public static int CalculatePickpocketingChance(Entity.PlayerEntity player, Entity.DaggerfallEntityBehaviour target)
+        public static int CalculatePickpocketingChance(Entity.PlayerEntity player, Entity.EnemyEntity target)
         {
             int chance = player.Skills.Pickpocket;
             // If target is an enemy mobile, apply level modifier.
-            if (target)
+            if (target != null)
             {
-                Entity.EnemyEntity enemyEntity = target.Entity as Entity.EnemyEntity;
-                chance += 5 * ((player.Level) - (enemyEntity.Level));
+                chance += 5 * ((player.Level) - (target.Level));
             }
             return Mathf.Clamp(chance, 5, 95);
         }
@@ -222,6 +221,16 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             if (weapon != null)
             {
+                // If the attacker has a weapon equipped, check if the material is high enough to damage the target
+                if (target.MinMetalToHit > (Items.WeaponMaterialTypes)weapon.NativeMaterialValue)
+                {
+                    if (attacker == player)
+                    {
+                        DaggerfallUI.Instance.PopupMessage(UserInterfaceWindows.HardStrings.materialIneffective);
+                    }
+                    return 0;
+                }
+
                 // If the attacker has a weapon equipped, get the weapon's damage
                 damageLow = weapon.GetBaseDamageMin();
                 damageHigh = weapon.GetBaseDamageMax();
@@ -473,6 +482,12 @@ namespace DaggerfallWorkshop.Game.Formulas
             Entity.EnemyEntity AITarget = target as Entity.EnemyEntity;
 
             int armorValue = 0;
+
+            // Apply hit mod from character biography
+            if (target == player)
+            {
+                chanceToHit -= player.BiographyAvoidHitMod;
+            }
 
             // Get armor value for struck body part
             if (struckBodyPart <= target.ArmorValues.Length)

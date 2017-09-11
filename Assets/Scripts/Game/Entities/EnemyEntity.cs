@@ -32,6 +32,7 @@ namespace DaggerfallWorkshop.Game.Entity
         int careerIndex = -1;
         EntityTypes entityType = EntityTypes.None;
         MobileEnemy mobileEnemy;
+        bool pickpocketByPlayerAttempted = false;
 
         #endregion
 
@@ -50,6 +51,12 @@ namespace DaggerfallWorkshop.Game.Entity
         public MobileEnemy MobileEnemy
         {
             get { return mobileEnemy; }
+        }
+
+        public bool PickpocketByPlayerAttempted
+        {
+            get { return (pickpocketByPlayerAttempted); }
+            set { pickpocketByPlayerAttempted = value; }
         }
 
         #endregion
@@ -103,6 +110,7 @@ namespace DaggerfallWorkshop.Game.Entity
             this.mobileEnemy = mobileEnemy;
             this.entityType = entityType;
             name = career.Name;
+            minMetalToHit = (Items.WeaponMaterialTypes)mobileEnemy.MinMetalToHit - 1;
 
             short skillsLevel = (short)((level * 5) + 30);
             if (skillsLevel > 100)

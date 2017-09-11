@@ -70,6 +70,13 @@ namespace DaggerfallWorkshop.Game.Items
 
         #endregion
 
+        #region Item flag bitmasks
+
+        const ushort identifiedMask = 0x20;
+        const ushort artifactMask = 0x800;
+
+        #endregion
+
         #region Properties
 
         /// <summary>
@@ -226,6 +233,14 @@ namespace DaggerfallWorkshop.Game.Items
         public bool IsEnchanted
         {
             get { return GetIsEnchanted(); }
+        }
+
+        /// <summary>
+        /// Checks if this item is an artifact.
+        /// </summary>
+        public bool IsArtifact
+        {
+            get { return (flags & artifactMask) > 0; }
         }
 
         /// <summary>
@@ -422,7 +437,7 @@ namespace DaggerfallWorkshop.Game.Items
             currentVariant = 0;
             value = itemTemplate.basePrice;
             unknown = 0;
-            flags = 0;
+            flags = artifactMask & identifiedMask;      // Set as artifact & identified.
             currentCondition = itemTemplate.hitPoints;
             maxCondition = itemTemplate.hitPoints;
             unknown2 = 0;
@@ -1288,7 +1303,6 @@ namespace DaggerfallWorkshop.Game.Items
         {
             if (legacyMagic == null)
                 return true;
-            const ushort identifiedMask = 32;
             return (flags & identifiedMask) > 0;
         }
 

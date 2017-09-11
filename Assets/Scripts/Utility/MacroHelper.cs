@@ -92,7 +92,7 @@ namespace DaggerfallWorkshop.Utility
             { "%g2", Pronoun2 },  // Him/Her etc...
             { "%g2self", Pronoun2self },// Himself/Herself etc...
             { "%g3", Pronoun3 },  // His/Hers/Theirs etc...
-            { "%gii", null }, // Amount of gold in hand
+            { "%gii", GoldCarried }, // Amount of gold in hand
             { "%god", God }, // Some god (listed in TEXT.RSC)
             { "%gtp", null }, // Amount of fine
             { "%hea", HpMod }, // HP Modifier
@@ -171,7 +171,7 @@ namespace DaggerfallWorkshop.Utility
             { "%r4", null },  // Nobilitys rep
             { "%r5", null },  // Underworld rep
             { "%ra", PlayerRace },  // Player's race
-            { "%reg", Region }, // Region
+			{ "%reg", CurrentRegion }, // Region
             { "%rn", null },  // Regent's Name
             { "%rt", null },  // Regent's Title
             { "%spc", Magicka }, // Current Spell Points
@@ -198,6 +198,7 @@ namespace DaggerfallWorkshop.Utility
             { "%pg2", PlayerPronoun2 }, // Him/Her (player)
             { "%pg2self", PlayerPronoun2self },// Himself/Herself (player)
             { "%pg3", PlayerPronoun3 },  // His/Hers (player)
+			{ "%hrn", HomeRegion },  // Home region (of person)
         };
 
         // Multi-line macro handlers, returns tokens.
@@ -398,7 +399,7 @@ namespace DaggerfallWorkshop.Utility
             else if (rep < -40)
                 return "a villain";
             else if (rep < -60)
-                return "pond Scum";
+                return "pond scum";
             else if (rep < -80)
                 return "hated";
             return "unknown";
@@ -492,6 +493,11 @@ namespace DaggerfallWorkshop.Utility
             // Just use "Apprentice" for all %pct guild titles for now
             // Guilds are not implemented yet, will need to move into a MacroDataSource
             return "Apprentice";
+        }
+
+        private static string GoldCarried(IMacroContextProvider mcp)
+        {   // %gii
+            return GameManager.Instance.PlayerEntity.GoldPieces.ToString();
         }
 
         #endregion
@@ -606,9 +612,9 @@ namespace DaggerfallWorkshop.Utility
             return mcp.GetMacroDataSource().Oath();
         }
 
-        public static string Region(IMacroContextProvider mcp)
-        {   // %reg
-            return mcp.GetMacroDataSource().Region();
+        public static string HomeRegion(IMacroContextProvider mcp)
+        {   // %hrn
+            return mcp.GetMacroDataSource().HomeRegion();
         }
 
         public static string God(IMacroContextProvider mcp)

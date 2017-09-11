@@ -35,6 +35,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string usingLeftHand = "Using weapon in left hand.";
         public const string itemHasBroken = "%s has broken.";
         public const string itemHasBrokenPlural = "%s have broken.";
+        public const string cannotCarryAnymore = "You cannot carry anymore stuff.";
+        public const string cannotHoldAnymore = "Your cart cannot hold anymore stuff.";
+        public const string cannotCarryGold = "You cannot carry that much gold.";
 
         public const string enterSaveName = "Enter save name";
         public const string selectSaveName = "Select a save";
@@ -45,6 +48,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string noSavesFound = "No saves found. Load a Classic save?";
 
         public const string theBodyHasNoTreasure = "The body has no treasure.";
+        public const string youAreTooFarAway = "You are too far away...";
+        public const string youSeeAn = "You see an %s.";
+        public const string youSeeA = "You see a %s.";
+        public const string youSeeADeadPerson = "You see a dead person.";
+        public const string youSeeADead = "You see a dead %s.";
 
         public const string loiterHowManyHours = "Loiter how many hours : ";
         public const string restHowManyHours = "Rest how many hours : ";
@@ -65,6 +73,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string residence = "Residence";
         public const string youSee = "You see %s.";
         public const string theNamedResidence = "The %s Residence";
+
+        public const string materialIneffective = "The material of the weapon you are using is ineffective.";
 
         public const string lockpickingSuccess = "The lock clicks open.";
         public const string lockpickingFailure = "It does not unlock.";

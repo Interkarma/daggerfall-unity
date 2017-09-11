@@ -38,7 +38,18 @@ namespace DaggerfallWorkshop.Game
 
         PlayerActivateModes currentMode = PlayerActivateModes.Grab;
 
-        public float RayDistance = 2.4f;        // Distance of ray check, tune this to your scale and preference
+        public float RayDistance = 0;        // Distance of ray check, tune this to your scale and preference
+        public float ActivateDistance = 2.25f; // Distance within which something must be for player to activate it. Tune as needed.
+
+        // Maximum distance from which different object types can be activated, in classic distance units
+        public float DefaultActivationDistance = 128;
+        public float DoorActivationDistance = 128;
+        public float TreasureActivationDistance = 128;
+        public float PickpocketDistance = 128;
+        public float CorpseActivationDistance = 150;
+        //public float TouchSpellActivationDistance = 160;
+        public float StaticNPCActivationDistance = 256;
+        public float MobileNPCActivationDistance = 256;
 
         // Opening and closing hours by building type
         byte[] openHours = { 7, 8, 9, 8, 0, 9, 10, 10, 9, 6, 9, 11, 9, 9, 0, 0, 10, 0 };
@@ -74,32 +85,30 @@ namespace DaggerfallWorkshop.Game
             // Fire ray into scene
             if (InputManager.Instance.ActionStarted(InputManager.Actions.ActivateCenterObject))
             {
-                // TODO: Clean all this up and support mobile enemy info-clicks
+                // TODO: Clean all this up
 
-                // Using RaycastAll as hits can be blocked by decorations or other models
-                // When this happens activation feels unresponsive to player
-                // Also processing hit detection in order of priority
+                // Was using RayCastAll here to avoid unresponsive feeling when objects block ray,
+                // but this did not allow for a long raycast, since it would find things through walls, etc.
+                // Also even with a short raycast, RayCastAll allowed accessing things through walls, etc.
                 Ray ray = new Ray(mainCamera.transform.position, mainCamera.transform.forward);
-                RaycastHit[] hits;
-                hits = Physics.RaycastAll(ray, RayDistance);
-                if (hits != null)
+                RaycastHit hit;
+                RayDistance = 75f; // Approximates classic at full view distance (default setting). Classic seems to do raycasts for as far as it can render objects.
+                bool hitSomething = Physics.Raycast(ray, out hit, RayDistance);
+                if (hitSomething)
                 {
-                    // Check each hit in range for action, exit on first valid action processed
                     bool hitBuilding = false;
                     bool buildingUnlocked = false;
                     DFLocation.BuildingTypes buildingType = DFLocation.BuildingTypes.AllValid;
                     StaticBuilding building = new StaticBuilding();
 
-                    for (int i = 0; i < hits.Length; i++)
-                    {
-                        #region Hit Checks
+                    #region Hit Checks
 
                         // Check for a static building hit
                         Transform buildingOwner;
-                        DaggerfallStaticBuildings buildings = GetBuildings(hits[i].transform, out buildingOwner);
+                        DaggerfallStaticBuildings buildings = GetBuildings(hit.transform, out buildingOwner);
                         if (buildings)
                         {
-                            if (buildings.HasHit(hits[i].point, out building))
+                            if (buildings.HasHit(hit.point, out building))
                             {
                                 hitBuilding = true;
 
@@ -146,12 +155,19 @@ namespace DaggerfallWorkshop.Game
 
                         // Check for a static door hit
                         Transform doorOwner;
-                        DaggerfallStaticDoors doors = GetDoors(hits[i].transform, out doorOwner);
+                        DaggerfallStaticDoors doors = GetDoors(hit.transform, out doorOwner);
                         if (doors && playerEnterExit)
                         {
                             StaticDoor door;
-                            if (doors.HasHit(hits[i].point, out door))
+                            if (doors.HasHit(hit.point, out door))
                             {
+                                // Check if close enough to activate
+                                if (hit.distance > (DoorActivationDistance * MeshReader.GlobalScale))
+                                {
+                                    DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
+                                    return;
+                                }
+
                                 if (door.doorType == DoorTypes.Building && !playerEnterExit.IsPlayerInside)
                                 {
                                     // Discover building
@@ -159,11 +175,19 @@ namespace DaggerfallWorkshop.Game
 
                                     // TODO: Implement lockpicking and door bashing for exterior doors
                                     // For now, any locked building door can be entered by using steal mode
-                                    if (!buildingUnlocked && (currentMode != PlayerActivateModes.Steal))
+                                    if (!buildingUnlocked)
                                     {
-                                        string Locked = "Locked.";
-                                        DaggerfallUI.Instance.PopupMessage(Locked);
-                                        return;
+                                        if (currentMode != PlayerActivateModes.Steal)
+                                        {
+                                            string Locked = "Locked.";
+                                            DaggerfallUI.Instance.PopupMessage(Locked);
+                                            return;
+                                        }
+                                        else // Breaking into building
+                                        {
+                                            PlayerEntity player = GameManager.Instance.PlayerEntity;
+                                            player.TallyCrimeGuildRequirements(true, 1);
+                                        }
                                     }
 
                                     // If entering a shop let player know the quality level
@@ -223,8 +247,15 @@ namespace DaggerfallWorkshop.Game
 
                         // Check for an action door hit
                         DaggerfallActionDoor actionDoor;
-                        if (ActionDoorCheck(hits[i], out actionDoor))
+                        if (ActionDoorCheck(hit, out actionDoor))
                         {
+                            // Check if close enough to activate
+                            if (hit.distance > (DoorActivationDistance * MeshReader.GlobalScale))
+                            {
+                                DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
+                                return;
+                            }
+
                             if (currentMode == PlayerActivateModes.Steal && actionDoor.IsLocked && !actionDoor.IsOpen)
                             {
                                 actionDoor.AttemptLockpicking();
@@ -235,30 +266,69 @@ namespace DaggerfallWorkshop.Game
 
                         // Check for action record hit
                         DaggerfallAction action;
-                        if (ActionCheck(hits[i], out action))
+                        if (ActionCheck(hit, out action))
                         {
-                            action.Receive(this.gameObject, DaggerfallAction.TriggerTypes.Direct);
+                            if (hit.distance <= (DefaultActivationDistance * MeshReader.GlobalScale))
+                            {
+                                action.Receive(this.gameObject, DaggerfallAction.TriggerTypes.Direct);
+                            }
                         }
 
                         // Check for lootable object hit
                         DaggerfallLoot loot;
-                        if (LootCheck(hits[i], out loot))
+                        if (LootCheck(hit, out loot))
                         {
-                            // For bodies, check has treasure first
-                            if (loot.ContainerType == LootContainerTypes.CorpseMarker && loot.Items.Count == 0)
+                            switch (currentMode)
                             {
-                                DaggerfallUI.AddHUDText(HardStrings.theBodyHasNoTreasure);
-                                return;
-                            }
+                                case PlayerActivateModes.Info:
+                                    if (loot.ContainerType == LootContainerTypes.CorpseMarker && loot.EnemyEntity != null)
+                                    {
+                                        string message = string.Empty;
+                                        if (loot.EnemyEntity.EntityType == EntityTypes.EnemyClass)
+                                            message = HardStrings.youSeeADeadPerson;
+                                        else
+                                        {
+                                            message = HardStrings.youSeeADead;
+                                            message = message.Replace("%s", loot.EnemyEntity.MobileEnemy.Name);
+                                        }
+                                        DaggerfallUI.Instance.PopupMessage(message);
+                                    }
+                                    break;
+                                case PlayerActivateModes.Grab:
+                                case PlayerActivateModes.Talk:
+                                case PlayerActivateModes.Steal:
+                                    // Check if close enough to activate
+                                    if (loot.ContainerType == LootContainerTypes.CorpseMarker)
+                                    {
+                                        if (hit.distance > CorpseActivationDistance * MeshReader.GlobalScale)
+                                        {
+                                            DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
+                                            break;
+                                        }
+                                    }
+                                    else if (hit.distance > TreasureActivationDistance * MeshReader.GlobalScale)
+                                    {
+                                        DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
+                                        break;
+                                    }
 
-                            // Open inventory window with loot as remote target
-                            DaggerfallUI.Instance.InventoryWindow.LootTarget = loot;
-                            DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenInventoryWindow);
+                                    // For bodies, check has treasure first
+                                    if (loot.ContainerType == LootContainerTypes.CorpseMarker && loot.Items.Count == 0)
+                                    {
+                                        DaggerfallUI.AddHUDText(HardStrings.theBodyHasNoTreasure);
+                                        break;
+                                    }
+
+                                    // Open inventory window with loot as remote target
+                                    DaggerfallUI.Instance.InventoryWindow.LootTarget = loot;
+                                    DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenInventoryWindow);
+                                    break;
+                            }
                         }
 
                         // Check for static NPC hit
                         StaticNPC npc;
-                        if (NPCCheck(hits[i], out npc))
+                        if (NPCCheck(hit, out npc))
                         {
                             switch (currentMode)
                             {
@@ -268,6 +338,11 @@ namespace DaggerfallWorkshop.Game
                                 case PlayerActivateModes.Grab:
                                 case PlayerActivateModes.Talk:
                                 case PlayerActivateModes.Steal:
+                                    if (hit.distance > (StaticNPCActivationDistance * MeshReader.GlobalScale))
+                                    {
+                                        DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
+                                        break;
+                                    }
                                     StaticNPCClick(npc);
                                     break;
                             }
@@ -275,33 +350,76 @@ namespace DaggerfallWorkshop.Game
 
                         // Check for mobile NPC hit
                         MobilePersonNPC mobileNpc = null;
-                        if (MobilePersonMotorCheck(hits[i], out mobileNpc))
+                        if (MobilePersonMotorCheck(hit, out mobileNpc))
                         {
                             switch (currentMode)
                             {
                                 case PlayerActivateModes.Info:
                                 case PlayerActivateModes.Grab:
                                 case PlayerActivateModes.Talk:
+                                    if (hit.distance > (MobileNPCActivationDistance * MeshReader.GlobalScale))
+                                    {
+                                        DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
+                                        break;
+                                    }
                                     Talk(mobileNpc);
                                     break;
                                 case PlayerActivateModes.Steal:
-                                    Pickpocket();
+                                    if (!mobileNpc.PickpocketByPlayerAttempted)
+                                    {
+                                        if (hit.distance > (PickpocketDistance * MeshReader.GlobalScale))
+                                        {
+                                            DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
+                                            break;
+                                        }
+                                        mobileNpc.PickpocketByPlayerAttempted = true;
+                                        Pickpocket();
+                                    }
                                     break;
                             }
                         }
 
                         // Check for mobile enemy hit
-                        DaggerfallEntityBehaviour mobileEnemy;
-                        if (MobileEnemyCheck(hits[i], out mobileEnemy))
+                        DaggerfallEntityBehaviour mobileEnemyBehaviour;
+                        if (MobileEnemyCheck(hit, out mobileEnemyBehaviour))
                         {
+                            EnemyEntity enemyEntity = mobileEnemyBehaviour.Entity as EnemyEntity;
                             switch (currentMode)
                             {
                                 case PlayerActivateModes.Info:
                                 case PlayerActivateModes.Grab:
                                 case PlayerActivateModes.Talk:
+                                    if (enemyEntity != null)
+                                    {
+                                        MobileEnemy mobileEnemy = enemyEntity.MobileEnemy;
+                                        bool startsWithVowel = "aeiouAEIOU".Contains(mobileEnemy.Name[0].ToString());
+                                        string message;
+                                        if (startsWithVowel)
+                                            message = HardStrings.youSeeAn;
+                                        else
+                                            message = HardStrings.youSeeA;
+                                        message = message.Replace("%s", mobileEnemy.Name);
+                                        DaggerfallUI.Instance.PopupMessage(message);
+                                    }
                                     break;
                                 case PlayerActivateModes.Steal:
-                                    Pickpocket(mobileEnemy);
+                                    // Classic allows pickpocketing of NPC mobiles and enemy mobiles.
+                                    // In early versions the only enemy mobiles that can be pickpocketed are classes,
+                                    // but patch 1.07.212 allows pickpocketing of creatures.
+                                    // For now, the only enemy mobiles being allowed by DF Unity are classes.
+                                    if (mobileEnemyBehaviour && (mobileEnemyBehaviour.EntityType != EntityTypes.EnemyClass))
+                                        break;
+                                    // Classic doesn't set any flag when pickpocketing enemy mobiles, so infinite attempts are possible
+                                    if (enemyEntity != null && !enemyEntity.PickpocketByPlayerAttempted)
+                                    {
+                                        if (hit.distance > (PickpocketDistance * MeshReader.GlobalScale))
+                                        {
+                                            DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
+                                            break;
+                                        }
+                                        enemyEntity.PickpocketByPlayerAttempted = true;
+                                        Pickpocket(enemyEntity);
+                                    }
                                     break;
                             }
                         }
@@ -309,20 +427,31 @@ namespace DaggerfallWorkshop.Game
                         // Trigger general quest resource behaviour click
                         // Note: This will cause a second click on special NPCs, look into a way to unify this handling
                         QuestResourceBehaviour questResourceBehaviour;
-                        if (QuestResourceBehaviourCheck(hits[i], out questResourceBehaviour))
+                        if (QuestResourceBehaviourCheck(hit, out questResourceBehaviour))
                         {
+                            if (hit.distance > (DefaultActivationDistance * MeshReader.GlobalScale))
+                            {
+                                DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
+                                return;
+                            }
+
                             TriggerQuestResourceBehaviourClick(questResourceBehaviour);
                         }
 
                         // Trigger ladder hit
-                        DaggerfallLadder ladder = hits[i].transform.GetComponent<DaggerfallLadder>();
+                        DaggerfallLadder ladder = hit.transform.GetComponent<DaggerfallLadder>();
                         if (ladder)
                         {
+                            if (hit.distance > (DefaultActivationDistance * MeshReader.GlobalScale))
+                            {
+                                DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
+                                return;
+                            }
+
                             ladder.ClimbLadder();
                         }
 
                         #endregion
-                    }
                 }
             }
         }
@@ -637,15 +766,8 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Player has clicked on a pickpocket target in steal mode
-        void Pickpocket(DaggerfallEntityBehaviour target = null)
+        void Pickpocket(EnemyEntity target = null)
         {
-            // Classic allows pickpocketing of NPC mobiles and enemy mobiles.
-            // In early versions the only enemy mobiles that can be pickpocketed are classes,
-            // but patch 1.07.212 allows pickpocketing of creatures.
-            // For now, the only enemy mobiles being allowed by DF Unity are classes.
-            if (target && (target.EntityType != EntityTypes.EnemyClass))
-                return;
-
             const int foundNothingValuableTextId = 8999;
 
             PlayerEntity player = GameManager.Instance.PlayerEntity;
@@ -671,11 +793,12 @@ namespace DaggerfallWorkshop.Game
                         gotGold = gotGold.Replace("%d", pinchedGoldPieces.ToString());
                     }
                     DaggerfallUI.MessageBox(gotGold);
+                    player.TallyCrimeGuildRequirements(true, 1);
                 }
                 else
                 {
                     string noGoldFound = DaggerfallUnity.Instance.TextProvider.GetRandomText(foundNothingValuableTextId);
-                    DaggerfallUI.MessageBox(noGoldFound);
+                    DaggerfallUI.MessageBox(noGoldFound, null, true);
                 }
             }
             else

@@ -42,10 +42,25 @@ namespace DaggerfallWorkshop.Game.UserInterface
         int cursorY = 0;
         int tabStop = 0;
 
+        bool wrapText = false;
+        int maxTextWidth = 0;
+
         public PixelFont Font
         {
             get { return GetFont(); }
             set { font = value; }
+        }
+
+        public bool WrapText
+        {
+            get { return wrapText; }
+            set { wrapText = value; }
+        }
+
+        public int MaxTextWidth
+        {
+            get { return maxTextWidth; }
+            set { maxTextWidth = value; }
         }
 
         /// <summary>
@@ -135,7 +150,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// <param name="text">Text for this label.</param>
         /// <param name="font">Font for this label.</param>
         /// <returns>TextLabel.</returns>
-        public TextLabel AddTextLabel(string text, PixelFont font = null, bool wrapText = false, int maxWidth = 0)
+        public TextLabel AddTextLabel(string text, PixelFont font = null)
         {
             if (font == null)
                 font = GetFont();
@@ -144,14 +159,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             textLabel.AutoSize = AutoSizeModes.None;
             textLabel.Font = font;
             textLabel.Position = new Vector2(cursorX, cursorY);
-            textLabel.Text = text;
-            textLabel.Parent = this;
             textLabel.WrapText = wrapText;
 
-            // Optionally specify max width
-            if (maxWidth > 0)
-                textLabel.MaxWidth = maxWidth;
-
+            // Use max width if it has been specified
+            if (maxTextWidth > 0)
+                textLabel.MaxWidth = maxTextWidth;
+            textLabel.Text = text;
+            textLabel.Parent = this;
             textLabel.TextColor = TextColor;
             textLabel.ShadowColor = ShadowColor;
             textLabel.ShadowPosition = ShadowPosition;

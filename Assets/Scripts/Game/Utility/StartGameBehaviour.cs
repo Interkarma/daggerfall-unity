@@ -498,6 +498,13 @@ namespace DaggerfallWorkshop.Game.Utility
             PlayerEntity playerEntity = FindPlayerEntity();
             playerEntity.AssignCharacter(characterDocument, characterRecord.ParsedData.level, characterRecord.ParsedData.maxHealth, false);
 
+            // Assign biography modifiers
+            playerEntity.BiographyResistDiseaseMod = saveVars.BiographyResistDiseaseMod;
+            playerEntity.BiographyResistMagicMod = saveVars.BiographyResistMagicMod;
+            playerEntity.BiographyAvoidHitMod = saveVars.BiographyAvoidHitMod;
+            playerEntity.BiographyResistPoisonMod = saveVars.BiographyResistPoisonMod;
+            playerEntity.BiographyFatigueMod = saveVars.BiographyFatigueMod;
+
             // Assign faction data
             playerEntity.FactionData.ImportClassicReputation(saveVars);
 

@@ -27,39 +27,67 @@ namespace DaggerfallConnect.Save
         #region Fields
 
         const string filename = "SAVEVARS.DAT";
+        const int biographyModifiersOffset = 0x30;
         const int emperorSonNameOffset = 0x7C;
         const int travelFlagsOffset = 0xF5;
+        const int maceOfMolagBalVarsOffset = 0x33F;
+
+        const int globalVarsCount = 64;
+
         const int isDayOffset = 0x391;
+        const int typeOfCrimeCommittedOffset = 0x3A3;
         const int inDungeonWaterOffset = 0x3A6;
+        const int weatherTypesOffset = 0x3B7;
         const int weaponDrawnOffset = 0x3BF;
-        const int lastSpellCostOffset = 0x38F;
         const int gameTimeOffset = 0x3C9;
+        const int maleOrFemaleClothingOffset = 0x3D1; // 6 for male clothing or 12 for female clothing, matching player gender. Not bothering to read right now.
         const int usingLeftHandWeaponOffset = 0x3D9;
+        const int currentRegionIdOffset = 0x173A; // Not bothering to read right now.
         const int cheatFlagsOffset = 0x173B;
         const int lastSkillCheckTimeOffset = 0x179A;
+
         const int factionDataOffset = 0x17D0;
         const int factionDataLength = 92;
-        const int globalVarsCount = 64;
-        const int globalVarsOffset = 0x34f;
+
+        // Private fields
+
+        FileProxy saveVarsFile = new FileProxy();
+
+        int biographyResistDiseaseMod = 0;
+        int biographyResistMagicMod = 0;
+        int biographyAvoidHitMod = 0;
+        int biographyResistPoisonMod = 0;
+        int biographyFatigueMod = 0;
 
         string emperorSonName = ""; // Randomly chosen and can be used in character history, where it fills in %imp.
+
         bool cautiousTravel = false;
         bool innsTravel = false;
         bool footOrHorseTravel = false;
+
+        int maceOfMolagBalSpellPointBonus = 0;
+        int maceOfMolagBalStrengthBonus = 0;
+        uint maceOfMolagBalSpellPointBonusTimeLimit = 0;
+        uint maceOfMolagBalStrengthBonusTimeLimit = 0;
+
+        byte[] globalVars = new byte[globalVarsCount];
+
+        short lastSpellCost = 0; // The cost of the last spell that was readied. If the spell is aborted, these spell points are returned.
+
         bool isDay = false;
+        byte typeOfCrimeCommitted = 0;
         bool inDungeonWater = false;
+        byte[] weatherTypes; // Probably the possible weather types for the player's location
         bool weaponDrawn = false;
-        short lastSpellCost = 0; // The cost of the last spell that was cast. If the spell is aborted, these spell points are returned.
         uint gameTime = 0;
         bool usingLeftHandWeapon = false;
+
         bool allMapLocationsRevealedMode = false;
         bool godMode = false;
+
         uint lastSkillCheckTime = 0;
 
-        // Private fields
-        FileProxy saveVarsFile = new FileProxy();
         List<FactionFile.FactionData> factions = new List<FactionFile.FactionData>();
-        byte[] globalVars = new byte[globalVarsCount];
 
         #endregion
 
@@ -85,15 +113,6 @@ namespace DaggerfallConnect.Save
         }
 
         /// <summary>
-        /// Weapon status flags.
-        /// </summary>
-        [Flags]
-        public enum WeaponStatusFlags
-        {
-            WeaponDrawn = 0x40,
-        }
-
-        /// <summary>
         /// Cheat flags.
         /// </summary>
         [Flags]
@@ -112,6 +131,46 @@ namespace DaggerfallConnect.Save
         public static string Filename
         {
             get { return filename; }
+        }
+
+        /// <summary>
+        /// Gets biography resist modifier from savevars.
+        /// </summary>
+        public int BiographyResistDiseaseMod
+        {
+            get { return biographyResistDiseaseMod; }
+        }
+
+        /// <summary>
+        /// Gets biography magic modifier from savevars.
+        /// </summary>
+        public int BiographyResistMagicMod
+        {
+            get { return biographyResistMagicMod; }
+        }
+
+        /// <summary>
+        /// Gets biography hit avoidance modifier from savevars.
+        /// </summary>
+        public int BiographyAvoidHitMod
+        {
+            get { return biographyAvoidHitMod; }
+        }
+
+        /// <summary>
+        /// Gets biography resist poison modifier from savevars.
+        /// </summary>
+        public int BiographyResistPoisonMod
+        {
+            get { return biographyResistPoisonMod; }
+        }
+
+        /// <summary>
+        /// Gets biography fatigue modifier from savevars.
+        /// </summary>
+        public int BiographyFatigueMod
+        {
+            get { return biographyFatigueMod; }
         }
 
         /// <summary>
@@ -147,11 +206,51 @@ namespace DaggerfallConnect.Save
         }
 
         /// <summary>
+        /// Gets Mace of Molag Bal spell point bonus, read from savevars.
+        /// </summary>
+        public int MaceOfMolagBalSpellPointBonus
+        {
+            get { return maceOfMolagBalSpellPointBonus; }
+        }
+
+        /// <summary>
+        /// Gets Mace of Molag Bal strength bonus, read from savevars.
+        /// </summary>
+        public int MaceOfMolagBalStrengthBonus
+        {
+            get { return maceOfMolagBalStrengthBonus; }
+        }
+
+        /// <summary>
+        /// Gets time Mace of Molag Bal spell point bonus ends, read from savevars.
+        /// </summary>
+        public uint MaceOfMolagBalSpellPointBonusTimeLimit
+        {
+            get { return maceOfMolagBalSpellPointBonusTimeLimit; }
+        }
+
+        /// <summary>
+        /// Gets time Mace of Molag Bal strength bonus ends, read from savevars.
+        /// </summary>
+        public uint MaceOfMolagBalStrengthBonusTimeLimit
+        {
+            get { return maceOfMolagBalStrengthBonusTimeLimit; }
+        }
+
+        /// <summary>
         /// Gets whether it is daytime from savevars.
         /// </summary>
         public bool IsDay
         {
             get { return isDay; }
+        }
+
+        /// <summary>
+        /// Gets type of crime committed by player from savevars.
+        /// </summary>
+        public byte TypeOfCrimeCommitted
+        {
+            get { return typeOfCrimeCommitted; }
         }
 
         /// <summary>
@@ -163,6 +262,14 @@ namespace DaggerfallConnect.Save
         }
 
         /// <summary>
+        /// Gets current possible weather types?
+        /// </summary>
+        public byte[] WeatherTypes
+        {
+            get { return weatherTypes; }
+        }
+
+        /// <summary>
         /// Gets whether weapon is drawn from savevars.
         /// </summary>
         public bool WeaponDrawn
@@ -171,7 +278,7 @@ namespace DaggerfallConnect.Save
         }
 
         /// <summary>
-        /// Gets the cost of the last spell cast from savevars.
+        /// Gets the cost of the last readied spell from savevars.
         /// </summary>
         public short LastSpellCost
         {
@@ -276,18 +383,22 @@ namespace DaggerfallConnect.Save
             BinaryReader reader = saveVarsFile.GetReader();
 
             // Read data
+            ReadBiographyModifiers(reader);
             ReadEmperorSonName(reader);
             ReadTravelFlags(reader);
-            ReadIsDay(reader);
-            ReadInDungeonWater(reader);
-            ReadWeaponDrawn(reader);
+            ReadMaceOfMolagBalVars(reader);
+            ReadGlobalVars(reader);
             ReadLastSpellCost(reader);
+            ReadIsDay(reader);
+            ReadTypeOfCrimeCommitted(reader);
+            ReadInDungeonWater(reader);
+            ReadWeatherTypes(reader);
+            ReadWeaponDrawn(reader);
             ReadGameTime(reader);
             ReadUsingLeftHandWeapon(reader);
             ReadCheatFlags(reader);
             ReadLastSkillCheckTime(reader);
             ReadFactionData(reader);
-            ReadGlobalVars(reader);
 
             return true;
         }
@@ -295,6 +406,16 @@ namespace DaggerfallConnect.Save
         #endregion
 
         #region Private Methods
+
+        void ReadBiographyModifiers(BinaryReader reader)
+        {
+            reader.BaseStream.Position = biographyModifiersOffset;
+            biographyResistDiseaseMod = reader.ReadInt32();
+            biographyResistMagicMod = reader.ReadInt32();
+            biographyAvoidHitMod = reader.ReadInt32();
+            biographyResistPoisonMod = reader.ReadInt32();
+            biographyFatigueMod = reader.ReadInt32();
+        }
 
         void ReadEmperorSonName(BinaryReader reader)
         {
@@ -314,11 +435,38 @@ namespace DaggerfallConnect.Save
                 innsTravel = true;
         }
 
+        void ReadMaceOfMolagBalVars(BinaryReader reader)
+        {
+            reader.BaseStream.Position = maceOfMolagBalVarsOffset;
+            maceOfMolagBalSpellPointBonus = reader.ReadInt32();
+            maceOfMolagBalStrengthBonus = reader.ReadInt32();
+            maceOfMolagBalSpellPointBonusTimeLimit = reader.ReadUInt32();
+            maceOfMolagBalStrengthBonusTimeLimit = reader.ReadUInt32();
+        }
+
+        void ReadGlobalVars(BinaryReader reader)
+        {
+            // Offset 0x34F
+            globalVars = reader.ReadBytes(globalVarsCount);
+        }
+
+        void ReadLastSpellCost(BinaryReader reader)
+        {
+            // Offset 0x38F
+            lastSpellCost = reader.ReadInt16();
+        }
+
         void ReadIsDay(BinaryReader reader)
         {
             reader.BaseStream.Position = isDayOffset;
             if (reader.ReadByte() == 1)
                 isDay = true;
+        }
+
+        void ReadTypeOfCrimeCommitted(BinaryReader reader)
+        {
+            reader.BaseStream.Position = typeOfCrimeCommittedOffset;
+            typeOfCrimeCommitted = reader.ReadByte();
         }
 
         void ReadInDungeonWater(BinaryReader reader)
@@ -328,18 +476,22 @@ namespace DaggerfallConnect.Save
                 inDungeonWater = true;
         }
 
+        void ReadWeatherTypes(BinaryReader reader)
+        {
+            reader.BaseStream.Position = weatherTypesOffset;
+            weatherTypes = reader.ReadBytes(6);
+        }
+
         void ReadWeaponDrawn(BinaryReader reader)
         {
             reader.BaseStream.Position = weaponDrawnOffset;
             byte flags = reader.ReadByte();
-            if ((flags & (byte)WeaponStatusFlags.WeaponDrawn) != 0)
+            // This byte's various flags are set and cleared when in-game UIs are open and closed.
+            // It might be related to layering images onto the screen.
+            // The only value that seems to be relevant to loading a saved game is 0x40, which is set when
+            // the player's weapon is drawn.
+            if ((flags & 0x40) != 0)
                 weaponDrawn = true;
-        }
-
-        void ReadLastSpellCost(BinaryReader reader)
-        {
-            reader.BaseStream.Position = lastSpellCostOffset;
-            lastSpellCost = reader.ReadInt16();
         }
 
         void ReadGameTime(BinaryReader reader)
@@ -416,16 +568,6 @@ namespace DaggerfallConnect.Save
 
                 factions.Add(faction);
             }
-        }
-
-        void ReadGlobalVars(BinaryReader reader)
-        {
-            long currentPos = reader.BaseStream.Position;
-
-            reader.BaseStream.Position = globalVarsOffset;
-            globalVars = reader.ReadBytes(globalVarsCount);
-
-            reader.BaseStream.Position = currentPos;
         }
 
         #endregion
