@@ -185,8 +185,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 }
                 else
                 {
-                    int newWidth = (int)(labelTexture.width - leftCut - rightCut);
-                    int newHeight = (int)(labelTexture.height - topCut - bottomCut);
+                    int newWidth = (int)(totalWidth - leftCut - rightCut);
+                    int newHeight = (int)(totalHeight - topCut - bottomCut);
 
                     if ((newWidth <= 0) || (newHeight <= 0))
                         return;
