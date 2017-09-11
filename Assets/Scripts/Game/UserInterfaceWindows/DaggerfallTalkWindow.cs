@@ -148,7 +148,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Rect rectButtonTopicRight = new Rect(86, 177, 16, 9);
         VerticalScrollBar verticalScrollBarTopic = null;
         HorizontalSlider horizontalSliderTopic = null;
-        int lengthOfLongestItemInListBox;
+        //int lengthOfLongestItemInListBox;
+        int widthOfLongestItemInListBox;
 
         // textures of green/red arrow buttons for topic frame
         Texture2D arrowTopicUpRed;
@@ -341,10 +342,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             listboxTopic.OnScroll += ListBoxTopic_OnScroll;
             listboxTopic.Position = new Vector2(6, 71);
             listboxTopic.Size = new Vector2(94, 104);
-            listboxTopic.RowsDisplayed = maxNumTopicsShown;
+            //listboxTopic.RowsDisplayed = maxNumTopicsShown;
             listboxTopic.MaxCharacters = -1;
             listboxTopic.Name = "list_topic";
             listboxTopic.EnabledHorizontalScroll = true;
+            listboxTopic.VerticalScrollMode = ListBox.VerticalScrollModes.PixelWise;
+            listboxTopic.HorizontalScrollMode = ListBox.HorizontalScrollModes.PixelWise;
+            listboxTopic.RectRestrictedRenderArea = new Rect(listboxTopic.Position, listboxTopic.Size);
             //SetListItems(ref listboxTopic, ref listTopicLocation);
             listboxTopic.OnUseSelectedItem += ListboxTopic_OnUseSelectedItem;
             mainPanel.Components.Add(listboxTopic);
@@ -554,13 +558,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void UpdateScrollBarsTopic()
         {
-            verticalScrollBarTopic.DisplayUnits = Math.Min(maxNumTopicsShown, listboxTopic.Count);
-            verticalScrollBarTopic.TotalUnits = listboxTopic.Count;
+            verticalScrollBarTopic.DisplayUnits = (int)listboxTopic.Size.y; //Math.Min(maxNumTopicsShown, listboxTopic.Count);
+            verticalScrollBarTopic.TotalUnits = listboxTopic.HeightContent();  //listboxTopic.Count;
             verticalScrollBarTopic.ScrollIndex = 0;
             verticalScrollBarTopic.Update();
 
-            horizontalSliderTopic.DisplayUnits = maxNumCharactersOfTopicShown;
-            horizontalSliderTopic.TotalUnits = lengthOfLongestItemInListBox;
+            horizontalSliderTopic.DisplayUnits = (int)listboxTopic.Size.x; //maxNumCharactersOfTopicShown;
+            horizontalSliderTopic.TotalUnits = listboxTopic.WidthContent();  //lengthOfLongestItemInListBox;
             horizontalSliderTopic.ScrollIndex = 0;
             horizontalSliderTopic.Update();
         }
@@ -579,13 +583,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             int verticalScrollIndex = GetSafeScrollIndex(verticalScrollBarTopic);
             // Update scroller buttons
-            UpdateListScrollerButtons(verticalScrollBarTopic, verticalScrollIndex, listboxTopic.Count, buttonTopicUp, buttonTopicDown);
+            UpdateListScrollerButtons(verticalScrollBarTopic, verticalScrollIndex, listboxTopic.HeightContent(), buttonTopicUp, buttonTopicDown);
             buttonTopicUp.Update();
             buttonTopicDown.Update();
 
-            int horizontalScrollIndex = horizontalSliderTopic.ScrollIndex;
+            int horizontalScrollIndex = GetSafeScrollIndex(horizontalSliderTopic);
             // Update scroller buttons
-            UpdateListScrollerButtonsLeftRight(horizontalScrollIndex, lengthOfLongestItemInListBox, buttonTopicLeft, buttonTopicRight);
+            UpdateListScrollerButtonsLeftRight(horizontalSliderTopic, horizontalScrollIndex, widthOfLongestItemInListBox, buttonTopicLeft, buttonTopicRight);
             buttonTopicLeft.Update();
             buttonTopicRight.Update();
         }
@@ -617,15 +621,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
 
             // compute length of longest item in listbox from current list items...
-            lengthOfLongestItemInListBox = listboxTopic.LengthOfLongestItem();
+            //lengthOfLongestItemInListBox = listboxTopic.LengthOfLongestItem();
+            widthOfLongestItemInListBox = listboxTopic.WidthContent();
             // update listboxTopic.MaxHorizontalScrollIndex            
-            listboxTopic.MaxHorizontalScrollIndex = Math.Max(0, lengthOfLongestItemInListBox - maxNumCharactersOfTopicShown);
+            //listboxTopic.MaxHorizontalScrollIndex = Math.Max(0, lengthOfLongestItemInListBox - maxNumCharactersOfTopicShown);
+            listboxTopic.MaxHorizontalScrollIndex = Math.Max(0, widthOfLongestItemInListBox - (int)listboxTopic.Size.x);
         }
 
         void ClearListboxTopics()
         {
             listboxTopic.ClearItems();
-            lengthOfLongestItemInListBox = 0;
+            //lengthOfLongestItemInListBox = 0;
+            widthOfLongestItemInListBox = 0;
             listboxTopic.MaxHorizontalScrollIndex = 0;
         }
 
@@ -879,7 +886,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         // Updates red/green state of left/right scroller buttons
-        void UpdateListScrollerButtonsLeftRight(int index, int count, Button leftButton, Button rightButton)
+        void UpdateListScrollerButtonsLeftRight(HorizontalSlider horizontalSlider, int index, int count, Button leftButton, Button rightButton)
         {
             // Update up button
             if (index > 0)
@@ -888,13 +895,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 leftButton.BackgroundTexture = arrowTopicLeftRed;
 
             // Update down button
-            if (index < (count - horizontalSliderTopic.DisplayUnits))
+            if (index < (count - horizontalSlider.DisplayUnits))
                 rightButton.BackgroundTexture = arrowTopicRightGreen;
             else
                 rightButton.BackgroundTexture = arrowTopicRightRed;
 
             // No items above or below
-            if (count <= horizontalSliderTopic.DisplayUnits)
+            if (count <= horizontalSlider.DisplayUnits)
             {
                 leftButton.BackgroundTexture = arrowTopicLeftRed;
                 rightButton.BackgroundTexture = arrowTopicRightRed;
@@ -949,11 +956,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
         private void VerticalScrollBarTopic_OnScroll()
         {
             // Update scroller
-            verticalScrollBarTopic.TotalUnits = listboxTopic.Count;
+            verticalScrollBarTopic.TotalUnits = listboxTopic.HeightContent(); //listboxTopic.Count;
             int scrollIndex = GetSafeScrollIndex(verticalScrollBarTopic);
-            
+
             // Update scroller buttons
-            UpdateListScrollerButtons(verticalScrollBarTopic, scrollIndex, listboxTopic.Count, buttonTopicUp, buttonTopicDown);
+            //UpdateListScrollerButtons(verticalScrollBarTopic, scrollIndex, listboxTopic.Count, buttonTopicUp, buttonTopicDown);
+            UpdateListScrollerButtons(verticalScrollBarTopic, scrollIndex, listboxTopic.HeightContent(), buttonTopicUp, buttonTopicDown);
 
             listboxTopic.ScrollIndex = scrollIndex;
             listboxTopic.Update();
@@ -962,11 +970,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
         private void HorizontalSliderTopic_OnScroll()
         {
             // Update scroller
-            horizontalSliderTopic.TotalUnits = lengthOfLongestItemInListBox;
+            horizontalSliderTopic.TotalUnits = widthOfLongestItemInListBox; //lengthOfLongestItemInListBox;
             int horizontalScrollIndex = GetSafeScrollIndex(horizontalSliderTopic); // horizontalSliderTopicWindow.ScrollIndex;
 
             // Update scroller buttons
-            UpdateListScrollerButtonsLeftRight(horizontalScrollIndex, lengthOfLongestItemInListBox, buttonTopicLeft, buttonTopicRight);
+            //UpdateListScrollerButtonsLeftRight(horizontalScrollIndex, lengthOfLongestItemInListBox, buttonTopicLeft, buttonTopicRight);
+            UpdateListScrollerButtonsLeftRight(horizontalSliderTopic, horizontalScrollIndex, widthOfLongestItemInListBox, buttonTopicLeft, buttonTopicRight);
 
             listboxTopic.HorizontalScrollIndex = horizontalScrollIndex;
             listboxTopic.Update();
@@ -1017,12 +1026,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private void ButtonTopicUp_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            verticalScrollBarTopic.ScrollIndex--;
+            verticalScrollBarTopic.ScrollIndex -=5;
         }
 
         private void ButtonTopicDown_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            verticalScrollBarTopic.ScrollIndex++;
+            verticalScrollBarTopic.ScrollIndex +=5;
         }
 
         private void ButtonTopicLeft_OnMouseClick(BaseScreenComponent sender, Vector2 position)
