@@ -60,6 +60,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
         VerticalScrollModes verticalScrollMode = VerticalScrollModes.EntryWise;
 
+        // HorizontalScrollMode.PixelWise is only applied if verticalScrollMode == VerticalScrollModes.PixelWise, otherwise fallback HorizontalScrollMode.Charwise is applied
+        public enum HorizontalScrollModes
+        {
+            CharWise,
+            PixelWise
+        }
+        HorizontalScrollModes horizontalScrollMode = HorizontalScrollModes.CharWise;
+
         // ListItem class allows for each item to have unique text colors if necessary (needed e.g. in talk window for question and answer color flavors)
         public class ListItem
         {
@@ -222,6 +230,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set { verticalScrollMode = value; }
         }
 
+        public HorizontalScrollModes HorizontalScrollMode
+        {
+            get { return horizontalScrollMode; }
+            set { horizontalScrollMode = value; }
+        }
+
         #endregion
 
         #region Overrides
@@ -261,9 +275,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     {
                         currentLine += label.NumTextLines;
                         continue;
-                    }                    
+                    }
 
-                    currentLine += label.NumTextLines;                  
+                    currentLine += label.NumTextLines;                
                     label.StartCharacterIndex = horizontalScrollIndex;
                     label.UpdateLabelTexture();
                     if (i == selectedIndex)
@@ -299,8 +313,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
                         y += label.TextHeight + rowSpacing;
                         continue;
                     }
-                               
-                    label.StartCharacterIndex = horizontalScrollIndex;
+
+                    if (horizontalScrollMode == HorizontalScrollModes.CharWise)
+                        label.StartCharacterIndex = horizontalScrollIndex;
+                    else if (horizontalScrollMode == HorizontalScrollModes.PixelWise)
+                        x = -horizontalScrollIndex;
                     label.UpdateLabelTexture();
                     if (i == selectedIndex)
                     {
@@ -403,7 +420,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 textLabel.RectRestrictedRenderArea = this.rectRestrictedRenderArea;
             }
-            textLabel.MaxWidth = (int)Size.x;
+            if (horizontalScrollMode == HorizontalScrollModes.CharWise)
+                textLabel.MaxWidth = (int)Size.x;
+            else if (horizontalScrollMode == HorizontalScrollModes.PixelWise)
+                textLabel.MaxWidth = -1;
             textLabel.AutoSize = AutoSizeModes.None;
             textLabel.HorizontalAlignment = rowAlignment;
             textLabel.Font = font;
@@ -482,6 +502,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     sumHeight += rowSpacing;
             }
             return sumHeight;
+        }
+
+        public int WidthContent()
+        {
+            int width = 0;
+            for (int i = 0; i < listItems.Count; i++)
+            {
+                width = Math.Max(width, listItems[i].textLabel.TextWidth);
+            }
+            return width;
         }
 
         public void SelectPrevious()
