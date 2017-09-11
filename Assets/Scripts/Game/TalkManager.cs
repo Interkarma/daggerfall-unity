@@ -83,28 +83,41 @@ namespace DaggerfallWorkshop.Game
         #endregion
 
         #region Fields        
+     
+        public enum ListItemType
+        {
+            Item,
+            ItemGroup,
+            Navigation
+        }
 
-        List<string> listTopicLocation;
-        List<string> listTopicPeople;
-        List<string> listTopicThings;
+        public struct ListItem
+        {
+            public ListItemType type; // list item can be either a normal item, a navigation item (to get to parent list) or an item group (contains list of child items)
+            public string caption;
+            public List<ListItem> listChildItems; // null if type == ListItemType.Navigation or ListItemType.Item, only contains a list if type == ListItemType.ItemGroup
+            public List<ListItem> listParentItems; // null if type == ListItemType.ItemGroup or ListItemType.Item, only contains a list if type == ListItemType.Navigation
+        }
 
-        List<string> listAnswers;
+        List<ListItem> listTopicLocation;
+        List<ListItem> listTopicPeople;
+        List<ListItem> listTopicThings;
 
         #endregion
 
         #region Properties
 
-        public List<string> ListTopicLocation
+        public List<ListItem> ListTopicLocation
         {
             get { return listTopicLocation; }
         }
 
-        public List<string> ListTopicPeople
+        public List<ListItem> ListTopicPeople
         {
             get { return listTopicPeople; }
         }
 
-        public List<string> ListTopicThings
+        public List<ListItem> ListTopicThings
         {
             get { return listTopicThings; }
         }
@@ -155,22 +168,57 @@ namespace DaggerfallWorkshop.Game
 
         void PrepareTestTopicLists()
         {
-            listTopicLocation = new List<string>();
-            for (int i = 0; i < 50; i++)
+            listTopicLocation = new List<ListItem>();
+            ListItem itemGroup;
+            for (int i = 0; i < 20; i++)
             {
-                listTopicLocation.Add("location " + i + " test string");
+                itemGroup = new ListItem();
+                itemGroup.type = ListItemType.ItemGroup;
+                itemGroup.caption = "shop type " + i + " group";
+                listTopicLocation.Add(itemGroup);
             }
+            itemGroup = new ListItem();
+            itemGroup.type = ListItemType.ItemGroup;
+            itemGroup.caption = "General";
+            listTopicLocation.Add(itemGroup);
+            itemGroup = new ListItem();
+            itemGroup.type = ListItemType.ItemGroup;
+            itemGroup.caption = "Regional";
+            itemGroup.listChildItems = new List<ListItem>();            
+            for (int i = 0; i < 7; i++)
+            {
+                ListItem item;
+                if (i == 0)                   
+                {
+                    item = new ListItem();
+                    item.type = ListItemType.Navigation;
+                    item.caption = "Previous List";
+                    item.listParentItems = listTopicLocation;
+                    itemGroup.listChildItems.Add(item);
+                }
+                item = new ListItem();
+                item.type = ListItemType.Item;
+                item.caption = "inner item " + i + " in group";
+                itemGroup.listChildItems.Add(item);
+            }
+            listTopicLocation.Add(itemGroup);
 
-            listTopicPeople = new List<string>();
+            listTopicPeople = new List<ListItem>();
             for (int i = 0; i < 12; i++)
             {
-                listTopicPeople.Add("dummy person " + i + " (here will be the name of the person later on)");
+                ListItem item = new ListItem();
+                item.type = ListItemType.ItemGroup;
+                item.caption = "dummy person " + i + " (here will be the name of the person later on)";
+                listTopicPeople.Add(item);
             }
 
-            listTopicThings = new List<string>();
+            listTopicThings = new List<ListItem>();
             for (int i = 0; i < 30; i++)
             {
-                listTopicThings.Add("thing " + i);
+                ListItem item = new ListItem();
+                item.type = ListItemType.ItemGroup;
+                item.caption = "thing " + i;
+                listTopicThings.Add(item);
             }
         }
 
