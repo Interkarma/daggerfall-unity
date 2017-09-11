@@ -1106,7 +1106,7 @@ namespace DaggerfallWorkshop.Game.Questing
         public int SetMainQuestStage(int stage)
         {
             // Clamp to valid range
-            stage = Mathf.Clamp(stage, 1, 2);
+            stage = Mathf.Clamp(stage, 1, 3);
 
             // Setup current stage
             ClearMainQuestState();
@@ -1124,6 +1124,13 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 GameManager.Instance.PlayerEntity.Level = 3;
                 InstantiateQuest("S0000999");
+                InstantiateQuest("S0000977");
+            }
+            else if (stage == 3)
+            {
+                // From stage 3 using a custom backbone quest to control offers and prerequisites
+                GameManager.Instance.PlayerEntity.Level = 5;
+                InstantiateQuest("__MQSTAGE03");
                 InstantiateQuest("S0000977");
             }
 
