@@ -770,7 +770,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             textureBackground.SetPixels(4, textureBackground.height - 56 - 10, 107, 10, textureCategoryWorkGrayedOut);
             textureBackground.Apply(false);
 
-            SetListboxTopics(ref listboxTopic, TalkManager.Instance.ListTopicPeople);
+            SetListboxTopics(ref listboxTopic, TalkManager.Instance.ListTopicPerson);
             listboxTopic.Update();
 
             UpdateScrollBarsTopic();
@@ -927,8 +927,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
             else if (listItem.type == TalkManager.ListItemType.Item)
             {
-                string question = "question for \"" + listCurrentTopics[index].caption + "\"";
-                string answer = "answer for \"" + listCurrentTopics[index].caption + "\"";
+                string question = DaggerfallUnity.TextProvider.GetRandomText(7226); //"question for \"" + listCurrentTopics[index].caption + "\"";
+                string answer = DaggerfallUnity.TextProvider.GetRandomText(7285) + DaggerfallUnity.TextProvider.GetRandomText(7332); //"answer for \"" + listCurrentTopics[index].caption + "\"";
                 ListBox.ListItem textLabelQuestion;
                 ListBox.ListItem textLabelAnswer;
                 listboxConversation.AddItem(question, out textLabelQuestion);
@@ -938,6 +938,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 textLabelAnswer.selectedTextColor = textcolorHighlighted;
 
                 listboxConversation.SelectedIndex = listboxConversation.Count - 1; // always highlight the new answer
+
+                UpdateScrollBarConversation();
+                UpdateScrollButtonsConversation();
             }
         }
 

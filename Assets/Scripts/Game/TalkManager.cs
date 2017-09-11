@@ -91,16 +91,28 @@ namespace DaggerfallWorkshop.Game
             Navigation
         }
 
-        public struct ListItem
+        public enum QuestionType
         {
-            public ListItemType type; // list item can be either a normal item, a navigation item (to get to parent list) or an item group (contains list of child items)
-            public string caption;
-            public List<ListItem> listChildItems; // null if type == ListItemType.Navigation or ListItemType.Item, only contains a list if type == ListItemType.ItemGroup
-            public List<ListItem> listParentItems; // null if type == ListItemType.ItemGroup or ListItemType.Item, only contains a list if type == ListItemType.Navigation
+            NoQuestion, // used for list entries that are not of ListItemType item
+            News,
+            Work,
+            LocalBuilding,
+            Regional,
+            Person,
+            Thing
+        }
+
+        public class ListItem
+        {
+            public ListItemType type = ListItemType.Item; // list item can be either a normal item, a navigation item (to get to parent list) or an item group (contains list of child items)
+            public string caption = "undefined";
+            public QuestionType questionType = QuestionType.NoQuestion;
+            public List<ListItem> listChildItems = null; // null if type == ListItemType.Navigation or ListItemType.Item, only contains a list if type == ListItemType.ItemGroup
+            public List<ListItem> listParentItems = null; // null if type == ListItemType.ItemGroup or ListItemType.Item, only contains a list if type == ListItemType.Navigation
         }
 
         List<ListItem> listTopicLocation;
-        List<ListItem> listTopicPeople;
+        List<ListItem> listTopicPerson;
         List<ListItem> listTopicThings;
 
         #endregion
@@ -112,9 +124,9 @@ namespace DaggerfallWorkshop.Game
             get { return listTopicLocation; }
         }
 
-        public List<ListItem> ListTopicPeople
+        public List<ListItem> ListTopicPerson
         {
-            get { return listTopicPeople; }
+            get { return listTopicPerson; }
         }
 
         public List<ListItem> ListTopicThings
@@ -173,7 +185,7 @@ namespace DaggerfallWorkshop.Game
             for (int i = 0; i < 20; i++)
             {
                 itemGroup = new ListItem();
-                itemGroup.type = ListItemType.ItemGroup;
+                itemGroup.type = ListItemType.ItemGroup;                
                 itemGroup.caption = "shop type " + i + " group";
                 listTopicLocation.Add(itemGroup);
             }
@@ -198,25 +210,28 @@ namespace DaggerfallWorkshop.Game
                 }
                 item = new ListItem();
                 item.type = ListItemType.Item;
+                item.questionType = QuestionType.Regional;
                 item.caption = "inner item " + i + " in group";
                 itemGroup.listChildItems.Add(item);
             }
             listTopicLocation.Add(itemGroup);
 
-            listTopicPeople = new List<ListItem>();
+            listTopicPerson = new List<ListItem>();
             for (int i = 0; i < 12; i++)
             {
                 ListItem item = new ListItem();
-                item.type = ListItemType.ItemGroup;
+                item.type = ListItemType.Item;
+                item.questionType = QuestionType.Person;
                 item.caption = "dummy person " + i + " (here will be the name of the person later on)";
-                listTopicPeople.Add(item);
+                listTopicPerson.Add(item);
             }
 
             listTopicThings = new List<ListItem>();
             for (int i = 0; i < 30; i++)
             {
                 ListItem item = new ListItem();
-                item.type = ListItemType.ItemGroup;
+                item.type = ListItemType.Item;
+                item.questionType = QuestionType.Thing;
                 item.caption = "thing " + i;
                 listTopicThings.Add(item);
             }
