@@ -295,7 +295,7 @@ namespace DaggerfallWorkshop.Game.Utility
             // Move the mobile transform a half-tile into centre so it appears to be properly aligned
             Vector3 result = locationOrigin + offset;
             result.x += HalfTile;
-            result.z += HalfTile;
+            result.z -= HalfTile;
 
             // Attempt to refine Y by sampling terrain at this map pixel position
             if (refineY)
