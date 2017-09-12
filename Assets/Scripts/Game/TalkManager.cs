@@ -103,36 +103,48 @@ namespace DaggerfallWorkshop.Game
             Thing
         }
 
+        public class Ref<T> where T : class
+        {
+            public T Value { get; set; }
+        }
+
         public class ListItem
         {
             public ListItemType type = ListItemType.Item; // list item can be either a normal item, a navigation item (to get to parent list) or an item group (contains list of child items)
             public string caption = "undefined";
             public QuestionType questionType = QuestionType.NoQuestion;
-            public List<ListItem> listChildItems = null; // null if type == ListItemType.Navigation or ListItemType.Item, only contains a list if type == ListItemType.ItemGroup
-            public List<ListItem> listParentItems = null; // null if type == ListItemType.ItemGroup or ListItemType.Item, only contains a list if type == ListItemType.Navigation
+            public Ref<List<ListItem>> listChildItems = null; // null if type == ListItemType.Navigation or ListItemType.Item, only contains a list if type == ListItemType.ItemGroup
+            public Ref<List<ListItem>> listParentItems = null; // null if type == ListItemType.ItemGroup or ListItemType.Item, only contains a list if type == ListItemType.Navigation
         }
 
         List<ListItem> listTopicLocation;
         List<ListItem> listTopicPerson;
-        List<ListItem> listTopicThings;
+        List<ListItem> listTopicThing;
+        
+        struct BuildingInfo
+        {
+            public string name;
+            public DFLocation.BuildingTypes buildingType;
+        }       
+        List<BuildingInfo> listBuildings = null;
 
         #endregion
 
         #region Properties
 
-        public List<ListItem> ListTopicLocation
+        public Ref<List<ListItem>> ListTopicLocation
         {
-            get { return listTopicLocation; }
+            get { return new Ref<List<ListItem>> { Value = listTopicLocation }; }
         }
 
-        public List<ListItem> ListTopicPerson
+        public Ref<List<ListItem>> ListTopicPerson
         {
-            get { return listTopicPerson; }
+            get { return new Ref<List<ListItem>> { Value = listTopicPerson }; }
         }
 
-        public List<ListItem> ListTopicThings
+        public Ref<List<ListItem>> ListTopicThings
         {
-            get { return listTopicThings; }
+            get { return new Ref<List<ListItem>> { Value = listTopicThing }; }
         }
 
         #endregion
@@ -143,7 +155,7 @@ namespace DaggerfallWorkshop.Game
         {
             SetupSingleton();
 
-            PrepareTestTopicLists();
+            AssembleTopicLists();
         }
 
         void OnDestroy()
@@ -192,44 +204,224 @@ namespace DaggerfallWorkshop.Game
 
         #region Private Methods
 
-        void PrepareTestTopicLists()
+        void GetBuildingList()
+        {
+            listBuildings = new List<BuildingInfo>();
+
+            ContentReader.MapSummary mapSummary;
+            DFPosition mapPixel = GameManager.Instance.PlayerGPS.CurrentMapPixel;
+            if (!DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out mapSummary))
+            {
+                // no location found
+                return; // do nothing
+            }
+            DFLocation location = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(mapSummary.RegionIndex, mapSummary.MapIndex);
+            if (!location.Loaded)
+            {
+                // Location not loaded, something went wrong
+                DaggerfallUnity.LogMessage("error when loading location for in TalkManager.GetBuildingList", true);
+            }
+
+            DFBlock[] blocks;
+            RMBLayout.GetLocationBuildingData(location, out blocks);
+            int width = location.Exterior.ExteriorData.Width;
+            int height = location.Exterior.ExteriorData.Height;
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    int index = y * width + x;
+                    BuildingSummary[] buildingsInBlock = RMBLayout.GetBuildingData(blocks[index], x, y);
+
+                    foreach (BuildingSummary buildingSummary in buildingsInBlock)
+                    {
+                        try
+                        {
+                            string locationName = BuildingNames.GetName(buildingSummary.NameSeed, buildingSummary.BuildingType, buildingSummary.FactionId, location.Name, location.RegionName);
+                            BuildingInfo item;
+                            item.buildingType = buildingSummary.BuildingType;
+                            item.name = locationName;
+                            listBuildings.Add(item);
+                        }
+                        catch (Exception e)
+                        {
+                            string exceptionMessage = String.Format("exception occured in function BuildingNames.GetName (exception message: " + e.Message + @") with params: 
+                                                                        seed: {0}, type: {1}, factionID: {2}, locationName: {3}, regionName: {4}",
+                                                                        buildingSummary.NameSeed, buildingSummary.BuildingType, buildingSummary.FactionId, location.Name, location.RegionName);
+                            DaggerfallUnity.LogMessage(exceptionMessage, true);
+
+                        }
+                    }
+                }
+            }
+        }
+
+        string BuildingTypeToGroupString(DFLocation.BuildingTypes buildingType)
+        {
+            switch (buildingType)
+            {
+                case DFLocation.BuildingTypes.Alchemist:
+                    return ("Alchemists");
+                case DFLocation.BuildingTypes.Armorer:
+                    return ("Armorers");
+                case DFLocation.BuildingTypes.Bank:
+                    return ("Banks");
+                case DFLocation.BuildingTypes.Bookseller:
+                    return ("Bookstores");
+                case DFLocation.BuildingTypes.ClothingStore:
+                    return ("Clothing stores");
+                case DFLocation.BuildingTypes.GemStore:
+                    return ("Gem stores");
+                case DFLocation.BuildingTypes.GeneralStore:
+                    return ("General stores");
+                case DFLocation.BuildingTypes.GuildHall:
+                    return ("Guilds");
+                case DFLocation.BuildingTypes.Library:
+                    return ("Libraries");
+                case DFLocation.BuildingTypes.PawnShop:
+                    return ("Pawn shops");
+                case DFLocation.BuildingTypes.Tavern:
+                    return ("Taverns");
+                case DFLocation.BuildingTypes.WeaponSmith:
+                    return ("Weapon smiths");
+                case DFLocation.BuildingTypes.Temple:
+                    return ("Local temples");
+                default:
+                    return ("");
+            }
+        }
+
+        bool checkBuildingTypeInSkipList(DFLocation.BuildingTypes buildingType)
+        {
+            if (buildingType == DFLocation.BuildingTypes.AllValid ||
+                buildingType == DFLocation.BuildingTypes.FurnitureStore ||
+                buildingType == DFLocation.BuildingTypes.House1 ||
+                buildingType == DFLocation.BuildingTypes.House2 ||
+                buildingType == DFLocation.BuildingTypes.House3 ||
+                buildingType == DFLocation.BuildingTypes.House4 ||
+                buildingType == DFLocation.BuildingTypes.House5 ||
+                buildingType == DFLocation.BuildingTypes.House6 ||
+                buildingType == DFLocation.BuildingTypes.HouseForSale ||
+                buildingType == DFLocation.BuildingTypes.Palace ||
+                buildingType == DFLocation.BuildingTypes.Ship ||
+                buildingType == DFLocation.BuildingTypes.Special1 ||
+                buildingType == DFLocation.BuildingTypes.Special2 ||
+                buildingType == DFLocation.BuildingTypes.Special3 ||
+                buildingType == DFLocation.BuildingTypes.Special4 ||
+                buildingType == DFLocation.BuildingTypes.Town23 ||
+                buildingType == DFLocation.BuildingTypes.Town4)
+                return true;
+            return false;
+        }
+
+        void AssembleTopicLists()
+        {
+            AssembleTopicListWhereIs();
+            AssembleTopicListLocation();
+            AssembleTopicListPerson();
+            AssembleTopicListThing();
+        }
+
+        void AssembleTopicListWhereIs()
+        {
+
+        }
+
+        void AssembleTopicListLocation()
         {
             listTopicLocation = new List<ListItem>();
-            ListItem itemGroup;
-            for (int i = 0; i < 20; i++)
-            {
-                itemGroup = new ListItem();
-                itemGroup.type = ListItemType.ItemGroup;                
-                itemGroup.caption = "shop type " + i + " group";
-                listTopicLocation.Add(itemGroup);
+
+            GetBuildingList();
+
+            ListItem itemBuildingTypeGroup;
+            List<BuildingInfo> matchingBuildings = new List<BuildingInfo>();
+
+            foreach (DFLocation.BuildingTypes buildingType in Enum.GetValues(typeof(DFLocation.BuildingTypes)))
+            {                
+                matchingBuildings = listBuildings.FindAll(x => x.buildingType == buildingType);
+                if (checkBuildingTypeInSkipList(buildingType))
+                    continue;
+
+                if (matchingBuildings.Count > 0)
+                {
+                    itemBuildingTypeGroup = new ListItem();
+                    itemBuildingTypeGroup.type = ListItemType.ItemGroup;
+                    itemBuildingTypeGroup.caption = BuildingTypeToGroupString(buildingType);
+
+                    itemBuildingTypeGroup.listChildItems = new Ref<List<ListItem>> { Value = new List<ListItem>() };
+
+                    ListItem itemPreviousList = new ListItem();
+                    itemPreviousList.type = ListItemType.Navigation;
+                    itemPreviousList.caption = "Previous List";
+                    itemPreviousList.listParentItems = new Ref<List<ListItem>> { Value = listTopicLocation };                
+                    itemBuildingTypeGroup.listChildItems.Value.Add(itemPreviousList);
+
+                    foreach (BuildingInfo buildingInfo in matchingBuildings)
+                    {
+                        ListItem item = new ListItem();
+                        item.type = ListItemType.Item;
+                        item.questionType = QuestionType.LocalBuilding;
+                        item.caption = buildingInfo.name;
+                        itemBuildingTypeGroup.listChildItems.Value.Add(item);
+                    }
+
+                    listTopicLocation.Add(itemBuildingTypeGroup);
+                }
             }
-            itemGroup = new ListItem();
-            itemGroup.type = ListItemType.ItemGroup;
-            itemGroup.caption = "General";
-            listTopicLocation.Add(itemGroup);
-            itemGroup = new ListItem();
-            itemGroup.type = ListItemType.ItemGroup;
-            itemGroup.caption = "Regional";
-            itemGroup.listChildItems = new List<ListItem>();            
+            
+            matchingBuildings = listBuildings.FindAll(x => x.buildingType == DFLocation.BuildingTypes.Palace);
+            if (matchingBuildings.Count > 0)
+            {
+                itemBuildingTypeGroup = new ListItem();
+                itemBuildingTypeGroup.type = ListItemType.ItemGroup;
+                itemBuildingTypeGroup.caption = "General";
+                listTopicLocation.Add(itemBuildingTypeGroup);
+
+                ListItem itemPreviousList;
+                itemPreviousList = new ListItem();
+                itemPreviousList.type = ListItemType.Navigation;
+                itemPreviousList.caption = "Previous List";
+                itemPreviousList.listParentItems = new Ref<List<ListItem>> { Value = listTopicLocation };
+                itemBuildingTypeGroup.listChildItems = new Ref<List<ListItem>> { Value = new List<ListItem>() };
+                itemBuildingTypeGroup.listChildItems.Value.Add(itemPreviousList);
+
+                foreach (BuildingInfo buildingInfo in matchingBuildings)
+                {
+                    ListItem item = new ListItem();
+                    item.type = ListItemType.Item;
+                    item.questionType = QuestionType.LocalBuilding;
+                    item.caption = buildingInfo.name;
+                    itemBuildingTypeGroup.listChildItems.Value.Add(item);
+                }
+            }
+
+            itemBuildingTypeGroup = new ListItem();
+            itemBuildingTypeGroup.type = ListItemType.ItemGroup;
+            itemBuildingTypeGroup.caption = "Regional";
+            itemBuildingTypeGroup.listChildItems = new Ref<List<ListItem>> { Value = new List<ListItem>() };
             for (int i = 0; i < 7; i++)
             {
                 ListItem item;
-                if (i == 0)                   
+                if (i == 0)
                 {
                     item = new ListItem();
                     item.type = ListItemType.Navigation;
                     item.caption = "Previous List";
-                    item.listParentItems = listTopicLocation;
-                    itemGroup.listChildItems.Add(item);
+                    item.listParentItems = new Ref<List<ListItem>> { Value = listTopicLocation };
+                    itemBuildingTypeGroup.listChildItems.Value.Add(item);
                 }
                 item = new ListItem();
                 item.type = ListItemType.Item;
                 item.questionType = QuestionType.Regional;
-                item.caption = "inner item " + i + " in group";
-                itemGroup.listChildItems.Add(item);
+                item.caption = "regional temple (placeholder) " + i;
+                itemBuildingTypeGroup.listChildItems.Value.Add(item);
             }
-            listTopicLocation.Add(itemGroup);
+            listTopicLocation.Add(itemBuildingTypeGroup);            
+        }
 
+        void AssembleTopicListPerson()
+        {
             listTopicPerson = new List<ListItem>();
             for (int i = 0; i < 12; i++)
             {
@@ -239,15 +431,18 @@ namespace DaggerfallWorkshop.Game
                 item.caption = "dummy person " + i + " (here will be the name of the person later on)";
                 listTopicPerson.Add(item);
             }
+        }
 
-            listTopicThings = new List<ListItem>();
+        void AssembleTopicListThing()
+        {
+            listTopicThing = new List<ListItem>();
             for (int i = 0; i < 30; i++)
             {
                 ListItem item = new ListItem();
                 item.type = ListItemType.Item;
                 item.questionType = QuestionType.Thing;
                 item.caption = "thing " + i;
-                listTopicThings.Add(item);
+                listTopicThing.Add(item);
             }
         }
 
