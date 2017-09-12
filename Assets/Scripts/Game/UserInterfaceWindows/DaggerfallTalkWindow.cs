@@ -42,6 +42,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         //const int maxNumAnswerLinesShown = 15; // max number of lines displayed in scrolling area of answers
 
+        Color textcolorPlayerSays = new Color(0.698f, 0.812f, 1.0f);
+
         Color textcolorQuestion = new Color(0.698f, 0.812f, 1.0f);
         Color textcolorQuestionHighlighted = new Color(0.8f, 0.9f, 1.0f);
         Color textcolorHighlighted = Color.white;
@@ -65,13 +67,27 @@ namespace DaggerfallWorkshop.Game.UserInterface
         };
         TalkCategory selectedTalkCategory = TalkCategory.Location;
 
-        enum TalkTone
+        public enum TalkTone
         {
             Polite,
             Normal,
             Blunt
         };
-        TalkTone selectedTalkTone = TalkTone.Polite;
+        TalkTone selectedTalkTone = TalkTone.Normal;
+
+        static public int TalkToneToIndex(TalkTone talkTone)
+        {
+            switch (talkTone)
+            {
+                case TalkTone.Polite:
+                    return 0;
+                default:
+                case TalkTone.Normal:
+                    return 1;
+                case TalkTone.Blunt:
+                    return 2;
+            }
+        }
 
         List<TalkManager.ListItem> listCurrentTopics; // current topic list metadata of displayed topic list in topic frame
 
@@ -100,7 +116,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         Panel mainPanel;
 
-        TextLabel pcSay;
+        TextLabel textlabelPlayerSays;
+        string currentQuestion = "";
 
         // alignment stuff for checkbox buttons
         Panel panelTone; // used as selection marker
@@ -197,7 +214,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 verticalScrollBarConversation.ScrollIndex = 0;
                 UpdateScrollBarConversation();
-            }            
+            }
+
+            selectedTalkTone = TalkTone.Normal;
+            currentQuestion = "";
         }
 
         public override void OnPop()
@@ -278,7 +298,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             labelNameNPC.Position = new Vector2(0, 0);
             labelNameNPC.Size = new Vector2(197, 10);
             labelNameNPC.Name = "label_npcName";
-            labelNameNPC.MaxCharacters = 32;
+            labelNameNPC.MaxWidth = -1;
+            labelNameNPC.MaxCharacters = -1;
             labelNameNPC.HorizontalAlignment = HorizontalAlignment.Center;
             labelNameNPC.VerticalAlignment = VerticalAlignment.Middle;
             panelNameNPC.Components.Add(labelNameNPC);
@@ -329,14 +350,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
             textureCategoryWorkHighlighted = textureBackground.GetPixels(4, textureBackground.height - 56 - 10, 107, 10);
             textureCategoryWorkGrayedOut = textureGrayedOutCategories.GetPixels(0, 0, 107, 10);
 
-            /*
-            pcSay = new TextLabel();
-            pcSay.Position = new Vector2(150, 14);
-            pcSay.Size = new Vector2(60, 13);
-            pcSay.Name = "accnt_total_label";
-            pcSay.MaxCharacters = 13;
-            mainPanel.Components.Add(pcSay);
-            */          
+            textlabelPlayerSays = new TextLabel();
+            textlabelPlayerSays.Position = new Vector2(123, 8);
+            textlabelPlayerSays.Size = new Vector2(124, 38);
+            textlabelPlayerSays.Name = "label_player_says";
+            textlabelPlayerSays.MaxCharacters = -1;
+            textlabelPlayerSays.WrapText = true;
+            textlabelPlayerSays.WrapWords = true;
+            textlabelPlayerSays.TextColor = textcolorPlayerSays;
+            mainPanel.Components.Add(textlabelPlayerSays);                   
 
             listboxTopic = new ListBox();
             listboxTopic.OnScroll += ListBoxTopic_OnScroll;
@@ -351,6 +373,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             listboxTopic.RectRestrictedRenderArea = new Rect(listboxTopic.Position, listboxTopic.Size);
             //SetListItems(ref listboxTopic, ref listTopicLocation);
             listboxTopic.OnUseSelectedItem += ListboxTopic_OnUseSelectedItem;
+            listboxTopic.OnSelectItem += ListboxTopic_OnSelectItem;
             mainPanel.Components.Add(listboxTopic);
 
             // Cut out red up/down arrows (topic)
@@ -392,8 +415,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             arrowTopicRightGreen.SetPixels32(ImageProcessing.FlipHorizontallyColors(ref rotated, arrowTopicRightGreen.width, arrowTopicRightGreen.height));
             arrowTopicRightGreen.Apply(false);
             arrowTopicRightGreen.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
-
-
 
             // Cut out red up/down arrows (conversation)           
             arrowConversationUpRed = ImageReader.GetSubTexture(redArrowsTexture, upArrowRectInSrcImg);
@@ -908,6 +929,23 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
+        void UpdateQuestion(int index)
+        {
+            // TODO: work section handling
+
+            if (index < 0 || index >= listboxTopic.Count)
+                return;
+
+            TalkManager.ListItem listItem = listCurrentTopics[index];
+
+            if (listItem.type == TalkManager.ListItemType.Item)
+                currentQuestion = TalkManager.Instance.GetQuestionText(listItem, selectedTalkTone);
+            else
+                currentQuestion = "";
+
+            textlabelPlayerSays.Text = currentQuestion;
+        }
+
         void SelectTopicFromTopicList(int index)
         {
             if (index < 0 || index >= listboxTopic.Count)
@@ -934,11 +972,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
             else if (listItem.type == TalkManager.ListItemType.Item)
             {
-                string question = DaggerfallUnity.TextProvider.GetRandomText(7226); //"question for \"" + listCurrentTopics[index].caption + "\"";
-                string answer = DaggerfallUnity.TextProvider.GetRandomText(7285) + DaggerfallUnity.TextProvider.GetRandomText(7332); //"answer for \"" + listCurrentTopics[index].caption + "\"";
+                string answer = TalkManager.Instance.GetAnswerText(listItem);
                 ListBox.ListItem textLabelQuestion;
                 ListBox.ListItem textLabelAnswer;
-                listboxConversation.AddItem(question, out textLabelQuestion);
+                listboxConversation.AddItem(currentQuestion, out textLabelQuestion);
                 textLabelQuestion.textColor = textcolorQuestion;
                 textLabelQuestion.selectedTextColor = textcolorHighlighted; // textcolorQuestionHighlighted
                 listboxConversation.AddItem(answer, out textLabelAnswer);
@@ -994,6 +1031,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             listboxConversation.Update();
         }
 
+        private void ListboxTopic_OnSelectItem()
+        {
+            UpdateQuestion(listboxTopic.SelectedIndex);
+        }
 
         private void ListboxTopic_OnUseSelectedItem()
         {
@@ -1100,36 +1141,25 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             selectedTalkTone = TalkTone.Polite;
             UpdateCheckboxes();
+            UpdateQuestion(listboxTopic.SelectedIndex);
         }
 
         private void ButtonToneNormal_OnClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             selectedTalkTone = TalkTone.Normal;
             UpdateCheckboxes();
+            UpdateQuestion(listboxTopic.SelectedIndex);
         }
 
         private void ButtonToneBlunt_OnClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             selectedTalkTone = TalkTone.Blunt;
             UpdateCheckboxes();
+            UpdateQuestion(listboxTopic.SelectedIndex);
         }
 
         private void ButtonOkay_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            /*
-            string question = "This is just a dummy placeholder for a question...";
-            string answer = "And this is a dummy answer. This again is just a placeholder!";
-            ListBox.ListItem textLabelQuestion;
-            ListBox.ListItem textLabelAnswer;
-            listboxConversation.AddItem(question, out textLabelQuestion);
-            textLabelQuestion.textColor = textcolorQuestion;
-            textLabelQuestion.selectedTextColor = textcolorHighlighted; // textcolorQuestionHighlighted
-            listboxConversation.AddItem(answer, out textLabelAnswer);
-            textLabelAnswer.selectedTextColor = textcolorHighlighted;
-
-            listboxConversation.SelectedIndex = listboxConversation.Count - 1; // always highlight the new answer
-            */
-
             SelectTopicFromTopicList(listboxTopic.SelectedIndex);
         }
 

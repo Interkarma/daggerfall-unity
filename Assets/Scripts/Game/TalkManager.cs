@@ -18,6 +18,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.UserInterface;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -173,6 +174,19 @@ namespace DaggerfallWorkshop.Game
         #endregion
 
         #region Public Methods
+
+        public string GetQuestionText(TalkManager.ListItem listItem, DaggerfallTalkWindow.TalkTone talkTone)
+        {
+            int toneIndex = DaggerfallTalkWindow.TalkToneToIndex(talkTone);
+            string question = "question about " + listItem.caption + ": " + DaggerfallUnity.Instance.TextProvider.GetRandomText(7225 + toneIndex);
+            return question;
+        }
+
+        public string GetAnswerText(TalkManager.ListItem listItem)
+        {
+            string answer = "answer about " + listItem.caption + ": " + DaggerfallUnity.Instance.TextProvider.GetRandomText(7285) + DaggerfallUnity.Instance.TextProvider.GetRandomText(7332);
+            return answer;
+        }
 
         #endregion
 
