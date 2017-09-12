@@ -298,7 +298,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             labelNameNPC.Position = new Vector2(0, 0);
             labelNameNPC.Size = new Vector2(197, 10);
             labelNameNPC.Name = "label_npcName";
-            labelNameNPC.MaxWidth = -1;
             labelNameNPC.MaxCharacters = -1;
             labelNameNPC.HorizontalAlignment = HorizontalAlignment.Center;
             labelNameNPC.VerticalAlignment = VerticalAlignment.Middle;
@@ -354,6 +353,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             textlabelPlayerSays.Position = new Vector2(123, 8);
             textlabelPlayerSays.Size = new Vector2(124, 38);
             textlabelPlayerSays.Name = "label_player_says";
+            textlabelPlayerSays.MaxWidth = (int)textlabelPlayerSays.Size.x;
             textlabelPlayerSays.MaxCharacters = -1;
             textlabelPlayerSays.WrapText = true;
             textlabelPlayerSays.WrapWords = true;
