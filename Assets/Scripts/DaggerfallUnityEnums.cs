@@ -520,7 +520,7 @@ namespace DaggerfallWorkshop
         Shelves,
         Chest,
         Merchant,
-        Table,
+        Anvil,
         Magic,
         Backpack,
         Corpse3,
