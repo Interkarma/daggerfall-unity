@@ -60,6 +60,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Rect useButtonRect = new Rect(226, 103, 31, 14);
         Rect goldButtonRect = new Rect(226, 126, 31, 14);
 
+        Rect actionButtonsPanelRect = new Rect(222, 10, 39, 190);
+        Rect selectButtonRect = new Rect(4, 48, 31, 14);
+        Rect stealButtonRect = new Rect(4, 102, 31, 14);
+        Rect modeActionButtonRect = new Rect(4, 124, 31, 14);
+        Rect clearButtonRect = new Rect(4, 146, 31, 14);
+
         //Rect localTargetIconRect = new Rect(164, 11, 57, 36);
         Rect remoteTargetIconRect = new Rect(262, 11, 57, 36);
 
@@ -80,6 +86,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button removeButton;
         Button useButton;
         Button goldButton;
+
+        Panel actionButtonsPanel;
+        Button selectButton;
+        Button stealButton;
+        Button modeActionButton;
+        Button clearButton;
 
         Button localItemsUpButton;
         Button localItemsDownButton;
@@ -137,6 +149,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Texture2D redDownArrow;
         Texture2D greenDownArrow;
 
+        Texture2D actionButtonsTexture;
+        Texture2D actionButtonsGoldTexture;
+        Texture2D selectSelected;
+        Texture2D selectNotSelected;
+
         #endregion
 
         #region Fields
@@ -145,6 +162,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string goldTextureName = "INVE01I0.IMG";
         const string greenArrowsTextureName = "INVE06I0.IMG";           // Green up/down arrows when more items available
         const string redArrowsTextureName = "INVE07I0.IMG";             // Red up/down arrows when no more items available
+        const string buyButtonsTextureName = "INVE08I0.IMG";
+        const string sellButtonsTextureName = "INVE10I0.IMG";
+        const string sellButtonsGoldTextureName = "INVE11I0.IMG";
+        const string repairButtonsTextureName = "INVE12I0.IMG";
+
         const int listDisplayUnits = 4;                                 // Number of items displayed in scrolling areas
         const int accessoryCount = 12;                                  // Number of accessory slots
         const int itemButtonMarginSize = 2;                             // Margin of item buttons
@@ -168,6 +190,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         ItemCollection lastRemoteItems = null;
         RemoteTargetTypes lastRemoteTargetType;
 
+        WindowModes windowMode = WindowModes.Inventory;
+
         int lastMouseOverPaperDollEquipIndex = -1;
 
         ItemCollection.AddPosition preferredOrder = ItemCollection.AddPosition.DontCare;
@@ -175,6 +199,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #endregion
 
         #region Enums
+
+        public enum WindowModes
+        {
+            Inventory,
+            Sell,
+            Buy,
+            Repair,
+        }
 
         enum TabPages
         {
@@ -197,6 +229,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Equip,
             Remove,
             Use,
+            Select,
         }
 
         #endregion
@@ -228,6 +261,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
         }
 
+        public DaggerfallInventoryWindow(IUserInterfaceManager uiManager, WindowModes windowMode, DaggerfallBaseWindow previous = null)
+            : base(uiManager, previous)
+        {
+            this.windowMode = windowMode;
+        }
+
         #endregion
 
         #region Setup Methods
@@ -242,6 +281,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Setup native panel background
             NativePanel.BackgroundTexture = baseTexture;
+
+            // Setup action button panel.
+            actionButtonsPanel = DaggerfallUI.AddPanel(actionButtonsPanelRect, NativePanel);
+            // If not inventory mode, overlay mode button texture.
+            if (actionButtonsTexture != null)
+                actionButtonsPanel.BackgroundTexture = actionButtonsTexture;
 
             // Character portrait
             NativePanel.Components.Add(paperDoll);
@@ -308,18 +353,28 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             infoButton = DaggerfallUI.AddButton(infoButtonRect, NativePanel);
             infoButton.OnMouseClick += InfoButton_OnMouseClick;
 
-            equipButton = DaggerfallUI.AddButton(equipButtonRect, NativePanel);
-            equipButton.OnMouseClick += EquipButton_OnMouseClick;
+            if (windowMode == WindowModes.Inventory)
+            {
+                equipButton = DaggerfallUI.AddButton(equipButtonRect, NativePanel);
+                equipButton.OnMouseClick += EquipButton_OnMouseClick;
 
-            removeButton = DaggerfallUI.AddButton(removeButtonRect, NativePanel);
-            removeButton.OnMouseClick += RemoveButton_OnMouseClick;
+                removeButton = DaggerfallUI.AddButton(removeButtonRect, NativePanel);
+                removeButton.OnMouseClick += RemoveButton_OnMouseClick;
 
-            useButton = DaggerfallUI.AddButton(useButtonRect, NativePanel);
-            useButton.OnMouseClick += UseButton_OnMouseClick;
+                useButton = DaggerfallUI.AddButton(useButtonRect, NativePanel);
+                useButton.OnMouseClick += UseButton_OnMouseClick;
 
-            goldButton = DaggerfallUI.AddButton(goldButtonRect, NativePanel);
-            goldButton.OnMouseClick += GoldButton_OnMouseClick;
-            //goldButton.BackgroundColor = new Color(1, 0, 0, 0.5f);
+                goldButton = DaggerfallUI.AddButton(goldButtonRect, NativePanel);
+                goldButton.OnMouseClick += GoldButton_OnMouseClick;
+            }
+            else
+            {
+                selectButton = DaggerfallUI.AddButton(selectButtonRect, actionButtonsPanel);
+                selectButton.OnMouseClick += SellButton_OnMouseClick;
+
+                modeActionButton = DaggerfallUI.AddButton(modeActionButtonRect, actionButtonsPanel);
+                modeActionButton.OnMouseClick += SellButton_OnMouseClick;
+            }
         }
 
         void SetupScrollBars()
@@ -685,25 +740,40 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Clear all button selections
             infoButton.BackgroundTexture = infoNotSelected;
-            equipButton.BackgroundTexture = equipNotSelected;
-            removeButton.BackgroundTexture = removeNotSelected;
-            useButton.BackgroundTexture = useNotSelected;
-
-            // Set button selected texture
-            switch(mode)
+            if (windowMode == WindowModes.Inventory)
             {
-                case ActionModes.Info:
+                equipButton.BackgroundTexture = equipNotSelected;
+                removeButton.BackgroundTexture = removeNotSelected;
+                useButton.BackgroundTexture = useNotSelected;
+
+                // Set button selected texture
+                switch (mode)
+                {
+                    case ActionModes.Info:
+                        infoButton.BackgroundTexture = infoSelected;
+                        break;
+                    case ActionModes.Equip:
+                        equipButton.BackgroundTexture = equipSelected;
+                        break;
+                    case ActionModes.Remove:
+                        removeButton.BackgroundTexture = removeSelected;
+                        break;
+                    case ActionModes.Use:
+                        useButton.BackgroundTexture = useSelected;
+                        break;
+                }
+            }
+            else
+            {
+                if (mode == ActionModes.Info)
+                {
                     infoButton.BackgroundTexture = infoSelected;
-                    break;
-                case ActionModes.Equip:
-                    equipButton.BackgroundTexture = equipSelected;
-                    break;
-                case ActionModes.Remove:
-                    removeButton.BackgroundTexture = removeSelected;
-                    break;
-                case ActionModes.Use:
-                    useButton.BackgroundTexture = useSelected;
-                    break;
+                    selectButton.BackgroundTexture = selectNotSelected;
+                }
+                else if (mode == ActionModes.Select)
+                {
+                    selectButton.BackgroundTexture = selectSelected;
+                }
             }
         }
 
@@ -1039,6 +1109,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             equipSelected = ImageReader.GetSubTexture(goldTexture, equipButtonRect);
             removeSelected = ImageReader.GetSubTexture(goldTexture, removeButtonRect);
             useSelected = ImageReader.GetSubTexture(goldTexture, useButtonRect);
+
+            // Load special button texture if windowMode is not Inventory.
+            if (windowMode == WindowModes.Sell)
+                actionButtonsTexture = ImageReader.GetTexture(sellButtonsTextureName);
+            else if (windowMode == WindowModes.Buy)
+                actionButtonsTexture = ImageReader.GetTexture(buyButtonsTextureName);
+            else if (windowMode == WindowModes.Repair)
+                actionButtonsTexture = ImageReader.GetTexture(repairButtonsTextureName);
+
+            if (windowMode != WindowModes.Inventory)
+            {
+                actionButtonsGoldTexture = ImageReader.GetTexture(sellButtonsGoldTextureName);
+                selectNotSelected = ImageReader.GetSubTexture(actionButtonsTexture, selectButtonRect);
+                selectSelected = ImageReader.GetSubTexture(actionButtonsGoldTexture, selectButtonRect);
+            }
         }
 
         /// <summary>
@@ -1188,6 +1273,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             Refresh(false);
         }
+
+        private void SellButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            Debug.Log("Sell!");
+        }
+
 
         #endregion
 
