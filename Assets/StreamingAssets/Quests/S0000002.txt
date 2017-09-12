@@ -3,6 +3,7 @@
 -- QuestId: 2
 Messages: 51
 Quest: S0000002
+DisplayName: Blackmailing Prince Helseth
 -- Message panels
 QRC:
 

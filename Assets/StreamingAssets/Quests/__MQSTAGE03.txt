@@ -166,7 +166,7 @@ Clock mainquestclock 00:00 0 flag 9 range 0 0
 
 
 --	Quest start-up:
-	start task _MetLadyB_ 
+	start task _S.44_ 
 	log 1010 step 0 
 
 _S.00_ task:
@@ -236,61 +236,61 @@ _S.20_ task:
 _S.21_ task:
 	level 5 completed 
 
-_S.22_ task:
-	when _S.04_ and _S.10_ and not _S.19_ 
-	say 1032 
+-_S.22_ task:
+-	when _S.04_ and _S.10_ and not _S.19_ 
+-	say 1032 
 
-_S.23_ task:
-	when _S.06_ and _S.08_ and not _S.21_ 
-	say 1034 
+-_S.23_ task:
+-	when _S.06_ and _S.08_ and not _S.21_ 
+-	say 1034 
 
-_S.24_ task:
-	when _S.05_ and _S.09_ and not _S.20_ 
-	say 1032 
+-_S.24_ task:
+-	when _S.05_ and _S.09_ and not _S.20_ 
+-	say 1032 
 
 _S.25_ task:
 	when _S.01_ and _S.13_ and not _S.16_ 
 	say 1032 
 
-_S.26_ task:
-	when _S.00_ and _S.14_ and not _S.15_ 
-	say 1032 
+-_S.26_ task:
+-	when _S.00_ and _S.14_ and not _S.15_ 
+-	say 1032 
 
-_S.27_ task:
-	when _S.02_ and _S.12_ and not _S.17_ 
-	say 1036 
+-_S.27_ task:
+-	when _S.02_ and _S.12_ and not _S.17_ 
+-	say 1036 
 
-_S.28_ task:
-	when _S.03_ and _S.11_ and not _S.18_ 
-	say 1032 
+-_S.28_ task:
+-	when _S.03_ and _S.11_ and not _S.18_ 
+-	say 1032 
 
-_S.29_ task:
-	when _S.04_ and not _S.10_ 
-	say 1031 
+-_S.29_ task:
+-	when _S.04_ and not _S.10_ 
+-	say 1031 
 
-_S.30_ task:
-	when _S.06_ and not _S.08_ 
-	say 1033 
+-_S.30_ task:
+-	when _S.06_ and not _S.08_ 
+-	say 1033 
 
-_S.31_ task:
-	when _S.05_ and not _S.09_ 
-	say 1031 
+-_S.31_ task:
+-	when _S.05_ and not _S.09_ 
+-	say 1031 
 
-_S.32_ task:
-	when _S.01_ and not _S.13_ 
-	say 1031 
+-_S.32_ task:
+-	when _S.01_ and not _S.13_ 
+-	say 1031 
 
-_S.33_ task:
-	when _S.00_ and not _S.14_ 
-	say 1031 
+-_S.33_ task:
+-	when _S.00_ and not _S.14_ 
+-	say 1031 
 
-_S.34_ task:
-	when _S.02_ and not _S.12_ 
-	say 1035 
+-_S.34_ task:
+-	when _S.02_ and not _S.12_ 
+-	say 1035 
 
-_S.35_ task:
-	when _S.03_ and not _S.11_ 
-	say 1031 
+-_S.35_ task:
+-	when _S.03_ and not _S.11_ 
+-	say 1031 
 
 -_S.36_ task:
 -	when _S.10_ and _S.19_ and _S.04_ 
@@ -312,10 +312,10 @@ _S.39_ task:
 	start quest 2 2 
 	unset _S.01_ 
 
-_S.40_ task:
-	when _S.00_ and _S.14_ and _S.15_ 
-	start quest 1 1 
-	unset _S.00_ 
+-_S.40_ task:
+-	when _S.00_ and _S.14_ and _S.15_ 
+-	start quest 1 1 
+-	unset _S.00_ 
 
 -_S.41_ task:
 -	when _S.02_ and _S.12_ and _S.17_ 
@@ -367,4 +367,3 @@ _S.57_ task:
 	clear _S.50_ _S.57_ _S.53_ _S.56_ 
 
 OpenedShapeshifters _S.58_
-MetLadyBrisienna _MetLadyB_

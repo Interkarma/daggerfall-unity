@@ -3,6 +3,7 @@
 -- QuestId: 11
 Messages: 62
 Quest: S0000011
+DisplayName: Barenziah's Book
 -- Message panels
 QRC:
 

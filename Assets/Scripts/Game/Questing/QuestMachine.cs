@@ -1129,8 +1129,8 @@ namespace DaggerfallWorkshop.Game.Questing
             }
             else if (stage == 3)
             {
-                // From stage 3 using a custom backbone quest to control offers and prerequisites
-                GameManager.Instance.PlayerEntity.Level = 5;
+                GameManager.Instance.PlayerEntity.FactionData.ChangeReputation(395, 20);    // Queen Barenziah +20
+                GameManager.Instance.PlayerEntity.Level = 9;
                 InstantiateQuest("__MQSTAGE03");
                 InstantiateQuest("S0000977");
             }
