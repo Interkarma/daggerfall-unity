@@ -1097,10 +1097,11 @@ namespace DaggerfallWorkshop.Game.Questing
             Instance.PurgeAllQuests();
             GameManager.Instance.PlayerEntity.FactionData.ZeroAllReputations();
             GameManager.Instance.PlayerEntity.GlobalVars.ZeroAllGlobalVars();
+            QuestMachine.Instance.LastNPCClicked = null;
         }
 
         /// <summary>
-        /// Sets main quest stage from 1-2 (currently).
+        /// Sets main quest stage from 1-3 (currently).
         /// </summary>
         /// <param name="stage">Stage value.</param>
         public int SetMainQuestStage(int stage)

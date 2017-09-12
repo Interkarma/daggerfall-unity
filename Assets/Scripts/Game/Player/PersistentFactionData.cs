@@ -294,16 +294,11 @@ namespace DaggerfallWorkshop.Game.Player
         }
 
         /// <summary>
-        /// Reset all reputations and legal reputations back to 0.
+        /// Reset all reputations and legal reputations back to 0 (and resets from FACTION.TXT).
         /// </summary>
         public void ZeroAllReputations()
         {
-            List<int> keys = new List<int>(factionDict.Keys);
-            foreach (int key in keys)
-            {
-                SetReputation(key, 0);
-            }
-
+            Reset();
             ResetLegalReputation();
         }
 

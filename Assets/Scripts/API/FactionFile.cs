@@ -264,29 +264,33 @@ namespace DaggerfallConnect.Arena2
                     if (dstFaction.id != srcFaction.id)
                         throw new Exception(string.Format("ID mismatch while merging faction data. SrcFaction=#{0}, DstFaction=#{1}", srcFaction.id, dstFaction.id));
 
-                    // Copy live data from SAVEVARS.DAT
-                    dstFaction.type = srcFaction.type;
-                    dstFaction.name = srcFaction.name;
+                    // Copy live reputation value from SAVEVARS.DAT
+                    // Other values remain as pre-generated from faction.txt
+                    // This is to prevent bad save data polluting faction structure
                     dstFaction.rep = srcFaction.rep;
-                    dstFaction.region = srcFaction.region;
-                    dstFaction.power = srcFaction.power;
-                    dstFaction.flags = srcFaction.flags;
-                    dstFaction.ruler = srcFaction.ruler;
-                    dstFaction.ally1 = srcFaction.ally1;
-                    dstFaction.ally2 = srcFaction.ally2;
-                    dstFaction.ally3 = srcFaction.ally3;
-                    dstFaction.enemy1 = srcFaction.enemy1;
-                    dstFaction.enemy2 = srcFaction.enemy2;
-                    dstFaction.enemy3 = srcFaction.enemy3;
-                    dstFaction.face = srcFaction.face;
-                    dstFaction.race = srcFaction.race;
-                    dstFaction.flat1 = srcFaction.flat1;
-                    dstFaction.flat2 = srcFaction.flat2;
-                    dstFaction.sgroup = srcFaction.sgroup;
-                    dstFaction.ggroup = srcFaction.ggroup;
-                    dstFaction.vam = srcFaction.vam;
 
-                    // Store data back in new dictionary
+                    // May migrate other values later
+                    //dstFaction.type = srcFaction.type;
+                    //dstFaction.name = srcFaction.name;
+                    //dstFaction.region = srcFaction.region;
+                    //dstFaction.power = srcFaction.power;
+                    //dstFaction.flags = srcFaction.flags;
+                    //dstFaction.ruler = srcFaction.ruler;
+                    //dstFaction.ally1 = srcFaction.ally1;
+                    //dstFaction.ally2 = srcFaction.ally2;
+                    //dstFaction.ally3 = srcFaction.ally3;
+                    //dstFaction.enemy1 = srcFaction.enemy1;
+                    //dstFaction.enemy2 = srcFaction.enemy2;
+                    //dstFaction.enemy3 = srcFaction.enemy3;
+                    //dstFaction.face = srcFaction.face;
+                    //dstFaction.race = srcFaction.race;
+                    //dstFaction.flat1 = srcFaction.flat1;
+                    //dstFaction.flat2 = srcFaction.flat2;
+                    //dstFaction.sgroup = srcFaction.sgroup;
+                    //dstFaction.ggroup = srcFaction.ggroup;
+                    //dstFaction.vam = srcFaction.vam;
+
+                    // Store merged data back in new dictionary
                     dict[srcFaction.id] = dstFaction;
                 }
             }
