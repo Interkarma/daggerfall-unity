@@ -121,6 +121,17 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.playerEntity.otherItems = entity.OtherItems.SerializeItems();
             data.playerEntity.goldPieces = entity.GoldPieces;
             data.playerEntity.globalVars = entity.GlobalVars.SerializeGlobalVars();
+            data.playerEntity.minMetalToHit = entity.MinMetalToHit;
+            data.playerEntity.biographyResistDiseaseMod = entity.BiographyResistDiseaseMod;
+            data.playerEntity.biographyResistMagicMod = entity.BiographyResistMagicMod;
+            data.playerEntity.biographyAvoidHitMod = entity.BiographyAvoidHitMod;
+            data.playerEntity.biographyResistPoisonMod = entity.BiographyResistPoisonMod;
+            data.playerEntity.biographyFatigueMod = entity.BiographyFatigueMod;
+            data.playerEntity.biographyReactionMod = entity.BiographyReactionMod;
+            data.playerEntity.timeForThievesGuildLetter = entity.TimeForThievesGuildLetter;
+            data.playerEntity.timeForDarkBrotherhoodLetter = entity.TimeForDarkBrotherhoodLetter;
+            data.playerEntity.thievesGuildRequirementTally = entity.ThievesGuildRequirementTally;
+            data.playerEntity.darkBrotherhoodRequirementTally = entity.DarkBrotherhoodRequirementTally;
 
             // Store player position data
             data.playerPosition = GetPlayerPositionData();
@@ -207,6 +218,17 @@ namespace DaggerfallWorkshop.Game.Serialization
             entity.ItemEquipTable.DeserializeEquipTable(data.playerEntity.equipTable, entity.Items);
             entity.GoldPieces = data.playerEntity.goldPieces;
             entity.GlobalVars.DeserializeGlobalVars(data.playerEntity.globalVars);
+            entity.MinMetalToHit = data.playerEntity.minMetalToHit;
+            entity.BiographyResistDiseaseMod = data.playerEntity.biographyResistDiseaseMod;
+            entity.BiographyResistMagicMod = data.playerEntity.biographyResistMagicMod;
+            entity.BiographyAvoidHitMod = data.playerEntity.biographyAvoidHitMod;
+            entity.BiographyResistPoisonMod = data.playerEntity.biographyResistPoisonMod;
+            entity.BiographyFatigueMod = data.playerEntity.biographyFatigueMod;
+            entity.BiographyReactionMod = data.playerEntity.biographyReactionMod;
+            entity.TimeForThievesGuildLetter = data.playerEntity.timeForThievesGuildLetter;
+            entity.TimeForDarkBrotherhoodLetter = data.playerEntity.timeForDarkBrotherhoodLetter;
+            entity.ThievesGuildRequirementTally = data.playerEntity.thievesGuildRequirementTally;
+            entity.DarkBrotherhoodRequirementTally = data.playerEntity.darkBrotherhoodRequirementTally;
             entity.SetCurrentLevelUpSkillSum();
 
             // Fill in missing data for saves

@@ -76,6 +76,7 @@ namespace DaggerfallConnect.Save
             doc.timeForDarkBrotherhoodLetter = parsedData.timeForDarkBrotherhoodLetter;
             doc.darkBrotherhoodRequirementTally = parsedData.darkBrotherhoodRequirementTally;
             doc.thievesGuildRequirementTally = parsedData.thievesGuildRequirementTally;
+            doc.biographyReactionMod = parsedData.biographyReactionMod;
 
             return doc;
         }
@@ -171,6 +172,9 @@ namespace DaggerfallConnect.Save
 
             reader.BaseStream.Position = 0x222;
             parsedData.thievesGuildRequirementTally = reader.ReadByte();
+
+            reader.BaseStream.Position = 0x224;
+            parsedData.biographyReactionMod = reader.ReadSByte();
 
             reader.BaseStream.Position = 0x230;
             parsedData.career = ReadCareer(reader);
@@ -336,6 +340,7 @@ namespace DaggerfallConnect.Save
             public Byte effectStrength; // Used for Open and Shade effects at least.
             public Byte darkBrotherhoodRequirementTally;
             public Byte thievesGuildRequirementTally;
+            public SByte biographyReactionMod;
             public DFCareer career;
         }
 

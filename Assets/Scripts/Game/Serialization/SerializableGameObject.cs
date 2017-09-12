@@ -134,6 +134,17 @@ namespace DaggerfallWorkshop.Game.Serialization
         public ItemData_v1[] otherItems;
         public int goldPieces;
         public GlobalVar[] globalVars;
+        public WeaponMaterialTypes minMetalToHit;
+        public int biographyResistDiseaseMod;
+        public int biographyResistMagicMod;
+        public int biographyAvoidHitMod;
+        public int biographyResistPoisonMod;
+        public int biographyFatigueMod;
+        public int biographyReactionMod;
+        public uint timeForThievesGuildLetter;
+        public uint timeForDarkBrotherhoodLetter;
+        public int thievesGuildRequirementTally;
+        public int darkBrotherhoodRequirementTally;
     }
 
     [fsObject("v1")]
@@ -265,9 +276,12 @@ namespace DaggerfallWorkshop.Game.Serialization
         public int textureArchive;
         public int textureRecord;
         public string lootTableKey;
+        public string entityName;
         public bool playerOwned;
         public bool customDrop;
+        public bool isEnemyClass;
         public ItemData_v1[] items;
+        public EnemyEntity enemyEntity;
     }
 
     #endregion

@@ -561,7 +561,11 @@ namespace DaggerfallWorkshop.Utility
                 loot.ContainerImage = containerImage;
                 loot.TextureArchive = textureArchive;
                 loot.TextureRecord = textureRecord;
-                loot.EnemyEntity = enemyEntity;
+                if (enemyEntity != null)
+                {
+                    loot.entityName = enemyEntity.MobileEnemy.Name;
+                    loot.isEnemyClass = (enemyEntity.EntityType == EntityTypes.EnemyClass);
+                }
             }
 
             loot.transform.position = position;

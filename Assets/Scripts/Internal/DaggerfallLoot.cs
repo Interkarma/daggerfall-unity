@@ -41,15 +41,15 @@ namespace DaggerfallWorkshop
         public LootContainerTypes ContainerType = LootContainerTypes.Nothing;
         public InventoryContainerImages ContainerImage = InventoryContainerImages.Chest;
         public string LootTableKey = string.Empty;
+        public string entityName = string.Empty;
         public int TextureArchive = 0;
         public int TextureRecord = 0;
         public bool playerOwned = false;
         public bool customDrop = false;         // Custom drop loot is not part of base scene and must be respawned on deserialization
+        public bool isEnemyClass = false;
 
         ulong loadID = 0;
         ItemCollection items = new ItemCollection();
-
-        Game.Entity.EnemyEntity enemyEntity = null;
 
         public ulong LoadID
         {
@@ -60,12 +60,6 @@ namespace DaggerfallWorkshop
         public ItemCollection Items
         {
             get { return items; }
-        }
-
-        public Game.Entity.EnemyEntity EnemyEntity
-        {
-            get { return enemyEntity; }
-            set { enemyEntity = value; }
         }
 
         /// <summary>

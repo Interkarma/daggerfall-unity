@@ -44,6 +44,7 @@ namespace DaggerfallWorkshop.Game.Player
         public uint timeForDarkBrotherhoodLetter;
         public byte darkBrotherhoodRequirementTally;
         public byte thievesGuildRequirementTally;
+        public sbyte biographyReactionMod;
 
         public CharacterDocument()
         {

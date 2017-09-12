@@ -186,7 +186,7 @@ namespace DaggerfallWorkshop.Game
                                         else // Breaking into building
                                         {
                                             PlayerEntity player = GameManager.Instance.PlayerEntity;
-                                            player.TallyCrimeGuildRequirements(true, 1);
+                                            //player.TallyCrimeGuildRequirements(true, 1);
                                         }
                                     }
 
@@ -281,15 +281,15 @@ namespace DaggerfallWorkshop.Game
                             switch (currentMode)
                             {
                                 case PlayerActivateModes.Info:
-                                    if (loot.ContainerType == LootContainerTypes.CorpseMarker && loot.EnemyEntity != null)
+                                    if (loot.ContainerType == LootContainerTypes.CorpseMarker && !string.IsNullOrEmpty(loot.entityName))
                                     {
                                         string message = string.Empty;
-                                        if (loot.EnemyEntity.EntityType == EntityTypes.EnemyClass)
+                                        if (loot.isEnemyClass)
                                             message = HardStrings.youSeeADeadPerson;
                                         else
                                         {
                                             message = HardStrings.youSeeADead;
-                                            message = message.Replace("%s", loot.EnemyEntity.MobileEnemy.Name);
+                                            message = message.Replace("%s", loot.entityName);
                                         }
                                         DaggerfallUI.Instance.PopupMessage(message);
                                     }
@@ -793,7 +793,7 @@ namespace DaggerfallWorkshop.Game
                         gotGold = gotGold.Replace("%d", pinchedGoldPieces.ToString());
                     }
                     DaggerfallUI.MessageBox(gotGold);
-                    player.TallyCrimeGuildRequirements(true, 1);
+                    //player.TallyCrimeGuildRequirements(true, 1);
                 }
                 else
                 {
