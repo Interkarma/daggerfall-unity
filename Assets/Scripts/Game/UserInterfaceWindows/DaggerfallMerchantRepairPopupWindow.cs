@@ -10,19 +10,13 @@
 //
 
 using UnityEngine;
-using System;
-using System.IO;
-using System.Collections;
-using System.Collections.Generic;
-using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
-using DaggerfallWorkshop.Game.Questing;
 using DaggerfallConnect;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
-    public class DaggerfallMerchantPopupWindow : DaggerfallPopupWindow
+    public class DaggerfallMerchantRepairPopupWindow : DaggerfallPopupWindow
     {
         #region UI Rects
 
@@ -51,7 +45,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Fields
 
-        const string baseTextureName = "REPR01I0.IMG";      // Join guild / Talk / Custom
+        const string baseTextureName = "REPR01I0.IMG";      // Repair / Talk / Sell
 
         DFLocation.BuildingData buildingData;
 
@@ -69,7 +63,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Constructors
 
-        public DaggerfallMerchantPopupWindow(IUserInterfaceManager uiManager)
+        public DaggerfallMerchantRepairPopupWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
         {
             // Clear background
@@ -124,10 +118,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Event Handlers
 
+        private void TalkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            CloseWindow();
+        }
+
         private void SellButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             CloseWindow();
-            DaggerfallItemActionWindow sellWindow = new DaggerfallItemActionWindow(uiManager, DaggerfallItemActionWindow.WindowModes.Sell, this);
+            DaggerfallItemActionWindow sellWindow = new DaggerfallItemActionWindow(uiManager, DaggerfallItemActionWindow.WindowModes.Sell, buildingData, this);
             uiManager.PushWindow(sellWindow);
         }
 
