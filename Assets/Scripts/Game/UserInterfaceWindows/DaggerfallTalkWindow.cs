@@ -37,7 +37,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const string greenArrowsTextureName = "INVE06I0.IMG";       // Green up/down arrows when more items available
         const string redArrowsTextureName = "INVE07I0.IMG";         // Red up/down arrows when no more items available
 
-        const int maxNumTopicsShown = 13; // max number of items displayed in scrolling area of topics list
+        //const int maxNumTopicsShown = 13; // max number of items displayed in scrolling area of topics list
         const int maxNumCharactersOfTopicShown = 20; // max number of characters of a topic displayed in scrolling area of topics list
 
         //const int maxNumAnswerLinesShown = 15; // max number of lines displayed in scrolling area of answers
@@ -55,7 +55,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             TellMeAbout,
             WhereIs
         };
-        TalkOption selectedTalkOption = TalkOption.TellMeAbout;
+        TalkOption selectedTalkOption = TalkOption.WhereIs;
 
         enum TalkCategory
         {
@@ -118,6 +118,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         TextLabel textlabelPlayerSays;
         string currentQuestion = "";
+        int selectionIndexLastUsed = -1;
 
         // alignment stuff for checkbox buttons
         Panel panelTone; // used as selection marker
@@ -222,6 +223,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 UpdateScrollBarConversation();
             }
 
+            selectedTalkCategory = TalkCategory.Location;
             selectedTalkTone = TalkTone.Normal;
             currentQuestion = "";
         }
@@ -449,7 +451,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             SetupScrollBars();
             SetupScrollButtons();                                   
 
-            SetTalkModeTellMeAbout();
+            SetTalkModeWhereIs();
 
             //UpdateButtonState();
             UpdateCheckboxes();
@@ -1017,14 +1019,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 if (listItem.listParentItems.Value != null)
                 {
-                    SetListboxTopics(ref listboxTopic, listItem.listParentItems);
+                    selectionIndexLastUsed = -1;
+                    SetListboxTopics(ref listboxTopic, listItem.listParentItems);                    
                 }
             }
             else if (listItem.type == TalkManager.ListItemType.ItemGroup)
             {
                 if (listItem.listChildItems.Value != null)
                 {
-                    SetListboxTopics(ref listboxTopic, listItem.listChildItems);
+                    selectionIndexLastUsed = -1;
+                    SetListboxTopics(ref listboxTopic, listItem.listChildItems);                    
                 }
             }
             else if (listItem.type == TalkManager.ListItemType.Item)
@@ -1042,6 +1046,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                 UpdateScrollBarConversation();
                 UpdateScrollButtonsConversation();
+
+                UpdateQuestion(listboxTopic.SelectedIndex);
             }
             inListboxTopicContentUpdate = false;
         }
@@ -1091,7 +1097,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private void ListboxTopic_OnSelectItem()
         {
-            UpdateQuestion(listboxTopic.SelectedIndex);
+            int index = listboxTopic.SelectedIndex;
+            if (index != selectionIndexLastUsed)
+            UpdateQuestion(index);
+            selectionIndexLastUsed = index;
         }
 
         private void ListboxTopic_OnUseSelectedItem()
