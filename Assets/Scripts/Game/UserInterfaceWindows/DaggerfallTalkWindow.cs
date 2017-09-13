@@ -659,8 +659,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
             listboxTopic.Update();
             UpdateScrollBarsTopic();
             UpdateScrollButtonsTopic();
-            listboxTopic.SelectNone();
-            UpdateQuestion(-1); // important since it might have selected question from last double-click action when changing level of topic tree
+            if (listTopic.Value[0].listParentItems != null) // first entry is "previous" item
+            {
+                listboxTopic.SelectIndex(1);
+            }
+            else
+            {
+                listboxTopic.SelectIndex(0);
+                //listboxTopic.SelectNone();
+                //UpdateQuestion(-1); // important since it might have selected question from last double-click action when changing level of topic tree
+            }
         }
 
         void ClearListboxTopics()
