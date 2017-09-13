@@ -801,7 +801,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// <summary>
         /// Creates filtered list of local items based on view state.
         /// </summary>
-        protected void FilterLocalItems()
+        protected virtual void FilterLocalItems()
         {
             // Clear current references
             localItemsFiltered.Clear();
@@ -1587,7 +1587,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         // NOTE: Working through action processes here. Will clean up soon.
 
-        private void AccessoryItemsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void AccessoryItemsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             // Get item
             EquipSlots slot = (EquipSlots)sender.Tag;
@@ -1596,7 +1596,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
 
             // Handle click based on action
-            if (selectedActionMode == ActionModes.Equip)
+            if (selectedActionMode == ActionModes.Equip ||
+                selectedActionMode == ActionModes.Select)
             {
                 UnequipItem(item, false);
             }
@@ -1606,7 +1607,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        private void PaperDoll_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void PaperDoll_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             // Get equip value
             byte value = paperDoll.GetEquipIndex((int)position.x, (int)position.y);
@@ -1620,7 +1621,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
 
             // Handle click based on action
-            if (selectedActionMode == ActionModes.Equip)
+            if (selectedActionMode == ActionModes.Equip ||
+                selectedActionMode == ActionModes.Select)
             {
                 UnequipItem(item);
             }
@@ -1634,12 +1636,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        private void LocalItemsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
-        {
-            LocalItemsClick(sender);
-        }
-
-        protected virtual void LocalItemsClick(BaseScreenComponent sender)
+        protected virtual void LocalItemsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             // Get index
             int index = localItemsScrollBar.ScrollIndex + (int)sender.Tag;
@@ -1676,12 +1673,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        private void RemoteItemsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
-        {
-            RemoteItemsClick(sender);
-        }
-
-        protected virtual void RemoteItemsClick(BaseScreenComponent sender)
+        protected virtual void RemoteItemsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             // Get index
             int index = remoteItemsScrollBar.ScrollIndex + (int)sender.Tag;

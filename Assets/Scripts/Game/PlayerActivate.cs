@@ -733,13 +733,28 @@ namespace DaggerfallWorkshop.Game
             Debug.Log(String.Format("{0}, {1} ", npc.DisplayName, npc.Data.factionID));
             if (playerEnterExit.IsPlayerInsideBuilding)
             {
+                DFLocation.BuildingData buildingData = playerEnterExit.Interior.BuildingData;
                 FactionFile.FactionData factionData;
                 if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(npc.Data.factionID, out factionData))
                 {
                     // Check if this NPC is a merchant.
-                    if (MerchantCheck(npc, factionData))
-                        return;
-                    // TODO - more checks for npc types... guild services etc
+                    if ((FactionFile.SocialGroups)factionData.sgroup == FactionFile.SocialGroups.Merchants)
+                    {
+                        if (RMBLayout.IsRepairShop(buildingData.BuildingType))
+                        {
+                            DaggerfallMerchantRepairPopupWindow merchantWindow = new DaggerfallMerchantRepairPopupWindow(DaggerfallUI.Instance.UserInterfaceManager);
+                            merchantWindow.BuildingData = buildingData;
+                            DaggerfallUI.Instance.UserInterfaceManager.PushWindow(merchantWindow);
+                        }
+                        else
+                        {
+                            DaggerfallMerchantPopupWindow merchantWindow = new DaggerfallMerchantPopupWindow(DaggerfallUI.Instance.UserInterfaceManager);
+                            merchantWindow.BuildingData = buildingData;
+                            DaggerfallUI.Instance.UserInterfaceManager.PushWindow(merchantWindow);
+                        }
+
+                        // TODO - more checks for npc types... guild services etc
+                    }
                 }
             }
 
@@ -753,37 +768,6 @@ namespace DaggerfallWorkshop.Game
             SpecialNPCClickHandler specialNPCClickHandler = npc.gameObject.GetComponent<SpecialNPCClickHandler>();
             if (specialNPCClickHandler)
                 specialNPCClickHandler.DoClick();
-        }
-
-        bool MerchantCheck(StaticNPC npc, FactionFile.FactionData factionData)
-        {
-            Debug.Log(String.Format("{0}, {1} ", factionData.ToString(), factionData.sgroup));
-
-            if ((FactionFile.SocialGroups)factionData.sgroup == FactionFile.SocialGroups.Merchants)
-            {
-                DFLocation.BuildingTypes buildingType = playerEnterExit.Interior.BuildingData.BuildingType;
-
-                Debug.Log("A merchant! " + buildingType.ToString());
-
-                if (buildingType == DFLocation.BuildingTypes.Armorer ||
-                    buildingType == DFLocation.BuildingTypes.GeneralStore ||
-                    buildingType == DFLocation.BuildingTypes.WeaponSmith)
-                {
-                    DaggerfallMerchantRepairPopupWindow merchantWindow = new DaggerfallMerchantRepairPopupWindow(DaggerfallUI.Instance.UserInterfaceManager);
-                    merchantWindow.BuildingType = buildingType;
-                    DaggerfallUI.Instance.UserInterfaceManager.PushWindow(merchantWindow);
-
-                }
-                else
-                {
-                    DaggerfallMerchantPopupWindow merchantWindow = new DaggerfallMerchantPopupWindow(DaggerfallUI.Instance.UserInterfaceManager);
-                    merchantWindow.BuildingType = buildingType;
-                    DaggerfallUI.Instance.UserInterfaceManager.PushWindow(merchantWindow);
-                }
-
-                return true;
-            }
-            return false;
         }
 
         // Check if NPC is a Questor

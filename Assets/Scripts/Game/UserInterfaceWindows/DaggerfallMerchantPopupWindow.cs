@@ -46,16 +46,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         const string baseTextureName = "GNRC01I0.IMG";      // Talk / Sell
 
-        DFLocation.BuildingTypes buildingType = DFLocation.BuildingTypes.AllValid;
+        DFLocation.BuildingData buildingData;
 
         #endregion
 
         #region Properties
 
-        public DFLocation.BuildingTypes BuildingType
+        public DFLocation.BuildingData BuildingData
         {
-            get { return buildingType; }
-            set { buildingType = value; }
+            get { return buildingData; }
+            set { buildingData = value; }
         }
 
         #endregion

@@ -47,16 +47,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         const string baseTextureName = "REPR01I0.IMG";      // Repair / Talk / Sell
 
-        DFLocation.BuildingTypes buildingType = DFLocation.BuildingTypes.AllValid;
+        DFLocation.BuildingData buildingData;
 
         #endregion
 
         #region Properties
 
-        public DFLocation.BuildingTypes BuildingType
+        public DFLocation.BuildingData BuildingData
         {
-            get { return buildingType; }
-            set { buildingType = value; }
+            get { return buildingData; }
+            set { buildingData = value; }
         }
 
         #endregion
@@ -126,7 +126,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void SellButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             CloseWindow();
-            DaggerfallItemActionWindow sellWindow = new DaggerfallItemActionWindow(uiManager, DaggerfallItemActionWindow.WindowModes.Sell, this);
+            DaggerfallItemActionWindow sellWindow = new DaggerfallItemActionWindow(uiManager, DaggerfallItemActionWindow.WindowModes.Sell, buildingData, this);
             uiManager.PushWindow(sellWindow);
         }
 

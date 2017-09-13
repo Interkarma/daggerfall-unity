@@ -20,6 +20,8 @@ using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.Banking;
+using DaggerfallConnect;
+using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -65,7 +67,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region UI Textures
 
-        Texture2D costPanelBaseTexture;
         Texture2D costPanelTexture;
         Texture2D actionButtonsTexture;
         Texture2D actionButtonsGoldTexture;
@@ -83,6 +84,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string costPanelTextureName = "REPR02I0.IMG";
 
         WindowModes windowMode = WindowModes.Inventory;
+        DFLocation.BuildingData buildingData;
 
         ItemCollection merchantItems = new ItemCollection();
         bool usingWagon = false;
@@ -108,10 +110,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Constructors
 
-        public DaggerfallItemActionWindow(IUserInterfaceManager uiManager, WindowModes windowMode, DaggerfallBaseWindow previous = null)
+        public DaggerfallItemActionWindow(IUserInterfaceManager uiManager, WindowModes windowMode, DFLocation.BuildingData buildingData, DaggerfallBaseWindow previous = null)
             : base(uiManager, previous)
         {
             this.windowMode = windowMode;
+            this.buildingData = buildingData;
+
         }
 
         #endregion
@@ -171,6 +175,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             UpdateAccessoryItemsDisplay();
             UpdateLocalTargetIcon();
             UpdateRemoteTargetIcon();
+            UpdateCostAndGold();
         }
 
         void SetupCostAndGold()
@@ -192,8 +197,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             selectButton = DaggerfallUI.AddButton(selectButtonRect, actionButtonsPanel);
             selectButton.OnMouseClick += SelectButton_OnMouseClick;
 
+            if (windowMode == WindowModes.Buy)
+            {
+                stealButton = DaggerfallUI.AddButton(stealButtonRect, actionButtonsPanel);
+                stealButton.OnMouseClick += StealButton_OnMouseClick;
+            }
             modeActionButton = DaggerfallUI.AddButton(modeActionButtonRect, actionButtonsPanel);
-            modeActionButton.OnMouseClick += SellButton_OnMouseClick;
+            modeActionButton.OnMouseClick += ModeActionButton_OnMouseClick;
+
+            clearButton = DaggerfallUI.AddButton(clearButtonRect, actionButtonsPanel);
+            clearButton.OnMouseClick += ClearButton_OnMouseClick;
+
         }
 
         #endregion
@@ -229,7 +243,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public override void OnPop()
         {
-            // What to do with items?
+            ClearSelectedItems();
         }
 
         public override void Refresh(bool refreshPaperDoll = true)
@@ -239,9 +253,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             base.Refresh(refreshPaperDoll);
 
-            costLabel.Text = "0";
-            goldLabel.Text = PlayerEntity.GoldPieces.ToString();
+            UpdateCostAndGold();
+        }
 
+        private void UpdateCostAndGold()
+        {
+            int cost = 0;
+            for (int i = 0; i < remoteItems.Count; i++)
+            {
+                DaggerfallUnityItem item = remoteItems.GetItem(i);
+                cost += FormulaHelper.CalculateItemCost(item.value, buildingData.Quality) * item.stackCount;
+            }
+            costLabel.Text = cost.ToString();
+            goldLabel.Text = PlayerEntity.GoldPieces.ToString();
         }
 
         #endregion
@@ -260,6 +284,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 infoButton.BackgroundTexture = infoNotSelected;
                 selectButton.BackgroundTexture = selectSelected;
+            }
+        }
+
+        void ClearSelectedItems()
+        {
+            if (windowMode != WindowModes.Buy)
+            {
+                // Return items to player inventory. (ignoring weight here)
+                PlayerEntity.Items.TransferAll(remoteItems);
             }
         }
 
@@ -300,6 +333,30 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        protected override void FilterLocalItems()
+        {
+            base.FilterLocalItems();
+
+            // Filter again based on merchant type - YUKKY!
+            List<DaggerfallUnityItem> itemsMerchantDeals = new List<DaggerfallUnityItem>();
+            foreach (DaggerfallUnityItem item in localItemsFiltered)
+            {
+                //switch (item.ItemGroup)
+                //{
+                //    case ItemGroups.Armor:
+                //    case ItemGroups.Weapons:
+                //        if (buildingData == DFLocation.BuildingTypes.Armorer ||
+                //            buildingData == DFLocation.BuildingTypes.GeneralStore ||
+                //            buildingData == DFLocation.BuildingTypes.WeaponSmith)
+                //        {
+                //            itemsMerchantDeals.Add(item);
+                //        }
+                //        break;
+                //}
+            }
+            //localItemsFiltered = itemsMerchantDeals;
+        }
+        
         void ShowWagon(bool show)
         {
             if (show)
@@ -340,9 +397,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #endregion
 
-        #region Action Handler Methods
+        #region Item Click Event Handlers
 
-        protected override void LocalItemsClick(BaseScreenComponent sender)
+        protected override void LocalItemsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             // Get index
             int index = localItemsScrollBar.ScrollIndex + (int)sender.Tag;
@@ -372,7 +429,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        protected override void RemoteItemsClick(BaseScreenComponent sender)
+        protected override void RemoteItemsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             // Get index
             int index = remoteItemsScrollBar.ScrollIndex + (int)sender.Tag;
@@ -385,12 +442,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
 
             // Handle click based on action
-            if (selectedActionMode == ActionModes.Select && CanCarry(item))
+            if (selectedActionMode == ActionModes.Select)
             {
-                if ((!usingWagon && CanCarry(item)) || WagonCanHold(item))
+                if (CanCarry(item) || (usingWagon && WagonCanHold(item)))
                     TransferItem(item, remoteItems, localItems);
                 else
-                    ;// show messgae?
+                    ;// show message? 
             }
             else if (selectedActionMode == ActionModes.Info)
             {
@@ -417,11 +474,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SelectActionMode(ActionModes.Select);
         }
 
-        private void SellButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void StealButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            // TODO
+        }
+
+        private void ModeActionButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             Debug.Log("Sell!");
         }
 
+        private void ClearButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            Debug.Log("Clear!");
+            ClearSelectedItems();
+            Refresh();
+        }
 
         #endregion
     }
