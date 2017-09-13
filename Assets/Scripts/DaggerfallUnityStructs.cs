@@ -19,6 +19,7 @@ using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Questing;
+using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop
 {
@@ -187,7 +188,7 @@ namespace DaggerfallWorkshop
         public int AttackSound;                     // Index of enemy "attack" sound
         public int SightModifier;                   // +/- range of vision for acute/impaired sight
         public int HearingModifier;                 // +/- range of hearing for acute/impaired hearing
-        public MetalTypes MinMetalToHit;            // Minimum metal type required to hit enemy
+        public WeaponMaterialTypes MinMetalToHit;   // Minimum metal type required to hit enemy
         public int MinDamage;                       // Minimum damage per first hit of attack
         public int MaxDamage;                       // Maximum damage per first hit of attack
         public int MinDamage2;                      // Minimum damage per second hit of attack
