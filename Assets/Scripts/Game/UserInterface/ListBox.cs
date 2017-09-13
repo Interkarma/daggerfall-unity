@@ -110,12 +110,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set { scrollIndex = value; }
         }
 
+        /// <summary>
+        /// Enables horizontally scrolling of listbox content (this mode can be used if textlabels do not horizontally fit into listbox entirely)
+        /// </summary>
         public bool EnabledHorizontalScroll
         {
             get { return enabledHorizontalScroll; }
             set { enabledHorizontalScroll = value; }
         }
 
+        /// <summary>
+        /// Horizontal scroll index - depending on HorizontalScrollMode its unit is either in characters or pixels
+        /// </summary>
         public int HorizontalScrollIndex
         {
             get { return horizontalScrollIndex; }
@@ -126,6 +132,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
+        /// <summary>
+        /// Maximal allowed horizontal scroll index - depending on HorizontalScrollMode its unit is either in characters or pixels
+        /// </summary>
         public int MaxHorizontalScrollIndex
         {
             get { return maxHorizontalScrollIndex; }
@@ -148,12 +157,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
             get { return listItems.Count; }
         }
 
+        /// <summary>
+        /// enable wrapping of text items, additional mode for word wrapping can be activated with property WrapWords
+        /// </summary>
         public bool WrapTextItems
         {
             get { return wrapTextItems; }
             set { wrapTextItems = value; }
         }
 
+        /// <summary>
+        /// enable wrapping of words in text items - Property WrapTextItems must be set to true as well so that this has an effect
+        /// </summary>
         public bool WrapWords
         {
             get { return wrapWords; }
@@ -214,6 +229,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set { selectedShadowColor = value; }
         }
 
+        /// <summary>
+        /// define a restricted render area so that listbox content (textlabels) are only rendered within these Rect's bounds
+        /// </summary>
         public Rect RectRestrictedRenderArea
         {
             get { return rectRestrictedRenderArea; }
@@ -224,12 +242,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
+        /// <summary>
+        /// set vertical scroll mode to either character wise or pixel wise
+        /// </summary>
         public VerticalScrollModes VerticalScrollMode
         {
             get { return verticalScrollMode; }
             set { verticalScrollMode = value; }
         }
 
+        /// <summary>
+        /// set horizontal scroll mode to either character wise or pixel wise
+        /// </summary>
         public HorizontalScrollModes HorizontalScrollMode
         {
             get { return horizontalScrollMode; }

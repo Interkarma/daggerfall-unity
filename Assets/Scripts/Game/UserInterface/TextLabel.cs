@@ -25,7 +25,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const int minTextureDim = 8;
 
         int maxCharacters = -1;
-        int startCharacterIndex = 0;
+        int startCharacterIndex = 0; // can be used to offset start character of textlabel's text (used by listbox's entry-wise horizontal scroll mode)
         PixelFont font;
         string text = string.Empty;
         byte[] asciiBytes;
@@ -43,7 +43,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         bool wrapText = false; // wrap text - but will tear words that are reaching
         bool wrapWords = false; // wrap words - no word tearing
 
-        bool makeTextureNoLongerReadable = true;
+        bool makeTextureNoLongerReadable = true; // in pixel-wise scroll mode with restricted render area this flag is set to false since textures must be readable for this mode to work
 
         // restricted render area can be used to force label rendering inside this rect (used for text rendering in window frames where text is larger than frame)
         bool useRestrictedRenderArea = false;
@@ -59,6 +59,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set { maxCharacters = value; }
         }
 
+        /// <summary>
+        /// specify character index inside textlabel's text as new starting index
+        /// </summary>
         public int StartCharacterIndex
         {
             get { return startCharacterIndex; }
@@ -115,24 +118,36 @@ namespace DaggerfallWorkshop.Game.UserInterface
             get { return numTextLines; }
         }
 
+        /// <summary>
+        /// set the maximum allowed width of the textlabel in pixels
+        /// </summary>
         public int MaxWidth
         {
             get { return maxWidth; }
             set { maxWidth = value; }
         }
 
+        /// <summary>
+        /// enable text wrapping - use MaxWidth property to set maximum allowed width of the textlabel
+        /// </summary>
         public bool WrapText
         {
             get { return wrapText; }
             set { wrapText = value; CreateLabelTexture(); }
         }
 
+        /// <summary>
+        /// enable word wrapping - words will no longer get tear apart if possible - make sure to enable property WrapText to make this property to have an effect
+        /// </summary>
         public bool WrapWords
         {
             get { return wrapWords; }
             set { wrapWords = value; CreateLabelTexture(); }
         }
 
+        /// <summary>
+        /// set a restricted render area for the textlabel - the textlabel's content will only be rendered inside the specified Rect's bounds
+        /// </summary>
         public Rect RectRestrictedRenderArea
         {
             get { return rectRestrictedRenderArea; }
@@ -197,11 +212,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     subTex.Apply(false);
                     subTex.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
 
-
                     float xMinScreen = (rectLabel.xMin + leftCut) * LocalScale.x + this.Parent.Parent.Rectangle.x;
                     float yMinScreen = (rectLabel.yMin + topCut) * LocalScale.y + this.Parent.Parent.Rectangle.y;
                     float xMaxScreen = (rectLabel.xMax - rightCut) * LocalScale.x + this.Parent.Parent.Rectangle.x;
-                    float yMaxScreen = (rectLabel.yMax - bottomCut) * LocalScale.y + this.Parent.Parent.Rectangle.y;
+                    float yMaxScreen = (rectLabel.yMax - bottomCut) * LocalScale.y + this.Parent.Parent.Rectangle.y;                
                     totalRect = Rect.MinMaxRect(xMinScreen, yMinScreen, xMaxScreen, yMaxScreen);
                     innerRect = new Rect(0, 0, 1, 1); //(float)newWidth / (float)textureWidth, (float)newHeight / (float)textureHeight);
                     textureToDraw = subTex;
