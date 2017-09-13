@@ -190,6 +190,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Texture2D arrowConversationDownRed;
         Texture2D arrowConversationDownGreen;
 
+        // used to guard execution of function SelectTopicFromTopicList - see this function for more detail why this guarding is necessary
+        bool inListboxTopicContentUpdate = false;
+
         public DaggerfallTalkWindow(IUserInterfaceManager uiManager, DaggerfallBaseWindow previous = null)
             : base(uiManager, previous)
         {
@@ -199,6 +202,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public override void OnPush()
         {
             base.OnPush();
+
+            if (listboxTopic != null)
+                listboxTopic.ClearItems();
 
             if (listboxConversation != null)
                 listboxConversation.ClearItems();
@@ -366,6 +372,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             listboxTopic.Size = new Vector2(94, 104);
             //listboxTopic.RowsDisplayed = maxNumTopicsShown;
             listboxTopic.MaxCharacters = -1;
+            listboxTopic.RowSpacing = 0;
             listboxTopic.Name = "list_topic";
             listboxTopic.EnabledHorizontalScroll = true;
             listboxTopic.VerticalScrollMode = ListBox.VerticalScrollModes.PixelWise;
@@ -644,9 +651,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // compute length of longest item in listbox from current list items...
             //lengthOfLongestItemInListBox = listboxTopic.LengthOfLongestItem();
             widthOfLongestItemInListBox = listboxTopic.WidthContent();
+
             // update listboxTopic.MaxHorizontalScrollIndex            
             //listboxTopic.MaxHorizontalScrollIndex = Math.Max(0, lengthOfLongestItemInListBox - maxNumCharactersOfTopicShown);
             listboxTopic.MaxHorizontalScrollIndex = Math.Max(0, widthOfLongestItemInListBox - (int)listboxTopic.Size.x);
+            
+            listboxTopic.Update();
+            UpdateScrollBarsTopic();
+            UpdateScrollButtonsTopic();
+            listboxTopic.SelectNone();
+            UpdateQuestion(-1); // important since it might have selected question from last double-click action when changing level of topic tree
         }
 
         void ClearListboxTopics()
@@ -934,7 +948,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // TODO: work section handling
 
             if (index < 0 || index >= listboxTopic.Count)
+            {
+                textlabelPlayerSays.Text = "";
                 return;
+            }
 
             TalkManager.ListItem listItem = listCurrentTopics.Value[index];
 
@@ -948,27 +965,36 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void SelectTopicFromTopicList(int index)
         {
+            // guard execution - this is important because I encountered a issue with listbox and double-click:
+            // when changing listbox content and updating the listbox in the double click event callback the
+            // corresponding item (at the screen position) of the newly created and set content will receive
+            // the same double-click event and thus trigger its callback - which is a) unwanted and b) can lead
+            // in the case where the click position is a group item in first list and a "previous list" item
+            // in linked second list to an infinite loop (e.g. location list with group item on first position and
+            // "previous" item on linked second list)
+            // SIDE NOTE: don't use return inside this function (or if you do, don't forget to set
+            // inListboxTopicContentUpdate to false again before!)
+            if (inListboxTopicContentUpdate)
+                return;
+            inListboxTopicContentUpdate = true;
+
             if (index < 0 || index >= listboxTopic.Count)
                 return;
 
             TalkManager.ListItem listItem = listCurrentTopics.Value[index];
             if (listItem.type == TalkManager.ListItemType.Navigation)
             {
-                if (listItem.listParentItems.Value == null)
-                    return;
-                SetListboxTopics(ref listboxTopic, listItem.listParentItems);
-                listboxTopic.Update();
-                UpdateScrollBarsTopic();
-                UpdateScrollButtonsTopic();
+                if (listItem.listParentItems.Value != null)
+                {
+                    SetListboxTopics(ref listboxTopic, listItem.listParentItems);
+                }
             }
             else if (listItem.type == TalkManager.ListItemType.ItemGroup)
             {
-                if (listItem.listChildItems.Value == null)
-                    return;
-                SetListboxTopics(ref listboxTopic, listItem.listChildItems);
-                listboxTopic.Update();
-                UpdateScrollBarsTopic();
-                UpdateScrollButtonsTopic();
+                if (listItem.listChildItems.Value != null)
+                {
+                    SetListboxTopics(ref listboxTopic, listItem.listChildItems);
+                }
             }
             else if (listItem.type == TalkManager.ListItemType.Item)
             {
@@ -986,6 +1012,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 UpdateScrollBarConversation();
                 UpdateScrollButtonsConversation();
             }
+            inListboxTopicContentUpdate = false;
         }
 
         #region event handlers

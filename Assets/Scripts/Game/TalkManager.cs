@@ -19,6 +19,7 @@ using DaggerfallConnect.Utility;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
+using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -155,12 +156,20 @@ namespace DaggerfallWorkshop.Game
         {
             SetupSingleton();
 
-            AssembleTopicLists();
+            // important that transition events/delegates are created in Awake() instead of OnEnable (since exteriorAutomap gameobject is disabled when going indoors and enabled when going outdoors)
+            PlayerGPS.OnMapPixelChanged += OnMapPixelChanged;
+            PlayerEnterExit.OnTransitionExterior += OnTransitionToExterior;
+            PlayerEnterExit.OnTransitionDungeonExterior += OnTransitionToDungeonExterior;
+            SaveLoadManager.OnLoad += OnLoadEvent;            
         }
 
         void OnDestroy()
         {
-
+            // important that transition events/delegates are destroyed in OnDestroy() instead of OnDisable (since exteriorAutomap gameobject is disabled when going indoors and enabled when going outdoors)
+            PlayerGPS.OnMapPixelChanged -= OnMapPixelChanged;
+            PlayerEnterExit.OnTransitionExterior -= OnTransitionToExterior;
+            PlayerEnterExit.OnTransitionDungeonExterior -= OnTransitionToDungeonExterior;
+            SaveLoadManager.OnLoad -= OnLoadEvent;
         }
 
         void OnEnable()
@@ -449,6 +458,26 @@ namespace DaggerfallWorkshop.Game
         #endregion
 
         #region event handlers
+
+        private void OnMapPixelChanged(DFPosition mapPixel)
+        {
+            AssembleTopicLists();
+        }
+
+        private void OnTransitionToExterior(PlayerEnterExit.TransitionEventArgs args)
+        {
+            AssembleTopicLists();
+        }
+
+        private void OnTransitionToDungeonExterior(PlayerEnterExit.TransitionEventArgs args)
+        {
+            AssembleTopicLists();
+        }
+
+        void OnLoadEvent(SaveData_v1 saveData)
+        {
+            AssembleTopicLists();
+        }
 
         #endregion
     }
