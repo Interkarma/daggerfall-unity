@@ -322,36 +322,63 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     asciiBytes[i] = PixelFont.SpaceASCII;
 
                 // Calculate total width
-                PixelFont.GlyphInfo glyph = font.GetGlyph(asciiBytes[i]);
+                PixelFont.GlyphInfo glyph = font.GetGlyph(asciiBytes[i]);                
 
                 // If maxWidth is set, don't allow the label texture to exceed it
-                if ((maxWidth <= 0) || (width + glyph.width + font.GlyphSpacing) <= maxWidth)
+                if ((maxWidth <= 0) || ((width + glyph.width + font.GlyphSpacing) <= maxWidth))
+                {                    
                     width += glyph.width + font.GlyphSpacing;
+                }
                 else
                 {
+                    int rowLength;
                     if (wrapWords)
                     {
                         int j;
-                        for (j = i; j >= lastEndOfRowByte; j--)
+                        for (j = i - 1; j >= lastEndOfRowByte; j--) // start from i - 1 since pos i could also be a space and we don't want to stop there
                         {
                             if (asciiBytes[j] == PixelFont.SpaceASCII)
                                 break;
                         }
-                        if (j > lastEndOfRowByte)
-                            i = j+1;
+                        if (j > lastEndOfRowByte) // space found in row
+                        {
+                            i = j + 1; // position after space for next line
+                            rowLength = j - lastEndOfRowByte; // set length from row start to position before space
+                        }
+                        else
+                        {
+                            rowLength = i - lastEndOfRowByte;
+                        }
+
+                        // compute width of text-wrapped line
+                        width = 0;
+                        for (int k = lastEndOfRowByte; k < j; k++)
+                        {
+                            glyph = font.GetGlyph(asciiBytes[k]);
+                            width += glyph.width + font.GlyphSpacing;
+                        }
+                    }
+                    else
+                    {
+                        rowLength = i - lastEndOfRowByte;
                     }
                     // The row of glyphs exceeded maxWidth. Add it to the list of rows and start
                     // counting width again with the remainder of the ASCII bytes.
-                    byte[] trimmed = new List<byte>(asciiBytes).GetRange(lastEndOfRowByte, i - lastEndOfRowByte).ToArray();
+                    byte[] trimmed = new List<byte>(asciiBytes).GetRange(lastEndOfRowByte, rowLength).ToArray();
                     rows.Add(trimmed);
+
+                    // update greatest width found so far
                     if (greatestWidthFound < width)
                         greatestWidthFound = width;
+                    
+                    // reset width for next line
                     width = 0;
-                    lastEndOfRowByte = i;
 
                     // Resume interation over remainder of ASCII bytes
                     //asciiBytes = new List<byte>(asciiBytes).GetRange(i, asciiBytes.Length - i).ToArray();
-                    //i = 0;                    
+                    //i = 0;
+
+                    lastEndOfRowByte = i;
                 }
             }
 
@@ -381,7 +408,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 for (int i = 0; i < row.Length; i++)
                 {
                     PixelFont.GlyphInfo glyph = font.GetGlyph(row[i]);
-                    if (xpos + glyph.width >= totalWidth)
+                    if (xpos + glyph.width > totalWidth)
                         break;
 
                     labelTexture.SetPixels32(xpos, ypos, glyph.width, font.GlyphHeight, glyph.colors);
