@@ -1760,7 +1760,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        private void StartGameBehaviour_OnNewGame()
+        protected virtual void StartGameBehaviour_OnNewGame()
         {
             // Reset certain elements on a new game
             if (IsSetup)

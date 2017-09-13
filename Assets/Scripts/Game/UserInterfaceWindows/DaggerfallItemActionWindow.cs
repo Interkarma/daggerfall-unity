@@ -28,7 +28,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// <summary>
     /// Implements inventory window.
     /// </summary>
-    public class DaggerfallItemActionWindow : DaggerfallInventoryWindow
+    public class DaggerfallItemActionWindow : DaggerfallInventoryWindow //, IMacroContextProvider
     {
         #region UI Rects
 
@@ -256,6 +256,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             UpdateCostAndGold();
         }
 
+        #endregion
+
+        #region pricing
+
         private void UpdateCostAndGold()
         {
             int cost = 0;
@@ -266,6 +270,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             costLabel.Text = cost.ToString();
             goldLabel.Text = PlayerEntity.GoldPieces.ToString();
+        }
+
+        private int GetDealPrice()
+        {
+            // This is modified for deal - just using cost for now.
+            int cost = 0;
+            for (int i = 0; i < remoteItems.Count; i++)
+            {
+                DaggerfallUnityItem item = remoteItems.GetItem(i);
+                cost += FormulaHelper.CalculateItemCost(item.value, buildingData.Quality) * item.stackCount;
+            }
+            return cost;
         }
 
         #endregion
@@ -476,21 +492,62 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void StealButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            // TODO
+            if (windowMode == WindowModes.Buy)
+            {
+                // TODO
+            }
         }
 
         private void ModeActionButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            Debug.Log("Sell!");
+            Debug.Log("Request deal!");
+            ShowDealPopup();
         }
 
         private void ClearButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            Debug.Log("Clear!");
             ClearSelectedItems();
             Refresh();
         }
 
+        private void ConfirmDeal_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        {
+            if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
+            {
+                // Proceed with deal.
+                switch (windowMode)
+                {
+                    case WindowModes.Sell:
+                        PlayerEntity.GoldPieces += GetDealPrice();
+                        remoteItems.Clear();
+                        break;
+                }
+                Refresh();
+            }
+
+            CloseWindow();
+        }
+
         #endregion
+
+        void ShowDealPopup()
+        {
+            const int qualityLevelDealId = 260;
+            int qualityOffset = buildingData.Quality / 4;
+
+            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
+            TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(qualityLevelDealId + qualityOffset);
+            messageBox.SetTextTokens(tokens); //, this);
+            messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
+            messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
+            messageBox.OnButtonClick += ConfirmDeal_OnButtonClick;
+            uiManager.PushWindow(messageBox);
+        }
+
+
+        protected override void StartGameBehaviour_OnNewGame()
+        {
+            // Do nothing when game starts, as this window class is not used in a persisted manner like its parent.
+        }
     }
 }
