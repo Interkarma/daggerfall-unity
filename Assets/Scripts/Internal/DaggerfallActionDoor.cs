@@ -139,7 +139,9 @@ namespace DaggerfallWorkshop
 
                 if (chance >= 30)
                     if (chance >= 35)
-                        if (chance >= 45)
+                        if (chance >= 95)
+                            Game.DaggerfallUI.SetMidScreenText(HardStrings.lockpickChance[9]);
+                        else if (chance >= 45)
                             Game.DaggerfallUI.SetMidScreenText(HardStrings.lockpickChance[(chance - 45) / 5]);
                         else
                             Game.DaggerfallUI.SetMidScreenText(HardStrings.lockpickChance3);
