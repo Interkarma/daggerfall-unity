@@ -691,7 +691,7 @@ namespace DaggerfallWorkshop.Game.Formulas
         public static int CalculateItemCost(int baseItemValue, int shopQuality)
         {
             // TODO - this is made-up BS by Hazelnut, needs classic formula to be implemented here!
-            return baseItemValue * (shopQuality / 10);
+            return (int)(baseItemValue * ((float)shopQuality / 10));
         }
 
         #endregion

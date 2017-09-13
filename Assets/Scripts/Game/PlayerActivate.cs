@@ -754,7 +754,6 @@ namespace DaggerfallWorkshop.Game
         // Player has clicked on a static NPC
         void StaticNPCClick(StaticNPC npc)
         {
-            Debug.Log(String.Format("{0}, {1} ", npc.DisplayName, npc.Data.factionID));
             if (playerEnterExit.IsPlayerInsideBuilding)
             {
                 DFLocation.BuildingData buildingData = playerEnterExit.Interior.BuildingData;
