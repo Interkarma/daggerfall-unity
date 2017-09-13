@@ -90,7 +90,7 @@ namespace DaggerfallWorkshop.Game
         {
             Item,
             ItemGroup,
-            Navigation
+            NavigationBack
         }
 
         public enum QuestionType
@@ -199,13 +199,13 @@ namespace DaggerfallWorkshop.Game
         public string GetQuestionText(TalkManager.ListItem listItem, DaggerfallTalkWindow.TalkTone talkTone)
         {
             int toneIndex = DaggerfallTalkWindow.TalkToneToIndex(talkTone);
-            string question = "question about " + listItem.caption + ": " + DaggerfallUnity.Instance.TextProvider.GetRandomText(7225 + toneIndex);
+            string question = "%hnt.... It'd be easiest if I just ... question about " + listItem.caption + ": " + DaggerfallUnity.Instance.TextProvider.GetRandomText(7225 + toneIndex);
             return question;
         }
 
         public string GetAnswerText(TalkManager.ListItem listItem)
         {
-            string answer = "answer about " + listItem.caption + ": " + DaggerfallUnity.Instance.TextProvider.GetRandomText(7285) + DaggerfallUnity.Instance.TextProvider.GetRandomText(7332);
+            string answer = /*"answer about " + listItem.caption + ": " + */DaggerfallUnity.Instance.TextProvider.GetRandomText(7285) + DaggerfallUnity.Instance.TextProvider.GetRandomText(7332);
             return answer;
         }
 
@@ -361,7 +361,7 @@ namespace DaggerfallWorkshop.Game
                     itemBuildingTypeGroup.listChildItems = new Ref<List<ListItem>> { Value = new List<ListItem>() };
 
                     ListItem itemPreviousList = new ListItem();
-                    itemPreviousList.type = ListItemType.Navigation;
+                    itemPreviousList.type = ListItemType.NavigationBack;
                     itemPreviousList.caption = "Previous List";
                     itemPreviousList.listParentItems = new Ref<List<ListItem>> { Value = listTopicLocation };                
                     itemBuildingTypeGroup.listChildItems.Value.Add(itemPreviousList);
@@ -389,7 +389,7 @@ namespace DaggerfallWorkshop.Game
 
                 ListItem itemPreviousList;
                 itemPreviousList = new ListItem();
-                itemPreviousList.type = ListItemType.Navigation;
+                itemPreviousList.type = ListItemType.NavigationBack;
                 itemPreviousList.caption = "Previous List";
                 itemPreviousList.listParentItems = new Ref<List<ListItem>> { Value = listTopicLocation };
                 itemBuildingTypeGroup.listChildItems = new Ref<List<ListItem>> { Value = new List<ListItem>() };
@@ -415,7 +415,7 @@ namespace DaggerfallWorkshop.Game
                 if (i == 0)
                 {
                     item = new ListItem();
-                    item.type = ListItemType.Navigation;
+                    item.type = ListItemType.NavigationBack;
                     item.caption = "Previous List";
                     item.listParentItems = new Ref<List<ListItem>> { Value = listTopicLocation };
                     itemBuildingTypeGroup.listChildItems.Value.Add(item);
