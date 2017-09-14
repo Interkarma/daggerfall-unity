@@ -88,6 +88,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         ItemCollection merchantItems = new ItemCollection();
         bool usingWagon = false;
+        int cost = 0;
 
         #endregion
 
@@ -168,6 +169,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SelectActionMode(ActionModes.Select);
 
             // Setup initial display
+
+            // TODO call refresh(false)!!!!!!
             FilterLocalItems();
             FilterRemoteItems();
             UpdateLocalItemsDisplay();
@@ -216,15 +219,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public override void OnPush()
         {
-            // Local items always points to player inventory
+            // Local items starts pointing to player inventory
             localItems = PlayerEntity.Items;
 
-            // Start a new dropped items target
+            // Initialise merchant items collection
             merchantItems.Clear();
             remoteItems = merchantItems;
             remoteTargetType = RemoteTargetTypes.Merchant;
 
-            // Clear wagon button state on open
+            // Clear wagon button state
             if (wagonButton != null)
             {
                 usingWagon = false;
@@ -262,7 +265,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void UpdateCostAndGold()
         {
-            int cost = 0;
+            cost = 0;
             for (int i = 0; i < remoteItems.Count; i++)
             {
                 DaggerfallUnityItem item = remoteItems.GetItem(i);
@@ -274,13 +277,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private int GetTradePrice()
         {
-            // This is modified for trade - just using cost for now.
-            int cost = 0;
-            for (int i = 0; i < remoteItems.Count; i++)
-            {
-                DaggerfallUnityItem item = remoteItems.GetItem(i);
-                cost += FormulaHelper.CalculateItemCost(item.value, buildingData.Quality) * item.stackCount;
-            }
+            // The cost is modified for trade based on mercantile skill etc - just using 75% cost for now.
             return (int)(cost * 0.75);
         }
 
@@ -307,7 +304,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (windowMode != WindowModes.Buy)
             {
-                // Return items to player inventory. (ignoring weight here)
+                // Return items to player inventory. 
+                // Note: ignoring weight here, like classic. Priority is to not lose any items.
                 PlayerEntity.Items.TransferAll(remoteItems);
             }
         }
@@ -349,30 +347,30 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        static Dictionary<DFLocation.BuildingTypes, List<ItemGroups>> storeBuysItemType = new Dictionary<DFLocation.BuildingTypes, List<ItemGroups>>()
+        {
+            { DFLocation.BuildingTypes.GeneralStore, new List<ItemGroups>() { ItemGroups.Armor, ItemGroups.MagicItems, ItemGroups.Weapons } },
+        };
+            
         protected override void FilterLocalItems()
         {
             base.FilterLocalItems();
 
-            // Filter again based on merchant type - YUKKY!
-            List<DaggerfallUnityItem> itemsMerchantDeals = new List<DaggerfallUnityItem>();
+            // Remove any items not accepted by this merchant type.
+            // ? repair/identify have restrictions?
+            List<ItemGroups> itemTypesAccepted = storeBuysItemType[buildingData.BuildingType];
+            string stuff = "";
             foreach (DaggerfallUnityItem item in localItemsFiltered)
-            {
-                //switch (item.ItemGroup)
-                //{
-                //    case ItemGroups.Armor:
-                //    case ItemGroups.Weapons:
-                //        if (buildingData == DFLocation.BuildingTypes.Armorer ||
-                //            buildingData == DFLocation.BuildingTypes.GeneralStore ||
-                //            buildingData == DFLocation.BuildingTypes.WeaponSmith)
-                //        {
-                //            itemsMerchantDeals.Add(item);
-                //        }
-                //        break;
-                //}
-            }
-            //localItemsFiltered = itemsMerchantDeals;
+                stuff += item.shortName + ", ";
+            Debug.Log(stuff);
+
+            localItemsFiltered.RemoveAll(i => !itemTypesAccepted.Contains(i.ItemGroup));
+            stuff = "";
+            foreach (DaggerfallUnityItem item in localItemsFiltered)
+                stuff += item.shortName + ", ";
+            Debug.Log(stuff);
         }
-        
+
         void ShowWagon(bool show)
         {
             if (show)
@@ -462,8 +460,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 if (CanCarry(item) || (usingWagon && WagonCanHold(item)))
                     TransferItem(item, remoteItems, localItems);
-                else
-                    ;// show message? 
             }
             else if (selectedActionMode == ActionModes.Info)
             {
@@ -524,7 +520,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
                 Refresh();
             }
-
             CloseWindow();
         }
 
