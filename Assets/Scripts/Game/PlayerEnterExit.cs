@@ -52,6 +52,7 @@ namespace DaggerfallWorkshop.Game
 
         DFLocation.BuildingTypes buildingType;
         ushort factionID = 0;
+        BuildingSummary buildingSummary;
 
         /// <summary>
         /// True when player is inside any structure.
@@ -137,6 +138,20 @@ namespace DaggerfallWorkshop.Game
         public uint FactionID
         {
             get { return factionID; }
+        }
+
+        /// <summary>
+        /// Gets current building's data.
+        /// Only valid when player is inside a building.
+        /// This is set every time player enters a building and is saved/loaded with each save game.
+        /// Notes:
+        ///  Older save games will not carry this data until player exits and enters building again.
+        ///  When consuming this property, try to handle empty BuildingSummary if possible.
+        /// </summary>
+        public BuildingSummary BuildingSummary
+        {
+            get { return buildingSummary; }
+            internal set { buildingSummary = value; }
         }
 
         /// <summary>

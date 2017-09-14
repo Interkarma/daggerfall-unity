@@ -216,9 +216,9 @@ namespace DaggerfallWorkshop.Game
                                             return;
                                         }
                                     }
-
+                                    
                                     // Hit door while outside, transition inside
-                                    playerEnterExit.TransitionInterior(doorOwner, door, true);
+                                    TransitionInterior(doorOwner, door, true);
                                     return;
                                 }
                                 else if (door.doorType == DoorTypes.Building && playerEnterExit.IsPlayerInside)
@@ -456,10 +456,34 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        // Custom transition to store building data before entering building
+        private void TransitionInterior(Transform doorOwner, StaticDoor door, bool doFade = false)
+        {
+            // Get building directory for location
+            BuildingDirectory buildingDirectory = GameManager.Instance.StreamingWorld.GetCurrentBuildingDirectory();
+            if (!buildingDirectory)
+            {
+                Debug.LogError("PlayerActivate.TransitionInterior() could not retrieve BuildingDirectory.");
+                return;
+            }
+
+            // Get detailed building data from directory
+            BuildingSummary buildingSummary = new BuildingSummary();
+            if (!buildingDirectory.GetBuildingSummary(door.buildingKey, out buildingSummary))
+            {
+                Debug.LogErrorFormat("PlayerActivate.TransitionInterior() could not retrieve BuildingSummary for key {0}.", door.buildingKey);
+                return;
+            }
+
+            // Perform transition
+            playerEnterExit.BuildingSummary = buildingSummary;
+            playerEnterExit.TransitionInterior(doorOwner, door, doFade);
+        }
+
         // Message box closed, move to interior
         private void Popup_OnClose()
         {
-            playerEnterExit.TransitionInterior(deferredInteriorDoorOwner, deferredInteriorDoor, true);
+            TransitionInterior(deferredInteriorDoorOwner, deferredInteriorDoor, true);
         }
 
         // Look for building array on object, then on direct parent
