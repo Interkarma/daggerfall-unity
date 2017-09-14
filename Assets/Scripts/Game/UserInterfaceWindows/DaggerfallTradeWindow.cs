@@ -84,11 +84,31 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string costPanelTextureName = "REPR02I0.IMG";
 
         WindowModes windowMode = WindowModes.Inventory;
-        DFLocation.BuildingData buildingData;
+        BuildingSummary buildingSummary;
 
         ItemCollection merchantItems = new ItemCollection();
         bool usingWagon = false;
         int cost = 0;
+
+        static Dictionary<DFLocation.BuildingTypes, List<ItemGroups>> storeBuysItemType = new Dictionary<DFLocation.BuildingTypes, List<ItemGroups>>()
+        {
+            { DFLocation.BuildingTypes.Alchemist, new List<ItemGroups>()
+                { ItemGroups.Gems, ItemGroups.CreatureIngredients1, ItemGroups.CreatureIngredients2, ItemGroups.CreatureIngredients3, ItemGroups.PlantIngredients1, ItemGroups.PlantIngredients2, ItemGroups.MiscellaneousIngredients1, ItemGroups.MiscellaneousIngredients2, ItemGroups.MetalIngredients } },
+            { DFLocation.BuildingTypes.Armorer, new List<ItemGroups>()
+                { ItemGroups.Armor, ItemGroups.Weapons } },
+            { DFLocation.BuildingTypes.Bookseller, new List<ItemGroups>()
+                { ItemGroups.Books } },
+            { DFLocation.BuildingTypes.ClothingStore, new List<ItemGroups>()
+                { ItemGroups.MensClothing, ItemGroups.WomensClothing } },
+            { DFLocation.BuildingTypes.GemStore, new List<ItemGroups>()
+                { ItemGroups.Gems, ItemGroups.Jewellery } },
+            { DFLocation.BuildingTypes.GeneralStore, new List<ItemGroups>()
+                { ItemGroups.Books, ItemGroups.MensClothing, ItemGroups.WomensClothing, /*ItemGroups.Transportation,*/ ItemGroups.Jewellery, ItemGroups.Weapons } },
+            { DFLocation.BuildingTypes.PawnShop, new List<ItemGroups>()
+                { ItemGroups.Armor, ItemGroups.Books, ItemGroups.MensClothing, ItemGroups.WomensClothing, ItemGroups.Gems, ItemGroups.Jewellery, ItemGroups.Weapons } },
+            { DFLocation.BuildingTypes.WeaponSmith, new List<ItemGroups>()
+                { ItemGroups.Armor, ItemGroups.Weapons } },
+        };
 
         #endregion
 
@@ -111,12 +131,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Constructors
 
-        public DaggerfallTradeWindow(IUserInterfaceManager uiManager, WindowModes windowMode, DFLocation.BuildingData buildingData, DaggerfallBaseWindow previous = null)
+        public DaggerfallTradeWindow(IUserInterfaceManager uiManager, WindowModes windowMode, DaggerfallBaseWindow previous = null)
             : base(uiManager, previous)
         {
             this.windowMode = windowMode;
-            this.buildingData = buildingData;
-
         }
 
         #endregion
@@ -169,8 +187,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SelectActionMode(ActionModes.Select);
 
             // Setup initial display
-
-            // TODO call refresh(false)!!!!!!
             FilterLocalItems();
             FilterRemoteItems();
             UpdateLocalItemsDisplay();
@@ -219,6 +235,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public override void OnPush()
         {
+            // Get building info, close if invalid
+            buildingSummary = GameManager.Instance.PlayerEnterExit.BuildingSummary;
+            //Debug.Log(string.Format("{0} {1} {2}", buildingSummary.buildingKey, buildingSummary.BuildingType, buildingSummary.Quality));
+            if (buildingSummary.buildingKey <= 0)
+                DaggerfallUI.MessageBox(HardStrings.oldSaveNoTrade, true);
+
             // Local items starts pointing to player inventory
             localItems = PlayerEntity.Items;
 
@@ -261,7 +283,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #endregion
 
-        #region pricing
+        #region Pricing
 
         private void UpdateCostAndGold()
         {
@@ -269,7 +291,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             for (int i = 0; i < remoteItems.Count; i++)
             {
                 DaggerfallUnityItem item = remoteItems.GetItem(i);
-                cost += FormulaHelper.CalculateItemCost(item.value, buildingData.Quality) * item.stackCount;
+                cost += FormulaHelper.CalculateItemCost(item.value, buildingSummary.Quality) * item.stackCount;
             }
             costLabel.Text = cost.ToString();
             goldLabel.Text = PlayerEntity.GoldPieces.ToString();
@@ -277,8 +299,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private int GetTradePrice()
         {
-            // The cost is modified for trade based on mercantile skill etc - just using 75% cost for now.
-            return (int)(cost * 0.75);
+            return FormulaHelper.CalculateTradePrice(cost, buildingSummary.Quality);
         }
 
         #endregion
@@ -310,6 +331,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        protected override void UpdateLocalTargetIcon()
+        {
+            if (usingWagon)
+            {
+                localTargetIconPanel.BackgroundTexture = DaggerfallUnity.ItemHelper.GetContainerImage(InventoryContainerImages.Wagon).texture;
+                float weight = PlayerEntity.WagonWeight;
+                localTargetIconLabel.Text = String.Format(weight % 1 == 0 ? "{0:F0} / {1}" : "{0:F2} / {1}", weight, ItemHelper.wagonKgLimit);
+            }
+            else
+            {
+                localTargetIconPanel.BackgroundTexture = null;
+                localTargetIconLabel.Text = "";
+            }
+        }
+
         protected override void UpdateRemoteTargetIcon()
         {
             ImageData containerImage;
@@ -332,43 +368,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             remoteTargetIconPanel.BackgroundTexture = containerImage.texture;
         }
 
-        protected override void UpdateLocalTargetIcon()
-        {
-            if (usingWagon)
-            {
-                localTargetIconPanel.BackgroundTexture = DaggerfallUnity.ItemHelper.GetContainerImage(InventoryContainerImages.Wagon).texture;
-                float weight = PlayerEntity.WagonWeight;
-                localTargetIconLabel.Text = String.Format(weight % 1 == 0 ? "{0:F0} / {1}" : "{0:F2} / {1}", weight, ItemHelper.wagonKgLimit);
-            }
-            else
-            {
-                localTargetIconPanel.BackgroundTexture = null;
-                localTargetIconLabel.Text = "";
-            }
-        }
-
-        static Dictionary<DFLocation.BuildingTypes, List<ItemGroups>> storeBuysItemType = new Dictionary<DFLocation.BuildingTypes, List<ItemGroups>>()
-        {
-            { DFLocation.BuildingTypes.GeneralStore, new List<ItemGroups>() { ItemGroups.Armor, ItemGroups.MagicItems, ItemGroups.Weapons } },
-        };
-            
         protected override void FilterLocalItems()
         {
             base.FilterLocalItems();
 
-            // Remove any items not accepted by this merchant type.
+            if (windowMode == WindowModes.Sell)
+            {
+                // Remove any items not accepted by this merchant type.
+                List<ItemGroups> itemTypesAccepted = storeBuysItemType[buildingSummary.BuildingType];
+                localItemsFiltered.RemoveAll(i => !itemTypesAccepted.Contains(i.ItemGroup));
+            }
             // ? repair/identify have restrictions?
-            List<ItemGroups> itemTypesAccepted = storeBuysItemType[buildingData.BuildingType];
-            string stuff = "";
-            foreach (DaggerfallUnityItem item in localItemsFiltered)
-                stuff += item.shortName + ", ";
-            Debug.Log(stuff);
+            // repair: not in classic, the condition is checked which means only weps & armour/
 
-            localItemsFiltered.RemoveAll(i => !itemTypesAccepted.Contains(i.ItemGroup));
-            stuff = "";
-            foreach (DaggerfallUnityItem item in localItemsFiltered)
-                stuff += item.shortName + ", ";
-            Debug.Log(stuff);
         }
 
         void ShowWagon(bool show)
@@ -531,9 +543,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             int msgOffset = 0;
 
             if (windowMode == WindowModes.Buy)
-                msgOffset = (buildingData.Quality > 10) ? 1 : 0;
+                msgOffset = (buildingSummary.Quality > 10) ? 1 : 0;
             else
-                msgOffset = 1 + (buildingData.Quality / 5);
+                msgOffset = 1 + (buildingSummary.Quality / 5);
 
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
             TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(tradeMessageBaseId + msgOffset);

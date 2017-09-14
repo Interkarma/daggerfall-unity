@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -59,9 +59,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Panel backgroundPanel = new Panel();
         Panel characterPanel = new Panel();
 
-        TextLabel head = new TextLabel();
-        TextLabel[] armourLabels = new TextLabel[6];
-
         string lastBackgroundName = string.Empty;
 
         #endregion
@@ -94,9 +91,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Set initial display flags
             backgroundPanel.Enabled = showBackgroundLayer;
             characterPanel.Enabled = showCharacterLayer;
-
-            head = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(30, 20), characterPanel);
-            head.Text = "12";
         }
 
         #endregion

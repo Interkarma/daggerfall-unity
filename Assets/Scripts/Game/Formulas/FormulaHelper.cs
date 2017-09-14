@@ -691,7 +691,15 @@ namespace DaggerfallWorkshop.Game.Formulas
         public static int CalculateItemCost(int baseItemValue, int shopQuality)
         {
             // TODO - this is made-up BS by Hazelnut, needs classic formula to be implemented here!
+
             return (int)(baseItemValue * ((float)shopQuality / 10));
+        }
+
+        public static int CalculateTradePrice(int cost, int shopQuality)
+        {
+            // TODO - The cost is modified for trade based on mercantile skill etc - just using 75% cost for now.
+
+            return (int)(cost * 0.75);
         }
 
         #endregion

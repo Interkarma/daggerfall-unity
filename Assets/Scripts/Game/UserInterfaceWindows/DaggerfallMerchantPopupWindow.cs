@@ -22,7 +22,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Rect talkButtonRect = new Rect(5, 5, 120, 7);
         Rect sellButtonRect = new Rect(5, 14, 120, 7);
-        Rect exitButtonRect = new Rect(44, 33, 43, 15);
+        Rect exitButtonRect = new Rect(44, 24, 43, 15);
 
         #endregion
 
@@ -45,18 +45,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #region Fields
 
         const string baseTextureName = "GNRC01I0.IMG";      // Talk / Sell
-
-        DFLocation.BuildingData buildingData;
-
-        #endregion
-
-        #region Properties
-
-        public DFLocation.BuildingData BuildingData
-        {
-            get { return buildingData; }
-            set { buildingData = value; }
-        }
 
         #endregion
 
@@ -126,6 +114,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void SellButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             CloseWindow();
+            DaggerfallTradeWindow sellWindow = new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Sell, this);
+            uiManager.PushWindow(sellWindow);
         }
 
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)

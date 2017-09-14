@@ -756,29 +756,20 @@ namespace DaggerfallWorkshop.Game
         {
             if (playerEnterExit.IsPlayerInsideBuilding)
             {
-                DFLocation.BuildingData buildingData = playerEnterExit.Interior.BuildingData;
                 FactionFile.FactionData factionData;
                 if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(npc.Data.factionID, out factionData))
                 {
                     // Check if this NPC is a merchant.
                     if ((FactionFile.SocialGroups)factionData.sgroup == FactionFile.SocialGroups.Merchants)
                     {
-                        if (RMBLayout.IsRepairShop(buildingData.BuildingType))
-                        {
-                            DaggerfallMerchantRepairPopupWindow merchantWindow = new DaggerfallMerchantRepairPopupWindow(DaggerfallUI.Instance.UserInterfaceManager);
-                            merchantWindow.BuildingData = buildingData;
-                            DaggerfallUI.Instance.UserInterfaceManager.PushWindow(merchantWindow);
-                        }
+                        if (RMBLayout.IsRepairShop(playerEnterExit.BuildingSummary.BuildingType))
+                            DaggerfallUI.Instance.UserInterfaceManager.PushWindow(new DaggerfallMerchantRepairPopupWindow(DaggerfallUI.Instance.UserInterfaceManager));
                         else
-                        {
-                            DaggerfallMerchantPopupWindow merchantWindow = new DaggerfallMerchantPopupWindow(DaggerfallUI.Instance.UserInterfaceManager);
-                            merchantWindow.BuildingData = buildingData;
-                            DaggerfallUI.Instance.UserInterfaceManager.PushWindow(merchantWindow);
-                        }
-
-                        // TODO - more checks for npc types... guild services etc
+                            DaggerfallUI.Instance.UserInterfaceManager.PushWindow(new DaggerfallMerchantPopupWindow(DaggerfallUI.Instance.UserInterfaceManager));
                     }
                 }
+                // TODO - more checks for npc types... guild services etc
+
             }
 
             // Store the NPC just clicked in quest engine
@@ -849,7 +840,7 @@ namespace DaggerfallWorkshop.Game
                 else
                 {
                     string noGoldFound = DaggerfallUnity.Instance.TextProvider.GetRandomText(foundNothingValuableTextId);
-                    DaggerfallUI.MessageBox(noGoldFound, null, true);
+                    DaggerfallUI.MessageBox(noGoldFound, true);
                 }
             }
             else

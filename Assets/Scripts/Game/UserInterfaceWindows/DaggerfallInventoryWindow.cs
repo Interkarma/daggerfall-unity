@@ -277,6 +277,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             UpdateLocalItemsDisplay();
             UpdateRemoteItemsDisplay();
             UpdateAccessoryItemsDisplay();
+            UpdateLocalTargetIcon();
             UpdateRemoteTargetIcon();
         }
 
@@ -1202,7 +1203,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #endregion
 
-        #region ScrollBar Event Handlers
+        #region Local ScrollBar Event Handlers
 
         private void LocalItemsScrollBar_OnScroll()
         {
@@ -1231,7 +1232,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #endregion
 
-        #region Remote Items List Events
+        #region Remote ScrollBar Event Handlers
 
         private void RemoteItemsScrollBar_OnScroll()
         {

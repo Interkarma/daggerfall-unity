@@ -46,6 +46,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string youMustEnterASaveName = "You must enter a save name.";
         public const string youMustSelectASaveName = "You must select a save name.";
         public const string noSavesFound = "No saves found. Load a Classic save?";
+        public const string oldSaveNoTrade = "Old indoor save loaded, trade window will not work please exit and re-enter building.";
 
         public const string theBodyHasNoTreasure = "The body has no treasure.";
         public const string youAreTooFarAway = "You are too far away...";
