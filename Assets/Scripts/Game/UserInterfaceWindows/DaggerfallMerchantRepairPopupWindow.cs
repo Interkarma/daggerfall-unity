@@ -126,7 +126,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void SellButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             CloseWindow();
-            DaggerfallItemActionWindow sellWindow = new DaggerfallItemActionWindow(uiManager, DaggerfallItemActionWindow.WindowModes.Sell, buildingData, this);
+            DaggerfallTradeWindow sellWindow = new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Sell, buildingData, this);
             uiManager.PushWindow(sellWindow);
         }
 
