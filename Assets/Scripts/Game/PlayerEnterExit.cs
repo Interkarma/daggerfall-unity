@@ -54,6 +54,10 @@ namespace DaggerfallWorkshop.Game
         ushort factionID = 0;
         BuildingSummary buildingSummary;
 
+        DFLocation holidayTextLocation;
+        bool holidayTextPrimed = false;
+        float holidayTextTimer = 0f;
+
         /// <summary>
         /// True when player is inside any structure.
         /// </summary>
@@ -191,6 +195,15 @@ namespace DaggerfallWorkshop.Game
                     //Debug.Log(string.Format("Player is now inside block {0}", playerDungeonBlockData.BlockName));
                 }
             }
+
+            // Count down holiday text display
+            if (holidayTextTimer > 0)
+                holidayTextTimer -= Time.deltaTime;
+            if (holidayTextTimer <= 0 && holidayTextPrimed)
+            {
+                holidayTextPrimed = false;
+                ShowHolidayText();
+            }
         }
 
         #region Public Methods
@@ -311,6 +324,27 @@ namespace DaggerfallWorkshop.Game
 
             // Lower respawn flag
             isRespawning = false;
+        }
+
+        public void ShowHolidayText()
+        {
+            const int holidaysStartID = 8349;
+
+            uint minutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+            int holidayId = Formulas.FormulaHelper.GetHolidayId(minutes, holidayTextLocation.RegionIndex);
+            if (holidayId != 0)
+            {
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
+                messageBox.SetTextTokens(holidaysStartID + holidayId);
+                messageBox.ClickAnywhereToClose = true;
+                messageBox.ParentPanel.BackgroundColor = Color.clear;
+                messageBox.ScreenDimColor = new Color32(0, 0, 0, 0);
+                messageBox.Show();
+            }
+
+            // Set holiday text timer to a somewhat large value so it doesn't show again and again if the player is repeatedly crossing the
+            // border of a city.
+            holidayTextTimer = 10f;
         }
 
         #endregion
@@ -869,6 +903,13 @@ namespace DaggerfallWorkshop.Game
                     string youAreEntering = HardStrings.youAreEntering;
                     youAreEntering = youAreEntering.Replace("%s", location.Name);
                     DaggerfallUI.AddHUDText(youAreEntering, 2);
+
+                    if (holidayTextTimer <= 0 && !holidayTextPrimed)
+                    {
+                        holidayTextTimer = 2.5f; // Short delay to give save game fade-in time to finish
+                        holidayTextPrimed = true;
+                    }
+                    holidayTextLocation = location;
                 }
             }
         }
