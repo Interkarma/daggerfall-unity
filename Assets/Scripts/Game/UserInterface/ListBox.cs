@@ -458,6 +458,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             textLabel.WrapWords = wrapWords;
 
             itemOut = new ListItem(textLabel);
+            itemOut.textColor = textColor;
+            itemOut.selectedTextColor = selectedTextColor;
+            itemOut.shadowColor = shadowColor;
+            itemOut.selectedShadowColor = selectedShadowColor;
             if (position < 0)
                 listItems.Add(itemOut);
             else
