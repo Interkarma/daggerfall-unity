@@ -845,20 +845,7 @@ namespace DaggerfallWorkshop.Game.Items
             }
             else
             {
-                // Shield armor values in classic are unaffected by their material type.
-                switch ((Armor) TemplateIndex)
-                {
-                case Armor.Buckler:
-                    return 1;
-                case Armor.Round_Shield:
-                    return 2;
-                case Armor.Kite_Shield:
-                    return 3;
-                case Armor.Tower_Shield:
-                    return 4;
-                default:
-                    return 0;
-                }
+                return GetShieldArmorValue();
             }
         }
 
