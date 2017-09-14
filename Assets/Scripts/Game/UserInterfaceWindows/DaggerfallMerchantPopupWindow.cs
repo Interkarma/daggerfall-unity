@@ -10,14 +10,8 @@
 //
 
 using UnityEngine;
-using System;
-using System.IO;
-using System.Collections;
-using System.Collections.Generic;
-using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
-using DaggerfallWorkshop.Game.Questing;
 using DaggerfallConnect;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
@@ -26,9 +20,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         #region UI Rects
 
-        Rect repairButtonRect = new Rect(5, 5, 120, 7);
-        Rect talkButtonRect = new Rect(5, 14, 120, 7);
-        Rect sellButtonRect = new Rect(5, 23, 120, 7);
+        Rect talkButtonRect = new Rect(5, 5, 120, 7);
+        Rect sellButtonRect = new Rect(5, 14, 120, 7);
         Rect exitButtonRect = new Rect(44, 33, 43, 15);
 
         #endregion
@@ -36,10 +29,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #region UI Controls
 
         Panel mainPanel = new Panel();
-        Button repairButton = new Button();
         Button talkButton = new Button();
         Button sellButton = new Button();
         Button exitButton = new Button();
+        TextLabel sellLabel = new TextLabel();
 
         #endregion
 
@@ -51,7 +44,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Fields
 
-        const string baseTextureName = "REPR01I0.IMG";      // Join guild / Talk / Custom
+        const string baseTextureName = "GNRC01I0.IMG";      // Talk / Sell
 
         DFLocation.BuildingData buildingData;
 
@@ -92,16 +85,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mainPanel.Position = new Vector2(0, 50);
             mainPanel.Size = new Vector2(baseTexture.width, baseTexture.height);
 
-            // Repair button
-            repairButton = DaggerfallUI.AddButton(repairButtonRect, mainPanel);
-            repairButton.BackgroundColor = DaggerfallUI.DaggerfallUnityNotImplementedColor;
-
             // Talk button
             talkButton = DaggerfallUI.AddButton(talkButtonRect, mainPanel);
             talkButton.BackgroundColor = DaggerfallUI.DaggerfallUnityNotImplementedColor;
 
             // Sell button
+            sellLabel.Position = new Vector2(0, 1);
+            sellLabel.ShadowPosition = Vector2.zero;
+            sellLabel.HorizontalAlignment = HorizontalAlignment.Center;
+            sellLabel.Text = HardStrings.menuSell;
             sellButton = DaggerfallUI.AddButton(sellButtonRect, mainPanel);
+            sellButton.Components.Add(sellLabel);
             sellButton.OnMouseClick += SellButton_OnMouseClick;
 
             // Exit button
@@ -124,11 +118,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Event Handlers
 
+        private void TalkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            CloseWindow();
+        }
+
         private void SellButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             CloseWindow();
-            DaggerfallItemActionWindow sellWindow = new DaggerfallItemActionWindow(uiManager, DaggerfallItemActionWindow.WindowModes.Sell, this);
-            uiManager.PushWindow(sellWindow);
         }
 
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
