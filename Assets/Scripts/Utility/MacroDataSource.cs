@@ -18,6 +18,15 @@ namespace DaggerfallWorkshop.Utility
     public abstract class MacroDataSource   
     // TODO: extract interface when complete set of handlers done? : IMacroDataSource
     {
+        public virtual string Amount()
+        {   // %a
+            throw new NotImplementedException();
+        }
+        public virtual string ShopName()
+        {   // %cpn
+            throw new NotImplementedException();
+        }
+
         public virtual string Str()
         {   // %str
             throw new NotImplementedException();

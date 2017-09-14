@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -754,6 +754,24 @@ namespace DaggerfallWorkshop.Game
         // Player has clicked on a static NPC
         void StaticNPCClick(StaticNPC npc)
         {
+            if (playerEnterExit.IsPlayerInsideBuilding)
+            {
+                FactionFile.FactionData factionData;
+                if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(npc.Data.factionID, out factionData))
+                {
+                    // Check if this NPC is a merchant.
+                    if ((FactionFile.SocialGroups)factionData.sgroup == FactionFile.SocialGroups.Merchants)
+                    {
+                        if (RMBLayout.IsRepairShop(playerEnterExit.BuildingSummary.BuildingType))
+                            DaggerfallUI.Instance.UserInterfaceManager.PushWindow(new DaggerfallMerchantRepairPopupWindow(DaggerfallUI.Instance.UserInterfaceManager));
+                        else
+                            DaggerfallUI.Instance.UserInterfaceManager.PushWindow(new DaggerfallMerchantPopupWindow(DaggerfallUI.Instance.UserInterfaceManager));
+                    }
+                }
+                // TODO - more checks for npc types... guild services etc
+
+            }
+
             // Store the NPC just clicked in quest engine
             QuestMachine.Instance.LastNPCClicked = npc;
 
@@ -822,7 +840,7 @@ namespace DaggerfallWorkshop.Game
                 else
                 {
                     string noGoldFound = DaggerfallUnity.Instance.TextProvider.GetRandomText(foundNothingValuableTextId);
-                    DaggerfallUI.MessageBox(noGoldFound, null, true);
+                    DaggerfallUI.MessageBox(noGoldFound, true);
                 }
             }
             else

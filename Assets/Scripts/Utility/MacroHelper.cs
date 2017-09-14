@@ -12,6 +12,7 @@ using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using UnityEngine;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -43,7 +44,7 @@ namespace DaggerfallWorkshop.Utility
             { "%2com", null },// ?
             { "%2hn", null }, // ?
             { "%3hn", null }, // ?
-            { "%a", null },   // Cost of somthing.
+            { "%a", Amount },   // Cost of somthing.
             { "%ach", null }, // + Chance per
             { "%adr", null }, // + Duration per
             { "%agi", Agi }, //  Amount of Agility
@@ -60,7 +61,7 @@ namespace DaggerfallWorkshop.Utility
             { "%clm", null }, // Per level (Magnitude)
             { "%cn", CityName },  // City name
             { "%cn2", CityName2 }, // City name #2
-            { "%cpn", null }, // Current shop name
+            { "%cpn", ShopName }, // Current shop name
             { "%cri", null }, // Accused crime
             { "%crn", CurrentRegion }, // Current Region
             { "%dae", null }, // A daedra
@@ -243,25 +244,26 @@ namespace DaggerfallWorkshop.Utility
                         // Iterate words to find macros
                         for (int wordIdx = 0; wordIdx < words.Length; wordIdx++)
                         {
-                            if (words[wordIdx].StartsWith("%"))
+                            int pos = words[wordIdx].IndexOf('%');
+                            if (pos >= 0)
                             {
-                                int wordLen = words[wordIdx].Length - 1;
-                                if (words[wordIdx].IndexOfAny(PUNCTUATION) == wordLen)
+                                string prefix = words[wordIdx].Substring(0, pos);
+                                string macro = words[wordIdx].Substring(pos);
+                                if (macro.StartsWith("%"))
                                 {
-                                    string symbolStr = words[wordIdx].Substring(0, wordLen);
-                                    words[wordIdx] = GetValue(symbolStr, mcp) + words[wordIdx].Substring(wordLen);
+                                    int macroLen = macro.Length - 1;
+                                    if (macro.IndexOfAny(PUNCTUATION) == macroLen)
+                                    {
+                                        string symbolStr = macro.Substring(0, macroLen);
+                                        words[wordIdx] = prefix + GetValue(symbolStr, mcp) + macro.Substring(macroLen);
+                                    }
+                                    else
+                                    {
+                                        words[wordIdx] = prefix + GetValue(macro, mcp);
+                                    }
                                 }
-                                else
-                                {
-                                    words[wordIdx] = GetValue(words[wordIdx], mcp);
-                                }
-                            }
-                            else if (words[wordIdx].StartsWith("+%"))
-                            {   // Support willpower message which erroneously has the + just before the %. 
-                                words[wordIdx] = '+' + GetValue(words[wordIdx].Substring(1), mcp);
                             }
                         }
-
                         // Re-assemble words and update token.
                         tokenText = string.Empty;
                         for (int wordIdx = 0; wordIdx < words.Length; wordIdx++)
@@ -506,6 +508,15 @@ namespace DaggerfallWorkshop.Utility
         // Contextual macro handlers - delegate to the macro data source provided by macro context provider.
         //
         #region contextual macro handlers
+
+        private static string Amount(IMacroContextProvider mcp)
+        {   // %a
+            return mcp.GetMacroDataSource().Amount();
+        }
+        private static string ShopName(IMacroContextProvider mcp)
+        {   // %cpn
+            return mcp.GetMacroDataSource().ShopName();
+        }
 
         private static string Str(IMacroContextProvider mcp)
         {   // %str
