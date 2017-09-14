@@ -199,7 +199,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
         }
 
-
         public override void OnPush()
         {
             base.OnPush();
@@ -207,8 +206,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (listboxTopic != null)
                 listboxTopic.ClearItems();
 
-            if (listboxConversation != null)
-                listboxConversation.ClearItems();
+            SetStartConversation();
 
             // Reset scrollbars
             if (verticalScrollBarTopic != null)
@@ -446,6 +444,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             listboxConversation.VerticalScrollMode = ListBox.VerticalScrollModes.PixelWise;        
             mainPanel.Components.Add(listboxConversation);
 
+            SetStartConversation();
+
             SetupButtons();
             SetupCheckboxes();
             SetupScrollBars();
@@ -461,6 +461,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
             UpdateScrollButtonsConversation();
 
             UpdateLabels();
+        }
+
+        void SetStartConversation()
+        {
+            if (listboxConversation != null)
+            {
+                listboxConversation.ClearItems();
+
+                listboxConversation.AddItem(TalkManager.Instance.GetNPCGreetingDialog());
+            }
+
+            TalkManager.Instance.StartNewConversation();
         }
 
         void SetupButtons()

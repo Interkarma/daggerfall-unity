@@ -121,6 +121,8 @@ namespace DaggerfallWorkshop.Game
         List<ListItem> listTopicLocation;
         List<ListItem> listTopicPerson;
         List<ListItem> listTopicThing;
+
+        int numQuestionsAsked = 0;
         
         struct BuildingInfo
         {
@@ -196,16 +198,41 @@ namespace DaggerfallWorkshop.Game
 
         #region Public Methods
 
+        public void StartNewConversation()
+        {
+            numQuestionsAsked = 0;
+        }
+
+        public string GetNPCGreetingDialog()
+        {
+            //string greetingString = DaggerfallUnity.Instance.TextProvider.GetRandomText(7206);
+            //string greetingString = DaggerfallUnity.Instance.TextProvider.GetRandomText(7207);
+            string greetingString = DaggerfallUnity.Instance.TextProvider.GetRandomText(7208);
+            //string greetingString = DaggerfallUnity.Instance.TextProvider.GetRandomText(7209);
+            return (greetingString);
+        }
+
+        public string GetPCGreetingDialog(DaggerfallTalkWindow.TalkTone talkTone)
+        {
+            int toneIndex = DaggerfallTalkWindow.TalkToneToIndex(talkTone);
+            string greetingString = DaggerfallUnity.Instance.TextProvider.GetRandomText(7215 + toneIndex);
+            return (greetingString);
+        }
+
         public string GetQuestionText(TalkManager.ListItem listItem, DaggerfallTalkWindow.TalkTone talkTone)
         {
             int toneIndex = DaggerfallTalkWindow.TalkToneToIndex(talkTone);
-            string question = "%hnt.... It'd be easiest if I just ... question about " + listItem.caption + ": " + DaggerfallUnity.Instance.TextProvider.GetRandomText(7225 + toneIndex);
+            string question = "";
+            if (numQuestionsAsked == 0)
+                question += GetPCGreetingDialog(talkTone);
+            question += "question about " + listItem.caption + ": " + DaggerfallUnity.Instance.TextProvider.GetRandomText(7225 + toneIndex);
             return question;
         }
 
         public string GetAnswerText(TalkManager.ListItem listItem)
-        {
-            string answer = /*"answer about " + listItem.caption + ": " + */DaggerfallUnity.Instance.TextProvider.GetRandomText(7285) + DaggerfallUnity.Instance.TextProvider.GetRandomText(7332);
+        {            
+            string answer = DaggerfallUnity.Instance.TextProvider.GetRandomText(7285) + DaggerfallUnity.Instance.TextProvider.GetRandomText(7332);
+            numQuestionsAsked++;
             return answer;
         }
 
