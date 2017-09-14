@@ -26,9 +26,9 @@ using DaggerfallWorkshop.Game.Formulas;
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
     /// <summary>
-    /// Implements inventory window.
+    /// Implements trade windows, based on inventory window.
     /// </summary>
-    public class DaggerfallItemActionWindow : DaggerfallInventoryWindow //, IMacroContextProvider
+    public partial class DaggerfallTradeWindow : DaggerfallInventoryWindow, IMacroContextProvider
     {
         #region UI Rects
 
@@ -110,7 +110,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Constructors
 
-        public DaggerfallItemActionWindow(IUserInterfaceManager uiManager, WindowModes windowMode, DFLocation.BuildingData buildingData, DaggerfallBaseWindow previous = null)
+        public DaggerfallTradeWindow(IUserInterfaceManager uiManager, WindowModes windowMode, DFLocation.BuildingData buildingData, DaggerfallBaseWindow previous = null)
             : base(uiManager, previous)
         {
             this.windowMode = windowMode;
@@ -272,16 +272,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             goldLabel.Text = PlayerEntity.GoldPieces.ToString();
         }
 
-        private int GetDealPrice()
+        private int GetTradePrice()
         {
-            // This is modified for deal - just using cost for now.
+            // This is modified for trade - just using cost for now.
             int cost = 0;
             for (int i = 0; i < remoteItems.Count; i++)
             {
                 DaggerfallUnityItem item = remoteItems.GetItem(i);
                 cost += FormulaHelper.CalculateItemCost(item.value, buildingData.Quality) * item.stackCount;
             }
-            return cost;
+            return (int)(cost * 0.75);
         }
 
         #endregion
@@ -500,8 +500,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ModeActionButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            Debug.Log("Request deal!");
-            ShowDealPopup();
+            Debug.Log("Request trade!");
+            ShowTradePopup();
         }
 
         private void ClearButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -510,15 +510,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Refresh();
         }
 
-        private void ConfirmDeal_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        private void ConfirmTrade_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
             {
-                // Proceed with deal.
+                // Proceed with trade.
                 switch (windowMode)
                 {
                     case WindowModes.Sell:
-                        PlayerEntity.GoldPieces += GetDealPrice();
+                        PlayerEntity.GoldPieces += GetTradePrice();
                         remoteItems.Clear();
                         break;
                 }
@@ -530,17 +530,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #endregion
 
-        void ShowDealPopup()
+        void ShowTradePopup()
         {
-            const int qualityLevelDealId = 260;
-            int qualityOffset = buildingData.Quality / 4;
+            const int tradeMessageBaseId = 260;
+            int msgOffset = 0;
+
+            if (windowMode == WindowModes.Buy)
+                msgOffset = (buildingData.Quality > 10) ? 1 : 0;
+            else
+                msgOffset = 1 + (buildingData.Quality / 5);
 
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
-            TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(qualityLevelDealId + qualityOffset);
-            messageBox.SetTextTokens(tokens); //, this);
+            TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(tradeMessageBaseId + msgOffset);
+            messageBox.SetTextTokens(tokens, this);
             messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
             messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
-            messageBox.OnButtonClick += ConfirmDeal_OnButtonClick;
+            messageBox.OnButtonClick += ConfirmTrade_OnButtonClick;
             uiManager.PushWindow(messageBox);
         }
 
@@ -549,5 +554,36 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // Do nothing when game starts, as this window class is not used in a persisted manner like its parent.
         }
+
+        #region Macro handling
+
+        public MacroDataSource GetMacroDataSource()
+        {
+            return new TradeMacroDataSource(this);
+        }
+
+        /// <summary>
+        /// MacroDataSource context sensitive methods for items in Daggerfall Unity.
+        /// </summary>
+        private class TradeMacroDataSource : MacroDataSource
+        {
+            private DaggerfallTradeWindow parent;
+            public TradeMacroDataSource(DaggerfallTradeWindow tradeWindow)
+            {
+                this.parent = tradeWindow;
+            }
+
+            public override string Amount()
+            {
+                return parent.GetTradePrice().ToString();
+            }
+
+            public override string ShopName()
+            {
+                return "unknown"; //parent.buildingData.;
+            }
+        }
+
+        #endregion
     }
 }
