@@ -50,6 +50,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected Panel localTargetIconPanel;
         protected TextLabel localTargetIconLabel;
+        TextLabel[] remoteItemsRepairLabels = new TextLabel[listDisplayUnits];
 
         Panel costPanel;
         TextLabel costLabel;
@@ -62,6 +63,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button stealButton;
         Button modeActionButton;
         Button clearButton;
+
+        Color doneItemBackgroundColor = new Color(0.1f, 0.2f, 0.6f, 0.5f);
 
         #endregion
 
@@ -229,6 +232,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         }
 
+        protected override void SetupRemoteItemsElements()
+        {
+            base.SetupRemoteItemsElements();
+
+            // Setup repair labels
+            if (windowMode == WindowModes.Repair)
+            {
+                for (int i = 0; i < listDisplayUnits; i++)
+                {
+                    remoteItemsRepairLabels[i] = DaggerfallUI.AddTextLabel(DaggerfallUI.Instance.Font4, Vector2.zero, string.Empty, remoteItemsButtons[i]);
+                    remoteItemsRepairLabels[i].HorizontalAlignment = HorizontalAlignment.Left;
+                    remoteItemsRepairLabels[i].VerticalAlignment = VerticalAlignment.Top;
+                }
+            }
+        }
+
         #endregion
 
         #region Public Methods
@@ -339,6 +358,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        protected override void ClearRemoteItemsElements()
+        {
+            if (windowMode == WindowModes.Repair)
+                for (int i = 0; i < listDisplayUnits; i++)
+                    remoteItemsRepairLabels[i].Text = String.Empty;
+
+            base.ClearRemoteItemsElements();
+        }
+
         protected override void UpdateLocalTargetIcon()
         {
             if (usingWagon)
@@ -389,6 +417,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Do repair/identify have restrictions?
             // repair: not in classic, the condition is checked (which means only weps & armour since only they get damage I think)
             // identify: ?
+        }
+
+        protected override void SetItemBackgroundColour(DaggerfallUnityItem item, int i, bool local)
+        {
+            Button itemButton = (local) ? localItemsButtons[i] : remoteItemsButtons[i];
+            TextLabel itemLabel = (local) ? null : remoteItemsRepairLabels[i];
+
+            if (!local && windowMode == WindowModes.Repair && item.currentCondition == item.maxCondition)
+            {
+                if (itemLabel != null)
+                    itemLabel.Text = HardStrings.repairDone + i;
+                itemButton.BackgroundColor = doneItemBackgroundColor;
+            }
+            else
+            {
+                if (itemLabel != null)
+                    itemLabel.Text = String.Empty;
+                base.SetItemBackgroundColour(item, i, local);
+            }
         }
 
         void ShowWagon(bool show)
@@ -552,6 +599,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         }
                         break;
                 }
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.GoldPieces);
                 Refresh();
             }
             CloseWindow();

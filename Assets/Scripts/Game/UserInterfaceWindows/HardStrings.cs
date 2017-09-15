@@ -117,5 +117,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string cannotTravelWithEnemiesNearby = "You cannot travel with enemies nearby.";
 
         public const string powersUnknown = "Powers unknown.";
+        public const string repairDone = "DONE";
+        public const string repairDays = "%d days";
     }
 }
