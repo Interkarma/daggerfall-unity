@@ -1224,6 +1224,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             selectedTalkTone = TalkTone.Polite;
             if (TalkToneToIndex(selectedTalkTone) == toneLastUsed)
                 return;
+            toneLastUsed = TalkToneToIndex(selectedTalkTone);
             UpdateCheckboxes();
             UpdateQuestion(listboxTopic.SelectedIndex);
         }
@@ -1233,6 +1234,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             selectedTalkTone = TalkTone.Normal;
             if (TalkToneToIndex(selectedTalkTone) == toneLastUsed)
                 return;
+            toneLastUsed = TalkToneToIndex(selectedTalkTone);
             UpdateCheckboxes();
             UpdateQuestion(listboxTopic.SelectedIndex);
         }
@@ -1242,6 +1244,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             selectedTalkTone = TalkTone.Blunt;
             if (TalkToneToIndex(selectedTalkTone) == toneLastUsed)
                 return;
+            toneLastUsed = TalkToneToIndex(selectedTalkTone);
             UpdateCheckboxes();
             UpdateQuestion(listboxTopic.SelectedIndex);
         }

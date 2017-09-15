@@ -217,7 +217,7 @@ namespace DaggerfallWorkshop.Game
         public string GetPCGreetingText(DaggerfallTalkWindow.TalkTone talkTone)
         {
             int toneIndex = DaggerfallTalkWindow.TalkToneToIndex(talkTone);
-            string greetingString = DaggerfallUnity.Instance.TextProvider.GetRandomText(7215 + toneIndex);
+            string greetingString = DaggerfallUnity.Instance.TextProvider.GetRandomText(7215 + toneIndex) + " ";
             return (greetingString);
         }
 
@@ -240,13 +240,70 @@ namespace DaggerfallWorkshop.Game
                     questionOpeningText = GetPCFollowUpText(talkTone);
             }
             question += questionOpeningText;
-            question += DaggerfallUnity.Instance.TextProvider.GetRandomText(7225 + toneIndex);
+
+            switch (listItem.questionType)
+            {
+                case QuestionType.NoQuestion:
+                default:
+                    break;
+                case QuestionType.News:
+                    question += DaggerfallUnity.Instance.TextProvider.GetRandomText(7231 + toneIndex);
+                    break;
+                case QuestionType.LocalBuilding:
+                    question += DaggerfallUnity.Instance.TextProvider.GetRandomText(7225) + toneIndex;
+                    break;
+                case QuestionType.Person:
+                    question += DaggerfallUnity.Instance.TextProvider.GetRandomText(7225) + toneIndex;
+                    break;
+                case QuestionType.Thing:
+                    question += "not implemented";
+                    break;
+                case QuestionType.Regional:
+                    question += "not implemented";
+                    break;
+                case QuestionType.Work:
+                    question += DaggerfallUnity.Instance.TextProvider.GetRandomText(7211) + toneIndex;
+                    break;
+            }            
             return question;
         }
 
+        public string GetNewsOrRumors()
+        {
+            string news = DaggerfallUnity.Instance.TextProvider.GetRandomText(1400);
+            return (news);
+        }
+
         public string GetAnswerText(TalkManager.ListItem listItem)
-        {            
-            string answer = DaggerfallUnity.Instance.TextProvider.GetRandomText(7285) + DaggerfallUnity.Instance.TextProvider.GetRandomText(7332);
+        {
+            string answer = "";
+            switch (listItem.questionType)
+            {
+                case QuestionType.NoQuestion:
+                default:                    
+                    answer = DaggerfallUnity.Instance.TextProvider.GetRandomText(7280);
+                    break;
+                case QuestionType.News:
+                    answer = GetNewsOrRumors();
+                    break;
+                case QuestionType.LocalBuilding:
+                    answer = DaggerfallUnity.Instance.TextProvider.GetRandomText(7285) + DaggerfallUnity.Instance.TextProvider.GetRandomText(7332);
+                    break;
+                case QuestionType.Person:
+                    answer = DaggerfallUnity.Instance.TextProvider.GetRandomText(7280);
+                    break;
+                case QuestionType.Thing:
+                    answer = "not implemented";
+                    break;
+                case QuestionType.Regional:
+                    answer = "not implemented";
+                    break;
+                case QuestionType.Work:
+                    answer = DaggerfallUnity.Instance.TextProvider.GetRandomText(8076);
+                    break;
+
+            }
+
             numQuestionsAsked++;
             questionOpeningText = ""; // reset questionOpeningText so that it is newly created for next question
             return answer;
