@@ -396,9 +396,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 }
             }
 
-            if (width < greatestWidthFound)
-                width = greatestWidthFound;
-
             if (lastEndOfRowByte > 0)
                 asciiBytes = new List<byte>(asciiBytes).GetRange(lastEndOfRowByte, asciiBytes.Length - lastEndOfRowByte).ToArray();
 
@@ -415,6 +412,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 greatestWidthFound = width;
 
             rows.Add(asciiBytes);
+
+
+            width = greatestWidthFound;
 
             // Create target label texture
             totalWidth = width;
