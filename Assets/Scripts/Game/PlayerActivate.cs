@@ -238,8 +238,10 @@ namespace DaggerfallWorkshop.Game
                                 }
                                 else if (door.doorType == DoorTypes.DungeonExit && playerEnterExit.IsPlayerInside)
                                 {
-                                    // Hit dungeon exit while inside, transition outside
-                                    playerEnterExit.TransitionDungeonExterior(true);
+                                    // Hit dungeon exit while inside, ask if access wagon or transition outside
+                                    DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager, DaggerfallMessageBox.CommonMessageBoxButtons.YesNo, 38);
+                                    messageBox.OnButtonClick += DungeonWagonAccess_OnButtonClick;
+                                    DaggerfallUI.UIManager.PushWindow(messageBox);
                                     return;
                                 }
                             }
@@ -484,6 +486,21 @@ namespace DaggerfallWorkshop.Game
         private void Popup_OnClose()
         {
             TransitionInterior(deferredInteriorDoorOwner, deferredInteriorDoor, true);
+        }
+
+        // Access wagon or dungeon exit
+        private void DungeonWagonAccess_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        {
+            if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.No)
+            {
+                playerEnterExit.TransitionDungeonExterior(true);
+            }
+            else
+            {
+                DaggerfallUI.Instance.InventoryWindow.AllowDungeonWagonAccess();
+                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenInventoryWindow);
+            }
+            sender.CloseWindow();
         }
 
         // Look for building array on object, then on direct parent

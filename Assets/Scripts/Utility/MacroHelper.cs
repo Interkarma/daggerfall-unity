@@ -211,7 +211,7 @@ namespace DaggerfallWorkshop.Utility
         #endregion
 
         // Any punctuation characters that can be on the end of a macro symbol need adding here.
-        static char[] PUNCTUATION = { '.', ',', '\'' };
+        static char[] PUNCTUATION = { '.', ',', '\'', '?' };
 
         /// <summary>
         /// Expands any macros in the textfile tokens.
@@ -356,6 +356,7 @@ namespace DaggerfallWorkshop.Utility
 
         private static string CityName(IMacroContextProvider mcp)
         {   // %cn
+//            PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
             PlayerGPS gps = GameManager.Instance.PlayerGPS;
             if (gps.HasCurrentLocation)
                 return gps.CurrentLocation.Name;

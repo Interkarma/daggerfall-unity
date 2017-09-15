@@ -163,6 +163,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         DaggerfallLoot lootTarget = null;
         bool usingWagon = false;
+        bool allowDungeonWagonAccess = false;
 
         ItemCollection lastRemoteItems = null;
         RemoteTargetTypes lastRemoteTargetType;
@@ -217,6 +218,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             get { return lootTarget; }
             set { lootTarget = value; }
+        }
+
+        public void AllowDungeonWagonAccess()
+        {
+            allowDungeonWagonAccess = true;
         }
 
         #endregion
@@ -530,6 +536,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public override void OnPop()
         {
+            // Reset allowing wagon access in dungeons
+            allowDungeonWagonAccess = false;
+
             // Clear any loot target on exit
             if (lootTarget != null)
             {
@@ -1138,7 +1147,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void WagonButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            ShowWagon(!usingWagon);
+            if (!GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon || allowDungeonWagonAccess)
+                ShowWagon(!usingWagon);
         }
 
         private void InfoButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
