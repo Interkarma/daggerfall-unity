@@ -1,5 +1,5 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -221,8 +221,8 @@ namespace DaggerfallWorkshop.Utility
                     imageData.scale = new DFSize();
                     imageData.size = imgFile.GetSize(0);
 
-                    // texture pack support
-                    if ((AssetInjection.TextureReplacement.CustomImageExist(filename)) && (createTexture))
+                    // Texture pack support
+                    if (createTexture && AssetInjection.TextureReplacement.CustomImageExist(filename))
                     {
                         imageData.texture = AssetInjection.TextureReplacement.LoadCustomImage(filename);
                         createTexture = false;
@@ -239,8 +239,8 @@ namespace DaggerfallWorkshop.Utility
                     imageData.scale = new DFSize();
                     imageData.size = cifFile.GetSize(record);
 
-                    // texture pack support
-                    if ((AssetInjection.TextureReplacement.CustomCifExist(filename, record, frame)) && (createTexture))
+                    // Texture pack support
+                    if (createTexture && AssetInjection.TextureReplacement.CustomCifExist(filename, record, frame))
                     {
                         imageData.texture = AssetInjection.TextureReplacement.LoadCustomCif(filename, record, frame);
                         createTexture = false;
@@ -257,7 +257,12 @@ namespace DaggerfallWorkshop.Utility
                     imageData.scale = new DFSize();
                     imageData.size = cfaFile.GetSize(record);
 
-                    // TODO: texture pack support?
+                    // Texture pack support
+                    if (createTexture && AssetInjection.TextureReplacement.CustomCifExist(filename, record, frame))
+                    {
+                        imageData.texture = AssetInjection.TextureReplacement.LoadCustomCif(filename, record, frame);
+                        createTexture = false;
+                    }
 
                     break;
 
