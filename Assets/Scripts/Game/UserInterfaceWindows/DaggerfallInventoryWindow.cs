@@ -536,7 +536,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public override void OnPop()
         {
-            // Reset allowing wagon access in dungeons
+            // Reset dungeon wagon access permission
             allowDungeonWagonAccess = false;
 
             // Clear any loot target on exit

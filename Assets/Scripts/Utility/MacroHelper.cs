@@ -356,7 +356,6 @@ namespace DaggerfallWorkshop.Utility
 
         private static string CityName(IMacroContextProvider mcp)
         {   // %cn
-//            PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
             PlayerGPS gps = GameManager.Instance.PlayerGPS;
             if (gps.HasCurrentLocation)
                 return gps.CurrentLocation.Name;
