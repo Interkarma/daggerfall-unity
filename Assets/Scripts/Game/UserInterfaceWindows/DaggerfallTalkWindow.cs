@@ -749,7 +749,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             textureBackground.SetPixels(4, textureBackground.height - 56 - 10, 107, 10, textureCategoryWorkGrayedOut);
             textureBackground.Apply(false);
 
-            ClearListboxTopics();
+            SetListboxTopics(ref listboxTopic, TalkManager.Instance.ListTellMeAbout);
             listboxTopic.Update();
 
             UpdateScrollBarsTopic();
@@ -767,11 +767,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             textureBackground.Apply(false);
 
             SetTalkCategory(selectedTalkCategory);
-
-            //UpdateScrollBarsTopic();
-            //UpdateScrollButtonsTopic();
-
-            //UpdateQuestion(listboxTopic.SelectedIndex);
         }
 
         void SetTalkCategory(TalkCategory talkCategory)

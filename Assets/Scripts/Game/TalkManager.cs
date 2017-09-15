@@ -97,6 +97,7 @@ namespace DaggerfallWorkshop.Game
         {
             NoQuestion, // used for list entries that are not of ListItemType item
             News,
+            OrganisationInfo,
             Work,
             LocalBuilding,
             Regional,
@@ -113,6 +114,7 @@ namespace DaggerfallWorkshop.Game
             public List<ListItem> listParentItems = null; // null if type == ListItemType.ItemGroup or ListItemType.Item, only contains a list if type == ListItemType.Navigation
         }
 
+        List<ListItem> listTellMeAbout;
         List<ListItem> listTopicLocation;
         List<ListItem> listTopicPerson;
         List<ListItem> listTopicThing;
@@ -131,6 +133,11 @@ namespace DaggerfallWorkshop.Game
         #endregion
 
         #region Properties
+
+        public List<ListItem> ListTellMeAbout
+        {
+            get { return listTellMeAbout; }
+        }
 
         public List<ListItem> ListTopicLocation
         {
@@ -244,6 +251,9 @@ namespace DaggerfallWorkshop.Game
                 case QuestionType.News:
                     question += DaggerfallUnity.Instance.TextProvider.GetRandomText(7231 + toneIndex);
                     break;
+                case QuestionType.OrganisationInfo:
+                    question += "not implemented";
+                    break;
                 case QuestionType.LocalBuilding:
                     question += DaggerfallUnity.Instance.TextProvider.GetRandomText(7225) + toneIndex;
                     break;
@@ -280,6 +290,9 @@ namespace DaggerfallWorkshop.Game
                     break;
                 case QuestionType.News:
                     answer = GetNewsOrRumors();
+                    break;
+                case QuestionType.OrganisationInfo:
+                    answer = "not implemented";
                     break;
                 case QuestionType.LocalBuilding:
                     answer = DaggerfallUnity.Instance.TextProvider.GetRandomText(7285) + DaggerfallUnity.Instance.TextProvider.GetRandomText(7332);
@@ -421,15 +434,29 @@ namespace DaggerfallWorkshop.Game
 
         void AssembleTopicLists()
         {
-            AssembleTopicListWhereIs();
+            AssembleTopicListTellMeAbout();
             AssembleTopicListLocation();
             AssembleTopicListPerson();
             AssembleTopicListThing();
         }
 
-        void AssembleTopicListWhereIs()
+        void AssembleTopicListTellMeAbout()
         {
+            listTellMeAbout = new List<ListItem>();
+            ListItem itemAnyNews = new ListItem();
+            itemAnyNews.type = ListItemType.Item;
+            itemAnyNews.questionType = QuestionType.News;
+            itemAnyNews.caption = "Any News?";
+            listTellMeAbout.Add(itemAnyNews);
 
+            for (int i = 0; i < 10; i++)
+            {
+                ListItem itemOrganisationInfo = new ListItem();
+                itemOrganisationInfo.type = ListItemType.Item;
+                itemOrganisationInfo.questionType = QuestionType.OrganisationInfo;
+                itemOrganisationInfo.caption = "Placeholder for Organisation";
+                listTellMeAbout.Add(itemOrganisationInfo);
+            }
         }
 
         void AssembleTopicListLocation()
