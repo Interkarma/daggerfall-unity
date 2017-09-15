@@ -754,6 +754,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             UpdateScrollBarsTopic();
             UpdateScrollButtonsTopic();
+
+            UpdateQuestion(listboxTopic.SelectedIndex);
         }
 
         void SetTalkModeWhereIs()
@@ -766,8 +768,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             SetTalkCategory(selectedTalkCategory);
 
-            UpdateScrollBarsTopic();
-            UpdateScrollButtonsTopic();
+            //UpdateScrollBarsTopic();
+            //UpdateScrollButtonsTopic();
+
+            //UpdateQuestion(listboxTopic.SelectedIndex);
         }
 
         void SetTalkCategory(TalkCategory talkCategory)
@@ -795,6 +799,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void SetTalkCategoryNone()
         {
+            ClearCurrentQuestion();
+
             selectedTalkCategory = TalkCategory.None;
 
             textureBackground.SetPixels(4, textureBackground.height - 26 - 10, 107, 10, textureCategoryLocationGrayedOut);
@@ -825,6 +831,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             UpdateScrollBarsTopic();
             UpdateScrollButtonsTopic();
+
+            UpdateQuestion(listboxTopic.SelectedIndex);
         }
 
         void SetTalkCategoryPeople()
@@ -842,6 +850,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             UpdateScrollBarsTopic();
             UpdateScrollButtonsTopic();
+
+            UpdateQuestion(listboxTopic.SelectedIndex);
         }
 
         void SetTalkCategoryThings()
@@ -859,6 +869,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             UpdateScrollBarsTopic();
             UpdateScrollButtonsTopic();
+
+            UpdateQuestion(listboxTopic.SelectedIndex);
         }
 
         void SetTalkCategoryWork()
@@ -876,6 +888,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             UpdateScrollBarsTopic();
             UpdateScrollButtonsTopic();
+
+            // create fake list item so that we can call function and set its questionType to QuestionType.Work
+            TalkManager.ListItem listItem = new TalkManager.ListItem();
+            listItem.questionType = TalkManager.QuestionType.Work;
+            currentQuestion = TalkManager.Instance.GetQuestionText(listItem, selectedTalkTone);
+            textlabelPlayerSays.Text = currentQuestion;
         }
 
         /// <summary>
@@ -991,10 +1009,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
+        void ClearCurrentQuestion()
+        {
+            currentQuestion = "";
+            textlabelPlayerSays.Text = "";
+        }
+
         void UpdateQuestion(int index)
         {
-            // TODO: work section handling
-
             if (index < 0 || index >= listboxTopic.Count)
             {
                 textlabelPlayerSays.Text = "";
@@ -1009,6 +1031,22 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 currentQuestion = "";
 
             textlabelPlayerSays.Text = currentQuestion;
+        }
+
+        void SetQuestionAnswerPairInConversationListbox(string question, string answer)
+        {
+            ListBox.ListItem textLabelQuestion;
+            ListBox.ListItem textLabelAnswer;
+            listboxConversation.AddItem(question, out textLabelQuestion);
+            textLabelQuestion.textColor = textcolorQuestion;
+            textLabelQuestion.selectedTextColor = textcolorHighlighted; // textcolorQuestionHighlighted
+            listboxConversation.AddItem(answer, out textLabelAnswer);
+            textLabelAnswer.selectedTextColor = textcolorHighlighted;
+
+            listboxConversation.SelectedIndex = listboxConversation.Count - 1; // always highlight the new answer
+
+            UpdateScrollBarConversation();
+            UpdateScrollButtonsConversation();
         }
 
         void SelectTopicFromTopicList(int index)
@@ -1049,20 +1087,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             else if (listItem.type == TalkManager.ListItemType.Item)
             {
                 string answer = TalkManager.Instance.GetAnswerText(listItem);
-                ListBox.ListItem textLabelQuestion;
-                ListBox.ListItem textLabelAnswer;
-                listboxConversation.AddItem(currentQuestion, out textLabelQuestion);
-                textLabelQuestion.textColor = textcolorQuestion;
-                textLabelQuestion.selectedTextColor = textcolorHighlighted; // textcolorQuestionHighlighted
-                listboxConversation.AddItem(answer, out textLabelAnswer);
-                textLabelAnswer.selectedTextColor = textcolorHighlighted;
 
-                listboxConversation.SelectedIndex = listboxConversation.Count - 1; // always highlight the new answer
-
-                UpdateScrollBarConversation();
-                UpdateScrollButtonsConversation();
-
-                UpdateQuestion(listboxTopic.SelectedIndex);
+                SetQuestionAnswerPairInConversationListbox(currentQuestion, answer);
+                
+                UpdateQuestion(listboxTopic.SelectedIndex); // and get new question text for textlabel
             }
             inListboxTopicContentUpdate = false;
         }
@@ -1251,7 +1279,19 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private void ButtonOkay_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            SelectTopicFromTopicList(listboxTopic.SelectedIndex);
+            if (selectedTalkOption == TalkOption.WhereIs && selectedTalkCategory == TalkCategory.Work)
+            {
+                // create fake list item so that we can call function and set its questionType to QuestionType.Work
+                TalkManager.ListItem listItem = new TalkManager.ListItem();
+                listItem.questionType = TalkManager.QuestionType.Work;
+                string answer = TalkManager.Instance.GetAnswerText(listItem);
+
+                SetQuestionAnswerPairInConversationListbox(currentQuestion, answer);
+            }
+            else
+            {
+                SelectTopicFromTopicList(listboxTopic.SelectedIndex);
+            }
         }
 
         private void ButtonGoodbye_OnMouseClick(BaseScreenComponent sender, Vector2 position)
