@@ -47,7 +47,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region UI Controls
 
-        protected Panel localTargetIconPanel;
         protected TextLabel localTargetIconLabel;
         TextLabel[] remoteItemsRepairLabels = new TextLabel[listDisplayUnits];
 

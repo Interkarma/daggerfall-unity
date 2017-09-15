@@ -88,6 +88,7 @@ namespace DaggerfallWorkshop.Game
         QuestMachineInspectorWindow dfQuestInspector;
 
         DaggerfallFontPlus fontPetrock32;
+        DaggerfallFontPlus fontExeter32;
 
         public DaggerfallFont Font1 { get { return GetFont(1); } }
         public DaggerfallFont Font2 { get { return GetFont(2); } }
@@ -190,6 +191,7 @@ namespace DaggerfallWorkshop.Game
         public enum HQPixelFonts
         {
             Petrock_32,
+            Exeter_32,
         }
 
         void Awake()
@@ -458,7 +460,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Gets a new DaggerfallFont.
         /// </summary>
-        /// <param name="index">I ndex of font between 1-5 (default is 4).</param>
+        /// <param name="index">Index of font between 1-5 (default is 4).</param>
         /// <returns>DaggerfallFont</returns>
         public DaggerfallFont GetFont(int index = 4)
         {
@@ -502,6 +504,10 @@ namespace DaggerfallWorkshop.Game
                     if (fontPetrock32 == null)
                         fontPetrock32 = new DaggerfallFontPlus(Resources.Load<Texture2D>("Kingthings-Petrock-Light-PixelFont"), 16, 16, 32);
                     return fontPetrock32;
+                case HQPixelFonts.Exeter_32:
+                    if (fontExeter32 == null)
+                        fontExeter32 = new DaggerfallFontPlus(Resources.Load<Texture2D>("Kingthings-Exeter-PixelFont"), 16, 16, 32);
+                    return fontExeter32;
             }
 
             return null;

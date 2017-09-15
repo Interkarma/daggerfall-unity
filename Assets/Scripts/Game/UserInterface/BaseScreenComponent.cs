@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -74,10 +74,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
         float minAutoScale = 0;
         float maxAutoScale = 0;
 
-        public delegate void OnMouseEnterHandler();
+        public delegate void OnMouseEnterHandler(BaseScreenComponent sender);
         public event OnMouseEnterHandler OnMouseEnter;
 
-        public delegate void OnMouseLeaveHandler();
+        public delegate void OnMouseLeaveHandler(BaseScreenComponent sender);
         public event OnMouseLeaveHandler OnMouseLeave;
 
         public delegate void OnMouseMoveHandler(int x, int y);
@@ -745,7 +745,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         protected virtual void MouseEnter()
         {
             if (OnMouseEnter != null)
-                OnMouseEnter();
+                OnMouseEnter(this);
         }
 
         /// <summary>
@@ -754,7 +754,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         protected virtual void MouseExit()
         {
             if (OnMouseLeave != null)
-                OnMouseLeave();
+                OnMouseLeave(this);
         }
 
         /// <summary>
