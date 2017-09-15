@@ -446,7 +446,7 @@ namespace DaggerfallWorkshop.Game
             ListItem itemAnyNews = new ListItem();
             itemAnyNews.type = ListItemType.Item;
             itemAnyNews.questionType = QuestionType.News;
-            itemAnyNews.caption = "Any News?";
+            itemAnyNews.caption = "Any news?";
             listTellMeAbout.Add(itemAnyNews);
 
             for (int i = 0; i < 10; i++)

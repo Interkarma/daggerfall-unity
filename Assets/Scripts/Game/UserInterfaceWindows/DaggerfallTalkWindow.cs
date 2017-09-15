@@ -51,11 +51,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Color textcolorCaptionGotoParentList = new Color(0.698f, 0.812f, 1.0f);
         Color textcolorCaptionGotoParentListHighlighted = Color.white;
 
-        enum TalkOption { 
+        enum TalkOption {
+            None,
             TellMeAbout,
             WhereIs
         };
         TalkOption selectedTalkOption = TalkOption.WhereIs;
+        TalkOption talkOptionLastUsed = TalkOption.None;
 
         enum TalkCategory
         {
@@ -66,6 +68,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Work
         };
         TalkCategory selectedTalkCategory = TalkCategory.Location;
+        TalkCategory talkCategoryLastUsed = TalkCategory.None;
 
         public enum TalkTone
         {
@@ -223,8 +226,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 UpdateScrollBarConversation();
             }
 
+            selectedTalkOption = TalkOption.WhereIs;
             selectedTalkCategory = TalkCategory.Location;
             selectedTalkTone = TalkTone.Normal;
+            talkCategoryLastUsed = TalkCategory.None;
+            talkOptionLastUsed = TalkOption.None;
             toneLastUsed = -1;
             currentQuestion = "";
         }
@@ -740,7 +746,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
         void SetTalkModeTellMeAbout()
         {
             selectedTalkOption = TalkOption.TellMeAbout;
-            
+            if (selectedTalkOption == talkOptionLastUsed)
+                return;
+            talkOptionLastUsed = selectedTalkOption;
+
+            talkCategoryLastUsed = TalkCategory.None; // important so that category is enabled again when switching back to TalkOption.WhereIs
+
             textureBackground.SetPixels(4, textureBackground.height - 4 - 10, 107, 10, textureTellMeAboutHighlighted);
             textureBackground.SetPixels(4, textureBackground.height - 14 - 10, 107, 10, textureWhereIsNormal);
             textureBackground.SetPixels(4, textureBackground.height - 26 - 10, 107, 10, textureCategoryLocationGrayedOut);
@@ -761,6 +772,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         void SetTalkModeWhereIs()
         {
             selectedTalkOption = TalkOption.WhereIs;
+            if (selectedTalkOption == talkOptionLastUsed)
+                return;
+            talkOptionLastUsed = selectedTalkOption;
 
             textureBackground.SetPixels(4, textureBackground.height - 4 - 10, 107, 10, textureTellMeAboutNormal);
             textureBackground.SetPixels(4, textureBackground.height - 14 - 10, 107, 10, textureWhereIsHighlighted);            
@@ -797,6 +811,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             ClearCurrentQuestion();
 
             selectedTalkCategory = TalkCategory.None;
+            talkCategoryLastUsed = TalkCategory.None;
 
             textureBackground.SetPixels(4, textureBackground.height - 26 - 10, 107, 10, textureCategoryLocationGrayedOut);
             textureBackground.SetPixels(4, textureBackground.height - 36 - 10, 107, 10, textureCategoryPeopleGrayedOut);
@@ -814,6 +829,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         void SetTalkCategoryLocation()
         {
             selectedTalkCategory = TalkCategory.Location;
+            if (selectedTalkCategory == talkCategoryLastUsed)
+                return;
+            talkCategoryLastUsed = selectedTalkCategory;
 
             textureBackground.SetPixels(4, textureBackground.height - 26 - 10, 107, 10, textureCategoryLocationHighlighted);
             textureBackground.SetPixels(4, textureBackground.height - 36 - 10, 107, 10, textureCategoryPeopleGrayedOut);
@@ -833,6 +851,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         void SetTalkCategoryPeople()
         {
             selectedTalkCategory = TalkCategory.People;
+            if (selectedTalkCategory == talkCategoryLastUsed)
+                return;
+            talkCategoryLastUsed = selectedTalkCategory;
 
             textureBackground.SetPixels(4, textureBackground.height - 26 - 10, 107, 10, textureCategoryLocationGrayedOut);
             textureBackground.SetPixels(4, textureBackground.height - 36 - 10, 107, 10, textureCategoryPeopleHighlighted);
@@ -852,6 +873,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         void SetTalkCategoryThings()
         {
             selectedTalkCategory = TalkCategory.Things;
+            if (selectedTalkCategory == talkCategoryLastUsed)
+                return;
+            talkCategoryLastUsed = selectedTalkCategory;
 
             textureBackground.SetPixels(4, textureBackground.height - 26 - 10, 107, 10, textureCategoryLocationGrayedOut);
             textureBackground.SetPixels(4, textureBackground.height - 36 - 10, 107, 10, textureCategoryPeopleGrayedOut);
@@ -871,6 +895,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         void SetTalkCategoryWork()
         {
             selectedTalkCategory = TalkCategory.Work;
+            if (selectedTalkCategory == talkCategoryLastUsed)
+                return;
+            talkCategoryLastUsed = selectedTalkCategory;
 
             textureBackground.SetPixels(4, textureBackground.height - 26 - 10, 107, 10, textureCategoryLocationGrayedOut);
             textureBackground.SetPixels(4, textureBackground.height - 36 - 10, 107, 10, textureCategoryPeopleGrayedOut);
