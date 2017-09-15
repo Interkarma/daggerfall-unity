@@ -238,12 +238,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetTextTokens(tokenList.ToArray());
         }
 
-        public void SetTextTokens(TextFile.Token[] tokens, IMacroContextProvider mcp = null)
+        public void SetTextTokens(TextFile.Token[] tokens, IMacroContextProvider mcp = null, bool expandMacros = true)
         {
             if (!IsSetup)
                 Setup();
 
-            MacroHelper.ExpandMacros(ref tokens, mcp);
+            if (expandMacros)
+                MacroHelper.ExpandMacros(ref tokens, mcp);
             label.SetText(tokens);
             UpdatePanelSizes();
         }

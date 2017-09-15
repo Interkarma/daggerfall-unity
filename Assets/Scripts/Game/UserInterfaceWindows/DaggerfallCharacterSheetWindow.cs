@@ -285,7 +285,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
-            messageBox.SetTextTokens(tokens.ToArray());
+            messageBox.SetTextTokens(tokens.ToArray(), null, false);
             messageBox.ClickAnywhereToClose = true;
             messageBox.Show();
         }
