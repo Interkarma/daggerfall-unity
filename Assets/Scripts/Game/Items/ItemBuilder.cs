@@ -280,7 +280,7 @@ namespace DaggerfallWorkshop.Game.Items
         {
             // Create random weapon type (excluding bows and arrows for now)
             Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(ItemGroups.Weapons);
-            int groupIndex = UnityEngine.Random.Range(0, enumArray.Length - 3);
+            int groupIndex = UnityEngine.Random.Range(0, enumArray.Length - 1);
             DaggerfallUnityItem newItem = new DaggerfallUnityItem(ItemGroups.Weapons, groupIndex);
 
             // Random weapon material
