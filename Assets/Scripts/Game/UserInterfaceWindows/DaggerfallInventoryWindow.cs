@@ -60,7 +60,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Rect useButtonRect = new Rect(226, 103, 31, 14);
         Rect goldButtonRect = new Rect(226, 126, 31, 14);
 
-        protected Rect remoteTargetIconRect = new Rect(262, 11, 57, 36);
+        protected Rect remoteTargetIconRect = new Rect(263, 12, 55, 34);
+        protected Rect localTargetIconRect = new Rect(165, 12, 55, 34);
 
         protected Rect exitButtonRect = new Rect(222, 178, 39, 22);
 
@@ -737,7 +738,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(lootTarget.ContainerImage);
                     break;
             }
-
             remoteTargetIconPanel.BackgroundTexture = containerImage.texture;
         }
 

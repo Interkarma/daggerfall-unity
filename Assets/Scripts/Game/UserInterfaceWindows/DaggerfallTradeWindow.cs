@@ -34,7 +34,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Rect costPanelRect = new Rect(0, 3, 111, 9);
         Rect costPanelPositionRect = new Rect(49, 13, 111, 9);
-        Rect localTargetIconRect = new Rect(164, 11, 57, 36);
 
         Rect actionButtonsPanelRect = new Rect(222, 10, 39, 190);
         Rect wagonButtonRect = new Rect(4, 4, 31, 14);
