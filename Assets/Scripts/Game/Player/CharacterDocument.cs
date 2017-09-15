@@ -39,7 +39,7 @@ namespace DaggerfallWorkshop.Game.Player
         public short[] skillUses;
         public int startingLevelUpSkillSum;
         public byte minMetalToHit;
-        public sbyte[] armorValues = new sbyte[DaggerfallEntity.ArmorValuesArrayLength];
+        public sbyte[] armorValues = new sbyte[DaggerfallEntity.NumberBodyParts];
         public uint timeForThievesGuildLetter;
         public uint timeForDarkBrotherhoodLetter;
         public byte darkBrotherhoodRequirementTally;
