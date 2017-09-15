@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -59,6 +59,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Panel backgroundPanel = new Panel();
         Panel characterPanel = new Panel();
 
+        TextLabel[] armourLabels = new TextLabel[DaggerfallEntity.NumberBodyParts];
+        Vector2[] armourLabelPos = new Vector2[] { new Vector2(70, 12), new Vector2(20, 38), new Vector2(86, 38), new Vector2(12, 58), new Vector2(6, 90), new Vector2(18, 120), new Vector2(22, 168) };
+
         string lastBackgroundName = string.Empty;
 
         #endregion
@@ -91,6 +94,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Set initial display flags
             backgroundPanel.Enabled = showBackgroundLayer;
             characterPanel.Enabled = showCharacterLayer;
+
+            for (int bpIdx = 0; bpIdx < DaggerfallEntity.NumberBodyParts; bpIdx++)
+            {
+                armourLabels[bpIdx] = DaggerfallUI.AddDefaultShadowedTextLabel(armourLabelPos[bpIdx], characterPanel);
+                armourLabels[bpIdx].Text = "0";
+            }
         }
 
         #endregion
@@ -138,6 +147,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             paperDollTexture = ImageReader.GetTexture(paperDollColors, paperDollWidth, paperDollHeight);
             characterPanel.BackgroundTexture = paperDollTexture;
 
+            RefreshArmourValues(playerEntity);
+
             //// Create image from selection mask
             //DFPalette palette = new DFPalette();
             //byte value = 20;
@@ -183,6 +194,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
         #endregion
 
         #region Private Methods
+
+        // Refresh armour value labels
+        void RefreshArmourValues(PlayerEntity playerEntity)
+        {
+            for (int bpIdx = 0; bpIdx < DaggerfallEntity.NumberBodyParts; bpIdx++)
+            {
+                sbyte av = playerEntity.ArmorValues[bpIdx];
+                int bpAv = (100 - av) / 5;
+                armourLabels[bpIdx].Text = bpAv.ToString();
+            }
+        }
 
         // Clear paper doll colours and indices
         void ClearPaperDoll()

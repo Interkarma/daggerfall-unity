@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -30,8 +30,7 @@ namespace DaggerfallWorkshop.Game.Entity
     public abstract class DaggerfallEntity
     {
         #region Fields
-
-        public const int ArmorValuesArrayLength = 7;
+        public const int NumberBodyParts = 7;
 
         protected Genders gender;
         protected DFCareer career = new DFCareer();
@@ -46,7 +45,7 @@ namespace DaggerfallWorkshop.Game.Entity
         protected int currentFatigue;
         protected int currentMagicka;
         protected WeaponMaterialTypes minMetalToHit;
-        protected sbyte[] armorValues = new sbyte[ArmorValuesArrayLength];
+        protected sbyte[] armorValues = new sbyte[NumberBodyParts];
 
         bool quiesce = false;
 
@@ -272,40 +271,13 @@ namespace DaggerfallWorkshop.Game.Entity
             else
             {
                 // Shield armor values in classic are unaffected by their material type.
-                int shieldValue = armor.GetMaterialArmorValue();
                 int[] values = { 0, 0, 0, 0, 0, 0, 0 }; // shield's effect on the 7 armor values
                 int armorBonus = armor.GetShieldArmorValue();
                 BodyParts[] protectedBodyParts = armor.GetShieldProtectedBodyParts();
 
-                // Note: Resolving conflict during merge - is this code still required?
                 foreach (var BodyParts in protectedBodyParts)
                 {
                     values[(int)BodyParts] = armorBonus;
-                }
-
-                if (armor.TemplateIndex == (int)Armor.Buckler)
-                {
-                    values[2] = shieldValue; // left arm
-                    values[4] = shieldValue; // gloves
-                }
-                else if (armor.TemplateIndex == (int)Armor.Round_Shield)
-                {
-                    values[2] = shieldValue; // left arm
-                    values[4] = shieldValue; // gloves
-                    values[5] = shieldValue; // legs armor
-                }
-                else if (armor.TemplateIndex == (int)Armor.Kite_Shield)
-                {
-                    values[2] = shieldValue; // left arm
-                    values[4] = shieldValue; // gloves
-                    values[5] = shieldValue; // legs armor
-                }
-                else if (armor.TemplateIndex == (int)Armor.Tower_Shield)
-                {
-                    values[0] = shieldValue; // head
-                    values[2] = shieldValue; // left arm
-                    values[4] = shieldValue; // gloves
-                    values[5] = shieldValue; // legs armor
                 }
 
                 for (int i = 0; i < armorValues.Length; i++)
