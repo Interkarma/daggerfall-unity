@@ -97,7 +97,7 @@ namespace DaggerfallWorkshop.Game
         {
             NoQuestion, // used for list entries that are not of ListItemType item
             News,
-            OrganisationInfo,
+            OrganizationInfo,
             Work,
             LocalBuilding,
             Regional,
@@ -251,7 +251,7 @@ namespace DaggerfallWorkshop.Game
                 case QuestionType.News:
                     question += DaggerfallUnity.Instance.TextProvider.GetRandomText(7231 + toneIndex);
                     break;
-                case QuestionType.OrganisationInfo:
+                case QuestionType.OrganizationInfo:
                     question += "not implemented";
                     break;
                 case QuestionType.LocalBuilding:
@@ -291,7 +291,7 @@ namespace DaggerfallWorkshop.Game
                 case QuestionType.News:
                     answer = GetNewsOrRumors();
                     break;
-                case QuestionType.OrganisationInfo:
+                case QuestionType.OrganizationInfo:
                     answer = "not implemented";
                     break;
                 case QuestionType.LocalBuilding:
@@ -451,11 +451,11 @@ namespace DaggerfallWorkshop.Game
 
             for (int i = 0; i < 10; i++)
             {
-                ListItem itemOrganisationInfo = new ListItem();
-                itemOrganisationInfo.type = ListItemType.Item;
-                itemOrganisationInfo.questionType = QuestionType.OrganisationInfo;
-                itemOrganisationInfo.caption = "Placeholder for Organisation";
-                listTellMeAbout.Add(itemOrganisationInfo);
+                ListItem itemOrganizationInfo = new ListItem();
+                itemOrganizationInfo.type = ListItemType.Item;
+                itemOrganizationInfo.questionType = QuestionType.OrganizationInfo;
+                itemOrganizationInfo.caption = "Placeholder for Organization";
+                listTellMeAbout.Add(itemOrganizationInfo);
             }
         }
 
