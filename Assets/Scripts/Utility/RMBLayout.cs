@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -614,6 +614,22 @@ namespace DaggerfallWorkshop.Utility
                 case DFLocation.BuildingTypes.GeneralStore:
                 case DFLocation.BuildingTypes.Library:
                 case DFLocation.BuildingTypes.PawnShop:
+                case DFLocation.BuildingTypes.WeaponSmith:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        /// <summary>
+        /// Checks if building is a shop which offers repair service.
+        /// </summary>
+        public static bool IsRepairShop(DFLocation.BuildingTypes buildingType)
+        {
+            switch (buildingType)
+            {
+                case DFLocation.BuildingTypes.Armorer:
+                case DFLocation.BuildingTypes.GeneralStore:
                 case DFLocation.BuildingTypes.WeaponSmith:
                     return true;
                 default:

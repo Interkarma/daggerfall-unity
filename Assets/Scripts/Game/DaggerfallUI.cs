@@ -888,7 +888,7 @@ namespace DaggerfallWorkshop.Game
             return texture;
         }
 
-        public static DaggerfallMessageBox MessageBox(string message, IMacroContextProvider mds = null, bool wrapText = false)
+        public static DaggerfallMessageBox MessageBox(string message, bool wrapText = false, IMacroContextProvider mds = null)
         {
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(Instance.uiManager, Instance.uiManager.TopWindow, wrapText);
             messageBox.SetText(message);
