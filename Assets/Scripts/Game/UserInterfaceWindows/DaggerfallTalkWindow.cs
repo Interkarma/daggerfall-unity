@@ -89,7 +89,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
-        TalkManager.Ref<List<TalkManager.ListItem>> listCurrentTopics; // current topic list metadata of displayed topic list in topic frame
+        List<TalkManager.ListItem> listCurrentTopics; // current topic list metadata of displayed topic list in topic frame
 
         Texture2D textureBackground;
         Texture2D textureHighlightedOptions;
@@ -648,14 +648,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             buttonConversationDown.Update();
         }
 
-        void SetListboxTopics(ref ListBox listboxTopic, TalkManager.Ref<List<TalkManager.ListItem>> listTopic)
+        void SetListboxTopics(ref ListBox listboxTopic, List<TalkManager.ListItem> listTopic)
         {
             listCurrentTopics = listTopic;
 
             listboxTopic.ClearItems();            
-            for (int i = 0; i < listTopic.Value.Count; i++)
+            for (int i = 0; i < listTopic.Count; i++)
             {
-                TalkManager.ListItem item = listTopic.Value[i];
+                TalkManager.ListItem item = listTopic[i];
                 ListBox.ListItem listboxItem;
                 listboxTopic.AddItem(item.caption, out listboxItem);
                 if (item.type == TalkManager.ListItemType.NavigationBack)
@@ -676,7 +676,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             listboxTopic.Update();
             UpdateScrollBarsTopic();
             UpdateScrollButtonsTopic();
-            if (listTopic.Value[0].listParentItems != null) // first entry is "previous" item
+            if (listTopic[0].listParentItems != null) // first entry is "previous" item
             {
                 listboxTopic.SelectIndex(1);
             }
@@ -1023,7 +1023,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 return;
             }
 
-            TalkManager.ListItem listItem = listCurrentTopics.Value[index];
+            TalkManager.ListItem listItem = listCurrentTopics[index];
 
             if (listItem.type == TalkManager.ListItemType.Item)
                 currentQuestion = TalkManager.Instance.GetQuestionText(listItem, selectedTalkTone);
@@ -1067,10 +1067,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (index < 0 || index >= listboxTopic.Count)
                 return;
 
-            TalkManager.ListItem listItem = listCurrentTopics.Value[index];
+            TalkManager.ListItem listItem = listCurrentTopics[index];
             if (listItem.type == TalkManager.ListItemType.NavigationBack)
             {
-                if (listItem.listParentItems.Value != null)
+                if (listItem.listParentItems != null)
                 {
                     selectionIndexLastUsed = -1;
                     SetListboxTopics(ref listboxTopic, listItem.listParentItems);                    
@@ -1078,7 +1078,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
             else if (listItem.type == TalkManager.ListItemType.ItemGroup)
             {
-                if (listItem.listChildItems.Value != null)
+                if (listItem.listChildItems != null)
                 {
                     selectionIndexLastUsed = -1;
                     SetListboxTopics(ref listboxTopic, listItem.listChildItems);                    

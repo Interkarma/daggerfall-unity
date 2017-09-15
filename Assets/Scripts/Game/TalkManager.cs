@@ -104,18 +104,13 @@ namespace DaggerfallWorkshop.Game
             Thing
         }
 
-        public class Ref<T> where T : class
-        {
-            public T Value { get; set; }
-        }
-
         public class ListItem
         {
             public ListItemType type = ListItemType.Item; // list item can be either a normal item, a navigation item (to get to parent list) or an item group (contains list of child items)
             public string caption = "undefined";
             public QuestionType questionType = QuestionType.NoQuestion;
-            public Ref<List<ListItem>> listChildItems = null; // null if type == ListItemType.Navigation or ListItemType.Item, only contains a list if type == ListItemType.ItemGroup
-            public Ref<List<ListItem>> listParentItems = null; // null if type == ListItemType.ItemGroup or ListItemType.Item, only contains a list if type == ListItemType.Navigation
+            public List<ListItem> listChildItems = null; // null if type == ListItemType.Navigation or ListItemType.Item, only contains a list if type == ListItemType.ItemGroup
+            public List<ListItem> listParentItems = null; // null if type == ListItemType.ItemGroup or ListItemType.Item, only contains a list if type == ListItemType.Navigation
         }
 
         List<ListItem> listTopicLocation;
@@ -137,19 +132,19 @@ namespace DaggerfallWorkshop.Game
 
         #region Properties
 
-        public Ref<List<ListItem>> ListTopicLocation
+        public List<ListItem> ListTopicLocation
         {
-            get { return new Ref<List<ListItem>> { Value = listTopicLocation }; }
+            get { return listTopicLocation; }
         }
 
-        public Ref<List<ListItem>> ListTopicPerson
+        public List<ListItem> ListTopicPerson
         {
-            get { return new Ref<List<ListItem>> { Value = listTopicPerson }; }
+            get { return listTopicPerson; }
         }
 
-        public Ref<List<ListItem>> ListTopicThings
+        public List<ListItem> ListTopicThings
         {
-            get { return new Ref<List<ListItem>> { Value = listTopicThing }; }
+            get {  return listTopicThing; }
         }
 
         #endregion
@@ -458,13 +453,13 @@ namespace DaggerfallWorkshop.Game
                     itemBuildingTypeGroup.type = ListItemType.ItemGroup;
                     itemBuildingTypeGroup.caption = BuildingTypeToGroupString(buildingType);
 
-                    itemBuildingTypeGroup.listChildItems = new Ref<List<ListItem>> { Value = new List<ListItem>() };
+                    itemBuildingTypeGroup.listChildItems = new List<ListItem>();
 
                     ListItem itemPreviousList = new ListItem();
                     itemPreviousList.type = ListItemType.NavigationBack;
                     itemPreviousList.caption = "Previous List";
-                    itemPreviousList.listParentItems = new Ref<List<ListItem>> { Value = listTopicLocation };                
-                    itemBuildingTypeGroup.listChildItems.Value.Add(itemPreviousList);
+                    itemPreviousList.listParentItems = listTopicLocation;                
+                    itemBuildingTypeGroup.listChildItems.Add(itemPreviousList);
 
                     foreach (BuildingInfo buildingInfo in matchingBuildings)
                     {
@@ -472,7 +467,7 @@ namespace DaggerfallWorkshop.Game
                         item.type = ListItemType.Item;
                         item.questionType = QuestionType.LocalBuilding;
                         item.caption = buildingInfo.name;
-                        itemBuildingTypeGroup.listChildItems.Value.Add(item);
+                        itemBuildingTypeGroup.listChildItems.Add(item);
                     }
 
                     listTopicLocation.Add(itemBuildingTypeGroup);
@@ -491,9 +486,9 @@ namespace DaggerfallWorkshop.Game
                 itemPreviousList = new ListItem();
                 itemPreviousList.type = ListItemType.NavigationBack;
                 itemPreviousList.caption = "Previous List";
-                itemPreviousList.listParentItems = new Ref<List<ListItem>> { Value = listTopicLocation };
-                itemBuildingTypeGroup.listChildItems = new Ref<List<ListItem>> { Value = new List<ListItem>() };
-                itemBuildingTypeGroup.listChildItems.Value.Add(itemPreviousList);
+                itemPreviousList.listParentItems = listTopicLocation;
+                itemBuildingTypeGroup.listChildItems = new List<ListItem>();
+                itemBuildingTypeGroup.listChildItems.Add(itemPreviousList);
 
                 foreach (BuildingInfo buildingInfo in matchingBuildings)
                 {
@@ -501,14 +496,14 @@ namespace DaggerfallWorkshop.Game
                     item.type = ListItemType.Item;
                     item.questionType = QuestionType.LocalBuilding;
                     item.caption = buildingInfo.name;
-                    itemBuildingTypeGroup.listChildItems.Value.Add(item);
+                    itemBuildingTypeGroup.listChildItems.Add(item);
                 }
             }
 
             itemBuildingTypeGroup = new ListItem();
             itemBuildingTypeGroup.type = ListItemType.ItemGroup;
             itemBuildingTypeGroup.caption = "Regional";
-            itemBuildingTypeGroup.listChildItems = new Ref<List<ListItem>> { Value = new List<ListItem>() };
+            itemBuildingTypeGroup.listChildItems = new List<ListItem>();
             for (int i = 0; i < 7; i++)
             {
                 ListItem item;
@@ -517,14 +512,14 @@ namespace DaggerfallWorkshop.Game
                     item = new ListItem();
                     item.type = ListItemType.NavigationBack;
                     item.caption = "Previous List";
-                    item.listParentItems = new Ref<List<ListItem>> { Value = listTopicLocation };
-                    itemBuildingTypeGroup.listChildItems.Value.Add(item);
+                    item.listParentItems = listTopicLocation;
+                    itemBuildingTypeGroup.listChildItems.Add(item);
                 }
                 item = new ListItem();
                 item.type = ListItemType.Item;
                 item.questionType = QuestionType.Regional;
                 item.caption = "regional temple (placeholder) " + i;
-                itemBuildingTypeGroup.listChildItems.Value.Add(item);
+                itemBuildingTypeGroup.listChildItems.Add(item);
             }
             listTopicLocation.Add(itemBuildingTypeGroup);            
         }
