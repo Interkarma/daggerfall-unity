@@ -154,6 +154,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Button buttonCheckboxToneNormal;
         Button buttonCheckboxToneBlunt;
 
+        int toneLastUsed = -1;
+
         // position rect of arrow images is src image
         Rect upArrowRectInSrcImg = new Rect(0, 0, 9, 16);
         Rect downArrowRectInSrcImg = new Rect(0, 136, 9, 16);
@@ -223,6 +225,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             selectedTalkCategory = TalkCategory.Location;
             selectedTalkTone = TalkTone.Normal;
+            toneLastUsed = -1;
             currentQuestion = "";
         }
 
@@ -469,7 +472,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 listboxConversation.ClearItems();
 
-                listboxConversation.AddItem(TalkManager.Instance.GetNPCGreetingDialog());
+                listboxConversation.AddItem(TalkManager.Instance.GetNPCGreetingText());
             }
 
             TalkManager.Instance.StartNewConversation();
@@ -1219,6 +1222,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         private void ButtonTonePolite_OnClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             selectedTalkTone = TalkTone.Polite;
+            if (TalkToneToIndex(selectedTalkTone) == toneLastUsed)
+                return;
             UpdateCheckboxes();
             UpdateQuestion(listboxTopic.SelectedIndex);
         }
@@ -1226,6 +1231,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         private void ButtonToneNormal_OnClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             selectedTalkTone = TalkTone.Normal;
+            if (TalkToneToIndex(selectedTalkTone) == toneLastUsed)
+                return;
             UpdateCheckboxes();
             UpdateQuestion(listboxTopic.SelectedIndex);
         }
@@ -1233,6 +1240,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         private void ButtonToneBlunt_OnClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             selectedTalkTone = TalkTone.Blunt;
+            if (TalkToneToIndex(selectedTalkTone) == toneLastUsed)
+                return;
             UpdateCheckboxes();
             UpdateQuestion(listboxTopic.SelectedIndex);
         }

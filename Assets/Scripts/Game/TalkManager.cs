@@ -123,7 +123,9 @@ namespace DaggerfallWorkshop.Game
         List<ListItem> listTopicThing;
 
         int numQuestionsAsked = 0;
-        
+        string questionOpeningText = ""; // randomize PC opening text only once for every new question so save it in this string after creating it
+
+
         struct BuildingInfo
         {
             public string name;
@@ -203,29 +205,42 @@ namespace DaggerfallWorkshop.Game
             numQuestionsAsked = 0;
         }
 
-        public string GetNPCGreetingDialog()
+        public string GetNPCGreetingText()
         {
             //string greetingString = DaggerfallUnity.Instance.TextProvider.GetRandomText(7206);
             //string greetingString = DaggerfallUnity.Instance.TextProvider.GetRandomText(7207);
-            string greetingString = DaggerfallUnity.Instance.TextProvider.GetRandomText(7208);
-            //string greetingString = DaggerfallUnity.Instance.TextProvider.GetRandomText(7209);
+            //string greetingString = DaggerfallUnity.Instance.TextProvider.GetRandomText(7208);
+            string greetingString = DaggerfallUnity.Instance.TextProvider.GetRandomText(7209);
             return (greetingString);
         }
 
-        public string GetPCGreetingDialog(DaggerfallTalkWindow.TalkTone talkTone)
+        public string GetPCGreetingText(DaggerfallTalkWindow.TalkTone talkTone)
         {
             int toneIndex = DaggerfallTalkWindow.TalkToneToIndex(talkTone);
             string greetingString = DaggerfallUnity.Instance.TextProvider.GetRandomText(7215 + toneIndex);
             return (greetingString);
         }
 
+        public string GetPCFollowUpText(DaggerfallTalkWindow.TalkTone talkTone)
+        {
+            int toneIndex = DaggerfallTalkWindow.TalkToneToIndex(talkTone);
+            string followUpString = DaggerfallUnity.Instance.TextProvider.GetRandomText(7218 + toneIndex) + " ";
+            return (followUpString);
+        }
+
         public string GetQuestionText(TalkManager.ListItem listItem, DaggerfallTalkWindow.TalkTone talkTone)
         {
             int toneIndex = DaggerfallTalkWindow.TalkToneToIndex(talkTone);
             string question = "";
-            if (numQuestionsAsked == 0)
-                question += GetPCGreetingDialog(talkTone);
-            question += "question about " + listItem.caption + ": " + DaggerfallUnity.Instance.TextProvider.GetRandomText(7225 + toneIndex);
+            if (questionOpeningText == "")
+            {
+                if (numQuestionsAsked == 0)
+                    questionOpeningText = GetPCGreetingText(talkTone);
+                else
+                    questionOpeningText = GetPCFollowUpText(talkTone);
+            }
+            question += questionOpeningText;
+            question += DaggerfallUnity.Instance.TextProvider.GetRandomText(7225 + toneIndex);
             return question;
         }
 
@@ -233,6 +248,7 @@ namespace DaggerfallWorkshop.Game
         {            
             string answer = DaggerfallUnity.Instance.TextProvider.GetRandomText(7285) + DaggerfallUnity.Instance.TextProvider.GetRandomText(7332);
             numQuestionsAsked++;
+            questionOpeningText = ""; // reset questionOpeningText so that it is newly created for next question
             return answer;
         }
 
