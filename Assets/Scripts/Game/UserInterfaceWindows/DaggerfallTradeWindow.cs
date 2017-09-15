@@ -291,7 +291,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             for (int i = 0; i < remoteItems.Count; i++)
             {
                 DaggerfallUnityItem item = remoteItems.GetItem(i);
-                cost += FormulaHelper.CalculateItemCost(item.value, buildingSummary.Quality) * item.stackCount;
+                switch (windowMode)
+                {
+                    case WindowModes.Sell:
+                        cost += FormulaHelper.CalculateItemSellCost(item.value, buildingSummary.Quality) * item.stackCount;
+                        break;
+                    case WindowModes.Repair:
+                        cost += FormulaHelper.CalculateItemRepairCost(item.value, buildingSummary.Quality, item.currentCondition, item.maxCondition) * item.stackCount;
+                        break;
+                }
             }
             costLabel.Text = cost.ToString();
             goldLabel.Text = PlayerEntity.GoldPieces.ToString();
@@ -378,9 +386,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 List<ItemGroups> itemTypesAccepted = storeBuysItemType[buildingSummary.BuildingType];
                 localItemsFiltered.RemoveAll(i => !itemTypesAccepted.Contains(i.ItemGroup));
             }
-            // ? repair/identify have restrictions?
-            // repair: not in classic, the condition is checked which means only weps & armour/
-
+            // Do repair/identify have restrictions?
+            // repair: not in classic, the condition is checked (which means only weps & armour since only they get damage I think)
+            // identify: ?
         }
 
         void ShowWagon(bool show)
@@ -438,20 +446,27 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
 
             // Handle click based on action & mode
-            if (windowMode == WindowModes.Sell)
+            if (selectedActionMode == ActionModes.Select)
             {
-                if (selectedActionMode == ActionModes.Select)
+                if (windowMode == WindowModes.Sell)
                 {
                     // Transfer to remote items
                     if (remoteItems != null)
-                    {
                         TransferItem(item, localItems, remoteItems);
-                    }
                 }
-                else if (selectedActionMode == ActionModes.Info)
+                else if (windowMode == WindowModes.Repair)
                 {
-                    ShowInfoPopup(item);
+                    // Check if item is damaged & transfer
+                    if (item.currentCondition < item.maxCondition)
+                        TransferItem(item, localItems, remoteItems);
+                    else
+                        DaggerfallUI.MessageBox(24);
                 }
+
+            }
+            else if (selectedActionMode == ActionModes.Info)
+            {
+                ShowInfoPopup(item);
             }
         }
 
@@ -508,7 +523,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ModeActionButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            Debug.Log("Request trade!");
             ShowTradePopup();
         }
 
@@ -529,6 +543,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         PlayerEntity.GoldPieces += GetTradePrice();
                         remoteItems.Clear();
                         break;
+                    case WindowModes.Repair:
+                        PlayerEntity.GoldPieces -= GetTradePrice();
+                        for (int i = 0; i < remoteItems.Count; i++)
+                        {
+                            DaggerfallUnityItem item = remoteItems.GetItem(i);
+                            item.currentCondition = item.maxCondition;
+                        }
+                        break;
                 }
                 Refresh();
             }
@@ -540,20 +562,29 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void ShowTradePopup()
         {
             const int tradeMessageBaseId = 260;
+            const int notEnoughGoldId = 454;
             int msgOffset = 0;
 
-            if (windowMode == WindowModes.Buy)
-                msgOffset = (buildingSummary.Quality > 10) ? 1 : 0;
+            if (windowMode != WindowModes.Sell && PlayerEntity.GoldPieces < GetTradePrice())
+            {
+                DaggerfallUI.MessageBox(notEnoughGoldId);
+            }
             else
-                msgOffset = 1 + (buildingSummary.Quality / 5);
+            {
+                // TODO what is classic algorithm? (seems repair can use all even though not correct contextually)
+                if (windowMode == WindowModes.Buy)
+                    msgOffset = (buildingSummary.Quality > 10) ? 1 : 0;
+                else
+                    msgOffset = 1 + (buildingSummary.Quality / 5);
 
-            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
-            TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(tradeMessageBaseId + msgOffset);
-            messageBox.SetTextTokens(tokens, this);
-            messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
-            messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
-            messageBox.OnButtonClick += ConfirmTrade_OnButtonClick;
-            uiManager.PushWindow(messageBox);
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
+                TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(tradeMessageBaseId + msgOffset);
+                messageBox.SetTextTokens(tokens, this);
+                messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
+                messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
+                messageBox.OnButtonClick += ConfirmTrade_OnButtonClick;
+                uiManager.PushWindow(messageBox);
+            }
         }
 
 
