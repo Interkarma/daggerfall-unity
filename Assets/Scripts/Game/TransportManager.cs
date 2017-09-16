@@ -1,5 +1,5 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -62,8 +62,8 @@ namespace DaggerfallWorkshop.Game
         DaggerfallAudioSource dfAudioSource;
         AudioSource ridingAudioSource;
 
-        Texture2D ridingTexure;
-        Texture2D[] ridingTexures = new Texture2D[4];
+        ImageData ridingTexure;
+        ImageData[] ridingTexures = new ImageData[4];
         float lastFrameTime = 0;
         int frameIdx = 0;
 
@@ -143,7 +143,7 @@ namespace DaggerfallWorkshop.Game
         {
             if (Event.current.type.Equals(EventType.Repaint) && !GameManager.IsGamePaused)
             {
-                if ((mode == TransportModes.Horse || mode == TransportModes.Cart) && ridingTexure != null)
+                if ((mode == TransportModes.Horse || mode == TransportModes.Cart) && ridingTexure.texture != null)
                 {
                     // Draw horse texture behind other HUD elements & weapons.
                     GUI.depth = 2;
@@ -155,7 +155,7 @@ namespace DaggerfallWorkshop.Game
                                     Screen.height - (ridingTexure.height * horseScaleY),
                                     ridingTexure.width * horseScaleY,
                                     ridingTexure.height * horseScaleY);
-                    GUI.DrawTexture(pos, ridingTexure);
+                    GUI.DrawTexture(pos, ridingTexure.texture);
                 }
             }
         }
@@ -179,7 +179,7 @@ namespace DaggerfallWorkshop.Game
                 // Setup appropriate riding textures.
                 string textureName = (mode == TransportModes.Horse) ? horseTextureName : cartTextureName;
                 for (int i = 0; i < 4; i++)
-                    ridingTexures[i] = ImageReader.GetTexture(textureName, 0, i, true);
+                    ridingTexures[i] = ImageReader.GetImageData(textureName, 0, i, true, true);
                 ridingTexure = ridingTexures[0];
 
                 // Initialise neighing timer.
