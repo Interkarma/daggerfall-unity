@@ -97,6 +97,7 @@ namespace DaggerfallWorkshop.Game
         {
             NoQuestion, // used for list entries that are not of ListItemType item
             News,
+            OrganizationInfo,
             Work,
             LocalBuilding,
             Regional,
@@ -104,24 +105,24 @@ namespace DaggerfallWorkshop.Game
             Thing
         }
 
-        public class Ref<T> where T : class
-        {
-            public T Value { get; set; }
-        }
-
         public class ListItem
         {
             public ListItemType type = ListItemType.Item; // list item can be either a normal item, a navigation item (to get to parent list) or an item group (contains list of child items)
             public string caption = "undefined";
             public QuestionType questionType = QuestionType.NoQuestion;
-            public Ref<List<ListItem>> listChildItems = null; // null if type == ListItemType.Navigation or ListItemType.Item, only contains a list if type == ListItemType.ItemGroup
-            public Ref<List<ListItem>> listParentItems = null; // null if type == ListItemType.ItemGroup or ListItemType.Item, only contains a list if type == ListItemType.Navigation
+            public List<ListItem> listChildItems = null; // null if type == ListItemType.Navigation or ListItemType.Item, only contains a list if type == ListItemType.ItemGroup
+            public List<ListItem> listParentItems = null; // null if type == ListItemType.ItemGroup or ListItemType.Item, only contains a list if type == ListItemType.Navigation
         }
 
+        List<ListItem> listTellMeAbout;
         List<ListItem> listTopicLocation;
         List<ListItem> listTopicPerson;
         List<ListItem> listTopicThing;
-        
+
+        int numQuestionsAsked = 0;
+        string questionOpeningText = ""; // randomize PC opening text only once for every new question so save it in this string after creating it
+
+
         struct BuildingInfo
         {
             public string name;
@@ -133,19 +134,24 @@ namespace DaggerfallWorkshop.Game
 
         #region Properties
 
-        public Ref<List<ListItem>> ListTopicLocation
+        public List<ListItem> ListTellMeAbout
         {
-            get { return new Ref<List<ListItem>> { Value = listTopicLocation }; }
+            get { return listTellMeAbout; }
         }
 
-        public Ref<List<ListItem>> ListTopicPerson
+        public List<ListItem> ListTopicLocation
         {
-            get { return new Ref<List<ListItem>> { Value = listTopicPerson }; }
+            get { return listTopicLocation; }
         }
 
-        public Ref<List<ListItem>> ListTopicThings
+        public List<ListItem> ListTopicPerson
         {
-            get { return new Ref<List<ListItem>> { Value = listTopicThing }; }
+            get { return listTopicPerson; }
+        }
+
+        public List<ListItem> ListTopicThings
+        {
+            get {  return listTopicThing; }
         }
 
         #endregion
@@ -196,16 +202,118 @@ namespace DaggerfallWorkshop.Game
 
         #region Public Methods
 
+        public void StartNewConversation()
+        {
+            numQuestionsAsked = 0;
+        }
+
+        public string GetNPCGreetingText()
+        {
+            //string greetingString = DaggerfallUnity.Instance.TextProvider.GetRandomText(7206);
+            //string greetingString = DaggerfallUnity.Instance.TextProvider.GetRandomText(7207);
+            //string greetingString = DaggerfallUnity.Instance.TextProvider.GetRandomText(7208);
+            string greetingString = DaggerfallUnity.Instance.TextProvider.GetRandomText(7209);
+            return (greetingString);
+        }
+
+        public string GetPCGreetingText(DaggerfallTalkWindow.TalkTone talkTone)
+        {
+            int toneIndex = DaggerfallTalkWindow.TalkToneToIndex(talkTone);
+            string greetingString = DaggerfallUnity.Instance.TextProvider.GetRandomText(7215 + toneIndex) + " ";
+            return (greetingString);
+        }
+
+        public string GetPCFollowUpText(DaggerfallTalkWindow.TalkTone talkTone)
+        {
+            int toneIndex = DaggerfallTalkWindow.TalkToneToIndex(talkTone);
+            string followUpString = DaggerfallUnity.Instance.TextProvider.GetRandomText(7218 + toneIndex) + " ";
+            return (followUpString);
+        }
+
         public string GetQuestionText(TalkManager.ListItem listItem, DaggerfallTalkWindow.TalkTone talkTone)
         {
             int toneIndex = DaggerfallTalkWindow.TalkToneToIndex(talkTone);
-            string question = "%hnt.... It'd be easiest if I just ... question about " + listItem.caption + ": " + DaggerfallUnity.Instance.TextProvider.GetRandomText(7225 + toneIndex);
+            string question = "";
+            if (questionOpeningText == "")
+            {
+                if (numQuestionsAsked == 0)
+                    questionOpeningText = GetPCGreetingText(talkTone);
+                else
+                    questionOpeningText = GetPCFollowUpText(talkTone);
+            }
+            question += questionOpeningText;
+
+            switch (listItem.questionType)
+            {
+                case QuestionType.NoQuestion:
+                default:
+                    break;
+                case QuestionType.News:
+                    question += DaggerfallUnity.Instance.TextProvider.GetRandomText(7231 + toneIndex);
+                    break;
+                case QuestionType.OrganizationInfo:
+                    question += "not implemented";
+                    break;
+                case QuestionType.LocalBuilding:
+                    question += DaggerfallUnity.Instance.TextProvider.GetRandomText(7225) + toneIndex;
+                    break;
+                case QuestionType.Person:
+                    question += DaggerfallUnity.Instance.TextProvider.GetRandomText(7225) + toneIndex;
+                    break;
+                case QuestionType.Thing:
+                    question += "not implemented";
+                    break;
+                case QuestionType.Regional:
+                    question += "not implemented";
+                    break;
+                case QuestionType.Work:
+                    question += DaggerfallUnity.Instance.TextProvider.GetRandomText(7211) + toneIndex;
+                    break;
+            }            
             return question;
+        }
+
+        public string GetNewsOrRumors()
+        {
+            string news = DaggerfallUnity.Instance.TextProvider.GetRandomText(1400);
+            return (news);
         }
 
         public string GetAnswerText(TalkManager.ListItem listItem)
         {
-            string answer = /*"answer about " + listItem.caption + ": " + */DaggerfallUnity.Instance.TextProvider.GetRandomText(7285) + DaggerfallUnity.Instance.TextProvider.GetRandomText(7332);
+            string answer = "";
+            switch (listItem.questionType)
+            {
+                case QuestionType.NoQuestion:
+                default:                    
+                    answer = DaggerfallUnity.Instance.TextProvider.GetRandomText(7280);
+                    break;
+                case QuestionType.News:
+                    answer = GetNewsOrRumors();
+                    break;
+                case QuestionType.OrganizationInfo:
+                    answer = "not implemented";
+                    break;
+                case QuestionType.LocalBuilding:
+                    answer = DaggerfallUnity.Instance.TextProvider.GetRandomText(7285) + DaggerfallUnity.Instance.TextProvider.GetRandomText(7332);
+                    break;
+                case QuestionType.Person:
+                    answer = DaggerfallUnity.Instance.TextProvider.GetRandomText(7280);
+                    break;
+                case QuestionType.Thing:
+                    answer = "not implemented";
+                    break;
+                case QuestionType.Regional:
+                    answer = "not implemented";
+                    break;
+                case QuestionType.Work:
+                    answer = DaggerfallUnity.Instance.TextProvider.GetRandomText(8076);
+                    break;
+
+            }
+
+            numQuestionsAsked++;
+            questionOpeningText = ""; // reset questionOpeningText so that it is newly created for next question
             return answer;
         }
 
@@ -326,15 +434,29 @@ namespace DaggerfallWorkshop.Game
 
         void AssembleTopicLists()
         {
-            AssembleTopicListWhereIs();
+            AssembleTopicListTellMeAbout();
             AssembleTopicListLocation();
             AssembleTopicListPerson();
             AssembleTopicListThing();
         }
 
-        void AssembleTopicListWhereIs()
+        void AssembleTopicListTellMeAbout()
         {
+            listTellMeAbout = new List<ListItem>();
+            ListItem itemAnyNews = new ListItem();
+            itemAnyNews.type = ListItemType.Item;
+            itemAnyNews.questionType = QuestionType.News;
+            itemAnyNews.caption = "Any news?";
+            listTellMeAbout.Add(itemAnyNews);
 
+            for (int i = 0; i < 10; i++)
+            {
+                ListItem itemOrganizationInfo = new ListItem();
+                itemOrganizationInfo.type = ListItemType.Item;
+                itemOrganizationInfo.questionType = QuestionType.OrganizationInfo;
+                itemOrganizationInfo.caption = "Placeholder for Organization";
+                listTellMeAbout.Add(itemOrganizationInfo);
+            }
         }
 
         void AssembleTopicListLocation()
@@ -358,13 +480,13 @@ namespace DaggerfallWorkshop.Game
                     itemBuildingTypeGroup.type = ListItemType.ItemGroup;
                     itemBuildingTypeGroup.caption = BuildingTypeToGroupString(buildingType);
 
-                    itemBuildingTypeGroup.listChildItems = new Ref<List<ListItem>> { Value = new List<ListItem>() };
+                    itemBuildingTypeGroup.listChildItems = new List<ListItem>();
 
                     ListItem itemPreviousList = new ListItem();
                     itemPreviousList.type = ListItemType.NavigationBack;
                     itemPreviousList.caption = "Previous List";
-                    itemPreviousList.listParentItems = new Ref<List<ListItem>> { Value = listTopicLocation };                
-                    itemBuildingTypeGroup.listChildItems.Value.Add(itemPreviousList);
+                    itemPreviousList.listParentItems = listTopicLocation;                
+                    itemBuildingTypeGroup.listChildItems.Add(itemPreviousList);
 
                     foreach (BuildingInfo buildingInfo in matchingBuildings)
                     {
@@ -372,7 +494,7 @@ namespace DaggerfallWorkshop.Game
                         item.type = ListItemType.Item;
                         item.questionType = QuestionType.LocalBuilding;
                         item.caption = buildingInfo.name;
-                        itemBuildingTypeGroup.listChildItems.Value.Add(item);
+                        itemBuildingTypeGroup.listChildItems.Add(item);
                     }
 
                     listTopicLocation.Add(itemBuildingTypeGroup);
@@ -391,9 +513,9 @@ namespace DaggerfallWorkshop.Game
                 itemPreviousList = new ListItem();
                 itemPreviousList.type = ListItemType.NavigationBack;
                 itemPreviousList.caption = "Previous List";
-                itemPreviousList.listParentItems = new Ref<List<ListItem>> { Value = listTopicLocation };
-                itemBuildingTypeGroup.listChildItems = new Ref<List<ListItem>> { Value = new List<ListItem>() };
-                itemBuildingTypeGroup.listChildItems.Value.Add(itemPreviousList);
+                itemPreviousList.listParentItems = listTopicLocation;
+                itemBuildingTypeGroup.listChildItems = new List<ListItem>();
+                itemBuildingTypeGroup.listChildItems.Add(itemPreviousList);
 
                 foreach (BuildingInfo buildingInfo in matchingBuildings)
                 {
@@ -401,14 +523,14 @@ namespace DaggerfallWorkshop.Game
                     item.type = ListItemType.Item;
                     item.questionType = QuestionType.LocalBuilding;
                     item.caption = buildingInfo.name;
-                    itemBuildingTypeGroup.listChildItems.Value.Add(item);
+                    itemBuildingTypeGroup.listChildItems.Add(item);
                 }
             }
 
             itemBuildingTypeGroup = new ListItem();
             itemBuildingTypeGroup.type = ListItemType.ItemGroup;
             itemBuildingTypeGroup.caption = "Regional";
-            itemBuildingTypeGroup.listChildItems = new Ref<List<ListItem>> { Value = new List<ListItem>() };
+            itemBuildingTypeGroup.listChildItems = new List<ListItem>();
             for (int i = 0; i < 7; i++)
             {
                 ListItem item;
@@ -417,14 +539,14 @@ namespace DaggerfallWorkshop.Game
                     item = new ListItem();
                     item.type = ListItemType.NavigationBack;
                     item.caption = "Previous List";
-                    item.listParentItems = new Ref<List<ListItem>> { Value = listTopicLocation };
-                    itemBuildingTypeGroup.listChildItems.Value.Add(item);
+                    item.listParentItems = listTopicLocation;
+                    itemBuildingTypeGroup.listChildItems.Add(item);
                 }
                 item = new ListItem();
                 item.type = ListItemType.Item;
                 item.questionType = QuestionType.Regional;
                 item.caption = "regional temple (placeholder) " + i;
-                itemBuildingTypeGroup.listChildItems.Value.Add(item);
+                itemBuildingTypeGroup.listChildItems.Add(item);
             }
             listTopicLocation.Add(itemBuildingTypeGroup);            
         }

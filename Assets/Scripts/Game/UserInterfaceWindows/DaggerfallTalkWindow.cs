@@ -51,11 +51,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Color textcolorCaptionGotoParentList = new Color(0.698f, 0.812f, 1.0f);
         Color textcolorCaptionGotoParentListHighlighted = Color.white;
 
-        enum TalkOption { 
+        enum TalkOption {
+            None,
             TellMeAbout,
             WhereIs
         };
         TalkOption selectedTalkOption = TalkOption.WhereIs;
+        TalkOption talkOptionLastUsed = TalkOption.None;
 
         enum TalkCategory
         {
@@ -66,6 +68,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Work
         };
         TalkCategory selectedTalkCategory = TalkCategory.Location;
+        TalkCategory talkCategoryLastUsed = TalkCategory.None;
 
         public enum TalkTone
         {
@@ -89,7 +92,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
-        TalkManager.Ref<List<TalkManager.ListItem>> listCurrentTopics; // current topic list metadata of displayed topic list in topic frame
+        List<TalkManager.ListItem> listCurrentTopics; // current topic list metadata of displayed topic list in topic frame
 
         Texture2D textureBackground;
         Texture2D textureHighlightedOptions;
@@ -154,6 +157,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Button buttonCheckboxToneNormal;
         Button buttonCheckboxToneBlunt;
 
+        int toneLastUsed = -1;
+
         // position rect of arrow images is src image
         Rect upArrowRectInSrcImg = new Rect(0, 0, 9, 16);
         Rect downArrowRectInSrcImg = new Rect(0, 136, 9, 16);
@@ -199,7 +204,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
         }
 
-
         public override void OnPush()
         {
             base.OnPush();
@@ -207,8 +211,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (listboxTopic != null)
                 listboxTopic.ClearItems();
 
-            if (listboxConversation != null)
-                listboxConversation.ClearItems();
+            SetStartConversation();
 
             // Reset scrollbars
             if (verticalScrollBarTopic != null)
@@ -223,8 +226,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 UpdateScrollBarConversation();
             }
 
+            selectedTalkOption = TalkOption.WhereIs;
             selectedTalkCategory = TalkCategory.Location;
             selectedTalkTone = TalkTone.Normal;
+            talkCategoryLastUsed = TalkCategory.None;
+            talkOptionLastUsed = TalkOption.None;
+            toneLastUsed = -1;
             currentQuestion = "";
         }
 
@@ -446,6 +453,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             listboxConversation.VerticalScrollMode = ListBox.VerticalScrollModes.PixelWise;        
             mainPanel.Components.Add(listboxConversation);
 
+            SetStartConversation();
+
             SetupButtons();
             SetupCheckboxes();
             SetupScrollBars();
@@ -461,6 +470,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
             UpdateScrollButtonsConversation();
 
             UpdateLabels();
+        }
+
+        void SetStartConversation()
+        {
+            if (listboxConversation != null)
+            {
+                listboxConversation.ClearItems();
+
+                listboxConversation.AddItem(TalkManager.Instance.GetNPCGreetingText());
+            }
+
+            TalkManager.Instance.StartNewConversation();
         }
 
         void SetupButtons()
@@ -633,14 +654,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             buttonConversationDown.Update();
         }
 
-        void SetListboxTopics(ref ListBox listboxTopic, TalkManager.Ref<List<TalkManager.ListItem>> listTopic)
+        void SetListboxTopics(ref ListBox listboxTopic, List<TalkManager.ListItem> listTopic)
         {
             listCurrentTopics = listTopic;
 
             listboxTopic.ClearItems();            
-            for (int i = 0; i < listTopic.Value.Count; i++)
+            for (int i = 0; i < listTopic.Count; i++)
             {
-                TalkManager.ListItem item = listTopic.Value[i];
+                TalkManager.ListItem item = listTopic[i];
                 ListBox.ListItem listboxItem;
                 listboxTopic.AddItem(item.caption, out listboxItem);
                 if (item.type == TalkManager.ListItemType.NavigationBack)
@@ -661,7 +682,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             listboxTopic.Update();
             UpdateScrollBarsTopic();
             UpdateScrollButtonsTopic();
-            if (listTopic.Value[0].listParentItems != null) // first entry is "previous" item
+            if (listTopic[0].listParentItems != null) // first entry is "previous" item
             {
                 listboxTopic.SelectIndex(1);
             }
@@ -725,7 +746,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
         void SetTalkModeTellMeAbout()
         {
             selectedTalkOption = TalkOption.TellMeAbout;
-            
+            if (selectedTalkOption == talkOptionLastUsed)
+                return;
+            talkOptionLastUsed = selectedTalkOption;
+
+            talkCategoryLastUsed = TalkCategory.None; // important so that category is enabled again when switching back to TalkOption.WhereIs
+
             textureBackground.SetPixels(4, textureBackground.height - 4 - 10, 107, 10, textureTellMeAboutHighlighted);
             textureBackground.SetPixels(4, textureBackground.height - 14 - 10, 107, 10, textureWhereIsNormal);
             textureBackground.SetPixels(4, textureBackground.height - 26 - 10, 107, 10, textureCategoryLocationGrayedOut);
@@ -734,25 +760,27 @@ namespace DaggerfallWorkshop.Game.UserInterface
             textureBackground.SetPixels(4, textureBackground.height - 56 - 10, 107, 10, textureCategoryWorkGrayedOut);
             textureBackground.Apply(false);
 
-            ClearListboxTopics();
+            SetListboxTopics(ref listboxTopic, TalkManager.Instance.ListTellMeAbout);
             listboxTopic.Update();
 
             UpdateScrollBarsTopic();
             UpdateScrollButtonsTopic();
+
+            UpdateQuestion(listboxTopic.SelectedIndex);
         }
 
         void SetTalkModeWhereIs()
         {
             selectedTalkOption = TalkOption.WhereIs;
+            if (selectedTalkOption == talkOptionLastUsed)
+                return;
+            talkOptionLastUsed = selectedTalkOption;
 
             textureBackground.SetPixels(4, textureBackground.height - 4 - 10, 107, 10, textureTellMeAboutNormal);
             textureBackground.SetPixels(4, textureBackground.height - 14 - 10, 107, 10, textureWhereIsHighlighted);            
             textureBackground.Apply(false);
 
             SetTalkCategory(selectedTalkCategory);
-
-            UpdateScrollBarsTopic();
-            UpdateScrollButtonsTopic();
         }
 
         void SetTalkCategory(TalkCategory talkCategory)
@@ -780,7 +808,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void SetTalkCategoryNone()
         {
+            ClearCurrentQuestion();
+
             selectedTalkCategory = TalkCategory.None;
+            talkCategoryLastUsed = TalkCategory.None;
 
             textureBackground.SetPixels(4, textureBackground.height - 26 - 10, 107, 10, textureCategoryLocationGrayedOut);
             textureBackground.SetPixels(4, textureBackground.height - 36 - 10, 107, 10, textureCategoryPeopleGrayedOut);
@@ -798,6 +829,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         void SetTalkCategoryLocation()
         {
             selectedTalkCategory = TalkCategory.Location;
+            if (selectedTalkCategory == talkCategoryLastUsed)
+                return;
+            talkCategoryLastUsed = selectedTalkCategory;
 
             textureBackground.SetPixels(4, textureBackground.height - 26 - 10, 107, 10, textureCategoryLocationHighlighted);
             textureBackground.SetPixels(4, textureBackground.height - 36 - 10, 107, 10, textureCategoryPeopleGrayedOut);
@@ -810,11 +844,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             UpdateScrollBarsTopic();
             UpdateScrollButtonsTopic();
+
+            UpdateQuestion(listboxTopic.SelectedIndex);
         }
 
         void SetTalkCategoryPeople()
         {
             selectedTalkCategory = TalkCategory.People;
+            if (selectedTalkCategory == talkCategoryLastUsed)
+                return;
+            talkCategoryLastUsed = selectedTalkCategory;
 
             textureBackground.SetPixels(4, textureBackground.height - 26 - 10, 107, 10, textureCategoryLocationGrayedOut);
             textureBackground.SetPixels(4, textureBackground.height - 36 - 10, 107, 10, textureCategoryPeopleHighlighted);
@@ -827,11 +866,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             UpdateScrollBarsTopic();
             UpdateScrollButtonsTopic();
+
+            UpdateQuestion(listboxTopic.SelectedIndex);
         }
 
         void SetTalkCategoryThings()
         {
             selectedTalkCategory = TalkCategory.Things;
+            if (selectedTalkCategory == talkCategoryLastUsed)
+                return;
+            talkCategoryLastUsed = selectedTalkCategory;
 
             textureBackground.SetPixels(4, textureBackground.height - 26 - 10, 107, 10, textureCategoryLocationGrayedOut);
             textureBackground.SetPixels(4, textureBackground.height - 36 - 10, 107, 10, textureCategoryPeopleGrayedOut);
@@ -844,11 +888,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             UpdateScrollBarsTopic();
             UpdateScrollButtonsTopic();
+
+            UpdateQuestion(listboxTopic.SelectedIndex);
         }
 
         void SetTalkCategoryWork()
         {
             selectedTalkCategory = TalkCategory.Work;
+            if (selectedTalkCategory == talkCategoryLastUsed)
+                return;
+            talkCategoryLastUsed = selectedTalkCategory;
 
             textureBackground.SetPixels(4, textureBackground.height - 26 - 10, 107, 10, textureCategoryLocationGrayedOut);
             textureBackground.SetPixels(4, textureBackground.height - 36 - 10, 107, 10, textureCategoryPeopleGrayedOut);
@@ -861,6 +910,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             UpdateScrollBarsTopic();
             UpdateScrollButtonsTopic();
+
+            // create fake list item so that we can call function and set its questionType to QuestionType.Work
+            TalkManager.ListItem listItem = new TalkManager.ListItem();
+            listItem.questionType = TalkManager.QuestionType.Work;
+            currentQuestion = TalkManager.Instance.GetQuestionText(listItem, selectedTalkTone);
+            textlabelPlayerSays.Text = currentQuestion;
         }
 
         /// <summary>
@@ -976,17 +1031,21 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
+        void ClearCurrentQuestion()
+        {
+            currentQuestion = "";
+            textlabelPlayerSays.Text = "";
+        }
+
         void UpdateQuestion(int index)
         {
-            // TODO: work section handling
-
             if (index < 0 || index >= listboxTopic.Count)
             {
                 textlabelPlayerSays.Text = "";
                 return;
             }
 
-            TalkManager.ListItem listItem = listCurrentTopics.Value[index];
+            TalkManager.ListItem listItem = listCurrentTopics[index];
 
             if (listItem.type == TalkManager.ListItemType.Item)
                 currentQuestion = TalkManager.Instance.GetQuestionText(listItem, selectedTalkTone);
@@ -994,6 +1053,22 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 currentQuestion = "";
 
             textlabelPlayerSays.Text = currentQuestion;
+        }
+
+        void SetQuestionAnswerPairInConversationListbox(string question, string answer)
+        {
+            ListBox.ListItem textLabelQuestion;
+            ListBox.ListItem textLabelAnswer;
+            listboxConversation.AddItem(question, out textLabelQuestion);
+            textLabelQuestion.textColor = textcolorQuestion;
+            textLabelQuestion.selectedTextColor = textcolorHighlighted; // textcolorQuestionHighlighted
+            listboxConversation.AddItem(answer, out textLabelAnswer);
+            textLabelAnswer.selectedTextColor = textcolorHighlighted;
+
+            listboxConversation.SelectedIndex = listboxConversation.Count - 1; // always highlight the new answer
+
+            UpdateScrollBarConversation();
+            UpdateScrollButtonsConversation();
         }
 
         void SelectTopicFromTopicList(int index)
@@ -1014,10 +1089,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (index < 0 || index >= listboxTopic.Count)
                 return;
 
-            TalkManager.ListItem listItem = listCurrentTopics.Value[index];
+            TalkManager.ListItem listItem = listCurrentTopics[index];
             if (listItem.type == TalkManager.ListItemType.NavigationBack)
             {
-                if (listItem.listParentItems.Value != null)
+                if (listItem.listParentItems != null)
                 {
                     selectionIndexLastUsed = -1;
                     SetListboxTopics(ref listboxTopic, listItem.listParentItems);                    
@@ -1025,7 +1100,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
             else if (listItem.type == TalkManager.ListItemType.ItemGroup)
             {
-                if (listItem.listChildItems.Value != null)
+                if (listItem.listChildItems != null)
                 {
                     selectionIndexLastUsed = -1;
                     SetListboxTopics(ref listboxTopic, listItem.listChildItems);                    
@@ -1034,20 +1109,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             else if (listItem.type == TalkManager.ListItemType.Item)
             {
                 string answer = TalkManager.Instance.GetAnswerText(listItem);
-                ListBox.ListItem textLabelQuestion;
-                ListBox.ListItem textLabelAnswer;
-                listboxConversation.AddItem(currentQuestion, out textLabelQuestion);
-                textLabelQuestion.textColor = textcolorQuestion;
-                textLabelQuestion.selectedTextColor = textcolorHighlighted; // textcolorQuestionHighlighted
-                listboxConversation.AddItem(answer, out textLabelAnswer);
-                textLabelAnswer.selectedTextColor = textcolorHighlighted;
 
-                listboxConversation.SelectedIndex = listboxConversation.Count - 1; // always highlight the new answer
-
-                UpdateScrollBarConversation();
-                UpdateScrollButtonsConversation();
-
-                UpdateQuestion(listboxTopic.SelectedIndex);
+                SetQuestionAnswerPairInConversationListbox(currentQuestion, answer);
+                
+                UpdateQuestion(listboxTopic.SelectedIndex); // and get new question text for textlabel
             }
             inListboxTopicContentUpdate = false;
         }
@@ -1207,6 +1272,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         private void ButtonTonePolite_OnClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             selectedTalkTone = TalkTone.Polite;
+            if (TalkToneToIndex(selectedTalkTone) == toneLastUsed)
+                return;
+            toneLastUsed = TalkToneToIndex(selectedTalkTone);
             UpdateCheckboxes();
             UpdateQuestion(listboxTopic.SelectedIndex);
         }
@@ -1214,6 +1282,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         private void ButtonToneNormal_OnClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             selectedTalkTone = TalkTone.Normal;
+            if (TalkToneToIndex(selectedTalkTone) == toneLastUsed)
+                return;
+            toneLastUsed = TalkToneToIndex(selectedTalkTone);
             UpdateCheckboxes();
             UpdateQuestion(listboxTopic.SelectedIndex);
         }
@@ -1221,13 +1292,28 @@ namespace DaggerfallWorkshop.Game.UserInterface
         private void ButtonToneBlunt_OnClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             selectedTalkTone = TalkTone.Blunt;
+            if (TalkToneToIndex(selectedTalkTone) == toneLastUsed)
+                return;
+            toneLastUsed = TalkToneToIndex(selectedTalkTone);
             UpdateCheckboxes();
             UpdateQuestion(listboxTopic.SelectedIndex);
         }
 
         private void ButtonOkay_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            SelectTopicFromTopicList(listboxTopic.SelectedIndex);
+            if (selectedTalkOption == TalkOption.WhereIs && selectedTalkCategory == TalkCategory.Work)
+            {
+                // create fake list item so that we can call function and set its questionType to QuestionType.Work
+                TalkManager.ListItem listItem = new TalkManager.ListItem();
+                listItem.questionType = TalkManager.QuestionType.Work;
+                string answer = TalkManager.Instance.GetAnswerText(listItem);
+
+                SetQuestionAnswerPairInConversationListbox(currentQuestion, answer);
+            }
+            else
+            {
+                SelectTopicFromTopicList(listboxTopic.SelectedIndex);
+            }
         }
 
         private void ButtonGoodbye_OnMouseClick(BaseScreenComponent sender, Vector2 position)

@@ -399,10 +399,22 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (lastEndOfRowByte > 0)
                 asciiBytes = new List<byte>(asciiBytes).GetRange(lastEndOfRowByte, asciiBytes.Length - lastEndOfRowByte).ToArray();
 
+            // also get width of last line
+            width = 0;
+            for (int i=0; i < asciiBytes.Length; i++)
+            {
+                PixelFont.GlyphInfo glyph = font.GetGlyph(asciiBytes[i]);
+                width += glyph.width + font.GlyphSpacing;
+            }
+
+            // update greatest width found so far
+            if (width <= maxWidth && greatestWidthFound < width) // width should always be <= maxWidth here
+                greatestWidthFound = width;
+
             rows.Add(asciiBytes);
 
-            if (width < greatestWidthFound)
-                width = greatestWidthFound;
+
+            width = greatestWidthFound;
 
             // Create target label texture
             totalWidth = width;
