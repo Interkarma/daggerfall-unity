@@ -100,8 +100,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Texture2D texturePortrait;
 
         Panel panelNameNPC;
-        TextLabel labelNameNPC = null;
-        string nameNPC = "";
+        TextLabel labelNameNPC = null;        
 
         Color[] textureTellMeAboutNormal;
         Color[] textureTellMeAboutHighlighted;
@@ -266,7 +265,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             UpdatePortrait();
 
-            nameNPC = name;
+            TalkManager.Instance.NameNPC = name;
             UpdateNameNPC();
         }
 
@@ -715,7 +714,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             if (labelNameNPC != null)
             {
-                labelNameNPC.Text = nameNPC;
+                labelNameNPC.Text = TalkManager.Instance.NameNPC;
             }
         }
 

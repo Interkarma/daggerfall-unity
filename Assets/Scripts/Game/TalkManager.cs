@@ -114,6 +114,9 @@ namespace DaggerfallWorkshop.Game
             public List<ListItem> listParentItems = null; // null if type == ListItemType.ItemGroup or ListItemType.Item, only contains a list if type == ListItemType.Navigation
         }
 
+        string nameNPC = "";
+        string currentKeySubject = "";
+
         List<ListItem> listTellMeAbout;
         List<ListItem> listTopicLocation;
         List<ListItem> listTopicPerson;
@@ -133,6 +136,17 @@ namespace DaggerfallWorkshop.Game
         #endregion
 
         #region Properties
+
+        public string NameNPC
+        {
+            get { return nameNPC; }
+            set { nameNPC = value; }
+        }
+
+        public string CurrentKeySubject
+        {
+            get { return currentKeySubject; }
+        }
 
         public List<ListItem> ListTellMeAbout
         {
@@ -212,21 +226,23 @@ namespace DaggerfallWorkshop.Game
             //string greetingString = DaggerfallUnity.Instance.TextProvider.GetRandomText(7206);
             //string greetingString = DaggerfallUnity.Instance.TextProvider.GetRandomText(7207);
             //string greetingString = DaggerfallUnity.Instance.TextProvider.GetRandomText(7208);
-            string greetingString = DaggerfallUnity.Instance.TextProvider.GetRandomText(7209);
+            string greetingString = expandRandomTextRecord(7209) + " ";
+            
             return (greetingString);
         }
 
         public string GetPCGreetingText(DaggerfallTalkWindow.TalkTone talkTone)
         {
             int toneIndex = DaggerfallTalkWindow.TalkToneToIndex(talkTone);
-            string greetingString = DaggerfallUnity.Instance.TextProvider.GetRandomText(7215 + toneIndex) + " ";
+            string greetingString = expandRandomTextRecord(7215 + toneIndex);
+
             return (greetingString);
         }
 
         public string GetPCFollowUpText(DaggerfallTalkWindow.TalkTone talkTone)
         {
             int toneIndex = DaggerfallTalkWindow.TalkToneToIndex(talkTone);
-            string followUpString = DaggerfallUnity.Instance.TextProvider.GetRandomText(7218 + toneIndex) + " ";
+            string followUpString = expandRandomTextRecord(7218 + toneIndex) + " ";
             return (followUpString);
         }
 
@@ -243,22 +259,24 @@ namespace DaggerfallWorkshop.Game
             }
             question += questionOpeningText;
 
+            currentKeySubject = listItem.caption; // set key to current caption for now (which is in case of buildings the building name)
+
             switch (listItem.questionType)
             {
                 case QuestionType.NoQuestion:
                 default:
                     break;
                 case QuestionType.News:
-                    question += DaggerfallUnity.Instance.TextProvider.GetRandomText(7231 + toneIndex);
+                    question += expandRandomTextRecord(7231 + toneIndex);
                     break;
                 case QuestionType.OrganizationInfo:
                     question += "not implemented";
                     break;
                 case QuestionType.LocalBuilding:
-                    question += DaggerfallUnity.Instance.TextProvider.GetRandomText(7225) + toneIndex;
+                    question += expandRandomTextRecord(7225) + toneIndex;
                     break;
                 case QuestionType.Person:
-                    question += DaggerfallUnity.Instance.TextProvider.GetRandomText(7225) + toneIndex;
+                    question += expandRandomTextRecord(7225) + toneIndex;
                     break;
                 case QuestionType.Thing:
                     question += "not implemented";
@@ -267,7 +285,7 @@ namespace DaggerfallWorkshop.Game
                     question += "not implemented";
                     break;
                 case QuestionType.Work:
-                    question += DaggerfallUnity.Instance.TextProvider.GetRandomText(7211) + toneIndex;
+                    question += expandRandomTextRecord(7211) + toneIndex;
                     break;
             }            
             return question;
@@ -286,7 +304,7 @@ namespace DaggerfallWorkshop.Game
             {
                 case QuestionType.NoQuestion:
                 default:                    
-                    answer = DaggerfallUnity.Instance.TextProvider.GetRandomText(7280);
+                    answer = expandRandomTextRecord(7280);
                     break;
                 case QuestionType.News:
                     answer = GetNewsOrRumors();
@@ -295,10 +313,10 @@ namespace DaggerfallWorkshop.Game
                     answer = "not implemented";
                     break;
                 case QuestionType.LocalBuilding:
-                    answer = DaggerfallUnity.Instance.TextProvider.GetRandomText(7285) + DaggerfallUnity.Instance.TextProvider.GetRandomText(7332);
+                    answer = expandRandomTextRecord(7285) + expandRandomTextRecord(7332);
                     break;
                 case QuestionType.Person:
-                    answer = DaggerfallUnity.Instance.TextProvider.GetRandomText(7280);
+                    answer = expandRandomTextRecord(7280);
                     break;
                 case QuestionType.Thing:
                     answer = "not implemented";
@@ -307,7 +325,7 @@ namespace DaggerfallWorkshop.Game
                     answer = "not implemented";
                     break;
                 case QuestionType.Work:
-                    answer = DaggerfallUnity.Instance.TextProvider.GetRandomText(8076);
+                    answer = expandRandomTextRecord(8076);
                     break;
 
             }
@@ -601,6 +619,13 @@ namespace DaggerfallWorkshop.Game
             AssembleTopicLists();
         }
 
+        private string expandRandomTextRecord(int recordIndex)
+        {
+            TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(recordIndex);
+            MacroHelper.ExpandMacros(ref tokens);
+            return (tokens[0].text);
+        }
+            
         #endregion
     }
 }

@@ -37,7 +37,7 @@ namespace DaggerfallWorkshop.Utility
         {
             { "%1am", null }, // 1st + Magnitude
             { "%1bm", null }, // 1st base Magnitude
-            { "%1com", null },// Greeting (?)
+            { "%1com", UnknownResolveToEmptyString },// Greeting (?) (comment Nystul: used in dialogs, not sure what this is really. It seems to get always resolved to an empty string in vanilla (at least in all my saves so far))
             { "%1hn", null }, // ?
             { "%2am", null }, // 2nd + Magnitude
             { "%2bm", null }, // 2nd Base Magnitude
@@ -111,7 +111,7 @@ namespace DaggerfallWorkshop.Utility
             { "%int", Int }, // Amount of Intelligence
             { "%it", ItemName },  //  Item
             { "%jok", null }, // A joke
-            { "%key", null }, // A location (?)
+            { "%key", DialogKeySubject }, // A location (?) (comment Nystul: yeah seems so, it is the building you are asking about how it seems - not sure if it can be anything else than a building, e.g. target person or item as well)
             { "%key2", null },// Another location
             { "%kg", Weight },  //  Weight of items
             { "%kno", null }, // A knightly guild name
@@ -128,7 +128,7 @@ namespace DaggerfallWorkshop.Utility
             { "%mn", null },  // Random First(?) name (Male?)
             { "%mn2", null }, // Same as _mn (?)
             { "%mod", ArmourMod }, // Modification
-            { "%n", null },   // A random female first name
+            { "%n", NameDialogPartner },   // A random female first name (comment Nystul: I think it is just a random name - or maybe this is the reason that in vanilla all male mobile npcs have female names...)
             { "%nam", null }, // A random full name
             { "%nrn", null }, // Noble of the current region
             { "%nt", null },  // ?
@@ -500,6 +500,21 @@ namespace DaggerfallWorkshop.Utility
         private static string GoldCarried(IMacroContextProvider mcp)
         {   // %gii
             return GameManager.Instance.PlayerEntity.GoldPieces.ToString();
+        }
+
+        private static string UnknownResolveToEmptyString(IMacroContextProvider mcp)
+        {
+            return "";
+        }
+
+        private static string NameDialogPartner(IMacroContextProvider mcp)
+        {
+            return GameManager.Instance.TalkManager.NameNPC;
+        }
+
+        private static string DialogKeySubject(IMacroContextProvider mcp)
+        {
+            return GameManager.Instance.TalkManager.CurrentKeySubject;
         }
 
         #endregion
