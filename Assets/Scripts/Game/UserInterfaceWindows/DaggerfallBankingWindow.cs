@@ -473,6 +473,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 return parent.amount.ToString();
             }
+            public override string MaxLoan()
+            {
+                return DaggerfallBankManager.CalculateMaxLoan().ToString();
+            }
+
         }
 
         #endregion

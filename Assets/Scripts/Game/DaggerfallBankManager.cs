@@ -20,7 +20,7 @@ using DaggerfallWorkshop.Game.Items;
 
 /*
  * Todo
- * Depositing / withdrawing LOC
+ * Depositing / withdrawing LOC -DONE
  * buying & selling ships/houses
  * events
 */
@@ -74,6 +74,8 @@ namespace DaggerfallWorkshop.Game.Banking
         public const int gold1kg = 400;
 
         private static int loanMaxPerLevel = 50000;
+
+        private static float locCommission = 1.1f;
 
         private static DaggerfallDateTime dateTime;
 
@@ -230,24 +232,23 @@ namespace DaggerfallWorkshop.Game.Banking
             while (true)
             {
                 DaggerfallUnityItem loc = playerItems.GetItem(ItemGroups.MiscItems, (int)MiscItems.Letter_of_credit);
-                if (loc != null) {
-                    BankAccounts[regionIndex].accountGold += loc.value;
-                    playerItems.RemoveItem(loc);
-                } else {
+                if (loc == null)
                     return TransactionResult.NONE;
-                }
+                BankAccounts[regionIndex].accountGold += loc.value;
+                playerItems.RemoveItem(loc);
             }
         }
 
         public static TransactionResult Withdraw_LOC(int amount, int regionIndex)
         {
             // Create LOC and deduct from account
-            if (amount > BankAccounts[regionIndex].accountGold + (.1 * BankAccounts[regionIndex].accountGold))
+            int amountPlusCommission = (int)(amount * locCommission);
+            if (amountPlusCommission > BankAccounts[regionIndex].accountGold)
                 return TransactionResult.NOT_ENOUGH_ACCOUNT_LOC;
             else if (amount < 100)
                 return TransactionResult.LOC_REQUEST_TOO_SMALL;
 
-            BankAccounts[regionIndex].accountGold -= (int)(amount * 1.1);
+            BankAccounts[regionIndex].accountGold -= amountPlusCommission;
             DaggerfallUnityItem loc = ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Letter_of_credit);
             loc.value = amount;
             GameManager.Instance.PlayerEntity.Items.AddItem(loc, Items.ItemCollection.AddPosition.Front);
@@ -280,11 +281,10 @@ namespace DaggerfallWorkshop.Game.Banking
 
         //unoffical wiki says max possible loan is 1,100,000 but testing indicates otherwise
         //rep. doesn't seem to effect cap, it's just level * 50k
-        private static int CalculateMaxLoan()
+        public static int CalculateMaxLoan()
         {
             return GameManager.Instance.PlayerEntity.Level * loanMaxPerLevel;
         }
-
 
         //note - uses inv. gold pieces, account gold & loc
         private static TransactionResult RepayLoan(ref int amount, int regionIndex)
