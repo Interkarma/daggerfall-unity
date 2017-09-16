@@ -60,7 +60,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Rect useButtonRect = new Rect(226, 103, 31, 14);
         Rect goldButtonRect = new Rect(226, 126, 31, 14);
 
-        protected Rect remoteTargetIconRect = new Rect(262, 11, 57, 36);
+        protected Rect remoteTargetIconRect = new Rect(263, 12, 55, 34);
+        protected Rect localTargetIconRect = new Rect(165, 12, 55, 34);
 
         protected Rect exitButtonRect = new Rect(222, 178, 39, 22);
 
@@ -87,12 +88,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected VerticalScrollBar localItemsScrollBar;
         protected VerticalScrollBar remoteItemsScrollBar;
 
-        Button[] localItemsButtons = new Button[listDisplayUnits];
-        Panel[] localItemsIconPanels = new Panel[listDisplayUnits];
-        TextLabel[] localItemsStackLabels = new TextLabel[listDisplayUnits];
-        Button[] remoteItemsButtons = new Button[listDisplayUnits];
-        Panel[] remoteItemsIconPanels = new Panel[listDisplayUnits];
-        TextLabel[] remoteItemsStackLabels = new TextLabel[listDisplayUnits];
+        protected Button[] localItemsButtons = new Button[listDisplayUnits];
+        protected Panel[] localItemsIconPanels = new Panel[listDisplayUnits];
+        protected TextLabel[] localItemsStackLabels = new TextLabel[listDisplayUnits];
+        protected Button[] remoteItemsButtons = new Button[listDisplayUnits];
+        protected Panel[] remoteItemsIconPanels = new Panel[listDisplayUnits];
+        protected TextLabel[] remoteItemsStackLabels = new TextLabel[listDisplayUnits];
 
         Button[] accessoryButtons = new Button[accessoryCount];
         Panel[] accessoryIconPanels = new Panel[accessoryCount];
@@ -144,7 +145,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string greenArrowsTextureName = "INVE06I0.IMG";           // Green up/down arrows when more items available
         const string redArrowsTextureName = "INVE07I0.IMG";             // Red up/down arrows when no more items available
 
-        const int listDisplayUnits = 4;                                 // Number of items displayed in scrolling areas
+        protected const int listDisplayUnits = 4;                                 // Number of items displayed in scrolling areas
         const int accessoryCount = 12;                                  // Number of accessory slots
         const int itemButtonMarginSize = 2;                             // Margin of item buttons
         const int accessoryButtonMarginSize = 1;                        // Margin of accessory buttons
@@ -365,7 +366,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             remoteItemsDownButton.OnMouseClick += RemoteItemsDownButton_OnMouseClick;
         }
 
-        protected void SetupLocalItemsElements()
+        protected virtual void SetupLocalItemsElements()
         {
             // List panel for scrolling behaviour
             Panel localItemsListPanel = DaggerfallUI.AddPanel(localItemsListPanelRect, NativePanel);
@@ -397,7 +398,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        protected void SetupRemoteItemsElements()
+        protected virtual void SetupRemoteItemsElements()
         {
             // List panel for scrolling behaviour
             Panel remoteItemsListPanel = DaggerfallUI.AddPanel(remoteItemsListPanelRect, NativePanel);
@@ -583,7 +584,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #region Helper Methods
 
         // Clears all local list display elements
-        void ClearLocalItemsElements()
+        protected virtual void ClearLocalItemsElements()
         {
             for (int i = 0; i < listDisplayUnits; i++)
             {
@@ -597,7 +598,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         // Clears all remote list display elements
-        void ClearRemoteItemsElements()
+        protected virtual void ClearRemoteItemsElements()
         {
             for (int i = 0; i < listDisplayUnits; i++)
             {
@@ -737,7 +738,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(lootTarget.ContainerImage);
                     break;
             }
-
             remoteTargetIconPanel.BackgroundTexture = containerImage.texture;
         }
 
@@ -899,11 +899,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUnityItem item = localItemsFiltered[scrollIndex + i];
                 ImageData image = GetInventoryImage(item);
 
-                // TEST: Set green background for local quest items
-                if (item.IsQuestItem)
-                    localItemsButtons[i].BackgroundColor = questItemBackgroundColor;
-                else
-                    localItemsButtons[i].BackgroundColor = Color.clear;
+                SetItemBackgroundColour(item, i, true);
 
                 // Set image to button icon
                 localItemsIconPanels[i].BackgroundTexture = image.texture;
@@ -953,11 +949,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUnityItem item = remoteItemsFiltered[scrollIndex + i];
                 ImageData image = GetInventoryImage(item);
 
-                // TEST: Set green background for remote quest items
-                if (item.IsQuestItem)
-                    remoteItemsButtons[i].BackgroundColor = questItemBackgroundColor;
-                else
-                    remoteItemsButtons[i].BackgroundColor = Color.clear;
+                SetItemBackgroundColour(item, i, false);
 
                 // Set image to button icon
                 remoteItemsIconPanels[i].BackgroundTexture = image.texture;
@@ -970,6 +962,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Tooltip text
                 remoteItemsButtons[i].ToolTipText = item.LongName;
             }
+        }
+
+        protected virtual void SetItemBackgroundColour(DaggerfallUnityItem item, int i, bool local)
+        {
+            Button itemButton = (local) ? localItemsButtons[i] : remoteItemsButtons[i];
+            // TEST: Set green background for remote quest items
+            if (item.IsQuestItem)
+                itemButton.BackgroundColor = questItemBackgroundColor;
+            else
+                itemButton.BackgroundColor = Color.clear;
         }
 
         /// <summary>

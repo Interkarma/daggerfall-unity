@@ -76,7 +76,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Repair button
             repairButton = DaggerfallUI.AddButton(repairButtonRect, mainPanel);
-            repairButton.BackgroundColor = DaggerfallUI.DaggerfallUnityNotImplementedColor;
+            repairButton.OnMouseClick += RepairButton_OnMouseClick;
 
             // Talk button
             talkButton = DaggerfallUI.AddButton(talkButtonRect, mainPanel);
@@ -105,6 +105,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #endregion
 
         #region Event Handlers
+
+        private void RepairButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            CloseWindow();
+            uiManager.PushWindow(new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Repair, this));
+        }
 
         private void TalkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
