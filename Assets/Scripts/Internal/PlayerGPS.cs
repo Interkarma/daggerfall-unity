@@ -76,6 +76,7 @@ namespace DaggerfallWorkshop
             public Dictionary<int, DiscoveredBuilding> discoveredBuildings;
         }
 
+        [Serializable]
         public struct DiscoveredBuilding
         {
             public int buildingKey;

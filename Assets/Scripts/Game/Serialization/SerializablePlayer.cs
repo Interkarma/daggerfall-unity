@@ -147,7 +147,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (playerEnterExit.IsPlayerInsideBuilding)
             {
                 data.playerPosition.exteriorDoors = playerEnterExit.ExteriorDoors;
-                data.playerPosition.buildingSummary = playerEnterExit.BuildingSummary;
+                data.playerPosition.buildingDiscoveryData = playerEnterExit.BuildingDiscoveryData;
             }
 
             return data;
@@ -274,7 +274,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Restore building summary
             if (data.playerPosition.insideBuilding)
             {
-                playerEnterExit.BuildingSummary = data.playerPosition.buildingSummary;
+                playerEnterExit.BuildingDiscoveryData = data.playerPosition.buildingDiscoveryData;
             }
 
             // Lower player position flag if inside with no doors

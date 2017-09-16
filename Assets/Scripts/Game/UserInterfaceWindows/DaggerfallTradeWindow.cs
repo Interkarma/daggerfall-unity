@@ -86,7 +86,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string costPanelTextureName = "REPR02I0.IMG";
 
         WindowModes windowMode = WindowModes.Inventory;
-        BuildingSummary buildingSummary;
+        PlayerGPS.DiscoveredBuilding buildingDiscoveryData;
 
         ItemCollection merchantItems = new ItemCollection();
         bool usingWagon = false;
@@ -254,9 +254,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void OnPush()
         {
             // Get building info, close if invalid
-            buildingSummary = GameManager.Instance.PlayerEnterExit.BuildingSummary;
+            buildingDiscoveryData = GameManager.Instance.PlayerEnterExit.BuildingDiscoveryData;
             //Debug.Log(string.Format("{0} {1} {2}", buildingSummary.buildingKey, buildingSummary.BuildingType, buildingSummary.Quality));
-            if (buildingSummary.buildingKey <= 0)
+            if (buildingDiscoveryData.buildingKey <= 0)
                 DaggerfallUI.MessageBox(HardStrings.oldSaveNoTrade, true);
 
             // Local items starts pointing to player inventory
@@ -312,10 +312,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 switch (windowMode)
                 {
                     case WindowModes.Sell:
-                        cost += FormulaHelper.CalculateItemSellCost(item.value, buildingSummary.Quality) * item.stackCount;
+                        cost += FormulaHelper.CalculateItemSellCost(item.value, buildingDiscoveryData.quality) * item.stackCount;
                         break;
                     case WindowModes.Repair:
-                        cost += FormulaHelper.CalculateItemRepairCost(item.value, buildingSummary.Quality, item.currentCondition, item.maxCondition) * item.stackCount;
+                        cost += FormulaHelper.CalculateItemRepairCost(item.value, buildingDiscoveryData.quality, item.currentCondition, item.maxCondition) * item.stackCount;
                         break;
                 }
             }
@@ -325,7 +325,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private int GetTradePrice()
         {
-            return FormulaHelper.CalculateTradePrice(cost, buildingSummary.Quality);
+            return FormulaHelper.CalculateTradePrice(cost, buildingDiscoveryData.quality);
         }
 
         #endregion
@@ -410,7 +410,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (windowMode == WindowModes.Sell)
             {
                 // Remove any items not accepted by this merchant type.
-                List<ItemGroups> itemTypesAccepted = storeBuysItemType[buildingSummary.BuildingType];
+                List<ItemGroups> itemTypesAccepted = storeBuysItemType[buildingDiscoveryData.buildingType];
                 localItemsFiltered.RemoveAll(i => !itemTypesAccepted.Contains(i.ItemGroup));
             }
             // Do repair/identify have restrictions?
@@ -620,9 +620,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 // TODO what is classic algorithm? (seems repair can use all even though not correct contextually)
                 if (windowMode == WindowModes.Buy)
-                    msgOffset = (buildingSummary.Quality > 10) ? 1 : 0;
+                    msgOffset = (buildingDiscoveryData.quality > 10) ? 1 : 0;
                 else
-                    msgOffset = 1 + (buildingSummary.Quality / 5);
+                    msgOffset = 1 + (buildingDiscoveryData.quality / 5);
 
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
                 TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(tradeMessageBaseId + msgOffset);

@@ -161,7 +161,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public string terrainSamplerName;
         public int terrainSamplerVersion;
         public StaticDoor[] exteriorDoors;
-        public BuildingSummary buildingSummary;
+        public PlayerGPS.DiscoveredBuilding buildingDiscoveryData;
         public WeatherType weather;
     }
 

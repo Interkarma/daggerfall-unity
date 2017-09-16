@@ -52,7 +52,7 @@ namespace DaggerfallWorkshop.Game
 
         DFLocation.BuildingTypes buildingType;
         ushort factionID = 0;
-        BuildingSummary buildingSummary;
+        PlayerGPS.DiscoveredBuilding buildingDiscoveryData;
 
         DFLocation holidayTextLocation;
         bool holidayTextPrimed = false;
@@ -145,17 +145,17 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-        /// Gets current building's data.
+        /// Gets current building's discovery data.
         /// Only valid when player is inside a building.
         /// This is set every time player enters a building and is saved/loaded with each save game.
         /// Notes:
         ///  Older save games will not carry this data until player exits and enters building again.
-        ///  When consuming this property, try to handle empty BuildingSummary if possible.
+        ///  When consuming this property, try to handle empty BuildingDiscoveryData (buildingKey == 0) if possible.
         /// </summary>
-        public BuildingSummary BuildingSummary
+        public PlayerGPS.DiscoveredBuilding BuildingDiscoveryData
         {
-            get { return buildingSummary; }
-            internal set { buildingSummary = value; }
+            get { return buildingDiscoveryData; }
+            internal set { buildingDiscoveryData = value; }
         }
 
         /// <summary>

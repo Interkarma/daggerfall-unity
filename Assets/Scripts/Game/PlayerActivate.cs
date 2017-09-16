@@ -469,16 +469,16 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
-            // Get detailed building data from directory
-            BuildingSummary buildingSummary = new BuildingSummary();
-            if (!buildingDirectory.GetBuildingSummary(door.buildingKey, out buildingSummary))
+            // Get building discovery data - this is added when player clicks door at exterior
+            PlayerGPS.DiscoveredBuilding db;
+            if (!GameManager.Instance.PlayerGPS.GetDiscoveredBuilding(door.buildingKey, out db))
             {
-                Debug.LogErrorFormat("PlayerActivate.TransitionInterior() could not retrieve BuildingSummary for key {0}.", door.buildingKey);
+                Debug.LogErrorFormat("PlayerActivate.TransitionInterior() could not retrieve DiscoveredBuilding for key {0}.", door.buildingKey);
                 return;
             }
 
             // Perform transition
-            playerEnterExit.BuildingSummary = buildingSummary;
+            playerEnterExit.BuildingDiscoveryData = db;
             playerEnterExit.TransitionInterior(doorOwner, door, doFade);
         }
 
@@ -779,7 +779,7 @@ namespace DaggerfallWorkshop.Game
                     // Check if this NPC is a merchant.
                     if ((FactionFile.SocialGroups)factionData.sgroup == FactionFile.SocialGroups.Merchants)
                     {
-                        if (RMBLayout.IsRepairShop(playerEnterExit.BuildingSummary.BuildingType))
+                        if (RMBLayout.IsRepairShop(playerEnterExit.BuildingDiscoveryData.buildingType))
                             DaggerfallUI.Instance.UserInterfaceManager.PushWindow(new DaggerfallMerchantRepairPopupWindow(DaggerfallUI.Instance.UserInterfaceManager));
                         else
                             DaggerfallUI.Instance.UserInterfaceManager.PushWindow(new DaggerfallMerchantPopupWindow(DaggerfallUI.Instance.UserInterfaceManager));
