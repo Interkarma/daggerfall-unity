@@ -37,7 +37,7 @@ namespace DaggerfallWorkshop.Utility
         {
             { "%1am", null }, // 1st + Magnitude
             { "%1bm", null }, // 1st base Magnitude
-            { "%1com", UnknownResolveToEmptyString },// Greeting (?) (comment Nystul: used in dialogs, not sure what this is really. It seems to get always resolved to an empty string in vanilla (at least in all my saves so far))
+            { "%1com", GreetingOrFollowUpText },// Greeting (?)
             { "%1hn", null }, // ?
             { "%2am", null }, // 2nd + Magnitude
             { "%2bm", null }, // 2nd Base Magnitude
@@ -502,9 +502,9 @@ namespace DaggerfallWorkshop.Utility
             return GameManager.Instance.PlayerEntity.GoldPieces.ToString();
         }
 
-        private static string UnknownResolveToEmptyString(IMacroContextProvider mcp)
+        private static string GreetingOrFollowUpText(IMacroContextProvider mcp)
         {
-            return "";
+            return GameManager.Instance.TalkManager.GetPCGreetingOrFollowUpText();
         }
 
         private static string NameDialogPartner(IMacroContextProvider mcp)

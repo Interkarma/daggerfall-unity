@@ -92,6 +92,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
+        bool isSetup = false;
+
         List<TalkManager.ListItem> listCurrentTopics; // current topic list metadata of displayed topic list in topic frame
 
         Texture2D textureBackground;
@@ -223,6 +225,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 verticalScrollBarConversation.ScrollIndex = 0;
                 UpdateScrollBarConversation();
+            }
+
+            if (textlabelPlayerSays != null)
+                textlabelPlayerSays.Text = "";
+
+            if (isSetup)
+            {
+                SetTalkModeWhereIs();
+                SetTalkCategoryLocation();
             }
 
             selectedTalkOption = TalkOption.WhereIs;
@@ -469,6 +480,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             UpdateScrollButtonsConversation();
 
             UpdateLabels();
+
+            isSetup = true;
         }
 
         void SetStartConversation()

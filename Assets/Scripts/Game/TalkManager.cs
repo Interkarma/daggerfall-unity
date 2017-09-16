@@ -125,6 +125,7 @@ namespace DaggerfallWorkshop.Game
         int numQuestionsAsked = 0;
         string questionOpeningText = ""; // randomize PC opening text only once for every new question so save it in this string after creating it
 
+        DaggerfallTalkWindow.TalkTone currentTalkTone = DaggerfallTalkWindow.TalkTone.Normal;
 
         struct BuildingInfo
         {
@@ -219,6 +220,7 @@ namespace DaggerfallWorkshop.Game
         public void StartNewConversation()
         {
             numQuestionsAsked = 0;
+            questionOpeningText = "";
         }
 
         public string GetNPCGreetingText()
@@ -242,22 +244,28 @@ namespace DaggerfallWorkshop.Game
         public string GetPCFollowUpText(DaggerfallTalkWindow.TalkTone talkTone)
         {
             int toneIndex = DaggerfallTalkWindow.TalkToneToIndex(talkTone);
-            string followUpString = expandRandomTextRecord(7218 + toneIndex) + " ";
+            string followUpString = expandRandomTextRecord(7218 + toneIndex);
             return (followUpString);
+        }
+
+        public string GetPCGreetingOrFollowUpText()
+        {
+            if (questionOpeningText == "")
+            {
+                if (numQuestionsAsked == 0)
+                    questionOpeningText = GetPCGreetingText(currentTalkTone);
+                else
+                    questionOpeningText = GetPCFollowUpText(currentTalkTone);
+            }
+            return questionOpeningText;
         }
 
         public string GetQuestionText(TalkManager.ListItem listItem, DaggerfallTalkWindow.TalkTone talkTone)
         {
             int toneIndex = DaggerfallTalkWindow.TalkToneToIndex(talkTone);
             string question = "";
-            if (questionOpeningText == "")
-            {
-                if (numQuestionsAsked == 0)
-                    questionOpeningText = GetPCGreetingText(talkTone);
-                else
-                    questionOpeningText = GetPCFollowUpText(talkTone);
-            }
-            question += questionOpeningText;
+
+            currentTalkTone = talkTone;
 
             currentKeySubject = listItem.caption; // set key to current caption for now (which is in case of buildings the building name)
 
@@ -267,25 +275,25 @@ namespace DaggerfallWorkshop.Game
                 default:
                     break;
                 case QuestionType.News:
-                    question += expandRandomTextRecord(7231 + toneIndex);
+                    question = expandRandomTextRecord(7231 + toneIndex);
                     break;
                 case QuestionType.OrganizationInfo:
-                    question += "not implemented";
+                    question = "not implemented";
                     break;
                 case QuestionType.LocalBuilding:
-                    question += expandRandomTextRecord(7225) + toneIndex;
+                    question = expandRandomTextRecord(7225) + toneIndex;
                     break;
                 case QuestionType.Person:
-                    question += expandRandomTextRecord(7225) + toneIndex;
+                    question = expandRandomTextRecord(7225) + toneIndex;
                     break;
                 case QuestionType.Thing:
-                    question += "not implemented";
+                    question = "not implemented";
                     break;
                 case QuestionType.Regional:
-                    question += "not implemented";
+                    question = "not implemented";
                     break;
                 case QuestionType.Work:
-                    question += expandRandomTextRecord(7211) + toneIndex;
+                    question = expandRandomTextRecord(7211) + toneIndex;
                     break;
             }            
             return question;
