@@ -771,38 +771,49 @@ namespace DaggerfallWorkshop.Game
         // Player has clicked on a static NPC
         void StaticNPCClick(StaticNPC npc)
         {
-            if (playerEnterExit.IsPlayerInsideBuilding)
-            {
-                FactionFile.FactionData factionData;
-                if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(npc.Data.factionID, out factionData))
-                {
-                    // Check if this NPC is a merchant.
-                    if ((FactionFile.SocialGroups)factionData.sgroup == FactionFile.SocialGroups.Merchants)
-                    {
-                        if (RMBLayout.IsRepairShop(playerEnterExit.BuildingDiscoveryData.buildingType))
-                            DaggerfallUI.Instance.UserInterfaceManager.PushWindow(new DaggerfallMerchantRepairPopupWindow(DaggerfallUI.Instance.UserInterfaceManager));
-                        else
-                            DaggerfallUI.Instance.UserInterfaceManager.PushWindow(new DaggerfallMerchantPopupWindow(DaggerfallUI.Instance.UserInterfaceManager));
-                    }
-                }
-                // TODO - more checks for npc types... guild services etc
-
-            }
-
             // Store the NPC just clicked in quest engine
             QuestMachine.Instance.LastNPCClicked = npc;
 
             // Check if this NPC is a quest giver and show temp guild quest popup
-            QuestorCheck(npc);
+            if (QuestorCheck(npc))
+                return;
 
             // Handle special NPC in home location click
             SpecialNPCClickHandler specialNPCClickHandler = npc.gameObject.GetComponent<SpecialNPCClickHandler>();
             if (specialNPCClickHandler)
                 specialNPCClickHandler.DoClick();
+            else
+            {
+                FactionFile.FactionData factionData;
+                if (playerEnterExit.IsPlayerInsideBuilding &&
+                    GameManager.Instance.PlayerEntity.FactionData.GetFactionData(npc.Data.factionID, out factionData))
+                {
+                    // Check if this NPC is a merchant.
+                    if ((FactionFile.SocialGroups)factionData.sgroup == FactionFile.SocialGroups.Merchants)
+                    {
+                        if (RMBLayout.IsShop(playerEnterExit.BuildingDiscoveryData.buildingType))
+                        {
+                            if (RMBLayout.IsRepairShop(playerEnterExit.BuildingDiscoveryData.buildingType))
+                                DaggerfallUI.Instance.UserInterfaceManager.PushWindow(new DaggerfallMerchantRepairPopupWindow(DaggerfallUI.Instance.UserInterfaceManager));
+                            else
+                                DaggerfallUI.Instance.UserInterfaceManager.PushWindow(
+                                    new DaggerfallMerchantServicePopupWindow(DaggerfallUI.Instance.UserInterfaceManager, DaggerfallMerchantServicePopupWindow.Services.Sell));
+                        }
+                        else if (playerEnterExit.BuildingDiscoveryData.buildingType == DFLocation.BuildingTypes.Bank)
+                        {
+                            DaggerfallUI.Instance.UserInterfaceManager.PushWindow(
+                                new DaggerfallMerchantServicePopupWindow(DaggerfallUI.Instance.UserInterfaceManager, DaggerfallMerchantServicePopupWindow.Services.Banking));
+                        }
+                        else if (playerEnterExit.BuildingDiscoveryData.buildingType == DFLocation.BuildingTypes.Tavern)
+                            return;
+                    }
+                    // TODO - more checks for npc social types? ... guild services etc?
+                }
+            }
         }
 
         // Check if NPC is a Questor
-        void QuestorCheck(StaticNPC npc)
+        bool QuestorCheck(StaticNPC npc)
         {
             // Check if player clicked on supported guild questor
             DaggerfallGuildPopupWindow.TempGuilds guild;
@@ -821,7 +832,9 @@ namespace DaggerfallWorkshop.Game
                 guildWindow.CurrentService = DaggerfallGuildPopupWindow.TempGuildServices.Questor;
                 guildWindow.QuestorNPC = npc;
                 DaggerfallUI.Instance.UserInterfaceManager.PushWindow(guildWindow);
+                return true;
             }
+            return false;
         }
 
         // Player has clicked on a pickpocket target in steal mode

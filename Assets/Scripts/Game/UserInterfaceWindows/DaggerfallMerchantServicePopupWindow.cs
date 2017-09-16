@@ -16,12 +16,12 @@ using DaggerfallConnect;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
-    public class DaggerfallMerchantPopupWindow : DaggerfallPopupWindow
+    public class DaggerfallMerchantServicePopupWindow : DaggerfallPopupWindow
     {
         #region UI Rects
 
         Rect talkButtonRect = new Rect(5, 5, 120, 7);
-        Rect sellButtonRect = new Rect(5, 14, 120, 7);
+        Rect serviceButtonRect = new Rect(5, 14, 120, 7);
         Rect exitButtonRect = new Rect(44, 24, 43, 15);
 
         #endregion
@@ -30,9 +30,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Panel mainPanel = new Panel();
         Button talkButton = new Button();
-        Button sellButton = new Button();
+        Button serviceButton = new Button();
         Button exitButton = new Button();
-        TextLabel sellLabel = new TextLabel();
+        TextLabel serviceLabel = new TextLabel();
 
         #endregion
 
@@ -45,14 +45,29 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #region Fields
 
         const string baseTextureName = "GNRC01I0.IMG";      // Talk / Sell
+        Services currentService;
+
+        #endregion
+
+        #region Enums
+
+        /// <summary>
+        /// Supported services.
+        /// </summary>
+        public enum Services
+        {
+            Sell,
+            Banking,
+        }
 
         #endregion
 
         #region Constructors
 
-        public DaggerfallMerchantPopupWindow(IUserInterfaceManager uiManager)
+        public DaggerfallMerchantServicePopupWindow(IUserInterfaceManager uiManager, Services service)
             : base(uiManager)
         {
+            currentService = service;
             // Clear background
             ParentPanel.BackgroundColor = Color.clear;
         }
@@ -77,14 +92,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             talkButton = DaggerfallUI.AddButton(talkButtonRect, mainPanel);
             talkButton.BackgroundColor = DaggerfallUI.DaggerfallUnityNotImplementedColor;
 
-            // Sell button
-            sellLabel.Position = new Vector2(0, 1);
-            sellLabel.ShadowPosition = Vector2.zero;
-            sellLabel.HorizontalAlignment = HorizontalAlignment.Center;
-            sellLabel.Text = HardStrings.menuSell;
-            sellButton = DaggerfallUI.AddButton(sellButtonRect, mainPanel);
-            sellButton.Components.Add(sellLabel);
-            sellButton.OnMouseClick += SellButton_OnMouseClick;
+            // Service button
+            serviceLabel.Position = new Vector2(0, 1);
+            serviceLabel.ShadowPosition = Vector2.zero;
+            serviceLabel.HorizontalAlignment = HorizontalAlignment.Center;
+            serviceLabel.Text = GetServiceLabelText();
+            serviceButton = DaggerfallUI.AddButton(serviceButtonRect, mainPanel);
+            serviceButton.Components.Add(serviceLabel);
+            serviceButton.OnMouseClick += ServiceButton_OnMouseClick;
 
             // Exit button
             exitButton = DaggerfallUI.AddButton(exitButtonRect, mainPanel);
@@ -96,6 +111,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #endregion
 
         #region Private Methods
+
+        string GetServiceLabelText()
+        {
+            switch (currentService)
+            {
+                default:
+                case Services.Sell:
+                    return HardStrings.serviceSell;
+                case Services.Banking:
+                    return HardStrings.serviceBanking;
+            }
+        }
 
         void LoadTextures()
         {
@@ -111,11 +138,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             CloseWindow();
         }
 
-        private void SellButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void ServiceButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             CloseWindow();
-            DaggerfallTradeWindow sellWindow = new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Sell, this);
-            uiManager.PushWindow(sellWindow);
+            switch (currentService)
+            {
+                default:
+                case Services.Sell:
+                    uiManager.PushWindow(new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Sell, this));
+                    break;
+                case Services.Banking:
+                    uiManager.PushWindow(new DaggerfallBankingWindow(uiManager, this));
+                    break;
+            }
         }
 
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
