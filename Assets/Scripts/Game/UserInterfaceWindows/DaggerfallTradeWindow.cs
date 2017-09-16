@@ -665,7 +665,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             public override string ShopName()
             {
-                return "unknown"; //parent.buildingData.;
+                return parent.buildingDiscoveryData.displayName;
             }
         }
 
