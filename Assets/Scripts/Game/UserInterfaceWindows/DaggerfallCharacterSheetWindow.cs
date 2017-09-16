@@ -319,7 +319,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             raceLabel.Text = PlayerEntity.RaceTemplate.Name;
             classLabel.Text = PlayerEntity.Career.Name;
             levelLabel.Text = PlayerEntity.Level.ToString();
-            goldLabel.Text = PlayerEntity.GoldPieces.ToString();
+            goldLabel.Text = PlayerEntity.GetGoldAmount().ToString();
             fatigueLabel.Text = string.Format("{0}/{1}", PlayerEntity.CurrentFatigue / 64, PlayerEntity.MaxFatigue / 64);
             healthLabel.Text = string.Format("{0}/{1}", PlayerEntity.CurrentHealth, PlayerEntity.MaxHealth);
             encumbranceLabel.Text = string.Format("{0}/{1}", (int)PlayerEntity.CarriedWeight, PlayerEntity.MaxEncumbrance);

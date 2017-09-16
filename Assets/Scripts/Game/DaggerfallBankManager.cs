@@ -16,6 +16,7 @@ using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect.Save;
 using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Game.Items;
 
 /*
  * Todo
@@ -224,20 +225,33 @@ namespace DaggerfallWorkshop.Game.Banking
 
         public static TransactionResult DepositAll_LOC(int regionIndex)
         {
-            //##TODO - remove all LOC from inventory and add sum to account
-            return TransactionResult.NONE;
+            // Remove all LOC from inventory and add sum to account
+            ItemCollection playerItems = GameManager.Instance.PlayerEntity.Items;
+            while (true)
+            {
+                DaggerfallUnityItem loc = playerItems.GetItem(ItemGroups.MiscItems, (int)MiscItems.Letter_of_credit);
+                if (loc != null) {
+                    BankAccounts[regionIndex].accountGold += loc.value;
+                    playerItems.RemoveItem(loc);
+                } else {
+                    return TransactionResult.NONE;
+                }
+            }
         }
 
-        //##TODO - need to create LOC, update account
         public static TransactionResult Withdraw_LOC(int amount, int regionIndex)
         {
-
+            // Create LOC and deduct from account
             if (amount > BankAccounts[regionIndex].accountGold + (.1 * BankAccounts[regionIndex].accountGold))
                 return TransactionResult.NOT_ENOUGH_ACCOUNT_LOC;
             else if (amount < 100)
                 return TransactionResult.LOC_REQUEST_TOO_SMALL;
-            else
-                return TransactionResult.NONE;
+
+            BankAccounts[regionIndex].accountGold -= (int)(amount * 1.1);
+            DaggerfallUnityItem loc = ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Letter_of_credit);
+            loc.value = amount;
+            GameManager.Instance.PlayerEntity.Items.AddItem(loc, Items.ItemCollection.AddPosition.Front);
+            return TransactionResult.NONE;
         }
 
         //##TODO
@@ -273,10 +287,10 @@ namespace DaggerfallWorkshop.Game.Banking
 
 
         //note - uses inv. gold pieces, account gold & loc
-        //TODO - check for LOC if repaying more than gold inv. + account gold
         private static TransactionResult RepayLoan(ref int amount, int regionIndex)
         {
-            var playerGold = GameManager.Instance.PlayerEntity.GoldPieces;
+            PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+            var playerGold = playerEntity.GetGoldAmount();
             var accountGold = BankAccounts[regionIndex].accountGold;
             TransactionResult result = TransactionResult.NONE;
 
@@ -291,18 +305,12 @@ namespace DaggerfallWorkshop.Game.Banking
             }
 
             bankAccounts[regionIndex].loanTotal -= amount;
-            playerGold -= amount;
+            amount = playerEntity.DeductGoldAmount(amount);
+            if (amount > 0)
+                bankAccounts[regionIndex].accountGold -= amount;
 
-            if (playerGold < 0)
-            {
-                accountGold += playerGold;
-                playerGold = 0;
-            }
             if (bankAccounts[regionIndex].loanTotal <= 0)
                 bankAccounts[regionIndex].loanDueDate = 0;
-
-            bankAccounts[regionIndex].accountGold = accountGold;
-            GameManager.Instance.PlayerEntity.GoldPieces = playerGold;
 
             return result;
         }
