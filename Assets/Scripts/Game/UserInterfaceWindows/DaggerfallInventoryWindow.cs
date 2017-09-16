@@ -1320,7 +1320,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
             }
 
-            if (playerEntity.ItemEquipTable.EquipItem(item) && item.ItemGroup == ItemGroups.Armor)
+            if (playerEntity.ItemEquipTable.EquipItem(item) && 
+                (item.ItemGroup == ItemGroups.Armor ||
+                 (item.ItemGroup == ItemGroups.MensClothing && item.GroupIndex >= 6 && item.GroupIndex <= 8) ||
+                 (item.ItemGroup == ItemGroups.WomensClothing && item.GroupIndex >= 4 && item.GroupIndex <= 6)
+                ))
             {
                 playerEntity.UpdateEquippedArmorValues(item, true);
             }
