@@ -271,14 +271,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Setup local and remote target icon panels
             localTargetIconPanel = DaggerfallUI.AddPanel(localTargetIconRect, NativePanel);
+            localTargetIconPanel.BackgroundColor = new Color(0.1f, 0.2f, 0.6f, 0.5f);
             remoteTargetIconPanel = DaggerfallUI.AddPanel(remoteTargetIconRect, NativePanel);
             remoteTargetIconLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(1, 2), remoteTargetIconPanel);
 
             // Setup item info panel
             localTargetInfoLabel = new MultiFormatTextLabel(); //DaggerfallUI.AddTextLabel(DaggerfallUI.Instance.Font4, Vector2.zero, string.Empty, localTargetIconPanel);
-            localTargetInfoLabel.HorizontalAlignment = HorizontalAlignment.Left;
-            localTargetInfoLabel.VerticalAlignment = VerticalAlignment.Top;
+            //localTargetInfoLabel.HorizontalAlignment = HorizontalAlignment.Left;
+            //localTargetInfoLabel.VerticalAlignment = VerticalAlignment.Top;
+            localTargetInfoLabel.BackgroundColor = new Color(0.1f, 0.6f, 0.1f, 0.5f);
+
             localTargetInfoLabel.ShadowPosition = Vector2.zero;
+            localTargetInfoLabel.AutoSize = AutoSizeModes.ResizeToFill;
+            //localTargetInfoLabel.Scale = new Vector2(0.5f, 0.5f);
             //localTargetInfoLabel.Font = DaggerfallUI.Instance.GetHQPixelFont(DaggerfallUI.HQPixelFonts.Petrock_32);
             localTargetInfoLabel.TextColor = DaggerfallUI.DaggerfallUnityDefaultToolTipTextColor;
             localTargetIconPanel.Components.Add(localTargetInfoLabel);
