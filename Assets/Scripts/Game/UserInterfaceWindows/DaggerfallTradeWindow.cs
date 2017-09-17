@@ -621,18 +621,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             const int tradeMessageBaseId = 260;
             const int notEnoughGoldId = 454;
             int msgOffset = 0;
+            int tradePrice = GetTradePrice();
 
-            if (windowMode != WindowModes.Sell && PlayerEntity.GetGoldAmount() < GetTradePrice())
+            if (windowMode != WindowModes.Sell && PlayerEntity.GetGoldAmount() < tradePrice)
             {
                 DaggerfallUI.MessageBox(notEnoughGoldId);
             }
             else
             {
-                // TODO what is classic algorithm? (seems repair can use all even though not correct contextually)
-                if (windowMode == WindowModes.Buy)
-                    msgOffset = (buildingDiscoveryData.quality > 10) ? 1 : 0;
-                else
-                    msgOffset = 1 + (buildingDiscoveryData.quality / 5);
+                if (cost >> 1 <= tradePrice)
+                {
+                    if (cost - (cost >> 2) <= tradePrice)
+                        msgOffset = 2;
+                    else
+                        msgOffset = 1;
+                }
+                if (windowMode == WindowModes.Sell)
+                    msgOffset += 3;
 
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
                 TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(tradeMessageBaseId + msgOffset);
