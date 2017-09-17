@@ -481,6 +481,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected override void LocalItemsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            const int doesNotNeedToBeRepairedTextId = 24;
+
             // Get index
             int index = localItemsScrollBar.ScrollIndex + (int)sender.Tag;
             if (index >= localItemsFiltered.Count)
@@ -503,10 +505,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 else if (windowMode == WindowModes.Repair)
                 {
                     // Check if item is damaged & transfer
-                    if (item.currentCondition < item.maxCondition)
+                    if ((item.currentCondition < item.maxCondition) && item.TemplateIndex != (int)Weapons.Arrow)
                         TransferItem(item, localItems, remoteItems);
                     else
-                        DaggerfallUI.MessageBox(24);
+                        DaggerfallUI.MessageBox(doesNotNeedToBeRepairedTextId);
                 }
 
             }
