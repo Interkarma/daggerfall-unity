@@ -76,6 +76,22 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
+        /// Gets the value of all the credit letters in this collection.
+        /// </summary>
+        /// <returns>Amount in gp</returns>
+        public int GetCreditAmount()
+        {
+            int locGroupIndex = DaggerfallUnity.Instance.ItemHelper.GetGroupIndex(ItemGroups.MiscItems, (int)MiscItems.Letter_of_credit);
+            int amount = 0;
+            foreach (DaggerfallUnityItem item in items.Values)
+            {
+                if (item.ItemGroup == ItemGroups.MiscItems && item.GroupIndex == locGroupIndex)
+                    amount += item.value;
+            }
+            return amount;
+        }
+
+        /// <summary>
         /// Check if item exists in this collection.
         /// </summary>
         /// <param name="item">Item to check.</param>
@@ -230,6 +246,23 @@ namespace DaggerfallWorkshop.Game.Items
                 return null;
             else
                 return (DaggerfallUnityItem)items[index];
+        }
+
+        /// <summary>
+        /// Get the first of an item type from this collection.
+        /// </summary>
+        /// <param name="itemGroup">Item group.</param>
+        /// <param name="itemIndex">Template index.</param>
+        /// <returns>An item of this type, or null if none found.</returns>
+        public DaggerfallUnityItem GetItem(ItemGroups itemGroup, int itemIndex)
+        {
+            int groupIndex = DaggerfallUnity.Instance.ItemHelper.GetGroupIndex(itemGroup, itemIndex);
+            foreach (DaggerfallUnityItem item in items.Values)
+            {
+                if (item.ItemGroup == itemGroup && item.GroupIndex == groupIndex)
+                    return item;
+            }
+            return null;
         }
 
         /// <summary>

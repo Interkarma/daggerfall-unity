@@ -320,7 +320,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
             }
             costLabel.Text = cost.ToString();
-            goldLabel.Text = PlayerEntity.GoldPieces.ToString();
+            goldLabel.Text = PlayerEntity.GetGoldAmount().ToString();
         }
 
         private int GetTradePrice()
@@ -332,7 +332,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Helper Methods
 
-        void SelectActionMode(ActionModes mode)
+        protected void SelectActionMode(ActionModes mode)
         {
             selectedActionMode = mode;
             if (mode == ActionModes.Info)
@@ -347,7 +347,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void ClearSelectedItems()
+        protected void ClearSelectedItems()
         {
             if (windowMode != WindowModes.Buy)
             {
@@ -426,7 +426,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (!local && windowMode == WindowModes.Repair && item.currentCondition == item.maxCondition)
             {
                 if (itemLabel != null)
-                    itemLabel.Text = HardStrings.repairDone + i;
+                    itemLabel.Text = HardStrings.repairDone;
                 itemButton.BackgroundColor = doneItemBackgroundColor;
             }
             else
@@ -437,7 +437,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void ShowWagon(bool show)
+        protected void ShowWagon(bool show)
         {
             if (show)
             {
@@ -590,7 +590,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         remoteItems.Clear();
                         break;
                     case WindowModes.Repair:
-                        PlayerEntity.GoldPieces -= GetTradePrice();
+                        PlayerEntity.DeductGoldAmount(GetTradePrice());
                         for (int i = 0; i < remoteItems.Count; i++)
                         {
                             DaggerfallUnityItem item = remoteItems.GetItem(i);
@@ -612,7 +612,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             const int notEnoughGoldId = 454;
             int msgOffset = 0;
 
-            if (windowMode != WindowModes.Sell && PlayerEntity.GoldPieces < GetTradePrice())
+            if (windowMode != WindowModes.Sell && PlayerEntity.GetGoldAmount() < GetTradePrice())
             {
                 DaggerfallUI.MessageBox(notEnoughGoldId);
             }
@@ -648,7 +648,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         /// <summary>
-        /// MacroDataSource context sensitive methods for items in Daggerfall Unity.
+        /// MacroDataSource context sensitive methods for trade window.
         /// </summary>
         private class TradeMacroDataSource : MacroDataSource
         {
