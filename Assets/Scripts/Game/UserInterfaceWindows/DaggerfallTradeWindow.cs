@@ -569,7 +569,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ModeActionButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            ShowTradePopup();
+            if (remoteItems.Count > 0)
+                ShowTradePopup();
         }
 
         private void ClearButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
