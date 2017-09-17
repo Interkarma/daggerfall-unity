@@ -586,7 +586,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 switch (windowMode)
                 {
                     case WindowModes.Sell:
-                        PlayerEntity.GoldPieces += GetTradePrice();
+                        int goldAmount = GetTradePrice();
+                        float goldWeight = (float)goldAmount / DaggerfallBankManager.gold1kg;
+                        if (PlayerEntity.CarriedWeight + goldWeight <= PlayerEntity.MaxEncumbrance)
+                            PlayerEntity.GoldPieces += goldAmount;
+                        else
+                        {
+                            DaggerfallUnityItem loc = ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Letter_of_credit);
+                            loc.value = goldAmount;
+                            GameManager.Instance.PlayerEntity.Items.AddItem(loc, Items.ItemCollection.AddPosition.Front);
+                        }
                         remoteItems.Clear();
                         break;
                     case WindowModes.Repair:
