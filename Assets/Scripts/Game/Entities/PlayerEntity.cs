@@ -20,6 +20,7 @@ using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Utility;
 using UnityEngine;
+using System;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
@@ -208,8 +209,14 @@ namespace DaggerfallWorkshop.Game.Entity
                 // Get container parent
                 ContainerRecord containerRecord = (ContainerRecord)record.Parent;
 
-                // Add to local inventory or wagon
+                // Create item, grabbing trapped soul if needed
                 DaggerfallUnityItem newItem = new DaggerfallUnityItem((ItemRecord)record);
+                if (newItem.ItemGroup == ItemGroups.MiscItems && newItem.GroupIndex == 1)
+                {
+                    TrappedSoulRecord soulRecord = (TrappedSoulRecord) record.Children[0];    // Can items have any other types of children?
+                    newItem.TrappedSoulType = (MobileTypes) soulRecord.RecordRoot.SpriteIndex;
+                }
+                // Add to local inventory or wagon
                 if (containerRecord.IsWagon)
                     wagonItems.AddItem(newItem);
                 else

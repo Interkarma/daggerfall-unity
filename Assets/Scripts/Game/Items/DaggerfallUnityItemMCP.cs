@@ -98,6 +98,14 @@ namespace DaggerfallWorkshop.Game.Items
                 return bookFile.Author;
             }
 
+            public override string HeldSoul()
+            {   // %hs
+                MobileEnemy soul;
+                EnemyBasics.GetEnemy(parent.trappedSoulType, out soul);
+                return soul.Name;
+            }
+
+
             public override TextFile.Token[] MagicPowers(TextFile.Formatting format)
             {   // %mpw
                 if (parent.IsArtifact)
