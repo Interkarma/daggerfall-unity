@@ -71,7 +71,7 @@ namespace DaggerfallConnect.Save
 
         void ReadNativeContainerData()
         {
-            // Must be a container type
+            // Must be a trapped soul type
             if (recordType != RecordTypes.TrappedSoul)
                 return;
 
@@ -79,9 +79,9 @@ namespace DaggerfallConnect.Save
             MemoryStream stream = new MemoryStream(RecordData);
             BinaryReader reader = new BinaryReader(stream);
 
-            // Read container data
+            // Read container data - seems always is a single byte value = 150, use unknown
             parsedData = new TrappedSoulRecordData();
-            parsedData.unknown = reader.ReadBytes(RecordLength);    // Seems always is a single byte value = 150
+            parsedData.unknown = reader.ReadBytes(RecordLength);    
 
             // Close stream
             reader.Close();
