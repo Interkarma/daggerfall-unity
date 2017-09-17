@@ -75,7 +75,7 @@ namespace DaggerfallWorkshop.Game.Banking
 
         private static int loanMaxPerLevel = 50000;
 
-        private static float locCommission = 1.01f;
+        private static double locCommission = 1.01;
 
         private static DaggerfallDateTime dateTime;
 
@@ -242,7 +242,7 @@ namespace DaggerfallWorkshop.Game.Banking
         public static TransactionResult Withdraw_LOC(int amount, int regionIndex)
         {
             // Create LOC and deduct from account
-            int amountPlusCommission = (int)Math.Round(amount * locCommission);
+            int amountPlusCommission = (int)(amount * locCommission);
             if (amountPlusCommission > BankAccounts[regionIndex].accountGold)
                 return TransactionResult.NOT_ENOUGH_ACCOUNT_LOC;
             else if (amount < 100)
