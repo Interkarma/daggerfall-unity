@@ -1051,13 +1051,21 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void UpdateQuestion(int index)
         {
-            if (index < 0 || index >= listboxTopic.Count)
+            TalkManager.ListItem listItem;
+            if (selectedTalkCategory == TalkCategory.Work)
             {
-                textlabelPlayerSays.Text = "";
-                return;
+                listItem = new TalkManager.ListItem();
+                listItem.questionType = TalkManager.QuestionType.Work;
             }
-
-            TalkManager.ListItem listItem = listCurrentTopics[index];
+            else
+            {
+                listItem = listCurrentTopics[index];
+                if (index < 0 || index >= listboxTopic.Count)
+                {
+                    textlabelPlayerSays.Text = "";
+                    return;
+                }
+            }
 
             if (listItem.type == TalkManager.ListItemType.Item)
                 currentQuestion = TalkManager.Instance.GetQuestionText(listItem, selectedTalkTone);
