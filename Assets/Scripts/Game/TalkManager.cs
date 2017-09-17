@@ -105,25 +105,37 @@ namespace DaggerfallWorkshop.Game
             Thing
         }
 
+        public enum NPCKnowledgeAboutItem
+        {
+            NotSet,
+            DoesNotKnowAboutItem,
+            KnowsAboutItem
+        }
+
         public class ListItem
         {
             public ListItemType type = ListItemType.Item; // list item can be either a normal item, a navigation item (to get to parent list) or an item group (contains list of child items)
             public string caption = "undefined";
             public QuestionType questionType = QuestionType.NoQuestion;
+            public NPCKnowledgeAboutItem npcKnowledgeAboutItem = NPCKnowledgeAboutItem.NotSet;
+            public int buildingKey = -1;
             public List<ListItem> listChildItems = null; // null if type == ListItemType.Navigation or ListItemType.Item, only contains a list if type == ListItemType.ItemGroup
             public List<ListItem> listParentItems = null; // null if type == ListItemType.ItemGroup or ListItemType.Item, only contains a list if type == ListItemType.Navigation
         }
 
         string nameNPC = "";
         string currentKeySubject = "";
+        int currentKeySubjectBuildingKey = -1;
 
-        List<ListItem> listTellMeAbout;
+        List<ListItem> listTopicTellMeAbout;
         List<ListItem> listTopicLocation;
         List<ListItem> listTopicPerson;
         List<ListItem> listTopicThing;
 
         int numQuestionsAsked = 0;
         string questionOpeningText = ""; // randomize PC opening text only once for every new question so save it in this string after creating it
+
+        bool markLocationOnMap = false;
 
         DaggerfallTalkWindow.TalkTone currentTalkTone = DaggerfallTalkWindow.TalkTone.Normal;
 
@@ -143,7 +155,6 @@ namespace DaggerfallWorkshop.Game
         public string NameNPC
         {
             get { return nameNPC; }
-            set { nameNPC = value; }
         }
 
         public string CurrentKeySubject
@@ -151,9 +162,14 @@ namespace DaggerfallWorkshop.Game
             get { return currentKeySubject; }
         }
 
-        public List<ListItem> ListTellMeAbout
+        public bool MarkLocationOnMap
         {
-            get { return listTellMeAbout; }
+            get { return markLocationOnMap;  }
+        }
+
+        public List<ListItem> ListTopicTellMeAbout
+        {
+            get { return listTopicTellMeAbout; }
         }
 
         public List<ListItem> ListTopicLocation
@@ -217,12 +233,24 @@ namespace DaggerfallWorkshop.Game
 
         #endregion
 
-        #region Public Methods
+        #region Public Methods        
 
         public void StartNewConversation()
         {
             numQuestionsAsked = 0;
             questionOpeningText = "";
+        }
+
+        public void UpdateNPC(string name)
+        {
+            nameNPC = name;
+
+            // reset npc knowledge, for now it resets every time the npc has changed (player talked to new npc)
+            // TODO: match classic daggerfall - in classic npc remember their knowledge about topics for their time of existence
+            resetNPCKnowledgeInTopicListRecursively(listTopicLocation);
+            resetNPCKnowledgeInTopicListRecursively(listTopicPerson);
+            resetNPCKnowledgeInTopicListRecursively(listTopicThing);
+            resetNPCKnowledgeInTopicListRecursively(listTopicTellMeAbout);
         }
 
         public string GetNPCGreetingText()
@@ -262,7 +290,7 @@ namespace DaggerfallWorkshop.Game
             return questionOpeningText;
         }
 
-        public string GetKeySubjectLocationDirectionHint()
+        public string GetKeySubjectLocationDirection()
         {
             string directionHint = "";
 
@@ -280,7 +308,7 @@ namespace DaggerfallWorkshop.Game
             playerPos.x -= refWidth * 0.5f;
             playerPos.y -= refHeight * 0.5f;
 
-            BuildingInfo buildingInfo = listBuildings.Find(x => x.name == currentKeySubject);
+            BuildingInfo buildingInfo = listBuildings.Find(x => x.buildingKey == currentKeySubjectBuildingKey);
             float diffX = buildingInfo.position.x - playerPos.x;
             float diffY = buildingInfo.position.y - playerPos.y;
             if (diffX < 0 && Math.Abs(diffX) > Math.Abs(diffY))
@@ -296,7 +324,7 @@ namespace DaggerfallWorkshop.Game
 
         public void MarkKeySubjectLocationOnMap()
         {
-            BuildingInfo buildingInfo = listBuildings.Find(x => x.name == currentKeySubject);
+            BuildingInfo buildingInfo = listBuildings.Find(x => x.buildingKey == currentKeySubjectBuildingKey);
             GameManager.Instance.PlayerGPS.DiscoverBuilding(buildingInfo.buildingKey);
         }
 
@@ -321,6 +349,7 @@ namespace DaggerfallWorkshop.Game
                     question = "not implemented";
                     break;
                 case QuestionType.LocalBuilding:
+                    currentKeySubjectBuildingKey = listItem.buildingKey;
                     question = expandRandomTextRecord(7225 + toneIndex);
                     break;
                 case QuestionType.Person:
@@ -345,6 +374,50 @@ namespace DaggerfallWorkshop.Game
             return (news);
         }
 
+        public string GetKeySubjectLocationHint()
+        {
+            string answer;
+
+            // chances unknown - so there is a 75% chance for now that npc gives location direction hints and a 25% chance that npc will reveal location on map
+            int randomNum = UnityEngine.Random.Range(0, 4);
+            if (randomNum > 0)
+            {
+                markLocationOnMap = false;
+                answer = expandRandomTextRecord(7333);                
+            }
+            else
+            {
+                markLocationOnMap = true;
+                answer = expandRandomTextRecord(7332);
+                markLocationOnMap = false;
+            }
+
+            return answer;
+        }
+
+        public string GetAnswerAboutLocation(TalkManager.ListItem listItem)
+        {
+            string answer;
+
+            if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.NotSet)
+            {
+                // chances unknown - so there is a 50% chance for now that npc knows
+                int randomNum = UnityEngine.Random.Range(0, 2);
+                if (randomNum == 0)
+                    listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.DoesNotKnowAboutItem;
+                else
+                    listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.KnowsAboutItem;
+            }
+
+            if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.DoesNotKnowAboutItem)
+                answer = expandRandomTextRecord(7280);
+            else
+            {
+                answer = expandRandomTextRecord(7270);
+            }
+            return answer;
+        }
+
         public string GetAnswerText(TalkManager.ListItem listItem)
         {
             string answer = "";
@@ -361,7 +434,7 @@ namespace DaggerfallWorkshop.Game
                     answer = "not implemented";
                     break;
                 case QuestionType.LocalBuilding:
-                    answer = expandRandomTextRecord(7285) + expandRandomTextRecord(7332);
+                    answer = GetAnswerAboutLocation(listItem);
                     break;
                 case QuestionType.Person:
                     answer = expandRandomTextRecord(7280);
@@ -506,22 +579,32 @@ namespace DaggerfallWorkshop.Game
             return false;
         }
 
+        void resetNPCKnowledgeInTopicListRecursively(List<ListItem> list)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                list[i].npcKnowledgeAboutItem = NPCKnowledgeAboutItem.NotSet;
+                if (list[i].type == ListItemType.ItemGroup && list[i].listChildItems != null)
+                    resetNPCKnowledgeInTopicListRecursively(list[i].listChildItems);
+            }
+        }
+
         void AssembleTopicLists()
         {
-            AssembleTopicListTellMeAbout();
+            AssembleTopiclistTopicTellMeAbout();
             AssembleTopicListLocation();
             AssembleTopicListPerson();
             AssembleTopicListThing();
         }
 
-        void AssembleTopicListTellMeAbout()
+        void AssembleTopiclistTopicTellMeAbout()
         {
-            listTellMeAbout = new List<ListItem>();
+            listTopicTellMeAbout = new List<ListItem>();
             ListItem itemAnyNews = new ListItem();
             itemAnyNews.type = ListItemType.Item;
             itemAnyNews.questionType = QuestionType.News;
             itemAnyNews.caption = "Any news?";
-            listTellMeAbout.Add(itemAnyNews);
+            listTopicTellMeAbout.Add(itemAnyNews);
 
             for (int i = 0; i < 10; i++)
             {
@@ -529,7 +612,7 @@ namespace DaggerfallWorkshop.Game
                 itemOrganizationInfo.type = ListItemType.Item;
                 itemOrganizationInfo.questionType = QuestionType.OrganizationInfo;
                 itemOrganizationInfo.caption = "Placeholder for Organization";
-                listTellMeAbout.Add(itemOrganizationInfo);
+                listTopicTellMeAbout.Add(itemOrganizationInfo);
             }
         }
 
@@ -568,6 +651,7 @@ namespace DaggerfallWorkshop.Game
                         item.type = ListItemType.Item;
                         item.questionType = QuestionType.LocalBuilding;
                         item.caption = buildingInfo.name;
+                        item.buildingKey = buildingInfo.buildingKey;
                         itemBuildingTypeGroup.listChildItems.Add(item);
                     }
 

@@ -67,7 +67,7 @@ namespace DaggerfallWorkshop.Utility
             { "%dae", null }, // A daedra
             { "%dam", DmgMod }, // Damage modifyer
             { "%dat", Date }, // Date
-            { "%di", null },  // Direction
+            { "%di", DialogLocationDirection },  // Direction
             { "%dip", null }, // Days in prison
             { "%dng", null }, // Dungeon
             { "%dts", null }, // Daedra
@@ -99,7 +99,7 @@ namespace DaggerfallWorkshop.Utility
             { "%hea", HpMod }, // HP Modifier
             { "%hmd", HealRateMod }, // Healing rate modifer
             { "%hnr", null }, // Honorific
-            { "%hnt", DialogLocationDirectionHint }, // Direction of location.
+            { "%hnt", DialogLocationHint }, // Direction of location. (comment Nystul: it is either a location direction hint or a map reveal)
             { "%hnt2", null },// ?
             { "%hol", null }, // Holiday
             { "%hpn", null }, // ?
@@ -117,7 +117,7 @@ namespace DaggerfallWorkshop.Utility
             { "%kno", null }, // A knightly guild name
             { "%lev", null }, // Rank in guild that you are in.
             { "%ln", null },  //  Random lastname
-            { "%loc", MarkLocationOnMap }, // Location marked on map
+            { "%loc", MarkLocationOnMap }, // Location marked on map (comment Nystul: this seems to be context dependent - it is used both in direction dialogs (7333) and map reveal dialogs (7332) - it seems to return the name of the building and reveal the map only if a 7332 dialog was chosen
             { "%lt1", null }, // Title of _fl1
             { "%ltn", LocalReputation }, // In the eyes of the law you are.......
             { "%luc", Luck }, // Luck
@@ -521,17 +521,24 @@ namespace DaggerfallWorkshop.Utility
             return GameManager.Instance.TalkManager.CurrentKeySubject;
         }
 
-        private static string DialogLocationDirectionHint(IMacroContextProvider mcp)
+        private static string DialogLocationDirection(IMacroContextProvider mcp)
+        {
+            // %di
+            return GameManager.Instance.TalkManager.GetKeySubjectLocationDirection();
+        }
+
+        private static string DialogLocationHint(IMacroContextProvider mcp)
         {
             // %hnt
-            return GameManager.Instance.TalkManager.GetKeySubjectLocationDirectionHint();
+            return GameManager.Instance.TalkManager.GetKeySubjectLocationHint();
         }
 
         private static string MarkLocationOnMap(IMacroContextProvider mcp)
         {
             // %loc
-            GameManager.Instance.TalkManager.MarkKeySubjectLocationOnMap();
-            return "";
+            if (GameManager.Instance.TalkManager.MarkLocationOnMap)
+                GameManager.Instance.TalkManager.MarkKeySubjectLocationOnMap();
+            return GameManager.Instance.TalkManager.CurrentKeySubject;
         }
 
         #endregion

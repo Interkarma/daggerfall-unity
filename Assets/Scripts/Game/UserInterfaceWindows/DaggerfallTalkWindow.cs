@@ -229,10 +229,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             if (textlabelPlayerSays != null)
                 textlabelPlayerSays.Text = "";
-
+            
             if (isSetup)
             {
                 SetTalkModeWhereIs();
+                selectedTalkCategory = TalkCategory.None; // enforce that function SetTalkCategoryLocation does not skip itself and updated its topic list
                 SetTalkCategoryLocation();
             }
 
@@ -276,7 +277,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             UpdatePortrait();
 
-            TalkManager.Instance.NameNPC = name;
+            TalkManager.Instance.UpdateNPC(name);
             UpdateNameNPC();
         }
 
@@ -772,7 +773,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             textureBackground.SetPixels(4, textureBackground.height - 56 - 10, 107, 10, textureCategoryWorkGrayedOut);
             textureBackground.Apply(false);
 
-            SetListboxTopics(ref listboxTopic, TalkManager.Instance.ListTellMeAbout);
+            SetListboxTopics(ref listboxTopic, TalkManager.Instance.ListTopicTellMeAbout);
             listboxTopic.Update();
 
             UpdateScrollBarsTopic();
