@@ -312,7 +312,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 switch (windowMode)
                 {
                     case WindowModes.Sell:
-                        cost += FormulaHelper.CalculateItemSellCost(item.value, buildingDiscoveryData.quality) * item.stackCount;
+                        cost += FormulaHelper.CalculateCost(item.value, buildingDiscoveryData.quality) * item.stackCount;
                         break;
                     case WindowModes.Repair:
                         cost += FormulaHelper.CalculateItemRepairCost(item.value, buildingDiscoveryData.quality, item.currentCondition, item.maxCondition) * item.stackCount;
@@ -325,7 +325,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private int GetTradePrice()
         {
-            return FormulaHelper.CalculateTradePrice(cost, buildingDiscoveryData.quality, true); // Note: This should pass false when buying is implemented
+            if (windowMode == WindowModes.Sell)
+                return FormulaHelper.CalculateTradePrice(cost, buildingDiscoveryData.quality, true);
+            else
+                return FormulaHelper.CalculateTradePrice(cost, buildingDiscoveryData.quality, false);
         }
 
         #endregion
@@ -571,7 +574,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ModeActionButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (remoteItems.Count > 0)
+            if (cost > 0)
                 ShowTradePopup();
         }
 

@@ -688,7 +688,7 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         #region Commerce
 
-        public static int CalculateItemSellCost(int baseItemValue, int shopQuality)
+        public static int CalculateCost(int baseItemValue, int shopQuality)
         {
             int cost = baseItemValue;
 
@@ -706,9 +706,16 @@ namespace DaggerfallWorkshop.Game.Formulas
             // Don't cost already repaired item
             if (condition == max)
                 return 0;
-            // TODO - this is made-up BS by Hazelnut, needs classic formula to be implemented here!
-            Debug.Log(string.Format("baseVal={0}, shopQual={1}, cond={3}, cost= {0} / ({2} * {3})", baseItemValue, shopQuality, (baseItemValue / ((float)shopQuality / 10)), (1-((float)condition / (float)max))*5));
-            return (int)(baseItemValue / ((float)shopQuality / 10) * ((1 - ((float)condition / (float)max)) * 5));
+
+            int cost = baseItemValue;
+
+            cost = 10 * baseItemValue / 100;
+
+            if (cost < 1)
+                cost = 1;
+
+            cost = CalculateCost(cost, shopQuality);
+            return cost;
         }
 
         public static int CalculateTradePrice(int cost, int shopQuality, bool selling)
