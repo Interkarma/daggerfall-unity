@@ -92,6 +92,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
+        bool isSetup = false;
+
         List<TalkManager.ListItem> listCurrentTopics; // current topic list metadata of displayed topic list in topic frame
 
         Texture2D textureBackground;
@@ -100,8 +102,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Texture2D texturePortrait;
 
         Panel panelNameNPC;
-        TextLabel labelNameNPC = null;
-        string nameNPC = "";
+        TextLabel labelNameNPC = null;        
 
         Color[] textureTellMeAboutNormal;
         Color[] textureTellMeAboutHighlighted;
@@ -226,6 +227,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 UpdateScrollBarConversation();
             }
 
+            if (textlabelPlayerSays != null)
+                textlabelPlayerSays.Text = "";
+            
+            if (isSetup)
+            {
+                SetTalkModeWhereIs();
+                talkCategoryLastUsed = TalkCategory.None; // enforce that function SetTalkCategoryLocation does not skip itself and updated its topic list
+                SetTalkCategoryLocation();
+            }
+
             selectedTalkOption = TalkOption.WhereIs;
             selectedTalkCategory = TalkCategory.Location;
             selectedTalkTone = TalkTone.Normal;
@@ -247,7 +258,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             UpdateLabels();
         }
 
-        public void setNPCPortraitAndName(int recordId, string name)
+        public void SetNPCPortraitAndName(int recordId, string name)
         {
             // Load npc portrait           
             CifRciFile rciFile = new CifRciFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, portraitImgName), FileUsage.UseMemory, false);
@@ -266,7 +277,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             UpdatePortrait();
 
-            nameNPC = name;
             UpdateNameNPC();
         }
 
@@ -470,6 +480,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             UpdateScrollButtonsConversation();
 
             UpdateLabels();
+
+            isSetup = true;
         }
 
         void SetStartConversation()
@@ -715,7 +727,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             if (labelNameNPC != null)
             {
-                labelNameNPC.Text = nameNPC;
+                labelNameNPC.Text = TalkManager.Instance.NameNPC;
             }
         }
 
@@ -760,7 +772,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             textureBackground.SetPixels(4, textureBackground.height - 56 - 10, 107, 10, textureCategoryWorkGrayedOut);
             textureBackground.Apply(false);
 
-            SetListboxTopics(ref listboxTopic, TalkManager.Instance.ListTellMeAbout);
+            SetListboxTopics(ref listboxTopic, TalkManager.Instance.ListTopicTellMeAbout);
             listboxTopic.Update();
 
             UpdateScrollBarsTopic();
@@ -1039,13 +1051,21 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void UpdateQuestion(int index)
         {
-            if (index < 0 || index >= listboxTopic.Count)
+            TalkManager.ListItem listItem;
+            if (selectedTalkCategory == TalkCategory.Work)
             {
-                textlabelPlayerSays.Text = "";
-                return;
+                listItem = new TalkManager.ListItem();
+                listItem.questionType = TalkManager.QuestionType.Work;
             }
-
-            TalkManager.ListItem listItem = listCurrentTopics[index];
+            else
+            {
+                listItem = listCurrentTopics[index];
+                if (index < 0 || index >= listboxTopic.Count)
+                {
+                    textlabelPlayerSays.Text = "";
+                    return;
+                }
+            }
 
             if (listItem.type == TalkManager.ListItemType.Item)
                 currentQuestion = TalkManager.Instance.GetQuestionText(listItem, selectedTalkTone);

@@ -124,7 +124,7 @@ namespace DaggerfallWorkshop.Game
 
         GameObject popUpNameplate = null; // the pop-up nameplate used to expand "*" nameplates
 
-        private struct Rectangle
+        public struct Rectangle
         {
             public int xpos;
             public int ypos;
@@ -135,7 +135,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Block layout of location.
         /// </summary>
-        private struct BlockLayout
+        public struct BlockLayout
         {
             public int x;
             public int y;
@@ -151,8 +151,11 @@ namespace DaggerfallWorkshop.Game
         int locationWidth;
         int locationHeight;
 
-        const int blockSizeWidth = 64;
-        const int blockSizeHeight = 64;
+        public const int blockSizeWidth = 64;
+        public const int blockSizeHeight = 64;
+
+        public const int numMaxBlocksX = 8;
+        public const int numMaxBlocksY = 8;
 
         // layout image dimensions
         int layoutWidth;
@@ -189,6 +192,11 @@ namespace DaggerfallWorkshop.Game
         public float LayoutMultiplier
         {
             get { return (layoutMultiplier); }
+        }
+
+        public BlockLayout[] ExteriorLayout
+        {
+            get { if (exteriorLayout == null) { loadAndCreateLocationExteriorAutomap(); }; return (exteriorLayout); }
         }
 
         public int LocationWidth
@@ -742,8 +750,8 @@ namespace DaggerfallWorkshop.Game
                     foreach (BuildingSummary buildingSummary in buildingsInBlock)
                     {
                         //Debug.Log(String.Format("x: {0}, y: {1}", buildingSummary.Position.x, buildingSummary.Position.z));
-                        int xPosBuilding = layout.rect.xpos + (int)(buildingSummary.Position.x / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * 64.0f);
-                        int yPosBuilding = layout.rect.ypos + (int)(buildingSummary.Position.z / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * 64.0f);
+                        int xPosBuilding = layout.rect.xpos + (int)(buildingSummary.Position.x / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * blockSizeWidth);
+                        int yPosBuilding = layout.rect.ypos + (int)(buildingSummary.Position.z / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * blockSizeHeight);
 
                         BuildingNameplate newBuildingNameplate;
                         try
@@ -1458,8 +1466,8 @@ namespace DaggerfallWorkshop.Game
             playerPos.z = ((GameManager.Instance.PlayerGPS.transform.position.z) % scale) / scale;
             playerPos.y = 0.0f;
 
-            int refWidth = (int)(blockSizeWidth * 8 * layoutMultiplier); // layoutWidth / layoutMultiplier
-            int refHeight = (int)(blockSizeHeight * 8 * layoutMultiplier); // layoutHeight / layoutMultiplier
+            int refWidth = (int)(blockSizeWidth * numMaxBlocksX * layoutMultiplier); // layoutWidth / layoutMultiplier
+            int refHeight = (int)(blockSizeHeight * numMaxBlocksY * layoutMultiplier); // layoutHeight / layoutMultiplier
             playerPos.x *= refWidth;
             playerPos.y = 0.1f;
             playerPos.z *= refHeight;
@@ -1631,8 +1639,8 @@ namespace DaggerfallWorkshop.Game
                 //foreach (RMBLayout.BuildingSummary buildingSummary in buildingsInBlock)
                 //{
                 //    //Debug.Log(String.Format("x: {0}, y: {1}", buildingSummary.Position.x, buildingSummary.Position.z));
-                //    int xPosBuilding = layout.rect.xpos + (int)(buildingSummary.Position.x / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * 64.0f);
-                //    int yPosBuilding  = layout.rect.ypos + (int)(buildingSummary.Position.z / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * 64.0f);
+                //    int xPosBuilding = layout.rect.xpos + (int)(buildingSummary.Position.x / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * blockSizeWidth);
+                //    int yPosBuilding  = layout.rect.ypos + (int)(buildingSummary.Position.z / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * blockSizeHeight);
                 //    //exteriorLayoutTexture.SetPixel(xPosBuilding, yPosBuilding, Color.yellow);
                 //}
 

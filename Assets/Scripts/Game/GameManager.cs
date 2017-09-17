@@ -67,8 +67,11 @@ namespace DaggerfallWorkshop.Game
         ItemHelper itemHelper = null;
         StateManager stateManager = null;
         DaggerfallAutomap interiorAutomap = null;
+        DaggerfallExteriorAutomap exteriorAutomap = null;
         QuestMachine questMachine = null;
 		TransportManager transportManager = null;
+        TalkManager talkManager = null;
+
 
         #endregion
 
@@ -260,6 +263,12 @@ namespace DaggerfallWorkshop.Game
             set { interiorAutomap = value; }
         }
 
+        public DaggerfallExteriorAutomap ExteriorAutomap
+        {
+            get { return (exteriorAutomap != null) ? exteriorAutomap : exteriorAutomap = GetComponentFromObject<DaggerfallExteriorAutomap>(GetGameObjectWithName("ExteriorAutomap")); }
+            set { exteriorAutomap = value; }
+        }
+
         public QuestMachine QuestMachine
         {
             get { return (questMachine) ? questMachine : questMachine = GetMonoBehaviour<QuestMachine>(); }
@@ -270,6 +279,12 @@ namespace DaggerfallWorkshop.Game
         {
             get { return (transportManager) ? transportManager : transportManager = GetComponentFromObject<TransportManager>(PlayerObject); }
             set { transportManager = value; }
+        }
+
+        public TalkManager TalkManager
+        {
+            get { return (talkManager) ? talkManager : talkManager = GetComponentFromObject<TalkManager>(GetGameObjectWithName("TalkManager")); }
+            set { talkManager = value; }
         }
 
         public bool IsPlayerOnHUD

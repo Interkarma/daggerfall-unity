@@ -349,14 +349,22 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     if (wrapWords)
                     {
                         int j;
-                        for (j = i - 1; j >= lastEndOfRowByte; j--) // start from i - 1 since pos i could also be a space and we don't want to stop there
+                        for (j = i; j >= lastEndOfRowByte; j--)
                         {
-                            if (asciiBytes[j] == PixelFont.SpaceASCII)
-                                break;
+                            glyph = font.GetGlyph(asciiBytes[j]);
+                            if (j < i) // glyph i has not been added to width
+                            {
+                                width -= glyph.width + font.GlyphSpacing;
+                                if (width <= maxWidth && asciiBytes[j] == PixelFont.SpaceASCII)
+                                {
+                                    break;
+                                }
+                            }
                         }
-                        if (j > lastEndOfRowByte) // space found in row
+
+                        if (j > lastEndOfRowByte) // space found in row at position that is not exceeding maxWidth for all summed glyph's widths before this position
                         {
-                            i = j + 1; // position after space for next line
+                            i = j; // set new processing position (j is the space position, i will be increased on next loop iteration to point to next chat after the space char)
                             rowLength = j - lastEndOfRowByte; // set length from row start to position before space
                         }
                         else
@@ -392,7 +400,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     //asciiBytes = new List<byte>(asciiBytes).GetRange(i, asciiBytes.Length - i).ToArray();
                     //i = 0;
 
-                    lastEndOfRowByte = i;
+                    lastEndOfRowByte = i + 1; // position after space for next line, note: i will be increased on next loop iteration anyway - so no need to increase i
                 }
             }
 

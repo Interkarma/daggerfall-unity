@@ -105,16 +105,45 @@ namespace DaggerfallWorkshop.Game
             Thing
         }
 
+        public enum NPCKnowledgeAboutItem
+        {
+            NotSet,
+            DoesNotKnowAboutItem,
+            KnowsAboutItem
+        }
+
         public class ListItem
         {
             public ListItemType type = ListItemType.Item; // list item can be either a normal item, a navigation item (to get to parent list) or an item group (contains list of child items)
             public string caption = "undefined";
             public QuestionType questionType = QuestionType.NoQuestion;
+            public NPCKnowledgeAboutItem npcKnowledgeAboutItem = NPCKnowledgeAboutItem.NotSet;
+            public int buildingKey = -1;
             public List<ListItem> listChildItems = null; // null if type == ListItemType.Navigation or ListItemType.Item, only contains a list if type == ListItemType.ItemGroup
             public List<ListItem> listParentItems = null; // null if type == ListItemType.ItemGroup or ListItemType.Item, only contains a list if type == ListItemType.Navigation
         }
 
-        List<ListItem> listTellMeAbout;
+        // current target npc for conversion
+        MobilePersonNPC targetNPC = null;
+
+        // last target npc for a conversion (null if not talked to any mobile npc yet)
+        MobilePersonNPC lastTargetNPC = null;
+
+        public enum KeySubjectType
+        {
+            Unset,
+            Building,
+            Person,
+            Thing,
+            Work
+        }
+
+        string nameNPC = "";
+        string currentKeySubject = "";
+        KeySubjectType currentKeySubjectType = KeySubjectType.Unset;
+        int currentKeySubjectBuildingKey = -1;
+
+        List<ListItem> listTopicTellMeAbout;
         List<ListItem> listTopicLocation;
         List<ListItem> listTopicPerson;
         List<ListItem> listTopicThing;
@@ -122,11 +151,16 @@ namespace DaggerfallWorkshop.Game
         int numQuestionsAsked = 0;
         string questionOpeningText = ""; // randomize PC opening text only once for every new question so save it in this string after creating it
 
+        bool markLocationOnMap = false;
+
+        DaggerfallTalkWindow.TalkTone currentTalkTone = DaggerfallTalkWindow.TalkTone.Normal;
 
         struct BuildingInfo
         {
             public string name;
             public DFLocation.BuildingTypes buildingType;
+            public int buildingKey;
+            public Vector2 position;
         }       
         List<BuildingInfo> listBuildings = null;
 
@@ -134,9 +168,29 @@ namespace DaggerfallWorkshop.Game
 
         #region Properties
 
-        public List<ListItem> ListTellMeAbout
+        public string NameNPC
         {
-            get { return listTellMeAbout; }
+            get { return nameNPC; }
+        }
+
+        public string CurrentKeySubject
+        {
+            get { return currentKeySubject; }
+        }
+
+        public KeySubjectType CurrentKeySubjectType
+        {
+            get { return currentKeySubjectType;  }
+        }
+
+        public bool MarkLocationOnMap
+        {
+            get { return markLocationOnMap;  }
+        }
+
+        public List<ListItem> ListTopicTellMeAbout
+        {
+            get { return listTopicTellMeAbout; }
         }
 
         public List<ListItem> ListTopicLocation
@@ -200,11 +254,31 @@ namespace DaggerfallWorkshop.Game
 
         #endregion
 
-        #region Public Methods
+        #region Public Methods        
+
+        public void SetTargetNPC(MobilePersonNPC targetNPC)
+        {
+            if (targetNPC == lastTargetNPC)
+                return;
+
+            DaggerfallUI.Instance.TalkWindow.SetNPCPortraitAndName(targetNPC.PersonFaceRecordId, targetNPC.NameNPC);
+
+            lastTargetNPC = targetNPC;
+
+            nameNPC = targetNPC.NameNPC;
+
+            // reset npc knowledge, for now it resets every time the npc has changed (player talked to new npc)
+            // TODO: match classic daggerfall - in classic npc remember their knowledge about topics for their time of existence
+            resetNPCKnowledgeInTopicListRecursively(listTopicLocation);
+            resetNPCKnowledgeInTopicListRecursively(listTopicPerson);
+            resetNPCKnowledgeInTopicListRecursively(listTopicThing);
+            resetNPCKnowledgeInTopicListRecursively(listTopicTellMeAbout);
+        }
 
         public void StartNewConversation()
         {
             numQuestionsAsked = 0;
+            questionOpeningText = "";
         }
 
         public string GetNPCGreetingText()
@@ -212,36 +286,103 @@ namespace DaggerfallWorkshop.Game
             //string greetingString = DaggerfallUnity.Instance.TextProvider.GetRandomText(7206);
             //string greetingString = DaggerfallUnity.Instance.TextProvider.GetRandomText(7207);
             //string greetingString = DaggerfallUnity.Instance.TextProvider.GetRandomText(7208);
-            string greetingString = DaggerfallUnity.Instance.TextProvider.GetRandomText(7209);
+            string greetingString = expandRandomTextRecord(7209) + " ";
+            
             return (greetingString);
         }
 
         public string GetPCGreetingText(DaggerfallTalkWindow.TalkTone talkTone)
         {
             int toneIndex = DaggerfallTalkWindow.TalkToneToIndex(talkTone);
-            string greetingString = DaggerfallUnity.Instance.TextProvider.GetRandomText(7215 + toneIndex) + " ";
+            string greetingString = expandRandomTextRecord(7215 + toneIndex);
+
             return (greetingString);
         }
 
         public string GetPCFollowUpText(DaggerfallTalkWindow.TalkTone talkTone)
         {
             int toneIndex = DaggerfallTalkWindow.TalkToneToIndex(talkTone);
-            string followUpString = DaggerfallUnity.Instance.TextProvider.GetRandomText(7218 + toneIndex) + " ";
+            string followUpString = expandRandomTextRecord(7218 + toneIndex);
             return (followUpString);
+        }
+
+        public string GetPCGreetingOrFollowUpText()
+        {
+            if (questionOpeningText == "")
+            {
+                if (numQuestionsAsked == 0)
+                    questionOpeningText = GetPCGreetingText(currentTalkTone);
+                else
+                    questionOpeningText = GetPCFollowUpText(currentTalkTone);
+            }
+            return questionOpeningText;
+        }
+
+        public string GetWorkString()
+        {
+            return expandRandomTextRecord(7211);
+        }
+
+        public string GetKeySubjectLocationDirection()
+        {
+            string directionHint = "";
+
+            // note Nystul:
+            // I reused coordinate mapping from buildings from exterior automap layout implementation here
+            // So both building position as well as player position are calculated in map coordinates and compared
+            Vector2 playerPos;
+            float scale = MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale;
+            playerPos.x = ((GameManager.Instance.PlayerGPS.transform.position.x) % scale) / scale;
+            playerPos.y = ((GameManager.Instance.PlayerGPS.transform.position.z) % scale) / scale;
+            int refWidth = (int)(DaggerfallExteriorAutomap.blockSizeWidth * DaggerfallExteriorAutomap.numMaxBlocksX * GameManager.Instance.ExteriorAutomap.LayoutMultiplier);
+            int refHeight = (int)(DaggerfallExteriorAutomap.blockSizeHeight * DaggerfallExteriorAutomap.numMaxBlocksY * GameManager.Instance.ExteriorAutomap.LayoutMultiplier);
+            playerPos.x *= refWidth;
+            playerPos.y *= refHeight;
+            playerPos.x -= refWidth * 0.5f;
+            playerPos.y -= refHeight * 0.5f;
+
+            BuildingInfo buildingInfo = listBuildings.Find(x => x.buildingKey == currentKeySubjectBuildingKey);
+
+            Vector2 vecDirectionToTarget = buildingInfo.position - playerPos;
+            float angle = Mathf.Acos(Vector2.Dot(vecDirectionToTarget, Vector2.right) / vecDirectionToTarget.magnitude) / Mathf.PI * 180.0f;
+            if (buildingInfo.position.y - playerPos.y < 0)
+                angle = 180.0f + (180.0f - angle);
+
+            if ((angle >= 0.0f && angle < 22.5f) || (angle >= 337.5f && angle <= 360.0f))
+                directionHint = "east";
+            else if (angle >= 22.5f && angle < 67.5f)
+                directionHint = "northeast";
+            else if (angle >= 67.5f && angle < 112.5f)
+                directionHint = "north";
+            else if (angle >= 112.5f && angle < 157.5f)
+                directionHint = "northwest";
+            else if (angle >= 157.5f && angle < 202.5f)
+                directionHint = "west";
+            else if (angle >= 202.5f && angle < 247.5f)
+                directionHint = "southwest";
+            else if (angle >= 247.5f && angle < 292.5f)
+                directionHint = "south";
+            else if (angle >= 292.5f && angle < 337.5f)
+                directionHint = "southeast";
+            else
+                directionHint = "nevermind...";
+            return directionHint;
+        }
+
+        public void MarkKeySubjectLocationOnMap()
+        {
+            BuildingInfo buildingInfo = listBuildings.Find(x => x.buildingKey == currentKeySubjectBuildingKey);
+            GameManager.Instance.PlayerGPS.DiscoverBuilding(buildingInfo.buildingKey);
         }
 
         public string GetQuestionText(TalkManager.ListItem listItem, DaggerfallTalkWindow.TalkTone talkTone)
         {
             int toneIndex = DaggerfallTalkWindow.TalkToneToIndex(talkTone);
             string question = "";
-            if (questionOpeningText == "")
-            {
-                if (numQuestionsAsked == 0)
-                    questionOpeningText = GetPCGreetingText(talkTone);
-                else
-                    questionOpeningText = GetPCFollowUpText(talkTone);
-            }
-            question += questionOpeningText;
+
+            currentTalkTone = talkTone;
+
+            currentKeySubject = listItem.caption; // set key to current caption for now (which is in case of buildings the building name)
 
             switch (listItem.questionType)
             {
@@ -249,25 +390,28 @@ namespace DaggerfallWorkshop.Game
                 default:
                     break;
                 case QuestionType.News:
-                    question += DaggerfallUnity.Instance.TextProvider.GetRandomText(7231 + toneIndex);
+                    question = expandRandomTextRecord(7231 + toneIndex);
                     break;
                 case QuestionType.OrganizationInfo:
-                    question += "not implemented";
+                    question = "not implemented";
                     break;
                 case QuestionType.LocalBuilding:
-                    question += DaggerfallUnity.Instance.TextProvider.GetRandomText(7225) + toneIndex;
+                    currentKeySubjectType = KeySubjectType.Building;
+                    currentKeySubjectBuildingKey = listItem.buildingKey;
+                    question = expandRandomTextRecord(7225 + toneIndex);
                     break;
                 case QuestionType.Person:
-                    question += DaggerfallUnity.Instance.TextProvider.GetRandomText(7225) + toneIndex;
+                    question = expandRandomTextRecord(7225 + toneIndex);
                     break;
                 case QuestionType.Thing:
-                    question += "not implemented";
+                    question = "not implemented";
                     break;
                 case QuestionType.Regional:
-                    question += "not implemented";
+                    question = "not implemented";
                     break;
                 case QuestionType.Work:
-                    question += DaggerfallUnity.Instance.TextProvider.GetRandomText(7211) + toneIndex;
+                    currentKeySubjectType = KeySubjectType.Work;
+                    question = expandRandomTextRecord(7212 + toneIndex);
                     break;
             }            
             return question;
@@ -279,6 +423,50 @@ namespace DaggerfallWorkshop.Game
             return (news);
         }
 
+        public string GetKeySubjectLocationHint()
+        {
+            string answer;
+
+            // chances unknown - so there is a 75% chance for now that npc gives location direction hints and a 25% chance that npc will reveal location on map
+            int randomNum = UnityEngine.Random.Range(0, 4);
+            if (randomNum > 0)
+            {
+                markLocationOnMap = false;
+                answer = expandRandomTextRecord(7333);                
+            }
+            else
+            {
+                markLocationOnMap = true;
+                answer = expandRandomTextRecord(7332);
+                markLocationOnMap = false;
+            }
+
+            return answer;
+        }
+
+        public string GetAnswerAboutLocation(TalkManager.ListItem listItem)
+        {
+            string answer;
+
+            if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.NotSet)
+            {
+                // chances unknown - so there is a 50% chance for now that npc knows
+                int randomNum = UnityEngine.Random.Range(0, 2);
+                if (randomNum == 0)
+                    listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.DoesNotKnowAboutItem;
+                else
+                    listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.KnowsAboutItem;
+            }
+
+            if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.DoesNotKnowAboutItem)
+                answer = expandRandomTextRecord(7280);
+            else
+            {
+                answer = expandRandomTextRecord(7270);
+            }
+            return answer;
+        }
+
         public string GetAnswerText(TalkManager.ListItem listItem)
         {
             string answer = "";
@@ -286,7 +474,7 @@ namespace DaggerfallWorkshop.Game
             {
                 case QuestionType.NoQuestion:
                 default:                    
-                    answer = DaggerfallUnity.Instance.TextProvider.GetRandomText(7280);
+                    answer = expandRandomTextRecord(7280);
                     break;
                 case QuestionType.News:
                     answer = GetNewsOrRumors();
@@ -295,10 +483,10 @@ namespace DaggerfallWorkshop.Game
                     answer = "not implemented";
                     break;
                 case QuestionType.LocalBuilding:
-                    answer = DaggerfallUnity.Instance.TextProvider.GetRandomText(7285) + DaggerfallUnity.Instance.TextProvider.GetRandomText(7332);
+                    answer = GetAnswerAboutLocation(listItem);
                     break;
                 case QuestionType.Person:
-                    answer = DaggerfallUnity.Instance.TextProvider.GetRandomText(7280);
+                    answer = expandRandomTextRecord(7280);
                     break;
                 case QuestionType.Thing:
                     answer = "not implemented";
@@ -307,7 +495,7 @@ namespace DaggerfallWorkshop.Game
                     answer = "not implemented";
                     break;
                 case QuestionType.Work:
-                    answer = DaggerfallUnity.Instance.TextProvider.GetRandomText(8076);
+                    answer = expandRandomTextRecord(8076);
                     break;
 
             }
@@ -339,6 +527,9 @@ namespace DaggerfallWorkshop.Game
                 DaggerfallUnity.LogMessage("error when loading location for in TalkManager.GetBuildingList", true);
             }
 
+
+            DaggerfallExteriorAutomap.BlockLayout[] blockLayout = GameManager.Instance.ExteriorAutomap.ExteriorLayout;
+
             DFBlock[] blocks;
             RMBLayout.GetLocationBuildingData(location, out blocks);
             int width = location.Exterior.ExteriorData.Width;
@@ -359,6 +550,11 @@ namespace DaggerfallWorkshop.Game
                             BuildingInfo item;
                             item.buildingType = buildingSummary.BuildingType;
                             item.name = locationName;
+                            item.buildingKey = buildingSummary.buildingKey;
+                            // compute building position in map coordinate system                     
+                            float xPosBuilding = blockLayout[index].rect.xpos + (int)(buildingSummary.Position.x / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * DaggerfallExteriorAutomap.blockSizeWidth) - GameManager.Instance.ExteriorAutomap.LocationWidth * DaggerfallExteriorAutomap.blockSizeWidth * 0.5f;
+                            float yPosBuilding = blockLayout[index].rect.ypos + (int)(buildingSummary.Position.z / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * DaggerfallExteriorAutomap.blockSizeHeight) - GameManager.Instance.ExteriorAutomap.LocationHeight * DaggerfallExteriorAutomap.blockSizeHeight * 0.5f;
+                            item.position = new Vector2(xPosBuilding, yPosBuilding);
                             listBuildings.Add(item);
                         }
                         catch (Exception e)
@@ -432,22 +628,32 @@ namespace DaggerfallWorkshop.Game
             return false;
         }
 
+        void resetNPCKnowledgeInTopicListRecursively(List<ListItem> list)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                list[i].npcKnowledgeAboutItem = NPCKnowledgeAboutItem.NotSet;
+                if (list[i].type == ListItemType.ItemGroup && list[i].listChildItems != null)
+                    resetNPCKnowledgeInTopicListRecursively(list[i].listChildItems);
+            }
+        }
+
         void AssembleTopicLists()
         {
-            AssembleTopicListTellMeAbout();
+            AssembleTopiclistTopicTellMeAbout();
             AssembleTopicListLocation();
             AssembleTopicListPerson();
             AssembleTopicListThing();
         }
 
-        void AssembleTopicListTellMeAbout()
+        void AssembleTopiclistTopicTellMeAbout()
         {
-            listTellMeAbout = new List<ListItem>();
+            listTopicTellMeAbout = new List<ListItem>();
             ListItem itemAnyNews = new ListItem();
             itemAnyNews.type = ListItemType.Item;
             itemAnyNews.questionType = QuestionType.News;
             itemAnyNews.caption = "Any news?";
-            listTellMeAbout.Add(itemAnyNews);
+            listTopicTellMeAbout.Add(itemAnyNews);
 
             for (int i = 0; i < 10; i++)
             {
@@ -455,7 +661,7 @@ namespace DaggerfallWorkshop.Game
                 itemOrganizationInfo.type = ListItemType.Item;
                 itemOrganizationInfo.questionType = QuestionType.OrganizationInfo;
                 itemOrganizationInfo.caption = "Placeholder for Organization";
-                listTellMeAbout.Add(itemOrganizationInfo);
+                listTopicTellMeAbout.Add(itemOrganizationInfo);
             }
         }
 
@@ -494,6 +700,7 @@ namespace DaggerfallWorkshop.Game
                         item.type = ListItemType.Item;
                         item.questionType = QuestionType.LocalBuilding;
                         item.caption = buildingInfo.name;
+                        item.buildingKey = buildingInfo.buildingKey;
                         itemBuildingTypeGroup.listChildItems.Add(item);
                     }
 
@@ -601,6 +808,13 @@ namespace DaggerfallWorkshop.Game
             AssembleTopicLists();
         }
 
+        private string expandRandomTextRecord(int recordIndex)
+        {
+            TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(recordIndex);
+            MacroHelper.ExpandMacros(ref tokens);
+            return (tokens[0].text);
+        }
+            
         #endregion
     }
 }

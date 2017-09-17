@@ -37,11 +37,11 @@ namespace DaggerfallWorkshop.Utility
         {
             { "%1am", null }, // 1st + Magnitude
             { "%1bm", null }, // 1st base Magnitude
-            { "%1com", null },// Greeting (?)
+            { "%1com", GreetingOrFollowUpText },// Greeting (?)
             { "%1hn", null }, // ?
             { "%2am", null }, // 2nd + Magnitude
             { "%2bm", null }, // 2nd Base Magnitude
-            { "%2com", null },// ?
+            { "%2com", DummyResolve2com },// ? (comment Nystul: it seems to be used in questions about work - it seems to be resolved to an empty string but not sure what else this macro does)
             { "%2hn", null }, // ?
             { "%3hn", null }, // ?
             { "%a", Amount },   // Cost of somthing.
@@ -67,7 +67,7 @@ namespace DaggerfallWorkshop.Utility
             { "%dae", null }, // A daedra
             { "%dam", DmgMod }, // Damage modifyer
             { "%dat", Date }, // Date
-            { "%di", null },  // Direction
+            { "%di", DialogLocationDirection },  // Direction
             { "%dip", null }, // Days in prison
             { "%dng", null }, // Dungeon
             { "%dts", null }, // Daedra
@@ -99,7 +99,7 @@ namespace DaggerfallWorkshop.Utility
             { "%hea", HpMod }, // HP Modifier
             { "%hmd", HealRateMod }, // Healing rate modifer
             { "%hnr", null }, // Honorific
-            { "%hnt", null }, // Direction of location.
+            { "%hnt", DialogLocationHint }, // Direction of location. (comment Nystul: it is either a location direction hint or a map reveal)
             { "%hnt2", null },// ?
             { "%hol", null }, // Holiday
             { "%hpn", null }, // ?
@@ -111,13 +111,13 @@ namespace DaggerfallWorkshop.Utility
             { "%int", Int }, // Amount of Intelligence
             { "%it", ItemName },  //  Item
             { "%jok", null }, // A joke
-            { "%key", null }, // A location (?)
+            { "%key", DialogKeySubject }, // A location (?) (comment Nystul: it is the topic you are asking about (e.g. building, work, etc.) how it seems)
             { "%key2", null },// Another location
             { "%kg", Weight },  //  Weight of items
             { "%kno", null }, // A knightly guild name
             { "%lev", null }, // Rank in guild that you are in.
             { "%ln", null },  //  Random lastname
-            { "%loc", null }, // Location marked on map
+            { "%loc", MarkLocationOnMap }, // Location marked on map (comment Nystul: this seems to be context dependent - it is used both in direction dialogs (7333) and map reveal dialogs (7332) - it seems to return the name of the building and reveal the map only if a 7332 dialog was chosen
             { "%lt1", null }, // Title of _fl1
             { "%ltn", LocalReputation }, // In the eyes of the law you are.......
             { "%luc", Luck }, // Luck
@@ -129,7 +129,7 @@ namespace DaggerfallWorkshop.Utility
             { "%mn", null },  // Random First(?) name (Male?)
             { "%mn2", null }, // Same as _mn (?)
             { "%mod", ArmourMod }, // Modification
-            { "%n", null },   // A random female first name
+            { "%n", NameDialogPartner },   // A random female first name (comment Nystul: I think it is just a random name - or maybe this is the reason that in vanilla all male mobile npcs have female names...)
             { "%nam", null }, // A random full name
             { "%nrn", null }, // Noble of the current region
             { "%nt", null },  // ?
@@ -501,6 +501,63 @@ namespace DaggerfallWorkshop.Utility
         private static string GoldCarried(IMacroContextProvider mcp)
         {   // %gii
             return GameManager.Instance.PlayerEntity.GoldPieces.ToString();
+        }
+
+        private static string GreetingOrFollowUpText(IMacroContextProvider mcp)
+        {
+            // %1com
+            return GameManager.Instance.TalkManager.GetPCGreetingOrFollowUpText();
+        }
+
+        private static string DummyResolve2com(IMacroContextProvider mcp)
+        {
+            // %2com
+            return ""; // return empty string for now - not known if it does something else in classic
+        }
+
+        private static string NameDialogPartner(IMacroContextProvider mcp)
+        {
+            // %n
+            return GameManager.Instance.TalkManager.NameNPC;
+        }
+
+        private static string DialogKeySubject(IMacroContextProvider mcp)
+        {
+            // %key
+            switch (GameManager.Instance.TalkManager.CurrentKeySubjectType)
+            {
+                case TalkManager.KeySubjectType.Unset:
+                default:
+                    return "";
+                case TalkManager.KeySubjectType.Building:
+                    return GameManager.Instance.TalkManager.CurrentKeySubject;
+                case TalkManager.KeySubjectType.Person:
+                    return GameManager.Instance.TalkManager.CurrentKeySubject;
+                case TalkManager.KeySubjectType.Thing:
+                    return GameManager.Instance.TalkManager.CurrentKeySubject;
+                case TalkManager.KeySubjectType.Work:
+                    return GameManager.Instance.TalkManager.GetWorkString();
+            }
+        }
+
+        private static string DialogLocationDirection(IMacroContextProvider mcp)
+        {
+            // %di
+            return GameManager.Instance.TalkManager.GetKeySubjectLocationDirection();
+        }
+
+        private static string DialogLocationHint(IMacroContextProvider mcp)
+        {
+            // %hnt
+            return GameManager.Instance.TalkManager.GetKeySubjectLocationHint();
+        }
+
+        private static string MarkLocationOnMap(IMacroContextProvider mcp)
+        {
+            // %loc
+            if (GameManager.Instance.TalkManager.MarkLocationOnMap)
+                GameManager.Instance.TalkManager.MarkKeySubjectLocationOnMap();
+            return GameManager.Instance.TalkManager.CurrentKeySubject;
         }
 
         #endregion
