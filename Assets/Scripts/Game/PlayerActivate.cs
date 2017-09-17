@@ -884,7 +884,7 @@ namespace DaggerfallWorkshop.Game
         void Talk(MobilePersonNPC targetNPC = null)
         {
             DaggerfallUI.UIManager.PushWindow(DaggerfallUI.Instance.TalkWindow);
-            DaggerfallUI.Instance.TalkWindow.setNPCPortraitAndName(targetNPC.PersonFaceRecordId, targetNPC.NameNPC);
+            GameManager.Instance.TalkManager.SetTargetNPC(targetNPC);
         }
 
     }

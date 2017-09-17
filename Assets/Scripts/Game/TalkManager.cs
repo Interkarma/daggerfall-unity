@@ -123,6 +123,12 @@ namespace DaggerfallWorkshop.Game
             public List<ListItem> listParentItems = null; // null if type == ListItemType.ItemGroup or ListItemType.Item, only contains a list if type == ListItemType.Navigation
         }
 
+        // current target npc for conversion
+        MobilePersonNPC targetNPC = null;
+
+        // last target npc for a conversion (null if not talked to any mobile npc yet)
+        MobilePersonNPC lastTargetNPC = null;
+
         string nameNPC = "";
         string currentKeySubject = "";
         int currentKeySubjectBuildingKey = -1;
@@ -235,15 +241,16 @@ namespace DaggerfallWorkshop.Game
 
         #region Public Methods        
 
-        public void StartNewConversation()
+        public void SetTargetNPC(MobilePersonNPC targetNPC)
         {
-            numQuestionsAsked = 0;
-            questionOpeningText = "";
-        }
+            if (targetNPC == lastTargetNPC)
+                return;
 
-        public void UpdateNPC(string name)
-        {
-            nameNPC = name;
+            DaggerfallUI.Instance.TalkWindow.SetNPCPortraitAndName(targetNPC.PersonFaceRecordId, targetNPC.NameNPC);
+
+            lastTargetNPC = targetNPC;
+
+            nameNPC = targetNPC.NameNPC;
 
             // reset npc knowledge, for now it resets every time the npc has changed (player talked to new npc)
             // TODO: match classic daggerfall - in classic npc remember their knowledge about topics for their time of existence
@@ -251,6 +258,12 @@ namespace DaggerfallWorkshop.Game
             resetNPCKnowledgeInTopicListRecursively(listTopicPerson);
             resetNPCKnowledgeInTopicListRecursively(listTopicThing);
             resetNPCKnowledgeInTopicListRecursively(listTopicTellMeAbout);
+        }
+
+        public void StartNewConversation()
+        {
+            numQuestionsAsked = 0;
+            questionOpeningText = "";
         }
 
         public string GetNPCGreetingText()
@@ -309,16 +322,30 @@ namespace DaggerfallWorkshop.Game
             playerPos.y -= refHeight * 0.5f;
 
             BuildingInfo buildingInfo = listBuildings.Find(x => x.buildingKey == currentKeySubjectBuildingKey);
-            float diffX = buildingInfo.position.x - playerPos.x;
-            float diffY = buildingInfo.position.y - playerPos.y;
-            if (diffX < 0 && Math.Abs(diffX) > Math.Abs(diffY))
-                directionHint = "west";
-            else if (diffX >= 0 && Math.Abs(diffX) > Math.Abs(diffY))
+
+            Vector2 vecDirectionToTarget = buildingInfo.position - playerPos;
+            float angle = Mathf.Acos(Vector2.Dot(vecDirectionToTarget, Vector2.right) / vecDirectionToTarget.magnitude) / Mathf.PI * 180.0f;
+            if (buildingInfo.position.y - playerPos.y < 0)
+                angle = 180.0f + (180.0f - angle);
+
+            if ((angle >= 0.0f && angle < 22.5f) || (angle >= 337.5f && angle <= 360.0f))
                 directionHint = "east";
-            if (diffY < 0 && Math.Abs(diffX) <= Math.Abs(diffY))
-                directionHint = "south";
-            else if (diffY >= 0 && Math.Abs(diffX) <= Math.Abs(diffY))
+            else if (angle >= 22.5f && angle < 67.5f)
+                directionHint = "northeast";
+            else if (angle >= 67.5f && angle < 112.5f)
                 directionHint = "north";
+            else if (angle >= 112.5f && angle < 157.5f)
+                directionHint = "northwest";
+            else if (angle >= 157.5f && angle < 202.5f)
+                directionHint = "west";
+            else if (angle >= 202.5f && angle < 247.5f)
+                directionHint = "southwest";
+            else if (angle >= 247.5f && angle < 292.5f)
+                directionHint = "south";
+            else if (angle >= 292.5f && angle < 337.5f)
+                directionHint = "southeast";
+            else
+                directionHint = "nevermind...";
             return directionHint;
         }
 

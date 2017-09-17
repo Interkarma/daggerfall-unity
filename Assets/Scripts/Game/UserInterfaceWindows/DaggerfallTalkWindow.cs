@@ -233,7 +233,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (isSetup)
             {
                 SetTalkModeWhereIs();
-                selectedTalkCategory = TalkCategory.None; // enforce that function SetTalkCategoryLocation does not skip itself and updated its topic list
+                talkCategoryLastUsed = TalkCategory.None; // enforce that function SetTalkCategoryLocation does not skip itself and updated its topic list
                 SetTalkCategoryLocation();
             }
 
@@ -258,7 +258,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             UpdateLabels();
         }
 
-        public void setNPCPortraitAndName(int recordId, string name)
+        public void SetNPCPortraitAndName(int recordId, string name)
         {
             // Load npc portrait           
             CifRciFile rciFile = new CifRciFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, portraitImgName), FileUsage.UseMemory, false);
@@ -277,7 +277,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             UpdatePortrait();
 
-            TalkManager.Instance.UpdateNPC(name);
             UpdateNameNPC();
         }
 
