@@ -54,6 +54,9 @@ namespace DaggerfallWorkshop.Game.Items
         int currentVariant = 0;
         ulong uid;
 
+        // Soul trapped
+        MobileTypes trappedSoulType = MobileTypes.None;
+
         // Quest-related fields
         bool isQuestItem = false;
         ulong questUID = 0;
@@ -257,6 +260,15 @@ namespace DaggerfallWorkshop.Game.Items
         public bool IsIdentified
         {
             get { return GetIsIdentified(); }
+        }
+
+        /// <summary>
+        /// Gets the soul trapped in a soul trap.
+        /// </summary>
+        public MobileTypes TrappedSoulType
+        {
+            get { return trappedSoulType; }
+            set { trappedSoulType = value; }
         }
 
         /// <summary>

@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -245,6 +245,9 @@ namespace DaggerfallConnect.Save
                     case RecordTypes.Container:
                         record = new ContainerRecord(reader, length);
                         break;
+                    case RecordTypes.Soul:
+                        record = new TrappedSoulRecord(reader, length);
+                        break;
                     //case RecordTypes.Door:
                     //    record = new SaveTreeBaseRecord(reader, length);    // Read then skip these records for now
                     //    continue;
@@ -382,6 +385,7 @@ namespace DaggerfallConnect.Save
         QBNData = 0x0e,
         QuestTree = 0x10,                           // Fixsave calls this "quest tree".
         EnemyMobile = 0x12,
+        Soul = 0x14,                                // Souls held in soul traps.
         SpellcastingCreatureListHead = 0x16,
         UserOptions = 0x17,                         // Fixsave calls this "user options"
         LocationName1 = 0x18,                       // Possibly logbook entries. chunktcl calls this "Logbook"
