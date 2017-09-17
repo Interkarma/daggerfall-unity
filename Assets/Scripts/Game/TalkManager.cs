@@ -131,6 +131,8 @@ namespace DaggerfallWorkshop.Game
         {
             public string name;
             public DFLocation.BuildingTypes buildingType;
+            public int buildingKey;
+            public Vector2 position;
         }       
         List<BuildingInfo> listBuildings = null;
 
@@ -260,6 +262,44 @@ namespace DaggerfallWorkshop.Game
             return questionOpeningText;
         }
 
+        public string GetKeySubjectLocationDirectionHint()
+        {
+            string directionHint = "";
+
+            // note Nystul:
+            // I reused coordinate mapping from buildings from exterior automap layout implementation here
+            // So both building position as well as player position are calculated in map coordinates and compared
+            Vector2 playerPos;
+            float scale = MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale;
+            playerPos.x = ((GameManager.Instance.PlayerGPS.transform.position.x) % scale) / scale;
+            playerPos.y = ((GameManager.Instance.PlayerGPS.transform.position.z) % scale) / scale;
+            int refWidth = (int)(DaggerfallExteriorAutomap.blockSizeWidth * DaggerfallExteriorAutomap.numMaxBlocksX * GameManager.Instance.ExteriorAutomap.LayoutMultiplier);
+            int refHeight = (int)(DaggerfallExteriorAutomap.blockSizeHeight * DaggerfallExteriorAutomap.numMaxBlocksY * GameManager.Instance.ExteriorAutomap.LayoutMultiplier);
+            playerPos.x *= refWidth;
+            playerPos.y *= refHeight;
+            playerPos.x -= refWidth * 0.5f;
+            playerPos.y -= refHeight * 0.5f;
+
+            BuildingInfo buildingInfo = listBuildings.Find(x => x.name == currentKeySubject);
+            float diffX = buildingInfo.position.x - playerPos.x;
+            float diffY = buildingInfo.position.y - playerPos.y;
+            if (diffX < 0 && Math.Abs(diffX) > Math.Abs(diffY))
+                directionHint = "west";
+            else if (diffX >= 0 && Math.Abs(diffX) > Math.Abs(diffY))
+                directionHint = "east";
+            if (diffY < 0 && Math.Abs(diffX) <= Math.Abs(diffY))
+                directionHint = "south";
+            else if (diffY >= 0 && Math.Abs(diffX) <= Math.Abs(diffY))
+                directionHint = "north";
+            return directionHint;
+        }
+
+        public void MarkKeySubjectLocationOnMap()
+        {
+            BuildingInfo buildingInfo = listBuildings.Find(x => x.name == currentKeySubject);
+            GameManager.Instance.PlayerGPS.DiscoverBuilding(buildingInfo.buildingKey);
+        }
+
         public string GetQuestionText(TalkManager.ListItem listItem, DaggerfallTalkWindow.TalkTone talkTone)
         {
             int toneIndex = DaggerfallTalkWindow.TalkToneToIndex(talkTone);
@@ -281,10 +321,10 @@ namespace DaggerfallWorkshop.Game
                     question = "not implemented";
                     break;
                 case QuestionType.LocalBuilding:
-                    question = expandRandomTextRecord(7225) + toneIndex;
+                    question = expandRandomTextRecord(7225 + toneIndex);
                     break;
                 case QuestionType.Person:
-                    question = expandRandomTextRecord(7225) + toneIndex;
+                    question = expandRandomTextRecord(7225 + toneIndex);
                     break;
                 case QuestionType.Thing:
                     question = "not implemented";
@@ -293,7 +333,7 @@ namespace DaggerfallWorkshop.Game
                     question = "not implemented";
                     break;
                 case QuestionType.Work:
-                    question = expandRandomTextRecord(7211) + toneIndex;
+                    question = expandRandomTextRecord(7211 + toneIndex);
                     break;
             }            
             return question;
@@ -365,6 +405,9 @@ namespace DaggerfallWorkshop.Game
                 DaggerfallUnity.LogMessage("error when loading location for in TalkManager.GetBuildingList", true);
             }
 
+
+            DaggerfallExteriorAutomap.BlockLayout[] blockLayout = GameManager.Instance.ExteriorAutomap.ExteriorLayout;
+
             DFBlock[] blocks;
             RMBLayout.GetLocationBuildingData(location, out blocks);
             int width = location.Exterior.ExteriorData.Width;
@@ -385,6 +428,11 @@ namespace DaggerfallWorkshop.Game
                             BuildingInfo item;
                             item.buildingType = buildingSummary.BuildingType;
                             item.name = locationName;
+                            item.buildingKey = buildingSummary.buildingKey;
+                            // compute building position in map coordinate system                     
+                            float xPosBuilding = blockLayout[index].rect.xpos + (int)(buildingSummary.Position.x / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * DaggerfallExteriorAutomap.blockSizeWidth) - GameManager.Instance.ExteriorAutomap.LocationWidth * DaggerfallExteriorAutomap.blockSizeWidth * 0.5f;
+                            float yPosBuilding = blockLayout[index].rect.ypos + (int)(buildingSummary.Position.z / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * DaggerfallExteriorAutomap.blockSizeHeight) - GameManager.Instance.ExteriorAutomap.LocationHeight * DaggerfallExteriorAutomap.blockSizeHeight * 0.5f;
+                            item.position = new Vector2(xPosBuilding, yPosBuilding);
                             listBuildings.Add(item);
                         }
                         catch (Exception e)

@@ -99,7 +99,7 @@ namespace DaggerfallWorkshop.Utility
             { "%hea", HpMod }, // HP Modifier
             { "%hmd", HealRateMod }, // Healing rate modifer
             { "%hnr", null }, // Honorific
-            { "%hnt", null }, // Direction of location.
+            { "%hnt", DialogLocationDirectionHint }, // Direction of location.
             { "%hnt2", null },// ?
             { "%hol", null }, // Holiday
             { "%hpn", null }, // ?
@@ -117,7 +117,7 @@ namespace DaggerfallWorkshop.Utility
             { "%kno", null }, // A knightly guild name
             { "%lev", null }, // Rank in guild that you are in.
             { "%ln", null },  //  Random lastname
-            { "%loc", null }, // Location marked on map
+            { "%loc", MarkLocationOnMap }, // Location marked on map
             { "%lt1", null }, // Title of _fl1
             { "%ltn", LocalReputation }, // In the eyes of the law you are.......
             { "%luc", Luck }, // Luck
@@ -505,17 +505,33 @@ namespace DaggerfallWorkshop.Utility
 
         private static string GreetingOrFollowUpText(IMacroContextProvider mcp)
         {
+            // %1com
             return GameManager.Instance.TalkManager.GetPCGreetingOrFollowUpText();
         }
 
         private static string NameDialogPartner(IMacroContextProvider mcp)
         {
+            // %n
             return GameManager.Instance.TalkManager.NameNPC;
         }
 
         private static string DialogKeySubject(IMacroContextProvider mcp)
         {
+            // %key
             return GameManager.Instance.TalkManager.CurrentKeySubject;
+        }
+
+        private static string DialogLocationDirectionHint(IMacroContextProvider mcp)
+        {
+            // %hnt
+            return GameManager.Instance.TalkManager.GetKeySubjectLocationDirectionHint();
+        }
+
+        private static string MarkLocationOnMap(IMacroContextProvider mcp)
+        {
+            // %loc
+            GameManager.Instance.TalkManager.MarkKeySubjectLocationOnMap();
+            return "";
         }
 
         #endregion
