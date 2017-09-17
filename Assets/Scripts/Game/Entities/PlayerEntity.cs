@@ -63,6 +63,8 @@ namespace DaggerfallWorkshop.Game.Entity
         protected int thievesGuildRequirementTally = 0;
         protected int darkBrotherhoodRequirementTally = 0;
 
+        protected ushort[] priceAdjustmentByRegion = FormulaHelper.RandomRegionalPriceAdjustments();
+
         #endregion
 
         #region Properties
@@ -94,6 +96,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public int DarkBrotherhoodRequirementTally { get { return darkBrotherhoodRequirementTally; } set { darkBrotherhoodRequirementTally = value; } }
         public float CarriedWeight { get { return Items.GetWeight() + ((float)goldPieces / DaggerfallBankManager.gold1kg); } }
         public float WagonWeight { get { return WagonItems.GetWeight(); } }
+        public ushort[] PriceAdjustmentByRegion { get { return priceAdjustmentByRegion; } set { priceAdjustmentByRegion = value; } }
 
         #endregion
 

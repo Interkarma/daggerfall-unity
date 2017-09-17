@@ -530,6 +530,10 @@ namespace DaggerfallWorkshop.Game.Utility
             var bankRecords = saveTree.FindRecord(RecordTypes.BankAccount);
             Banking.DaggerfallBankManager.ReadNativeBankData(bankRecords);
 
+            // Get regional data.
+            // Currently this only gets the regional price adjustments.
+            playerEntity.PriceAdjustmentByRegion = saveVars.PriceAdjustmentsByRegion;
+
             // Start game
             DaggerfallUI.Instance.PopToHUD();
             GameManager.Instance.PauseGame(false);

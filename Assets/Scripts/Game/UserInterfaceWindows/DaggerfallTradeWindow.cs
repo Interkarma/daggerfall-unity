@@ -325,7 +325,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private int GetTradePrice()
         {
-            return FormulaHelper.CalculateTradePrice(cost, buildingDiscoveryData.quality);
+            return FormulaHelper.CalculateTradePrice(cost, buildingDiscoveryData.quality, true); // Note: This should pass false when buying is implemented
         }
 
         #endregion

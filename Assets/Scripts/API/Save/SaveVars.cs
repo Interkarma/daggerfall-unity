@@ -46,6 +46,9 @@ namespace DaggerfallConnect.Save
         const int cheatFlagsOffset = 0x173B;
         const int lastSkillCheckTimeOffset = 0x179A;
 
+        const int regionDataOffset = 0x3DA;
+        const int regionDataLength = 4960;
+
         const int factionDataOffset = 0x17D0;
         const int factionDataLength = 92;
 
@@ -86,6 +89,8 @@ namespace DaggerfallConnect.Save
         bool godMode = false;
 
         uint lastSkillCheckTime = 0;
+
+        ushort[] priceAdjustmentsByRegion = new ushort[62];
 
         List<FactionFile.FactionData> factions = new List<FactionFile.FactionData>();
 
@@ -341,6 +346,14 @@ namespace DaggerfallConnect.Save
             get { return globalVars; }
         }
 
+        /// <summary>
+        /// Gets array of how much prices are adjusted in each region.
+        /// </summary>
+        public ushort[] PriceAdjustmentsByRegion
+        {
+            get { return priceAdjustmentsByRegion; }
+        }
+
         #endregion
 
         #region Constructors
@@ -398,6 +411,7 @@ namespace DaggerfallConnect.Save
             ReadUsingLeftHandWeapon(reader);
             ReadCheatFlags(reader);
             ReadLastSkillCheckTime(reader);
+            ReadRegionData(reader);
             ReadFactionData(reader);
 
             return true;
@@ -521,6 +535,29 @@ namespace DaggerfallConnect.Save
         {
             reader.BaseStream.Position = lastSkillCheckTimeOffset;
             lastSkillCheckTime = reader.ReadUInt32();
+        }
+
+        void ReadRegionData(BinaryReader reader)
+        {
+            byte[] regionData = new byte[regionDataLength];
+            reader.BaseStream.Position = regionDataOffset;
+            regionData = reader.ReadBytes(regionDataLength);
+
+            GetPriceAdjustmentsByRegion(regionData);
+        }
+
+        void GetPriceAdjustmentsByRegion(byte[] regionData)
+        {
+            int priceAdjustmentsOffset = 0x4E;
+            byte byte1;
+            byte byte2;
+
+            for (int i = 0; i < 62; i++)
+            {
+                byte1 = regionData[priceAdjustmentsOffset + (80 * i)];
+                byte2 = regionData[priceAdjustmentsOffset + (80 * i) + 1];
+                priceAdjustmentsByRegion[i] = (ushort)((byte1) | (byte2 << 8));
+            }
         }
 
         void ReadFactionData(BinaryReader reader)
