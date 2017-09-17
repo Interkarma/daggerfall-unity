@@ -75,7 +75,7 @@ namespace DaggerfallWorkshop.Game.Banking
 
         private static int loanMaxPerLevel = 50000;
 
-        private static float locCommission = 1.1f;
+        private static double locCommission = 1.01;
 
         private static DaggerfallDateTime dateTime;
 
