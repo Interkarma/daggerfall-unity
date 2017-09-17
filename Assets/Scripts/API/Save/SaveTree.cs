@@ -245,7 +245,7 @@ namespace DaggerfallConnect.Save
                     case RecordTypes.Container:
                         record = new ContainerRecord(reader, length);
                         break;
-                    case RecordTypes.Soul:
+                    case RecordTypes.TrappedSoul:
                         record = new TrappedSoulRecord(reader, length);
                         break;
                     //case RecordTypes.Door:
@@ -385,7 +385,7 @@ namespace DaggerfallConnect.Save
         QBNData = 0x0e,
         QuestTree = 0x10,                           // Fixsave calls this "quest tree".
         EnemyMobile = 0x12,
-        Soul = 0x14,                                // Souls held in soul traps.
+        TrappedSoul = 0x14,                                // Souls held in soul traps.
         SpellcastingCreatureListHead = 0x16,
         UserOptions = 0x17,                         // Fixsave calls this "user options"
         LocationName1 = 0x18,                       // Possibly logbook entries. chunktcl calls this "Logbook"

@@ -72,7 +72,7 @@ namespace DaggerfallConnect.Save
         void ReadNativeContainerData()
         {
             // Must be a container type
-            if (recordType != RecordTypes.Soul)
+            if (recordType != RecordTypes.TrappedSoul)
                 return;
 
             // Prepare stream
