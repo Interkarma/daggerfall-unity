@@ -335,6 +335,51 @@ namespace DaggerfallWorkshop.Game.Entity
             }
         }
 
+        /// <summary>
+        /// Returns the amount of gold carried by the player. (gold pieces + letters of credit)
+        /// </summary>
+        public int GetGoldAmount()
+        {
+            return goldPieces + items.GetCreditAmount();
+        }
+
+        /// <summary>
+        /// Deducts the amount of gold specified from the player. (check GoldAmount first)
+        /// Gold pieces first if enough, then letters of credit, then gold pieces.
+        /// </summary>
+        /// <param name="amount">Amount to deduct</param>
+        /// <returns>Amount remaining to be paid if not enough funds.</returns>
+        public int DeductGoldAmount(int amount)
+        {
+            if (amount <= goldPieces) {
+                goldPieces -= amount;
+            } else {
+                while (amount > 0)
+                {
+                    DaggerfallUnityItem loc = items.GetItem(ItemGroups.MiscItems, (int)MiscItems.Letter_of_credit);
+                    if (loc == null) {
+                        break;
+                    } else if (amount <= loc.value) {
+                        loc.value -= amount;
+                        amount = 0;
+                    } else {
+                        amount -= loc.value;
+                        items.RemoveItem(loc);
+                    }
+                }
+
+                if (amount > 0) {
+                    if (amount <= goldPieces) {
+                        goldPieces -= amount;
+                    } else {     // Underpaid.
+                        amount -= goldPieces;
+                        goldPieces = 0;
+                        return amount;
+                    }
+                }
+            }
+            return 0;
+        }
 
         /// <summary>
         /// Raise skills if conditions are met.

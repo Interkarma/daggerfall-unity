@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -17,6 +17,7 @@ using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Banking;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -27,7 +28,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
  * depositing / withdrawing LOC
  */ 
 
-    public class DaggerfallBankingWindow : DaggerfallPopupWindow
+    public class DaggerfallBankingWindow : DaggerfallPopupWindow, IMacroContextProvider
     {
         const string IMGNAME    = "BANK00I0.IMG";
 
@@ -56,7 +57,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         TransactionType transactionType = TransactionType.None;
 
         public int regionIndex = 0;
-
+        int amount = 0;
 
         public DaggerfallBankingWindow(IUserInterfaceManager uiManager, DaggerfallBaseWindow previous = null)
             : base(uiManager, previous)
@@ -244,7 +245,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void UpdateLabels()
         {
-            inventoryAmount.Text    = playerEntity.GoldPieces.ToString();
+            inventoryAmount.Text    = playerEntity.GetGoldAmount().ToString();
             accountAmount.Text      = DaggerfallBankManager.GetAccountTotal(regionIndex).ToString();
             loanAmountDue.Text      = DaggerfallBankManager.GetLoanedTotal(regionIndex).ToString();
             loanDueBy.Text          = DaggerfallBankManager.GetLoanDueDateString(regionIndex);
@@ -297,18 +298,19 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         //generates pop-ups, either to indicate failed transaction
         //or to prompt with yes / no option
-        void GeneratePopup(TransactionResult result, long amount = 0)
+        void GeneratePopup(TransactionResult result, int amount = 0)
         {
             if (result == TransactionResult.NONE)
                 return;
 
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
             messageBox.ClickAnywhereToClose = true;
+            this.amount = amount;
 
             if (result == TransactionResult.TOO_HEAVY)
                 messageBox.SetText(HardStrings.cannotCarryGold);
             else
-                messageBox.SetTextTokens((int)result);
+                messageBox.SetTextTokens((int)result, this);
 
             if (result == TransactionResult.DEPOSIT_LOC) //show messagebox window w/ yes no buttons
             {
@@ -417,7 +419,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (!DaggerfallBankManager.OwnsHouse)
                 return;
             else
-                GeneratePopup(TransactionResult.SELL_HOUSE_OFFER);
+                GeneratePopup(TransactionResult.SELL_HOUSE_OFFER, 1234);  // Temp value 1234 for testing.
         }
 
         void buyShipButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -433,7 +435,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (!DaggerfallBankManager.OwnsShip)
                 return;
             else
-                GeneratePopup(TransactionResult.SELL_SHIP_OFFER);
+                GeneratePopup(TransactionResult.SELL_SHIP_OFFER, 123);  // Temp value 123 for testing.
         }
 
         void exitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -449,7 +451,36 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #endregion
 
+        #region Macro handling
 
+        public MacroDataSource GetMacroDataSource()
+        {
+            return new BankingMacroDataSource(this);
+        }
+
+        /// <summary>
+        /// MacroDataSource context sensitive methods for banking window.
+        /// </summary>
+        private class BankingMacroDataSource : MacroDataSource
+        {
+            private DaggerfallBankingWindow parent;
+            public BankingMacroDataSource(DaggerfallBankingWindow bankingWindow)
+            {
+                this.parent = bankingWindow;
+            }
+
+            public override string Amount()
+            {
+                return parent.amount.ToString();
+            }
+            public override string MaxLoan()
+            {
+                return DaggerfallBankManager.CalculateMaxLoan().ToString();
+            }
+
+        }
+
+        #endregion
 
 
 

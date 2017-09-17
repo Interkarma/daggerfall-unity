@@ -125,6 +125,7 @@ namespace DaggerfallWorkshop.Utility
             { "%mad", MagicResist }, // Resistance
             { "%mat", Material }, // Material
             { "%mit", null }, // Item
+            { "%ml", MaxLoan },  // Max loan amount
             { "%mn", null },  // Random First(?) name (Male?)
             { "%mn2", null }, // Same as _mn (?)
             { "%mod", ArmourMod }, // Modification
@@ -531,6 +532,10 @@ namespace DaggerfallWorkshop.Utility
         private static string ShopName(IMacroContextProvider mcp)
         {   // %cpn
             return mcp.GetMacroDataSource().ShopName();
+        }
+        private static string MaxLoan(IMacroContextProvider mcp)
+        {   // %ml
+            return mcp.GetMacroDataSource().MaxLoan();
         }
 
         private static string Str(IMacroContextProvider mcp)

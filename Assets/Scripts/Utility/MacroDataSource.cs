@@ -26,6 +26,10 @@ namespace DaggerfallWorkshop.Utility
         {   // %cpn
             throw new NotImplementedException();
         }
+        public virtual string MaxLoan()
+        {   // %ml
+            throw new NotImplementedException();
+        }
 
         public virtual string Str()
         {   // %str
