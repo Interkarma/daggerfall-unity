@@ -312,7 +312,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 switch (windowMode)
                 {
                     case WindowModes.Sell:
-                        cost += FormulaHelper.CalculateItemSellCost(item.value, buildingDiscoveryData.quality) * item.stackCount;
+                        cost += FormulaHelper.CalculateCost(item.value, buildingDiscoveryData.quality) * item.stackCount;
                         break;
                     case WindowModes.Repair:
                         cost += FormulaHelper.CalculateItemRepairCost(item.value, buildingDiscoveryData.quality, item.currentCondition, item.maxCondition) * item.stackCount;
@@ -325,7 +325,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private int GetTradePrice()
         {
-            return FormulaHelper.CalculateTradePrice(cost, buildingDiscoveryData.quality);
+            if (windowMode == WindowModes.Sell)
+                return FormulaHelper.CalculateTradePrice(cost, buildingDiscoveryData.quality, true);
+            else
+                return FormulaHelper.CalculateTradePrice(cost, buildingDiscoveryData.quality, false);
         }
 
         #endregion
@@ -481,6 +484,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected override void LocalItemsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            const int doesNotNeedToBeRepairedTextId = 24;
+
             // Get index
             int index = localItemsScrollBar.ScrollIndex + (int)sender.Tag;
             if (index >= localItemsFiltered.Count)
@@ -503,10 +508,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 else if (windowMode == WindowModes.Repair)
                 {
                     // Check if item is damaged & transfer
-                    if (item.currentCondition < item.maxCondition)
+                    if ((item.currentCondition < item.maxCondition) && item.TemplateIndex != (int)Weapons.Arrow)
                         TransferItem(item, localItems, remoteItems);
                     else
-                        DaggerfallUI.MessageBox(24);
+                        DaggerfallUI.MessageBox(doesNotNeedToBeRepairedTextId);
                 }
 
             }
@@ -569,7 +574,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ModeActionButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            ShowTradePopup();
+            if (cost > 0)
+                ShowTradePopup();
         }
 
         private void ClearButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -586,7 +592,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 switch (windowMode)
                 {
                     case WindowModes.Sell:
-                        PlayerEntity.GoldPieces += GetTradePrice();
+                        int goldAmount = GetTradePrice();
+                        float goldWeight = (float)goldAmount / DaggerfallBankManager.gold1kg;
+                        if (PlayerEntity.CarriedWeight + goldWeight <= PlayerEntity.MaxEncumbrance)
+                            PlayerEntity.GoldPieces += goldAmount;
+                        else
+                        {
+                            DaggerfallUnityItem loc = ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Letter_of_credit);
+                            loc.value = goldAmount;
+                            GameManager.Instance.PlayerEntity.Items.AddItem(loc, Items.ItemCollection.AddPosition.Front);
+                        }
                         remoteItems.Clear();
                         break;
                     case WindowModes.Repair:
@@ -599,6 +614,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         break;
                 }
                 DaggerfallUI.Instance.PlayOneShot(SoundClips.GoldPieces);
+                PlayerEntity.TallySkill((short)Skills.Mercantile, 1);
                 Refresh();
             }
             CloseWindow();
@@ -611,18 +627,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             const int tradeMessageBaseId = 260;
             const int notEnoughGoldId = 454;
             int msgOffset = 0;
+            int tradePrice = GetTradePrice();
 
-            if (windowMode != WindowModes.Sell && PlayerEntity.GetGoldAmount() < GetTradePrice())
+            if (windowMode != WindowModes.Sell && PlayerEntity.GetGoldAmount() < tradePrice)
             {
                 DaggerfallUI.MessageBox(notEnoughGoldId);
             }
             else
             {
-                // TODO what is classic algorithm? (seems repair can use all even though not correct contextually)
-                if (windowMode == WindowModes.Buy)
-                    msgOffset = (buildingDiscoveryData.quality > 10) ? 1 : 0;
-                else
-                    msgOffset = 1 + (buildingDiscoveryData.quality / 5);
+                if (cost >> 1 <= tradePrice)
+                {
+                    if (cost - (cost >> 2) <= tradePrice)
+                        msgOffset = 2;
+                    else
+                        msgOffset = 1;
+                }
+                if (windowMode == WindowModes.Sell)
+                    msgOffset += 3;
 
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
                 TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(tradeMessageBaseId + msgOffset);

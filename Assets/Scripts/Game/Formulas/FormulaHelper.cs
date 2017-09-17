@@ -688,11 +688,17 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         #region Commerce
 
-        public static int CalculateItemSellCost(int baseItemValue, int shopQuality)
+        public static int CalculateCost(int baseItemValue, int shopQuality)
         {
-            // TODO - this is made-up BS by Hazelnut, needs classic formula to be implemented here!
-            Debug.Log(string.Format("baseVal={0}, shopQual={1}, cost= {0} / {2} = {3}", baseItemValue, shopQuality, (float)shopQuality / 10, (baseItemValue / ((float)shopQuality / 10))));
-            return (int)(baseItemValue / ((float)shopQuality / 10));
+            int cost = baseItemValue;
+
+            if (cost < 1)
+                cost = 1;
+
+            cost = ApplyRegionalPriceAdjustment(cost);
+            cost = 2 * (cost * (shopQuality - 10) / 100 + cost);
+
+            return cost;
         }
 
         public static int CalculateItemRepairCost(int baseItemValue, int shopQuality, int condition, int max)
@@ -700,16 +706,70 @@ namespace DaggerfallWorkshop.Game.Formulas
             // Don't cost already repaired item
             if (condition == max)
                 return 0;
-            // TODO - this is made-up BS by Hazelnut, needs classic formula to be implemented here!
-            Debug.Log(string.Format("baseVal={0}, shopQual={1}, cond={3}, cost= {0} / ({2} * {3})", baseItemValue, shopQuality, (baseItemValue / ((float)shopQuality / 10)), (1-((float)condition / (float)max))*5));
-            return (int)(baseItemValue / ((float)shopQuality / 10) * ((1 - ((float)condition / (float)max)) * 5));
+
+            int cost = baseItemValue;
+
+            cost = 10 * baseItemValue / 100;
+
+            if (cost < 1)
+                cost = 1;
+
+            cost = CalculateCost(cost, shopQuality);
+            return cost;
         }
 
-        public static int CalculateTradePrice(int cost, int shopQuality)
+        public static int CalculateTradePrice(int cost, int shopQuality, bool selling)
         {
-            // TODO - The cost is modified for trade based on mercantile skill etc - just using 75% cost for now.
+            Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
+            int merchant_mercantile_level = 5 * (shopQuality - 10) + 50;
+            int merchant_personality_level = 5 * (shopQuality - 10) + 50;
 
-            return (int)(cost * 0.75);
+            int delta_mercantile;
+            int delta_personality;
+            int amount = 0;
+
+            if (selling)
+            {
+                delta_mercantile = (((100 - merchant_mercantile_level) << 8) / 200 + 128) * (((player.Skills.Mercantile) << 8) / 200 + 128) >> 8;
+                delta_personality = (((100 - merchant_personality_level) << 8) / 200 + 128) * ((player.Stats.Personality << 8) / 200 + 128) >> 8;
+                amount = ((((179 * delta_mercantile) >> 8) + ((51 * delta_personality) >> 8)) * cost) >> 8;
+            }
+            else // buying
+            {
+                delta_mercantile = ((merchant_mercantile_level << 8) / 200 + 128) * (((100 - (player.Skills.Mercantile)) << 8) / 200 + 128) >> 8;
+                delta_personality = ((merchant_personality_level << 8) / 200 + 128) * (((100 - player.Stats.Personality) << 8) / 200 + 128) >> 8 << 6;
+                amount = ((((192 * delta_mercantile) >> 8) + (delta_personality >> 8)) * cost) >> 8;
+            }
+
+            return amount;
+        }
+
+        public static int ApplyRegionalPriceAdjustment(int cost)
+        {
+            int adjustedCost;
+            int currentRegionIndex;
+            Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
+            PlayerGPS gps = GameManager.Instance.PlayerGPS;
+            if (gps.HasCurrentLocation)
+                currentRegionIndex = gps.CurrentRegionIndex;
+            else
+                return cost;
+
+            adjustedCost = cost * player.PriceAdjustmentByRegion[currentRegionIndex] / 1000;
+            if (adjustedCost < 1)
+                adjustedCost = 1;
+            return adjustedCost;
+        }
+
+        public static ushort[] RandomRegionalPriceAdjustments()
+        {
+            ushort[] priceAdjustments = new ushort[62];
+            for (int i = 0; i < 62; ++i)
+            {
+                priceAdjustments[i] = (ushort)(UnityEngine.Random.Range(0, 501) + 750);
+            }
+
+            return priceAdjustments;
         }
 
         #endregion
