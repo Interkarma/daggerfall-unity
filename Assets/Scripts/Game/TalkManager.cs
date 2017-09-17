@@ -129,8 +129,18 @@ namespace DaggerfallWorkshop.Game
         // last target npc for a conversion (null if not talked to any mobile npc yet)
         MobilePersonNPC lastTargetNPC = null;
 
+        public enum KeySubjectType
+        {
+            Unset,
+            Building,
+            Person,
+            Thing,
+            Work
+        }
+
         string nameNPC = "";
         string currentKeySubject = "";
+        KeySubjectType currentKeySubjectType = KeySubjectType.Unset;
         int currentKeySubjectBuildingKey = -1;
 
         List<ListItem> listTopicTellMeAbout;
@@ -166,6 +176,11 @@ namespace DaggerfallWorkshop.Game
         public string CurrentKeySubject
         {
             get { return currentKeySubject; }
+        }
+
+        public KeySubjectType CurrentKeySubjectType
+        {
+            get { return currentKeySubjectType;  }
         }
 
         public bool MarkLocationOnMap
@@ -303,6 +318,11 @@ namespace DaggerfallWorkshop.Game
             return questionOpeningText;
         }
 
+        public string GetWorkString()
+        {
+            return expandRandomTextRecord(7211);
+        }
+
         public string GetKeySubjectLocationDirection()
         {
             string directionHint = "";
@@ -376,6 +396,7 @@ namespace DaggerfallWorkshop.Game
                     question = "not implemented";
                     break;
                 case QuestionType.LocalBuilding:
+                    currentKeySubjectType = KeySubjectType.Building;
                     currentKeySubjectBuildingKey = listItem.buildingKey;
                     question = expandRandomTextRecord(7225 + toneIndex);
                     break;
@@ -389,7 +410,8 @@ namespace DaggerfallWorkshop.Game
                     question = "not implemented";
                     break;
                 case QuestionType.Work:
-                    question = expandRandomTextRecord(7211 + toneIndex);
+                    currentKeySubjectType = KeySubjectType.Work;
+                    question = expandRandomTextRecord(7212 + toneIndex);
                     break;
             }            
             return question;

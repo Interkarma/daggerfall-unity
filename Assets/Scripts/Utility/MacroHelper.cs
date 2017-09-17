@@ -41,7 +41,7 @@ namespace DaggerfallWorkshop.Utility
             { "%1hn", null }, // ?
             { "%2am", null }, // 2nd + Magnitude
             { "%2bm", null }, // 2nd Base Magnitude
-            { "%2com", null },// ?
+            { "%2com", DummyResolve2com },// ? (comment Nystul: it seems to be used in questions about work - it seems to be resolved to an empty string but not sure what else this macro does)
             { "%2hn", null }, // ?
             { "%3hn", null }, // ?
             { "%a", Amount },   // Cost of somthing.
@@ -111,7 +111,7 @@ namespace DaggerfallWorkshop.Utility
             { "%int", Int }, // Amount of Intelligence
             { "%it", ItemName },  //  Item
             { "%jok", null }, // A joke
-            { "%key", DialogKeySubject }, // A location (?) (comment Nystul: yeah seems so, it is the building you are asking about how it seems - not sure if it can be anything else than a building, e.g. target person or item as well)
+            { "%key", DialogKeySubject }, // A location (?) (comment Nystul: it is the topic you are asking about (e.g. building, work, etc.) how it seems)
             { "%key2", null },// Another location
             { "%kg", Weight },  //  Weight of items
             { "%kno", null }, // A knightly guild name
@@ -509,6 +509,12 @@ namespace DaggerfallWorkshop.Utility
             return GameManager.Instance.TalkManager.GetPCGreetingOrFollowUpText();
         }
 
+        private static string DummyResolve2com(IMacroContextProvider mcp)
+        {
+            // %2com
+            return ""; // return empty string for now - not known if it does something else in classic
+        }
+
         private static string NameDialogPartner(IMacroContextProvider mcp)
         {
             // %n
@@ -518,7 +524,20 @@ namespace DaggerfallWorkshop.Utility
         private static string DialogKeySubject(IMacroContextProvider mcp)
         {
             // %key
-            return GameManager.Instance.TalkManager.CurrentKeySubject;
+            switch (GameManager.Instance.TalkManager.CurrentKeySubjectType)
+            {
+                case TalkManager.KeySubjectType.Unset:
+                default:
+                    return "";
+                case TalkManager.KeySubjectType.Building:
+                    return GameManager.Instance.TalkManager.CurrentKeySubject;
+                case TalkManager.KeySubjectType.Person:
+                    return GameManager.Instance.TalkManager.CurrentKeySubject;
+                case TalkManager.KeySubjectType.Thing:
+                    return GameManager.Instance.TalkManager.CurrentKeySubject;
+                case TalkManager.KeySubjectType.Work:
+                    return GameManager.Instance.TalkManager.GetWorkString();
+            }
         }
 
         private static string DialogLocationDirection(IMacroContextProvider mcp)
