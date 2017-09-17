@@ -26,11 +26,6 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
     /// </summary>
     static public class MeshReplacement
     {
-        /// <summary>
-        /// Winter tag added after id for winter models.
-        /// </summary>
-        const string winterTag = "_winter";
-
         #region Public Methods
 
         /// <summary>
@@ -50,22 +45,23 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 return null;
 
             // Get name
-            string modelName = modelID.ToString();
+            string modelName = modelID.ToString();;
+            string climateModelName = ClimateSeasonName(modelName);
 
 #if DEVELOPMENT_BUILD
 
             // Import Gameobject from Resources
             string path = "Models/" + modelName + "/";
-            if (Resources.Load(path + modelName) != null)
+            if (Resources.Load(path + climateModelName) != null)
             {
-                // Assign the name according to the current season
-                if (IsWinter())
-                {
-                    if (Resources.Load(path + modelName + winterTag) != null)
-                        modelName += winterTag;
-                }
-
-                // Import GameObject
+                // Import model fo specific climate/season
+                GameObject go = GameObject.Instantiate(Resources.Load(path + climateModelName) as GameObject);
+                InstantiateCustomModel(go, parent, matrix, climateModelName);
+                return go;
+            }
+            else if (Resources.Load(path + modelName) != null)
+            {
+                // Import generic model
                 GameObject go = GameObject.Instantiate(Resources.Load(path + modelName) as GameObject);
                 InstantiateCustomModel(go, parent, matrix, modelName);
                 return go;
@@ -78,20 +74,26 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             for (int i = mods.Length; i-- > 0;)
             {
                 AssetBundle bundle = mods[i].AssetBundle;
-                if (bundle && bundle.Contains(modelName))
+                if (bundle)
                 {
-                    // Assign the name according to the current season
-                    if (IsWinter() && bundle.Contains(modelName + winterTag))
-                            modelName += winterTag;
+                    // Get Name
+                    string name;
+                    if (bundle.Contains(climateModelName))
+                        name = climateModelName;
+                    else if (bundle.Contains(modelName))
+                        name = modelName;
+                    else
+                        continue;
 
-                    GameObject go = mods[i].GetAsset<GameObject>(modelName, true);
-                    if (go != null)
+                    // Import GameObject
+                    GameObject go = mods[i].GetAsset<GameObject>(name, true);
+                    if (go)
                     {
-                        InstantiateCustomModel(go, parent, matrix, modelName);
+                        InstantiateCustomModel(go, parent, matrix, name);
                         return go;
                     }
 
-                    Debug.LogError("Failed to import " + modelName + " from " + mods[i].Title + " as GameObject.");
+                    Debug.LogErrorFormat("Failed to import {0} from {1} as GameObject.", climateModelName, mods[i].Title);
                 }
             }
 
@@ -156,12 +158,27 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         #region Private Methods
 
         /// <summary>
-        /// Check if is winter and we are in a location which supports winter models.
+        /// Get model name for current climate and season.
         /// </summary>
-        static private bool IsWinter()
+        private static string ClimateSeasonName(string modelName)
         {
-            return ((GameManager.Instance.PlayerGPS.ClimateSettings.ClimateType != DaggerfallConnect.DFLocation.ClimateBaseType.Desert) 
-                && (DaggerfallUnity.Instance.WorldTime.Now.SeasonValue == DaggerfallDateTime.Seasons.Winter));
+            if (!GameManager.HasInstance)
+                return modelName;
+
+            // Get climate
+            ClimateBases climateBase = ClimateSwaps.FromAPIClimateBase(GameManager.Instance.PlayerGPS.ClimateSettings.ClimateType);
+            string name = modelName + "_" + climateBase.ToString();
+
+            // Get season
+            if (climateBase != ClimateBases.Desert)
+            {
+                if (DaggerfallUnity.Instance.WorldTime.Now.SeasonValue == DaggerfallDateTime.Seasons.Winter)
+                    name += "Winter";
+                else
+                    name += "Summer";
+            } 
+                
+            return name;
         }
 
         /// <summary>
