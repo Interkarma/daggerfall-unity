@@ -67,6 +67,11 @@ namespace DaggerfallConnect.Save
             doc.currentHealth = parsedData.currentHealth;
             doc.maxHealth = parsedData.maxHealth;
             doc.currentSpellPoints = parsedData.currentSpellPoints;
+            doc.reputationCommoners = parsedData.reputationCommoners;
+            doc.reputationMerchants = parsedData.reputationMerchants;
+            doc.reputationNobility = parsedData.reputationNobility;
+            doc.reputationScholars = parsedData.reputationScholars;
+            doc.reputationUnderworld = parsedData.reputationUnderworld;
             doc.currentFatigue = parsedData.currentFatigue;
             doc.skillUses = parsedData.skillUses;
             doc.startingLevelUpSkillSum = parsedData.startingLevelUpSkillSum;

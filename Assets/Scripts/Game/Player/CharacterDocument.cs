@@ -35,6 +35,11 @@ namespace DaggerfallWorkshop.Game.Player
         public int currentHealth;
         public int maxHealth;
         public int currentSpellPoints;
+        public short reputationCommoners;
+        public short reputationMerchants;
+        public short reputationNobility;
+        public short reputationScholars;
+        public short reputationUnderworld;
         public int currentFatigue;
         public short[] skillUses;
         public int startingLevelUpSkillSum;

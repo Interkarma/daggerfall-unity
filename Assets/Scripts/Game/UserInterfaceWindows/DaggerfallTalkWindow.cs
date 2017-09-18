@@ -102,7 +102,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Texture2D texturePortrait;
 
         Panel panelNameNPC;
-        TextLabel labelNameNPC = null;        
+        TextLabel labelNameNPC = null;
 
         Color[] textureTellMeAboutNormal;
         Color[] textureTellMeAboutHighlighted;

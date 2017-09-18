@@ -142,6 +142,7 @@ namespace DaggerfallWorkshop.Game
         string currentKeySubject = "";
         KeySubjectType currentKeySubjectType = KeySubjectType.Unset;
         int currentKeySubjectBuildingKey = -1;
+        int reactionToPlayer = 0;
 
         List<ListItem> listTopicTellMeAbout;
         List<ListItem> listTopicLocation;
@@ -256,7 +257,7 @@ namespace DaggerfallWorkshop.Game
 
         #region Public Methods        
 
-        public void SetTargetNPC(MobilePersonNPC targetNPC)
+        public void SetTargetNPC(MobilePersonNPC targetNPC, int reactionToPlayer)
         {
             if (targetNPC == lastTargetNPC)
                 return;
@@ -266,6 +267,8 @@ namespace DaggerfallWorkshop.Game
             lastTargetNPC = targetNPC;
 
             nameNPC = targetNPC.NameNPC;
+
+            this.reactionToPlayer = reactionToPlayer;
 
             // reset npc knowledge, for now it resets every time the npc has changed (player talked to new npc)
             // TODO: match classic daggerfall - in classic npc remember their knowledge about topics for their time of existence
@@ -283,10 +286,31 @@ namespace DaggerfallWorkshop.Game
 
         public string GetNPCGreetingText()
         {
-            //string greetingString = DaggerfallUnity.Instance.TextProvider.GetRandomText(7206);
-            //string greetingString = DaggerfallUnity.Instance.TextProvider.GetRandomText(7207);
-            //string greetingString = DaggerfallUnity.Instance.TextProvider.GetRandomText(7208);
-            string greetingString = expandRandomTextRecord(7209) + " ";
+            const int dislikePlayerGreetingTextId = 7206;
+            const int neutralToPlayerGreetingTextId = 7207;
+            const int likePlayerGreetingTextId = 7208;
+            const int veryLikePlayerGreetingTextId = 7209;
+
+            string greetingString = "";
+
+            if (reactionToPlayer >= 0)
+            {
+                if (reactionToPlayer >= 10)
+                {
+                    if (reactionToPlayer >= 30)
+                        greetingString = expandRandomTextRecord(veryLikePlayerGreetingTextId);
+                    else
+                        greetingString = expandRandomTextRecord(likePlayerGreetingTextId);
+                }
+                else
+                {
+                    greetingString = expandRandomTextRecord(neutralToPlayerGreetingTextId);
+                }
+            }
+            else
+            {
+                greetingString = expandRandomTextRecord(dislikePlayerGreetingTextId);
+            }
             
             return (greetingString);
         }

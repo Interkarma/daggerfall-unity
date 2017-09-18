@@ -52,6 +52,8 @@ namespace DaggerfallWorkshop.Game.Entity
         protected int currentLevelUpSkillSum = 0;
         protected bool readyToLevelUp = false;
 
+        protected short[] sGroupReputations = new short[5];
+
         protected int biographyResistDiseaseMod = 0;
         protected int biographyResistMagicMod = 0;
         protected int biographyAvoidHitMod = 0;
@@ -85,6 +87,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public int StartingLevelUpSkillSum { get { return startingLevelUpSkillSum; } set { startingLevelUpSkillSum = value; } }
         public int CurrentLevelUpSkillSum {  get { return currentLevelUpSkillSum; } }
         public bool ReadyToLevelUp { get { return readyToLevelUp; } set { readyToLevelUp = value; } }
+        public short[] SGroupReputations { get { return sGroupReputations; } set { sGroupReputations = value; } }
         public int BiographyResistDiseaseMod { get { return biographyResistDiseaseMod; } set { biographyResistDiseaseMod = value; } }
         public int BiographyResistMagicMod { get { return biographyResistMagicMod; } set { biographyResistMagicMod = value; } }
         public int BiographyAvoidHitMod { get { return biographyAvoidHitMod; } set { biographyAvoidHitMod = value; } }
@@ -157,6 +160,11 @@ namespace DaggerfallWorkshop.Game.Entity
             this.maxHealth = character.maxHealth;
             this.currentHealth = character.currentHealth;
             this.currentMagicka = character.currentSpellPoints;
+            this.sGroupReputations[0] = character.reputationCommoners;
+            this.sGroupReputations[1] = character.reputationMerchants;
+            this.sGroupReputations[2] = character.reputationNobility;
+            this.sGroupReputations[3] = character.reputationScholars;
+            this.sGroupReputations[4] = character.reputationUnderworld;
             this.currentFatigue = character.currentFatigue;
             this.skillUses = character.skillUses;
             this.startingLevelUpSkillSum = character.startingLevelUpSkillSum;
