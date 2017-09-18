@@ -202,10 +202,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 Rect rectLabel = new Rect(this.Parent.Position + this.Position, this.Size * textScale);
 
-                float leftCut = Math.Max(0, rectRestrictedRenderArea.xMin - rectLabel.xMin) / textScale;
-                float rightCut = Math.Max(0, rectLabel.xMax - rectRestrictedRenderArea.xMax) / textScale;
-                float topCut = Math.Max(0, rectRestrictedRenderArea.yMin - rectLabel.yMin) / textScale;
-                float bottomCut = Math.Max(0, rectLabel.yMax - rectRestrictedRenderArea.yMax) / textScale;
+                float leftCut = Mathf.Round(Math.Max(0, rectRestrictedRenderArea.xMin - rectLabel.xMin) / textScale);
+                float rightCut = Mathf.Round(Math.Max(0, rectLabel.xMax - rectRestrictedRenderArea.xMax) / textScale);
+                float topCut = Mathf.Round(Math.Max(0, rectRestrictedRenderArea.yMin - rectLabel.yMin) / textScale);
+                float bottomCut = Mathf.Round(Math.Max(0, rectLabel.yMax - rectRestrictedRenderArea.yMax) / textScale);
 
                 if ((leftCut == 0) && (rightCut == 0) && (topCut == 0) && (bottomCut == 0))
                 {
