@@ -200,7 +200,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Texture2D textureToDraw;
             if (useRestrictedRenderArea)
             {
-                Rect rectLabel = new Rect(this.Parent.Position + this.Position, this.Size * textScale);               
+                Rect rectLabel = new Rect(this.Parent.Position + this.Position, this.Size);
 
                 float leftCut = Math.Max(0, rectRestrictedRenderArea.xMin - rectLabel.xMin);
                 float rightCut = Math.Max(0, rectLabel.xMax - rectRestrictedRenderArea.xMax);
