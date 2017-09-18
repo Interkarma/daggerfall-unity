@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -263,6 +263,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 innerRect = new Rect(0, 0, (float)totalWidth / (float)textureWidth, (float)totalHeight / (float)textureHeight);
                 textureToDraw = labelTexture;
             }
+
+            // compensate for textScale
+            totalRect.xMax = totalRect.xMin + totalRect.width * textScale;
+            totalRect.yMax = totalRect.yMin + totalRect.height * textScale;
 
             // Draw shadow            
             if (shadowPosition != Vector2.zero)

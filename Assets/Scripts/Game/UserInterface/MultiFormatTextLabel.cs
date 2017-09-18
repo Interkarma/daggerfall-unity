@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -28,6 +28,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const int tabWidth = 35;
 
         PixelFont font;
+        float textScale = 1.0f; // scale text 
         int rowLeading = 0;
         Vector2 shadowPosition = DaggerfallUI.DaggerfallDefaultShadowPos;
         Color textColor = DaggerfallUI.DaggerfallDefaultTextColor;
@@ -61,6 +62,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             get { return maxTextWidth; }
             set { maxTextWidth = value; }
+        }
+
+        /// <summary>
+        /// set text scale factor - 1.0f is default value, 0.5f is half sized text, 2.0f double sized text and so on
+        /// </summary>
+        public float TextScale
+        {
+            get { return textScale; }
+            set { textScale = value; }
         }
 
         /// <summary>
@@ -160,6 +170,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             textLabel.Font = font;
             textLabel.Position = new Vector2(cursorX, cursorY);
             textLabel.WrapText = wrapText;
+            textLabel.TextScale = TextScale;
 
             // Use max width if it has been specified
             if (maxTextWidth > 0)

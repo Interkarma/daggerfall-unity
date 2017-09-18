@@ -62,6 +62,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected Rect remoteTargetIconRect = new Rect(263, 12, 55, 34);
         protected Rect localTargetIconRect = new Rect(165, 12, 55, 34);
+        protected Rect infoCutoutRect = new Rect(196, 68, 50, 37);
 
         protected Rect exitButtonRect = new Rect(222, 178, 39, 22);
 
@@ -100,7 +101,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         PaperDoll paperDoll = new PaperDoll();
         protected Panel localTargetIconPanel;
-        protected MultiFormatTextLabel localTargetInfoLabel;
+        protected MultiFormatTextLabel localTargetItemInfoLabel;
         protected Panel remoteTargetIconPanel;
         protected TextLabel remoteTargetIconLabel;
 
@@ -138,6 +139,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected Texture2D redDownArrow;
         protected Texture2D greenDownArrow;
 
+        protected Texture2D infoTexture;
+
         #endregion
 
         #region Fields
@@ -146,8 +149,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string goldTextureName = "INVE01I0.IMG";
         const string greenArrowsTextureName = "INVE06I0.IMG";           // Green up/down arrows when more items available
         const string redArrowsTextureName = "INVE07I0.IMG";             // Red up/down arrows when no more items available
+        const string infoTextureName = "ITEM00I0.IMG";
 
-        protected const int listDisplayUnits = 4;                                 // Number of items displayed in scrolling areas
+        protected const int listDisplayUnits = 4;                       // Number of items displayed in scrolling areas
         const int accessoryCount = 12;                                  // Number of accessory slots
         const int itemButtonMarginSize = 2;                             // Margin of item buttons
         const int accessoryButtonMarginSize = 1;                        // Margin of accessory buttons
@@ -271,22 +275,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Setup local and remote target icon panels
             localTargetIconPanel = DaggerfallUI.AddPanel(localTargetIconRect, NativePanel);
-            localTargetIconPanel.BackgroundColor = new Color(0.1f, 0.2f, 0.6f, 0.5f);
+            localTargetIconPanel.BackgroundTexture = infoTexture;
             remoteTargetIconPanel = DaggerfallUI.AddPanel(remoteTargetIconRect, NativePanel);
             remoteTargetIconLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(1, 2), remoteTargetIconPanel);
 
-            // Setup item info panel
-            localTargetInfoLabel = new MultiFormatTextLabel(); //DaggerfallUI.AddTextLabel(DaggerfallUI.Instance.Font4, Vector2.zero, string.Empty, localTargetIconPanel);
-            //localTargetInfoLabel.HorizontalAlignment = HorizontalAlignment.Left;
-            //localTargetInfoLabel.VerticalAlignment = VerticalAlignment.Top;
-            localTargetInfoLabel.BackgroundColor = new Color(0.1f, 0.6f, 0.1f, 0.5f);
-
-            localTargetInfoLabel.ShadowPosition = Vector2.zero;
-            localTargetInfoLabel.AutoSize = AutoSizeModes.ResizeToFill;
-            //localTargetInfoLabel.Scale = new Vector2(0.5f, 0.5f);
-            //localTargetInfoLabel.Font = DaggerfallUI.Instance.GetHQPixelFont(DaggerfallUI.HQPixelFonts.Petrock_32);
-            localTargetInfoLabel.TextColor = DaggerfallUI.DaggerfallUnityDefaultToolTipTextColor;
-            localTargetIconPanel.Components.Add(localTargetInfoLabel);
+            // Setup item info panel in local target icon if configured
+            localTargetItemInfoLabel = new MultiFormatTextLabel();
+            localTargetItemInfoLabel.Position = new Vector2(2, 0);
+            localTargetItemInfoLabel.VerticalAlignment = VerticalAlignment.Middle;
+            localTargetItemInfoLabel.MaxTextWidth = 53;
+            localTargetItemInfoLabel.ShadowPosition = Vector2.zero;
+            localTargetItemInfoLabel.TextScale = 0.6f;
+            localTargetItemInfoLabel.TextColor = DaggerfallUI.DaggerfallUnityDefaultToolTipTextColor;
+            localTargetIconPanel.Components.Add(localTargetItemInfoLabel);
 
             // Setup initial state
             SelectTabPage(TabPages.WeaponsAndArmor);
@@ -438,6 +439,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 remoteItemsButtons[i].ToolTip = defaultToolTip;
                 remoteItemsButtons[i].Tag = i;
                 remoteItemsButtons[i].OnMouseClick += RemoteItemsButton_OnMouseClick;
+                remoteItemsButtons[i].OnMouseEnter += RemoteItemsButton_OnMouseEnter;
 
                 // Icon image panel
                 remoteItemsIconPanels[i] = DaggerfallUI.AddPanel(remoteItemsButtons[i], AutoSizeModes.ScaleToFit);
@@ -1080,6 +1082,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             removeSelected = ImageReader.GetSubTexture(goldTexture, removeButtonRect);
             useSelected = ImageReader.GetSubTexture(goldTexture, useButtonRect);
 
+            Texture2D infoBaseTexture = ImageReader.GetTexture(infoTextureName);
+            infoTexture = ImageReader.GetSubTexture(infoBaseTexture, infoCutoutRect);
         }
 
         /// <summary>
@@ -1613,22 +1617,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected virtual void LocalItemsButton_OnMouseEnter(BaseScreenComponent sender)
         {
-            Debug.Log("mouse enter");
             // Get index
             int index = localItemsScrollBar.ScrollIndex + (int)sender.Tag;
             if (index >= localItemsFiltered.Count)
                 return;
-
             // Get item
             DaggerfallUnityItem item = localItemsFiltered[index];
             if (item == null)
                 return;
-
-            // Display info in local target icon panel
-            TextFile.Token[] tokens = ItemHelper.GetItemInfo(item, DaggerfallUnity.TextProvider);
-            MacroHelper.ExpandMacros(ref tokens, item);
-            localTargetInfoLabel.SetText(tokens);
-            Debug.Log(tokens[0].ToString());
+            UpdateItemInfoPanel(item);
         }
 
         protected virtual void RemoteItemsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -1678,6 +1675,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        protected virtual void RemoteItemsButton_OnMouseEnter(BaseScreenComponent sender)
+        {
+            // Get index
+            int index = remoteItemsScrollBar.ScrollIndex + (int)sender.Tag;
+            if (index >= remoteItemsFiltered.Count)
+                return;
+            // Get item
+            DaggerfallUnityItem item = remoteItemsFiltered[index];
+            if (item == null)
+                return;
+            UpdateItemInfoPanel(item);
+        }
+
         protected void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             CloseWindow();
@@ -1705,8 +1715,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     DaggerfallUnityItem item = playerEntity.ItemEquipTable.EquipTable[value];
                     if (item != null)
                         text = item.LongName;
-                }
 
+                    // Update the info panel
+                    UpdateItemInfoPanel(item);
+                }
                 // Update tooltip text
                 paperDoll.ToolTipText = text;
             }
@@ -1716,6 +1728,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 paperDoll.ToolTipText = string.Empty;
                 lastMouseOverPaperDollEquipIndex = value;
             }
+        }
+
+        private void UpdateItemInfoPanel(DaggerfallUnityItem item)
+        {
+            // Display info in local target icon panel, replacing justification tokens
+            TextFile.Token[] tokens = ItemHelper.GetItemInfo(item, DaggerfallUnity.TextProvider);
+            for (int tokenIdx = 0; tokenIdx < tokens.Length; tokenIdx++)
+            {
+                if (tokens[tokenIdx].formatting == TextFile.Formatting.JustifyCenter)
+                    tokens[tokenIdx].formatting = TextFile.Formatting.NewLine;
+                if (tokens[tokenIdx].text != null)
+                    tokens[tokenIdx].text = tokens[tokenIdx].text.Replace("kilograms", "kg").Replace("points of damage", "damage");
+            }
+            MacroHelper.ExpandMacros(ref tokens, item);
+            localTargetItemInfoLabel.SetText(tokens);
         }
 
         protected virtual void StartGameBehaviour_OnNewGame()
