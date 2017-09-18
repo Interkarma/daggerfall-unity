@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -93,6 +93,7 @@ namespace DaggerfallWorkshop
         public int ShopQualityPresentation { get; set; }
         public int ShopQualityHUDDelay { get; set; }
         public bool ShowQuestJournalClocksAsCountdown { get; set; }
+        public bool EnableInventoryInfoPanel { get; set; }
 
         // [Controls]
         public bool InvertMouseVertical { get; set; }
@@ -155,6 +156,7 @@ namespace DaggerfallWorkshop
             ToolTipDelayInSeconds = GetFloat(sectionGUI, "ToolTipDelayInSeconds", 0, 10);
             ToolTipBackgroundColor = GetColor(sectionGUI, "ToolTipBackgroundColor", DaggerfallUI.DaggerfallUnityDefaultToolTipBackgroundColor);
             ToolTipTextColor = GetColor(sectionGUI, "ToolTipTextColor", DaggerfallUI.DaggerfallUnityDefaultToolTipTextColor);
+            EnableInventoryInfoPanel = GetBool(sectionGUI, "EnableInventoryInfoPanel");
             AutomapNumberOfDungeons = GetInt(sectionGUI, "AutomapNumberOfDungeons", 0, 100);
             ShopQualityPresentation = GetInt(sectionGUI, "ShopQualityPresentation", 0, 2);
             ShopQualityHUDDelay = GetInt(sectionGUI, "ShopQualityHUDDelay", 1, 10);
