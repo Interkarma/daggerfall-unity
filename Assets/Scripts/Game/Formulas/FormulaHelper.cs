@@ -772,6 +772,36 @@ namespace DaggerfallWorkshop.Game.Formulas
             return priceAdjustments;
         }
 
+        public static ushort[] ModifyPriceAdjustmentByRegion(ushort[] currentPriceAdjustments, uint times)
+        {
+            DaggerfallConnect.Arena2.FactionFile.FactionData merchantsFaction;
+            if (!GameManager.Instance.PlayerEntity.FactionData.GetFactionData(510, out merchantsFaction))
+                return currentPriceAdjustments;
+
+            for (int i = 0; i < 62; ++i)
+            {
+                DaggerfallConnect.Arena2.FactionFile.FactionData regionFaction;
+                if (GameManager.Instance.PlayerEntity.FactionData.FindFactionByTypeAndRegion(7, i + 1, out regionFaction))
+                {
+                    for (int j = 0; j < times; ++j)
+                    {
+                        int chanceOfPriceRise = ((merchantsFaction.power) - (regionFaction.power)) / 5
+                            + 50 - (currentPriceAdjustments[i] - 1000) / 25;
+                        if (UnityEngine.Random.Range(0, 101) >= chanceOfPriceRise)
+                            currentPriceAdjustments[i] = (ushort)(49 * currentPriceAdjustments[i] / 50);
+                        else
+                            currentPriceAdjustments[i] = (ushort)(51 * currentPriceAdjustments[i] / 50);
+
+                        Mathf.Clamp(currentPriceAdjustments[i], 250, 4000);
+                    }
+                }
+
+                // TODO: There is a bit more to this, possibly adjustments to regional power.
+            }
+
+            return currentPriceAdjustments;
+        }
+
         #endregion
     }
 }
