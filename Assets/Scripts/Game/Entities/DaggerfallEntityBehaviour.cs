@@ -33,7 +33,7 @@ namespace DaggerfallWorkshop.Game.Entity
         EntityTypes lastEntityType = EntityTypes.None;
         DaggerfallEntity entity = null;
 
-        private int lastGameMinute = -1;
+        private uint lastGameMinutes = 0;
         PlayerMotor playerMotor = null;
 
         // Fatigue loss per in-game minute
@@ -98,6 +98,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
             if (EntityType == EntityTypes.Player)
             {
+                uint gameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
                 // Wait until game has started and the game time has been set.
                 // If the game time is taken before then "30" is returned, which causes an initial player fatigue loss
                 // after loading or starting a game with a non-30 minute.
@@ -107,11 +108,10 @@ namespace DaggerfallWorkshop.Game.Entity
                     gameStarted = true;
 
                 // Every game minute, apply fatigue loss to the player
-                if (lastGameMinute == -1 && lastGameMinute != DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.Minute)
-                    lastGameMinute = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.Minute;
-                else if (lastGameMinute != DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.Minute)
+                if (lastGameMinutes == 0 && lastGameMinutes != gameMinutes)
+                    lastGameMinutes = gameMinutes;
+                else if (lastGameMinutes != gameMinutes)
                 {
-                    lastGameMinute = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.Minute;
                     if (playerMotor.IsRunning)
                         Entity.DecreaseFatigue(RunningFatigueLoss);
                     else
@@ -130,6 +130,19 @@ namespace DaggerfallWorkshop.Game.Entity
                 {
                     CheckedCurrentJump = false;
                 }
+
+                // Adjust regional prices each time a day passes.
+                uint lastDay = lastGameMinutes / 1440;
+                uint currentDay = gameMinutes / 1440;
+                uint daysPast = currentDay - lastDay;
+
+                if (daysPast > 0)
+                {
+                    Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
+                    FormulaHelper.ModifyPriceAdjustmentByRegion(player.PriceAdjustmentByRegion, daysPast);
+                }
+
+                lastGameMinutes = gameMinutes;
 
                 //HandleStartingCrimeGuildQuests(Entity as PlayerEntity);
             }

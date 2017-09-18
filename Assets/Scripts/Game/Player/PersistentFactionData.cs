@@ -177,6 +177,50 @@ namespace DaggerfallWorkshop.Game.Player
         }
 
         /// <summary>
+        /// Finds faction of the given type and for the given region.
+        /// If a match for both is not found, the last faction that matched type and had -1 for region is returned.
+        /// A function like this exists in classic and is used in a number of places.
+        /// One known use case is for finding the region factions. If no specific
+        /// faction exists for the region, Random Ruler (region -1) is returned.
+        /// </summary>
+        /// <param name="type">Type to match.</param>
+        /// <param name="oneBasedRegionIndex">Region index to match. Must be ONE-BASED region index used by FACTION.TXT.</param>
+        /// <param name="factionDataOut">Receives faction data.</param>
+        /// <returns>True if successful.</returns>
+        public bool FindFactionByTypeAndRegion(int type, int oneBasedRegionIndex, out FactionFile.FactionData factionDataOut)
+        {
+            bool foundPartialMatch = false;
+            factionDataOut = new FactionFile.FactionData();
+            FactionFile.FactionData partialMatch = new FactionFile.FactionData();
+
+            // Match faction items
+            foreach (FactionFile.FactionData item in factionDict.Values)
+            {
+                if (type == item.type && oneBasedRegionIndex == item.region)
+                {
+                    factionDataOut = item;
+                    return true;
+                }
+                else if (type == item.type && item.region == -1)
+                {
+                    foundPartialMatch = true;
+                    partialMatch = item;
+                }
+            }
+
+            if (foundPartialMatch)
+            {
+                factionDataOut = partialMatch;
+                return true;
+            }
+            else
+            {
+                Debug.LogFormat("PersistentFactionData.FindFactionByTypeAndRegion() couldn't find the requested faction. Type {0}, RegionIndex {1}", type, oneBasedRegionIndex);
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Gets faction ID from name. Experimental.
         /// </summary>
         /// <param name="name">Name of faction to get ID of.</param>
