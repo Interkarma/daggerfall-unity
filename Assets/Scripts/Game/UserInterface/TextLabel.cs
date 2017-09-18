@@ -167,7 +167,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public float TextScale
         {
             get { return textScale; }
-            set { textScale = value; }
+            set
+            {
+                textScale = Math.Max(0.1f, Math.Min(2.0f, value));
+                CreateLabelTexture();
+            }
         }
 
         public void setPosition(Vector2 newPos)
