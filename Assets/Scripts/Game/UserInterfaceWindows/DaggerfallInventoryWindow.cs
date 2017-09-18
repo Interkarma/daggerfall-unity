@@ -306,9 +306,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 localTargetItemInfoLabel = new MultiFormatTextLabel();
                 localTargetItemInfoLabel.Position = new Vector2(2, 0);
                 localTargetItemInfoLabel.VerticalAlignment = VerticalAlignment.Middle;
-                localTargetItemInfoLabel.MaxTextWidth = 53;
                 localTargetItemInfoLabel.ShadowPosition = Vector2.zero;
-                localTargetItemInfoLabel.TextScale = 0.6f;
+                localTargetItemInfoLabel.TextScale = 0.75f;
+                localTargetItemInfoLabel.MaxTextWidth = 71;
                 localTargetItemInfoLabel.TextColor = DaggerfallUI.DaggerfallUnityDefaultToolTipTextColor;
                 localTargetIconPanel.Components.Add(localTargetItemInfoLabel);
             }
@@ -493,6 +493,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 button.ToolTip = defaultToolTip;
                 button.Tag = i;
                 button.OnMouseClick += AccessoryItemsButton_OnMouseClick;
+                if (localTargetItemInfoLabel != null)
+                    button.OnMouseEnter += AccessoryItemsButton_OnMouseEnter;
                 accessoryButtons[i] = button;
 
                 // Create icon panel
@@ -1625,19 +1627,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        protected virtual void LocalItemsButton_OnMouseEnter(BaseScreenComponent sender)
-        {
-            // Get index
-            int index = localItemsScrollBar.ScrollIndex + (int)sender.Tag;
-            if (index >= localItemsFiltered.Count)
-                return;
-            // Get item
-            DaggerfallUnityItem item = localItemsFiltered[index];
-            if (item == null)
-                return;
-            UpdateItemInfoPanel(item);
-        }
-
         protected virtual void RemoteItemsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             // Get index
@@ -1685,19 +1674,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        protected virtual void RemoteItemsButton_OnMouseEnter(BaseScreenComponent sender)
-        {
-            // Get index
-            int index = remoteItemsScrollBar.ScrollIndex + (int)sender.Tag;
-            if (index >= remoteItemsFiltered.Count)
-                return;
-            // Get item
-            DaggerfallUnityItem item = remoteItemsFiltered[index];
-            if (item == null)
-                return;
-            UpdateItemInfoPanel(item);
-        }
-
         protected void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             CloseWindow();
@@ -1705,7 +1681,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #endregion
 
-        #region Other Event Handlers
+        #region Hover & StartGame Event Handlers
 
         private void PaperDoll_OnMouseMove(int x, int y)
         {
@@ -1739,6 +1715,42 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 paperDoll.ToolTipText = string.Empty;
                 lastMouseOverPaperDollEquipIndex = value;
             }
+        }
+
+        protected virtual void AccessoryItemsButton_OnMouseEnter(BaseScreenComponent sender)
+        {
+            // Get item
+            EquipSlots slot = (EquipSlots)sender.Tag;
+            DaggerfallUnityItem item = playerEntity.ItemEquipTable.GetItem(slot);
+            if (item == null)
+                return;
+            UpdateItemInfoPanel(item);
+        }
+
+        protected virtual void LocalItemsButton_OnMouseEnter(BaseScreenComponent sender)
+        {
+            // Get index
+            int index = localItemsScrollBar.ScrollIndex + (int)sender.Tag;
+            if (index >= localItemsFiltered.Count)
+                return;
+            // Get item
+            DaggerfallUnityItem item = localItemsFiltered[index];
+            if (item == null)
+                return;
+            UpdateItemInfoPanel(item);
+        }
+
+        protected virtual void RemoteItemsButton_OnMouseEnter(BaseScreenComponent sender)
+        {
+            // Get index
+            int index = remoteItemsScrollBar.ScrollIndex + (int)sender.Tag;
+            if (index >= remoteItemsFiltered.Count)
+                return;
+            // Get item
+            DaggerfallUnityItem item = remoteItemsFiltered[index];
+            if (item == null)
+                return;
+            UpdateItemInfoPanel(item);
         }
 
         private void UpdateItemInfoPanel(DaggerfallUnityItem item)
