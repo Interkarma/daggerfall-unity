@@ -49,6 +49,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         bool useRestrictedRenderArea = false;
         Rect rectRestrictedRenderArea;
 
+        float textScale = 1.0f; // scale text 
+
         /// <summary>
         /// Maximum length of label string.
         /// Setting to -1 allows for any length.
@@ -105,12 +107,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public int TextWidth
         {
-            get { return totalWidth; }
+            get { return (int)(totalWidth * textScale); }
         }
 
         public int TextHeight
         {
-            get { return totalHeight; }
+            get { return (int)(totalHeight * textScale); }
         }
 
         public int NumTextLines
@@ -159,6 +161,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
+        /// <summary>
+        /// set text scale factor - 1.0f is default value, 0.5f is half sized text, 2.0f double sized text and so on
+        /// </summary>
+        public float TextScale
+        {
+            get { return textScale; }
+            set { textScale = value; }
+        }
+
         public void setPosition(Vector2 newPos)
         {
             this.Position = newPos;
@@ -185,7 +196,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Texture2D textureToDraw;
             if (useRestrictedRenderArea)
             {
-                Rect rectLabel = new Rect(this.Parent.Position + this.Position, this.Size);               
+                Rect rectLabel = new Rect(this.Parent.Position + this.Position, this.Size * textScale);               
 
                 float leftCut = Math.Max(0, rectRestrictedRenderArea.xMin - rectLabel.xMin);
                 float rightCut = Math.Max(0, rectLabel.xMax - rectRestrictedRenderArea.xMax);
@@ -215,7 +226,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     float xMinScreen = (rectLabel.xMin + leftCut) * LocalScale.x + this.Parent.Parent.Rectangle.x;
                     float yMinScreen = (rectLabel.yMin + topCut) * LocalScale.y + this.Parent.Parent.Rectangle.y;
                     float xMaxScreen = (rectLabel.xMax - rightCut) * LocalScale.x + this.Parent.Parent.Rectangle.x;
-                    float yMaxScreen = (rectLabel.yMax - bottomCut) * LocalScale.y + this.Parent.Parent.Rectangle.y;                
+                    float yMaxScreen = (rectLabel.yMax - bottomCut) * LocalScale.y + this.Parent.Parent.Rectangle.y;
                     totalRect = Rect.MinMaxRect(xMinScreen, yMinScreen, xMaxScreen, yMaxScreen);
                     innerRect = new Rect(0, 0, 1, 1); //(float)newWidth / (float)textureWidth, (float)newHeight / (float)textureHeight);
                     textureToDraw = subTex;
@@ -227,6 +238,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 innerRect = new Rect(0, 0, (float)totalWidth / (float)textureWidth, (float)totalHeight / (float)textureHeight);
                 textureToDraw = labelTexture;
             }
+
+            // compensate for textScale
+            totalRect.xMax = totalRect.xMin + totalRect.width * textScale;
+            totalRect.yMax = totalRect.yMin + totalRect.height * textScale;
 
             // Draw shadow            
             if (shadowPosition != Vector2.zero)
@@ -276,6 +291,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (font == null)
                 font = DaggerfallUI.DefaultFont;
 
+            // set a local maxWidth that compensates for textScale
+            int maxWidth = (int)(this.maxWidth / textScale);
+
             // First pass encodes ASCII and calculates final dimensions
             int width = 0;
             asciiBytes = Encoding.ASCII.GetBytes(text);
@@ -295,7 +313,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Create target label texture
             totalWidth = width;
-            totalHeight = font.GlyphHeight;
+            totalHeight = (int)(font.GlyphHeight);
             numTextLines = 1;
             labelTexture = CreateLabelTexture(totalWidth, totalHeight);
             if (labelTexture == null)
@@ -321,6 +339,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             if (font == null)
                 font = DaggerfallUI.DefaultFont;
+
+            // set a local maxWidth that compensates for textScale
+            int maxWidth = (int)(this.maxWidth / textScale);
 
             // First pass encodes ASCII and calculates final dimensions
             int width = 0;
@@ -426,7 +447,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Create target label texture
             totalWidth = width;
-            totalHeight = rows.Count * font.GlyphHeight;
+            totalHeight = (int)(rows.Count * font.GlyphHeight);
             numTextLines = rows.Count;
             labelTexture = CreateLabelTexture(totalWidth, totalHeight);
             if (labelTexture == null)
