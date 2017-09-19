@@ -59,6 +59,7 @@ namespace DaggerfallWorkshop.Game.Items
 
         // Quest-related fields
         bool isQuestItem = false;
+        bool allowQuestItemRemoval = false;
         ulong questUID = 0;
         Symbol questItemSymbol = null;
 
@@ -277,6 +278,15 @@ namespace DaggerfallWorkshop.Game.Items
         public bool IsQuestItem
         {
             get { return isQuestItem; }
+        }
+
+        /// <summary>
+        /// This flag determines if quest item can be removed from main item collection.
+        /// </summary>
+        public bool AllowQuestItemRemoval
+        {
+            get { return allowQuestItemRemoval; }
+            set { allowQuestItemRemoval = value; }
         }
 
         /// <summary>

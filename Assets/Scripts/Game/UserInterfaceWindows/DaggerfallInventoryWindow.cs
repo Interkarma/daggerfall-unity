@@ -1433,6 +1433,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
             }
 
+            // Block removal of quest items to remote collection unless permitted
+            // Some quest scripts require player to drop item in a specific place
+            // This will otherwise prevent accidental loss of important quest items
+            if (item.IsQuestItem && !item.AllowQuestItemRemoval && from == localItems)
+            {
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
+                messageBox.SetText(HardStrings.cannotRemoveThisItem);
+                messageBox.ClickAnywhereToClose = true;
+                messageBox.Show();
+                return;
+            }
+
             // When transferring gold to player simply add to player's gold count
             if (item.IsOfTemplate(ItemGroups.Currency, (int)Currency.Gold_pieces) && PlayerEntity.Items == to)
             {

@@ -120,5 +120,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string powersUnknown = "Powers unknown.";
         public const string repairDone = "DONE";
         public const string repairDays = "%d days";
+
+        public const string cannotRemoveThisItem = "You cannot remove this item.";
     }
 }
