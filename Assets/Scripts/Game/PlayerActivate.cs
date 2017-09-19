@@ -437,7 +437,9 @@ namespace DaggerfallWorkshop.Game
                                 return;
                             }
 
-                            TriggerQuestResourceBehaviourClick(questResourceBehaviour);
+                            // Only trigger click when not in info mode
+                            if (currentMode != PlayerActivateModes.Info)
+                                TriggerQuestResourceBehaviourClick(questResourceBehaviour);
                         }
 
                         // Trigger ladder hit
