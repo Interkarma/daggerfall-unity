@@ -1455,7 +1455,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
             }
 
-            to.Transfer(item, from, preferredOrder);
+            // Always place quest item pickups to front of list
+            // Otherwise use preferred order
+            ItemCollection.AddPosition order = preferredOrder;
+            if (item.IsQuestItem)
+                order = ItemCollection.AddPosition.Front;
+
+            to.Transfer(item, from, order);
             Refresh(false);
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
