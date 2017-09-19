@@ -790,6 +790,7 @@ namespace DaggerfallWorkshop.Game
                 if (playerEnterExit.IsPlayerInsideBuilding &&
                     GameManager.Instance.PlayerEntity.FactionData.GetFactionData(npc.Data.factionID, out factionData))
                 {
+                    Debug.LogFormat("social: {0}, building: {1}", factionData.sgroup, playerEnterExit.BuildingDiscoveryData.buildingType);
                     // Check if this NPC is a merchant.
                     if ((FactionFile.SocialGroups)factionData.sgroup == FactionFile.SocialGroups.Merchants)
                     {
