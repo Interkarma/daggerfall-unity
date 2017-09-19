@@ -495,6 +495,7 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             public ulong uid;
             public bool questComplete;
+            public bool questSuccess;
             public string questName;
             public string displayName;
             public DaggerfallDateTime questStartTime;
@@ -512,6 +513,7 @@ namespace DaggerfallWorkshop.Game.Questing
             QuestSaveData_v1 data = new QuestSaveData_v1();
             data.uid = uid;
             data.questComplete = questComplete;
+            data.questSuccess = questSuccess;
             data.questName = questName;
             data.displayName = displayName;
             data.questStartTime = questStartTime;
@@ -559,6 +561,7 @@ namespace DaggerfallWorkshop.Game.Questing
             // Restore base state
             uid = data.uid;
             questComplete = data.questComplete;
+            questSuccess = data.questSuccess;
             questName = data.questName;
             displayName = data.displayName;
             questStartTime = data.questStartTime;
