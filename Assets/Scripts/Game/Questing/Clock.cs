@@ -411,6 +411,10 @@ namespace DaggerfallWorkshop.Game.Questing
                 travelTimeDaysWater = (int)((travelTimeCalculator.TravelTimeTotalWater / 60 / 24) + 0.5);
             travelTimeDaysTotal = (int)((travelTimeDaysLand + travelTimeDaysWater) * returnTripMultiplier);
 
+            // Always allow at least 1 day for travel time
+            if (travelTimeDaysTotal < 1)
+                travelTimeDaysTotal = 1;
+
             return GetTimeInSeconds(travelTimeDaysTotal, 0, 0);
         }
 
