@@ -131,16 +131,16 @@ namespace DaggerfallWorkshop.Game.Entity
                     CheckedCurrentJump = false;
                 }
 
-                // Adjust regional prices each time a day passes.
-                uint lastDay = lastGameMinutes / 1440;
-                uint currentDay = gameMinutes / 1440;
-                uint daysPast = currentDay - lastDay;
+                //// Adjust regional prices each time a day passes.
+                //uint lastDay = lastGameMinutes / 1440;
+                //uint currentDay = gameMinutes / 1440;
+                //uint daysPast = currentDay - lastDay;
 
-                if (daysPast > 0)
-                {
-                    Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
-                    FormulaHelper.ModifyPriceAdjustmentByRegion(player.PriceAdjustmentByRegion, daysPast);
-                }
+                //if (daysPast > 0)
+                //{
+                //    Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
+                //    FormulaHelper.ModifyPriceAdjustmentByRegion(player.PriceAdjustmentByRegion, daysPast);
+                //}
 
                 lastGameMinutes = gameMinutes;
 
