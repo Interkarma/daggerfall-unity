@@ -171,6 +171,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         DaggerfallLoot lootTarget = null;
         bool usingWagon = false;
         bool allowDungeonWagonAccess = false;
+        bool suppressTooltips = false;
 
         ItemCollection lastRemoteItems = null;
         RemoteTargetTypes lastRemoteTargetType;
@@ -257,13 +258,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Setup native panel background
             NativePanel.BackgroundTexture = baseTexture;
 
-            // Character portrait
-            SetupPaperdoll();
+            // Suppress tool tips if info panel is active
+            suppressTooltips = DaggerfallUnity.Settings.EnableInventoryInfoPanel;
 
             // Setup local and remote target icon panels
             localTargetIconPanel = DaggerfallUI.AddPanel(localTargetIconRect, NativePanel);
             remoteTargetIconPanel = DaggerfallUI.AddPanel(remoteTargetIconRect, NativePanel);
             remoteTargetIconLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(1, 2), remoteTargetIconPanel);
+
+            // Character portrait
+            SetupPaperdoll();
 
             // Setup item info panel in local target icon if configured
             SetupItemInfoPanel();
@@ -323,6 +327,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             paperDoll.OnMouseMove += PaperDoll_OnMouseMove;
             paperDoll.OnMouseClick += PaperDoll_OnMouseClick;
             paperDoll.ToolTip = defaultToolTip;
+            paperDoll.SuppressToolTip = suppressTooltips;
             paperDoll.Refresh();
         }
 
@@ -414,6 +419,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 localItemsButtons[i] = DaggerfallUI.AddButton(itemsButtonRects[i], localItemsListPanel);
                 localItemsButtons[i].SetMargins(Margins.All, itemButtonMarginSize);
                 localItemsButtons[i].ToolTip = defaultToolTip;
+                localItemsButtons[i].SuppressToolTip = suppressTooltips;
                 localItemsButtons[i].Tag = i;
                 localItemsButtons[i].OnMouseClick += LocalItemsButton_OnMouseClick;
                 if (localTargetItemInfoLabel != null)
@@ -448,6 +454,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 remoteItemsButtons[i] = DaggerfallUI.AddButton(itemsButtonRects[i], remoteItemsListPanel);
                 remoteItemsButtons[i].SetMargins(Margins.All, itemButtonMarginSize);
                 remoteItemsButtons[i].ToolTip = defaultToolTip;
+                remoteItemsButtons[i].SuppressToolTip = suppressTooltips;
                 remoteItemsButtons[i].Tag = i;
                 remoteItemsButtons[i].OnMouseClick += RemoteItemsButton_OnMouseClick;
                 if (localTargetItemInfoLabel != null)
@@ -493,6 +500,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 Button button = DaggerfallUI.AddButton(rect, NativePanel);
                 button.SetMargins(Margins.All, accessoryButtonMarginSize);
                 button.ToolTip = defaultToolTip;
+                button.SuppressToolTip = suppressTooltips;
                 button.Tag = i;
                 button.OnMouseClick += AccessoryItemsButton_OnMouseClick;
                 if (localTargetItemInfoLabel != null)
