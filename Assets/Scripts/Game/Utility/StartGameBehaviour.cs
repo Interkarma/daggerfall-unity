@@ -333,6 +333,9 @@ namespace DaggerfallWorkshop.Game.Utility
             // Set game time
             DaggerfallUnity.Instance.WorldTime.Now.SetClassicGameStartTime();
 
+            // Set time tracked in playerEntity
+            playerEntity.LastGameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+
             // Get start parameters
             DFPosition mapPixel = new DFPosition(DaggerfallUnity.Settings.StartCellX, DaggerfallUnity.Settings.StartCellY);
             bool startInDungeon = DaggerfallUnity.Settings.StartInDungeon;
@@ -533,6 +536,9 @@ namespace DaggerfallWorkshop.Game.Utility
             // Get regional data.
             // Currently this only gets the regional price adjustments.
             playerEntity.PriceAdjustmentByRegion = saveVars.PriceAdjustmentsByRegion;
+
+            // Set time tracked by playerEntity for game minute-based updates
+            playerEntity.LastGameMinutes = saveVars.GameTime;
 
             // Start game
             DaggerfallUI.Instance.PopToHUD();
