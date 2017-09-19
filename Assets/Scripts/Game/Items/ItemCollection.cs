@@ -451,6 +451,35 @@ namespace DaggerfallWorkshop.Game.Items
             return results;
         }
 
+        /// <summary>
+        /// Removes any orphaned quest items from this collection.
+        /// This method can be removed in future.
+        /// </summary>
+        public int RemoveOrphanedQuestItems()
+        {
+            // Schedule removal if item relates to a null or tombstoned quest
+            List<DaggerfallUnityItem> itemsToRemove = new List<DaggerfallUnityItem>();
+            foreach (DaggerfallUnityItem item in items.Values)
+            {
+                if (item.IsQuestItem)
+                {
+                    Quest quest = GameManager.Instance.QuestMachine.GetQuest(item.QuestUID);
+                    if (quest == null)
+                        itemsToRemove.Add(item);
+                    else if (quest.QuestTombstoned)
+                        itemsToRemove.Add(item);
+                }
+            }
+
+            // Remove scheduled items
+            foreach(DaggerfallUnityItem item in itemsToRemove)
+            {
+                RemoveItem(item);
+            }
+
+            return itemsToRemove.Count;
+        }
+
         #endregion
 
         #region Private Methods

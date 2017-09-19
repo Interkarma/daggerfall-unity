@@ -1293,6 +1293,9 @@ namespace DaggerfallWorkshop.Game.Serialization
                 Debug.Log(message);
             }
 
+            // Clear any orphaned quest items
+            RemoveAllOrphanedQuestItems();
+
             // Lower load in progress flag
             loadInProgress = false;
 
@@ -1301,6 +1304,22 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             // Raise OnLoad event
             RaiseOnLoadEvent(saveData);
+        }
+
+        /// <summary>
+        /// Looks for orphaned quest items (quest no longer active) remaining in player item collections.
+        /// </summary>
+        void RemoveAllOrphanedQuestItems()
+        {
+            int count = 0;
+            Entity.PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+            count += playerEntity.Items.RemoveOrphanedQuestItems();
+            count += playerEntity.WagonItems.RemoveOrphanedQuestItems();
+            count += playerEntity.OtherItems.RemoveOrphanedQuestItems();
+            if (count > 0)
+            {
+                Debug.LogFormat("Removed {0} orphaned quest items.", count);
+            }
         }
 
         #endregion
