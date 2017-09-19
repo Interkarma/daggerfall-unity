@@ -118,6 +118,7 @@ namespace DaggerfallWorkshop.Game.Questing
         bool isTriggerCondition = false;
         bool isAlwaysOnTriggerCondition = false;
         string debugSource;
+        protected bool allowRearm = true;
 
         public bool IsComplete { get { return isComplete; } set { isComplete = value; } }
         public bool IsTriggerCondition { get { return isTriggerCondition; } set { isTriggerCondition = value; } }
@@ -161,7 +162,8 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public virtual void RearmAction()
         {
-            isComplete = false;
+            if (isComplete && allowRearm)
+                isComplete = false;
         }
 
         #region Serialization
