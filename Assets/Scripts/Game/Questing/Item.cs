@@ -173,6 +173,18 @@ namespace DaggerfallWorkshop.Game.Questing
             return result;
         }
 
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            // Remove item if present in player item collections and still marked as a quest item
+            if (item != null && item.IsQuestItem)
+            {
+                Entity.PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+                playerEntity.Items.RemoveItem(item);
+            }
+        }
+
         #endregion
 
         #region Private Methods
