@@ -47,7 +47,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         int currentQuestIndex;
         Quest currentQuest;
 
-        bool showGlobalVars = false;
+        DisplayState displayState = DisplayState.QuestState;         
 
         TextLabel questNameLabel = new TextLabel();
         TextLabel processLabel = new TextLabel();
@@ -57,15 +57,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
         TextLabel[] timerLabelPool = new TextLabel[timerLabelPoolCount];
         TextLabel[] globalsLabelPool = new TextLabel[globalLabelPoolCount];
 
+        enum DisplayState
+        {
+            Nothing,
+            QuestState,
+            QuestStatePlusGlobals,
+            EndOfList,
+        }
+
         public Quest CurrentQuest
         {
             get { return currentQuest; }
-        }
-
-        public bool ShowGlobalVars
-        {
-            get { return showGlobalVars; }
-            set { EnableGlobalVars(value); }
         }
 
         public HUDQuestDebugger()
@@ -108,7 +110,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             SetupGlobalVarLabel(new Vector2(550, 0));
 
             // Disable global vars by default
-            ShowGlobalVars = false;
+            displayState = DisplayState.QuestState;
+            EnableGlobalVars(false);
 
             // Set starting state
             ClearCurrentQuest();
@@ -138,13 +141,31 @@ namespace DaggerfallWorkshop.Game.UserInterface
             else if (Input.GetKeyDown(KeyCode.RightBracket))
                 MoveNextQuest();
             else if (leftShiftDown && Input.GetKeyDown(KeyCode.Tab))
-                ShowGlobalVars = !ShowGlobalVars;
+            {
+                displayState = displayState + 1;
+
+                // Show/hide globals
+                if (displayState == DisplayState.QuestStatePlusGlobals)
+                    EnableGlobalVars(true);
+                else
+                    EnableGlobalVars(false);
+
+                // Wrap to start of list
+                if (displayState == DisplayState.EndOfList)
+                    displayState = DisplayState.Nothing;
+            }
+
+            // Show/hide entire debugger overlay debugger
+            if (displayState == DisplayState.Nothing)
+                Enabled = false;
+            else
+                Enabled = true;
         }
 
         private void QuestMachine_OnTick()
         {
             // Update global variables status
-            if (ShowGlobalVars)
+            if (displayState == DisplayState.QuestStatePlusGlobals)
             {
                 UpdateGlobalVarsStatus();
             }
@@ -461,7 +482,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 globalsLabelPool[i].Enabled = value;
             }
-            showGlobalVars = value;
         }
 
         #endregion
