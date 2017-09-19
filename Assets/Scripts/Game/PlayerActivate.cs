@@ -783,7 +783,10 @@ namespace DaggerfallWorkshop.Game
             // Handle special NPC in home location click
             SpecialNPCClickHandler specialNPCClickHandler = npc.gameObject.GetComponent<SpecialNPCClickHandler>();
             if (specialNPCClickHandler)
+            {
+                specialNPCClickHandler.StaticNPC = npc;
                 specialNPCClickHandler.DoClick();
+            }
             else
             {
                 FactionFile.FactionData factionData;
@@ -829,6 +832,11 @@ namespace DaggerfallWorkshop.Game
                 }
                 else // if no special handling had to be done (all remaining npcs of the remaining social groups not handled explicitely above): default is talk to the static npc
                 {
+                    // with one exception: guards
+                    if (npc.Data.billboardArchiveIndex == 183 && npc.Data.billboardRecordIndex == 3) // detect if clicked guard (comment Nystul: didn't find a better mechanism than billboard texture check)
+                        return; // if guard was clicked don't open talk window
+
+                    // otherwise open talk window
                     GameManager.Instance.TalkManager.TalkToStaticNPC(npc);
                 }
             }

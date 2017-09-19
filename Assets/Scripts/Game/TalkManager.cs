@@ -125,11 +125,11 @@ namespace DaggerfallWorkshop.Game
         }
 
         // current target npc for conversion
-        MobilePersonNPC targetNPC = null;
+        MobilePersonNPC targetMobileNPC = null;
         StaticNPC targetStaticNPC = null;
 
         // last target npc for a conversion (null if not talked to any mobile npc yet)
-        MobilePersonNPC lastTargetNPC = null;
+        MobilePersonNPC lastTargetMobileNPC = null;
         StaticNPC lastTargetStaticNPC = null;
 
         public enum KeySubjectType
@@ -335,16 +335,18 @@ namespace DaggerfallWorkshop.Game
         }
 
 
-        public void SetTargetNPC(MobilePersonNPC targetNPC, int reactionToPlayer)
+        public void SetTargetNPC(MobilePersonNPC targetMobileNPC, int reactionToPlayer)
         {
-            if (targetNPC == lastTargetNPC)
+            if (targetMobileNPC == lastTargetMobileNPC)
                 return;
 
-            DaggerfallUI.Instance.TalkWindow.SetNPCPortrait(targetNPC.PersonFaceRecordId);
+            this.targetMobileNPC = targetMobileNPC;
 
-            lastTargetNPC = targetNPC;
+            DaggerfallUI.Instance.TalkWindow.SetNPCPortrait(DaggerfallTalkWindow.FacePortraitArchive.CommonFaces, targetMobileNPC.PersonFaceRecordId);
 
-            nameNPC = targetNPC.NameNPC;
+            lastTargetMobileNPC = targetMobileNPC;
+
+            nameNPC = targetMobileNPC.NameNPC;
             DaggerfallUI.Instance.TalkWindow.UpdateNameNPC();
 
             this.reactionToPlayer = reactionToPlayer;
@@ -362,7 +364,12 @@ namespace DaggerfallWorkshop.Game
             if (targetNPC == lastTargetStaticNPC)
                 return;
 
-            DaggerfallUI.Instance.TalkWindow.SetNPCPortrait(getPortraitIndexFromStaticNPCBillboard(targetNPC.Data.billboardArchiveIndex, targetNPC.Data.billboardRecordIndex));
+            this.targetStaticNPC = targetNPC;
+
+            DaggerfallTalkWindow.FacePortraitArchive facePortraitArchive;
+            int recordIndex;
+            getPortraitIndexFromStaticNPCBillboard(targetNPC.Data.billboardArchiveIndex, targetNPC.Data.billboardRecordIndex, out facePortraitArchive, out recordIndex);
+            DaggerfallUI.Instance.TalkWindow.SetNPCPortrait(facePortraitArchive, recordIndex);
 
             lastTargetStaticNPC = targetNPC;
 
@@ -917,24 +924,59 @@ namespace DaggerfallWorkshop.Game
         /// <param name="billboardArchiveIndex"> archive index of the billboard</param>
         /// <param name="billboardRecordIndex"> record index of the billboard inside the archive </param>
         /// <returns></returns>
-        private int getPortraitIndexFromStaticNPCBillboard(int billboardArchiveIndex, int billboardRecordIndex)
+        private void getPortraitIndexFromStaticNPCBillboard(int billboardArchiveIndex, int billboardRecordIndex, out DaggerfallTalkWindow.FacePortraitArchive facePortraitArchive, out int recordIndex)
         {
+            FactionFile.FactionData factionData;
+            GameManager.Instance.PlayerEntity.FactionData.GetFactionData(targetStaticNPC.Data.factionID, out factionData);
+
+            FactionFile.FlatData flatData = FactionFile.GetFlatData(factionData.flat1);
+            //FactionFile.FlatData flatData2 = FactionFile.GetFlatData(factionData.flat2);
+
+            if (factionData.type == 4)
+            {
+                facePortraitArchive = DaggerfallTalkWindow.FacePortraitArchive.SpecialFaces;
+
+                // test if flatData matches our billboard - if so special face handling          
+                if (billboardArchiveIndex == flatData.archive && billboardRecordIndex == flatData.record)
+                {
+                    recordIndex = factionData.face;
+                    return;
+                }
+            }
+
+            facePortraitArchive = DaggerfallTalkWindow.FacePortraitArchive.CommonFaces;
+
             if (billboardArchiveIndex == 182)
             {
                 if (billboardRecordIndex == 0) // example static npc: merchant in the odd blades in daggerfall
-                    return (390);
+                {
+                    recordIndex = 390;
+                    return;
+                }
                 else if (billboardRecordIndex == 20) // example static npc: fighters guild questor in daggerfall
-                    return (476);
+                {
+                    recordIndex = 476;
+                    return;
+                }
                 else if (billboardRecordIndex == 17) // example static npc: fighters guild npc next to entrance in daggerfall
-                    return (428);
+                {
+                    recordIndex = 428;
+                    return;
+                }
             }
             else if (billboardArchiveIndex == 183)
             {
                 if (billboardRecordIndex == 5) // example static npc: banker in the bank of daggerfall in daggerfall at the market square
-                    return (402);
+                {
+                    recordIndex = 402;
+                    return;
+                }
             }
 
-            return (410); // default to oops - so we see that we need to fill it in
+            // use oops if we fail to resolve face
+            facePortraitArchive = DaggerfallTalkWindow.FacePortraitArchive.CommonFaces;
+            recordIndex = 410;
+            return;            
         }
 
         #endregion
