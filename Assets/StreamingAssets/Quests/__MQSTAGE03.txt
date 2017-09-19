@@ -331,9 +331,9 @@ ElysannaSatisfied _S.43_
 MetLadyBrisienna _S.44_
 	log 1011 step 1 
 
-_S.45_ task:
-	when _S.14_ and _S.15_ 
-	give pc _I.00_ notify 1026 
+-_S.45_ task:
+-	when _S.14_ and _S.15_ 
+-	give pc _I.00_ notify 1026 
 
 -_S.46_ task:
 -	when _S.11_ and _S.18_ 
