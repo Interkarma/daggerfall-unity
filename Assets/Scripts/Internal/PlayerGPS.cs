@@ -806,7 +806,7 @@ namespace DaggerfallWorkshop
                 BuildingDirectory.ReverseBuildingKey(buildingKey, out layoutX, out layoutY, out recordIndex);
                 Debug.LogFormat("Unable to find expected building key {0} in {1}.{2}", buildingKey, buildingDirectory.LocationData.RegionName, buildingDirectory.LocationData.Name);
                 Debug.LogFormat("LayoutX={0}, LayoutY={1}, RecordIndex={2}", layoutX, layoutY, recordIndex);
-                throw new Exception("Error finding building key in directory.");
+                return false;
             }
 
             // Resolve name by building type
