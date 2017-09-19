@@ -234,15 +234,19 @@ namespace DaggerfallWorkshop.Game.Questing
             // Performing termination check AFTER executing task at least once to ensure behaviour matches classic.
             if (type == TaskType.PersistUntil)
             {
-                // Unset this task when target symbol is also unset
                 Task targetTask = ParentQuest.GetTask(targetSymbol);
-                if (targetTask != null)
+                if (targetTask.IsTriggered)
                 {
-                    if (!targetTask.IsTriggered)
-                        Clear();
-                    // Should these tasks be able to rearm?
-                    // Would need strong evidence before allowing this
+                    // Target now set, terminate persistent task
+                    Clear();
                 }
+                else
+                {
+                    // Rearm actions so they can repeat next run
+                    // This behaviour obvserved in S0000011 in "until _S.12_ performed" to continuously clear Barenziah click
+                    RearmActions();
+                }
+                    
             }
 
             // Store trigger state this update
@@ -392,6 +396,14 @@ namespace DaggerfallWorkshop.Game.Questing
             }
         }
 
+        void RearmActions()
+        {
+            foreach (IQuestAction action in actions)
+            {
+                action.RearmAction();
+            }
+        }
+
         public bool GetTriggerValue()
         {
             if (globalVarLink != -1)
@@ -417,10 +429,7 @@ namespace DaggerfallWorkshop.Game.Questing
             // If clearing a task then need to rearm actions
             if (value == false)
             {
-                foreach (IQuestAction action in actions)
-                {
-                    action.RearmAction();
-                }
+                RearmActions();
             }
         }
 
