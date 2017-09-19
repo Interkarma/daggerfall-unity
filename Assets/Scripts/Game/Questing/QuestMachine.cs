@@ -1129,7 +1129,7 @@ namespace DaggerfallWorkshop.Game.Questing
             }
             else if (stage == 3)
             {
-                GameManager.Instance.PlayerEntity.FactionData.ChangeReputation(395, 20);    // Queen Barenziah +20
+                GameManager.Instance.PlayerEntity.FactionData.ChangeReputation(391, 20);    // Queen Barenziah +20
                 GameManager.Instance.PlayerEntity.Level = 9;
                 InstantiateQuest("__MQSTAGE03");
                 InstantiateQuest("S0000977");
