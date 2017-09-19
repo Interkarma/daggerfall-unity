@@ -364,7 +364,7 @@ namespace DaggerfallWorkshop.Game
                                         DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
                                         break;
                                     }
-                                    Talk(mobileNpc);
+                                    GameManager.Instance.TalkManager.TalkToMobileNPC(mobileNpc);
                                     break;
                                 case PlayerActivateModes.Steal:
                                     if (!mobileNpc.PickpocketByPlayerAttempted)
@@ -808,6 +808,10 @@ namespace DaggerfallWorkshop.Game
                             return;
                     }
                     // TODO - more checks for npc social types? ... guild services etc?
+                    else // if no special handling had to be done: default is talk to the static npc
+                    {
+                        GameManager.Instance.TalkManager.TalkToStaticNPC(npc);
+                    }
                 }
             }
         }
@@ -878,44 +882,6 @@ namespace DaggerfallWorkshop.Game
                 string notSuccessfulMessage = HardStrings.youAreNotSuccessful;
                 DaggerfallUI.Instance.PopupMessage(notSuccessfulMessage);
             }
-        }
-        
-        // Player has clicked on a talk target
-        void Talk(MobilePersonNPC targetNPC = null)
-        {
-            const int youGetNoResponseTextId = 7205;
-
-            // Get NPC faction
-            FactionFile.FactionData NPCfaction;
-            int oneBasedPlayerRegion = GameManager.Instance.PlayerGPS.CurrentOneBasedRegionIndex;
-            FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(
-                (int)FactionFile.FactionTypes.Province, -1, -1, oneBasedPlayerRegion);
-
-            // Should always find a single region
-            if (factions == null || factions.Length != 1)
-                throw new Exception("Talk() did not find exactly 1 match for NPC faction.");
-
-            NPCfaction = factions[0];
-
-            // Get reaction to player
-            int reactionToPlayer = 0;
-            PlayerEntity player = GameManager.Instance.PlayerEntity;
-            reactionToPlayer = NPCfaction.rep;
-            reactionToPlayer += player.BiographyReactionMod;
-
-            if (NPCfaction.sgroup < player.SGroupReputations.Length) // one of the five general social groups
-                reactionToPlayer += player.SGroupReputations[NPCfaction.sgroup];
-
-            if (reactionToPlayer >= -20)
-            {
-                DaggerfallUI.UIManager.PushWindow(DaggerfallUI.Instance.TalkWindow);
-                GameManager.Instance.TalkManager.SetTargetNPC(targetNPC, reactionToPlayer);
-            }
-            else
-            {
-                DaggerfallUI.MessageBox(youGetNoResponseTextId);
-            }
-        }
-
+        }       
     }
 }

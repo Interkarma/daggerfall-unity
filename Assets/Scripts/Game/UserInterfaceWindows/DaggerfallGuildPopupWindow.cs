@@ -151,7 +151,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Talk button
             talkButton = DaggerfallUI.AddButton(talkButtonRect, mainPanel);
-            talkButton.BackgroundColor = DaggerfallUI.DaggerfallUnityNotImplementedColor;
+            talkButton.OnMouseClick += TalkButton_OnMouseClick;
 
             // Exit button
             exitButton = DaggerfallUI.AddButton(exitButtonRect, mainPanel);
@@ -336,6 +336,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             CloseWindow();
+        }
+
+        private void TalkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            GameManager.Instance.TalkManager.TalkToStaticNPC(questorNPC);
         }
 
         private void ServiceButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
