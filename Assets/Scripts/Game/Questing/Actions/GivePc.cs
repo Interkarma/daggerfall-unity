@@ -87,12 +87,15 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 DirectToPlayerWithNotify(item);
             else
                 OfferToPlayerWithQuestComplete(item);
-            
+
             SetComplete();
         }
 
         void OfferToPlayerWithQuestComplete(Item item)
         {
+            // Quest successful
+            ParentQuest.QuestSuccess = true;
+
             // Show quest complete message
             DaggerfallMessageBox messageBox = ParentQuest.ShowMessagePopup((int)QuestMachine.QuestMessages.QuestComplete);
 

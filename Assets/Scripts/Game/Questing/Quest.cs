@@ -40,6 +40,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
         ulong uid;
         bool questComplete = false;
+        bool questSuccess = false;
         Dictionary<int, LogEntry> activeLogMessages = new Dictionary<int, LogEntry>();
 
         string questName;
@@ -97,6 +98,16 @@ namespace DaggerfallWorkshop.Game.Questing
         public bool QuestComplete
         {
             get { return questComplete; }
+        }
+
+        /// <summary>
+        /// True when quest executes a "give pc" action, which indicates quest success.
+        /// If quest ends without this being set, quest can be considered failed.
+        /// </summary>
+        public bool QuestSuccess
+        {
+            get { return questSuccess; }
+            set { questSuccess = value; }
         }
 
         /// <summary>

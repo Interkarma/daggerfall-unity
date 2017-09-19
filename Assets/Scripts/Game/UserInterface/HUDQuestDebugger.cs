@@ -37,7 +37,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const int timerColWidth = 100;
         const string noQuestsRunning = "NO QUESTS RUNNING";
         const string questRunning = "Running";
-        const string questFinished = "Finished";
+        const string questFinishedSuccess = "Finished (success)";
+        const string questFinishedFailed = "Finished (failed)";
         const int taskLabelPoolCount = 84;
         const int timerLabelPoolCount = 20;
         const int globalLabelPoolCount = 64;
@@ -214,9 +215,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Set running status
             // TODO: Use this line for step-through debugging
             if (!currentQuest.QuestComplete)
+            {
                 processLabel.Text = string.Format("[{0}] - {1}", DaggerfallUnity.Instance.WorldTime.Now.MinTimeString(), questRunning);
+            }
             else
-                processLabel.Text = string.Format("[{0}] - {1}", DaggerfallUnity.Instance.WorldTime.Now.MinTimeString(), questFinished);
+            {
+                if (currentQuest.QuestSuccess)
+                    processLabel.Text = string.Format("[{0}] - {1}", DaggerfallUnity.Instance.WorldTime.Now.MinTimeString(), questFinishedSuccess);
+                else
+                    processLabel.Text = string.Format("[{0}] - {1}", DaggerfallUnity.Instance.WorldTime.Now.MinTimeString(), questFinishedFailed);
+            }
         }
 
         void SetupTaskLabels(Vector2 startPosition)
