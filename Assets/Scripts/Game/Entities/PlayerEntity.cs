@@ -221,7 +221,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 DaggerfallUnityItem newItem = new DaggerfallUnityItem((ItemRecord)record);
                 if (newItem.ItemGroup == ItemGroups.MiscItems && newItem.GroupIndex == 1)
                 {
-                    TrappedSoulRecord soulRecord = (TrappedSoulRecord) record.Children[0];    // Can items have any other types of children?
+                    TrappedSoulRecord soulRecord = (TrappedSoulRecord) record.Children[0];
                     newItem.TrappedSoulType = (MobileTypes) soulRecord.RecordRoot.SpriteIndex;
                 }
                 // Add to local inventory or wagon

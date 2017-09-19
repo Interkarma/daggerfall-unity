@@ -146,6 +146,7 @@ namespace DaggerfallWorkshop.Utility
             { "%per", Per }, // Amount of Personality
             { "%plq", null }, // Place of something in log.
             { "%pnq", null }, // Person of something in log
+            { "%po", Potion }, //  Potion
             { "%pp1", null }, // ?
             { "%pp2", null }, // ?
             { "%pqn", null }, // Potential Quest Giver
@@ -661,6 +662,11 @@ namespace DaggerfallWorkshop.Utility
         public static string HeldSoul(IMacroContextProvider mcp)
         {   // %hs
             return mcp.GetMacroDataSource().HeldSoul();
+        }
+
+        public static string Potion(IMacroContextProvider mcp)
+        {   // %po
+            return mcp.GetMacroDataSource().Potion();
         }
 
         public static string Pronoun(IMacroContextProvider mcp)

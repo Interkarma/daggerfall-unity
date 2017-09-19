@@ -11,11 +11,14 @@ using DaggerfallConnect.Arena2;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using UnityEngine;
+using DaggerfallConnect.FallExe;
 
 namespace DaggerfallWorkshop.Game.Items
 {
     public partial class DaggerfallUnityItem : IMacroContextProvider
     {
+        private Recipe[] recipeArray;
+
         public MacroDataSource GetMacroDataSource()
         {
             return new ItemMacroDataSource(this);
@@ -105,6 +108,33 @@ namespace DaggerfallWorkshop.Game.Items
                 return soul.Name;
             }
 
+            public override string Potion()
+            {   // %po
+                KeyValuePair<string, Recipe[]> mapping = DaggerfallUnity.Instance.ItemHelper.getPotionRecipesByID(parent.typeDependentData);
+                parent.recipeArray = mapping.Value;
+                if (parent.TemplateIndex == (int)MiscItems.Potion_recipe)
+                    return mapping.Key;                                          // "Potion recipe for %po"
+                else if (parent.TemplateIndex == (int)UselessItems1.Glass_Bottle)
+                    return HardStrings.potionOf.Replace("%po", mapping.Key);     // "Potion of %po"
+                throw new NotImplementedException();
+            }
+
+
+            public override TextFile.Token[] PotionRecipeIngredients(TextFile.Formatting format)
+            {
+                // InconsolableCellist:
+                // Potions can have multiple recipes, and it's unclear how this variation is stored
+                // The actual variation could be stored in the currentVariation field, but I haven't been able find any recipes
+                // in the game that aren't just the first recipe in the list; for now we'll just pick the first one here
+                List<TextFile.Token> ingredientsTokens = new List<TextFile.Token>();
+                Ingredient[] ingredients = parent.recipeArray[0].ingredients;
+                for (int i = 0; i < ingredients.Length; ++i)
+                {
+                    ingredientsTokens.Add(TextFile.CreateTextToken(ingredients[i].name));
+                    ingredientsTokens.Add(TextFile.CreateFormatToken(format));
+                }
+                return ingredientsTokens.ToArray();
+            }
 
             public override TextFile.Token[] MagicPowers(TextFile.Formatting format)
             {   // %mpw
@@ -122,9 +152,7 @@ namespace DaggerfallWorkshop.Game.Items
                 else if (!parent.IsIdentified)
                 {
                     // Powers unknown.
-                    TextFile.Token nopowersToken = new TextFile.Token();
-                    nopowersToken.text = HardStrings.powersUnknown;
-                    nopowersToken.formatting = TextFile.Formatting.Text;
+                    TextFile.Token nopowersToken = TextFile.CreateTextToken(HardStrings.powersUnknown);
                     return new TextFile.Token[] { nopowersToken };
                 }
                 else
@@ -138,13 +166,8 @@ namespace DaggerfallWorkshop.Game.Items
                     {
                         if (parent.legacyMagic[i] == 0xffff)
                             break;
-                        TextFile.Token powerToken = new TextFile.Token();
-                        powerToken.text = "Power number " + parent.legacyMagic[i];
-                        powerToken.formatting = TextFile.Formatting.Text;
-                        magicPowersTokens.Add(powerToken);
-                        TextFile.Token formatToken = new TextFile.Token();
-                        formatToken.formatting = format;
-                        magicPowersTokens.Add(formatToken);
+                        magicPowersTokens.Add(TextFile.CreateTextToken("Power number " + parent.legacyMagic[i]));
+                        magicPowersTokens.Add(TextFile.CreateFormatToken(format));
                     }
                     return magicPowersTokens.ToArray();
                 }

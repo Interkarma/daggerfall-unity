@@ -309,6 +309,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 localTargetItemInfoLabel.ShadowPosition = Vector2.zero;
                 localTargetItemInfoLabel.TextScale = 0.75f;
                 localTargetItemInfoLabel.MaxTextWidth = 71;
+                localTargetItemInfoLabel.WrapText = true;
+                localTargetItemInfoLabel.WrapWords = true;
                 localTargetItemInfoLabel.TextColor = DaggerfallUI.DaggerfallUnityDefaultToolTipTextColor;
                 localTargetIconPanel.Components.Add(localTargetItemInfoLabel);
             }
@@ -1473,18 +1475,26 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
                 messageBox.SetTextTokens(tokens, item);
-                if (item.legacyMagic == null)
-                {
-                    messageBox.ClickAnywhereToClose = true;
+
+                if (item.TemplateIndex == (int)MiscItems.Potion_recipe)
+                {   // Setup the next message box with the potion recipe ingredients list.
+                    DaggerfallMessageBox messageBoxRecipe = new DaggerfallMessageBox(uiManager, messageBox);
+                    messageBoxRecipe.SetTextTokens(item.GetMacroDataSource().PotionRecipeIngredients(TextFile.Formatting.JustifyCenter));
+                    messageBoxRecipe.ClickAnywhereToClose = true;
+                    messageBox.AddNextMessageBox(messageBoxRecipe);
                     messageBox.Show();
                 }
-                else
+                else if (item.legacyMagic != null)
                 {   // Setup the next message box with the magic effect info.
                     DaggerfallMessageBox messageBoxMagic = new DaggerfallMessageBox(uiManager, messageBox);
                     messageBoxMagic.SetTextTokens(1016, item);
                     messageBoxMagic.ClickAnywhereToClose = true;
-
                     messageBox.AddNextMessageBox(messageBoxMagic);
+                    messageBox.Show();
+                }
+                else
+                {
+                    messageBox.ClickAnywhereToClose = true;
                     messageBox.Show();
                 }
             }
@@ -1775,6 +1785,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // Display info in local target icon panel, replacing justification tokens
             TextFile.Token[] tokens = ItemHelper.GetItemInfo(item, DaggerfallUnity.TextProvider);
+            MacroHelper.ExpandMacros(ref tokens, item);
             for (int tokenIdx = 0; tokenIdx < tokens.Length; tokenIdx++)
             {
                 if (tokens[tokenIdx].formatting == TextFile.Formatting.JustifyCenter)
@@ -1782,7 +1793,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (tokens[tokenIdx].text != null)
                     tokens[tokenIdx].text = tokens[tokenIdx].text.Replace("kilograms", "kg").Replace("points of damage", "damage");
             }
-            MacroHelper.ExpandMacros(ref tokens, item);
             localTargetItemInfoLabel.SetText(tokens);
         }
 

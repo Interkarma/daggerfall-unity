@@ -58,7 +58,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string loiterHowManyHours = "Loiter how many hours : ";
         public const string restHowManyHours = "Rest how many hours : ";
 
-        public const string potionRecipeFor = "Recipe for %po";
+        public const string potionRecipeFor = "Recipe for Potion of %po";
+        public const string potionOf = "Potion of %po";
         public const string cannotUseThis = "You cannot use this.";
         public const string multipleAssignments = "You have multiple assignments...";
 

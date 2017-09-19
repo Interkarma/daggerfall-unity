@@ -44,6 +44,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         int tabStop = 0;
 
         bool wrapText = false;
+        bool wrapWords = false;
         int maxTextWidth = 0;
 
         public PixelFont Font
@@ -56,6 +57,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             get { return wrapText; }
             set { wrapText = value; }
+        }
+
+        public bool WrapWords
+        {
+            get { return wrapWords; }
+            set { wrapWords = value; }
         }
 
         public int MaxTextWidth
@@ -170,6 +177,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             textLabel.Font = font;
             textLabel.Position = new Vector2(cursorX, cursorY);
             textLabel.WrapText = wrapText;
+            textLabel.WrapWords = wrapWords;
             textLabel.TextScale = TextScale;
 
             // Use max width if it has been specified
@@ -227,7 +235,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         int LineHeight
         {
-            get { return GetFont().GlyphHeight + rowLeading; }
+            get {   // TODO: This is a hack.. only way I could get it to work right for info panel
+                int lineHeight = GetFont().GlyphHeight;
+                if (wrapText && lastLabel != null && (int)lastLabel.Size.y > GetFont().GlyphHeight)
+                    lineHeight += (int)(((lastLabel.Size.y / GetFont().GlyphHeight) - 1) * (GetFont().GlyphHeight * 0.5));
+                return lineHeight + rowLeading;
+            }
         }
 
         void LayoutTextElements(TextFile.Token[] tokens)

@@ -451,7 +451,7 @@ namespace DaggerfallWorkshop.Game.Items
             const int miscTextId = 1003;
             const int soulTrapTextId = 1004;
             const int letterOfCreditTextId = 1007;
-            //const int potionTextId = 1008;
+            const int potionTextId = 1008;
             const int bookTextId = 1009;
             const int arrowTextId = 1011;
             const int weaponNoMaterialTextId = 1012;
@@ -459,91 +459,71 @@ namespace DaggerfallWorkshop.Game.Items
             const int oghmaInfiniumTextId = 1015;
             const int houseDeedTextId = 1073;
 
-            TextFile.Token[] tokens = null;
-
             // Handle by item group
             switch (item.ItemGroup)
             {
-                case (ItemGroups.Armor):
+                case ItemGroups.Armor:
                     if (item.IsShield || item.TemplateIndex == (int)Armor.Helm || item.IsArtifact)
-                        tokens = textProvider.GetRSCTokens(armorNoMaterialTextId);
+                        return textProvider.GetRSCTokens(armorNoMaterialTextId);    // Handle shields, helms and artifact armour
                     else
-                        tokens = textProvider.GetRSCTokens(armorTextId);
-                    break;
+                        return textProvider.GetRSCTokens(armorTextId);              // Handle armour
 
-                case (ItemGroups.Weapons):
+                case ItemGroups.Weapons:
                     if (item.TemplateIndex == (int)Weapons.Arrow)
-                        tokens = textProvider.GetRSCTokens(arrowTextId);
+                        return textProvider.GetRSCTokens(arrowTextId);              // Handle arrows
                     else if (item.IsArtifact)
-                        tokens = textProvider.GetRSCTokens(weaponNoMaterialTextId);
+                        return textProvider.GetRSCTokens(weaponNoMaterialTextId);   // Handle artifacts
                     else
-                        tokens = textProvider.GetRSCTokens(weaponTextId);
-                    break;
+                        return textProvider.GetRSCTokens(weaponTextId);             // Handle weapons
 
-                case (ItemGroups.Books):
-                    // Handle Oghma Infinium
+                case ItemGroups.Books:
                     if (item.legacyMagic != null && item.legacyMagic[0] == 26)
-                    {
-                        tokens = textProvider.GetRSCTokens(oghmaInfiniumTextId);
-                    }
-                    // Handle other books
-                    else
-                    {
-                        tokens = textProvider.GetRSCTokens(bookTextId);
-                    }
-                    break;
+                        return textProvider.GetRSCTokens(oghmaInfiniumTextId);      // Handle Oghma Infinium
+                    else                                                      
+                        return textProvider.GetRSCTokens(bookTextId);               // Handle other books
 
-                // TODO: Check for potion in glass bottle.
-                // In classic, the check is whether RecordRoot.SublistHead is non-null
-                // and of PotionMix type.
-
-                case (ItemGroups.Paintings):
+                case ItemGroups.Paintings:
                     // TODO: Show painting. Uses file paint.dat.
-                    tokens = textProvider.GetRSCTokens(paintingTextId);
-                    break;
+                    return textProvider.GetRSCTokens(paintingTextId);
+
+                case ItemGroups.MiscItems:
+                    // A few items in the MiscItems group have their own text display
+                    if (item.TemplateIndex == (int)MiscItems.Potion_recipe)
+                        return GetPotionRecipeTokens();                             // Handle potion recipes
+                    else if (item.TemplateIndex == (int)MiscItems.House_Deed)
+                        return textProvider.GetRSCTokens(houseDeedTextId);          // Handle house deeds
+                    else if (item.TemplateIndex == (int)MiscItems.Soul_trap)
+                        return textProvider.GetRSCTokens(soulTrapTextId);           // Handle soul traps
+                    else if (item.TemplateIndex == (int)MiscItems.Letter_of_credit)
+                        return textProvider.GetRSCTokens(letterOfCreditTextId);     // Handle letters of credit
+                    else
+                        return textProvider.GetRSCTokens(miscTextId);               // Default misc items
 
                 default:
-                    // A few items in the MiscItems group have their own text display
-                    if (item.ItemGroup == ItemGroups.MiscItems)
-                    {
-                        // Handle potion recipes
-                        if (item.TemplateIndex == (int)MiscItems.Potion_recipe)
-                        {
-                            //TODO - deprecate potion recipe window now macro handling is in
-
-                            //DaggerfallPotionRecipeWindow readerWindow = new DaggerfallPotionRecipeWindow(DaggerfallUI.UIManager, item.typeDependentData, this);
-                            //DaggerfallUI.UIManager.PushWindow(readerWindow);
-                            //return;
-                        }
-                        // Handle house deeds
-                        else if (item.TemplateIndex == (int)MiscItems.House_Deed)
-                        {
-                            tokens = textProvider.GetRSCTokens(houseDeedTextId);
-                        }
-                        // Handle soul traps
-                        else if (item.TemplateIndex == (int)MiscItems.Soul_trap)
-                        {
-                            tokens = textProvider.GetRSCTokens(soulTrapTextId);
-                        }
-                        else if (item.TemplateIndex == (int)MiscItems.Letter_of_credit)
-                        {
-                            tokens = textProvider.GetRSCTokens(letterOfCreditTextId);
-                        }
-                        if (tokens != null)
-                            break;
-                    }
+                    // Handle potions in glass bottles
+                    // In classic, the check is whether RecordRoot.SublistHead is non-null and of PotionMix type.
+                    // TODO: Do we need it or will glass bottles with typedependentdata cover it?
+                    if (item.ItemGroup == ItemGroups.UselessItems1 && item.TemplateIndex == (int) UselessItems1.Glass_Bottle)
+                        return textProvider.GetRSCTokens(potionTextId);
 
                     // Handle Azura's Star
                     if (item.legacyMagic != null && item.legacyMagic[0] == 26 && item.legacyMagic[1] == 9)
-                    {
-                        tokens = textProvider.GetRSCTokens(soulTrapTextId);
-                        break;
-                    }
+                        return textProvider.GetRSCTokens(soulTrapTextId);
 
                     // Default fallback if none of the above applied
-                    tokens = textProvider.GetRSCTokens(miscTextId);
-                    break;
+                    return textProvider.GetRSCTokens(miscTextId);
             }
+        }
+
+        // TODO: can this be replaced with a new text RSC entry?
+        private static TextFile.Token[] GetPotionRecipeTokens()
+        {
+            TextFile.Token[] tokens = new TextFile.Token[5];
+            tokens[0] = TextFile.CreateTextToken(HardStrings.potionRecipeFor);
+            tokens[1] = TextFile.CreateFormatToken(TextFile.Formatting.JustifyCenter);
+            tokens[2] = TextFile.CreateTextToken("Weight: %kg kilograms");
+            tokens[3] = TextFile.CreateFormatToken(TextFile.Formatting.JustifyCenter);
+            tokens[4] = TextFile.CreateFormatToken(TextFile.Formatting.EndOfRecord);
             return tokens;
         }
 
