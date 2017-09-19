@@ -340,11 +340,12 @@ namespace DaggerfallWorkshop.Game
             if (targetNPC == lastTargetNPC)
                 return;
 
-            DaggerfallUI.Instance.TalkWindow.SetNPCPortraitAndName(targetNPC.PersonFaceRecordId, targetNPC.NameNPC);
+            DaggerfallUI.Instance.TalkWindow.SetNPCPortrait(targetNPC.PersonFaceRecordId);
 
             lastTargetNPC = targetNPC;
 
             nameNPC = targetNPC.NameNPC;
+            DaggerfallUI.Instance.TalkWindow.UpdateNameNPC();
 
             this.reactionToPlayer = reactionToPlayer;
 
@@ -361,11 +362,12 @@ namespace DaggerfallWorkshop.Game
             if (targetNPC == lastTargetStaticNPC)
                 return;
 
-            DaggerfallUI.Instance.TalkWindow.SetNPCPortraitAndName(getPortraitIndexFromStaticNPCBillboard(targetNPC.Data.billboardArchiveIndex, targetNPC.Data.billboardRecordIndex), targetNPC.DisplayName);
+            DaggerfallUI.Instance.TalkWindow.SetNPCPortrait(getPortraitIndexFromStaticNPCBillboard(targetNPC.Data.billboardArchiveIndex, targetNPC.Data.billboardRecordIndex));
 
             lastTargetStaticNPC = targetNPC;
 
             nameNPC = targetNPC.DisplayName;
+            DaggerfallUI.Instance.TalkWindow.UpdateNameNPC();
 
             this.reactionToPlayer = reactionToPlayer;
 
@@ -919,10 +921,17 @@ namespace DaggerfallWorkshop.Game
         {
             if (billboardArchiveIndex == 182)
             {
-                if (billboardRecordIndex == 20) // example static npc: fighters guild questor in daggerfall
+                if (billboardRecordIndex == 0) // example static npc: merchant in the odd blades in daggerfall
+                    return (390);
+                else if (billboardRecordIndex == 20) // example static npc: fighters guild questor in daggerfall
                     return (476);
                 else if (billboardRecordIndex == 17) // example static npc: fighters guild npc next to entrance in daggerfall
                     return (428);
+            }
+            else if (billboardArchiveIndex == 183)
+            {
+                if (billboardRecordIndex == 5) // example static npc: banker in the bank of daggerfall in daggerfall at the market square
+                    return (402);
             }
 
             return (410); // default to oops - so we see that we need to fill it in

@@ -258,7 +258,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             UpdateLabels();
         }
 
-        public void SetNPCPortraitAndName(int recordId, string name)
+        public void SetNPCPortrait(int recordId)
         {
             // Load npc portrait           
             CifRciFile rciFile = new CifRciFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, portraitImgName), FileUsage.UseMemory, false);
@@ -276,8 +276,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
 
             UpdatePortrait();
+        }
 
-            UpdateNameNPC();
+        public void UpdateNameNPC()
+        {
+            if (labelNameNPC != null)
+            {
+                labelNameNPC.Text = TalkManager.Instance.NameNPC;
+            }
         }
 
         protected override void Setup()
@@ -720,14 +726,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 textureBackground.SetPixels(119, textureBackground.height - 65 - 64, 64, 64, texturePortrait.GetPixels());
                 textureBackground.Apply(false);
-            }
-        }
-
-        void UpdateNameNPC()
-        {
-            if (labelNameNPC != null)
-            {
-                labelNameNPC.Text = TalkManager.Instance.NameNPC;
             }
         }
 

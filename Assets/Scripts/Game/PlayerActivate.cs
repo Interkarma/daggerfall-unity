@@ -794,24 +794,40 @@ namespace DaggerfallWorkshop.Game
                         if (RMBLayout.IsShop(playerEnterExit.BuildingDiscoveryData.buildingType))
                         {
                             if (RMBLayout.IsRepairShop(playerEnterExit.BuildingDiscoveryData.buildingType))
-                                DaggerfallUI.Instance.UserInterfaceManager.PushWindow(new DaggerfallMerchantRepairPopupWindow(DaggerfallUI.Instance.UserInterfaceManager));
+                            {
+                                DaggerfallMerchantRepairPopupWindow merchantRepairWindow = new DaggerfallMerchantRepairPopupWindow(DaggerfallUI.Instance.UserInterfaceManager);
+                                merchantRepairWindow.MerchantNPC = npc;
+                                DaggerfallUI.Instance.UserInterfaceManager.PushWindow(merchantRepairWindow);
+                            }
                             else
-                                DaggerfallUI.Instance.UserInterfaceManager.PushWindow(
-                                    new DaggerfallMerchantServicePopupWindow(DaggerfallUI.Instance.UserInterfaceManager, DaggerfallMerchantServicePopupWindow.Services.Sell));
+                            {
+                                DaggerfallMerchantServicePopupWindow merchantServiceSellWindow = new DaggerfallMerchantServicePopupWindow(DaggerfallUI.Instance.UserInterfaceManager, DaggerfallMerchantServicePopupWindow.Services.Sell);
+                                merchantServiceSellWindow.MerchantNPC = npc;
+                                DaggerfallUI.Instance.UserInterfaceManager.PushWindow(merchantServiceSellWindow);
+                            }
                         }
                         else if (playerEnterExit.BuildingDiscoveryData.buildingType == DFLocation.BuildingTypes.Bank)
                         {
-                            DaggerfallUI.Instance.UserInterfaceManager.PushWindow(
-                                new DaggerfallMerchantServicePopupWindow(DaggerfallUI.Instance.UserInterfaceManager, DaggerfallMerchantServicePopupWindow.Services.Banking));
+                            DaggerfallMerchantServicePopupWindow merchantServiceBankingWindow = new DaggerfallMerchantServicePopupWindow(DaggerfallUI.Instance.UserInterfaceManager, DaggerfallMerchantServicePopupWindow.Services.Banking);
+                            merchantServiceBankingWindow.MerchantNPC = npc;
+                            DaggerfallUI.Instance.UserInterfaceManager.PushWindow(merchantServiceBankingWindow);
+
                         }
                         else if (playerEnterExit.BuildingDiscoveryData.buildingType == DFLocation.BuildingTypes.Tavern)
-                            return;
+                        {
+                            // for now only talk to all npc in taverns - TODO: add tavern option in here
+                            GameManager.Instance.TalkManager.TalkToStaticNPC(npc);
+                        }
                     }
                     // TODO - more checks for npc social types? ... guild services etc?
-                    else // if no special handling had to be done: default is talk to the static npc
+                    else // if no special handling had to be done for npc with social group of type merchant: talk to the static npc
                     {
                         GameManager.Instance.TalkManager.TalkToStaticNPC(npc);
                     }
+                }
+                else // if no special handling had to be done (all remaining npcs of the remaining social groups not handled explicitely above): default is talk to the static npc
+                {
+                    GameManager.Instance.TalkManager.TalkToStaticNPC(npc);
                 }
             }
         }
