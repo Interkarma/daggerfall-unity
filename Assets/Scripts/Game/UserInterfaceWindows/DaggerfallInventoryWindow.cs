@@ -62,6 +62,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected Rect remoteTargetIconRect = new Rect(263, 12, 55, 34);
         protected Rect localTargetIconRect = new Rect(165, 12, 55, 34);
+        protected Rect infoCutoutRect = new Rect(196, 68, 50, 37);
 
         protected Rect exitButtonRect = new Rect(222, 178, 39, 22);
 
@@ -99,6 +100,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Panel[] accessoryIconPanels = new Panel[accessoryCount];
 
         PaperDoll paperDoll = new PaperDoll();
+        protected Panel localTargetIconPanel;
+        protected MultiFormatTextLabel localTargetItemInfoLabel;
         protected Panel remoteTargetIconPanel;
         protected TextLabel remoteTargetIconLabel;
 
@@ -136,6 +139,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected Texture2D redDownArrow;
         protected Texture2D greenDownArrow;
 
+        protected Texture2D infoTexture;
+
         #endregion
 
         #region Fields
@@ -144,8 +149,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string goldTextureName = "INVE01I0.IMG";
         const string greenArrowsTextureName = "INVE06I0.IMG";           // Green up/down arrows when more items available
         const string redArrowsTextureName = "INVE07I0.IMG";             // Red up/down arrows when no more items available
+        const string infoTextureName = "ITEM00I0.IMG";
 
-        protected const int listDisplayUnits = 4;                                 // Number of items displayed in scrolling areas
+        protected const int listDisplayUnits = 4;                       // Number of items displayed in scrolling areas
         const int accessoryCount = 12;                                  // Number of accessory slots
         const int itemButtonMarginSize = 2;                             // Margin of item buttons
         const int accessoryButtonMarginSize = 1;                        // Margin of accessory buttons
@@ -254,6 +260,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Character portrait
             SetupPaperdoll();
 
+            // Setup local and remote target icon panels
+            localTargetIconPanel = DaggerfallUI.AddPanel(localTargetIconRect, NativePanel);
+            remoteTargetIconPanel = DaggerfallUI.AddPanel(remoteTargetIconRect, NativePanel);
+            remoteTargetIconLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(1, 2), remoteTargetIconPanel);
+
+            // Setup item info panel in local target icon if configured
+            SetupItemInfoPanel();
+
             // Setup UI
             SetupTabPageButtons();
             SetupActionButtons();
@@ -266,10 +280,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Exit buttons
             Button exitButton = DaggerfallUI.AddButton(exitButtonRect, NativePanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
-
-            // Setup local and remote target icon panels
-            remoteTargetIconPanel = DaggerfallUI.AddPanel(remoteTargetIconRect, NativePanel);
-            remoteTargetIconLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(1, 2), remoteTargetIconPanel);
 
             // Setup initial state
             SelectTabPage(TabPages.WeaponsAndArmor);
@@ -286,6 +296,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             UpdateAccessoryItemsDisplay();
             UpdateLocalTargetIcon();
             UpdateRemoteTargetIcon();
+        }
+
+        private void SetupItemInfoPanel()
+        {
+            if (DaggerfallUnity.Settings.EnableInventoryInfoPanel)
+            {
+                localTargetIconPanel.BackgroundTexture = infoTexture;
+                localTargetItemInfoLabel = new MultiFormatTextLabel();
+                localTargetItemInfoLabel.Position = new Vector2(2, 0);
+                localTargetItemInfoLabel.VerticalAlignment = VerticalAlignment.Middle;
+                localTargetItemInfoLabel.ShadowPosition = Vector2.zero;
+                localTargetItemInfoLabel.TextScale = 0.75f;
+                localTargetItemInfoLabel.MaxTextWidth = 71;
+                localTargetItemInfoLabel.TextColor = DaggerfallUI.DaggerfallUnityDefaultToolTipTextColor;
+                localTargetIconPanel.Components.Add(localTargetItemInfoLabel);
+            }
         }
 
         protected void SetupPaperdoll()
@@ -388,6 +414,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 localItemsButtons[i].ToolTip = defaultToolTip;
                 localItemsButtons[i].Tag = i;
                 localItemsButtons[i].OnMouseClick += LocalItemsButton_OnMouseClick;
+                if (localTargetItemInfoLabel != null)
+                    localItemsButtons[i].OnMouseEnter += LocalItemsButton_OnMouseEnter;
 
                 // Icon image panel
                 localItemsIconPanels[i] = DaggerfallUI.AddPanel(localItemsButtons[i], AutoSizeModes.ScaleToFit);
@@ -420,6 +448,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 remoteItemsButtons[i].ToolTip = defaultToolTip;
                 remoteItemsButtons[i].Tag = i;
                 remoteItemsButtons[i].OnMouseClick += RemoteItemsButton_OnMouseClick;
+                if (localTargetItemInfoLabel != null)
+                    remoteItemsButtons[i].OnMouseEnter += RemoteItemsButton_OnMouseEnter;
 
                 // Icon image panel
                 remoteItemsIconPanels[i] = DaggerfallUI.AddPanel(remoteItemsButtons[i], AutoSizeModes.ScaleToFit);
@@ -463,6 +493,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 button.ToolTip = defaultToolTip;
                 button.Tag = i;
                 button.OnMouseClick += AccessoryItemsButton_OnMouseClick;
+                if (localTargetItemInfoLabel != null)
+                    button.OnMouseEnter += AccessoryItemsButton_OnMouseEnter;
                 accessoryButtons[i] = button;
 
                 // Create icon panel
@@ -1062,6 +1094,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             removeSelected = ImageReader.GetSubTexture(goldTexture, removeButtonRect);
             useSelected = ImageReader.GetSubTexture(goldTexture, useButtonRect);
 
+            Texture2D infoBaseTexture = ImageReader.GetTexture(infoTextureName);
+            infoTexture = ImageReader.GetSubTexture(infoBaseTexture, infoCutoutRect);
         }
 
         /// <summary>
@@ -1416,104 +1450,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected void ShowInfoPopup(DaggerfallUnityItem item)
         {
-            const int paintingTextId = 250;
-            const int armorTextId = 1000;
-            const int weaponTextId = 1001;
-            const int miscTextId = 1003;
-            const int soulTrapTextId = 1004;
-            const int letterOfCreditTextId = 1007;
-            //const int potionTextId = 1008;
-            const int bookTextId = 1009;
-            const int arrowTextId = 1011;
-            const int weaponNoMaterialTextId = 1012;
-            const int armorNoMaterialTextId = 1014;
-            const int oghmaInfiniumTextId = 1015;
-            const int houseDeedTextId = 1073;
-
-            TextFile.Token[] tokens = null;
-
-            // Handle by item group
-            switch (item.ItemGroup)
-            {
-                case (ItemGroups.Armor):
-                    if (item.IsShield || item.TemplateIndex == (int)Armor.Helm || item.IsArtifact)
-                        tokens = DaggerfallUnity.TextProvider.GetRSCTokens(armorNoMaterialTextId);
-                    else
-                        tokens = DaggerfallUnity.TextProvider.GetRSCTokens(armorTextId);
-                    break;
-
-                case (ItemGroups.Weapons):
-                    if (item.TemplateIndex == (int)Weapons.Arrow)
-                        tokens = DaggerfallUnity.TextProvider.GetRSCTokens(arrowTextId);
-                    else if (item.IsArtifact)
-                        tokens = DaggerfallUnity.TextProvider.GetRSCTokens(weaponNoMaterialTextId);
-                    else
-                        tokens = DaggerfallUnity.TextProvider.GetRSCTokens(weaponTextId);
-                    break;
-
-                case (ItemGroups.Books):
-                    // Handle Oghma Infinium
-                    if (item.legacyMagic != null && item.legacyMagic[0] == 26)
-                    {
-                        tokens = DaggerfallUnity.TextProvider.GetRSCTokens(oghmaInfiniumTextId);
-                    }
-                    // Handle other books
-                    else
-                    {
-                        tokens = DaggerfallUnity.TextProvider.GetRSCTokens(bookTextId);
-                    }
-                    break;
-
-                // TODO: Check for potion in glass bottle.
-                // In classic, the check is whether RecordRoot.SublistHead is non-null
-                // and of PotionMix type.
-
-                case (ItemGroups.Paintings):
-                    // TODO: Show painting. Uses file paint.dat.
-                    tokens = DaggerfallUnity.TextProvider.GetRSCTokens(paintingTextId);
-                    break;
-
-                default:
-                    // A few items in the MiscItems group have their own text display
-                    if (item.ItemGroup == ItemGroups.MiscItems)
-                    {
-                        // Handle potion recipes
-                        if (item.TemplateIndex == (int)MiscItems.Potion_recipe)
-                        {
-                            DaggerfallPotionRecipeWindow readerWindow = new DaggerfallPotionRecipeWindow(uiManager, item.typeDependentData, this);
-                            uiManager.PushWindow(readerWindow);
-                            return;
-                        }
-                        // Handle house deeds
-                        else if (item.TemplateIndex == (int)MiscItems.House_Deed)
-                        {
-                            tokens = DaggerfallUnity.TextProvider.GetRSCTokens(houseDeedTextId);
-                        }
-                        // Handle soul traps
-                        else if (item.TemplateIndex == (int)MiscItems.Soul_trap)
-                        {
-                            tokens = DaggerfallUnity.TextProvider.GetRSCTokens(soulTrapTextId);
-                        }
-                        else if (item.TemplateIndex == (int)MiscItems.Letter_of_credit)
-                        {
-                            tokens = DaggerfallUnity.TextProvider.GetRSCTokens(letterOfCreditTextId);
-                        }
-                        if (tokens != null)
-                            break;
-                    }
-
-                    // Handle Azura's Star
-                    if (item.legacyMagic != null && item.legacyMagic[0] == 26 && item.legacyMagic[1] == 9)
-                    {
-                        tokens = DaggerfallUnity.TextProvider.GetRSCTokens(soulTrapTextId);
-                        break;
-                    }
-
-                    // Default fallback if none of the above applied
-                    tokens = DaggerfallUnity.TextProvider.GetRSCTokens(miscTextId);
-                    break;
-            }
-
+            TextFile.Token[] tokens = ItemHelper.GetItemInfo(item, DaggerfallUnity.TextProvider);
             if (tokens != null && tokens.Length > 0)
             {
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
@@ -1744,7 +1681,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #endregion
 
-        #region Other Event Handlers
+        #region Hover & StartGame Event Handlers
 
         private void PaperDoll_OnMouseMove(int x, int y)
         {
@@ -1764,8 +1701,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     DaggerfallUnityItem item = playerEntity.ItemEquipTable.EquipTable[value];
                     if (item != null)
                         text = item.LongName;
-                }
 
+                    // Update the info panel if used
+                    if (localTargetItemInfoLabel != null)
+                        UpdateItemInfoPanel(item);
+                }
                 // Update tooltip text
                 paperDoll.ToolTipText = text;
             }
@@ -1775,6 +1715,57 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 paperDoll.ToolTipText = string.Empty;
                 lastMouseOverPaperDollEquipIndex = value;
             }
+        }
+
+        protected virtual void AccessoryItemsButton_OnMouseEnter(BaseScreenComponent sender)
+        {
+            // Get item
+            EquipSlots slot = (EquipSlots)sender.Tag;
+            DaggerfallUnityItem item = playerEntity.ItemEquipTable.GetItem(slot);
+            if (item == null)
+                return;
+            UpdateItemInfoPanel(item);
+        }
+
+        protected virtual void LocalItemsButton_OnMouseEnter(BaseScreenComponent sender)
+        {
+            // Get index
+            int index = localItemsScrollBar.ScrollIndex + (int)sender.Tag;
+            if (index >= localItemsFiltered.Count)
+                return;
+            // Get item
+            DaggerfallUnityItem item = localItemsFiltered[index];
+            if (item == null)
+                return;
+            UpdateItemInfoPanel(item);
+        }
+
+        protected virtual void RemoteItemsButton_OnMouseEnter(BaseScreenComponent sender)
+        {
+            // Get index
+            int index = remoteItemsScrollBar.ScrollIndex + (int)sender.Tag;
+            if (index >= remoteItemsFiltered.Count)
+                return;
+            // Get item
+            DaggerfallUnityItem item = remoteItemsFiltered[index];
+            if (item == null)
+                return;
+            UpdateItemInfoPanel(item);
+        }
+
+        private void UpdateItemInfoPanel(DaggerfallUnityItem item)
+        {
+            // Display info in local target icon panel, replacing justification tokens
+            TextFile.Token[] tokens = ItemHelper.GetItemInfo(item, DaggerfallUnity.TextProvider);
+            for (int tokenIdx = 0; tokenIdx < tokens.Length; tokenIdx++)
+            {
+                if (tokens[tokenIdx].formatting == TextFile.Formatting.JustifyCenter)
+                    tokens[tokenIdx].formatting = TextFile.Formatting.NewLine;
+                if (tokens[tokenIdx].text != null)
+                    tokens[tokenIdx].text = tokens[tokenIdx].text.Replace("kilograms", "kg").Replace("points of damage", "damage");
+            }
+            MacroHelper.ExpandMacros(ref tokens, item);
+            localTargetItemInfoLabel.SetText(tokens);
         }
 
         protected virtual void StartGameBehaviour_OnNewGame()
