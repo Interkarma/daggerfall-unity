@@ -587,6 +587,7 @@ namespace DaggerfallWorkshop.Game.Items
             data.isQuestItem = isQuestItem;
             data.questUID = questUID;
             data.questItemSymbol = questItemSymbol;
+            data.trappedSoulType = trappedSoulType;
 
             return data;
         }
@@ -1186,6 +1187,7 @@ namespace DaggerfallWorkshop.Game.Items
             isQuestItem = data.isQuestItem;
             questUID = data.questUID;
             questItemSymbol = data.questItemSymbol;
+            trappedSoulType = data.trappedSoulType;
         }
 
         /// <summary>

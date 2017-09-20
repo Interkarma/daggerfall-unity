@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -325,7 +325,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             gridButton.OnRightMouseClick += GridButton_OnRightMouseClick;
             gridButton.ToolTip = defaultToolTip;
             gridButton.ToolTipText = "left click: switch to next view mode (hotkey: enter key)\ravailable view modes are:\r- original (hotkey F2)\r- extra: includes extra buildings (hotkey F3)\r- all: includes extra buildings, ground flats (hotkey F4)\rswitch background texture with F5-F8";
-            gridButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // forward button
             forwardButton = DaggerfallUI.AddButton(new Rect(105, 171, 21, 19), NativePanel);
@@ -335,7 +334,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             forwardButton.OnRightMouseUp += ForwardButton_OnRightMouseUp;
             forwardButton.ToolTip = defaultToolTip;
             forwardButton.ToolTipText = "left click: move up (hotkey: up arrow)\rright click: move to north location border (hotkey: shift+up arrow)";
-            forwardButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // backward button
             backwardButton = DaggerfallUI.AddButton(new Rect(126, 171, 21, 19), NativePanel);
@@ -345,7 +343,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             backwardButton.OnRightMouseUp += BackwardButton_OnRightMouseUp;
             backwardButton.ToolTip = defaultToolTip;
             backwardButton.ToolTipText = "left click: move down (hotkey: down arrow)\rright click: move to south location border (hotkey: shift+down arrow)";
-            backwardButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // left button
             leftButton = DaggerfallUI.AddButton(new Rect(149, 171, 21, 19), NativePanel);
@@ -355,7 +352,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             leftButton.OnRightMouseUp += LeftButton_OnRightMouseUp;
             leftButton.ToolTip = defaultToolTip;
             leftButton.ToolTipText = "left click: move to the left (hotkey: left arrow)\rright click: move to west location border (hotkey: shift+left arrow)";
-            leftButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // right button
             rightButton = DaggerfallUI.AddButton(new Rect(170, 171, 21, 19), NativePanel);
@@ -365,7 +361,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rightButton.OnRightMouseUp += RightButton_OnRightMouseUp;
             rightButton.ToolTip = defaultToolTip;
             rightButton.ToolTipText = "left click: move to the right (hotkey: right arrow)\rright click: move to east location border (hotkey: shift+right arrow)";
-            rightButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // rotate left button
             rotateLeftButton = DaggerfallUI.AddButton(new Rect(193, 171, 21, 19), NativePanel);
@@ -375,7 +370,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rotateLeftButton.OnRightMouseUp += RotateLeftButton_OnRightMouseUp;
             rotateLeftButton.ToolTip = defaultToolTip;
             rotateLeftButton.ToolTipText = "left click: rotate map to the left (hotkey: control+right arrow)\rright click: rotate map around the player position\rto the left  (hotkey: alt+right arrow)";
-            rotateLeftButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // rotate right button
             rotateRightButton = DaggerfallUI.AddButton(new Rect(214, 171, 21, 19), NativePanel);
@@ -385,7 +379,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rotateRightButton.OnRightMouseUp += RotateRightButton_OnRightMouseUp;
             rotateRightButton.ToolTip = defaultToolTip;
             rotateRightButton.ToolTipText = "left click: rotate map to the right (hotkey: control+right arrow)\rright click: rotate map around the player position\rto the right (hotkey: alt+right arrow)";
-            rotateRightButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // upstairs button
             upstairsButton = DaggerfallUI.AddButton(new Rect(237, 171, 21, 19), NativePanel);
@@ -395,7 +388,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             upstairsButton.OnRightMouseUp += UpstairsButton_OnRightMouseUp;
             upstairsButton.ToolTip = defaultToolTip;
             upstairsButton.ToolTipText = "left click: zoom in (hotkey: page up)\rright click: apply maximum zoom";
-            upstairsButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // downstairs button
             downstairsButton = DaggerfallUI.AddButton(new Rect(258, 171, 21, 19), NativePanel);
@@ -405,7 +397,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             downstairsButton.OnRightMouseUp += DownstairsButton_OnRightMouseUp;
             downstairsButton.ToolTip = defaultToolTip;
             downstairsButton.ToolTipText = "left click: zoom out (hotkey: page down\rright click: apply minimum zoom)";
-            downstairsButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // Exit button
             Button exitButton = DaggerfallUI.AddButton(new Rect(281, 171, 28, 19), NativePanel);
@@ -420,7 +411,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             dummyPanelCompass.OnRightMouseClick += Compass_OnRightMouseClick;
             dummyPanelCompass.ToolTip = defaultToolTip;
             dummyPanelCompass.ToolTipText = "left click: focus player position (hotkey: tab)\rright click: reset view (hotkey: backspace)";
-            dummyPanelCompass.ToolTip.ToolTipDelay = toolTipDelay;
+
+            if (defaultToolTip != null)
+            {
+                gridButton.ToolTip.ToolTipDelay = toolTipDelay;
+                forwardButton.ToolTip.ToolTipDelay = toolTipDelay;
+                backwardButton.ToolTip.ToolTipDelay = toolTipDelay;
+                leftButton.ToolTip.ToolTipDelay = toolTipDelay;
+                rightButton.ToolTip.ToolTipDelay = toolTipDelay;
+                rotateLeftButton.ToolTip.ToolTipDelay = toolTipDelay;
+                rotateRightButton.ToolTip.ToolTipDelay = toolTipDelay;
+                upstairsButton.ToolTip.ToolTipDelay = toolTipDelay;
+                downstairsButton.ToolTip.ToolTipDelay = toolTipDelay;
+                dummyPanelCompass.ToolTip.ToolTipDelay = toolTipDelay;
+            }
 
             // compass            
             compass = new HUDCompass();

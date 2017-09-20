@@ -193,6 +193,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public bool isQuestItem;
         public ulong questUID;
         public Symbol questItemSymbol;
+        public MobileTypes trappedSoulType;
     }
 
     #endregion
