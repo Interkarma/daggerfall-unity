@@ -38,7 +38,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const string noQuestsRunning = "NO QUESTS RUNNING";
         const string questRunning = "Running";
         const string questFinishedSuccess = "Finished (success)";
-        const string questFinishedFailed = "Finished (failed)";
+        const string questFinishedFailedOrExpired = "Finished (failed/expired)";
         const int taskLabelPoolCount = 84;
         const int timerLabelPoolCount = 20;
         const int globalLabelPoolCount = 64;
@@ -244,7 +244,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 if (currentQuest.QuestSuccess)
                     processLabel.Text = string.Format("[{0}] - {1}", DaggerfallUnity.Instance.WorldTime.Now.MinTimeString(), questFinishedSuccess);
                 else
-                    processLabel.Text = string.Format("[{0}] - {1}", DaggerfallUnity.Instance.WorldTime.Now.MinTimeString(), questFinishedFailed);
+                    processLabel.Text = string.Format("[{0}] - {1}", DaggerfallUnity.Instance.WorldTime.Now.MinTimeString(), questFinishedFailedOrExpired);
             }
         }
 
