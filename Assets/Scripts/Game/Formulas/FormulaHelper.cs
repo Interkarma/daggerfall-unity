@@ -772,7 +772,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             return priceAdjustments;
         }
 
-        public static ushort[] ModifyPriceAdjustmentByRegion(ushort[] currentPriceAdjustments, uint times)
+        public static ushort[] ModifyPriceAdjustmentByRegion(ushort[] currentPriceAdjustments, int times)
         {
             DaggerfallConnect.Arena2.FactionFile.FactionData merchantsFaction;
             if (!GameManager.Instance.PlayerEntity.FactionData.GetFactionData(510, out merchantsFaction))

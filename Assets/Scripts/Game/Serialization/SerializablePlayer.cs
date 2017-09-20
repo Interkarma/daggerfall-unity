@@ -232,6 +232,9 @@ namespace DaggerfallWorkshop.Game.Serialization
             entity.DarkBrotherhoodRequirementTally = data.playerEntity.darkBrotherhoodRequirementTally;
             entity.SetCurrentLevelUpSkillSum();
 
+            // Set time tracked in player entity
+            entity.LastGameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+
             // Fill in missing data for saves
             if (entity.StartingLevelUpSkillSum <= 0)
                 entity.EstimateStartingLevelUpSkillSum();

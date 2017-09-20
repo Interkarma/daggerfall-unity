@@ -68,6 +68,19 @@ namespace DaggerfallWorkshop.Game.Entity
 
         protected ushort[] priceAdjustmentByRegion = FormulaHelper.RandomRegionalPriceAdjustments();
 
+        // Fatigue loss per in-game minute
+        private int DefaultFatigueLoss = 11;        // According to DF Chronicles and verified in classic
+        //private int ClimbingFatigueLoss = 22;     // According to DF Chronicles
+        private int RunningFatigueLoss = 88;        // According to DF Chronicles and verified in classic
+        //private int SwimmingFatigueLoss = 44;     // According to DF Chronicles
+
+        private int JumpingFatigueLoss = 11;        // According to DF Chronicles and verified in classic
+        private bool CheckedCurrentJump = false;
+
+        PlayerMotor playerMotor = null;
+        protected uint lastGameMinutes = 0;         // Being tracked in order to perform updates based on changes in the current game minute
+        private bool gameStarted = false;
+
         #endregion
 
         #region Properties
@@ -101,6 +114,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public float CarriedWeight { get { return Items.GetWeight() + ((float)goldPieces / DaggerfallBankManager.gold1kg); } }
         public float WagonWeight { get { return WagonItems.GetWeight(); } }
         public ushort[] PriceAdjustmentByRegion { get { return priceAdjustmentByRegion; } set { priceAdjustmentByRegion = value; } }
+        public uint LastGameMinutes { get { return lastGameMinutes; } set { lastGameMinutes = value; } }
 
         #endregion
 
@@ -116,6 +130,58 @@ namespace DaggerfallWorkshop.Game.Entity
         #endregion
 
         #region Public Methods
+
+        public override void Update(DaggerfallEntityBehaviour sender)
+        {
+            if (playerMotor = null)
+                playerMotor = GameManager.Instance.PlayerMotor;
+
+            uint gameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+            // Wait until game has started and the game time has been set.
+            // If the game time is taken before then "30" is returned, which causes an initial player fatigue loss
+            // after loading or starting a game with a non-30 minute.
+            if (!gameStarted && !GameManager.Instance.StateManager.GameInProgress)
+                return;
+            else if (!gameStarted)
+                gameStarted = true;
+
+            // Every game minute, apply fatigue loss to the player
+            if (playerMotor != null)
+            {
+                if (lastGameMinutes != gameMinutes)
+                {
+                    if (playerMotor.IsRunning)
+                        DecreaseFatigue(RunningFatigueLoss);
+                    else
+                        DecreaseFatigue(DefaultFatigueLoss);
+                }
+                // Reduce fatigue when jumping and tally jumping skill
+                if (!CheckedCurrentJump && playerMotor.IsJumping)
+                {
+                    DecreaseFatigue(JumpingFatigueLoss);
+                    TallySkill((short)Skills.Jumping, 1);
+                    CheckedCurrentJump = true;
+                }
+
+                // Reset jump fatigue check when grounded
+                if (CheckedCurrentJump && !playerMotor.IsJumping)
+                {
+                    CheckedCurrentJump = false;
+                }
+            }
+
+            // Adjust regional prices each time a day passes.
+            uint lastDay = lastGameMinutes / 1440;
+            uint currentDay = gameMinutes / 1440;
+            int daysPast = (int)(currentDay - lastDay);
+
+            if (daysPast > 0)
+                FormulaHelper.ModifyPriceAdjustmentByRegion(priceAdjustmentByRegion, daysPast);
+
+            lastGameMinutes = gameMinutes;
+
+            //HandleStartingCrimeGuildQuests(Entity as PlayerEntity);
+        }
 
         /// <summary>
         /// Resets entity to initial state.
@@ -493,6 +559,28 @@ namespace DaggerfallWorkshop.Game.Entity
                 readyToLevelUp = true;
 
             return levelUp;
+        }
+
+        void HandleStartingCrimeGuildQuests()
+        {
+            if (thievesGuildRequirementTally != 100
+                && timeForThievesGuildLetter > 0
+                && timeForThievesGuildLetter < DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime()
+                && !GameManager.Instance.PlayerGPS.GetComponent<PlayerEnterExit>().IsPlayerInside)
+            {
+                thievesGuildRequirementTally = 100;
+                timeForThievesGuildLetter = 0;
+                Questing.QuestMachine.Instance.InstantiateQuest("O0A0AL00");
+            }
+            if (darkBrotherhoodRequirementTally != 100
+                && timeForDarkBrotherhoodLetter > 0
+                && timeForDarkBrotherhoodLetter < DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime()
+                && !GameManager.Instance.PlayerGPS.GetComponent<PlayerEnterExit>().IsPlayerInside)
+            {
+                darkBrotherhoodRequirementTally = 100;
+                timeForDarkBrotherhoodLetter = 0;
+                Questing.QuestMachine.Instance.InstantiateQuest("L0A01L00");
+            }
         }
 
         #endregion
