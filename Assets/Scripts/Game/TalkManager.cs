@@ -946,101 +946,77 @@ namespace DaggerfallWorkshop.Game
 
             facePortraitArchive = DaggerfallTalkWindow.FacePortraitArchive.CommonFaces;
 
-            if (billboardArchiveIndex == 182)
-            {
-                if (billboardRecordIndex == 0) // example static npc: merchant in the odd blades in daggerfall
-                {
-                    recordIndex = 390;
-                    return;
-                }
-                else if (billboardRecordIndex == 2)
-                {
-                    recordIndex = 428;
-                    return;
-                }
-                else if (billboardRecordIndex == 20) // example static npc: fighters guild questor in daggerfall
-                {
-                    recordIndex = 476;
-                    return;
-                }
-                else if (billboardRecordIndex == 17) // example static npc: fighters guild npc next to entrance in daggerfall
-                {
-                    recordIndex = 428;
-                    return;
-                }
-                else if (billboardRecordIndex == 27)
-                {
-                    recordIndex = 446;
-                    return;
-                }
-                else if (billboardRecordIndex == 40)
-                {
-                    recordIndex = 477;
-                    return;
-                }
-            }
-            else if (billboardArchiveIndex == 183)
-            {
-                if (billboardRecordIndex == 2)
-                {
-                    recordIndex = 403;
-                    return;
-                }
-                else if (billboardRecordIndex == 5) // example static npc: banker in the bank of daggerfall in daggerfall at the market square
-                {
-                    recordIndex = 402;
-                    return;
-                }
-
-            }
-            else if (billboardArchiveIndex == 184) // tavern folks
-            {
-                if (billboardRecordIndex == 3)
-                {
-                    recordIndex = 460;
-                    return;
-                }
-                else if (billboardRecordIndex == 4)
-                {
-                    recordIndex = 471;
-                    return;
-                }
-                else if (billboardRecordIndex == 7)
-                {
-                    recordIndex = 417;
-                    return;
-                }
-                else if (billboardRecordIndex == 11)
-                {
-                    recordIndex = 421;
-                    return;
-                }
-                else if (billboardRecordIndex == 16)
-                {
-                    recordIndex = 464;
-                    return;
-                }
-                else if (billboardRecordIndex == 17)
-                {
-                    recordIndex = 473;
-                    return;
-                }
-                else if (billboardRecordIndex == 19)
-                {
-                    recordIndex = 373;
-                    return;
-                }
-                else if (billboardRecordIndex == 29)
-                {
-                    recordIndex = 421;
-                    return;
-                }
-            }
-
-            // use oops if we fail to resolve face
-            facePortraitArchive = DaggerfallTalkWindow.FacePortraitArchive.CommonFaces;
-            recordIndex = 410;
-            return;            
+            // try to resolve for known combinations of archiveIndex and recordIndex
+            if (billboardArchiveIndex == 177 && billboardRecordIndex == 0)
+                recordIndex = 479;
+            else if (billboardArchiveIndex == 177 && billboardRecordIndex == 1)
+                recordIndex = 480;
+            else if (billboardArchiveIndex == 177 && billboardRecordIndex == 2)
+                recordIndex = 481;
+            else if (billboardArchiveIndex == 177 && billboardRecordIndex == 5)
+                recordIndex = 478;
+            else if (billboardArchiveIndex == 177 && billboardRecordIndex == 4)
+                recordIndex = 398;
+            else if (billboardArchiveIndex == 181 && billboardRecordIndex == 2)
+                recordIndex = 483;
+            else if (billboardArchiveIndex == 181 && billboardRecordIndex == 5)
+                recordIndex = 396;
+            else if (billboardArchiveIndex == 182 && billboardRecordIndex == 0) // example static npc: merchant in the odd blades in daggerfall
+                recordIndex = 390;
+            else if (billboardArchiveIndex == 182 && billboardRecordIndex == 2)
+                recordIndex = 428;
+            else if (billboardArchiveIndex == 182 && billboardRecordIndex == 16)
+                recordIndex = 436;
+            else if (billboardArchiveIndex == 182 && billboardRecordIndex == 17) // example static npc: fighters guild npc next to entrance in daggerfall
+                recordIndex = 428;
+            else if (billboardArchiveIndex == 182 && billboardRecordIndex == 20) // example static npc: fighters guild questor in daggerfall
+                recordIndex = 476;
+            else if (billboardArchiveIndex == 182 && billboardRecordIndex == 21)
+                recordIndex = 440;
+            else if (billboardArchiveIndex == 182 && billboardRecordIndex == 23)
+                recordIndex = 442;
+            else if (billboardArchiveIndex == 182 && billboardRecordIndex == 25)
+                recordIndex = 444;
+            else if (billboardArchiveIndex == 182 && billboardRecordIndex == 27)
+                recordIndex = 446;
+            else if (billboardArchiveIndex == 182 && billboardRecordIndex == 40)
+                recordIndex = 477;
+            else if (billboardArchiveIndex == 182 && billboardRecordIndex == 45)
+                recordIndex = 419;
+            else if (billboardArchiveIndex == 182 && billboardRecordIndex == 59)
+                recordIndex = 389;
+            else if (billboardArchiveIndex == 183 && billboardRecordIndex == 2)
+                recordIndex = 403;
+            else if (billboardArchiveIndex == 183 && billboardRecordIndex == 3)
+                recordIndex = 404;
+            else if (billboardArchiveIndex == 183 && billboardRecordIndex == 4)
+                recordIndex = 405;
+            else if (billboardArchiveIndex == 183 && billboardRecordIndex == 5) // example static npc: banker in the bank of daggerfall in daggerfall at the market square
+                recordIndex = 402;
+            else if (billboardArchiveIndex == 184 && billboardRecordIndex == 0)
+                recordIndex = 469;
+            else if (billboardArchiveIndex == 184 && billboardRecordIndex == 3)
+                recordIndex = 460;
+            else if (billboardArchiveIndex == 184 && billboardRecordIndex == 4)             
+                recordIndex = 471;
+            else if (billboardArchiveIndex == 184 && billboardRecordIndex == 7)
+                recordIndex = 417;
+            else if (billboardArchiveIndex == 184 && billboardRecordIndex == 11)
+                recordIndex = 421;
+            else if (billboardArchiveIndex == 184 && billboardRecordIndex == 16)
+                recordIndex = 464;
+            else if (billboardArchiveIndex == 184 && billboardRecordIndex == 17)
+                recordIndex = 473;
+            else if (billboardArchiveIndex == 184 && billboardRecordIndex == 18)
+                recordIndex = 474;
+            else if (billboardArchiveIndex == 184 && billboardRecordIndex == 19)
+                recordIndex = 373;
+            else if (billboardArchiveIndex == 184 && billboardRecordIndex == 21)
+                recordIndex = 466;
+            else if (billboardArchiveIndex == 184 && billboardRecordIndex == 29)
+                recordIndex = 421;
+            else // use oops if we fail to resolve face                
+                recordIndex = 410;    
         }
 
         #endregion
