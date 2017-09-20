@@ -368,7 +368,7 @@ namespace DaggerfallWorkshop.Game
 
             DaggerfallTalkWindow.FacePortraitArchive facePortraitArchive;
             int recordIndex;
-            getPortraitIndexFromStaticNPCBillboard(targetNPC.Data.billboardArchiveIndex, targetNPC.Data.billboardRecordIndex, out facePortraitArchive, out recordIndex);
+            getPortraitIndexFromStaticNPCBillboard(out facePortraitArchive, out recordIndex);
             DaggerfallUI.Instance.TalkWindow.SetNPCPortrait(facePortraitArchive, recordIndex);
 
             lastTargetStaticNPC = targetNPC;
@@ -918,105 +918,30 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-        /// this functions maps billboards to npc portraits
-        /// it might be possible that the selected portrait is dependent on more data than just the billboard archive and record indices
+        /// get portrait archive and texture record index for current set target static npc
         /// </summary>
-        /// <param name="billboardArchiveIndex"> archive index of the billboard</param>
-        /// <param name="billboardRecordIndex"> record index of the billboard inside the archive </param>
         /// <returns></returns>
-        private void getPortraitIndexFromStaticNPCBillboard(int billboardArchiveIndex, int billboardRecordIndex, out DaggerfallTalkWindow.FacePortraitArchive facePortraitArchive, out int recordIndex)
+        private void getPortraitIndexFromStaticNPCBillboard(out DaggerfallTalkWindow.FacePortraitArchive facePortraitArchive, out int recordIndex)
         {
             FactionFile.FactionData factionData;
             GameManager.Instance.PlayerEntity.FactionData.GetFactionData(targetStaticNPC.Data.factionID, out factionData);
 
-            FactionFile.FlatData flatData = FactionFile.GetFlatData(factionData.flat1);
-            //FactionFile.FlatData flatData2 = FactionFile.GetFlatData(factionData.flat2);
+            FactionFile.FlatData factionFlatData = FactionFile.GetFlatData(factionData.flat1);
+            //FactionFile.FlatData flatData2 = FactionFile.GetFlatData(factionData.flat2); // do we need this? is flat2 used for npcs in some places?
 
             if (factionData.type == 4)
             {
                 facePortraitArchive = DaggerfallTalkWindow.FacePortraitArchive.SpecialFaces;
-
-                // test if flatData matches our billboard - if so special face handling          
-                if (billboardArchiveIndex == flatData.archive && billboardRecordIndex == flatData.record)
-                {
-                    recordIndex = factionData.face;
-                    return;
-                }
+                recordIndex = factionData.face;
+                return;
             }
 
             facePortraitArchive = DaggerfallTalkWindow.FacePortraitArchive.CommonFaces;
-
-            // try to resolve for known combinations of archiveIndex and recordIndex
-            if (billboardArchiveIndex == 177 && billboardRecordIndex == 0)
-                recordIndex = 479;
-            else if (billboardArchiveIndex == 177 && billboardRecordIndex == 1)
-                recordIndex = 480;
-            else if (billboardArchiveIndex == 177 && billboardRecordIndex == 2)
-                recordIndex = 481;
-            else if (billboardArchiveIndex == 177 && billboardRecordIndex == 5)
-                recordIndex = 478;
-            else if (billboardArchiveIndex == 177 && billboardRecordIndex == 4)
-                recordIndex = 398;
-            else if (billboardArchiveIndex == 181 && billboardRecordIndex == 2)
-                recordIndex = 483;
-            else if (billboardArchiveIndex == 181 && billboardRecordIndex == 5)
-                recordIndex = 396;
-            else if (billboardArchiveIndex == 182 && billboardRecordIndex == 0) // example static npc: merchant in the odd blades in daggerfall
-                recordIndex = 390;
-            else if (billboardArchiveIndex == 182 && billboardRecordIndex == 2)
-                recordIndex = 428;
-            else if (billboardArchiveIndex == 182 && billboardRecordIndex == 16)
-                recordIndex = 436;
-            else if (billboardArchiveIndex == 182 && billboardRecordIndex == 17) // example static npc: fighters guild npc next to entrance in daggerfall
-                recordIndex = 428;
-            else if (billboardArchiveIndex == 182 && billboardRecordIndex == 20) // example static npc: fighters guild questor in daggerfall
-                recordIndex = 476;
-            else if (billboardArchiveIndex == 182 && billboardRecordIndex == 21)
-                recordIndex = 440;
-            else if (billboardArchiveIndex == 182 && billboardRecordIndex == 23)
-                recordIndex = 442;
-            else if (billboardArchiveIndex == 182 && billboardRecordIndex == 25)
-                recordIndex = 444;
-            else if (billboardArchiveIndex == 182 && billboardRecordIndex == 27)
-                recordIndex = 446;
-            else if (billboardArchiveIndex == 182 && billboardRecordIndex == 40)
-                recordIndex = 477;
-            else if (billboardArchiveIndex == 182 && billboardRecordIndex == 45)
-                recordIndex = 419;
-            else if (billboardArchiveIndex == 182 && billboardRecordIndex == 59)
-                recordIndex = 389;
-            else if (billboardArchiveIndex == 183 && billboardRecordIndex == 2)
-                recordIndex = 403;
-            else if (billboardArchiveIndex == 183 && billboardRecordIndex == 3)
-                recordIndex = 404;
-            else if (billboardArchiveIndex == 183 && billboardRecordIndex == 4)
-                recordIndex = 405;
-            else if (billboardArchiveIndex == 183 && billboardRecordIndex == 5) // example static npc: banker in the bank of daggerfall in daggerfall at the market square
-                recordIndex = 402;
-            else if (billboardArchiveIndex == 184 && billboardRecordIndex == 0)
-                recordIndex = 469;
-            else if (billboardArchiveIndex == 184 && billboardRecordIndex == 3)
-                recordIndex = 460;
-            else if (billboardArchiveIndex == 184 && billboardRecordIndex == 4)             
-                recordIndex = 471;
-            else if (billboardArchiveIndex == 184 && billboardRecordIndex == 7)
-                recordIndex = 417;
-            else if (billboardArchiveIndex == 184 && billboardRecordIndex == 11)
-                recordIndex = 421;
-            else if (billboardArchiveIndex == 184 && billboardRecordIndex == 16)
-                recordIndex = 464;
-            else if (billboardArchiveIndex == 184 && billboardRecordIndex == 17)
-                recordIndex = 473;
-            else if (billboardArchiveIndex == 184 && billboardRecordIndex == 18)
-                recordIndex = 474;
-            else if (billboardArchiveIndex == 184 && billboardRecordIndex == 19)
-                recordIndex = 373;
-            else if (billboardArchiveIndex == 184 && billboardRecordIndex == 21)
-                recordIndex = 466;
-            else if (billboardArchiveIndex == 184 && billboardRecordIndex == 29)
-                recordIndex = 421;
+            FlatsFile.FlatData flatData;
+            if (DaggerfallUnity.Instance.ContentReader.FlatsFileReader.GetFlatData(FlatsFile.GetFlatID(factionFlatData.archive, factionFlatData.record), out flatData))
+                recordIndex = flatData.faceIndex;
             else // use oops if we fail to resolve face                
-                recordIndex = 410;    
+                recordIndex = 410;
         }
 
         #endregion
