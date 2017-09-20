@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -69,6 +69,21 @@ namespace DaggerfallConnect.Arena2
                 tabToken.formatting = Formatting.PositionPrefix;
                 return tabToken;
             }
+        }
+
+        public static Token CreateTextToken(string text)
+        {
+            Token textToken = new Token();
+            textToken.formatting = Formatting.Text;
+            textToken.text = text;
+            return textToken;
+        }
+
+        public static Token CreateFormatToken(Formatting format)
+        {
+            Token formatToken = new Token();
+            formatToken.formatting = format;
+            return formatToken;
         }
 
         #endregion

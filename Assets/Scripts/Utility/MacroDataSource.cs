@@ -119,6 +119,11 @@ namespace DaggerfallWorkshop.Utility
             throw new NotImplementedException();
         }
 
+        public virtual string Potion()
+        {   // %po
+            throw new NotImplementedException();
+        }
+
         public virtual string Pronoun()
         {   // %g & %g1
             throw new NotImplementedException();
@@ -153,6 +158,11 @@ namespace DaggerfallWorkshop.Utility
 
         public virtual string God()
         {   // %god
+            throw new NotImplementedException();
+        }
+
+        public virtual TextFile.Token[] PotionRecipeIngredients(TextFile.Formatting format)
+        {
             throw new NotImplementedException();
         }
 
