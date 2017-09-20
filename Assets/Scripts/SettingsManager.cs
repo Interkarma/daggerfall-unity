@@ -209,6 +209,7 @@ namespace DaggerfallWorkshop
             SetFloat(sectionGUI, "ToolTipDelayInSeconds", ToolTipDelayInSeconds);
             SetColor(sectionGUI, "ToolTipBackgroundColor", ToolTipBackgroundColor);
             SetColor(sectionGUI, "ToolTipTextColor", ToolTipTextColor);
+            SetBool(sectionGUI, "EnableInventoryInfoPanel", EnableInventoryInfoPanel);
             SetInt(sectionGUI, "AutomapNumberOfDungeons", AutomapNumberOfDungeons);
             SetInt(sectionGUI, "ShopQualityPresentation", ShopQualityPresentation);
             SetInt(sectionGUI, "ShopQualityHUDDelay", ShopQualityHUDDelay);
