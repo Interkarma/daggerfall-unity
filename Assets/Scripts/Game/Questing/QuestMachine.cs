@@ -872,6 +872,53 @@ namespace DaggerfallWorkshop.Game.Questing
             return assignedFound.ToArray();
         }
 
+        public void ClearMainQuestState()
+        {
+            // Reset current state
+            Instance.PurgeAllQuests();
+            GameManager.Instance.PlayerEntity.FactionData.ZeroAllReputations();
+            GameManager.Instance.PlayerEntity.GlobalVars.ZeroAllGlobalVars();
+            QuestMachine.Instance.LastNPCClicked = null;
+        }
+
+        /// <summary>
+        /// Sets main quest stage from 1-3 (currently).
+        /// </summary>
+        /// <param name="stage">Stage value.</param>
+        public int SetMainQuestStage(int stage)
+        {
+            // Clamp to valid range
+            stage = Mathf.Clamp(stage, 1, 3);
+
+            // Setup current stage
+            ClearMainQuestState();
+            if (stage == 1)
+            {
+                GameManager.Instance.PlayerEntity.Level = 1;
+                InstantiateQuest("_BRISIEN"); // Also starts backbone S0000999
+                InstantiateQuest("S0000977"); // Normally started by tutorial
+            }
+            else if (stage == 2)
+            {
+                GameManager.Instance.PlayerEntity.GlobalVars.SetGlobalVar(31, true);        // MetLadyBrisienna globalvar
+                GameManager.Instance.PlayerEntity.FactionData.ChangeReputation(365, 20);    // Aubk-i +20
+                GameManager.Instance.PlayerEntity.FactionData.ChangeReputation(394, 20);    // Morgiah +20
+
+                GameManager.Instance.PlayerEntity.Level = 3;
+                InstantiateQuest("S0000999");
+                InstantiateQuest("S0000977");
+            }
+            else if (stage == 3)
+            {
+                GameManager.Instance.PlayerEntity.FactionData.ChangeReputation(391, 20);    // Queen Barenziah +20
+                GameManager.Instance.PlayerEntity.Level = 9;
+                InstantiateQuest("__MQSTAGE03");
+                InstantiateQuest("S0000977");
+            }
+
+            return stage;
+        }
+
         #endregion
 
         #region Site Links
@@ -1091,51 +1138,82 @@ namespace DaggerfallWorkshop.Game.Questing
             return false;
         }
 
-        public void ClearMainQuestState()
-        {
-            // Reset current state
-            Instance.PurgeAllQuests();
-            GameManager.Instance.PlayerEntity.FactionData.ZeroAllReputations();
-            GameManager.Instance.PlayerEntity.GlobalVars.ZeroAllGlobalVars();
-            QuestMachine.Instance.LastNPCClicked = null;
-        }
-
         /// <summary>
-        /// Sets main quest stage from 1-3 (currently).
+        /// Removes an existing quest resource allocation (if present).
+        /// This is called when allocating a resource to ensure it is removed from any previous SiteLinks
+        /// For example, Sx011 will move Barenziah's book from Orsinium to Scourg Barrow after a time limit expires.
+        /// Allocation needs to be removed from Orsinium or item will be present in both locations.
+        /// This needs to be done in a way that does not break resources allocated from other quests.
         /// </summary>
-        /// <param name="stage">Stage value.</param>
-        public int SetMainQuestStage(int stage)
+        /// <param name="resource">The resource to cull. No action taken if resource null or not found.</param>
+        public void CullResourceTarget(QuestResource resource)
         {
-            // Clamp to valid range
-            stage = Mathf.Clamp(stage, 1, 3);
+            // Do nothing if resource null
+            if (resource == null)
+                return;
 
-            // Setup current stage
-            ClearMainQuestState();
-            if (stage == 1)
+            // Walk through all SiteLinks
+            for (int i = 0; i < siteLinks.Count; i++)
             {
-                GameManager.Instance.PlayerEntity.Level = 1;
-                InstantiateQuest("_BRISIEN"); // Also starts backbone S0000999
-                InstantiateQuest("S0000977"); // Normally started by tutorial
-            }
-            else if (stage == 2)
-            {
-                GameManager.Instance.PlayerEntity.GlobalVars.SetGlobalVar(31, true);        // MetLadyBrisienna globalvar
-                GameManager.Instance.PlayerEntity.FactionData.ChangeReputation(365, 20);    // Aubk-i +20
-                GameManager.Instance.PlayerEntity.FactionData.ChangeReputation(394, 20);    // Morgiah +20
+                // Get link
+                SiteLink link = siteLinks[i];
 
-                GameManager.Instance.PlayerEntity.Level = 3;
-                InstantiateQuest("S0000999");
-                InstantiateQuest("S0000977");
-            }
-            else if (stage == 3)
-            {
-                GameManager.Instance.PlayerEntity.FactionData.ChangeReputation(391, 20);    // Queen Barenziah +20
-                GameManager.Instance.PlayerEntity.Level = 9;
-                InstantiateQuest("__MQSTAGE03");
-                InstantiateQuest("S0000977");
+                // Get the Quest object referenced by this link
+                Quest quest = GetQuest(link.questUID);
+                if (quest == null)
+                    throw new Exception(string.Format("CullResourceSiteLink() could not find active quest for UID {0}", link.questUID));
+
+                // Get the Place resource referenced by this link
+                Place place = quest.GetPlace(link.placeSymbol);
+                if (place == null)
+                    throw new Exception(string.Format("CullResourceSiteLink() could not find Place symbol {0} in quest UID {1}", link.placeSymbol, link.questUID));
+
+                // Modify selected spawn QuestMarker for this Place
+                QuestMarker spawnMarker = place.SiteDetails.questSpawnMarkers[place.SiteDetails.selectedQuestSpawnMarker];
+                if (spawnMarker.targetResources != null)
+                {
+                    for (int j = 0; j < spawnMarker.targetResources.Count; j++)
+                    {
+                        // Get target resource
+                        QuestResource existingResource = quest.GetResource(spawnMarker.targetResources[j]);
+                        if (existingResource == null)
+                            continue;
+
+                        // Cull matching resource
+                        if (existingResource.Symbol.Equals(resource.Symbol))
+                        {
+                            spawnMarker.targetResources.Remove(existingResource.Symbol);
+                            Debug.LogFormat("Removed spawn {0} from {1}", existingResource.Symbol.Original, place.Symbol.Original);
+                            break;
+                        }
+                    }
+                }
+                place.SiteDetails.questSpawnMarkers[place.SiteDetails.selectedQuestSpawnMarker] = spawnMarker;
+
+                // Modify selected item QuestMarker for this Place
+                QuestMarker itemMarker = place.SiteDetails.questItemMarkers[place.SiteDetails.selectedQuestItemMarker];
+                if (itemMarker.targetResources != null)
+                {
+                    for (int j = 0; j < itemMarker.targetResources.Count; j++)
+                    {
+                        // Get target resource
+                        QuestResource existingResource = quest.GetResource(itemMarker.targetResources[j]);
+                        if (existingResource == null)
+                            continue;
+
+                        // Cull matching resource
+                        if (existingResource.Symbol.Equals(resource.Symbol))
+                        {
+                            itemMarker.targetResources.Remove(existingResource.Symbol);
+                            Debug.LogFormat("Removed item {0} from {1}", existingResource.Symbol.Original, place.Symbol.Original);
+                            break;
+                        }
+                    }
+                }
+                place.SiteDetails.questItemMarkers[place.SiteDetails.selectedQuestItemMarker] = itemMarker;
             }
 
-            return stage;
+            // TODO: Might need to hot-remove items here if timer expires while player inside target site
         }
 
         #endregion

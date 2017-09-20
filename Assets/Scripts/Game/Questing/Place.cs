@@ -271,6 +271,11 @@ namespace DaggerfallWorkshop.Game.Questing
             if (resource == null)
                 throw new Exception(string.Format("Could not locate quest resource with symbol {0}", targetSymbol.Name));
 
+            // Remove this resource if already injected at another Place
+            // Sometimes a quest will move a resource part way through quest
+            // This ensures resource does not become duplicated in both sites
+            QuestMachine.Instance.CullResourceTarget(resource);
+
             // Must be a supported resource type
             MarkerTypes requiredMarkerType = MarkerTypes.None;
             if (resource is Person || resource is Foe)
