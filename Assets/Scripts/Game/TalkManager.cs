@@ -953,6 +953,11 @@ namespace DaggerfallWorkshop.Game
                     recordIndex = 390;
                     return;
                 }
+                else if (billboardRecordIndex == 2)
+                {
+                    recordIndex = 428;
+                    return;
+                }
                 else if (billboardRecordIndex == 20) // example static npc: fighters guild questor in daggerfall
                 {
                     recordIndex = 476;
@@ -963,12 +968,71 @@ namespace DaggerfallWorkshop.Game
                     recordIndex = 428;
                     return;
                 }
+                else if (billboardRecordIndex == 27)
+                {
+                    recordIndex = 446;
+                    return;
+                }
+                else if (billboardRecordIndex == 40)
+                {
+                    recordIndex = 477;
+                    return;
+                }
             }
             else if (billboardArchiveIndex == 183)
             {
-                if (billboardRecordIndex == 5) // example static npc: banker in the bank of daggerfall in daggerfall at the market square
+                if (billboardRecordIndex == 2)
+                {
+                    recordIndex = 403;
+                    return;
+                }
+                else if (billboardRecordIndex == 5) // example static npc: banker in the bank of daggerfall in daggerfall at the market square
                 {
                     recordIndex = 402;
+                    return;
+                }
+
+            }
+            else if (billboardArchiveIndex == 184) // tavern folks
+            {
+                if (billboardRecordIndex == 3)
+                {
+                    recordIndex = 460;
+                    return;
+                }
+                else if (billboardRecordIndex == 4)
+                {
+                    recordIndex = 471;
+                    return;
+                }
+                else if (billboardRecordIndex == 7)
+                {
+                    recordIndex = 417;
+                    return;
+                }
+                else if (billboardRecordIndex == 11)
+                {
+                    recordIndex = 421;
+                    return;
+                }
+                else if (billboardRecordIndex == 16)
+                {
+                    recordIndex = 464;
+                    return;
+                }
+                else if (billboardRecordIndex == 17)
+                {
+                    recordIndex = 473;
+                    return;
+                }
+                else if (billboardRecordIndex == 19)
+                {
+                    recordIndex = 373;
+                    return;
+                }
+                else if (billboardRecordIndex == 29)
+                {
+                    recordIndex = 421;
                     return;
                 }
             }
