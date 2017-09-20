@@ -364,7 +364,7 @@ namespace DaggerfallWorkshop.Game
                                         DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
                                         break;
                                     }
-                                    Talk(mobileNpc);
+                                    GameManager.Instance.TalkManager.TalkToMobileNPC(mobileNpc);
                                     break;
                                 case PlayerActivateModes.Steal:
                                     if (!mobileNpc.PickpocketByPlayerAttempted)
@@ -783,7 +783,10 @@ namespace DaggerfallWorkshop.Game
             // Handle special NPC in home location click
             SpecialNPCClickHandler specialNPCClickHandler = npc.gameObject.GetComponent<SpecialNPCClickHandler>();
             if (specialNPCClickHandler)
+            {
+                specialNPCClickHandler.StaticNPC = npc;
                 specialNPCClickHandler.DoClick();
+            }
             else
             {
                 FactionFile.FactionData factionData;
@@ -796,20 +799,45 @@ namespace DaggerfallWorkshop.Game
                         if (RMBLayout.IsShop(playerEnterExit.BuildingDiscoveryData.buildingType))
                         {
                             if (RMBLayout.IsRepairShop(playerEnterExit.BuildingDiscoveryData.buildingType))
-                                DaggerfallUI.Instance.UserInterfaceManager.PushWindow(new DaggerfallMerchantRepairPopupWindow(DaggerfallUI.Instance.UserInterfaceManager));
+                            {
+                                DaggerfallMerchantRepairPopupWindow merchantRepairWindow = new DaggerfallMerchantRepairPopupWindow(DaggerfallUI.Instance.UserInterfaceManager);
+                                merchantRepairWindow.MerchantNPC = npc;
+                                DaggerfallUI.Instance.UserInterfaceManager.PushWindow(merchantRepairWindow);
+                            }
                             else
-                                DaggerfallUI.Instance.UserInterfaceManager.PushWindow(
-                                    new DaggerfallMerchantServicePopupWindow(DaggerfallUI.Instance.UserInterfaceManager, DaggerfallMerchantServicePopupWindow.Services.Sell));
+                            {
+                                DaggerfallMerchantServicePopupWindow merchantServiceSellWindow = new DaggerfallMerchantServicePopupWindow(DaggerfallUI.Instance.UserInterfaceManager, DaggerfallMerchantServicePopupWindow.Services.Sell);
+                                merchantServiceSellWindow.MerchantNPC = npc;
+                                DaggerfallUI.Instance.UserInterfaceManager.PushWindow(merchantServiceSellWindow);
+                            }
                         }
                         else if (playerEnterExit.BuildingDiscoveryData.buildingType == DFLocation.BuildingTypes.Bank)
                         {
-                            DaggerfallUI.Instance.UserInterfaceManager.PushWindow(
-                                new DaggerfallMerchantServicePopupWindow(DaggerfallUI.Instance.UserInterfaceManager, DaggerfallMerchantServicePopupWindow.Services.Banking));
+                            DaggerfallMerchantServicePopupWindow merchantServiceBankingWindow = new DaggerfallMerchantServicePopupWindow(DaggerfallUI.Instance.UserInterfaceManager, DaggerfallMerchantServicePopupWindow.Services.Banking);
+                            merchantServiceBankingWindow.MerchantNPC = npc;
+                            DaggerfallUI.Instance.UserInterfaceManager.PushWindow(merchantServiceBankingWindow);
+
                         }
                         else if (playerEnterExit.BuildingDiscoveryData.buildingType == DFLocation.BuildingTypes.Tavern)
-                            return;
+                        {
+                            // for now only talk to all npc in taverns - TODO: add tavern option in here
+                            GameManager.Instance.TalkManager.TalkToStaticNPC(npc);
+                        }
                     }
                     // TODO - more checks for npc social types? ... guild services etc?
+                    else // if no special handling had to be done for npc with social group of type merchant: talk to the static npc
+                    {
+                        GameManager.Instance.TalkManager.TalkToStaticNPC(npc);
+                    }
+                }
+                else // if no special handling had to be done (all remaining npcs of the remaining social groups not handled explicitely above): default is talk to the static npc
+                {
+                    // with one exception: guards
+                    if (npc.Data.billboardArchiveIndex == 183 && npc.Data.billboardRecordIndex == 3) // detect if clicked guard (comment Nystul: didn't find a better mechanism than billboard texture check)
+                        return; // if guard was clicked don't open talk window
+
+                    // otherwise open talk window
+                    GameManager.Instance.TalkManager.TalkToStaticNPC(npc);
                 }
             }
         }
@@ -880,44 +908,6 @@ namespace DaggerfallWorkshop.Game
                 string notSuccessfulMessage = HardStrings.youAreNotSuccessful;
                 DaggerfallUI.Instance.PopupMessage(notSuccessfulMessage);
             }
-        }
-        
-        // Player has clicked on a talk target
-        void Talk(MobilePersonNPC targetNPC = null)
-        {
-            const int youGetNoResponseTextId = 7205;
-
-            // Get NPC faction
-            FactionFile.FactionData NPCfaction;
-            int oneBasedPlayerRegion = GameManager.Instance.PlayerGPS.CurrentOneBasedRegionIndex;
-            FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(
-                (int)FactionFile.FactionTypes.Province, -1, -1, oneBasedPlayerRegion);
-
-            // Should always find a single region
-            if (factions == null || factions.Length != 1)
-                throw new Exception("Talk() did not find exactly 1 match for NPC faction.");
-
-            NPCfaction = factions[0];
-
-            // Get reaction to player
-            int reactionToPlayer = 0;
-            PlayerEntity player = GameManager.Instance.PlayerEntity;
-            reactionToPlayer = NPCfaction.rep;
-            reactionToPlayer += player.BiographyReactionMod;
-
-            if (NPCfaction.sgroup < player.SGroupReputations.Length) // one of the five general social groups
-                reactionToPlayer += player.SGroupReputations[NPCfaction.sgroup];
-
-            if (reactionToPlayer >= -20)
-            {
-                DaggerfallUI.UIManager.PushWindow(DaggerfallUI.Instance.TalkWindow);
-                GameManager.Instance.TalkManager.SetTargetNPC(targetNPC, reactionToPlayer);
-            }
-            else
-            {
-                DaggerfallUI.MessageBox(youGetNoResponseTextId);
-            }
-        }
-
+        }       
     }
 }

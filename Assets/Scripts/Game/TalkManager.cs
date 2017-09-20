@@ -20,6 +20,7 @@ using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -124,10 +125,12 @@ namespace DaggerfallWorkshop.Game
         }
 
         // current target npc for conversion
-        MobilePersonNPC targetNPC = null;
+        MobilePersonNPC targetMobileNPC = null;
+        StaticNPC targetStaticNPC = null;
 
         // last target npc for a conversion (null if not talked to any mobile npc yet)
-        MobilePersonNPC lastTargetNPC = null;
+        MobilePersonNPC lastTargetMobileNPC = null;
+        StaticNPC lastTargetStaticNPC = null;
 
         public enum KeySubjectType
         {
@@ -255,18 +258,123 @@ namespace DaggerfallWorkshop.Game
 
         #endregion
 
-        #region Public Methods        
+        #region Public Methods
 
-        public void SetTargetNPC(MobilePersonNPC targetNPC, int reactionToPlayer)
+        // Player has clicked on a mobile talk target
+        public void TalkToMobileNPC(MobilePersonNPC targetNPC)
         {
-            if (targetNPC == lastTargetNPC)
+            const int youGetNoResponseTextId = 7205;
+
+            // Get NPC faction
+            FactionFile.FactionData NPCfaction;
+            int oneBasedPlayerRegion = GameManager.Instance.PlayerGPS.CurrentOneBasedRegionIndex;
+            FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(
+                (int)FactionFile.FactionTypes.Province, -1, -1, oneBasedPlayerRegion);
+
+            // Should always find a single region
+            if (factions == null || factions.Length != 1)
+                throw new Exception("Talk() did not find exactly 1 match for NPC faction.");
+
+            NPCfaction = factions[0];
+
+            // Get reaction to player
+            int reactionToPlayer = 0;
+            PlayerEntity player = GameManager.Instance.PlayerEntity;
+            reactionToPlayer = NPCfaction.rep;
+            reactionToPlayer += player.BiographyReactionMod;
+
+            if (NPCfaction.sgroup < player.SGroupReputations.Length) // one of the five general social groups
+                reactionToPlayer += player.SGroupReputations[NPCfaction.sgroup];
+
+            if (reactionToPlayer >= -20)
+            {
+                DaggerfallUI.UIManager.PushWindow(DaggerfallUI.Instance.TalkWindow);
+                GameManager.Instance.TalkManager.SetTargetNPC(targetNPC, reactionToPlayer);
+            }
+            else
+            {
+                DaggerfallUI.MessageBox(youGetNoResponseTextId);
+            }
+        }
+
+        // Player has clicked or static talk target or clicked the talk button inside a popup-window
+        public void TalkToStaticNPC(StaticNPC targetNPC)
+        {
+            const int youGetNoResponseTextId = 7205;
+
+            // Get NPC faction
+            FactionFile.FactionData NPCfaction;
+            int oneBasedPlayerRegion = GameManager.Instance.PlayerGPS.CurrentOneBasedRegionIndex;
+            FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(
+                (int)FactionFile.FactionTypes.Province, -1, -1, oneBasedPlayerRegion);
+
+            // Should always find a single region
+            if (factions == null || factions.Length != 1)
+                throw new Exception("Talk() did not find exactly 1 match for NPC faction.");
+
+            NPCfaction = factions[0];
+
+            // Get reaction to player
+            int reactionToPlayer = 0;
+            PlayerEntity player = GameManager.Instance.PlayerEntity;
+            reactionToPlayer = NPCfaction.rep;
+            reactionToPlayer += player.BiographyReactionMod;
+
+            if (NPCfaction.sgroup < player.SGroupReputations.Length) // one of the five general social groups
+                reactionToPlayer += player.SGroupReputations[NPCfaction.sgroup];
+
+            if (reactionToPlayer >= -20)
+            {
+                DaggerfallUI.UIManager.PushWindow(DaggerfallUI.Instance.TalkWindow);
+                GameManager.Instance.TalkManager.SetTargetNPC(targetNPC, reactionToPlayer);
+            }
+            else
+            {
+                DaggerfallUI.MessageBox(youGetNoResponseTextId);
+            }
+        }
+
+
+        public void SetTargetNPC(MobilePersonNPC targetMobileNPC, int reactionToPlayer)
+        {
+            if (targetMobileNPC == lastTargetMobileNPC)
                 return;
 
-            DaggerfallUI.Instance.TalkWindow.SetNPCPortraitAndName(targetNPC.PersonFaceRecordId, targetNPC.NameNPC);
+            this.targetMobileNPC = targetMobileNPC;
 
-            lastTargetNPC = targetNPC;
+            DaggerfallUI.Instance.TalkWindow.SetNPCPortrait(DaggerfallTalkWindow.FacePortraitArchive.CommonFaces, targetMobileNPC.PersonFaceRecordId);
 
-            nameNPC = targetNPC.NameNPC;
+            lastTargetMobileNPC = targetMobileNPC;
+
+            nameNPC = targetMobileNPC.NameNPC;
+            DaggerfallUI.Instance.TalkWindow.UpdateNameNPC();
+
+            this.reactionToPlayer = reactionToPlayer;
+
+            // reset npc knowledge, for now it resets every time the npc has changed (player talked to new npc)
+            // TODO: match classic daggerfall - in classic npc remember their knowledge about topics for their time of existence
+            resetNPCKnowledgeInTopicListRecursively(listTopicLocation);
+            resetNPCKnowledgeInTopicListRecursively(listTopicPerson);
+            resetNPCKnowledgeInTopicListRecursively(listTopicThing);
+            resetNPCKnowledgeInTopicListRecursively(listTopicTellMeAbout);
+        }
+
+        public void SetTargetNPC(StaticNPC targetNPC, int reactionToPlayer)
+        {
+            if (targetNPC == lastTargetStaticNPC)
+                return;
+
+            this.targetStaticNPC = targetNPC;
+
+            DaggerfallTalkWindow.FacePortraitArchive facePortraitArchive;
+            int recordIndex;
+            getPortraitIndexFromStaticNPCBillboard(targetNPC.Data.billboardArchiveIndex, targetNPC.Data.billboardRecordIndex, out facePortraitArchive, out recordIndex);
+            DaggerfallUI.Instance.TalkWindow.SetNPCPortrait(facePortraitArchive, recordIndex);
+
+            lastTargetStaticNPC = targetNPC;
+
+            nameNPC = targetNPC.DisplayName;
+            DaggerfallUI.Instance.TalkWindow.UpdateNameNPC();
 
             this.reactionToPlayer = reactionToPlayer;
 
@@ -452,8 +560,9 @@ namespace DaggerfallWorkshop.Game
             string answer;
 
             // chances unknown - so there is a 75% chance for now that npc gives location direction hints and a 25% chance that npc will reveal location on map
+            // always only give directional hints if player is inside
             int randomNum = UnityEngine.Random.Range(0, 4);
-            if (randomNum > 0)
+            if (randomNum > 0 || GameManager.Instance.IsPlayerInside)
             {
                 markLocationOnMap = false;
                 answer = expandRandomTextRecord(7333);                
@@ -533,7 +642,7 @@ namespace DaggerfallWorkshop.Game
 
         #region Private Methods
 
-        void GetBuildingList()
+        private void GetBuildingList()
         {
             listBuildings = new List<BuildingInfo>();
 
@@ -594,7 +703,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        string BuildingTypeToGroupString(DFLocation.BuildingTypes buildingType)
+        private string BuildingTypeToGroupString(DFLocation.BuildingTypes buildingType)
         {
             switch (buildingType)
             {
@@ -629,7 +738,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        bool checkBuildingTypeInSkipList(DFLocation.BuildingTypes buildingType)
+        private bool checkBuildingTypeInSkipList(DFLocation.BuildingTypes buildingType)
         {
             if (buildingType == DFLocation.BuildingTypes.AllValid ||
                 buildingType == DFLocation.BuildingTypes.FurnitureStore ||
@@ -652,7 +761,7 @@ namespace DaggerfallWorkshop.Game
             return false;
         }
 
-        void resetNPCKnowledgeInTopicListRecursively(List<ListItem> list)
+        private void resetNPCKnowledgeInTopicListRecursively(List<ListItem> list)
         {
             for (int i = 0; i < list.Count; i++)
             {
@@ -662,7 +771,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        void AssembleTopicLists()
+        private void AssembleTopicLists()
         {
             AssembleTopiclistTopicTellMeAbout();
             AssembleTopicListLocation();
@@ -670,7 +779,7 @@ namespace DaggerfallWorkshop.Game
             AssembleTopicListThing();
         }
 
-        void AssembleTopiclistTopicTellMeAbout()
+        private void AssembleTopiclistTopicTellMeAbout()
         {
             listTopicTellMeAbout = new List<ListItem>();
             ListItem itemAnyNews = new ListItem();
@@ -689,7 +798,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        void AssembleTopicListLocation()
+        private void AssembleTopicListLocation()
         {
             listTopicLocation = new List<ListItem>();
 
@@ -782,7 +891,7 @@ namespace DaggerfallWorkshop.Game
             listTopicLocation.Add(itemBuildingTypeGroup);            
         }
 
-        void AssembleTopicListPerson()
+        private void AssembleTopicListPerson()
         {
             listTopicPerson = new List<ListItem>();
             for (int i = 0; i < 12; i++)
@@ -795,7 +904,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        void AssembleTopicListThing()
+        private void AssembleTopicListThing()
         {
             listTopicThing = new List<ListItem>();
             for (int i = 0; i < 30; i++)
@@ -806,6 +915,68 @@ namespace DaggerfallWorkshop.Game
                 item.caption = "thing " + i;
                 listTopicThing.Add(item);
             }
+        }
+
+        /// <summary>
+        /// this functions maps billboards to npc portraits
+        /// it might be possible that the selected portrait is dependent on more data than just the billboard archive and record indices
+        /// </summary>
+        /// <param name="billboardArchiveIndex"> archive index of the billboard</param>
+        /// <param name="billboardRecordIndex"> record index of the billboard inside the archive </param>
+        /// <returns></returns>
+        private void getPortraitIndexFromStaticNPCBillboard(int billboardArchiveIndex, int billboardRecordIndex, out DaggerfallTalkWindow.FacePortraitArchive facePortraitArchive, out int recordIndex)
+        {
+            FactionFile.FactionData factionData;
+            GameManager.Instance.PlayerEntity.FactionData.GetFactionData(targetStaticNPC.Data.factionID, out factionData);
+
+            FactionFile.FlatData flatData = FactionFile.GetFlatData(factionData.flat1);
+            //FactionFile.FlatData flatData2 = FactionFile.GetFlatData(factionData.flat2);
+
+            if (factionData.type == 4)
+            {
+                facePortraitArchive = DaggerfallTalkWindow.FacePortraitArchive.SpecialFaces;
+
+                // test if flatData matches our billboard - if so special face handling          
+                if (billboardArchiveIndex == flatData.archive && billboardRecordIndex == flatData.record)
+                {
+                    recordIndex = factionData.face;
+                    return;
+                }
+            }
+
+            facePortraitArchive = DaggerfallTalkWindow.FacePortraitArchive.CommonFaces;
+
+            if (billboardArchiveIndex == 182)
+            {
+                if (billboardRecordIndex == 0) // example static npc: merchant in the odd blades in daggerfall
+                {
+                    recordIndex = 390;
+                    return;
+                }
+                else if (billboardRecordIndex == 20) // example static npc: fighters guild questor in daggerfall
+                {
+                    recordIndex = 476;
+                    return;
+                }
+                else if (billboardRecordIndex == 17) // example static npc: fighters guild npc next to entrance in daggerfall
+                {
+                    recordIndex = 428;
+                    return;
+                }
+            }
+            else if (billboardArchiveIndex == 183)
+            {
+                if (billboardRecordIndex == 5) // example static npc: banker in the bank of daggerfall in daggerfall at the market square
+                {
+                    recordIndex = 402;
+                    return;
+                }
+            }
+
+            // use oops if we fail to resolve face
+            facePortraitArchive = DaggerfallTalkWindow.FacePortraitArchive.CommonFaces;
+            recordIndex = 410;
+            return;            
         }
 
         #endregion

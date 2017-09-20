@@ -33,6 +33,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const string highlightedOptionsImgName = "TALK03I0.IMG";
 
         const string portraitImgName = "TFAC00I0.RCI";
+        const string facesImgName = "FACES.CIF";
 
         const string greenArrowsTextureName = "INVE06I0.IMG";       // Green up/down arrows when more items available
         const string redArrowsTextureName = "INVE07I0.IMG";         // Red up/down arrows when no more items available
@@ -69,6 +70,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
         };
         TalkCategory selectedTalkCategory = TalkCategory.Location;
         TalkCategory talkCategoryLastUsed = TalkCategory.None;
+
+        public enum FacePortraitArchive
+        {
+            CommonFaces, // mobile npcs, common static npcs
+            SpecialFaces  // story npcs and special npcs
+        }
 
         public enum TalkTone
         {
@@ -258,10 +265,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             UpdateLabels();
         }
 
-        public void SetNPCPortraitAndName(int recordId, string name)
+        public void SetNPCPortrait(FacePortraitArchive facePortraitArchive, int recordId)
         {
             // Load npc portrait           
-            CifRciFile rciFile = new CifRciFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, portraitImgName), FileUsage.UseMemory, false);
+            CifRciFile rciFile;
+            if (facePortraitArchive == FacePortraitArchive.CommonFaces)
+                rciFile = new CifRciFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, portraitImgName), FileUsage.UseMemory, false);
+            else
+                rciFile = new CifRciFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, facesImgName), FileUsage.UseMemory, false);
             rciFile.LoadPalette(Path.Combine(DaggerfallUnity.Instance.Arena2Path, rciFile.PaletteName));
             DFBitmap bitmap = rciFile.GetDFBitmap(recordId, 0);
             texturePortrait = new Texture2D(bitmap.Width, bitmap.Height, TextureFormat.ARGB32, false);
@@ -276,8 +287,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
 
             UpdatePortrait();
+        }
 
-            UpdateNameNPC();
+        public void UpdateNameNPC()
+        {
+            if (labelNameNPC != null)
+            {
+                labelNameNPC.Text = TalkManager.Instance.NameNPC;
+            }
         }
 
         protected override void Setup()
@@ -720,14 +737,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 textureBackground.SetPixels(119, textureBackground.height - 65 - 64, 64, 64, texturePortrait.GetPixels());
                 textureBackground.Apply(false);
-            }
-        }
-
-        void UpdateNameNPC()
-        {
-            if (labelNameNPC != null)
-            {
-                labelNameNPC.Text = TalkManager.Instance.NameNPC;
             }
         }
 

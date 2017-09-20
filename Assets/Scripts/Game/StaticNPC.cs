@@ -84,6 +84,10 @@ namespace DaggerfallWorkshop.Game
             public int locationID;
             public int buildingKey;
             public NameHelper.BankTypes nameBank;
+
+            // appearance (which texture used for billboard)
+            public int billboardArchiveIndex;
+            public int billboardRecordIndex;
         }
 
         /// <summary>
@@ -122,6 +126,8 @@ namespace DaggerfallWorkshop.Game
             npcData.nameSeed = (int)obj.Resources.FlatResource.Position;
             npcData.gender = ((npcData.flags & 32) == 32) ? Genders.Female : Genders.Male;
             npcData.context = Context.Dungeon;
+            npcData.billboardArchiveIndex = obj.Resources.FlatResource.TextureArchive;
+            npcData.billboardRecordIndex = obj.Resources.FlatResource.TextureRecord;
         }
 
         /// <summary>
@@ -136,6 +142,8 @@ namespace DaggerfallWorkshop.Game
             npcData.nameSeed = (int)obj.Position;
             npcData.gender = ((npcData.flags & 32) == 32) ? Genders.Female : Genders.Male;
             npcData.context = Context.Building;
+            npcData.billboardArchiveIndex = obj.TextureArchive;
+            npcData.billboardRecordIndex = obj.TextureRecord;
         }
 
         /// <summary>

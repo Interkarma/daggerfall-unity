@@ -32,6 +32,14 @@ namespace DaggerfallWorkshop.Game.Questing
     /// </summary>
     public class SpecialNPCClickHandler : MonoBehaviour
     {
+        StaticNPC npc; // needed for talk window setup
+
+        public StaticNPC StaticNPC
+        {
+            get { return npc; }
+            set { npc = value; }
+        }
+
         public int IndividualFactionID { get; set; }
 
         /// <summary>
@@ -45,6 +53,13 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // Check active quests to see if anyone has reserved this NPC
             ulong[] questIDs = QuestMachine.Instance.GetAllActiveQuests();
+
+            // if currently not part in an active quest allow conversation with npc
+            if (questIDs.Length == 0)
+            {
+                GameManager.Instance.TalkManager.TalkToStaticNPC(npc);
+            }
+
             foreach (ulong questID in questIDs)
             {
                 // Get quest object
