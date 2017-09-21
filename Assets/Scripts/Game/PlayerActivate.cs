@@ -102,6 +102,25 @@ namespace DaggerfallWorkshop.Game
 
                     #region Hit Checks
 
+                        // Trigger general quest resource behaviour click
+                        // Note: This will cause a second click on special NPCs, look into a way to unify this handling
+                        QuestResourceBehaviour questResourceBehaviour;
+                        if (QuestResourceBehaviourCheck(hit, out questResourceBehaviour))
+                        {
+                            if (hit.distance > (DefaultActivationDistance * MeshReader.GlobalScale))
+                            {
+                                DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
+                                return;
+                            }
+
+                            // Only trigger click when not in info mode
+                            if (currentMode != PlayerActivateModes.Info)
+                            {
+                                TriggerQuestResourceBehaviourClick(questResourceBehaviour);
+                                return;
+                            }
+                        }
+
                         // Check for a static building hit
                         Transform buildingOwner;
                         DaggerfallStaticBuildings buildings = GetBuildings(hit.transform, out buildingOwner);
@@ -423,22 +442,6 @@ namespace DaggerfallWorkshop.Game
                                     }
                                     break;
                             }
-                        }
-
-                        // Trigger general quest resource behaviour click
-                        // Note: This will cause a second click on special NPCs, look into a way to unify this handling
-                        QuestResourceBehaviour questResourceBehaviour;
-                        if (QuestResourceBehaviourCheck(hit, out questResourceBehaviour))
-                        {
-                            if (hit.distance > (DefaultActivationDistance * MeshReader.GlobalScale))
-                            {
-                                DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
-                                return;
-                            }
-
-                            // Only trigger click when not in info mode
-                            if (currentMode != PlayerActivateModes.Info)
-                                TriggerQuestResourceBehaviourClick(questResourceBehaviour);
                         }
 
                         // Trigger ladder hit
@@ -783,7 +786,6 @@ namespace DaggerfallWorkshop.Game
             SpecialNPCClickHandler specialNPCClickHandler = npc.gameObject.GetComponent<SpecialNPCClickHandler>();
             if (specialNPCClickHandler)
             {
-                specialNPCClickHandler.StaticNPC = npc;
                 specialNPCClickHandler.DoClick();
             }
             else

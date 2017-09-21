@@ -368,7 +368,7 @@ namespace DaggerfallWorkshop.Game
 
             DaggerfallTalkWindow.FacePortraitArchive facePortraitArchive;
             int recordIndex;
-            getPortraitIndexFromStaticNPCBillboard(targetNPC.Data.billboardArchiveIndex, targetNPC.Data.billboardRecordIndex, out facePortraitArchive, out recordIndex);
+            getPortraitIndexFromStaticNPCBillboard(out facePortraitArchive, out recordIndex);
             DaggerfallUI.Instance.TalkWindow.SetNPCPortrait(facePortraitArchive, recordIndex);
 
             lastTargetStaticNPC = targetNPC;
@@ -918,65 +918,30 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-        /// this functions maps billboards to npc portraits
-        /// it might be possible that the selected portrait is dependent on more data than just the billboard archive and record indices
+        /// get portrait archive and texture record index for current set target static npc
         /// </summary>
-        /// <param name="billboardArchiveIndex"> archive index of the billboard</param>
-        /// <param name="billboardRecordIndex"> record index of the billboard inside the archive </param>
         /// <returns></returns>
-        private void getPortraitIndexFromStaticNPCBillboard(int billboardArchiveIndex, int billboardRecordIndex, out DaggerfallTalkWindow.FacePortraitArchive facePortraitArchive, out int recordIndex)
+        private void getPortraitIndexFromStaticNPCBillboard(out DaggerfallTalkWindow.FacePortraitArchive facePortraitArchive, out int recordIndex)
         {
             FactionFile.FactionData factionData;
             GameManager.Instance.PlayerEntity.FactionData.GetFactionData(targetStaticNPC.Data.factionID, out factionData);
 
-            FactionFile.FlatData flatData = FactionFile.GetFlatData(factionData.flat1);
-            //FactionFile.FlatData flatData2 = FactionFile.GetFlatData(factionData.flat2);
+            FactionFile.FlatData factionFlatData = FactionFile.GetFlatData(factionData.flat1);
+            //FactionFile.FlatData flatData2 = FactionFile.GetFlatData(factionData.flat2); // do we need this? is flat2 used for npcs in some places?
 
             if (factionData.type == 4)
             {
                 facePortraitArchive = DaggerfallTalkWindow.FacePortraitArchive.SpecialFaces;
-
-                // test if flatData matches our billboard - if so special face handling          
-                if (billboardArchiveIndex == flatData.archive && billboardRecordIndex == flatData.record)
-                {
-                    recordIndex = factionData.face;
-                    return;
-                }
+                recordIndex = factionData.face;
+                return;
             }
 
             facePortraitArchive = DaggerfallTalkWindow.FacePortraitArchive.CommonFaces;
-
-            if (billboardArchiveIndex == 182)
-            {
-                if (billboardRecordIndex == 0) // example static npc: merchant in the odd blades in daggerfall
-                {
-                    recordIndex = 390;
-                    return;
-                }
-                else if (billboardRecordIndex == 20) // example static npc: fighters guild questor in daggerfall
-                {
-                    recordIndex = 476;
-                    return;
-                }
-                else if (billboardRecordIndex == 17) // example static npc: fighters guild npc next to entrance in daggerfall
-                {
-                    recordIndex = 428;
-                    return;
-                }
-            }
-            else if (billboardArchiveIndex == 183)
-            {
-                if (billboardRecordIndex == 5) // example static npc: banker in the bank of daggerfall in daggerfall at the market square
-                {
-                    recordIndex = 402;
-                    return;
-                }
-            }
-
-            // use oops if we fail to resolve face
-            facePortraitArchive = DaggerfallTalkWindow.FacePortraitArchive.CommonFaces;
-            recordIndex = 410;
-            return;            
+            FlatsFile.FlatData flatData;
+            if (DaggerfallUnity.Instance.ContentReader.FlatsFileReader.GetFlatData(FlatsFile.GetFlatID(factionFlatData.archive, factionFlatData.record), out flatData))
+                recordIndex = flatData.faceIndex;
+            else // use oops if we fail to resolve face                
+                recordIndex = 410;
         }
 
         #endregion

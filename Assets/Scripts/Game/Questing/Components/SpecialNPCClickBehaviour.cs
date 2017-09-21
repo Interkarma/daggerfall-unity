@@ -32,14 +32,6 @@ namespace DaggerfallWorkshop.Game.Questing
     /// </summary>
     public class SpecialNPCClickHandler : MonoBehaviour
     {
-        StaticNPC npc; // needed for talk window setup
-
-        public StaticNPC StaticNPC
-        {
-            get { return npc; }
-            set { npc = value; }
-        }
-
         public int IndividualFactionID { get; set; }
 
         /// <summary>
@@ -57,7 +49,7 @@ namespace DaggerfallWorkshop.Game.Questing
             // if currently not part in an active quest allow conversation with npc
             if (questIDs.Length == 0)
             {
-                GameManager.Instance.TalkManager.TalkToStaticNPC(npc);
+                GameManager.Instance.TalkManager.TalkToStaticNPC(this.GetComponent<StaticNPC>());
             }
 
             foreach (ulong questID in questIDs)
