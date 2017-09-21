@@ -48,7 +48,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             string modelName = modelID.ToString();;
             string climateModelName = ClimateSeasonName(modelName);
 
-#if DEVELOPMENT_BUILD
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
 
             // Import Gameobject from Resources
             string path = "Models/" + modelName + "/";
@@ -68,6 +68,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             }
 
 #endif
+#if !UNITY_EDITOR
 
             // Get model from mods using load order
             Mod[] mods = ModManager.Instance.GetAllMods(true);
@@ -97,6 +98,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 }
             }
 
+#endif
+
             return null;
         }
 
@@ -119,7 +122,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             // Get name
             string modelName = archive.ToString("D3") + "_" + record.ToString();
 
-#if DEVELOPMENT_BUILD
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
 
             // Import Gameobject from Resources
             string path = "Flats/" + modelName + "/";
@@ -131,6 +134,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             }
 
 #endif
+#if !UNITY_EDITOR
 
             // Get model from mods using load order
             Mod[] mods = ModManager.Instance.GetAllMods(true);
@@ -149,6 +153,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                     Debug.LogError("Failed to import " + modelName + " from " + mods[i].Title + " as GameObject.");
                 }
             }
+
+#endif
 
             return null;
         }
@@ -256,10 +262,20 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             foreach (var meshRenderer in meshRenderers)
             {
                 // Check all materials
-                Material[] materials = meshRenderer.materials;
+                Material[] materials = meshRenderer.sharedMaterials;
                 for (int i = 0; i < materials.Length; i++)
                 {
-                    if (materials[i].mainTexture != null)
+                    if (!materials[i])
+                    {
+                        if (object3D == meshRenderer.gameObject)
+                            Debug.LogErrorFormat("{0} is missing material {1}.", object3D.name, i.ToString());
+                        else
+                            Debug.LogErrorFormat("{0} (child {1}) is missing material {2}.", object3D.name, meshRenderer.name, i.ToString());
+
+                        continue;
+                    }
+
+                    if (materials[i].mainTexture)
                     {
                         // Get name of texture
                         string textureName = materials[i].mainTexture.name;
@@ -293,12 +309,10 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                         if (materials[i].GetTexture("_MetallicGlossMap") != null)
                             materials[i].GetTexture("_MetallicGlossMap").filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
                     }
-                    else
-                        Debug.LogError(string.Format("{0} is missing a material or a texture.", object3D.name));
                 }
 
                 // Confirm finalised materials
-                meshRenderer.materials = materials;
+                meshRenderer.sharedMaterials = materials;
             }
         }
 
