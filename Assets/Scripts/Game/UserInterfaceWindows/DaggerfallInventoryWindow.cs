@@ -186,7 +186,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         ItemCollection.AddPosition preferredOrder = ItemCollection.AddPosition.DontCare;
 
         Panel remoteItemsPanel;
-        ItemScroller remoteItemScroller;
+        ItemsScroller remoteItemsScroller;
 
         #endregion
 
@@ -285,8 +285,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetupLocalItemsElements();
 
             remoteItemsPanel = DaggerfallUI.AddPanel(remoteItemsPanelRect, NativePanel);
-            remoteItemScroller = new ItemScroller(remoteItemsPanel);
-            
+            remoteItemsScroller = new ItemsScroller(remoteItemsPanel, defaultToolTip);
+            remoteItemsScroller.OnItemClick += RemoteItemScroller_OnItemClick;
 
 //            SetupRemoteItemsElements();
             SetupAccessoryElements();
@@ -310,6 +310,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             UpdateAccessoryItemsDisplay();
             UpdateLocalTargetIcon();
             UpdateRemoteTargetIcon();
+        }
+
+        private void RemoteItemScroller_OnItemClick(DaggerfallUnityItem item)
+        {
+            Debug.LogFormat("inv item {0} clicked", item.ItemName);
         }
 
         protected void SetupTargetIconPanels()
@@ -870,7 +875,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         localItemsFiltered.Add(item);
                 }
             }
-            remoteItemScroller.FilteredItems = localItemsFiltered;
+            remoteItemsScroller.Items = localItemsFiltered;
         }
 
         /// <summary>
