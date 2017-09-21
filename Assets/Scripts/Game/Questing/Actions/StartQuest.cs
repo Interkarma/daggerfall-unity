@@ -26,10 +26,11 @@ namespace DaggerfallWorkshop.Game.Questing
     {
         int questIndex1;
         int questIndex2;
+        string questName;
 
         public override string Pattern
         {
-            get { return @"start quest (?<questIndex1>\d+) (?<questIndex2>\d+)"; }
+            get { return @"start quest (?<questIndex1>\d+) (?<questIndex2>\d+)|start quest (?<questName>\w+)"; }
         }
 
         public StartQuest(Quest parentQuest)
@@ -49,13 +50,18 @@ namespace DaggerfallWorkshop.Game.Questing
             StartQuest action = new StartQuest(parentQuest);
             action.questIndex1 = Parser.ParseInt(match.Groups["questIndex1"].Value);
             action.questIndex2 = Parser.ParseInt(match.Groups["questIndex2"].Value);
+            action.questName = match.Groups["questName"].Value;
 
             return action;
         }
 
         public override void Update(Task caller)
         {
-            string questName = string.Format("S{0:0000000}", questIndex1);
+            // Convert quest index to name
+            if (string.IsNullOrEmpty(questName) && questIndex1 > 0)
+                questName = string.Format("S{0:0000000}", questIndex1);
+
+            // Attempt to parse quest
             Quest quest = QuestMachine.Instance.ParseQuest(questName);
             if (quest != null)
             {
@@ -72,6 +78,7 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             public int questIndex1;
             public int questIndex2;
+            public string questName;
         }
 
         public override object GetSaveData()
@@ -79,6 +86,7 @@ namespace DaggerfallWorkshop.Game.Questing
             SaveData_v1 data = new SaveData_v1();
             data.questIndex1 = questIndex1;
             data.questIndex2 = questIndex2;
+            data.questName = questName;
 
             return data;
         }
@@ -91,6 +99,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
             questIndex1 = data.questIndex1;
             questIndex2 = data.questIndex2;
+            questName = data.questName;
         }
 
         #endregion
