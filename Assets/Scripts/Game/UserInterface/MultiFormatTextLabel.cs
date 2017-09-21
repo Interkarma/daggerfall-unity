@@ -238,7 +238,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             get {   // TODO: This is a hack.. only way I could get it to work right for info panel
                 int lineHeight = GetFont().GlyphHeight;
                 if (wrapText && lastLabel != null && (int)lastLabel.Size.y > GetFont().GlyphHeight)
-                    lineHeight += (int)(((lastLabel.Size.y / GetFont().GlyphHeight) - 1) * (GetFont().GlyphHeight * 0.5));
+                    lineHeight += (int)(((lastLabel.Size.y / GetFont().GlyphHeight) - 1) * (GetFont().GlyphHeight * 0.4));
                 return lineHeight + rowLeading;
             }
         }

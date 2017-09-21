@@ -32,8 +32,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         #region UI Rects
 
-        Rect costPanelRect = new Rect(0, 3, 111, 9);
-        Rect costPanelPositionRect = new Rect(49, 13, 111, 9);
+        Rect costPanelRect = new Rect(49, 13, 111, 9);
 
         Rect actionButtonsPanelRect = new Rect(222, 10, 39, 190);
         Rect wagonButtonRect = new Rect(4, 4, 31, 14);
@@ -43,11 +42,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Rect modeActionButtonRect = new Rect(4, 124, 31, 14);
         Rect clearButtonRect = new Rect(4, 146, 31, 14);
 
+        Rect itemInfoPanelRect = new Rect(223, 87, 37, 32);
+
         #endregion
 
         #region UI Controls
 
-        protected TextLabel localTargetIconLabel;
         TextLabel[] remoteItemsRepairLabels = new TextLabel[listDisplayUnits];
 
         Panel costPanel;
@@ -82,7 +82,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string sellButtonsTextureName = "INVE10I0.IMG";
         const string sellButtonsGoldTextureName = "INVE11I0.IMG";
         const string repairButtonsTextureName = "INVE12I0.IMG";
-        const string costPanelTextureName = "REPR02I0.IMG";
+        const string costPanelTextureName = "SHOP00I0.IMG";
 
         WindowModes windowMode = WindowModes.Inventory;
         PlayerGPS.DiscoveredBuilding buildingDiscoveryData;
@@ -165,7 +165,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (actionButtonsTexture != null)
                 actionButtonsPanel.BackgroundTexture = actionButtonsTexture;
 
+            // Setup item info panel if configured
+            if (DaggerfallUnity.Settings.EnableInventoryInfoPanel)
+            {
+                itemInfoPanel = DaggerfallUI.AddPanel(itemInfoPanelRect, NativePanel);
+                SetupItemInfoPanel();
+            }
+
             // Setup UI
+            SetupTargetIconPanels();
             SetupTabPageButtons();
             SetupActionButtons();
             SetupScrollBars();
@@ -177,11 +185,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Exit buttons
             Button exitButton = DaggerfallUI.AddButton(exitButtonRect, NativePanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
-
-            // Setup local and remote target icon panels
-            localTargetIconPanel = DaggerfallUI.AddPanel(localTargetIconRect, NativePanel);
-            localTargetIconLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(1, 2), localTargetIconPanel);
-            remoteTargetIconPanel = DaggerfallUI.AddPanel(remoteTargetIconRect, NativePanel);
 
             // Setup initial state
             SelectTabPage(TabPages.WeaponsAndArmor);
@@ -200,7 +203,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void SetupCostAndGold()
         {
-            costPanel = DaggerfallUI.AddPanel(costPanelPositionRect, NativePanel);
+            costPanel = DaggerfallUI.AddPanel(costPanelRect, NativePanel);
             costPanel.BackgroundTexture = costPanelTexture;
             costLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(28, 2), costPanel);
             goldLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(68, 2), costPanel);
@@ -378,8 +381,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else
             {
-                localTargetIconPanel.BackgroundTexture = null;
-                localTargetIconLabel.Text = "";
+                base.UpdateLocalTargetIcon();
             }
         }
 
@@ -461,9 +463,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.LoadTextures();
 
-            Texture2D costPanelBaseTexture = ImageReader.GetTexture(costPanelTextureName);
-            costPanelTexture = ImageReader.GetSubTexture(costPanelBaseTexture, costPanelRect);
-
             // Load special button texture.
             if (windowMode == WindowModes.Sell)
                 actionButtonsTexture = ImageReader.GetTexture(sellButtonsTextureName);
@@ -475,6 +474,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             actionButtonsGoldTexture = ImageReader.GetTexture(sellButtonsGoldTextureName);
             selectNotSelected = ImageReader.GetSubTexture(actionButtonsTexture, selectButtonRect);
             selectSelected = ImageReader.GetSubTexture(actionButtonsGoldTexture, selectButtonRect);
+
+            costPanelTexture = ImageReader.GetTexture(costPanelTextureName);
         }
 
         #endregion
