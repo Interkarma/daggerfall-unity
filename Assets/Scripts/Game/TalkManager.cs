@@ -927,8 +927,9 @@ namespace DaggerfallWorkshop.Game
             GameManager.Instance.PlayerEntity.FactionData.GetFactionData(targetStaticNPC.Data.factionID, out factionData);
 
             FactionFile.FlatData factionFlatData = FactionFile.GetFlatData(factionData.flat1);
-            //FactionFile.FlatData flatData2 = FactionFile.GetFlatData(factionData.flat2); // do we need this? is flat2 used for npcs in some places?
+            FactionFile.FlatData factionFlatData2 = FactionFile.GetFlatData(factionData.flat2);
 
+            // get face for special npcs here and return in this case
             if (factionData.type == 4)
             {
                 facePortraitArchive = DaggerfallTalkWindow.FacePortraitArchive.SpecialFaces;
@@ -936,12 +937,28 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
+            // if no special npc, resolving process for common faces starts here
             facePortraitArchive = DaggerfallTalkWindow.FacePortraitArchive.CommonFaces;
+
+            // use oops as default - so use it if we fail to resolve face later on in this resolving process
+            recordIndex = 410;
+
             FlatsFile.FlatData flatData;
-            if (DaggerfallUnity.Instance.ContentReader.FlatsFileReader.GetFlatData(FlatsFile.GetFlatID(factionFlatData.archive, factionFlatData.record), out flatData))
+            
+            // resolve face from npc's faction data as default            
+            int archive = factionFlatData.archive;
+            int record = factionFlatData.record;
+            if (targetStaticNPC.Data.gender == Genders.Female)
+            {
+                archive = factionFlatData2.archive;
+                record = factionFlatData2.record;
+            }
+            if (DaggerfallUnity.Instance.ContentReader.FlatsFileReader.GetFlatData(FlatsFile.GetFlatID(archive, record), out flatData)) // (if flat data exists in FlatsFile, overwrite index)
                 recordIndex = flatData.faceIndex;
-            else // use oops if we fail to resolve face                
-                recordIndex = 410;
+
+            // overwrite if target npc's billboard archive and record index can be resolved (more specific than just the factiondata - which will always resolve to same portrait for a specific faction)
+            if (DaggerfallUnity.Instance.ContentReader.FlatsFileReader.GetFlatData(FlatsFile.GetFlatID(targetStaticNPC.Data.billboardArchiveIndex, targetStaticNPC.Data.billboardRecordIndex), out flatData))
+                recordIndex = flatData.faceIndex;
         }
 
         #endregion
