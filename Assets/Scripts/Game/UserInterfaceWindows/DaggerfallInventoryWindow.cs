@@ -581,6 +581,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (remoteItemsScrollBar != null)
                 remoteItemsScrollBar.ScrollIndex = 0;
 
+            // Clear info panel
+            if (itemInfoPanelLabel != null)
+                itemInfoPanelLabel.SetText(new TextFile.Token[0]);
+
             // Refresh window
             Refresh();
         }
@@ -802,64 +806,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             remoteTargetIconPanel.BackgroundTexture = containerImage.texture;
         }
-
-        //void SetLocalTarget(ItemTargets target)
-        //{
-        //    // Only player supported for now
-        //    if (target == ItemTargets.Player)
-        //    {
-        //        localItems = PlayerEntity.Items;
-        //    }
-        //}
-
-        //void SetRemoteTarget(ItemTargets target)
-        //{
-        //    //remoteTarget = target;
-
-        //    // Clear selections
-        //    wagonButton.BackgroundTexture = wagonNotSelected;
-
-        //    // Only wagon and ground supported for now
-        //    if (target == ItemTargets.Wagon)
-        //    {
-        //        // Show wagon icon
-        //        ImageData containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(LootContainerImages.Wagon);
-        //        remoteTargetIconPanel.BackgroundTexture = containerImage.texture;
-
-        //        // Highlight wagon button
-        //        wagonButton.BackgroundTexture = wagonSelected;
-
-        //        // Set remote items
-        //        remoteItems = playerEntity.WagonItems;
-        //    }
-        //    else if (target == ItemTargets.Ground)
-        //    {
-        //        // Show ground icon
-        //        ImageData containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(LootContainerImages.Ground);
-        //        remoteTargetIconPanel.BackgroundTexture = containerImage.texture;
-
-        //        // TODO: Need to create new loot pile on drop containing items
-        //        // For now just using an empty, volatile container for bootstrapping
-        //        //remoteItems = new ItemCollection();
-        //    }
-        //}
-
-        //void SetRemoteTarget(ItemCollection items, LootContainerImages containerIcon)
-        //{
-        //    // Must be setup
-        //    if (!IsSetup)
-        //        Setup();
-
-        //    // Clear selections
-        //    wagonButton.BackgroundTexture = wagonNotSelected;
-
-        //    // Show icon
-        //    ImageData containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(containerIcon);
-        //    remoteTargetIconPanel.BackgroundTexture = containerImage.texture;
-
-        //    // Set remote items
-        //    remoteItems = items;
-        //}
 
         /// <summary>
         /// Creates filtered list of local items based on view state.
@@ -1815,6 +1761,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             itemInfoPanelLabel.SetText(tokens);
         }
 
+        // This never gets called AFAICS, do we even need it with OnPush() working? - Hazelnut
         protected virtual void StartGameBehaviour_OnNewGame()
         {
             // Reset certain elements on a new game
@@ -1824,7 +1771,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 SelectTabPage(TabPages.WeaponsAndArmor);
                 localItemsScrollBar.Reset(listDisplayUnits);
                 remoteItemsScrollBar.Reset(listDisplayUnits);
-                itemInfoPanelLabel.SetText(new TextFile.Token[0]);
             }
         }
 
