@@ -42,6 +42,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Rect localItemsListPanelRect = new Rect(172, 48, 50, 152);
         Rect remoteItemsListPanelRect = new Rect(270, 48, 50, 152);
+        Rect remoteItemsPanelRect = new Rect(261, 48, 59, 152);
         Rect[] itemsButtonRects = new Rect[]
         {
             new Rect(0, 0, 50, 38),
@@ -184,6 +185,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         ItemCollection.AddPosition preferredOrder = ItemCollection.AddPosition.DontCare;
 
+        Panel remoteItemsPanel;
+        ItemScroller remoteItemScroller;
+
         #endregion
 
         #region Enums
@@ -279,7 +283,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetupScrollBars();
             SetupScrollButtons();
             SetupLocalItemsElements();
-            SetupRemoteItemsElements();
+
+            remoteItemsPanel = DaggerfallUI.AddPanel(remoteItemsPanelRect, NativePanel);
+            remoteItemScroller = new ItemScroller(remoteItemsPanel);
+            
+
+//            SetupRemoteItemsElements();
             SetupAccessoryElements();
 
             // Exit buttons
@@ -295,9 +304,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Setup initial display
             FilterLocalItems();
-            FilterRemoteItems();
+//            FilterRemoteItems();
             UpdateLocalItemsDisplay();
-            UpdateRemoteItemsDisplay();
+//            UpdateRemoteItemsDisplay();
             UpdateAccessoryItemsDisplay();
             UpdateLocalTargetIcon();
             UpdateRemoteTargetIcon();
@@ -389,12 +398,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.Components.Add(localItemsScrollBar);
 
             // Remote items list scroll bar (e.g. wagon, shop, loot pile, etc.)
-            remoteItemsScrollBar = new VerticalScrollBar();
-            remoteItemsScrollBar.Position = new Vector2(262, 66);
-            remoteItemsScrollBar.Size = new Vector2(6, 117);
-            remoteItemsScrollBar.DisplayUnits = listDisplayUnits;
-            remoteItemsScrollBar.OnScroll += RemoteItemsScrollBar_OnScroll;
-            NativePanel.Components.Add(remoteItemsScrollBar);
+            //remoteItemsScrollBar = new VerticalScrollBar();
+            //remoteItemsScrollBar.Position = new Vector2(262, 66);
+            //remoteItemsScrollBar.Size = new Vector2(6, 117);
+            //remoteItemsScrollBar.DisplayUnits = listDisplayUnits;
+            //remoteItemsScrollBar.OnScroll += RemoteItemsScrollBar_OnScroll;
+            //NativePanel.Components.Add(remoteItemsScrollBar);
         }
 
         protected void SetupScrollButtons()
@@ -407,13 +416,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             localItemsDownButton.BackgroundTexture = redDownArrow;
             localItemsDownButton.OnMouseClick += LocalItemsDownButton_OnMouseClick;
 
-            remoteItemsUpButton = DaggerfallUI.AddButton(remoteItemsUpButtonRect, NativePanel);
-            remoteItemsUpButton.BackgroundTexture = redUpArrow;
-            remoteItemsUpButton.OnMouseClick += RemoteItemsUpButton_OnMouseClick;
+            //remoteItemsUpButton = DaggerfallUI.AddButton(remoteItemsUpButtonRect, NativePanel);
+            //remoteItemsUpButton.BackgroundTexture = redUpArrow;
+            //remoteItemsUpButton.OnMouseClick += RemoteItemsUpButton_OnMouseClick;
 
-            remoteItemsDownButton = DaggerfallUI.AddButton(remoteItemsDownButtonRect, NativePanel);
-            remoteItemsDownButton.BackgroundTexture = redDownArrow;
-            remoteItemsDownButton.OnMouseClick += RemoteItemsDownButton_OnMouseClick;
+            //remoteItemsDownButton = DaggerfallUI.AddButton(remoteItemsDownButtonRect, NativePanel);
+            //remoteItemsDownButton.BackgroundTexture = redDownArrow;
+            //remoteItemsDownButton.OnMouseClick += RemoteItemsDownButton_OnMouseClick;
         }
 
         protected virtual void SetupLocalItemsElements()
@@ -861,6 +870,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         localItemsFiltered.Add(item);
                 }
             }
+            remoteItemScroller.FilteredItems = localItemsFiltered;
         }
 
         /// <summary>
