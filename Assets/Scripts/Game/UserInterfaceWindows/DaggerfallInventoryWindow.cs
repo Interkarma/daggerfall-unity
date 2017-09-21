@@ -1761,7 +1761,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             itemInfoPanelLabel.SetText(tokens);
         }
 
-        // This never gets called AFAICS, do we even need it with OnPush() working? - Hazelnut
         protected virtual void StartGameBehaviour_OnNewGame()
         {
             // Reset certain elements on a new game
