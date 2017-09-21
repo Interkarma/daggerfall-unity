@@ -1,0 +1,1506 @@
+175 0
+beautiful maiden
+?2
+-2
+2
+410
+
+175 1
+dark warrior
+2
+-2
+2
+410
+
+175 2
+terrible child
+1
+-2
+2
+410
+
+175 3
+horned man
+1
+-2
+2
+410
+
+175 4
+clawed monstrosity
+1
+-2
+2
+410
+
+175 5
+green humanoid
+1
+-2
+2
+410
+
+175 6
+four-armed giant
+1
+-2
+2
+410
+
+175 7
+dark woman
+2
+-2
+2
+395
+
+175 8
+blonde woman
+2
+-2
+2
+410
+
+175 9
+cloven-footed man
+1
+-2
+2
+410
+
+175 10
+dark woman
+2
+-2
+2
+410
+
+175 11
+dark-clad woman
+2
+-2
+2
+410
+
+175 12
+green serpent
+1
+-2
+2
+410
+
+175 13
+crimson giant
+1
+-2
+2
+410
+
+175 14
+elegant gentleman
+1
+-2
+2
+410
+
+175 15
+wizened crone
+2
+-2
+2
+410
+
+176 0
+dark-cloaked man
+1
+22
+3
+360
+
+176 1
+dark-cloaked man
+-1
+22
+3
+360
+
+176 2
+bare-breasted dancer
+?2
+22
+3
+363
+
+176 3
+bare-breasted dancer
+?2
+22
+3
+363
+
+176 4
+dancer
+?2
+22
+3
+396 
+
+176 5
+dark-cloaked man
+1
+22
+3
+360
+
+176 6
+woman in black and red
+2
+22
+3
+362
+
+177 0
+cowled old man
+1
+11
+10
+479
+
+177 1
+old man with a hat
+1
+11
+10
+480
+
+177 2
+bald man
+1
+11
+10
+481
+
+177 3
+blonde woman
+2
+11
+10
+363
+
+177 4
+man with glowing eyes
+1
+11
+10
+398
+
+177 5
+magic crafter
+1
+11
+10
+478
+
+178 0
+cowled woman
+2
+24
+14
+360
+
+178 1
+red-cowled man
+1
+24
+14
+361
+
+178 1
+red-cloaked man
+1
+24
+14
+361
+
+178 2
+red-cloaked man
+1
+24
+14
+361
+
+178 3
+red-cloaked man
+1
+24
+14
+361
+
+178 4
+man with glowing eyes
+1
+24
+14
+482
+
+178 5
+red-cowled dancer
+2
+24
+14
+367
+
+178 6
+red-cowled dancer
+2
+24
+14
+367
+
+179 0
+naked dark-haired woman
+?2
+25
+22
+368
+
+179 1
+naked woman
+?2
+25
+22
+368
+
+179 2
+mysterious woman
+2
+25
+22
+363
+
+179 3
+black-cowled dancer
+2
+25
+22
+369
+
+179 4
+red-haired woman
+2
+25
+22
+485
+
+180 0
+dark-haired woman in red
+2
+16
+15
+371
+
+180 1   
+noblewoman wearing blue
+2
+16
+15
+363
+
+180 2
+well-dressed man
+1
+16
+15
+399
+
+180 3
+portly man in violet
+1
+16
+15
+383
+
+181 0
+blue-cloaked man
+1
+14
+17
+372
+
+181 1
+young woman in blue
+2
+14
+17
+370
+
+181 2
+blue-cloaked old man
+1
+14
+17
+483
+
+181 3
+blue-cloaked boy
+1
+14
+17
+484
+
+181 4
+beautiful blonde
+2
+14
+17
+373
+
+181 5
+dancer wearing blue
+2
+14
+17
+396
+
+181 6
+blue-cloaked dancer
+2
+14
+17
+374
+
+181 7
+blue-cloaked dancer
+2
+14
+17
+375
+
+182 0
+white-haired old man
+1
+13
+11
+390
+
+182 1
+fat bald man
+1
+15
+8
+468
+
+182 2
+blond-bearded man
+1
+15
+8
+428
+
+182 3
+bearded man
+1
+15
+8
+429
+
+182 4
+well-dressed boy
+1
+16
+19
+430
+
+182 5
+jester
+2
+15
+5
+486
+
+182 6
+jester
+1
+15
+5
+487
+
+182 7
+white-bearded man
+1
+-1
+4
+431
+
+182 8
+man in chef's hat
+1
+-1
+4
+432
+
+182 9
+woman in gray
+2
+16
+15
+433
+
+182 10
+woman in blue
+2
+16
+15
+434
+
+182 11
+comely maiden
+2
+-1
+4
+412
+
+182 12
+milk maid
+2
+-1
+4
+435
+
+182 13
+man wearing brown
+1
+-1
+4
+488
+
+182 14
+man in a brown hat
+1
+-1  
+4
+415
+
+182 15
+blond aristocrat
+1
+-1
+15
+436
+
+182 16
+fair-bearded man
+1
+16
+15
+436
+
+182 17
+blond-bearded man
+1
+-1
+11
+436
+
+182 18
+brown-haired young man
+1
+15
+11
+437
+
+182 19
+man in a gray tunic
+1
+3
+11
+438
+
+182 20
+man in a green coat
+1
+5
+11
+476
+
+182 21
+old beggar
+1
+-3
+1
+440
+
+182 22
+cloaked old man
+1
+14
+17
+441
+
+182 23
+man in a blue coat
+1
+-1
+15
+442
+
+182 24
+bearded old man
+1
+15
+5
+443
+
+182 25
+scruffy-looking sailor
+1
+27
+16
+444
+
+182 26
+young lady in green
+2
+9
+11
+445
+
+182 27
+elegantly dressed lady
+2
+16
+15
+446
+
+182 28
+blue-cloaked woman
+2
+-1
+11
+447
+
+182 29
+pathetic old cripple
+1
+26
+18
+448
+
+182 30
+pitiful bald man
+1
+26
+18
+449
+
+182 31
+pitiful bald man
+1
+26
+18
+449
+
+182 32
+good-looking whore
+?2
+-3
+7
+450
+
+182 33
+prostitute
+?2
+-3
+7
+451
+
+182 34
+blonde whore
+?2
+-3
+7
+452
+
+182 35
+scruffy sailor
+1
+27
+16
+453
+
+182 36
+snake charmer
+1
+15
+5
+454
+
+182 37
+flute player
+1
+15
+13
+455
+
+182 38
+little girl
+2
+-1
+19
+456
+
+182 39
+street sweeper
+1
+-1
+4
+457
+
+182 40
+wise-looking man
+1
+11
+10
+477
+
+182 41
+remarkable woman
+?2
+11
+10
+489
+
+182 42
+page boy
+1
+16
+19
+490
+
+182 43
+little boy
+1
+16
+19
+491
+
+182 44
+old crone
+2
+-3
+1
+401
+
+182 45
+adventuresome woman
+2
+-1
+9
+370
+
+182 46
+handsome young man
+1
+-1
+9
+492
+
+182 47
+pretty young lady
+2
+16
+15
+493
+
+182 48
+blond whore
+?2
+-3
+7
+363
+
+182 49
+juggler
+1
+15
+5
+494
+
+182 50
+flutist
+2
+15
+13
+495
+
+182 51
+lutist
+1
+15
+13
+496
+
+182 52
+drummer
+1
+15
+13
+497
+
+182 53
+young bellringer
+2
+15
+13
+498
+
+182 54
+hooded man
+1
+-1
+23
+499
+
+182 55
+hooded man
+1
+-1
+23
+387
+
+182 56
+hooded woman
+2
+-1
+23
+375
+
+182 57
+nearly naked man
+1
+-3
+7
+500
+
+182 58
+nearly naked man
+1
+-3
+7
+501
+
+182 59
+blacksmith
+1
+2
+4
+389
+
+183 0
+regal fairie
+1
+28
+6
+402
+
+183 1
+regal fairie
+2
+28
+6
+363
+
+183 2
+guard
+1
+16
+9
+403
+
+183 3
+guard
+1
+16
+9
+404
+
+183 4
+noble-looking man
+1
+16
+9
+405
+
+183 5
+flamboyant young man
+1
+16
+15
+402
+
+183 6
+bearded king
+1
+16
+15
+377
+
+183 7
+king wearing a turban
+1
+16
+15
+377
+
+183 8
+white-haired queen
+2
+16
+15
+406
+
+183 9
+brunette queen
+2
+16
+15
+407
+
+183 10
+king
+1
+16
+15
+389
+
+183 11
+queen
+2
+16
+15
+362
+
+183 12
+cowled monk
+1
+-2
+12
+408
+
+183 13
+handsome young king
+1
+-2
+12
+402
+
+183 14
+stunning brunette
+2
+-2
+12
+362
+
+183 15
+blind old crone
+2
+-2
+12
+409
+
+183 16
+stylish fat man
+1
+-2
+12
+376
+
+183 17
+bedraggled witch
+2
+-2
+12
+401
+
+183 18
+gorgeous Redguard
+2
+-2
+12
+395
+
+183 19
+majestic orc
+1
+-2
+12
+410
+
+183 20
+Dark Elf king
+1
+-2
+12
+382
+
+183 21
+blonde queen
+2
+-2
+12
+363
+
+184 0
+well-to-do merchant
+1
+-1
+11
+469
+
+184 1
+woman in a cloak
+2
+-1
+11
+470
+
+184 2
+man in a green robe
+1
+-1
+10
+459
+
+184 3
+fat flutist
+1
+15
+5
+460
+
+184 4
+strapping young man
+1
+-1
+16
+471
+
+184 5
+beautiful blonde
+2
+-1
+11
+462
+
+184 6
+bare-breasted wench
+?2
+18
+4
+416 
+
+184 7
+sleek-looking blonde
+2
+-1
+9
+417
+
+184 8
+blonde strumpet
+?2
+-3
+7
+418
+
+184 9
+shapely brunette
+?2
+-1
+22
+472
+
+184 10
+dazzling blonde
+?2
+-1
+6
+420
+
+184 11
+naked blonde woman
+?2
+-2
+7
+421
+
+184 12
+naked brunette
+?2
+-2
+7
+475
+
+184 13
+naked blonde
+?2
+-2
+7
+423
+
+184 14
+naked brunette
+?2
+-2
+7
+472
+
+184 15
+ragged young boy
+1
+-3
+19
+463
+
+184 16
+chubby old man
+1
+-1
+10
+464
+
+184 17
+brawny peasant
+1
+-3
+4
+473
+
+184 18
+tough she-devil
+2
+-1
+16
+474
+
+184 19
+attractive blonde
+2
+-1
+11
+373
+
+184 20
+man in purple
+1
+-1
+11
+465
+
+184 21
+bearded old man
+1
+-1
+17
+466
+
+184 22
+woman with a staff
+2
+-1
+22
+363
+
+184 23
+woman in green pants
+2
+-1
+11
+363
+
+184 24
+dark-haired rogue
+1
+-1
+16
+467
+
+184 25
+fair-haired youth
+1
+-1
+9
+393
+
+184 26
+red-haired woman
+2
+-1
+11
+394
+
+184 27
+pathetic beggar
+1
+-3
+1
+401
+
+184 28
+red-headed vixen
+?2
+-1
+23
+394
+
+184 29
+blonde wearing blue
+2
+-1
+15
+363
+
+184 30
+dark-skinned woman
+2
+-1
+7
+474
+
+184 31
+bald slave
+1
+26
+18
+388
+
+184 32
+dark warrior woman
+2
+-1
+9
+373
+
+184 33
+dark buxom wench
+?2
+-1
+7
+373
+
+184 34
+man on horseback
+1
+-3
+9
+392
+
+199 0
+Light
+1
+-2
+127
+410
+
+199 1
+Light
+1
+-2
+127
+410
+
+199 2
+Daedra
+1
+-2
+127
+410
+
+199 3
+Summoning
+1
+-2
+127
+410
+
+199 4
+Rest
+1
+-2
+127
+410
+
+199 5
+Court
+1
+-2
+127
+410
+
+199 6
+Pit
+1
+-2
+127
+410
+
+199 7
+Effect
+1
+-2
+127
+410
+
+199 8
+Entrance
+1
+-2
+127
+410
+
+199 9
+Path
+1
+-2
+127
+410
+
+199 10
+Start
+1
+-2
+127
+410
+
+199 11
+Quest
+1
+-2
+127
+410
+
+199 12
+Create
+1
+-2
+127
+410
+
+199 13
+Prison
+1
+-2
+127
+410
+
+199 14
+Prison exit
+1
+-2
+127
+410
+
+199 15
+Random monster
+1
+-2
+127
+410
+
+199 16
+Monster
+1
+-2
+127
+410
+
+199 16
+Teleport
+1
+-2
+127
+410
+
+199 16
+Quest item
+1
+-2
+127
+410
+
+334 19
+Gothryd
+1
+0
+0
+0
+
+334 21
+Aubki
+2
+0
+0
+0
+
+334 0
+Provlith
+1
+0
+0
+0
+
+334 1
+Popudax
+1
+0
+0
+0
+
+334 5
+Cyadasga
+2
+0
+0
+0
+
+334 4
+Myniseva
+2
+0
+0
+0
+
+334 18
+Mobar
+1
+0
+0
+0
+
+334 17
+Bridwell
+1
+0
+0
+0
+
+180 0
+Lady Bridwell
+2
+0
+0
+0
+
+357 7
+Prince Lhotuu
+1
+0
+0
+0
+
+334 10
+Lady Northbridge
+2
+0
+0
+0
+
+357 15
+Queen Akouithi
+2
+0
+0
+0
+
+357 1
+Prince Guelelith
+1
+0
+0
+0
+
+346 17
+princess Elysana
+2
+0
+0
+0
+
+346 0
+Princess Mougiah
+2
+0
+0
+0
+
+346 22
+Queen Baueuziah
+2
+0
+0
+0
+
+346 21
+King Eadwyre
+1
+0
+0
+0
+
+346 16
+Prince Helseth
+1
+0
+0
+0
+
+346 11
+Karethys
+2
+0 
+0
+0
+
+183 14
+Medora
+2
+0
+0
+0
+
+178 4
+King of Worms
+1
+0
+0
+0
+
+346 7
+Lord Castellian
+1
+0
+0
+0
+
+183 19
+Gortwog
+1
+0
+0
+0
+
+182 46 
+Lord Woodbourne 
+1
+0
+0
+0
+
+346 10
+blue-cloaked woman (court wayrest)
+2
+-1
+11
+447
+
+
