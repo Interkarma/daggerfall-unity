@@ -284,8 +284,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetupScrollButtons();
             SetupLocalItemsElements();
 
-            remoteItemsPanel = DaggerfallUI.AddPanel(remoteItemsPanelRect, NativePanel);
-            remoteItemsScroller = new ItemsScroller(remoteItemsPanel, defaultToolTip);
+            //remoteItemsPanel = DaggerfallUI.AddPanel(remoteItemsPanelRect, NativePanel);
+            remoteItemsScroller = new ItemsScroller(defaultToolTip);
+            remoteItemsScroller.Position = new Vector2(remoteItemsPanelRect.x, remoteItemsPanelRect.y);
+            remoteItemsScroller.Size = new Vector2(remoteItemsPanelRect.width, remoteItemsPanelRect.height);
+            NativePanel.Components.Add(remoteItemsScroller);
             remoteItemsScroller.OnItemClick += RemoteItemScroller_OnItemClick;
 
 //            SetupRemoteItemsElements();

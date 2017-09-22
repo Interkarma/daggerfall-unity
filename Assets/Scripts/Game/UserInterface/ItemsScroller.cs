@@ -16,7 +16,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// <summary>
     /// Implements an item scroller UI element composed of scrollbar & items.
     /// </summary>
-    public class ItemsScroller
+    public class ItemsScroller : Panel
     {
         Rect itemListPanelRect = new Rect(9, 0, 50, 152);
         Rect[] itemButtonRects = new Rect[]
@@ -52,7 +52,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int listDisplayUnits = 4;                       // Number of items displayed in scrolling areas
         const int itemButtonMarginSize = 2;                   // Margin of item buttons
 
-        Panel parentPanel;
         ToolTip toolTip;
         List<DaggerfallUnityItem> items = new List<DaggerfallUnityItem>();
 
@@ -70,40 +69,41 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public event OnItemClickHandler OnItemClick;
 
 
-        public ItemsScroller(Panel panel, ToolTip toolTip)
+        public ItemsScroller(ToolTip toolTip)
+            : base()
         {
-            parentPanel = panel;
             this.toolTip = toolTip;
 
             LoadTextures();
-            SetupScrollBars();
+            SetupScrollBar();
             SetupScrollButtons();
             SetupItemsElements();
         }
 
 
-        void SetupScrollBars()
+        void SetupScrollBar()
         {
-            // Local items list scroll bar (e.g. items in character inventory)
+            // Item list scroll bar (e.g. items in character inventory)
             itemListScrollBar = new VerticalScrollBar
             {
                 Position = new Vector2(1, 18),
                 Size = new Vector2(6, 117),
                 DisplayUnits = listDisplayUnits
             };
-            parentPanel.Components.Add(itemListScrollBar);
+            Components.Add(itemListScrollBar);
             itemListScrollBar.OnScroll += ItemsScrollBar_OnScroll;
         }
 
         void SetupScrollButtons()
         {
+            // Item list scroll buttons
             itemListUpButton = new Button
             {
                 Position = new Vector2(0, 0),
                 Size = new Vector2(9, 16),
                 BackgroundTexture = redUpArrow
             };
-            parentPanel.Components.Add(itemListUpButton);
+            Components.Add(itemListUpButton);
             itemListUpButton.OnMouseClick += ItemsUpButton_OnMouseClick;
 
             itemListDownButton = new Button
@@ -112,14 +112,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 Size = new Vector2(9, 16),
                 BackgroundTexture = redDownArrow
             };
-            parentPanel.Components.Add(itemListDownButton);
+            Components.Add(itemListDownButton);
             itemListDownButton.OnMouseClick += ItemsDownButton_OnMouseClick;
         }
 
         void SetupItemsElements()
         {
             // List panel for scrolling behaviour
-            Panel itemsListPanel = DaggerfallUI.AddPanel(itemListPanelRect, parentPanel);
+            Panel itemsListPanel = DaggerfallUI.AddPanel(itemListPanelRect, this);
             itemsListPanel.OnMouseScrollUp += ItemsListPanel_OnMouseScrollUp;
             itemsListPanel.OnMouseScrollDown += ItemsListPanel_OnMouseScrollDown;
 
@@ -319,12 +319,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             itemListScrollBar.ScrollIndex++;
         }
 
-        private void ItemsListPanel_OnMouseScrollUp()
+        private void ItemsListPanel_OnMouseScrollUp(BaseScreenComponent sender)
         {
             itemListScrollBar.ScrollIndex--;
         }
 
-        private void ItemsListPanel_OnMouseScrollDown()
+        private void ItemsListPanel_OnMouseScrollDown(BaseScreenComponent sender)
         {
             itemListScrollBar.ScrollIndex++;
         }
