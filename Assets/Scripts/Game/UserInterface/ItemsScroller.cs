@@ -60,13 +60,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             get { return items; }
             set {
                 items = value;
-                itemListScrollBar.Reset(listDisplayUnits);
                 UpdateItemsDisplay();
             }
         }
 
         public delegate void OnItemClickHandler(DaggerfallUnityItem item);
         public event OnItemClickHandler OnItemClick;
+
+        public delegate void OnItemHoverHandler(DaggerfallUnityItem item);
+        public event OnItemHoverHandler OnItemHover;
 
 
         public ItemsScroller(ToolTip toolTip)
@@ -80,6 +82,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetupItemsElements();
         }
 
+        public void ResetScroll()
+        {
+            itemListScrollBar.Reset(listDisplayUnits);
+        }
 
         void SetupScrollBar()
         {
@@ -132,8 +138,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 itemButtons[i].ToolTip = toolTip;
                 itemButtons[i].Tag = i;
                 itemButtons[i].OnMouseClick += ItemButton_OnMouseClick;
-                //if (itemInfoPanelLabel != null)
-                //    itemsButtons[i].OnMouseEnter += itemsButton_OnMouseEnter;
+                itemButtons[i].OnMouseEnter += ItemButton_OnMouseEnter;
+                itemButtons[i].OnMouseScrollUp += ItemButton_OnMouseEnter;
+                itemButtons[i].OnMouseScrollDown += ItemButton_OnMouseEnter;
 
                 // Icon image panel
                 itemIconPanels[i] = DaggerfallUI.AddPanel(itemButtons[i], AutoSizeModes.ScaleToFit);
@@ -186,9 +193,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 // Get item and image
                 DaggerfallUnityItem item = items[scrollIndex + i];
-                ImageData image = GetInventoryImage(item);
+                ImageData image = DaggerfallUnity.Instance.ItemHelper.GetInventoryImage(item);
 
-                SetItemBackgroundColour(item, i, true);
+                SetItemBackgroundColour(item, i);
 
                 // Set image to button icon
                 itemIconPanels[i].BackgroundTexture = image.texture;
@@ -249,23 +256,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        // Gets inventory image
-        ImageData GetInventoryImage(DaggerfallUnityItem item)
-        {
-            if (item.TemplateIndex == (int)Transportation.Small_cart)
-            {
-                // Handle small cart - the template image for this is not correct
-                // Correct image actually in CIF files
-                return DaggerfallUnity.Instance.ItemHelper.GetContainerImage(InventoryContainerImages.Wagon);
-            }
-            else
-            {
-                // Get inventory image
-                return DaggerfallUnity.Instance.ItemHelper.GetItemImage(item, true);
-            }
-        }
-
-        void SetItemBackgroundColour(DaggerfallUnityItem item, int i, bool local)
+        void SetItemBackgroundColour(DaggerfallUnityItem item, int i)
         {
             // TEST: Set green background for remote quest items
             if (item.IsQuestItem)
@@ -273,7 +264,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else
                 itemButtons[i].BackgroundColor = Color.clear;
         }
-
 
         void LoadTextures()
         {
@@ -289,7 +279,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
 
-
         void ItemButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             // Get index
@@ -302,6 +291,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Debug.LogFormat("item {0} clicked", item.ItemName);
             if (item != null && OnItemClick != null)
                 OnItemClick(item);
+        }
+
+        protected virtual void ItemButton_OnMouseEnter(BaseScreenComponent sender)
+        {
+            // Get index
+            int index = itemListScrollBar.ScrollIndex + (int)sender.Tag;
+            if (index >= items.Count)
+                return;
+            // Get item
+            DaggerfallUnityItem item = items[index];
+            if (item != null && OnItemClick != null)
+                OnItemHover(item);
         }
 
         private void ItemsScrollBar_OnScroll()

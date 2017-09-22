@@ -48,7 +48,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region UI Controls
 
-        TextLabel[] remoteItemsRepairLabels = new TextLabel[listDisplayUnits];
+        //TextLabel[] remoteItemsRepairLabels = new TextLabel[listDisplayUnits];
 
         Panel costPanel;
         TextLabel costLabel;
@@ -139,6 +139,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         #endregion
+/*
 
         #region Setup Methods
 
@@ -660,9 +661,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // Do nothing when game starts, as this window class is not used in a persisted manner like its parent.
         }
+*/
 
         #region Macro handling
-
         public MacroDataSource GetMacroDataSource()
         {
             return new TradeMacroDataSource(this);
@@ -681,7 +682,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             public override string Amount()
             {
-                return parent.GetTradePrice().ToString();
+                return "disabled"; // parent.GetTradePrice().ToString();
             }
 
             public override string ShopName()
