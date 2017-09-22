@@ -49,7 +49,7 @@ namespace DaggerfallConnect.Arena2
             public int archive;
             public int record;
             public string caption;
-            public string unknown1; // used string for this since there are lots of "?2" values
+            public string gender; // values are 1 for male, 2 for female. If preceded by a "?", in classic the flat would be censored in ChildGard mode.
             public int unknown2;
             public int unknown3;
             public int faceIndex; // index of face in FACES.CIF
@@ -236,9 +236,11 @@ namespace DaggerfallConnect.Arena2
             line = block[1];
             flat.caption = line;
 
-            // get currently unknown values
+            // get gender
             line = block[2];
-            flat.unknown1 = line;
+            flat.gender = line;
+
+            // get currently unknown values
             line = block[3];
             flat.unknown2 = ParseInt(line);
             line = block[4];
