@@ -119,10 +119,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public delegate void OnMiddleMouseDoubleClickHandler(BaseScreenComponent sender, Vector2 position);
         public event OnMiddleMouseDoubleClickHandler OnMiddleMouseDoubleClick;
 
-        public delegate void OnMouseScrollUpEventHandler();
+        public delegate void OnMouseScrollUpEventHandler(BaseScreenComponent sender);
         public event OnMouseScrollUpEventHandler OnMouseScrollUp;
 
-        public delegate void OnMouseScrollDownEventHandler();
+        public delegate void OnMouseScrollDownEventHandler(BaseScreenComponent sender);
         public event OnMouseScrollDownEventHandler OnMouseScrollDown;
 
         #endregion
@@ -763,7 +763,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         protected virtual void MouseScrollUp()
         {
             if (OnMouseScrollUp != null)
-                OnMouseScrollUp();
+                OnMouseScrollUp(this);
         }
 
         /// <summary>
@@ -772,7 +772,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         protected virtual void MouseScrollDown()
         {
             if (OnMouseScrollDown != null)
-                OnMouseScrollDown();
+                OnMouseScrollDown(this);
         }
 
         #endregion

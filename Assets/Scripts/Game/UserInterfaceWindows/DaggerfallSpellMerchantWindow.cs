@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -365,7 +365,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Debug.Log("list box Double Clicked");
         }
 
-        void listBox_OnMouseScroll()
+        void listBox_OnMouseScroll(BaseScreenComponent sender)
         {
             Debug.Log("list box mouse scroll down");
 
