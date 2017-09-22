@@ -70,22 +70,6 @@ namespace DaggerfallWorkshop.Game.Items
 
         #region Public Methods
 
-        // Gets inventory image
-        public ImageData GetInventoryImage(DaggerfallUnityItem item)
-        {
-            if (item.TemplateIndex == (int)Transportation.Small_cart)
-            {
-                // Handle small cart - the template image for this is not correct
-                // Correct image actually in CIF files
-                return GetContainerImage(InventoryContainerImages.Wagon);
-            }
-            else
-            {
-                // Get inventory image
-                return GetItemImage(item, true);
-            }
-        }
-
         /// <summary>
         /// Gets item template data using group and index.
         /// </summary>
@@ -204,6 +188,22 @@ namespace DaggerfallWorkshop.Game.Items
             }
 
             return result;
+        }
+
+        // Gets inventory image
+        public ImageData GetInventoryImage(DaggerfallUnityItem item)
+        {
+            if (item.TemplateIndex == (int)Transportation.Small_cart)
+            {
+                // Handle small cart - the template image for this is not correct
+                // Correct image actually in CIF files
+                return GetContainerImage(InventoryContainerImages.Wagon);
+            }
+            else
+            {
+                // Get inventory image
+                return GetItemImage(item, true);
+            }
         }
 
         /// <summary>

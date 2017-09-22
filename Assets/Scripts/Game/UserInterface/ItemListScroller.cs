@@ -8,16 +8,17 @@
 using UnityEngine;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Utility;
-using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Items;
 
-namespace DaggerfallWorkshop.Game.UserInterfaceWindows
+namespace DaggerfallWorkshop.Game.UserInterface
 {
     /// <summary>
-    /// Implements an item scroller UI element composed of scrollbar & items.
+    /// Item scroller UI panel component composed of scrollbar, scroll buttons & items list.
     /// </summary>
-    public class ItemsScroller : Panel
+    public class ItemListScroller : Panel
     {
+        #region UI Rects, Controls, Textures
+
         Rect itemListPanelRect = new Rect(9, 0, 50, 152);
         Rect[] itemButtonRects = new Rect[]
         {
@@ -26,7 +27,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             new Rect(0, 76, 50, 38),
             new Rect(0, 114, 50, 38)
         };
-
         Rect upArrowRect = new Rect(0, 0, 9, 16);
         Rect downArrowRect = new Rect(0, 136, 9, 16);
 
@@ -42,18 +42,49 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button[] itemButtons = new Button[listDisplayUnits];
         Panel[] itemIconPanels = new Panel[listDisplayUnits];
         TextLabel[] itemStackLabels = new TextLabel[listDisplayUnits];
+        TextLabel[] itemMiscLabels = new TextLabel[listDisplayUnits];
 
+        #endregion
 
-        const string greenArrowsTextureName = "INVE06I0.IMG";           // Green up/down arrows when more items available
-        const string redArrowsTextureName = "INVE07I0.IMG";             // Red up/down arrows when no more items available
+        #region Fields
 
-        Color questItemBackgroundColor = new Color(0f, 0.25f, 0f, 0.5f);
+        const string greenArrowsTextureName = "INVE06I0.IMG"; // Green up/down arrows when more items available
+        const string redArrowsTextureName = "INVE07I0.IMG";   // Red up/down arrows when no more items available
 
         const int listDisplayUnits = 4;                       // Number of items displayed in scrolling areas
         const int itemButtonMarginSize = 2;                   // Margin of item buttons
 
-        ToolTip toolTip;
         List<DaggerfallUnityItem> items = new List<DaggerfallUnityItem>();
+
+        ToolTip toolTip;
+        ItemBackgroundColourHandler backgroundColourHandler;
+        ItemLabelTextHandler labelTextHandler;
+
+        #endregion
+
+        #region Delegates, Events, Properties
+
+        public delegate Color ItemBackgroundColourHandler(DaggerfallUnityItem item);
+
+        public delegate string ItemLabelTextHandler(DaggerfallUnityItem item);
+
+        public delegate void OnItemClickHandler(DaggerfallUnityItem item);
+        public event OnItemClickHandler OnItemClick;
+
+        public delegate void OnItemHoverHandler(DaggerfallUnityItem item);
+        public event OnItemHoverHandler OnItemHover;
+
+        public ItemBackgroundColourHandler BackgroundColourHandler
+        {
+            get { return backgroundColourHandler; }
+            set { backgroundColourHandler = value; }
+        }
+
+        public ItemLabelTextHandler LabelTextHandler
+        {
+            get { return labelTextHandler; }
+            set { labelTextHandler = value; }
+        }
 
         public List<DaggerfallUnityItem> Items
         {
@@ -63,15 +94,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 UpdateItemsDisplay();
             }
         }
+        #endregion
 
-        public delegate void OnItemClickHandler(DaggerfallUnityItem item);
-        public event OnItemClickHandler OnItemClick;
+        #region Constructors, Public methods
 
-        public delegate void OnItemHoverHandler(DaggerfallUnityItem item);
-        public event OnItemHoverHandler OnItemHover;
-
-
-        public ItemsScroller(ToolTip toolTip)
+        public ItemListScroller(ToolTip toolTip)
             : base()
         {
             this.toolTip = toolTip;
@@ -79,13 +106,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             LoadTextures();
             SetupScrollBar();
             SetupScrollButtons();
-            SetupItemsElements();
+            SetupItemsList();
         }
 
         public void ResetScroll()
         {
             itemListScrollBar.Reset(listDisplayUnits);
         }
+
+        #endregion
+
+        #region Private, Setup methods
 
         void SetupScrollBar()
         {
@@ -122,7 +153,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             itemListDownButton.OnMouseClick += ItemsDownButton_OnMouseClick;
         }
 
-        void SetupItemsElements()
+        void SetupItemsList()
         {
             // List panel for scrolling behaviour
             Panel itemsListPanel = DaggerfallUI.AddPanel(itemListPanelRect, this);
@@ -154,14 +185,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 itemStackLabels[i].VerticalAlignment = VerticalAlignment.Bottom;
                 itemStackLabels[i].ShadowPosition = Vector2.zero;
                 itemStackLabels[i].TextColor = DaggerfallUI.DaggerfallUnityDefaultToolTipTextColor;
+
+                // Misc labels
+                itemMiscLabels[i] = DaggerfallUI.AddTextLabel(DaggerfallUI.Instance.Font4, Vector2.zero, string.Empty, itemButtons[i]);
+                itemMiscLabels[i].HorizontalAlignment = HorizontalAlignment.Left;
+                itemMiscLabels[i].VerticalAlignment = VerticalAlignment.Top;
             }
         }
 
-        void ClearItemsElements()
+        void ClearItemsList()
         {
             for (int i = 0; i < listDisplayUnits; i++)
             {
                 itemStackLabels[i].Text = string.Empty;
+                itemMiscLabels[i].Text = string.Empty;
                 itemButtons[i].ToolTipText = string.Empty;
                 itemIconPanels[i].BackgroundTexture = null;
                 itemButtons[i].BackgroundColor = Color.clear;
@@ -173,11 +210,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void UpdateItemsDisplay()
         {
             // Clear list elements
-            ClearItemsElements();
+            ClearItemsList();
             if (items == null)
                 return;
 
-            // Update scroller
+            // Update scrollbar
             itemListScrollBar.TotalUnits = items.Count;
             int scrollIndex = GetSafeScrollIndex(itemListScrollBar);
 
@@ -195,8 +232,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUnityItem item = items[scrollIndex + i];
                 ImageData image = DaggerfallUnity.Instance.ItemHelper.GetInventoryImage(item);
 
-                SetItemBackgroundColour(item, i);
-
                 // Set image to button icon
                 itemIconPanels[i].BackgroundTexture = image.texture;
                 itemIconPanels[i].Size = new Vector2(image.texture.width, image.texture.height);
@@ -205,13 +240,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (item.stackCount > 1)
                     itemStackLabels[i].Text = item.stackCount.ToString();
 
+                // Handle context specific background colour & label
+                if (backgroundColourHandler != null)
+                    itemButtons[i].BackgroundColor = backgroundColourHandler(item);
+                if (labelTextHandler != null)
+                    itemMiscLabels[i].Text = labelTextHandler(item);
+
                 // Tooltip text
-                string text;
-                if (item.ItemGroup == ItemGroups.Books)
-                    text = DaggerfallUnity.Instance.ItemHelper.getBookNameByMessage(item.message, item.LongName);
-                else
-                    text = item.LongName;
-                itemButtons[i].ToolTipText = text;
+                itemButtons[i].ToolTipText =
+                    (item.ItemGroup == ItemGroups.Books) ? DaggerfallUnity.Instance.ItemHelper.getBookNameByMessage(item.message, item.LongName) : item.LongName;
             }
         }
 
@@ -229,7 +266,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (scrollIndex < 0) scrollIndex = 0;
                 scroller.Reset(scroller.DisplayUnits, scroller.TotalUnits, scrollIndex);
             }
-
             return scrollIndex;
         }
 
@@ -237,16 +273,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void UpdateListScrollerButtons(int index, int count, Button upButton, Button downButton)
         {
             // Update up button
-            if (index > 0)
-                upButton.BackgroundTexture = greenUpArrow;
-            else
-                upButton.BackgroundTexture = redUpArrow;
+            upButton.BackgroundTexture = (index > 0) ? greenUpArrow : redUpArrow;
 
             // Update down button
-            if (index < (count - listDisplayUnits))
-                downButton.BackgroundTexture = greenDownArrow;
-            else
-                downButton.BackgroundTexture = redDownArrow;
+            upButton.BackgroundTexture = (index < (count - listDisplayUnits)) ? greenDownArrow : redDownArrow;
 
             // No items above or below
             if (count <= listDisplayUnits)
@@ -254,15 +284,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 upButton.BackgroundTexture = redUpArrow;
                 downButton.BackgroundTexture = redDownArrow;
             }
-        }
-
-        void SetItemBackgroundColour(DaggerfallUnityItem item, int i)
-        {
-            // TEST: Set green background for remote quest items
-            if (item.IsQuestItem)
-                itemButtons[i].BackgroundColor = questItemBackgroundColor;
-            else
-                itemButtons[i].BackgroundColor = Color.clear;
         }
 
         void LoadTextures()
@@ -278,6 +299,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             greenDownArrow = ImageReader.GetSubTexture(greenArrowsTexture, downArrowRect);
         }
 
+        #endregion
+
+        #region Event handlers
 
         void ItemButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
@@ -288,46 +312,48 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Get item and raise item click event
             DaggerfallUnityItem item = items[index];
-            Debug.LogFormat("item {0} clicked", item.ItemName);
             if (item != null && OnItemClick != null)
                 OnItemClick(item);
         }
 
-        protected virtual void ItemButton_OnMouseEnter(BaseScreenComponent sender)
+        void ItemButton_OnMouseEnter(BaseScreenComponent sender)
         {
             // Get index
             int index = itemListScrollBar.ScrollIndex + (int)sender.Tag;
             if (index >= items.Count)
                 return;
-            // Get item
+
+            // Get item and raise item hover event
             DaggerfallUnityItem item = items[index];
             if (item != null && OnItemClick != null)
                 OnItemHover(item);
         }
 
-        private void ItemsScrollBar_OnScroll()
+        void ItemsScrollBar_OnScroll()
         {
             UpdateItemsDisplay();
         }
 
-        private void ItemsUpButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void ItemsUpButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             itemListScrollBar.ScrollIndex--;
         }
 
-        private void ItemsDownButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void ItemsDownButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             itemListScrollBar.ScrollIndex++;
         }
 
-        private void ItemsListPanel_OnMouseScrollUp(BaseScreenComponent sender)
+        void ItemsListPanel_OnMouseScrollUp(BaseScreenComponent sender)
         {
             itemListScrollBar.ScrollIndex--;
         }
 
-        private void ItemsListPanel_OnMouseScrollDown(BaseScreenComponent sender)
+        void ItemsListPanel_OnMouseScrollDown(BaseScreenComponent sender)
         {
             itemListScrollBar.ScrollIndex++;
         }
+
+        #endregion
     }
 }

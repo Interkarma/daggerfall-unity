@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors: InconsolableCellist
+// Contributors: InconsolableCellist, Hazelnut
 //
 // Notes:
 //
@@ -45,8 +45,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Rect localTargetIconRect = new Rect(165, 12, 55, 34);
         Rect remoteTargetIconRect = new Rect(263, 12, 55, 34);
 
-        Rect localItemsScrollerRect = new Rect(163, 48, 59, 152);
-        Rect remoteItemsScrollerRect = new Rect(261, 48, 59, 152);
+        Rect localItemListScrollerRect = new Rect(163, 48, 59, 152);
+        Rect remoteItemListScrollerRect = new Rect(261, 48, 59, 152);
 
         Rect itemInfoPanelRect = new Rect(223, 145, 37, 32);
         Rect infoCutoutRect = new Rect(196, 68, 50, 37);
@@ -81,8 +81,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected Panel itemInfoPanel;
         protected MultiFormatTextLabel itemInfoPanelLabel;
 
-        ItemsScroller localItemsScroller;
-        ItemsScroller remoteItemsScroller;
+        protected ItemListScroller localItemListScroller;
+        protected ItemListScroller remoteItemListScroller;
 
         #endregion
 
@@ -123,6 +123,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         const int accessoryCount = 12;                                  // Number of accessory slots
         const int accessoryButtonMarginSize = 1;                        // Margin of accessory buttons
+
+        Color questItemBackgroundColor = new Color(0f, 0.25f, 0f, 0.5f);
 
         PlayerEntity playerEntity;
 
@@ -239,7 +241,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetupTargetIconPanels();
             SetupTabPageButtons();
             SetupActionButtons();
-            SetupItemsScrollers();
+            SetupItemListScrollers();
             SetupAccessoryElements();
 
             // Exit buttons
@@ -255,33 +257,46 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Setup initial display
             FilterLocalItems();
+            localItemListScroller.Items = localItemsFiltered;
             FilterRemoteItems();
+            remoteItemListScroller.Items = remoteItemsFiltered;
             UpdateAccessoryItemsDisplay();
             UpdateLocalTargetIcon();
             UpdateRemoteTargetIcon();
         }
 
-        protected void SetupItemsScrollers()
+        protected void SetupItemListScrollers()
         {
-            localItemsScroller = new ItemsScroller(defaultToolTip)
+            localItemListScroller = new ItemListScroller(defaultToolTip)
             {
-                Position = new Vector2(localItemsScrollerRect.x, localItemsScrollerRect.y),
-                Size = new Vector2(localItemsScrollerRect.width, localItemsScrollerRect.height)
+                Position = new Vector2(localItemListScrollerRect.x, localItemListScrollerRect.y),
+                Size = new Vector2(localItemListScrollerRect.width, localItemListScrollerRect.height),
+                BackgroundColourHandler = ItemBackgroundColourHandler
             };
-            NativePanel.Components.Add(localItemsScroller);
-            localItemsScroller.OnItemClick += LocalItemScroller_OnItemClick;
+            NativePanel.Components.Add(localItemListScroller);
+            localItemListScroller.OnItemClick += LocalItemListScroller_OnItemClick;
             if (itemInfoPanelLabel != null)
-                localItemsScroller.OnItemHover += ItemsScroller_OnHover;
+                localItemListScroller.OnItemHover += ItemListScroller_OnHover;
 
-            remoteItemsScroller = new ItemsScroller(defaultToolTip)
+            remoteItemListScroller = new ItemListScroller(defaultToolTip)
             {
-                Position = new Vector2(remoteItemsScrollerRect.x, remoteItemsScrollerRect.y),
-                Size = new Vector2(remoteItemsScrollerRect.width, remoteItemsScrollerRect.height)
+                Position = new Vector2(remoteItemListScrollerRect.x, remoteItemListScrollerRect.y),
+                Size = new Vector2(remoteItemListScrollerRect.width, remoteItemListScrollerRect.height),
+                BackgroundColourHandler = ItemBackgroundColourHandler
             };
-            NativePanel.Components.Add(remoteItemsScroller);
-            remoteItemsScroller.OnItemClick += RemoteItemScroller_OnItemClick;
+            NativePanel.Components.Add(remoteItemListScroller);
+            remoteItemListScroller.OnItemClick += RemoteItemListScroller_OnItemClick;
             if (itemInfoPanelLabel != null)
-                remoteItemsScroller.OnItemHover += ItemsScroller_OnHover;
+                remoteItemListScroller.OnItemHover += ItemListScroller_OnHover;
+        }
+
+        protected virtual Color ItemBackgroundColourHandler(DaggerfallUnityItem item)
+        {
+            // TEST: Set green background for remote quest items
+            if (item.IsQuestItem)
+                return questItemBackgroundColor;
+            else
+                return Color.clear;
         }
 
         protected void SetupTargetIconPanels()
@@ -290,6 +305,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             localTargetIconPanel = DaggerfallUI.AddPanel(localTargetIconRect, NativePanel);
             localTargetIconLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(1, 2), localTargetIconPanel);
             localTargetIconLabel.TextColor = DaggerfallUI.DaggerfallUnityDefaultToolTipTextColor;
+
             remoteTargetIconPanel = DaggerfallUI.AddPanel(remoteTargetIconRect, NativePanel);
             remoteTargetIconLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(1, 2), remoteTargetIconPanel);
             remoteTargetIconLabel.TextColor = DaggerfallUI.DaggerfallUnityDefaultToolTipTextColor;
@@ -497,7 +513,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Refresh items display
             FilterLocalItems();
+            localItemListScroller.Items = localItemsFiltered;
             FilterRemoteItems();
+            remoteItemListScroller.Items = remoteItemsFiltered;
             UpdateAccessoryItemsDisplay();
 
             // Refresh remote target icon
@@ -540,10 +558,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     ingredientsButton.BackgroundTexture = ingredientsSelected;
                     break;
             }
+            // Clear info panel
+            if (itemInfoPanelLabel != null)
+                itemInfoPanelLabel.SetText(new TextFile.Token[0]);
 
             // Update filtered list
-            localItemsScroller.ResetScroll();
+            localItemListScroller.ResetScroll();
             FilterLocalItems();
+            localItemListScroller.Items = localItemsFiltered;
         }
 
         void SelectActionMode(ActionModes mode)
@@ -585,7 +607,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected virtual void UpdateRemoteTargetIcon()
         {
             ImageData containerImage;
-            remoteTargetIconLabel.Text = "";
+            remoteTargetIconLabel.Text = String.Empty;
             switch (remoteTargetType)
             {
                 default:
@@ -652,7 +674,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     }
                 }
             }
-            localItemsScroller.Items = localItemsFiltered;
         }
 
         /// <summary>
@@ -668,8 +689,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (remoteItems != null)
                 for (int i = 0; i < remoteItems.Count; i++)
                     remoteItemsFiltered.Add(remoteItems.GetItem(i));
-
-            remoteItemsScroller.Items = remoteItemsFiltered;
         }
 
         /// <summary>
@@ -775,11 +794,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             usingWagon = show;
-            remoteItemsScroller.ResetScroll();
+            remoteItemListScroller.ResetScroll();
             Refresh(false);
         }
 
-        private void UpdateItemInfoPanel(DaggerfallUnityItem item)
+        void UpdateItemInfoPanel(DaggerfallUnityItem item)
         {
             // Display info in local target icon panel, replacing justification tokens
             TextFile.Token[] tokens = ItemHelper.GetItemInfo(item, DaggerfallUnity.TextProvider);
@@ -1200,7 +1219,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        private void LocalItemScroller_OnItemClick(DaggerfallUnityItem item)
+        protected virtual void LocalItemListScroller_OnItemClick(DaggerfallUnityItem item)
         {
             // Handle click based on action
             if (selectedActionMode == ActionModes.Equip)
@@ -1227,7 +1246,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        private void RemoteItemScroller_OnItemClick(DaggerfallUnityItem item)
+        protected virtual void RemoteItemListScroller_OnItemClick(DaggerfallUnityItem item)
         {
             // Send click to quest system
             if (item.IsQuestItem)
@@ -1317,7 +1336,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             UpdateItemInfoPanel(item);
         }
 
-        protected virtual void ItemsScroller_OnHover(DaggerfallUnityItem item)
+        protected virtual void ItemListScroller_OnHover(DaggerfallUnityItem item)
         {
             UpdateItemInfoPanel(item);
         }
