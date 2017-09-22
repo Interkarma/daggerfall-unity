@@ -1694,12 +1694,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Event Handlers
 
-        private void PanelAutomap_OnMouseScrollUp()
+        private void PanelAutomap_OnMouseScrollUp(BaseScreenComponent sender)
         {
             ActionZoomIn(zoomSpeedMouseWheel);
         }
 
-        private void PanelAutomap_OnMouseScrollDown()
+        private void PanelAutomap_OnMouseScrollDown(BaseScreenComponent sender)
         {
             ActionZoomOut(zoomSpeedMouseWheel);
         }
@@ -1792,7 +1792,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ActionResetRotationPivotAxis();
         }
 
-        private void GridButton_OnMouseScrollUp()
+        private void GridButton_OnMouseScrollUp(BaseScreenComponent sender)
         {
             if (inDragMode())
                 return;
@@ -1800,7 +1800,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ActionIncreaseCameraFieldOfView();
         }
 
-        private void GridButton_OnMouseScrollDown()
+        private void GridButton_OnMouseScrollDown(BaseScreenComponent sender)
         {
             if (inDragMode())
                 return;

@@ -1163,12 +1163,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Event Handlers
 
-        private void PanelAutomap_OnMouseScrollUp()
+        private void PanelAutomap_OnMouseScrollUp(BaseScreenComponent sender)
         {
             ActionZoom(-zoomSpeedMouseWheel);
         }
 
-        private void PanelAutomap_OnMouseScrollDown()
+        private void PanelAutomap_OnMouseScrollDown(BaseScreenComponent sender)
         {
             ActionZoom(zoomSpeedMouseWheel);
         }

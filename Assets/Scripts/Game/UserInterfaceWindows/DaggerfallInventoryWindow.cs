@@ -432,9 +432,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 localItemsButtons[i].ToolTip = defaultToolTip;
                 localItemsButtons[i].Tag = i;
                 localItemsButtons[i].OnMouseClick += LocalItemsButton_OnMouseClick;
-                if (itemInfoPanelLabel != null)
+                if (itemInfoPanelLabel != null) {
                     localItemsButtons[i].OnMouseEnter += LocalItemsButton_OnMouseEnter;
-
+                    localItemsButtons[i].OnMouseScrollUp += LocalItemsButton_OnMouseScrollUp;
+                    localItemsButtons[i].OnMouseScrollDown += LocalItemsButton_OnMouseScrollDown;
+                }
                 // Icon image panel
                 localItemsIconPanels[i] = DaggerfallUI.AddPanel(localItemsButtons[i], AutoSizeModes.ScaleToFit);
                 localItemsIconPanels[i].HorizontalAlignment = HorizontalAlignment.Center;
@@ -466,8 +468,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 remoteItemsButtons[i].ToolTip = defaultToolTip;
                 remoteItemsButtons[i].Tag = i;
                 remoteItemsButtons[i].OnMouseClick += RemoteItemsButton_OnMouseClick;
-                if (itemInfoPanelLabel != null)
+                if (itemInfoPanelLabel != null) {
                     remoteItemsButtons[i].OnMouseEnter += RemoteItemsButton_OnMouseEnter;
+                    remoteItemsButtons[i].OnMouseScrollUp += RemoteItemsButton_OnMouseScrollUp;
+                    remoteItemsButtons[i].OnMouseScrollDown += RemoteItemsButton_OnMouseScrollDown;
+                }
 
                 // Icon image panel
                 remoteItemsIconPanels[i] = DaggerfallUI.AddPanel(remoteItemsButtons[i], AutoSizeModes.ScaleToFit);
@@ -1233,12 +1238,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             localItemsScrollBar.ScrollIndex++;
         }
 
-        private void MyItemsListPanel_OnMouseScrollUp()
+        private void MyItemsListPanel_OnMouseScrollUp(BaseScreenComponent sender)
         {
             localItemsScrollBar.ScrollIndex--;
         }
 
-        private void MyItemsListPanel_OnMouseScrollDown()
+        private void MyItemsListPanel_OnMouseScrollDown(BaseScreenComponent sender)
         {
             localItemsScrollBar.ScrollIndex++;
         }
@@ -1262,12 +1267,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             remoteItemsScrollBar.ScrollIndex++;
         }
 
-        private void RemoteItemsListPanel_OnMouseScrollUp()
+        private void RemoteItemsListPanel_OnMouseScrollUp(BaseScreenComponent sender)
         {
             remoteItemsScrollBar.ScrollIndex--;
         }
 
-        private void RemoteItemsListPanel_OnMouseScrollDown()
+        private void RemoteItemsListPanel_OnMouseScrollDown(BaseScreenComponent sender)
         {
             remoteItemsScrollBar.ScrollIndex++;
         }
@@ -1281,13 +1286,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             const int itemBrokenTextId = 29;
             const int forbiddenEquipmentTextId = 1068;
 
+            if (item.ItemGroup == ItemGroups.Weapons && item.TemplateIndex == (int)Weapons.Arrow)
+                return;
+
             if (item.currentCondition < 1)
             {
                 TextFile.Token[] tokens = DaggerfallUnity.TextProvider.GetRSCTokens(itemBrokenTextId);
                 if (tokens != null && tokens.Length > 0)
                 {
                     DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
-                    messageBox.SetTextTokens(tokens);
+                    messageBox.SetTextTokens(tokens, item);
                     messageBox.ClickAnywhereToClose = true;
                     messageBox.Show();
                 }
@@ -1733,6 +1741,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             UpdateItemInfoPanel(item);
         }
 
+        private void LocalItemsButton_OnMouseScrollUp(BaseScreenComponent sender)
+        {
+            LocalItemsButton_OnMouseEnter(sender);
+        }
+
+        private void LocalItemsButton_OnMouseScrollDown(BaseScreenComponent sender)
+        {
+            LocalItemsButton_OnMouseEnter(sender);
+        }
+
         protected virtual void RemoteItemsButton_OnMouseEnter(BaseScreenComponent sender)
         {
             // Get index
@@ -1744,6 +1762,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (item == null)
                 return;
             UpdateItemInfoPanel(item);
+        }
+
+        private void RemoteItemsButton_OnMouseScrollUp(BaseScreenComponent sender)
+        {
+            RemoteItemsButton_OnMouseEnter(sender);
+        }
+
+        private void RemoteItemsButton_OnMouseScrollDown(BaseScreenComponent sender)
+        {
+            RemoteItemsButton_OnMouseEnter(sender);
         }
 
         private void UpdateItemInfoPanel(DaggerfallUnityItem item)
