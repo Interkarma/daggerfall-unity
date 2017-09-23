@@ -40,8 +40,9 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
 
     // Colors
     Color backgroundColor = new Color(0, 0, 0, 0.7f);
+    Color itemColor = new Color(0.0f, 0.8f, 0.0f, 1.0f);
     Color unselectedTextColor = new Color(0.6f, 0.6f, 0.6f, 1f);
-    Color selectedTextColor = new Color(0.0f, 0.8f, 0.0f, 1.0f);
+    Color selectedTextColor = new Color32(243, 239, 44, 255);
     Color listBoxBackgroundColor = new Color(0.1f, 0.1f, 0.1f, 0.5f);
     Color scrollBarBackgroundColor = new Color(0.0f, 0.5f, 0.0f, 0.4f);
 
@@ -74,18 +75,19 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
 
     #region Fields
 
-    // Labels
+    // Section titles
     const string mainTitleText = "Advanced Settings";
     const string closeButtonText = "Close";
-    const string graphicQualityText = "Graphic Quality";
-    const string guiText = "GUI";
     const string gameplayOptionsText = "Gameplay";
-    const string infoText = "Info";
+    const string guiText = "GUI";
     const string controlsText = "Controls";
-    const string filterModesText = "Filter Modes";
+    const string infoText = "Info";
+    const string graphicQualityText = "Graphic Quality";
 
     // Position controls
-    const float spacing = 12f; // Space between items
+    const float itemTextScale = 0.9f;
+    const float sectionSpacing = 12f; // Space after title
+    const float itemSpacing = 10f; // Space between items
     const float nextPanel = 20f; // Vertical offset for panels
     float y = 2f; // Current position
 
@@ -144,31 +146,32 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
         ParentPanel.BackgroundTextureLayout = BackgroundLayout.StretchToFill;
 
         // Add advanced settings title text
-        TextLabel titleLabel = AddTextlabel (advancedSettingsPanel, mainTitleText);
+        TextLabel titleLabel = AddTextTitle (advancedSettingsPanel, mainTitleText);
 
         y = nextPanel;
 
         // Gameplay
-        AddTextlabel(leftPanel, gameplayOptionsText);
+        AddTextTitle(leftPanel, gameplayOptionsText);
         StartInDungeon = AddCheckbox(leftPanel, "Start In Dungeon", "Start new game inside the first dungeon", DaggerfallUnity.Settings.StartInDungeon);
 
         // GUI
-        AddTextlabel(leftPanel, guiText);
+        AddTextTitle(leftPanel, guiText);
         EnableToolTips = AddCheckbox(leftPanel, "Tool Tips", "Show description when mouse is over an item in GUI", DaggerfallUnity.Settings.EnableToolTips);
         HQTooltips = AddCheckbox(leftPanel, "HQ Tool Tips", "Use High Quality Font for Tool Tips", DaggerfallUnity.Settings.HQTooltips);
         if (!DaggerfallUnity.Settings.EnableToolTips)
             HQTooltips.IsChecked = false;
+        //TODO: inventory info
         Crosshair = AddCheckbox(leftPanel, "Crosshair", "Enable Crosshair on HUD", DaggerfallUnity.Settings.Crosshair);
 
         // Controls
-        AddTextlabel(leftPanel, controlsText);
+        AddTextTitle(leftPanel, controlsText);
 
         // Mouse
         int sensitivityStartValue = (int)(DaggerfallUnity.Settings.MouseLookSensitivity * 10);
         AddSlider(leftPanel, sensitivityMin, sensitivityMax, sensitivityStartValue, "Mouse Sensitivity", "Mouse look sensitivity.", mouseSensitivityScroll_OnScroll, out mouseSensitivitySlider, out mouseSensitivityNumberLabel);
 
         // Info
-        AddTextlabel(leftPanel, infoText);
+        AddTextTitle(leftPanel, infoText);
         AddTextItem(leftPanel, "Quality Level: " + ((QualityLevel)DaggerfallUnity.Settings.QualityLevel).ToString(), "General graphic quality");
 
         string textureArrayLabel = "Texture Arrays: ";
@@ -182,9 +185,9 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
         y = nextPanel;
 
         // Graphic Quality
-        AddTextlabel(centerPanel, graphicQualityText);
+        AddTextTitle(centerPanel, graphicQualityText);
         DungeonLightShadows = AddCheckbox(centerPanel, "Dungeon Light Shadows", "Dungeon lights cast shadows", DaggerfallUnity.Settings.DungeonLightShadows);
-        UseLegacyDeferred = AddCheckbox(centerPanel, "Use Legacy Deferred", "Use Legacy Deferred", DaggerfallUnity.Settings.UseLegacyDeferred);
+        UseLegacyDeferred = AddCheckbox(centerPanel, "Use Legacy Deferred", "Use Legacy Deferred", DaggerfallUnity.Settings.UseLegacyDeferred); //TODO: better description
 
         // FOV
         int fovStartValue = DaggerfallUnity.Settings.FieldOfView;
@@ -196,22 +199,16 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
         const string terrainDistanceToolTiP = "Maximum distance of active terrains from player position";
         AddSlider(centerPanel, terrainDistanceMin, terrainDistanceMax, terraindDistanceStartValue, "Terrain Distance", terrainDistanceToolTiP, terrainDistanceScroll_OnScroll, out terrainDistanceSlider, out terrainDistanceNumberLabel);
 
-        // Shadow resolution
-        AddTextlabel(centerPanel, "Shadow Resolution");
-        ShadowResolutionMode = AddListbox(centerPanel, ShadowResolutionModes(), DaggerfallUnity.Settings.ShadowResolutionMode);
-
         y = nextPanel;
 
         // Filter modes
-        TextLabel filterModes = AddTextlabel (rightPanel, filterModesText);
-        AddToolTipToTextLabel(filterModes, "Many users want Point filter with vanilla textures.");
-        /*TextLabel mainFilterMode = */AddTextlabel (rightPanel, "Main Filter");
-        MainFilterMode = AddListbox (rightPanel, FilterModes(), DaggerfallUnity.Settings.MainFilterMode);
+        MainFilterMode = AddListbox (rightPanel, FilterModes(), DaggerfallUnity.Settings.MainFilterMode, "Main Filter", "Filter for game textures");
         MainFilterMode.OnSelectItem += mainFilterMode_OnSelectItem;
-        /*TextLabel guiFilterMode = */AddTextlabel (rightPanel, "GUI Filter");
-        GUIFilterMode = AddListbox (rightPanel, FilterModes(), DaggerfallUnity.Settings.GUIFilterMode);
-        /*TextLabel videoFilterMode = */AddTextlabel (rightPanel, "Video Filter");
-        VideoFilterMode = AddListbox (rightPanel, FilterModes(), DaggerfallUnity.Settings.VideoFilterMode);
+        GUIFilterMode = AddListbox (rightPanel, FilterModes(), DaggerfallUnity.Settings.GUIFilterMode, "GUI Filter", "Filter for HUD images");
+        VideoFilterMode = AddListbox (rightPanel, FilterModes(), DaggerfallUnity.Settings.VideoFilterMode, "Video Filter", "Filter for movies");
+
+        // Shadow resolution
+        ShadowResolutionMode = AddListbox(rightPanel, ShadowResolutionModes(), DaggerfallUnity.Settings.ShadowResolutionMode, "Shadow Resolution", "Shadow Resolution"); //TODO: better description
 
         // Add Close button
         Button closeButton = new Button();
@@ -230,19 +227,18 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
     #region Setup Methods
 
     /// <summary>
-    /// Add a text label.
+    /// Add a text label with title settings.
     /// </summary>
     /// <param name="panel">leftPanel, centerPanel or rightPanel.</param>
     /// <param name="text">Label.</param>
-    /// <param name="alignment">Horizontal alignment.</param>
-    TextLabel AddTextlabel (Panel panel, string text, HorizontalAlignment alignment = HorizontalAlignment.Center)
+    TextLabel AddTextTitle (Panel panel, string text)
     {
         TextLabel textLabel = new TextLabel();
         textLabel.Text = text;
         textLabel.Position = new Vector2(0, y);
-        textLabel.HorizontalAlignment = alignment;
+        textLabel.HorizontalAlignment = HorizontalAlignment.Center;
         panel.Components.Add(textLabel);
-        y += spacing;
+        y += sectionSpacing;
 
         return textLabel;
     }
@@ -255,10 +251,16 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
     /// <returns></returns>
     TextLabel AddTextItem (Panel panel, string name, string description)
     {
-        var textLabel = AddTextlabel(panel, name, HorizontalAlignment.Left);
+        TextLabel textLabel = new TextLabel();
+        textLabel.Text = name;
+        textLabel.Position = new Vector2(0, y);
+        textLabel.HorizontalAlignment = HorizontalAlignment.Left;
         textLabel.ShadowColor = Color.clear;
-        textLabel.TextColor = selectedTextColor;
+        textLabel.TextColor = itemColor;
+        textLabel.TextScale = itemTextScale;
+        panel.Components.Add(textLabel);
         AddToolTipToTextLabel(textLabel, description);
+        y += itemSpacing;
 
         return textLabel;
     }
@@ -285,14 +287,15 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
     {
         Checkbox checkbox = new Checkbox();
         checkbox.Label.Text = text;
-        checkbox.Label.TextColor = selectedTextColor;
-        checkbox.CheckBoxColor = selectedTextColor;
+        checkbox.Label.TextColor = itemColor;
+        checkbox.Label.TextScale = itemTextScale;
+        checkbox.CheckBoxColor = itemColor;
         checkbox.ToolTip = defaultToolTip;
         checkbox.ToolTipText = tip;
         checkbox.IsChecked = isChecked;
         checkbox.Position = new Vector2(0, y);
         panel.Components.Add(checkbox);
-        y += spacing;
+        y += itemSpacing;
 
         return checkbox;
     }
@@ -303,16 +306,36 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
     /// <param name="panel">leftPanel, centerPanel or rightPanel.</param>
     /// <param name="Options">List of labels.</param>
     /// <param name="selected">Selected option.</param>
-    ListBox AddListbox (Panel panel, List<string> Options, int selected)
+    ListBox AddListbox(
+        Panel panel,
+        List<string> Options,
+        int selected,
+        string title,
+        string toolTip)
     {
         int displayed = Options.Count;
-        int spacing = 9 * displayed;
+        int spacing = 7 * displayed;
 
+        // Title
+        TextLabel textLabel = new TextLabel();
+        textLabel.Text = title;
+        textLabel.Position = new Vector2(0, y);
+        textLabel.HorizontalAlignment = HorizontalAlignment.Center;
+        textLabel.ShadowColor = Color.clear;
+        textLabel.TextColor = itemColor;
+        textLabel.TextScale = itemTextScale;
+        AddToolTipToTextLabel(textLabel, toolTip);
+        panel.Components.Add(textLabel);
+
+        y += 8;
+
+        // ListBox
         ListBox listBox = new ListBox();
         listBox.BackgroundColor = listBoxBackgroundColor;
         listBox.TextColor = unselectedTextColor;
         listBox.SelectedTextColor = selectedTextColor;
         listBox.ShadowPosition = Vector2.zero;
+        listBox.TextScale = itemTextScale;
         listBox.RowsDisplayed = displayed;
         listBox.RowAlignment = HorizontalAlignment.Center;
         listBox.HorizontalAlignment = HorizontalAlignment.Center;
@@ -357,8 +380,9 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
         // Title
         TextLabel titleLabel = new TextLabel();
         titleLabel.Position = new Vector2(0, y);
+        titleLabel.TextScale = itemTextScale;
         titleLabel.Text = title;
-        titleLabel.TextColor = selectedTextColor;
+        titleLabel.TextColor = itemColor;
         titleLabel.ShadowColor = Color.clear;
         AddToolTipToTextLabel(titleLabel, toolTip);
         panel.Components.Add(titleLabel);
@@ -383,7 +407,7 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
         updateIndicator();
         panel.Components.Add(indicator);
 
-        y += spacing;
+        y += itemSpacing;
     }
 
     #endregion

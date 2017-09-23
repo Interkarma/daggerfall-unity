@@ -41,6 +41,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         bool wrapWords = false;
         int rowsDisplayed = 9;
         int rowSpacing = 1;
+        float textScale = 1.0f;
         HorizontalAlignment rowAlignment = HorizontalAlignment.Left;
         Vector2 shadowPosition = DaggerfallUI.DaggerfallDefaultShadowPos;
         Vector2 selectedShadowPosition = Vector2.zero;
@@ -227,6 +228,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             get { return selectedShadowColor; }
             set { selectedShadowColor = value; }
+        }
+
+        public float TextScale
+        {
+            get { return textScale; }
+            set { textScale = value; }
         }
 
         /// <summary>
@@ -453,6 +460,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             textLabel.Font = font;
             textLabel.MaxCharacters = maxCharacters;
             textLabel.Text = text;
+            textLabel.TextScale = textScale;
             textLabel.Parent = this;
             textLabel.WrapText = wrapTextItems;
             textLabel.WrapWords = wrapWords;
