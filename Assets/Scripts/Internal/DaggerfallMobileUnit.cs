@@ -305,15 +305,6 @@ namespace DaggerfallWorkshop
             int record = summary.StateAnims[orientation].Record;
             Vector2 size = summary.RecordSizes[record];
 
-            // Post-fix female thief scale for orentations 1 and 7
-            // The scale read from Daggerfall's files is too small
-            if ((MobileTypes)summary.Enemy.ID == MobileTypes.Thief &&
-                summary.Enemy.Gender == MobileGender.Female &&
-                (orientation == 1 || orientation == 7))
-            {
-                size *= 1.35f;
-            }
-
             // Ensure walking enemies keep their feet aligned between states
             if (summary.Enemy.Behaviour != MobileBehaviour.Flying &&
                 summary.Enemy.Behaviour != MobileBehaviour.Aquatic &&
