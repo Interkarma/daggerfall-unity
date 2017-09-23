@@ -35,6 +35,7 @@ ShopQualityPresentation=0
 ShopQualityHUDDelay=4
 ShowQuestJournalClocksAsCountdown=False
 EnableInventoryInfoPanel = True
+EnableEnhancedItemLists = False
 
 [Controls]
 InvertMouseVertical=False

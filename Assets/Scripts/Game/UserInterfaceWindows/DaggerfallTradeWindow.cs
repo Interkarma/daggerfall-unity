@@ -8,7 +8,6 @@
 //
 // Notes:
 //
-
 using UnityEngine;
 using System;
 using System.Collections.Generic;
@@ -17,8 +16,6 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
-using DaggerfallWorkshop.Game.Utility;
-using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.Banking;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Formulas;
@@ -48,8 +45,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region UI Controls
 
-        TextLabel[] remoteItemsRepairLabels = new TextLabel[listDisplayUnits];
-
         Panel costPanel;
         TextLabel costLabel;
         TextLabel goldLabel;
@@ -61,8 +56,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button stealButton;
         Button modeActionButton;
         Button clearButton;
-
-        Color doneItemBackgroundColor = new Color(0.1f, 0.2f, 0.6f, 0.5f);
 
         #endregion
 
@@ -83,6 +76,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string sellButtonsGoldTextureName = "INVE11I0.IMG";
         const string repairButtonsTextureName = "INVE12I0.IMG";
         const string costPanelTextureName = "SHOP00I0.IMG";
+
+        const int doesNotNeedToBeRepairedTextId = 24;
+
+        Color doneItemBackgroundColor = new Color(0.1f, 0.2f, 0.6f, 0.5f);
 
         WindowModes windowMode = WindowModes.Inventory;
         PlayerGPS.DiscoveredBuilding buildingDiscoveryData;
@@ -176,12 +173,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetupTargetIconPanels();
             SetupTabPageButtons();
             SetupActionButtons();
-            SetupScrollBars();
-            SetupScrollButtons();
-            SetupLocalItemsElements();
-            SetupRemoteItemsElements();
             SetupAccessoryElements();
+            SetupItemListScrollers();
 
+            // Setup special behaviour for remote items when repairing
+            if (windowMode == WindowModes.Repair) {
+                remoteItemListScroller.BackgroundColourHandler = RepairItemBackgroundColourHandler;
+                remoteItemListScroller.LabelTextHandler = RepairItemLabelTextHandler;
+            }
             // Exit buttons
             Button exitButton = DaggerfallUI.AddButton(exitButtonRect, NativePanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
@@ -192,13 +191,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Setup initial display
             FilterLocalItems();
+            localItemListScroller.Items = localItemsFiltered;
             FilterRemoteItems();
-            UpdateLocalItemsDisplay();
-            UpdateRemoteItemsDisplay();
+            remoteItemListScroller.Items = remoteItemsFiltered;
             UpdateAccessoryItemsDisplay();
             UpdateLocalTargetIcon();
             UpdateRemoteTargetIcon();
-            UpdateCostAndGold();
+        }
+
+        Color RepairItemBackgroundColourHandler(DaggerfallUnityItem item)
+        {
+            return (item.currentCondition == item.maxCondition) ? doneItemBackgroundColor : Color.clear;
+        }
+
+        string RepairItemLabelTextHandler(DaggerfallUnityItem item)
+        {
+            return (item.currentCondition == item.maxCondition) ? HardStrings.repairDone : String.Empty;
         }
 
         void SetupCostAndGold()
@@ -230,23 +238,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             clearButton = DaggerfallUI.AddButton(clearButtonRect, actionButtonsPanel);
             clearButton.OnMouseClick += ClearButton_OnMouseClick;
-
-        }
-
-        protected override void SetupRemoteItemsElements()
-        {
-            base.SetupRemoteItemsElements();
-
-            // Setup repair labels
-            if (windowMode == WindowModes.Repair)
-            {
-                for (int i = 0; i < listDisplayUnits; i++)
-                {
-                    remoteItemsRepairLabels[i] = DaggerfallUI.AddTextLabel(DaggerfallUI.Instance.Font4, Vector2.zero, string.Empty, remoteItemsButtons[i]);
-                    remoteItemsRepairLabels[i].HorizontalAlignment = HorizontalAlignment.Left;
-                    remoteItemsRepairLabels[i].VerticalAlignment = VerticalAlignment.Top;
-                }
-            }
         }
 
         #endregion
@@ -275,12 +266,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 usingWagon = false;
                 wagonButton.BackgroundTexture = wagonNotSelected;
             }
-
-            // Reset scrollbars
-            if (localItemsScrollBar != null)
-                localItemsScrollBar.ScrollIndex = 0;
-            if (remoteItemsScrollBar != null)
-                remoteItemsScrollBar.ScrollIndex = 0;
 
             // Refresh window
             Refresh();
@@ -362,15 +347,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        protected override void ClearRemoteItemsElements()
-        {
-            if (windowMode == WindowModes.Repair)
-                for (int i = 0; i < listDisplayUnits; i++)
-                    remoteItemsRepairLabels[i].Text = String.Empty;
-
-            base.ClearRemoteItemsElements();
-        }
-
         protected override void UpdateLocalTargetIcon()
         {
             if (usingWagon)
@@ -422,25 +398,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // identify: ?
         }
 
-        protected override void SetItemBackgroundColour(DaggerfallUnityItem item, int i, bool local)
-        {
-            Button itemButton = (local) ? localItemsButtons[i] : remoteItemsButtons[i];
-            TextLabel itemLabel = (local) ? null : remoteItemsRepairLabels[i];
-
-            if (!local && windowMode == WindowModes.Repair && item.currentCondition == item.maxCondition)
-            {
-                if (itemLabel != null)
-                    itemLabel.Text = HardStrings.repairDone;
-                itemButton.BackgroundColor = doneItemBackgroundColor;
-            }
-            else
-            {
-                if (itemLabel != null)
-                    itemLabel.Text = String.Empty;
-                base.SetItemBackgroundColour(item, i, local);
-            }
-        }
-
         protected void ShowWagon(bool show)
         {
             if (show)
@@ -456,6 +413,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 localItems = PlayerEntity.Items;
             }
             usingWagon = show;
+            localItemListScroller.ResetScroll();
             Refresh(false);
         }
 
@@ -482,20 +440,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Item Click Event Handlers
 
-        protected override void LocalItemsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected override void LocalItemListScroller_OnItemClick(DaggerfallUnityItem item)
         {
-            const int doesNotNeedToBeRepairedTextId = 24;
-
-            // Get index
-            int index = localItemsScrollBar.ScrollIndex + (int)sender.Tag;
-            if (index >= localItemsFiltered.Count)
-                return;
-
-            // Get item
-            DaggerfallUnityItem item = localItemsFiltered[index];
-            if (item == null)
-                return;
-
             // Handle click based on action & mode
             if (selectedActionMode == ActionModes.Select)
             {
@@ -513,7 +459,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     else
                         DaggerfallUI.MessageBox(doesNotNeedToBeRepairedTextId);
                 }
-
             }
             else if (selectedActionMode == ActionModes.Info)
             {
@@ -521,18 +466,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        protected override void RemoteItemsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected override void RemoteItemListScroller_OnItemClick(DaggerfallUnityItem item)
         {
-            // Get index
-            int index = remoteItemsScrollBar.ScrollIndex + (int)sender.Tag;
-            if (index >= remoteItemsFiltered.Count)
-                return;
-
-            // Get item
-            DaggerfallUnityItem item = remoteItemsFiltered[index];
-            if (item == null)
-                return;
-
             // Handle click based on action
             if (selectedActionMode == ActionModes.Select)
             {
@@ -662,7 +597,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         #region Macro handling
-
         public MacroDataSource GetMacroDataSource()
         {
             return new TradeMacroDataSource(this);

@@ -94,6 +94,7 @@ namespace DaggerfallWorkshop
         public int ShopQualityHUDDelay { get; set; }
         public bool ShowQuestJournalClocksAsCountdown { get; set; }
         public bool EnableInventoryInfoPanel { get; set; }
+        public bool EnableEnhancedItemLists { get; set; }
 
         // [Controls]
         public bool InvertMouseVertical { get; set; }
@@ -157,6 +158,7 @@ namespace DaggerfallWorkshop
             ToolTipBackgroundColor = GetColor(sectionGUI, "ToolTipBackgroundColor", DaggerfallUI.DaggerfallUnityDefaultToolTipBackgroundColor);
             ToolTipTextColor = GetColor(sectionGUI, "ToolTipTextColor", DaggerfallUI.DaggerfallUnityDefaultToolTipTextColor);
             EnableInventoryInfoPanel = GetBool(sectionGUI, "EnableInventoryInfoPanel");
+            EnableEnhancedItemLists = GetBool(sectionGUI, "EnableEnhancedItemLists");
             AutomapNumberOfDungeons = GetInt(sectionGUI, "AutomapNumberOfDungeons", 0, 100);
             ShopQualityPresentation = GetInt(sectionGUI, "ShopQualityPresentation", 0, 2);
             ShopQualityHUDDelay = GetInt(sectionGUI, "ShopQualityHUDDelay", 1, 10);
@@ -210,6 +212,7 @@ namespace DaggerfallWorkshop
             SetColor(sectionGUI, "ToolTipBackgroundColor", ToolTipBackgroundColor);
             SetColor(sectionGUI, "ToolTipTextColor", ToolTipTextColor);
             SetBool(sectionGUI, "EnableInventoryInfoPanel", EnableInventoryInfoPanel);
+            SetBool(sectionGUI, "EnableEnhancedItemLists", EnableEnhancedItemLists);
             SetInt(sectionGUI, "AutomapNumberOfDungeons", AutomapNumberOfDungeons);
             SetInt(sectionGUI, "ShopQualityPresentation", ShopQualityPresentation);
             SetInt(sectionGUI, "ShopQualityHUDDelay", ShopQualityHUDDelay);
