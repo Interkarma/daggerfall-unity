@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -86,23 +86,30 @@ namespace DaggerfallWorkshop.Game.Items
         /// <param name="item">Item to equip.</param>
         /// <param name="alwaysEquip">Always equip item, replacing another in the same slot if needed.</param>
         /// <returns>True when item equipped, otherwise false.</returns>
-        public bool EquipItem(DaggerfallUnityItem item, bool alwaysEquip = true, bool playEquipSounds = true)
+        public List<DaggerfallUnityItem> EquipItem(DaggerfallUnityItem item, bool alwaysEquip = true, bool playEquipSounds = true)
         {
             if (item == null)
-                return false;
+                return null;
+
+            // Get slot for this item
+            EquipSlots slot = GetEquipSlot(item);
+            if (slot == EquipSlots.None)
+                return null;
+
+            List<DaggerfallUnityItem> unequippedList = new List<DaggerfallUnityItem>();
 
             // Special weapon handling
             if (item.ItemGroup == ItemGroups.Weapons)
             {
                 // Cannot equip arrows
                 if (item.TemplateIndex == (int)Weapons.Arrow)
-                    return false;
+                    return null;
 
                 // Equipping a 2H weapons will always unequip both hands
                 if (GetItemHands(item) == ItemHands.Both)
                 {
-                    UnequipItem(EquipSlots.LeftHand);
-                    UnequipItem(EquipSlots.RightHand);
+                    UnequipItem(EquipSlots.LeftHand, unequippedList);
+                    UnequipItem(EquipSlots.RightHand, unequippedList);
                 }
             }            
 
@@ -115,23 +122,15 @@ namespace DaggerfallWorkshop.Game.Items
             {
                 // If holding a 2H weapon then unequip
                 DaggerfallUnityItem rightHandItem = equipTable[(int)EquipSlots.RightHand];
-                if (rightHandItem != null)
-                {
-                    if (GetItemHands(rightHandItem) == ItemHands.Both)
-                        UnequipItem(EquipSlots.RightHand);
-                }
+                if (rightHandItem != null && GetItemHands(rightHandItem) == ItemHands.Both)
+                    UnequipItem(EquipSlots.RightHand, unequippedList);
             }
-
-            // Get slot for this item
-            EquipSlots slot = GetEquipSlot(item);
-            if (slot == EquipSlots.None)
-                    return false;
 
             // Unequip any previous item
             if (!IsSlotOpen(slot) && !alwaysEquip)
-                return false;
+                return null;
             else
-                UnequipItem(slot);
+                UnequipItem(slot, unequippedList);
 
             // Equip item to slot
             item.EquipSlot = slot;
@@ -143,25 +142,32 @@ namespace DaggerfallWorkshop.Game.Items
 
             //Debug.Log(string.Format("Equipped {0} to {1}", item.LongName, slot.ToString()));
 
-            return true;
+            return unequippedList;
+        }
+
+        public void UnequipItem(EquipSlots slot, List<DaggerfallUnityItem> list)
+        {
+            DaggerfallUnityItem item = UnequipItem(slot);
+            if (item != null)
+                list.Add(item);
         }
 
         /// <summary>
         /// Attempt to unequip item from slot.
         /// </summary>
         /// <param name="slot">Slot to unequip.</param>
-        /// <returns>True if item unequipped, otherwise false.</returns>
-        public bool UnequipItem(EquipSlots slot)
+        /// <returns>The item unequipped, otherwise null.</returns>
+        public DaggerfallUnityItem UnequipItem(EquipSlots slot)
         {
             if (!IsSlotOpen(slot))
             {
+                DaggerfallUnityItem item = equipTable[(int)slot];
                 equipTable[(int)slot].EquipSlot = EquipSlots.None;
                 equipTable[(int)slot] = null;
 
-                return true;
+                return item;
             }
-
-            return false;
+            return null;
         }
 
         /// <summary>

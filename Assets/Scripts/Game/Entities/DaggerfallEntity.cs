@@ -252,43 +252,49 @@ namespace DaggerfallWorkshop.Game.Entity
         /// </summary>
         public void UpdateEquippedArmorValues(DaggerfallUnityItem armor, bool equipping)
         {
-            if (!armor.IsShield)
+            if (armor.ItemGroup == ItemGroups.Armor ||
+                (armor.ItemGroup == ItemGroups.MensClothing && armor.GroupIndex >= 6 && armor.GroupIndex <= 8) ||
+                (armor.ItemGroup == ItemGroups.WomensClothing && armor.GroupIndex >= 4 && armor.GroupIndex <= 6)
+               )
             {
-                // Get slot used by this armor
-                EquipSlots slot = ItemEquipTable.GetEquipSlot(armor);
-
-                int index = (int)DaggerfallUnityItem.GetBodyPartForEquipSlot(slot);
-
-                if (equipping)
+                if (!armor.IsShield)
                 {
-                    armorValues[index] -= (sbyte)(armor.GetMaterialArmorValue() * 5);
-                }
-                else
-                {
-                    armorValues[index] += (sbyte)(armor.GetMaterialArmorValue() * 5);
-                }
-            }
-            else
-            {
-                // Shield armor values in classic are unaffected by their material type.
-                int[] values = { 0, 0, 0, 0, 0, 0, 0 }; // shield's effect on the 7 armor values
-                int armorBonus = armor.GetShieldArmorValue();
-                BodyParts[] protectedBodyParts = armor.GetShieldProtectedBodyParts();
+                    // Get slot used by this armor
+                    EquipSlots slot = ItemEquipTable.GetEquipSlot(armor);
 
-                foreach (var BodyParts in protectedBodyParts)
-                {
-                    values[(int)BodyParts] = armorBonus;
-                }
+                    int index = (int)DaggerfallUnityItem.GetBodyPartForEquipSlot(slot);
 
-                for (int i = 0; i < armorValues.Length; i++)
-                {
                     if (equipping)
                     {
-                        armorValues[i] -= (sbyte)(values[i] * 5);
+                        armorValues[index] -= (sbyte)(armor.GetMaterialArmorValue() * 5);
                     }
                     else
                     {
-                        armorValues[i] += (sbyte)(values[i] * 5);
+                        armorValues[index] += (sbyte)(armor.GetMaterialArmorValue() * 5);
+                    }
+                }
+                else
+                {
+                    // Shield armor values in classic are unaffected by their material type.
+                    int[] values = { 0, 0, 0, 0, 0, 0, 0 }; // shield's effect on the 7 armor values
+                    int armorBonus = armor.GetShieldArmorValue();
+                    BodyParts[] protectedBodyParts = armor.GetShieldProtectedBodyParts();
+
+                    foreach (var BodyParts in protectedBodyParts)
+                    {
+                        values[(int)BodyParts] = armorBonus;
+                    }
+
+                    for (int i = 0; i < armorValues.Length; i++)
+                    {
+                        if (equipping)
+                        {
+                            armorValues[i] -= (sbyte)(values[i] * 5);
+                        }
+                        else
+                        {
+                            armorValues[i] += (sbyte)(values[i] * 5);
+                        }
                     }
                 }
             }
