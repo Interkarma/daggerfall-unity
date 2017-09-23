@@ -40,6 +40,9 @@ namespace DaggerfallWorkshop.Game
         bool flies;                                 // The enemy can fly
         int enemyLayerMask;                         // Layer mask for Enemies to optimize collision checks
 
+        bool isAttackFollowsPlayerSet;              // For setting if the enemy will follow the player or not during an attack
+        bool attackFollowsPlayer;                   // For setting if the enemy will follow the player or not during an attack
+
         public bool IsHostile
         {
             get { return isHostile; }
@@ -56,6 +59,7 @@ namespace DaggerfallWorkshop.Game
                     mobile.Summary.Enemy.Behaviour == MobileBehaviour.Spectral;
             enemyLayerMask = LayerMask.GetMask("Enemies");
             entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
+            isAttackFollowsPlayerSet = false;
         }
 
         void Update()
@@ -144,7 +148,7 @@ namespace DaggerfallWorkshop.Game
 
             // Reduced speed if playing a one-shot animation
             if (mobile.IsPlayingOneShot())
-                moveSpeed /= 4;
+                moveSpeed /= 2;
 
             // Remain idle when player not acquired or not hostile
             if (senses.LastKnownPlayerPos == EnemySenses.ResetPlayerPos || !isHostile)
@@ -187,11 +191,21 @@ namespace DaggerfallWorkshop.Game
                 targetPos.y -= deltaHeight;
             }
 
-            // Get direction & distance and face target, but only if not attacking, so player has a chance to see
+            // Get direction & distance and face target.
+            // If attacking, randomly do not do so so player has a chance to see
             // attack animations other than those directly facing the player
             var direction = targetPos - transform.position;
             float distance = direction.magnitude;
-            if (!mobile.IsPlayingOneShot())
+
+            if (mobile.IsPlayingOneShot() && !isAttackFollowsPlayerSet)
+            {
+                attackFollowsPlayer = (Random.Range(0, 2) > 0);
+                isAttackFollowsPlayerSet = true;
+            }
+            else if (!mobile.IsPlayingOneShot())
+                isAttackFollowsPlayerSet = false;
+
+            if (!mobile.IsPlayingOneShot() || !attackFollowsPlayer)
                 transform.forward = direction.normalized;
 
             // Move towards target
