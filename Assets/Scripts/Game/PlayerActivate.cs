@@ -38,8 +38,8 @@ namespace DaggerfallWorkshop.Game
 
         PlayerActivateModes currentMode = PlayerActivateModes.Grab;
 
-        public float RayDistance = 0;        // Distance of ray check, tune this to your scale and preference
-        public float ActivateDistance = 2.25f; // Distance within which something must be for player to activate it. Tune as needed.
+        public float RayDistance = 0;           // Distance of ray check, tune this to your scale and preference
+        public float ActivateDistance = 2.3f;   // Distance within which something must be for player to activate it. Tune as needed.
 
         // Maximum distance from which different object types can be activated, in classic distance units
         public float DefaultActivationDistance = 128;
@@ -89,7 +89,7 @@ namespace DaggerfallWorkshop.Game
 
                 // Ray origin is slightly below camera height to ensure it originates inside player's own collider
                 // This prevents ray from intersecting with player's own collider and blocking looting or low triggers
-                Ray ray = new Ray(transform.position + Vector3.up * 0.6f, mainCamera.transform.forward);
+                Ray ray = new Ray(transform.position + Vector3.up * 0.7f, mainCamera.transform.forward);
                 RaycastHit hit;
                 RayDistance = 75f; // Approximates classic at full view distance (default setting). Classic seems to do raycasts for as far as it can render objects.
                 bool hitSomething = Physics.Raycast(ray, out hit, RayDistance);
