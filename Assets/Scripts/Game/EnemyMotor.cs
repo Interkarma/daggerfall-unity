@@ -138,9 +138,13 @@ namespace DaggerfallWorkshop.Game
 
         private void Move()
         {
-            // Do nothing if playing a one-shot animation
+            // Monster speed of movement follows the same formula as for when the player walks
+            EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
+            float moveSpeed = ((entity.Stats.Speed + PlayerMotor.dfWalkBase) / PlayerMotor.classicToUnitySpeedUnitRatio);
+
+            // Reduced speed if playing a one-shot animation
             if (mobile.IsPlayingOneShot())
-                return;
+                moveSpeed /= 4;
 
             // Remain idle when player not acquired or not hostile
             if (senses.LastKnownPlayerPos == EnemySenses.ResetPlayerPos || !isHostile)
@@ -183,19 +187,19 @@ namespace DaggerfallWorkshop.Game
                 targetPos.y -= deltaHeight;
             }
 
-            // Get direction & distance and face target
+            // Get direction & distance and face target, but only if not attacking, so player has a chance to see
+            // attack animations other than those directly facing the player
             var direction = targetPos - transform.position;
             float distance = direction.magnitude;
-            transform.forward = direction.normalized;
+            if (!mobile.IsPlayingOneShot())
+                transform.forward = direction.normalized;
 
             // Move towards target
             if (distance > stopDistance)
             {
-                mobile.ChangeEnemyState(MobileStates.Move);
-
-                // Monster speed of movement follows the same formula as for when the player walks
-                EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
-                var motion = transform.forward * ((entity.Stats.Speed + PlayerMotor.dfWalkBase) / PlayerMotor.classicToUnitySpeedUnitRatio);
+                if (!mobile.IsPlayingOneShot())
+                    mobile.ChangeEnemyState(MobileStates.Move);
+                var motion = transform.forward * moveSpeed;
 
                 // Prevent rat stacks (enemies don't stand on shorter enemies)
                 AvoidEnemies(ref motion);

@@ -44,7 +44,7 @@ namespace DaggerfallWorkshop.Game
         void Update()
         {
             // Handle state in progress
-            if (mobile.IsPlayingOneShot())
+            if (mobile.IsPlayingOneShot() && (mobile.LastFrameAnimated < mobile.Summary.Enemy.HitFrame))
             {
                 // Are we attacking?
                 if (mobile.IsAttacking())
@@ -54,7 +54,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             // If an attack was in progress it is now complete and we can apply damage
-            if (isAttacking)
+            if (isAttacking && mobile.LastFrameAnimated == mobile.Summary.Enemy.HitFrame)
             {
                 MeleeDamage();
                 isAttacking = false;
@@ -66,6 +66,8 @@ namespace DaggerfallWorkshop.Game
             {
                 MeleeAnimation();
                 meleeTimer = MeleeAttackSpeed;
+                // Randomize
+                meleeTimer += Random.Range(-.50f, .50f);
             }
         }
 
