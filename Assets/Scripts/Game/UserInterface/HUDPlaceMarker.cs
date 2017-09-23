@@ -47,9 +47,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             base.Update();
 
-            // Disable markers if inside or no targets
+            // Disable markers if inside or no targets, or quest debugger hidden
             bool enableMarkers = true;
-            if (GameManager.Instance.PlayerEnterExit.IsPlayerInside || siteTargets.Count == 0)
+            if (GameManager.Instance.PlayerEnterExit.IsPlayerInside || siteTargets.Count == 0 ||
+                DaggerfallUI.Instance.DaggerfallHUD.QuestDebugger.State == HUDQuestDebugger.DisplayState.Nothing)
             {
                 enableMarkers = false;
             }

@@ -47,7 +47,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         int currentQuestIndex;
         Quest currentQuest;
 
-        DisplayState displayState = DisplayState.QuestState;         
+        DisplayState displayState;
 
         TextLabel questNameLabel = new TextLabel();
         TextLabel processLabel = new TextLabel();
@@ -57,17 +57,22 @@ namespace DaggerfallWorkshop.Game.UserInterface
         TextLabel[] timerLabelPool = new TextLabel[timerLabelPoolCount];
         TextLabel[] globalsLabelPool = new TextLabel[globalLabelPoolCount];
 
-        enum DisplayState
+        public enum DisplayState
         {
             Nothing,
             QuestState,
-            QuestStatePlusGlobals,
-            EndOfList,
+            QuestStateFull,
         }
 
         public Quest CurrentQuest
         {
             get { return currentQuest; }
+        }
+
+        public DisplayState State
+        {
+            get { return displayState; }
+            set { displayState = value; }
         }
 
         public HUDQuestDebugger()
@@ -135,6 +140,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (allQuests == null || allQuests.Length != QuestMachine.Instance.QuestCount)
                 FullRefresh();
 
+            // Clamp display state
+            if (displayState < DisplayState.Nothing || displayState > DisplayState.QuestStateFull)
+                displayState = DisplayState.Nothing;
+
             bool leftShiftDown = Input.GetKey(KeyCode.LeftShift);
             if (Input.GetKeyDown(KeyCode.LeftBracket))
                 MovePreviousQuest();
@@ -145,27 +154,20 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 displayState = displayState + 1;
 
                 // Show/hide globals
-                if (displayState == DisplayState.QuestStatePlusGlobals)
+                if (displayState == DisplayState.QuestStateFull)
                     EnableGlobalVars(true);
                 else
                     EnableGlobalVars(false);
-
-                // Wrap to start of list
-                if (displayState == DisplayState.EndOfList)
-                    displayState = DisplayState.Nothing;
             }
 
             // Show/hide entire debugger overlay debugger
-            if (displayState == DisplayState.Nothing)
-                Enabled = false;
-            else
-                Enabled = true;
+            Enabled = !(displayState == DisplayState.Nothing);
         }
 
         private void QuestMachine_OnTick()
         {
             // Update global variables status
-            if (displayState == DisplayState.QuestStatePlusGlobals)
+            if (displayState == DisplayState.QuestStateFull)
             {
                 UpdateGlobalVarsStatus();
             }
