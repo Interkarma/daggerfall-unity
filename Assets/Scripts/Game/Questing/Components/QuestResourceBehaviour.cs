@@ -116,9 +116,23 @@ namespace DaggerfallWorkshop.Game.Questing
             // Handle enemy checks
             if (enemyEntityBehaviour)
             {
+                // Get foe resource
+                Foe foe = (Foe)targetResource;
+                if (foe == null)
+                    return;
+
+                // Handle restrained check
+                // This might need some tuning in relation to injured and death checks
+                if (foe.IsRestrained)
+                {
+                    // Make enemy non-hostile
+                    EnemyMotor enemyMotor = transform.GetComponent<EnemyMotor>();
+                    if (enemyMotor)
+                        enemyMotor.IsHostile = false;
+                }
+
                 // Handle injured check
                 // This has to happen before death or script actions attached to injured event will not trigger
-                Foe foe = (Foe)targetResource;
                 if (enemyEntityBehaviour.Entity.CurrentHealth < enemyEntityBehaviour.Entity.MaxHealth && !foe.InjuredTrigger)
                 {
                     foe.SetInjured();

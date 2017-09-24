@@ -317,6 +317,7 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new RevealLocation(null));
 
             // In progress - these actions are being actively developed
+            RegisterAction(new RestrainFoe(null));
 
             // Stubs - these actions are not complete yet
             // Just setting up so certain quests compile for now

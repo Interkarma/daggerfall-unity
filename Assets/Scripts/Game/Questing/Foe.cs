@@ -36,6 +36,7 @@ namespace DaggerfallWorkshop.Game.Questing
         int spawnCount;                     // How many foes to spawn
         MobileTypes foeType;                // MobileType to spawn
         bool injuredTrigger;                // True once enemy injured, rearmed each wave
+        bool restrained;                    // True if enemy restrained by quest
         int killCount;                      // How many of this enemy spawn player has killed, does not rearm
         string displayName;                 // Foe display name for quest system macros
         string typeName;                    // Foe type name for quest system macros
@@ -57,6 +58,11 @@ namespace DaggerfallWorkshop.Game.Questing
         public bool InjuredTrigger
         {
             get { return injuredTrigger; }
+        }
+
+        public bool IsRestrained
+        {
+            get { return restrained; }
         }
 
         public int KillCount
@@ -158,6 +164,22 @@ namespace DaggerfallWorkshop.Game.Questing
         public void RearmInjured()
         {
             injuredTrigger = false;
+        }
+
+        /// <summary>
+        /// Sets restrained flag.
+        /// </summary>
+        public void SetRestrained()
+        {
+            restrained = true;
+        }
+
+        /// <summary>
+        /// Clears restrained flag.
+        /// </summary>
+        public void ClearRestrained()
+        {
+            restrained = false;
         }
 
         /// <summary>
@@ -268,6 +290,7 @@ namespace DaggerfallWorkshop.Game.Questing
             public int spawnCount;
             public MobileTypes foeType;
             public bool injuredTrigger;
+            public bool restrained;
             public int killCount;
             public string displayName;
             public string typeName;
@@ -279,6 +302,7 @@ namespace DaggerfallWorkshop.Game.Questing
             data.spawnCount = spawnCount;
             data.foeType = foeType;
             data.injuredTrigger = injuredTrigger;
+            data.restrained = restrained;
             data.killCount = killCount;
             data.displayName = displayName;
             data.typeName = typeName;
@@ -295,6 +319,7 @@ namespace DaggerfallWorkshop.Game.Questing
             spawnCount = data.spawnCount;
             foeType = data.foeType;
             injuredTrigger = data.injuredTrigger;
+            restrained = data.restrained;
             killCount = data.killCount;
             displayName = data.displayName;
             typeName = data.typeName;
