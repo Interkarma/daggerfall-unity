@@ -373,12 +373,24 @@ namespace DaggerfallWorkshop.Game.Entity
         /// </summary>
         public override void TallySkill(short skillId, short amount)
         {
-            skillUses[skillId] += amount;
-            if (skillUses[skillId] > 20000)
-                skillUses[skillId] = 20000;
-            else if (skillUses[skillId] < 0)
+            try
             {
-                skillUses[skillId] = 0;
+                skillUses[skillId] += amount;
+                if (skillUses[skillId] > 20000)
+                    skillUses[skillId] = 20000;
+                else if (skillUses[skillId] < 0)
+                {
+                    skillUses[skillId] = 0;
+                }
+            }
+            catch(Exception ex)
+            {
+                string error = string.Format("Caught exception {0} with skillId {1}.", ex.Message, skillId);
+
+                if (skillUses == null || skillUses.Length == 0)
+                    error += " skillUses is null or empty.";
+
+                Debug.Log(error);
             }
         }
 
