@@ -49,11 +49,22 @@ namespace DaggerfallWorkshop
         float enemyFacingAngle;
         int lastOrientation;
         int currentFrame;
+        int lastFrameAnimated;
         bool restartAnims = true;
 
         public MobileUnitSummary Summary
         {
             get { return summary; }
+        }
+
+        public int CurrentFrame
+        {
+            get { return currentFrame; }
+        }
+
+        public int LastFrameAnimated
+        {
+            get { return lastFrameAnimated; }
         }
 
         [Serializable]
@@ -294,15 +305,6 @@ namespace DaggerfallWorkshop
             int record = summary.StateAnims[orientation].Record;
             Vector2 size = summary.RecordSizes[record];
 
-            // Post-fix female thief scale for orentations 1 and 7
-            // The scale read from Daggerfall's files is too small
-            if ((MobileTypes)summary.Enemy.ID == MobileTypes.Thief &&
-                summary.Enemy.Gender == MobileGender.Female &&
-                (orientation == 1 || orientation == 7))
-            {
-                size *= 1.35f;
-            }
-
             // Ensure walking enemies keep their feet aligned between states
             if (summary.Enemy.Behaviour != MobileBehaviour.Flying &&
                 summary.Enemy.Behaviour != MobileBehaviour.Aquatic &&
@@ -324,8 +326,10 @@ namespace DaggerfallWorkshop
             // Check if orientation flip needed
             bool flip = summary.StateAnims[orientation].FlipLeftRight;
 
-            // Rat Idle animation needs to be inverted
-            if (summary.Enemy.ID == (int)MobileTypes.Rat && summary.EnemyState == MobileStates.Idle)
+            // Some characters' idle animations need to be inverted. Add as needed.
+            if ((summary.Enemy.ID == (int)MobileTypes.GiantBat
+                || summary.Enemy.ID == (int)MobileTypes.Imp)
+                && summary.EnemyState == MobileStates.Idle)
                 flip = !flip;
 
             // Scorpion Idle and Move animations need to be inverted
@@ -374,8 +378,13 @@ namespace DaggerfallWorkshop
             {
                 if (summary.IsSetup && summary.StateAnims != null && summary.StateAnims.Length > 0)
                 {
+                    // Update enemy and fps
+                    OrientEnemy(lastOrientation);
+                    fps = summary.StateAnims[lastOrientation].FramePerSecond;
                     // Step frame
+                    lastFrameAnimated = currentFrame;
                     currentFrame++;
+
                     if (currentFrame >= summary.StateAnims[lastOrientation].NumFrames)
                     {
                         if (IsPlayingOneShot())
@@ -383,10 +392,6 @@ namespace DaggerfallWorkshop
                         else
                             currentFrame = 0;                       // Otherwise keep looping frames
                     }
-
-                    // Update enemy and fps
-                    OrientEnemy(lastOrientation);
-                    fps = summary.StateAnims[lastOrientation].FramePerSecond;
                 }
 
                 yield return new WaitForSeconds(1f / fps);
@@ -572,7 +577,12 @@ namespace DaggerfallWorkshop
             // Assign number number of frames per anim
             for (int i = 0; i < anims.Length; i++)
                 anims[i].NumFrames = summary.RecordFrames[anims[i].Record];
-            
+
+            // If flying, set to faster flying animation speed
+            if ((state == MobileStates.Move || state == MobileStates.Idle) && summary.Enemy.Behaviour == MobileBehaviour.Flying)
+                for (int i = 0; i < anims.Length; i++)
+                    anims[i].FramePerSecond = EnemyBasics.FlyAnimSpeed;
+
             return anims;
         }
 

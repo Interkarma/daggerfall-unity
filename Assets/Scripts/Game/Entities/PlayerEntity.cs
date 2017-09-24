@@ -133,7 +133,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public override void Update(DaggerfallEntityBehaviour sender)
         {
-            if (playerMotor = null)
+            if (playerMotor == null)
                 playerMotor = GameManager.Instance.PlayerMotor;
 
             uint gameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();

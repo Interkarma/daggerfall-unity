@@ -24,8 +24,9 @@ namespace DaggerfallWorkshop.Utility
         #region Enemy Animations
 
         // Speeds in frames-per-second
-        public static int MoveAnimSpeed = 7;
-        public static int PrimaryAttackAnimSpeed = 8;
+        public static int MoveAnimSpeed = 6;
+        public static int FlyAnimSpeed = 10;
+        public static int PrimaryAttackAnimSpeed = 10;
         public static int HurtAnimSpeed = 4;
         public static int IdleAnimSpeed = 4;
         public static int RangedAttack1AnimSpeed = 6;
@@ -145,6 +146,7 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = 6,
                 ParrySounds = false,
                 MapChance = 0,
+                HitFrame = 3,
             },
 
             // Imp
@@ -174,6 +176,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 MapChance = 1,
                 LootTableKey = "D",
+                HitFrame = 3,
             },
 
             // Spriggan
@@ -206,6 +209,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 MapChance = 0,
                 LootTableKey = "B",
+                HitFrame = 3,
             },
 
             // Giant Bat
@@ -233,6 +237,7 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = 6,
                 ParrySounds = false,
                 MapChance = 0,
+                HitFrame = 2,
             },
 
             // Grizzly Bear
@@ -264,6 +269,7 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = 6,
                 ParrySounds = false,
                 MapChance = 0,
+                HitFrame = 3,
             },
 
             // Sabertooth Tiger
@@ -295,6 +301,7 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = 6,
                 ParrySounds = false,
                 MapChance = 0,
+                HitFrame = 3,
             },
 
             // Spider
@@ -322,6 +329,7 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = 5,
                 ParrySounds = false,
                 MapChance = 0,
+                HitFrame = 3,
             },
 
             // Orc
@@ -351,6 +359,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = true,
                 MapChance = 0,
                 LootTableKey = "A",
+                HitFrame = 3,
             },
 
             // Centaur
@@ -380,6 +389,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = true,
                 MapChance = 1,
                 LootTableKey = "C",
+                HitFrame = 3,
             },
 
             // Werewolf
@@ -412,6 +422,7 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = 5,
                 MapChance = 0,
                 ParrySounds = false,
+                HitFrame = 2,
             },
 
             // Nymph
@@ -441,6 +452,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 MapChance = 1,
                 LootTableKey = "C",
+                HitFrame = 5,
             },
 
             // Slaughterfish
@@ -468,6 +480,7 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = 6,
                 MapChance = 0,
                 ParrySounds = false,
+                HitFrame = 5,
             },
 
             // Orc Sergeant
@@ -497,6 +510,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = true,
                 MapChance = 1,
                 LootTableKey = "A",
+                HitFrame = 2,
             },
 
             // Harpy
@@ -525,6 +539,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 MapChance = 0,
                 LootTableKey = "D",
+                HitFrame = 3,
             },
 
             // Wereboar
@@ -557,6 +572,7 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = 3,
                 MapChance = 0,
                 ParrySounds = false,
+                HitFrame = 3,
             },
 
             // Skeletal Warrior
@@ -587,6 +603,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = true,
                 MapChance = 1,
                 LootTableKey = "H",
+                HitFrame = 4,
             },
 
             // Giant
@@ -616,6 +633,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 MapChance = 1,
                 LootTableKey = "F",
+                HitFrame = 3,
             },
 
             // Zombie
@@ -644,6 +662,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 MapChance = 1,
                 LootTableKey = "G",
+                HitFrame = 3,
             },
 
             // Ghost
@@ -673,6 +692,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 MapChance = 1,
                 LootTableKey = "I",
+                HitFrame = 3,
             },
 
             // Mummy
@@ -702,6 +722,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 MapChance = 1,
                 LootTableKey = "E",
+                HitFrame = 4,
             },
 
             // Giant Scorpion
@@ -729,6 +750,7 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = 0,
                 MapChance = 0,
                 ParrySounds = false,
+                HitFrame = 3,
             },
 
             // Orc Shaman
@@ -758,6 +780,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = true,
                 MapChance = 3,
                 LootTableKey = "U",
+                HitFrame = 3,
             },
 
             // Gargoyle
@@ -786,6 +809,7 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = 0,
                 MapChance = 0,
                 ParrySounds = false,
+                HitFrame = 3,
             },
 
             // Wraith
@@ -815,6 +839,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 MapChance = 1,
                 LootTableKey = "I",
+                HitFrame = 3,
             },
 
             // Orc Warlord
@@ -844,6 +869,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = true,
                 MapChance = 2,
                 LootTableKey = "T",
+                HitFrame = 3,
             },
 
             // Frost Daedra
@@ -873,6 +899,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = true,
                 MapChance = 0,
                 LootTableKey = "J",
+                HitFrame = 3,
             },
 
             // Fire Daedra
@@ -902,6 +929,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = true,
                 MapChance = 0,
                 LootTableKey = "J",
+                HitFrame = 2,
             },
 
             // Daedroth
@@ -930,6 +958,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = true,
                 MapChance = 0,
                 LootTableKey = "E",
+                HitFrame = 3,
             },
 
             // Vampire
@@ -959,6 +988,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 MapChance = 3,
                 LootTableKey = "Q",
+                HitFrame = 4,
             },
 
             // Daedra Seducer
@@ -988,6 +1018,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 MapChance = 1,
                 LootTableKey = "Q",
+                HitFrame = 3,
             },
 
             // Vampire Ancient
@@ -1017,6 +1048,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 MapChance = 3,
                 LootTableKey = "Q",
+                HitFrame = 3,
             },
 
             // Daedra Lord
@@ -1046,6 +1078,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = true,
                 MapChance = 0,
                 LootTableKey = "S",
+                HitFrame = 3,
             },
 
             // Lich
@@ -1076,6 +1109,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 MapChance = 4,
                 LootTableKey = "S",
+                HitFrame = 3,
             },
 
             // Ancient Lich
@@ -1106,6 +1140,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 MapChance = 4,
                 LootTableKey = "S",
+                HitFrame = 3,
             },
 
             // Dragonling
@@ -1133,6 +1168,7 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = 6,
                 ParrySounds = false,
                 MapChance = 0,
+                HitFrame = 2,
             },
 
             // Fire Atronach
@@ -1160,6 +1196,7 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = 6,
                 ParrySounds = false,
                 MapChance = 0,
+                HitFrame = 3,
             },
 
             // Iron Atronach
@@ -1187,6 +1224,7 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = 6,
                 ParrySounds = true,
                 MapChance = 0,
+                HitFrame = 3,
             },
 
             // Flesh Atronach
@@ -1214,6 +1252,7 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = 6,
                 ParrySounds = false,
                 MapChance = 0,
+                HitFrame = 3,
             },
 
             // Ice Atronach
@@ -1241,6 +1280,7 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = 6,
                 ParrySounds = true,
                 MapChance = 0,
+                HitFrame = 3,
             },
 
             // Dragonling
@@ -1268,6 +1308,7 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = 6,
                 ParrySounds = false,
                 MapChance = 0,
+                HitFrame = 2,
             },
 
             // Dreugh
@@ -1296,6 +1337,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 MapChance = 0,
                 LootTableKey = "R",
+                HitFrame = 3,
             },
 
             // Lamia
@@ -1324,6 +1366,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 MapChance = 0,
                 LootTableKey = "R",
+                HitFrame = 4,
             },
 
             // Mage
@@ -1346,6 +1389,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 MapChance = 3,
                 LootTableKey = "U",
+                HitFrame = 3,
             },
 
             // Spellsword
@@ -1368,6 +1412,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = true,
                 MapChance = 1,
                 LootTableKey = "P",
+                HitFrame = 3,
             },
 
             // Battlemage
@@ -1390,6 +1435,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = true,
                 MapChance = 2,
                 LootTableKey = "U",
+                HitFrame = 3,
             },
 
             // Sorcerer
@@ -1412,6 +1458,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 MapChance = 3,
                 LootTableKey = "U",
+                HitFrame = 3,
             },
 
             // Healer
@@ -1434,6 +1481,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 MapChance = 1,
                 LootTableKey = "U",
+                HitFrame = 3,
             },
 
             // Nightblade
@@ -1456,6 +1504,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = true,
                 MapChance = 1,
                 LootTableKey = "U",
+                HitFrame = 3,
             },
 
             // Bard
@@ -1478,6 +1527,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = true,
                 MapChance = 2,
                 LootTableKey = "O",
+                HitFrame = 3,
             },
 
             // Burglar
@@ -1500,6 +1550,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = true,
                 MapChance = 1,
                 LootTableKey = "O",
+                HitFrame = 3,
             },
 
             // Rogue
@@ -1522,6 +1573,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = true,
                 MapChance = 1,
                 LootTableKey = "O",
+                HitFrame = 3,
             },
 
             // Acrobat
@@ -1544,6 +1596,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = true,
                 MapChance = 0,
                 LootTableKey = "O",
+                HitFrame = 3,
             },
 
             // Thief
@@ -1566,6 +1619,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = true,
                 MapChance = 2,
                 LootTableKey = "O",
+                HitFrame = 3,
             },
 
             // Assassin
@@ -1588,6 +1642,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = true,
                 MapChance = 0,
                 LootTableKey = "O",
+                HitFrame = 3,
             },
 
             // Monk
@@ -1610,6 +1665,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = true,
                 MapChance = 1,
                 LootTableKey = "T",
+                HitFrame = 3,
             },
 
             // Archer
@@ -1633,6 +1689,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = true,
                 MapChance = 0,
                 LootTableKey = "C",
+                HitFrame = 3,
             },
 
             // Ranger
@@ -1655,6 +1712,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = true,
                 MapChance = 1,
                 LootTableKey = "C",
+                HitFrame = 3,
             },
 
             // Barbarian
@@ -1677,6 +1735,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = true,
                 MapChance = 0,
                 LootTableKey = "T",
+                HitFrame = 3,
             },
 
             // Warrior
@@ -1699,6 +1758,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = true,
                 MapChance = 0,
                 LootTableKey = "T",
+                HitFrame = 3,
             },
 
             // Knight
@@ -1721,6 +1781,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = true,
                 MapChance = 1,
                 LootTableKey = "T",
+                HitFrame = 3,
             },
 
             // City Watch - The Haltmeister
@@ -1742,6 +1803,7 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.None,
                 ParrySounds = true,
                 MapChance = 0,
+                HitFrame = 3,
             },
         };
 

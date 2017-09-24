@@ -202,6 +202,7 @@ namespace DaggerfallWorkshop
         public bool ParrySounds;                    // Plays parry sounds when attacks against this enemy miss
         public int MapChance;                       // Chance of having a map
         public string LootTableKey;                 // Key to use when generating loot
+        public int HitFrame;                        // Frame of attack animation at which hit on target is attempted
     }
 
     /// <summary>
