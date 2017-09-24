@@ -644,6 +644,15 @@ namespace DaggerfallWorkshop.Game
                         // Remove health
                         enemyEntity.DecreaseHealth(damage);
                         hitEnemy = true;
+
+                        // Make foe attack their aggressor
+                        // Currently this is just player, but should be expanded later
+                        // for a wider variety of behaviours
+                        EnemyMotor enemyMotor = hit.transform.GetComponent<EnemyMotor>();
+                        if (enemyMotor)
+                        {
+                            enemyMotor.MakeEnemyHostileToPlayer(gameObject);
+                        }
                     }
                 }
 
