@@ -38,6 +38,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Vector2 shadowPosition = DaggerfallUI.DaggerfallDefaultShadowPos;
         Color textColor = DaggerfallUI.DaggerfallDefaultTextColor;
         Color shadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
+        HorizontalAlignment horizontalTextAlignment;
 
         int maxWidth = -1;
         bool wrapText = false; // wrap text - but will tear words that are reaching
@@ -100,6 +101,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set { shadowColor = value; }
         }
 
+        public HorizontalAlignment HorizontalTextAlignment
+        {
+            get { return horizontalTextAlignment; }
+            set { horizontalTextAlignment = value; CreateLabelTexture(); }
+        }
+
         public Texture2D Texture
         {
             get { return labelTexture; }
@@ -107,12 +114,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public int TextWidth
         {
-            get { return (int)(totalWidth * textScale); }
+            get { return (int)(totalWidth); }
         }
 
         public int TextHeight
         {
-            get { return (int)(totalHeight * textScale); }
+            get { return (int)(totalHeight); }
         }
 
         public int NumTextLines
@@ -170,6 +177,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set
             {
                 textScale = Math.Max(0.1f, Math.Min(2.0f, value));
+                this.Size *= textScale;                                
                 CreateLabelTexture();
             }
         }
@@ -200,7 +208,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Texture2D textureToDraw;
             if (useRestrictedRenderArea)
             {
-                Rect rectLabel = new Rect(this.Parent.Position + this.Position, this.Size * textScale);
+                Rect rectLabel = new Rect(this.Parent.Position + this.Position, this.Size);
 
                 float leftCut = Mathf.Round(Math.Max(0, rectRestrictedRenderArea.xMin - rectLabel.xMin) / textScale);
                 float rightCut = Mathf.Round(Math.Max(0, rectLabel.xMax - rectRestrictedRenderArea.xMax) / textScale);
@@ -210,10 +218,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 if ((leftCut == 0) && (rightCut == 0) && (topCut == 0) && (bottomCut == 0))
                 {
                     totalRect = Rectangle;
-
-                    // compensate for textScale
-                    totalRect.xMax = totalRect.xMin + totalRect.width * textScale;
-                    totalRect.yMax = totalRect.yMin + totalRect.height * textScale;
 
                     innerRect = new Rect(0, 0, (float)totalWidth / (float)textureWidth, (float)totalHeight / (float)textureHeight);
                     textureToDraw = labelTexture;
@@ -238,16 +242,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     float yMaxScreen = (rectLabel.yMax - bottomCut * textScale) * LocalScale.y + this.Parent.Parent.Rectangle.y;
                     totalRect = Rect.MinMaxRect(xMinScreen, yMinScreen, xMaxScreen, yMaxScreen);
 
-                    //totalRect = Rectangle;
-                    //totalRect.xMin += leftCut;
-                    //totalRect.yMin += topCut;
-                    //totalRect.xMax = totalRect.xMin + totalRect.width - rightCut;
-                    //totalRect.yMax = totalRect.yMin + totalRect.height - bottomCut;
-
-                    // compensate for textScale
-                    //totalRect.xMax = totalRect.xMin + totalRect.width * textScale;
-                    //totalRect.yMax = totalRect.yMin + totalRect.height * textScale;
-
                     innerRect = new Rect(0, 0, 1, 1); //(float)newWidth / (float)textureWidth, (float)newHeight / (float)textureHeight);
                     textureToDraw = subTex;
                 }
@@ -256,17 +250,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 totalRect = Rectangle;
 
-                // compensate for textScale
-                totalRect.xMax = totalRect.xMin + totalRect.width * textScale;
-                totalRect.yMax = totalRect.yMin + totalRect.height * textScale;
-
                 innerRect = new Rect(0, 0, (float)totalWidth / (float)textureWidth, (float)totalHeight / (float)textureHeight);
                 textureToDraw = labelTexture;
             }
-
-            // compensate for textScale
-            totalRect.xMax = totalRect.xMin + totalRect.width * textScale;
-            totalRect.yMax = totalRect.yMin + totalRect.height * textScale;
 
             // Draw shadow            
             if (shadowPosition != Vector2.zero)
@@ -344,8 +330,24 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (labelTexture == null)
                 throw new Exception("TextLabel failed to create labelTexture.");
 
+            float alignmentOffset;
+            switch (horizontalTextAlignment)
+            {
+                default:
+                case HorizontalAlignment.None:
+                case HorizontalAlignment.Left:
+                    alignmentOffset = 0.0f;
+                    break;
+                case HorizontalAlignment.Center:
+                    alignmentOffset = (totalWidth - width) * 0.5f;
+                    break;
+                case HorizontalAlignment.Right:
+                    alignmentOffset = totalWidth - width;
+                    break;
+            }
+
             // Second pass adds glyphs to label texture
-            int xpos = 0;
+            int xpos = (int)alignmentOffset;
             for (int i = startCharacterIndex; i < asciiBytes.Length; i++)
             {
                 PixelFont.GlyphInfo glyph = font.GetGlyph(asciiBytes[i]);
@@ -357,7 +359,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
             labelTexture.Apply(false, makeTextureNoLongerReadable);
             labelTexture.filterMode = font.FilterMode;
-            this.Size = new Vector2(totalWidth, totalHeight);
+            this.Size = new Vector2(totalWidth * textScale, totalHeight * textScale);
         }
 
         void CreateLabelTextureWrapped()
@@ -374,6 +376,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             int lastEndOfRowByte = 0;
             asciiBytes = Encoding.ASCII.GetBytes(text);
             List<byte[]> rows = new List<byte[]>();
+            List<float> rowWidth = new List<float>();
 
             for (int i = 0; i < asciiBytes.Length; i++)
             {
@@ -434,6 +437,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     // counting width again with the remainder of the ASCII bytes.
                     byte[] trimmed = new List<byte>(asciiBytes).GetRange(lastEndOfRowByte, rowLength).ToArray();
                     rows.Add(trimmed);
+                    rowWidth.Add(width);
 
                     // update greatest width found so far
                     if (greatestWidthFound < width)
@@ -466,12 +470,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 greatestWidthFound = width;
 
             rows.Add(asciiBytes);
-
+            rowWidth.Add(width);
 
             width = greatestWidthFound;
 
             // Create target label texture
-            totalWidth = width;
+            totalWidth = maxWidth;
             totalHeight = (int)(rows.Count * font.GlyphHeight);
             numTextLines = rows.Count;
             labelTexture = CreateLabelTexture(totalWidth, totalHeight);
@@ -482,9 +486,27 @@ namespace DaggerfallWorkshop.Game.UserInterface
             int xpos = 0;
             int ypos = totalHeight - font.GlyphHeight;
 
-            foreach (byte[] row in rows)
+            //foreach (byte[] row in rows)
+            for(int r = 0; r < rows.Count; r++)
             {
-                xpos = 0;
+                byte[] row = rows[r];
+                float alignmentOffset;
+                switch (horizontalTextAlignment)
+                {
+                    default:
+                    case HorizontalAlignment.None:
+                    case HorizontalAlignment.Left:
+                        alignmentOffset = 0.0f;
+                        break;
+                    case HorizontalAlignment.Center:
+                        alignmentOffset = (totalWidth - rowWidth[r]) * 0.5f;
+                        break;
+                    case HorizontalAlignment.Right:
+                        alignmentOffset = totalWidth - rowWidth[r];
+                        break;
+                }
+
+                xpos = (int)alignmentOffset;
                 for (int i = 0; i < row.Length; i++)
                 {
                     PixelFont.GlyphInfo glyph = font.GetGlyph(row[i]);
@@ -499,7 +521,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             labelTexture.Apply(false, makeTextureNoLongerReadable);
             labelTexture.filterMode = font.FilterMode;
-            this.Size = new Vector2(totalWidth, totalHeight);
+            this.Size = new Vector2(totalWidth * textScale, totalHeight * textScale);
         }
 
         protected virtual Texture2D CreateLabelTexture(int width, int height)
