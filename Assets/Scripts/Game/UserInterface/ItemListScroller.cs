@@ -207,8 +207,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             itemStackLabels = new TextLabel[listDisplayUnits];
             itemMiscLabels = new TextLabel[listDisplayUnits];
             Rect[] itemButtonRects = (enhanced) ? itemButtonRects16 : itemButtonRects4;
+
             for (int i = 0; i < listDisplayUnits; i++)
             {
+                // Panel - for backing button in enhanced mode
+                if (enhanced) {
+                    Panel buttonPanel = DaggerfallUI.AddPanel(itemButtonRects[i], itemsListPanel);
+                    buttonPanel.BackgroundTexture = itemListTextures[i];
+                }
                 // Button
                 itemButtons[i] = DaggerfallUI.AddButton(itemButtonRects[i], itemsListPanel);
                 itemButtons[i].SetMargins(Margins.All, itemButtonMarginSize);
@@ -218,8 +224,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 itemButtons[i].OnMouseEnter += ItemButton_OnMouseEnter;
                 itemButtons[i].OnMouseScrollUp += ItemButton_OnMouseEnter;
                 itemButtons[i].OnMouseScrollDown += ItemButton_OnMouseEnter;
-                if (enhanced)
-                    itemButtons[i].BackgroundTexture = itemListTextures[i];
 
                 // Icon image panel
                 itemIconPanels[i] = DaggerfallUI.AddPanel(itemButtons[i], AutoSizeModes.ScaleToFit);
@@ -383,7 +387,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Get item and raise item hover event
             DaggerfallUnityItem item = items[index];
-            if (item != null && OnItemClick != null)
+            if (item != null && OnItemHover != null)
                 OnItemHover(item);
         }
 

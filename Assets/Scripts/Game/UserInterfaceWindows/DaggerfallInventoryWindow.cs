@@ -970,13 +970,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
                 return;
             }
-
-            if (playerEntity.ItemEquipTable.EquipItem(item) && 
-                (item.ItemGroup == ItemGroups.Armor ||
-                 (item.ItemGroup == ItemGroups.MensClothing && item.GroupIndex >= 6 && item.GroupIndex <= 8) ||
-                 (item.ItemGroup == ItemGroups.WomensClothing && item.GroupIndex >= 4 && item.GroupIndex <= 6)
-                ))
+            // Try to equip the item, and update armour values accordingly
+            List<DaggerfallUnityItem> unequippedList = playerEntity.ItemEquipTable.EquipItem(item);
+            if (unequippedList != null)
             {
+                foreach (DaggerfallUnityItem unequippedItem in unequippedList) {
+                    playerEntity.UpdateEquippedArmorValues(unequippedItem, false);
+                }
                 playerEntity.UpdateEquippedArmorValues(item, true);
             }
             Refresh();
@@ -984,7 +984,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected void UnequipItem(DaggerfallUnityItem item, bool refreshPaperDoll = true)
         {
-            if (playerEntity.ItemEquipTable.UnequipItem(item.EquipSlot) && item.ItemGroup == ItemGroups.Armor)
+            if (playerEntity.ItemEquipTable.UnequipItem(item.EquipSlot) != null)
             {
                 playerEntity.UpdateEquippedArmorValues(item, false);
             }
