@@ -317,8 +317,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 Position = new Vector2(2, 0),
                 VerticalAlignment = VerticalAlignment.Middle,
-                TextScale = 0.625f,
-                MaxTextWidth = 58,
+                TextScale = 0.45f,
+                MaxTextWidth = 37,
                 WrapText = true,
                 WrapWords = true,
                 TextColor = new Color32(250, 250, 220, 255),
