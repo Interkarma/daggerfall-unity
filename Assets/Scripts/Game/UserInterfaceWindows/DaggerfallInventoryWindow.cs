@@ -457,7 +457,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             // Set default button by context
-            if (removeButton != null && lootTarget != null)
+            if ((removeButton != null && lootTarget != null) || allowDungeonWagonAccess)
             {
                 // When looting, make "remove" default action so player does not accidentially equip when picking up
                 SelectActionMode(ActionModes.Remove);
@@ -467,7 +467,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // When managing inventory only, make "equip" default action so player can manage gear
                 SelectActionMode(ActionModes.Equip);
             }
-
+            if (IsSetup)
+            {
+                // Start with wagon if accessing from dungeon
+                if (allowDungeonWagonAccess) {
+                    ShowWagon(true);
+                    SelectActionMode(ActionModes.Remove);
+                }
+                // Reset item list scroll
+                localItemListScroller.ResetScroll();
+                remoteItemListScroller.ResetScroll();
+            }
             // Clear info panel
             if (itemInfoPanelLabel != null)
                 itemInfoPanelLabel.SetText(new TextFile.Token[0]);
