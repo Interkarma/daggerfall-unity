@@ -321,6 +321,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 MaxTextWidth = 37,
                 WrapText = true,
                 WrapWords = true,
+                ExtraLeading = 3,
                 TextColor = new Color32(250, 250, 220, 255),
                 ShadowPosition = new Vector2(0.5f, 0.5f),
                 ShadowColor = DaggerfallUI.DaggerfallAlternateShadowColor1
