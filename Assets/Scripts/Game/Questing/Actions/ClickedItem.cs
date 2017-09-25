@@ -9,11 +9,8 @@
 // Notes:
 //
 
-using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using System;
+using DaggerfallWorkshop.Utility;
 using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Questing
@@ -21,10 +18,13 @@ namespace DaggerfallWorkshop.Game.Questing
     public class ClickedItem : ActionTemplate
     {
         Symbol itemSymbol;
+        int id;
 
         public override string Pattern
         {
-            get { return @"clicked item (?<anItem>[a-zA-Z0-9_.-]+)"; }
+            get { return @"clicked item (?<anItem>[a-zA-Z0-9_.-]+) say (?<id>\d+)|" +
+                         @"clicked item (?<anItem>[a-zA-Z0-9_.-]+) say (?<idName>\w+)|" +
+                         @"clicked item (?<anItem>[a-zA-Z0-9_.-]+)"; }
         }
 
         public ClickedItem(Quest parentQuest)
@@ -43,6 +43,15 @@ namespace DaggerfallWorkshop.Game.Questing
             // Factory new action
             ClickedItem action = new ClickedItem(parentQuest);
             action.itemSymbol = new Symbol(match.Groups["anItem"].Value);
+            action.id = Parser.ParseInt(match.Groups["id"].Value);
+
+            // Resolve static message back to ID
+            string idName = match.Groups["idName"].Value;
+            if (action.id == 0 && !string.IsNullOrEmpty(idName))
+            {
+                Table table = QuestMachine.Instance.StaticMessagesTable;
+                action.id = Parser.ParseInt(table.GetValue("id", idName));
+            }
 
             return action;
         }
@@ -64,6 +73,9 @@ namespace DaggerfallWorkshop.Game.Questing
             if (item.HasPlayerClicked)
             {
                 //item.RearmPlayerClick();
+                if (id != 0)
+                    ParentQuest.ShowMessagePopup(id);
+
                 return true;
             }
 
@@ -76,12 +88,14 @@ namespace DaggerfallWorkshop.Game.Questing
         public struct SaveData_v1
         {
             public Symbol itemSymbol;
+            public int id;
         }
 
         public override object GetSaveData()
         {
             SaveData_v1 data = new SaveData_v1();
             data.itemSymbol = itemSymbol;
+            data.id = id;
 
             return data;
         }
@@ -93,6 +107,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 return;
 
             itemSymbol = data.itemSymbol;
+            id = data.id;
         }
 
         #endregion
