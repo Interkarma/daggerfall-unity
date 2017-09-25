@@ -114,12 +114,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public int TextWidth
         {
-            get { return (int)(totalWidth * textScale); }
+            get { return (int)(totalWidth); }
         }
 
         public int TextHeight
         {
-            get { return (int)(totalHeight * textScale); }
+            get { return (int)(totalHeight); }
         }
 
         public int NumTextLines
