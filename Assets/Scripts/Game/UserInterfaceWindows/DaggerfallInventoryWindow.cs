@@ -457,7 +457,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             // Set default button by context
-            if ((removeButton != null && lootTarget != null))
+            if (removeButton != null && lootTarget != null)
             {
                 // When looting, make "remove" default action so player does not accidentially equip when picking up
                 SelectActionMode(ActionModes.Remove);
