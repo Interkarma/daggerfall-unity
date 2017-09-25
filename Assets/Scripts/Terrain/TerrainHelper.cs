@@ -16,6 +16,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop
 {
@@ -468,7 +469,8 @@ namespace DaggerfallWorkshop
 
                     // Add to batch
                     int record = UnityEngine.Random.Range(1, 32);
-                    dfBillboardBatch.AddItem(record, pos);
+                    if (!MeshReplacement.ImportNatureGameObject(dfBillboardBatch.TextureArchive, record, terrain, x, y))
+                        dfBillboardBatch.AddItem(record, pos);
                 }
             }
 
