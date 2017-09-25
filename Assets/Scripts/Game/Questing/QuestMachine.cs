@@ -315,9 +315,9 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new ChangeReputeWith(null));
             RegisterAction(new ReputeExceedsDo(null));
             RegisterAction(new RevealLocation(null));
+            RegisterAction(new RestrainFoe(null));
 
             // In progress - these actions are being actively developed
-            RegisterAction(new RestrainFoe(null));
 
             // Stubs - these actions are not complete yet
             // Just setting up so certain quests compile for now

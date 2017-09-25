@@ -129,6 +129,9 @@ namespace DaggerfallWorkshop.Game.Questing
                     EnemyMotor enemyMotor = transform.GetComponent<EnemyMotor>();
                     if (enemyMotor)
                         enemyMotor.IsHostile = false;
+
+                    // Lower flag now this has been handled
+                    foe.ClearRestrained();
                 }
 
                 // Handle injured check
