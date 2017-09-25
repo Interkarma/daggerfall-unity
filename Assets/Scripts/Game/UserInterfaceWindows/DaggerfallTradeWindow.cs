@@ -549,7 +549,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         break;
                 }
                 DaggerfallUI.Instance.PlayOneShot(SoundClips.GoldPieces);
-                PlayerEntity.TallySkill((short)Skills.Mercantile, 1);
+                PlayerEntity.TallySkill(DFCareer.Skills.Mercantile, 1);
                 Refresh();
             }
             CloseWindow();

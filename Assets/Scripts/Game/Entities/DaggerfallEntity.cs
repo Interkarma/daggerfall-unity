@@ -243,7 +243,7 @@ namespace DaggerfallWorkshop.Game.Entity
         /// <summary>
         /// Tally skill usage.
         /// </summary>
-        public virtual void TallySkill(short skillId, short amount)
+        public virtual void TallySkill(DFCareer.Skills skill, short amount)
         {
         }
 

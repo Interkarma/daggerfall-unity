@@ -10,6 +10,7 @@
 //
 
 using System.Collections.Generic;
+using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Save;
 using DaggerfallWorkshop.Game.Banking;
@@ -159,7 +160,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 if (!CheckedCurrentJump && playerMotor.IsJumping)
                 {
                     DecreaseFatigue(JumpingFatigueLoss);
-                    TallySkill((short)Skills.Jumping, 1);
+                    TallySkill(DFCareer.Skills.Jumping, 1);
                     CheckedCurrentJump = true;
                 }
 
@@ -371,8 +372,10 @@ namespace DaggerfallWorkshop.Game.Entity
         /// <summary>
         /// Tally skill usage.
         /// </summary>
-        public override void TallySkill(short skillId, short amount)
+        public override void TallySkill(DFCareer.Skills skill, short amount)
         {
+            int skillId = (int)skill;
+
             try
             {
                 skillUses[skillId] += amount;
@@ -642,7 +645,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 CurrentFatigue += fatigueRecoveryRate;
                 CurrentMagicka += spellPointRecoveryRate;
 
-                TallySkill((short)Skills.Medical, 1);
+                TallySkill(DFCareer.Skills.Medical, 1);
             }
             else
                 SetHealth(0);

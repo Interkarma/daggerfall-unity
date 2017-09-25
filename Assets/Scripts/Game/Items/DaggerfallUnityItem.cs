@@ -10,6 +10,7 @@
 //
 
 using System;
+using DaggerfallConnect;
 using DaggerfallConnect.Save;
 using DaggerfallConnect.FallExe;
 using DaggerfallWorkshop.Game.Serialization;
@@ -715,25 +716,30 @@ namespace DaggerfallWorkshop.Game.Items
             }
         }
 
-        public short GetWeaponSkillID()
+        public short GetWeaponSkillIDAsShort()
         {
             int skill = GetWeaponSkillUsed();
             switch (skill)
             {
-                case (int)DaggerfallConnect.DFCareer.ProficiencyFlags.ShortBlades:
+                case (int)DFCareer.ProficiencyFlags.ShortBlades:
                     return (int)Skills.ShortBlade;
-                case (int)DaggerfallConnect.DFCareer.ProficiencyFlags.LongBlades:
+                case (int)DFCareer.ProficiencyFlags.LongBlades:
                     return (int)Skills.LongBlade;
-                case (int)DaggerfallConnect.DFCareer.ProficiencyFlags.Axes:
+                case (int)DFCareer.ProficiencyFlags.Axes:
                     return (int)Skills.Axe;
-                case (int)DaggerfallConnect.DFCareer.ProficiencyFlags.BluntWeapons:
+                case (int)DFCareer.ProficiencyFlags.BluntWeapons:
                     return (int)Skills.BluntWeapon;
-                case (int)DaggerfallConnect.DFCareer.ProficiencyFlags.MissileWeapons:
+                case (int)DFCareer.ProficiencyFlags.MissileWeapons:
                     return (int)Skills.Archery;
 
                 default:
                     return (int)Skills.None;
             }
+        }
+
+        public DFCareer.Skills GetWeaponSkillID()
+        {
+            return (DFCareer.Skills)GetWeaponSkillIDAsShort();
         }
 
         public int GetBaseDamageMin()
