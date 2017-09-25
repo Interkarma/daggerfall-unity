@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using System.Collections;
+using DaggerfallConnect;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Formulas;
@@ -172,7 +173,7 @@ namespace DaggerfallWorkshop
             if (!IsMagicallyHeld)
             {
                 int chance = 0;
-                player.TallySkill((short)Skills.Lockpicking, 1);
+                player.TallySkill(DFCareer.Skills.Lockpicking, 1);
                 chance = FormulaHelper.CalculateInteriorLockpickingChance(player.Level, CurrentLockValue, player.Skills.Lockpicking);
 
                 if (Random.Range(0, 101) > chance)
@@ -216,7 +217,7 @@ namespace DaggerfallWorkshop
                 if (!IsMagicallyHeld)
                 {
                     PlayerEntity player = Game.GameManager.Instance.PlayerEntity;
-                    player.TallySkill((short)Skills.Stealth, 1);
+                    player.TallySkill(DFCareer.Skills.Stealth, 1);
                     // Roll for chance to open
                     int chance = 20 - CurrentLockValue;
                     int roll = UnityEngine.Random.Range(1, 101);

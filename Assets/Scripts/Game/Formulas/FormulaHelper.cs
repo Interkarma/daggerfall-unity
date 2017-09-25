@@ -234,7 +234,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                 // If the attacker has a weapon equipped, get the weapon's damage
                 damageLow = weapon.GetBaseDamageMin();
                 damageHigh = weapon.GetBaseDamageMax();
-                short skillID = weapon.GetWeaponSkillID();
+                short skillID = weapon.GetWeaponSkillIDAsShort();
                 chanceToHitMod = attacker.Skills.GetSkillValue(skillID);
             }
             else if (attacker == player)

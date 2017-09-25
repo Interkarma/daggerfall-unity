@@ -874,7 +874,7 @@ namespace DaggerfallWorkshop.Game
             const int foundNothingValuableTextId = 8999;
 
             PlayerEntity player = GameManager.Instance.PlayerEntity;
-            player.TallySkill((short)Skills.Pickpocket, 1);
+            player.TallySkill(DFCareer.Skills.Pickpocket, 1);
 
             int chance = Formulas.FormulaHelper.CalculatePickpocketingChance(player, target);
 

@@ -13,6 +13,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
@@ -270,13 +271,13 @@ namespace DaggerfallWorkshop.Game
                 {
                     // Tally skills
                     if (weapon.WeaponType == WeaponTypes.Melee || weapon.WeaponType == WeaponTypes.Werecreature)
-                        playerEntity.TallySkill((short)Skills.HandToHand, 1);
+                        playerEntity.TallySkill(DFCareer.Skills.HandToHand, 1);
                     else if (usingRightHand && (currentRightHandWeapon != null))
                         playerEntity.TallySkill(currentRightHandWeapon.GetWeaponSkillID(), 1);
                     else if (currentLeftHandWeapon != null)
                         playerEntity.TallySkill(currentLeftHandWeapon.GetWeaponSkillID(), 1);
 
-                    playerEntity.TallySkill((short)Skills.CriticalStrike, 1);
+                    playerEntity.TallySkill(DFCareer.Skills.CriticalStrike, 1);
                 }
 
                 // Damage transfer is done. The attack now plays through the remainder of its animation frames.
@@ -644,6 +645,15 @@ namespace DaggerfallWorkshop.Game
                         // Remove health
                         enemyEntity.DecreaseHealth(damage);
                         hitEnemy = true;
+
+                        // Make foe attack their aggressor
+                        // Currently this is just player, but should be expanded later
+                        // for a wider variety of behaviours
+                        EnemyMotor enemyMotor = hit.transform.GetComponent<EnemyMotor>();
+                        if (enemyMotor)
+                        {
+                            enemyMotor.MakeEnemyHostileToPlayer(gameObject);
+                        }
                     }
                 }
 

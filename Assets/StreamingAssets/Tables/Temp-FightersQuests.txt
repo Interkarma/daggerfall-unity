@@ -21,7 +21,7 @@ M0B20Y02, Passed with engine bugs ("injured _monster_ saying 1020" does not work
 M0B30Y03, Passed
 M0B30Y04, Passed
 M0B30Y08, Passed with reward bug
--M0B40Y05, FAILED needs more action support; has reward bug; possible to break if one-shotting spriggan
+M0B40Y05, Passed with reward bug; possible to break if one-shotting spriggan
 M0B50Y09, Passed with reward bug
 M0B60Y10, Passed
 M0C00Y11, Passed with reward bug

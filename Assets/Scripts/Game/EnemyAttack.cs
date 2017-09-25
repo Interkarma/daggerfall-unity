@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using System.Collections;
+using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game
@@ -113,7 +114,7 @@ namespace DaggerfallWorkshop.Game
                     }
 
                     // Tally player's dodging skill
-                    GameManager.Instance.PlayerEntity.TallySkill((short)Skills.Dodging, 1);
+                    GameManager.Instance.PlayerEntity.TallySkill(DFCareer.Skills.Dodging, 1);
                 }
 
                 if (sounds)

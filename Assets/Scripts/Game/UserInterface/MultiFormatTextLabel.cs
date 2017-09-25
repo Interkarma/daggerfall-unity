@@ -208,7 +208,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             lastLabel = textLabel;
 
             cursorX += textLabel.TextWidth;
-            //cursorY += textLabel.TextHeight;
 
             return textLabel;
         }
@@ -259,13 +258,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Clear();
 
             TextFile.Token token = new TextFile.Token();
-            //TextFile.Token nextToken = new TextFile.Token();
+            TextFile.Token nextToken = new TextFile.Token();
             for (int i = 0; i < tokens.Length; i++)
             {
                 token = tokens[i];
-                //nextToken.formatting = TextFile.Formatting.Nothing;
-                //if (i < tokens.Length - 1)
-                //    nextToken = tokens[i + 1];
+                nextToken.formatting = TextFile.Formatting.Nothing;
+                if (i < tokens.Length - 1)
+                    nextToken = tokens[i + 1];
 
                 // Still working out rules for justify logic
                 // This will adapt over time as required

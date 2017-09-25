@@ -9,11 +9,8 @@
 // Notes:
 //
 
-using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using System;
+using DaggerfallWorkshop.Utility;
 using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Questing
@@ -24,10 +21,13 @@ namespace DaggerfallWorkshop.Game.Questing
     public class ClickedNpc : ActionTemplate
     {
         Symbol npcSymbol;
+        int id;
 
         public override string Pattern
         {
-            get { return @"clicked npc (?<anNPC>[a-zA-Z0-9_.-]+)"; }
+            get { return @"clicked npc (?<anNPC>[a-zA-Z0-9_.-]+) say (?<id>\d+)|" +
+                         @"clicked npc (?<anNPC>[a-zA-Z0-9_.-]+) say (?<idName>\w+)|" +
+                         @"clicked npc (?<anNPC>[a-zA-Z0-9_.-]+)"; }
         }
 
         public ClickedNpc(Quest parentQuest)
@@ -46,6 +46,15 @@ namespace DaggerfallWorkshop.Game.Questing
             // Factory new action
             ClickedNpc action = new ClickedNpc(parentQuest);
             action.npcSymbol = new Symbol(match.Groups["anNPC"].Value);
+            action.id = Parser.ParseInt(match.Groups["id"].Value);
+
+            // Resolve static message back to ID
+            string idName = match.Groups["idName"].Value;
+            if (action.id == 0 && !string.IsNullOrEmpty(idName))
+            {
+                Table table = QuestMachine.Instance.StaticMessagesTable;
+                action.id = Parser.ParseInt(table.GetValue("id", idName));
+            }
 
             return action;
         }
@@ -67,6 +76,9 @@ namespace DaggerfallWorkshop.Game.Questing
             if (person.HasPlayerClicked)
             {
                 //person.RearmPlayerClick();
+                if (id != 0)
+                    ParentQuest.ShowMessagePopup(id);
+                
                 return true;
             }
 
@@ -79,12 +91,14 @@ namespace DaggerfallWorkshop.Game.Questing
         public struct SaveData_v1
         {
             public Symbol npcSymbol;
+            public int id;
         }
 
         public override object GetSaveData()
         {
             SaveData_v1 data = new SaveData_v1();
             data.npcSymbol = npcSymbol;
+            data.id = id;
 
             return data;
         }
@@ -96,6 +110,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 return;
 
             npcSymbol = data.npcSymbol;
+            id = data.id;
         }
 
         #endregion
