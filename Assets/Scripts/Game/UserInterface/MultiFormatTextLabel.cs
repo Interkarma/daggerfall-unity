@@ -47,6 +47,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         bool wrapWords = false;
         int maxTextWidth = 0;
 
+        int minTextureDimTextLabel = TextLabel.limitMinTextureDim; // set this with property MinTextureDim to higher values if you experience scaling issues with small texts (e.g. inventory infopanel)
+
         public PixelFont Font
         {
             get { return GetFont(); }
@@ -69,6 +71,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             get { return maxTextWidth; }
             set { maxTextWidth = value; }
+        }
+
+        /// <summary>
+        /// used to set min texture dims of textlabel to higher values if there would be aspect or scaling issues with small texts otherwise (e.g. some single-lined textlabels in inventory infopanel)
+        /// </summary>
+        public int MinTextureDimTextLabel
+        {
+            get { return minTextureDimTextLabel; }
+            set { minTextureDimTextLabel = Math.Max(TextLabel.limitMinTextureDim, value); }
         }
 
         /// <summary>
@@ -174,6 +185,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             TextLabel textLabel = new TextLabel();
             textLabel.AutoSize = AutoSizeModes.None;
+            textLabel.MinTextureDim = minTextureDimTextLabel;
             textLabel.Font = font;
             textLabel.Position = new Vector2(cursorX, cursorY);
             textLabel.WrapText = wrapText;

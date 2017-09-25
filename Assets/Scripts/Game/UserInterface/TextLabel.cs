@@ -22,7 +22,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
     /// </summary>
     public class TextLabel : BaseScreenComponent
     {
-        const int minTextureDim = 8;
+        public const int limitMinTextureDim = 8; // the smallest possible value for minTextureDim (used to enforce minimum texture dimensions of 8x8 to avoid "degenerate image" error in Unity 5.2)
+        int minTextureDim = limitMinTextureDim; // set this with property MinTextureDim to higher values if you experience scaling issues with small texts (e.g. inventory infopanel)
 
         int maxCharacters = -1;
         int startCharacterIndex = 0; // can be used to offset start character of textlabel's text (used by listbox's entry-wise horizontal scroll mode)
@@ -51,6 +52,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Rect rectRestrictedRenderArea;
 
         float textScale = 1.0f; // scale text 
+
+        /// <summary>
+        /// used to set min texture dims of textlabel to higher values if there would be aspect or scaling issues with small texts otherwise (e.g. some single-lined textlabels in inventory infopanel)
+        /// </summary>
+        public int MinTextureDim
+        {
+            get { return minTextureDim; }
+            set { minTextureDim = Math.Max(limitMinTextureDim, value); CreateLabelTexture(); }
+        }
 
         /// <summary>
         /// Maximum length of label string.
