@@ -246,13 +246,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     subTex.Apply(false);
                     subTex.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
 
-                    float xMinScreen = (rectLabel.xMin + leftCut * textScale) * LocalScale.x + this.Parent.Parent.Rectangle.x;
-                    float yMinScreen = (rectLabel.yMin + topCut * textScale) * LocalScale.y + this.Parent.Parent.Rectangle.y;
-                    float xMaxScreen = (rectLabel.xMax - rightCut * textScale) * LocalScale.x + this.Parent.Parent.Rectangle.x;
-                    float yMaxScreen = (rectLabel.yMax - bottomCut * textScale) * LocalScale.y + this.Parent.Parent.Rectangle.y;
+                    float xMinScreen = Rectangle.xMin + (this.Position.x + leftCut * textScale) * LocalScale.x;
+                    float yMinScreen = Rectangle.yMin + (topCut * textScale) * LocalScale.y;
+                    float xMaxScreen = Rectangle.xMax + (this.Position.x - rightCut * textScale) * LocalScale.x;
+                    float yMaxScreen = Rectangle.yMax - (bottomCut * textScale) * LocalScale.y;
                     totalRect = Rect.MinMaxRect(xMinScreen, yMinScreen, xMaxScreen, yMaxScreen);
-
                     innerRect = new Rect(0, 0, 1, 1); //(float)newWidth / (float)textureWidth, (float)newHeight / (float)textureHeight);
+
                     textureToDraw = subTex;
                 }
             }

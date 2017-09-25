@@ -325,7 +325,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     }
 
                     label.Position = new Vector2(x, y);
-                    label.HorizontalAlignment = rowAlignment;
                     label.Draw();
 
                     y += label.TextHeight + rowSpacing;
@@ -364,7 +363,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     }
 
                     label.Position = new Vector2(x, y);
-                    label.HorizontalAlignment = rowAlignment;
                     label.Draw();
 
                     y += label.TextHeight + rowSpacing;
