@@ -258,6 +258,8 @@ namespace DaggerfallWorkshop.Game.Serialization
         public bool isHostile;
         public bool questSpawn;
         public MobileGender mobileGender;
+        public ItemData_v1[] items;
+        public ulong[] equipTable;
         public QuestResourceBehaviour.QuestResourceSaveData_v1 questResource;
     }
 
@@ -283,7 +285,6 @@ namespace DaggerfallWorkshop.Game.Serialization
         public bool customDrop;
         public bool isEnemyClass;
         public ItemData_v1[] items;
-        public EnemyEntity enemyEntity;
     }
 
     #endregion

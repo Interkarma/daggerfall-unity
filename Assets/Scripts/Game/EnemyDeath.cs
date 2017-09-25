@@ -94,16 +94,19 @@ namespace DaggerfallWorkshop.Game
 
             // Generate items
             loot.GenerateItems();
-            // Add any equipped items to loot
-            for (int i = (int)Items.EquipSlots.Head; i < (int)Items.EquipSlots.Feet; i++)
-            {
-                Items.DaggerfallUnityItem item = enemyEntity.ItemEquipTable.GetItem((Items.EquipSlots)i);
-                if (item != null)
-                {
-                    enemyEntity.ItemEquipTable.UnequipItem((Items.EquipSlots)i);
-                    loot.Items.AddItem(item);
-                }
-            }
+
+            // This is no longer required as enemy loot is now added to entity item collection
+            // This item collection is transferred to loot container below
+            //// Add any equipped items to loot
+            //for (int i = (int)Items.EquipSlots.Head; i < (int)Items.EquipSlots.Feet; i++)
+            //{
+            //    Items.DaggerfallUnityItem item = enemyEntity.ItemEquipTable.GetItem((Items.EquipSlots)i);
+            //    if (item != null)
+            //    {
+            //        enemyEntity.ItemEquipTable.UnequipItem((Items.EquipSlots)i);
+            //        loot.Items.AddItem(item);
+            //    }
+            //}
 
             // Chance of adding map
             loot.RandomlyAddMap(mobile.Summary.Enemy.MapChance);

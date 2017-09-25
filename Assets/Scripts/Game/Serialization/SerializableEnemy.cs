@@ -109,6 +109,8 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.isDead = (entity.CurrentHealth <= 0) ? true : false;
             data.questSpawn = enemy.QuestSpawn;
             data.mobileGender = mobileEnemy.Summary.Enemy.Gender;
+            data.items = entity.Items.SerializeItems();
+            data.equipTable = entity.ItemEquipTable.SerializeEquipTable();
 
             // Add quest resource data if present
             QuestResourceBehaviour questResourceBehaviour = GetComponent<QuestResourceBehaviour>();
@@ -152,6 +154,8 @@ namespace DaggerfallWorkshop.Game.Serialization
             entityBehaviour.gameObject.name = data.gameObjectName;
             enemy.transform.position = data.currentPosition;
             enemy.transform.rotation = data.currentRotation;
+            entity.Items.DeserializeItems(data.items);
+            entity.ItemEquipTable.DeserializeEquipTable(data.equipTable, entity.Items);
             entity.MaxHealth = data.startingHealth;
             entity.CurrentHealth = data.currentHealth;
             entity.CurrentFatigue = data.currentFatigue;
@@ -187,27 +191,30 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (!enemy)
                 return false;
 
-            // Always save enemy if a quest spawn
-            if (enemy.QuestSpawn)
-                return true;
+            // Always serialize enemy
+            return true;
 
-            // Get references
-            DaggerfallEntityBehaviour entityBehaviour = enemy.GetComponent<DaggerfallEntityBehaviour>();
-            EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
-            EnemySenses senses = enemy.GetComponent<EnemySenses>();
+            //// Always save enemy if a quest spawn
+            //if (enemy.QuestSpawn)
+            //    return true;
 
-            // Save enemy if it has ever encountered player or if any vital signs have dropped
-            // Enemy should otherwise still be in starting state
-            bool save = false;
-            if (senses.HasEncounteredPlayer ||
-                entity.CurrentHealth < entity.MaxHealth ||
-                entity.CurrentFatigue < entity.MaxFatigue ||
-                entity.CurrentMagicka < entity.MaxMagicka)
-            {
-                save = true;
-            }
+            //// Get references
+            //DaggerfallEntityBehaviour entityBehaviour = enemy.GetComponent<DaggerfallEntityBehaviour>();
+            //EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
+            //EnemySenses senses = enemy.GetComponent<EnemySenses>();
 
-            return save;
+            //// Save enemy if it has ever encountered player or if any vital signs have dropped
+            //// Enemy should otherwise still be in starting state
+            //bool save = false;
+            //if (senses.HasEncounteredPlayer ||
+            //    entity.CurrentHealth < entity.MaxHealth ||
+            //    entity.CurrentFatigue < entity.MaxFatigue ||
+            //    entity.CurrentMagicka < entity.MaxMagicka)
+            //{
+            //    save = true;
+            //}
+
+            //return save;
         }
 
         ulong GetLoadID()
