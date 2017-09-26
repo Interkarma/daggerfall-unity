@@ -513,7 +513,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 textLabelNPCGreeting.textLabel.TextScale = 0.8f;
                 textLabelNPCGreeting.textLabel.HorizontalAlignment = HorizontalAlignment.Left;
                 textLabelNPCGreeting.textLabel.HorizontalTextAlignment = TextLabel.HorizontalTextAlignmentSetting.Left;
-                textLabelNPCGreeting.textLabel.MaxWidth = (int)(textLabelNPCGreeting.textLabel.MaxWidth * 0.9f);
+                textLabelNPCGreeting.textLabel.MaxWidth = (int)(textLabelNPCGreeting.textLabel.MaxWidth * 0.75f);
             }
 
             TalkManager.Instance.StartNewConversation();
@@ -1101,14 +1101,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             textLabelQuestion.textLabel.HorizontalAlignment = HorizontalAlignment.Right;
             textLabelQuestion.textLabel.HorizontalTextAlignment = TextLabel.HorizontalTextAlignmentSetting.Justify;
             //textLabelQuestion.textLabel.BackgroundColor = new Color(0.3f, 0.4f, 0.9f);
-            //textLabelQuestion.textLabel.MaxWidth = (int)(textLabelQuestion.textLabel.MaxWidth * 0.7f);
+            textLabelQuestion.textLabel.MaxWidth = (int)(textLabelQuestion.textLabel.MaxWidth * 0.75f);
             listboxConversation.AddItem(answer, out textLabelAnswer);
             textLabelAnswer.selectedTextColor = textcolorHighlighted;
             textLabelAnswer.textLabel.TextScale = 0.8f;
             textLabelAnswer.textLabel.HorizontalAlignment = HorizontalAlignment.Left;
             textLabelAnswer.textLabel.HorizontalTextAlignment = TextLabel.HorizontalTextAlignmentSetting.Justify;
             //textLabelAnswer.textLabel.BackgroundColor = new Color(0.4f, 0.3f, 0.9f);
-            //textLabelAnswer.textLabel.MaxWidth = (int)(textLabelQuestion.textLabel.MaxWidth * 0.7f);
+            textLabelAnswer.textLabel.MaxWidth = (int)(textLabelAnswer.textLabel.MaxWidth * 0.75f);
 
             listboxConversation.SelectedIndex = listboxConversation.Count - 1; // always highlight the new answer
 
