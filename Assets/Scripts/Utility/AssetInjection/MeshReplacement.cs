@@ -311,13 +311,17 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                         }
 
                         // Assign filtermode
-                        materials[i].mainTexture.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
-                        if (materials[i].GetTexture("_BumpMap") != null)
-                            materials[i].GetTexture("_BumpMap").filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
-                        if (materials[i].GetTexture("_EmissionMap") != null)
-                            materials[i].GetTexture("_EmissionMap").filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
-                        if (materials[i].GetTexture("_MetallicGlossMap") != null)
-                            materials[i].GetTexture("_MetallicGlossMap").filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
+                        FilterMode filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
+                        materials[i].mainTexture.filterMode = filterMode;
+
+                        if (materials[i].HasProperty("_BumpMap") && materials[i].GetTexture("_BumpMap"))
+                            materials[i].GetTexture("_BumpMap").filterMode = filterMode;
+
+                        if (materials[i].HasProperty("_EmissionMap") && materials[i].GetTexture("_EmissionMap"))
+                            materials[i].GetTexture("_EmissionMap").filterMode = filterMode;
+
+                        if (materials[i].HasProperty("_MetallicGlossMap") && materials[i].GetTexture("_MetallicGlossMap"))
+                            materials[i].GetTexture("_MetallicGlossMap").filterMode = filterMode;
                     }
                 }
 
