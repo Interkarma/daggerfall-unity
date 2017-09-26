@@ -31,6 +31,7 @@ namespace DaggerfallWorkshop.Game.Questing
         const int faceCount = 10;
 
         Races race = Races.Breton;
+        NameHelper.BankTypes nameBank = NameHelper.BankTypes.Breton;
         Genders npcGender = Genders.Male;
         int faceIndex = 0;
         int nameSeed = -1;
@@ -325,6 +326,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // Otherwise use race of current region
             race = GameManager.Instance.PlayerGPS.GetRaceOfCurrentRegion();
+            nameBank = GameManager.Instance.PlayerGPS.GetNameBankOfCurrentRegion();
         }
 
         void AssignGender(string genderName)
@@ -352,31 +354,6 @@ namespace DaggerfallWorkshop.Game.Questing
             if (factionData.type == (int)FactionFile.FactionTypes.WitchesCoven)
                 npcGender = Genders.Female;
 
-            // Get name bank - supports more races than are found in FACTION.TXT
-            NameHelper.BankTypes bankType;
-            switch (race)
-            {
-                case Races.Redguard:
-                    bankType = NameHelper.BankTypes.Redguard;
-                    break;
-                case Races.Nord:
-                    bankType = NameHelper.BankTypes.Nord;
-                    break;
-                case Races.DarkElf:
-                    bankType = NameHelper.BankTypes.DarkElf;
-                    break;
-                case Races.HighElf:
-                    bankType = NameHelper.BankTypes.HighElf;
-                    break;
-                case Races.WoodElf:
-                    bankType = NameHelper.BankTypes.WoodElf;
-                    break;
-                case Races.Breton:
-                default:
-                    bankType = NameHelper.BankTypes.Breton;
-                    break;
-            }
-
             // Assign name - some types have their own individual name to use
             if (factionData.type == (int)FactionFile.FactionTypes.Individual ||
                 factionData.type == (int)FactionFile.FactionTypes.Daedra)
@@ -392,7 +369,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 // Generate a random name based on gender and race name bank
                 DFRandom.srand(nameSeed);
-                displayName = DaggerfallUnity.Instance.NameHelper.FullName(bankType, npcGender);
+                displayName = DaggerfallUnity.Instance.NameHelper.FullName(nameBank, npcGender);
             }
         }
 
@@ -828,6 +805,7 @@ namespace DaggerfallWorkshop.Game.Questing
         public struct SaveData_v1
         {
             public Races race;
+            public NameHelper.BankTypes nameBank;
             public Genders npcGender;
             public int faceIndex;
             public int nameSeed;
@@ -845,6 +823,7 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             SaveData_v1 data = new SaveData_v1();
             data.race = race;
+            data.nameBank = nameBank;
             data.npcGender = npcGender;
             data.faceIndex = faceIndex;
             data.nameSeed = nameSeed;
@@ -871,6 +850,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 throw new Exception("Could not deserialize Person resource FactionID to FactionData");
 
             race = data.race;
+            nameBank = data.nameBank;
             npcGender = data.npcGender;
             faceIndex = data.faceIndex;
             nameSeed = data.nameSeed;
