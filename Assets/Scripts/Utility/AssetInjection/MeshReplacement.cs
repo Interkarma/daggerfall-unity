@@ -120,9 +120,9 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             if (!LoadGameObjectFromMods("Flats", name, out prefab))
                 return false;
 
-            // Get instance properties (TODO: position is different than original)
+            // Get instance properties
             TerrainData terrainData = terrain.terrainData;
-            Vector3 position = new Vector3(x / (float)terrainData.heightmapWidth, 0.0f, y / (float)terrainData.heightmapHeight);
+            Vector3 position = new Vector3(x / (float)terrainData.detailResolution, 0.0f, y / (float)terrainData.detailResolution);
             float rotation = Random.Range(0f, 360f);
             int index = GetTreePrototypeIndex(terrainData, prefab);
 
