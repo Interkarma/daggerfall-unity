@@ -9,15 +9,10 @@
 // Notes:
 //
 
-/*
- * TODO:
- * - StreamingWorld
- */
-
+using System.Collections.Generic;
 using UnityEngine;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
-using System.Collections.Generic;
 
 namespace DaggerfallWorkshop.Utility.AssetInjection
 {
@@ -25,210 +20,111 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
     /// Handles import and injection of custom meshes and materials with the purpose of providing modding support.
     /// This is done in the shape of a model->model replacement as wall as a 2d billboard->model replacement.
     /// </summary>
-    static public class MeshReplacement
+    public static class MeshReplacement
     {
         #region Public Methods
 
         /// <summary>
-        /// Import the custom GameObject if available.
+        /// Import a GameObject from mods.
         /// </summary>
-        /// <remarks>
-        /// A GameObject which corresponds to <paramref name="modelID"/>
-        /// is searched inside mods and eventually imported and returned. 
-        /// On Development builds is also imported from Resources for easier tests.
-        /// </remarks>
         /// <param name="matrix">Matrix with position and rotation of GameObject.</param>
         /// <returns>Returns the imported model or null.</returns>
-        static public GameObject ImportCustomGameobject (uint modelID, Transform parent, Matrix4x4 matrix)
+        public static GameObject ImportCustomGameobject (uint modelID, Transform parent, Matrix4x4 matrix)
         {
             // Check user settings
             if (!DaggerfallUnity.Settings.MeshAndTextureReplacement)
                 return null;
 
-            // Get name
+            // Get names
             string modelName = modelID.ToString();;
             string climateModelName = ClimateSeasonName(modelName);
 
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            // Get GameObject
+            GameObject prefab;
+            if (!LoadGameObjectFromMods("Models", climateModelName, modelName, out prefab))
+                return null;
 
-            // Import Gameobject from Resources
-            string path = "Models/" + modelName + "/";
-            if (Resources.Load(path + climateModelName) != null)
-            {
-                // Import model fo specific climate/season
-                GameObject go = GameObject.Instantiate(Resources.Load(path + climateModelName) as GameObject);
-                InstantiateCustomModel(go, parent, matrix, climateModelName);
-                return go;
-            }
-            else if (Resources.Load(path + modelName) != null)
-            {
-                // Import generic model
-                GameObject go = GameObject.Instantiate(Resources.Load(path + modelName) as GameObject);
-                InstantiateCustomModel(go, parent, matrix, modelName);
-                return go;
-            }
+            // Instantiate GameObject
+            GameObject go = GameObject.Instantiate(prefab, parent);
+            go.name = string.Format("DaggerfallMesh[Replacement][ID ={0}]", modelName);
+            go.transform.position = matrix.GetColumn(3);
+            go.transform.rotation = GameObjectHelper.QuaternionFromMatrix(matrix);
 
-#endif
-#if !UNITY_EDITOR
-
-            // Get model from mods using load order
-            Mod[] mods = ModManager.Instance.GetAllMods(true);
-            for (int i = mods.Length; i-- > 0;)
-            {
-                AssetBundle bundle = mods[i].AssetBundle;
-                if (bundle)
-                {
-                    // Get Name
-                    string name;
-                    if (bundle.Contains(climateModelName))
-                        name = climateModelName;
-                    else if (bundle.Contains(modelName))
-                        name = modelName;
-                    else
-                        continue;
-
-                    // Import GameObject
-                    GameObject go = mods[i].GetAsset<GameObject>(name, true);
-                    if (go)
-                    {
-                        InstantiateCustomModel(go, parent, matrix, name);
-                        return go;
-                    }
-
-                    Debug.LogErrorFormat("Failed to import {0} from {1} as GameObject.", climateModelName, mods[i].Title);
-                }
-            }
-
-#endif
-
-            return null;
+            // Finalise gameobject
+            FinaliseMaterials(go);
+            return go;
         }
 
         /// <summary>
-        /// Import the custom GameObject for billboard if available.
+        /// Import a GameObject from mods instead of billboard.
         /// </summary>
-        /// <remarks>
-        /// A GameObject which corresponds to <paramref name="archive"/> and <paramref name="record"/>
-        /// is searched inside mods and eventually imported and returned. 
-        /// On Development builds is also imported from Resources for easier tests.
-        /// </remarks>
         /// <param name="inDungeon">Fix position for dungeon models.</param>
         /// <returns>Returns the imported model or null.</returns>
-        static public GameObject ImportCustomFlatGameobject (int archive, int record, Vector3 position, Transform parent, bool inDungeon = false)
+        public static GameObject ImportCustomFlatGameobject (int archive, int record, Vector3 position, Transform parent, bool inDungeon = false)
         {
             // Check user settings
             if (!DaggerfallUnity.Settings.MeshAndTextureReplacement)
                 return null;
 
-            // Get name
-            string modelName = archive.ToString("D3") + "_" + record.ToString();
+            // Get GameObject
+            GameObject prefab;
+            string name = archive.ToString("D3") + "_" + record.ToString();
+            if (!LoadGameObjectFromMods("Flats", name, out prefab))
+                return null;
 
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            // Instantiate GameObject
+            GameObject go = GameObject.Instantiate(prefab, parent);
+            go.name = string.Format("DaggerfallBillboard [Replacement] [TEXTURE.{0:000}, Index={1}]", archive, record);
 
-            // Import Gameobject from Resources
-            string path = "Flats/" + modelName + "/";
-            if (Resources.Load(path + modelName) != null)
+            // Assign position
+            if (inDungeon)
             {
-                GameObject go = GameObject.Instantiate(Resources.Load(path + modelName) as GameObject);
-                InstantiateCustomFlat(go, ref position, parent, archive, record, inDungeon);
-                return go;
+                // Fix origin position for dungeon flats
+                int height = ImageReader.GetImageData("TEXTURE." + archive.ToString("D3"), record, createTexture: false).height;
+                position.y -= height / 2 * MeshReader.GlobalScale;
+            }
+            go.transform.localPosition = position;
+
+            // Assign a random rotation
+            if (go.GetComponent<FaceWall>() == null)
+            {
+                Random.InitState((int)position.x);
+                go.transform.Rotate(0, Random.Range(0f, 360f), 0);
             }
 
-#endif
-#if !UNITY_EDITOR
-
-            // Get model from mods using load order
-            Mod[] mods = ModManager.Instance.GetAllMods(true);
-            for (int i = mods.Length; i-- > 0;)
+            // Add NPC trigger collider
+            if (RDBLayout.IsNPCFlat(archive))
             {
-                AssetBundle bundle = mods[i].AssetBundle;
-                if (bundle && bundle.Contains(modelName))
-                {
-                    GameObject go = mods[i].GetAsset<GameObject>(modelName, true);
-                    if (go != null)
-                    {
-                        InstantiateCustomFlat(go, ref position, parent, archive, record, inDungeon);
-                        return go;
-                    }
-
-                    Debug.LogError("Failed to import " + modelName + " from " + mods[i].Title + " as GameObject.");
-                }
+                Collider col = go.AddComponent<BoxCollider>();
+                col.isTrigger = true;
             }
 
-#endif
-
-            return null;
+            // Finalise gameobject materials
+            FinaliseMaterials(go);
+            return go;
         }
 
+        /// <summary>
+        /// Import a gameobject from mods to use with the terrain system.
+        /// </summary>
+        /// <returns>True if gameobject is found and imported.</returns>
         public static bool ImportNatureGameObject(int archive, int record, Terrain terrain, int x, int y)
         {
             // Check user settings
             if (!DaggerfallUnity.Settings.MeshAndTextureReplacement)
                 return false;
 
-            // Get name
-            string modelName = archive.ToString("D3") + "_" + record.ToString();
-
-            GameObject go = null;
-
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-
-            // Import Gameobject from Resources
-            string path = "Flats/" + modelName + "/";
-            if (Resources.Load(path + modelName))
-                go = Resources.Load(path + modelName) as GameObject;
-
-#endif
-#if !UNITY_EDITOR
-
-            // Get model from mods using load order
-            Mod[] mods = ModManager.Instance.GetAllMods(true);
-            for (int i = mods.Length; i-- > 0;)
-            {
-                AssetBundle bundle = mods[i].AssetBundle;
-                if (bundle && bundle.Contains(modelName))
-                {
-                    go = mods[i].GetAsset<GameObject>(modelName, false);
-                    break;
-                }
-            }
-
-#endif
-
-            if (!go)
+            // Get prototype
+            GameObject prefab;
+            string name = archive.ToString("D3") + "_" + record.ToString();
+            if (!LoadGameObjectFromMods("Flats", name, out prefab))
                 return false;
 
-            // Assign prototype to terrain
+            // Get instance properties (TODO: position is different than original)
             TerrainData terrainData = terrain.terrainData;
-            TreePrototype[] treePrototypes = terrainData.treePrototypes;
-            int? index = null;
-            for (int i = 0; i < treePrototypes.Length; i++)
-            {
-                // Search existing prototype
-                if (treePrototypes[i].prefab == go)
-                {
-                    index = i;
-                    break;
-                }
-            }
-            if (!index.HasValue)
-            {
-                // Add new prototype
-                var treePrototype = new TreePrototype()
-                {
-                    prefab = go,
-                    bendFactor = 1
-                };
-
-                var updatedTreePrototypes = new List<TreePrototype>(treePrototypes);
-                updatedTreePrototypes.Add(treePrototype);
-                index = updatedTreePrototypes.Count - 1;
-                terrainData.treePrototypes = updatedTreePrototypes.ToArray();
-            }
-            terrainData.RefreshPrototypes();
-
-            // Get local position on terrain (TODO: different than original, review later)
-            Vector3 localPosition = new Vector3(x/(float)terrainData.heightmapWidth, 0.0f, y/(float)terrainData.heightmapHeight);
+            Vector3 position = new Vector3(x / (float)terrainData.heightmapWidth, 0.0f, y / (float)terrainData.heightmapHeight);
+            float rotation = Random.Range(0f, 360f);
+            int index = GetTreePrototypeIndex(terrainData, prefab);
 
             // Add tree instance
             TreeInstance treeInstance = new TreeInstance()
@@ -237,9 +133,9 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 widthScale = 1,
                 color = Color.grey,
                 lightmapColor = Color.grey,
-                position = localPosition,
-                rotation = 0, //TODO: random orientation
-                prototypeIndex = index.Value
+                position = position,
+                rotation = rotation,
+                prototypeIndex = index
             };
             terrain.AddTreeInstance(treeInstance);
 
@@ -275,62 +171,89 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         /// <summary>
-        /// Assign parent, position, rotation and texture filtermode.
+        /// Search and import a GameObject from mods.
+        /// In editor and dev builds is also imported from resources for easy testing.
         /// </summary>
-        static private void InstantiateCustomModel(GameObject go, Transform parent, Matrix4x4 matrix, string modelName)
+        private static bool LoadGameObjectFromMods(string folder, string name, out GameObject go)
         {
-            // Assign transform properties
-            go.transform.parent = parent;
-            go.transform.position = matrix.GetColumn(3);
-            go.transform.rotation = GameObjectHelper.QuaternionFromMatrix(matrix);
-
-            // Assign name
-            go.name = string.Format("DaggerfallMesh[Replacement][ID ={0}]", modelName);
-
-            // Finalise gameobject
-            FinaliseMaterials(go);
+            return LoadGameObjectFromMods(folder, name, null, out go);
         }
 
         /// <summary>
-        /// Assign parent, position, rotation and texture filtermode.
+        /// Search and import a GameObject from mods.
+        /// In editor and dev builds is also imported from resources for easy testing.
         /// </summary>
-        static private void InstantiateCustomFlat(GameObject go, ref Vector3 position, Transform parent, int archive, int record, bool inDungeon)
+        private static bool LoadGameObjectFromMods(string folder, string name, string fallbackName, out GameObject go)
         {
-            // Fix origin position for dungeon flats
-            if (inDungeon)
-            {
-                // Get height
-                int height = ImageReader.GetImageData("TEXTURE." + archive.ToString("D3"), record, createTexture: false).height;
 
-                // Correct transform
-                position.y -= height / 2 * MeshReader.GlobalScale;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+
+            // Import Gameobject from Resources
+            string path = folder + "/" + name + "/";
+            if (Resources.Load(path + name))
+            {
+                go = Resources.Load(path + name) as GameObject;
+                return true;
+            }
+            else if (fallbackName != null && Resources.Load(path + fallbackName))
+            {
+                go = Resources.Load(path + fallbackName) as GameObject;
+                return true;
             }
 
-            // Assign transform properties
-            go.transform.parent = parent;
-            go.transform.localPosition = position;
+#endif
+#if !UNITY_EDITOR
 
-            // Assign a random rotation so that flats in group won't look all aligned.
-            // We use a seed becuse we want the models to have the same
-            // rotation every time the same location is loaded.
-            if (go.GetComponent<FaceWall>() == null)
+            // Get model from mods using load order
+            Mod[] mods = ModManager.Instance.GetAllMods(true);
+            for (int i = mods.Length; i-- > 0;)
             {
-                UnityEngine.Random.InitState((int)position.x);
-                go.transform.Rotate(0, UnityEngine.Random.Range(0f, 360f), 0);
+                AssetBundle bundle = mods[i].AssetBundle;
+                if (bundle)
+                {
+                    if (bundle.Contains(name))
+                    {
+                        go = mods[i].GetAsset<GameObject>(name);
+                        return true;
+                    }
+                    else if (fallbackName != null && bundle.Contains(fallbackName))
+                    {
+                        go = mods[i].GetAsset<GameObject>(fallbackName);
+                        return true;
+                    }
+                }
             }
 
-            // Assign name
-            go.name = string.Format("DaggerfallBillboard [Replacement] [TEXTURE.{0:000}, Index={1}]", archive, record);
+#endif
 
-            // Finalise gameobject material
-            FinaliseMaterials(go);
+            go = null;
+            return false;
+        }
 
-            // Add NPC trigger collider
-            if (RDBLayout.IsNPCFlat(archive))
+        /// <summary>
+        /// Get index of tree prototype on terrain. If new, it will be added to the collection.
+        /// </summary>
+        private static int GetTreePrototypeIndex(TerrainData terrainData, GameObject prefab)
+        {
+            // Search existing prototype
+            TreePrototype[] treePrototypes = terrainData.treePrototypes;
+            for (int i = 0; i < treePrototypes.Length; i++)
             {
-                Collider col = go.AddComponent<BoxCollider>();
-                col.isTrigger = true;
+                if (treePrototypes[i].prefab == prefab)
+                    return i;
             }
+
+            // Add new prototype
+            var updatedTreePrototypes = new List<TreePrototype>(treePrototypes);
+            var treePrototype = new TreePrototype()
+            {
+                prefab = prefab,
+                bendFactor = 1
+            };
+            updatedTreePrototypes.Add(treePrototype);
+            terrainData.treePrototypes = updatedTreePrototypes.ToArray();
+            terrainData.RefreshPrototypes();
+            return updatedTreePrototypes.Count - 1;
         }
 
         /// <summary>
@@ -402,48 +325,6 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 meshRenderer.sharedMaterials = materials;
             }
         }
-
-        #endregion
-
-        #region Legacy Methods
-
-        // This was used to import mesh and materials separately from Resources.
-        // It might be useful again in the future.
-        //
-        //static public Mesh LoadReplacementModel(uint modelID, ref CachedMaterial[] cachedMaterialsOut)
-        //{
-        //    // Import mesh
-        //    GameObject object3D = Resources.Load("Models/" + modelID.ToString() + "/" + modelID.ToString() + "_mesh") as GameObject;
-        //
-        //    // Import materials
-        //    cachedMaterialsOut = new CachedMaterial[object3D.GetComponent<MeshRenderer>().sharedMaterials.Length];
-        //
-        //    string materialPath;
-        //
-        //    // If it's not winter or the model doesn't have a winter version, it loads default materials
-        //    if ((DaggerfallUnity.Instance.WorldTime.Now.SeasonValue != DaggerfallDateTime.Seasons.Winter) || (Resources.Load("Models/" + modelID.ToString() + "/material_w_0") == null))
-        //        materialPath = "/material_";
-        //    // If it's winter and the model has a winter version, it loads winter materials
-        //   else
-        //        materialPath = "/material_w_";
-        //
-        //    for (int i = 0; i < cachedMaterialsOut.Length; i++)
-        //    {
-        //        if (Resources.Load("Models/" + modelID.ToString() + materialPath + i) != null)
-        //        {
-        //            cachedMaterialsOut[i].material = Resources.Load("Models/" + modelID.ToString() + materialPath + i) as Material;
-        //            if (cachedMaterialsOut[i].material.mainTexture != null)
-        //                cachedMaterialsOut[i].material.mainTexture.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode; //assign texture filtermode as user settings
-        //            else
-        //                Debug.LogError("Custom model " + modelID + " is missing a texture");
-        //        }
-        //        else
-        //            Debug.LogError("Custom model " + modelID + " is missing a material");
-        //    }
-        //
-        //    return object3D.GetComponent<MeshFilter>().sharedMesh;
-        //}
-        //
 
         #endregion
     }
