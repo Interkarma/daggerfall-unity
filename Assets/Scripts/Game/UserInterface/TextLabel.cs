@@ -195,8 +195,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             get { return textScale; }
             set
             {
-                textScale = Math.Max(0.1f, Math.Min(2.0f, value));
-                this.Size *= textScale;                                
+                textScale = Math.Max(0.1f, Math.Min(2.0f, value));                            
                 CreateLabelTexture();
             }
         }
