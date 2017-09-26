@@ -15,6 +15,7 @@ using System.Collections;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
+using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Utility;
@@ -790,10 +791,28 @@ namespace DaggerfallWorkshop.Game
             }
             else
             {
+                UserInterfaceManager uiManager = DaggerfallUI.Instance.UserInterfaceManager;
+                if (Enum.IsDefined(typeof(GuildServices), npc.Data.factionID))
+                {
+                    GuildServices guildService = (GuildServices)npc.Data.factionID;
+                    Debug.Log("NPC offers guild service: " + guildService.ToString());
+                    DaggerfallGuildServicePopupWindow serviceWindow = new DaggerfallGuildServicePopupWindow(uiManager, guildService);
+                    serviceWindow.MerchantNPC = npc;
+                    uiManager.PushWindow(serviceWindow);
+                    return;
+                }
+                //{
+                //    case FactionFile.GuildServices.MG_Identify:
+                //        DaggerfallGuildServicePopupWindow serviceWindow = new DaggerfallGuildServicePopupWindow(uiManager, (GuildServices)npc.Data.factionID);
+                //        serviceWindow.MerchantNPC = npc;
+                //        uiManager.PushWindow(serviceWindow);
+
+                //}
                 FactionFile.FactionData factionData;
                 if (playerEnterExit.IsPlayerInsideBuilding &&
                     GameManager.Instance.PlayerEntity.FactionData.GetFactionData(npc.Data.factionID, out factionData))
                 {
+                    Debug.LogFormat("{0} {1}", npc.Data.factionID, (FactionFile.SocialGroups)factionData.sgroup);
                     // Check if this NPC is a merchant.
                     if ((FactionFile.SocialGroups)factionData.sgroup == FactionFile.SocialGroups.Merchants)
                     {
@@ -801,22 +820,22 @@ namespace DaggerfallWorkshop.Game
                         {
                             if (RMBLayout.IsRepairShop(playerEnterExit.BuildingDiscoveryData.buildingType))
                             {
-                                DaggerfallMerchantRepairPopupWindow merchantRepairWindow = new DaggerfallMerchantRepairPopupWindow(DaggerfallUI.Instance.UserInterfaceManager);
+                                DaggerfallMerchantRepairPopupWindow merchantRepairWindow = new DaggerfallMerchantRepairPopupWindow(uiManager);
                                 merchantRepairWindow.MerchantNPC = npc;
-                                DaggerfallUI.Instance.UserInterfaceManager.PushWindow(merchantRepairWindow);
+                                uiManager.PushWindow(merchantRepairWindow);
                             }
                             else
                             {
-                                DaggerfallMerchantServicePopupWindow merchantServiceSellWindow = new DaggerfallMerchantServicePopupWindow(DaggerfallUI.Instance.UserInterfaceManager, DaggerfallMerchantServicePopupWindow.Services.Sell);
+                                DaggerfallMerchantServicePopupWindow merchantServiceSellWindow = new DaggerfallMerchantServicePopupWindow(uiManager, DaggerfallMerchantServicePopupWindow.Services.Sell);
                                 merchantServiceSellWindow.MerchantNPC = npc;
-                                DaggerfallUI.Instance.UserInterfaceManager.PushWindow(merchantServiceSellWindow);
+                                uiManager.PushWindow(merchantServiceSellWindow);
                             }
                         }
                         else if (playerEnterExit.BuildingDiscoveryData.buildingType == DFLocation.BuildingTypes.Bank)
                         {
-                            DaggerfallMerchantServicePopupWindow merchantServiceBankingWindow = new DaggerfallMerchantServicePopupWindow(DaggerfallUI.Instance.UserInterfaceManager, DaggerfallMerchantServicePopupWindow.Services.Banking);
+                            DaggerfallMerchantServicePopupWindow merchantServiceBankingWindow = new DaggerfallMerchantServicePopupWindow(uiManager, DaggerfallMerchantServicePopupWindow.Services.Banking);
                             merchantServiceBankingWindow.MerchantNPC = npc;
-                            DaggerfallUI.Instance.UserInterfaceManager.PushWindow(merchantServiceBankingWindow);
+                            uiManager.PushWindow(merchantServiceBankingWindow);
 
                         }
                         else if (playerEnterExit.BuildingDiscoveryData.buildingType == DFLocation.BuildingTypes.Tavern)

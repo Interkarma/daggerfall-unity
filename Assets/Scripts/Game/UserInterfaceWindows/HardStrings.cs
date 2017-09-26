@@ -105,6 +105,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string getQuest = "Get Quest";
         public const string serviceSell = "Sell";
         public const string serviceBanking = "Banking";
+        public const string serviceIdentify = "Identify";
+        public const string serviceBuySpells = "Buy Spells";
 
         public const string pronounHe = "he";
         public const string pronounShe = "she";
