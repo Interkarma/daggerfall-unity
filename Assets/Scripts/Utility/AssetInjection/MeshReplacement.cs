@@ -142,6 +142,24 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             return true;
         }
 
+        /// <summary>
+        /// Remove all tree instances from terrain.
+        /// </summary>
+        public static void ClearNatureGameObjects(Terrain terrain)
+        {
+            if (!DaggerfallUnity.Settings.MeshAndTextureReplacement)
+                return;
+
+            TerrainData terrainData = terrain.terrainData;
+            if (terrainData.treeInstanceCount > 0)
+            {
+                terrainData.treeInstances = new TreeInstance[0];
+                terrainData.treePrototypes = new TreePrototype[0];
+                terrainData.RefreshPrototypes();
+                terrain.Flush();
+            }
+        }
+
         #endregion
 
         #region Private Methods
