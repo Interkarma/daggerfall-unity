@@ -17,6 +17,7 @@
 using UnityEngine;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
+using System.Collections.Generic;
 
 namespace DaggerfallWorkshop.Utility.AssetInjection
 {
@@ -157,6 +158,92 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 #endif
 
             return null;
+        }
+
+        public static bool ImportNatureGameObject(int archive, int record, Terrain terrain, int x, int y)
+        {
+            // Check user settings
+            if (!DaggerfallUnity.Settings.MeshAndTextureReplacement)
+                return false;
+
+            // Get name
+            string modelName = archive.ToString("D3") + "_" + record.ToString();
+
+            GameObject go = null;
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+
+            // Import Gameobject from Resources
+            string path = "Flats/" + modelName + "/";
+            if (Resources.Load(path + modelName))
+                go = Resources.Load(path + modelName) as GameObject;
+
+#endif
+#if !UNITY_EDITOR
+
+            // Get model from mods using load order
+            Mod[] mods = ModManager.Instance.GetAllMods(true);
+            for (int i = mods.Length; i-- > 0;)
+            {
+                AssetBundle bundle = mods[i].AssetBundle;
+                if (bundle && bundle.Contains(modelName))
+                {
+                    go = mods[i].GetAsset<GameObject>(modelName, false);
+                    break;
+                }
+            }
+
+#endif
+
+            if (!go)
+                return false;
+
+            // Assign prototype to terrain
+            TerrainData terrainData = terrain.terrainData;
+            TreePrototype[] treePrototypes = terrainData.treePrototypes;
+            int? index = null;
+            for (int i = 0; i < treePrototypes.Length; i++)
+            {
+                // Search existing prototype
+                if (treePrototypes[i].prefab == go)
+                {
+                    index = i;
+                    break;
+                }
+            }
+            if (!index.HasValue)
+            {
+                // Add new prototype
+                var treePrototype = new TreePrototype()
+                {
+                    prefab = go,
+                    bendFactor = 1
+                };
+
+                var updatedTreePrototypes = new List<TreePrototype>(treePrototypes);
+                updatedTreePrototypes.Add(treePrototype);
+                index = updatedTreePrototypes.Count - 1;
+                terrainData.treePrototypes = updatedTreePrototypes.ToArray();
+            }
+            terrainData.RefreshPrototypes();
+
+            // Get local position on terrain (TODO: different than original, review later)
+            Vector3 localPosition = new Vector3(x/(float)terrainData.heightmapWidth, 0.0f, y/(float)terrainData.heightmapHeight);
+
+            // Add tree instance
+            TreeInstance treeInstance = new TreeInstance()
+            {
+                heightScale = 1,
+                widthScale = 1,
+                color = Color.grey,
+                lightmapColor = Color.grey,
+                position = localPosition,
+                rotation = 0, //TODO: random orientation
+                prototypeIndex = index.Value
+            };
+            terrain.AddTreeInstance(treeInstance);
+
+            return true;
         }
 
         #endregion

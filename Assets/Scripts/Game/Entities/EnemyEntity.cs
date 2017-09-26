@@ -157,6 +157,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 int item = UnityEngine.Random.Range((int)Game.Items.Weapons.Broadsword, (int)(Game.Items.Weapons.Longsword) + 1);
                 Items.DaggerfallUnityItem weapon = Game.Items.ItemBuilder.CreateWeapon((Items.Weapons)item, Game.Items.ItemBuilder.RandomMaterial(itemLevel));
                 ItemEquipTable.EquipItem(weapon, true, false);
+                Items.AddItem(weapon);
 
                 chance = 50;
 
@@ -166,6 +167,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 {
                     Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(gender, race, (Items.Armor)item, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
                     ItemEquipTable.EquipItem(armor, true, false);
+                    Items.AddItem(armor);
                 }
                 // left-hand weapon
                 else if (UnityEngine.Random.Range(1, 101) <= chance)
@@ -173,6 +175,7 @@ namespace DaggerfallWorkshop.Game.Entity
                     item = UnityEngine.Random.Range((int)Game.Items.Weapons.Dagger, (int)(Game.Items.Weapons.Shortsword) + 1);
                     weapon = Game.Items.ItemBuilder.CreateWeapon((Items.Weapons)item, Game.Items.ItemBuilder.RandomMaterial(itemLevel));
                     ItemEquipTable.EquipItem(weapon, true, false);
+                    Items.AddItem(weapon);
                 }
             }
             else
@@ -181,6 +184,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 int item = UnityEngine.Random.Range((int)Game.Items.Weapons.Claymore, (int)(Game.Items.Weapons.Battle_Axe) + 1);
                 Items.DaggerfallUnityItem weapon = Game.Items.ItemBuilder.CreateWeapon((Items.Weapons)item, Game.Items.ItemBuilder.RandomMaterial(itemLevel));
                 ItemEquipTable.EquipItem(weapon, true, false);
+                Items.AddItem(weapon);
 
                 if (variant == 1)
                     chance = 75;
@@ -192,36 +196,42 @@ namespace DaggerfallWorkshop.Game.Entity
             {
                 Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(gender, race, Game.Items.Armor.Helm, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
                 ItemEquipTable.EquipItem(armor, true, false);
+                Items.AddItem(armor);
             }
             // right pauldron
             if (UnityEngine.Random.Range(1, 101) <= chance)
             {
                 Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(gender, race, Game.Items.Armor.Right_Pauldron, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
                 ItemEquipTable.EquipItem(armor, true, false);
+                Items.AddItem(armor);
             }
             // left pauldron
             if (UnityEngine.Random.Range(1, 101) <= chance)
             {
                 Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(gender, race, Game.Items.Armor.Left_Pauldron, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
                 ItemEquipTable.EquipItem(armor, true, false);
+                Items.AddItem(armor);
             }
             // cuirass
             if (UnityEngine.Random.Range(1, 101) <= chance)
             {
                 Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(gender, race, Game.Items.Armor.Cuirass, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
                 ItemEquipTable.EquipItem(armor, true, false);
+                Items.AddItem(armor);
             }
             // greaves
             if (UnityEngine.Random.Range(1, 101) <= chance)
             {
                 Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(gender, race, Game.Items.Armor.Greaves, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
                 ItemEquipTable.EquipItem(armor, true, false);
+                Items.AddItem(armor);
             }
             // boots
             if (UnityEngine.Random.Range(1, 101) <= chance)
             {
                 Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(gender, race, Game.Items.Armor.Boots, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
                 ItemEquipTable.EquipItem(armor, true, false);
+                Items.AddItem(armor);
             }
 
             // Initialize armor values to 100 (no armor)

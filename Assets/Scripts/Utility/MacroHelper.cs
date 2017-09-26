@@ -7,12 +7,12 @@
 
 using System;
 using System.Collections.Generic;
+using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
-using UnityEngine;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -64,6 +64,7 @@ namespace DaggerfallWorkshop.Utility
             { "%cpn", ShopName }, // Current shop name
             { "%cri", null }, // Accused crime
             { "%crn", CurrentRegion }, // Current Region
+            { "%ct", CityType }, // City type? e.g city, town, village?
             { "%dae", null }, // A daedra
             { "%dam", DmgMod }, // Damage modifyer
             { "%dat", Date }, // Date
@@ -253,8 +254,8 @@ namespace DaggerfallWorkshop.Utility
                                 string macro = words[wordIdx].Substring(pos);
                                 if (macro.StartsWith("%"))
                                 {
-                                    int macroLen = macro.Length - 1;
-                                    if (macro.IndexOfAny(PUNCTUATION) == macroLen)
+                                    int macroLen;
+                                    if ((macroLen = macro.IndexOfAny(PUNCTUATION)) > 0)
                                     {
                                         string symbolStr = macro.Substring(0, macroLen);
                                         words[wordIdx] = prefix + GetValue(symbolStr, mcp) + macro.Substring(macroLen);
@@ -373,6 +374,32 @@ namespace DaggerfallWorkshop.Utility
         private static string CurrentRegion(IMacroContextProvider mcp)
         {   // %crn
             return GameManager.Instance.PlayerGPS.CurrentRegion.Name;
+        }
+
+        private static string CityType(IMacroContextProvider mcp)
+        {   // %ct
+            PlayerGPS gps = GameManager.Instance.PlayerGPS;
+            switch (gps.CurrentLocationType)
+            {
+                case DFRegion.LocationTypes.TownCity:
+                    return "city";
+                case DFRegion.LocationTypes.TownVillage:
+                    return "village";
+                case DFRegion.LocationTypes.TownHamlet:
+                    return "hamlet";
+                case DFRegion.LocationTypes.HomeFarms:
+                    return "farm";
+                case DFRegion.LocationTypes.HomePoor:
+                    return "shack";
+                case DFRegion.LocationTypes.HomeWealthy:
+                    return "manor";
+                case DFRegion.LocationTypes.Tavern:
+                    return "community";
+                case DFRegion.LocationTypes.ReligionTemple:
+                    return "shrine";
+                default:
+                    return gps.CurrentLocationType.ToString();
+            }
         }
 
         private static string LocalReputation(IMacroContextProvider mcp)
