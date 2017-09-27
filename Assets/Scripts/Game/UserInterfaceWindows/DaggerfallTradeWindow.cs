@@ -40,6 +40,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Rect clearButtonRect = new Rect(4, 146, 31, 14);
 
         Rect itemInfoPanelRect = new Rect(223, 87, 37, 32);
+        Rect itemBuyInfoPanelRect = new Rect(223, 76, 37, 32);
 
         #endregion
 
@@ -126,6 +127,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Properties
 
+        public ItemCollection MerchantItems
+        {
+            get { return merchantItems; }
+            set { merchantItems = value; }
+        }
+
         #endregion
 
         #region Constructors
@@ -166,7 +173,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Setup item info panel if configured
             if (DaggerfallUnity.Settings.EnableInventoryInfoPanel)
             {
-                itemInfoPanel = DaggerfallUI.AddPanel(itemInfoPanelRect, NativePanel);
+                if (windowMode == WindowModes.Buy)
+                    itemInfoPanel = DaggerfallUI.AddPanel(itemBuyInfoPanelRect, NativePanel);
+                else
+                    itemInfoPanel = DaggerfallUI.AddPanel(itemInfoPanelRect, NativePanel);
                 SetupItemInfoPanel();
             }
 
@@ -187,7 +197,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
 
             // Setup initial state
-            SelectTabPage(TabPages.WeaponsAndArmor);
+            SelectTabPage((windowMode == WindowModes.Identify) ? TabPages.MagicItems : TabPages.WeaponsAndArmor);
             SelectActionMode(ActionModes.Select);
 
             // Setup initial display
@@ -198,6 +208,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             UpdateAccessoryItemsDisplay();
             UpdateLocalTargetIcon();
             UpdateRemoteTargetIcon();
+            UpdateCostAndGold();
         }
 
         Color RepairItemBackgroundColourHandler(DaggerfallUnityItem item)
@@ -257,7 +268,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             localItems = PlayerEntity.Items;
 
             // Initialise merchant items collection
-            merchantItems.Clear();
+            if (windowMode != WindowModes.Buy)
+                merchantItems.Clear();
             remoteItems = merchantItems;
             remoteTargetType = RemoteTargetTypes.Merchant;
 

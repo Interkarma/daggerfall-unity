@@ -791,25 +791,27 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
-            // Does the NPC offer a guild service?
-            UserInterfaceManager uiManager = DaggerfallUI.Instance.UserInterfaceManager;
-            if (Enum.IsDefined(typeof(GuildServices), npc.Data.factionID))
-            {
-                GuildServices guildService = (GuildServices)npc.Data.factionID;
-                Debug.Log("NPC offers guild service: " + guildService.ToString());
-                uiManager.PushWindow(new DaggerfallGuildServicePopupWindow(uiManager, npc, guildService));
-                return;
-            }
-
-            // Check social group e.g. merchant.
+            // Get faction data.
             FactionFile.FactionData factionData;
             if (playerEnterExit.IsPlayerInsideBuilding &&
                 GameManager.Instance.PlayerEntity.FactionData.GetFactionData(npc.Data.factionID, out factionData))
             {
-                Debug.LogFormat("faction id: {0}, social group: {1}", npc.Data.factionID, (FactionFile.SocialGroups)factionData.sgroup);
-                // Check if this NPC is a merchant.
-                if ((FactionFile.SocialGroups)factionData.sgroup == FactionFile.SocialGroups.Merchants)
+                UserInterfaceManager uiManager = DaggerfallUI.Instance.UserInterfaceManager;
+                Debug.LogFormat("faction id: {0}, social group: {1}, guild: {2}", 
+                    npc.Data.factionID, (FactionFile.SocialGroups)factionData.sgroup, (FactionFile.GuildGroups)factionData.ggroup);
+
+                // Check if the NPC offers a guild service.
+                if (Enum.IsDefined(typeof(GuildServices), npc.Data.factionID))
                 {
+                    FactionFile.GuildGroups guild = (FactionFile.GuildGroups)factionData.ggroup;
+                    GuildServices service = (GuildServices)npc.Data.factionID;
+                    Debug.Log("NPC offers guild service: " + service.ToString());
+                    uiManager.PushWindow(new DaggerfallGuildServicePopupWindow(uiManager, npc, guild, service));
+                }
+                // Check if this NPC is a merchant.
+                else if ((FactionFile.SocialGroups)factionData.sgroup == FactionFile.SocialGroups.Merchants)
+                {
+                    // Shop?
                     if (RMBLayout.IsShop(playerEnterExit.BuildingDiscoveryData.buildingType))
                     {
                         if (RMBLayout.IsRepairShop(playerEnterExit.BuildingDiscoveryData.buildingType))
@@ -817,13 +819,15 @@ namespace DaggerfallWorkshop.Game
                         else
                             uiManager.PushWindow(new DaggerfallMerchantServicePopupWindow(uiManager, npc, DaggerfallMerchantServicePopupWindow.Services.Sell));
                     }
+                    // Bank?
                     else if (playerEnterExit.BuildingDiscoveryData.buildingType == DFLocation.BuildingTypes.Bank)
                         uiManager.PushWindow(new DaggerfallMerchantServicePopupWindow(uiManager, npc, DaggerfallMerchantServicePopupWindow.Services.Banking));
+                    // Tavern?
                     else if (playerEnterExit.BuildingDiscoveryData.buildingType == DFLocation.BuildingTypes.Tavern)
                         // for now only talk to all npc in taverns - TODO: add tavern option in here
                         GameManager.Instance.TalkManager.TalkToStaticNPC(npc);
                 }
-                // TODO - more checks for npc social types? ... guild services etc?
+                // TODO - more checks for npc social types?
                 else // if no special handling had to be done for npc with social group of type merchant: talk to the static npc
                 {
                     GameManager.Instance.TalkManager.TalkToStaticNPC(npc);

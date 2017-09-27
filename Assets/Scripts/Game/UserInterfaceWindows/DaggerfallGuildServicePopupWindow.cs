@@ -11,8 +11,11 @@
 
 using UnityEngine;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -70,17 +73,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Texture2D baseTexture;
 
         StaticNPC serviceNPC;
-        GuildServices currentService;
+        FactionFile.GuildGroups guild;
+        GuildServices service;
 
         #endregion
 
         #region Constructors
 
-        public DaggerfallGuildServicePopupWindow(IUserInterfaceManager uiManager, StaticNPC npc, GuildServices service)
+        public DaggerfallGuildServicePopupWindow(IUserInterfaceManager uiManager, StaticNPC npc, FactionFile.GuildGroups guild, GuildServices service)
             : base(uiManager)
         {
             serviceNPC = npc;
-            currentService = service;
+            this.guild = guild;
+            this.service = service;
             // Clear background
             ParentPanel.BackgroundColor = Color.clear;
         }
@@ -103,6 +108,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Join Guild button
             joinButton = DaggerfallUI.AddButton(joinButtonRect, mainPanel);
+            joinButton.OnMouseClick += JoinButton_OnMouseClick;
             joinButton.BackgroundColor = DaggerfallUI.DaggerfallUnityNotImplementedColor;
 
             // Talk button
@@ -131,7 +137,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         string GetServiceLabelText()
         {
-            switch (currentService)
+            switch (service)
             {
                 case GuildServices.MG_Quests:
                     return HardStrings.serviceQuests;
@@ -171,6 +177,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Event Handlers
 
+        private void JoinButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            DaggerfallUI.MessageBox("Joining guild " + guild + " not yet implemented.");
+        }
+
         private void TalkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             GameManager.Instance.TalkManager.TalkToStaticNPC(serviceNPC);
@@ -179,10 +190,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ServiceButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             CloseWindow();
-            switch (currentService)
+            switch (service)
             {
                 case GuildServices.MG_Identify:
                     uiManager.PushWindow(new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Identify, this));
+                    break;
+                case GuildServices.MG_Buy_Magic_Items:
+                    DaggerfallTradeWindow tradeWindow = new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Buy, this);
+                    // TODO: replace with proper generation...
+                    PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+                    ItemCollection items = new ItemCollection();
+                    items.AddItem(ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race));
+                    items.AddItem(ItemBuilder.CreateRandomBook());
+                    items.AddItem(ItemBuilder.CreateRandomClothing(playerEntity.Gender));
+                    items.AddItem(ItemBuilder.CreateRandomIngredient());
+                    items.AddItem(ItemBuilder.CreateRandomReligiousItem());
+                    items.AddItem(ItemBuilder.CreateRandomWeapon(playerEntity.Level));
+                    tradeWindow.MerchantItems = items;
+                    uiManager.PushWindow(tradeWindow);
                     break;
                 case GuildServices.MG_Buy_Spells:
                     //uiManager.PushWindow(new DaggerfallBankingWindow(uiManager, this));
