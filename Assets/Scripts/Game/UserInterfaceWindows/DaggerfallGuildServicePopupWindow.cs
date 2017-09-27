@@ -76,6 +76,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         FactionFile.GuildGroups guild;
         GuildServices service;
 
+        static ItemCollection merchantItems;
+
         #endregion
 
         #region Constructors
@@ -93,6 +95,32 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #endregion
 
         #region Setup Methods
+
+        // TODO: replace with proper merchant item generation...
+        ItemCollection GetMerchantItems()
+        {
+            if (merchantItems == null)
+            {
+                PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+                ItemCollection items = new ItemCollection();
+                items.AddItem(ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race));
+                items.AddItem(ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race));
+                items.AddItem(ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race));
+                items.AddItem(ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race));
+                items.AddItem(ItemBuilder.CreateRandomBook());
+                items.AddItem(ItemBuilder.CreateRandomClothing(playerEntity.Gender));
+                items.AddItem(ItemBuilder.CreateRandomClothing(playerEntity.Gender));
+                items.AddItem(ItemBuilder.CreateRandomClothing(playerEntity.Gender));
+                items.AddItem(ItemBuilder.CreateRandomClothing(playerEntity.Gender));
+                items.AddItem(ItemBuilder.CreateRandomIngredient());
+                items.AddItem(ItemBuilder.CreateRandomReligiousItem());
+                items.AddItem(ItemBuilder.CreateRandomWeapon(playerEntity.Level));
+                items.AddItem(ItemBuilder.CreateRandomWeapon(playerEntity.Level));
+                items.AddItem(ItemBuilder.CreateRandomWeapon(playerEntity.Level));
+                merchantItems = items;
+            }
+            return merchantItems;
+        }
 
         protected override void Setup()
         {
@@ -199,16 +227,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     break;
                 case GuildServices.MG_Buy_Magic_Items:
                     DaggerfallTradeWindow tradeWindow = new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Buy, this);
-                    // TODO: replace with proper merchant item generation...
-                    PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
-                    ItemCollection items = new ItemCollection();
-                    items.AddItem(ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race));
-                    items.AddItem(ItemBuilder.CreateRandomBook());
-                    items.AddItem(ItemBuilder.CreateRandomClothing(playerEntity.Gender));
-                    items.AddItem(ItemBuilder.CreateRandomIngredient());
-                    items.AddItem(ItemBuilder.CreateRandomReligiousItem());
-                    items.AddItem(ItemBuilder.CreateRandomWeapon(playerEntity.Level));
-                    tradeWindow.MerchantItems = items;
+                    tradeWindow.MerchantItems = GetMerchantItems();
                     uiManager.PushWindow(tradeWindow);
                     break;
                 case GuildServices.MG_Buy_Spells:
