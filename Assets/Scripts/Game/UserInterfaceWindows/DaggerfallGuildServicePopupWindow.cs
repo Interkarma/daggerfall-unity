@@ -147,6 +147,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     return HardStrings.serviceBuySpells;
                 case GuildServices.MG_Buy_Magic_Items:
                     return HardStrings.serviceBuyMagicItems;
+                case GuildServices.MG_Make_Spells:
+                    return HardStrings.serviceMakeSpells;
                 case GuildServices.MG_Make_Magic_Items:
                     return HardStrings.serviceMakeMagicItems;
                 case GuildServices.MG_Daedra_Summoning:
@@ -197,7 +199,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     break;
                 case GuildServices.MG_Buy_Magic_Items:
                     DaggerfallTradeWindow tradeWindow = new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Buy, this);
-                    // TODO: replace with proper generation...
+                    // TODO: replace with proper merchant item generation...
                     PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
                     ItemCollection items = new ItemCollection();
                     items.AddItem(ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race));

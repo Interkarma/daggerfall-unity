@@ -85,8 +85,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         WindowModes windowMode = WindowModes.Inventory;
         PlayerGPS.DiscoveredBuilding buildingDiscoveryData;
+        List<ItemGroups> itemTypesAccepted = storeBuysItemType[DFLocation.BuildingTypes.GeneralStore];
 
         ItemCollection merchantItems = new ItemCollection();
+        ItemCollection basketItems = new ItemCollection();
+
         bool usingWagon = false;
         int cost = 0;
 
@@ -263,6 +266,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             //Debug.Log(string.Format("{0} {1} {2}", buildingSummary.buildingKey, buildingSummary.BuildingType, buildingSummary.Quality));
             if (buildingDiscoveryData.buildingKey <= 0)
                 DaggerfallUI.MessageBox(HardStrings.oldSaveNoTrade, true);
+            else if (windowMode == WindowModes.Sell)
+                itemTypesAccepted = storeBuysItemType[buildingDiscoveryData.buildingType];
 
             // Local items starts pointing to player inventory
             localItems = PlayerEntity.Items;
@@ -306,21 +311,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void UpdateCostAndGold()
         {
             cost = 0;
-            for (int i = 0; i < remoteItems.Count; i++)
+            if (remoteItems != null)
             {
-                DaggerfallUnityItem item = remoteItems.GetItem(i);
-                switch (windowMode)
+                for (int i = 0; i < remoteItems.Count; i++)
                 {
-                    case WindowModes.Sell:
-                        cost += FormulaHelper.CalculateCost(item.value, buildingDiscoveryData.quality) * item.stackCount;
-                        break;
-                    case WindowModes.Repair:
-                        cost += FormulaHelper.CalculateItemRepairCost(item.value, buildingDiscoveryData.quality, item.currentCondition, item.maxCondition) * item.stackCount;
-                        break;
-                    case WindowModes.Identify:
-                        if (!item.IsIdentified)
-                            cost += FormulaHelper.CalculateItemIdentifyCost(item.value, buildingDiscoveryData.quality);
-                        break;
+                    DaggerfallUnityItem item = remoteItems.GetItem(i);
+                    switch (windowMode)
+                    {
+                        case WindowModes.Sell:
+                            cost += FormulaHelper.CalculateCost(item.value, buildingDiscoveryData.quality) * item.stackCount;
+                            break;
+                        case WindowModes.Repair:
+                            cost += FormulaHelper.CalculateItemRepairCost(item.value, buildingDiscoveryData.quality, item.currentCondition, item.maxCondition) * item.stackCount;
+                            break;
+                        case WindowModes.Identify:
+                            if (!item.IsIdentified)
+                                cost += FormulaHelper.CalculateItemIdentifyCost(item.value, buildingDiscoveryData.quality);
+                            break;
+                    }
                 }
             }
             costLabel.Text = cost.ToString();
@@ -402,17 +410,32 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected override void FilterLocalItems()
         {
-            base.FilterLocalItems();
+            localItemsFiltered.Clear();
 
-            if (windowMode == WindowModes.Sell)
+            if (windowMode == WindowModes.Buy && basketItems != null)
             {
-                // Remove any items not accepted by this merchant type.
-                List<ItemGroups> itemTypesAccepted = storeBuysItemType[buildingDiscoveryData.buildingType];
-                localItemsFiltered.RemoveAll(i => !itemTypesAccepted.Contains(i.ItemGroup));
+                // Add any basket items first.
+                for (int i = 0; i < basketItems.Count; i++)
+                {
+                    DaggerfallUnityItem item = basketItems.GetItem(i);
+                    // Add if not equipped
+                    if (!item.IsEquipped)
+                        AddLocalItem(item);
+                }
             }
-            // Do repair/identify have restrictions?
-            // repair: not in classic, the condition is checked (which means only weps & armour since only they get damage I think)
-            // identify: ?
+
+            if (localItems != null)
+            {
+                // Add local items to list
+                for (int i = 0; i < localItems.Count; i++)
+                {
+                    DaggerfallUnityItem item = localItems.GetItem(i);
+
+                    // Add if not equipped & accepted for selling
+                    if (!item.IsEquipped && (windowMode != WindowModes.Sell || itemTypesAccepted.Contains(item.ItemGroup)))
+                        AddLocalItem(item);
+                }
+            }
         }
 
         protected void ShowWagon(bool show)
@@ -499,7 +522,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (selectedActionMode == ActionModes.Select)
             {
                 if (CanCarry(item) || (usingWagon && WagonCanHold(item)))
-                    TransferItem(item, remoteItems, localItems);
+                {
+                    if (windowMode == WindowModes.Buy)
+                        TransferItem(item, remoteItems, basketItems);
+                    else
+                        TransferItem(item, remoteItems, localItems);
+                }
             }
             else if (selectedActionMode == ActionModes.Info)
             {
