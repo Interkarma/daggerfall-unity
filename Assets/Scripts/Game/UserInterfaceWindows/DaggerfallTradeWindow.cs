@@ -75,6 +75,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string sellButtonsTextureName = "INVE10I0.IMG";
         const string sellButtonsGoldTextureName = "INVE11I0.IMG";
         const string repairButtonsTextureName = "INVE12I0.IMG";
+        const string identifyButtonsTextureName = "INVE14I0.IMG";
         const string costPanelTextureName = "SHOP00I0.IMG";
 
         const int doesNotNeedToBeRepairedTextId = 24;
@@ -304,6 +305,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     case WindowModes.Repair:
                         cost += FormulaHelper.CalculateItemRepairCost(item.value, buildingDiscoveryData.quality, item.currentCondition, item.maxCondition) * item.stackCount;
                         break;
+                    case WindowModes.Identify:
+                        if (!item.IsIdentified)
+                            cost += FormulaHelper.CalculateItemIdentifyCost(item.value, buildingDiscoveryData.quality);
+                        break;
                 }
             }
             costLabel.Text = cost.ToString();
@@ -428,6 +433,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 actionButtonsTexture = ImageReader.GetTexture(buyButtonsTextureName);
             else if (windowMode == WindowModes.Repair)
                 actionButtonsTexture = ImageReader.GetTexture(repairButtonsTextureName);
+            else if (windowMode == WindowModes.Identify)
+                actionButtonsTexture = ImageReader.GetTexture(identifyButtonsTextureName);
 
             actionButtonsGoldTexture = ImageReader.GetTexture(sellButtonsGoldTextureName);
             selectNotSelected = ImageReader.GetSubTexture(actionButtonsTexture, selectButtonRect);
@@ -458,6 +465,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         TransferItem(item, localItems, remoteItems);
                     else
                         DaggerfallUI.MessageBox(doesNotNeedToBeRepairedTextId);
+                }
+                else if (windowMode == WindowModes.Identify)
+                {
+                    // Check if item is unidentified & transfer
+                    if (!item.IsIdentified)
+                        TransferItem(item, localItems, remoteItems);
+                    else
+                        DaggerfallUI.MessageBox(HardStrings.doesntNeedIdentifying);
                 }
             }
             else if (selectedActionMode == ActionModes.Info)
@@ -545,6 +560,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         {
                             DaggerfallUnityItem item = remoteItems.GetItem(i);
                             item.currentCondition = item.maxCondition;
+                        }
+                        break;
+                    case WindowModes.Identify:
+                        PlayerEntity.DeductGoldAmount(GetTradePrice());
+                        for (int i = 0; i < remoteItems.Count; i++)
+                        {
+                            DaggerfallUnityItem item = remoteItems.GetItem(i);
+                            item.IdentifyItem();
                         }
                         break;
                 }

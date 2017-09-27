@@ -64,36 +64,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #endregion
 
-        #region UI Textures
-
-        Texture2D baseTexture;
-
-        #endregion
-
         #region Fields
 
         const string baseTextureName = "GILD00I0.IMG";      // Join Guild / Talk / Service
+        Texture2D baseTexture;
+
+        StaticNPC serviceNPC;
         GuildServices currentService;
-
-        StaticNPC merchantNPC;
-
-        #endregion
-
-        #region Properties
-
-        public StaticNPC MerchantNPC
-        {
-            get { return merchantNPC; }
-            set { merchantNPC = value; }
-        }
 
         #endregion
 
         #region Constructors
 
-        public DaggerfallGuildServicePopupWindow(IUserInterfaceManager uiManager, GuildServices service)
+        public DaggerfallGuildServicePopupWindow(IUserInterfaceManager uiManager, StaticNPC npc, GuildServices service)
             : base(uiManager)
         {
+            serviceNPC = npc;
             currentService = service;
             // Clear background
             ParentPanel.BackgroundColor = Color.clear;
@@ -147,11 +133,32 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             switch (currentService)
             {
-                default:
+                case GuildServices.MG_Quests:
+                    return HardStrings.serviceQuests;
                 case GuildServices.MG_Identify:
                     return HardStrings.serviceIdentify;
                 case GuildServices.MG_Buy_Spells:
                     return HardStrings.serviceBuySpells;
+                case GuildServices.MG_Buy_Magic_Items:
+                    return HardStrings.serviceBuyMagicItems;
+                case GuildServices.MG_Make_Magic_Items:
+                    return HardStrings.serviceMakeMagicItems;
+                case GuildServices.MG_Daedra_Summoning:
+                    return HardStrings.serviceDaedraSummon;
+                case GuildServices.MG_Teleportation:
+                    return HardStrings.serviceTeleport;
+                case GuildServices.MG_Training:
+                    return HardStrings.serviceTraining;
+                case GuildServices.FG_Repairs:
+                    return HardStrings.serviceRepairs;
+                case GuildServices.FG_Training:
+                    return HardStrings.serviceTraining;
+                case GuildServices.Cure_Diseases:
+                    return HardStrings.serviceCure;
+                case GuildServices.Make_Donation:
+                    return HardStrings.serviceDonate;
+                default:
+                    return "?";
             }
         }
 
@@ -166,7 +173,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void TalkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            GameManager.Instance.TalkManager.TalkToStaticNPC(merchantNPC);
+            GameManager.Instance.TalkManager.TalkToStaticNPC(serviceNPC);
         }
 
         private void ServiceButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -174,12 +181,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             CloseWindow();
             switch (currentService)
             {
-                default:
                 case GuildServices.MG_Identify:
                     uiManager.PushWindow(new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Identify, this));
                     break;
                 case GuildServices.MG_Buy_Spells:
                     //uiManager.PushWindow(new DaggerfallBankingWindow(uiManager, this));
+                    //break;
+                default:
+                    DaggerfallUI.MessageBox("Guild service not yet implemented.");
                     break;
             }
         }

@@ -37,35 +37,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #endregion
 
-        #region UI Textures
-
-        Texture2D baseTexture;
-
-        #endregion
-
         #region Fields
 
         const string baseTextureName = "REPR01I0.IMG";      // Repair / Talk / Sell
+        Texture2D baseTexture;
 
         StaticNPC merchantNPC;
 
         #endregion
 
-        #region Properties
-
-        public StaticNPC MerchantNPC
-        {
-            get { return merchantNPC; }
-            set { merchantNPC = value; }
-        }
-
-        #endregion
-
         #region Constructors
 
-        public DaggerfallMerchantRepairPopupWindow(IUserInterfaceManager uiManager)
+        public DaggerfallMerchantRepairPopupWindow(IUserInterfaceManager uiManager, StaticNPC npc)
             : base(uiManager)
         {
+            merchantNPC = npc;
             // Clear background
             ParentPanel.BackgroundColor = Color.clear;
         }
