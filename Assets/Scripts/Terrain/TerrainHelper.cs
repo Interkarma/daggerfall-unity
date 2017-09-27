@@ -381,6 +381,7 @@ namespace DaggerfallWorkshop
 
             // Remove exiting billboards
             dfBillboardBatch.Clear();
+            MeshReplacement.ClearNatureGameObjects(terrain);
 
             // Seed random with terrain key
             Random.InitState(MakeTerrainKey(dfTerrain.MapPixelX, dfTerrain.MapPixelY));
