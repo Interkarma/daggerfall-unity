@@ -400,12 +400,19 @@ namespace DaggerfallWorkshop.Game.Items
         public static DaggerfallUnityItem SetItemPropertiesByMaterial(DaggerfallUnityItem item, WeaponMaterialTypes material)
         {
             item.value *= 3 * valueMultipliersByMaterial[(int)material];
-            item.weightInKg *= weightMultipliersByMaterial[(int)material] / 4;
+            item.weightInKg = CalculateWeightForMaterial(item, material);
             item.maxCondition *= conditionMultipliersByMaterial[(int)material] / 4;
             item.currentCondition = item.maxCondition;
             item.enchantmentPoints *= enchantmentPointMultipliersByMaterial[(int)material] / 4;
 
             return item;
+        }
+
+        static float CalculateWeightForMaterial(DaggerfallUnityItem item, WeaponMaterialTypes material)
+        {
+            int quarterKgs = (int)(item.weightInKg * 4);
+            double matQuarterKgs = (float)(quarterKgs * weightMultipliersByMaterial[(int)material]) / 4;
+            return (float) Math.Round(matQuarterKgs) / 4;
         }
 
         /// <summary>
