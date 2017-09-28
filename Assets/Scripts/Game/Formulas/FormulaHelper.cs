@@ -718,6 +718,13 @@ namespace DaggerfallWorkshop.Game.Formulas
             return cost;
         }
 
+        // TODO: implement DF formula - this is a placeholder
+        public static int CalculateItemIdentifyCost(int baseItemValue, int shopQuality)
+        {
+            int cost = baseItemValue / 5;
+            return CalculateCost(cost, shopQuality);
+        }
+
         public static int CalculateTradePrice(int cost, int shopQuality, bool selling)
         {
             Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;

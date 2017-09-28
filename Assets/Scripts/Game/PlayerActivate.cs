@@ -15,6 +15,7 @@ using System.Collections;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
+using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Utility;
@@ -787,59 +788,59 @@ namespace DaggerfallWorkshop.Game
             if (specialNPCClickHandler)
             {
                 specialNPCClickHandler.DoClick();
+                return;
             }
-            else
+
+            // Get faction data.
+            FactionFile.FactionData factionData;
+            if (playerEnterExit.IsPlayerInsideBuilding &&
+                GameManager.Instance.PlayerEntity.FactionData.GetFactionData(npc.Data.factionID, out factionData))
             {
-                FactionFile.FactionData factionData;
-                if (playerEnterExit.IsPlayerInsideBuilding &&
-                    GameManager.Instance.PlayerEntity.FactionData.GetFactionData(npc.Data.factionID, out factionData))
-                {
-                    // Check if this NPC is a merchant.
-                    if ((FactionFile.SocialGroups)factionData.sgroup == FactionFile.SocialGroups.Merchants)
-                    {
-                        if (RMBLayout.IsShop(playerEnterExit.BuildingDiscoveryData.buildingType))
-                        {
-                            if (RMBLayout.IsRepairShop(playerEnterExit.BuildingDiscoveryData.buildingType))
-                            {
-                                DaggerfallMerchantRepairPopupWindow merchantRepairWindow = new DaggerfallMerchantRepairPopupWindow(DaggerfallUI.Instance.UserInterfaceManager);
-                                merchantRepairWindow.MerchantNPC = npc;
-                                DaggerfallUI.Instance.UserInterfaceManager.PushWindow(merchantRepairWindow);
-                            }
-                            else
-                            {
-                                DaggerfallMerchantServicePopupWindow merchantServiceSellWindow = new DaggerfallMerchantServicePopupWindow(DaggerfallUI.Instance.UserInterfaceManager, DaggerfallMerchantServicePopupWindow.Services.Sell);
-                                merchantServiceSellWindow.MerchantNPC = npc;
-                                DaggerfallUI.Instance.UserInterfaceManager.PushWindow(merchantServiceSellWindow);
-                            }
-                        }
-                        else if (playerEnterExit.BuildingDiscoveryData.buildingType == DFLocation.BuildingTypes.Bank)
-                        {
-                            DaggerfallMerchantServicePopupWindow merchantServiceBankingWindow = new DaggerfallMerchantServicePopupWindow(DaggerfallUI.Instance.UserInterfaceManager, DaggerfallMerchantServicePopupWindow.Services.Banking);
-                            merchantServiceBankingWindow.MerchantNPC = npc;
-                            DaggerfallUI.Instance.UserInterfaceManager.PushWindow(merchantServiceBankingWindow);
+                UserInterfaceManager uiManager = DaggerfallUI.Instance.UserInterfaceManager;
+                Debug.LogFormat("faction id: {0}, social group: {1}, guild: {2}", 
+                    npc.Data.factionID, (FactionFile.SocialGroups)factionData.sgroup, (FactionFile.GuildGroups)factionData.ggroup);
 
-                        }
-                        else if (playerEnterExit.BuildingDiscoveryData.buildingType == DFLocation.BuildingTypes.Tavern)
-                        {
-                            // for now only talk to all npc in taverns - TODO: add tavern option in here
-                            GameManager.Instance.TalkManager.TalkToStaticNPC(npc);
-                        }
-                    }
-                    // TODO - more checks for npc social types? ... guild services etc?
-                    else // if no special handling had to be done for npc with social group of type merchant: talk to the static npc
-                    {
-                        GameManager.Instance.TalkManager.TalkToStaticNPC(npc);
-                    }
+                // Check if the NPC offers a guild service.
+                if (Enum.IsDefined(typeof(GuildServices), npc.Data.factionID))
+                {
+                    FactionFile.GuildGroups guild = (FactionFile.GuildGroups)factionData.ggroup;
+                    GuildServices service = (GuildServices)npc.Data.factionID;
+                    Debug.Log("NPC offers guild service: " + service.ToString());
+                    uiManager.PushWindow(new DaggerfallGuildServicePopupWindow(uiManager, npc, guild, service));
                 }
-                else // if no special handling had to be done (all remaining npcs of the remaining social groups not handled explicitely above): default is talk to the static npc
+                // Check if this NPC is a merchant.
+                else if ((FactionFile.SocialGroups)factionData.sgroup == FactionFile.SocialGroups.Merchants)
                 {
-                    // with one exception: guards
-                    if (npc.Data.billboardArchiveIndex == 183 && npc.Data.billboardRecordIndex == 3) // detect if clicked guard (comment Nystul: didn't find a better mechanism than billboard texture check)
-                        return; // if guard was clicked don't open talk window
-
-                    // otherwise open talk window
+                    // Shop?
+                    if (RMBLayout.IsShop(playerEnterExit.BuildingDiscoveryData.buildingType))
+                    {
+                        if (RMBLayout.IsRepairShop(playerEnterExit.BuildingDiscoveryData.buildingType))
+                            uiManager.PushWindow(new DaggerfallMerchantRepairPopupWindow(uiManager, npc));
+                        else
+                            uiManager.PushWindow(new DaggerfallMerchantServicePopupWindow(uiManager, npc, DaggerfallMerchantServicePopupWindow.Services.Sell));
+                    }
+                    // Bank?
+                    else if (playerEnterExit.BuildingDiscoveryData.buildingType == DFLocation.BuildingTypes.Bank)
+                        uiManager.PushWindow(new DaggerfallMerchantServicePopupWindow(uiManager, npc, DaggerfallMerchantServicePopupWindow.Services.Banking));
+                    // Tavern?
+                    else if (playerEnterExit.BuildingDiscoveryData.buildingType == DFLocation.BuildingTypes.Tavern)
+                        // for now only talk to all npc in taverns - TODO: add tavern option in here
+                        GameManager.Instance.TalkManager.TalkToStaticNPC(npc);
+                }
+                // TODO - more checks for npc social types?
+                else // if no special handling had to be done for npc with social group of type merchant: talk to the static npc
+                {
                     GameManager.Instance.TalkManager.TalkToStaticNPC(npc);
                 }
+            }
+            else // if no special handling had to be done (all remaining npcs of the remaining social groups not handled explicitely above): default is talk to the static npc
+            {
+                // with one exception: guards
+                if (npc.Data.billboardArchiveIndex == 183 && npc.Data.billboardRecordIndex == 3) // detect if clicked guard (comment Nystul: didn't find a better mechanism than billboard texture check)
+                    return; // if guard was clicked don't open talk window
+
+                // otherwise open talk window
+                GameManager.Instance.TalkManager.TalkToStaticNPC(npc);
             }
         }
 
