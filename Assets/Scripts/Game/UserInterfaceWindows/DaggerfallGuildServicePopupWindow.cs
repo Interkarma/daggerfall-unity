@@ -108,10 +108,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 items.AddItem(ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race));
                 items.AddItem(ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race));
                 items.AddItem(ItemBuilder.CreateRandomBook());
-                items.AddItem(ItemBuilder.CreateRandomClothing(playerEntity.Gender));
-                items.AddItem(ItemBuilder.CreateRandomClothing(playerEntity.Gender));
-                items.AddItem(ItemBuilder.CreateRandomClothing(playerEntity.Gender));
-                items.AddItem(ItemBuilder.CreateRandomClothing(playerEntity.Gender));
+                items.AddItem(ItemBuilder.CreateRandomClothing(playerEntity.Gender, playerEntity.Race));
+                items.AddItem(ItemBuilder.CreateRandomClothing(playerEntity.Gender, playerEntity.Race));
+                items.AddItem(ItemBuilder.CreateRandomClothing(playerEntity.Gender, playerEntity.Race));
+                items.AddItem(ItemBuilder.CreateRandomClothing(playerEntity.Gender, playerEntity.Race));
                 items.AddItem(ItemBuilder.CreateRandomIngredient());
                 items.AddItem(ItemBuilder.CreateRandomReligiousItem());
                 items.AddItem(ItemBuilder.CreateRandomWeapon(playerEntity.Level));

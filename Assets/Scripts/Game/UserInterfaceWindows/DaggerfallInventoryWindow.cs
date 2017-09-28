@@ -608,11 +608,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        protected virtual float GetCarriedWeight()
+        {
+            return playerEntity.CarriedWeight;
+        }
+
         protected virtual void UpdateLocalTargetIcon()
         {
             // Never changes on inventory window.
             localTargetIconPanel.BackgroundTexture = DaggerfallUnity.ItemHelper.GetContainerImage(InventoryContainerImages.Backpack).texture;
-            float weight = PlayerEntity.CarriedWeight;
+            float weight = GetCarriedWeight();
             localTargetIconLabel.Text = String.Format(weight % 1 == 0 ? "{0:F0} / {1}" : "{0:F2} / {1}", weight, PlayerEntity.MaxEncumbrance);
         }
 
@@ -1019,7 +1024,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected bool CanCarry(DaggerfallUnityItem item)
         {
             // Check weight limit
-            if (playerEntity.CarriedWeight + item.weightInKg > playerEntity.MaxEncumbrance)
+            if (GetCarriedWeight() + item.weightInKg > playerEntity.MaxEncumbrance)
             {
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
                 messageBox.SetText(HardStrings.cannotCarryAnymore);
