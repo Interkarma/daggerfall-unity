@@ -194,7 +194,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void SetServiceText()
         {
             if (currentService == TempGuildServices.Questor)
-                serviceText.Text = HardStrings.getQuest;
+                serviceText.Text = HardStrings.serviceQuests;
         }
 
         void OfferCuratedGuildQuest()

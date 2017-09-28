@@ -102,9 +102,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string skillImprove = "Your %s skill has improved.";
         public const string mustDistributeBonusPoints = "You must distribute all bonus points.";
 
-        public const string getQuest = "Get Quest";
+        public const string serviceQuests = "Get Quest";
         public const string serviceSell = "Sell";
         public const string serviceBanking = "Banking";
+        public const string serviceIdentify = "Identify";
+        public const string serviceBuySpells = "Buy Spells";
+        public const string serviceTraining = "Training";
+        public const string serviceTeleport = "Teleportation";
+        public const string serviceMakeSpells = "Make Spells";
+        public const string serviceBuyMagicItems = "Buy Magic Items";
+        public const string serviceDaedraSummon = "Daedra Summoning";
+        public const string serviceMakeMagicItems = "Make Magic Items";
+        public const string serviceRepairs = "Repairs";
+        public const string serviceDonate = "Make Donation";
+        public const string serviceCure = "Cure Disease";
+
+        public const string doesntNeedIdentifying = "This does not need to be identified.";
 
         public const string pronounHe = "he";
         public const string pronounShe = "she";

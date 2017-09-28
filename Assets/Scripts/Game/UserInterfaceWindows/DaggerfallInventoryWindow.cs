@@ -652,39 +652,41 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 for (int i = 0; i < localItems.Count; i++)
                 {
                     DaggerfallUnityItem item = localItems.GetItem(i);
-
-                    // Reject if equipped
-                    if (item.IsEquipped)
-                        continue;
-
-                    bool isWeaponOrArmor = (item.ItemGroup == ItemGroups.Weapons || item.ItemGroup == ItemGroups.Armor);
-
-                    // Add based on view
-                    if (selectedTabPage == TabPages.WeaponsAndArmor)
-                    {
-                        // Weapons and armor
-                        if (isWeaponOrArmor && !item.IsEnchanted)
-                            localItemsFiltered.Add(item);
-                    }
-                    else if (selectedTabPage == TabPages.MagicItems)
-                    {
-                        // Enchanted items
-                        if (item.IsEnchanted)
-                            localItemsFiltered.Add(item);
-                    }
-                    else if (selectedTabPage == TabPages.Ingredients)
-                    {
-                        // Ingredients
-                        if (item.IsIngredient && !item.IsEnchanted)
-                            localItemsFiltered.Add(item);
-                    }
-                    else if (selectedTabPage == TabPages.ClothingAndMisc)
-                    {
-                        // Everything else
-                        if (!isWeaponOrArmor && !item.IsEnchanted && !item.IsIngredient)
-                            localItemsFiltered.Add(item);
-                    }
+                    // Add if not equipped
+                    if (!item.IsEquipped)
+                        AddLocalItem(item);
                 }
+            }
+        }
+
+        protected void AddLocalItem(DaggerfallUnityItem item)
+        {
+            bool isWeaponOrArmor = (item.ItemGroup == ItemGroups.Weapons || item.ItemGroup == ItemGroups.Armor);
+
+            // Add based on view
+            if (selectedTabPage == TabPages.WeaponsAndArmor)
+            {
+                // Weapons and armor
+                if (isWeaponOrArmor && !item.IsEnchanted)
+                    localItemsFiltered.Add(item);
+            }
+            else if (selectedTabPage == TabPages.MagicItems)
+            {
+                // Enchanted items
+                if (item.IsEnchanted)
+                    localItemsFiltered.Add(item);
+            }
+            else if (selectedTabPage == TabPages.Ingredients)
+            {
+                // Ingredients
+                if (item.IsIngredient && !item.IsEnchanted)
+                    localItemsFiltered.Add(item);
+            }
+            else if (selectedTabPage == TabPages.ClothingAndMisc)
+            {
+                // Everything else
+                if (!isWeaponOrArmor && !item.IsEnchanted && !item.IsIngredient)
+                    localItemsFiltered.Add(item);
             }
         }
 
@@ -720,7 +722,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     return;
 
                 // Get item at this equip index (if any)
-                DaggerfallUnityItem item = playerEntity.ItemEquipTable.GetItem((EquipSlots)button.Tag);
+                DaggerfallUnityItem item = PlayerEntity.ItemEquipTable.GetItem((EquipSlots)button.Tag);
                 if (item == null)
                 {
                     panel.BackgroundTexture = null;
@@ -772,6 +774,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             removeSelected = ImageReader.GetSubTexture(goldTexture, removeButtonRect);
             useSelected = ImageReader.GetSubTexture(goldTexture, useButtonRect);
 
+            // Cut out info panel texture from item maker
             Texture2D infoBaseTexture = ImageReader.GetTexture(infoTextureName);
             infoTexture = ImageReader.GetSubTexture(infoBaseTexture, infoCutoutRect);
         }
