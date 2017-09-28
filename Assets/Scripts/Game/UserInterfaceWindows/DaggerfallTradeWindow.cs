@@ -382,7 +382,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected void ClearSelectedItems()
         {
             if (windowMode == WindowModes.Buy)
-            {   // Return all basket items to merchant.
+            {   // Return all basket items to merchant, unequipping if necessary.
+                for (int i = 0; i < basketItems.Count; i++)
+                {
+                    DaggerfallUnityItem item = basketItems.GetItem(i);
+                    if (item.IsEquipped)
+                        UnequipItem(item);
+                }
                 remoteItems.TransferAll(basketItems);
             }
             else
@@ -390,6 +396,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Note: ignoring weight here, like classic. Priority is to not lose any items.
                 PlayerEntity.Items.TransferAll(remoteItems);
             }
+        }
+
+        protected override float GetCarriedWeight()
+        {
+            return PlayerEntity.CarriedWeight + basketItems.GetWeight();
         }
 
         protected override void UpdateLocalTargetIcon()
@@ -432,7 +443,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             localItemsFiltered.Clear();
 
-            // Add any basket items first.
+            // Add any basket items to filtered list first
             if (windowMode == WindowModes.Buy && basketItems != null)
             {
                 for (int i = 0; i < basketItems.Count; i++)
@@ -443,7 +454,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         AddLocalItem(item);
                 }
             }
-            // Add local items to list
+            // Add local items to filtered list
             if (localItems != null)
             {
                 for (int i = 0; i < localItems.Count; i++)
@@ -511,8 +522,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         break;
 
                     case WindowModes.Buy:
-                        if (remoteItems != null && basketItems.Contains(item))
-                            TransferItem(item, basketItems, remoteItems);
+                        if (usingWagon)
+                            if (CanCarry(item))
+                                TransferItem(item, localItems, PlayerEntity.Items);
+                            else
+                                break;
+                        EquipItem(item);
                         break;
 
                     case WindowModes.Repair:
