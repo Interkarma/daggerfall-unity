@@ -411,8 +411,8 @@ namespace DaggerfallWorkshop.Game.Items
         static float CalculateWeightForMaterial(DaggerfallUnityItem item, WeaponMaterialTypes material)
         {
             int quarterKgs = (int)(item.weightInKg * 4);
-            double matQuarterKgs = (float)(quarterKgs * weightMultipliersByMaterial[(int)material]) / 4;
-            return (float) Math.Round(matQuarterKgs) / 4;
+            float matQuarterKgs = (float)(quarterKgs * weightMultipliersByMaterial[(int)material]) / 4;
+            return Mathf.Round(matQuarterKgs) / 4;
         }
 
         /// <summary>

@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -95,18 +95,16 @@ namespace DaggerfallWorkshop.Game
             // Generate items
             loot.GenerateItems();
 
-            // This is no longer required as enemy loot is now added to entity item collection
+            // This is still required so enemy equipment is not marked as equipped
             // This item collection is transferred to loot container below
-            //// Add any equipped items to loot
-            //for (int i = (int)Items.EquipSlots.Head; i < (int)Items.EquipSlots.Feet; i++)
-            //{
-            //    Items.DaggerfallUnityItem item = enemyEntity.ItemEquipTable.GetItem((Items.EquipSlots)i);
-            //    if (item != null)
-            //    {
-            //        enemyEntity.ItemEquipTable.UnequipItem((Items.EquipSlots)i);
-            //        loot.Items.AddItem(item);
-            //    }
-            //}
+            for (int i = (int)Items.EquipSlots.Head; i < (int)Items.EquipSlots.Feet; i++)
+            {
+                Items.DaggerfallUnityItem item = enemyEntity.ItemEquipTable.GetItem((Items.EquipSlots)i);
+                if (item != null)
+                {
+                    enemyEntity.ItemEquipTable.UnequipItem((Items.EquipSlots)i);
+                }
+            }
 
             // Chance of adding map
             loot.RandomlyAddMap(mobile.Summary.Enemy.MapChance);

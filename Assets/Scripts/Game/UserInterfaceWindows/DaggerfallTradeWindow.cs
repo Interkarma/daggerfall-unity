@@ -68,6 +68,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Texture2D selectSelected;
         Texture2D selectNotSelected;
 
+        ImageData coinsAnimation;
+
         #endregion
 
         #region Fields
@@ -78,10 +80,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string repairButtonsTextureName = "INVE12I0.IMG";
         const string identifyButtonsTextureName = "INVE14I0.IMG";
         const string costPanelTextureName = "SHOP00I0.IMG";
+        const string coinsAnimTextureName = "TEXTURE.434";
+
+        const float coinsAnimationDelay = 0.08f;
 
         const int doesNotNeedToBeRepairedTextId = 24;
 
-        Color purchaseItemBackgroundColor = new Color(0.6f, 0.55f, 0.0f, 0.4f);
         Color doneItemBackgroundColor = new Color(0.1f, 0.2f, 0.6f, 0.5f);
 
         WindowModes windowMode = WindowModes.Inventory;
@@ -194,8 +198,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Highlight purchasable items
             if (windowMode == WindowModes.Buy)
             {
-                localItemListScroller.BackgroundColourHandler = BuyItemBackgroundColourHandler;
-                remoteItemListScroller.BackgroundColourHandler = BuyItemBackgroundColourHandler;
+                localItemListScroller.BackgroundAnimationHandler = BuyItemBackgroundAnimationHandler;
+                remoteItemListScroller.BackgroundAnimationHandler = BuyItemBackgroundAnimationHandler;
+                localItemListScroller.BackgroundAnimationDelay = coinsAnimationDelay;
+                remoteItemListScroller.BackgroundAnimationDelay = coinsAnimationDelay;
             }
             // Setup special behaviour for remote items when repairing
             if (windowMode == WindowModes.Repair) {
@@ -221,14 +227,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             UpdateCostAndGold();
         }
 
-        Color BuyItemBackgroundColourHandler(DaggerfallUnityItem item)
-        {
-            return (basketItems.Contains(item) || remoteItems.Contains(item)) ? purchaseItemBackgroundColor : Color.clear;
-        }
-
         Color RepairItemBackgroundColourHandler(DaggerfallUnityItem item)
         {
             return (item.currentCondition == item.maxCondition) ? doneItemBackgroundColor : Color.clear;
+        }
+
+        Texture2D[] BuyItemBackgroundAnimationHandler(DaggerfallUnityItem item)
+        {
+            return (basketItems.Contains(item) || remoteItems.Contains(item)) ? coinsAnimation.animatedTextures : null;
         }
 
         string RepairItemLabelTextHandler(DaggerfallUnityItem item)
@@ -443,8 +449,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             localItemsFiltered.Clear();
 
-            // Add any basket items to filtered list first
-            if (windowMode == WindowModes.Buy && basketItems != null)
+            // Add any basket items to filtered list first, if not using wagon
+            if (windowMode == WindowModes.Buy && !usingWagon && basketItems != null)
             {
                 for (int i = 0; i < basketItems.Count; i++)
                 {
@@ -489,15 +495,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.LoadTextures();
 
             // Load special button texture.
-            if (windowMode == WindowModes.Sell)
+            if (windowMode == WindowModes.Sell) {
                 actionButtonsTexture = ImageReader.GetTexture(sellButtonsTextureName);
-            else if (windowMode == WindowModes.Buy)
+            } else if (windowMode == WindowModes.Buy) {
                 actionButtonsTexture = ImageReader.GetTexture(buyButtonsTextureName);
-            else if (windowMode == WindowModes.Repair)
+                coinsAnimation = ImageReader.GetImageData(coinsAnimTextureName, 6, 0, true, false, true);
+            } else if (windowMode == WindowModes.Repair) {
                 actionButtonsTexture = ImageReader.GetTexture(repairButtonsTextureName);
-            else if (windowMode == WindowModes.Identify)
+            } else if (windowMode == WindowModes.Identify) {
                 actionButtonsTexture = ImageReader.GetTexture(identifyButtonsTextureName);
-
+            }
             actionButtonsGoldTexture = ImageReader.GetTexture(sellButtonsGoldTextureName);
             selectNotSelected = ImageReader.GetSubTexture(actionButtonsTexture, selectButtonRect);
             selectSelected = ImageReader.GetSubTexture(actionButtonsGoldTexture, selectButtonRect);

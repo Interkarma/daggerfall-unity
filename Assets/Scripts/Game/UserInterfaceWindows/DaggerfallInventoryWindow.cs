@@ -113,6 +113,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected Texture2D infoTexture;
 
+        ImageData magicAnimation;
+
         #endregion
 
         #region Fields
@@ -120,6 +122,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string baseTextureName = "INVE00I0.IMG";
         const string goldTextureName = "INVE01I0.IMG";
         const string infoTextureName = "ITEM00I0.IMG";
+        const string magicAnimTextureName = "TEXTURE.434";
+
+        const float magicAnimationDelay = 0.15f;
 
         const int accessoryCount = 12;                                  // Number of accessory slots
         const int accessoryButtonMarginSize = 1;                        // Margin of accessory buttons
@@ -271,7 +276,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 Position = new Vector2(localItemListScrollerRect.x, localItemListScrollerRect.y),
                 Size = new Vector2(localItemListScrollerRect.width, localItemListScrollerRect.height),
-                BackgroundColourHandler = ItemBackgroundColourHandler
+                BackgroundColourHandler = ItemBackgroundColourHandler,
+                ForegroundAnimationHandler = MagicItemForegroundAnimationHander,
+                ForegroundAnimationDelay = magicAnimationDelay
             };
             NativePanel.Components.Add(localItemListScroller);
             localItemListScroller.OnItemClick += LocalItemListScroller_OnItemClick;
@@ -282,7 +289,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 Position = new Vector2(remoteItemListScrollerRect.x, remoteItemListScrollerRect.y),
                 Size = new Vector2(remoteItemListScrollerRect.width, remoteItemListScrollerRect.height),
-                BackgroundColourHandler = ItemBackgroundColourHandler
+                BackgroundColourHandler = ItemBackgroundColourHandler,
+                ForegroundAnimationHandler = MagicItemForegroundAnimationHander,
+                ForegroundAnimationDelay = magicAnimationDelay
             };
             NativePanel.Components.Add(remoteItemListScroller);
             remoteItemListScroller.OnItemClick += RemoteItemListScroller_OnItemClick;
@@ -297,6 +306,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return questItemBackgroundColor;
             else
                 return Color.clear;
+        }
+
+        Texture2D[] MagicItemForegroundAnimationHander(DaggerfallUnityItem item)
+        {
+            return (item.IsEnchanted) ? magicAnimation.animatedTextures : null;
         }
 
         protected void SetupTargetIconPanels()
@@ -403,6 +417,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 button.SetMargins(Margins.All, accessoryButtonMarginSize);
                 button.ToolTip = defaultToolTip;
                 button.Tag = i;
+                button.AnimationDelayInSeconds = magicAnimationDelay;
                 button.OnMouseClick += AccessoryItemsButton_OnMouseClick;
                 if (itemInfoPanelLabel != null)
                     button.OnMouseEnter += AccessoryItemsButton_OnMouseEnter;
@@ -732,6 +747,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     panel.BackgroundTexture = null;
                     button.ToolTipText = string.Empty;
+                    button.AnimatedBackgroundTextures = null;
                     continue;
                 }
 
@@ -740,6 +756,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 panel.BackgroundTexture = image.texture;
                 panel.Size = new Vector2(image.width, image.height);
                 button.ToolTipText = item.LongName;
+                if (item.IsEnchanted)
+                    button.AnimatedBackgroundTextures = magicAnimation.animatedTextures;
             }
         }
 
@@ -782,6 +800,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Cut out info panel texture from item maker
             Texture2D infoBaseTexture = ImageReader.GetTexture(infoTextureName);
             infoTexture = ImageReader.GetSubTexture(infoBaseTexture, infoCutoutRect);
+
+            // Load magic item animation textures
+            magicAnimation = ImageReader.GetImageData(magicAnimTextureName, 5, 0, true, false, true);
+
         }
 
         void ShowWagon(bool show)

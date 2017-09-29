@@ -106,13 +106,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 items.AddItem(ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race));
                 items.AddItem(ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race));
                 items.AddItem(ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race));
-                items.AddItem(ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race));
+                DaggerfallUnityItem magic = ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race);
+                magic.legacyMagic = new int[] { 1, 87, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535 };
+                items.AddItem(magic);
                 items.AddItem(ItemBuilder.CreateRandomBook());
                 items.AddItem(ItemBuilder.CreateRandomClothing(playerEntity.Gender, playerEntity.Race));
                 items.AddItem(ItemBuilder.CreateRandomClothing(playerEntity.Gender, playerEntity.Race));
                 items.AddItem(ItemBuilder.CreateRandomClothing(playerEntity.Gender, playerEntity.Race));
                 items.AddItem(ItemBuilder.CreateRandomClothing(playerEntity.Gender, playerEntity.Race));
                 items.AddItem(ItemBuilder.CreateRandomIngredient());
+                items.AddItem(ItemBuilder.CreateItem(ItemGroups.MiscItems, 274));
                 items.AddItem(ItemBuilder.CreateRandomReligiousItem());
                 items.AddItem(ItemBuilder.CreateRandomWeapon(playerEntity.Level));
                 items.AddItem(ItemBuilder.CreateRandomWeapon(playerEntity.Level));
