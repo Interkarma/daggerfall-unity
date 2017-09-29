@@ -82,6 +82,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string costPanelTextureName = "SHOP00I0.IMG";
         const string coinsAnimTextureName = "TEXTURE.434";
 
+        const float coinsAnimationDelay = 0.08f;
+
         const int doesNotNeedToBeRepairedTextId = 24;
 
         Color doneItemBackgroundColor = new Color(0.1f, 0.2f, 0.6f, 0.5f);
@@ -198,6 +200,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 localItemListScroller.BackgroundAnimationHandler = BuyItemBackgroundAnimationHandler;
                 remoteItemListScroller.BackgroundAnimationHandler = BuyItemBackgroundAnimationHandler;
+                localItemListScroller.BackgroundAnimationDelay = coinsAnimationDelay;
+                remoteItemListScroller.BackgroundAnimationDelay = coinsAnimationDelay;
             }
             // Setup special behaviour for remote items when repairing
             if (windowMode == WindowModes.Repair) {

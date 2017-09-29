@@ -87,6 +87,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         float textScale = 1f;           // Scale of text on item buttons
         int scrollNum = 1;              // Number of items on each scroll tick
 
+        float foregroundAnimationDelay = 0.2f;    
+        float backgroundAnimationDelay = 0.2f;
+
         List<DaggerfallUnityItem> items = new List<DaggerfallUnityItem>();
 
         ToolTip toolTip;
@@ -112,24 +115,38 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public delegate void OnItemHoverHandler(DaggerfallUnityItem item);
         public event OnItemHoverHandler OnItemHover;
 
+        /// <summary>Handler for colour highlighting</summary>
         public ItemBackgroundColourHandler BackgroundColourHandler
         {
             get { return backgroundColourHandler; }
             set { backgroundColourHandler = value; }
         }
 
+        /// <summary>Handler for background animations (can't be colour highlighted)</summary>
         public ItemBackgroundAnimationHandler BackgroundAnimationHandler
         {
             get { return backgroundAnimationHandler; }
             set { backgroundAnimationHandler = value; }
         }
-
+        /// <summary>Delay in seconds between each frame of animation</summary>
+        public float BackgroundAnimationDelay
+        {
+            get { return backgroundAnimationDelay; }
+            set { backgroundAnimationDelay = value; }
+        }
+        /// <summary>Handler for foreground animations (can be colour highlighted)</summary>
         public ItemForegroundAnimationHandler ForegroundAnimationHandler
         {
             get { return foregroundAnimationHandler; }
             set { foregroundAnimationHandler = value; }
         }
-
+        /// <summary>Delay in seconds between each frame of animation</summary>
+        public float ForegroundAnimationDelay
+        {
+            get { return foregroundAnimationDelay; }
+            set { foregroundAnimationDelay = value; }
+        }
+        /// <summary>Handler for label text (top left)</summary>
         public ItemLabelTextHandler LabelTextHandler
         {
             get { return labelTextHandler; }
@@ -144,6 +161,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 UpdateItemsDisplay();
             }
         }
+
         #endregion
 
         #region Constructors, Public methods
@@ -246,6 +264,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                 // Item foreground animation panel
                 itemAnimPanels[i] = DaggerfallUI.AddPanel(itemButtonRects[i], itemsListPanel);
+                itemAnimPanels[i].AnimationDelayInSeconds = foregroundAnimationDelay;
 
                 // Icon image panel
                 itemIconPanels[i] = DaggerfallUI.AddPanel(itemButtons[i], AutoSizeModes.ScaleToFit);
@@ -323,13 +342,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 if (item.stackCount > 1)
                     itemStackLabels[i].Text = item.stackCount.ToString();
 
-                // Handle context specific background colour, animation & label
+                // Handle context specific background colour, animations & label
                 if (backgroundColourHandler != null)
                     itemButtons[i].BackgroundColor = backgroundColourHandler(item);
-                if (backgroundAnimationHandler != null)
+                if (backgroundAnimationHandler != null) {
+                    itemButtons[i].AnimationDelayInSeconds = backgroundAnimationDelay;
                     itemButtons[i].AnimatedBackgroundTextures = backgroundAnimationHandler(item);
-                if (foregroundAnimationHandler != null)
+                }
+                if (foregroundAnimationHandler != null) {
+                    itemAnimPanels[i].AnimationDelayInSeconds = foregroundAnimationDelay;
                     itemAnimPanels[i].AnimatedBackgroundTextures = foregroundAnimationHandler(item);
+                }
                 if (labelTextHandler != null)
                     itemMiscLabels[i].Text = labelTextHandler(item);
 

@@ -124,6 +124,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string infoTextureName = "ITEM00I0.IMG";
         const string magicAnimTextureName = "TEXTURE.434";
 
+        const float magicAnimationDelay = 0.15f;
+
         const int accessoryCount = 12;                                  // Number of accessory slots
         const int accessoryButtonMarginSize = 1;                        // Margin of accessory buttons
 
@@ -275,7 +277,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 Position = new Vector2(localItemListScrollerRect.x, localItemListScrollerRect.y),
                 Size = new Vector2(localItemListScrollerRect.width, localItemListScrollerRect.height),
                 BackgroundColourHandler = ItemBackgroundColourHandler,
-                ForegroundAnimationHandler = MagicItemForegroundAnimationHander
+                ForegroundAnimationHandler = MagicItemForegroundAnimationHander,
+                ForegroundAnimationDelay = magicAnimationDelay
             };
             NativePanel.Components.Add(localItemListScroller);
             localItemListScroller.OnItemClick += LocalItemListScroller_OnItemClick;
@@ -287,7 +290,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 Position = new Vector2(remoteItemListScrollerRect.x, remoteItemListScrollerRect.y),
                 Size = new Vector2(remoteItemListScrollerRect.width, remoteItemListScrollerRect.height),
                 BackgroundColourHandler = ItemBackgroundColourHandler,
-                ForegroundAnimationHandler = MagicItemForegroundAnimationHander
+                ForegroundAnimationHandler = MagicItemForegroundAnimationHander,
+                ForegroundAnimationDelay = magicAnimationDelay
             };
             NativePanel.Components.Add(remoteItemListScroller);
             remoteItemListScroller.OnItemClick += RemoteItemListScroller_OnItemClick;
@@ -413,6 +417,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 button.SetMargins(Margins.All, accessoryButtonMarginSize);
                 button.ToolTip = defaultToolTip;
                 button.Tag = i;
+                button.AnimationDelayInSeconds = magicAnimationDelay;
                 button.OnMouseClick += AccessoryItemsButton_OnMouseClick;
                 if (itemInfoPanelLabel != null)
                     button.OnMouseEnter += AccessoryItemsButton_OnMouseEnter;
