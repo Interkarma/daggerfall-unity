@@ -41,6 +41,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         Button[] itemButtons;
         Panel[] itemIconPanels;
+        Panel[] itemAnimPanels;
         TextLabel[] itemStackLabels;
         TextLabel[] itemMiscLabels;
 
@@ -90,6 +91,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         ToolTip toolTip;
         ItemBackgroundColourHandler backgroundColourHandler;
+        ItemBackgroundAnimationHandler backgroundAnimationHandler;
+        ItemForegroundAnimationHandler foregroundAnimationHandler;
         ItemLabelTextHandler labelTextHandler;
 
         #endregion
@@ -97,6 +100,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         #region Delegates, Events, Properties
 
         public delegate Color ItemBackgroundColourHandler(DaggerfallUnityItem item);
+
+        public delegate Texture2D[] ItemBackgroundAnimationHandler(DaggerfallUnityItem item);
+        public delegate Texture2D[] ItemForegroundAnimationHandler(DaggerfallUnityItem item);
 
         public delegate string ItemLabelTextHandler(DaggerfallUnityItem item);
 
@@ -110,6 +116,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             get { return backgroundColourHandler; }
             set { backgroundColourHandler = value; }
+        }
+
+        public ItemBackgroundAnimationHandler BackgroundAnimationHandler
+        {
+            get { return backgroundAnimationHandler; }
+            set { backgroundAnimationHandler = value; }
+        }
+
+        public ItemForegroundAnimationHandler ForegroundAnimationHandler
+        {
+            get { return foregroundAnimationHandler; }
+            set { foregroundAnimationHandler = value; }
         }
 
         public ItemLabelTextHandler LabelTextHandler
@@ -204,6 +222,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Setup buttons
             itemButtons = new Button[listDisplayUnits];
             itemIconPanels = new Panel[listDisplayUnits];
+            itemAnimPanels = new Panel[listDisplayUnits];
             itemStackLabels = new TextLabel[listDisplayUnits];
             itemMiscLabels = new TextLabel[listDisplayUnits];
             Rect[] itemButtonRects = (enhanced) ? itemButtonRects16 : itemButtonRects4;
@@ -215,7 +234,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     Panel buttonPanel = DaggerfallUI.AddPanel(itemButtonRects[i], itemsListPanel);
                     buttonPanel.BackgroundTexture = itemListTextures[i];
                 }
-                // Button
+                // Buttons (also handle highlight colours)
                 itemButtons[i] = DaggerfallUI.AddButton(itemButtonRects[i], itemsListPanel);
                 itemButtons[i].SetMargins(Margins.All, itemButtonMarginSize);
                 itemButtons[i].ToolTip = toolTip;
@@ -224,6 +243,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 itemButtons[i].OnMouseEnter += ItemButton_OnMouseEnter;
                 itemButtons[i].OnMouseScrollUp += ItemButton_OnMouseEnter;
                 itemButtons[i].OnMouseScrollDown += ItemButton_OnMouseEnter;
+
+                // Item foreground animation panel
+                itemAnimPanels[i] = DaggerfallUI.AddPanel(itemButtonRects[i], itemsListPanel);
 
                 // Icon image panel
                 itemIconPanels[i] = DaggerfallUI.AddPanel(itemButtons[i], AutoSizeModes.ScaleToFit);
@@ -256,7 +278,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 itemButtons[i].ToolTipText = string.Empty;
                 itemIconPanels[i].BackgroundTexture = null;
                 itemButtons[i].BackgroundColor = Color.clear;
+                itemButtons[i].AnimatedBackgroundTextures = null;
                 itemIconPanels[i].AnimatedBackgroundTextures = null;
+                itemAnimPanels[i].AnimatedBackgroundTextures = null;
             }
             itemListUpButton.BackgroundTexture = redUpArrow;
             itemListDownButton.BackgroundTexture = redDownArrow;
@@ -299,9 +323,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 if (item.stackCount > 1)
                     itemStackLabels[i].Text = item.stackCount.ToString();
 
-                // Handle context specific background colour & label
+                // Handle context specific background colour, animation & label
                 if (backgroundColourHandler != null)
                     itemButtons[i].BackgroundColor = backgroundColourHandler(item);
+                if (backgroundAnimationHandler != null)
+                    itemButtons[i].AnimatedBackgroundTextures = backgroundAnimationHandler(item);
+                if (foregroundAnimationHandler != null)
+                    itemAnimPanels[i].AnimatedBackgroundTextures = foregroundAnimationHandler(item);
                 if (labelTextHandler != null)
                     itemMiscLabels[i].Text = labelTextHandler(item);
 
