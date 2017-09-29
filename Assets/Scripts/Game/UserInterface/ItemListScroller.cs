@@ -256,6 +256,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 itemButtons[i].ToolTipText = string.Empty;
                 itemIconPanels[i].BackgroundTexture = null;
                 itemButtons[i].BackgroundColor = Color.clear;
+                itemIconPanels[i].AnimatedBackgroundTextures = null;
             }
             itemListUpButton.BackgroundTexture = redUpArrow;
             itemListDownButton.BackgroundTexture = redDownArrow;
@@ -289,8 +290,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 // Set animated image frames to button icon (if any)
                 if (image.animatedTextures != null && image.animatedTextures.Length > 0)
                     itemIconPanels[i].AnimatedBackgroundTextures = image.animatedTextures;
-                else
-                    itemIconPanels[i].AnimatedBackgroundTextures = null;
 
                 // Set image to button icon
                 itemIconPanels[i].BackgroundTexture = image.texture;
