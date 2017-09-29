@@ -286,6 +286,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 DaggerfallUnityItem item = items[scrollIndex + i];
                 ImageData image = DaggerfallUnity.Instance.ItemHelper.GetInventoryImage(item);
 
+                // Set animated image frames to button icon (if any)
+                if (image.animatedTextures != null && image.animatedTextures.Length > 0)
+                    itemIconPanels[i].AnimatedBackgroundTextures = image.animatedTextures;
+                else
+                    itemIconPanels[i].AnimatedBackgroundTextures = null;
+
                 // Set image to button icon
                 itemIconPanels[i].BackgroundTexture = image.texture;
                 itemIconPanels[i].Size = new Vector2(image.texture.width, image.texture.height);

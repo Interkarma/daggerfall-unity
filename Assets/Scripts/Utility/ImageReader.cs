@@ -173,8 +173,9 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="frame">Which frame to read for multi-frame images.</param>
         /// <param name="hasAlpha">Enable this for image cutouts.</param>
         /// <param name="createTexture">Create a Texture2D.</param>
+        /// <param name="createAllFrameTextures">Creates a Texture2D for every frame in a TEXTURE file (if greater than 1 frames).</param>
         /// <returns>ImageData. If result.type == ImageTypes.None then read failed.</returns>
-        public static ImageData GetImageData(string filename, int record = 0, int frame = 0, bool hasAlpha = false, bool createTexture = true)
+        public static ImageData GetImageData(string filename, int record = 0, int frame = 0, bool hasAlpha = false, bool createTexture = true, bool createAllFrameTextures = false)
         {
             // Check API ready
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
@@ -202,12 +203,22 @@ namespace DaggerfallWorkshop.Utility
 
             // Read supported image files
             DFBitmap dfBitmap = null;
+            DFBitmap[] dfBitmapAllFrames = null;
             switch (fileType)
             {
                 case ImageTypes.TEXTURE:
                     TextureFile textureFile = new TextureFile(Path.Combine(dfUnity.Arena2Path, filename), FileUsage.UseMemory, true);
                     textureFile.LoadPalette(Path.Combine(dfUnity.Arena2Path, textureFile.PaletteName));
                     dfBitmap = textureFile.GetDFBitmap(record, frame);
+                    int frameCount = textureFile.GetFrameCount(record);
+                    if (createAllFrameTextures && frameCount > 1)
+                    {
+                        dfBitmapAllFrames = new DFBitmap[frameCount];
+                        for (int i = 0; i < frameCount; i++)
+                        {
+                            dfBitmapAllFrames[i] = textureFile.GetDFBitmap(record, i);
+                        }
+                    }
                     imageData.offset = textureFile.GetOffset(record);
                     imageData.scale = textureFile.GetScale(record);
                     imageData.size = textureFile.GetSize(record);
@@ -285,6 +296,19 @@ namespace DaggerfallWorkshop.Utility
 
                 // Create new Texture2D
                 imageData.texture = GetTexture(colors, imageData.width, imageData.height);
+            }
+
+            // Create animated Texture2D frames
+            if (createAllFrameTextures && dfBitmapAllFrames != null)
+            {
+                imageData.animatedTextures = new Texture2D[dfBitmapAllFrames.Length];
+                for (int i = 0; i < dfBitmapAllFrames.Length; i++)
+                {
+                    ImageData curFrame = imageData;
+                    curFrame.dfBitmap = dfBitmapAllFrames[i];
+                    Color32[] colors = GetColors(curFrame);
+                    imageData.animatedTextures[i] = GetTexture(colors, imageData.width, imageData.height);
+                }
             }
 
             return imageData;
