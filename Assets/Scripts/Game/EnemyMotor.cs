@@ -148,7 +148,7 @@ namespace DaggerfallWorkshop.Game
 
             // Reduced speed if playing a one-shot animation
             if (mobile.IsPlayingOneShot())
-                moveSpeed /= 2;
+                moveSpeed /= 3;
 
             // Remain idle when player not acquired or not hostile
             if (senses.LastKnownPlayerPos == EnemySenses.ResetPlayerPos || !isHostile)
