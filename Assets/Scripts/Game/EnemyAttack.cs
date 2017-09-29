@@ -22,7 +22,7 @@ namespace DaggerfallWorkshop.Game
     [RequireComponent(typeof(EnemySenses))]
     public class EnemyAttack : MonoBehaviour
     {
-        public float MeleeAttackSpeed = 1.0f;       // Number of seconds between melee attacks
+        public float MeleeAttackSpeed = 1.25f;      // Number of seconds between melee attacks
         public float MeleeDistance = 2.0f;          // Maximum distance for melee attack
 
         EnemyMotor motor;

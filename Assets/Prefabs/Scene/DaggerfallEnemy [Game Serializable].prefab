@@ -5,12 +5,12 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 488118}
-  - 33: {fileID: 3367684}
-  - 23: {fileID: 2302536}
-  - 114: {fileID: 11478892}
+  - component: {fileID: 488118}
+  - component: {fileID: 3367684}
+  - component: {fileID: 2302536}
+  - component: {fileID: 11478892}
   m_Layer: 0
   m_Name: MobileUnitBillboard
   m_TagString: Untagged
@@ -23,22 +23,22 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 481572}
-  - 114: {fileID: 11410784}
-  - 114: {fileID: 11495432}
-  - 114: {fileID: 11499798}
-  - 114: {fileID: 11424130}
-  - 114: {fileID: 11470552}
-  - 114: {fileID: 114000013776501450}
-  - 143: {fileID: 14323946}
-  - 82: {fileID: 8249844}
-  - 114: {fileID: 11492232}
-  - 114: {fileID: 11439840}
-  - 114: {fileID: 11452974}
-  - 114: {fileID: 11435454}
-  - 114: {fileID: 11449422}
+  - component: {fileID: 481572}
+  - component: {fileID: 11410784}
+  - component: {fileID: 11495432}
+  - component: {fileID: 11499798}
+  - component: {fileID: 11424130}
+  - component: {fileID: 11470552}
+  - component: {fileID: 114000013776501450}
+  - component: {fileID: 14323946}
+  - component: {fileID: 8249844}
+  - component: {fileID: 11492232}
+  - component: {fileID: 11439840}
+  - component: {fileID: 11452974}
+  - component: {fileID: 11435454}
+  - component: {fileID: 11449422}
   m_Layer: 0
   m_Name: DaggerfallEnemy [Game Serializable]
   m_TagString: Untagged
@@ -55,11 +55,11 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 488118}
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &488118
 Transform:
   m_ObjectHideFlags: 1
@@ -69,10 +69,10 @@ Transform:
   m_LocalRotation: {x: 0, y: -0.32127059, z: 0, w: 0.94698745}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 481572}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &2302536
 MeshRenderer:
   m_ObjectHideFlags: 1
@@ -87,7 +87,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 0}
-  m_SubsetIndices: 
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
@@ -95,7 +97,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
-  m_SelectedWireframeHidden: 0
+  m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -125,6 +127,7 @@ AudioSource:
   Loop: 0
   Mute: 0
   Spatialize: 0
+  SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
@@ -137,12 +140,14 @@ AudioSource:
   rolloffCustomCurve:
     serializedVersion: 2
     m_Curve:
-    - time: 0
+    - serializedVersion: 2
+      time: 0
       value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
-    - time: 1
+    - serializedVersion: 2
+      time: 1
       value: 0
       inSlope: 0
       outSlope: 0
@@ -153,7 +158,8 @@ AudioSource:
   panLevelCustomCurve:
     serializedVersion: 2
     m_Curve:
-    - time: 0
+    - serializedVersion: 2
+      time: 0
       value: 0
       inSlope: 0
       outSlope: 0
@@ -164,7 +170,8 @@ AudioSource:
   spreadCustomCurve:
     serializedVersion: 2
     m_Curve:
-    - time: 0
+    - serializedVersion: 2
+      time: 0
       value: 0
       inSlope: 0
       outSlope: 0
@@ -175,7 +182,8 @@ AudioSource:
   reverbZoneMixCustomCurve:
     serializedVersion: 2
     m_Curve:
-    - time: 0
+    - serializedVersion: 2
+      time: 0
       value: 1
       inSlope: 0
       outSlope: 0
@@ -196,6 +204,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EnemyType: 15
   EnemyReaction: 0
+  EnemyGender: 0
 --- !u!114 &11424130
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -207,8 +216,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 148778fc11ccec74aa9f538dab0d07d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MeleeAttackSpeed: 1
-  MeleeDistance: 2.5
+  MeleeAttackSpeed: 1.25
+  MeleeDistance: 2
 --- !u!114 &11435454
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -263,8 +272,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 727166852387f3c4ca2404b91b6598d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MoveSpeed: 5
-  FlySpeed: 5
   OpenDoorDistance: 2
   GiveUpTime: 4
 --- !u!114 &11470552
@@ -320,8 +327,18 @@ MonoBehaviour:
       MinMetalToHit: 0
       MinDamage: 0
       MaxDamage: 0
+      MinDamage2: 0
+      MaxDamage2: 0
+      MinDamage3: 0
+      MaxDamage3: 0
       MinHealth: 0
       MaxHealth: 0
+      Level: 0
+      ArmorValue: 0
+      ParrySounds: 0
+      MapChance: 0
+      LootTableKey: 
+      HitFrame: 0
     EnemyState: 0
     StateAnims: []
 --- !u!114 &11492232
