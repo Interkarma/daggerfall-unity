@@ -16,6 +16,8 @@ using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
+
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -146,7 +148,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if ( crimeType == 4 || crimeType == 3) // Assault or murder
                 {
                     // If player is a member of the Dark Brotherhood, they may be rescued for a violent crime
-                    Guilds.Guild guild = GameManager.Instance.GuildManager.GetGuild(42);
+                    Guilds.Guild guild = GameManager.Instance.GuildManager.GetGuild((int)FactionFile.FactionIDs.The_Dark_Brotherhood);
                     if (guild.IsMember())
                     {
                         if (guild.Rank >= UnityEngine.Random.Range(0, 20))
@@ -167,7 +169,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (crimeType <= 2 || crimeType == 11) // Attempted breaking and entering, trespassing, breaking and entering, pickpocketing
                 {
                     // If player is a member of the Thieves Guild, they may be rescued for a thieving crime
-                    Guilds.Guild guild = GameManager.Instance.GuildManager.GetGuild(108);
+                    Guilds.Guild guild = GameManager.Instance.GuildManager.GetGuild((int)FactionFile.FactionIDs.The_Thieves_Guild);
                     if (guild.IsMember())
                     {
                         if (guild.Rank >= UnityEngine.Random.Range(0, 20))
