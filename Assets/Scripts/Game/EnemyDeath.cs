@@ -97,7 +97,7 @@ namespace DaggerfallWorkshop.Game
 
             // This is still required so enemy equipment is not marked as equipped
             // This item collection is transferred to loot container below
-            for (int i = (int)Items.EquipSlots.Head; i < (int)Items.EquipSlots.Feet; i++)
+            for (int i = (int)Items.EquipSlots.Head; i <= (int)Items.EquipSlots.Feet; i++)
             {
                 Items.DaggerfallUnityItem item = enemyEntity.ItemEquipTable.GetItem((Items.EquipSlots)i);
                 if (item != null)
