@@ -1010,6 +1010,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     messageBox.ClickAnywhereToClose = true;
                     messageBox.Show();
                 }
+                Refresh();
                 return;
             }
             // Try to equip the item, and update armour values accordingly
