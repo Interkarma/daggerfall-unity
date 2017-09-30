@@ -987,7 +987,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     prohibited = true;
                 // Check for prohibited material
                 else if (((item.NativeMaterialValue >> 8) == 2)
-                    && (1 << (item.NativeMaterialValue >> 8) & (int)playerEntity.Career.ForbiddenMaterials) != 0)
+                    && (1 << (item.NativeMaterialValue << 8) & (int)playerEntity.Career.ForbiddenMaterials) != 0)
                     prohibited = true;
             }
             else if (item.ItemGroup == ItemGroups.Weapons)
