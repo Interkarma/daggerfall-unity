@@ -11,6 +11,7 @@
 
 using System.Collections.Generic;
 using UnityEngine;
+using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
 
@@ -110,6 +111,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if gameobject is found and imported.</returns>
         public static bool ImportNatureGameObject(int archive, int record, Terrain terrain, int x, int y)
         {
+            const int tilemapDim = MapsFile.WorldMapTileDim - 1;
+
             // Check user settings
             if (!DaggerfallUnity.Settings.MeshAndTextureReplacement)
                 return false;
@@ -122,7 +125,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
             // Get instance properties
             TerrainData terrainData = terrain.terrainData;
-            Vector3 position = new Vector3(x / (float)terrainData.detailResolution, 0.0f, y / (float)terrainData.detailResolution);
+            Vector3 position = new Vector3(x / (float)tilemapDim, 0.0f, y / (float)tilemapDim);
             float rotation = Random.Range(0f, 360f);
             int index = GetTreePrototypeIndex(terrainData, prefab);
 
