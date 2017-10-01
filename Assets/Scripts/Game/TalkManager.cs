@@ -102,8 +102,11 @@ namespace DaggerfallWorkshop.Game
             Work,
             LocalBuilding,
             Regional,
-            Person,
-            Thing
+            Person, // not sure if we will ever have a person entry which is no quest person...
+            Thing, // not sure if we will ever have a thing entry which is no quest thing...
+            QuestLocation,
+            QuestPerson,
+            QuestThing
         }
 
         public enum NPCKnowledgeAboutItem
@@ -120,6 +123,7 @@ namespace DaggerfallWorkshop.Game
             public QuestionType questionType = QuestionType.NoQuestion;
             public NPCKnowledgeAboutItem npcKnowledgeAboutItem = NPCKnowledgeAboutItem.NotSet;
             public int buildingKey = -1;
+            public ulong questID = 0; // used for listitems that are question about quest resources
             public List<ListItem> listChildItems = null; // null if type == ListItemType.Navigation or ListItemType.Item, only contains a list if type == ListItemType.ItemGroup
             public List<ListItem> listParentItems = null; // null if type == ListItemType.ItemGroup or ListItemType.Item, only contains a list if type == ListItemType.Navigation
         }
@@ -167,6 +171,33 @@ namespace DaggerfallWorkshop.Game
             public Vector2 position;
         }       
         List<BuildingInfo> listBuildings = null;
+
+        // quest injected stuff
+
+        public enum QuestInfoResourceType
+        {
+            NotSet,
+            Location,
+            Person,
+            Thing
+        }
+
+        // quest info answers about quest resource
+        public class QuestResourceInfo
+        {
+            public QuestInfoResourceType resourceType;
+            public List<string> answers;
+        }
+
+        // a dictionary of quest resources (key resource name, value is the QuestResourceInfo)
+        public class QuestResources
+        {
+            public Dictionary<string, QuestResourceInfo> resourceInfo;
+        }
+
+        // dictionary of quests (key is questID, value is QuestInfo)
+        Dictionary<ulong, QuestResources> dictQuestInfo = new Dictionary<ulong, QuestResources>();
+
 
         #endregion
 
@@ -627,6 +658,11 @@ namespace DaggerfallWorkshop.Game
                 case QuestionType.Regional:
                     answer = "not implemented";
                     break;
+                case QuestionType.QuestLocation:
+                case QuestionType.QuestPerson:
+                case QuestionType.QuestThing:
+                    answer = GetAnswerAboutQuestTopic(listItem);
+                    break;
                 case QuestionType.Work:
                     answer = expandRandomTextRecord(8076);
                     break;
@@ -636,6 +672,45 @@ namespace DaggerfallWorkshop.Game
             numQuestionsAsked++;
             questionOpeningText = ""; // reset questionOpeningText so that it is newly created for next question
             return answer;
+        }
+
+        public string GetAnswerAboutQuestTopic(TalkManager.ListItem listItem)
+        {
+            if (dictQuestInfo.ContainsKey(listItem.questID))
+            {
+                if (dictQuestInfo[listItem.questID].resourceInfo.ContainsKey(listItem.caption))
+                {
+                    List<string> possibleAnswers = dictQuestInfo[listItem.questID].resourceInfo[listItem.caption].answers;
+                    int randomNumAnswer = UnityEngine.Random.Range(0, possibleAnswers.Count);
+                    return possibleAnswers[randomNumAnswer];
+                }
+            }
+            return "Never mind..."; // error case - should never ever occur
+        }
+
+        public void AddQuestInfoTopics(ulong questID, string resourceName, QuestInfoResourceType resourceType, List<string> answers)
+        {
+            QuestResources questResources;
+            if (dictQuestInfo.ContainsKey(questID))
+            {
+                questResources = dictQuestInfo[questID];
+            }
+            else
+            {
+                questResources = new QuestResources();
+                questResources.resourceInfo = new Dictionary<string, QuestResourceInfo>();
+            }
+
+            QuestResourceInfo questResourceInfo = new QuestResourceInfo();
+            questResourceInfo.answers = answers;
+            questResourceInfo.resourceType = resourceType;
+
+            questResources.resourceInfo[resourceName] = questResourceInfo;
+
+            dictQuestInfo[questID] = questResources;
+
+            // update topic list
+            AssembleTopiclistTellMeAbout();
         }
 
         #endregion
@@ -773,13 +848,13 @@ namespace DaggerfallWorkshop.Game
 
         private void AssembleTopicLists()
         {
-            AssembleTopiclistTopicTellMeAbout();
+            AssembleTopiclistTellMeAbout();
             AssembleTopicListLocation();
             AssembleTopicListPerson();
             AssembleTopicListThing();
         }
 
-        private void AssembleTopiclistTopicTellMeAbout()
+        private void AssembleTopiclistTellMeAbout()
         {
             listTopicTellMeAbout = new List<ListItem>();
             ListItem itemAnyNews = new ListItem();
@@ -787,6 +862,34 @@ namespace DaggerfallWorkshop.Game
             itemAnyNews.questionType = QuestionType.News;
             itemAnyNews.caption = "Any news?";
             listTopicTellMeAbout.Add(itemAnyNews);
+
+            foreach (KeyValuePair<ulong, QuestResources> questInfo in dictQuestInfo)
+            {
+                foreach (KeyValuePair<string, QuestResourceInfo> questResourceInfo in questInfo.Value.resourceInfo)
+                {
+                    ListItem itemQuestTopic = new ListItem();
+                    itemQuestTopic.type = ListItemType.Item;
+                    switch (questResourceInfo.Value.resourceType)
+                    {
+                        case QuestInfoResourceType.NotSet:
+                        default:
+                            itemQuestTopic.questionType = QuestionType.NoQuestion;
+                            break;
+                        case QuestInfoResourceType.Location:
+                            itemQuestTopic.questionType = QuestionType.QuestLocation;
+                            break;
+                        case QuestInfoResourceType.Person:
+                            itemQuestTopic.questionType = QuestionType.QuestPerson;
+                            break;
+                        case QuestInfoResourceType.Thing:
+                            itemQuestTopic.questionType = QuestionType.QuestThing;
+                            break;
+                    }
+                    itemQuestTopic.questID = questInfo.Key;
+                    itemQuestTopic.caption = questResourceInfo.Key;
+                    listTopicTellMeAbout.Add(itemQuestTopic);
+                }
+            }
 
             for (int i = 0; i < 10; i++)
             {

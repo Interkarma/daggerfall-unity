@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
@@ -240,6 +241,9 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Is NPC at home?
                 isIndividualAtHome = atHome;
 
+                // add conversation topics from anyInfo command tag
+                AddConversationTopics();
+
                 // Done
                 Debug.LogFormat("Created NPC {0} with FactionID #{1}.", displayName, factionData.id);
             }
@@ -415,6 +419,22 @@ namespace DaggerfallWorkshop.Game.Questing
             // Select a random god for this NPC
             int godID = UnityEngine.Random.Range(minGodID, maxGodID + 1);
             godName = DaggerfallUnity.Instance.TextProvider.GetRandomText(godID);
+        }
+
+        void AddConversationTopics()
+        {
+            if (this.InfoMessageID != -1)
+            {
+                Message message = this.ParentQuest.GetMessage(this.InfoMessageID);
+                List<string> answers = new List<string>();
+                for (int i=0; i < message.VariantCount; i++)
+                {
+                    TextFile.Token[] tokens = message.Variants[i].tokens.ToArray();
+                    answers.Add(tokens[0].text);
+                }
+                
+                GameManager.Instance.TalkManager.AddQuestInfoTopics(this.ParentQuest.UID, this.displayName, TalkManager.QuestInfoResourceType.Person, answers);
+            }
         }
 
         Genders GetGender(string genderName)

@@ -50,12 +50,17 @@ namespace DaggerfallWorkshop.Game.Questing
             get { return variants.Count; }
         }
 
+        public List<MessageVariant> Variants
+        {
+            get { return variants; }
+        }
+
         #endregion
 
         #region Structures
 
         [SerializeField]
-        struct MessageVariant
+        public struct MessageVariant
         {
             public List<TextFile.Token> tokens;
         }
