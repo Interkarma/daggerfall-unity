@@ -428,26 +428,88 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public DaggerfallMessageBox ShowMessagePopup(int id)
         {
+            const int chunkSize = 22;
+
             // Get message resource
             Message message = GetMessage(id);
             if (message == null)
                 return null;
 
-            // Get message tokens
+            // Get all message tokens
             TextFile.Token[] tokens = message.GetTextTokens();
+            if (tokens == null || tokens.Length == 0)
+                return null;
 
-            // Present popup message
-            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
-            messageBox.SetTextTokens(tokens);
-            messageBox.ClickAnywhereToClose = true;
-            messageBox.AllowCancel = true;
-            messageBox.ParentPanel.BackgroundColor = Color.clear;
-            messageBox.Show();
+            // Split token lines into chunks for display
+            // This break huge blocks of text into multiple popups
+            int lineCount = 0;
+            List<TextFile.Token> currentChunk = new List<TextFile.Token>();
+            List<TextFile.Token[]> chunks = new List<TextFile.Token[]>();
+            for (int i = 0; i < tokens.Length; i++)
+            {
+                // Add current token
+                currentChunk.Add(tokens[i]);
+
+                // Count new lines and start a new chunk at max size
+                if (tokens[i].formatting == TextFile.Formatting.JustifyCenter ||
+                    tokens[i].formatting == TextFile.Formatting.JustifyLeft ||
+                    tokens[i].formatting == TextFile.Formatting.Nothing)
+                {
+                    if (++lineCount > chunkSize)
+                    {
+                        chunks.Add(currentChunk.ToArray());
+                        currentChunk.Clear();
+                        lineCount = 0;
+                    }
+                }
+            }
+
+            // Add final chunk only if not empty
+            if (currentChunk.Count > 0)
+                chunks.Add(currentChunk.ToArray());
+
+            // Display message boxes in reverse order - this is the previous way of showing stacked popups
+            DaggerfallMessageBox rootMessageBox = null;
+            for (int i = chunks.Count - 1; i >= 0; i--)
+            {
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
+                messageBox.SetTextTokens(chunks[i]);
+                messageBox.ClickAnywhereToClose = true;
+                messageBox.AllowCancel = true;
+                messageBox.ParentPanel.BackgroundColor = Color.clear;
+                messageBox.Show();
+
+                if (i == 0)
+                    rootMessageBox = messageBox;
+            }
+
+            //// Compose root message box and use AddNextMessageBox() - this is a new technique added by Hazelnut
+            //// TODO: Currently when linking more than two message boxes the final two boxes loop between each other
+            //// Will return to this later to check, for now just want to continue with quest work
+            //DaggerfallMessageBox rootMessageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
+            //rootMessageBox.SetTextTokens(chunks[0]);
+            //rootMessageBox.ClickAnywhereToClose = true;
+            //rootMessageBox.AllowCancel = true;
+            //rootMessageBox.ParentPanel.BackgroundColor = Color.clear;
+
+            //// String together remaining message boxes (if any)
+            //DaggerfallMessageBox lastMessageBox = rootMessageBox;
+            //for (int i = 1; i < chunks.Count; i++)
+            //{
+            //    DaggerfallMessageBox thisMessageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
+            //    thisMessageBox.SetTextTokens(chunks[i]);
+            //    thisMessageBox.ClickAnywhereToClose = true;
+            //    thisMessageBox.AllowCancel = true;
+            //    thisMessageBox.ParentPanel.BackgroundColor = Color.clear;
+            //    lastMessageBox.AddNextMessageBox(thisMessageBox);
+            //    lastMessageBox = thisMessageBox;
+            //}
+            //rootMessageBox.Show();
 
             // Set a quest break so popup will display immediately
             questBreak = true;
 
-            return messageBox;
+            return rootMessageBox;
         }
 
         #endregion
