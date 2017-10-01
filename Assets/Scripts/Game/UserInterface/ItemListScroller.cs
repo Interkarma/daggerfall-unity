@@ -41,6 +41,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         Button[] itemButtons;
         Panel[] itemIconPanels;
+        Panel[] itemAnimPanels;
         TextLabel[] itemStackLabels;
         TextLabel[] itemMiscLabels;
 
@@ -86,10 +87,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
         float textScale = 1f;           // Scale of text on item buttons
         int scrollNum = 1;              // Number of items on each scroll tick
 
+        float foregroundAnimationDelay = 0.2f;    
+        float backgroundAnimationDelay = 0.2f;
+
         List<DaggerfallUnityItem> items = new List<DaggerfallUnityItem>();
 
         ToolTip toolTip;
         ItemBackgroundColourHandler backgroundColourHandler;
+        ItemBackgroundAnimationHandler backgroundAnimationHandler;
+        ItemForegroundAnimationHandler foregroundAnimationHandler;
         ItemLabelTextHandler labelTextHandler;
 
         #endregion
@@ -97,6 +103,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         #region Delegates, Events, Properties
 
         public delegate Color ItemBackgroundColourHandler(DaggerfallUnityItem item);
+
+        public delegate Texture2D[] ItemBackgroundAnimationHandler(DaggerfallUnityItem item);
+        public delegate Texture2D[] ItemForegroundAnimationHandler(DaggerfallUnityItem item);
 
         public delegate string ItemLabelTextHandler(DaggerfallUnityItem item);
 
@@ -106,12 +115,38 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public delegate void OnItemHoverHandler(DaggerfallUnityItem item);
         public event OnItemHoverHandler OnItemHover;
 
+        /// <summary>Handler for colour highlighting</summary>
         public ItemBackgroundColourHandler BackgroundColourHandler
         {
             get { return backgroundColourHandler; }
             set { backgroundColourHandler = value; }
         }
 
+        /// <summary>Handler for background animations (can't be colour highlighted)</summary>
+        public ItemBackgroundAnimationHandler BackgroundAnimationHandler
+        {
+            get { return backgroundAnimationHandler; }
+            set { backgroundAnimationHandler = value; }
+        }
+        /// <summary>Delay in seconds between each frame of animation</summary>
+        public float BackgroundAnimationDelay
+        {
+            get { return backgroundAnimationDelay; }
+            set { backgroundAnimationDelay = value; }
+        }
+        /// <summary>Handler for foreground animations (can be colour highlighted)</summary>
+        public ItemForegroundAnimationHandler ForegroundAnimationHandler
+        {
+            get { return foregroundAnimationHandler; }
+            set { foregroundAnimationHandler = value; }
+        }
+        /// <summary>Delay in seconds between each frame of animation</summary>
+        public float ForegroundAnimationDelay
+        {
+            get { return foregroundAnimationDelay; }
+            set { foregroundAnimationDelay = value; }
+        }
+        /// <summary>Handler for label text (top left)</summary>
         public ItemLabelTextHandler LabelTextHandler
         {
             get { return labelTextHandler; }
@@ -126,6 +161,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 UpdateItemsDisplay();
             }
         }
+
         #endregion
 
         #region Constructors, Public methods
@@ -204,6 +240,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Setup buttons
             itemButtons = new Button[listDisplayUnits];
             itemIconPanels = new Panel[listDisplayUnits];
+            itemAnimPanels = new Panel[listDisplayUnits];
             itemStackLabels = new TextLabel[listDisplayUnits];
             itemMiscLabels = new TextLabel[listDisplayUnits];
             Rect[] itemButtonRects = (enhanced) ? itemButtonRects16 : itemButtonRects4;
@@ -215,7 +252,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     Panel buttonPanel = DaggerfallUI.AddPanel(itemButtonRects[i], itemsListPanel);
                     buttonPanel.BackgroundTexture = itemListTextures[i];
                 }
-                // Button
+                // Buttons (also handle highlight colours)
                 itemButtons[i] = DaggerfallUI.AddButton(itemButtonRects[i], itemsListPanel);
                 itemButtons[i].SetMargins(Margins.All, itemButtonMarginSize);
                 itemButtons[i].ToolTip = toolTip;
@@ -224,6 +261,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 itemButtons[i].OnMouseEnter += ItemButton_OnMouseEnter;
                 itemButtons[i].OnMouseScrollUp += ItemButton_OnMouseEnter;
                 itemButtons[i].OnMouseScrollDown += ItemButton_OnMouseEnter;
+
+                // Item foreground animation panel
+                itemAnimPanels[i] = DaggerfallUI.AddPanel(itemButtonRects[i], itemsListPanel);
+                itemAnimPanels[i].AnimationDelayInSeconds = foregroundAnimationDelay;
 
                 // Icon image panel
                 itemIconPanels[i] = DaggerfallUI.AddPanel(itemButtons[i], AutoSizeModes.ScaleToFit);
@@ -256,6 +297,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 itemButtons[i].ToolTipText = string.Empty;
                 itemIconPanels[i].BackgroundTexture = null;
                 itemButtons[i].BackgroundColor = Color.clear;
+                itemButtons[i].AnimatedBackgroundTextures = null;
+                itemIconPanels[i].AnimatedBackgroundTextures = null;
+                itemAnimPanels[i].AnimatedBackgroundTextures = null;
             }
             itemListUpButton.BackgroundTexture = redUpArrow;
             itemListDownButton.BackgroundTexture = redDownArrow;
@@ -286,6 +330,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 DaggerfallUnityItem item = items[scrollIndex + i];
                 ImageData image = DaggerfallUnity.Instance.ItemHelper.GetInventoryImage(item);
 
+                // Set animated image frames to button icon (if any)
+                if (image.animatedTextures != null && image.animatedTextures.Length > 0)
+                    itemIconPanels[i].AnimatedBackgroundTextures = image.animatedTextures;
+
                 // Set image to button icon
                 itemIconPanels[i].BackgroundTexture = image.texture;
                 itemIconPanels[i].Size = new Vector2(image.texture.width, image.texture.height);
@@ -294,9 +342,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 if (item.stackCount > 1)
                     itemStackLabels[i].Text = item.stackCount.ToString();
 
-                // Handle context specific background colour & label
+                // Handle context specific background colour, animations & label
                 if (backgroundColourHandler != null)
                     itemButtons[i].BackgroundColor = backgroundColourHandler(item);
+                if (backgroundAnimationHandler != null) {
+                    itemButtons[i].AnimationDelayInSeconds = backgroundAnimationDelay;
+                    itemButtons[i].AnimatedBackgroundTextures = backgroundAnimationHandler(item);
+                }
+                if (foregroundAnimationHandler != null) {
+                    itemAnimPanels[i].AnimationDelayInSeconds = foregroundAnimationDelay;
+                    itemAnimPanels[i].AnimatedBackgroundTextures = foregroundAnimationHandler(item);
+                }
                 if (labelTextHandler != null)
                     itemMiscLabels[i].Text = labelTextHandler(item);
 

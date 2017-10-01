@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -194,7 +194,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// </summary>
         /// <param name="gender">Gender of player</param>
         /// <returns>DaggerfallUnityItem.</returns>
-        public static DaggerfallUnityItem CreateRandomClothing(Genders gender)
+        public static DaggerfallUnityItem CreateRandomClothing(Genders gender, Races race)
         {
             // Create random clothing by gender
             DaggerfallUnityItem newItem;
@@ -210,6 +210,7 @@ namespace DaggerfallWorkshop.Game.Items
                 int groupIndex = UnityEngine.Random.Range(0, enumArray.Length);
                 newItem = new DaggerfallUnityItem(ItemGroups.WomensClothing, groupIndex);
             }
+            SetRace(newItem, race);
 
             // Random dye colour
             newItem.dyeColor = RandomClothingDye();
@@ -399,12 +400,19 @@ namespace DaggerfallWorkshop.Game.Items
         public static DaggerfallUnityItem SetItemPropertiesByMaterial(DaggerfallUnityItem item, WeaponMaterialTypes material)
         {
             item.value *= 3 * valueMultipliersByMaterial[(int)material];
-            item.weightInKg *= weightMultipliersByMaterial[(int)material] / 4;
+            item.weightInKg = CalculateWeightForMaterial(item, material);
             item.maxCondition *= conditionMultipliersByMaterial[(int)material] / 4;
             item.currentCondition = item.maxCondition;
             item.enchantmentPoints *= enchantmentPointMultipliersByMaterial[(int)material] / 4;
 
             return item;
+        }
+
+        static float CalculateWeightForMaterial(DaggerfallUnityItem item, WeaponMaterialTypes material)
+        {
+            int quarterKgs = (int)(item.weightInKg * 4);
+            float matQuarterKgs = (float)(quarterKgs * weightMultipliersByMaterial[(int)material]) / 4;
+            return Mathf.Round(matQuarterKgs) / 4;
         }
 
         /// <summary>

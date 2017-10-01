@@ -10,9 +10,8 @@
 //
 
 using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using System;
 using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Questing.Actions
@@ -41,30 +40,37 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             if (!match.Success)
                 return null;
 
-            // Trim source end or trailing white space will be split to an empty symbol at end of array
-            source = source.TrimEnd();
-
-            // Factory new action
+            // Factory new action and get list of symbols
+            source = source.Trim();
+            List<Symbol> symbols = new List<Symbol>();
             PickOneOf action = new PickOneOf(parentQuest);
             try
             {
-                var splits = source.Split();
+                string[] splits = source.Split();
                 if (splits == null || splits.Length < 4)
                     return null;
-                else
-                    action.taskSymbols = new Symbol[splits.Length - 3];
 
-                for (int i = 0; i < action.taskSymbols.Length; i++)
+                for (int i = 3; i < splits.Length; i++)
                 {
-                    action.taskSymbols[i] = new Symbol(splits[i + 3]);
+                    if (string.IsNullOrEmpty(splits[i]))
+                        continue;
+
+                    symbols.Add(new Symbol(splits[i]));
                 }
 
             }
             catch (System.Exception ex)
             {
                 DaggerfallUnity.LogMessage("PickOneOf.Create() failed with exception: " + ex.Message, true);
-                action = null;
+                return null;
             }
+
+            // Handle no valid symbols
+            if (symbols.Count == 0)
+                return null;
+
+            // Assign symbols
+            action.taskSymbols = symbols.ToArray();
 
             return action;
 

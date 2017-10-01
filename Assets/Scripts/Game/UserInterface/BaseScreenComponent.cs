@@ -64,7 +64,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Color backgroundColor = Color.clear;
         Texture2D backgroundColorTexture;
         protected Texture2D backgroundTexture;
+        protected Texture2D[] animatedBackgroundTextures;
         protected BackgroundLayout backgroundTextureLayout = BackgroundLayout.StretchToFill;
+
+        int animationFrame = 0;
+        float animationDelay = 0.25f;
+        float animationLastTickTime = 0f;
 
         bool mouseOverComponent = false;
         bool leftMouseWasHeldDown = false;
@@ -262,6 +267,30 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             get { return backgroundTexture; }
             set { backgroundTexture = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets array of background textures for animated background.
+        /// Set null to disable animated background.
+        /// Any existing background texture is removed when setting an animated background.
+        /// </summary>
+        public Texture2D[] AnimatedBackgroundTextures
+        {
+            get { return animatedBackgroundTextures; }
+            set
+            {
+                backgroundTexture = null;
+                animatedBackgroundTextures = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets animation delay in seconds.
+        /// </summary>
+        public float AnimationDelayInSeconds
+        {
+            get { return animationDelay; }
+            set { animationDelay = value; }
         }
 
         /// <summary>
@@ -583,6 +612,22 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Do nothing if disabled
             if (!enabled)
                 return;
+
+            // Animated background textures
+            if (animatedBackgroundTextures != null && animatedBackgroundTextures.Length > 0)
+            {
+                // Tick animation
+                if (Time.realtimeSinceStartup > animationLastTickTime + animationDelay)
+                {
+                    if (++animationFrame >= animatedBackgroundTextures.Length)
+                        animationFrame = 0;
+
+                    animationLastTickTime = Time.realtimeSinceStartup;
+                }
+
+                // Assign current frame as background texture reference
+                backgroundTexture = animatedBackgroundTextures[animationFrame];
+            }
 
             // Draw background
             Rect myRect = Rectangle;

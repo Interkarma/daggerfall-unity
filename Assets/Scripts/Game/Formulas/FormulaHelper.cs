@@ -718,6 +718,22 @@ namespace DaggerfallWorkshop.Game.Formulas
             return cost;
         }
 
+        public static int CalculateItemIdentifyCost(int baseItemValue)
+        {
+            // Free on Witches Festival
+            uint minutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+            PlayerGPS gps = GameManager.Instance.PlayerGPS;
+            if (gps.HasCurrentLocation)
+            {
+                int holidayId = GetHolidayId(minutes, gps.CurrentRegionIndex);
+                if (holidayId == (int)DaggerfallConnect.DFLocation.Holidays.Witches_Festival)
+                    return 0;
+            }
+
+            int cost = (25 * baseItemValue) >> 8;
+            return cost;
+        }
+
         public static int CalculateTradePrice(int cost, int shopQuality, bool selling)
         {
             Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;

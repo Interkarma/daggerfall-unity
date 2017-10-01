@@ -22,10 +22,12 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
     {
         Symbol itemSymbol;
         Symbol placeSymbol;
+        int marker = -1;
 
         public override string Pattern
         {
-            get { return @"place item (?<anItem>[a-zA-Z0-9_.-]+) at (?<aPlace>\w+)"; }
+            get { return @"place item (?<anItem>[a-zA-Z0-9_.-]+) at (?<aPlace>\w+) marker (?<marker>\d+)|" +
+                         @"place item (?<anItem>[a-zA-Z0-9_.-]+) at (?<aPlace>\w+)"; }
         }
 
         public PlaceItem(Quest parentQuest)
@@ -44,6 +46,11 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             PlaceItem action = new PlaceItem(parentQuest);
             action.itemSymbol = new Symbol(match.Groups["anItem"].Value);
             action.placeSymbol = new Symbol(match.Groups["aPlace"].Value);
+
+            // Set custom marker
+            Group markerGroup = match.Groups["marker"];
+            if (markerGroup.Success)
+                action.marker = Parser.ParseInt(markerGroup.Value);
 
             return action;
         }
@@ -67,7 +74,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 throw new Exception(string.Format("Could not find Place resource symbol {0}", placeSymbol));
 
             // Assign Item to Place
-            place.AssignQuestResource(item.Symbol);
+            place.AssignQuestResource(item.Symbol, marker);
 
             SetComplete();
         }
@@ -79,6 +86,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         {
             public Symbol itemSymbol;
             public Symbol placeSymbol;
+            public int marker;
         }
 
         public override object GetSaveData()
@@ -86,6 +94,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             SaveData_v1 data = new SaveData_v1();
             data.itemSymbol = itemSymbol;
             data.placeSymbol = placeSymbol;
+            data.marker = marker;
 
             return data;
         }
@@ -98,6 +107,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
             itemSymbol = data.itemSymbol;
             placeSymbol = data.placeSymbol;
+            marker = data.marker;
         }
 
         #endregion

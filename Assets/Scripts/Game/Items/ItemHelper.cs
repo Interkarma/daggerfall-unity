@@ -202,19 +202,21 @@ namespace DaggerfallWorkshop.Game.Items
             else
             {
                 // Get inventory image
-                return GetItemImage(item, true);
+                return GetItemImage(item, true, false, true);
             }
         }
 
         /// <summary>
         /// Gets inventory/equip image for specified item.
         /// Image will be cached based on material and hand for faster subsequent fetches.
+        /// Animated item images do not support dyes.
         /// </summary>
         /// <param name="item">Item to fetch image for.</param>
         /// <param name="removeMask">Removes mask index (e.g. around helmets) from final image.</param>
         /// <param name="forPaperDoll">Image is for paper doll.</param>
+        /// <param name="allowAnimation">Read animated textures.</param>
         /// <returns>ImageData.</returns>
-        public ImageData GetItemImage(DaggerfallUnityItem item, bool removeMask = false, bool forPaperDoll = false)
+        public ImageData GetItemImage(DaggerfallUnityItem item, bool removeMask = false, bool forPaperDoll = false, bool allowAnimation = false)
         {
             // Get colour
             int color = (int)item.dyeColor;
@@ -256,7 +258,7 @@ namespace DaggerfallWorkshop.Game.Items
 
             // Load image data
             string filename = TextureFile.IndexToFileName(archive);
-            ImageData data = ImageReader.GetImageData(filename, record, 0, true, false);
+            ImageData data = ImageReader.GetImageData(filename, record, 0, true, false, allowAnimation);
             if (data.type == ImageTypes.None)
                 throw new Exception("GetItemImage() could not load image data.");
 

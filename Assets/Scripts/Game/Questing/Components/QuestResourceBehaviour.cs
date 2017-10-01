@@ -113,6 +113,14 @@ namespace DaggerfallWorkshop.Game.Questing
 
         private void Update()
         {
+            // Ensure target resource has this behaviour assigned
+            // Coupling is otherwise lost when reloading a game
+            if (targetResource != null)
+            {
+                if (!targetResource.QuestResourceBehaviour)
+                    targetResource.QuestResourceBehaviour = this;
+            }
+
             // Handle enemy checks
             if (enemyEntityBehaviour)
             {

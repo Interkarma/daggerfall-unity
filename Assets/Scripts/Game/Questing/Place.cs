@@ -260,7 +260,8 @@ namespace DaggerfallWorkshop.Game.Questing
         /// Quest must have previously created SiteLink for layout builders to discover assigned resources.
         /// </summary>
         /// <param name="targetSymbol">Resource symbol of Person, Item, or Foe to assign.</param>
-        public void AssignQuestResource(Symbol targetSymbol)
+        /// <param name="marker">Preferred marker index to use instead of random.</param>
+        public void AssignQuestResource(Symbol targetSymbol, int marker = -1)
         {
             // Site must have at least one marker of each type
             if (!ValidateQuestMarkers(siteDetails.questSpawnMarkers, siteDetails.questItemMarkers))
@@ -288,10 +289,24 @@ namespace DaggerfallWorkshop.Game.Questing
             // Assign target resource to marker selected for this quest
             if (requiredMarkerType == MarkerTypes.QuestSpawn)
             {
+                // Override selected spawn marker index
+                if (marker >= 0 && marker < siteDetails.questSpawnMarkers.Length)
+                {
+                    siteDetails.selectedQuestSpawnMarker = marker;
+                    Debug.LogFormat("AssignQuestResource() used static spawn marker with index {0}", marker);
+                }
+
                 AssignResourceToMarker(targetSymbol.Clone(), ref siteDetails.questSpawnMarkers[siteDetails.selectedQuestSpawnMarker]);
             }
             else if (requiredMarkerType == MarkerTypes.QuestItem)
             {
+                // Override selected item marker index
+                if (marker >= 0 && marker < siteDetails.questItemMarkers.Length)
+                {
+                    siteDetails.selectedQuestItemMarker = marker;
+                    Debug.LogFormat("AssignQuestResource() used static item marker with index {0}", marker);
+                }
+
                 AssignResourceToMarker(targetSymbol.Clone(), ref siteDetails.questItemMarkers[siteDetails.selectedQuestItemMarker]);
             }
             else

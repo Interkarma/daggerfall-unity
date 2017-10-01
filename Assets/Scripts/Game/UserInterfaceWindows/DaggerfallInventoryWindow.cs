@@ -113,6 +113,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected Texture2D infoTexture;
 
+        ImageData magicAnimation;
+
         #endregion
 
         #region Fields
@@ -120,6 +122,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string baseTextureName = "INVE00I0.IMG";
         const string goldTextureName = "INVE01I0.IMG";
         const string infoTextureName = "ITEM00I0.IMG";
+        const string magicAnimTextureName = "TEXTURE.434";
+
+        const float magicAnimationDelay = 0.15f;
 
         const int accessoryCount = 12;                                  // Number of accessory slots
         const int accessoryButtonMarginSize = 1;                        // Margin of accessory buttons
@@ -271,7 +276,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 Position = new Vector2(localItemListScrollerRect.x, localItemListScrollerRect.y),
                 Size = new Vector2(localItemListScrollerRect.width, localItemListScrollerRect.height),
-                BackgroundColourHandler = ItemBackgroundColourHandler
+                BackgroundColourHandler = ItemBackgroundColourHandler,
+                ForegroundAnimationHandler = MagicItemForegroundAnimationHander,
+                ForegroundAnimationDelay = magicAnimationDelay
             };
             NativePanel.Components.Add(localItemListScroller);
             localItemListScroller.OnItemClick += LocalItemListScroller_OnItemClick;
@@ -282,7 +289,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 Position = new Vector2(remoteItemListScrollerRect.x, remoteItemListScrollerRect.y),
                 Size = new Vector2(remoteItemListScrollerRect.width, remoteItemListScrollerRect.height),
-                BackgroundColourHandler = ItemBackgroundColourHandler
+                BackgroundColourHandler = ItemBackgroundColourHandler,
+                ForegroundAnimationHandler = MagicItemForegroundAnimationHander,
+                ForegroundAnimationDelay = magicAnimationDelay
             };
             NativePanel.Components.Add(remoteItemListScroller);
             remoteItemListScroller.OnItemClick += RemoteItemListScroller_OnItemClick;
@@ -297,6 +306,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return questItemBackgroundColor;
             else
                 return Color.clear;
+        }
+
+        Texture2D[] MagicItemForegroundAnimationHander(DaggerfallUnityItem item)
+        {
+            return (item.IsEnchanted) ? magicAnimation.animatedTextures : null;
         }
 
         protected void SetupTargetIconPanels()
@@ -403,6 +417,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 button.SetMargins(Margins.All, accessoryButtonMarginSize);
                 button.ToolTip = defaultToolTip;
                 button.Tag = i;
+                button.AnimationDelayInSeconds = magicAnimationDelay;
                 button.OnMouseClick += AccessoryItemsButton_OnMouseClick;
                 if (itemInfoPanelLabel != null)
                     button.OnMouseEnter += AccessoryItemsButton_OnMouseEnter;
@@ -608,11 +623,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        protected virtual float GetCarriedWeight()
+        {
+            return playerEntity.CarriedWeight;
+        }
+
         protected virtual void UpdateLocalTargetIcon()
         {
             // Never changes on inventory window.
             localTargetIconPanel.BackgroundTexture = DaggerfallUnity.ItemHelper.GetContainerImage(InventoryContainerImages.Backpack).texture;
-            float weight = PlayerEntity.CarriedWeight;
+            float weight = GetCarriedWeight();
             localTargetIconLabel.Text = String.Format(weight % 1 == 0 ? "{0:F0} / {1}" : "{0:F2} / {1}", weight, PlayerEntity.MaxEncumbrance);
         }
 
@@ -652,39 +672,41 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 for (int i = 0; i < localItems.Count; i++)
                 {
                     DaggerfallUnityItem item = localItems.GetItem(i);
-
-                    // Reject if equipped
-                    if (item.IsEquipped)
-                        continue;
-
-                    bool isWeaponOrArmor = (item.ItemGroup == ItemGroups.Weapons || item.ItemGroup == ItemGroups.Armor);
-
-                    // Add based on view
-                    if (selectedTabPage == TabPages.WeaponsAndArmor)
-                    {
-                        // Weapons and armor
-                        if (isWeaponOrArmor && !item.IsEnchanted)
-                            localItemsFiltered.Add(item);
-                    }
-                    else if (selectedTabPage == TabPages.MagicItems)
-                    {
-                        // Enchanted items
-                        if (item.IsEnchanted)
-                            localItemsFiltered.Add(item);
-                    }
-                    else if (selectedTabPage == TabPages.Ingredients)
-                    {
-                        // Ingredients
-                        if (item.IsIngredient && !item.IsEnchanted)
-                            localItemsFiltered.Add(item);
-                    }
-                    else if (selectedTabPage == TabPages.ClothingAndMisc)
-                    {
-                        // Everything else
-                        if (!isWeaponOrArmor && !item.IsEnchanted && !item.IsIngredient)
-                            localItemsFiltered.Add(item);
-                    }
+                    // Add if not equipped
+                    if (!item.IsEquipped)
+                        AddLocalItem(item);
                 }
+            }
+        }
+
+        protected void AddLocalItem(DaggerfallUnityItem item)
+        {
+            bool isWeaponOrArmor = (item.ItemGroup == ItemGroups.Weapons || item.ItemGroup == ItemGroups.Armor);
+
+            // Add based on view
+            if (selectedTabPage == TabPages.WeaponsAndArmor)
+            {
+                // Weapons and armor
+                if (isWeaponOrArmor && !item.IsEnchanted)
+                    localItemsFiltered.Add(item);
+            }
+            else if (selectedTabPage == TabPages.MagicItems)
+            {
+                // Enchanted items
+                if (item.IsEnchanted)
+                    localItemsFiltered.Add(item);
+            }
+            else if (selectedTabPage == TabPages.Ingredients)
+            {
+                // Ingredients
+                if (item.IsIngredient && !item.IsEnchanted)
+                    localItemsFiltered.Add(item);
+            }
+            else if (selectedTabPage == TabPages.ClothingAndMisc)
+            {
+                // Everything else
+                if (!isWeaponOrArmor && !item.IsEnchanted && !item.IsIngredient)
+                    localItemsFiltered.Add(item);
             }
         }
 
@@ -720,11 +742,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     return;
 
                 // Get item at this equip index (if any)
-                DaggerfallUnityItem item = playerEntity.ItemEquipTable.GetItem((EquipSlots)button.Tag);
+                DaggerfallUnityItem item = PlayerEntity.ItemEquipTable.GetItem((EquipSlots)button.Tag);
                 if (item == null)
                 {
                     panel.BackgroundTexture = null;
                     button.ToolTipText = string.Empty;
+                    button.AnimatedBackgroundTextures = null;
                     continue;
                 }
 
@@ -733,6 +756,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 panel.BackgroundTexture = image.texture;
                 panel.Size = new Vector2(image.width, image.height);
                 button.ToolTipText = item.LongName;
+                if (item.IsEnchanted)
+                    button.AnimatedBackgroundTextures = magicAnimation.animatedTextures;
             }
         }
 
@@ -772,8 +797,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             removeSelected = ImageReader.GetSubTexture(goldTexture, removeButtonRect);
             useSelected = ImageReader.GetSubTexture(goldTexture, useButtonRect);
 
+            // Cut out info panel texture from item maker
             Texture2D infoBaseTexture = ImageReader.GetTexture(infoTextureName);
             infoTexture = ImageReader.GetSubTexture(infoBaseTexture, infoCutoutRect);
+
+            // Load magic item animation textures
+            magicAnimation = ImageReader.GetImageData(magicAnimTextureName, 5, 0, true, false, true);
+
         }
 
         void ShowWagon(bool show)
@@ -957,7 +987,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     prohibited = true;
                 // Check for prohibited material
                 else if (((item.NativeMaterialValue >> 8) == 2)
-                    && (1 << (item.NativeMaterialValue >> 8) & (int)playerEntity.Career.ForbiddenMaterials) != 0)
+                    && (1 << (item.NativeMaterialValue << 8) & (int)playerEntity.Career.ForbiddenMaterials) != 0)
                     prohibited = true;
             }
             else if (item.ItemGroup == ItemGroups.Weapons)
@@ -1016,7 +1046,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected bool CanCarry(DaggerfallUnityItem item)
         {
             // Check weight limit
-            if (playerEntity.CarriedWeight + item.weightInKg > playerEntity.MaxEncumbrance)
+            if (GetCarriedWeight() + item.weightInKg > playerEntity.MaxEncumbrance)
             {
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
                 messageBox.SetText(HardStrings.cannotCarryAnymore);

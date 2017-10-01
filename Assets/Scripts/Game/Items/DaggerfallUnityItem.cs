@@ -1012,6 +1012,14 @@ namespace DaggerfallWorkshop.Game.Items
             this.questItemSymbol = questItemSymbol;
         }
 
+        /// <summary>
+        /// Identifies the item.
+        /// </summary>
+        public void IdentifyItem()
+        {
+            flags = (ushort)(flags | identifiedMask);
+        }        
+
         #endregion
 
         #region Static Methods

@@ -3,6 +3,7 @@
 -- QuestId: 1
 Messages: 41
 Quest: S0000001
+DisplayName: Missing Prince
 -- Message panels
 QRC:
 
@@ -309,7 +310,7 @@ Person _lhotun_ named Prince_Lhotun atHome
 Person _akorithi_ named Queen_Akorithi atHome
 Person _greklith_ face 88 named Prince_Greklith atHome
 Person Vhosek face 88 named Lord_Vhosek atHome
-Person _brother_ face 5 faction Children anyInfo 1030 rumors 1031
+Person _brother_ face 5 faction Children male anyInfo 1030 rumors 1031
 Person _agentuk_ face 1 faction Agents_of_The_Underking
 
 Place _ukcrypt_ remote dungeon0 anyInfo 1015 rumors 1016

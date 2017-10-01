@@ -103,6 +103,8 @@ namespace DaggerfallWorkshop.Game.Items
 
             public override string HeldSoul()
             {   // %hs
+                if (parent.trappedSoulType == MobileTypes.None)
+                    return "Nothing";
                 MobileEnemy soul;
                 EnemyBasics.GetEnemy(parent.trappedSoulType, out soul);
                 return soul.Name;

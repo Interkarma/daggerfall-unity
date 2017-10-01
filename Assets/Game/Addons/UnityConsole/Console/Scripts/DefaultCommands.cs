@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using Wenzil.Console.Commands;
 using DaggerfallWorkshop.Game;
 using System.Linq;
@@ -1249,7 +1249,7 @@ namespace Wenzil.Console
                             newItem = ItemBuilder.CreateRandomArmor(playerEntity.Level, RandomEnumValue<Genders>(), RandomEnumValue<Races>());
                             break;
                         case "cloth":
-                            newItem = ItemBuilder.CreateRandomClothing(RandomEnumValue<Genders>());
+                            newItem = ItemBuilder.CreateRandomClothing(RandomEnumValue<Genders>(), RandomEnumValue<Races>());
                             break;
                         case "ingr":
                             newItem = ItemBuilder.CreateRandomIngredient();

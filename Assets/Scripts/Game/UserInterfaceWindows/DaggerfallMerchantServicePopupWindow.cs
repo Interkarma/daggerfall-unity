@@ -36,28 +36,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #endregion
 
-        #region UI Textures
-
-        Texture2D baseTexture;
-
-        #endregion
-
         #region Fields
 
         const string baseTextureName = "GNRC01I0.IMG";      // Talk / Sell
+        Texture2D baseTexture;
+
         Services currentService;
-
         StaticNPC merchantNPC;
-
-        #endregion
-
-        #region Properties
-
-        public StaticNPC MerchantNPC
-        {
-            get { return merchantNPC; }
-            set { merchantNPC = value; }
-        }
 
         #endregion
 
@@ -76,9 +61,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Constructors
 
-        public DaggerfallMerchantServicePopupWindow(IUserInterfaceManager uiManager, Services service)
+        public DaggerfallMerchantServicePopupWindow(IUserInterfaceManager uiManager, StaticNPC npc, Services service)
             : base(uiManager)
         {
+            merchantNPC = npc;
             currentService = service;
             // Clear background
             ParentPanel.BackgroundColor = Color.clear;
@@ -147,6 +133,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void TalkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            CloseWindow();
             GameManager.Instance.TalkManager.TalkToStaticNPC(merchantNPC);
         }
 

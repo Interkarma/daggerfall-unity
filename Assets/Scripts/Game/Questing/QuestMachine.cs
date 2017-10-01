@@ -883,13 +883,13 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
-        /// Sets main quest stage from 1-3 (currently).
+        /// Sets main quest stage from 1-4 (currently).
         /// </summary>
         /// <param name="stage">Stage value.</param>
         public int SetMainQuestStage(int stage)
         {
             // Clamp to valid range
-            stage = Mathf.Clamp(stage, 1, 3);
+            stage = Mathf.Clamp(stage, 1, 4);
 
             // Setup current stage
             ClearMainQuestState();
@@ -914,6 +914,13 @@ namespace DaggerfallWorkshop.Game.Questing
                 GameManager.Instance.PlayerEntity.FactionData.ChangeReputation(391, 20);    // Queen Barenziah +20
                 GameManager.Instance.PlayerEntity.Level = 9;
                 InstantiateQuest("__MQSTAGE03");
+                InstantiateQuest("S0000977");
+            }
+            else if (stage == 4)
+            {
+                GameManager.Instance.PlayerEntity.FactionData.ChangeReputation(380, 20);    // Queen Akorithi +20
+                GameManager.Instance.PlayerEntity.Level = 7;
+                InstantiateQuest("__MQSTAGE04");
                 InstantiateQuest("S0000977");
             }
 
