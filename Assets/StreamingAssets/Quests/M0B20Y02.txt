@@ -131,7 +131,7 @@ _pcgetsgold_ task:
 	end quest 
 
 _S.01_ task:
-	create foe _monster_ every 30 minutes 15 times with 30% success 
+	create foe _monster_ every 15 minutes 15 times with 50% success 
 
 _mondead_ task:
 	killed 6 _monster_ 
