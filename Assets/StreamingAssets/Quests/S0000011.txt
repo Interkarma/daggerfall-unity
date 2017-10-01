@@ -351,7 +351,7 @@ _S.02_ task:
 
 _S.03_ task:
 	when _S.01_ and not _S.04_ 
-	place item Chapter6 at _scourgbarrow_ 
+	place item Chapter6 at _scourgbarrow_ marker 5
 	say 1061 
 
 _S.04_ task:
@@ -362,7 +362,7 @@ _S.05_ task:
 	when _S.08_ or _S.15_ 
 
 yes task:
-	place item Chapter6 at _orsinium_ 
+	place item Chapter6 at _orsinium_ marker 2
 	start timer _S.01_ 
 	log 1010 step 0 
 	reveal _orsinium_ in province 26 at 146892 
