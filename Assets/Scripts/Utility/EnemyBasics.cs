@@ -1018,7 +1018,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 MapChance = 1,
                 LootTableKey = "Q",
-                HitFrame = 3,
+                HitFrame = 2,
             },
 
             // Vampire Ancient
