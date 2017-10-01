@@ -77,7 +77,7 @@ womens_clothing        ,12,-1
 womens_robe            ,12,18
 painting               ,13,-1
 portrait               ,13,0
-Lysandus_death         ,13,3
+Lysandus_death         ,13,0
 gem                    ,14,-1
 ruby                   ,14,0
 emerald                ,14,1
