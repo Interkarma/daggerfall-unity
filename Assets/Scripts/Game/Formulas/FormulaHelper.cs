@@ -718,11 +718,20 @@ namespace DaggerfallWorkshop.Game.Formulas
             return cost;
         }
 
-        // TODO: implement DF formula - this is a placeholder
-        public static int CalculateItemIdentifyCost(int baseItemValue, int shopQuality)
+        public static int CalculateItemIdentifyCost(int baseItemValue)
         {
-            int cost = baseItemValue / 5;
-            return CalculateCost(cost, shopQuality);
+            // Free on Witches Festival
+            uint minutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+            PlayerGPS gps = GameManager.Instance.PlayerGPS;
+            if (gps.HasCurrentLocation)
+            {
+                int holidayId = GetHolidayId(minutes, gps.CurrentRegionIndex);
+                if (holidayId == (int)DaggerfallConnect.DFLocation.Holidays.Witches_Festival)
+                    return 0;
+            }
+
+            int cost = (25 * baseItemValue) >> 8;
+            return cost;
         }
 
         public static int CalculateTradePrice(int cost, int shopQuality, bool selling)

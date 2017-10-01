@@ -349,7 +349,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                             break;
                         case WindowModes.Identify:
                             if (!item.IsIdentified)
-                                cost += FormulaHelper.CalculateItemIdentifyCost(item.value, buildingDiscoveryData.quality);
+                                cost += FormulaHelper.CalculateItemIdentifyCost(item.value);
                             break;
                     }
                 }
@@ -362,6 +362,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (windowMode == WindowModes.Sell)
                 return FormulaHelper.CalculateTradePrice(cost, buildingDiscoveryData.quality, true);
+            else if (windowMode == WindowModes.Identify)
+                return cost;
             else
                 return FormulaHelper.CalculateTradePrice(cost, buildingDiscoveryData.quality, false);
         }

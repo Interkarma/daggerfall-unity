@@ -259,6 +259,72 @@ namespace DaggerfallConnect
 
         #endregion
 
+        #region Holiday Enumerations
+
+        /// <summary>
+        /// Holiday ID numbers.
+        /// </summary>
+        public enum Holidays
+        {
+            None,
+            New_Life,
+            Scour_Day,
+            Ovanka,
+            South_Winds_Prayer,
+            Day_of_Lights,
+            Waking_Day,
+            Mad_Pelagius,
+            Othroktide,
+            Day_of_Release,
+            Hearts_Day,
+            Perserverance_Day,
+            Aduros_Nau,
+            First_Harvest,
+            Day_of_Waiting,
+            Flower_Day,
+            Festival_of_Blades,
+            Gardtide,
+            Day_of_the_Dead,
+            Day_of_Shame,
+            Jesters_Day,
+            Second_Harvest,
+            Marukhs_Day,
+            Fire_Festival,
+            Fishing_Day,
+            Drigh_RZimb,
+            Mid_Year,
+            Dancing_Day,
+            Tibedetha,
+            Merchants_Festival,
+            Divad_Etept,
+            Suns_Rest,
+            Fiery_Night,
+            Maiden_Katrica,
+            Koomu_Alazeri,
+            Feast_of_the_Tiger,
+            Appreciation_Day,
+            Harvest_End,
+            Tales_and_Tallow,
+            Khurat,
+            Riglametha,
+            Childrens_Day,
+            Dirij_Tereur,
+            Witches_Festival,
+            Broken_Diamonds,
+            Emperors_Birthday,
+            Serpents_Dance,
+            Moon_Festival,
+            Hel_Anseilak,
+            Warriors_Festival,
+            North_Winds_Festival,
+            Baranth_Do,
+            Chila,
+            Saturalia,
+            Old_Life_Festival, // Not used
+        }
+
+        #endregion
+
         #region Climate Structures
 
         /// <summary>
