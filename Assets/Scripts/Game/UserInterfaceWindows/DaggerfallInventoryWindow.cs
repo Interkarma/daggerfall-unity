@@ -317,10 +317,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // Setup local and remote target icon panels
             localTargetIconPanel = DaggerfallUI.AddPanel(localTargetIconRect, NativePanel);
+            localTargetIconPanel.BackgroundTextureLayout = BackgroundLayout.ScaleToFit;
             localTargetIconLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(1, 2), localTargetIconPanel);
             localTargetIconLabel.TextColor = DaggerfallUI.DaggerfallUnityDefaultToolTipTextColor;
 
             remoteTargetIconPanel = DaggerfallUI.AddPanel(remoteTargetIconRect, NativePanel);
+            remoteTargetIconPanel.BackgroundTextureLayout = BackgroundLayout.ScaleToFit;
             remoteTargetIconLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(1, 2), remoteTargetIconPanel);
             remoteTargetIconLabel.TextColor = DaggerfallUI.DaggerfallUnityDefaultToolTipTextColor;
         }
