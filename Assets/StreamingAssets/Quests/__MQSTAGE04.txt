@@ -1,7 +1,7 @@
 -- This is a modified backbone quest that only launches current stage for testers.
 -- Any required reputations or global variables are set at launch.
 
-Quest: __MQSTAGE03
+Quest: __MQSTAGE04
 DisplayName: Main Quest Backbone (Test Stage 4)
 -- Message panels
 QRC:

@@ -3,6 +3,7 @@
 -- QuestId: 17
 Messages: 23
 Quest: S0000017
+DisplayName: Wayrest Painting
 -- Message panels
 QRC:
 
@@ -123,7 +124,7 @@ _2letter_ task:
 
 yes task:
 	_item_ used do _S.05_ 
-	place item _item_ at _wayrest_ 
+	place item _item_ at _wayrest_ marker 0
 	add dialog for item _item_ 
 	log 1010 step 0 
 	say AcceptQuest 
