@@ -565,6 +565,8 @@ namespace DaggerfallWorkshop.Utility
                     return GameManager.Instance.TalkManager.CurrentKeySubject;
                 case TalkManager.KeySubjectType.Work:
                     return GameManager.Instance.TalkManager.GetWorkString();
+                case TalkManager.KeySubjectType.QuestTopic:
+                    return GameManager.Instance.TalkManager.CurrentKeySubject;
             }
         }
 

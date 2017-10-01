@@ -106,7 +106,7 @@ namespace DaggerfallWorkshop.Game
             Thing, // not sure if we will ever have a thing entry which is no quest thing...
             QuestLocation,
             QuestPerson,
-            QuestThing
+            QuestItem
         }
 
         public enum NPCKnowledgeAboutItem
@@ -142,7 +142,8 @@ namespace DaggerfallWorkshop.Game
             Building,
             Person,
             Thing,
-            Work
+            Work,
+            QuestTopic
         }
 
         string nameNPC = "";
@@ -572,6 +573,12 @@ namespace DaggerfallWorkshop.Game
                 case QuestionType.Regional:
                     question = "not implemented";
                     break;
+                case QuestionType.QuestLocation:
+                case QuestionType.QuestPerson:
+                case QuestionType.QuestItem:
+                    currentKeySubjectType = KeySubjectType.QuestTopic;
+                    question = expandRandomTextRecord(7212 + toneIndex);
+                    break;
                 case QuestionType.Work:
                     currentKeySubjectType = KeySubjectType.Work;
                     question = expandRandomTextRecord(7212 + toneIndex);
@@ -660,7 +667,7 @@ namespace DaggerfallWorkshop.Game
                     break;
                 case QuestionType.QuestLocation:
                 case QuestionType.QuestPerson:
-                case QuestionType.QuestThing:
+                case QuestionType.QuestItem:
                     answer = GetAnswerAboutQuestTopic(listItem);
                     break;
                 case QuestionType.Work:
@@ -882,7 +889,7 @@ namespace DaggerfallWorkshop.Game
                             itemQuestTopic.questionType = QuestionType.QuestPerson;
                             break;
                         case QuestInfoResourceType.Thing:
-                            itemQuestTopic.questionType = QuestionType.QuestThing;
+                            itemQuestTopic.questionType = QuestionType.QuestItem;
                             break;
                     }
                     itemQuestTopic.questID = questInfo.Key;
