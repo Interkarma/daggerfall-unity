@@ -919,7 +919,7 @@ namespace DaggerfallWorkshop.Game.Questing
             else if (stage == 4)
             {
                 GameManager.Instance.PlayerEntity.FactionData.ChangeReputation(380, 20);    // Queen Akorithi +20
-                GameManager.Instance.PlayerEntity.Level = 7;
+                GameManager.Instance.PlayerEntity.Level = 8;
                 InstantiateQuest("__MQSTAGE04");
                 InstantiateQuest("S0000977");
             }
