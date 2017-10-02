@@ -34,25 +34,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #endregion
 
-        #region Structures
-
-        struct FaceDetails
-        {
-            public ulong questUID;
-            public Symbol targetPerson;
-            public Races targetRace;
-            public Genders gender;
-            public int faceIndex;
-        }
-
-        #endregion
-
         #region Constructors
 
         public EscortingNPCFacePanel()
             : base()
         {
             QuestMachine.OnQuestEnded += QuestMachine_OnQuestEnded;
+            Serialization.SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
         }
 
         #endregion
@@ -126,7 +114,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             return face;
         }
 
-        void ClearFaces()
+        public void ClearFaces()
         {
             // Remove face panels from component list
             foreach (Panel facePanel in facePanels)
@@ -138,7 +126,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             facePanels.Clear();
         }
 
-        void RefreshFaces()
+        public void RefreshFaces()
         {
             // Clear existing faces
             ClearFaces();
@@ -184,6 +172,22 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #endregion
 
+        #region Serialization
+
+        public FaceDetails[] GetSaveData()
+        {
+            return faces.ToArray();
+        }
+
+        public void RestoreSaveData(FaceDetails[] faces)
+        {
+            this.faces.Clear();
+            this.faces.AddRange(faces);
+            RefreshFaces();
+        }
+
+        #endregion
+
         #region Event Handlers
 
         private void QuestMachine_OnQuestEnded(Quest quest)
@@ -202,6 +206,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 }
             }
 
+            RefreshFaces();
+        }
+
+        private void SaveLoadManager_OnStartLoad(Serialization.SaveData_v1 saveData)
+        {
+            faces.Clear();
             RefreshFaces();
         }
 
