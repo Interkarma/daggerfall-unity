@@ -53,6 +53,8 @@ namespace DaggerfallWorkshop.Game.Questing
         Person lastPersonReferenced = null;
         bool questBreak = false;
 
+        int ticksToEnd = 0;
+
         #endregion
 
         #region Structures
@@ -205,6 +207,13 @@ namespace DaggerfallWorkshop.Game.Questing
             if (questComplete)
                 return;
 
+            // Countdown ticks to end
+            if (ticksToEnd > 0)
+            {
+                if (--ticksToEnd == 0)
+                    questComplete = true;
+            }
+
             // Tick resources
             foreach(QuestResource resource in resources.Values)
             {
@@ -237,7 +246,11 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public void EndQuest()
         {
-            questComplete = true;
+            // Schedule quest to end after a couple of ticks
+            // This allows any final tasks started directly before "end quest" to execute
+            // Example is Sx017 when Akorithi prompts if PC used painting then ends quest
+            // There might be a better way to handle this (e.g. prompt executes task directly rather than on next tick)
+            ticksToEnd = 2;
         }
 
         public void StartTask(Symbol symbol)
