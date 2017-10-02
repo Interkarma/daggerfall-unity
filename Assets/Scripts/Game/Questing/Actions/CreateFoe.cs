@@ -24,7 +24,7 @@ namespace DaggerfallWorkshop.Game.Questing
     {
         Symbol foeSymbol;
         uint spawnInterval;
-        int spawnMaxTimes;
+        int spawnMaxTimes = -1;
         int spawnChance;
 
         ulong lastSpawnTime = 0;
@@ -33,13 +33,16 @@ namespace DaggerfallWorkshop.Game.Questing
         bool spawnInProgress = false;
         GameObject[] pendingFoeGameObjects;
         int pendingFoesSpawned;
+        bool isSendAction = false;
 
         public override string Pattern
         {
             get
             {
                 return @"create foe (?<symbol>[a-zA-Z0-9_.-]+) every (?<minutes>\d+) minutes (?<infinite>indefinitely) with (?<percent>\d+)% success|" +
-                       @"create foe (?<symbol>[a-zA-Z0-9_.-]+) every (?<minutes>\d+) minutes (?<count>\d+) times with (?<percent>\d+)% success";
+                       @"create foe (?<symbol>[a-zA-Z0-9_.-]+) every (?<minutes>\d+) minutes (?<count>\d+) times with (?<percent>\d+)% success|" +
+                       @"(?<send>send) (?<symbol>[a-zA-Z0-9_.-]+) every (?<minutes>\d+) minutes (?<count>\d+) times with (?<percent>\d+)% success|" +
+                       @"(?<send>send) (?<symbol>[a-zA-Z0-9_.-]+) every (?<minutes>\d+) minutes with (?<percent>\d+)% success";
             }
         }
 
@@ -74,6 +77,10 @@ namespace DaggerfallWorkshop.Game.Questing
             // Handle infinite
             if (!string.IsNullOrEmpty(match.Groups["infinite"].Value))
                 action.spawnMaxTimes = -1;
+
+            // Handle "send" variant
+            if (!string.IsNullOrEmpty(match.Groups["send"].Value))
+                action.isSendAction = true;
 
             return action;
         }
@@ -139,8 +146,17 @@ namespace DaggerfallWorkshop.Game.Questing
 
         void TryPlacement()
         {
-            // Place in world near player depending on local area
             PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
+
+            // The "send" variant is only used when player outside in towns
+            // The placement will remain pending until player matches conditions
+            if (isSendAction)
+            {
+                if (playerEnterExit.IsPlayerInside || !GameManager.Instance.PlayerGPS.IsPlayerInLocationRect)
+                    return;
+            }
+
+            // Place in world near player depending on local area
             if (playerEnterExit.IsPlayerInsideBuilding)
             {
                 PlaceFoeBuildingInterior(pendingFoeGameObjects, playerEnterExit.Interior);
@@ -343,6 +359,7 @@ namespace DaggerfallWorkshop.Game.Questing
             public int spawnMaxTimes;
             public int spawnChance;
             public int spawnCounter;
+            public bool isSendAction;
         }
 
         public override object GetSaveData()
@@ -353,6 +370,7 @@ namespace DaggerfallWorkshop.Game.Questing
             data.spawnMaxTimes = spawnMaxTimes;
             data.spawnChance = spawnChance;
             data.spawnCounter = spawnCounter;
+            data.isSendAction = isSendAction;
 
             return data;
         }
@@ -368,6 +386,7 @@ namespace DaggerfallWorkshop.Game.Questing
             spawnMaxTimes = data.spawnMaxTimes;
             spawnChance = data.spawnChance;
             spawnCounter = data.spawnCounter;
+            isSendAction = data.isSendAction;
         }
 
         #endregion
