@@ -1013,6 +1013,19 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
+        /// Remove status as quest item so it becomes permanent and will not be removed at end of quest.
+        /// </summary>
+        public void MakePermanent()
+        {
+            if (isQuestItem)
+            {
+                questUID = 0;
+                questItemSymbol = null;
+                isQuestItem = false;
+            }
+        }
+
+        /// <summary>
         /// Identifies the item.
         /// </summary>
         public void IdentifyItem()

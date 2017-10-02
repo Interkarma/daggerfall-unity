@@ -103,6 +103,11 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             if (item == null)
                 return;
 
+            // Release item so we can offer back to player
+            // Sometimes a quest item is both carried by player then offered back to them
+            // Example is Sx010 where "curse" is removed and player can keep item
+            ReleaseItemPriorToOffer(item);
+
             // Create a dropped loot container window for player to loot their reward
             rewardLoot = GameObjectHelper.CreateDroppedLootContainer(GameManager.Instance.PlayerObject, DaggerfallUnity.NextUID);
             rewardLoot.ContainerImage = InventoryContainerImages.Merchant;
@@ -117,6 +122,21 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // Give player item and show notify message
             GameManager.Instance.PlayerEntity.Items.AddItem(item.DaggerfallUnityItem, Items.ItemCollection.AddPosition.Front);
             ParentQuest.ShowMessagePopup(textId);
+        }
+
+        void ReleaseItemPriorToOffer(Item item)
+        {
+            if (item == null)
+                return;
+
+            // Unequip item if player is wearing it
+            GameManager.Instance.PlayerEntity.ItemEquipTable.UnequipItem(item.DaggerfallUnityItem);
+
+            // Remove from inventory so it can be offered back to player
+            GameManager.Instance.PlayerEntity.Items.RemoveItem(item.DaggerfallUnityItem);
+
+            // Implies "make permanent" action
+            item.DaggerfallUnityItem.MakePermanent();
         }
 
         private void QuestCompleteMessage_OnClose()
