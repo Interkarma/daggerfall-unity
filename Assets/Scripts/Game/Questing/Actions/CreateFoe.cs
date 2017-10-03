@@ -148,11 +148,11 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
 
-            // The "send" variant is only used when player outside in towns
+            // The "send" variant is only used when player within a town/exterior location
             // The placement will remain pending until player matches conditions
             if (isSendAction)
             {
-                if (playerEnterExit.IsPlayerInside || !GameManager.Instance.PlayerGPS.IsPlayerInLocationRect)
+                if (!GameManager.Instance.PlayerGPS.IsPlayerInLocationRect)
                     return;
             }
 

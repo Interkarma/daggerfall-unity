@@ -317,6 +317,7 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new RevealLocation(null));
             RegisterAction(new RestrainFoe(null));
             RegisterAction(new MakePermanent(null));
+            RegisterAction(new HaveItem(null));
 
             // In progress - these actions are being actively developed
 
