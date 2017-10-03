@@ -24,7 +24,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
         public override string Pattern
         {
-            get { return @"place foe (?<aFoe>[a-zA-Z0-9_.-]+) at (?<aPlace>\w+)"; }
+            get { return @"place foe (?<aFoe>[a-zA-Z0-9_.-]+) at (?<aPlace>[a-zA-Z0-9_.-]+)"; }
         }
 
         public PlaceFoe(Quest parentQuest)
