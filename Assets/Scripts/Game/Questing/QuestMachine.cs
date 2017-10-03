@@ -891,7 +891,7 @@ namespace DaggerfallWorkshop.Game.Questing
         public int SetMainQuestStage(int stage)
         {
             // Clamp to valid range
-            stage = Mathf.Clamp(stage, 1, 4);
+            stage = Mathf.Clamp(stage, 1, 5);
 
             // Setup current stage
             ClearMainQuestState();
@@ -923,6 +923,12 @@ namespace DaggerfallWorkshop.Game.Questing
                 GameManager.Instance.PlayerEntity.FactionData.ChangeReputation(380, 20);    // Queen Akorithi +20
                 GameManager.Instance.PlayerEntity.Level = 8;
                 InstantiateQuest("__MQSTAGE04");
+                InstantiateQuest("S0000977");
+            }
+            else if (stage == 5)
+            {
+                GameManager.Instance.PlayerEntity.Level = 8;
+                InstantiateQuest("__MQSTAGE05");
                 InstantiateQuest("S0000977");
             }
 

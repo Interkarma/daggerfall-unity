@@ -407,14 +407,19 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         void SetupLocalSite()
         {
+            // Daggerfall has no local dungeons but some quests (e.g. Sx007) can request one
+            // This is used to stash a resource somewhere player cannot find it
+            // Setup a remote dungeon instead
+            if (p1 == 1)
+            {
+                SetupRemoteSite();
+                return;
+            }
+
             // Get player location
             DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
             if (!location.Loaded)
                 throw new Exception("Tried to setup a local site but player is not in a location (i.e. player in wilderness).");
-
-            // Local dungeons not supported
-            if (p1 == 1)
-                throw new Exception("Cannot specify a local dungeon place resource. Only use of remote or fixed supported for dungeons.");
 
             // Get list of valid sites
             SiteDetails[] foundSites = null;
