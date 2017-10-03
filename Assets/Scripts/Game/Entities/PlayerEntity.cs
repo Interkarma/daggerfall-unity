@@ -68,7 +68,7 @@ namespace DaggerfallWorkshop.Game.Entity
         protected int thievesGuildRequirementTally = 0;
         protected int darkBrotherhoodRequirementTally = 0;
 
-        protected ushort[] priceAdjustmentByRegion = FormulaHelper.RandomRegionalPriceAdjustments();
+        protected RegionDataRecord[] regionData = new RegionDataRecord[62];
 
         // Fatigue loss per in-game minute
         public const int DefaultFatigueLoss = 11;
@@ -121,7 +121,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public int DarkBrotherhoodRequirementTally { get { return darkBrotherhoodRequirementTally; } set { darkBrotherhoodRequirementTally = value; } }
         public float CarriedWeight { get { return Items.GetWeight() + ((float)goldPieces / DaggerfallBankManager.gold1kg); } }
         public float WagonWeight { get { return WagonItems.GetWeight(); } }
-        public ushort[] PriceAdjustmentByRegion { get { return priceAdjustmentByRegion; } set { priceAdjustmentByRegion = value; } }
+        public RegionDataRecord[] RegionData { get { return regionData; } set { regionData = value; } }
         public uint LastGameMinutes { get { return lastGameMinutes; } set { lastGameMinutes = value; } }
 
         #endregion
@@ -195,7 +195,7 @@ namespace DaggerfallWorkshop.Game.Entity
             int daysPast = (int)(currentDay - lastDay);
 
             if (daysPast > 0)
-                FormulaHelper.ModifyPriceAdjustmentByRegion(priceAdjustmentByRegion, daysPast);
+                FormulaHelper.ModifyPriceAdjustmentByRegion(ref regionData, daysPast);
 
             lastGameMinutes = gameMinutes;
 
@@ -647,6 +647,25 @@ namespace DaggerfallWorkshop.Game.Entity
             // Optionally make permanent
             if (makePermanent)
                 item.MakePermanent();
+        }
+
+        #endregion
+
+        #region RegionData
+        public struct RegionDataRecord // 80 bytes long
+        {
+            public byte[] Values; // 29 bytes long
+            public bool[] Flags; // 29 bytes long
+            public bool[] Flags2; // 14 bytes long
+            // bytes 72 to 74 unknown
+            public short LegalRep; // bytes 74 to 76
+            public ushort Unknown; // bytes 76 to 78
+            public ushort PriceAdjustment; // bytes 78 to 80
+        }
+
+        public void InitializeRegionPrices()
+        {
+            FormulaHelper.RandomizeInitialPriceAdjustments(ref regionData);
         }
 
         #endregion
