@@ -130,7 +130,11 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 return;
 
             // Unequip item if player is wearing it
-            GameManager.Instance.PlayerEntity.ItemEquipTable.UnequipItem(item.DaggerfallUnityItem);
+            if (GameManager.Instance.PlayerEntity.ItemEquipTable.UnequipItem(item.DaggerfallUnityItem))
+            {
+                // If item was actually unequipped then update armour values
+                GameManager.Instance.PlayerEntity.UpdateEquippedArmorValues(item.DaggerfallUnityItem, false);
+            }
 
             // Remove from inventory so it can be offered back to player
             GameManager.Instance.PlayerEntity.Items.RemoveItem(item.DaggerfallUnityItem);
