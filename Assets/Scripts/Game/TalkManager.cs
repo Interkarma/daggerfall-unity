@@ -175,6 +175,7 @@ namespace DaggerfallWorkshop.Game
 
         // quest injected stuff
 
+        // quest info resource type
         public enum QuestInfoResourceType
         {
             NotSet,
@@ -199,6 +200,10 @@ namespace DaggerfallWorkshop.Game
         // dictionary of quests (key is questID, value is QuestInfo)
         Dictionary<ulong, QuestResources> dictQuestInfo = new Dictionary<ulong, QuestResources>();
 
+        public class SaveDataConversation
+        {
+            public Dictionary<ulong, QuestResources> dictQuestInfo;
+        }
 
         #endregion
 
@@ -715,6 +720,38 @@ namespace DaggerfallWorkshop.Game
             questResources.resourceInfo[resourceName] = questResourceInfo;
 
             dictQuestInfo[questID] = questResources;
+
+            // update topic list
+            AssembleTopiclistTellMeAbout();
+        }
+
+        public void RemoveQuestInfoTopicsForSpecificQuest(ulong questID)
+        {
+            if (dictQuestInfo.ContainsKey(questID))
+            {
+                dictQuestInfo.Remove(questID);
+            }
+
+            // update topic list
+            AssembleTopiclistTellMeAbout();
+        }
+
+        /// <summary>
+        /// Gets conversation dictionary for save.
+        /// </summary>
+        public SaveDataConversation GetConversationSaveData()
+        {
+            SaveDataConversation saveDataConversation = new SaveDataConversation();
+            saveDataConversation.dictQuestInfo = dictQuestInfo;
+            return saveDataConversation;
+        }
+
+        /// <summary>
+        /// Restores conversation dictionary for load.
+        /// </summary>
+        public void RestoreConversationData(SaveDataConversation data)
+        {
+            dictQuestInfo = data.dictQuestInfo;
 
             // update topic list
             AssembleTopiclistTellMeAbout();
