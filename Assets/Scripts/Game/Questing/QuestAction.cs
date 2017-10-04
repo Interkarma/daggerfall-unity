@@ -51,11 +51,6 @@ namespace DaggerfallWorkshop.Game.Questing
         string DebugSource { get; set; }
 
         /// <summary>
-        /// Returns true if this action can tick during rest.
-        /// </summary>
-        bool AllowRestingTick { get; }
-
-        /// <summary>
         /// Helper to test if source is a match for Pattern.
         /// </summary>
         Match Test(string source);
@@ -124,13 +119,11 @@ namespace DaggerfallWorkshop.Game.Questing
         bool isAlwaysOnTriggerCondition = false;
         string debugSource;
         protected bool allowRearm = true;
-        protected bool allowRestingTick = false;
 
         public bool IsComplete { get { return isComplete; } set { isComplete = value; } }
         public bool IsTriggerCondition { get { return isTriggerCondition; } set { isTriggerCondition = value; } }
         public bool IsAlwaysOnTriggerCondition {  get { return isAlwaysOnTriggerCondition; } set { isAlwaysOnTriggerCondition = value; } }
         public string DebugSource { get { return debugSource; } set { debugSource = value; } }
-        public bool AllowRestingTick { get { return allowRestingTick; } }
 
         public abstract string Pattern { get; }
 

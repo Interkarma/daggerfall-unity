@@ -77,7 +77,6 @@ namespace DaggerfallWorkshop.Game.Questing
         List<Quest> questsToRemove = new List<Quest>();
         List<Quest> questsToInvoke = new List<Quest>();
 
-        bool isRestingTick = false;
         bool waitingForStartup = true;
         float startupTimer = 0;
         float updateTimer = 0;
@@ -186,14 +185,6 @@ namespace DaggerfallWorkshop.Game.Questing
         public bool IsDebugModeEnabled
         {
             get { return true; }
-        }
-
-        /// <summary>
-        /// Returns true if this is a resting tick.
-        /// </summary>
-        public bool IsRestingTick
-        {
-            get { return isRestingTick; }
         }
 
         #endregion
@@ -350,11 +341,8 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <summary>
         /// Tick quest machine.
         /// </summary>
-        public void Tick(bool resting = false)
+        public void Tick()
         {
-            // Set flag
-            isRestingTick = resting;
-
             // Invoke scheduled quests
             foreach (Quest quest in questsToInvoke)
             {

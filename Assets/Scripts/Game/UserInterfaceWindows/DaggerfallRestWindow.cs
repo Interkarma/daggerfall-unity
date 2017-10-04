@@ -253,11 +253,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             bool finished = false;
             if (Time.realtimeSinceStartup > waitTimer + waitTime)
             {
-                // Progress world time by 1 hour and rest-tick quest machine
+                // Progress world time by 1 hour and tick quest machine
                 // This could cause enemies to be spawned
                 totalHours++;
                 DaggerfallUnity.WorldTime.Now.RaiseTime(DaggerfallDateTime.SecondsPerHour);
-                Questing.QuestMachine.Instance.Tick(true);
+                Questing.QuestMachine.Instance.Tick();
 
                 // TODO: Random spawns appropriate to player location
 
