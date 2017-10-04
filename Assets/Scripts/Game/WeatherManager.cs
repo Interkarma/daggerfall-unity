@@ -74,6 +74,9 @@ namespace DaggerfallWorkshop.Game
         {
             _dfUnity = DaggerfallUnity.Instance;
             _weatherTable = WeatherTable.ParseJsonTable();
+
+            if (DaggerfallUnity.Settings.MeshAndTextureReplacement)
+                AddWindZone();
         }
 
         void Update()
@@ -296,6 +299,17 @@ namespace DaggerfallWorkshop.Game
             }
             RaiseOnWeatherChangeEvent(next);
             PlayerWeather.WeatherType = next;
+        }
+
+        void AddWindZone()
+        {
+            // Add a wind zone for trees and particles.
+            var windZone = gameObject.AddComponent<WindZone>();
+            windZone.mode = WindZoneMode.Directional;
+            windZone.windMain = 0.2f;
+            windZone.windTurbulence = 0.1f;
+            windZone.windPulseMagnitude = 1;
+            windZone.windPulseFrequency = 0.25f;
         }
 
         #endregion
