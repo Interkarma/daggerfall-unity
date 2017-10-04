@@ -286,6 +286,11 @@ namespace DaggerfallWorkshop.Game.Questing
             else
                 throw new Exception(string.Format("Tried to assign incompatible resource symbol {0} to Place", targetSymbol.Name));
 
+            // Use magic number index if one is available and no marker assigned
+            // Magic number is one-based, marker array is zero-based, need to -1 on magic number
+            if (marker == -1 && siteDetails.magicNumberIndex > 0)
+                marker = siteDetails.magicNumberIndex - 1;
+
             // Assign target resource to marker selected for this quest
             if (requiredMarkerType == MarkerTypes.QuestSpawn)
             {
@@ -338,7 +343,12 @@ namespace DaggerfallWorkshop.Game.Questing
                 else if (siteDetails.siteType == SiteTypes.Dungeon)
                 {
                     if (requiredMarkerType == MarkerTypes.QuestSpawn)
-                        Debug.LogFormat("Assigned Foe _{0}_ to Dungeon {1}", resource.Symbol.Name, SiteDetails.locationName);
+                    {
+                        if (SiteDetails.magicNumberIndex == 0)
+                            Debug.LogFormat("Assigned Foe _{0}_ to Dungeon {1}", resource.Symbol.Name, SiteDetails.locationName);
+                        else
+                            Debug.LogFormat("Assigned Foe _{0}_ to Dungeon {1}, index {2}", resource.Symbol.Name, SiteDetails.locationName, SiteDetails.magicNumberIndex);
+                    }
                 }
             }
             else if (resource is Item)
@@ -351,7 +361,12 @@ namespace DaggerfallWorkshop.Game.Questing
                 else if (siteDetails.siteType == SiteTypes.Dungeon)
                 {
                     if (requiredMarkerType == MarkerTypes.QuestItem)
-                        Debug.LogFormat("Assigned Item _{0}_ to Dungeon {1}", resource.Symbol.Name, SiteDetails.locationName);
+                    {
+                        if (SiteDetails.magicNumberIndex == 0)
+                            Debug.LogFormat("Assigned Item _{0}_ to Dungeon {1}", resource.Symbol.Name, SiteDetails.locationName);
+                        else
+                            Debug.LogFormat("Assigned Item _{0}_ to Dungeon {1}, index {2}", resource.Symbol.Name, SiteDetails.locationName, SiteDetails.magicNumberIndex);
+                    }
                 }
             }
 
@@ -658,8 +673,6 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             // Attempt to get locationId by p1 - try p1 first then p1-1
             // This should work out dungeon or exterior loctionId as needed
-            // No longer certain about p2 meaning of 0xfa
-            // Possible p2 only be used for teleport cheat
             SiteTypes siteType;
             DFLocation location;
             if (!DaggerfallUnity.Instance.ContentReader.GetQuestLocation(p1, out location))
@@ -693,6 +706,18 @@ namespace DaggerfallWorkshop.Game.Questing
                     throw new Exception(string.Format("Could not find any quest markers in random dungeon {0}", location.Name));
             }
 
+            // Configure magic number index for fixed dungeons
+            int magicNumberIndex = 0;
+            if (siteType == SiteTypes.Dungeon)
+            {
+                // The second param in fixed location is still-unknown magic number
+                // Used mainly when quest stashes multiple resources to the one dungeon
+                // Does not seem to directly correlate to sequential marker index used
+                // Although this could simply be due to different scene build process in Daggerfall Unity
+                if (p2 >> 8 == 0xfa)
+                    magicNumberIndex = p2 & 0xff;
+            }
+
             // Create a new site for this location
             siteDetails = new SiteDetails();
             siteDetails.questUID = ParentQuest.UID;
@@ -703,6 +728,7 @@ namespace DaggerfallWorkshop.Game.Questing
             siteDetails.locationName = location.Name;
             siteDetails.questSpawnMarkers = questSpawnMarkers;
             siteDetails.questItemMarkers = questItemMarkers;
+            siteDetails.magicNumberIndex = magicNumberIndex;
 
             // Asssign markers only if available
             if (questSpawnMarkers != null)

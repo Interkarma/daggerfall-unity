@@ -392,6 +392,7 @@ namespace DaggerfallWorkshop
         public QuestMarker[] questItemMarkers;      // Array of quest item markers (Item resource) found in site, can be null or empty
         public int selectedQuestSpawnMarker;        // Quest spawn marker randomly chosen at time of site generation
         public int selectedQuestItemMarker;         // Quest item marker randomly chosen at time of site generation
+        public int magicNumberIndex;                // Static index specified by fixed places only (one-based)
     }
 
     /// <summary>
@@ -410,6 +411,7 @@ namespace DaggerfallWorkshop
         public SiteTypes siteType;                  // Type of site involved in quest
         public int mapId;                           // MapID of site location in world
         public int buildingKey;                     // Key for building site types
+        public int magicNumberIndex;                // Static index specified by fixed places only (one-based)
     }
 
     /// <summary>
