@@ -251,6 +251,9 @@ namespace DaggerfallWorkshop.Game.Questing
             // Example is Sx017 when Akorithi prompts if PC used painting then ends quest
             // There might be a better way to handle this (e.g. prompt executes task directly rather than on next tick)
             ticksToEnd = 2;
+
+            // remove all quest topics for this quest from talk manager
+            GameManager.Instance.TalkManager.RemoveQuestInfoTopicsForSpecificQuest(this.UID);
         }
 
         public void StartTask(Symbol symbol)
