@@ -214,6 +214,25 @@ namespace DaggerfallWorkshop.Game.Questing
             if (itemClass == -1)
                 throw new Exception(string.Format("Tried to create Item with class {0}", itemClass));
 
+            // Handle random magic item by redirecting itemClass to one of several supported types
+            // Currently unknown how many types this supports - will expand later
+            // May also need to account for gender if offering clothing
+            // Item should have a world texture as may be placed in world by quest
+            // Only goal currently to have more variety than "ruby" for everything
+            bool isMagicItem = false;
+            if (itemClass == (int)ItemGroups.MagicItems && itemSubClass == -1)
+            {
+                ItemGroups[] randomMagicGroups = new ItemGroups[]
+                {
+                    ItemGroups.Armor,
+                    ItemGroups.Weapons,
+                    ItemGroups.ReligiousItems,
+                    ItemGroups.Gems,
+                };
+                itemClass = UnityEngine.Random.Range(0, randomMagicGroups.Length);
+                isMagicItem = true;
+            }
+
             // Handle random subclass
             if (itemSubClass == -1)
             {
@@ -223,6 +242,15 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // Create item
             DaggerfallUnityItem result = new DaggerfallUnityItem((ItemGroups)itemClass, itemSubClass);
+
+            // Assign dummy magic effects so item becomes enchanted
+            // This will need to be ported to real magic system in future
+            if (isMagicItem)
+            {
+                result.legacyMagic = new int[] { 1, 87, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535 };
+            }
+
+            // Link item to quest
             result.LinkQuestItem(ParentQuest.UID, Symbol.Clone());
 
             return result;

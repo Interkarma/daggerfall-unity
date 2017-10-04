@@ -131,7 +131,7 @@ _1stparton_ task:
 	end quest 
 
 _S.04_ task:
-	create foe _monster_ every 30 minutes 20 times with 30% success 
+	create foe _monster_ every 15 minutes 20 times with 50% success 
 
 _clearclick_ task:
 	when _qgclicked_ and not _mondead_ 

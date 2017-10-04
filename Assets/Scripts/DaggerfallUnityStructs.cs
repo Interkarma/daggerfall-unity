@@ -473,4 +473,14 @@ namespace DaggerfallWorkshop
         public string name;
         public bool value;
     }
+
+    [Serializable]
+    public struct FaceDetails
+    {
+        public ulong questUID;
+        public Symbol targetPerson;
+        public Races targetRace;
+        public Genders gender;
+        public int faceIndex;
+    }
 }

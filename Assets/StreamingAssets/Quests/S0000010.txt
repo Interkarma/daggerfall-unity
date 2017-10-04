@@ -3,6 +3,7 @@
 -- QuestId: 10
 Messages: 23
 Quest: S0000010
+DisplayName: Stronghold of the Blades
 -- Message panels
 QRC:
 
@@ -165,7 +166,7 @@ _S.01_ task:
 	injured _F.00_ saying 1010 
 
 yes task:
-	place item _reward_ at _llugwych_ 
+	place item _reward_ at _llugwych_ marker 0
 	start timer _itemindung_ 
 	log 1008 step 0 
 	reveal _llugwych_ in province 40 at 26340 
@@ -189,7 +190,7 @@ _S.05_ task:
 	prompt QuestorOffer yes yes no _no_ 
 
 _S.06_ task:
-	send _F.00_ every minutes times with success 
+	send _F.00_ every 50 minutes 10 times with 5% success 
 
 variable _S.07_
 _S.08_ task:

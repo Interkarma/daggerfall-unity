@@ -242,8 +242,9 @@ namespace DaggerfallWorkshop.Game.Items
                     record += 1;
             }
 
-            // Gold pieces use world texture indices
-            if (item.ItemGroup == ItemGroups.Currency && item.TemplateIndex == (int)Currency.Gold_pieces)
+            // Use world texture archive if inventory texture not set
+            // Examples are gold pieces and wayrest painting
+            if (archive == 0 && record == 0)
             {
                 archive = item.ItemTemplate.worldTextureArchive;
                 record = item.ItemTemplate.worldTextureRecord;

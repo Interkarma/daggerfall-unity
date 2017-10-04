@@ -72,6 +72,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public EnemyData_v1[] enemyData;
         public LootContainerData_v1[] lootContainers;
         public BankRecordData_v1[] bankAccounts;
+        public FaceDetails[] escortingFaces;
     }
 
     #endregion

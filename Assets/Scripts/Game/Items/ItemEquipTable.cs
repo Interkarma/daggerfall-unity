@@ -171,6 +171,29 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
+        /// Attempt to unequip a specific item.
+        /// </summary>
+        /// <param name="item">Item to unequip.</param>
+        /// <returns>True if item was found to be equipped and was unequipped.</returns>
+        public bool UnequipItem(DaggerfallUnityItem item)
+        {
+            if (item == null)
+                return false;
+
+            for (int i = 0; i < equipTable.Length; i++)
+            {
+                if (equipTable[i] != null && equipTable[i].UID == item.UID)
+                {
+                    equipTable[i].EquipSlot = EquipSlots.None;
+                    equipTable[i] = null;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Get the equipment slot this items belongs in.
         /// Not currently 100% known how Daggerfall defines equipment slots.
         /// This method uses the best available knowledge at time of writing.

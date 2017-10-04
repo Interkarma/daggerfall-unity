@@ -767,6 +767,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             saveData.enemyData = GetEnemyData();
             saveData.lootContainers = GetLootContainerData();
             saveData.bankAccounts = GetBankData();
+            saveData.escortingFaces = DaggerfallUI.Instance.DaggerfallHUD.EscortingFaces.GetSaveData();
 
             return saveData;
         }
@@ -924,6 +925,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             RestoreEnemyData(saveData.enemyData);
             RestoreLootContainerData(saveData.lootContainers);
             RestoreBankData(saveData.bankAccounts);
+            RestoreEscortingFacesData(saveData.escortingFaces);
         }
 
         void RestoreFactionData(FactionData_v2 factionData)
@@ -1073,6 +1075,14 @@ namespace DaggerfallWorkshop.Game.Serialization
 
                 Banking.DaggerfallBankManager.BankAccounts[bankData[i].regionIndex] = bankData[i];
             }
+        }
+
+        void RestoreEscortingFacesData(FaceDetails[] escortingFaces)
+        {
+            if (escortingFaces == null)
+                DaggerfallUI.Instance.DaggerfallHUD.EscortingFaces.ClearFaces();
+            else
+                DaggerfallUI.Instance.DaggerfallHUD.EscortingFaces.RestoreSaveData(escortingFaces);
         }
 
         #endregion

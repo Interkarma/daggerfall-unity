@@ -26,8 +26,8 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
         public override string Pattern
         {
-            get { return @"place item (?<anItem>[a-zA-Z0-9_.-]+) at (?<aPlace>\w+) marker (?<marker>\d+)|" +
-                         @"place item (?<anItem>[a-zA-Z0-9_.-]+) at (?<aPlace>\w+)"; }
+            get { return @"place item (?<anItem>[a-zA-Z0-9_.-]+) at (?<aPlace>[a-zA-Z0-9_.-]+) marker (?<marker>\d+)|" +
+                         @"place item (?<anItem>[a-zA-Z0-9_.-]+) at (?<aPlace>[a-zA-Z0-9_.-]+)"; }
         }
 
         public PlaceItem(Quest parentQuest)

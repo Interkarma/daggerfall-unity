@@ -166,6 +166,12 @@ namespace DaggerfallWorkshop
                 case 9570447:           // Daggerfall/Castle Necromoghan
                     DungeonTextureTable = StaticTextureTables.CastleNecromoghan;
                     break;
+                case 2352284:           // Betony/Tristore Laboratory
+                    DungeonTextureTable = StaticTextureTables.TristoreLaboratory;
+                    break;
+                case 336619236:         // Ykalon/Castle Llugwych
+                    DungeonTextureTable = StaticTextureTables.CastleLlugwych;
+                    break;
                 default:                // Everywhere else - random table seeded from ID
                     DungeonTextureTable = StaticTextureTables.RandomTextureTable(Summary.ID);
                     break;
