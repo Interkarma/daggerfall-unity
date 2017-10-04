@@ -52,6 +52,7 @@ namespace DaggerfallWorkshop.Game.Questing
             PlayerEnterExit.OnTransitionDungeonExterior += PlayerEnterExit_OnTransitionExterior;
             PlayerEnterExit.OnTransitionExterior += PlayerEnterExit_OnTransitionExterior;
             StreamingWorld.OnInitWorld += StreamingWorld_OnInitWorld;
+            allowRestingTick = true;
         }
 
         public override void InitialiseOnSet()

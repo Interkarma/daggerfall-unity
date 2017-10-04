@@ -191,6 +191,10 @@ namespace DaggerfallWorkshop.Game.Questing
             // Iterate conditions and actions for this task
             foreach (IQuestAction action in actions)
             {
+                // Do not tick actions during rest unless the action allows it
+                if (QuestMachine.Instance.IsRestingTick && !action.AllowRestingTick)
+                    continue;
+
                 // Completed actions are never executed again
                 // The action itself should decide if/when to be complete
                 // At a higher level, turning off the task will also disable actions

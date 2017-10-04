@@ -30,6 +30,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         public PlaceFoe(Quest parentQuest)
             : base(parentQuest)
         {
+            allowRestingTick = true;
         }
 
         public override IQuestAction CreateNew(string source, Quest parentQuest)
