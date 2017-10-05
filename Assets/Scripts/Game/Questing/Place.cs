@@ -486,7 +486,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         bool SelectRemoteTownSite(DFLocation.BuildingTypes requiredBuildingType)
         {
-            const int maxAttempts = 50;
+            const int maxAttempts = 500;
 
             // Get player region
             int regionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
