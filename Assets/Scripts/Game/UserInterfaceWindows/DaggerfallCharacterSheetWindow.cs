@@ -430,7 +430,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             DaggerfallStats workingStats = statsRollout.WorkingStats;
             fatigueLabel.Text = string.Format("{0}/{1}", PlayerEntity.CurrentFatigue / 64, workingStats.Strength + workingStats.Endurance);
-            encumbranceLabel.Text = string.Format("{0}/{1}", (int)PlayerEntity.CarriedWeight, PlayerEntity.MaxEncumbrance);
+            encumbranceLabel.Text = string.Format("{0}/{1}", (int)PlayerEntity.CarriedWeight, FormulaHelper.MaxEncumbrance(workingStats.Strength));
         }
 
         #endregion

@@ -114,6 +114,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.playerEntity.currentMagicka = entity.CurrentMagicka;
             data.playerEntity.skillUses = entity.SkillUses;
             data.playerEntity.timeOfLastSkillIncreaseCheck = entity.TimeOfLastSkillIncreaseCheck;
+            data.playerEntity.timeOfLastSkillTraining = entity.TimeOfLastSkillTraining;
             data.playerEntity.startingLevelUpSkillSum = entity.StartingLevelUpSkillSum;
             data.playerEntity.equipTable = entity.ItemEquipTable.SerializeEquipTable();
             data.playerEntity.items = entity.Items.SerializeItems();
@@ -212,6 +213,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             entity.CurrentMagicka = data.playerEntity.currentMagicka;
             entity.SkillUses = data.playerEntity.skillUses;
             entity.TimeOfLastSkillIncreaseCheck = data.playerEntity.timeOfLastSkillIncreaseCheck;
+            entity.TimeOfLastSkillTraining = data.playerEntity.timeOfLastSkillTraining;
             entity.StartingLevelUpSkillSum = data.playerEntity.startingLevelUpSkillSum;
             entity.Items.DeserializeItems(data.playerEntity.items);
             entity.WagonItems.DeserializeItems(data.playerEntity.wagonItems);

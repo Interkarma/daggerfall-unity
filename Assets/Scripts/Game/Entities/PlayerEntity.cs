@@ -48,6 +48,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
         protected short[] skillUses;
         protected uint timeOfLastSkillIncreaseCheck = 0;
+        protected uint timeOfLastSkillTraining = 0;
 
         protected int startingLevelUpSkillSum = 0;
         protected int currentLevelUpSkillSum = 0;
@@ -98,6 +99,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public PersistentGlobalVars GlobalVars { get { return globalVars; } }
         public short[] SkillUses { get { return skillUses; } set { skillUses = value; } }
         public uint TimeOfLastSkillIncreaseCheck { get { return timeOfLastSkillIncreaseCheck; } set { timeOfLastSkillIncreaseCheck = value; } }
+        public uint TimeOfLastSkillTraining { get { return timeOfLastSkillTraining; } set { timeOfLastSkillTraining = value; } }
         public int StartingLevelUpSkillSum { get { return startingLevelUpSkillSum; } set { startingLevelUpSkillSum = value; } }
         public int CurrentLevelUpSkillSum {  get { return currentLevelUpSkillSum; } }
         public bool ReadyToLevelUp { get { return readyToLevelUp; } set { readyToLevelUp = value; } }
@@ -200,6 +202,7 @@ namespace DaggerfallWorkshop.Game.Entity
             currentLevelUpSkillSum = 0;
             goldPieces = 0;
             timeOfLastSkillIncreaseCheck = 0;
+            timeOfLastSkillTraining = 0;
             if (skillUses != null)
                 System.Array.Clear(skillUses, 0, skillUses.Length);
         }
@@ -258,6 +261,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 FillVitalSigns();
 
             timeOfLastSkillIncreaseCheck = DaggerfallUnity.Instance.WorldTime.Now.ToClassicDaggerfallTime();
+            timeOfLastSkillTraining = 0;
 
             DaggerfallUnity.LogMessage("Assigned character " + this.name, true);
         }
