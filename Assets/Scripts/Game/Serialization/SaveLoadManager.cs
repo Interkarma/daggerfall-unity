@@ -1187,6 +1187,11 @@ namespace DaggerfallWorkshop.Game.Serialization
                 Dictionary<int, PlayerGPS.DiscoveredLocation> discoveryData = Deserialize(typeof(Dictionary<int, PlayerGPS.DiscoveredLocation>), discoveryDataJson) as Dictionary<int, PlayerGPS.DiscoveredLocation>;
                 GameManager.Instance.PlayerGPS.RestoreDiscoveryData(discoveryData);
             }
+            else
+            {
+                // Clear discovery data when not in save, or live state will be retained from previous session
+                GameManager.Instance.PlayerGPS.ClearDiscoveryData();
+            }
 
             // Must have PlayerEnterExit to respawn player at saved location
             PlayerEnterExit playerEnterExit = serializablePlayer.GetComponent<PlayerEnterExit>();
