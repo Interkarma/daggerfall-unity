@@ -146,6 +146,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public uint timeForDarkBrotherhoodLetter;
         public int thievesGuildRequirementTally;
         public int darkBrotherhoodRequirementTally;
+        public uint timeOfLastSkillTraining;
     }
 
     [fsObject("v1")]

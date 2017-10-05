@@ -16,6 +16,7 @@ using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
+using System.Collections.Generic;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -45,7 +46,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Cure_Diseases = 813,
     }
 
-    public class DaggerfallGuildServicePopupWindow : DaggerfallPopupWindow
+    public class DaggerfallGuildServicePopupWindow : DaggerfallPopupWindow, IMacroContextProvider
     {
         #region UI Rects
 
@@ -72,11 +73,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string baseTextureName = "GILD00I0.IMG";      // Join Guild / Talk / Service
         Texture2D baseTexture;
 
+        PlayerEntity playerEntity;
+
         StaticNPC serviceNPC;
         FactionFile.GuildGroups guild;
         GuildServices service;
 
         static ItemCollection merchantItems;
+
+        DFCareer.Skills skillToTrain;
 
         #endregion
 
@@ -88,6 +93,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             serviceNPC = npc;
             this.guild = guild;
             this.service = service;
+            playerEntity = GameManager.Instance.PlayerEntity;
             // Clear background
             ParentPanel.BackgroundColor = Color.clear;
         }
@@ -228,6 +234,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 case GuildServices.MG_Identify:
                     uiManager.PushWindow(new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Identify, this));
                     break;
+                case GuildServices.MG_Training:
+                case GuildServices.FG_Training:
+                    TrainingService();
+                    break;
                 case GuildServices.MG_Buy_Magic_Items:
                     DaggerfallTradeWindow tradeWindow = new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Buy, this);
                     tradeWindow.MerchantItems = GetMerchantItems();
@@ -248,5 +258,137 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         #endregion
+
+        #region Service handling
+
+        static Dictionary<GuildServices, List<DFCareer.Skills>> guildTrainingSkills = new Dictionary<GuildServices, List<DFCareer.Skills>>()
+        {
+            { GuildServices.FG_Training, new List<DFCareer.Skills>() {
+                DFCareer.Skills.Archery, DFCareer.Skills.Axe, DFCareer.Skills.BluntWeapon, DFCareer.Skills.CriticalStrike, 
+                DFCareer.Skills.Giantish, DFCareer.Skills.Jumping, DFCareer.Skills.LongBlade, DFCareer.Skills.Orcish, 
+                DFCareer.Skills.Running, DFCareer.Skills.ShortBlade, DFCareer.Skills.Swimming } },
+            { GuildServices.MG_Training, new List<DFCareer.Skills>() {
+                DFCareer.Skills.Alteration, DFCareer.Skills.Daedric, DFCareer.Skills.Destruction, DFCareer.Skills.Dragonish, 
+                DFCareer.Skills.Harpy, DFCareer.Skills.Illusion, DFCareer.Skills.Impish, DFCareer.Skills.Mysticism, 
+                DFCareer.Skills.Orcish, DFCareer.Skills.Restoration, DFCareer.Skills.Spriggan, DFCareer.Skills.Thaumaturgy } },
+        };
+//        DFCareer.Skills., DFCareer.Skills., DFCareer.Skills., DFCareer.Skills., 
+
+        void TrainingService()
+        {
+            // Check enough time has passed since last trained
+            DaggerfallDateTime now = DaggerfallUnity.Instance.WorldTime.Now;
+            if ((now.ToClassicDaggerfallTime() - playerEntity.TimeOfLastSkillTraining) <= 720)
+            {
+                Debug.LogFormat("{0} - {1} = {2}", now.ToClassicDaggerfallTime(), playerEntity.TimeOfLastSkillTraining, now.ToClassicDaggerfallTime() - playerEntity.TimeOfLastSkillTraining);
+                TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(4023);
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager);
+                messageBox.SetTextTokens(tokens, this);
+                messageBox.ClickAnywhereToClose = true;
+                uiManager.PushWindow(messageBox);
+                return;
+            }
+            // Check not too tired?
+
+            // Show skill picker loaded with guild training skills
+            DaggerfallListPickerWindow skillPicker = new DaggerfallListPickerWindow(uiManager, this);
+            skillPicker.OnItemPicked += TrainingSkill_OnItemPicked;
+
+            List<DFCareer.Skills> trainingSkills;
+            if (guildTrainingSkills.TryGetValue(service, out trainingSkills))
+            {
+                foreach (DFCareer.Skills skill in trainingSkills)
+                    skillPicker.ListBox.AddItem(DaggerfallUnity.Instance.TextProvider.GetSkillName(skill));
+
+                uiManager.PushWindow(skillPicker);
+            }
+        }
+
+        public void TrainingSkill_OnItemPicked(int index, string skillName)
+        {
+            Debug.Log("picked " + skillName);
+            CloseWindow();
+            List<DFCareer.Skills> trainingSkills;
+            if (guildTrainingSkills.TryGetValue(service, out trainingSkills))
+            {
+                skillToTrain = trainingSkills[index];
+
+                if (playerEntity.Skills.GetSkillValue(skillToTrain) >= 50)
+                {
+                    // Inform player they're too skilled to train
+                    TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(4022);
+                    DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager);
+                    messageBox.SetTextTokens(tokens, this);
+                    messageBox.ClickAnywhereToClose = true;
+                    uiManager.PushWindow(messageBox);
+                }
+                else
+                {   // Offer training price
+                    DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager);
+                    TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(8);
+                    messageBox.SetTextTokens(tokens, this);
+                    messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
+                    messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
+                    messageBox.OnButtonClick += ConfirmTraining_OnButtonClick;
+                    uiManager.PushWindow(messageBox);
+                }
+            }
+            else
+                Debug.LogError("Invalid skill selected for training.");
+
+        }
+
+        public void ConfirmTraining_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        {
+            if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
+            {
+                Debug.Log("Trained skill " + skillToTrain.ToString());
+
+                DaggerfallDateTime now = DaggerfallUnity.Instance.WorldTime.Now;
+                playerEntity.TimeOfLastSkillTraining = now.ToClassicDaggerfallTime();
+                now.RaiseTime(DaggerfallDateTime.SecondsPerHour * 3);
+                playerEntity.DeductGoldAmount(GetServicePrice());
+                playerEntity.DecreaseFatigue(30 * 64);
+                playerEntity.TallySkill(skillToTrain, 15);
+                CloseWindow();
+                DaggerfallUI.MessageBox(5221);
+            }
+            else
+                CloseWindow();
+        }
+
+        int GetServicePrice()
+        {
+            return 100 * playerEntity.Level;
+        }
+
+        #endregion
+
+        #region Macro handling
+
+        public MacroDataSource GetMacroDataSource()
+        {
+            return new GuildServiceMacroDataSource(this);
+        }
+
+        /// <summary>
+        /// MacroDataSource context sensitive methods for guild services window.
+        /// </summary>
+        private class GuildServiceMacroDataSource : MacroDataSource
+        {
+            private DaggerfallGuildServicePopupWindow parent;
+            public GuildServiceMacroDataSource(DaggerfallGuildServicePopupWindow guildServiceWindow)
+            {
+                this.parent = guildServiceWindow;
+            }
+
+            public override string Amount()
+            {
+                return parent.GetServicePrice().ToString();
+            }
+        }
+
+        #endregion
+
     }
 }
