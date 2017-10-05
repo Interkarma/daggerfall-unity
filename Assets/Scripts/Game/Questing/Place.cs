@@ -486,6 +486,8 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         bool SelectRemoteTownSite(DFLocation.BuildingTypes requiredBuildingType)
         {
+            const int maxAttempts = 50;
+
             // Get player region
             int regionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
             DFRegion regionData = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegion(regionIndex);
@@ -501,7 +503,11 @@ namespace DaggerfallWorkshop.Game.Questing
             while (!found)
             {
                 // Increment attempts
-                attempts++;
+                if (++attempts >= maxAttempts)
+                {
+                    Debug.LogErrorFormat("Could not find remote town site with building type {0} within {1} attempts", requiredBuildingType.ToString(), attempts);
+                    break;
+                }
 
                 // Get a random location index
                 int locationIndex = UnityEngine.Random.Range(0, (int)regionData.LocationCount);
@@ -547,7 +553,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
             //Debug.LogFormat("Found remote candidate site in {0} attempts", attempts);
 
-            return true;
+            return found;
         }
 
         /// <summary>
