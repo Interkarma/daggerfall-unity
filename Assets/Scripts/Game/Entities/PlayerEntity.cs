@@ -76,6 +76,11 @@ namespace DaggerfallWorkshop.Game.Entity
         private int RunningFatigueLoss = 88;        // According to DF Chronicles and verified in classic
         //private int SwimmingFatigueLoss = 44;     // According to DF Chronicles
 
+        private float runningTallyTimer = 0f;
+        private float runningTallyInterval = 0.0625f; // Tally every 1/16 second of running. The rate at which the running skill
+                                                      // is tallied in classic varies by how fast the game is being processed.
+                                                      // Based on some tests, around every 1/16 of a second is a typical rate.
+
         private int JumpingFatigueLoss = 11;        // According to DF Chronicles and verified in classic
         private bool CheckedCurrentJump = false;
 
@@ -147,10 +152,21 @@ namespace DaggerfallWorkshop.Game.Entity
                 return;
             else if (!gameStarted)
                 gameStarted = true;
-
-            // Every game minute, apply fatigue loss to the player
             if (playerMotor != null)
             {
+                // Tally running skill
+                if (playerMotor.IsRunning && !playerMotor.IsRiding)
+                {
+                    if (runningTallyTimer < runningTallyInterval)
+                        runningTallyTimer += Time.deltaTime;
+                    else
+                    {
+                        TallySkill(DFCareer.Skills.Running, 1);
+                        runningTallyTimer = 0f;
+                    }
+                }
+
+                // Every game minute, apply fatigue loss to the player
                 if (lastGameMinutes != gameMinutes)
                 {
                     if (playerMotor.IsRunning)
