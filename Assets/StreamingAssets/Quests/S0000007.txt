@@ -3,6 +3,7 @@
 -- QuestId: 7
 Messages: 37
 Quest: S0000007
+DisplayName: The Werebeast
 -- Message panels
 QRC:
 
