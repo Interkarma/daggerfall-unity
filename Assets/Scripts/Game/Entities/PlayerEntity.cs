@@ -603,6 +603,32 @@ namespace DaggerfallWorkshop.Game.Entity
             }
         }
 
+        /// <summary>
+        /// Releases a quest item carried by player so it can be assigned back again by quest script.
+        /// This ensures item is properly unequipped and optionally makes permanent.
+        /// </summary>
+        /// <param name="item">Item to release.</param>
+        /// <param name="makePermanent">True to make item permanent.</param>
+        public void ReleaseQuestItemForReoffer(DaggerfallUnityItem item, bool makePermanent = false)
+        {
+            if (item == null)
+                return;
+
+            // Unequip item if player is wearing it
+            if (GameManager.Instance.PlayerEntity.ItemEquipTable.UnequipItem(item))
+            {
+                // If item was actually unequipped then update armour values
+                GameManager.Instance.PlayerEntity.UpdateEquippedArmorValues(item, false);
+            }
+
+            // Remove quest from inventory so it can be offered back to player
+            GameManager.Instance.PlayerEntity.Items.RemoveItem(item);
+
+            // Optionally make permanent
+            if (makePermanent)
+                item.MakePermanent();
+        }
+
         #endregion
 
         #region Event Handlers
