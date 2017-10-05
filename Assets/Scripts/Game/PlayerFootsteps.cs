@@ -22,15 +22,22 @@ namespace DaggerfallWorkshop.Game
     [RequireComponent(typeof(DaggerfallAudioSource))]
     public class PlayerFootsteps : MonoBehaviour
     {
-        public float WalkStepInterval = 1.6f;
-        public float RunStepInterval = 1.8f;
-        public float PitchVariance = 0.3f;
+        public float WalkStepInterval = 2.5f; // Matched to classic. Was 1.6f;
+        public float RunStepInterval = 2.5f; // Matched to classic. Was 1.8f;
         public float GroundDistance = 1.8f;
         public float FootstepVolumeScale = 0.7f;
-        public SoundClips FootstepSoundNormal = SoundClips.PlayerFootstepNormal;
-        public SoundClips FootstepSoundSnow = SoundClips.PlayerFootstepSnow;
+
+        public SoundClips FootstepSoundDungeon1 = SoundClips.PlayerFootstepStone1;
+        public SoundClips FootstepSoundDungeon2 = SoundClips.PlayerFootstepStone2;
+        public SoundClips FootstepSoundOutside1 = SoundClips.PlayerFootstepOutside1;
+        public SoundClips FootstepSoundOutside2 = SoundClips.PlayerFootstepOutside2;
+        public SoundClips FootstepSoundSnow1 = SoundClips.PlayerFootstepSnow1;
+        public SoundClips FootstepSoundSnow2 = SoundClips.PlayerFootstepSnow2;
+        public SoundClips FootstepSoundBuilding1 = SoundClips.PlayerFootstepWood1;
+        public SoundClips FootstepSoundBuilding2 = SoundClips.PlayerFootstepWood2;
         public SoundClips FootstepSoundShallow = SoundClips.SplashSmallLow;
         public SoundClips FootstepSoundSubmerged = SoundClips.SplashSmall;
+
         public SoundClips FallHardSound = SoundClips.FallHard;
         public SoundClips FallDamageSound = SoundClips.FallDamage;
         public SoundClips SplashLargeSound = SoundClips.SplashLarge;
@@ -41,12 +48,15 @@ namespace DaggerfallWorkshop.Game
         PlayerMotor playerMotor;
         TransportManager transportManager;
         AudioSource customAudioSource;
-        AudioClip clip;
+        AudioClip clip1;
+        AudioClip clip2;
         Vector3 lastPosition;
         bool lostGrounding;
         float distance;
+        bool alternateStep = false;
 
-        SoundClips currentFootstepSound = SoundClips.None;
+        SoundClips currentFootstepSound1 = SoundClips.None;
+        SoundClips currentFootstepSound2 = SoundClips.None;
         DaggerfallDateTime.Seasons currentSeason = DaggerfallDateTime.Seasons.Summer;
         bool isInside = false;
 
@@ -59,8 +69,7 @@ namespace DaggerfallWorkshop.Game
             playerEnterExit = GetComponent<PlayerEnterExit>();
             transportManager = GetComponent<TransportManager>();
 
-            // Add our own custom audio source at runtime as we need to change the pitch of footsteps.
-            // We don't want that affecting to other sounds on this game object.
+            // CustomAudioSource was here for adjusting pitch. It should be removable now, but doing so makes the swimming sound loud, so leaving it for now.
             customAudioSource = gameObject.AddComponent<AudioSource>();
             customAudioSource.hideFlags = HideFlags.HideInInspector;
             customAudioSource.playOnAwake = false;
@@ -72,7 +81,8 @@ namespace DaggerfallWorkshop.Game
             lastPosition = GetHorizontalPosition();
 
             // Set starting footsteps
-            currentFootstepSound = FootstepSoundNormal;
+            currentFootstepSound1 = FootstepSoundDungeon1;
+            currentFootstepSound2 = FootstepSoundDungeon2;
         }
 
         void FixedUpdate()
@@ -80,50 +90,79 @@ namespace DaggerfallWorkshop.Game
             // Get player inside flag
             // Can only do this when PlayerEnterExit is available, otherwise default to true
             bool playerInside = (playerEnterExit == null) ? true : playerEnterExit.IsPlayerInside;
+            bool playerInBuilding = (playerEnterExit == null) ? false : playerEnterExit.IsPlayerInsideBuilding;
 
             // Change footstep sounds between winter/summer variants or when player enters/exits an interior space
             if (dfUnity.WorldTime.Now.SeasonValue != currentSeason || isInside != playerInside)
             {
                 currentSeason = dfUnity.WorldTime.Now.SeasonValue;
                 isInside = playerInside;
-                if (currentSeason == DaggerfallDateTime.Seasons.Winter && !isInside)
-                    currentFootstepSound = FootstepSoundSnow;
-                else
-                    currentFootstepSound = FootstepSoundNormal;
+                if (!isInside)
+                    if (currentSeason == DaggerfallDateTime.Seasons.Winter)
+                    {
+                        currentFootstepSound1 = FootstepSoundSnow1;
+                        currentFootstepSound2 = FootstepSoundSnow2;
+                    }
+                    else
+                    {
+                        currentFootstepSound1 = FootstepSoundOutside1;
+                        currentFootstepSound2 = FootstepSoundOutside2;
+                    }
+                else if (playerInBuilding)
+                {
+                    currentFootstepSound1 = FootstepSoundBuilding1;
+                    currentFootstepSound2 = FootstepSoundBuilding2;
+                }
+                else // in dungeon
+                {
+                    currentFootstepSound1 = FootstepSoundDungeon1;
+                    currentFootstepSound2 = FootstepSoundDungeon2;
+                }
 
-                clip = null;
+                clip1 = null;
+                clip2 = null;
             }
 
             // Use water sounds if in water
             if (playerEnterExit.blockWaterLevel != 10000)
             {
                 // In water, deep depth
-                if ((currentFootstepSound != FootstepSoundSubmerged) && playerEnterExit.IsPlayerSubmerged)
+                if ((currentFootstepSound1 != FootstepSoundSubmerged) && playerEnterExit.IsPlayerSubmerged)
                 {
-                    currentFootstepSound = FootstepSoundSubmerged;
-                    clip = null;
+                    currentFootstepSound1 = FootstepSoundSubmerged;
+                    currentFootstepSound2 = FootstepSoundSubmerged;
+                    clip1 = null;
+                    clip2 = null;
                 }
                 // In water, shallow depth
-                else if ((currentFootstepSound != FootstepSoundShallow) && !playerEnterExit.IsPlayerSubmerged && (playerMotor.transform.position.y - 0.95f) < (playerEnterExit.blockWaterLevel * -1 * MeshReader.GlobalScale))
+                else if ((currentFootstepSound1 != FootstepSoundShallow) && !playerEnterExit.IsPlayerSubmerged && (playerMotor.transform.position.y - 0.95f) < (playerEnterExit.blockWaterLevel * -1 * MeshReader.GlobalScale))
                 {
-                    currentFootstepSound = FootstepSoundShallow;
-                    clip = null;
+                    currentFootstepSound1 = FootstepSoundShallow;
+                    currentFootstepSound2 = FootstepSoundShallow;
+                    clip1 = null;
+                    clip2 = null;
                 }
             }
 
             // Not in water, reset footsteps to normal
-            if ((currentFootstepSound == FootstepSoundSubmerged || currentFootstepSound == FootstepSoundShallow)
+            if ((currentFootstepSound1 == FootstepSoundSubmerged || currentFootstepSound1 == FootstepSoundShallow)
                 && (playerEnterExit.blockWaterLevel == 10000 || (playerMotor.transform.position.y - 0.95f) >= (playerEnterExit.blockWaterLevel * -1 * MeshReader.GlobalScale)))
             {
-                currentFootstepSound = FootstepSoundNormal;
+                currentFootstepSound1 = FootstepSoundDungeon1;
+                currentFootstepSound2 = FootstepSoundDungeon2;
 
-                clip = null;
+                clip1 = null;
+                clip2 = null;
             }
 
-            // Reload clip if needed
-            if (clip == null)
+            // Reload clips if needed
+            if (clip1 == null)
             {
-                clip = dfAudioSource.GetAudioClip((int)currentFootstepSound);
+                clip1 = dfAudioSource.GetAudioClip((int)currentFootstepSound1);
+            }
+            if (clip2 == null)
+            {
+                clip2 = dfAudioSource.GetAudioClip((int)currentFootstepSound2);
             }
 
             // Check whether player is on foot and abort playing footsteps if not.
@@ -135,8 +174,8 @@ namespace DaggerfallWorkshop.Game
 
             // Check if player is grounded
             // Note: In classic, submerged "footstep" sound is only played when walking on the floor while in the water, but it sounds like a swimming sound
-            // and when outdoors is played while swimming at the water's surface, so it seems better to play it all the time while submerged in water.
-            if (currentFootstepSound != FootstepSoundSubmerged)
+            // and when outside is played while swimming at the water's surface, so it seems better to play it all the time while submerged in water.
+            if (currentFootstepSound1 != FootstepSoundSubmerged)
             {
                 if (!IsGrounded())
                 {
@@ -169,11 +208,14 @@ namespace DaggerfallWorkshop.Game
                 threshold = (playerMotor.IsRunning) ? RunStepInterval : WalkStepInterval;
 
             // Play sound if over distance threshold
-            if (distance > threshold && customAudioSource && clip)
+            if (distance > threshold && customAudioSource && clip1 && clip2)
             {
-                // Set a random pitch so footsteps don't sound too mechanical
-                customAudioSource.pitch = Random.Range(1f - PitchVariance, 1f + PitchVariance);
-                customAudioSource.PlayOneShot(clip, FootstepVolumeScale);
+                if (!alternateStep)
+                    customAudioSource.PlayOneShot(clip1, FootstepVolumeScale);
+                else
+                    customAudioSource.PlayOneShot(clip2, FootstepVolumeScale);
+
+                alternateStep = (!alternateStep);
                 distance = 0f;
             }
         }
