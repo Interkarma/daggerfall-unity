@@ -248,4 +248,4 @@ _S.10_ task:
 
 _S.11_ task:
 	when yes and _S.08_ 
-	send _F.00_ every minutes times with success 
+	send _F.00_ every 500 minutes 10 times with 50% success 
