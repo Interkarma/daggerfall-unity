@@ -308,9 +308,13 @@ namespace DaggerfallWorkshop.Game
             FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(
                 (int)FactionFile.FactionTypes.Province, -1, -1, oneBasedPlayerRegion);
 
-            // Should always find a single region
-            if (factions == null || factions.Length != 1)
-                throw new Exception("Talk() did not find exactly 1 match for NPC faction.");
+            // Should always find a region
+            if (factions == null || factions.Length == 0)
+                throw new Exception("TalkToMobileNPC() did not find a match for NPC faction.");
+
+            // Warn if more than 1 region is found
+            if (factions.Length > 1)
+                Debug.LogWarningFormat("TalkToMobileNPC() found more than 1 matching NPC faction for region {0}.", oneBasedPlayerRegion);
 
             NPCfaction = factions[0];
 
@@ -345,9 +349,13 @@ namespace DaggerfallWorkshop.Game
             FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(
                 (int)FactionFile.FactionTypes.Province, -1, -1, oneBasedPlayerRegion);
 
-            // Should always find a single region
-            if (factions == null || factions.Length != 1)
-                throw new Exception("Talk() did not find exactly 1 match for NPC faction.");
+            // Should always find a region
+            if (factions == null || factions.Length == 0)
+                throw new Exception("TalkToStaticNPC() did not find a match for NPC faction.");
+
+            // Warn if more than 1 region is found
+            if (factions.Length > 1)
+                Debug.LogWarningFormat("TalkToStaticNPC() found more than 1 matching NPC faction for region {0}.", oneBasedPlayerRegion);
 
             NPCfaction = factions[0];
 

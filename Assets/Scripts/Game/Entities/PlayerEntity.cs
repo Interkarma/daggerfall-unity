@@ -48,6 +48,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
         protected short[] skillUses;
         protected uint timeOfLastSkillIncreaseCheck = 0;
+        protected uint timeOfLastSkillTraining = 0;
 
         protected int startingLevelUpSkillSum = 0;
         protected int currentLevelUpSkillSum = 0;
@@ -98,6 +99,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public PersistentGlobalVars GlobalVars { get { return globalVars; } }
         public short[] SkillUses { get { return skillUses; } set { skillUses = value; } }
         public uint TimeOfLastSkillIncreaseCheck { get { return timeOfLastSkillIncreaseCheck; } set { timeOfLastSkillIncreaseCheck = value; } }
+        public uint TimeOfLastSkillTraining { get { return timeOfLastSkillTraining; } set { timeOfLastSkillTraining = value; } }
         public int StartingLevelUpSkillSum { get { return startingLevelUpSkillSum; } set { startingLevelUpSkillSum = value; } }
         public int CurrentLevelUpSkillSum {  get { return currentLevelUpSkillSum; } }
         public bool ReadyToLevelUp { get { return readyToLevelUp; } set { readyToLevelUp = value; } }
@@ -200,6 +202,7 @@ namespace DaggerfallWorkshop.Game.Entity
             currentLevelUpSkillSum = 0;
             goldPieces = 0;
             timeOfLastSkillIncreaseCheck = 0;
+            timeOfLastSkillTraining = 0;
             if (skillUses != null)
                 System.Array.Clear(skillUses, 0, skillUses.Length);
         }
@@ -258,6 +261,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 FillVitalSigns();
 
             timeOfLastSkillIncreaseCheck = DaggerfallUnity.Instance.WorldTime.Now.ToClassicDaggerfallTime();
+            timeOfLastSkillTraining = 0;
 
             DaggerfallUnity.LogMessage("Assigned character " + this.name, true);
         }
@@ -601,6 +605,32 @@ namespace DaggerfallWorkshop.Game.Entity
                 timeForDarkBrotherhoodLetter = 0;
                 Questing.QuestMachine.Instance.InstantiateQuest("L0A01L00");
             }
+        }
+
+        /// <summary>
+        /// Releases a quest item carried by player so it can be assigned back again by quest script.
+        /// This ensures item is properly unequipped and optionally makes permanent.
+        /// </summary>
+        /// <param name="item">Item to release.</param>
+        /// <param name="makePermanent">True to make item permanent.</param>
+        public void ReleaseQuestItemForReoffer(DaggerfallUnityItem item, bool makePermanent = false)
+        {
+            if (item == null)
+                return;
+
+            // Unequip item if player is wearing it
+            if (GameManager.Instance.PlayerEntity.ItemEquipTable.UnequipItem(item))
+            {
+                // If item was actually unequipped then update armour values
+                GameManager.Instance.PlayerEntity.UpdateEquippedArmorValues(item, false);
+            }
+
+            // Remove quest from inventory so it can be offered back to player
+            GameManager.Instance.PlayerEntity.Items.RemoveItem(item);
+
+            // Optionally make permanent
+            if (makePermanent)
+                item.MakePermanent();
         }
 
         #endregion

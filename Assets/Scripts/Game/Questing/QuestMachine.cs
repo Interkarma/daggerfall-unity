@@ -968,27 +968,39 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <param name="siteType">Type of sites to select.</param>
         /// <param name="mapId">MapID in world.</param>
         /// <param name="buildingKey">Building key for buidings. Not used if left at default 0.</param>
+        /// <param name="magicNumberIndex">Magic number index for fixed sites. Not used is left at default 0.</param>
         /// <returns>SiteLink[] array of found links. Check for null or empty on return.</returns>
-        public SiteLink[] GetSiteLinks(SiteTypes siteType, int mapId, int buildingKey = 0)
+        public SiteLink[] GetSiteLinks(SiteTypes siteType, int mapId, int buildingKey = 0, int magicNumberIndex = 0)
         {
             // Collect a copy of all site links matching params
             List<SiteLink> foundSiteLinks = new List<SiteLink>();
             foreach (SiteLink link in siteLinks)
             {
-                // Match site type
+                // Match base siteType and mapID
+                bool isMatch = false;
                 if (link.siteType == siteType && link.mapId == mapId)
                 {
-                    if (buildingKey != 0)
-                    {
-                        // Match building key if specified
-                        if (buildingKey == link.buildingKey)
-                            foundSiteLinks.Add(link);
-                    }
-                    else
-                    {
-                        // Otherwise just add link
-                        foundSiteLinks.Add(link);
-                    }
+                    isMatch = true;
+                }
+
+                // Match buildingKey (if set)
+                if (isMatch && buildingKey != 0)
+                {
+                    if (buildingKey != link.buildingKey)
+                        isMatch = false;
+                }
+
+                // Match magicNumberIndex (if set)
+                if (isMatch && magicNumberIndex != 0)
+                {
+                    if (magicNumberIndex != link.magicNumberIndex)
+                        isMatch = false;
+                }
+
+                // Add link if all tests passed
+                if (isMatch)
+                {
+                    foundSiteLinks.Add(link);
                 }
             }
 
@@ -1270,7 +1282,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 throw new Exception(string.Format("HasSiteLink() could not find Place symbol {0}", placeSymbol.Name));
 
             // Collect any SiteLinks associdated with this site
-            SiteLink[] siteLinks = Instance.GetSiteLinks(place.SiteDetails.siteType, place.SiteDetails.mapId, place.SiteDetails.buildingKey);
+            SiteLink[] siteLinks = Instance.GetSiteLinks(place.SiteDetails.siteType, place.SiteDetails.mapId, place.SiteDetails.buildingKey, place.SiteDetails.magicNumberIndex);
             if (siteLinks == null || siteLinks.Length == 0)
                 return false;
 
@@ -1294,6 +1306,7 @@ namespace DaggerfallWorkshop.Game.Questing
             siteLink.siteType = place.SiteDetails.siteType;
             siteLink.mapId = place.SiteDetails.mapId;
             siteLink.buildingKey = place.SiteDetails.buildingKey;
+            siteLink.magicNumberIndex = place.SiteDetails.magicNumberIndex;
             Instance.AddSiteLink(siteLink);
 
             // Output debug information
@@ -1303,7 +1316,10 @@ namespace DaggerfallWorkshop.Game.Questing
                     Debug.LogFormat("Created Building SiteLink to {0} in {1}/{2}", place.SiteDetails.buildingName, place.SiteDetails.regionName, place.SiteDetails.locationName);
                     break;
                 case SiteTypes.Dungeon:
-                    Debug.LogFormat("Created Dungeon SiteLink to {0}/{1}", place.SiteDetails.regionName, place.SiteDetails.locationName);
+                    if (siteLink.magicNumberIndex == 0)
+                        Debug.LogFormat("Created Dungeon SiteLink to {0}/{1}", place.SiteDetails.regionName, place.SiteDetails.locationName);
+                    else
+                        Debug.LogFormat("Created Dungeon SiteLink to {0}/{1}, index {2}", place.SiteDetails.regionName, place.SiteDetails.locationName, siteLink.magicNumberIndex);
                     break;
             }
         }

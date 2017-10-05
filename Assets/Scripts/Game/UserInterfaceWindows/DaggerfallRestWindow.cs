@@ -246,6 +246,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         bool TickRest()
         {
+            // Do nothing if another window has taken over UI
+            // This will stop rest from progressing further until player dismisses top window
+            if (uiManager.TopWindow != this)
+                return false;
+
             // Loitering runs at a slower rate to rest
             float waitTime = (currentRestMode == RestModes.Loiter) ? loiterWaitTimePerHour : restWaitTimePerHour;
 
@@ -253,11 +258,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             bool finished = false;
             if (Time.realtimeSinceStartup > waitTimer + waitTime)
             {
+                waitTimer = Time.realtimeSinceStartup;
+
                 // Progress world time by 1 hour and tick quest machine
                 // This could cause enemies to be spawned
                 totalHours++;
                 DaggerfallUnity.WorldTime.Now.RaiseTime(DaggerfallDateTime.SecondsPerHour);
                 Questing.QuestMachine.Instance.Tick();
+
+                // Do nothing if another window (e.g. quest popup) has suddenly taken over UI
+                // Checking for second time as quest tick above can perfectly align with rest ending
+                if (uiManager.TopWindow != this)
+                    return false;
 
                 // TODO: Random spawns appropriate to player location
 
@@ -268,7 +280,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     return true;
                 }
 
-                waitTimer = Time.realtimeSinceStartup;
                 if (currentRestMode == RestModes.TimedRest)
                 {
                     TickVitals();

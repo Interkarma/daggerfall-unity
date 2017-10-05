@@ -785,6 +785,16 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
+        /// Clear discovered locations.
+        /// Intended to be used when loading an old save without discovery data.
+        /// Otherwise live discovery state from previous session is retained.
+        /// </summary>
+        public void ClearDiscoveryData()
+        {
+            discoveredLocations.Clear();
+        }
+
+        /// <summary>
         /// Gets building information from current location.
         /// Does not change discovery state for building.
         /// </summary>

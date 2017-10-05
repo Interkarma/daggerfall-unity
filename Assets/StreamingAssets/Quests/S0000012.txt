@@ -3,6 +3,7 @@
 -- QuestId: 12
 Messages: 22
 Quest: S0000012
+DisplayName: The Emperor's Courier
 -- Message panels
 QRC:
 
@@ -168,8 +169,8 @@ Item letter47 letter used 1017
 Item _jewelry_ trinket
 
 Person _Mynisera_ face 96 named Mynisera atHome
-Person _messenger_ face 1 named The_Knights_of_the_Dragon
-Person _dispatcher_ named The_Knights_of_the_Dragon
+Person _messenger_ face 1 faction The_Knights_of_the_Dragon
+Person _dispatcher_ faction The_Knights_of_the_Dragon
 Person _aubki_ named Queen_Aubk-i atHome
 
 Place _location_ remote random
@@ -247,4 +248,4 @@ _S.10_ task:
 
 _S.11_ task:
 	when yes and _S.08_ 
-	send _F.00_ every minutes times with success 
+	send _F.00_ every 500 minutes 10 times with 50% success 

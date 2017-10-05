@@ -284,6 +284,26 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         public void StartTimer()
         {
+            if (clockEnabled)
+                return;
+
+            // Allow for clock symbol "_2place_" matching a place resource called "place"
+            // This always seems to be a one-way trip calculation
+            // Used when quest wants to calculate time to a destination at the point clock is started
+            if (Symbol.Original.StartsWith("_2") && Symbol.Original.EndsWith("_") && startingTimeInSeconds == 0 )
+            {
+                // Get inner part of symbol from original
+                string inner = Symbol.Original.Substring(2, Symbol.Original.Length - 3);
+
+                // Check if there is a place matching this inner symbol name and calculate one-way trip
+                Place targetPlace = ParentQuest.GetPlace(new Symbol(inner));
+                if (targetPlace != null)
+                {
+                    int clockTimeInSeconds = (GetTravelTimeInSeconds(targetPlace, false));
+                    InitialiseTimer(clockTimeInSeconds);
+                }
+            }
+
             if (!clockFinished)
             {
                 clockEnabled = true;
@@ -368,20 +388,28 @@ namespace DaggerfallWorkshop.Game.Questing
             }
         }
 
-        int GetTravelTimeInSeconds()
+        /// <summary>
+        /// Gets travel time based on overworld map logic.
+        /// </summary>
+        /// <param name="place">Target place resource. If null will use first place defined in quest.</param>
+        /// <param name="returnTrip">Use return trip multiplier.</param>
+        /// <returns>Travel time in seconds.</returns>
+        int GetTravelTimeInSeconds(Place place = null, bool returnTrip = true)
         {
-            // First Place resource should be main location of quest
-            // This seems to hold true in all quests looked at in detail so far
-            QuestResource[] placeResources = ParentQuest.GetAllResources(typeof(Place));
-            if (placeResources == null || placeResources.Length == 0)
+            if (place == null)
             {
-                Debug.LogError("Clock wants a travel time but quest has no Place resources.");
-                return 0;
+                // Get first place resource from quest
+                QuestResource[] placeResources = ParentQuest.GetAllResources(typeof(Place));
+                if (placeResources == null || placeResources.Length == 0)
+                {
+                    Debug.LogError("Clock wants a travel time but quest has no Place resources.");
+                    return 0;
+                }
+                place = (Place)placeResources[0];
             }
 
-            // Get location from place resource
+            // Get target location from place resource
             DFLocation location;
-            Place place = (Place)placeResources[0];
             if (!DaggerfallUnity.Instance.ContentReader.GetLocation(place.SiteDetails.regionName, place.SiteDetails.locationName, out location))
             {
                 Debug.LogErrorFormat("Could not find Quest Place {0}/{1}", place.SiteDetails.regionName, place.SiteDetails.locationName);
@@ -409,7 +437,11 @@ namespace DaggerfallWorkshop.Game.Questing
                 travelTimeDaysLand = (int)((travelTimeCalculator.TravelTimeTotalLand / 60 / 24) + 0.5);
             if (travelTimeCalculator.TravelTimeTotalWater > 0)
                 travelTimeDaysWater = (int)((travelTimeCalculator.TravelTimeTotalWater / 60 / 24) + 0.5);
-            travelTimeDaysTotal = (int)((travelTimeDaysLand + travelTimeDaysWater) * returnTripMultiplier);
+            travelTimeDaysTotal = travelTimeDaysLand + travelTimeDaysWater;
+
+            // Apply return trip multiplier
+            if (returnTrip)
+                travelTimeDaysTotal = (int)(travelTimeDaysTotal * returnTripMultiplier);
 
             // Always allow at least 1 day for travel time
             if (travelTimeDaysTotal < 1)

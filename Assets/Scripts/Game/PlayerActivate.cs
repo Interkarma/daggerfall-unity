@@ -22,6 +22,7 @@ using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.Player;
+using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -258,10 +259,17 @@ namespace DaggerfallWorkshop.Game
                                 else if (door.doorType == DoorTypes.DungeonExit && playerEnterExit.IsPlayerInside)
                                 {
                                     // Hit dungeon exit while inside, ask if access wagon or transition outside
-                                    DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager, DaggerfallMessageBox.CommonMessageBoxButtons.YesNo, 38);
-                                    messageBox.OnButtonClick += DungeonWagonAccess_OnButtonClick;
-                                    DaggerfallUI.UIManager.PushWindow(messageBox);
-                                    return;
+                                    if (GameManager.Instance.PlayerEntity.Items.Contains(ItemGroups.Transportation, (int) Transportation.Small_cart))
+                                    {
+                                        DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager, DaggerfallMessageBox.CommonMessageBoxButtons.YesNo, 38);
+                                        messageBox.OnButtonClick += DungeonWagonAccess_OnButtonClick;
+                                        DaggerfallUI.UIManager.PushWindow(messageBox);
+                                        return;
+                                    }
+                                    else
+                                    {
+                                        playerEnterExit.TransitionDungeonExterior(true);
+                                    }
                                 }
                             }
                         }

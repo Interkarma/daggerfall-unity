@@ -590,7 +590,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void WagonButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            ShowWagon(!usingWagon);
+            if (PlayerEntity.Items.Contains(ItemGroups.Transportation, (int) Transportation.Small_cart))
+                ShowWagon(!usingWagon);
         }
 
         private void InfoButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -718,6 +719,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         #region Macro handling
+
         public MacroDataSource GetMacroDataSource()
         {
             return new TradeMacroDataSource(this);
