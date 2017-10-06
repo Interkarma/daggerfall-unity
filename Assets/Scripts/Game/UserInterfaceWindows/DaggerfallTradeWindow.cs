@@ -104,8 +104,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 { ItemGroups.Gems, ItemGroups.CreatureIngredients1, ItemGroups.CreatureIngredients2, ItemGroups.CreatureIngredients3, ItemGroups.PlantIngredients1, ItemGroups.PlantIngredients2, ItemGroups.MiscellaneousIngredients1, ItemGroups.MiscellaneousIngredients2, ItemGroups.MetalIngredients } },
             { DFLocation.BuildingTypes.Armorer, new List<ItemGroups>()
                 { ItemGroups.Armor, ItemGroups.Weapons } },
-            { DFLocation.BuildingTypes.Bookseller, new List<ItemGroups>()
-                { ItemGroups.Books } },
+            { DFLocation.BuildingTypes.Bookseller, new List<ItemGroups>()   { ItemGroups.Books } },
+            { DFLocation.BuildingTypes.Library, new List<ItemGroups>()      { ItemGroups.Books } }, // Some bookshops are marked as libraries
             { DFLocation.BuildingTypes.ClothingStore, new List<ItemGroups>()
                 { ItemGroups.MensClothing, ItemGroups.WomensClothing } },
             { DFLocation.BuildingTypes.GemStore, new List<ItemGroups>()
