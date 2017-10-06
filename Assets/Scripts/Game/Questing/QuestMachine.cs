@@ -318,6 +318,8 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new RestrainFoe(null));
             RegisterAction(new MakePermanent(null));
             RegisterAction(new HaveItem(null));
+            RegisterAction(new AddAsQuestor(null));
+            RegisterAction(new DropAsQuestor(null));
 
             // In progress - these actions are being actively developed
 
@@ -326,8 +328,6 @@ namespace DaggerfallWorkshop.Game.Questing
             //RegisterAction(new DialogLink(null));
             //RegisterAction(new AddDialog(null));
             //RegisterAction(new MuteNpc(null));
-            //RegisterAction(new AddAsQuestor(null));
-            //RegisterAction(new DropAsQuestor(null));
             //RegisterAction(new LegalRepute(null));
 
             // Raise event for custom actions to be registered
@@ -504,7 +504,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         /// <param name="questName">Name of quest filename. Extensions .txt is optional.</param>
         /// <returns>Quest object if successfully parsed, otherwise null.</returns>
-        public Quest ParseQuest(string questName, StaticNPC questorNPC = null)
+        public Quest ParseQuest(string questName)
         {
             Debug.LogFormat("Parsing quest {0}", questName);
 

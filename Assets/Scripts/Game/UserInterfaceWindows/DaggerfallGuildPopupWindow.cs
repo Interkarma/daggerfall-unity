@@ -243,7 +243,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Parse quest
             try
             {
-                offeredQuest = QuestMachine.Instance.ParseQuest(questName, questorNPC);
+                offeredQuest = QuestMachine.Instance.ParseQuest(questName);
             }
             catch (Exception ex)
             {

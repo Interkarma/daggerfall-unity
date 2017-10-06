@@ -47,7 +47,8 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public override void Update(Task caller)
         {
-            // TODO: Perform action changes
+            // Drop questor
+            ParentQuest.DropQuestor(target);
 
             SetComplete();
         }

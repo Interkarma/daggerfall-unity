@@ -38,6 +38,9 @@ namespace DaggerfallWorkshop.Game.Questing
         // Clock, Place, Person, Foe, etc. all share a common resource dictionary
         Dictionary<string, QuestResource> resources = new Dictionary<string, QuestResource>();
 
+        // Questors as added by quest script
+        Dictionary<string, QuestorData> questors = new Dictionary<string, QuestorData>();
+
         ulong uid;
         bool questComplete = false;
         bool questSuccess = false;
@@ -80,6 +83,13 @@ namespace DaggerfallWorkshop.Game.Questing
             public Task.TaskType type;
             public Symbol symbol;
             public bool set;
+        }
+
+        [Serializable]
+        public struct QuestorData
+        {
+            public Symbol symbol;
+            public string name;
         }
 
         #endregion
@@ -288,6 +298,57 @@ namespace DaggerfallWorkshop.Game.Questing
             foreach(QuestResource resource in resources.Values)
             {
                 resource.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Start tracking a new questor.
+        /// </summary>
+        /// <param name="personSymbol">Symbol of new questor.</param>
+        public void AddQuestor(Symbol personSymbol)
+        {
+            // Must be a valid resource
+            if (personSymbol == null || string.IsNullOrEmpty(personSymbol.Name))
+                throw new Exception("AddQuestor() must receive a named symbol.");
+
+            // Person must not be a questor already
+            if (questors.ContainsKey(personSymbol.Name))
+            {
+                Debug.LogWarningFormat("Person {0} is already a questor for quest {1} [{2}]", personSymbol.Original, uid, displayName);
+                return;
+            }
+
+            // Attempt to get person resources
+            Person person = GetPerson(personSymbol);
+            if (person == null)
+            {
+                Debug.LogWarningFormat("Could not find matching Person resource to add questor {0}", personSymbol.Original);
+                return;
+            }
+
+            // Create new questor
+            string key = personSymbol.Name;
+            QuestorData qd = new QuestorData();
+            qd.symbol = personSymbol.Clone();
+            qd.name = person.DisplayName;
+            questors.Add(personSymbol.Name, qd);
+        }
+
+        /// <summary>
+        /// Stop tracking an existing questor.
+        /// </summary>
+        /// <param name="personSymbol">Symbol of questor to drop.</param>
+        public void DropQuestor(Symbol personSymbol)
+        {
+            // Must be a valid resource
+            if (personSymbol == null || string.IsNullOrEmpty(personSymbol.Name))
+                throw new Exception("DropQuestor() must receive a named symbol.");
+
+            // Remove questor if present
+            string key = personSymbol.Name;
+            if (questors.ContainsKey(key))
+            {
+                questors.Remove(key);
             }
         }
 
@@ -579,6 +640,7 @@ namespace DaggerfallWorkshop.Game.Questing
             public LogEntry[] activeLogMessages;
             public Message.MessageSaveData_v1[] messages;
             public QuestResource.ResourceSaveData_v1[] resources;
+            public Dictionary<string, QuestorData> questors;
             public Task.TaskSaveData_v1[] tasks;
         }
 
@@ -618,6 +680,9 @@ namespace DaggerfallWorkshop.Game.Questing
                 resourceSaveDataList.Add(resource.GetResourceSaveData());
             }
             data.resources = resourceSaveDataList.ToArray();
+
+            // Save questors
+            data.questors = questors;
 
             // Save tasks
             List<Task.TaskSaveData_v1> taskSaveDataList = new List<Task.TaskSaveData_v1>();
@@ -670,6 +735,13 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Restore state
                 resource.RestoreResourceSaveData(resourceData);
                 resources.Add(resource.Symbol.Name, resource);
+            }
+
+            // Restore questors
+            questors.Clear();
+            if (data.questors != null)
+            {
+                questors = data.questors;
             }
 
             // Restore tasks
