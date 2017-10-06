@@ -1120,16 +1120,24 @@ namespace DaggerfallWorkshop.Utility
                     SpecialNPCClickHandler specialNPCClickHandler = go.AddComponent<SpecialNPCClickHandler>();
                     specialNPCClickHandler.IndividualFactionID = factionID;
 
-                    // Add QuestResourceBehaviour to GameObject
-                    // TODO: Need to handle this when individual NPC is used in multiple quests
-                    // Currently only first quest resource will be linked
+                    // Always add QuestResourceBehaviour to individual NPC
+                    // This is required to boot-strap quest as often questor is not set until after player clicks resource
+                    QuestResourceBehaviour questResourceBehaviour = go.AddComponent<QuestResourceBehaviour>();
                     Person[] activePersonResources = QuestMachine.Instance.ActiveFactionPersons(factionID);
                     if (activePersonResources != null && activePersonResources.Length > 0)
                     {
                         Person person = activePersonResources[0];
-                        QuestResourceBehaviour questResourceBehaviour = go.AddComponent<QuestResourceBehaviour>();
                         questResourceBehaviour.AssignResource(person);
                         person.QuestResourceBehaviour = questResourceBehaviour;
+                    }
+
+                    // Link up resource and behaviour if this person is already an active questor
+                    // This will override above and usually means player is part-way through an active quest
+                    Person activeQuestor = QuestMachine.Instance.ActiveQuestor(factionID);
+                    if (activeQuestor != null)
+                    {
+                        questResourceBehaviour.AssignResource(activeQuestor);
+                        activeQuestor.QuestResourceBehaviour = questResourceBehaviour;
                     }
                 }
             }

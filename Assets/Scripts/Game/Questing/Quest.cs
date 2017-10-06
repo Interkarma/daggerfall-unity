@@ -332,6 +332,20 @@ namespace DaggerfallWorkshop.Game.Questing
             qd.symbol = personSymbol.Clone();
             qd.name = person.DisplayName;
             questors.Add(personSymbol.Name, qd);
+
+            // Link to assciated QuestResourceBehaviour (if any) in current scene
+            QuestResourceBehaviour[] behaviours = GameObject.FindObjectsOfType<QuestResourceBehaviour>();
+            foreach(var questResourceBehaviour in behaviours)
+            {
+                // Get StaticNPC if present
+                StaticNPC npc = questResourceBehaviour.GetComponent<StaticNPC>();
+                if (!npc)
+                    continue;
+
+                // Link up resource and behaviour if this person found in scene
+                questResourceBehaviour.AssignResource(person);
+                person.QuestResourceBehaviour = questResourceBehaviour;
+            }
         }
 
         /// <summary>
@@ -498,6 +512,17 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             return foundResources.ToArray();
+        }
+
+        public Symbol[] GetQuestors()
+        {
+            List<Symbol> foundQuestors = new List<Symbol>();
+            foreach (var kvp in questors)
+            {
+                foundQuestors.Add(kvp.Value.symbol);
+            }
+
+            return foundQuestors.ToArray();
         }
 
         public DaggerfallMessageBox ShowMessagePopup(int id)

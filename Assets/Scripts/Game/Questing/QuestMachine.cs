@@ -875,6 +875,38 @@ namespace DaggerfallWorkshop.Game.Questing
             return assignedFound.ToArray();
         }
 
+        /// <summary>
+        /// Find an active questor for an individual NPC faction ID across all quests.
+        /// Individual NPCs can only be assigned as a questor by one quest at a time.
+        /// </summary>
+        /// <param name="factionID">FactionID of individual NPC to search for.</param>
+        /// <returns>Person resource.</returns>
+        public Person ActiveQuestor(int factionID)
+        {
+            Person found = null;
+            foreach (Quest quest in quests.Values)
+            {
+                Symbol[] questorSymbols = quest.GetQuestors();
+                if (questorSymbols == null || questorSymbols.Length == 0)
+                    continue;
+
+                foreach (Symbol symbol in questorSymbols)
+                {
+                    Person person = quest.GetPerson(symbol);
+                    if (person == null)
+                        continue;
+
+                    if (person.FactionData.id == factionID)
+                    {
+                        found = person;
+                        break;
+                    }
+                }
+            }
+
+            return found;
+        }
+
         public void ClearMainQuestState()
         {
             // Reset current state
