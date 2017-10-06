@@ -272,19 +272,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DFCareer.Skills.Harpy, DFCareer.Skills.Illusion, DFCareer.Skills.Impish, DFCareer.Skills.Mysticism, 
                 DFCareer.Skills.Orcish, DFCareer.Skills.Restoration, DFCareer.Skills.Spriggan, DFCareer.Skills.Thaumaturgy } },
         };
-//        DFCareer.Skills., DFCareer.Skills., DFCareer.Skills., DFCareer.Skills., 
 
         void TrainingService()
         {
             // Check enough time has passed since last trained
             DaggerfallDateTime now = DaggerfallUnity.Instance.WorldTime.Now;
-            if ((now.ToClassicDaggerfallTime() - playerEntity.TimeOfLastSkillTraining) <= 720)
+            if ((now.ToClassicDaggerfallTime() - playerEntity.TimeOfLastSkillTraining) < 720)
             {
                 Debug.LogFormat("{0} - {1} = {2}", now.ToClassicDaggerfallTime(), playerEntity.TimeOfLastSkillTraining, now.ToClassicDaggerfallTime() - playerEntity.TimeOfLastSkillTraining);
                 TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(4023);
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager);
                 messageBox.SetTextTokens(tokens, this);
                 messageBox.ClickAnywhereToClose = true;
+                messageBox.ParentPanel.BackgroundColor = Color.clear;
                 uiManager.PushWindow(messageBox);
                 return;
             }
@@ -330,6 +330,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
                     messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
                     messageBox.OnButtonClick += ConfirmTraining_OnButtonClick;
+                    messageBox.ParentPanel.BackgroundColor = Color.clear;
                     uiManager.PushWindow(messageBox);
                 }
             }
@@ -342,16 +343,26 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
             {
-                Debug.Log("Trained skill " + skillToTrain.ToString());
+                if (playerEntity.GoldPieces < GetServicePrice())
+                {
+                    CloseWindow();
+                    DaggerfallUI.MessageBox(454); // not enough gold
+                }
+                else
+                {
+                    Debug.Log("Trained skill " + skillToTrain.ToString());
 
-                DaggerfallDateTime now = DaggerfallUnity.Instance.WorldTime.Now;
-                playerEntity.TimeOfLastSkillTraining = now.ToClassicDaggerfallTime();
-                now.RaiseTime(DaggerfallDateTime.SecondsPerHour * 3);
-                playerEntity.DeductGoldAmount(GetServicePrice());
-                playerEntity.DecreaseFatigue(30 * 64);
-                playerEntity.TallySkill(skillToTrain, 15);
-                CloseWindow();
-                DaggerfallUI.MessageBox(5221);
+                    DaggerfallDateTime now = DaggerfallUnity.Instance.WorldTime.Now;
+                    playerEntity.TimeOfLastSkillTraining = now.ToClassicDaggerfallTime();
+                    now.RaiseTime(DaggerfallDateTime.SecondsPerHour * 3);
+                    playerEntity.DeductGoldAmount(GetServicePrice());
+                    playerEntity.DecreaseFatigue(PlayerEntity.DefaultFatigueLoss * 180);
+                    int skillAdvancementMultiplier = DaggerfallSkills.GetAdvancementMultiplier(skillToTrain);
+                    short tallyAmount = (short)(Random.Range(10, 21) * skillAdvancementMultiplier);
+                    playerEntity.TallySkill(skillToTrain, tallyAmount);
+                    CloseWindow();
+                    DaggerfallUI.MessageBox(5221); // you trained for 3 hours
+                }
             }
             else
                 CloseWindow();

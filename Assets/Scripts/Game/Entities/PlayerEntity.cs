@@ -71,10 +71,10 @@ namespace DaggerfallWorkshop.Game.Entity
         protected ushort[] priceAdjustmentByRegion = FormulaHelper.RandomRegionalPriceAdjustments();
 
         // Fatigue loss per in-game minute
-        private int DefaultFatigueLoss = 11;        // According to DF Chronicles and verified in classic
-        //private int ClimbingFatigueLoss = 22;     // According to DF Chronicles
-        private int RunningFatigueLoss = 88;        // According to DF Chronicles and verified in classic
-        //private int SwimmingFatigueLoss = 44;     // According to DF Chronicles
+        public const int DefaultFatigueLoss = 11;
+        //public const int ClimbingFatigueLoss = 22;
+        public const int RunningFatigueLoss = 88;
+        //public const int SwimmingFatigueLoss = 44;
 
         private float runningTallyTimer = 0f;
         private float runningTallyInterval = 0.0625f; // Tally every 1/16 second of running. The rate at which the running skill
@@ -255,11 +255,12 @@ namespace DaggerfallWorkshop.Game.Entity
             this.skillUses = character.skillUses;
             this.startingLevelUpSkillSum = character.startingLevelUpSkillSum;
             this.minMetalToHit = (WeaponMaterialTypes)character.minMetalToHit;
-            this.ArmorValues = character.armorValues;
-            this.TimeForThievesGuildLetter = character.timeForThievesGuildLetter;
-            this.TimeForDarkBrotherhoodLetter = character.timeForDarkBrotherhoodLetter;
-            this.DarkBrotherhoodRequirementTally = character.darkBrotherhoodRequirementTally;
-            this.ThievesGuildRequirementTally = character.thievesGuildRequirementTally;
+            this.armorValues = character.armorValues;
+            this.timeOfLastSkillTraining = character.lastTimePlayerBoughtTraining;
+            this.timeForThievesGuildLetter = character.timeForThievesGuildLetter;
+            this.timeForDarkBrotherhoodLetter = character.timeForDarkBrotherhoodLetter;
+            this.darkBrotherhoodRequirementTally = character.darkBrotherhoodRequirementTally;
+            this.thievesGuildRequirementTally = character.thievesGuildRequirementTally;
 
             SetCurrentLevelUpSkillSum();
 
@@ -277,7 +278,6 @@ namespace DaggerfallWorkshop.Game.Entity
                 FillVitalSigns();
 
             timeOfLastSkillIncreaseCheck = DaggerfallUnity.Instance.WorldTime.Now.ToClassicDaggerfallTime();
-            timeOfLastSkillTraining = 0;
 
             DaggerfallUnity.LogMessage("Assigned character " + this.name, true);
         }
@@ -518,7 +518,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
             for (short i = 0; i < skillUses.Length; i++)
             {
-                int skillAdvancementMultiplier = skills.GetAdvancementMultiplier((DaggerfallConnect.DFCareer.Skills)i);
+                int skillAdvancementMultiplier = DaggerfallSkills.GetAdvancementMultiplier((DFCareer.Skills)i);
                 float careerAdvancementMultiplier = Career.AdvancementMultiplier;
                 int usesNeededForAdvancement = FormulaHelper.CalculateSkillUsesForAdvancement(skills.GetSkillValue(i), skillAdvancementMultiplier, careerAdvancementMultiplier, level);
                 if (skillUses[i] >= usesNeededForAdvancement)
