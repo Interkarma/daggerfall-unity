@@ -104,6 +104,27 @@ namespace DaggerfallWorkshop.Game
 
                     #region Hit Checks
 
+                        // Trigger quest resource behaviour click on anything but NPCs
+                        QuestResourceBehaviour questResourceBehaviour;
+                        if (QuestResourceBehaviourCheck(hit, out questResourceBehaviour))
+                        {
+                            if (!(questResourceBehaviour.TargetResource is Person))
+                            {
+                                if (hit.distance > (DefaultActivationDistance * MeshReader.GlobalScale))
+                                {
+                                    DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
+                                    return;
+                                }
+
+                                // Only trigger click when not in info mode
+                                if (currentMode != PlayerActivateModes.Info)
+                                {
+                                    TriggerQuestResourceBehaviourClick(questResourceBehaviour);
+                                    return;
+                                }
+                            }
+                        }
+
                         // Check for a static building hit
                         Transform buildingOwner;
                         DaggerfallStaticBuildings buildings = GetBuildings(hit.transform, out buildingOwner);
