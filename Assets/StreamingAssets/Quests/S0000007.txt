@@ -39,8 +39,8 @@ AcceptQuest:  [1002]
 <ce>                            plenty of time.
 
 QuestFail:  [1003]
-<ce>                     You think I'm an idiot, %pct?
-<ce>                  You think I don't know that loop is
+<ce>                     You think I'm an idiot, %pcn?
+<ce>                  You think I don't know that loup is
 <ce>                             still alive?
 
 QuestComplete:  [1004]
