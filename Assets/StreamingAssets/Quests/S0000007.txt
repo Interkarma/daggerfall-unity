@@ -583,3 +583,7 @@ _S.45_ task:
 	make pc ill with Caliron's_Curse saying 1027 
 	unset _S.06_ _S.33_ 
 	unset _S.08_ _delay_ 
+
+_clearclick_ task:
+	when _S.06_ and not _mondead_
+	clear _S.06_ _clearclick_
