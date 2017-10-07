@@ -368,7 +368,7 @@ namespace DaggerfallWorkshop.Game.Entity
             return GetPrimaryStat((DFCareer.Skills)index);
         }
 
-        public int GetAdvancementMultiplier(DFCareer.Skills skill)
+        public static int GetAdvancementMultiplier(DFCareer.Skills skill)
         {
             switch (skill)
             {
