@@ -69,7 +69,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TDi_Training = 250,
         TSt_Training = 252,
         TKy_Training = 254,
-        TKy_Buy_Spells = 256,
+        TKy_Buy_Spells = 497,
     }
 
     public class DaggerfallGuildServicePopupWindow : DaggerfallPopupWindow, IMacroContextProvider
@@ -210,6 +210,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 case GuildServices.MG_Identify:
                     return HardStrings.serviceIdentify;
                 case GuildServices.MG_Buy_Spells:
+                case GuildServices.TKy_Buy_Spells:
                     return HardStrings.serviceBuySpells;
                 case GuildServices.MG_Buy_Magic_Items:
                     return HardStrings.serviceBuyMagicItems;
