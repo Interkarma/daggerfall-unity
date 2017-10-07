@@ -262,9 +262,26 @@ namespace DaggerfallWorkshop.Game.Questing
             // Get amount
             int amount = 0;
             if (rangeLow == -1 || rangeHigh == -1)
-                amount = GameManager.Instance.PlayerEntity.Level * UnityEngine.Random.Range(90, 110);
+            {
+                Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
+
+                // TODO: If this is a faction quest, playerMod is (player factionrank + 1) rather than level
+                int playerMod = (player.Level / 2) + 1;
+                if (playerMod > 10)
+                    playerMod = 10;
+
+                // TODO: If this is a faction quest, factionMod = faction.power rather than 50
+                int factionMod = 50;
+
+                PlayerGPS gps = GameManager.Instance.PlayerGPS;
+                int regionPriceMod = player.RegionData[gps.CurrentRegionIndex].PriceAdjustment / 2;
+                amount = UnityEngine.Random.Range(150 * playerMod, (200 * playerMod) + 1) * (regionPriceMod + 500) / 1000 * (factionMod + 50) / 100;
+            }
             else
                 amount = UnityEngine.Random.Range(rangeLow, rangeHigh + 1);
+
+            if (amount < 1)
+                amount = 1;
 
             // Create item
             DaggerfallUnityItem result = new DaggerfallUnityItem(ItemGroups.Currency, 0);
