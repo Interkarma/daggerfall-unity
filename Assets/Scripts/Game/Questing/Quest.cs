@@ -333,18 +333,24 @@ namespace DaggerfallWorkshop.Game.Questing
             qd.name = person.DisplayName;
             questors.Add(personSymbol.Name, qd);
 
-            // Link to assciated QuestResourceBehaviour (if any) in current scene
-            QuestResourceBehaviour[] behaviours = GameObject.FindObjectsOfType<QuestResourceBehaviour>();
-            foreach(var questResourceBehaviour in behaviours)
+            // Dynamically relink individual NPC and associated QuestResourceBehaviour (if any) in current scene
+            if (person.IsIndividualNPC)
             {
-                // Get StaticNPC if present
-                StaticNPC npc = questResourceBehaviour.GetComponent<StaticNPC>();
-                if (!npc)
-                    continue;
+                QuestResourceBehaviour[] behaviours = GameObject.FindObjectsOfType<QuestResourceBehaviour>();
+                foreach (var questResourceBehaviour in behaviours)
+                {
+                    // Get StaticNPC if present
+                    StaticNPC npc = questResourceBehaviour.GetComponent<StaticNPC>();
+                    if (!npc)
+                        continue;
 
-                // Link up resource and behaviour if this person found in scene
-                questResourceBehaviour.AssignResource(person);
-                person.QuestResourceBehaviour = questResourceBehaviour;
+                    // Link up resource and behaviour if this person found in scene
+                    if (person.FactionData.id == npc.Data.factionID)
+                    {
+                        questResourceBehaviour.AssignResource(person);
+                        person.QuestResourceBehaviour = questResourceBehaviour;
+                    }
+                }
             }
         }
 

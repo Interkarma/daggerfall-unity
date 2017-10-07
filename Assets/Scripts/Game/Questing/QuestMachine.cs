@@ -82,6 +82,7 @@ namespace DaggerfallWorkshop.Game.Questing
         float updateTimer = 0;
 
         StaticNPC lastNPCClicked;
+        Dictionary<int, IQuestAction> factionListeners = new Dictionary<int, IQuestAction>();
 
         #endregion
 
@@ -905,6 +906,35 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             return found;
+        }
+
+        /// <summary>
+        /// Check if a faction listener is active for the individual faction ID.
+        /// </summary>
+        public bool HasFactionListener(int factionID)
+        {
+            return factionListeners.ContainsKey(factionID);
+        }
+
+        /// <summary>
+        /// Add a faction listener for the individual faction ID.
+        /// Does nothing if faction ID already claimed.
+        /// </summary>
+        public void AddFactionListener(int factionID, IQuestAction owner)
+        {
+            if (!HasFactionListener(factionID))
+                factionListeners.Add(factionID, owner);
+        }
+
+        /// <summary>
+        /// Remove a faction listener for the individual faction ID.
+        /// Does nothing if faction ID not claimed.
+        /// </summary>
+        /// <param name="factionID"></param>
+        public void RemoveFactionListener(int factionID)
+        {
+            if (HasFactionListener(factionID))
+                factionListeners.Remove(factionID);
         }
 
         public void ClearMainQuestState()
