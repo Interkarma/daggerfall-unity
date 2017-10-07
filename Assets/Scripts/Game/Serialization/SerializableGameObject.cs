@@ -147,6 +147,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public int thievesGuildRequirementTally;
         public int darkBrotherhoodRequirementTally;
         public uint timeOfLastSkillTraining;
+        public PlayerEntity.RegionDataRecord[] regionData;
     }
 
     [fsObject("v1")]

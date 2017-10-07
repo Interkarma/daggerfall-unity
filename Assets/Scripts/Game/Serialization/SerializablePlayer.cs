@@ -133,6 +133,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.playerEntity.timeForDarkBrotherhoodLetter = entity.TimeForDarkBrotherhoodLetter;
             data.playerEntity.thievesGuildRequirementTally = entity.ThievesGuildRequirementTally;
             data.playerEntity.darkBrotherhoodRequirementTally = entity.DarkBrotherhoodRequirementTally;
+            data.playerEntity.regionData = entity.RegionData;
 
             // Store player position data
             data.playerPosition = GetPlayerPositionData();
@@ -233,6 +234,11 @@ namespace DaggerfallWorkshop.Game.Serialization
             entity.ThievesGuildRequirementTally = data.playerEntity.thievesGuildRequirementTally;
             entity.DarkBrotherhoodRequirementTally = data.playerEntity.darkBrotherhoodRequirementTally;
             entity.SetCurrentLevelUpSkillSum();
+
+            if (data.playerEntity.regionData != null)
+                entity.RegionData = data.playerEntity.regionData;
+            else // If data doesn't exist, initialize to random values
+                entity.InitializeRegionPrices();
 
             // Set time tracked in player entity
             entity.LastGameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();

@@ -405,8 +405,8 @@ namespace DaggerfallWorkshop.Utility
         private static string LocalReputation(IMacroContextProvider mcp)
         {   // %ltn
             PlayerGPS gps = GameManager.Instance.PlayerGPS;
-            PersistentFactionData factionData = Game.GameManager.Instance.PlayerEntity.FactionData;
-            int rep = factionData.GetLegalReputation(gps.CurrentRegionIndex).value;
+            int rep = GameManager.Instance.PlayerEntity.RegionData[gps.CurrentRegionIndex].LegalRep;
+
             if (rep > 80)
                 return "revered";
             else if (rep > 60)
@@ -421,18 +421,19 @@ namespace DaggerfallWorkshop.Utility
                 return "dependable";
             else if (rep == 0)
                 return "a common citizen";
-            else if (rep < 0)
-                return "undependable";
-            else if (rep < -10)
-                return "a scoundrel";
-            else if (rep < -20)
-                return "a criminal";
-            else if (rep < -40)
-                return "a villain";
-            else if (rep < -60)
-                return "pond scum";
             else if (rep < -80)
                 return "hated";
+            else if (rep < -60)
+                return "pond scum";
+            else if (rep < -40)
+                return "a villain";
+            else if (rep < -20)
+                return "a criminal";
+            else if (rep < -10)
+                return "a scoundrel";
+            else if (rep < 0)
+                return "undependable";
+
             return "unknown";
         }
 

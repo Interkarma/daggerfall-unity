@@ -16,6 +16,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallConnect.Save
 {
@@ -47,7 +48,8 @@ namespace DaggerfallConnect.Save
         const int lastSkillCheckTimeOffset = 0x179A;
 
         const int regionDataOffset = 0x3DA;
-        const int regionDataLength = 4960;
+        const int regionDataLength = 80;
+        const int regionCount = 62;
 
         const int factionDataOffset = 0x17D0;
         const int factionDataLength = 92;
@@ -90,8 +92,7 @@ namespace DaggerfallConnect.Save
 
         uint lastSkillCheckTime = 0;
 
-        ushort[] priceAdjustmentsByRegion = new ushort[62];
-
+        List<PlayerEntity.RegionDataRecord> regionDataList = new List<PlayerEntity.RegionDataRecord>();
         List<FactionFile.FactionData> factions = new List<FactionFile.FactionData>();
 
         #endregion
@@ -331,6 +332,14 @@ namespace DaggerfallConnect.Save
         }
 
         /// <summary>
+        /// Gets array of regionData read from savevars.
+        /// </summary>
+        public PlayerEntity.RegionDataRecord[] RegionData
+        {
+            get { return regionDataList.ToArray(); }
+        }
+
+        /// <summary>
         /// Gets array of factions read from savevars.
         /// </summary>
         public FactionFile.FactionData[] Factions
@@ -344,14 +353,6 @@ namespace DaggerfallConnect.Save
         public byte[] GlobalVars
         {
             get { return globalVars; }
-        }
-
-        /// <summary>
-        /// Gets array of how much prices are adjusted in each region.
-        /// </summary>
-        public ushort[] PriceAdjustmentsByRegion
-        {
-            get { return priceAdjustmentsByRegion; }
         }
 
         #endregion
@@ -539,24 +540,32 @@ namespace DaggerfallConnect.Save
 
         void ReadRegionData(BinaryReader reader)
         {
-            byte[] regionData = new byte[regionDataLength];
-            reader.BaseStream.Position = regionDataOffset;
-            regionData = reader.ReadBytes(regionDataLength);
-
-            GetPriceAdjustmentsByRegion(regionData);
-        }
-
-        void GetPriceAdjustmentsByRegion(byte[] regionData)
-        {
-            int priceAdjustmentsOffset = 0x4E;
-            byte byte1;
-            byte byte2;
-
-            for (int i = 0; i < 62; i++)
+            // Step through region data
+            regionDataList.Clear();
+            for (int i = 0; i < regionCount; i++)
             {
-                byte1 = regionData[priceAdjustmentsOffset + (80 * i)];
-                byte2 = regionData[priceAdjustmentsOffset + (80 * i) + 1];
-                priceAdjustmentsByRegion[i] = (ushort)((byte1) | (byte2 << 8));
+                PlayerEntity.RegionDataRecord regionData = new PlayerEntity.RegionDataRecord();
+                reader.BaseStream.Position = regionDataOffset + (i * regionDataLength);
+                regionData.Values = new byte[29];
+
+                for (int j = 0; j < 29; j++)
+                    regionData.Values[j] = reader.ReadByte();
+
+                regionData.Flags = new bool[29];
+                for (int j = 0; j < 29; j++)
+                    regionData.Flags[j] = reader.ReadBoolean();
+
+                regionData.Flags2 = new bool[14];
+                for (int j = 0; j < 14; j++)
+                    regionData.Flags2[j] = reader.ReadBoolean();
+
+                reader.BaseStream.Position += 2; // unknown
+
+                regionData.LegalRep = reader.ReadInt16();
+                regionData.Unknown = reader.ReadUInt16();
+                regionData.PriceAdjustment = reader.ReadUInt16();
+
+                regionDataList.Add(regionData);
             }
         }
 

@@ -771,30 +771,25 @@ namespace DaggerfallWorkshop.Game.Formulas
             else
                 return cost;
 
-            adjustedCost = cost * player.PriceAdjustmentByRegion[currentRegionIndex] / 1000;
+            adjustedCost = cost * player.RegionData[currentRegionIndex].PriceAdjustment / 1000;
             if (adjustedCost < 1)
                 adjustedCost = 1;
             return adjustedCost;
         }
 
-        public static ushort[] RandomRegionalPriceAdjustments()
+        public static void RandomizeInitialPriceAdjustments(ref Entity.PlayerEntity.RegionDataRecord[] regionData)
         {
-            ushort[] priceAdjustments = new ushort[62];
-            for (int i = 0; i < 62; ++i)
-            {
-                priceAdjustments[i] = (ushort)(UnityEngine.Random.Range(0, 501) + 750);
-            }
-
-            return priceAdjustments;
+            for (int i = 0; i < regionData.Length; i++)
+                regionData[i].PriceAdjustment = (ushort)(UnityEngine.Random.Range(0, 501) + 750);
         }
 
-        public static ushort[] ModifyPriceAdjustmentByRegion(ushort[] currentPriceAdjustments, int times)
+        public static void ModifyPriceAdjustmentByRegion(ref Entity.PlayerEntity.RegionDataRecord[] regionData, int times)
         {
             DaggerfallConnect.Arena2.FactionFile.FactionData merchantsFaction;
             if (!GameManager.Instance.PlayerEntity.FactionData.GetFactionData(510, out merchantsFaction))
-                return currentPriceAdjustments;
+                return;
 
-            for (int i = 0; i < 62; ++i)
+            for (int i = 0; i < regionData.Length; ++i)
             {
                 DaggerfallConnect.Arena2.FactionFile.FactionData regionFaction;
                 if (GameManager.Instance.PlayerEntity.FactionData.FindFactionByTypeAndRegion(7, i + 1, out regionFaction))
@@ -802,20 +797,16 @@ namespace DaggerfallWorkshop.Game.Formulas
                     for (int j = 0; j < times; ++j)
                     {
                         int chanceOfPriceRise = ((merchantsFaction.power) - (regionFaction.power)) / 5
-                            + 50 - (currentPriceAdjustments[i] - 1000) / 25;
+                            + 50 - (regionData[i].PriceAdjustment - 1000) / 25;
                         if (UnityEngine.Random.Range(0, 101) >= chanceOfPriceRise)
-                            currentPriceAdjustments[i] = (ushort)(49 * currentPriceAdjustments[i] / 50);
+                            regionData[i].PriceAdjustment = (ushort)(49 * regionData[i].PriceAdjustment / 50);
                         else
-                            currentPriceAdjustments[i] = (ushort)(51 * currentPriceAdjustments[i] / 50);
+                            regionData[i].PriceAdjustment = (ushort)(51 * regionData[i].PriceAdjustment / 50);
 
-                        Mathf.Clamp(currentPriceAdjustments[i], 250, 4000);
+                        Mathf.Clamp(regionData[i].PriceAdjustment, 250, 4000);
                     }
                 }
-
-                // TODO: There is a bit more to this, possibly adjustments to regional power.
             }
-
-            return currentPriceAdjustments;
         }
 
         #endregion
