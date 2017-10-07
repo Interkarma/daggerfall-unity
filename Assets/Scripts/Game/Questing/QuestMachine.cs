@@ -990,6 +990,7 @@ namespace DaggerfallWorkshop.Game.Questing
             else if (stage == 5)
             {
                 GameManager.Instance.PlayerEntity.Level = 8;
+                GameManager.Instance.PlayerEntity.FactionData.ChangeReputation(510, 60);    // Merchants +60
                 InstantiateQuest("__MQSTAGE05");
                 InstantiateQuest("S0000977");
             }

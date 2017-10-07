@@ -29,12 +29,13 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         Symbol itemSymbol;
         int textId;
         bool isNothing;
+        bool silently;
 
         DaggerfallLoot rewardLoot = null;
 
         public override string Pattern
         {
-            get { return @"give pc (?<nothing>nothing)|give pc (?<anItem>[a-zA-Z0-9_.]+) notify (?<id>\d+)|give pc (?<anItem>[a-zA-Z0-9_.]+)"; }
+            get { return @"give pc (?<nothing>nothing)|give pc (?<anItem>[a-zA-Z0-9_.]+) notify (?<id>\d+)|give pc (?<anItem>[a-zA-Z0-9_.]+) (?<silently>silently)|give pc (?<anItem>[a-zA-Z0-9_.]+)"; }
         }
 
         public GivePc(Quest parentQuest)
@@ -53,10 +54,8 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             GivePc action = new GivePc(parentQuest);
             action.itemSymbol = new Symbol(match.Groups["anItem"].Value);
             action.textId = Parser.ParseInt(match.Groups["id"].Value);
-            if (!string.IsNullOrEmpty(match.Groups["nothing"].Value))
-                action.isNothing = true;
-            else
-                action.isNothing = false;
+            action.isNothing = !string.IsNullOrEmpty(match.Groups["nothing"].Value);
+            action.silently = !string.IsNullOrEmpty(match.Groups["silently"].Value);
 
             return action;
         }
@@ -84,9 +83,16 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
             // Give quest item to player based on command format
             if (textId != 0)
+            {
                 DirectToPlayerWithNotify(item);
+            }
             else
-                OfferToPlayerWithQuestComplete(item);
+            {
+                if (silently)
+                    DirectToPlayerWithoutNotify(item);
+                else
+                    OfferToPlayerWithQuestComplete(item);
+            }
 
             SetComplete();
         }
@@ -124,6 +130,12 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             ParentQuest.ShowMessagePopup(textId);
         }
 
+        void DirectToPlayerWithoutNotify(Item item)
+        {
+            // Just give player item
+            GameManager.Instance.PlayerEntity.Items.AddItem(item.DaggerfallUnityItem, Items.ItemCollection.AddPosition.Front);
+        }
+
         private void QuestCompleteMessage_OnClose()
         {
             // Open loot reward container once QuestComplete dismissed
@@ -142,6 +154,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             public Symbol itemSymbol;
             public int textId;
             public bool isNothing;
+            public bool silently;
         }
 
         public override object GetSaveData()
@@ -150,6 +163,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             data.itemSymbol = itemSymbol;
             data.textId = textId;
             data.isNothing = isNothing;
+            data.silently = silently;
 
             return data;
         }
@@ -163,6 +177,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             itemSymbol = data.itemSymbol;
             textId = data.textId;
             isNothing = data.isNothing;
+            silently = data.silently;
         }
 
         #endregion
