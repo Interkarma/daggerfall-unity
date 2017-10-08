@@ -165,6 +165,10 @@ namespace DaggerfallWorkshop.Game.Questing
                     textOut = (isGoldPieces) ? item.stackCount.ToString() : item.LongName;
                     break;
 
+                case MacroTypes.DetailsMacro:           // Same as display name?
+                    textOut = (isGoldPieces) ? item.stackCount.ToString() : item.LongName;
+                    break;
+
                 default:                                // Macro not supported
                     result = false;
                     break;
