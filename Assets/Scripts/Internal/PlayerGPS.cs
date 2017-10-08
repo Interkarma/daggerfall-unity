@@ -380,6 +380,31 @@ namespace DaggerfallWorkshop
             return factions[0].id;
         }
 
+        /// <summary>
+        /// Checks if player is inside a location world cell, optionally inside location rect, optionally outside
+        /// </summary>
+        /// <returns></returns>
+        public bool IsPlayerInTown(bool mustBeInLocationRect = false, bool mustBeOutside = false)
+        {
+            // Check if player inside a town cell
+            if (CurrentLocationType == DFRegion.LocationTypes.TownCity ||
+                CurrentLocationType == DFRegion.LocationTypes.TownHamlet ||
+                CurrentLocationType == DFRegion.LocationTypes.TownVillage)
+            {
+                // Optionally check if player inside location rect
+                if (mustBeInLocationRect && !IsPlayerInLocationRect)
+                    return false;
+
+                // Optionally check if player outside
+                if (mustBeOutside && GameManager.Instance.IsPlayerInside)
+                    return false;
+
+                return true;
+            }
+
+            return false;
+        }
+
         #endregion
 
         #region Private Methods
