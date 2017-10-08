@@ -44,6 +44,7 @@ namespace DaggerfallWorkshop.Game.Questing
         string homeRegionName = string.Empty;
         string homeBuildingName = string.Empty;
         Symbol homePlaceSymbol = null;
+        bool assignedToHome = false;
         FactionFile.FactionData factionData;
         StaticNPC.NPCData questorData;
 
@@ -294,6 +295,33 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             return result;
+        }
+
+        public override void Tick(Quest caller)
+        {
+            base.Tick(caller);
+
+            // Auto-assign NPC to home Place if available and player enters
+            // This only happens for very specific NPC types
+            // Equivalent to calling "place anNPC at aPlace" from script
+            // Will not be called again as assignment is permanent for duration of quest
+            if (homePlaceSymbol != null && !assignedToHome)
+            {
+                Place home = ParentQuest.GetPlace(homePlaceSymbol);
+                if (home == null)
+                    return;
+
+                if (home.IsPlayerHere())
+                {
+                    // Create SiteLink if not already present
+                    if (!QuestMachine.HasSiteLink(ParentQuest, homePlaceSymbol))
+                        QuestMachine.CreateSiteLink(ParentQuest, homePlaceSymbol);
+
+                    // Hot-place NPC at this location
+                    home.AssignQuestResource(Symbol);
+                    assignedToHome = true;
+                }
+            }
         }
 
         #endregion
@@ -871,6 +899,7 @@ namespace DaggerfallWorkshop.Game.Questing
             public string homeRegionName;
             public string homeBuildingName;
             public Symbol homePlaceSymbol;
+            public bool assignedToHome;
             public int factionID;
             public StaticNPC.NPCData questorData;
         }
@@ -892,6 +921,7 @@ namespace DaggerfallWorkshop.Game.Questing
             data.homeRegionName = homeRegionName;
             data.homeBuildingName = homeBuildingName;
             data.homePlaceSymbol = homePlaceSymbol;
+            data.assignedToHome = assignedToHome;
             data.factionID = factionData.id;
             data.questorData = questorData;
 
@@ -922,6 +952,7 @@ namespace DaggerfallWorkshop.Game.Questing
             homeRegionName = data.homeRegionName;
             homeBuildingName = data.homeBuildingName;
             homePlaceSymbol = data.homePlaceSymbol;
+            assignedToHome = data.assignedToHome;
             factionData = dsfactionData;
             questorData = data.questorData;
         }
