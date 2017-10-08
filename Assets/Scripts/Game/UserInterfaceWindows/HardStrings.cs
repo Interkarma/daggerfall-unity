@@ -136,5 +136,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string repairDays = "%d days";
 
         public const string cannotRemoveThisItem = "You cannot remove this item.";
+
+        public const string youReceiveGoldPieces = "You receive %s gold pieces.";     // Custom message for "get item" gold assignment
     }
 }
