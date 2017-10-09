@@ -1061,7 +1061,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (selectedRegion == 19) //if betony, add 129 to y value...129 + current y origin seems to be approx. correct map pixel for upper left corner of betony
                 y += 129;
 
+            if (selectedRegion == 61) // Fix for Cybiades zoom-in map. Map is more zoomed in than for other regions but the pixel coordinates are not scaled to match.
+                                      // The upper right corner of Cybiades (about x=440 y=340) is the same for both Cybiades's zoomed-in map and Sentinel's less zoomed in map,
+                                      // so that is being used as the base for this fix.
+            {
+                int xDiff = x - 440;
+                int yDiff = y - 340;
+                xDiff /= 4;
+                yDiff /= 4;
+                x = 440 + xDiff;
+                y = 340 + yDiff;
+            }
+
             int sampleRegion = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetPoliticIndex(x, y) - 128;
+
             if (sampleRegion != selectedRegion && sampleRegion >= 0 && sampleRegion < DaggerfallUnity.Instance.ContentReader.MapFileReader.RegionCount)
             {
                 mouseOverRegion = sampleRegion;
