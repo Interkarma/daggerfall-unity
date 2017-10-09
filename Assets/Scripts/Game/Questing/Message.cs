@@ -169,6 +169,28 @@ namespace DaggerfallWorkshop.Game.Questing
             return tokens;
         }
 
+        /// <summary>
+        /// Gets text tokens for this message for specified variant.
+        /// Will return the specified variant
+        /// </summary>
+        /// <param name="variant">the variant of interest.</param>
+        /// <param name="expandMacros">True to expand text macros like %foo and __foo_.</param>
+        /// <returns>Array of text tokens.</returns>
+        public TextFile.Token[] GetTextTokensByVariant(int variant = 0, bool expandMacros = true)
+        {
+            // Get token array
+            TextFile.Token[] tokens = variants[variant].tokens.ToArray();
+
+            // Expand macros
+            if (expandMacros)
+            {
+                QuestMacroHelper macroHelper = new QuestMacroHelper();
+                macroHelper.ExpandQuestMessage(ParentQuest, ref tokens);
+            }
+
+            return tokens;
+        }
+
         #endregion
 
         #region Serialization
