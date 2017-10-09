@@ -241,9 +241,6 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Is NPC at home?
                 isIndividualAtHome = atHome;
 
-                // add conversation topics from anyInfo command tag
-                AddConversationTopics();
-
                 // Done
                 Debug.LogFormat("Created NPC {0} with FactionID #{1}.", displayName, factionData.id);
             }
@@ -429,7 +426,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 List<string> answers = new List<string>();
                 for (int i=0; i < message.VariantCount; i++)
                 {
-                    TextFile.Token[] tokens = message.Variants[i].tokens.ToArray();
+                    TextFile.Token[] tokens = message.GetTextTokensByVariant(i);
                     answers.Add(tokens[0].text);
                 }
                 
