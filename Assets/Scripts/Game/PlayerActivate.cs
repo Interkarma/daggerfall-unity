@@ -120,7 +120,6 @@ namespace DaggerfallWorkshop.Game
                                 if (currentMode != PlayerActivateModes.Info)
                                 {
                                     TriggerQuestResourceBehaviourClick(questResourceBehaviour);
-                                    return;
                                 }
                             }
                         }
