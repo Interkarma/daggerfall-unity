@@ -68,7 +68,7 @@ namespace DaggerfallWorkshop.Utility
             { "%dae", null }, // A daedra
             { "%dam", DmgMod }, // Damage modifyer
             { "%dat", Date }, // Date
-            { "%di", DialogLocationDirection },  // Direction
+            { "%di", LocationDirection },  // Direction
             { "%dip", null }, // Days in prison
             { "%dng", null }, // Dungeon
             { "%dts", null }, // Daedra
@@ -571,11 +571,11 @@ namespace DaggerfallWorkshop.Utility
             }
         }
 
-        private static string DialogLocationDirection(IMacroContextProvider mcp)
-        {
-            // %di
-            return GameManager.Instance.TalkManager.GetKeySubjectLocationDirection();
-        }
+        //private static string DialogLocationDirection(IMacroContextProvider mcp)
+        //{
+        //    // %di
+        //    return GameManager.Instance.TalkManager.GetKeySubjectLocationDirection();
+        //}
 
         private static string DialogLocationHint(IMacroContextProvider mcp)
         {
@@ -734,6 +734,12 @@ namespace DaggerfallWorkshop.Utility
         public static string God(IMacroContextProvider mcp)
         {   // %god
             return mcp.GetMacroDataSource().God();
+        }
+
+        public static string LocationDirection(IMacroContextProvider mcp)
+        {
+            // %di
+            return mcp.GetMacroDataSource().LocationDirection();
         }
 
         #endregion

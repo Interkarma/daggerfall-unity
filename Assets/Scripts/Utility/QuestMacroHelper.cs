@@ -103,6 +103,15 @@ namespace DaggerfallWorkshop.Utility
             }
         }
 
+        public void ExpandQuestString(Quest parentQuest, ref string questString)
+        {
+            Macro macro = GetMacro(questString);
+            if (macro.type == MacroTypes.ContextMacro)
+            {
+                questString = questString.Replace(macro.token, MacroHelper.GetValue(macro.token, parentQuest));
+            }
+        }
+
         #endregion
 
         #region Private Methods

@@ -21,13 +21,14 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Questing;
 
 namespace DaggerfallWorkshop.Game
 {
     /// <summary>
     /// this class manages talk topics and resulting actions/answers
     /// </summary>
-    public class TalkManager : MonoBehaviour
+    public partial class TalkManager : MonoBehaviour
     {
         #region Singleton
 
@@ -146,6 +147,7 @@ namespace DaggerfallWorkshop.Game
             QuestTopic
         }
 
+        ListItem currentQuestionListItem = null; // current question list item
         string nameNPC = "";
         string currentKeySubject = "";
         KeySubjectType currentKeySubjectType = KeySubjectType.Unset;
@@ -188,7 +190,7 @@ namespace DaggerfallWorkshop.Game
         public class QuestResourceInfo
         {
             public QuestInfoResourceType resourceType;
-            public List<string> answers;
+            public List<TextFile.Token[]> answers;
         }
 
         // a dictionary of quest resources (key resource name, value is the QuestResourceInfo)
@@ -212,6 +214,11 @@ namespace DaggerfallWorkshop.Game
         public string NameNPC
         {
             get { return nameNPC; }
+        }
+
+        public ListItem CurrentQuestionListItem
+        {
+            get { return currentQuestionListItem; }
         }
 
         public string CurrentKeySubject
@@ -435,6 +442,7 @@ namespace DaggerfallWorkshop.Game
         {
             numQuestionsAsked = 0;
             questionOpeningText = "";
+            currentQuestionListItem = null;
         }
 
         public string GetNPCGreetingText()
@@ -500,10 +508,34 @@ namespace DaggerfallWorkshop.Game
             return expandRandomTextRecord(7211);
         }
 
+        public string DirectionVector2DirectionHintString(Vector2 vecDirectionToTarget)
+        {
+            float angle = Mathf.Acos(Vector2.Dot(vecDirectionToTarget, Vector2.right) / vecDirectionToTarget.magnitude) / Mathf.PI * 180.0f;
+            if (vecDirectionToTarget.y < 0)
+                angle = 180.0f + (180.0f - angle);
+
+            if ((angle >= 0.0f && angle < 22.5f) || (angle >= 337.5f && angle <= 360.0f))
+                return "east";
+            else if (angle >= 22.5f && angle < 67.5f)
+                return "northeast";
+            else if (angle >= 67.5f && angle < 112.5f)
+                return "north";
+            else if (angle >= 112.5f && angle < 157.5f)
+                return "northwest";
+            else if (angle >= 157.5f && angle < 202.5f)
+                return "west";
+            else if (angle >= 202.5f && angle < 247.5f)
+                return "southwest";
+            else if (angle >= 247.5f && angle < 292.5f)
+                return "south";
+            else if (angle >= 292.5f && angle < 337.5f)
+                return "southeast";
+            else
+                return "nevermind...";
+        }
+
         public string GetKeySubjectLocationDirection()
         {
-            string directionHint = "";
-
             // note Nystul:
             // I reused coordinate mapping from buildings from exterior automap layout implementation here
             // So both building position as well as player position are calculated in map coordinates and compared
@@ -521,29 +553,7 @@ namespace DaggerfallWorkshop.Game
             BuildingInfo buildingInfo = listBuildings.Find(x => x.buildingKey == currentKeySubjectBuildingKey);
 
             Vector2 vecDirectionToTarget = buildingInfo.position - playerPos;
-            float angle = Mathf.Acos(Vector2.Dot(vecDirectionToTarget, Vector2.right) / vecDirectionToTarget.magnitude) / Mathf.PI * 180.0f;
-            if (buildingInfo.position.y - playerPos.y < 0)
-                angle = 180.0f + (180.0f - angle);
-
-            if ((angle >= 0.0f && angle < 22.5f) || (angle >= 337.5f && angle <= 360.0f))
-                directionHint = "east";
-            else if (angle >= 22.5f && angle < 67.5f)
-                directionHint = "northeast";
-            else if (angle >= 67.5f && angle < 112.5f)
-                directionHint = "north";
-            else if (angle >= 112.5f && angle < 157.5f)
-                directionHint = "northwest";
-            else if (angle >= 157.5f && angle < 202.5f)
-                directionHint = "west";
-            else if (angle >= 202.5f && angle < 247.5f)
-                directionHint = "southwest";
-            else if (angle >= 247.5f && angle < 292.5f)
-                directionHint = "south";
-            else if (angle >= 292.5f && angle < 337.5f)
-                directionHint = "southeast";
-            else
-                directionHint = "nevermind...";
-            return directionHint;
+            return DirectionVector2DirectionHintString(vecDirectionToTarget);
         }
 
         public void MarkKeySubjectLocationOnMap()
@@ -654,6 +664,7 @@ namespace DaggerfallWorkshop.Game
         public string GetAnswerText(TalkManager.ListItem listItem)
         {
             string answer = "";
+            currentQuestionListItem = listItem;
             switch (listItem.questionType)
             {
                 case QuestionType.NoQuestion:
@@ -700,15 +711,24 @@ namespace DaggerfallWorkshop.Game
             {
                 if (dictQuestInfo[listItem.questID].resourceInfo.ContainsKey(listItem.caption))
                 {
-                    List<string> possibleAnswers = dictQuestInfo[listItem.questID].resourceInfo[listItem.caption].answers;
-                    int randomNumAnswer = UnityEngine.Random.Range(0, possibleAnswers.Count);
-                    return possibleAnswers[randomNumAnswer];
+                    List<TextFile.Token[]> answers = dictQuestInfo[listItem.questID].resourceInfo[listItem.caption].answers;
+                    int randomNumAnswer = UnityEngine.Random.Range(0, answers.Count);
+
+                    // cloning important here: we want to evaluate every time the answer is created so altering macros are re-expanded correctly
+                    // e.g. Missing Prince quest allows player to ask for dungeon and there is a "%di" macro that needs to be re-evaluated
+                    // to correctly show current direction to dungeon (when in different towns it is likely to be different)
+                    TextFile.Token[] tokens = (TextFile.Token[])answers[randomNumAnswer].Clone();
+
+                    QuestMacroHelper macroHelper = new QuestMacroHelper();
+                    macroHelper.ExpandQuestMessage(GameManager.Instance.QuestMachine.GetQuest(listItem.questID), ref tokens);
+                    
+                    return tokens[0].text;
                 }
             }
             return "Never mind..."; // error case - should never ever occur
         }
 
-        public void AddQuestInfoTopics(ulong questID, string resourceName, QuestInfoResourceType resourceType, List<string> answers)
+        public void AddQuestInfoTopics(ulong questID, string resourceName, QuestInfoResourceType resourceType, List<TextFile.Token[]> answers)
         {
             QuestResources questResources;
             if (dictQuestInfo.ContainsKey(questID))
@@ -937,8 +957,12 @@ namespace DaggerfallWorkshop.Game
                             itemQuestTopic.questionType = QuestionType.QuestItem;
                             break;
                     }
-                    itemQuestTopic.questID = questInfo.Key;
-                    itemQuestTopic.caption = questResourceInfo.Key;
+                    ulong questID = questInfo.Key;
+                    itemQuestTopic.questID = questID;
+                    string captionString = questResourceInfo.Key;
+                    //QuestMacroHelper macroHelper = new QuestMacroHelper();
+                    //macroHelper.ExpandQuestString(GameManager.Instance.QuestMachine.GetQuest(questID), ref captionString);
+                    itemQuestTopic.caption = captionString;
                     listTopicTellMeAbout.Add(itemQuestTopic);
                 }
             }
@@ -1143,7 +1167,9 @@ namespace DaggerfallWorkshop.Game
         private string expandRandomTextRecord(int recordIndex)
         {
             TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(recordIndex);
-            MacroHelper.ExpandMacros(ref tokens);
+
+            MacroHelper.ExpandMacros(ref tokens, this); // this... TalkManager (TalkManagerMCP)
+
             return (tokens[0].text);
         }
             

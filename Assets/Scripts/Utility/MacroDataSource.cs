@@ -161,6 +161,11 @@ namespace DaggerfallWorkshop.Utility
             throw new NotImplementedException();
         }
 
+        public virtual string LocationDirection()
+        {   // %di
+            throw new NotImplementedException();
+        }
+
         public virtual TextFile.Token[] PotionRecipeIngredients(TextFile.Formatting format)
         {
             throw new NotImplementedException();

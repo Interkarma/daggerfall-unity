@@ -244,6 +244,9 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Is NPC at home?
                 isIndividualAtHome = atHome;
 
+                // add conversation topics from anyInfo command tag
+                AddConversationTopics();
+
                 // Done
                 Debug.LogFormat("Created NPC {0} with FactionID #{1}.", displayName, factionData.id);
             }
@@ -479,13 +482,12 @@ namespace DaggerfallWorkshop.Game.Questing
             if (this.InfoMessageID != -1)
             {
                 Message message = this.ParentQuest.GetMessage(this.InfoMessageID);
-                List<string> answers = new List<string>();
+                List<TextFile.Token[]> answers = new List<TextFile.Token[]>();
                 for (int i=0; i < message.VariantCount; i++)
                 {
-                    TextFile.Token[] tokens = message.GetTextTokensByVariant(i);
-                    answers.Add(tokens[0].text);
-                }
-                
+                    TextFile.Token[] tokens = message.GetTextTokensByVariant(i, false); // do not expand macros here (they will be expanded just in time by TalkManager class)
+                    answers.Add(tokens);
+                }                
                 GameManager.Instance.TalkManager.AddQuestInfoTopics(this.ParentQuest.UID, this.displayName, TalkManager.QuestInfoResourceType.Person, answers);
             }
         }

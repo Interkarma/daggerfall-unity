@@ -236,22 +236,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 {
                     // This is a person declaration
                     Person person = new Person(quest, lines[i]);
-                    quest.AddResource(person);
-
-                    // add conversation topics from anyInfo command tag
-                    if (person.InfoMessageID != -1)
-                    {
-                        Message message = quest.GetMessage(person.InfoMessageID);
-                        List<string> answers = new List<string>();
-                        for (int v=0; v < message.VariantCount; v++)
-                        {
-                            TextFile.Token[] tokens = message.GetTextTokensByVariant(v);
-                            answers.Add(tokens[0].text);
-                        }
-                
-                        GameManager.Instance.TalkManager.AddQuestInfoTopics(quest.UID, person.DisplayName, TalkManager.QuestInfoResourceType.Person, answers);
-                    }
-        
+                    quest.AddResource(person);        
                 }
                 else if (lines[i].StartsWith("foe", StringComparison.InvariantCultureIgnoreCase))
                 {

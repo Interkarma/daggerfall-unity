@@ -53,6 +53,7 @@ namespace DaggerfallWorkshop.Game.Questing
         bool questTombstoned = false;
         DaggerfallDateTime questTombstoneTime;
 
+        Place lastPlaceReferenced = null;
         Person lastPersonReferenced = null;
         bool questBreak = false;
 
@@ -148,6 +149,17 @@ namespace DaggerfallWorkshop.Game.Questing
         public DaggerfallDateTime QuestStartTime
         {
             get { return questStartTime; }
+        }
+
+        /// <summary>
+        /// Gets or sets last Place resource encountered during macro expand.
+        /// This will be used to resolve di, etc.
+        /// Can return null so caller should have a fail-over plan.
+        /// </summary>
+        public Place LastPlaceReferenced
+        {
+            get { return lastPlaceReferenced; }
+            set { lastPlaceReferenced = value; }
         }
 
         /// <summary>

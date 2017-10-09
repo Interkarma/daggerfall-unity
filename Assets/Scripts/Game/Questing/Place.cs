@@ -18,6 +18,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using FullSerializer;
+using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -211,6 +212,9 @@ namespace DaggerfallWorkshop.Game.Questing
                 {
                     throw new Exception("Invalid placeType in line: " + line);
                 }
+
+                // add conversation topics from anyInfo command tag
+                AddConversationTopics();
             }
         }
 
@@ -222,6 +226,10 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <returns>True if macro expanded, otherwise false.</returns>
         public override bool ExpandMacro(MacroTypes macro, out string textOut)
         {
+            // Store this place in quest as last Place encountered
+            // This will be used for %di, etc.
+            ParentQuest.LastPlaceReferenced = this;
+
             textOut = string.Empty;
             bool result = true;
             switch (macro)
@@ -230,12 +238,24 @@ namespace DaggerfallWorkshop.Game.Questing
                     textOut = siteDetails.buildingName;
                     break;
 
-                case MacroTypes.NameMacro2:             // Name of location (e.g. Gothway Garden)
+                case MacroTypes.NameMacro2:             // Name of location/dungeon (e.g. Gothway Garden)
                     textOut = siteDetails.locationName;
                     break;
 
-                case MacroTypes.NameMacro3:             // Name of dungeon (e.g. Privateer's Hold) - Not sure about this one, need to test
-                    textOut = siteDetails.locationName;
+                case MacroTypes.NameMacro3:             // Name of quest dungeon (e.g. Castle Faallem, The Fortress of Fhojum)
+                    DFLocation locationOut;
+                    int regionIndex = -1;
+                    string[] regionNames = DaggerfallUnity.Instance.ContentReader.MapFileReader.RegionNames;
+                    for (int i = 0; i < regionNames.Length; i++)
+                    {
+                        if (regionNames[i] == siteDetails.regionName)
+                        {
+                            regionIndex = i;
+                            break;
+                        }
+                    }
+                    DaggerfallUnity.Instance.ContentReader.GetLocation(regionIndex, (int)siteDetails.locationId, out locationOut);
+                    textOut = locationOut.Name;
                     break;
 
                 case MacroTypes.NameMacro4:             // Name of region (e.g. Tigonus)
@@ -954,6 +974,24 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             return foundLocationIndices.ToArray();
+        }
+
+        void AddConversationTopics()
+        {
+            if (this.InfoMessageID != -1)
+            {
+                Message message = this.ParentQuest.GetMessage(this.InfoMessageID);
+                List<TextFile.Token[]> answers = new List<TextFile.Token[]>();
+                for (int i = 0; i < message.VariantCount; i++)
+                {
+                    TextFile.Token[] tokens = message.GetTextTokensByVariant(i, false); // do not expand macros here (they will be expanded just in time by TalkManager class)
+                    answers.Add(tokens);
+                }
+
+                string captionString;
+                this.ExpandMacro(MacroTypes.NameMacro3, out captionString);
+                GameManager.Instance.TalkManager.AddQuestInfoTopics(this.ParentQuest.UID, captionString, TalkManager.QuestInfoResourceType.Location, answers);
+            }
         }
 
         #endregion
