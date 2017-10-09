@@ -181,7 +181,7 @@ variable _S.02_
 _S.03_ task:
 	toting _I.00_ and Castellian clicked saying 1022 
 	pc at _casfort_ set _S.12_ 
-	place item _I.04_ at _casfort_ 
+-	place item _I.04_ at _casfort_ 
 	start timer _S.04_ 
 	hide npc Castellian 
 
