@@ -82,6 +82,7 @@ namespace DaggerfallWorkshop.Game.Questing
         float updateTimer = 0;
 
         StaticNPC lastNPCClicked;
+        Dictionary<int, IQuestAction> factionListeners = new Dictionary<int, IQuestAction>();
 
         #endregion
 
@@ -318,6 +319,8 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new RestrainFoe(null));
             RegisterAction(new MakePermanent(null));
             RegisterAction(new HaveItem(null));
+            RegisterAction(new AddAsQuestor(null));
+            RegisterAction(new DropAsQuestor(null));
 
             // In progress - these actions are being actively developed
 
@@ -326,8 +329,6 @@ namespace DaggerfallWorkshop.Game.Questing
             //RegisterAction(new DialogLink(null));
             //RegisterAction(new AddDialog(null));
             //RegisterAction(new MuteNpc(null));
-            //RegisterAction(new AddAsQuestor(null));
-            //RegisterAction(new DropAsQuestor(null));
             //RegisterAction(new LegalRepute(null));
 
             // Raise event for custom actions to be registered
@@ -504,7 +505,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         /// <param name="questName">Name of quest filename. Extensions .txt is optional.</param>
         /// <returns>Quest object if successfully parsed, otherwise null.</returns>
-        public Quest ParseQuest(string questName, StaticNPC questorNPC = null)
+        public Quest ParseQuest(string questName)
         {
             Debug.LogFormat("Parsing quest {0}", questName);
 
@@ -875,6 +876,67 @@ namespace DaggerfallWorkshop.Game.Questing
             return assignedFound.ToArray();
         }
 
+        /// <summary>
+        /// Find an active questor for an individual NPC faction ID across all quests.
+        /// Individual NPCs can only be assigned as a questor by one quest at a time.
+        /// </summary>
+        /// <param name="factionID">FactionID of individual NPC to search for.</param>
+        /// <returns>Person resource.</returns>
+        public Person ActiveQuestor(int factionID)
+        {
+            Person found = null;
+            foreach (Quest quest in quests.Values)
+            {
+                Symbol[] questorSymbols = quest.GetQuestors();
+                if (questorSymbols == null || questorSymbols.Length == 0)
+                    continue;
+
+                foreach (Symbol symbol in questorSymbols)
+                {
+                    Person person = quest.GetPerson(symbol);
+                    if (person == null)
+                        continue;
+
+                    if (person.FactionData.id == factionID)
+                    {
+                        found = person;
+                        break;
+                    }
+                }
+            }
+
+            return found;
+        }
+
+        /// <summary>
+        /// Check if a faction listener is active for the individual faction ID.
+        /// </summary>
+        public bool HasFactionListener(int factionID)
+        {
+            return factionListeners.ContainsKey(factionID);
+        }
+
+        /// <summary>
+        /// Add a faction listener for the individual faction ID.
+        /// Does nothing if faction ID already claimed.
+        /// </summary>
+        public void AddFactionListener(int factionID, IQuestAction owner)
+        {
+            if (!HasFactionListener(factionID))
+                factionListeners.Add(factionID, owner);
+        }
+
+        /// <summary>
+        /// Remove a faction listener for the individual faction ID.
+        /// Does nothing if faction ID not claimed.
+        /// </summary>
+        /// <param name="factionID"></param>
+        public void RemoveFactionListener(int factionID)
+        {
+            if (HasFactionListener(factionID))
+                factionListeners.Remove(factionID);
+        }
+
         public void ClearMainQuestState()
         {
             // Reset current state
@@ -928,6 +990,7 @@ namespace DaggerfallWorkshop.Game.Questing
             else if (stage == 5)
             {
                 GameManager.Instance.PlayerEntity.Level = 8;
+                GameManager.Instance.PlayerEntity.FactionData.ChangeReputation(510, 60);    // Merchants +60
                 InstantiateQuest("__MQSTAGE05");
                 InstantiateQuest("S0000977");
             }

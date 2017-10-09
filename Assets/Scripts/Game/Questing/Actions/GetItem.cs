@@ -11,6 +11,8 @@
 
 using UnityEngine;
 using System.Text.RegularExpressions;
+using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Questing.Actions
@@ -65,7 +67,18 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             GameManager.Instance.PlayerEntity.ReleaseQuestItemForReoffer(item.DaggerfallUnityItem);
 
             // Give quest item to player
-            GameManager.Instance.PlayerEntity.Items.AddItem(item.DaggerfallUnityItem, Items.ItemCollection.AddPosition.Front);
+            if (item.DaggerfallUnityItem.IsOfTemplate(ItemGroups.Currency, (int)Currency.Gold_pieces))
+            {
+                // Give player gold equal to stack size and notify
+                int amount = item.DaggerfallUnityItem.stackCount;
+                GameManager.Instance.PlayerEntity.GoldPieces += amount;
+                DaggerfallUI.AddHUDText(HardStrings.youReceiveGoldPieces.Replace("%s", amount.ToString()));
+            }
+            else
+            {
+                // Give player actual item
+                GameManager.Instance.PlayerEntity.Items.AddItem(item.DaggerfallUnityItem, ItemCollection.AddPosition.Front);
+            }
 
             SetComplete();
         }

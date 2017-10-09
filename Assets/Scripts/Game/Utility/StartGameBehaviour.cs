@@ -382,8 +382,11 @@ namespace DaggerfallWorkshop.Game.Utility
             // Assign starting gear to player entity
             DaggerfallUnity.Instance.ItemHelper.AssignStartingGear(playerEntity);
 
-            //##Setup bank accounts
+            // Setup bank accounts
             Banking.DaggerfallBankManager.SetupAccounts();
+
+            // Randomize initial region prices
+            playerEntity.InitializeRegionPrices();
 
             // Start game
             GameManager.Instance.PauseGame(false);
@@ -537,8 +540,7 @@ namespace DaggerfallWorkshop.Game.Utility
             Banking.DaggerfallBankManager.ReadNativeBankData(bankRecords);
 
             // Get regional data.
-            // Currently this only gets the regional price adjustments.
-            playerEntity.PriceAdjustmentByRegion = saveVars.PriceAdjustmentsByRegion;
+            playerEntity.RegionData= saveVars.RegionData;
 
             // Set time tracked by playerEntity for game minute-based updates
             playerEntity.LastGameMinutes = saveVars.GameTime;

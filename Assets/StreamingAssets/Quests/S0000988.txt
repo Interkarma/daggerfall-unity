@@ -3,6 +3,7 @@
 -- QuestId: 988
 Messages: 21
 Quest: S0000988
+DisplayName: Mantella Revealed
 -- Message panels
 QRC:
 

@@ -5634,7 +5634,7 @@
     "isLiquid": false,
     "isOneHanded": false,
     "isIngredient": false,
-    "worldTextureArchive": -132,
+    "worldTextureArchive": 380,
     "worldTextureRecord": 1,
     "playerTextureArchive": 0,
     "playerTextureRecord": 0

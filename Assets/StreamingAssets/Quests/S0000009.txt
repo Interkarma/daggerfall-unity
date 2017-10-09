@@ -3,6 +3,7 @@
 -- QuestId: 9
 Messages: 22
 Quest: S0000009
+DisplayName: Elysana's Betrayal
 -- Message panels
 QRC:
 
@@ -61,7 +62,7 @@ Those guys who ambushed that %ra weren't from around here. Hired assassins.
 RumorsPostsuccess:  [1007]
 Hear some mystery man is hiring assassins to kill a certain %ra mercenary.
 <--->
-_contact_ was mad as can be. You'd think %g's be happy to see %g3 cousin.
+_contact_ was mad as can be. You'd think %g's be happy to see %g2 cousin.
 
 QuestLogEntry:  [1010]
 %qdt:
@@ -72,7 +73,7 @@ QuestLogEntry:  [1010]
  relative to the Totem.
 
 Message:  1011
-<ce>                    _foil_ suddenly runs away, %g3
+<ce>                    _foil_ suddenly runs away, %g2
 <ce>               feet making no sound as %g disappears into
 <ce>                              the shadows.
 

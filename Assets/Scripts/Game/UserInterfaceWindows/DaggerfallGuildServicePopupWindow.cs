@@ -41,9 +41,35 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         FG_Repairs = 850,
         FG_Quests = 851,
 
+        // Thieves Guild:
+        TG_Training = 803,
+        TG_Quests = 804,
+        TG_Sell_Magic_Items = 805,
+        TG_Spymaster = 806,
+
+        // Dark Brotherhood:
+        DB_Quests = 807,
+        DB_Training = 839,
+        DB_Make_Potions = 840,
+        DB_Buy_Potions = 841,
+        DB_Spymaster = 841,
+        DB_Buy_Soulgems = 843,
+
         // Temples:
-        Make_Donation = 810,
-        Cure_Diseases = 813,
+        T_Quests = 240,
+        T_Make_Donation = 810,
+        T_Cure_Diseases = 813,
+
+        // Temples, specific:
+        TAr_Training = 241,
+        TZe_Training = 243,
+        TMa_Training = 245,
+        TAk_Training = 247,
+        TJu_Training = 249,
+        TDi_Training = 250,
+        TSt_Training = 252,
+        TKy_Training = 254,
+        TKy_Buy_Spells = 497,
     }
 
     public class DaggerfallGuildServicePopupWindow : DaggerfallPopupWindow, IMacroContextProvider
@@ -71,17 +97,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #region Fields
 
         const string baseTextureName = "GILD00I0.IMG";      // Join Guild / Talk / Service
+
+        const int TrainingOfferId = 8;
+        const int TrainingTooSkilledId = 4022;
+        const int TrainingToSoonId = 4023;
+        const int TrainSkillId = 5221;
+        const int notEnoughGoldId = 454;
+
         Texture2D baseTexture;
-
         PlayerEntity playerEntity;
-
         StaticNPC serviceNPC;
         FactionFile.GuildGroups guild;
         GuildServices service;
 
-        static ItemCollection merchantItems;
-
-        DFCareer.Skills skillToTrain;
+        static ItemCollection merchantItems;    // Temporary
 
         #endregion
 
@@ -181,6 +210,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 case GuildServices.MG_Identify:
                     return HardStrings.serviceIdentify;
                 case GuildServices.MG_Buy_Spells:
+                case GuildServices.TKy_Buy_Spells:
                     return HardStrings.serviceBuySpells;
                 case GuildServices.MG_Buy_Magic_Items:
                     return HardStrings.serviceBuyMagicItems;
@@ -193,14 +223,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 case GuildServices.MG_Teleportation:
                     return HardStrings.serviceTeleport;
                 case GuildServices.MG_Training:
+                case GuildServices.FG_Training:
+                case GuildServices.TG_Training:
+                case GuildServices.DB_Training:
+                case GuildServices.TAk_Training:
+                case GuildServices.TAr_Training:
+                case GuildServices.TDi_Training:
+                case GuildServices.TJu_Training:
+                case GuildServices.TKy_Training:
+                case GuildServices.TMa_Training:
+                case GuildServices.TSt_Training:
+                case GuildServices.TZe_Training:
                     return HardStrings.serviceTraining;
                 case GuildServices.FG_Repairs:
                     return HardStrings.serviceRepairs;
-                case GuildServices.FG_Training:
-                    return HardStrings.serviceTraining;
-                case GuildServices.Cure_Diseases:
+                case GuildServices.T_Cure_Diseases:
                     return HardStrings.serviceCure;
-                case GuildServices.Make_Donation:
+                case GuildServices.T_Make_Donation:
                     return HardStrings.serviceDonate;
                 default:
                     return "?";
@@ -236,6 +275,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     break;
                 case GuildServices.MG_Training:
                 case GuildServices.FG_Training:
+                case GuildServices.TG_Training:
+                case GuildServices.DB_Training:
+                case GuildServices.TAk_Training:
+                case GuildServices.TAr_Training:
+                case GuildServices.TDi_Training:
+                case GuildServices.TJu_Training:
+                case GuildServices.TKy_Training:
+                case GuildServices.TMa_Training:
+                case GuildServices.TSt_Training:
+                case GuildServices.TZe_Training:
                     TrainingService();
                     break;
                 case GuildServices.MG_Buy_Magic_Items:
@@ -271,94 +320,130 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DFCareer.Skills.Alteration, DFCareer.Skills.Daedric, DFCareer.Skills.Destruction, DFCareer.Skills.Dragonish, 
                 DFCareer.Skills.Harpy, DFCareer.Skills.Illusion, DFCareer.Skills.Impish, DFCareer.Skills.Mysticism, 
                 DFCareer.Skills.Orcish, DFCareer.Skills.Restoration, DFCareer.Skills.Spriggan, DFCareer.Skills.Thaumaturgy } },
+            { GuildServices.TG_Training, new List<DFCareer.Skills>() {
+                DFCareer.Skills.Backstabbing, DFCareer.Skills.BluntWeapon, DFCareer.Skills.Climbing, DFCareer.Skills.Dodging,
+                DFCareer.Skills.Jumping, DFCareer.Skills.Lockpicking, DFCareer.Skills.Pickpocket, DFCareer.Skills.Pickpocket,
+                DFCareer.Skills.ShortBlade, DFCareer.Skills.Stealth, DFCareer.Skills.Streetwise, DFCareer.Skills.Swimming } },
+            { GuildServices.DB_Training, new List<DFCareer.Skills>() {
+                DFCareer.Skills.Archery, DFCareer.Skills.Backstabbing, DFCareer.Skills.Climbing, DFCareer.Skills.CriticalStrike,
+                DFCareer.Skills.Daedric, DFCareer.Skills.Destruction, DFCareer.Skills.Dodging, DFCareer.Skills.Running,
+                DFCareer.Skills.ShortBlade, DFCareer.Skills.Stealth, DFCareer.Skills.Streetwise, DFCareer.Skills.Swimming } },
+            { GuildServices.TAk_Training, new List<DFCareer.Skills>() {
+                DFCareer.Skills.Alteration, DFCareer.Skills.Archery, DFCareer.Skills.Daedric, DFCareer.Skills.Destruction,
+                DFCareer.Skills.Dragonish, DFCareer.Skills.LongBlade, DFCareer.Skills.Running, DFCareer.Skills.Stealth, DFCareer.Skills.Swimming } },
+            { GuildServices.TAr_Training, new List<DFCareer.Skills>() {
+                DFCareer.Skills.Axe, DFCareer.Skills.Backstabbing, DFCareer.Skills.Climbing, DFCareer.Skills.CriticalStrike,
+                DFCareer.Skills.Daedric, DFCareer.Skills.Destruction, DFCareer.Skills.Medical, DFCareer.Skills.Restoration, DFCareer.Skills.ShortBlade } },
+            { GuildServices.TDi_Training, new List<DFCareer.Skills>() {
+                DFCareer.Skills.Daedric, DFCareer.Skills.Etiquette, DFCareer.Skills.Harpy, DFCareer.Skills.Illusion, DFCareer.Skills.Lockpicking,
+                DFCareer.Skills.LongBlade, DFCareer.Skills.Nymph, DFCareer.Skills.Orcish, DFCareer.Skills.Restoration, DFCareer.Skills.Streetwise } },
+            { GuildServices.TJu_Training, new List<DFCareer.Skills>() {
+                DFCareer.Skills.Alteration, DFCareer.Skills.CriticalStrike, DFCareer.Skills.Daedric, DFCareer.Skills.Impish, DFCareer.Skills.Lockpicking,
+                DFCareer.Skills.Mercantile, DFCareer.Skills.Mysticism, DFCareer.Skills.ShortBlade, DFCareer.Skills.Thaumaturgy } },
+            { GuildServices.TKy_Training, new List<DFCareer.Skills>() {
+                DFCareer.Skills.Archery, DFCareer.Skills.Climbing, DFCareer.Skills.Daedric, DFCareer.Skills.Destruction,
+                DFCareer.Skills.Dodging, DFCareer.Skills.Dragonish, DFCareer.Skills.Harpy, DFCareer.Skills.Illusion,
+                DFCareer.Skills.Jumping, DFCareer.Skills.Running, DFCareer.Skills.Stealth } },
+            { GuildServices.TMa_Training, new List<DFCareer.Skills>() {
+                DFCareer.Skills.Archery, DFCareer.Skills.CriticalStrike, DFCareer.Skills.Daedric, DFCareer.Skills.Etiquette, DFCareer.Skills.Harpy,
+                DFCareer.Skills.Illusion, DFCareer.Skills.Medical, DFCareer.Skills.Nymph, DFCareer.Skills.Restoration, DFCareer.Skills.Streetwise } },
+            { GuildServices.TSt_Training, new List<DFCareer.Skills>() {
+                DFCareer.Skills.Axe, DFCareer.Skills.BluntWeapon, DFCareer.Skills.CriticalStrike, DFCareer.Skills.Daedric, DFCareer.Skills.Dodging,
+                DFCareer.Skills.Medical, DFCareer.Skills.Orcish, DFCareer.Skills.Restoration, DFCareer.Skills.Spriggan } },
+            { GuildServices.TZe_Training, new List<DFCareer.Skills>() {
+                DFCareer.Skills.BluntWeapon, DFCareer.Skills.Centaurian, DFCareer.Skills.Daedric, DFCareer.Skills.Etiquette,
+                DFCareer.Skills.Giantish, DFCareer.Skills.Harpy, DFCareer.Skills.Mercantile, DFCareer.Skills.Orcish,
+                DFCareer.Skills.Pickpocket, DFCareer.Skills.Spriggan, DFCareer.Skills.Streetwise, DFCareer.Skills.Thaumaturgy } },
         };
-//        DFCareer.Skills., DFCareer.Skills., DFCareer.Skills., DFCareer.Skills., 
 
         void TrainingService()
         {
             // Check enough time has passed since last trained
             DaggerfallDateTime now = DaggerfallUnity.Instance.WorldTime.Now;
-            if ((now.ToClassicDaggerfallTime() - playerEntity.TimeOfLastSkillTraining) <= 720)
+            if ((now.ToClassicDaggerfallTime() - playerEntity.TimeOfLastSkillTraining) < 720)
             {
-                Debug.LogFormat("{0} - {1} = {2}", now.ToClassicDaggerfallTime(), playerEntity.TimeOfLastSkillTraining, now.ToClassicDaggerfallTime() - playerEntity.TimeOfLastSkillTraining);
-                TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(4023);
-                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager);
+                TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(TrainingToSoonId);
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
                 messageBox.SetTextTokens(tokens, this);
                 messageBox.ClickAnywhereToClose = true;
+                messageBox.ParentPanel.BackgroundColor = Color.clear;
                 uiManager.PushWindow(messageBox);
                 return;
             }
-            // Check not too tired?
+            else
+            {   // Offer training price
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
+                TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(TrainingOfferId);
+                messageBox.SetTextTokens(tokens, this);
+                messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
+                messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
+                messageBox.OnButtonClick += ConfirmTraining_OnButtonClick;
+                uiManager.PushWindow(messageBox);
+            }
+        }
 
-            // Show skill picker loaded with guild training skills
-            DaggerfallListPickerWindow skillPicker = new DaggerfallListPickerWindow(uiManager, this);
-            skillPicker.OnItemPicked += TrainingSkill_OnItemPicked;
-
-            List<DFCareer.Skills> trainingSkills;
-            if (guildTrainingSkills.TryGetValue(service, out trainingSkills))
+        public void ConfirmTraining_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        {
+            CloseWindow();
+            if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
             {
-                foreach (DFCareer.Skills skill in trainingSkills)
-                    skillPicker.ListBox.AddItem(DaggerfallUnity.Instance.TextProvider.GetSkillName(skill));
+                if (playerEntity.GetGoldAmount() >= GetServicePrice())
+                {
+                    // Show skill picker loaded with guild training skills
+                    DaggerfallListPickerWindow skillPicker = new DaggerfallListPickerWindow(uiManager, this);
+                    skillPicker.OnItemPicked += TrainingSkill_OnItemPicked;
 
-                uiManager.PushWindow(skillPicker);
+                    List<DFCareer.Skills> trainingSkills;
+                    if (guildTrainingSkills.TryGetValue(service, out trainingSkills))
+                    {
+                        foreach (DFCareer.Skills skill in trainingSkills)
+                            skillPicker.ListBox.AddItem(DaggerfallUnity.Instance.TextProvider.GetSkillName(skill));
+
+                        uiManager.PushWindow(skillPicker);
+                    }
+                }
+                else
+                    DaggerfallUI.MessageBox(notEnoughGoldId);
             }
         }
 
         public void TrainingSkill_OnItemPicked(int index, string skillName)
         {
-            Debug.Log("picked " + skillName);
             CloseWindow();
             List<DFCareer.Skills> trainingSkills;
             if (guildTrainingSkills.TryGetValue(service, out trainingSkills))
             {
-                skillToTrain = trainingSkills[index];
+                DFCareer.Skills skillToTrain = trainingSkills[index];
 
-                if (playerEntity.Skills.GetSkillValue(skillToTrain) >= 50)
+                if (playerEntity.Skills.GetSkillValue(skillToTrain) > 50)
                 {
                     // Inform player they're too skilled to train
-                    TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(4022);
-                    DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager);
+                    TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(TrainingTooSkilledId);
+                    DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
                     messageBox.SetTextTokens(tokens, this);
                     messageBox.ClickAnywhereToClose = true;
                     uiManager.PushWindow(messageBox);
                 }
                 else
-                {   // Offer training price
-                    DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager);
-                    TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(8);
-                    messageBox.SetTextTokens(tokens, this);
-                    messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
-                    messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
-                    messageBox.OnButtonClick += ConfirmTraining_OnButtonClick;
-                    uiManager.PushWindow(messageBox);
+                {   // Train the skill
+                    DaggerfallDateTime now = DaggerfallUnity.Instance.WorldTime.Now;
+                    playerEntity.TimeOfLastSkillTraining = now.ToClassicDaggerfallTime();
+                    now.RaiseTime(DaggerfallDateTime.SecondsPerHour * 3);
+                    playerEntity.DeductGoldAmount(GetServicePrice());
+                    playerEntity.DecreaseFatigue(PlayerEntity.DefaultFatigueLoss * 180);
+                    int skillAdvancementMultiplier = DaggerfallSkills.GetAdvancementMultiplier(skillToTrain);
+                    short tallyAmount = (short)(Random.Range(10, 21) * skillAdvancementMultiplier);
+                    playerEntity.TallySkill(skillToTrain, tallyAmount);
+                    DaggerfallUI.MessageBox(TrainSkillId);
                 }
             }
             else
                 Debug.LogError("Invalid skill selected for training.");
-
-        }
-
-        public void ConfirmTraining_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
-        {
-            if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
-            {
-                Debug.Log("Trained skill " + skillToTrain.ToString());
-
-                DaggerfallDateTime now = DaggerfallUnity.Instance.WorldTime.Now;
-                playerEntity.TimeOfLastSkillTraining = now.ToClassicDaggerfallTime();
-                now.RaiseTime(DaggerfallDateTime.SecondsPerHour * 3);
-                playerEntity.DeductGoldAmount(GetServicePrice());
-                playerEntity.DecreaseFatigue(30 * 64);
-                playerEntity.TallySkill(skillToTrain, 15);
-                CloseWindow();
-                DaggerfallUI.MessageBox(5221);
-            }
-            else
-                CloseWindow();
         }
 
         int GetServicePrice()
         {
+            // TODO: 400 * level, if non-member of temple
             return 100 * playerEntity.Level;
         }
 

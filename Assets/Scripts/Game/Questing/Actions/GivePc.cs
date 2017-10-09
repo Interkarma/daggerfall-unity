@@ -29,12 +29,16 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         Symbol itemSymbol;
         int textId;
         bool isNothing;
+        bool silently;
+
+        bool waitingForTown = false;
+        int ticksUntilFire = 0;
 
         DaggerfallLoot rewardLoot = null;
 
         public override string Pattern
         {
-            get { return @"give pc (?<nothing>nothing)|give pc (?<anItem>[a-zA-Z0-9_.]+) notify (?<id>\d+)|give pc (?<anItem>[a-zA-Z0-9_.]+)"; }
+            get { return @"give pc (?<nothing>nothing)|give pc (?<anItem>[a-zA-Z0-9_.]+) notify (?<id>\d+)|give pc (?<anItem>[a-zA-Z0-9_.]+) (?<silently>silently)|give pc (?<anItem>[a-zA-Z0-9_.]+)"; }
         }
 
         public GivePc(Quest parentQuest)
@@ -53,17 +57,50 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             GivePc action = new GivePc(parentQuest);
             action.itemSymbol = new Symbol(match.Groups["anItem"].Value);
             action.textId = Parser.ParseInt(match.Groups["id"].Value);
-            if (!string.IsNullOrEmpty(match.Groups["nothing"].Value))
-                action.isNothing = true;
-            else
-                action.isNothing = false;
+            action.isNothing = !string.IsNullOrEmpty(match.Groups["nothing"].Value);
+            action.silently = !string.IsNullOrEmpty(match.Groups["silently"].Value);
 
             return action;
         }
 
         public override void Update(Task caller)
         {
+            const int minHour = 8;
+            const int maxHour = 17;
+            const int minDelay = 40;
+            const int maxDelay = 600;
+
             base.Update(caller);
+
+            // "give pc anItem notify 1234" and "give pc anItem silently" require player
+            // to be within a town, outdoors, and during set hours for action to fire
+            if (textId != 0 || silently)
+            {
+                // Fail if conditions not met, but take note we are waiting
+                DaggerfallDateTime now = DaggerfallUnity.Instance.WorldTime.Now;
+                if (!GameManager.Instance.PlayerGPS.IsPlayerInTown(true, true) || now.Hour < minHour || now.Hour > maxHour)
+                {
+                    waitingForTown = true;
+                    ticksUntilFire = 0;
+                    return;
+                }
+
+                // If we were waiting then add a small random delay so messages don't all arrive at once
+                if (waitingForTown)
+                {
+                    ticksUntilFire = UnityEngine.Random.Range(minDelay, maxDelay);
+                    waitingForTown = false;
+                }
+            }
+
+            // Reduce random delay until nothing is left
+            // This is in questmachine ticks which is currently 10 ticks per second while game is running
+            // Does not tick while game paused or resting - player must be actively in town walking around
+            if (ticksUntilFire > 0)
+            {
+                ticksUntilFire--;
+                return;
+            }
 
             // Handle giving player nothing
             // This also shows QuestComplete message but does not give player loot
@@ -84,9 +121,16 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
             // Give quest item to player based on command format
             if (textId != 0)
+            {
                 DirectToPlayerWithNotify(item);
+            }
             else
-                OfferToPlayerWithQuestComplete(item);
+            {
+                if (silently)
+                    DirectToPlayerWithoutNotify(item);
+                else
+                    OfferToPlayerWithQuestComplete(item);
+            }
 
             SetComplete();
         }
@@ -124,6 +168,12 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             ParentQuest.ShowMessagePopup(textId);
         }
 
+        void DirectToPlayerWithoutNotify(Item item)
+        {
+            // Just give player item
+            GameManager.Instance.PlayerEntity.Items.AddItem(item.DaggerfallUnityItem, Items.ItemCollection.AddPosition.Front);
+        }
+
         private void QuestCompleteMessage_OnClose()
         {
             // Open loot reward container once QuestComplete dismissed
@@ -142,6 +192,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             public Symbol itemSymbol;
             public int textId;
             public bool isNothing;
+            public bool silently;
         }
 
         public override object GetSaveData()
@@ -150,6 +201,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             data.itemSymbol = itemSymbol;
             data.textId = textId;
             data.isNothing = isNothing;
+            data.silently = silently;
 
             return data;
         }
@@ -163,6 +215,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             itemSymbol = data.itemSymbol;
             textId = data.textId;
             isNothing = data.isNothing;
+            silently = data.silently;
         }
 
         #endregion

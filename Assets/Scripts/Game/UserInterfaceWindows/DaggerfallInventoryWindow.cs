@@ -988,9 +988,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Check for prohibited armor type (leather, chain or plate)
                 else if ((1 << (item.NativeMaterialValue >> 8) & (int)playerEntity.Career.ForbiddenArmors) != 0)
                     prohibited = true;
+
                 // Check for prohibited material
                 else if (((item.NativeMaterialValue >> 8) == 2)
-                    && (1 << (item.NativeMaterialValue << 8) & (int)playerEntity.Career.ForbiddenMaterials) != 0)
+                    && (1 << (item.NativeMaterialValue & 0xFF) & (int)playerEntity.Career.ForbiddenMaterials) != 0)
                     prohibited = true;
             }
             else if (item.ItemGroup == ItemGroups.Weapons)

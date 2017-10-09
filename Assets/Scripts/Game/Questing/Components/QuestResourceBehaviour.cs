@@ -183,18 +183,37 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <summary>
         /// Called by PlayerActivate when clicking on this GameObject.
         /// </summary>
-        public void DoClick()
+        /// <returns>True if this resource was found in any active quests.</returns>
+        public bool DoClick()
         {
-            // Set click on resource
+            bool foundInActiveQuest = false;
+
+            // Handle linked resource
             if (targetResource != null)
             {
-                // Set the click on resource
+                // Click resource
                 targetResource.SetPlayerClicked();
 
-                // Give item to player and hide resource
+                // If this an item then transfer item to player and hide resource
                 if (targetResource is Item)
                     TransferWorldItemToPlayer();
+
+                foundInActiveQuest = true;
             }
+
+            // Possible for NPC to start a direct follow-up quest and new quest needs a bootstrap click
+            // But if resource is still associated with old quest from previous layout then click never sent to new quest
+            // So if behaviour is peered with an individual StaticNPC then send click to all quests using this NPC
+            // This allows new quest to receive click and NPC will be re-linked on next layout or by "add NPC as questor"
+            StaticNPC npc = GetComponent<StaticNPC>();
+            if (npc)
+            {
+                int factionID = npc.Data.factionID;
+                if (QuestMachine.Instance.IsIndividualNPC(factionID))
+                    foundInActiveQuest = ClickAllIndividualNPCs(factionID);
+            }
+
+            return foundInActiveQuest;
         }
 
         /// <summary>
@@ -209,7 +228,6 @@ namespace DaggerfallWorkshop.Game.Questing
 
             return data;
         }
-
 
         /// <summary>
         /// Restores deserialized save data.
@@ -267,6 +285,39 @@ namespace DaggerfallWorkshop.Game.Questing
             // Hide item so player cannot pickup again
             // This will cause it not to display in world again despite being placed by SiteLink
             item.IsHidden = true;
+        }
+
+        bool ClickAllIndividualNPCs(int factionID)
+        {
+            // Check active quests to see if any are using this NPC
+            ulong[] questIDs = QuestMachine.Instance.GetAllActiveQuests();
+            bool matched = false;
+            foreach (ulong questID in questIDs)
+            {
+                // Get quest object
+                Quest quest = QuestMachine.Instance.GetQuest(questID);
+                if (quest == null)
+                    continue;
+
+                // Get all the Person resources in this quest
+                QuestResource[] personResources = quest.GetAllResources(typeof(Person));
+                if (personResources == null || personResources.Length == 0)
+                    continue;
+
+                // Check each Person for a match
+                foreach (QuestResource resource in personResources)
+                {
+                    // Set click if individual matches Person factionID
+                    Person person = (Person)resource;
+                    if (person.IsIndividualNPC && person.FactionData.id == factionID)
+                    {
+                        person.SetPlayerClicked();
+                        matched = true;
+                    }
+                }
+            }
+
+            return matched;
         }
 
         #endregion

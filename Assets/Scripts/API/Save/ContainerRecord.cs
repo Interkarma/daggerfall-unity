@@ -39,7 +39,7 @@ namespace DaggerfallConnect.Save
         }
 
         /// <summary>
-        /// Experimental. Returns true if this is a wagon.
+        /// Returns true if this is a wagon.
         /// </summary>
         public bool IsWagon
         {
@@ -102,9 +102,7 @@ namespace DaggerfallConnect.Save
             if (parsedData.unknown == null || parsedData.unknown.Length == 0)
                 return false;
 
-            // If first byte is 150, this seems to indicate wagon container
-            // NOTE: I have a downloaded save where wagon is 122 for unknown reason. Newly created chars buying wagon is 150 always. (Hazelnut)
-            if (parsedData.unknown[0] == 150)
+            if (recordRoot.SpriteIndex == 4)
                 return true;
             else
                 return false;

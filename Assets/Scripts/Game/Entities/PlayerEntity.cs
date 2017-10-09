@@ -68,13 +68,18 @@ namespace DaggerfallWorkshop.Game.Entity
         protected int thievesGuildRequirementTally = 0;
         protected int darkBrotherhoodRequirementTally = 0;
 
-        protected ushort[] priceAdjustmentByRegion = FormulaHelper.RandomRegionalPriceAdjustments();
+        protected RegionDataRecord[] regionData = new RegionDataRecord[62];
 
         // Fatigue loss per in-game minute
-        private int DefaultFatigueLoss = 11;        // According to DF Chronicles and verified in classic
-        //private int ClimbingFatigueLoss = 22;     // According to DF Chronicles
-        private int RunningFatigueLoss = 88;        // According to DF Chronicles and verified in classic
-        //private int SwimmingFatigueLoss = 44;     // According to DF Chronicles
+        public const int DefaultFatigueLoss = 11;
+        //public const int ClimbingFatigueLoss = 22;
+        public const int RunningFatigueLoss = 88;
+        //public const int SwimmingFatigueLoss = 44;
+
+        private float runningTallyTimer = 0f;
+        private float runningTallyInterval = 0.0625f; // Tally every 1/16 second of running. The rate at which the running skill
+                                                      // is tallied in classic varies by how fast the game is being processed.
+                                                      // Based on some tests, around every 1/16 of a second is a typical rate.
 
         private int JumpingFatigueLoss = 11;        // According to DF Chronicles and verified in classic
         private bool CheckedCurrentJump = false;
@@ -116,7 +121,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public int DarkBrotherhoodRequirementTally { get { return darkBrotherhoodRequirementTally; } set { darkBrotherhoodRequirementTally = value; } }
         public float CarriedWeight { get { return Items.GetWeight() + ((float)goldPieces / DaggerfallBankManager.gold1kg); } }
         public float WagonWeight { get { return WagonItems.GetWeight(); } }
-        public ushort[] PriceAdjustmentByRegion { get { return priceAdjustmentByRegion; } set { priceAdjustmentByRegion = value; } }
+        public RegionDataRecord[] RegionData { get { return regionData; } set { regionData = value; } }
         public uint LastGameMinutes { get { return lastGameMinutes; } set { lastGameMinutes = value; } }
 
         #endregion
@@ -147,10 +152,21 @@ namespace DaggerfallWorkshop.Game.Entity
                 return;
             else if (!gameStarted)
                 gameStarted = true;
-
-            // Every game minute, apply fatigue loss to the player
             if (playerMotor != null)
             {
+                // Tally running skill
+                if (playerMotor.IsRunning && !playerMotor.IsRiding)
+                {
+                    if (runningTallyTimer < runningTallyInterval)
+                        runningTallyTimer += Time.deltaTime;
+                    else
+                    {
+                        TallySkill(DFCareer.Skills.Running, 1);
+                        runningTallyTimer = 0f;
+                    }
+                }
+
+                // Every game minute, apply fatigue loss to the player
                 if (lastGameMinutes != gameMinutes)
                 {
                     if (playerMotor.IsRunning)
@@ -179,7 +195,7 @@ namespace DaggerfallWorkshop.Game.Entity
             int daysPast = (int)(currentDay - lastDay);
 
             if (daysPast > 0)
-                FormulaHelper.ModifyPriceAdjustmentByRegion(priceAdjustmentByRegion, daysPast);
+                FormulaHelper.ModifyPriceAdjustmentByRegion(ref regionData, daysPast);
 
             lastGameMinutes = gameMinutes;
 
@@ -239,11 +255,12 @@ namespace DaggerfallWorkshop.Game.Entity
             this.skillUses = character.skillUses;
             this.startingLevelUpSkillSum = character.startingLevelUpSkillSum;
             this.minMetalToHit = (WeaponMaterialTypes)character.minMetalToHit;
-            this.ArmorValues = character.armorValues;
-            this.TimeForThievesGuildLetter = character.timeForThievesGuildLetter;
-            this.TimeForDarkBrotherhoodLetter = character.timeForDarkBrotherhoodLetter;
-            this.DarkBrotherhoodRequirementTally = character.darkBrotherhoodRequirementTally;
-            this.ThievesGuildRequirementTally = character.thievesGuildRequirementTally;
+            this.armorValues = character.armorValues;
+            this.timeOfLastSkillTraining = character.lastTimePlayerBoughtTraining;
+            this.timeForThievesGuildLetter = character.timeForThievesGuildLetter;
+            this.timeForDarkBrotherhoodLetter = character.timeForDarkBrotherhoodLetter;
+            this.darkBrotherhoodRequirementTally = character.darkBrotherhoodRequirementTally;
+            this.thievesGuildRequirementTally = character.thievesGuildRequirementTally;
 
             SetCurrentLevelUpSkillSum();
 
@@ -261,7 +278,6 @@ namespace DaggerfallWorkshop.Game.Entity
                 FillVitalSigns();
 
             timeOfLastSkillIncreaseCheck = DaggerfallUnity.Instance.WorldTime.Now.ToClassicDaggerfallTime();
-            timeOfLastSkillTraining = 0;
 
             DaggerfallUnity.LogMessage("Assigned character " + this.name, true);
         }
@@ -502,7 +518,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
             for (short i = 0; i < skillUses.Length; i++)
             {
-                int skillAdvancementMultiplier = skills.GetAdvancementMultiplier((DaggerfallConnect.DFCareer.Skills)i);
+                int skillAdvancementMultiplier = DaggerfallSkills.GetAdvancementMultiplier((DFCareer.Skills)i);
                 float careerAdvancementMultiplier = Career.AdvancementMultiplier;
                 int usesNeededForAdvancement = FormulaHelper.CalculateSkillUsesForAdvancement(skills.GetSkillValue(i), skillAdvancementMultiplier, careerAdvancementMultiplier, level);
                 if (skillUses[i] >= usesNeededForAdvancement)
@@ -631,6 +647,25 @@ namespace DaggerfallWorkshop.Game.Entity
             // Optionally make permanent
             if (makePermanent)
                 item.MakePermanent();
+        }
+
+        #endregion
+
+        #region RegionData
+        public struct RegionDataRecord // 80 bytes long
+        {
+            public byte[] Values; // 29 bytes long
+            public bool[] Flags; // 29 bytes long
+            public bool[] Flags2; // 14 bytes long
+            // bytes 72 to 74 unknown
+            public short LegalRep; // bytes 74 to 76
+            public ushort Unknown; // bytes 76 to 78
+            public ushort PriceAdjustment; // bytes 78 to 80
+        }
+
+        public void InitializeRegionPrices()
+        {
+            FormulaHelper.RandomizeInitialPriceAdjustments(ref regionData);
         }
 
         #endregion

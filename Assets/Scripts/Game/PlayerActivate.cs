@@ -104,22 +104,23 @@ namespace DaggerfallWorkshop.Game
 
                     #region Hit Checks
 
-                        // Trigger general quest resource behaviour click
-                        // Note: This will cause a second click on special NPCs, look into a way to unify this handling
+                        // Trigger quest resource behaviour click on anything but NPCs
                         QuestResourceBehaviour questResourceBehaviour;
                         if (QuestResourceBehaviourCheck(hit, out questResourceBehaviour))
                         {
-                            if (hit.distance > (DefaultActivationDistance * MeshReader.GlobalScale))
+                            if (!(questResourceBehaviour.TargetResource is Person))
                             {
-                                DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
-                                return;
-                            }
+                                if (hit.distance > (DefaultActivationDistance * MeshReader.GlobalScale))
+                                {
+                                    DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
+                                    return;
+                                }
 
-                            // Only trigger click when not in info mode
-                            if (currentMode != PlayerActivateModes.Info)
-                            {
-                                TriggerQuestResourceBehaviourClick(questResourceBehaviour);
-                                return;
+                                // Only trigger click when not in info mode
+                                if (currentMode != PlayerActivateModes.Info)
+                                {
+                                    TriggerQuestResourceBehaviourClick(questResourceBehaviour);
+                                }
                             }
                         }
 
@@ -261,7 +262,7 @@ namespace DaggerfallWorkshop.Game
                                     // Hit dungeon exit while inside, ask if access wagon or transition outside
                                     if (GameManager.Instance.PlayerEntity.Items.Contains(ItemGroups.Transportation, (int) Transportation.Small_cart))
                                     {
-                                        DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager, DaggerfallMessageBox.CommonMessageBoxButtons.YesNo, 38);
+                                        DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager, DaggerfallMessageBox.CommonMessageBoxButtons.YesNo, 38, DaggerfallUI.UIManager.TopWindow);
                                         messageBox.OnButtonClick += DungeonWagonAccess_OnButtonClick;
                                         DaggerfallUI.UIManager.PushWindow(messageBox);
                                         return;
@@ -774,30 +775,44 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Player has clicked a GameObject with a QuestResourceBehaviour attached
-        void TriggerQuestResourceBehaviourClick(QuestResourceBehaviour questResourceBehaviour)
+        bool TriggerQuestResourceBehaviourClick(QuestResourceBehaviour questResourceBehaviour)
         {
             // Handle typical quest resource click
             if (questResourceBehaviour)
-                questResourceBehaviour.DoClick();
+                return questResourceBehaviour.DoClick();
+            else
+                return false;
         }
 
         // Player has clicked on a static NPC
         void StaticNPCClick(StaticNPC npc)
         {
+            // Do nothing if no NPC passed
+            if (!npc)
+                return;
+
             // Store the NPC just clicked in quest engine
             QuestMachine.Instance.LastNPCClicked = npc;
 
             // Check if this NPC is a quest giver and show temp guild quest popup
+            // This will be changed later when temp guild system replaced with real thing
             if (QuestorCheck(npc))
                 return;
 
-            // Handle special NPC in home location click
-            SpecialNPCClickHandler specialNPCClickHandler = npc.gameObject.GetComponent<SpecialNPCClickHandler>();
-            if (specialNPCClickHandler)
+            // Handle quest NPC click and exit if linked to a Person resource
+            QuestResourceBehaviour questResourceBehaviour = npc.gameObject.GetComponent<QuestResourceBehaviour>();
+            if (questResourceBehaviour)
             {
-                specialNPCClickHandler.DoClick();
-                return;
+                if (TriggerQuestResourceBehaviourClick(questResourceBehaviour))
+                    return;
             }
+
+            // Do nothing further if a quest is actively listening on this individual NPC
+            // This NPC not reserved as a Person resource but has a WhenNpcIsAvailable action listening on it
+            // This effectively shuts down several named NPCs during main quest, but not trivial to otherwise determine appropriate access
+            // TODO: Try to find a good solution for releasing listeners when the owning action is disabled
+            if (QuestMachine.Instance.HasFactionListener(npc.Data.factionID))
+                return;
 
             // Get faction data.
             FactionFile.FactionData factionData;

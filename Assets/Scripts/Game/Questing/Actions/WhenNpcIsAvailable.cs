@@ -68,6 +68,10 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public override bool CheckTrigger(Task caller)
         {
+            // Update faction listener for this individual
+            // This allows other agencies to determine if a quest is actively listening on this NPC
+            QuestMachine.Instance.AddFactionListener(npcFactionID, this);
+
             // Check if player has clicked on anyone
             StaticNPC lastClicked = QuestMachine.Instance.LastNPCClicked;
             if (lastClicked == null)
@@ -94,6 +98,13 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             return false;
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            QuestMachine.Instance.RemoveFactionListener(npcFactionID);
         }
 
         #region Serialization

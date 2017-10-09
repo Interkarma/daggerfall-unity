@@ -43,6 +43,9 @@ namespace DaggerfallWorkshop.Game.Questing
         string godName = string.Empty;
         string homeTownName = string.Empty;
         string homeRegionName = string.Empty;
+        string homeBuildingName = string.Empty;
+        Symbol homePlaceSymbol = null;
+        bool assignedToHome = false;
         FactionFile.FactionData factionData;
         StaticNPC.NPCData questorData;
 
@@ -267,16 +270,20 @@ namespace DaggerfallWorkshop.Game.Questing
                     textOut = displayName;
                     break;
 
-                case MacroTypes.NameMacro2:             // Person residence name
-                    result = false;
+                case MacroTypes.NameMacro2:             // Home building name
+                    textOut = homeBuildingName;
                     break;
 
                 case MacroTypes.NameMacro3:             // Home town name
                     textOut = homeTownName;
                     break;
 
-                case MacroTypes.DetailsMacro:           // Class name
-                    result = false;
+                case MacroTypes.NameMacro4:             // Home region name
+                    textOut = homeRegionName;
+                    break;
+
+                case MacroTypes.DetailsMacro:           // Race
+                    textOut = RaceTemplate.GetRaceDictionary()[(int)race].Name;
                     break;
 
                 case MacroTypes.FactionMacro:           // Faction macro
@@ -289,6 +296,33 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             return result;
+        }
+
+        public override void Tick(Quest caller)
+        {
+            base.Tick(caller);
+
+            // Auto-assign NPC to home Place if available and player enters
+            // This only happens for very specific NPC types
+            // Equivalent to calling "place anNPC at aPlace" from script
+            // Will not be called again as assignment is permanent for duration of quest
+            if (homePlaceSymbol != null && !assignedToHome)
+            {
+                Place home = ParentQuest.GetPlace(homePlaceSymbol);
+                if (home == null)
+                    return;
+
+                if (home.IsPlayerHere())
+                {
+                    // Create SiteLink if not already present
+                    if (!QuestMachine.HasSiteLink(ParentQuest, homePlaceSymbol))
+                        QuestMachine.CreateSiteLink(ParentQuest, homePlaceSymbol);
+
+                    // Hot-place NPC at this location
+                    home.AssignQuestResource(Symbol);
+                    assignedToHome = true;
+                }
+            }
         }
 
         #endregion
@@ -351,9 +385,12 @@ namespace DaggerfallWorkshop.Game.Questing
         // Has some logic to handle individual faction objects and certain flat limitations
         void AssignDisplayName()
         {
-            // Witches only have female flats
-            if (factionData.type == (int)FactionFile.FactionTypes.WitchesCoven)
+            // Witches and prostitutes only have female flats in Daggerfall
+            if (factionData.type == (int)FactionFile.FactionTypes.WitchesCoven ||
+                factionData.id == 512)
+            {
                 npcGender = Genders.Female;
+            }
 
             // Assign name - some types have their own individual name to use
             if (factionData.type == (int)FactionFile.FactionTypes.Individual ||
@@ -376,6 +413,8 @@ namespace DaggerfallWorkshop.Game.Questing
 
         void AssignHomeTown()
         {
+            const string blank = "BLANK";
+
             // If this is a Questor or individual NPC then use current location name
             // Person is being instantiated where player currently is
             if (isQuestor || (IsIndividualNPC && isIndividualAtHome))
@@ -383,27 +422,44 @@ namespace DaggerfallWorkshop.Game.Questing
                 if (GameManager.Instance.PlayerGPS.HasCurrentLocation)
                 {
                     homeTownName = GameManager.Instance.PlayerGPS.CurrentLocation.Name;
+                    homeRegionName = GameManager.Instance.PlayerGPS.CurrentLocation.RegionName;
+                    homeBuildingName = blank;
                     return;
                 }
             }
 
-            // Find a random location name from town types
-            // This might take a few attempts but will very quickly find a random town name
-            int index;
-            bool found = false;
-            int regionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
-            DFRegion regionData = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegion(regionIndex);
-            while (!found)
+            // Handle specific home Place assigned at create time
+            if (homePlaceSymbol != null)
             {
-                index = UnityEngine.Random.Range(0, regionData.MapTable.Length);
-                DFRegion.LocationTypes locationType = regionData.MapTable[index].LocationType;
-                if (locationType == DFRegion.LocationTypes.TownCity ||
-                    locationType == DFRegion.LocationTypes.TownHamlet ||
-                    locationType == DFRegion.LocationTypes.TownVillage)
+                Place home = ParentQuest.GetPlace(homePlaceSymbol);
+                if (home != null)
                 {
-                    homeTownName = regionData.MapNames[index];
-                    homeRegionName = regionData.Name;
-                    found = true;
+                    homeTownName = home.SiteDetails.locationName;
+                    homeRegionName = home.SiteDetails.regionName;
+                    homeBuildingName = home.SiteDetails.buildingName;
+                }
+            }
+            else
+            {
+                // Find a random location name from town types for flavour text
+                // This might take a few attempts but will very quickly find a random town name
+                int index;
+                bool found = false;
+                int regionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
+                DFRegion regionData = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegion(regionIndex);
+                while (!found)
+                {
+                    index = UnityEngine.Random.Range(0, regionData.MapTable.Length);
+                    DFRegion.LocationTypes locationType = regionData.MapTable[index].LocationType;
+                    if (locationType == DFRegion.LocationTypes.TownCity ||
+                        locationType == DFRegion.LocationTypes.TownHamlet ||
+                        locationType == DFRegion.LocationTypes.TownVillage)
+                    {
+                        homeTownName = regionData.MapNames[index];
+                        homeRegionName = regionData.Name;
+                        homeBuildingName = blank;
+                        found = true;
+                    }
                 }
             }
         }
@@ -512,6 +568,31 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 if (SetupQuestorNPC())
                     return;
+            }
+
+            // Handle Local_3.x group NPCs (limited)
+            // These appear to be a special case of assigning a residential person who is automatically instantiated to home Place
+            // Creating a full target Place for this person automatically and storing in Quest
+            // NOTE: Understanding is still being developed here, likely will need to rework this later
+            if (QuestMachine.Instance.FactionsTable.HasValue(careerAllianceName))
+            {
+                // Get params for this case
+                int p1 = Parser.ParseInt(QuestMachine.Instance.FactionsTable.GetValue("p1", careerAllianceName));
+                int p2 = Parser.ParseInt(QuestMachine.Instance.FactionsTable.GetValue("p2", careerAllianceName));
+                //int p3 = Parser.ParseInt(QuestMachine.Instance.FactionsTable.GetValue("p3", careerAllianceName));
+
+                // Only supporting specific cases for now - can expand later based on testing and iteration of support
+                // This will support Local_3.0 - Local_3.3
+                // Referencing quest Sx009 here where player must locate and click an NPC with only a home location to go by
+                if (p1 == 0 && p2 == -3)
+                {
+                    // Just using "house2" here as actual meaning of p3 unknown
+                    string homeSymbol = string.Format("_{0}_home_", Symbol.Name);
+                    string source = string.Format("Place {0} remote house2", homeSymbol);
+                    Place home = new Place(ParentQuest, source);
+                    homePlaceSymbol = home.Symbol.Clone();
+                    ParentQuest.AddResource(home);
+                }
             }
 
             // Get faction data
@@ -832,6 +913,10 @@ namespace DaggerfallWorkshop.Game.Questing
             public string displayName;
             public string godName;
             public string homeTownName;
+            public string homeRegionName;
+            public string homeBuildingName;
+            public Symbol homePlaceSymbol;
+            public bool assignedToHome;
             public int factionID;
             public StaticNPC.NPCData questorData;
         }
@@ -850,6 +935,10 @@ namespace DaggerfallWorkshop.Game.Questing
             data.displayName = displayName;
             data.godName = godName;
             data.homeTownName = homeTownName;
+            data.homeRegionName = homeRegionName;
+            data.homeBuildingName = homeBuildingName;
+            data.homePlaceSymbol = homePlaceSymbol;
+            data.assignedToHome = assignedToHome;
             data.factionID = factionData.id;
             data.questorData = questorData;
 
@@ -877,6 +966,10 @@ namespace DaggerfallWorkshop.Game.Questing
             displayName = data.displayName;
             godName = data.godName;
             homeTownName = data.homeTownName;
+            homeRegionName = data.homeRegionName;
+            homeBuildingName = data.homeBuildingName;
+            homePlaceSymbol = data.homePlaceSymbol;
+            assignedToHome = data.assignedToHome;
             factionData = dsfactionData;
             questorData = data.questorData;
         }
