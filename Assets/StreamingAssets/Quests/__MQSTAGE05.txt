@@ -304,10 +304,10 @@ _S.37_ task:
 	start quest 7 7 
 	unset _S.30_ _S.23_ _S.06_ 
 
--_S.38_ task:
--	when _S.05_ and _S.09_ and _S.20_ and not _S.47_ 
--	start quest 6 6 
--	unset _S.05_ 
+_S.38_ task:
+	when _S.05_ and _S.09_ and _S.20_ and not _S.47_ 
+	start quest 6 6 
+	unset _S.05_ 
 
 -_S.39_ task:
 -	when _S.01_ and _S.13_ and _S.16_ and not _S.43_ 
