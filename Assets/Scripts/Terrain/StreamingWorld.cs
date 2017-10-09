@@ -640,6 +640,7 @@ namespace DaggerfallWorkshop
                         location.MapTableData.LocationType == DFRegion.LocationTypes.TownVillage ||
                         location.MapTableData.LocationType == DFRegion.LocationTypes.HomeFarms ||
                         location.MapTableData.LocationType == DFRegion.LocationTypes.HomeWealthy ||
+                        location.MapTableData.LocationType == DFRegion.LocationTypes.ReligionTemple ||
                         location.MapTableData.LocationType == DFRegion.LocationTypes.Tavern)
                     {
                         dfLocation.gameObject.AddComponent<PopulationManager>();
