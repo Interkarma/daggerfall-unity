@@ -47,7 +47,6 @@ namespace DaggerfallWorkshop.Utility
             {
                 switch (ci.textureSet)
                 {
-                    case DFLocation.ClimateTextureSet.Interior_TempleInt:
                     case DFLocation.ClimateTextureSet.Interior_MarbleFloors:
                         return archive;
                 }
