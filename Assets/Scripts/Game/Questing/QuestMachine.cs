@@ -948,13 +948,13 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
-        /// Sets main quest stage from 1-4 (currently).
+        /// Sets main quest stage from 1-6 (currently).
         /// </summary>
         /// <param name="stage">Stage value.</param>
         public int SetMainQuestStage(int stage)
         {
             // Clamp to valid range
-            stage = Mathf.Clamp(stage, 1, 5);
+            stage = Mathf.Clamp(stage, 1, 6);
 
             // Setup current stage
             ClearMainQuestState();
@@ -993,6 +993,12 @@ namespace DaggerfallWorkshop.Game.Questing
                 GameManager.Instance.PlayerEntity.Level = 8;
                 GameManager.Instance.PlayerEntity.FactionData.ChangeReputation(510, 60);    // Merchants +60
                 InstantiateQuest("__MQSTAGE05");
+                InstantiateQuest("S0000977");
+            }
+            else if (stage == 6)
+            {
+                GameManager.Instance.PlayerEntity.Level = 8;
+                InstantiateQuest("__MQSTAGE06");
                 InstantiateQuest("S0000977");
             }
 
