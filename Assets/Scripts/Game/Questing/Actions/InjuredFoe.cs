@@ -24,10 +24,11 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
     public class InjuredFoe : ActionTemplate
     {
         Symbol foeSymbol;
+        int textID;
 
         public override string Pattern
         {
-            get { return @"injured (?<aFoe>[a-zA-Z0-9_.-]+)"; }
+            get { return @"injured (?<aFoe>[a-zA-Z0-9_.-]+) saying (?<textID>\d+)|injured (?<aFoe>[a-zA-Z0-9_.-]+)"; }
         }
 
         public InjuredFoe(Quest parentQuest)
@@ -46,6 +47,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // Factory new action
             InjuredFoe action = new InjuredFoe(parentQuest);
             action.foeSymbol = new Symbol(match.Groups["aFoe"].Value);
+            action.textID = Parser.ParseInt(match.Groups["textID"].Value);
 
             return action;
         }
@@ -60,6 +62,10 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // Check injured flag
             if (foe.InjuredTrigger)
             {
+                // Optionally show message
+                if (textID != 0)
+                    ParentQuest.ShowMessagePopup(textID);
+
                 return true;
             }
 
@@ -72,12 +78,14 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         public struct SaveData_v1
         {
             public Symbol foeSymbol;
+            public int textID;
         }
 
         public override object GetSaveData()
         {
             SaveData_v1 data = new SaveData_v1();
             data.foeSymbol = foeSymbol;
+            data.textID = textID;
 
             return data;
         }
@@ -89,6 +97,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 return;
 
             foeSymbol = data.foeSymbol;
+            textID = data.textID;
         }
 
         #endregion
