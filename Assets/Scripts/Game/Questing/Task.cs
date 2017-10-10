@@ -415,9 +415,14 @@ namespace DaggerfallWorkshop.Game.Questing
         public void SetTriggerValue(bool value)
         {
             if (globalVarLink != -1)
+            {
                 GameManager.Instance.PlayerEntity.GlobalVars.SetGlobalVar(globalVarLink, value);
-            else
                 triggered = value;
+            }
+            else
+            {
+                triggered = value;
+            }
 
             // If this task is dropped then trigger state cannot be changed
             if (dropped)
