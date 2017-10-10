@@ -31,6 +31,10 @@ namespace DaggerfallWorkshop.Utility
         /// <returns>Archive index of new texture.</returns>
         public static int ApplyClimate(int archive, int record, ClimateBases climate, ClimateSeason season)
         {
+            // Don't swap textures for door 3. Same behavior as classic.
+            if (((archive % 100) == 74) && record == 3)
+                return archive;
+
             // Get climate texture info
             ClimateTextureInfo ci = ClimateSwaps.GetClimateTextureInfo(archive);
 
