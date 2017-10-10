@@ -169,7 +169,8 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <param name="line"></param>
         protected void ParseMessageTags(string line)
         {
-            string matchStr = @"anyInfo (?<info>\d+)|used (?<used>\d+)|rumors (?<rumors>\d+)";
+            string matchStr = @"anyInfo (?<info>\d+)|used (?<used>\d+)|rumors (?<rumors>\d+)|" +
+                              @"anyInfo (?<infoName>\w+)|used (?<usedName>\w+)|rumors (?<rumorsName>\w+)";
 
             // Get message tag matches
             MatchCollection matches = Regex.Matches(line, matchStr);
@@ -179,20 +180,56 @@ namespace DaggerfallWorkshop.Game.Questing
             // Grab tag values
             foreach (Match match in matches)
             {
-                // Match info message id
+                //
+                // info
+                //
+
+                // Match info message ID
                 Group info = match.Groups["info"];
                 if (info.Success)
                     infoMessageID = Parser.ParseInt(info.Value);
 
-                // Match used message id
+                // Resolve info message name back to ID
+                string infoName = match.Groups["infoName"].Value;
+                if (usedMessageID == -1 && !string.IsNullOrEmpty(infoName))
+                {
+                    Table table = QuestMachine.Instance.StaticMessagesTable;
+                    infoMessageID = Parser.ParseInt(table.GetValue("id", infoName));
+                }
+
+                //
+                // used
+                //
+
+                // Match used message ID
                 Group used = match.Groups["used"];
                 if (used.Success)
                     usedMessageID = Parser.ParseInt(used.Value);
 
-                // Match rumors message id
+                // Resolve used message name back to ID
+                string usedName = match.Groups["usedName"].Value;
+                if (usedMessageID == -1 && !string.IsNullOrEmpty(usedName))
+                {
+                    Table table = QuestMachine.Instance.StaticMessagesTable;
+                    usedMessageID = Parser.ParseInt(table.GetValue("id", usedName));
+                }
+
+                //
+                // rumors
+                //
+
+                // Match rumors message ID
                 Group rumors = match.Groups["rumors"];
                 if (rumors.Success)
                     rumorsMessageID = Parser.ParseInt(rumors.Value);
+
+                // Resolve rumors message name back to ID
+                string rumorsName = match.Groups["rumorsName"].Value;
+                if (rumorsMessageID == -1 && !string.IsNullOrEmpty(rumorsName))
+                {
+                    Table table = QuestMachine.Instance.StaticMessagesTable;
+                    rumorsMessageID = Parser.ParseInt(table.GetValue("id", rumorsName));
+                }
             }
         }
 
