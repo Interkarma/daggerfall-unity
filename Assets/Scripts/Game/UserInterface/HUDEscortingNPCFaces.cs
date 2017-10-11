@@ -10,11 +10,10 @@
 //
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Questing;
-using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.UserInterface
@@ -28,6 +27,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         #region Fields
 
         const int maxFaces = 3;
+        const string factionFaceFile = "FACES.CIF";
 
         List<FaceDetails> faces = new List<FaceDetails>();
         List<Panel> facePanels = new List<Panel>();
@@ -54,6 +54,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             const int startX = 8;
             const int startY = 36;
             const int spaceY = 40;
+            const int spaceYSpecial = 50;
 
             // Align face panels - usually only a single face
             int faceCount = 0;
@@ -70,7 +71,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 // Setup panel position
                 facePanel.Enabled = true;
                 facePanel.Position = pos;
-                pos.y += spaceY;
+
+                // Space to next face
+                if (spaceY < facePanel.Size.y)
+                    pos.y += spaceYSpecial;
+                else
+                    pos.y += spaceY;
             }
         }
 
@@ -110,6 +116,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
             face.targetRace = person.Race;
             face.gender = person.Gender;
             face.faceIndex = person.FaceIndex;
+            face.factionFaceIndex = -1;
+            
+            // Read faction face index for fixed NPCs
+            if (person.IsIndividualNPC)
+            {
+                FactionFile.FactionData fd;
+                if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(person.FactionIndex, out fd))
+                {
+                    face.factionFaceIndex = fd.face;
+                }
+            }
 
             return face;
         }
@@ -128,6 +145,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public void RefreshFaces()
         {
+            const int specialFacePanelWidth = 48;
+            const int specialFacePanelHeight = 48;
+
             // Clear existing faces
             ClearFaces();
 
@@ -152,18 +172,29 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                 // Get image for this face
                 Texture2D faceTexture = null;
-                if (face.gender == Genders.Male)
-                    faceTexture = DaggerfallUI.GetTextureFromCifRci(raceTemplate.PaperDollHeadsMale, face.faceIndex);
-                else if (face.gender == Genders.Female)
-                    faceTexture = DaggerfallUI.GetTextureFromCifRci(raceTemplate.PaperDollHeadsFemale, face.faceIndex);
+                Panel facePanel = new Panel();
+                if (face.factionFaceIndex >= 0 && face.factionFaceIndex <= 60)
+                {
+                    // Use special NPC face set at time face data was added
+                    faceTexture = DaggerfallUI.GetTextureFromCifRci(factionFaceFile, face.factionFaceIndex);
+                    facePanel.Size = new Vector2(specialFacePanelWidth, specialFacePanelHeight);
+                }
+                else
+                {
+                    // Use generic NPC face
+                    if (face.gender == Genders.Male)
+                        faceTexture = DaggerfallUI.GetTextureFromCifRci(raceTemplate.PaperDollHeadsMale, face.faceIndex);
+                    else if (face.gender == Genders.Female)
+                        faceTexture = DaggerfallUI.GetTextureFromCifRci(raceTemplate.PaperDollHeadsFemale, face.faceIndex);
+
+                    facePanel.Size = new Vector2(faceTexture.width, faceTexture.height);
+                }
 
                 // Must have a texture by now
                 if (faceTexture == null)
                     throw new Exception("RefreshFaces() could not load face texture for Person resource.");
 
                 // Add texture to list
-                Panel facePanel = new Panel();
-                facePanel.Size = new Vector2(faceTexture.width, faceTexture.height);
                 facePanel.BackgroundTexture = faceTexture;
                 facePanels.Add(facePanel);
                 Components.Add(facePanel);
