@@ -80,7 +80,13 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // Handle "send" variant
             if (!string.IsNullOrEmpty(match.Groups["send"].Value))
+            {
                 action.isSendAction = true;
+
+                // "send" without "count" implies infinite
+                if (action.spawnMaxTimes == 0)
+                    action.spawnMaxTimes = -1;
+            }
 
             return action;
         }

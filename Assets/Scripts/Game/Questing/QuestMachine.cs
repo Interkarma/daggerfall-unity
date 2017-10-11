@@ -999,6 +999,7 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 GameManager.Instance.PlayerEntity.Level = 10;
                 GameManager.Instance.PlayerEntity.FactionData.ChangeReputation(363, 20);    // Medora +20
+                GameManager.Instance.PlayerEntity.FactionData.ChangeReputation(305, 20);    // King of Worms +20
                 InstantiateQuest("__MQSTAGE06");
                 InstantiateQuest("S0000977");
             }
