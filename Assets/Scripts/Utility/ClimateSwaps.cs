@@ -31,12 +31,8 @@ namespace DaggerfallWorkshop.Utility
         /// <returns>Archive index of new texture.</returns>
         public static int ApplyClimate(int archive, int record, ClimateBases climate, ClimateSeason season)
         {
-            // Don't swap textures for door 3. Same behavior as classic.
-            if (((archive % 100) == 74) && record == 3)
-                return archive;
-
             // Get climate texture info
-            ClimateTextureInfo ci = ClimateSwaps.GetClimateTextureInfo(archive);
+            ClimateTextureInfo ci = ClimateSwaps.GetClimateTextureInfo(archive, record);
 
             // Ignore non-climate textures
             if (ci.textureSet == DFLocation.ClimateTextureSet.None)
@@ -116,8 +112,9 @@ namespace DaggerfallWorkshop.Utility
         /// Get climate texture information.
         /// </summary>
         /// <param name="archive">Texture archive index.</param>
+        /// <param name="record">Texture record index.</param>
         /// <returns>ClimateTextureInfo.</returns>
-        public static ClimateTextureInfo GetClimateTextureInfo(int archive)
+        public static ClimateTextureInfo GetClimateTextureInfo(int archive, int record)
         {
             // Create new climate texture information
             ClimateTextureInfo ci = new ClimateTextureInfo();
@@ -189,9 +186,10 @@ namespace DaggerfallWorkshop.Utility
                     ci.supportsWinter = true;
                     break;
 
-                // Exterior sets (do not support winter)
+                // Door record 3 shouldn't change
                 case DFLocation.ClimateTextureSet.Exterior_Doors:
-                    ci.supportsWinter = false;
+                    if (record == 3)
+                        ci.textureSet = DFLocation.ClimateTextureSet.None;
                     break;
 
                 // Interior sets (do not support winter)
