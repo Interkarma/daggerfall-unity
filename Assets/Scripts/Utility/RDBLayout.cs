@@ -780,6 +780,10 @@ namespace DaggerfallWorkshop.Utility
                 loadID = (ulong)(blockData.Position + rdbObj.This);
 
             AddAction(go, description, soundID_Index, duration, magnitude, axis, triggerFlag, actionFlag, loadID);
+
+            // Add special action door component if this is an "open"/"close" action but model is not a regular action door
+            if (actionFlag == DFBlock.RdbActionFlags.OpenDoor || actionFlag == DFBlock.RdbActionFlags.CloseDoor && !IsActionDoor(ref blockData, rdbObj, rdbObj.Resources.ModelResource.ModelIndex))
+                go.AddComponent<DaggerfallActionDoorSpecial>();
         }
 
         private static void AddActionFlatHelper(

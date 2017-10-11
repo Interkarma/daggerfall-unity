@@ -547,9 +547,26 @@ namespace DaggerfallWorkshop
         /// </summary>
         public static void OpenDoor(GameObject triggerObj, DaggerfallAction thisAction)
         {
+            // Try special action door
+            if (thisAction != null && thisAction.gameObject)
+            {
+                DaggerfallActionDoorSpecial specialDoor = thisAction.gameObject.GetComponent<DaggerfallActionDoorSpecial>();
+                if (specialDoor)
+                {
+                    if (specialDoor.IsOpen)
+                        return;
+                    else
+                    {
+                        specialDoor.ToggleDoor();
+                        return;
+                    }
+                }
+            }
+
+            // Try regular action door
             DaggerfallActionDoor door;
             if (!GetDoor(thisAction.gameObject, out door))
-                DaggerfallUnity.LogMessage(string.Format("No DaggerfallActionDoor component found"), true);
+                DaggerfallUnity.LogMessage(string.Format("No DaggerfallActionDoor or DaggerfallActionDoorSpecial component found"), true);
             else
             {
                 if (door.IsOpen)
@@ -569,10 +586,26 @@ namespace DaggerfallWorkshop
         /// </summary>
         public static void CloseDoor(GameObject triggerObj, DaggerfallAction thisAction)
         {
+            // Try special action door
+            if (thisAction != null && thisAction.gameObject)
+            {
+                DaggerfallActionDoorSpecial specialDoor = thisAction.gameObject.GetComponent<DaggerfallActionDoorSpecial>();
+                if (specialDoor)
+                {
+                    if (specialDoor.IsClosed)
+                        return;
+                    else
+                    {
+                        specialDoor.ToggleDoor();
+                        return;
+                    }
+                }
+            }
 
+            // Try regular action door
             DaggerfallActionDoor door;
             if (!GetDoor(thisAction.gameObject, out door))
-                DaggerfallUnity.LogMessage(string.Format("No DaggerfallActionDoor component found"), true);
+                DaggerfallUnity.LogMessage(string.Format("No DaggerfallActionDoor or DaggerfallActionDoorSpecial component found"), true);
             else
             {
                 if (!door.IsOpen)
@@ -584,7 +617,6 @@ namespace DaggerfallWorkshop
                 }
 
             }
-
         }
 
         /// <summary>
