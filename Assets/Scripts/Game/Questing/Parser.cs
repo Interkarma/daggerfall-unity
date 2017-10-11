@@ -196,9 +196,24 @@ namespace DaggerfallWorkshop.Game.Questing
                     {
                         string text = lines[++i].TrimEnd('\r');
                         if (string.IsNullOrEmpty(text))
-                            break;
+                        {
+                            // Sometimes quest author will forget single space in front of an empty message line
+                            // Peek ahead to see if next line is really a new message header
+                            // Otherwise just treat this as a line break in message (add a single ' ' character)
+                            if (!PeekMessageEnd(lines, i))
+                            {
+                                messageLines.Add(" ");
+                                continue;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
                         else
+                        {
                             messageLines.Add(text);
+                        }
                     }
 
                     // Instantiate message
@@ -208,6 +223,24 @@ namespace DaggerfallWorkshop.Game.Questing
                     quest.AddMessage(messageID, message);
                 }
             }
+        }
+
+        // Try to decide if message block is actually at an end
+        // This will occur if next line matches one of the following:
+        // - End of stream
+        // - A second empty line
+        // - Start of a new message block tab or QBN: tag
+        // Returns true if this appears to be end of message
+        bool PeekMessageEnd(List<string> lines, int line)
+        {
+            if (line + 1 >= lines.Count)
+                return true;
+
+            string nextLine = lines[line + 1];
+            if (nextLine.Contains(":") || string.IsNullOrEmpty(nextLine.Trim()))
+                return true;
+
+            return false;
         }
 
         void ParseQBN(Quest quest, List<string> lines)
