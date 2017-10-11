@@ -171,7 +171,7 @@ _S.05_ task:
 
 variable _S.06_
 yes task:
-	place item horn at _huntstart_ 
+	place item horn at _huntstart_ marker 1
 	start timer _2shedungent_ 
 	log 1010 step 0 
 	reveal _huntstart_ in province 16 at 50966 
