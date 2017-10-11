@@ -9,57 +9,42 @@
 // Notes:
 //
 
-using UnityEngine;
-using System.Collections;
+using DaggerfallConnect;
 
 namespace DaggerfallWorkshop
 {
-    /// <summary>
-    /// Defines static texture tables for key dungeons.
-    /// Currently missing key table information required to load correct texture tables at runtime.
-    /// </summary>
     public static class StaticTextureTables
     {
-        public const int TableLength = 6;
-
-        /// The following tables were dumped at runtime from linear offset 0x286186 using dosbox debugger
-        public static int[] PrivateersHold = new int[] { 23, 22, 19, 22, 20, 323 };
-        public static int[] Wayrest = new int[] { 23, 19, 19, 20, 20, 168 };
-        public static int[] Daggerfall = new int[] { 19, 20, 22, 23, 20, 168 };
-        public static int[] Sentinel = new int[] { 120, 123, 122, 122, 119, 168 };
-        public static int[] Orsinium = new int[] { 23, 23, 19, 20, 20, 168 };
-        public static int[] Shedungent = new int[] { 23, 22, 23, 22, 22, 168 };
-        public static int[] ScourgBarrow = new int[] { 20, 20, 23, 23, 20, 168 };
-        public static int[] WoodborneHall = new int[] { 23, 23, 22, 22, 23, 168 };
-        public static int[] MantellanCrux = new int[] { 123, 123, 123, 120, 120, 168 };
-        public static int[] LysandusTomb = new int[] { 23, 23, 23, 23, 23, 168 };
-        public static int[] DirenniTower = new int[] { 19, 20, 23, 19, 20, 168 };
-        public static int[] CastleNecromoghan = new int[] { 20, 23, 23, 19, 19, 168 };
-        public static int[] TristoreLaboratory = new int[] { 23, 23, 23, 23, 22, 168 };
-        public static int[] CastleLlugwych = new int[] { 19, 23, 20, 20, 23, 168 };
-
         // Default texture table at linear offset 0x28617C
         public static int[] DefaultTextureTable = new int[] { 119, 120, 122, 123, 124, 168 };
 
         // Helper to generate valid texture table from random seed
-        public static int[] RandomTextureTable(int seed)
+        public static int[] RandomTextureTable(int seed, DFLocation.ClimateBaseType climate)
         {
-            // Valid dungeon textures table indices
-            int[] valids = new int[]
-            {
-                019, 020, 022, 023, 024, 068,
-                119, 120, 122, 123, 124, 168,
-                319, 320, 322, 323, 324, 368,
-                419, 420, 422, 423, 424, 468,
-            };
+            byte[] climateTextureArchiveIndices = { 0, 0, 1, 4, 4, 0, 3, 3, 3, 0 };
+            short[] climateTextureArchives = { 19, 119, 319, 419, 119 };
 
-            Random.InitState(seed);
-            int[] textureTable = new int[TableLength];
-            for (int i = 0; i < TableLength; i++)
+            int terrain = Game.GameManager.Instance.PlayerGPS.CurrentClimateIndex;
+            int climateTextureArchiveIndicesIndex = Game.Utility.TravelTimeCalculator.climateIndices[terrain - (int)Game.Utility.TravelTimeCalculator.TerrainTypes.Ocean];
+            int climateTextureArchiveIndex = climateTextureArchiveIndices[climateTextureArchiveIndicesIndex];
+
+            int textureRecordOffset;
+            DFRandom.srand(seed);
+
+            int[] textureTable = (int[])DefaultTextureTable.Clone();
+
+            if (climateTextureArchiveIndex != 1)
             {
-                textureTable[i] = valids[Random.Range(0, valids.Length)];
+                for (int i = 0; i < 5; ++i)
+                {
+                    textureRecordOffset = DFRandom.random_range_inclusive(0, 4);
+                    if (textureRecordOffset == 2) // invalid
+                        textureRecordOffset = 4;
+                    textureTable[i] = climateTextureArchives[climateTextureArchiveIndex] + textureRecordOffset;
+                }
             }
 
+            textureTable[5] = (int)DFLocation.ClimateTextureSet.Interior_Sewer + (int)climate;
             return textureTable;
         }
     }
