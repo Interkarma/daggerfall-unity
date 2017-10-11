@@ -3,6 +3,7 @@
 -- QuestId: 18
 Messages: 31
 Quest: S0000018
+DisplayName: Dust of Restful Death
 -- Message panels
 QRC:
 

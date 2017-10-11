@@ -997,7 +997,8 @@ namespace DaggerfallWorkshop.Game.Questing
             }
             else if (stage == 6)
             {
-                GameManager.Instance.PlayerEntity.Level = 8;
+                GameManager.Instance.PlayerEntity.Level = 10;
+                GameManager.Instance.PlayerEntity.FactionData.ChangeReputation(363, 20);    // Medora +20
                 InstantiateQuest("__MQSTAGE06");
                 InstantiateQuest("S0000977");
             }
