@@ -161,7 +161,7 @@ Item _I.00_ letter used 1040
 Item _I.01_ letter used 1041
 
 Place _dirennitower_ permanent DirenniTowerEntry
-
+Place _lysandustomb_ permanent LysandusTomb2
 
 Clock mainquestclock 00:00 0 flag 9 range 0 0
 
@@ -171,6 +171,7 @@ Clock mainquestclock 00:00 0 flag 9 range 0 0
 	start task _S.59_
 	start task _S.60_
 	reveal _dirennitower_
+	reveal _lysandustomb_
 	start quest 21 21
 	log 1010 step 0 
 
