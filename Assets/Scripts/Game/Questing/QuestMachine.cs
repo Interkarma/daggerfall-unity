@@ -1000,6 +1000,8 @@ namespace DaggerfallWorkshop.Game.Questing
                 GameManager.Instance.PlayerEntity.Level = 10;
                 GameManager.Instance.PlayerEntity.FactionData.ChangeReputation(363, 20);    // Medora +20
                 GameManager.Instance.PlayerEntity.FactionData.ChangeReputation(305, 20);    // King of Worms +20
+                GameManager.Instance.PlayerEntity.GlobalVars.SetGlobalVar(29, true);        // MyniseraSatisfied globalvar
+                GameManager.Instance.PlayerEntity.GlobalVars.SetGlobalVar(33, true);        // KingOfWormsSatisfied globalvar
                 InstantiateQuest("__MQSTAGE06");
                 InstantiateQuest("S0000977");
             }

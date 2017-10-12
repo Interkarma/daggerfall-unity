@@ -3,6 +3,7 @@
 -- QuestId: 8
 Messages: 71
 Quest: S0000008
+DisplayName: Who Gets the Totem
 -- Message panels
 QRC:
 
@@ -386,7 +387,7 @@ _meetladyb_ task:
 	prompt QuestorOffer yes yes no _no_ 
 
 yes task:
-	place item _totem_ at _daggerfall_ 
+	place item _totem_ at _daggerfall_ marker 5
 	log 1010 step 0 
 	say AcceptQuest 
 	add Brisienna as questor 
