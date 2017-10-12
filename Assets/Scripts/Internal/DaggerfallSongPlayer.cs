@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -19,6 +19,7 @@ using DaggerfallWorkshop.AudioSynthesis.Sequencer;
 using DaggerfallWorkshop.AudioSynthesis.Synthesis;
 using DaggerfallWorkshop.AudioSynthesis.Midi;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop
 {
@@ -53,6 +54,7 @@ namespace DaggerfallWorkshop
         int numBuffers = 0;
         bool playEnabled = false;
         bool awakeComplete = false;
+        float oldGain;
 
         SoundReplacement.CustomSong customSong;
 
@@ -69,6 +71,9 @@ namespace DaggerfallWorkshop
             InitSynth();
 
             InitCustomSongs();
+
+            DaggerfallVidPlayerWindow.OnVideoStart += DaggerfallVidPlayerWindow_OnVideoStart;
+            DaggerfallVidPlayerWindow.OnVideoEnd += DaggerfallVidPlayerWindow_OnVideoEnd;
         }
 
         void Update()
@@ -343,6 +348,19 @@ namespace DaggerfallWorkshop
                 final = string.Format("Song '{0}' ready. Not playing.", currentMidiName);
 
             return final;
+        }
+
+        private void DaggerfallVidPlayerWindow_OnVideoStart()
+        {
+            // Mute music while video is playing
+            oldGain = Gain;
+            Gain = 0;
+        }
+
+        private void DaggerfallVidPlayerWindow_OnVideoEnd()
+        {
+            // Restore music to previous level
+            Gain = oldGain;
         }
 
         #endregion
