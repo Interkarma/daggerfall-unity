@@ -136,6 +136,7 @@ namespace DaggerfallWorkshop
         {DFBlock.RdbActionFlags.DrainMagicka, new ActionDelegate(DrainMagicka)},
         {DFBlock.RdbActionFlags.Activate,   new ActionDelegate(Activate)},
         {DFBlock.RdbActionFlags.DoorText, new ActionDelegate(DoorText)},
+        {DFBlock.RdbActionFlags.SetGlobalVar, new ActionDelegate(SetGlobalVar)},
         };
 
         public enum TriggerTypes
@@ -719,6 +720,17 @@ namespace DaggerfallWorkshop
         public static void Activate(GameObject triggerObj, DaggerfallAction thisAction)
         {
             return;
+        }
+
+        /// <summary>
+        /// 31
+        /// Sets global variable in quest system.
+        /// </summary>
+        public static void SetGlobalVar(GameObject triggerObj, DaggerfallAction thisAction)
+        {
+            // Global variable index stored in action axis value
+            GameManager.Instance.PlayerEntity.GlobalVars.SetGlobalVar(thisAction.ActionAxisRawValue, true);
+            Debug.LogFormat("Action set global variable #{0}", thisAction.ActionAxisRawValue);
         }
 
         /// <summary>

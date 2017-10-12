@@ -178,7 +178,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Startup task begins as triggered
                 type = TaskType.Headless;
                 targetSymbol = null;
-                triggered = true;
+                IsTriggered = true;
                 symbol = new Symbol(DaggerfallUnity.NextUID.ToString());
             }
 
@@ -202,16 +202,16 @@ namespace DaggerfallWorkshop.Game.Questing
                 // These can turn task on when any trigger evaluates true
                 // They are no longer checked once task is triggered (unless set to always be on)
                 // But can fire again if owning task is unset/rearmed later
-                if (action.IsTriggerCondition && !triggered || action.IsAlwaysOnTriggerCondition)
+                if (action.IsTriggerCondition && !IsTriggered || action.IsAlwaysOnTriggerCondition)
                 {
                     if (action.CheckTrigger(this))
-                        triggered = true;
+                        IsTriggered = true;
                     else
-                        triggered = false;
+                        IsTriggered = false;
                 }
 
                 // Tick other actions only when active
-                if (triggered && !action.IsTriggerCondition)
+                if (IsTriggered && !action.IsTriggerCondition)
                 {
                     // Initialise action if task was previously untriggered
                     if (!prevTriggered)
@@ -250,7 +250,7 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             // Store trigger state this update
-            prevTriggered = triggered;
+            prevTriggered = IsTriggered;
         }
 
         /// <summary>
@@ -344,7 +344,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     // It rarely makes sense for these actions to be repeated "over and over" as per Template docs
                     type = TaskType.PersistUntil;
                     targetSymbol = new Symbol(match.Groups["symbol"].Value);
-                    triggered = true;
+                    IsTriggered = true;
                     symbol = new Symbol(DaggerfallUnity.NextUID.ToString());
                 }
                 else if (!string.IsNullOrEmpty(match.Groups["variable"].Value))
@@ -352,7 +352,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     // Variable
                     type = TaskType.Variable;
                     targetSymbol = null;
-                    triggered = false;
+                    IsTriggered = false;
                     symbol = new Symbol(match.Groups["symbol"].Value);
                 }
 
@@ -407,7 +407,7 @@ namespace DaggerfallWorkshop.Game.Questing
         public bool GetTriggerValue()
         {
             if (globalVarLink != -1)
-                return GameManager.Instance.PlayerEntity.GlobalVars.GetGlobalVar(globalVarLink);
+                return triggered = GameManager.Instance.PlayerEntity.GlobalVars.GetGlobalVar(globalVarLink);
             else
                 return triggered;
         }
@@ -463,7 +463,7 @@ namespace DaggerfallWorkshop.Game.Questing
             TaskSaveData_v1 data = new TaskSaveData_v1();
             data.symbol = symbol;
             data.targetSymbol = targetSymbol;
-            data.triggered = triggered;
+            data.triggered = IsTriggered;
             data.prevTriggered = prevTriggered;
             data.type = type;
             data.dropped = dropped;
@@ -487,7 +487,7 @@ namespace DaggerfallWorkshop.Game.Questing
             // Restore base task data
             symbol = data.symbol;
             targetSymbol = data.targetSymbol;
-            triggered = data.triggered;
+            IsTriggered = data.triggered;
             prevTriggered = data.prevTriggered;
             type = data.type;
             dropped = data.dropped;
