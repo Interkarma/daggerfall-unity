@@ -85,18 +85,19 @@ namespace DaggerfallWorkshop
         {
             if (Application.isPlaying)
             {
-                // Set self inactive if this is an editor marker
-                bool showEditorFlats = GameManager.Instance.StartGameBehaviour.ShowEditorFlats;
-                if (summary.FlatType == FlatTypes.Editor && !showEditorFlats)
-                {
-                    this.gameObject.SetActive(false);
-                    return;
-                }
-
                 // Get component references
                 mainCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
                 meshFilter = GetComponent<MeshFilter>();
                 meshRenderer = GetComponent<MeshRenderer>();
+
+                // Hide editor marker from live scene
+                bool showEditorFlats = GameManager.Instance.StartGameBehaviour.ShowEditorFlats;
+                if (summary.FlatType == FlatTypes.Editor && meshRenderer && !showEditorFlats)
+                {
+                    // Just disable mesh renderer as actual object can be part of action chain
+                    // Example is the treasury in Daggerfall castle, some action records flow through the quest item marker
+                    meshRenderer.enabled = false;
+                }
             }
         }
 
