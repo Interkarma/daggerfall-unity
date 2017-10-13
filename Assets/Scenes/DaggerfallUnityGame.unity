@@ -1663,6 +1663,36 @@ Prefab:
       propertyPath: DungeonParent
       value: 
       objectReference: {fileID: 620133648}
+    - target: {fileID: 114374306957635026, guid: 53a45b46ca97a974f8e677f68c2a85e6,
+        type: 2}
+      propertyPath: SpecialAreaLight.r
+      value: 0.64705884
+      objectReference: {fileID: 0}
+    - target: {fileID: 114374306957635026, guid: 53a45b46ca97a974f8e677f68c2a85e6,
+        type: 2}
+      propertyPath: SpecialAreaLight.g
+      value: 0.64705884
+      objectReference: {fileID: 0}
+    - target: {fileID: 114374306957635026, guid: 53a45b46ca97a974f8e677f68c2a85e6,
+        type: 2}
+      propertyPath: SpecialAreaLight.b
+      value: 0.64705884
+      objectReference: {fileID: 0}
+    - target: {fileID: 114374306957635026, guid: 53a45b46ca97a974f8e677f68c2a85e6,
+        type: 2}
+      propertyPath: DungeonAmbientLight.r
+      value: 0.29411766
+      objectReference: {fileID: 0}
+    - target: {fileID: 114374306957635026, guid: 53a45b46ca97a974f8e677f68c2a85e6,
+        type: 2}
+      propertyPath: DungeonAmbientLight.g
+      value: 0.29411766
+      objectReference: {fileID: 0}
+    - target: {fileID: 114374306957635026, guid: 53a45b46ca97a974f8e677f68c2a85e6,
+        type: 2}
+      propertyPath: DungeonAmbientLight.b
+      value: 0.29411766
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 2}
   m_IsPrefabParent: 0
@@ -2059,7 +2089,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22400016, guid: 312abd0527754e047a6bfbc424f09ace, type: 2}
       propertyPath: m_SizeDelta.y
-      value: 16
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 11400006, guid: 312abd0527754e047a6bfbc424f09ace, type: 2}
       propertyPath: m_Value
