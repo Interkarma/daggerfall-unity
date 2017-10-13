@@ -16,9 +16,9 @@ using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using FullSerializer;
-using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -242,20 +242,8 @@ namespace DaggerfallWorkshop.Game.Questing
                     textOut = siteDetails.locationName;
                     break;
 
-                case MacroTypes.NameMacro3:             // Name of quest dungeon (e.g. Castle Faallem, The Fortress of Fhojum)
-                    DFLocation locationOut;
-                    int regionIndex = -1;
-                    string[] regionNames = DaggerfallUnity.Instance.ContentReader.MapFileReader.RegionNames;
-                    for (int i = 0; i < regionNames.Length; i++)
-                    {
-                        if (regionNames[i] == siteDetails.regionName)
-                        {
-                            regionIndex = i;
-                            break;
-                        }
-                    }
-                    DaggerfallUnity.Instance.ContentReader.GetLocation(regionIndex, (int)siteDetails.locationId, out locationOut);
-                    textOut = locationOut.Name;
+                case MacroTypes.NameMacro3:             // Name of dungeon (e.g. Privateer's Hold) - Not sure about this one, need to test
+                    textOut = siteDetails.locationName;
                     break;
 
                 case MacroTypes.NameMacro4:             // Name of region (e.g. Tigonus)

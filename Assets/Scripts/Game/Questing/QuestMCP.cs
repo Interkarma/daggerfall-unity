@@ -162,10 +162,8 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 DFRegion currentDFRegion = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegion(region);
 
-                //string[] locations = currentDFRegion.MapNames;
-                
-
-                /*
+                string name = this.parent.LastPlaceReferenced.SiteDetails.locationName.ToLower();
+                string[] locations = currentDFRegion.MapNames;                              
                 for (int i = 0; i < locations.Length; i++)
                 {
                     if (locations[i].ToLower() == name) // Valid location found with exact name
@@ -179,15 +177,7 @@ namespace DaggerfallWorkshop.Game.Questing
                         }
                     }
                 }
-                */
-                DFLocation locationOut;
-                DaggerfallUnity.Instance.ContentReader.GetLocation(region, (int)this.parent.LastPlaceReferenced.SiteDetails.locationId, out locationOut);
-                locationInfo = locationOut.MapTableData;
-                position = MapsFile.LongitudeLatitudeToMapPixel((int)locationInfo.Longitude, (int)locationInfo.Latitude);
-                positionLocation = new Vector2(position.X, position.Y);
-
-                string name = locationOut.Name.ToLower();
-
+                
                 if (positionLocation != Vector2.zero)
                 {
                     Vector2 vecDirectionToTarget = positionLocation - positionPlayer;
