@@ -119,7 +119,10 @@ namespace DaggerfallWorkshop
         /// </summary>
         public int CurrentRegionIndex
         {
-            get { return currentPoliticIndex - 128; }
+            get { if (currentPoliticIndex == 64)
+                    return 31; // High Rock sea coast
+                  else
+                    return currentPoliticIndex - 128; }
         }
 
         /// <summary>
