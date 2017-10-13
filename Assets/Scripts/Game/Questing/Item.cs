@@ -39,6 +39,7 @@ namespace DaggerfallWorkshop.Game.Questing
     {
         #region Fields
 
+        bool artifact = false;
         DaggerfallUnityItem item = null;
 
         #endregion
@@ -85,7 +86,7 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             base.SetResource(line);
 
-            string declMatchStr = @"(Item|item) (?<symbol>[a-zA-Z0-9_.-]+) artifact (?<itemName>[a-zA-Z0-9_.-]+)|(Item|item) (?<symbol>[a-zA-Z0-9_.-]+) (?<itemName>[a-zA-Z0-9_.-]+)";
+            string declMatchStr = @"(Item|item) (?<symbol>[a-zA-Z0-9_.-]+) (?<artifact>artifact) (?<itemName>[a-zA-Z0-9_.-]+)|(Item|item) (?<symbol>[a-zA-Z0-9_.-]+) (?<itemName>[a-zA-Z0-9_.-]+)";
 
             string optionsMatchStr = @"range (?<rangeLow>\d+) to (?<rangeHigh>\d+)|" +
                                      @"item class (?<itemClass>\d+) subclass (?<itemSubClass>\d+)";
@@ -105,6 +106,10 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 // Item or artifact name
                 itemName = match.Groups["itemName"].Value;
+
+                // Artifact status
+                if (!string.IsNullOrEmpty(match.Groups["artifact"].Value))
+                    artifact = true;
 
                 // Set gold - this is not in the lookup table
                 if (itemName == "gold")
@@ -162,11 +167,11 @@ namespace DaggerfallWorkshop.Game.Questing
             switch (macro)
             {
                 case MacroTypes.NameMacro1:             // Display name
-                    textOut = (isGoldPieces) ? item.stackCount.ToString() : item.LongName;
-                    break;
-
                 case MacroTypes.DetailsMacro:           // Same as display name?
-                    textOut = (isGoldPieces) ? item.stackCount.ToString() : item.LongName;
+                    if (artifact)
+                        textOut = item.shortName;
+                    else
+                        textOut = (isGoldPieces) ? item.stackCount.ToString() : item.LongName;
                     break;
 
                 default:                                // Macro not supported
@@ -302,12 +307,15 @@ namespace DaggerfallWorkshop.Game.Questing
         [fsObject("v1")]
         public struct SaveData_v1
         {
+            public bool artifact;
             public ItemData_v1 item;
         }
 
         public override object GetSaveData()
         {
             SaveData_v1 data = new SaveData_v1();
+
+            data.artifact = artifact;
             data.item = item.GetSaveData();
 
             return data;
@@ -319,6 +327,7 @@ namespace DaggerfallWorkshop.Game.Questing
             if (dataIn == null)
                 return;
 
+            artifact = data.artifact;
             item = new DaggerfallUnityItem(data.item);
         }
 
