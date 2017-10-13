@@ -10,7 +10,6 @@
 //
 
 using UnityEngine;
-using System.Collections.Generic;
 using DaggerfallConnect.Utility;
 
 namespace DaggerfallWorkshop.Game.Utility
@@ -20,50 +19,19 @@ namespace DaggerfallWorkshop.Game.Utility
     /// Travel time needs to be coordinated between these systems for quests to provide a
     /// realistic amount of time for player to complete quest.
     /// 
-    /// Notes:
-    ///  * Created by Lypyl. Moved to own class by Interkarma so logic can be shared across systems.
     /// </summary>
     public class TravelTimeCalculator
     {
         #region Fields
 
-        public const float BaseTemperateTravelTime = 60.5f;         // Represents time to travel 1 pixel on foot recklessly, camping out, for different terrains
-        public const float BaseDesert224_225TravelTime = 63.5f;     // Should result in travel times fairly close to classic Daggerfall
-        public const float BaseDesert229TravelTime = 65.5f;
-        public const float BaseMountain226TravelTime = 67.5f;
-        public const float BaseSwamp227_228TravelTime = 72.5f;
-        public const float BaseMountain230TravelTime = 60.5f;
-        public const float BaseOceanTravelTime = 153.65f;
-        public const float InnModifier = .86f;
-        public const float HorseMod = .5f;
-        public const float CartMod = .75f;
-        public const float ShipMod = .3125f;
-        public const int CautiousMod = 2;
+        // Gives index to use with terrainMovementModifiers[]. Indexed by terrain type, starting with Ocean at index 0.
+        byte[] terrainMovementModifierIndices = { 0, 0, 0, 1, 2, 3, 4, 5, 5, 5 };
 
-        List<TerrainTypes> terrains = new List<TerrainTypes>();
+        // Gives movement modifiers used for different terrain types.
+        byte[] terrainMovementModifiers = { 240, 220, 200, 200, 230, 250 };
 
-        float travelTimeTotalLand = 0;
-        float travelTimeTotalWater = 0;
-
-        #endregion
-
-        #region Properties
-
-        /// <summary>
-        /// Gets total travel time over land.
-        /// </summary>
-        public float TravelTimeTotalLand
-        {
-            get { return travelTimeTotalLand; }
-        }
-
-        /// <summary>
-        /// Gets total travel time over water.
-        /// </summary>
-        public float TravelTimeTotalWater
-        {
-            get { return travelTimeTotalWater; }
-        }
+        // Used in calculating travel cost
+        int pixelsTraveledOnOcean = 0;
 
         #endregion
 
@@ -72,7 +40,7 @@ namespace DaggerfallWorkshop.Game.Utility
         public enum TerrainTypes
         {
             None = 0,
-            ocean = 223,
+            Ocean = 223,
             Desert = 224,
             Desert2 = 225,
             Mountain = 226,
@@ -89,156 +57,124 @@ namespace DaggerfallWorkshop.Game.Utility
         #region Public Methods
 
         /// <summary>
-        /// Creates an overland path from player's current location to destination.
-        /// This must be called before calculating distance.
+        /// Creates a path from player's current location to destination and
+        /// returns minutes taken to travel.
         /// </summary>
         /// <param name="endPos">Endpoint in map pixel coordinates.</param>
-        public void GeneratePath(DFPosition endPos)
+        public int CalculateTravelTime(DFPosition endPos,
+            bool speedCautious = false,
+            bool sleepModeInn = false,
+            bool travelShip = false,
+            bool hasHorse = false,
+            bool hasCart = false)
         {
-            Vector2[] directions = new Vector2[] { new Vector2(0, 1), new Vector2(1, 0), new Vector2(0, -1), new Vector2(-1, 0), new Vector2(1, 1), new Vector2(-1, 1), new Vector2(1, -1), new Vector2(-1, -1) };
-            //Vector2[] directions = new Vector2[] { new Vector2(0, 1), new Vector2(1, 0), new Vector2(0, -1), new Vector2(-1, 0)}; //4 direction movement
-            Vector2 current = new Vector2(GameManager.Instance.PlayerGPS.CurrentMapPixel.X, GameManager.Instance.PlayerGPS.CurrentMapPixel.Y);
-            Vector2 end = new Vector2(endPos.X, endPos.Y);
-            terrains.Clear();
-            while (current != end)
+            int transportModifier = 0;
+            if (hasHorse)
+                transportModifier = 128;
+            else if (hasCart)
+                transportModifier = 192;
+            else
+                transportModifier = 256;
+
+            int playerXMapPixel = GameManager.Instance.PlayerGPS.CurrentMapPixel.X;
+            int playerYMapPixel = GameManager.Instance.PlayerGPS.CurrentMapPixel.Y;
+            int distanceXMapPixels = endPos.X - playerXMapPixel;
+            int distanceYMapPixels = endPos.Y - playerYMapPixel;
+            int distanceXMapPixelsAbs = Mathf.Abs(distanceXMapPixels);
+            int distanceYMapPixelsAbs = Mathf.Abs(distanceYMapPixels);
+            int furthestOfXandYDistance = 0;
+
+            if (distanceXMapPixelsAbs <= distanceYMapPixelsAbs)
+                furthestOfXandYDistance = distanceYMapPixelsAbs;
+            else
+                furthestOfXandYDistance = distanceXMapPixelsAbs;
+
+            int xPixelMovementDirection;
+            int yPixelMovementDirection;
+
+            if (distanceXMapPixels >= 0)
+                xPixelMovementDirection = 1;
+            else
+                xPixelMovementDirection = -1;
+
+            if (distanceYMapPixels >= 0)
+                yPixelMovementDirection = 1;
+            else
+                yPixelMovementDirection = -1;
+
+            int numberOfMovements = 0;
+            int shorterOfXandYDistanceIncrementer = 0;
+
+            int minutesTakenThisMove = 0;
+            int minutesTakenTotal = 0;
+
+            DaggerfallConnect.Arena2.MapsFile mapsFile = DaggerfallUnity.Instance.ContentReader.MapFileReader;
+            pixelsTraveledOnOcean = 0;
+
+            while (numberOfMovements < furthestOfXandYDistance)
             {
-                float distance = Vector2.Distance(current, end);
-                int selection = 0;
-
-                for (int i = 0; i < directions.Length; i++)
+                if (furthestOfXandYDistance == distanceXMapPixelsAbs)
                 {
-                    Vector2 next = current + directions[i];
-                    if (current.x < 0 || current.y < 0 || current.x >= DaggerfallConnect.Arena2.MapsFile.MaxMapPixelX || current.y >= DaggerfallConnect.Arena2.MapsFile.MaxMapPixelY)
-                        continue;
+                    playerXMapPixel += xPixelMovementDirection;
+                    shorterOfXandYDistanceIncrementer += distanceYMapPixelsAbs;
 
-                    float check = Vector2.Distance(next, end);
-                    if (check < distance)
+                    if (shorterOfXandYDistanceIncrementer > distanceXMapPixelsAbs)
                     {
-                        distance = check;
-                        selection = i;
+                        shorterOfXandYDistanceIncrementer -= distanceXMapPixelsAbs;
+                        playerYMapPixel += yPixelMovementDirection;
                     }
+                }
+                else
+                {
+                    playerYMapPixel += yPixelMovementDirection;
+                    shorterOfXandYDistanceIncrementer += distanceXMapPixelsAbs;
 
+                    if (shorterOfXandYDistanceIncrementer > distanceYMapPixelsAbs)
+                    {
+                        shorterOfXandYDistanceIncrementer -= distanceYMapPixelsAbs;
+                        playerXMapPixel += xPixelMovementDirection;
+                    }
                 }
 
-                current += directions[selection];
-                terrains.Add((TerrainTypes)DaggerfallUnity.Instance.ContentReader.MapFileReader.GetClimateIndex((int)current.x, (int)current.y));
+                int terrainMovementIndex = 0;
+                int terrain = mapsFile.GetClimateIndex(playerXMapPixel, playerYMapPixel);
+                if (terrain == (int)TerrainTypes.Ocean)
+                {
+                    ++pixelsTraveledOnOcean;
+                    if (travelShip)
+                        minutesTakenThisMove = 51;
+                    else
+                        minutesTakenThisMove = 255;
+                }
+                else
+                {
+                    terrainMovementIndex = terrainMovementModifierIndices[terrain - (int)TerrainTypes.Ocean];
+                    minutesTakenThisMove = (((102 * transportModifier) >> 8)
+                        * (256 - terrainMovementModifiers[terrainMovementIndex] + 256)) >> 8;
+                }
+
+                if (!sleepModeInn)
+                    minutesTakenThisMove = (300 * minutesTakenThisMove) >> 8;
+                minutesTakenTotal += minutesTakenThisMove;
+                ++numberOfMovements;
             }
+
+            if (!speedCautious)
+                minutesTakenTotal = minutesTakenTotal >> 1;
+
+            return minutesTakenTotal;
         }
 
-        /// <summary>
-        /// Clears generated path to tidy up.
-        /// </summary>
-        public void ClearPath()
+        public int CalculateTripCost(int travelTimeInMinutes, bool sleepModeInn, bool hasShip, bool travelShip)
         {
-            terrains.Clear();
+            int travelTimeInDays = (travelTimeInMinutes + 59) / 60;
+            int cost = 0;
+            if (sleepModeInn)
+                cost = 5 * ((travelTimeInDays - pixelsTraveledOnOcean) / 24) + 5;
+            if ((pixelsTraveledOnOcean > 0) && !hasShip && travelShip)
+                cost += 25 * (pixelsTraveledOnOcean / 24 + 1);
+            return cost;
         }
-
-        /// <summary>
-        /// Calculates total travel time based on current overland path.
-        /// Interkarma Notes:
-        ///  * Original used TravelFoot as both local Property and passed as parameter via horse.
-        ///  * Kept original behaviour so code executes the same, but should probably be cleaned up.
-        /// </summary>
-        public void CalculateTravelTimeTotal(
-            bool travelFoot,
-            bool playerHasCart,
-            bool playerHasHorse,
-            bool cautiousSpeed = false,
-            bool inn = false,
-            bool horse = false,
-            bool cart = false,
-            bool ship = false)
-        {
-            travelTimeTotalLand = 0;
-            travelTimeTotalWater = 0;
-            foreach (TerrainTypes terrain in terrains)
-            {
-                CalculateTravelTime(terrain, travelFoot, playerHasCart, playerHasHorse, cautiousSpeed, inn, horse, cart, ship);
-            }
-
-            //Debug.Log(string.Format("Total Time Cost: {0}  Inn: {1} PlayerHasShip {2} PlayerHasCart: {3} PlayerHasHorse: {4}", time, inn, PlayerHasShip, PlayerHasCart, PlayerHasHorse));
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        void CalculateTravelTime(TerrainTypes terrainType,
-            bool travelFoot,
-            bool playerHasCart,
-            bool playerHasHorse,
-            bool cautiousSpeed = false,
-            bool inn = false,
-            bool horse = false,
-            bool cart = false,
-            bool ship = false)
-        {
-            float travelTimeLand = 0;
-            float travelTimeWater = 0;
-
-            switch (terrainType)
-            {
-                case TerrainTypes.None:
-                    travelTimeLand += BaseTemperateTravelTime;
-                    break;
-                case TerrainTypes.ocean:
-                    travelTimeWater += BaseOceanTravelTime;
-                    break;
-                case TerrainTypes.Desert:
-                    travelTimeLand += BaseDesert224_225TravelTime;
-                    break;
-                case TerrainTypes.Desert2:
-                    travelTimeLand += BaseDesert224_225TravelTime;
-                    break;
-                case TerrainTypes.Mountain:
-                    travelTimeLand += BaseMountain226TravelTime;
-                    break;
-                case TerrainTypes.Swamp:
-                    travelTimeLand += BaseSwamp227_228TravelTime;
-                    break;
-                case TerrainTypes.Swamp2:
-                    travelTimeLand += BaseSwamp227_228TravelTime;
-                    break;
-                case TerrainTypes.Desert3:
-                    travelTimeLand += BaseDesert229TravelTime;
-                    break;
-                case TerrainTypes.Mountain2:
-                    travelTimeLand += BaseMountain230TravelTime;
-                    break;
-                case TerrainTypes.Temperate:
-                    travelTimeLand += BaseTemperateTravelTime;
-                    break;
-                case TerrainTypes.Temperate2:
-                    travelTimeLand += BaseTemperateTravelTime;
-                    break;
-                default:
-                    travelTimeLand += BaseTemperateTravelTime;
-                    break;
-            }
-
-            if (terrainType == TerrainTypes.ocean && !travelFoot)
-                travelTimeWater *= ShipMod;
-            else if (terrainType != TerrainTypes.ocean)
-            {
-                if (inn)
-                    travelTimeLand *= InnModifier;
-                if (playerHasCart)
-                    travelTimeLand *= CartMod;
-                else if (playerHasHorse)
-                    travelTimeLand *= HorseMod;
-            }
-
-            if (cautiousSpeed)
-            {
-                travelTimeLand *= CautiousMod;
-                travelTimeWater *= CautiousMod;
-            }
-
-            //Debug.Log(string.Format("Time Cost: {0} Terrain Type: {1} Inn: {2} PlayerHasShip {3} PlayerHasCart: {4} PlayerHasHorse: {5}", time, terrainType.ToString(), inn, PlayerHasShip, PlayerHasCart, PlayerHasHorse));
-            travelTimeTotalLand += travelTimeLand;
-            travelTimeTotalWater += travelTimeWater;
-        }
-
         #endregion
     }
 }
