@@ -191,6 +191,10 @@ namespace DaggerfallWorkshop.Game
         {
             public QuestInfoResourceType resourceType;
             public List<TextFile.Token[]> answers;
+            public bool availableForDialog; // if it will show up in section "Tell Me About" in talk window (any dialog link for this resource will set this false, if no dialog link is present it will be set to true)
+            public List<string> dialogLinkedLocations; // list of location quest resources dialog-linked to this quest resource
+            public List<string> dialogLinkedPersons; // list of person quest resources dialog-linked to this quest resource
+            public List<string> dialogLinkedThings; // list of thing quest resources dialog-linked to this quest resource
         }
 
         // a dictionary of quest resources (key resource name, value is the QuestResourceInfo)
@@ -744,10 +748,76 @@ namespace DaggerfallWorkshop.Game
             QuestResourceInfo questResourceInfo = new QuestResourceInfo();
             questResourceInfo.answers = answers;
             questResourceInfo.resourceType = resourceType;
+            questResourceInfo.availableForDialog = true;
+            questResourceInfo.dialogLinkedLocations = new List<string>();
+            questResourceInfo.dialogLinkedPersons = new List<string>();
+            questResourceInfo.dialogLinkedThings = new List<string>();
 
             questResources.resourceInfo[resourceName] = questResourceInfo;
 
             dictQuestInfo[questID] = questResources;
+
+            // update topic list
+            AssembleTopiclistTellMeAbout();
+        }
+
+        public void AddDialogLinkForQuestInfoResource(ulong questID, string resourceName, QuestInfoResourceType resourceType, string linkedResourceName = null, QuestInfoResourceType linkedResourceType = QuestInfoResourceType.NotSet)
+        {
+            QuestResources questResources;
+            if (dictQuestInfo.ContainsKey(questID))
+            {
+                questResources = dictQuestInfo[questID];
+            }
+            else
+            {
+                Debug.Log(String.Format("AddDialogLinkForQuestInfoResource() could not find quest with questID {0}", questID));
+                return;
+            }
+
+            QuestResourceInfo questResource;
+            if (questResources.resourceInfo.ContainsKey(resourceName))
+            {
+                 questResource = questResources.resourceInfo[resourceName];
+            }
+            else
+            {
+                Debug.Log(String.Format("AddDialogLinkForQuestInfoResource() could not find a quest info resource with name {0}", resourceName));
+                return;
+            }
+            
+            switch (linkedResourceType)
+            {
+                case QuestInfoResourceType.NotSet:
+                    // no linked resource specified - don't create entries in linked resource lists but proceed (leave switch statement) so flag "availableForDialog" is set to false for resource
+                    break;
+                case QuestInfoResourceType.Location:
+                    if (!questResource.dialogLinkedLocations.Contains(linkedResourceName))
+                        questResource.dialogLinkedLocations.Add(linkedResourceName);
+                    break;
+                case QuestInfoResourceType.Person:
+                    if (!questResource.dialogLinkedPersons.Contains(linkedResourceName))
+                        questResource.dialogLinkedPersons.Add(linkedResourceName);
+                    break;
+                case QuestInfoResourceType.Thing:
+                    if (!questResource.dialogLinkedThings.Contains(linkedResourceName))
+                        questResource.dialogLinkedThings.Add(linkedResourceName);
+                    break;
+                default:
+                    Debug.Log("AddDialogLinkForQuestInfoResource(): unknown linked quest resource type");
+                    return;
+            }
+            
+            // "hide" quest resource dialog entry
+            questResource.availableForDialog = false;
+
+            if (linkedResourceName != null)
+            {
+                // "hide" linked quest resource dialog entry as well
+                if (questResources.resourceInfo.ContainsKey(linkedResourceName))
+                    questResources.resourceInfo[linkedResourceName].availableForDialog = false;
+                else
+                    Debug.Log("AddDialogLinkForQuestInfoResource(): linked quest resource not found");
+            }
 
             // update topic list
             AssembleTopiclistTellMeAbout();
@@ -963,7 +1033,9 @@ namespace DaggerfallWorkshop.Game
                     //QuestMacroHelper macroHelper = new QuestMacroHelper();
                     //macroHelper.ExpandQuestString(GameManager.Instance.QuestMachine.GetQuest(questID), ref captionString);
                     itemQuestTopic.caption = captionString;
-                    listTopicTellMeAbout.Add(itemQuestTopic);
+
+                    if (questResourceInfo.Value.availableForDialog) // only make it available for talk if it is not "hidden" by dialog link command
+                        listTopicTellMeAbout.Add(itemQuestTopic);
                 }
             }
 
