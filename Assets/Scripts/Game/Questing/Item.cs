@@ -317,7 +317,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     TextFile.Token[] tokens = message.GetTextTokensByVariant(i, false); // do not expand macros here (they will be expanded just in time by TalkManager class)
                     answers.Add(tokens);
                 }
-                GameManager.Instance.TalkManager.AddQuestInfoTopics(this.ParentQuest.UID, this.item.shortName, TalkManager.QuestInfoResourceType.Thing, answers);
+                GameManager.Instance.TalkManager.AddQuestInfoTopics(this.ParentQuest.UID, this.item.ItemName, TalkManager.QuestInfoResourceType.Thing, answers);
             }
         }
 
