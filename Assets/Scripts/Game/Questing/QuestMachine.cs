@@ -949,13 +949,13 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
-        /// Sets main quest stage from 1-6 (currently).
+        /// Sets main quest stage from 1-7 (currently).
         /// </summary>
         /// <param name="stage">Stage value.</param>
         public int SetMainQuestStage(int stage)
         {
             // Clamp to valid range
-            stage = Mathf.Clamp(stage, 1, 6);
+            stage = Mathf.Clamp(stage, 1, 7);
 
             // Setup current stage
             ClearMainQuestState();
@@ -1002,9 +1002,29 @@ namespace DaggerfallWorkshop.Game.Questing
                 GameManager.Instance.PlayerEntity.FactionData.ChangeReputation(363, 20);    // Medora +20
                 GameManager.Instance.PlayerEntity.FactionData.ChangeReputation(305, 20);    // King of Worms +20
                 GameManager.Instance.PlayerEntity.GlobalVars.SetGlobalVar(29, true);        // MyniseraSatisfied globalvar
+                GameManager.Instance.PlayerEntity.GlobalVars.SetGlobalVar(31, true);        // MetLadyBrisienna globalvar
                 GameManager.Instance.PlayerEntity.GlobalVars.SetGlobalVar(33, true);        // KingOfWormsSatisfied globalvar
                 InstantiateQuest("__MQSTAGE06");
                 InstantiateQuest("S0000977");
+            }
+            else if (stage == 7)
+            {
+                // Only raise level
+                if (GameManager.Instance.PlayerEntity.Level < 10)
+                    GameManager.Instance.PlayerEntity.Level = 10;
+
+                // Set global variables
+                GameManager.Instance.PlayerEntity.GlobalVars.SetGlobalVar(0, true);         // LiftedCurse globalvar
+                GameManager.Instance.PlayerEntity.GlobalVars.SetGlobalVar(9, true);         // MedoraGotHorn globalvar
+                GameManager.Instance.PlayerEntity.GlobalVars.SetGlobalVar(23, true);        // MorgiahSatisfied globalvar
+                GameManager.Instance.PlayerEntity.GlobalVars.SetGlobalVar(28, true);        // BarenziahSatisfied globalvar
+                GameManager.Instance.PlayerEntity.GlobalVars.SetGlobalVar(29, true);        // MyniseraSatisfied globalvar
+                GameManager.Instance.PlayerEntity.GlobalVars.SetGlobalVar(31, true);        // MetLadyBrisienna globalvar
+                GameManager.Instance.PlayerEntity.GlobalVars.SetGlobalVar(33, true);        // KingOfWormsSatisfied globalvar
+                GameManager.Instance.PlayerEntity.GlobalVars.SetGlobalVar(43, true);        // LysandusSatisfied globalvar
+
+                // Start final quest line
+                InstantiateQuest("S0000008");
             }
 
             return stage;
