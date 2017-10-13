@@ -65,10 +65,10 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
         public override void Update(Task caller)
         {
-            const int minHour = 8;
-            const int maxHour = 17;
+            const int minHour = 7;
+            const int maxHour = 18;
             const int minDelay = 40;
-            const int maxDelay = 600;
+            const int maxDelay = 500;
 
             base.Update(caller);
 
