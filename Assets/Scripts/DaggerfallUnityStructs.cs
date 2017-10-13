@@ -484,5 +484,6 @@ namespace DaggerfallWorkshop
         public Races targetRace;
         public Genders gender;
         public int faceIndex;
+        public int factionFaceIndex;
     }
 }

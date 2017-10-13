@@ -34,6 +34,7 @@ namespace DaggerfallWorkshop.Game
         bool isPlayerInside = false;
         bool isPlayerInsideDungeon = false;
         bool isPlayerInsideDungeonCastle = false;
+        bool isPlayerInsideSpecialArea = false;
         bool isRespawning = false;
         DaggerfallInterior interior;
         DaggerfallDungeon dungeon;
@@ -89,6 +90,15 @@ namespace DaggerfallWorkshop.Game
         public bool IsPlayerInsideDungeonCastle
         {
             get { return isPlayerInsideDungeonCastle; }
+        }
+
+        /// <summary>
+        /// True only when player inside special blocks of a dungeon.
+        /// For example, treasure room in Daggerfall castle.
+        /// </summary>
+        public bool IsPlayerInsideSpecialArea
+        {
+            get { return isPlayerInsideSpecialArea; }
         }
 
         /// <summary>
@@ -192,6 +202,7 @@ namespace DaggerfallWorkshop.Game
                     dungeon.GetBlockData(playerBlockIndex, out playerDungeonBlockData);
                     lastPlayerDungeonBlockIndex = playerBlockIndex;
                     CastleCheck();
+                    SpecialAreaCheck();
                     //Debug.Log(string.Format("Player is now inside block {0}", playerDungeonBlockData.BlockName));
                 }
             }
@@ -770,6 +781,25 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        private void SpecialAreaCheck()
+        {
+            if (!isPlayerInsideDungeon)
+            {
+                isPlayerInsideSpecialArea = false;
+                return;
+            }
+
+            switch (playerDungeonBlockData.BlockName)
+            {
+                case "S0000161.RDB":    // Daggerfall treasure room
+                    isPlayerInsideSpecialArea = true;
+                    break;
+                default:
+                    isPlayerInsideSpecialArea = false;
+                    break;
+            }
+        }
+
         private void SetStanding()
         {
             // Snap player to ground
@@ -777,6 +807,8 @@ namespace DaggerfallWorkshop.Game
             Ray ray = new Ray(transform.position, Vector3.down);
             if (Physics.Raycast(ray, out hit, controller.height * 2f))
             {
+                // Cancel movement so player doesn't take falling damage if they transitioned into a dungeon while jumping
+                GameManager.Instance.PlayerMotor.CancelMovement = true;
                 // Position player at hit position plus just over half controller height up
                 Vector3 pos = hit.point;
                 pos.y += controller.height / 2f + 0.25f;

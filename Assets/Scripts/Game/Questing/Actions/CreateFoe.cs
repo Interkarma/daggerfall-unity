@@ -80,7 +80,13 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // Handle "send" variant
             if (!string.IsNullOrEmpty(match.Groups["send"].Value))
+            {
                 action.isSendAction = true;
+
+                // "send" without "count" implies infinite
+                if (action.spawnMaxTimes == 0)
+                    action.spawnMaxTimes = -1;
+            }
 
             return action;
         }
@@ -187,34 +193,40 @@ namespace DaggerfallWorkshop.Game.Questing
             if (interiorParent == null)
                 throw new Exception("PlaceFoeFreely() must have a DaggerfallLocation parent object.");
 
-            // Use free spawn if no interior spawn points
-            if (interiorParent.SpawnPoints.Length == 0)
-            {
-                PlaceFoeFreely(gameObjects, interiorParent.transform);
-                return;
-            }
+            // Always place foes around player rather than use spawn points
+            // Spawn points work well for "interior hunt" quests but less so for "directly attack the player"
+            // Feel just placing freely will yield best results overall
+            PlaceFoeFreely(gameObjects, interiorParent.transform);
+            return;
 
-            // Place using spawn points
-            foreach (GameObject go in gameObjects)
-            {
-                Vector3 spawnPosition;
-                bool spawnPositionFound = interiorParent.GetRandomSpawnPoint(out spawnPosition);
-                go.transform.parent = interiorParent.transform;
+            //// Use free spawn if no interior spawn points
+            //if (interiorParent.SpawnPoints.Length == 0)
+            //{
+            //    PlaceFoeFreely(gameObjects, interiorParent.transform);
+            //    return;
+            //}
 
-                if (spawnPositionFound)
-                {
-                    go.transform.localPosition = spawnPosition;
-                }
-                else
-                {
-                    Debug.Log("Fallback placing behind player");
-                    PlayerMotor playerMotor = GameManager.Instance.PlayerMotor;
-                    go.transform.position = playerMotor.transform.position + -playerMotor.transform.forward;
-                }
+            //// Place using spawn points
+            //foreach (GameObject go in gameObjects)
+            //{
+            //    Vector3 spawnPosition;
+            //    bool spawnPositionFound = interiorParent.GetRandomSpawnPoint(out spawnPosition);
+            //    go.transform.parent = interiorParent.transform;
 
-                FinalizeFoe(go);
-                pendingFoesSpawned++;
-            }
+            //    if (spawnPositionFound)
+            //    {
+            //        go.transform.localPosition = spawnPosition;
+            //    }
+            //    else
+            //    {
+            //        Debug.Log("Fallback placing behind player");
+            //        PlayerMotor playerMotor = GameManager.Instance.PlayerMotor;
+            //        go.transform.position = playerMotor.transform.position + -playerMotor.transform.forward;
+            //    }
+
+            //    FinalizeFoe(go);
+            //    pendingFoesSpawned++;
+            //}
         }
 
         // Place foe somewhere near player when inside a dungeon

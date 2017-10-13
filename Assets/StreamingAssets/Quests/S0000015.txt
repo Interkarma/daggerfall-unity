@@ -3,6 +3,7 @@
 -- QuestId: 15
 Messages: 46
 Quest: S0000015
+DisplayName: Lysandus' Revenge
 -- Message panels
 QRC:
 
@@ -181,11 +182,11 @@ Foe Woodborne is Knight
 Foe _F.01_ is Spellsword
 
 --	Quest start-up:
-	place item WoodborneDiary at WoodbourneHall2 
+	place item WoodborneDiary at WoodbourneHall2 marker 1
 	log 1019 step 2 
 	reveal WoodbourneHall1 in province 23 at 194859 
 	WoodborneDiary used do _S.01_ 
-	place foe Woodborne at WoodbourneHall1 
+	place foe Woodborne at WoodbourneHall1 marker 2
 
 _S.00_ task:
 	killed 1 Woodborne 

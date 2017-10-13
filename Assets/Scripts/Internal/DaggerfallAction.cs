@@ -136,6 +136,7 @@ namespace DaggerfallWorkshop
         {DFBlock.RdbActionFlags.DrainMagicka, new ActionDelegate(DrainMagicka)},
         {DFBlock.RdbActionFlags.Activate,   new ActionDelegate(Activate)},
         {DFBlock.RdbActionFlags.DoorText, new ActionDelegate(DoorText)},
+        {DFBlock.RdbActionFlags.SetGlobalVar, new ActionDelegate(SetGlobalVar)},
         };
 
         public enum TriggerTypes
@@ -547,9 +548,26 @@ namespace DaggerfallWorkshop
         /// </summary>
         public static void OpenDoor(GameObject triggerObj, DaggerfallAction thisAction)
         {
+            // Try special action door
+            if (thisAction != null && thisAction.gameObject)
+            {
+                DaggerfallActionDoorSpecial specialDoor = thisAction.gameObject.GetComponent<DaggerfallActionDoorSpecial>();
+                if (specialDoor)
+                {
+                    if (specialDoor.IsOpen)
+                        return;
+                    else
+                    {
+                        specialDoor.ToggleDoor();
+                        return;
+                    }
+                }
+            }
+
+            // Try regular action door
             DaggerfallActionDoor door;
             if (!GetDoor(thisAction.gameObject, out door))
-                DaggerfallUnity.LogMessage(string.Format("No DaggerfallActionDoor component found"), true);
+                DaggerfallUnity.LogMessage(string.Format("No DaggerfallActionDoor or DaggerfallActionDoorSpecial component found"), true);
             else
             {
                 if (door.IsOpen)
@@ -569,10 +587,26 @@ namespace DaggerfallWorkshop
         /// </summary>
         public static void CloseDoor(GameObject triggerObj, DaggerfallAction thisAction)
         {
+            // Try special action door
+            if (thisAction != null && thisAction.gameObject)
+            {
+                DaggerfallActionDoorSpecial specialDoor = thisAction.gameObject.GetComponent<DaggerfallActionDoorSpecial>();
+                if (specialDoor)
+                {
+                    if (specialDoor.IsClosed)
+                        return;
+                    else
+                    {
+                        specialDoor.ToggleDoor();
+                        return;
+                    }
+                }
+            }
 
+            // Try regular action door
             DaggerfallActionDoor door;
             if (!GetDoor(thisAction.gameObject, out door))
-                DaggerfallUnity.LogMessage(string.Format("No DaggerfallActionDoor component found"), true);
+                DaggerfallUnity.LogMessage(string.Format("No DaggerfallActionDoor or DaggerfallActionDoorSpecial component found"), true);
             else
             {
                 if (!door.IsOpen)
@@ -584,7 +618,6 @@ namespace DaggerfallWorkshop
                 }
 
             }
-
         }
 
         /// <summary>
@@ -687,6 +720,17 @@ namespace DaggerfallWorkshop
         public static void Activate(GameObject triggerObj, DaggerfallAction thisAction)
         {
             return;
+        }
+
+        /// <summary>
+        /// 31
+        /// Sets global variable in quest system.
+        /// </summary>
+        public static void SetGlobalVar(GameObject triggerObj, DaggerfallAction thisAction)
+        {
+            // Global variable index stored in action axis value
+            GameManager.Instance.PlayerEntity.GlobalVars.SetGlobalVar(thisAction.ActionAxisRawValue, true);
+            Debug.LogFormat("Action set global variable #{0}", thisAction.ActionAxisRawValue);
         }
 
         /// <summary>

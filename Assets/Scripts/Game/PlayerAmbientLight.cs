@@ -28,6 +28,7 @@ namespace DaggerfallWorkshop.Game
         public Color InteriorNightAmbientLight = new Color(0.20f, 0.18f, 0.20f);
         public Color DungeonAmbientLight = new Color(0.12f, 0.12f, 0.12f);
         public Color CastleAmbientLight = new Color(0.58f, 0.58f, 0.58f);
+        public Color SpecialAreaLight = new Color(0.58f, 0.58f, 0.58f);
         public float FadeDuration = 3f;
         public float FadeStep = 0.1f;
 
@@ -71,6 +72,8 @@ namespace DaggerfallWorkshop.Game
                 {
                     if (playerEnterExit.IsPlayerInsideDungeonCastle)
                         targetAmbientLight = CastleAmbientLight;
+                    else if (playerEnterExit.IsPlayerInsideSpecialArea)
+                        targetAmbientLight = SpecialAreaLight;
                     else
                         targetAmbientLight = DungeonAmbientLight;
                 }

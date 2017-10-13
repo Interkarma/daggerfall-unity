@@ -3,6 +3,7 @@
 -- QuestId: 18
 Messages: 31
 Quest: S0000018
+DisplayName: Dust of Restful Death
 -- Message panels
 QRC:
 
@@ -60,7 +61,7 @@ Message:  1020
 <ce>                             now illegible.
 <ce>                                    
  Lady Med...
-
+ 
  ...favor. They intend to slay him. I am
  sending ........ers to stop them. You must
  support me. If the empire finds I have

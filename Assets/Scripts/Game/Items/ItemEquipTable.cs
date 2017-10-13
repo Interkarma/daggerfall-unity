@@ -153,6 +153,28 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
+        /// Checks if an item is currently equipped.
+        /// </summary>
+        /// <param name="item">Item to check.</param>
+        /// <returns>True if item is equipped.</returns>
+        public bool IsEquipped(DaggerfallUnityItem item)
+        {
+            if (item == null)
+                return false;
+
+            for (int i = 0; i < equipTable.Length; i++)
+            {
+                if (equipTable[i] == null)
+                    continue;
+
+                if (equipTable[i].UID == item.UID)
+                    return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Attempt to unequip item from slot.
         /// </summary>
         /// <param name="slot">Slot to unequip.</param>

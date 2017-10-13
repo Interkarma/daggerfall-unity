@@ -10,31 +10,26 @@
 //
 
 using UnityEngine;
-using System.Collections;
 using System.Text.RegularExpressions;
-using System;
 using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Questing.Actions
 {
     /// <summary>
-    /// Triggers when a Foe has been injured.
-    /// Will not fire if Foe dies immediately (e.g. player one-shots enemy).
+    /// Remove a quest Item from player.
     /// </summary>
-    public class InjuredFoe : ActionTemplate
+    public class TakeItem : ActionTemplate
     {
-        Symbol foeSymbol;
-        int textID;
+        Symbol itemSymbol;
 
         public override string Pattern
         {
-            get { return @"injured (?<aFoe>[a-zA-Z0-9_.-]+) saying (?<textID>\d+)|injured (?<aFoe>[a-zA-Z0-9_.-]+)"; }
+            get { return @"take (?<anItem>[a-zA-Z0-9_.]+) from pc"; }
         }
 
-        public InjuredFoe(Quest parentQuest)
+        public TakeItem(Quest parentQuest)
             : base(parentQuest)
         {
-            IsTriggerCondition = true;
         }
 
         public override IQuestAction CreateNew(string source, Quest parentQuest)
@@ -45,31 +40,29 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 return null;
 
             // Factory new action
-            InjuredFoe action = new InjuredFoe(parentQuest);
-            action.foeSymbol = new Symbol(match.Groups["aFoe"].Value);
-            action.textID = Parser.ParseInt(match.Groups["textID"].Value);
+            TakeItem action = new TakeItem(parentQuest);
+            action.itemSymbol = new Symbol(match.Groups["anItem"].Value);
 
             return action;
         }
 
-        public override bool CheckTrigger(Task caller)
+        public override void Update(Task caller)
         {
-            // Get related Foe resource
-            Foe foe = ParentQuest.GetFoe(foeSymbol);
-            if (foe == null)
-                return false;
+            base.Update(caller);
 
-            // Check injured flag
-            if (foe.InjuredTrigger)
+            // Attempt to get Item resource
+            Item item = ParentQuest.GetItem(itemSymbol);
+            if (item == null)
             {
-                // Optionally show message
-                if (textID != 0)
-                    ParentQuest.ShowMessagePopup(textID);
-
-                return true;
+                Debug.LogErrorFormat("Could not find Item resource symbol {0}", itemSymbol);
+                return;
             }
 
-            return false;
+            // Release item - this will clear equip state and remove item from player's inventory
+            // Now item is not associated with any collections and will just be garbage collected
+            GameManager.Instance.PlayerEntity.ReleaseQuestItemForReoffer(item.DaggerfallUnityItem);
+
+            SetComplete();
         }
 
         #region Serialization
@@ -77,15 +70,13 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         [fsObject("v1")]
         public struct SaveData_v1
         {
-            public Symbol foeSymbol;
-            public int textID;
+            public Symbol itemSymbol;
         }
 
         public override object GetSaveData()
         {
             SaveData_v1 data = new SaveData_v1();
-            data.foeSymbol = foeSymbol;
-            data.textID = textID;
+            data.itemSymbol = itemSymbol;
 
             return data;
         }
@@ -96,8 +87,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             if (dataIn == null)
                 return;
 
-            foeSymbol = data.foeSymbol;
-            textID = data.textID;
+            itemSymbol = data.itemSymbol;
         }
 
         #endregion

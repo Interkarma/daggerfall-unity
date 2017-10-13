@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -93,6 +93,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     video.Open(PlayOnStart);
                     video.Playing = true;
                     Cursor.visible = false;
+                    RaiseOnVideoStartGlobalEvent();
                 }
             }
         }
@@ -109,6 +110,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     customVideo.StopVideo();
                     RaiseOnVideoFinishedHandler();
+                    RaiseOnVideoEndGlobalEvent();
                     CloseWindow();
                 }
             }
@@ -120,12 +122,31 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     video.Playing = false;
                     video.Dispose();
                     RaiseOnVideoFinishedHandler();
+                    RaiseOnVideoEndGlobalEvent();
                     CloseWindow();
                 }
             }
         }
 
         #region Event Handlers
+
+        // OnVideoStart (global)
+        public delegate void OnVideoStartEventHandler();
+        public static event OnVideoStartEventHandler OnVideoStart;
+        protected virtual void RaiseOnVideoStartGlobalEvent()
+        {
+            if (OnVideoStart != null)
+                OnVideoStart();
+        }
+
+        // OnVideoEnd (global)
+        public delegate void OnVideoEndEventHandler();
+        public static event OnVideoEndEventHandler OnVideoEnd;
+        protected virtual void RaiseOnVideoEndGlobalEvent()
+        {
+            if (OnVideoEnd != null)
+                OnVideoEnd();
+        }
 
         // OnVideoFinished
         public delegate void OnVideoFinishedHandler();

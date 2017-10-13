@@ -3,6 +3,7 @@
 -- QuestId: 6
 Messages: 31
 Quest: S0000006
+DisplayName: Elysana's Robe
 -- Message panels
 QRC:
 

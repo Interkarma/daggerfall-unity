@@ -3,6 +3,7 @@
 -- QuestId: 22
 Messages: 12
 Quest: S0000022
+DisplayName: Lysandus' Revelation
 -- Message panels
 QRC:
 
@@ -13,7 +14,7 @@ RefuseQuest:  [1001]
 
 AcceptQuest:  [1002]
 <ce>                   The powder is ready. All you need
-<ce>                    to do is spinkle it on his true
+<ce>                    to do is sprinkle it on his true
 <ce>                   corpse. I must warn you. It will
 <ce>                  not put his shade to rest, but will
 <ce>                  soothe it sufficiently to allow you

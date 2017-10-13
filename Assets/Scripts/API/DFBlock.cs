@@ -705,8 +705,8 @@ namespace DaggerfallConnect
             ///<summary>30 Activate </summary>
             Activate = 0x1E,
 
-            ///<summary>31 Unknown - only on 2 objects, Main quest related </summary>
-            Unknown31 = 0x1F,
+            ///<summary>Sets a global variable in quest system - only used on 2 main quest objects.</summary>
+            SetGlobalVar = 0x1F,
 
             ///<summary>32  Unknown, only on 4 objects </summary>
             Unknown32 = 0x20,

@@ -383,13 +383,16 @@ namespace DaggerfallWorkshop
         /// <summary>
         /// Checks if player is inside a location world cell, optionally inside location rect, optionally outside
         /// </summary>
-        /// <returns></returns>
+        /// <returns>True if player inside a township</returns>
         public bool IsPlayerInTown(bool mustBeInLocationRect = false, bool mustBeOutside = false)
         {
             // Check if player inside a town cell
             if (CurrentLocationType == DFRegion.LocationTypes.TownCity ||
                 CurrentLocationType == DFRegion.LocationTypes.TownHamlet ||
-                CurrentLocationType == DFRegion.LocationTypes.TownVillage)
+                CurrentLocationType == DFRegion.LocationTypes.TownVillage ||
+                CurrentLocationType == DFRegion.LocationTypes.HomeFarms ||
+                CurrentLocationType == DFRegion.LocationTypes.HomeWealthy ||
+                CurrentLocationType == DFRegion.LocationTypes.ReligionTemple)
             {
                 // Optionally check if player inside location rect
                 if (mustBeInLocationRect && !IsPlayerInLocationRect)

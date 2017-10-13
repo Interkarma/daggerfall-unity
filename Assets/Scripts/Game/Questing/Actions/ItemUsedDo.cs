@@ -9,32 +9,31 @@
 // Notes:
 //
 
-using UnityEngine;
-using System.Collections;
 using System.Text.RegularExpressions;
-using System;
 using FullSerializer;
 
-namespace DaggerfallWorkshop.Game.Questing.Actions
+namespace DaggerfallWorkshop.Game.Questing
 {
     /// <summary>
-    /// Triggers when a Foe has been injured.
-    /// Will not fire if Foe dies immediately (e.g. player one-shots enemy).
+    /// Condition that fires when player equips an Item.
+    /// Seen in Sx006 when player equips the robe.
+    /// Outcome is distinct from "use" in inventory window.
     /// </summary>
-    public class InjuredFoe : ActionTemplate
+    public class ItemUsedDo : ActionTemplate
     {
-        Symbol foeSymbol;
+        Symbol itemSymbol;
+        Symbol taskSymbol;
         int textID;
 
         public override string Pattern
         {
-            get { return @"injured (?<aFoe>[a-zA-Z0-9_.-]+) saying (?<textID>\d+)|injured (?<aFoe>[a-zA-Z0-9_.-]+)"; }
+            get { return @"(?<anItem>[a-zA-Z0-9_.-]+) used do (?<aTask>[a-zA-Z0-9_.-]+)|" +
+                         @"(?<anItem>[a-zA-Z0-9_.-]+) used saying (?<textID>\d+) do (?<aTask>[a-zA-Z0-9_.-]+)"; }
         }
 
-        public InjuredFoe(Quest parentQuest)
+        public ItemUsedDo(Quest parentQuest)
             : base(parentQuest)
         {
-            IsTriggerCondition = true;
         }
 
         public override IQuestAction CreateNew(string source, Quest parentQuest)
@@ -45,31 +44,33 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 return null;
 
             // Factory new action
-            InjuredFoe action = new InjuredFoe(parentQuest);
-            action.foeSymbol = new Symbol(match.Groups["aFoe"].Value);
+            ItemUsedDo action = new ItemUsedDo(parentQuest);
+            action.itemSymbol = new Symbol(match.Groups["anItem"].Value);
+            action.taskSymbol = new Symbol(match.Groups["aTask"].Value);
             action.textID = Parser.ParseInt(match.Groups["textID"].Value);
 
             return action;
         }
 
-        public override bool CheckTrigger(Task caller)
+        public override void Update(Task caller)
         {
-            // Get related Foe resource
-            Foe foe = ParentQuest.GetFoe(foeSymbol);
-            if (foe == null)
-                return false;
+            // Attempt to get Item resource
+            Item item = ParentQuest.GetItem(itemSymbol);
+            if (item == null)
+                return;
 
-            // Check injured flag
-            if (foe.InjuredTrigger)
-            {
-                // Optionally show message
-                if (textID != 0)
-                    ParentQuest.ShowMessagePopup(textID);
+            // Check if player is wearing item
+            if (!GameManager.Instance.PlayerEntity.ItemEquipTable.IsEquipped(item.DaggerfallUnityItem))
+                return;
 
-                return true;
-            }
+            // Say message
+            if (textID != 0)
+                ParentQuest.ShowMessagePopup(textID);
 
-            return false;
+            // Trigger target task
+            ParentQuest.StartTask(taskSymbol);
+
+            SetComplete();
         }
 
         #region Serialization
@@ -77,14 +78,16 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         [fsObject("v1")]
         public struct SaveData_v1
         {
-            public Symbol foeSymbol;
+            public Symbol itemSymbol;
+            public Symbol taskSymbol;
             public int textID;
         }
 
         public override object GetSaveData()
         {
             SaveData_v1 data = new SaveData_v1();
-            data.foeSymbol = foeSymbol;
+            data.itemSymbol = itemSymbol;
+            data.taskSymbol = taskSymbol;
             data.textID = textID;
 
             return data;
@@ -96,7 +99,8 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             if (dataIn == null)
                 return;
 
-            foeSymbol = data.foeSymbol;
+            itemSymbol = data.itemSymbol;
+            taskSymbol = data.taskSymbol;
             textID = data.textID;
         }
 

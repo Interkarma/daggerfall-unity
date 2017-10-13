@@ -21,10 +21,12 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
     {
         Symbol foeSymbol;
         Symbol placeSymbol;
+        int marker = -1;
 
         public override string Pattern
         {
-            get { return @"place foe (?<aFoe>[a-zA-Z0-9_.-]+) at (?<aPlace>[a-zA-Z0-9_.-]+)"; }
+            get { return @"place foe (?<aFoe>[a-zA-Z0-9_.-]+) at (?<aPlace>[a-zA-Z0-9_.-]+) marker (?<marker>\d+)|" +
+                         @"place foe (?<aFoe>[a-zA-Z0-9_.-]+) at (?<aPlace>[a-zA-Z0-9_.-]+)"; }
         }
 
         public PlaceFoe(Quest parentQuest)
@@ -43,6 +45,11 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             PlaceFoe action = new PlaceFoe(parentQuest);
             action.foeSymbol = new Symbol(match.Groups["aFoe"].Value);
             action.placeSymbol = new Symbol(match.Groups["aPlace"].Value);
+
+            // Set custom marker
+            Group markerGroup = match.Groups["marker"];
+            if (markerGroup.Success)
+                action.marker = Parser.ParseInt(markerGroup.Value);
 
             return action;
         }
@@ -66,7 +73,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 throw new Exception(string.Format("Could not find Place resource symbol {0}", placeSymbol));
 
             // Assign Foe to Place
-            place.AssignQuestResource(foeSymbol);
+            place.AssignQuestResource(foeSymbol, marker);
 
             SetComplete();
         }
@@ -78,6 +85,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         {
             public Symbol foeSymbol;
             public Symbol placeSymbol;
+            public int marker;
         }
 
         public override object GetSaveData()
@@ -85,6 +93,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             SaveData_v1 data = new SaveData_v1();
             data.foeSymbol = foeSymbol;
             data.placeSymbol = placeSymbol;
+            data.marker = marker;
 
             return data;
         }
@@ -97,6 +106,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
             foeSymbol = data.foeSymbol;
             placeSymbol = data.placeSymbol;
+            marker = data.marker;
         }
 
         #endregion
