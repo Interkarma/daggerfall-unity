@@ -737,7 +737,6 @@ namespace DaggerfallWorkshop
         /// <summary>
         /// 32
         /// Shows text at the top of the screen when player clicks on associated door in info mode.
-        /// TODO: Can cause castle guards to go hostile if player clicked door outside of info mode.
         /// </summary>
         public static void DoorText(GameObject triggerObj, DaggerfallAction thisAction)
         {
@@ -794,9 +793,13 @@ namespace DaggerfallWorkshop
                         throw new System.Exception(string.Format("DaggerfallAction: Bad DoorTextID requested: {0}.", DoorTextID));
                     }
                 }
-                else
+            }
+            else
+            {
+                // Classic seems to only check whether this value is greater than 5, as a trespassing check
+                if (thisAction.ActionAxisRawValue > 5)
                 {
-                    // TODO: Fourth byte of thisAction determines if guards turn hostile.
+                    GameManager.Instance.MakeEnemiesHostile();
                 }
             }
         }
