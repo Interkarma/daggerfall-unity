@@ -19,6 +19,7 @@ using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game.Questing;
 
@@ -340,6 +341,14 @@ namespace DaggerfallWorkshop.Utility
                                 startMarkers.Add(flatObject);
                             else if (record == 8)
                                 enterMarkers.Add(flatObject);
+
+                            // Add special marker component for quest and item markers
+                            if (record == 11 || record == 18)
+                            {
+                                ulong markerID = (ulong)(blockData.Position + obj.This);
+                                DaggerfallMarker marker = flatObject.AddComponent<DaggerfallMarker>();
+                                marker.MarkerID = markerID;
+                            }
 
                             //add editor flats to actionLinkDict
                             if (!actionLinkDict.ContainsKey(obj.This))

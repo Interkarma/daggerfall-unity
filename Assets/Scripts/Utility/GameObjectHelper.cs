@@ -937,20 +937,37 @@ namespace DaggerfallWorkshop.Utility
             // Set name
             go.name = string.Format("Quest Item [{0} | {1}]", item.Symbol.Original, item.DaggerfallUnityItem.LongName);
 
-            // Marker position
-            Vector3 position;
-            Vector3 dungeonBlockPosition = new Vector3(marker.dungeonX * RDBLayout.RDBSide, 0, marker.dungeonZ * RDBLayout.RDBSide);
-            position = dungeonBlockPosition + marker.flatPosition;
+            // Get matching live scene marker (if any)
+            DaggerfallMarker sceneMarker = GetDaggerfallMarker(marker.markerID);
 
-            // Dungeon flats have a different origin (centre point) than elsewhere (base point)
-            // Find bottom of marker in world space as it should be aligned to placement surface (e.g. ground, table, shelf, etc.)
-            if (siteType == SiteTypes.Dungeon)
+            // Parent to scene marker or just set position
+            Vector3 position = Vector3.zero;
+            if (sceneMarker)
             {
-                position.y += (-DaggerfallLoot.randomTreasureMarkerDim / 2 * MeshReader.GlobalScale);
+                // Parent to scene marker
+                go.transform.parent = sceneMarker.transform;
+
+                // Move down item icon by half own size
+                position.y -= (dfBillboard.Summary.Size.y / 2f);
+            }
+            else
+            {
+                // Marker position
+                Vector3 dungeonBlockPosition = new Vector3(marker.dungeonX * RDBLayout.RDBSide, 0, marker.dungeonZ * RDBLayout.RDBSide);
+                position = dungeonBlockPosition + marker.flatPosition;
+
+                // Dungeon flats have a different origin (centre point) than elsewhere (base point)
+                // Find bottom of marker in world space as it should be aligned to placement surface (e.g. ground, table, shelf, etc.)
+                if (siteType == SiteTypes.Dungeon)
+                {
+                    position.y += (-DaggerfallLoot.randomTreasureMarkerDim / 2 * MeshReader.GlobalScale);
+                }
+
+                // Move up item icon by half own size
+                position.y += (dfBillboard.Summary.Size.y / 2f);
             }
 
-            // Now move up item icon by half own size and assign position
-            position.y += (dfBillboard.Summary.Size.y / 2f);
+            // Assign final position
             go.transform.localPosition = position;
 
             // Add QuestResourceBehaviour to GameObject
@@ -963,6 +980,21 @@ namespace DaggerfallWorkshop.Utility
             // Assign a trigger collider for clicks
             SphereCollider collider = go.AddComponent<SphereCollider>();
             collider.isTrigger = true;
+        }
+
+        /// <summary>
+        /// Get special marker in scene matching markerID.
+        /// </summary>
+        static DaggerfallMarker GetDaggerfallMarker(ulong markerID)
+        {
+            DaggerfallMarker[] markers = GameObject.FindObjectsOfType<DaggerfallMarker>();
+            foreach(DaggerfallMarker marker in markers)
+            {
+                if (marker.MarkerID == markerID)
+                    return marker;
+            }
+
+            return null;
         }
 
         #endregion

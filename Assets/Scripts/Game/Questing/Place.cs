@@ -963,7 +963,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <summary>
         /// Creates a new QuestMarker.
         /// </summary>
-        QuestMarker CreateQuestMarker(MarkerTypes markerType, Vector3 flatPosition, int dungeonX = 0, int dungeonZ = 0)
+        QuestMarker CreateQuestMarker(MarkerTypes markerType, Vector3 flatPosition, int dungeonX = 0, int dungeonZ = 0, ulong markerID = 0)
         {
             QuestMarker questMarker = new QuestMarker();
             questMarker.questUID = ParentQuest.UID;
@@ -972,6 +972,7 @@ namespace DaggerfallWorkshop.Game.Questing
             questMarker.flatPosition = flatPosition;
             questMarker.dungeonX = dungeonX;
             questMarker.dungeonZ = dungeonZ;
+            questMarker.markerID = markerID;
 
             return questMarker;
         }
@@ -1066,6 +1067,9 @@ namespace DaggerfallWorkshop.Game.Questing
                     // Look for flats in this group
                     foreach (DFBlock.RdbObject obj in group.RdbObjects)
                     {
+                        // Get marker ID
+                        ulong markerID = (ulong)(blockData.Position + obj.This);
+
                         // Look for editor flats
                         Vector3 position = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
                         if (obj.Type == DFBlock.RdbResourceTypes.Flat)
@@ -1075,10 +1079,10 @@ namespace DaggerfallWorkshop.Game.Questing
                                 switch (obj.Resources.FlatResource.TextureRecord)
                                 {
                                     case spawnMarkerFlatIndex:
-                                        questSpawnMarkerList.Add(CreateQuestMarker(MarkerTypes.QuestSpawn, position, dungeonBlock.X, dungeonBlock.Z));
+                                        questSpawnMarkerList.Add(CreateQuestMarker(MarkerTypes.QuestSpawn, position, dungeonBlock.X, dungeonBlock.Z, markerID));
                                         break;
                                     case itemMarkerFlatIndex:
-                                        questItemMarkerList.Add(CreateQuestMarker(MarkerTypes.QuestItem, position, dungeonBlock.X, dungeonBlock.Z));
+                                        questItemMarkerList.Add(CreateQuestMarker(MarkerTypes.QuestItem, position, dungeonBlock.X, dungeonBlock.Z, markerID));
                                         break;
                                 }
                             }
