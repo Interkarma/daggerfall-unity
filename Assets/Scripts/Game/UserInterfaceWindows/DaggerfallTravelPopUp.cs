@@ -246,7 +246,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             tripCost = travelTimeCalculator.CalculateTripCost(
                 travelTimeMinutes,
                 sleepModeInn,
-                hasShip,
+                false,  // TODO: Replace with hasShip when ship buying is implemented.
                 travelShip
                 );
 
