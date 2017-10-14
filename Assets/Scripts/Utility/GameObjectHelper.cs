@@ -764,7 +764,7 @@ namespace DaggerfallWorkshop.Utility
         /// Just working through the steps in buildings interiors for now.
         /// This will be moved to a different setup class later.
         /// </summary>
-        public static void AddQuestResourceObjects(SiteTypes siteType, Transform parent, int buildingKey = 0)
+        public static void AddQuestResourceObjects(SiteTypes siteType, Transform parent, int buildingKey = 0, bool enableNPCs = true, bool enableFoes = true, bool enableItems = true)
         {
             // Collect any SiteLinks associdated with this site
             SiteLink[] siteLinks = QuestMachine.Instance.GetSiteLinks(siteType, GameManager.Instance.PlayerGPS.CurrentMapID, buildingKey);
@@ -796,11 +796,11 @@ namespace DaggerfallWorkshop.Utility
                             continue;
 
                         // Inject to scene based on resource type
-                        if (resource is Person)
+                        if (resource is Person && enableNPCs)
                         {
                             AddQuestNPC(siteType, quest, spawnMarker, (Person)resource, parent);
                         }
-                        else if (resource is Foe)
+                        else if (resource is Foe && enableFoes)
                         {
                             Foe foe = (Foe)resource;
                             if (foe.KillCount < foe.SpawnCount)
@@ -810,19 +810,22 @@ namespace DaggerfallWorkshop.Utility
                 }
 
                 // Get selected item QuestMarker for this Place
-                QuestMarker itemMarker = place.SiteDetails.questItemMarkers[place.SiteDetails.selectedQuestItemMarker];
-                if (itemMarker.targetResources != null)
+                if (enableItems)
                 {
-                    foreach (Symbol target in itemMarker.targetResources)
+                    QuestMarker itemMarker = place.SiteDetails.questItemMarkers[place.SiteDetails.selectedQuestItemMarker];
+                    if (itemMarker.targetResources != null)
                     {
-                        // Get target resource
-                        QuestResource resource = quest.GetResource(target);
-                        if (resource == null)
-                            continue;
+                        foreach (Symbol target in itemMarker.targetResources)
+                        {
+                            // Get target resource
+                            QuestResource resource = quest.GetResource(target);
+                            if (resource == null)
+                                continue;
 
-                        // Inject into scene
-                        if (resource is Item)
-                            AddQuestItem(siteType, quest, itemMarker, (Item)resource, parent);
+                            // Inject into scene
+                            if (resource is Item)
+                                AddQuestItem(siteType, quest, itemMarker, (Item)resource, parent);
+                        }
                     }
                 }
             }

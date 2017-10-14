@@ -612,6 +612,9 @@ namespace DaggerfallWorkshop.Game
 
             EnableDungeonParent();
 
+            // Add quest resources - except foes, these are loaded from enemy save data
+            GameObjectHelper.AddQuestResourceObjects(SiteTypes.Dungeon, dungeon.transform, 0, true, false, true);
+
             // Set to start position
             MovePlayerToMarker(marker);
 
