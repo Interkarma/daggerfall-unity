@@ -422,32 +422,17 @@ namespace DaggerfallWorkshop.Game.Questing
             // Create a path to location
             // Use the most cautious time possible allowing for player to camp out or stop at inns along the way
             TravelTimeCalculator travelTimeCalculator = new TravelTimeCalculator();
-            travelTimeCalculator.GeneratePath(endPos);
-            travelTimeCalculator.CalculateTravelTimeTotal(true, false, false, true, false);
-
-            // Get travel time in total days across land and water
-            // Allow for return trip travel time plus some fudge for side goals and quest process itself
-            // How Daggerfall actually calcutes travel time is currently unknown
-            // This should be fair and realistic in most circumstances while still creating time pressures
-            // Modify "returnTripMultiplier" to make calcualted quest time harder/easier
-            int travelTimeDaysLand = 0;
-            int travelTimeDaysWater = 0;
-            int travelTimeDaysTotal = 0;
-            if (travelTimeCalculator.TravelTimeTotalLand > 0)
-                travelTimeDaysLand = (int)((travelTimeCalculator.TravelTimeTotalLand / 60 / 24) + 0.5);
-            if (travelTimeCalculator.TravelTimeTotalWater > 0)
-                travelTimeDaysWater = (int)((travelTimeCalculator.TravelTimeTotalWater / 60 / 24) + 0.5);
-            travelTimeDaysTotal = travelTimeDaysLand + travelTimeDaysWater;
+            int travelTimeMinutes = travelTimeCalculator.CalculateTravelTime(endPos, true, false, false, false, true);
 
             // Apply return trip multiplier
             if (returnTrip)
-                travelTimeDaysTotal = (int)(travelTimeDaysTotal * returnTripMultiplier);
+                travelTimeMinutes = (int)(travelTimeMinutes * returnTripMultiplier);
 
             // Always allow at least 1 day for travel time
-            if (travelTimeDaysTotal < 1)
-                travelTimeDaysTotal = 1;
+            if (travelTimeMinutes < 1440)
+                travelTimeMinutes = 1440;
 
-            return GetTimeInSeconds(travelTimeDaysTotal, 0, 0);
+            return GetTimeInSeconds(0, 0, travelTimeMinutes);
         }
 
         #endregion
