@@ -1000,30 +1000,48 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             for (int i = 0; i < enemies.Length; i++)
             {
-                // Apply to known enemies that are part of scene build
-                ulong key = enemies[i].loadID;
-                if (serializableEnemies.ContainsKey(key))
-                {
-                    serializableEnemies[key].RestoreSaveData(enemies[i]);
-                }
-                else
-                {
-                    // Add quest spawn enemies back to scene
-                    if (enemies[i].questSpawn)
-                    {
-                        // Create target GameObject
-                        GameObject go = GameObjectHelper.InstantiatePrefab(DaggerfallUnity.Instance.Option_EnemyPrefab.gameObject, enemies[i].gameObjectName, null, Vector3.zero);
-                        go.transform.parent = GameObjectHelper.GetSpawnParentTransform();
+                // Create target GameObject
+                GameObject go = GameObjectHelper.InstantiatePrefab(DaggerfallUnity.Instance.Option_EnemyPrefab.gameObject, enemies[i].gameObjectName, null, Vector3.zero);
+                go.transform.parent = GameObjectHelper.GetSpawnParentTransform();
 
-                        // Set LoadID
-                        DaggerfallEnemy enemy = go.GetComponent<DaggerfallEnemy>();
-                        enemy.LoadID = enemies[i].loadID;
+                // Set LoadID
+                DaggerfallEnemy enemy = go.GetComponent<DaggerfallEnemy>();
+                enemy.LoadID = enemies[i].loadID;
 
-                        // Restore save data
-                        SerializableEnemy serializableEnemy = go.GetComponent<SerializableEnemy>();
-                        serializableEnemy.RestoreSaveData(enemies[i]);
-                    }
-                }
+                // Restore save data
+                SerializableEnemy serializableEnemy = go.GetComponent<SerializableEnemy>();
+                serializableEnemy.RestoreSaveData(enemies[i]);
+
+                // Note: Enemies are no longer merged with existing scene data
+                // All enemy state is saved while player inside dungeon
+                // Enemies are not imported when loading a save game inside a dungeon
+                // They are only imported from save game state
+                // Keeping following code for now as reference only
+
+                //// Apply to known enemies that are part of scene build
+                //ulong key = enemies[i].loadID;
+                //if (serializableEnemies.ContainsKey(key))
+                //{
+                //    serializableEnemies[key].RestoreSaveData(enemies[i]);
+                //}
+                //else
+                //{
+                //    // Add quest spawn enemies back to scene
+                //    if (enemies[i].questSpawn)
+                //    {
+                //        // Create target GameObject
+                //        GameObject go = GameObjectHelper.InstantiatePrefab(DaggerfallUnity.Instance.Option_EnemyPrefab.gameObject, enemies[i].gameObjectName, null, Vector3.zero);
+                //        go.transform.parent = GameObjectHelper.GetSpawnParentTransform();
+
+                //        // Set LoadID
+                //        DaggerfallEnemy enemy = go.GetComponent<DaggerfallEnemy>();
+                //        enemy.LoadID = enemies[i].loadID;
+
+                //        // Restore save data
+                //        SerializableEnemy serializableEnemy = go.GetComponent<SerializableEnemy>();
+                //        serializableEnemy.RestoreSaveData(enemies[i]);
+                //    }
+                //}
             }
         }
 
@@ -1251,7 +1269,8 @@ namespace DaggerfallWorkshop.Game.Serialization
                 playerEnterExit.RespawnPlayer(
                     saveData.playerData.playerPosition.worldPosX,
                     saveData.playerData.playerPosition.worldPosZ,
-                    true);
+                    true,
+                    false);
             }
             else if (saveData.playerData.playerPosition.insideBuilding && hasExteriorDoors && !repositionPlayer)
             {

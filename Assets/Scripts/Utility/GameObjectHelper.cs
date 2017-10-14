@@ -457,6 +457,7 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="dungeonType">Dungeon type for random encounters.</param>
         /// <param name="seed">Seed for random encounters.</param>
         /// <param name="cloneFrom">Clone and build on a prefab object template.</param>
+        /// <param name="importEnemies">Import enemies from game data.</param>
         public static GameObject CreateRDBBlockGameObject(
             string blockName,
             int[] textureTable = null,
@@ -465,7 +466,8 @@ namespace DaggerfallWorkshop.Utility
             float monsterPower = 0.5f,
             int monsterVariance = 4,
             int seed = 0,
-            DaggerfallRDBBlock cloneFrom = null)
+            DaggerfallRDBBlock cloneFrom = null,
+            bool importEnemies = true)
         {
             // Get DaggerfallUnity
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
@@ -498,8 +500,11 @@ namespace DaggerfallWorkshop.Utility
             RDBLayout.AddTreasure(go, editorObjects, ref blockData, dungeonType);
 
             // Add enemies
-            RDBLayout.AddFixedEnemies(go, editorObjects, ref blockData);
-            RDBLayout.AddRandomEnemies(go, editorObjects, dungeonType, monsterPower, ref blockData, monsterVariance, seed);
+            if (importEnemies)
+            {
+                RDBLayout.AddFixedEnemies(go, editorObjects, ref blockData);
+                RDBLayout.AddRandomEnemies(go, editorObjects, dungeonType, monsterPower, ref blockData, monsterVariance, seed);
+            }
 
             // Link action nodes
             RDBLayout.LinkActionNodes(actionLinkDict);
@@ -1084,7 +1089,7 @@ namespace DaggerfallWorkshop.Utility
             return CreateDaggerfallDungeonGameObject(location, parent);
         }
 
-        public static GameObject CreateDaggerfallDungeonGameObject(DFLocation location, Transform parent)
+        public static GameObject CreateDaggerfallDungeonGameObject(DFLocation location, Transform parent, bool importEnemies = true)
         {
             if (!location.HasDungeon)
             {
@@ -1096,7 +1101,7 @@ namespace DaggerfallWorkshop.Utility
             GameObject go = new GameObject(string.Format("DaggerfallDungeon [Region={0}, Name={1}]", location.RegionName, location.Name));
             if (parent) go.transform.parent = parent;
             DaggerfallDungeon c = go.AddComponent<DaggerfallDungeon>();
-            c.SetDungeon(location);
+            c.SetDungeon(location, importEnemies);
 
             return go;
         }

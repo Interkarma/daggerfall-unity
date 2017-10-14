@@ -225,9 +225,10 @@ namespace DaggerfallWorkshop.Game
         public void RespawnPlayer(
             int worldX,
             int worldZ,
-            bool insideDungeon = false)
+            bool insideDungeon = false,
+            bool importEnemies = true)
         {
-            RespawnPlayer(worldX, worldZ, insideDungeon, false, null, false);
+            RespawnPlayer(worldX, worldZ, insideDungeon, false, null, false, importEnemies);
         }
 
         /// <summary>
@@ -240,7 +241,8 @@ namespace DaggerfallWorkshop.Game
             bool insideDungeon,
             bool insideBuilding,
             StaticDoor[] exteriorDoors = null,
-            bool forceReposition = false)
+            bool forceReposition = false,
+            bool importEnemies = true)
         {
             // Mark any existing world data for destruction
             if (dungeon)
@@ -258,10 +260,10 @@ namespace DaggerfallWorkshop.Game
             // Start respawn process
             isRespawning = true;
             SetExteriorDoors(exteriorDoors);
-            StartCoroutine(Respawner(worldX, worldZ, insideDungeon, insideBuilding, forceReposition));
+            StartCoroutine(Respawner(worldX, worldZ, insideDungeon, insideBuilding, forceReposition, importEnemies));
         }
 
-        IEnumerator Respawner(int worldX, int worldZ, bool insideDungeon, bool insideBuilding, bool forceReposition)
+        IEnumerator Respawner(int worldX, int worldZ, bool insideDungeon, bool insideBuilding, bool forceReposition, bool importEnemies)
         {
             // Wait for end of frame so existing world data can be removed
             yield return new WaitForEndOfFrame();
@@ -313,7 +315,7 @@ namespace DaggerfallWorkshop.Game
                 DFLocation location;
                 world.TeleportToCoordinates(pos.X, pos.Y, StreamingWorld.RepositionMethods.None);
                 dfUnity.ContentReader.GetLocation(summary.RegionIndex, summary.MapIndex, out location);
-                StartDungeonInterior(location, true);
+                StartDungeonInterior(location, true, importEnemies);
                 world.suppressWorld = true;
             }
             else if (hasLocation && insideBuilding && exteriorDoors != null)
@@ -582,14 +584,14 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Starts player inside dungeon with no exterior world.
         /// </summary>
-        public void StartDungeonInterior(DFLocation location, bool preferEnterMarker = true)
+        public void StartDungeonInterior(DFLocation location, bool preferEnterMarker = true, bool importEnemies = true)
         {
             // Ensure we have component references
             if (!ReferenceComponents())
                 return;
 
             // Layout dungeon
-            GameObject newDungeon = GameObjectHelper.CreateDaggerfallDungeonGameObject(location, DungeonParent.transform);
+            GameObject newDungeon = GameObjectHelper.CreateDaggerfallDungeonGameObject(location, DungeonParent.transform, importEnemies);
             newDungeon.hideFlags = defaultHideFlags;
             dungeon = newDungeon.GetComponent<DaggerfallDungeon>();
 

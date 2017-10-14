@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -73,7 +73,7 @@ namespace DaggerfallWorkshop
             public DFRegion.DungeonTypes DungeonType;
         }
 
-        public void SetDungeon(DFLocation location)
+        public void SetDungeon(DFLocation location, bool importEnemies = true)
         {
             if (!ReadyCheck())
                 return;
@@ -102,9 +102,9 @@ namespace DaggerfallWorkshop
             // Perform layout
             startMarker = null;
             if (location.Name == "Orsinium")
-                LayoutOrsinium(ref location);
+                LayoutOrsinium(ref location, importEnemies);
             else
-                LayoutDungeon(ref location);
+                LayoutDungeon(ref location, importEnemies);
 
             // Seal location
             isSet = true;
@@ -235,7 +235,7 @@ namespace DaggerfallWorkshop
 
         #region Private Methods
 
-        private void LayoutDungeon(ref DFLocation location)
+        private void LayoutDungeon(ref DFLocation location, bool importEnemies = true)
         {
 #if SHOW_LAYOUT_TIMES
             // Start timing
@@ -262,7 +262,8 @@ namespace DaggerfallWorkshop
                     monsterPower,
                     RandomMonsterVariance,
                     (int)DateTime.Now.Ticks/*Summary.ID*/,      // TODO: Add more options for seed
-                    dfUnity.Option_DungeonBlockPrefab);
+                    dfUnity.Option_DungeonBlockPrefab,
+                    importEnemies);
                 go.transform.parent = this.transform;
                 go.transform.position = new Vector3(block.X * RDBLayout.RDBSide, 0, block.Z * RDBLayout.RDBSide);
 
@@ -279,7 +280,7 @@ namespace DaggerfallWorkshop
         }
 
         // Orsinium defines two blocks at [-1,-1]
-        private void LayoutOrsinium(ref DFLocation location)
+        private void LayoutOrsinium(ref DFLocation location, bool importEnemies = true)
         {
             // Calculate monster power - this is a clamped 0-1 value based on player's level from 1-20
             float monsterPower = Mathf.Clamp01(GameManager.Instance.PlayerEntity.Level / 20f);
@@ -298,7 +299,8 @@ namespace DaggerfallWorkshop
                     monsterPower,
                     RandomMonsterVariance,
                     (int)DateTime.Now.Ticks/*Summary.ID*/,      // TODO: Add more options for seed
-                    dfUnity.Option_DungeonBlockPrefab);
+                    dfUnity.Option_DungeonBlockPrefab,
+                    importEnemies);
                 go.transform.parent = this.transform;
                 go.transform.position = new Vector3(block.X * RDBLayout.RDBSide, 0, block.Z * RDBLayout.RDBSide);
 
