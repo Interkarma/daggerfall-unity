@@ -242,10 +242,9 @@ namespace DaggerfallWorkshop.Game.Questing
                 waitingForStartup = false;
             }
 
-            // Do not tick while HUD fading
-            // This is to prevent quest popups or other actions while player
-            // moving between interior/exterior
-            if (DaggerfallUI.Instance.FadeInProgress)
+            // Do not tick while HUD fading, player respawning, or load in progress
+            // This is to prevent quest popups or other actions while player/world unavailable
+            if (DaggerfallUI.Instance.FadeInProgress || GameManager.Instance.PlayerEnterExit.IsRespawning || SaveLoadManager.Instance.LoadInProgress)
                 return;
 
             // Increment update timer

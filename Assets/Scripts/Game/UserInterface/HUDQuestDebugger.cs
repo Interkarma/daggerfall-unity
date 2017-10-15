@@ -130,6 +130,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             base.Update();
 
+            // Do not tick while HUD fading, player respawning, or load in progress
+            // This is to prevent quest popups or other actions while player/world unavailable
+            if (DaggerfallUI.Instance.FadeInProgress || GameManager.Instance.PlayerEnterExit.IsRespawning || SaveLoadManager.Instance.LoadInProgress)
+                return;
+
             if (QuestMachine.Instance.QuestCount == 0 && currentQuest != null)
             {
                 ClearCurrentQuest();
