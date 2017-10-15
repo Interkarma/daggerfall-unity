@@ -106,6 +106,8 @@ namespace DaggerfallWorkshop.Game
 
         private bool cancelMovement = false;
 
+        FakeLevitate fakeLevitate;
+
         public bool IsGrounded
         {
             get { return grounded; }
@@ -168,6 +170,8 @@ namespace DaggerfallWorkshop.Game
             slideLimit = controller.slopeLimit - .1f;
             jumpTimer = antiBunnyHopFactor;
             mainCamera = GameManager.Instance.MainCamera;
+
+            fakeLevitate = GetComponent<FakeLevitate>();
         }
 
         void FixedUpdate()
@@ -181,6 +185,10 @@ namespace DaggerfallWorkshop.Game
                 ClearFallingDamage();
                 return;
             }
+
+            // Do nothing if player fake levitating - replacement motor will take over movement
+            if (fakeLevitate && fakeLevitate.IsLevitating)
+                return;
 
             //float inputX = Input.GetAxis("Horizontal");
             //float inputY = Input.GetAxis("Vertical");
@@ -411,6 +419,10 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
+            // Do nothing if player fake levitating - replacement motor will take over movement
+            if (fakeLevitate && fakeLevitate.IsLevitating)
+                return;
+
             if (isRiding && !riding)
             {
                 Vector3 pos = mainCamera.transform.localPosition;

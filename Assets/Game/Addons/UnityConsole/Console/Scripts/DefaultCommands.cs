@@ -41,6 +41,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(ClearMQState.name, ClearMQState.description, ClearMQState.usage, ClearMQState.Execute);
             ConsoleCommandsDatabase.RegisterCommand(SetMQStage.name, SetMQStage.description, SetMQStage.usage, SetMQStage.Execute);
             ConsoleCommandsDatabase.RegisterCommand(SetLevel.name, SetLevel.description, SetLevel.usage, SetLevel.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(Levitate.name, Levitate.description, Levitate.usage, Levitate.Execute);
             ConsoleCommandsDatabase.RegisterCommand(OpenAllDoors.name, OpenAllDoors.description, OpenAllDoors.usage, OpenAllDoors.Execute);
             ConsoleCommandsDatabase.RegisterCommand(OpenDoor.name, OpenDoor.description, OpenDoor.usage, OpenDoor.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ActivateAction.name, ActivateAction.description, ActivateAction.usage, ActivateAction.Execute);
@@ -988,6 +989,37 @@ namespace Wenzil.Console
                 GameManager.Instance.PlayerEntity.Level = Mathf.Clamp(level, 1, 30);
 
                 return "Finished";
+            }
+        }
+        private static class Levitate
+        {
+            public static readonly string name = "levitate";
+            public static readonly string error = "Could not start levitating.";
+            public static readonly string description = "Start or stop levitating.";
+            public static readonly string usage = "levitate on|off";
+
+            public static string Execute(params string[] args)
+            {
+                if (args == null || args.Length != 1)
+                    return HelpCommand.Execute(name);
+
+                FakeLevitate fakeLevitate = GameManager.Instance.PlayerMotor.GetComponent<FakeLevitate>();
+                if (!fakeLevitate)
+                    return "Could not find FakeLevitate component peered with PlayerMotor.";
+
+                string state = args[0];
+                if (string.Compare(state, "on", true) == 0)
+                {
+                    fakeLevitate.IsLevitating = true;
+                    return "Player is now levitating";
+                }
+                else if (string.Compare(state, "off", true) == 0)
+                {
+                    fakeLevitate.IsLevitating = false;
+                    return "Player is no longer levitating";
+                }
+
+                return HelpCommand.Execute(name);
             }
         }
 
