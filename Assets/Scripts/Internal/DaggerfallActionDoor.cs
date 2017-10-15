@@ -227,6 +227,9 @@ namespace DaggerfallWorkshop
                         ToggleDoor(true);
                     }
                 }
+
+                if (Game.GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeonCastle)
+                    Game.GameManager.Instance.MakeEnemiesHostile();
             }
         }
 
