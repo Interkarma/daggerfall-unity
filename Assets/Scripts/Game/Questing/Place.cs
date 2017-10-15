@@ -695,9 +695,14 @@ namespace DaggerfallWorkshop.Game.Questing
                     siteType = SiteTypes.Dungeon;
                 }
             }
+            else if (p1 == 50000)
+            {
+                // Hardcode ID for MantellanCrux as game data not a match
+                siteType = SiteTypes.Dungeon;
+            }
             else
             {
-                // If p1 resolves then exterior is referenced
+                // If p1 does not resolve then exterior is referenced
                 siteType = SiteTypes.Town;
             }
 
@@ -706,10 +711,20 @@ namespace DaggerfallWorkshop.Game.Questing
             QuestMarker[] questSpawnMarkers = null, questItemMarkers = null;
             if (siteType == SiteTypes.Dungeon)
             {
-                // Dungeon must be a valid quest site
+                // Enumerate markers
                 EnumerateDungeonQuestMarkers(location, out questSpawnMarkers, out questItemMarkers);
-                if (!ValidateQuestMarkers(questSpawnMarkers, questItemMarkers))
-                    throw new Exception(string.Format("Could not find any quest markers in random dungeon {0}", location.Name));
+                if (p1 == 50000)
+                {
+                    // Hardcode for MantellanCrux as it only has a quest spawn marker
+                    if (questSpawnMarkers == null || questSpawnMarkers.Length == 0)
+                        throw new Exception("Could not find spawn marker in MantellanCrux");
+                }
+                else
+                {
+                    // Dungeon must be a valid quest site with both quest spawn and quest item markers
+                    if (!ValidateQuestMarkers(questSpawnMarkers, questItemMarkers))
+                        throw new Exception(string.Format("Could not find any quest markers in random dungeon {0}", location.Name));
+                }
             }
 
             // Configure magic number index for fixed dungeons

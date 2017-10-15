@@ -323,6 +323,7 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new DropAsQuestor(null));
             RegisterAction(new ItemUsedDo(null));
             RegisterAction(new TakeItem(null));
+            RegisterAction(new TeleportPc(null));
 
             // In progress - these actions are being actively developed
 

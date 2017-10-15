@@ -810,7 +810,7 @@ namespace DaggerfallWorkshop.Utility
                 }
 
                 // Get selected item QuestMarker for this Place
-                if (enableItems)
+                if (enableItems && place.SiteDetails.questItemMarkers != null)
                 {
                     QuestMarker itemMarker = place.SiteDetails.questItemMarkers[place.SiteDetails.selectedQuestItemMarker];
                     if (itemMarker.targetResources != null)
