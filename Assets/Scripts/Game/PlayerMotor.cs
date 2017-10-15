@@ -107,6 +107,7 @@ namespace DaggerfallWorkshop.Game
         private bool cancelMovement = false;
 
         FakeLevitate fakeLevitate;
+        float freezeMotor = 0;
 
         public bool IsGrounded
         {
@@ -161,6 +162,17 @@ namespace DaggerfallWorkshop.Game
             set { cancelMovement = value; }
         }
 
+        /// <summary>
+        /// Freeze motor for an amount of time in seconds.
+        /// Used by teleport action to prevent player from falling when teleport is part of a physics change.
+        /// It can take a few frames for physics to catch up.
+        /// </summary>
+        public float FreezeMotor
+        {
+            get { return freezeMotor; }
+            set { freezeMotor = value; }
+        }
+
         void Start()
         {
             controller = GetComponent<CharacterController>();
@@ -183,6 +195,18 @@ namespace DaggerfallWorkshop.Game
                 cancelMovement = false;
                 ClearActivePlatform();
                 ClearFallingDamage();
+                return;
+            }
+
+            // Handle freeze movement
+            if (freezeMotor > 0)
+            {
+                freezeMotor -= Time.deltaTime;
+                if (freezeMotor <= 0)
+                {
+                    freezeMotor = 0;
+                    CancelMovement = true;
+                }
                 return;
             }
 
