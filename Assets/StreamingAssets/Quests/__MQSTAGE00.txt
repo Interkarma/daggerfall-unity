@@ -9,7 +9,7 @@ QRC:
 Message:  1030
 <ce>Welcome to Daggerfall Unity!
 <ce>
-<ce>The main story quest is available, but not yet fully functional.
+<ce>The main story quest is fully available but might contain bugs.
 <ce>You may need to start again later with a new character.
 <ce>
 <ce>Would you like to begin main quest now?

@@ -74,6 +74,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 player.transform.position = resumePosition;
                 resumePending = false;
                 SetComplete();
+                return;
             }
 
             // Create SiteLink if not already present
