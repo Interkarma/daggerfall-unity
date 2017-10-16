@@ -761,7 +761,7 @@ namespace DaggerfallWorkshop.Game
             AssembleTopiclistTellMeAbout();
         }
 
-        public void AddDialogLinkForQuestInfoResource(ulong questID, string resourceName, QuestInfoResourceType resourceType, string linkedResourceName = null, QuestInfoResourceType linkedResourceType = QuestInfoResourceType.NotSet)
+        public void DialogLinkForQuestInfoResource(ulong questID, string resourceName, QuestInfoResourceType resourceType, string linkedResourceName = null, QuestInfoResourceType linkedResourceType = QuestInfoResourceType.NotSet)
         {
             QuestResources questResources;
             if (dictQuestInfo.ContainsKey(questID))
@@ -818,6 +818,36 @@ namespace DaggerfallWorkshop.Game
                 else
                     Debug.Log("AddDialogLinkForQuestInfoResource(): linked quest resource not found");
             }
+
+            // update topic list
+            AssembleTopiclistTellMeAbout();
+        }
+
+        public void AddDialogForQuestInfoResource(ulong questID, string resourceName, QuestInfoResourceType resourceType)
+        {
+            QuestResources questResources;
+            if (dictQuestInfo.ContainsKey(questID))
+            {
+                questResources = dictQuestInfo[questID];
+            }
+            else
+            {
+                Debug.Log(String.Format("AddDialogLinkForQuestInfoResource() could not find quest with questID {0}", questID));
+                return;
+            }
+
+            QuestResourceInfo questResource;
+            if (questResources.resourceInfo.ContainsKey(resourceName))
+            {
+                questResource = questResources.resourceInfo[resourceName];
+            }
+            else
+            {
+                Debug.Log(String.Format("AddDialogLinkForQuestInfoResource() could not find a quest info resource with name {0}", resourceName));
+                return;
+            }
+
+            questResource.availableForDialog = true;
 
             // update topic list
             AssembleTopiclistTellMeAbout();

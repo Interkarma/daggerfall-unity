@@ -326,10 +326,10 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // In progress - these actions are being actively developed
             RegisterAction(new DialogLink(null));
+            RegisterAction(new AddDialog(null));
 
             // Stubs - these actions are not complete yet
-            // Just setting up so certain quests compile for now            
-            //RegisterAction(new AddDialog(null));
+            // Just setting up so certain quests compile for now
             //RegisterAction(new MuteNpc(null));
             //RegisterAction(new LegalRepute(null));
 
