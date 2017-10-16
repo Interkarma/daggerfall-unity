@@ -94,12 +94,17 @@ namespace DaggerfallWorkshop.Game.Questing
         [fsObject("v1")]
         public struct SaveData_v1
         {
+            public Symbol placeSymbol;
+            public Symbol npcSymbol;
+            public Symbol itemSymbol;
         }
 
         public override object GetSaveData()
         {
             SaveData_v1 data = new SaveData_v1();
-
+            data.placeSymbol = placeSymbol;
+            data.npcSymbol = npcSymbol;
+            data.itemSymbol = itemSymbol;
             return data;
         }
 
@@ -108,6 +113,9 @@ namespace DaggerfallWorkshop.Game.Questing
             SaveData_v1 data = (SaveData_v1)dataIn;
             if (dataIn == null)
                 return;
+            placeSymbol = data.placeSymbol;
+            npcSymbol = data.npcSymbol;
+            itemSymbol = data.itemSymbol;
         }
 
         #endregion
