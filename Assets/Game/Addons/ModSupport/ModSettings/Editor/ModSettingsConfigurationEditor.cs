@@ -19,6 +19,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
     [CustomEditor(typeof(ModSettingsConfiguration))]
     public class ModSettingsConfigurationEditor : Editor
     {
+        #region Fields
+
+        const bool foldoutStartExpanded = true;
+        const int newSectionKeyCount = 1;
+
         SerializedProperty _version;
         SerializedProperty _isPreset;
         SerializedProperty _presetSettings;
@@ -26,15 +31,18 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         SerializedProperty _sections;
 
-        bool sectionsExpanded = true;
+        bool sectionsExpanded = foldoutStartExpanded;
         int sectionsCount;
 
         Dictionary<int, bool> sectionExpanded = new Dictionary<int, bool>();
         Dictionary<int, int> keysCount = new Dictionary<int, int>();
-
         Dictionary<string, bool> keysExpanded = new Dictionary<string, bool>();
 
         ModSettingsConfiguration Target;
+
+        #endregion
+
+        #region Inspector Setup
 
         private void OnEnable()
         {
@@ -55,6 +63,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
             EditorGUILayout.HelpBox("Create settings for a mod. Remember to name the file 'modsettings.asset'", MessageType.Info);
 
+            // Header
             EditorGUILayout.LabelField("Header", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(_version);
             EditorGUILayout.PropertyField(_isPreset);
@@ -64,6 +73,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             else
                 EditorGUILayout.PropertyField(_presets, true);
 
+            // Settings
             EditorGUILayout.Separator();
             EditorGUILayout.LabelField("Settings", EditorStyles.boldLabel);
 
@@ -72,10 +82,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             {
                 EditorGUI.indentLevel++;
                 sectionsCount = EditorGUILayout.IntField("Size", sectionsCount);
-                while (_sections.arraySize > sectionsCount)
-                    _sections.DeleteArrayElementAtIndex(_sections.arraySize - 1);
-                while (_sections.arraySize < sectionsCount)
-                    _sections.InsertArrayElementAtIndex(_sections.arraySize);
+                if (_sections.arraySize != sectionsCount)
+                    ResizeArray(ref _sections, sectionsCount);
 
                 var sectionNames = new List<string>();
 
@@ -83,18 +91,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 {
                     SerializedProperty _section = _sections.GetArrayElementAtIndex(i);
                     SerializedProperty _sectionName = _section.FindPropertyRelative("name");
+                    if (string.IsNullOrEmpty(_sectionName.stringValue))
+                        _sectionName.stringValue = "Section";
                     sectionNames.Add(_sectionName.stringValue);
 
-                    bool thisSectionsExpanded;
-                    if (!sectionExpanded.TryGetValue(i, out thisSectionsExpanded))
-                    {
-                        thisSectionsExpanded = true;
-                        sectionExpanded.Add(i, true);
-                    }
-                    thisSectionsExpanded = EditorGUILayout.Foldout(thisSectionsExpanded, _sectionName.stringValue, true);
-                    sectionExpanded.Remove(i);
-                    sectionExpanded.Add(i, thisSectionsExpanded);
-                    if (thisSectionsExpanded)
+                    if (IsSectionFoldoutExpanded(i, _sectionName.stringValue))
                     {
                         EditorGUI.indentLevel++;
                         EditorGUILayout.PropertyField(_sectionName);
@@ -103,43 +104,19 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
                         var keyNames = new List<string>();
 
-                        int thisKeysCount;
-                        if (!keysCount.TryGetValue(i, out thisKeysCount))
-                        {
-                            try
-                            {
-                                thisKeysCount = Target.sections[i].keys.Length;
-                            }
-                            catch
-                            {
-                                thisKeysCount = 1;
-                            }
-                            keysCount.Add(i, thisKeysCount);
-                        }
-                        thisKeysCount = EditorGUILayout.IntField("Keys", thisKeysCount);
-                        while (_keys.arraySize > thisKeysCount)
-                            _keys.DeleteArrayElementAtIndex(_sections.arraySize - 1);
-                        while (_keys.arraySize < thisKeysCount)
-                            _keys.InsertArrayElementAtIndex(_keys.arraySize);
-                        keysCount.Remove(i);
-                        keysCount.Add(i, thisKeysCount);
+                        int thisKeysCount = KeysCount(i);
+                        if (_keys.arraySize != thisKeysCount)
+                            ResizeArray(ref _keys, thisKeysCount);
 
                         for (int j = 0; j < _keys.arraySize; j++)
                         {
                             SerializedProperty _key = _keys.GetArrayElementAtIndex(j);
                             SerializedProperty _keyName = _key.FindPropertyRelative("name");
+                            if (string.IsNullOrEmpty(_keyName.stringValue))
+                                _keyName.stringValue = "Key";
+                            keyNames.Add(_keyName.stringValue);
 
-                            bool thisKeyExpanded;
-                            string dictKey = i + "_" + j;
-                            if (!keysExpanded.TryGetValue(dictKey, out thisKeyExpanded))
-                            {
-                                thisKeyExpanded = true;
-                                keysExpanded.Add(dictKey, true);
-                            }
-                            thisKeyExpanded = EditorGUILayout.Foldout(thisKeyExpanded, _keyName.stringValue, true);
-                            keysExpanded.Remove(dictKey);
-                            keysExpanded.Add(dictKey, thisKeyExpanded);
-                            if (thisKeyExpanded)
+                            if (IsKeyFoldoutExpanded(i, j, _keyName.stringValue))
                             {
                                 EditorGUILayout.PropertyField(_keyName);
                                 EditorGUILayout.PropertyField(_key.FindPropertyRelative("description"));
@@ -148,7 +125,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                                 EditorGUILayout.PropertyField(_type);
 
                                 var keyType = (ModSettingsKey.KeyType)_type.enumValueIndex;
-                                switch(keyType)
+                                switch (keyType)
                                 {
                                     case ModSettingsKey.KeyType.Toggle:
                                         EditorGUILayout.PropertyField(_key.FindPropertyRelative("toggle").FindPropertyRelative("value"));
@@ -162,6 +139,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                                         SerializedProperty _slider = _key.FindPropertyRelative("slider");
                                         SerializedProperty _sliderMin = _slider.FindPropertyRelative("min");
                                         SerializedProperty _sliderMax = _slider.FindPropertyRelative("max");
+                                        if (_sliderMin.intValue == 0 && _sliderMax.intValue == 0)
+                                            _sliderMax.intValue = 100;
                                         EditorGUILayout.IntSlider(_slider.FindPropertyRelative("value"), _sliderMin.intValue, _sliderMax.intValue);
                                         GUILayout.BeginHorizontal();
                                         EditorGUILayout.PropertyField(_sliderMin);
@@ -174,6 +153,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                                         SerializedProperty _floatSliderValue = _floatSlider.FindPropertyRelative("value");
                                         SerializedProperty _floatSliderMin = _floatSlider.FindPropertyRelative("min");
                                         SerializedProperty _floatSliderMax = _floatSlider.FindPropertyRelative("max");
+                                        if (_floatSliderMin.floatValue == 0 && _floatSliderMax.floatValue == 0)
+                                            _floatSliderMax.floatValue = 1;
                                         EditorGUILayout.Slider(_floatSliderValue, _floatSliderMin.floatValue, _floatSliderMax.floatValue);
                                         GUILayout.BeginHorizontal();
                                         EditorGUILayout.PropertyField(_floatSliderMin);
@@ -205,8 +186,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                                         EditorGUILayout.PropertyField(_key.FindPropertyRelative("color").FindPropertyRelative("color"));
                                         break;
                                 }
-
-                                keyNames.Add(_keyName.stringValue);
                             }
                         }
 
@@ -223,6 +202,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                     EditorGUILayout.HelpBox("Multiple sections with the same name detected!", MessageType.Error);
             }
 
+            // Import/Export
             EditorGUILayout.Separator();
             EditorGUILayout.LabelField("Import/Export", EditorStyles.boldLabel);
             EditorGUILayout.HelpBox("Import from/export to Untracked/modsettings.json", MessageType.None);
@@ -236,9 +216,77 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             serializedObject.ApplyModifiedProperties();
         }
 
+        #endregion
+
+        #region Private Methods
+
+        /// <summary>
+        /// Is this section visible?
+        /// </summary>
+        private bool IsSectionFoldoutExpanded(int section, string title)
+        {
+            bool isExpanded;
+            if (!sectionExpanded.TryGetValue(section, out isExpanded))
+            {
+                isExpanded = foldoutStartExpanded;
+                sectionExpanded.Add(section, isExpanded);
+            }
+            isExpanded = EditorGUILayout.Foldout(isExpanded, title, true);
+            sectionExpanded[section] = isExpanded;
+            return isExpanded;
+        }
+
+        /// <summary>
+        /// Is this key visible?
+        /// </summary>
+        private bool IsKeyFoldoutExpanded(int section, int key, string title)
+        {
+            bool isExpanded;
+            string dictKey = section + "_" + key;
+            if (!keysExpanded.TryGetValue(dictKey, out isExpanded))
+            {
+                isExpanded = foldoutStartExpanded;
+                keysExpanded.Add(dictKey, isExpanded);
+            }
+            isExpanded = EditorGUILayout.Foldout(isExpanded, title, true);
+            keysExpanded[dictKey] = isExpanded;
+            return isExpanded;
+        }
+
+        /// <summary>
+        /// Get number of keys in a section
+        /// </summary>
+        private int KeysCount(int section)
+        {
+            int count;
+            if (!keysCount.TryGetValue(section, out count))
+            {
+                if (section < Target.sections.Length)
+                    count = Target.sections[section].keys.Length;
+                else
+                    count = newSectionKeyCount;
+
+                keysCount.Add(section, count);
+            }
+            count = EditorGUILayout.IntField("Keys", count);
+            keysCount[section] = count;
+            return count;
+        }
+
+        private static void ResizeArray(ref SerializedProperty _array, int length)
+        {
+            while (_array.arraySize > length)
+                _array.DeleteArrayElementAtIndex(_array.arraySize - 1);
+
+            while (_array.arraySize < length)
+                _array.InsertArrayElementAtIndex(_array.arraySize);
+        }
+
         private static bool DuplicatesDetected(List<string> names)
         {
             return names.GroupBy(x => x).Any(g => g.Count() > 1);
         }
+
+        #endregion
     }
 }

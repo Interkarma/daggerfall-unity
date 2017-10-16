@@ -124,7 +124,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         [Serializable]
         public class Section
         {
-            public string name = "Section";
+            public string name;
             public ModSettingsKey[] keys = new ModSettingsKey[1];
 
             public ModSettingsKey this[string keyName]

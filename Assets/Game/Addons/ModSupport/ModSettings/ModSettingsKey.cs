@@ -19,8 +19,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
     {
         public enum KeyType { Toggle, MultipleChoice, Slider, FloatSlider, Tuple, FloatTuple, Text, Color }
 
-        public string name = "Key";
-        public string description = "A new key";
+        public string name;
+        public string description;
         public KeyType type = KeyType.Toggle;
 
         public Toggle toggle;
