@@ -497,6 +497,26 @@ namespace DaggerfallWorkshop.Game
             return areEnemiesNearby;
         }
 
+        /// <summary>
+        /// Make all enemies in an area go hostile.
+        /// </summary>
+        public void MakeEnemiesHostile()
+        {
+            DaggerfallEntityBehaviour[] entityBehaviours = FindObjectsOfType<DaggerfallEntityBehaviour>();
+            for (int i = 0; i < entityBehaviours.Length; i++)
+            {
+                DaggerfallEntityBehaviour entityBehaviour = entityBehaviours[i];
+                if (entityBehaviour.EntityType == EntityTypes.EnemyMonster || entityBehaviour.EntityType == EntityTypes.EnemyClass)
+                {
+                    EnemyMotor enemyMotor = entityBehaviour.GetComponent<EnemyMotor>();
+                    if (enemyMotor)
+                    {
+                        enemyMotor.IsHostile = true;
+                    }
+                }
+            }
+        }
+
         #endregion
 
         #region Public Static Methods

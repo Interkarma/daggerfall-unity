@@ -652,6 +652,11 @@ namespace DaggerfallWorkshop.Game
                         EnemyMotor enemyMotor = hit.transform.GetComponent<EnemyMotor>();
                         if (enemyMotor)
                         {
+                            // Make enemies in an area aggressive if player attacked a non-hostile one.
+                            if (!enemyMotor.IsHostile)
+                            {
+                                GameManager.Instance.MakeEnemiesHostile();
+                            }
                             enemyMotor.MakeEnemyHostileToPlayer(gameObject);
                         }
                     }
