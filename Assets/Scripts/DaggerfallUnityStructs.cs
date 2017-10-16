@@ -429,6 +429,7 @@ namespace DaggerfallWorkshop
         public int dungeonX;                        // Dungeon block X position in location
         public int dungeonZ;                        // Dungeon block Z position in location
         public int buildingKey;                     // Building key if a building site
+        public ulong markerID;                      // Marker ID for dungeon markers
     }
 
     /// <summary>

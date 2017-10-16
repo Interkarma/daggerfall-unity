@@ -242,10 +242,9 @@ namespace DaggerfallWorkshop.Game.Questing
                 waitingForStartup = false;
             }
 
-            // Do not tick while HUD fading
-            // This is to prevent quest popups or other actions while player
-            // moving between interior/exterior
-            if (DaggerfallUI.Instance.FadeInProgress)
+            // Do not tick while HUD fading or load in progress
+            // This is to prevent quest popups or other actions while player/world unavailable
+            if (DaggerfallUI.Instance.FadeInProgress || SaveLoadManager.Instance.LoadInProgress)
                 return;
 
             // Increment update timer
@@ -323,6 +322,7 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new DropAsQuestor(null));
             RegisterAction(new ItemUsedDo(null));
             RegisterAction(new TakeItem(null));
+            RegisterAction(new TeleportPc(null));
 
             // In progress - these actions are being actively developed
             RegisterAction(new DialogLink(null));

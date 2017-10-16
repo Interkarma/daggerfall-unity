@@ -457,6 +457,7 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="dungeonType">Dungeon type for random encounters.</param>
         /// <param name="seed">Seed for random encounters.</param>
         /// <param name="cloneFrom">Clone and build on a prefab object template.</param>
+        /// <param name="importEnemies">Import enemies from game data.</param>
         public static GameObject CreateRDBBlockGameObject(
             string blockName,
             int[] textureTable = null,
@@ -465,7 +466,8 @@ namespace DaggerfallWorkshop.Utility
             float monsterPower = 0.5f,
             int monsterVariance = 4,
             int seed = 0,
-            DaggerfallRDBBlock cloneFrom = null)
+            DaggerfallRDBBlock cloneFrom = null,
+            bool importEnemies = true)
         {
             // Get DaggerfallUnity
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
@@ -498,8 +500,11 @@ namespace DaggerfallWorkshop.Utility
             RDBLayout.AddTreasure(go, editorObjects, ref blockData, dungeonType);
 
             // Add enemies
-            RDBLayout.AddFixedEnemies(go, editorObjects, ref blockData);
-            RDBLayout.AddRandomEnemies(go, editorObjects, dungeonType, monsterPower, ref blockData, monsterVariance, seed);
+            if (importEnemies)
+            {
+                RDBLayout.AddFixedEnemies(go, editorObjects, ref blockData);
+                RDBLayout.AddRandomEnemies(go, editorObjects, dungeonType, monsterPower, ref blockData, monsterVariance, seed);
+            }
 
             // Link action nodes
             RDBLayout.LinkActionNodes(actionLinkDict);
@@ -759,7 +764,7 @@ namespace DaggerfallWorkshop.Utility
         /// Just working through the steps in buildings interiors for now.
         /// This will be moved to a different setup class later.
         /// </summary>
-        public static void AddQuestResourceObjects(SiteTypes siteType, Transform parent, int buildingKey = 0)
+        public static void AddQuestResourceObjects(SiteTypes siteType, Transform parent, int buildingKey = 0, bool enableNPCs = true, bool enableFoes = true, bool enableItems = true)
         {
             // Collect any SiteLinks associdated with this site
             SiteLink[] siteLinks = QuestMachine.Instance.GetSiteLinks(siteType, GameManager.Instance.PlayerGPS.CurrentMapID, buildingKey);
@@ -791,11 +796,11 @@ namespace DaggerfallWorkshop.Utility
                             continue;
 
                         // Inject to scene based on resource type
-                        if (resource is Person)
+                        if (resource is Person && enableNPCs)
                         {
                             AddQuestNPC(siteType, quest, spawnMarker, (Person)resource, parent);
                         }
-                        else if (resource is Foe)
+                        else if (resource is Foe && enableFoes)
                         {
                             Foe foe = (Foe)resource;
                             if (foe.KillCount < foe.SpawnCount)
@@ -805,19 +810,22 @@ namespace DaggerfallWorkshop.Utility
                 }
 
                 // Get selected item QuestMarker for this Place
-                QuestMarker itemMarker = place.SiteDetails.questItemMarkers[place.SiteDetails.selectedQuestItemMarker];
-                if (itemMarker.targetResources != null)
+                if (enableItems && place.SiteDetails.questItemMarkers != null)
                 {
-                    foreach (Symbol target in itemMarker.targetResources)
+                    QuestMarker itemMarker = place.SiteDetails.questItemMarkers[place.SiteDetails.selectedQuestItemMarker];
+                    if (itemMarker.targetResources != null)
                     {
-                        // Get target resource
-                        QuestResource resource = quest.GetResource(target);
-                        if (resource == null)
-                            continue;
+                        foreach (Symbol target in itemMarker.targetResources)
+                        {
+                            // Get target resource
+                            QuestResource resource = quest.GetResource(target);
+                            if (resource == null)
+                                continue;
 
-                        // Inject into scene
-                        if (resource is Item)
-                            AddQuestItem(siteType, quest, itemMarker, (Item)resource, parent);
+                            // Inject into scene
+                            if (resource is Item)
+                                AddQuestItem(siteType, quest, itemMarker, (Item)resource, parent);
+                        }
                     }
                 }
             }
@@ -929,20 +937,37 @@ namespace DaggerfallWorkshop.Utility
             // Set name
             go.name = string.Format("Quest Item [{0} | {1}]", item.Symbol.Original, item.DaggerfallUnityItem.LongName);
 
-            // Marker position
-            Vector3 position;
-            Vector3 dungeonBlockPosition = new Vector3(marker.dungeonX * RDBLayout.RDBSide, 0, marker.dungeonZ * RDBLayout.RDBSide);
-            position = dungeonBlockPosition + marker.flatPosition;
+            // Get matching live scene marker (if any)
+            DaggerfallMarker sceneMarker = GetDaggerfallMarker(marker.markerID);
 
-            // Dungeon flats have a different origin (centre point) than elsewhere (base point)
-            // Find bottom of marker in world space as it should be aligned to placement surface (e.g. ground, table, shelf, etc.)
-            if (siteType == SiteTypes.Dungeon)
+            // Parent to scene marker or just set position
+            Vector3 position = Vector3.zero;
+            if (sceneMarker)
             {
-                position.y += (-DaggerfallLoot.randomTreasureMarkerDim / 2 * MeshReader.GlobalScale);
+                // Parent to scene marker
+                go.transform.parent = sceneMarker.transform;
+
+                // Move down item icon by half own size
+                position.y -= (dfBillboard.Summary.Size.y / 2f);
+            }
+            else
+            {
+                // Marker position
+                Vector3 dungeonBlockPosition = new Vector3(marker.dungeonX * RDBLayout.RDBSide, 0, marker.dungeonZ * RDBLayout.RDBSide);
+                position = dungeonBlockPosition + marker.flatPosition;
+
+                // Dungeon flats have a different origin (centre point) than elsewhere (base point)
+                // Find bottom of marker in world space as it should be aligned to placement surface (e.g. ground, table, shelf, etc.)
+                if (siteType == SiteTypes.Dungeon)
+                {
+                    position.y += (-DaggerfallLoot.randomTreasureMarkerDim / 2 * MeshReader.GlobalScale);
+                }
+
+                // Move up item icon by half own size
+                position.y += (dfBillboard.Summary.Size.y / 2f);
             }
 
-            // Now move up item icon by half own size and assign position
-            position.y += (dfBillboard.Summary.Size.y / 2f);
+            // Assign final position
             go.transform.localPosition = position;
 
             // Add QuestResourceBehaviour to GameObject
@@ -955,6 +980,21 @@ namespace DaggerfallWorkshop.Utility
             // Assign a trigger collider for clicks
             SphereCollider collider = go.AddComponent<SphereCollider>();
             collider.isTrigger = true;
+        }
+
+        /// <summary>
+        /// Get special marker in scene matching markerID.
+        /// </summary>
+        static DaggerfallMarker GetDaggerfallMarker(ulong markerID)
+        {
+            DaggerfallMarker[] markers = GameObject.FindObjectsOfType<DaggerfallMarker>();
+            foreach(DaggerfallMarker marker in markers)
+            {
+                if (marker.MarkerID == markerID)
+                    return marker;
+            }
+
+            return null;
         }
 
         #endregion
@@ -1084,7 +1124,7 @@ namespace DaggerfallWorkshop.Utility
             return CreateDaggerfallDungeonGameObject(location, parent);
         }
 
-        public static GameObject CreateDaggerfallDungeonGameObject(DFLocation location, Transform parent)
+        public static GameObject CreateDaggerfallDungeonGameObject(DFLocation location, Transform parent, bool importEnemies = true)
         {
             if (!location.HasDungeon)
             {
@@ -1096,7 +1136,7 @@ namespace DaggerfallWorkshop.Utility
             GameObject go = new GameObject(string.Format("DaggerfallDungeon [Region={0}, Name={1}]", location.RegionName, location.Name));
             if (parent) go.transform.parent = parent;
             DaggerfallDungeon c = go.AddComponent<DaggerfallDungeon>();
-            c.SetDungeon(location);
+            c.SetDungeon(location, importEnemies);
 
             return go;
         }

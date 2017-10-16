@@ -57,7 +57,7 @@ Message:  1050
 QBN:
 
 
-Place _L.00_ permanent Mantellan_Crux
+Place _L.00_ permanent MantellanCrux
 Place _shedungent_ permanent Shedungent1
 
 Clock _delay_ 00:01 0 flag 1 range 0 1
@@ -67,7 +67,7 @@ Clock _delay_ 00:01 0 flag 1 range 0 1
 	dialog link for location _L.00_ 
 	log 1010 step 0 
 	say 1012 
-	transfer pc inside _L.00_ 31 1001 
+	transfer pc inside _L.00_ marker 0
 
 _delay_ task:
 	play video 3 
@@ -75,7 +75,7 @@ _delay_ task:
 
 FinishedMantellanCrux _S.01_
 	start timer _delay_ 
-	transfer pc inside _shedungent_ 16 50966 
+	transfer pc inside _shedungent_ marker 0
 
 GothrydGotTotem _S.02_
 	when _S.20_ and _S.21_ 

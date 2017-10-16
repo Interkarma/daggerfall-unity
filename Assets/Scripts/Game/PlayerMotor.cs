@@ -106,6 +106,9 @@ namespace DaggerfallWorkshop.Game
 
         private bool cancelMovement = false;
 
+        FakeLevitate fakeLevitate;
+        float freezeMotor = 0;
+
         public bool IsGrounded
         {
             get { return grounded; }
@@ -159,6 +162,17 @@ namespace DaggerfallWorkshop.Game
             set { cancelMovement = value; }
         }
 
+        /// <summary>
+        /// Freeze motor for an amount of time in seconds.
+        /// Used by teleport action to prevent player from falling when teleport is part of a physics change.
+        /// It can take a few frames for physics to catch up.
+        /// </summary>
+        public float FreezeMotor
+        {
+            get { return freezeMotor; }
+            set { freezeMotor = value; }
+        }
+
         void Start()
         {
             controller = GetComponent<CharacterController>();
@@ -168,6 +182,8 @@ namespace DaggerfallWorkshop.Game
             slideLimit = controller.slopeLimit - .1f;
             jumpTimer = antiBunnyHopFactor;
             mainCamera = GameManager.Instance.MainCamera;
+
+            fakeLevitate = GetComponent<FakeLevitate>();
         }
 
         void FixedUpdate()
@@ -181,6 +197,22 @@ namespace DaggerfallWorkshop.Game
                 ClearFallingDamage();
                 return;
             }
+
+            // Handle freeze movement
+            if (freezeMotor > 0)
+            {
+                freezeMotor -= Time.deltaTime;
+                if (freezeMotor <= 0)
+                {
+                    freezeMotor = 0;
+                    CancelMovement = true;
+                }
+                return;
+            }
+
+            // Do nothing if player fake levitating - replacement motor will take over movement
+            if (fakeLevitate && fakeLevitate.IsLevitating)
+                return;
 
             //float inputX = Input.GetAxis("Horizontal");
             //float inputY = Input.GetAxis("Vertical");
@@ -411,6 +443,10 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
+            // Do nothing if player fake levitating - replacement motor will take over movement
+            if (fakeLevitate && fakeLevitate.IsLevitating)
+                return;
+
             if (isRiding && !riding)
             {
                 Vector3 pos = mainCamera.transform.localPosition;

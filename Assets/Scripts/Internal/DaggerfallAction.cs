@@ -505,6 +505,7 @@ namespace DaggerfallWorkshop
                 DaggerfallUnity.LogMessage("Failed to get Player or Player entity", true);
                 return;
             }
+            GameManager.Instance.PlayerMotor.FreezeMotor = 0.5f;
             playerObject.transform.position = thisAction.NextObject.transform.position;
             playerObject.transform.rotation = thisAction.NextObject.transform.rotation;
         }

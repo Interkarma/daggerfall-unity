@@ -787,8 +787,10 @@ namespace DaggerfallWorkshop.Game
         // Player has clicked on a static NPC
         void StaticNPCClick(StaticNPC npc)
         {
-            // Do nothing if no NPC passed
-            if (!npc)
+            // Do nothing if no NPC passed or fade in progress
+            // Quest machine does not tick while fading (to prevent things happening while screen is black)
+            // But this can result in player clicking a quest NPC before quest state ticks after load and breaking quest
+            if (!npc || DaggerfallUI.Instance.FadeInProgress)
                 return;
 
             // Store the NPC just clicked in quest engine

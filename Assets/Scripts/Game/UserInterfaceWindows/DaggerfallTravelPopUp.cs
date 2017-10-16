@@ -70,13 +70,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextLabel tripCostLabel;
         TextLabel travelTimeLabel;
 
+        int travelTimeMinutes;
         int countdownValueTravelTimeDays; // used for remaining days in fast travel countdown
         bool doFastTravel = false; // flag used to indicate Update() function that fast travel should happen
         float waitTimer = 0;
 
         bool speedCautious  = true;
-        bool travelFoot     = true;
+        bool travelShip     = true;
         bool sleepModeInn   = true;
+
+        bool hasHorse = false;
+        bool hasCart = false;
+        bool hasShip = false;
 
         int tripCost = 0;
 
@@ -86,13 +91,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         internal DFPosition EndPos { get { return endPos; } set { endPos = value;} }
         internal DaggerfallTravelMapWindow TravelWindow { get { return travelWindow; } set { travelWindow = value; } }
-
-        // Interkarma Notes:
-        //  * These properties are only read from and will always have default value of false
-        //  * PlayerHasShip does not appear to be implemented currently
-        public bool PlayerHasHorse { get; set; }
-        public bool PlayerHasCart { get; set; }
-        public bool PlayerHasShip { get; set; }
 
         #endregion
 
@@ -171,7 +169,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void OnPush()
         {
             base.OnPush();
-            travelTimeCalculator.GeneratePath(endPos);
+
+            Items.ItemCollection inventory = GameManager.Instance.PlayerEntity.Items;
+            hasHorse = inventory.Contains(Items.ItemGroups.Transportation, (int)Items.Transportation.Horse);
+            hasCart = inventory.Contains(Items.ItemGroups.Transportation, (int)Items.Transportation.Small_cart);
+            hasShip = Banking.DaggerfallBankManager.OwnsShip;
+
             if (base.IsSetup)
                 Refresh();
         }
@@ -207,7 +210,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         //Update when player pushes buttons etc.
         void Refresh()
         {
-            travelTimeCalculator.CalculateTravelTimeTotal(travelFoot, PlayerHasCart, PlayerHasHorse, speedCautious, sleepModeInn, travelFoot);
             UpdateTogglePanels();
             UpdateLabels();
         }
@@ -223,35 +225,30 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 sleepToggleColorPanel.Position = innPanelPos;
             else
                 sleepToggleColorPanel.Position = campoutPos;
-            if (travelFoot)
-                transportToggleColorPanel.Position = footPos;
-            else
+            if (travelShip)
                 transportToggleColorPanel.Position = shipPos;
+            else
+                transportToggleColorPanel.Position = footPos;
         }
 
         //Updates text labels
         void UpdateLabels()
         {
             availableGoldLabel.Text = GameManager.Instance.PlayerEntity.GoldPieces.ToString();
+            travelTimeMinutes = travelTimeCalculator.CalculateTravelTime(endPos, speedCautious, sleepModeInn, travelShip, hasHorse, hasCart);
 
-            int travelTimeDaysLand = 0;
-            int travelTimeDaysWater = 0;
-            int travelTimeDaysTotal = 0;
-            
-            if (travelTimeCalculator.TravelTimeTotalLand > 0)
-                travelTimeDaysLand = (int)((travelTimeCalculator.TravelTimeTotalLand / 60 / 24) + 0.5);
-            if (travelTimeCalculator.TravelTimeTotalWater > 0)
-                travelTimeDaysWater = (int)((travelTimeCalculator.TravelTimeTotalWater / 60 / 24) + 0.5);
-            travelTimeDaysTotal = travelTimeDaysLand + travelTimeDaysWater;
+            int travelTimeDaysTotal = (travelTimeMinutes / 1440);
 
-            tripCost = FormulaHelper.CalculateTripCost(
-                travelTimeCalculator.TravelTimeTotalLand,
-                travelTimeCalculator.TravelTimeTotalWater,
-                speedCautious,
+            // Classic always adds 1. For DF Unity, only add 1 if there is a remainder to round up.
+            if ((travelTimeMinutes % 1440) > 0)
+                travelTimeDaysTotal += 1;
+
+            tripCost = travelTimeCalculator.CalculateTripCost(
+                travelTimeMinutes,
                 sleepModeInn,
-                travelFoot,
-                TravelTimeCalculator.CautiousMod,
-                TravelTimeCalculator.ShipMod);
+                false,  // TODO: Replace with hasShip when ship buying is implemented.
+                travelShip
+                );
 
             travelTimeLabel.Text = string.Format("{0}", travelTimeDaysTotal);
             tripCostLabel.Text = tripCost.ToString();
@@ -289,7 +286,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 GameManager.Instance.PlayerEntity.CurrentMagicka = GameManager.Instance.PlayerEntity.MaxMagicka;
             }
 
-            DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime((travelTimeCalculator.TravelTimeTotalLand + travelTimeCalculator.TravelTimeTotalWater) * 60);
+            DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime(travelTimeMinutes * 60);
 
             // Raise arrival time to just after 7am if cautious travel would otherwise arrive at night
             // Increasing this from 6am to 7am as game is quite dark on at 6am (in Daggerfall Unity, Daggerfall is lighter)
@@ -313,7 +310,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
             }
 
-            travelTimeCalculator.ClearPath();
             DaggerfallUI.Instance.UserInterfaceManager.PopWindow();
             travelWindow.CloseTravelWindows(true);
             GameManager.Instance.PlayerEntity.RaiseSkills();
@@ -360,7 +356,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public void ExitButtonOnClickHandler(BaseScreenComponent sender, Vector2 position)
         {
-            travelTimeCalculator.ClearPath();
             DaggerfallUI.Instance.UserInterfaceManager.PopWindow();
         }
 
@@ -372,7 +367,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public void TransportModeButtonOnClickHandler(BaseScreenComponent sender, Vector2 position)
         {
-            travelFoot = !travelFoot;
+            travelShip = !travelShip;
             Refresh();
         }
 
