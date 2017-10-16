@@ -15,7 +15,7 @@ using FullSerializer;
 namespace DaggerfallWorkshop.Game.Questing
 {
     /// <summary>
-    /// Incomplete. Just stubbing out action for now so quest will compile.
+    /// dialog link command used in quests.
     /// </summary>
     public class DialogLink : ActionTemplate
     {        
@@ -72,37 +72,37 @@ namespace DaggerfallWorkshop.Game.Questing
             if (place != null)
             {
                 namePlace = place.SiteDetails.locationName;
-                GameManager.Instance.TalkManager.AddDialogLinkForQuestInfoResource(ParentQuest.UID, namePlace, TalkManager.QuestInfoResourceType.Location);
+                GameManager.Instance.TalkManager.DialogLinkForQuestInfoResource(ParentQuest.UID, namePlace, TalkManager.QuestInfoResourceType.Location);
             }
             if (person != null)
             {
                 namePerson = person.DisplayName;
-                GameManager.Instance.TalkManager.AddDialogLinkForQuestInfoResource(ParentQuest.UID, namePerson, TalkManager.QuestInfoResourceType.Person);
+                GameManager.Instance.TalkManager.DialogLinkForQuestInfoResource(ParentQuest.UID, namePerson, TalkManager.QuestInfoResourceType.Person);
             }
             if (item != null)
             {
                 nameItem = item.DaggerfallUnityItem.ItemName;
-                GameManager.Instance.TalkManager.AddDialogLinkForQuestInfoResource(ParentQuest.UID, nameItem, TalkManager.QuestInfoResourceType.Thing);
+                GameManager.Instance.TalkManager.DialogLinkForQuestInfoResource(ParentQuest.UID, nameItem, TalkManager.QuestInfoResourceType.Thing);
             }
 
             // then create dialog links between the resources
             if ((place != null) && (person != null))
             {
                 // register both links (location -> person as well as person -> location)
-                GameManager.Instance.TalkManager.AddDialogLinkForQuestInfoResource(ParentQuest.UID, namePlace, TalkManager.QuestInfoResourceType.Location, namePerson, TalkManager.QuestInfoResourceType.Person);
-                GameManager.Instance.TalkManager.AddDialogLinkForQuestInfoResource(ParentQuest.UID, namePerson, TalkManager.QuestInfoResourceType.Person, namePlace, TalkManager.QuestInfoResourceType.Location);
+                GameManager.Instance.TalkManager.DialogLinkForQuestInfoResource(ParentQuest.UID, namePlace, TalkManager.QuestInfoResourceType.Location, namePerson, TalkManager.QuestInfoResourceType.Person);
+                GameManager.Instance.TalkManager.DialogLinkForQuestInfoResource(ParentQuest.UID, namePerson, TalkManager.QuestInfoResourceType.Person, namePlace, TalkManager.QuestInfoResourceType.Location);
             }
             if ((place != null) && (item != null))
             {
                 // register both links (location -> item as well as item -> location)
-                GameManager.Instance.TalkManager.AddDialogLinkForQuestInfoResource(ParentQuest.UID, namePlace, TalkManager.QuestInfoResourceType.Location, nameItem, TalkManager.QuestInfoResourceType.Thing);
-                GameManager.Instance.TalkManager.AddDialogLinkForQuestInfoResource(ParentQuest.UID, nameItem, TalkManager.QuestInfoResourceType.Thing, namePlace, TalkManager.QuestInfoResourceType.Location);
+                GameManager.Instance.TalkManager.DialogLinkForQuestInfoResource(ParentQuest.UID, namePlace, TalkManager.QuestInfoResourceType.Location, nameItem, TalkManager.QuestInfoResourceType.Thing);
+                GameManager.Instance.TalkManager.DialogLinkForQuestInfoResource(ParentQuest.UID, nameItem, TalkManager.QuestInfoResourceType.Thing, namePlace, TalkManager.QuestInfoResourceType.Location);
             }
             if ((person != null) && (item != null))
             {
                 // register both links (person -> item as well as item -> person)
-                GameManager.Instance.TalkManager.AddDialogLinkForQuestInfoResource(ParentQuest.UID, namePerson, TalkManager.QuestInfoResourceType.Person, nameItem, TalkManager.QuestInfoResourceType.Thing);
-                GameManager.Instance.TalkManager.AddDialogLinkForQuestInfoResource(ParentQuest.UID, nameItem, TalkManager.QuestInfoResourceType.Thing, namePerson, TalkManager.QuestInfoResourceType.Person);
+                GameManager.Instance.TalkManager.DialogLinkForQuestInfoResource(ParentQuest.UID, namePerson, TalkManager.QuestInfoResourceType.Person, nameItem, TalkManager.QuestInfoResourceType.Thing);
+                GameManager.Instance.TalkManager.DialogLinkForQuestInfoResource(ParentQuest.UID, nameItem, TalkManager.QuestInfoResourceType.Thing, namePerson, TalkManager.QuestInfoResourceType.Person);
             }
 
             SetComplete();
