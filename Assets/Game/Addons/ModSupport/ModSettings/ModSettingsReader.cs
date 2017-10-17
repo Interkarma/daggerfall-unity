@@ -176,6 +176,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             return presets;
         }
 
+        public static ModSettingsConfiguration GetConfig(Mod mod)
+        {
+            return mod.GetAsset<ModSettingsConfiguration>("modsettings.asset");
+        }
+
         /// <summary>
         /// Convert settings string to Color
         /// (ex: 000000FF --> Color.black).

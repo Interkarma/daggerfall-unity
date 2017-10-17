@@ -31,7 +31,7 @@ namespace DaggerfallWorkshop
         public const int ANSWER_TEXT_INDEX = 5656;
         public const int TYPE_99_TEXT_INDEX = 7700;
 
-        public bool ActionEnabled = false;                                          // Enable/disable action - not currently being used, but some objects are single activate
+        public bool ActionEnabled = false;                                          // Enable/disable action. Currently only used in the DoorText action, but some objects are single activate
         public bool PlaySound = true;                                               // Play sound if present (ActionSound > 0)
         public string ModelDescription = string.Empty;                              // Description string for this model
         public DFBlock.RdbActionFlags ActionFlag = DFBlock.RdbActionFlags.None;     // Action flag value
@@ -737,66 +737,67 @@ namespace DaggerfallWorkshop
         /// <summary>
         /// 32
         /// Shows text at the top of the screen when player clicks on associated door in info mode.
-        /// TODO: Can cause castle guards to go hostile if player clicked door outside of info mode.
         /// </summary>
         public static void DoorText(GameObject triggerObj, DaggerfallAction thisAction)
         {
-            if (GameManager.Instance.PlayerActivate.CurrentMode == PlayerActivateModes.Info)
+            // The way that classic handles this action has some problems. The text is only displayed
+            // if the door is clicked in info mode, so it can easily be missed, and if clicked in info mode
+            // the trespassing check isn't run but the door is still opened, making it an exploit.
+            // For DF Unity, we're showing the text on the first click of the door, and opening the door
+            // and running the trespassing check from the second click onward, all regardless of interaction mode.
+
+            int DoorTextID = TYPE_99_TEXT_INDEX + thisAction.Index;
+
+            // Patch some textID lookups.
+            switch (DoorTextID)
             {
-                if (thisAction.Index != 0)
+                case 7700:  // action.Index was 0.
+                    thisAction.ActionEnabled = true; // This means skip over trying to display the message and proceed to the trespassing check.
+                                                     // DaggerfallActionDoor will also proceed with opening the door even on first activation.
+                    break;
+                case 7701:
+                case 7702:
+                case 7703:
+                case 7704:
+                    {
+                        DoorTextID = 7705; // All of these are the same except that only 7705 correctly has "allowed" instead of "allow"
+                        break;
+                    }
+                case 7706:  // Doesn't exist. This is on a door in Castle Wayrest to a room with some potions, bookshelves, weighting scales and a telescope.
+                    {
+                        thisAction.ActionEnabled = true;
+                        break;
+                    }
+                case 7715:  // Doesn't exist. Found on doors in back of Orsinium throne room.
+                    {
+                        thisAction.ActionEnabled = true;
+                        break;
+                    }
+                case 7719:  // Doesn't exist. This is on the doors to a room near the start of the Orsinium dungeon area with a long table lined with chairs and a fireplace.
+                    {
+                        thisAction.ActionEnabled = true;
+                        break;
+                    }
+            }
+
+            if (thisAction.activationCount == 1 && DoorTextID != 7700 && !thisAction.ActionEnabled)
+            {
+                TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(DoorTextID);
+                if (tokens != null)
                 {
-                    int DoorTextID = TYPE_99_TEXT_INDEX + thisAction.Index;
-
-                    // Patch some textID lookups. Cases 7706, 7715 and 7719 cause "Bad DAGTEXT number requested : %d." to display in classic.
-                    switch (DoorTextID)
-                    {
-                        case 7701:
-                        case 7702:
-                        case 7703:
-                        case 7704:
-                            {
-                                DoorTextID = 7705; // All of these are the same except that only 7705 correctly has "allowed" instead of "allow"
-                            }
-                            break;
-                        case 7706: // This is on a door in Castle Wayrest to a room with some potions, bookshelves, weighting scales and a telescope.
-                                   // TextID 7764 "Chanting and odd, alien noises seep under the door. The smell of sulphur and noxious potions invades your nose"
-                                   // was maybe supposed to be used here, but not sure.
-                            {
-                                return;
-                            }
-                        case 7715: // Doors in back of Orsinium throne room. It seems likely this is supposed to be TextID 7717:
-                                   // "A strong, orcish voice in the back of the hall snarls "All who enter must face the trial by arms.""
-                                   // Unlike all the other door texts this one lacks a justify center line break.
-                                   // Rather than implement text wrapping for just this message, two replacement strings are being used here.
-                            {
-                                const string Text7717First = "A strong, orcish voice in the back of the";
-                                const string Text7717Second = "hall snarls \"All who enter must face the trial by arms.\"";
-                                DaggerfallUI.AddHUDText(Text7717First, 2.0f);
-                                DaggerfallUI.AddHUDText(Text7717Second, 2.0f);
-                                return;
-                            }
-                        case 7719: // This is on the doors to a room near the start of the Orsinium dungeon area with a long table lined with chairs and a fireplace.
-                                   // Soon after this room is a large open room.
-                                   // "Bold, brash male voices echo from behind the door. Faint clatters of metal, obviously made by men in armor moving about, can be heard."
-                                   // was maybe supposed to be used here, but not sure.
-                            {
-                                return;
-                            }
-                    }
-
-                    TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(DoorTextID);
-                    if (tokens != null)
-                    {
-                        DaggerfallUI.AddHUDText(tokens, 2.0f);
-                    }
-                    else
-                    {
-                        throw new System.Exception(string.Format("DaggerfallAction: Bad DoorTextID requested: {0}.", DoorTextID));
-                    }
+                    DaggerfallUI.AddHUDText(tokens, 2.0f);
                 }
                 else
                 {
-                    // TODO: Fourth byte of thisAction determines if guards turn hostile.
+                    throw new System.Exception(string.Format("DaggerfallAction: Bad DoorTextID requested: {0}.", DoorTextID));
+                }
+            }
+            else
+            {
+                // Classic seems to only check whether this value is greater than 5, as a trespassing check
+                if (thisAction.ActionAxisRawValue > 5)
+                {
+                    GameManager.Instance.MakeEnemiesHostile();
                 }
             }
         }

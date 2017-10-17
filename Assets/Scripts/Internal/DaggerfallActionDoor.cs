@@ -227,6 +227,9 @@ namespace DaggerfallWorkshop
                         ToggleDoor(true);
                     }
                 }
+
+                if (Game.GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeonCastle)
+                    Game.GameManager.Instance.MakeEnemiesHostile();
             }
         }
 
@@ -263,6 +266,19 @@ namespace DaggerfallWorkshop
 
         private void Open(float duration, bool ignoreLocks = false, bool activatedByPlayer = false)
         {
+            // Handle DoorText actions. On first activation, show the text but don't try to open the door.
+            DaggerfallAction action = GetComponent<DaggerfallAction>();
+            if (action != null
+                && action.ActionFlag == DFBlock.RdbActionFlags.DoorText
+                && (action.TriggerFlag == DFBlock.RdbTriggerFlags.Door || action.TriggerFlag == DFBlock.RdbTriggerFlags.Direct) // Door to Mynisera's room has a "Direct" trigger flag
+                && action.activationCount == 0
+                && activatedByPlayer)
+            {
+                ExecuteActionOnToggle();
+                if (!action.ActionEnabled) // ActionEnabled will still be false if there was valid text to display. In that case, don't open the door for this first activation.
+                    return;
+            }
+
             // Do nothing if door cannot be opened right now
             if ((IsLocked && !ignoreLocks) || IsOpen)
             {
@@ -270,6 +286,9 @@ namespace DaggerfallWorkshop
                     LookAtLock();
                 return;
             }
+
+            if (activatedByPlayer)
+                ExecuteActionOnToggle();
 
             //// Tween rotation
             //Hashtable rotateParams = __ExternalAssets.iTween.Hash(
@@ -300,12 +319,6 @@ namespace DaggerfallWorkshop
                 if (dfAudioSource != null)
                     dfAudioSource.PlayOneShot(OpenSound);
             }
-
-            // For doors that are also action objects, execute action when door opened / closed
-            // Only doing so if player was the activator, to keep DoorText actions from running
-            // when enemies open doors.
-            if (activatedByPlayer)
-                ExecuteActionOnToggle();
 
             // Set flag
             //IsMagicallyHeld = false;
@@ -367,7 +380,6 @@ namespace DaggerfallWorkshop
             DaggerfallAction action = GetComponent<DaggerfallAction>();
             if(action != null)
                 action.Receive(gameObject, DaggerfallAction.TriggerTypes.Door);
-
         }
 
         #endregion
