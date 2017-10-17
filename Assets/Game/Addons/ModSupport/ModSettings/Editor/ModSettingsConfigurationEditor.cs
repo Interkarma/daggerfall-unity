@@ -32,17 +32,28 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         SerializedProperty _sections;
 
         bool sectionsExpanded = foldoutStartExpanded;
-        int sectionsCount;
 
         Dictionary<int, bool> sectionExpanded = new Dictionary<int, bool>();
-        Dictionary<int, int> keysCount = new Dictionary<int, int>();
         Dictionary<string, bool> keysExpanded = new Dictionary<string, bool>();
 
+        bool editMode = false;
+        int sectionsCount;
+        Dictionary<int, int> keysCount = new Dictionary<int, int>();
+
         ModSettingsConfiguration Target;
+
+        GUIStyle sectionFoldoutStyle;
+        GUIStyle keyFoldoutStyle;
 
         #endregion
 
         #region Inspector Setup
+
+        private void Awake()
+        {
+            sectionFoldoutStyle = GetFoldoutStyle(new Color(0.1f, 0.1f, 0.1f, 1));
+            keyFoldoutStyle = GetFoldoutStyle(new Color(0.3f, 0.3f, 0.3f, 1));
+        }
 
         private void OnEnable()
         {
@@ -81,9 +92,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             if (sectionsExpanded)
             {
                 EditorGUI.indentLevel++;
-                sectionsCount = EditorGUILayout.IntField("Size", sectionsCount);
-                if (_sections.arraySize != sectionsCount)
-                    ResizeArray(ref _sections, sectionsCount);
+
+                editMode = EditorGUILayout.Toggle("Edit Mode", editMode);
+
+                using (new EditorGUI.DisabledScope(true))
+                {
+                    sectionsCount = EditorGUILayout.IntField("Size", sectionsCount);
+                }
 
                 var sectionNames = new List<string>();
 
@@ -104,9 +119,10 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
                         var keyNames = new List<string>();
 
-                        int thisKeysCount = KeysCount(i);
-                        if (_keys.arraySize != thisKeysCount)
-                            ResizeArray(ref _keys, thisKeysCount);
+                        using (new EditorGUI.DisabledScope(true))
+                        {
+                            int thisKeysCount = KeysCount(i);
+                        }
 
                         for (int j = 0; j < _keys.arraySize; j++)
                         {
@@ -186,10 +202,16 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                                         EditorGUILayout.PropertyField(_key.FindPropertyRelative("color").FindPropertyRelative("color"));
                                         break;
                                 }
+
+                                if (editMode)
+                                    keysCount[i] += InsertOrRemove(_keys, j, i);
                             }
                         }
 
                         EditorGUI.indentLevel--;
+
+                        if (editMode)
+                            sectionsCount += InsertOrRemove(_sections, i);
 
                         if (DuplicatesDetected(keyNames))
                             EditorGUILayout.HelpBox("Multiple keys with the same name in a section detected!", MessageType.Error);
@@ -234,7 +256,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 isExpanded = foldoutStartExpanded;
                 sectionExpanded.Add(section, isExpanded);
             }
-            isExpanded = EditorGUILayout.Foldout(isExpanded, title, true);
+            isExpanded = EditorGUILayout.Foldout(isExpanded, title, true, sectionFoldoutStyle);
             sectionExpanded[section] = isExpanded;
             return isExpanded;
         }
@@ -251,7 +273,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 isExpanded = foldoutStartExpanded;
                 keysExpanded.Add(dictKey, isExpanded);
             }
-            isExpanded = EditorGUILayout.Foldout(isExpanded, title, true);
+            isExpanded = EditorGUILayout.Foldout(isExpanded, title, true, keyFoldoutStyle);
             keysExpanded[dictKey] = isExpanded;
             return isExpanded;
         }
@@ -276,13 +298,74 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             return count;
         }
 
-        private static void ResizeArray(ref SerializedProperty _array, int length)
+        /// <summary>
+        /// Insert or remove a key or section as requested by controls.
+        /// </summary>
+        private int InsertOrRemove(SerializedProperty _array, int index, int? section = null)
         {
-            while (_array.arraySize > length)
-                _array.DeleteArrayElementAtIndex(_array.arraySize - 1);
+            int increment = 0;
 
-            while (_array.arraySize < length)
-                _array.InsertArrayElementAtIndex(_array.arraySize);
+            GUILayout.BeginHorizontal();
+            GUILayout.Space(EditorGUI.indentLevel * 10);
+            GUILayoutOption keyButtonsHeight = GUILayout.Height(14f);
+
+            if (GUILayout.Button("Insert", keyButtonsHeight))
+            {
+                increment++;
+
+                if (section.HasValue)
+                    InsertKeyAtIndex(section.Value, index);
+                else
+                    InsertSectionAtIndex(index);
+            }
+
+            var removeKeyButtonStyle = new GUIStyle(GUI.skin.button);
+            removeKeyButtonStyle.normal.textColor = Color.red;
+            if (GUILayout.Button("Remove", removeKeyButtonStyle, keyButtonsHeight) && _array.arraySize > 1)
+            {
+                increment--;
+
+                _array.DeleteArrayElementAtIndex(index);
+            }
+
+            GUILayout.EndHorizontal();
+
+            return increment;
+        }
+
+        /// <summary>
+        /// Insert a section as a new empty instance.
+        /// </summary>
+        private void InsertSectionAtIndex(int index)
+        {
+            List<ModSettingsConfiguration.Section> sections = Target.sections.ToList();
+            sections.Insert(index + 1, new ModSettingsConfiguration.Section());
+            Target.sections = sections.ToArray();
+        }
+
+        /// <summary>
+        /// Insert a key as a new empty instance.
+        /// </summary>
+        private void InsertKeyAtIndex(int section, int index)
+        {
+            List<ModSettingsKey> keys = Target.sections[section].keys.ToList();
+            keys.Insert(index + 1, new ModSettingsKey());
+            Target.sections[section].keys = keys.ToArray();
+        }
+
+        private static GUIStyle GetFoldoutStyle(Color color)
+        {
+            GUIStyle style = new GUIStyle(EditorStyles.foldout);
+            style.fontStyle = FontStyle.Bold;
+            style.normal.textColor = color;
+            style.onNormal.textColor = color;
+            style.hover.textColor = color;
+            style.onHover.textColor = color;
+            style.focused.textColor = color;
+            style.onFocused.textColor = color;
+            style.active.textColor = color;
+            style.onActive.textColor = color;
+            return style;
         }
 
         private static bool DuplicatesDetected(List<string> names)
