@@ -205,13 +205,16 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             // Import/Export
             EditorGUILayout.Separator();
             EditorGUILayout.LabelField("Import/Export", EditorStyles.boldLabel);
-            EditorGUILayout.HelpBox("Import from/export to Untracked/modsettings.json", MessageType.None);
+            EditorGUILayout.HelpBox("Import from/export to Untracked/modsettings.json, export to Untracked/modsettings.ini", MessageType.None);
 
             if (GUILayout.Button("Import"))
                 Target.Import();
 
             if (GUILayout.Button("Export"))
                 Target.Export();
+
+            if (GUILayout.Button("Export (Ini)"))
+                Target.ExportToIni();
 
             serializedObject.ApplyModifiedProperties();
         }

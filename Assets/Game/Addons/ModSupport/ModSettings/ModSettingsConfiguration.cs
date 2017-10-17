@@ -26,6 +26,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             get { return Path.Combine(Path.Combine(Application.dataPath, "Untracked"), "modsettings.json"); }
         }
 
+        static string ParsedIniPath
+        {
+            get { return Path.Combine(Path.Combine(Application.dataPath, "Untracked"), "modsettings.ini"); }
+        }
+
         [Tooltip("Version of settings config file. This is not the version of mod or preset.")]
         public string version = "1.0";
 
@@ -93,6 +98,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         {
             if (!Serialize(this))
                 Debug.LogError("Failed to export mod settings");
+        }
+
+        public void ExportToIni()
+        {
+            File.WriteAllText(ParsedIniPath, ModSettingsReader.ParseConfigToIni(this).ToString());
         }
 
         private static bool Deserialize(ModSettingsConfiguration config)
