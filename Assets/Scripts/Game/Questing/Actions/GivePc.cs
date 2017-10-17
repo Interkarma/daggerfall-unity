@@ -31,6 +31,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         bool isNothing;
         bool silently;
 
+        bool offerImmediately = false;
         bool waitingForTown = false;
         int ticksUntilFire = 0;
 
@@ -74,7 +75,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
             // "give pc anItem notify 1234" and "give pc anItem silently" require player
             // to be within a town, outdoors, and during set hours for action to fire
-            if (textId != 0 || silently)
+            if ((textId != 0 || silently) && !offerImmediately)
             {
                 // Fail if conditions not met, but take note we are waiting
                 DaggerfallDateTime now = DaggerfallUnity.Instance.WorldTime.Now;
@@ -90,6 +91,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 {
                     ticksUntilFire = UnityEngine.Random.Range(minDelay, maxDelay);
                     waitingForTown = false;
+                    RaiseOnOfferPendingEvent(this);
                 }
             }
 
@@ -132,7 +134,15 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                     OfferToPlayerWithQuestComplete(item);
             }
 
+            offerImmediately = false;
             SetComplete();
+        }
+
+        public void OfferImmediately()
+        {
+            waitingForTown = false;
+            ticksUntilFire = 0;
+            offerImmediately = true;
         }
 
         void OfferToPlayerWithQuestComplete(Item item)
@@ -216,6 +226,19 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             textId = data.textId;
             isNothing = data.isNothing;
             silently = data.silently;
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        // OnOfferPending
+        public delegate void OnOfferPendingHandler(GivePc sender);
+        public static event OnOfferPendingHandler OnOfferPending;
+        protected virtual void RaiseOnOfferPendingEvent(GivePc sender)
+        {
+            if (OnOfferPending != null)
+                OnOfferPending(sender);
         }
 
         #endregion
