@@ -725,8 +725,17 @@ namespace DaggerfallWorkshop.Game
 
                     QuestMacroHelper macroHelper = new QuestMacroHelper();
                     macroHelper.ExpandQuestMessage(GameManager.Instance.QuestMachine.GetQuest(listItem.questID), ref tokens);
-                    
-                    return tokens[0].text;
+
+                    string returnString = "";
+                    for (int i = 0; i < tokens.Length; i++)
+                    {
+                        string textFragment = tokens[i].text;
+                        if (textFragment.Length > 0 && i < textFragment.Length)
+                            returnString += textFragment;
+                        else
+                            returnString += " ";
+                    }
+                    return returnString;
                 }
             }
             return "Never mind..."; // error case - should never ever occur

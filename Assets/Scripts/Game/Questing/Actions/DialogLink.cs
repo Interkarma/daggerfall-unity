@@ -26,6 +26,7 @@ namespace DaggerfallWorkshop.Game.Questing
         public override string Pattern
         {
             get { return @"dialog link for location (?<aSite>\w+) person (?<anNPC>\w+) item (?<anItem>\w+)|" +
+                         @"dialog link for location (?<aSite>\w+) person (?<anNPC>\w+)|" +
                          @"dialog link for location (?<aSite>\w+) item (?<anItem>\w+)|" +
                          @"dialog link for location (?<aSite>\w+)|" +
                          @"dialog link for person (?<anNPC>\w+) item (?<anItem>\w+)|" +
