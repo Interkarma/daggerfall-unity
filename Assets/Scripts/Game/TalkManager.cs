@@ -1285,10 +1285,22 @@ namespace DaggerfallWorkshop.Game
             // to correctly show current direction to dungeon (when in different towns it is likely to be different)
             TextFile.Token[] tokens = (TextFile.Token[])answers[randomNumAnswer].Clone();
 
+            // expand tokens and reveal dialog-linked resources
             QuestMacroHelper macroHelper = new QuestMacroHelper();
-            macroHelper.ExpandQuestMessage(GameManager.Instance.QuestMachine.GetQuest(questID), ref tokens);
+            macroHelper.ExpandQuestMessage(GameManager.Instance.QuestMachine.GetQuest(questID), ref tokens, true);
 
-            return tokens[0].text;
+            // create return string from expanded tokens
+            string returnString = "";
+            for (int i = 0; i < tokens.Length; i++)
+            {
+                string textFragment = tokens[i].text;
+                if (textFragment.Length > 0 && i < textFragment.Length)
+                    returnString += textFragment;
+                else
+                    returnString += " ";
+            }
+            return returnString;
+
         }
 
 

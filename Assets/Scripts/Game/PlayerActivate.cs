@@ -448,7 +448,7 @@ namespace DaggerfallWorkshop.Game
                                             break;
                                         }
                                         enemyEntity.PickpocketByPlayerAttempted = true;
-                                        Pickpocket(enemyEntity);
+                                        Pickpocket(mobileEnemyBehaviour);
                                     }
                                     break;
                             }
@@ -895,14 +895,17 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Player has clicked on a pickpocket target in steal mode
-        void Pickpocket(EnemyEntity target = null)
+        void Pickpocket(DaggerfallEntityBehaviour target = null)
         {
             const int foundNothingValuableTextId = 8999;
 
             PlayerEntity player = GameManager.Instance.PlayerEntity;
+            EnemyEntity enemyEntity = null;
+            if (target != null)
+                enemyEntity = target.Entity as EnemyEntity;
             player.TallySkill(DFCareer.Skills.Pickpocket, 1);
 
-            int chance = Formulas.FormulaHelper.CalculatePickpocketingChance(player, target);
+            int chance = Formulas.FormulaHelper.CalculatePickpocketingChance(player, enemyEntity);
 
             if (UnityEngine.Random.Range(0, 101) <= chance)
             {
@@ -934,6 +937,19 @@ namespace DaggerfallWorkshop.Game
             {
                 string notSuccessfulMessage = HardStrings.youAreNotSuccessful;
                 DaggerfallUI.Instance.PopupMessage(notSuccessfulMessage);
+
+                // Make enemies in an area aggressive if player failed to pickpocket a non-hostile one.
+                EnemyMotor enemyMotor = null;
+                if (target != null)
+                    enemyMotor = target.GetComponent<EnemyMotor>();
+                if (enemyMotor)
+                {
+                    if (!enemyMotor.IsHostile)
+                    {
+                        GameManager.Instance.MakeEnemiesHostile();
+                    }
+                    enemyMotor.MakeEnemyHostileToPlayer(gameObject);
+                }
             }
         }       
     }
