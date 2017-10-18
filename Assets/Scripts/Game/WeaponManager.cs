@@ -47,6 +47,7 @@ namespace DaggerfallWorkshop.Game
         PlayerEntity playerEntity;
         GameObject player;
         GameObject mainCamera;
+        bool isClickAttack = false;
         bool isStartingAttack = false;
         bool isDamageFinished = false;
         Hand lastAttackHand = Hand.None;
@@ -226,13 +227,15 @@ namespace DaggerfallWorkshop.Game
             }
             else
             {
-                // Player must initiate attack (release and click attack)
-                if (!InputManager.Instance.ActionStarted(InputManager.Actions.SwingWeapon) && !isStartingAttack)
+                // Player must click to attack
+                if (InputManager.Instance.ActionStarted(InputManager.Actions.SwingWeapon) && !isStartingAttack)
                 {
-                    lastAttackHand = Hand.None;
+                    isClickAttack = true;
+                }
+                else
+                {
                     _gesture.Clear();
                     ShowWeapons(true);
-                    return;
                 }
             }
 
@@ -315,11 +318,18 @@ namespace DaggerfallWorkshop.Game
             if (isBowAttacking)
             {
                 // Ensure attack button was released before starting the next attack
-                if (lastAttackHand == Hand.None) 
+                if (lastAttackHand == Hand.None)
                     attackDirection = MouseDirections.Down; // Force attack without tracking a swing for Bow
             }
+            else if (isClickAttack)
+            {
+                attackDirection = (MouseDirections)UnityEngine.Random.Range((int)MouseDirections.Left, (int)MouseDirections.DownRight + 1);
+                isClickAttack = false;
+            }
             else
+            {
                 attackDirection = TrackMouseAttack(); // Track swing direction for other weapons
+            }
 
             // Exit if no attack action registered
             if (attackDirection != MouseDirections.None)
@@ -463,14 +473,6 @@ namespace DaggerfallWorkshop.Game
 
         MouseDirections TrackMouseAttack()
         {
-            // Simple hack to return a random attack direction
-            if (DaggerfallUnity.Settings.ClickToAttack)
-            {
-                // Not all attack directions valid for all weapons - use a common subset of directions
-                MouseDirections randomAttack = (MouseDirections)UnityEngine.Random.Range((int)MouseDirections.Left, (int)MouseDirections.DownRight + 1);
-                return randomAttack;
-            }
-
             // Track action for idle plus all eight mouse directions
             var sum = _gesture.Add(InputManager.Instance.MouseX, InputManager.Instance.MouseY) * weaponSensitivity;
 
