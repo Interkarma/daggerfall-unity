@@ -144,6 +144,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #endregion
 
+        #region Overrides
+
+        public override void OnPop()
+        {
+            // Update keybinds only when exiting from a valid configuration
+            SaveKeybindValues(moveKeysOne, 2, 8);
+            SaveKeybindValues(moveKeysTwo, 8, 14);
+            SaveKeybindValues(modeKeys, 14, 20);
+            SaveKeybindValues(magicKeys, 20, 24);
+            SaveKeybindValues(weaponKeys, 24, 27);
+            SaveKeybindValues(statusKeys, 27, 30);
+            SaveKeybindValues(activateKeys, 30, 32);
+            SaveKeybindValues(lookKeys, 32, 36);
+            SaveKeybindValues(uiKeys, 36, 40);
+            InputManager.Instance.SaveKeyBinds();
+        }
+
+        #endregion
+
         #region Private Methods
 
         private void SetupKeybindButtons(List<Button> buttonGroup, int startPoint, int endPoint, int leftOffset, int topOffset, bool firstSetup)
@@ -175,6 +194,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 buttonGroup[j].Label.Text = InputManager.Instance.GetBinding(key).ToString();
                 buttonGroup[j].Label.TextColor = DaggerfallUI.DaggerfallDefaultTextColor;
+            }
+        }
+
+        private void SaveKeybindValues(List<Button> buttonGroup, int startPoint, int endPoint)
+        {
+            for (int i = startPoint; i < endPoint; i++)
+            {
+                // Get action and code for this button
+                int j = i - startPoint;
+                InputManager.Actions action = (InputManager.Actions)Enum.Parse(typeof(InputManager.Actions), actions[i]);
+                KeyCode code = (KeyCode)Enum.Parse(typeof(KeyCode), buttonGroup[j].Label.Text);
+
+                // Rebind only if new code is different
+                KeyCode curCode = InputManager.Instance.GetBinding(action);
+                if (curCode != code)
+                {
+                    InputManager.Instance.SetBinding(code, action);
+                    Debug.LogFormat("Bound Action {0} with Code {1}", action, code.ToString());
+                }
             }
         }
 
@@ -239,6 +277,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetupKeybindButtons(activateKeys, 30, 32, 269, 79, false);
             SetupKeybindButtons(lookKeys, 32, 36, 269, 102, false);
             SetupKeybindButtons(uiKeys, 36, 40, 269, 147, false);
+            AllowCancel = true;
         }
 
         private void ShowMultipleAssignmentsMessage()
@@ -326,9 +365,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     {
                         button.Label.Text = code.ToString();
                         CheckDuplicates();
-                        InputManager.Instance.ClearBinding(buttonAction);
-                        InputManager.Instance.SetBinding(code, buttonAction);
-                        InputManager.Instance.SaveKeyBinds();
                     }
                     else
                     {
