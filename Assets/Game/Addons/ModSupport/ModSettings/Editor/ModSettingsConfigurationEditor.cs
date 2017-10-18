@@ -148,7 +148,10 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                                         break;
 
                                     case ModSettingsKey.KeyType.MultipleChoice:
-                                        EditorGUILayout.PropertyField(_key.FindPropertyRelative("multipleChoice").FindPropertyRelative("choices"), true);
+                                        SerializedProperty _multipleChoice = _key.FindPropertyRelative("multipleChoice");
+                                        SerializedProperty _selected = _multipleChoice.FindPropertyRelative("selected");
+                                        _selected.intValue = EditorGUILayout.Popup(_selected.intValue, Target.sections[i].keys[j].multipleChoice.choices);
+                                        EditorGUILayout.PropertyField(_multipleChoice.FindPropertyRelative("choices"), true);
                                         break;
 
                                     case ModSettingsKey.KeyType.Slider:

@@ -164,13 +164,24 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 presets.Add(parser.ReadFile(path));
             }
 
-            // Get presets from mod
+            // Get presets from mod (TextAsset)
             int index = 0;
             while (mod.AssetBundle.Contains("settingspreset" + index + ".ini.txt"))
             {
                 TextAsset presetFile = mod.GetAsset<TextAsset>("settingspreset" + index + ".ini.txt");
                 presets.Add(GetIniDataFromTextAsset(presetFile));
                 index++;
+            }
+
+            // Get preset from mod (Config)
+            var config = GetConfig(mod);
+            if (config != null)
+            {
+                foreach (var presetName in config.presets)
+                {
+                    var presetConfig = mod.GetAsset<ModSettingsConfiguration>(presetName);
+                    presets.Add(ParseConfigToIni(presetConfig));
+                }
             }
 
             return presets;
@@ -190,23 +201,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
             // Header
             var header = new SectionData(internalSection);
-            KeyData version = new KeyData(settingsVersionKey);
-            version.Value = config.version;
-            header.Keys.AddKey(version);
+            header.Keys.AddKey(settingsVersionKey, config.version);
 
             if (config.isPreset)
             {
-                var presetName = new KeyData("PresetName");
-                presetName.Value = config.presetSettings.name;
-
-                var presetAuthor = new KeyData("PresetAuthor");
-                presetAuthor.Value = config.presetSettings.author;
-
-                var settingsVersion = new KeyData("SettingsVersion");
-                settingsVersion.Value = config.version;
-
-                var presetDescription = new KeyData("Description");
-                presetDescription.Value = config.presetSettings.description;
+                header.Keys.AddKey("PresetName", config.presetSettings.name);
+                header.Keys.AddKey("PresetAuthor", config.presetSettings.author);
+                header.Keys.AddKey("Description", config.presetSettings.description);
             }
 
             iniData.Sections.Add(header);
@@ -226,8 +227,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                             keyData.Value = key.toggle.value.ToString();
                             break;
 
-                        case ModSettingsKey.KeyType.MultipleChoice: //TODO
-                            keyData.Value = "null";
+                        case ModSettingsKey.KeyType.MultipleChoice:
+                            keyData.Value = key.multipleChoice.selected.ToString();
                             break;
 
                         case ModSettingsKey.KeyType.Slider:
@@ -262,6 +263,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             }
 
             return iniData;
+        }
+
+        public static bool IsHexColor(string stringColor)
+        {
+            int hexColor;
+            return (stringColor.Length == 8 &&
+                int.TryParse(stringColor, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out hexColor));
         }
 
         /// <summary>

@@ -41,6 +41,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         [Serializable]
         public class MultipleChoice
         {
+            public int selected;
             public string[] choices;
         }
 

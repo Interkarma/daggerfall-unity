@@ -209,32 +209,35 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                     settingName.Text = key.KeyName;
                     settingName.Position = new Vector2(x, y);
                     settingName.HorizontalAlignment = HorizontalAlignment.None;
-                    if (comment < comments.Count)
-                    {
-                        settingName.ToolTip = defaultToolTip;
-                        settingName.ToolTipText = comments[comment];
-                        comment++;
-                    }
                     currentPanel.Components.Add(settingName);
 
                     // Setting field
                     ModSettingsKey configKey;
                     if (config && config.Key(section.SectionName, key.KeyName, out configKey))
                     {
+                        settingName.ToolTip = defaultToolTip;
                         settingName.ToolTipText = configKey.description;
 
                         // Use config file
                         switch (configKey.type)
                         {
                             case ModSettingsKey.KeyType.Toggle:
-                                AddCheckBox(key.Value == "True");
+                                bool toggle;
+                                AddCheckBox((bool.TryParse(key.Value, out toggle) && toggle) || configKey.toggle.value);
+                                break;
+
+                            case ModSettingsKey.KeyType.MultipleChoice: //TODO: show text
+                                int selected;
+                                if (!int.TryParse(key.Value, out selected))
+                                    selected = configKey.multipleChoice.selected;
+                                AddSlider(0, configKey.multipleChoice.choices.Length, selected, key.KeyName);
                                 break;
 
                             case ModSettingsKey.KeyType.Slider:
                                 var slider = configKey.slider;
                                 int startValue;
                                 if (!int.TryParse(key.Value, out startValue))
-                                    startValue = 0;
+                                    startValue = configKey.slider.value;
                                 AddSlider(slider.min, slider.max, startValue, key.KeyName);
                                 break;
 
@@ -242,75 +245,56 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                                 var floatSlider = configKey.floatSlider;
                                 float floatStartValue;
                                 if (!float.TryParse(key.Value, out floatStartValue))
-                                    floatStartValue = 0;
+                                    floatStartValue = configKey.floatSlider.value;
                                 AddSlider(floatSlider.min, floatSlider.max, floatStartValue, key.KeyName);
                                 break;
 
                             case ModSettingsKey.KeyType.Tuple:
+                                var tuple = AddTuple(key.Value);
+                                tuple.First.Numeric = tuple.Second.Numeric = true;
+                                break;
+
                             case ModSettingsKey.KeyType.FloatTuple:
-                                int index = key.Value.IndexOf(ModSettingsReader.tupleDelimiterChar);
-                                var first = GetTextbox(95, 19.6f, key.Value.Substring(0, index));
-                                var second = GetTextbox(116, 19.6f, key.Value.Substring(index + ModSettingsReader.tupleDelimiterChar.Length));
-                                modTuples.Add(new Tuple<TextBox, TextBox>(first, second));
+                                AddTuple(key.Value); // TextBox.Numeric doesn't allow dot
                                 break;
 
                             case ModSettingsKey.KeyType.Text:
-                            case ModSettingsKey.KeyType.MultipleChoice: //TODO
                                 TextBox textBox = GetTextbox(95, 40, key.Value);
                                 modTextBoxes.Add(textBox);
                                 break;
 
                             case ModSettingsKey.KeyType.Color:
                                 TextBox colorBox = GetTextbox(95, 40, key.Value);
-                                modTextBoxes.Add(colorBox);
-                                int hexColor;
-                                if (colorBox.DefaultText.Length != 8 || !int.TryParse(colorBox.DefaultText, System.Globalization.NumberStyles.HexNumber,
-                                             System.Globalization.CultureInfo.InvariantCulture, out hexColor))
-                                {
+                                if (!ModSettingsReader.IsHexColor(colorBox.DefaultText))
                                     colorBox.DefaultText = "FFFFFFFF";
-                                }
-                                // Use box background as a preview of the color
-                                Color32 color = ModSettingsReader.ColorFromString(colorBox.DefaultText);
-                                colorBox.BackgroundColor = color;
-                                colorBox.ToolTip = defaultToolTip;
-                                colorBox.ToolTipText = color.ToString();
+                                SetBackgroundTint(colorBox);
+                                modTextBoxes.Add(colorBox);
                                 break;
                         }
                     }
                     else
                     {
                         // Legacy support
+                        if (comment < comments.Count)
+                        {
+                            settingName.ToolTip = defaultToolTip;
+                            settingName.ToolTipText = comments[comment];
+                            comment++;
+                        }
+
                         if (key.Value == "True")
                             AddCheckBox(true);
                         else if (key.Value == "False")
                             AddCheckBox(false);
-                        else if (key.Value.Contains(ModSettingsReader.tupleDelimiterChar)) // Tuple
-                        {
-                            int index = key.Value.IndexOf(ModSettingsReader.tupleDelimiterChar);
-                            var first = GetTextbox(95, 19.6f, key.Value.Substring(0, index));
-                            var second = GetTextbox(116, 19.6f, key.Value.Substring(index + ModSettingsReader.tupleDelimiterChar.Length));
-                            modTuples.Add(new Tuple<TextBox, TextBox>(first, second));
-                        }
+                        else if (key.Value.Contains(ModSettingsReader.tupleDelimiterChar))
+                            AddTuple(key.Value);
                         else
                         {
                             TextBox textBox = GetTextbox(95, 40, key.Value);
                             modTextBoxes.Add(textBox);
 
-                            // Color
-                            if (textBox.DefaultText.Length == 8)
-                            {
-                                // Check if is a hex number or just a string with lenght eight
-                                int hexColor;
-                                if (int.TryParse(textBox.DefaultText, System.Globalization.NumberStyles.HexNumber,
-                                         System.Globalization.CultureInfo.InvariantCulture, out hexColor))
-                                {
-                                    // Use box background as a preview of the color
-                                    Color32 color = ModSettingsReader.ColorFromString(textBox.DefaultText);
-                                    textBox.BackgroundColor = color;
-                                    textBox.ToolTip = defaultToolTip;
-                                    textBox.ToolTipText = color.ToString();
-                                }
-                            }
+                            if (ModSettingsReader.IsHexColor(textBox.DefaultText))
+                                    SetBackgroundTint(textBox);
                         }
                     }
 
@@ -331,7 +315,38 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             {
                 foreach (KeyData key in section.Keys)
                 {
-                    if (key.Value == "True" || key.Value == "False")
+                    ModSettingsKey configKey;
+                    if (config && config.Key(section.SectionName, key.KeyName, out configKey))
+                    {
+                        switch(configKey.type)
+                        {
+                            case ModSettingsKey.KeyType.Toggle:
+                                data[section.SectionName][key.KeyName] = modCheckboxes[checkBox].IsChecked.ToString();
+                                checkBox++;
+                                break;
+
+                            case ModSettingsKey.KeyType.Slider:
+                            case ModSettingsKey.KeyType.FloatSlider:
+                            case ModSettingsKey.KeyType.MultipleChoice:
+                                data[section.SectionName][key.KeyName] = modSliders[slider].indicator.Text;
+                                slider++;
+                                break;
+
+                            case ModSettingsKey.KeyType.Tuple:
+                            case ModSettingsKey.KeyType.FloatTuple:
+                                string value = modTuples[tuple].First.ResultText + ModSettingsReader.tupleDelimiterChar + modTuples[tuple].Second.ResultText;
+                                data[section.SectionName][key.KeyName] = value;
+                                tuple++;
+                                break;
+
+                            case ModSettingsKey.KeyType.Text:
+                            case ModSettingsKey.KeyType.Color:
+                                data[section.SectionName][key.KeyName] = modTextBoxes[textBox].ResultText;
+                                textBox++;
+                                break;
+                        }
+                    }
+                    else if (key.Value == "True" || key.Value == "False")
                     {
                         data[section.SectionName][key.KeyName] = modCheckboxes[checkBox].IsChecked.ToString();
                         checkBox++;
@@ -341,11 +356,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                         string value = modTuples[tuple].First.ResultText + ModSettingsReader.tupleDelimiterChar + modTuples[tuple].Second.ResultText;
                         data[section.SectionName][key.KeyName] = value;
                         tuple++;
-                    }
-                    else if (config && config.IsSlider(section.SectionName, key.KeyName))
-                    {
-                        data[section.SectionName][key.KeyName] = modSliders[slider].indicator.Text;
-                        slider++;
                     }
                     else
                     {
@@ -529,6 +539,25 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             };
             modSliders.Add(sliderSetup);
             UpdateSliderIndicators();
+        }
+
+        private Tuple<TextBox, TextBox> AddTuple(string values)
+        {
+            int index = values.IndexOf(ModSettingsReader.tupleDelimiterChar);
+            var tuple = new Tuple<TextBox, TextBox>(
+                GetTextbox(95, 19.6f, values.Substring(0, index)),
+                GetTextbox(116, 19.6f, values.Substring(index + ModSettingsReader.tupleDelimiterChar.Length)));
+            modTuples.Add(tuple);
+            return tuple;
+        }
+
+        private void SetBackgroundTint(TextBox textBox)
+        {
+            // Use box background as a preview of the color
+            Color32 color = ModSettingsReader.ColorFromString(textBox.DefaultText);
+            textBox.BackgroundColor = color;
+            textBox.ToolTip = defaultToolTip;
+            textBox.ToolTipText = color.ToString();
         }
 
         /// <summary>
