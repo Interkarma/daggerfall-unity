@@ -212,13 +212,28 @@ namespace DaggerfallWorkshop.Game
             if (isDamageFinished && !IsLeftHandAttacking() && !IsRightHandAttacking())
                 isDamageFinished = false;
 
-            // Reset tracking if user not holding down 'SwingWeapon' button and no attack in progress
-            if (!InputManager.Instance.HasAction(InputManager.Actions.SwingWeapon) && !isStartingAttack)
+            // Handle attack
+            if (!DaggerfallUnity.Settings.ClickToAttack || isBowAttacking)
             {
-                lastAttackHand = Hand.None;
-                _gesture.Clear();
-                ShowWeapons(true);
-                return;
+                // Reset tracking if user not holding down 'SwingWeapon' button and no attack in progress
+                if (!InputManager.Instance.HasAction(InputManager.Actions.SwingWeapon) && !isStartingAttack)
+                {
+                    lastAttackHand = Hand.None;
+                    _gesture.Clear();
+                    ShowWeapons(true);
+                    return;
+                }
+            }
+            else
+            {
+                // Player must initiate attack (release and click attack)
+                if (!InputManager.Instance.ActionStarted(InputManager.Actions.SwingWeapon) && !isStartingAttack)
+                {
+                    lastAttackHand = Hand.None;
+                    _gesture.Clear();
+                    ShowWeapons(true);
+                    return;
+                }
             }
 
             // Handle attack in progress. For melee weapons set isAttacking but don't go further until the animation passes the middle frame.
@@ -448,6 +463,14 @@ namespace DaggerfallWorkshop.Game
 
         MouseDirections TrackMouseAttack()
         {
+            // Simple hack to return a random attack direction
+            if (DaggerfallUnity.Settings.ClickToAttack)
+            {
+                // Not all attack directions valid for all weapons - use a common subset of directions
+                MouseDirections randomAttack = (MouseDirections)UnityEngine.Random.Range((int)MouseDirections.Left, (int)MouseDirections.DownRight + 1);
+                return randomAttack;
+            }
+
             // Track action for idle plus all eight mouse directions
             var sum = _gesture.Add(InputManager.Instance.MouseX, InputManager.Instance.MouseY) * weaponSensitivity;
 
