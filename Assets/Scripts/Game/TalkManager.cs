@@ -190,7 +190,8 @@ namespace DaggerfallWorkshop.Game
         public class QuestResourceInfo
         {
             public QuestInfoResourceType resourceType;
-            public List<TextFile.Token[]> answers;
+            public List<TextFile.Token[]> anyInfoAnswers;
+            public List<TextFile.Token[]> rumorsAnswers;
             public bool availableForDialog; // if it will show up in section "Tell Me About" in talk window (any dialog link for this resource will set this false, if no dialog link is present it will be set to true)
             public List<string> dialogLinkedLocations; // list of location quest resources dialog-linked to this quest resource
             public List<string> dialogLinkedPersons; // list of person quest resources dialog-linked to this quest resource
@@ -642,6 +643,32 @@ namespace DaggerfallWorkshop.Game
             return answer;
         }
 
+        public string GetDialogHint(ListItem listItem)
+        {
+            if (dictQuestInfo.ContainsKey(listItem.questID))
+            {
+                if (dictQuestInfo[listItem.questID].resourceInfo.ContainsKey(listItem.caption))
+                {
+                    List<TextFile.Token[]> answers = dictQuestInfo[listItem.questID].resourceInfo[listItem.caption].anyInfoAnswers;
+                    return getAnswerFromTokensArray(listItem.questID, answers);
+                }
+            }
+            return "Never mind..."; // error case - should never ever occur
+        }
+
+        public string GetDialogHint2(ListItem listItem)
+        {
+            if (dictQuestInfo.ContainsKey(listItem.questID))
+            {
+                if (dictQuestInfo[listItem.questID].resourceInfo.ContainsKey(listItem.caption))
+                {
+                    List<TextFile.Token[]> answers = dictQuestInfo[listItem.questID].resourceInfo[listItem.caption].rumorsAnswers;
+                    return getAnswerFromTokensArray(listItem.questID, answers);
+                }
+            }
+            return "Never mind..."; // error case - should never ever occur
+        }
+
         public string GetAnswerAboutLocation(TalkManager.ListItem listItem)
         {
             string answer;
@@ -711,28 +738,10 @@ namespace DaggerfallWorkshop.Game
 
         public string GetAnswerAboutQuestTopic(TalkManager.ListItem listItem)
         {
-            if (dictQuestInfo.ContainsKey(listItem.questID))
-            {
-                if (dictQuestInfo[listItem.questID].resourceInfo.ContainsKey(listItem.caption))
-                {
-                    List<TextFile.Token[]> answers = dictQuestInfo[listItem.questID].resourceInfo[listItem.caption].answers;
-                    int randomNumAnswer = UnityEngine.Random.Range(0, answers.Count);
-
-                    // cloning important here: we want to evaluate every time the answer is created so altering macros are re-expanded correctly
-                    // e.g. Missing Prince quest allows player to ask for dungeon and there is a "%di" macro that needs to be re-evaluated
-                    // to correctly show current direction to dungeon (when in different towns it is likely to be different)
-                    TextFile.Token[] tokens = (TextFile.Token[])answers[randomNumAnswer].Clone();
-
-                    QuestMacroHelper macroHelper = new QuestMacroHelper();
-                    macroHelper.ExpandQuestMessage(GameManager.Instance.QuestMachine.GetQuest(listItem.questID), ref tokens);
-                    
-                    return tokens[0].text;
-                }
-            }
-            return "Never mind..."; // error case - should never ever occur
+           return expandRandomTextRecord(7278);
         }
 
-        public void AddQuestInfoTopics(ulong questID, string resourceName, QuestInfoResourceType resourceType, List<TextFile.Token[]> answers)
+        public void AddQuestTopicWithInfoAndRumors(ulong questID, string resourceName, QuestInfoResourceType resourceType, List<TextFile.Token[]> anyInfoAnswers, List<TextFile.Token[]> rumorsAnswers)
         {
             QuestResources questResources;
             if (dictQuestInfo.ContainsKey(questID))
@@ -746,7 +755,8 @@ namespace DaggerfallWorkshop.Game
             }
 
             QuestResourceInfo questResourceInfo = new QuestResourceInfo();
-            questResourceInfo.answers = answers;
+            questResourceInfo.anyInfoAnswers = anyInfoAnswers;
+            questResourceInfo.rumorsAnswers = rumorsAnswers;
             questResourceInfo.resourceType = resourceType;
             questResourceInfo.availableForDialog = true;
             questResourceInfo.dialogLinkedLocations = new List<string>();
@@ -1265,6 +1275,22 @@ namespace DaggerfallWorkshop.Game
         {
             AssembleTopicLists();
         }
+
+        private string getAnswerFromTokensArray(ulong questID, List<TextFile.Token[]> answers)
+        {
+            int randomNumAnswer = UnityEngine.Random.Range(0, answers.Count);
+
+            // cloning important here: we want to evaluate every time the answer is created so altering macros are re-expanded correctly
+            // e.g. Missing Prince quest allows player to ask for dungeon and there is a "%di" macro that needs to be re-evaluated
+            // to correctly show current direction to dungeon (when in different towns it is likely to be different)
+            TextFile.Token[] tokens = (TextFile.Token[])answers[randomNumAnswer].Clone();
+
+            QuestMacroHelper macroHelper = new QuestMacroHelper();
+            macroHelper.ExpandQuestMessage(GameManager.Instance.QuestMachine.GetQuest(questID), ref tokens);
+
+            return tokens[0].text;
+        }
+
 
         private string expandRandomTextRecord(int recordIndex)
         {

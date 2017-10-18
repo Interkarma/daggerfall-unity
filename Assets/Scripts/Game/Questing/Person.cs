@@ -482,13 +482,22 @@ namespace DaggerfallWorkshop.Game.Questing
             if (this.InfoMessageID != -1)
             {
                 Message message = this.ParentQuest.GetMessage(this.InfoMessageID);
-                List<TextFile.Token[]> answers = new List<TextFile.Token[]>();
+                List<TextFile.Token[]> anyInfoAnswers = new List<TextFile.Token[]>();
                 for (int i=0; i < message.VariantCount; i++)
                 {
                     TextFile.Token[] tokens = message.GetTextTokensByVariant(i, false); // do not expand macros here (they will be expanded just in time by TalkManager class)
-                    answers.Add(tokens);
-                }                
-                GameManager.Instance.TalkManager.AddQuestInfoTopics(this.ParentQuest.UID, this.displayName, TalkManager.QuestInfoResourceType.Person, answers);
+                    anyInfoAnswers.Add(tokens);
+                }
+
+                message = this.ParentQuest.GetMessage(this.RumorsMessageID);
+                List<TextFile.Token[]> anyRumorsAnswers = new List<TextFile.Token[]>();
+                for (int i = 0; i < message.VariantCount; i++)
+                {
+                    TextFile.Token[] tokens = message.GetTextTokensByVariant(i, false); // do not expand macros here (they will be expanded just in time by TalkManager class)
+                    anyRumorsAnswers.Add(tokens);
+                }
+
+                GameManager.Instance.TalkManager.AddQuestTopicWithInfoAndRumors(this.ParentQuest.UID, this.displayName, TalkManager.QuestInfoResourceType.Person, anyInfoAnswers, anyRumorsAnswers);
             }
         }
 

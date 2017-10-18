@@ -48,6 +48,31 @@ namespace DaggerfallWorkshop.Game
                 return "never mind...";
             }
 
+            public override string DialogHint()
+            {
+                if (parent.questionType == QuestionType.LocalBuilding)
+                {
+                    return GameManager.Instance.TalkManager.GetKeySubjectLocationHint();
+                }
+                else if (parent.questionType == QuestionType.QuestLocation || parent.questionType == QuestionType.QuestPerson || parent.questionType == QuestionType.QuestItem)
+                {
+                    return GameManager.Instance.TalkManager.GetDialogHint(parent);
+                }
+                return "never mind...";
+            }
+
+            public override string DialogHint2()
+            {
+                if (parent.questionType == QuestionType.LocalBuilding)
+                {
+                    return GameManager.Instance.TalkManager.GetKeySubjectLocationHint();
+                }
+                else if (parent.questionType == QuestionType.QuestLocation || parent.questionType == QuestionType.QuestPerson || parent.questionType == QuestionType.QuestItem)
+                {
+                    return GameManager.Instance.TalkManager.GetDialogHint2(parent);
+                }
+                return "never mind...";
+            }
         }
     }
 }
