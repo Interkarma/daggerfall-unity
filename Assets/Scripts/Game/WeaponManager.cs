@@ -47,6 +47,7 @@ namespace DaggerfallWorkshop.Game
         PlayerEntity playerEntity;
         GameObject player;
         GameObject mainCamera;
+        bool isClickAttack = false;
         bool isStartingAttack = false;
         bool isDamageFinished = false;
         Hand lastAttackHand = Hand.None;
@@ -212,13 +213,30 @@ namespace DaggerfallWorkshop.Game
             if (isDamageFinished && !IsLeftHandAttacking() && !IsRightHandAttacking())
                 isDamageFinished = false;
 
-            // Reset tracking if user not holding down 'SwingWeapon' button and no attack in progress
-            if (!InputManager.Instance.HasAction(InputManager.Actions.SwingWeapon) && !isStartingAttack)
+            // Handle attack
+            if (!DaggerfallUnity.Settings.ClickToAttack || isBowAttacking)
             {
-                lastAttackHand = Hand.None;
-                _gesture.Clear();
-                ShowWeapons(true);
-                return;
+                // Reset tracking if user not holding down 'SwingWeapon' button and no attack in progress
+                if (!InputManager.Instance.HasAction(InputManager.Actions.SwingWeapon) && !isStartingAttack)
+                {
+                    lastAttackHand = Hand.None;
+                    _gesture.Clear();
+                    ShowWeapons(true);
+                    return;
+                }
+            }
+            else
+            {
+                // Player must click to attack
+                if (InputManager.Instance.ActionStarted(InputManager.Actions.SwingWeapon) && !isStartingAttack)
+                {
+                    isClickAttack = true;
+                }
+                else
+                {
+                    _gesture.Clear();
+                    ShowWeapons(true);
+                }
             }
 
             // Handle attack in progress. For melee weapons set isAttacking but don't go further until the animation passes the middle frame.
@@ -300,11 +318,18 @@ namespace DaggerfallWorkshop.Game
             if (isBowAttacking)
             {
                 // Ensure attack button was released before starting the next attack
-                if (lastAttackHand == Hand.None) 
+                if (lastAttackHand == Hand.None)
                     attackDirection = MouseDirections.Down; // Force attack without tracking a swing for Bow
             }
+            else if (isClickAttack)
+            {
+                attackDirection = (MouseDirections)UnityEngine.Random.Range((int)MouseDirections.Left, (int)MouseDirections.DownRight + 1);
+                isClickAttack = false;
+            }
             else
+            {
                 attackDirection = TrackMouseAttack(); // Track swing direction for other weapons
+            }
 
             // Exit if no attack action registered
             if (attackDirection != MouseDirections.None)

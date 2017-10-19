@@ -54,7 +54,8 @@ namespace DaggerfallWorkshop.Game.Questing
             // Factory new action
             TeleportPc action = new TeleportPc(parentQuest);
             action.targetPlace = new Symbol(match.Groups["aPlace"].Value);
-            action.targetMarker = Parser.ParseInt(match.Groups["marker"].Value);
+            if (match.Groups["marker"].Success)
+                action.targetMarker = Parser.ParseInt(match.Groups["marker"].Value);
 
             return action;
         }
@@ -112,12 +113,16 @@ namespace DaggerfallWorkshop.Game.Questing
             // Determine start position
             if (usingMarker)
             {
+                // Use specified quest marker
                 Vector3 dungeonBlockPosition = new Vector3(marker.dungeonX * RDBLayout.RDBSide, 0, marker.dungeonZ * RDBLayout.RDBSide);
                 resumePosition = dungeonBlockPosition + marker.flatPosition;
             }
             else
             {
-                // TODO: Use dungeon start marker position for dungeon traps
+                // Use first quest marker
+                marker = place.SiteDetails.questSpawnMarkers[0];
+                Vector3 dungeonBlockPosition = new Vector3(marker.dungeonX * RDBLayout.RDBSide, 0, marker.dungeonZ * RDBLayout.RDBSide);
+                resumePosition = dungeonBlockPosition + marker.flatPosition;
             }
 
             resumePending = true;

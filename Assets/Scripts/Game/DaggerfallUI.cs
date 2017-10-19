@@ -89,6 +89,8 @@ namespace DaggerfallWorkshop.Game
 
         DaggerfallFontPlus fontPetrock32;
 
+        Questing.Actions.GivePc lastPendingOfferSender = null;
+
         public DaggerfallFont Font1 { get { return GetFont(1); } }
         public DaggerfallFont Font2 { get { return GetFont(2); } }
         public DaggerfallFont Font3 { get { return GetFont(3); } }
@@ -216,6 +218,8 @@ namespace DaggerfallWorkshop.Game
 
             dfQuestInspector = new QuestMachineInspectorWindow(uiManager);
 
+            Questing.Actions.GivePc.OnOfferPending += GivePc_OnOfferPending;
+
             SetupSingleton();
         }
 
@@ -331,7 +335,10 @@ namespace DaggerfallWorkshop.Game
                             MessageBox(HardStrings.cannotTravelWithEnemiesNearby);
                         }
                         else
-                            uiManager.PushWindow(dfTravelMapWindow);
+                        {
+                            if (!GiveOffer())
+                                uiManager.PushWindow(dfTravelMapWindow);
+                        }
                     }
                     break;
                 case DaggerfallUIMessages.dfuiOpenAutomap:
@@ -361,7 +368,8 @@ namespace DaggerfallWorkshop.Game
                     }
                     else if (GameManager.Instance.PlayerController.isGrounded)
                     {
-                        uiManager.PushWindow(new DaggerfallRestWindow(uiManager));
+                        if (!GiveOffer())
+                            uiManager.PushWindow(new DaggerfallRestWindow(uiManager));
                     }
                     break;
                 case DaggerfallUIMessages.dfuiOpenTransportWindow:
@@ -1027,6 +1035,27 @@ namespace DaggerfallWorkshop.Game
                 if (!string.IsNullOrEmpty(video) && enableVideos)
                     uiManager.PushWindow(new DaggerfallVidPlayerWindow(uiManager, video));
             }
+        }
+
+        bool GiveOffer()
+        {
+            if (lastPendingOfferSender != null)
+            {
+                lastPendingOfferSender.OfferImmediately();
+                lastPendingOfferSender = null;
+                return true;
+            }
+
+            return false;
+        }
+
+        #endregion
+
+        #region Events
+
+        private void GivePc_OnOfferPending(Questing.Actions.GivePc sender)
+        {
+            lastPendingOfferSender = sender;
         }
 
         #endregion

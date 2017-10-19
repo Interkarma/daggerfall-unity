@@ -104,6 +104,7 @@ namespace DaggerfallWorkshop
         public int Handedness { get; set; }
         public float WeaponAttackThreshold { get; set; }
         public float WeaponSensitivity { get; set; }
+        public bool ClickToAttack { get; set; }
 
         // [Startup]
         public int StartCellX { get; set; }
@@ -170,6 +171,7 @@ namespace DaggerfallWorkshop
             Handedness = GetInt(sectionControls, "Handedness", 0, 3);
             WeaponAttackThreshold = GetFloat(sectionControls, "WeaponAttackThreshold", 0.001f, 1.0f);
             WeaponSensitivity = GetFloat(sectionControls, "WeaponSensitivity", 0.1f, 10.0f);
+            ClickToAttack = GetBool(sectionControls, "ClickToAttack");
             StartCellX = GetInt(sectionStartup, "StartCellX", 2, 997);
             StartCellY = GetInt(sectionStartup, "StartCellY", 2, 497);
             StartInDungeon = GetBool(sectionStartup, "StartInDungeon");
@@ -224,6 +226,7 @@ namespace DaggerfallWorkshop
             SetInt(sectionControls, "Handedness", Handedness);
             SetFloat(sectionControls, "WeaponAttackThreshold", WeaponAttackThreshold);
             SetFloat(sectionControls, "WeaponSensitivity", WeaponSensitivity);
+            SetBool(sectionControls, "ClickToAttack", ClickToAttack);
             SetInt(sectionStartup, "StartCellX", StartCellX);
             SetInt(sectionStartup, "StartCellY", StartCellY);
             SetBool(sectionStartup, "StartInDungeon", StartInDungeon);

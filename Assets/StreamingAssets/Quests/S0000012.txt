@@ -131,7 +131,7 @@ Message:  1021
 <ce>              himself. If this is some ruse to ambush me,
 <ce>                you will surely not live to regret it.
 <ce>                                    
-<ce>                  Hmmm. Yes, I am _dispatcher_. This
+<ce>                  Hmmm. Yes, I am _messenger_. This
 <ce>             signet ring proves that you are indeed in the
 <ce>            service of Mynisera. Some time ago I delivered
 <ce>              a letter from the Emperor addressed to the

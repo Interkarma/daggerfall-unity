@@ -103,8 +103,7 @@ namespace DaggerfallWorkshop.Game
                 return;
 
             // Suppress mouse look if player is swinging weapon
-            //if (Input.GetButton("Fire2"))
-            if (InputManager.Instance.HasAction(InputManager.Actions.SwingWeapon))
+            if (InputManager.Instance.HasAction(InputManager.Actions.SwingWeapon) && !DaggerfallUnity.Settings.ClickToAttack)
                 return;
 
             Vector2 rawMouseDelta = new Vector2(InputManager.Instance.LookX, InputManager.Instance.LookY);
