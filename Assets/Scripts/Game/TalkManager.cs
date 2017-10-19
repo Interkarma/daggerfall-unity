@@ -189,21 +189,32 @@ namespace DaggerfallWorkshop.Game
             Thing
         }
 
+        // quest resource locality info
+        public class QuestResourceLocalityInfo
+        {
+            public string regionName;
+            public string townName;
+        }
+
         // quest info answers about quest resource
         public class QuestResourceInfo
         {
             public QuestInfoResourceType resourceType;
             public List<TextFile.Token[]> anyInfoAnswers;
             public List<TextFile.Token[]> rumorsAnswers;
-            public bool availableForDialog; // if it will show up in section "Tell Me About" in talk window (any dialog link for this resource will set this false, if no dialog link is present it will be set to true)
+            public bool availableForDialog; // if it will show up in talk window (any dialog link for this resource will set this false, if no dialog link is present it will be set to true)
+            public bool hasEntryInTellMeAbout; // if resource will get entry in section "Tell Me About" (anyInfo or rumors available)
+            public bool hasEntryInWhereIs; // if resource will get entry in section "Where Is" (e.g. person resources)
             public List<string> dialogLinkedLocations; // list of location quest resources dialog-linked to this quest resource
             public List<string> dialogLinkedPersons; // list of person quest resources dialog-linked to this quest resource
             public List<string> dialogLinkedThings; // list of thing quest resources dialog-linked to this quest resource
+            public QuestResourceLocalityInfo localityInfo; // if quest resource is of type QuestInfoResourceType.Person this holds information about quest resource locality
         }
 
-        // a dictionary of quest resources (key resource name, value is the QuestResourceInfo)
+        // quest related resources and npcs
         public class QuestResources
         {
+            // a dictionary of quest resources (key resource name, value is the QuestResourceInfo)
             public Dictionary<string, QuestResourceInfo> resourceInfo;
         }
 
@@ -781,9 +792,15 @@ namespace DaggerfallWorkshop.Game
             questResourceInfo.rumorsAnswers = rumorsAnswers;
             questResourceInfo.resourceType = resourceType;
             questResourceInfo.availableForDialog = true;
+            questResourceInfo.hasEntryInTellMeAbout = true;
+            if (resourceType == QuestInfoResourceType.Person || resourceType == QuestInfoResourceType.Location)
+                questResourceInfo.hasEntryInWhereIs = true;
+            else
+                questResourceInfo.hasEntryInWhereIs = false;
             questResourceInfo.dialogLinkedLocations = new List<string>();
             questResourceInfo.dialogLinkedPersons = new List<string>();
             questResourceInfo.dialogLinkedThings = new List<string>();
+            questResourceInfo.localityInfo = null;
 
             questResources.resourceInfo[resourceName] = questResourceInfo;
 
@@ -791,6 +808,59 @@ namespace DaggerfallWorkshop.Game
 
             // update topic list
             AssembleTopiclistTellMeAbout();
+        }
+
+        public void AddPersonTopic(ulong questID, DaggerfallWorkshop.Game.Questing.Person person)
+        {
+            string resourceName = person.DisplayName;
+
+            QuestResources questResources;
+            if (dictQuestInfo.ContainsKey(questID))
+            {
+                questResources = dictQuestInfo[questID];
+            }
+            else
+            {
+                questResources = new QuestResources();
+                questResources.resourceInfo = new Dictionary<string, QuestResourceInfo>();
+            }
+
+            QuestResourceInfo questResourceInfo;
+            if (questResources.resourceInfo.ContainsKey(resourceName))
+            {
+                questResourceInfo = questResources.resourceInfo[resourceName];
+            }
+            else
+            {
+                questResourceInfo = new QuestResourceInfo();
+                questResourceInfo.anyInfoAnswers = null;
+                questResourceInfo.rumorsAnswers = null;
+                questResourceInfo.resourceType = QuestInfoResourceType.Person;
+                questResourceInfo.availableForDialog = false;
+                questResourceInfo.hasEntryInTellMeAbout = false;
+                questResourceInfo.hasEntryInWhereIs = true;
+                questResourceInfo.dialogLinkedLocations = new List<string>();
+                questResourceInfo.dialogLinkedPersons = new List<string>();
+                questResourceInfo.dialogLinkedThings = new List<string>();                
+            }
+
+            questResourceInfo.localityInfo = new QuestResourceLocalityInfo();
+
+            QuestMacroHelper macroHelper = new QuestMacroHelper();
+            
+            string resolvedString = "___" + person.Symbol.Name + "_";
+            macroHelper.ExpandQuestString(GameManager.Instance.QuestMachine.GetQuest(questID), ref resolvedString);
+            questResourceInfo.localityInfo.regionName = resolvedString;
+
+            resolvedString = "____" + person.Symbol.Name + "_";
+            macroHelper.ExpandQuestString(GameManager.Instance.QuestMachine.GetQuest(questID), ref resolvedString);
+            questResourceInfo.localityInfo.townName = resolvedString;
+            
+            questResources.resourceInfo[resourceName] = questResourceInfo;
+            dictQuestInfo[questID] = questResources;
+            
+            // update topic list
+            AssembleTopicListPerson();
         }
 
         public void DialogLinkForQuestInfoResource(ulong questID, string resourceName, QuestInfoResourceType resourceType, string linkedResourceName = null, QuestInfoResourceType linkedResourceType = QuestInfoResourceType.NotSet)
@@ -892,8 +962,11 @@ namespace DaggerfallWorkshop.Game
                 dictQuestInfo.Remove(questID);
             }
 
-            // update topic list
+            // update topic lists
             AssembleTopiclistTellMeAbout();
+            AssembleTopicListLocation();
+            AssembleTopicListPerson();
+            AssembleTopicListThing();
         }
 
         /// <summary>
@@ -1096,7 +1169,7 @@ namespace DaggerfallWorkshop.Game
                     //macroHelper.ExpandQuestString(GameManager.Instance.QuestMachine.GetQuest(questID), ref captionString);
                     itemQuestTopic.caption = captionString;
 
-                    if (questResourceInfo.Value.availableForDialog) // only make it available for talk if it is not "hidden" by dialog link command
+                    if (questResourceInfo.Value.availableForDialog && questResourceInfo.Value.hasEntryInTellMeAbout) // only make it available for talk if it is not "hidden" by dialog link command
                         listTopicTellMeAbout.Add(itemQuestTopic);
                 }
             }
@@ -1207,13 +1280,28 @@ namespace DaggerfallWorkshop.Game
         private void AssembleTopicListPerson()
         {
             listTopicPerson = new List<ListItem>();
-            for (int i = 0; i < 12; i++)
+
+            foreach (KeyValuePair<ulong, QuestResources> questInfo in dictQuestInfo)
             {
-                ListItem item = new ListItem();
-                item.type = ListItemType.Item;
-                item.questionType = QuestionType.Person;
-                item.caption = "dummy person " + i + " (here will be the name of the person later on)";
-                listTopicPerson.Add(item);
+                foreach (KeyValuePair<string, QuestResourceInfo> questResourceInfo in questInfo.Value.resourceInfo)
+                {
+                    if (questResourceInfo.Value.resourceType == QuestInfoResourceType.Person)
+                    {
+                        ListItem item = new ListItem();
+                        item.type = ListItemType.Item;
+                        item.questionType = QuestionType.Person;
+
+                        ulong questID = questInfo.Key;
+                        item.questID = questID;
+
+                        string captionString = questResourceInfo.Key;
+                        item.caption = captionString;
+
+                        if (questResourceInfo.Value.availableForDialog && questResourceInfo.Value.hasEntryInWhereIs) // only make it available for talk if it is not "hidden" by dialog link command
+                            listTopicPerson.Add(item);
+                    }
+
+                }
             }
         }
 

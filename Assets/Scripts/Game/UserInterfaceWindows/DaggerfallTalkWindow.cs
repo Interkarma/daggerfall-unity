@@ -717,6 +717,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             listboxTopic.Update();
             UpdateScrollBarsTopic();
             UpdateScrollButtonsTopic();
+
+            if (listTopic.Count <= 0)
+                return;
+
             if (listTopic[0].listParentItems != null) // first entry is "previous" item
             {
                 listboxTopic.SelectIndex(1);
@@ -1074,11 +1078,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
             else
             {
-                listItem = listCurrentTopics[index];
                 if (index < 0 || index >= listboxTopic.Count)
                 {
                     textlabelPlayerSays.Text = "";
                     return;
+                }
+                else
+                {
+                    listItem = listCurrentTopics[index];
                 }
             }
 
