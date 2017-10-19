@@ -693,10 +693,10 @@ namespace DaggerfallWorkshop.Game
             }
 
             if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.DoesNotKnowAboutItem)
-                answer = expandRandomTextRecord(7280);
+                answer = getRecordIdByNpcsSocialGroup(7281, 7280, 7280, 7283, 7282, 7284); // messages if npc does not know
             else
             {                
-                answer = getQuestionEnvelope(7271, 7270, 7270, 7273, 7272, 7274); // will pick one of those text record ids for answers depending on socialgroup of npc
+                answer = getRecordIdByNpcsSocialGroup(7271, 7270, 7270, 7273, 7272, 7274); // location related messages if npc knows
             }
             return answer;
         }
@@ -708,8 +708,8 @@ namespace DaggerfallWorkshop.Game
             switch (listItem.questionType)
             {
                 case QuestionType.NoQuestion:
-                default:                    
-                    answer = expandRandomTextRecord(7280);
+                default:
+                    answer = getRecordIdByNpcsSocialGroup(7281, 7280, 7280, 7283, 7282, 7284); // messages if npc does not know
                     break;
                 case QuestionType.News:
                     answer = GetNewsOrRumors();
@@ -721,7 +721,7 @@ namespace DaggerfallWorkshop.Game
                     answer = GetAnswerAboutLocation(listItem);
                     break;
                 case QuestionType.Person:
-                    answer = expandRandomTextRecord(7280);
+                    answer = getRecordIdByNpcsSocialGroup(7281, 7280, 7280, 7283, 7282, 7284); // messages if npc does not know
                     break;
                 case QuestionType.Thing:
                     answer = "not implemented";
@@ -747,7 +747,20 @@ namespace DaggerfallWorkshop.Game
 
         public string GetAnswerAboutQuestTopic(TalkManager.ListItem listItem)
         {
-            return getQuestionEnvelope(7276, 7275, 7275, 7278, 7277, 7279);  // will pick one of those text record ids for answers depending on socialgroup of npc
+            if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.NotSet)
+            {
+                // chances unknown - so there is a 50% chance for now that npc knows
+                int randomNum = UnityEngine.Random.Range(0, 2);
+                if (randomNum == 0)
+                    listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.DoesNotKnowAboutItem;
+                else
+                    listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.KnowsAboutItem;
+            }
+
+            if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.DoesNotKnowAboutItem)
+                return getRecordIdByNpcsSocialGroup(7281, 7280, 7280, 7283, 7282, 7284); // messages if npc does not know
+            else
+                return getRecordIdByNpcsSocialGroup(7276, 7275, 7275, 7278, 7277, 7279); // quest topic related messages if npc knows
         }
 
         public void AddQuestTopicWithInfoAndRumors(ulong questID, string resourceName, QuestInfoResourceType resourceType, List<TextFile.Token[]> anyInfoAnswers, List<TextFile.Token[]> rumorsAnswers)
@@ -1285,7 +1298,7 @@ namespace DaggerfallWorkshop.Game
             AssembleTopicLists();
         }
 
-        private string getQuestionEnvelope(int textRecordIdDefault, int textRecordIdGuildMembers, int textRecordIdMerchants, int textRecordIdNobility, int textRecordIdScholars, int textRecordIdUnderworld)
+        private string getRecordIdByNpcsSocialGroup(int textRecordIdDefault, int textRecordIdGuildMembers, int textRecordIdMerchants, int textRecordIdNobility, int textRecordIdScholars, int textRecordIdUnderworld)
         {
             switch (npcSocialGroup)
             {
