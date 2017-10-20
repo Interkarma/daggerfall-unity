@@ -51,7 +51,10 @@ namespace DaggerfallWorkshop.Game.Questing
             // Attempt to get Item resource
             Item item = ParentQuest.GetItem(target);
             if (item == null)
+            {
+                SetComplete();
                 throw new Exception(string.Format("Could not find Item resource symbol {0}", target));
+            }
 
             // Convert to permanent
             if (item.DaggerfallUnityItem != null)

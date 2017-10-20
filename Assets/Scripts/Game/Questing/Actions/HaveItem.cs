@@ -54,7 +54,10 @@ namespace DaggerfallWorkshop.Game.Questing
             // Attempt to get Item resource
             Item item = ParentQuest.GetItem(targetItem);
             if (item == null)
+            {
+                SetComplete();
                 throw new Exception(string.Format("Could not find Item resource symbol {0}", targetItem));
+            }
 
             // Start/Clear target task based on player carrying item
             if (GameManager.Instance.PlayerEntity.Items.Contains(item.DaggerfallUnityItem))

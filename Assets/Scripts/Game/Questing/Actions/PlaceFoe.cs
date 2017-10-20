@@ -65,12 +65,18 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // Attempt to get Foe resource
             Foe foe = ParentQuest.GetFoe(foeSymbol);
             if (foe == null)
+            {
+                SetComplete();
                 throw new Exception(string.Format("Could not find Foe resource symbol {0}", foeSymbol));
+            }
 
             // Attempt to get Place resource
             Place place = ParentQuest.GetPlace(placeSymbol);
             if (place == null)
+            {
+                SetComplete();
                 throw new Exception(string.Format("Could not find Place resource symbol {0}", placeSymbol));
+            }
 
             // Assign Foe to Place
             place.AssignQuestResource(foeSymbol, marker);

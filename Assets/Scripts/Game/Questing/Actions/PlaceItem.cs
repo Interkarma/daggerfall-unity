@@ -66,12 +66,18 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // Attempt to get Item resource
             Item item = ParentQuest.GetItem(itemSymbol);
             if (item == null)
+            {
+                SetComplete();
                 throw new Exception(string.Format("Could not find Item resource symbol {0}", itemSymbol));
+            }
 
             // Attempt to get Place resource
             Place place = ParentQuest.GetPlace(placeSymbol);
             if (place == null)
+            {
+                SetComplete();
                 throw new Exception(string.Format("Could not find Place resource symbol {0}", placeSymbol));
+            }
 
             // Assign Item to Place
             place.AssignQuestResource(item.Symbol, marker);
