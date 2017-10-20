@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -11,10 +11,10 @@
 
 using System.IO;
 using System.Globalization;
+using System.Collections.Generic;
+using UnityEngine;
 using IniParser;
 using IniParser.Model;
-using UnityEngine;
-using System.Collections.Generic;
 
 namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 {
@@ -53,30 +53,15 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             if (File.Exists(settingPath))
                 return true;
 
-            if (mod.AssetBundle.Contains("modsettings.ini.txt"))
+            IniData defaultSettings;
+            if (TryGetDefaultSettings(mod, out defaultSettings))
             {
                 // Recreate file on disk using default values
-                IniData defaultSettings = GetDefaultSettings(mod);
                 parser.WriteFile(settingPath, defaultSettings);
                 return true;
             }
-            else if (mod.AssetBundle.Contains(mod.Title + ".ini.txt"))
-            {
-                // Recreate file on disk using default values
-                IniData defaultSettings = GetDefaultSettings(mod);
-                parser.WriteFile(settingPath, defaultSettings);
-                return true;
-            }
-            else if(mod.AssetBundle.Contains(mod.FileName + ".ini.txt"))
-            {
-                IniData defaultSettings = GetDefaultSettings(mod);
-                parser.WriteFile(settingPath, defaultSettings);
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+
+            return false;
         }
 
         /// <summary>
@@ -86,28 +71,52 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// <returns></returns>
         public static IniData GetSettings(Mod mod, bool getDefaultsAsFallback = true)
         {
+            // Get path
             string path = Path.Combine(mod.DirPath, mod.FileName + ".ini");
 
+            // File on disk
             if (File.Exists(path))
                 return parser.ReadFile(path);
 
-            Debug.LogError(mod.Title + ": failed to read " + path);
-            if (getDefaultsAsFallback == false)
-                return null;
+            // Default settings
+            if (getDefaultsAsFallback)
+                return GetDefaultSettings(mod);
 
-            IniData defaultSettings = GetDefaultSettings(mod);
-            if (defaultSettings != null)
+            return null;
+        }
+
+        public static bool TryGetDefaultSettings(Mod mod, out IniData settings)
+        {
+            // Get default settings from ini file
+            if (mod.AssetBundle.Contains(mod.Title + ".ini.txt"))
             {
-                // Create settings file
-                parser.WriteFile(path, defaultSettings);
-                Debug.Log(mod.Title + ": A new " + mod.FileName + ".ini has been recreated with default settings");
-                return defaultSettings;
+                settings = GetIniDataFromTextAsset(mod.GetAsset<TextAsset>(mod.Title + ".ini.txt"));
+                return true;
             }
-            else
+            else if (mod.AssetBundle.Contains("modsettings.ini.txt"))
             {
-                Debug.LogError(mod.Title + ": Failed to get default settings");
-                return null;
+                settings = GetIniDataFromTextAsset(mod.GetAsset<TextAsset>("modsettings.ini.txt"));
+                return true;
             }
+
+            // Eventually this will no longer be supported as file name can be changed by user.
+            if (mod.AssetBundle.Contains(mod.FileName + ".ini.txt"))
+            {
+                Debug.LogWarningFormat("{0} is using an obsolete modsettings filename!", mod.Title);
+                settings = GetIniDataFromTextAsset(mod.GetAsset<TextAsset>(mod.FileName + ".ini.txt"));
+                return true;
+            }
+
+            // Get defaults from config file
+            var config = GetConfig(mod);
+            if (config)
+            {
+                settings = ParseConfigToIni(config);
+                return true;
+            }
+
+            settings = null;
+            return false;
         }
 
         /// <summary>
@@ -115,21 +124,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// </summary>
         public static IniData GetDefaultSettings(Mod mod)
         {
-            // Get modName.ini.txt from Mod
-            TextAsset iniFile = null;
-            if (mod.AssetBundle.Contains(mod.Title + ".ini.txt"))
-                iniFile = mod.GetAsset<TextAsset>(mod.Title + ".ini.txt");
-            else if (mod.AssetBundle.Contains("modsettings.ini.txt"))
-                iniFile = mod.GetAsset<TextAsset>("modsettings.ini.txt");
-            else if (mod.AssetBundle.Contains(mod.FileName + ".ini.txt"))
-                iniFile = mod.GetAsset<TextAsset>(mod.FileName + ".ini.txt"); //should not be used, as file name can be changed by user
-            else
-            {
-                Debug.LogError("Failed to get default settings from " + mod.Title);
-                return null;
-            }
+            IniData defaultSettings;
+            if (TryGetDefaultSettings(mod, out defaultSettings))
+                return defaultSettings;
 
-            return GetIniDataFromTextAsset(iniFile);
+            Debug.LogErrorFormat("Failed to get default settings from {0}", mod.Title);
+            return null;
         }
 
         /// <summary>
@@ -164,7 +164,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 presets.Add(parser.ReadFile(path));
             }
 
-            // Get presets from mod
+            // Get presets from mod (TextAsset)
             int index = 0;
             while (mod.AssetBundle.Contains("settingspreset" + index + ".ini.txt"))
             {
@@ -173,12 +173,103 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 index++;
             }
 
+            // Get preset from mod (Config)
+            var config = GetConfig(mod);
+            if (config != null)
+            {
+                foreach (var presetName in config.presets)
+                {
+                    var presetConfig = mod.GetAsset<ModSettingsConfiguration>(presetName);
+                    presets.Add(ParseConfigToIni(presetConfig));
+                }
+            }
+
             return presets;
         }
 
         public static ModSettingsConfiguration GetConfig(Mod mod)
         {
-            return mod.GetAsset<ModSettingsConfiguration>("modsettings.asset");
+            if (mod.AssetBundle.Contains("modsettings.asset"))
+                return mod.GetAsset<ModSettingsConfiguration>("modsettings.asset");
+
+            return null;
+        }
+
+        public static IniData ParseConfigToIni(ModSettingsConfiguration config)
+        {
+            var iniData = new IniData();
+
+            // Header
+            var header = new SectionData(internalSection);
+            header.Keys.AddKey(settingsVersionKey, config.version);
+
+            if (config.isPreset)
+            {
+                header.Keys.AddKey("PresetName", config.presetSettings.name);
+                header.Keys.AddKey("PresetAuthor", config.presetSettings.author);
+                header.Keys.AddKey("Description", config.presetSettings.description);
+            }
+
+            iniData.Sections.Add(header);
+
+            // Settings
+            foreach (var section in config.sections)
+            {
+                var sectionData = new SectionData(section.name);
+
+                foreach (var key in section.keys)
+                {
+                    KeyData keyData = new KeyData(key.name);
+
+                    switch (key.type)
+                    {
+                        case ModSettingsKey.KeyType.Toggle:
+                            keyData.Value = key.toggle.value.ToString();
+                            break;
+
+                        case ModSettingsKey.KeyType.MultipleChoice:
+                            keyData.Value = key.multipleChoice.selected.ToString();
+                            break;
+
+                        case ModSettingsKey.KeyType.Slider:
+                            keyData.Value = key.slider.value.ToString();
+                            break;
+
+                        case ModSettingsKey.KeyType.FloatSlider:
+                            keyData.Value = key.floatSlider.value.ToString();
+                            break;
+
+                        case ModSettingsKey.KeyType.Tuple:
+                            keyData.Value = key.tuple.first + tupleDelimiterChar + key.tuple.second;
+                            break;
+
+                        case ModSettingsKey.KeyType.FloatTuple:
+                            keyData.Value = key.floatTuple.first + tupleDelimiterChar + key.floatTuple.second;
+                            break;
+
+                        case ModSettingsKey.KeyType.Text:
+                            keyData.Value = key.text.text;
+                            break;
+
+                        case ModSettingsKey.KeyType.Color:
+                            keyData.Value = key.color.HexColor;
+                            break;
+                    }
+
+                    sectionData.Keys.AddKey(keyData);
+                }
+
+                iniData.Sections.Add(sectionData);
+            }
+
+            return iniData;
+        }
+
+        public static bool IsHexColor(string stringColor)
+        {
+            int hexColor;
+            return (stringColor.Length == 8 &&
+                int.TryParse(stringColor, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out hexColor));
         }
 
         /// <summary>
