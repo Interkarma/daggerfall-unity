@@ -31,6 +31,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         SerializedProperty _sections;
 
+        bool presetSyncExpanded = false;
+        bool addNewKeys = false;
+
         bool sectionsExpanded = foldoutStartExpanded;
 
         Dictionary<int, bool> sectionExpanded = new Dictionary<int, bool>();
@@ -41,6 +44,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         Dictionary<int, int> keysCount = new Dictionary<int, int>();
 
         ModSettingsConfiguration Target;
+        ModSettingsConfiguration parent;
 
         GUIStyle sectionFoldoutStyle;
         GUIStyle keyFoldoutStyle;
@@ -72,15 +76,34 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         {
             serializedObject.Update();
 
-            EditorGUILayout.HelpBox("Create settings for a mod. Remember to name the file 'modsettings.asset'", MessageType.Info);
+            if (_isPreset.boolValue)
+                EditorGUILayout.HelpBox("Create a preset for a mod. Remember to add it to the list of presets", MessageType.Info);
+            else
+                EditorGUILayout.HelpBox("Create settings for a mod. Remember to name the file 'modsettings.asset'", MessageType.Info);
 
             // Header
             EditorGUILayout.LabelField("Header", EditorStyles.boldLabel);
-            EditorGUILayout.PropertyField(_version);
+            using (new EditorGUI.DisabledScope(_isPreset.boolValue))
+                EditorGUILayout.PropertyField(_version);
             EditorGUILayout.PropertyField(_isPreset);
 
+            // Presets tools
             if (_isPreset.boolValue)
+            {
+                presetSyncExpanded = EditorGUILayout.Foldout(presetSyncExpanded, "Sync", true);
+                if (presetSyncExpanded)
+                {
+                    EditorGUILayout.HelpBox("Sync preset with main settings (doesn't reset compatible values)", MessageType.None);
+                    parent = (ModSettingsConfiguration)EditorGUILayout.ObjectField("Parent", parent, typeof(ModSettingsConfiguration), true);
+                    if (parent)
+                    {
+                        addNewKeys = EditorGUILayout.Toggle(new GUIContent("Add New Keys", "Add missing keys or only sync existing ones?"), addNewKeys);
+                        if (GUILayout.Button("Sync"))
+                            Target.Sync(parent, addNewKeys);
+                    }
+                }
                 EditorGUILayout.PropertyField(_presetSettings, true);
+            }
             else
                 EditorGUILayout.PropertyField(_presets, true);
 
@@ -113,7 +136,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                     if (IsSectionFoldoutExpanded(i, _sectionName.stringValue))
                     {
                         EditorGUI.indentLevel++;
-                        EditorGUILayout.PropertyField(_sectionName);
+
+                        using (new EditorGUI.DisabledScope(_isPreset.boolValue))
+                            EditorGUILayout.PropertyField(_sectionName);
 
                         SerializedProperty _keys = _section.FindPropertyRelative("keys");
 
@@ -134,11 +159,14 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
                             if (IsKeyFoldoutExpanded(i, j, _keyName.stringValue))
                             {
-                                EditorGUILayout.PropertyField(_keyName);
-                                EditorGUILayout.PropertyField(_key.FindPropertyRelative("description"));
-
                                 SerializedProperty _type = _key.FindPropertyRelative("type");
-                                EditorGUILayout.PropertyField(_type);
+
+                                using (new EditorGUI.DisabledScope(_isPreset.boolValue))
+                                {
+                                    EditorGUILayout.PropertyField(_keyName);
+                                    EditorGUILayout.PropertyField(_key.FindPropertyRelative("description"));
+                                    EditorGUILayout.PropertyField(_type);
+                                }
 
                                 var keyType = (ModSettingsKey.KeyType)_type.enumValueIndex;
                                 switch (keyType)
@@ -151,7 +179,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                                         SerializedProperty _multipleChoice = _key.FindPropertyRelative("multipleChoice");
                                         SerializedProperty _selected = _multipleChoice.FindPropertyRelative("selected");
                                         _selected.intValue = EditorGUILayout.Popup(_selected.intValue, Target.sections[i].keys[j].multipleChoice.choices);
-                                        EditorGUILayout.PropertyField(_multipleChoice.FindPropertyRelative("choices"), true);
+                                        using (new EditorGUI.DisabledScope(_isPreset.boolValue))
+                                            EditorGUILayout.PropertyField(_multipleChoice.FindPropertyRelative("choices"), true);
                                         break;
 
                                     case ModSettingsKey.KeyType.Slider:
@@ -162,8 +191,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                                             _sliderMax.intValue = 100;
                                         EditorGUILayout.IntSlider(_slider.FindPropertyRelative("value"), _sliderMin.intValue, _sliderMax.intValue);
                                         GUILayout.BeginHorizontal();
-                                        EditorGUILayout.PropertyField(_sliderMin);
-                                        EditorGUILayout.PropertyField(_sliderMax);
+                                        using (new EditorGUI.DisabledScope(_isPreset.boolValue))
+                                        {
+                                            EditorGUILayout.PropertyField(_sliderMin);
+                                            EditorGUILayout.PropertyField(_sliderMax);
+                                        }
                                         GUILayout.EndHorizontal();
                                         break;
 
@@ -176,8 +208,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                                             _floatSliderMax.floatValue = 1;
                                         EditorGUILayout.Slider(_floatSliderValue, _floatSliderMin.floatValue, _floatSliderMax.floatValue);
                                         GUILayout.BeginHorizontal();
-                                        EditorGUILayout.PropertyField(_floatSliderMin);
-                                        EditorGUILayout.PropertyField(_floatSliderMax);
+                                        using (new EditorGUI.DisabledScope(_isPreset.boolValue))
+                                        {
+                                            EditorGUILayout.PropertyField(_floatSliderMin);
+                                            EditorGUILayout.PropertyField(_floatSliderMax);
+                                        }
                                         GUILayout.EndHorizontal();
                                         break;
 

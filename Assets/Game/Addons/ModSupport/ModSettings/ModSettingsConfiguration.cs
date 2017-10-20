@@ -12,6 +12,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Collections.Generic;
 using UnityEngine;
 using FullSerializer;
 using KeyType = DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.ModSettingsKey.KeyType;
@@ -21,6 +22,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
     [CreateAssetMenu(fileName = "modsettings", menuName = "Mods/Settings", order = 0)]
     public class ModSettingsConfiguration : ScriptableObject
     {
+        #region Fields & Properties
+
         static string SerializedFile
         {
             get { return Path.Combine(Path.Combine(Application.dataPath, "Untracked"), "modsettings.json"); }
@@ -49,6 +52,10 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         {
             get { return sections.FirstOrDefault(x => x.name == sectionName); }
         }
+
+        #endregion
+
+        #region Public Methods
 
         public bool Key(string sectionName, string keyName, out ModSettingsKey keyOut)
         {
@@ -88,6 +95,101 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             return type == KeyType.Tuple || type == KeyType.FloatTuple;
         }
 
+        #endregion
+
+        #region Editor Methods
+
+#if UNITY_EDITOR
+
+        /// <summary>
+        /// Sync version and UI controls/checks from parent to this preset.
+        /// A preset can have even only a portion of keys (typically a section).
+        /// </summary>
+        /// <param name="parent">Main settings.</param>
+        /// <param name="addNewKeys">Add missing keys or sync only found ones?</param>
+        public void Sync(ModSettingsConfiguration parent, bool addNewKeys)
+        {
+            if (!parent)
+            {
+                Debug.LogError("Parent not found");
+                return;
+            }
+
+            version = parent.version;
+
+            var childSections = new List<Section>();
+            foreach (var parentSection in parent.sections)
+            {
+                Section section = this[parentSection.name];
+                if (section == null)
+                {
+                    if (!addNewKeys)
+                        continue;
+
+                    section = new Section();
+                    section.name = parentSection.name;
+                    section.keys = new ModSettingsKey[0];
+                }
+
+                var childKeys = new List<ModSettingsKey>();
+                foreach (var parentKey in parentSection.keys)
+                {
+                    ModSettingsKey key = section[parentKey.name];
+                    if (key == null)
+                    {
+                        if (!addNewKeys)
+                            continue;
+
+                        key = new ModSettingsKey();
+                        key.name = parentKey.name;
+                    }
+
+                    key.description = parentKey.description;
+                    key.type = parentKey.type;
+                    switch (parentKey.type)
+                    {
+                        case KeyType.MultipleChoice:
+                            if (key.multipleChoice == null)
+                                key.multipleChoice = new ModSettingsKey.MultipleChoice();
+                            key.multipleChoice.choices = parentKey.multipleChoice.choices;
+                            break;
+
+                        case KeyType.Slider:
+                            if (key.slider == null)
+                                key.slider = new ModSettingsKey.Slider();
+                            key.slider.max = parentKey.slider.max;
+                            key.slider.min = parentKey.slider.min;
+                            break;
+
+                        case KeyType.FloatSlider:
+                            if (key.floatSlider == null)
+                                key.floatSlider = new ModSettingsKey.FloatSlider();
+                            key.floatSlider.max = parentKey.floatSlider.max;
+                            key.floatSlider.min = parentKey.floatSlider.min;
+                            break;
+                    }
+
+                    childKeys.Add(key);
+                }
+
+                section.keys = childKeys.ToArray();
+
+                childSections.Add(section);
+            }
+
+            sections = childSections.ToArray();
+
+            // Add to list of presets
+            string presetPath = UnityEditor.AssetDatabase.GetAssetPath(this.GetInstanceID());
+            string presetName = Path.GetFileNameWithoutExtension(presetPath);
+            if (!parent.presets.Contains(presetName))
+            {
+                var presets = new List<string>(parent.presets);
+                presets.Add(presetName);
+                parent.presets = presets.ToArray();
+            }
+        }
+		
         public void Import()
         {
             if (!Deserialize(this))
@@ -131,6 +233,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             return false;
         }
 
+#endif
+
+        #endregion
+
+        #region Classes
+
         [Serializable]
         public class Section
         {
@@ -152,5 +260,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             [TextAreaAttribute(1, 4)]
             public string description;
         }
+
+        #endregion
     }
 }
