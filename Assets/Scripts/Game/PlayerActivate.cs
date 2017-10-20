@@ -762,7 +762,7 @@ namespace DaggerfallWorkshop.Game
             DaggerfallUI.AddHUDText(HardStrings.youSee.Replace("%s", npc.DisplayName));
 
             // Add debug info
-            if (DaggerfallUI.Instance.DaggerfallHUD.ShowQuestDebugger)
+            if (DaggerfallUI.Instance.DaggerfallHUD.QuestDebugger.State != HUDQuestDebugger.DisplayState.Nothing)
             {
                 // Get faction info of this NPC
                 FactionFile.FactionData factionData;

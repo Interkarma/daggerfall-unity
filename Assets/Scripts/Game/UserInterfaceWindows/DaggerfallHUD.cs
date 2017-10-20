@@ -49,7 +49,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public bool ShowCompass { get; set; }
         public bool ShowLocalQuestPlaces { get; set; }
         public bool ShowEscortingFaces { get; set; }
-        public bool ShowQuestDebugger { get; set; }
 
         public PopupText PopupText
         {
@@ -93,7 +92,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ShowCompass = true;
             ShowEscortingFaces = true;
             ShowLocalQuestPlaces = true;
-            ShowQuestDebugger = true;
 
             // Get references
             player = GameObject.FindGameObjectWithTag("Player");
@@ -136,7 +134,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             compass.Enabled = ShowCompass;
             placeMarker.Enabled = ShowLocalQuestPlaces;
             escortingFaces.EnableBorder = ShowEscortingFaces;
-            questDebugger.Enabled = ShowQuestDebugger;
+            questDebugger.Enabled = !(questDebugger.State == HUDQuestDebugger.DisplayState.Nothing);
 
             // Scale HUD elements
             compass.Scale = NativePanel.LocalScale;
@@ -167,6 +165,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 vitals.Health = (float)entity.CurrentHealth / (float)entity.MaxHealth;
                 vitals.Fatigue = (float)entity.CurrentFatigue / (float)entity.MaxFatigue;
                 vitals.Magicka = (float)entity.CurrentMagicka / (float)entity.MaxMagicka;
+            }
+
+            // Cycle quest debugger state
+            if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.Tab))
+            {
+                questDebugger.NextState();
             }
 
             base.Update();
