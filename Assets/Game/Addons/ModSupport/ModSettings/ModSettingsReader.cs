@@ -251,8 +251,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                             keyData.Value = key.text.text;
                             break;
 
-                        case ModSettingsKey.KeyType.Color: //TODO
-                            keyData.Value = "FFFFFFFF";
+                        case ModSettingsKey.KeyType.Color:
+                            keyData.Value = key.color.HexColor;
                             break;
                     }
 

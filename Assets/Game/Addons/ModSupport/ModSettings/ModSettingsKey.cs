@@ -85,6 +85,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         [Serializable]
         public class Tint
         {
+            public string HexColor
+            {
+                get { return ColorUtility.ToHtmlStringRGBA(color); }
+            }
+
             public Color32 color;
         }
     }

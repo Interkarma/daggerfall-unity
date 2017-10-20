@@ -266,7 +266,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                             case ModSettingsKey.KeyType.Color:
                                 TextBox colorBox = GetTextbox(95, 40, key.Value);
                                 if (!ModSettingsReader.IsHexColor(colorBox.DefaultText))
-                                    colorBox.DefaultText = "FFFFFFFF";
+                                    colorBox.DefaultText = configKey.color.HexColor;
                                 SetBackgroundTint(colorBox);
                                 modTextBoxes.Add(colorBox);
                                 break;
