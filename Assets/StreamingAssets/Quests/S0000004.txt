@@ -221,5 +221,4 @@ _S.09_ task:
 
 _S.10_ task:
 	start quest 21 21 
-	make engagement permanent 
 	end quest 
