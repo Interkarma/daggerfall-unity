@@ -30,22 +30,35 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
     {
         struct SliderSetup
         {
-            public string Value
-            {
-                get
-                {
-                    int value = slider.ScrollIndex + lowerValue;
-                    if (isFloat)
-                        return (value / 10f).ToString();
-
-                    return value.ToString();
-                }
-            }
-
             public HorizontalSlider slider;
             public TextLabel indicator;
             public int lowerValue;
             public bool isFloat;
+            public string[] items;
+
+            public string IndicatorText
+            {
+                get
+                {
+                    int value = slider.ScrollIndex + lowerValue;
+                    if (items != null && items.Length > value)
+                        return items[slider.ScrollIndex];
+                    else if (isFloat)
+                        return (value / 10f).ToString();
+                    else
+                        return value.ToString();
+                }
+            }
+
+            public string KeyValue
+            {
+                get
+                {
+                    if (items != null)
+                        return slider.ScrollIndex.ToString();
+                    return indicator.Text;
+                }
+            }
         }
 
         /// <summary>
@@ -226,11 +239,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                                 AddCheckBox((bool.TryParse(key.Value, out toggle) && toggle) || configKey.toggle.value);
                                 break;
 
-                            case ModSettingsKey.KeyType.MultipleChoice: //TODO: show text
+                            case ModSettingsKey.KeyType.MultipleChoice:
                                 int selected;
                                 if (!int.TryParse(key.Value, out selected))
                                     selected = configKey.multipleChoice.selected;
-                                AddSlider(0, configKey.multipleChoice.choices.Length, selected, key.KeyName);
+                                AddSlider(configKey.multipleChoice.choices, selected, key.KeyName);
                                 break;
 
                             case ModSettingsKey.KeyType.Slider:
@@ -325,10 +338,10 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                                 checkBox++;
                                 break;
 
+                            case ModSettingsKey.KeyType.MultipleChoice:
                             case ModSettingsKey.KeyType.Slider:
                             case ModSettingsKey.KeyType.FloatSlider:
-                            case ModSettingsKey.KeyType.MultipleChoice:
-                                data[section.SectionName][key.KeyName] = modSliders[slider].indicator.Text;
+                                data[section.SectionName][key.KeyName] = modSliders[slider].KeyValue;
                                 slider++;
                                 break;
 
@@ -499,6 +512,14 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         }
 
         /// <summary>
+        /// Add a slider with text options.
+        /// </summary>
+        void AddSlider(string[] items, int selected, string title)
+        {
+            AddSlider(0, items.Length - 1, selected, title, false, items);
+        }
+
+        /// <summary>
         /// Add a slider with a numerical indicator.
         /// </summary>
         void AddSlider(float minValue, float maxValue, float startValue, string title)
@@ -509,7 +530,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// <summary>
         /// Add a slider with a numerical indicator.
         /// </summary>
-        void AddSlider(int minValue, int maxValue, int startValue, string title, bool isFloat = false)
+        void AddSlider(int minValue, int maxValue, int startValue, string title, bool isFloat = false, string[] items = null)
         {
             MovePosition(8);
 
@@ -537,6 +558,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 lowerValue = minValue,
                 isFloat = isFloat
             };
+            if (items != null)
+                sliderSetup.items = items;
             modSliders.Add(sliderSetup);
             UpdateSliderIndicators();
         }
@@ -794,7 +817,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         private void UpdateSliderIndicators()
         {
             for (int i = 0; i < modSliders.Count; i++)
-                modSliders[i].indicator.Text = modSliders[i].Value;
+                modSliders[i].indicator.Text = modSliders[i].IndicatorText;
         }
 
         #endregion
