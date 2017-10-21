@@ -1060,10 +1060,8 @@ namespace DaggerfallWorkshop.Utility
             DaggerfallActionDoor actionDoor = go.GetComponent<DaggerfallActionDoor>();
 
             // Set starting lock value
-            if (obj.Resources.ModelResource.TriggerFlag_StartingLock >= 16)
-            {
-                actionDoor.StartingLockValue = (int)obj.Resources.ModelResource.TriggerFlag_StartingLock / 8;
-            }
+            byte[] lockValues = { 0x00, 0x02, 0x04, 0x06, 0x08, 0x0A, 0x0C, 0x0E, 0x10, 0x12, 0x14, 0x19, 0x1E, 0x32, 0x80, 0xFF };
+            actionDoor.StartingLockValue = lockValues[obj.Resources.ModelResource.TriggerFlag_StartingLock >> 4];
 
             // Set LoadID
             actionDoor.LoadID = loadID;
