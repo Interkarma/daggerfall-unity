@@ -13,7 +13,7 @@ using DaggerfallConnect;
 
 namespace DaggerfallWorkshop
 {
-    public static class StaticTextureTables
+    public static class TextureTables
     {
         // Default texture table at linear offset 0x28617C
         public static int[] DefaultTextureTable = new int[] { 119, 120, 122, 123, 124, 168 };

@@ -124,7 +124,7 @@ namespace DaggerfallWorkshop
         public void RandomiseDungeonTextureTable()
         {
             DFLocation.ClimateBaseType[] climates = { DFLocation.ClimateBaseType.Desert, DFLocation.ClimateBaseType.Mountain, DFLocation.ClimateBaseType.Temperate, DFLocation.ClimateBaseType.Swamp };
-            DungeonTextureTable = StaticTextureTables.RandomTextureTable(UnityEngine.Random.Range(int.MinValue, int.MaxValue), climates[UnityEngine.Random.Range(0, climates.Length)]);
+            DungeonTextureTable = TextureTables.RandomTextureTable(UnityEngine.Random.Range(int.MinValue, int.MaxValue), climates[UnityEngine.Random.Range(0, climates.Length)]);
             ApplyDungeonTextureTable();
         }
 
@@ -132,7 +132,7 @@ namespace DaggerfallWorkshop
         {
             // Dungeon textures are gotten in same manner as classic
             DFLocation.ClimateBaseType climate = GameManager.Instance.PlayerGPS.ClimateSettings.ClimateType;
-            DungeonTextureTable = StaticTextureTables.RandomTextureTable(Summary.LocationData.Dungeon.RecordElement.Header.LocationId, climate);
+            DungeonTextureTable = TextureTables.RandomTextureTable(Summary.LocationData.Dungeon.RecordElement.Header.LocationId, climate);
             ApplyDungeonTextureTable();
         }
 
