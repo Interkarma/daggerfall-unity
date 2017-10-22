@@ -962,7 +962,7 @@ namespace DaggerfallConnect
             /// <summary>Index into ModelReferenceList array.</summary>
             public UInt16 ModelIndex;
 
-            /// <summary>Unknown.</summary>
+            /// <summary>Trigger flag and starting lock for doors.</summary>
             internal UInt32 TriggerFlag_StartingLock;
 
             /// <summary>ID of sound to play when action is executed. Also used for spell & text index.</summary>

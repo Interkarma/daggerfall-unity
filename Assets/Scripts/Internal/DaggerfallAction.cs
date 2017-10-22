@@ -549,22 +549,6 @@ namespace DaggerfallWorkshop
         /// </summary>
         public static void OpenDoor(GameObject triggerObj, DaggerfallAction thisAction)
         {
-            // Try special action door
-            if (thisAction != null && thisAction.gameObject)
-            {
-                DaggerfallActionDoorSpecial specialDoor = thisAction.gameObject.GetComponent<DaggerfallActionDoorSpecial>();
-                if (specialDoor)
-                {
-                    if (specialDoor.IsOpen)
-                        return;
-                    else
-                    {
-                        specialDoor.ToggleDoor();
-                        return;
-                    }
-                }
-            }
-
             // Try regular action door
             DaggerfallActionDoor door;
             if (!GetDoor(thisAction.gameObject, out door))
@@ -577,6 +561,20 @@ namespace DaggerfallWorkshop
                 {
                     door.CurrentLockValue = 0;
                     door.ToggleDoor();
+                    return;
+                }
+            }
+
+            // Try special action door
+            if (thisAction != null && thisAction.gameObject)
+            {
+                DaggerfallActionDoorSpecial specialDoor = thisAction.gameObject.GetComponent<DaggerfallActionDoorSpecial>();
+                if (specialDoor)
+                {
+                    if (specialDoor.IsOpen)
+                        return;
+                    else
+                        specialDoor.ToggleDoor();
                 }
             }
         }
@@ -588,22 +586,6 @@ namespace DaggerfallWorkshop
         /// </summary>
         public static void CloseDoor(GameObject triggerObj, DaggerfallAction thisAction)
         {
-            // Try special action door
-            if (thisAction != null && thisAction.gameObject)
-            {
-                DaggerfallActionDoorSpecial specialDoor = thisAction.gameObject.GetComponent<DaggerfallActionDoorSpecial>();
-                if (specialDoor)
-                {
-                    if (specialDoor.IsClosed)
-                        return;
-                    else
-                    {
-                        specialDoor.ToggleDoor();
-                        return;
-                    }
-                }
-            }
-
             // Try regular action door
             DaggerfallActionDoor door;
             if (!GetDoor(thisAction.gameObject, out door))
@@ -616,9 +598,24 @@ namespace DaggerfallWorkshop
                 {
                     door.ToggleDoor();
                     door.CurrentLockValue = door.StartingLockValue;
+                    return;
                 }
 
             }
+
+            // Try special action door
+            if (thisAction != null && thisAction.gameObject)
+            {
+                DaggerfallActionDoorSpecial specialDoor = thisAction.gameObject.GetComponent<DaggerfallActionDoorSpecial>();
+                if (specialDoor)
+                {
+                    if (specialDoor.IsClosed)
+                        return;
+                    else
+                        specialDoor.ToggleDoor();
+                }
+            }
+
         }
 
         /// <summary>
