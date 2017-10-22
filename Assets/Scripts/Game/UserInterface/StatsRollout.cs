@@ -41,8 +41,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         DaggerfallFont font;
         UpDownSpinner spinner;
         int selectedStat = 0;
-        DaggerfallStats startingStats;
-        DaggerfallStats workingStats;
+        DaggerfallStats startingStats = new DaggerfallStats();
+        DaggerfallStats workingStats = new DaggerfallStats();
         int bonusPool = 0;
         Color modifiedStatTextColor = Color.green;
         TextLabel[] statLabels = new TextLabel[DaggerfallStats.Count];

@@ -36,7 +36,7 @@ namespace DaggerfallWorkshop.Game.Entity
         protected DFCareer career = new DFCareer();
         protected string name;
         protected int level;
-        protected DaggerfallStats stats;
+        protected DaggerfallStats stats = new DaggerfallStats();
         protected DaggerfallSkills skills;
         protected ItemCollection items = new ItemCollection();
         protected ItemEquipTable equipTable = new ItemEquipTable();

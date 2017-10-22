@@ -27,8 +27,8 @@ namespace DaggerfallWorkshop.Game.Player
         public DFCareer career;
         public string name;
         public int faceIndex;
-        public DaggerfallStats startingStats;
-        public DaggerfallStats workingStats;
+        public DaggerfallStats startingStats = new DaggerfallStats();
+        public DaggerfallStats workingStats = new DaggerfallStats();
         public DaggerfallSkills startingSkills;
         public DaggerfallSkills workingSkills;
         public PlayerReflexes reflexes;

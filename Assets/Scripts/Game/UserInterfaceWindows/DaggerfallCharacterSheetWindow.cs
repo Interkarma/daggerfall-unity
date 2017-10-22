@@ -307,8 +307,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Add stats rollout for leveling up
                 NativePanel.Components.Add(statsRollout);
 
-                this.statsRollout.StartingStats = PlayerEntity.Stats;
-                this.statsRollout.WorkingStats = PlayerEntity.Stats;
+                this.statsRollout.StartingStats = PlayerEntity.Stats.Clone();
+                this.statsRollout.WorkingStats = PlayerEntity.Stats.Clone();
                 this.statsRollout.BonusPool = bonusPool;
 
                 PlayerEntity.ReadyToLevelUp = false;

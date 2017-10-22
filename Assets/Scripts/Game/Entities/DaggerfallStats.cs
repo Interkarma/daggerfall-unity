@@ -21,7 +21,7 @@ namespace DaggerfallWorkshop.Game.Entity
     /// Daggerfall stats collection for every entity.
     /// </summary>
     [Serializable]
-    public partial struct DaggerfallStats
+    public partial class DaggerfallStats
     {
         public const int Count = 8;
 
@@ -48,6 +48,10 @@ namespace DaggerfallWorkshop.Game.Entity
             Luck = defaultValue;
         }
 
+        /// <summary>
+        /// Deep copy contents of another DaggerfallStats into this one.
+        /// </summary>
+        /// <param name="other">Stats collection to copy from.</param>
         public void Copy(DaggerfallStats other)
         {
             this.Strength = other.Strength;
@@ -58,6 +62,18 @@ namespace DaggerfallWorkshop.Game.Entity
             this.Personality = other.Personality;
             this.Speed = other.Speed;
             this.Luck = other.Luck;
+        }
+
+        /// <summary>
+        /// Create a new deep copy of this stat collection.
+        /// </summary>
+        /// <returns>New DaggerfallStats which is a copy of this DaggerfallStats.</returns>
+        public DaggerfallStats Clone()
+        {
+            DaggerfallStats newStats = new DaggerfallStats();
+            newStats.Copy(this);
+
+            return newStats;
         }
 
         public int GetStatValue(DFCareer.Stats stat)
