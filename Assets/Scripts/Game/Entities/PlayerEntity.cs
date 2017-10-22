@@ -344,7 +344,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 faceIndex = 0;
                 reflexes = PlayerReflexes.Average;
                 gender = Genders.Male;
-                stats.SetFromCareer(career);
+                stats.SetPermanentFromCareer(career);
                 level = testPlayerLevel;
                 maxHealth = FormulaHelper.RollMaxHealth(level, career.HitPointsPerLevel);
                 name = testPlayerName;

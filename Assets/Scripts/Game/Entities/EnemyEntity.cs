@@ -79,7 +79,7 @@ namespace DaggerfallWorkshop.Game.Entity
             {
                 careerIndex = (int)mobileEnemy.ID;
                 career = GetMonsterCareerTemplate((MonsterCareers)careerIndex);
-                stats.SetFromCareer(career);
+                stats.SetPermanentFromCareer(career);
 
                 // Enemy monster has predefined level, health and armor values.
                 // Armor values can be modified below by equipment.
@@ -94,7 +94,7 @@ namespace DaggerfallWorkshop.Game.Entity
             {
                 careerIndex = (int)mobileEnemy.ID - 128;
                 career = GetClassCareerTemplate((ClassCareers)careerIndex);
-                stats.SetFromCareer(career);
+                stats.SetPermanentFromCareer(career);
 
                 // Enemy class is levelled to player and uses similar health rules
                 level = GameManager.Instance.PlayerEntity.Level;

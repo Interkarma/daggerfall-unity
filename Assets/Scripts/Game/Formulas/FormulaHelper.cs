@@ -82,7 +82,7 @@ namespace DaggerfallWorkshop.Game.Formulas
         public static int CalculateHealthRecoveryRate(Entity.PlayerEntity player)
         {
             short medical = player.Skills.Medical;
-            int endurance = player.Stats.Endurance;
+            int endurance = player.Stats.LiveEndurance;
             int maxHealth = player.MaxHealth;
             PlayerEnterExit playerEnterExit;
             playerEnterExit = GameManager.Instance.PlayerGPS.GetComponent<PlayerEnterExit>();
@@ -162,7 +162,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             int minRoll = player.Career.HitPointsPerLevel / 2;
             int maxRoll = player.Career.HitPointsPerLevel + 1; // Adding +1 as Unity Random.Range(int,int) is exclusive of maximum value
             int addHitPoints = UnityEngine.Random.Range(minRoll, maxRoll);
-            addHitPoints += HitPointsModifier(player.Stats.Endurance);
+            addHitPoints += HitPointsModifier(player.Stats.LiveEndurance);
             if (addHitPoints < 1)
                 addHitPoints = 1;
             return addHitPoints;
@@ -397,7 +397,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             // The in-game display of the strength modifier in Daggerfall is incorrect. It is actually ((STR - 50) / 5).
             if ((attacker == player) || (weapon != null))
             {
-                damageModifiers += DamageModifier(attacker.Stats.Strength);
+                damageModifiers += DamageModifier(attacker.Stats.LiveStrength);
             }
 
             // Apply material modifier.
@@ -509,10 +509,10 @@ namespace DaggerfallWorkshop.Game.Formulas
             }
 
             // Apply luck modifier.
-            chanceToHit += ((attacker.Stats.Luck - target.Stats.Luck) / 10);
+            chanceToHit += ((attacker.Stats.LiveLuck - target.Stats.LiveLuck) / 10);
 
             // Apply agility modifier.
-            chanceToHit += ((attacker.Stats.Agility - target.Stats.Agility) / 10);
+            chanceToHit += ((attacker.Stats.LiveAgility - target.Stats.LiveAgility) / 10);
 
             // Apply weapon material modifier.
             if (weapon != null)
@@ -670,13 +670,13 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (selling)
             {
                 delta_mercantile = (((100 - merchant_mercantile_level) << 8) / 200 + 128) * (((player.Skills.Mercantile) << 8) / 200 + 128) >> 8;
-                delta_personality = (((100 - merchant_personality_level) << 8) / 200 + 128) * ((player.Stats.Personality << 8) / 200 + 128) >> 8;
+                delta_personality = (((100 - merchant_personality_level) << 8) / 200 + 128) * ((player.Stats.LivePersonality << 8) / 200 + 128) >> 8;
                 amount = ((((179 * delta_mercantile) >> 8) + ((51 * delta_personality) >> 8)) * cost) >> 8;
             }
             else // buying
             {
                 delta_mercantile = ((merchant_mercantile_level << 8) / 200 + 128) * (((100 - (player.Skills.Mercantile)) << 8) / 200 + 128) >> 8;
-                delta_personality = ((merchant_personality_level << 8) / 200 + 128) * (((100 - player.Stats.Personality) << 8) / 200 + 128) >> 8 << 6;
+                delta_personality = ((merchant_personality_level << 8) / 200 + 128) * (((100 - player.Stats.LivePersonality) << 8) / 200 + 128) >> 8 << 6;
                 amount = ((((192 * delta_mercantile) >> 8) + (delta_personality >> 8)) * cost) >> 8;
             }
 

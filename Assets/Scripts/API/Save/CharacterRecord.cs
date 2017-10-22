@@ -201,7 +201,7 @@ namespace DaggerfallConnect.Save
             DaggerfallStats result = new DaggerfallStats();
             for (int i = 0; i < 8; i++)
             {
-                result.SetStatValue(i, reader.ReadInt16());
+                result.SetPermanentStatValue(i, reader.ReadInt16());
             }
 
             return result;
