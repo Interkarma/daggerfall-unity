@@ -1,5 +1,5 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -196,7 +196,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             skillNameToken.formatting = TextFile.Formatting.Text;
 
             TextFile.Token skillValueToken = new TextFile.Token();
-            skillValueToken.text = string.Format("{0}%", playerEntity.Skills.GetSkillValue(skill));
+            skillValueToken.text = string.Format("{0}%", playerEntity.Skills.GetLiveSkillValue(skill));
             skillValueToken.formatting = TextFile.Formatting.Text;
 
             DFCareer.Stats primaryStat = DaggerfallSkills.GetPrimaryStat(skill);
@@ -277,8 +277,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 tokens.Add(TextFile.NewLineToken);
                 TextFile.Token HandToHandDamageToken = new TextFile.Token();
-                int minDamage = FormulaHelper.CalculateHandToHandMinDamage(playerEntity.Skills.GetSkillValue(DFCareer.Skills.HandToHand));
-                int maxDamage = FormulaHelper.CalculateHandToHandMaxDamage(playerEntity.Skills.GetSkillValue(DFCareer.Skills.HandToHand));
+                int minDamage = FormulaHelper.CalculateHandToHandMinDamage(playerEntity.Skills.GetLiveSkillValue(DFCareer.Skills.HandToHand));
+                int maxDamage = FormulaHelper.CalculateHandToHandMaxDamage(playerEntity.Skills.GetLiveSkillValue(DFCareer.Skills.HandToHand));
                 HandToHandDamageToken.text = DaggerfallUnity.Instance.TextProvider.GetSkillName(DFCareer.Skills.HandToHand) + " dmg: " + minDamage + "-" + maxDamage;
                 HandToHandDamageToken.formatting = TextFile.Formatting.Text;
                 tokens.Add(HandToHandDamageToken);

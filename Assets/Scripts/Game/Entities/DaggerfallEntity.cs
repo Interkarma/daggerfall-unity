@@ -37,7 +37,7 @@ namespace DaggerfallWorkshop.Game.Entity
         protected string name;
         protected int level;
         protected DaggerfallStats stats = new DaggerfallStats();
-        protected DaggerfallSkills skills;
+        protected DaggerfallSkills skills = new DaggerfallSkills();
         protected ItemCollection items = new ItemCollection();
         protected ItemEquipTable equipTable = new ItemEquipTable();
         protected int maxHealth;

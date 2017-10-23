@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections;
+using DaggerfallConnect;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -595,7 +596,7 @@ namespace DaggerfallWorkshop.Game
             if (useRunSpeedOverride)
                 return runSpeedOverride;
             Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
-            float runSpeed = baseSpeed * (1.25f + (player.Skills.Running / 200f));
+            float runSpeed = baseSpeed * (1.25f + (player.Skills.GetLiveSkillValue(DFCareer.Skills.Running) / 200f));
             return runSpeed;
         }
     }

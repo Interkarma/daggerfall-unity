@@ -27,22 +27,14 @@ namespace DaggerfallWorkshop.Game.Entity
         const int defaultValue = 50;
 
         // Current permanent stat values
-        [SerializeField]
-        int Strength;
-        [SerializeField]
-        int Intelligence;
-        [SerializeField]
-        int Willpower;
-        [SerializeField]
-        int Agility;
-        [SerializeField]
-        int Endurance;
-        [SerializeField]
-        int Personality;
-        [SerializeField]
-        int Speed;
-        [SerializeField]
-        int Luck;
+        [SerializeField] int Strength;
+        [SerializeField] int Intelligence;
+        [SerializeField] int Willpower;
+        [SerializeField] int Agility;
+        [SerializeField] int Endurance;
+        [SerializeField] int Personality;
+        [SerializeField] int Speed;
+        [SerializeField] int Luck;
 
         // Mods are temporary changes to stat values from effects
         // Default is 0 - effects can raise/lower mod values during their lifecycle
@@ -108,14 +100,14 @@ namespace DaggerfallWorkshop.Game.Entity
         /// <param name="other">Stats collection to copy from.</param>
         public void Copy(DaggerfallStats other)
         {
-            this.Strength = other.Strength;
-            this.Intelligence = other.Intelligence;
-            this.Willpower = other.Willpower;
-            this.Agility = other.Agility;
-            this.Endurance = other.Endurance;
-            this.Personality = other.Personality;
-            this.Speed = other.Speed;
-            this.Luck = other.Luck;
+            Strength = other.Strength;
+            Intelligence = other.Intelligence;
+            Willpower = other.Willpower;
+            Agility = other.Agility;
+            Endurance = other.Endurance;
+            Personality = other.Personality;
+            Speed = other.Speed;
+            Luck = other.Luck;
         }
 
         /// <summary>
@@ -142,27 +134,12 @@ namespace DaggerfallWorkshop.Game.Entity
         /// <returns>Stat value.</returns>
         public int GetLiveStatValue(DFCareer.Stats stat)
         {
-            switch (stat)
-            {
-                case DFCareer.Stats.Strength:
-                    return Strength + mods[(int)DFCareer.Stats.Strength];
-                case DFCareer.Stats.Intelligence:
-                    return Intelligence + mods[(int)DFCareer.Stats.Intelligence];
-                case DFCareer.Stats.Willpower:
-                    return Willpower + mods[(int)DFCareer.Stats.Willpower];
-                case DFCareer.Stats.Agility:
-                    return Agility + mods[(int)DFCareer.Stats.Agility];
-                case DFCareer.Stats.Endurance:
-                    return Endurance + mods[(int)DFCareer.Stats.Endurance];
-                case DFCareer.Stats.Personality:
-                    return Personality + mods[(int)DFCareer.Stats.Personality];
-                case DFCareer.Stats.Speed:
-                    return Speed + mods[(int)DFCareer.Stats.Speed];
-                case DFCareer.Stats.Luck:
-                    return Luck + mods[(int)DFCareer.Stats.Luck];
-                default:
-                    return 0;
-            }
+            int mod = mods[(int)stat];
+            int value = GetPermanentStatValue(stat) + mod;
+
+            // TODO: Any other clamping or processing
+
+            return (short)value;
         }
 
         /// <summary>
@@ -172,7 +149,23 @@ namespace DaggerfallWorkshop.Game.Entity
         /// <returns>Stat value.</returns>
         public int GetLiveStatValue(int index)
         {
+            if (index < 0 || index >= Count)
+                return 0;
+
             return GetLiveStatValue((DFCareer.Stats)index);
+        }
+
+        /// <summary>
+        /// Gets permanent stat value by index, does not include effect mods.
+        /// </summary>
+        /// <param name="index">Index of stat.</param>
+        /// <returns>Stat value.</returns>
+        public int GetPermanentStatValue(int index)
+        {
+            if (index < 0 || index >= Count)
+                return 0;
+
+            return GetPermanentStatValue((DFCareer.Stats)index);
         }
 
         /// <summary>
@@ -203,16 +196,6 @@ namespace DaggerfallWorkshop.Game.Entity
                 default:
                     return 0;
             }
-        }
-
-        /// <summary>
-        /// Gets permanent stat value by index, does not include effect mods.
-        /// </summary>
-        /// <param name="index">Index of stat.</param>
-        /// <returns>Stat value.</returns>
-        public int GetPermanentStatValue(int index)
-        {
-            return GetPermanentStatValue((DFCareer.Stats)index);
         }
 
         #endregion

@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -136,7 +136,7 @@ namespace DaggerfallWorkshop
                 // There seems to be an oversight in classic. It uses two separate lockpicking functions (seems to be one for animated doors in interiors and one for exterior doors)
                 // but the difficulty text is always based on the exterior function.
                 // DF Unity doesn't have exterior locked doors yet, so the below uses the interior function.
-                int chance = FormulaHelper.CalculateInteriorLockpickingChance(player.Level, CurrentLockValue, player.Skills.Lockpicking);
+                int chance = FormulaHelper.CalculateInteriorLockpickingChance(player.Level, CurrentLockValue, player.Skills.GetLiveSkillValue(DFCareer.Skills.Lockpicking));
 
                 if (chance >= 30)
                     if (chance >= 35)
@@ -165,7 +165,7 @@ namespace DaggerfallWorkshop
             PlayerEntity player = Game.GameManager.Instance.PlayerEntity;
 
             // If player fails at their current lockpicking skill level, they can't try again
-            if (FailedSkillLevel == player.Skills.Lockpicking)
+            if (FailedSkillLevel == player.Skills.GetLiveSkillValue(DFCareer.Skills.Lockpicking))
             {
                 return;
             }
@@ -174,12 +174,12 @@ namespace DaggerfallWorkshop
             {
                 int chance = 0;
                 player.TallySkill(DFCareer.Skills.Lockpicking, 1);
-                chance = FormulaHelper.CalculateInteriorLockpickingChance(player.Level, CurrentLockValue, player.Skills.Lockpicking);
+                chance = FormulaHelper.CalculateInteriorLockpickingChance(player.Level, CurrentLockValue, player.Skills.GetLiveSkillValue(DFCareer.Skills.Lockpicking));
 
                 if (Random.Range(0, 101) > chance)
                 {
                     Game.DaggerfallUI.Instance.PopupMessage(HardStrings.lockpickingFailure);
-                    FailedSkillLevel = player.Skills.Lockpicking;
+                    FailedSkillLevel = player.Skills.GetLiveSkillValue(DFCareer.Skills.Lockpicking);
                 }
                 else
                 {

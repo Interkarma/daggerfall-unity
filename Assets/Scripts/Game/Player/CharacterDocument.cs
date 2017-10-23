@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -29,8 +29,8 @@ namespace DaggerfallWorkshop.Game.Player
         public int faceIndex;
         public DaggerfallStats startingStats = new DaggerfallStats();
         public DaggerfallStats workingStats = new DaggerfallStats();
-        public DaggerfallSkills startingSkills;
-        public DaggerfallSkills workingSkills;
+        public DaggerfallSkills startingSkills = new DaggerfallSkills();
+        public DaggerfallSkills workingSkills = new DaggerfallSkills();
         public PlayerReflexes reflexes;
         public int currentHealth;
         public int maxHealth;

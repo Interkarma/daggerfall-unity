@@ -415,7 +415,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 DFCareer.Skills skillToTrain = trainingSkills[index];
 
-                if (playerEntity.Skills.GetSkillValue(skillToTrain) > 50)
+                if (playerEntity.Skills.GetPermanentSkillValue(skillToTrain) > 50)
                 {
                     // Inform player they're too skilled to train
                     TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(TrainingTooSkilledId);

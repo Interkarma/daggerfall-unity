@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -53,8 +53,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         int selectedMinorSkill = 0;
         Color modifiedStatTextColor = Color.green;
 
-        DaggerfallSkills startingSkills;
-        DaggerfallSkills workingSkills;
+        DaggerfallSkills startingSkills = new DaggerfallSkills();
+        DaggerfallSkills workingSkills = new DaggerfallSkills();
 
         DFCareer.Skills[] primarySkills = new DFCareer.Skills[DaggerfallSkills.PrimarySkillsCount];
         DFCareer.Skills[] majorSkills = new DFCareer.Skills[DaggerfallSkills.MajorSkillsCount];
@@ -116,21 +116,21 @@ namespace DaggerfallWorkshop.Game.UserInterface
             for (int i = 0; i < DaggerfallSkills.PrimarySkillsCount; i++)
             {
                 int value = minPrimarySkill + UnityEngine.Random.Range(minPrimaryBonusRoll, maxPrimaryBonusRoll + 1);
-                startingSkills.SetSkillValue(primarySkills[i], (short)value);
+                startingSkills.SetPermanentSkillValue(primarySkills[i], (short)value);
             }
 
             // Roll major skills
             for (int i = 0; i < DaggerfallSkills.MajorSkillsCount; i++)
             {
                 int value = minMajorSkill + UnityEngine.Random.Range(minMajorBonusRoll, maxMajorBonusRoll + 1);
-                startingSkills.SetSkillValue(majorSkills[i], (short)value);
+                startingSkills.SetPermanentSkillValue(majorSkills[i], (short)value);
             }
 
             // Roll minor skills
             for (int i = 0; i < DaggerfallSkills.MinorSkillsCount; i++)
             {
                 int value = minMinorSkill + UnityEngine.Random.Range(minMinorBonusRoll, maxMinorBonusRoll + 1);
-                startingSkills.SetSkillValue(minorSkills[i], (short)value);
+                startingSkills.SetPermanentSkillValue(minorSkills[i], (short)value);
             }
 
             // Copy to working skills
@@ -282,8 +282,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Set primary skill values label text
             for (int i = 0; i < DaggerfallSkills.PrimarySkillsCount; i++)
             {
-                int startingSkill = startingSkills.GetSkillValue(primarySkills[i]);
-                int workingSkill = workingSkills.GetSkillValue(primarySkills[i]);
+                int startingSkill = startingSkills.GetPermanentSkillValue(primarySkills[i]);
+                int workingSkill = workingSkills.GetPermanentSkillValue(primarySkills[i]);
 
                 primarySkillValueLabels[i].Text = workingSkill.ToString();
                 if (workingSkill != startingSkill)
@@ -295,8 +295,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Set major skill values label text
             for (int i = 0; i < DaggerfallSkills.MajorSkillsCount; i++)
             {
-                int startingSkill = startingSkills.GetSkillValue(majorSkills[i]);
-                int workingSkill = workingSkills.GetSkillValue(majorSkills[i]);
+                int startingSkill = startingSkills.GetPermanentSkillValue(majorSkills[i]);
+                int workingSkill = workingSkills.GetPermanentSkillValue(majorSkills[i]);
 
                 majorSkillValueLabels[i].Text = workingSkill.ToString();
                 if (workingSkill != startingSkill)
@@ -308,8 +308,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Set minor skill values label text
             for (int i = 0; i < DaggerfallSkills.MinorSkillsCount; i++)
             {
-                int startingSkill = startingSkills.GetSkillValue(minorSkills[i]);
-                int workingSkill = workingSkills.GetSkillValue(minorSkills[i]);
+                int startingSkill = startingSkills.GetPermanentSkillValue(minorSkills[i]);
+                int workingSkill = workingSkills.GetPermanentSkillValue(minorSkills[i]);
 
                 minorSkillValueLabels[i].Text = workingSkill.ToString();
                 if (workingSkill != startingSkill)
@@ -340,26 +340,26 @@ namespace DaggerfallWorkshop.Game.UserInterface
         void AddSkillPoint(DFCareer.Skills skill, LeftRightSpinner spinner)
         {
             // Bonus point pool cannot fall below zero
-            int workingValue = workingSkills.GetSkillValue(skill);
+            int workingValue = workingSkills.GetPermanentSkillValue(skill);
             if (spinner.Value == 0)
                 return;
 
             // Remove a point from pool and assign to skill
             spinner.Value -= 1;
-            workingSkills.SetSkillValue(skill, (short)(workingValue + 1));
+            workingSkills.SetPermanentSkillValue(skill, (short)(workingValue + 1));
             UpdateSkillValueLabels();
         }
 
         void RemoveSkillPoint(DFCareer.Skills skill, LeftRightSpinner spinner)
         {
             // Working skill value cannot fall below rolled skill value
-            int workingValue = workingSkills.GetSkillValue(skill);
-            if (workingValue == startingSkills.GetSkillValue(skill))
+            int workingValue = workingSkills.GetPermanentSkillValue(skill);
+            if (workingValue == startingSkills.GetPermanentSkillValue(skill))
                 return;
 
             // Remove a point from skill and assign to pool
             spinner.Value += 1;
-            workingSkills.SetSkillValue(skill, (short)(workingValue - 1));
+            workingSkills.SetPermanentSkillValue(skill, (short)(workingValue - 1));
             UpdateSkillValueLabels();
         }
 
