@@ -139,7 +139,7 @@ namespace DaggerfallWorkshop.Utility
 
             // Use default texture table if one not specified
             if (textureTable == null)
-                textureTable = StaticTextureTables.DefaultTextureTable;
+                textureTable = TextureTables.DefaultTextureTable;
 
             // Create gameobject
             GameObject go;
@@ -215,7 +215,7 @@ namespace DaggerfallWorkshop.Utility
 
             // Use default texture table if one not specified
             if (textureTable == null)
-                textureTable = StaticTextureTables.DefaultTextureTable;
+                textureTable = TextureTables.DefaultTextureTable;
 
             // Add parent node
             GameObject actionDoorsNode = new GameObject("Action Doors");

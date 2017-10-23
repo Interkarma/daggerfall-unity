@@ -123,60 +123,16 @@ namespace DaggerfallWorkshop
 
         public void RandomiseDungeonTextureTable()
         {
-            DungeonTextureTable = StaticTextureTables.RandomTextureTable(UnityEngine.Random.Range(int.MinValue, int.MaxValue));
+            DFLocation.ClimateBaseType[] climates = { DFLocation.ClimateBaseType.Desert, DFLocation.ClimateBaseType.Mountain, DFLocation.ClimateBaseType.Temperate, DFLocation.ClimateBaseType.Swamp };
+            DungeonTextureTable = TextureTables.RandomTextureTable(UnityEngine.Random.Range(int.MinValue, int.MaxValue), climates[UnityEngine.Random.Range(0, climates.Length)]);
             ApplyDungeonTextureTable();
         }
 
         public void UseLocationDungeonTextureTable()
         {
-            // Hard-coding location texture tables as missing information to generate at runtime
-            // This will be replaced with true implementation when possible
-            switch (Summary.ID)
-            {
-                case 187853213:         // Daggerfall/Privateer's Hold
-                    DungeonTextureTable = StaticTextureTables.PrivateersHold;
-                    break;
-                case 630439035:         // Wayrest/Wayrest
-                    DungeonTextureTable = StaticTextureTables.Wayrest;
-                    break;
-                case 1291010263:        // Daggerfall/Daggerfall
-                    DungeonTextureTable = StaticTextureTables.Daggerfall;
-                    break;
-                case 6634853:           // Sentinel/Sentinel
-                    DungeonTextureTable = StaticTextureTables.Sentinel;
-                    break;
-                case 19021260:          // Orsinium Area/Orsinium
-                    DungeonTextureTable = StaticTextureTables.Orsinium;
-                    break;
-                case 728811286:         // Wrothgarian Mountains/Shedungent
-                    DungeonTextureTable = StaticTextureTables.Shedungent;
-                    break;
-                case 701948302:         // Dragontail Mountains/Scourg Barrow
-                    DungeonTextureTable = StaticTextureTables.ScourgBarrow;
-                    break;
-                case 83032363:          // Wayrest/Woodborne Hall
-                    DungeonTextureTable = StaticTextureTables.WoodborneHall;
-                    break;
-                case 1001:              // High Rock sea coast/Mantellan Crux
-                    DungeonTextureTable = StaticTextureTables.MantellanCrux;
-                    break;
-                case 207828842:         // Menevia/Lysandus' Tomb
-                    DungeonTextureTable = StaticTextureTables.LysandusTomb;
-                    break;
-                case 9570447:           // Daggerfall/Castle Necromoghan
-                    DungeonTextureTable = StaticTextureTables.CastleNecromoghan;
-                    break;
-                case 2352284:           // Betony/Tristore Laboratory
-                    DungeonTextureTable = StaticTextureTables.TristoreLaboratory;
-                    break;
-                case 336619236:         // Ykalon/Castle Llugwych
-                    DungeonTextureTable = StaticTextureTables.CastleLlugwych;
-                    break;
-                default:                // Everywhere else - random table seeded from ID
-                    DungeonTextureTable = StaticTextureTables.RandomTextureTable(Summary.ID);
-                    break;
-            }
-
+            // Dungeon textures are gotten in same manner as classic
+            DFLocation.ClimateBaseType climate = GameManager.Instance.PlayerGPS.ClimateSettings.ClimateType;
+            DungeonTextureTable = TextureTables.RandomTextureTable(Summary.LocationData.Dungeon.RecordElement.Header.LocationId, climate);
             ApplyDungeonTextureTable();
         }
 
