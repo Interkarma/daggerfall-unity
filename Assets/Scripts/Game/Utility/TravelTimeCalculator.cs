@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using DaggerfallConnect.Utility;
+using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Game.Utility
 {
@@ -33,25 +34,6 @@ namespace DaggerfallWorkshop.Game.Utility
 
         // Used in calculating travel cost
         int pixelsTraveledOnOcean = 0;
-
-        #endregion
-
-        #region Enums
-
-        public enum TerrainTypes
-        {
-            None = 0,
-            Ocean = 223,
-            Desert = 224,
-            Desert2 = 225,
-            Mountain = 226,
-            Swamp = 227,
-            Swamp2 = 228,
-            Desert3 = 229,
-            Mountain2 = 230,
-            Temperate = 231,
-            Temperate2 = 232
-        };
 
         #endregion
 
@@ -109,7 +91,7 @@ namespace DaggerfallWorkshop.Game.Utility
             int minutesTakenThisMove = 0;
             int minutesTakenTotal = 0;
 
-            DaggerfallConnect.Arena2.MapsFile mapsFile = DaggerfallUnity.Instance.ContentReader.MapFileReader;
+            MapsFile mapsFile = DaggerfallUnity.Instance.ContentReader.MapFileReader;
             pixelsTraveledOnOcean = 0;
 
             while (numberOfMovements < furthestOfXandYDistance)
@@ -139,7 +121,7 @@ namespace DaggerfallWorkshop.Game.Utility
 
                 int terrainMovementIndex = 0;
                 int terrain = mapsFile.GetClimateIndex(playerXMapPixel, playerYMapPixel);
-                if (terrain == (int)TerrainTypes.Ocean)
+                if (terrain == (int)MapsFile.Climates.Ocean)
                 {
                     ++pixelsTraveledOnOcean;
                     if (travelShip)
@@ -149,7 +131,7 @@ namespace DaggerfallWorkshop.Game.Utility
                 }
                 else
                 {
-                    terrainMovementIndex = climateIndices[terrain - (int)TerrainTypes.Ocean];
+                    terrainMovementIndex = climateIndices[terrain - (int)MapsFile.Climates.Ocean];
                     minutesTakenThisMove = (((102 * transportModifier) >> 8)
                         * (256 - terrainMovementModifiers[terrainMovementIndex] + 256)) >> 8;
                 }
