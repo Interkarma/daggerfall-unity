@@ -25,7 +25,8 @@ namespace DaggerfallWorkshop.Game.Utility
         #region Fields
 
         // Gives index to use with terrainMovementModifiers[]. Indexed by terrain type, starting with Ocean at index 0.
-        byte[] terrainMovementModifierIndices = { 0, 0, 0, 1, 2, 3, 4, 5, 5, 5 };
+        // Also used for getting climate-related indices for dungeon textures.
+        public static byte[] climateIndices = { 0, 0, 0, 1, 2, 3, 4, 5, 5, 5 };
 
         // Gives movement modifiers used for different terrain types.
         byte[] terrainMovementModifiers = { 240, 220, 200, 200, 230, 250 };
@@ -148,7 +149,7 @@ namespace DaggerfallWorkshop.Game.Utility
                 }
                 else
                 {
-                    terrainMovementIndex = terrainMovementModifierIndices[terrain - (int)TerrainTypes.Ocean];
+                    terrainMovementIndex = climateIndices[terrain - (int)TerrainTypes.Ocean];
                     minutesTakenThisMove = (((102 * transportModifier) >> 8)
                         * (256 - terrainMovementModifiers[terrainMovementIndex] + 256)) >> 8;
                 }
