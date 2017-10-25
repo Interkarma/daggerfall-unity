@@ -269,7 +269,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 {
                     // This is a person declaration
                     Person person = new Person(quest, lines[i]);
-                    quest.AddResource(person);        
+                    quest.AddResource(person);
                 }
                 else if (lines[i].StartsWith("foe", StringComparison.InvariantCultureIgnoreCase))
                 {
