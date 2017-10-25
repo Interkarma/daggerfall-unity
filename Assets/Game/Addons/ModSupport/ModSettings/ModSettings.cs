@@ -10,10 +10,9 @@
 //
 
 using System;
-using System.IO;
 using System.Globalization;
+using System.Reflection;
 using UnityEngine;
-using IniParser;
 using IniParser.Model;
 using DaggerfallWorkshop.Utility;
 
@@ -26,10 +25,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
     {
         // Fields
         Mod Mod;
-        string path;
         IniData userSettings;
         IniData defaultSettings;
-        FileIniDataParser parser = new FileIniDataParser();
 
         #region Public Methods
 
@@ -37,29 +34,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// Import settings for Mod.
         /// </summary>
         /// <param name="mod">Mod to load settings for.</param>
-        /// <returns></returns>
         public ModSettings(Mod mod)
         {
             Mod = mod;
-            path = Path.Combine(mod.DirPath, Mod.FileName + ".ini");
 
-            // Read default settings
-            defaultSettings = ModSettingsReader.GetDefaultSettings(Mod);
-
-            // Read user settings
-            if (File.Exists(path))
-            {
-                userSettings = parser.ReadFile(path);
-                ModSettingsReader.UpdateSettings(ref userSettings, defaultSettings, Mod);
-            }
-            else
-            {
-                // Create settings file with default values
-                userSettings = defaultSettings;
-                parser.WriteFile(path, defaultSettings);
-                Debug.Log(Mod.Title + ": failed to read " + path + "." + Mod.FileName + ": A new " + Mod.FileName
-                    + ".ini has been recreated with default settings");
-            }
+            ModSettingsReader.GetSettings(mod, out userSettings, out defaultSettings);
         }
 
         /// <summary>
@@ -234,6 +213,39 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             }
         }
 
+        /// <summary>
+        /// Deserialize a section of settings in a class.
+        /// </summary>
+        /// <typeparam name="T">Type of class.</typeparam>
+        /// <param name="section">Name of section.</param>
+        /// <param name="instance">Instance of class with keys as public fields.</param>
+        public void Deserialize<T>(string section, ref T instance) where T : class
+        {
+            if (!userSettings.Sections.ContainsSection(section))
+            {
+                Debug.LogErrorFormat("Failed to parse section {0} for mod {1}", section, Mod.Title);
+                return;
+            }
+
+            KeyDataCollection sectionData = userSettings[section];
+            foreach (var field in typeof(T).GetFields(BindingFlags.Instance | BindingFlags.Public))
+            {
+                try
+                {
+                    if (sectionData.ContainsKey(field.Name))
+                    {
+                        var value = GetValue(section, field.Name, field.FieldType);
+                        if (value != null)
+                            field.SetValue(instance, value);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.LogErrorFormat("Failed to parse section {0} for mod {1}\n{2}", section, Mod.Title, e.ToString());
+                }
+            }
+        }
+
         #endregion
 
         #region Private Methods
@@ -250,7 +262,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             }
             catch
             {
-                Debug.LogError("Failed to get " + section + ", " + name + " from " + path + ". Using default value.");
+                Debug.LogErrorFormat("Failed to get ({0},{1}) for mod {2}. Using default value.", section, name, Mod.Title);
 
                 try
                 {
@@ -258,10 +270,33 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 }
                 catch
                 {
-                    Debug.LogError("Failed to get " + section + ", " + name + " from default settings of " + Mod.Title + ".");
+                    Debug.LogErrorFormat("Failed to get ({0},{1}) from default settings of mod {2}.", section, name, Mod.Title);
                     return null;
                 }
             }
+        }
+
+        /// <summary>
+        /// Get value for specified type.
+        /// </summary>
+        private object GetValue(string section, string name, Type type)
+        {
+            if (type == typeof(string))
+                return GetString(section, name);
+            else if (type == typeof(int))
+                return GetInt(section, name);
+            else if (type == typeof(float))
+                return GetFloat(section, name);
+            else if (type == typeof(bool))
+                return GetBool(section, name);
+            else if (type == typeof(Tuple<int, int>))
+                return GetTupleInt(section, name);
+            else if (type == typeof(Tuple<float, float>))
+                return GetTupleFloat(section, name);
+            if (type == typeof(Color))
+                return GetColor(section, name);
+
+            return null;
         }
 
         #endregion

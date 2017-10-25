@@ -9,10 +9,8 @@
 // Notes:
 //
 
-using System.IO;
 using System.Linq;
 using System.Collections.Generic;
-using IniParser;
 using IniParser.Model;
 using UnityEngine;
 using DaggerfallWorkshop.Game.UserInterface;
@@ -28,6 +26,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
     /// </summary>
     public class ModSettingsWindow : DaggerfallPopupWindow
     {
+        #region Structs
+
         struct SliderSetup
         {
             public HorizontalSlider slider;
@@ -61,25 +61,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             }
         }
 
-        /// <summary>
-        /// Constructor for the mod settings window.
-        /// </summary>
-        /// <param name="mod">Mod whose values are to be exposed on screen.</param>
-        public ModSettingsWindow(IUserInterfaceManager uiManager, Mod mod)
-            : base(uiManager)
-        {
-            Mod = mod;
-        }
-
-        public override void Update()
-        {
-            base.Update();
-
-            if(Input.GetKeyDown(KeyCode.Tab) && modSettingsPages.Count > 1)
-                NextPage();
-        }
+        #endregion
 
         #region Fields
+
+        readonly Mod mod;
 
         // UI Controls
         Panel modSettingsPanel = new Panel();
@@ -90,23 +76,22 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         DaggerfallListPickerWindow presetPicker;
         const int spacing = 8;
         const int startX = 10;
-        const int startY = 15;//6;
+        const int startY = 15;
         int x = startX;
         int y = startY;
 
-        // Fields
-        private Mod Mod;
-        string path;
+        // Settings
         IniData data;
         IniData defaultSettings;
         ModSettingsConfiguration config;
-        FileIniDataParser parser                = new FileIniDataParser();
+        List<IniData> presets = new List<IniData>();
+        int currentPresetIndex;
+
+        // GUI elements
         List<TextBox> modTextBoxes              = new List<TextBox>();
         List<Checkbox> modCheckboxes            = new List<Checkbox>();
         List<Tuple<TextBox, TextBox>> modTuples = new List<Tuple<TextBox, TextBox>>();
         List<SliderSetup> modSliders            = new List<SliderSetup>();
-        int currentPresetIndex;
-        List<IniData> presets                   = new List<IniData>();
 
         // Colors
         Color panelBackgroundColor    = new Color(0, 0, 0, 0.7f);
@@ -114,26 +99,33 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         Color saveButtonColor         = new Color(0.0f, 0.5f, 0.0f, 0.4f); //green with alpha
         Color cancelButtonColor       = new Color(0.2f, 0.2f, 0.2f, 0.4f); //grey with alpha
         Color sectionTitleColor       = new Color(0.16f, 0.26f, 1, 1); // light blue
-        
+
         #endregion
 
-        #region Setup
+        #region Constructors
 
         /// <summary>
-        /// Setup the panel.
+        /// Constructor for the mod settings window.
         /// </summary>
+        /// <param name="mod">Mod whose values are to be exposed on screen.</param>
+        public ModSettingsWindow(IUserInterfaceManager uiManager, Mod mod)
+            : base(uiManager)
+        {
+            this.mod = mod;
+        }
+
+        #endregion
+
+        #region Override Methods
+
         protected override void Setup()
         {
-            // Set path
-            path = Path.Combine(Mod.DirPath, Mod.FileName + ".ini");
+            // Get settings
+            ModSettingsReader.GetSettings(mod, out data, out defaultSettings);
+            config = ModSettingsReader.GetConfig(mod);
+            presets = ModSettingsReader.GetPresets(mod);
 
-            // Default settings
-            defaultSettings = ModSettingsReader.GetDefaultSettings(Mod);
-
-            // Presets
-            presets = ModSettingsReader.GetPresets(Mod);
-
-            // Add panel
+            // Setup base panel
             ParentPanel.BackgroundColor = Color.clear;
             modSettingsPanel.BackgroundColor = panelBackgroundColor;
             modSettingsPanel.Outline.Enabled = true;
@@ -141,66 +133,28 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             modSettingsPanel.Position = new Vector2(0, 8);
             modSettingsPanel.Size = new Vector2(320, 175);
             NativePanel.Components.Add(modSettingsPanel);
-            InitPanel();
+
+            // Initialize window
+            Init();
         }
 
-        /// <summary>
-        /// Add components to panel.
-        /// </summary>
-        private void InitPanel()
+        public override void Update()
         {
-            // Add title
-            TextLabel titleLabel = new TextLabel();
-            titleLabel.Text = Mod.Title + " settings";
-            titleLabel.Position = new Vector2(0, 6);
-            titleLabel.HorizontalAlignment = HorizontalAlignment.Center;
-            modSettingsPanel.Components.Add(titleLabel);
-            currentPanel = modSettingsPanel;
+            base.Update();
 
-            // Reset button
-            Button resetButton = GetButton("Reset", HorizontalAlignment.Left, resetButtonColor);
-            resetButton.OnMouseClick += ResetButton_OnMouseClick;
-
-            // Save button
-            Button saveButton = GetButton("Save", HorizontalAlignment.Center, saveButtonColor);
-            saveButton.OnMouseClick += SaveButton_OnMouseClick;
-
-            // Cancel button
-            Button cancelButton = GetButton("Cancel", HorizontalAlignment.Right, cancelButtonColor);
-            cancelButton.OnMouseClick += CancelButton_OnMouseClick;
-
-            // Presets button
-            if (presets.Count > 0)
-            {
-                Button presetButton = GetButton("Presets", HorizontalAlignment.Right, saveButtonColor);
-                presetButton.VerticalAlignment = VerticalAlignment.Top;
-                presetButton.Size = new Vector2(35, 9);
-                presetButton.OnMouseClick += PresetButton_OnMouseClick;
-            }
-
-            // Settings
-            modSettingsPages.Add(GetPanel(true));
-            LoadSettings();
+            if (Input.GetKeyDown(KeyCode.Tab) && modSettingsPages.Count > 1)
+                NextPage();
         }
 
         #endregion
 
-        #region Methods
+        #region Load/Save Settings
 
         /// <summary>
         /// Load settings from IniData.
-        /// This will be read from the ini file on disk the first time.
         /// </summary>
         private void LoadSettings ()
         {
-            // Read file
-            if (data == null)
-            {
-                data = parser.ReadFile(path);
-                ModSettingsReader.UpdateSettings(ref data, defaultSettings, Mod);
-                config = ModSettingsReader.GetConfig(Mod);
-            }
-
             // Read settings
             foreach (SectionData section in data.Sections.Where(x => x.SectionName != ModSettingsReader.internalSection))
             {
@@ -380,14 +334,56 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
             // Save to file
             if (writeToDisk)
-                parser.WriteFile(path, data);
+                ModSettingsReader.SaveSettings(mod, data);
+        }
+
+        #endregion
+
+        #region Panel Setup
+
+        /// <summary>
+        /// Add controls and load settings.
+        /// </summary>
+        private void Init()
+        {
+            // Title
+            TextLabel titleLabel = new TextLabel();
+            titleLabel.Text = mod.Title + " settings";
+            titleLabel.Position = new Vector2(0, 6);
+            titleLabel.HorizontalAlignment = HorizontalAlignment.Center;
+            modSettingsPanel.Components.Add(titleLabel);
+            currentPanel = modSettingsPanel;
+
+            // Reset button
+            Button resetButton = GetButton("Reset", HorizontalAlignment.Left, resetButtonColor);
+            resetButton.OnMouseClick += ResetButton_OnMouseClick;
+
+            // Save button
+            Button saveButton = GetButton("Save", HorizontalAlignment.Center, saveButtonColor);
+            saveButton.OnMouseClick += SaveButton_OnMouseClick;
+
+            // Cancel button
+            Button cancelButton = GetButton("Cancel", HorizontalAlignment.Right, cancelButtonColor);
+            cancelButton.OnMouseClick += CancelButton_OnMouseClick;
+
+            // Presets button
+            if (presets.Count > 0)
+            {
+                Button presetButton = GetButton("Presets", HorizontalAlignment.Right, saveButtonColor);
+                presetButton.VerticalAlignment = VerticalAlignment.Top;
+                presetButton.Size = new Vector2(35, 9);
+                presetButton.OnMouseClick += PresetButton_OnMouseClick;
+            }
+
+            // Create first page and load settings
+            AddPage();
+            currentPanel.Enabled = true;
+            LoadSettings();
         }
 
         /// <summary>
         /// Controls page and column disposition.
         /// </summary>
-        /// <param name="numberOfElements">Number of titles and keys already placed on window.</param>
-        /// <returns>False on reached capacity limit.</returns>
         private void MovePosition(int space)
         {
             const int size = 160;
@@ -415,7 +411,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                     }
 
                     // Add another page
-                    modSettingsPages.Add(GetPanel(false));
+                    AddPage();
 
                     // Move to left column
                     y = startY;
@@ -444,6 +440,30 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             modSettingsPages[currentPage].Enabled = true;
             nextPageButton.Label.Text = "Page " + (currentPage + 1).ToString();
         }
+
+        /// <summary>
+        /// Remove all components and initialize the window again.
+        /// </summary>
+        private void RestartSettingsWindow()
+        {
+            modSettingsPanel.Components.Clear();
+            modSettingsPages.Clear();
+
+            modTextBoxes.Clear();
+            modCheckboxes.Clear();
+            modTuples.Clear();
+            modSliders.Clear();
+
+            currentPage = 0;
+            x = startX;
+            y = startY;
+
+            Init();
+        }
+
+        #endregion
+
+        #region Helper Methods
 
         /// <summary>
         /// Get a button.
@@ -583,43 +603,19 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             textBox.ToolTipText = color.ToString();
         }
 
-        /// <summary>
-        /// Get a panel and set it as current page.
-        /// </summary>
-        /// <param name="isEnabled">Is panel enabled?</param>
-        private Panel GetPanel(bool isEnabled)
+        private void AddPage()
         {
             Panel panel = new Panel()
             {
                 BackgroundColor = Color.clear,
                 Position = new Vector2(0, 0),
                 Size = new Vector2(320, 175),
-                Enabled = isEnabled
+                Enabled = false
             };
             panel.Outline.Enabled = false;
             modSettingsPanel.Components.Add(panel);
+            modSettingsPages.Add(panel);
             currentPanel = panel;
-            return panel;
-        }
-
-        /// <summary>
-        /// Remove all components and initialize the window again.
-        /// </summary>
-        private void RestartSettingsWindow()
-        {
-            modSettingsPanel.Components.Clear();
-            modSettingsPages.Clear();
-
-            modTextBoxes.Clear();
-            modCheckboxes.Clear();
-            modTuples.Clear();
-            modSliders.Clear();
-
-            currentPage = 0;
-            x = startX;
-            y = startY;
-
-            InitPanel();
         }
 
         #endregion
@@ -672,11 +668,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         {
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
             {
-                // Save default settings
-                data = defaultSettings;
-                parser.WriteFile(path, data);
-
-                // Restart settings window
+                ModSettingsReader.ResetSettings(mod, ref data, defaultSettings);
                 CloseWindow();
                 RestartSettingsWindow();
             }
@@ -711,7 +703,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                     else
                     {
                         presetName = "Unknown preset";
-                        Debug.LogError("A preset for mod " + Mod.Title + " is missing the key 'PresetName'");
+                        Debug.LogError("A preset for mod " + mod.Title + " is missing the key 'PresetName'");
                     }
 
                     // Get Author (if present)
@@ -727,19 +719,19 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                     if (presetVersion == null)
                     {
                         presetName = "[?] " + presetName;
-                        Debug.LogError("Preset " + presetName + " for mod " + Mod.Title + " is missing the key 'SettingsVersion'");
+                        Debug.LogError("Preset " + presetName + " for mod " + mod.Title + " is missing the key 'SettingsVersion'");
                     }
                     else if (presetVersion != settingsVersion)
                     {
                         presetName = "[!] " + presetName;
                         Debug.Log("Preset " + presetName + " was made for version " + presetVersion + " but " + 
-                            Mod.Title + " has settings version " + settingsVersion);
+                            mod.Title + " has settings version " + settingsVersion);
                     }
                 }
                 catch
                 {
                     presetName = "[Unknown preset]";
-                    Debug.LogError("Failed to read the header from a preset for mod " + Mod.Title);
+                    Debug.LogError("Failed to read the header from a preset for mod " + mod.Title);
                 }
 
                 if (presetName.Length > 30)
