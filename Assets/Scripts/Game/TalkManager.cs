@@ -189,13 +189,6 @@ namespace DaggerfallWorkshop.Game
             Thing
         }
 
-        // quest resource locality info
-        public class QuestResourceLocalityInfo
-        {
-            public string regionName;
-            public string townName;
-        }
-
         // quest info answers about quest resource
         public class QuestResourceInfo
         {
@@ -208,7 +201,7 @@ namespace DaggerfallWorkshop.Game
             public List<string> dialogLinkedLocations; // list of location quest resources dialog-linked to this quest resource
             public List<string> dialogLinkedPersons; // list of person quest resources dialog-linked to this quest resource
             public List<string> dialogLinkedThings; // list of thing quest resources dialog-linked to this quest resource
-            public QuestResourceLocalityInfo localityInfo; // if quest resource is of type QuestInfoResourceType.Person this holds information about quest resource locality
+            public QuestResource questResource; // reference to this quest resource
         }
 
         // quest related resources and npcs
@@ -774,7 +767,7 @@ namespace DaggerfallWorkshop.Game
                 return getRecordIdByNpcsSocialGroup(7276, 7275, 7275, 7278, 7277, 7279); // quest topic related messages if npc knows
         }
 
-        public void AddQuestTopicWithInfoAndRumors(ulong questID, string resourceName, QuestInfoResourceType resourceType, List<TextFile.Token[]> anyInfoAnswers, List<TextFile.Token[]> rumorsAnswers)
+        public void AddQuestTopicWithInfoAndRumors(ulong questID, QuestResource questResource, string resourceName, QuestInfoResourceType resourceType, List<TextFile.Token[]> anyInfoAnswers, List<TextFile.Token[]> rumorsAnswers)
         {
             QuestResources questResources;
             if (dictQuestInfo.ContainsKey(questID))
@@ -800,8 +793,8 @@ namespace DaggerfallWorkshop.Game
             questResourceInfo.dialogLinkedLocations = new List<string>();
             questResourceInfo.dialogLinkedPersons = new List<string>();
             questResourceInfo.dialogLinkedThings = new List<string>();
-            questResourceInfo.localityInfo = null;
-
+            questResourceInfo.questResource = questResource;
+         
             questResources.resourceInfo[resourceName] = questResourceInfo;
 
             dictQuestInfo[questID] = questResources;
@@ -841,20 +834,11 @@ namespace DaggerfallWorkshop.Game
                 questResourceInfo.hasEntryInWhereIs = true;
                 questResourceInfo.dialogLinkedLocations = new List<string>();
                 questResourceInfo.dialogLinkedPersons = new List<string>();
-                questResourceInfo.dialogLinkedThings = new List<string>();                
+                questResourceInfo.dialogLinkedThings = new List<string>();
+                questResourceInfo.questResource = person;
             }
 
-            questResourceInfo.localityInfo = new QuestResourceLocalityInfo();
-
-            QuestMacroHelper macroHelper = new QuestMacroHelper();
-            
-            string resolvedString = "___" + person.Symbol.Name + "_";
-            macroHelper.ExpandQuestString(GameManager.Instance.QuestMachine.GetQuest(questID), ref resolvedString);
-            questResourceInfo.localityInfo.regionName = resolvedString;
-
-            resolvedString = "____" + person.Symbol.Name + "_";
-            macroHelper.ExpandQuestString(GameManager.Instance.QuestMachine.GetQuest(questID), ref resolvedString);
-            questResourceInfo.localityInfo.townName = resolvedString;
+            QuestMacroHelper macroHelper = new QuestMacroHelper();           
             
             questResources.resourceInfo[resourceName] = questResourceInfo;
             dictQuestInfo[questID] = questResources;
@@ -1297,7 +1281,10 @@ namespace DaggerfallWorkshop.Game
                         string captionString = questResourceInfo.Key;
                         item.caption = captionString;
 
-                        if (questResourceInfo.Value.availableForDialog && questResourceInfo.Value.hasEntryInWhereIs) // only make it available for talk if it is not "hidden" by dialog link command
+                        bool IsPlayerInSameLocationWorldCell = ((Questing.Person)questResourceInfo.Value.questResource).IsPlayerInSameLocationWorldCell();
+                        if (questResourceInfo.Value.availableForDialog && // only make it available for talk if it is not "hidden" by dialog link command
+                            questResourceInfo.Value.hasEntryInWhereIs &&
+                            IsPlayerInSameLocationWorldCell)
                             listTopicPerson.Add(item);
                     }
 

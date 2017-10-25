@@ -1001,7 +1001,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 string captionString;
                 this.ExpandMacro(MacroTypes.NameMacro3, out captionString);
-                GameManager.Instance.TalkManager.AddQuestTopicWithInfoAndRumors(this.ParentQuest.UID, captionString, TalkManager.QuestInfoResourceType.Location, anyInfoAnswers, anyRumorsAnswers);
+                GameManager.Instance.TalkManager.AddQuestTopicWithInfoAndRumors(this.ParentQuest.UID, this, captionString, TalkManager.QuestInfoResourceType.Location, anyInfoAnswers, anyRumorsAnswers);
             }
         }
 
