@@ -522,7 +522,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 {
                     textLabelNPCGreeting.textLabel.TextScale = textScaleModernConversationStyle;
                     textLabelNPCGreeting.textLabel.MaxWidth = (int)(textLabelNPCGreeting.textLabel.MaxWidth * textBlockSizeModernConversationStyle);
-                    textLabelNPCGreeting.textLabel.BackgroundColor = textcolorAnswerBackgroundModernConversationStyle;
+                    //textLabelNPCGreeting.textLabel.BackgroundColor = textcolorAnswerBackgroundModernConversationStyle;
                 }
             }
 
@@ -1121,7 +1121,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 textLabelQuestion.textLabel.TextScale = textScaleModernConversationStyle;
                 textLabelQuestion.textLabel.MaxWidth = (int)(textLabelQuestion.textLabel.MaxWidth * textBlockSizeModernConversationStyle);
-                textLabelQuestion.textLabel.BackgroundColor = textcolorQuestionBackgroundModernConversationStyle;
+                //textLabelQuestion.textLabel.BackgroundColor = textcolorQuestionBackgroundModernConversationStyle;
             }
             listboxConversation.AddItem(answer, out textLabelAnswer);
             textLabelAnswer.selectedTextColor = textcolorHighlighted;            
@@ -1132,7 +1132,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 textLabelAnswer.textLabel.TextScale = textScaleModernConversationStyle;
                 textLabelAnswer.textLabel.MaxWidth = (int)(textLabelAnswer.textLabel.MaxWidth * textBlockSizeModernConversationStyle);
-                textLabelAnswer.textLabel.BackgroundColor = textcolorAnswerBackgroundModernConversationStyle;
+                //textLabelAnswer.textLabel.BackgroundColor = textcolorAnswerBackgroundModernConversationStyle;
             }
 
             listboxConversation.SelectedIndex = listboxConversation.Count - 1; // always highlight the new answer
