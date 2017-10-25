@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -201,7 +201,7 @@ namespace DaggerfallConnect.Save
             DaggerfallStats result = new DaggerfallStats();
             for (int i = 0; i < 8; i++)
             {
-                result.SetStatValue(i, reader.ReadInt16());
+                result.SetPermanentStatValue(i, reader.ReadInt16());
             }
 
             return result;
@@ -251,7 +251,7 @@ namespace DaggerfallConnect.Save
                 Int16 skillValue = reader.ReadInt16();
                 Int16 skillCounterValue = reader.ReadInt16();
                 reader.ReadInt16(); // Seems to always be 00
-                skills.SetSkillValue(i, skillValue);
+                skills.SetPermanentSkillValue(i, skillValue);
                 skillUses[i] = skillCounterValue;
             }
 

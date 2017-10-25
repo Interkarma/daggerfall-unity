@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections;
+using DaggerfallConnect;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -572,7 +573,7 @@ namespace DaggerfallWorkshop.Game
         {
             Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
             float baseSpeed = 0;
-            float playerSpeed = player.Stats.Speed;
+            float playerSpeed = player.Stats.LiveSpeed;
             if (isCrouching)
                 baseSpeed = (playerSpeed + dfCrouchBase) / classicToUnitySpeedUnitRatio;
             else if (riding)
@@ -587,7 +588,7 @@ namespace DaggerfallWorkshop.Game
             if (useWalkSpeedOverride == true)
                 return walkSpeedOverride;
             else
-                return (player.Stats.Speed + dfWalkBase) / classicToUnitySpeedUnitRatio;
+                return (player.Stats.LiveSpeed + dfWalkBase) / classicToUnitySpeedUnitRatio;
         }
 
         public float GetRunSpeed(float baseSpeed)
@@ -595,7 +596,7 @@ namespace DaggerfallWorkshop.Game
             if (useRunSpeedOverride)
                 return runSpeedOverride;
             Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
-            float runSpeed = baseSpeed * (1.25f + (player.Skills.Running / 200f));
+            float runSpeed = baseSpeed * (1.25f + (player.Skills.GetLiveSkillValue(DFCareer.Skills.Running) / 200f));
             return runSpeed;
         }
     }

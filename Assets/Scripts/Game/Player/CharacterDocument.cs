@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -27,10 +27,10 @@ namespace DaggerfallWorkshop.Game.Player
         public DFCareer career;
         public string name;
         public int faceIndex;
-        public DaggerfallStats startingStats;
-        public DaggerfallStats workingStats;
-        public DaggerfallSkills startingSkills;
-        public DaggerfallSkills workingSkills;
+        public DaggerfallStats startingStats = new DaggerfallStats();
+        public DaggerfallStats workingStats = new DaggerfallStats();
+        public DaggerfallSkills startingSkills = new DaggerfallSkills();
+        public DaggerfallSkills workingSkills = new DaggerfallSkills();
         public PlayerReflexes reflexes;
         public int currentHealth;
         public int maxHealth;
@@ -66,7 +66,7 @@ namespace DaggerfallWorkshop.Game.Player
             name = "Nameless";
             reflexes = PlayerReflexes.Average;
             workingSkills.SetDefaults();
-            workingStats.SetFromCareer(career);
+            workingStats.SetPermanentFromCareer(career);
             startingLevelUpSkillSum = 0;
             faceIndex = 0;
             skillUses = new short[DaggerfallSkills.Count];
@@ -104,14 +104,14 @@ namespace DaggerfallWorkshop.Game.Player
         {
             DaggerfallStats stats = new DaggerfallStats();
 
-            stats.Strength = dfClass.Strength;
-            stats.Intelligence = dfClass.Intelligence;
-            stats.Willpower = dfClass.Willpower;
-            stats.Agility = dfClass.Agility;
-            stats.Endurance = dfClass.Endurance;
-            stats.Personality = dfClass.Personality;
-            stats.Speed = dfClass.Speed;
-            stats.Luck = dfClass.Luck;
+            stats.SetPermanentStatValue(DFCareer.Stats.Strength, dfClass.Strength);
+            stats.SetPermanentStatValue(DFCareer.Stats.Intelligence, dfClass.Intelligence);
+            stats.SetPermanentStatValue(DFCareer.Stats.Willpower, dfClass.Willpower);
+            stats.SetPermanentStatValue(DFCareer.Stats.Agility, dfClass.Agility);
+            stats.SetPermanentStatValue(DFCareer.Stats.Endurance, dfClass.Endurance);
+            stats.SetPermanentStatValue(DFCareer.Stats.Personality, dfClass.Personality);
+            stats.SetPermanentStatValue(DFCareer.Stats.Speed, dfClass.Speed);
+            stats.SetPermanentStatValue(DFCareer.Stats.Luck, dfClass.Luck);
 
             return stats;
         }

@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -79,7 +79,7 @@ namespace DaggerfallWorkshop.Game.Entity
             {
                 careerIndex = (int)mobileEnemy.ID;
                 career = GetMonsterCareerTemplate((MonsterCareers)careerIndex);
-                stats.SetFromCareer(career);
+                stats.SetPermanentFromCareer(career);
 
                 // Enemy monster has predefined level, health and armor values.
                 // Armor values can be modified below by equipment.
@@ -94,7 +94,7 @@ namespace DaggerfallWorkshop.Game.Entity
             {
                 careerIndex = (int)mobileEnemy.ID - 128;
                 career = GetClassCareerTemplate((ClassCareers)careerIndex);
-                stats.SetFromCareer(career);
+                stats.SetPermanentFromCareer(career);
 
                 // Enemy class is levelled to player and uses similar health rules
                 level = GameManager.Instance.PlayerEntity.Level;
@@ -120,7 +120,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
             for (int i = 0; i <= DaggerfallSkills.Count; i++)
             {
-                skills.SetSkillValue(i, skillsLevel);
+                skills.SetPermanentSkillValue(i, skillsLevel);
             }
 
             // Enemy classes and some monsters use equipment

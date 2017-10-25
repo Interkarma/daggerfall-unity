@@ -70,6 +70,17 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
+        /// Generates a random number between min and max (inclusive).
+        /// </summary>
+        /// <param name="min">Minimum number.</param>
+        /// <param name="max">Maximum number (inclusive).</param>
+        /// <returns>Random number between min and max - 1.</returns>
+        public static int random_range_inclusive(int min, int max)
+        {
+            return (int)rand() % (max - min + 1) + min;
+        }
+
+        /// <summary>
         /// Generates a random number between 0 and max (exclusive).
         /// </summary>
         /// <param name="max">Maximum number (exclusive).</param>

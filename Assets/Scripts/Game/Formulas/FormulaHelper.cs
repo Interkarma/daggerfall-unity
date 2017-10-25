@@ -1,5 +1,5 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using System;
+using DaggerfallConnect;
 
 namespace DaggerfallWorkshop.Game.Formulas
 {
@@ -81,8 +82,8 @@ namespace DaggerfallWorkshop.Game.Formulas
         // Calculate how much health the player should recover per hour of rest
         public static int CalculateHealthRecoveryRate(Entity.PlayerEntity player)
         {
-            short medical = player.Skills.Medical;
-            int endurance = player.Stats.Endurance;
+            short medical = player.Skills.GetLiveSkillValue(DFCareer.Skills.Medical);
+            int endurance = player.Stats.LiveEndurance;
             int maxHealth = player.MaxHealth;
             PlayerEnterExit playerEnterExit;
             playerEnterExit = GameManager.Instance.PlayerGPS.GetComponent<PlayerEnterExit>();
@@ -134,7 +135,7 @@ namespace DaggerfallWorkshop.Game.Formulas
         // Calculate chance of successfully pickpocketing a target
         public static int CalculatePickpocketingChance(Entity.PlayerEntity player, Entity.EnemyEntity target)
         {
-            int chance = player.Skills.Pickpocket;
+            int chance = player.Skills.GetLiveSkillValue(DFCareer.Skills.Pickpocket);
             // If target is an enemy mobile, apply level modifier.
             if (target != null)
             {
@@ -162,7 +163,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             int minRoll = player.Career.HitPointsPerLevel / 2;
             int maxRoll = player.Career.HitPointsPerLevel + 1; // Adding +1 as Unity Random.Range(int,int) is exclusive of maximum value
             int addHitPoints = UnityEngine.Random.Range(minRoll, maxRoll);
-            addHitPoints += HitPointsModifier(player.Stats.Endurance);
+            addHitPoints += HitPointsModifier(player.Stats.LiveEndurance);
             if (addHitPoints < 1)
                 addHitPoints = 1;
             return addHitPoints;
@@ -235,14 +236,14 @@ namespace DaggerfallWorkshop.Game.Formulas
                 damageLow = weapon.GetBaseDamageMin();
                 damageHigh = weapon.GetBaseDamageMax();
                 short skillID = weapon.GetWeaponSkillIDAsShort();
-                chanceToHitMod = attacker.Skills.GetSkillValue(skillID);
+                chanceToHitMod = attacker.Skills.GetLiveSkillValue(skillID);
             }
             else if (attacker == player)
             {
                 // If the player is attacking with no weapon equipped, use hand-to-hand skill for damage
-                damageLow = CalculateHandToHandMinDamage(attacker.Skills.HandToHand);
-                damageHigh = CalculateHandToHandMaxDamage(attacker.Skills.HandToHand);
-                chanceToHitMod = attacker.Skills.HandToHand;
+                damageLow = CalculateHandToHandMinDamage(attacker.Skills.GetLiveSkillValue(DFCareer.Skills.HandToHand));
+                damageHigh = CalculateHandToHandMaxDamage(attacker.Skills.GetLiveSkillValue(DFCareer.Skills.HandToHand));
+                chanceToHitMod = attacker.Skills.GetLiveSkillValue(DFCareer.Skills.HandToHand);
             }
 
             if (AIAttacker != null)
@@ -259,7 +260,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                 {
                     damageLow = AIAttacker.MobileEnemy.MinDamage;
                     damageHigh = AIAttacker.MobileEnemy.MaxDamage;
-                    chanceToHitMod = attacker.Skills.HandToHand;
+                    chanceToHitMod = attacker.Skills.GetLiveSkillValue(DFCareer.Skills.HandToHand);
                 }
             }
 
@@ -397,7 +398,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             // The in-game display of the strength modifier in Daggerfall is incorrect. It is actually ((STR - 50) / 5).
             if ((attacker == player) || (weapon != null))
             {
-                damageModifiers += DamageModifier(attacker.Stats.Strength);
+                damageModifiers += DamageModifier(attacker.Stats.LiveStrength);
             }
 
             // Apply material modifier.
@@ -509,10 +510,10 @@ namespace DaggerfallWorkshop.Game.Formulas
             }
 
             // Apply luck modifier.
-            chanceToHit += ((attacker.Stats.Luck - target.Stats.Luck) / 10);
+            chanceToHit += ((attacker.Stats.LiveLuck - target.Stats.LiveLuck) / 10);
 
             // Apply agility modifier.
-            chanceToHit += ((attacker.Stats.Agility - target.Stats.Agility) / 10);
+            chanceToHit += ((attacker.Stats.LiveAgility - target.Stats.LiveAgility) / 10);
 
             // Apply weapon material modifier.
             if (weapon != null)
@@ -523,12 +524,12 @@ namespace DaggerfallWorkshop.Game.Formulas
             // Apply dodging modifier.
             // This modifier is bugged in classic and the attacker's dodging skill is used rather than the target's.
             // DF Chronicles says the dodging calculation is (dodging / 10), but it actually seems to be (dodging / 4).
-            chanceToHit -= (target.Skills.Dodging / 4);
+            chanceToHit -= (target.Skills.GetLiveSkillValue(DFCareer.Skills.Dodging) / 4);
 
             // Apply critical strike modifier.
-            if (UnityEngine.Random.Range(0, 100 + 1) < attacker.Skills.CriticalStrike)
+            if (UnityEngine.Random.Range(0, 100 + 1) < attacker.Skills.GetLiveSkillValue(DFCareer.Skills.CriticalStrike))
             {
-                chanceToHit += (attacker.Skills.CriticalStrike / 10);
+                chanceToHit += (attacker.Skills.GetLiveSkillValue(DFCareer.Skills.CriticalStrike) / 10);
             }
 
             // Apply monster modifier.
@@ -669,14 +670,14 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             if (selling)
             {
-                delta_mercantile = (((100 - merchant_mercantile_level) << 8) / 200 + 128) * (((player.Skills.Mercantile) << 8) / 200 + 128) >> 8;
-                delta_personality = (((100 - merchant_personality_level) << 8) / 200 + 128) * ((player.Stats.Personality << 8) / 200 + 128) >> 8;
+                delta_mercantile = (((100 - merchant_mercantile_level) << 8) / 200 + 128) * (((player.Skills.GetLiveSkillValue(DFCareer.Skills.Mercantile)) << 8) / 200 + 128) >> 8;
+                delta_personality = (((100 - merchant_personality_level) << 8) / 200 + 128) * ((player.Stats.LivePersonality << 8) / 200 + 128) >> 8;
                 amount = ((((179 * delta_mercantile) >> 8) + ((51 * delta_personality) >> 8)) * cost) >> 8;
             }
             else // buying
             {
-                delta_mercantile = ((merchant_mercantile_level << 8) / 200 + 128) * (((100 - (player.Skills.Mercantile)) << 8) / 200 + 128) >> 8;
-                delta_personality = ((merchant_personality_level << 8) / 200 + 128) * (((100 - player.Stats.Personality) << 8) / 200 + 128) >> 8 << 6;
+                delta_mercantile = ((merchant_mercantile_level << 8) / 200 + 128) * (((100 - (player.Skills.GetLiveSkillValue(DFCareer.Skills.Mercantile))) << 8) / 200 + 128) >> 8;
+                delta_personality = ((merchant_personality_level << 8) / 200 + 128) * (((100 - player.Stats.LivePersonality) << 8) / 200 + 128) >> 8 << 6;
                 amount = ((((192 * delta_mercantile) >> 8) + (delta_personality >> 8)) * cost) >> 8;
             }
 

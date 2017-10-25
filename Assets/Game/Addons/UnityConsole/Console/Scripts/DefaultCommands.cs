@@ -13,6 +13,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Weather;
 using DaggerfallWorkshop.Game.Questing;
+using DaggerfallWorkshop.Game.UserInterface;
 
 namespace Wenzil.Console
 {
@@ -869,7 +870,7 @@ namespace Wenzil.Console
 
             public static string Execute(params string[] args)
             {
-                if (!DaggerfallUI.Instance.DaggerfallHUD.ShowQuestDebugger)
+                if (DaggerfallUI.Instance.DaggerfallHUD.QuestDebugger.State == HUDQuestDebugger.DisplayState.Nothing)
                     return "Quest debugger is not open.";
 
                 Quest currentQuest = DaggerfallUI.Instance.DaggerfallHUD.QuestDebugger.CurrentQuest;

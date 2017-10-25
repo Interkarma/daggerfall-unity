@@ -344,7 +344,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 faceIndex = 0;
                 reflexes = PlayerReflexes.Average;
                 gender = Genders.Male;
-                stats.SetFromCareer(career);
+                stats.SetPermanentFromCareer(career);
                 level = testPlayerLevel;
                 maxHealth = FormulaHelper.RollMaxHealth(level, career.HitPointsPerLevel);
                 name = testPlayerName;
@@ -520,11 +520,11 @@ namespace DaggerfallWorkshop.Game.Entity
             {
                 int skillAdvancementMultiplier = DaggerfallSkills.GetAdvancementMultiplier((DFCareer.Skills)i);
                 float careerAdvancementMultiplier = Career.AdvancementMultiplier;
-                int usesNeededForAdvancement = FormulaHelper.CalculateSkillUsesForAdvancement(skills.GetSkillValue(i), skillAdvancementMultiplier, careerAdvancementMultiplier, level);
+                int usesNeededForAdvancement = FormulaHelper.CalculateSkillUsesForAdvancement(skills.GetPermanentSkillValue(i), skillAdvancementMultiplier, careerAdvancementMultiplier, level);
                 if (skillUses[i] >= usesNeededForAdvancement)
                 {
                     skillUses[i] = 0;
-                    skills.SetSkillValue(i, (short)(skills.GetSkillValue(i) + 1));
+                    skills.SetPermanentSkillValue(i, (short)(skills.GetPermanentSkillValue(i) + 1));
                     SetCurrentLevelUpSkillSum();
                     DaggerfallUI.Instance.PopupMessage(HardStrings.skillImprove.Replace("%s", DaggerfallUnity.Instance.TextProvider.GetSkillName((DaggerfallConnect.DFCareer.Skills)i)));
                 }
@@ -547,12 +547,12 @@ namespace DaggerfallWorkshop.Game.Entity
             List<DaggerfallConnect.DFCareer.Skills> minorSkills = GetMinorSkills();
             for (int i = 0; i < primarySkills.Count; i++)
             {
-                sum += skills.GetSkillValue(primarySkills[i]);
+                sum += skills.GetPermanentSkillValue(primarySkills[i]);
             }
 
             for (int i = 0; i < majorSkills.Count; i++)
             {
-                short value = skills.GetSkillValue(majorSkills[i]);
+                short value = skills.GetPermanentSkillValue(majorSkills[i]);
                 sum += value;
                 if (i == 0)
                     lowestMajorSkillValue = value;
@@ -564,7 +564,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
             for (int i = 0; i < minorSkills.Count; i++)
             {
-                short value = skills.GetSkillValue(minorSkills[i]);
+                short value = skills.GetPermanentSkillValue(minorSkills[i]);
                 if (i == 0)
                     highestMinorSkillValue = value;
                 else if (value > highestMinorSkillValue)

@@ -12,7 +12,7 @@ using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
-    public partial struct DaggerfallStats : IMacroContextProvider
+    public partial class DaggerfallStats : IMacroContextProvider
     {
         [NonSerializedAttribute]
         private StatsMacroDataSource dataSource;

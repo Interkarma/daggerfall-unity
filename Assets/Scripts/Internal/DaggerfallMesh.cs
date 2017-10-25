@@ -162,6 +162,7 @@ namespace DaggerfallWorkshop
             // Get new material array
             int archive, record, frame;
             Material[] materials = new Material[defaultTextures.Count];
+            int climateIndex = (int)Game.GameManager.Instance.PlayerGPS.ClimateSettings.ClimateType;
             for (int i = 0; i < defaultTextures.Count; i++)
             {
                 MaterialReader.ReverseTextureKey(defaultTextures[i], out archive, out record, out frame);
@@ -184,6 +185,9 @@ namespace DaggerfallWorkshop
                         break;
                     case 168:
                         archive = dungeonTextureTable[5];
+                        break;
+                    case 74:
+                        archive += climateIndex;
                         break;
                 }
                 materials[i] = dfUnity.MaterialReader.GetMaterial(archive, record);

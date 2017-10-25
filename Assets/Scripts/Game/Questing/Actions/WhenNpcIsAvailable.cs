@@ -57,7 +57,10 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 FactionFile.FactionData factionData = Person.GetFactionData(factionID);
                 if (factionData.type != (int)FactionFile.FactionTypes.Individual)
+                {
+                    SetComplete();
                     throw new Exception(string.Format("WhenNpcIsAvailable: NPC {0} with FactionID {1} is not an individual NPC", individualNPCName, factionID));
+                }
             }
 
             action.npcName = individualNPCName;

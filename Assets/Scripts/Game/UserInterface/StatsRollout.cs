@@ -41,8 +41,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         DaggerfallFont font;
         UpDownSpinner spinner;
         int selectedStat = 0;
-        DaggerfallStats startingStats;
-        DaggerfallStats workingStats;
+        DaggerfallStats startingStats = new DaggerfallStats();
+        DaggerfallStats workingStats = new DaggerfallStats();
         int bonusPool = 0;
         Color modifiedStatTextColor = Color.green;
         TextLabel[] statLabels = new TextLabel[DaggerfallStats.Count];
@@ -136,14 +136,22 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Roll bonus value for each base stat
             // Using maxBonusRoll + 1 as Unity's Random.Range(int,int) is exclusive
             // of maximum value and we want to be inclusive of maximum value
-            rolledStats.Strength += UnityEngine.Random.Range(minBonusRoll, maxBonusRoll + 1);
-            rolledStats.Intelligence += UnityEngine.Random.Range(minBonusRoll, maxBonusRoll + 1);
-            rolledStats.Willpower += UnityEngine.Random.Range(minBonusRoll, maxBonusRoll + 1);
-            rolledStats.Agility += UnityEngine.Random.Range(minBonusRoll, maxBonusRoll + 1);
-            rolledStats.Endurance += UnityEngine.Random.Range(minBonusRoll, maxBonusRoll + 1);
-            rolledStats.Personality += UnityEngine.Random.Range(minBonusRoll, maxBonusRoll + 1);
-            rolledStats.Speed += UnityEngine.Random.Range(minBonusRoll, maxBonusRoll + 1);
-            rolledStats.Luck += UnityEngine.Random.Range(minBonusRoll, maxBonusRoll + 1);
+            int strength = rolledStats.PermanentStrength + UnityEngine.Random.Range(minBonusRoll, maxBonusRoll + 1);
+            int intelligence = rolledStats.PermanentIntelligence + UnityEngine.Random.Range(minBonusRoll, maxBonusRoll + 1);
+            int willpower = rolledStats.PermanentWillpower + UnityEngine.Random.Range(minBonusRoll, maxBonusRoll + 1);
+            int agility = rolledStats.PermanentAgility + UnityEngine.Random.Range(minBonusRoll, maxBonusRoll + 1);
+            int endurance = rolledStats.PermanentEndurance + UnityEngine.Random.Range(minBonusRoll, maxBonusRoll + 1);
+            int personality = rolledStats.PermanentPersonality + UnityEngine.Random.Range(minBonusRoll, maxBonusRoll + 1);
+            int speed = rolledStats.PermanentSpeed + UnityEngine.Random.Range(minBonusRoll, maxBonusRoll + 1);
+            int luck = rolledStats.PermanentLuck + UnityEngine.Random.Range(minBonusRoll, maxBonusRoll + 1);
+            rolledStats.SetPermanentStatValue(DFCareer.Stats.Strength, strength);
+            rolledStats.SetPermanentStatValue(DFCareer.Stats.Intelligence, intelligence);
+            rolledStats.SetPermanentStatValue(DFCareer.Stats.Willpower, willpower);
+            rolledStats.SetPermanentStatValue(DFCareer.Stats.Agility, agility);
+            rolledStats.SetPermanentStatValue(DFCareer.Stats.Endurance, endurance);
+            rolledStats.SetPermanentStatValue(DFCareer.Stats.Personality, personality);
+            rolledStats.SetPermanentStatValue(DFCareer.Stats.Speed, speed);
+            rolledStats.SetPermanentStatValue(DFCareer.Stats.Luck, luck);
 
             // Roll bonus pool for player to distribute
             // Using maxBonusPool + 1 for inclusive range as above
@@ -176,8 +184,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Update primary stat labels
             for (int i = 0; i < DaggerfallStats.Count; i++)
             {
-                statLabels[i].Text = workingStats.GetStatValue(i).ToString();
-                if (workingStats.GetStatValue(i) != startingStats.GetStatValue(i))
+                statLabels[i].Text = workingStats.GetPermanentStatValue(i).ToString();
+                if (workingStats.GetPermanentStatValue(i) != startingStats.GetPermanentStatValue(i))
                     statLabels[i].TextColor = modifiedStatTextColor;
                 else
                     statLabels[i].TextColor = DaggerfallUI.DaggerfallDefaultTextColor;
@@ -205,7 +213,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         void Spinner_OnUpButtonClicked()
         {
             // Get working stat value
-            int workingValue = workingStats.GetStatValue(selectedStat);
+            int workingValue = workingStats.GetPermanentStatValue(selectedStat);
 
             // Working value cannot rise above maxWorkingValue and bonus cannot fall below zero
             if (workingValue == maxWorkingValue || bonusPool == 0)
@@ -213,7 +221,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Remove a point from pool stat and assign to working stat
             bonusPool -= 1;
-            workingStats.SetStatValue(selectedStat, workingValue + 1);
+            workingStats.SetPermanentStatValue(selectedStat, workingValue + 1);
             spinner.Value = bonusPool;
             UpdateStatLabels();
             RaiseOnStatChanged();
@@ -222,14 +230,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
         void Spinner_OnDownButtonClicked()
         {
             // Get working stat value
-            int workingValue = workingStats.GetStatValue(selectedStat);
+            int workingValue = workingStats.GetPermanentStatValue(selectedStat);
 
             // Working value cannot reduce below starting value or minWorkingValue
-            if (workingValue == startingStats.GetStatValue(selectedStat) || workingValue == minWorkingValue)
+            if (workingValue == startingStats.GetPermanentStatValue(selectedStat) || workingValue == minWorkingValue)
                 return;
 
             // Remove a point from working stat and assign to pool
-            workingStats.SetStatValue(selectedStat, workingValue - 1);
+            workingStats.SetPermanentStatValue(selectedStat, workingValue - 1);
             bonusPool += 1;
             spinner.Value = bonusPool;
             UpdateStatLabels();

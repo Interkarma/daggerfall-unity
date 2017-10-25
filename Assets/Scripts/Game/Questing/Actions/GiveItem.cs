@@ -53,12 +53,18 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // Attempt to get Item resource
             Item item = ParentQuest.GetItem(itemSymbol);
             if (item == null)
+            {
+                SetComplete();
                 throw new Exception(string.Format("Could not find Item resource symbol {0}", itemSymbol));
+            }
 
             // Attempt to get target resource
             QuestResource target = ParentQuest.GetResource(targetSymbol);
             if (target == null)
+            {
+                SetComplete();
                 throw new Exception(string.Format("Could not find target resource symbol {0}", targetSymbol));
+            }
 
             // Target must exist in the world
             if (!target.QuestResourceBehaviour)
@@ -67,7 +73,10 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // Must have an Entity to receive item
             DaggerfallEntityBehaviour entityBehaviour = target.QuestResourceBehaviour.GetComponent<DaggerfallEntityBehaviour>();
             if (!entityBehaviour)
+            {
+                SetComplete();
                 throw new Exception(string.Format("GiveItem target {0} is not an Entity with DaggerfallEntityBehaviour", targetSymbol));
+            }
 
             // Assign item for player to find
             //  * Some quests assign item to Foe at create time, others on injured event

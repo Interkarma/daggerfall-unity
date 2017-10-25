@@ -332,7 +332,7 @@ _S.00_ task:
 	add dialog for location _dirennitower_ 
 	remove log step 0 
 	reveal _dirennitower_ in province 9 at 204718 
-	repute with _akorithi_ exceeds 5 do _S.16_ 
+	repute with _akorithi_ exceeds 0 do _S.16_ 
 	change repute with _lhotun_ by +15 
 	change repute with _agentuk_ by +25 
 	mute npc _lhotun_ 

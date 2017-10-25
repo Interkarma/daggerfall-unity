@@ -45,8 +45,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         DFCareer dfClass;
         bool rollSaved = false;
-        DaggerfallStats savedRolledStats;
-        DaggerfallStats savedWorkingStats;
+        DaggerfallStats savedRolledStats = new DaggerfallStats();
+        DaggerfallStats savedWorkingStats = new DaggerfallStats();
         int savedBonusPool;
 
         public DFCareer DFClass
@@ -153,13 +153,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void UpdateSecondaryStatLabels()
         {
             DaggerfallStats workingStats = statsRollout.WorkingStats;
-            damageModifierLabel.Text = FormulaHelper.DamageModifier(workingStats.Strength).ToString("+0;-0;0");
-            maxEncumbranceLabel.Text = FormulaHelper.MaxEncumbrance(workingStats.Strength).ToString();
-            spellPointsLabel.Text = FormulaHelper.SpellPoints(workingStats.Intelligence, dfClass.SpellPointMultiplierValue).ToString();
-            magicResistLabel.Text = FormulaHelper.MagicResist(workingStats.Willpower).ToString();
-            toHitModifierLabel.Text = FormulaHelper.ToHitModifier(workingStats.Agility).ToString("+0;-0;0");
-            hitPointsModifierLabel.Text = FormulaHelper.HitPointsModifier(workingStats.Endurance).ToString("+0;-0;0");
-            healingRateModifierLabel.Text = FormulaHelper.HealingRateModifier(workingStats.Endurance).ToString("+0;-0;0");
+            damageModifierLabel.Text = FormulaHelper.DamageModifier(workingStats.LiveStrength).ToString("+0;-0;0");
+            maxEncumbranceLabel.Text = FormulaHelper.MaxEncumbrance(workingStats.LiveStrength).ToString();
+            spellPointsLabel.Text = FormulaHelper.SpellPoints(workingStats.LiveIntelligence, dfClass.SpellPointMultiplierValue).ToString();
+            magicResistLabel.Text = FormulaHelper.MagicResist(workingStats.LiveWillpower).ToString();
+            toHitModifierLabel.Text = FormulaHelper.ToHitModifier(workingStats.LiveAgility).ToString("+0;-0;0");
+            hitPointsModifierLabel.Text = FormulaHelper.HitPointsModifier(workingStats.LiveEndurance).ToString("+0;-0;0");
+            healingRateModifierLabel.Text = FormulaHelper.HealingRateModifier(workingStats.LiveEndurance).ToString("+0;-0;0");
         }
 
         void RerollButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)

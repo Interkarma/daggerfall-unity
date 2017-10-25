@@ -136,12 +136,18 @@ namespace DaggerfallWorkshop.Game.Questing
             // Get the Foe resource
             Foe foe = ParentQuest.GetFoe(foeSymbol);
             if (foe == null)
+            {
+                SetComplete();
                 throw new Exception(string.Format("create foe could not find Foe with symbol name {0}", Symbol.Name));
+            }
 
             // Get foe GameObjects
             pendingFoeGameObjects = foe.CreateFoeGameObjects(Vector3.zero);
             if (pendingFoeGameObjects == null || pendingFoeGameObjects.Length != foe.SpawnCount)
+            {
+                SetComplete();
                 throw new Exception(string.Format("create foe attempted to create {0}x{1} GameObjects and failed.", foe.SpawnCount, Symbol.Name));
+            }
 
             // Initiate deployment process
             // Usually the foe will spawn immediately but can take longer depending on available placement space
@@ -191,7 +197,10 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             // Must have a DaggerfallLocation parent
             if (interiorParent == null)
+            {
+                SetComplete();
                 throw new Exception("PlaceFoeFreely() must have a DaggerfallLocation parent object.");
+            }
 
             // Always place foes around player rather than use spawn points
             // Spawn points work well for "interior hunt" quests but less so for "directly attack the player"

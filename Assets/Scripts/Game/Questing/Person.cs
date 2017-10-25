@@ -45,6 +45,7 @@ namespace DaggerfallWorkshop.Game.Questing
         string homeRegionName = string.Empty;
         string homeBuildingName = string.Empty;
         Symbol homePlaceSymbol = null;
+        Symbol lastAssignedPlaceSymbol = null;
         bool assignedToHome = false;
         FactionFile.FactionData factionData;
         StaticNPC.NPCData questorData;
@@ -326,6 +327,56 @@ namespace DaggerfallWorkshop.Game.Questing
                     assignedToHome = true;
                 }
             }
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Called by "place npc" to help track current Place assignment.
+        /// </summary>
+        /// <param name="symbol">Place symbol where Person was assigned.</param>
+        public void SetAssignedPlaceSymbol(Symbol placeSymbol)
+        {
+            lastAssignedPlaceSymbol = placeSymbol;
+        }
+
+        /// <summary>
+        /// Gets most recent Place this Person was assigned to.
+        /// Notes:
+        ///  - Can be null when NPC not yet assigned. They are technically nowhere.
+        ///  - Will continue to return last assigned place even when "hide npc" is used.
+        ///  - The action "destroy npc" will revoke assignment.
+        /// </summary>
+        /// <returns>Most recent Place symbol assigned, or null if not assigned.</returns>
+        public Symbol GetAssignedPlaceSymbol()
+        {
+            return lastAssignedPlaceSymbol;
+        }
+
+        /// <summary>
+        /// Checks if player in same world cell as Place this Person was assigned to.
+        /// Does not care about specific building/dungeon or interior/exterior, just matching location mapID.
+        /// Does not care if player actually inside bounds, just if inside same world cell.
+        /// </summary>
+        /// <returns>True if player in same world cell as location.</returns>
+        public bool IsPlayerInSameLocationWorldCell()
+        {
+            // Get Place resource
+            Place place = ParentQuest.GetPlace(lastAssignedPlaceSymbol);
+            if (place == null)
+                return false;
+
+            // Compare mapID of player location and Place
+            DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
+            if (location.Loaded)
+            {
+                if (location.MapTableData.MapId == place.SiteDetails.mapId)
+                    return true;
+            }
+
+            return false;
         }
 
         #endregion
@@ -929,6 +980,7 @@ namespace DaggerfallWorkshop.Game.Questing
             public string homeRegionName;
             public string homeBuildingName;
             public Symbol homePlaceSymbol;
+            public Symbol lastAssignedPlaceSymbol;
             public bool assignedToHome;
             public int factionID;
             public StaticNPC.NPCData questorData;
@@ -951,6 +1003,7 @@ namespace DaggerfallWorkshop.Game.Questing
             data.homeRegionName = homeRegionName;
             data.homeBuildingName = homeBuildingName;
             data.homePlaceSymbol = homePlaceSymbol;
+            data.lastAssignedPlaceSymbol = lastAssignedPlaceSymbol;
             data.assignedToHome = assignedToHome;
             data.factionID = factionData.id;
             data.questorData = questorData;
@@ -982,6 +1035,7 @@ namespace DaggerfallWorkshop.Game.Questing
             homeRegionName = data.homeRegionName;
             homeBuildingName = data.homeBuildingName;
             homePlaceSymbol = data.homePlaceSymbol;
+            lastAssignedPlaceSymbol = data.lastAssignedPlaceSymbol;
             assignedToHome = data.assignedToHome;
             factionData = dsfactionData;
             questorData = data.questorData;

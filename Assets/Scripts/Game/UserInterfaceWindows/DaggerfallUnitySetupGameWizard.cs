@@ -63,6 +63,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox mouseSmoothing;
         Checkbox leftHandWeapons;
         Checkbox playerNudity;
+        Checkbox clickToAttack;
         Checkbox meshAndTextureReplacement;
 
         Color unselectedTextColor = new Color(0.6f, 0.6f, 0.6f, 1f);
@@ -444,6 +445,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mouseSmoothing = AddOption(x, "Mouse Smoothing", "Smooth mouse-look sampling", DaggerfallUnity.Settings.MouseLookSmoothing);
             leftHandWeapons = AddOption(x, "Left Hand Weapons", "Draw weapons on left side of screen", GetLeftHandWeapons());
             playerNudity = AddOption(x, "Player Nudity", "Allow nudity on paper doll", DaggerfallUnity.Settings.PlayerNudity);
+            clickToAttack = AddOption(x, "Click to attack", "Enable a simple click to trigger attacks", DaggerfallUnity.Settings.ClickToAttack);
 
             // Setup mods checkboxes
             // TODO: Might rework this, but could still be useful for certain core mods later
@@ -703,6 +705,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.MouseLookSmoothing = mouseSmoothing.IsChecked;
             DaggerfallUnity.Settings.Handedness = GetHandedness(leftHandWeapons.IsChecked);
             DaggerfallUnity.Settings.PlayerNudity = playerNudity.IsChecked;
+            DaggerfallUnity.Settings.ClickToAttack = clickToAttack.IsChecked;
 
             DaggerfallUnity.Settings.MeshAndTextureReplacement = meshAndTextureReplacement.IsChecked;
 

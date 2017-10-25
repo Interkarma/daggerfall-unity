@@ -144,7 +144,7 @@ namespace DaggerfallWorkshop.Game
         {
             // Monster speed of movement follows the same formula as for when the player walks
             EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
-            float moveSpeed = ((entity.Stats.Speed + PlayerMotor.dfWalkBase) / PlayerMotor.classicToUnitySpeedUnitRatio);
+            float moveSpeed = ((entity.Stats.LiveSpeed + PlayerMotor.dfWalkBase) / PlayerMotor.classicToUnitySpeedUnitRatio);
 
             // Reduced speed if playing a one-shot animation
             if (mobile.IsPlayingOneShot())

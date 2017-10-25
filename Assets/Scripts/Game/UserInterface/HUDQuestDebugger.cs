@@ -47,7 +47,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         int currentQuestIndex;
         Quest currentQuest;
 
-        DisplayState displayState;
+        DisplayState displayState = DisplayState.Nothing;
 
         TextLabel questNameLabel = new TextLabel();
         TextLabel processLabel = new TextLabel();
@@ -115,7 +115,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             SetupGlobalVarLabel(new Vector2(550, 0));
 
             // Disable global vars by default
-            displayState = DisplayState.QuestState;
             EnableGlobalVars(false);
 
             // Set starting state
@@ -154,19 +153,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 MovePreviousQuest();
             else if (Input.GetKeyDown(KeyCode.RightBracket))
                 MoveNextQuest();
-            else if (leftShiftDown && Input.GetKeyDown(KeyCode.Tab))
-            {
-                displayState = displayState + 1;
-
-                // Show/hide globals
-                if (displayState == DisplayState.QuestStateFull)
-                    EnableGlobalVars(true);
-                else
-                    EnableGlobalVars(false);
-            }
-
-            // Show/hide entire debugger overlay debugger
-            Enabled = !(displayState == DisplayState.Nothing);
         }
 
         private void QuestMachine_OnTick()
@@ -197,6 +183,20 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Update task and timer status
             UpdateQuestStatus();
+        }
+
+        public void NextState()
+        {
+            // Rotate through states
+            displayState = displayState + 1;
+            if (displayState > DisplayState.QuestStateFull)
+                displayState = DisplayState.Nothing;
+
+            // Show/hide globals
+            if (displayState == DisplayState.QuestStateFull)
+                EnableGlobalVars(true);
+            else
+                EnableGlobalVars(false);
         }
 
         #region Private Methods

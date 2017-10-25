@@ -622,6 +622,9 @@ namespace DaggerfallWorkshop.Game
             PlayerMouseLook playerMouseLook = GameManager.Instance.PlayerMouseLook;
             if (playerMouseLook)
                 playerMouseLook.SetFacing(Vector3.forward);
+
+            // Raise event
+            RaiseOnTransitionDungeonInteriorEvent(new StaticDoor(), dungeon);
         }
 
         /// <summary>

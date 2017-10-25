@@ -1,5 +1,5 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -196,7 +196,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             skillNameToken.formatting = TextFile.Formatting.Text;
 
             TextFile.Token skillValueToken = new TextFile.Token();
-            skillValueToken.text = string.Format("{0}%", playerEntity.Skills.GetSkillValue(skill));
+            skillValueToken.text = string.Format("{0}%", playerEntity.Skills.GetLiveSkillValue(skill));
             skillValueToken.formatting = TextFile.Formatting.Text;
 
             DFCareer.Stats primaryStat = DaggerfallSkills.GetPrimaryStat(skill);
@@ -277,8 +277,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 tokens.Add(TextFile.NewLineToken);
                 TextFile.Token HandToHandDamageToken = new TextFile.Token();
-                int minDamage = FormulaHelper.CalculateHandToHandMinDamage(playerEntity.Skills.GetSkillValue(DFCareer.Skills.HandToHand));
-                int maxDamage = FormulaHelper.CalculateHandToHandMaxDamage(playerEntity.Skills.GetSkillValue(DFCareer.Skills.HandToHand));
+                int minDamage = FormulaHelper.CalculateHandToHandMinDamage(playerEntity.Skills.GetLiveSkillValue(DFCareer.Skills.HandToHand));
+                int maxDamage = FormulaHelper.CalculateHandToHandMaxDamage(playerEntity.Skills.GetLiveSkillValue(DFCareer.Skills.HandToHand));
                 HandToHandDamageToken.text = DaggerfallUnity.Instance.TextProvider.GetSkillName(DFCareer.Skills.HandToHand) + " dmg: " + minDamage + "-" + maxDamage;
                 HandToHandDamageToken.formatting = TextFile.Formatting.Text;
                 tokens.Add(HandToHandDamageToken);
@@ -307,8 +307,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Add stats rollout for leveling up
                 NativePanel.Components.Add(statsRollout);
 
-                this.statsRollout.StartingStats = PlayerEntity.Stats;
-                this.statsRollout.WorkingStats = PlayerEntity.Stats;
+                this.statsRollout.StartingStats = PlayerEntity.Stats.Clone();
+                this.statsRollout.WorkingStats = PlayerEntity.Stats.Clone();
                 this.statsRollout.BonusPool = bonusPool;
 
                 PlayerEntity.ReadyToLevelUp = false;
@@ -325,10 +325,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             encumbranceLabel.Text = string.Format("{0}/{1}", (int)PlayerEntity.CarriedWeight, PlayerEntity.MaxEncumbrance);
 
             // Update stat labels
+            // TODO: Colour blue/red based on whether stat mod has change above/below permanent value
             for (int i = 0; i < DaggerfallStats.Count; i++)
             {
                 if (!leveling)
-                    statLabels[i].Text = PlayerEntity.Stats.GetStatValue(i).ToString();
+                    statLabels[i].Text = PlayerEntity.Stats.GetLiveStatValue(i).ToString();
                 else
                     statLabels[i].Text = ""; // If leveling, statsRollout will fill in the stat labels.
             }
@@ -429,8 +430,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void UpdateSecondaryStatLabels()
         {
             DaggerfallStats workingStats = statsRollout.WorkingStats;
-            fatigueLabel.Text = string.Format("{0}/{1}", PlayerEntity.CurrentFatigue / 64, workingStats.Strength + workingStats.Endurance);
-            encumbranceLabel.Text = string.Format("{0}/{1}", (int)PlayerEntity.CarriedWeight, FormulaHelper.MaxEncumbrance(workingStats.Strength));
+            fatigueLabel.Text = string.Format("{0}/{1}", PlayerEntity.CurrentFatigue / 64, workingStats.LiveStrength + workingStats.LiveEndurance);
+            encumbranceLabel.Text = string.Format("{0}/{1}", (int)PlayerEntity.CarriedWeight, FormulaHelper.MaxEncumbrance(workingStats.LiveStrength));
         }
 
         #endregion

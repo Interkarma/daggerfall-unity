@@ -64,12 +64,18 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // Attempt to get Person resource
             Person person = ParentQuest.GetPerson(npcSymbol);
             if (person == null)
+            {
+                SetComplete();
                 throw new Exception(string.Format("Could not find Person resource symbol {0}", npcSymbol));
+            }
 
             // Attempt to get Place resource
             Place place = ParentQuest.GetPlace(placeSymbol);
             if (place == null)
+            {
+                SetComplete();
                 throw new Exception(string.Format("Could not find Place resource symbol {0}", placeSymbol));
+            }
 
             // Is target an individual NPC that is supposed to be at home
             // Daggerfall never seems to use "create npc at" or "place npc" for "athome" NPCs
@@ -84,6 +90,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
             // Assign Person to Place
             place.AssignQuestResource(person.Symbol);
+            person.SetAssignedPlaceSymbol(Symbol);
 
             SetComplete();
         }

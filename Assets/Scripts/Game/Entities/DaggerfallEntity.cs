@@ -36,8 +36,8 @@ namespace DaggerfallWorkshop.Game.Entity
         protected DFCareer career = new DFCareer();
         protected string name;
         protected int level;
-        protected DaggerfallStats stats;
-        protected DaggerfallSkills skills;
+        protected DaggerfallStats stats = new DaggerfallStats();
+        protected DaggerfallSkills skills = new DaggerfallSkills();
         protected ItemCollection items = new ItemCollection();
         protected ItemEquipTable equipTable = new ItemEquipTable();
         protected int maxHealth;
@@ -76,18 +76,18 @@ namespace DaggerfallWorkshop.Game.Entity
         public ItemEquipTable ItemEquipTable { get { return equipTable; } }
         public int MaxHealth { get { return maxHealth; } set { maxHealth = value; } }
         public int CurrentHealth { get { return currentHealth; } set { SetHealth(value); } }
-        public int MaxFatigue { get { return (stats.Strength + stats.Endurance) * 64; } }
+        public int MaxFatigue { get { return (stats.LiveStrength + stats.LiveEndurance) * 64; } }
         public int CurrentFatigue { get { return currentFatigue; } set { SetFatigue(value); } }
-        public int MaxMagicka { get { return FormulaHelper.SpellPoints(stats.Intelligence, career.SpellPointMultiplierValue); } }
+        public int MaxMagicka { get { return FormulaHelper.SpellPoints(stats.LiveIntelligence, career.SpellPointMultiplierValue); } }
         public int CurrentMagicka { get { return currentMagicka; } set { SetMagicka(value); } }
         public WeaponMaterialTypes MinMetalToHit { get { return minMetalToHit; } set { minMetalToHit = value; } }
         public sbyte[] ArmorValues { get { return armorValues; } set { armorValues = value; } }
-        public int DamageModifier { get { return FormulaHelper.DamageModifier(stats.Strength); } }
-        public int MaxEncumbrance { get { return FormulaHelper.MaxEncumbrance(stats.Strength); } }
-        public int MagicResist { get { return FormulaHelper.MagicResist(stats.Willpower); } }
-        public int ToHitModifier { get { return FormulaHelper.ToHitModifier(stats.Agility); } }
-        public int HitPointsModifier { get { return FormulaHelper.HitPointsModifier(stats.Endurance); } }
-        public int HealingRateModifier { get { return FormulaHelper.HealingRateModifier(stats.Endurance); } }
+        public int DamageModifier { get { return FormulaHelper.DamageModifier(stats.LiveStrength); } }
+        public int MaxEncumbrance { get { return FormulaHelper.MaxEncumbrance(stats.LiveStrength); } }
+        public int MagicResist { get { return FormulaHelper.MagicResist(stats.LiveWillpower); } }
+        public int ToHitModifier { get { return FormulaHelper.ToHitModifier(stats.LiveAgility); } }
+        public int HitPointsModifier { get { return FormulaHelper.HitPointsModifier(stats.LiveEndurance); } }
+        public int HealingRateModifier { get { return FormulaHelper.HealingRateModifier(stats.LiveEndurance); } }
 
         #endregion
 
