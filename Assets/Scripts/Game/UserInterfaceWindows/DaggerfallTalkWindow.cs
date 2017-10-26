@@ -49,7 +49,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Color textcolorQuestionHighlighted = new Color(0.8f, 0.9f, 1.0f);
         Color textcolorHighlighted = Color.white;
 
-        Color textcolorQuestionBackgroundModernConversationStyle = new Color(0.23f, 0.27f, 0.33f);
+        Color textcolorQuestionBackgroundModernConversationStyle = new Color(0.3f, 0.35f, 0.43f); // new Color(0.23f, 0.27f, 0.33f);
         Color textcolorAnswerBackgroundModernConversationStyle = new Color(0.32f, 0.31f, 0.06f); //  default text r: 243 (0.95f), g: 239 (0.93f), b: 44 (0.17)
 
         Color textcolorCaptionGotoParentList = new Color(0.698f, 0.812f, 1.0f);
@@ -522,7 +522,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 {
                     textLabelNPCGreeting.textLabel.TextScale = textScaleModernConversationStyle;
                     textLabelNPCGreeting.textLabel.MaxWidth = (int)(textLabelNPCGreeting.textLabel.MaxWidth * textBlockSizeModernConversationStyle);
-                    //textLabelNPCGreeting.textLabel.BackgroundColor = textcolorAnswerBackgroundModernConversationStyle;
+                    textLabelNPCGreeting.textLabel.BackgroundColor = textcolorAnswerBackgroundModernConversationStyle;
                 }
             }
 
@@ -1121,7 +1121,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 textLabelQuestion.textLabel.TextScale = textScaleModernConversationStyle;
                 textLabelQuestion.textLabel.MaxWidth = (int)(textLabelQuestion.textLabel.MaxWidth * textBlockSizeModernConversationStyle);
-                //textLabelQuestion.textLabel.BackgroundColor = textcolorQuestionBackgroundModernConversationStyle;
+                textLabelQuestion.textLabel.BackgroundColor = textcolorQuestionBackgroundModernConversationStyle;
             }
             listboxConversation.AddItem(answer, out textLabelAnswer);
             textLabelAnswer.selectedTextColor = textcolorHighlighted;            
@@ -1132,7 +1132,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 textLabelAnswer.textLabel.TextScale = textScaleModernConversationStyle;
                 textLabelAnswer.textLabel.MaxWidth = (int)(textLabelAnswer.textLabel.MaxWidth * textBlockSizeModernConversationStyle);
-                //textLabelAnswer.textLabel.BackgroundColor = textcolorAnswerBackgroundModernConversationStyle;
+                textLabelAnswer.textLabel.BackgroundColor = textcolorAnswerBackgroundModernConversationStyle;
             }
 
             listboxConversation.SelectedIndex = listboxConversation.Count - 1; // always highlight the new answer

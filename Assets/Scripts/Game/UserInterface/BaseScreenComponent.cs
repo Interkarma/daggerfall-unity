@@ -44,6 +44,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
         HorizontalAlignment horizontalAlignment = HorizontalAlignment.None;
         VerticalAlignment verticalAlignment = VerticalAlignment.None;
 
+        // restricted render area can be used to force background rendering inside this rect (must be used in conjunction with ui elements that also support restricted render area like textlabel)
+        protected bool useRestrictedRenderArea = false;
+        protected Rect rectRestrictedRenderArea;
+
         float doubleClickDelay = 0.3f;
         float leftClickTime;
         float lastLeftClickTime;
@@ -224,6 +228,20 @@ namespace DaggerfallWorkshop.Game.UserInterface
             get { return verticalAlignment; }
             set { verticalAlignment = value; }
         }
+
+        /// <summary>
+        /// set a restricted render area for background rendering - the background will only be rendered inside the specified Rect's bounds
+        /// </summary>
+        public Rect RectRestrictedRenderArea
+        {
+            get { return rectRestrictedRenderArea; }
+            set
+            {
+                rectRestrictedRenderArea = value;
+                useRestrictedRenderArea = true;
+            }
+        }
+
 
         /// <summary>
         /// Gets current mouse position from recent update.
@@ -631,21 +649,35 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Draw background
             Rect myRect = Rectangle;
+            if (useRestrictedRenderArea)
+            {
+                Rect rect = new Rect(this.Parent.Position + this.Position, this.Size);
+
+                Vector2 parentScale = parent.LocalScale;
+
+                float leftCut = Math.Max(0, rectRestrictedRenderArea.xMin - rect.xMin) * parentScale.x;
+                float rightCut = Math.Max(0, rect.xMax - rectRestrictedRenderArea.xMax) * parentScale.x;
+                float topCut = Math.Max(0, rectRestrictedRenderArea.yMin - rect.yMin) * parentScale.y;
+                float bottomCut = Math.Max(0, rect.yMax - rectRestrictedRenderArea.yMax) * parentScale.y;
+                
+                myRect = new Rect(new Vector2(Rectangle.xMin + leftCut, Rectangle.yMin + topCut), new Vector2(Rectangle.width - leftCut - rightCut, Rectangle.height - topCut - bottomCut));
+            }
+            
             if (backgroundTexture)
             {
                 switch (backgroundTextureLayout)
                 {
                     case BackgroundLayout.Tile:
                         backgroundTexture.wrapMode = TextureWrapMode.Repeat;
-                        GUI.DrawTextureWithTexCoords(Rectangle, backgroundTexture, new Rect(0, 0, myRect.width / backgroundTexture.width, myRect.height / backgroundTexture.height));
+                        GUI.DrawTextureWithTexCoords(myRect, backgroundTexture, new Rect(0, 0, myRect.width / backgroundTexture.width, myRect.height / backgroundTexture.height));
                         break;
                     case BackgroundLayout.StretchToFill:
                         backgroundTexture.wrapMode = TextureWrapMode.Clamp;
-                        GUI.DrawTexture(Rectangle, backgroundTexture, ScaleMode.StretchToFill);
+                        GUI.DrawTexture(myRect, backgroundTexture, ScaleMode.StretchToFill);
                         break;
                     case BackgroundLayout.ScaleToFit:
                         backgroundTexture.wrapMode = TextureWrapMode.Clamp;
-                        GUI.DrawTexture(Rectangle, backgroundTexture, ScaleMode.ScaleToFit);
+                        GUI.DrawTexture(myRect, backgroundTexture, ScaleMode.ScaleToFit);
                         break;
                 }
             }
@@ -653,7 +685,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 Color color = GUI.color;
                 GUI.color = backgroundColor;
-                GUI.DrawTexture(Rectangle, backgroundColorTexture, ScaleMode.StretchToFill);
+                GUI.DrawTexture(myRect, backgroundColorTexture, ScaleMode.StretchToFill);
                 GUI.color = color;
             }
 
