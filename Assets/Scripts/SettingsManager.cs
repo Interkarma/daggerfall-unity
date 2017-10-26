@@ -95,6 +95,7 @@ namespace DaggerfallWorkshop
         public bool ShowQuestJournalClocksAsCountdown { get; set; }
         public bool EnableInventoryInfoPanel { get; set; }
         public bool EnableEnhancedItemLists { get; set; }
+        public bool EnableModernConversationStyleInTalkWindow { get; set; }
 
         // [Controls]
         public bool InvertMouseVertical { get; set; }
@@ -160,6 +161,7 @@ namespace DaggerfallWorkshop
             ToolTipTextColor = GetColor(sectionGUI, "ToolTipTextColor", DaggerfallUI.DaggerfallUnityDefaultToolTipTextColor);
             EnableInventoryInfoPanel = GetBool(sectionGUI, "EnableInventoryInfoPanel");
             EnableEnhancedItemLists = GetBool(sectionGUI, "EnableEnhancedItemLists");
+            EnableModernConversationStyleInTalkWindow = GetBool(sectionGUI, "EnableModernConversationStyleInTalkWindow");
             AutomapNumberOfDungeons = GetInt(sectionGUI, "AutomapNumberOfDungeons", 0, 100);
             ShopQualityPresentation = GetInt(sectionGUI, "ShopQualityPresentation", 0, 2);
             ShopQualityHUDDelay = GetInt(sectionGUI, "ShopQualityHUDDelay", 1, 10);

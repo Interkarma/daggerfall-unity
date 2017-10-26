@@ -49,8 +49,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Color textcolorQuestionHighlighted = new Color(0.8f, 0.9f, 1.0f);
         Color textcolorHighlighted = Color.white;
 
+        Color textcolorQuestionBackgroundModernConversationStyle = new Color(0.23f, 0.27f, 0.33f);
+        Color textcolorAnswerBackgroundModernConversationStyle = new Color(0.32f, 0.31f, 0.06f); //  default text r: 243 (0.95f), g: 239 (0.93f), b: 44 (0.17)
+
         Color textcolorCaptionGotoParentList = new Color(0.698f, 0.812f, 1.0f);
         Color textcolorCaptionGotoParentListHighlighted = Color.white;
+
+        const float textScaleModernConversationStyle = 0.8f;
+        const float textBlockSizeModernConversationStyle = 0.75f;
 
         enum TalkOption {
             None,
@@ -507,7 +513,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 listboxConversation.ClearItems();
 
-                listboxConversation.AddItem(TalkManager.Instance.GetNPCGreetingText());
+                ListBox.ListItem textLabelNPCGreeting;
+                listboxConversation.AddItem(TalkManager.Instance.GetNPCGreetingText(), out textLabelNPCGreeting);
+                textLabelNPCGreeting.selectedTextColor = textcolorHighlighted;
+                textLabelNPCGreeting.textLabel.HorizontalAlignment = HorizontalAlignment.Left;
+                textLabelNPCGreeting.textLabel.HorizontalTextAlignment = TextLabel.HorizontalTextAlignmentSetting.Left;
+                if (DaggerfallUnity.Settings.EnableModernConversationStyleInTalkWindow)
+                {
+                    textLabelNPCGreeting.textLabel.TextScale = textScaleModernConversationStyle;
+                    textLabelNPCGreeting.textLabel.MaxWidth = (int)(textLabelNPCGreeting.textLabel.MaxWidth * textBlockSizeModernConversationStyle);
+                    //textLabelNPCGreeting.textLabel.BackgroundColor = textcolorAnswerBackgroundModernConversationStyle;
+                }
             }
 
             TalkManager.Instance.StartNewConversation();
@@ -711,6 +727,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             listboxTopic.Update();
             UpdateScrollBarsTopic();
             UpdateScrollButtonsTopic();
+
+            if (listTopic.Count <= 0)
+                return;
+
             if (listTopic[0].listParentItems != null) // first entry is "previous" item
             {
                 listboxTopic.SelectIndex(1);
@@ -1068,11 +1088,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
             else
             {
-                listItem = listCurrentTopics[index];
                 if (index < 0 || index >= listboxTopic.Count)
                 {
                     textlabelPlayerSays.Text = "";
                     return;
+                }
+                else
+                {
+                    listItem = listCurrentTopics[index];
                 }
             }
 
@@ -1090,9 +1113,27 @@ namespace DaggerfallWorkshop.Game.UserInterface
             ListBox.ListItem textLabelAnswer;
             listboxConversation.AddItem(question, out textLabelQuestion);
             textLabelQuestion.textColor = textcolorQuestion;
-            textLabelQuestion.selectedTextColor = textcolorHighlighted; // textcolorQuestionHighlighted
+            textLabelQuestion.selectedTextColor = textcolorHighlighted; // textcolorQuestionHighlighted            
+            textLabelQuestion.textLabel.HorizontalAlignment = HorizontalAlignment.Right;
+            textLabelQuestion.textLabel.HorizontalTextAlignment = TextLabel.HorizontalTextAlignmentSetting.Left;
+            //textLabelQuestion.textLabel.BackgroundColor = new Color(0.3f, 0.4f, 0.9f);
+            if (DaggerfallUnity.Settings.EnableModernConversationStyleInTalkWindow)
+            {
+                textLabelQuestion.textLabel.TextScale = textScaleModernConversationStyle;
+                textLabelQuestion.textLabel.MaxWidth = (int)(textLabelQuestion.textLabel.MaxWidth * textBlockSizeModernConversationStyle);
+                //textLabelQuestion.textLabel.BackgroundColor = textcolorQuestionBackgroundModernConversationStyle;
+            }
             listboxConversation.AddItem(answer, out textLabelAnswer);
-            textLabelAnswer.selectedTextColor = textcolorHighlighted;
+            textLabelAnswer.selectedTextColor = textcolorHighlighted;            
+            textLabelAnswer.textLabel.HorizontalAlignment = HorizontalAlignment.Left;
+            textLabelAnswer.textLabel.HorizontalTextAlignment = TextLabel.HorizontalTextAlignmentSetting.Left;
+            //textLabelAnswer.textLabel.BackgroundColor = new Color(0.4f, 0.3f, 0.9f);
+            if (DaggerfallUnity.Settings.EnableModernConversationStyleInTalkWindow)
+            {
+                textLabelAnswer.textLabel.TextScale = textScaleModernConversationStyle;
+                textLabelAnswer.textLabel.MaxWidth = (int)(textLabelAnswer.textLabel.MaxWidth * textBlockSizeModernConversationStyle);
+                //textLabelAnswer.textLabel.BackgroundColor = textcolorAnswerBackgroundModernConversationStyle;
+            }
 
             listboxConversation.SelectedIndex = listboxConversation.Count - 1; // always highlight the new answer
 

@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Michael Rauter (Nystul)
 // 
 // Notes:
 //
@@ -15,13 +15,23 @@ using FullSerializer;
 namespace DaggerfallWorkshop.Game.Questing
 {
     /// <summary>
-    /// Incomplete. Just stubbing out action for now so quest will compile.
+    /// add dialog command used in quests to make talk options available.
     /// </summary>
     public class AddDialog : ActionTemplate
     {
+        Symbol placeSymbol;
+        Symbol npcSymbol;
+        Symbol itemSymbol;
+
         public override string Pattern
         {
-            get { return @"add dialog for"; }
+            get { return @"add dialog for location (?<aPlace>\w+) person (?<anNPC>\w+) item (?<anItem>\w+)|" +
+                         @"add dialog for person (?<anNPC>\w+) item (?<anItem>\w+)|" +
+                         @"add dialog for location (?<aPlace>\w+) person (?<anNPC>\w+)|" +
+                         @"add dialog for location (?<aPlace>\w+) item (?<anItem>\w+)|" +
+                         @"add dialog for location (?<aPlace>\w+)|" +
+                         @"add dialog for person (?<anNPC>\w+)|" +
+                         @"add dialog for item (?<anItem>\w+)"; }
         }
 
         public AddDialog(Quest parentQuest)
@@ -38,13 +48,43 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // Factory new action
             AddDialog action = new AddDialog(parentQuest);
+            if (!string.IsNullOrEmpty(match.Groups["aPlace"].Value))
+                action.placeSymbol = new Symbol(match.Groups["aPlace"].Value);
+            if (!string.IsNullOrEmpty(match.Groups["anNPC"].Value))
+                action.npcSymbol = new Symbol(match.Groups["anNPC"].Value);
+            if (!string.IsNullOrEmpty(match.Groups["anItem"].Value))
+                action.itemSymbol = new Symbol(match.Groups["anItem"].Value);
 
             return action;
         }
 
         public override void Update(Task caller)
         {
-            // TODO: Perform action changes
+            // Get related Location resource
+            Place place = ParentQuest.GetPlace(placeSymbol);
+            // Get related Person resource
+            Person person = ParentQuest.GetPerson(npcSymbol);
+            // Get related Item resource
+            Item item = ParentQuest.GetItem(itemSymbol);
+
+            string namePlace = "", namePerson = "", nameItem = "";
+
+            // add dialog for resources
+            if (place != null)
+            {
+                namePlace = place.SiteDetails.locationName;
+                GameManager.Instance.TalkManager.AddDialogForQuestInfoResource(ParentQuest.UID, namePlace, TalkManager.QuestInfoResourceType.Location);
+            }
+            if (person != null)
+            {
+                namePerson = person.DisplayName;
+                GameManager.Instance.TalkManager.AddDialogForQuestInfoResource(ParentQuest.UID, namePerson, TalkManager.QuestInfoResourceType.Person);
+            }
+            if (item != null)
+            {
+                nameItem = item.DaggerfallUnityItem.ItemName;
+                GameManager.Instance.TalkManager.AddDialogForQuestInfoResource(ParentQuest.UID, nameItem, TalkManager.QuestInfoResourceType.Thing);
+            }
 
             SetComplete();
         }
@@ -54,12 +94,17 @@ namespace DaggerfallWorkshop.Game.Questing
         [fsObject("v1")]
         public struct SaveData_v1
         {
+            public Symbol placeSymbol;
+            public Symbol npcSymbol;
+            public Symbol itemSymbol;
         }
 
         public override object GetSaveData()
         {
             SaveData_v1 data = new SaveData_v1();
-
+            data.placeSymbol = placeSymbol;
+            data.npcSymbol = npcSymbol;
+            data.itemSymbol = itemSymbol;
             return data;
         }
 
@@ -68,6 +113,9 @@ namespace DaggerfallWorkshop.Game.Questing
             SaveData_v1 data = (SaveData_v1)dataIn;
             if (dataIn == null)
                 return;
+            placeSymbol = data.placeSymbol;
+            npcSymbol = data.npcSymbol;
+            itemSymbol = data.itemSymbol;
         }
 
         #endregion

@@ -5,7 +5,11 @@
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Hazelnut
 
+using UnityEngine;
 using System;
+using DaggerfallConnect;
+using DaggerfallConnect.Utility;
+using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
@@ -136,6 +140,54 @@ namespace DaggerfallWorkshop.Game.Questing
                     return parent.LastPersonReferenced.GodName;
                 else
                     return "Arkay";
+            }
+
+            public override string LocationDirection()
+            {
+                Vector2 positionPlayer;
+                Vector2 positionLocation = Vector2.zero;
+
+                DFPosition position = new DFPosition();
+                PlayerGPS playerGPS = GameManager.Instance.PlayerGPS;
+                if (playerGPS)
+                    position = playerGPS.CurrentMapPixel;
+                
+                positionPlayer = new Vector2(position.X, position.Y);
+
+                int region = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetPoliticIndex(position.X, position.Y) - 128;
+                if (region < 0 || region >= DaggerfallUnity.Instance.ContentReader.MapFileReader.RegionCount)
+                    region = -1;
+                
+                DFRegion.RegionMapTable locationInfo = new DFRegion.RegionMapTable();
+
+                DFRegion currentDFRegion = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegion(region);
+
+                string name = this.parent.LastPlaceReferenced.SiteDetails.locationName.ToLower();
+                string[] locations = currentDFRegion.MapNames;                              
+                for (int i = 0; i < locations.Length; i++)
+                {
+                    if (locations[i].ToLower() == name) // Valid location found with exact name
+                    {
+                        if (currentDFRegion.MapNameLookup.ContainsKey(locations[i]))
+                        {
+                            int index = currentDFRegion.MapNameLookup[locations[i]];
+                            locationInfo = currentDFRegion.MapTable[index];
+                            position = MapsFile.LongitudeLatitudeToMapPixel((int)locationInfo.Longitude, (int)locationInfo.Latitude);
+                            positionLocation = new Vector2(position.X, position.Y);
+                        }
+                    }
+                }
+                
+                if (positionLocation != Vector2.zero)
+                {
+                    Vector2 vecDirectionToTarget = positionLocation - positionPlayer;
+                    vecDirectionToTarget.y = -vecDirectionToTarget.y; // invert y axis
+                    return GameManager.Instance.TalkManager.DirectionVector2DirectionHintString(vecDirectionToTarget);
+                }
+                else
+                {
+                    return "... never mind ...";
+                }
             }
         }
     }

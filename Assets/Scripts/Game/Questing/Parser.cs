@@ -16,6 +16,7 @@ using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Utility;
+using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Game.Questing
 {

@@ -329,11 +329,11 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new TeleportPc(null));
 
             // In progress - these actions are being actively developed
+            RegisterAction(new DialogLink(null));
+            RegisterAction(new AddDialog(null));
 
             // Stubs - these actions are not complete yet
             // Just setting up so certain quests compile for now
-            //RegisterAction(new DialogLink(null));
-            //RegisterAction(new AddDialog(null));
             //RegisterAction(new MuteNpc(null));
             //RegisterAction(new LegalRepute(null));
 

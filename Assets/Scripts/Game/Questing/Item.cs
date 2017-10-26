@@ -10,10 +10,12 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallConnect.Arena2;
 using FullSerializer;
 
 /*Example patterns:
@@ -187,6 +189,9 @@ namespace DaggerfallWorkshop.Game.Questing
                     item = CreateGold(rangeLow, rangeHigh);             // Create gold pieces of amount by level or range values
                 else
                     throw new Exception(string.Format("Could not create Item from line {0}", line));
+
+                // add conversation topics from anyInfo command tag
+                AddConversationTopics();
             }
         }
 
@@ -333,6 +338,31 @@ namespace DaggerfallWorkshop.Game.Questing
             result.LinkQuestItem(ParentQuest.UID, Symbol.Clone());
 
             return result;
+        }
+
+
+        void AddConversationTopics()
+        {
+            if (this.InfoMessageID != -1)
+            {
+                Message message = this.ParentQuest.GetMessage(this.InfoMessageID);
+                List<TextFile.Token[]> anyInfoAnswers = new List<TextFile.Token[]>();
+                for (int i = 0; i < message.VariantCount; i++)
+                {
+                    TextFile.Token[] tokens = message.GetTextTokensByVariant(i, false); // do not expand macros here (they will be expanded just in time by TalkManager class)
+                    anyInfoAnswers.Add(tokens);
+                }
+
+                message = this.ParentQuest.GetMessage(this.RumorsMessageID);
+                List<TextFile.Token[]> anyRumorsAnswers = new List<TextFile.Token[]>();
+                for (int i = 0; i < message.VariantCount; i++)
+                {
+                    TextFile.Token[] tokens = message.GetTextTokensByVariant(i, false); // do not expand macros here (they will be expanded just in time by TalkManager class)
+                    anyRumorsAnswers.Add(tokens);
+                }
+
+                GameManager.Instance.TalkManager.AddQuestTopicWithInfoAndRumors(this.ParentQuest.UID, this, this.item.ItemName, TalkManager.QuestInfoResourceType.Thing, anyInfoAnswers, anyRumorsAnswers);
+            }
         }
 
         #endregion

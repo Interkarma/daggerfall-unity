@@ -68,7 +68,7 @@ namespace DaggerfallWorkshop.Utility
             { "%dae", null }, // A daedra
             { "%dam", DmgMod }, // Damage modifyer
             { "%dat", Date }, // Date
-            { "%di", DialogLocationDirection },  // Direction
+            { "%di", LocationDirection },  // Direction
             { "%dip", null }, // Days in prison
             { "%dng", null }, // Dungeon
             { "%dts", null }, // Daedra
@@ -100,8 +100,8 @@ namespace DaggerfallWorkshop.Utility
             { "%hea", HpMod }, // HP Modifier
             { "%hmd", HealRateMod }, // Healing rate modifer
             { "%hnr", null }, // Honorific
-            { "%hnt", DialogLocationHint }, // Direction of location. (comment Nystul: it is either a location direction hint or a map reveal)
-            { "%hnt2", null },// ?
+            { "%hnt", DialogHint }, // context "Tell Me About": anyInfo message, context place: Direction of location. (comment Nystul: it is either a location direction hint or a map reveal)
+            { "%hnt2", DialogHint2 }, // context "Tell Me About": rumors message
             { "%hol", null }, // Holiday
             { "%hpn", null }, // ?
             { "%hpw", null }, // ?
@@ -566,20 +566,22 @@ namespace DaggerfallWorkshop.Utility
                     return GameManager.Instance.TalkManager.CurrentKeySubject;
                 case TalkManager.KeySubjectType.Work:
                     return GameManager.Instance.TalkManager.GetWorkString();
+                case TalkManager.KeySubjectType.QuestTopic:
+                    return GameManager.Instance.TalkManager.CurrentKeySubject;
             }
         }
 
-        private static string DialogLocationDirection(IMacroContextProvider mcp)
-        {
-            // %di
-            return GameManager.Instance.TalkManager.GetKeySubjectLocationDirection();
-        }
+        //private static string DialogLocationDirection(IMacroContextProvider mcp)
+        //{
+        //    // %di
+        //    return GameManager.Instance.TalkManager.GetKeySubjectLocationDirection();
+        //}
 
-        private static string DialogLocationHint(IMacroContextProvider mcp)
-        {
-            // %hnt
-            return GameManager.Instance.TalkManager.GetKeySubjectLocationHint();
-        }
+        //private static string DialogHint(IMacroContextProvider mcp)
+        //{
+        //    // %hnt
+        //    return GameManager.Instance.TalkManager.GetKeySubjectLocationHint();
+        //}
 
         private static string MarkLocationOnMap(IMacroContextProvider mcp)
         {
@@ -732,6 +734,24 @@ namespace DaggerfallWorkshop.Utility
         public static string God(IMacroContextProvider mcp)
         {   // %god
             return mcp.GetMacroDataSource().God();
+        }
+
+        public static string LocationDirection(IMacroContextProvider mcp)
+        {
+            // %di
+            return mcp.GetMacroDataSource().LocationDirection();
+        }
+
+        public static string DialogHint(IMacroContextProvider mcp)
+        {
+            // %hnt
+            return mcp.GetMacroDataSource().DialogHint();
+        }
+
+        public static string DialogHint2(IMacroContextProvider mcp)
+        {
+            // %hnt2
+            return mcp.GetMacroDataSource().DialogHint2();
         }
 
         #endregion

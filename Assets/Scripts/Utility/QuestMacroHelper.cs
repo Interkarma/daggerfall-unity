@@ -56,7 +56,8 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         /// <param name="parentQuest">Parent quest of message.</param>
         /// <param name="tokens">Array of message tokens to expand macros inside of.</param>
-        public void ExpandQuestMessage(Quest parentQuest, ref TextFile.Token[] tokens)
+        /// <param name="resolveDialogLinks">will reveal dialog linked resources in talk window (this must be false for all calls to this function except if caller is talk manager when expanding answers).</param>
+        public void ExpandQuestMessage(Quest parentQuest, ref TextFile.Token[] tokens, bool revealDialogLinks = false)
         {
             // Iterate message tokens
             for (int token = 0; token < tokens.Length; token++)
@@ -83,6 +84,24 @@ namespace DaggerfallWorkshop.Utility
                             {
                                 words[word] = words[word].Replace(macro.token, result);
                             }
+
+                            // reveal dialog linked resources in talk window
+                            if (revealDialogLinks)
+                            {
+                                System.Type t = resource.GetType();
+                                if (t.Equals(typeof(DaggerfallWorkshop.Game.Questing.Place)))
+                                {
+                                        GameManager.Instance.TalkManager.AddDialogForQuestInfoResource(parentQuest.UID, result, TalkManager.QuestInfoResourceType.Location);
+                                }
+                                else if (t.Equals(typeof(DaggerfallWorkshop.Game.Questing.Person)))
+                                {
+                                        GameManager.Instance.TalkManager.AddDialogForQuestInfoResource(parentQuest.UID, result, TalkManager.QuestInfoResourceType.Person);
+                                }
+                                else if (t.Equals(typeof(DaggerfallWorkshop.Game.Questing.Item)))
+                                {
+                                        GameManager.Instance.TalkManager.AddDialogForQuestInfoResource(parentQuest.UID, result, TalkManager.QuestInfoResourceType.Thing);
+                                }
+                            }
                         }
                     }
 
@@ -100,6 +119,15 @@ namespace DaggerfallWorkshop.Utility
 
                 // Store result back into token
                 tokens[token].text = final;
+            }
+        }
+
+        public void ExpandQuestString(Quest parentQuest, ref string questString)
+        {
+            Macro macro = GetMacro(questString);
+            if (macro.type == MacroTypes.ContextMacro)
+            {
+                questString = questString.Replace(macro.token, MacroHelper.GetValue(macro.token, parentQuest));
             }
         }
 

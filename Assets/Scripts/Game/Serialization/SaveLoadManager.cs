@@ -42,6 +42,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         const string containerDataFilename = "ContainerData.txt";
         const string questDataFilename = "QuestData.txt";
         const string discoveryDataFilename = "DiscoveryData.txt";
+        const string conversationDataFilename = "ConversationData.txt";
         const string automapDataFilename = "AutomapData.txt";
         const string screenshotFilename = "Screenshot.jpg";
         const string notReadyExceptionText = "SaveLoad not ready.";
@@ -1128,12 +1129,16 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Get discovery data
             Dictionary<int, PlayerGPS.DiscoveredLocation> discoveryData = GameManager.Instance.PlayerGPS.GetDiscoverySaveData();
 
+            // Get conversation data
+            TalkManager.SaveDataConversation conversationData = GameManager.Instance.TalkManager.GetConversationSaveData();
+
             // Serialize save data to JSON strings
             string saveDataJson = Serialize(saveData.GetType(), saveData);
             string saveInfoJson = Serialize(saveInfo.GetType(), saveInfo);
             string factionDataJson = Serialize(factionData.GetType(), factionData);
             string questDataJson = Serialize(questData.GetType(), questData);
             string discoveryDataJson = Serialize(discoveryData.GetType(), discoveryData);
+            string conversationDataJson = Serialize(conversationData.GetType(), conversationData);
 
             // Create screenshot for save
             // TODO: Hide UI for screenshot or use a different method
@@ -1148,6 +1153,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             WriteSaveFile(Path.Combine(path, factionDataFilename), factionDataJson);
             WriteSaveFile(Path.Combine(path, questDataFilename), questDataJson);
             WriteSaveFile(Path.Combine(path, discoveryDataFilename), discoveryDataJson);
+            WriteSaveFile(Path.Combine(path, conversationDataFilename), conversationDataJson);
 
             // Save automap state
             try
@@ -1185,6 +1191,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             string factionDataJson = ReadSaveFile(Path.Combine(path, factionDataFilename));
             string questDataJson = ReadSaveFile(Path.Combine(path, questDataFilename));
             string discoveryDataJson = ReadSaveFile(Path.Combine(path, discoveryDataFilename));
+            string conversationDataJson = ReadSaveFile(Path.Combine(path, conversationDataFilename));
 
             // Deserialize JSON strings
             SaveData_v1 saveData = Deserialize(typeof(SaveData_v1), saveDataJson) as SaveData_v1;
@@ -1209,6 +1216,13 @@ namespace DaggerfallWorkshop.Game.Serialization
             {
                 // Clear discovery data when not in save, or live state will be retained from previous session
                 GameManager.Instance.PlayerGPS.ClearDiscoveryData();
+            }
+
+            // Restore conversation data
+            if (!string.IsNullOrEmpty(conversationDataJson))
+            {
+                TalkManager.SaveDataConversation conversationData = Deserialize(typeof(TalkManager.SaveDataConversation), conversationDataJson) as TalkManager.SaveDataConversation;
+                GameManager.Instance.TalkManager.RestoreConversationData(conversationData);
             }
 
             // Must have PlayerEnterExit to respawn player at saved location

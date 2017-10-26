@@ -21,13 +21,14 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Questing;
 
 namespace DaggerfallWorkshop.Game
 {
     /// <summary>
     /// this class manages talk topics and resulting actions/answers
     /// </summary>
-    public class TalkManager : MonoBehaviour
+    public partial class TalkManager : MonoBehaviour
     {
         #region Singleton
 
@@ -102,8 +103,11 @@ namespace DaggerfallWorkshop.Game
             Work,
             LocalBuilding,
             Regional,
-            Person,
-            Thing
+            Person, // not sure if we will ever have a person entry which is no quest person...
+            Thing, // not sure if we will ever have a thing entry which is no quest thing...
+            QuestLocation,
+            QuestPerson,
+            QuestItem
         }
 
         public enum NPCKnowledgeAboutItem
@@ -120,6 +124,7 @@ namespace DaggerfallWorkshop.Game
             public QuestionType questionType = QuestionType.NoQuestion;
             public NPCKnowledgeAboutItem npcKnowledgeAboutItem = NPCKnowledgeAboutItem.NotSet;
             public int buildingKey = -1;
+            public ulong questID = 0; // used for listitems that are question about quest resources
             public List<ListItem> listChildItems = null; // null if type == ListItemType.Navigation or ListItemType.Item, only contains a list if type == ListItemType.ItemGroup
             public List<ListItem> listParentItems = null; // null if type == ListItemType.ItemGroup or ListItemType.Item, only contains a list if type == ListItemType.Navigation
         }
@@ -127,6 +132,7 @@ namespace DaggerfallWorkshop.Game
         // current target npc for conversion
         MobilePersonNPC targetMobileNPC = null;
         StaticNPC targetStaticNPC = null;
+        FactionFile.SocialGroups npcSocialGroup;
 
         // last target npc for a conversion (null if not talked to any mobile npc yet)
         MobilePersonNPC lastTargetMobileNPC = null;
@@ -138,10 +144,14 @@ namespace DaggerfallWorkshop.Game
             Building,
             Person,
             Thing,
-            Work
+            Work,
+            QuestTopic
         }
 
         string nameNPC = "";
+
+
+        ListItem currentQuestionListItem = null; // current question list item        
         string currentKeySubject = "";
         KeySubjectType currentKeySubjectType = KeySubjectType.Unset;
         int currentKeySubjectBuildingKey = -1;
@@ -168,6 +178,47 @@ namespace DaggerfallWorkshop.Game
         }       
         List<BuildingInfo> listBuildings = null;
 
+        // quest injected stuff
+
+        // quest info resource type
+        public enum QuestInfoResourceType
+        {
+            NotSet,
+            Location,
+            Person,
+            Thing
+        }
+
+        // quest info answers about quest resource
+        public class QuestResourceInfo
+        {
+            public QuestInfoResourceType resourceType;
+            public List<TextFile.Token[]> anyInfoAnswers;
+            public List<TextFile.Token[]> rumorsAnswers;
+            public bool availableForDialog; // if it will show up in talk window (any dialog link for this resource will set this false, if no dialog link is present it will be set to true)
+            public bool hasEntryInTellMeAbout; // if resource will get entry in section "Tell Me About" (anyInfo or rumors available)
+            public bool hasEntryInWhereIs; // if resource will get entry in section "Where Is" (e.g. person resources)
+            public List<string> dialogLinkedLocations; // list of location quest resources dialog-linked to this quest resource
+            public List<string> dialogLinkedPersons; // list of person quest resources dialog-linked to this quest resource
+            public List<string> dialogLinkedThings; // list of thing quest resources dialog-linked to this quest resource
+            public QuestResource questResource; // reference to this quest resource
+        }
+
+        // quest related resources and npcs
+        public class QuestResources
+        {
+            // a dictionary of quest resources (key resource name, value is the QuestResourceInfo)
+            public Dictionary<string, QuestResourceInfo> resourceInfo;
+        }
+
+        // dictionary of quests (key is questID, value is QuestInfo)
+        Dictionary<ulong, QuestResources> dictQuestInfo = new Dictionary<ulong, QuestResources>();
+
+        public class SaveDataConversation
+        {
+            public Dictionary<ulong, QuestResources> dictQuestInfo;
+        }
+
         #endregion
 
         #region Properties
@@ -175,6 +226,11 @@ namespace DaggerfallWorkshop.Game
         public string NameNPC
         {
             get { return nameNPC; }
+        }
+
+        public ListItem CurrentQuestionListItem
+        {
+            get { return currentQuestionListItem; }
         }
 
         public string CurrentKeySubject
@@ -357,6 +413,8 @@ namespace DaggerfallWorkshop.Game
             nameNPC = targetMobileNPC.NameNPC;
             DaggerfallUI.Instance.TalkWindow.UpdateNameNPC();
 
+            npcSocialGroup = FactionFile.SocialGroups.Commoners;
+
             this.reactionToPlayer = reactionToPlayer;
 
             // reset npc knowledge, for now it resets every time the npc has changed (player talked to new npc)
@@ -384,6 +442,10 @@ namespace DaggerfallWorkshop.Game
             nameNPC = targetNPC.DisplayName;
             DaggerfallUI.Instance.TalkWindow.UpdateNameNPC();
 
+            FactionFile.FactionData factionData;
+            GameManager.Instance.PlayerEntity.FactionData.GetFactionData(targetStaticNPC.Data.factionID, out factionData);
+            npcSocialGroup = (FactionFile.SocialGroups)factionData.sgroup;
+
             this.reactionToPlayer = reactionToPlayer;
 
             // reset npc knowledge, for now it resets every time the npc has changed (player talked to new npc)
@@ -398,6 +460,7 @@ namespace DaggerfallWorkshop.Game
         {
             numQuestionsAsked = 0;
             questionOpeningText = "";
+            currentQuestionListItem = null;
         }
 
         public string GetNPCGreetingText()
@@ -463,10 +526,34 @@ namespace DaggerfallWorkshop.Game
             return expandRandomTextRecord(7211);
         }
 
+        public string DirectionVector2DirectionHintString(Vector2 vecDirectionToTarget)
+        {
+            float angle = Mathf.Acos(Vector2.Dot(vecDirectionToTarget, Vector2.right) / vecDirectionToTarget.magnitude) / Mathf.PI * 180.0f;
+            if (vecDirectionToTarget.y < 0)
+                angle = 180.0f + (180.0f - angle);
+
+            if ((angle >= 0.0f && angle < 22.5f) || (angle >= 337.5f && angle <= 360.0f))
+                return "east";
+            else if (angle >= 22.5f && angle < 67.5f)
+                return "northeast";
+            else if (angle >= 67.5f && angle < 112.5f)
+                return "north";
+            else if (angle >= 112.5f && angle < 157.5f)
+                return "northwest";
+            else if (angle >= 157.5f && angle < 202.5f)
+                return "west";
+            else if (angle >= 202.5f && angle < 247.5f)
+                return "southwest";
+            else if (angle >= 247.5f && angle < 292.5f)
+                return "south";
+            else if (angle >= 292.5f && angle < 337.5f)
+                return "southeast";
+            else
+                return "nevermind...";
+        }
+
         public string GetKeySubjectLocationDirection()
         {
-            string directionHint = "";
-
             // note Nystul:
             // I reused coordinate mapping from buildings from exterior automap layout implementation here
             // So both building position as well as player position are calculated in map coordinates and compared
@@ -484,29 +571,7 @@ namespace DaggerfallWorkshop.Game
             BuildingInfo buildingInfo = listBuildings.Find(x => x.buildingKey == currentKeySubjectBuildingKey);
 
             Vector2 vecDirectionToTarget = buildingInfo.position - playerPos;
-            float angle = Mathf.Acos(Vector2.Dot(vecDirectionToTarget, Vector2.right) / vecDirectionToTarget.magnitude) / Mathf.PI * 180.0f;
-            if (buildingInfo.position.y - playerPos.y < 0)
-                angle = 180.0f + (180.0f - angle);
-
-            if ((angle >= 0.0f && angle < 22.5f) || (angle >= 337.5f && angle <= 360.0f))
-                directionHint = "east";
-            else if (angle >= 22.5f && angle < 67.5f)
-                directionHint = "northeast";
-            else if (angle >= 67.5f && angle < 112.5f)
-                directionHint = "north";
-            else if (angle >= 112.5f && angle < 157.5f)
-                directionHint = "northwest";
-            else if (angle >= 157.5f && angle < 202.5f)
-                directionHint = "west";
-            else if (angle >= 202.5f && angle < 247.5f)
-                directionHint = "southwest";
-            else if (angle >= 247.5f && angle < 292.5f)
-                directionHint = "south";
-            else if (angle >= 292.5f && angle < 337.5f)
-                directionHint = "southeast";
-            else
-                directionHint = "nevermind...";
-            return directionHint;
+            return DirectionVector2DirectionHintString(vecDirectionToTarget);
         }
 
         public void MarkKeySubjectLocationOnMap()
@@ -549,6 +614,12 @@ namespace DaggerfallWorkshop.Game
                 case QuestionType.Regional:
                     question = "not implemented";
                     break;
+                case QuestionType.QuestLocation:
+                case QuestionType.QuestPerson:
+                case QuestionType.QuestItem:
+                    currentKeySubjectType = KeySubjectType.QuestTopic;
+                    question = expandRandomTextRecord(7212 + toneIndex);
+                    break;
                 case QuestionType.Work:
                     currentKeySubjectType = KeySubjectType.Work;
                     question = expandRandomTextRecord(7212 + toneIndex);
@@ -573,7 +644,7 @@ namespace DaggerfallWorkshop.Game
             if (randomNum > 0 || GameManager.Instance.IsPlayerInside)
             {
                 markLocationOnMap = false;
-                answer = expandRandomTextRecord(7333);                
+                answer = expandRandomTextRecord(7333);
             }
             else
             {
@@ -583,6 +654,32 @@ namespace DaggerfallWorkshop.Game
             }
 
             return answer;
+        }
+
+        public string GetDialogHint(ListItem listItem)
+        {
+            if (dictQuestInfo.ContainsKey(listItem.questID))
+            {
+                if (dictQuestInfo[listItem.questID].resourceInfo.ContainsKey(listItem.caption))
+                {
+                    List<TextFile.Token[]> answers = dictQuestInfo[listItem.questID].resourceInfo[listItem.caption].anyInfoAnswers;
+                    return getAnswerFromTokensArray(listItem.questID, answers);
+                }
+            }
+            return "Never mind..."; // error case - should never ever occur
+        }
+
+        public string GetDialogHint2(ListItem listItem)
+        {
+            if (dictQuestInfo.ContainsKey(listItem.questID))
+            {
+                if (dictQuestInfo[listItem.questID].resourceInfo.ContainsKey(listItem.caption))
+                {
+                    List<TextFile.Token[]> answers = dictQuestInfo[listItem.questID].resourceInfo[listItem.caption].rumorsAnswers;
+                    return getAnswerFromTokensArray(listItem.questID, answers);
+                }
+            }
+            return "Never mind..."; // error case - should never ever occur
         }
 
         public string GetAnswerAboutLocation(TalkManager.ListItem listItem)
@@ -600,10 +697,10 @@ namespace DaggerfallWorkshop.Game
             }
 
             if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.DoesNotKnowAboutItem)
-                answer = expandRandomTextRecord(7280);
+                answer = getRecordIdByNpcsSocialGroup(7281, 7280, 7280, 7283, 7282, 7284); // messages if npc does not know
             else
-            {
-                answer = expandRandomTextRecord(7270);
+            {                
+                answer = getRecordIdByNpcsSocialGroup(7271, 7270, 7270, 7273, 7272, 7274); // location related messages if npc knows
             }
             return answer;
         }
@@ -611,11 +708,12 @@ namespace DaggerfallWorkshop.Game
         public string GetAnswerText(TalkManager.ListItem listItem)
         {
             string answer = "";
+            currentQuestionListItem = listItem;
             switch (listItem.questionType)
             {
                 case QuestionType.NoQuestion:
-                default:                    
-                    answer = expandRandomTextRecord(7280);
+                default:
+                    answer = getRecordIdByNpcsSocialGroup(7281, 7280, 7280, 7283, 7282, 7284); // messages if npc does not know
                     break;
                 case QuestionType.News:
                     answer = GetNewsOrRumors();
@@ -627,13 +725,18 @@ namespace DaggerfallWorkshop.Game
                     answer = GetAnswerAboutLocation(listItem);
                     break;
                 case QuestionType.Person:
-                    answer = expandRandomTextRecord(7280);
+                    answer = getRecordIdByNpcsSocialGroup(7281, 7280, 7280, 7283, 7282, 7284); // messages if npc does not know
                     break;
                 case QuestionType.Thing:
                     answer = "not implemented";
                     break;
                 case QuestionType.Regional:
                     answer = "not implemented";
+                    break;
+                case QuestionType.QuestLocation:
+                case QuestionType.QuestPerson:
+                case QuestionType.QuestItem:
+                    answer = GetAnswerAboutQuestTopic(listItem);
                     break;
                 case QuestionType.Work:
                     answer = expandRandomTextRecord(8076);
@@ -644,6 +747,231 @@ namespace DaggerfallWorkshop.Game
             numQuestionsAsked++;
             questionOpeningText = ""; // reset questionOpeningText so that it is newly created for next question
             return answer;
+        }
+
+        public string GetAnswerAboutQuestTopic(TalkManager.ListItem listItem)
+        {
+            if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.NotSet)
+            {
+                // chances unknown - so there is a 50% chance for now that npc knows
+                int randomNum = UnityEngine.Random.Range(0, 2);
+                if (randomNum == 0)
+                    listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.DoesNotKnowAboutItem;
+                else
+                    listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.KnowsAboutItem;
+            }
+
+            if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.DoesNotKnowAboutItem)
+                return getRecordIdByNpcsSocialGroup(7281, 7280, 7280, 7283, 7282, 7284); // messages if npc does not know
+            else
+                return getRecordIdByNpcsSocialGroup(7276, 7275, 7275, 7278, 7277, 7279); // quest topic related messages if npc knows
+        }
+
+        public void AddQuestTopicWithInfoAndRumors(ulong questID, QuestResource questResource, string resourceName, QuestInfoResourceType resourceType, List<TextFile.Token[]> anyInfoAnswers, List<TextFile.Token[]> rumorsAnswers)
+        {
+            QuestResources questResources;
+            if (dictQuestInfo.ContainsKey(questID))
+            {
+                questResources = dictQuestInfo[questID];
+            }
+            else
+            {
+                questResources = new QuestResources();
+                questResources.resourceInfo = new Dictionary<string, QuestResourceInfo>();
+            }
+
+            QuestResourceInfo questResourceInfo = new QuestResourceInfo();
+            questResourceInfo.anyInfoAnswers = anyInfoAnswers;
+            questResourceInfo.rumorsAnswers = rumorsAnswers;
+            questResourceInfo.resourceType = resourceType;
+            questResourceInfo.availableForDialog = true;
+            questResourceInfo.hasEntryInTellMeAbout = true;
+            if (resourceType == QuestInfoResourceType.Person || resourceType == QuestInfoResourceType.Location)
+                questResourceInfo.hasEntryInWhereIs = true;
+            else
+                questResourceInfo.hasEntryInWhereIs = false;
+            questResourceInfo.dialogLinkedLocations = new List<string>();
+            questResourceInfo.dialogLinkedPersons = new List<string>();
+            questResourceInfo.dialogLinkedThings = new List<string>();
+            questResourceInfo.questResource = questResource;
+         
+            questResources.resourceInfo[resourceName] = questResourceInfo;
+
+            dictQuestInfo[questID] = questResources;
+
+            // update topic list
+            AssembleTopiclistTellMeAbout();
+        }
+
+        public void AddPersonTopic(ulong questID, DaggerfallWorkshop.Game.Questing.Person person)
+        {
+            string resourceName = person.DisplayName;
+
+            QuestResources questResources;
+            if (dictQuestInfo.ContainsKey(questID))
+            {
+                questResources = dictQuestInfo[questID];
+            }
+            else
+            {
+                questResources = new QuestResources();
+                questResources.resourceInfo = new Dictionary<string, QuestResourceInfo>();
+            }
+
+            QuestResourceInfo questResourceInfo;
+            if (questResources.resourceInfo.ContainsKey(resourceName))
+            {
+                questResourceInfo = questResources.resourceInfo[resourceName];
+            }
+            else
+            {
+                questResourceInfo = new QuestResourceInfo();
+                questResourceInfo.anyInfoAnswers = null;
+                questResourceInfo.rumorsAnswers = null;
+                questResourceInfo.resourceType = QuestInfoResourceType.Person;
+                questResourceInfo.availableForDialog = false;
+                questResourceInfo.hasEntryInTellMeAbout = false;
+                questResourceInfo.hasEntryInWhereIs = true;
+                questResourceInfo.dialogLinkedLocations = new List<string>();
+                questResourceInfo.dialogLinkedPersons = new List<string>();
+                questResourceInfo.dialogLinkedThings = new List<string>();
+                questResourceInfo.questResource = person;
+            }
+
+            QuestMacroHelper macroHelper = new QuestMacroHelper();           
+            
+            questResources.resourceInfo[resourceName] = questResourceInfo;
+            dictQuestInfo[questID] = questResources;
+            
+            // update topic list
+            AssembleTopicListPerson();
+        }
+
+        public void DialogLinkForQuestInfoResource(ulong questID, string resourceName, QuestInfoResourceType resourceType, string linkedResourceName = null, QuestInfoResourceType linkedResourceType = QuestInfoResourceType.NotSet)
+        {
+            QuestResources questResources;
+            if (dictQuestInfo.ContainsKey(questID))
+            {
+                questResources = dictQuestInfo[questID];
+            }
+            else
+            {
+                Debug.Log(String.Format("AddDialogLinkForQuestInfoResource() could not find quest with questID {0}", questID));
+                return;
+            }
+
+            QuestResourceInfo questResource;
+            if (questResources.resourceInfo.ContainsKey(resourceName))
+            {
+                 questResource = questResources.resourceInfo[resourceName];
+            }
+            else
+            {
+                Debug.Log(String.Format("AddDialogLinkForQuestInfoResource() could not find a quest info resource with name {0}", resourceName));
+                return;
+            }
+            
+            switch (linkedResourceType)
+            {
+                case QuestInfoResourceType.NotSet:
+                    // no linked resource specified - don't create entries in linked resource lists but proceed (leave switch statement) so flag "availableForDialog" is set to false for resource
+                    break;
+                case QuestInfoResourceType.Location:
+                    if (!questResource.dialogLinkedLocations.Contains(linkedResourceName))
+                        questResource.dialogLinkedLocations.Add(linkedResourceName);
+                    break;
+                case QuestInfoResourceType.Person:
+                    if (!questResource.dialogLinkedPersons.Contains(linkedResourceName))
+                        questResource.dialogLinkedPersons.Add(linkedResourceName);
+                    break;
+                case QuestInfoResourceType.Thing:
+                    if (!questResource.dialogLinkedThings.Contains(linkedResourceName))
+                        questResource.dialogLinkedThings.Add(linkedResourceName);
+                    break;
+                default:
+                    Debug.Log("AddDialogLinkForQuestInfoResource(): unknown linked quest resource type");
+                    return;
+            }
+            
+            // "hide" quest resource dialog entry
+            questResource.availableForDialog = false;
+
+            if (linkedResourceName != null)
+            {
+                // "hide" linked quest resource dialog entry as well
+                if (questResources.resourceInfo.ContainsKey(linkedResourceName))
+                    questResources.resourceInfo[linkedResourceName].availableForDialog = false;
+                else
+                    Debug.Log("AddDialogLinkForQuestInfoResource(): linked quest resource not found");
+            }
+
+            // update topic list
+            AssembleTopiclistTellMeAbout();
+        }
+
+        public void AddDialogForQuestInfoResource(ulong questID, string resourceName, QuestInfoResourceType resourceType)
+        {
+            QuestResources questResources;
+            if (dictQuestInfo.ContainsKey(questID))
+            {
+                questResources = dictQuestInfo[questID];
+            }
+            else
+            {
+                Debug.Log(String.Format("AddDialogLinkForQuestInfoResource() could not find quest with questID {0}", questID));
+                return;
+            }
+
+            QuestResourceInfo questResource;
+            if (questResources.resourceInfo.ContainsKey(resourceName))
+            {
+                questResource = questResources.resourceInfo[resourceName];
+            }
+            else
+            {
+                Debug.Log(String.Format("AddDialogLinkForQuestInfoResource() could not find a quest info resource with name {0}", resourceName));
+                return;
+            }
+
+            questResource.availableForDialog = true;
+
+            // update topic list
+            AssembleTopiclistTellMeAbout();
+        }
+
+        public void RemoveQuestInfoTopicsForSpecificQuest(ulong questID)
+        {
+            if (dictQuestInfo.ContainsKey(questID))
+            {
+                dictQuestInfo.Remove(questID);
+            }
+
+            // update topic lists
+            AssembleTopiclistTellMeAbout();
+            AssembleTopicListLocation();
+            AssembleTopicListPerson();
+            AssembleTopicListThing();
+        }
+
+        /// <summary>
+        /// Gets conversation dictionary for save.
+        /// </summary>
+        public SaveDataConversation GetConversationSaveData()
+        {
+            SaveDataConversation saveDataConversation = new SaveDataConversation();
+            saveDataConversation.dictQuestInfo = dictQuestInfo;
+            return saveDataConversation;
+        }
+
+        /// <summary>
+        /// Restores conversation dictionary for load.
+        /// </summary>
+        public void RestoreConversationData(SaveDataConversation data)
+        {
+            dictQuestInfo = data.dictQuestInfo;
+
+            // update topic list
+            AssembleTopiclistTellMeAbout();
         }
 
         #endregion
@@ -781,13 +1109,13 @@ namespace DaggerfallWorkshop.Game
 
         private void AssembleTopicLists()
         {
-            AssembleTopiclistTopicTellMeAbout();
+            AssembleTopiclistTellMeAbout();
             AssembleTopicListLocation();
             AssembleTopicListPerson();
             AssembleTopicListThing();
         }
 
-        private void AssembleTopiclistTopicTellMeAbout()
+        private void AssembleTopiclistTellMeAbout()
         {
             listTopicTellMeAbout = new List<ListItem>();
             ListItem itemAnyNews = new ListItem();
@@ -795,6 +1123,40 @@ namespace DaggerfallWorkshop.Game
             itemAnyNews.questionType = QuestionType.News;
             itemAnyNews.caption = "Any news?";
             listTopicTellMeAbout.Add(itemAnyNews);
+
+            foreach (KeyValuePair<ulong, QuestResources> questInfo in dictQuestInfo)
+            {
+                foreach (KeyValuePair<string, QuestResourceInfo> questResourceInfo in questInfo.Value.resourceInfo)
+                {
+                    ListItem itemQuestTopic = new ListItem();
+                    itemQuestTopic.type = ListItemType.Item;
+                    switch (questResourceInfo.Value.resourceType)
+                    {
+                        case QuestInfoResourceType.NotSet:
+                        default:
+                            itemQuestTopic.questionType = QuestionType.NoQuestion;
+                            break;
+                        case QuestInfoResourceType.Location:
+                            itemQuestTopic.questionType = QuestionType.QuestLocation;
+                            break;
+                        case QuestInfoResourceType.Person:
+                            itemQuestTopic.questionType = QuestionType.QuestPerson;
+                            break;
+                        case QuestInfoResourceType.Thing:
+                            itemQuestTopic.questionType = QuestionType.QuestItem;
+                            break;
+                    }
+                    ulong questID = questInfo.Key;
+                    itemQuestTopic.questID = questID;
+                    string captionString = questResourceInfo.Key;
+                    //QuestMacroHelper macroHelper = new QuestMacroHelper();
+                    //macroHelper.ExpandQuestString(GameManager.Instance.QuestMachine.GetQuest(questID), ref captionString);
+                    itemQuestTopic.caption = captionString;
+
+                    if (questResourceInfo.Value.availableForDialog && questResourceInfo.Value.hasEntryInTellMeAbout) // only make it available for talk if it is not "hidden" by dialog link command
+                        listTopicTellMeAbout.Add(itemQuestTopic);
+                }
+            }
 
             for (int i = 0; i < 10; i++)
             {
@@ -902,13 +1264,31 @@ namespace DaggerfallWorkshop.Game
         private void AssembleTopicListPerson()
         {
             listTopicPerson = new List<ListItem>();
-            for (int i = 0; i < 12; i++)
+
+            foreach (KeyValuePair<ulong, QuestResources> questInfo in dictQuestInfo)
             {
-                ListItem item = new ListItem();
-                item.type = ListItemType.Item;
-                item.questionType = QuestionType.Person;
-                item.caption = "dummy person " + i + " (here will be the name of the person later on)";
-                listTopicPerson.Add(item);
+                foreach (KeyValuePair<string, QuestResourceInfo> questResourceInfo in questInfo.Value.resourceInfo)
+                {
+                    if (questResourceInfo.Value.resourceType == QuestInfoResourceType.Person)
+                    {
+                        ListItem item = new ListItem();
+                        item.type = ListItemType.Item;
+                        item.questionType = QuestionType.Person;
+
+                        ulong questID = questInfo.Key;
+                        item.questID = questID;
+
+                        string captionString = questResourceInfo.Key;
+                        item.caption = captionString;
+
+                        bool IsPlayerInSameLocationWorldCell = ((Questing.Person)questResourceInfo.Value.questResource).IsPlayerInSameLocationWorldCell();
+                        if (questResourceInfo.Value.availableForDialog && // only make it available for talk if it is not "hidden" by dialog link command
+                            questResourceInfo.Value.hasEntryInWhereIs &&
+                            IsPlayerInSameLocationWorldCell)
+                            listTopicPerson.Add(item);
+                    }
+
+                }
             }
         }
 
@@ -993,10 +1373,66 @@ namespace DaggerfallWorkshop.Game
             AssembleTopicLists();
         }
 
+        private string getRecordIdByNpcsSocialGroup(int textRecordIdDefault, int textRecordIdGuildMembers, int textRecordIdMerchants, int textRecordIdNobility, int textRecordIdScholars, int textRecordIdUnderworld)
+        {
+            switch (npcSocialGroup)
+            {
+                case FactionFile.SocialGroups.None:
+                case FactionFile.SocialGroups.Commoners:
+                case FactionFile.SocialGroups.SGroup10:
+                case FactionFile.SocialGroups.SGroup5:
+                case FactionFile.SocialGroups.SGroup8:
+                case FactionFile.SocialGroups.SGroup9:
+                case FactionFile.SocialGroups.SupernaturalBeings:
+                default:
+                    return expandRandomTextRecord(textRecordIdDefault);
+                case FactionFile.SocialGroups.GuildMembers:
+                    return expandRandomTextRecord(textRecordIdGuildMembers);
+                case FactionFile.SocialGroups.Merchants:
+                    return expandRandomTextRecord(textRecordIdMerchants);
+                case FactionFile.SocialGroups.Nobility:
+                    return expandRandomTextRecord(textRecordIdNobility);
+                case FactionFile.SocialGroups.Scholars:
+                    return expandRandomTextRecord(textRecordIdScholars);
+                case FactionFile.SocialGroups.Underworld:
+                    return expandRandomTextRecord(textRecordIdUnderworld); // todo: this needs to be tested with a npc of social group underworld in vanilla df
+            }
+        }
+
+        private string getAnswerFromTokensArray(ulong questID, List<TextFile.Token[]> answers)
+        {
+            int randomNumAnswer = UnityEngine.Random.Range(0, answers.Count);
+
+            // cloning important here: we want to evaluate every time the answer is created so altering macros are re-expanded correctly
+            // e.g. Missing Prince quest allows player to ask for dungeon and there is a "%di" macro that needs to be re-evaluated
+            // to correctly show current direction to dungeon (when in different towns it is likely to be different)
+            TextFile.Token[] tokens = (TextFile.Token[])answers[randomNumAnswer].Clone();
+
+            // expand tokens and reveal dialog-linked resources
+            QuestMacroHelper macroHelper = new QuestMacroHelper();
+            macroHelper.ExpandQuestMessage(GameManager.Instance.QuestMachine.GetQuest(questID), ref tokens, true);
+
+            // create return string from expanded tokens
+            string returnString = "";
+            for (int i = 0; i < tokens.Length; i++)
+            {
+                string textFragment = tokens[i].text;
+                if (textFragment.Length > 0 && i < textFragment.Length)
+                    returnString += textFragment;
+                else
+                    returnString += " ";
+            }
+            return returnString;
+
+        }
+
+
         private string expandRandomTextRecord(int recordIndex)
         {
             TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(recordIndex);
-            MacroHelper.ExpandMacros(ref tokens);
+
+            MacroHelper.ExpandMacros(ref tokens, this); // this... TalkManager (TalkManagerMCP)
+
             return (tokens[0].text);
         }
             

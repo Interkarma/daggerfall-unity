@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
@@ -243,6 +244,9 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 // Is NPC at home?
                 isIndividualAtHome = atHome;
+
+                // add conversation topics from anyInfo command tag
+                AddConversationTopics();
 
                 // Done
                 Debug.LogFormat("Created NPC {0} with FactionID #{1}.", displayName, factionData.id);
@@ -522,6 +526,32 @@ namespace DaggerfallWorkshop.Game.Questing
             // Select a random god for this NPC
             int godID = UnityEngine.Random.Range(minGodID, maxGodID + 1);
             godName = DaggerfallUnity.Instance.TextProvider.GetRandomText(godID);
+        }
+
+        void AddConversationTopics()
+        {
+            if (this.InfoMessageID != -1)
+            {
+                Message message = this.ParentQuest.GetMessage(this.InfoMessageID);
+                List<TextFile.Token[]> anyInfoAnswers = new List<TextFile.Token[]>();
+                for (int i=0; i < message.VariantCount; i++)
+                {
+                    TextFile.Token[] tokens = message.GetTextTokensByVariant(i, false); // do not expand macros here (they will be expanded just in time by TalkManager class)
+                    anyInfoAnswers.Add(tokens);
+                }
+
+                message = this.ParentQuest.GetMessage(this.RumorsMessageID);
+                List<TextFile.Token[]> anyRumorsAnswers = new List<TextFile.Token[]>();
+                for (int i = 0; i < message.VariantCount; i++)
+                {
+                    TextFile.Token[] tokens = message.GetTextTokensByVariant(i, false); // do not expand macros here (they will be expanded just in time by TalkManager class)
+                    anyRumorsAnswers.Add(tokens);
+                }
+
+                GameManager.Instance.TalkManager.AddQuestTopicWithInfoAndRumors(this.ParentQuest.UID, this, this.displayName, TalkManager.QuestInfoResourceType.Person, anyInfoAnswers, anyRumorsAnswers);                
+            }
+
+            GameManager.Instance.TalkManager.AddPersonTopic(this.ParentQuest.UID, this);
         }
 
         Genders GetGender(string genderName)
