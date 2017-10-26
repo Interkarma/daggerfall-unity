@@ -23,6 +23,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
     /// </summary>
     public static class ModSettingsReader
     {
+        #region Fields
+
         /// <summary>
         /// Section containing information used by the modding system.
         /// </summary>
@@ -40,6 +42,10 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         static FileIniDataParser parser = new FileIniDataParser();
 
+        #endregion
+
+        #region Load/Save Settings
+
         /// <summary>
         /// Check if a mod support settings. If configuration file
         /// is missing it will be recreated with default values.
@@ -47,7 +53,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         public static bool HasSettings(Mod mod)
         {
             // Get path
-            string settingPath = Path.Combine(mod.DirPath, mod.FileName + ".ini");
+            string settingPath = SettingsPath(mod);
 
             // File on disk
             if (File.Exists(settingPath))
@@ -65,24 +71,42 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         }
 
         /// <summary>
-        /// Get settings for mod. (optionally) if configuration file
-        /// is missing it will be recreated with default values.
+        /// Get user settings and default settings for mod.
         /// </summary>
-        /// <returns></returns>
-        public static IniData GetSettings(Mod mod, bool getDefaultsAsFallback = true)
+        public static void GetSettings(Mod mod, out IniData settings, out IniData defaultSettings)
         {
-            // Get path
-            string path = Path.Combine(mod.DirPath, mod.FileName + ".ini");
+            // Load default settings
+            defaultSettings = GetDefaultSettings(mod);
 
-            // File on disk
+            // Load serialized settings or recreate them
+            string path = SettingsPath(mod);
             if (File.Exists(path))
-                return parser.ReadFile(path);
+            {
+                settings = parser.ReadFile(path);
 
-            // Default settings
-            if (getDefaultsAsFallback)
-                return GetDefaultSettings(mod);
-
-            return null;
+                try
+                {
+                    if (settings[internalSection][settingsVersionKey] != defaultSettings[internalSection][settingsVersionKey])
+                    {
+                        ResetSettings(mod, ref settings, defaultSettings);
+                        Debug.LogFormat("Settings for {0} are incompatible with current version. " +
+                            "New settings have been recreated with default values", mod.Title);
+                    }
+                }
+                catch
+                {
+                    ResetSettings(mod, ref settings, defaultSettings);
+                    Debug.LogErrorFormat("Failed to read settings for {0}. " +
+                        "New settings have been recreated with default values", mod.Title);
+                }
+            }
+            else
+            {
+                settings = null;
+                ResetSettings(mod, ref settings, defaultSettings);
+                Debug.LogFormat("Missing settings for {0}. " +
+                    "New settings have been recreated with default values.", mod.Title);
+            }
         }
 
         public static bool TryGetDefaultSettings(Mod mod, out IniData settings)
@@ -133,24 +157,20 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         }
 
         /// <summary>
-        /// Check compatibility between user settings and current version of mod.
+        /// Save settings to disk.
         /// </summary>
-        public static void UpdateSettings(ref IniData userSettings, IniData defaultSettings, Mod mod)
+        public static void SaveSettings(Mod mod, IniData settings)
         {
-            try
-            {
-                if (userSettings[internalSection][settingsVersionKey] != defaultSettings[internalSection][settingsVersionKey])
-                {
-                    parser.WriteFile(Path.Combine(mod.DirPath, mod.FileName + ".ini"), defaultSettings);
-                    userSettings = defaultSettings;
-                    Debug.Log("Outdated settings for " + mod.Title +
-                        " have been found and replaced with default values from new version.");
-                }
-            }
-            catch
-            {
-                Debug.LogError("Failed to read internal settings for " + mod.Title + ".");
-            }
+            parser.WriteFile(SettingsPath(mod), settings);
+        }
+
+        /// <summary>
+        /// Save default settings to disk and set them as current settings.
+        /// </summary>
+        public static void ResetSettings(Mod mod, ref IniData settings, IniData defaultSettings)
+        {
+            settings = new IniData(defaultSettings);
+            parser.WriteFile(SettingsPath(mod), settings);
         }
 
         public static List<IniData> GetPresets (Mod mod)
@@ -194,6 +214,10 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
             return null;
         }
+
+        #endregion
+
+        #region Helper Methods
 
         public static IniData ParseConfigToIni(ModSettingsConfiguration config)
         {
@@ -295,6 +319,15 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             return new Color32(r, g, b, a);
         }
 
+        #endregion
+
+        #region Private Methods
+
+        private static string SettingsPath(Mod mod)
+        {
+            return Path.Combine(mod.DirPath, mod.FileName + ".ini");
+        }
+
         private static IniData GetIniDataFromTextAsset (TextAsset textAsset)
         {
             MemoryStream stream = new MemoryStream(textAsset.bytes);
@@ -303,5 +336,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             reader.Close();
             return iniData;
         }
+
+        #endregion
     }
 }
