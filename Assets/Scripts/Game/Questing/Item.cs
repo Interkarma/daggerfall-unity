@@ -41,6 +41,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
         bool artifact = false;
         bool useClicked = false;
+        bool actionWatching = false;
         DaggerfallUnityItem item = null;
 
         #endregion
@@ -65,6 +66,17 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             get { return useClicked; }
             set { useClicked = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets value when an action is watching this item for some reason.
+        /// Usually waiting for a response to clicks.
+        /// This means quest system should have priority to "use" handling on this item.
+        /// </summary>
+        public bool ActionWatching
+        {
+            get { return actionWatching; }
+            set { actionWatching = value; }
         }
 
         #endregion
@@ -322,6 +334,7 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             public bool artifact;
             public bool useClicked;
+            public bool actionWatching;
             public ItemData_v1 item;
         }
 
@@ -331,6 +344,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
             data.artifact = artifact;
             data.useClicked = useClicked;
+            data.actionWatching = actionWatching;
             data.item = item.GetSaveData();
 
             return data;
@@ -344,6 +358,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
             artifact = data.artifact;
             useClicked = data.useClicked;
+            actionWatching = data.actionWatching;
             item = new DaggerfallUnityItem(data.item);
         }
 

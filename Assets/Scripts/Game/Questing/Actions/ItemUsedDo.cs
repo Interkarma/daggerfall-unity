@@ -58,6 +58,9 @@ namespace DaggerfallWorkshop.Game.Questing
             if (item == null)
                 return;
 
+            // Let the item know it's being watched
+            item.ActionWatching = true;
+
             // Player must be wearing item or item clicked with "use" in inventory
             if (GameManager.Instance.PlayerEntity.ItemEquipTable.IsEquipped(item.DaggerfallUnityItem) || item.UseClicked)
             {
@@ -67,6 +70,9 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 // Trigger target task
                 ParentQuest.StartTask(taskSymbol);
+
+                // Clear watching flag
+                item.ActionWatching = false;
 
                 SetComplete();
             }
