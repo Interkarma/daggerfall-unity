@@ -15,9 +15,8 @@ using FullSerializer;
 namespace DaggerfallWorkshop.Game.Questing
 {
     /// <summary>
-    /// Condition that fires when player equips an Item.
-    /// Seen in Sx006 when player equips the robe.
-    /// Outcome is distinct from "use" in inventory window.
+    /// Condition that fires when player equips an Item or clicks "Use" on item in inventory window.
+    /// Seen in Sx006 when player equips the robe or in Sx017 when player uses painting.
     /// </summary>
     public class ItemUsedDo : ActionTemplate
     {
@@ -59,18 +58,18 @@ namespace DaggerfallWorkshop.Game.Questing
             if (item == null)
                 return;
 
-            // Check if player is wearing item
-            if (!GameManager.Instance.PlayerEntity.ItemEquipTable.IsEquipped(item.DaggerfallUnityItem))
-                return;
+            // Player must be wearing item or item clicked with "use" in inventory
+            if (GameManager.Instance.PlayerEntity.ItemEquipTable.IsEquipped(item.DaggerfallUnityItem) || item.UseClicked)
+            {
+                // Say message
+                if (textID != 0)
+                    ParentQuest.ShowMessagePopup(textID);
 
-            // Say message
-            if (textID != 0)
-                ParentQuest.ShowMessagePopup(textID);
+                // Trigger target task
+                ParentQuest.StartTask(taskSymbol);
 
-            // Trigger target task
-            ParentQuest.StartTask(taskSymbol);
-
-            SetComplete();
+                SetComplete();
+            }
         }
 
         #region Serialization

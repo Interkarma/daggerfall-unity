@@ -40,6 +40,7 @@ namespace DaggerfallWorkshop.Game.Questing
         #region Fields
 
         bool artifact = false;
+        bool useClicked = false;
         DaggerfallUnityItem item = null;
 
         #endregion
@@ -52,6 +53,18 @@ namespace DaggerfallWorkshop.Game.Questing
         public DaggerfallUnityItem DaggerfallUnityItem
         {
             get { return item; }
+        }
+
+        /// <summary>
+        /// Gets or sets flag when player clicks "Use" on item in inventory.
+        /// This is unrelated to using text-only objects like letters.
+        /// Example is Sx017 "Wayrest Painting" when player uses painting to trigger a quest task.
+        /// This flag is only raised once for any quest actions that consume it.
+        /// </summary>
+        public bool UseClicked
+        {
+            get { return useClicked; }
+            set { useClicked = value; }
         }
 
         #endregion
@@ -308,6 +321,7 @@ namespace DaggerfallWorkshop.Game.Questing
         public struct SaveData_v1
         {
             public bool artifact;
+            public bool useClicked;
             public ItemData_v1 item;
         }
 
@@ -316,6 +330,7 @@ namespace DaggerfallWorkshop.Game.Questing
             SaveData_v1 data = new SaveData_v1();
 
             data.artifact = artifact;
+            data.useClicked = useClicked;
             data.item = item.GetSaveData();
 
             return data;
@@ -328,6 +343,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 return;
 
             artifact = data.artifact;
+            useClicked = data.useClicked;
             item = new DaggerfallUnityItem(data.item);
         }
 

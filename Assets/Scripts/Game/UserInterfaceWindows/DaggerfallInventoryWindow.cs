@@ -1167,6 +1167,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Get the Item resource from quest
                 Item questItem = quest.GetItem(item.QuestItemSymbol);
 
+                // If item not already used, then pop back to HUD so quest system has first shot at it
+                // On second pass the normal message popup will display instead
+                if (!questItem.UseClicked)
+                {
+                    questItem.UseClicked = true;
+                    DaggerfallUI.Instance.PopToHUD();
+                    return;
+                }
+
                 // Check for an on use value
                 if (questItem.UsedMessageID != 0)
                 {
