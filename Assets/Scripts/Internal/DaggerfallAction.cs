@@ -769,15 +769,10 @@ namespace DaggerfallWorkshop
                         break;
                     }
                 case 7706:  // Doesn't exist. This is on a door in Castle Wayrest to a room with some potions, bookshelves, weighting scales and a telescope.
-                    {
-                        thisAction.ActionEnabled = true;
-                        break;
-                    }
+                case 7711:  // Doesn't exist. Found on door to kitchen in Wayrest dungeon.
+                case 7712:  // Doesn't exist. Found on door to storage room in Wayrest dungeon kitchen.
                 case 7715:  // Doesn't exist. Found on doors in back of Orsinium throne room.
-                    {
-                        thisAction.ActionEnabled = true;
-                        break;
-                    }
+                case 7717:  // "A strong, orcish voice in the back of the hall snarls 'All who enter must face the trial by arms.'" Incorrectly located on a door to an armory room in Wayrest dungeon.
                 case 7719:  // Doesn't exist. This is on the doors to a room near the start of the Orsinium dungeon area with a long table lined with chairs and a fireplace.
                     {
                         thisAction.ActionEnabled = true;
