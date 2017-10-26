@@ -1084,16 +1084,34 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
             }
 
-            // Block removal of quest items to remote collection unless permitted
-            // Some quest scripts require player to drop item in a specific place
-            // This will otherwise prevent accidental loss of important quest items
-            if (item.IsQuestItem && !item.AllowQuestItemRemoval && from == localItems)
+            // Handle quest item transfer
+            if (item.IsQuestItem)
             {
-                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
-                messageBox.SetText(HardStrings.cannotRemoveThisItem);
-                messageBox.ClickAnywhereToClose = true;
-                messageBox.Show();
-                return;
+                // Player cannot drop most quest items
+                if (!item.AllowQuestItemRemoval && from == localItems)
+                {
+                    DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
+                    messageBox.SetText(HardStrings.cannotRemoveThisItem);
+                    messageBox.ClickAnywhereToClose = true;
+                    messageBox.Show();
+                    return;
+                }
+
+                // Get the quest this item belongs to
+                Quest quest = QuestMachine.Instance.GetQuest(item.QuestUID);
+                if (quest == null)
+                    throw new Exception("DaggerfallUnityItem references a quest that could not be found.");
+
+                // Get quest item
+                Item questItem = quest.GetItem(item.QuestItemSymbol);
+                if (questItem == null)
+                    throw new Exception("DaggerfallUnityItem references a quest item that could not be found.");
+
+                // Dropping or picking up quest item
+                if (item.AllowQuestItemRemoval && from == localItems && remoteTargetType == RemoteTargetTypes.Dropped)
+                    questItem.PlayerDropped = true;
+                else if (item.AllowQuestItemRemoval && from == remoteItems && remoteTargetType == RemoteTargetTypes.Dropped)
+                    questItem.PlayerDropped = false;
             }
 
             // When transferring gold to player simply add to player's gold count

@@ -42,6 +42,7 @@ namespace DaggerfallWorkshop.Game.Questing
         bool artifact = false;
         bool useClicked = false;
         bool actionWatching = false;
+        bool playerDropped = false;
         DaggerfallUnityItem item = null;
 
         #endregion
@@ -77,6 +78,15 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             get { return actionWatching; }
             set { actionWatching = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets flag stating if this item was dropped from inventory.
+        /// </summary>
+        public bool PlayerDropped
+        {
+            get { return playerDropped; }
+            set { playerDropped = value; }
         }
 
         #endregion
@@ -335,6 +345,7 @@ namespace DaggerfallWorkshop.Game.Questing
             public bool artifact;
             public bool useClicked;
             public bool actionWatching;
+            public bool playerDropped;
             public ItemData_v1 item;
         }
 
@@ -345,6 +356,7 @@ namespace DaggerfallWorkshop.Game.Questing
             data.artifact = artifact;
             data.useClicked = useClicked;
             data.actionWatching = actionWatching;
+            data.playerDropped = playerDropped;
             data.item = item.GetSaveData();
 
             return data;
@@ -359,6 +371,7 @@ namespace DaggerfallWorkshop.Game.Questing
             artifact = data.artifact;
             useClicked = data.useClicked;
             actionWatching = data.actionWatching;
+            playerDropped = data.playerDropped;
             item = new DaggerfallUnityItem(data.item);
         }
 
