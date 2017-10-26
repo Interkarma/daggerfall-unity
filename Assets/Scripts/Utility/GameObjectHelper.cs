@@ -489,7 +489,7 @@ namespace DaggerfallWorkshop.Utility
             DFBlock.RdbObject[] editorObjects;
             GameObject[] startMarkers;
             GameObject[] enterMarkers;
-            RDBLayout.AddFlats(go, actionLinkDict, ref blockData, out editorObjects, out startMarkers, out enterMarkers);
+            RDBLayout.AddFlats(go, actionLinkDict, ref blockData, out editorObjects, out startMarkers, out enterMarkers, dungeonType);
 
             // Set start and enter markers
             DaggerfallRDBBlock dfBlock = go.GetComponent<DaggerfallRDBBlock>();
@@ -535,7 +535,8 @@ namespace DaggerfallWorkshop.Utility
             int textureArchive,
             int textureRecord,
             ulong loadID = 0,
-            EnemyEntity enemyEntity = null)
+            EnemyEntity enemyEntity = null,
+            bool adjustPosition = true)
         {
             // Setup initial loot container prefab
             GameObject go = InstantiatePrefab(DaggerfallUnity.Instance.Option_LootContainerPrefab.gameObject, containerType.ToString(), parent, position);
@@ -554,7 +555,8 @@ namespace DaggerfallWorkshop.Utility
                 dfBillboard.SetMaterial(textureArchive, textureRecord);
 
                 // Now move up loot icon by half own size so bottom is aligned with position
-                position.y += (dfBillboard.Summary.Size.y / 2f);
+                if (adjustPosition)
+                    position.y += (dfBillboard.Summary.Size.y / 2f);
             }
 
             // Setup DaggerfallLoot component to make lootable
@@ -937,38 +939,26 @@ namespace DaggerfallWorkshop.Utility
             // Set name
             go.name = string.Format("Quest Item [{0} | {1}]", item.Symbol.Original, item.DaggerfallUnityItem.LongName);
 
-            // Get matching live scene marker (if any)
-            DaggerfallMarker sceneMarker = GetDaggerfallMarker(marker.markerID);
+            // Marker position
+            Vector3 dungeonBlockPosition = new Vector3(marker.dungeonX * RDBLayout.RDBSide, 0, marker.dungeonZ * RDBLayout.RDBSide);
+            Vector3 position = dungeonBlockPosition + marker.flatPosition;
 
-            // Parent to scene marker or just set position
-            Vector3 position = Vector3.zero;
-            if (sceneMarker)
-            {
-                // Parent to scene marker
-                go.transform.parent = sceneMarker.transform;
+            // Dungeon flats have a different origin (centre point) than elsewhere (base point)
+            // Find bottom of marker in world space as it should be aligned to placement surface (e.g. ground, table, shelf, etc.)
+            if (siteType == SiteTypes.Dungeon)
+                position.y += (-DaggerfallLoot.randomTreasureMarkerDim / 2 * MeshReader.GlobalScale);
 
-                // Move down item icon by half own size
-                position.y -= (dfBillboard.Summary.Size.y / 2f);
-            }
-            else
-            {
-                // Marker position
-                Vector3 dungeonBlockPosition = new Vector3(marker.dungeonX * RDBLayout.RDBSide, 0, marker.dungeonZ * RDBLayout.RDBSide);
-                position = dungeonBlockPosition + marker.flatPosition;
-
-                // Dungeon flats have a different origin (centre point) than elsewhere (base point)
-                // Find bottom of marker in world space as it should be aligned to placement surface (e.g. ground, table, shelf, etc.)
-                if (siteType == SiteTypes.Dungeon)
-                {
-                    position.y += (-DaggerfallLoot.randomTreasureMarkerDim / 2 * MeshReader.GlobalScale);
-                }
-
-                // Move up item icon by half own size
-                position.y += (dfBillboard.Summary.Size.y / 2f);
-            }
+            // Move up item icon by half own size
+            position.y += (dfBillboard.Summary.Size.y / 2f);
 
             // Assign final position
             go.transform.localPosition = position;
+
+            // Parent to scene marker (if any)
+            // This ensures mobile ques objects parented to action marker translates correctly
+            DaggerfallMarker sceneMarker = GetDaggerfallMarker(marker.markerID);
+            if (sceneMarker)
+                go.transform.parent = sceneMarker.transform;
 
             // Add QuestResourceBehaviour to GameObject
             QuestResourceBehaviour questResourceBehaviour = go.AddComponent<QuestResourceBehaviour>();

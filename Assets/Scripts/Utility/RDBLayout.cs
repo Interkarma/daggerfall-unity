@@ -299,7 +299,8 @@ namespace DaggerfallWorkshop.Utility
             ref DFBlock blockData,
             out DFBlock.RdbObject[] editorObjectsOut,
             out GameObject[] startMarkersOut,
-            out GameObject[] enterMarkersOut)
+            out GameObject[] enterMarkersOut,
+            DFRegion.DungeonTypes dungeonType)
         {
             List<DFBlock.RdbObject> editorObjects = new List<DFBlock.RdbObject>();
             List<GameObject> startMarkers = new List<GameObject>();
@@ -361,6 +362,19 @@ namespace DaggerfallWorkshop.Utility
                             }
                         }
 
+                        // Disable MeshRenderer is this is a fixed treasure flat
+                        // Will be restored in-place by AddFixedTreasure()
+                        if (archive == TextureReader.FixedTreasureFlatsArchive)
+                        {
+                            // Disable original marker appearance
+                            MeshRenderer meshRenderer = flatObject.GetComponent<MeshRenderer>();
+                            if (meshRenderer)
+                                meshRenderer.enabled = false;
+
+                            // Assign fixed treaure to this marker
+                            AssignFixedTreasure(flatObject, obj, ref blockData, dungeonType);
+                        }
+
                         //add action component to flat if it has an action
                         if (obj.Resources.FlatResource.Action > 0)
                         {
@@ -404,6 +418,19 @@ namespace DaggerfallWorkshop.Utility
                 if (editorObjects[i].Resources.FlatResource.TextureRecord == randomTreasureFlatIndex)
                     AddRandomTreasure(editorObjects[i], randomTreasureNode.transform, ref blockData, dungeonType, serialize);
             }
+        }
+
+        public static void AssignFixedTreasure(
+            GameObject parent,
+            DFBlock.RdbObject obj,
+            ref DFBlock blockData,
+            DFRegion.DungeonTypes dungeonType,
+            bool serialize = true)
+        {
+            // Add fixed treasure flat with same archive & record and use exact position
+            int archive = obj.Resources.FlatResource.TextureArchive;
+            int record = obj.Resources.FlatResource.TextureRecord;
+            AddRandomTreasure(obj, parent.transform, ref blockData, dungeonType, serialize, archive, record, false);
         }
 
         /// <summary>
@@ -1308,7 +1335,15 @@ namespace DaggerfallWorkshop.Utility
             }
         }
 
-        private static void AddRandomTreasure(DFBlock.RdbObject obj, Transform parent, ref DFBlock blockData, DFRegion.DungeonTypes dungeonType, bool serialize)
+        private static DaggerfallLoot AddRandomTreasure(
+            DFBlock.RdbObject obj,
+            Transform parent,
+            ref DFBlock blockData,
+            DFRegion.DungeonTypes dungeonType,
+            bool serialize,
+            int archive = 0,
+            int record = 0,
+            bool adjustPosition = true)
         {
             // Create unique LoadID for save sytem
             ulong loadID = 0;
@@ -1322,17 +1357,37 @@ namespace DaggerfallWorkshop.Utility
             // Find bottom of marker in world space
             // Marker is aligned to surface and has a constant size (40x40)
             Vector3 position = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
-            position.y += (-DaggerfallLoot.randomTreasureMarkerDim / 2 * MeshReader.GlobalScale);
+            if (adjustPosition)
+                position.y += (-DaggerfallLoot.randomTreasureMarkerDim / 2 * MeshReader.GlobalScale);
 
             // Create random loot container
-            DaggerfallLoot loot = GameObjectHelper.CreateLootContainer(
-                LootContainerTypes.RandomTreasure,
-                InventoryContainerImages.Chest,
-                position,
-                parent,
-                DaggerfallLoot.randomTreasureArchive,
-                iconRecord,
-                loadID);
+            DaggerfallLoot loot = null;
+            if (archive == 0)
+            {
+                loot = GameObjectHelper.CreateLootContainer(
+                    LootContainerTypes.RandomTreasure,
+                    InventoryContainerImages.Chest,
+                    position,
+                    parent,
+                    DaggerfallLoot.randomTreasureArchive,
+                    iconRecord,
+                    loadID,
+                    null,
+                    adjustPosition);
+            }
+            else
+            {
+                loot = GameObjectHelper.CreateLootContainer(
+                    LootContainerTypes.RandomTreasure,
+                    InventoryContainerImages.Chest,
+                    position,
+                    parent,
+                    archive,
+                    record,
+                    loadID,
+                    null,
+                    adjustPosition);
+            }
 
             // Get dungeon type index
             int dungeonIndex = (int)dungeonType >> 8;
@@ -1382,6 +1437,8 @@ namespace DaggerfallWorkshop.Utility
             {
                 DaggerfallUnity.LogMessage(string.Format("RDBLayout: Dungeon type {0} is out of range or unknown.", dungeonType), true);
             }
+
+            return loot;
         }
 
         #endregion

@@ -31,6 +31,7 @@ namespace DaggerfallWorkshop.Utility
         public const int EditorFlatsTextureArchive = 199;
         public const int AnimalsTextureArchive = 201;
         public const int LightsTextureArchive = 210;
+        public const int FixedTreasureFlatsArchive = 216;
         public int[] MiscFlatsTextureArchives = new int[] { 97, 205, 211, 212, 213, 301 };
 
         /// <summary>
