@@ -15,6 +15,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
 {
     public class HorizontalSlider : BaseScreenComponent
     {
+        enum Mode { ScrollBar, IntSlider, FloatSlider, MultipleChoices};
+
         #region Fields
 
         Texture2D hScrollThumbLeft;
@@ -25,6 +27,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
         int displayUnits;
         int scrollIndex;
         Rect thumbRect;
+
+        Mode mode = Mode.ScrollBar;
+        TextLabel indicator;
+        int minValue;
+        int maxValue;
+        string[] items;
 
         bool draggingThumb = false;
         Vector2 dragStartPosition;
@@ -49,7 +57,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public int DisplayUnits
         {
             get { return displayUnits; }
-            set { displayUnits = value; }
+            set { SetDisplayUnits(value); }
         }
 
         /// <summary>
@@ -73,6 +81,31 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// Tint color of the slider.
         /// </summary>
         public Color? TintColor { get; set; }
+
+        /// <summary>
+        /// Indicator for this slider.
+        /// </summary>
+        public TextLabel Indicator
+        {
+            get { return indicator; }
+        }
+
+        /// <summary>
+        /// Distance from slider. Negative is on the left.
+        /// </summary>
+        public int IndicatorOffset
+        {
+            set { SetIndicatorOffset(value); }
+        }
+
+        /// <summary>
+        /// Current value on the slider.
+        /// </summary>
+        public int Value
+        {
+            get { return scrollIndex + minValue; }
+            set { SetScrollIndex(value - minValue); }
+        }
 
         #endregion
 
@@ -129,6 +162,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 return;
 
             DrawSlider();
+
+            if (indicator != null)
+                indicator.Draw();
         }
 
         protected override void MouseClick(Vector2 clickPosition)
@@ -158,6 +194,67 @@ namespace DaggerfallWorkshop.Game.UserInterface
         #region Public Methods
 
         /// <summary>
+        /// Draws a numeric indicator that show the value on slider.
+        /// </summary>
+        public void SetIndicator(int min, int max, int start)
+        {
+            this.mode = Mode.IntSlider;
+            this.items = null;
+            SetupIndicator(min, max, start);
+        }
+
+        /// <summary>
+        /// Draws a numeric indicator that show the value on slider with one decimal digit.
+        /// </summary>
+        public void SetIndicator(float min, float max, float start)
+        {
+            this.mode = Mode.FloatSlider;
+            this.items = null;
+            SetupIndicator(
+                Mathf.RoundToInt(min * 10),
+                Mathf.RoundToInt(max * 10),
+                Mathf.RoundToInt(start * 10));
+        }
+
+        /// <summary>
+        /// Draws a text indicator that show selected option on slider.
+        /// </summary>
+        public void SetIndicator(string[] items, int selected)
+        {
+            this.mode = Mode.MultipleChoices;
+            this.items = items;
+            SetupIndicator(0, items.Length - 1, selected);
+        }
+
+        /// <summary>
+        /// Removes any indicator.
+        /// </summary>
+        public void RemoveIndicator()
+        {
+            this.mode = Mode.ScrollBar;
+            this.items = null;
+            this.indicator = null;
+        }
+
+        /// <summary>
+        /// Get value on the slider.
+        /// </summary>
+        public float GetValue()
+        {
+            return mode == Mode.FloatSlider ? (float)Value / 10 : Value;
+        }
+
+        /// <summary>
+        /// Set value on the slider.
+        /// </summary>
+        public void SetValue(float value)
+        {
+            if (mode == Mode.FloatSlider)
+                value *= 10;
+            Value = Mathf.RoundToInt(value);
+        }
+
+        /// <summary>
         /// Resets slider properties without triggering events.
         /// </summary>
         public void Reset(int displayUnits = 0, int totalUnits = 0, int scrollIndex = 0)
@@ -170,6 +267,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
         #endregion
 
         #region Private Methods
+
+        void SetDisplayUnits(int value)
+        {
+            displayUnits = value;
+
+            if (mode != Mode.ScrollBar)
+                totalUnits = (maxValue - minValue) + displayUnits;
+        }
 
         void SetScrollIndex(int value)
         {
@@ -184,7 +289,21 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (scrollIndex > maxScroll)
                 scrollIndex = maxScroll;
 
+            if (indicator != null)
+                indicator.Text = GetIndicatorText();
+
             RaiseOnScrollEvent();
+        }
+
+        void SetIndicatorOffset(int value)
+        {
+            if (indicator == null)
+                return;
+
+            if (value >= 0)
+                indicator.Position = new Vector2(Position.x + Size.x + value, Position.y);
+            else
+                indicator.Position = new Vector2(Position.x + value, Position.y);
         }
 
         void DrawSlider()
@@ -211,6 +330,40 @@ namespace DaggerfallWorkshop.Game.UserInterface
             GUI.DrawTexture(bodyRect, hScrollThumbBody, ScaleMode.StretchToFill);
             GUI.DrawTexture(rightRect, hScrollThumbRight, ScaleMode.StretchToFill);
             GUI.color = color;
+        }
+
+        void SetupIndicator(int min, int max, int start)
+        {
+            if (indicator == null)
+            {
+                indicator = new TextLabel();
+                indicator.Parent = Parent;
+            }
+
+            minValue = min;
+            maxValue = max;
+            SetDisplayUnits(displayUnits);
+            SetScrollIndex(start - min);
+        }
+
+        string GetIndicatorText()
+        {
+            int selected = scrollIndex + minValue;
+
+            switch(mode)
+            {
+                case Mode.IntSlider:
+                    return selected.ToString();
+
+                case Mode.FloatSlider:
+                    return ((float)selected / 10).ToString("n1");
+
+                case Mode.MultipleChoices:
+                    return selected < items.Length ? items[selected] : string.Empty;
+
+                default:
+                    return string.Empty;
+            }
         }
 
         #endregion
