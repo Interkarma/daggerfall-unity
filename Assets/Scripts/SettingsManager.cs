@@ -73,6 +73,7 @@ namespace DaggerfallWorkshop
         public bool UseLegacyDeferred { get; set; }
         public bool DungeonLightShadows { get; set; }
         public bool EnableTextureArrays { get; set; }
+        public int RandomDungeonTextures { get; set; }
 
         // [ChildGuard]
         public bool PlayerNudity { get; set; }
@@ -147,6 +148,7 @@ namespace DaggerfallWorkshop
             UseLegacyDeferred = GetBool(sectionVideo, "UseLegacyDeferred");
             DungeonLightShadows = GetBool(sectionVideo, "DungeonLightShadows");
             EnableTextureArrays = GetBool(sectionVideo, "EnableTextureArrays");
+            RandomDungeonTextures = GetInt(sectionVideo, "RandomDungeonTextures", 0, 4);
             PlayerNudity = GetBool(sectionChildGuard, "PlayerNudity");
             ShowOptionsAtStart = GetBool(sectionGUI, "ShowOptionsAtStart");
             GUIFilterMode = GetInt(sectionGUI, "GUIFilterMode", 0, 2);
@@ -203,6 +205,7 @@ namespace DaggerfallWorkshop
             SetBool(sectionVideo, "UseLegacyDeferred", UseLegacyDeferred);
             SetBool(sectionVideo, "DungeonLightShadows", DungeonLightShadows);
             SetBool(sectionVideo, "EnableTextureArrays", EnableTextureArrays);
+            SetInt(sectionVideo, "RandomDungeonTextures", RandomDungeonTextures);
             SetBool(sectionChildGuard, "PlayerNudity", PlayerNudity);
             SetBool(sectionGUI, "ShowOptionsAtStart", ShowOptionsAtStart);
             SetInt(sectionGUI, "GUIFilterMode", GUIFilterMode);
