@@ -630,27 +630,22 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
                     // Get Name
                     string name = section["PresetName"];
-                    if (name != null)
+                    if (string.IsNullOrEmpty(name))
                     {
-                        presetName = name;
-                    }
-                    else
-                    {
-                        presetName = "Unknown preset";
+                        name = "Unknown preset";
                         Debug.LogError("A preset for mod " + mod.Title + " is missing the key 'PresetName'");
                     }
+                    presetName = name;
 
                     // Get Author (if present)
                     string author = section["PresetAuthor"];
-                    if (author != null)
-                    {
+                    if (!string.IsNullOrEmpty(author))
                         presetName += " by " + author;
-                    }
 
                     // Check Version
                     string presetVersion = section["SettingsVersion"];
                     string settingsVersion = data[ModSettingsReader.internalSection]["SettingsVersion"];
-                    if (presetVersion == null)
+                    if (string.IsNullOrEmpty(presetVersion))
                     {
                         presetName = "[?] " + presetName;
                         Debug.LogError("Preset " + presetName + " for mod " + mod.Title + " is missing the key 'SettingsVersion'");
