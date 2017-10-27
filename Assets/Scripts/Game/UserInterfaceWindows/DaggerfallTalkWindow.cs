@@ -109,7 +109,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         List<TalkManager.ListItem> listCurrentTopics; // current topic list metadata of displayed topic list in topic frame
 
-        Texture2D textureBackground;
+        Texture2D textureBackground;        
         Texture2D textureHighlightedOptions;
         Texture2D textureGrayedOutCategories;
         Texture2D texturePortrait;
@@ -117,25 +117,33 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Panel panelNameNPC;
         TextLabel labelNameNPC = null;
 
-        Color[] textureTellMeAboutNormal;
-        Color[] textureTellMeAboutHighlighted;
-        Color[] textureWhereIsNormal;
-        Color[] textureWhereIsHighlighted;
+        Texture2D textureTellMeAboutHighlighted;
+        Texture2D textureWhereIsHighlighted;
 
-        Color[] textureCategoryLocationHighlighted;
-        Color[] textureCategoryLocationGrayedOut;
-        Color[] textureCategoryPeopleHighlighted;
-        Color[] textureCategoryPeopleGrayedOut;
-        Color[] textureCategoryThingsHighlighted;
-        Color[] textureCategoryThingsGrayedOut;
-        Color[] textureCategoryWorkHighlighted;
-        Color[] textureCategoryWorkGrayedOut;
+        Texture2D textureCategoryLocationGrayedOut;
+        Texture2D textureCategoryPersonGrayedOut;
+        Texture2D textureCategoryThingGrayedOut;
+        Texture2D textureCategoryWorkGrayedOut;
+
+        Color[] colorsTellMeAboutHighlighted;
+        Color[] colorsWhereIsHighlighted;
+
+        Color[] colorsCategoryLocationGrayedOut;
+        Color[] colorsCategoryPeopleGrayedOut;
+        Color[] colorsCategoryThingGrayedOut;
+        Color[] colorsCategoryWorkGrayedOut;
+
 
         Panel mainPanel;
 
         TextLabel textlabelPlayerSays;
         string currentQuestion = "";
         int selectionIndexLastUsed = -1;
+
+        // alignment stuff for portrait
+        Panel panelPortrait = null;
+        Vector2 panelPortraitPos = new Vector2(119, 65);
+        Vector2 panelPortraitSize = new Vector2(64f, 64f);
 
         // alignment stuff for checkbox buttons
         Panel panelTone; // used as selection marker
@@ -154,7 +162,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Button buttonTellMeAbout;
         Button buttonWhereIs;
         Button buttonCategoryLocation;
-        Button buttonCategoryPeople;
+        Button buttonCategoryPerson;
         Button buttonCategoryThings;
         Button buttonCategoryWork;
         Button buttonTopicUp;
@@ -292,7 +300,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 return;
             }
 
-            UpdatePortrait();
+            if (panelPortrait != null)
+                panelPortrait.BackgroundTexture = texturePortrait;
         }
 
         public void UpdateNameNPC()
@@ -313,12 +322,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             ParentPanel.BackgroundColor = ScreenDimColor;
 
             // Load background texture of talk window
-            imgFile = new ImgFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, talkWindowImgName), FileUsage.UseMemory, false);
-            imgFile.LoadPalette(Path.Combine(DaggerfallUnity.Instance.Arena2Path, imgFile.PaletteName));
-            bitmap = imgFile.GetDFBitmap();
-            textureBackground = new Texture2D(bitmap.Width, bitmap.Height, TextureFormat.ARGB32, false);
-            textureBackground.SetPixels32(imgFile.GetColor32(bitmap, 0));
-            textureBackground.Apply(false, false); // make readable
+            //imgFile = new ImgFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, talkWindowImgName), FileUsage.UseMemory, false);
+            //imgFile.LoadPalette(Path.Combine(DaggerfallUnity.Instance.Arena2Path, imgFile.PaletteName));
+            //bitmap = imgFile.GetDFBitmap();
+            textureBackground = DaggerfallUI.GetTextureFromImg(talkWindowImgName, TextureFormat.ARGB32, false);
+            //textureBackground = new Texture2D(bitmap.Width, bitmap.Height, TextureFormat.ARGB32, false);
+            //textureBackground.SetPixels32(imgFile.GetColor32(bitmap, 0));
+            //textureBackground.Apply(false, false); // make readable
             textureBackground.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
             if (!textureBackground)
             {
@@ -329,14 +339,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             mainPanel = DaggerfallUI.AddPanel(NativePanel, AutoSizeModes.None);
             mainPanel.BackgroundTexture = textureBackground;
-            mainPanel.Size = new Vector2(textureBackground.width, textureBackground.height);
+            //mainPanel.Size = new Vector2(textureBackground.width, textureBackground.height);
+            mainPanel.Size = new Vector2(320, 200);
             mainPanel.HorizontalAlignment = HorizontalAlignment.Center;
             mainPanel.VerticalAlignment = VerticalAlignment.Middle;
 
-            if (texturePortrait)
-            {
-                UpdatePortrait();
-            }
+            panelPortrait = DaggerfallUI.AddPanel(new Rect(panelPortraitPos, panelPortraitSize), NativePanel);
+            panelPortrait.BackgroundTexture = texturePortrait;
 
             panelNameNPC = DaggerfallUI.AddPanel(mainPanel, AutoSizeModes.None);
             panelNameNPC.Position = new Vector2(117, 52);
@@ -382,20 +391,38 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 CloseWindow();
                 return;
             }
+            
+            colorsTellMeAboutHighlighted = textureHighlightedOptions.GetPixels(0, 10, 107, 10);            
+            colorsWhereIsHighlighted = textureHighlightedOptions.GetPixels(0, 0, 107, 10);
 
-            textureTellMeAboutNormal = textureBackground.GetPixels(4, textureBackground.height - 4 - 10, 107, 10);
-            textureTellMeAboutHighlighted = textureHighlightedOptions.GetPixels(0, 10, 107, 10);
-            textureWhereIsNormal = textureBackground.GetPixels(4, textureBackground.height - 14 - 10, 107, 10);
-            textureWhereIsHighlighted = textureHighlightedOptions.GetPixels(0, 0, 107, 10);
+            //colorsCategoryLocationHighlighted = textureBackground.GetPixels(4, textureBackground.height - 26 - 10, 107, 10);
+            colorsCategoryLocationGrayedOut = textureGrayedOutCategories.GetPixels(0, 30, 107, 10);
+            //colorsCategoryPeopleHighlighted = textureBackground.GetPixels(4, textureBackground.height - 36 - 10, 107, 10);
+            colorsCategoryPeopleGrayedOut = textureGrayedOutCategories.GetPixels(0, 20, 107, 10);
+            //colorsCategoryThingHighlighted = textureBackground.GetPixels(4, textureBackground.height - 46 - 10, 107, 10);
+            colorsCategoryThingGrayedOut = textureGrayedOutCategories.GetPixels(0, 10, 107, 10);
+            //colorsCategoryWorkHighlighted = textureBackground.GetPixels(4, textureBackground.height - 56 - 10, 107, 10);
+            colorsCategoryWorkGrayedOut = textureGrayedOutCategories.GetPixels(0, 0, 107, 10);
 
-            textureCategoryLocationHighlighted = textureBackground.GetPixels(4, textureBackground.height - 26 - 10, 107, 10);
-            textureCategoryLocationGrayedOut = textureGrayedOutCategories.GetPixels(0, 30, 107, 10);
-            textureCategoryPeopleHighlighted = textureBackground.GetPixels(4, textureBackground.height - 36 - 10, 107, 10);
-            textureCategoryPeopleGrayedOut = textureGrayedOutCategories.GetPixels(0, 20, 107, 10);
-            textureCategoryThingsHighlighted = textureBackground.GetPixels(4, textureBackground.height - 46 - 10, 107, 10);
-            textureCategoryThingsGrayedOut = textureGrayedOutCategories.GetPixels(0, 10, 107, 10);
-            textureCategoryWorkHighlighted = textureBackground.GetPixels(4, textureBackground.height - 56 - 10, 107, 10);
-            textureCategoryWorkGrayedOut = textureGrayedOutCategories.GetPixels(0, 0, 107, 10);
+            textureTellMeAboutHighlighted = new Texture2D(107, 10, TextureFormat.ARGB32, false);
+            textureTellMeAboutHighlighted.SetPixels(colorsTellMeAboutHighlighted);
+            textureTellMeAboutHighlighted.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
+            textureWhereIsHighlighted = new Texture2D(107, 10, TextureFormat.ARGB32, false);
+            textureWhereIsHighlighted.SetPixels(colorsWhereIsHighlighted);
+            textureWhereIsHighlighted.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
+
+            textureCategoryLocationGrayedOut = new Texture2D(107, 10, TextureFormat.ARGB32, false);
+            textureCategoryLocationGrayedOut.SetPixels(colorsCategoryLocationGrayedOut);
+            textureCategoryLocationGrayedOut.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
+            textureCategoryPersonGrayedOut = new Texture2D(107, 10, TextureFormat.ARGB32, false);
+            textureCategoryPersonGrayedOut.SetPixels(colorsCategoryPeopleGrayedOut);
+            textureCategoryPersonGrayedOut.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
+            textureCategoryThingGrayedOut = new Texture2D(107, 10, TextureFormat.ARGB32, false);
+            textureCategoryThingGrayedOut.SetPixels(colorsCategoryThingGrayedOut);
+            textureCategoryThingGrayedOut.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
+            textureCategoryWorkGrayedOut = new Texture2D(107, 10, TextureFormat.ARGB32, false);
+            textureCategoryWorkGrayedOut.SetPixels(colorsCategoryWorkGrayedOut);
+            textureCategoryWorkGrayedOut.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
 
             textlabelPlayerSays = new TextLabel();
             textlabelPlayerSays.Position = new Vector2(123, 8);
@@ -552,12 +579,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             buttonCategoryLocation.OnMouseClick += ButtonCategoryLocation_OnMouseClick;
             mainPanel.Components.Add(buttonCategoryLocation);
 
-            buttonCategoryPeople = new Button();
-            buttonCategoryPeople.Position = new Vector2(4, 36);
-            buttonCategoryPeople.Size = new Vector2(107, 10);
-            buttonCategoryPeople.Name = "button_categoryPeople";
-            buttonCategoryPeople.OnMouseClick += ButtonCategoryPeople_OnMouseClick;
-            mainPanel.Components.Add(buttonCategoryPeople);
+            buttonCategoryPerson = new Button();
+            buttonCategoryPerson.Position = new Vector2(4, 36);
+            buttonCategoryPerson.Size = new Vector2(107, 10);
+            buttonCategoryPerson.Name = "button_categoryPeople";
+            buttonCategoryPerson.OnMouseClick += ButtonCategoryPeople_OnMouseClick;
+            mainPanel.Components.Add(buttonCategoryPerson);
 
             buttonCategoryThings = new Button();
             buttonCategoryThings.Position = new Vector2(4, 46);
@@ -751,15 +778,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             listboxTopic.MaxHorizontalScrollIndex = 0;
         }
 
-        void UpdatePortrait()
-        {
-            if (textureBackground)
-            {
-                textureBackground.SetPixels(119, textureBackground.height - 65 - 64, 64, 64, texturePortrait.GetPixels());
-                textureBackground.Apply(false);
-            }
-        }
-
         void UpdateLabels()
         {
 
@@ -793,13 +811,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             talkCategoryLastUsed = TalkCategory.None; // important so that category is enabled again when switching back to TalkOption.WhereIs
 
-            textureBackground.SetPixels(4, textureBackground.height - 4 - 10, 107, 10, textureTellMeAboutHighlighted);
-            textureBackground.SetPixels(4, textureBackground.height - 14 - 10, 107, 10, textureWhereIsNormal);
-            textureBackground.SetPixels(4, textureBackground.height - 26 - 10, 107, 10, textureCategoryLocationGrayedOut);
-            textureBackground.SetPixels(4, textureBackground.height - 36 - 10, 107, 10, textureCategoryPeopleGrayedOut);
-            textureBackground.SetPixels(4, textureBackground.height - 46 - 10, 107, 10, textureCategoryThingsGrayedOut);
-            textureBackground.SetPixels(4, textureBackground.height - 56 - 10, 107, 10, textureCategoryWorkGrayedOut);
-            textureBackground.Apply(false);
+            buttonTellMeAbout.BackgroundTexture = textureTellMeAboutHighlighted;
+            buttonWhereIs.BackgroundTexture = null;
+            buttonCategoryLocation.BackgroundTexture = null;
+            buttonCategoryPerson.BackgroundTexture = null;
+            buttonCategoryThings.BackgroundTexture = null;
+            buttonCategoryWork.BackgroundTexture = null;
 
             SetListboxTopics(ref listboxTopic, TalkManager.Instance.ListTopicTellMeAbout);
             listboxTopic.Update();
@@ -817,9 +834,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 return;
             talkOptionLastUsed = selectedTalkOption;
 
-            textureBackground.SetPixels(4, textureBackground.height - 4 - 10, 107, 10, textureTellMeAboutNormal);
-            textureBackground.SetPixels(4, textureBackground.height - 14 - 10, 107, 10, textureWhereIsHighlighted);            
-            textureBackground.Apply(false);
+            buttonTellMeAbout.BackgroundTexture = null;
+            buttonWhereIs.BackgroundTexture = textureWhereIsHighlighted;
 
             SetTalkCategory(selectedTalkCategory);
         }
@@ -854,11 +870,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             selectedTalkCategory = TalkCategory.None;
             talkCategoryLastUsed = TalkCategory.None;
 
-            textureBackground.SetPixels(4, textureBackground.height - 26 - 10, 107, 10, textureCategoryLocationGrayedOut);
-            textureBackground.SetPixels(4, textureBackground.height - 36 - 10, 107, 10, textureCategoryPeopleGrayedOut);
-            textureBackground.SetPixels(4, textureBackground.height - 46 - 10, 107, 10, textureCategoryThingsGrayedOut);
-            textureBackground.SetPixels(4, textureBackground.height - 56 - 10, 107, 10, textureCategoryWorkGrayedOut);
-            textureBackground.Apply(false);
+            buttonCategoryLocation.BackgroundTexture = null;
+            buttonCategoryPerson.BackgroundTexture = null;
+            buttonCategoryThings.BackgroundTexture = null;
+            buttonCategoryWork.BackgroundTexture = null;
 
             ClearListboxTopics();
             listboxTopic.Update();
@@ -874,11 +889,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 return;
             talkCategoryLastUsed = selectedTalkCategory;
 
-            textureBackground.SetPixels(4, textureBackground.height - 26 - 10, 107, 10, textureCategoryLocationHighlighted);
-            textureBackground.SetPixels(4, textureBackground.height - 36 - 10, 107, 10, textureCategoryPeopleGrayedOut);
-            textureBackground.SetPixels(4, textureBackground.height - 46 - 10, 107, 10, textureCategoryThingsGrayedOut);
-            textureBackground.SetPixels(4, textureBackground.height - 56 - 10, 107, 10, textureCategoryWorkGrayedOut);
-            textureBackground.Apply(false);
+            buttonCategoryLocation.BackgroundTexture = null;
+            buttonCategoryPerson.BackgroundTexture = textureCategoryPersonGrayedOut;
+            buttonCategoryThings.BackgroundTexture = textureCategoryThingGrayedOut;
+            buttonCategoryWork.BackgroundTexture = textureCategoryWorkGrayedOut;
 
             SetListboxTopics(ref listboxTopic, TalkManager.Instance.ListTopicLocation);
             listboxTopic.Update();
@@ -896,11 +910,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 return;
             talkCategoryLastUsed = selectedTalkCategory;
 
-            textureBackground.SetPixels(4, textureBackground.height - 26 - 10, 107, 10, textureCategoryLocationGrayedOut);
-            textureBackground.SetPixels(4, textureBackground.height - 36 - 10, 107, 10, textureCategoryPeopleHighlighted);
-            textureBackground.SetPixels(4, textureBackground.height - 46 - 10, 107, 10, textureCategoryThingsGrayedOut);
-            textureBackground.SetPixels(4, textureBackground.height - 56 - 10, 107, 10, textureCategoryWorkGrayedOut);
-            textureBackground.Apply(false);
+            buttonCategoryLocation.BackgroundTexture = textureCategoryLocationGrayedOut;
+            buttonCategoryPerson.BackgroundTexture = null;
+            buttonCategoryThings.BackgroundTexture = textureCategoryThingGrayedOut;
+            buttonCategoryWork.BackgroundTexture = textureCategoryWorkGrayedOut;
 
             SetListboxTopics(ref listboxTopic, TalkManager.Instance.ListTopicPerson);
             listboxTopic.Update();
@@ -918,11 +931,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 return;
             talkCategoryLastUsed = selectedTalkCategory;
 
-            textureBackground.SetPixels(4, textureBackground.height - 26 - 10, 107, 10, textureCategoryLocationGrayedOut);
-            textureBackground.SetPixels(4, textureBackground.height - 36 - 10, 107, 10, textureCategoryPeopleGrayedOut);
-            textureBackground.SetPixels(4, textureBackground.height - 46 - 10, 107, 10, textureCategoryThingsHighlighted);
-            textureBackground.SetPixels(4, textureBackground.height - 56 - 10, 107, 10, textureCategoryWorkGrayedOut);
-            textureBackground.Apply(false);
+            buttonCategoryLocation.BackgroundTexture = textureCategoryLocationGrayedOut;
+            buttonCategoryPerson.BackgroundTexture = textureCategoryPersonGrayedOut;
+            buttonCategoryThings.BackgroundTexture = null;
+            buttonCategoryWork.BackgroundTexture = textureCategoryWorkGrayedOut;
 
             SetListboxTopics(ref listboxTopic, TalkManager.Instance.ListTopicThings);
             listboxTopic.Update();
@@ -940,11 +952,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 return;
             talkCategoryLastUsed = selectedTalkCategory;
 
-            textureBackground.SetPixels(4, textureBackground.height - 26 - 10, 107, 10, textureCategoryLocationGrayedOut);
-            textureBackground.SetPixels(4, textureBackground.height - 36 - 10, 107, 10, textureCategoryPeopleGrayedOut);
-            textureBackground.SetPixels(4, textureBackground.height - 46 - 10, 107, 10, textureCategoryThingsGrayedOut);
-            textureBackground.SetPixels(4, textureBackground.height - 56 - 10, 107, 10, textureCategoryWorkHighlighted);
-            textureBackground.Apply(false);
+            buttonCategoryLocation.BackgroundTexture = textureCategoryLocationGrayedOut;
+            buttonCategoryPerson.BackgroundTexture = textureCategoryPersonGrayedOut;
+            buttonCategoryThings.BackgroundTexture = textureCategoryThingGrayedOut;
+            buttonCategoryWork.BackgroundTexture = null;
 
             ClearListboxTopics();
             listboxTopic.Update();

@@ -755,10 +755,10 @@ namespace DaggerfallWorkshop.Game
             return newPanel;
         }
 
-        public static Texture2D GetTextureFromImg(string name, TextureFormat format = TextureFormat.ARGB32)
+        public static Texture2D GetTextureFromImg(string name, TextureFormat format = TextureFormat.ARGB32, bool readOnly = true)
         {
             DFPosition offset;
-            Texture2D texture = GetTextureFromImg(name, out offset, format);
+            Texture2D texture = GetTextureFromImg(name, out offset, format, readOnly);
 
             return texture;
         }
@@ -767,9 +767,9 @@ namespace DaggerfallWorkshop.Game
         /// Loads IMG file to texture using a subrect of source image.
         /// Origin of source image (0,0) is bottom-left corner.
         /// </summary>
-        public static Texture2D GetTextureFromImg(string name, Rect subRect, TextureFormat format = TextureFormat.ARGB32)
+        public static Texture2D GetTextureFromImg(string name, Rect subRect, TextureFormat format = TextureFormat.ARGB32, bool readOnly = true)
         {
-            ImgFile imgFile = new ImgFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, name), FileUsage.UseMemory, true);
+            ImgFile imgFile = new ImgFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, name), FileUsage.UseMemory, readOnly);
             imgFile.LoadPalette(Path.Combine(DaggerfallUnity.Instance.Arena2Path, imgFile.PaletteName));
 
             DFBitmap bitmap = imgFile.GetDFBitmap();
@@ -796,7 +796,7 @@ namespace DaggerfallWorkshop.Game
             return texture;
         }
 
-        public static Texture2D GetTextureFromImg(string name, out DFPosition offset, TextureFormat format = TextureFormat.ARGB32)
+        public static Texture2D GetTextureFromImg(string name, out DFPosition offset, TextureFormat format = TextureFormat.ARGB32, bool readOnly = true)
         {
             offset = new DFPosition();
 
@@ -804,7 +804,7 @@ namespace DaggerfallWorkshop.Game
             if (!dfUnity.IsReady)
                 return null;
 
-            ImgFile imgFile = new ImgFile(Path.Combine(dfUnity.Arena2Path, name), FileUsage.UseMemory, true);            
+            ImgFile imgFile = new ImgFile(Path.Combine(dfUnity.Arena2Path, name), FileUsage.UseMemory, readOnly);            
             Texture2D texture = null;
  
             // Custom texture
@@ -814,7 +814,7 @@ namespace DaggerfallWorkshop.Game
             else
             {
                 imgFile.LoadPalette(Path.Combine(dfUnity.Arena2Path, imgFile.PaletteName));
-                texture = GetTextureFromImg(imgFile, format);
+                texture = GetTextureFromImg(imgFile, format, readOnly);
             }
                 
             texture.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
@@ -823,12 +823,12 @@ namespace DaggerfallWorkshop.Game
             return texture;
         }
 
-        public static Texture2D GetTextureFromImg(ImgFile img, TextureFormat format = TextureFormat.ARGB32)
+        public static Texture2D GetTextureFromImg(ImgFile img, TextureFormat format = TextureFormat.ARGB32, bool readOnly = true)
         {
             DFBitmap bitmap = img.GetDFBitmap();
             Texture2D texture = new Texture2D(bitmap.Width, bitmap.Height, format, false);
             texture.SetPixels32(img.GetColor32(bitmap, 0));
-            texture.Apply(false, true);
+            texture.Apply(false, readOnly);
             texture.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
 
             return texture;
