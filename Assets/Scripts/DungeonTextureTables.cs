@@ -45,18 +45,18 @@ namespace DaggerfallWorkshop
 
             int textureArchiveOffset;
             DFRandom.srand(seed);
+            int[] textureTable = new int[TableLength];
 
-            int[] textureTable = (int[])DefaultTextureTable.Clone();
-
-            if (randomDungeonTextures != 0 || climateTextureArchiveIndex != 1) // classic algorithm skips on index 1
+            // In classic, if climateTextureArchiveIndex is 1 here (only happens with rainforest climate), the following loop is skipped and
+            // a dungeon in that climate will have the texture table of the last visited dungeon or, if no dungeons
+            // had been visited since starting the program, the default dungeon textures. This seems like it must just be a bug, so the
+            // recreation of the classic algorithm here assigns textures even if climateTextureArchiveIndex is 1.
+            for (int i = 0; i < 5; ++i)
             {
-                for (int i = 0; i < 5; ++i)
-                {
-                    textureArchiveOffset = DFRandom.random_range_inclusive(0, 4);
-                    if (textureArchiveOffset == 2) // invalid
-                        textureArchiveOffset = 4;
-                    textureTable[i] = climateTextureArchives[climateTextureArchiveIndex] + textureArchiveOffset;
-                }
+                textureArchiveOffset = DFRandom.random_range_inclusive(0, 4);
+                if (textureArchiveOffset == 2) // invalid
+                    textureArchiveOffset = 4;
+                textureTable[i] = climateTextureArchives[climateTextureArchiveIndex] + textureArchiveOffset;
             }
 
             textureTable[5] = (int)DFLocation.ClimateTextureSet.Interior_Sewer + 100 * climateTextureArchiveIndices[climateBasedIndexValue];
