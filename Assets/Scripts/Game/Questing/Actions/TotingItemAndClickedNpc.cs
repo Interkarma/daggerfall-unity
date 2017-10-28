@@ -86,7 +86,9 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 //person.RearmPlayerClick();
                 if (GameManager.Instance.PlayerEntity.Items.Contains(item))
                 {
+                    // Show message popup, remove item, return true on trigger
                     ParentQuest.ShowMessagePopup(id);
+                    GameManager.Instance.PlayerEntity.ReleaseQuestItemForReoffer(item.DaggerfallUnityItem);
                     return true;
                 }
             }
