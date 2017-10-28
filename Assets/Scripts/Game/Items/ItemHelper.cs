@@ -180,7 +180,7 @@ namespace DaggerfallWorkshop.Game.Items
             }
 
             // Resolve armor material
-            if (item.ItemGroup == ItemGroups.Armor && !item.IsShield && item.TemplateIndex != (int) Armor.Helm)
+            if (item.ItemGroup == ItemGroups.Armor && ArmorShouldShowMaterial(item))
             {
                 ArmorMaterialTypes armorMaterial = (ArmorMaterialTypes) item.nativeMaterialValue;
                 string materialName = DaggerfallUnity.Instance.TextProvider.GetArmorMaterialName(armorMaterial);
@@ -482,10 +482,10 @@ namespace DaggerfallWorkshop.Game.Items
             switch (item.ItemGroup)
             {
                 case ItemGroups.Armor:
-                    if (item.IsShield || item.TemplateIndex == (int)Armor.Helm || item.IsArtifact)
-                        return textProvider.GetRSCTokens(armorNoMaterialTextId);    // Handle shields, helms and artifact armour
+                    if (ArmorShouldShowMaterial(item))
+                        return textProvider.GetRSCTokens(armorTextId); // Handle armor showing material
                     else
-                        return textProvider.GetRSCTokens(armorTextId);              // Handle armour
+                        return textProvider.GetRSCTokens(armorNoMaterialTextId); // Handle armor not showing material
 
                 case ItemGroups.Weapons:
                     if (item.TemplateIndex == (int)Weapons.Arrow)
@@ -532,6 +532,35 @@ namespace DaggerfallWorkshop.Game.Items
                     // Default fallback if none of the above applied
                     return textProvider.GetRSCTokens(miscTextId);
             }
+        }
+
+        /// <summary>
+        /// Returns whether an armor item should show its material in info popups and tooltips
+        /// </summary>
+        private static bool ArmorShouldShowMaterial(DaggerfallUnityItem item)
+        {
+            // HelmAndShieldMaterialDisplay setting for showing material for helms and shields:
+            // 0 : Don't show (classic behavior)
+            // 1 : Show for all but leather and chain
+            // 2 : Show for all but leather
+            // 3 : Show for all
+            if (item.IsArtifact)
+                return false;
+            else if (item.IsShield || item.TemplateIndex == (int)Armor.Helm)
+            {
+                if ((DaggerfallUnity.Settings.HelmAndShieldMaterialDisplay == 1)
+                    && ((ArmorMaterialTypes)item.nativeMaterialValue >= ArmorMaterialTypes.Iron))
+                    return true;
+                else if ((DaggerfallUnity.Settings.HelmAndShieldMaterialDisplay == 2)
+                    && ((ArmorMaterialTypes)item.nativeMaterialValue >= ArmorMaterialTypes.Chain))
+                    return true;
+                else if (DaggerfallUnity.Settings.HelmAndShieldMaterialDisplay == 3)
+                    return true;
+                else
+                    return false;
+            }
+            else
+                return true;
         }
 
         // TODO: can this be replaced with a new text RSC entry?

@@ -35,9 +35,10 @@ AutomapNumberOfDungeons=5
 ShopQualityPresentation=0
 ShopQualityHUDDelay=4
 ShowQuestJournalClocksAsCountdown=False
-EnableInventoryInfoPanel = True
-EnableEnhancedItemLists = False
-EnableModernConversationStyleInTalkWindow = False
+EnableInventoryInfoPanel=True
+EnableEnhancedItemLists=False
+EnableModernConversationStyleInTalkWindow=False
+HelmAndShieldMaterialDisplay=0
 
 [Controls]
 InvertMouseVertical=False
