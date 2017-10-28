@@ -148,7 +148,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (displayState < DisplayState.Nothing || displayState > DisplayState.QuestStateFull)
                 displayState = DisplayState.Nothing;
 
-            bool leftShiftDown = Input.GetKey(KeyCode.LeftShift);
             if (Input.GetKeyDown(KeyCode.LeftBracket))
                 MovePreviousQuest();
             else if (Input.GetKeyDown(KeyCode.RightBracket))
