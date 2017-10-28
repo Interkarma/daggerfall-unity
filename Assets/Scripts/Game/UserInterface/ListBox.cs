@@ -51,8 +51,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Color selectedShadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
 
         // restricted render area can be used to force list box content rendering inside this rect (used for content rendering in window frames where content is larger than frame)
-        bool useRestrictedRenderArea = false;
-        Rect rectRestrictedRenderArea;
+        new bool useRestrictedRenderArea = false;
+        new Rect rectRestrictedRenderArea;
 
         public enum VerticalScrollModes
         {
@@ -239,7 +239,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// <summary>
         /// define a restricted render area so that listbox content (textlabels) are only rendered within these Rect's bounds
         /// </summary>
-        public Rect RectRestrictedRenderArea
+        public new Rect RectRestrictedRenderArea
         {
             get { return rectRestrictedRenderArea; }
             set
