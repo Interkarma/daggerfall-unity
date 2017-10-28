@@ -1300,10 +1300,6 @@ namespace DaggerfallWorkshop.Game.Items
         // New items cannot currently have magical properties
         bool GetIsEnchanted()
         {
-            // Spellbook considered enchanted
-            if (IsOfTemplate((int)MiscItems.Spellbook))
-                return true;
-
             if (legacyMagic == null || legacyMagic.Length == 0)
                 return false;
 
