@@ -14,6 +14,7 @@ ShadowResolutionMode=1
 UseLegacyDeferred=False
 DungeonLightShadows=False
 EnableTextureArrays=True
+RandomDungeonTextures=0
 
 [ChildGuard]
 PlayerNudity=False

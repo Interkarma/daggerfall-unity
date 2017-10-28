@@ -123,14 +123,52 @@ namespace DaggerfallWorkshop
 
         public void RandomiseDungeonTextureTable()
         {
-            DungeonTextureTable = DungeonTextureTables.RandomTextureTable(UnityEngine.Random.Range(int.MinValue, int.MaxValue));
+            DungeonTextureTable = DungeonTextureTables.RandomTextureTableAlternate(UnityEngine.Random.Range(int.MinValue, int.MaxValue));
             ApplyDungeonTextureTable();
         }
 
         public void UseLocationDungeonTextureTable()
         {
-            // Dungeon textures are gotten in same manner as classic
-            DungeonTextureTable = DungeonTextureTables.RandomTextureTable(Summary.LocationData.Dungeon.RecordElement.Header.LocationId);
+            // Generates dungeon texture table from random seed
+            // RandomDungeonTextures are read from settings.ini. Values are
+            // 0 : Classic textures (swamp and woodland texture sets unused)
+            // 1 : Textures by climate + classic textures for main story dungeons
+            // 2 : Textures by climate for all dungeons
+            // 3 : Randomized + classic textures for main story dungeons (method used in earlier DF Unity builds)
+            // 4 : Randomized for all dungeons
+            bool mainStoryDungeon = false;
+            switch (Summary.ID)
+            {
+                case 187853213:         // Daggerfall/Privateer's Hold
+                case 630439035:         // Wayrest/Wayrest
+                case 1291010263:        // Daggerfall/Daggerfall
+                case 6634853:           // Sentinel/Sentinel
+                case 19021260:          // Orsinium Area/Orsinium
+                case 728811286:         // Wrothgarian Mountains/Shedungent
+                case 701948302:         // Dragontail Mountains/Scourg Barrow
+                case 83032363:          // Wayrest/Woodborne Hall
+                case 1001:              // High Rock sea coast/Mantellan Crux
+                case 207828842:         // Menevia/Lysandus' Tomb
+                case 9570447:           // Daggerfall/Castle Necromoghan
+                case 2352284:           // Betony/Tristore Laboratory
+                case 336619236:         // Ykalon/Castle Llugwych
+                     mainStoryDungeon = true;
+                     break;
+                  default:
+                     break;
+            }
+
+            int randomDungeonTextures = DaggerfallUnity.Settings.RandomDungeonTextures;
+            // If not overriding with other textures (modes 2 and 4), use classic algorithm for main story dungeons
+            if (mainStoryDungeon && randomDungeonTextures != 2 && randomDungeonTextures != 4)
+                DungeonTextureTable = DungeonTextureTables.RandomTextureTableClassic(Summary.LocationData.Dungeon.RecordElement.Header.LocationId);
+            else // Otherwise, use a random texture according to the mode set in settings.ini
+            {
+                if (randomDungeonTextures < 3)
+                    DungeonTextureTable = DungeonTextureTables.RandomTextureTableClassic(Summary.LocationData.Dungeon.RecordElement.Header.LocationId, DaggerfallUnity.Settings.RandomDungeonTextures);
+                else
+                    DungeonTextureTable = DungeonTextureTables.RandomTextureTableAlternate(Summary.ID);
+            }
             ApplyDungeonTextureTable();
         }
 
