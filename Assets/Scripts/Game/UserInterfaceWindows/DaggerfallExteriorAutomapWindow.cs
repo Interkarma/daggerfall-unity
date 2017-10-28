@@ -162,6 +162,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Panel dummyPanelCompass = null; // used to determine correct compass position
 
+        Panel panelCaption = null; // used to place and show caption label
+
         // these boolean flags are used to indicate which mouse button was pressed over which gui button/element - these are set in the event callbacks
 #pragma warning disable 414
         bool leftMouseClickedOnPanelAutomap = false; // used for debug teleport mode clicks
@@ -202,6 +204,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         RenderTexture renderTextureExteriorAutomap = null; // render texture in which exterior automap camera will render into
         Texture2D textureExteriorAutomap = null; // render texture will converted to this texture so that it can be drawn in panelRenderExteriorAutomap
 
+        Texture2D textureBackgroundAlternative1;
+        Texture2D textureBackgroundAlternative2;
+        Texture2D textureBackgroundAlternative3;
+
         int renderTextureExteriorAutomapDepth = 16;
         int oldRenderTextureExteriorAutomapWidth; // used to store previous width of exterior automap render texture to react to changes to NativePanel's size and react accordingly by setting texture up with new widht and height again
         int oldRenderTextureExteriorAutomapHeight; // used to store previous height of exterior automap render texture to react to changes to NativePanel's size and react accordingly by setting texture up with new widht and height again
@@ -236,34 +242,29 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             gameobjectExteriorAutomap.transform.rotation = Quaternion.Euler(Vector3.zero);
 
             // Load native texture
-            imgFile = new ImgFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, nativeImgName), FileUsage.UseMemory, false);
-            imgFile.LoadPalette(Path.Combine(DaggerfallUnity.Instance.Arena2Path, imgFile.PaletteName));
-            bitmap = imgFile.GetDFBitmap();
-            nativeTexture = new Texture2D(bitmap.Width, bitmap.Height, TextureFormat.ARGB32, false);
-            nativeTexture.SetPixels32(imgFile.GetColor32(bitmap, 0));
-            nativeTexture.Apply(false, false); // make readable
+            nativeTexture = DaggerfallUI.GetTextureFromImg(nativeImgName, TextureFormat.ARGB32, false);
             nativeTexture.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
             if (!nativeTexture)
                 throw new Exception("DaggerfallExteriorAutomapWindow: Could not load native texture (AMAP00I0.IMG).");
-            
+
             // Load caption line
-            imgFile = new ImgFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, nativeImgNameCaption), FileUsage.UseMemory, false);
-            imgFile.LoadPalette(Path.Combine(DaggerfallUnity.Instance.Arena2Path, imgFile.PaletteName));
-            bitmap = imgFile.GetDFBitmap();
-            Texture2D nativeTextureCaption = new Texture2D(bitmap.Width, bitmap.Height, TextureFormat.ARGB32, false);
-            nativeTextureCaption.SetPixels32(imgFile.GetColor32(bitmap, 0));
-            nativeTextureCaption.Apply(false, false); // make readable
+            Texture2D nativeTextureCaption = DaggerfallUI.GetTextureFromImg(nativeImgNameCaption, TextureFormat.ARGB32, true);
             nativeTextureCaption.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
             if (!nativeTextureCaption)
                 throw new Exception("DaggerfallExteriorAutomapWindow: Could not load native texture (TOWN00I0.IMG).");
-            pixelsCaption = nativeTextureCaption.GetPixels(0, 0, 320, 10);
+
+            Rect rectPanelCaption = new Rect();
+            rectPanelCaption.position = new Vector2(0, 200 - 10);
+            rectPanelCaption.size = new Vector2(320, 10);
+            panelCaption = DaggerfallUI.AddPanel(rectPanelCaption, NativePanel);
 
             // set caption line in bottom part of exterior automap window background image texture
-            nativeTexture.SetPixels(0, 0, 320, 10, pixelsCaption);
-            nativeTexture.Apply(false);
+            panelCaption.BackgroundTexture = nativeTextureCaption;
 
-            // store background graphics from from background image
-            backgroundOriginal = nativeTexture.GetPixels(0, 29, nativeTexture.width, nativeTexture.height - 29);
+            // store background graphics from from background image            
+            int width = (int)(320 * (nativeTexture.width / 320f));
+            int height = (int)((200 - 29) * (nativeTexture.height / 200f));
+            backgroundOriginal = nativeTexture.GetPixels((int)(0 * (nativeTexture.width / 320f)), (int)(29 * (nativeTexture.height / 200f)), width, height);
 
             backgroundAlternative1 = new Color[backgroundOriginal.Length];
             for (int i = 0; i < backgroundOriginal.Length; ++i)
@@ -273,6 +274,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 backgroundAlternative1[i].b = 0.0f;
                 backgroundAlternative1[i].a = 1.0f;
             }
+            textureBackgroundAlternative1 = new Texture2D(width, height, TextureFormat.ARGB32, false);
+            textureBackgroundAlternative1.SetPixels(backgroundAlternative1);
+            textureBackgroundAlternative1.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
+            textureBackgroundAlternative1.Apply(false, true);
 
             backgroundAlternative2 = new Color[backgroundOriginal.Length];
             for (int i = 0; i < backgroundOriginal.Length; ++i)
@@ -282,6 +287,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 backgroundAlternative2[i].b = 0.3f;
                 backgroundAlternative2[i].a = 1.0f;
             }
+            textureBackgroundAlternative2 = new Texture2D(width, height, TextureFormat.ARGB32, false);
+            textureBackgroundAlternative2.SetPixels(backgroundAlternative2);
+            textureBackgroundAlternative2.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
+            textureBackgroundAlternative2.Apply(false, true);
 
             backgroundAlternative3 = new Color[backgroundOriginal.Length];
             for (int i = 0; i < backgroundOriginal.Length; ++i)
@@ -291,6 +300,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 backgroundAlternative3[i].b = 0.18f;
                 backgroundAlternative3[i].a = 1.0f;
             }
+            textureBackgroundAlternative3 = new Texture2D(width, height, TextureFormat.ARGB32, false);
+            textureBackgroundAlternative3.SetPixels(backgroundAlternative3);
+            textureBackgroundAlternative3.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
+            textureBackgroundAlternative3.Apply(false, true);
 
             // Always dim background
             ParentPanel.BackgroundColor = ScreenDimColor;
@@ -1103,8 +1116,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionSwitchToExteriorAutomapBackgroundOriginal()
         {
-            nativeTexture.SetPixels(0, 29, nativeTexture.width, nativeTexture.height - 29, backgroundOriginal);
-            nativeTexture.Apply(false);
+            dummyPanelAutomap.BackgroundTexture = null;
             updateAutomapView();
         }
 
@@ -1113,8 +1125,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionSwitchToExteriorAutomapBackgroundAlternative1()
         {
-            nativeTexture.SetPixels(0, 29, nativeTexture.width, nativeTexture.height - 29, backgroundAlternative1);
-            nativeTexture.Apply(false);
+            dummyPanelAutomap.BackgroundTexture = textureBackgroundAlternative1;
             updateAutomapView();
         }
 
@@ -1123,8 +1134,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionSwitchToExteriorAutomapBackgroundAlternative2()
         {
-            nativeTexture.SetPixels(0, 29, nativeTexture.width, nativeTexture.height - 29, backgroundAlternative2);
-            nativeTexture.Apply(false);
+            dummyPanelAutomap.BackgroundTexture = textureBackgroundAlternative2;
             updateAutomapView();
         }
 
@@ -1133,8 +1143,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionSwitchToExteriorAutomapBackgroundAlternative3()
         {
-            nativeTexture.SetPixels(0, 29, nativeTexture.width, nativeTexture.height - 29, backgroundAlternative3);
-            nativeTexture.Apply(false);
+            dummyPanelAutomap.BackgroundTexture = textureBackgroundAlternative3;
             updateAutomapView();
         }
 

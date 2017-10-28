@@ -9,6 +9,7 @@ using System;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect.Arena2;
 using System.Collections.Generic;
+using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using UnityEngine;
 using DaggerfallConnect.FallExe;
@@ -17,9 +18,34 @@ namespace DaggerfallWorkshop.Game
 {
     public partial class TalkManager : IMacroContextProvider
     {
+        /// <summary>
+        /// Oaths by race.
+        /// </summary>
+        enum RacialOaths
+        {
+            None = 0,
+            Nord = 201,
+            Khajiit = 202,
+            Redguard = 203,
+            Breton = 204,
+            Argonian = 205,
+            Bosmer = 206,
+            Altmer = 207,
+            Dunmer = 208,
+        }
+
+        public class TalkManagerContext
+        {
+            public ListItem currentQuestionListItem;
+            public Races npcRace;
+        }
+
         public MacroDataSource GetMacroDataSource()
         {
-            return new TalkManagerDataSource(this.currentQuestionListItem);
+            TalkManagerContext context = new TalkManagerContext();
+            context.currentQuestionListItem = this.currentQuestionListItem;
+            context.npcRace = this.npcData.race;
+            return new TalkManagerDataSource(context);
         }
 
         /// <summary>
@@ -28,10 +54,10 @@ namespace DaggerfallWorkshop.Game
         private class TalkManagerDataSource : MacroDataSource
         {
 
-            private TalkManager.ListItem parent;
-            public TalkManagerDataSource(TalkManager.ListItem item)
+            private TalkManagerContext parent;
+            public TalkManagerDataSource(TalkManagerContext context)
             {
-                this.parent = item;
+                this.parent = context;
             }
 
             public override string LocationDirection()
@@ -41,7 +67,7 @@ namespace DaggerfallWorkshop.Game
                 //    return GameManager.Instance.TalkManager.GetQuestLocationDirection();
                 //}
                 //else if (parent.questionType == QuestionType.LocalBuilding)
-                if (parent.questionType == QuestionType.LocalBuilding)
+                if (parent.currentQuestionListItem.questionType == QuestionType.LocalBuilding)
                 {
                     return GameManager.Instance.TalkManager.GetKeySubjectLocationDirection();
                 }
@@ -50,28 +76,67 @@ namespace DaggerfallWorkshop.Game
 
             public override string DialogHint()
             {
-                if (parent.questionType == QuestionType.LocalBuilding)
+                if (parent.currentQuestionListItem.questionType == QuestionType.LocalBuilding)
                 {
                     return GameManager.Instance.TalkManager.GetKeySubjectLocationHint();
                 }
-                else if (parent.questionType == QuestionType.QuestLocation || parent.questionType == QuestionType.QuestPerson || parent.questionType == QuestionType.QuestItem)
+                else if (parent.currentQuestionListItem.questionType == QuestionType.QuestLocation || parent.currentQuestionListItem.questionType == QuestionType.QuestPerson || parent.currentQuestionListItem.questionType == QuestionType.QuestItem)
                 {
-                    return GameManager.Instance.TalkManager.GetDialogHint(parent);
+                    return GameManager.Instance.TalkManager.GetDialogHint(parent.currentQuestionListItem);
                 }
                 return "never mind...";
             }
 
             public override string DialogHint2()
             {
-                if (parent.questionType == QuestionType.LocalBuilding)
+                if (parent.currentQuestionListItem.questionType == QuestionType.LocalBuilding)
                 {
                     return GameManager.Instance.TalkManager.GetKeySubjectLocationHint();
                 }
-                else if (parent.questionType == QuestionType.QuestLocation || parent.questionType == QuestionType.QuestPerson || parent.questionType == QuestionType.QuestItem)
+                else if (parent.currentQuestionListItem.questionType == QuestionType.QuestLocation || parent.currentQuestionListItem.questionType == QuestionType.QuestPerson || parent.currentQuestionListItem.questionType == QuestionType.QuestItem)
                 {
-                    return GameManager.Instance.TalkManager.GetDialogHint2(parent);
+                    return GameManager.Instance.TalkManager.GetDialogHint2(parent.currentQuestionListItem);
                 }
                 return "never mind...";
+            }
+            public override string Oath()
+            {
+                RacialOaths whichOath = RacialOaths.None;
+                switch (parent.npcRace)
+                {
+                    case Races.Argonian:
+                        whichOath = RacialOaths.Argonian;
+                        break;
+                    case Races.Breton:
+                        whichOath = RacialOaths.Breton;
+                        break;
+                    case Races.DarkElf:
+                        whichOath = RacialOaths.Dunmer;
+                        break;
+                    case Races.HighElf:
+                        whichOath = RacialOaths.Altmer;
+                        break;
+                    case Races.Khajiit:
+                        whichOath = RacialOaths.Khajiit;
+                        break;
+                    case Races.Nord:
+                        whichOath = RacialOaths.Nord;
+                        break;
+                    case Races.Redguard:
+                        whichOath = RacialOaths.Redguard;
+                        break;
+                    case Races.Vampire:
+                        whichOath = RacialOaths.Dunmer;
+                        break;
+                    case Races.Wereboar:
+                    case Races.Werewolf:
+                        whichOath = RacialOaths.None;
+                        break;
+                    case Races.WoodElf:
+                        whichOath = RacialOaths.Bosmer;
+                        break;
+                }
+                return DaggerfallUnity.Instance.TextProvider.GetRandomText((int)whichOath);
             }
         }
     }

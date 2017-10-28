@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Michael Rauter (Nystul)
 // 
 // Notes:
 //
@@ -54,11 +54,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         bool wrapText = false; // wrap text - but will tear words that are reaching
         bool wrapWords = false; // wrap words - no word tearing
 
-        bool makeTextureNoLongerReadable = true; // in pixel-wise scroll mode with restricted render area this flag is set to false since textures must be readable for this mode to work
-
-        // restricted render area can be used to force label rendering inside this rect (used for text rendering in window frames where text is larger than frame)
-        bool useRestrictedRenderArea = false;
-        Rect rectRestrictedRenderArea;
+        bool makeTextureNoLongerReadable = true; // in pixel-wise scroll mode with restricted render area this flag is set to false since textures must be readable for this mode to work        
 
         float textScale = 1.0f; // scale text 
 
@@ -176,13 +172,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// <summary>
         /// set a restricted render area for the textlabel - the textlabel's content will only be rendered inside the specified Rect's bounds
         /// </summary>
-        public Rect RectRestrictedRenderArea
+        new public Rect RectRestrictedRenderArea
         {
             get { return rectRestrictedRenderArea; }
             set
             {
-                rectRestrictedRenderArea = value;
-                useRestrictedRenderArea = true;
+                ((BaseScreenComponent)this).RectRestrictedRenderArea = value;
                 makeTextureNoLongerReadable = false;
             }
         }

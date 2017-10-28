@@ -132,7 +132,12 @@ namespace DaggerfallWorkshop.Game
         // current target npc for conversion
         MobilePersonNPC targetMobileNPC = null;
         StaticNPC targetStaticNPC = null;
-        FactionFile.SocialGroups npcSocialGroup;
+        public class NPCData
+        {
+            public Races race;
+            public FactionFile.SocialGroups socialGroup;
+        }
+        NPCData npcData;
 
         // last target npc for a conversion (null if not talked to any mobile npc yet)
         MobilePersonNPC lastTargetMobileNPC = null;
@@ -413,7 +418,9 @@ namespace DaggerfallWorkshop.Game
             nameNPC = targetMobileNPC.NameNPC;
             DaggerfallUI.Instance.TalkWindow.UpdateNameNPC();
 
-            npcSocialGroup = FactionFile.SocialGroups.Commoners;
+            npcData = new NPCData();
+            npcData.socialGroup = FactionFile.SocialGroups.Commoners;
+            npcData.race = targetMobileNPC.Race;
 
             this.reactionToPlayer = reactionToPlayer;
 
@@ -444,7 +451,10 @@ namespace DaggerfallWorkshop.Game
 
             FactionFile.FactionData factionData;
             GameManager.Instance.PlayerEntity.FactionData.GetFactionData(targetStaticNPC.Data.factionID, out factionData);
-            npcSocialGroup = (FactionFile.SocialGroups)factionData.sgroup;
+
+            npcData = new NPCData();
+            npcData.socialGroup = (FactionFile.SocialGroups)factionData.sgroup;
+            npcData.race = Races.Breton; // TODO: find a way to get race for static npc
 
             this.reactionToPlayer = reactionToPlayer;
 
@@ -1281,7 +1291,7 @@ namespace DaggerfallWorkshop.Game
                         string captionString = questResourceInfo.Key;
                         item.caption = captionString;
 
-                        bool IsPlayerInSameLocationWorldCell = ((Questing.Person)questResourceInfo.Value.questResource).IsPlayerInSameLocationWorldCell();
+                        bool IsPlayerInSameLocationWorldCell = false;  //((Questing.Person)questResourceInfo.Value.questResource).IsPlayerInSameLocationWorldCell();
                         if (questResourceInfo.Value.availableForDialog && // only make it available for talk if it is not "hidden" by dialog link command
                             questResourceInfo.Value.hasEntryInWhereIs &&
                             IsPlayerInSameLocationWorldCell)
@@ -1349,56 +1359,6 @@ namespace DaggerfallWorkshop.Game
                 recordIndex = flatData.faceIndex;
         }
 
-        #endregion
-
-        #region event handlers
-
-        private void OnMapPixelChanged(DFPosition mapPixel)
-        {
-            AssembleTopicLists();
-        }
-
-        private void OnTransitionToExterior(PlayerEnterExit.TransitionEventArgs args)
-        {
-            AssembleTopicLists();
-        }
-
-        private void OnTransitionToDungeonExterior(PlayerEnterExit.TransitionEventArgs args)
-        {
-            AssembleTopicLists();
-        }
-
-        void OnLoadEvent(SaveData_v1 saveData)
-        {
-            AssembleTopicLists();
-        }
-
-        private string getRecordIdByNpcsSocialGroup(int textRecordIdDefault, int textRecordIdGuildMembers, int textRecordIdMerchants, int textRecordIdNobility, int textRecordIdScholars, int textRecordIdUnderworld)
-        {
-            switch (npcSocialGroup)
-            {
-                case FactionFile.SocialGroups.None:
-                case FactionFile.SocialGroups.Commoners:
-                case FactionFile.SocialGroups.SGroup10:
-                case FactionFile.SocialGroups.SGroup5:
-                case FactionFile.SocialGroups.SGroup8:
-                case FactionFile.SocialGroups.SGroup9:
-                case FactionFile.SocialGroups.SupernaturalBeings:
-                default:
-                    return expandRandomTextRecord(textRecordIdDefault);
-                case FactionFile.SocialGroups.GuildMembers:
-                    return expandRandomTextRecord(textRecordIdGuildMembers);
-                case FactionFile.SocialGroups.Merchants:
-                    return expandRandomTextRecord(textRecordIdMerchants);
-                case FactionFile.SocialGroups.Nobility:
-                    return expandRandomTextRecord(textRecordIdNobility);
-                case FactionFile.SocialGroups.Scholars:
-                    return expandRandomTextRecord(textRecordIdScholars);
-                case FactionFile.SocialGroups.Underworld:
-                    return expandRandomTextRecord(textRecordIdUnderworld); // todo: this needs to be tested with a npc of social group underworld in vanilla df
-            }
-        }
-
         private string getAnswerFromTokensArray(ulong questID, List<TextFile.Token[]> answers)
         {
             int randomNumAnswer = UnityEngine.Random.Range(0, answers.Count);
@@ -1435,7 +1395,57 @@ namespace DaggerfallWorkshop.Game
 
             return (tokens[0].text);
         }
-            
+
         #endregion
+
+        #region event handlers
+
+        private void OnMapPixelChanged(DFPosition mapPixel)
+        {
+            AssembleTopicLists();
+        }
+
+        private void OnTransitionToExterior(PlayerEnterExit.TransitionEventArgs args)
+        {
+            AssembleTopicLists();
+        }
+
+        private void OnTransitionToDungeonExterior(PlayerEnterExit.TransitionEventArgs args)
+        {
+            AssembleTopicLists();
+        }
+
+        void OnLoadEvent(SaveData_v1 saveData)
+        {
+            AssembleTopicLists();
+        }
+
+        private string getRecordIdByNpcsSocialGroup(int textRecordIdDefault, int textRecordIdGuildMembers, int textRecordIdMerchants, int textRecordIdNobility, int textRecordIdScholars, int textRecordIdUnderworld)
+        {
+            switch (npcData.socialGroup)
+            {
+                case FactionFile.SocialGroups.None:
+                case FactionFile.SocialGroups.Commoners:
+                case FactionFile.SocialGroups.SGroup10:
+                case FactionFile.SocialGroups.SGroup5:
+                case FactionFile.SocialGroups.SGroup8:
+                case FactionFile.SocialGroups.SGroup9:
+                case FactionFile.SocialGroups.SupernaturalBeings:
+                default:
+                    return expandRandomTextRecord(textRecordIdDefault);
+                case FactionFile.SocialGroups.GuildMembers:
+                    return expandRandomTextRecord(textRecordIdGuildMembers);
+                case FactionFile.SocialGroups.Merchants:
+                    return expandRandomTextRecord(textRecordIdMerchants);
+                case FactionFile.SocialGroups.Nobility:
+                    return expandRandomTextRecord(textRecordIdNobility);
+                case FactionFile.SocialGroups.Scholars:
+                    return expandRandomTextRecord(textRecordIdScholars);
+                case FactionFile.SocialGroups.Underworld:
+                    return expandRandomTextRecord(textRecordIdUnderworld); // todo: this needs to be tested with a npc of social group underworld in vanilla df
+            }
+        }
+
+        #endregion         
     }
 }

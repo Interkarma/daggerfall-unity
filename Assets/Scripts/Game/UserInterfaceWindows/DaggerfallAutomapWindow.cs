@@ -214,6 +214,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Texture2D nativeTexture; // background image will be stored in this Texture2D
 
+        Texture2D nativeTextureGrid2D;
+        Texture2D nativeTextureGrid3D;
+
         Color[] pixelsGrid2D; // grid button texture for 2D view image will be stored in here
         Color[] pixelsGrid3D; // grid button texture for 3D view image will be stored in here
 
@@ -221,6 +224,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Color[] backgroundAlternative1; // texture with first alternative background will be stored in here
         Color[] backgroundAlternative2; // texture with second alternative background will be stored in here
         Color[] backgroundAlternative3; // texture with third alternative background will be stored in here
+
+        Texture2D textureBackgroundAlternative1;
+        Texture2D textureBackgroundAlternative2;
+        Texture2D textureBackgroundAlternative3;
 
         HUDCompass compass = null;
 
@@ -253,42 +260,37 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         protected override void Setup()
         {           
-            ImgFile imgFile = null;
-            DFBitmap bitmap = null;
-
             if (isSetup) // don't setup twice!
                 return;
 
             initGlobalResources(); // initialize gameobjectAutomap, daggerfallAutomap and layerAutomap
 
             // Load native texture
-            imgFile = new ImgFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, nativeImgName), FileUsage.UseMemory, false);
-            imgFile.LoadPalette(Path.Combine(DaggerfallUnity.Instance.Arena2Path, imgFile.PaletteName));
-            bitmap = imgFile.GetDFBitmap();
-            nativeTexture = new Texture2D(bitmap.Width, bitmap.Height, TextureFormat.ARGB32, false);
-            nativeTexture.SetPixels32(imgFile.GetColor32(bitmap, 0));
-            nativeTexture.Apply(false, false); // make readable
+            nativeTexture = DaggerfallUI.GetTextureFromImg(nativeImgName, TextureFormat.ARGB32, false);
             nativeTexture.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
             if (!nativeTexture)
                 throw new Exception("DaggerfallAutomapWindow: Could not load native texture (AMAP00I0.IMG).");
-            
+
             // Load alternative Grid Icon (3D View Grid graphics)
-            imgFile = new ImgFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, nativeImgNameGrid3D), FileUsage.UseMemory, false);
-            imgFile.LoadPalette(Path.Combine(DaggerfallUnity.Instance.Arena2Path, imgFile.PaletteName));
-            bitmap = imgFile.GetDFBitmap();
-            Texture2D nativeTextureGrid3D = new Texture2D(bitmap.Width, bitmap.Height, TextureFormat.ARGB32, false);
-            nativeTextureGrid3D.SetPixels32(imgFile.GetColor32(bitmap, 0));
-            nativeTextureGrid3D.Apply(false, false); // make readable
+            nativeTextureGrid3D = DaggerfallUI.GetTextureFromImg(nativeImgNameGrid3D, TextureFormat.ARGB32, false);
             nativeTextureGrid3D.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
             if (!nativeTextureGrid3D)
-                throw new Exception("DaggerfallAutomapWindow: Could not load native texture (AMAP01I0.IMG).");
-            pixelsGrid3D = nativeTextureGrid3D.GetPixels(0, 0, 27, 19);
+                throw new Exception("DaggerfallAutomapWindow: Could not load native texture (AMAP01I0.IMG).");            
+            pixelsGrid3D = nativeTextureGrid3D.GetPixels((int)(0), (int)((200 - 0 - 19) * (nativeTextureGrid3D.height / 200f)), (int)(27 * (nativeTextureGrid3D.width / 320f)), (int)(19 * (nativeTextureGrid3D.height / 200f)));
 
-            // Cut out 2D View Grid graphics from background image
-            pixelsGrid2D = nativeTexture.GetPixels(78, nativeTexture.height - 171 - 19, 27, 19);
+            // Cut out 2D View Grid graphics from background image            
+            int width = (int)(27 * (nativeTexture.width / 320f));
+            int height = (int)(19 * (nativeTexture.height / 200f));
+            pixelsGrid2D = nativeTexture.GetPixels((int)(78 * (nativeTexture.width / 320f)), (int)((200 - 171 - 19) * (nativeTexture.height / 200f)), width, height);
+            nativeTextureGrid2D = new Texture2D(width, height, TextureFormat.ARGB32, false);
+            nativeTextureGrid2D.SetPixels(pixelsGrid2D);
+            nativeTextureGrid2D.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
+            nativeTextureGrid2D.Apply(false, false);
 
-            // store background graphics from from background image
-            backgroundOriginal = nativeTexture.GetPixels(0, 29, nativeTexture.width, nativeTexture.height - 29);
+            // store background graphics from from background image            
+            width = (int)(320 * (nativeTexture.width / 320f));
+            height = (int)((200 - 29) * (nativeTexture.height / 200f));
+            backgroundOriginal = nativeTexture.GetPixels((int)(0 * (nativeTexture.width / 320f)), (int)(29 * (nativeTexture.height / 200f)), width, height);
 
             backgroundAlternative1 = new Color[backgroundOriginal.Length];
             for (int i = 0; i < backgroundOriginal.Length; ++i)
@@ -298,6 +300,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 backgroundAlternative1[i].b = 0.0f;
                 backgroundAlternative1[i].a = 1.0f;
             }
+            textureBackgroundAlternative1 = new Texture2D(width, height, TextureFormat.ARGB32, false);
+            textureBackgroundAlternative1.SetPixels(backgroundAlternative1);
+            textureBackgroundAlternative1.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
+            textureBackgroundAlternative1.Apply(false, true);
 
             backgroundAlternative2 = new Color[backgroundOriginal.Length];
             for (int i = 0; i < backgroundOriginal.Length; ++i)
@@ -307,6 +313,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 backgroundAlternative2[i].b = 0.3f;
                 backgroundAlternative2[i].a = 1.0f;
             }
+            textureBackgroundAlternative2 = new Texture2D(width, height, TextureFormat.ARGB32, false);
+            textureBackgroundAlternative2.SetPixels(backgroundAlternative2);
+            textureBackgroundAlternative2.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
+            textureBackgroundAlternative2.Apply(false, true);
 
             backgroundAlternative3 = new Color[backgroundOriginal.Length];
             for (int i = 0; i < backgroundOriginal.Length; ++i)
@@ -316,6 +326,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 backgroundAlternative3[i].b = 0.2f;
                 backgroundAlternative3[i].a = 1.0f;
             }
+            textureBackgroundAlternative3 = new Texture2D(width, height, TextureFormat.ARGB32, false);
+            textureBackgroundAlternative3.SetPixels(backgroundAlternative3);
+            textureBackgroundAlternative3.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
+            textureBackgroundAlternative3.Apply(false, true);
 
             // Always dim background
             ParentPanel.BackgroundColor = ScreenDimColor;
@@ -1540,8 +1554,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionSwitchToAutomapBackgroundOriginal()
         {
-            nativeTexture.SetPixels(0, 29, nativeTexture.width, nativeTexture.height - 29, backgroundOriginal);
-            nativeTexture.Apply(false);
+            dummyPanelAutomap.BackgroundTexture = null;
             updateAutomapView();
         }
 
@@ -1550,8 +1563,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionSwitchToAutomapBackgroundAlternative1()
         {
-            nativeTexture.SetPixels(0, 29, nativeTexture.width, nativeTexture.height - 29, backgroundAlternative1);
-            nativeTexture.Apply(false);
+            dummyPanelAutomap.BackgroundTexture = textureBackgroundAlternative1;
             updateAutomapView();
         }
 
@@ -1560,8 +1572,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionSwitchToAutomapBackgroundAlternative2()
         {
-            nativeTexture.SetPixels(0, 29, nativeTexture.width, nativeTexture.height - 29, backgroundAlternative2);
-            nativeTexture.Apply(false);
+            dummyPanelAutomap.BackgroundTexture = textureBackgroundAlternative2;
             updateAutomapView();
         }
 
@@ -1570,8 +1581,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionSwitchToAutomapBackgroundAlternative3()
         {
-            nativeTexture.SetPixels(0, 29, nativeTexture.width, nativeTexture.height - 29, backgroundAlternative3);
-            nativeTexture.Apply(false);
+            dummyPanelAutomap.BackgroundTexture = textureBackgroundAlternative3;
             updateAutomapView();
         }
 
@@ -1588,8 +1598,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 case AutomapViewMode.View2D:
                     // update grid graphics
-                    nativeTexture.SetPixels(78, nativeTexture.height - 171 - 19, 27, 19, pixelsGrid2D);
-                    nativeTexture.Apply(false);
+                    gridButton.BackgroundTexture = nativeTextureGrid2D;
                     saveCameraTransformView3D();
                     restoreOldCameraTransformViewFromTop();
                     cameraAutomap.fieldOfView = fieldOfViewCameraMode2D;
@@ -1598,8 +1607,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     break;
                 case AutomapViewMode.View3D:
                     // update grid graphics
-                    nativeTexture.SetPixels(78, nativeTexture.height - 171 - 19, 27, 19, pixelsGrid3D);
-                    nativeTexture.Apply(false);
+                    gridButton.BackgroundTexture = nativeTextureGrid3D;
                     saveCameraTransformViewFromTop();
                     restoreOldCameraTransformView3D();
                     cameraAutomap.fieldOfView = fieldOfViewCameraMode3D;
