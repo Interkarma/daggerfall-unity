@@ -695,7 +695,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else if (selectedTabPage == TabPages.MagicItems)
             {
                 // Enchanted items
-                if (item.IsEnchanted)
+                if (item.IsEnchanted || item.IsOfTemplate((int)MiscItems.Spellbook))
                     localItemsFiltered.Add(item);
             }
             else if (selectedTabPage == TabPages.Ingredients)
@@ -707,7 +707,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else if (selectedTabPage == TabPages.ClothingAndMisc)
             {
                 // Everything else
-                if (!isWeaponOrArmor && !item.IsEnchanted && !item.IsIngredient)
+                if (!isWeaponOrArmor && !item.IsEnchanted && !item.IsIngredient && !item.IsOfTemplate((int)MiscItems.Spellbook))
                     localItemsFiltered.Add(item);
             }
         }
