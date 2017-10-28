@@ -44,7 +44,7 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
     Color unselectedTextColor = new Color(0.6f, 0.6f, 0.6f, 1f);
     Color selectedTextColor = new Color32(243, 239, 44, 255);
     Color listBoxBackgroundColor = new Color(0.1f, 0.1f, 0.1f, 0.5f);
-    Color scrollBarBackgroundColor = new Color(0.0f, 0.5f, 0.0f, 0.4f);
+    Color sliderBackgroundColor = new Color(0.0f, 0.5f, 0.0f, 0.4f);
 
     // Settings
     Checkbox StartInDungeon;
@@ -385,7 +385,7 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
         slider.Position = new Vector2(0, y);
         slider.Size = new Vector2(80.0f, 5.0f);
         slider.DisplayUnits = 20;
-        slider.BackgroundColor = Color.grey;
+        slider.BackgroundColor = sliderBackgroundColor;
         slider.TintColor = new Color(153, 153, 0);
         panel.Components.Add(slider);
 
