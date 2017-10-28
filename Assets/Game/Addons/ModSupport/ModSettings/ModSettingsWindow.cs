@@ -561,7 +561,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             slider.Indicator.TextScale = textScale;
             slider.Indicator.TextColor = Color.white;
             slider.Indicator.ShadowColor = Color.clear;
-            slider.Indicator.HorizontalTextAlignment = HorizontalAlignment.Right;
+            slider.Indicator.HorizontalTextAlignment = TextLabel.HorizontalTextAlignmentSetting.Right;
         }
 
         private Tuple<TextBox, TextBox> AddTuple(string values)
