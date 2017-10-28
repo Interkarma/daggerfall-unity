@@ -184,7 +184,7 @@ namespace DaggerfallWorkshop.Utility
             { "%spt", MagickaMax }, // Max spell points
             { "%str", Str }, // Amount of strength
             { "%sub", null }, // ?
-            { "%t", null },   // Regent's Title
+            { "%t", Title },  // Regent's Title
             { "%tcn", null }, // Travel city name
             { "%thd", ToHitMod }, // Combat odds
             { "%tim", Time }, // Time
@@ -399,6 +399,43 @@ namespace DaggerfallWorkshop.Utility
                     return "shrine";
                 default:
                     return gps.CurrentLocationType.ToString();
+            }
+        }
+
+        private static string Title(IMacroContextProvider mcp)
+        {   // %t
+            PlayerGPS gps = GameManager.Instance.PlayerGPS;
+            FactionFile.FactionData regionFaction;
+            GameManager.Instance.PlayerEntity.FactionData.FindFactionByTypeAndRegion(7, gps.CurrentRegionIndex + 1, out regionFaction);
+
+            switch (regionFaction.ruler)
+            {
+                case 1:
+                    return "King";
+                case 2:
+                    return "Queen";
+                case 3:
+                    return "Duke";
+                case 4:
+                    return "Duchess";
+                case 5:
+                    return "Marquis";
+                case 6:
+                    return "Marquise";
+                case 7:
+                    return "Count";
+                case 8:
+                    return "Countess";
+                case 9:
+                    return "Baron";
+                case 10:
+                    return "Baroness";
+                case 11:
+                    return "Lord";
+                case 12:
+                    return "Lady";
+                default:
+                    return "Lord";
             }
         }
 
