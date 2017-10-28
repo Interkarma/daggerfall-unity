@@ -44,7 +44,7 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
     Color unselectedTextColor = new Color(0.6f, 0.6f, 0.6f, 1f);
     Color selectedTextColor = new Color32(243, 239, 44, 255);
     Color listBoxBackgroundColor = new Color(0.1f, 0.1f, 0.1f, 0.5f);
-    Color scrollBarBackgroundColor = new Color(0.0f, 0.5f, 0.0f, 0.4f);
+    Color sliderBackgroundColor = new Color(0.0f, 0.5f, 0.0f, 0.4f);
 
     // Settings
     Checkbox StartInDungeon;
@@ -54,16 +54,12 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
     Checkbox Crosshair;
 
     HorizontalSlider mouseSensitivitySlider;
-    TextLabel mouseSensitivityNumberLabel;
 
     Checkbox DungeonLightShadows;
     Checkbox UseLegacyDeferred;
 
     HorizontalSlider fovSlider;
-    TextLabel fovNumberLabel;
-
     HorizontalSlider terrainDistanceSlider;
-    TextLabel terrainDistanceNumberLabel;
 
     ListBox ShadowResolutionMode;
 
@@ -90,21 +86,6 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
     const float itemSpacing = 10f; // Space between items
     const float nextPanel = 20f; // Vertical offset for panels
     float y = 2f; // Current position
-
-    // Fov
-    const int fovMin = 60;
-    const int fovMax = 80;
-    int fovLabel;
-
-    // Mouse Sensitivity
-    const int sensitivityMin = 1; /* 0.1 */
-    const int sensitivityMax = 40; /* 4.0 */
-    float sensitivityLabel;
-
-    // Terrain Distance
-    const int terrainDistanceMin = 1;
-    const int terrainDistanceMax = 4;
-    int terrainDistanceLabel;
 
     #endregion
 
@@ -167,8 +148,7 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
         AddTextTitle(leftPanel, controlsText);
 
         // Mouse
-        int sensitivityStartValue = (int)(DaggerfallUnity.Settings.MouseLookSensitivity * 10);
-        AddSlider(leftPanel, sensitivityMin, sensitivityMax, sensitivityStartValue, "Mouse Sensitivity", "Mouse look sensitivity.", mouseSensitivityScroll_OnScroll, out mouseSensitivitySlider, out mouseSensitivityNumberLabel);
+        AddSlider(leftPanel, 0.1f, 4.0f, DaggerfallUnity.Settings.MouseLookSensitivity, "Mouse Sensitivity", "Mouse look sensitivity.", out mouseSensitivitySlider);
 
         // Info
         AddTextTitle(leftPanel, infoText);
@@ -192,12 +172,12 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
         // FOV
         int fovStartValue = DaggerfallUnity.Settings.FieldOfView;
         const string fovToolTip = "The observable world that is seen at any given moment";
-        AddSlider(centerPanel, fovMin, fovMax, fovStartValue, "Field Of View", fovToolTip, fovScroll_OnScroll, out fovSlider, out fovNumberLabel);
+        AddSlider(centerPanel, 60, 80, fovStartValue, "Field Of View", fovToolTip, out fovSlider);
 
         // Terrain distance
         int terraindDistanceStartValue = DaggerfallUnity.Settings.TerrainDistance;
         const string terrainDistanceToolTiP = "Maximum distance of active terrains from player position";
-        AddSlider(centerPanel, terrainDistanceMin, terrainDistanceMax, terraindDistanceStartValue, "Terrain Distance", terrainDistanceToolTiP, terrainDistanceScroll_OnScroll, out terrainDistanceSlider, out terrainDistanceNumberLabel);
+        AddSlider(centerPanel, 1, 4, terraindDistanceStartValue, "Terrain Distance", terrainDistanceToolTiP, out terrainDistanceSlider);
 
         y = nextPanel;
 
@@ -363,19 +343,30 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
     /// <param name="startValue">Initial value on slider.</param>
     /// <param name="title">Descriptive name of settings.</param>
     /// <param name="toolTip">Description of setting.</param>
-    /// <param name="updateIndicator">Action to execute on scroll.</param>
-    /// <param name="slider">Slider bar.</param>
-    /// <param name="indicator">Slider value indicator.</param>
-    void AddSlider(
-        Panel panel,
-        int minValue,
-        int maxValue,
-        int startValue,
-        string title,
-        string toolTip,
-        HorizontalSlider.OnScrollHandler updateIndicator,
-        out HorizontalSlider slider,
-        out TextLabel indicator)
+    void AddSlider(Panel panel, int minValue, int maxValue, int startValue, string title, string toolTip, out HorizontalSlider slider)
+    {
+        slider = GetSlider(panel, title, toolTip);
+        slider.SetIndicator(minValue, maxValue, startValue);
+        slider.IndicatorOffset = 15;
+    }
+
+    /// <summary>
+    /// Add a slider with a numerical indicator.
+    /// </summary>
+    /// <param name="panel">leftPanel, centerPanel or rightPanel.</param>
+    /// <param name="minValue">Minimum value on slider.</param>
+    /// <param name="maxValue">Maximum value on slider.</param>
+    /// <param name="startValue">Initial value on slider.</param>
+    /// <param name="title">Descriptive name of settings.</param>
+    /// <param name="toolTip">Description of setting.</param>
+    void AddSlider(Panel panel, float minValue, float maxValue, float startValue, string title, string toolTip, out HorizontalSlider slider)
+    {
+        slider = GetSlider(panel, title, toolTip);
+        slider.SetIndicator(minValue, maxValue, startValue);
+        slider.IndicatorOffset = 15;
+    }
+
+    private HorizontalSlider GetSlider(Panel panel, string title, string toolTip)
     {
         // Title
         TextLabel titleLabel = new TextLabel();
@@ -390,24 +381,16 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
         y += 8;
 
         // Slider
-        slider = new HorizontalSlider();
+        var slider = new HorizontalSlider();
         slider.Position = new Vector2(0, y);
         slider.Size = new Vector2(80.0f, 5.0f);
         slider.DisplayUnits = 20;
-        slider.TotalUnits = (maxValue - minValue) + 20;
-        slider.ScrollIndex = startValue - minValue;
-        slider.BackgroundColor = scrollBarBackgroundColor;
+        slider.BackgroundColor = sliderBackgroundColor;
         slider.TintColor = new Color(153, 153, 0);
-        slider.OnScroll += updateIndicator;
         panel.Components.Add(slider);
 
-        // Indicator
-        indicator = new TextLabel();
-        indicator.Position = new Vector2(slider.Size.x + 15, y);
-        updateIndicator();
-        panel.Components.Add(indicator);
-
         y += itemSpacing;
+        return slider;
     }
 
     #endregion
@@ -425,13 +408,13 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
         DaggerfallUnity.Settings.HQTooltips = HQTooltips.IsChecked;
         DaggerfallUnity.Settings.Crosshair = Crosshair.IsChecked;
 
-        DaggerfallUnity.Settings.MouseLookSensitivity = sensitivityLabel;
+        DaggerfallUnity.Settings.MouseLookSensitivity = mouseSensitivitySlider.GetValue();
 
         DaggerfallUnity.Settings.DungeonLightShadows = DungeonLightShadows.IsChecked;
         DaggerfallUnity.Settings.UseLegacyDeferred = UseLegacyDeferred.IsChecked;
 
-        DaggerfallUnity.Settings.FieldOfView = fovLabel;
-        DaggerfallUnity.Settings.TerrainDistance = terrainDistanceLabel;
+        DaggerfallUnity.Settings.FieldOfView = fovSlider.Value;
+        DaggerfallUnity.Settings.TerrainDistance = terrainDistanceSlider.Value;
 
         DaggerfallUnity.Settings.ShadowResolutionMode = ShadowResolutionMode.SelectedIndex;
 
@@ -449,34 +432,6 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
     private void mainFilterMode_OnSelectItem()
     {
         ParentPanel.BackgroundTexture = GetBackground(MainFilterMode.SelectedIndex);
-    }
-
-    /// <summary>
-    /// Update label of FOV indicator.
-    /// </summary>
-    private void fovScroll_OnScroll()
-    {
-        fovLabel = fovSlider.ScrollIndex + fovMin;
-        fovNumberLabel.Text = fovLabel.ToString();
-    }
-
-    /// <summary>
-    /// Update label of Mouse sensitivity indicator.
-    /// </summary>
-    private void mouseSensitivityScroll_OnScroll()
-    {
-        sensitivityLabel = mouseSensitivitySlider.ScrollIndex + sensitivityMin;
-        sensitivityLabel /= 10;
-        mouseSensitivityNumberLabel.Text = sensitivityLabel.ToString();
-    }
-
-    /// <summary>
-    /// Update label of Terrain distance indicator.
-    /// </summary>
-    private void terrainDistanceScroll_OnScroll()
-    {
-        terrainDistanceLabel = terrainDistanceSlider.ScrollIndex + terrainDistanceMin;
-        terrainDistanceNumberLabel.Text = terrainDistanceLabel.ToString();
     }
 
     /// <summary>

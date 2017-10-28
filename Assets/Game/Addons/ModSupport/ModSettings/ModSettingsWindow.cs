@@ -9,6 +9,7 @@
 // Notes:
 //
 
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using IniParser.Model;
@@ -26,43 +27,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
     /// </summary>
     public class ModSettingsWindow : DaggerfallPopupWindow
     {
-        #region Structs
-
-        struct SliderSetup
-        {
-            public HorizontalSlider slider;
-            public TextLabel indicator;
-            public int lowerValue;
-            public bool isFloat;
-            public string[] items;
-
-            public string IndicatorText
-            {
-                get
-                {
-                    int value = slider.ScrollIndex + lowerValue;
-                    if (items != null && items.Length > value)
-                        return items[slider.ScrollIndex];
-                    else if (isFloat)
-                        return (value / 10f).ToString();
-                    else
-                        return value.ToString();
-                }
-            }
-
-            public string KeyValue
-            {
-                get
-                {
-                    if (items != null)
-                        return slider.ScrollIndex.ToString();
-                    return indicator.Text;
-                }
-            }
-        }
-
-        #endregion
-
         #region Fields
 
         readonly Mod mod;
@@ -75,6 +39,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         Button nextPageButton;
         DaggerfallListPickerWindow presetPicker;
         const int spacing = 8;
+        const float textScale = 0.8f;
         const int startX = 10;
         const int startY = 15;
         int x = startX;
@@ -91,14 +56,15 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         List<TextBox> modTextBoxes              = new List<TextBox>();
         List<Checkbox> modCheckboxes            = new List<Checkbox>();
         List<Tuple<TextBox, TextBox>> modTuples = new List<Tuple<TextBox, TextBox>>();
-        List<SliderSetup> modSliders            = new List<SliderSetup>();
+        List<HorizontalSlider> modSliders       = new List<HorizontalSlider>();
 
         // Colors
         Color panelBackgroundColor    = new Color(0, 0, 0, 0.7f);
         Color resetButtonColor        = new Color(1, 0, 0, 0.4f); //red with alpha
         Color saveButtonColor         = new Color(0.0f, 0.5f, 0.0f, 0.4f); //green with alpha
         Color cancelButtonColor       = new Color(0.2f, 0.2f, 0.2f, 0.4f); //grey with alpha
-        Color sectionTitleColor       = new Color(0.16f, 0.26f, 1, 1); // light blue
+        Color sectionTitleColor       = new Color(0.53f, 0.81f, 0.98f, 1); // light blue
+        Color backgroundTitleColor    = new Color(0, 0.8f, 0, 0.1f); //green
 
         #endregion
 
@@ -158,25 +124,16 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             // Read settings
             foreach (SectionData section in data.Sections.Where(x => x.SectionName != ModSettingsReader.internalSection))
             {
-                // Section label
-                TextLabel textLabel = new TextLabel();
-                textLabel.Text = section.SectionName;
-                textLabel.TextColor = sectionTitleColor;
-                textLabel.Position = new Vector2(x, y);
-                textLabel.HorizontalAlignment = HorizontalAlignment.None;
-                currentPanel.Components.Add(textLabel);
-                MovePosition(spacing + 4);
+                // Section title
+                AddSectionTitle(section.SectionName);
+                MovePosition(spacing);
                 List<string> comments = section.Comments;
                 int comment = 0;
 
                 foreach (KeyData key in section.Keys)
                 {
                     // Setting label
-                    TextLabel settingName = new TextLabel();
-                    settingName.Text = key.KeyName;
-                    settingName.Position = new Vector2(x, y);
-                    settingName.HorizontalAlignment = HorizontalAlignment.None;
-                    currentPanel.Components.Add(settingName);
+                    TextLabel settingName = AddKeyName(key.KeyName);
 
                     // Setting field
                     ModSettingsKey configKey;
@@ -197,23 +154,29 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                                 int selected;
                                 if (!int.TryParse(key.Value, out selected))
                                     selected = configKey.multipleChoice.selected;
-                                AddSlider(configKey.multipleChoice.choices, selected, key.KeyName);
+                                var multipleChoice = GetSlider();
+                                multipleChoice.SetIndicator(configKey.multipleChoice.choices, selected);
+                                SetSliderIndicator(multipleChoice);
                                 break;
 
                             case ModSettingsKey.KeyType.Slider:
-                                var slider = configKey.slider;
+                                var sliderKey = configKey.slider;
                                 int startValue;
                                 if (!int.TryParse(key.Value, out startValue))
                                     startValue = configKey.slider.value;
-                                AddSlider(slider.min, slider.max, startValue, key.KeyName);
+                                var slider = GetSlider();
+                                slider.SetIndicator(sliderKey.min, sliderKey.max, startValue);
+                                SetSliderIndicator(slider);
                                 break;
 
                             case ModSettingsKey.KeyType.FloatSlider:
-                                var floatSlider = configKey.floatSlider;
+                                var floatSliderKey = configKey.floatSlider;
                                 float floatStartValue;
                                 if (!float.TryParse(key.Value, out floatStartValue))
                                     floatStartValue = configKey.floatSlider.value;
-                                AddSlider(floatSlider.min, floatSlider.max, floatStartValue, key.KeyName);
+                                var floatSlider = GetSlider();
+                                floatSlider.SetIndicator(floatSliderKey.min, floatSliderKey.max, floatStartValue);
+                                SetSliderIndicator(floatSlider);
                                 break;
 
                             case ModSettingsKey.KeyType.Tuple:
@@ -295,7 +258,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                             case ModSettingsKey.KeyType.MultipleChoice:
                             case ModSettingsKey.KeyType.Slider:
                             case ModSettingsKey.KeyType.FloatSlider:
-                                data[section.SectionName][key.KeyName] = modSliders[slider].KeyValue;
+                                data[section.SectionName][key.KeyName] = modSliders[slider].GetValue().ToString();
                                 slider++;
                                 break;
 
@@ -465,6 +428,49 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         #region Helper Methods
 
+        private void AddSectionTitle(string title)
+        {
+            Panel background = new Panel();
+            background.Position = new Vector2(x, y - 0.5f);
+            background.Size = new Vector2(140, 6.5f);
+            background.BackgroundColor = backgroundTitleColor;
+            background.Outline.Enabled = true;
+            background.Outline.Sides = Sides.Bottom;
+            background.Outline.Color = saveButtonColor;
+            background.Outline.Thickness = 1;
+            currentPanel.Components.Add(background);
+
+            TextLabel textLabel = new TextLabel(DaggerfallUI.Instance.Font5);
+            textLabel.Text = FormattedName(title);
+            textLabel.TextColor = sectionTitleColor;
+            textLabel.ShadowColor = new Color(0.3f, 0.45f, 0.54f, 1);
+            textLabel.TextScale = 0.9f;
+            textLabel.Position = new Vector2(0, 0.5f);
+            textLabel.HorizontalAlignment = HorizontalAlignment.Center;
+            background.Components.Add(textLabel);
+        }
+
+        private TextLabel AddKeyName(string name)
+        {
+            TextLabel textLabel = new TextLabel();
+            textLabel.Text = FormattedName(name);
+            textLabel.ShadowColor = Color.clear;
+            textLabel.TextScale = textScale;
+            textLabel.Position = new Vector2(x, y);
+            textLabel.HorizontalAlignment = HorizontalAlignment.None;
+            currentPanel.Components.Add(textLabel);
+            return textLabel;
+        }
+
+        /// <summary>
+        /// Add a space before uppercase chars.
+        /// </summary>
+        private string FormattedName(string name)
+        {
+            var chars = name.Select(x => Char.IsUpper(x) ? " " + x : x.ToString());
+            return string.Concat(chars.ToArray()).TrimStart(' ');
+        }
+
         /// <summary>
         /// Get a button.
         /// </summary>
@@ -532,56 +538,30 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         }
 
         /// <summary>
-        /// Add a slider with text options.
+        /// Get a slider.
         /// </summary>
-        void AddSlider(string[] items, int selected, string title)
+        private HorizontalSlider GetSlider()
         {
-            AddSlider(0, items.Length - 1, selected, title, false, items);
-        }
+            MovePosition(6);
 
-        /// <summary>
-        /// Add a slider with a numerical indicator.
-        /// </summary>
-        void AddSlider(float minValue, float maxValue, float startValue, string title)
-        {
-            AddSlider((int)(minValue * 10), (int)(maxValue * 10), (int)(startValue * 10), title, true);
-        }
-
-        /// <summary>
-        /// Add a slider with a numerical indicator.
-        /// </summary>
-        void AddSlider(int minValue, int maxValue, int startValue, string title, bool isFloat = false, string[] items = null)
-        {
-            MovePosition(8);
-
-            // Slider
             var slider = new HorizontalSlider();
             slider.Position = new Vector2(x, y);
-            slider.Size = new Vector2(80.0f, 5.0f);
+            slider.Size = new Vector2(80.0f, 4.0f);
             slider.DisplayUnits = 20;
-            slider.TotalUnits = (maxValue - minValue) + 20;
-            slider.ScrollIndex = startValue - minValue;
-            slider.BackgroundColor = Color.grey;
+            slider.BackgroundColor = new Color(0.5f, 0.5f, 0.5f, 0.3f);
             slider.TintColor = new Color(153, 153, 0);
-            slider.OnScroll += UpdateSliderIndicators;
+            modSliders.Add(slider);
             currentPanel.Components.Add(slider);
+            return slider;
+        }
 
-            // Indicator
-            var indicator = new TextLabel();
-            indicator.Position = new Vector2(x + slider.Size.x + 15, y);
-            currentPanel.Components.Add(indicator);
-
-            var sliderSetup = new SliderSetup()
-            {
-                slider = slider,
-                indicator = indicator,
-                lowerValue = minValue,
-                isFloat = isFloat
-            };
-            if (items != null)
-                sliderSetup.items = items;
-            modSliders.Add(sliderSetup);
-            UpdateSliderIndicators();
+        private void SetSliderIndicator(HorizontalSlider slider)
+        {
+            slider.IndicatorOffset = 15;
+            slider.Indicator.TextScale = textScale;
+            slider.Indicator.TextColor = Color.white;
+            slider.Indicator.ShadowColor = Color.clear;
+            slider.Indicator.HorizontalTextAlignment = HorizontalAlignment.Right;
         }
 
         private Tuple<TextBox, TextBox> AddTuple(string values)
@@ -696,27 +676,22 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
                     // Get Name
                     string name = section["PresetName"];
-                    if (name != null)
+                    if (string.IsNullOrEmpty(name))
                     {
-                        presetName = name;
-                    }
-                    else
-                    {
-                        presetName = "Unknown preset";
+                        name = "Unknown preset";
                         Debug.LogError("A preset for mod " + mod.Title + " is missing the key 'PresetName'");
                     }
+                    presetName = name;
 
                     // Get Author (if present)
                     string author = section["PresetAuthor"];
-                    if (author != null)
-                    {
+                    if (!string.IsNullOrEmpty(author))
                         presetName += " by " + author;
-                    }
 
                     // Check Version
                     string presetVersion = section["SettingsVersion"];
                     string settingsVersion = data[ModSettingsReader.internalSection]["SettingsVersion"];
-                    if (presetVersion == null)
+                    if (string.IsNullOrEmpty(presetVersion))
                     {
                         presetName = "[?] " + presetName;
                         Debug.LogError("Preset " + presetName + " for mod " + mod.Title + " is missing the key 'SettingsVersion'");
@@ -804,12 +779,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             }
             else
                 CloseWindow();
-        }
-
-        private void UpdateSliderIndicators()
-        {
-            for (int i = 0; i < modSliders.Count; i++)
-                modSliders[i].indicator.Text = modSliders[i].IndicatorText;
         }
 
         #endregion

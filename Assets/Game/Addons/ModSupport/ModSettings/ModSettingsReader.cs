@@ -283,7 +283,10 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                     sectionData.Keys.AddKey(keyData);
                 }
 
-                iniData.Sections.Add(sectionData);
+                if (section.name == internalSection)
+                    iniData.Sections.GetSectionData(internalSection).Merge(sectionData);
+                else
+                    iniData.Sections.Add(sectionData);
             }
 
             return iniData;
