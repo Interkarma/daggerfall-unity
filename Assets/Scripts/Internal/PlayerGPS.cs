@@ -596,24 +596,6 @@ namespace DaggerfallWorkshop
 
         #region Location Discovery
 
-        public static bool checkIfLocationTypeAlwaysKnown(DFRegion.LocationTypes locationType)
-        {
-            if (locationType == DFRegion.LocationTypes.GraveyardCommon ||                
-                locationType == DFRegion.LocationTypes.HomeFarms ||
-                locationType == DFRegion.LocationTypes.HomePoor ||
-                locationType == DFRegion.LocationTypes.HomeWealthy ||
-                locationType == DFRegion.LocationTypes.ReligionCult ||
-                locationType == DFRegion.LocationTypes.ReligionTemple ||
-                locationType == DFRegion.LocationTypes.Tavern ||
-                locationType == DFRegion.LocationTypes.TownCity ||
-                locationType == DFRegion.LocationTypes.TownHamlet ||
-                locationType == DFRegion.LocationTypes.TownVillage)
-            {
-                return true;
-            }
-            return false;
-        }
-
         /// <summary>
         /// Discover current location.
         /// Does nothing if player in wilderness or location already dicovered.

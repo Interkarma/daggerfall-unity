@@ -43,6 +43,7 @@ namespace DaggerfallWorkshop.Utility
             public int MapIndex;
             public DFRegion.LocationTypes LocationType;
             public DFRegion.DungeonTypes DungeonType;
+            public bool Discovered;
         }
 
         public bool IsReady
@@ -309,6 +310,10 @@ namespace DaggerfallWorkshop.Utility
                     summary.MapIndex = location;
                     summary.LocationType = mapTable.LocationType;
                     summary.DungeonType = mapTable.DungeonType;
+
+                    // TODO: This by itself doesn't account for DFRegion.LocationTypes.GraveyardForgotten locations that start the game discovered in classic
+                    summary.Discovered = mapTable.Discovered;
+
                     mapDict.Add(summary.ID, summary);
 
                     // Link locationId with mapId - adds ~25ms overhead
