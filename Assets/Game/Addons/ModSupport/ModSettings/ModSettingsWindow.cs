@@ -238,7 +238,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         private void SaveSettings (bool writeToDisk = true)
         {
             // Set new values
-            int checkBox = 0, textBox = 0, tuple = 0, slider = 0;
+            int checkBox = 0, textBox = 0, tuple = 0, slider = 0, colorPicker = 0;
             foreach (SectionData section in data.Sections.Where(x => x.SectionName != ModSettingsReader.internalSection))
             {
                 foreach (KeyData key in section.Keys)
@@ -273,6 +273,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                                 break;
 
                             case ModSettingsKey.KeyType.Color:
+                                string hexColor = ColorUtility.ToHtmlStringRGBA(modColorPickers[colorPicker].BackgroundColor);
+                                data[section.SectionName][key.KeyName] = hexColor;
+                                colorPicker++;
                                 break;
                         }
                     }
@@ -416,6 +419,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             modCheckboxes.Clear();
             modTuples.Clear();
             modSliders.Clear();
+            modColorPickers.Clear();
 
             currentPage = 0;
             x = startX;
