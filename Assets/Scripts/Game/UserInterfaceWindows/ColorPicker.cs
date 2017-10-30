@@ -34,6 +34,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Color[] colors = GetColors();
 
+        bool draggingThumb = false;
+
         public Color Color
         {
             get { return pickerPanel.BackgroundColor; }
@@ -102,14 +104,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             colorPreview.Size = new Vector2(colorPreviewWidth, colorPreviewHeight);
             colorPreview.HorizontalAlignment = HorizontalAlignment.Right;
             colorPreview.Position = new Vector2(0, 1);
-            colorPreview.OnMouseClick += ColorPreview_OnMouseClick;
             pickerPanel.Components.Add(colorPreview);
 
             var crosshairTex = Resources.Load<Texture2D>("Crosshair");
             crosshair = new Panel();
             crosshair.BackgroundTexture = crosshairTex;
             crosshair.Size = new Vector2(crosshairTex.width, crosshairTex.height);
-            crosshair.Position = new Vector2(colorPreview.Size.x - crosshair.Size.x, 0);
             colorPreview.Components.Add(crosshair);
 
             slider = new HorizontalSlider();
@@ -130,6 +130,31 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 SetColor(Color.white);
         }
 
+        public override void Update()
+        {
+            base.Update();
+
+            if (Input.GetMouseButton(0) && colorPreview.MouseOverComponent)
+            {
+                if (!draggingThumb)
+                    draggingThumb = true;
+
+                Vector2 position = colorPreview.ScaledMousePosition;
+                crosshair.Position = position;
+
+                Color color = GetPixel(colorPreview.BackgroundTexture, position);
+                hexColor.Text = ColorUtility.ToHtmlStringRGBA(color);
+                rgbaColor.Text = color.ToString();
+                hsvColor.Text = GetHSV(color);
+                ConfirmColorPicked(color);
+
+            }
+            else if (draggingThumb)
+            {
+                draggingThumb = false;
+            }
+        }
+
         #endregion
 
         #region Private Methods
@@ -139,6 +164,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             float h, s, v;
             Color.RGBToHSV(color, out h, out s, out v);
             slider.ScrollIndex = Mathf.RoundToInt(numberOfColors * h);
+            SetCrosshairPosition(s, v);
 
             colorPreview.BackgroundTexture = GetColorPreview(color);
             hexColor.Text = ColorUtility.ToHtmlStringRGBA(color);
@@ -146,6 +172,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             hsvColor.Text = GetHSV(color);
 
             ConfirmColorPicked(color);
+        }
+
+        private void SetCrosshairPosition(float saturation, float value)
+        {
+            float posX = colorPreview.Size.x * saturation;
+            float posY = colorPreview.Size.y * (1 - value);
+            crosshair.Position = new Vector2(posX, posY);
         }
 
         private void ConfirmColorPicked(Color color)
@@ -215,6 +248,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return string.Format("HSV({0}, {1}, {2})", h, s , v);
         }
 
+        private static Color GetPixel(Texture2D tex, Vector2 position)
+        {
+            int posX = Mathf.RoundToInt(position.x);
+            int posY = Mathf.RoundToInt(position.y);
+
+            return tex.GetPixel(posX, tex.height - posY);
+        }
+
         #endregion
 
         #region Event Handlers
@@ -231,22 +272,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void Slider_OnScroll()
         {
-            Color color = colors[slider.ScrollIndex];
-            colorPreview.BackgroundTexture = GetColorPreview(color);
-            hexColor.Text = ColorUtility.ToHtmlStringRGBA(color);
-            rgbaColor.Text = color.ToString();
-            hsvColor.Text = GetHSV(color);
-            ConfirmColorPicked(color);
-        }
-
-        private void ColorPreview_OnMouseClick(BaseScreenComponent sender, Vector2 position)
-        {
-            crosshair.Position = position;
-            int posX = Mathf.RoundToInt(position.x);
-            int posY = Mathf.RoundToInt(position.y);
-
-            Texture2D tex = colorPreview.BackgroundTexture;
-            Color color = tex.GetPixel(posX, tex.height - posY);
+            colorPreview.BackgroundTexture = GetColorPreview(colors[slider.ScrollIndex]);
+            Color color = GetPixel(colorPreview.BackgroundTexture, crosshair.Position);
 
             hexColor.Text = ColorUtility.ToHtmlStringRGBA(color);
             rgbaColor.Text = color.ToString();
