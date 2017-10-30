@@ -18,6 +18,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         #region Fields & Properties
 
+        const int numberOfColors = 360;
         const int colorPreviewWidth = 400;
         const int colorPreviewHeight = 200;
 
@@ -39,6 +40,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             set { SetColor(value); }
         }
 
+        Button sender;
+        public Button Sender
+        {
+            get { return sender; }
+        }
+
         #endregion
 
         #region Constructors
@@ -46,6 +53,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public ColorPicker(IUserInterfaceManager uiManager, DaggerfallBaseWindow previous = null)
             : base(uiManager, previous)
         {
+        }
+
+        public ColorPicker(IUserInterfaceManager uiManager, DaggerfallBaseWindow previous, Button sender)
+            : base(uiManager, previous)
+        {
+            this.sender = sender;
         }
 
         #endregion
@@ -66,8 +79,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             pickerPanel.Outline.Enabled = true;
             ParentPanel.Components.Add(pickerPanel);
 
+            var hexSymbol = new TextLabel();
+            hexSymbol.Text = "#";
+            hexSymbol.Position = new Vector2(20, 140);
+            pickerPanel.Components.Add(hexSymbol);
+
             hexColor = new TextBox();
-            hexColor.Position = new Vector2(20, 140);
+            hexColor.Position = new Vector2(20 + hexSymbol.Size.x, 140);
             hexColor.MaxCharacters = 8;
             hexColor.OnType += HexColor_OnType;
             pickerPanel.Components.Add(hexColor);
@@ -91,7 +109,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             crosshair = new Panel();
             crosshair.BackgroundTexture = crosshairTex;
             crosshair.Size = new Vector2(crosshairTex.width, crosshairTex.height);
-            crosshair.Position = new Vector2(colorPreview.Size.x, 0);
+            crosshair.Position = new Vector2(colorPreview.Size.x - crosshair.Size.x, 0);
             colorPreview.Components.Add(crosshair);
 
             slider = new HorizontalSlider();
@@ -106,7 +124,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             slider.OnScroll += Slider_OnScroll;
             pickerPanel.Components.Add(slider);
 
-            Slider_OnScroll();
+            if (sender != null)
+                SetColor(sender.BackgroundColor);
+            else
+                SetColor(Color.white);
         }
 
         #endregion
@@ -115,16 +136,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void SetColor(Color color)
         {
+            float h, s, v;
+            Color.RGBToHSV(color, out h, out s, out v);
+            slider.ScrollIndex = Mathf.RoundToInt(numberOfColors * h);
+
             colorPreview.BackgroundTexture = GetColorPreview(color);
             hexColor.Text = ColorUtility.ToHtmlStringRGBA(color);
             rgbaColor.Text = color.ToString();
             hsvColor.Text = GetHSV(color);
+
             ConfirmColorPicked(color);
         }
 
         private void ConfirmColorPicked(Color color)
         {
             pickerPanel.BackgroundColor = color;
+
+            if (sender != null)
+                sender.BackgroundColor = color;
+
             RaiseOnColorPickedEvent();
         }
 
@@ -134,8 +164,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private static Color[] GetColors()
         {
-            const int numberOfColors = 360;
-
             Color[] colors = new Color[numberOfColors];
 
             for (int i = 0; i < numberOfColors; i++)
@@ -193,13 +221,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void HexColor_OnType()
         {
-            Color color;
-            if (hexColor.Text.Length == 8 && ColorUtility.TryParseHtmlString("#" + hexColor.Text, out color))
+            if (hexColor.Text.Length == 8)
             {
-                colorPreview.BackgroundTexture = GetColorPreview(color);
-                rgbaColor.Text = color.ToString();
-                hsvColor.Text = GetHSV(color);
-                ConfirmColorPicked(color);
+                Color color;
+                if (ColorUtility.TryParseHtmlString("#" + hexColor.Text, out color))
+                    SetColor(color);
             }
         }
 

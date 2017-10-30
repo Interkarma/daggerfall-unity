@@ -57,6 +57,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         List<Checkbox> modCheckboxes            = new List<Checkbox>();
         List<Tuple<TextBox, TextBox>> modTuples = new List<Tuple<TextBox, TextBox>>();
         List<HorizontalSlider> modSliders       = new List<HorizontalSlider>();
+        List<Button> modColorPickers            = new List<Button>();
 
         // Colors
         Color panelBackgroundColor    = new Color(0, 0, 0, 0.7f);
@@ -194,11 +195,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                                 break;
 
                             case ModSettingsKey.KeyType.Color:
-                                TextBox colorBox = GetTextbox(95, 40, key.Value);
-                                if (!ModSettingsReader.IsHexColor(colorBox.DefaultText))
-                                    colorBox.DefaultText = configKey.color.HexColor;
-                                SetBackgroundTint(colorBox);
-                                modTextBoxes.Add(colorBox);
+                                AddColorPicker(key.Value, configKey);
                                 break;
                         }
                     }
@@ -218,13 +215,14 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                             AddCheckBox(false);
                         else if (key.Value.Contains(ModSettingsReader.tupleDelimiterChar))
                             AddTuple(key.Value);
+                        else if (ModSettingsReader.IsHexColor(key.Value))
+                        {
+                            AddColorPicker(key.Value);
+                        }
                         else
                         {
                             TextBox textBox = GetTextbox(95, 40, key.Value);
                             modTextBoxes.Add(textBox);
-
-                            if (ModSettingsReader.IsHexColor(textBox.DefaultText))
-                                    SetBackgroundTint(textBox);
                         }
                     }
 
@@ -270,9 +268,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                                 break;
 
                             case ModSettingsKey.KeyType.Text:
-                            case ModSettingsKey.KeyType.Color:
                                 data[section.SectionName][key.KeyName] = modTextBoxes[textBox].ResultText;
                                 textBox++;
+                                break;
+
+                            case ModSettingsKey.KeyType.Color:
                                 break;
                         }
                     }
@@ -574,13 +574,23 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             return tuple;
         }
 
-        private void SetBackgroundTint(TextBox textBox)
+        private void AddColorPicker(string hexColor, ModSettingsKey key = null)
         {
-            // Use box background as a preview of the color
-            Color32 color = ModSettingsReader.ColorFromString(textBox.DefaultText);
-            textBox.BackgroundColor = color;
-            textBox.ToolTip = defaultToolTip;
-            textBox.ToolTipText = color.ToString();
+            Button colorPicker = new Button()
+            {
+                Position = new Vector2(x + 95, y),
+                AutoSize = AutoSizeModes.None,
+                Size = new Vector2(40, 6),
+            };
+            colorPicker.Outline.Enabled = true;
+
+            if (!ModSettingsReader.IsHexColor(hexColor))
+                hexColor = key != null ? key.color.HexColor : "FFFFFFFF";
+            colorPicker.BackgroundColor = ModSettingsReader.ColorFromString(hexColor);
+
+            colorPicker.OnMouseClick += ColorPicker_OnMouseClick;
+            modColorPickers.Add(colorPicker);
+            currentPanel.Components.Add(colorPicker);
         }
 
         private void AddPage()
@@ -779,6 +789,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             }
             else
                 CloseWindow();
+        }
+
+        private void ColorPicker_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            var colorPicker = new ColorPicker(uiManager, this, (Button)sender);
+            uiManager.PushWindow(colorPicker);
         }
 
         #endregion
