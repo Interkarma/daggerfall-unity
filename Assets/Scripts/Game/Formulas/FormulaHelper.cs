@@ -213,6 +213,8 @@ namespace DaggerfallWorkshop.Game.Formulas
             {
                 if (GameManager.Instance.WeaponManager.UsingRightHand)
                     weapon = attacker.ItemEquipTable.GetItem(Items.EquipSlots.RightHand);
+                else
+                    weapon = attacker.ItemEquipTable.GetItem(Items.EquipSlots.LeftHand);
             }
 
             if (target != player)
