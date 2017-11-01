@@ -87,18 +87,18 @@ namespace DaggerfallWorkshop.Game.Formulas
             int maxHealth = player.MaxHealth;
             PlayerEnterExit playerEnterExit;
             playerEnterExit = GameManager.Instance.PlayerGPS.GetComponent<PlayerEnterExit>();
-            DaggerfallConnect.DFCareer.RapidHealingFlags rapidHealingFlags = player.Career.RapidHealing;
+            DFCareer.RapidHealingFlags rapidHealingFlags = player.Career.RapidHealing;
 
             short addToMedical = 60;
 
-            if (rapidHealingFlags == DaggerfallConnect.DFCareer.RapidHealingFlags.Always)
+            if (rapidHealingFlags == DFCareer.RapidHealingFlags.Always)
                 addToMedical = 100;
             else if (DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.IsDay && !playerEnterExit.IsPlayerInside)
             {
-                if (rapidHealingFlags == DaggerfallConnect.DFCareer.RapidHealingFlags.InLight)
+                if (rapidHealingFlags == DFCareer.RapidHealingFlags.InLight)
                     addToMedical = 100;
             }
-            else if (rapidHealingFlags == DaggerfallConnect.DFCareer.RapidHealingFlags.InDarkness)
+            else if (rapidHealingFlags == DFCareer.RapidHealingFlags.InDarkness)
                 addToMedical = 100;
 
             medical += addToMedical;
@@ -213,6 +213,8 @@ namespace DaggerfallWorkshop.Game.Formulas
             {
                 if (GameManager.Instance.WeaponManager.UsingRightHand)
                     weapon = attacker.ItemEquipTable.GetItem(Items.EquipSlots.RightHand);
+                else
+                    weapon = attacker.ItemEquipTable.GetItem(Items.EquipSlots.LeftHand);
             }
 
             if (target != player)
@@ -299,8 +301,8 @@ namespace DaggerfallWorkshop.Game.Formulas
                 damageModifiers += ((attacker.Level / 3) + 1);
                 chanceToHitMod += attacker.Level;
             }
-            // Apply hand-to-hand proficiency modifiers for player. Hand-to-hand proficiencty is not applied in classic.
-            else if ((attacker == player) && weapon == null && ((int)attacker.Career.ExpertProficiencies & (int)(DaggerfallConnect.DFCareer.ProficiencyFlags.HandToHand)) != 0)
+            // Apply hand-to-hand proficiency modifiers for player. Hand-to-hand proficiency is not applied in classic.
+            else if ((attacker == player) && weapon == null && ((int)attacker.Career.ExpertProficiencies & (int)(DFCareer.ProficiencyFlags.HandToHand)) != 0)
             {
                 damageModifiers += ((attacker.Level / 3) + 1);
                 chanceToHitMod += attacker.Level;
@@ -317,7 +319,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                     baseDamage *= 2;
                     damageModifiers *= 2;
                 }
-                if (weapon.GetWeaponSkillUsed() != (int)DaggerfallConnect.DFCareer.ProficiencyFlags.BluntWeapons)
+                if (weapon.GetWeaponSkillUsed() != (int)DFCareer.ProficiencyFlags.BluntWeapons)
                 {
                     baseDamage /= 2;
                     damageModifiers /= 2;
@@ -326,46 +328,46 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             // Apply bonus or penalty by opponent type.
             // In classic this is broken and only works if the attack is done with a weapon that has the maximum number of enchantments.
-            if ((target != player) && (AITarget.GetEnemyGroup() == DaggerfallConnect.DFCareer.EnemyGroups.Undead))
+            if ((target != player) && (AITarget.GetEnemyGroup() == DFCareer.EnemyGroups.Undead))
             {
-                if (((int)attacker.Career.UndeadAttackModifier & (int)DaggerfallConnect.DFCareer.AttackModifier.Bonus) != 0)
+                if (((int)attacker.Career.UndeadAttackModifier & (int)DFCareer.AttackModifier.Bonus) != 0)
                 {
                     damageModifiers += attacker.Level;
                 }
-                if (((int)attacker.Career.UndeadAttackModifier & (int)DaggerfallConnect.DFCareer.AttackModifier.Phobia) != 0)
+                if (((int)attacker.Career.UndeadAttackModifier & (int)DFCareer.AttackModifier.Phobia) != 0)
                 {
                     damageModifiers -= attacker.Level;
                 }
             }
-            else if ((target != player) && (AITarget.GetEnemyGroup() == DaggerfallConnect.DFCareer.EnemyGroups.Daedra))
+            else if ((target != player) && (AITarget.GetEnemyGroup() == DFCareer.EnemyGroups.Daedra))
             {
-                if (((int)attacker.Career.DaedraAttackModifier & (int)DaggerfallConnect.DFCareer.AttackModifier.Bonus) != 0)
+                if (((int)attacker.Career.DaedraAttackModifier & (int)DFCareer.AttackModifier.Bonus) != 0)
                 {
                     damageModifiers += attacker.Level;
                 }
-                if (((int)attacker.Career.DaedraAttackModifier & (int)DaggerfallConnect.DFCareer.AttackModifier.Phobia) != 0)
+                if (((int)attacker.Career.DaedraAttackModifier & (int)DFCareer.AttackModifier.Phobia) != 0)
                 {
                     damageModifiers -= attacker.Level;
                 }
             }
-            else if ((target != player) && (AITarget.GetEnemyGroup() == DaggerfallConnect.DFCareer.EnemyGroups.Humanoid))
+            else if ((target != player) && (AITarget.GetEnemyGroup() == DFCareer.EnemyGroups.Humanoid))
             {
-                if (((int)attacker.Career.HumanoidAttackModifier & (int)DaggerfallConnect.DFCareer.AttackModifier.Bonus) != 0)
+                if (((int)attacker.Career.HumanoidAttackModifier & (int)DFCareer.AttackModifier.Bonus) != 0)
                 {
                     damageModifiers += attacker.Level;
                 }
-                if (((int)attacker.Career.HumanoidAttackModifier & (int)DaggerfallConnect.DFCareer.AttackModifier.Phobia) != 0)
+                if (((int)attacker.Career.HumanoidAttackModifier & (int)DFCareer.AttackModifier.Phobia) != 0)
                 {
                     damageModifiers -= attacker.Level;
                 }
             }
-            else if ((target != player) && (AITarget.GetEnemyGroup() == DaggerfallConnect.DFCareer.EnemyGroups.Animals))
+            else if ((target != player) && (AITarget.GetEnemyGroup() == DFCareer.EnemyGroups.Animals))
             {
-                if (((int)attacker.Career.AnimalsAttackModifier & (int)DaggerfallConnect.DFCareer.AttackModifier.Bonus) != 0)
+                if (((int)attacker.Career.AnimalsAttackModifier & (int)DFCareer.AttackModifier.Bonus) != 0)
                 {
                     damageModifiers += attacker.Level;
                 }
-                if (((int)attacker.Career.AnimalsAttackModifier & (int)DaggerfallConnect.DFCareer.AttackModifier.Phobia) != 0)
+                if (((int)attacker.Career.AnimalsAttackModifier & (int)DFCareer.AttackModifier.Phobia) != 0)
                 {
                     damageModifiers -= attacker.Level;
                 }
@@ -379,7 +381,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                     damageModifiers += (attacker.Level / 4);
                     chanceToHitMod += (attacker.Level / 4);
                 }
-                else if (weapon.GetWeaponSkillUsed() == (int)DaggerfallConnect.DFCareer.ProficiencyFlags.MissileWeapons)
+                else if (weapon.GetWeaponSkillUsed() == (int)DFCareer.ProficiencyFlags.MissileWeapons)
                 {
                     if (player.RaceTemplate.ID == (int)Entity.Races.WoodElf)
                     {
@@ -650,7 +652,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (gps.HasCurrentLocation)
             {
                 int holidayId = GetHolidayId(minutes, gps.CurrentRegionIndex);
-                if (holidayId == (int)DaggerfallConnect.DFLocation.Holidays.Witches_Festival)
+                if (holidayId == (int)DFLocation.Holidays.Witches_Festival)
                     return 0;
             }
 
