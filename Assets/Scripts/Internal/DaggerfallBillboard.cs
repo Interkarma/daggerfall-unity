@@ -77,6 +77,8 @@ namespace DaggerfallWorkshop
             public int FactionOrMobileID;                       // FactionID for NPCs, Mobile ID for monsters
             public int NameSeed;                                // NPC name seed
             public MobileTypes FixedEnemyType;                  // Type for fixed enemy marker
+            public short WaterLevel;                            // Dungeon water level
+            public bool CastleBlock;                            // Non-hostile area of main story castle dungeons
             public TextureReplacement.CustomBillboard 
                 CustomBillboard;                                // Custom textures
         }
@@ -221,11 +223,23 @@ namespace DaggerfallWorkshop
             summary.NameSeed = (int)resource.Position;
 
             // Set data of fixed mobile types (e.g. non-random enemy spawn)
-            if (resource.TextureArchive == 199 && resource.TextureRecord == 16)
+            if (resource.TextureArchive == 199)
             {
-                summary.IsMobile = true;
-                summary.EditorFlatType = EditorFlatTypes.FixedMobile;
-                summary.FixedEnemyType = (MobileTypes)(summary.FactionOrMobileID & 0xff);
+                if (resource.TextureRecord == 16)
+                {
+                    summary.IsMobile = true;
+                    summary.EditorFlatType = EditorFlatTypes.FixedMobile;
+                    summary.FixedEnemyType = (MobileTypes)(summary.FactionOrMobileID & 0xff);
+                }
+                else if (resource.TextureRecord == 10) // Start marker. Holds data for dungeon block water level and castle block status.
+                {
+                    if (resource.SoundIndex != 0)
+                        summary.WaterLevel = (short)(-8 * resource.SoundIndex);
+                    else
+                        summary.WaterLevel = 10000; // no water
+
+                    summary.CastleBlock = (resource.Magnitude != 0);
+                }
             }
         }
 

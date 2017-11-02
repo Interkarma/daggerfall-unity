@@ -642,6 +642,12 @@ namespace DaggerfallConnect
 
             /// <summary>Name of RDB block.</summary>
             public String BlockName;
+
+            /// <summary>Height level of dungeon water. 10000 means no water.</summary>
+            public Int16 WaterLevel;
+
+            /// <summary>Whether this block is a main story castle area.</summary>
+            public Boolean CastleBlock;
         }
 
         #endregion

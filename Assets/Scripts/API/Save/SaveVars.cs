@@ -46,6 +46,7 @@ namespace DaggerfallConnect.Save
         const int currentRegionIdOffset = 0x173A; // Not bothering to read right now.
         const int cheatFlagsOffset = 0x173B;
         const int lastSkillCheckTimeOffset = 0x179A;
+        const int dungeonWaterLevelOffset = 0x17A8; // Not bothering to read right now.
 
         const int regionDataOffset = 0x3DA;
         const int regionDataLength = 80;
