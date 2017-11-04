@@ -38,6 +38,9 @@ namespace DaggerfallWorkshop.Utility
         public const uint CityGateOpenModelID = 446;
         public const uint CityGateClosedModelID = 447;
 
+        // Animal sounds range. Matched to classic.
+        const float animalSoundMaxDistance = 768 * MeshReader.GlobalScale;
+
         #region Structures
 
         struct BuildingPoolItem
@@ -337,16 +340,19 @@ namespace DaggerfallWorkshop.Utility
                 }
 
                 // Add to batch where available
-                if (obj.TextureArchive == TextureReader.AnimalsTextureArchive && animalsBillboardBatch != null)
-                {
-                    animalsBillboardBatch.AddItem(obj.TextureRecord, billboardPosition);
-                    continue;
-                }
+                //if (obj.TextureArchive == TextureReader.AnimalsTextureArchive && animalsBillboardBatch != null)
+                //{
+                //    animalsBillboardBatch.AddItem(obj.TextureRecord, billboardPosition);
+                //    continue;
+                //}
 
                 // Add standalone billboard gameobject
                 GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, flatsParent);
                 go.transform.position = billboardPosition;
                 AlignBillboardToBase(go);
+                // Add animal sound
+                if (obj.TextureArchive == TextureReader.AnimalsTextureArchive)
+                    AddAnimalAudioSource(go);
             }
         }
 
@@ -808,6 +814,43 @@ namespace DaggerfallWorkshop.Utility
                 return true;
             else
                 return false;
+        }
+
+        private static void AddAnimalAudioSource(GameObject go)
+        {
+            DaggerfallAudioSource source = go.AddComponent<DaggerfallAudioSource>();
+            source.AudioSource.maxDistance = animalSoundMaxDistance;
+
+            DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
+            SoundClips sound = SoundClips.None;
+            switch(dfBillboard.Summary.Record)
+            {
+                case 0:
+                case 1:
+                    sound = SoundClips.AnimalHorse;
+                    break;
+                case 3:
+                case 4:
+                    sound = SoundClips.AnimalCow;
+                    break;
+                case 5:
+                case 6:
+                    sound = SoundClips.AnimalPig;
+                    break;
+                case 7:
+                case 8:
+                    sound = SoundClips.AnimalCat;
+                    break;
+                case 9:
+                case 10:
+                    sound = SoundClips.AnimalDog;
+                    break;
+                default:
+                    sound = SoundClips.None;
+                    break;
+            }
+
+            source.SetSound(sound, AudioPresets.PlayRandomlyIfPlayerNear);
         }
 
         #endregion

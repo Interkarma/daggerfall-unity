@@ -54,6 +54,11 @@ namespace DaggerfallWorkshop
         // Can only be flagged using LoopOnDistance preset.
         private bool playerCheck = false;
 
+        // Sets looping sound to only play randomly and on a slower update matched to classic.
+        // Only used for animal sounds.
+        private bool playRandomly = false;
+        private float classicUpdateTimer = 0f;
+
         public bool IsReady
         {
             get { return ReadyCheck(); }
@@ -83,8 +88,26 @@ namespace DaggerfallWorkshop
             // Handle player checks
             if (playerCheck && audioSource && player)
             {
-                bool playerInRange = (Vector3.Distance(transform.position, player.transform.position) < audioSource.maxDistance);
+                bool playerInRange = (Vector3.Distance(transform.position, player.transform.position) <= audioSource.maxDistance);
+
                 audioSource.enabled = playerInRange;
+
+                // Handle random play
+                if (audioSource.enabled && playRandomly)
+                {
+                    bool classicUpdate = false;
+
+                    if (classicUpdateTimer < Game.Entity.PlayerEntity.ClassicUpdateInterval)
+                        classicUpdateTimer += Time.deltaTime;
+                    else
+                    {
+                        classicUpdateTimer = 0;
+                        classicUpdate = true;
+                    }
+
+                    if (classicUpdate && DFRandom.rand() <= 100)
+                        audioSource.Play();
+                }
             }
         }
 
@@ -247,21 +270,31 @@ namespace DaggerfallWorkshop
                     audioSource.playOnAwake = false;
                     audioSource.loop = false;
                     playerCheck = false;
+                    playRandomly = false;
                     break;
                 case AudioPresets.LoopOnAwake:
                     audioSource.playOnAwake = true;
                     audioSource.loop = true;
                     playerCheck = false;
+                    playRandomly = false;
                     break;
                 case AudioPresets.LoopOnDemand:
                     audioSource.playOnAwake = false;
                     audioSource.loop = true;
                     playerCheck = false;
+                    playRandomly = false;
                     break;
                 case AudioPresets.LoopIfPlayerNear:
                     audioSource.playOnAwake = true;
                     audioSource.loop = true;
                     playerCheck = true;
+                    playRandomly = false;
+                    break;
+                case AudioPresets.PlayRandomlyIfPlayerNear:
+                    audioSource.playOnAwake = false;
+                    audioSource.loop = false;
+                    playerCheck = true;
+                    playRandomly = true;
                     break;
                 default:
                     break;
