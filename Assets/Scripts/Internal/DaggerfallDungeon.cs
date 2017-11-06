@@ -244,8 +244,9 @@ namespace DaggerfallWorkshop
             float monsterPower = Mathf.Clamp01(playerLevel / 20f);
 
             // Create dungeon layout
-            foreach (var block in location.Dungeon.Blocks)
+            for (int i = 0; i < summary.LocationData.Dungeon.Blocks.Length; i++)
             {
+                DFLocation.DungeonBlock block = summary.LocationData.Dungeon.Blocks[i];
                 GameObject go = GameObjectHelper.CreateRDBBlockGameObject(
                     block.BlockName,
                     DungeonTextureTable,
@@ -261,7 +262,12 @@ namespace DaggerfallWorkshop
 
                 DaggerfallRDBBlock daggerfallBlock = go.GetComponent<DaggerfallRDBBlock>();
                 if (block.IsStartingBlock)
-                    FindMarkers(daggerfallBlock);
+                    FindMarkers(daggerfallBlock, ref block, true); // Assign start marker and enter marker
+                else
+                    FindMarkers(daggerfallBlock, ref block, false); // Only find water level and palaceblock info from start marker
+
+                summary.LocationData.Dungeon.Blocks[i].WaterLevel = block.WaterLevel;
+                summary.LocationData.Dungeon.Blocks[i].CastleBlock = block.CastleBlock;
             }
 
 #if SHOW_LAYOUT_TIMES
@@ -278,8 +284,9 @@ namespace DaggerfallWorkshop
             float monsterPower = Mathf.Clamp01(GameManager.Instance.PlayerEntity.Level / 20f);
 
             // Create dungeon layout and handle misplaced block
-            foreach (var block in location.Dungeon.Blocks)
+            for (int i = 0; i < summary.LocationData.Dungeon.Blocks.Length; i++)
             {
+                DFLocation.DungeonBlock block = summary.LocationData.Dungeon.Blocks[i];
                 if (block.X == -1 && block.Z == -1 && block.BlockName == "N0000065.RDB")
                     continue;
 
@@ -298,12 +305,17 @@ namespace DaggerfallWorkshop
 
                 DaggerfallRDBBlock daggerfallBlock = go.GetComponent<DaggerfallRDBBlock>();
                 if (block.IsStartingBlock)
-                    FindMarkers(daggerfallBlock);
+                    FindMarkers(daggerfallBlock, ref block, true); // Assign start marker and enter marker
+                else
+                    FindMarkers(daggerfallBlock, ref block, false); // Only find water level and castle block info from start marker
+
+                summary.LocationData.Dungeon.Blocks[i].WaterLevel = block.WaterLevel;
+                summary.LocationData.Dungeon.Blocks[i].CastleBlock = block.CastleBlock;
             }
         }
 
-        // Finds start and enter markers, should only be called for starting block
-        private void FindMarkers(DaggerfallRDBBlock dfBlock)
+        // Finds start and enter markers, should be called with true for starting block, otherwise false to just get water level and castle block data
+        private void FindMarkers(DaggerfallRDBBlock dfBlock, ref DFLocation.DungeonBlock block, bool assign)
         {
             if (!dfBlock)
                 throw new Exception("DaggerfallDungeon: dfBlock cannot be null.");
@@ -315,7 +327,12 @@ namespace DaggerfallWorkshop
                 if (dfBlock.StartMarkers.Length > 1)
                     DaggerfallUnity.LogMessage("DaggerfallDungeon: Multiple 'Start' markers found. Using first marker.", true);
 
-                startMarker = dfBlock.StartMarkers[0];
+                if (assign)
+                    startMarker = dfBlock.StartMarkers[0];
+
+                DaggerfallBillboard dfBillboard = dfBlock.StartMarkers[0].GetComponent<DaggerfallBillboard>();
+                block.WaterLevel = dfBillboard.Summary.WaterLevel;
+                block.CastleBlock = dfBillboard.Summary.CastleBlock;
             }
 
             if (dfBlock.EnterMarkers != null && dfBlock.EnterMarkers.Length > 0)
@@ -326,7 +343,8 @@ namespace DaggerfallWorkshop
                 if (dfBlock.EnterMarkers.Length > 1)
                     DaggerfallUnity.LogMessage("DaggerfallDungeon: Multiple 'Enter' markers found. Using first marker.", true);
 
-                enterMarker = dfBlock.EnterMarkers[0];
+                if (assign)
+                    enterMarker = dfBlock.EnterMarkers[0];
             }
         }
 

@@ -35,9 +35,13 @@ namespace DaggerfallWorkshop.Game
         SoundClips[] ambientSounds;
         AudioClip rainLoop;
         AudioClip cricketsLoop;
+        AudioClip waterSound;
         float waitTime;
         float waitCounter;
+        float waterSoundWaitTime = 0.0625f; // Approximation of classic's main update loop. About 1/16 of a second (varies in classic by frame rate). TODO: Unify with runningTallyInterval in PlayerEntity. Where should this value go?
+        float waterWaitCounter;
         AmbientSoundPresets lastPresets;
+        PlayerEnterExit playerEnterExit;
 
         public enum AmbientSoundPresets
         {
@@ -62,12 +66,14 @@ namespace DaggerfallWorkshop.Game
         {
             rainLoop = null;
             cricketsLoop = null;
+            waterSound = null;
         }
 
         void OnEnable()
         {
             rainLoop = null;
             cricketsLoop = null;
+            waterSound = null;
         }
 
         void Update()
@@ -79,6 +85,7 @@ namespace DaggerfallWorkshop.Game
                 lastPresets = Presets;
                 rainLoop = null;
                 cricketsLoop = null;
+                waterSound = null;
 
                 // Stop playing any loops
                 if (dfAudioSource.AudioSource.isPlaying)
@@ -112,12 +119,35 @@ namespace DaggerfallWorkshop.Game
                 dfAudioSource.AudioSource.Play();
             }
 
-            // Tick counter
+            // Tick counters
             waitCounter += Time.deltaTime;
+            waterWaitCounter += Time.deltaTime;
             if (waitCounter > waitTime)
             {
                 PlayEffects();
                 StartWaiting();
+            }
+
+            // Play water sound effect. Timing and position based on classic behavior.
+            // TODO: Make sound follow player's X and Z movement and not have such a sharp falloff (PlayClipAtPoint can no longer be heard if you even walk a few steps away)
+            if (waterWaitCounter > waterSoundWaitTime)
+            {
+                if (waterSound == null)
+                    waterSound = DaggerfallUI.Instance.DaggerfallAudioSource.GetAudioClip((int)SoundClips.WaterGentle);
+
+                if (playerEnterExit == null)
+                    playerEnterExit = GameManager.Instance.PlayerEnterExit;
+                if (playerEnterExit)
+                {
+                    if (playerEnterExit.blockWaterLevel != 10000 && DFRandom.rand() < 50)
+                    {
+                        Entity.DaggerfallEntityBehaviour player = GameManager.Instance.PlayerEntityBehaviour;
+                        AudioClip waterSound = DaggerfallUI.Instance.DaggerfallAudioSource.GetAudioClip((int)SoundClips.WaterGentle);                        
+                        Vector3 waterSoundPosition = new Vector3(player.transform.position.x, (playerEnterExit.blockWaterLevel * -1 * MeshReader.GlobalScale), player.transform.position.z);
+                        AudioSource.PlayClipAtPoint(waterSound, waterSoundPosition, 1);
+                    }
+                }
+                waterWaitCounter = 0;
             }
         }
 
@@ -143,7 +173,8 @@ namespace DaggerfallWorkshop.Game
                 // Do not play ambient effect in castle blocks
                 if (doNotPlayInCastle)
                 {
-                    PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
+                    if (playerEnterExit == null)
+                        playerEnterExit = GameManager.Instance.PlayerEnterExit;
                     if (playerEnterExit)
                     {
                         if (playerEnterExit.IsPlayerInsideDungeonCastle)
