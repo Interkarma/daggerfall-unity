@@ -35,11 +35,13 @@ namespace DaggerfallWorkshop.Game
         bool isPlayerInsideDungeon = false;
         bool isPlayerInsideDungeonCastle = false;
         bool isPlayerInsideSpecialArea = false;
+        bool isPlayerInDungeonWater = false;
         bool isRespawning = false;
         DaggerfallInterior interior;
         DaggerfallDungeon dungeon;
         StreamingWorld world;
         PlayerGPS playerGPS;
+        Entity.DaggerfallEntityBehaviour player;
 
         List<StaticDoor> exteriorDoors = new List<StaticDoor>();
 
@@ -184,6 +186,7 @@ namespace DaggerfallWorkshop.Game
             dfUnity = DaggerfallUnity.Instance;
             playerGPS = GetComponent<PlayerGPS>();
             world = FindObjectOfType<StreamingWorld>();
+            player = GameManager.Instance.PlayerEntityBehaviour;
         }
 
         void Start()
@@ -216,6 +219,16 @@ namespace DaggerfallWorkshop.Game
             {
                 holidayTextPrimed = false;
                 ShowHolidayText();
+            }
+
+            // NOTE: Player's y value in DF unity is 0.95 units off from classic, so subtracting it to get correct comparison
+            if (blockWaterLevel == 10000 || (player.transform.position.y + (50 * MeshReader.GlobalScale) - 0.95f) >= (blockWaterLevel * -1 * MeshReader.GlobalScale))
+                isPlayerInDungeonWater = false;
+            else
+            {
+                if (!isPlayerInDungeonWater)
+                    SendMessage("PlayLargeSplash", SendMessageOptions.DontRequireReceiver);
+                isPlayerInDungeonWater = true;
             }
         }
 
