@@ -166,7 +166,6 @@ namespace DaggerfallConnect
 
         /// <summary>
         /// Describes dungeon types based on Daggerfall Chronicles.
-        /// (value >> 8) = index of type.
         /// </summary>
         public enum DungeonTypes
         {
