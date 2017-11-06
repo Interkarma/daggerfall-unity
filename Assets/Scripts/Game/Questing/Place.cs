@@ -798,8 +798,7 @@ namespace DaggerfallWorkshop.Game.Questing
             if (locationType == DFRegion.LocationTypes.DungeonKeep ||
                 locationType == DFRegion.LocationTypes.DungeonLabyrinth ||
                 locationType == DFRegion.LocationTypes.DungeonRuin ||
-                locationType == DFRegion.LocationTypes.GraveyardCommon ||
-                locationType == DFRegion.LocationTypes.GraveyardForgotten)
+                locationType == DFRegion.LocationTypes.Graveyard)
             {
                 return true;
             }
@@ -946,14 +945,14 @@ namespace DaggerfallWorkshop.Game.Questing
                 if (dungeonTypeIndex == -1)
                 {
                     // Limit range to indices 0-upperLimit
-                    int testIndex = ((int)regionData.MapTable[i].DungeonType >> 8);
+                    int testIndex = ((int)regionData.MapTable[i].DungeonType);
                     if (testIndex >= 0 && testIndex <= upperLimit)
                         foundLocationIndices.Add(i);
                 }
                 else
                 {
                     // Otherwise dungeon must be of specifed type
-                    if (((int)regionData.MapTable[i].DungeonType >> 8) == dungeonTypeIndex)
+                    if (((int)regionData.MapTable[i].DungeonType) == dungeonTypeIndex)
                         foundLocationIndices.Add(i);
                 }
             }

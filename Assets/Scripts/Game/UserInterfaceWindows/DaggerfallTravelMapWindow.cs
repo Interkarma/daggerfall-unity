@@ -25,11 +25,6 @@ using Wenzil.Console.Commands;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
-    ///TODO:
-    ///1. Betony
-    ///2. location filtering
-
-
     /// <summary>
     /// Implements Daggerfall's travel map.
     /// </summary>
@@ -946,7 +941,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool checkLocationDiscovered(ContentReader.MapSummary summary)
         {
             if (GameManager.Instance.PlayerGPS.HasDiscoveredLocation(summary.ID) ||
-                PlayerGPS.checkIfLocationTypeAlwaysKnown(summary.LocationType) ||
+                summary.Discovered ||
                 revealUndiscoveredLocations == true)
             {
                 return true;
@@ -988,10 +983,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                             ContentReader.MapSummary summary;
                             if (DaggerfallUnity.Instance.ContentReader.HasLocation(originX + x, originY + y, out summary))
                             {
-                                // TEMP: Check if location discovered
-                                // This does not correctly account for locations that should always be shown
-                                // Purpose is only to test ID matching with discovery system
-                                // This is to be removed once proper discovery implemented
                                 if (!checkLocationDiscovered(summary))
                                     continue;
 
@@ -1205,10 +1196,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 case DFRegion.LocationTypes.DungeonRuin:
                     index = 2;
                     break;
-                case DFRegion.LocationTypes.GraveyardCommon:
-                    index = 3;
-                    break;
-                case DFRegion.LocationTypes.GraveyardForgotten:
+                case DFRegion.LocationTypes.Graveyard:
                     index = 3;
                     break;
                 case DFRegion.LocationTypes.Coven:

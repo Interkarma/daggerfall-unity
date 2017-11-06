@@ -197,8 +197,7 @@ namespace DaggerfallWorkshop
                         }
                         break;
                     case SearchPatterns.Graveyards:
-                        if (type == DFRegion.LocationTypes.GraveyardCommon ||
-                            type == DFRegion.LocationTypes.GraveyardForgotten)
+                        if (type == DFRegion.LocationTypes.Graveyard)
                         {
                             addName = true;
                         }
