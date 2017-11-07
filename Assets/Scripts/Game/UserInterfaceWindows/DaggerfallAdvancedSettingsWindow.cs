@@ -49,9 +49,10 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
     // Settings
     Checkbox StartInDungeon;
 
-    Checkbox EnableToolTips;
-    Checkbox HQTooltips;
+    HorizontalSlider toolTips;
     Checkbox Crosshair;
+    Checkbox inventoryInfoPanel;
+    Checkbox enhancedItemLists;
 
     HorizontalSlider mouseSensitivitySlider;
 
@@ -137,12 +138,11 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
 
         // GUI
         AddTextTitle(leftPanel, guiText);
-        EnableToolTips = AddCheckbox(leftPanel, "Tool Tips", "Show description when mouse is over an item in GUI", DaggerfallUnity.Settings.EnableToolTips);
-        HQTooltips = AddCheckbox(leftPanel, "HQ Tool Tips", "Use High Quality Font for Tool Tips", DaggerfallUnity.Settings.HQTooltips);
-        if (!DaggerfallUnity.Settings.EnableToolTips)
-            HQTooltips.IsChecked = false;
-        //TODO: inventory info
+        int tootipMode = DaggerfallUnity.Settings.EnableToolTips ? DaggerfallUnity.Settings.HQTooltips ? 2 : 1 : 0;
+        AddSlider(leftPanel, new string[] { "Off", "On", "HQ" }, tootipMode, "Tool Tips", "Shows informations about GUI items", out toolTips);
         Crosshair = AddCheckbox(leftPanel, "Crosshair", "Enable Crosshair on HUD", DaggerfallUnity.Settings.Crosshair);
+        inventoryInfoPanel = AddCheckbox(leftPanel, "Inventory Info Panel", "Inventory Info Panel", DaggerfallUnity.Settings.EnableInventoryInfoPanel);
+        enhancedItemLists = AddCheckbox(leftPanel, "Enhanced Item Lists", "Inventory 16x item grid", DaggerfallUnity.Settings.EnableEnhancedItemLists);
 
         // Controls
         AddTextTitle(leftPanel, controlsText);
@@ -366,6 +366,13 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
         slider.IndicatorOffset = 15;
     }
 
+    void AddSlider(Panel panel, string[] choices, int selected, string title, string toolTip, out HorizontalSlider slider)
+    {
+        slider = GetSlider(panel, title, toolTip);
+        slider.SetIndicator(choices, selected);
+        slider.IndicatorOffset = 15;
+    }
+
     private HorizontalSlider GetSlider(Panel panel, string title, string toolTip)
     {
         // Title
@@ -404,9 +411,11 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
     {
         DaggerfallUnity.Settings.StartInDungeon = StartInDungeon.IsChecked;
 
-        DaggerfallUnity.Settings.EnableToolTips = EnableToolTips.IsChecked;
-        DaggerfallUnity.Settings.HQTooltips = HQTooltips.IsChecked;
+        DaggerfallUnity.Settings.EnableToolTips = toolTips.ScrollIndex != 0;
+        DaggerfallUnity.Settings.HQTooltips = toolTips.ScrollIndex == 2;
         DaggerfallUnity.Settings.Crosshair = Crosshair.IsChecked;
+        DaggerfallUnity.Settings.EnableInventoryInfoPanel = inventoryInfoPanel.IsChecked;
+        DaggerfallUnity.Settings.EnableEnhancedItemLists = enhancedItemLists.IsChecked;
 
         DaggerfallUnity.Settings.MouseLookSensitivity = mouseSensitivitySlider.GetValue();
 
