@@ -74,7 +74,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public const int DefaultFatigueLoss = 11;
         //public const int ClimbingFatigueLoss = 22;
         public const int RunningFatigueLoss = 88;
-        //public const int SwimmingFatigueLoss = 44;
+        public const int SwimmingFatigueLoss = 44;
 
         private float runningTallyTimer = 0f;
         private float runningTallyInterval = 0.0625f; // Tally every 1/16 second of running. The rate at which the running skill
@@ -169,10 +169,17 @@ namespace DaggerfallWorkshop.Game.Entity
                 // Every game minute, apply fatigue loss to the player
                 if (lastGameMinutes != gameMinutes)
                 {
+                    int amount = DefaultFatigueLoss;
                     if (playerMotor.IsRunning)
-                        DecreaseFatigue(RunningFatigueLoss);
-                    else
-                        DecreaseFatigue(DefaultFatigueLoss);
+                        amount = RunningFatigueLoss;
+                    else if (GameManager.Instance.PlayerEnterExit.IsPlayerSubmerged)
+                    {
+                        if (Race != Races.Argonian && UnityEngine.Random.Range(1, 100) > Skills.GetLiveSkillValue(DFCareer.Skills.Swimming))
+                            amount = SwimmingFatigueLoss;
+                        TallySkill(DFCareer.Skills.Swimming, 1);
+                    }
+
+                    DecreaseFatigue(amount);
                 }
                 // Reduce fatigue when jumping and tally jumping skill
                 if (!CheckedCurrentJump && playerMotor.IsJumping)

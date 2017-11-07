@@ -124,21 +124,32 @@ namespace DaggerfallWorkshop.Game
                 StartWaiting();
             }
 
-            // Play water sound effect. Timing and position based on classic behavior.
+            // Play water sound effects. Timing and position based on classic behavior.
             // TODO: Make sound follow player's X and Z movement but play from Y coordinate of dungeon water, for a more dynamically 3d sound.
-            // Currently the sound is a volume adjustment based on distance from the water.
+            // Currently the sound is a volume adjustment based on vertical distance from the water.
             if (waterWaitCounter > waterSoundWaitTime)
             {
                 if (playerEnterExit == null)
                     playerEnterExit = GameManager.Instance.PlayerEnterExit;
                 if (playerEnterExit)
                 {
-                    if (playerEnterExit.blockWaterLevel != 10000 && DFRandom.rand() < 50)
+                    if (playerEnterExit.blockWaterLevel != 10000)
                     {
-                        Entity.DaggerfallEntityBehaviour player = GameManager.Instance.PlayerEntityBehaviour;                   
-                        float waterHeightInDFUnityUnits = (playerEnterExit.blockWaterLevel * -1 * MeshReader.GlobalScale);
-                        float volumeScale = Mathf.Clamp(1 - (Mathf.Abs(player.transform.position.y - waterHeightInDFUnityUnits) / 9), 0, 1);
-                        dfAudioSource.PlayOneShot((int)SoundClips.WaterGentle, 0, volumeScale);
+                        Entity.DaggerfallEntityBehaviour player = GameManager.Instance.PlayerEntityBehaviour;
+                        // Chance to play gentle water sound based on vertical distance between player and water surface
+                        if (DFRandom.rand() < 50)
+                        {
+                            float waterHeightInDFUnityUnits = (playerEnterExit.blockWaterLevel * -1 * MeshReader.GlobalScale);
+                            float volumeScale = Mathf.Clamp(1 - (Mathf.Abs(player.transform.position.y - waterHeightInDFUnityUnits) / 9), 0, 1);
+                            dfAudioSource.PlayOneShot((int)SoundClips.WaterGentle, 0, volumeScale);
+                        }
+
+                        // Chance to play underwater bubbling noise if player is underwater
+                        if ((player.transform.position.y + (76 * MeshReader.GlobalScale) - 0.95f) < (playerEnterExit.blockWaterLevel * -1 * MeshReader.GlobalScale))
+                        {
+                            if (DFRandom.rand() < 100)
+                                dfAudioSource.PlayOneShot((int)SoundClips.AmbientWaterBubbles, 0);
+                        }
                     }
                 }
                 waterWaitCounter = 0;

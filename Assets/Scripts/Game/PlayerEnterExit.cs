@@ -35,13 +35,14 @@ namespace DaggerfallWorkshop.Game
         bool isPlayerInsideDungeon = false;
         bool isPlayerInsideDungeonCastle = false;
         bool isPlayerInsideSpecialArea = false;
-        bool isPlayerInDungeonWater = false;
+        bool isPlayerSubmerged = false;
         bool isRespawning = false;
         DaggerfallInterior interior;
         DaggerfallDungeon dungeon;
         StreamingWorld world;
         PlayerGPS playerGPS;
         Entity.DaggerfallEntityBehaviour player;
+        FakeLevitate fakeLevitate;
 
         List<StaticDoor> exteriorDoors = new List<StaticDoor>();
 
@@ -102,6 +103,14 @@ namespace DaggerfallWorkshop.Game
         public bool IsPlayerInsideSpecialArea
         {
             get { return isPlayerInsideSpecialArea; }
+        }
+
+        /// <summary>
+        /// True when player is submerged in water.
+        /// </summary>
+        public bool IsPlayerSubmerged
+        {
+            get { return isPlayerSubmerged; }
         }
 
         /// <summary>
@@ -193,6 +202,7 @@ namespace DaggerfallWorkshop.Game
         {
             // Wire event for when player enters a new location
             PlayerGPS.OnEnterLocationRect += PlayerGPS_OnEnterLocationRect;
+            fakeLevitate = GetComponent<FakeLevitate>();
         }
 
         void Update()
@@ -223,12 +233,16 @@ namespace DaggerfallWorkshop.Game
 
             // NOTE: Player's y value in DF unity is 0.95 units off from classic, so subtracting it to get correct comparison
             if (blockWaterLevel == 10000 || (player.transform.position.y + (50 * MeshReader.GlobalScale) - 0.95f) >= (blockWaterLevel * -1 * MeshReader.GlobalScale))
-                isPlayerInDungeonWater = false;
+            {
+                isPlayerSubmerged = false;
+                fakeLevitate.IsSwimming = false;
+            }
             else
             {
-                if (!isPlayerInDungeonWater)
+                if (!isPlayerSubmerged)
                     SendMessage("PlayLargeSplash", SendMessageOptions.DontRequireReceiver);
-                isPlayerInDungeonWater = true;
+                isPlayerSubmerged = true;
+                fakeLevitate.IsSwimming = true;
             }
         }
 

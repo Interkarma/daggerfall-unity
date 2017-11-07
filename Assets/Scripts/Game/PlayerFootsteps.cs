@@ -29,6 +29,8 @@ namespace DaggerfallWorkshop.Game
         public float FootstepVolumeScale = 0.7f;
         public SoundClips FootstepSoundNormal = SoundClips.PlayerFootstepNormal;
         public SoundClips FootstepSoundSnow = SoundClips.PlayerFootstepSnow;
+        public SoundClips FootstepSoundShallow = SoundClips.SplashSmallLow;
+        public SoundClips FootstepSoundSubmerged = SoundClips.SplashSmall;
         public SoundClips FallHardSound = SoundClips.FallHard;
         public SoundClips FallDamageSound = SoundClips.FallDamage;
         public SoundClips SplashLargeSound = SoundClips.SplashLarge;
@@ -92,13 +94,39 @@ namespace DaggerfallWorkshop.Game
                 clip = null;
             }
 
+            // Use water sounds if in water
+            if (playerEnterExit.blockWaterLevel != 10000)
+            {
+                // In water, deep depth
+                if ((currentFootstepSound != FootstepSoundSubmerged) && playerEnterExit.IsPlayerSubmerged)
+                {
+                    currentFootstepSound = FootstepSoundSubmerged;
+                    clip = null;
+                }
+                // In water, shallow depth
+                else if ((currentFootstepSound != FootstepSoundShallow) && !playerEnterExit.IsPlayerSubmerged && (playerMotor.transform.position.y - 0.95f) < (playerEnterExit.blockWaterLevel * -1 * MeshReader.GlobalScale))
+                {
+                    currentFootstepSound = FootstepSoundShallow;
+                    clip = null;
+                }
+            }
+
+            // Not in water, reset footsteps to normal
+            if ((currentFootstepSound == FootstepSoundSubmerged || currentFootstepSound == FootstepSoundShallow)
+                && (playerEnterExit.blockWaterLevel == 10000 || (playerMotor.transform.position.y - 0.95f) >= (playerEnterExit.blockWaterLevel * -1 * MeshReader.GlobalScale)))
+            {
+                currentFootstepSound = FootstepSoundNormal;
+
+                clip = null;
+            }
+
             // Reload clip if needed
             if (clip == null)
             {
                 clip = dfAudioSource.GetAudioClip((int)currentFootstepSound);
             }
 
-            // Check whether player is on foot and abort paying footsteps if not.
+            // Check whether player is on foot and abort playing footsteps if not.
             if (!transportManager.IsOnFoot)
             {
                 distance = 0f;
@@ -106,22 +134,27 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Check if player is grounded
-            if (!IsGrounded())
+            // Note: In classic, submerged "footstep" sound is only played when walking on the floor while in the water, but it sounds like a swimming sound
+            // and when outdoors is played while swimming at the water's surface, so it seems better to play it all the time while submerged in water.
+            if (currentFootstepSound != FootstepSoundSubmerged)
             {
-                // Player has lost grounding
-                distance = 0f;
-                lostGrounding = true;
-                return;
-            }
-            else
-            {
-                // Player is grounded but we might need to reset after losing grounding
-                if (lostGrounding)
+                if (!IsGrounded())
                 {
+                    // Player has lost grounding
                     distance = 0f;
-                    lastPosition = GetHorizontalPosition();
-                    lostGrounding = false;
+                    lostGrounding = true;
                     return;
+                }
+                else
+                {
+                    // Player is grounded but we might need to reset after losing grounding
+                    if (lostGrounding)
+                    {
+                        distance = 0f;
+                        lastPosition = GetHorizontalPosition();
+                        lostGrounding = false;
+                        return;
+                    }
                 }
             }
 
