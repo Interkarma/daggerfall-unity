@@ -60,14 +60,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         // Settings
         Checkbox StartInDungeon;
+        HorizontalSlider randomDungeonTextures;
 
+        Checkbox crosshair;
         HorizontalSlider toolTips;
-        Checkbox Crosshair;
+        HorizontalSlider helmAndShieldMaterialDisplay;
         Checkbox inventoryInfoPanel;
         Checkbox enhancedItemLists;
 
         HorizontalSlider mouseSensitivitySlider;
+        HorizontalSlider weaponSensitivity;
 
+        HorizontalSlider qualityLevel;
         Checkbox DungeonLightShadows;
         Checkbox UseLegacyDeferred;
 
@@ -84,14 +88,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Fields
 
-        // Section titles
         const string closeButtonText = "Close";
-        const string gameplayOptionsText = "Gameplay";
-        const string guiText = "GUI";
-        const string controlsText = "Controls";
-        const string infoText = "Info";
-        const string filtersText = "Texture Filters";
-        const string graphicQualityText = "Graphic Quality";
 
         // Position controls
         const float itemTextScale = 0.9f;
@@ -156,41 +153,35 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void Gameplay(Panel leftPanel, Panel rightPanel)
         {
-            // Gameplay
-            AddSectionTitle(leftPanel, gameplayOptionsText);
+            // Game
+            AddSectionTitle(leftPanel, "Game");
             StartInDungeon = AddCheckbox(leftPanel, "Start In Dungeon", "Start new game inside the first dungeon", DaggerfallUnity.Settings.StartInDungeon);
+            randomDungeonTextures = AddSlider(leftPanel, "Dungeon Textures", "Generates dungeon texture table from random seed",
+                DaggerfallUnity.Settings.RandomDungeonTextures, "classic", "climate", "climateOnly", "random", "randomOnly");
 
             // GUI
-            AddSectionTitle(leftPanel, guiText);
+            AddSectionTitle(leftPanel, "GUI");
+            crosshair = AddCheckbox(leftPanel, "Crosshair", "Enable Crosshair on HUD", DaggerfallUnity.Settings.Crosshair);
             int tootipMode = DaggerfallUnity.Settings.EnableToolTips ? DaggerfallUnity.Settings.HQTooltips ? 2 : 1 : 0;
             toolTips = AddSlider(leftPanel, "Tool Tips", "Shows informations about GUI items", tootipMode, "Off", "On", "HQ");
-            Crosshair = AddCheckbox(leftPanel, "Crosshair", "Enable Crosshair on HUD", DaggerfallUnity.Settings.Crosshair);
-            inventoryInfoPanel = AddCheckbox(leftPanel, "Inventory Info Panel", "Inventory Info Panel", DaggerfallUnity.Settings.EnableInventoryInfoPanel);
+            helmAndShieldMaterialDisplay = AddSlider(leftPanel, "Helm and Shield Material Display", "Show material for helms and shields in info popups and tooltips",
+                DaggerfallUnity.Settings.HelmAndShieldMaterialDisplay, "off", "noLeatChai", "noLeat", "on");
+            inventoryInfoPanel = AddCheckbox(leftPanel, "Inventory Info Panel", "Inventory Info Panel", DaggerfallUnity.Settings.EnableInventoryInfoPanel); //TODO: better description
             enhancedItemLists = AddCheckbox(leftPanel, "Enhanced Item Lists", "Inventory 16x item grid", DaggerfallUnity.Settings.EnableEnhancedItemLists);
 
-            // Controls
-            AddSectionTitle(leftPanel, controlsText);
+            y = nextPanel;
 
-            // Mouse
-            mouseSensitivitySlider = AddSlider(leftPanel, "Mouse Sensitivity", "Mouse look sensitivity.", 0.1f, 4.0f, DaggerfallUnity.Settings.MouseLookSensitivity);
+            // Controls
+            AddSectionTitle(rightPanel, "Controls");
+            mouseSensitivitySlider = AddSlider(rightPanel, "Mouse Sensitivity", "Mouse look sensitivity.", 0.1f, 4.0f, DaggerfallUnity.Settings.MouseLookSensitivity);
+            weaponSensitivity = AddSlider(rightPanel, "Weapon Sensitivity", "Weapon Sensitivity", 0.1f, 10.0f, DaggerfallUnity.Settings.WeaponSensitivity); //TODO: better description
         }
 
         private void Video(Panel leftPanel, Panel rightPanel)
         {
-            // Info
-            AddSectionTitle(leftPanel, infoText);
-            AddInfo(leftPanel, "Quality Level: " + QualitySettings.names[DaggerfallUnity.Settings.QualityLevel], "General graphic quality");
-
-            string textureArrayLabel = "Texture Arrays: ";
-            if (!SystemInfo.supports2DArrayTextures)
-                textureArrayLabel += "Unsupported";
-            else
-                textureArrayLabel += DaggerfallUnity.Settings.EnableTextureArrays ? "Enabled" : "Disabled";
-            const string textureArrayToolTip = "Improved implementation of terrain textures, with better performance and modding support";
-            TextLabel labelTextureArrayUsage = AddInfo(leftPanel, textureArrayLabel, textureArrayToolTip);
-
-            // Filter modes
-            AddSectionTitle(leftPanel, filtersText);
+            // Basic settings
+            AddSectionTitle(leftPanel, "Basic");
+            qualityLevel = AddSlider(leftPanel, "Quality Level", "General graphic quality", DaggerfallUnity.Settings.QualityLevel, QualitySettings.names);
             string[] filterModes = new string[] { "Point", "Bilinear", "Trilinear" };
             mainFilterMode = AddSlider(leftPanel, "Main Filter", "Filter for game textures", DaggerfallUnity.Settings.MainFilterMode, filterModes);
             mainFilterMode.OnScroll += MainFilterMode_OnScroll;
@@ -199,48 +190,54 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             y = nextPanel;
 
-            // Graphic Quality
-            AddSectionTitle(rightPanel, graphicQualityText);
+            // Advanced settings
+            AddSectionTitle(rightPanel, "Advanced");
             DungeonLightShadows = AddCheckbox(rightPanel, "Dungeon Light Shadows", "Dungeon lights cast shadows", DaggerfallUnity.Settings.DungeonLightShadows);
             UseLegacyDeferred = AddCheckbox(rightPanel, "Use Legacy Deferred", "Use Legacy Deferred", DaggerfallUnity.Settings.UseLegacyDeferred); //TODO: better description
-
-            // FOV
-            int fovStartValue = DaggerfallUnity.Settings.FieldOfView;
-            fovSlider = AddSlider(rightPanel, "Field Of View", "The observable world that is seen at any given moment", 60, 80, fovStartValue);
-
-            // Terrain distance
-            int terraindDistanceStartValue = DaggerfallUnity.Settings.TerrainDistance;
+            fovSlider = AddSlider(rightPanel, "Field Of View", "The observable world that is seen at any given moment",
+                60, 80, DaggerfallUnity.Settings.FieldOfView);
             terrainDistanceSlider = AddSlider(rightPanel, "Terrain Distance", "Maximum distance of active terrains from player position",
-                1, 4, terraindDistanceStartValue);
-
-            // Shadow resolution
+                1, 4, DaggerfallUnity.Settings.TerrainDistance);
             shadowResolutionMode = AddSlider(rightPanel, "Shadow Resolution", "Shadow Resolution", //TODO: better description
                 DaggerfallUnity.Settings.ShadowResolutionMode, "Low", "Medium", "High", "Very High");
+            string textureArrayLabel = "Texture Arrays: ";
+            if (!SystemInfo.supports2DArrayTextures)
+                textureArrayLabel += "Unsupported";
+            else
+                textureArrayLabel += DaggerfallUnity.Settings.EnableTextureArrays ? "Enabled" : "Disabled";
+            AddInfo(rightPanel, textureArrayLabel, "Improved implementation of terrain textures, with better performance and modding support");
         }
 
         private void SaveSettings()
         {
-            DaggerfallUnity.Settings.StartInDungeon = StartInDungeon.IsChecked;
+            /* GamePlay */
 
+            DaggerfallUnity.Settings.StartInDungeon = StartInDungeon.IsChecked;
+            DaggerfallUnity.Settings.RandomDungeonTextures = randomDungeonTextures.ScrollIndex;
+
+            DaggerfallUnity.Settings.Crosshair = crosshair.IsChecked;
             DaggerfallUnity.Settings.EnableToolTips = toolTips.ScrollIndex != 0;
             DaggerfallUnity.Settings.HQTooltips = toolTips.ScrollIndex == 2;
-            DaggerfallUnity.Settings.Crosshair = Crosshair.IsChecked;
+            DaggerfallUnity.Settings.HelmAndShieldMaterialDisplay = helmAndShieldMaterialDisplay.ScrollIndex;
             DaggerfallUnity.Settings.EnableInventoryInfoPanel = inventoryInfoPanel.IsChecked;
             DaggerfallUnity.Settings.EnableEnhancedItemLists = enhancedItemLists.IsChecked;
 
             DaggerfallUnity.Settings.MouseLookSensitivity = mouseSensitivitySlider.GetValue();
+            DaggerfallUnity.Settings.WeaponSensitivity = weaponSensitivity.GetValue();
 
-            DaggerfallUnity.Settings.DungeonLightShadows = DungeonLightShadows.IsChecked;
-            DaggerfallUnity.Settings.UseLegacyDeferred = UseLegacyDeferred.IsChecked;
+            /* Video */
 
-            DaggerfallUnity.Settings.FieldOfView = fovSlider.Value;
-            DaggerfallUnity.Settings.TerrainDistance = terrainDistanceSlider.Value;
-
-            DaggerfallUnity.Settings.ShadowResolutionMode = shadowResolutionMode.ScrollIndex;
-
+            DaggerfallUnity.Settings.QualityLevel = qualityLevel.ScrollIndex;
             DaggerfallUnity.Settings.MainFilterMode = mainFilterMode.ScrollIndex;
             DaggerfallUnity.Settings.GUIFilterMode = guiFilterMode.ScrollIndex;
             DaggerfallUnity.Settings.VideoFilterMode = videoFilterMode.ScrollIndex;
+
+            DaggerfallUnity.Settings.DungeonLightShadows = DungeonLightShadows.IsChecked;
+            DaggerfallUnity.Settings.UseLegacyDeferred = UseLegacyDeferred.IsChecked;
+            DaggerfallUnity.Settings.FieldOfView = fovSlider.Value;
+            DaggerfallUnity.Settings.TerrainDistance = terrainDistanceSlider.Value;
+            DaggerfallUnity.Settings.ShadowResolutionMode = shadowResolutionMode.ScrollIndex;
+
 
             DaggerfallUnity.Settings.SaveSettings();
         }
@@ -398,6 +395,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             var slider = GetBaseSlider(panel, title, toolTip);
             slider.SetIndicator(minValue, maxValue, startValue);
             slider.IndicatorOffset = 15;
+            slider.Indicator.ShadowColor = Color.clear;
             return slider;
         }
 
@@ -409,6 +407,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             var slider = GetBaseSlider(panel, title, toolTip);
             slider.SetIndicator(minValue, maxValue, startValue);
             slider.IndicatorOffset = 15;
+            slider.Indicator.ShadowColor = Color.clear;
             return slider;
         }
 
@@ -420,6 +419,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             var slider = GetBaseSlider(panel, title, toolTip);
             slider.SetIndicator(choices, selected);
             slider.IndicatorOffset = 15;
+            slider.Indicator.ShadowColor = Color.clear;
             return slider;
         }
 
@@ -436,12 +436,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             titleLabel.ToolTipText = toolTip;
             panel.Components.Add(titleLabel);
 
-            y += 8;
+            y += 6;
 
             // Slider
             var slider = new HorizontalSlider();
             slider.Position = new Vector2(0, y);
-            slider.Size = new Vector2(80.0f, 5.0f);
+            slider.Size = new Vector2(80.0f, 4.0f);
             slider.DisplayUnits = 20;
             slider.BackgroundColor = sliderBackgroundColor;
             slider.TintColor = new Color(153, 153, 0);
