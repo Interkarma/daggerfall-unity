@@ -145,7 +145,7 @@ namespace DaggerfallWorkshop.Game
                         }
 
                         // Chance to play underwater bubbling noise if player is underwater
-                        if ((player.transform.position.y + (76 * MeshReader.GlobalScale) - 0.95f) < (playerEnterExit.blockWaterLevel * -1 * MeshReader.GlobalScale))
+                        if (playerEnterExit.IsPlayerSubmerged)
                         {
                             if (DFRandom.rand() < 100)
                                 dfAudioSource.PlayOneShot((int)SoundClips.AmbientWaterBubbles, 0);

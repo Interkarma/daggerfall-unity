@@ -38,6 +38,7 @@ namespace DaggerfallConnect.Save
         const int isDayOffset = 0x391;
         const int typeOfCrimeCommittedOffset = 0x3A3;
         const int inDungeonWaterOffset = 0x3A6;
+        const int breathRemainingOffset = 0x3AB;
         const int weatherTypesOffset = 0x3B7;
         const int weaponDrawnOffset = 0x3BF;
         const int gameTimeOffset = 0x3C9;
@@ -83,6 +84,7 @@ namespace DaggerfallConnect.Save
         bool isDay = false;
         byte typeOfCrimeCommitted = 0;
         bool inDungeonWater = false;
+        int breathRemaining = 0;
         byte[] weatherTypes; // Probably the possible weather types for the player's location
         bool weaponDrawn = false;
         uint gameTime = 0;
@@ -266,6 +268,14 @@ namespace DaggerfallConnect.Save
         public bool InDungeonWater
         {
             get { return inDungeonWater; }
+        }
+
+        /// <summary>
+        /// Gets breath remaining when underwater from savevars.
+        /// </summary>
+        public int BreathRemaining
+        {
+            get { return breathRemaining; }
         }
 
         /// <summary>
@@ -490,6 +500,12 @@ namespace DaggerfallConnect.Save
             reader.BaseStream.Position = inDungeonWaterOffset;
             if (reader.ReadByte() == 1)
                 inDungeonWater = true;
+        }
+
+        void ReadBreathRemaining(BinaryReader reader)
+        {
+            reader.BaseStream.Position = breathRemainingOffset;
+            breathRemaining = reader.ReadInt32();
         }
 
         void ReadWeatherTypes(BinaryReader reader)

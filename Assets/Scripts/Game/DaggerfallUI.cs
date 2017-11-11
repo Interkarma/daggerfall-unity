@@ -366,7 +366,7 @@ namespace DaggerfallWorkshop.Game
                         const int enemiesNearby = 354;
                         MessageBox(enemiesNearby);
                     }
-                    else if (GameManager.Instance.PlayerEnterExit.IsPlayerSubmerged)
+                    else if (GameManager.Instance.PlayerEnterExit.IsPlayerSwimming)
                     {
                         const int cannotRestNow = 355;
                         MessageBox(cannotRestNow);

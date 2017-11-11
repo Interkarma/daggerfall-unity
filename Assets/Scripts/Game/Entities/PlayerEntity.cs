@@ -76,10 +76,10 @@ namespace DaggerfallWorkshop.Game.Entity
         public const int RunningFatigueLoss = 88;
         public const int SwimmingFatigueLoss = 44;
 
-        private float runningTallyTimer = 0f;
-        private float runningTallyInterval = 0.0625f; // Tally every 1/16 second of running. The rate at which the running skill
-                                                      // is tallied in classic varies by how fast the game is being processed.
-                                                      // Based on some tests, around every 1/16 of a second is a typical rate.
+        private float classicUpdateTimer = 0f;
+        private float classicUpdateInterval = 0.0625f; // Update every 1/16 of a second. An approximation of classic's update loop, which
+                                                       // varies with framerate.
+        private int breathUpdateTally = 0;
 
         private int JumpingFatigueLoss = 11;        // According to DF Chronicles and verified in classic
         private bool CheckedCurrentJump = false;
@@ -141,6 +141,16 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public override void Update(DaggerfallEntityBehaviour sender)
         {
+            bool classicUpdate = false;
+
+            if (classicUpdateTimer < classicUpdateInterval)
+                classicUpdateTimer += Time.deltaTime;
+            else
+            {
+                classicUpdateTimer = 0;
+                classicUpdate = true;
+            }
+
             if (playerMotor == null)
                 playerMotor = GameManager.Instance.PlayerMotor;
 
@@ -154,33 +164,53 @@ namespace DaggerfallWorkshop.Game.Entity
                 gameStarted = true;
             if (playerMotor != null)
             {
-                // Tally running skill
-                if (playerMotor.IsRunning && !playerMotor.IsRiding)
-                {
-                    if (runningTallyTimer < runningTallyInterval)
-                        runningTallyTimer += Time.deltaTime;
-                    else
-                    {
-                        TallySkill(DFCareer.Skills.Running, 1);
-                        runningTallyTimer = 0f;
-                    }
-                }
-
                 // Every game minute, apply fatigue loss to the player
                 if (lastGameMinutes != gameMinutes)
                 {
                     int amount = DefaultFatigueLoss;
                     if (playerMotor.IsRunning)
                         amount = RunningFatigueLoss;
-                    else if (GameManager.Instance.PlayerEnterExit.IsPlayerSubmerged)
+                    else if (GameManager.Instance.PlayerEnterExit.IsPlayerSwimming)
                     {
-                        if (Race != Races.Argonian && UnityEngine.Random.Range(1, 100) > Skills.GetLiveSkillValue(DFCareer.Skills.Swimming))
+                        if (Race != Races.Argonian && UnityEngine.Random.Range(1, 100 + 1) > Skills.GetLiveSkillValue(DFCareer.Skills.Swimming))
                             amount = SwimmingFatigueLoss;
                         TallySkill(DFCareer.Skills.Swimming, 1);
                     }
 
                     DecreaseFatigue(amount);
                 }
+
+                // Handle events that are called by classic's update loop
+                if (classicUpdate)
+                {
+                    // Tally running skill
+                    if (playerMotor.IsRunning && !playerMotor.IsRiding)
+                        TallySkill(DFCareer.Skills.Running, 1);
+
+                    // Handle breath when underwater
+                    if (GameManager.Instance.PlayerEnterExit.IsPlayerSubmerged)
+                    {
+                        if (currentBreath == 0)
+                        {
+                            currentBreath = MaxBreath;
+                        }
+                        if (breathUpdateTally > 18)
+                        {
+                            --currentBreath;
+                            if (Race == Races.Argonian && (UnityEngine.Random.Range(0, 2) == 1))
+                                ++currentBreath;
+                            breathUpdateTally = 0;
+                        }
+                        else
+                            ++breathUpdateTally;
+
+                        if (currentBreath <= 0)
+                            SetHealth(0);
+                    }
+                    else
+                        currentBreath = 0;
+                }
+
                 // Reduce fatigue when jumping and tally jumping skill
                 if (!CheckedCurrentJump && playerMotor.IsJumping)
                 {
