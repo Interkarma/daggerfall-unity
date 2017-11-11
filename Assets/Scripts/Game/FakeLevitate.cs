@@ -63,13 +63,16 @@ namespace DaggerfallWorkshop.Game
                 Move(-playerCamera.transform.right);
 
             // Up/down
+            Vector3 upDownVector = new Vector3 (0, 0, 0);
             if (InputManager.Instance.HasAction(InputManager.Actions.Jump) || InputManager.Instance.HasAction(InputManager.Actions.FloatUp))
-                Move(Vector3.up);
-            else if(InputManager.Instance.HasAction(InputManager.Actions.Crouch) || InputManager.Instance.HasAction(InputManager.Actions.FloatDown))
-                Move(-Vector3.up);
+                upDownVector = upDownVector + Vector3.up;
+            if (InputManager.Instance.HasAction(InputManager.Actions.Crouch) || InputManager.Instance.HasAction(InputManager.Actions.FloatDown) ||
+                GameManager.Instance.PlayerEnterExit.IsPlayerSwimming && (GameManager.Instance.PlayerEntity.CarriedWeight * 4) > 250)
+                upDownVector = upDownVector + Vector3.down;
+            Move(upDownVector, true);
         }
 
-        void Move(Vector3 direction)
+        void Move(Vector3 direction, bool upOrDown = false)
         {
             if (playerSwimming)
             {
@@ -82,11 +85,14 @@ namespace DaggerfallWorkshop.Game
                 float baseSpeed = playerMotor.GetBaseSpeed();
                 moveSpeed = playerMotor.GetSwimSpeed(baseSpeed);
             }
-            else
-                // Reset to levitate speed in case it has been changed by swimming
-                moveSpeed = 4.0f;
+
+            // There's a fixed speed for up/down movement
+            if (upOrDown)
+                moveSpeed = 80f / PlayerMotor.classicToUnitySpeedUnitRatio;
 
             playerMotor.controller.Move(direction * moveSpeed * Time.deltaTime);
+            // Reset to levitate speed in case it has been changed by swimming
+            moveSpeed = 4.0f;
         }
 
         void SetLevitating(bool levitating)
