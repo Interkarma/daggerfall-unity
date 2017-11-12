@@ -64,7 +64,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public float Breath
         {
             get { return breathProgress.Amount; }
-            set { breathProgress.Amount = value; }
+            set { SetRemainingBreath(value); }
         }
 
         public HUDVitals()
@@ -127,7 +127,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 fatigueProgress.ProgressTexture = DaggerfallUI.GetTextureFromImg(fatigueBarFilename);
             }
             magickaProgress.ProgressTexture = DaggerfallUI.GetTextureFromImg(magickaBarFilename);
-            breathProgress.ProgressTexture = DaggerfallUI.GetTextureFromImg(magickaBarFilename);
+        }
+
+        void SetRemainingBreath(float amount)
+        {
+            breathProgress.Amount = amount;
+            int threshold = ((GameManager.Instance.PlayerEntity.Stats.LiveEndurance) >> 3) + 4;
+            if (threshold > GameManager.Instance.PlayerEntity.CurrentBreath)
+                breathProgress.Color = new Color32(148, 12, 0, 255);
+            else
+                breathProgress.Color = new Color32(247, 239, 41, 255);
         }
     }
 }
