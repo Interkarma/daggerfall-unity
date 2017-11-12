@@ -141,6 +141,9 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public override void Update(DaggerfallEntityBehaviour sender)
         {
+            if (CurrentHealth <= 0)
+                return;
+
             bool classicUpdate = false;
 
             if (classicUpdateTimer < classicUpdateInterval)
