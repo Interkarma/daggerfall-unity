@@ -31,6 +31,7 @@ namespace DaggerfallWorkshop.Game
         public SoundClips FootstepSoundSnow = SoundClips.PlayerFootstepSnow;
         public SoundClips FallHardSound = SoundClips.FallHard;
         public SoundClips FallDamageSound = SoundClips.FallDamage;
+        public SoundClips SplashLargeSound = SoundClips.SplashLarge;
 
         DaggerfallUnity dfUnity;
         PlayerEnterExit playerEnterExit;
@@ -175,6 +176,13 @@ namespace DaggerfallWorkshop.Game
             // Play hard fall one-shot through normal audio source
             if (dfAudioSource)
                 dfAudioSource.PlayOneShot((int)FallHardSound, 0, FootstepVolumeScale);
+        }
+
+        // Capture this message so we can play large splash sound
+        public void PlayLargeSplash()
+        {
+            if (dfAudioSource)
+                dfAudioSource.PlayOneShot((int)SplashLargeSound, 0, FootstepVolumeScale);
         }
 
         #endregion

@@ -1239,7 +1239,7 @@ namespace DaggerfallWorkshop.Utility
                 return;
 
             // Get dungeon type index
-            int dungeonIndex = (int)dungeonType >> 8;
+            int dungeonIndex = (int)dungeonType;
             if (dungeonIndex < RandomEncounters.EncounterTables.Length)
             {
                 // Get encounter table
@@ -1390,7 +1390,7 @@ namespace DaggerfallWorkshop.Utility
             }
 
             // Get dungeon type index
-            int dungeonIndex = (int)dungeonType >> 8;
+            int dungeonIndex = (int)dungeonType;
 
             string[] lootTableKeys = {
             "K", // Crypt
