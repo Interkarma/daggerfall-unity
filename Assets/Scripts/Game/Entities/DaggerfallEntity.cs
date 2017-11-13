@@ -44,6 +44,7 @@ namespace DaggerfallWorkshop.Game.Entity
         protected int currentHealth;
         protected int currentFatigue;
         protected int currentMagicka;
+        protected int currentBreath;
         protected WeaponMaterialTypes minMetalToHit;
         protected sbyte[] armorValues = new sbyte[NumberBodyParts];
 
@@ -80,6 +81,8 @@ namespace DaggerfallWorkshop.Game.Entity
         public int CurrentFatigue { get { return currentFatigue; } set { SetFatigue(value); } }
         public int MaxMagicka { get { return FormulaHelper.SpellPoints(stats.LiveIntelligence, career.SpellPointMultiplierValue); } }
         public int CurrentMagicka { get { return currentMagicka; } set { SetMagicka(value); } }
+        public int MaxBreath { get { return stats.LiveEndurance / 2; } }
+        public int CurrentBreath { get { return currentBreath; } set { SetBreath(value); } }
         public WeaponMaterialTypes MinMetalToHit { get { return minMetalToHit; } set { minMetalToHit = value; } }
         public sbyte[] ArmorValues { get { return armorValues; } set { armorValues = value; } }
         public int DamageModifier { get { return FormulaHelper.DamageModifier(stats.LiveStrength); } }
@@ -162,6 +165,13 @@ namespace DaggerfallWorkshop.Game.Entity
                 RaiseOnMagickaDepletedEvent();
 
             return currentMagicka;
+        }
+
+        public virtual int SetBreath(int amount)
+        {
+            currentBreath = Mathf.Clamp(amount, 0, MaxBreath);
+
+            return currentBreath;
         }
 
         public void FillVitalSigns()

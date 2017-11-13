@@ -22,12 +22,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const string fatigueBarFilename = "MAIN04I0.IMG";
         const string magickaBarFilename = "MAIN05I0.IMG";
         const int nativeBarWidth = 4;
+        const int nativeBreathBarWidth = 6;
         const int nativeBarHeight = 32;
         const int borderSize = 10;
 
         VerticalProgress healthProgress = new VerticalProgress();
         VerticalProgress fatigueProgress = new VerticalProgress();
         VerticalProgress magickaProgress = new VerticalProgress();
+        VerticalProgress breathProgress = new VerticalProgress();
 
         /// <summary>
         /// Gets or sets current health as value between 0 and 1.
@@ -56,6 +58,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set { magickaProgress.Amount = value; }
         }
 
+        /// <summary>
+        /// Gets or sets current breath as value between 0 and 1.
+        /// </summary>
+        public float Breath
+        {
+            get { return breathProgress.Amount; }
+            set { SetRemainingBreath(value); }
+        }
+
         public HUDVitals()
             :base()
         {
@@ -73,6 +84,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Components.Add(healthProgress);
             Components.Add(fatigueProgress);
             Components.Add(magickaProgress);
+            Components.Add(breathProgress);
         }
 
         public override void Update()
@@ -82,7 +94,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 base.Update();
 
                 float barWidth = nativeBarWidth * Scale.x;
+                float breathBarWidth = nativeBreathBarWidth * Scale.x;
                 float barHeight = nativeBarHeight * Scale.y;
+                float breathBarHeight = GameManager.Instance.PlayerEntity.Stats.LiveEndurance * Scale.y;
 
                 Size = new Vector2(barWidth * 5, barHeight);
 
@@ -94,6 +108,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                 magickaProgress.Position = new Vector2(barWidth * 4, 0);
                 magickaProgress.Size = new Vector2(barWidth, barHeight);
+
+                breathProgress.Position = new Vector2(306 * Scale.x, (-60 * Scale.y) - breathBarHeight);
+                breathProgress.Size = new Vector2(breathBarWidth, breathBarHeight);
             }
         }
 
@@ -110,6 +127,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 fatigueProgress.ProgressTexture = DaggerfallUI.GetTextureFromImg(fatigueBarFilename);
             }
             magickaProgress.ProgressTexture = DaggerfallUI.GetTextureFromImg(magickaBarFilename);
+        }
+
+        void SetRemainingBreath(float amount)
+        {
+            breathProgress.Amount = amount;
+            int threshold = ((GameManager.Instance.PlayerEntity.Stats.LiveEndurance) >> 3) + 4;
+            if (threshold > GameManager.Instance.PlayerEntity.CurrentBreath)
+                breathProgress.Color = new Color32(148, 12, 0, 255);
+            else
+                breathProgress.Color = new Color32(247, 239, 41, 255);
         }
     }
 }

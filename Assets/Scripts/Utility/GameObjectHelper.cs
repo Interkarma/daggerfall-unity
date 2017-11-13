@@ -503,7 +503,7 @@ namespace DaggerfallWorkshop.Utility
             if (importEnemies)
             {
                 RDBLayout.AddFixedEnemies(go, editorObjects, ref blockData);
-                RDBLayout.AddRandomEnemies(go, editorObjects, dungeonType, monsterPower, ref blockData, monsterVariance, seed);
+                RDBLayout.AddRandomEnemies(go, editorObjects, dungeonType, monsterPower, ref blockData, startMarkers, monsterVariance, seed);
             }
 
             // Link action nodes

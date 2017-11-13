@@ -211,8 +211,8 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
-            // Do nothing if player fake levitating - replacement motor will take over movement
-            if (fakeLevitate && fakeLevitate.IsLevitating)
+            // Do nothing if player fake levitating/swimming - replacement motor will take over movement
+            if (fakeLevitate && (fakeLevitate.IsLevitating || fakeLevitate.IsSwimming))
                 return;
 
             //float inputX = Input.GetAxis("Horizontal");
@@ -444,7 +444,8 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
-            // Do nothing if player fake levitating - replacement motor will take over movement
+            // Do nothing if player fake levitating - replacement motor will take over movement.
+            // Don't return here for swimming because player should still be able to crouch when swimming.
             if (fakeLevitate && fakeLevitate.IsLevitating)
                 return;
 
@@ -598,6 +599,13 @@ namespace DaggerfallWorkshop.Game
             Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
             float runSpeed = baseSpeed * (1.25f + (player.Skills.GetLiveSkillValue(DFCareer.Skills.Running) / 200f));
             return runSpeed;
+        }
+
+        public float GetSwimSpeed(float baseSpeed)
+        {
+            Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
+            float swimSpeed = (baseSpeed * (player.Skills.GetLiveSkillValue(DFCareer.Skills.Swimming) / 200f)) + (baseSpeed / 4);
+            return swimSpeed;
         }
     }
 }

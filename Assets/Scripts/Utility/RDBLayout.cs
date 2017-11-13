@@ -488,6 +488,7 @@ namespace DaggerfallWorkshop.Utility
             DFRegion.DungeonTypes dungeonType,
             float monsterPower,
             ref DFBlock blockData,
+            GameObject[] startMarkers,
             int monsterVariance = 4,
             int seed = 0,
             bool serialize = true)
@@ -518,7 +519,7 @@ namespace DaggerfallWorkshop.Utility
             {
                 // Add random enemy objects
                 if (editorObjects[i].Resources.FlatResource.TextureRecord == randomMonsterFlatIndex)
-                    AddRandomRDBEnemy(editorObjects[i], dungeonType, monsterPower, monsterVariance, randomEnemiesNode.transform, ref blockData, serialize);
+                    AddRandomRDBEnemy(editorObjects[i], dungeonType, monsterPower, monsterVariance, randomEnemiesNode.transform, ref blockData, startMarkers, serialize);
             }
         }
 
@@ -1232,6 +1233,7 @@ namespace DaggerfallWorkshop.Utility
             int monsterVariance,
             Transform parent,
             ref DFBlock blockData,
+            GameObject[] startMarkers,
             bool serialize)
         {
             // Must have a dungeon type
@@ -1242,8 +1244,29 @@ namespace DaggerfallWorkshop.Utility
             int dungeonIndex = (int)dungeonType;
             if (dungeonIndex < RandomEncounters.EncounterTables.Length)
             {
+                // Get water level from start marker if it exists
+                DaggerfallBillboard dfBillboard;
+                if (startMarkers.Length > 0)
+                    dfBillboard = startMarkers[0].GetComponent<DaggerfallBillboard>();
+                else
+                    dfBillboard = null;
+
+                int waterLevel = 10000;
+                if (dfBillboard != null)
+                    waterLevel = dfBillboard.Summary.WaterLevel;
+
                 // Get encounter table
-                RandomEncounterTable table = RandomEncounters.EncounterTables[dungeonIndex];
+                // Use water encounter table if the marker is under the water level
+                // These are classic values, so a greater y value means elevation is lower
+                RandomEncounterTable table;
+                if (waterLevel >= obj.YPos)
+                {
+                    table = RandomEncounters.EncounterTables[dungeonIndex];
+                }
+                else
+                {
+                    table = RandomEncounters.EncounterTables[19]; // underwater encounter table
+                }
 
                 // Get base monster index into table
                 int baseMonsterIndex = (int)((float)table.Enemies.Length * monsterPower);

@@ -15,13 +15,14 @@ using UnityEngine;
 namespace DaggerfallWorkshop.Game
 {
     /// <summary>
-    /// A temporary replacement motor for player levitation.
-    /// This is just so player can navigate Mantellan Crux and other places where levitation useful.
+    /// A temporary replacement motor for player levitation and swimming.
+    /// This is just so player can navigate Mantellan Crux and other places where levitation useful, and to allow for work on swimming mechanics.
     /// Will be removed after PlayerMotor refactor and magic system able to perform job properly.
     /// </summary>
     public class FakeLevitate : MonoBehaviour
     {
         bool playerLevitating = false;
+        bool playerSwimming = false;
         PlayerMotor playerMotor;
         Camera playerCamera;
         float moveSpeed = 4.0f;
@@ -32,6 +33,12 @@ namespace DaggerfallWorkshop.Game
             set { SetLevitating(value); }
         }
 
+        public bool IsSwimming
+        {
+            get { return playerSwimming; }
+            set { SetSwimming(value); }
+        }
+
         private void Start()
         {
             playerMotor = GetComponent<PlayerMotor>();
@@ -40,7 +47,7 @@ namespace DaggerfallWorkshop.Game
 
         private void Update()
         {
-            if (!playerMotor || !playerCamera || !playerLevitating)
+            if (!playerMotor || !playerCamera || (!playerLevitating && !playerSwimming))
                 return;
 
             // Forward/backwards
@@ -56,15 +63,36 @@ namespace DaggerfallWorkshop.Game
                 Move(-playerCamera.transform.right);
 
             // Up/down
+            Vector3 upDownVector = new Vector3 (0, 0, 0);
             if (InputManager.Instance.HasAction(InputManager.Actions.Jump) || InputManager.Instance.HasAction(InputManager.Actions.FloatUp))
-                Move(Vector3.up);
-            else if(InputManager.Instance.HasAction(InputManager.Actions.Crouch) || InputManager.Instance.HasAction(InputManager.Actions.FloatDown))
-                Move(-Vector3.up);
+                upDownVector = upDownVector + Vector3.up;
+            if (InputManager.Instance.HasAction(InputManager.Actions.Crouch) || InputManager.Instance.HasAction(InputManager.Actions.FloatDown) ||
+                GameManager.Instance.PlayerEnterExit.IsPlayerSwimming && (GameManager.Instance.PlayerEntity.CarriedWeight * 4) > 250)
+                upDownVector = upDownVector + Vector3.down;
+            Move(upDownVector, true);
         }
 
-        void Move(Vector3 direction)
+        void Move(Vector3 direction, bool upOrDown = false)
         {
+            if (playerSwimming)
+            {
+                // Do not allow player to swim up out of water, as he would immediately be pulled back in, making jerky movement and playing the splash sound repeatedly
+                if ((direction.y > 0) && (playerMotor.controller.transform.position.y + (50 * MeshReader.GlobalScale) - 0.93f) >=
+                (GameManager.Instance.PlayerEnterExit.blockWaterLevel * -1 * MeshReader.GlobalScale))
+                    direction.y = 0;
+
+                Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
+                float baseSpeed = playerMotor.GetBaseSpeed();
+                moveSpeed = playerMotor.GetSwimSpeed(baseSpeed);
+            }
+
+            // There's a fixed speed for up/down movement
+            if (upOrDown)
+                moveSpeed = 80f / PlayerMotor.classicToUnitySpeedUnitRatio;
+
             playerMotor.controller.Move(direction * moveSpeed * Time.deltaTime);
+            // Reset to levitate speed in case it has been changed by swimming
+            moveSpeed = 4.0f;
         }
 
         void SetLevitating(bool levitating)
@@ -86,6 +114,29 @@ namespace DaggerfallWorkshop.Game
             {
                 playerMotor.CancelMovement = true;
                 playerLevitating = false;
+                return;
+            }
+        }
+
+        void SetSwimming(bool swimming)
+        {
+            // Must have PlayerMotor reference
+            if (!playerMotor)
+                return;
+
+            // Start swimming
+            if (!playerSwimming && swimming)
+            {
+                playerMotor.CancelMovement = true;
+                playerSwimming = true;
+                return;
+            }
+
+            // Stop swimming
+            if (playerSwimming && !swimming)
+            {
+                playerMotor.CancelMovement = true;
+                playerSwimming = false;
                 return;
             }
         }

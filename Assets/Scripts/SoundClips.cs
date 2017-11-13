@@ -373,14 +373,14 @@ namespace DaggerfallWorkshop
 
         ArenaIceGolem = 307,
 
+        FootstepMetal = 308, // May be unused
+
         // Player footstep and movement sounds
-        // These are played with variable pitch
-        PlayerFootstepMetal = 308,
-        PlayerFootstepNormal = 309,
-        PlayerFootstepSnow = 310,
-        PlayerFootstepUnknown = 311,
+        PlayerFootstepStone1 = 309,
+        PlayerFootstepOutside1 = 310,
+        PlayerFootstepSnow1 = 311,
         PlayerSwimming = 312,
-        PlayerFootstepWood = 313,
+        PlayerFootstepWood1 = 313,
 
         ArenaGoblin = 314,
 
@@ -400,7 +400,11 @@ namespace DaggerfallWorkshop
 
         ArenaRat = 329,
 
-        // 330 through 333 are footsteps
+        // Player footstep sounds for other foot
+        PlayerFootstepStone2 = 330,
+        PlayerFootstepOutside2 = 331,
+        PlayerFootstepSnow2 = 332,
+        PlayerFootstepWood2 = 333,
 
         SplashSmallLow = 334,
 

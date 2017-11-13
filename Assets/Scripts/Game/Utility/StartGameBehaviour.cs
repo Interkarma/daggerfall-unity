@@ -545,6 +545,9 @@ namespace DaggerfallWorkshop.Game.Utility
             // Set time tracked by playerEntity for game minute-based updates
             playerEntity.LastGameMinutes = saveVars.GameTime;
 
+            // Get breath remaining if player was submerged (0 if they were not in the water)
+            playerEntity.CurrentBreath = saveVars.BreathRemaining;
+
             // Start game
             DaggerfallUI.Instance.PopToHUD();
             GameManager.Instance.PauseGame(false);

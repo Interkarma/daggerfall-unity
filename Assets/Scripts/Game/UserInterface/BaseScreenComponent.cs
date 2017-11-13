@@ -278,6 +278,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         /// <summary>
+        /// Gets or sets background colour texture.
+        /// </summary>
+        public Texture2D BackgroundColorTexture
+        {
+            get { return backgroundColorTexture; }
+            set { backgroundColorTexture = value; }
+        }
+
+        /// <summary>
         /// Gets or sets background texture.
         ///  Will replace BackgroundColor if set.
         /// </summary>
