@@ -366,6 +366,7 @@ namespace DaggerfallWorkshop.Game.Questing
                         anyRumorsAnswers.Add(tokens);
                     }
                 }
+
                 GameManager.Instance.TalkManager.AddQuestTopicWithInfoAndRumors(this.ParentQuest.UID, this, this.item.ItemName, TalkManager.QuestInfoResourceType.Thing, anyInfoAnswers, anyRumorsAnswers);
             }
         }

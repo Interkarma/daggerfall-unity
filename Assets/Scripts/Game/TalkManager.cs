@@ -704,6 +704,8 @@ namespace DaggerfallWorkshop.Game
         public void RemoveQuestRumorsFromRumorMill(ulong questID)
         {
             int i = 0;
+            if (listRumorMill == null)
+                return;
             while (i < listRumorMill.Count)
             {
                 if (listRumorMill[i].rumorType == RumorType.QuestProgressRumor || listRumorMill[i].rumorType == RumorType.QuestRumorMill)
