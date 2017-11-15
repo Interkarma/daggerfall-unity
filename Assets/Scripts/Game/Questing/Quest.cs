@@ -276,6 +276,9 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // remove all quest topics for this quest from talk manager
             GameManager.Instance.TalkManager.RemoveQuestInfoTopicsForSpecificQuest(this.UID);
+
+            // remove all rumors for this quest from talk manager
+            GameManager.Instance.TalkManager.RemoveQuestRumorsFromRumorMill(this.UID);
         }
 
         public void StartTask(Symbol symbol)

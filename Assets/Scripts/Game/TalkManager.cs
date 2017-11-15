@@ -701,6 +701,22 @@ namespace DaggerfallWorkshop.Game
             listRumorMill.Add(entry);
         }
 
+        public void RemoveQuestRumorsFromRumorMill(ulong questID)
+        {
+            int i = 0;
+            while (i < listRumorMill.Count)
+            {
+                if (listRumorMill[i].rumorType == RumorType.QuestProgressRumor || listRumorMill[i].rumorType == RumorType.QuestRumorMill)
+                {
+                    listRumorMill.RemoveAt(i);
+                }
+                else
+                {
+                    i++;
+                }
+            }
+        }
+
         public string GetKeySubjectLocationHint()
         {
             string answer;
