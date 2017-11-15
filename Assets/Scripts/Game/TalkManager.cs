@@ -704,7 +704,7 @@ namespace DaggerfallWorkshop.Game
             listRumorMill.Add(entry);
         }
 
-        public void AddReplaceQuestProgressRumorToRumorMill(ulong questID, Message message)
+        public void AddOrReplaceQuestProgressRumor(ulong questID, Message message)
         {
             if (listRumorMill == null)
                 SetupRumorMill();
