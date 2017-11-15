@@ -678,7 +678,8 @@ namespace DaggerfallWorkshop.Game
             {
                 int variant = UnityEngine.Random.Range(0, entry.listRumorVariants.Count);
                 TextFile.Token[] tokens = entry.listRumorVariants[variant];
-                MacroHelper.ExpandMacros(ref tokens, this);
+                QuestMacroHelper macroHelper = new QuestMacroHelper();
+                macroHelper.ExpandQuestMessage(GameManager.Instance.QuestMachine.GetQuest(entry.questID), ref tokens, true);
                 news = tokens[0].text; // tokens.ToString();
             }
             
@@ -923,7 +924,7 @@ namespace DaggerfallWorkshop.Game
                 questResourceInfo.questResource = person;
             }
 
-            QuestMacroHelper macroHelper = new QuestMacroHelper();           
+            QuestMacroHelper macroHelper = new QuestMacroHelper();
             
             questResources.resourceInfo[resourceName] = questResourceInfo;
             dictQuestInfo[questID] = questResources;
