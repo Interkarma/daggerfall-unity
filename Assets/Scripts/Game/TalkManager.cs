@@ -688,6 +688,9 @@ namespace DaggerfallWorkshop.Game
 
         public void AddQuestRumorToRumorMill(ulong questID, Message message)
         {
+            if (listRumorMill == null)
+                SetupRumorMill();
+
             RumorMillEntry entry = new RumorMillEntry();
             entry.rumorType = RumorType.QuestRumorMill;
             entry.questID = questID;
@@ -697,19 +700,58 @@ namespace DaggerfallWorkshop.Game
                 TextFile.Token[] variantItem = message.GetTextTokensByVariant(i, false); // do not expand macros
                 entry.listRumorVariants.Add(variantItem);
             }
-            if (listRumorMill == null)
-                SetupRumorMill();
+
             listRumorMill.Add(entry);
         }
 
-        public void RemoveQuestRumorsFromRumorMill(ulong questID)
+        public void AddReplaceQuestProgressRumorToRumorMill(ulong questID, Message message)
         {
-            int i = 0;
+            if (listRumorMill == null)
+                SetupRumorMill();
+
+            int i;
+            for (i = 0; i < listRumorMill.Count; i++)
+            {
+                if (listRumorMill[i].rumorType == RumorType.QuestProgressRumor && listRumorMill[i].questID == questID)
+                {
+                    break;
+                }
+            }
+
+            List<TextFile.Token[]> listRumorVariants = new List<TextFile.Token[]>();
+            for (i = 0; i < message.VariantCount; i++)
+            {
+                TextFile.Token[] variantItem = message.GetTextTokensByVariant(i, false); // do not expand macros
+                listRumorVariants.Add(variantItem);
+            }
+
+            RumorMillEntry entry;
+            if (i >= listRumorMill.Count) // no entry was found -> create new
+            {
+                entry = new RumorMillEntry();
+                entry.rumorType = RumorType.QuestProgressRumor;
+                entry.questID = questID;
+                entry.listRumorVariants = listRumorVariants;
+                listRumorMill.Add(entry);
+            }
+            else // existing entry for questID -> replace
+            {
+                entry = listRumorMill[i];
+                entry.listRumorVariants = listRumorVariants;
+                listRumorMill[i] = entry;
+            }            
+        }
+
+        public void RemoveQuestRumorsFromRumorMill(ulong questID)
+        {            
             if (listRumorMill == null)
                 return;
+
+            int i = 0;
             while (i < listRumorMill.Count)
             {
-                if (listRumorMill[i].rumorType == RumorType.QuestProgressRumor || listRumorMill[i].rumorType == RumorType.QuestRumorMill)
+                if ((listRumorMill[i].rumorType == RumorType.QuestProgressRumor || listRumorMill[i].rumorType == RumorType.QuestRumorMill) &&
+                    (listRumorMill[i].questID == questID))
                 {
                     listRumorMill.RemoveAt(i);
                 }
