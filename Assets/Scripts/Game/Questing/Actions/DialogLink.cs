@@ -73,6 +73,8 @@ namespace DaggerfallWorkshop.Game.Questing
             if (place != null)
             {
                 namePlace = place.SiteDetails.locationName;
+                if (namePlace == null)
+                    namePlace = place.Name; // workaround to prevent exception, TODO: correct name resolving for local houses/residences
                 GameManager.Instance.TalkManager.DialogLinkForQuestInfoResource(ParentQuest.UID, namePlace, TalkManager.QuestInfoResourceType.Location);
             }
             if (person != null)
