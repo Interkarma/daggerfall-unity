@@ -1093,8 +1093,18 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public void RestoreConversationData(SaveDataConversation data)
         {
+            if (data == null)
+                data = new SaveDataConversation();
+
             dictQuestInfo = data.dictQuestInfo;
+            if (dictQuestInfo == null)
+                dictQuestInfo = new Dictionary<ulong, QuestResources>();
             listRumorMill = data.listRumorMill;
+            if (listRumorMill == null)
+            {
+                SetupRumorMill();
+            }
+
             // update topic list
             AssembleTopiclistTellMeAbout();
         }
