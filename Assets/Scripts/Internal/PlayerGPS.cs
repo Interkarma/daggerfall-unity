@@ -61,6 +61,8 @@ namespace DaggerfallWorkshop
         int lastClimateIndex;
         int lastPoliticIndex;
 
+        string locationRevealedByMapItem;
+
         Dictionary<int, DiscoveredLocation> discoveredLocations = new Dictionary<int, DiscoveredLocation>();
 
         #endregion
@@ -217,6 +219,14 @@ namespace DaggerfallWorkshop
         public RectOffset LocationRect
         {
             get { return new RectOffset(locationWorldRectMinX, locationWorldRectMaxX, locationWorldRectMinZ, locationWorldRectMaxZ); }
+        }
+
+        /// <summary>
+        /// The name of the last location revealed by a map item. Used for %map macro.
+        /// </summary>
+        public string LocationRevealedByMapItem
+        {
+            get { return locationRevealedByMapItem; } set { locationRevealedByMapItem = value; }
         }
 
         #endregion
