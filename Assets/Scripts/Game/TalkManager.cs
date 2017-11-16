@@ -670,11 +670,7 @@ namespace DaggerfallWorkshop.Game
                 MacroHelper.ExpandMacros(ref tokens, this);
                 news = tokens[0].text; // tokens.ToString(); //tokens[0].text
             }
-            else if (entry.rumorType == RumorType.QuestProgressRumor)
-            {
-
-            }
-            else if (entry.rumorType == RumorType.QuestRumorMill)
+            else if (entry.rumorType == RumorType.QuestRumorMill || entry.rumorType == RumorType.QuestProgressRumor)
             {
                 int variant = UnityEngine.Random.Range(0, entry.listRumorVariants.Count);
                 TextFile.Token[] tokens = entry.listRumorVariants[variant];
@@ -719,9 +715,9 @@ namespace DaggerfallWorkshop.Game
             }
 
             List<TextFile.Token[]> listRumorVariants = new List<TextFile.Token[]>();
-            for (i = 0; i < message.VariantCount; i++)
+            for (int v = 0; v < message.VariantCount; v++)
             {
-                TextFile.Token[] variantItem = message.GetTextTokensByVariant(i, false); // do not expand macros
+                TextFile.Token[] variantItem = message.GetTextTokensByVariant(v, false); // do not expand macros
                 listRumorVariants.Add(variantItem);
             }
 
