@@ -88,13 +88,16 @@ namespace DaggerfallWorkshop
 
         /// <summary>
         /// Randomly add a potion
-        /// TODO: Add potion contents. Just a glass bottle for now.
         /// </summary>
         public void RandomlyAddPotion(int chance)
         {
+            ushort[] potionValues = { 25, 50, 50, 50, 75, 75, 75, 75, 100, 100, 100, 100, 125, 125, 125, 200, 200, 200, 250, 500 };
             if (Random.Range(1, 101) < chance)
             {
                 DaggerfallUnityItem potion = new DaggerfallUnityItem(ItemGroups.UselessItems1, 1);
+                byte recipe = (byte)Random.Range(0, 20);
+                potion.typeDependentData = recipe;
+                potion.value = potionValues[recipe];
                 items.AddItem(potion);
             }
         }
