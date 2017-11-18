@@ -92,9 +92,6 @@ namespace DaggerfallWorkshop.Game
                 mobile.Summary.Enemy.CorpseTexture,
                 DaggerfallUnity.NextUID);
 
-            // Generate items
-            loot.GenerateItems();
-
             // This is still required so enemy equipment is not marked as equipped
             // This item collection is transferred to loot container below
             for (int i = (int)Items.EquipSlots.Head; i <= (int)Items.EquipSlots.Feet; i++)
@@ -104,17 +101,6 @@ namespace DaggerfallWorkshop.Game
                 {
                     enemyEntity.ItemEquipTable.UnequipItem((Items.EquipSlots)i);
                 }
-            }
-
-            // Chance of adding map
-            loot.RandomlyAddMap(mobile.Summary.Enemy.MapChance);
-
-            if (!string.IsNullOrEmpty(mobile.Summary.Enemy.LootTableKey))
-            {
-                // Chance of adding potion
-                loot.RandomlyAddPotion(3);
-                // Chance of adding potion recipe
-                loot.RandomlyAddPotionRecipe(2);
             }
 
             entityBehaviour.CorpseLootContainer = loot;

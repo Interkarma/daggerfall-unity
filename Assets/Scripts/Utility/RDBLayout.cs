@@ -1440,8 +1440,7 @@ namespace DaggerfallWorkshop.Utility
             // Get loot table key
             if (dungeonIndex < lootTableKeys.Length)
             {
-                loot.LootTableKey = lootTableKeys[dungeonIndex];
-                loot.GenerateItems();
+                DaggerfallLoot.GenerateItems(lootTableKeys[dungeonIndex], loot.Items);
 
                 // Randomly add map
                 char key = lootTableKeys[dungeonIndex][0];
@@ -1451,9 +1450,9 @@ namespace DaggerfallWorkshop.Utility
                 {
                     int[] mapChances = { 2, 1, 1, 2, 2, 15 };
                     int mapChance = mapChances[alphabetIndex - 10];
-                    loot.RandomlyAddMap(mapChance);
-                    loot.RandomlyAddPotion(4);
-                    loot.RandomlyAddPotionRecipe(2);
+                    DaggerfallLoot.RandomlyAddMap(mapChance, loot.Items);
+                    DaggerfallLoot.RandomlyAddPotion(4, loot.Items);
+                    DaggerfallLoot.RandomlyAddPotionRecipe(2, loot.Items);
                 }
             }
             else

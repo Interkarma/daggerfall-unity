@@ -67,7 +67,6 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.currentPosition = loot.transform.position;
             data.textureArchive = loot.TextureArchive;
             data.textureRecord = loot.TextureRecord;
-            data.lootTableKey = loot.LootTableKey;
             data.playerOwned = loot.playerOwned;
             data.customDrop = loot.customDrop;
             data.items = loot.Items.SerializeItems();
@@ -110,7 +109,6 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Restore other data
             loot.ContainerType = data.containerType;
             loot.ContainerImage = data.containerImage;
-            loot.LootTableKey = data.lootTableKey;
             loot.TextureArchive = data.textureArchive;
             loot.TextureRecord = data.textureRecord;
             loot.playerOwned = data.playerOwned;

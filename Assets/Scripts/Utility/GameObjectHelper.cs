@@ -631,7 +631,6 @@ namespace DaggerfallWorkshop.Utility
 
             // Set properties
             loot.LoadID = loadID;
-            loot.LootTableKey = string.Empty;
             loot.playerOwned = true;
             loot.customDrop = true;
 
@@ -698,7 +697,6 @@ namespace DaggerfallWorkshop.Utility
 
             // Set properties
             loot.LoadID = loadID;
-            loot.LootTableKey = enemyEntity.MobileEnemy.LootTableKey;
             loot.playerOwned = false;
             loot.customDrop = true;
 
