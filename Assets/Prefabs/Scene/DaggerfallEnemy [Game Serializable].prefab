@@ -217,7 +217,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MeleeAttackSpeed: 1.25
-  MeleeDistance: 2
+  MeleeDistance: 2.5
 --- !u!114 &11435454
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -339,6 +339,7 @@ MonoBehaviour:
       MapChance: 0
       LootTableKey: 
       HitFrame: 0
+      Weight: 0
     EnemyState: 0
     StateAnims: []
 --- !u!114 &11492232

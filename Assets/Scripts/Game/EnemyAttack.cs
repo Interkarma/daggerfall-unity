@@ -23,7 +23,7 @@ namespace DaggerfallWorkshop.Game
     public class EnemyAttack : MonoBehaviour
     {
         public float MeleeAttackSpeed = 1.25f;      // Number of seconds between melee attacks
-        public float MeleeDistance = 2f;          // Maximum distance for melee attack
+        public float MeleeDistance = 2.5f;          // Maximum distance for melee attack
 
         EnemyMotor motor;
         EnemySenses senses;
