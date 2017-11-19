@@ -26,6 +26,7 @@ namespace DaggerfallWorkshop.Game
     {
         public float OpenDoorDistance = 2f;         // Maximum distance to open door
         public float GiveUpTime = 4f;               // Time in seconds enemy will give up if target is unreachable
+        public const float AttackSpeedDivisor = 3f;       // How much to slow down during attack animations
 
         EnemySenses senses;
         Vector3 targetPos;
@@ -201,7 +202,7 @@ namespace DaggerfallWorkshop.Game
 
             // Reduced speed if playing a one-shot animation
             if (mobile.IsPlayingOneShot())
-                moveSpeed /= 3;
+                moveSpeed /= AttackSpeedDivisor;
 
             // Remain idle when player not acquired or not hostile
             if (senses.LastKnownPlayerPos == EnemySenses.ResetPlayerPos || !isHostile)
