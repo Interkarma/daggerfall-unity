@@ -122,7 +122,7 @@ namespace DaggerfallWorkshop.Utility
             { "%lt1", null }, // Title of _fl1
             { "%ltn", LocalReputation }, // In the eyes of the law you are.......
             { "%luc", Luck }, // Luck
-            { "%map", null }, // ?
+            { "%map", LocationRevealedByMapItem }, // Name of location revealed by a map item
             { "%mad", MagicResist }, // Resistance
             { "%mat", Material }, // Material
             { "%mit", null }, // Item
@@ -626,6 +626,12 @@ namespace DaggerfallWorkshop.Utility
             if (GameManager.Instance.TalkManager.MarkLocationOnMap)
                 GameManager.Instance.TalkManager.MarkKeySubjectLocationOnMap();
             return GameManager.Instance.TalkManager.CurrentKeySubject;
+        }
+
+        private static string LocationRevealedByMapItem(IMacroContextProvider mcp)
+        {
+            // %map
+            return GameManager.Instance.PlayerGPS.LocationRevealedByMapItem;
         }
 
         #endregion
