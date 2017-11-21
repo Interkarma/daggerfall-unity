@@ -219,9 +219,29 @@ namespace DaggerfallWorkshop.Game
         // dictionary of quests (key is questID, value is QuestInfo)
         Dictionary<ulong, QuestResources> dictQuestInfo = new Dictionary<ulong, QuestResources>();
 
+
+        public enum RumorType
+        {
+            CommonRumor,
+            QuestProgressRumor,
+            QuestRumorMill
+        }
+
+        // rumor mill data
+        public class RumorMillEntry
+        {
+            public RumorType rumorType;            
+            public List<TextFile.Token[]> listRumorVariants;
+            public ulong questID; // questID used for RumorType::QuestProgressRumor and RumorType::QuestRumorMill, otherwise not set
+        }
+        // list of rumors in rumor mill
+        List<RumorMillEntry> listRumorMill = new List<RumorMillEntry>();
+
+
         public class SaveDataConversation
         {
             public Dictionary<ulong, QuestResources> dictQuestInfo;
+            public List<RumorMillEntry> listRumorMill;
         }
 
         #endregion
@@ -471,6 +491,7 @@ namespace DaggerfallWorkshop.Game
             numQuestionsAsked = 0;
             questionOpeningText = "";
             currentQuestionListItem = null;
+            SetupRumorMill();
         }
 
         public string GetNPCGreetingText()
@@ -640,8 +661,101 @@ namespace DaggerfallWorkshop.Game
 
         public string GetNewsOrRumors()
         {
-            string news = DaggerfallUnity.Instance.TextProvider.GetRandomText(1400);
+            string news = "nevermind ...";
+            int randomIndex = UnityEngine.Random.Range(0, listRumorMill.Count);
+            RumorMillEntry entry = listRumorMill[randomIndex];
+            if (entry.rumorType == RumorType.CommonRumor)
+            {
+                TextFile.Token[] tokens = entry.listRumorVariants[0];
+                MacroHelper.ExpandMacros(ref tokens, this);
+                news = tokens[0].text; // tokens.ToString(); //tokens[0].text
+            }
+            else if (entry.rumorType == RumorType.QuestRumorMill || entry.rumorType == RumorType.QuestProgressRumor)
+            {
+                int variant = UnityEngine.Random.Range(0, entry.listRumorVariants.Count);
+                TextFile.Token[] tokens = entry.listRumorVariants[variant];
+                QuestMacroHelper macroHelper = new QuestMacroHelper();
+                macroHelper.ExpandQuestMessage(GameManager.Instance.QuestMachine.GetQuest(entry.questID), ref tokens, true);
+                news = tokens[0].text; // tokens.ToString();
+            }
+            
             return (news);
+        }
+
+        public void AddQuestRumorToRumorMill(ulong questID, Message message)
+        {
+            if (listRumorMill == null)
+                SetupRumorMill();
+
+            RumorMillEntry entry = new RumorMillEntry();
+            entry.rumorType = RumorType.QuestRumorMill;
+            entry.questID = questID;
+            entry.listRumorVariants = new List<TextFile.Token[]>();
+            for (int i=0; i<message.VariantCount; i++)
+            {
+                TextFile.Token[] variantItem = message.GetTextTokensByVariant(i, false); // do not expand macros
+                entry.listRumorVariants.Add(variantItem);
+            }
+
+            listRumorMill.Add(entry);
+        }
+
+        public void AddOrReplaceQuestProgressRumor(ulong questID, Message message)
+        {
+            if (listRumorMill == null)
+                SetupRumorMill();
+
+            int i;
+            for (i = 0; i < listRumorMill.Count; i++)
+            {
+                if (listRumorMill[i].rumorType == RumorType.QuestProgressRumor && listRumorMill[i].questID == questID)
+                {
+                    break;
+                }
+            }
+
+            List<TextFile.Token[]> listRumorVariants = new List<TextFile.Token[]>();
+            for (int v = 0; v < message.VariantCount; v++)
+            {
+                TextFile.Token[] variantItem = message.GetTextTokensByVariant(v, false); // do not expand macros
+                listRumorVariants.Add(variantItem);
+            }
+
+            RumorMillEntry entry;
+            if (i >= listRumorMill.Count) // no entry was found -> create new
+            {
+                entry = new RumorMillEntry();
+                entry.rumorType = RumorType.QuestProgressRumor;
+                entry.questID = questID;
+                entry.listRumorVariants = listRumorVariants;
+                listRumorMill.Add(entry);
+            }
+            else // existing entry for questID -> replace
+            {
+                entry = listRumorMill[i];
+                entry.listRumorVariants = listRumorVariants;
+                listRumorMill[i] = entry;
+            }            
+        }
+
+        public void RemoveQuestRumorsFromRumorMill(ulong questID)
+        {            
+            if (listRumorMill == null)
+                return;
+
+            int i = 0;
+            while (i < listRumorMill.Count)
+            {
+                if ((listRumorMill[i].rumorType == RumorType.QuestProgressRumor || listRumorMill[i].rumorType == RumorType.QuestRumorMill) &&
+                    (listRumorMill[i].questID == questID))
+                {
+                    listRumorMill.RemoveAt(i);
+                }
+                else
+                {
+                    i++;
+                }
+            }
         }
 
         public string GetKeySubjectLocationHint()
@@ -848,7 +962,7 @@ namespace DaggerfallWorkshop.Game
                 questResourceInfo.questResource = person;
             }
 
-            QuestMacroHelper macroHelper = new QuestMacroHelper();           
+            QuestMacroHelper macroHelper = new QuestMacroHelper();
             
             questResources.resourceInfo[resourceName] = questResourceInfo;
             dictQuestInfo[questID] = questResources;
@@ -970,6 +1084,7 @@ namespace DaggerfallWorkshop.Game
         {
             SaveDataConversation saveDataConversation = new SaveDataConversation();
             saveDataConversation.dictQuestInfo = dictQuestInfo;
+            saveDataConversation.listRumorMill = listRumorMill;
             return saveDataConversation;
         }
 
@@ -978,7 +1093,17 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public void RestoreConversationData(SaveDataConversation data)
         {
+            if (data == null)
+                data = new SaveDataConversation();
+
             dictQuestInfo = data.dictQuestInfo;
+            if (dictQuestInfo == null)
+                dictQuestInfo = new Dictionary<ulong, QuestResources>();
+            listRumorMill = data.listRumorMill;
+            if (listRumorMill == null)
+            {
+                SetupRumorMill();
+            }
 
             // update topic list
             AssembleTopiclistTellMeAbout();
@@ -987,6 +1112,35 @@ namespace DaggerfallWorkshop.Game
         #endregion
 
         #region Private Methods
+
+        private void SetupRumorMill()
+        {
+            if (listRumorMill == null)
+                listRumorMill = new List<RumorMillEntry>();
+            if (listRumorMill.Count == 0)
+            {
+                for (int i = 0; i < 10; i++) // setup 10 random comman rumors (this is very early work in progress)
+                {
+                    RumorMillEntry entry = new RumorMillEntry();
+
+                    TextFile.Token[] tokens;
+                    int randomNum = UnityEngine.Random.Range(0, 12);
+                    if (randomNum >= 0 && randomNum <= 9)
+                        tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(1400 + randomNum);
+                    else if (randomNum == 10)
+                        tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(1456);
+                    else if (randomNum == 11)
+                        tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(1481);
+                    else
+                        tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(1457);
+                    entry.rumorType = RumorType.CommonRumor;
+                    entry.listRumorVariants = new List<TextFile.Token[]>();
+                    entry.listRumorVariants.Add(tokens);
+
+                    listRumorMill.Add(entry);
+                }
+            }
+        }
 
         private void GetBuildingList()
         {

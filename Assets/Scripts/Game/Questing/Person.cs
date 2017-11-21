@@ -532,20 +532,26 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             if (this.InfoMessageID != -1)
             {
+                List<TextFile.Token[]> anyInfoAnswers = new List<TextFile.Token[]>();                
                 Message message = this.ParentQuest.GetMessage(this.InfoMessageID);
-                List<TextFile.Token[]> anyInfoAnswers = new List<TextFile.Token[]>();
-                for (int i=0; i < message.VariantCount; i++)
+                if (message != null)
                 {
-                    TextFile.Token[] tokens = message.GetTextTokensByVariant(i, false); // do not expand macros here (they will be expanded just in time by TalkManager class)
-                    anyInfoAnswers.Add(tokens);
+                    for (int i = 0; i < message.VariantCount; i++)
+                    {
+                        TextFile.Token[] tokens = message.GetTextTokensByVariant(i, false); // do not expand macros here (they will be expanded just in time by TalkManager class)
+                        anyInfoAnswers.Add(tokens);
+                    }
                 }
 
                 message = this.ParentQuest.GetMessage(this.RumorsMessageID);
                 List<TextFile.Token[]> anyRumorsAnswers = new List<TextFile.Token[]>();
-                for (int i = 0; i < message.VariantCount; i++)
+                if (message != null)
                 {
-                    TextFile.Token[] tokens = message.GetTextTokensByVariant(i, false); // do not expand macros here (they will be expanded just in time by TalkManager class)
-                    anyRumorsAnswers.Add(tokens);
+                    for (int i = 0; i < message.VariantCount; i++)
+                    {
+                        TextFile.Token[] tokens = message.GetTextTokensByVariant(i, false); // do not expand macros here (they will be expanded just in time by TalkManager class)
+                        anyRumorsAnswers.Add(tokens);
+                    }
                 }
 
                 GameManager.Instance.TalkManager.AddQuestTopicWithInfoAndRumors(this.ParentQuest.UID, this, this.displayName, TalkManager.QuestInfoResourceType.Person, anyInfoAnswers, anyRumorsAnswers);                

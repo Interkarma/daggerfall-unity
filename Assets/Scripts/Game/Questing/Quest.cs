@@ -227,8 +227,22 @@ namespace DaggerfallWorkshop.Game.Questing
             // Do nothing if complete
             // Now waiting to be tombstoned in quest machine
             if (questComplete)
-                return;
+            {
+                // Add QuestorPostSuccess or QuestorPostFailure rumor to rumor mill
+                Message message;
+                if (questSuccess)
+                    message = GetMessage((int)QuestMachine.QuestMessages.RumorsPostSuccess);
+                else
+                    message = GetMessage((int)QuestMachine.QuestMessages.RumorsPostFailure);
+                if (message != null)
+                {
+                    GameManager.Instance.TalkManager.AddOrReplaceQuestProgressRumor(this.UID, message);
+                }
 
+                // Do nothing further if complete
+                // Now waiting to be tombstoned in quest machine
+                return;
+            }
             // Countdown ticks to end
             if (ticksToEnd > 0)
             {
@@ -266,6 +280,21 @@ namespace DaggerfallWorkshop.Game.Questing
             }
         }
 
+        /// <summary>
+        /// initializes quest rumors
+        /// dictionary must contain the quest's messages (call after messages was initialized correctly)
+        /// </summary>
+        public void initQuestRumors()
+        {
+            // Add RumorsDuringQuest rumor to rumor mill
+            Message message;
+            message = GetMessage((int)QuestMachine.QuestMessages.RumorsDuringQuest);
+            if (message != null)
+            {
+                GameManager.Instance.TalkManager.AddOrReplaceQuestProgressRumor(this.UID, message);
+            }
+        }
+
         public void EndQuest()
         {
             // Schedule quest to end after a couple of ticks
@@ -276,6 +305,9 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // remove all quest topics for this quest from talk manager
             GameManager.Instance.TalkManager.RemoveQuestInfoTopicsForSpecificQuest(this.UID);
+
+            // remove all rumors for this quest from talk manager
+            GameManager.Instance.TalkManager.RemoveQuestRumorsFromRumorMill(this.UID);
         }
 
         public void StartTask(Symbol symbol)

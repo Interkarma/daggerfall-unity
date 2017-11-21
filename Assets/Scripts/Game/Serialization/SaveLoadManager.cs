@@ -1224,6 +1224,10 @@ namespace DaggerfallWorkshop.Game.Serialization
                 TalkManager.SaveDataConversation conversationData = Deserialize(typeof(TalkManager.SaveDataConversation), conversationDataJson) as TalkManager.SaveDataConversation;
                 GameManager.Instance.TalkManager.RestoreConversationData(conversationData);
             }
+            else
+            {                
+                GameManager.Instance.TalkManager.RestoreConversationData(null);
+            }
 
             // Must have PlayerEnterExit to respawn player at saved location
             PlayerEnterExit playerEnterExit = serializablePlayer.GetComponent<PlayerEnterExit>();

@@ -331,6 +331,7 @@ namespace DaggerfallWorkshop.Game.Questing
             // In progress - these actions are being actively developed
             RegisterAction(new DialogLink(null));
             RegisterAction(new AddDialog(null));
+            RegisterAction(new RumorMill(null));
 
             // Stubs - these actions are not complete yet
             // Just setting up so certain quests compile for now
@@ -559,7 +560,11 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <param name="quest">Quest.</param>
         public void InstantiateQuest(Quest quest)
         {
-            quests.Add(quest.UID, quest);
+            // init quest rumors (note Nystul: did not find a better place to do this since it must happen after quest parsing and should be called exactly one time for each quest)
+            quest.initQuestRumors();
+
+            quests.Add(quest.UID, quest);            
+
             RaiseOnQuestStartedEvent(quest);
         }
 
