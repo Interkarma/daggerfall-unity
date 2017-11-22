@@ -710,9 +710,12 @@ namespace DaggerfallWorkshop.Game
             RumorMillEntry entry = listRumorMill[randomIndex];
             if (entry.rumorType == RumorType.CommonRumor)
             {
-                TextFile.Token[] tokens = entry.listRumorVariants[0];
-                MacroHelper.ExpandMacros(ref tokens, this);
-                news = tokens[0].text; // tokens.ToString(); //tokens[0].text
+                if (entry.listRumorVariants != null)
+                {
+                    TextFile.Token[] tokens = entry.listRumorVariants[0];
+                    MacroHelper.ExpandMacros(ref tokens, this);
+                    news = tokens[0].text;
+                }
             }
             else if (entry.rumorType == RumorType.QuestRumorMill || entry.rumorType == RumorType.QuestProgressRumor)
             {
