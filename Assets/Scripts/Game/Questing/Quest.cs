@@ -228,17 +228,6 @@ namespace DaggerfallWorkshop.Game.Questing
             // Now waiting to be tombstoned in quest machine
             if (questComplete)
             {
-                // Add QuestorPostSuccess or QuestorPostFailure rumor to rumor mill
-                Message message;
-                if (questSuccess)
-                    message = GetMessage((int)QuestMachine.QuestMessages.RumorsPostSuccess);
-                else
-                    message = GetMessage((int)QuestMachine.QuestMessages.RumorsPostFailure);
-                if (message != null)
-                {
-                    GameManager.Instance.TalkManager.AddOrReplaceQuestProgressRumor(this.UID, message);
-                }
-
                 // Do nothing further if complete
                 // Now waiting to be tombstoned in quest machine
                 return;
@@ -303,11 +292,11 @@ namespace DaggerfallWorkshop.Game.Questing
             // There might be a better way to handle this (e.g. prompt executes task directly rather than on next tick)
             ticksToEnd = 2;
 
-            // remove all quest topics for this quest from talk manager
-            GameManager.Instance.TalkManager.RemoveQuestInfoTopicsForSpecificQuest(this.UID);
+            // remove quest progress rumors for this quest from talk manager
+            GameManager.Instance.TalkManager.RemoveQuestProgressRumorsFromRumorMill(this.UID);
 
-            // remove all rumors for this quest from talk manager
-            GameManager.Instance.TalkManager.RemoveQuestRumorsFromRumorMill(this.UID);
+            // remove all quest's questor messages about quest success/failure
+            GameManager.Instance.TalkManager.RemoveQuestorPostQuestMessage(this.UID);
         }
 
         public void StartTask(Symbol symbol)
@@ -489,6 +478,30 @@ namespace DaggerfallWorkshop.Game.Questing
             questTombstoned = true;
             questComplete = true;
             questTombstoneTime = new DaggerfallDateTime(DaggerfallUnity.Instance.WorldTime.Now);
+
+            Message messageRumors;
+            Message messageQuestor;
+            // add RumorsPostSuccess, RumorsPostFailure, QuestorPostSuccess or QuestorPostFailure rumor to rumor mill                
+            if (questSuccess)
+            {
+                messageRumors = GetMessage((int)QuestMachine.QuestMessages.RumorsPostSuccess);
+                messageQuestor = GetMessage((int)QuestMachine.QuestMessages.QuestorPostSuccess);
+            }
+            else
+            {
+                messageRumors = GetMessage((int)QuestMachine.QuestMessages.RumorsPostFailure);
+                messageQuestor = GetMessage((int)QuestMachine.QuestMessages.QuestorPostFailure);
+            }
+            if (messageRumors != null)
+                GameManager.Instance.TalkManager.AddOrReplaceQuestProgressRumor(this.UID, messageRumors);
+            if (messageQuestor != null)
+                GameManager.Instance.TalkManager.AddQuestorPostQuestMessage(this.UID, messageQuestor);
+
+            // remove quest rumors (rumor mill command) for this quest from talk manager
+            GameManager.Instance.TalkManager.RemoveQuestRumorsFromRumorMill(this.UID);
+
+            // remove all quest topics for this quest from talk manager
+            GameManager.Instance.TalkManager.RemoveQuestInfoTopicsForSpecificQuest(this.UID);
         }
 
         #endregion
