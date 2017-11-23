@@ -187,6 +187,10 @@ namespace DaggerfallWorkshop.Game.Items
                 result = string.Format("{0} {1}", materialName, result);
             }
 
+            // Resolve potion names
+            if (item.ItemGroup == ItemGroups.UselessItems1 && item.TemplateIndex == (int)UselessItems1.Glass_Bottle)
+                return MacroHelper.GetValue("%po", item);
+
             return result;
         }
 

@@ -40,7 +40,6 @@ namespace DaggerfallWorkshop
 
         public LootContainerTypes ContainerType = LootContainerTypes.Nothing;
         public InventoryContainerImages ContainerImage = InventoryContainerImages.Chest;
-        public string LootTableKey = string.Empty;
         public string entityName = string.Empty;
         public int TextureArchive = 0;
         public int TextureRecord = 0;
@@ -63,53 +62,56 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
-        /// Regenerates items in this container based on loot table key.
-        /// Existing items will be destroyed.
+        /// Generates items in the given item collection based on loot table key.
+        /// Any existing items will be destroyed.
         /// </summary>
-        public void GenerateItems()
+        public static void GenerateItems(string LootTableKey, ItemCollection collection)
         {
             LootChanceMatrix matrix = LootTables.GetMatrix(LootTableKey);
             DaggerfallUnityItem[] newitems = LootTables.GenerateRandomLoot(LootTableKey, matrix, GameManager.Instance.PlayerEntity);
 
-            items.Import(newitems);
+            collection.Import(newitems);
         }
 
         /// <summary>
         /// Randomly add a map
         /// </summary>
-        public void RandomlyAddMap(int chance)
+        public static void RandomlyAddMap(int chance, ItemCollection collection)
         {
             if (Random.Range(1, 101) <= chance)
             {
                 DaggerfallUnityItem map = new DaggerfallUnityItem(ItemGroups.MiscItems, 8);
-                items.AddItem(map);
+                collection.AddItem(map);
             }
         }
 
         /// <summary>
         /// Randomly add a potion
-        /// TODO: Add potion contents. Just a glass bottle for now.
         /// </summary>
-        public void RandomlyAddPotion(int chance)
+        public static void RandomlyAddPotion(int chance, ItemCollection collection)
         {
+            ushort[] potionValues = { 25, 50, 50, 50, 75, 75, 75, 75, 100, 100, 100, 100, 125, 125, 125, 200, 200, 200, 250, 500 };
             if (Random.Range(1, 101) < chance)
             {
                 DaggerfallUnityItem potion = new DaggerfallUnityItem(ItemGroups.UselessItems1, 1);
-                items.AddItem(potion);
+                byte recipe = (byte)Random.Range(0, 20);
+                potion.typeDependentData = recipe;
+                potion.value = potionValues[recipe];
+                collection.AddItem(potion);
             }
         }
 
         /// <summary>
         /// Randomly add a potion recipe
         /// </summary>
-        public void RandomlyAddPotionRecipe(int chance)
+        public static void RandomlyAddPotionRecipe(int chance, ItemCollection collection)
         {
             if (Random.Range(1, 101) < chance)
             {
                 DaggerfallUnityItem potionRecipe = new DaggerfallUnityItem(ItemGroups.MiscItems, 4);
                 byte recipe = (byte)Random.Range(0, 20);
                 potionRecipe.typeDependentData = recipe;
-                items.AddItem(potionRecipe);
+                collection.AddItem(potionRecipe);
             }
         }
 
