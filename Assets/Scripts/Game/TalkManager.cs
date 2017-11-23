@@ -1496,24 +1496,77 @@ namespace DaggerfallWorkshop.Game
             itemBuildingTypeGroup.type = ListItemType.ItemGroup;
             itemBuildingTypeGroup.caption = "Regional";
             itemBuildingTypeGroup.listChildItems = new List<ListItem>();
-            for (int i = 0; i < 7; i++)
+
+            ListItem prevListItem;
+            prevListItem = new ListItem();
+            prevListItem.type = ListItemType.NavigationBack;
+            prevListItem.caption = "Previous List";
+            prevListItem.listParentItems = listTopicLocation;
+            itemBuildingTypeGroup.listChildItems.Add(prevListItem);
+
+            AddRegionalItems(ref itemBuildingTypeGroup);
+            listTopicLocation.Add(itemBuildingTypeGroup);
+        }
+
+        private void AddRegionalItems(ref ListItem itemBuildingTypeGroup)
+        {
+            int playerRegion = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
+            byte[] KnightlyOrderRegions = { 0x05, 0x11, 0x12, 0x14, 0x15, 0x16, 0x17, 0x2B, 0x33, 0x37 };
+            ushort[] FactionsAndBuildings = { 0x1A, 0x15, 0x1D, 0x1B, 0x23, 0x18, 0x21, 0x16, 0x19E, 0x170, 0x19D, 0x198, 0x19A, 0x19B, 0x199, 0x19F, 0x1A0,
+                                      0x1A1, 0x28, 0x29, 0x0F, 0x0A, 0x0D, 0x2, 0x0, 0x3, 0x5, 0x6, 0x8 };
+
+            for (int i = 0; i < 28; ++i)
             {
-                ListItem item;
-                if (i == 0)
+                if (i >= 8 && i <= 17) // is a knightly order
                 {
-                    item = new ListItem();
-                    item.type = ListItemType.NavigationBack;
-                    item.caption = "Previous List";
-                    item.listParentItems = listTopicLocation;
-                    itemBuildingTypeGroup.listChildItems.Add(item);
+                    if (playerRegion == KnightlyOrderRegions[i - 8] && !DoesBuildingExistLocally(FactionsAndBuildings[i], false))
+                        AddRegionalBuildingTalkItem(i, ref itemBuildingTypeGroup);
                 }
-                item = new ListItem();
-                item.type = ListItemType.Item;
-                item.questionType = QuestionType.Regional;
-                item.caption = "regional temple (placeholder) " + i;
-                itemBuildingTypeGroup.listChildItems.Add(item);
+                else if (i >= 20) // is a store
+                {
+                    if (!DoesBuildingExistLocally(FactionsAndBuildings[i], true))
+                        AddRegionalBuildingTalkItem(i, ref itemBuildingTypeGroup);
+                }
+                else if (!DoesBuildingExistLocally(FactionsAndBuildings[i], false)) // is a temple
+                {
+                    AddRegionalBuildingTalkItem(i, ref itemBuildingTypeGroup);
+                }
             }
-            listTopicLocation.Add(itemBuildingTypeGroup);            
+        }
+
+        private bool DoesBuildingExistLocally(ushort SearchedFor, bool SearchByBuildingType)
+        {
+            DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
+
+            if (location.Loaded)
+            {
+                foreach (var building in location.Exterior.Buildings)
+                {
+                    if (SearchByBuildingType)
+                    {
+                        if ((ushort)building.BuildingType == SearchedFor)
+                            return true;
+                    }
+                    else
+                    {
+                        if (building.FactionId == SearchedFor)
+                            return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private void AddRegionalBuildingTalkItem(int index, ref ListItem itemBuildingTypeGroup)
+        {
+            ListItem item;
+
+            item = new ListItem();
+            item.type = ListItemType.Item;
+            item.questionType = QuestionType.Regional;
+            item.caption = UserInterfaceWindows.HardStrings.any.Replace("%s", UserInterfaceWindows.HardStrings.buildingNames[index]);
+            itemBuildingTypeGroup.listChildItems.Add(item);
         }
 
         private void AssembleTopicListPerson()
