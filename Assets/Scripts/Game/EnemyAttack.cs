@@ -23,7 +23,7 @@ namespace DaggerfallWorkshop.Game
     public class EnemyAttack : MonoBehaviour
     {
         public float MeleeAttackSpeed = 1.25f;      // Number of seconds between melee attacks
-        public float MeleeDistance = 2.0f;          // Maximum distance for melee attack
+        public float MeleeDistance = 2.5f;          // Maximum distance for melee attack
 
         EnemyMotor motor;
         EnemySenses senses;
@@ -77,8 +77,16 @@ namespace DaggerfallWorkshop.Game
         private void MeleeAnimation()
         {
             // Are we in range and facing player? Then start attack.
-            if (senses.DistanceToPlayer < MeleeDistance && senses.PlayerInSight)
+            if (senses.PlayerInSight)
             {
+                // Take the speed of movement during the attack animation and hit frame into account when calculating attack range
+                EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
+                float attackSpeed = ((entity.Stats.LiveSpeed + PlayerMotor.dfWalkBase) / PlayerMotor.classicToUnitySpeedUnitRatio) / EnemyMotor.AttackSpeedDivisor;
+                float timeUntilHit = mobile.Summary.Enemy.HitFrame / DaggerfallWorkshop.Utility.EnemyBasics.PrimaryAttackAnimSpeed;
+
+                if (senses.DistanceToPlayer >= (MeleeDistance + (attackSpeed * timeUntilHit)))
+                    return;
+
                 // Don't attack if not hostile
                 if (!motor.IsHostile)
                     return;

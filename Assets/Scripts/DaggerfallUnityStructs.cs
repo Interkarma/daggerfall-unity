@@ -204,6 +204,7 @@ namespace DaggerfallWorkshop
         public int MapChance;                       // Chance of having a map
         public string LootTableKey;                 // Key to use when generating loot
         public int HitFrame;                        // Frame of attack animation at which hit on target is attempted
+        public int Weight;                          // Weight of this enemy. Affects chance of being knocked back by a hit.
     }
 
     /// <summary>

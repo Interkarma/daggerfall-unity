@@ -147,6 +147,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 MapChance = 0,
                 HitFrame = 3,
+                Weight = 2,
             },
 
             // Imp
@@ -175,8 +176,9 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = 3,
                 ParrySounds = false,
                 MapChance = 1,
-                LootTableKey = "D",
                 HitFrame = 3,
+                Weight = 40,
+                LootTableKey = "D",
             },
 
             // Spriggan
@@ -208,8 +210,9 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = -4,
                 ParrySounds = false,
                 MapChance = 0,
-                LootTableKey = "B",
                 HitFrame = 3,
+                Weight = 240,
+                LootTableKey = "B",
             },
 
             // Giant Bat
@@ -238,6 +241,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 MapChance = 0,
                 HitFrame = 2,
+                Weight = 80,
             },
 
             // Grizzly Bear
@@ -270,6 +274,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 MapChance = 0,
                 HitFrame = 3,
+                Weight = 1000,
             },
 
             // Sabertooth Tiger
@@ -302,6 +307,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 MapChance = 0,
                 HitFrame = 3,
+                Weight = 1000,
             },
 
             // Spider
@@ -330,6 +336,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 MapChance = 0,
                 HitFrame = 3,
+                Weight = 400,
             },
 
             // Orc
@@ -358,8 +365,9 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = 7,
                 ParrySounds = true,
                 MapChance = 0,
-                LootTableKey = "A",
                 HitFrame = 3,
+                Weight = 600,
+                LootTableKey = "A",
             },
 
             // Centaur
@@ -388,8 +396,9 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = 6,
                 ParrySounds = true,
                 MapChance = 1,
-                LootTableKey = "C",
                 HitFrame = 3,
+                Weight = 1200,
+                LootTableKey = "C",
             },
 
             // Werewolf
@@ -423,6 +432,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 0,
                 ParrySounds = false,
                 HitFrame = 2,
+                Weight = 480,
             },
 
             // Nymph
@@ -451,8 +461,9 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = 0,
                 ParrySounds = false,
                 MapChance = 1,
-                LootTableKey = "C",
                 HitFrame = 5,
+                Weight = 200,
+                LootTableKey = "C",
             },
 
             // Slaughterfish
@@ -478,9 +489,10 @@ namespace DaggerfallWorkshop.Utility
                 MaxHealth = 50,
                 Level = 7,
                 ArmorValue = 6,
-                MapChance = 0,
                 ParrySounds = false,
+                MapChance = 0,
                 HitFrame = 5,
+                Weight = 400,
             },
 
             // Orc Sergeant
@@ -509,8 +521,9 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = 5,
                 ParrySounds = true,
                 MapChance = 1,
-                LootTableKey = "A",
                 HitFrame = 2,
+                Weight = 600,
+                LootTableKey = "A",
             },
 
             // Harpy
@@ -538,8 +551,9 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = 2,
                 ParrySounds = false,
                 MapChance = 0,
-                LootTableKey = "D",
                 HitFrame = 3,
+                Weight = 200,
+                LootTableKey = "D",
             },
 
             // Wereboar
@@ -573,6 +587,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 0,
                 ParrySounds = false,
                 HitFrame = 3,
+                Weight = 560,
             },
 
             // Skeletal Warrior
@@ -602,8 +617,9 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = 2,
                 ParrySounds = true,
                 MapChance = 1,
-                LootTableKey = "H",
                 HitFrame = 4,
+                Weight = 80,
+                LootTableKey = "H",
             },
 
             // Giant
@@ -634,6 +650,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 1,
                 LootTableKey = "F",
                 HitFrame = 3,
+                Weight = 3000,
             },
 
             // Zombie
@@ -661,8 +678,9 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = 0,
                 ParrySounds = false,
                 MapChance = 1,
-                LootTableKey = "G",
                 HitFrame = 3,
+                Weight = 4000,
+                LootTableKey = "G",
             },
 
             // Ghost
@@ -691,8 +709,9 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = 0,
                 ParrySounds = false,
                 MapChance = 1,
-                LootTableKey = "I",
                 HitFrame = 3,
+                Weight = 0,
+                LootTableKey = "I",
             },
 
             // Mummy
@@ -721,8 +740,9 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = 2,
                 ParrySounds = false,
                 MapChance = 1,
-                LootTableKey = "E",
                 HitFrame = 4,
+                Weight = 300,
+                LootTableKey = "E",
             },
 
             // Giant Scorpion
@@ -747,10 +767,11 @@ namespace DaggerfallWorkshop.Utility
                 MinHealth = 18,
                 MaxHealth = 74,
                 Level = 12,
+                ParrySounds = false,
                 ArmorValue = 0,
                 MapChance = 0,
-                ParrySounds = false,
                 HitFrame = 3,
+                Weight = 600,
             },
 
             // Orc Shaman
@@ -779,8 +800,9 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = 7,
                 ParrySounds = true,
                 MapChance = 3,
-                LootTableKey = "U",
                 HitFrame = 3,
+                Weight = 400,
+                LootTableKey = "U",
             },
 
             // Gargoyle
@@ -810,6 +832,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 0,
                 ParrySounds = false,
                 HitFrame = 3,
+                Weight = 300,
             },
 
             // Wraith
@@ -838,8 +861,9 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = 0,
                 ParrySounds = false,
                 MapChance = 1,
-                LootTableKey = "I",
                 HitFrame = 3,
+                Weight = 0,
+                LootTableKey = "I",
             },
 
             // Orc Warlord
@@ -868,8 +892,9 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = 0,
                 ParrySounds = true,
                 MapChance = 2,
-                LootTableKey = "T",
                 HitFrame = 3,
+                Weight = 700,
+                LootTableKey = "T",
             },
 
             // Frost Daedra
@@ -898,8 +923,9 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = -5,
                 ParrySounds = true,
                 MapChance = 0,
-                LootTableKey = "J",
                 HitFrame = 3,
+                Weight = 800,
+                LootTableKey = "J",
             },
 
             // Fire Daedra
@@ -928,8 +954,9 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = 1,
                 ParrySounds = true,
                 MapChance = 0,
-                LootTableKey = "J",
                 HitFrame = 2,
+                Weight = 800,
+                LootTableKey = "J",
             },
 
             // Daedroth
@@ -957,8 +984,9 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = 1,
                 ParrySounds = true,
                 MapChance = 0,
-                LootTableKey = "E",
                 HitFrame = 3,
+                Weight = 400,
+                LootTableKey = "E",
             },
 
             // Vampire
@@ -987,8 +1015,9 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = -2,
                 ParrySounds = false,
                 MapChance = 3,
-                LootTableKey = "Q",
                 HitFrame = 4,
+                Weight = 400,
+                LootTableKey = "Q",
             },
 
             // Daedra Seducer
@@ -1017,8 +1046,9 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = 1,
                 ParrySounds = false,
                 MapChance = 1,
-                LootTableKey = "Q",
                 HitFrame = 2,
+                Weight = 200,
+                LootTableKey = "Q",
             },
 
             // Vampire Ancient
@@ -1047,8 +1077,9 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = -5,
                 ParrySounds = false,
                 MapChance = 3,
-                LootTableKey = "Q",
                 HitFrame = 3,
+                Weight = 400,
+                LootTableKey = "Q",
             },
 
             // Daedra Lord
@@ -1077,8 +1108,9 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = -10,
                 ParrySounds = true,
                 MapChance = 0,
-                LootTableKey = "S",
                 HitFrame = 3,
+                Weight = 1000,
+                LootTableKey = "S",
             },
 
             // Lich
@@ -1108,8 +1140,9 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = -10,
                 ParrySounds = false,
                 MapChance = 4,
-                LootTableKey = "S",
                 HitFrame = 3,
+                Weight = 300,
+                LootTableKey = "S",
             },
 
             // Ancient Lich
@@ -1139,9 +1172,12 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = -12,
                 ParrySounds = false,
                 MapChance = 4,
-                LootTableKey = "S",
                 HitFrame = 3,
+                Weight = 300,
+                LootTableKey = "S",
             },
+
+            // TODO: Figure out weights for monsters from here onward.
 
             // Dragonling
             new MobileEnemy()
@@ -1169,6 +1205,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 MapChance = 0,
                 HitFrame = 2,
+                Weight = 10000,
             },
 
             // Fire Atronach
@@ -1197,6 +1234,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 MapChance = 0,
                 HitFrame = 3,
+                Weight = 1000,
             },
 
             // Iron Atronach
@@ -1225,6 +1263,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = true,
                 MapChance = 0,
                 HitFrame = 3,
+                Weight = 1000,
             },
 
             // Flesh Atronach
@@ -1253,6 +1292,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 MapChance = 0,
                 HitFrame = 3,
+                Weight = 1000,
             },
 
             // Ice Atronach
@@ -1281,6 +1321,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = true,
                 MapChance = 0,
                 HitFrame = 3,
+                Weight = 1000,
             },
 
             // Dragonling
@@ -1336,8 +1377,8 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = 6,
                 ParrySounds = false,
                 MapChance = 0,
-                LootTableKey = "R",
                 HitFrame = 3,
+                LootTableKey = "R",
             },
 
             // Lamia

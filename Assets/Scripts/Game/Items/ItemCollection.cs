@@ -71,6 +71,10 @@ namespace DaggerfallWorkshop.Game.Items
                 // Horses, carts and arrows are not counted against encumbrance.
                 if (item.ItemGroup != ItemGroups.Transportation && item.TemplateIndex != (int)Weapons.Arrow)
                     weight += item.weightInKg * item.stackCount;
+
+                // Enemies carry around gold as an item, unlike the player
+                if (item.ItemGroup == ItemGroups.Currency)
+                    weight += item.stackCount / Banking.DaggerfallBankManager.gold1kg;
             }
             return weight;
         }

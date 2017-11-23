@@ -649,6 +649,8 @@ namespace DaggerfallWorkshop.Game
                         // Calculate damage
                         int damage = FormulaHelper.CalculateWeaponDamage(playerEntity, enemyEntity, weapon);
 
+                        EnemyMotor enemyMotor = hit.transform.GetComponent<EnemyMotor>();
+
                         // Play hit sound and trigger blood splash at hit point
                         if (damage > 0)
                         {
@@ -657,6 +659,28 @@ namespace DaggerfallWorkshop.Game
                             if (blood)
                             {
                                 blood.ShowBloodSplash(enemyEntity.MobileEnemy.BloodIndex, hit.point);
+                            }
+
+                            // Knock back enemy based on damage and enemy weight
+                            if (enemyMotor)
+                            {
+                                if (enemyMotor.KnockBackSpeed <= (5 / (PlayerMotor.classicToUnitySpeedUnitRatio / 10)) &&
+                                    entityBehaviour.EntityType == EntityTypes.EnemyClass ||
+                                    enemyEntity.MobileEnemy.Weight > 0)
+                                {
+                                    float enemyWeight = enemyEntity.GetWeightInClassicUnits();
+                                    float tenTimesDamage = damage * 10;
+                                    float twoTimesDamage = damage * 2;
+
+                                    float knockBackAmount = ((tenTimesDamage - enemyWeight) * 256) / (enemyWeight + tenTimesDamage) * twoTimesDamage;
+                                    float knockBackSpeed = (tenTimesDamage / enemyWeight) * (twoTimesDamage - (knockBackAmount / 256));
+                                    knockBackSpeed /= (PlayerMotor.classicToUnitySpeedUnitRatio / 10);
+
+                                    if (knockBackSpeed < (15 / (PlayerMotor.classicToUnitySpeedUnitRatio / 10)))
+                                        knockBackSpeed = (15 / (PlayerMotor.classicToUnitySpeedUnitRatio / 10));
+                                    enemyMotor.KnockBackSpeed = knockBackSpeed;
+                                    enemyMotor.KnockBackDirection = mainCamera.transform.forward;
+                                }
                             }
                         }
                         else
@@ -674,7 +698,6 @@ namespace DaggerfallWorkshop.Game
                         // Make foe attack their aggressor
                         // Currently this is just player, but should be expanded later
                         // for a wider variety of behaviours
-                        EnemyMotor enemyMotor = hit.transform.GetComponent<EnemyMotor>();
                         if (enemyMotor)
                         {
                             // Make enemies in an area aggressive if player attacked a non-hostile one.
