@@ -139,9 +139,16 @@ namespace DaggerfallWorkshop.Game
         }
         NPCData npcData;
 
-        // last target npc for a conversion (null if not talked to any mobile npc yet)
+        // last target npc for a conversion
+        enum NPCType
+        {
+            Static,
+            Mobile,
+            Unset
+        }
         MobilePersonNPC lastTargetMobileNPC = null;
         StaticNPC lastTargetStaticNPC = null;
+        NPCType currentNPCType = NPCType.Unset;
 
         public enum KeySubjectType
         {
@@ -238,10 +245,14 @@ namespace DaggerfallWorkshop.Game
         List<RumorMillEntry> listRumorMill = new List<RumorMillEntry>();
 
 
+        // questor post quest message stuff
+        Dictionary<ulong, TextFile.Token[]> dictQuestorPostQuestMessage = new Dictionary<ulong,TextFile.Token[]>();
+
         public class SaveDataConversation
         {
             public Dictionary<ulong, QuestResources> dictQuestInfo;
             public List<RumorMillEntry> listRumorMill;
+            public Dictionary<ulong, TextFile.Token[]> dictQuestorPostQuestMessage;
         }
 
         #endregion
@@ -344,6 +355,8 @@ namespace DaggerfallWorkshop.Game
         // Player has clicked on a mobile talk target
         public void TalkToMobileNPC(MobilePersonNPC targetNPC)
         {
+            currentNPCType = NPCType.Mobile;
+
             const int youGetNoResponseTextId = 7205;
 
             // Get NPC faction
@@ -379,12 +392,14 @@ namespace DaggerfallWorkshop.Game
             else
             {
                 DaggerfallUI.MessageBox(youGetNoResponseTextId);
-            }
+            }            
         }
 
         // Player has clicked or static talk target or clicked the talk button inside a popup-window
         public void TalkToStaticNPC(StaticNPC targetNPC)
         {
+            currentNPCType = NPCType.Static;
+
             const int youGetNoResponseTextId = 7205;
 
             // Get NPC faction
@@ -502,6 +517,35 @@ namespace DaggerfallWorkshop.Game
             const int veryLikePlayerGreetingTextId = 7209;
 
             string greetingString = "";
+
+            if (currentNPCType == NPCType.Static)
+            {
+                foreach(KeyValuePair<ulong, TextFile.Token[]> entry in dictQuestorPostQuestMessage)
+                {
+                    ulong questID = entry.Key;
+                    Quest quest = GameManager.Instance.QuestMachine.GetQuest(questID);
+                    if (quest == null)
+                        continue;
+                    QuestResource[] questPeople = quest.GetAllResources(typeof(Person));
+                    foreach (Person person in questPeople)
+                    {
+                        if (person.IsQuestor)
+                        {
+                            if (GameManager.Instance.QuestMachine.IsNPCDataEqual(person.QuestorData, lastTargetStaticNPC.Data))
+                            {
+                                TextFile.Token[] tokens = dictQuestorPostQuestMessage[questID];
+
+                                // expand tokens and reveal dialog-linked resources
+                                QuestMacroHelper macroHelper = new QuestMacroHelper();
+                                macroHelper.ExpandQuestMessage(GameManager.Instance.QuestMachine.GetQuest(questID), ref tokens, true);
+                                greetingString = TokensToString(tokens);
+
+                                return (greetingString);                                
+                            }
+                        }
+                    }
+                }
+            }
 
             if (reactionToPlayer >= 0)
             {
@@ -666,17 +710,22 @@ namespace DaggerfallWorkshop.Game
             RumorMillEntry entry = listRumorMill[randomIndex];
             if (entry.rumorType == RumorType.CommonRumor)
             {
-                TextFile.Token[] tokens = entry.listRumorVariants[0];
-                MacroHelper.ExpandMacros(ref tokens, this);
-                news = tokens[0].text; // tokens.ToString(); //tokens[0].text
+                if (entry.listRumorVariants != null)
+                {
+                    TextFile.Token[] tokens = entry.listRumorVariants[0];
+                    MacroHelper.ExpandMacros(ref tokens, this);
+                    news = tokens[0].text;
+                }
             }
             else if (entry.rumorType == RumorType.QuestRumorMill || entry.rumorType == RumorType.QuestProgressRumor)
             {
                 int variant = UnityEngine.Random.Range(0, entry.listRumorVariants.Count);
                 TextFile.Token[] tokens = entry.listRumorVariants[variant];
+
+                // expand tokens and reveal dialog-linked resources
                 QuestMacroHelper macroHelper = new QuestMacroHelper();
                 macroHelper.ExpandQuestMessage(GameManager.Instance.QuestMachine.GetQuest(entry.questID), ref tokens, true);
-                news = tokens[0].text; // tokens.ToString();
+                news = TokensToString(tokens);                
             }
             
             return (news);
@@ -746,8 +795,8 @@ namespace DaggerfallWorkshop.Game
             int i = 0;
             while (i < listRumorMill.Count)
             {
-                if ((listRumorMill[i].rumorType == RumorType.QuestProgressRumor || listRumorMill[i].rumorType == RumorType.QuestRumorMill) &&
-                    (listRumorMill[i].questID == questID))
+                if (listRumorMill[i].rumorType == RumorType.QuestRumorMill &&
+                    listRumorMill[i].questID == questID)
                 {
                     listRumorMill.RemoveAt(i);
                 }
@@ -755,6 +804,40 @@ namespace DaggerfallWorkshop.Game
                 {
                     i++;
                 }
+            }
+        }
+
+        public void RemoveQuestProgressRumorsFromRumorMill(ulong questID)
+        {            
+            if (listRumorMill == null)
+                return;
+
+            int i = 0;
+            while (i < listRumorMill.Count)
+            {
+                if (listRumorMill[i].rumorType == RumorType.QuestProgressRumor &&
+                    listRumorMill[i].questID == questID)
+                {
+                    listRumorMill.RemoveAt(i);
+                }
+                else
+                {
+                    i++;
+                }
+            }
+        }
+
+        public void AddQuestorPostQuestMessage(ulong questID, Message message)
+        {
+            TextFile.Token[] tokens = message.GetTextTokens(0, false); // do not expand macros
+            dictQuestorPostQuestMessage[questID] = tokens;
+        }
+
+        public void RemoveQuestorPostQuestMessage(ulong questID)
+        {
+            if (dictQuestorPostQuestMessage.ContainsKey(questID))
+            {
+                dictQuestorPostQuestMessage.Remove(questID);
             }
         }
 
@@ -1085,6 +1168,7 @@ namespace DaggerfallWorkshop.Game
             SaveDataConversation saveDataConversation = new SaveDataConversation();
             saveDataConversation.dictQuestInfo = dictQuestInfo;
             saveDataConversation.listRumorMill = listRumorMill;
+            saveDataConversation.dictQuestorPostQuestMessage = dictQuestorPostQuestMessage;
             return saveDataConversation;
         }
 
@@ -1099,10 +1183,17 @@ namespace DaggerfallWorkshop.Game
             dictQuestInfo = data.dictQuestInfo;
             if (dictQuestInfo == null)
                 dictQuestInfo = new Dictionary<ulong, QuestResources>();
+            
             listRumorMill = data.listRumorMill;
             if (listRumorMill == null)
             {
                 SetupRumorMill();
+            }
+
+            dictQuestorPostQuestMessage = data.dictQuestorPostQuestMessage;
+            if (dictQuestorPostQuestMessage == null)
+            {
+                dictQuestorPostQuestMessage = new Dictionary<ulong, TextFile.Token[]>();
             }
 
             // update topic list
@@ -1526,6 +1617,12 @@ namespace DaggerfallWorkshop.Game
             QuestMacroHelper macroHelper = new QuestMacroHelper();
             macroHelper.ExpandQuestMessage(GameManager.Instance.QuestMachine.GetQuest(questID), ref tokens, true);
 
+            return TokensToString(tokens);
+
+        }
+
+        private string TokensToString(TextFile.Token[] tokens)
+        {
             // create return string from expanded tokens
             string returnString = "";
             for (int i = 0; i < tokens.Length; i++)
@@ -1537,7 +1634,6 @@ namespace DaggerfallWorkshop.Game
                     returnString += " ";
             }
             return returnString;
-
         }
 
 
