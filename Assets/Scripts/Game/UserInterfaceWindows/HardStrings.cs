@@ -67,6 +67,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public const string storeClosed = "Store is closed. Open from %d1:00 to %d2:00.";
 
+        public const string any = "Any %s";
+        public static readonly string[] buildingNames = { "Temple of Akatosh", "Temple of Arkay", "Temple of Dibella",
+                                                "Temple of Julianos", "Temple of Kynareth", "Temple of Mara",
+                                                "Temple of Stendarr", "Temple of Zen", "Order of the Raven",
+                                                "Knights of the Dragon", "Knights of the Owl", "Order of the Candle",
+                                                "Knights of the Flame", "Host of the Horn", "Knights of the Rose",
+                                                "Knights of the Wheel", "Order of the Scarab", "Knights of the Hawk",
+                                                "Mages Guild", "Fighters Guild", "Tavern", "Library", "Weapon Smith",
+                                                "Armorer", "Alchemist", "Bank", "Bookstore", "Clothing store", "Gem store" };
+
         public const string interactionIsNowInMode = "Interaction is now in %s mode.";
         public const string steal = "steal";
         public const string grab = "grab";
