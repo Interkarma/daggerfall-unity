@@ -229,8 +229,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         protected override void Setup()
         {           
-            ImgFile imgFile = null;
-            DFBitmap bitmap = null;
+            //ImgFile imgFile = null;
+            //DFBitmap bitmap = null;
 
             if (isSetup) // don't setup twice!
                 return;

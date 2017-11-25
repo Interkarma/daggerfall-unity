@@ -345,7 +345,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         IEnumerator WaitForKeyPress(Button button)
         {
             string currentLabel = button.Label.Text;
-            InputManager.Actions buttonAction = (InputManager.Actions)Enum.Parse(typeof(InputManager.Actions), button.Name);
+            //InputManager.Actions buttonAction = (InputManager.Actions)Enum.Parse(typeof(InputManager.Actions), button.Name);
 
             button.Label.Text = "";
             yield return new WaitForSecondsRealtime(0.05f);

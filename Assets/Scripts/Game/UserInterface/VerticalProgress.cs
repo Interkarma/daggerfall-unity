@@ -64,6 +64,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             ColorTexture.SetPixels32(colors);
             ColorTexture.Apply(false, true);
             ColorTexture.filterMode = FilterMode.Point;
+            this.color = color;
         }
 
         void DrawProgress()
