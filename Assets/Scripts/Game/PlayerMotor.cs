@@ -511,7 +511,7 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
-            if (smoothFollower != null)
+            if (smoothFollower != null && controller != null)
             {
                 float distanceMoved = Vector3.Distance(smoothFollowerPrevWorldPos, smoothFollower.position);        // Assuming the follower is a child of this motor transform we can get the distance travelled.
                 float maxPossibleDistanceByMotorVelocity = controller.velocity.magnitude * 2.0f * Time.deltaTime;   // Theoretically the max distance the motor can carry the player with a generous margin.

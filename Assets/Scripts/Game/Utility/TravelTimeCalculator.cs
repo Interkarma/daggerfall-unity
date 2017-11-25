@@ -150,10 +150,10 @@ namespace DaggerfallWorkshop.Game.Utility
 
         public int CalculateTripCost(int travelTimeInMinutes, bool sleepModeInn, bool hasShip, bool travelShip)
         {
-            int travelTimeInDays = (travelTimeInMinutes + 59) / 60;
+            int travelTimeInHours = (travelTimeInMinutes + 59) / 60;
             int cost = 0;
             if (sleepModeInn)
-                cost = 5 * ((travelTimeInDays - pixelsTraveledOnOcean) / 24) + 5;
+                cost = 5 * ((travelTimeInHours - pixelsTraveledOnOcean) / 24) + 5;
             if ((pixelsTraveledOnOcean > 0) && !hasShip && travelShip)
                 cost += 25 * (pixelsTraveledOnOcean / 24 + 1);
             return cost;
