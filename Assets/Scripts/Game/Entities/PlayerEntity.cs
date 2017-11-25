@@ -229,13 +229,17 @@ namespace DaggerfallWorkshop.Game.Entity
                 }
             }
 
-            // Adjust regional prices each time a day passes.
+            // Adjust regional prices and update climate weathers whenever the date has changed.
             uint lastDay = lastGameMinutes / 1440;
             uint currentDay = gameMinutes / 1440;
             int daysPast = (int)(currentDay - lastDay);
 
             if (daysPast > 0)
+            {
                 FormulaHelper.ModifyPriceAdjustmentByRegion(ref regionData, daysPast);
+                GameManager.Instance.WeatherManager.SetClimateWeathers();
+                GameManager.Instance.WeatherManager.UpdateWeatherFromClimateArray = true;
+            }
 
             lastGameMinutes = gameMinutes;
 

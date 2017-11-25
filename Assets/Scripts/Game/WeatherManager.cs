@@ -13,6 +13,7 @@ using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Weather;
 using DaggerfallWorkshop.Utility;
 using UnityEngine;
+using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -64,6 +65,10 @@ namespace DaggerfallWorkshop.Game
 
         public bool IsOvercast { get; private set; }
 
+        bool updateWeatherFromClimateArray = false;
+
+        public bool UpdateWeatherFromClimateArray { get { return updateWeatherFromClimateArray; } set { updateWeatherFromClimateArray = value; } }
+
         void Awake()
         {
             SaveLoadManager.OnLoad += SaveLoadManager_OnLoad;
@@ -84,6 +89,7 @@ namespace DaggerfallWorkshop.Game
             SetAmbientEffects();
             //PollWeatherChanges();
             SetSunlightScale();
+            UpdateFromClimateArrayCheck();
         }
 
         public void ClearOvercast()
@@ -265,6 +271,42 @@ namespace DaggerfallWorkshop.Game
             SetWeather(next);
         }
 
+        void UpdateFromClimateArrayCheck()
+        {
+            if (updateWeatherFromClimateArray)
+            {
+                if (PlayerWeather.PlayerGps.ReadyCheck())
+                {
+                    SetWeatherFromWeatherClimateArray();
+                    updateWeatherFromClimateArray = false;
+                }
+            }
+        }
+
+        // Sets weathers for each of the climate zones, like classic
+        public void SetClimateWeathers()
+        {
+            PlayerWeather.ClimateWeathers[0] = (byte)_weatherTable.GetWeather((int)MapsFile.Climates.Desert, _dfUnity.WorldTime.Now.SeasonValue);
+            PlayerWeather.ClimateWeathers[1] = (byte)_weatherTable.GetWeather((int)MapsFile.Climates.Mountain, _dfUnity.WorldTime.Now.SeasonValue);
+            PlayerWeather.ClimateWeathers[2] = (byte)_weatherTable.GetWeather((int)MapsFile.Climates.Rainforest, _dfUnity.WorldTime.Now.SeasonValue);
+            PlayerWeather.ClimateWeathers[3] = (byte)_weatherTable.GetWeather((int)MapsFile.Climates.Swamp, _dfUnity.WorldTime.Now.SeasonValue);
+            PlayerWeather.ClimateWeathers[4] = (byte)_weatherTable.GetWeather((int)MapsFile.Climates.Subtropical, _dfUnity.WorldTime.Now.SeasonValue);
+            PlayerWeather.ClimateWeathers[5] = (byte)_weatherTable.GetWeather((int)MapsFile.Climates.Woodlands, _dfUnity.WorldTime.Now.SeasonValue);
+        }
+
+        public void SetWeatherFromWeatherClimateArray()
+        {
+            int climate = PlayerWeather.PlayerGps.CurrentClimateIndex;
+            int index = Utility.TravelTimeCalculator.climateIndices[climate - (int)MapsFile.Climates.Ocean];
+
+            WeatherType weather = (WeatherType)PlayerWeather.ClimateWeathers[index];
+
+            if (weather == PlayerWeather.WeatherType)
+                return;
+
+            SetWeather(weather);
+        }
+
         public void SetWeather(WeatherType next)
         {
             Debug.Log("Next weather change: " + next);
@@ -318,21 +360,17 @@ namespace DaggerfallWorkshop.Game
 
         void SaveLoadManager_OnLoad(SaveData_v1 saveData)
         {
-            switch (saveData.playerData.playerPosition.weather)
-            {
-                case WeatherType.Rain:
-                    StartRaining();
-                    break;
-                case WeatherType.Snow:
-                    StartSnowing();
-                    break;
-            }
+            SetWeather(saveData.playerData.playerPosition.weather);
         }
 
         void StreamingWorld_OnInitWorld()
         {
             // Clear weather when starting up world
             ClearAllWeather();
+
+            // Set weather in case we have loaded from a classic save.
+            // Currently loading a Unity save will replace this with its own weather value after this.
+            updateWeatherFromClimateArray = true;
         }
 
         #endregion
