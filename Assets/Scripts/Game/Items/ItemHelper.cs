@@ -632,6 +632,37 @@ namespace DaggerfallWorkshop.Game.Items
                     return WeaponTypes.None;
             }
 
+            // Handle enchanted weapons
+            if (item.legacyMagic != null && item.legacyMagic[0] != -1)
+            {
+                switch (result)
+                {
+                    case WeaponTypes.Dagger:
+                        result = WeaponTypes.Dagger_Magic;
+                        break;
+                    case WeaponTypes.Staff:
+                        result = WeaponTypes.Staff_Magic;
+                        break;
+                    case WeaponTypes.LongBlade:
+                        result = WeaponTypes.LongBlade_Magic;
+                        break;
+                    case WeaponTypes.Mace:
+                        result = WeaponTypes.Mace_Magic;
+                        break;
+                    case WeaponTypes.Flail:
+                        result = WeaponTypes.Flail_Magic;
+                        break;
+                    case WeaponTypes.Warhammer:
+                        result = WeaponTypes.Warhammer_Magic;
+                        break;
+                    case WeaponTypes.Battleaxe:
+                        result = WeaponTypes.Battleaxe_Magic;
+                        break;
+                    default:
+                        break;
+                }
+            }
+
             return result;
         }
 
