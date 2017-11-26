@@ -59,6 +59,9 @@ namespace DaggerfallWorkshop.Game
         DaggerfallUnityItem currentRightHandWeapon = null;
         DaggerfallUnityItem currentLeftHandWeapon = null;
 
+        public float EquipCountdownRightHand;
+        public float EquipCountdownLeftHand;
+
         #region Properties
 
         public bool UsingRightHand { get { return usingRightHand; } set { usingRightHand = value; } }
@@ -190,6 +193,14 @@ namespace DaggerfallWorkshop.Game
             // Do nothing while weapon cooldown
             if (Time.time < cooldownTime)
                 return;
+
+            // Do nothing if weapon isn't done equipping
+            if ((usingRightHand && EquipCountdownRightHand != 0)
+                || (!usingRightHand && EquipCountdownLeftHand != 0))
+            {
+                ShowWeapons(false);
+                return;
+            }
 
             // Toggle weapon sheath
             if (InputManager.Instance.ActionStarted(InputManager.Actions.ReadyWeapon))
@@ -370,28 +381,31 @@ namespace DaggerfallWorkshop.Game
 
             // Right-hand item changed
             if (!DaggerfallUnityItem.CompareItems(currentRightHandWeapon, rightHandItem))
-            {
-                if (rightHandItem != null)
-                {
-                    //string message = HardStrings.equippingWeapon;
-                    //message = message.Replace("%s", rightHandItem.ItemTemplate.name);
-                    //DaggerfallUI.Instance.PopupMessage(message);
-                }
-                //DaggerfallUI.Instance.PopupMessage(HardStrings.rightHandEquipped);
                 currentRightHandWeapon = rightHandItem;
-            }
 
             // Left-hand item changed
             if (!DaggerfallUnityItem.CompareItems(currentLeftHandWeapon, leftHandItem))
-            {
-                if (leftHandItem != null)
-                {
-                    //string message = HardStrings.equippingWeapon;
-                    //message = message.Replace("%s", leftHandItem.ItemTemplate.name);
-                    //DaggerfallUI.Instance.PopupMessage(message);
-                }
-                //DaggerfallUI.Instance.PopupMessage(HardStrings.leftHandEquipped);
                 currentLeftHandWeapon = leftHandItem;
+
+            if (EquipCountdownRightHand > 0)
+            {
+                EquipCountdownRightHand -= Time.deltaTime * 980; // Approximating classic update time based off measuring video
+                if (EquipCountdownRightHand <= 0)
+                {
+                    EquipCountdownRightHand = 0;
+                    string message = HardStrings.rightHandEquipped;
+                    DaggerfallUI.Instance.PopupMessage(message);
+                }
+            }
+            if (EquipCountdownLeftHand > 0)
+            {
+                EquipCountdownLeftHand -= Time.deltaTime * 980; // Approximating classic update time based off measuring video
+                if (EquipCountdownLeftHand <= 0)
+                {
+                    EquipCountdownLeftHand = 0;
+                    string message = HardStrings.leftHandEquipped;
+                    DaggerfallUI.Instance.PopupMessage(message);
+                }
             }
 
             // Apply weapon settings
