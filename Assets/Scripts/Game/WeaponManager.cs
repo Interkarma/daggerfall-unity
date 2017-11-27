@@ -48,8 +48,9 @@ namespace DaggerfallWorkshop.Game
         GameObject player;
         GameObject mainCamera;
         bool isClickAttack = false;
-        bool isStartingAttack = false;
+        bool isAttacking = false;
         bool isDamageFinished = false;
+        bool isBowSoundFinished = false;
         Hand lastAttackHand = Hand.None;
         float cooldownTime = 0.0f;                  // Wait for weapon cooldown
         int swingWeaponFatigueLoss = 11;            // According to DF Chronicles and verified in classic
@@ -190,9 +191,33 @@ namespace DaggerfallWorkshop.Game
             else
                 playerEntity = GameManager.Instance.PlayerEntity;
 
-            // Do nothing while weapon cooldown
+            // Get weapon
+            FPSWeapon weapon;
+            if (usingRightHand)
+                weapon = RightHandWeapon;
+            else
+                weapon = LeftHandWeapon;
+
+            // Reset variables if there isn't an attack ongoing
+            if (!IsLeftHandAttacking() && !IsRightHandAttacking())
+            {
+                // If an attack with a bow just finished, set cooldown
+                if (weapon.WeaponType == WeaponTypes.Bow && isAttacking)
+                {
+                    float cooldown = 10 * (100 - GameManager.Instance.PlayerEntity.Stats.LiveSpeed) + 800;
+                    cooldownTime = Time.time + (cooldown / 980); // Approximates classic frame update
+                }
+
+                isAttacking = false;
+                isDamageFinished = false;
+                isBowSoundFinished = false;
+            }
+
+            // Do nothing while weapon cooldown. Used for bow.
             if (Time.time < cooldownTime)
+            {
                 return;
+            }
 
             // Do nothing if weapon isn't done equipping
             if ((usingRightHand && EquipCountdownRightHand != 0)
@@ -203,11 +228,11 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Toggle weapon sheath
-            if (InputManager.Instance.ActionStarted(InputManager.Actions.ReadyWeapon))
+            if (!isAttacking && InputManager.Instance.ActionStarted(InputManager.Actions.ReadyWeapon))
                 ToggleSheath();
 
             // Toggle weapon hand
-            if (InputManager.Instance.ActionComplete(InputManager.Actions.SwitchHand))
+            if (!isAttacking && InputManager.Instance.ActionComplete(InputManager.Actions.SwitchHand))
                 ToggleHand();
 
             // Do nothing if weapons sheathed
@@ -216,75 +241,82 @@ namespace DaggerfallWorkshop.Game
                 ShowWeapons(false);
                 return;
             }
-
-            bool isBowAttacking = (RightHandWeapon && !LeftHandWeapon && (RightHandWeapon.WeaponType == WeaponTypes.Bow))
-    || (!RightHandWeapon && LeftHandWeapon && (LeftHandWeapon.WeaponType == WeaponTypes.Bow));
-
-            // If the last attack has tried to apply damage and the swing animation has finished, reset isDamageFinished
-            if (isDamageFinished && !IsLeftHandAttacking() && !IsRightHandAttacking())
-                isDamageFinished = false;
-
-            // Handle attack
-            if (!DaggerfallUnity.Settings.ClickToAttack || isBowAttacking)
-            {
-                // Reset tracking if user not holding down 'SwingWeapon' button and no attack in progress
-                if (!InputManager.Instance.HasAction(InputManager.Actions.SwingWeapon) && !isStartingAttack)
-                {
-                    lastAttackHand = Hand.None;
-                    _gesture.Clear();
-                    ShowWeapons(true);
-                    return;
-                }
-            }
             else
+                ShowWeapons(true);
+
+            // Get if bow is equipped
+            bool bowEquipped = (RightHandWeapon && RightHandWeapon.WeaponType == WeaponTypes.Bow)
+                 || (LeftHandWeapon && LeftHandWeapon.WeaponType == WeaponTypes.Bow);
+
+            // Handle beginning a new attack
+            if (!isAttacking)
             {
-                // Player must click to attack
-                if (InputManager.Instance.ActionStarted(InputManager.Actions.SwingWeapon) && !isStartingAttack)
+                if (!DaggerfallUnity.Settings.ClickToAttack || bowEquipped)
                 {
-                    isClickAttack = true;
+                    // Reset tracking if user not holding down 'SwingWeapon' button and no attack in progress
+                    if (!InputManager.Instance.HasAction(InputManager.Actions.SwingWeapon))
+                    {
+                        lastAttackHand = Hand.None;
+                        _gesture.Clear();
+                        return;
+                    }
                 }
                 else
                 {
-                    _gesture.Clear();
-                    ShowWeapons(true);
-                }
-            }
-
-            // Handle attack in progress. For melee weapons set isAttacking but don't go further until the animation passes the middle frame.
-            // This recreates timing similar to classic Daggerfall.
-            // Bow is plays through its full animation before proceeding.
-            if (!isBowAttacking && ((IsLeftHandAttacking() && !LeftHandWeapon.IsPastMiddleFrame())
-                || (IsRightHandAttacking() && !RightHandWeapon.IsPastMiddleFrame())))
-            {
-                isStartingAttack = true;
-                return;
-            }
-            else if (isBowAttacking && (IsLeftHandAttacking() || IsRightHandAttacking()))
-            {
-                isStartingAttack = true;
-                return;
-            }
-
-            // The attack has passed the middle animation frame.
-            // Attempt to transfer damage based on last attack hand.
-            if (isStartingAttack)
-            {
-                // First part of attack is over (first half of melee swing, or the full animation for the bow)
-                isStartingAttack = false;
-
-                // Get attack hand weapon
-                FPSWeapon weapon;
-                switch (lastAttackHand)
-                {
-                    case Hand.Left:
-                        weapon = LeftHandWeapon;
-                        break;
-                    case Hand.Right:
-                        weapon = RightHandWeapon;
-                        break;
-                    default:
+                    // Player must click to attack
+                    if (InputManager.Instance.ActionStarted(InputManager.Actions.SwingWeapon))
+                    {
+                        isClickAttack = true;
+                    }
+                    else
+                    {
+                        _gesture.Clear();
                         return;
+                    }
                 }
+            }
+
+            var attackDirection = MouseDirections.None;
+            if (!isAttacking)
+            {
+                if (bowEquipped)
+                {
+                    // Ensure attack button was released before starting the next attack
+                    if (lastAttackHand == Hand.None)
+                        attackDirection = MouseDirections.Down; // Force attack without tracking a swing for Bow
+                }
+                else if (isClickAttack)
+                {
+                    attackDirection = (MouseDirections)UnityEngine.Random.Range((int)MouseDirections.Left, (int)MouseDirections.DownRight + 1);
+                    isClickAttack = false;
+                }
+                else
+                {
+                    attackDirection = TrackMouseAttack(); // Track swing direction for other weapons
+                }
+            }
+
+            // Start attack if one has been initiated
+            if (attackDirection != MouseDirections.None)
+            {
+                ExecuteAttacks(attackDirection);
+                isAttacking = true;
+            }
+
+            // Stop here if no attack is happening
+            if (!isAttacking)
+                return;
+
+            if (!isBowSoundFinished && weapon.WeaponType == WeaponTypes.Bow && weapon.GetCurrentFrame() == 3)
+            {
+                weapon.PlaySwingSound();
+                isBowSoundFinished = true;
+            }
+            else if (!isDamageFinished && weapon.GetCurrentFrame() == weapon.GetHitFrame())
+            {
+                // The attack has reached the hit frame.
+                // Attempt to transfer damage based on last attack hand.
+                // Get attack hand weapon
 
                 // Transfer damage.
                 bool hitEnemy = false;
@@ -294,7 +326,7 @@ namespace DaggerfallWorkshop.Game
                 playerEntity.DecreaseFatigue(swingWeaponFatigueLoss);
 
                 // Play swing sound if attack didn't hit an enemy.
-                if (!hitEnemy)
+                if (!hitEnemy && weapon.WeaponType != WeaponTypes.Bow)
                     weapon.PlaySwingSound();
                 else
                 {
@@ -308,43 +340,8 @@ namespace DaggerfallWorkshop.Game
 
                     playerEntity.TallySkill(DFCareer.Skills.CriticalStrike, 1);
                 }
-
-                // Damage transfer is done. The attack now plays through the remainder of its animation frames.
                 isDamageFinished = true;
-
-                // Weapon cooldown
-                if (weapon.Cooldown > 0.0f)
-                {
-                    cooldownTime = Time.time + weapon.Cooldown;
-                    ShowWeapons(false);
-                }
-
-                return;
             }
-
-            // Restore weapon visibility
-            ShowWeapons(true);
-
-            var attackDirection = MouseDirections.None;
-            if (isBowAttacking)
-            {
-                // Ensure attack button was released before starting the next attack
-                if (lastAttackHand == Hand.None)
-                    attackDirection = MouseDirections.Down; // Force attack without tracking a swing for Bow
-            }
-            else if (isClickAttack)
-            {
-                attackDirection = (MouseDirections)UnityEngine.Random.Range((int)MouseDirections.Left, (int)MouseDirections.DownRight + 1);
-                isClickAttack = false;
-            }
-            else
-            {
-                attackDirection = TrackMouseAttack(); // Track swing direction for other weapons
-            }
-
-            // Exit if no attack action registered
-            if (attackDirection != MouseDirections.None)
-                ExecuteAttacks(attackDirection);
         }
 
         public void SheathWeapons()
@@ -450,8 +447,6 @@ namespace DaggerfallWorkshop.Game
             target.MetalType = MetalTypes.None;
             target.DrawWeaponSound = SoundClips.None;
             target.SwingWeaponSound = SoundClips.SwingHighPitch;
-
-            // TODO: Adjust FPSWeapon attack speed scale for swing pitch variance
         }
 
         void SetWeapon(FPSWeapon target, DaggerfallUnityItem weapon)
@@ -470,15 +465,11 @@ namespace DaggerfallWorkshop.Game
             if (target.WeaponType == WeaponTypes.Bow)
             {
                 target.Reach = 50f;
-                target.Cooldown = 1.0f;
             }
             else
             {
                 target.Reach = 2.5f;
-                target.Cooldown = 0.0f;
             }
-
-            // TODO: Adjust FPSWeapon attack speed scale for swing pitch variance
         }
 
         #endregion

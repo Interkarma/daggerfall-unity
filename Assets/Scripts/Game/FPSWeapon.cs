@@ -46,6 +46,9 @@ namespace DaggerfallWorkshop.Game
         const int nativeScreenWidth = 320;
         const int nativeScreenHeight = 200;
 
+        readonly byte[] leftUnarmedAnims = { 0, 1, 2, 3, 4, 2, 1, 0 };
+        int leftUnarmedAnimIndex = 0;
+
         DaggerfallUnity dfUnity;
         CifRciFile cifFile;
         Texture2D weaponAtlas;
@@ -143,7 +146,10 @@ namespace DaggerfallWorkshop.Game
         public void ChangeWeaponState(WeaponStates state)
         {
             weaponState = state;
-            currentFrame = 0;
+
+            if (!(WeaponType == WeaponTypes.Bow && state == WeaponStates.StrikeDown))
+                currentFrame = 0;
+
             UpdateWeapon();
         }
 
@@ -152,9 +158,17 @@ namespace DaggerfallWorkshop.Game
             return IsPlayingOneShot();
         }
 
-        public bool IsPastMiddleFrame()
+        public int GetHitFrame()
         {
-            return (currentFrame > (weaponAnims[(int)weaponState].NumFrames / 2));
+            if (WeaponType == WeaponTypes.Bow)
+                return 5;
+            else
+                return 2;
+        }
+
+        public int GetCurrentFrame()
+        {
+            return currentFrame;
         }
 
         public void PlayActivateSound()
@@ -348,25 +362,58 @@ namespace DaggerfallWorkshop.Game
         {
             while (true)
             {
-                float fps = 10;
-                if (weaponAnims != null)
+                Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
+                float speed = 0;
+                float time = 0;
+                if (player != null)
                 {
-                    // Step frame
-                    currentFrame++;
-                    if (currentFrame >= weaponAnims[(int)weaponState].NumFrames)
+                    if (WeaponType == WeaponTypes.Bow)
+                        time = Entity.PlayerEntity.ClassicUpdateInterval;
+                    else
                     {
-                        if (IsPlayingOneShot())
-                            ChangeWeaponState(WeaponStates.Idle);   // If this is a one-shot anim go to queued weapon state
-                        else
-                            currentFrame = 0;                       // Otherwise keep looping frames
+                        speed = 3 * (115 - player.Stats.LiveSpeed);
+                        time = speed / 980; // Approximation of classic frame update
                     }
-
-                    // Update weapon and fps
-                    UpdateWeapon();
-                    fps = (int)((float)weaponAnims[(int)weaponState].FramePerSecond * AttackSpeedScale);
                 }
 
-                yield return new WaitForSeconds(1f / fps);
+                if (weaponAnims != null && ShowWeapon)
+                {
+                    // Special animation for unarmed attack to left
+                    if ((WeaponType == WeaponTypes.Melee || WeaponType == WeaponTypes.Werecreature)
+                        && WeaponState == WeaponStates.StrikeLeft)
+                    {
+                        // Step frame
+                        currentFrame = leftUnarmedAnims[leftUnarmedAnimIndex];
+                        leftUnarmedAnimIndex++;
+                        if (leftUnarmedAnimIndex >= leftUnarmedAnims.Length)
+                        {
+                            ChangeWeaponState(WeaponStates.Idle);
+                            leftUnarmedAnimIndex = 0;
+                        }
+                    }
+                    else
+                    {
+                        // Step frame
+                        currentFrame++;
+                        if (currentFrame >= weaponAnims[(int)weaponState].NumFrames)
+                        {
+                            if (IsPlayingOneShot())
+                            {
+                                ChangeWeaponState(WeaponStates.Idle);   // If this is a one-shot anim go to queued weapon state
+                                if (WeaponType == WeaponTypes.Bow)
+                                    ShowWeapon = false; // Immediately hide bow so its idle frame doesn't show before it is hidden for its cooldown
+                            }
+                            else if (WeaponType == WeaponTypes.Bow)
+                                currentFrame = 3;
+                            else
+                                currentFrame = 0;                       // Otherwise keep looping frames
+                        }
+                    }
+
+                    UpdateWeapon();
+                }
+
+                yield return new WaitForSeconds(time);
             }
         }
 
