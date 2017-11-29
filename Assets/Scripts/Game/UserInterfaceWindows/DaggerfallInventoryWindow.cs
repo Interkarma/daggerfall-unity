@@ -84,6 +84,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected ItemListScroller localItemListScroller;
         protected ItemListScroller remoteItemListScroller;
 
+        // Only used for setting equip delay
+        protected DaggerfallUnityItem lastRightHandItem;
+        protected DaggerfallUnityItem lastLeftHandItem;
+
         #endregion
 
         #region UI Textures
@@ -499,6 +503,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (itemInfoPanelLabel != null)
                 itemInfoPanelLabel.SetText(new TextFile.Token[0]);
 
+            // Update tracked weapons for setting equip delay
+            SetEquipDelayTime(false);
+
             // Refresh window
             Refresh();
         }
@@ -525,6 +532,34 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallLoot droppedLootContainer = GameObjectHelper.CreateDroppedLootContainer(GameManager.Instance.PlayerObject, DaggerfallUnity.NextUID);
                 droppedLootContainer.Items.TransferAll(droppedItems);
             }
+
+            // Add equip delay if weapon was changed
+            SetEquipDelayTime(true);
+
+            // Show "equipping" message if a delay was added
+            PlayerEntity player = GameManager.Instance.PlayerEntity;
+            if (GameManager.Instance.WeaponManager.EquipCountdownRightHand > 0)
+            {
+                DaggerfallUnityItem currentRightHandWeapon = player.ItemEquipTable.GetItem(EquipSlots.RightHand);
+                if (currentRightHandWeapon != null)
+                {
+                    string message = HardStrings.equippingWeapon;
+                    message = message.Replace("%s", currentRightHandWeapon.ItemTemplate.name);
+                    DaggerfallUI.Instance.PopupMessage(message);
+                }
+            }
+
+            if (GameManager.Instance.WeaponManager.EquipCountdownLeftHand > 0)
+            {
+                DaggerfallUnityItem currentLeftHandWeapon = player.ItemEquipTable.GetItem(EquipSlots.LeftHand);
+                if (currentLeftHandWeapon != null)
+                {
+                    string message = HardStrings.equippingWeapon;
+                    message = message.Replace("%s", currentLeftHandWeapon.ItemTemplate.name);
+                    DaggerfallUI.Instance.PopupMessage(message);
+                }
+            }
+
         }
 
         #endregion
@@ -855,6 +890,56 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     tokens[tokenIdx].text = tokens[tokenIdx].text.Replace("kilograms", "kg").Replace("points of damage", "damage").Replace("armor rating", "armor");
             }
             itemInfoPanelLabel.SetText(tokens);
+        }
+
+        void SetEquipDelayTime(bool setTime)
+        {
+            ushort[] equipDelayTimes = { 500, 700, 1200, 900, 900, 1800, 1600, 1700, 1700, 3000, 3400, 2000, 2200, 2000, 2200, 2000, 4000, 5000 };
+
+            int delayTimeRight = 0;
+            int delayTimeLeft = 0;
+            PlayerEntity player = GameManager.Instance.PlayerEntity;
+            DaggerfallUnityItem currentRightHandItem = player.ItemEquipTable.GetItem(EquipSlots.RightHand);
+            DaggerfallUnityItem currentLeftHandItem = player.ItemEquipTable.GetItem(EquipSlots.LeftHand);
+
+            if (setTime)
+            {
+                if (lastRightHandItem != currentRightHandItem)
+                {
+                    // Add delay for unequipping old item
+                    if (lastRightHandItem != null)
+                        delayTimeRight = equipDelayTimes[lastRightHandItem.GroupIndex];
+
+                    // Add delay for equipping new item
+                    if (currentRightHandItem != null)
+                        delayTimeRight += equipDelayTimes[currentRightHandItem.GroupIndex];
+                }
+                if (lastLeftHandItem != currentLeftHandItem)
+                {
+                    // Add delay for unequipping old item
+                    if (lastLeftHandItem != null)
+                        delayTimeLeft = equipDelayTimes[lastLeftHandItem.GroupIndex];
+
+                    // Add delay for equipping new item
+                    if (currentLeftHandItem != null)
+                        delayTimeLeft += equipDelayTimes[currentLeftHandItem.GroupIndex];
+                }
+            }
+            else
+            {
+                lastRightHandItem = null;
+                lastLeftHandItem = null;
+                if (currentRightHandItem != null)
+                {
+                    lastRightHandItem = currentRightHandItem;
+                }
+                if (currentLeftHandItem != null)
+                {
+                    lastLeftHandItem = currentLeftHandItem;
+                }
+            }
+            GameManager.Instance.WeaponManager.EquipCountdownRightHand += delayTimeRight;
+            GameManager.Instance.WeaponManager.EquipCountdownLeftHand += delayTimeLeft;
         }
 
         #endregion
