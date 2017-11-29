@@ -110,8 +110,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected override void Setup()
         {
             // Set background
-            ParentPanel.BackgroundTexture = GetBackground(DaggerfallUnity.Settings.MainFilterMode);
-            ParentPanel.BackgroundTextureLayout = BackgroundLayout.StretchToFill;
+            ParentPanel.BackgroundColor = Color.clear;
 
             // Pages selection top bar
             bar.Outline.Enabled = true;
@@ -198,7 +197,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             qualityLevel = AddSlider(leftPanel, "Quality Level", "General graphic quality", DaggerfallUnity.Settings.QualityLevel, QualitySettings.names);
             string[] filterModes = new string[] { "Point", "Bilinear", "Trilinear" };
             mainFilterMode = AddSlider(leftPanel, "Main Filter", "Filter for game textures", DaggerfallUnity.Settings.MainFilterMode, filterModes);
-            mainFilterMode.OnScroll += MainFilterMode_OnScroll;
             guiFilterMode = AddSlider(leftPanel, "GUI Filter", "Filter for HUD images", DaggerfallUnity.Settings.GUIFilterMode, filterModes);
             videoFilterMode = AddSlider(leftPanel, "Video Filter", "Filter for movies", DaggerfallUnity.Settings.VideoFilterMode, filterModes);
 
@@ -506,37 +504,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return textBox;
         }
 
-        /// <summary>
-        /// Load Background texture.
-        /// </summary>
-        /// <param name="filtermode">Filtermode index.</param>
-        /// <returns></returns>
-        private static Texture2D GetBackground(int filtermode)
-        {
-            Texture2D tex;
-
-            switch (filtermode)
-            {
-                case 0:
-                    tex = Resources.Load<Texture2D>("AdvancedSettings_Point");
-                    break;
-                case 1:
-                    tex = Resources.Load<Texture2D>("AdvancedSettings_Bilinear");
-                    break;
-                case 2:
-                    tex = Resources.Load<Texture2D>("AdvancedSettings_Trilinear");
-                    break;
-                default:
-                    tex = Resources.Load<Texture2D>("AdvancedSettings_Point");
-                    Debug.LogError("Advanced Settings Window: error in setting background");
-                    break;
-            }
-
-            tex.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
-
-            return tex;
-        }
-
         #endregion
 
         #region Event Handlers
@@ -553,14 +520,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             SaveSettings();
             DaggerfallUI.UIManager.PopWindow();
-        }
-
-        /// <summary>
-        /// Update background texture when filter mode is changed.
-        /// </summary>
-        private void MainFilterMode_OnScroll()
-        {
-            ParentPanel.BackgroundTexture = GetBackground(mainFilterMode.ScrollIndex);
         }
 
         #endregion
