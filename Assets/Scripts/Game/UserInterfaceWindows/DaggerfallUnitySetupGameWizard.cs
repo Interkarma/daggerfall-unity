@@ -64,7 +64,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox leftHandWeapons;
         Checkbox playerNudity;
         Checkbox clickToAttack;
-        Checkbox meshAndTextureReplacement;
 
         Color unselectedTextColor = new Color(0.6f, 0.6f, 0.6f, 1f);
         Color selectedTextColor = new Color(0.0f, 0.8f, 0.0f, 1.0f);
@@ -451,7 +450,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // TODO: Might rework this, but could still be useful for certain core mods later
             x = 165;
             optionPos = 20;
-            meshAndTextureReplacement = AddOption(x, "Support for Graphical Mods", "Enable replacement of textures and models", DaggerfallUnity.Settings.MeshAndTextureReplacement);
             //bool exampleModCheckbox = AddOption(x, "Example", "Example built-in mod", DaggerfallUnity.Settings.ExampleModOption);
 
             // Add mod note
@@ -706,8 +704,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.Handedness = GetHandedness(leftHandWeapons.IsChecked);
             DaggerfallUnity.Settings.PlayerNudity = playerNudity.IsChecked;
             DaggerfallUnity.Settings.ClickToAttack = clickToAttack.IsChecked;
-
-            DaggerfallUnity.Settings.MeshAndTextureReplacement = meshAndTextureReplacement.IsChecked;
 
             DaggerfallUnity.Settings.SaveSettings();
             moveNextStage = true;
