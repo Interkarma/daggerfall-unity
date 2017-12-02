@@ -68,6 +68,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         int currentPage = 0;
         float y = 0;
 
+        bool applyScreenChanges = false;
+
         #endregion
 
         #region Settings Controls
@@ -109,7 +111,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         protected override void Setup()
         {
-            // Set background
+            AllowCancel = false;
             ParentPanel.BackgroundColor = Color.clear;
 
             // Pages selection top bar
@@ -193,8 +195,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             resolution = AddSlider(leftPanel, "Resolution", "Screen resolution",
                 Array.FindIndex(Screen.resolutions, x => x.width == DaggerfallUnity.Settings.ResolutionWidth && x.height == DaggerfallUnity.Settings.ResolutionHeight),
                 Screen.resolutions.Select(x => string.Format("{0}x{1}", x.width, x.height)).ToArray());
+            resolution.OnScroll += Resolution_OnScroll;
             fullscreen = AddCheckbox(leftPanel, "Fullscreen", "Enable fullscreen", DaggerfallUnity.Settings.Fullscreen);
+            fullscreen.OnToggleState += Fullscreen_OnToggleState;
             qualityLevel = AddSlider(leftPanel, "Quality Level", "General graphic quality", DaggerfallUnity.Settings.QualityLevel, QualitySettings.names);
+            qualityLevel.OnScroll += QualityLevel_OnScroll;
             string[] filterModes = new string[] { "Point", "Bilinear", "Trilinear" };
             mainFilterMode = AddSlider(leftPanel, "Main Filter", "Filter for game textures", DaggerfallUnity.Settings.MainFilterMode, filterModes);
             guiFilterMode = AddSlider(leftPanel, "GUI Filter", "Filter for HUD images", DaggerfallUnity.Settings.GUIFilterMode, filterModes);
@@ -246,11 +251,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             /* Video */
 
-            Resolution selectedResolution = Screen.resolutions[resolution.ScrollIndex];
-            DaggerfallUnity.Settings.ResolutionWidth = selectedResolution.width;
-            DaggerfallUnity.Settings.ResolutionHeight = selectedResolution.height;
-            DaggerfallUnity.Settings.Fullscreen = fullscreen.IsChecked;
-            DaggerfallUnity.Settings.QualityLevel = qualityLevel.ScrollIndex;
+            if (applyScreenChanges)
+            {
+                Resolution selectedResolution = Screen.resolutions[resolution.ScrollIndex];
+                DaggerfallUnity.Settings.ResolutionWidth = selectedResolution.width;
+                DaggerfallUnity.Settings.ResolutionHeight = selectedResolution.height;
+                DaggerfallUnity.Settings.Fullscreen = fullscreen.IsChecked;
+                Screen.SetResolution(selectedResolution.width, selectedResolution.height, fullscreen.IsChecked);
+
+                DaggerfallUnity.Settings.QualityLevel = qualityLevel.ScrollIndex;
+                QualitySettings.SetQualityLevel(qualityLevel.ScrollIndex);
+            }
             DaggerfallUnity.Settings.MainFilterMode = mainFilterMode.ScrollIndex;
             DaggerfallUnity.Settings.GUIFilterMode = guiFilterMode.ScrollIndex;
             DaggerfallUnity.Settings.VideoFilterMode = videoFilterMode.ScrollIndex;
@@ -260,7 +271,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.ShadowResolutionMode = shadowResolutionMode.ScrollIndex;
             DaggerfallUnity.Settings.DungeonLightShadows = dungeonLightShadows.IsChecked;
             DaggerfallUnity.Settings.UseLegacyDeferred = useLegacyDeferred.IsChecked;
-
 
             DaggerfallUnity.Settings.SaveSettings();
         }
@@ -520,6 +530,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             SaveSettings();
             DaggerfallUI.UIManager.PopWindow();
+        }
+
+        private void QualityLevel_OnScroll()
+        {
+            applyScreenChanges = true;
+        }
+
+        private void Fullscreen_OnToggleState()
+        {
+            applyScreenChanges = true;
+        }
+
+        private void Resolution_OnScroll()
+        {
+            applyScreenChanges = true;
         }
 
         #endregion
