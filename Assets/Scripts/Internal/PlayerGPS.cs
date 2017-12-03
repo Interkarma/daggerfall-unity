@@ -587,7 +587,7 @@ namespace DaggerfallWorkshop
             isPlayerInLocationRect = check;
         }
 
-        private bool ReadyCheck()
+        public bool ReadyCheck()
         {
             // Ensure we have a DaggerfallUnity reference
             if (dfUnity == null)

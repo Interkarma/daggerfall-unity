@@ -39,7 +39,7 @@ namespace DaggerfallConnect.Save
         const int typeOfCrimeCommittedOffset = 0x3A3;
         const int inDungeonWaterOffset = 0x3A6;
         const int breathRemainingOffset = 0x3AB;
-        const int weatherTypesOffset = 0x3B7;
+        const int climateWeathersOffset = 0x3B7;
         const int weaponDrawnOffset = 0x3BF;
         const int gameTimeOffset = 0x3C9;
         const int maleOrFemaleClothingOffset = 0x3D1; // 6 for male clothing or 12 for female clothing, matching player gender. Not bothering to read right now.
@@ -47,6 +47,7 @@ namespace DaggerfallConnect.Save
         const int currentRegionIdOffset = 0x173A; // Not bothering to read right now.
         const int cheatFlagsOffset = 0x173B;
         const int lastSkillCheckTimeOffset = 0x179A;
+        const int climateWeathersDuplicateOffset = 0x17A2; // Same data as other climateWeathers
         const int dungeonWaterLevelOffset = 0x17A8; // Not bothering to read right now.
 
         const int regionDataOffset = 0x3DA;
@@ -85,7 +86,7 @@ namespace DaggerfallConnect.Save
         byte typeOfCrimeCommitted = 0;
         bool inDungeonWater = false;
         int breathRemaining = 0;
-        byte[] weatherTypes; // Probably the possible weather types for the player's location
+        byte[] climateWeathers; // Weather in each of the six weather climates
         bool weaponDrawn = false;
         uint gameTime = 0;
         bool usingLeftHandWeapon = false;
@@ -279,11 +280,11 @@ namespace DaggerfallConnect.Save
         }
 
         /// <summary>
-        /// Gets current possible weather types?
+        /// Gets weathers in the six weather climates
         /// </summary>
-        public byte[] WeatherTypes
+        public byte[] ClimateWeathers
         {
-            get { return weatherTypes; }
+            get { return climateWeathers; }
         }
 
         /// <summary>
@@ -417,7 +418,7 @@ namespace DaggerfallConnect.Save
             ReadIsDay(reader);
             ReadTypeOfCrimeCommitted(reader);
             ReadInDungeonWater(reader);
-            ReadWeatherTypes(reader);
+            ReadClimateWeathers(reader);
             ReadWeaponDrawn(reader);
             ReadGameTime(reader);
             ReadUsingLeftHandWeapon(reader);
@@ -508,10 +509,11 @@ namespace DaggerfallConnect.Save
             breathRemaining = reader.ReadInt32();
         }
 
-        void ReadWeatherTypes(BinaryReader reader)
+        void ReadClimateWeathers(BinaryReader reader)
         {
-            reader.BaseStream.Position = weatherTypesOffset;
-            weatherTypes = reader.ReadBytes(6);
+            // Classic reads from both the first and then overwrites with the duplicate, so effectively the duplicate is what is used
+            reader.BaseStream.Position = climateWeathersDuplicateOffset;
+            climateWeathers = reader.ReadBytes(6);
         }
 
         void ReadWeaponDrawn(BinaryReader reader)

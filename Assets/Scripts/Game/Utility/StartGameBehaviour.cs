@@ -388,6 +388,9 @@ namespace DaggerfallWorkshop.Game.Utility
             // Randomize initial region prices
             playerEntity.InitializeRegionPrices();
 
+            // Randomize weathers
+            GameManager.Instance.WeatherManager.SetClimateWeathers();
+
             // Start game
             GameManager.Instance.PauseGame(false);
             DaggerfallUI.Instance.FadeHUDFromBlack();
@@ -547,6 +550,22 @@ namespace DaggerfallWorkshop.Game.Utility
 
             // Get breath remaining if player was submerged (0 if they were not in the water)
             playerEntity.CurrentBreath = saveVars.BreathRemaining;
+
+            // Get weather
+            byte[] climateWeathers = saveVars.ClimateWeathers;
+
+            // Enums for thunder and snow are reversed in classic and Unity, so they are converted here.
+            for (int i = 0; i < climateWeathers.Length; i++)
+            {
+                // TODO: 0x80 flag can be set for snow or rain, to add fog to these weathers. This isn't in DF Unity yet, so
+                // temporarily removing the flag.
+                climateWeathers[i] &= 0x7f;
+                if (climateWeathers[i] == 5)
+                    climateWeathers[i] = 6;
+                else if (climateWeathers[i] == 6)
+                    climateWeathers[i] = 5;
+            }
+            GameManager.Instance.WeatherManager.PlayerWeather.ClimateWeathers = climateWeathers;
 
             // Start game
             DaggerfallUI.Instance.PopToHUD();
