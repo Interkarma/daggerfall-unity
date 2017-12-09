@@ -173,16 +173,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             parser.WriteFile(SettingsPath(mod), settings);
         }
 
+        /// <summary>
+        /// Import presets from mod and local presets from disk.
+        /// </summary>
         public static List<IniData> GetPresets (Mod mod)
         {
             List<IniData> presets = new List<IniData>();
-
-            // Get presets from disk
-            string[] presetsDirectories = Directory.GetFiles(mod.DirPath, mod.FileName + "preset" + "*.ini");
-            foreach (string path in presetsDirectories)
-            {
-                presets.Add(parser.ReadFile(path));
-            }
 
             // Get presets from mod (TextAsset)
             int index = 0;
@@ -203,6 +199,10 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                     presets.Add(ParseConfigToIni(presetConfig));
                 }
             }
+
+            // Get presets from disk
+            foreach (string path in Directory.GetFiles(mod.DirPath, mod.FileName + "preset" + "*.ini"))
+                presets.Add(parser.ReadFile(path));
 
             return presets;
         }
