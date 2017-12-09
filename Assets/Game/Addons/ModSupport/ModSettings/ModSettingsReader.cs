@@ -218,7 +218,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             presetData.Sections.Add(section);
 
             string name = string.Format("{0}preset{1}.ini", mod.FileName, preset.Title);
-            parser.WriteFile(Path.Combine(mod.DirPath, name), presetData);
+            foreach (char c in Path.GetInvalidPathChars())
+                name = name.Replace(c, '_');
+            parser.WriteFile(Path.Combine(mod.DirPath, name), presetData);      
         }
 
         public static ModSettingsConfiguration GetConfig(Mod mod)
