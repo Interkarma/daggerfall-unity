@@ -225,7 +225,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             itemOut.shadowColor = Color.clear;
 
             listBox.SelectIndex(0);
-            //UpdateIndicator();
         }
 
         public override void Update()
@@ -234,7 +233,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
             if (isInit)
             {
-                UpdateIndicator();
+                ListBox_OnSelectItem();
                 isInit = false;
             }
         }
