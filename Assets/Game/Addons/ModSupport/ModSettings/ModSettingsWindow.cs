@@ -290,6 +290,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                         data[section.SectionName][key.KeyName] = value;
                         tuple++;
                     }
+                    else if (ModSettingsReader.IsHexColor(key.Value))
+                    {
+                        string hexColor = ColorUtility.ToHtmlStringRGBA(modColorPickers[colorPicker].BackgroundColor);
+                        data[section.SectionName][key.KeyName] = hexColor;
+                        colorPicker++;
+                    }
                     else
                     {
                         data[section.SectionName][key.KeyName] = modTextBoxes[textBox].ResultText;
