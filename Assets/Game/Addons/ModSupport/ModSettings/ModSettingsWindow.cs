@@ -37,7 +37,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         Panel currentPanel;
         int currentPage = 0;
         Button nextPageButton;
-        DaggerfallListPickerWindow presetPicker;
+        PresetPicker presetPicker;
         const int spacing = 8;
         const float textScale = 0.8f;
         const int startX = 10;
@@ -670,129 +670,45 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 CloseWindow();
         }
 
-        /// <summary>
-        /// Open preset listbox on preset button.
-        /// </summary>
+
         private void PresetButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            // Create presets listbox
-            presetPicker = new DaggerfallListPickerWindow(uiManager, this);
-            presetPicker.ListBox.MaxCharacters = 30;
-            presetPicker.OnItemPicked += HandlePresetPickEvent;
+            presetPicker = new PresetPicker(uiManager, this, data[ModSettingsReader.internalSection]["SettingsVersion"]);
 
             foreach (IniData presetData in presets)
             {
-                string presetName;
-
-                try
-                {
-                    var section = presetData[ModSettingsReader.internalSection];
-
-                    // Get Name
-                    string name = section["PresetName"];
-                    if (string.IsNullOrEmpty(name))
-                    {
-                        name = "Unknown preset";
-                        Debug.LogError("A preset for mod " + mod.Title + " is missing the key 'PresetName'");
-                    }
-                    presetName = name;
-
-                    // Get Author (if present)
-                    string author = section["PresetAuthor"];
-                    if (!string.IsNullOrEmpty(author))
-                        presetName += " by " + author;
-
-                    // Check Version
-                    string presetVersion = section["SettingsVersion"];
-                    string settingsVersion = data[ModSettingsReader.internalSection]["SettingsVersion"];
-                    if (string.IsNullOrEmpty(presetVersion))
-                    {
-                        presetName = "[?] " + presetName;
-                        Debug.LogError("Preset " + presetName + " for mod " + mod.Title + " is missing the key 'SettingsVersion'");
-                    }
-                    else if (presetVersion != settingsVersion)
-                    {
-                        presetName = "[!] " + presetName;
-                        Debug.Log("Preset " + presetName + " was made for version " + presetVersion + " but " + 
-                            mod.Title + " has settings version " + settingsVersion);
-                    }
-                }
-                catch
-                {
-                    presetName = "[Unknown preset]";
-                    Debug.LogError("Failed to read the header from a preset for mod " + mod.Title);
-                }
-
-                if (presetName.Length > 30)
-                {
-                    presetName = presetName.Substring(0, 27);
-                    presetName += "...";
-                }
-
-                // Add preset to listbox
-                presetPicker.ListBox.AddItem(presetName);
+                var section = presetData[ModSettingsReader.internalSection];
+                presetPicker.AddPreset(
+                    section["PresetName"],
+                    section["Description"],
+                    section["PresetAuthor"],
+                    section["SettingsVersion"]);
             }
 
+            presetPicker.OnPresetPicked += PresetPicker_OnPresetPicked;
+            presetPicker.OnCreatePreset += PresetPicker_OnCreatePreset;
             uiManager.PushWindow(presetPicker); 
         }
 
-        /// <summary>
-        /// preset confirmation.
-        /// </summary>
-        /// <param name="index">Preset index.</param>
-        /// <param name="preset">Preset name.</param>
-        private void HandlePresetPickEvent (int index, string preset)
+        private void PresetPicker_OnPresetPicked(int index)
         {
-            // Selected preset
-            currentPresetIndex = index;
+            // Save current settings
+            SaveSettings(false);
 
-            // Open confirmation message box
-            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
-            string message = "Import settings from " + preset + " ?";
-            try
-            {
-                string description = presets[currentPresetIndex][ModSettingsReader.internalSection]["Description"];
-                if (description != null)
-                {
-                    messageBox.SetText(new string[] { description, "", message });
-                }
-                else
-                {
-                    messageBox.SetText(message);
-                }
-            }
-            catch
-            {
-                messageBox.SetText(message);
-            }
-            messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
-            messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Cancel);
-            messageBox.OnButtonClick += ConfirmPreset_OnButtonClick;
-            uiManager.PushWindow(messageBox);
+            // Confront current settings and preset
+            foreach (SectionData section in presets[index].Sections.Where(x => x.SectionName != ModSettingsReader.internalSection))
+                foreach (KeyData key in section.Keys)
+                    data[section.SectionName][key.KeyName] = key.Value;
+
+            // Apply changes
+            RestartSettingsWindow();
         }
 
-        /// <summary>
-        /// Apply selected preset.
-        /// </summary>
-        private void ConfirmPreset_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        private void PresetPicker_OnCreatePreset(Preset preset)
         {
-            if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
-            {
-                // Save current settings
-                SaveSettings(false);
-
-                // Confront current settings and preset
-                foreach (SectionData section in presets[currentPresetIndex].Sections.Where(x => x.SectionName != ModSettingsReader.internalSection))
-                    foreach (KeyData key in section.Keys)
-                        data[section.SectionName][key.KeyName] = key.Value;
-
-                // Apply changes
-                CloseWindow();
-                presetPicker.CloseWindow();
-                RestartSettingsWindow();
-            }
-            else
-                CloseWindow();
+            SaveSettings(false);
+            ModSettingsReader.CreatePreset(mod, data, preset);
+            presets = ModSettingsReader.GetPresets(mod);
         }
 
         private void ColorPicker_OnMouseClick(BaseScreenComponent sender, Vector2 position)

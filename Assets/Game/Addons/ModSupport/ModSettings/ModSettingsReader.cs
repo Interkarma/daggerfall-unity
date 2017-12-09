@@ -207,6 +207,20 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             return presets;
         }
 
+        public static void CreatePreset(Mod mod, IniData data, Preset preset)
+        {
+            IniData presetData = new IniData(data);
+            var section = new SectionData(internalSection);
+            section.Keys.AddKey("PresetName", preset.Title);
+            section.Keys.AddKey("Description", preset.Description);
+            section.Keys.AddKey("PresetAuthor", preset.Author);
+            section.Keys.AddKey("SettingsVersion", preset.Version);
+            presetData.Sections.Add(section);
+
+            string name = string.Format("{0}preset{1}.ini", mod.FileName, preset.Title);
+            parser.WriteFile(Path.Combine(mod.DirPath, name), presetData);
+        }
+
         public static ModSettingsConfiguration GetConfig(Mod mod)
         {
             if (mod.AssetBundle.Contains("modsettings.asset"))
