@@ -490,15 +490,14 @@ namespace DaggerfallWorkshop.Game.Items
 
         /// <summary>
         /// Determines if item is stackable.
-        /// Currently very simple - only ingredients and gold pieces are stackable.
+        /// Only ingredients, gold pieces and arrows are stackable.
         /// </summary>
         /// <param name="item">Item to check if stackable.</param>
         /// <returns>True if item stackable.</returns>
         bool IsStackable(DaggerfallUnityItem item)
         {
-            if (item.IsIngredient)
-                return true;
-            else if (item.IsOfTemplate(ItemGroups.Currency, (int)Currency.Gold_pieces))
+            if (item.IsIngredient || item.IsOfTemplate(ItemGroups.Currency, (int)Currency.Gold_pieces)
+                || item.IsOfTemplate(ItemGroups.Weapons, (int)Weapons.Arrow))
                 return true;
             else
                 return false;

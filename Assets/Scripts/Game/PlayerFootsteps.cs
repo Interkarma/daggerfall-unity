@@ -260,6 +260,33 @@ namespace DaggerfallWorkshop.Game
                 dfAudioSource.PlayOneShot((int)SplashLargeSound, 0, FootstepVolumeScale);
         }
 
-        #endregion
-    }
+        // Capture this message so we can play enemies' weapon hit sounds on player
+        public void PlayWeaponHitSound()
+        {
+            if (dfAudioSource)
+            {
+                dfAudioSource.PlayOneShot((int)SoundClips.Hit1 + Random.Range(0, 5), 0, 1f);
+            }
+        }
+
+        // Capture this message so we can play enemies' weaponless hit sounds on player
+        public void PlayWeaponlessHitSound()
+        {
+            if (dfAudioSource)
+            {
+                dfAudioSource.PlayOneShot((int)SoundClips.Hit1 + Random.Range(2, 4), 0, 1f);
+            }
+        }
+
+        // Capture this message so we can play enemies' arrow sounds on player
+        public void PlayArrowSound()
+        {
+            if (dfAudioSource)
+            {
+                dfAudioSource.PlayOneShot((int)SoundClips.ArrowHit, 0, 1f);
+            }
+        }
+
+    #endregion
+}
 }

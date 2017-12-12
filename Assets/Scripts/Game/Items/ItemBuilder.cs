@@ -279,9 +279,9 @@ namespace DaggerfallWorkshop.Game.Items
         /// <returns>DaggerfallUnityItem</returns>
         public static DaggerfallUnityItem CreateRandomWeapon(int playerLevel)
         {
-            // Create random weapon type (excluding bows and arrows for now)
+            // Create random weapon type
             Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(ItemGroups.Weapons);
-            int groupIndex = UnityEngine.Random.Range(0, enumArray.Length - 1);
+            int groupIndex = UnityEngine.Random.Range(0, enumArray.Length);
             DaggerfallUnityItem newItem = new DaggerfallUnityItem(ItemGroups.Weapons, groupIndex);
 
             // Random weapon material
@@ -290,6 +290,13 @@ namespace DaggerfallWorkshop.Game.Items
 
             newItem = SetItemPropertiesByMaterial(newItem, material);
             newItem.dyeColor = DaggerfallUnity.Instance.ItemHelper.GetWeaponDyeColor(material);
+
+            // Handle arrows
+            if (groupIndex == 18)
+            {
+                newItem.stackCount = UnityEngine.Random.Range(1, 21);
+                newItem.currentCondition = 0; // not sure if this is necessary, but classic does it
+            }
 
             return newItem;
         }
