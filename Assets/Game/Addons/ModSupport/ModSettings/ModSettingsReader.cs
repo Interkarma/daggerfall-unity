@@ -173,16 +173,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             parser.WriteFile(SettingsPath(mod), settings);
         }
 
+        /// <summary>
+        /// Import presets from mod and local presets from disk.
+        /// </summary>
         public static List<IniData> GetPresets (Mod mod)
         {
             List<IniData> presets = new List<IniData>();
-
-            // Get presets from disk
-            string[] presetsDirectories = Directory.GetFiles(mod.DirPath, mod.FileName + "preset" + "*.ini");
-            foreach (string path in presetsDirectories)
-            {
-                presets.Add(parser.ReadFile(path));
-            }
 
             // Get presets from mod (TextAsset)
             int index = 0;
@@ -204,7 +200,27 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 }
             }
 
+            // Get presets from disk
+            foreach (string path in Directory.GetFiles(mod.DirPath, mod.FileName + "preset" + "*.ini"))
+                presets.Add(parser.ReadFile(path));
+
             return presets;
+        }
+
+        public static void CreatePreset(Mod mod, IniData data, Preset preset)
+        {
+            IniData presetData = new IniData(data);
+            var section = new SectionData(internalSection);
+            section.Keys.AddKey("PresetName", preset.Title);
+            section.Keys.AddKey("Description", preset.Description);
+            section.Keys.AddKey("PresetAuthor", preset.Author);
+            section.Keys.AddKey("SettingsVersion", preset.Version);
+            presetData.Sections.Add(section);
+
+            string name = string.Format("{0}preset{1}.ini", mod.FileName, preset.Title);
+            foreach (char c in Path.GetInvalidPathChars())
+                name = name.Replace(c, '_');
+            parser.WriteFile(Path.Combine(mod.DirPath, name), presetData);      
         }
 
         public static ModSettingsConfiguration GetConfig(Mod mod)
