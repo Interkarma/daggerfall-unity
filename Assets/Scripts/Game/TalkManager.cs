@@ -125,6 +125,7 @@ namespace DaggerfallWorkshop.Game
             public NPCKnowledgeAboutItem npcKnowledgeAboutItem = NPCKnowledgeAboutItem.NotSet;
             public int buildingKey = -1;
             public ulong questID = 0; // used for listitems that are question about quest resources
+            public int index = -1;
             public List<ListItem> listChildItems = null; // null if type == ListItemType.Navigation or ListItemType.Item, only contains a list if type == ListItemType.ItemGroup
             public List<ListItem> listParentItems = null; // null if type == ListItemType.ItemGroup or ListItemType.Item, only contains a list if type == ListItemType.Navigation
         }
@@ -189,6 +190,11 @@ namespace DaggerfallWorkshop.Game
             public Vector2 position;
         }       
         List<BuildingInfo> listBuildings = null;
+
+        short[] FactionsAndBuildings = { 0x1A, 0x15, 0x1D, 0x1B, 0x23, 0x18, 0x21, 0x16, 0x19E, 0x170, 0x19D, 0x198, 0x19A, 0x19B, 0x199, 0x19F, 0x1A0,
+                                          0x1A1, 0x28, 0x29, 0x0F, 0x0A, 0x0D, 0x2, 0x0, 0x3, 0x5, 0x6, 0x8 };
+
+        public string LocationOfRegionalBuilding;
 
         // quest injected stuff
 
@@ -687,7 +693,12 @@ namespace DaggerfallWorkshop.Game
                     question = "not implemented";
                     break;
                 case QuestionType.Regional:
-                    question = "not implemented";
+                    currentKeySubjectType = KeySubjectType.Building;
+
+                    // Improvement over classic. Make "Any" lower-case since it will be in the middle of a sentence.
+                    currentKeySubject = currentKeySubject.Replace("Any", "any");
+
+                    question = expandRandomTextRecord(7225 + toneIndex);
                     break;
                 case QuestionType.QuestLocation:
                 case QuestionType.QuestPerson:
@@ -912,6 +923,128 @@ namespace DaggerfallWorkshop.Game
             return answer;
         }
 
+        public string GetAnswerAboutRegionalBuilding(TalkManager.ListItem listItem)
+        {
+            if (GetRegionalLocationCityName(listItem))
+                return expandRandomTextRecord(10);
+            else
+                return expandRandomTextRecord(11);
+        }
+
+        public bool GetRegionalLocationCityName(TalkManager.ListItem listItem)
+        {
+            byte[] lookUpIndexes = { 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x19, 0x1A, 0x1B, 0x1D, 0x1E, 0x1F, 0x20,
+                                     0x21, 0x22, 0x23, 0x24, 0x27, 0x00, 0x0B, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x0A };
+
+            DFLocation location = new DFLocation();
+            if (GetLocationWithRegionalBuilding(lookUpIndexes[listItem.index], FactionsAndBuildings[listItem.index], ref location))
+            {
+                LocationOfRegionalBuilding = location.Name;
+                return true;
+            }
+            else
+                return false;
+        }
+
+        public bool GetLocationWithRegionalBuilding(byte index, short faction, ref DFLocation location)
+        {
+            PlayerGPS gps = GameManager.Instance.PlayerGPS;
+            int locationsWithRegionalBuildingCount = 0;
+
+            // Get how many locations in the region exist with the building being asked about
+            for (int i = 0; i < gps.CurrentRegion.LocationCount; i++)
+            {
+                locationsWithRegionalBuildingCount += CheckLocationKeyForRegionalBuilding(gps.CurrentRegion.MapTable[i].Key, index, faction);
+            }
+            if (locationsWithRegionalBuildingCount > 0)
+            {
+                int locationToChoose = UnityEngine.Random.Range(0, locationsWithRegionalBuildingCount) + 1;
+                // Get the location
+                for (int i = 0; i < gps.CurrentRegion.LocationCount; i++)
+                {
+                    locationToChoose -= CheckLocationKeyForRegionalBuilding(gps.CurrentRegion.MapTable[i].Key, index, faction);
+                    if (locationToChoose == 0)
+                    {
+                        location = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(gps.CurrentRegionIndex, i);
+                        return true;
+                    }
+                }
+                return false;
+            }
+            else
+                return false;
+        }
+
+        public int CheckLocationKeyForRegionalBuilding(uint key, byte index, short faction)
+        {
+            byte templeFlags = (byte)(key & 0xff);
+            byte storeFlags = (byte)((key >> 8) & 0xff);
+            byte guildFlags = (byte)((key >> 16) & 0xff);
+
+            if (index > 0x27) // Out of range
+                return 0;
+            switch (index)
+            {
+                case 0: // Tavern
+                    return storeFlags & 1;
+                case 3: // Weapon Smith
+                    return (byte)(storeFlags << 6) >> 7;
+                case 4: // Armorer
+                    return (byte)(storeFlags << 5) >> 7;
+                case 5: // Alchemist
+                    return (byte)(storeFlags << 4) >> 7;
+                case 6: // Bank
+                    return (byte)(storeFlags << 3) >> 7;
+                case 7: // Bookstore
+                    return (byte)(storeFlags << 2) >> 7;
+                case 8: // Clothing store
+                    return (byte)(storeFlags << 1) >> 7;
+                case 0xA: // Gem store
+                    return storeFlags >> 7;
+                case 0xB: // Library
+                    return guildFlags & 1;
+                case 0xD: // Temples
+                    switch (faction)
+                    {
+                        case 21: // Arkay
+                            return (byte)(templeFlags << 6) >> 7;
+                        case 22: // Zen
+                            return templeFlags >> 7;
+                        case 24: // Mara
+                            return (byte)(templeFlags << 2) >> 7;
+                        case 26: // Akatosh
+                            return templeFlags & 1;
+                        case 27: // Julianos
+                            return (byte)(templeFlags << 4) >> 7;
+                        case 29: // Dibella
+                            return (byte)(templeFlags << 5) >> 7;
+                        case 33: // Stendarr
+                            return (byte)(templeFlags << 1) >> 7;
+                        case 35: // Kynareth
+                            return (byte)(templeFlags << 3) >> 7;
+                        default:
+                            return 0;
+                    }
+                case 0x19: // Order of the Raven
+                case 0x1A: // Knights of the Dragon
+                case 0x1B: // Knights of the Owl
+                case 0x1D: // Order of the Candle
+                case 0x1E: // Knights of the Flame
+                case 0x1F: // Host of the Horn
+                case 0x20: // Knights of the Rose
+                case 0x21: // Knights of the Wheel
+                case 0x22: // Order of the Scarab
+                case 0x23: // Knights of the Hawk
+                    return (byte)(guildFlags << 6) >> 7;
+                case 0x24: // The Mages Guild
+                    return (byte)(guildFlags << 5) >> 7;
+                case 0x27: // The Fighters Guild
+                    return (byte)(guildFlags << 2) >> 7;
+                default:
+                    return 0;
+            }
+        }
+
         public string GetAnswerText(TalkManager.ListItem listItem)
         {
             string answer = "";
@@ -938,7 +1071,7 @@ namespace DaggerfallWorkshop.Game
                     answer = "not implemented";
                     break;
                 case QuestionType.Regional:
-                    answer = "not implemented";
+                    answer = GetAnswerAboutRegionalBuilding(listItem);
                     break;
                 case QuestionType.QuestLocation:
                 case QuestionType.QuestPerson:
@@ -1512,8 +1645,6 @@ namespace DaggerfallWorkshop.Game
         {
             int playerRegion = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
             byte[] KnightlyOrderRegions = { 0x05, 0x11, 0x12, 0x14, 0x15, 0x16, 0x17, 0x2B, 0x33, 0x37 };
-            ushort[] FactionsAndBuildings = { 0x1A, 0x15, 0x1D, 0x1B, 0x23, 0x18, 0x21, 0x16, 0x19E, 0x170, 0x19D, 0x198, 0x19A, 0x19B, 0x199, 0x19F, 0x1A0,
-                                      0x1A1, 0x28, 0x29, 0x0F, 0x0A, 0x0D, 0x2, 0x0, 0x3, 0x5, 0x6, 0x8 };
 
             for (int i = 0; i < 28; ++i)
             {
@@ -1534,7 +1665,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        private bool DoesBuildingExistLocally(ushort SearchedFor, bool SearchByBuildingType)
+        private bool DoesBuildingExistLocally(short SearchedFor, bool SearchByBuildingType)
         {
             DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
 
@@ -1544,7 +1675,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     if (SearchByBuildingType)
                     {
-                        if ((ushort)building.BuildingType == SearchedFor)
+                        if ((short)building.BuildingType == SearchedFor)
                             return true;
                     }
                     else
@@ -1566,6 +1697,7 @@ namespace DaggerfallWorkshop.Game
             item.type = ListItemType.Item;
             item.questionType = QuestionType.Regional;
             item.caption = UserInterfaceWindows.HardStrings.any.Replace("%s", UserInterfaceWindows.HardStrings.buildingNames[index]);
+            item.index = index;
             itemBuildingTypeGroup.listChildItems.Add(item);
         }
 

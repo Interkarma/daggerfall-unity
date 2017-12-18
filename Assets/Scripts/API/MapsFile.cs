@@ -976,7 +976,7 @@ namespace DaggerfallConnect.Arena2
                 regions[region].DFRegion.MapTable[i].Discovered = ((bitfield >> 24) & 0x40) != 0;
                 regions[region].DFRegion.MapTable[i].Latitude = (reader.ReadInt32() & 0xFFFFFF) >> 8;
                 regions[region].DFRegion.MapTable[i].DungeonType = (DFRegion.DungeonTypes)reader.ReadByte();
-                regions[region].DFRegion.MapTable[i].Unused = reader.ReadUInt32();
+                regions[region].DFRegion.MapTable[i].Key = reader.ReadUInt32();
 
                 // Add to dictionary
                 if (!regions[region].DFRegion.MapIdLookup.ContainsKey(regions[region].DFRegion.MapTable[i].MapId))

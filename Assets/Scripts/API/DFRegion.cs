@@ -240,8 +240,8 @@ namespace DaggerfallConnect
             /// <summary>Whether or not this location is discovered.</summary>
             public Boolean Discovered;
 
-            /// <summary>Last 4 bytes appear to be unused.</summary>
-            public UInt32 Unused;
+            /// <summary>A key for the contents of the location.</summary>
+            public UInt32 Key;
         }
 
         #endregion

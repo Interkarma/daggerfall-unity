@@ -76,7 +76,7 @@ namespace DaggerfallWorkshop.Utility
             { "%ef", null },  // Local shop name
             { "%enc", EncumbranceMax }, // Encumbrance
             { "%end", End }, // Amount of Endurance
-            { "%fcn", null }, // Another city
+            { "%fcn", LocationOfRegionalBuilding }, // Location with regional building asked about
             { "%fe", null },  // ?
             { "%fea", null }, // ?
             { "%fl1", null }, // Lord of _fx1
@@ -632,6 +632,12 @@ namespace DaggerfallWorkshop.Utility
         {
             // %map
             return GameManager.Instance.PlayerGPS.LocationRevealedByMapItem;
+        }
+
+        private static string LocationOfRegionalBuilding(IMacroContextProvider mcp)
+        {
+            // %fcn
+            return GameManager.Instance.TalkManager.LocationOfRegionalBuilding;
         }
 
         #endregion
