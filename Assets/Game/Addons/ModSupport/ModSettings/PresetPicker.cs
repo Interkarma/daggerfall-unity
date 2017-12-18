@@ -51,7 +51,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         TextLabel descriptionLabel      = new TextLabel();
         TextLabel authorLabel           = new TextLabel();
         TextLabel versionLabel          = new TextLabel();
-        TextLabel indicator             = new TextLabel();
+        Paginator paginator             = new Paginator();
         TextBox creatorTitle            = new TextBox();
         TextBox creatorDescription      = new TextBox();
 
@@ -62,7 +62,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         Color selectedTitleColor        = Color.blue;
         Color warningColor              = new Color(1, 0, 0, 0.4f);
 
-        bool isInit = true;
         bool creationMode = false;
 
         #endregion
@@ -136,35 +135,14 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             controlPanel.Size = new Vector2(mainPanel.Size.x, 20);
             mainPanel.Components.Add(controlPanel);
 
-            var leftButton = new Button();
-            leftButton.Size = new Vector2(5, 5);
-            leftButton.Position = new Vector2(10, 0);
-            leftButton.VerticalAlignment = VerticalAlignment.Middle;
-            leftButton.Label.Text = "<";
-            leftButton.Label.Font = DaggerfallUI.Instance.Font3;
-            leftButton.Label.ShadowColor = Color.clear;
-            leftButton.Label.TextColor = Color.blue;
-            leftButton.OnMouseClick += LeftButton_OnMouseClick;
-            controlPanel.Components.Add(leftButton);
-
-            var rightButton = new Button();
-            rightButton.Size = new Vector2(5, 5);
-            rightButton.Position = new Vector2(40, 0);
-            rightButton.VerticalAlignment = VerticalAlignment.Middle;
-            rightButton.Label.Text = ">";
-            rightButton.Label.Font = DaggerfallUI.Instance.Font3;
-            rightButton.Label.ShadowColor = Color.clear;
-            rightButton.Label.TextColor = Color.blue;
-            rightButton.OnMouseClick += RightButton_OnMouseClick;
-            controlPanel.Components.Add(rightButton);
-
-            indicator.Font = DaggerfallUI.Instance.Font3;
-            indicator.ShadowColor = Color.clear;
-            indicator.TextColor = titleColor;
-            indicator.Size = new Vector2(25, 5);
-            indicator.Position = new Vector2(20, 0);
-            indicator.VerticalAlignment = VerticalAlignment.Middle;
-            controlPanel.Components.Add(indicator);
+            paginator.Size = new Vector2(30, 5);
+            paginator.VerticalAlignment = VerticalAlignment.Middle;
+            paginator.Position = new Vector2(10, 0);
+            paginator.TextColor = titleColor;
+            paginator.ArrowColor = Color.blue;
+            paginator.DisabledArrowColor = new Color(0.28f, 0.24f, 0.55f);
+            paginator.OnSelected += Paginator_OnSelected;
+            controlPanel.Components.Add(paginator);
 
             var cancelButton = new Button();
             cancelButton.Size = new Vector2(30, 10);
@@ -224,18 +202,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             itemOut.selectedTextColor = selectedTitleColor;
             itemOut.shadowColor = Color.clear;
 
-            listBox.SelectIndex(0);
-        }
-
-        public override void Update()
-        {
-            base.Update();
-
-            if (isInit)
-            {
-                ListBox_OnSelectItem();
-                isInit = false;
-            }
+            ListBox_OnSelectItem();
         }
 
         #endregion
@@ -271,11 +238,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             presets.Add(preset);
 
             listBox.AddItem(preset.Title, out itemOut);
-        }
-
-        private void UpdateIndicator()
-        {
-            indicator.Text = string.Format("{0}/{1}", listBox.SelectedIndex + 1, listBox.Count);
+            paginator.Total = listBox.Count;
         }
 
         private void SetCreationMode(bool toggle)
@@ -291,18 +254,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         #endregion
 
         #region Event Handlers
-
-        private void LeftButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
-        {
-            listBox.SelectPrevious();
-            UpdateIndicator();
-        }
-
-        private void RightButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
-        {
-            listBox.SelectNext();
-            UpdateIndicator();
-        }
 
         private void ListBox_OnSelectItem()
         {
@@ -324,8 +275,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 else
                     versionLabel.Text = string.Empty;
             }
+            paginator.Sync(listBox.SelectedIndex);
+        }
 
-            UpdateIndicator();
+        private void Paginator_OnSelected(int previous, int selected)
+        {
+            listBox.SelectedIndex = paginator.Selected;
         }
 
         private void CancelButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
