@@ -439,11 +439,12 @@ namespace DaggerfallWorkshop
     /// </summary>
     public enum AudioPresets
     {
-        None,                   // No changes to AudioSource
-        OnDemand,               // PlayOnAwake=false, Loop=false
-        LoopOnAwake,            // PlayOnAwake=true, Loop=true
-        LoopOnDemand,           // PlayOnAwake=false, Loop=true
-        LoopIfPlayerNear,       // PlayOnAwake=true, Loop=true, distanceCheck=true
+        None,                       // No changes to AudioSource
+        OnDemand,                   // PlayOnAwake=false, Loop=false
+        LoopOnAwake,                // PlayOnAwake=true, Loop=true
+        LoopOnDemand,               // PlayOnAwake=false, Loop=true
+        LoopIfPlayerNear,           // PlayOnAwake=true, Loop=true, distanceCheck=true
+        PlayRandomlyIfPlayerNear,   // PlayOnAwake=false, Loop=false, distanceCheck=true, playRandomly=true
     }
 
     /// <summary>
