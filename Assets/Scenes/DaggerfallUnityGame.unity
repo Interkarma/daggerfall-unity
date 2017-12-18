@@ -2100,7 +2100,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22400016, guid: 312abd0527754e047a6bfbc424f09ace, type: 2}
       propertyPath: m_SizeDelta.y
-      value: 16
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 11400006, guid: 312abd0527754e047a6bfbc424f09ace, type: 2}
       propertyPath: m_Value
@@ -2144,6 +2144,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9348098e91052a443a761eff41c888c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  LocationOfRegionalBuilding: 
 --- !u!4 &2117241641
 Transform:
   m_ObjectHideFlags: 0
