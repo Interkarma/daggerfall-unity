@@ -198,8 +198,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.OnPop();
 
             Debug.Log(string.Format("Resting raised time by {0} hours total", totalHours));
-
-            playerEntity.RaiseSkills();
         }
 
         #endregion
@@ -414,6 +412,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void RestFinishedPopup_OnClose()
         {
             DaggerfallUI.Instance.PopToHUD();
+            playerEntity.RaiseSkills();
         }
 
         #endregion

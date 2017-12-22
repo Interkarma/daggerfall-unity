@@ -42,6 +42,8 @@ namespace DaggerfallWorkshop.Game.Player
         public short reputationUnderworld;
         public int currentFatigue;
         public short[] skillUses;
+        public uint skillsRaisedThisLevel1;
+        public uint skillsRaisedThisLevel2;
         public int startingLevelUpSkillSum;
         public byte minMetalToHit;
         public sbyte[] armorValues = new sbyte[DaggerfallEntity.NumberBodyParts];

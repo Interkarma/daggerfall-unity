@@ -47,6 +47,8 @@ namespace DaggerfallWorkshop.Game.Entity
         protected PersistentGlobalVars globalVars = new PersistentGlobalVars();
 
         protected short[] skillUses;
+        protected uint skillsRaisedThisLevel1 = 0;
+        protected uint skillsRaisedThisLevel2 = 0;
         protected uint timeOfLastSkillIncreaseCheck = 0;
         protected uint timeOfLastSkillTraining = 0;
 
@@ -297,6 +299,8 @@ namespace DaggerfallWorkshop.Game.Entity
             this.sGroupReputations[4] = character.reputationUnderworld;
             this.currentFatigue = character.currentFatigue;
             this.skillUses = character.skillUses;
+            this.skillsRaisedThisLevel1 = character.skillsRaisedThisLevel1;
+            this.skillsRaisedThisLevel2 = character.skillsRaisedThisLevel2;
             this.startingLevelUpSkillSum = character.startingLevelUpSkillSum;
             this.minMetalToHit = (WeaponMaterialTypes)character.minMetalToHit;
             this.armorValues = character.armorValues;
@@ -554,6 +558,8 @@ namespace DaggerfallWorkshop.Game.Entity
         /// </summary>
         public void RaiseSkills()
         {
+            const int youAreNowAMasterOfTextID = 4020;
+
             DaggerfallDateTime now = DaggerfallUnity.Instance.WorldTime.Now;
             if ((now.ToClassicDaggerfallTime() - timeOfLastSkillIncreaseCheck) <= 360)
                 return;
@@ -568,14 +574,56 @@ namespace DaggerfallWorkshop.Game.Entity
                 if (skillUses[i] >= usesNeededForAdvancement)
                 {
                     skillUses[i] = 0;
-                    skills.SetPermanentSkillValue(i, (short)(skills.GetPermanentSkillValue(i) + 1));
-                    SetCurrentLevelUpSkillSum();
-                    DaggerfallUI.Instance.PopupMessage(HardStrings.skillImprove.Replace("%s", DaggerfallUnity.Instance.TextProvider.GetSkillName((DaggerfallConnect.DFCareer.Skills)i)));
+
+                    if (skills.GetPermanentSkillValue(i) < 100 && (skills.GetPermanentSkillValue(i) < 95 || !AlreadyMasteredASkill()))
+                    {
+                        skills.SetPermanentSkillValue(i, (short)(skills.GetPermanentSkillValue(i) + 1));
+                        SetCurrentLevelUpSkillSum();
+                        DaggerfallUI.Instance.PopupMessage(HardStrings.skillImprove.Replace("%s", DaggerfallUnity.Instance.TextProvider.GetSkillName((DFCareer.Skills)i)));
+                        if (skills.GetPermanentSkillValue(i) == 100)
+                        {
+                            List<DFCareer.Skills> primarySkills = GetPrimarySkills();
+                            if (primarySkills.Contains((DFCareer.Skills)i))
+                            {
+                                ITextProvider textProvider = DaggerfallUnity.Instance.TextProvider;
+                                TextFile.Token[] tokens;
+                                tokens = textProvider.GetRSCTokens(youAreNowAMasterOfTextID);
+                                if (tokens != null && tokens.Length > 0)
+                                {
+                                    DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
+                                    messageBox.SetTextTokens(tokens);
+                                    messageBox.ClickAnywhereToClose = true;
+                                    messageBox.ParentPanel.BackgroundColor = Color.clear;
+                                    messageBox.Show();
+                                }
+                                DaggerfallUI.Instance.PlayOneShot(SoundClips.ArenaFanfareLevelUp);
+                            }
+                        }
+                    }
                 }
             }
 
             if (CheckForLevelUp())
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenCharacterSheetWindow);
+        }
+
+        /// <summary>
+        /// Gets whether the player has already become master of a skill.
+        /// </summary>
+        public bool AlreadyMasteredASkill()
+        {
+            bool mastered = false;
+            List<DFCareer.Skills> primarySkills = GetPrimarySkills();
+            foreach (DFCareer.Skills skill in primarySkills)
+            {
+                if (skills.GetPermanentSkillValue(skill) == 100)
+                {
+                    mastered = true;
+                    break;
+                }
+            }
+
+            return mastered;
         }
 
         /// <summary>
