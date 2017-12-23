@@ -440,18 +440,20 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             }
 
             // Properties
-            if (XMLManager.XmlFileExist(archive, record, frame))
+            string path = Path.Combine(texturesPath, GetName(archive, record, frame));
+            if (XMLManager.XmlFileExists(path))
             {
-                string fileName = GetName(archive, record, frame);
-                float value;
+                var xml = new XMLManager(path);
 
                 // Metallic parameter
-                if (XMLManager.TryGetFloat(fileName, "metallic", out value, texturesPath))
-                    material.SetFloat("_Metallic", value);
+                float metallic;
+                if (xml.TryGetFloat("metallic", out metallic))
+                    material.SetFloat("_Metallic", metallic);
 
                 // Smoothness parameter
-                if (XMLManager.TryGetFloat(fileName, "smoothness", out value, texturesPath))
-                    material.SetFloat("_Glossiness", value);
+                float smoothness;
+                if (xml.TryGetFloat("smoothness", out smoothness))
+                    material.SetFloat("_Glossiness", smoothness);
             }
         }
 
@@ -478,16 +480,19 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             Vector2 uv = Vector2.zero;
 
             // Get properties from Xml
-            if (XMLManager.XmlFileExist(archive, record))
+            string path = Path.Combine(texturesPath, GetName(archive, record));
+            if (XMLManager.XmlFileExists(path))
             {
-                // Customize billboard size (scale)
+                var xml = new XMLManager(path);
+
+                // Set billboard scale
                 Transform transform = go.GetComponent<Transform>();
-                transform.localScale = XMLManager.GetScale(name, texturesPath, transform.localScale);
+                transform.localScale = xml.GetVector3("scaleX", "scaleY", transform.localScale);
                 summary.Size.x *= transform.localScale.x;
                 summary.Size.y *= transform.localScale.y;
 
                 // Get UV
-                uv = XMLManager.GetUv(name, texturesPath, uv.x, uv.y);
+                uv = xml.GetVector2("uvX", "uvY", uv);
             }
 
             // Update UV
@@ -651,6 +656,18 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             }
         }
 
+        public static void SetEnemyScale(int archive, int record, ref Vector2 size)
+        {
+            string path = Path.Combine(texturesPath, GetName(archive, record));
+            if (!XMLManager.XmlFileExists(path))
+                return;
+
+            var xml = new XMLManager(path);
+            Vector2 scale = xml.GetVector2("scaleX", "scaleY", Vector2.zero);
+            size.x *= scale.x;
+            size.y *= scale.y;
+        }
+
         /// <summary>
         /// Import custom texture and label settings for buttons
         /// </summary>
@@ -663,14 +680,19 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             button.BackgroundTexture.filterMode = (FilterMode)DaggerfallUnity.Settings.GUIFilterMode;
 
             // Load settings from Xml
-            if (XMLManager.XmlFileExist(colorName, texturesPath))
+            string path = Path.Combine(texturesPath, colorName);
+            if (XMLManager.XmlFileExists(path))
             {
-                // Set custom color
-                if (XMLManager.GetString(colorName, "customtext", texturesPath) == "true")
-                    button.Label.TextColor = XMLManager.GetColor(colorName, texturesPath);
-                // Disable text. This is useful if text is drawn on texture
-                else if (XMLManager.GetString(colorName, "customtext", texturesPath) == "notext")
-                    button.Label.Text = "";
+                var xml = new XMLManager(path);
+
+                string value;
+                if (xml.TryGetString("customtext", out value))
+                {
+                    if (value == "true") // Set custom color for text
+                        button.Label.TextColor = xml.GetColor(button.Label.TextColor);
+                    else if (value == "notext") // Disable text. This is useful if text is drawn on texture
+                        button.Label.Text = string.Empty;
+                }
             }            
         }
 
@@ -782,9 +804,31 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         static public Vector2 GetSizeFromXml(Texture2D texture, string textureName, float scaleWidth = 1, float scaleHeight = 1)
         {
             if (CustomImageExist(textureName))
-                return XMLManager.GetSize(textureName, imgPath, scaleWidth, scaleHeight);
+                return GetSize(textureName, imgPath, scaleWidth, scaleHeight);
             else
                 return new Vector2(texture.width * scaleWidth, texture.height * scaleHeight);
+        }
+
+        public static Vector2 GetSize(string fileName, string path, float additionalScaleX = 1, float additionaScaleY = 1)
+        {
+            // Get size from xml
+            path = Path.Combine(path, fileName);
+            if (XMLManager.XmlFileExists(path))
+            {
+                var xml = new XMLManager(path);
+
+                Vector2 size;
+                if (xml.TryGetVector2("width", "height", out size))
+                {
+                    size.x *= additionalScaleX;
+                    size.y *= additionaScaleY;
+                    return size;
+                }
+            }
+
+            // Fallback: get size from imagedata
+            ImageData imageData = ImageReader.GetImageData(fileName, createTexture: false);
+            return new Vector2(imageData.width * additionalScaleX, imageData.height * additionaScaleY);
         }
 
         #endregion

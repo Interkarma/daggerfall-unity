@@ -39,7 +39,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 BackgroundTexture = CrosshairTexture;
 
                 if (TextureReplacement.CustomTextureExist(defaultCrosshairFilename))
-                    Size = XMLManager.GetSize(defaultCrosshairFilename, TextureReplacement.TexturesPath, CrosshairScale, CrosshairScale);
+                    Size = TextureReplacement.GetSize(defaultCrosshairFilename, TextureReplacement.TexturesPath, CrosshairScale, CrosshairScale);
                 else
                     Size = new Vector2(CrosshairTexture.width * CrosshairScale, CrosshairTexture.height * CrosshairScale);
 
