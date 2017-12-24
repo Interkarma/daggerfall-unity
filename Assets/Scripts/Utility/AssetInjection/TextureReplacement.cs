@@ -761,74 +761,67 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         /// <summary>
-        /// Get size of vanilla texture, even if using a custom one.
+        /// Get a safe size for a control based on resolution of img.
         /// </summary>
-        /// <param name="texture">Texture.</param>
-        /// <param name="textureName">Archive of texture.</param>
-        /// <param name="record">Record of texture.</param>
-        /// <param name="frame">Frame of texture.</param>
-        /// <returns>Vector2 with width and height</returns>
-        static public Vector2 GetSizeFromTexture(Texture2D texture, int archive, int record, int frame = 0)
+        public static Vector2 GetSize(Texture2D texture, string textureName, bool allowXml = false)
         {
-            if (CustomTextureExist(archive, record, frame))
+            if (allowXml)
             {
-                ImageData imageData = ImageReader.GetImageData("TEXTURE." + archive, createTexture: false);
-                return new Vector2(imageData.width, imageData.height);
+                // Get size from xml
+                string path = Path.Combine(imgPath, textureName);
+                if (XMLManager.XmlFileExists(path))
+                {
+                    var xml = new XMLManager(path);
+                    Vector2 size;
+                    if (xml.TryGetVector2("width", "height", out size))
+                        return size;
+                }
             }
-            else
-                return new Vector2(texture.width, texture.height);
-        }
 
-        /// <summary>
-        /// Get size of vanilla texture, even if using a custom one.
-        /// </summary>
-        /// <param name="texture">Texture.</param>
-        /// <param name="textureName">Name of texture file.</param>
-        /// <param name="record">Record of texture (CifRci only).</param>
-        /// <param name="frame">Frame of texture (CifRci only).</param>
-        /// <returns>Vector2 with width and height</returns>
-        static public Vector2 GetSizeFromTexture(Texture2D texture, string textureName, int record = 0, int frame = 0)
-        {
-            if (CustomImageExist(textureName) || CustomCifExist(textureName, record, frame))
+            // Get size from vanilla image
+            if (CustomImageExist(textureName))
             {
                 ImageData imageData = ImageReader.GetImageData(textureName, createTexture: false);
                 return new Vector2(imageData.width, imageData.height);
             }
-            else
-                return new Vector2(texture.width, texture.height);
+
+            // Get size from texture
+            return new Vector2(texture.width, texture.height);
         }
 
         /// <summary>
-        /// Get custom size or default size of texture.
+        /// Get a safe size for a control based on resolution of img with a scale.
         /// </summary>
-        static public Vector2 GetSizeFromXml(Texture2D texture, string textureName, float scaleWidth = 1, float scaleHeight = 1)
+        public static Vector2 GetSize(Texture2D texture, string textureName, float scale, bool allowXml = false)
         {
-            if (CustomImageExist(textureName))
-                return GetSize(textureName, imgPath, scaleWidth, scaleHeight);
-            else
-                return new Vector2(texture.width * scaleWidth, texture.height * scaleHeight);
+            return GetSize(texture, textureName, allowXml) * scale;
         }
 
-        public static Vector2 GetSize(string fileName, string path, float additionalScaleX = 1, float additionaScaleY = 1)
+        /// <summary>
+        /// Get a safe size for a control based on resolution of img with a scale.
+        /// </summary>
+        public static Vector2 GetSize(Texture2D texture, string textureName, Vector2 scale, bool allowXml = false)
         {
-            // Get size from xml
-            path = Path.Combine(path, fileName);
-            if (XMLManager.XmlFileExists(path))
-            {
-                var xml = new XMLManager(path);
+            Vector2 size = GetSize(texture, textureName, allowXml);
+            size.x *= scale.x;
+            size.y *= scale.y;
+            return size;
+        }
 
-                Vector2 size;
-                if (xml.TryGetVector2("width", "height", out size))
-                {
-                    size.x *= additionalScaleX;
-                    size.y *= additionaScaleY;
-                    return size;
-                }
+        /// <summary>
+        /// Get a safe size for a control based on resolution of cif or rci.
+        /// </summary>
+        public static Vector2 GetSize(Texture2D texture, string textureName, int record, int frame = 0)
+        {
+            // Get size from vanilla image
+            if (CustomCifExist(textureName, record, frame))
+            {
+                ImageData imageData = ImageReader.GetImageData(textureName, createTexture: false);
+                return new Vector2(imageData.width, imageData.height);
             }
 
-            // Fallback: get size from imagedata
-            ImageData imageData = ImageReader.GetImageData(fileName, createTexture: false);
-            return new Vector2(imageData.width * additionalScaleX, imageData.height * additionaScaleY);
+            // Get size from texture
+            return new Vector2(texture.width, texture.height);
         }
 
         #endregion

@@ -66,7 +66,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (Enabled)
             {
                 base.Update();
-                Size = TextureReplacement.GetSizeFromXml(compassBoxTexture, compassBoxFilename, Scale.x, Scale.y);
+                Size = TextureReplacement.GetSize(compassBoxTexture, compassBoxFilename, Scale, true);
             }
         }
 
@@ -109,12 +109,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             compassBoxRect.x = Position.x;
             compassBoxRect.y = Position.y;
 
-            Vector2 boxRectSize = TextureReplacement.GetSizeFromXml(compassBoxTexture, compassBoxFilename, Scale.x, Scale.y);
+            Vector2 boxRectSize = TextureReplacement.GetSize(compassBoxTexture, compassBoxFilename, Scale, true);
             compassBoxRect.width = boxRectSize.x;
             compassBoxRect.height = boxRectSize.y;
 
             // Get compassTexture size
-            Vector2 compassTextureSize = TextureReplacement.GetSizeFromXml(compassTexture, compassFilename);
+            Vector2 compassTextureSize = TextureReplacement.GetSize(compassTexture, compassFilename, true);
             float compassTextureWidth = compassTextureSize.x;
             float compassTextureHeight = compassTextureSize.y;
 

@@ -104,9 +104,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (currentFaceTexture != null)
             {
                 if (raceGender == Genders.Male)
-                    facePanel.Size = TextureReplacement.GetSizeFromTexture(currentFaceTexture, raceTemplate.PaperDollHeadsMale, faceIndex);
+                    facePanel.Size = TextureReplacement.GetSize(currentFaceTexture, raceTemplate.PaperDollHeadsMale, faceIndex);
                 else if (raceGender == Genders.Female)
-                    facePanel.Size = TextureReplacement.GetSizeFromTexture(currentFaceTexture, raceTemplate.PaperDollHeadsFemale, faceIndex);
+                    facePanel.Size = TextureReplacement.GetSize(currentFaceTexture, raceTemplate.PaperDollHeadsFemale, faceIndex);
 
                 facePanel.BackgroundTexture = currentFaceTexture;
             }

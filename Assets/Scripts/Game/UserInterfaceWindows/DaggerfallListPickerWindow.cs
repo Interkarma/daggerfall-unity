@@ -55,7 +55,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 throw new Exception("DaggerfallClassSelectWindow: Could not load native texture.");
 
             // Create panel for picker
-            pickerPanel.Size = TextureReplacement.GetSizeFromTexture(nativeTexture, nativeImgName);
+            pickerPanel.Size = TextureReplacement.GetSize(nativeTexture, nativeImgName);
             pickerPanel.HorizontalAlignment = HorizontalAlignment.Center;
             pickerPanel.VerticalAlignment = VerticalAlignment.Middle;
             pickerPanel.BackgroundTexture = nativeTexture;
