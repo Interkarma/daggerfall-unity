@@ -58,6 +58,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         Color saveButtonColor         = new Color(0.0f, 0.5f, 0.0f, 0.4f);  // green with alpha
         Color cancelButtonColor       = new Color(0.2f, 0.2f, 0.2f, 0.4f);  // grey with alpha
         Color sectionTitleColor       = new Color(0.53f, 0.81f, 0.98f, 1);  // light blue
+        Color sectionTitleShadow      = new Color(0.3f, 0.45f, 0.54f, 1);
         Color backgroundTitleColor    = new Color(0, 0.8f, 0, 0.1f);        // green
 
         readonly Mod mod;
@@ -328,8 +329,10 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         {
             // Title
             TextLabel titleLabel = new TextLabel();
-            titleLabel.Text = mod.Title + " settings";
-            titleLabel.Position = new Vector2(0, 6);
+            titleLabel.Text = mod.Title; // + " settings";
+            titleLabel.Font = DaggerfallUI.Instance.Font2;
+            titleLabel.TextScale = 0.75f;
+            titleLabel.Position = new Vector2(0, 3);
             titleLabel.HorizontalAlignment = HorizontalAlignment.Center;
             modSettingsPanel.Components.Add(titleLabel);
             currentPanel = modSettingsPanel;
@@ -349,10 +352,16 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             // Presets button
             if (presets.Count > 0)
             {
-                Button presetButton = GetButton("Presets", HorizontalAlignment.Right, saveButtonColor);
-                presetButton.VerticalAlignment = VerticalAlignment.Top;
+                Button presetButton = new Button();
                 presetButton.Size = new Vector2(35, 9);
+                presetButton.Position = new Vector2(currentPanel.Size.x - 37, 2);
+                presetButton.Label.Text = "Presets";
+                presetButton.Label.Font = DaggerfallUI.Instance.Font3;
+                presetButton.Label.TextScale = 0.8f;
+                presetButton.Label.TextColor = sectionTitleColor;
+                presetButton.Label.ShadowColor = sectionTitleShadow;
                 presetButton.OnMouseClick += PresetButton_OnMouseClick;
+                currentPanel.Components.Add(presetButton);
             }
 
             // Create first page and load settings
@@ -382,7 +391,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                         paginator.TextColor = Color.yellow;
                         paginator.ArrowColor = Color.green;
                         paginator.DisabledArrowColor = new Color(0.18f, 0.55f, 0.34f);
-                        paginator.Position = new Vector2(startX + 3, 3);
+                        paginator.Position = new Vector2(startX + 3, 3.5f);
                         paginator.Size = new Vector2(35, 6);
                         paginator.OnSelected += Paginator_OnSelected;
                         modSettingsPanel.Components.Add(paginator);
@@ -441,7 +450,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             TextLabel textLabel = new TextLabel(DaggerfallUI.Instance.Font5);
             textLabel.Text = FormattedName(title);
             textLabel.TextColor = sectionTitleColor;
-            textLabel.ShadowColor = new Color(0.3f, 0.45f, 0.54f, 1);
+            textLabel.ShadowColor = sectionTitleShadow;
             textLabel.TextScale = 0.9f;
             textLabel.Position = new Vector2(0, 0.5f);
             textLabel.HorizontalAlignment = HorizontalAlignment.Center;
