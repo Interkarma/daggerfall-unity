@@ -295,6 +295,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 case GuildServices.MG_Buy_Spells:
                     //uiManager.PushWindow(new DaggerfallBankingWindow(uiManager, this));
                     //break;
+                case GuildServices.MG_Teleportation:
+                    DaggerfallUI.Instance.DfTravelMapWindow.ActivateTeleportationTravel();
+                    uiManager.PushWindow(DaggerfallUI.Instance.DfTravelMapWindow);
+                    break;
+
                 default:
                     DaggerfallUI.MessageBox("Guild service not yet implemented.");
                     break;

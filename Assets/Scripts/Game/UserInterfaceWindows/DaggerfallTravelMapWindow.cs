@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -119,6 +119,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool zoom                   = false;    //toggles zoom mode
         bool draw                   = true;     //draws textures to panel
         bool loadNewImage           = true;     //loads current map image
+        bool teleportationTravel    = false;    // Indicates travel should be by teleportation
 
         static bool revealUndiscoveredLocations; // flag used to indicate cheat/debugging mode for revealing undiscovered locations
 
@@ -165,6 +166,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool FindingLocation
         {
             get { return identifying && findingLocation && RegionSelected; }
+        }
+
+        public void ActivateTeleportationTravel()
+        {
+            teleportationTravel = true;
         }
 
         #endregion
@@ -266,6 +272,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 SetPlayerRegionOverlay();
                 CloseRegionPanel();
             }
+        }
+
+        public override void OnPop()
+        {
+            base.OnPop();
+            teleportationTravel = false;
         }
 
         public override void Update()
@@ -1447,20 +1459,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void CreatePopUpWindow()
         {
-            if (popUp != null)
+            DFPosition pos = MapsFile.GetPixelFromPixelID(locationSummary.ID);
+            if (teleportationTravel)
             {
-                DFPosition pos = MapsFile.GetPixelFromPixelID(locationSummary.ID);
-                popUp.EndPos = pos;
-                DaggerfallUI.UIManager.PushWindow(popUp);
+                DaggerfallTeleportPopUp telePopup = new DaggerfallTeleportPopUp(DaggerfallUI.UIManager, DaggerfallUI.UIManager.TopWindow, this);
+                telePopup.DestinationPos = pos;
+                telePopup.DestinationName = currentDFRegion.MapNames[locationSummary.MapIndex];
+                DaggerfallUI.UIManager.PushWindow(telePopup);
             }
             else
             {
-                popUp = new DaggerfallTravelPopUp(DaggerfallUI.UIManager, DaggerfallUI.UIManager.TopWindow, this);
-                DFPosition pos = MapsFile.GetPixelFromPixelID(locationSummary.ID);
+                if (popUp == null)
+                {
+                    popUp = new DaggerfallTravelPopUp(DaggerfallUI.UIManager, DaggerfallUI.UIManager.TopWindow, this);
+                }
                 popUp.EndPos = pos;
                 DaggerfallUI.UIManager.PushWindow(popUp);
             }
-
         }
 
         #endregion

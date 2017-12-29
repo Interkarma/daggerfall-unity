@@ -184,6 +184,11 @@ namespace DaggerfallWorkshop.Game
             get { return dfExteriorAutomapWindow; }
         }
 
+        public DaggerfallTravelMapWindow DfTravelMapWindow
+        {
+            get { return dfTravelMapWindow; }
+        }
+
         public enum PopupStyle
         {
             Parchment,
