@@ -90,9 +90,8 @@ namespace DaggerfallWorkshop.Game
                 LoadWeaponAtlas();
                 if (weaponAtlas == null)
                     return;
-
-                UpdateWeapon();
             }
+            UpdateWeapon();
 
             if (Event.current.type.Equals(EventType.Repaint) && ShowWeapon)
             {
@@ -189,30 +188,6 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        public void PlayHitSound()
-        {
-            if (dfAudioSource)
-            {
-                int sound;
-                dfAudioSource.AudioSource.pitch = 1f;
-                if (WeaponType == WeaponTypes.Melee || WeaponType == WeaponTypes.Werecreature) 
-                    sound = (int)SoundClips.Hit1 + UnityEngine.Random.Range(2, 4);
-                else
-                    sound = (int)SoundClips.Hit1 + UnityEngine.Random.Range(0, 5);
-                dfAudioSource.PlayOneShot(sound, 0);
-            }
-        }
-
-        public void PlayParrySound()
-        {
-            if (dfAudioSource)
-            {
-                dfAudioSource.AudioSource.pitch = 1f;
-                int sound = (int)SoundClips.Parry1 + UnityEngine.Random.Range(0, 9);
-                dfAudioSource.PlayOneShot(sound, 0);
-            }
-        }
-
         #region Private Methods
 
         private bool IsPlayingOneShot()
@@ -237,6 +212,13 @@ namespace DaggerfallWorkshop.Game
             {
                 weaponState = WeaponStates.Idle;
                 return;
+            }
+
+            // Handle bow with no arrows
+            if (WeaponType == WeaponTypes.Bow && GameManager.Instance.PlayerEntity.Items.GetItem(Items.ItemGroups.Weapons, (int)Items.Weapons.Arrow) == null)
+            {
+                GameManager.Instance.WeaponManager.SheathWeapons();
+                DaggerfallUI.SetMidScreenText(UserInterfaceWindows.HardStrings.youHaveNoArrows);
             }
 
             // Store rect and anim
@@ -401,7 +383,7 @@ namespace DaggerfallWorkshop.Game
                             {
                                 ChangeWeaponState(WeaponStates.Idle);   // If this is a one-shot anim go to queued weapon state
                                 if (WeaponType == WeaponTypes.Bow)
-                                    ShowWeapon = false; // Immediately hide bow so its idle frame doesn't show before it is hidden for its cooldown
+                                    ShowWeapon = false;                 // Immediately hide bow so its idle frame doesn't show before it is hidden for its cooldown
                             }
                             else if (WeaponType == WeaponTypes.Bow)
                                 currentFrame = 3;

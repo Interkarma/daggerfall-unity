@@ -108,6 +108,41 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        public void PlayHitSound(Items.DaggerfallUnityItem weapon)
+        {
+            if (IsReady())
+            {
+                int sound;
+                if (weapon != null)
+                {
+                    sound = (int)SoundClips.Hit1 + Random.Range(0, 5);
+                }
+                else
+                {
+                    sound = (int)SoundClips.Hit1 + Random.Range(2, 4);
+                }
+
+                dfAudioSource.PlayOneShot(sound, 1, 1.1f);
+            }
+        }
+
+        public void PlayParrySound()
+        {
+            if (IsReady())
+            {
+                int sound = (int)SoundClips.Parry1 + UnityEngine.Random.Range(0, 9);
+                dfAudioSource.PlayOneShot(sound, 1, 1.1f);
+            }
+        }
+
+        public void PlayArrowSound()
+        {
+            if (IsReady())
+            {
+                dfAudioSource.PlayOneShot(SoundClips.ArrowHit, 1, 1.1f);
+            }
+        }
+
         public void PlayMissSound(Items.DaggerfallUnityItem weapon)
         {
             if (IsReady())

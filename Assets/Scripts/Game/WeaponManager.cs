@@ -204,7 +204,7 @@ namespace DaggerfallWorkshop.Game
                 // If an attack with a bow just finished, set cooldown
                 if (weapon.WeaponType == WeaponTypes.Bow && isAttacking)
                 {
-                    float cooldown = 10 * (100 - GameManager.Instance.PlayerEntity.Stats.LiveSpeed) + 800;
+                    float cooldown = 10 * (100 - playerEntity.Stats.LiveSpeed) + 800;
                     cooldownTime = Time.time + (cooldown / 980); // Approximates classic frame update
                 }
 
@@ -311,6 +311,16 @@ namespace DaggerfallWorkshop.Game
             {
                 weapon.PlaySwingSound();
                 isBowSoundFinished = true;
+
+                // Remove arrow
+                ItemCollection playerItems = playerEntity.Items;
+                DaggerfallUnityItem arrow = playerItems.GetItem(ItemGroups.Weapons, (int)Weapons.Arrow);
+                if (arrow != null)
+                {
+                    arrow.stackCount--;
+                    if (arrow.stackCount <= 0)
+                        playerItems.RemoveItem(arrow);
+                }
             }
             else if (!isDamageFinished && weapon.GetCurrentFrame() == weapon.GetHitFrame())
             {
@@ -655,11 +665,24 @@ namespace DaggerfallWorkshop.Game
                         int damage = FormulaHelper.CalculateWeaponDamage(playerEntity, enemyEntity, weapon);
 
                         EnemyMotor enemyMotor = hit.transform.GetComponent<EnemyMotor>();
+                        EnemySounds enemySounds = hit.transform.GetComponent<EnemySounds>();
+
+                        // Play arrow sound and add arrow to target's inventory
+                        if (weapon.WeaponType == WeaponTypes.Bow)
+                        {
+                            enemySounds.PlayArrowSound();
+                            DaggerfallUnityItem arrow = ItemBuilder.CreateItem(ItemGroups.Weapons, (int)Weapons.Arrow);
+                            enemyEntity.Items.AddItem(arrow);
+                        }
 
                         // Play hit sound and trigger blood splash at hit point
                         if (damage > 0)
                         {
-                            weapon.PlayHitSound();
+                            if (usingRightHand)
+                                enemySounds.PlayHitSound(currentRightHandWeapon);
+                            else
+                                enemySounds.PlayHitSound(currentLeftHandWeapon);
+
                             EnemyBlood blood = hit.transform.GetComponent<EnemyBlood>();
                             if (blood)
                             {
@@ -690,10 +713,10 @@ namespace DaggerfallWorkshop.Game
                         }
                         else
                         {
-                            if (!enemyEntity.MobileEnemy.ParrySounds || weapon.WeaponType == WeaponTypes.Melee)
+                            if ((weapon.WeaponType != WeaponTypes.Bow && !enemyEntity.MobileEnemy.ParrySounds) || weapon.WeaponType == WeaponTypes.Melee)
                                 weapon.PlaySwingSound();
-                            else
-                                weapon.PlayParrySound();
+                            else if (enemyEntity.MobileEnemy.ParrySounds)
+                                enemySounds.PlayParrySound();
                         }
 
                         // Remove health
@@ -720,7 +743,6 @@ namespace DaggerfallWorkshop.Game
                 if (mobileNpc)
                 {
                     // TODO: Create blood splash.
-                    weapon.PlayHitSound();
                     mobileNpc.Motor.gameObject.SetActive(false);
                     //GameManager.Instance.PlayerEntity.TallyCrimeGuildRequirements(false, 5);
                 }

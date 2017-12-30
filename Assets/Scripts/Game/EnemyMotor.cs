@@ -44,8 +44,9 @@ namespace DaggerfallWorkshop.Game
         bool isAttackFollowsPlayerSet;              // For setting if the enemy will follow the player or not during an attack
         bool attackFollowsPlayer;                   // For setting if the enemy will follow the player or not during an attack
 
-        float classicUpdateTimer = 0f;      // Just used for knockback processing currently
-        float knockBackSpeed;                         // While non-zero, this enemy will be knocked backwards at this speed
+        float classicUpdateTimer = 0f;
+        bool classicUpdate = false;
+        float knockBackSpeed;                       // While non-zero, this enemy will be knocked backwards at this speed
         Vector3 knockBackDirection;                 // Direction to travel while being knocked back
 
         public bool IsHostile
@@ -85,6 +86,15 @@ namespace DaggerfallWorkshop.Game
 
         void FixedUpdate()
         {
+            classicUpdateTimer += Time.deltaTime;
+            if (classicUpdateTimer >= PlayerEntity.ClassicUpdateInterval)
+            {
+                classicUpdateTimer = 0;
+                classicUpdate = true;
+            }
+            else
+                classicUpdate = false;
+
             Move();
             OpenDoors();
         }
@@ -183,10 +193,8 @@ namespace DaggerfallWorkshop.Game
                 else
                     controller.SimpleMove(motion);
 
-                classicUpdateTimer += Time.deltaTime;
-                if (classicUpdateTimer >= PlayerEntity.ClassicUpdateInterval)
+                if (classicUpdate)
                 {
-                    classicUpdateTimer = 0;
                     knockBackSpeed -= (5 / (PlayerMotor.classicToUnitySpeedUnitRatio / 10));
                     if (knockBackSpeed <= (5 / (PlayerMotor.classicToUnitySpeedUnitRatio / 10)) &&
                         mobile.Summary.EnemyState != MobileStates.PrimaryAttack)
@@ -262,8 +270,30 @@ namespace DaggerfallWorkshop.Game
             if (!mobile.IsPlayingOneShot() || !attackFollowsPlayer)
                 transform.forward = direction.normalized;
 
+            // Ranged attack
+            if (senses.PlayerInSight && 360 * MeshReader.GlobalScale < distance && distance < 2048 * MeshReader.GlobalScale &&
+                mobile.Summary.Enemy.HasRangedAttack1 && mobile.Summary.Enemy.ID > 129 && mobile.Summary.Enemy.ID != 132)
+            {
+                if (classicUpdate)
+                {
+                    // Random chance to shoot bow
+                    if (DFRandom.rand() < 1000)
+                    {
+                        if (mobile.Summary.Enemy.HasRangedAttack1 && !mobile.Summary.Enemy.HasRangedAttack2
+                            && mobile.Summary.EnemyState != MobileStates.RangedAttack1)
+                            mobile.ChangeEnemyState(MobileStates.RangedAttack1);
+                        else if (mobile.Summary.Enemy.HasRangedAttack2 && mobile.Summary.EnemyState != MobileStates.RangedAttack2)
+                            mobile.ChangeEnemyState(MobileStates.RangedAttack2);
+                    }
+                    // Otherwise hold ground
+                    else if (!mobile.IsPlayingOneShot())
+                    {
+                        mobile.ChangeEnemyState(MobileStates.Idle);
+                    }
+                }
+            }
             // Move towards target
-            if (distance > stopDistance)
+            else if (distance > stopDistance)
             {
                 if (!mobile.IsPlayingOneShot())
                     mobile.ChangeEnemyState(MobileStates.Move);

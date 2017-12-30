@@ -31,7 +31,8 @@ namespace DaggerfallWorkshop.Game
         DaggerfallMobileUnit mobile;
         DaggerfallEntityBehaviour entityBehaviour;
         float meleeTimer = 0;
-        bool isAttacking;
+        bool isMeleeAttackingPreHitFrame;
+        bool isShootingPreHitFrame;
 
         void Start()
         {
@@ -44,24 +45,48 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
-            // Handle state in progress
-            if (mobile.IsPlayingOneShot() && (mobile.LastFrameAnimated < mobile.Summary.Enemy.HitFrame))
+            // Handle state in progress before hit frame
+            if (mobile.IsPlayingOneShot())
             {
-                // Are we attacking?
-                if (mobile.IsAttacking())
-                    isAttacking = true;
+                if (mobile.LastFrameAnimated < mobile.Summary.Enemy.HitFrame
+                    && mobile.Summary.EnemyState == MobileStates.PrimaryAttack)
+                {
+                    // Are we melee attacking?
+                    if (mobile.IsAttacking())
+                        isMeleeAttackingPreHitFrame = true;
 
-                return;
+                    return;
+                }
+                else if (mobile.LastFrameAnimated < 2 // TODO: Animate bow correctly
+                    && (mobile.Summary.EnemyState == MobileStates.RangedAttack1
+                    || mobile.Summary.EnemyState == MobileStates.RangedAttack2))
+                {
+                    // Are we shooting bow?
+                    if (mobile.IsAttacking())
+                        isShootingPreHitFrame = true;
+
+                    return;
+                }
             }
 
-            // If an attack was in progress it is now complete and we can apply damage
-            if (isAttacking && mobile.LastFrameAnimated == mobile.Summary.Enemy.HitFrame)
+            // If a melee attack has reached the hit frame we can apply damage
+            if (isMeleeAttackingPreHitFrame && mobile.LastFrameAnimated == mobile.Summary.Enemy.HitFrame)
             {
                 MeleeDamage();
-                isAttacking = false;
+                isMeleeAttackingPreHitFrame = false;
+            }
+            // Same for shooting bow
+            else if (isShootingPreHitFrame && mobile.LastFrameAnimated == 2) // TODO: Animate bow correctly
+            {
+                BowDamage();
+                isShootingPreHitFrame = false;
+
+                DaggerfallAudioSource dfAudioSource = GetComponent<DaggerfallAudioSource>();
+                if (dfAudioSource)
+                    dfAudioSource.PlayOneShot((int)SoundClips.ArrowShoot, 1, 1.0f);
             }
 
-            // Countdown to next attack
+            // Countdown to next melee attack
             meleeTimer -= Time.deltaTime;
             if (meleeTimer < 0)
             {
@@ -107,45 +132,70 @@ namespace DaggerfallWorkshop.Game
             if (entityBehaviour)
             {
                 EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
-                MobileEnemy enemy = entity.MobileEnemy;
 
                 int damage = 0;
 
                 // Are we still in range and facing player? Then apply melee damage.
                 if (senses.DistanceToPlayer < MeleeDistance && senses.PlayerInSight)
                 {
-                    // Calculate damage
-                    damage = Game.Formulas.FormulaHelper.CalculateWeaponDamage(entity, GameManager.Instance.PlayerEntity, null);
-                    if (damage > 0)
-                    {
-                        GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", damage);
-                    }
-
-                    // Tally player's dodging skill
-                    GameManager.Instance.PlayerEntity.TallySkill(DFCareer.Skills.Dodging, 1);
+                    damage = ApplyDamageToPlayer();
                 }
 
-                if (sounds)
+                Items.DaggerfallUnityItem weapon = entity.ItemEquipTable.GetItem(Items.EquipSlots.RightHand);
+                if (weapon == null)
+                    weapon = entity.ItemEquipTable.GetItem(Items.EquipSlots.LeftHand);
+
+                if (damage > 0)
                 {
-                    Items.DaggerfallUnityItem weapon = entity.ItemEquipTable.GetItem(Items.EquipSlots.RightHand);
-                    if (weapon == null)
-                        weapon = entity.ItemEquipTable.GetItem(Items.EquipSlots.LeftHand);
-                    if (damage > 0)
-                    {
-                        // TODO: Play hit and parry sounds on other AI characters once attacks against other AI are possible
-                        DaggerfallAudioSource dfAudioSource = GetComponent<DaggerfallAudioSource>();
-                        if (dfAudioSource)
-                        {
-                            if (weapon == null)
-                                dfAudioSource.PlayOneShot((int)SoundClips.Hit1 + UnityEngine.Random.Range(2, 4), 0, 1.1f);
-                            else
-                                dfAudioSource.PlayOneShot((int)SoundClips.Hit1 + UnityEngine.Random.Range(0, 5), 0, 1.1f);
-                        }
-                    }
+                    // TODO: Play hit and parry sounds on other AI characters once attacks against other AI are possible
+                    if (weapon != null)
+                        GameManager.Instance.PlayerObject.SendMessage("PlayWeaponHitSound");
                     else
-                        sounds.PlayMissSound(weapon);
+                        GameManager.Instance.PlayerObject.SendMessage("PlayWeaponlessHitSound");
+                }
+                else if (sounds)
+                {
+                    sounds.PlayMissSound(weapon);
                 }
             }
+        }
+
+        private void BowDamage()
+        {
+            if (entityBehaviour)
+            {
+                // Can we see player? Then apply damage.
+                if (senses.PlayerInSight)
+                {
+                    int damage = ApplyDamageToPlayer();
+
+                    // Play arrow sound and add arrow to player inventory
+                    GameManager.Instance.PlayerObject.SendMessage("PlayArrowSound");
+
+                    if (damage > 0)
+                        GameManager.Instance.PlayerObject.SendMessage("PlayWeaponHitSound");
+
+                    Items.DaggerfallUnityItem arrow = Items.ItemBuilder.CreateItem(Items.ItemGroups.Weapons, (int)Items.Weapons.Arrow);
+                    GameManager.Instance.PlayerEntity.Items.AddItem(arrow);
+                }
+            }
+        }
+
+        private int ApplyDamageToPlayer()
+        {
+            int damage = 0;
+            EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
+
+            // Calculate damage
+            damage = Game.Formulas.FormulaHelper.CalculateWeaponDamage(entity, GameManager.Instance.PlayerEntity, null);
+
+            // Tally player's dodging skill
+            GameManager.Instance.PlayerEntity.TallySkill(DFCareer.Skills.Dodging, 1);
+
+            if (damage > 0)
+                GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", damage);
+
+            return damage;
         }
 
         #endregion
