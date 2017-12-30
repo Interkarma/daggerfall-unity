@@ -14,6 +14,6 @@ using System;
 public static class VersionInfo
 {
     public const string DaggerfallToolsForUnityVersion = "1.7.1";
-    public const string DaggerfallUnityVersion = "0.4.90";
+    public const string DaggerfallUnityVersion = "0.4.102";
     public const string RecommendedUnityVersion = "5.5.0f3";
 }
