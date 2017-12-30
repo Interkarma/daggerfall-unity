@@ -27,45 +27,49 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
     /// </summary>
     public class ModSettingsWindow : DaggerfallPopupWindow
     {
+        #region UI Controls
+
+        Panel modSettingsPanel                      = new Panel();
+        List<Panel> modSettingsPages                = new List<Panel>();
+        Panel currentPanel;
+        Paginator paginator;
+        PresetPicker presetPicker;
+
+        List<TextBox> modTextBoxes                  = new List<TextBox>();
+        List<Checkbox> modCheckboxes                = new List<Checkbox>();
+        List<Tuple<TextBox, TextBox>> modTuples     = new List<Tuple<TextBox, TextBox>>();
+        List<HorizontalSlider> modSliders           = new List<HorizontalSlider>();
+        List<Button> modColorPickers                = new List<Button>();
+
+        #endregion
+
         #region Fields
 
-        readonly Mod mod;
-
-        // UI Controls
-        Panel modSettingsPanel = new Panel();
-        List<Panel> modSettingsPages = new List<Panel>();
-        Panel currentPanel;
-        int currentPage = 0;
-        Button nextPageButton;
-        PresetPicker presetPicker;
         const int spacing = 8;
         const float textScale = 0.8f;
         const int startX = 10;
         const int startY = 15;
-        int x = startX;
-        int y = startY;
 
-        // Settings
+        const KeyCode nextPageKey = KeyCode.Tab;
+        const KeyCode previousPageKey = KeyCode.LeftShift;
+
+        Color panelBackgroundColor    = new Color(0, 0, 0, 0.7f);
+        Color resetButtonColor        = new Color(1, 0, 0, 0.4f);           // red with alpha
+        Color saveButtonColor         = new Color(0.0f, 0.5f, 0.0f, 0.4f);  // green with alpha
+        Color cancelButtonColor       = new Color(0.2f, 0.2f, 0.2f, 0.4f);  // grey with alpha
+        Color sectionTitleColor       = new Color(0.53f, 0.81f, 0.98f, 1);  // light blue
+        Color sectionTitleShadow      = new Color(0.3f, 0.45f, 0.54f, 1);
+        Color backgroundTitleColor    = new Color(0, 0.8f, 0, 0.1f);        // green
+
+        readonly Mod mod;
+
         IniData data;
         IniData defaultSettings;
         ModSettingsConfiguration config;
         List<IniData> presets = new List<IniData>();
-        int currentPresetIndex;
 
-        // GUI elements
-        List<TextBox> modTextBoxes              = new List<TextBox>();
-        List<Checkbox> modCheckboxes            = new List<Checkbox>();
-        List<Tuple<TextBox, TextBox>> modTuples = new List<Tuple<TextBox, TextBox>>();
-        List<HorizontalSlider> modSliders       = new List<HorizontalSlider>();
-        List<Button> modColorPickers            = new List<Button>();
-
-        // Colors
-        Color panelBackgroundColor    = new Color(0, 0, 0, 0.7f);
-        Color resetButtonColor        = new Color(1, 0, 0, 0.4f); //red with alpha
-        Color saveButtonColor         = new Color(0.0f, 0.5f, 0.0f, 0.4f); //green with alpha
-        Color cancelButtonColor       = new Color(0.2f, 0.2f, 0.2f, 0.4f); //grey with alpha
-        Color sectionTitleColor       = new Color(0.53f, 0.81f, 0.98f, 1); // light blue
-        Color backgroundTitleColor    = new Color(0, 0.8f, 0, 0.1f); //green
+        int x = startX;
+        int y = startY;
 
         #endregion
 
@@ -109,8 +113,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         {
             base.Update();
 
-            if (Input.GetKeyDown(KeyCode.Tab) && modSettingsPages.Count > 1)
-                NextPage();
+            if (modSettingsPages.Count > 1)
+            {
+                if (Input.GetKeyDown(nextPageKey))
+                    paginator.Next();
+                else if (Input.GetKeyDown(previousPageKey))
+                    paginator.Previous();
+            }
         }
 
         #endregion
@@ -320,8 +329,10 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         {
             // Title
             TextLabel titleLabel = new TextLabel();
-            titleLabel.Text = mod.Title + " settings";
-            titleLabel.Position = new Vector2(0, 6);
+            titleLabel.Text = mod.Title; // + " settings";
+            titleLabel.Font = DaggerfallUI.Instance.Font2;
+            titleLabel.TextScale = 0.75f;
+            titleLabel.Position = new Vector2(0, 3);
             titleLabel.HorizontalAlignment = HorizontalAlignment.Center;
             modSettingsPanel.Components.Add(titleLabel);
             currentPanel = modSettingsPanel;
@@ -341,10 +352,16 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             // Presets button
             if (presets.Count > 0)
             {
-                Button presetButton = GetButton("Presets", HorizontalAlignment.Right, saveButtonColor);
-                presetButton.VerticalAlignment = VerticalAlignment.Top;
+                Button presetButton = new Button();
                 presetButton.Size = new Vector2(35, 9);
+                presetButton.Position = new Vector2(currentPanel.Size.x - 37, 2);
+                presetButton.Label.Text = "Presets";
+                presetButton.Label.Font = DaggerfallUI.Instance.Font3;
+                presetButton.Label.TextScale = 0.8f;
+                presetButton.Label.TextColor = sectionTitleColor;
+                presetButton.Label.ShadowColor = sectionTitleShadow;
                 presetButton.OnMouseClick += PresetButton_OnMouseClick;
+                currentPanel.Components.Add(presetButton);
             }
 
             // Create first page and load settings
@@ -366,24 +383,20 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             {
                 if (x != startX)
                 {
-                    if (nextPageButton == null)
-                    {
-                        // Create switch button
-                        nextPageButton = new Button()
-                        {
-                            Size = new Vector2(30, 6),
-                            HorizontalAlignment = HorizontalAlignment.Left,
-                            VerticalAlignment = VerticalAlignment.Top,
-                            BackgroundColor = cancelButtonColor
-                        };
-                        nextPageButton.Outline.Enabled = true;
-                        nextPageButton.Label.Text = "Page 1";
-                        nextPageButton.OnMouseClick += NextPageButton_OnMouseClick;
-                        modSettingsPanel.Components.Add(nextPageButton);
-                    }
-
                     // Add another page
                     AddPage();
+                    if (paginator == null)
+                    {
+                        paginator = new Paginator();
+                        paginator.TextColor = Color.yellow;
+                        paginator.ArrowColor = Color.green;
+                        paginator.DisabledArrowColor = new Color(0.18f, 0.55f, 0.34f);
+                        paginator.Position = new Vector2(startX + 3, 3.5f);
+                        paginator.Size = new Vector2(35, 6);
+                        paginator.OnSelected += Paginator_OnSelected;
+                        modSettingsPanel.Components.Add(paginator);
+                    }
+                    paginator.Total = modSettingsPages.Count;
 
                     // Move to left column
                     y = startY;
@@ -396,21 +409,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                     x += 160;
                 }
             }
-        }
-
-        /// <summary>
-        /// Switch between pages.
-        /// </summary>
-        private void NextPage()
-        {
-            modSettingsPages[currentPage].Enabled = false;
-
-            currentPage++;
-            if (currentPage == modSettingsPages.Count)
-                currentPage = 0;
-
-            modSettingsPages[currentPage].Enabled = true;
-            nextPageButton.Label.Text = "Page " + (currentPage + 1).ToString();
         }
 
         /// <summary>
@@ -427,7 +425,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             modSliders.Clear();
             modColorPickers.Clear();
 
-            currentPage = 0;
             x = startX;
             y = startY;
 
@@ -453,7 +450,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             TextLabel textLabel = new TextLabel(DaggerfallUI.Instance.Font5);
             textLabel.Text = FormattedName(title);
             textLabel.TextColor = sectionTitleColor;
-            textLabel.ShadowColor = new Color(0.3f, 0.45f, 0.54f, 1);
+            textLabel.ShadowColor = sectionTitleShadow;
             textLabel.TextScale = 0.9f;
             textLabel.Position = new Vector2(0, 0.5f);
             textLabel.HorizontalAlignment = HorizontalAlignment.Center;
@@ -622,12 +619,10 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         #region Event Handlers
 
-        /// <summary>
-        /// Switch between pages.
-        /// </summary>
-        private void NextPageButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void Paginator_OnSelected(int previous, int selected)
         {
-            NextPage();
+            modSettingsPages[previous].Enabled = false;
+            modSettingsPages[selected].Enabled = true;
         }
 
         /// <summary>
