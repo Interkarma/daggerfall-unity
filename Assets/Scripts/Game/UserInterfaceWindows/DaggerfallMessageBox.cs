@@ -162,7 +162,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Check if any previous message boxes need to be closed as well.
             DaggerfallMessageBox prevWindow = PreviousWindow as DaggerfallMessageBox;
             if (prevWindow != null && prevWindow.nextMessageBox != null)
+            {
                 prevWindow.nextMessageBox.CloseWindow();
+                Debug.Log("OnPop Close");
+            }
         }
 
         #region Public Methods

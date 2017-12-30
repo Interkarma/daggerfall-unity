@@ -179,7 +179,7 @@ namespace DaggerfallWorkshop.Utility
             { "%rn", null },  // Regent's Name
             { "%rt", null },  // Regent's Title
             { "%spc", Magicka }, // Current Spell Points
-            { "%ski", null }, // Skill
+            { "%ski", Skill }, // Mastered skill name
             { "%spd", Spd }, // Speed
             { "%spt", MagickaMax }, // Max spell points
             { "%str", Str }, // Amount of strength
@@ -532,6 +532,19 @@ namespace DaggerfallWorkshop.Utility
         private static string Magicka(IMacroContextProvider mcp)
         {   // %spt
             return GameManager.Instance.PlayerEntity.MaxMagicka.ToString();
+        }
+        private static string Skill(IMacroContextProvider mcp)
+        {   // %ski
+            List<DFCareer.Skills> primarySkills = GameManager.Instance.PlayerEntity.GetPrimarySkills();
+            foreach (DFCareer.Skills skill in primarySkills)
+            {
+                if (GameManager.Instance.PlayerEntity.Skills.GetPermanentSkillValue(skill) == 100)
+                {
+                    return DaggerfallUnity.Instance.TextProvider.GetSkillName(skill);
+                }
+            }
+
+            return "BLANK";
         }
 
         private static string MagicResist(IMacroContextProvider mcp)

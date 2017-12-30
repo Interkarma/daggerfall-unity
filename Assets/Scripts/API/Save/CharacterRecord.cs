@@ -74,6 +74,8 @@ namespace DaggerfallConnect.Save
             doc.reputationUnderworld = parsedData.reputationUnderworld;
             doc.currentFatigue = parsedData.currentFatigue;
             doc.skillUses = parsedData.skillUses;
+            doc.skillsRaisedThisLevel1 = parsedData.skillsRaisedThisLevel1;
+            doc.skillsRaisedThisLevel2 = parsedData.skillsRaisedThisLevel2;
             doc.startingLevelUpSkillSum = parsedData.startingLevelUpSkillSum;
             doc.minMetalToHit = parsedData.minMetalToHit;
             doc.armorValues = parsedData.armorValues;
@@ -114,8 +116,8 @@ namespace DaggerfallConnect.Save
             }
             parsedData.armorValues = armorValues;
 
-            parsedData.skillUnknown1 = reader.ReadInt32();
-            parsedData.skillUnknown2 = reader.ReadInt32();
+            parsedData.skillsRaisedThisLevel1 = reader.ReadUInt32();
+            parsedData.skillsRaisedThisLevel2 = reader.ReadUInt32();
             parsedData.startingLevelUpSkillSum = reader.ReadInt32();
 
             parsedData.baseHealth = reader.ReadInt16();
@@ -296,8 +298,8 @@ namespace DaggerfallConnect.Save
             public byte minMetalToHit;
             public Races race;
             public sbyte[] armorValues;
-            public Int32 skillUnknown1; // Seems to be related to skills and leveling
-            public Int32 skillUnknown2; // Seems to be related to skills and leveling
+            public UInt32 skillsRaisedThisLevel1; // Flags for skills 0 through 31.
+            public UInt32 skillsRaisedThisLevel2; // Flags for skills 32 through 34.
             public Int32 startingLevelUpSkillSum; // The starting total of all the primary skills, the two top major skills and the top minor skill
             public Int16 baseHealth;
             public UInt32 timePlayerBecameWerebeast; // Needs confirming
