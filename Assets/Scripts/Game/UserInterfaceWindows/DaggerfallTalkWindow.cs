@@ -22,6 +22,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 
 namespace DaggerfallWorkshop.Game.UserInterface
@@ -293,17 +294,22 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public void SetNPCPortrait(FacePortraitArchive facePortraitArchive, int recordId)
         {
-            // Load npc portrait           
-            CifRciFile rciFile;
-            if (facePortraitArchive == FacePortraitArchive.CommonFaces)
-                rciFile = new CifRciFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, portraitImgName), FileUsage.UseMemory, false);
+            // Load npc portrait
+            string imageName = facePortraitArchive == FacePortraitArchive.CommonFaces ? portraitImgName : facesImgName;
+            if (TextureReplacement.CustomCifExist(imageName, recordId, 0))
+            {
+                texturePortrait = TextureReplacement.LoadCustomCif(imageName, recordId, 0);
+            }
             else
-                rciFile = new CifRciFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, facesImgName), FileUsage.UseMemory, false);
-            rciFile.LoadPalette(Path.Combine(DaggerfallUnity.Instance.Arena2Path, rciFile.PaletteName));
-            DFBitmap bitmap = rciFile.GetDFBitmap(recordId, 0);
-            texturePortrait = new Texture2D(bitmap.Width, bitmap.Height, TextureFormat.ARGB32, false);
-            texturePortrait.SetPixels32(rciFile.GetColor32(bitmap, 0));
-            texturePortrait.Apply(false, false); // make readable
+            {
+                CifRciFile rciFile = new CifRciFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, imageName), FileUsage.UseMemory, false);
+                rciFile.LoadPalette(Path.Combine(DaggerfallUnity.Instance.Arena2Path, rciFile.PaletteName));
+                DFBitmap bitmap = rciFile.GetDFBitmap(recordId, 0);
+                texturePortrait = new Texture2D(bitmap.Width, bitmap.Height, TextureFormat.ARGB32, false);
+                texturePortrait.SetPixels32(rciFile.GetColor32(bitmap, 0));
+                texturePortrait.Apply(false, false); // make readable
+            }
+
             texturePortrait.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
             if (!texturePortrait)
             {

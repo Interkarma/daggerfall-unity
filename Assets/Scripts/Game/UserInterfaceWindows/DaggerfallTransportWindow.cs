@@ -53,6 +53,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string baseTextureName = "MOVE00I0.IMG";
         const string disabledTextureName = "MOVE01I0.IMG";
 
+        Vector2 baseSize;
+
         #endregion
 
         #region Constructors
@@ -84,7 +86,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mainPanel.VerticalAlignment = VerticalAlignment.Middle;
             mainPanel.BackgroundTexture = baseTexture;
             mainPanel.Position = new Vector2(0, 50);
-            mainPanel.Size = new Vector2(baseTexture.width, baseTexture.height);
+            mainPanel.Size = baseSize;
 
             // Foot button
             footButton = DaggerfallUI.AddButton(footButtonRect, mainPanel);
@@ -125,7 +127,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void LoadTextures()
         {
-            baseTexture = ImageReader.GetTexture(baseTextureName);
+            ImageData baseData = ImageReader.GetImageData(baseTextureName);
+            baseTexture = baseData.texture;
+            baseSize = new Vector2(baseData.width, baseData.height);
             disabledTexture = ImageReader.GetTexture(disabledTextureName);
         }
 
