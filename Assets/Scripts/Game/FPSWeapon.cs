@@ -211,7 +211,7 @@ namespace DaggerfallWorkshop.Game
             if (!ShowWeapon || WeaponType == WeaponTypes.None)
             {
                 weaponState = WeaponStates.Idle;
-                return;
+                currentFrame = 0;
             }
 
             // Handle bow with no arrows
@@ -360,6 +360,8 @@ namespace DaggerfallWorkshop.Game
 
                 if (weaponAnims != null && ShowWeapon)
                 {
+                    int frameBeforeStepping = currentFrame;
+
                     // Special animation for unarmed attack to left
                     if ((WeaponType == WeaponTypes.Melee || WeaponType == WeaponTypes.Werecreature)
                         && WeaponState == WeaponStates.StrikeLeft)
@@ -392,7 +394,9 @@ namespace DaggerfallWorkshop.Game
                         }
                     }
 
-                    UpdateWeapon();
+                    // Only update if the frame actually changed
+                    if (frameBeforeStepping != currentFrame)
+                        UpdateWeapon();
                 }
 
                 yield return new WaitForSeconds(time);
