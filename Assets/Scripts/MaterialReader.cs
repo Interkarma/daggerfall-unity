@@ -145,7 +145,7 @@ namespace DaggerfallWorkshop
                         textureReader.MiscFlatsTextureArchives,
                         2,
                         true,
-                        2048,
+                        DaggerfallUnity.Settings.MeshAndTextureReplacement ? 4096 : 2048,
                         AlphaTextureFormat,
                         NonAlphaTextureFormat);
 
