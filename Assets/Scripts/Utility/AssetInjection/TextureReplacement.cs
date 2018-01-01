@@ -76,8 +76,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         // Enemy will use custom textures if [archive, enemyDefaultRecord, enemyDefaultFrame] is found.
-        public const int enemyDefaultRecord = 0;          
-        public const int enemyDefaultFrame = 0;
+        const int enemyDefaultRecord = 0;          
+        const int enemyDefaultFrame = 0;
 
         /// <summary>
         /// Custom textures for enemies.
@@ -229,7 +229,6 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         {
             return TextureFileExist(cifRciPath, GetNameCifRci(filename, record, frame, metalType));
         }
-
 
         /// <summary>
         /// Import image from disk to replace .CIFs and .RCIs. for a specific metalType
@@ -586,6 +585,14 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             }
         }
 
+        public static bool EnemyHasCustomMaterial(int archive)
+        {
+            // This is the first texture set on enemy. Enemies use all custom textures or all vanilla.
+            // If (archive, defaultRecord, defaultFrame) is present on disk all other textures are
+            // considered required, otherwise vanilla textures are used.
+            return TextureFileExist(texturesPath, GetName(archive, enemyDefaultRecord, enemyDefaultFrame));
+        }
+
         /// <summary>
         /// Import and set custom material on Enemy unit.
         /// </summary>
@@ -594,17 +601,15 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="textures">All textures for this enemy (except dead texture).</param>
         static public void SetupCustomEnemyMaterial(GameObject go, int archive, out List<List<Texture2D>> textures)
         {
-            // This is the first texture set on enemy. Enemies use all custom textures or all vanilla.
-            // If (archive, defaultRecord, defaultFrame) is present on disk all other textures are
-            // considered required, otherwise vanilla textures are used.
+            var meshRenderer = go.GetComponent<MeshRenderer>();
+            MaterialReader materialReader = DaggerfallUnity.Instance.MaterialReader;
             int record = enemyDefaultRecord, frame = enemyDefaultFrame;
 
             // Update UV map
             SetUv(go.GetComponent<MeshFilter>());
 
             // Get default texture from cache or import from disk
-            var meshRenderer = go.GetComponent<MeshRenderer>();
-            MaterialReader materialReader = DaggerfallUnity.Instance.MaterialReader;
+            meshRenderer.sharedMaterial = MaterialReader.CreateStandardMaterial(MaterialReader.CustomBlendMode.Cutout);
             CachedMaterial cachedMaterialOut;
             if (materialReader.GetCachedMaterialCustomBillboard(archive, record, frame, out cachedMaterialOut))
                 meshRenderer.material.mainTexture = cachedMaterialOut.albedoMap;
