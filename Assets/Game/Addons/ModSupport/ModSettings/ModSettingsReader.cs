@@ -70,6 +70,34 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             return false;
         }
 
+        public static void GetSettings(Mod mod, out IniData settings, out ModSettingsConfiguration config)
+        {
+            // Load config
+            config = GetConfig(mod, true);
+
+            // Load serialized settings or recreate them
+            string path = SettingsPath(mod);
+            if (File.Exists(path))
+            {
+                settings = parser.ReadFile(path);
+
+                var header = settings.Sections.GetSectionData(internalSection);
+                if (header == null || header.Keys[settingsVersionKey] != config.version)
+                {
+                    ResetSettings(mod, ref settings, config);
+                    Debug.LogFormat("Settings for {0} are incompatible with current version. " +
+                        "New settings have been recreated with default values", mod.Title);
+                } 
+            }
+            else
+            {
+                settings = null;
+                ResetSettings(mod, ref settings, config);
+                Debug.LogFormat("Missing settings for {0}. " +
+                    "New settings have been recreated with default values.", mod.Title);
+            }
+        }
+
         /// <summary>
         /// Get user settings and default settings for mod.
         /// </summary>
@@ -156,6 +184,18 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             return null;
         }
 
+        public static ModSettingsConfiguration GetConfig(Mod mod, bool allowParse = false)
+        {
+            if (mod.AssetBundle.Contains("modsettings.asset"))
+                return mod.GetAsset<ModSettingsConfiguration>("modsettings.asset");
+
+            IniData iniData;
+            if (allowParse && TryGetDefaultSettings(mod, out iniData))
+                return ParseIniToConfig(iniData);
+
+            return null;
+        }
+
         /// <summary>
         /// Save settings to disk.
         /// </summary>
@@ -170,6 +210,15 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         public static void ResetSettings(Mod mod, ref IniData settings, IniData defaultSettings)
         {
             settings = new IniData(defaultSettings);
+            parser.WriteFile(SettingsPath(mod), settings);
+        }
+
+        /// <summary>
+        /// Save default settings to disk and set them as current settings.
+        /// </summary>
+        public static void ResetSettings(Mod mod, ref IniData settings, ModSettingsConfiguration config)
+        {
+            settings = ParseConfigToIni(config);
             parser.WriteFile(SettingsPath(mod), settings);
         }
 
@@ -201,7 +250,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             }
 
             // Get presets from disk
-            foreach (string path in Directory.GetFiles(mod.DirPath, mod.FileName + "preset" + "*.ini"))
+            foreach (string path in Directory.GetFiles(mod.DirPath, mod.FileName + "preset*.ini"))
                 presets.Add(parser.ReadFile(path));
 
             return presets;
@@ -221,14 +270,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             foreach (char c in Path.GetInvalidPathChars())
                 name = name.Replace(c, '_');
             parser.WriteFile(Path.Combine(mod.DirPath, name), presetData);      
-        }
-
-        public static ModSettingsConfiguration GetConfig(Mod mod)
-        {
-            if (mod.AssetBundle.Contains("modsettings.asset"))
-                return mod.GetAsset<ModSettingsConfiguration>("modsettings.asset");
-
-            return null;
         }
 
         #endregion
@@ -306,6 +347,67 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             }
 
             return iniData;
+        }
+
+        public static ModSettingsConfiguration ParseIniToConfig(IniData iniData)
+        {
+            var config = ScriptableObject.CreateInstance(typeof(ModSettingsConfiguration)) as ModSettingsConfiguration;
+
+            var configSections = new List<ModSettingsConfiguration.Section>();
+            foreach (SectionData section in iniData.Sections)
+            {
+                // Header
+                if (section.SectionName == internalSection)
+                {
+                    config.version = section.Keys[settingsVersionKey];
+                    continue;
+                }
+
+                // Settings
+                var configSection = new ModSettingsConfiguration.Section();
+                configSection.name = section.SectionName;
+
+                List<ModSettingsKey> keys = new List<ModSettingsKey>();
+                foreach (KeyData key in section.Keys)
+                {
+                    var configKey = new ModSettingsKey();
+                    configKey.name = key.KeyName;
+
+                    if (key.Value == "True" || key.Value == "False")
+                    {
+                        configKey.type = ModSettingsKey.KeyType.Toggle;
+                        configKey.toggle = new ModSettingsKey.Toggle();
+                        configKey.toggle.value = bool.Parse(key.Value);
+                    }
+                    else if (key.Value.Contains(tupleDelimiterChar))
+                    {
+                        configKey.type = ModSettingsKey.KeyType.FloatTuple;
+                        configKey.floatTuple = new ModSettingsKey.FloatTuple();
+                        int index = key.Value.IndexOf(tupleDelimiterChar);
+                        float.TryParse(key.Value.Substring(0, index), out configKey.floatTuple.first);
+                        float.TryParse(key.Value.Substring(index + tupleDelimiterChar.Length), out configKey.floatTuple.second);
+                    }
+                    else if (IsHexColor(key.Value))
+                    {
+                        configKey.type = ModSettingsKey.KeyType.Color;
+                        configKey.color = new ModSettingsKey.Tint();
+                        configKey.color.color = ColorFromString(key.Value);
+                    }
+                    else
+                    {
+                        configKey.type = ModSettingsKey.KeyType.Text;
+                        configKey.text = new ModSettingsKey.Text();
+                        configKey.text.text = key.Value;
+                    }
+
+                    keys.Add(configKey);
+                }
+                configSection.keys = keys.ToArray();
+                configSections.Add(configSection);
+            }
+            config.sections = configSections.ToArray();
+
+            return config;
         }
 
         public static bool IsHexColor(string stringColor)
