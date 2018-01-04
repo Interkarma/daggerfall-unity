@@ -13,6 +13,7 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using UnityEditorInternal;
 
 namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 {
@@ -21,43 +22,31 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
     {
         #region Fields
 
-        const bool foldoutStartExpanded = true;
-        const int newSectionKeyCount = 1;
-
         SerializedProperty _version;
         SerializedProperty _isPreset;
         SerializedProperty _presetSettings;
         SerializedProperty _presets;
-
         SerializedProperty _sections;
 
         bool presetSyncExpanded = false;
         bool addNewKeys = false;
+        int selectionGridSelected = 0;
 
-        bool sectionsExpanded = foldoutStartExpanded;
-
+        ReorderableList sections;
         Dictionary<int, bool> sectionExpanded = new Dictionary<int, bool>();
-        Dictionary<string, bool> keysExpanded = new Dictionary<string, bool>();
+        int currentSection;
 
-        bool editMode = false;
-        int sectionsCount;
-        Dictionary<int, int> keysCount = new Dictionary<int, int>();
+        List<ReorderableList> keys = new List<ReorderableList>();
+        Dictionary<string, float> keysSizes = new Dictionary<string, float>();
+
+        bool isPreset;
 
         ModSettingsConfiguration Target;
         ModSettingsConfiguration parent;
 
-        GUIStyle sectionFoldoutStyle;
-        GUIStyle keyFoldoutStyle;
-
         #endregion
 
-        #region Inspector Setup
-
-        private void Awake()
-        {
-            sectionFoldoutStyle = GetFoldoutStyle(new Color(0.1f, 0.1f, 0.1f, 1));
-            keyFoldoutStyle = GetFoldoutStyle(new Color(0.3f, 0.3f, 0.3f, 1));
-        }
+        #region Unity
 
         private void OnEnable()
         {
@@ -65,30 +54,40 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             _isPreset = serializedObject.FindProperty("isPreset");
             _presetSettings = serializedObject.FindProperty("presetSettings");
             _presets = serializedObject.FindProperty("presets");
-
             _sections = serializedObject.FindProperty("sections");
 
+            sections = new ReorderableList(serializedObject, _sections, true, true, true, true);
+            sections.drawHeaderCallback = Sections_DrawHeaderCallback;
+            sections.drawElementCallback = Sections_DrawElementCallback;
+            sections.onAddCallback = Sections_OnAddCallback;
+            sections.onRemoveCallback = Sections_OnRemoveCallback;
+
+            for (int i = 0; i < _sections.arraySize; i++)
+                AddKeysList(i);
+
             Target = (ModSettingsConfiguration)target;
-            sectionsCount = Target.sections.Length;
         }
 
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
 
-            if (_isPreset.boolValue)
-                EditorGUILayout.HelpBox("Create a preset for a mod. Remember to add it to the list of presets", MessageType.Info);
+            if (isPreset = _isPreset.boolValue)
+                EditorGUILayout.HelpBox("Create a preset for a mod. This is a group of a portion or all settings values. " +
+                    "Remember to sync it with the main settings asset.", MessageType.Info);
             else
-                EditorGUILayout.HelpBox("Create settings for a mod. Remember to name the file 'modsettings.asset'", MessageType.Info);
+                EditorGUILayout.HelpBox("Create settings for a mod. Remember to name the file 'modsettings.asset'. " +
+                    "You can acces them in game through DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.", MessageType.Info);
 
             // Header
             EditorGUILayout.LabelField("Header", EditorStyles.boldLabel);
-            using (new EditorGUI.DisabledScope(_isPreset.boolValue))
+            EditorGUILayout.Separator();
+            using (new EditorGUI.DisabledScope(isPreset))
                 EditorGUILayout.PropertyField(_version);
             EditorGUILayout.PropertyField(_isPreset);
 
             // Presets tools
-            if (_isPreset.boolValue)
+            if (isPreset)
             {
                 presetSyncExpanded = EditorGUILayout.Foldout(presetSyncExpanded, "Sync", true);
                 if (presetSyncExpanded)
@@ -102,169 +101,63 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                             Target.Sync(parent, addNewKeys);
                     }
                 }
-                EditorGUILayout.PropertyField(_presetSettings, true);
+
+                EditorGUILayout.PropertyField(_presetSettings, new GUIContent("Info"), true);
             }
             else
                 EditorGUILayout.PropertyField(_presets, true);
 
-            // Settings
-            EditorGUILayout.Separator();
-            EditorGUILayout.LabelField("Settings", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
 
-            sectionsExpanded = EditorGUILayout.Foldout(sectionsExpanded, "Sections", true);
-            if (sectionsExpanded)
+            // Settings
+            EditorGUILayout.LabelField("Settings", EditorStyles.boldLabel);
+            EditorGUILayout.Separator();
+            selectionGridSelected = GUILayout.SelectionGrid(selectionGridSelected, new string[] { "Sections", "Keys" }, 2);
+
+            sections.draggable = sections.displayAdd = sections.displayRemove = !isPreset;
+            foreach (var keyControl in keys)
+                keyControl.draggable = keyControl.displayAdd = keyControl.displayRemove = !isPreset;
+
+            if (selectionGridSelected == 0)
+                sections.DoLayoutList();
+
+            bool duplicateSections = false, duplicateKeys = false;
+            var sectionNames = new List<string>();
+            for (int i = 0; i < _sections.arraySize; i++)
             {
+                SerializedProperty _section = _sections.GetArrayElementAtIndex(i);
+                SerializedProperty _sectionName = _section.FindPropertyRelative("name");
+                if (string.IsNullOrEmpty(_sectionName.stringValue))
+                    _sectionName.stringValue = "Section";
+                sectionNames.Add(_sectionName.stringValue);
+
                 EditorGUI.indentLevel++;
 
-                editMode = EditorGUILayout.Toggle("Edit Mode", editMode);
+                if (selectionGridSelected == 1)
+                    keys[currentSection = i].DoLayoutList();
 
-                using (new EditorGUI.DisabledScope(true))
-                {
-                    sectionsCount = EditorGUILayout.IntField("Size", sectionsCount);
-                }
-
-                var sectionNames = new List<string>();
-
-                for (int i = 0; i < _sections.arraySize; i++)
-                {
-                    SerializedProperty _section = _sections.GetArrayElementAtIndex(i);
-                    SerializedProperty _sectionName = _section.FindPropertyRelative("name");
-                    if (string.IsNullOrEmpty(_sectionName.stringValue))
-                        _sectionName.stringValue = "Section";
-                    sectionNames.Add(_sectionName.stringValue);
-
-                    if (IsSectionFoldoutExpanded(i, _sectionName.stringValue))
-                    {
-                        EditorGUI.indentLevel++;
-
-                        using (new EditorGUI.DisabledScope(_isPreset.boolValue))
-                            EditorGUILayout.PropertyField(_sectionName);
-
-                        SerializedProperty _keys = _section.FindPropertyRelative("keys");
-
-                        var keyNames = new List<string>();
-
-                        using (new EditorGUI.DisabledScope(true))
-                        {
-                            int thisKeysCount = KeysCount(i);
-                        }
-
-                        for (int j = 0; j < _keys.arraySize; j++)
-                        {
-                            SerializedProperty _key = _keys.GetArrayElementAtIndex(j);
-                            SerializedProperty _keyName = _key.FindPropertyRelative("name");
-                            if (string.IsNullOrEmpty(_keyName.stringValue))
-                                _keyName.stringValue = "Key";
-                            keyNames.Add(_keyName.stringValue);
-
-                            if (IsKeyFoldoutExpanded(i, j, _keyName.stringValue))
-                            {
-                                SerializedProperty _type = _key.FindPropertyRelative("type");
-
-                                using (new EditorGUI.DisabledScope(_isPreset.boolValue))
-                                {
-                                    EditorGUILayout.PropertyField(_keyName);
-                                    EditorGUILayout.PropertyField(_key.FindPropertyRelative("description"));
-                                    EditorGUILayout.PropertyField(_type);
-                                }
-
-                                var keyType = (ModSettingsKey.KeyType)_type.enumValueIndex;
-                                switch (keyType)
-                                {
-                                    case ModSettingsKey.KeyType.Toggle:
-                                        EditorGUILayout.PropertyField(_key.FindPropertyRelative("toggle").FindPropertyRelative("value"));
-                                        break;
-
-                                    case ModSettingsKey.KeyType.MultipleChoice:
-                                        SerializedProperty _multipleChoice = _key.FindPropertyRelative("multipleChoice");
-                                        SerializedProperty _selected = _multipleChoice.FindPropertyRelative("selected");
-                                        _selected.intValue = EditorGUILayout.Popup(_selected.intValue, Target.sections[i].keys[j].multipleChoice.choices);
-                                        using (new EditorGUI.DisabledScope(_isPreset.boolValue))
-                                            EditorGUILayout.PropertyField(_multipleChoice.FindPropertyRelative("choices"), true);
-                                        break;
-
-                                    case ModSettingsKey.KeyType.Slider:
-                                        SerializedProperty _slider = _key.FindPropertyRelative("slider");
-                                        SerializedProperty _sliderMin = _slider.FindPropertyRelative("min");
-                                        SerializedProperty _sliderMax = _slider.FindPropertyRelative("max");
-                                        if (_sliderMin.intValue == 0 && _sliderMax.intValue == 0)
-                                            _sliderMax.intValue = 100;
-                                        EditorGUILayout.IntSlider(_slider.FindPropertyRelative("value"), _sliderMin.intValue, _sliderMax.intValue);
-                                        GUILayout.BeginHorizontal();
-                                        using (new EditorGUI.DisabledScope(_isPreset.boolValue))
-                                        {
-                                            EditorGUILayout.PropertyField(_sliderMin);
-                                            EditorGUILayout.PropertyField(_sliderMax);
-                                        }
-                                        GUILayout.EndHorizontal();
-                                        break;
-
-                                    case ModSettingsKey.KeyType.FloatSlider:
-                                        SerializedProperty _floatSlider = _key.FindPropertyRelative("floatSlider");
-                                        SerializedProperty _floatSliderValue = _floatSlider.FindPropertyRelative("value");
-                                        SerializedProperty _floatSliderMin = _floatSlider.FindPropertyRelative("min");
-                                        SerializedProperty _floatSliderMax = _floatSlider.FindPropertyRelative("max");
-                                        if (_floatSliderMin.floatValue == 0 && _floatSliderMax.floatValue == 0)
-                                            _floatSliderMax.floatValue = 1;
-                                        EditorGUILayout.Slider(_floatSliderValue, _floatSliderMin.floatValue, _floatSliderMax.floatValue);
-                                        GUILayout.BeginHorizontal();
-                                        using (new EditorGUI.DisabledScope(_isPreset.boolValue))
-                                        {
-                                            EditorGUILayout.PropertyField(_floatSliderMin);
-                                            EditorGUILayout.PropertyField(_floatSliderMax);
-                                        }
-                                        GUILayout.EndHorizontal();
-                                        break;
-
-                                    case ModSettingsKey.KeyType.Tuple:
-                                        SerializedProperty _tuple = _key.FindPropertyRelative("tuple");
-                                        GUILayout.BeginHorizontal();
-                                        EditorGUILayout.PropertyField(_tuple.FindPropertyRelative("first"));
-                                        EditorGUILayout.PropertyField(_tuple.FindPropertyRelative("second"));
-                                        GUILayout.EndHorizontal();
-                                        break;
-
-                                    case ModSettingsKey.KeyType.FloatTuple:
-                                        SerializedProperty _floatTuple = _key.FindPropertyRelative("floatTuple");
-                                        GUILayout.BeginHorizontal();
-                                        EditorGUILayout.PropertyField(_floatTuple.FindPropertyRelative("first"));
-                                        EditorGUILayout.PropertyField(_floatTuple.FindPropertyRelative("second"));
-                                        GUILayout.EndHorizontal();
-                                        break;
-
-                                    case ModSettingsKey.KeyType.Text:
-                                        EditorGUILayout.PropertyField(_key.FindPropertyRelative("text").FindPropertyRelative("text"));
-                                        break;
-
-                                    case ModSettingsKey.KeyType.Color:
-                                        EditorGUILayout.PropertyField(_key.FindPropertyRelative("color").FindPropertyRelative("color"));
-                                        break;
-                                }
-
-                                if (editMode)
-                                    keysCount[i] += InsertOrRemove(_keys, j, i);
-                            }
-                        }
-
-                        EditorGUI.indentLevel--;
-
-                        if (editMode)
-                            sectionsCount += InsertOrRemove(_sections, i);
-
-                        if (DuplicatesDetected(keyNames))
-                            EditorGUILayout.HelpBox("Multiple keys with the same name in a section detected!", MessageType.Error);
-                    }
-                }
+                SerializedProperty _keys = _section.FindPropertyRelative("keys");
+                var keyNames = new List<string>();
+                for (int j = 0; j < _keys.arraySize; j++)
+                    keyNames.Add(_keys.GetArrayElementAtIndex(j).FindPropertyRelative("name").stringValue);
 
                 EditorGUI.indentLevel--;
 
-                if (DuplicatesDetected(sectionNames))
-                    EditorGUILayout.HelpBox("Multiple sections with the same name detected!", MessageType.Error);
+                duplicateKeys |= DuplicatesDetected(keyNames);
             }
 
+            duplicateSections |= DuplicatesDetected(sectionNames);
+
+            if (duplicateSections)
+                EditorGUILayout.HelpBox("Multiple sections with the same name detected!", MessageType.Error);
+            if (duplicateKeys)
+                EditorGUILayout.HelpBox("Multiple keys with the same name in a section detected!", MessageType.Error);
+
+            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+
             // Import/Export
-            EditorGUILayout.Separator();
             EditorGUILayout.LabelField("Import/Export", EditorStyles.boldLabel);
+            EditorGUILayout.Separator();
             EditorGUILayout.HelpBox("Import from/export to Untracked/modsettings.json, export to Untracked/modsettings.ini", MessageType.None);
 
             if (GUILayout.Button("Import"))
@@ -281,129 +174,201 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         #endregion
 
-        #region Private Methods
+        #region Callbacks
 
-        /// <summary>
-        /// Is this section visible?
-        /// </summary>
-        private bool IsSectionFoldoutExpanded(int section, string title)
+        private void Sections_DrawHeaderCallback(Rect rect)
         {
-            bool isExpanded;
-            if (!sectionExpanded.TryGetValue(section, out isExpanded))
-            {
-                isExpanded = foldoutStartExpanded;
-                sectionExpanded.Add(section, isExpanded);
-            }
-            isExpanded = EditorGUILayout.Foldout(isExpanded, title, true, sectionFoldoutStyle);
-            sectionExpanded[section] = isExpanded;
-            return isExpanded;
+            EditorGUI.LabelField(new Rect(rect.x, rect.y, 300, EditorGUIUtility.singleLineHeight), "Sections");
         }
 
-        /// <summary>
-        /// Is this key visible?
-        /// </summary>
-        private bool IsKeyFoldoutExpanded(int section, int key, string title)
+        private void Sections_DrawElementCallback(Rect rect, int index, bool isActive, bool isFocused)
         {
-            bool isExpanded;
-            string dictKey = section + "_" + key;
-            if (!keysExpanded.TryGetValue(dictKey, out isExpanded))
-            {
-                isExpanded = foldoutStartExpanded;
-                keysExpanded.Add(dictKey, isExpanded);
-            }
-            isExpanded = EditorGUILayout.Foldout(isExpanded, title, true, keyFoldoutStyle);
-            keysExpanded[dictKey] = isExpanded;
-            return isExpanded;
+            SerializedProperty _sectionName = _sections.GetArrayElementAtIndex(index).FindPropertyRelative("name");
+
+            using (new EditorGUI.DisabledScope(isPreset))
+                EditorGUI.PropertyField(new Rect(rect.x, rect.y, 300, EditorGUIUtility.singleLineHeight), _sectionName, GUIContent.none, false);
         }
 
-        /// <summary>
-        /// Get number of keys in a section
-        /// </summary>
-        private int KeysCount(int section)
+        private void Sections_OnAddCallback(ReorderableList l)
         {
-            int count;
-            if (!keysCount.TryGetValue(section, out count))
-            {
-                if (section < Target.sections.Length)
-                    count = Target.sections[section].keys.Length;
-                else
-                    count = newSectionKeyCount;
-
-                keysCount.Add(section, count);
-            }
-            count = EditorGUILayout.IntField("Keys", count);
-            keysCount[section] = count;
-            return count;
+            ReorderableList.defaultBehaviours.DoAddButton(l);
+            AddKeysList(_sections.arraySize - 1);
         }
 
-        /// <summary>
-        /// Insert or remove a key or section as requested by controls.
-        /// </summary>
-        private int InsertOrRemove(SerializedProperty _array, int index, int? section = null)
+        private void Sections_OnRemoveCallback(ReorderableList l)
         {
-            int increment = 0;
+            if (EditorUtility.DisplayDialog("Delete section", "Are you sure you want to delete this section?", "Yes", "No"))
+                ReorderableList.defaultBehaviours.DoRemoveButton(l);
+        }
 
-            GUILayout.BeginHorizontal();
-            GUILayout.Space(EditorGUI.indentLevel * 10);
-            GUILayoutOption keyButtonsHeight = GUILayout.Height(14f);
+        private void Keys_DrawHeaderCallback(Rect rect)
+        {
+            SerializedProperty _sectionName = _sections.GetArrayElementAtIndex(currentSection).FindPropertyRelative("name");
+            if (!sectionExpanded.ContainsKey(currentSection))
+                sectionExpanded.Add(currentSection, false);
+            sectionExpanded[currentSection] = EditorGUI.Foldout(new Rect(rect.x, rect.y, 300, EditorGUIUtility.singleLineHeight),
+                sectionExpanded[currentSection], _sectionName.stringValue);
+        }
 
-            if (GUILayout.Button("Insert", keyButtonsHeight))
+        private void Keys_DrawElementCallback(Rect rect, int index, bool isActive, bool isFocused)
+        {
+            float lineHeight = EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+
+            SerializedProperty _section = _sections.GetArrayElementAtIndex(currentSection);
+            SerializedProperty _keys = _section.FindPropertyRelative("keys");
+
+            SerializedProperty _key = _keys.GetArrayElementAtIndex(index);
+            SerializedProperty _keyName = _key.FindPropertyRelative("name");
+            if (string.IsNullOrEmpty(_keyName.stringValue))
+                _keyName.stringValue = "Key";
+
+            if (!sectionExpanded[currentSection])
             {
-                increment++;
-
-                if (section.HasValue)
-                    InsertKeyAtIndex(section.Value, index);
-                else
-                    InsertSectionAtIndex(index);
+                EditorGUI.LabelField(new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight), _keyName.stringValue);
+                SetKeySize(currentSection, index, lineHeight);
+                return;
             }
 
-            var removeKeyButtonStyle = new GUIStyle(GUI.skin.button);
-            removeKeyButtonStyle.normal.textColor = Color.red;
-            if (GUILayout.Button("Remove", removeKeyButtonStyle, keyButtonsHeight) && _array.arraySize > 1)
-            {
-                increment--;
+            SerializedProperty _type = _key.FindPropertyRelative("type");
 
-                _array.DeleteArrayElementAtIndex(index);
+            using (new EditorGUI.DisabledScope(isPreset))
+            {
+                EditorGUI.PropertyField(new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight), _keyName, GUIContent.none);
+                EditorGUI.PropertyField(new Rect(rect.x, rect.y + lineHeight, rect.width, EditorGUIUtility.singleLineHeight), _key.FindPropertyRelative("description"));
+                EditorGUI.PropertyField(new Rect(rect.x, rect.y + 2 * lineHeight, rect.width, EditorGUIUtility.singleLineHeight), _type, new GUIContent("UI Control"));
             }
 
-            GUILayout.EndHorizontal();
+            int lines = 4;
+            switch ((ModSettingsKey.KeyType)_type.enumValueIndex)
+            {
+                case ModSettingsKey.KeyType.Toggle:
+                    SerializedProperty _value = _key.FindPropertyRelative("toggle").FindPropertyRelative("value");
+                    EditorGUI.PropertyField(new Rect(rect.x, rect.y + 3 * lineHeight, rect.width, lineHeight), _value, true);
+                    break;
 
-            return increment;
+                case ModSettingsKey.KeyType.MultipleChoice:
+                    SerializedProperty _multipleChoice = _key.FindPropertyRelative("multipleChoice");
+                    SerializedProperty _selected = _multipleChoice.FindPropertyRelative("selected");
+                    SerializedProperty _choices = _multipleChoice.FindPropertyRelative("choices");
+                    string[] choices = Target.sections[currentSection].keys[index].multipleChoice.choices;
+                    _selected.intValue = EditorGUI.Popup(new Rect(rect.x, rect.y + 3 * lineHeight, rect.width, EditorGUIUtility.singleLineHeight),
+                        _selected.intValue, choices);
+                    using (new EditorGUI.DisabledScope(isPreset))
+                        EditorGUI.PropertyField(new Rect(rect.x, rect.y + 4 * lineHeight, rect.width, EditorGUIUtility.singleLineHeight), _choices, true);
+                    lines += _choices.isExpanded ? 2 + choices.Length : 1;
+                    break;
+
+                case ModSettingsKey.KeyType.Slider:
+                    SerializedProperty _slider = _key.FindPropertyRelative("slider");
+                    SerializedProperty _sliderMin = _slider.FindPropertyRelative("min");
+                    SerializedProperty _sliderMax = _slider.FindPropertyRelative("max");
+                    if (_sliderMin.intValue == 0 && _sliderMax.intValue == 0)
+                        _sliderMax.intValue = 100;
+                    EditorGUI.IntSlider(new Rect(rect.x, rect.y + 3 * lineHeight, rect.width, EditorGUIUtility.singleLineHeight),
+                        _slider.FindPropertyRelative("value"), _sliderMin.intValue, _sliderMax.intValue);
+                    GUILayout.BeginHorizontal();
+                    using (new EditorGUI.DisabledScope(isPreset))
+                    {
+                        EditorGUI.PropertyField(new Rect(rect.x, rect.y + 4 * lineHeight, rect.width / 2, EditorGUIUtility.singleLineHeight), _sliderMin);
+                        EditorGUI.PropertyField(new Rect(rect.x + 150, rect.y + 4 * lineHeight, rect.width / 2, EditorGUIUtility.singleLineHeight), _sliderMax);
+                    }
+                    GUILayout.EndHorizontal();
+                    lines += 1;
+                    break;
+
+                case ModSettingsKey.KeyType.FloatSlider:
+                    SerializedProperty _floatSlider = _key.FindPropertyRelative("floatSlider");
+                    SerializedProperty _floatSliderValue = _floatSlider.FindPropertyRelative("value");
+                    SerializedProperty _floatSliderMin = _floatSlider.FindPropertyRelative("min");
+                    SerializedProperty _floatSliderMax = _floatSlider.FindPropertyRelative("max");
+                    if (_floatSliderMin.floatValue == 0 && _floatSliderMax.floatValue == 0)
+                        _floatSliderMax.floatValue = 1;
+                    EditorGUI.Slider(new Rect(rect.x, rect.y + 3 * lineHeight, rect.width, EditorGUIUtility.singleLineHeight),
+                        _floatSliderValue, _floatSliderMin.floatValue, _floatSliderMax.floatValue);
+                    GUILayout.BeginHorizontal();
+                    using (new EditorGUI.DisabledScope(isPreset))
+                    {
+                        EditorGUI.PropertyField(new Rect(rect.x, rect.y + 4 * lineHeight, rect.width / 2, EditorGUIUtility.singleLineHeight), _floatSliderMin);
+                        EditorGUI.PropertyField(new Rect(rect.x + 150, rect.y + 4 * lineHeight, rect.width / 2, EditorGUIUtility.singleLineHeight), _floatSliderMax);
+                    }
+                    GUILayout.EndHorizontal();
+                    lines += 1;
+                    break;
+
+                case ModSettingsKey.KeyType.Tuple:
+                    SerializedProperty _tuple = _key.FindPropertyRelative("tuple");
+                    EditorGUI.indentLevel++;
+                    GUILayout.BeginHorizontal();
+                    EditorGUI.PropertyField(new Rect(rect.x, rect.y + 3 * lineHeight, rect.width / 2, EditorGUIUtility.singleLineHeight),
+                        _tuple.FindPropertyRelative("first"), GUIContent.none);
+                    EditorGUI.PropertyField(new Rect(rect.x + 150, rect.y + 3 * lineHeight, rect.width / 2, EditorGUIUtility.singleLineHeight),
+                        _tuple.FindPropertyRelative("second"), GUIContent.none);
+                    GUILayout.EndHorizontal();
+                    EditorGUI.indentLevel--;
+                    break;
+
+                case ModSettingsKey.KeyType.FloatTuple:
+                    SerializedProperty _floatTuple = _key.FindPropertyRelative("floatTuple");
+                    EditorGUI.indentLevel++;
+                    GUILayout.BeginHorizontal();
+                    EditorGUI.PropertyField(new Rect(rect.x, rect.y + 3 * lineHeight, rect.width / 2, EditorGUIUtility.singleLineHeight),
+                        _floatTuple.FindPropertyRelative("first"), GUIContent.none);
+                    EditorGUI.PropertyField(new Rect(rect.x + 150, rect.y + 3 * lineHeight, rect.width / 2, EditorGUIUtility.singleLineHeight),
+                        _floatTuple.FindPropertyRelative("second"), GUIContent.none);
+                    GUILayout.EndHorizontal();
+                    EditorGUI.indentLevel--;
+                    break;
+
+                case ModSettingsKey.KeyType.Text:
+                    EditorGUI.PropertyField(new Rect(rect.x, rect.y + 3 * lineHeight, rect.width, EditorGUIUtility.singleLineHeight * 3),
+                        _key.FindPropertyRelative("text").FindPropertyRelative("text"));
+                    lines += 2;
+                    break;
+
+                case ModSettingsKey.KeyType.Color:
+                    EditorGUI.PropertyField(new Rect(rect.x, rect.y + 3 * lineHeight, rect.width, EditorGUIUtility.singleLineHeight),
+                        _key.FindPropertyRelative("color").FindPropertyRelative("color"));
+                    break;
+            }
+
+            SetKeySize(currentSection, index, (lines + 1) * lineHeight);
         }
 
-        /// <summary>
-        /// Insert a section as a new empty instance.
-        /// </summary>
-        private void InsertSectionAtIndex(int index)
+        private float Keys_ElementHeightCallback(int index)
         {
-            List<ModSettingsConfiguration.Section> sections = Target.sections.ToList();
-            sections.Insert(index + 1, new ModSettingsConfiguration.Section());
-            Target.sections = sections.ToArray();
+            float size;
+            keysSizes.TryGetValue(currentSection + " - " + index, out size);
+            return size;
         }
 
-        /// <summary>
-        /// Insert a key as a new empty instance.
-        /// </summary>
-        private void InsertKeyAtIndex(int section, int index)
+        private void Keys_OnRemoveCallback(ReorderableList l)
         {
-            List<ModSettingsKey> keys = Target.sections[section].keys.ToList();
-            keys.Insert(index + 1, new ModSettingsKey());
-            Target.sections[section].keys = keys.ToArray();
+            if (EditorUtility.DisplayDialog("Delete key", "Are you sure you want to delete this key?", "Yes", "No"))
+                ReorderableList.defaultBehaviours.DoRemoveButton(l);
         }
 
-        private static GUIStyle GetFoldoutStyle(Color color)
+        #endregion
+
+        #region Helpers
+
+        private void AddKeysList(int section)
         {
-            GUIStyle style = new GUIStyle(EditorStyles.foldout);
-            style.fontStyle = FontStyle.Bold;
-            style.normal.textColor = color;
-            style.onNormal.textColor = color;
-            style.hover.textColor = color;
-            style.onHover.textColor = color;
-            style.focused.textColor = color;
-            style.onFocused.textColor = color;
-            style.active.textColor = color;
-            style.onActive.textColor = color;
-            return style;
+            ReorderableList key = new ReorderableList(serializedObject,
+                    _sections.GetArrayElementAtIndex(section).FindPropertyRelative("keys"),
+                    true, true, true, true);
+            key.drawHeaderCallback = Keys_DrawHeaderCallback;
+            key.drawElementCallback = Keys_DrawElementCallback;
+            key.elementHeightCallback = Keys_ElementHeightCallback;
+            key.onRemoveCallback = Keys_OnRemoveCallback;
+            keys.Add(key);
+        }
+
+        private void SetKeySize(int section, int key, float size)
+        {
+            string dictKey = currentSection + " - " + key;
+            if (keysSizes.ContainsKey(dictKey))
+                keysSizes[dictKey] = size;
+            else keysSizes.Add(dictKey, size);
         }
 
         private static bool DuplicatesDetected(List<string> names)
