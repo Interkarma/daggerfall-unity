@@ -31,6 +31,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         bool presetSyncExpanded = false;
         bool addNewKeys = false;
         int selectionGridSelected = 0;
+        int parseFormat = 0;
 
         ReorderableList sections;
         Dictionary<int, bool> sectionExpanded = new Dictionary<int, bool>();
@@ -40,6 +41,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         Dictionary<string, float> keysSizes = new Dictionary<string, float>();
 
         bool isPreset;
+
+        float lineHeight;
 
         ModSettingsConfiguration Target;
         ModSettingsConfiguration parent;
@@ -71,6 +74,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
+
+            lineHeight = EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 
             if (isPreset = _isPreset.boolValue)
                 EditorGUILayout.HelpBox("Create a preset for a mod. This is a group of a portion or all settings values. " +
@@ -158,16 +163,23 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             // Import/Export
             EditorGUILayout.LabelField("Import/Export", EditorStyles.boldLabel);
             EditorGUILayout.Separator();
-            EditorGUILayout.HelpBox("Import from/export to Untracked/modsettings.json, export to Untracked/modsettings.ini", MessageType.None);
-
-            if (GUILayout.Button("Import"))
-                Target.Import();
-
-            if (GUILayout.Button("Export"))
-                Target.Export();
-
-            if (GUILayout.Button("Export (Ini)"))
-                Target.ExportToIni();
+            EditorGUILayout.HelpBox(string.Format("Import from/export to Untracked/modsettings.{0}", parseFormat == 0 ? "ini" : "json"), MessageType.None);
+            parseFormat = GUILayout.SelectionGrid(parseFormat, new string[] { "Ini", "Json" }, 2);
+            if (parseFormat == 0)
+            {
+                if (GUILayout.Button("Import"))
+                    Target.ImportFromIni();
+                else if (GUILayout.Button("Export"))
+                    Target.ExportToIni();
+            }
+            else
+            { 
+            
+                if (GUILayout.Button("Import"))
+                    Target.Import();
+                else if (GUILayout.Button("Export"))
+                    Target.Export();
+            }
 
             serializedObject.ApplyModifiedProperties();
         }
@@ -178,7 +190,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         private void Sections_DrawHeaderCallback(Rect rect)
         {
-            EditorGUI.LabelField(new Rect(rect.x, rect.y, 300, EditorGUIUtility.singleLineHeight), "Sections");
+            EditorGUI.LabelField(LineRect(rect), "Sections");
         }
 
         private void Sections_DrawElementCallback(Rect rect, int index, bool isActive, bool isFocused)
@@ -186,7 +198,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             SerializedProperty _sectionName = _sections.GetArrayElementAtIndex(index).FindPropertyRelative("name");
 
             using (new EditorGUI.DisabledScope(isPreset))
-                EditorGUI.PropertyField(new Rect(rect.x, rect.y, 300, EditorGUIUtility.singleLineHeight), _sectionName, GUIContent.none, false);
+                EditorGUI.PropertyField(LineRect(rect), _sectionName, GUIContent.none, false);
         }
 
         private void Sections_OnAddCallback(ReorderableList l)
@@ -206,13 +218,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             SerializedProperty _sectionName = _sections.GetArrayElementAtIndex(currentSection).FindPropertyRelative("name");
             if (!sectionExpanded.ContainsKey(currentSection))
                 sectionExpanded.Add(currentSection, false);
-            sectionExpanded[currentSection] = EditorGUI.Foldout(new Rect(rect.x, rect.y, 300, EditorGUIUtility.singleLineHeight),
-                sectionExpanded[currentSection], _sectionName.stringValue);
+            sectionExpanded[currentSection] = EditorGUI.Foldout(LineRect(rect), sectionExpanded[currentSection], _sectionName.stringValue);
         }
 
         private void Keys_DrawElementCallback(Rect rect, int index, bool isActive, bool isFocused)
         {
-            float lineHeight = EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+            int line = 0;
 
             SerializedProperty _section = _sections.GetArrayElementAtIndex(currentSection);
             SerializedProperty _keys = _section.FindPropertyRelative("keys");
@@ -224,7 +235,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
             if (!sectionExpanded[currentSection])
             {
-                EditorGUI.LabelField(new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight), _keyName.stringValue);
+                EditorGUI.LabelField(LineRect(rect), _keyName.stringValue);
                 SetKeySize(currentSection, index, lineHeight);
                 return;
             }
@@ -233,9 +244,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
             using (new EditorGUI.DisabledScope(isPreset))
             {
-                EditorGUI.PropertyField(new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight), _keyName, GUIContent.none);
-                EditorGUI.PropertyField(new Rect(rect.x, rect.y + lineHeight, rect.width, EditorGUIUtility.singleLineHeight), _key.FindPropertyRelative("description"));
-                EditorGUI.PropertyField(new Rect(rect.x, rect.y + 2 * lineHeight, rect.width, EditorGUIUtility.singleLineHeight), _type, new GUIContent("UI Control"));
+                EditorGUI.PropertyField(LineRect(rect, line++), _keyName, GUIContent.none);
+                EditorGUI.PropertyField(LineRect(rect, line++), _key.FindPropertyRelative("description"));
+                EditorGUI.PropertyField(LineRect(rect, line++), _type, new GUIContent("UI Control"));
             }
 
             int lines = 4;
@@ -243,7 +254,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             {
                 case ModSettingsKey.KeyType.Toggle:
                     SerializedProperty _value = _key.FindPropertyRelative("toggle").FindPropertyRelative("value");
-                    EditorGUI.PropertyField(new Rect(rect.x, rect.y + 3 * lineHeight, rect.width, lineHeight), _value, true);
+                    EditorGUI.PropertyField(LineRect(rect, line++), _value, true);
                     break;
 
                 case ModSettingsKey.KeyType.MultipleChoice:
@@ -251,10 +262,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                     SerializedProperty _selected = _multipleChoice.FindPropertyRelative("selected");
                     SerializedProperty _choices = _multipleChoice.FindPropertyRelative("choices");
                     string[] choices = Target.sections[currentSection].keys[index].multipleChoice.choices;
-                    _selected.intValue = EditorGUI.Popup(new Rect(rect.x, rect.y + 3 * lineHeight, rect.width, EditorGUIUtility.singleLineHeight),
-                        _selected.intValue, choices);
+                    _selected.intValue = EditorGUI.Popup(LineRect(rect, line++), _selected.intValue, choices);
                     using (new EditorGUI.DisabledScope(isPreset))
-                        EditorGUI.PropertyField(new Rect(rect.x, rect.y + 4 * lineHeight, rect.width, EditorGUIUtility.singleLineHeight), _choices, true);
+                        EditorGUI.PropertyField(LineRect(rect, line++), _choices, true);
                     lines += _choices.isExpanded ? 2 + choices.Length : 1;
                     break;
 
@@ -264,13 +274,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                     SerializedProperty _sliderMax = _slider.FindPropertyRelative("max");
                     if (_sliderMin.intValue == 0 && _sliderMax.intValue == 0)
                         _sliderMax.intValue = 100;
-                    EditorGUI.IntSlider(new Rect(rect.x, rect.y + 3 * lineHeight, rect.width, EditorGUIUtility.singleLineHeight),
+                    EditorGUI.IntSlider(LineRect(rect, line++),
                         _slider.FindPropertyRelative("value"), _sliderMin.intValue, _sliderMax.intValue);
                     GUILayout.BeginHorizontal();
                     using (new EditorGUI.DisabledScope(isPreset))
                     {
-                        EditorGUI.PropertyField(new Rect(rect.x, rect.y + 4 * lineHeight, rect.width / 2, EditorGUIUtility.singleLineHeight), _sliderMin);
-                        EditorGUI.PropertyField(new Rect(rect.x + 150, rect.y + 4 * lineHeight, rect.width / 2, EditorGUIUtility.singleLineHeight), _sliderMax);
+                        EditorGUI.PropertyField(HalfLineRect(rect, line), _sliderMin);
+                        EditorGUI.PropertyField(HalfLineRect(rect, line++, true), _sliderMax);
                     }
                     GUILayout.EndHorizontal();
                     lines += 1;
@@ -283,13 +293,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                     SerializedProperty _floatSliderMax = _floatSlider.FindPropertyRelative("max");
                     if (_floatSliderMin.floatValue == 0 && _floatSliderMax.floatValue == 0)
                         _floatSliderMax.floatValue = 1;
-                    EditorGUI.Slider(new Rect(rect.x, rect.y + 3 * lineHeight, rect.width, EditorGUIUtility.singleLineHeight),
-                        _floatSliderValue, _floatSliderMin.floatValue, _floatSliderMax.floatValue);
+                    EditorGUI.Slider(LineRect(rect, line++), _floatSliderValue, _floatSliderMin.floatValue, _floatSliderMax.floatValue);
                     GUILayout.BeginHorizontal();
                     using (new EditorGUI.DisabledScope(isPreset))
                     {
-                        EditorGUI.PropertyField(new Rect(rect.x, rect.y + 4 * lineHeight, rect.width / 2, EditorGUIUtility.singleLineHeight), _floatSliderMin);
-                        EditorGUI.PropertyField(new Rect(rect.x + 150, rect.y + 4 * lineHeight, rect.width / 2, EditorGUIUtility.singleLineHeight), _floatSliderMax);
+                        EditorGUI.PropertyField(HalfLineRect(rect, line), _floatSliderMin);
+                        EditorGUI.PropertyField(HalfLineRect(rect, line++, true), _floatSliderMax);
                     }
                     GUILayout.EndHorizontal();
                     lines += 1;
@@ -297,26 +306,18 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
                 case ModSettingsKey.KeyType.Tuple:
                     SerializedProperty _tuple = _key.FindPropertyRelative("tuple");
-                    EditorGUI.indentLevel++;
                     GUILayout.BeginHorizontal();
-                    EditorGUI.PropertyField(new Rect(rect.x, rect.y + 3 * lineHeight, rect.width / 2, EditorGUIUtility.singleLineHeight),
-                        _tuple.FindPropertyRelative("first"), GUIContent.none);
-                    EditorGUI.PropertyField(new Rect(rect.x + 150, rect.y + 3 * lineHeight, rect.width / 2, EditorGUIUtility.singleLineHeight),
-                        _tuple.FindPropertyRelative("second"), GUIContent.none);
+                    EditorGUI.PropertyField(HalfLineRect(rect, line), _tuple.FindPropertyRelative("first"), GUIContent.none);
+                    EditorGUI.PropertyField(HalfLineRect(rect, line++, true), _tuple.FindPropertyRelative("second"), GUIContent.none);
                     GUILayout.EndHorizontal();
-                    EditorGUI.indentLevel--;
                     break;
 
                 case ModSettingsKey.KeyType.FloatTuple:
                     SerializedProperty _floatTuple = _key.FindPropertyRelative("floatTuple");
-                    EditorGUI.indentLevel++;
                     GUILayout.BeginHorizontal();
-                    EditorGUI.PropertyField(new Rect(rect.x, rect.y + 3 * lineHeight, rect.width / 2, EditorGUIUtility.singleLineHeight),
-                        _floatTuple.FindPropertyRelative("first"), GUIContent.none);
-                    EditorGUI.PropertyField(new Rect(rect.x + 150, rect.y + 3 * lineHeight, rect.width / 2, EditorGUIUtility.singleLineHeight),
-                        _floatTuple.FindPropertyRelative("second"), GUIContent.none);
+                    EditorGUI.PropertyField(HalfLineRect(rect, line), _floatTuple.FindPropertyRelative("first"), GUIContent.none);
+                    EditorGUI.PropertyField(HalfLineRect(rect, line++, true), _floatTuple.FindPropertyRelative("second"), GUIContent.none);
                     GUILayout.EndHorizontal();
-                    EditorGUI.indentLevel--;
                     break;
 
                 case ModSettingsKey.KeyType.Text:
@@ -326,8 +327,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                     break;
 
                 case ModSettingsKey.KeyType.Color:
-                    EditorGUI.PropertyField(new Rect(rect.x, rect.y + 3 * lineHeight, rect.width, EditorGUIUtility.singleLineHeight),
-                        _key.FindPropertyRelative("color").FindPropertyRelative("color"));
+                    EditorGUI.PropertyField(LineRect(rect, line++), _key.FindPropertyRelative("color").FindPropertyRelative("color"));
                     break;
             }
 
@@ -369,6 +369,18 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             if (keysSizes.ContainsKey(dictKey))
                 keysSizes[dictKey] = size;
             else keysSizes.Add(dictKey, size);
+        }
+
+        private Rect LineRect(Rect rect, int line = 0)
+        {
+            return new Rect(rect.x, rect.y + line * lineHeight,
+                rect.width, EditorGUIUtility.singleLineHeight);
+        }
+
+        private Rect HalfLineRect(Rect rect, int line = 0, bool right = false)
+        {
+            return new Rect(right ? rect.x + rect.width / 2 : rect.x,
+                rect.y + line * lineHeight, rect.width / 2, EditorGUIUtility.singleLineHeight);
         }
 
         private static bool DuplicatesDetected(List<string> names)

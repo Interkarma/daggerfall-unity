@@ -15,6 +15,7 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using FullSerializer;
+using IniParser;
 using KeyType = DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.ModSettingsKey.KeyType;
 
 namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
@@ -200,6 +201,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         {
             if (!Serialize(this))
                 Debug.LogError("Failed to export mod settings");
+        }
+
+        public void ImportFromIni()
+        {
+            ModSettingsReader.ParseIniToConfig((new FileIniDataParser()).ReadFile(ParsedIniPath), this);
         }
 
         public void ExportToIni()

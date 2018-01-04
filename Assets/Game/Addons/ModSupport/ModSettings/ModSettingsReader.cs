@@ -352,7 +352,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         public static ModSettingsConfiguration ParseIniToConfig(IniData iniData)
         {
             var config = ScriptableObject.CreateInstance(typeof(ModSettingsConfiguration)) as ModSettingsConfiguration;
+            ParseIniToConfig(iniData, config);
+            return config;
+        }
 
+        public static void ParseIniToConfig(IniData iniData, ModSettingsConfiguration config)
+        {
             var configSections = new List<ModSettingsConfiguration.Section>();
             foreach (SectionData section in iniData.Sections)
             {
@@ -406,8 +411,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 configSections.Add(configSection);
             }
             config.sections = configSections.ToArray();
-
-            return config;
         }
 
         public static bool IsHexColor(string stringColor)
