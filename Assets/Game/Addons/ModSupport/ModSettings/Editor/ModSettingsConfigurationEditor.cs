@@ -43,6 +43,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         bool isPreset;
         float lineHeight;
         List<string> cachedChoices;
+        List<string> sectionNames = new List<string>();
+        List<List<string>> keyNames = new List<List<string>>();
 
         ModSettingsConfiguration Target;
         ModSettingsConfiguration parent;
@@ -127,28 +129,35 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 sections.DoLayoutList();
 
             bool duplicateSections = false, duplicateKeys = false;
-            var sectionNames = new List<string>();
+            sectionNames.Clear();
+            keyNames.Clear();
             for (int i = 0; i < _sections.arraySize; i++)
             {
                 SerializedProperty _section = _sections.GetArrayElementAtIndex(i);
                 SerializedProperty _sectionName = _section.FindPropertyRelative("name");
-                if (string.IsNullOrEmpty(_sectionName.stringValue))
-                    _sectionName.stringValue = "Section";
+                _sectionName.stringValue = !string.IsNullOrEmpty(_sectionName.stringValue) ?
+                    _sectionName.stringValue.Replace(" ", string.Empty) : "Section";
                 sectionNames.Add(_sectionName.stringValue);
 
                 EditorGUI.indentLevel++;
 
-                if (selectionGridSelected == 1)
-                    keys[currentSection = i].DoLayoutList();
-
                 SerializedProperty _keys = _section.FindPropertyRelative("keys");
                 var keyNames = new List<string>();
                 for (int j = 0; j < _keys.arraySize; j++)
-                    keyNames.Add(_keys.GetArrayElementAtIndex(j).FindPropertyRelative("name").stringValue);
-
-                EditorGUI.indentLevel--;
+                {
+                    SerializedProperty _keyName = _keys.GetArrayElementAtIndex(j).FindPropertyRelative("name");
+                    _keyName.stringValue = !string.IsNullOrEmpty(_keyName.stringValue) ?
+                        _keyName.stringValue.Replace(" ", string.Empty) : "Key";
+                    keyNames.Add(_keyName.stringValue);
+                }
 
                 duplicateKeys |= DuplicatesDetected(keyNames);
+                this.keyNames.Add(keyNames);
+
+                if (selectionGridSelected == 1)
+                    keys[currentSection = i].DoLayoutList();
+
+                EditorGUI.indentLevel--;
             }
 
             duplicateSections |= DuplicatesDetected(sectionNames);
@@ -205,7 +214,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         {
             int index = l.serializedProperty.arraySize++;
             SerializedProperty section = l.serializedProperty.GetArrayElementAtIndex(index);
-            section.FindPropertyRelative("name").stringValue = "Section";
+            section.FindPropertyRelative("name").stringValue = GetUniqueName(sectionNames, "Section");
             section.FindPropertyRelative("keys").arraySize = 0;
             AddKeysList(_sections.arraySize - 1);
             l.index = index;
@@ -225,24 +234,21 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             var style = new GUIStyle(EditorStyles.foldout);
             if (_sectionName.stringValue == ModSettingsReader.internalSection)
                 style.normal.textColor = Color.red;
-            sectionExpanded[currentSection] = EditorGUI.Foldout(LineRect(rect), sectionExpanded[currentSection], _sectionName.stringValue, style);
+            sectionExpanded[currentSection] = EditorGUI.Foldout(LineRect(rect), sectionExpanded[currentSection],
+                ModSettingsReader.FormattedName(_sectionName.stringValue), style);
         }
 
         private void Keys_DrawElementCallback(Rect rect, int index, bool isActive, bool isFocused)
         {
             int line = 0;
 
-            SerializedProperty _section = _sections.GetArrayElementAtIndex(currentSection);
-            SerializedProperty _keys = _section.FindPropertyRelative("keys");
-
+            SerializedProperty _keys = _sections.GetArrayElementAtIndex(currentSection).FindPropertyRelative("keys");
             SerializedProperty _key = _keys.GetArrayElementAtIndex(index);
             SerializedProperty _keyName = _key.FindPropertyRelative("name");
-            if (string.IsNullOrEmpty(_keyName.stringValue))
-                _keyName.stringValue = "Key";
 
             if (!sectionExpanded[currentSection])
             {
-                EditorGUI.LabelField(LineRect(rect), _keyName.stringValue);
+                EditorGUI.LabelField(LineRect(rect), ModSettingsReader.FormattedName(_keyName.stringValue));
                 SetKeySize(currentSection, index, lineHeight);
                 return;
             }
@@ -363,7 +369,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         {
             int index = l.serializedProperty.arraySize++;
             SerializedProperty key = l.serializedProperty.GetArrayElementAtIndex(index);
-            key.FindPropertyRelative("name").stringValue = "Key";
+            key.FindPropertyRelative("name").stringValue = GetUniqueName(keyNames[currentSection], "Key");
             key.FindPropertyRelative("description").stringValue = string.Empty;
             key.FindPropertyRelative("type").enumValueIndex = 0;
             l.index = index;
@@ -428,6 +434,19 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         {
             var multipleChoice = choicesKey as ModSettingsKey.MultipleChoice;
             multipleChoice.choices = cachedChoices.ToArray();
+        }
+
+        // Same as ObjectNames.GetUniqueName but without spaces.
+        private static string GetUniqueName(List<string> existingNames, string baseName)
+        {
+            string name = baseName;
+            int index = 1;
+
+            // Appends the next available numerical increment
+            while (existingNames.Any(x => x == name))
+                name = string.Format("{0}({1})", baseName, index++);
+
+            return name;
         }
 
         private static bool DuplicatesDetected(List<string> names)

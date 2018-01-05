@@ -396,7 +396,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             currentPanel.Components.Add(background);
 
             TextLabel textLabel = new TextLabel(DaggerfallUI.Instance.Font5);
-            textLabel.Text = FormattedName(title);
+            textLabel.Text = ModSettingsReader.FormattedName(title);
             textLabel.TextColor = sectionTitleColor;
             textLabel.ShadowColor = sectionTitleShadow;
             textLabel.TextScale = 0.9f;
@@ -408,22 +408,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         private TextLabel AddKeyName(string name)
         {
             TextLabel textLabel = new TextLabel();
-            textLabel.Text = FormattedName(name);
+            textLabel.Text = ModSettingsReader.FormattedName(name);
             textLabel.ShadowColor = Color.clear;
             textLabel.TextScale = textScale;
             textLabel.Position = new Vector2(x, y);
             textLabel.HorizontalAlignment = HorizontalAlignment.None;
             currentPanel.Components.Add(textLabel);
             return textLabel;
-        }
-
-        /// <summary>
-        /// Add a space before uppercase chars.
-        /// </summary>
-        private string FormattedName(string name)
-        {
-            var chars = name.Select(x => Char.IsUpper(x) ? " " + x : x.ToString());
-            return string.Concat(chars.ToArray()).TrimStart(' ');
         }
 
         /// <summary>

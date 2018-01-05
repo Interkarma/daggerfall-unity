@@ -21,19 +21,10 @@ using KeyType = DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.ModSettin
 namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 {
     [CreateAssetMenu(fileName = "modsettings", menuName = "Mods/Settings", order = 0)]
+    [HelpURL("http://www.dfworkshop.net/projects/daggerfall-unity/modding/")]
     public class ModSettingsConfiguration : ScriptableObject
     {
-        #region Fields & Properties
-
-        static string SerializedFile
-        {
-            get { return Path.Combine(Path.Combine(Application.dataPath, "Untracked"), "modsettings.json"); }
-        }
-
-        static string ParsedIniPath
-        {
-            get { return Path.Combine(Path.Combine(Application.dataPath, "Untracked"), "modsettings.ini"); }
-        }
+        #region Fields
 
         [Tooltip("Version of settings config file. This is not the version of mod or preset.")]
         public string version = "1.0";
@@ -48,6 +39,24 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         public string[] presets;
 
         public Section[] sections = new Section[1];
+
+        #endregion
+
+        #region Properties
+
+#if UNITY_EDITOR
+
+        static string JsonPath
+        {
+            get { return Path.Combine(Path.Combine(Application.dataPath, "Untracked"), "modsettings.json"); }
+        }
+
+        static string IniPath
+        {
+            get { return Path.Combine(Path.Combine(Application.dataPath, "Untracked"), "modsettings.ini"); }
+        }
+
+#endif
 
         public Section this[string sectionName]
         {
@@ -205,20 +214,20 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         public void ImportFromIni()
         {
-            ModSettingsReader.ParseIniToConfig((new FileIniDataParser()).ReadFile(ParsedIniPath), this);
+            ModSettingsReader.ParseIniToConfig((new FileIniDataParser()).ReadFile(IniPath), this);
         }
 
         public void ExportToIni()
         {
-            File.WriteAllText(ParsedIniPath, ModSettingsReader.ParseConfigToIni(this).ToString());
+            File.WriteAllText(IniPath, ModSettingsReader.ParseConfigToIni(this).ToString());
         }
 
         private static bool Deserialize(ModSettingsConfiguration config)
         {
             fsSerializer fsSerializer = new fsSerializer();
-            if (File.Exists(SerializedFile))
+            if (File.Exists(JsonPath))
             {
-                string serializedData = File.ReadAllText(SerializedFile);
+                string serializedData = File.ReadAllText(JsonPath);
                 fsData data = fsJsonParser.Parse(serializedData);
                 return fsSerializer.TryDeserialize(data, ref config).Succeeded;
             }
@@ -232,7 +241,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             fsData data;
             if (fsSerializer.TrySerialize(typeof(fsSerializer), config, out data).Succeeded)
             {
-                File.WriteAllText(SerializedFile, fsJsonPrinter.PrettyJson(data));
+                File.WriteAllText(JsonPath, fsJsonPrinter.PrettyJson(data));
                 return true;
             }
 

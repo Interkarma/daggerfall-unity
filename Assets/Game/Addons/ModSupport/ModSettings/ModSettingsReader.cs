@@ -9,9 +9,11 @@
 // Notes:
 //
 
-using System.IO;
-using System.Globalization;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
 using UnityEngine;
 using IniParser;
 using IniParser.Model;
@@ -441,6 +443,15 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             byte a = byte.Parse(colorStr.Substring(6, 2), NumberStyles.HexNumber);
 
             return new Color32(r, g, b, a);
+        }
+
+        /// <summary>
+        /// Make a displayable name for a key or section.
+        /// </summary>
+        public static string FormattedName(string name)
+        {
+            return string.Concat((name.First().ToString().ToUpper() + name.Substring(1))
+                .Select(x => Char.IsUpper(x) ? " " + x : x.ToString()).ToArray()).TrimStart(' ');
         }
 
         #endregion
