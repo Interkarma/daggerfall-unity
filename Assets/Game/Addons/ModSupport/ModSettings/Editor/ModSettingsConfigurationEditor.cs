@@ -41,8 +41,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         Dictionary<string, float> keysSizes = new Dictionary<string, float>();
 
         bool isPreset;
-
         float lineHeight;
+        List<string> cachedChoices;
 
         ModSettingsConfiguration Target;
         ModSettingsConfiguration parent;
@@ -203,8 +203,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         private void Sections_OnAddCallback(ReorderableList l)
         {
-            ReorderableList.defaultBehaviours.DoAddButton(l);
+            int index = l.serializedProperty.arraySize++;
+            SerializedProperty section = l.serializedProperty.GetArrayElementAtIndex(index);
+            section.FindPropertyRelative("name").stringValue = "Section";
+            section.FindPropertyRelative("keys").arraySize = 0;
             AddKeysList(_sections.arraySize - 1);
+            l.index = index;
         }
 
         private void Sections_OnRemoveCallback(ReorderableList l)
@@ -218,7 +222,10 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             SerializedProperty _sectionName = _sections.GetArrayElementAtIndex(currentSection).FindPropertyRelative("name");
             if (!sectionExpanded.ContainsKey(currentSection))
                 sectionExpanded.Add(currentSection, false);
-            sectionExpanded[currentSection] = EditorGUI.Foldout(LineRect(rect), sectionExpanded[currentSection], _sectionName.stringValue);
+            var style = new GUIStyle(EditorStyles.foldout);
+            if (_sectionName.stringValue == ModSettingsReader.internalSection)
+                style.normal.textColor = Color.red;
+            sectionExpanded[currentSection] = EditorGUI.Foldout(LineRect(rect), sectionExpanded[currentSection], _sectionName.stringValue, style);
         }
 
         private void Keys_DrawElementCallback(Rect rect, int index, bool isActive, bool isFocused)
@@ -261,10 +268,21 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                     SerializedProperty _multipleChoice = _key.FindPropertyRelative("multipleChoice");
                     SerializedProperty _selected = _multipleChoice.FindPropertyRelative("selected");
                     SerializedProperty _choices = _multipleChoice.FindPropertyRelative("choices");
-                    string[] choices = Target.sections[currentSection].keys[index].multipleChoice.choices;
+                    var multipleChoice = Target.sections[currentSection].keys[index].multipleChoice;
+                    string[] choices = multipleChoice.choices;
                     _selected.intValue = EditorGUI.Popup(LineRect(rect, line++), _selected.intValue, choices);
                     using (new EditorGUI.DisabledScope(isPreset))
+                    {
+                        if (DropDownButton(rect, line))
+                        {
+                            var menu = new GenericMenu();
+                            menu.AddItem(new GUIContent("Copy choices"), false, CopyChoices, new List<string>(choices));
+                            if (cachedChoices != null)
+                                menu.AddItem(new GUIContent("Paste choices"), false, PasteChoices, multipleChoice);
+                            menu.ShowAsContext();
+                        }
                         EditorGUI.PropertyField(LineRect(rect, line++), _choices, true);
+                    }
                     lines += _choices.isExpanded ? 2 + choices.Length : 1;
                     break;
 
@@ -341,6 +359,16 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             return size;
         }
 
+        private void Keys_OnAddCallback(ReorderableList l)
+        {
+            int index = l.serializedProperty.arraySize++;
+            SerializedProperty key = l.serializedProperty.GetArrayElementAtIndex(index);
+            key.FindPropertyRelative("name").stringValue = "Key";
+            key.FindPropertyRelative("description").stringValue = string.Empty;
+            key.FindPropertyRelative("type").enumValueIndex = 0;
+            l.index = index;
+        }
+
         private void Keys_OnRemoveCallback(ReorderableList l)
         {
             if (EditorUtility.DisplayDialog("Delete key", "Are you sure you want to delete this key?", "Yes", "No"))
@@ -359,6 +387,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             key.drawHeaderCallback = Keys_DrawHeaderCallback;
             key.drawElementCallback = Keys_DrawElementCallback;
             key.elementHeightCallback = Keys_ElementHeightCallback;
+            key.onAddCallback = Keys_OnAddCallback;
             key.onRemoveCallback = Keys_OnRemoveCallback;
             keys.Add(key);
         }
@@ -381,6 +410,24 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         {
             return new Rect(right ? rect.x + rect.width / 2 : rect.x,
                 rect.y + line * lineHeight, rect.width / 2, EditorGUIUtility.singleLineHeight);
+        }
+
+        private bool DropDownButton(Rect rect, int line)
+        {
+            return GUI.Button(new Rect(rect.x + rect.width * 15f / 16,
+                rect.y + line * lineHeight, rect.width / 16, EditorGUIUtility.singleLineHeight),
+                "✲", EditorStyles.boldLabel);
+        }
+
+        private void CopyChoices(object choices)
+        {
+            cachedChoices = choices as List<string>;
+        }
+
+        private void PasteChoices(object choicesKey)
+        {
+            var multipleChoice = choicesKey as ModSettingsKey.MultipleChoice;
+            multipleChoice.choices = cachedChoices.ToArray();
         }
 
         private static bool DuplicatesDetected(List<string> names)
