@@ -252,7 +252,6 @@ namespace DaggerfallWorkshop.Utility
                 // Always import emission if present on disk
                 emissionMap = TextureReplacement.LoadCustomEmission(settings.archive, settings.record, settings.frame);
                 resultEmissive = true;
-                isWindow = false;
             }
             else
             {
