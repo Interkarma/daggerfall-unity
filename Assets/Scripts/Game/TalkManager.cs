@@ -158,7 +158,8 @@ namespace DaggerfallWorkshop.Game
             Person,
             Thing,
             Work,
-            QuestTopic
+            QuestTopic,
+            Organization
         }
 
         string nameNPC = "";
@@ -260,6 +261,9 @@ namespace DaggerfallWorkshop.Game
             public List<RumorMillEntry> listRumorMill;
             public Dictionary<ulong, TextFile.Token[]> dictQuestorPostQuestMessage;
         }
+
+        // faction IDs for factions listed in "tell me about"
+        int[] infoFactionIDs = { 42, 40, 108, 129, 306, 353, 41, 67, 82, 84, 88, 92, 94, 106, 36, 83, 85, 89, 93, 95, 99, 107, 37, 368, 408, 409, 410, 411, 413, 414, 415, 416, 417, 98 };
 
         #endregion
 
@@ -679,7 +683,8 @@ namespace DaggerfallWorkshop.Game
                     question = expandRandomTextRecord(7231 + toneIndex);
                     break;
                 case QuestionType.OrganizationInfo:
-                    question = "not implemented";
+                    currentKeySubjectType = KeySubjectType.Organization;
+                    question = expandRandomTextRecord(7212 + toneIndex);
                     break;
                 case QuestionType.LocalBuilding:
                     currentKeySubjectType = KeySubjectType.Building;
@@ -740,6 +745,12 @@ namespace DaggerfallWorkshop.Game
             }
             
             return (news);
+        }
+
+        public string GetOrganizationInfo(TalkManager.ListItem listItem)
+        {
+            int index = (listItem.index > 7 ? listItem.index + 1 : listItem.index);
+            return expandRandomTextRecord(860 + index);
         }
 
         public void AddQuestRumorToRumorMill(ulong questID, Message message)
@@ -1059,7 +1070,7 @@ namespace DaggerfallWorkshop.Game
                     answer = GetNewsOrRumors();
                     break;
                 case QuestionType.OrganizationInfo:
-                    answer = "not implemented";
+                    answer = GetOrganizationInfo(listItem);
                     break;
                 case QuestionType.LocalBuilding:
                     answer = GetAnswerAboutLocation(listItem);
@@ -1546,12 +1557,15 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < infoFactionIDs.Length; i++) 
             {
                 ListItem itemOrganizationInfo = new ListItem();
+                FactionFile.FactionData factionData;
                 itemOrganizationInfo.type = ListItemType.Item;
                 itemOrganizationInfo.questionType = QuestionType.OrganizationInfo;
-                itemOrganizationInfo.caption = "Placeholder for Organization";
+                DaggerfallUnity.Instance.ContentReader.FactionFileReader.GetFactionData(infoFactionIDs[i], out factionData);
+                itemOrganizationInfo.caption = factionData.name;
+                itemOrganizationInfo.index = i;
                 listTopicTellMeAbout.Add(itemOrganizationInfo);
             }
         }
