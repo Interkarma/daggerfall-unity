@@ -25,7 +25,6 @@ namespace DaggerfallWorkshop.Game
     public class EnemyMotor : MonoBehaviour
     {
         public float OpenDoorDistance = 2f;         // Maximum distance to open door
-        public float GiveUpTime = 4f;               // Time in seconds enemy will give up if target is unreachable
         public const float AttackSpeedDivisor = 3f;       // How much to slow down during attack animations
 
         EnemySenses senses;
@@ -35,7 +34,6 @@ namespace DaggerfallWorkshop.Game
         DaggerfallEntityBehaviour entityBehaviour;
 
         float stopDistance = 1.7f;                  // Used to prevent orbiting
-        Vector3 lastTargetPos;                      // Target from previous update
         float giveUpTimer;                          // Timer before enemy gives up
         bool isHostile;                             // Is enemy hostile to player
         bool flies;                                 // The enemy can fly
@@ -100,13 +98,14 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-        /// Immediately become hostile towards player.
+        /// Immediately become hostile towards player and know player's location.
         /// </summary>
         public void MakeEnemyHostileToPlayer(GameObject player)
         {
             if (player)
             {
                 senses.LastKnownPlayerPos = player.transform.position;
+                giveUpTimer = 200;
             }
             isHostile = true;
         }
@@ -164,7 +163,7 @@ namespace DaggerfallWorkshop.Game
             // This isn't perfect. In some cases enemies may still stack. It seems to happen when enemies are very close.
             // Always choose one direction. If this is random, the enemy will wiggle behind the other enemy because it's
             // computed so frequently. We could choose a direction at a lower rate to still give some randomness.
-//            plannedMotion = Quaternion.Euler(0, 90, 0) * plannedMotion;
+            // plannedMotion = Quaternion.Euler(0, 90, 0) * plannedMotion;
         }
 
         private void Move()
@@ -212,33 +211,50 @@ namespace DaggerfallWorkshop.Game
             if (mobile.IsPlayingOneShot())
                 moveSpeed /= AttackSpeedDivisor;
 
-            // Remain idle when player not acquired or not hostile
-            if (senses.LastKnownPlayerPos == EnemySenses.ResetPlayerPos || !isHostile)
+            // Remain idle when not hostile
+            if (!isHostile)
             {
                 mobile.ChangeEnemyState(MobileStates.Idle);
                 return;
             }
-
-            // Enemy will keep moving towards last known player position
-            targetPos = senses.LastKnownPlayerPos;
-            if (targetPos == lastTargetPos)
+            // If hostile but the enemy doesn't see the player, run the stealth check
+            else if (senses.LastKnownPlayerPos == EnemySenses.ResetPlayerPos)
             {
-                // Increment countdown to giving up when target is uncreachable and player lost
-                giveUpTimer += Time.deltaTime;
-                if (giveUpTimer > GiveUpTime &&
-                    !senses.PlayerInSight && !senses.PlayerInEarshot)
+                if (senses.StealthCheck())
                 {
-                    // Target is unreachable or player lost for too long, time to give up
-                    senses.LastKnownPlayerPos = EnemySenses.ResetPlayerPos;
+                    // Enemy noticed the player
+                    senses.LastKnownPlayerPos = GameManager.Instance.PlayerObject.transform.position;
+                    senses.DetectedPlayer = true;
+                }
+                else
+                {
+                    // Enemy didn't notice the player
+                    mobile.ChangeEnemyState(MobileStates.Idle);
+                    senses.DetectedPlayer = false;
                     return;
                 }
             }
-            else
+
+            // As long as the player is directly seen/heard,
+            // giveUpTimer is reset to full
+            if (senses.PlayerInSight || senses.PlayerInEarshot)
             {
-                // Still chasing, update last target and reset give up timer
-                lastTargetPos = targetPos;
-                giveUpTimer = 0;
+                giveUpTimer = 200;
             }
+            else if (giveUpTimer == 0)
+            {
+                // Player lost for too long, or wasn't in sight/earshot to begin with. Time to give up
+                senses.LastKnownPlayerPos = EnemySenses.ResetPlayerPos;
+                return;
+            }
+
+            // GiveUpTimer value is from classic, so decrease at the speed of classic's update loop
+            if (!senses.PlayerInSight && !senses.PlayerInEarshot
+                && giveUpTimer > 0 && classicUpdate)
+                giveUpTimer--;
+
+            // Enemy will keep moving towards last known player position
+            targetPos = senses.LastKnownPlayerPos;
 
             // Flying enemies aim for player face
             if (flies)
@@ -270,7 +286,7 @@ namespace DaggerfallWorkshop.Game
             if (!mobile.IsPlayingOneShot() || !attackFollowsPlayer)
                 transform.forward = direction.normalized;
 
-            // Ranged attack
+            // Bow attack for enemies that have the appropriate animation
             if (senses.PlayerInSight && 360 * MeshReader.GlobalScale < distance && distance < 2048 * MeshReader.GlobalScale &&
                 mobile.Summary.Enemy.HasRangedAttack1 && mobile.Summary.Enemy.ID > 129 && mobile.Summary.Enemy.ID != 132)
             {
@@ -311,7 +327,10 @@ namespace DaggerfallWorkshop.Game
             {
                 // We have reached target, is player nearby?
                 if (!senses.PlayerInSight && !senses.PlayerInEarshot)
+                {
+                    mobile.ChangeEnemyState(MobileStates.Idle);
                     senses.LastKnownPlayerPos = EnemySenses.ResetPlayerPos;
+                }
             }
         }
 

@@ -261,7 +261,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   OpenDoorDistance: 2
-  GiveUpTime: 4
 --- !u!114 &11470552
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -368,9 +367,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fd446a55d098ca4f826c3c9bc93563a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SightRadius: 16
-  HearingRadius: 8
-  FieldOfView: 120
+  SightRadius: 25
+  HearingRadius: 25
+  FieldOfView: 180
 --- !u!143 &14323946
 CharacterController:
   m_ObjectHideFlags: 1

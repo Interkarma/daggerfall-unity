@@ -142,6 +142,22 @@ namespace DaggerfallWorkshop.Game
             set { isRiding = value; }
         }
 
+        public bool IsMovingLessThanHalfSpeed
+        {
+            get
+            {
+                if (IsStandingStill)
+                {
+                    return true;
+                }
+                if (isCrouching)
+                {
+                    return (GetWalkSpeed(GameManager.Instance.PlayerEntity) / 2) >= speed;
+                }
+                return (GetBaseSpeed() / 2) >= speed;
+            }
+        }
+
         public Transform ActivePlatform
         {
             get { return activePlatform; }
@@ -281,6 +297,13 @@ namespace DaggerfallWorkshop.Game
                     {
                         speed = GetRunSpeed(speed);
                     }
+                }
+
+                // Handle sneak key. Reduces movement speed to half, then subtracts 1 in classic speed units
+                if (InputManager.Instance.HasAction(InputManager.Actions.Sneak))
+                {
+                    speed /= 2;
+                    speed -= (1 / classicToUnitySpeedUnitRatio);
                 }
 
                 // If sliding (and it's allowed), or if we're on an object tagged "Slide", get a vector pointing down the slope we're on
