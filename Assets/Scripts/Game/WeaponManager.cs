@@ -655,6 +655,7 @@ namespace DaggerfallWorkshop.Game
 
                 // Check if hit an entity and remove health
                 DaggerfallEntityBehaviour entityBehaviour = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
+                DaggerfallMobileUnit entityMobileUnit = hit.transform.GetComponentInChildren<DaggerfallMobileUnit>();
                 if (entityBehaviour)
                 {
                     if (entityBehaviour.EntityType == EntityTypes.EnemyMonster || entityBehaviour.EntityType == EntityTypes.EnemyClass)
@@ -662,7 +663,11 @@ namespace DaggerfallWorkshop.Game
                         EnemyEntity enemyEntity = entityBehaviour.Entity as EnemyEntity;
 
                         // Calculate damage
-                        int damage = FormulaHelper.CalculateWeaponDamage(playerEntity, enemyEntity, weapon);
+                        int damage;
+                        if (usingRightHand)
+                            damage = FormulaHelper.CalculateAttackDamage(playerEntity, enemyEntity, (int)(EquipSlots.RightHand), entityMobileUnit.Summary.AnimStateRecord);
+                        else
+                            damage = FormulaHelper.CalculateAttackDamage(playerEntity, enemyEntity, (int)(EquipSlots.LeftHand), entityMobileUnit.Summary.AnimStateRecord);
 
                         EnemyMotor enemyMotor = hit.transform.GetComponent<EnemyMotor>();
                         EnemySounds enemySounds = hit.transform.GetComponent<EnemySounds>();

@@ -88,6 +88,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string theNamedResidence = "The %s Residence";
 
         public const string materialIneffective = "The material of the weapon you are using is ineffective.";
+        public const string successfulBackstab = "Successful backstab!";
 
         public const string lockpickingSuccess = "The lock clicks open.";
         public const string lockpickingFailure = "It does not unlock.";
