@@ -129,7 +129,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// </summary>
         private void LoadSettings()
         {
-            foreach (var section in config.sections)
+            foreach (var section in config.VisibleSections)
             {
                 // Add section title to window
                 AddSectionTitle(section.name);
@@ -158,7 +158,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                     {
                         case ModSettingsKey.KeyType.Toggle:
                             bool toggle;
-                            AddCheckBox((bool.TryParse(keyData.Value, out toggle) && toggle) || key.toggle.value);
+                            AddCheckBox(bool.TryParse(keyData.Value, out toggle) ? toggle : key.toggle.value);
                             break;
 
                         case ModSettingsKey.KeyType.MultipleChoice:
@@ -222,7 +222,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         {
             // Set new values
             int checkBox = 0, textBox = 0, tuple = 0, slider = 0, colorPicker = 0;
-            foreach (var section in config.sections)
+            foreach (var section in config.VisibleSections)
             {
                 foreach (var key in section.keys)
                 {
@@ -520,7 +520,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             return tuple;
         }
 
-        private void AddColorPicker(string hexColor, ModSettingsKey key = null)
+        private void AddColorPicker(string hexColor, ModSettingsKey key)
         {
             Button colorPicker = new Button()
             {
@@ -530,9 +530,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             };
             colorPicker.Outline.Enabled = true;
 
-            if (!ModSettingsReader.IsHexColor(hexColor))
-                hexColor = key != null ? key.color.HexColor : "FFFFFFFF";
-            colorPicker.BackgroundColor = ModSettingsReader.ColorFromString(hexColor);
+            Color color;
+            if (ColorUtility.TryParseHtmlString("#" + hexColor, out color))
+                colorPicker.BackgroundColor = color;
+            else
+                colorPicker.BackgroundColor = key.color.color;
 
             colorPicker.OnMouseClick += ColorPicker_OnMouseClick;
             modColorPickers.Add(colorPicker);

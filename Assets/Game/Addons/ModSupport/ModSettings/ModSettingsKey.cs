@@ -88,6 +88,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             public string HexColor
             {
                 get { return ColorUtility.ToHtmlStringRGBA(color); }
+                set
+                {
+                    Color color;
+                    if (ColorUtility.TryParseHtmlString("#" + value, out color))
+                        this.color = color;
+                }
             }
 
             public Color32 color;

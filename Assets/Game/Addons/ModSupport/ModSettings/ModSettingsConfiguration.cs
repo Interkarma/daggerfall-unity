@@ -58,6 +58,25 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
 #endif
 
+        /// <summary>
+        /// Get all sections shown on GUI.
+        /// </summary>
+        public IEnumerable<Section> VisibleSections
+        {
+            get { return sections.Where(x => x.name != ModSettingsReader.internalSection); }
+        }
+
+        /// <summary>
+        /// Get section hidden from GUI. Can be null.
+        /// </summary>
+        public Section HiddenSection
+        {
+            get { return sections.FirstOrDefault(x => x.name == ModSettingsReader.internalSection); }
+        }
+
+        /// <summary>
+        /// Get a section with the given name.
+        /// </summary>
         public Section this[string sectionName]
         {
             get { return sections.FirstOrDefault(x => x.name == sectionName); }
@@ -84,25 +103,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             return false;
         }
 
-        public KeyType GetKeyType(string sectionName, string keyName)
+        public bool Key(string sectionName, string keyName, KeyType keyType, out ModSettingsKey keyOut)
         {
-            ModSettingsKey key;
-            if (Key(sectionName, keyName, out key))
-                return key.type;
-
-            return (KeyType)(-1);
-        }
-
-        public bool IsSlider(string sectionName, string keyName)
-        {
-            KeyType type = GetKeyType(sectionName, keyName);
-            return type == KeyType.Slider || type == KeyType.FloatSlider;
-        }
-
-        public bool IsTuple(string sectionName, string keyName)
-        {
-            KeyType type = GetKeyType(sectionName, keyName);
-            return type == KeyType.Tuple || type == KeyType.FloatTuple;
+            return Key(sectionName, keyName, out keyOut) && keyOut.type == keyType;
         }
 
         #endregion

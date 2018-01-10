@@ -33,6 +33,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         int selectionGridSelected = 0;
         int parseFormat = 0;
 
+        ReorderableList presets;
+        bool presetsListExpanded;
+
         ReorderableList sections;
         Dictionary<int, bool> sectionExpanded = new Dictionary<int, bool>();
         int currentSection;
@@ -112,7 +115,17 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 EditorGUILayout.PropertyField(_presetSettings, new GUIContent("Info"), true);
             }
             else
-                EditorGUILayout.PropertyField(_presets, true);
+            {
+                if (presets == null)
+                {
+                    presets = new ReorderableList(serializedObject, _presets, true, true, true, true);
+                    presets.drawHeaderCallback = Presets_DrawHeaderCallback;
+                    presets.drawElementCallback = Presets_DrawElementCallback;
+                }
+                EditorGUI.indentLevel++;
+                presets.DoLayoutList();
+                EditorGUI.indentLevel--;
+            }
 
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
 
@@ -196,6 +209,18 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         #endregion
 
         #region Callbacks
+
+        private void Presets_DrawHeaderCallback(Rect rect)
+        {
+            presetsListExpanded = EditorGUI.Foldout(LineRect(rect), presetsListExpanded, "Preset Names");
+            presets.elementHeight = presetsListExpanded ? lineHeight : 0;
+        }
+
+        private void Presets_DrawElementCallback(Rect rect, int index, bool isActive, bool isFocused)
+        {
+            if (presetsListExpanded)
+                EditorGUI.PropertyField(LineRect(rect), _presets.GetArrayElementAtIndex(index), GUIContent.none, false);
+        }
 
         private void Sections_DrawHeaderCallback(Rect rect)
         {
