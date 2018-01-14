@@ -37,6 +37,7 @@ namespace DaggerfallWorkshop.Game
         float giveUpTimer;                          // Timer before enemy gives up
         bool isHostile;                             // Is enemy hostile to player
         bool flies;                                 // The enemy can fly
+        bool swims;                                 // The enemy can swim
         int enemyLayerMask;                         // Layer mask for Enemies to optimize collision checks
 
         bool isAttackFollowsPlayerSet;              // For setting if the enemy will follow the player or not during an attack
@@ -73,6 +74,7 @@ namespace DaggerfallWorkshop.Game
             isHostile = mobile.Summary.Enemy.Reactions == MobileReactions.Hostile;
             flies = mobile.Summary.Enemy.Behaviour == MobileBehaviour.Flying ||
                     mobile.Summary.Enemy.Behaviour == MobileBehaviour.Spectral;
+            swims = mobile.Summary.Enemy.Behaviour == MobileBehaviour.Aquatic;
             enemyLayerMask = LayerMask.GetMask("Enemies");
             entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
             isAttackFollowsPlayerSet = false;
@@ -187,7 +189,11 @@ namespace DaggerfallWorkshop.Game
                 else
                     motion = knockBackDirection * (25 / (PlayerMotor.classicToUnitySpeedUnitRatio / 10));
 
-                if (flies)
+				if (swims)
+				{
+					WaterMove(motion);
+				}
+				else if(flies)
                     controller.Move(motion * Time.deltaTime);
                 else
                     controller.SimpleMove(motion);
@@ -256,8 +262,8 @@ namespace DaggerfallWorkshop.Game
             // Enemy will keep moving towards last known player position
             targetPos = senses.LastKnownPlayerPos;
 
-            // Flying enemies aim for player face
-            if (flies)
+            // Flying enemies and slaughterfish aim for player face
+            if (flies || (swims && mobile.Summary.Enemy.ID == (int)MonsterCareers.Slaughterfish))
                 targetPos.y += 0.9f;
             else
             {
@@ -318,7 +324,11 @@ namespace DaggerfallWorkshop.Game
                 // Prevent rat stacks (enemies don't stand on shorter enemies)
                 AvoidEnemies(ref motion);
 
-                if (flies)
+                if (swims)
+                {
+					WaterMove(motion);
+                }
+                else if (flies)
                     controller.Move(motion * Time.deltaTime);
                 else
                     controller.SimpleMove(motion);
@@ -333,6 +343,22 @@ namespace DaggerfallWorkshop.Game
                 }
             }
         }
+
+		private void WaterMove(Vector3 motion)
+		{
+            // Don't allow aquatic enemies to go above the water level of a dungeon block
+            if (GameManager.Instance.PlayerEnterExit.blockWaterLevel != 10000
+					&& controller.transform.position.y <
+					GameManager.Instance.PlayerEnterExit.blockWaterLevel * -1 * MeshReader.GlobalScale)
+			{
+				if (motion.y > 0 && controller.transform.position.y + (100 * MeshReader.GlobalScale) >=
+						GameManager.Instance.PlayerEnterExit.blockWaterLevel * -1 * MeshReader.GlobalScale)
+				{
+					motion.y = 0;
+				}
+				controller.Move(motion * Time.deltaTime);
+			}
+		}
 
         private void OpenDoors()
         {
