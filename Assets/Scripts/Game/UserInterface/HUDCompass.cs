@@ -24,7 +24,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         Camera compassCamera;
         Texture2D compassTexture;
+        Vector2 compassSize;
         Texture2D compassBoxTexture;
+        Vector2 compassBoxSize;
         float eulerAngle;
 
         /// <summary>
@@ -66,7 +68,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (Enabled)
             {
                 base.Update();
-                Size = TextureReplacement.GetSize(compassBoxTexture, compassBoxFilename, Scale, true);
+                Size = new Vector2(compassBoxSize.x * Scale.x, compassBoxSize.y * Scale.y);
             }
         }
 
@@ -82,7 +84,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         void LoadAssets()
         {
             compassTexture = DaggerfallUI.GetTextureFromImg(compassFilename);
+            compassSize = TextureReplacement.GetSize(compassTexture, compassFilename, true);
             compassBoxTexture = DaggerfallUI.GetTextureFromImg(compassBoxFilename);
+            compassBoxSize = TextureReplacement.GetSize(compassBoxTexture, compassBoxFilename, true);
         }
 
         void DrawCompass()
@@ -109,14 +113,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             compassBoxRect.x = Position.x;
             compassBoxRect.y = Position.y;
 
-            Vector2 boxRectSize = TextureReplacement.GetSize(compassBoxTexture, compassBoxFilename, Scale, true);
+            Vector2 boxRectSize = new Vector2(compassBoxSize.x * Scale.x, compassBoxSize.y * Scale.y);
             compassBoxRect.width = boxRectSize.x;
             compassBoxRect.height = boxRectSize.y;
 
             // Get compassTexture size
-            Vector2 compassTextureSize = TextureReplacement.GetSize(compassTexture, compassFilename, true);
-            float compassTextureWidth = compassTextureSize.x;
-            float compassTextureHeight = compassTextureSize.y;
+            float compassTextureWidth = compassSize.x;
+            float compassTextureHeight = compassSize.y;
 
             // Compass strip source
             Rect compassSrcRect = new Rect();

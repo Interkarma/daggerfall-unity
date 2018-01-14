@@ -795,25 +795,6 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         /// <summary>
-        /// Get a safe size for a control based on resolution of img with a scale.
-        /// </summary>
-        public static Vector2 GetSize(Texture2D texture, string textureName, float scale, bool allowXml = false)
-        {
-            return GetSize(texture, textureName, allowXml) * scale;
-        }
-
-        /// <summary>
-        /// Get a safe size for a control based on resolution of img with a scale.
-        /// </summary>
-        public static Vector2 GetSize(Texture2D texture, string textureName, Vector2 scale, bool allowXml = false)
-        {
-            Vector2 size = GetSize(texture, textureName, allowXml);
-            size.x *= scale.x;
-            size.y *= scale.y;
-            return size;
-        }
-
-        /// <summary>
         /// Get a safe size for a control based on resolution of cif or rci.
         /// </summary>
         public static Vector2 GetSize(Texture2D texture, string textureName, int record, int frame = 0)
