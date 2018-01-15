@@ -44,10 +44,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
     {
         #region Fields & Structs
 
+        const string extension = ".png";
+
         // Paths
-        static private string texturesPath = Path.Combine(Application.streamingAssetsPath, "Textures");
-        static private string imgPath = Path.Combine(texturesPath, "Img");
-        static private string cifPath = Path.Combine(texturesPath, "CifRci");
+        static readonly string texturesPath = Path.Combine(Application.streamingAssetsPath, "Textures");
+        static readonly string imgPath = Path.Combine(texturesPath, "Img");
+        static readonly string cifRciPath = Path.Combine(texturesPath, "CifRci");
 
         /// <summary>
         /// Common tags for textures maps.
@@ -74,8 +76,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         // Enemy will use custom textures if [archive, enemyDefaultRecord, enemyDefaultFrame] is found.
-        public const int enemyDefaultRecord = 0;          
-        public const int enemyDefaultFrame = 0;
+        const int enemyDefaultRecord = 0;          
+        const int enemyDefaultFrame = 0;
 
         /// <summary>
         /// Custom textures for enemies.
@@ -96,7 +98,6 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         static public string TexturesPath
         {
             get { return texturesPath; }
-            internal set { texturesPath = value; }
         }
 
         /// <summary>
@@ -105,7 +106,6 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         static public string ImagesPath
         {
             get { return imgPath; }
-            internal set { imgPath = value; }
         }
 
         /// <summary>
@@ -113,8 +113,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// </summary>
         static public string CifRciPath
         {
-            get { return cifPath; }
-            internal set { cifPath = value; }
+            get { return cifRciPath; }
         }
 
         #endregion
@@ -155,7 +154,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>Texture.</returns>
         static public Texture2D LoadCustomTexture(int archive, int record, int frame)
         {
-            return ImportTextureFile(texturesPath, GetName(archive, record, frame));
+            return ImportTextureFile(texturesPath, GetName(archive, record, frame), true);
         }
 
         /// <summary>
@@ -166,7 +165,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>Texture.</returns>
         static public Texture2D LoadCustomTexture(string name)
         {
-            return ImportTextureFile(texturesPath, name);
+            return ImportTextureFile(texturesPath, name, true);
         }
 
         /// <summary>
@@ -189,6 +188,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         static public Texture2D LoadCustomImage(string filename)
         {
             return ImportTextureFile(imgPath, filename);
+
         }
 
         /// <summary>
@@ -201,7 +201,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if image exists.</returns>
         static public bool CustomCifExist(string filename, int record, int frame = 0)
         {
-            return TextureFileExist(cifPath, GetNameCifRci(filename, record, frame));
+            return TextureFileExist(cifRciPath, GetNameCifRci(filename, record, frame));
         }
 
         /// <summary>
@@ -214,7 +214,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>Image.</returns>
         static public Texture2D LoadCustomCif(string filename, int record, int frame)
         {
-            return ImportTextureFile(cifPath, GetNameCifRci(filename, record, frame));
+            return ImportTextureFile(cifRciPath, GetNameCifRci(filename, record, frame));
         }
 
         /// <summary>
@@ -227,9 +227,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if generic or specific image exists.</returns>
         static public bool CustomCifExist(string filename, int record, int frame, MetalTypes metalType)
         {
-            return TextureFileExist(cifPath, GetNameCifRci(filename, record, frame, metalType));
+            return TextureFileExist(cifRciPath, GetNameCifRci(filename, record, frame, metalType));
         }
-
 
         /// <summary>
         /// Import image from disk to replace .CIFs and .RCIs. for a specific metalType
@@ -241,7 +240,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>Image for this metalType or generic image if metalType is None.</returns>
         static public Texture2D LoadCustomCif(string filename, int record, int frame, MetalTypes metalType)
         {
-            return ImportTextureFile(cifPath, GetNameCifRci(filename, record, frame, metalType));
+            return ImportTextureFile(cifRciPath, GetNameCifRci(filename, record, frame, metalType));
         }
 
         /// <summary>
@@ -326,7 +325,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>Emission map.</returns>
         static public Texture2D LoadCustomEmission(int archive, int record, int frame)
         {
-            return ImportTextureFile(texturesPath, GetName(archive, record, frame) + MapTags.Emission);
+            return ImportTextureFile(texturesPath, GetName(archive, record, frame) + MapTags.Emission, true);
         }
 
         /// <summary>
@@ -337,7 +336,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>Emission map.</returns>
         static public Texture2D LoadCustomEmission(string name)
         {
-            return ImportTextureFile(texturesPath, name + MapTags.Emission);
+            return ImportTextureFile(texturesPath, name + MapTags.Emission, true);
         }
 
         /// <summary>
@@ -374,7 +373,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>MetallicGloss map.</returns>
         static public Texture2D LoadCustomMetallicGloss(int archive, int record, int frame)
         {
-            return ImportTextureFile(texturesPath, GetName(archive, record, frame) + MapTags.MetallicGloss);
+            return ImportTextureFile(texturesPath, GetName(archive, record, frame) + MapTags.MetallicGloss, true);
         }
 
         /// <summary>
@@ -385,7 +384,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>MetallicGloss map.</returns>
         static public Texture2D LoadCustomMetallicGloss(string name)
         {
-            return ImportTextureFile(texturesPath, name + MapTags.MetallicGloss);
+            return ImportTextureFile(texturesPath, name + MapTags.MetallicGloss, true);
         }
 
         // General import methods for mods or other external code.
@@ -408,7 +407,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                         break;
 
                     default:
-                        texture = ImportTextureFile(path, name);
+                        texture = ImportTextureFile(path, name, true);
                         break;
                 }
 
@@ -440,18 +439,20 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             }
 
             // Properties
-            if (XMLManager.XmlFileExist(archive, record, frame))
+            string path = Path.Combine(texturesPath, GetName(archive, record, frame));
+            if (XMLManager.XmlFileExists(path))
             {
-                string fileName = GetName(archive, record, frame);
-                float value;
+                var xml = new XMLManager(path);
 
                 // Metallic parameter
-                if (XMLManager.TryGetFloat(fileName, "metallic", out value, texturesPath))
-                    material.SetFloat("_Metallic", value);
+                float metallic;
+                if (xml.TryGetFloat("metallic", out metallic))
+                    material.SetFloat("_Metallic", metallic);
 
                 // Smoothness parameter
-                if (XMLManager.TryGetFloat(fileName, "smoothness", out value, texturesPath))
-                    material.SetFloat("_Glossiness", value);
+                float smoothness;
+                if (xml.TryGetFloat("smoothness", out smoothness))
+                    material.SetFloat("_Glossiness", smoothness);
             }
         }
 
@@ -478,20 +479,23 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             Vector2 uv = Vector2.zero;
 
             // Get properties from Xml
-            if (XMLManager.XmlFileExist(archive, record))
+            string path = Path.Combine(texturesPath, GetName(archive, record));
+            if (XMLManager.XmlFileExists(path))
             {
-                // Customize billboard size (scale)
+                var xml = new XMLManager(path);
+
+                // Set billboard scale
                 Transform transform = go.GetComponent<Transform>();
-                transform.localScale = XMLManager.GetScale(name, texturesPath, transform.localScale);
+                transform.localScale = xml.GetVector3("scaleX", "scaleY", transform.localScale);
                 summary.Size.x *= transform.localScale.x;
                 summary.Size.y *= transform.localScale.y;
 
                 // Get UV
-                uv = XMLManager.GetUv(name, texturesPath, uv.x, uv.y);
+                uv = xml.GetVector2("uvX", "uvY", uv);
             }
 
             // Update UV
-            UpdateUV(go.GetComponent<MeshFilter>(), uv.x, uv.y);
+            SetUv(go.GetComponent<MeshFilter>(), uv.x, uv.y);
 
             // Get material from cache or import from disk
             MaterialReader materialReader = DaggerfallUnity.Instance.MaterialReader;
@@ -581,6 +585,14 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             }
         }
 
+        public static bool EnemyHasCustomMaterial(int archive)
+        {
+            // This is the first texture set on enemy. Enemies use all custom textures or all vanilla.
+            // If (archive, defaultRecord, defaultFrame) is present on disk all other textures are
+            // considered required, otherwise vanilla textures are used.
+            return TextureFileExist(texturesPath, GetName(archive, enemyDefaultRecord, enemyDefaultFrame));
+        }
+
         /// <summary>
         /// Import and set custom material on Enemy unit.
         /// </summary>
@@ -589,17 +601,15 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="textures">All textures for this enemy (except dead texture).</param>
         static public void SetupCustomEnemyMaterial(GameObject go, int archive, out List<List<Texture2D>> textures)
         {
-            // This is the first texture set on enemy. Enemies use all custom textures or all vanilla.
-            // If (archive, defaultRecord, defaultFrame) is present on disk all other textures are
-            // considered required, otherwise vanilla textures are used.
+            var meshRenderer = go.GetComponent<MeshRenderer>();
+            MaterialReader materialReader = DaggerfallUnity.Instance.MaterialReader;
             int record = enemyDefaultRecord, frame = enemyDefaultFrame;
 
             // Update UV map
-            UpdateUV(go.GetComponent<MeshFilter>());
+            SetUv(go.GetComponent<MeshFilter>());
 
             // Get default texture from cache or import from disk
-            var meshRenderer = go.GetComponent<MeshRenderer>();
-            MaterialReader materialReader = DaggerfallUnity.Instance.MaterialReader;
+            meshRenderer.sharedMaterial = MaterialReader.CreateStandardMaterial(MaterialReader.CustomBlendMode.Cutout);
             CachedMaterial cachedMaterialOut;
             if (materialReader.GetCachedMaterialCustomBillboard(archive, record, frame, out cachedMaterialOut))
                 meshRenderer.material.mainTexture = cachedMaterialOut.albedoMap;
@@ -651,6 +661,18 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             }
         }
 
+        public static void SetEnemyScale(int archive, int record, ref Vector2 size)
+        {
+            string path = Path.Combine(texturesPath, GetName(archive, record));
+            if (!XMLManager.XmlFileExists(path))
+                return;
+
+            var xml = new XMLManager(path);
+            Vector2 scale = xml.GetVector2("scaleX", "scaleY", Vector2.zero);
+            size.x *= scale.x;
+            size.y *= scale.y;
+        }
+
         /// <summary>
         /// Import custom texture and label settings for buttons
         /// </summary>
@@ -663,14 +685,19 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             button.BackgroundTexture.filterMode = (FilterMode)DaggerfallUnity.Settings.GUIFilterMode;
 
             // Load settings from Xml
-            if (XMLManager.XmlFileExist(colorName, texturesPath))
+            string path = Path.Combine(texturesPath, colorName);
+            if (XMLManager.XmlFileExists(path))
             {
-                // Set custom color
-                if (XMLManager.GetString(colorName, "customtext", texturesPath) == "true")
-                    button.Label.TextColor = XMLManager.GetColor(colorName, texturesPath);
-                // Disable text. This is useful if text is drawn on texture
-                else if (XMLManager.GetString(colorName, "customtext", texturesPath) == "notext")
-                    button.Label.Text = "";
+                var xml = new XMLManager(path);
+
+                string value;
+                if (xml.TryGetString("customtext", out value))
+                {
+                    if (value == "true") // Set custom color for text
+                        button.Label.TextColor = xml.GetColor(button.Label.TextColor);
+                    else if (value == "notext") // Disable text. This is useful if text is drawn on texture
+                        button.Label.Text = string.Empty;
+                }
             }            
         }
 
@@ -739,52 +766,48 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         /// <summary>
-        /// Get size of vanilla texture, even if using a custom one.
+        /// Get a safe size for a control based on resolution of img.
         /// </summary>
-        /// <param name="texture">Texture.</param>
-        /// <param name="textureName">Archive of texture.</param>
-        /// <param name="record">Record of texture.</param>
-        /// <param name="frame">Frame of texture.</param>
-        /// <returns>Vector2 with width and height</returns>
-        static public Vector2 GetSizeFromTexture(Texture2D texture, int archive, int record, int frame = 0)
+        public static Vector2 GetSize(Texture2D texture, string textureName, bool allowXml = false)
         {
-            if (CustomTextureExist(archive, record, frame))
+            if (allowXml)
             {
-                ImageData imageData = ImageReader.GetImageData("TEXTURE." + archive, createTexture: false);
-                return new Vector2(imageData.width, imageData.height);
+                // Get size from xml
+                string path = Path.Combine(imgPath, textureName);
+                if (XMLManager.XmlFileExists(path))
+                {
+                    var xml = new XMLManager(path);
+                    Vector2 size;
+                    if (xml.TryGetVector2("width", "height", out size))
+                        return size;
+                }
             }
-            else
-                return new Vector2(texture.width, texture.height);
-        }
 
-        /// <summary>
-        /// Get size of vanilla texture, even if using a custom one.
-        /// </summary>
-        /// <param name="texture">Texture.</param>
-        /// <param name="textureName">Name of texture file.</param>
-        /// <param name="record">Record of texture (CifRci only).</param>
-        /// <param name="frame">Frame of texture (CifRci only).</param>
-        /// <returns>Vector2 with width and height</returns>
-        static public Vector2 GetSizeFromTexture(Texture2D texture, string textureName, int record = 0, int frame = 0)
-        {
-            if (CustomImageExist(textureName) || CustomCifExist(textureName, record, frame))
+            // Get size from vanilla image
+            if (CustomImageExist(textureName))
             {
                 ImageData imageData = ImageReader.GetImageData(textureName, createTexture: false);
                 return new Vector2(imageData.width, imageData.height);
             }
-            else
-                return new Vector2(texture.width, texture.height);
+
+            // Get size from texture
+            return new Vector2(texture.width, texture.height);
         }
 
         /// <summary>
-        /// Get custom size or default size of texture.
+        /// Get a safe size for a control based on resolution of cif or rci.
         /// </summary>
-        static public Vector2 GetSizeFromXml(Texture2D texture, string textureName, float scaleWidth = 1, float scaleHeight = 1)
+        public static Vector2 GetSize(Texture2D texture, string textureName, int record, int frame = 0)
         {
-            if (CustomImageExist(textureName))
-                return XMLManager.GetSize(textureName, imgPath, scaleWidth, scaleHeight);
-            else
-                return new Vector2(texture.width * scaleWidth, texture.height * scaleHeight);
+            // Get size from vanilla image
+            if (CustomCifExist(textureName, record, frame))
+            {
+                ImageData imageData = ImageReader.GetImageData(textureName, createTexture: false);
+                return new Vector2(imageData.width, imageData.height);
+            }
+
+            // Get size from texture
+            return new Vector2(texture.width, texture.height);
         }
 
         #endregion
@@ -792,63 +815,45 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         #region Private Methods
 
         /// <summary>
-        /// Check if image file exist on disk.
+        /// True if image file exists and settings allow import.
         /// </summary>
-        /// <param name="path">Location of image file.</param>
-        /// <param name="name">Name of image file.</param>
-        /// <returns></returns>
-        static private bool TextureFileExist (string path, string name)
+        /// <param name="path">Path to file on disk.</param>
+        /// <param name="fileName">Name of file without extension.</param>
+        private static bool TextureFileExist (string path, string name)
         {
-            if (DaggerfallUnity.Settings.MeshAndTextureReplacement //check .ini setting
-                && File.Exists(Path.Combine(path, name + ".png")))
-                return true;
-
-            return false;
+            return DaggerfallUnity.Settings.MeshAndTextureReplacement
+                && File.Exists(Path.Combine(path, name + extension));
         }
 
         /// <summary>
-        /// Import image file with .png extension from disk,
-        /// to be used as a texture.
+        /// Import image file as texture2D.
         /// </summary>
-        /// <param name="path">Location of image file.</param>
-        /// <param name="name">Name of image file.</param>
-        /// <returns></returns>
-        static private Texture2D ImportTextureFile (string path, string name)
+        /// <param name="path">Path to file on disk.</param>
+        /// <param name="fileName">Name of file without extension.</param>
+        /// <param name="mipMaps">Enable MipMaps?</param>
+        private static Texture2D ImportTextureFile (string path, string fileName, bool mipMaps = false)
         {
             // Create empty texture, size will be the actual size of .png file
-            Texture2D tex = new Texture2D(2, 2);
+            Texture2D tex = new Texture2D(2, 2, TextureFormat.RGBA32, mipMaps);
 
             // Load image as Texture2D
-            tex.LoadImage(File.ReadAllBytes(Path.Combine(path, name + ".png")));
+            tex.LoadImage(File.ReadAllBytes(Path.Combine(path, fileName + extension)));
 
-            // Return imported texture
-            if (tex != null)
-                return tex;
-
-            Debug.LogError("Can't import custom texture " + name + ".png from " + path);
-            return null;
+            return tex;
         }
 
         /// <summary>
-        /// Import image file with .png extension from disk,
-        /// to be used as a normal map.
+        /// Import image file as Normal Map texture2D.
         /// </summary>
-        /// <param name="path">Location of image file.</param>
-        /// <param name="name">Name of image file.</param>
-        /// <returns>Normal map as Texture2D</returns>
-        static private Texture2D ImportNormalMap (string path, string name)
+        /// <param name="path">Path to file on disk.</param>
+        /// <param name="fileName">Name of file without extension.</param>
+        private static Texture2D ImportNormalMap (string path, string fileName)
         {
             //create empty texture, size will be the actual size of .png file
             Texture2D tex = new Texture2D(2, 2, TextureFormat.ARGB32, true);
 
             // Load image as Texture2D
-            tex.LoadImage(File.ReadAllBytes(Path.Combine(path, name + ".png")));
-
-            if (tex == null)
-            {
-                Debug.LogError("Can't import custom texture " + name + ".png from " + path);
-                return null;
-            }
+            tex.LoadImage(File.ReadAllBytes(Path.Combine(path, fileName + extension)));
 
             Color32[] colours = tex.GetPixels32();
             for (int i = 0; i < colours.Length; i++)
@@ -863,10 +868,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         /// <summary>
-        /// Update UV map
+        /// Set UV Map for a planar mesh.
         /// </summary>
-        /// <param name="meshFilter">MeshFilter of GameObject</param>
-        static private void UpdateUV (MeshFilter meshFilter, float x = 0, float y = 0)
+        /// <param name="x">Offset on X axis.</param>
+        /// <param name="y">Offset on Y axis.</param>
+        private static void SetUv(MeshFilter meshFilter, float x = 0, float y = 0)
         {
             Vector2[] uv = new Vector2[4];
             uv[0] = new Vector2(x, 1 - y);
@@ -877,18 +883,15 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         /// <summary>
-        /// Check all frames available on disk.
+        /// Get number of frames available on disk for a record.
         /// </summary>
         /// <param name="archive">Archive index.</param>
         /// <param name="record">Record index.</param>
-        /// <returns>Number of textures present on disk for this record</returns>
-        static private int NumberOfAvailableFrames(int archive, int record)
+        private static int NumberOfAvailableFrames(int archive, int record)
         {
             int frames = 0;
             while (CustomTextureExist(archive, record, frames))
-            {
                 frames++;
-            }
             return frames;
         }
 

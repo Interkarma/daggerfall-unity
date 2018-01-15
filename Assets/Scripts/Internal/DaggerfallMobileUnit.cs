@@ -133,10 +133,7 @@ namespace DaggerfallWorkshop
 
             // Load enemy content
             int archive = GetTextureArchive();
-            if (TextureReplacement.CustomTextureExist(archive, TextureReplacement.enemyDefaultRecord, TextureReplacement.enemyDefaultFrame))
-                summary.CustomMaterial.isCustom = true;
-            else
-                summary.CustomMaterial.isCustom = false;
+            summary.CustomMaterial.isCustom = TextureReplacement.EnemyHasCustomMaterial(archive);
             CacheRecordSizesAndFrames(dfUnity, archive);
             AssignMeshAndMaterial(dfUnity, archive);
 
@@ -321,7 +318,6 @@ namespace DaggerfallWorkshop
 
             // Set mesh scale for this state
             transform.localScale = new Vector3(size.x, size.y, 1);
-            Rect rect = summary.AtlasRects[summary.AtlasIndices[record].startIndex + currentFrame];
 
             // Check if orientation flip needed
             bool flip = summary.StateAnims[orientation].FlipLeftRight;
@@ -344,11 +340,13 @@ namespace DaggerfallWorkshop
                 if ((record < summary.CustomMaterial.MainTexture.Count) && (currentFrame < summary.CustomMaterial.MainTexture[record].Count))
                     GetComponent<MeshRenderer>().material.mainTexture = summary.CustomMaterial.MainTexture[record][currentFrame];
                 else
-                    Debug.LogError("Texture " + GetTextureArchive() + "_" + record + "-" + currentFrame + ".png is missing"); 
+                    Debug.LogErrorFormat("Mobile Unit: imported archive {0} does not contain texture for record {1}, frame {2}",
+                        GetTextureArchive(), record, currentFrame);
             }
             else
             {
                 // Daggerfall Atlas: Update UVs on mesh
+                Rect rect = summary.AtlasRects[summary.AtlasIndices[record].startIndex + currentFrame];
                 Vector2[] uvs = new Vector2[4];
                 if (flip)
                 {
@@ -460,13 +458,9 @@ namespace DaggerfallWorkshop
                 finalSize.x = (size.Width + xChange);
                 finalSize.y = (size.Height + yChange);
                 
-                // Get eventual custom scale
-                if ((summary.CustomMaterial.isCustom) && (XMLManager.XmlFileExist(archive, i)))
-                {
-                    Vector2 enemyScale = XMLManager.GetScale(TextureReplacement.GetName(archive, i), TextureReplacement.TexturesPath);
-                    finalSize.x *= enemyScale.x;
-                    finalSize.y *= enemyScale.y;
-                }
+                // Set optional scale
+                if (summary.CustomMaterial.isCustom)
+                    TextureReplacement.SetEnemyScale(archive, i, ref finalSize);
  
                 // Store final size and frame count
                 summary.RecordSizes[i] = finalSize * MeshReader.GlobalScale;
@@ -519,6 +513,13 @@ namespace DaggerfallWorkshop
             // Assign mesh
             meshFilter.sharedMesh = mesh;
 
+            // Get custom material if available
+            if (summary.CustomMaterial.isCustom)
+            {
+                TextureReplacement.SetupCustomEnemyMaterial(this.gameObject, archive, out summary.CustomMaterial.MainTexture);
+                return;
+            }
+
             // Load material atlas
             Material material = dfUnity.MaterialReader.GetMaterialAtlas(
                 archive,
@@ -535,10 +536,6 @@ namespace DaggerfallWorkshop
 
             // Set new enemy material
             GetComponent<MeshRenderer>().sharedMaterial = material;
-
-            // Get custom material if available
-            if (summary.CustomMaterial.isCustom)
-                TextureReplacement.SetupCustomEnemyMaterial(this.gameObject, archive, out summary.CustomMaterial.MainTexture);
         }
 
         /// <summary>
