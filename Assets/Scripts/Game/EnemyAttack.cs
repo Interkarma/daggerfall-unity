@@ -187,7 +187,7 @@ namespace DaggerfallWorkshop.Game
             EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
 
             // Calculate damage
-            damage = Game.Formulas.FormulaHelper.CalculateWeaponDamage(entity, GameManager.Instance.PlayerEntity, null);
+            damage = Formulas.FormulaHelper.CalculateAttackDamage(entity, GameManager.Instance.PlayerEntity, (int)(Items.EquipSlots.RightHand), -1);
 
             // Tally player's dodging skill
             GameManager.Instance.PlayerEntity.TallySkill(DFCareer.Skills.Dodging, 1);

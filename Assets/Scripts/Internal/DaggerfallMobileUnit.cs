@@ -80,6 +80,7 @@ namespace DaggerfallWorkshop
             public MobileAnimation[] StateAnims;                // Animation frames for this state
             public TextureReplacement.CustomEnemyMaterial 
                 CustomMaterial;                                 // Custom material
+            public int AnimStateRecord;                         // Record number of animation state
         }
 
         void Start()
@@ -300,6 +301,7 @@ namespace DaggerfallWorkshop
             
             // Get enemy size and scale for this state
             int record = summary.StateAnims[orientation].Record;
+            summary.AnimStateRecord = record;
             Vector2 size = summary.RecordSizes[record];
 
             // Ensure walking enemies keep their feet aligned between states

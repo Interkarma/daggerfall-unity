@@ -186,248 +186,261 @@ namespace DaggerfallWorkshop.Game.Formulas
             return (handToHandSkill / 5) + 1;
         }
 
-        public static int CalculateWeaponDamage(Entity.DaggerfallEntity attacker, Entity.DaggerfallEntity target, FPSWeapon onscreenWeapon)
+        public static int CalculateAttackDamage(Entity.DaggerfallEntity attacker, Entity.DaggerfallEntity target, int weaponEquipSlot, int enemyAnimStateRecord)
         {
             if (attacker == null || target == null)
                 return 0;
 
-            int damageLow = 0;
-            int damageHigh = 0;
+            int minBaseDamage = 0;
+            int maxBaseDamage = 0;
             int damageModifiers = 0;
-            int baseDamage = 0;
-            int damageResult = 0;
+            int damage = 0;
             int chanceToHitMod = 0;
-            Items.DaggerfallUnityItem weapon = null;
+            int backstabbingLevel = 0;
             Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
-            Entity.EnemyEntity AIAttacker = null;
-            Entity.EnemyEntity AITarget = null;
+            Items.DaggerfallUnityItem weapon = attacker.ItemEquipTable.GetItem((Items.EquipSlots)weaponEquipSlot);
+            short skillID = 0;
 
-            if (attacker != player)
+            // Choose whether weapon-wielding enemies use their weapons or weaponless attacks.
+            // In classic, weapon-wielding enemies use the damage values of their weapons
+            // instead of their weaponless values.
+            // For some enemies this gives lower damage than similar-tier monsters
+            // and the weaponless values seems more appropriate, so here
+            // enemies will choose to use their weaponless attack if it is more damaging.
+            Entity.EnemyEntity AIAttacker = attacker as Entity.EnemyEntity;
+            if (AIAttacker != null && weapon != null)
             {
-                AIAttacker = attacker as Entity.EnemyEntity;
-                weapon = attacker.ItemEquipTable.GetItem(Items.EquipSlots.RightHand);
-                if (weapon == null)
-                    weapon = attacker.ItemEquipTable.GetItem(Items.EquipSlots.LeftHand);
-            }
-            else
-            {
-                if (GameManager.Instance.WeaponManager.UsingRightHand)
-                    weapon = attacker.ItemEquipTable.GetItem(Items.EquipSlots.RightHand);
-                else
-                    weapon = attacker.ItemEquipTable.GetItem(Items.EquipSlots.LeftHand);
-            }
+                int weaponAverage = ((minBaseDamage + maxBaseDamage) / 2);
+                int noWeaponAverage = ((AIAttacker.MobileEnemy.MinDamage + AIAttacker.MobileEnemy.MaxDamage) / 2);
 
-            if (target != player)
-            {
-                AITarget = target as Entity.EnemyEntity;
+                if (noWeaponAverage > weaponAverage)
+                {
+                    // Use hand-to-hand
+                    weapon = null;
+                }
             }
 
             if (weapon != null)
             {
-                // If the attacker has a weapon equipped, check if the material is high enough to damage the target
+                // If the attacker is using a weapon, check if the material is high enough to damage the target
                 if (target.MinMetalToHit > (Items.WeaponMaterialTypes)weapon.NativeMaterialValue)
                 {
                     if (attacker == player)
                     {
                         DaggerfallUI.Instance.PopupMessage(UserInterfaceWindows.HardStrings.materialIneffective);
                     }
+
                     return 0;
                 }
 
-                // If the attacker has a weapon equipped, get the weapon's damage
-                damageLow = weapon.GetBaseDamageMin();
-                damageHigh = weapon.GetBaseDamageMax();
-                short skillID = weapon.GetWeaponSkillIDAsShort();
-                chanceToHitMod = attacker.Skills.GetLiveSkillValue(skillID);
+                // Get weapon skill used
+                skillID = weapon.GetWeaponSkillIDAsShort();
             }
-            else if (attacker == player)
+            else
             {
-                // If the player is attacking with no weapon equipped, use hand-to-hand skill for damage
-                damageLow = CalculateHandToHandMinDamage(attacker.Skills.GetLiveSkillValue(DFCareer.Skills.HandToHand));
-                damageHigh = CalculateHandToHandMaxDamage(attacker.Skills.GetLiveSkillValue(DFCareer.Skills.HandToHand));
-                chanceToHitMod = attacker.Skills.GetLiveSkillValue(DFCareer.Skills.HandToHand);
+                skillID = (short)DFCareer.Skills.HandToHand;
             }
 
-            if (AIAttacker != null)
-            {
-                // Note: In classic, for enemies that have weapons, the damage values in the enemy
-                // definitions are overridden by the weapon stats. This is fine for enemy classes,
-                // who have non-weapon damage values of 0, but for the monsters that use weapons,
-                // they may have a better attack if they don't use a weapon.
-                // In DF Unity, enemies are using whichever is more damaging, the weapon or non-weapon attack.
-                int weaponAverage = ((damageLow + damageHigh) / 2);
-                int noWeaponAverage = ((AIAttacker.MobileEnemy.MinDamage + AIAttacker.MobileEnemy.MaxDamage) / 2);
+            chanceToHitMod = attacker.Skills.GetLiveSkillValue(skillID);
 
-                if (noWeaponAverage > weaponAverage)
-                {
-                    damageLow = AIAttacker.MobileEnemy.MinDamage;
-                    damageHigh = AIAttacker.MobileEnemy.MaxDamage;
-                    chanceToHitMod = attacker.Skills.GetLiveSkillValue(DFCareer.Skills.HandToHand);
-                }
+            Entity.EnemyEntity AITarget = null;
+            if (target != player)
+            {
+                AITarget = target as Entity.EnemyEntity;
             }
 
-            baseDamage = UnityEngine.Random.Range(damageLow, damageHigh + 1);
+            if (attacker == player)
+            {
+                // Apply swing modifiers. Not applied to hand-to-hand in classic.
+                FPSWeapon onscreenWeapon;
+                if (weaponEquipSlot == (int)(Items.EquipSlots.RightHand))
+                    onscreenWeapon = GameManager.Instance.WeaponManager.RightHandWeapon;
+                else
+                    onscreenWeapon = GameManager.Instance.WeaponManager.LeftHandWeapon;
 
-            if (onscreenWeapon != null && (attacker == player))
-            {
-                // Apply swing modifiers for player.
-                // The Daggerfall manual groups diagonal slashes to the left and right as if they are the same, but they are different.
-                // Classic does not apply swing modifiers to hand-to-hand.
-                if (onscreenWeapon.WeaponState == WeaponStates.StrikeUp)
+                if (onscreenWeapon != null)
                 {
-                    damageModifiers += -4;
-                    chanceToHitMod += 10;
+                    // The Daggerfall manual groups diagonal slashes to the left and right as if they are the same, but they are different.
+                    // Classic does not apply swing modifiers to hand-to-hand.
+                    if (onscreenWeapon.WeaponState == WeaponStates.StrikeUp)
+                    {
+                        damageModifiers += -4;
+                        chanceToHitMod += 10;
+                    }
+                    if (onscreenWeapon.WeaponState == WeaponStates.StrikeDownRight)
+                    {
+                        damageModifiers += -2;
+                        chanceToHitMod += 5;
+                    }
+                    if (onscreenWeapon.WeaponState == WeaponStates.StrikeDownLeft)
+                    {
+                        damageModifiers += 2;
+                        chanceToHitMod += -5;
+                    }
+                    if (onscreenWeapon.WeaponState == WeaponStates.StrikeDown)
+                    {
+                        damageModifiers += 4;
+                        chanceToHitMod += -10;
+                    }
                 }
-                if (onscreenWeapon.WeaponState == WeaponStates.StrikeDownRight)
-                {
-                    damageModifiers += -2;
-                    chanceToHitMod += 5;
-                }
-                if (onscreenWeapon.WeaponState == WeaponStates.StrikeDownLeft)
-                {
-                    damageModifiers += 2;
-                    chanceToHitMod += -5;
-                }
-                if (onscreenWeapon.WeaponState == WeaponStates.StrikeDown)
-                {
-                    damageModifiers += 4;
-                    chanceToHitMod += -10;
-                }
-            }
 
-            // Apply weapon proficiency modifiers for player.
-            if ((attacker == player) && weapon != null && ((int)attacker.Career.ExpertProficiencies & weapon.GetWeaponSkillUsed()) != 0)
-            {
-                damageModifiers += ((attacker.Level / 3) + 1);
-                chanceToHitMod += attacker.Level;
-            }
-            // Apply hand-to-hand proficiency modifiers for player. Hand-to-hand proficiency is not applied in classic.
-            else if ((attacker == player) && weapon == null && ((int)attacker.Career.ExpertProficiencies & (int)(DFCareer.ProficiencyFlags.HandToHand)) != 0)
-            {
-                damageModifiers += ((attacker.Level / 3) + 1);
-                chanceToHitMod += attacker.Level;
-            }
+                if (weapon != null)
+                {
+                    // Apply weapon proficiency
+                    if (((int)attacker.Career.ExpertProficiencies & weapon.GetWeaponSkillUsed()) != 0)
+                    {
+                        damageModifiers += ((attacker.Level / 3) + 1);
+                        chanceToHitMod += attacker.Level;
+                    }
+                }
+                // Apply hand-to-hand proficiency. Hand-to-hand proficiency is not applied in classic.
+                else if (((int)attacker.Career.ExpertProficiencies & (int)(DFCareer.ProficiencyFlags.HandToHand)) != 0)
+                {
+                    damageModifiers += ((attacker.Level / 3) + 1);
+                    chanceToHitMod += attacker.Level;
+                }
 
-            // Apply modifiers for Skeletal Warrior.
-            // In classic these appear to be applied after the swing and weapon proficiency modifiers but before all other
-            // damage modifiers. Doing the same here.
-            // DF Chronicles just says "Edged weapons inflict 1/2 damage"
-            if (weapon != null && (target != player) && AITarget.CareerIndex == (int)Entity.MonsterCareers.SkeletalWarrior)
-            {
-                if (weapon.NativeMaterialValue == (int)Items.WeaponMaterialTypes.Silver)
+                // Apply racial bonuses
+                if (weapon != null)
                 {
-                    baseDamage *= 2;
-                    damageModifiers *= 2;
-                }
-                if (weapon.GetWeaponSkillUsed() != (int)DFCareer.ProficiencyFlags.BluntWeapons)
-                {
-                    baseDamage /= 2;
-                    damageModifiers /= 2;
-                }
-            }
-
-            // Apply bonus or penalty by opponent type.
-            // In classic this is broken and only works if the attack is done with a weapon that has the maximum number of enchantments.
-            if ((target != player) && (AITarget.GetEnemyGroup() == DFCareer.EnemyGroups.Undead))
-            {
-                if (((int)attacker.Career.UndeadAttackModifier & (int)DFCareer.AttackModifier.Bonus) != 0)
-                {
-                    damageModifiers += attacker.Level;
-                }
-                if (((int)attacker.Career.UndeadAttackModifier & (int)DFCareer.AttackModifier.Phobia) != 0)
-                {
-                    damageModifiers -= attacker.Level;
-                }
-            }
-            else if ((target != player) && (AITarget.GetEnemyGroup() == DFCareer.EnemyGroups.Daedra))
-            {
-                if (((int)attacker.Career.DaedraAttackModifier & (int)DFCareer.AttackModifier.Bonus) != 0)
-                {
-                    damageModifiers += attacker.Level;
-                }
-                if (((int)attacker.Career.DaedraAttackModifier & (int)DFCareer.AttackModifier.Phobia) != 0)
-                {
-                    damageModifiers -= attacker.Level;
-                }
-            }
-            else if ((target != player) && (AITarget.GetEnemyGroup() == DFCareer.EnemyGroups.Humanoid))
-            {
-                if (((int)attacker.Career.HumanoidAttackModifier & (int)DFCareer.AttackModifier.Bonus) != 0)
-                {
-                    damageModifiers += attacker.Level;
-                }
-                if (((int)attacker.Career.HumanoidAttackModifier & (int)DFCareer.AttackModifier.Phobia) != 0)
-                {
-                    damageModifiers -= attacker.Level;
-                }
-            }
-            else if ((target != player) && (AITarget.GetEnemyGroup() == DFCareer.EnemyGroups.Animals))
-            {
-                if (((int)attacker.Career.AnimalsAttackModifier & (int)DFCareer.AttackModifier.Bonus) != 0)
-                {
-                    damageModifiers += attacker.Level;
-                }
-                if (((int)attacker.Career.AnimalsAttackModifier & (int)DFCareer.AttackModifier.Phobia) != 0)
-                {
-                    damageModifiers -= attacker.Level;
-                }
-            }
-
-            // Apply racial modifiers for player.
-            if ((attacker == player) && weapon != null)
-            {
-                if (player.RaceTemplate.ID == (int)Entity.Races.DarkElf)
-                {
-                    damageModifiers += (attacker.Level / 4);
-                    chanceToHitMod += (attacker.Level / 4);
-                }
-                else if (weapon.GetWeaponSkillUsed() == (int)DFCareer.ProficiencyFlags.MissileWeapons)
-                {
-                    if (player.RaceTemplate.ID == (int)Entity.Races.WoodElf)
+                    if (player.RaceTemplate.ID == (int)Entity.Races.DarkElf)
+                    {
+                        damageModifiers += (attacker.Level / 4);
+                        chanceToHitMod += (attacker.Level / 4);
+                    }
+                    else if (skillID == (short)DFCareer.Skills.Archery)
+                    {
+                        if (player.RaceTemplate.ID == (int)Entity.Races.WoodElf)
+                        {
+                            damageModifiers += (attacker.Level / 3);
+                            chanceToHitMod += (attacker.Level / 3);
+                        }
+                    }
+                    else if (player.RaceTemplate.ID == (int)Entity.Races.Redguard)
                     {
                         damageModifiers += (attacker.Level / 3);
                         chanceToHitMod += (attacker.Level / 3);
                     }
                 }
-                else if (player.RaceTemplate.ID == (int)Entity.Races.Redguard)
+
+                // Apply backstabbing
+                if (enemyAnimStateRecord % 5 > 2) // Facing away from player
                 {
-                    damageModifiers += (attacker.Level / 3);
-                    chanceToHitMod += (attacker.Level / 3);
+                    chanceToHitMod += attacker.Skills.GetLiveSkillValue(DFCareer.Skills.Backstabbing);
+                    attacker.TallySkill(DFCareer.Skills.Backstabbing, 1); // backstabbing
+                    backstabbingLevel = attacker.Skills.GetLiveSkillValue(DFCareer.Skills.Backstabbing);
                 }
-            }
-
-            // Apply strength modifier for player or for AI characters using weapons.
-            // The in-game display of the strength modifier in Daggerfall is incorrect. It is actually ((STR - 50) / 5).
-            if ((attacker == player) || (weapon != null))
-            {
-                damageModifiers += DamageModifier(attacker.Stats.LiveStrength);
-            }
-
-            // Apply material modifier.
-            // The in-game display in Daggerfall of weapon damages with material modifiers is incorrect. The material modifier is half of what the display suggests.
-            if (weapon != null)
-            {
-                damageModifiers += weapon.GetWeaponMaterialModifier();
             }
 
             // Choose struck body part
             int[] bodyParts = { 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 6 };
             int struckBodyPart = bodyParts[UnityEngine.Random.Range(0, bodyParts.Length)];
 
-            // Check for a successful hit.
-            if (CalculateSuccessfulHit(attacker, target, chanceToHitMod, weapon, struckBodyPart) == true)
+            // Get damage for weaponless attacks
+            if (skillID == (short)DFCareer.Skills.HandToHand)
             {
-                // 0 damage is possible. Creates no blood splash.
-                damageResult = Mathf.Max(0, (baseDamage + damageModifiers));
+                if (attacker == player)
+                {
+                    if (CalculateSuccessfulHit(attacker, target, chanceToHitMod, null, struckBodyPart))
+                    {
+                        minBaseDamage = CalculateHandToHandMinDamage(attacker.Skills.GetLiveSkillValue(DFCareer.Skills.HandToHand));
+                        maxBaseDamage = CalculateHandToHandMaxDamage(attacker.Skills.GetLiveSkillValue(DFCareer.Skills.HandToHand));
+                        damage = UnityEngine.Random.Range(minBaseDamage, maxBaseDamage + 1);
+
+                        // Apply damage modifiers.
+                        damage += damageModifiers;
+                        // Apply strength modifier. It is not applied in classic despite what the in-game description for the Strength attribute says.
+                        damage += DamageModifier(attacker.Stats.LiveStrength);
+
+                        // Handle backstabbing
+                        if (backstabbingLevel > 0 && UnityEngine.Random.Range(1, 101) <= backstabbingLevel)
+                        {
+                            damage *= 3;
+                            string backstabMessage = UserInterfaceWindows.HardStrings.successfulBackstab;
+                            DaggerfallUI.Instance.PopupMessage(backstabMessage);
+                        }
+                    }
+                }
+                else // attacker is monster
+                {
+                    // Handle multiple attacks by AI
+                    int attackNumber = 0;
+                    while (attackNumber < 3) // Classic supports up to 5 attacks but no monster has more than 3
+                    {
+                        if (attackNumber == 0)
+                        {
+                            minBaseDamage = AIAttacker.MobileEnemy.MinDamage;
+                            maxBaseDamage = AIAttacker.MobileEnemy.MaxDamage;
+                        }
+                        else if (attackNumber == 1)
+                        {
+                            minBaseDamage = AIAttacker.MobileEnemy.MinDamage2;
+                            maxBaseDamage = AIAttacker.MobileEnemy.MaxDamage2;
+                        }
+                        else if (attackNumber == 2)
+                        {
+                            minBaseDamage = AIAttacker.MobileEnemy.MinDamage3;
+                            maxBaseDamage = AIAttacker.MobileEnemy.MaxDamage3;
+                        }
+
+                        if (DFRandom.rand() % 100 < 50 && minBaseDamage > 0 && CalculateSuccessfulHit(attacker, target, chanceToHitMod, null, struckBodyPart))
+                        {
+                            damage += UnityEngine.Random.Range(minBaseDamage, maxBaseDamage + 1);
+                        }
+                        ++attackNumber;
+                    }
+                }
+            }
+            // Handle weapon attacks
+            else
+            {
+                if (CalculateSuccessfulHit(attacker, target, chanceToHitMod, weapon, struckBodyPart))
+                {
+                    damage = UnityEngine.Random.Range(weapon.GetBaseDamageMin(), weapon.GetBaseDamageMax() + 1);
+                    damage += damageModifiers;
+
+                    // Apply modifiers for Skeletal Warrior.
+                    if (AITarget != null && AITarget.CareerIndex == (int)Entity.MonsterCareers.SkeletalWarrior)
+                    {
+                        if (weapon.NativeMaterialValue == (int)Items.WeaponMaterialTypes.Silver)
+                        {
+                            damage *= 2;
+                        }
+                        if ((weapon.flags & 0x10) == 0) // not a blunt weapon
+                        {
+                            damage /= 2;
+                        }
+                    }
+
+                    // Apply strength modifier
+                    damage += DamageModifier(attacker.Stats.LiveStrength);
+
+                    // Apply material modifier.
+                    // The in-game display in Daggerfall of weapon damages with material modifiers is incorrect. The material modifier is half of what the display suggests.
+                    damage += weapon.GetWeaponMaterialModifier();
+
+                    if (damage < 1)
+                        damage = 0;
+
+                    damage += GetBonusOrPenaltyByEnemyType(attacker, AITarget);
+
+                    if (backstabbingLevel > 1 && UnityEngine.Random.Range(1, 100 + 1) <= backstabbingLevel)
+                    {
+                        damage *= 3;
+                        string backstabMessage = UserInterfaceWindows.HardStrings.successfulBackstab;
+                        DaggerfallUI.Instance.PopupMessage(backstabMessage);
+                    }
+                }
             }
 
-            // If damage was done by a weapon, damage condition of weapon and armor of hit body part
-            // In classic, shields are never damaged because the item in the equip slot of the hit
-            // body part is all that is handled.
-            // Here, if an equipped shield covered the hit body part, it takes damage instead.
-            if (weapon != null && damageResult > 0)
+            damage = Mathf.Max(0, damage);
+
+            // If damage was done by a weapon, damage the weapon and armor of the hit body part.
+            // In classic, shields are never damaged, only armor specific to the hitbody part is.
+            // Here, if an equipped shield covers the hit body part, it takes damage instead.
+            if (weapon != null && damage > 0)
             {
-                weapon.DamageThroughPhysicalHit(damageResult, attacker);
+                weapon.DamageThroughPhysicalHit(damage, attacker);
 
                 Items.DaggerfallUnityItem shield = target.ItemEquipTable.GetItem(Items.EquipSlots.LeftHand);
                 bool shieldTakesDamage = false;
@@ -443,36 +456,17 @@ namespace DaggerfallWorkshop.Game.Formulas
                 }
 
                 if (shieldTakesDamage)
-                    shield.DamageThroughPhysicalHit(damageResult, target);
+                    shield.DamageThroughPhysicalHit(damage, target);
                 else
                 {
                     Items.EquipSlots hitSlot = Items.DaggerfallUnityItem.GetEquipSlotForBodyPart((Items.BodyParts)struckBodyPart);
                     Items.DaggerfallUnityItem armor = target.ItemEquipTable.GetItem(hitSlot);
                     if (armor != null)
-                        armor.DamageThroughPhysicalHit(damageResult, target);
+                        armor.DamageThroughPhysicalHit(damage, target);
                 }
             }
 
-            // If attack was by player or weapon-based, end here
-            if ((attacker == player) || (weapon != null))
-            {
-                return damageResult;
-            }
-            // Handle multiple attacks by AI characters.
-            else
-            {
-                if (AIAttacker.MobileEnemy.MaxDamage2 != 0 && (CalculateSuccessfulHit(attacker, target, chanceToHitMod, weapon, struckBodyPart) == true))
-                {
-                    baseDamage = UnityEngine.Random.Range(AIAttacker.MobileEnemy.MinDamage2, AIAttacker.MobileEnemy.MaxDamage2 + 1);
-                    damageResult += Mathf.Max(0, (baseDamage + damageModifiers));
-                }
-                if (AIAttacker.MobileEnemy.MaxDamage3 != 0 && (CalculateSuccessfulHit(attacker, target, chanceToHitMod, weapon, struckBodyPart) == true))
-                {
-                    baseDamage = UnityEngine.Random.Range(AIAttacker.MobileEnemy.MinDamage3, AIAttacker.MobileEnemy.MaxDamage3 + 1);
-                    damageResult += Mathf.Max(0, (baseDamage + damageModifiers));
-                }
-                return damageResult;
-            }
+            return damage;
         }
 
         public static bool CalculateSuccessfulHit(Entity.DaggerfallEntity attacker, Entity.DaggerfallEntity target, int chanceToHitMod, Items.DaggerfallUnityItem weapon, int struckBodyPart)
@@ -551,6 +545,62 @@ namespace DaggerfallWorkshop.Game.Formulas
                 return true;
             else
                 return false;
+        }
+
+        static int GetBonusOrPenaltyByEnemyType(Entity.DaggerfallEntity attacker, Entity.EnemyEntity AITarget)
+        {
+            if (attacker == null || AITarget == null)
+                return 0;
+
+            int damage = 0;
+            // Apply bonus or penalty by opponent type.
+            // In classic this is broken and only works if the attack is done with a weapon that has the maximum number of enchantments.
+            if (AITarget.GetEnemyGroup() == DFCareer.EnemyGroups.Undead)
+            {
+                if (((int)attacker.Career.UndeadAttackModifier & (int)DFCareer.AttackModifier.Bonus) != 0)
+                {
+                    damage += attacker.Level;
+                }
+                if (((int)attacker.Career.UndeadAttackModifier & (int)DFCareer.AttackModifier.Phobia) != 0)
+                {
+                    damage -= attacker.Level;
+                }
+            }
+            else if (AITarget.GetEnemyGroup() == DFCareer.EnemyGroups.Daedra)
+            {
+                if (((int)attacker.Career.DaedraAttackModifier & (int)DFCareer.AttackModifier.Bonus) != 0)
+                {
+                    damage += attacker.Level;
+                }
+                if (((int)attacker.Career.DaedraAttackModifier & (int)DFCareer.AttackModifier.Phobia) != 0)
+                {
+                    damage -= attacker.Level;
+                }
+            }
+            else if (AITarget.GetEnemyGroup() == DFCareer.EnemyGroups.Humanoid)
+            {
+                if (((int)attacker.Career.HumanoidAttackModifier & (int)DFCareer.AttackModifier.Bonus) != 0)
+                {
+                    damage += attacker.Level;
+                }
+                if (((int)attacker.Career.HumanoidAttackModifier & (int)DFCareer.AttackModifier.Phobia) != 0)
+                {
+                    damage -= attacker.Level;
+                }
+            }
+            else if (AITarget.GetEnemyGroup() == DFCareer.EnemyGroups.Animals)
+            {
+                if (((int)attacker.Career.AnimalsAttackModifier & (int)DFCareer.AttackModifier.Bonus) != 0)
+                {
+                    damage += attacker.Level;
+                }
+                if (((int)attacker.Career.AnimalsAttackModifier & (int)DFCareer.AttackModifier.Phobia) != 0)
+                {
+                    damage -= attacker.Level;
+                }
+            }
+
+            return damage;
         }
 
         #endregion
