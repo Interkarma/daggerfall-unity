@@ -216,8 +216,6 @@ namespace DaggerfallWorkshop
                 // Cannot bash magically held doors
                 if (!IsMagicallyHeld)
                 {
-                    PlayerEntity player = Game.GameManager.Instance.PlayerEntity;
-                    player.TallySkill(DFCareer.Skills.Stealth, 1);
                     // Roll for chance to open
                     int chance = 20 - CurrentLockValue;
                     int roll = UnityEngine.Random.Range(1, 101);

@@ -21,9 +21,9 @@ namespace DaggerfallWorkshop.Game
     {
         public static readonly Vector3 ResetPlayerPos = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
 
-        public float SightRadius = 18f;         // Range of enemy sight
-        public float HearingRadius = 10f;       // Range of enemy hearing
-        public float FieldOfView = 140f;        // Enemy field of view
+        public float SightRadius = 25f;         // Range of enemy sight
+        public float HearingRadius = 25f;       // Range of enemy hearing
+        public float FieldOfView = 180f;        // Enemy field of view
 
         DaggerfallMobileUnit mobile;
         bool playerInSight;
@@ -34,6 +34,8 @@ namespace DaggerfallWorkshop.Game
         DaggerfallActionDoor actionDoor;
         float distanceToActionDoor;
         bool hasEncounteredPlayer = false;
+        bool detectedPlayer = false;
+        uint timeOfLastStealthCheck = 0;
 
         GameObject Player
         {
@@ -43,6 +45,12 @@ namespace DaggerfallWorkshop.Game
         public bool PlayerInSight
         {
             get { return playerInSight; }
+        }
+
+        public bool DetectedPlayer
+        {
+            get { return detectedPlayer; }
+            set { detectedPlayer = value; }
         }
 
         public bool PlayerInEarshot
@@ -97,7 +105,16 @@ namespace DaggerfallWorkshop.Game
                 distanceToPlayer = toPlayer.magnitude;
 
                 playerInSight = CanSeePlayer();
-                playerInEarshot = CanHearPlayer();
+
+                if (playerInSight)
+                    detectedPlayer = true;
+
+                // Classic stealth mechanics would be interfered with by hearing, so only enable
+                // hearing if the enemy has detected the player. If player has been seen we can omit hearing.
+                if (detectedPlayer == true && !playerInSight)
+                    playerInEarshot = CanHearPlayer();
+                else
+                    playerInEarshot = false;
 
                 if((playerInEarshot || playerInSight) && !hasEncounteredPlayer)
                     hasEncounteredPlayer = true;
@@ -105,6 +122,37 @@ namespace DaggerfallWorkshop.Game
         }
 
         #region Private Methods
+
+        public bool StealthCheck()
+        {
+            if (distanceToPlayer > 1024 * MeshReader.GlobalScale)
+                return false;
+
+            uint gameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+            if (gameMinutes == timeOfLastStealthCheck)
+                return detectedPlayer;
+
+            PlayerMotor playerMotor = GameManager.Instance.PlayerMotor;
+            if (playerMotor.IsMovingLessThanHalfSpeed)
+            {
+                if ((gameMinutes & 1) == 1)
+                    return detectedPlayer;
+            }
+            else if (hasEncounteredPlayer)
+                return true;
+
+            Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
+            if (player.TimeOfLastStealthCheck != gameMinutes)
+            {
+                player.TallySkill(DaggerfallConnect.DFCareer.Skills.Stealth, 1);
+                player.TimeOfLastStealthCheck = gameMinutes;
+            }
+            timeOfLastStealthCheck = gameMinutes;
+
+            int stealthRoll = 2 * ((int)(distanceToPlayer / MeshReader.GlobalScale) * player.Skills.GetLiveSkillValue(DaggerfallConnect.DFCareer.Skills.Stealth) >> 10);
+
+            return Random.Range(1, 101) > stealthRoll;
+        }
 
         private bool CanSeePlayer()
         {
@@ -151,14 +199,15 @@ namespace DaggerfallWorkshop.Game
             bool heard = false;
             float hearingScale = 1f;
 
-            // If something is between enemy and player then reduce hearing radius by half
+            // If something is between enemy and player then return false (was reduce hearingScale by half), to minimize
+            // enemies walking against walls.
             // Hearing is not impeded by doors or other non-static objects
             RaycastHit hit;
             Ray ray = new Ray(transform.position, directionToPlayer);
             if (Physics.Raycast(ray, out hit))
             {
                 if (hit.transform.gameObject != Player && hit.transform.gameObject.isStatic)
-                    hearingScale = 0.5f;
+                    return false;
             }
 
             // TODO: Modify this by how much noise the player is making

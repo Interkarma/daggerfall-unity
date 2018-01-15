@@ -52,7 +52,8 @@ namespace DaggerfallWorkshop.Game
         const float animFrameTime = 0.125f;  // Time between animation frames in seconds.
 
         const SoundClips horseSound = SoundClips.AnimalHorse;
-        const SoundClips horseRidingSound = SoundClips.HorseClop2;
+        const SoundClips horseRidingSound1 = SoundClips.HorseClop;
+        const SoundClips horseRidingSound2 = SoundClips.HorseClop2;
         const SoundClips cartRidingSound = SoundClips.HorseAndCart;
 
         // TODO: Move into ImageHelper? (duplicated in FPSWeapon & DaggerfallVidPlayerWindow)
@@ -69,7 +70,7 @@ namespace DaggerfallWorkshop.Game
 
         AudioClip neighClip;
         float neighTime = 0;
-
+        bool wasMovingLessThanHalfSpeed = true;
 
         // Use this for initialization
         void Start()
@@ -126,7 +127,21 @@ namespace DaggerfallWorkshop.Game
                         frameIdx = (frameIdx == 3) ? 0 : frameIdx + 1;
                         ridingTexure = ridingTexures[frameIdx];
                     }
-                    // Play hoof-fall (clip-clop) sounds.
+                    // Get appropriate hoof sound for horse
+                    if (mode == TransportModes.Horse)
+                    {
+                        if (!wasMovingLessThanHalfSpeed && playerMotor.IsMovingLessThanHalfSpeed)
+                        {
+                            wasMovingLessThanHalfSpeed = true;
+                            ridingAudioSource.clip = dfAudioSource.GetAudioClip((int)horseRidingSound1);
+                        }
+                        else if (wasMovingLessThanHalfSpeed && !playerMotor.IsMovingLessThanHalfSpeed)
+                        {
+                            wasMovingLessThanHalfSpeed = false;
+                            ridingAudioSource.clip = dfAudioSource.GetAudioClip((int)horseRidingSound2);
+                        }
+                    }
+
                     if (!ridingAudioSource.isPlaying)
                         ridingAudioSource.Play();
                 }
@@ -173,7 +188,7 @@ namespace DaggerfallWorkshop.Game
                 playerMotor.IsRiding = true;
 
                 // Setup appropriate riding sounds.
-                SoundClips sound = (mode == TransportModes.Horse) ? horseRidingSound : cartRidingSound;
+                SoundClips sound = (mode == TransportModes.Horse) ? horseRidingSound2 : cartRidingSound;
                 ridingAudioSource.clip = dfAudioSource.GetAudioClip((int) sound);
 
                 // Setup appropriate riding textures.
