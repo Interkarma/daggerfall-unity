@@ -64,7 +64,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         readonly Mod mod;
 
         IniData data;
-        IniData defaultSettings;
         ModSettingsConfiguration config;
         List<IniData> presets = new List<IniData>();
 
@@ -92,8 +91,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         protected override void Setup()
         {
             // Get settings
-            ModSettingsReader.GetSettings(mod, out data, out defaultSettings);
-            config = ModSettingsReader.GetConfig(mod);
+            ModSettingsReader.GetSettings(mod, out data, out config);
             presets = ModSettingsReader.GetPresets(mod);
 
             // Setup base panel
@@ -129,110 +127,86 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// <summary>
         /// Load settings from IniData.
         /// </summary>
-        private void LoadSettings ()
+        private void LoadSettings()
         {
-            // Read settings
-            foreach (SectionData section in data.Sections.Where(x => x.SectionName != ModSettingsReader.internalSection))
+            foreach (var section in config.VisibleSections)
             {
-                // Section title
-                AddSectionTitle(section.SectionName);
+                // Add section title to window
+                AddSectionTitle(section.name);
                 MovePosition(spacing);
-                List<string> comments = section.Comments;
-                int comment = 0;
 
-                foreach (KeyData key in section.Keys)
+                // Get section from collection
+                SectionDataCollection sectionDataCollection = data.Sections;
+                if (!sectionDataCollection.ContainsSection(section.name))
+                    sectionDataCollection.AddSection(section.name);
+                SectionData sectionData = sectionDataCollection.GetSectionData(section.name);
+
+                foreach (var key in section.keys)
                 {
-                    // Setting label
-                    TextLabel settingName = AddKeyName(key.KeyName);
+                    // Get key from collection
+                    KeyDataCollection keyDataCollection = sectionData.Keys;
+                    if (!keyDataCollection.ContainsKey(key.name))
+                        keyDataCollection.AddKey(key.name);
+                    KeyData keyData = keyDataCollection.GetKeyData(key.name);
 
-                    // Setting field
-                    ModSettingsKey configKey;
-                    if (config && config.Key(section.SectionName, key.KeyName, out configKey))
+                    // Add key to window with corrispective control
+                    TextLabel settingName = AddKeyName(key.name);
+                    settingName.ToolTip = defaultToolTip;
+                    settingName.ToolTipText = key.description;
+
+                    switch (key.type)
                     {
-                        settingName.ToolTip = defaultToolTip;
-                        settingName.ToolTipText = configKey.description;
+                        case ModSettingsKey.KeyType.Toggle:
+                            bool toggle;
+                            AddCheckBox(bool.TryParse(keyData.Value, out toggle) ? toggle : key.toggle.value);
+                            break;
 
-                        // Use config file
-                        switch (configKey.type)
-                        {
-                            case ModSettingsKey.KeyType.Toggle:
-                                bool toggle;
-                                AddCheckBox((bool.TryParse(key.Value, out toggle) && toggle) || configKey.toggle.value);
-                                break;
+                        case ModSettingsKey.KeyType.MultipleChoice:
+                            int selected;
+                            if (!int.TryParse(keyData.Value, out selected))
+                                selected = key.multipleChoice.selected;
+                            var multipleChoice = GetSlider();
+                            multipleChoice.SetIndicator(key.multipleChoice.choices, selected);
+                            SetSliderIndicator(multipleChoice);
+                            break;
 
-                            case ModSettingsKey.KeyType.MultipleChoice:
-                                int selected;
-                                if (!int.TryParse(key.Value, out selected))
-                                    selected = configKey.multipleChoice.selected;
-                                var multipleChoice = GetSlider();
-                                multipleChoice.SetIndicator(configKey.multipleChoice.choices, selected);
-                                SetSliderIndicator(multipleChoice);
-                                break;
+                        case ModSettingsKey.KeyType.Slider:
+                            var sliderKey = key.slider;
+                            int startValue;
+                            if (!int.TryParse(keyData.Value, out startValue))
+                                startValue = key.slider.value;
+                            var slider = GetSlider();
+                            slider.SetIndicator(sliderKey.min, sliderKey.max, startValue);
+                            SetSliderIndicator(slider);
+                            break;
 
-                            case ModSettingsKey.KeyType.Slider:
-                                var sliderKey = configKey.slider;
-                                int startValue;
-                                if (!int.TryParse(key.Value, out startValue))
-                                    startValue = configKey.slider.value;
-                                var slider = GetSlider();
-                                slider.SetIndicator(sliderKey.min, sliderKey.max, startValue);
-                                SetSliderIndicator(slider);
-                                break;
+                        case ModSettingsKey.KeyType.FloatSlider:
+                            var floatSliderKey = key.floatSlider;
+                            float floatStartValue;
+                            if (!float.TryParse(keyData.Value, out floatStartValue))
+                                floatStartValue = key.floatSlider.value;
+                            var floatSlider = GetSlider();
+                            floatSlider.SetIndicator(floatSliderKey.min, floatSliderKey.max, floatStartValue);
+                            SetSliderIndicator(floatSlider);
+                            break;
 
-                            case ModSettingsKey.KeyType.FloatSlider:
-                                var floatSliderKey = configKey.floatSlider;
-                                float floatStartValue;
-                                if (!float.TryParse(key.Value, out floatStartValue))
-                                    floatStartValue = configKey.floatSlider.value;
-                                var floatSlider = GetSlider();
-                                floatSlider.SetIndicator(floatSliderKey.min, floatSliderKey.max, floatStartValue);
-                                SetSliderIndicator(floatSlider);
-                                break;
+                        case ModSettingsKey.KeyType.Tuple:
+                            var tuple = AddTuple(keyData.Value);
+                            tuple.First.Numeric = tuple.Second.Numeric = true;
+                            break;
 
-                            case ModSettingsKey.KeyType.Tuple:
-                                var tuple = AddTuple(key.Value);
-                                tuple.First.Numeric = tuple.Second.Numeric = true;
-                                break;
+                        case ModSettingsKey.KeyType.FloatTuple:
+                            AddTuple(keyData.Value); // TextBox.Numeric doesn't allow dot
+                            break;
 
-                            case ModSettingsKey.KeyType.FloatTuple:
-                                AddTuple(key.Value); // TextBox.Numeric doesn't allow dot
-                                break;
-
-                            case ModSettingsKey.KeyType.Text:
-                                TextBox textBox = GetTextbox(95, 40, key.Value);
-                                modTextBoxes.Add(textBox);
-                                break;
-
-                            case ModSettingsKey.KeyType.Color:
-                                AddColorPicker(key.Value, configKey);
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        // Legacy support
-                        if (comment < comments.Count)
-                        {
-                            settingName.ToolTip = defaultToolTip;
-                            settingName.ToolTipText = comments[comment];
-                            comment++;
-                        }
-
-                        if (key.Value == "True")
-                            AddCheckBox(true);
-                        else if (key.Value == "False")
-                            AddCheckBox(false);
-                        else if (key.Value.Contains(ModSettingsReader.tupleDelimiterChar))
-                            AddTuple(key.Value);
-                        else if (ModSettingsReader.IsHexColor(key.Value))
-                        {
-                            AddColorPicker(key.Value);
-                        }
-                        else
-                        {
-                            TextBox textBox = GetTextbox(95, 40, key.Value);
+                        case ModSettingsKey.KeyType.Text:
+                            TextBox textBox = GetTextbox(95, 40, keyData.Value);
                             modTextBoxes.Add(textBox);
-                        }
+                            break;
+
+                        case ModSettingsKey.KeyType.Color:
+                            AddColorPicker(keyData.Value, key);
+                            break;
                     }
 
                     MovePosition(spacing);
@@ -248,68 +222,42 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         {
             // Set new values
             int checkBox = 0, textBox = 0, tuple = 0, slider = 0, colorPicker = 0;
-            foreach (SectionData section in data.Sections.Where(x => x.SectionName != ModSettingsReader.internalSection))
+            foreach (var section in config.VisibleSections)
             {
-                foreach (KeyData key in section.Keys)
+                foreach (var key in section.keys)
                 {
-                    ModSettingsKey configKey;
-                    if (config && config.Key(section.SectionName, key.KeyName, out configKey))
+                    switch (key.type)
                     {
-                        switch(configKey.type)
-                        {
-                            case ModSettingsKey.KeyType.Toggle:
-                                data[section.SectionName][key.KeyName] = modCheckboxes[checkBox].IsChecked.ToString();
-                                checkBox++;
-                                break;
+                        case ModSettingsKey.KeyType.Toggle:
+                            data[section.name][key.name] = modCheckboxes[checkBox].IsChecked.ToString();
+                            checkBox++;
+                            break;
 
-                            case ModSettingsKey.KeyType.MultipleChoice:
-                            case ModSettingsKey.KeyType.Slider:
-                            case ModSettingsKey.KeyType.FloatSlider:
-                                data[section.SectionName][key.KeyName] = modSliders[slider].GetValue().ToString();
-                                slider++;
-                                break;
+                        case ModSettingsKey.KeyType.MultipleChoice:
+                        case ModSettingsKey.KeyType.Slider:
+                        case ModSettingsKey.KeyType.FloatSlider:
+                            data[section.name][key.name] = modSliders[slider].GetValue().ToString();
+                            slider++;
+                            break;
 
-                            case ModSettingsKey.KeyType.Tuple:
-                            case ModSettingsKey.KeyType.FloatTuple:
-                                string value = modTuples[tuple].First.ResultText + ModSettingsReader.tupleDelimiterChar + modTuples[tuple].Second.ResultText;
-                                data[section.SectionName][key.KeyName] = value;
-                                tuple++;
-                                break;
+                        case ModSettingsKey.KeyType.Tuple:
+                        case ModSettingsKey.KeyType.FloatTuple:
+                            string value = modTuples[tuple].First.ResultText + ModSettingsReader.tupleDelimiterChar + modTuples[tuple].Second.ResultText;
+                            data[section.name][key.name] = value;
+                            tuple++;
+                            break;
 
-                            case ModSettingsKey.KeyType.Text:
-                                data[section.SectionName][key.KeyName] = modTextBoxes[textBox].ResultText;
-                                textBox++;
-                                break;
+                        case ModSettingsKey.KeyType.Text:
+                            data[section.name][key.name] = modTextBoxes[textBox].ResultText;
+                            textBox++;
+                            break;
 
-                            case ModSettingsKey.KeyType.Color:
-                                string hexColor = ColorUtility.ToHtmlStringRGBA(modColorPickers[colorPicker].BackgroundColor);
-                                data[section.SectionName][key.KeyName] = hexColor;
-                                colorPicker++;
-                                break;
-                        }
+                        case ModSettingsKey.KeyType.Color:
+                            string hexColor = ColorUtility.ToHtmlStringRGBA(modColorPickers[colorPicker].BackgroundColor);
+                            data[section.name][key.name] = hexColor;
+                            colorPicker++;
+                            break;
                     }
-                    else if (key.Value == "True" || key.Value == "False")
-                    {
-                        data[section.SectionName][key.KeyName] = modCheckboxes[checkBox].IsChecked.ToString();
-                        checkBox++;
-                    }
-                    else if (key.Value.Contains(ModSettingsReader.tupleDelimiterChar))
-                    {
-                        string value = modTuples[tuple].First.ResultText + ModSettingsReader.tupleDelimiterChar + modTuples[tuple].Second.ResultText;
-                        data[section.SectionName][key.KeyName] = value;
-                        tuple++;
-                    }
-                    else if (ModSettingsReader.IsHexColor(key.Value))
-                    {
-                        string hexColor = ColorUtility.ToHtmlStringRGBA(modColorPickers[colorPicker].BackgroundColor);
-                        data[section.SectionName][key.KeyName] = hexColor;
-                        colorPicker++;
-                    }
-                    else
-                    {
-                        data[section.SectionName][key.KeyName] = modTextBoxes[textBox].ResultText;
-                        textBox++;
-                    }     
                 }
             }
 
@@ -448,7 +396,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             currentPanel.Components.Add(background);
 
             TextLabel textLabel = new TextLabel(DaggerfallUI.Instance.Font5);
-            textLabel.Text = FormattedName(title);
+            textLabel.Text = ModSettingsReader.FormattedName(title);
             textLabel.TextColor = sectionTitleColor;
             textLabel.ShadowColor = sectionTitleShadow;
             textLabel.TextScale = 0.9f;
@@ -460,22 +408,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         private TextLabel AddKeyName(string name)
         {
             TextLabel textLabel = new TextLabel();
-            textLabel.Text = FormattedName(name);
+            textLabel.Text = ModSettingsReader.FormattedName(name);
             textLabel.ShadowColor = Color.clear;
             textLabel.TextScale = textScale;
             textLabel.Position = new Vector2(x, y);
             textLabel.HorizontalAlignment = HorizontalAlignment.None;
             currentPanel.Components.Add(textLabel);
             return textLabel;
-        }
-
-        /// <summary>
-        /// Add a space before uppercase chars.
-        /// </summary>
-        private string FormattedName(string name)
-        {
-            var chars = name.Select(x => Char.IsUpper(x) ? " " + x : x.ToString());
-            return string.Concat(chars.ToArray()).TrimStart(' ');
         }
 
         /// <summary>
@@ -581,7 +520,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             return tuple;
         }
 
-        private void AddColorPicker(string hexColor, ModSettingsKey key = null)
+        private void AddColorPicker(string hexColor, ModSettingsKey key)
         {
             Button colorPicker = new Button()
             {
@@ -591,9 +530,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             };
             colorPicker.Outline.Enabled = true;
 
-            if (!ModSettingsReader.IsHexColor(hexColor))
-                hexColor = key != null ? key.color.HexColor : "FFFFFFFF";
-            colorPicker.BackgroundColor = ModSettingsReader.ColorFromString(hexColor);
+            Color color;
+            if (ColorUtility.TryParseHtmlString("#" + hexColor, out color))
+                colorPicker.BackgroundColor = color;
+            else
+                colorPicker.BackgroundColor = key.color.color;
 
             colorPicker.OnMouseClick += ColorPicker_OnMouseClick;
             modColorPickers.Add(colorPicker);
@@ -663,7 +604,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         {
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
             {
-                ModSettingsReader.ResetSettings(mod, ref data, defaultSettings);
+                ModSettingsReader.ResetSettings(mod, ref data, config);
                 CloseWindow();
                 RestartSettingsWindow();
             }
