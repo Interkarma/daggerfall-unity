@@ -239,7 +239,7 @@ namespace DaggerfallWorkshop.Game.Utility
             // Only supporting left-hand rendering for now
             // More handedness options may be added later
             if (DaggerfallUnity.Settings.Handedness == 1)
-                weaponManager.RightHandWeapon.LeftHand = true;
+                weaponManager.ScreenWeapon.FlipHorizontal = true;
 
             // GodMode setting
             PlayerEntity playerEntity = FindPlayerEntity();

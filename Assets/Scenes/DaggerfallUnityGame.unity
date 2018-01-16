@@ -1693,6 +1693,10 @@ Prefab:
       propertyPath: DungeonAmbientLight.b
       value: 0.29411766
       objectReference: {fileID: 0}
+    - target: {fileID: 11400018, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 2}
+      propertyPath: ScreenWeapon
+      value: 
+      objectReference: {fileID: 2132483541}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 2}
   m_IsPrefabParent: 0
@@ -2228,3 +2232,9 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: bbe5e15c9f6b3dc47bb9485a437750a0, type: 2}
   m_IsPrefabParent: 0
+--- !u!114 &2132483541 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 11400020, guid: 53a45b46ca97a974f8e677f68c2a85e6,
+    type: 2}
+  m_PrefabInternal: {fileID: 1603610568}
+  m_Script: {fileID: 11500000, guid: 5760473fd49c2004189fbdf0b7ed6cb7, type: 3}

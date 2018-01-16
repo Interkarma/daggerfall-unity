@@ -31,7 +31,7 @@ namespace DaggerfallWorkshop.Game
     public class FPSWeapon : MonoBehaviour
     {
         public bool ShowWeapon = true;
-        public bool LeftHand = false;
+        public bool FlipHorizontal = false;
         public WeaponTypes WeaponType = WeaponTypes.None;
         public MetalTypes MetalType = MetalTypes.None;
         public float Reach = 2.5f;
@@ -227,8 +227,8 @@ namespace DaggerfallWorkshop.Game
                 weaponAnimRecordIndex = 0; // Bow has only 1 animation
             else
                 weaponAnimRecordIndex = (int)weaponState;
-            if (LeftHand &&
-                (weaponState == WeaponStates.Idle || weaponState == WeaponStates.StrikeDown || weaponState == WeaponStates.StrikeUp))
+
+            if (FlipHorizontal && (weaponState == WeaponStates.Idle || weaponState == WeaponStates.StrikeDown || weaponState == WeaponStates.StrikeUp))
             {
                 // Mirror weapon rect
                 Rect rect = weaponRects[weaponIndices[weaponAnimRecordIndex].startIndex + currentFrame];
@@ -295,8 +295,7 @@ namespace DaggerfallWorkshop.Game
 
         private void AlignRight(WeaponAnimation anim, int width, int height)
         {
-            if (LeftHand &&
-                (weaponState == WeaponStates.Idle || weaponState == WeaponStates.StrikeDown || weaponState == WeaponStates.StrikeUp))
+            if (FlipHorizontal && (weaponState == WeaponStates.Idle || weaponState == WeaponStates.StrikeDown || weaponState == WeaponStates.StrikeUp))
             {
                 // Flip alignment
                 AlignLeft(anim, width, height);

@@ -252,11 +252,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (attacker == player)
             {
                 // Apply swing modifiers. Not applied to hand-to-hand in classic.
-                FPSWeapon onscreenWeapon;
-                if (weaponEquipSlot == (int)(Items.EquipSlots.RightHand))
-                    onscreenWeapon = GameManager.Instance.WeaponManager.RightHandWeapon;
-                else
-                    onscreenWeapon = GameManager.Instance.WeaponManager.LeftHandWeapon;
+                FPSWeapon onscreenWeapon = GameManager.Instance.WeaponManager.ScreenWeapon;
 
                 if (onscreenWeapon != null)
                 {

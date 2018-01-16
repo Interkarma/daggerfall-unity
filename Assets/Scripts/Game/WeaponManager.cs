@@ -30,19 +30,16 @@ namespace DaggerfallWorkshop.Game
         // Max time-length of a trail of mouse positions for attack gestures
         private const float MaxGestureSeconds = 1.0f;
 
-        public FPSWeapon LeftHandWeapon;            // Weapon in left hand
-        public FPSWeapon RightHandWeapon;           // Weapon in right hand
-        public bool Sheathed;                       // Weapon (or weapons) are sheathed
+        public FPSWeapon ScreenWeapon;              // Weapon displayed in FPS view
+        public bool Sheathed;                       // Weapon is sheathed
         public float SphereCastRadius = 0.3f;       // Radius of SphereCast used to target attacks
         [Range(0, 1)]
-        public float AttackThreshold = 0.05f;        // Minimum mouse gesture travel distance for an attack. % of screen
+        public float AttackThreshold = 0.05f;       // Minimum mouse gesture travel distance for an attack. % of screen
         public float ChanceToBeParried = 0.1f;      // Example: Chance for player hit to be parried
-
-        bool alternateAttack;                       // Flag to flip weapons on alternating attacks
 
         float weaponSensitivity = 1.0f;             // Sensitivity of weapon swings to mouse movements
         private Gesture _gesture;
-        private int _longestDim;                     // Longest screen dimension, used to compare gestures for attack
+        private int _longestDim;                    // Longest screen dimension, used to compare gestures for attack
 
         PlayerEntity playerEntity;
         GameObject player;
@@ -180,7 +177,7 @@ namespace DaggerfallWorkshop.Game
             player = transform.gameObject;
             _gesture = new Gesture();
             _longestDim = Math.Max(Screen.width, Screen.height);
-            SetMelee(RightHandWeapon);
+            SetMelee(ScreenWeapon);
         }
 
         void Update()
@@ -191,18 +188,11 @@ namespace DaggerfallWorkshop.Game
             else
                 playerEntity = GameManager.Instance.PlayerEntity;
 
-            // Get weapon
-            FPSWeapon weapon;
-            if (usingRightHand)
-                weapon = RightHandWeapon;
-            else
-                weapon = LeftHandWeapon;
-
             // Reset variables if there isn't an attack ongoing
-            if (!IsLeftHandAttacking() && !IsRightHandAttacking())
+            if (!IsWeaponAttacking())
             {
                 // If an attack with a bow just finished, set cooldown
-                if (weapon.WeaponType == WeaponTypes.Bow && isAttacking)
+                if (ScreenWeapon.WeaponType == WeaponTypes.Bow && isAttacking)
                 {
                     float cooldown = 10 * (100 - playerEntity.Stats.LiveSpeed) + 800;
                     cooldownTime = Time.time + (cooldown / 980); // Approximates classic frame update
@@ -245,8 +235,7 @@ namespace DaggerfallWorkshop.Game
                 ShowWeapons(true);
 
             // Get if bow is equipped
-            bool bowEquipped = (RightHandWeapon && RightHandWeapon.WeaponType == WeaponTypes.Bow)
-                 || (LeftHandWeapon && LeftHandWeapon.WeaponType == WeaponTypes.Bow);
+            bool bowEquipped = (ScreenWeapon && ScreenWeapon.WeaponType == WeaponTypes.Bow);
 
             // Handle beginning a new attack
             if (!isAttacking)
@@ -307,9 +296,9 @@ namespace DaggerfallWorkshop.Game
             if (!isAttacking)
                 return;
 
-            if (!isBowSoundFinished && weapon.WeaponType == WeaponTypes.Bow && weapon.GetCurrentFrame() == 3)
+            if (!isBowSoundFinished && ScreenWeapon.WeaponType == WeaponTypes.Bow && ScreenWeapon.GetCurrentFrame() == 3)
             {
-                weapon.PlaySwingSound();
+                ScreenWeapon.PlaySwingSound();
                 isBowSoundFinished = true;
 
                 // Remove arrow
@@ -322,7 +311,7 @@ namespace DaggerfallWorkshop.Game
                         playerItems.RemoveItem(arrow);
                 }
             }
-            else if (!isDamageFinished && weapon.GetCurrentFrame() == weapon.GetHitFrame())
+            else if (!isDamageFinished && ScreenWeapon.GetCurrentFrame() == ScreenWeapon.GetHitFrame())
             {
                 // The attack has reached the hit frame.
                 // Attempt to transfer damage based on last attack hand.
@@ -330,18 +319,18 @@ namespace DaggerfallWorkshop.Game
 
                 // Transfer damage.
                 bool hitEnemy = false;
-                WeaponDamage(weapon, out hitEnemy);
+                WeaponDamage(ScreenWeapon, out hitEnemy);
 
                 // Fatigue loss
                 playerEntity.DecreaseFatigue(swingWeaponFatigueLoss);
 
                 // Play swing sound if attack didn't hit an enemy.
-                if (!hitEnemy && weapon.WeaponType != WeaponTypes.Bow)
-                    weapon.PlaySwingSound();
+                if (!hitEnemy && ScreenWeapon.WeaponType != WeaponTypes.Bow)
+                    ScreenWeapon.PlaySwingSound();
                 else
                 {
                     // Tally skills
-                    if (weapon.WeaponType == WeaponTypes.Melee || weapon.WeaponType == WeaponTypes.Werecreature)
+                    if (ScreenWeapon.WeaponType == WeaponTypes.Melee || ScreenWeapon.WeaponType == WeaponTypes.Werecreature)
                         playerEntity.TallySkill(DFCareer.Skills.HandToHand, 1);
                     else if (usingRightHand && (currentRightHandWeapon != null))
                         playerEntity.TallySkill(currentRightHandWeapon.GetWeaponSkillID(), 1);
@@ -438,16 +427,16 @@ namespace DaggerfallWorkshop.Game
             if (usingRightHand)
             {
                 if (currentRightHandWeapon == null)
-                    SetMelee(RightHandWeapon);
+                    SetMelee(ScreenWeapon);
                 else
-                    SetWeapon(RightHandWeapon, currentRightHandWeapon);
+                    SetWeapon(ScreenWeapon, currentRightHandWeapon);
             }
             else
             {
                 if (currentLeftHandWeapon == null)
-                    SetMelee(RightHandWeapon);
+                    SetMelee(ScreenWeapon);
                 else
-                    SetWeapon(RightHandWeapon, currentLeftHandWeapon);
+                    SetWeapon(ScreenWeapon, currentLeftHandWeapon);
             }
         }
 
@@ -554,76 +543,29 @@ namespace DaggerfallWorkshop.Game
         }
 
         void ExecuteAttacks(MouseDirections direction)
-        {
-            // Perform dual-wield attacks
-            if (LeftHandWeapon && RightHandWeapon)
+        { 
+            if(ScreenWeapon)
             {
-                // Hand-specific attacks
-                if (direction == MouseDirections.Right || direction == MouseDirections.DownRight)
-                {
-                    RightHandWeapon.ShowWeapon = false;
-                    LeftHandWeapon.OnAttackDirection(direction);
-                    lastAttackHand = Hand.Left;
-                    return;
-                }
-                else if (direction == MouseDirections.Left || direction == MouseDirections.DownLeft)
-                {
-                    LeftHandWeapon.ShowWeapon = false;
-                    RightHandWeapon.OnAttackDirection(direction);
-                    lastAttackHand = Hand.Right;
-                    return;
-                }
-                else
-                {
-                    // Alternate attack hand
-                    alternateAttack = !alternateAttack;
-                }
-
-                // Fire alternating attack
-                if (alternateAttack)
-                {
-                    LeftHandWeapon.OnAttackDirection(direction);
-                    lastAttackHand = Hand.Left;
-                }
-                else
-                {
-                    RightHandWeapon.OnAttackDirection(direction);
-                    lastAttackHand = Hand.Right;
-                }
-            }
-            else if (LeftHandWeapon && !RightHandWeapon)
-            {
-                // Just fire left hand
-                LeftHandWeapon.OnAttackDirection(direction);
-                lastAttackHand = Hand.Left;
-            }
-            else if (!LeftHandWeapon && RightHandWeapon)
-            {
-                // Just fire right hand
-                RightHandWeapon.OnAttackDirection(direction);
+                // Fire screen weapon animation
+                ScreenWeapon.OnAttackDirection(direction);
                 lastAttackHand = Hand.Right;
             }
             else
             {
-                // No weapons set, no attacks possible
+                // No weapon set, no attacks possible
                 lastAttackHand = Hand.None;
             }
         }
 
-        private bool IsLeftHandAttacking()
+        private bool IsWeaponAttacking()
         {
-            return LeftHandWeapon && LeftHandWeapon.IsAttacking();
-        }
-
-        private bool IsRightHandAttacking()
-        {
-            return RightHandWeapon && RightHandWeapon.IsAttacking();
+            return ScreenWeapon && ScreenWeapon.IsAttacking();
         }
 
         private void ShowWeapons(bool show)
         {
-            if (LeftHandWeapon) LeftHandWeapon.ShowWeapon = show;
-            if (RightHandWeapon) RightHandWeapon.ShowWeapon = show;
+            if (ScreenWeapon)
+                ScreenWeapon.ShowWeapon = show;
         }
 
         private void WeaponDamage(FPSWeapon weapon, out bool hitEnemy)
@@ -759,20 +701,12 @@ namespace DaggerfallWorkshop.Game
             Sheathed = !Sheathed;
             if (!Sheathed)
             {
-                // Play left-hand weapon equip sound
-                if (LeftHandWeapon &&
-                    LeftHandWeapon.WeaponType != WeaponTypes.Melee &&
-                    LeftHandWeapon.WeaponType != WeaponTypes.None)
-                {
-                    LeftHandWeapon.PlayActivateSound();
-                }
-
                 // Play right-hand weapon equip sound
-                if (RightHandWeapon &&
-                    RightHandWeapon.WeaponType != WeaponTypes.Melee &&
-                    RightHandWeapon.WeaponType != WeaponTypes.None)
+                if (ScreenWeapon &&
+                    ScreenWeapon.WeaponType != WeaponTypes.Melee &&
+                    ScreenWeapon.WeaponType != WeaponTypes.None)
                 {
-                    RightHandWeapon.PlayActivateSound();
+                    ScreenWeapon.PlayActivateSound();
                 }
             }
         }
