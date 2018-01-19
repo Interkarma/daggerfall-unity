@@ -224,6 +224,7 @@ namespace DaggerfallWorkshop.Game.Utility
 
             // Filter settings
             DaggerfallUnity.Instance.MaterialReader.MainFilterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
+            DaggerfallUnity.Instance.MaterialReader.CompressModdedTextures = DaggerfallUnity.Settings.CompressModdedTextures;
 
             // HUD settings
             DaggerfallHUD hud = DaggerfallUI.Instance.DaggerfallHUD;
