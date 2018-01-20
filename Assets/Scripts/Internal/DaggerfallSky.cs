@@ -54,7 +54,6 @@ namespace DaggerfallWorkshop
         const int skyNativeHalfWidth = 256;     // Half native image width
         const int skyNativeHeight = 220;        // Native image height
         const float skyScale = 1.3f;            // Scale of sky image relative to display area
-        const float skyHorizon = 0.20f;         // Higher the value lower the horizon
 
         DaggerfallUnity dfUnity;
         public SkyFile skyFile;
@@ -235,21 +234,16 @@ namespace DaggerfallWorkshop
             }
 
             // Scroll up-down
-            float horizonY = -Screen.height + (Screen.height * skyHorizon);
-            float scrollY = horizonY;
-            if (angles.x >= 270f && angles.x < 360f)
-            {
-                // Scroll down until top of sky is aligned with top of screen
-                percent = (360f - angles.x) / 75f;
-                scrollY += height * percent;
-                if (scrollY > 0) scrollY = 0;
-            }
-            else
-            {
-                // Keep scrolling up
-                percent = angles.x / 75f;
-                scrollY -= height * percent;
-            }
+            // "baseScrollY" puts the bottom of the fake sky at the center of the screen.
+            float baseScrollY = -(height - Screen.height) - (Screen.height / 2);
+
+            // Zoom of the camera (1.0 at fov=90).
+            float zoom = 1f / Mathf.Tan((mainCamera.fieldOfView * 0.50f) * Mathf.Deg2Rad);
+            float angleXRadians = angles.x * Mathf.Deg2Rad;
+
+            // Y-shearing is the percent of the screen height to translate Y coordinates by.
+            float yShear = (Mathf.Tan(angleXRadians) * zoom) * 0.50f;
+            float scrollY = Mathf.Clamp(baseScrollY - (yShear * Screen.height), -height, 0f);
 
             westRect = new Rect(westOffset + scrollX, scrollY, width, height);
             eastRect = new Rect(eastOffset + scrollX, scrollY, width, height);
