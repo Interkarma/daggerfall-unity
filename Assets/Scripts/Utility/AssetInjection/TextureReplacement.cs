@@ -15,6 +15,8 @@
  *        (http://forums.dfworkshop.net/viewtopic.php?f=22&p=3547&sid=6a99dbcffad1a15b08dd5e157274b772#p3547)
  */
 
+//#define DEBUG_TEXTURE_FORMAT
+
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -91,6 +93,16 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         #endregion
 
         #region Properties
+
+        static TextureFormat TextureFormat
+        {
+            get
+            {
+                return DaggerfallUnity.Instance.MaterialReader.CompressModdedTextures ?
+                    TextureFormat.DXT5 :
+                    TextureFormat.ARGB32;
+            }
+        }
 
         /// <summary>
         /// Path to custom textures on disk.
@@ -834,10 +846,14 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         private static Texture2D ImportTextureFile (string path, string fileName, bool mipMaps = false)
         {
             // Create empty texture, size will be the actual size of .png file
-            Texture2D tex = new Texture2D(2, 2, TextureFormat.RGBA32, mipMaps);
+            Texture2D tex = new Texture2D(4, 4, TextureFormat, mipMaps);
 
             // Load image as Texture2D
             tex.LoadImage(File.ReadAllBytes(Path.Combine(path, fileName + extension)));
+
+#if DEBUG_TEXTURE_FORMAT    
+            Debug.LogFormat("{0}: {1} - mipmaps requested: {2}, mipmaps count : {3}", fileName, tex.format, mipMaps, tex.mipmapCount);
+#endif
 
             return tex;
         }
@@ -849,12 +865,10 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="fileName">Name of file without extension.</param>
         private static Texture2D ImportNormalMap (string path, string fileName)
         {
-            //create empty texture, size will be the actual size of .png file
-            Texture2D tex = new Texture2D(2, 2, TextureFormat.ARGB32, true);
+            // Get texture
+            Texture2D tex = ImportTextureFile(path, fileName, true);
 
-            // Load image as Texture2D
-            tex.LoadImage(File.ReadAllBytes(Path.Combine(path, fileName + extension)));
-
+            // RGBA to DXTnm
             Color32[] colours = tex.GetPixels32();
             for (int i = 0; i < colours.Length; i++)
             {

@@ -38,6 +38,7 @@ namespace DaggerfallWorkshop
         // General settings
         public bool AtlasTextures = true;
         public bool CompressSkyTextures = false;
+        public bool CompressModdedTextures = true;
         public bool Sharpen = false;
         public bool GenerateNormals = false;
         public float NormalTextureStrength = 0.2f;

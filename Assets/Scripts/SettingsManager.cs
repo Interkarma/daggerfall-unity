@@ -122,6 +122,7 @@ namespace DaggerfallWorkshop
         public bool LypyL_GameConsole { get; set; }
         public bool LypyL_ModSystem { get; set; }
         public bool MeshAndTextureReplacement { get; set; }
+        public bool CompressModdedTextures { get; set; }
 
         #endregion
 
@@ -186,6 +187,7 @@ namespace DaggerfallWorkshop
             LypyL_GameConsole = GetBool(sectionEnhancements, "LypyL_GameConsole");
             LypyL_ModSystem = GetBool(sectionEnhancements, "LypyL_ModSystem");
             MeshAndTextureReplacement = GetBool(sectionEnhancements, "MeshAndTextureReplacement");
+            CompressModdedTextures = GetBool(sectionEnhancements, "CompressModdedTextures");
         }
 
         /// <summary>
@@ -243,6 +245,7 @@ namespace DaggerfallWorkshop
             SetBool(sectionEnhancements, "LypyL_GameConsole", LypyL_GameConsole);
             SetBool(sectionEnhancements, "LypyL_ModSystem", LypyL_ModSystem);
             SetBool(sectionEnhancements, "MeshAndTextureReplacement", MeshAndTextureReplacement);
+            SetBool(sectionEnhancements, "CompressModdedTextures", CompressModdedTextures);
 
             // Write settings to persistent file
             WriteSettingsFile();

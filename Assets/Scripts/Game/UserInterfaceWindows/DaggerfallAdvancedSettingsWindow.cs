@@ -88,6 +88,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox gameConsole;
         Checkbox modSystem;
         Checkbox assetImport;
+        Checkbox compressModdedTextures;
 
         // Video
         HorizontalSlider resolution;
@@ -186,6 +187,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             gameConsole = AddCheckbox(rightPanel, "Game Console", "Enable input for console commands", DaggerfallUnity.Settings.LypyL_GameConsole);
             modSystem = AddCheckbox(rightPanel, "Mod System", "Enable support for mods.", DaggerfallUnity.Settings.LypyL_ModSystem);
             assetImport = AddCheckbox(rightPanel, "Allow Custom Assets", "Import assets from enabled mods and loose files.", DaggerfallUnity.Settings.MeshAndTextureReplacement);
+            compressModdedTextures = AddCheckbox(rightPanel, "Compress Modded Textures", "Import textures with a compressed format which uses less graphics memory.", DaggerfallUnity.Settings.CompressModdedTextures);
         }
 
         private void Video(Panel leftPanel, Panel rightPanel)
@@ -248,6 +250,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.LypyL_GameConsole = gameConsole.IsChecked;
             DaggerfallUnity.Settings.LypyL_ModSystem = modSystem.IsChecked;
             DaggerfallUnity.Settings.MeshAndTextureReplacement = assetImport.IsChecked;
+            DaggerfallUnity.Settings.CompressModdedTextures = compressModdedTextures.IsChecked;
 
             /* Video */
 
