@@ -123,7 +123,7 @@ Material:
       second: 0
     - first:
         name: _WaveScale
-      second: 0.07
+      second: 0.1
     - first:
         name: _ZWrite
       second: 1
@@ -142,4 +142,4 @@ Material:
       second: {r: 0, g: 0, b: 0, a: 1}
     - first:
         name: _horizonColor
-      second: {r: 0.172, g: 0.463, b: 0.435, a: 0.0019607844}
+      second: {r: 0.03137255, g: 0.03137255, b: 0.03529412, a: 0.0019607844}
