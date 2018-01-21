@@ -275,21 +275,23 @@ namespace DaggerfallWorkshop.Game
                 targetPos.y -= deltaHeight;
             }
 
-            // Get direction & distance and face target.
-            // If attacking, randomly do not do so so player has a chance to see
-            // attack animations other than those directly facing the player
+            // Get direction & distance.
             var direction = targetPos - transform.position;
             float distance = direction.magnitude;
 
-            if (mobile.IsPlayingOneShot() && !isAttackFollowsPlayerSet)
+            // If attacking, randomly follow player with attack.
+            if (mobile.Summary.EnemyState == MobileStates.PrimaryAttack)
             {
-                attackFollowsPlayer = (Random.Range(0f, 1f) > 0.5f);
-                isAttackFollowsPlayerSet = true;
+                if (!isAttackFollowsPlayerSet)
+                {
+                    attackFollowsPlayer = (Random.Range(0f, 1f) > 0.5f);
+                    isAttackFollowsPlayerSet = true;
+                }
             }
-            else if (!mobile.IsPlayingOneShot())
+            else
                 isAttackFollowsPlayerSet = false;
 
-            if (!mobile.IsPlayingOneShot() || !attackFollowsPlayer)
+            if (attackFollowsPlayer)
                 transform.forward = direction.normalized;
 
             // Bow attack for enemies that have the appropriate animation
@@ -298,19 +300,29 @@ namespace DaggerfallWorkshop.Game
             {
                 if (classicUpdate)
                 {
-                    // Random chance to shoot bow
-                    if (DFRandom.rand() < 1000)
+                    if (senses.TargetIsWithinYawAngle(22.5f))
                     {
-                        if (mobile.Summary.Enemy.HasRangedAttack1 && !mobile.Summary.Enemy.HasRangedAttack2
-                            && mobile.Summary.EnemyState != MobileStates.RangedAttack1)
-                            mobile.ChangeEnemyState(MobileStates.RangedAttack1);
-                        else if (mobile.Summary.Enemy.HasRangedAttack2 && mobile.Summary.EnemyState != MobileStates.RangedAttack2)
-                            mobile.ChangeEnemyState(MobileStates.RangedAttack2);
+                        // Random chance to shoot bow
+                        if (DFRandom.rand() < 1000)
+                        {
+                            if (mobile.Summary.Enemy.HasRangedAttack1 && !mobile.Summary.Enemy.HasRangedAttack2
+                                && mobile.Summary.EnemyState != MobileStates.RangedAttack1)
+                                mobile.ChangeEnemyState(MobileStates.RangedAttack1);
+                            else if (mobile.Summary.Enemy.HasRangedAttack2 && mobile.Summary.EnemyState != MobileStates.RangedAttack2)
+                                mobile.ChangeEnemyState(MobileStates.RangedAttack2);
+                        }
+                        // Otherwise hold ground
+                        else if (!mobile.IsPlayingOneShot())
+                        {
+                            mobile.ChangeEnemyState(MobileStates.Idle);
+                        }
                     }
-                    // Otherwise hold ground
-                    else if (!mobile.IsPlayingOneShot())
+                    else
                     {
-                        mobile.ChangeEnemyState(MobileStates.Idle);
+                        if (!mobile.IsPlayingOneShot())
+                            mobile.ChangeEnemyState(MobileStates.Move);
+                        TurnToTarget(direction.normalized);
+                        return;
                     }
                 }
             }
@@ -319,6 +331,13 @@ namespace DaggerfallWorkshop.Game
             {
                 if (!mobile.IsPlayingOneShot())
                     mobile.ChangeEnemyState(MobileStates.Move);
+
+                if (!senses.TargetIsWithinYawAngle(5.625f))
+                {
+                    TurnToTarget(direction.normalized);
+                    return;
+                }
+
                 var motion = transform.forward * moveSpeed;
 
                 // Prevent rat stacks (enemies don't stand on shorter enemies)
@@ -359,6 +378,12 @@ namespace DaggerfallWorkshop.Game
 				controller.Move(motion * Time.deltaTime);
 			}
 		}
+
+        private void TurnToTarget(Vector3 targetDirection)
+        {
+            if (classicUpdate)
+                transform.forward = Vector3.RotateTowards(transform.forward, targetDirection, 11.25f * Mathf.Deg2Rad, 0.0f);
+        }
 
         private void OpenDoors()
         {
