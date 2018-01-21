@@ -81,7 +81,7 @@ namespace DaggerfallWorkshop
         DaggerfallUnity dfUnity;
         TextureReader textureReader;
         Dictionary<int, CachedMaterial> materialDict = new Dictionary<int, CachedMaterial>();
-        TextureAtlasBuilder miscBillboardsAtlas = null;
+        //TextureAtlasBuilder miscBillboardsAtlas = null;
 
         #endregion
 
@@ -129,35 +129,35 @@ namespace DaggerfallWorkshop
             get { return (IsReady) ? textureReader : null; }
         }
 
-        /// <summary>
-        /// TEMP: Gets a special misc billboards super-atlas for scene builders.
-        /// </summary>
-        public TextureAtlasBuilder MiscBillboardAtlas
-        {
-            get
-            {
-                // Create new atlas or return existing
-                if (miscBillboardsAtlas == null)
-                {
-                    if (!IsReady)
-                        return null;
+        ///// <summary>
+        ///// TEMP: Gets a special misc billboards super-atlas for scene builders.
+        ///// </summary>
+        //public TextureAtlasBuilder MiscBillboardAtlas
+        //{
+        //    get
+        //    {
+        //        // Create new atlas or return existing
+        //        if (miscBillboardsAtlas == null)
+        //        {
+        //            if (!IsReady)
+        //                return null;
 
-                    miscBillboardsAtlas = textureReader.CreateTextureAtlasBuilder(
-                        textureReader.MiscFlatsTextureArchives,
-                        2,
-                        true,
-                        DaggerfallUnity.Settings.MeshAndTextureReplacement ? 4096 : 2048,
-                        AlphaTextureFormat,
-                        NonAlphaTextureFormat);
+        //            miscBillboardsAtlas = textureReader.CreateTextureAtlasBuilder(
+        //                textureReader.MiscFlatsTextureArchives,
+        //                2,
+        //                true,
+        //                DaggerfallUnity.Settings.MeshAndTextureReplacement ? 4096 : 2048,
+        //                AlphaTextureFormat,
+        //                NonAlphaTextureFormat);
 
-                    return miscBillboardsAtlas;
-                }
-                else
-                {
-                    return miscBillboardsAtlas;
-                }
-            }
-        }
+        //            return miscBillboardsAtlas;
+        //        }
+        //        else
+        //        {
+        //            return miscBillboardsAtlas;
+        //        }
+        //    }
+        //}
 
         #endregion
 

@@ -609,17 +609,17 @@ namespace DaggerfallWorkshop
                     // Create billboard batch game objects for this location
                     // Streaming world always batches for performance, regardless of options
                     int natureArchive = ClimateSwaps.GetNatureArchive(LocalPlayerGPS.ClimateSettings.NatureSet, dfUnity.WorldTime.Now.SeasonValue);
-                    TextureAtlasBuilder miscBillboardAtlas = dfUnity.MaterialReader.MiscBillboardAtlas;
+                    //TextureAtlasBuilder miscBillboardAtlas = dfUnity.MaterialReader.MiscBillboardAtlas;
                     DaggerfallBillboardBatch natureBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(natureArchive, locationObject.transform);
                     DaggerfallBillboardBatch lightsBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(TextureReader.LightsTextureArchive, locationObject.transform);
                     DaggerfallBillboardBatch animalsBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(TextureReader.AnimalsTextureArchive, locationObject.transform);
-                    DaggerfallBillboardBatch miscBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(miscBillboardAtlas.AtlasMaterial, locationObject.transform);
+                    //DaggerfallBillboardBatch miscBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(miscBillboardAtlas.AtlasMaterial, locationObject.transform);
 
                     // Set hide flags
                     natureBillboardBatch.hideFlags = defaultHideFlags;
                     lightsBillboardBatch.hideFlags = defaultHideFlags;
                     animalsBillboardBatch.hideFlags = defaultHideFlags;
-                    miscBillboardBatch.hideFlags = defaultHideFlags;
+                    //miscBillboardBatch.hideFlags = defaultHideFlags;
 
                     // Position RMB blocks inside terrain area
                     int width = location.Exterior.ExteriorData.Width;
@@ -658,7 +658,7 @@ namespace DaggerfallWorkshop
                             natureBillboardBatch.BlockOrigin = blockOrigin;
                             lightsBillboardBatch.BlockOrigin = blockOrigin;
                             animalsBillboardBatch.BlockOrigin = blockOrigin;
-                            miscBillboardBatch.BlockOrigin = blockOrigin;
+                            //miscBillboardBatch.BlockOrigin = blockOrigin;
 
                             // Get block name and data
                             DFBlock blockData;
@@ -675,8 +675,8 @@ namespace DaggerfallWorkshop
                                 natureBillboardBatch,
                                 lightsBillboardBatch,
                                 animalsBillboardBatch,
-                                miscBillboardAtlas,
-                                miscBillboardBatch);
+                                null,
+                                null);
 
                             // Set game object properties
                             go.hideFlags = defaultHideFlags;
@@ -697,7 +697,7 @@ namespace DaggerfallWorkshop
                     natureBillboardBatch.Apply();
                     lightsBillboardBatch.Apply();
                     animalsBillboardBatch.Apply();
-                    miscBillboardBatch.Apply();
+                    //miscBillboardBatch.Apply();
 
                     //// TEST: Store a RAW image of navgrid
                     //string filename = string.Format("{0} [{1}x{2}].raw", location.Name, cityNavigation.CityWidth * 64, cityNavigation.CityHeight * 64);

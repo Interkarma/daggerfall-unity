@@ -32,7 +32,7 @@ namespace DaggerfallWorkshop.Utility
         public const int AnimalsTextureArchive = 201;
         public const int LightsTextureArchive = 210;
         public const int FixedTreasureFlatsArchive = 216;
-        public int[] MiscFlatsTextureArchives = new int[] { 97, 205, 211, 212, 213, 301 };
+        //public int[] MiscFlatsTextureArchives = new int[] { 97, 205, 211, 212, 213, 301 };
 
         /// <summary>
         /// Gets or sets Arena2 path.
@@ -453,59 +453,59 @@ namespace DaggerfallWorkshop.Utility
             return results;
         }
 
-        /// <summary>
-        /// TEMP: Creates super-atlas populated with all archives in array.
-        /// Currently does not support animated textures, normal map, or emission map.
-        /// TODO: Integrate this feature fully with material system.
-        /// </summary>
-        /// <param name="archives">Archive array.</param>
-        /// <param name="borderSize">Number of pixels border to add around image.</param>
-        /// <param name="dilate">Blend texture into surrounding empty pixels. Requires border.</param>
-        /// <param name="maxAtlasSize">Maximum atlas size.</param>
-        /// <param name="alphaTextureFormat">Alpha TextureFormat.</param>
-        /// <param name="nonAlphaFormat">Non-alpha TextureFormat.</param>
-        /// <returns>TextureAtlasBuilder.</returns>
-        public TextureAtlasBuilder CreateTextureAtlasBuilder(
-            int[] archives,
-            int borderSize = 0,
-            bool dilate = false,
-            int maxAtlasSize = 2048,
-            SupportedAlphaTextureFormats alphaTextureFormat = SupportedAlphaTextureFormats.RGBA32,
-            SupportedNonAlphaTextureFormats nonAlphaFormat = SupportedNonAlphaTextureFormats.RGB24)
-        {
-            // Iterate archives
-            TextureFile textureFile = new TextureFile();
-            TextureAtlasBuilder builder = new TextureAtlasBuilder();
-            GetTextureSettings settings = TextureReader.CreateTextureSettings(0, 0, 0, 0, borderSize, dilate, maxAtlasSize);
-            settings.stayReadable = true;
-            for (int i = 0; i < archives.Length; i++)
-            {
-                // Load texture file
-                settings.archive = archives[i];
-                textureFile.Load(Path.Combine(Arena2Path, TextureFile.IndexToFileName(settings.archive)), FileUsage.UseMemory, true);
+        ///// <summary>
+        ///// TEMP: Creates super-atlas populated with all archives in array.
+        ///// Currently does not support animated textures, normal map, or emission map.
+        ///// TODO: Integrate this feature fully with material system.
+        ///// </summary>
+        ///// <param name="archives">Archive array.</param>
+        ///// <param name="borderSize">Number of pixels border to add around image.</param>
+        ///// <param name="dilate">Blend texture into surrounding empty pixels. Requires border.</param>
+        ///// <param name="maxAtlasSize">Maximum atlas size.</param>
+        ///// <param name="alphaTextureFormat">Alpha TextureFormat.</param>
+        ///// <param name="nonAlphaFormat">Non-alpha TextureFormat.</param>
+        ///// <returns>TextureAtlasBuilder.</returns>
+        //public TextureAtlasBuilder CreateTextureAtlasBuilder(
+        //    int[] archives,
+        //    int borderSize = 0,
+        //    bool dilate = false,
+        //    int maxAtlasSize = 2048,
+        //    SupportedAlphaTextureFormats alphaTextureFormat = SupportedAlphaTextureFormats.RGBA32,
+        //    SupportedNonAlphaTextureFormats nonAlphaFormat = SupportedNonAlphaTextureFormats.RGB24)
+        //{
+        //    // Iterate archives
+        //    TextureFile textureFile = new TextureFile();
+        //    TextureAtlasBuilder builder = new TextureAtlasBuilder();
+        //    GetTextureSettings settings = TextureReader.CreateTextureSettings(0, 0, 0, 0, borderSize, dilate, maxAtlasSize);
+        //    settings.stayReadable = true;
+        //    for (int i = 0; i < archives.Length; i++)
+        //    {
+        //        // Load texture file
+        //        settings.archive = archives[i];
+        //        textureFile.Load(Path.Combine(Arena2Path, TextureFile.IndexToFileName(settings.archive)), FileUsage.UseMemory, true);
 
-                // Add all records for this archive - single frame only
-                for (int record = 0; record < textureFile.RecordCount; record++)
-                {
-                    settings.record = record;
-                    GetTextureResults results = GetTexture2D(settings, alphaTextureFormat, nonAlphaFormat);
-                    DFSize size = textureFile.GetSize(record);
-                    DFSize scale = textureFile.GetScale(record);
-                    builder.AddTextureItem(
-                        results.albedoMap,
-                        settings.archive,
-                        settings.record,
-                        0, 1,
-                        new Vector2(size.Width, size.Height),
-                        new Vector2(scale.Width, scale.Height));
-                }
-            }
+        //        // Add all records for this archive - single frame only
+        //        for (int record = 0; record < textureFile.RecordCount; record++)
+        //        {
+        //            settings.record = record;
+        //            GetTextureResults results = GetTexture2D(settings, alphaTextureFormat, nonAlphaFormat);
+        //            DFSize size = textureFile.GetSize(record);
+        //            DFSize scale = textureFile.GetScale(record);
+        //            builder.AddTextureItem(
+        //                results.albedoMap,
+        //                settings.archive,
+        //                settings.record,
+        //                0, 1,
+        //                new Vector2(size.Width, size.Height),
+        //                new Vector2(scale.Width, scale.Height));
+        //        }
+        //    }
 
-            // Apply the builder
-            builder.Rebuild(borderSize);
+        //    // Apply the builder
+        //    builder.Rebuild(borderSize);
             
-            return builder;
-        }
+        //    return builder;
+        //}
 
         /// <summary>
         /// Gets specially packed tileset atlas for terrains.

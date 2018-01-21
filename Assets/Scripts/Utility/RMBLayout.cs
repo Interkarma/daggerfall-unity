@@ -328,16 +328,16 @@ namespace DaggerfallWorkshop.Utility
                 if (MeshReplacement.ImportCustomFlatGameobject(obj.TextureArchive, obj.TextureRecord, billboardPosition, flatsParent) != null)
                     continue;
 
-                // Use misc billboard atlas where available
-                if (miscBillboardsAtlas != null && miscBillboardsBatch != null)
-                {
-                    TextureAtlasBuilder.AtlasItem item = miscBillboardsAtlas.GetAtlasItem(obj.TextureArchive, obj.TextureRecord);
-                    if (item.key != -1)
-                    {
-                        miscBillboardsBatch.AddItem(item.rect, item.textureItem.size, item.textureItem.scale, billboardPosition);
-                        continue;
-                    }
-                }
+                //// Use misc billboard atlas where available
+                //if (miscBillboardsAtlas != null && miscBillboardsBatch != null)
+                //{
+                //    TextureAtlasBuilder.AtlasItem item = miscBillboardsAtlas.GetAtlasItem(obj.TextureArchive, obj.TextureRecord);
+                //    if (item.key != -1)
+                //    {
+                //        miscBillboardsBatch.AddItem(item.rect, item.textureItem.size, item.textureItem.scale, billboardPosition);
+                //        continue;
+                //    }
+                //}
 
                 // Add to batch where available
                 //if (obj.TextureArchive == TextureReader.AnimalsTextureArchive && animalsBillboardBatch != null)

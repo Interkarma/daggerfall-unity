@@ -359,19 +359,19 @@ namespace DaggerfallWorkshop
             int height = location.Exterior.ExteriorData.Height;
 
             // Create billboard batch game objects for this location
-            TextureAtlasBuilder miscBillboardAtlas = null;
+            //TextureAtlasBuilder miscBillboardAtlas = null;
             summary.NatureBillboardBatch = null;
             DaggerfallBillboardBatch lightsBillboardBatch = null;
             DaggerfallBillboardBatch animalsBillboardBatch = null;
-            DaggerfallBillboardBatch miscBillboardBatch = null;
+            //DaggerfallBillboardBatch miscBillboardBatch = null;
             if (dfUnity.Option_BatchBillboards)
             {
-                miscBillboardAtlas = dfUnity.MaterialReader.MiscBillboardAtlas;
+                //miscBillboardAtlas = dfUnity.MaterialReader.MiscBillboardAtlas;
                 int natureArchive = ClimateSwaps.GetNatureArchive(CurrentNatureSet, CurrentSeason);
                 summary.NatureBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(natureArchive, transform);
                 lightsBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(TextureReader.LightsTextureArchive, transform);
                 animalsBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(TextureReader.AnimalsTextureArchive, transform);
-                miscBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(miscBillboardAtlas.AtlasMaterial, transform);
+                //miscBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(miscBillboardAtlas.AtlasMaterial, transform);
             }
 
             // Import blocks
@@ -387,7 +387,7 @@ namespace DaggerfallWorkshop
                         summary.NatureBillboardBatch.BlockOrigin = blockOrigin;
                         lightsBillboardBatch.BlockOrigin = blockOrigin;
                         animalsBillboardBatch.BlockOrigin = blockOrigin;
-                        miscBillboardBatch.BlockOrigin = blockOrigin;
+                        //miscBillboardBatch.BlockOrigin = blockOrigin;
                     }
 
                     string blockName = dfUnity.ContentReader.BlockFileReader.CheckName(dfUnity.ContentReader.MapFileReader.GetRmbBlockName(ref location, x, y));
@@ -400,8 +400,8 @@ namespace DaggerfallWorkshop
                         summary.NatureBillboardBatch,
                         lightsBillboardBatch,
                         animalsBillboardBatch,
-                        miscBillboardAtlas,
-                        miscBillboardBatch,
+                        null, //miscBillboardAtlas,
+                        null, //miscBillboardBatch,
                         CurrentNatureSet,
                         CurrentSeason);
                     go.transform.parent = this.transform;
@@ -413,7 +413,7 @@ namespace DaggerfallWorkshop
             if (summary.NatureBillboardBatch) summary.NatureBillboardBatch.Apply();
             if (lightsBillboardBatch) lightsBillboardBatch.Apply();
             if (animalsBillboardBatch) animalsBillboardBatch.Apply();
-            if (miscBillboardBatch) miscBillboardBatch.Apply();
+            //if (miscBillboardBatch) miscBillboardBatch.Apply();
 
             // Enumerate start marker game objects
             EnumerateStartMarkers();
