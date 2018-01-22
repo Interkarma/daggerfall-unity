@@ -84,7 +84,9 @@ namespace DaggerfallWorkshop.Game.Serialization
                 return;
 
             // Restore billboard only if this is a billboard-based loot container
-            if (loot.ContainerType != LootContainerTypes.Nothing && loot.ContainerType != LootContainerTypes.Geometry)
+            if (loot.ContainerType == LootContainerTypes.RandomTreasure ||
+                loot.ContainerType == LootContainerTypes.CorpseMarker ||
+                loot.ContainerType == LootContainerTypes.DroppedLoot)
             {
                 DaggerfallBillboard billboard = loot.GetComponent<DaggerfallBillboard>();
 

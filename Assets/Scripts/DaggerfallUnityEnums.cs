@@ -536,7 +536,6 @@ namespace DaggerfallWorkshop
         RandomTreasure,
         CorpseMarker,
         DroppedLoot,
-        Geometry,
     }
 
     /// <summary>

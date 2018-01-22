@@ -711,26 +711,24 @@ namespace DaggerfallWorkshop.Utility
 
         /// <summary>
         /// Destroys/Disables a loot container.
-        /// Ignores LootContainerTypes.Nothing, .CorpseMarker, .Geometry.
+        /// Ignores unsupported or persistent container types.
         /// Custom drop containers will be destroyed from world.
         /// Fixed containers will be disabled so their empty state continues to be serialized.
         /// </summary>
         /// <param name="loot">DaggerfallLoot.</param>
         public static void RemoveLootContainer(DaggerfallLoot loot)
         {
-            // Some container types are not removed from world even if empty
-            if (loot.ContainerType == LootContainerTypes.Nothing ||
-                loot.ContainerType == LootContainerTypes.CorpseMarker ||
-                loot.ContainerType == LootContainerTypes.Geometry)
+            // Only certain container types can be removed from world
+            // Other container types (e.g. corpse markers and geometry-based containers) will persist
+            if (loot.ContainerType == LootContainerTypes.RandomTreasure ||
+                loot.ContainerType == LootContainerTypes.DroppedLoot)
             {
-                return;
+                // Destroy or disable based on custom flag
+                if (loot.customDrop)
+                    GameObject.Destroy(loot.gameObject);
+                else
+                    loot.gameObject.SetActive(false);
             }
-
-            // Destroy or disable based on custom flag
-            if (loot.customDrop)
-                GameObject.Destroy(loot.gameObject);
-            else
-                loot.gameObject.SetActive(false);
         }
 
         #endregion
