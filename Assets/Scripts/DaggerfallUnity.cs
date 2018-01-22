@@ -96,6 +96,9 @@ namespace DaggerfallWorkshop
         public DaggerfallEnemy Option_EnemyPrefab = null;
         public bool Option_ImportRandomTreasure = true;
         public DaggerfallLoot Option_LootContainerPrefab = null;
+        public GameObject Option_DungeonWaterPrefab = null;
+        public Vector3 Option_DungeonWaterPlaneSize = Vector3.one;
+        public Vector3 Option_DungeonWaterPlaneOffset = Vector3.zero;
 
         // Time and space options
         public bool Option_AutomateTextureSwaps = true;

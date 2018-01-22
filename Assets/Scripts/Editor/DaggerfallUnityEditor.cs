@@ -238,6 +238,19 @@ namespace DaggerfallWorkshop
                     });
                 });
 
+                // Dungeon Water
+                var propDungeonWaterPrefab = Prop("Option_DungeonWaterPrefab");
+                var propDungeonWaterPlaneSize = Prop("Option_DungeonWaterPlaneSize");
+                var propDungeonWaterPlaneOffset = Prop("Option_DungeonWaterPlaneOffset");
+                EditorGUILayout.Space();
+                EditorGUILayout.LabelField("Water");
+                GUILayoutHelper.Indent(() =>
+                {
+                    propDungeonWaterPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("Dungeon Water", "Prefab for dungeon water."), propDungeonWaterPrefab.objectReferenceValue, typeof(GameObject), false);
+                    propDungeonWaterPlaneSize.vector3Value = EditorGUILayout.Vector3Field(new GUIContent("Plane Size", "Size of water plane in Unity units, used for scaling target relative to Daggerfall geometry import (i.e. MeshReader.GlobalScale)."), propDungeonWaterPlaneSize.vector3Value, null);
+                    propDungeonWaterPlaneOffset.vector3Value = EditorGUILayout.Vector3Field(new GUIContent("Plane Offset", "Amount to offset water plane so origin aligns with block origin and top aligns with water surface."), propDungeonWaterPlaneOffset.vector3Value, null);
+                });
+
                 // Optional
                 var propCityBlockPrefab = Prop("Option_CityBlockPrefab");
                 var propDungeonBlockPrefab = Prop("Option_DungeonBlockPrefab");

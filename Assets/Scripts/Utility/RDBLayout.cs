@@ -523,6 +523,39 @@ namespace DaggerfallWorkshop.Utility
             }
         }
 
+        /// <summary>
+        /// Add dungeon water plane prefab to RDB block post layout.
+        /// This is called from DaggerfallDungeon layout as water level is available from map data, not RDB data.
+        /// </summary>
+        /// <param name="go">Parent block GameObject.</param>
+        /// <param name="nativeBlockWaterLevel">Native water level from map data.</param>
+        public static void AddWater(
+            GameObject parent,
+            Vector3 position,
+            short nativeBlockWaterLevel)
+        {
+            // Exit if no water present or prefab not set
+            if (nativeBlockWaterLevel == 10000 || DaggerfallUnity.Instance.Option_DungeonWaterPrefab.gameObject == null)
+                return;
+
+            // Instantiate water prefab to block parent
+            GameObject go = GameObjectHelper.InstantiatePrefab(DaggerfallUnity.Instance.Option_DungeonWaterPrefab.gameObject, "DungeonWater", parent.transform, position);
+
+            // Scale water plane to RDB dimensions
+            Vector3 prefabScale = DaggerfallUnity.Instance.Option_DungeonWaterPlaneSize;
+            go.transform.localScale = new Vector3(
+                1f / prefabScale.x * RDBSide,
+                1f,
+                1f / prefabScale.z * RDBSide);
+
+            // Align water plane to RDB origin
+            Vector3 prefabOffset = DaggerfallUnity.Instance.Option_DungeonWaterPlaneOffset;
+            go.transform.localPosition += new Vector3(
+                prefabOffset.x * (1f / prefabScale.x) * RDBSide,
+                nativeBlockWaterLevel * -1 * MeshReader.GlobalScale,
+                prefabOffset.z * (1f / prefabScale.x) * RDBSide);
+        }
+
         #endregion
 
         #region Private Methods

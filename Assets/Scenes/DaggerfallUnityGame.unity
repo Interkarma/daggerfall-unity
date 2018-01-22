@@ -987,6 +987,43 @@ Prefab:
       value: 
       objectReference: {fileID: 114040605119886728, guid: a00eeb38a1afa314b9c2e1c2879a2e1d,
         type: 2}
+    - target: {fileID: 11400000, guid: 0811f78212229814d8c469c916304789, type: 2}
+      propertyPath: Option_DungeonWaterPlaneSize.x
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 0811f78212229814d8c469c916304789, type: 2}
+      propertyPath: Option_DungeonWaterPlaneSize.z
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 0811f78212229814d8c469c916304789, type: 2}
+      propertyPath: Option_DungeonWaterPrefab
+      value: 
+      objectReference: {fileID: 1333835593155398, guid: 574cb9d5c6f200a47987d8425d8c9342,
+        type: 2}
+    - target: {fileID: 11400000, guid: 0811f78212229814d8c469c916304789, type: 2}
+      propertyPath: Option_DungeonWaterMeshSize.x
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 0811f78212229814d8c469c916304789, type: 2}
+      propertyPath: Option_DungeonWaterMeshSize.z
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 0811f78212229814d8c469c916304789, type: 2}
+      propertyPath: Option_DungeonWaterMeshOffset.x
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 0811f78212229814d8c469c916304789, type: 2}
+      propertyPath: Option_DungeonWaterMeshOffset.z
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 0811f78212229814d8c469c916304789, type: 2}
+      propertyPath: Option_DungeonWaterPlaneOffset.x
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 0811f78212229814d8c469c916304789, type: 2}
+      propertyPath: Option_DungeonWaterPlaneOffset.z
+      value: 5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0811f78212229814d8c469c916304789, type: 2}
   m_IsPrefabParent: 0
