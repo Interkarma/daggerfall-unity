@@ -618,7 +618,6 @@ namespace DaggerfallWorkshop.Utility
                 case DFLocation.BuildingTypes.FurnitureStore:
                 case DFLocation.BuildingTypes.GemStore:
                 case DFLocation.BuildingTypes.GeneralStore:
-                case DFLocation.BuildingTypes.Library:
                 case DFLocation.BuildingTypes.PawnShop:
                 case DFLocation.BuildingTypes.WeaponSmith:
                     return true;
