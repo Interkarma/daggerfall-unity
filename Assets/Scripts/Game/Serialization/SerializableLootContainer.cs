@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -11,8 +11,6 @@
 
 using UnityEngine;
 using System;
-using System.Collections.Generic;
-using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
 
@@ -85,22 +83,26 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (data.loadID != LoadID)
                 return;
 
-            DaggerfallBillboard billboard = loot.GetComponent<DaggerfallBillboard>();
-
-            // Restore position
-            loot.transform.position = data.currentPosition;
-
-            // Restore appearance
-            if (MeshReplacement.ImportCustomFlatGameobject(data.textureArchive, data.textureRecord, Vector3.zero, loot.transform))
+            // Restore billboard only if this is a billboard-based loot container
+            if (loot.ContainerType != LootContainerTypes.Nothing && loot.ContainerType != LootContainerTypes.Geometry)
             {
-                // Use imported model instead of billboard
-                if (billboard) Destroy(billboard);
-                Destroy(GetComponent<MeshRenderer>());
-            }
-            else if (billboard)
-            {
-                // Restore billboard appearance if present
-                billboard.SetMaterial(data.textureArchive, data.textureRecord);
+                DaggerfallBillboard billboard = loot.GetComponent<DaggerfallBillboard>();
+
+                // Restore position
+                loot.transform.position = data.currentPosition;
+
+                // Restore appearance
+                if (MeshReplacement.ImportCustomFlatGameobject(data.textureArchive, data.textureRecord, Vector3.zero, loot.transform))
+                {
+                    // Use imported model instead of billboard
+                    if (billboard) Destroy(billboard);
+                    Destroy(GetComponent<MeshRenderer>());
+                }
+                else if (billboard)
+                {
+                    // Restore billboard appearance if present
+                    billboard.SetMaterial(data.textureArchive, data.textureRecord);
+                }
             }
 
             // Restore items

@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -711,15 +711,20 @@ namespace DaggerfallWorkshop.Utility
 
         /// <summary>
         /// Destroys/Disables a loot container.
+        /// Ignores LootContainerTypes.Nothing, .CorpseMarker, .Geometry.
         /// Custom drop containers will be destroyed from world.
         /// Fixed containers will be disabled so their empty state continues to be serialized.
         /// </summary>
         /// <param name="loot">DaggerfallLoot.</param>
         public static void RemoveLootContainer(DaggerfallLoot loot)
         {
-            // Corpse markers are not removed from world even if empty
-            if (loot.ContainerType == LootContainerTypes.CorpseMarker)
+            // Some container types are not removed from world even if empty
+            if (loot.ContainerType == LootContainerTypes.Nothing ||
+                loot.ContainerType == LootContainerTypes.CorpseMarker ||
+                loot.ContainerType == LootContainerTypes.Geometry)
+            {
                 return;
+            }
 
             // Destroy or disable based on custom flag
             if (loot.customDrop)
