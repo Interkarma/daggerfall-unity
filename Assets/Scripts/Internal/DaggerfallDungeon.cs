@@ -269,10 +269,8 @@ namespace DaggerfallWorkshop
                 summary.LocationData.Dungeon.Blocks[i].WaterLevel = block.WaterLevel;
                 summary.LocationData.Dungeon.Blocks[i].CastleBlock = block.CastleBlock;
 
-                // Add water blocks, but filter out border blocks - these don't seem to follow the 10000 = no water rule
-                // The AddWater() call will otherwise check for water prefab and native height before injecting water plane
-                if (!block.BlockName.StartsWith("B", StringComparison.InvariantCultureIgnoreCase))
-                    RDBLayout.AddWater(go, go.transform.position, block.WaterLevel);
+                // Add water blocks
+                RDBLayout.AddWater(go, go.transform.position, block.WaterLevel);
             }
 
 #if SHOW_LAYOUT_TIMES
@@ -317,10 +315,8 @@ namespace DaggerfallWorkshop
                 summary.LocationData.Dungeon.Blocks[i].WaterLevel = block.WaterLevel;
                 summary.LocationData.Dungeon.Blocks[i].CastleBlock = block.CastleBlock;
 
-                // Add water blocks, but filter out border blocks - these don't seem to follow the 10000 = no water rule
-                // The AddWater() call will otherwise check for water prefab and native height before injecting water plane
-                if (!block.BlockName.StartsWith("B", StringComparison.InvariantCultureIgnoreCase))
-                    RDBLayout.AddWater(go, go.transform.position, block.WaterLevel);
+                // Add water blocks
+                RDBLayout.AddWater(go, go.transform.position, block.WaterLevel);
             }
         }
 
@@ -344,6 +340,8 @@ namespace DaggerfallWorkshop
                 block.WaterLevel = dfBillboard.Summary.WaterLevel;
                 block.CastleBlock = dfBillboard.Summary.CastleBlock;
             }
+            else // No water
+                block.WaterLevel = 10000;
 
             if (dfBlock.EnterMarkers != null && dfBlock.EnterMarkers.Length > 0)
             {
