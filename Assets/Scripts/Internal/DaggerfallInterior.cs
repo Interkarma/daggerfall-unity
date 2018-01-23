@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -25,6 +25,14 @@ namespace DaggerfallWorkshop
         const int doorModelId = 9800;
         const int ladderModelId = 41409;
         const int propModelType = 3;
+
+        const uint modelIdsShelvesOffset = 41000;
+        static List<uint> modelIdsShelves = new List<uint> { 5, 6, 11, 12, 15, 16, 17, 18, 19, 28, 29, 31, 35, 37, 40, 42, 44, 46, 48, 49 };
+
+        // Building data for map layout, indicates no activation components needed.
+        static PlayerGPS.DiscoveredBuilding mapBD = new PlayerGPS.DiscoveredBuilding {
+            buildingType = DFLocation.BuildingTypes.AllValid
+        };
 
         DaggerfallUnity dfUnity;
         DFBlock blockData;
@@ -107,7 +115,7 @@ namespace DaggerfallWorkshop
         /// <param name="doorOwner">Parent transform owning door array.</param>
         /// <param name="door">Exterior door player clicked on.</param>
         /// <returns>True if successful.</returns>
-        public bool DoLayout(Transform doorOwner, StaticDoor door, ClimateBases climateBase)
+        public bool DoLayout(Transform doorOwner, StaticDoor door, ClimateBases climateBase, PlayerGPS.DiscoveredBuilding buildingData)
         {
             if (dfUnity == null)
                 dfUnity = DaggerfallUnity.Instance;
@@ -130,7 +138,7 @@ namespace DaggerfallWorkshop
                 throw new Exception(string.Format("No interior 3D models found for record index {0}", door.recordIndex), null);
 
             // Layout interior data
-            AddModels();
+            AddModels(buildingData);
             AddFlats();
             AddPeople();
             AddActionDoors();
@@ -168,7 +176,7 @@ namespace DaggerfallWorkshop
                 throw new Exception(string.Format("No interior 3D models found for record index {0}", door.recordIndex), null);
 
             // Layout interior data
-            AddModels();
+            AddModels(mapBD);
 
             return true;
         }
@@ -236,7 +244,7 @@ namespace DaggerfallWorkshop
         /// <summary>
         /// Add interior models.
         /// </summary>
-        private void AddModels()
+        private void AddModels(PlayerGPS.DiscoveredBuilding buildingData)
         {
             List<StaticDoor> doors = new List<StaticDoor>();
             GameObject node = new GameObject("Models");
@@ -317,9 +325,36 @@ namespace DaggerfallWorkshop
                     go.AddComponent<DaggerfallLadder>();
                 }
 
-                // TODO: Add loot container information to specific furniture items
-                if (obj.ObjectType == propModelType)
+                // Add loot container information to specific furniture items, except when laying out map (buildingType=AllValid)
+                DFLocation.BuildingTypes buildingType = buildingData.buildingType;
+                if (obj.ObjectType == propModelType && buildingType != DFLocation.BuildingTypes.AllValid)
                 {
+                    // Handle shelves
+                    if (modelIdsShelves.Contains(obj.ModelIdNum - modelIdsShelvesOffset))
+                    {
+                        if (RMBLayout.IsShop(buildingType))
+                        {
+                            // Shop shelves, add a DaggerfallLoot component
+                            go.AddComponent<DaggerfallLoot>();
+                            DaggerfallLoot loot = go.GetComponent<DaggerfallLoot>();
+                            if (loot)
+                            {
+                                // Set as shop shelves and create unique LoadID for save sytem
+                                loot.ContainerType = LootContainerTypes.Shelves;
+                                loot.LoadID = (ulong)(buildingData.buildingKey + obj.XPos + obj.YPos + obj.ZPos);
+                                // Stock shop shelf if needed
+                                if (loot.Items.Count == 0)
+                                    DaggerfallLoot.StockItems(buildingData, loot.Items);
+                            }
+                        }
+                        else if (buildingType == DFLocation.BuildingTypes.Library ||
+                                 buildingType == DFLocation.BuildingTypes.GuildHall ||
+                                 buildingType == DFLocation.BuildingTypes.Temple)
+                        {
+                            // Bookshelves, add DaggerfallBookshelf component
+                            go.AddComponent<DaggerfallBookshelf>();
+                        }
+                    }
                 }
 
             }
