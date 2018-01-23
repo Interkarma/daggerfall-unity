@@ -62,7 +62,7 @@ namespace DaggerfallWorkshop
             get { return items; }
         }
 
-        public static void StockItems(PlayerGPS.DiscoveredBuilding buildingData, ItemCollection items)
+        public static void StockShopShelf(PlayerGPS.DiscoveredBuilding buildingData, ItemCollection items)
         {
             // TODO: Allofich to replace with shelf stocking code... using supplied building type and quality
             DFLocation.BuildingTypes buildingType = buildingData.buildingType;
@@ -87,6 +87,19 @@ namespace DaggerfallWorkshop
             items.AddItem(ItemBuilder.CreateRandomWeapon(playerEntity.Level));
             items.AddItem(ItemBuilder.CreateRandomWeapon(playerEntity.Level));
             items.AddItem(ItemBuilder.CreateRandomWeapon(playerEntity.Level));
+        }
+
+        public static void StockHouseContainer(PlayerGPS.DiscoveredBuilding buildingData, ItemCollection items)
+        {
+            // TODO: Allofich to replace with house container stocking code... using supplied building type and quality
+            DFLocation.BuildingTypes buildingType = buildingData.buildingType;
+            int shopQuality = buildingData.quality;
+
+            // NOTE: This doesn't neccessarily need to stock anything, classic has many furniture containers which have nothing, so no effect when click
+
+            // Temp test code...
+            Game.Entity.PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+            items.AddItem(ItemBuilder.CreateRandomIngredient());
         }
 
         /// <summary>

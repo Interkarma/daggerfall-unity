@@ -536,7 +536,8 @@ namespace DaggerfallWorkshop
         RandomTreasure,
         CorpseMarker,
         DroppedLoot,
-        Shelves
+        ShopShelves,
+        HouseContainers
     }
 
     /// <summary>

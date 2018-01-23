@@ -57,6 +57,8 @@ namespace DaggerfallWorkshop.Game
         byte[] openHours = { 7, 8, 9, 8, 0, 9, 10, 10, 9, 6, 9, 11, 9, 9, 0, 0, 10, 0 };
         byte[] closeHours = { 22, 16, 19, 15, 25, 21, 19, 20, 18, 23, 23, 23, 20, 20, 25, 25, 16, 0 };
 
+        const int PrivatePropertyId = 37;
+
         public PlayerActivateModes CurrentMode
         {
             get { return currentMode; }
@@ -308,60 +310,7 @@ namespace DaggerfallWorkshop.Game
                     DaggerfallLoot loot;
                     if (LootCheck(hit, out loot))
                     {
-                        if (hit.distance > TreasureActivationDistance * MeshReader.GlobalScale)
-                        {
-                            DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
-                            return;
-                        }
-                        // Handle shop shelves. (mode not relevant)
-                        if (loot.ContainerType == LootContainerTypes.Shelves)
-                        {
-                            // Open trade window with activated loot container as remote target.
-                            UserInterfaceManager uiManager = DaggerfallUI.Instance.UserInterfaceManager;
-                            DaggerfallTradeWindow tradeWindow = new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Buy);
-                            tradeWindow.MerchantItems = loot.Items;
-                            uiManager.PushWindow(tradeWindow);
-                        }
-                        else
-                        {
-                            switch (currentMode)
-                            {
-                                case PlayerActivateModes.Info:
-                                    if (loot.ContainerType == LootContainerTypes.CorpseMarker && !string.IsNullOrEmpty(loot.entityName))
-                                    {
-                                        string message = string.Empty;
-                                        if (loot.isEnemyClass)
-                                            message = HardStrings.youSeeADeadPerson;
-                                        else
-                                        {
-                                            message = HardStrings.youSeeADead;
-                                            message = message.Replace("%s", loot.entityName);
-                                        }
-                                        DaggerfallUI.Instance.PopupMessage(message);
-                                    }
-                                    break;
-                                case PlayerActivateModes.Grab:
-                                case PlayerActivateModes.Talk:
-                                case PlayerActivateModes.Steal:
-                                    // Check if close enough to activate
-                                    if (loot.ContainerType == LootContainerTypes.CorpseMarker &&
-                                        hit.distance > CorpseActivationDistance * MeshReader.GlobalScale)
-                                    {
-                                        DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
-                                        break;
-                                    }
-                                    // For bodies, check has treasure
-                                    else if (loot.ContainerType == LootContainerTypes.CorpseMarker && loot.Items.Count == 0)
-                                    {
-                                        DaggerfallUI.AddHUDText(HardStrings.theBodyHasNoTreasure);
-                                        break;
-                                    }
-                                    // Open inventory window with activated loot container as remote target.
-                                    DaggerfallUI.Instance.InventoryWindow.LootTarget = loot;
-                                    DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenInventoryWindow);
-                                    break;
-                            }
-                        }
+                        HandleLootContainer(hit, loot);
                     }
 
                     // Check for static NPC hit
@@ -489,6 +438,80 @@ namespace DaggerfallWorkshop.Game
                 }
             }
         }
+
+        private void HandleLootContainer(RaycastHit hit, DaggerfallLoot loot)
+        {
+            // Check if close enough to activate for all types, except for corpses
+            if (loot.ContainerType != LootContainerTypes.CorpseMarker &&
+                hit.distance > TreasureActivationDistance * MeshReader.GlobalScale)
+            {
+                DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
+                return;
+            }
+            UserInterfaceManager uiManager = DaggerfallUI.Instance.UserInterfaceManager;
+            switch (loot.ContainerType)
+            {
+                // Handle shop shelves: open trade window with activated loot container as remote target
+                case LootContainerTypes.ShopShelves:
+                    DaggerfallTradeWindow tradeWindow = new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Buy);
+                    tradeWindow.MerchantItems = loot.Items;
+                    uiManager.PushWindow(tradeWindow);
+                    return;
+
+                // Handle house furniture containers: ask player if they want to look through private property
+                case LootContainerTypes.HouseContainers:
+                    if (loot.Items.Count == 0)
+                        return;
+                    DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, DaggerfallMessageBox.CommonMessageBoxButtons.YesNo, PrivatePropertyId, uiManager.TopWindow);
+                    messageBox.OnButtonClick += PrivateProperty_OnButtonClick;
+                    uiManager.PushWindow(messageBox);
+                    DaggerfallUI.Instance.InventoryWindow.LootTarget = loot;
+                    return;
+
+                // Handle corpses: info mode gives a description
+                case LootContainerTypes.CorpseMarker:
+                    if (currentMode == PlayerActivateModes.Info)
+                    {   // Corpse info mode
+                        if (!string.IsNullOrEmpty(loot.entityName))
+                            DaggerfallUI.AddHUDText((loot.isEnemyClass) ? HardStrings.youSeeADeadPerson : HardStrings.youSeeADead.Replace("%s", loot.entityName));
+                        return;
+                    }
+                    else
+                    {   // Check if close enough to activate and that corpse has items
+                        if (hit.distance > CorpseActivationDistance * MeshReader.GlobalScale)
+                        {
+                            DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
+                            return;
+                        }
+                        else if (loot.Items.Count == 0)
+                        {
+                            DaggerfallUI.AddHUDText(HardStrings.theBodyHasNoTreasure);
+                            return;
+                        }
+                        break;
+                    }
+                // No special handling for all other loot container types: (Nothing, RandomTreasure, DroppedLoot)
+            }
+            // Open inventory window with activated loot container as remote target (if we fall through to here)
+            DaggerfallUI.Instance.InventoryWindow.LootTarget = loot;
+            DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenInventoryWindow);
+            return;
+        }
+
+        public void PrivateProperty_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        {
+            sender.CloseWindow();
+            if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
+            {
+                // Record player crime
+                Debug.Log("Player crime detected: rifling through private property!!");
+                // Open inventory window with activated private container as remote target (pre-set)
+                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenInventoryWindow);
+            }
+            else
+                DaggerfallUI.Instance.InventoryWindow.LootTarget = null;
+        }
+
 
         // Custom transition to store building data before entering building
         private void TransitionInterior(Transform doorOwner, StaticDoor door, bool doFade = false)
