@@ -121,7 +121,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        #region Private Methods
+        #region Public Methods
 
         public bool StealthCheck()
         {
@@ -153,6 +153,25 @@ namespace DaggerfallWorkshop.Game
 
             return Random.Range(1, 101) > stealthRoll;
         }
+
+        public bool TargetIsWithinYawAngle(float targetAngle)
+        {
+            Vector3 directionToPlayer2D = directionToPlayer;
+            directionToPlayer2D.y = 0;
+
+            Vector3 enemyDirection2D = transform.forward;
+            enemyDirection2D.y = 0;
+
+            float angle = Vector3.Angle(directionToPlayer2D, enemyDirection2D);
+            if (angle < targetAngle)
+                return true;
+            else
+                return false;
+        }
+
+        #endregion
+
+        #region Private Methods
 
         private bool CanSeePlayer()
         {
