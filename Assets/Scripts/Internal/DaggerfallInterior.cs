@@ -17,6 +17,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop
 {
@@ -25,6 +26,8 @@ namespace DaggerfallWorkshop
         const int doorModelId = 9800;
         const int ladderModelId = 41409;
         const int propModelType = 3;
+
+        private const int posMask = 0x3FF;  // 10 bits
 
         const uint houseContainerObjectGroup = 418;
         const uint containerObjectGroupOffset = 41000;
@@ -353,8 +356,12 @@ namespace DaggerfallWorkshop
 
         private void AddFurnitureAction(DFBlock.RmbBlock3dObjectRecord obj, GameObject go, PlayerGPS.DiscoveredBuilding buildingData)
         {
-            // Create unique LoadID for save system
-            ulong loadID = (ulong)(buildingData.buildingKey + obj.XPos + obj.YPos + obj.ZPos);
+            // Create unique LoadID for save system, using 9 lsb and the sign bit from each coord pos int
+            ulong loadID = ((ulong)buildingData.buildingKey) << 30 |
+                           (uint)(obj.XPos << 1 & posMask) << 20 |
+                           (uint)(obj.YPos << 1 & posMask) << 10 |
+                           (uint)(obj.ZPos << 1 & posMask);
+
             DFLocation.BuildingTypes buildingType = buildingData.buildingType;
 
             // Handle shelves:
@@ -367,10 +374,13 @@ namespace DaggerfallWorkshop
                     DaggerfallLoot loot = go.GetComponent<DaggerfallLoot>();
                     if (loot)
                     {
-                        // Set as shelves and assign load id
+                        // Set as shelves, assign load id and create serialization object
                         loot.ContainerType = LootContainerTypes.ShopShelves;
                         loot.ContainerImage = InventoryContainerImages.Shelves;
                         loot.LoadID = loadID;
+                        if (SaveLoadManager.Instance != null)
+                            go.AddComponent<SerializableLootContainer>();
+
                         // Stock shop shelf if needed
                         if (loot.Items.Count == 0)
                             DaggerfallLoot.StockShopShelf(buildingData, loot.Items);
