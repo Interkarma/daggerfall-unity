@@ -302,6 +302,20 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
+        /// Creates stack of arrows.
+        /// </summary>
+        /// <param name="amount">Number of arrows in stack.</param>
+        /// <returns>DaggerfallUnityItem</returns>
+        public static DaggerfallUnityItem CreateArrows(int amount)
+        {
+            // Create arrows item
+            DaggerfallUnityItem newItem = new DaggerfallUnityItem(ItemGroups.Weapons, 18);
+            newItem.stackCount = amount;
+            newItem.currentCondition = 0; // not sure if this is necessary, but classic does it
+            return newItem;
+        }
+
+        /// <summary>
         /// Generates armour.
         /// </summary>
         /// <param name="gender">Gender armor is created for.</param>
