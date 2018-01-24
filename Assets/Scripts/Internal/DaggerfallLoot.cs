@@ -69,24 +69,46 @@ namespace DaggerfallWorkshop
             int shopQuality = buildingData.quality;
 
             // Temp test code...
+            int[] generalItems = new int[] { 93, 94, 247, 248, 249, 252, 253, 278, 274 };
+            ItemGroups[] generalItemGrps = new ItemGroups[] { ItemGroups.Transportation, ItemGroups.Transportation, ItemGroups.UselessItems2, ItemGroups.UselessItems2, 
+                ItemGroups.UselessItems2, ItemGroups.UselessItems2, ItemGroups.UselessItems2, ItemGroups.UselessItems2, ItemGroups.MiscItems };
+                    
             Game.Entity.PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
-            items.AddItem(ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race));
-            items.AddItem(ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race));
-            items.AddItem(ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race));
-            DaggerfallUnityItem magic = ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race);
-            magic.legacyMagic = new int[] { 1, 87, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535 };
-            items.AddItem(magic);
-            items.AddItem(ItemBuilder.CreateRandomBook());
-            items.AddItem(ItemBuilder.CreateRandomClothing(playerEntity.Gender, playerEntity.Race));
-            items.AddItem(ItemBuilder.CreateRandomClothing(playerEntity.Gender, playerEntity.Race));
-            items.AddItem(ItemBuilder.CreateRandomClothing(playerEntity.Gender, playerEntity.Race));
-            items.AddItem(ItemBuilder.CreateRandomClothing(playerEntity.Gender, playerEntity.Race));
-            items.AddItem(ItemBuilder.CreateRandomIngredient());
-            items.AddItem(ItemBuilder.CreateItem(ItemGroups.MiscItems, 274));
-            items.AddItem(ItemBuilder.CreateRandomReligiousItem());
-            items.AddItem(ItemBuilder.CreateRandomWeapon(playerEntity.Level));
-            items.AddItem(ItemBuilder.CreateRandomWeapon(playerEntity.Level));
-            items.AddItem(ItemBuilder.CreateRandomWeapon(playerEntity.Level));
+            for (int i=0; i<12; i++)
+            {
+                switch (buildingType)
+                {
+                    case DFLocation.BuildingTypes.Alchemist:
+                        items.AddItem(ItemBuilder.CreateRandomIngredient());
+                        break;
+                    case DFLocation.BuildingTypes.Armorer:
+                        items.AddItem(ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race));
+                        break;
+                    case DFLocation.BuildingTypes.Bookseller:
+                        items.AddItem(ItemBuilder.CreateRandomBook());
+                        break;
+                    case DFLocation.BuildingTypes.ClothingStore:
+                        items.AddItem(ItemBuilder.CreateRandomClothing(playerEntity.Gender, playerEntity.Race));
+                        break;
+                    case DFLocation.BuildingTypes.GemStore:
+                        if (i < 8)
+                            items.AddItem(ItemBuilder.CreateItem(ItemGroups.Gems, i));
+                        break;
+                    case DFLocation.BuildingTypes.GeneralStore:
+                    case DFLocation.BuildingTypes.PawnShop:
+                        if (i < generalItems.Length)
+                            items.AddItem(ItemBuilder.CreateItem(generalItemGrps[i], generalItems[i]));
+                        else
+                            items.AddItem(ItemBuilder.CreateArrows(Random.Range(1, 10)));
+                        break;
+                    case DFLocation.BuildingTypes.WeaponSmith:
+                        if (i > 0)
+                            items.AddItem(ItemBuilder.CreateRandomWeapon(playerEntity.Level));
+                        else
+                            items.AddItem(ItemBuilder.CreateArrows(Random.Range(10, 50)));
+                        break;
+                }
+            }
         }
 
         public static void StockHouseContainer(PlayerGPS.DiscoveredBuilding buildingData, ItemCollection items)
