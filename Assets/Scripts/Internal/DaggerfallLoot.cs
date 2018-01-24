@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -14,6 +14,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Items;
+using DaggerfallConnect;
 
 namespace DaggerfallWorkshop
 {
@@ -59,6 +60,46 @@ namespace DaggerfallWorkshop
         public ItemCollection Items
         {
             get { return items; }
+        }
+
+        public static void StockShopShelf(PlayerGPS.DiscoveredBuilding buildingData, ItemCollection items)
+        {
+            // TODO: Allofich to replace with shelf stocking code... using supplied building type and quality
+            DFLocation.BuildingTypes buildingType = buildingData.buildingType;
+            int shopQuality = buildingData.quality;
+
+            // Temp test code...
+            Game.Entity.PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+            items.AddItem(ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race));
+            items.AddItem(ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race));
+            items.AddItem(ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race));
+            DaggerfallUnityItem magic = ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race);
+            magic.legacyMagic = new int[] { 1, 87, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535 };
+            items.AddItem(magic);
+            items.AddItem(ItemBuilder.CreateRandomBook());
+            items.AddItem(ItemBuilder.CreateRandomClothing(playerEntity.Gender, playerEntity.Race));
+            items.AddItem(ItemBuilder.CreateRandomClothing(playerEntity.Gender, playerEntity.Race));
+            items.AddItem(ItemBuilder.CreateRandomClothing(playerEntity.Gender, playerEntity.Race));
+            items.AddItem(ItemBuilder.CreateRandomClothing(playerEntity.Gender, playerEntity.Race));
+            items.AddItem(ItemBuilder.CreateRandomIngredient());
+            items.AddItem(ItemBuilder.CreateItem(ItemGroups.MiscItems, 274));
+            items.AddItem(ItemBuilder.CreateRandomReligiousItem());
+            items.AddItem(ItemBuilder.CreateRandomWeapon(playerEntity.Level));
+            items.AddItem(ItemBuilder.CreateRandomWeapon(playerEntity.Level));
+            items.AddItem(ItemBuilder.CreateRandomWeapon(playerEntity.Level));
+        }
+
+        public static void StockHouseContainer(PlayerGPS.DiscoveredBuilding buildingData, ItemCollection items)
+        {
+            // TODO: Allofich to replace with house container stocking code... using supplied building type and quality
+            DFLocation.BuildingTypes buildingType = buildingData.buildingType;
+            int shopQuality = buildingData.quality;
+
+            // NOTE: This doesn't neccessarily need to stock anything, classic has many furniture containers which have nothing, so no effect when click
+
+            // Temp test code...
+            Game.Entity.PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+            items.AddItem(ItemBuilder.CreateRandomIngredient());
         }
 
         /// <summary>

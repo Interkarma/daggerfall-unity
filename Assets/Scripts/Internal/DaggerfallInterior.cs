@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -17,6 +17,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop
 {
@@ -25,6 +26,18 @@ namespace DaggerfallWorkshop
         const int doorModelId = 9800;
         const int ladderModelId = 41409;
         const int propModelType = 3;
+
+        private const int posMask = 0x3FF;  // 10 bits
+
+        const uint houseContainerObjectGroup = 418;
+        const uint containerObjectGroupOffset = 41000;
+        static List<uint> shopShelvesObjectGroupIndices = new List<uint> { 5, 6, 11, 12, 15, 16, 17, 18, 19, 28, 29, 31, 35, 37, 40, 42, 44, 46, 48, 49 };
+        static List<uint> houseContainerObjectGroupIndices = new List<uint> { 3, 4, 7, 8, 32, 33, 34, 35, 36, 37, 38, 50, 51 };
+
+        // Building data for map layout, indicates no activation components needed.
+        static PlayerGPS.DiscoveredBuilding mapBD = new PlayerGPS.DiscoveredBuilding {
+            buildingType = DFLocation.BuildingTypes.AllValid
+        };
 
         DaggerfallUnity dfUnity;
         DFBlock blockData;
@@ -107,7 +120,7 @@ namespace DaggerfallWorkshop
         /// <param name="doorOwner">Parent transform owning door array.</param>
         /// <param name="door">Exterior door player clicked on.</param>
         /// <returns>True if successful.</returns>
-        public bool DoLayout(Transform doorOwner, StaticDoor door, ClimateBases climateBase)
+        public bool DoLayout(Transform doorOwner, StaticDoor door, ClimateBases climateBase, PlayerGPS.DiscoveredBuilding buildingData)
         {
             if (dfUnity == null)
                 dfUnity = DaggerfallUnity.Instance;
@@ -130,7 +143,7 @@ namespace DaggerfallWorkshop
                 throw new Exception(string.Format("No interior 3D models found for record index {0}", door.recordIndex), null);
 
             // Layout interior data
-            AddModels();
+            AddModels(buildingData);
             AddFlats();
             AddPeople();
             AddActionDoors();
@@ -168,7 +181,7 @@ namespace DaggerfallWorkshop
                 throw new Exception(string.Format("No interior 3D models found for record index {0}", door.recordIndex), null);
 
             // Layout interior data
-            AddModels();
+            AddModels(mapBD);
 
             return true;
         }
@@ -236,7 +249,7 @@ namespace DaggerfallWorkshop
         /// <summary>
         /// Add interior models.
         /// </summary>
-        private void AddModels()
+        private void AddModels(PlayerGPS.DiscoveredBuilding buildingData)
         {
             List<StaticDoor> doors = new List<StaticDoor>();
             GameObject node = new GameObject("Models");
@@ -317,11 +330,9 @@ namespace DaggerfallWorkshop
                     go.AddComponent<DaggerfallLadder>();
                 }
 
-                // TODO: Add loot container information to specific furniture items
-                if (obj.ObjectType == propModelType)
-                {
-                }
-
+                // Optionally add action objects to specific furniture items (e.g. loot containers), except when laying out map (buildingType=AllValid)
+                if (obj.ObjectType == propModelType && buildingData.buildingType != DFLocation.BuildingTypes.AllValid)
+                    AddFurnitureAction(obj, go, buildingData);
             }
 
             // Add combined GameObject
@@ -341,6 +352,70 @@ namespace DaggerfallWorkshop
             // Add static doors component
             DaggerfallStaticDoors c = this.gameObject.AddComponent<DaggerfallStaticDoors>();
             c.Doors = doors.ToArray();
+        }
+
+        private void AddFurnitureAction(DFBlock.RmbBlock3dObjectRecord obj, GameObject go, PlayerGPS.DiscoveredBuilding buildingData)
+        {
+            // Create unique LoadID for save system, using 9 lsb and the sign bit from each coord pos int
+            ulong loadID = ((ulong)buildingData.buildingKey) << 30 |
+                           (uint)(obj.XPos << 1 & posMask) << 20 |
+                           (uint)(obj.YPos << 1 & posMask) << 10 |
+                           (uint)(obj.ZPos << 1 & posMask);
+
+            DFLocation.BuildingTypes buildingType = buildingData.buildingType;
+
+            // Handle shelves:
+            if (shopShelvesObjectGroupIndices.Contains(obj.ModelIdNum - containerObjectGroupOffset))
+            {
+                if (RMBLayout.IsShop(buildingType))
+                {
+                    // Shop shelves, so add a DaggerfallLoot component
+                    go.AddComponent<DaggerfallLoot>();
+                    DaggerfallLoot loot = go.GetComponent<DaggerfallLoot>();
+                    if (loot)
+                    {
+                        // Set as shelves, assign load id and create serialization object
+                        loot.ContainerType = LootContainerTypes.ShopShelves;
+                        loot.ContainerImage = InventoryContainerImages.Shelves;
+                        loot.LoadID = loadID;
+                        if (SaveLoadManager.Instance != null)
+                            go.AddComponent<SerializableLootContainer>();
+
+                        // Stock shop shelf if needed
+                        if (loot.Items.Count == 0)
+                            DaggerfallLoot.StockShopShelf(buildingData, loot.Items);
+                    }
+                    return;
+                }
+                else if (buildingType == DFLocation.BuildingTypes.Library ||
+                         buildingType == DFLocation.BuildingTypes.GuildHall ||
+                         buildingType == DFLocation.BuildingTypes.Temple)
+                {
+                    // Bookshelves, add DaggerfallBookshelf component
+                    go.AddComponent<DaggerfallBookshelf>();
+                    return;
+                }
+            }
+            // Handle generic furniture as (private) house containers:
+            // (e.g. shelves, boxes, wardrobes, drawers etc)
+            if (obj.ModelIdNum / 100 == houseContainerObjectGroup ||
+                houseContainerObjectGroupIndices.Contains(obj.ModelIdNum - containerObjectGroupOffset))
+            {
+                go.AddComponent<DaggerfallLoot>();
+                DaggerfallLoot loot = go.GetComponent<DaggerfallLoot>();
+                if (loot)
+                {
+                    // Set as house container (private furniture) and assign load id
+                    loot.ContainerType = LootContainerTypes.HouseContainers;
+                    loot.ContainerImage = InventoryContainerImages.Shelves;
+                    loot.LoadID = loadID;
+                    // Stock house container if needed
+                    if (loot.Items.Count == 0)
+                        DaggerfallLoot.StockHouseContainer(buildingData, loot.Items);
+
+                }
+
+            }
         }
 
         /// <summary>

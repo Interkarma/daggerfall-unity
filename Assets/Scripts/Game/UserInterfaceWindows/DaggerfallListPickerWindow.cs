@@ -35,7 +35,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected ListBox listBox = new ListBox();
         protected VerticalScrollBar scrollBar;
 
-        public DaggerfallListPickerWindow(IUserInterfaceManager uiManager, DaggerfallBaseWindow previous = null)
+        public DaggerfallListPickerWindow(IUserInterfaceManager uiManager, IUserInterfaceWindow previous = null)
             : base(uiManager, previous)
         {
         }

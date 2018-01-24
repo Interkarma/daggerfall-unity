@@ -128,6 +128,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string serviceRepairs = "Repairs";
         public const string serviceDonate = "Make Donation";
         public const string serviceCure = "Cure Disease";
+        public const string serviceDenied = "You need to be a member to access this.";
 
         public const string doesntNeedIdentifying = "This does not need to be identified.";
 
