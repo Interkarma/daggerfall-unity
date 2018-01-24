@@ -110,7 +110,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             { DFLocation.BuildingTypes.GemStore, new List<ItemGroups>()
                 { ItemGroups.Gems, ItemGroups.Jewellery } },
             { DFLocation.BuildingTypes.GeneralStore, new List<ItemGroups>()
-                { ItemGroups.Books, ItemGroups.MensClothing, ItemGroups.WomensClothing, /*ItemGroups.Transportation,*/ ItemGroups.Jewellery, ItemGroups.Weapons } },
+                { ItemGroups.Books, ItemGroups.MensClothing, ItemGroups.WomensClothing, ItemGroups.Transportation, ItemGroups.Jewellery, ItemGroups.Weapons } },
             { DFLocation.BuildingTypes.PawnShop, new List<ItemGroups>()
                 { ItemGroups.Armor, ItemGroups.Books, ItemGroups.MensClothing, ItemGroups.WomensClothing, ItemGroups.Gems, ItemGroups.Jewellery, ItemGroups.ReligiousItems, ItemGroups.Weapons } },
             { DFLocation.BuildingTypes.WeaponSmith, new List<ItemGroups>()

@@ -1135,7 +1135,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected bool CanCarry(DaggerfallUnityItem item)
         {
             // Check weight limit
-            if (GetCarriedWeight() + item.weightInKg > playerEntity.MaxEncumbrance)
+            if (GetCarriedWeight() + item.weightInKg > playerEntity.MaxEncumbrance &&
+                item.ItemGroup != ItemGroups.Transportation)
             {
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
                 messageBox.SetText(HardStrings.cannotCarryAnymore);
@@ -1149,7 +1150,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected bool WagonCanHold(DaggerfallUnityItem item)
         {
             // Check cart weight limit
-            if (remoteItems.GetWeight() + item.weightInKg > ItemHelper.wagonKgLimit)
+            if (remoteItems.GetWeight() + item.weightInKg > ItemHelper.wagonKgLimit &&
+                item.ItemGroup != ItemGroups.Transportation)
             {
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
                 messageBox.SetText(HardStrings.cannotHoldAnymore);
@@ -1160,14 +1162,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return true;
         }
 
-        protected void TransferItem(DaggerfallUnityItem item, ItemCollection from, ItemCollection to)
+        protected void TransferItem(DaggerfallUnityItem item, ItemCollection from, ItemCollection to, bool blockTransport = false)
         {
-            // Block transfer of horse or cart
-            if (item.IsOfTemplate(ItemGroups.Transportation, (int)Transportation.Horse) ||
-                item.IsOfTemplate(ItemGroups.Transportation, (int)Transportation.Small_cart))
-            {
+            // Block transfer of horse or cart (don't allow putting either in wagon)
+            if (blockTransport && item.ItemGroup == ItemGroups.Transportation)
                 return;
-            }
 
             // Handle map items
             if (item.IsOfTemplate(ItemGroups.MiscItems, (int)MiscItems.Map))
@@ -1456,7 +1455,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     // Check wagon weight limit
                     if (!usingWagon || WagonCanHold(item))
-                        TransferItem(item, localItems, remoteItems);
+                        TransferItem(item, localItems, remoteItems, true);
                 }
             }
             else if (selectedActionMode == ActionModes.Info)

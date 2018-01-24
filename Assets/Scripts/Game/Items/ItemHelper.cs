@@ -954,17 +954,6 @@ namespace DaggerfallWorkshop.Game.Items
             shortShirt.dyeColor = ItemBuilder.RandomClothingDye();
             ItemBuilder.RandomizeClothingVariant(casualPants);
 
-            // Add a horse
-            // This helps player get around
-            // Free horse will be removed once shops are implemented
-            items.AddItem(ItemBuilder.CreateItem(ItemGroups.Transportation, (int)Transportation.Horse));
-
-            // Add a wagon
-            // This is required for now as shops not currently implemented
-            // Wagon is easy to obtain anyway (150g) and most player can affored right out of Privateer's Hold
-            // TODO: Remove this once shops can sell this item to players as normal
-            items.AddItem(ItemBuilder.CreateItem(ItemGroups.Transportation, (int)Transportation.Small_cart));
-
             // Add spellbook, all players start with one
             items.AddItem(ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Spellbook));
 
@@ -985,13 +974,6 @@ namespace DaggerfallWorkshop.Game.Items
             items.AddItem(ItemBuilder.CreateWeapon(Weapons.Katana, WeaponMaterialTypes.Iron));
             items.AddItem(ItemBuilder.CreateWeapon(Weapons.Staff, WeaponMaterialTypes.Silver));
             items.AddItem(ItemBuilder.CreateWeapon(Weapons.Long_Bow, WeaponMaterialTypes.Silver));
-
-            // Add some ingredients
-            for (int i = 0; i < 10; i++)
-            {
-                items.AddItem(ItemBuilder.CreateRandomIngredient());
-                items.AddItem(ItemBuilder.CreateRandomBook());
-            }
 
             // Add some starting gold
             playerEntity.GoldPieces += 100;
