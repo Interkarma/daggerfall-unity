@@ -222,11 +222,20 @@ namespace DaggerfallWorkshop.Game
                 int playerBlockIndex = dungeon.GetPlayerBlockIndex(transform.position);
                 if (playerBlockIndex != lastPlayerDungeonBlockIndex)
                 {
-                    dungeon.GetBlockData(playerBlockIndex, out playerDungeonBlockData);
                     lastPlayerDungeonBlockIndex = playerBlockIndex;
-                    blockWaterLevel = playerDungeonBlockData.WaterLevel;
-                    isPlayerInsideDungeonCastle = playerDungeonBlockData.CastleBlock;
-                    SpecialAreaCheck();
+                    if (playerBlockIndex != -1)
+                    {
+                        dungeon.GetBlockData(playerBlockIndex, out playerDungeonBlockData);
+                        blockWaterLevel = playerDungeonBlockData.WaterLevel;
+                        isPlayerInsideDungeonCastle = playerDungeonBlockData.CastleBlock;
+                        SpecialAreaCheck();
+                    }
+                    else
+                    {
+                        blockWaterLevel = 10000;
+                        isPlayerInsideDungeonCastle = false;
+                        isPlayerInsideSpecialArea = false;
+                    }
                     //Debug.Log(string.Format("Player is now inside block {0}", playerDungeonBlockData.BlockName));
                 }
             }
