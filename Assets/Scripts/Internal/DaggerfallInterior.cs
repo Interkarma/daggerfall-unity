@@ -370,8 +370,7 @@ namespace DaggerfallWorkshop
                 if (RMBLayout.IsShop(buildingType))
                 {
                     // Shop shelves, so add a DaggerfallLoot component
-                    go.AddComponent<DaggerfallLoot>();
-                    DaggerfallLoot loot = go.GetComponent<DaggerfallLoot>();
+                    DaggerfallLoot loot = go.AddComponent<DaggerfallLoot>();
                     if (loot)
                     {
                         // Set as shelves, assign load id and create serialization object
@@ -401,8 +400,7 @@ namespace DaggerfallWorkshop
             if (obj.ModelIdNum / 100 == houseContainerObjectGroup ||
                 houseContainerObjectGroupIndices.Contains(obj.ModelIdNum - containerObjectGroupOffset))
             {
-                go.AddComponent<DaggerfallLoot>();
-                DaggerfallLoot loot = go.GetComponent<DaggerfallLoot>();
+                DaggerfallLoot loot = go.AddComponent<DaggerfallLoot>();
                 if (loot)
                 {
                     // Set as house container (private furniture) and assign load id
