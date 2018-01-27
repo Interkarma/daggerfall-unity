@@ -900,7 +900,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11400000, guid: 0811f78212229814d8c469c916304789, type: 2}
       propertyPath: Arena2Path
-      value: D:\Games\Daggerfall\arena2
+      value: G:\Daggerfall\Dagger\arena2
       objectReference: {fileID: 0}
     - target: {fileID: 11400008, guid: 0811f78212229814d8c469c916304789, type: 2}
       propertyPath: GenerateNormals
@@ -934,7 +934,7 @@ Prefab:
     - target: {fileID: 11400000, guid: 0811f78212229814d8c469c916304789, type: 2}
       propertyPath: Option_InteriorDoorPrefab
       value: 
-      objectReference: {fileID: 11420022, guid: 8bcd7eec5b47e7b4a97244dcfe9b6a98,
+      objectReference: {fileID: 11420022, guid: 5ff2939196ad9d544b940b85e9b05471,
         type: 2}
     - target: {fileID: 11400000, guid: 0811f78212229814d8c469c916304789, type: 2}
       propertyPath: Option_EnemyPrefab
@@ -2141,7 +2141,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22400016, guid: 312abd0527754e047a6bfbc424f09ace, type: 2}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 11400006, guid: 312abd0527754e047a6bfbc424f09ace, type: 2}
       propertyPath: m_Value

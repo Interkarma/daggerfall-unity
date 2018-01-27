@@ -778,6 +778,7 @@ namespace DaggerfallWorkshop
                 // Assign loadID
                 if (actionDoor)
                     actionDoor.LoadID = loadID;
+                go.AddComponent<SerializableActionDoor>();
             }
         }
 

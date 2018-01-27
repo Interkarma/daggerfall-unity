@@ -429,6 +429,36 @@ namespace DaggerfallWorkshop.Game.Serialization
             return singletonOut != null;
         }
 
+        /// <summary>
+        /// Register ISerializableGameObject with SerializableStateManager.
+        /// </summary>
+        public static void RegisterSerializableGameObject(ISerializableGameObject serializableObject)
+        {
+            if (sceneUnloaded)
+                return;
+            Instance.stateManager.RegisterStatefulGameObject(serializableObject);
+        }
+
+        /// <summary>
+        /// Deregister ISerializableGameObject from SerializableStateManager.
+        /// </summary>
+        public static void DeregisterSerializableGameObject(ISerializableGameObject serializableObject)
+        {
+            if (sceneUnloaded)
+                return;
+            Instance.stateManager.DeregisterStatefulGameObject(serializableObject);
+        }
+
+        /// <summary>
+        /// Force deregister all ISerializableGameObject instances from SerializableStateManager.
+        /// </summary>
+        public static void DeregisterAllSerializableGameObjects(bool keepPlayer = true)
+        {
+            if (sceneUnloaded)
+                return;
+            Instance.stateManager.DeregisterAllStatefulGameObjects(keepPlayer);
+        }
+
         #endregion
 
         #region Serialization Helpers

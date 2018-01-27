@@ -55,14 +55,14 @@ namespace DaggerfallWorkshop.Game.Serialization
                         enemy.LoadID++;
                 }
 
-                SaveLoadManager.StateManager.RegisterSerializableGameObject(this);
+                SaveLoadManager.RegisterSerializableGameObject(this);
             }
         }
 
         void OnDestroy()
         {
             if (LoadID != 0)
-                SaveLoadManager.StateManager.DeregisterSerializableGameObject(this);
+                SaveLoadManager.DeregisterSerializableGameObject(this);
         }
 
 #if UNITY_EDITOR

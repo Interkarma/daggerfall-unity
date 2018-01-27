@@ -22,6 +22,8 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         DaggerfallLoot loot;
 
+        bool registered = false;
+
         #endregion
 
         #region Unity
@@ -31,18 +33,18 @@ namespace DaggerfallWorkshop.Game.Serialization
             loot = GetComponent<DaggerfallLoot>();
             if (!loot)
                 throw new Exception("DaggerfallLoot not found.");
+            RegisterGameObject();
         }
 
         void Start()
         {
-            if (LoadID != 0)
-                SaveLoadManager.StateManager.RegisterSerializableGameObject(this);
+            RegisterGameObject();
         }
 
         void OnDestroy()
         {
             if (LoadID != 0)
-                SaveLoadManager.StateManager.DeregisterSerializableGameObject(this);
+                SaveLoadManager.DeregisterSerializableGameObject(this);
         }
 
         #endregion
@@ -129,6 +131,15 @@ namespace DaggerfallWorkshop.Game.Serialization
         #endregion
 
         #region Private Methods
+
+        void RegisterGameObject()
+        {
+            if (!registered && LoadID != 0)
+            {
+                SaveLoadManager.RegisterSerializableGameObject(this);
+                registered = true;
+            }
+        }
 
         bool HasChanged()
         {
