@@ -103,18 +103,6 @@ namespace DaggerfallWorkshop.Game.Serialization
                 else
                     serializableObjects.Add(serializableObject.LoadID, serializableObject);
             }
-/*
-            if (serializableObject is SerializablePlayer)
-                serializablePlayer = serializableObject as SerializablePlayer;
-            else if (serializableObject is SerializableActionDoor)
-                AddSerializableActionDoor(serializableObject as SerializableActionDoor);
-            else if (serializableObject is SerializableActionObject)
-                AddSerializableActionObject(serializableObject as SerializableActionObject);
-            else if (serializableObject is SerializableEnemy)
-                AddSerializableEnemy(serializableObject as SerializableEnemy);
-            else if (serializableObject is SerializableLootContainer)
-                AddSerializableLootContainer(serializableObject as SerializableLootContainer);
-                */
         }
 
         /// <summary>
@@ -128,16 +116,6 @@ namespace DaggerfallWorkshop.Game.Serialization
             StatefulGameObjectTypes sgObjType = GetStatefulGameObjectType(serializableObject);
             Dictionary<ulong, ISerializableGameObject> serializableObjects = statefulGameObjects[(int)sgObjType];
             serializableObjects.Remove(serializableObject.LoadID);
-/*
-            if (serializableObject is SerializableActionDoor)
-                serializableActionDoors.Remove(serializableObject.LoadID);
-            else if (serializableObject is SerializableActionObject)
-                serializableActionObjects.Remove(serializableObject.LoadID);
-            else if (serializableObject is SerializableEnemy)
-                serializableEnemies.Remove(serializableObject.LoadID);
-            else if (serializableObject is SerializableLootContainer)
-                serializableLootContainers.Remove(serializableObject.LoadID);
-                */
         }
 
         /// <summary>
@@ -335,20 +313,6 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         #region Private Methods
 
-        private StatefulGameObjectTypes GetStatefulGameObjectType(ISerializableGameObject sgObj)
-        {
-            if (sgObj is SerializableActionDoor)
-                return StatefulGameObjectTypes.ActionDoor;
-            else if (sgObj is SerializableActionObject)
-                return StatefulGameObjectTypes.ActionObject;
-            else if (sgObj is SerializableEnemy)
-                return StatefulGameObjectTypes.Enemy;
-            else if (sgObj is SerializableLootContainer)
-                return StatefulGameObjectTypes.LootContainer;
-
-            throw new Exception(typeNotImplementedExeptionText);
-        }
-
         private Dictionary<ulong, ISerializableGameObject> SerializableActionDoors
         {
             get { return statefulGameObjects[(int)StatefulGameObjectTypes.ActionDoor]; }
@@ -369,6 +333,19 @@ namespace DaggerfallWorkshop.Game.Serialization
             get { return statefulGameObjects[(int)StatefulGameObjectTypes.LootContainer]; }
         }
 
+        private StatefulGameObjectTypes GetStatefulGameObjectType(ISerializableGameObject sgObj)
+        {
+            if (sgObj is SerializableActionDoor)
+                return StatefulGameObjectTypes.ActionDoor;
+            else if (sgObj is SerializableActionObject)
+                return StatefulGameObjectTypes.ActionObject;
+            else if (sgObj is SerializableEnemy)
+                return StatefulGameObjectTypes.Enemy;
+            else if (sgObj is SerializableLootContainer)
+                return StatefulGameObjectTypes.LootContainer;
+
+            throw new Exception(typeNotImplementedExeptionText);
+        }
 
         #endregion
     }
