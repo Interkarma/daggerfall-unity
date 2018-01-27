@@ -39,6 +39,22 @@ namespace DaggerfallWorkshop
             0, 20, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 37, 43, 44, 45, 46, 47
         };
 
+        public static byte[] itemGroupsAlchemist = new byte[] { 0x0E, 0x1E, 0x0F, 0x32, 0x10, 0x32, 0x11, 0x1E, 0x12, 0x14, 0x13, 0x14, 0x14, 0x3C, 0x15, 0x28, 0x16, 0x1E };
+        public static byte[] itemGroupsHouseForSale = new byte[] { 0x11, 0x1E, 0x12, 0x14, 0x13, 0x14 };
+        public static byte[] itemGroupsArmorer = new byte[] { 0x02, 0x50, 0x03, 0x14 };
+        public static byte[] itemGroupsBank = new byte[] { 0x07, 0x32 };
+        public static byte[] itemGroupsTown4 = new byte[] { 0x00, 0x50, 0x04, 0x1E, 0x0D, 0x14, 0x0E, 0x0A, 0x19, 0x32 };
+        public static byte[] itemGroupsBookseller = new byte[] { 0x07, 0x28, 0x0B, 0x05 };
+        public static byte[] itemGroupsClothingStore = new byte[] { 0x06, 0x32, 0x0C, 0x32 };
+        public static byte[] itemGroupsFurnitureStore = new byte[] { 0x0D, 0x14 };
+        public static byte[] itemGroupsGemStore = new byte[] { 0x0E, 0x28, 0x19, 0x32 };
+        public static byte[] itemGroupsGeneralStore = new byte[] { 0x03, 0x14, 0x06, 0x0A, 0x07, 0x0A, 0x09, 0x32, 0x17, 0x00, 0x0C, 0x0A, 0x04, 0x00 };
+        public static byte[] itemGroupsLibrary = new byte[] { 0x07, 0x32 };
+        public static byte[] itemGroupsGuildHall = new byte[] { 0x04, 0x1E, 0x07, 0x1E, 0x0F, 0x32, 0x10, 0x32, 0x11, 0x1E, 0x12, 0x14, 0x13, 0x14, 0x14, 0x3C, 0x15, 0x28, 0x16, 0x1E };
+        public static byte[] itemGroupsPawnShop = new byte[] { 0x02, 0x0A, 0x03, 0x0A, 0x04, 0x0A, 0x07, 0x0A, 0x09, 0x14, 0x0D, 0x05, 0x0E, 0x0A, 0x19, 0x0A, 0x0A, 0x0A };
+        public static byte[] itemGroupsWeaponSmith = new byte[] { 0x02, 0x1E, 0x03, 0x46 };
+        public static byte[] itemGroupsTemple = new byte[] { 0x0C, 0xFF, 0x02, 0xFF };
+
         public LootContainerTypes ContainerType = LootContainerTypes.Nothing;
         public InventoryContainerImages ContainerImage = InventoryContainerImages.Chest;
         public string entityName = string.Empty;
@@ -64,49 +80,98 @@ namespace DaggerfallWorkshop
 
         public static void StockShopShelf(PlayerGPS.DiscoveredBuilding buildingData, ItemCollection items)
         {
-            // TODO: Allofich to replace with shelf stocking code... using supplied building type and quality
             DFLocation.BuildingTypes buildingType = buildingData.buildingType;
             int shopQuality = buildingData.quality;
-
-            // Temp test code...
-            int[] generalItems = new int[] { 93, 94, 247, 248, 249, 252, 253, 278, 274 };
-            ItemGroups[] generalItemGrps = new ItemGroups[] { ItemGroups.Transportation, ItemGroups.Transportation, ItemGroups.UselessItems2, ItemGroups.UselessItems2, 
-                ItemGroups.UselessItems2, ItemGroups.UselessItems2, ItemGroups.UselessItems2, ItemGroups.UselessItems2, ItemGroups.MiscItems };
-                    
             Game.Entity.PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
-            for (int i=0; i<12; i++)
+            byte[] itemGroups = { 0 };
+
+            switch (buildingType)
             {
-                switch (buildingType)
+                case DFLocation.BuildingTypes.Alchemist:
+                    itemGroups = itemGroupsAlchemist;
+                    RandomlyAddPotionRecipe(25, items);
+                    break;
+                case DFLocation.BuildingTypes.Armorer:
+                    itemGroups = itemGroupsArmorer;
+                    break;
+                case DFLocation.BuildingTypes.Bookseller:
+                    itemGroups = itemGroupsBookseller;
+                    break;
+                case DFLocation.BuildingTypes.ClothingStore:
+                    itemGroups = itemGroupsClothingStore;
+                    break;
+                case DFLocation.BuildingTypes.GemStore:
+                    itemGroups = itemGroupsGemStore;
+                    break;
+                case DFLocation.BuildingTypes.GeneralStore:
+                    itemGroups = itemGroupsGeneralStore;
+                    items.AddItem(ItemBuilder.CreateItem(ItemGroups.Transportation, (int)Transportation.Horse));
+                    items.AddItem(ItemBuilder.CreateItem(ItemGroups.Transportation, (int)Transportation.Small_cart));
+                    break;
+                case DFLocation.BuildingTypes.PawnShop:
+                    itemGroups = itemGroupsPawnShop;
+                    break;
+                case DFLocation.BuildingTypes.WeaponSmith:
+                    itemGroups = itemGroupsWeaponSmith;
+                    break;
+            }
+
+            for (int i = 0; i < itemGroups.Length; i += 2)
+            {
+                ItemGroups itemGroup = (ItemGroups)itemGroups[i];
+                int chanceMod = itemGroups[i + 1];
+                if (itemGroup == ItemGroups.MensClothing && playerEntity.Gender == Game.Entity.Genders.Female)
+                    itemGroup = ItemGroups.WomensClothing;
+                if (itemGroup == ItemGroups.WomensClothing && playerEntity.Gender == Game.Entity.Genders.Male)
+                    itemGroup = ItemGroups.MensClothing;
+                System.Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(itemGroup);
+
+                if (enumArray.Length > 0 && itemGroup != ItemGroups.Furniture && itemGroup != ItemGroups.UselessItems1)
                 {
-                    case DFLocation.BuildingTypes.Alchemist:
-                        items.AddItem(ItemBuilder.CreateRandomIngredient());
-                        break;
-                    case DFLocation.BuildingTypes.Armorer:
-                        items.AddItem(ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race));
-                        break;
-                    case DFLocation.BuildingTypes.Bookseller:
-                        items.AddItem(ItemBuilder.CreateRandomBook());
-                        break;
-                    case DFLocation.BuildingTypes.ClothingStore:
-                        items.AddItem(ItemBuilder.CreateRandomClothing(playerEntity.Gender, playerEntity.Race));
-                        break;
-                    case DFLocation.BuildingTypes.GemStore:
-                        if (i < 8)
-                            items.AddItem(ItemBuilder.CreateItem(ItemGroups.Gems, i));
-                        break;
-                    case DFLocation.BuildingTypes.GeneralStore:
-                    case DFLocation.BuildingTypes.PawnShop:
-                        if (i < generalItems.Length)
-                            items.AddItem(ItemBuilder.CreateItem(generalItemGrps[i], generalItems[i]));
-                        else
-                            items.AddItem(ItemBuilder.CreateArrows(Random.Range(1, 10)));
-                        break;
-                    case DFLocation.BuildingTypes.WeaponSmith:
-                        if (i > 0)
-                            items.AddItem(ItemBuilder.CreateRandomWeapon(playerEntity.Level));
-                        else
-                            items.AddItem(ItemBuilder.CreateArrows(Random.Range(10, 50)));
-                        break;
+                    if (itemGroup == ItemGroups.Books)
+                    {
+                        int qualityMod = (shopQuality + 3) / 5;
+                        if (qualityMod >= 4)
+                            --qualityMod;
+                        qualityMod++;
+                        for (int j = 0; j <= qualityMod; ++j)
+                        {
+                            items.AddItem(ItemBuilder.CreateRandomBook());
+                        }
+                    }
+                    else
+                    {
+                        for (int j = 0; j < enumArray.Length; ++j)
+                        {
+                            DaggerfallConnect.FallExe.ItemTemplate itemTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(itemGroup, j);
+                            if (itemTemplate.rarity <= shopQuality)
+                            {
+                                int stockChance = chanceMod * 5 * (21 - itemTemplate.rarity) / 100;
+                                if (Random.Range(1, 101) <= stockChance)
+                                {
+                                    DaggerfallUnityItem item = null;
+                                    if (itemGroup == ItemGroups.Weapons)
+                                        item = ItemBuilder.CreateWeapon(j + Weapons.Dagger, ItemBuilder.RandomMaterial(playerEntity.Level));
+                                    else if (itemGroup == ItemGroups.Armor)
+                                        item = ItemBuilder.CreateArmor(playerEntity.Gender, playerEntity.Race, j + Armor.Cuirass, ItemBuilder.RandomArmorMaterial(playerEntity.Level));
+                                    else if (itemGroup == ItemGroups.MensClothing)
+                                    {
+                                        item = ItemBuilder.CreateMensClothing(j + MensClothing.Straps, playerEntity.Race);
+                                        item.dyeColor = ItemBuilder.RandomClothingDye();
+                                    }
+                                    else if (itemGroup == ItemGroups.WomensClothing)
+                                    {
+                                        item = ItemBuilder.CreateWomensClothing(j + WomensClothing.Brassier, playerEntity.Race);
+                                        item.dyeColor = ItemBuilder.RandomClothingDye();
+                                    }
+                                    else
+                                        item = new DaggerfallUnityItem(itemGroup, j);
+
+                                    items.AddItem(item);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

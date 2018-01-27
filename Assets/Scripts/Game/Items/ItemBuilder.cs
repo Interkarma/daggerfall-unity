@@ -269,6 +269,13 @@ namespace DaggerfallWorkshop.Game.Items
             newItem = SetItemPropertiesByMaterial(newItem, material);
             newItem.dyeColor = DaggerfallUnity.Instance.ItemHelper.GetWeaponDyeColor(material);
 
+            // Handle arrows
+            if (groupIndex == 18)
+            {
+                newItem.stackCount = UnityEngine.Random.Range(1, 21);
+                newItem.currentCondition = 0; // not sure if this is necessary, but classic does it
+            }
+
             return newItem;
         }
 
@@ -298,20 +305,6 @@ namespace DaggerfallWorkshop.Game.Items
                 newItem.currentCondition = 0; // not sure if this is necessary, but classic does it
             }
 
-            return newItem;
-        }
-
-        /// <summary>
-        /// Creates stack of arrows.
-        /// </summary>
-        /// <param name="amount">Number of arrows in stack.</param>
-        /// <returns>DaggerfallUnityItem</returns>
-        public static DaggerfallUnityItem CreateArrows(int amount)
-        {
-            // Create arrows item
-            DaggerfallUnityItem newItem = new DaggerfallUnityItem(ItemGroups.Weapons, 18);
-            newItem.stackCount = amount;
-            newItem.currentCondition = 0; // not sure if this is necessary, but classic does it
             return newItem;
         }
 

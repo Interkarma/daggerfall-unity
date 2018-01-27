@@ -31,7 +31,7 @@ namespace DaggerfallConnect.FallExe
         public Int32 capacityOrTarget;              // Capacity of container or target of effect
         public Int32 basePrice;                     // Base price before material, mercantile, etc. modify value
         public Int16 enchantmentPoints;             // Base enchantment points before material
-        public Byte unknown;                        // Unknown value
+        public Byte rarity;                         // Rarity of item appearing in buildings. Building quality must be at least equal this for item to appear.
         public Byte variants;                       // Number of variants for wearable items, unknown for non-wearable items
         public Byte drawOrderOrEffect;              // Ordering of items on paper doll (sort lowest to highest) or effect for ingredients
         public Byte propertiesBitfield;             // Bitfield with some other item properties
@@ -42,7 +42,6 @@ namespace DaggerfallConnect.FallExe
     /// <summary>
     /// Stores item template data in a more friendly format.
     /// Provides some convenience such as splitting out texture bitfields.
-    /// Passing through unknown values as-is.
     /// </summary>
     [Serializable]
     public struct ItemTemplate
@@ -54,7 +53,7 @@ namespace DaggerfallConnect.FallExe
         public int capacityOrTarget;                // Capacity of container or target of effect
         public int basePrice;                       // Base price before material, mercantile, etc. modify value
         public int enchantmentPoints;               // Base enchantment points before material
-        public byte unknown;                        // Unknown value
+        public byte rarity;                         // Rarity of item appearing in buildings. Building quality must be at least equal this for item to appear.
         public byte variants;                       // Number of variants for wearable items, unknown for non-wearable items
         public byte drawOrderOrEffect;              // Ordering of items on paper doll (sort lowest to highest) or effect for ingredients
         public bool isBluntWeapon;                  // True for blunt weapons
@@ -289,7 +288,7 @@ namespace DaggerfallConnect.FallExe
                 desc.capacityOrTarget = item.capacityOrTarget;
                 desc.basePrice = item.basePrice;
                 desc.enchantmentPoints = item.enchantmentPoints;
-                desc.unknown = item.unknown;
+                desc.rarity = item.rarity;
                 desc.variants = item.variants;
                 desc.drawOrderOrEffect = item.drawOrderOrEffect;
                 desc.isBluntWeapon = (((item.propertiesBitfield >> 4) & 1) == 1) ? true : false;
@@ -326,7 +325,7 @@ namespace DaggerfallConnect.FallExe
                 writer.Write(item.capacityOrTarget);
                 writer.Write(item.basePrice);
                 writer.Write(item.enchantmentPoints);
-                writer.Write(item.unknown);
+                writer.Write(item.rarity);
                 writer.Write(item.variants);
                 writer.Write(item.drawOrderOrEffect);
                 writer.Write(item.propertiesBitfield);
@@ -397,7 +396,7 @@ namespace DaggerfallConnect.FallExe
             item.capacityOrTarget = reader.ReadInt32();
             item.basePrice = reader.ReadInt32();
             item.enchantmentPoints = reader.ReadInt16();
-            item.unknown = reader.ReadByte();
+            item.rarity = reader.ReadByte();
             item.variants = reader.ReadByte();
             item.drawOrderOrEffect = reader.ReadByte();
             item.propertiesBitfield = reader.ReadByte();
