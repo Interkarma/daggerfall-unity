@@ -49,8 +49,6 @@ namespace DaggerfallWorkshop.Game.Serialization
             get { return serializablePlayer; }
         }
 
-        public bool SceneUnloaded { get; set; }
-
         #endregion
 
         #region Constructors & Event Handlers
@@ -64,7 +62,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             PlayerEnterExit.OnTransitionInterior += new PlayerEnterExit.OnTransitionInteriorEventHandler(HandleInteriorTransition);
         }
 
-        // Handle interior/exterior transition events
+        // Handle interior->exterior transition events
         void HandlePreTransition(PlayerEnterExit.TransitionEventArgs args)
         {
             if (args.TransitionType == PlayerEnterExit.TransitionType.ToBuildingExterior)
@@ -74,7 +72,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             }
         }
 
-        // Handle interior/exterior transition events
+        // Handle exterior->interior transition events
         void HandleInteriorTransition(PlayerEnterExit.TransitionEventArgs args)
         {
             string sceneName = args.DaggerfallInterior.name;
