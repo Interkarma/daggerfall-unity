@@ -74,12 +74,12 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (!transportManager)
                 throw new Exception("TransportManager not found.");
 
-            SaveLoadManager.RegisterSerializableGameObject(this);
+            SaveLoadManager.StateManager.RegisterSerializableGameObject(this);
         }
 
         void OnDestroy()
         {
-            SaveLoadManager.DeregisterSerializableGameObject(this);
+            SaveLoadManager.StateManager.DeregisterSerializableGameObject(this);
         }
 
         #endregion
