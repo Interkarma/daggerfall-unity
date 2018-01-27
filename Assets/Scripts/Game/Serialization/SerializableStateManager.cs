@@ -6,17 +6,20 @@
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    Lypyl (lypyldf@gmail.com), Hazelnut
 // 
-// Notes:           Extracted from SaveLoadManager class
+// Notes:           Extracted from SaveLoadManager class (Hazelnut Jan2018)
 //
 
 using UnityEngine;
 using System;
 using System.Collections.Generic;
-using FullSerializer;
 using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.Serialization
 {
+    /// <summary>
+    /// Enum of stateful game object types that implement ISerializableGameObject.
+    /// To add a new type of stateful game object, add type name here and a condition to GetStatefulGameObjectType().
+    /// </summary>
     public enum StatefulGameObjectTypes
     {
         LootContainer,
@@ -35,14 +38,14 @@ namespace DaggerfallWorkshop.Game.Serialization
         #region Fields
 
         const string invalidLoadIDExceptionText = "serializableObject does not have a valid LoadID";
-        const string duplicateLoadIDErrorText = "{0} detected duplicate LoadID {1}. This object will not be serialized.";
+        const string duplicateLoadIDErrorText = "Duplicate LoadID {1} detected for {0} object. This object will not be serialized.";
+        const string typeNotImplementedExeptionText = "ISerializableGameObject type not implemented.";
+
+        // Serializable player (there can be only one!)
+        SerializablePlayer serializablePlayer;
 
         // Serializable stateful game objects in current scene
-        SerializablePlayer serializablePlayer;
-        Dictionary<ulong, SerializableActionDoor> serializableActionDoors = new Dictionary<ulong, SerializableActionDoor>();
-        Dictionary<ulong, SerializableActionObject> serializableActionObjects = new Dictionary<ulong, SerializableActionObject>();
-        Dictionary<ulong, SerializableEnemy> serializableEnemies = new Dictionary<ulong, SerializableEnemy>();
-        Dictionary<ulong, SerializableLootContainer> serializableLootContainers = new Dictionary<ulong, SerializableLootContainer>();
+        List<Dictionary<ulong, ISerializableGameObject>> statefulGameObjects = new List<Dictionary<ulong, ISerializableGameObject>>();
 
         #endregion
 
@@ -55,6 +58,12 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         #endregion
 
+        public SerializableStateManager()
+        {
+            foreach (StatefulGameObjectTypes type in Enum.GetValues(typeof(StatefulGameObjectTypes)))
+                statefulGameObjects.Add(new Dictionary<ulong, ISerializableGameObject>());
+        }
+
         #region Public Methods
 
         /// <summary>
@@ -62,7 +71,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         /// </summary>
         public bool ContainsEnemy(ulong id)
         {
-            return (serializableEnemies.ContainsKey(id));
+            return SerializableEnemies.ContainsKey(id);
         }
 
         /// <summary>
@@ -70,17 +79,31 @@ namespace DaggerfallWorkshop.Game.Serialization
         /// </summary>
         public bool ContainsActionDoor(ulong id)
         {
-            return (serializableActionDoors.ContainsKey(id));
+            return SerializableActionDoors.ContainsKey(id);
         }
 
         /// <summary>
-        /// Register ISerializableGameObject with SaveLoadManager.
+        /// Register ISerializableGameObject with SerializableStateManager.
         /// </summary>
         public void RegisterSerializableGameObject(ISerializableGameObject serializableObject)
         {
             if (serializableObject.LoadID == 0)
                 throw new Exception(invalidLoadIDExceptionText);
 
+            if (serializableObject is SerializablePlayer)
+            {
+                serializablePlayer = serializableObject as SerializablePlayer;
+            }
+            else
+            {
+                StatefulGameObjectTypes sgObjType = GetStatefulGameObjectType(serializableObject);
+                Dictionary<ulong, ISerializableGameObject> serializableObjects = statefulGameObjects[(int)sgObjType];
+                if (serializableObjects.ContainsKey(serializableObject.LoadID))
+                    DaggerfallUnity.LogMessage(string.Format(duplicateLoadIDErrorText, sgObjType, serializableObject.LoadID));
+                else
+                    serializableObjects.Add(serializableObject.LoadID, serializableObject);
+            }
+/*
             if (serializableObject is SerializablePlayer)
                 serializablePlayer = serializableObject as SerializablePlayer;
             else if (serializableObject is SerializableActionDoor)
@@ -91,16 +114,21 @@ namespace DaggerfallWorkshop.Game.Serialization
                 AddSerializableEnemy(serializableObject as SerializableEnemy);
             else if (serializableObject is SerializableLootContainer)
                 AddSerializableLootContainer(serializableObject as SerializableLootContainer);
+                */
         }
 
         /// <summary>
-        /// Deregister ISerializableGameObject from SaveLoadManager.
+        /// Deregister ISerializableGameObject from SerializableStateManager.
         /// </summary>
         public void DeregisterSerializableGameObject(ISerializableGameObject serializableObject)
         {
             if (serializableObject.LoadID == 0)
                 throw new Exception(invalidLoadIDExceptionText);
 
+            StatefulGameObjectTypes sgObjType = GetStatefulGameObjectType(serializableObject);
+            Dictionary<ulong, ISerializableGameObject> serializableObjects = statefulGameObjects[(int)sgObjType];
+            serializableObjects.Remove(serializableObject.LoadID);
+/*
             if (serializableObject is SerializableActionDoor)
                 serializableActionDoors.Remove(serializableObject.LoadID);
             else if (serializableObject is SerializableActionObject)
@@ -109,10 +137,11 @@ namespace DaggerfallWorkshop.Game.Serialization
                 serializableEnemies.Remove(serializableObject.LoadID);
             else if (serializableObject is SerializableLootContainer)
                 serializableLootContainers.Remove(serializableObject.LoadID);
+                */
         }
 
         /// <summary>
-        /// Force deregister all ISerializableGameObject instances from SaveLoadManager.
+        /// Force deregister all ISerializableGameObject instances from SerializableStateManager.
         /// </summary>
         public void DeregisterAllSerializableGameObjects(bool keepPlayer = true)
         {
@@ -121,15 +150,15 @@ namespace DaggerfallWorkshop.Game.Serialization
                 serializablePlayer = null;
 
             // Deregister other objects
-            serializableActionDoors.Clear();
-            serializableActionObjects.Clear();
-            serializableEnemies.Clear();
-            serializableLootContainers.Clear();
+            foreach (Dictionary<ulong, ISerializableGameObject> serializableObjects in statefulGameObjects)
+            {
+                serializableObjects.Clear();
+            }
         }
 
         #endregion
 
-        #region Public Serialization Accessor Methods
+        #region Public Serialization Methods
 
         public PlayerData_v1 GetPlayerData()
         {
@@ -151,7 +180,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         {
             List<ActionDoorData_v1> actionDoors = new List<ActionDoorData_v1>();
 
-            foreach (var value in serializableActionDoors.Values)
+            foreach (var value in SerializableActionDoors.Values)
             {
                 if (value.ShouldSave)
                     actionDoors.Add((ActionDoorData_v1)value.GetSaveData());
@@ -164,7 +193,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         {
             List<ActionObjectData_v1> actionObjects = new List<ActionObjectData_v1>();
 
-            foreach (var value in serializableActionObjects.Values)
+            foreach (var value in SerializableActionObjects.Values)
             {
                 if (value.ShouldSave)
                     actionObjects.Add((ActionObjectData_v1)value.GetSaveData());
@@ -177,7 +206,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         {
             List<EnemyData_v1> enemies = new List<EnemyData_v1>();
 
-            foreach (var value in serializableEnemies.Values)
+            foreach (var value in SerializableEnemies.Values)
             {
                 if (value.ShouldSave)
                     enemies.Add((EnemyData_v1)value.GetSaveData());
@@ -190,7 +219,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         {
             List<LootContainerData_v1> containers = new List<LootContainerData_v1>();
 
-            foreach (var value in serializableLootContainers.Values)
+            foreach (var value in SerializableLootContainers.Values)
             {
                 if (value.ShouldSave)
                     containers.Add((LootContainerData_v1)value.GetSaveData());
@@ -225,9 +254,9 @@ namespace DaggerfallWorkshop.Game.Serialization
             for (int i = 0; i < actionDoors.Length; i++)
             {
                 ulong key = actionDoors[i].loadID;
-                if (serializableActionDoors.ContainsKey(key))
+                if (SerializableActionDoors.ContainsKey(key))
                 {
-                    serializableActionDoors[key].RestoreSaveData(actionDoors[i]);
+                    SerializableActionDoors[key].RestoreSaveData(actionDoors[i]);
                 }
             }
         }
@@ -240,9 +269,9 @@ namespace DaggerfallWorkshop.Game.Serialization
             for (int i = 0; i < actionObjects.Length; i++)
             {
                 ulong key = actionObjects[i].loadID;
-                if (serializableActionObjects.ContainsKey(key))
+                if (SerializableActionObjects.ContainsKey(key))
                 {
-                    serializableActionObjects[key].RestoreSaveData(actionObjects[i]);
+                    SerializableActionObjects[key].RestoreSaveData(actionObjects[i]);
                 }
             }
         }
@@ -281,10 +310,10 @@ namespace DaggerfallWorkshop.Game.Serialization
 
                 // Restore loot containers
                 ulong key = lootContainers[i].loadID;
-                if (serializableLootContainers.ContainsKey(key))
+                if (SerializableLootContainers.ContainsKey(key))
                 {
                     // Apply to known loot container that is part of scene build
-                    serializableLootContainers[key].RestoreSaveData(lootContainers[i]);
+                    SerializableLootContainers[key].RestoreSaveData(lootContainers[i]);
                 }
                 else
                 {
@@ -306,52 +335,40 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         #region Private Methods
 
-        private void AddSerializableActionDoor(SerializableActionDoor serializableObject)
+        private StatefulGameObjectTypes GetStatefulGameObjectType(ISerializableGameObject sgObj)
         {
-            if (serializableActionDoors.ContainsKey(serializableObject.LoadID))
-            {
-                string message = string.Format(duplicateLoadIDErrorText, "AddSerializableActionDoor()", serializableObject.LoadID);
-                DaggerfallUnity.LogMessage(message);
-                return;
-            }
-            serializableActionDoors.Add(serializableObject.LoadID, serializableObject);
+            if (sgObj is SerializableActionDoor)
+                return StatefulGameObjectTypes.ActionDoor;
+            else if (sgObj is SerializableActionObject)
+                return StatefulGameObjectTypes.ActionObject;
+            else if (sgObj is SerializableEnemy)
+                return StatefulGameObjectTypes.Enemy;
+            else if (sgObj is SerializableLootContainer)
+                return StatefulGameObjectTypes.LootContainer;
+
+            throw new Exception(typeNotImplementedExeptionText);
         }
 
-        private void AddSerializableActionObject(SerializableActionObject serializableObject)
+        private Dictionary<ulong, ISerializableGameObject> SerializableActionDoors
         {
-            if (serializableActionObjects.ContainsKey(serializableObject.LoadID))
-            {
-                string message = string.Format(duplicateLoadIDErrorText, "AddSerializableActionObject()", serializableObject.LoadID);
-                DaggerfallUnity.LogMessage(message);
-                return;
-            }
-
-            serializableActionObjects.Add(serializableObject.LoadID, serializableObject);
+            get { return statefulGameObjects[(int)StatefulGameObjectTypes.ActionDoor]; }
         }
 
-        private void AddSerializableEnemy(SerializableEnemy serializableObject)
+        private Dictionary<ulong, ISerializableGameObject> SerializableActionObjects
         {
-            if (serializableEnemies.ContainsKey(serializableObject.LoadID))
-            {
-                string message = string.Format(duplicateLoadIDErrorText, "AddSerializableEnemy()", serializableObject.LoadID);
-                DaggerfallUnity.LogMessage(message);
-                return;
-            }
-
-            serializableEnemies.Add(serializableObject.LoadID, serializableObject);
+            get { return statefulGameObjects[(int)StatefulGameObjectTypes.ActionObject]; }
         }
 
-        private void AddSerializableLootContainer(SerializableLootContainer serializableObject)
+        private Dictionary<ulong, ISerializableGameObject> SerializableEnemies
         {
-            if (serializableLootContainers.ContainsKey(serializableObject.LoadID))
-            {
-                string message = string.Format(duplicateLoadIDErrorText, "AddSerializableLootContainer()", serializableObject.LoadID);
-                DaggerfallUnity.LogMessage(message);
-                return;
-            }
-
-            serializableLootContainers.Add(serializableObject.LoadID, serializableObject);
+            get { return statefulGameObjects[(int)StatefulGameObjectTypes.Enemy]; }
         }
+
+        private Dictionary<ulong, ISerializableGameObject> SerializableLootContainers
+        {
+            get { return statefulGameObjects[(int)StatefulGameObjectTypes.LootContainer]; }
+        }
+
 
         #endregion
     }

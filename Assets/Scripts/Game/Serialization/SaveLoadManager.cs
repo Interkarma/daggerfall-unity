@@ -46,8 +46,6 @@ namespace DaggerfallWorkshop.Game.Serialization
         const string automapDataFilename = "AutomapData.txt";
         const string screenshotFilename = "Screenshot.jpg";
         const string notReadyExceptionText = "SaveLoad not ready.";
-        const string invalidLoadIDExceptionText = "serializableObject does not have a valid LoadID";
-        const string duplicateLoadIDErrorText = "{0} detected duplicate LoadID {1}. This object will not be serialized.";
 
         // Serializable state manager for stateful game objects
         SerializableStateManager stateManager = new SerializableStateManager();
