@@ -310,7 +310,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Deregister all serializable objects
-            SaveLoadManager.StateManager.DeregisterAllSerializableGameObjects();
+            SaveLoadManager.DeregisterAllSerializableGameObjects();
 
             // Start respawn process
             isRespawning = true;
@@ -538,7 +538,7 @@ namespace DaggerfallWorkshop.Game
                 return;
 
             // Raise event
-            RaiseOnPreTransitionEvent(TransitionType.ToBuildingExterior);
+            RaiseOnPreTransitionEvent(TransitionType.ToBuildingExterior, interior.name);
 
             // Find closest door and position player outside of it
             StaticDoor closestDoor;
@@ -794,7 +794,7 @@ namespace DaggerfallWorkshop.Game
                 return;
 
             // Raise event
-            RaiseOnPreTransitionEvent(TransitionType.ToDungeonExterior);
+            RaiseOnPreTransitionEvent(TransitionType.ToDungeonExterior, dungeon.name);
 
             EnableExteriorParent();
 
@@ -910,6 +910,9 @@ namespace DaggerfallWorkshop.Game
             /// <summary>The newly instanced dungeon interior. For dungeon interior transitions only.</summary>
             public DaggerfallDungeon DaggerfallDungeon { get; set; }
 
+            /// <summary>The scene name of the interior. For building exterior transitions only.</summary>
+            public string SceneName { get; set; }
+
             /// <summary>Constructor.</summary>
             public TransitionEventArgs()
             {
@@ -924,6 +927,14 @@ namespace DaggerfallWorkshop.Game
                 : base()
             {
                 this.TransitionType = transitionType;
+            }
+
+            /// <summary>Constructor helper.</summary>
+            public TransitionEventArgs(TransitionType transitionType, string sceneName)
+                : base()
+            {
+                this.TransitionType = transitionType;
+                this.SceneName = sceneName;
             }
 
             /// <summary>Constructor helper.</summary>
@@ -994,9 +1005,9 @@ namespace DaggerfallWorkshop.Game
         // OnPreTransition - Called PRIOR to any transition, other events called AFTER transition.
         public delegate void OnPreTransitionEventHandler(TransitionEventArgs args);
         public static event OnPreTransitionEventHandler OnPreTransition;
-        protected virtual void RaiseOnPreTransitionEvent(TransitionType transitionType)
+        protected virtual void RaiseOnPreTransitionEvent(TransitionType transitionType, string sceneName)
         {
-            TransitionEventArgs args = new TransitionEventArgs(transitionType);
+            TransitionEventArgs args = new TransitionEventArgs(transitionType, sceneName);
             if (OnPreTransition != null)
                 OnPreTransition(args);
         }

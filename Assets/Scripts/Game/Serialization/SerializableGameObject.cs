@@ -22,8 +22,24 @@ using FullSerializer;
 namespace DaggerfallWorkshop.Game.Serialization
 {
     /// <summary>
+    /// Enum of stateful game object types that implement ISerializableGameObject.
+    /// To add a new type of stateful game object:
+    ///     - add type name here
+    ///     - add a condition to SerializableStateManager.GetStatefulGameObjectType()
+    ///     - add serializer methods
+    ///     - optionally add to SerializableStateManager.CacheScene() if ingame persistance required (these must precede non cacheble types)
+    /// </summary>
+    public enum StatefulGameObjectTypes
+    {
+        LootContainer,
+        ActionDoor,
+        ActionObject,
+        Enemy,
+    }
+
+    /// <summary>
     /// Implement this interface with any MonoBehaviour-derived class that can save/load state.
-    /// Classes implementing this interface must also register/deregister themselves to SaveLoadManager.
+    /// Classes implementing this interface must also register/deregister themselves to SerializableStateManager.
     /// Only registered objects will be serialized/deserialized. If a deserialized object of the specified
     /// LoadID cannot be found then that object will not have any state restored.
     /// </summary>

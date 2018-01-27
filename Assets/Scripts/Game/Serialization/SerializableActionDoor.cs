@@ -26,6 +26,8 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         DaggerfallActionDoor actionDoor;
 
+        bool registered = false;
+
         #endregion
 
         #region Unity
@@ -35,27 +37,18 @@ namespace DaggerfallWorkshop.Game.Serialization
             actionDoor = GetComponent<DaggerfallActionDoor>();
             if (!actionDoor)
                 throw new Exception("DaggerfallActionDoor not found.");
+            RegisterGameObject();
         }
 
         void Start()
         {
-            if (LoadID != 0)
-            {
-                // Using same hack ID fix as SerializableEnemy
-                if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon)
-                {
-                    if (actionDoor && SaveLoadManager.StateManager.ContainsActionDoor(actionDoor.LoadID))
-                        actionDoor.LoadID++;
-                }
-
-                SaveLoadManager.StateManager.RegisterSerializableGameObject(this);
-            }
+            RegisterGameObject();
         }
 
         void OnDestroy()
         {
             if (LoadID != 0)
-                SaveLoadManager.StateManager.DeregisterSerializableGameObject(this);
+                SaveLoadManager.DeregisterSerializableGameObject(this);
         }
 
         #endregion
@@ -105,6 +98,22 @@ namespace DaggerfallWorkshop.Game.Serialization
         #endregion
 
         #region Private Methods
+
+        void RegisterGameObject()
+        {
+            Debug.LogFormat("registering door {0} {1}", registered, LoadID);
+            if (!registered && LoadID != 0)
+            {
+                // Using same hack ID fix as SerializableEnemy
+                if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon)
+                {
+                    if (actionDoor && SaveLoadManager.StateManager.ContainsActionDoor(actionDoor.LoadID))
+                        actionDoor.LoadID++;
+                }
+                SaveLoadManager.RegisterSerializableGameObject(this);
+                registered = true;
+            }
+        }
 
         bool HasChanged()
         {

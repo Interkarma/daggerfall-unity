@@ -17,18 +17,6 @@ using DaggerfallWorkshop.Utility;
 namespace DaggerfallWorkshop.Game.Serialization
 {
     /// <summary>
-    /// Enum of stateful game object types that implement ISerializableGameObject.
-    /// To add a new type of stateful game object, add type name here and a condition to GetStatefulGameObjectType().
-    /// </summary>
-    public enum StatefulGameObjectTypes
-    {
-        LootContainer,
-        ActionDoor,
-        ActionObject,
-        Enemy
-    }
-
-    /// <summary>
     /// Manages stateful game objects. (implementations of ISerializableGameObject)
     /// Used by SaveLoadManager to serialize scene state.
     /// Uses a scene cache to persist building interiors & player owned areas.
@@ -39,13 +27,18 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         const string invalidLoadIDExceptionText = "serializableObject does not have a valid LoadID";
         const string duplicateLoadIDErrorText = "Duplicate LoadID {1} detected for {0} object. This object will not be serialized.";
-        const string typeNotImplementedExeptionText = "ISerializableGameObject type not implemented.";
+        const string typeNotImplementedExeptionText = "ISerializableGameObject type not implemented for ";
 
         // Serializable player (there can be only one!)
         SerializablePlayer serializablePlayer;
 
         // Serializable stateful game objects in current scene
-        List<Dictionary<ulong, ISerializableGameObject>> statefulGameObjects = new List<Dictionary<ulong, ISerializableGameObject>>();
+        List<Dictionary<ulong, ISerializableGameObject>> statefulGameObjects = new List<Dictionary<ulong, ISerializableGameObject>>(Enum.GetNames(typeof(StatefulGameObjectTypes)).Length);
+
+        //
+        Dictionary<string, List<object[]>> sceneDataCache = new Dictionary<string, List<object[]>>();
+
+        //List<string>
 
         #endregion
 
@@ -56,15 +49,66 @@ namespace DaggerfallWorkshop.Game.Serialization
             get { return serializablePlayer; }
         }
 
+        public bool SceneUnloaded { get; set; }
+
         #endregion
+
+        #region Constructors & Event Handlers
 
         public SerializableStateManager()
         {
             foreach (StatefulGameObjectTypes type in Enum.GetValues(typeof(StatefulGameObjectTypes)))
                 statefulGameObjects.Add(new Dictionary<ulong, ISerializableGameObject>());
+
+            PlayerEnterExit.OnPreTransition += new PlayerEnterExit.OnPreTransitionEventHandler(HandlePreTransition);
+            PlayerEnterExit.OnTransitionInterior += new PlayerEnterExit.OnTransitionInteriorEventHandler(HandleInteriorTransition);
         }
 
+        // Handle interior/exterior transition events
+        void HandlePreTransition(PlayerEnterExit.TransitionEventArgs args)
+        {
+            if (args.TransitionType == PlayerEnterExit.TransitionType.ToBuildingExterior)
+            {
+                Debug.LogFormat("Caching scene: {0}", args.SceneName);
+                CacheScene(args.SceneName);
+            }
+        }
+
+        // Handle interior/exterior transition events
+        void HandleInteriorTransition(PlayerEnterExit.TransitionEventArgs args)
+        {
+            string sceneName = args.DaggerfallInterior.name;
+            Debug.LogFormat("Restoring scene: {0}", sceneName);
+            RestoreCachedScene(sceneName);
+        }
+
+        #endregion
+
         #region Public Methods
+
+        public void CacheScene(string sceneName)
+        {
+            // Only cache loot containers & action doors for scenes
+            LootContainerData_v1[] containerData = GetLootContainerData();
+            ActionDoorData_v1[] actionDoorData = GetActionDoorData();
+            List<object[]> sceneData = new List<object[]>(2);
+            sceneData.Insert((int)StatefulGameObjectTypes.LootContainer, containerData);
+            sceneData.Insert((int)StatefulGameObjectTypes.ActionDoor, actionDoorData);
+            sceneDataCache[sceneName] = sceneData;
+        }
+
+        public void RestoreCachedScene(string sceneName)
+        {
+            List<object[]> sceneData;
+            sceneDataCache.TryGetValue(sceneName, out sceneData);
+            if (sceneData != null)
+            {
+                LootContainerData_v1[] containerData = (LootContainerData_v1[]) sceneData[(int)StatefulGameObjectTypes.LootContainer];
+                ActionDoorData_v1[] actionDoorData = (ActionDoorData_v1[]) sceneData[(int)StatefulGameObjectTypes.ActionDoor];
+                RestoreLootContainerData(containerData);
+                RestoreActionDoorData(actionDoorData);
+            }
+        }
 
         /// <summary>
         /// Check if a LoadID is already in enemy serialization list.
@@ -85,7 +129,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         /// <summary>
         /// Register ISerializableGameObject with SerializableStateManager.
         /// </summary>
-        public void RegisterSerializableGameObject(ISerializableGameObject serializableObject)
+        public void RegisterStatefulGameObject(ISerializableGameObject serializableObject)
         {
             if (serializableObject.LoadID == 0)
                 throw new Exception(invalidLoadIDExceptionText);
@@ -108,7 +152,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         /// <summary>
         /// Deregister ISerializableGameObject from SerializableStateManager.
         /// </summary>
-        public void DeregisterSerializableGameObject(ISerializableGameObject serializableObject)
+        public void DeregisterStatefulGameObject(ISerializableGameObject serializableObject)
         {
             if (serializableObject.LoadID == 0)
                 throw new Exception(invalidLoadIDExceptionText);
@@ -121,7 +165,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         /// <summary>
         /// Force deregister all ISerializableGameObject instances from SerializableStateManager.
         /// </summary>
-        public void DeregisterAllSerializableGameObjects(bool keepPlayer = true)
+        public void DeregisterAllStatefulGameObjects(bool keepPlayer = true)
         {
             // Optionally deregister player
             if (!keepPlayer)
@@ -344,7 +388,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             else if (sgObj is SerializableLootContainer)
                 return StatefulGameObjectTypes.LootContainer;
 
-            throw new Exception(typeNotImplementedExeptionText);
+            throw new Exception(typeNotImplementedExeptionText + sgObj.GetType().ToString());
         }
 
         #endregion
