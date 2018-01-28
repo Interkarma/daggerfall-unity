@@ -667,6 +667,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             saveData.lootContainers = stateManager.GetLootContainerData();
             saveData.bankAccounts = GetBankData();
             saveData.escortingFaces = DaggerfallUI.Instance.DaggerfallHUD.EscortingFaces.GetSaveData();
+            saveData.sceneCache = stateManager.GetSceneCache();
 
             return saveData;
         }
@@ -757,6 +758,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             stateManager.RestoreLootContainerData(saveData.lootContainers);
             RestoreBankData(saveData.bankAccounts);
             RestoreEscortingFacesData(saveData.escortingFaces);
+            stateManager.RestoreSceneCache(saveData.sceneCache);
         }
 
         void RestoreDateTimeData(DateAndTime_v1 dateTimeData)
