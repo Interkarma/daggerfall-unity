@@ -28,12 +28,13 @@ namespace DaggerfallWorkshop.Game.Serialization
         const string invalidLoadIDExceptionText = "serializableObject does not have a valid LoadID";
         const string duplicateLoadIDErrorText = "Duplicate LoadID {1} detected for {0} object. This object will not be serialized.";
         const string typeNotImplementedExeptionText = "ISerializableGameObject type not implemented for ";
+        private static int numStatefulGameObjectTypes = Enum.GetNames(typeof(StatefulGameObjectTypes)).Length;
 
         // Serializable player (there can be only one!)
         SerializablePlayer serializablePlayer;
 
         // Serializable stateful game objects in current scene
-        List<Dictionary<ulong, ISerializableGameObject>> statefulGameObjects = new List<Dictionary<ulong, ISerializableGameObject>>(Enum.GetNames(typeof(StatefulGameObjectTypes)).Length);
+        List<Dictionary<ulong, ISerializableGameObject>> statefulGameObjects = new List<Dictionary<ulong, ISerializableGameObject>>(numStatefulGameObjectTypes);
 
         //
         Dictionary<string, List<object[]>> sceneDataCache = new Dictionary<string, List<object[]>>();
@@ -87,11 +88,13 @@ namespace DaggerfallWorkshop.Game.Serialization
         public void CacheScene(string sceneName)
         {
             // Only cache loot containers & action doors for scenes
+            List<object[]> sceneData = new List<object[]>(numStatefulGameObjectTypes);
             LootContainerData_v1[] containerData = GetLootContainerData();
             ActionDoorData_v1[] actionDoorData = GetActionDoorData();
-            List<object[]> sceneData = new List<object[]>(2);
             sceneData.Insert((int)StatefulGameObjectTypes.LootContainer, containerData);
             sceneData.Insert((int)StatefulGameObjectTypes.ActionDoor, actionDoorData);
+            sceneData.Insert((int)StatefulGameObjectTypes.ActionObject, new object[0]);
+            sceneData.Insert((int)StatefulGameObjectTypes.Enemy, new object[0]);
             sceneDataCache[sceneName] = sceneData;
         }
 
@@ -173,6 +176,48 @@ namespace DaggerfallWorkshop.Game.Serialization
             foreach (Dictionary<ulong, ISerializableGameObject> serializableObjects in statefulGameObjects)
             {
                 serializableObjects.Clear();
+            }
+        }
+
+        #endregion
+
+        #region SceneCache Serialization Methods
+
+        public SceneCache_v1[] GetSceneCache()
+        {
+            List<SceneCache_v1> data = new List<SceneCache_v1>(sceneDataCache.Count);
+            foreach (string sceneName in sceneDataCache.Keys)
+            {
+                List<object[]> sceneData;
+                sceneDataCache.TryGetValue(sceneName, out sceneData);
+                if (sceneData != null)
+                {
+                    LootContainerData_v1[] containerData = (LootContainerData_v1[])sceneData[(int)StatefulGameObjectTypes.LootContainer];
+                    ActionDoorData_v1[] actionDoorData = (ActionDoorData_v1[])sceneData[(int)StatefulGameObjectTypes.ActionDoor];
+                    data.Add(new SceneCache_v1() {
+                        sceneName = sceneName,
+                        lootContainers = containerData,
+                        actionDoors = actionDoorData
+                    });
+                }
+            }
+            return data.ToArray();
+        }
+
+        public void RestoreSceneCache(SceneCache_v1[] sceneCacheData)
+        {
+            if (sceneCacheData == null || sceneCacheData.Length == 0)
+                return;
+
+            for (int i = 0; i < sceneCacheData.Length; i++)
+            {
+                SceneCache_v1 scene = sceneCacheData[i];
+                List<object[]> sceneData = new List<object[]>(numStatefulGameObjectTypes);
+                sceneData.Insert((int)StatefulGameObjectTypes.LootContainer, scene.lootContainers);
+                sceneData.Insert((int)StatefulGameObjectTypes.ActionDoor, scene.actionDoors);
+                sceneData.Insert((int)StatefulGameObjectTypes.ActionObject, new object[0]);
+                sceneData.Insert((int)StatefulGameObjectTypes.Enemy, new object[0]);
+                sceneDataCache[scene.sceneName] = sceneData;
             }
         }
 

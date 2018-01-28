@@ -27,7 +27,7 @@ namespace DaggerfallWorkshop.Game.Serialization
     ///     - add type name here
     ///     - add a condition to SerializableStateManager.GetStatefulGameObjectType()
     ///     - add serializer methods
-    ///     - optionally add to SerializableStateManager.CacheScene() if ingame persistance required (these must precede non cacheble types)
+    ///     - add to SerializableStateManager.CacheScene() & RestoreCachedScene()
     /// </summary>
     public enum StatefulGameObjectTypes
     {
@@ -89,6 +89,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public LootContainerData_v1[] lootContainers;
         public BankRecordData_v1[] bankAccounts;
         public FaceDetails[] escortingFaces;
+        public SceneCache_v1[] sceneCache;
     }
 
     #endregion
@@ -110,6 +111,14 @@ namespace DaggerfallWorkshop.Game.Serialization
     {
         public ulong gameTime;
         public long realTime;
+    }
+
+    [fsObject("v1")]
+    public class SceneCache_v1
+    {
+        public string sceneName;
+        public LootContainerData_v1[] lootContainers;
+        public ActionDoorData_v1[] actionDoors;
     }
 
     #endregion
