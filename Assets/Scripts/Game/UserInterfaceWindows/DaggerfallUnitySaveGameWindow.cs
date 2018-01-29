@@ -375,6 +375,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (key == -1)
                 return;
 
+            // Destroy old background texture
+            if (screenshotPanel.BackgroundTexture)
+            {
+                UnityEngine.Object.Destroy(screenshotPanel.BackgroundTexture);
+                screenshotPanel.BackgroundTexture = null;
+            }
+
             // Get save info and texture
             string path = GameManager.Instance.SaveLoadManager.GetSaveFolder(key);
             SaveInfo_v1 saveInfo = GameManager.Instance.SaveLoadManager.GetSaveInfo(key);
