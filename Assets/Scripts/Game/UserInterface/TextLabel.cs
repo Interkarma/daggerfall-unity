@@ -499,6 +499,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             //width = greatestWidthFound;
 
+            // Destroy old texture
+            if (labelTexture)
+                UnityEngine.Object.Destroy(labelTexture);
+
             // Create target label texture
             totalWidth = maxWidth;
             totalHeight = (int)(rows.Count * font.GlyphHeight);
