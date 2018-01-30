@@ -383,7 +383,7 @@ namespace DaggerfallWorkshop.Game
                 world.TeleportToCoordinates(pos.X, pos.Y, StreamingWorld.RepositionMethods.None);
                 dfUnity.ContentReader.GetLocation(summary.RegionIndex, summary.MapIndex, out location);
                 StartBuildingInterior(location, exteriorDoors[0]);
-                world.suppressWorld = false;    // Not suppressing world when loading building interiors so the restoration from scene cache works
+                world.suppressWorld = true;
             }
             else
             {
@@ -572,6 +572,7 @@ namespace DaggerfallWorkshop.Game
             isPlayerInside = false;
 
             // Update serializable state from scene cache for interior->exterior transition
+            world.Update();
             SaveLoadManager.StateManager.RestoreCachedScene(world.SceneName);
 
             // Fire event

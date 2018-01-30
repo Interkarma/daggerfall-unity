@@ -428,14 +428,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 GeneratePopup(TransactionResult.ALREADY_OWN_SHIP);
             //else if not port town
             //else show ship selection window
+            else
+            {
+                GeneratePopup(DaggerfallBankManager.PurchaseShip(ShipType.Small, 1000, regionIndex));
+            }
         }
 
         void sellShipButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (!DaggerfallBankManager.OwnsShip)
-                return;
+            if (DaggerfallBankManager.OwnsShip)
+                GeneratePopup(TransactionResult.SELL_SHIP_OFFER, (int)(DaggerfallBankManager.GetShipPrice(DaggerfallBankManager.OwnedShip) * 0.85));
             else
-                GeneratePopup(TransactionResult.SELL_SHIP_OFFER, 123);  // Temp value 123 for testing.
+                return;
         }
 
         void exitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)

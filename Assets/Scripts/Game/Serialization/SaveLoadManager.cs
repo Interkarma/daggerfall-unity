@@ -18,6 +18,7 @@ using FullSerializer;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Banking;
 
 namespace DaggerfallWorkshop.Game.Serialization
 {
@@ -676,7 +677,8 @@ namespace DaggerfallWorkshop.Game.Serialization
             saveData.dungeonData = GetDungeonData();
             saveData.enemyData = stateManager.GetEnemyData();
             saveData.lootContainers = stateManager.GetLootContainerData();
-            saveData.bankAccounts = GetBankData();
+            saveData.bankAccounts = GetBankAccountData();
+            saveData.bankDeeds = GetBankDeedData();
             saveData.escortingFaces = DaggerfallUI.Instance.DaggerfallHUD.EscortingFaces.GetSaveData();
             saveData.sceneCache = stateManager.GetSceneCache();
 
@@ -701,7 +703,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             return data;
         }
 
-        BankRecordData_v1[] GetBankData()
+        BankRecordData_v1[] GetBankAccountData()
         {
             List<BankRecordData_v1> records = new List<BankRecordData_v1>();
 
@@ -716,6 +718,16 @@ namespace DaggerfallWorkshop.Game.Serialization
             }
 
             return records.ToArray();
+        }
+
+        BankDeedData_v1 GetBankDeedData()
+        {
+            return new BankDeedData_v1() {
+                shipType = (int) DaggerfallBankManager.OwnedShip,
+/*                houseDeed = new HouseDeedData_v1() {
+                    houseId = 1
+                }*/
+            };
         }
 
         /// <summary>
@@ -768,6 +780,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             stateManager.RestoreEnemyData(saveData.enemyData);
             stateManager.RestoreLootContainerData(saveData.lootContainers);
             RestoreBankData(saveData.bankAccounts);
+            RestoreBankDeedData(saveData.bankDeeds);
             RestoreEscortingFacesData(saveData.escortingFaces);
             stateManager.RestoreSceneCache(saveData.sceneCache);
         }
@@ -789,20 +802,28 @@ namespace DaggerfallWorkshop.Game.Serialization
             stateManager.RestoreActionObjectData(dungeonData.actionObjects);
         }
 
-        void RestoreBankData(BankRecordData_v1 [] bankData)
+        void RestoreBankData(BankRecordData_v1[] bankData)
         {
-            Banking.DaggerfallBankManager.SetupAccounts();
+            DaggerfallBankManager.SetupAccounts();
 
             if (bankData == null)
                 return;
 
             for (int i = 0; i < bankData.Length; i++)
             {
-                if (bankData[i].regionIndex < 0 || bankData[i].regionIndex >= Banking.DaggerfallBankManager.BankAccounts.Length)
+                if (bankData[i].regionIndex < 0 || bankData[i].regionIndex >= DaggerfallBankManager.BankAccounts.Length)
                     continue;
 
-                Banking.DaggerfallBankManager.BankAccounts[bankData[i].regionIndex] = bankData[i];
+                DaggerfallBankManager.BankAccounts[bankData[i].regionIndex] = bankData[i];
             }
+        }
+
+        void RestoreBankDeedData(BankDeedData_v1 deedData)
+        {
+            if (deedData == null)
+                return;
+
+            DaggerfallBankManager.OwnedShip = (ShipType) deedData.shipType;
         }
 
         void RestoreEscortingFacesData(FaceDetails[] escortingFaces)

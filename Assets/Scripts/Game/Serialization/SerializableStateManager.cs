@@ -40,12 +40,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         Dictionary<string, List<object[]>> sceneDataCache = new Dictionary<string, List<object[]>>();
 
         // Scenes to persist permanently (i.e. player ship/house or tavern rented room)
-        List<string> permanentScenes = new List<string>()
-        {
-//            DaggerfallInterior.GetSceneName(390, 0),    // Small ship
-//            DaggerfallInterior.GetSceneName(630, 0),    // Large ship
-        };
-            
+        List<string> permanentScenes = new List<string>();
 
         #endregion
 
@@ -123,8 +118,10 @@ namespace DaggerfallWorkshop.Game.Serialization
             else
             {
                 Dictionary<string, List<object[]>> newSceneDataCache = new Dictionary<string, List<object[]>>();
+                List<object[]> sceneData;
                 foreach (string sceneName in permanentScenes)
-                    newSceneDataCache[sceneName] = sceneDataCache[sceneName];
+                    if (sceneDataCache.TryGetValue(sceneName, out sceneData))
+                        newSceneDataCache[sceneName] = sceneDataCache[sceneName];
                 sceneDataCache = newSceneDataCache;
             }
         }

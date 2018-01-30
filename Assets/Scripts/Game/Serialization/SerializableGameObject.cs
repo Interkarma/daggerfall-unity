@@ -88,6 +88,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public EnemyData_v1[] enemyData;
         public LootContainerData_v1[] lootContainers;
         public BankRecordData_v1[] bankAccounts;
+        public BankDeedData_v1 bankDeeds;
         public FaceDetails[] escortingFaces;
         public SceneCache_v1 sceneCache;
     }
@@ -363,6 +364,23 @@ namespace DaggerfallWorkshop.Game.Serialization
         public string saveName;
         public string characterName;
         public DateAndTime_v1 dateAndTime;
+    }
+
+    #endregion
+
+    #region Bank Data
+
+    [fsObject("v1")]
+    public class BankDeedData_v1
+    {
+        public int shipType;
+        public HouseDeedData_v1 houseDeed;
+    }
+
+    [fsObject("v1")]
+    public class HouseDeedData_v1
+    {
+        public int houseId;
     }
 
     [fsObject("v1")]
