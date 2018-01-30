@@ -119,9 +119,15 @@ namespace DaggerfallWorkshop
         public bool IsInit { get { return init; } }
 
         /// <summary>
-        /// Gets the scene name for this map pixel.
+        /// Gets the scene name for the current map pixel.
         /// </summary>
-        public string SceneName { get { return string.Format("DaggerfallWorld [mapX={0}, mapY={1}]", MapPixelX, MapPixelY); } }
+        public string SceneName { get { return GetSceneName(MapPixelX, MapPixelY); } }
+
+        /// <summary>Gets the scene name for the given map pixel.</summary>
+        public static string GetSceneName(int MapPixelX, int MapPixelY)
+        {
+            return string.Format("DaggerfallWorld [mapX={0}, mapY={1}]", MapPixelX, MapPixelY);
+        }
 
         /// <summary>
         /// Gets Transform of central terrain player is standing on.
@@ -201,7 +207,7 @@ namespace DaggerfallWorkshop
 
         #region Unity
 
-        void Update()
+        public void Update()
         {
             // Cannot proceed until ready and player is set
             if (!ReadyCheck())
@@ -213,7 +219,7 @@ namespace DaggerfallWorkshop
                 curMapPixel.Y != MapPixelY ||
                 init)
             {
-                //Debug.Log(string.Format("Entering new map pixel X={0}, Y={1}", curMapPixel.X, curMapPixel.Y));
+                Debug.Log(string.Format("Entering new map pixel X={0}, Y={1}", curMapPixel.X, curMapPixel.Y));
                 MapPixelX = curMapPixel.X;
                 MapPixelY = curMapPixel.Y;
                 UpdateWorld();
@@ -904,8 +910,11 @@ namespace DaggerfallWorkshop
             {
                 if (!IsInRange(looseObjectsList[i].mapPixelX, looseObjectsList[i].mapPixelY) || collectAll)
                 {
-                    looseObjectsList[i].gameObject.SetActive(false);
-                    StartCoroutine(DestroyGameObjectIterative(looseObjectsList[i].gameObject));
+                    if (looseObjectsList[i].gameObject != null)
+                    {
+                        looseObjectsList[i].gameObject.SetActive(false);
+                        StartCoroutine(DestroyGameObjectIterative(looseObjectsList[i].gameObject));
+                    }
                     looseObjectsList.RemoveAt(i);
                 }
             }

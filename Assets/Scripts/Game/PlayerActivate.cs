@@ -23,6 +23,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Game.Banking;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -460,6 +461,10 @@ namespace DaggerfallWorkshop.Game
 
                 // Handle house furniture containers: ask player if they want to look through private property
                 case LootContainerTypes.HouseContainers:
+
+                    if (playerEnterExit.BuildingType == DFLocation.BuildingTypes.Ship && DaggerfallBankManager.OwnsShip)
+                        break;      // Allow access for player owned interiors. (not distinguishing between ships)
+
                     if (loot.Items.Count == 0)
                         return;
                     DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, DaggerfallMessageBox.CommonMessageBoxButtons.YesNo, PrivatePropertyId, uiManager.TopWindow);
@@ -699,7 +704,7 @@ namespace DaggerfallWorkshop.Game
                 unlocked = (openHours[(int)type] <= DaggerfallUnity.Instance.WorldTime.Now.Hour
                     && closeHours[(int)type] > DaggerfallUnity.Instance.WorldTime.Now.Hour);
             }
-            else if (type == DFLocation.BuildingTypes.Ship && Banking.DaggerfallBankManager.OwnsShip)
+            else if (type == DFLocation.BuildingTypes.Ship && DaggerfallBankManager.OwnsShip)
                 unlocked = true;
             return unlocked;
         }

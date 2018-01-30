@@ -69,14 +69,9 @@ namespace DaggerfallWorkshop
         /// </summary>
         public static string GetSceneName(DFLocation location, StaticDoor door)
         {
-            return GetSceneName(location.LocationIndex, door.blockIndex, door.recordIndex);
-            //return GetSceneName2(location.MapTableData.MapId, door.buildingKey);
+            return GetSceneName(location.MapTableData.MapId, door.buildingKey);
         }
-        public static string GetSceneName(int locIndex, int blockIndex, int recordIndex)
-        {
-            return string.Format("DaggerfallInterior [Location={0}, Block={1}, Record={2}]", locIndex, blockIndex, recordIndex);
-        }
-        public static string GetSceneName2(int mapID, int buildingKey)
+        public static string GetSceneName(int mapID, int buildingKey)
         {
             return string.Format("DaggerfallInterior [MapID={0}, BuildingKey={1}]", mapID, buildingKey);
         }
