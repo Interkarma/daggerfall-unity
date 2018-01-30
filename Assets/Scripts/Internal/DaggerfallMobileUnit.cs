@@ -326,7 +326,9 @@ namespace DaggerfallWorkshop
 
             // Some characters' idle animations need to be inverted. Add as needed.
             if ((summary.Enemy.ID == (int)MobileTypes.GiantBat
-                || summary.Enemy.ID == (int)MobileTypes.Imp)
+                || summary.Enemy.ID == (int)MobileTypes.Imp
+                || summary.Enemy.ID == (int)MobileTypes.Dreugh
+                || summary.Enemy.ID == (int)MobileTypes.Lamia)
                 && summary.EnemyState == MobileStates.Idle)
                 flip = !flip;
 

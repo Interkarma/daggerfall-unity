@@ -215,7 +215,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Handle bow with no arrows
-            if (WeaponType == WeaponTypes.Bow && GameManager.Instance.PlayerEntity.Items.GetItem(Items.ItemGroups.Weapons, (int)Items.Weapons.Arrow) == null)
+            if (!GameManager.Instance.WeaponManager.Sheathed && WeaponType == WeaponTypes.Bow && GameManager.Instance.PlayerEntity.Items.GetItem(Items.ItemGroups.Weapons, (int)Items.Weapons.Arrow) == null)
             {
                 GameManager.Instance.WeaponManager.SheathWeapons();
                 DaggerfallUI.SetMidScreenText(UserInterfaceWindows.HardStrings.youHaveNoArrows);
