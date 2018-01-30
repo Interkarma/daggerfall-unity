@@ -119,6 +119,11 @@ namespace DaggerfallWorkshop
         public bool IsInit { get { return init; } }
 
         /// <summary>
+        /// Gets the scene name for this map pixel.
+        /// </summary>
+        public string SceneName { get { return string.Format("DaggerfallWorld [mapX={0}, mapY={1}]", MapPixelX, MapPixelY); } }
+
+        /// <summary>
         /// Gets Transform of central terrain player is standing on.
         /// </summary>
         public Transform PlayerTerrainTransform { get { return GetPlayerTerrainTransform(); } }
@@ -177,6 +182,7 @@ namespace DaggerfallWorkshop
             public GameObject gameObject;
             public int mapPixelX;
             public int mapPixelY;
+            public bool statefulObj;
         }
 
         /// <summary>
@@ -373,10 +379,11 @@ namespace DaggerfallWorkshop
         /// Tracked object will be automatically destroyed when outside of range.
         /// </summary>
         /// <param name="gameObject">Game object to track.</param>
+        /// <param name="statefulObj">True to mark as a stateful game object which is managed by SerializedStateManager.</param>
         /// <param name="mapPixelX">Map pixel X to store gameobject. -1 for player location.</param>
         /// <param name="mapPixelY">Map pixel Y to store gameobject. -1 for player location.</param>
         /// <param name="setParent">True to set parent as StreamingTarget.</param>
-        public void TrackLooseObject(GameObject gameObject, int mapPixelX = -1, int mapPixelY = -1, bool setParent = false)
+        public void TrackLooseObject(GameObject gameObject, bool statefulObj = false, int mapPixelX = -1, int mapPixelY = -1, bool setParent = false)
         {
             // Create loose object description
             LooseObjectDesc desc = new LooseObjectDesc();
@@ -385,11 +392,17 @@ namespace DaggerfallWorkshop
                 desc.mapPixelX = MapPixelX;
             if (mapPixelY == -1)
                 desc.mapPixelY = MapPixelY;
+            desc.statefulObj = statefulObj;
             looseObjectsList.Add(desc);
 
             // Change object parent
             if (setParent)
                 gameObject.transform.parent = StreamingTarget.transform;
+        }
+
+        public void ClearStatefulLooseObjects()
+        {
+            looseObjectsList.RemoveAll(x => x.statefulObj);
         }
 
         /// <summary>
@@ -427,7 +440,7 @@ namespace DaggerfallWorkshop
             for (int i = 0; i < looseObjectsList.Count; i++)
             {
                 LooseObjectDesc desc = looseObjectsList[i];
-                if (desc.gameObject && desc.mapPixelX == MapPixelX && desc.mapPixelY == MapPixelY)
+                if (!desc.statefulObj && desc.gameObject && desc.mapPixelX == MapPixelX && desc.mapPixelY == MapPixelY)
                 {
                     DaggerfallLocation location = desc.gameObject.GetComponent<DaggerfallLocation>();
                     if (location)
@@ -444,7 +457,7 @@ namespace DaggerfallWorkshop
 
         // Init world at startup or when player teleports
         private void InitWorld()
-        {
+        {   Debug.LogFormat("INITWORLD {0}", looseObjectsList.ToString());
             // Cannot init world without a player, as world positions around player
             // Also do nothing if world is on hold at start
             if (LocalPlayerGPS == null || suppressWorld)
@@ -473,6 +486,7 @@ namespace DaggerfallWorkshop
 
             init = true;
             RaiseOnInitWorldEvent();
+            Debug.LogFormat("INITWORLD done {0}", looseObjectsList.ToString());
         }
 
         // Place terrain tiles when player changes map pixels
@@ -604,6 +618,7 @@ namespace DaggerfallWorkshop
                     looseObject.gameObject = locationObject;
                     looseObject.mapPixelX = terrainArray[index].mapPixelX;
                     looseObject.mapPixelY = terrainArray[index].mapPixelY;
+                    looseObject.statefulObj = false;
                     looseObjectsList.Add(looseObject);
 
                     // Create billboard batch game objects for this location

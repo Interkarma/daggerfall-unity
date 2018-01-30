@@ -311,6 +311,8 @@ namespace DaggerfallWorkshop.Game
 
             // Deregister all serializable objects
             SaveLoadManager.DeregisterAllSerializableGameObjects();
+            // not here... need to do when enter new location, this wipes out cache when travel to ship??
+//            SaveLoadManager.ClearSceneCache(true);
 
             // Start respawn process
             isRespawning = true;
@@ -381,7 +383,7 @@ namespace DaggerfallWorkshop.Game
                 world.TeleportToCoordinates(pos.X, pos.Y, StreamingWorld.RepositionMethods.None);
                 dfUnity.ContentReader.GetLocation(summary.RegionIndex, summary.MapIndex, out location);
                 StartBuildingInterior(location, exteriorDoors[0]);
-                world.suppressWorld = true;
+                world.suppressWorld = false;    // Not suppressing world when loading building interiors so the restoration from scene cache works
             }
             else
             {
@@ -425,7 +427,7 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         /// <param name="doorOwner">Parent transform owning door array..</param>
         /// <param name="door">Exterior door player clicked on.</param>
-        public void TransitionInterior(Transform doorOwner, StaticDoor door, bool doFade = false)
+        public void TransitionInterior(Transform doorOwner, StaticDoor door, bool doFade = false, bool start = true)
         {
             // Ensure we have component references
             if (!ReferenceComponents())
@@ -440,6 +442,16 @@ namespace DaggerfallWorkshop.Game
                 door.ownerRotation = doorOwner.rotation;
             }
 
+            if (!start)
+            {
+                // Update scene cache from serializable state for exterior->interior transition
+                SaveLoadManager.StateManager.CacheScene(world.SceneName);
+                // Explicitly deregister all stateful objects since exterior isn't destroyed
+                SaveLoadManager.DeregisterAllSerializableGameObjects(true);
+                // Clear all stateful objects from world loose object tracking
+                world.ClearStatefulLooseObjects();
+            }
+
             // Raise event
             RaiseOnPreTransitionEvent(TransitionType.ToBuildingInterior, door);
 
@@ -452,7 +464,7 @@ namespace DaggerfallWorkshop.Game
 
             // Layout interior
             // This needs to be done first so we know where the enter markers are
-            GameObject newInterior = new GameObject(string.Format("DaggerfallInterior [Block={0}, Record={1}]", door.blockIndex, door.recordIndex));
+            GameObject newInterior = new GameObject(DaggerfallInterior.GetSceneName(playerGPS.CurrentLocation, door));
             newInterior.hideFlags = defaultHideFlags;
             interior = newInterior.AddComponent<DaggerfallInterior>();
 
@@ -519,6 +531,10 @@ namespace DaggerfallWorkshop.Game
             // Add quest resources
             GameObjectHelper.AddQuestResourceObjects(SiteTypes.Building, interior.transform, interior.EntryDoor.buildingKey);
 
+            // Update serializable state from scene cache for exterior->interior transition (unless new/load game)
+            if (!start)
+                SaveLoadManager.StateManager.RestoreCachedScene(interior.name);
+
             // Raise event
             RaiseOnTransitionInteriorEvent(door, interior);
 
@@ -540,6 +556,9 @@ namespace DaggerfallWorkshop.Game
             // Raise event
             RaiseOnPreTransitionEvent(TransitionType.ToBuildingExterior, interior.name);
 
+            // Update scene cache from serializable state for interior->exterior transition
+            SaveLoadManager.StateManager.CacheScene(interior.name);
+
             // Find closest door and position player outside of it
             StaticDoor closestDoor;
             Vector3 closestDoorPos = DaggerfallStaticDoors.FindClosestDoor(transform.position, ExteriorDoors, out closestDoor);
@@ -551,6 +570,9 @@ namespace DaggerfallWorkshop.Game
 
             // Player is now outside building
             isPlayerInside = false;
+
+            // Update serializable state from scene cache for interior->exterior transition
+            SaveLoadManager.StateManager.RestoreCachedScene(world.SceneName);
 
             // Fire event
             RaiseOnTransitionExteriorEvent();

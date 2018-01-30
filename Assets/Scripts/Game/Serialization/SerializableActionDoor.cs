@@ -101,7 +101,6 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         void RegisterGameObject()
         {
-            Debug.LogFormat("registering door {0} {1}", registered, LoadID);
             if (!registered && LoadID != 0)
             {
                 // Using same hack ID fix as SerializableEnemy

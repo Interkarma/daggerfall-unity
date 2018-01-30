@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -22,6 +22,7 @@ using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop
 {
@@ -261,6 +262,8 @@ namespace DaggerfallWorkshop
                 lastMapPixelX = pos.X;
                 lastMapPixelY = pos.Y;
                 isPlayerInLocationRect = false;
+                // Clear non-permanent scenes from cache
+                SaveLoadManager.ClearSceneCache(false);
             }
 
             // Raise other events
