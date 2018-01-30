@@ -65,6 +65,23 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
+        /// Gets the scene name for the interior behind the given door.
+        /// </summary>
+        public static string GetSceneName(DFLocation location, StaticDoor door)
+        {
+            return GetSceneName(location.LocationIndex, door.blockIndex, door.recordIndex);
+            //return GetSceneName2(location.MapTableData.MapId, door.buildingKey);
+        }
+        public static string GetSceneName(int locIndex, int blockIndex, int recordIndex)
+        {
+            return string.Format("DaggerfallInterior [Location={0}, Block={1}, Record={2}]", locIndex, blockIndex, recordIndex);
+        }
+        public static string GetSceneName2(int mapID, int buildingKey)
+        {
+            return string.Format("DaggerfallInterior [MapID={0}, BuildingKey={1}]", mapID, buildingKey);
+        }
+
+        /// <summary>
         /// Gets transform owning door array.
         /// </summary>
         public Transform DoorOwner

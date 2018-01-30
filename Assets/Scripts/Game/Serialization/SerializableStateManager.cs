@@ -36,10 +36,16 @@ namespace DaggerfallWorkshop.Game.Serialization
         // Serializable stateful game objects in current scene
         List<Dictionary<ulong, ISerializableGameObject>> statefulGameObjects = new List<Dictionary<ulong, ISerializableGameObject>>(numStatefulGameObjectTypes);
 
-        //
+        // Scene cache for persisting state across transitions
         Dictionary<string, List<object[]>> sceneDataCache = new Dictionary<string, List<object[]>>();
 
-        //List<string>
+        // Scenes to persist permanently (i.e. player ship/house or tavern rented room)
+        List<string> permanentScenes = new List<string>()
+        {
+//            DaggerfallInterior.GetSceneName(390, 0),    // Small ship
+//            DaggerfallInterior.GetSceneName(630, 0),    // Large ship
+        };
+            
 
         #endregion
 
@@ -52,41 +58,32 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         #endregion
 
-        #region Constructors & Event Handlers
+        #region Constructors
 
         public SerializableStateManager()
         {
             foreach (StatefulGameObjectTypes type in Enum.GetValues(typeof(StatefulGameObjectTypes)))
                 statefulGameObjects.Add(new Dictionary<ulong, ISerializableGameObject>());
-
-            PlayerEnterExit.OnPreTransition += new PlayerEnterExit.OnPreTransitionEventHandler(HandlePreTransition);
-            PlayerEnterExit.OnTransitionInterior += new PlayerEnterExit.OnTransitionInteriorEventHandler(HandleInteriorTransition);
-        }
-
-        // Handle interior->exterior transition events
-        void HandlePreTransition(PlayerEnterExit.TransitionEventArgs args)
-        {
-            if (args.TransitionType == PlayerEnterExit.TransitionType.ToBuildingExterior)
-            {
-                Debug.LogFormat("Caching scene: {0}", args.SceneName);
-                CacheScene(args.SceneName);
-            }
-        }
-
-        // Handle exterior->interior transition events
-        void HandleInteriorTransition(PlayerEnterExit.TransitionEventArgs args)
-        {
-            string sceneName = args.DaggerfallInterior.name;
-            Debug.LogFormat("Restoring scene: {0}", sceneName);
-            RestoreCachedScene(sceneName);
         }
 
         #endregion
 
-        #region Public Methods
+        #region SceneCache Public Methods
+
+        public void AddPermanentScene(string sceneName)
+        {
+            permanentScenes.Add(sceneName);
+        }
+
+        public void RemovePermanentScene(string sceneName)
+        {
+            permanentScenes.Remove(sceneName);
+        }
 
         public void CacheScene(string sceneName)
         {
+            Debug.LogFormat("Caching scene: {0}", sceneName);
+
             // Only cache loot containers & action doors for scenes
             List<object[]> sceneData = new List<object[]>(numStatefulGameObjectTypes);
             LootContainerData_v1[] containerData = GetLootContainerData();
@@ -100,16 +97,92 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         public void RestoreCachedScene(string sceneName)
         {
+            Debug.LogFormat("Restoring scene: {0}", sceneName);
+
             List<object[]> sceneData;
             sceneDataCache.TryGetValue(sceneName, out sceneData);
             if (sceneData != null)
             {
-                LootContainerData_v1[] containerData = (LootContainerData_v1[]) sceneData[(int)StatefulGameObjectTypes.LootContainer];
-                ActionDoorData_v1[] actionDoorData = (ActionDoorData_v1[]) sceneData[(int)StatefulGameObjectTypes.ActionDoor];
+                LootContainerData_v1[] containerData = (LootContainerData_v1[])sceneData[(int)StatefulGameObjectTypes.LootContainer];
+                ActionDoorData_v1[] actionDoorData = (ActionDoorData_v1[])sceneData[(int)StatefulGameObjectTypes.ActionDoor];
                 RestoreLootContainerData(containerData);
                 RestoreActionDoorData(actionDoorData);
             }
+            // Delete scene from cache after restore
+            sceneDataCache.Remove(sceneName);
         }
+
+        public void ClearSceneCache(bool start = true)
+        {
+            Debug.Log("Clearing scene cache. start=" + start);
+            if (start)
+            {
+                sceneDataCache.Clear();
+                permanentScenes.Clear();
+            }
+            else
+            {
+                Dictionary<string, List<object[]>> newSceneDataCache = new Dictionary<string, List<object[]>>();
+                foreach (string sceneName in permanentScenes)
+                    newSceneDataCache[sceneName] = sceneDataCache[sceneName];
+                sceneDataCache = newSceneDataCache;
+            }
+        }
+
+        public SceneCache_v1 GetSceneCache()
+        {
+            List<SceneCacheEntry_v1> entries = new List<SceneCacheEntry_v1>(sceneDataCache.Count);
+            foreach (string sceneName in sceneDataCache.Keys)
+            {
+                List<object[]> sceneData;
+                sceneDataCache.TryGetValue(sceneName, out sceneData);
+                if (sceneData != null)
+                {
+                    LootContainerData_v1[] containerData = (LootContainerData_v1[])sceneData[(int)StatefulGameObjectTypes.LootContainer];
+                    ActionDoorData_v1[] actionDoorData = (ActionDoorData_v1[])sceneData[(int)StatefulGameObjectTypes.ActionDoor];
+                    entries.Add(new SceneCacheEntry_v1()
+                    {
+                        sceneName = sceneName,
+                        lootContainers = containerData,
+                        actionDoors = actionDoorData
+                    });
+                }
+            }
+            SceneCache_v1 data = new SceneCache_v1()
+            {
+                sceneCache = entries.ToArray(),
+                permanentScenes = permanentScenes.ToArray()
+            };
+            return data;
+        }
+
+        public void RestoreSceneCache(SceneCache_v1 sceneCacheData)
+        {
+            if (sceneCacheData == null)
+                return;
+
+            if (sceneCacheData.permanentScenes != null && sceneCacheData.permanentScenes.Length > 0)
+                permanentScenes = new List<string>(sceneCacheData.permanentScenes);
+
+            SceneCacheEntry_v1[] sceneCacheEntries = sceneCacheData.sceneCache;
+            if (sceneCacheEntries == null || sceneCacheEntries.Length == 0)
+                return;
+
+            for (int i = 0; i < sceneCacheEntries.Length; i++)
+            {
+                SceneCacheEntry_v1 scene = sceneCacheEntries[i];
+                List<object[]> sceneData = new List<object[]>(numStatefulGameObjectTypes);
+                sceneData.Insert((int)StatefulGameObjectTypes.LootContainer, scene.lootContainers);
+                sceneData.Insert((int)StatefulGameObjectTypes.ActionDoor, scene.actionDoors);
+                sceneData.Insert((int)StatefulGameObjectTypes.ActionObject, new object[0]);
+                sceneData.Insert((int)StatefulGameObjectTypes.Enemy, new object[0]);
+                sceneDataCache[scene.sceneName] = sceneData;
+            }
+        }
+
+        #endregion
+
+        #region Public Methods
 
         /// <summary>
         /// Check if a LoadID is already in enemy serialization list.
@@ -176,48 +249,6 @@ namespace DaggerfallWorkshop.Game.Serialization
             foreach (Dictionary<ulong, ISerializableGameObject> serializableObjects in statefulGameObjects)
             {
                 serializableObjects.Clear();
-            }
-        }
-
-        #endregion
-
-        #region SceneCache Serialization Methods
-
-        public SceneCache_v1[] GetSceneCache()
-        {
-            List<SceneCache_v1> data = new List<SceneCache_v1>(sceneDataCache.Count);
-            foreach (string sceneName in sceneDataCache.Keys)
-            {
-                List<object[]> sceneData;
-                sceneDataCache.TryGetValue(sceneName, out sceneData);
-                if (sceneData != null)
-                {
-                    LootContainerData_v1[] containerData = (LootContainerData_v1[])sceneData[(int)StatefulGameObjectTypes.LootContainer];
-                    ActionDoorData_v1[] actionDoorData = (ActionDoorData_v1[])sceneData[(int)StatefulGameObjectTypes.ActionDoor];
-                    data.Add(new SceneCache_v1() {
-                        sceneName = sceneName,
-                        lootContainers = containerData,
-                        actionDoors = actionDoorData
-                    });
-                }
-            }
-            return data.ToArray();
-        }
-
-        public void RestoreSceneCache(SceneCache_v1[] sceneCacheData)
-        {
-            if (sceneCacheData == null || sceneCacheData.Length == 0)
-                return;
-
-            for (int i = 0; i < sceneCacheData.Length; i++)
-            {
-                SceneCache_v1 scene = sceneCacheData[i];
-                List<object[]> sceneData = new List<object[]>(numStatefulGameObjectTypes);
-                sceneData.Insert((int)StatefulGameObjectTypes.LootContainer, scene.lootContainers);
-                sceneData.Insert((int)StatefulGameObjectTypes.ActionDoor, scene.actionDoors);
-                sceneData.Insert((int)StatefulGameObjectTypes.ActionObject, new object[0]);
-                sceneData.Insert((int)StatefulGameObjectTypes.Enemy, new object[0]);
-                sceneDataCache[scene.sceneName] = sceneData;
             }
         }
 
@@ -391,6 +422,7 @@ namespace DaggerfallWorkshop.Game.Serialization
                         {
                             serializableLootContainer.RestoreSaveData(lootContainers[i]);
                         }
+                        //Debug.LogFormat("created loot container {0} containing {1} parent {2}", key, customLootContainer.Items.GetItem(0).shortName, customLootContainer.transform.parent.name);
                     }
                 }
             }

@@ -89,7 +89,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public LootContainerData_v1[] lootContainers;
         public BankRecordData_v1[] bankAccounts;
         public FaceDetails[] escortingFaces;
-        public SceneCache_v1[] sceneCache;
+        public SceneCache_v1 sceneCache;
     }
 
     #endregion
@@ -115,6 +115,13 @@ namespace DaggerfallWorkshop.Game.Serialization
 
     [fsObject("v1")]
     public class SceneCache_v1
+    {
+        public SceneCacheEntry_v1[] sceneCache;
+        public string[] permanentScenes;
+    }
+
+    [fsObject("v1")]
+    public class SceneCacheEntry_v1
     {
         public string sceneName;
         public LootContainerData_v1[] lootContainers;

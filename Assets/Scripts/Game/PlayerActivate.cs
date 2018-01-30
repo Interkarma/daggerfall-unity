@@ -534,7 +534,7 @@ namespace DaggerfallWorkshop.Game
 
             // Perform transition
             playerEnterExit.BuildingDiscoveryData = db;
-            playerEnterExit.TransitionInterior(doorOwner, door, doFade);
+            playerEnterExit.TransitionInterior(doorOwner, door, doFade, false);
         }
 
         // Message box closed, move to interior
@@ -699,6 +699,8 @@ namespace DaggerfallWorkshop.Game
                 unlocked = (openHours[(int)type] <= DaggerfallUnity.Instance.WorldTime.Now.Hour
                     && closeHours[(int)type] > DaggerfallUnity.Instance.WorldTime.Now.Hour);
             }
+            else if (type == DFLocation.BuildingTypes.Ship && Banking.DaggerfallBankManager.OwnsShip)
+                unlocked = true;
             return unlocked;
         }
 

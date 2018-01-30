@@ -457,6 +457,17 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (sceneUnloaded)
                 return;
             Instance.stateManager.DeregisterAllStatefulGameObjects(keepPlayer);
+            Debug.Log("Deregistered all stateful objects");
+        }
+
+        /// <summary>
+        /// Clears the scene cache, 
+        /// </summary>
+        public static void ClearSceneCache(bool start)
+        {
+            if (sceneUnloaded)
+                return;
+            Instance.stateManager.ClearSceneCache(start);
         }
 
         #endregion
@@ -883,6 +894,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             GameManager.Instance.PlayerMotor.CancelMovement = true;
             InputManager.Instance.ClearAllActions();
             QuestMachine.Instance.ClearState();
+            stateManager.ClearSceneCache();
 
             // Read save data from files
             string saveDataJson = ReadSaveFile(Path.Combine(path, saveDataFilename));
