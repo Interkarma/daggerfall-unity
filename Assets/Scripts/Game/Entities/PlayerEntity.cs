@@ -355,6 +355,12 @@ namespace DaggerfallWorkshop.Game.Entity
                 // Get container parent
                 ContainerRecord containerRecord = (ContainerRecord)record.Parent;
 
+                // Some (most likely hacked) classic items have 0 or 65535 in image data bitfield
+                // Discard these items as they will likely have other bad attributes such as an impossible weight
+                // The goal here is just to prevent game from crashing due to bad item data
+                if ((record as ItemRecord).ParsedData.image1 == 0 || (record as ItemRecord).ParsedData.image1 == 0xffff)
+                    continue;
+
                 // Create item, grabbing trapped soul if needed
                 DaggerfallUnityItem newItem = new DaggerfallUnityItem((ItemRecord)record);
                 if (newItem.ItemGroup == ItemGroups.MiscItems && newItem.GroupIndex == 1)
