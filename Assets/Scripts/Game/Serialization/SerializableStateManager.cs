@@ -28,6 +28,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         const string invalidLoadIDExceptionText = "serializableObject does not have a valid LoadID";
         const string duplicateLoadIDErrorText = "Duplicate LoadID {1} detected for {0} object. This object will not be serialized.";
         const string typeNotImplementedExeptionText = "ISerializableGameObject type not implemented for ";
+
         private static int numStatefulGameObjectTypes = Enum.GetNames(typeof(StatefulGameObjectTypes)).Length;
 
         // Serializable player (there can be only one!)
@@ -39,7 +40,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         // Scene cache for persisting state across transitions
         Dictionary<string, List<object[]>> sceneDataCache = new Dictionary<string, List<object[]>>();
 
-        // Scenes to persist permanently (i.e. player ship/house or tavern rented room)
+        // Scenes to persist permanently (i.e. player owned ship/house or rented room in tavern)
         List<string> permanentScenes = new List<string>();
 
         #endregion
