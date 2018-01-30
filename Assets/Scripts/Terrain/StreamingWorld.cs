@@ -463,7 +463,7 @@ namespace DaggerfallWorkshop
 
         // Init world at startup or when player teleports
         private void InitWorld()
-        {   Debug.LogFormat("INITWORLD {0}", looseObjectsList.ToString());
+        {
             // Cannot init world without a player, as world positions around player
             // Also do nothing if world is on hold at start
             if (LocalPlayerGPS == null || suppressWorld)
@@ -492,7 +492,6 @@ namespace DaggerfallWorkshop
 
             init = true;
             RaiseOnInitWorldEvent();
-            Debug.LogFormat("INITWORLD done {0}", looseObjectsList.ToString());
         }
 
         // Place terrain tiles when player changes map pixels
