@@ -443,7 +443,7 @@ namespace DaggerfallWorkshop.Game
             if (!start)
             {
                 // Update scene cache from serializable state for exterior->interior transition
-                SaveLoadManager.StateManager.CacheScene(world.SceneName);
+                SaveLoadManager.CacheScene(world.SceneName);
                 // Explicitly deregister all stateful objects since exterior isn't destroyed
                 SaveLoadManager.DeregisterAllSerializableGameObjects(true);
                 // Clear all stateful objects from world loose object tracking
@@ -531,7 +531,7 @@ namespace DaggerfallWorkshop.Game
 
             // Update serializable state from scene cache for exterior->interior transition (unless new/load game)
             if (!start)
-                SaveLoadManager.StateManager.RestoreCachedScene(interior.name);
+                SaveLoadManager.RestoreCachedScene(interior.name);
 
             // Raise event
             RaiseOnTransitionInteriorEvent(door, interior);
@@ -555,7 +555,7 @@ namespace DaggerfallWorkshop.Game
             RaiseOnPreTransitionEvent(TransitionType.ToBuildingExterior);
 
             // Update scene cache from serializable state for interior->exterior transition
-            SaveLoadManager.StateManager.CacheScene(interior.name);
+            SaveLoadManager.CacheScene(interior.name);
 
             // Find closest door and position player outside of it
             StaticDoor closestDoor;
@@ -570,8 +570,7 @@ namespace DaggerfallWorkshop.Game
             isPlayerInside = false;
 
             // Update serializable state from scene cache for interior->exterior transition
-            world.Update();
-            SaveLoadManager.StateManager.RestoreCachedScene(world.SceneName);
+            SaveLoadManager.RestoreCachedScene(world.SceneName);
 
             // Fire event
             RaiseOnTransitionExteriorEvent();

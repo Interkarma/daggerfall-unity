@@ -227,7 +227,7 @@ namespace DaggerfallWorkshop.Game
                             DaggerfallUI.Instance.DaggerfallHUD.PopupText.AddText("Terrain sampler changed. Repositioning player.");
                     }
                     // Restore player position from before boarding ship, caching scene first.
-                    SaveLoadManager.StateManager.CacheScene(world.SceneName);// TODO: This should move into teleport, and only cache if scene in perm list::
+                    SaveLoadManager.CacheScene(world.SceneName);// TODO: This should move into teleport, and only cache if scene in perm list::
                     DFPosition mapPixel = MapsFile.WorldCoordToMapPixel(boardShipPosition.worldPosX, boardShipPosition.worldPosZ);
                     world.TeleportToCoordinates(mapPixel.X, mapPixel.Y, reposition);
                     serializablePlayer.RestorePosition(boardShipPosition);
@@ -241,8 +241,7 @@ namespace DaggerfallWorkshop.Game
                     DFPosition shipCoords = DaggerfallBankManager.GetShipCoords();
                     world.TeleportToCoordinates(shipCoords.X, shipCoords.Y, StreamingWorld.RepositionMethods.RandomStartMarker);
                     
-                    world.Update();
-                    SaveLoadManager.StateManager.RestoreCachedScene(world.SceneName);
+                    SaveLoadManager.RestoreCachedScene(world.SceneName);
                 }
                 DaggerfallUI.Instance.FadeHUDFromBlack();
                 mode = TransportModes.Foot;
