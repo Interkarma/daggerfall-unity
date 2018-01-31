@@ -391,10 +391,6 @@ namespace DaggerfallWorkshop
                         loot.LoadID = loadID;
                         if (SaveLoadManager.Instance != null)
                             go.AddComponent<SerializableLootContainer>();
-
-                        // Stock shop shelf if needed
-                        if (loot.Items.Count == 0)
-                            DaggerfallLoot.StockShopShelf(buildingData, loot.Items);
                     }
                     return;
                 }
@@ -419,12 +415,7 @@ namespace DaggerfallWorkshop
                     loot.ContainerType = LootContainerTypes.HouseContainers;
                     loot.ContainerImage = InventoryContainerImages.Shelves;
                     loot.LoadID = loadID;
-                    // Stock house container if needed
-                    if (loot.Items.Count == 0)
-                        DaggerfallLoot.StockHouseContainer(buildingData, loot.Items);
-
                 }
-
             }
         }
 
@@ -791,7 +782,9 @@ namespace DaggerfallWorkshop
                 // Assign loadID
                 if (actionDoor)
                     actionDoor.LoadID = loadID;
-                go.AddComponent<SerializableActionDoor>();
+
+                if (SaveLoadManager.Instance != null)
+                    go.AddComponent<SerializableActionDoor>();
             }
         }
 

@@ -65,7 +65,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.currentPosition = loot.transform.position;
             data.textureArchive = loot.TextureArchive;
             data.textureRecord = loot.TextureRecord;
-            data.playerOwned = loot.playerOwned;
+            data.stockedDate = loot.stockedDate;
             data.customDrop = loot.customDrop;
             data.items = loot.Items.SerializeItems();
             data.entityName = loot.entityName;
@@ -115,7 +115,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             loot.ContainerImage = data.containerImage;
             loot.TextureArchive = data.textureArchive;
             loot.TextureRecord = data.textureRecord;
-            loot.playerOwned = data.playerOwned;
+            loot.stockedDate = data.stockedDate;
             loot.customDrop = data.customDrop;
             loot.name = loot.ContainerType.ToString();
             loot.entityName = data.entityName;
@@ -132,8 +132,8 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         bool HasChanged()
         {
-            // Always save loot containers
-            return true;
+            // Save all loot containers, except for shelves & house containers that have not been opened and have a zero stockedDate
+            return !((loot.ContainerType == LootContainerTypes.ShopShelves || loot.ContainerType == LootContainerTypes.ShopShelves) && loot.stockedDate == 0);
         }
 
         ulong GetLoadID()
