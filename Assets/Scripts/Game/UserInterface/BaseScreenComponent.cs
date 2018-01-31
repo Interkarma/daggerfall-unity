@@ -656,7 +656,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 backgroundTexture = animatedBackgroundTextures[animationFrame];
             }
 
-            // Draw background
+            // Calculate cutout rect
             Rect myRect = Rectangle;
             if (useRestrictedRenderArea)
             {
@@ -671,7 +671,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 
                 myRect = new Rect(new Vector2(Rectangle.xMin + leftCut, Rectangle.yMin + topCut), new Vector2(Rectangle.width - leftCut - rightCut, Rectangle.height - topCut - bottomCut));
             }
+
+            // Draw background colour if not clear
+            if (backgroundColor != Color.clear && backgroundColorTexture)
+            {
+                Color color = GUI.color;
+                GUI.color = backgroundColor;
+                GUI.DrawTexture(myRect, backgroundColorTexture, ScaleMode.StretchToFill);
+                GUI.color = color;
+            }
             
+            // Draw background texture if present
             if (backgroundTexture)
             {
                 switch (backgroundTextureLayout)
@@ -689,13 +699,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
                         GUI.DrawTexture(myRect, backgroundTexture, ScaleMode.ScaleToFit);
                         break;
                 }
-            }
-            else if (backgroundColor != Color.clear && backgroundColorTexture != null)
-            {
-                Color color = GUI.color;
-                GUI.color = backgroundColor;
-                GUI.DrawTexture(myRect, backgroundColorTexture, ScaleMode.StretchToFill);
-                GUI.color = color;
             }
 
             // Draw tooltip on mouse hover
