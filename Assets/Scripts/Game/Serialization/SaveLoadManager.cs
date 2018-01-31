@@ -462,13 +462,39 @@ namespace DaggerfallWorkshop.Game.Serialization
         }
 
         /// <summary>
-        /// Clears the scene cache, 
+        /// Stores the current scene in the SerializableStateManager cache using the given name.
         /// </summary>
+        public static void CacheScene(string sceneName)
+        {
+            if (!sceneUnloaded)
+                Instance.stateManager.CacheScene(sceneName);
+        }
+
+        /// <summary>
+        /// Restores the current scene from the SerializableStateManager cache using the given name.
+        /// </summary>
+        public static void RestoreCachedScene(string sceneName)
+        {
+            if (!sceneUnloaded)
+                Instance.StartCoroutine(Instance.RestoreCachedSceneNextFrame(sceneName));
+        }
+
+        private IEnumerator RestoreCachedSceneNextFrame(string sceneName)
+        {
+            // Wait another frame so everthing has a chance to register
+            yield return new WaitForEndOfFrame();
+            // Restore the scene from cache
+            stateManager.RestoreCachedScene(sceneName);
+        }
+
+        /// <summary>
+        /// Clears the SerializableStateManager scene cache.
+        /// </summary>
+        /// <param name="start">True if starting a new or loaded game, so also clear permanent scene list</param>
         public static void ClearSceneCache(bool start)
         {
-            if (sceneUnloaded)
-                return;
-            Instance.stateManager.ClearSceneCache(start);
+            if (!sceneUnloaded)
+                Instance.stateManager.ClearSceneCache(start);
         }
 
         #endregion

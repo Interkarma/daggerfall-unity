@@ -207,7 +207,7 @@ namespace DaggerfallWorkshop
 
         #region Unity
 
-        public void Update()
+        void Update()
         {
             // Cannot proceed until ready and player is set
             if (!ReadyCheck())
