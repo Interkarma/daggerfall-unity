@@ -317,7 +317,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public int textureRecord;
         public string lootTableKey;
         public string entityName;
-        public bool playerOwned;
+        public int stockedDate;
         public bool customDrop;
         public bool isEnemyClass;
         public ItemData_v1[] items;

@@ -631,7 +631,6 @@ namespace DaggerfallWorkshop.Utility
 
             // Set properties
             loot.LoadID = loadID;
-            loot.playerOwned = true;
             loot.customDrop = true;
 
             // If dropped outside ask StreamingWorld to track loose object
@@ -697,7 +696,6 @@ namespace DaggerfallWorkshop.Utility
 
             // Set properties
             loot.LoadID = loadID;
-            loot.playerOwned = false;
             loot.customDrop = true;
 
             // If dropped outside ask StreamingWorld to track loose object

@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallConnect;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop
 {
@@ -185,9 +186,9 @@ namespace DaggerfallWorkshop
         public string entityName = string.Empty;
         public int TextureArchive = 0;
         public int TextureRecord = 0;
-        public bool playerOwned = false;
         public bool customDrop = false;         // Custom drop loot is not part of base scene and must be respawned on deserialization
         public bool isEnemyClass = false;
+        public int stockedDate = 0;
 
         ulong loadID = 0;
         ItemCollection items = new ItemCollection();
@@ -203,8 +204,16 @@ namespace DaggerfallWorkshop
             get { return items; }
         }
 
-        public static void StockShopShelf(PlayerGPS.DiscoveredBuilding buildingData, ItemCollection items)
+        public static int CreateStockedDate(DaggerfallDateTime date)
         {
+            return (date.Year * 1000) + date.DayOfYear;
+        }
+
+        public void StockShopShelf(PlayerGPS.DiscoveredBuilding buildingData)
+        {
+            stockedDate = CreateStockedDate(DaggerfallUnity.Instance.WorldTime.Now);
+            items.Clear();
+
             DFLocation.BuildingTypes buildingType = buildingData.buildingType;
             int shopQuality = buildingData.quality;
             Game.Entity.PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
@@ -301,9 +310,14 @@ namespace DaggerfallWorkshop
             }
         }
 
-        public static void StockHouseContainer(PlayerGPS.DiscoveredBuilding buildingData, ItemCollection items, uint modelIndex)
+//        public static void StockHouseContainer(PlayerGPS.DiscoveredBuilding buildingData, ItemCollection items, uint modelIndex)
+        public void StockHouseContainer(PlayerGPS.DiscoveredBuilding buildingData)
         {
+            stockedDate = CreateStockedDate(DaggerfallUnity.Instance.WorldTime.Now);
+            items.Clear();
+
             DFLocation.BuildingTypes buildingType = buildingData.buildingType;
+            uint modelIndex = 3; // TODO: grab from attached model object..
             int buildingQuality = buildingData.quality;
             byte[] privatePropertyList = null;
             DaggerfallUnityItem item = null;
