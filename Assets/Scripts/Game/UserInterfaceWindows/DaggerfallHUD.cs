@@ -36,6 +36,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         HUDPlaceMarker placeMarker = new HUDPlaceMarker();
         EscortingNPCFacePanel escortingFaces = new EscortingNPCFacePanel();
         HUDQuestDebugger questDebugger = new HUDQuestDebugger();
+        HUDActiveSpells activeSpells = new HUDActiveSpells();
         GameObject player;
         DaggerfallEntityBehaviour playerEntity;
 
@@ -49,6 +50,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public bool ShowCompass { get; set; }
         public bool ShowLocalQuestPlaces { get; set; }
         public bool ShowEscortingFaces { get; set; }
+        public bool ShowActiveSpells { get; set; }
 
         public PopupText PopupText
         {
@@ -81,6 +83,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             get { return questDebugger; }
         }
 
+        public HUDActiveSpells ActiveSpells
+        {
+            get { return activeSpells; }
+        }
+
         public DaggerfallHUD(IUserInterfaceManager uiManager)
             :base(uiManager)
         {
@@ -92,6 +99,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ShowCompass = true;
             ShowEscortingFaces = true;
             ShowLocalQuestPlaces = true;
+            ShowActiveSpells = false;
 
             // Get references
             player = GameObject.FindGameObjectWithTag("Player");
@@ -122,6 +130,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             questDebugger.Size = new Vector2(640, 400);
             questDebugger.AutoSize = AutoSizeModes.ScaleToFit;
             ParentPanel.Components.Add(questDebugger);
+
+            activeSpells.Size = NativePanel.Size;
+            activeSpells.AutoSize = AutoSizeModes.ScaleToFit;
+            activeSpells.HorizontalAlignment = HorizontalAlignment.Left;
+            //activeSpells.BackgroundColor = new Color(0, 0, 0, 0.25f);
+            ParentPanel.Components.Add(activeSpells);
         }
 
         public override void Update()
@@ -135,6 +149,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             placeMarker.Enabled = ShowLocalQuestPlaces;
             escortingFaces.EnableBorder = ShowEscortingFaces;
             questDebugger.Enabled = !(questDebugger.State == HUDQuestDebugger.DisplayState.Nothing);
+            activeSpells.Enabled = ShowActiveSpells;
 
             // Scale HUD elements
             compass.Scale = NativePanel.LocalScale;
