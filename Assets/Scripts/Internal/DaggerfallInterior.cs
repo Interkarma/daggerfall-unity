@@ -409,8 +409,7 @@ namespace DaggerfallWorkshop
                     loot.LoadID = loadID;
                     // Stock house container if needed
                     if (loot.Items.Count == 0)
-                        DaggerfallLoot.StockHouseContainer(buildingData, loot.Items);
-
+                        DaggerfallLoot.StockHouseContainer(buildingData, loot.Items, obj.ModelIdNum % 100);
                 }
 
             }

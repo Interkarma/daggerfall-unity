@@ -55,6 +55,131 @@ namespace DaggerfallWorkshop
         public static byte[] itemGroupsWeaponSmith = new byte[] { 0x02, 0x1E, 0x03, 0x46 };
         public static byte[] itemGroupsTemple = new byte[] { 0x0C, 0xFF, 0x02, 0xFF };
 
+        public static byte[][] privatePropertyItemsModels0to1 =
+        {
+            new byte[] { 0x06, 0x0C },
+            new byte[] { 0x06, 0x0C },
+            new byte[] { 0x02, 0x06, 0x0C },
+            new byte[] { 0x06, 0x0C },
+            new byte[] { 0x02, 0x06, 0x0C },
+            new byte[] { 0x06, 0x0C },
+            new byte[] { 0x06, 0x0C },
+            new byte[] { 0x06, 0x0C },
+            new byte[] { 0x06, 0x0C },
+            new byte[] { 0x06, 0x0C },
+            new byte[] { 0x06, 0x0C },
+            new byte[] { 0x02, 0x06, 0x0C },
+            new byte[] { 0x02, 0x06, 0x0C },
+            new byte[] { 0x02, 0x06, 0x0C },
+            new byte[] { 0x06, 0x0C },
+            new byte[] { 0x06, 0x0C },
+            new byte[] { 0x02, 0x06, 0x0C },
+            new byte[] { 0x02, 0x06, 0x0C },
+            new byte[] { 0x06, 0x0C },
+            new byte[] { 0x06, 0x0C },
+            new byte[] { 0x06, 0x0C },
+        };
+
+        public static byte[][] privatePropertyItemsModels2to3 =
+        {
+            new byte[] { 0x06, 0x09, 0x0C },
+            new byte[] { 0x06, 0x09, 0x0C },
+            new byte[] { 0x03, 0x06, 0x09, 0x0C },
+            new byte[] { 0x07, 0x09, 0x0B },
+            new byte[] { 0x09, 0x0A, 0x0B, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x13, 0x14, 0x19 },
+            new byte[] { 0x07, 0x09, 0x0B },
+            new byte[] { 0x06, 0x09, 0x0C },
+            new byte[] { 0x06, 0x09, 0x0C },
+            new byte[] { 0x09, 0x0B, 0x0E, 0x19 },
+            new byte[] { 0x09, 0x0A },
+            new byte[] { 0x09, 0x0B },
+            new byte[] { 0x03, 0x09, 0x0A, 0x0B },
+            new byte[] { 0x03, 0x09, 0x0B },
+            new byte[] { 0x03, 0x09 },
+            new byte[] { 0x07, 0x09, 0x0A, 0x0B, 0x0E },
+            new byte[] { 0x03, 0x09, 0x0A },
+            new byte[] { 0x03, 0x09, 0x0A, 0x0B, 0x19 },
+            new byte[] { 0x03, 0x09, 0x0A, 0x0B },
+            new byte[] { 0x06, 0x09, 0x0C },
+            new byte[] { 0x06, 0x09, 0x0C },
+            new byte[] { 0x06, 0x09, 0x0C }
+        };
+
+        public static byte[][] privatePropertyItemsModels4to10 =
+        {
+            new byte[] { 0x07, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x13, 0x15 },
+            new byte[] { 0x09, 0x15 },
+            new byte[] { 0x09, 0x15 },
+            new byte[] { 0x07, 0x19 },
+            new byte[] { 0x09, 0x0A, 0x0B, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x13, 0x14 },
+            new byte[] { 0x07, 0x09, 0x0A, 0x0B },
+            new byte[] { 0x06, 0x09, 0x0A, 0x0C, 0x0F, 0x10 },
+            new byte[] { 0x09 },
+            new byte[] { 0x07, 0x09, 0x0A, 0x15 },
+            new byte[] { 0x09 },
+            new byte[] { 0x09, 0x0D },
+            new byte[] { 0x09, 0x0A, 0x0D },
+            new byte[] { 0x09, 0x0A },
+            new byte[] { 0x09, 0x0A, 0x15 },
+            new byte[] { 0x04, 0x09, 0x0A, 0x14 },
+            new byte[] { 0x09, 0x0F, 0x10 },
+            new byte[] { 0x07, 0x09, 0x0D, 0x14 },
+            new byte[] { 0x07, 0x09, 0x0D, 0x14 },
+            new byte[] { 0x09, 0x0A },
+            new byte[] { 0x09, 0x0A },
+            new byte[] { 0x09, 0x0A }
+        };
+
+        public static byte[][] privatePropertyItemsModels11to14 =
+        {
+            new byte[] { 0x07, 0x09, 0x14, },
+            new byte[] { 0x07, 0x09, 0x14, },
+            new byte[] { 0x03, 0x06, 0x09, 0x0C },
+            new byte[] { 0x09, 0x0D, 0x0E },
+            new byte[] { 0x02, 0x03, 0x09 },
+            new byte[] { 0x07, 0x09 },
+            new byte[] { 0x06, 0x09, 0x0C },
+            new byte[] { 0x09 },
+            new byte[] { 0x03, 0x09, 0x15, 0x0E },
+            new byte[] { 0x09, 0x0A },
+            new byte[] { 0x09 },
+            new byte[] { 0x09, 0x03, 0x0E },
+            new byte[] { 0x09, 0x0D, 0x19 },
+            new byte[] { 0x03, 0x09, 0x0A, 0x15 },
+            new byte[] { 0x07, 0x09, 0x0A },
+            new byte[] { 0x06, 0x09, 0x0C },
+            new byte[] { 0x04, 0x07, 0x09, 0x0D, 0x19 },
+            new byte[] { 0x07, 0x09, 0x0D, 0x19 },
+            new byte[] { 0x03, 0x09 },
+            new byte[] { 0x03, 0x09 },
+            new byte[] { 0x03, 0x09 }
+        };
+
+        public static byte[][] privatePropertyItemsModels15AndUp =
+        {
+            new byte[] { 0x0F, 0x10, 0x11, 0x12, 0x13, 0x15 },
+            new byte[] { 0x02, 0x15 },
+            new byte[] { 0x02, 0x15 },
+            new byte[] { 0x0D, 0x19 },
+            new byte[] { 0x02, 0x03, 0x04, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x13, 0x15 },
+            new byte[] { 0x07, 0x0D },
+            new byte[] { 0x06, 0x09, 0x0C, 0x0F, 0x10 },
+            new byte[] { 0x09, 0x0D },
+            new byte[] { 0x09, 0x15 },
+            new byte[] { 0x09 },
+            new byte[] { 0x09, 0x0D },
+            new byte[] { 0x02, 0x09, 0x0D },
+            new byte[] { 0x02, 0x03, 0x09 },
+            new byte[] { 0x03, 0x09, 0x15 },
+            new byte[] { 0x09, 0x0A, 0x0D },
+            new byte[] { 0x09, 0x0F, 0x10 },
+            new byte[] { 0x09, 0x0D, 0x19 },
+            new byte[] { 0x09, 0x0D, 0x19 },
+            new byte[] { 0x06, 0x09, 0x0C },
+            new byte[] { 0x06, 0x09, 0x0C },
+            new byte[] { 0x06, 0x09, 0x0C }
+        };
+
         public LootContainerTypes ContainerType = LootContainerTypes.Nothing;
         public InventoryContainerImages ContainerImage = InventoryContainerImages.Chest;
         public string entityName = string.Empty;
@@ -124,9 +249,8 @@ namespace DaggerfallWorkshop
                     itemGroup = ItemGroups.WomensClothing;
                 if (itemGroup == ItemGroups.WomensClothing && playerEntity.Gender == Game.Entity.Genders.Male)
                     itemGroup = ItemGroups.MensClothing;
-                System.Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(itemGroup);
 
-                if (enumArray.Length > 0 && itemGroup != ItemGroups.Furniture && itemGroup != ItemGroups.UselessItems1)
+                if (itemGroup != ItemGroups.Furniture && itemGroup != ItemGroups.UselessItems1)
                 {
                     if (itemGroup == ItemGroups.Books)
                     {
@@ -141,6 +265,7 @@ namespace DaggerfallWorkshop
                     }
                     else
                     {
+                        System.Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(itemGroup);
                         for (int j = 0; j < enumArray.Length; ++j)
                         {
                             DaggerfallConnect.FallExe.ItemTemplate itemTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(itemGroup, j);
@@ -176,17 +301,90 @@ namespace DaggerfallWorkshop
             }
         }
 
-        public static void StockHouseContainer(PlayerGPS.DiscoveredBuilding buildingData, ItemCollection items)
+        public static void StockHouseContainer(PlayerGPS.DiscoveredBuilding buildingData, ItemCollection items, uint modelIndex)
         {
-            // TODO: Allofich to replace with house container stocking code... using supplied building type and quality
             DFLocation.BuildingTypes buildingType = buildingData.buildingType;
-            int shopQuality = buildingData.quality;
-
-            // NOTE: This doesn't neccessarily need to stock anything, classic has many furniture containers which have nothing, so no effect when click
-
-            // Temp test code...
+            int buildingQuality = buildingData.quality;
+            byte[] privatePropertyList = null;
+            DaggerfallUnityItem item = null;
             Game.Entity.PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
-            items.AddItem(ItemBuilder.CreateRandomIngredient());
+
+            if (buildingType < DFLocation.BuildingTypes.House5)
+            {
+                if (modelIndex >= 2)
+                {
+                    if (modelIndex >= 4)
+                    {
+                        if (modelIndex >= 11)
+                        {
+                            if (modelIndex >= 15)
+                            {
+                                privatePropertyList = privatePropertyItemsModels15AndUp[(int)buildingType];
+                            }
+                            else
+                            {
+                                privatePropertyList = privatePropertyItemsModels11to14[(int)buildingType];
+                            }
+                        }
+                        else
+                        {
+                            privatePropertyList = privatePropertyItemsModels4to10[(int)buildingType];
+                        }
+                    }
+                    else
+                    {
+                        privatePropertyList = privatePropertyItemsModels2to3[(int)buildingType];
+                    }
+                }
+                else
+                {
+                    privatePropertyList = privatePropertyItemsModels0to1[(int)buildingType];
+                }
+                if (privatePropertyList == null)
+                    return;
+                int randomChoice = Random.Range(0, privatePropertyList.Length);
+                ItemGroups itemGroup = (ItemGroups)privatePropertyList[randomChoice];
+                int continueChance = 100;
+                bool keepGoing = true;
+                while (keepGoing)
+                {
+                    if (itemGroup != ItemGroups.MensClothing && itemGroup != ItemGroups.WomensClothing)
+                    {
+                        if (itemGroup == ItemGroups.MagicItems)
+                        {
+                            //TODO: Make magic item
+                        }
+                        else if (itemGroup == ItemGroups.Books)
+                        {
+                            int groupIndex = (buildingQuality + 3) / 5;
+                            if (groupIndex == (int)ItemGroups.Books)
+                                items.AddItem(ItemBuilder.CreateRandomBook());
+                            else
+                                item = new DaggerfallUnityItem(itemGroup, groupIndex);
+                        }
+                        else
+                        {
+                            if (itemGroup == ItemGroups.Weapons)
+                                item = ItemBuilder.CreateRandomWeapon(playerEntity.Level);
+                            else if (itemGroup == ItemGroups.Armor)
+                                item = ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race);
+                            else
+                            {
+                                System.Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(itemGroup);
+                                item = new DaggerfallUnityItem(itemGroup, Random.Range(0,enumArray.Length));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        item = ItemBuilder.CreateRandomClothing(playerEntity.Gender,playerEntity.Race);
+                    }
+                    continueChance >>= 1;
+                    if (DFRandom.rand() % 100 > continueChance)
+                        keepGoing = false;
+                    items.AddItem(item);
+                }
+            }
         }
 
         /// <summary>
