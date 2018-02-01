@@ -10,6 +10,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
+using DaggerfallWorkshop.Game.Banking;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -211,6 +212,7 @@ namespace DaggerfallWorkshop.Game
                 GameManager.Instance.PlayerMotor.CancelMovement = true;
                 SerializablePlayer serializablePlayer = GetComponent<SerializablePlayer>();
                 DaggerfallUI.Instance.SmashHUDToBlack();
+                StreamingWorld world = GameManager.Instance.StreamingWorld;
 
                 // Is player on board ship?
                 if (boardShipPosition != null)
@@ -224,9 +226,10 @@ namespace DaggerfallWorkshop.Game
                         if (DaggerfallUI.Instance.DaggerfallHUD != null)
                             DaggerfallUI.Instance.DaggerfallHUD.PopupText.AddText("Terrain sampler changed. Repositioning player.");
                     }
-                    // Restore player position from before boarding ship.
+                    // Restore player position from before boarding ship, caching scene first.
+                    SaveLoadManager.CacheScene(world.SceneName);// TODO: This should move into teleport, and only cache if scene in perm list::
                     DFPosition mapPixel = MapsFile.WorldCoordToMapPixel(boardShipPosition.worldPosX, boardShipPosition.worldPosZ);
-                    GameManager.Instance.StreamingWorld.TeleportToCoordinates(mapPixel.X, mapPixel.Y, reposition);
+                    world.TeleportToCoordinates(mapPixel.X, mapPixel.Y, reposition);
                     serializablePlayer.RestorePosition(boardShipPosition);
                     boardShipPosition = null;
                 }
@@ -234,9 +237,11 @@ namespace DaggerfallWorkshop.Game
                 {
                     // Record current player position before boarding ship.
                     boardShipPosition = serializablePlayer.GetPlayerPositionData();
-
-                    // Teleport to ship
-                    GameManager.Instance.StreamingWorld.TeleportToCoordinates(2, 2, StreamingWorld.RepositionMethods.RandomStartMarker);
+                    // Teleport to the players ship, restoring cached scene.
+                    DFPosition shipCoords = DaggerfallBankManager.GetShipCoords();
+                    world.TeleportToCoordinates(shipCoords.X, shipCoords.Y, StreamingWorld.RepositionMethods.RandomStartMarker);
+                    
+                    SaveLoadManager.RestoreCachedScene(world.SceneName);
                 }
                 DaggerfallUI.Instance.FadeHUDFromBlack();
                 mode = TransportModes.Foot;

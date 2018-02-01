@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -1114,7 +1114,7 @@ namespace DaggerfallWorkshop.Game
         /// <param name="args"> the static door for loading the correct interior </param>
         private void createIndoorGeometryForAutomap(StaticDoor door)
         {
-            String newGeometryName = string.Format("DaggerfallInterior [Block={0}, Record={1}]", door.blockIndex, door.recordIndex);
+            String newGeometryName = DaggerfallInterior.GetSceneName(GameManager.Instance.PlayerGPS.CurrentLocation, door);
 
             if (gameobjectGeometry != null)
             {
@@ -1166,7 +1166,7 @@ namespace DaggerfallWorkshop.Game
         private void createDungeonGeometryForAutomap()
         {
             DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
-            String newGeometryName = string.Format("DaggerfallDungeon [Region={0}, Name={1}]", location.RegionName, location.Name);
+            String newGeometryName = DaggerfallDungeon.GetSceneName(location);
 
 
             if (gameobjectGeometry != null)

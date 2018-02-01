@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -256,7 +256,8 @@ namespace DaggerfallWorkshop.Game.Questing
         // Wilderness environments are currently open so can be placed on ground anywhere within range
         void PlaceFoeWilderness(GameObject[] gameObjects)
         {
-            GameManager.Instance.StreamingWorld.TrackLooseObject(gameObjects[pendingFoesSpawned], -1, -1, true);
+            // TODO this false will need to be true when start caching enemies
+            GameManager.Instance.StreamingWorld.TrackLooseObject(gameObjects[pendingFoesSpawned], false, -1, -1, true);
             PlaceFoeFreely(gameObjects, null, 8f, 25f);
         }
 

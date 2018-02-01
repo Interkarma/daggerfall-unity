@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -40,16 +40,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         void Start()
         {
             if (LoadID != 0)
-            {
-                // Using same hack ID fix as SerializableEnemy
-                if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon)
-                {
-                    if (actionDoor && SaveLoadManager.Instance.ContainsActionDoor(actionDoor.LoadID))
-                        actionDoor.LoadID++;
-                }
-
                 SaveLoadManager.RegisterSerializableGameObject(this);
-            }
         }
 
         void OnDestroy()

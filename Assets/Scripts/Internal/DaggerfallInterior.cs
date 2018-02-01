@@ -65,6 +65,18 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
+        /// Gets the scene name for the interior behind the given door.
+        /// </summary>
+        public static string GetSceneName(DFLocation location, StaticDoor door)
+        {
+            return GetSceneName(location.MapTableData.MapId, door.buildingKey);
+        }
+        public static string GetSceneName(int mapID, int buildingKey)
+        {
+            return string.Format("DaggerfallInterior [MapID={0}, BuildingKey={1}]", mapID, buildingKey);
+        }
+
+        /// <summary>
         /// Gets transform owning door array.
         /// </summary>
         public Transform DoorOwner
@@ -379,10 +391,6 @@ namespace DaggerfallWorkshop
                         loot.LoadID = loadID;
                         if (SaveLoadManager.Instance != null)
                             go.AddComponent<SerializableLootContainer>();
-
-                        // Stock shop shelf if needed
-                        if (loot.Items.Count == 0)
-                            DaggerfallLoot.StockShopShelf(buildingData, loot.Items);
                     }
                     return;
                 }
@@ -407,12 +415,7 @@ namespace DaggerfallWorkshop
                     loot.ContainerType = LootContainerTypes.HouseContainers;
                     loot.ContainerImage = InventoryContainerImages.Shelves;
                     loot.LoadID = loadID;
-                    // Stock house container if needed
-                    if (loot.Items.Count == 0)
-                        DaggerfallLoot.StockHouseContainer(buildingData, loot.Items);
-
                 }
-
             }
         }
 
@@ -779,6 +782,9 @@ namespace DaggerfallWorkshop
                 // Assign loadID
                 if (actionDoor)
                     actionDoor.LoadID = loadID;
+
+                if (SaveLoadManager.Instance != null)
+                    go.AddComponent<SerializableActionDoor>();
             }
         }
 
