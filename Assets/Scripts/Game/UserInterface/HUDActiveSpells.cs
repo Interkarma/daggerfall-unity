@@ -62,17 +62,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public HUDActiveSpells()
             : base()
         {
-            //// Add some test spells
-            //AddSelfSpell(0, "Free Action");
-            //AddSelfSpell(1, "Speed");
-            //AddSelfSpell(2, "Light");
-            //AddSelfSpell(3, "Water Breathing");
-            //AddSelfSpell(4, "Water Walking");
-            //AddSelfSpell(5, "Levitation");
-            //AddSelfSpell(6, "Strength");
-            //AddSelfSpell(7, "Witty Retorts");
-            //AddSelfSpell(8, "Enhanced Kung Fu");
-            //AddSelfSpell(9, "Aura of Terror");
+            // Add some test spells
+            AddSelfSpell(0, "Free Action");
+            AddSelfSpell(1, "Speed");
+            AddSelfSpell(2, "Light");
+            AddSelfSpell(3, "Water Breathing");
+            AddSelfSpell(4, "Water Walking");
+            AddSelfSpell(5, "Levitation");
+            AddSelfSpell(6, "Strength");
+            AddSelfSpell(7, "Witty Retorts");
+            AddSelfSpell(8, "Enhanced Kung Fu");
+            AddSelfSpell(9, "Aura of Terror");
         }
 
         #endregion
@@ -98,65 +98,24 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             ClearChildren();
 
-            //// Can show up to first 10 spells at present
-            //int count = 0;
-            //float posX = 0;
-            //float posY = 0;
-            //int row = 0;
-            //foreach (ActiveSpell spell in activeSelfList)
-            //{
-            //    Panel panel = new Panel();
-            //    panel.BackgroundColor = Color.black;
-            //    panel.BackgroundTexture = DaggerfallUI.Instance.SpellIconCollection.GetIcon(spell.iconIndex);
-            //    Components.Add(panel);
+            // Can show up to first 10 spells at present
+            int count = 0;
+            float posX = classicSelfStartX;
+            float posY = classicSelfStartY;
+            foreach (ActiveSpell spell in activeSelfList)
+            {
+                Panel panel = new Panel();
+                panel.BackgroundColor = Color.black;
+                panel.BackgroundTexture = DaggerfallUI.Instance.SpellIconCollection.GetIcon(spell.iconIndex);
+                Components.Add(panel);
 
-            //    //// Classic layout
-            //    //panel.Size = new Vector2(16, 16);
-            //    //panel.Position = new Vector2(posX, posY);
-            //    //posX += classicHorzSpacing;
-            //    //if (++count > 9)
-            //    //    break;
-
-            //    //// List large layout
-            //    //panel.Size = new Vector2(16, 16);
-            //    //panel.Position = new Vector2(posX, posY);
-            //    //posY += 20;
-            //    //if (++row > 4)
-            //    //{
-            //    //    row = 0;
-            //    //    posY = 0;
-            //    //    posX += 20;
-            //    //}
-            //    //if (++count > 9)
-            //    //    break;
-
-            //    //// List medium layout
-            //    //panel.Size = new Vector2(10, 10);
-            //    //panel.Position = new Vector2(posX, posY);
-            //    //posY += 12;
-            //    //if (++count > 9)
-            //    //    break;
-
-            //    //// List small layout
-            //    //panel.Size = new Vector2(8, 8);
-            //    //panel.Position = new Vector2(posX, posY);
-            //    //posY += 9;
-                
-            //    //// Add text to small layout
-            //    //TextLabel label = new TextLabel();
-            //    //label.Text = spell.displayName;
-            //    //label.Position = new Vector2(posX + 10, posY - 8);
-            //    //label.TextColor = Color.white;//DaggerfallUI.DaggerfallDefaultTextColor;
-            //    //label.BackgroundColor = new Color(0, 0, 0, 0.5f);
-            //    //label.ShadowPosition = Vector2.zero;
-            //    //label.ShadowColor = Color.gray;
-            //    //label.Scale = new Vector2(0.5f, 0.5f);
-            //    ////label.Font = DaggerfallUI.Instance.GetFont(4);
-            //    //Components.Add(label);
-
-            //    //if (++count > 9)
-            //    //    break;
-            //}
+                // Classic layout
+                panel.Size = new Vector2(16, 16);
+                panel.Position = new Vector2(posX, posY);
+                posX += classicHorzSpacing;
+                if (++count > 9)
+                    break;
+            }
         }
 
         #endregion

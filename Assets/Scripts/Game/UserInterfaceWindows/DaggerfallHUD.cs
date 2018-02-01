@@ -112,6 +112,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected override void Setup()
         {
+            //activeSpells.Size = NativePanel.Size;
+            //activeSpells.AutoSize = AutoSizeModes.ScaleToFit;
+            //activeSpells.HorizontalAlignment = HorizontalAlignment.Center;
+            //NativePanel.Components.Add(activeSpells);
+
             popupText.Size = NativePanel.Size;
             NativePanel.Components.Add(popupText);
 
@@ -130,12 +135,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             questDebugger.Size = new Vector2(640, 400);
             questDebugger.AutoSize = AutoSizeModes.ScaleToFit;
             ParentPanel.Components.Add(questDebugger);
-
-            activeSpells.Size = NativePanel.Size;
-            activeSpells.AutoSize = AutoSizeModes.ScaleToFit;
-            activeSpells.HorizontalAlignment = HorizontalAlignment.Left;
-            //activeSpells.BackgroundColor = new Color(0, 0, 0, 0.25f);
-            ParentPanel.Components.Add(activeSpells);
         }
 
         public override void Update()
