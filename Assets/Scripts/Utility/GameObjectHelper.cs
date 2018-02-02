@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -613,8 +613,8 @@ namespace DaggerfallWorkshop.Utility
             }
 
             // Randomise container texture
-            int iconIndex = UnityEngine.Random.Range(0, DaggerfallLoot.randomTreasureIconIndices.Length);
-            int iconRecord = DaggerfallLoot.randomTreasureIconIndices[iconIndex];
+            int iconIndex = UnityEngine.Random.Range(0, DaggerfallLootDataTables.randomTreasureIconIndices.Length);
+            int iconRecord = DaggerfallLootDataTables.randomTreasureIconIndices[iconIndex];
 
             // Find ground position below player
             Vector3 position = playerMotor.FindGroundPosition();
@@ -631,13 +631,12 @@ namespace DaggerfallWorkshop.Utility
 
             // Set properties
             loot.LoadID = loadID;
-            loot.playerOwned = true;
             loot.customDrop = true;
 
             // If dropped outside ask StreamingWorld to track loose object
             if (!GameManager.Instance.IsPlayerInside)
             {
-                GameManager.Instance.StreamingWorld.TrackLooseObject(loot.gameObject);
+                GameManager.Instance.StreamingWorld.TrackLooseObject(loot.gameObject, true);
             }
 
             return loot;
@@ -697,13 +696,12 @@ namespace DaggerfallWorkshop.Utility
 
             // Set properties
             loot.LoadID = loadID;
-            loot.playerOwned = false;
             loot.customDrop = true;
 
             // If dropped outside ask StreamingWorld to track loose object
             if (!GameManager.Instance.IsPlayerInside)
             {
-                GameManager.Instance.StreamingWorld.TrackLooseObject(loot.gameObject);
+                GameManager.Instance.StreamingWorld.TrackLooseObject(loot.gameObject, true);
             }
 
             return loot;
@@ -1124,7 +1122,7 @@ namespace DaggerfallWorkshop.Utility
                 return null;
             }
 
-            GameObject go = new GameObject(string.Format("DaggerfallDungeon [Region={0}, Name={1}]", location.RegionName, location.Name));
+            GameObject go = new GameObject(DaggerfallDungeon.GetSceneName(location));
             if (parent) go.transform.parent = parent;
             DaggerfallDungeon c = go.AddComponent<DaggerfallDungeon>();
             c.SetDungeon(location, importEnemies);

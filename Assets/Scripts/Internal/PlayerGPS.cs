@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -22,6 +22,8 @@ using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Game.Banking;
 
 namespace DaggerfallWorkshop
 {
@@ -258,6 +260,12 @@ namespace DaggerfallWorkshop
             {
                 RaiseOnMapPixelChangedEvent(pos);
                 UpdateWorldInfo(pos.X, pos.Y);
+
+                // Clear non-permanent scenes from cache, unless going to/from owned ship
+                DFPosition shipCoords = DaggerfallBankManager.GetShipCoords();
+                if (shipCoords == null || (!(pos.X == shipCoords.X && pos.Y == shipCoords.Y) && !(lastMapPixelX == shipCoords.X && lastMapPixelY == shipCoords.Y)))
+                    SaveLoadManager.ClearSceneCache(false);
+
                 lastMapPixelX = pos.X;
                 lastMapPixelY = pos.Y;
                 isPlayerInLocationRect = false;

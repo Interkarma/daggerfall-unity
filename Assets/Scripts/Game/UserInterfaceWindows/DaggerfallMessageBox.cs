@@ -164,7 +164,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (prevWindow != null && prevWindow.nextMessageBox != null)
             {
                 prevWindow.nextMessageBox.CloseWindow();
-                Debug.Log("OnPop Close");
             }
         }
 

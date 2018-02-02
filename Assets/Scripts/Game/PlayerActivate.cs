@@ -23,6 +23,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Game.Banking;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -451,8 +452,12 @@ namespace DaggerfallWorkshop.Game
             UserInterfaceManager uiManager = DaggerfallUI.Instance.UserInterfaceManager;
             switch (loot.ContainerType)
             {
-                // Handle shop shelves: open trade window with activated loot container as remote target
+                // Handle shop shelves: stock shelf if needed, then open trade window with activated loot container as remote target
                 case LootContainerTypes.ShopShelves:
+                    // Stock shop shelf on first access
+                    if (loot.stockedDate < DaggerfallLoot.CreateStockedDate(DaggerfallUnity.Instance.WorldTime.Now))
+                        loot.StockShopShelf(playerEnterExit.BuildingDiscoveryData);
+                    // Open Trade Window
                     DaggerfallTradeWindow tradeWindow = new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Buy);
                     tradeWindow.MerchantItems = loot.Items;
                     uiManager.PushWindow(tradeWindow);
@@ -460,6 +465,16 @@ namespace DaggerfallWorkshop.Game
 
                 // Handle house furniture containers: ask player if they want to look through private property
                 case LootContainerTypes.HouseContainers:
+                    // Allow access for player owned interiors. (not distinguishing between ships)
+                    if (playerEnterExit.BuildingType == DFLocation.BuildingTypes.Ship && DaggerfallBankManager.OwnsShip)
+                    {
+                        loot.stockedDate = 1;   // Ensure it gets serialized
+                        break;
+                    }
+                    // Stock house container on first access
+                    if (loot.stockedDate < DaggerfallLoot.CreateStockedDate(DaggerfallUnity.Instance.WorldTime.Now))
+                        loot.StockHouseContainer(playerEnterExit.BuildingDiscoveryData);
+                    // If no contents, do nothing
                     if (loot.Items.Count == 0)
                         return;
                     DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, DaggerfallMessageBox.CommonMessageBoxButtons.YesNo, PrivatePropertyId, uiManager.TopWindow);
@@ -534,7 +549,7 @@ namespace DaggerfallWorkshop.Game
 
             // Perform transition
             playerEnterExit.BuildingDiscoveryData = db;
-            playerEnterExit.TransitionInterior(doorOwner, door, doFade);
+            playerEnterExit.TransitionInterior(doorOwner, door, doFade, false);
         }
 
         // Message box closed, move to interior
@@ -699,6 +714,8 @@ namespace DaggerfallWorkshop.Game
                 unlocked = (openHours[(int)type] <= DaggerfallUnity.Instance.WorldTime.Now.Hour
                     && closeHours[(int)type] > DaggerfallUnity.Instance.WorldTime.Now.Hour);
             }
+            else if (type == DFLocation.BuildingTypes.Ship && DaggerfallBankManager.OwnsShip)
+                unlocked = true;
             return unlocked;
         }
 

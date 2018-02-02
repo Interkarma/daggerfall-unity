@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -41,6 +41,15 @@ namespace DaggerfallWorkshop
 
         GameObject startMarker = null;
         GameObject enterMarker = null;
+
+        /// <summary>
+        /// Gets the scene name for the dungeon at the given location.
+        /// </summary>
+        public static string GetSceneName(DFLocation location)
+        {
+            return string.Format("DaggerfallDungeon [Region={0}, Name={1}]", location.RegionName, location.Name);
+        }
+
 
         public DungeonSummary Summary
         {

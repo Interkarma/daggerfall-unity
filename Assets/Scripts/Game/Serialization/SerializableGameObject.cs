@@ -22,8 +22,24 @@ using FullSerializer;
 namespace DaggerfallWorkshop.Game.Serialization
 {
     /// <summary>
+    /// Enum of stateful game object types that implement ISerializableGameObject.
+    /// To add a new type of stateful game object:
+    ///     - add type name here
+    ///     - add a condition to SerializableStateManager.GetStatefulGameObjectType()
+    ///     - add serializer methods
+    ///     - add to SerializableStateManager.CacheScene() & RestoreCachedScene()
+    /// </summary>
+    public enum StatefulGameObjectTypes
+    {
+        LootContainer,
+        ActionDoor,
+        ActionObject,
+        Enemy,
+    }
+
+    /// <summary>
     /// Implement this interface with any MonoBehaviour-derived class that can save/load state.
-    /// Classes implementing this interface must also register/deregister themselves to SaveLoadManager.
+    /// Classes implementing this interface must also register/deregister themselves to SerializableStateManager.
     /// Only registered objects will be serialized/deserialized. If a deserialized object of the specified
     /// LoadID cannot be found then that object will not have any state restored.
     /// </summary>
@@ -72,7 +88,9 @@ namespace DaggerfallWorkshop.Game.Serialization
         public EnemyData_v1[] enemyData;
         public LootContainerData_v1[] lootContainers;
         public BankRecordData_v1[] bankAccounts;
+        public BankDeedData_v1 bankDeeds;
         public FaceDetails[] escortingFaces;
+        public SceneCache_v1 sceneCache;
     }
 
     #endregion
@@ -94,6 +112,21 @@ namespace DaggerfallWorkshop.Game.Serialization
     {
         public ulong gameTime;
         public long realTime;
+    }
+
+    [fsObject("v1")]
+    public class SceneCache_v1
+    {
+        public SceneCacheEntry_v1[] sceneCache;
+        public string[] permanentScenes;
+    }
+
+    [fsObject("v1")]
+    public class SceneCacheEntry_v1
+    {
+        public string sceneName;
+        public LootContainerData_v1[] lootContainers;
+        public ActionDoorData_v1[] actionDoors;
     }
 
     #endregion
@@ -284,7 +317,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public int textureRecord;
         public string lootTableKey;
         public string entityName;
-        public bool playerOwned;
+        public int stockedDate;
         public bool customDrop;
         public bool isEnemyClass;
         public ItemData_v1[] items;
@@ -331,6 +364,23 @@ namespace DaggerfallWorkshop.Game.Serialization
         public string saveName;
         public string characterName;
         public DateAndTime_v1 dateAndTime;
+    }
+
+    #endregion
+
+    #region Bank Data
+
+    [fsObject("v1")]
+    public class BankDeedData_v1
+    {
+        public int shipType;
+        public HouseDeedData_v1 houseDeed;
+    }
+
+    [fsObject("v1")]
+    public class HouseDeedData_v1
+    {
+        public int houseId;
     }
 
     [fsObject("v1")]

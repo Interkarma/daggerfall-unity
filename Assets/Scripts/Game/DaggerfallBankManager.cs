@@ -17,6 +17,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallConnect.Save;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Items;
+using DaggerfallConnect.Utility;
 
 /*
  * Todo
@@ -51,7 +52,7 @@ namespace DaggerfallWorkshop.Game.Banking
         BOUNTY_DEFAULT_LOAN     = 0297,   // not used in game
         SELL_HOUSE_OFFER        = 0298,
         SELL_SHIP_OFFER         = 0299,
-        NOT_ENOUGH_INVENTORY    = 0454,
+        NOT_ENOUGH_GOLD         = 0454,
     }
 
     public enum TransactionType
@@ -69,9 +70,40 @@ namespace DaggerfallWorkshop.Game.Banking
         Sell_ship,
     }
 
+    public enum ShipType
+    {
+        None = -1,
+        Small = 0,
+        Large = 1,
+    }
+
     public static class DaggerfallBankManager
     {
         public const int gold1kg = 400;
+        private const float deedSellMult = 0.85f;
+
+        private static int[] shipPrices = new int[] { 100000, 200000 };
+        private static DFPosition[] shipCoords = new DFPosition[] { new DFPosition(2, 2), new DFPosition(5, 5) };
+        private static string[] shipInteriorSceneNames = new string[] {
+            DaggerfallInterior.GetSceneName(1050578, 0),
+            DaggerfallInterior.GetSceneName(2102157, 0),
+        };
+        private static string[] shipExteriorSceneNames = new string[] {
+            StreamingWorld.GetSceneName(shipCoords[0].X, shipCoords[0].Y),
+            StreamingWorld.GetSceneName(shipCoords[1].X, shipCoords[1].Y),
+        };
+
+        private static ShipType ownedShip = ShipType.None;
+
+        public static bool OwnsShip { get { return ownedShip != ShipType.None; } }
+
+        public static ShipType OwnedShip { get { return ownedShip; } set { ownedShip = value; } }
+
+        public static int GetShipPrice(ShipType ship) { return ship >= 0 ? shipPrices[(int) ship] : 0; }
+
+        public static int GetShipSellPrice(ShipType ship) { return (int)(GetShipPrice(ship) * deedSellMult); }
+
+        public static DFPosition GetShipCoords() { return OwnsShip ? shipCoords[(int)ownedShip] : null; }
 
         private static int loanMaxPerLevel = 50000;
 
@@ -98,7 +130,6 @@ namespace DaggerfallWorkshop.Game.Banking
         }
 
         public static bool OwnsHouse { get { return true; } } //##TODo
-        public static bool OwnsShip { get { return true; } }  //##TODO
 
         public static bool HasLoan(int regionIndex)
         {
@@ -190,6 +221,9 @@ namespace DaggerfallWorkshop.Game.Banking
                 case TransactionType.Borrowing_loan:
                     result = BorrowLoan(amount, regionIndex);
                     break;
+                case TransactionType.Sell_ship:
+                    result = SellShip(regionIndex);
+                    break;
                 default:
                     result = TransactionResult.NONE;
                     break;
@@ -201,12 +235,12 @@ namespace DaggerfallWorkshop.Game.Banking
 
         public static TransactionResult DepositGold(int amount, int regionIndex)
         {
-
-            if (amount > GameManager.Instance.PlayerEntity.GoldPieces)
-                return TransactionResult.NOT_ENOUGH_INVENTORY;
+            PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+            if (amount > playerEntity.GoldPieces)
+                return TransactionResult.NOT_ENOUGH_GOLD;
 
             BankAccounts[regionIndex].accountGold += amount;
-            GameManager.Instance.PlayerEntity.GoldPieces -= (int)amount;
+            playerEntity.GoldPieces -= (int)amount;
             return TransactionResult.NONE;
         }
 
@@ -221,7 +255,7 @@ namespace DaggerfallWorkshop.Game.Banking
                 return TransactionResult.TOO_HEAVY;
 
             BankAccounts[regionIndex].accountGold -= amount;
-            GameManager.Instance.PlayerEntity.GoldPieces += (int)amount;
+            playerEntity.GoldPieces += amount;
             return TransactionResult.NONE;
         }
 
@@ -267,16 +301,38 @@ namespace DaggerfallWorkshop.Game.Banking
             return TransactionResult.SELL_HOUSE_OFFER;
         }
 
-        //##TODO
-        public static TransactionResult PurchaseShip()
+        public static TransactionResult PurchaseShip(ShipType shipType, int regionIndex)
         {
-            return TransactionResult.ALREADY_OWN_SHIP;
+            if (shipType == ShipType.None)
+                return TransactionResult.NONE;
+
+            int amount = GetShipPrice(shipType);
+            PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+            var playerGold = playerEntity.GetGoldAmount();
+            var accountGold = BankAccounts[regionIndex].accountGold;
+
+            if (amount > playerGold + accountGold)
+                return TransactionResult.NOT_ENOUGH_GOLD;
+
+            amount = playerEntity.DeductGoldAmount(amount);
+            bankAccounts[regionIndex].accountGold -= amount;
+
+            // Set player owned ship and add scenes to permanent list
+            ownedShip = shipType;
+            SaveLoadManager.StateManager.AddPermanentScene(shipExteriorSceneNames[(int)shipType]);
+            SaveLoadManager.StateManager.AddPermanentScene(shipInteriorSceneNames[(int)shipType]);
+
+            return TransactionResult.PURCHASED_SHIP;
         }
 
-        //##TODO
-        public static TransactionResult SellShip()
+        public static TransactionResult SellShip(int regionIndex)
         {
-            return TransactionResult.NOT_PORT_TOWN;
+            BankAccounts[regionIndex].accountGold += GetShipSellPrice(ownedShip); ;
+            SaveLoadManager.StateManager.RemovePermanentScene(shipExteriorSceneNames[(int)ownedShip]);
+            SaveLoadManager.StateManager.RemovePermanentScene(shipInteriorSceneNames[(int)ownedShip]);
+            ownedShip = ShipType.None;
+
+            return TransactionResult.NONE;
         }
 
         //unoffical wiki says max possible loan is 1,100,000 but testing indicates otherwise
@@ -297,7 +353,7 @@ namespace DaggerfallWorkshop.Game.Banking
             if (!HasLoan(regionIndex))
                 return TransactionResult.NONE;
             else if (amount > playerGold + accountGold)
-                return TransactionResult.NOT_ENOUGH_INVENTORY;
+                return TransactionResult.NOT_ENOUGH_GOLD;
             else if (amount > BankAccounts[regionIndex].loanTotal)
             {
                 result = TransactionResult.OVERPAID_LOAN;
@@ -306,7 +362,7 @@ namespace DaggerfallWorkshop.Game.Banking
 
             bankAccounts[regionIndex].loanTotal -= amount;
             amount = playerEntity.DeductGoldAmount(amount);
-            if (amount > 0)
+            if (amount > 0)     // Should not happen
                 bankAccounts[regionIndex].accountGold -= amount;
 
             if (bankAccounts[regionIndex].loanTotal <= 0)
