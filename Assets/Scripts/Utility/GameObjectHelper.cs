@@ -613,8 +613,8 @@ namespace DaggerfallWorkshop.Utility
             }
 
             // Randomise container texture
-            int iconIndex = UnityEngine.Random.Range(0, DaggerfallLoot.randomTreasureIconIndices.Length);
-            int iconRecord = DaggerfallLoot.randomTreasureIconIndices[iconIndex];
+            int iconIndex = UnityEngine.Random.Range(0, DaggerfallLootDataTables.randomTreasureIconIndices.Length);
+            int iconRecord = DaggerfallLootDataTables.randomTreasureIconIndices[iconIndex];
 
             // Find ground position below player
             Vector3 position = playerMotor.FindGroundPosition();

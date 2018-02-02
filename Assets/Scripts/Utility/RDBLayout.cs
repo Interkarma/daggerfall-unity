@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -1407,8 +1407,8 @@ namespace DaggerfallWorkshop.Utility
                 loadID = (ulong)(blockData.Position + obj.This);
 
             // Randomise container texture
-            int iconIndex = UnityEngine.Random.Range(0, DaggerfallLoot.randomTreasureIconIndices.Length);
-            int iconRecord = DaggerfallLoot.randomTreasureIconIndices[iconIndex];
+            int iconIndex = UnityEngine.Random.Range(0, DaggerfallLootDataTables.randomTreasureIconIndices.Length);
+            int iconRecord = DaggerfallLootDataTables.randomTreasureIconIndices[iconIndex];
 
             // Find bottom of marker in world space
             // Marker is aligned to surface and has a constant size (40x40)

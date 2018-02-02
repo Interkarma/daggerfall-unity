@@ -415,7 +415,7 @@ namespace DaggerfallWorkshop
                     loot.ContainerType = LootContainerTypes.HouseContainers;
                     loot.ContainerImage = InventoryContainerImages.Shelves;
                     loot.LoadID = loadID;
-//                        DaggerfallLoot.StockHouseContainer(buildingData, loot.Items, obj.ModelIdNum % 100);
+                    loot.TextureRecord = (int) obj.ModelIdNum % 100;
                 }
             }
         }
