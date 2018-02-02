@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Lypyl (lypyldf@gmail.com)
-// Contributors:    
+// Contributors:    Hazelnut
 // 
 // Notes:
 //
@@ -18,13 +18,6 @@ using DaggerfallConnect.Save;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallConnect.Utility;
-
-/*
- * Todo
- * Depositing / withdrawing LOC -DONE
- * buying & selling ships/houses
- * events
-*/
 
 namespace DaggerfallWorkshop.Game.Banking
 {
@@ -129,7 +122,7 @@ namespace DaggerfallWorkshop.Game.Banking
             }
         }
 
-        public static bool OwnsHouse { get { return true; } } //##TODo
+        public static bool OwnsHouse { get { return false; } } //##TODo
 
         public static bool HasLoan(int regionIndex)
         {

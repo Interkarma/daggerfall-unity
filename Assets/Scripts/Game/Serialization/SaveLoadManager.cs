@@ -845,10 +845,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         void RestoreBankDeedData(BankDeedData_v1 deedData)
         {
-            if (deedData == null)
-                return;
-
-            DaggerfallBankManager.OwnedShip = (ShipType) deedData.shipType;
+            DaggerfallBankManager.OwnedShip = (deedData == null) ? ShipType.None : (ShipType) deedData.shipType;
         }
 
         void RestoreEscortingFacesData(FaceDetails[] escortingFaces)

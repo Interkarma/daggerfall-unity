@@ -4,16 +4,12 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Lypyl (lypyldf@gmail.com)
-// Contributors:    
+// Contributors:    Hazelnut
 // 
 // Notes:
 //
 
-//#define LAYOUT
-
 using UnityEngine;
-using System.Collections;
-using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Banking;
@@ -21,13 +17,6 @@ using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
-
-/*
- * Todo -
- * buy / sell house / ships
- * depositing / withdrawing LOC
- */ 
-
     public class DaggerfallBankingWindow : DaggerfallPopupWindow, IMacroContextProvider
     {
         const string IMGNAME    = "BANK00I0.IMG";
@@ -201,12 +190,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             regionIndex     = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
             transactionType = TransactionType.None;
             UpdateLabels();
-
-
-#if LAYOUT
-            SetBackgroundColors();
-#endif
-
         }
 
         public override void OnPush()
@@ -242,6 +225,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             //    Debug.Log(transactionType.ToString());
         }
 
+        public void GeneratePurchaseShipPopup(ShipType shipType)
+        {
+            GeneratePopup(DaggerfallBankManager.PurchaseShip(shipType, regionIndex));
+        }
 
         void UpdateLabels()
         {
@@ -411,7 +398,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (DaggerfallBankManager.OwnsHouse)
                 GeneratePopup(TransactionResult.ALREADY_OWN_HOUSE);
             //else if no houses for sale
-            //else show houses for sale
+            else    // Show houses for sale
+                uiManager.PushWindow(new DaggerfallBankPurchasePopUp(uiManager, this));
         }
 
         void sellHouseButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -427,11 +415,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (DaggerfallBankManager.OwnsShip)
                 GeneratePopup(TransactionResult.ALREADY_OWN_SHIP);
             //else if not port town
-            //else show ship selection window
-            else
-            {
-                GeneratePopup(DaggerfallBankManager.PurchaseShip(ShipType.Small, regionIndex));
-            }
+            else    // Show ships for sale
+                uiManager.PushWindow(new DaggerfallBankPurchasePopUp(uiManager, this, true));
         }
 
         void sellShipButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -485,40 +470,5 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         #endregion
-
-
-
-#if LAYOUT
-
-        void SetBackgroundColors()
-        {
-            Color[] colors = new Color[]{
-                new Color(0,0,0, .75f),
-                new Color(1,0,0, .75f),
-                new Color(0,1,0, .75f),
-                new Color(0,0,0, .75f),
-                new Color(1, 1, 1, 0.75f),
-                new Color(1, 1, 0, 0.75f),
-                new Color(1, 0, 1, 0.75f),
-                new Color(0, 1, 1, 0.75f),
-            };
-
-
-            int i = 0;
-            int color_index = 0;
-            while (i < mainPanel.Components.Count)
-            {
-                if (color_index >= colors.Length)
-                    color_index = 0;
-
-                mainPanel.Components[i].BackgroundColor = colors[color_index];
-                i++;
-                color_index++;
-            }
-        }
-
-#endif
-
-
     }
 }
