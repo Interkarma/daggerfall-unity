@@ -8,6 +8,7 @@
 using UnityEngine;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
+using DaggerfallWorkshop.Game.Banking;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -53,6 +54,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Properties & Constants
 
+        DaggerfallBankingWindow bankingWindow;
         private const int listDisplayUnits = 10;  // Number of items displayed in scrolling area
         private const int scrollNum = 1;          // Number of items on each scroll tick
         private bool ships;                       // True if purchasing ships, otherwise showing purchasable houses.
@@ -61,10 +63,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Constructors
 
-        public DaggerfallBankPurchasePopUp(IUserInterfaceManager uiManager, IUserInterfaceWindow previousWindow = null, bool ships = false)
+        public DaggerfallBankPurchasePopUp(IUserInterfaceManager uiManager, DaggerfallBankingWindow previousWindow = null, bool ships = false)
             : base(uiManager, previousWindow)
         {
             this.ships = ships;
+            this.bankingWindow = previousWindow;
         }
 
         #endregion
@@ -107,9 +110,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void PopulatePriceList()
         {
-            for (int i = 0; i < 20; i++)
+            if (ships)
             {
-                priceListBox.AddItem("Price : " + (100000 + i) + " gold");
+                for (int i = 0; i < 2; i++)
+                    priceListBox.AddItem(HardStrings.bankPurchasePrice.Replace("%s", DaggerfallBankManager.GetShipPrice((ShipType) i).ToString()), i);
+            }
+            else
+            {   // List all the houses for sale in this location
+                for (int i = 0; i < 20; i++)
+                {
+                    priceListBox.AddItem("Price : " + (100000 + i) + " gold");
+                }
             }
         }
 
@@ -212,6 +223,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void BuyButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            if (priceListBox.SelectedIndex < 0)
+                return;
+            if (ships)
+            {
+                CloseWindow();
+                bankingWindow.GeneratePurchaseShipPopup((ShipType) priceListBox.SelectedIndex);
+            }
         }
 
         void PriceListBox_OnSelectItem()

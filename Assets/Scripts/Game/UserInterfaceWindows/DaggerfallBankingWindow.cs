@@ -225,6 +225,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             //    Debug.Log(transactionType.ToString());
         }
 
+        public void GeneratePurchaseShipPopup(ShipType shipType)
+        {
+            GeneratePopup(DaggerfallBankManager.PurchaseShip(shipType, regionIndex));
+        }
 
         void UpdateLabels()
         {
@@ -394,8 +398,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (DaggerfallBankManager.OwnsHouse)
                 GeneratePopup(TransactionResult.ALREADY_OWN_HOUSE);
             //else if no houses for sale
-            //else show houses for sale
-            else
+            else    // Show houses for sale
                 uiManager.PushWindow(new DaggerfallBankPurchasePopUp(uiManager, this));
         }
 
@@ -412,11 +415,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (DaggerfallBankManager.OwnsShip)
                 GeneratePopup(TransactionResult.ALREADY_OWN_SHIP);
             //else if not port town
-            //else show ship selection window
-            else
-            {
-                GeneratePopup(DaggerfallBankManager.PurchaseShip(ShipType.Small, regionIndex));
-            }
+            else    // Show ships for sale
+                uiManager.PushWindow(new DaggerfallBankPurchasePopUp(uiManager, this, true));
         }
 
         void sellShipButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
