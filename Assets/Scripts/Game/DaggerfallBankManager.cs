@@ -82,7 +82,7 @@ namespace DaggerfallWorkshop.Game.Banking
         public const int gold1kg = 400;
         private const float deedSellMult = 0.85f;
 
-        private static int[] shipPrices = new int[] { 1000, 200000 };
+        private static int[] shipPrices = new int[] { 100000, 200000 };
         private static DFPosition[] shipCoords = new DFPosition[] { new DFPosition(2, 2), new DFPosition(5, 5) };
         private static string[] shipInteriorSceneNames = new string[] {
             DaggerfallInterior.GetSceneName(1050578, 0),
