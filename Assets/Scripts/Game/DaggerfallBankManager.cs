@@ -315,7 +315,7 @@ namespace DaggerfallWorkshop.Game.Banking
                 return TransactionResult.NOT_ENOUGH_GOLD;
 
             amount = playerEntity.DeductGoldAmount(amount);
-            bankAccounts[regionIndex].loanTotal -= amount;
+            bankAccounts[regionIndex].accountGold -= amount;
 
             // Set player owned ship and add scenes to permanent list
             ownedShip = shipType;
