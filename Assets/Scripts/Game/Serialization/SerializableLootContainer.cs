@@ -133,7 +133,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         bool HasChanged()
         {
             // Save all loot containers, except for shelves & house containers that have not been opened and have a zero stockedDate
-            return !((loot.ContainerType == LootContainerTypes.ShopShelves || loot.ContainerType == LootContainerTypes.ShopShelves) && loot.stockedDate == 0);
+            return !((loot.ContainerType == LootContainerTypes.ShopShelves || loot.ContainerType == LootContainerTypes.HouseContainers) && loot.stockedDate == 0);
         }
 
         ulong GetLoadID()

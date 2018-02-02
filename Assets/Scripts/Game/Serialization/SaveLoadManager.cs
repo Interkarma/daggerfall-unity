@@ -458,7 +458,6 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (sceneUnloaded)
                 return;
             Instance.stateManager.DeregisterAllStatefulGameObjects(keepPlayer);
-            Debug.Log("Deregistered all stateful objects");
         }
 
         /// <summary>

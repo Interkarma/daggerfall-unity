@@ -416,6 +416,8 @@ namespace DaggerfallWorkshop
                     loot.ContainerImage = InventoryContainerImages.Shelves;
                     loot.LoadID = loadID;
                     loot.TextureRecord = (int) obj.ModelIdNum % 100;
+                    if (SaveLoadManager.Instance != null)
+                        go.AddComponent<SerializableLootContainer>();
                 }
             }
         }
