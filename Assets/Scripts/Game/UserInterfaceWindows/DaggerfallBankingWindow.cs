@@ -430,7 +430,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             //else show ship selection window
             else
             {
-                GeneratePopup(DaggerfallBankManager.PurchaseShip(ShipType.Small, 1000, regionIndex));
+                GeneratePopup(DaggerfallBankManager.PurchaseShip(ShipType.Small, regionIndex));
             }
         }
 

@@ -99,7 +99,7 @@ namespace DaggerfallWorkshop.Game.Banking
 
         public static ShipType OwnedShip { get { return ownedShip; } set { ownedShip = value; } }
 
-        public static int GetShipPrice(ShipType ship) { return ship >= 0 ? shipPrices[(int)ownedShip] : 0; }
+        public static int GetShipPrice(ShipType ship) { return ship >= 0 ? shipPrices[(int) ship] : 0; }
 
         public static int GetShipSellPrice(ShipType ship) { return (int)(GetShipPrice(ship) * deedSellMult); }
 
@@ -222,7 +222,7 @@ namespace DaggerfallWorkshop.Game.Banking
                     result = BorrowLoan(amount, regionIndex);
                     break;
                 case TransactionType.Sell_ship:
-                    result = SellShip();
+                    result = SellShip(regionIndex);
                     break;
                 default:
                     result = TransactionResult.NONE;
@@ -301,11 +301,12 @@ namespace DaggerfallWorkshop.Game.Banking
             return TransactionResult.SELL_HOUSE_OFFER;
         }
 
-        public static TransactionResult PurchaseShip(ShipType shipType, int amount, int regionIndex)
+        public static TransactionResult PurchaseShip(ShipType shipType, int regionIndex)
         {
             if (shipType == ShipType.None)
                 return TransactionResult.NONE;
 
+            int amount = GetShipPrice(shipType);
             PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
             var playerGold = playerEntity.GetGoldAmount();
             var accountGold = BankAccounts[regionIndex].accountGold;
@@ -324,14 +325,9 @@ namespace DaggerfallWorkshop.Game.Banking
             return TransactionResult.PURCHASED_SHIP;
         }
 
-        public static TransactionResult SellShip()
+        public static TransactionResult SellShip(int regionIndex)
         {
-            int amount = GetShipSellPrice(ownedShip);
-            PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
-            if (playerEntity.CarriedWeight + (amount / gold1kg) > playerEntity.MaxEncumbrance)
-                return TransactionResult.TOO_HEAVY;
-
-            playerEntity.GoldPieces += amount;
+            BankAccounts[regionIndex].accountGold += GetShipSellPrice(ownedShip); ;
             SaveLoadManager.StateManager.RemovePermanentScene(shipExteriorSceneNames[(int)ownedShip]);
             SaveLoadManager.StateManager.RemovePermanentScene(shipInteriorSceneNames[(int)ownedShip]);
             ownedShip = ShipType.None;
