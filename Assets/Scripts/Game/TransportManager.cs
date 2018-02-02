@@ -213,9 +213,10 @@ namespace DaggerfallWorkshop.Game
                 SerializablePlayer serializablePlayer = GetComponent<SerializablePlayer>();
                 DaggerfallUI.Instance.SmashHUDToBlack();
                 StreamingWorld world = GameManager.Instance.StreamingWorld;
+                DFPosition shipCoords = DaggerfallBankManager.GetShipCoords();
 
-                // Is player on board ship?
-                if (boardShipPosition != null)
+                // Is there recorded position before boarding and is player on the ship?
+                if (boardShipPosition != null && world.MapPixelX == shipCoords.X && world.MapPixelY == shipCoords.Y)
                 {
                     // Check for terrain sampler changes. (so don't fall through floor)
                     StreamingWorld.RepositionMethods reposition = StreamingWorld.RepositionMethods.None;
@@ -226,21 +227,22 @@ namespace DaggerfallWorkshop.Game
                         if (DaggerfallUI.Instance.DaggerfallHUD != null)
                             DaggerfallUI.Instance.DaggerfallHUD.PopupText.AddText("Terrain sampler changed. Repositioning player.");
                     }
-                    // Restore player position from before boarding ship, caching scene first.
-                    SaveLoadManager.CacheScene(world.SceneName);// TODO: This should move into teleport, and only cache if scene in perm list::
+                    // Restore player position from before boarding ship, caching ship scene first.
+                    SaveLoadManager.CacheScene(world.SceneName);    // TODO: Should this should move into teleport to support other teleports? Issue only if inside. (e.g. recall)
                     DFPosition mapPixel = MapsFile.WorldCoordToMapPixel(boardShipPosition.worldPosX, boardShipPosition.worldPosZ);
                     world.TeleportToCoordinates(mapPixel.X, mapPixel.Y, reposition);
                     serializablePlayer.RestorePosition(boardShipPosition);
                     boardShipPosition = null;
+                    // Restore cached scene (ship is special case, cache will not be cleared)
+                    SaveLoadManager.RestoreCachedScene(world.SceneName);
                 }
                 else
                 {
-                    // Record current player position before boarding ship.
+                    // Record current player position before boarding ship, and cache scene. (ship is special case, cache will not be cleared)
                     boardShipPosition = serializablePlayer.GetPlayerPositionData();
+                    SaveLoadManager.CacheScene(world.SceneName);
                     // Teleport to the players ship, restoring cached scene.
-                    DFPosition shipCoords = DaggerfallBankManager.GetShipCoords();
                     world.TeleportToCoordinates(shipCoords.X, shipCoords.Y, StreamingWorld.RepositionMethods.RandomStartMarker);
-                    
                     SaveLoadManager.RestoreCachedScene(world.SceneName);
                 }
                 DaggerfallUI.Instance.FadeHUDFromBlack();

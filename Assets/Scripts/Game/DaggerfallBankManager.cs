@@ -84,7 +84,6 @@ namespace DaggerfallWorkshop.Game.Banking
 
         private static int[] shipPrices = new int[] { 1000, 200000 };
         private static DFPosition[] shipCoords = new DFPosition[] { new DFPosition(2, 2), new DFPosition(5, 5) };
-        private static int[] shipInteriorKeys = new int[] { 0, 0 };
         private static string[] shipInteriorSceneNames = new string[] {
             DaggerfallInterior.GetSceneName(1050578, 0),
             DaggerfallInterior.GetSceneName(2102157, 0),
@@ -105,8 +104,6 @@ namespace DaggerfallWorkshop.Game.Banking
         public static int GetShipSellPrice(ShipType ship) { return (int)(GetShipPrice(ship) * deedSellMult); }
 
         public static DFPosition GetShipCoords() { return OwnsShip ? shipCoords[(int)ownedShip] : null; }
-
-        public static int GetShipBuildingKey() { return OwnsShip ? shipInteriorKeys[(int)ownedShip] : 0; }
 
         private static int loanMaxPerLevel = 50000;
 
