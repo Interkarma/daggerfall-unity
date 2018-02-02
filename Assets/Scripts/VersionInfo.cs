@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -13,7 +13,7 @@ using System;
 
 public static class VersionInfo
 {
-    public const string DaggerfallToolsForUnityVersion = "1.7.1";
-    public const string DaggerfallUnityVersion = "0.4.102";
+    public const string DaggerfallToolsForUnityVersion = "1.7.2";
+    public const string DaggerfallUnityVersion = "0.4.115";
     public const string RecommendedUnityVersion = "5.5.0f3";
 }
