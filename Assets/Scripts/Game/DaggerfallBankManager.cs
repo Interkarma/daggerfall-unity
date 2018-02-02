@@ -129,7 +129,7 @@ namespace DaggerfallWorkshop.Game.Banking
             }
         }
 
-        public static bool OwnsHouse { get { return true; } } //##TODo
+        public static bool OwnsHouse { get { return false; } } //##TODo
 
         public static bool HasLoan(int regionIndex)
         {
