@@ -139,6 +139,15 @@ namespace DaggerfallWorkshop.Game
             return buildings;
         }
 
+        public List<BuildingSummary> GetHousesForSale()
+        {
+            List<BuildingSummary> forSale = new List<BuildingSummary>();
+            foreach (BuildingSummary building in buildingDict.Values)
+                if (building.BuildingType == DFLocation.BuildingTypes.HouseForSale)
+                    forSale.Add(building);
+            return forSale;
+        }
+
         #endregion
 
         #region Public Static Methods

@@ -14,6 +14,7 @@ using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Banking;
 using DaggerfallWorkshop.Utility;
+using System.Collections.Generic;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -397,11 +398,24 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             if (DaggerfallBankManager.OwnsHouse)
                 GeneratePopup(TransactionResult.ALREADY_OWN_HOUSE);
-            //else if no houses for sale
-            else    // Show houses for sale
-                uiManager.PushWindow(new DaggerfallBankPurchasePopUp(uiManager, this));
+            else
+            {
+                BuildingDirectory buildingDirectory = GameManager.Instance.StreamingWorld.GetCurrentBuildingDirectory();
+                List<BuildingSummary> housesForSale = buildingDirectory.GetHousesForSale();
+                // If houses are for sale, show them
+                if (housesForSale.Count > 0)
+                    uiManager.PushWindow(new DaggerfallBankPurchasePopUp(uiManager, this, housesForSale));
+                else
+                    GeneratePopup(TransactionResult.NO_HOUSES_FOR_SALE);
+            }
         }
-
+/*
+        List<StaticBuilding> GetHousesForSale()
+        {
+            BuildingDirectory buildingDirectory = GameManager.Instance.StreamingWorld.GetCurrentBuildingDirectory();
+            buildingDirectory.
+        }
+        */
         void sellHouseButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             if (!DaggerfallBankManager.OwnsHouse)
@@ -416,7 +430,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 GeneratePopup(TransactionResult.ALREADY_OWN_SHIP);
             //else if not port town
             else    // Show ships for sale
-                uiManager.PushWindow(new DaggerfallBankPurchasePopUp(uiManager, this, true));
+                uiManager.PushWindow(new DaggerfallBankPurchasePopUp(uiManager, this));
         }
 
         void sellShipButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)

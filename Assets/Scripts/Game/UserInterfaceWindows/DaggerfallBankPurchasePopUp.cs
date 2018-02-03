@@ -9,6 +9,7 @@ using UnityEngine;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Banking;
+using System.Collections.Generic;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -54,20 +55,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Properties & Constants
 
-        DaggerfallBankingWindow bankingWindow;
+        protected DaggerfallBankingWindow bankingWindow;
+        private List<BuildingSummary> housesForSale;
         private const int listDisplayUnits = 10;  // Number of items displayed in scrolling area
         private const int scrollNum = 1;          // Number of items on each scroll tick
-        private bool ships;                       // True if purchasing ships, otherwise showing purchasable houses.
 
         #endregion
 
         #region Constructors
 
-        public DaggerfallBankPurchasePopUp(IUserInterfaceManager uiManager, DaggerfallBankingWindow previousWindow = null, bool ships = false)
+        public DaggerfallBankPurchasePopUp(IUserInterfaceManager uiManager, DaggerfallBankingWindow previousWindow = null, List<BuildingSummary> housesForSale = null)
             : base(uiManager, previousWindow)
         {
-            this.ships = ships;
-            this.bankingWindow = previousWindow;
+            this.housesForSale = housesForSale;
+            bankingWindow = previousWindow;
         }
 
         #endregion
@@ -110,17 +111,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void PopulatePriceList()
         {
-            if (ships)
+            if (housesForSale == null)
             {
                 for (int i = 0; i < 2; i++)
                     priceListBox.AddItem(HardStrings.bankPurchasePrice.Replace("%s", DaggerfallBankManager.GetShipPrice((ShipType) i).ToString()), i);
             }
             else
             {   // List all the houses for sale in this location
+                foreach (BuildingSummary house in housesForSale)
+                {
+                    priceListBox.AddItem("Price : " + house.buildingKey + " gold");
+                }
+                /*
                 for (int i = 0; i < 20; i++)
                 {
                     priceListBox.AddItem("Price : " + (100000 + i) + " gold");
-                }
+                }*/
             }
         }
 
@@ -225,7 +231,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (priceListBox.SelectedIndex < 0)
                 return;
-            if (ships)
+            if (housesForSale == null)
             {
                 CloseWindow();
                 bankingWindow.GeneratePurchaseShipPopup((ShipType) priceListBox.SelectedIndex);
