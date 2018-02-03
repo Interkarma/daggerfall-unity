@@ -586,7 +586,7 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="player">Player object, must have PlayerEnterExit and PlayerMotor attached.</param>
         /// <param name="loadID">Unique LoadID for save system.</param>
         /// <returns>DaggerfallLoot.</returns>
-        public static DaggerfallLoot CreateDroppedLootContainer(GameObject player, ulong loadID)
+        public static DaggerfallLoot CreateDroppedLootContainer(GameObject player, ulong loadID, int iconRecord = -1)
         {
             // Player must have a PlayerEnterExit component
             PlayerEnterExit playerEnterExit = player.GetComponent<PlayerEnterExit>();
@@ -612,9 +612,12 @@ namespace DaggerfallWorkshop.Utility
                 parent = GameManager.Instance.StreamingTarget.transform;
             }
 
-            // Randomise container texture
-            int iconIndex = UnityEngine.Random.Range(0, DaggerfallLootDataTables.randomTreasureIconIndices.Length);
-            int iconRecord = DaggerfallLootDataTables.randomTreasureIconIndices[iconIndex];
+            // Randomise container texture, if not manually set
+            if (iconRecord == -1)
+            {
+                int iconIndex = UnityEngine.Random.Range(0, DaggerfallLootDataTables.randomTreasureIconIndices.Length);
+                iconRecord = DaggerfallLootDataTables.randomTreasureIconIndices[iconIndex];
+            }
 
             // Find ground position below player
             Vector3 position = playerMotor.FindGroundPosition();

@@ -155,6 +155,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         RemoteTargetTypes lastRemoteTargetType;
 
         int lastMouseOverPaperDollEquipIndex = -1;
+        int droppedItemsIconTexRec = -1;
 
         ItemCollection.AddPosition preferredOrder = ItemCollection.AddPosition.DontCare;
 
@@ -329,6 +330,29 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             remoteTargetIconPanel.BackgroundTextureLayout = BackgroundLayout.ScaleToFit;
             remoteTargetIconLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(1, 2), remoteTargetIconPanel);
             remoteTargetIconLabel.TextColor = DaggerfallUI.DaggerfallUnityDefaultToolTipTextColor;
+
+            remoteTargetIconPanel.OnMouseClick += RemoteTargetIconPanel_OnMouseClick;
+            remoteTargetIconPanel.OnRightMouseClick += RemoteTargetIconPanel_OnRightMouseClick;
+        }
+
+        private void RemoteTargetIconPanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            // If items are being dropped by player, iterate up through drop textures
+            if (remoteTargetType == RemoteTargetTypes.Dropped && remoteItems.Count > 0)
+            {
+                droppedItemsIconTexRec = (droppedItemsIconTexRec < 47) ? droppedItemsIconTexRec + 1 : 0;
+                UpdateRemoteTargetIcon();
+            }
+        }
+
+        private void RemoteTargetIconPanel_OnRightMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            // If items are being dropped by player, iterate down through drop textures
+            if (remoteTargetType == RemoteTargetTypes.Dropped && remoteItems.Count > 0)
+            {
+                droppedItemsIconTexRec = (droppedItemsIconTexRec > 0) ? droppedItemsIconTexRec - 1 : 47;
+                UpdateRemoteTargetIcon();
+            }
         }
 
         protected void SetupItemInfoPanel()
@@ -529,7 +553,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Generate serializable loot pile in world for dropped items
             if (droppedItems.Count > 0)
             {
-                DaggerfallLoot droppedLootContainer = GameObjectHelper.CreateDroppedLootContainer(GameManager.Instance.PlayerObject, DaggerfallUnity.NextUID);
+                DaggerfallLoot droppedLootContainer = GameObjectHelper.CreateDroppedLootContainer(GameManager.Instance.PlayerObject, DaggerfallUnity.NextUID, droppedItemsIconTexRec);
                 droppedLootContainer.Items.TransferAll(droppedItems);
             }
 
@@ -681,7 +705,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 default:
                 case RemoteTargetTypes.Dropped:
-                    containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(InventoryContainerImages.Ground);
+                    if (droppedItemsIconTexRec > -1)
+                        containerImage = ImageReader.GetImageData(TextureFile.IndexToFileName(DaggerfallLoot.randomTreasureArchive), droppedItemsIconTexRec, 0, true);
+                    else
+                        containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(InventoryContainerImages.Ground);
                     break;
                 case RemoteTargetTypes.Wagon:
                     containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(InventoryContainerImages.Wagon);
