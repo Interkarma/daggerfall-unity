@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -18,6 +18,8 @@ using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Formulas;
+using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallConnect;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -64,12 +66,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         const float restWaitTimePerHour = 0.75f;
         const float loiterWaitTimePerHour = 1.25f;
+        const int cityCampingIllegal = 17;
 
         RestModes currentRestMode = RestModes.Selection;
         int hoursRemaining = 0;
         int totalHours = 0;
         float waitTimer = 0;
         bool enemyBrokeRest = false;
+        int remainingRentalHours;
 
         PlayerEntity playerEntity;
         DaggerfallHUD hud;
@@ -366,28 +370,77 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return false;
         }
 
+        /// <summary>
+        /// Check if player is allowed to rest at this location.
+        /// </summary>
+        bool CanRest()
+        {
+            remainingRentalHours = 0;
+            PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
+            PlayerGPS playerGPS = GameManager.Instance.PlayerGPS;
+
+            bool inTown = playerGPS.IsPlayerInTown(true);
+
+            if (inTown && !playerEnterExit.IsPlayerInside)
+            {
+                CloseWindow();
+                DaggerfallUI.MessageBox(cityCampingIllegal);
+                return false;
+            }
+            else if (inTown && playerEnterExit.IsPlayerInsideBuilding)
+            {
+                string sceneName = DaggerfallInterior.GetSceneName(playerGPS.CurrentLocation.MapTableData.MapId, playerEnterExit.BuildingDiscoveryData.buildingKey);
+                if (SaveLoadManager.StateManager.ContainsPermanantScene(sceneName))
+                {
+                    // Can rest if it's an player owned ship/house.
+                    if (playerEnterExit.BuildingType == DFLocation.BuildingTypes.Ship // || // TODO: house check
+                        )
+                        return true;
+
+                    // Find room rental record and get remaining time..
+                    int mapId = playerGPS.CurrentLocation.MapTableData.MapId;
+                    int buildingKey = playerEnterExit.BuildingDiscoveryData.buildingKey;
+                    remainingRentalHours = DaggerfallTavernWindow.GetRemainingHours(GameManager.Instance.PlayerEntity.GetRoomRental(mapId, buildingKey));
+                    return (remainingRentalHours > 0);
+                }
+                else
+                {
+                    CloseWindow();
+                    DaggerfallUI.MessageBox(HardStrings.haveNotRentedRoom);
+                    return false;
+                }
+            }
+            return true;
+        }
+
         #endregion
 
         #region Event Handlers
 
         private void WhileButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            DaggerfallInputMessageBox mb = new DaggerfallInputMessageBox(uiManager, this);
-            mb.SetTextBoxLabel(HardStrings.restHowManyHours);
-            mb.TextPanelDistanceX = 9;
-            mb.TextPanelDistanceY = 8;
-            mb.TextBox.Text = "0";
-            mb.TextBox.Numeric = true;
-            mb.TextBox.MaxCharacters = 8;
-            mb.TextBox.WidthOverride = 286;
-            mb.OnGotUserInput += TimedRestPrompt_OnGotUserInput;
-            mb.Show();
+            if (CanRest())
+            {
+                DaggerfallInputMessageBox mb = new DaggerfallInputMessageBox(uiManager, this);
+                mb.SetTextBoxLabel(HardStrings.restHowManyHours);
+                mb.TextPanelDistanceX = 9;
+                mb.TextPanelDistanceY = 8;
+                mb.TextBox.Text = "0";
+                mb.TextBox.Numeric = true;
+                mb.TextBox.MaxCharacters = 8;
+                mb.TextBox.WidthOverride = 286;
+                mb.OnGotUserInput += TimedRestPrompt_OnGotUserInput;
+                mb.Show();
+            }
         }
 
         private void HealedButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            waitTimer = Time.realtimeSinceStartup;
-            currentRestMode = RestModes.FullRest;
+            if (CanRest())
+            {
+                waitTimer = Time.realtimeSinceStartup;
+                currentRestMode = RestModes.FullRest;
+            }
         }
 
         private void LoiterButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)

@@ -22,6 +22,7 @@ using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Utility;
 using UnityEngine;
 using System;
+using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
@@ -73,6 +74,8 @@ namespace DaggerfallWorkshop.Game.Entity
         protected int darkBrotherhoodRequirementTally = 0;
 
         protected RegionDataRecord[] regionData = new RegionDataRecord[62];
+
+        private List<RoomRental_v1> roomRentals = new List<RoomRental_v1>();
 
         // Fatigue loss per in-game minute
         public const int DefaultFatigueLoss = 11;
@@ -128,6 +131,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public float WagonWeight { get { return WagonItems.GetWeight(); } }
         public RegionDataRecord[] RegionData { get { return regionData; } set { regionData = value; } }
         public uint LastGameMinutes { get { return lastGameMinutes; } set { lastGameMinutes = value; } }
+        public List<RoomRental_v1> RoomRentals { get { return roomRentals; } }
 
         #endregion
 
@@ -143,6 +147,23 @@ namespace DaggerfallWorkshop.Game.Entity
         #endregion
 
         #region Public Methods
+
+        public RoomRental_v1 GetRoomRental(int mapId, int buildingKey)
+        {
+            foreach (RoomRental_v1 room in roomRentals)
+            {
+                if (room.mapID == mapId && room.buildingKey == buildingKey)
+                {
+                    return room;
+                }
+            }
+            return null;
+        }
+
+        public List<RoomRental_v1> GetRoomRentals(int mapId)
+        {
+            return roomRentals.FindAll(r => r.mapID == mapId);
+        }
 
         public override void Update(DaggerfallEntityBehaviour sender)
         {

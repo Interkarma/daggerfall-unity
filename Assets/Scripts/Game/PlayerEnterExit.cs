@@ -997,6 +997,18 @@ namespace DaggerfallWorkshop.Game
                     youAreEntering = youAreEntering.Replace("%s", location.Name);
                     DaggerfallUI.AddHUDText(youAreEntering, 2);
 
+                    // Check room rentals in this location, and display how long rentals remain
+                    int mapId = playerGPS.CurrentLocation.MapTableData.MapId;
+                    List<RoomRental_v1> rooms = GameManager.Instance.PlayerEntity.GetRoomRentals(mapId);
+                    if (rooms.Count > 0)
+                    {
+                        foreach (RoomRental_v1 room in rooms)
+                        {
+                            string remainingHours = DaggerfallTavernWindow.GetRemainingHours(room).ToString();
+                            DaggerfallUI.AddHUDText(HardStrings.youHaveRentedRoom.Replace("%s", room.name).Replace("%d", remainingHours), 6);
+                        }
+                    }
+
                     if (holidayTextTimer <= 0 && !holidayTextPrimed)
                     {
                         holidayTextTimer = 2.5f; // Short delay to give save game fade-in time to finish

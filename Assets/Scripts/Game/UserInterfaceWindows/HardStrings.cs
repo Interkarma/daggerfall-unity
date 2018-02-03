@@ -65,6 +65,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string multipleAssignments = "You have multiple assignments...";
 
         public const string youAreEntering = "You are entering %s";
+        public const string youHaveRentedRoom = "You have a room at %s for %d hours.";
 
         public const string storeClosed = "Store is closed. Open from %d1:00 to %d2:00.";
 
@@ -152,5 +153,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public const string youReceiveGoldPieces = "You receive %s gold pieces.";     // Custom message for "get item" gold assignment
         public const string bankPurchasePrice = "Price : %s gold";
+        public const string haveNotRentedRoom = "You have not rented a room here.";
     }
 }

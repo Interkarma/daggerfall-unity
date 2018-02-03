@@ -181,6 +181,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public int darkBrotherhoodRequirementTally;
         public uint timeOfLastSkillTraining;
         public PlayerEntity.RegionDataRecord[] regionData;
+        public RoomRental_v1[] rentedRooms;
     }
 
     [fsObject("v1")]
@@ -199,6 +200,15 @@ namespace DaggerfallWorkshop.Game.Serialization
         public StaticDoor[] exteriorDoors;
         public PlayerGPS.DiscoveredBuilding buildingDiscoveryData;
         public WeatherType weather;
+    }
+
+    [fsObject("v1")]
+    public class RoomRental_v1
+    {
+        public string name;
+        public int mapID;
+        public int buildingKey;
+        public ulong expiryTime;
     }
 
     [fsObject("v1")]

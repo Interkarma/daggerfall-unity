@@ -886,13 +886,13 @@ namespace DaggerfallWorkshop.Game
                 // Check if the NPC offers a guild service.
                 if (Enum.IsDefined(typeof(GuildServices), npc.Data.factionID))
                 {
-                    FactionFile.GuildGroups guild = (FactionFile.GuildGroups)factionData.ggroup;
-                    GuildServices service = (GuildServices)npc.Data.factionID;
+                    FactionFile.GuildGroups guild = (FactionFile.GuildGroups) factionData.ggroup;
+                    GuildServices service = (GuildServices) npc.Data.factionID;
                     Debug.Log("NPC offers guild service: " + service.ToString());
                     uiManager.PushWindow(new DaggerfallGuildServicePopupWindow(uiManager, npc, guild, service));
                 }
                 // Check if this NPC is a merchant.
-                else if ((FactionFile.SocialGroups)factionData.sgroup == FactionFile.SocialGroups.Merchants)
+                else if ((FactionFile.SocialGroups) factionData.sgroup == FactionFile.SocialGroups.Merchants)
                 {
                     // Shop?
                     if (RMBLayout.IsShop(playerEnterExit.BuildingDiscoveryData.buildingType))
@@ -907,8 +907,7 @@ namespace DaggerfallWorkshop.Game
                         uiManager.PushWindow(new DaggerfallMerchantServicePopupWindow(uiManager, npc, DaggerfallMerchantServicePopupWindow.Services.Banking));
                     // Tavern?
                     else if (playerEnterExit.BuildingDiscoveryData.buildingType == DFLocation.BuildingTypes.Tavern)
-                        // for now only talk to all npc in taverns - TODO: add tavern option in here
-                        GameManager.Instance.TalkManager.TalkToStaticNPC(npc);
+                        uiManager.PushWindow(new DaggerfallTavernWindow(uiManager, npc));
                 }
                 // TODO - more checks for npc social types?
                 else // if no special handling had to be done for npc with social group of type merchant: talk to the static npc
