@@ -131,7 +131,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         // current target npc for conversion
-        MobilePersonNPC targetMobileNPC = null;
+        //MobilePersonNPC targetMobileNPC = null;
         StaticNPC targetStaticNPC = null;
         public class NPCData
         {
@@ -454,7 +454,7 @@ namespace DaggerfallWorkshop.Game
             if (targetMobileNPC == lastTargetMobileNPC)
                 return;
 
-            this.targetMobileNPC = targetMobileNPC;
+            //this.targetMobileNPC = targetMobileNPC;
 
             DaggerfallUI.Instance.TalkWindow.SetNPCPortrait(DaggerfallTalkWindow.FacePortraitArchive.CommonFaces, targetMobileNPC.PersonFaceRecordId);
 
@@ -1189,7 +1189,7 @@ namespace DaggerfallWorkshop.Game
                 questResourceInfo.questResource = person;
             }
 
-            QuestMacroHelper macroHelper = new QuestMacroHelper();
+            //QuestMacroHelper macroHelper = new QuestMacroHelper();
             
             questResources.resourceInfo[resourceName] = questResourceInfo;
             dictQuestInfo[questID] = questResources;

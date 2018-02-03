@@ -480,7 +480,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             int numberOfFrames;
             int archive = summary.Archive;
             int record = summary.Record;
-            string name = GetName(archive, record);
+            //string name = GetName(archive, record);
             var meshRenderer = go.GetComponent<MeshRenderer>();           
             Texture2D albedoTexture, emissionMap;
 

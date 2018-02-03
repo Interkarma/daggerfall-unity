@@ -47,14 +47,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Color textcolorPlayerSays = new Color(0.698f, 0.812f, 1.0f);
 
         Color textcolorQuestion = new Color(0.698f, 0.812f, 1.0f);
-        Color textcolorQuestionHighlighted = new Color(0.8f, 0.9f, 1.0f);
+        //Color textcolorQuestionHighlighted = new Color(0.8f, 0.9f, 1.0f);
         Color textcolorHighlighted = Color.white;
 
         Color textcolorQuestionBackgroundModernConversationStyle = new Color(0.3f, 0.35f, 0.43f); // new Color(0.23f, 0.27f, 0.33f);
         Color textcolorAnswerBackgroundModernConversationStyle = new Color(0.32f, 0.31f, 0.06f); //  default text r: 243 (0.95f), g: 239 (0.93f), b: 44 (0.17)
 
         Color textcolorCaptionGotoParentList = new Color(0.698f, 0.812f, 1.0f);
-        Color textcolorCaptionGotoParentListHighlighted = Color.white;
+        //Color textcolorCaptionGotoParentListHighlighted = Color.white;
 
         const float textScaleModernConversationStyle = 0.8f;
         const float textBlockSizeModernConversationStyle = 0.75f;

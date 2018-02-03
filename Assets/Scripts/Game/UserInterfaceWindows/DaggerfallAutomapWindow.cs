@@ -218,7 +218,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Texture2D nativeTextureGrid3D;
 
         Color[] pixelsGrid2D; // grid button texture for 2D view image will be stored in here
-        Color[] pixelsGrid3D; // grid button texture for 3D view image will be stored in here
+        //Color[] pixelsGrid3D; // grid button texture for 3D view image will be stored in here
 
         Color[] backgroundOriginal; // texture with orignial background will be stored in here
         Color[] backgroundAlternative1; // texture with first alternative background will be stored in here
@@ -276,7 +276,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             nativeTextureGrid3D.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
             if (!nativeTextureGrid3D)
                 throw new Exception("DaggerfallAutomapWindow: Could not load native texture (AMAP01I0.IMG).");            
-            pixelsGrid3D = nativeTextureGrid3D.GetPixels((int)(0), (int)((200 - 0 - 19) * (nativeTextureGrid3D.height / 200f)), (int)(27 * (nativeTextureGrid3D.width / 320f)), (int)(19 * (nativeTextureGrid3D.height / 200f)));
+            //pixelsGrid3D = nativeTextureGrid3D.GetPixels((int)(0), (int)((200 - 0 - 19) * (nativeTextureGrid3D.height / 200f)), (int)(27 * (nativeTextureGrid3D.width / 320f)), (int)(19 * (nativeTextureGrid3D.height / 200f)));
 
             // Cut out 2D View Grid graphics from background image            
             int width = (int)(27 * (nativeTexture.width / 320f));

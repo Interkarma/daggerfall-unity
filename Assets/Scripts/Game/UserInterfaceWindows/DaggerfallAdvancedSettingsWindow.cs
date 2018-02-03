@@ -54,16 +54,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Color backgroundColor           = new Color(0, 0, 0, 0.7f);
         Color closeButtonColor          = new Color(0.2f, 0.2f, 0.2f, 0.6f);
         Color itemColor                 = new Color(0.0f, 0.8f, 0.0f, 1.0f);
-        Color unselectedTextColor       = new Color(0.6f, 0.6f, 0.6f, 1f);
+        //Color unselectedTextColor       = new Color(0.6f, 0.6f, 0.6f, 1f);
         Color selectedTextColor         = new Color32(243, 239, 44, 255);
-        Color listBoxBackgroundColor    = new Color(0.1f, 0.1f, 0.1f, 0.5f);
+        //Color listBoxBackgroundColor    = new Color(0.1f, 0.1f, 0.1f, 0.5f);
         Color sliderBackgroundColor     = new Color(0.0f, 0.5f, 0.0f, 0.4f);
         Color pageButtonSelected        = Color.white;
         Color pageButtonUnselected      = Color.gray;
 
         // Fonts
         DaggerfallFont titleFont        = DaggerfallUI.Instance.Font2;
-        DaggerfallFont pageButtonFont   = DaggerfallUI.Instance.Font3;
+        //DaggerfallFont pageButtonFont   = DaggerfallUI.Instance.Font3;
 
         int currentPage = 0;
         float y = 0;
