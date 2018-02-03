@@ -586,7 +586,7 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="player">Player object, must have PlayerEnterExit and PlayerMotor attached.</param>
         /// <param name="loadID">Unique LoadID for save system.</param>
         /// <returns>DaggerfallLoot.</returns>
-        public static DaggerfallLoot CreateDroppedLootContainer(GameObject player, ulong loadID, int iconRecord = -1)
+        public static DaggerfallLoot CreateDroppedLootContainer(GameObject player, ulong loadID, int iconArchive = DaggerfallLootDataTables.randomTreasureArchive, int iconRecord = -1)
         {
             // Player must have a PlayerEnterExit component
             PlayerEnterExit playerEnterExit = player.GetComponent<PlayerEnterExit>();
@@ -628,13 +628,14 @@ namespace DaggerfallWorkshop.Utility
                 InventoryContainerImages.Chest,
                 position,
                 parent,
-                DaggerfallLoot.randomTreasureArchive,
+                iconArchive,
                 iconRecord,
                 loadID);
 
             // Set properties
             loot.LoadID = loadID;
             loot.customDrop = true;
+            loot.playerOwned = true;
 
             // If dropped outside ask StreamingWorld to track loose object
             if (!GameManager.Instance.IsPlayerInside)
@@ -700,6 +701,7 @@ namespace DaggerfallWorkshop.Utility
             // Set properties
             loot.LoadID = loadID;
             loot.customDrop = true;
+            loot.playerOwned = false;
 
             // If dropped outside ask StreamingWorld to track loose object
             if (!GameManager.Instance.IsPlayerInside)
