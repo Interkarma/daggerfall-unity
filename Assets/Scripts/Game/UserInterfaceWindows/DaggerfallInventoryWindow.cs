@@ -690,6 +690,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     break;
                 case RemoteTargetTypes.Loot:
                     containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(lootTarget.ContainerImage);
+                    if (lootTarget.TextureArchive > 0)
+                        containerImage = ImageReader.GetImageData(TextureFile.IndexToFileName(lootTarget.TextureArchive), lootTarget.TextureRecord, 0, true);
                     break;
             }
             remoteTargetIconPanel.BackgroundTexture = containerImage.texture;
