@@ -8,13 +8,9 @@
 using UnityEngine;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
-using DaggerfallWorkshop.Game.Items;
-using DaggerfallWorkshop.Game.Banking;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Formulas;
-using System;
 using DaggerfallWorkshop.Game.Entity;
-using System.Collections.Generic;
 using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
