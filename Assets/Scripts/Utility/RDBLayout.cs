@@ -1425,7 +1425,7 @@ namespace DaggerfallWorkshop.Utility
                     InventoryContainerImages.Chest,
                     position,
                     parent,
-                    DaggerfallLoot.randomTreasureArchive,
+                    DaggerfallLootDataTables.randomTreasureArchive,
                     iconRecord,
                     loadID,
                     null,
