@@ -16,6 +16,7 @@ using System.IO;
 using DaggerfallConnect;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Game.UserInterface;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -33,6 +34,7 @@ namespace DaggerfallWorkshop.Utility
         WoodsFile woodsFileReader;
         FactionFile factionFileReader;
         FlatsFile flatsFileReader;
+        //SpellIconCollection spellIconCollection;
         Dictionary<int, MapSummary> mapDict;
         Dictionary<int, int> locationIdToMapIdDict;
 
@@ -80,6 +82,11 @@ namespace DaggerfallWorkshop.Utility
         {
             get { return flatsFileReader; }
         }
+
+        //public SpellIconCollection SpellIconCollection
+        //{
+        //    get { return spellIconCollection; }
+        //}
 
         #region Constructors
 
@@ -278,6 +285,8 @@ namespace DaggerfallWorkshop.Utility
                 factionFileReader = new FactionFile(Path.Combine(arena2Path, FactionFile.Filename), FileUsage.UseMemory, true);
             if (flatsFileReader == null)
                 flatsFileReader = new FlatsFile(Path.Combine(arena2Path, FlatsFile.Filename), FileUsage.UseMemory, true);
+            //if (spellIconCollection == null)
+            //    spellIconCollection = new SpellIconCollection();
 
             // Build map lookup dictionary
             if (mapDict == null && mapFileReader != null)

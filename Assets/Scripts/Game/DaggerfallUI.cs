@@ -89,8 +89,6 @@ namespace DaggerfallWorkshop.Game
 
         DaggerfallFontPlus fontPetrock32;
 
-        SpellIconCollection spellIconCollection;
-
         Questing.Actions.GivePc lastPendingOfferSender = null;
 
         public DaggerfallFont Font1 { get { return GetFont(1); } }
@@ -201,11 +199,6 @@ namespace DaggerfallWorkshop.Game
             Petrock_32,
         }
 
-        public SpellIconCollection SpellIconCollection
-        {
-            get { return spellIconCollection; }
-        }
-
         void Awake()
         {
             dfUnity = DaggerfallUnity.Instance;
@@ -231,8 +224,6 @@ namespace DaggerfallWorkshop.Game
             dfQuestInspector = new QuestMachineInspectorWindow(uiManager);
 
             Questing.Actions.GivePc.OnOfferPending += GivePc_OnOfferPending;
-
-            spellIconCollection = new SpellIconCollection();
 
             SetupSingleton();
         }

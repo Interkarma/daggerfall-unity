@@ -106,7 +106,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 Panel panel = new Panel();
                 panel.BackgroundColor = Color.black;
-                panel.BackgroundTexture = DaggerfallUI.Instance.SpellIconCollection.GetIcon(spell.iconIndex);
+                //panel.BackgroundTexture = DaggerfallUnity.Instance.ContentReader.SpellIconCollection.GetIcon(spell.iconIndex);
                 Components.Add(panel);
 
                 // Classic layout
