@@ -10,7 +10,7 @@ UnityConnectSettings:
   CrashReportingSettings:
     m_EventUrl: https://perf-events.cloud.unity3d.com/api/events/crashes
     m_Enabled: 1
-    m_CaptureEditorExceptions: 1
+    m_CaptureEditorExceptions: 0
   UnityPurchasingSettings:
     m_Enabled: 0
     m_TestMode: 0
