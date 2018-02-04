@@ -75,7 +75,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
         protected RegionDataRecord[] regionData = new RegionDataRecord[62];
 
-        private List<RoomRental_v1> roomRentals = new List<RoomRental_v1>();
+        private List<RoomRental_v1> rentedRooms = new List<RoomRental_v1>();
 
         // Fatigue loss per in-game minute
         public const int DefaultFatigueLoss = 11;
@@ -131,7 +131,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public float WagonWeight { get { return WagonItems.GetWeight(); } }
         public RegionDataRecord[] RegionData { get { return regionData; } set { regionData = value; } }
         public uint LastGameMinutes { get { return lastGameMinutes; } set { lastGameMinutes = value; } }
-        public List<RoomRental_v1> RoomRentals { get { return roomRentals; } }
+        public List<RoomRental_v1> RentedRooms { get { return rentedRooms; } set { rentedRooms = value; } }
 
         #endregion
 
@@ -148,21 +148,38 @@ namespace DaggerfallWorkshop.Game.Entity
 
         #region Public Methods
 
-        public RoomRental_v1 GetRoomRental(int mapId, int buildingKey)
+        public RoomRental_v1 GetRentedRoom(int mapId, int buildingKey)
         {
-            foreach (RoomRental_v1 room in roomRentals)
-            {
+            foreach (RoomRental_v1 room in rentedRooms)
                 if (room.mapID == mapId && room.buildingKey == buildingKey)
-                {
                     return room;
-                }
-            }
+
             return null;
         }
 
-        public List<RoomRental_v1> GetRoomRentals(int mapId)
+        public List<RoomRental_v1> GetRentedRooms(int mapId)
         {
-            return roomRentals.FindAll(r => r.mapID == mapId);
+            return rentedRooms.FindAll(r => r.mapID == mapId);
+        }
+
+        public void RemoveExpiredRentedRooms()
+        {
+            rentedRooms.RemoveAll(r => {
+                if (GetRemainingHours(r) < 1) {
+                    SaveLoadManager.StateManager.RemovePermanentScene(DaggerfallInterior.GetSceneName(r.mapID, r.buildingKey));
+                    return true;
+                } else
+                    return false;
+            });
+        }
+
+        public static int GetRemainingHours(RoomRental_v1 room)
+        {
+            if (room == null)
+                return -1;
+
+            double remainingSecs = (double) (room.expiryTime - DaggerfallUnity.Instance.WorldTime.Now.ToSeconds());
+            return (int) Math.Ceiling((remainingSecs / DaggerfallDateTime.SecondsPerHour));
         }
 
         public override void Update(DaggerfallEntityBehaviour sender)
@@ -265,6 +282,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 FormulaHelper.ModifyPriceAdjustmentByRegion(ref regionData, daysPast);
                 GameManager.Instance.WeatherManager.SetClimateWeathers();
                 GameManager.Instance.WeatherManager.UpdateWeatherFromClimateArray = true;
+                RemoveExpiredRentedRooms();
             }
 
             lastGameMinutes = gameMinutes;

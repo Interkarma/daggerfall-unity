@@ -73,7 +73,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         int totalHours = 0;
         float waitTimer = 0;
         bool enemyBrokeRest = false;
-        int remainingRentalHours;
+        int remainingHoursRented = -1;
+        Vector3 allocatedBed;
 
         PlayerEntity playerEntity;
         DaggerfallHUD hud;
@@ -300,9 +301,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     if (hoursRemaining < 1)
                         finished = true;
                 }
+                // Check if rent expired
+                if (CheckRent())
+                    finished = true;
             }
 
             return finished;
+        }
+
+        private bool CheckRent()
+        {
+            if (remainingHoursRented > -1)
+            {
+                remainingHoursRented--;
+                return (remainingHoursRented == 0);
+            }
+            return false;
         }
 
         void EndRest()
@@ -319,7 +333,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else
             {
-                if (currentRestMode == RestModes.TimedRest)
+                if (remainingHoursRented == 0)
+                {
+                    DaggerfallMessageBox mb = DaggerfallUI.MessageBox(HardStrings.expiredRentedRoom);
+                    mb.OnClose += RestFinishedPopup_OnClose;
+                    currentRestMode = RestModes.Selection;
+                    playerEntity.RemoveExpiredRentedRooms();
+                }
+                else if (currentRestMode == RestModes.TimedRest)
                 {
                     DaggerfallMessageBox mb = DaggerfallUI.MessageBox(youWakeUpTextId);
                     mb.OnClose += RestFinishedPopup_OnClose;
@@ -375,7 +396,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         bool CanRest()
         {
-            remainingRentalHours = 0;
+            remainingHoursRented = -1;
+            allocatedBed = Vector3.zero;
             PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
             PlayerGPS playerGPS = GameManager.Instance.PlayerGPS;
 
@@ -387,30 +409,40 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUI.MessageBox(cityCampingIllegal);
                 return false;
             }
-            else if (inTown && playerEnterExit.IsPlayerInsideBuilding)
+            else if ((inTown || !playerGPS.HasCurrentLocation) && playerEnterExit.IsPlayerInsideBuilding)
             {
                 string sceneName = DaggerfallInterior.GetSceneName(playerGPS.CurrentLocation.MapTableData.MapId, playerEnterExit.BuildingDiscoveryData.buildingKey);
-                if (SaveLoadManager.StateManager.ContainsPermanantScene(sceneName))
+                if (SaveLoadManager.StateManager.ContainsPermanentScene(sceneName))
                 {
                     // Can rest if it's an player owned ship/house.
-                    if (playerEnterExit.BuildingType == DFLocation.BuildingTypes.Ship // || // TODO: house check
-                        )
-                        return true;
+                    if (playerEnterExit.BuildingType == DFLocation.BuildingTypes.Ship)
+                       // || TODO: house check
+                       return true;
 
                     // Find room rental record and get remaining time..
                     int mapId = playerGPS.CurrentLocation.MapTableData.MapId;
                     int buildingKey = playerEnterExit.BuildingDiscoveryData.buildingKey;
-                    remainingRentalHours = DaggerfallTavernWindow.GetRemainingHours(GameManager.Instance.PlayerEntity.GetRoomRental(mapId, buildingKey));
-                    return (remainingRentalHours > 0);
+                    RoomRental_v1 room = GameManager.Instance.PlayerEntity.GetRentedRoom(mapId, buildingKey);
+                    remainingHoursRented = PlayerEntity.GetRemainingHours(room);
+                    allocatedBed = room.allocatedBed;
+                    if (remainingHoursRented > 0)
+                        return true;
                 }
-                else
-                {
-                    CloseWindow();
-                    DaggerfallUI.MessageBox(HardStrings.haveNotRentedRoom);
-                    return false;
-                }
+                CloseWindow();
+                DaggerfallUI.MessageBox(HardStrings.haveNotRentedRoom);
+                return false;
             }
             return true;
+        }
+
+        void MoveToBed()
+        {
+            if (allocatedBed != Vector3.zero)
+            {
+                PlayerMotor playerMotor = GameManager.Instance.PlayerMotor;
+                playerMotor.transform.position = allocatedBed;
+                playerMotor.FixStanding();
+            }
         }
 
         #endregion
@@ -440,6 +472,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 waitTimer = Time.realtimeSinceStartup;
                 currentRestMode = RestModes.FullRest;
+                MoveToBed();
             }
         }
 
@@ -496,6 +529,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             hoursRemaining = time;
             waitTimer = Time.realtimeSinceStartup;
             currentRestMode = RestModes.TimedRest;
+            MoveToBed();
         }
 
         private void LoiterPrompt_OnGotUserInput(DaggerfallInputMessageBox sender, string input)

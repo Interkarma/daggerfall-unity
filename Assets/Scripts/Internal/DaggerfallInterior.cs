@@ -240,20 +240,21 @@ namespace DaggerfallWorkshop
         /// Find a specific marker. Will stop searching at first item found.
         /// </summary>
         /// <returns>True if at least one marker found.</returns>
-        public bool FindMarker(out Vector3 markerOut, InteriorMarkerTypes type)
+        public bool FindMarker(out Vector3 markerOut, InteriorMarkerTypes type, bool random = false)
         {
             markerOut = Vector3.zero;
 
             for (int i = 0; i < markers.Count; i++)
             {
-                if(markers[i].type == type)
+                if (markers[i].type == type)
                 {
                     markerOut = markers[i].gameObject.transform.position;
-                    return true;
+                    if (!random || UnityEngine.Random.Range(0, 2) == 0)
+                        return true;
                 }
             }
 
-            return false;
+            return !(markerOut == Vector3.zero);
         }
 
         #region Private Methods

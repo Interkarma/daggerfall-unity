@@ -176,6 +176,12 @@ namespace DaggerfallWorkshop.Utility
             throw new NotImplementedException();
         }
 
+        public virtual string RoomHoursLeft()
+        {   // %dwr
+            throw new NotImplementedException();
+        }
+
+
         public virtual TextFile.Token[] PotionRecipeIngredients(TextFile.Formatting format)
         {
             throw new NotImplementedException();

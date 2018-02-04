@@ -72,7 +72,7 @@ namespace DaggerfallWorkshop.Utility
             { "%dip", null }, // Days in prison
             { "%dng", null }, // Dungeon
             { "%dts", null }, // Daedra
-            { "%dwr", null }, // Days (hours) with room remaining?
+            { "%dwr", RoomHoursLeft }, // Hours with room remaining.
             { "%ef", null },  // Local shop name
             { "%enc", EncumbranceMax }, // Encumbrance
             { "%end", End }, // Amount of Endurance
@@ -801,21 +801,23 @@ namespace DaggerfallWorkshop.Utility
         }
 
         public static string LocationDirection(IMacroContextProvider mcp)
-        {
-            // %di
+        {   // %di
             return mcp.GetMacroDataSource().LocationDirection();
         }
 
         public static string DialogHint(IMacroContextProvider mcp)
-        {
-            // %hnt
+        {   // %hnt
             return mcp.GetMacroDataSource().DialogHint();
         }
 
         public static string DialogHint2(IMacroContextProvider mcp)
-        {
-            // %hnt2
+        {   // %hnt2
             return mcp.GetMacroDataSource().DialogHint2();
+        }
+
+        public static string RoomHoursLeft(IMacroContextProvider mcp)
+        {   // %dwr
+            return mcp.GetMacroDataSource().RoomHoursLeft();
         }
 
         #endregion

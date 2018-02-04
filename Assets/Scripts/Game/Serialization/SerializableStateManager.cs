@@ -71,7 +71,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             permanentScenes.Add(sceneName);
         }
 
-        public bool ContainsPermanantScene(string sceneName)
+        public bool ContainsPermanentScene(string sceneName)
         {
             return permanentScenes.Contains(sceneName);
         }
