@@ -331,6 +331,7 @@ namespace DaggerfallWorkshop
         public Vector3 Position;                        // Position of building
         public Vector3 Rotation;                        // Rotation of building
         public Matrix4x4 Matrix;                        // Transform matrix of building
+        public uint ModelID;                            // Numerical model ID of building in ARCH3D.BSA - 0 means no model found
     }
 
     /// <summary>

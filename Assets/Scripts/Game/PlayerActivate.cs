@@ -173,6 +173,9 @@ namespace DaggerfallWorkshop.Game
                                         DaggerfallUI.Instance.PopupMessage(storeClosedMessage);
                                     }
                                 }
+
+                                //// Debug model ID
+                                //Debug.LogFormat("Building ModelID={0}", buildingSummary.ModelID);
                             }
                         }
                     }

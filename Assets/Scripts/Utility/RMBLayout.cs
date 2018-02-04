@@ -454,6 +454,12 @@ namespace DaggerfallWorkshop.Utility
                 buildings[i].Position = new Vector3(subRecord.XPos, 0, BlocksFile.RMBDimension - subRecord.ZPos) * MeshReader.GlobalScale;
                 buildings[i].Rotation = new Vector3(0, -subRecord.YRotation / BlocksFile.RotationDivisor, 0);
                 buildings[i].Matrix = Matrix4x4.TRS(buildings[i].Position, Quaternion.Euler(buildings[i].Rotation), Vector3.one);
+
+                // First model of record is building model
+                if (subRecord.Exterior.Block3dObjectRecords.Length > 0)
+                {
+                    buildings[i].ModelID = subRecord.Exterior.Block3dObjectRecords[0].ModelIdNum;
+                }
             }
 
             return buildings;
