@@ -413,6 +413,7 @@ namespace DaggerfallWorkshop
                 CurrentLocationType == DFRegion.LocationTypes.TownVillage ||
                 CurrentLocationType == DFRegion.LocationTypes.HomeFarms ||
                 CurrentLocationType == DFRegion.LocationTypes.HomeWealthy ||
+                CurrentLocationType == DFRegion.LocationTypes.Tavern ||
                 CurrentLocationType == DFRegion.LocationTypes.ReligionTemple)
             {
                 // Optionally check if player inside location rect
