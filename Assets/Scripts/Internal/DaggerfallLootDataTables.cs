@@ -9,17 +9,39 @@
 // Notes: Extracted from DaggerfallLoot class on 2 Feb 2018
 //
 
+using System.Collections.Generic;
+
 namespace DaggerfallWorkshop
 {
     public static class DaggerfallLootDataTables
     {
+        // Default texture archive for random treasure pile
+        public const int randomTreasureArchive = 216;
+
+        // Other texture archives for dropped loot icons
+        public const int clothingArchive = 204;
+        public const int boxesNbottlesArchive = 205;
+        public const int combatArchive = 207;
+        public const int academicArchive = 209;
+        public const int miscArchive = 211;
+
         // Default icon range for random treasure piles in dungeons and when items are dropped by the player
         // Random treasure is generated only when clicked on and icon has no bearing
-        // Only a subset of loot icons from TEXTURE.216 are used
-        // These are matched to classic
+        // Only a subset of loot icons from TEXTURE.216 are used & These are matched to classic
         public static int[] randomTreasureIconIndices = new int[]
         {
             0, 20, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 37, 43, 44, 45, 46, 47
+        };
+
+        // Dropped items icon lists for player selection in inventory window
+        public static Dictionary<int, int[]> dropIconIdxs = new Dictionary<int, int[]>
+        {
+            { clothingArchive,      new int[] { 0,1,2,3,4,5,6,7,8,9 } },
+            { boxesNbottlesArchive, new int[] { 1,11,12,13,14,15,16,17,19,20,21,22,23,24,25,26,31,32,33,34,35,36,42,43,44 } },
+            { combatArchive,        new int[] { 3,4,5,6,7,8,9,10,11,12,13,14,16 } },
+            { academicArchive,      new int[] { 0,1,2,3,5,6,7,8,10 } },
+            { miscArchive,          new int[] { 2,49,51,57 } },
+            { randomTreasureArchive, new int[] { 0,1,3,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,36,37,38,39,40,43,44,45,46,47 } },
         };
 
         public static byte[] itemGroupsAlchemist = new byte[] { 0x0E, 0x1E, 0x0F, 0x32, 0x10, 0x32, 0x11, 0x1E, 0x12, 0x14, 0x13, 0x14, 0x14, 0x3C, 0x15, 0x28, 0x16, 0x1E };

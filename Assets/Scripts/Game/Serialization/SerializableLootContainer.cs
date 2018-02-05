@@ -66,6 +66,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.textureArchive = loot.TextureArchive;
             data.textureRecord = loot.TextureRecord;
             data.stockedDate = loot.stockedDate;
+            data.playerOwned = loot.playerOwned;
             data.customDrop = loot.customDrop;
             data.items = loot.Items.SerializeItems();
             data.entityName = loot.entityName;
@@ -116,6 +117,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             loot.TextureArchive = data.textureArchive;
             loot.TextureRecord = data.textureRecord;
             loot.stockedDate = data.stockedDate;
+            loot.playerOwned = data.playerOwned;
             loot.customDrop = data.customDrop;
             loot.name = loot.ContainerType.ToString();
             loot.entityName = data.entityName;

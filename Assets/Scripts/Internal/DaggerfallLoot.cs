@@ -22,9 +22,6 @@ namespace DaggerfallWorkshop
     /// </summary>
     public class DaggerfallLoot : MonoBehaviour
     {
-        // Default texture archive for random treasure pile
-        public const int randomTreasureArchive = 216;
-
         // Dimension of random treasure marker in Daggerfall Units
         // Used to align random icon to surface marker is placed on
         public const int randomTreasureMarkerDim = 40;
@@ -34,6 +31,7 @@ namespace DaggerfallWorkshop
         public string entityName = string.Empty;
         public int TextureArchive = 0;
         public int TextureRecord = 0;
+        public bool playerOwned = false;
         public bool customDrop = false;         // Custom drop loot is not part of base scene and must be respawned on deserialization
         public bool isEnemyClass = false;
         public int stockedDate = 0;

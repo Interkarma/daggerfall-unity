@@ -20,6 +20,7 @@ using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.Banking;
+using System.Linq;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -155,6 +156,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         RemoteTargetTypes lastRemoteTargetType;
 
         int lastMouseOverPaperDollEquipIndex = -1;
+        int dropIconArchive;
+        int dropIconTexture;
 
         ItemCollection.AddPosition preferredOrder = ItemCollection.AddPosition.DontCare;
 
@@ -329,6 +332,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             remoteTargetIconPanel.BackgroundTextureLayout = BackgroundLayout.ScaleToFit;
             remoteTargetIconLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(1, 2), remoteTargetIconPanel);
             remoteTargetIconLabel.TextColor = DaggerfallUI.DaggerfallUnityDefaultToolTipTextColor;
+
+            remoteTargetIconPanel.OnMouseClick += RemoteTargetIconPanel_OnMouseClick;
+            remoteTargetIconPanel.OnRightMouseClick += RemoteTargetIconPanel_OnRightMouseClick;
+            remoteTargetIconPanel.OnMiddleMouseClick += RemoteTargetIconPanel_OnMiddleMouseClick;
         }
 
         protected void SetupItemInfoPanel()
@@ -461,6 +468,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             droppedItems.Clear();
             remoteItems = droppedItems;
             remoteTargetType = RemoteTargetTypes.Dropped;
+            dropIconArchive = DaggerfallLootDataTables.randomTreasureArchive;
+            dropIconTexture = -1;
 
             // Use custom loot target if specified
             if (lootTarget != null)
@@ -468,6 +477,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 remoteItems = lootTarget.Items;
                 remoteTargetType = RemoteTargetTypes.Loot;
                 lootTarget.OnInventoryOpen();
+                dropIconArchive = lootTarget.TextureArchive;
+                int[] iconIdxs;
+                DaggerfallLootDataTables.dropIconIdxs.TryGetValue(dropIconArchive, out iconIdxs);
+                if (iconIdxs != null)
+                {
+                    for (int i = 0; i < iconIdxs.Length; i++)
+                    {
+                        if (iconIdxs[i] == lootTarget.TextureRecord)
+                        {
+                            dropIconTexture = i;
+                            break;
+                        }
+                    }
+                }
             }
 
             // Clear wagon button state on open
@@ -515,6 +538,27 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Reset dungeon wagon access permission
             allowDungeonWagonAccess = false;
 
+            // If icon has changed move items to dropped list so this loot is removed and a new one created
+            if (lootTarget != null && (lootTarget.TextureArchive != dropIconArchive || lootTarget.TextureRecord != dropIconTexture))
+                droppedItems.TransferAll(lootTarget.Items);
+
+            // Generate serializable loot pile in world for dropped items
+            if (droppedItems.Count > 0)
+            {
+                DaggerfallLoot droppedLootContainer;
+                if (dropIconTexture > -1)
+                    droppedLootContainer = GameObjectHelper.CreateDroppedLootContainer(
+                        GameManager.Instance.PlayerObject,
+                        DaggerfallUnity.NextUID,
+                        dropIconArchive,
+                        DaggerfallLootDataTables.dropIconIdxs[dropIconArchive][dropIconTexture]);
+                else
+                    droppedLootContainer = GameObjectHelper.CreateDroppedLootContainer(GameManager.Instance.PlayerObject, DaggerfallUnity.NextUID);
+                droppedLootContainer.Items.TransferAll(droppedItems);
+                if (lootTarget != null)
+                    droppedLootContainer.transform.position = lootTarget.transform.position;
+            }
+
             // Clear any loot target on exit
             if (lootTarget != null)
             {
@@ -524,13 +568,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 lootTarget.OnInventoryClose();
                 lootTarget = null;
-            }
-
-            // Generate serializable loot pile in world for dropped items
-            if (droppedItems.Count > 0)
-            {
-                DaggerfallLoot droppedLootContainer = GameObjectHelper.CreateDroppedLootContainer(GameManager.Instance.PlayerObject, DaggerfallUnity.NextUID);
-                droppedLootContainer.Items.TransferAll(droppedItems);
             }
 
             // Add equip delay if weapon was changed
@@ -677,20 +714,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             ImageData containerImage;
             remoteTargetIconLabel.Text = String.Empty;
-            switch (remoteTargetType)
+            if (remoteTargetType == RemoteTargetTypes.Wagon)
             {
-                default:
-                case RemoteTargetTypes.Dropped:
-                    containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(InventoryContainerImages.Ground);
-                    break;
-                case RemoteTargetTypes.Wagon:
-                    containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(InventoryContainerImages.Wagon);
-                    float weight = PlayerEntity.WagonWeight;
-                    remoteTargetIconLabel.Text = String.Format(weight % 1 == 0 ? "{0:F0} / {1}" : "{0:F2} / {1}", weight, ItemHelper.wagonKgLimit);
-                    break;
-                case RemoteTargetTypes.Loot:
-                    containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(lootTarget.ContainerImage);
-                    break;
+                containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(InventoryContainerImages.Wagon);
+                float weight = PlayerEntity.WagonWeight;
+                remoteTargetIconLabel.Text = String.Format(weight % 1 == 0 ? "{0:F0} / {1}" : "{0:F2} / {1}", weight, ItemHelper.wagonKgLimit);
+            }
+            else if (dropIconTexture > -1)
+            {
+                string filename = TextureFile.IndexToFileName(dropIconArchive);
+                containerImage = ImageReader.GetImageData(filename, DaggerfallLootDataTables.dropIconIdxs[dropIconArchive][dropIconTexture], 0, true);
+            }
+            else
+            {
+                containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(
+                        (remoteTargetType == RemoteTargetTypes.Loot) ? lootTarget.ContainerImage : InventoryContainerImages.Ground);
             }
             remoteTargetIconPanel.BackgroundTexture = containerImage.texture;
         }
@@ -1504,6 +1542,63 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             CloseWindow();
+        }
+
+        #endregion
+
+        #region Dropped items icon selection Event Handlers
+
+        private void RemoteTargetIconPanel_OnMiddleMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            // If items are being dropped by player, iterate up through drop archives
+            if (CanChangeDropIcon())
+            {
+                dropIconArchive = GetNextArchive();
+                dropIconTexture = 0;
+                UpdateRemoteTargetIcon();
+            }
+        }
+
+        private void RemoteTargetIconPanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            // If items are being dropped by player, iterate up through drop textures
+            if (CanChangeDropIcon())
+            {
+                dropIconTexture++;
+                if (dropIconTexture >= DaggerfallLootDataTables.dropIconIdxs[dropIconArchive].Length)
+                    dropIconTexture = 0;
+                UpdateRemoteTargetIcon();
+            }
+        }
+
+        private void RemoteTargetIconPanel_OnRightMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            // If items are being dropped by player, iterate down through drop textures
+            if (CanChangeDropIcon())
+            {
+                dropIconTexture--;
+                if (dropIconTexture < 0)
+                    dropIconTexture = DaggerfallLootDataTables.dropIconIdxs[dropIconArchive].Length - 1;
+                UpdateRemoteTargetIcon();
+            }
+        }
+
+        private bool CanChangeDropIcon()
+        {
+            return (remoteTargetType == RemoteTargetTypes.Dropped ||
+                    (remoteTargetType == RemoteTargetTypes.Loot && lootTarget.playerOwned));
+        }
+
+        private int GetNextArchive()
+        {
+            bool next = false;
+            foreach (int ai in DaggerfallLootDataTables.dropIconIdxs.Keys)
+            {
+                if (next)
+                    return ai;
+                next = (ai == dropIconArchive);
+            }
+            return DaggerfallLootDataTables.dropIconIdxs.Keys.First();
         }
 
         #endregion
