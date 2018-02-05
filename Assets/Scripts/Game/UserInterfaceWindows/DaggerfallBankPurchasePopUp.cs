@@ -130,6 +130,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        private void Display3dModel(int selectedIdx)
+        {
+            if (housesForSale == null)
+            {
+                uint shipModelId = DaggerfallBankManager.GetShipModelId((ShipType) selectedIdx);
+                // Get model data
+                ModelData modelData;
+                DaggerfallUnity.MeshReader.GetModelData(shipModelId, out modelData);
+
+                GameObject go = GameObjectHelper.CreateDaggerfallMeshGameObject(shipModelId, null);
+
+                RenderTexture renderTexture = new RenderTexture((int) displayPanelRect.width, (int) displayPanelRect.height, 16);
+            }
+        }
+
         private void SetupPriceList()
         {
             priceListBox = new ListBox()
@@ -241,6 +256,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void PriceListBox_OnSelectItem()
         {
             Debug.Log("Selected " + priceListBox.SelectedIndex);
+
         }
 
 

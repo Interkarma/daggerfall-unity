@@ -76,6 +76,7 @@ namespace DaggerfallWorkshop.Game.Banking
         private const float deedSellMult = 0.85f;
 
         private static int[] shipPrices = new int[] { 100000, 200000 };
+        private static uint[] shipModelIds = new uint[] { 910, 909 };
         private static DFPosition[] shipCoords = new DFPosition[] { new DFPosition(2, 2), new DFPosition(5, 5) };
         private static string[] shipInteriorSceneNames = new string[] {
             DaggerfallInterior.GetSceneName(1050578, 0),
@@ -95,6 +96,8 @@ namespace DaggerfallWorkshop.Game.Banking
         public static int GetShipPrice(ShipType ship) { return ship >= 0 ? shipPrices[(int) ship] : 0; }
 
         public static int GetShipSellPrice(ShipType ship) { return (int)(GetShipPrice(ship) * deedSellMult); }
+
+        public static uint GetShipModelId(ShipType ship) { return ship >= 0 ? shipModelIds[(int)ship] : 0; }
 
         public static DFPosition GetShipCoords() { return OwnsShip ? shipCoords[(int)ownedShip] : null; }
 
