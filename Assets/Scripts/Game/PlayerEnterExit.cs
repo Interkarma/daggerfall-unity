@@ -18,6 +18,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -452,6 +453,9 @@ namespace DaggerfallWorkshop.Game
 
             // Raise event
             RaiseOnPreTransitionEvent(TransitionType.ToBuildingInterior, door);
+
+            // Ensure expired rooms are removed
+            GameManager.Instance.PlayerEntity.RemoveExpiredRentedRooms();
 
             // Get climate
             ClimateBases climateBase = ClimateBases.Temperate;
@@ -996,6 +1000,20 @@ namespace DaggerfallWorkshop.Game
                     string youAreEntering = HardStrings.youAreEntering;
                     youAreEntering = youAreEntering.Replace("%s", location.Name);
                     DaggerfallUI.AddHUDText(youAreEntering, 2);
+
+                    // Check room rentals in this location, and display how long any rooms are rented for
+                    int mapId = playerGPS.CurrentLocation.MapTableData.MapId;
+                    PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+                    playerEntity.RemoveExpiredRentedRooms();
+                    List<RoomRental_v1> rooms = playerEntity.GetRentedRooms(mapId);
+                    if (rooms.Count > 0)
+                    {
+                        foreach (RoomRental_v1 room in rooms)
+                        {
+                            string remainingHours = PlayerEntity.GetRemainingHours(room).ToString();
+                            DaggerfallUI.AddHUDText(HardStrings.youHaveRentedRoom.Replace("%s", room.name).Replace("%d", remainingHours), 6);
+                        }
+                    }
 
                     if (holidayTextTimer <= 0 && !holidayTextPrimed)
                     {

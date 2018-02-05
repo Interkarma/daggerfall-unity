@@ -660,6 +660,12 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         #region Commerce
 
+        public static int CalculateRoomCost(int shopQuality)
+        {
+            // TODO: Awaiting the binary wizard, Allofich!
+            return 4;
+        }
+
         public static int CalculateCost(int baseItemValue, int shopQuality)
         {
             int cost = baseItemValue;

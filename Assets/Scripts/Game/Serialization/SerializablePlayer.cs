@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Hazelnut
 // 
 // Notes:
 //
@@ -12,6 +12,8 @@
 using UnityEngine;
 using System;
 using DaggerfallWorkshop.Game.Entity;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DaggerfallWorkshop.Game.Serialization
 {
@@ -134,6 +136,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.playerEntity.thievesGuildRequirementTally = entity.ThievesGuildRequirementTally;
             data.playerEntity.darkBrotherhoodRequirementTally = entity.DarkBrotherhoodRequirementTally;
             data.playerEntity.regionData = entity.RegionData;
+            data.playerEntity.rentedRooms = entity.RentedRooms.ToArray();
 
             // Store player position data
             data.playerPosition = GetPlayerPositionData();
@@ -234,6 +237,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             entity.ThievesGuildRequirementTally = data.playerEntity.thievesGuildRequirementTally;
             entity.DarkBrotherhoodRequirementTally = data.playerEntity.darkBrotherhoodRequirementTally;
             entity.SetCurrentLevelUpSkillSum();
+            entity.RentedRooms = (data.playerEntity.rentedRooms != null) ? data.playerEntity.rentedRooms.ToList() : new List<RoomRental_v1>();
 
             if (data.playerEntity.regionData != null)
                 entity.RegionData = data.playerEntity.regionData;

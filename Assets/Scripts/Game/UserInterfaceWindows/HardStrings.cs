@@ -151,6 +151,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string cannotRemoveThisItem = "You cannot remove this item.";
 
         public const string youReceiveGoldPieces = "You receive %s gold pieces.";     // Custom message for "get item" gold assignment
+
         public const string bankPurchasePrice = "Price : %s gold";
+
+        public const string youHaveRentedRoom = "You have a room at %s for %d hours.";
+        public const string haveNotRentedRoom = "You have not rented a room here.";
+        public const string expiredRentedRoom = "Your time for this room has expired.";
     }
 }
