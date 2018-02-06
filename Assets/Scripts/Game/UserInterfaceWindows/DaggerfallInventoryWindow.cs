@@ -477,17 +477,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 remoteItems = lootTarget.Items;
                 remoteTargetType = RemoteTargetTypes.Loot;
                 lootTarget.OnInventoryOpen();
-                dropIconArchive = lootTarget.TextureArchive;
-                int[] iconIdxs;
-                DaggerfallLootDataTables.dropIconIdxs.TryGetValue(dropIconArchive, out iconIdxs);
-                if (iconIdxs != null)
+                if (lootTarget.TextureArchive > 0)
                 {
-                    for (int i = 0; i < iconIdxs.Length; i++)
+                    dropIconArchive = lootTarget.TextureArchive;
+                    int[] iconIdxs;
+                    DaggerfallLootDataTables.dropIconIdxs.TryGetValue(dropIconArchive, out iconIdxs);
+                    if (iconIdxs != null)
                     {
-                        if (iconIdxs[i] == lootTarget.TextureRecord)
+                        for (int i = 0; i < iconIdxs.Length; i++)
                         {
-                            dropIconTexture = i;
-                            break;
+                            if (iconIdxs[i] == lootTarget.TextureRecord)
+                            {
+                                dropIconTexture = i;
+                                break;
+                            }
                         }
                     }
                 }
@@ -539,7 +542,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             allowDungeonWagonAccess = false;
 
             // If icon has changed move items to dropped list so this loot is removed and a new one created
-            if (lootTarget != null && (lootTarget.TextureArchive != dropIconArchive || lootTarget.TextureRecord != dropIconTexture))
+            if (lootTarget != null && lootTarget.TextureArchive > 0 && (lootTarget.TextureArchive != dropIconArchive || lootTarget.TextureRecord != dropIconTexture))
                 droppedItems.TransferAll(lootTarget.Items);
 
             // Generate serializable loot pile in world for dropped items

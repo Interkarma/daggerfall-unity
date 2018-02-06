@@ -233,7 +233,7 @@ namespace DaggerfallWorkshop
             items.Clear();
 
             DFLocation.BuildingTypes buildingType = buildingData.buildingType;
-            uint modelIndex = (uint)TextureRecord;
+            uint modelIndex = (uint) TextureRecord;
             int buildingQuality = buildingData.quality;
             byte[] privatePropertyList = null;
             DaggerfallUnityItem item = null;

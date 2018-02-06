@@ -31,8 +31,8 @@ namespace DaggerfallWorkshop
 
         const uint houseContainerObjectGroup = 418;
         const uint containerObjectGroupOffset = 41000;
-        static List<uint> shopShelvesObjectGroupIndices = new List<uint> { 5, 6, 11, 12, 15, 16, 17, 18, 19, 28, 29, 31, 35, 37, 40, 42, 44, 46, 47, 48, 49 };
-        static List<uint> houseContainerObjectGroupIndices = new List<uint> { 3, 4, 7, 8, 32, 33, 34, 35, 36, 37, 38, 50, 51 };
+        static List<uint> shopShelvesObjectGroupIndices = new List<uint> { 5, 6, 11, 12, 13, 15, 16, 17, 18, 19, 28, 29, 31, 35, 36, 37, 40, 42, 44, 46, 47, 48, 49, 808 };
+        static List<uint> houseContainerObjectGroupIndices = new List<uint> { 3, 4, 7, 32, 33, 34, 35, 37, 38, 50, 51 };
 
         // Building data for map layout, indicates no activation components needed.
         static PlayerGPS.DiscoveredBuilding mapBD = new PlayerGPS.DiscoveredBuilding {
@@ -406,8 +406,8 @@ namespace DaggerfallWorkshop
             }
             // Handle generic furniture as (private) house containers:
             // (e.g. shelves, boxes, wardrobes, drawers etc)
-            if (obj.ModelIdNum / 100 == houseContainerObjectGroup ||
-                houseContainerObjectGroupIndices.Contains(obj.ModelIdNum - containerObjectGroupOffset))
+            else if (obj.ModelIdNum / 100 == houseContainerObjectGroup ||
+                     houseContainerObjectGroupIndices.Contains(obj.ModelIdNum - containerObjectGroupOffset))
             {
                 DaggerfallLoot loot = go.AddComponent<DaggerfallLoot>();
                 if (loot)
