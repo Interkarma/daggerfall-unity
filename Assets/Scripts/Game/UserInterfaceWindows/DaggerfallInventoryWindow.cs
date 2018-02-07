@@ -542,8 +542,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             allowDungeonWagonAccess = false;
 
             // If icon has changed move items to dropped list so this loot is removed and a new one created
-            if (lootTarget != null && lootTarget.TextureArchive > 0 && (lootTarget.TextureArchive != dropIconArchive || lootTarget.TextureRecord != dropIconTexture))
+            if (lootTarget != null && lootTarget.TextureArchive > 0 && dropIconTexture != -1 &&
+                (lootTarget.TextureArchive != dropIconArchive || lootTarget.TextureRecord != DaggerfallLootDataTables.dropIconIdxs[dropIconArchive][dropIconTexture]))
+            {
                 droppedItems.TransferAll(lootTarget.Items);
+            }
 
             // Generate serializable loot pile in world for dropped items
             if (droppedItems.Count > 0)
