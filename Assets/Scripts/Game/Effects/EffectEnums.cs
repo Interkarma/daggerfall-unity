@@ -31,10 +31,10 @@ namespace DaggerfallWorkshop.Game.Effects
     }
 
     /// <summary>
-    /// How effect manifests for cast animations, billboard effects, resist checks, etc.
-    /// Can be used as flags by effect system to declare supported elements.
+    /// How spell manifests for cast animations, billboard effects, resist checks, etc.
+    /// Can be used as flags by effect system to declare supported spell types.
     /// </summary>
-    public enum EffectTypes
+    public enum SpellTypes
     {
         None = 0,
         Fire = 1,

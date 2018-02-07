@@ -24,6 +24,19 @@ namespace DaggerfallWorkshop.Game.Effects
     /// </summary>
     public abstract class FakeSpell
     {
+        #region Fields
+
+        protected string displayName;                           // Display name of spell
+        protected TargetTypes selectedTargetType;               // How this spell targets entities in world space
+        protected SpellTypes selectedSpellType;                 // How this spell manifests for cast animations, billboard effects, resist checks, etc.
+        protected int spellCost;                                // Cost of this spell to cast - not used for now
+
+        protected List<SpellEffectSettings> effects = new List<SpellEffectSettings>();
+
+        #endregion
+
+        #region Structs
+
         /// <summary>
         /// Settings for a single spell effect.
         /// Each spell has one or more effects with unique settings.
@@ -52,13 +65,11 @@ namespace DaggerfallWorkshop.Game.Effects
             public int MagnitudeBonusPerLevel;
         }
 
-        protected string displayName;                           // Display name of spell
-        protected TargetTypes selectedTargetType;               // How this spell targets entities in world space
-        protected EffectTypes selectedEffectType;               // How effect manifests for cast animations, billboard effects, resist checks, etc.
-        protected int spellCost;                                // Cost of this spell to cast - not used for now
+        #endregion
 
-        protected List<SpellEffectSettings> effects = new List<SpellEffectSettings>();
-
+        /// <summary>
+        /// Default construtor.
+        /// </summary>
         public FakeSpell()
         {
         }

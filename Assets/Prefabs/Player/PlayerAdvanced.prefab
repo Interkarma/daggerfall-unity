@@ -28,6 +28,7 @@ GameObject:
   - component: {fileID: 114683130944510392}
   - component: {fileID: 114121517922970790}
   - component: {fileID: 114764040474619316}
+  - component: {fileID: 114492803959826104}
   m_Layer: 0
   m_Name: PlayerAdvanced
   m_TagString: Player
@@ -585,6 +586,7 @@ MonoBehaviour:
   InteriorParent: {fileID: 0}
   DungeonParent: {fileID: 0}
   OverrideLocation: {fileID: 0}
+  blockWaterLevel: 10000
 --- !u!114 &11400010
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -634,15 +636,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f0385c7789a25748af535cd1103e3da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  WalkStepInterval: 1.6
-  RunStepInterval: 1.9
-  PitchVariance: 0.3
+  WalkStepInterval: 2.5
+  RunStepInterval: 2.5
   GroundDistance: 1.8
-  FootstepVolumeScale: 0.6
-  FootstepSoundNormal: 309
-  FootstepSoundSnow: 310
+  FootstepVolumeScale: 0.45
+  FootstepSoundDungeon1: 309
+  FootstepSoundDungeon2: 330
+  FootstepSoundOutside1: 310
+  FootstepSoundOutside2: 331
+  FootstepSoundSnow1: 311
+  FootstepSoundSnow2: 332
+  FootstepSoundBuilding1: 313
+  FootstepSoundBuilding2: 333
+  FootstepSoundShallow: 334
+  FootstepSoundSubmerged: 346
   FallHardSound: 92
   FallDamageSound: 91
+  SplashLargeSound: 342
 --- !u!114 &11400018
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -654,12 +664,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6bb047c7d86ac84eab17d4d321bef02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LeftHandWeapon: {fileID: 0}
-  RightHandWeapon: {fileID: 11400020}
+  ScreenWeapon: {fileID: 0}
   Sheathed: 1
   SphereCastRadius: 0.35
   AttackThreshold: 0.05
   ChanceToBeParried: 0.1
+  EquipCountdownRightHand: 0
+  EquipCountdownLeftHand: 0
 --- !u!114 &11400020
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -672,7 +683,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowWeapon: 0
-  LeftHand: 0
+  FlipHorizontal: 0
   WeaponType: -1
   MetalType: 0
   Reach: 2.5
@@ -708,7 +719,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowWeapon: 0
-  LeftHand: 1
+  FlipHorizontal: 0
   WeaponType: -1
   MetalType: 0
   Reach: 2.5
@@ -1052,6 +1063,7 @@ MonoBehaviour:
   InteriorNightAmbientLight: {r: 0.39215687, g: 0.39215687, b: 0.39215687, a: 1}
   DungeonAmbientLight: {r: 0.23529412, g: 0.23529412, b: 0.23529412, a: 1}
   CastleAmbientLight: {r: 0.64705884, g: 0.64705884, b: 0.64705884, a: 1}
+  SpecialAreaLight: {r: 0.58, g: 0.58, b: 0.58, a: 1}
   FadeDuration: 3
   FadeStep: 0.1
 --- !u!114 &114379227581842172
@@ -1068,6 +1080,18 @@ MonoBehaviour:
   RainParticles: {fileID: 1007696209173768}
   SnowParticles: {fileID: 1842233828954868}
   WeatherType: 0
+  ClimateWeathers: 
+--- !u!114 &114492803959826104
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9ffab243d560eb4698f5f394d36eb67, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114583161180529142
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using DaggerfallWorkshop.Game.Effects;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -165,6 +166,25 @@ namespace DaggerfallWorkshop.Utility
                     return "WEAPON11.CIF";
                 default:
                     throw new Exception("Unknown weapon type.");
+            }
+        }
+
+        public static string GetSpellAnimFilename(SpellTypes effectType)
+        {
+            switch (effectType)
+            {
+                case SpellTypes.Fire:
+                    return "FIRE00C6.CIF";
+                case SpellTypes.Cold:
+                    return "FRST00C6.CIF";
+                case SpellTypes.Poison:
+                    return "POIS00C6.CIF";
+                case SpellTypes.Shock:
+                    return "SHOK00C6.CIF";
+                case SpellTypes.Magic:
+                    return "MJIC00C6.CIF";
+                default:
+                    throw new Exception("Unsupported spell type.");
             }
         }
 

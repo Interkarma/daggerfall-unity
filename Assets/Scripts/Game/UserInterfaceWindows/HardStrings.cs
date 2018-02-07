@@ -157,5 +157,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string youHaveRentedRoom = "You have a room at %s for %d hours.";
         public const string haveNotRentedRoom = "You have not rented a room here.";
         public const string expiredRentedRoom = "Your time for this room has expired.";
+
+        public const string pressButtonToFireSpell = "Press button to fire spell.";
     }
 }
