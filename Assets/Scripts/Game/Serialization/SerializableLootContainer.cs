@@ -119,7 +119,6 @@ namespace DaggerfallWorkshop.Game.Serialization
             loot.stockedDate = data.stockedDate;
             loot.playerOwned = data.playerOwned;
             loot.customDrop = data.customDrop;
-            loot.name = loot.ContainerType.ToString();
             loot.entityName = data.entityName;
             loot.isEnemyClass = data.isEnemyClass;
 
