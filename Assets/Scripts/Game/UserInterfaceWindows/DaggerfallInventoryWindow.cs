@@ -477,7 +477,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 remoteItems = lootTarget.Items;
                 remoteTargetType = RemoteTargetTypes.Loot;
                 lootTarget.OnInventoryOpen();
-                if (lootTarget.TextureArchive > 0)
+                if (lootTarget.playerOwned && lootTarget.TextureArchive > 0)
                 {
                     dropIconArchive = lootTarget.TextureArchive;
                     int[] iconIdxs;
@@ -542,7 +542,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             allowDungeonWagonAccess = false;
 
             // If icon has changed move items to dropped list so this loot is removed and a new one created
-            if (lootTarget != null && lootTarget.TextureArchive > 0 && dropIconTexture != -1 &&
+            if (lootTarget != null && lootTarget.playerOwned && lootTarget.TextureArchive > 0 &&
                 (lootTarget.TextureArchive != dropIconArchive || lootTarget.TextureRecord != DaggerfallLootDataTables.dropIconIdxs[dropIconArchive][dropIconTexture]))
             {
                 droppedItems.TransferAll(lootTarget.Items);
@@ -560,9 +560,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         DaggerfallLootDataTables.dropIconIdxs[dropIconArchive][dropIconTexture]);
                 else
                     droppedLootContainer = GameObjectHelper.CreateDroppedLootContainer(GameManager.Instance.PlayerObject, DaggerfallUnity.NextUID);
+
                 droppedLootContainer.Items.TransferAll(droppedItems);
                 if (lootTarget != null)
-                    droppedLootContainer.transform.position = lootTarget.transform.position;
+                {   // Move newly created loot container to original position in x & z coords.
+                    Vector3 pos = new Vector3(lootTarget.transform.position.x, droppedLootContainer.transform.position.y, lootTarget.transform.position.z);
+                    droppedLootContainer.transform.position = pos;
+                }
             }
 
             // Clear any loot target on exit
@@ -730,6 +734,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 string filename = TextureFile.IndexToFileName(dropIconArchive);
                 containerImage = ImageReader.GetImageData(filename, DaggerfallLootDataTables.dropIconIdxs[dropIconArchive][dropIconTexture], 0, true);
+            }
+            else if (lootTarget != null && lootTarget.TextureArchive > 0)
+            {
+                string filename = TextureFile.IndexToFileName(lootTarget.TextureArchive);
+                containerImage = ImageReader.GetImageData(filename, lootTarget.TextureRecord, 0, true);
             }
             else
             {
