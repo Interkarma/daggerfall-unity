@@ -51,6 +51,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int howManyAdditionalDaysId = 5100;
         const int howManyDaysId = 5102;
 
+        readonly string[] tavernMenu =
+        {"Ale (1 gold)", "Beer (1 gold)", "Mead (2 gold)", "Wine (3 gold)",
+         "Bread (1 gold)", "Broth (1 gold)", "Cheese (2 gold)", "Fowl (3 gold)",
+         "Gruel (2 gold)", "Pie (2 gold)", "Stew (3 gold)"};
+        byte[] tavernFoodAndDrinkPrices = { 1, 1, 2, 3, 1, 1, 2, 3, 2, 2, 3 };
+
         StaticNPC merchantNPC;
         PlayerGPS.DiscoveredBuilding buildingData;
         RoomRental_v1 rentedRoom;
@@ -212,6 +218,53 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void FoodButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             CloseWindow();
+            uint gameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+
+            if ((gameMinutes - (GameManager.Instance.PlayerEntity.LastTimePlayerAteOrDrankAtTavern)) >= 240)
+            {
+                DaggerfallListPickerWindow foodAndDrinkPicker = new DaggerfallListPickerWindow(uiManager, this);
+                foodAndDrinkPicker.OnItemPicked += FoodAndDrink_OnItemPicked;
+
+                foreach (string menuItem in tavernMenu)
+                    foodAndDrinkPicker.ListBox.AddItem(menuItem);
+
+                uiManager.PushWindow(foodAndDrinkPicker);
+            }
+            else
+            {
+                DaggerfallUI.MessageBox(HardStrings.youAreNotHungry);
+            }
+        }
+
+        public void FoodAndDrink_OnItemPicked(int index, string foodOrDrinkName)
+        {
+            CloseWindow();
+            int price = tavernFoodAndDrinkPrices[index];
+            uint gameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+            int holidayID = FormulaHelper.GetHolidayId(gameMinutes, 0);
+            PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+
+            // Note: In-game holiday description for both New Life Festival and Harvest's End say they offer free drinks.
+            //       Below is what they actually do (New Life Festival = everything free,
+            //       Harvest's End = everything half-price but at least 1 gold).
+
+            if (holidayID == (int)DaggerfallConnect.DFLocation.Holidays.Harvest_End)
+            {
+                price >>= 1;
+                if (price == 0)
+                    price = 1;
+            }
+            if (holidayID != (int)DaggerfallConnect.DFLocation.Holidays.New_Life && playerEntity.GetGoldAmount() < price)
+            {
+                DaggerfallUI.MessageBox(notEnoughGoldId);
+            }
+            else
+            {
+                if (holidayID != (int)DaggerfallConnect.DFLocation.Holidays.New_Life)
+                    playerEntity.DeductGoldAmount(price);
+                playerEntity.SetHealth(playerEntity.CurrentHealth + 2 * price);
+                playerEntity.LastTimePlayerAteOrDrankAtTavern = gameMinutes;
+            }
         }
 
         #endregion

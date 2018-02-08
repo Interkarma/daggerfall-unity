@@ -79,6 +79,7 @@ namespace DaggerfallConnect.Save
             doc.startingLevelUpSkillSum = parsedData.startingLevelUpSkillSum;
             doc.minMetalToHit = parsedData.minMetalToHit;
             doc.armorValues = parsedData.armorValues;
+            doc.lastTimePlayerAteOrDrankAtTavern = parsedData.lastTimePlayerAteOrDrankAtTavern;
             doc.lastTimePlayerBoughtTraining = parsedData.lastTimePlayerBoughtTraining;
             doc.timeForThievesGuildLetter = parsedData.timeForThievesGuildLetter;
             doc.timeForDarkBrotherhoodLetter = parsedData.timeForDarkBrotherhoodLetter;
@@ -171,7 +172,8 @@ namespace DaggerfallConnect.Save
             reader.BaseStream.Position = 0x1fd;
             parsedData.timeStamp = reader.ReadUInt32();
 
-            reader.BaseStream.Position = 0x209;
+            reader.BaseStream.Position = 0x205;
+            parsedData.lastTimePlayerAteOrDrankAtTavern = reader.ReadUInt32();
             parsedData.lastTimePlayerBoughtTraining = reader.ReadUInt32();
 
             reader.BaseStream.Position = 0x211;
