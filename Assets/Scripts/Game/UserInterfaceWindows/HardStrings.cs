@@ -130,6 +130,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string serviceCure = "Cure Disease";
         public const string serviceDenied = "You need to be a member to access this.";
 
+        public const string roomFreeForKnightSuchAsYou = "The room is free for a knight such as you.";
+        public const string roomFreeDueToHeartsDay = "Room is free due to Heart's Day.";
+
         public const string doesntNeedIdentifying = "This does not need to be identified.";
 
         public const string pronounHe = "he";

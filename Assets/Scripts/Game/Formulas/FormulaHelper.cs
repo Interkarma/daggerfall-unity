@@ -660,10 +660,24 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         #region Commerce
 
-        public static int CalculateRoomCost(int shopQuality)
+        public static int CalculateRoomCost(int daysToRent)
         {
-            // TODO: Awaiting the binary wizard, Allofich!
-            return 4;
+            int cost = 0;
+            int dayOfYear = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.DayOfYear;
+            if (dayOfYear <= 46 && dayOfYear + daysToRent > 46)
+                cost = 7 * (daysToRent - 1);  // No charge for Heart's Day
+            else
+                cost = 7 * daysToRent;
+
+            // If player is member of region's knightly order, or rank 4 or higher in any knightly order
+            // DaggerfallUI.MessageBox(UserInterfaceWindows.HardStrings.roomFreeForKnightSuchAsYou);
+            // cost = 0;
+            if (cost == 0) // Only renting for Heart's Day
+            {
+                DaggerfallUI.MessageBox(UserInterfaceWindows.HardStrings.roomFreeDueToHeartsDay);
+            }
+
+            return cost;
         }
 
         public static int CalculateCost(int baseItemValue, int shopQuality)

@@ -55,6 +55,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         PlayerGPS.DiscoveredBuilding buildingData;
         RoomRental_v1 rentedRoom;
         int daysToRent = 0;
+        int tradePrice = 0;
 
         #endregion
 
@@ -106,15 +107,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #endregion
 
-        #region Private Methods
-
-        private int GetRoomPrice()
-        {
-            return FormulaHelper.CalculateRoomCost(buildingData.quality) * daysToRent;
-        }
-
-        #endregion
-
         #region Event Handlers
 
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -147,10 +139,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (!result || daysToRent < 1)
                 return;
 
-            if (daysToRent > 350)
+            int daysAlreadyRented = 0;
+            if (rentedRoom != null)
+            {
+                daysAlreadyRented = (int)((rentedRoom.expiryTime - DaggerfallUnity.Instance.WorldTime.Now.ToSeconds()) / DaggerfallDateTime.SecondsPerDay);
+            }
+
+            if (daysToRent + daysAlreadyRented > 350)
                 DaggerfallUI.MessageBox(tooManyDaysFutureId);
             else
             {
+                int cost = FormulaHelper.CalculateRoomCost(daysToRent);
+                tradePrice = FormulaHelper.CalculateTradePrice(cost, buildingData.quality, false);
+
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
                 TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(offerPriceId);
                 messageBox.SetTextTokens(tokens, this);
@@ -168,9 +169,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
                 PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
-                if (playerEntity.GetGoldAmount() >= GetRoomPrice())
+                if (playerEntity.GetGoldAmount() >= tradePrice)
                 {
-                    playerEntity.DeductGoldAmount(GetRoomPrice());
+                    playerEntity.DeductGoldAmount(tradePrice);
                     int mapId = GameManager.Instance.PlayerGPS.CurrentLocation.MapTableData.MapId;
                     string sceneName = DaggerfallInterior.GetSceneName(mapId, buildingData.buildingKey);
                     if (rentedRoom == null)
@@ -235,7 +236,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             public override string Amount()
             {
-                return parent.GetRoomPrice().ToString();
+                return parent.tradePrice.ToString();
             }
 
             public override string RoomHoursLeft()
