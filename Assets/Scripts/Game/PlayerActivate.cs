@@ -936,8 +936,8 @@ namespace DaggerfallWorkshop.Game
             DaggerfallGuildPopupWindow.TempGuilds guild;
             if (npc.Data.factionID == PersistentFactionData.fightersGuildQuestorFactionID)
                 guild = DaggerfallGuildPopupWindow.TempGuilds.Fighter;
-            else if (npc.Data.factionID == PersistentFactionData.magesGuildQuestorFactionID)
-                guild = DaggerfallGuildPopupWindow.TempGuilds.Mage;
+//            else if (npc.Data.factionID == PersistentFactionData.magesGuildQuestorFactionID)
+//                guild = DaggerfallGuildPopupWindow.TempGuilds.Mage;
             else
                 guild = DaggerfallGuildPopupWindow.TempGuilds.None;
 
