@@ -51,10 +51,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int howManyAdditionalDaysId = 5100;
         const int howManyDaysId = 5102;
 
-        readonly string[] tavernMenu =
-        {"Ale (1 gold)", "Beer (1 gold)", "Mead (2 gold)", "Wine (3 gold)",
-         "Bread (1 gold)", "Broth (1 gold)", "Cheese (2 gold)", "Fowl (3 gold)",
-         "Gruel (2 gold)", "Pie (2 gold)", "Stew (3 gold)"};
+        readonly string[] tavernMenu =  {
+            HardStrings.tavernAle, HardStrings.tavernBeer, HardStrings.tavernMead, HardStrings.tavernWine,
+            HardStrings.tavernBread, HardStrings.tavernBroth, HardStrings.tavernCheese, HardStrings.tavernFowl,
+            HardStrings.tavernGruel, HardStrings.tavernPie, HardStrings.tavernStew };
         byte[] tavernFoodAndDrinkPrices = { 1, 1, 2, 3, 1, 1, 2, 3, 2, 2, 3 };
 
         StaticNPC merchantNPC;
