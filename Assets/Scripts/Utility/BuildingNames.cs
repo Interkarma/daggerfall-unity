@@ -124,11 +124,32 @@ namespace DaggerfallWorkshop.Utility
                     break;
 
                 case DFLocation.BuildingTypes.Palace:
-                    // Main palace names (e.g. "Castle Daggerfall" appear to be hardcoded in FALL.EXE
-                    // Other palaces are just named "Palace"
-                    // Need to confirm behaviour before implementing
-                    // Just calling everything "Palace" for now.
-                    a = "Palace";
+                    // Main palace names come from TEXT.RSC (e.g. "Castle Daggerfall")
+                    // Other palaces are just named "Palace" (still need to confirm behaviour)
+                    int textId = 0;
+                    if (locationName == "Daggerfall")
+                        textId = 475;
+                    else if (locationName == "Wayrest")
+                        textId = 476;
+                    else if (locationName == "Sentinel")
+                        textId = 477;
+
+                    if (textId > 0)
+                    {
+                        TextFile.Token[] nameTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(textId);
+                        foreach (TextFile.Token token in nameTokens)
+                        {
+                            if (token.formatting == TextFile.Formatting.Text)
+                            {
+                                a = token.text;
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        a = "Palace";
+                    }
                     singleton = true;
                     break;
 

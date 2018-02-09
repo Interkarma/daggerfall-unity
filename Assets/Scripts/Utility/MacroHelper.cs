@@ -13,6 +13,7 @@ using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using UnityEngine;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -99,7 +100,7 @@ namespace DaggerfallWorkshop.Utility
             { "%gtp", null }, // Amount of fine
             { "%hea", HpMod }, // HP Modifier
             { "%hmd", HealRateMod }, // Healing rate modifer
-            { "%hnr", null }, // Honorific
+            { "%hnr", null }, // Honorific in guild/faction
             { "%hnt", DialogHint }, // context "Tell Me About": anyInfo message, context place: Direction of location. (comment Nystul: it is either a location direction hint or a map reveal)
             { "%hnt2", DialogHint2 }, // context "Tell Me About": rumors message
             { "%hol", null }, // Holiday
@@ -117,6 +118,7 @@ namespace DaggerfallWorkshop.Utility
             { "%kg", Weight },  //  Weight of items
             { "%kno", null }, // A knightly guild name
             { "%lev", null }, // Rank in guild that you are in.
+            { "%lp", LocalPalace },  //  Local / palace (?) dungeon
             { "%ln", null },  //  Random lastname
             { "%loc", MarkLocationOnMap }, // Location marked on map (comment Nystul: this seems to be context dependent - it is used both in direction dialogs (7333) and map reveal dialogs (7332) - it seems to return the name of the building and reveal the map only if a 7332 dialog was chosen
             { "%lt1", null }, // Title of _fl1
@@ -133,7 +135,7 @@ namespace DaggerfallWorkshop.Utility
             { "%n", NameDialogPartner },   // A random female first name (comment Nystul: I think it is just a random name - or maybe this is the reason that in vanilla all male mobile npcs have female names...)
             { "%nam", null }, // A random full name
             { "%nrn", null }, // Noble of the current region
-            { "%nt", null },  // ?
+            { "%nt", NearbyTavern },  // Nearby Tavern
             { "%ol1", null }, // Old lord of _fx1
             { "%olf", null }, // What happened to _ol1
             { "%on", null },  // ?
@@ -336,13 +338,19 @@ namespace DaggerfallWorkshop.Utility
             if (format == TextFile.Formatting.Text)
                 format = TextFile.Formatting.NewLine;
             MultilineMacroHandler svp = multilineMacroHandlers[symbolStr];
-            if (svp != null) {
-                try {
+            if (svp != null)
+            {
+                try
+                {
                     return svp.Invoke(mcp, format);
-                } catch (NotImplementedException) {
+                }
+                catch (NotImplementedException)
+                {
                     error = symbolStr + "[srcDataUnknown]";
                 }
-            } else {
+            }
+            else
+            {
                 error = symbolStr + "[unhandled]";
             }
             TextFile.Token errorToken = new TextFile.Token();
@@ -367,7 +375,7 @@ namespace DaggerfallWorkshop.Utility
         }
 
         private static string CityName2(IMacroContextProvider mcp)
-        {   // %cn2 (only used in msg #200)
+        {   // %cn2 (only used in msg #200 where cn and cn2 are random? places)
             throw new NotImplementedException();
         }
 
@@ -400,6 +408,37 @@ namespace DaggerfallWorkshop.Utility
                 default:
                     return gps.CurrentLocationType.ToString();
             }
+        }
+
+        private static string LocalPalace(IMacroContextProvider mcp)
+        {   // %lp - kinda guessing for this one
+            BuildingDirectory buildingDirectory = GameManager.Instance.StreamingWorld.GetCurrentBuildingDirectory();
+            if (buildingDirectory && buildingDirectory.BuildingCount > 0)
+            {
+                List<BuildingSummary> palaces = buildingDirectory.GetBuildingsOfType(DFLocation.BuildingTypes.Palace);
+                if (palaces.Count >= 1)
+                {
+                    Debug.LogFormat("Location {1} has a palace with buildingKey: {0}", palaces[0].buildingKey, GameManager.Instance.PlayerGPS.CurrentLocation.Name);
+                    PlayerGPS.DiscoveredBuilding palace;
+                    if (GameManager.Instance.PlayerGPS.GetAnyBuilding(palaces[0].buildingKey, out palace))
+                        return palace.displayName.TrimEnd('.');
+                }
+            }
+            return "local";
+        }
+
+        private static string NearbyTavern(IMacroContextProvider mcp)
+        {   // %nt - just gets a random tavern from current location and ignores how near it is.
+            BuildingDirectory buildingDirectory = GameManager.Instance.StreamingWorld.GetCurrentBuildingDirectory();
+            if (buildingDirectory && buildingDirectory.BuildingCount > 0)
+            {
+                List<BuildingSummary> taverns = buildingDirectory.GetBuildingsOfType(DFLocation.BuildingTypes.Tavern);
+                int i = UnityEngine.Random.Range(0, taverns.Count - 1);
+                PlayerGPS.DiscoveredBuilding tavern;
+                if (GameManager.Instance.PlayerGPS.GetAnyBuilding(taverns[i].buildingKey, out tavern))
+                    return tavern.displayName;
+            }
+            return "tavern";
         }
 
         private static string Title(IMacroContextProvider mcp)
@@ -539,11 +578,8 @@ namespace DaggerfallWorkshop.Utility
             foreach (DFCareer.Skills skill in primarySkills)
             {
                 if (GameManager.Instance.PlayerEntity.Skills.GetPermanentSkillValue(skill) == 100)
-                {
                     return DaggerfallUnity.Instance.TextProvider.GetSkillName(skill);
-                }
             }
-
             return "BLANK";
         }
 
@@ -660,7 +696,7 @@ namespace DaggerfallWorkshop.Utility
         //
         // Contextual macro handlers - delegate to the macro data source provided by macro context provider.
         //
-        #region contextual macro handlers
+        #region Contextual macro handlers
 
         private static string Amount(IMacroContextProvider mcp)
         {   // %a

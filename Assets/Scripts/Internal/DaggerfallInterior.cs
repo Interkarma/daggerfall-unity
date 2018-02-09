@@ -237,7 +237,7 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
-        /// Find a specific marker. Will stop searching at first item found.
+        /// Find a specific marker. Will stop searching at first item found, or at a random-ish marker if random=true.
         /// </summary>
         /// <returns>True if at least one marker found.</returns>
         public bool FindMarker(out Vector3 markerOut, InteriorMarkerTypes type, bool random = false)
