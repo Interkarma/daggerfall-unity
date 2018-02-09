@@ -390,21 +390,21 @@ namespace DaggerfallWorkshop.Utility
             switch (gps.CurrentLocationType)
             {
                 case DFRegion.LocationTypes.TownCity:
-                    return "city";
+                    return HardStrings.city;
                 case DFRegion.LocationTypes.TownVillage:
-                    return "village";
+                    return HardStrings.village;
                 case DFRegion.LocationTypes.TownHamlet:
-                    return "hamlet";
+                    return HardStrings.hamlet;
                 case DFRegion.LocationTypes.HomeFarms:
-                    return "farm";
+                    return HardStrings.farm;
                 case DFRegion.LocationTypes.HomePoor:
-                    return "shack";
+                    return HardStrings.shack;
                 case DFRegion.LocationTypes.HomeWealthy:
-                    return "manor";
+                    return HardStrings.manor;
                 case DFRegion.LocationTypes.Tavern:
-                    return "community";
+                    return HardStrings.community;
                 case DFRegion.LocationTypes.ReligionTemple:
-                    return "shrine";
+                    return HardStrings.shrine;
                 default:
                     return gps.CurrentLocationType.ToString();
             }
@@ -424,7 +424,7 @@ namespace DaggerfallWorkshop.Utility
                         return palace.displayName.TrimEnd('.');
                 }
             }
-            return "local";
+            return HardStrings.local;
         }
 
         private static string NearbyTavern(IMacroContextProvider mcp)
@@ -438,7 +438,7 @@ namespace DaggerfallWorkshop.Utility
                 if (GameManager.Instance.PlayerGPS.GetAnyBuilding(taverns[i].buildingKey, out tavern))
                     return tavern.displayName;
             }
-            return "tavern";
+            return HardStrings.tavern;
         }
 
         private static string Title(IMacroContextProvider mcp)
@@ -450,31 +450,31 @@ namespace DaggerfallWorkshop.Utility
             switch (regionFaction.ruler)
             {
                 case 1:
-                    return "King";
+                    return HardStrings.King;
                 case 2:
-                    return "Queen";
+                    return HardStrings.Queen;
                 case 3:
-                    return "Duke";
+                    return HardStrings.Duke;
                 case 4:
-                    return "Duchess";
+                    return HardStrings.Duchess;
                 case 5:
-                    return "Marquis";
+                    return HardStrings.Marquis;
                 case 6:
-                    return "Marquise";
+                    return HardStrings.Marquise;
                 case 7:
-                    return "Count";
+                    return HardStrings.Count;
                 case 8:
-                    return "Countess";
+                    return HardStrings.Countess;
                 case 9:
-                    return "Baron";
+                    return HardStrings.Baron;
                 case 10:
-                    return "Baroness";
+                    return HardStrings.Baroness;
                 case 11:
-                    return "Lord";
+                    return HardStrings.Lord;
                 case 12:
-                    return "Lady";
+                    return HardStrings.Lady;
                 default:
-                    return "Lord";
+                    return HardStrings.Lord;
             }
         }
 
@@ -484,33 +484,33 @@ namespace DaggerfallWorkshop.Utility
             int rep = GameManager.Instance.PlayerEntity.RegionData[gps.CurrentRegionIndex].LegalRep;
 
             if (rep > 80)
-                return "revered";
+                return HardStrings.revered;
             else if (rep > 60)
-                return "esteemed";
+                return HardStrings.esteemed;
             else if (rep > 40)
-                return "honored";
+                return HardStrings.honored;
             else if (rep > 20)
-                return "admired";
+                return HardStrings.admired;
             else if (rep > 10)
-                return "respected";
+                return HardStrings.respected;
             else if (rep > 0)
-                return "dependable";
+                return HardStrings.dependable;
             else if (rep == 0)
-                return "a common citizen";
+                return HardStrings.aCommonCitizen;
             else if (rep < -80)
-                return "hated";
+                return HardStrings.hated;
             else if (rep < -60)
-                return "pond scum";
+                return HardStrings.pondScum;
             else if (rep < -40)
-                return "a villain";
+                return HardStrings.aVillain;
             else if (rep < -20)
-                return "a criminal";
+                return HardStrings.aCriminal;
             else if (rep < -10)
-                return "a scoundrel";
+                return HardStrings.aScoundrel;
             else if (rep < 0)
-                return "undependable";
+                return HardStrings.undependable;
 
-            return "unknown";
+            return HardStrings.unknown;
         }
 
         private static string Time(IMacroContextProvider mcp)
