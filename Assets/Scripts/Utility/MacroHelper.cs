@@ -305,22 +305,15 @@ namespace DaggerfallWorkshop.Utility
                 MacroHandler svp = macroHandlers[symbolStr];
                 if (svp != null)
                 {
-                    try
-                    {
+                    try {
                         return svp.Invoke(mcp);
-                    }
-                    catch (NotImplementedException)
-                    {
+                    } catch (NotImplementedException) {
                         return symbolStr + "[srcDataUnknown]";
                     }
-                }
-                else
-                {
+                } else {
                     return symbolStr + "[unhandled]";
                 }
-            }
-            else
-            {
+            } else {
                 return symbolStr + "[undefined]";
             }
         }
@@ -338,19 +331,13 @@ namespace DaggerfallWorkshop.Utility
             if (format == TextFile.Formatting.Text)
                 format = TextFile.Formatting.NewLine;
             MultilineMacroHandler svp = multilineMacroHandlers[symbolStr];
-            if (svp != null)
-            {
-                try
-                {
+            if (svp != null) {
+                try {
                     return svp.Invoke(mcp, format);
-                }
-                catch (NotImplementedException)
-                {
+                } catch (NotImplementedException) {
                     error = symbolStr + "[srcDataUnknown]";
                 }
-            }
-            else
-            {
+            } else {
                 error = symbolStr + "[unhandled]";
             }
             TextFile.Token errorToken = new TextFile.Token();
