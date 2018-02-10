@@ -78,6 +78,9 @@ namespace DaggerfallWorkshop.Game
         // Player must be grounded for at least this many physics frames before being able to jump again; set to 0 to allow bunny hopping
         public int antiBunnyHopFactor = 1;
 
+        public float systemTimerUpdatesPerSecond = .055f; // Number of updates per second by the system timer at memory location 0x46C.
+                                                          // Used for timing various things in classic.
+
         // FixedUpdate is too choppy to give smooth camera movement. This handles a smooth following child transform.
         public Transform smoothFollower;                // The Transform that follows; will lerp to this Transform's position.
         public float smoothFollowerLerpSpeed = 25.0f;   // Multiplied by dt.
@@ -104,6 +107,16 @@ namespace DaggerfallWorkshop.Game
         private int jumpTimer;
         private bool jumping = false;
         private bool standingStill = false;
+
+        private bool failedClimbingCheck = false;
+        private bool isClimbing = false;
+        private float climbingStartTimer = 0;
+        private float climbingContinueTimer = 0;
+        private uint timeOfLastClimbingCheck = 0;
+        private bool showClimbingModeMessage = true;
+        private Vector2 lastHorizontalPosition = Vector2.zero;
+
+        private CollisionFlags collisionFlags = 0;
 
         private bool cancelMovement = false;
 
@@ -227,8 +240,68 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
-            // Do nothing if player fake levitating/swimming - replacement motor will take over movement
-            if (fakeLevitate && (fakeLevitate.IsLevitating || fakeLevitate.IsSwimming))
+            if (isClimbing)
+                collisionFlags = CollisionFlags.Sides;
+            // Get collision flags for swimming as well, so it's possible to climb out of water TODO: Collision flags from swimming aren't working
+            else if (fakeLevitate.IsSwimming)
+                collisionFlags = fakeLevitate.CollisionFlags;
+
+            // Climbing
+            uint gameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+            if (!InputManager.Instance.HasAction(InputManager.Actions.MoveForwards)
+                || (collisionFlags & CollisionFlags.Sides) == 0
+                || failedClimbingCheck
+                || fakeLevitate.IsLevitating
+                || isRiding
+                || Vector2.Distance(lastHorizontalPosition, new Vector2(controller.transform.position.x, controller.transform.position.z)) >= (0.003f)) // Approximation based on observing classic in-game
+            {
+                isClimbing = false;
+                showClimbingModeMessage = true;
+                climbingStartTimer = 0;
+                timeOfLastClimbingCheck = gameMinutes;
+            }
+            else
+            {
+                if (climbingStartTimer <= (systemTimerUpdatesPerSecond * 14))
+                    climbingStartTimer += Time.deltaTime;
+                else
+                {
+                    if (!isClimbing)
+                    {
+                        if (showClimbingModeMessage)
+                            DaggerfallUI.AddHUDText(UserInterfaceWindows.HardStrings.climbingMode);
+                        // Disable further showing of climbing mode message until current climb attempt is stopped
+                        // to keep it from filling message log
+                        showClimbingModeMessage = false;
+                        isClimbing = true;
+                    }
+
+                    // Initial check to start climbing
+                    if ((gameMinutes - timeOfLastClimbingCheck) > 18)
+                    {
+                        Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
+                        player.TallySkill(DFCareer.Skills.Climbing, 1);
+                        timeOfLastClimbingCheck = gameMinutes;
+                        if (UnityEngine.Random.Range(1, 101) > 95)
+                        {
+                            if (UnityEngine.Random.Range(1, 101) > player.Skills.GetLiveSkillValue(DFCareer.Skills.Climbing))
+                            {
+                                isClimbing = false;
+                                failedClimbingCheck = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (isClimbing)
+            {
+                falling = false;
+                ClimbMovement();
+            }
+
+            // Do nothing if player fake levitating/swimming or climbing - replacement motor will take over movement for levitating/swimming
+            if (fakeLevitate && (fakeLevitate.IsLevitating || fakeLevitate.IsSwimming) || isClimbing)
                 return;
 
             //float inputX = Input.GetAxis("Horizontal");
@@ -340,6 +413,8 @@ namespace DaggerfallWorkshop.Game
                         if (isCrouching)
                             moveDirection.y *= crouchingJumpDelta;
                     }
+                    else
+                        jumping = false;
                 }
                 catch
                 {
@@ -399,7 +474,12 @@ namespace DaggerfallWorkshop.Game
             activePlatform = null;
 
             // Move the controller, and set grounded true or false depending on whether we're standing on something
-            grounded = (controller.Move(moveDirection * Time.deltaTime) & CollisionFlags.Below) != 0;
+            collisionFlags = controller.Move(moveDirection * Time.deltaTime);
+
+            // Get pre-movement position for climbing check
+            lastHorizontalPosition = new Vector2(controller.transform.position.x, controller.transform.position.z);
+
+            grounded = (collisionFlags & CollisionFlags.Below) != 0;
 
             // Moving platforms support
             if (activePlatform != null)
@@ -410,6 +490,29 @@ namespace DaggerfallWorkshop.Game
                 // If you want to support moving platform rotation as well:
                 activeGlobalPlatformRotation = transform.rotation;
                 activeLocalPlatformRotation = Quaternion.Inverse(activePlatform.rotation) * transform.rotation;
+            }
+        }
+
+        private void ClimbMovement()
+        {
+            controller.Move(Vector3.up * Time.deltaTime);
+            if (climbingContinueTimer <= (systemTimerUpdatesPerSecond * 15))
+                climbingContinueTimer += Time.deltaTime;
+            else
+            {
+                climbingContinueTimer = 0;
+                Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
+                player.TallySkill(DFCareer.Skills.Climbing, 1);
+                int skill = player.Skills.GetLiveSkillValue(DFCareer.Skills.Climbing);
+                if (player.Race == Entity.Races.Khajiit)
+                    skill += 30;
+                Mathf.Clamp(skill, 5, 95);
+
+                if ((UnityEngine.Random.Range(1, 101) > 90)
+                    || (UnityEngine.Random.Range(1, 101) > skill))
+                {
+                    isClimbing = false;
+                }
             }
         }
 
