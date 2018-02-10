@@ -267,6 +267,9 @@ namespace DaggerfallWorkshop.Utility
             // Select a random token stream
             int index = UnityEngine.Random.Range(0, tokenStreams.Count);
 
+            // Select the next to last item from the array if the length of the last one is zero
+            index = (tokenStreams[index].Length == 0 ? index - 1 : index);
+
             return tokenStreams[index];
         }
 
