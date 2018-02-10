@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Michael Rauter (Nystul)
-// Contributors:    
+// Contributors: Numidium
 // 
 // Notes:
 //
@@ -99,7 +99,7 @@ namespace DaggerfallWorkshop.Game
         {
             NoQuestion, // used for list entries that are not of ListItemType item
             News,
-            OrganizationInfo,
+            OrganisationInfo,
             Work,
             LocalBuilding,
             Regional,
@@ -159,7 +159,7 @@ namespace DaggerfallWorkshop.Game
             Thing,
             Work,
             QuestTopic,
-            Organization
+            Organisation
         }
 
         string nameNPC = "";
@@ -682,8 +682,8 @@ namespace DaggerfallWorkshop.Game
                 case QuestionType.News:
                     question = expandRandomTextRecord(7231 + toneIndex);
                     break;
-                case QuestionType.OrganizationInfo:
-                    currentKeySubjectType = KeySubjectType.Organization;
+                case QuestionType.OrganisationInfo:
+                    currentKeySubjectType = KeySubjectType.Organisation;
                     question = expandRandomTextRecord(7212 + toneIndex);
                     break;
                 case QuestionType.LocalBuilding:
@@ -747,7 +747,7 @@ namespace DaggerfallWorkshop.Game
             return (news);
         }
 
-        public string GetOrganizationInfo(TalkManager.ListItem listItem)
+        public string GetOrganisationInfo(TalkManager.ListItem listItem)
         {
             int index = (listItem.index > 7 ? listItem.index + 1 : listItem.index);
             return expandRandomTextRecord(860 + index);
@@ -1069,8 +1069,8 @@ namespace DaggerfallWorkshop.Game
                 case QuestionType.News:
                     answer = GetNewsOrRumors();
                     break;
-                case QuestionType.OrganizationInfo:
-                    answer = GetOrganizationInfo(listItem);
+                case QuestionType.OrganisationInfo:
+                    answer = GetOrganisationInfo(listItem);
                     break;
                 case QuestionType.LocalBuilding:
                     answer = GetAnswerAboutLocation(listItem);
@@ -1559,14 +1559,14 @@ namespace DaggerfallWorkshop.Game
 
             for (int i = 0; i < infoFactionIDs.Length; i++) 
             {
-                ListItem itemOrganizationInfo = new ListItem();
+                ListItem itemOrganisationInfo = new ListItem();
                 FactionFile.FactionData factionData;
-                itemOrganizationInfo.type = ListItemType.Item;
-                itemOrganizationInfo.questionType = QuestionType.OrganizationInfo;
+                itemOrganisationInfo.type = ListItemType.Item;
+                itemOrganisationInfo.questionType = QuestionType.OrganisationInfo;
                 DaggerfallUnity.Instance.ContentReader.FactionFileReader.GetFactionData(infoFactionIDs[i], out factionData);
-                itemOrganizationInfo.caption = factionData.name;
-                itemOrganizationInfo.index = i;
-                listTopicTellMeAbout.Add(itemOrganizationInfo);
+                itemOrganisationInfo.caption = factionData.name;
+                itemOrganisationInfo.index = i;
+                listTopicTellMeAbout.Add(itemOrganisationInfo);
             }
         }
 
