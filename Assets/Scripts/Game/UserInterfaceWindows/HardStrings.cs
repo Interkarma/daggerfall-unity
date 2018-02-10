@@ -132,6 +132,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public const string doesntNeedIdentifying = "This does not need to be identified.";
 
+
+        // Words used by macro handlers:
+
         public const string pronounHe = "he";
         public const string pronounShe = "she";
         public const string pronounHim = "him";
@@ -140,6 +143,58 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string pronounHers = "hers";
         public const string pronounHimself = "himself";
         public const string pronounHerself = "herself";
+
+        public const string city = "city";
+        public const string village = "village";
+        public const string hamlet = "hamlet";
+        public const string farm = "farm";
+        public const string shack = "shack";
+        public const string manor = "manor";
+        public const string community = "community";
+        public const string shrine = "shrine";
+
+        public const string King = "King";
+        public const string Queen = "Queen";
+        public const string Duke = "Duke";
+        public const string Duchess = "Duchess";
+        public const string Marquis = "Marquis";
+        public const string Marquise = "Marquise";
+        public const string Count = "Count";
+        public const string Countess = "Countess";
+        public const string Baron = "Baron";
+        public const string Baroness = "Baroness";
+        public const string Lord = "Lord";
+        public const string Lady = "Lady";
+
+        public const string revered = "revered";
+        public const string esteemed = "esteemed";
+        public const string honored = "honored";
+        public const string admired = "admired";
+        public const string respected = "respected";
+        public const string dependable = "dependable";
+        public const string aCommonCitizen = "a common citizen";
+        public const string hated = "hated";
+        public const string pondScum = "pond scum";
+        public const string aVillain = "a villain";
+        public const string aCriminal = "a criminal";
+        public const string aScoundrel = "a scoundrel";
+        public const string undependable = "undependable";
+        public const string unknown = "unknown";
+
+        public const string Broken = "Broken";
+        public const string Useless = "Useless";
+        public const string Battered = "Battered";
+        public const string Worn = "Worn";
+        public const string Used = "Used";
+        public const string SlightlyUsed = "Slightly Used";
+        public const string AlmostNew = "Almost New";
+        public const string New = "New";
+        public const string Nothing = "Nothing";
+
+        public const string local = "local";
+        public const string tavern = "tavern";
+
+
 
         public const string cannotChangeTransportationIndoors = "You cannot change transportation indoors.";
         public const string cannotTravelWithEnemiesNearby = "You cannot travel with enemies nearby.";

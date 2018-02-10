@@ -13,6 +13,7 @@ using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using UnityEngine;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -99,7 +100,7 @@ namespace DaggerfallWorkshop.Utility
             { "%gtp", null }, // Amount of fine
             { "%hea", HpMod }, // HP Modifier
             { "%hmd", HealRateMod }, // Healing rate modifer
-            { "%hnr", null }, // Honorific
+            { "%hnr", null }, // Honorific in guild/faction
             { "%hnt", DialogHint }, // context "Tell Me About": anyInfo message, context place: Direction of location. (comment Nystul: it is either a location direction hint or a map reveal)
             { "%hnt2", DialogHint2 }, // context "Tell Me About": rumors message
             { "%hol", null }, // Holiday
@@ -117,6 +118,7 @@ namespace DaggerfallWorkshop.Utility
             { "%kg", Weight },  //  Weight of items
             { "%kno", null }, // A knightly guild name
             { "%lev", null }, // Rank in guild that you are in.
+            { "%lp", LocalPalace },  //  Local / palace (?) dungeon
             { "%ln", null },  //  Random lastname
             { "%loc", MarkLocationOnMap }, // Location marked on map (comment Nystul: this seems to be context dependent - it is used both in direction dialogs (7333) and map reveal dialogs (7332) - it seems to return the name of the building and reveal the map only if a 7332 dialog was chosen
             { "%lt1", null }, // Title of _fl1
@@ -133,7 +135,7 @@ namespace DaggerfallWorkshop.Utility
             { "%n", NameDialogPartner },   // A random female first name (comment Nystul: I think it is just a random name - or maybe this is the reason that in vanilla all male mobile npcs have female names...)
             { "%nam", null }, // A random full name
             { "%nrn", null }, // Noble of the current region
-            { "%nt", null },  // ?
+            { "%nt", NearbyTavern },  // Nearby Tavern
             { "%ol1", null }, // Old lord of _fx1
             { "%olf", null }, // What happened to _ol1
             { "%on", null },  // ?
@@ -303,22 +305,15 @@ namespace DaggerfallWorkshop.Utility
                 MacroHandler svp = macroHandlers[symbolStr];
                 if (svp != null)
                 {
-                    try
-                    {
+                    try {
                         return svp.Invoke(mcp);
-                    }
-                    catch (NotImplementedException)
-                    {
+                    } catch (NotImplementedException) {
                         return symbolStr + "[srcDataUnknown]";
                     }
-                }
-                else
-                {
+                } else {
                     return symbolStr + "[unhandled]";
                 }
-            }
-            else
-            {
+            } else {
                 return symbolStr + "[undefined]";
             }
         }
@@ -367,7 +362,7 @@ namespace DaggerfallWorkshop.Utility
         }
 
         private static string CityName2(IMacroContextProvider mcp)
-        {   // %cn2 (only used in msg #200)
+        {   // %cn2 (only used in msg #200 where cn and cn2 are random? places)
             throw new NotImplementedException();
         }
 
@@ -382,24 +377,55 @@ namespace DaggerfallWorkshop.Utility
             switch (gps.CurrentLocationType)
             {
                 case DFRegion.LocationTypes.TownCity:
-                    return "city";
+                    return HardStrings.city;
                 case DFRegion.LocationTypes.TownVillage:
-                    return "village";
+                    return HardStrings.village;
                 case DFRegion.LocationTypes.TownHamlet:
-                    return "hamlet";
+                    return HardStrings.hamlet;
                 case DFRegion.LocationTypes.HomeFarms:
-                    return "farm";
+                    return HardStrings.farm;
                 case DFRegion.LocationTypes.HomePoor:
-                    return "shack";
+                    return HardStrings.shack;
                 case DFRegion.LocationTypes.HomeWealthy:
-                    return "manor";
+                    return HardStrings.manor;
                 case DFRegion.LocationTypes.Tavern:
-                    return "community";
+                    return HardStrings.community;
                 case DFRegion.LocationTypes.ReligionTemple:
-                    return "shrine";
+                    return HardStrings.shrine;
                 default:
                     return gps.CurrentLocationType.ToString();
             }
+        }
+
+        private static string LocalPalace(IMacroContextProvider mcp)
+        {   // %lp - kinda guessing for this one
+            BuildingDirectory buildingDirectory = GameManager.Instance.StreamingWorld.GetCurrentBuildingDirectory();
+            if (buildingDirectory && buildingDirectory.BuildingCount > 0)
+            {
+                List<BuildingSummary> palaces = buildingDirectory.GetBuildingsOfType(DFLocation.BuildingTypes.Palace);
+                if (palaces.Count >= 1)
+                {
+                    Debug.LogFormat("Location {1} has a palace with buildingKey: {0}", palaces[0].buildingKey, GameManager.Instance.PlayerGPS.CurrentLocation.Name);
+                    PlayerGPS.DiscoveredBuilding palace;
+                    if (GameManager.Instance.PlayerGPS.GetAnyBuilding(palaces[0].buildingKey, out palace))
+                        return palace.displayName.TrimEnd('.');
+                }
+            }
+            return HardStrings.local;
+        }
+
+        private static string NearbyTavern(IMacroContextProvider mcp)
+        {   // %nt - just gets a random tavern from current location and ignores how near it is.
+            BuildingDirectory buildingDirectory = GameManager.Instance.StreamingWorld.GetCurrentBuildingDirectory();
+            if (buildingDirectory && buildingDirectory.BuildingCount > 0)
+            {
+                List<BuildingSummary> taverns = buildingDirectory.GetBuildingsOfType(DFLocation.BuildingTypes.Tavern);
+                int i = UnityEngine.Random.Range(0, taverns.Count - 1);
+                PlayerGPS.DiscoveredBuilding tavern;
+                if (GameManager.Instance.PlayerGPS.GetAnyBuilding(taverns[i].buildingKey, out tavern))
+                    return tavern.displayName;
+            }
+            return HardStrings.tavern;
         }
 
         private static string Title(IMacroContextProvider mcp)
@@ -411,31 +437,31 @@ namespace DaggerfallWorkshop.Utility
             switch (regionFaction.ruler)
             {
                 case 1:
-                    return "King";
+                    return HardStrings.King;
                 case 2:
-                    return "Queen";
+                    return HardStrings.Queen;
                 case 3:
-                    return "Duke";
+                    return HardStrings.Duke;
                 case 4:
-                    return "Duchess";
+                    return HardStrings.Duchess;
                 case 5:
-                    return "Marquis";
+                    return HardStrings.Marquis;
                 case 6:
-                    return "Marquise";
+                    return HardStrings.Marquise;
                 case 7:
-                    return "Count";
+                    return HardStrings.Count;
                 case 8:
-                    return "Countess";
+                    return HardStrings.Countess;
                 case 9:
-                    return "Baron";
+                    return HardStrings.Baron;
                 case 10:
-                    return "Baroness";
+                    return HardStrings.Baroness;
                 case 11:
-                    return "Lord";
+                    return HardStrings.Lord;
                 case 12:
-                    return "Lady";
+                    return HardStrings.Lady;
                 default:
-                    return "Lord";
+                    return HardStrings.Lord;
             }
         }
 
@@ -445,33 +471,33 @@ namespace DaggerfallWorkshop.Utility
             int rep = GameManager.Instance.PlayerEntity.RegionData[gps.CurrentRegionIndex].LegalRep;
 
             if (rep > 80)
-                return "revered";
+                return HardStrings.revered;
             else if (rep > 60)
-                return "esteemed";
+                return HardStrings.esteemed;
             else if (rep > 40)
-                return "honored";
+                return HardStrings.honored;
             else if (rep > 20)
-                return "admired";
+                return HardStrings.admired;
             else if (rep > 10)
-                return "respected";
+                return HardStrings.respected;
             else if (rep > 0)
-                return "dependable";
+                return HardStrings.dependable;
             else if (rep == 0)
-                return "a common citizen";
+                return HardStrings.aCommonCitizen;
             else if (rep < -80)
-                return "hated";
+                return HardStrings.hated;
             else if (rep < -60)
-                return "pond scum";
+                return HardStrings.pondScum;
             else if (rep < -40)
-                return "a villain";
+                return HardStrings.aVillain;
             else if (rep < -20)
-                return "a criminal";
+                return HardStrings.aCriminal;
             else if (rep < -10)
-                return "a scoundrel";
+                return HardStrings.aScoundrel;
             else if (rep < 0)
-                return "undependable";
+                return HardStrings.undependable;
 
-            return "unknown";
+            return HardStrings.unknown;
         }
 
         private static string Time(IMacroContextProvider mcp)
@@ -539,11 +565,8 @@ namespace DaggerfallWorkshop.Utility
             foreach (DFCareer.Skills skill in primarySkills)
             {
                 if (GameManager.Instance.PlayerEntity.Skills.GetPermanentSkillValue(skill) == 100)
-                {
                     return DaggerfallUnity.Instance.TextProvider.GetSkillName(skill);
-                }
             }
-
             return "BLANK";
         }
 
@@ -660,7 +683,7 @@ namespace DaggerfallWorkshop.Utility
         //
         // Contextual macro handlers - delegate to the macro data source provided by macro context provider.
         //
-        #region contextual macro handlers
+        #region Contextual macro handlers
 
         private static string Amount(IMacroContextProvider mcp)
         {   // %a

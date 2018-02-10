@@ -29,7 +29,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// </summary>
         private class ItemMacroDataSource : MacroDataSource
         {
-            private string[] conditions = new string[] { "Broken", "Useless", "Battered", "Worn", "Used", "Slightly Used", "Almost New", "New" };
+            private string[] conditions = new string[] { HardStrings.Broken, HardStrings.Useless, HardStrings.Battered, HardStrings.Worn, HardStrings.Used, HardStrings.SlightlyUsed, HardStrings.AlmostNew, HardStrings.New };
             private int[] conditionThresholds = new int[] {1, 5, 15, 40, 60, 75, 91, 101};
 
             private DaggerfallUnityItem parent;
@@ -104,7 +104,7 @@ namespace DaggerfallWorkshop.Game.Items
             public override string HeldSoul()
             {   // %hs
                 if (parent.trappedSoulType == MobileTypes.None)
-                    return "Nothing";
+                    return HardStrings.Nothing;
                 MobileEnemy soul;
                 EnemyBasics.GetEnemy(parent.trappedSoulType, out soul);
                 return soul.Name;
