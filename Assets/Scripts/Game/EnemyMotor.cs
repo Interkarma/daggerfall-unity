@@ -189,11 +189,11 @@ namespace DaggerfallWorkshop.Game
                 else
                     motion = knockBackDirection * (25 / (PlayerMotor.classicToUnitySpeedUnitRatio / 10));
 
-				if (swims)
-				{
-					WaterMove(motion);
-				}
-				else if(flies)
+                if (swims)
+                {
+                    WaterMove(motion);
+                }
+                else if (flies)
                     controller.Move(motion * Time.deltaTime);
                 else
                     controller.SimpleMove(motion);
@@ -295,27 +295,32 @@ namespace DaggerfallWorkshop.Game
                 transform.forward = direction.normalized;
 
             // Bow attack for enemies that have the appropriate animation
-            if (senses.PlayerInSight && 360 * MeshReader.GlobalScale < distance && distance < 2048 * MeshReader.GlobalScale &&
-                mobile.Summary.Enemy.HasRangedAttack1 && mobile.Summary.Enemy.ID > 129 && mobile.Summary.Enemy.ID != 132)
+            if (senses.PlayerInSight && 360 * MeshReader.GlobalScale < distance && distance < 2048 * MeshReader.GlobalScale)
             {
                 if (classicUpdate)
                 {
                     if (senses.TargetIsWithinYawAngle(22.5f))
                     {
-                        // Random chance to shoot bow
-                        if (DFRandom.rand() < 1000)
+                        if (mobile.Summary.Enemy.HasRangedAttack1 && mobile.Summary.Enemy.ID > 129 && mobile.Summary.Enemy.ID != 132)
                         {
-                            if (mobile.Summary.Enemy.HasRangedAttack1 && !mobile.Summary.Enemy.HasRangedAttack2
-                                && mobile.Summary.EnemyState != MobileStates.RangedAttack1)
-                                mobile.ChangeEnemyState(MobileStates.RangedAttack1);
-                            else if (mobile.Summary.Enemy.HasRangedAttack2 && mobile.Summary.EnemyState != MobileStates.RangedAttack2)
-                                mobile.ChangeEnemyState(MobileStates.RangedAttack2);
+                            // Random chance to shoot bow
+                            if (DFRandom.rand() < 1000)
+                            {
+                                if (mobile.Summary.Enemy.HasRangedAttack1 && !mobile.Summary.Enemy.HasRangedAttack2
+                                    && mobile.Summary.EnemyState != MobileStates.RangedAttack1)
+                                    mobile.ChangeEnemyState(MobileStates.RangedAttack1);
+                                else if (mobile.Summary.Enemy.HasRangedAttack2 && mobile.Summary.EnemyState != MobileStates.RangedAttack2)
+                                    mobile.ChangeEnemyState(MobileStates.RangedAttack2);
+                            }
+                            // Otherwise hold ground
+                            else if (!mobile.IsPlayingOneShot())
+                            {
+                                mobile.ChangeEnemyState(MobileStates.Idle);
+                            }
                         }
-                        // Otherwise hold ground
-                        else if (!mobile.IsPlayingOneShot())
-                        {
-                            mobile.ChangeEnemyState(MobileStates.Idle);
-                        }
+                        //else if (spellPoints > 0 && canCastRangeSpells && DFRandom.rand() % 40 == 0) TODO: Ranged spell shooting
+                        //          CastRangedSpell();
+                        //          Spell Cast Animation;
                     }
                     else
                     {
@@ -345,21 +350,30 @@ namespace DaggerfallWorkshop.Game
 
                 if (swims)
                 {
-					WaterMove(motion);
+                    WaterMove(motion);
                 }
                 else if (flies)
                     controller.Move(motion * Time.deltaTime);
                 else
                     controller.SimpleMove(motion);
             }
-            else
+            else if (!senses.TargetIsWithinYawAngle(22.5f))
             {
-                // We have reached target, is player nearby?
-                if (!senses.PlayerInSight && !senses.PlayerInEarshot)
-                {
-                    mobile.ChangeEnemyState(MobileStates.Idle);
-                    senses.LastKnownPlayerPos = EnemySenses.ResetPlayerPos;
-                }
+                TurnToTarget(direction.normalized);
+                return;
+            }
+            //else if
+            //{
+            // TODO: Touch spells.
+            //if (hasSpellPoints && attackCoolDownFinished && CanCastTouchSpells)
+            //{
+            //    Cast Touch Spell
+            //    Spell Cast Animation
+            //}
+            //}
+            else if (!senses.PlayerInSight && !senses.PlayerInEarshot)
+            {
+                mobile.ChangeEnemyState(MobileStates.Idle);
             }
         }
 
