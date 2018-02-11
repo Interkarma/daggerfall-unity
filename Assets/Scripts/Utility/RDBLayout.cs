@@ -22,6 +22,7 @@ using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game.Questing;
+using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -1448,50 +1449,8 @@ namespace DaggerfallWorkshop.Utility
             // Get dungeon type index
             int dungeonIndex = (int)dungeonType;
 
-            string[] lootTableKeys = {
-            "K", // Crypt
-            "N", // Orc Stronghold
-            "N", // Human Stronghold
-            "N", // Prison
-            "K", // Desecrated Temple
-            "M", // Mine
-            "M", // Natural Cave
-            "Q", // Coven
-            "K", // Vampire Haunt
-            "U", // Laboratory
-            "D", // Harpy Nest
-            "N", // Ruined Castle
-            "L", // Spider Nest
-            "F", // Giant Stronghold
-            "S", // Dragon's Den
-            "N", // Barbarian Stronghold
-            "M", // Volcanic Caves
-            "L", // Scorpion Nest
-            "N", // Cemetery
-            };
-
-            // Get loot table key
-            if (dungeonIndex < lootTableKeys.Length)
-            {
-                DaggerfallLoot.GenerateItems(lootTableKeys[dungeonIndex], loot.Items);
-
-                // Randomly add map
-                char key = lootTableKeys[dungeonIndex][0];
-                int alphabetIndex = key - 64;
-
-                if ( alphabetIndex >= 10 && alphabetIndex <= 15 ) // between keys J and 0
-                {
-                    int[] mapChances = { 2, 1, 1, 2, 2, 15 };
-                    int mapChance = mapChances[alphabetIndex - 10];
-                    DaggerfallLoot.RandomlyAddMap(mapChance, loot.Items);
-                    DaggerfallLoot.RandomlyAddPotion(4, loot.Items);
-                    DaggerfallLoot.RandomlyAddPotionRecipe(2, loot.Items);
-                }
-            }
-            else
-            {
+            if (!LootTables.GenerateLoot(loot, dungeonIndex))
                 DaggerfallUnity.LogMessage(string.Format("RDBLayout: Dungeon type {0} is out of range or unknown.", dungeonType), true);
-            }
 
             return loot;
         }

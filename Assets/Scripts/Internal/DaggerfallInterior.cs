@@ -18,6 +18,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop
 {
@@ -476,9 +477,8 @@ namespace DaggerfallWorkshop
                             DaggerfallLootDataTables.clothingArchive,
                             0, loadID);
 
-                        DaggerfallLoot.GenerateItems("O", loot.Items);
-                        DaggerfallLoot.RandomlyAddPotion(3, loot.Items);
-                        DaggerfallLoot.RandomlyAddPotionRecipe(2, loot.Items);
+                        if (!LootTables.GenerateLoot(loot, (int) GameManager.Instance.PlayerGPS.CurrentLocationType))
+                            DaggerfallUnity.LogMessage(string.Format("DaggerfallInterior: Location type {0} is out of range or unknown.", GameManager.Instance.PlayerGPS.CurrentLocationType), true);
                     }
                 }
 
