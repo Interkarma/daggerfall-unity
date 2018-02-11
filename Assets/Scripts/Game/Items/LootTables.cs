@@ -123,7 +123,7 @@ namespace DaggerfallWorkshop.Game.Items
                 DaggerfallLoot.GenerateItems(lootTableKeys[locationIndex], loot.Items);
 
                 // Randomly add map
-                char key = lootTableKeys[locationIndex][0];
+                char key = lootTableKeys[locationIndex]['O'];
                 int alphabetIndex = key - 64;
 
                 if (alphabetIndex >= 10 && alphabetIndex <= 15) // between keys J and 0
