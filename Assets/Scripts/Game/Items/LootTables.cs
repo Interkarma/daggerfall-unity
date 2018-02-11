@@ -126,7 +126,7 @@ namespace DaggerfallWorkshop.Game.Items
                 char key = lootTableKeys[locationIndex][0];
                 int alphabetIndex = key - 64;
 
-                if (alphabetIndex >= 10 && alphabetIndex <= 15) // between keys J and 0
+                if (alphabetIndex >= 10 && alphabetIndex <= 15) // between keys J and O
                 {
                     int[] mapChances = { 2, 1, 1, 2, 2, 15 };
                     int mapChance = mapChances[alphabetIndex - 10];
