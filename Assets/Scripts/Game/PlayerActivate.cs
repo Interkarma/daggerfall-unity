@@ -859,8 +859,8 @@ namespace DaggerfallWorkshop.Game
 
             // Check if this NPC is a quest giver and show temp guild quest popup
             // This will be changed later when temp guild system replaced with real thing
-            if (QuestorCheck(npc))
-                return;
+//            if (QuestorCheck(npc))
+//                return;
 
             // Handle quest NPC click and exit if linked to a Person resource
             QuestResourceBehaviour questResourceBehaviour = npc.gameObject.GetComponent<QuestResourceBehaviour>();
@@ -936,8 +936,8 @@ namespace DaggerfallWorkshop.Game
             DaggerfallGuildPopupWindow.TempGuilds guild;
             if (npc.Data.factionID == PersistentFactionData.fightersGuildQuestorFactionID)
                 guild = DaggerfallGuildPopupWindow.TempGuilds.Fighter;
-//            else if (npc.Data.factionID == PersistentFactionData.magesGuildQuestorFactionID)
-//                guild = DaggerfallGuildPopupWindow.TempGuilds.Mage;
+            else if (npc.Data.factionID == PersistentFactionData.magesGuildQuestorFactionID)
+                guild = DaggerfallGuildPopupWindow.TempGuilds.Mage;
             else
                 guild = DaggerfallGuildPopupWindow.TempGuilds.None;
 
