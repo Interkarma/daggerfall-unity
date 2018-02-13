@@ -18,6 +18,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop
 {
@@ -60,6 +61,7 @@ namespace DaggerfallWorkshop
         {
             Rest = 4,
             Enter = 8,
+            Treasure = 19,
             LadderBottom = 21,
             LadderTop = 22,
         }
@@ -156,7 +158,7 @@ namespace DaggerfallWorkshop
 
             // Layout interior data
             AddModels(buildingData);
-            AddFlats();
+            AddFlats(buildingData);
             AddPeople();
             AddActionDoors();
             AddSpawnPoints();
@@ -370,10 +372,10 @@ namespace DaggerfallWorkshop
         private void AddFurnitureAction(DFBlock.RmbBlock3dObjectRecord obj, GameObject go, PlayerGPS.DiscoveredBuilding buildingData)
         {
             // Create unique LoadID for save system, using 9 lsb and the sign bit from each coord pos int
-            ulong loadID = ((ulong)buildingData.buildingKey) << 30 |
-                           (uint)(obj.XPos << 1 & posMask) << 20 |
-                           (uint)(obj.YPos << 1 & posMask) << 10 |
-                           (uint)(obj.ZPos << 1 & posMask);
+            ulong loadID = ((ulong) buildingData.buildingKey) << 30 |
+                            (uint)(obj.XPos << 1 & posMask) << 20 |
+                            (uint)(obj.YPos << 1 & posMask) << 10 |
+                            (uint)(obj.ZPos << 1 & posMask);
 
             DFLocation.BuildingTypes buildingType = buildingData.buildingType;
 
@@ -426,7 +428,7 @@ namespace DaggerfallWorkshop
         /// <summary>
         /// Add interior flats.
         /// </summary>
-        private void AddFlats()
+        private void AddFlats(PlayerGPS.DiscoveredBuilding buildingData)
         {
             GameObject node = new GameObject("Interior Flats");
             node.transform.parent = this.transform;
@@ -457,6 +459,27 @@ namespace DaggerfallWorkshop
                     marker.type = (InteriorMarkerTypes)obj.TextureRecord;
                     marker.gameObject = go;
                     markers.Add(marker);
+
+                    // Add loot containers for treasure markers (always use pile of clothes icon)
+                    if (marker.type == InteriorMarkerTypes.Treasure)
+                    {
+                        // Create unique LoadID for save system, using 9 lsb and the sign bit from each coord pos int
+                        ulong loadID = ((ulong) buildingData.buildingKey) << 30 |
+                                        (uint)(obj.XPos << 1 & posMask) << 20 |
+                                        (uint)(obj.YPos << 1 & posMask) << 10 |
+                                        (uint)(obj.ZPos << 1 & posMask);
+
+                        DaggerfallLoot loot = GameObjectHelper.CreateLootContainer(
+                            LootContainerTypes.RandomTreasure,
+                            InventoryContainerImages.Chest,
+                            billboardPosition,
+                            node.transform,
+                            DaggerfallLootDataTables.clothingArchive,
+                            0, loadID);
+
+                        if (!LootTables.GenerateLoot(loot, (int) GameManager.Instance.PlayerGPS.CurrentLocationType))
+                            DaggerfallUnity.LogMessage(string.Format("DaggerfallInterior: Location type {0} is out of range or unknown.", GameManager.Instance.PlayerGPS.CurrentLocationType), true);
+                    }
                 }
 
                 // Add point lights
