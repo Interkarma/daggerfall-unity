@@ -123,11 +123,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string serviceTeleport = "Teleportation";
         public const string serviceMakeSpells = "Make Spells";
         public const string serviceBuyMagicItems = "Buy Magic Items";
+        public const string serviceSellMagicItems = "Buy Magic Items";
         public const string serviceDaedraSummon = "Daedra Summoning";
         public const string serviceMakeMagicItems = "Make Magic Items";
         public const string serviceRepairs = "Repairs";
         public const string serviceDonate = "Make Donation";
         public const string serviceCure = "Cure Disease";
+        public const string serviceSpymaster = "Spymaster";
+        public const string serviceMakePotions = "Make Potions";
+        public const string serviceBuyPotions = "Buy Potions";
+        public const string serviceBuySoulgems = "Buy Soulgems";
         public const string serviceDenied = "You need to be a member to access this.";
 
         public const string roomFreeForKnightSuchAsYou = "The room is free for a knight such as you.";

@@ -17,6 +17,8 @@ using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using System.Collections.Generic;
+using DaggerfallWorkshop.Game.Questing;
+using System;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -52,10 +54,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         DB_Training = 839,
         DB_Make_Potions = 840,
         DB_Buy_Potions = 841,
-        DB_Spymaster = 841,
+        DB_Spymaster = 842,
         DB_Buy_Soulgems = 843,
 
-        // Temples:
+        // Temples, generic:
         T_Quests = 240,
         T_Make_Donation = 810,
         T_Cure_Diseases = 813,
@@ -96,6 +98,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Fields
 
+        const string tempFightersQuestsFilename = "Temp-FightersQuests";
+        const string tempMagesQuestsFilename = "Temp-MagesGuild";
+
         const string baseTextureName = "GILD00I0.IMG";      // Join Guild / Talk / Service
 
         const int TrainingOfferId = 8;
@@ -109,6 +114,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         StaticNPC serviceNPC;
         FactionFile.GuildGroups guild;
         GuildServices service;
+        Quest offeredQuest = null;
 
         static ItemCollection merchantItems;    // Temporary
 
@@ -138,23 +144,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
                 ItemCollection items = new ItemCollection();
-                items.AddItem(ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race));
-                items.AddItem(ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race));
-                items.AddItem(ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race));
-                DaggerfallUnityItem magic = ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race);
-                magic.legacyMagic = new int[] { 1, 87, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535 };
-                items.AddItem(magic);
-                items.AddItem(ItemBuilder.CreateRandomBook());
-                items.AddItem(ItemBuilder.CreateRandomClothing(playerEntity.Gender, playerEntity.Race));
-                items.AddItem(ItemBuilder.CreateRandomClothing(playerEntity.Gender, playerEntity.Race));
-                items.AddItem(ItemBuilder.CreateRandomClothing(playerEntity.Gender, playerEntity.Race));
-                items.AddItem(ItemBuilder.CreateRandomClothing(playerEntity.Gender, playerEntity.Race));
-                items.AddItem(ItemBuilder.CreateRandomIngredient());
-                items.AddItem(ItemBuilder.CreateItem(ItemGroups.MiscItems, 274));
-                items.AddItem(ItemBuilder.CreateRandomReligiousItem());
-                items.AddItem(ItemBuilder.CreateRandomWeapon(playerEntity.Level));
-                items.AddItem(ItemBuilder.CreateRandomWeapon(playerEntity.Level));
-                items.AddItem(ItemBuilder.CreateRandomWeapon(playerEntity.Level));
+                DaggerfallUnityItem magicArm = ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race);
+                magicArm.legacyMagic = new int[] { 1, 87, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535 };
+                items.AddItem(magicArm);
+                DaggerfallUnityItem magicWeap = ItemBuilder.CreateRandomWeapon(playerEntity.Level);
+                magicWeap.legacyMagic = new int[] { 1, 87, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535 };
+                items.AddItem(magicWeap);
                 merchantItems = items;
             }
             return merchantItems;
@@ -205,23 +200,35 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             switch (service)
             {
+                case GuildServices.FG_Quests:
                 case GuildServices.MG_Quests:
+                case GuildServices.TG_Quests:
+                case GuildServices.DB_Quests:
+                case GuildServices.T_Quests:
                     return HardStrings.serviceQuests;
+
                 case GuildServices.MG_Identify:
                     return HardStrings.serviceIdentify;
+
                 case GuildServices.MG_Buy_Spells:
                 case GuildServices.TKy_Buy_Spells:
                     return HardStrings.serviceBuySpells;
+
                 case GuildServices.MG_Buy_Magic_Items:
                     return HardStrings.serviceBuyMagicItems;
+
                 case GuildServices.MG_Make_Spells:
                     return HardStrings.serviceMakeSpells;
+
                 case GuildServices.MG_Make_Magic_Items:
                     return HardStrings.serviceMakeMagicItems;
+
                 case GuildServices.MG_Daedra_Summoning:
                     return HardStrings.serviceDaedraSummon;
+
                 case GuildServices.MG_Teleportation:
                     return HardStrings.serviceTeleport;
+
                 case GuildServices.MG_Training:
                 case GuildServices.FG_Training:
                 case GuildServices.TG_Training:
@@ -235,12 +242,32 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 case GuildServices.TSt_Training:
                 case GuildServices.TZe_Training:
                     return HardStrings.serviceTraining;
+
                 case GuildServices.FG_Repairs:
                     return HardStrings.serviceRepairs;
-                case GuildServices.T_Cure_Diseases:
-                    return HardStrings.serviceCure;
+
+                case GuildServices.TG_Sell_Magic_Items:
+                    return HardStrings.serviceBuyMagicItems;
+
+                case GuildServices.TG_Spymaster:
+                case GuildServices.DB_Spymaster:
+                    return HardStrings.serviceSpymaster;
+
+                case GuildServices.DB_Make_Potions:
+                    return HardStrings.serviceMakePotions;
+
+                case GuildServices.DB_Buy_Potions:
+                    return HardStrings.serviceBuyPotions;
+
+                case GuildServices.DB_Buy_Soulgems:
+                    return HardStrings.serviceBuySoulgems;
+
                 case GuildServices.T_Make_Donation:
                     return HardStrings.serviceDonate;
+
+                case GuildServices.T_Cure_Diseases:
+                    return HardStrings.serviceCure;
+
                 default:
                     return "?";
             }
@@ -253,7 +280,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #endregion
 
-        #region Event Handlers
+        #region Event Handlers: General
 
         private void JoinButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
@@ -267,12 +294,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ServiceButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            CloseWindow();
             switch (service)
             {
+                case GuildServices.FG_Quests:
+                case GuildServices.MG_Quests:
+                case GuildServices.TG_Quests:
+                case GuildServices.DB_Quests:
+                case GuildServices.T_Quests:
+                    GetQuest();
+                    break;
+
                 case GuildServices.MG_Identify:
+                    CloseWindow();
                     uiManager.PushWindow(new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Identify, this));
                     break;
+
                 case GuildServices.MG_Training:
                 case GuildServices.FG_Training:
                 case GuildServices.TG_Training:
@@ -287,20 +323,26 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 case GuildServices.TZe_Training:
                     TrainingService();
                     break;
+
                 case GuildServices.MG_Buy_Magic_Items:
+                    CloseWindow();
                     DaggerfallTradeWindow tradeWindow = new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Buy, this);
                     tradeWindow.MerchantItems = GetMerchantItems();
                     uiManager.PushWindow(tradeWindow);
                     break;
+
                 case GuildServices.MG_Teleportation:
+                    CloseWindow();
                     DaggerfallUI.Instance.DfTravelMapWindow.ActivateTeleportationTravel();
                     uiManager.PushWindow(DaggerfallUI.Instance.DfTravelMapWindow);
                     break;
+
                 case GuildServices.MG_Buy_Spells:
                     //uiManager.PushWindow(new DaggerfallBankingWindow(uiManager, this));
                     //break;
 
                 default:
+                    CloseWindow();
                     DaggerfallUI.MessageBox("Guild service not yet implemented.");
                     break;
             }
@@ -313,7 +355,143 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #endregion
 
-        #region Service handling
+        #region Service Handling: Quests
+
+        static Dictionary<GuildServices, string> guildQuestTables = new Dictionary<GuildServices, string>()
+        {
+            { GuildServices.FG_Quests, tempFightersQuestsFilename },
+            { GuildServices.MG_Quests, tempMagesQuestsFilename },
+        };
+
+        void GetQuest()
+        {
+            // Just exit if this NPC already involved in an active quest
+            // If quest conditions are complete the quest system should pickup ending
+            if (QuestMachine.Instance.IsLastNPCClickedAnActiveQuestor())
+            {
+                CloseWindow();
+                return;
+            }
+
+            if (guildQuestTables.ContainsKey(service))
+            {
+                OfferGuildQuest();
+            }
+            else
+            {
+                CloseWindow();
+                DaggerfallUI.MessageBox("Guild quests not yet implemented.");
+            }
+        }
+
+        void OfferGuildQuest()
+        {
+            // Load quests table each time so player can edit their local file at runtime
+            Table table = null;
+            string questName = string.Empty;
+            try
+            {
+                table = new Table(QuestMachine.Instance.GetTableSourceText(guildQuestTables[service]));
+
+                // Select a quest name at random from table
+                if (table == null || table.RowCount == 0)
+                    throw new Exception("Quests table is empty.");
+
+                questName = table.GetRow(UnityEngine.Random.Range(0, table.RowCount))[0];
+            }
+            catch (Exception ex)
+            {
+                DaggerfallUI.Instance.PopupMessage(ex.Message);
+                return;
+            }
+
+            // Log offered quest
+            Debug.LogFormat("Offering quest {0} from Guild {1}", questName, guild);
+
+            // Parse quest
+            try
+            {
+                offeredQuest = QuestMachine.Instance.ParseQuest(questName);
+            }
+            catch (Exception ex)
+            {
+                // Log exception, show random flavour text, and exit
+                Debug.LogErrorFormat("Exception during quest compile: {0}", ex.Message);
+                ShowFailCompileMessage();
+                return;
+            }
+
+            // Offer the quest to player
+            DaggerfallMessageBox messageBox = QuestMachine.Instance.CreateMessagePrompt(offeredQuest, (int)QuestMachine.QuestMessages.QuestorOffer);
+            if (messageBox != null)
+            {
+                messageBox.OnButtonClick += OfferQuest_OnButtonClick;
+                messageBox.Show();
+            }
+        }
+
+        void ShowFailCompileMessage()
+        {
+            const int flavourMessageID = 600;
+
+            TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(flavourMessageID);
+            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
+            messageBox.SetTextTokens(tokens);
+            messageBox.ClickAnywhereToClose = true;
+            messageBox.AllowCancel = true;
+            messageBox.ParentPanel.BackgroundColor = Color.clear;
+            messageBox.Show();
+        }
+
+        // Show a popup such as accept/reject message close guild window
+        void ShowQuestPopupMessage(Quest quest, int id, bool exitOnClose = true)
+        {
+            // Get message resource
+            Message message = quest.GetMessage(id);
+            if (message == null)
+                return;
+
+            // Setup popup message
+            TextFile.Token[] tokens = message.GetTextTokens();
+            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
+            messageBox.SetTextTokens(tokens);
+            messageBox.ClickAnywhereToClose = true;
+            messageBox.AllowCancel = true;
+            messageBox.ParentPanel.BackgroundColor = Color.clear;
+
+            // Exit on close if requested
+            if (exitOnClose)
+                messageBox.OnClose += QuestPopupMessage_OnClose;
+
+            // Present popup message
+            messageBox.Show();
+        }
+
+        private void OfferQuest_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        {
+            if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
+            {
+                // Show accept message, add quest
+                sender.CloseWindow();
+                ShowQuestPopupMessage(offeredQuest, (int)QuestMachine.QuestMessages.AcceptQuest);
+                QuestMachine.Instance.InstantiateQuest(offeredQuest);
+            }
+            else
+            {
+                // Show refuse message
+                sender.CloseWindow();
+                ShowQuestPopupMessage(offeredQuest, (int)QuestMachine.QuestMessages.RefuseQuest, false);
+            }
+        }
+
+        private void QuestPopupMessage_OnClose()
+        {
+            CloseWindow();
+        }
+
+        #endregion
+
+        #region Service Handling: Training
 
         static Dictionary<GuildServices, List<DFCareer.Skills>> guildTrainingSkills = new Dictionary<GuildServices, List<DFCareer.Skills>>()
         {
@@ -363,6 +541,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void TrainingService()
         {
+            CloseWindow();
             // Check enough time has passed since last trained
             DaggerfallDateTime now = DaggerfallUnity.Instance.WorldTime.Now;
             if ((now.ToClassicDaggerfallTime() - playerEntity.TimeOfLastSkillTraining) < 720)
@@ -437,7 +616,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     playerEntity.DeductGoldAmount(GetServicePrice());
                     playerEntity.DecreaseFatigue(PlayerEntity.DefaultFatigueLoss * 180);
                     int skillAdvancementMultiplier = DaggerfallSkills.GetAdvancementMultiplier(skillToTrain);
-                    short tallyAmount = (short)(Random.Range(10, 21) * skillAdvancementMultiplier);
+                    short tallyAmount = (short)(UnityEngine.Random.Range(10, 21) * skillAdvancementMultiplier);
                     playerEntity.TallySkill(skillToTrain, tallyAmount);
                     DaggerfallUI.MessageBox(TrainSkillId);
                 }
@@ -454,7 +633,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #endregion
 
-        #region Macro handling
+        #region Macro Handling
 
         public MacroDataSource GetMacroDataSource()
         {

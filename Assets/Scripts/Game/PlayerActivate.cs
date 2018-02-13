@@ -859,8 +859,8 @@ namespace DaggerfallWorkshop.Game
 
             // Check if this NPC is a quest giver and show temp guild quest popup
             // This will be changed later when temp guild system replaced with real thing
-            if (QuestorCheck(npc))
-                return;
+//            if (QuestorCheck(npc))
+//                return;
 
             // Handle quest NPC click and exit if linked to a Person resource
             QuestResourceBehaviour questResourceBehaviour = npc.gameObject.GetComponent<QuestResourceBehaviour>();
