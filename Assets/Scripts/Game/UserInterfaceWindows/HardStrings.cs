@@ -218,5 +218,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string expiredRentedRoom = "Your time for this room has expired.";
 
         public const string pressButtonToFireSpell = "Press button to fire spell.";
+
+        public const string climbingMode = "Climbing mode.";
     }
 }

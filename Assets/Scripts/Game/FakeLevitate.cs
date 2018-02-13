@@ -26,6 +26,7 @@ namespace DaggerfallWorkshop.Game
         PlayerMotor playerMotor;
         Camera playerCamera;
         float moveSpeed = 4.0f;
+        CollisionFlags collisionFlags = 0;
 
         public bool IsLevitating
         {
@@ -37,6 +38,11 @@ namespace DaggerfallWorkshop.Game
         {
             get { return playerSwimming; }
             set { SetSwimming(value); }
+        }
+
+        public CollisionFlags CollisionFlags
+        {
+            get { return collisionFlags; }
         }
 
         private void Start()
@@ -90,7 +96,7 @@ namespace DaggerfallWorkshop.Game
             if (upOrDown)
                 moveSpeed = 80f / PlayerMotor.classicToUnitySpeedUnitRatio;
 
-            playerMotor.controller.Move(direction * moveSpeed * Time.deltaTime);
+            collisionFlags = playerMotor.controller.Move(direction * moveSpeed * Time.deltaTime);
             // Reset to levitate speed in case it has been changed by swimming
             moveSpeed = 4.0f;
         }
