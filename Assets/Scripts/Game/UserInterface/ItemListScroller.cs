@@ -432,6 +432,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             DaggerfallUnityItem item = items[index];
             if (item != null && OnItemClick != null)
                 OnItemClick(item);
+
+            ItemButton_OnMouseEnter(sender);
         }
 
         void ItemButton_OnMouseEnter(BaseScreenComponent sender)
