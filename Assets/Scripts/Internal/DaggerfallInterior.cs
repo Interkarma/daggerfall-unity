@@ -159,7 +159,7 @@ namespace DaggerfallWorkshop
             // Layout interior data
             AddModels(buildingData);
             AddFlats(buildingData);
-            AddPeople();
+            AddPeople(buildingData);
             AddActionDoors();
             AddSpawnPoints();
 
@@ -737,7 +737,7 @@ namespace DaggerfallWorkshop
         /// <summary>
         /// Add interior people flats.
         /// </summary>
-        private void AddPeople()
+        private void AddPeople(PlayerGPS.DiscoveredBuilding buildingData)
         {
             GameObject node = new GameObject("People Flats");
             node.transform.parent = this.transform;
@@ -766,6 +766,12 @@ namespace DaggerfallWorkshop
                 // Add StaticNPC behaviour
                 StaticNPC npc = go.AddComponent<StaticNPC>();
                 npc.SetLayoutData(obj);
+
+                // Disable if shop is closed
+                if (RMBLayout.IsShop(buildingData.buildingType) && !PlayerActivate.IsBuildingOpen(buildingData.buildingType))
+                {
+                    go.SetActive(false);
+                }
             }
         }
 

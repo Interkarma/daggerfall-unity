@@ -126,6 +126,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Inventory,      // Should never get used, treat as 'none'
             Sell,
             Buy,
+            Steal,
             Repair,
             Identify,
         }
@@ -195,7 +196,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetupItemListScrollers();
 
             // Highlight purchasable items
-            if (windowMode == WindowModes.Buy)
+            if (windowMode == WindowModes.Buy || windowMode == WindowModes.Steal)
             {
                 localItemListScroller.BackgroundAnimationHandler = BuyItemBackgroundAnimationHandler;
                 remoteItemListScroller.BackgroundAnimationHandler = BuyItemBackgroundAnimationHandler;
@@ -434,6 +435,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(InventoryContainerImages.Merchant);
                     break;
                 case WindowModes.Buy:
+                case WindowModes.Steal:
                     containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(InventoryContainerImages.Shelves);
                     break;
                 case WindowModes.Repair:
@@ -501,7 +503,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             } else if (windowMode == WindowModes.Buy) {
                 actionButtonsTexture = ImageReader.GetTexture(buyButtonsTextureName);
                 coinsAnimation = ImageReader.GetImageData(coinsAnimTextureName, 6, 0, true, false, true);
-            } else if (windowMode == WindowModes.Repair) {
+            } else if (windowMode == WindowModes.Steal) {
+                //actionButtonsTexture = ImageReader.GetTexture(buyButtonsTextureName);
+                coinsAnimation = ImageReader.GetImageData(coinsAnimTextureName, 6, 0, true, false, true);
+            }
+            else if (windowMode == WindowModes.Repair) {
                 actionButtonsTexture = ImageReader.GetTexture(repairButtonsTextureName);
             } else if (windowMode == WindowModes.Identify) {
                 actionButtonsTexture = ImageReader.GetTexture(identifyButtonsTextureName);
@@ -530,6 +536,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         break;
 
                     case WindowModes.Buy:
+                    case WindowModes.Steal:
                         if (usingWagon)
                             if (CanCarry(item))
                                 TransferItem(item, localItems, PlayerEntity.Items);

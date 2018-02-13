@@ -55,14 +55,20 @@ namespace DaggerfallWorkshop.Game
         public float MobileNPCActivationDistance = 256;
 
         // Opening and closing hours by building type
-        byte[] openHours = { 7, 8, 9, 8, 0, 9, 10, 10, 9, 6, 9, 11, 9, 9, 0, 0, 10, 0 };
-        byte[] closeHours = { 22, 16, 19, 15, 25, 21, 19, 20, 18, 23, 23, 23, 20, 20, 25, 25, 16, 0 };
+        static byte[] openHours = { 7, 8, 9, 8, 0, 9, 10, 10, 9, 6, 9, 11, 9, 9, 0, 0, 10, 0 };
+        static byte[] closeHours = { 22, 16, 19, 15, 25, 21, 19, 20, 18, 23, 23, 23, 20, 20, 25, 25, 16, 0 };
 
         const int PrivatePropertyId = 37;
 
         public PlayerActivateModes CurrentMode
         {
             get { return currentMode; }
+        }
+
+        public static bool IsBuildingOpen(DFLocation.BuildingTypes buildingType)
+        {
+            return (openHours[(int) buildingType] <= DaggerfallUnity.Instance.WorldTime.Now.Hour &&
+                    closeHours[(int) buildingType] > DaggerfallUnity.Instance.WorldTime.Now.Hour);
         }
 
         void Start()
@@ -461,7 +467,9 @@ namespace DaggerfallWorkshop.Game
                     if (loot.stockedDate < DaggerfallLoot.CreateStockedDate(DaggerfallUnity.Instance.WorldTime.Now))
                         loot.StockShopShelf(playerEnterExit.BuildingDiscoveryData);
                     // Open Trade Window
-                    DaggerfallTradeWindow tradeWindow = new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Buy);
+                    DaggerfallTradeWindow.WindowModes mode =
+                        (IsBuildingOpen(GameManager.Instance.PlayerEnterExit.BuildingType)) ? DaggerfallTradeWindow.WindowModes.Buy : DaggerfallTradeWindow.WindowModes.Steal;
+                    DaggerfallTradeWindow tradeWindow = new DaggerfallTradeWindow(uiManager, mode);
                     tradeWindow.MerchantItems = loot.Items;
                     uiManager.PushWindow(tradeWindow);
                     return;
@@ -714,8 +722,7 @@ namespace DaggerfallWorkshop.Game
             // Handle other structures (stores, temples, taverns, palaces)
             else if (type <= DFLocation.BuildingTypes.Palace)
             {
-                unlocked = (openHours[(int)type] <= DaggerfallUnity.Instance.WorldTime.Now.Hour
-                    && closeHours[(int)type] > DaggerfallUnity.Instance.WorldTime.Now.Hour);
+                unlocked = IsBuildingOpen(type);
             }
             else if (type == DFLocation.BuildingTypes.Ship && DaggerfallBankManager.OwnsShip)
                 unlocked = true;
