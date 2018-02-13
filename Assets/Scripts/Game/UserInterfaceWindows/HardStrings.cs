@@ -216,6 +216,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string youHaveRentedRoom = "You have a room at %s for %d hours.";
         public const string haveNotRentedRoom = "You have not rented a room here.";
         public const string expiredRentedRoom = "Your time for this room has expired.";
+        public const string tavernAle = "Ale (1 gold)";
+        public const string tavernBeer = "Beer (1 gold)";
+        public const string tavernMead = "Mead (2 gold)";
+        public const string tavernWine = "Wine (3 gold)";
+        public const string tavernBread = "Bread (1 gold)";
+        public const string tavernBroth = "Broth (1 gold)";
+        public const string tavernCheese = "Cheese (2 gold)";
+        public const string tavernFowl = "Fowl (3 gold)";
+        public const string tavernGruel = "Gruel (2 gold)";
+        public const string tavernPie = "Pie (2 gold)";
+        public const string tavernStew = "Stew (3 gold)";
+
 
         public const string pressButtonToFireSpell = "Press button to fire spell.";
 

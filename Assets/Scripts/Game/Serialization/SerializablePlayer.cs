@@ -114,6 +114,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.playerEntity.currentHealth = entity.CurrentHealth;
             data.playerEntity.currentFatigue = entity.CurrentFatigue;
             data.playerEntity.currentMagicka = entity.CurrentMagicka;
+            data.playerEntity.currentBreath = entity.CurrentBreath;
             data.playerEntity.skillUses = entity.SkillUses;
             data.playerEntity.timeOfLastSkillIncreaseCheck = entity.TimeOfLastSkillIncreaseCheck;
             data.playerEntity.timeOfLastSkillTraining = entity.TimeOfLastSkillTraining;
@@ -135,6 +136,8 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.playerEntity.timeForDarkBrotherhoodLetter = entity.TimeForDarkBrotherhoodLetter;
             data.playerEntity.thievesGuildRequirementTally = entity.ThievesGuildRequirementTally;
             data.playerEntity.darkBrotherhoodRequirementTally = entity.DarkBrotherhoodRequirementTally;
+            data.playerEntity.lastTimePlayerAteOrDrankAtTavern = entity.LastTimePlayerAteOrDrankAtTavern;
+
             data.playerEntity.regionData = entity.RegionData;
             data.playerEntity.rentedRooms = entity.RentedRooms.ToArray();
 
@@ -215,6 +218,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             entity.CurrentHealth = data.playerEntity.currentHealth;
             entity.CurrentFatigue = data.playerEntity.currentFatigue;
             entity.CurrentMagicka = data.playerEntity.currentMagicka;
+            entity.CurrentBreath = data.playerEntity.currentBreath;
             entity.SkillUses = data.playerEntity.skillUses;
             entity.TimeOfLastSkillIncreaseCheck = data.playerEntity.timeOfLastSkillIncreaseCheck;
             entity.TimeOfLastSkillTraining = data.playerEntity.timeOfLastSkillTraining;
@@ -236,6 +240,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             entity.TimeForDarkBrotherhoodLetter = data.playerEntity.timeForDarkBrotherhoodLetter;
             entity.ThievesGuildRequirementTally = data.playerEntity.thievesGuildRequirementTally;
             entity.DarkBrotherhoodRequirementTally = data.playerEntity.darkBrotherhoodRequirementTally;
+            entity.LastTimePlayerAteOrDrankAtTavern = data.playerEntity.lastTimePlayerAteOrDrankAtTavern;
             entity.SetCurrentLevelUpSkillSum();
             entity.RentedRooms = (data.playerEntity.rentedRooms != null) ? data.playerEntity.rentedRooms.ToList() : new List<RoomRental_v1>();
 

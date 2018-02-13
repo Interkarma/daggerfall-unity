@@ -159,6 +159,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public int currentHealth;
         public int currentFatigue;
         public int currentMagicka;
+        public int currentBreath;
         public short[] skillUses;
         public uint timeOfLastSkillIncreaseCheck;
         public int startingLevelUpSkillSum;
@@ -179,6 +180,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public uint timeForDarkBrotherhoodLetter;
         public int thievesGuildRequirementTally;
         public int darkBrotherhoodRequirementTally;
+        public uint lastTimePlayerAteOrDrankAtTavern;
         public uint timeOfLastSkillTraining;
         public PlayerEntity.RegionDataRecord[] regionData;
         public RoomRental_v1[] rentedRooms;
