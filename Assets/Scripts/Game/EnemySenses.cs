@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -11,6 +11,10 @@
 
 using UnityEngine;
 using System.Collections;
+using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Formulas;
+using DaggerfallConnect;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -111,13 +115,35 @@ namespace DaggerfallWorkshop.Game
 
                 // Classic stealth mechanics would be interfered with by hearing, so only enable
                 // hearing if the enemy has detected the player. If player has been seen we can omit hearing.
-                if (detectedPlayer == true && !playerInSight)
+                if (detectedPlayer && !playerInSight)
                     playerInEarshot = CanHearPlayer();
                 else
                     playerInEarshot = false;
 
-                if((playerInEarshot || playerInSight) && !hasEncounteredPlayer)
+                if ((playerInEarshot || playerInSight) && !hasEncounteredPlayer)
+                {
                     hasEncounteredPlayer = true;
+
+                    // Check appropriate language skill to see if player can pacify enemy
+                    DaggerfallEntityBehaviour entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
+                    EnemyMotor motor = GetComponent<EnemyMotor>();
+                    if (entityBehaviour && motor &&
+                        (entityBehaviour.EntityType == EntityTypes.EnemyMonster || entityBehaviour.EntityType == EntityTypes.EnemyClass))
+                    {
+                        EnemyEntity enemyEntity = entityBehaviour.Entity as EnemyEntity;
+                        DFCareer.Skills languageSkill = enemyEntity.GetLanguageSkill();
+                        if (languageSkill != DFCareer.Skills.None)
+                        {
+                            PlayerEntity player = GameManager.Instance.PlayerEntity;
+                            if (FormulaHelper.CalculateEnemyPacification(player, languageSkill))
+                            {
+                                motor.IsHostile = false;
+                                DaggerfallUI.AddHUDText(HardStrings.languagePacified.Replace("%e", enemyEntity.Name).Replace("%s", languageSkill.ToString()), 5);
+                            }
+                            player.TallySkill(languageSkill, 1);
+                        }
+                    }
+                }
             }
         }
 

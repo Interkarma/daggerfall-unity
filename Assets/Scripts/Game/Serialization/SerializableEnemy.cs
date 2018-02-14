@@ -92,6 +92,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Create save data
             EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
             EnemyMotor motor = enemy.GetComponent<EnemyMotor>();
+            EnemySenses senses = enemy.GetComponent<EnemySenses>();
             DaggerfallMobileUnit mobileEnemy = enemy.GetComponentInChildren<DaggerfallMobileUnit>();
             EnemyData_v1 data = new EnemyData_v1();
             data.loadID = LoadID;
@@ -106,6 +107,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.currentFatigue = entity.CurrentFatigue;
             data.currentMagicka = entity.CurrentMagicka;
             data.isHostile = motor.IsHostile;
+            data.hasEncounteredPlayer = senses.HasEncounteredPlayer;
             data.isDead = (entity.CurrentHealth <= 0) ? true : false;
             data.questSpawn = enemy.QuestSpawn;
             data.mobileGender = mobileEnemy.Summary.Enemy.Gender;
@@ -161,7 +163,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             entity.CurrentFatigue = data.currentFatigue;
             entity.CurrentMagicka = data.currentMagicka;
             motor.IsHostile = data.isHostile;
-            senses.HasEncounteredPlayer = true;
+            senses.HasEncounteredPlayer = data.hasEncounteredPlayer;
 
             // Disable dead enemies
             if (data.isDead)
