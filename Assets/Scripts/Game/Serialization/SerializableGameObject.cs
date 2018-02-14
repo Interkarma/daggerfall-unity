@@ -305,6 +305,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public string careerName;
         public int careerIndex;
         public bool isHostile;
+        public bool hasEncounteredPlayer;
         public bool questSpawn;
         public MobileGender mobileGender;
         public ItemData_v1[] items;

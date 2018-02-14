@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -347,6 +347,74 @@ namespace DaggerfallWorkshop.Game.Entity
 
                 default:
                     return DFCareer.EnemyGroups.None;
+            }
+        }
+
+        public DFCareer.Skills GetLanguageSkill()
+        {
+            if (entityType == EntityTypes.EnemyClass)
+            {
+                switch (careerIndex)
+                {
+                    case (int)ClassCareers.Burglar:
+                    case (int)ClassCareers.Rogue:
+                    case (int)ClassCareers.Acrobat:
+                    case (int)ClassCareers.Thief:
+                    case (int)ClassCareers.Assassin:
+                    case (int)ClassCareers.Nightblade:
+                        return DFCareer.Skills.Streetwise;
+                    default:
+                        return DFCareer.Skills.Etiquette;
+                }
+            }
+
+            switch (careerIndex)
+            {
+                case (int)MonsterCareers.Orc:
+                case (int)MonsterCareers.OrcSergeant:
+                case (int)MonsterCareers.OrcShaman:
+                case (int)MonsterCareers.OrcWarlord:
+                    return DFCareer.Skills.Orcish;
+
+                case (int)MonsterCareers.Harpy:
+                    return DFCareer.Skills.Harpy;
+
+                case (int)MonsterCareers.Giant:
+                    return DFCareer.Skills.Giantish;
+
+                case (int)MonsterCareers.Dragonling:
+                case (int)MonsterCareers.Dragonling_Alternate:
+                    return DFCareer.Skills.Dragonish;
+
+                case (int)MonsterCareers.Nymph:
+                case (int)MonsterCareers.Lamia:
+                    return DFCareer.Skills.Nymph;
+
+                case (int)MonsterCareers.FrostDaedra:
+                case (int)MonsterCareers.FireDaedra:
+                case (int)MonsterCareers.Daedroth:
+                case (int)MonsterCareers.DaedraSeducer:
+                case (int)MonsterCareers.DaedraLord:
+                    return DFCareer.Skills.Daedric;
+
+                case (int)MonsterCareers.Spriggan:
+                    return DFCareer.Skills.Spriggan;
+
+                case (int)MonsterCareers.Centaur:
+                    return DFCareer.Skills.Centaurian;
+
+                case (int)MonsterCareers.Imp:
+                case (int)MonsterCareers.Gargoyle:
+                    return DFCareer.Skills.Impish;
+
+                case (int)MonsterCareers.Vampire:
+                case (int)MonsterCareers.VampireAncient:
+                case (int)MonsterCareers.Lich:
+                case (int)MonsterCareers.AncientLich:
+                    return DFCareer.Skills.Etiquette;
+
+                default:
+                    return DFCareer.Skills.None;
             }
         }
 

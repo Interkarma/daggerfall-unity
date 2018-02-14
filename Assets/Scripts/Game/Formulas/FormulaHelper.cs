@@ -169,6 +169,29 @@ namespace DaggerfallWorkshop.Game.Formulas
             return addHitPoints;
         }
 
+        // Calculate whether the player is successful at pacifying an enemy.
+        public static bool CalculateEnemyPacification(Entity.PlayerEntity player, DFCareer.Skills languageSkill)
+        {
+            double chance = 0;
+            if (languageSkill == DFCareer.Skills.Etiquette ||
+                languageSkill == DFCareer.Skills.Streetwise)
+            {
+                chance += player.Skills.GetLiveSkillValue(languageSkill) / 10;
+                chance += player.Stats.LivePersonality / 5;
+            }
+            else
+            {
+                chance += player.Skills.GetLiveSkillValue(languageSkill);
+                chance += player.Stats.LivePersonality / 10;
+            }
+            chance += GameManager.Instance.WeaponManager.Sheathed ? 10 : -25;
+            chance += player.Stats.LiveLuck / 5;
+
+            int roll = UnityEngine.Random.Range(0, 145);    // Max ~96.5% chance for 100% skill + per + luck and sheathed weapon.
+            Debug.LogFormat("Pacification {3} using {0} skill: chance= {1}  roll= {2}", languageSkill, chance, roll, (roll < chance) ? "success" : "failure");
+            return (roll < chance);
+        }
+
         #endregion
 
         #region Damage
