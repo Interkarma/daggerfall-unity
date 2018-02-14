@@ -315,6 +315,48 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
 
         /// <summary>
+        /// Seek asset in all mods with load order.
+        /// </summary>
+        /// <param name="name">Name of asset to seek.</param>
+        /// <param name="clone">Make a copy of asset?</param>
+        /// <param name="asset">Loaded asset or null.</param>
+        /// <remarks>
+        /// If multiple mods contain an asset with given name, priority is defined by load order.
+        /// </remarks>
+        /// <returns>True if asset is found and loaded sucessfully.</returns>
+        public bool TryGetAsset<T>(string name, bool clone, out T asset) where T : UnityEngine.Object
+        {
+            var query = from mod in Mods where mod.AssetBundle != null
+                        orderby mod.LoadPriority descending
+                        where mod.AssetBundle.Contains(name)
+                        select mod.GetAsset<T>(name, clone);
+
+            return (asset = query.FirstOrDefault()) != null;
+        }
+
+        /// <summary>
+        /// Seek asset in all mods with load order.
+        /// Check all names for each mod with the given priority.
+        /// </summary>
+        /// <param name="names">Names of asset to seek ordered by priority.</param>
+        /// <param name="clone">Make a copy of asset?</param>
+        /// <param name="asset">Loaded asset or null.</param>
+        /// <remarks>
+        /// If multiple mods contain an asset with any of the given names, priority is defined by load order.
+        /// If chosen mod contains multiple assets, priority is defined by order of names list.
+        /// </remarks>
+        /// <returns>True if asset is found and loaded sucessfully.</returns>
+        public bool TryGetAsset<T>(string[] names, bool clone, out T asset) where T : UnityEngine.Object
+        {
+            var query = from mod in Mods where mod.AssetBundle != null
+                        orderby mod.LoadPriority descending
+                        from name in names where mod.AssetBundle.Contains(name)
+                        select mod.GetAsset<T>(name, clone);
+
+            return (asset = query.FirstOrDefault()) != null;
+        }
+
+        /// <summary>
         /// convert full relative path to just the asset name for example:
         /// /Assets/examples/myscript.cs to myscript.cs
         /// </summary>

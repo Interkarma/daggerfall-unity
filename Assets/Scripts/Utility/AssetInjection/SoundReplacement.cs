@@ -9,42 +9,29 @@
 // Notes:
 //
 
+using System.Collections;
 using System.IO;
 using UnityEngine;
+using DaggerfallWorkshop.Game.Utility.ModSupport;
 
 namespace DaggerfallWorkshop.Utility.AssetInjection
 {
     /// <summary>
-    /// Handles import and injection of custom sounds and
-    /// songs with the purpose of providing modding support.
+    /// Handles import and injection of custom sounds and songs with the purpose of providing modding support.
+    /// Sound files are imported from mod bundles with load order or loaded directly from disk.
     /// </summary>
-    static public class SoundReplacement
+    public static class SoundReplacement
     {
-        #region Fields & Structs
+        #region Fields & Properties
 
-        static private string soundPath = Path.Combine(Application.streamingAssetsPath, "Sound");
-        const string soundExtension = ".wav";
-        const string songExtension = ".ogg";
-
-        public struct CustomSong
-        {
-            public bool UseCustomSong;                   // Use custom song from disk or Daggerfall song
-            public float Timer;                          // Current position in song
-            public float Lenght;                         // Lenght of song
-            public bool IsReady;                         // True if song is completely imported
-        }
-
-        #endregion
-
-        #region Properties
+        static readonly string soundPath = Path.Combine(Application.streamingAssetsPath, "Sound");
 
         /// <summary>
-        /// Path to custom sounds and music on disk.
+        /// Path to custom sounds and songs on disk.
         /// </summary>
-        static public string SoundPath
+        public static string SoundPath
         {
             get { return soundPath; }
-            internal set { soundPath = value; }
         }
 
         #endregion
@@ -52,71 +39,36 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         #region Public Methods
 
         /// <summary>
-        /// Check if sound file exist on disk.
+        /// Seek sound from mods.
         /// </summary>
-        /// <param name="soundIndex">Index of clip. Will be casted to SoundClips enum for better readability.</param>
-        /// <returns></returns>
-        static public bool CustomSoundExist(int soundIndex)
+        /// <param name="sound">Sound clip to seek.</param>
+        /// <param name="audioClip">Audioclip with imported sound data.</param>
+        /// <returns>True if sound is found.</returns>
+        public static bool TryImportSound(SoundClips sound, out AudioClip audioClip)
         {
-            return SoundFileExist((SoundClips)soundIndex + soundExtension);
+            return TryImportAudioClip(sound.ToString(), ".wav", out audioClip);
         }
 
         /// <summary>
-        /// Load custom sound file from disk.
+        /// Seek song from mods.
         /// </summary>
-        /// <param name="soundIndex">Index of clip. Will be casted to SoundClips enum for better readability.</param>
-        /// <returns></returns>
-        static public WWW LoadCustomSound(int soundIndex)
+        /// <param name="song">Song to seek.</param>
+        /// <param name="audioClip">Audioclip with imported sound data.</param>
+        /// <returns>True if song is found.</returns>
+        public static bool TryImportSong(SongFiles song, out AudioClip audioClip)
         {
-            return GetWwwFile((SoundClips)soundIndex + soundExtension);
+            return TryImportAudioClip(song.ToString(), ".ogg", out audioClip);
         }
 
         /// <summary>
-        /// Check if song file exists on disk.
-        /// We use the same nomenclature used in SongFiles enum.
+        /// Seek midi song from mods.
         /// </summary>
-        /// <param name="filename">Name of song, including .mid extension</param>
-        /// <returns></returns>
-        static public bool CustomMidiSongExist(string filename)
+        /// <param name="filename">Name of song to seek including .mid extension.</param>
+        /// <param name="songBytes">Midi data as a byte array.</param>
+        /// <returns>True if song is found.</returns>
+        public static bool TryImportMidiSong(string filename, out byte[] songBytes)
         {
-            return SoundFileExist("song_" + filename);
-        }
-
-        /// <summary>
-        /// Load custom song file from disk as a byte array.
-        /// We use the same nomenclature used in SongFiles enum.
-        /// </summary>
-        /// <param name="filename">Name of song, including .mid extension</param>
-        /// <returns></returns>
-        static public byte[] LoadCustomMidiSong(string filename)
-        {
-            byte[] songFile = File.ReadAllBytes(Path.Combine(soundPath, "song_" + filename));
-
-            if (songFile != null)
-                return songFile;
-
-            Debug.LogError("can't load custom song song_" + filename);
-            return null;
-        }
-
-        /// <summary>
-        /// Check if song file exist on disk.
-        /// </summary>
-        /// <param name="song">Name of song.</param>
-        /// <returns></returns>
-        static public bool CustomSongExist(SongFiles song)
-        {
-            return SoundFileExist(song.ToString() + songExtension);
-        }
-
-        /// <summary>
-        /// Load custom sound file from disk.
-        /// </summary>
-        /// <param name="song"></param>
-        /// <returns></returns>
-        static public WWW LoadCustomSong(SongFiles song)
-        {
-            return GetWwwFile(song.ToString() + songExtension);
+            return TryGetAudioBytes("song_" + filename, out songBytes);
         }
 
         #endregion
@@ -124,32 +76,78 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         #region Private Methods
 
         /// <summary>
-        /// Check if sound file exist on disk.
+        /// Import sound data from modding locations as an audio clip.
         /// </summary>
-        /// <param name="name">Name of sound file.</param>
-        static private bool SoundFileExist(string name)
+        private static bool TryImportAudioClip(string name, string extension, out AudioClip audioClip)
         {
-            if (DaggerfallUnity.Settings.MeshAndTextureReplacement
-                && File.Exists(Path.Combine(soundPath, name)))
-                return true;
+            if (DaggerfallUnity.Settings.MeshAndTextureReplacement)
+            {
+                // Seek from loose files
+                string path = Path.Combine(soundPath, name + extension);
+                if (File.Exists(path))
+                {
+                    WWW www = new WWW("file://" + path);
+                    audioClip = www.audioClip;
+                    DaggerfallUnity.Instance.StartCoroutine(LoadAudioData(www, audioClip));
+                    return true;
+                }
 
+                // Seek from mods
+                if (ModManager.Instance != null && ModManager.Instance.TryGetAsset(name, false, out audioClip))
+                {
+                    if (audioClip.preloadAudioData || audioClip.LoadAudioData())
+                        return true;
+
+                    Debug.LogErrorFormat("Failed to load audiodata for audioclip {0}", name);
+                }
+            }
+
+            audioClip = null;
             return false;
         }
 
         /// <summary>
-        /// Get content of sound file.
+        /// Import midi data from modding locations as a byte array.
         /// </summary>
-        /// <param name="name">Name of sound file.</param>
-        /// <returns>New WWW object</returns>
-        static private WWW GetWwwFile (string name)
+        private static bool TryGetAudioBytes(string name, out byte[] songBytes)
         {
-            WWW www = new WWW(Path.Combine("file://" + soundPath, name));
+            if (DaggerfallUnity.Settings.MeshAndTextureReplacement)
+            {
+                // Seek from loose files
+                string path = Path.Combine(soundPath, name);
+                if (File.Exists(path))
+                {
+                    songBytes = File.ReadAllBytes(path);
+                    return true;
+                }
 
-            if (www!=null)
-                return www;
+                // Seek from mods
+                if (ModManager.Instance != null)
+                {
+                    TextAsset textAsset;
+                    if (ModManager.Instance.TryGetAsset(name, false, out textAsset))
+                    {
+                        songBytes = textAsset.bytes;
+                        return true;
+                    }
+                }
+            }
 
-            Debug.LogError(string.Format("File {0} from {1} is corrupted", name, soundPath));
-            return null;
+            songBytes = null;
+            return false;
+        }
+
+        /// <summary>
+        /// Load audio data from WWW in background.
+        /// </summary>
+        private static IEnumerator LoadAudioData(WWW www, AudioClip clip)
+        {
+            yield return www;
+
+            if (clip.loadState == AudioDataLoadState.Failed)
+                Debug.LogErrorFormat("Failed to load audioclip: {0}", www.error);
+
+            www.Dispose();
         }
 
         #endregion

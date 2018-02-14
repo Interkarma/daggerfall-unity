@@ -56,7 +56,8 @@ namespace DaggerfallWorkshop
         bool awakeComplete = false;
         float oldGain;
 
-        SoundReplacement.CustomSong customSong;
+        bool isImported;
+        bool isLoading;     
 
         /// <summary>
         /// Gets peer AudioSource component.
@@ -70,15 +71,13 @@ namespace DaggerfallWorkshop
         {
             InitSynth();
 
-            InitCustomSongs();
-
             DaggerfallVidPlayerWindow.OnVideoStart += DaggerfallVidPlayerWindow_OnVideoStart;
             DaggerfallVidPlayerWindow.OnVideoEnd += DaggerfallVidPlayerWindow_OnVideoEnd;
         }
 
         void Update()
         {
-            if (!customSong.UseCustomSong)
+            if (!isImported)
             {
                 // Update status
                 if (midiSequencer != null)
@@ -88,23 +87,25 @@ namespace DaggerfallWorkshop
                     EndTime = midiSequencer.EndTime;
                 }
             }
-            else if (customSong.IsReady)
+            else
             {
-                // Frame rate independent timer
-                customSong.Timer += Time.deltaTime;
-
-                // Triggered on end of audio clip
-                if (customSong.Timer >= customSong.Lenght)
+                // Start playing
+                if (isLoading && audioSource.clip.loadState == AudioDataLoadState.Loaded)
                 {
-                    IsPlaying = false;
-                    customSong.UseCustomSong = false;
+                    isLoading = false;
+                    audioSource.Play();
                 }
+
+                // Update status
+                IsPlaying = audioSource.isPlaying || isLoading;
+                CurrentTime = audioSource.timeSamples;
+                EndTime = audioSource.clip.samples;
             }
         }
 
         void LateUpdate()
         {
-            if (!customSong.UseCustomSong)
+            if (!isImported)
             {
                 if (audioSource.playOnAwake && (midiSequencer != null && !midiSequencer.IsPlaying) && !awakeComplete)
                 {
@@ -149,27 +150,14 @@ namespace DaggerfallWorkshop
             // Stop if playing another song
             Stop();
 
-            // Import custom song from disk
-            if (SoundReplacement.CustomSongExist(song))
+            // Import custom song
+            AudioClip clip;
+            if (isImported = SoundReplacement.TryImportSong(song, out clip))
             {
-                // Load song file
-                WWW customSongFile = SoundReplacement.LoadCustomSong(song);
-                if (customSongFile != null)
-                {
-                    // Let www import the song
-                    customSong.IsReady = false;
-
-                    // Play song
-                    StartCoroutine(PlayCustomSong(customSongFile));
-
-                    // Settings
-                    Song = song;
-                    customSong.UseCustomSong = true;
-                    IsPlaying = true;
-
-                    return;
-                }
-                Debug.LogError("Can't load custom song " + song);
+                Song = song;
+                audioSource.clip = clip;
+                isLoading = true;
+                return;
             }
 
             // Load song data
@@ -197,8 +185,14 @@ namespace DaggerfallWorkshop
             if (!InitSynth())
                 return;
 
-            if (customSong.UseCustomSong)
-                customSong.UseCustomSong = false;
+            // Reset audiosource clip
+            if (isImported)
+            {
+                isImported = false;
+                audioSource.Stop();
+                audioSource.clip = null;
+                audioSource.Play();
+            }
 
             // Stop if playing a song
             if (midiSequencer.IsPlaying)
@@ -208,34 +202,6 @@ namespace DaggerfallWorkshop
                 midiSynthesizer.ResetSynthControls();
                 midiSynthesizer.ResetPrograms();
                 playEnabled = false;
-            }
-        }
-
-        /// <summary>
-        /// Load AudioClip from WWW to get custom song.
-        /// </summary>
-        /// <param name="www">WWW object</param>
-        IEnumerator PlayCustomSong(WWW www)
-        {
-            // Get clip
-            AudioClip clip = www.audioClip;
-
-            // Import song
-            while (clip.loadState != AudioDataLoadState.Loaded)
-                yield return www;
-
-            if (clip.loadState == AudioDataLoadState.Failed)
-                Debug.LogError("Can't load custom song " + Song);
-            else
-            {
-                // Play clip
-                audioSource.clip = clip;
-                audioSource.Play();
-
-                // Set timer to get end of audio clip
-                customSong.Timer = 0f;
-                customSong.Lenght = clip.length;
-                customSong.IsReady = true;
             }
         }
 
@@ -289,12 +255,6 @@ namespace DaggerfallWorkshop
             return true;
         }
 
-        private void InitCustomSongs()
-        {
-            customSong.UseCustomSong = false;
-            customSong.IsReady = false;
-        }
-
         private string EnumToFilename(SongFiles song)
         {
             string enumName = song.ToString();
@@ -317,8 +277,9 @@ namespace DaggerfallWorkshop
         private byte[] LoadSong(string filename)
         {
             // Get custom midi song
-            if (SoundReplacement.CustomMidiSongExist(filename))
-                return SoundReplacement.LoadCustomMidiSong(filename);
+            byte[] songBytes;
+            if (SoundReplacement.TryImportMidiSong(filename, out songBytes))
+                return songBytes;
 
             // Get Daggerfal song
             TextAsset asset = Resources.Load<TextAsset>(Path.Combine(SongFolder, filename));
@@ -340,8 +301,13 @@ namespace DaggerfallWorkshop
                 return "Synthesizer not ready.";
 
             string final;
-            if (customSong.UseCustomSong)
-                final = string.Format("Playing custom song '{0}' at position {1}/{2}", Song, customSong.Timer, customSong.Lenght);
+            if (isImported)
+            {
+                if (isLoading)
+                    final = string.Format("Loading song '{0}'", Song);
+                else
+                    final = string.Format("Playing song '{0}' at position {1}/{2}", Song, audioSource.timeSamples, audioSource.clip.samples);
+            }
             else if (midiSequencer.IsPlaying)
                 final = string.Format("Playing song '{0}' at position {1}/{2}", currentMidiName, midiSequencer.CurrentTime, midiSequencer.EndTime);
             else
