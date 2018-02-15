@@ -197,6 +197,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public int worldPosZ;
         public bool insideDungeon;
         public bool insideBuilding;
+        public bool insideOpenShop;
         public string terrainSamplerName;
         public int terrainSamplerVersion;
         public StaticDoor[] exteriorDoors;

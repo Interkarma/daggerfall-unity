@@ -55,7 +55,7 @@ namespace DaggerfallWorkshop.Game
         public float MobileNPCActivationDistance = 256;
 
         // Opening and closing hours by building type
-        static byte[] openHours = { 7, 8, 9, 8, 0, 9, 10, 10, 9, 6, 9, 11, 9, 9, 0, 0, 10, 0 };
+        static byte[] openHours  = {  7,  8,  9,  8,  0,  9, 10, 10,  9,  6,  9, 11,  9,  9,  0,  0, 10, 0 };
         static byte[] closeHours = { 22, 16, 19, 15, 25, 21, 19, 20, 18, 23, 23, 23, 20, 20, 25, 25, 16, 0 };
 
         const int PrivatePropertyId = 37;
@@ -245,7 +245,7 @@ namespace DaggerfallWorkshop.Game
                                         // Defer transition to interior to after user closes messagebox
                                         deferredInteriorDoorOwner = doorOwner;
                                         deferredInteriorDoor = door;
-                                        mb.OnClose += Popup_OnClose;
+                                        mb.OnClose += BuildingGreetingPopup_OnClose;
                                         return;
                                     }
                                 }
@@ -467,7 +467,7 @@ namespace DaggerfallWorkshop.Game
                     if (loot.stockedDate < DaggerfallLoot.CreateStockedDate(DaggerfallUnity.Instance.WorldTime.Now))
                         loot.StockShopShelf(playerEnterExit.BuildingDiscoveryData);
                     // Open Trade Window if shop is open
-                    if (IsBuildingOpen(GameManager.Instance.PlayerEnterExit.BuildingType))
+                    if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideOpenShop)
                     {
                         DaggerfallTradeWindow tradeWindow = new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Buy);
                         tradeWindow.MerchantItems = loot.Items;
@@ -568,11 +568,12 @@ namespace DaggerfallWorkshop.Game
 
             // Perform transition
             playerEnterExit.BuildingDiscoveryData = db;
+            playerEnterExit.IsPlayerInsideOpenShop = RMBLayout.IsShop(db.buildingType) && IsBuildingOpen(db.buildingType);
             playerEnterExit.TransitionInterior(doorOwner, door, doFade, false);
         }
 
         // Message box closed, move to interior
-        private void Popup_OnClose()
+        private void BuildingGreetingPopup_OnClose()
         {
             TransitionInterior(deferredInteriorDoorOwner, deferredInteriorDoor, true);
         }

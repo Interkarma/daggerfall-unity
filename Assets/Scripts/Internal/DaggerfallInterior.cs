@@ -767,8 +767,10 @@ namespace DaggerfallWorkshop
                 StaticNPC npc = go.AddComponent<StaticNPC>();
                 npc.SetLayoutData(obj);
 
-                // Disable if shop is closed
-                if (RMBLayout.IsShop(buildingData.buildingType) && !PlayerActivate.IsBuildingOpen(buildingData.buildingType))
+                // Disable people if shop or building is closed
+                DFLocation.BuildingTypes buildingType = buildingData.buildingType;
+                if ((RMBLayout.IsShop(buildingType) && !GameManager.Instance.PlayerEnterExit.IsPlayerInsideOpenShop) ||
+                    (buildingType <= DFLocation.BuildingTypes.Palace && !RMBLayout.IsShop(buildingType) && !PlayerActivate.IsBuildingOpen(buildingType)))
                 {
                     go.SetActive(false);
                 }

@@ -36,6 +36,7 @@ namespace DaggerfallWorkshop.Game
         bool isPlayerInsideDungeon = false;
         bool isPlayerInsideDungeonCastle = false;
         bool isPlayerInsideSpecialArea = false;
+        bool isPlayerInsideOpenShop = false;
         bool isPlayerSwimming = false;
         bool isPlayerSubmerged = false;
         bool isRespawning = false;
@@ -105,6 +106,16 @@ namespace DaggerfallWorkshop.Game
         public bool IsPlayerInsideSpecialArea
         {
             get { return isPlayerInsideSpecialArea; }
+        }
+
+        /// <summary>
+        /// True when player is inside an open shop.
+        /// Set upon entry, so doesn't matter if shop 'closes' with player inside.
+        /// </summary>
+        public bool IsPlayerInsideOpenShop
+        {
+            get { return isPlayerInsideOpenShop; }
+            set { isPlayerInsideOpenShop = value; }
         }
 
         /// <summary>
