@@ -219,7 +219,7 @@ namespace DaggerfallWorkshop.Game
                                     else // Breaking into building
                                     {
                                         PlayerEntity player = GameManager.Instance.PlayerEntity;
-                                        //player.TallyCrimeGuildRequirements(true, 1);
+                                        player.TallyCrimeGuildRequirements(true, 1);
                                     }
                                 }
 
@@ -466,13 +466,19 @@ namespace DaggerfallWorkshop.Game
                     // Stock shop shelf on first access
                     if (loot.stockedDate < DaggerfallLoot.CreateStockedDate(DaggerfallUnity.Instance.WorldTime.Now))
                         loot.StockShopShelf(playerEnterExit.BuildingDiscoveryData);
-                    // Open Trade Window
-                    DaggerfallTradeWindow.WindowModes mode =
-                        (IsBuildingOpen(GameManager.Instance.PlayerEnterExit.BuildingType)) ? DaggerfallTradeWindow.WindowModes.Buy : DaggerfallTradeWindow.WindowModes.Steal;
-                    DaggerfallTradeWindow tradeWindow = new DaggerfallTradeWindow(uiManager, mode);
-                    tradeWindow.MerchantItems = loot.Items;
-                    uiManager.PushWindow(tradeWindow);
-                    return;
+                    // Open Trade Window if shop is open
+                    if (IsBuildingOpen(GameManager.Instance.PlayerEnterExit.BuildingType))
+                    {
+                        DaggerfallTradeWindow tradeWindow = new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Buy);
+                        tradeWindow.MerchantItems = loot.Items;
+                        uiManager.PushWindow(tradeWindow);
+                        return;
+                    }
+                    else
+                    {   // Open Inventory if shop closed, i.e. stealing
+                        DaggerfallUI.Instance.InventoryWindow.SetShopShelfStealing();
+                        break;
+                    }
 
                 // Handle house furniture containers: ask player if they want to look through private property
                 case LootContainerTypes.HouseContainers:
@@ -530,7 +536,9 @@ namespace DaggerfallWorkshop.Game
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
             {
                 // Record player crime
+                GameManager.Instance.PlayerEntity.TallyCrimeGuildRequirements(true, 1);
                 Debug.Log("Player crime detected: rifling through private property!!");
+
                 // Open inventory window with activated private container as remote target (pre-set)
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenInventoryWindow);
             }
@@ -992,7 +1000,7 @@ namespace DaggerfallWorkshop.Game
                         gotGold = gotGold.Replace("%d", pinchedGoldPieces.ToString());
                     }
                     DaggerfallUI.MessageBox(gotGold);
-                    //player.TallyCrimeGuildRequirements(true, 1);
+                    player.TallyCrimeGuildRequirements(true, 1);
                 }
                 else
                 {

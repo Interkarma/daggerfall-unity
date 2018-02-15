@@ -118,7 +118,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected Texture2D infoTexture;
 
-        ImageData magicAnimation;
+        protected ImageData coinsAnimation;
+        protected ImageData magicAnimation;
 
         #endregion
 
@@ -127,9 +128,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string baseTextureName = "INVE00I0.IMG";
         const string goldTextureName = "INVE01I0.IMG";
         const string infoTextureName = "ITEM00I0.IMG";
+
+        const string coinsAnimTextureName = "TEXTURE.434";
         const string magicAnimTextureName = "TEXTURE.434";
 
-        const float magicAnimationDelay = 0.15f;
+        protected const float coinsAnimationDelay = 0.08f;
+        protected const float magicAnimationDelay = 0.15f;
 
         const int accessoryCount = 12;                                  // Number of accessory slots
         const int accessoryButtonMarginSize = 1;                        // Margin of accessory buttons
@@ -151,6 +155,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         DaggerfallLoot lootTarget = null;
         bool usingWagon = false;
         bool allowDungeonWagonAccess = false;
+        bool shopShelfStealing = false;
+        int lootTargetStartCount = 0;
 
         ItemCollection lastRemoteItems = null;
         RemoteTargetTypes lastRemoteTargetType;
@@ -212,6 +218,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public void AllowDungeonWagonAccess()
         {
             allowDungeonWagonAccess = true;
+        }
+
+        public void SetShopShelfStealing()
+        {
+            shopShelfStealing = true;
         }
 
         #endregion
@@ -302,6 +313,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             };
             NativePanel.Components.Add(remoteItemListScroller);
             remoteItemListScroller.OnItemClick += RemoteItemListScroller_OnItemClick;
+            if (shopShelfStealing)
+            {
+                remoteItemListScroller.BackgroundAnimationHandler = StealItemBackgroundAnimationHandler;
+                remoteItemListScroller.BackgroundAnimationDelay = coinsAnimationDelay;
+            }
             if (itemInfoPanelLabel != null)
                 remoteItemListScroller.OnItemHover += ItemListScroller_OnHover;
         }
@@ -313,6 +329,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return questItemBackgroundColor;
             else
                 return Color.clear;
+        }
+
+        Texture2D[] StealItemBackgroundAnimationHandler(DaggerfallUnityItem item)
+        {
+            return (remoteItems.Contains(item)) ? coinsAnimation.animatedTextures : null;
         }
 
         Texture2D[] MagicItemForegroundAnimationHander(DaggerfallUnityItem item)
@@ -476,6 +497,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 remoteItems = lootTarget.Items;
                 remoteTargetType = RemoteTargetTypes.Loot;
+                lootTargetStartCount = remoteItems.Count;
                 lootTarget.OnInventoryOpen();
                 if (lootTarget.playerOwned && lootTarget.TextureArchive > 0)
                 {
@@ -540,6 +562,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // Reset dungeon wagon access permission
             allowDungeonWagonAccess = false;
+
+            // Handle stealing and reset shop shelf stealing mode
+            if (shopShelfStealing && remoteItems.Count < lootTargetStartCount)
+            {
+                playerEntity.TallyCrimeGuildRequirements(true, 1);
+                Debug.Log("Player crime detected: stealing from a shop!!");
+            }
+            shopShelfStealing = false;
 
             // If icon has changed move items to dropped list so this loot is removed and a new one created
             if (lootTarget != null && lootTarget.playerOwned && lootTarget.TextureArchive > 0 &&
@@ -890,6 +920,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Cut out info panel texture from item maker
             Texture2D infoBaseTexture = ImageReader.GetTexture(infoTextureName);
             infoTexture = ImageReader.GetSubTexture(infoBaseTexture, infoCutoutRect);
+
+            // Load coins animation textures
+            coinsAnimation = ImageReader.GetImageData(coinsAnimTextureName, 6, 0, true, false, true);
 
             // Load magic item animation textures
             magicAnimation = ImageReader.GetImageData(magicAnimTextureName, 5, 0, true, false, true);
