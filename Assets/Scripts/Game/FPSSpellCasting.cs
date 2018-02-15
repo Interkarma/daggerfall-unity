@@ -46,7 +46,6 @@ namespace DaggerfallWorkshop.Game
         /// This happens the first time a spell is cast and stored for re-casting.
         /// It's likely player will use a wide variety of spell types in normal play.
         /// </summary>
-        /// <param name="spellType"></param>
         void SetCurrentAnims(SpellTypes spellType, int border = 0, bool dilate = false)
         {
             // Attempt to get current anims

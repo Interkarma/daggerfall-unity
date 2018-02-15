@@ -266,6 +266,11 @@ namespace DaggerfallWorkshop.Game.Utility
             ResetWeaponManager();
             NoWorld = true;
             lastStartMethod = StartMethods.Void;
+
+            if (string.IsNullOrEmpty(PostStartMessage))
+                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiInitGame);
+            else
+                DaggerfallUI.PostMessage(PostStartMessage);
         }
 
         void StartTitleMenu()

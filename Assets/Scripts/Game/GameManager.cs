@@ -400,6 +400,10 @@ namespace DaggerfallWorkshop.Game
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenQuestJournalWindow);
             }
+            else if (InputManager.Instance.ActionComplete(InputManager.Actions.CastSpell))
+            {
+                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenSpellBookWindow);
+            }
 
             if (InputManager.Instance.ActionComplete(InputManager.Actions.Status))
             {

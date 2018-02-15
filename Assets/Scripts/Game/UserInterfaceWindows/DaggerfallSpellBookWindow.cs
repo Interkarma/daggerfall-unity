@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Lypyl (lypyldfa@dgmail.com)
-// Contributors:    
+// Contributors:    Gavin Clayton (interkarma@dfworkshop.net)
 // 
 // Notes:
 //
@@ -129,8 +129,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             scrollBar                       = new VerticalScrollBar();
             scrollBar.HorizontalAlignment   = HorizontalAlignment.None;
             scrollBar.VerticalAlignment     = VerticalAlignment.None;
-            scrollBar.Position              = new Vector2(121, 27);
-            scrollBar.Size                  = new Vector2(9, 104);
+            scrollBar.Position              = new Vector2(122, 28);
+            scrollBar.Size                  = new Vector2(7, 103);
             scrollBar.TotalUnits            = listBox.Count;
             scrollBar.DisplayUnits          = listBox.RowsDisplayed;
             scrollBar.ScrollIndex           = 0;

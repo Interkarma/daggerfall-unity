@@ -52,6 +52,7 @@ namespace DaggerfallWorkshop.Game
         public const string dfuiOpenTransportWindow = "dfuiOpenTransportWindow";
         public const string dfuiOpenAutomap = "dfuiOpenAutomap";
         public const string dfuiOpenQuestJournalWindow = "dfuiOpenQuestJournalWindow";
+        public const string dfuiOpenSpellBookWindow = "dfuiOpenSpellBookWindow";
 
         // Status info messages
         public const string dfuiStatusInfo = "dfuiStatusInfo";
