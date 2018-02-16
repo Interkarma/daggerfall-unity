@@ -141,7 +141,7 @@ namespace DaggerfallWorkshop.Game.Banking
             ModelData modelData;
             DaggerfallUnity.Instance.MeshReader.GetModelData(house.ModelID, out modelData);
             float houseRadius = modelData.DFMesh.Radius;
-            return (int) (houseRadius * 1280); //1436.6);
+            return (int) (houseRadius * 1280);
         }
 
         public static void SetupHouses()

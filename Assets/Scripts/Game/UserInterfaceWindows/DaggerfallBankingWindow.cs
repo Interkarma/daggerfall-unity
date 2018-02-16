@@ -403,10 +403,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
             else
             {
                 BuildingDirectory buildingDirectory = GameManager.Instance.StreamingWorld.GetCurrentBuildingDirectory();
-                List<BuildingSummary> housesForSale = buildingDirectory.GetHousesForSale();
-                // If houses are for sale, show them
-                if (housesForSale.Count > 0)
-                    uiManager.PushWindow(new DaggerfallBankPurchasePopUp(uiManager, this, housesForSale));
+                if (buildingDirectory)
+                {
+                    List<BuildingSummary> housesForSale = buildingDirectory.GetHousesForSale();
+                    // If houses are for sale, show them
+                    if (housesForSale.Count > 0)
+                        uiManager.PushWindow(new DaggerfallBankPurchasePopUp(uiManager, this, housesForSale));
+                    else
+                        GeneratePopup(TransactionResult.NO_HOUSES_FOR_SALE);
+                }
                 else
                     GeneratePopup(TransactionResult.NO_HOUSES_FOR_SALE);
             }
