@@ -10,6 +10,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Banking;
 using System.Collections.Generic;
+using DaggerfallConnect;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -185,7 +186,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {   // List all the houses for sale in this location
                 foreach (BuildingSummary house in housesForSale)
                 {
-                    priceListBox.AddItem("Price : " + house.buildingKey + " gold");
+                    priceListBox.AddItem("Price : " + DaggerfallBankManager.GetHousePrice(house) + " gold");
                 }
                 /*
                 for (int i = 0; i < 20; i++)
@@ -241,6 +242,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             goModel = GameObjectHelper.CreateDaggerfallMeshGameObject(modelId, null);
             goModel.layer = layer;
             goModel.transform.SetParent(goBankPurchase.transform);
+
+            // Apply current climate
+            ClimateBases climateBase = ClimateSwaps.FromAPIClimateBase(GameManager.Instance.PlayerGPS.ClimateSettings.ClimateType);
+            ClimateSeason season = (DaggerfallUnity.WorldTime.Now.SeasonValue == DaggerfallDateTime.Seasons.Winter) ? ClimateSeason.Winter : ClimateSeason.Summer;
+            DaggerfallMesh dfMesh = goModel.GetComponent<DaggerfallMesh>();
+            dfMesh.SetClimate(climateBase, season, WindowStyle.Day);
         }
 
         private void RenderModel()
@@ -356,11 +363,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (priceListBox.SelectedIndex < 0)
                 return;
+
+            CloseWindow();
             if (housesForSale == null)
-            {
-                CloseWindow();
-                bankingWindow.GeneratePurchaseShipPopup((ShipType) priceListBox.SelectedIndex);
-            }
+                bankingWindow.GeneratePurchaseShipPopup((ShipType)priceListBox.SelectedIndex);
+            else
+                bankingWindow.GeneratePurchaseHousePopup(housesForSale[priceListBox.SelectedIndex]);
         }
 
         void PriceListBox_OnSelectItem()
