@@ -68,8 +68,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Texture2D selectSelected;
         Texture2D selectNotSelected;
 
-        ImageData coinsAnimation;
-
         #endregion
 
         #region Fields
@@ -80,9 +78,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string repairButtonsTextureName = "INVE12I0.IMG";
         const string identifyButtonsTextureName = "INVE14I0.IMG";
         const string costPanelTextureName = "SHOP00I0.IMG";
-        const string coinsAnimTextureName = "TEXTURE.434";
-
-        const float coinsAnimationDelay = 0.08f;
 
         const int doesNotNeedToBeRepairedTextId = 24;
 
@@ -500,7 +495,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 actionButtonsTexture = ImageReader.GetTexture(sellButtonsTextureName);
             } else if (windowMode == WindowModes.Buy) {
                 actionButtonsTexture = ImageReader.GetTexture(buyButtonsTextureName);
-                coinsAnimation = ImageReader.GetImageData(coinsAnimTextureName, 6, 0, true, false, true);
             } else if (windowMode == WindowModes.Repair) {
                 actionButtonsTexture = ImageReader.GetTexture(repairButtonsTextureName);
             } else if (windowMode == WindowModes.Identify) {

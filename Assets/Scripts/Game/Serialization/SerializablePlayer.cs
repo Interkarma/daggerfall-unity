@@ -172,6 +172,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             playerPosition.worldPosZ = StreamingWorld.LocalPlayerGPS.WorldZ;
             playerPosition.insideDungeon = playerEnterExit.IsPlayerInsideDungeon;
             playerPosition.insideBuilding = playerEnterExit.IsPlayerInsideBuilding;
+            playerPosition.insideOpenShop = playerEnterExit.IsPlayerInsideOpenShop;
             playerPosition.terrainSamplerName = DaggerfallUnity.Instance.TerrainSampler.ToString();
             playerPosition.terrainSamplerVersion = DaggerfallUnity.Instance.TerrainSampler.Version;
             playerPosition.weather = GameManager.Instance.WeatherManager.PlayerWeather.WeatherType;
@@ -295,6 +296,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (data.playerPosition.insideBuilding)
             {
                 playerEnterExit.BuildingDiscoveryData = data.playerPosition.buildingDiscoveryData;
+                playerEnterExit.IsPlayerInsideOpenShop = data.playerPosition.insideOpenShop;
             }
 
             // Lower player position flag if inside with no doors

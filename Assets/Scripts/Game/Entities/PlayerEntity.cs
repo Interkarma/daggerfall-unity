@@ -527,6 +527,10 @@ namespace DaggerfallWorkshop.Game.Entity
         /// </summary>
         public void TallyCrimeGuildRequirements(bool thievingCrime, byte amount)
         {
+            // TODO: all disabled until ready to have TG/DB quests active in DFU
+            if (thievingCrime || !thievingCrime)
+                return;
+
             if (thievingCrime)
             {
                 if (timeForThievesGuildLetter == 0)
@@ -538,7 +542,7 @@ namespace DaggerfallWorkshop.Game.Entity
                         {
                             uint currentMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
                             timeForThievesGuildLetter = currentMinutes + 4320; // 3 days
-                       }
+                        }
                     }
                 }
             }

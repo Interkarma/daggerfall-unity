@@ -996,7 +996,10 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             // Restore building summary early for interior layout code
             if (saveData.playerData.playerPosition.insideBuilding)
+            {
                 playerEnterExit.BuildingDiscoveryData = saveData.playerData.playerPosition.buildingDiscoveryData;
+                playerEnterExit.IsPlayerInsideOpenShop = saveData.playerData.playerPosition.insideOpenShop;
+            }
 
             // Restore faction data to player entity
             // This is done early as later objects may require faction information on restore
