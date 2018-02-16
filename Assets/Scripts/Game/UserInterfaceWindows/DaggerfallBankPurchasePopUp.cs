@@ -51,14 +51,33 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Texture2D redDownArrow;
         Texture2D greenDownArrow;
 
+        Texture2D displayTexture;
+        Vector2 displayResolution;
+
         #endregion
 
-        #region Properties & Constants
+        #region Constants
+
+        private const int listDisplayUnits = 10;  // Number of items displayed in scrolling area
+        private const int scrollNum = 1;          // Number of items on each scroll tick
+        private const float rotSpeed = 0.02f;
+        private const string goName = "BankPurchase";
+
+        #endregion
+
+        #region Properties & Variables
 
         protected DaggerfallBankingWindow bankingWindow;
         private List<BuildingSummary> housesForSale;
-        private const int listDisplayUnits = 10;  // Number of items displayed in scrolling area
-        private const int scrollNum = 1;          // Number of items on each scroll tick
+
+        static int layer = 12;
+        static GameObject goBankPurchase;
+
+        GameObject goCameraBankPurchase;
+        Camera camera;
+        GameObject goModel;
+
+        float lastRotTime;
 
         #endregion
 
@@ -69,6 +88,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             this.housesForSale = housesForSale;
             bankingWindow = previousWindow;
+        }
+
+        static DaggerfallBankPurchasePopUp()
+        {
+            int editorLayer = LayerMask.NameToLayer(goName);
+            if (editorLayer == -1)
+                DaggerfallUnity.LogMessage("Did not find Layer with name \"BankPurchase\"! Defaulting to Layer 12.", true);
+            else
+                layer = editorLayer;
+
+            Camera.main.cullingMask = Camera.main.cullingMask & ~((1 << layer)); // don't render this layer with main camera
+
+            goBankPurchase = GameObject.Find(goName);
         }
 
         #endregion
@@ -87,8 +119,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mainPanel.Position = new Vector2(0, 50);
             mainPanel.Size = new Vector2(baseTexture.width, baseTexture.height);
 
-            displayPanel = DaggerfallUI.AddPanel(displayPanelRect, mainPanel);
-
             // Buy button
             buyButton = DaggerfallUI.AddButton(buyButtonRect, mainPanel);
             buyButton.OnMouseClick += BuyButton_OnMouseClick;
@@ -100,9 +130,42 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetupScrollBar();
             SetupScrollButtons();
             SetupPriceList();
+            SetupDisplayPanel();
 
             NativePanel.Components.Add(mainPanel);
 
+            Debug.LogFormat("local scale = {0}, {1}", NativePanel.LocalScale.x, NativePanel.LocalScale.y);
+        }
+
+        public override void OnPop()
+        {
+            if (goModel)
+            {
+                Object.Destroy(goModel);
+                goModel = null;
+            }
+            if (goCameraBankPurchase)
+            {
+                RenderTexture renderTexture = camera.targetTexture;
+                camera.targetTexture = null;
+                Object.Destroy(renderTexture);
+                Object.Destroy(goCameraBankPurchase);
+            }
+        }
+
+        public override void Update()
+        {
+            base.Update();
+
+            if (Time.realtimeSinceStartup > lastRotTime + rotSpeed)
+            {
+                lastRotTime = Time.realtimeSinceStartup;
+                if (goModel)
+                {
+                    goModel.transform.Rotate(Vector3.up, 1);
+                    RenderModel();
+                }
+            }
         }
 
         #endregion
@@ -130,19 +193,60 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        private void Display3dModel(int selectedIdx)
+        private void SetupDisplayPanel()
         {
+            displayPanel = DaggerfallUI.AddPanel(displayPanelRect, mainPanel);
+            displayResolution = new Vector2(displayPanelRect.width * NativePanel.LocalScale.x, displayPanelRect.height * NativePanel.LocalScale.y);
+            displayTexture = new Texture2D((int)displayResolution.x, (int)displayResolution.y, TextureFormat.ARGB32, false);
+
+            // Create camera
+            if (!goCameraBankPurchase)
+            {
+                goCameraBankPurchase = new GameObject("Camera");
+                camera = goCameraBankPurchase.AddComponent<Camera>();
+                camera.clearFlags = CameraClearFlags.SolidColor;
+                camera.cullingMask = 1 << layer;
+                camera.renderingPath = Camera.main.renderingPath;
+                camera.nearClipPlane = 0.7f;
+                camera.farClipPlane = 100.0f;
+                goCameraBankPurchase.transform.SetParent(goBankPurchase.transform);
+            }
+            RenderTexture renderTexture = new RenderTexture((int)displayResolution.x, (int)displayResolution.y, 16);
+            camera.targetTexture = renderTexture;
+        }
+
+        private void Display3dModelSelection(int selectedIdx)
+        {
+            if (goModel)
+                Object.Destroy(goModel);
+
             if (housesForSale == null)
             {
-                uint shipModelId = DaggerfallBankManager.GetShipModelId((ShipType) selectedIdx);
+                // Position camera
+                camera.transform.position = new Vector3(0, 12, DaggerfallBankManager.GetShipCameraDist((ShipType)selectedIdx));
                 // Get model data
                 ModelData modelData;
+                uint shipModelId = DaggerfallBankManager.GetShipModelId((ShipType)selectedIdx);
                 DaggerfallUnity.MeshReader.GetModelData(shipModelId, out modelData);
+                // Create mesh game object
+                goModel = GameObjectHelper.CreateDaggerfallMeshGameObject(shipModelId, null);
+                goModel.layer = layer;
+                goModel.transform.SetParent(goBankPurchase.transform);
 
-                GameObject go = GameObjectHelper.CreateDaggerfallMeshGameObject(shipModelId, null);
-
-                RenderTexture renderTexture = new RenderTexture((int) displayPanelRect.width, (int) displayPanelRect.height, 16);
+                RenderModel();
             }
+        }
+
+        private void RenderModel()
+        {
+            camera.Render();
+
+            RenderTexture.active = camera.targetTexture;
+            displayTexture.ReadPixels(new Rect(0, 0, (int)displayResolution.x, (int)displayResolution.y), 0, 0);
+            displayTexture.Apply(false);
+            RenderTexture.active = null;
+            displayPanel.BackgroundTexture = displayTexture;
+
         }
 
         private void SetupPriceList()
@@ -256,7 +360,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void PriceListBox_OnSelectItem()
         {
             Debug.Log("Selected " + priceListBox.SelectedIndex);
-
+            Display3dModelSelection(priceListBox.SelectedIndex);
         }
 
 
