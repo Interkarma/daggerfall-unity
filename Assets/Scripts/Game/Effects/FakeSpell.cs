@@ -14,6 +14,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.Effects
 {
@@ -22,7 +23,7 @@ namespace DaggerfallWorkshop.Game.Effects
     /// This will be replaced/reworked later for actual spell integration.
     /// Initial work to focus mainly on effect script execution.
     /// </summary>
-    public abstract class FakeSpell
+    public class FakeSpell
     {
         #region Fields
 
@@ -32,6 +33,8 @@ namespace DaggerfallWorkshop.Game.Effects
         protected int spellCost;                                // Cost of this spell to cast - not used for now
 
         protected List<SpellEffectSettings> effects = new List<SpellEffectSettings>();
+
+        protected DaggerfallEntityBehaviour casterEntityBehaviour;
 
         #endregion
 

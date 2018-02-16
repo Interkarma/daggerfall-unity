@@ -40,6 +40,7 @@ namespace DaggerfallWorkshop.Game
         StaticDoor deferredInteriorDoor;
 
         PlayerActivateModes currentMode = PlayerActivateModes.Grab;
+        bool castPending = false;
 
         public float RayDistance = 0;           // Distance of ray check, tune this to your scale and preference
         public float ActivateDistance = 2.3f;   // Distance within which something must be for player to activate it. Tune as needed.
@@ -76,6 +77,24 @@ namespace DaggerfallWorkshop.Game
         {
             if (mainCamera == null)
                 return;
+
+            // Do nothing if player has spell ready to cast as activate button is now used to fire spell
+            if (GameManager.Instance.PlayerSpellManager)
+            {
+                // Handle pending spell cast
+                if (GameManager.Instance.PlayerSpellManager.HasReadySpell)
+                {
+                    castPending = true;
+                    return;
+                }
+
+                // Prevents last spell cast click from falling through to normal click handling this frame
+                if (castPending)
+                {
+                    castPending = false;
+                    return;
+                }
+            }
 
             // Change activate mode
             if (InputManager.Instance.ActionStarted(InputManager.Actions.StealMode))

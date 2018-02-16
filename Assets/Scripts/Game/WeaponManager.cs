@@ -217,6 +217,16 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
+            // Hide weapons and do nothing if spell is ready
+            if (GameManager.Instance.PlayerSpellManager)
+            {
+                if (GameManager.Instance.PlayerSpellManager.HasReadySpell)
+                {
+                    ShowWeapons(false);
+                    return;
+                }
+            }
+
             // Toggle weapon sheath
             if (!isAttacking && InputManager.Instance.ActionStarted(InputManager.Actions.ReadyWeapon))
                 ToggleSheath();

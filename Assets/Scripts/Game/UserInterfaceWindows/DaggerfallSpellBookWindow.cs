@@ -12,11 +12,13 @@
 //#define LAYOUT
 
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallConnect.Arena2;
-using System;
+using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Effects;
 
 
 //Spellbook / spell buying effect text starts at 1200
@@ -383,6 +385,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             //TODO
             Debug.Log("list box Double Clicked");
+
+            // TEMP: Issue a fake spell to player's spell manager
+            // This will expand and eventually be replaced with real spells
+            // Currently just setting up spellcasting front-end and animations
+            SpellManager playerSpellManager = GameManager.Instance.PlayerSpellManager;
+            if (playerSpellManager)
+            {
+                playerSpellManager.SetReadySpell(new FakeSpell());
+                CloseWindow();
+            }
         }
 
         void listBox_OnMouseScroll(BaseScreenComponent sender)
