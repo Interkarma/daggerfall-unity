@@ -409,13 +409,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     GeneratePopup(TransactionResult.NO_HOUSES_FOR_SALE);
             }
         }
-/*
-        List<StaticBuilding> GetHousesForSale()
-        {
-            BuildingDirectory buildingDirectory = GameManager.Instance.StreamingWorld.GetCurrentBuildingDirectory();
-            buildingDirectory.
-        }
-        */
+
         void sellHouseButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             if (!DaggerfallBankManager.OwnsHouse)

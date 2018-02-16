@@ -162,8 +162,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 lastRotTime = Time.realtimeSinceStartup;
                 if (goModel)
                 {
-                    goModel.transform.Rotate(Vector3.up, 1);
+                    // Render the model into display panel
                     RenderModel();
+                    // Rotate model
+                    goModel.transform.Rotate(Vector3.up, 1);
                 }
             }
         }
@@ -220,21 +222,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (goModel)
                 Object.Destroy(goModel);
 
+            uint modelId = 0;
             if (housesForSale == null)
             {
-                // Position camera
+                // Position camera and set model id
                 camera.transform.position = new Vector3(0, 12, DaggerfallBankManager.GetShipCameraDist((ShipType)selectedIdx));
-                // Get model data
-                ModelData modelData;
-                uint shipModelId = DaggerfallBankManager.GetShipModelId((ShipType)selectedIdx);
-                DaggerfallUnity.MeshReader.GetModelData(shipModelId, out modelData);
-                // Create mesh game object
-                goModel = GameObjectHelper.CreateDaggerfallMeshGameObject(shipModelId, null);
-                goModel.layer = layer;
-                goModel.transform.SetParent(goBankPurchase.transform);
-
-                RenderModel();
+                modelId = DaggerfallBankManager.GetShipModelId((ShipType)selectedIdx);
             }
+            else
+            {
+                // Position camera and set model id
+                camera.transform.position = new Vector3(0, 3, -16);
+                BuildingSummary house = housesForSale[selectedIdx];
+                modelId = house.ModelID;
+            }
+
+            // Create mesh game object for the model
+            goModel = GameObjectHelper.CreateDaggerfallMeshGameObject(modelId, null);
+            goModel.layer = layer;
+            goModel.transform.SetParent(goBankPurchase.transform);
         }
 
         private void RenderModel()
