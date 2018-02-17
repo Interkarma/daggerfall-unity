@@ -75,7 +75,7 @@ namespace DaggerfallWorkshop.Game.Banking
     {
         public const int gold1kg = 400;
         private const float deedSellMult = 0.85f;
-        private const float housePriceMult = 1.280f;
+        private const float housePriceMult = 1280f;
 
         #region Ships:
 
@@ -116,6 +116,8 @@ namespace DaggerfallWorkshop.Game.Banking
 
         public static bool OwnsHouse { get { return Houses[GameManager.Instance.PlayerGPS.CurrentLocation.RegionIndex].buildingKey > 0; } }
 
+        public static int OwnedHouseKey { get { return Houses[GameManager.Instance.PlayerGPS.CurrentLocation.RegionIndex].buildingKey; } }
+
         public static bool IsHouseOwned(int buildingKey)
         {
             DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
@@ -144,6 +146,8 @@ namespace DaggerfallWorkshop.Game.Banking
             float houseRadius = modelData.DFMesh.Radius;
             return (int) (houseRadius * housePriceMult);
         }
+
+        public static int GetHouseSellPrice(BuildingSummary house) { return (int)(GetHousePrice(house) * deedSellMult); }
 
         public static void SetupHouses()
         {
@@ -277,6 +281,9 @@ namespace DaggerfallWorkshop.Game.Banking
                 case TransactionType.Borrowing_loan:
                     result = BorrowLoan(amount, regionIndex);
                     break;
+                case TransactionType.Sell_house:
+                    result = SellHouse(regionIndex);
+                    break;
                 case TransactionType.Sell_ship:
                     result = SellShip(regionIndex);
                     break;
@@ -361,7 +368,9 @@ namespace DaggerfallWorkshop.Game.Banking
             bankAccounts[regionIndex].accountGold -= amount;
 
             // Set player owned house for this region
-            int mapID = GameManager.Instance.PlayerGPS.CurrentLocation.MapTableData.MapId;
+            DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
+            int mapID = location.MapTableData.MapId;
+            houses[regionIndex].location = location.Name;
             houses[regionIndex].mapID = mapID;
             houses[regionIndex].buildingKey = house.buildingKey;
 
@@ -374,10 +383,20 @@ namespace DaggerfallWorkshop.Game.Banking
             return TransactionResult.PURCHASED_HOUSE;
         }
 
-        //##TODO
-        public static TransactionResult SellHouse()
+        public static TransactionResult SellHouse(int regionIndex)
         {
-            return TransactionResult.SELL_HOUSE_OFFER;
+            BuildingSummary house ;
+            BuildingDirectory buildingDirectory = GameManager.Instance.StreamingWorld.GetCurrentBuildingDirectory();
+            if (buildingDirectory)
+            {
+                if (buildingDirectory.GetBuildingSummary(DaggerfallBankManager.OwnedHouseKey, out house))
+                {
+                    BankAccounts[regionIndex].accountGold += GetHouseSellPrice(house);
+                    SaveLoadManager.StateManager.RemovePermanentScene(DaggerfallInterior.GetSceneName(houses[regionIndex].mapID, house.buildingKey));
+                    houses[regionIndex] = new HouseData_v1() { regionIndex = regionIndex };
+                }
+            }
+            return TransactionResult.NONE;
         }
 
         public static TransactionResult PurchaseShip(ShipType shipType, int regionIndex)
@@ -406,7 +425,7 @@ namespace DaggerfallWorkshop.Game.Banking
 
         public static TransactionResult SellShip(int regionIndex)
         {
-            BankAccounts[regionIndex].accountGold += GetShipSellPrice(ownedShip); ;
+            BankAccounts[regionIndex].accountGold += GetShipSellPrice(ownedShip);
             SaveLoadManager.StateManager.RemovePermanentScene(shipExteriorSceneNames[(int)ownedShip]);
             SaveLoadManager.StateManager.RemovePermanentScene(shipInteriorSceneNames[(int)ownedShip]);
             ownedShip = ShipType.None;
