@@ -141,6 +141,7 @@ namespace DaggerfallWorkshop.Game
 
         public List<BuildingSummary> GetHousesForSale()
         {
+            // TODO: add other random houses.
             List<BuildingSummary> forSale = new List<BuildingSummary>();
             foreach (BuildingSummary building in buildingDict.Values)
                 if (building.BuildingType == DFLocation.BuildingTypes.HouseForSale)

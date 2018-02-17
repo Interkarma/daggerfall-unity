@@ -504,7 +504,8 @@ namespace DaggerfallWorkshop.Game
                 // Handle house furniture containers: ask player if they want to look through private property
                 case LootContainerTypes.HouseContainers:
                     // Allow access for player owned interiors. (not distinguishing between ships)
-                    if (playerEnterExit.BuildingType == DFLocation.BuildingTypes.Ship && DaggerfallBankManager.OwnsShip)
+                    if ((playerEnterExit.BuildingType == DFLocation.BuildingTypes.Ship && DaggerfallBankManager.OwnsShip) ||
+                        DaggerfallBankManager.IsHouseOwned(playerEnterExit.BuildingDiscoveryData.buildingKey))
                     {
                         loot.stockedDate = 1;   // Ensure it gets serialized
                         break;

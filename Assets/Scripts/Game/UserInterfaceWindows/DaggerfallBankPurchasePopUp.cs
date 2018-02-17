@@ -186,13 +186,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {   // List all the houses for sale in this location
                 foreach (BuildingSummary house in housesForSale)
                 {
-                    priceListBox.AddItem("Price : " + DaggerfallBankManager.GetHousePrice(house) + " gold");
+                    priceListBox.AddItem(HardStrings.bankPurchasePrice.Replace("%s", DaggerfallBankManager.GetHousePrice(house).ToString()));
                 }
-                /*
-                for (int i = 0; i < 20; i++)
-                {
-                    priceListBox.AddItem("Price : " + (100000 + i) + " gold");
-                }*/
             }
         }
 

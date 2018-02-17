@@ -75,6 +75,7 @@ namespace DaggerfallWorkshop.Game.Banking
     {
         public const int gold1kg = 400;
         private const float deedSellMult = 0.85f;
+        private const float housePriceMult = 1.280f;
 
         #region Ships:
 
@@ -141,7 +142,7 @@ namespace DaggerfallWorkshop.Game.Banking
             ModelData modelData;
             DaggerfallUnity.Instance.MeshReader.GetModelData(house.ModelID, out modelData);
             float houseRadius = modelData.DFMesh.Radius;
-            return (int) (houseRadius * 1280);
+            return (int) (houseRadius * housePriceMult);
         }
 
         public static void SetupHouses()
