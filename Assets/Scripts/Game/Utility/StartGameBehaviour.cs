@@ -389,8 +389,9 @@ namespace DaggerfallWorkshop.Game.Utility
             // Assign starting gear to player entity
             DaggerfallUnity.Instance.ItemHelper.AssignStartingGear(playerEntity);
 
-            // Setup bank accounts
+            // Setup bank accounts and houses
             Banking.DaggerfallBankManager.SetupAccounts();
+            Banking.DaggerfallBankManager.SetupHouses();
 
             // Randomize initial region prices
             playerEntity.InitializeRegionPrices();

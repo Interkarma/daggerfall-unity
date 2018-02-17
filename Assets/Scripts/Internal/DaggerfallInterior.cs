@@ -19,6 +19,7 @@ using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Game.Banking;
 
 namespace DaggerfallWorkshop
 {
@@ -774,6 +775,9 @@ namespace DaggerfallWorkshop
                 {
                     go.SetActive(false);
                 }
+                // Disable people if player owns this house
+                else if (DaggerfallBankManager.IsHouseOwned(buildingData.buildingKey))
+                    go.SetActive(false);
             }
         }
 

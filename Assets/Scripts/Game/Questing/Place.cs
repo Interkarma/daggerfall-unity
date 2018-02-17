@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -19,6 +19,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using FullSerializer;
+using DaggerfallWorkshop.Game.Banking;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -813,6 +814,8 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         SiteDetails[] CollectQuestSitesOfBuildingType(DFLocation location, DFLocation.BuildingTypes buildingType)
         {
+                Debug.LogFormat("quest sites for {0} id {1}", location.Name, location.MapTableData.MapId);
+
             // Valid building types for valid search
             int[] validBuildingTypes = { 0, 2, 3, 5, 6, 8, 9, 11, 12, 13, 14, 15, 17, 18, 19, 20 };
 
@@ -851,6 +854,10 @@ namespace DaggerfallWorkshop.Game.Questing
                         // Match building against required type
                         if (buildingSummary[i].BuildingType == buildingType || wildcardFound)
                         {
+                            // Building must not be a player owned house
+                            if (DaggerfallBankManager.IsHouseOwned(buildingSummary[i].buildingKey))
+                                continue;
+
                             // Building must be a valid quest site
                             QuestMarker[] questSpawnMarkers, questItemMarkers;
                             EnumerateBuildingQuestMarkers(blocks[index], i, out questSpawnMarkers, out questItemMarkers);
