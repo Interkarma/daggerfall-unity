@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -536,6 +536,25 @@ namespace DaggerfallWorkshop.Game.Entity
                     return 8;
                 default:
                     return 0;
+            }
+        }
+
+        public static bool IsLanguageSkill(DFCareer.Skills skill)
+        {
+            switch (skill)
+            {
+                case DFCareer.Skills.Orcish:
+                case DFCareer.Skills.Harpy:
+                case DFCareer.Skills.Giantish:
+                case DFCareer.Skills.Dragonish:
+                case DFCareer.Skills.Nymph:
+                case DFCareer.Skills.Daedric:
+                case DFCareer.Skills.Spriggan:
+                case DFCareer.Skills.Centaurian:
+                case DFCareer.Skills.Impish:
+                    return true;
+                default:
+                    return false;
             }
         }
 

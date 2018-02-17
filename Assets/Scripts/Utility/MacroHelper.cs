@@ -217,7 +217,7 @@ namespace DaggerfallWorkshop.Utility
         #endregion
 
         // Any punctuation characters that can be on the end of a macro symbol need adding here.
-        static char[] PUNCTUATION = { '.', ',', '\'', '?' };
+        static char[] PUNCTUATION = { '.', ',', '\'', '?', '!' };
 
         /// <summary>
         /// Expands any macros in the textfile tokens.

@@ -598,8 +598,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (guildTrainingSkills.TryGetValue(service, out trainingSkills))
             {
                 DFCareer.Skills skillToTrain = trainingSkills[index];
+                int maxTraining = 50;
+                if (DaggerfallSkills.IsLanguageSkill(skillToTrain))     // BCHG: Language skill training is capped by char intelligence instead of 50%
+                    maxTraining = playerEntity.Stats.PermanentIntelligence;
 
-                if (playerEntity.Skills.GetPermanentSkillValue(skillToTrain) > 50)
+                if (playerEntity.Skills.GetPermanentSkillValue(skillToTrain) > maxTraining)
                 {
                     // Inform player they're too skilled to train
                     TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(TrainingTooSkilledId);
