@@ -14,6 +14,7 @@ using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Banking;
 using DaggerfallWorkshop.Utility;
+using System.Collections.Generic;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -105,77 +106,77 @@ namespace DaggerfallWorkshop.Game.UserInterface
             depoGoldButton.Position = new Vector2(120, 58);
             depoGoldButton.Size     = new Vector2(45, 8);
             depoGoldButton.Name     = "depo_gold_button";
-            depoGoldButton.OnMouseClick += depoGoldButton_OnMouseClick;
+            depoGoldButton.OnMouseClick += DepoGoldButton_OnMouseClick;
             mainPanel.Components.Add(depoGoldButton);
 
             drawGoldButton          = new Button();
             drawGoldButton.Position = new Vector2(172, 58);
             drawGoldButton.Size     = new Vector2(45, 8);
             drawGoldButton.Name     = "draw_gold_button";
-            drawGoldButton.OnMouseClick += drawGoldButton_OnMouseClick;
+            drawGoldButton.OnMouseClick += DrawGoldButton_OnMouseClick;
             mainPanel.Components.Add(drawGoldButton);
 
             depoLOCButton           = new Button();
             depoLOCButton.Position  = new Vector2(120, 76);
             depoLOCButton.Size      = new Vector2(45, 8);
             depoLOCButton.Name      = "depo_loc_button";
-            depoLOCButton.OnMouseClick += depoLOCButton_OnMouseClick;
+            depoLOCButton.OnMouseClick += DepoLOCButton_OnMouseClick;
             mainPanel.Components.Add(depoLOCButton);
 
             drawLOCButton           = new Button();
             drawLOCButton.Position  = new Vector2(172, 76);
             drawLOCButton.Size      = new Vector2(45, 8);
             drawLOCButton.Name      = "draw_LOC_button";
-            drawLOCButton.OnMouseClick += drawLOCButton_OnMouseClick;
+            drawLOCButton.OnMouseClick += DrawLOCButton_OnMouseClick;
             mainPanel.Components.Add(drawLOCButton);
 
             loanRepayButton         = new Button();
             loanRepayButton.Position= new Vector2(120, 94);
             loanRepayButton.Size    = new Vector2(45, 8);
             loanRepayButton.Name    = "loan_repay_button";
-            loanRepayButton.OnMouseClick += loanRepayButton_OnMouseClick;
+            loanRepayButton.OnMouseClick += LoanRepayButton_OnMouseClick;
             mainPanel.Components.Add(loanRepayButton);
 
             loanBorrowButton        = new Button();
             loanBorrowButton.Position = new Vector2(172, 94);
             loanBorrowButton.Size   = new Vector2(45, 8);
             loanBorrowButton.Name   = "loan_borrow_button";
-            loanBorrowButton.OnMouseClick += loanBorrowButton_OnMouseClick;
+            loanBorrowButton.OnMouseClick += LoanBorrowButton_OnMouseClick;
             mainPanel.Components.Add(loanBorrowButton);
 
             buyHouseButton          = new Button();
             buyHouseButton.Position = new Vector2(120, 112);
             buyHouseButton.Size     = new Vector2(45, 8);
             buyHouseButton.Name     = "buy_house_button";
-            buyHouseButton.OnMouseClick += buyHouseButton_OnMouseClick;
+            buyHouseButton.OnMouseClick += BuyHouseButton_OnMouseClick;
             mainPanel.Components.Add(buyHouseButton);
 
             sellHouseButton         = new Button();
             sellHouseButton.Position = new Vector2(172, 112);
             sellHouseButton.Size    = new Vector2(45, 8);
             sellHouseButton.Name    = "sell_house_button";
-            sellHouseButton.OnMouseClick += sellHouseButton_OnMouseClick;
+            sellHouseButton.OnMouseClick += SellHouseButton_OnMouseClick;
             mainPanel.Components.Add(sellHouseButton);
 
             buyShipButton           = new Button();
             buyShipButton.Position  = new Vector2(120, 130);
             buyShipButton.Size      = new Vector2(45, 8);
             buyShipButton.Name      = "buy_ship_button";
-            buyShipButton.OnMouseClick += buyShipButton_OnMouseClick;
+            buyShipButton.OnMouseClick += BuyShipButton_OnMouseClick;
             mainPanel.Components.Add(buyShipButton);
 
             sellShipButton          = new Button();
             sellShipButton.Position = new Vector2(172, 130);
             sellShipButton.Size     = new Vector2(45, 8);
             sellShipButton.Name     = "sell_ship_button";
-            sellShipButton.OnMouseClick += sellShipButton_OnMouseClick;
+            sellShipButton.OnMouseClick += SellShipButton_OnMouseClick;
             mainPanel.Components.Add(sellShipButton);
 
             exitButton              = new Button();
             exitButton.Position     = new Vector2(92, 159);
             exitButton.Size         = new Vector2(40, 19);
             exitButton.Name         = "exit_button";
-            exitButton.OnMouseClick += exitButton_OnMouseClick;
+            exitButton.OnMouseClick += ExitButton_OnMouseClick;
             mainPanel.Components.Add(exitButton);
 
             transactionInput           = new TextBox();
@@ -220,14 +221,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             UpdateButtons();
             UpdateLabels();
-
-            //if (transactionType != TransactionType.None)
-            //    Debug.Log(transactionType.ToString());
         }
 
         public void GeneratePurchaseShipPopup(ShipType shipType)
         {
             GeneratePopup(DaggerfallBankManager.PurchaseShip(shipType, regionIndex));
+        }
+
+        public void GeneratePurchaseHousePopup(BuildingSummary house)
+        {
+            GeneratePopup(DaggerfallBankManager.PurchaseHouse(house, regionIndex));
         }
 
         void UpdateLabels()
@@ -355,32 +358,32 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         //bank window button handlers
-        void depoGoldButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void DepoGoldButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             ToggleTransactionInput(TransactionType.Depositing_gold);
         }
 
-        void drawGoldButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void DrawGoldButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             ToggleTransactionInput(TransactionType.Withdrawing_gold);
         }
 
-        void depoLOCButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void DepoLOCButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             GeneratePopup(TransactionResult.DEPOSIT_LOC);
         }
 
-        void drawLOCButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void DrawLOCButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             ToggleTransactionInput(TransactionType.Withdrawing_Letter);
         }
 
-        void loanRepayButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void LoanRepayButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             ToggleTransactionInput(TransactionType.Repaying_loan);
         }
 
-        void loanBorrowButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void LoanBorrowButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             if (DaggerfallBankManager.HasLoan(regionIndex))
             {
@@ -393,41 +396,57 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
-        void buyHouseButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void BuyHouseButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             if (DaggerfallBankManager.OwnsHouse)
                 GeneratePopup(TransactionResult.ALREADY_OWN_HOUSE);
-            //else if no houses for sale
-            else    // Show houses for sale
-                uiManager.PushWindow(new DaggerfallBankPurchasePopUp(uiManager, this));
-        }
-
-        void sellHouseButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
-        {
-            if (!DaggerfallBankManager.OwnsHouse)
-                return;
             else
-                GeneratePopup(TransactionResult.SELL_HOUSE_OFFER, 1234);  // Temp value 1234 for testing.
+            {
+                BuildingDirectory buildingDirectory = GameManager.Instance.StreamingWorld.GetCurrentBuildingDirectory();
+                if (buildingDirectory)
+                {
+                    List<BuildingSummary> housesForSale = buildingDirectory.GetHousesForSale();
+                    // If houses are for sale, show them
+                    if (housesForSale.Count > 0)
+                        uiManager.PushWindow(new DaggerfallBankPurchasePopUp(uiManager, this, housesForSale));
+                    else
+                        GeneratePopup(TransactionResult.NO_HOUSES_FOR_SALE);
+                }
+                else
+                    GeneratePopup(TransactionResult.NO_HOUSES_FOR_SALE);
+            }
         }
 
-        void buyShipButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void SellHouseButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            if (DaggerfallBankManager.OwnsHouse)
+            {
+                BuildingDirectory buildingDirectory = GameManager.Instance.StreamingWorld.GetCurrentBuildingDirectory();
+                if (buildingDirectory)
+                {
+                    BuildingSummary house;
+                    if (buildingDirectory.GetBuildingSummary(DaggerfallBankManager.OwnedHouseKey, out house))
+                        GeneratePopup(TransactionResult.SELL_HOUSE_OFFER, DaggerfallBankManager.GetHouseSellPrice(house));
+                }
+            }
+        }
+
+        void BuyShipButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             if (DaggerfallBankManager.OwnsShip)
                 GeneratePopup(TransactionResult.ALREADY_OWN_SHIP);
             //else if not port town
             else    // Show ships for sale
-                uiManager.PushWindow(new DaggerfallBankPurchasePopUp(uiManager, this, true));
+                uiManager.PushWindow(new DaggerfallBankPurchasePopUp(uiManager, this));
         }
 
-        void sellShipButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void SellShipButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             if (DaggerfallBankManager.OwnsShip)
-                GeneratePopup(TransactionResult.SELL_SHIP_OFFER, (int)(DaggerfallBankManager.GetShipPrice(DaggerfallBankManager.OwnedShip) * 0.85));
-            else
-                return;
+                GeneratePopup(TransactionResult.SELL_SHIP_OFFER, DaggerfallBankManager.GetShipSellPrice(DaggerfallBankManager.OwnedShip));
         }
 
-        void exitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             CloseWindow();
         }

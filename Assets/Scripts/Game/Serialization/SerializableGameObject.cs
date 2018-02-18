@@ -390,13 +390,16 @@ namespace DaggerfallWorkshop.Game.Serialization
     public class BankDeedData_v1
     {
         public int shipType;
-        public HouseDeedData_v1 houseDeed;
+        public HouseData_v1[] houses;
     }
 
     [fsObject("v1")]
-    public class HouseDeedData_v1
+    public class HouseData_v1
     {
-        public int houseId;
+        public string location;
+        public int mapID;
+        public int buildingKey;
+        public int regionIndex;
     }
 
     [fsObject("v1")]

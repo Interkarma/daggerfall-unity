@@ -16,6 +16,7 @@ using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallConnect;
+using DaggerfallWorkshop.Game.Banking;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -411,13 +412,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (SaveLoadManager.StateManager.ContainsPermanentScene(sceneName))
                 {
                     // Can rest if it's an player owned ship/house.
-                    if (playerEnterExit.BuildingType == DFLocation.BuildingTypes.Ship)
-                       // || TODO: house check
+                    int buildingKey = playerEnterExit.BuildingDiscoveryData.buildingKey;
+                    if (playerEnterExit.BuildingType == DFLocation.BuildingTypes.Ship || DaggerfallBankManager.IsHouseOwned(buildingKey))
                        return true;
 
                     // Find room rental record and get remaining time..
                     int mapId = playerGPS.CurrentLocation.MapTableData.MapId;
-                    int buildingKey = playerEnterExit.BuildingDiscoveryData.buildingKey;
                     RoomRental_v1 room = GameManager.Instance.PlayerEntity.GetRentedRoom(mapId, buildingKey);
                     remainingHoursRented = PlayerEntity.GetRemainingHours(room);
                     allocatedBed = room.allocatedBed;

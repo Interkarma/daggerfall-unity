@@ -250,8 +250,10 @@ namespace DaggerfallWorkshop.Game
 
                                     DaggerfallMessageBox mb;
 
-                                    if (buildingUnlocked && buildingType >= DFLocation.BuildingTypes.House1
-                                        && buildingType <= DFLocation.BuildingTypes.House4)
+                                    if (buildingUnlocked &&
+                                        buildingType >= DFLocation.BuildingTypes.House1 &&
+                                        buildingType <= DFLocation.BuildingTypes.House4 &&
+                                        !DaggerfallBankManager.IsHouseOwned(building.buildingKey))
                                     {
                                         string greetingText = DaggerfallUnity.Instance.TextProvider.GetRandomText(houseGreetingsTextId);
                                         mb = DaggerfallUI.MessageBox(greetingText);
@@ -502,7 +504,8 @@ namespace DaggerfallWorkshop.Game
                 // Handle house furniture containers: ask player if they want to look through private property
                 case LootContainerTypes.HouseContainers:
                     // Allow access for player owned interiors. (not distinguishing between ships)
-                    if (playerEnterExit.BuildingType == DFLocation.BuildingTypes.Ship && DaggerfallBankManager.OwnsShip)
+                    if ((playerEnterExit.BuildingType == DFLocation.BuildingTypes.Ship && DaggerfallBankManager.OwnsShip) ||
+                        DaggerfallBankManager.IsHouseOwned(playerEnterExit.BuildingDiscoveryData.buildingKey))
                     {
                         loot.stockedDate = 1;   // Ensure it gets serialized
                         break;
@@ -734,6 +737,10 @@ namespace DaggerfallWorkshop.Game
         // Check if non-house building is unlocked and enterable
         private bool BuildingIsUnlocked(BuildingSummary buildingSummary)
         {
+            // Player owned house is always unlocked
+            if (DaggerfallBankManager.IsHouseOwned(buildingSummary.buildingKey))
+                return true;
+
             bool unlocked = false;
 
             DFLocation.BuildingTypes type = buildingSummary.BuildingType;

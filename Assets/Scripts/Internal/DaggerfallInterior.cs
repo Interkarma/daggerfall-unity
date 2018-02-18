@@ -19,6 +19,7 @@ using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Game.Banking;
 
 namespace DaggerfallWorkshop
 {
@@ -32,8 +33,8 @@ namespace DaggerfallWorkshop
 
         const uint houseContainerObjectGroup = 418;
         const uint containerObjectGroupOffset = 41000;
-        static List<uint> shopShelvesObjectGroupIndices = new List<uint> { 5, 6, 11, 12, 13, 15, 16, 17, 18, 19, 26, 28, 29, 31, 35, 36, 37, 40, 42, 44, 46, 47, 48, 49, 808 };
-        static List<uint> houseContainerObjectGroupIndices = new List<uint> { 3, 4, 7, 32, 33, 34, 35, 37, 38, 50, 51 };
+        static List<uint> shopShelvesObjectGroupIndices = new List<uint> { 5, 6, 11, 12, 13, 14, 15, 16, 17, 18, 19, 26, 28, 29, 31, 35, 36, 37, 40, 42, 44, 46, 47, 48, 49, 808 };
+        static List<uint> houseContainerObjectGroupIndices = new List<uint> { 3, 4, 7, 8, 27, 32, 33, 34, 35, 37, 38, 50, 51 };
 
         // Building data for map layout, indicates no activation components needed.
         static PlayerGPS.DiscoveredBuilding mapBD = new PlayerGPS.DiscoveredBuilding {
@@ -395,7 +396,6 @@ namespace DaggerfallWorkshop
                         if (SaveLoadManager.Instance != null)
                             go.AddComponent<SerializableLootContainer>();
                     }
-                    return;
                 }
                 else if (buildingType == DFLocation.BuildingTypes.Library ||
                          buildingType == DFLocation.BuildingTypes.GuildHall ||
@@ -403,7 +403,10 @@ namespace DaggerfallWorkshop
                 {
                     // Bookshelves, add DaggerfallBookshelf component
                     go.AddComponent<DaggerfallBookshelf>();
-                    return;
+                }
+                else if (DaggerfallBankManager.IsHouseOwned(buildingData.buildingKey))
+                {   // Player owned house, everything is a house container
+                    MakeHouseContainer(obj, go, loadID);
                 }
             }
             // Handle generic furniture as (private) house containers:
@@ -411,17 +414,22 @@ namespace DaggerfallWorkshop
             else if (obj.ModelIdNum / 100 == houseContainerObjectGroup ||
                      houseContainerObjectGroupIndices.Contains(obj.ModelIdNum - containerObjectGroupOffset))
             {
-                DaggerfallLoot loot = go.AddComponent<DaggerfallLoot>();
-                if (loot)
-                {
-                    // Set as house container (private furniture) and assign load id
-                    loot.ContainerType = LootContainerTypes.HouseContainers;
-                    loot.ContainerImage = InventoryContainerImages.Shelves;
-                    loot.LoadID = loadID;
-                    loot.TextureRecord = (int) obj.ModelIdNum % 100;
-                    if (SaveLoadManager.Instance != null)
-                        go.AddComponent<SerializableLootContainer>();
-                }
+                MakeHouseContainer(obj, go, loadID);
+            }
+        }
+
+        private static void MakeHouseContainer(DFBlock.RmbBlock3dObjectRecord obj, GameObject go, ulong loadID)
+        {
+            DaggerfallLoot loot = go.AddComponent<DaggerfallLoot>();
+            if (loot)
+            {
+                // Set as house container (private furniture) and assign load id
+                loot.ContainerType = LootContainerTypes.HouseContainers;
+                loot.ContainerImage = InventoryContainerImages.Shelves;
+                loot.LoadID = loadID;
+                loot.TextureRecord = (int)obj.ModelIdNum % 100;
+                if (SaveLoadManager.Instance != null)
+                    go.AddComponent<SerializableLootContainer>();
             }
         }
 
@@ -774,6 +782,9 @@ namespace DaggerfallWorkshop
                 {
                     go.SetActive(false);
                 }
+                // Disable people if player owns this house
+                else if (DaggerfallBankManager.IsHouseOwned(buildingData.buildingKey))
+                    go.SetActive(false);
             }
         }
 

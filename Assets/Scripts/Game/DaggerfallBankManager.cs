@@ -18,6 +18,7 @@ using DaggerfallConnect.Save;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallConnect.Utility;
+using DaggerfallConnect;
 
 namespace DaggerfallWorkshop.Game.Banking
 {
@@ -74,8 +75,13 @@ namespace DaggerfallWorkshop.Game.Banking
     {
         public const int gold1kg = 400;
         private const float deedSellMult = 0.85f;
+        private const float housePriceMult = 1280f;
+
+        #region Ships:
 
         private static int[] shipPrices = new int[] { 100000, 200000 };
+        private static uint[] shipModelIds = new uint[] { 910, 909 };
+        private static float[] shipCameraDist = new float[] { -30, -50 };
         private static DFPosition[] shipCoords = new DFPosition[] { new DFPosition(2, 2), new DFPosition(5, 5) };
         private static string[] shipInteriorSceneNames = new string[] {
             DaggerfallInterior.GetSceneName(1050578, 0),
@@ -96,7 +102,67 @@ namespace DaggerfallWorkshop.Game.Banking
 
         public static int GetShipSellPrice(ShipType ship) { return (int)(GetShipPrice(ship) * deedSellMult); }
 
+        public static uint GetShipModelId(ShipType ship) { return ship >= 0 ? shipModelIds[(int)ship] : 0; }
+
+        public static float GetShipCameraDist(ShipType ship) { return ship >= 0 ? shipCameraDist[(int)ship] : 0; }
+
         public static DFPosition GetShipCoords() { return OwnsShip ? shipCoords[(int)ownedShip] : null; }
+
+        #endregion
+
+        #region Houses:
+
+        private static HouseData_v1[] houses;
+
+        public static bool OwnsHouse { get { return Houses[GameManager.Instance.PlayerGPS.CurrentLocation.RegionIndex].buildingKey > 0; } }
+
+        public static int OwnedHouseKey { get { return Houses[GameManager.Instance.PlayerGPS.CurrentLocation.RegionIndex].buildingKey; } }
+
+        public static bool IsHouseOwned(int buildingKey)
+        {
+            DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
+            return Houses[location.RegionIndex].buildingKey == buildingKey;
+        }
+
+        public static HouseData_v1[] Houses
+        {
+            get {
+                if (houses == null)
+                    SetupHouses();
+                return houses;
+            }
+            set {
+                if (houses == null)
+                    SetupHouses();
+                houses = value;
+            }
+        }
+
+        public static int GetHousePrice(BuildingSummary house)
+        {
+            // Get model data and radius which defines price
+            ModelData modelData;
+            DaggerfallUnity.Instance.MeshReader.GetModelData(house.ModelID, out modelData);
+            float houseRadius = modelData.DFMesh.Radius;
+            return (int) (houseRadius * housePriceMult);
+        }
+
+        public static int GetHouseSellPrice(BuildingSummary house) { return (int)(GetHousePrice(house) * deedSellMult); }
+
+        public static void SetupHouses()
+        {
+            houses = new HouseData_v1[DaggerfallUnity.Instance.ContentReader.MapFileReader.RegionCount];
+            for (int i = 0; i < houses.Length; i++)
+            {
+                var house = new HouseData_v1();
+                house.regionIndex = i;
+                houses[i] = house;
+            }
+        }
+
+        #endregion
+
+        #region Loans and accounts:
 
         private static int loanMaxPerLevel = 50000;
 
@@ -121,8 +187,6 @@ namespace DaggerfallWorkshop.Game.Banking
                 bankAccounts = value; 
             }
         }
-
-        public static bool OwnsHouse { get { return false; } } //##TODo
 
         public static bool HasLoan(int regionIndex)
         {
@@ -183,6 +247,9 @@ namespace DaggerfallWorkshop.Game.Banking
                 return BankAccounts[regionIndex].loanDueDate;
         }
 
+        #endregion
+
+        #region Bank transaction methods
 
         public static void MakeTransaction(TransactionType type, int amount, int regionIndex)
         {
@@ -214,6 +281,9 @@ namespace DaggerfallWorkshop.Game.Banking
                 case TransactionType.Borrowing_loan:
                     result = BorrowLoan(amount, regionIndex);
                     break;
+                case TransactionType.Sell_house:
+                    result = SellHouse(regionIndex);
+                    break;
                 case TransactionType.Sell_ship:
                     result = SellShip(regionIndex);
                     break;
@@ -223,7 +293,6 @@ namespace DaggerfallWorkshop.Game.Banking
             }
 
             RaiseTransactionEvent(type, result, amount);
-
         }
 
         public static TransactionResult DepositGold(int amount, int regionIndex)
@@ -282,16 +351,52 @@ namespace DaggerfallWorkshop.Game.Banking
             return TransactionResult.NONE;
         }
 
-        //##TODO
-        public static TransactionResult PurchaseHouse()
+        public static TransactionResult PurchaseHouse(BuildingSummary house, int regionIndex)
         {
-            return TransactionResult.ALREADY_OWN_HOUSE;
+            if (house.buildingKey < 1)
+                return TransactionResult.NONE;
+
+            int amount = GetHousePrice(house);
+            PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+            var playerGold = playerEntity.GetGoldAmount();
+            var accountGold = BankAccounts[regionIndex].accountGold;
+
+            if (amount > playerGold + accountGold)
+                return TransactionResult.NOT_ENOUGH_GOLD;
+
+            amount = playerEntity.DeductGoldAmount(amount);
+            bankAccounts[regionIndex].accountGold -= amount;
+
+            // Set player owned house for this region
+            DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
+            int mapID = location.MapTableData.MapId;
+            houses[regionIndex].location = location.Name;
+            houses[regionIndex].mapID = mapID;
+            houses[regionIndex].buildingKey = house.buildingKey;
+
+            // Ensure building is discovered
+            GameManager.Instance.PlayerGPS.DiscoverBuilding(house.buildingKey);
+
+            // Add interior scene to permanent list
+            SaveLoadManager.StateManager.AddPermanentScene(DaggerfallInterior.GetSceneName(mapID, house.buildingKey));
+
+            return TransactionResult.PURCHASED_HOUSE;
         }
 
-        //##TODO
-        public static TransactionResult SellHouse()
+        public static TransactionResult SellHouse(int regionIndex)
         {
-            return TransactionResult.SELL_HOUSE_OFFER;
+            BuildingSummary house ;
+            BuildingDirectory buildingDirectory = GameManager.Instance.StreamingWorld.GetCurrentBuildingDirectory();
+            if (buildingDirectory)
+            {
+                if (buildingDirectory.GetBuildingSummary(DaggerfallBankManager.OwnedHouseKey, out house))
+                {
+                    BankAccounts[regionIndex].accountGold += GetHouseSellPrice(house);
+                    SaveLoadManager.StateManager.RemovePermanentScene(DaggerfallInterior.GetSceneName(houses[regionIndex].mapID, house.buildingKey));
+                    houses[regionIndex] = new HouseData_v1() { regionIndex = regionIndex };
+                }
+            }
+            return TransactionResult.NONE;
         }
 
         public static TransactionResult PurchaseShip(ShipType shipType, int regionIndex)
@@ -320,7 +425,7 @@ namespace DaggerfallWorkshop.Game.Banking
 
         public static TransactionResult SellShip(int regionIndex)
         {
-            BankAccounts[regionIndex].accountGold += GetShipSellPrice(ownedShip); ;
+            BankAccounts[regionIndex].accountGold += GetShipSellPrice(ownedShip);
             SaveLoadManager.StateManager.RemovePermanentScene(shipExteriorSceneNames[(int)ownedShip]);
             SaveLoadManager.StateManager.RemovePermanentScene(shipInteriorSceneNames[(int)ownedShip]);
             ownedShip = ShipType.None;
@@ -364,7 +469,6 @@ namespace DaggerfallWorkshop.Game.Banking
             return result;
         }
 
-
         private static TransactionResult BorrowLoan(int amount, int regionIndex)
         {
             TransactionResult result = TransactionResult.NONE;
@@ -382,6 +486,10 @@ namespace DaggerfallWorkshop.Game.Banking
             }
             return result;
         }
+
+        #endregion
+
+        #region Utility methods
 
         private static bool ValidateRegion(int regionIndex)
         {
@@ -404,14 +512,12 @@ namespace DaggerfallWorkshop.Game.Banking
             return timeString;
         }
 
-
         public static void ReadNativeBankData(SaveTreeBaseRecord records)
         {
             SetupAccounts();
 
             if (records == null || records.RecordType != RecordTypes.BankAccount)
                 return;
-
 
             MemoryStream stream = new MemoryStream(records.RecordData);
             BinaryReader reader = new BinaryReader(stream);
@@ -435,11 +541,12 @@ namespace DaggerfallWorkshop.Game.Banking
                 BankAccounts[record.regionIndex] = record;
                 count++;
             }
-
             reader.Close();
         }
 
-#region events
+        #endregion
+
+        #region events
 
         public delegate void Transaction(TransactionType type, TransactionResult result, int amount);
         public static event Transaction OnTransaction;
@@ -453,7 +560,6 @@ namespace DaggerfallWorkshop.Game.Banking
         public static event Transaction OnSellHouse;
         public static event Transaction OnBuyShip;
         public static event Transaction OnSellShip;
-
 
         public static void RaiseTransactionEvent(TransactionType type, TransactionResult result, int amount)
         {
@@ -507,11 +613,9 @@ namespace DaggerfallWorkshop.Game.Banking
                 default:
                     break;
             }
-
         }
 
-#endregion
-
+        #endregion
     }
 
 }

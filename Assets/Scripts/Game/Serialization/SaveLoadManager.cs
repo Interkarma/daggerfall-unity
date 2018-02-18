@@ -732,7 +732,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         {
             List<BankRecordData_v1> records = new List<BankRecordData_v1>();
 
-            foreach (var record in Banking.DaggerfallBankManager.BankAccounts)
+            foreach (var record in DaggerfallBankManager.BankAccounts)
             {
                 if (record == null)
                     continue;
@@ -749,10 +749,23 @@ namespace DaggerfallWorkshop.Game.Serialization
         {
             return new BankDeedData_v1() {
                 shipType = (int) DaggerfallBankManager.OwnedShip,
-/*                houseDeed = new HouseDeedData_v1() {
-                    houseId = 1
-                }*/
+                houses = GetHousesData(),
             };
+        }
+
+        HouseData_v1[] GetHousesData()
+        {
+            List<HouseData_v1> records = new List<HouseData_v1>();
+            foreach (var record in DaggerfallBankManager.Houses)
+            {
+                if (record == null)
+                    continue;
+                else if (record.mapID == 0 && record.buildingKey == 0)
+                    continue;
+                else
+                    records.Add(record);
+            }
+            return records.ToArray();
         }
 
         /// <summary>
@@ -830,6 +843,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         void RestoreBankData(BankRecordData_v1[] bankData)
         {
             DaggerfallBankManager.SetupAccounts();
+            DaggerfallBankManager.SetupHouses();    // Covers case when loading old save with no house data
 
             if (bankData == null)
                 return;
@@ -846,6 +860,24 @@ namespace DaggerfallWorkshop.Game.Serialization
         void RestoreBankDeedData(BankDeedData_v1 deedData)
         {
             DaggerfallBankManager.OwnedShip = (deedData == null) ? ShipType.None : (ShipType) deedData.shipType;
+            if (deedData != null)
+                RestoreHousesData(deedData.houses);
+        }
+
+        void RestoreHousesData(HouseData_v1[] housesData)
+        {
+            DaggerfallBankManager.SetupHouses();
+
+            if (housesData == null)
+                return;
+
+            for (int i = 0; i < housesData.Length; i++)
+            {
+                if (housesData[i].regionIndex < 0 || housesData[i].regionIndex >= DaggerfallBankManager.Houses.Length)
+                    continue;
+
+                DaggerfallBankManager.Houses[housesData[i].regionIndex] = housesData[i];
+            }
         }
 
         void RestoreEscortingFacesData(FaceDetails[] escortingFaces)
@@ -994,11 +1026,12 @@ namespace DaggerfallWorkshop.Game.Serialization
             else
                 hasExteriorDoors = true;
 
-            // Restore building summary early for interior layout code
+            // Restore building summary & house ownership early for interior layout code
             if (saveData.playerData.playerPosition.insideBuilding)
             {
                 playerEnterExit.BuildingDiscoveryData = saveData.playerData.playerPosition.buildingDiscoveryData;
                 playerEnterExit.IsPlayerInsideOpenShop = saveData.playerData.playerPosition.insideOpenShop;
+                RestoreHousesData(saveData.bankDeeds.houses);
             }
 
             // Restore faction data to player entity
