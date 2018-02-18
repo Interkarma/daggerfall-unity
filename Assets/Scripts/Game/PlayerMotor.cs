@@ -248,7 +248,7 @@ namespace DaggerfallWorkshop.Game
 
             // Climbing
             uint gameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
-            if (!InputManager.Instance.HasAction(InputManager.Actions.MoveForwards)
+            if (InputManager.Instance.HasAction(InputManager.Actions.Jump)
                 || (collisionFlags & CollisionFlags.Sides) == 0
                 || failedClimbingCheck
                 || fakeLevitate.IsLevitating
@@ -495,7 +495,10 @@ namespace DaggerfallWorkshop.Game
 
         private void ClimbMovement()
         {
-            controller.Move(Vector3.up * Time.deltaTime);
+            if (InputManager.Instance.HasAction(InputManager.Actions.MoveForwards))
+                controller.Move(Vector3.up * Time.deltaTime);
+            if (InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards))
+                controller.Move(-Vector3.up * Time.deltaTime);
             if (climbingContinueTimer <= (systemTimerUpdatesPerSecond * 15))
                 climbingContinueTimer += Time.deltaTime;
             else
