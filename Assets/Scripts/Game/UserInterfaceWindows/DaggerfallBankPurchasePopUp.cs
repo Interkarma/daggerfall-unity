@@ -11,6 +11,7 @@ using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Banking;
 using System.Collections.Generic;
 using DaggerfallConnect;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -61,8 +62,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private const int listDisplayUnits = 10;  // Number of items displayed in scrolling area
         private const int scrollNum = 1;          // Number of items on each scroll tick
-        private const float rotSpeed = 0.02f;
         private const string goName = "BankPurchase";
+        private const float rotSpeed = 0.02f;
+        private const float brightness = 0.4f;
 
         #endregion
 
@@ -76,6 +78,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         GameObject goCameraBankPurchase;
         Camera camera;
+        GameObject goLight;
         GameObject goModel;
 
         float lastRotTime;
@@ -134,8 +137,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetupDisplayPanel();
 
             NativePanel.Components.Add(mainPanel);
-
-            Debug.LogFormat("local scale = {0}, {1}", NativePanel.LocalScale.x, NativePanel.LocalScale.y);
         }
 
         public override void OnPop()
@@ -145,6 +146,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 Object.Destroy(goModel);
                 goModel = null;
             }
+            if (goLight)
+                Object.Destroy(goLight);
+
             if (goCameraBankPurchase)
             {
                 RenderTexture renderTexture = camera.targetTexture;
@@ -186,13 +190,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {   // List all the houses for sale in this location
                 foreach (BuildingSummary house in housesForSale)
                 {
-                    priceListBox.AddItem("Price : " + DaggerfallBankManager.GetHousePrice(house) + " gold");
+                    priceListBox.AddItem(HardStrings.bankPurchasePrice.Replace("%s", DaggerfallBankManager.GetHousePrice(house).ToString()));
                 }
-                /*
-                for (int i = 0; i < 20; i++)
-                {
-                    priceListBox.AddItem("Price : " + (100000 + i) + " gold");
-                }*/
             }
         }
 
@@ -214,6 +213,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 camera.farClipPlane = 100.0f;
                 goCameraBankPurchase.transform.SetParent(goBankPurchase.transform);
             }
+            if (!goLight)
+            {
+                goLight = new GameObject("Light");
+                Light light = goLight.AddComponent<Light>();
+                light.type = LightType.Directional;
+                light.transform.position = new Vector3(0, 50, -50);
+                light.intensity = brightness;
+                light.shadows = LightShadows.Hard;
+                light.cullingMask = 1 << layer;
+                goLight.transform.SetParent(goBankPurchase.transform);
+            }
+
             RenderTexture renderTexture = new RenderTexture((int)displayResolution.x, (int)displayResolution.y, 16);
             camera.targetTexture = renderTexture;
         }
@@ -221,27 +232,31 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void Display3dModelSelection(int selectedIdx)
         {
             if (goModel)
+            {
                 Object.Destroy(goModel);
+                goModel = null;
+            }
 
+            // Position camera and set model id
             uint modelId = 0;
             if (housesForSale == null)
             {
-                // Position camera and set model id
                 camera.transform.position = new Vector3(0, 12, DaggerfallBankManager.GetShipCameraDist((ShipType)selectedIdx));
                 modelId = DaggerfallBankManager.GetShipModelId((ShipType)selectedIdx);
             }
             else
             {
-                // Position camera and set model id
                 camera.transform.position = new Vector3(0, 3, -16);
                 BuildingSummary house = housesForSale[selectedIdx];
                 modelId = house.ModelID;
             }
 
-            // Create mesh game object for the model
-            goModel = GameObjectHelper.CreateDaggerfallMeshGameObject(modelId, null);
+            // Inject custom GameObject if available else create standard mesh game object for the model
+            goModel = MeshReplacement.ImportCustomGameobject(modelId, goBankPurchase.transform, new Matrix4x4());
+            if (goModel == null)
+                goModel = GameObjectHelper.CreateDaggerfallMeshGameObject(modelId, goBankPurchase.transform);
+
             goModel.layer = layer;
-            goModel.transform.SetParent(goBankPurchase.transform);
 
             // Apply current climate
             ClimateBases climateBase = ClimateSwaps.FromAPIClimateBase(GameManager.Instance.PlayerGPS.ClimateSettings.ClimateType);

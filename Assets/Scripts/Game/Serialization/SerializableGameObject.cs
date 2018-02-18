@@ -396,6 +396,7 @@ namespace DaggerfallWorkshop.Game.Serialization
     [fsObject("v1")]
     public class HouseData_v1
     {
+        public string location;
         public int mapID;
         public int buildingKey;
         public int regionIndex;

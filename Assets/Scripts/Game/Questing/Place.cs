@@ -814,8 +814,6 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         SiteDetails[] CollectQuestSitesOfBuildingType(DFLocation location, DFLocation.BuildingTypes buildingType)
         {
-                Debug.LogFormat("quest sites for {0} id {1}", location.Name, location.MapTableData.MapId);
-
             // Valid building types for valid search
             int[] validBuildingTypes = { 0, 2, 3, 5, 6, 8, 9, 11, 12, 13, 14, 15, 17, 18, 19, 20 };
 

@@ -419,10 +419,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void SellHouseButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (!DaggerfallBankManager.OwnsHouse)
-                return;
-            else
-                GeneratePopup(TransactionResult.SELL_HOUSE_OFFER, 1234);  // Temp value 1234 for testing.
+            if (DaggerfallBankManager.OwnsHouse)
+            {
+                BuildingDirectory buildingDirectory = GameManager.Instance.StreamingWorld.GetCurrentBuildingDirectory();
+                if (buildingDirectory)
+                {
+                    BuildingSummary house;
+                    if (buildingDirectory.GetBuildingSummary(DaggerfallBankManager.OwnedHouseKey, out house))
+                        GeneratePopup(TransactionResult.SELL_HOUSE_OFFER, DaggerfallBankManager.GetHouseSellPrice(house));
+                }
+            }
         }
 
         void BuyShipButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -437,9 +443,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         void SellShipButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             if (DaggerfallBankManager.OwnsShip)
-                GeneratePopup(TransactionResult.SELL_SHIP_OFFER, (int)(DaggerfallBankManager.GetShipPrice(DaggerfallBankManager.OwnedShip) * 0.85));
-            else
-                return;
+                GeneratePopup(TransactionResult.SELL_SHIP_OFFER, DaggerfallBankManager.GetShipSellPrice(DaggerfallBankManager.OwnedShip));
         }
 
         void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
