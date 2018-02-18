@@ -355,7 +355,7 @@ namespace DaggerfallWorkshop.Game.Entity
             if (entityType == EntityTypes.EnemyClass)
             {
                 switch (careerIndex)
-                {
+                {   // BCHG: classic uses Ettiquette for all
                     case (int)ClassCareers.Burglar:
                     case (int)ClassCareers.Rogue:
                     case (int)ClassCareers.Acrobat:
@@ -380,6 +380,7 @@ namespace DaggerfallWorkshop.Game.Entity
                     return DFCareer.Skills.Harpy;
 
                 case (int)MonsterCareers.Giant:
+                case (int)MonsterCareers.Gargoyle:
                     return DFCareer.Skills.Giantish;
 
                 case (int)MonsterCareers.Dragonling:
@@ -404,7 +405,7 @@ namespace DaggerfallWorkshop.Game.Entity
                     return DFCareer.Skills.Centaurian;
 
                 case (int)MonsterCareers.Imp:
-                case (int)MonsterCareers.Gargoyle:
+                case (int)MonsterCareers.Dreugh:
                     return DFCareer.Skills.Impish;
 
                 case (int)MonsterCareers.Vampire:

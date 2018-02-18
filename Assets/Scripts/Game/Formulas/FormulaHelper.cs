@@ -185,7 +185,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                 chance += player.Stats.LivePersonality / 10;
             }
             chance += GameManager.Instance.WeaponManager.Sheathed ? 10 : -25;
-            chance += player.Stats.LiveLuck / 5;
+            chance += player.Stats.LiveLuck / 5;    // BCHG: luck is not part of formula on uesp, not checked in classic code
 
             int roll = UnityEngine.Random.Range(0, 145);    // Max ~96.5% chance for 100% skill + per + luck and sheathed weapon.
             Debug.LogFormat("Pacification {3} using {0} skill: chance= {1}  roll= {2}", languageSkill, chance, roll, (roll < chance) ? "success" : "failure");
