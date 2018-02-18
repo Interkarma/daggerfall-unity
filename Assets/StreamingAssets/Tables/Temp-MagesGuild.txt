@@ -3,4 +3,22 @@
 
 schema: *name,notes
 
-N0B00Y06, 
+N0B00Y04, Passed
+N0B00Y06, Passed
+-N0B00Y08, needs sleep spell
+-N0B00Y09, Clock wants a travel time but quest has no Place resources.
+-N0B00Y16, needs open spell
+-N0B00Y17, 
+-N0B10Y01, 
+-N0B10Y03, 
+-N0B11Y18, 
+-N0B20Y02, 
+-N0B20Y05, 
+-N0B21Y14, 
+-N0B30Y15, 
+-N0B40Y07, 
+-N0C00Y01, unfinished quest - no dialogue
+-N0C00Y10, interacts with talk system?
+N0C00Y11, Passed but no message shown when revealing dungeon: reveal _newdung_ saying 1080
+N0C00Y12, Passed
+N0C00Y13, Passed
