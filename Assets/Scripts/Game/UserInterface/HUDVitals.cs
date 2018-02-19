@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -21,10 +21,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const string healthBarFilename = "MAIN03I0.IMG";
         const string fatigueBarFilename = "MAIN04I0.IMG";
         const string magickaBarFilename = "MAIN05I0.IMG";
-        const int nativeBarWidth = 4;
+        public const int nativeBarWidth = 4;
         const int nativeBreathBarWidth = 6;
         const int nativeBarHeight = 32;
-        const int borderSize = 10;
+        public const int borderSize = 10;
 
         VerticalProgress healthProgress = new VerticalProgress();
         VerticalProgress fatigueProgress = new VerticalProgress();
