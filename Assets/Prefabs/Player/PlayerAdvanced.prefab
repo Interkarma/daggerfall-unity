@@ -29,6 +29,7 @@ GameObject:
   - component: {fileID: 114121517922970790}
   - component: {fileID: 114764040474619316}
   - component: {fileID: 114492803959826104}
+  - component: {fileID: 114807000041290672}
   m_Layer: 0
   m_Name: PlayerAdvanced
   m_TagString: Player
@@ -569,6 +570,7 @@ MonoBehaviour:
   airControl: 0
   antiBumpFactor: 0.75
   antiBunnyHopFactor: 1
+  systemTimerUpdatesPerSecond: 0.055
   smoothFollower: {fileID: 4832112164805246}
   smoothFollowerLerpSpeed: 25
 --- !u!114 &11400008
@@ -1152,6 +1154,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RidingVolumeScale: 1
+--- !u!114 &114807000041290672
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40267076659f6004aaca6ff351ccb379, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!198 &198167633220797900
 ParticleSystem:
   m_ObjectHideFlags: 1

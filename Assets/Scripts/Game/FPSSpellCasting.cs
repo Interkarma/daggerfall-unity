@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using System;
+using System.Collections;
 using System.IO;
 using System.Collections.Generic;
 using DaggerfallConnect;
@@ -33,9 +34,60 @@ namespace DaggerfallWorkshop.Game
     {
         #region Fields
 
+        const int nativeScreenWidth = 320;
+        const int nativeScreenHeight = 200;
+        const float animSpeed = 0.3f;
+
         Dictionary<SpellTypes, Texture2D[]> castAnims = new Dictionary<SpellTypes, Texture2D[]>();
         Texture2D[] currentAnims;
         int currentFrame = -1;
+
+        DaggerfallAudioSource dfAudioSource;
+        Rect leftHandPosition;
+        Rect rightHandPosition;
+        Rect leftHandAnimRect;
+        Rect rightHandAnimRect;
+        float handScaleX;
+        float handScaleY;
+
+        #endregion
+
+        #region Properties
+
+        public bool IsPlayingAnim
+        {
+            get { return currentFrame >= 0; }
+        }
+
+        #endregion
+
+        #region Unity
+
+        void Start()
+        {
+            dfAudioSource = GetComponent<DaggerfallAudioSource>();
+            StartCoroutine(AnimateSpellCast());
+
+            // TEMP: Start playing test anim
+            //SetCurrentAnims(SpellTypes.Fire);
+            //currentFrame = 0;
+        }
+
+        void OnGUI()
+        {
+            // Must be ready
+            if (!ReadyCheck() || GameManager.IsGamePaused)
+                return;
+
+            UpdateSpellCast();
+
+            if (Event.current.type.Equals(EventType.Repaint))
+            {
+                // Draw spell cast texture behind other HUD elements
+                GUI.depth = 1;
+                GUI.DrawTextureWithTexCoords(leftHandPosition, currentAnims[currentFrame], leftHandAnimRect);
+            }
+        }
 
         #endregion
 
@@ -61,6 +113,9 @@ namespace DaggerfallWorkshop.Game
             CifRciFile cifFile = new CifRciFile();
             if (!cifFile.Load(path, FileUsage.UseMemory, true))
                 throw new Exception(string.Format("Could not load spell anims file {0}", path));
+
+            // Load CIF palette
+            cifFile.Palette.Load(Path.Combine(DaggerfallUnity.Instance.Arena2Path, cifFile.PaletteName));
 
             // Load textures - spells have a single frame per record unlike weapons
             Texture2D[] frames = new Texture2D[cifFile.RecordCount];
@@ -102,6 +157,88 @@ namespace DaggerfallWorkshop.Game
 
             // Use as current anims
             currentAnims = frames;
+        }
+
+        private void UpdateSpellCast()
+        {
+            // Do nothing if cast frame < 0
+            if (currentFrame < 0)
+                return;
+
+            // Get frame dimensions
+            int width = currentAnims[currentFrame].width;
+            int height = currentAnims[currentFrame].height;
+
+            // Get weapon scale
+            handScaleX = (float)Screen.width / (float)nativeScreenWidth;
+            handScaleY = (float)Screen.height / (float)nativeScreenHeight;
+
+            // Adjust scale to be slightly larger when not using point filtering
+            // This reduces the effect of filter shrink at edge of display
+            if (DaggerfallUnity.Instance.MaterialReader.MainFilterMode != FilterMode.Point)
+            {
+                handScaleX *= 1.01f;
+                handScaleY *= 1.01f;
+            }
+
+            // Get source rect
+            leftHandAnimRect = new Rect(0, 0, 1.0f, 1.0f);
+            rightHandAnimRect = new Rect(width, height, -width, height);
+
+            // Source casting animations are designed to fit inside a fixed 320x200 display
+            // This means they might be a little stretched on widescreen displays
+            AlignLeftHand(width, height);
+            AlignRightHand(width, height);
+        }
+
+        private void AlignLeftHand(int width, int height)
+        {
+            leftHandPosition = new Rect(
+                Screen.width * 0f,
+                Screen.height - height * handScaleY,
+                width * handScaleX,
+                height * handScaleY);
+        }
+
+        private void AlignRightHand(int width, int height)
+        {
+            rightHandPosition = new Rect(
+                Screen.width * (1f - 0f) - width * handScaleX,
+                Screen.height - height * handScaleY,
+                width * handScaleX,
+                height * handScaleY);
+        }
+
+        IEnumerator AnimateSpellCast()
+        {
+            while (true)
+            {
+                if (currentAnims != null && currentAnims.Length > 0)
+                {
+                    // Step frame until end
+                    currentFrame++;
+                    if (currentFrame >= currentAnims.Length)
+                        currentFrame = 0;
+                }
+
+                yield return new WaitForSeconds(animSpeed);
+            }
+        }
+
+        private bool ReadyCheck()
+        {
+            // Do nothing if DaggerfallUnity not ready
+            if (!DaggerfallUnity.Instance.IsReady)
+            {
+                DaggerfallUnity.LogMessage("FPSSpellCasting: DaggerfallUnity component is not ready. Have you set your Arena2 path?");
+                return false;
+            }
+
+            // Must have current spell texture anims
+            if (currentAnims == null || currentAnims.Length == 0)
+                return false;
+
+            return true;
         }
 
         #endregion
