@@ -561,6 +561,7 @@ namespace DaggerfallConnect.Arena2
         {
             // Setup frame to hold extracted image
             int length = records[record].Header.Width * records[record].Header.Height;
+            records[record].Frames[frame] = new DFBitmap();
             records[record].Frames[frame].Width = records[record].Header.Width;
             records[record].Frames[frame].Height = records[record].Header.Height;
             records[record].Frames[frame].Data = new byte[length];
