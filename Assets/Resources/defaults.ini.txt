@@ -24,6 +24,7 @@ ShowOptionsAtStart=True
 GUIFilterMode=0
 VideoFilterMode=1
 Crosshair=True
+InteractionModeIcon = icons
 SwapHealthAndFatigueColors=False
 DimAlphaStrength=0.5
 FreeScaling=False
