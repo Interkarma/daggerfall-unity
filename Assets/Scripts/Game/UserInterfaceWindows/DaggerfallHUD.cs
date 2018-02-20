@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -33,6 +33,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         HUDCrosshair crosshair = new HUDCrosshair();
         HUDVitals vitals = new HUDVitals();
         HUDCompass compass = new HUDCompass();
+        HUDInteractionModeIcon interactionModeIcon = new HUDInteractionModeIcon();
         HUDPlaceMarker placeMarker = new HUDPlaceMarker();
         EscortingNPCFacePanel escortingFaces = new EscortingNPCFacePanel();
         HUDQuestDebugger questDebugger = new HUDQuestDebugger();
@@ -48,6 +49,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public bool ShowCrosshair { get; set; }
         public bool ShowVitals { get; set; }
         public bool ShowCompass { get; set; }
+        public bool ShowInteractionModeIcon { get; set; }
         public bool ShowLocalQuestPlaces { get; set; }
         public bool ShowEscortingFaces { get; set; }
         public bool ShowActiveSpells { get; set; }
@@ -97,6 +99,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ShowCrosshair = DaggerfallUnity.Settings.Crosshair;
             ShowVitals = true;
             ShowCompass = true;
+            ShowInteractionModeIcon = DaggerfallUnity.Settings.InteractionModeIcon;
             ShowEscortingFaces = true;
             ShowLocalQuestPlaces = true;
             ShowActiveSpells = false;
@@ -108,6 +111,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ParentPanel.Components.Add(crosshair);
             ParentPanel.Components.Add(vitals);
             ParentPanel.Components.Add(compass);
+            ParentPanel.Components.Add(interactionModeIcon);
         }
 
         protected override void Setup()
@@ -145,6 +149,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             crosshair.Enabled = ShowCrosshair;
             vitals.Enabled = ShowVitals;
             compass.Enabled = ShowCompass;
+            interactionModeIcon.Enabled = ShowInteractionModeIcon;
             placeMarker.Enabled = ShowLocalQuestPlaces;
             escortingFaces.EnableBorder = ShowEscortingFaces;
             questDebugger.Enabled = !(questDebugger.State == HUDQuestDebugger.DisplayState.Nothing);
@@ -154,6 +159,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             compass.Scale = NativePanel.LocalScale;
             vitals.Scale = NativePanel.LocalScale;
             crosshair.CrosshairScale = CrosshairScale;
+            interactionModeIcon.Scale = NativePanel.LocalScale;
 
             // Align compass to screen panel
             Rect screenRect = ParentPanel.Rectangle;

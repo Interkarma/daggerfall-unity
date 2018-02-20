@@ -83,6 +83,7 @@ namespace DaggerfallWorkshop
         public int GUIFilterMode { get; set; }
         public int VideoFilterMode { get; set; }
         public bool Crosshair { get; set; }
+        public bool InteractionModeIcon { get; set; }
         public bool SwapHealthAndFatigueColors { get; set; }
         public float DimAlphaStrength { get; set; }
         public bool FreeScaling { get; set; }
@@ -156,6 +157,7 @@ namespace DaggerfallWorkshop
             GUIFilterMode = GetInt(sectionGUI, "GUIFilterMode", 0, 2);
             VideoFilterMode = GetInt(sectionGUI, "VideoFilterMode");
             Crosshair = GetBool(sectionGUI, "Crosshair");
+            InteractionModeIcon = GetBool(sectionGUI, "InteractionModeIcon");
             SwapHealthAndFatigueColors = GetBool(sectionGUI, "SwapHealthAndFatigueColors");
             DimAlphaStrength = GetFloat(sectionGUI, "DimAlphaStrength", 0, 1);
             FreeScaling = GetBool(sectionGUI, "FreeScaling");
