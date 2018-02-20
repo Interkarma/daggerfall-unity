@@ -99,7 +99,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ShowCrosshair = DaggerfallUnity.Settings.Crosshair;
             ShowVitals = true;
             ShowCompass = true;
-            ShowInteractionModeIcon = DaggerfallUnity.Settings.InteractionModeIcon;
+            ShowInteractionModeIcon = DaggerfallUnity.Settings.InteractionModeIcon.ToLower() != "none";
             ShowEscortingFaces = true;
             ShowLocalQuestPlaces = true;
             ShowActiveSpells = false;
