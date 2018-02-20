@@ -29,7 +29,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const string classicGrabFilename = "classic-grab";
         const string classicInfoFilename = "classic-info";
         const string classicTalkFilename = "classic-talk";
-        const float classicScale = 1f;
+        const float classicScale = 3f;
 
         Vector2 stealSize;
         Vector2 grabSize;
@@ -60,20 +60,19 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 {
                     case PlayerActivateModes.Steal:
                         BackgroundTexture = StealTexture;
-                        //Size = new Vector2(stealSize.x * Scale.x, stealSize.y * Scale.y);
-                        //Size = stealSize * displayScale;
+                        Size = stealSize * displayScale;
                         break;
                     case PlayerActivateModes.Grab:
                         BackgroundTexture = GrabTexture;
-                        //Size = grabSize * displayScale;
+                        Size = grabSize * displayScale;
                         break;
                     case PlayerActivateModes.Info:
                         BackgroundTexture = InfoTexture;
-                        //Size = infoSize * displayScale;
+                        Size = infoSize * displayScale;
                         break;
                     case PlayerActivateModes.Talk:
                         BackgroundTexture = TalkTexture;
-                        //Size = talkSize * displayScale;
+                        Size = talkSize * displayScale;
                         break;
                 }
                 Position = new Vector2((barWidth * 5) + (HUDVitals.borderSize * 2), Screen.height - HUDVitals.borderSize - Size.y);
@@ -95,7 +94,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 grabFilename = classicGrabFilename;
                 infoFilename = classicInfoFilename;
                 talkFilename = classicTalkFilename;
-                displayScale = 3f; //Scale.x * 2;
+                displayScale = classicScale;
             }
             else
             {
@@ -117,21 +116,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
             else
                 GrabTexture = Resources.Load<Texture2D>(grabFilename);
             grabSize = TextureReplacement.GetSize(GrabTexture, grabFilename, true);
-            Debug.Log("grab size= " + grabSize.ToString());
 
             if (TextureReplacement.CustomTextureExist(infoFilename))
                 InfoTexture = TextureReplacement.LoadCustomTexture(infoFilename);
             else
                 InfoTexture = Resources.Load<Texture2D>(infoFilename);
             infoSize = TextureReplacement.GetSize(InfoTexture, infoFilename, true);
-            Debug.Log("info size= " + infoSize.ToString());
 
             if (TextureReplacement.CustomTextureExist(talkFilename))
                 TalkTexture = TextureReplacement.LoadCustomTexture(talkFilename);
             else
                 TalkTexture = Resources.Load<Texture2D>(talkFilename);
             talkSize = TextureReplacement.GetSize(TalkTexture, talkFilename, true);
-            Debug.Log("talk size= " + talkSize.ToString());
         }
     }
 }
