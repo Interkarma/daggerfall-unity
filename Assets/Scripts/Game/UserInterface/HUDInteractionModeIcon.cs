@@ -23,6 +23,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const string iconGrabFilename = "icon-grab";
         const string iconInfoFilename = "icon-info";
         const string iconTalkFilename = "icon-talk";
+        const float iconScale = 0.5f;
+
+        const string classicStealFilename = "classic-steal";
+        const string classicGrabFilename = "classic-grab";
+        const string classicInfoFilename = "classic-info";
+        const string classicTalkFilename = "classic-talk";
+        const float classicScale = 3f;
 
         Vector2 stealSize;
         Vector2 grabSize;
@@ -33,7 +40,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public Texture2D GrabTexture;
         public Texture2D InfoTexture;
         public Texture2D TalkTexture;
-        public float IconScale = 0.5f;
+
+        float displayScale;
 
         public HUDInteractionModeIcon()
             : base()
@@ -52,19 +60,19 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 {
                     case PlayerActivateModes.Steal:
                         BackgroundTexture = StealTexture;
-                        Size = stealSize * IconScale;
+                        Size = stealSize * displayScale;
                         break;
                     case PlayerActivateModes.Grab:
                         BackgroundTexture = GrabTexture;
-                        Size = grabSize * IconScale;
+                        Size = grabSize * displayScale;
                         break;
                     case PlayerActivateModes.Info:
                         BackgroundTexture = InfoTexture;
-                        Size = infoSize * IconScale;
+                        Size = infoSize * displayScale;
                         break;
                     case PlayerActivateModes.Talk:
                         BackgroundTexture = TalkTexture;
-                        Size = talkSize * IconScale;
+                        Size = talkSize * displayScale;
                         break;
                 }
                 Position = new Vector2((barWidth * 5) + (HUDVitals.borderSize * 2), Screen.height - HUDVitals.borderSize - Size.y);
@@ -75,29 +83,51 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void LoadAssets()
         {
-            if (TextureReplacement.CustomTextureExist(iconStealFilename))
-                StealTexture = TextureReplacement.LoadCustomTexture(iconStealFilename);
-            else
-                StealTexture = Resources.Load<Texture2D>(iconStealFilename);
-            stealSize = TextureReplacement.GetSize(StealTexture, iconStealFilename, true);
+            string stealFilename;
+            string grabFilename;
+            string infoFilename;
+            string talkFilename;
 
-            if (TextureReplacement.CustomTextureExist(iconGrabFilename))
-                GrabTexture = TextureReplacement.LoadCustomTexture(iconGrabFilename);
+            if (DaggerfallUnity.Settings.InteractionModeIcon.ToLower() == "classic")
+            {
+                stealFilename = classicStealFilename;
+                grabFilename = classicGrabFilename;
+                infoFilename = classicInfoFilename;
+                talkFilename = classicTalkFilename;
+                displayScale = classicScale;
+            }
             else
-                GrabTexture = Resources.Load<Texture2D>(iconGrabFilename);
-            grabSize = TextureReplacement.GetSize(GrabTexture, iconGrabFilename, true);
+            {
+                stealFilename = iconStealFilename;
+                grabFilename = iconGrabFilename;
+                infoFilename = iconInfoFilename;
+                talkFilename = iconTalkFilename;
+                displayScale = iconScale;
+            }
 
-            if (TextureReplacement.CustomTextureExist(iconInfoFilename))
-                InfoTexture = TextureReplacement.LoadCustomTexture(iconInfoFilename);
+            if (TextureReplacement.CustomTextureExist(stealFilename))
+                StealTexture = TextureReplacement.LoadCustomTexture(stealFilename);
             else
-                InfoTexture = Resources.Load<Texture2D>(iconInfoFilename);
-            infoSize = TextureReplacement.GetSize(InfoTexture, iconInfoFilename, true);
+                StealTexture = Resources.Load<Texture2D>(stealFilename);
+            stealSize = TextureReplacement.GetSize(StealTexture, stealFilename, true);
 
-            if (TextureReplacement.CustomTextureExist(iconTalkFilename))
-                TalkTexture = TextureReplacement.LoadCustomTexture(iconTalkFilename);
+            if (TextureReplacement.CustomTextureExist(grabFilename))
+                GrabTexture = TextureReplacement.LoadCustomTexture(grabFilename);
             else
-                TalkTexture = Resources.Load<Texture2D>(iconTalkFilename);
-            talkSize = TextureReplacement.GetSize(TalkTexture, iconTalkFilename, true);
+                GrabTexture = Resources.Load<Texture2D>(grabFilename);
+            grabSize = TextureReplacement.GetSize(GrabTexture, grabFilename, true);
+
+            if (TextureReplacement.CustomTextureExist(infoFilename))
+                InfoTexture = TextureReplacement.LoadCustomTexture(infoFilename);
+            else
+                InfoTexture = Resources.Load<Texture2D>(infoFilename);
+            infoSize = TextureReplacement.GetSize(InfoTexture, infoFilename, true);
+
+            if (TextureReplacement.CustomTextureExist(talkFilename))
+                TalkTexture = TextureReplacement.LoadCustomTexture(talkFilename);
+            else
+                TalkTexture = Resources.Load<Texture2D>(talkFilename);
+            talkSize = TextureReplacement.GetSize(TalkTexture, talkFilename, true);
         }
     }
 }
