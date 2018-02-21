@@ -42,6 +42,10 @@ namespace DaggerfallWorkshop
         void Start()
         {
             myLight = GetComponent<Light>();
+
+            // Disable interior light shadows
+            if (InteriorLight && !DaggerfallUnity.Settings.InteriorLightShadows)
+                myLight.shadows = LightShadows.None;
         }
 
         void OnDisable()
