@@ -34,10 +34,14 @@ namespace DaggerfallWorkshop.Game
     {
         #region Fields
 
-        const int nativeScreenWidth = 320;
+        const int nativeScreenWidth = 300;
         const int nativeScreenHeight = 200;
-        const float animSpeed = 0.3f;
+        const float smallFrameAdjust = 0.134f;
+        const float animSpeed = 0.1f;                               // Set slower than classic as easier to check frames during build-out
 
+        int[] frameIndices = new int[] { 0, 1, 2, 3, 4, 5, 0 };     // Animation starts and ends with frame 0
+
+        SpellTypes currentAnimType = SpellTypes.None;
         Dictionary<SpellTypes, Texture2D[]> castAnims = new Dictionary<SpellTypes, Texture2D[]>();
         Texture2D[] currentAnims;
         int currentFrame = -1;
@@ -49,6 +53,7 @@ namespace DaggerfallWorkshop.Game
         Rect rightHandAnimRect;
         float handScaleX;
         float handScaleY;
+        float offset;
 
         #endregion
 
@@ -67,25 +72,53 @@ namespace DaggerfallWorkshop.Game
         {
             dfAudioSource = GetComponent<DaggerfallAudioSource>();
             StartCoroutine(AnimateSpellCast());
-
-            // TEMP: Start playing test anim
-            //SetCurrentAnims(SpellTypes.Fire);
-            //currentFrame = 0;
         }
 
         void OnGUI()
         {
+            //// TEMP: Cycle through playing different spell types for testing
+            //if (currentFrame == -1)
+            //{
+            //    switch (currentAnimType)
+            //    {
+            //        case SpellTypes.Cold:
+            //            SetCurrentAnims(SpellTypes.Fire);
+            //            break;
+            //        case SpellTypes.Fire:
+            //            SetCurrentAnims(SpellTypes.Magic);
+            //            break;
+            //        case SpellTypes.Magic:
+            //            SetCurrentAnims(SpellTypes.Poison);
+            //            break;
+            //        case SpellTypes.Poison:
+            //            SetCurrentAnims(SpellTypes.Shock);
+            //            break;
+            //        case SpellTypes.Shock:
+            //        case SpellTypes.None:
+            //            SetCurrentAnims(SpellTypes.Cold);
+            //            break;
+            //    }
+            //    Debug.LogFormat("Playing spell type {0}", currentAnimType.ToString());
+            //    currentFrame = 0;
+            //}
+
             // Must be ready
             if (!ReadyCheck() || GameManager.IsGamePaused)
                 return;
 
-            UpdateSpellCast();
+            // Update drawing positions for this frame
+            // Does nothing if no animation is playing
+            if (!UpdateSpellCast())
+                return;
 
             if (Event.current.type.Equals(EventType.Repaint))
             {
+                int frameIndex = frameIndices[currentFrame];
+
                 // Draw spell cast texture behind other HUD elements
                 GUI.depth = 1;
-                GUI.DrawTextureWithTexCoords(leftHandPosition, currentAnims[currentFrame], leftHandAnimRect);
+                GUI.DrawTextureWithTexCoords(leftHandPosition, currentAnims[frameIndex], leftHandAnimRect);
+                GUI.DrawTextureWithTexCoords(rightHandPosition, currentAnims[frameIndex], rightHandAnimRect);
             }
         }
 
@@ -103,6 +136,7 @@ namespace DaggerfallWorkshop.Game
             // Attempt to get current anims
             if (castAnims.ContainsKey(spellType))
             {
+                currentAnimType = spellType;
                 currentAnims = castAnims[spellType];
                 return;
             }
@@ -156,20 +190,22 @@ namespace DaggerfallWorkshop.Game
             castAnims.Add(spellType, frames);
 
             // Use as current anims
+            currentAnimType = spellType;
             currentAnims = frames;
         }
 
-        private void UpdateSpellCast()
+        private bool UpdateSpellCast()
         {
             // Do nothing if cast frame < 0
             if (currentFrame < 0)
-                return;
+                return false;
 
             // Get frame dimensions
-            int width = currentAnims[currentFrame].width;
-            int height = currentAnims[currentFrame].height;
+            int frameIndex = frameIndices[currentFrame];
+            int width = currentAnims[frameIndex].width;
+            int height = currentAnims[frameIndex].height;
 
-            // Get weapon scale
+            // Get hand scale
             handScaleX = (float)Screen.width / (float)nativeScreenWidth;
             handScaleY = (float)Screen.height / (float)nativeScreenHeight;
 
@@ -182,19 +218,29 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Get source rect
-            leftHandAnimRect = new Rect(0, 0, 1.0f, 1.0f);
-            rightHandAnimRect = new Rect(width, height, -width, height);
+            leftHandAnimRect = new Rect(0, 0, 1, 1);
+            rightHandAnimRect = new Rect(1, 0, -1, 1);
+
+            // Determine frame offset based on source animation
+            offset = 0f;
+            if (frameIndex == 0 || frameIndex == 5 ||                           // Frames 0 and 5 are always small frames
+                currentAnimType == SpellTypes.Fire && frameIndex == 4)          // Fire frame 4 is also a small frame
+            {
+                offset = smallFrameAdjust;
+            }
 
             // Source casting animations are designed to fit inside a fixed 320x200 display
             // This means they might be a little stretched on widescreen displays
             AlignLeftHand(width, height);
             AlignRightHand(width, height);
+
+            return true;
         }
 
         private void AlignLeftHand(int width, int height)
         {
             leftHandPosition = new Rect(
-                Screen.width * 0f,
+                Screen.width * offset,
                 Screen.height - height * handScaleY,
                 width * handScaleX,
                 height * handScaleY);
@@ -203,7 +249,7 @@ namespace DaggerfallWorkshop.Game
         private void AlignRightHand(int width, int height)
         {
             rightHandPosition = new Rect(
-                Screen.width * (1f - 0f) - width * handScaleX,
+                Screen.width * (1f - offset) - width * handScaleX,
                 Screen.height - height * handScaleY,
                 width * handScaleX,
                 height * handScaleY);
@@ -213,12 +259,12 @@ namespace DaggerfallWorkshop.Game
         {
             while (true)
             {
-                if (currentAnims != null && currentAnims.Length > 0)
+                if (currentAnims != null && currentAnims.Length > 0 && currentFrame >= 0)
                 {
                     // Step frame until end
                     currentFrame++;
-                    if (currentFrame >= currentAnims.Length)
-                        currentFrame = 0;
+                    if (currentFrame >= frameIndices.Length)
+                        currentFrame = -1;
                 }
 
                 yield return new WaitForSeconds(animSpeed);
