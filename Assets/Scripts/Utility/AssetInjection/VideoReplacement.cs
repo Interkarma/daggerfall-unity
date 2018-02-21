@@ -6,52 +6,72 @@
 // Original Author: TheLacus
 // Contributors:
 // 
-// Notes:           Uses AssetBundle instead of www.movie because of this:
-//                  (https://issuetracker.unity3d.com/issues/calling-www-dot-movie-fails-to-load-and-prints-error-loadmovedata-got-null)
-//                  Use WWWAudioExtensions.GetMovieTexture in Unity 5.6
+// Notes:
 //
 
-/*
- * TODO:
- * - Import videos from disk (see Notes).
- */
-
+using System.Collections;
+using System.IO;
 using UnityEngine;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
 
 namespace DaggerfallWorkshop.Utility.AssetInjection
 {
     /// <summary>
-    /// Handles import and injection of custom videos
-    /// with the purpose of providing modding support.
+    /// Handles import and injection of custom videos with the purpose of providing modding support.
+    /// MovieTextures are imported from mod bundles with load order or streamed directly from disk.
     /// </summary>
-    static public class VideoReplacement
+    public static class VideoReplacement
     {
+        static readonly string moviePath = Path.Combine(Application.streamingAssetsPath, "Movies");
+
         /// <summary>
-        /// Import custom video from mods.
+        /// Path to custom movies on disk.
         /// </summary>
-        /// <param name="name">Name of video.</param>
-        static public bool ImportCustomVideo(string name, out MovieTexture video)
+        public static string MoviePath
+        {
+            get { return moviePath; }
+        }
+
+        /// <summary>
+        /// Seek movie from mods.
+        /// </summary>
+        /// <param name="name">Name of movie to seek including .VID extension.</param>
+        /// <param name="movieTexture">Movietexture with imported video and sound data.</param>
+        /// <returns>True if movie is found.</returns>
+        public static bool TryImportMovie(string name, out MovieTexture movieTexture)
         {
             if (DaggerfallUnity.Settings.MeshAndTextureReplacement)
             {
-                Mod[] mods = ModManager.Instance.GetAllMods(true);
-                for (int i = mods.Length; i-- > 0;)
+                // Seek from loose files
+                string path = Path.Combine(moviePath, name + ".ogv");
+                if (File.Exists(path))
                 {
-                    AssetBundle bundle = mods[i].AssetBundle;
-                    if (bundle && bundle.Contains(name))
-                    {
-                        video = mods[i].GetAsset<MovieTexture>(name, true);
-                        if (video != null)
-                            return true;
-
-                        Debug.LogError("Failed to import " + name + " from " + mods[i].Title + " as MovieTexture.");
-                    }
+                    WWW www = new WWW("file://" + path);
+                    movieTexture = www.movie;
+                    DaggerfallUnity.Instance.StartCoroutine(LoadMovieTexture(www, movieTexture));
+                    return true;
                 }
+
+                // Seek from mods
+                if (ModManager.Instance != null)
+                    return ModManager.Instance.TryGetAsset(name, false, out movieTexture);
             }
 
-            video = null;
+            movieTexture = null;
             return false;
+        }
+
+        /// <summary>
+        /// Load movietexture from WWW in background.
+        /// </summary>
+        private static IEnumerator LoadMovieTexture(WWW www, MovieTexture movieTexture)
+        {
+            yield return www;
+
+            if (!movieTexture.isReadyToPlay)
+                Debug.LogErrorFormat("Failed to load movie: {0}", www.error);
+
+            www.Dispose();
         }
     }
 }
