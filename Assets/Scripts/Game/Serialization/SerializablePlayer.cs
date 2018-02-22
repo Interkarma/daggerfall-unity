@@ -140,8 +140,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             data.playerEntity.regionData = entity.RegionData;
             data.playerEntity.rentedRooms = entity.RentedRooms.ToArray();
-            data.playerEntity.disease = entity.Disease;
-            data.playerEntity.timeContractedDisease = entity.TimeContractedDisease;
+            data.playerEntity.disease = entity.Disease.GetSaveData();
 
             // Store player position data
             data.playerPosition = GetPlayerPositionData();
@@ -247,9 +246,9 @@ namespace DaggerfallWorkshop.Game.Serialization
             entity.DarkBrotherhoodRequirementTally = data.playerEntity.darkBrotherhoodRequirementTally;
             entity.LastTimePlayerAteOrDrankAtTavern = data.playerEntity.lastTimePlayerAteOrDrankAtTavern;
             entity.SetCurrentLevelUpSkillSum();
+
             entity.RentedRooms = (data.playerEntity.rentedRooms != null) ? data.playerEntity.rentedRooms.ToList() : new List<RoomRental_v1>();
-            entity.Disease = data.playerEntity.disease;
-            entity.TimeContractedDisease = data.playerEntity.timeContractedDisease;
+            entity.Disease.RestoreSaveData(data.playerEntity.disease);
 
             if (data.playerEntity.regionData != null)
                 entity.RegionData = data.playerEntity.regionData;

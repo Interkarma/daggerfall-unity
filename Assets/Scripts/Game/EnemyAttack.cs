@@ -196,7 +196,10 @@ namespace DaggerfallWorkshop.Game
             if (damage > 0)
             {
                 GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", damage);
-                GameManager.Instance.PlayerEntity.ContractDisease(FormulaHelper.CalculateChanceOfDisease(entity));
+
+                Diseases disease = FormulaHelper.CalculateChanceOfDisease(entity);
+                if (disease != Diseases.None)
+                    GameManager.Instance.PlayerEntity.Disease = new DaggerfallDisease(disease);
             }
 
             return damage;
