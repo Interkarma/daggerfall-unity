@@ -1,0 +1,7 @@
+-- These are quests given by nobility.
+-- This is not an exhaustive list.
+
+schema: *name,notes
+
+R0C10Y02, Gold Smuggling
+R0C10Y00, Jewel Smuggling

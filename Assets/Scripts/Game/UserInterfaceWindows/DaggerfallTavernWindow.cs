@@ -4,6 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Hazelnut
+// Contributors: Numidium
 
 using UnityEngine;
 using DaggerfallWorkshop.Utility;
@@ -212,7 +213,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void TalkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             CloseWindow();
-            GameManager.Instance.TalkManager.TalkToStaticNPC(merchantNPC);
+            
+            // Check if merchant is offering work
+            if (TalkManager.Instance.MerchantOfferingQuest(merchantNPC.Data.nameSeed)) {
+                uiManager.PushWindow(new DaggerfallQuestOfferWindow(uiManager, merchantNPC, FactionFile.SocialGroups.Merchants));
+            }
+            else 
+            {
+                GameManager.Instance.TalkManager.TalkToStaticNPC(merchantNPC);
+            }
         }
 
         private void FoodButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)

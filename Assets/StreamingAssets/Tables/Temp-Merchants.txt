@@ -1,0 +1,6 @@
+-- These are quests given by merchants/innkeepers.
+-- This is not an exhaustive list.
+
+schema: *name,notes
+
+K0C00Y08, A Rare Book
