@@ -153,8 +153,8 @@ namespace DaggerfallWorkshop.Utility
             { "%po", Potion }, //  Potion
             { "%pp1", null }, // ?
             { "%pp2", null }, // ?
-            { "%pqn", null }, // Potential Quest Giver
-            { "%pqp", null }, // Potential Quest Giver's Location
+            { "%pqn", PotentialQuestorName }, // Potential Quest Giver
+            { "%pqp", PotentialQuestorLocation }, // Potential Quest Giver's Location
             { "%ptm", null }, // An enemy of the current region (?)
             { "%q1", null },  // q1 to q12 Effects of questions answered in bio.
             { "%q2", null },
@@ -842,6 +842,18 @@ namespace DaggerfallWorkshop.Utility
         public static string RoomHoursLeft(IMacroContextProvider mcp)
         {   // %dwr
             return mcp.GetMacroDataSource().RoomHoursLeft();
+        }
+
+        public static string PotentialQuestorName(IMacroContextProvider mcp)
+        {
+            // %pqn
+            return mcp.GetMacroDataSource().PotentialQuestorName();
+        }
+
+        public static string PotentialQuestorLocation(IMacroContextProvider mcp)
+        {
+            // %pqp
+            return mcp.GetMacroDataSource().PotentialQuestorLocation();
         }
 
         #endregion
