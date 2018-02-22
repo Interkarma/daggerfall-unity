@@ -13,6 +13,7 @@ using UnityEngine;
 using System;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Guilds;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.Formulas
 {
@@ -626,6 +627,17 @@ namespace DaggerfallWorkshop.Game.Formulas
         #endregion
 
         #region Enemies
+
+        public static Diseases CalculateChanceOfDisease(EnemyEntity attacker)
+        {
+            DFCareer.EnemyGroups group = attacker.GetEnemyGroup();
+            if (group == DFCareer.EnemyGroups.Animals || group == DFCareer.EnemyGroups.Undead)
+            {
+                if (UnityEngine.Random.Range(0, 1000) > 600)
+                    return (Diseases) UnityEngine.Random.Range(100, 117);
+            }
+            return Diseases.None;
+        }
 
         // Generates health for enemy classes based on level and class
         public static int RollEnemyClassMaxHealth(int level, int hitPointsPerLevel)

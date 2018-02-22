@@ -75,6 +75,9 @@ namespace DaggerfallWorkshop.Game.Entity
 
         protected uint lastTimePlayerAteOrDrankAtTavern = 0;
 
+        protected Diseases disease = Diseases.None;
+        protected ulong timeContractedDisease = 0;
+
         protected RegionDataRecord[] regionData = new RegionDataRecord[62];
 
         private List<RoomRental_v1> rentedRooms = new List<RoomRental_v1>();
@@ -135,6 +138,8 @@ namespace DaggerfallWorkshop.Game.Entity
         public RegionDataRecord[] RegionData { get { return regionData; } set { regionData = value; } }
         public uint LastGameMinutes { get { return lastGameMinutes; } set { lastGameMinutes = value; } }
         public List<RoomRental_v1> RentedRooms { get { return rentedRooms; } set { rentedRooms = value; } }
+        public Diseases Disease { get { return disease; } set { disease = value; } }
+        public ulong TimeContractedDisease { get { return timeContractedDisease; } set { timeContractedDisease = value; } }
 
         #endregion
 
@@ -150,6 +155,22 @@ namespace DaggerfallWorkshop.Game.Entity
         #endregion
 
         #region Public Methods
+
+        public void CureDisease()
+        {
+            disease = Diseases.None;
+        }
+
+        public void ContractDisease(Diseases value)
+        {
+            // Only set disease if none already contracted.
+            if (disease == Diseases.None && value != Diseases.None)
+            {
+                disease = value;
+                timeContractedDisease = DaggerfallUnity.Instance.WorldTime.Now.ToSeconds();
+                Debug.Log("Player contracted " + disease.ToString());
+            }
+        }
 
         public RoomRental_v1 GetRentedRoom(int mapId, int buildingKey)
         {
@@ -313,7 +334,7 @@ namespace DaggerfallWorkshop.Game.Entity
             rentedRooms.Clear();
             if (skillUses != null)
                 System.Array.Clear(skillUses, 0, skillUses.Length);
-        }
+         }
 
         /// <summary>
         /// Assigns player entity settings from a character document.

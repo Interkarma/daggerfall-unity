@@ -185,6 +185,8 @@ namespace DaggerfallWorkshop.Game.Serialization
         public uint timeOfLastSkillTraining;
         public PlayerEntity.RegionDataRecord[] regionData;
         public RoomRental_v1[] rentedRooms;
+        public Diseases disease;
+        public ulong timeContractedDisease;
     }
 
     [fsObject("v1")]

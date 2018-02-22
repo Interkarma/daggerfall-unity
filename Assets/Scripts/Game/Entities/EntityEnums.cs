@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -178,5 +178,35 @@ namespace DaggerfallWorkshop.Game.Entity
         Average = 2,
         Low = 3,
         VeryLow = 4,
+    }
+
+    /// <summary>
+    /// Diseases the player can catch. (msgs 100-117)
+    /// </summary>
+    public enum Diseases
+    {
+        None = 0,
+        // Need to treat these 3 different?
+        //Vampirism,
+        //LycanthropyWolf,
+        //LycanthropyBoar,
+        WitchesPox = 100,
+        Plague = 101,
+        YellowFever = 102,
+        StomachRot = 103,
+        Consumption = 104,
+        BrainFever = 105,
+        SwampRot = 106,
+        CalironsCurse = 107,
+        Cholera = 108,
+        Leprosy = 109,
+        WoundRot = 110,
+        RedDeath = 111,
+        BloodRot = 112,
+        TyphoidFever = 113,
+        Dementia = 114,
+        Chrondiasis = 115,
+        WizardFever = 116,
+        Poison = 117,
     }
 }
