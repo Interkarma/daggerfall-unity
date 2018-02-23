@@ -19,6 +19,7 @@ using DaggerfallConnect.Arena2;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Game.Questing;
 using System;
+using DaggerfallWorkshop.Game.Guilds;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -74,7 +75,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TKy_Buy_Spells = 497,
     }
 
-    public class DaggerfallGuildServicePopupWindow : DaggerfallPopupWindow, IMacroContextProvider
+    public class DaggerfallGuildServicePopupWindow : DaggerfallPopupWindow
     {
         #region UI Rects
 
@@ -111,9 +112,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Texture2D baseTexture;
         PlayerEntity playerEntity;
+        GuildManager guildManager;
+
         StaticNPC serviceNPC;
-        FactionFile.GuildGroups guild;
+        FactionFile.GuildGroups guildGroup;
         GuildServices service;
+
+        Guild guild;
         Quest offeredQuest = null;
 
         static ItemCollection merchantItems;    // Temporary
@@ -122,13 +127,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Constructors
 
-        public DaggerfallGuildServicePopupWindow(IUserInterfaceManager uiManager, StaticNPC npc, FactionFile.GuildGroups guild, GuildServices service)
+        public DaggerfallGuildServicePopupWindow(IUserInterfaceManager uiManager, StaticNPC npc, FactionFile.GuildGroups guildGroup, GuildServices service)
             : base(uiManager)
         {
             serviceNPC = npc;
-            this.guild = guild;
+            this.guildGroup = guildGroup;
             this.service = service;
             playerEntity = GameManager.Instance.PlayerEntity;
+            guildManager = GameManager.Instance.GuildManager;
+
+            guild = guildManager.GetGuild(guildGroup);
+
             // Clear background
             ParentPanel.BackgroundColor = Color.clear;
         }
@@ -170,7 +179,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Join Guild button
             joinButton = DaggerfallUI.AddButton(joinButtonRect, mainPanel);
             joinButton.OnMouseClick += JoinButton_OnMouseClick;
-            joinButton.BackgroundColor = DaggerfallUI.DaggerfallUnityNotImplementedColor;
+            if (guild.IsMember())  // TODO: use different image
+                joinButton.BackgroundColor = DaggerfallUI.DaggerfallUnityNotImplementedColor;
 
             // Talk button
             talkButton = DaggerfallUI.AddButton(talkButtonRect, mainPanel);
@@ -191,6 +201,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             NativePanel.Components.Add(mainPanel);
         }
+
+        public override void OnPush()
+        {
+            base.OnPush();
+
+            // Check guild advancement
+            TextFile.Token[] updatedRank = guild.UpdateRank(playerEntity);
+            if (updatedRank != null)
+            {
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
+                messageBox.SetTextTokens(updatedRank, guild);
+                messageBox.ClickAnywhereToClose = true;
+                messageBox.ParentPanel.BackgroundColor = Color.clear;
+                uiManager.PushWindow(messageBox);
+            }
+        }
+
 
         #endregion
 
@@ -282,11 +309,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Event Handlers: General
 
-        private void JoinButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
-        {
-            DaggerfallUI.MessageBox("Joining guild " + guild + " not yet implemented.");
-        }
-
         private void TalkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             GameManager.Instance.TalkManager.TalkToStaticNPC(serviceNPC);
@@ -355,6 +377,53 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #endregion
 
+        #region Event Handlers: Joining Guild
+
+        private void JoinButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            CloseWindow();
+            guild = guildManager.JoinGuild(guildGroup);
+            if (guild == null)
+            {
+                DaggerfallUI.MessageBox("Joining guild " + guildGroup + " not implemented.");
+            }
+            else if (!guild.IsMember())
+            {
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
+                if (guild.IsEligibleToJoin(playerEntity))
+                {
+                    Debug.Log("eligible");
+                    messageBox.SetTextTokens(guild.TokensEligible(playerEntity));
+                    messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
+                    messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
+                    messageBox.OnButtonClick += ConfirmJoinGuild_OnButtonClick;
+                }
+                else
+                {
+                    messageBox.SetTextTokens(guild.TokensIneligible(playerEntity));
+                    messageBox.ClickAnywhereToClose = true;
+                    messageBox.ParentPanel.BackgroundColor = Color.clear;
+                }
+                uiManager.PushWindow(messageBox);
+            }
+        }
+
+        public void ConfirmJoinGuild_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        {
+            sender.CloseWindow();
+            if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
+            {
+                guildManager.AddMembership(guildGroup, guild);
+
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
+                messageBox.SetTextTokens(guild.TokensWelcome(), guild);
+                messageBox.ClickAnywhereToClose = true;
+                uiManager.PushWindow(messageBox);
+            }
+        }
+
+        #endregion
+
         #region Service Handling: Quests
 
         static Dictionary<GuildServices, string> guildQuestTables = new Dictionary<GuildServices, string>()
@@ -406,7 +475,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             // Log offered quest
-            Debug.LogFormat("Offering quest {0} from Guild {1}", questName, guild);
+            Debug.LogFormat("Offering quest {0} from Guild {1}", questName, guildGroup);
 
             // Parse quest
             try
@@ -495,10 +564,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         static Dictionary<GuildServices, List<DFCareer.Skills>> guildTrainingSkills = new Dictionary<GuildServices, List<DFCareer.Skills>>()
         {
-            { GuildServices.FG_Training, new List<DFCareer.Skills>() {
-                DFCareer.Skills.Archery, DFCareer.Skills.Axe, DFCareer.Skills.BluntWeapon, DFCareer.Skills.CriticalStrike, 
-                DFCareer.Skills.Giantish, DFCareer.Skills.Jumping, DFCareer.Skills.LongBlade, DFCareer.Skills.Orcish, 
-                DFCareer.Skills.Running, DFCareer.Skills.ShortBlade, DFCareer.Skills.Swimming } },
             { GuildServices.MG_Training, new List<DFCareer.Skills>() {
                 DFCareer.Skills.Alteration, DFCareer.Skills.Daedric, DFCareer.Skills.Destruction, DFCareer.Skills.Dragonish, 
                 DFCareer.Skills.Harpy, DFCareer.Skills.Illusion, DFCareer.Skills.Impish, DFCareer.Skills.Mysticism, 
@@ -542,28 +607,32 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void TrainingService()
         {
             CloseWindow();
-            // Check enough time has passed since last trained
-            DaggerfallDateTime now = DaggerfallUnity.Instance.WorldTime.Now;
-            if ((now.ToClassicDaggerfallTime() - playerEntity.TimeOfLastSkillTraining) < 720)
+            if (guildGroup == FactionFile.GuildGroups.HolyOrder || guild.IsMember())
             {
-                TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(TrainingToSoonId);
-                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
-                messageBox.SetTextTokens(tokens, this);
-                messageBox.ClickAnywhereToClose = true;
-                messageBox.ParentPanel.BackgroundColor = Color.clear;
-                uiManager.PushWindow(messageBox);
-                return;
+                // Check enough time has passed since last trained
+                DaggerfallDateTime now = DaggerfallUnity.Instance.WorldTime.Now;
+                if ((now.ToClassicDaggerfallTime() - playerEntity.TimeOfLastSkillTraining) < 720)
+                {
+                    TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(TrainingToSoonId);
+                    DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
+                    messageBox.SetTextTokens(tokens);
+                    messageBox.ClickAnywhereToClose = true;
+                    messageBox.ParentPanel.BackgroundColor = Color.clear;
+                    uiManager.PushWindow(messageBox);
+                }
+                else
+                {   // Offer training price
+                    DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
+                    TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(TrainingOfferId);
+                    messageBox.SetTextTokens(tokens, guild);
+                    messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
+                    messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
+                    messageBox.OnButtonClick += ConfirmTraining_OnButtonClick;
+                    uiManager.PushWindow(messageBox);
+                }
             }
             else
-            {   // Offer training price
-                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
-                TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(TrainingOfferId);
-                messageBox.SetTextTokens(tokens, this);
-                messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
-                messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
-                messageBox.OnButtonClick += ConfirmTraining_OnButtonClick;
-                uiManager.PushWindow(messageBox);
-            }
+                DaggerfallUI.MessageBox(HardStrings.serviceMembersOnly);
         }
 
         public void ConfirmTraining_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
@@ -571,16 +640,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             CloseWindow();
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
             {
-                if (playerEntity.GetGoldAmount() >= GetServicePrice())
+                if (playerEntity.GetGoldAmount() >= guild.GetTrainingPrice())
                 {
                     // Show skill picker loaded with guild training skills
                     DaggerfallListPickerWindow skillPicker = new DaggerfallListPickerWindow(uiManager, this);
                     skillPicker.OnItemPicked += TrainingSkill_OnItemPicked;
 
-                    List<DFCareer.Skills> trainingSkills;
+                    List<DFCareer.Skills> trainingSkills;   // Remove...
                     if (guildTrainingSkills.TryGetValue(service, out trainingSkills))
                     {
                         foreach (DFCareer.Skills skill in trainingSkills)
+                            skillPicker.ListBox.AddItem(DaggerfallUnity.Instance.TextProvider.GetSkillName(skill));
+
+                        uiManager.PushWindow(skillPicker);
+                    }                                       // ... to here.
+                    else
+                    {
+                        foreach (DFCareer.Skills skill in guild.GetTrainingSkills())
                             skillPicker.ListBox.AddItem(DaggerfallUnity.Instance.TextProvider.GetSkillName(skill));
 
                         uiManager.PushWindow(skillPicker);
@@ -594,48 +670,40 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public void TrainingSkill_OnItemPicked(int index, string skillName)
         {
             CloseWindow();
-            List<DFCareer.Skills> trainingSkills;
-            if (guildTrainingSkills.TryGetValue(service, out trainingSkills))
-            {
-                DFCareer.Skills skillToTrain = trainingSkills[index];
-                int maxTraining = 50;
-                if (DaggerfallSkills.IsLanguageSkill(skillToTrain))     // BCHG: Language skill training is capped by char intelligence instead of 50%
-                    maxTraining = playerEntity.Stats.PermanentIntelligence;
+            List<DFCareer.Skills> trainingSkills = guild.GetTrainingSkills();
+            if (trainingSkills == null)
+                guildTrainingSkills.TryGetValue(service, out trainingSkills);
 
-                if (playerEntity.Skills.GetPermanentSkillValue(skillToTrain) > maxTraining)
-                {
-                    // Inform player they're too skilled to train
-                    TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(TrainingTooSkilledId);
-                    DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
-                    messageBox.SetTextTokens(tokens, this);
-                    messageBox.ClickAnywhereToClose = true;
-                    uiManager.PushWindow(messageBox);
-                }
-                else
-                {   // Train the skill
-                    DaggerfallDateTime now = DaggerfallUnity.Instance.WorldTime.Now;
-                    playerEntity.TimeOfLastSkillTraining = now.ToClassicDaggerfallTime();
-                    now.RaiseTime(DaggerfallDateTime.SecondsPerHour * 3);
-                    playerEntity.DeductGoldAmount(GetServicePrice());
-                    playerEntity.DecreaseFatigue(PlayerEntity.DefaultFatigueLoss * 180);
-                    int skillAdvancementMultiplier = DaggerfallSkills.GetAdvancementMultiplier(skillToTrain);
-                    short tallyAmount = (short)(UnityEngine.Random.Range(10, 21) * skillAdvancementMultiplier);
-                    playerEntity.TallySkill(skillToTrain, tallyAmount);
-                    DaggerfallUI.MessageBox(TrainSkillId);
-                }
+            DFCareer.Skills skillToTrain = trainingSkills[index];
+            int maxTraining = 50;
+            if (DaggerfallSkills.IsLanguageSkill(skillToTrain))     // BCHG: Language skill training is capped by char intelligence instead of 50%
+                maxTraining = playerEntity.Stats.PermanentIntelligence;
+
+            if (playerEntity.Skills.GetPermanentSkillValue(skillToTrain) > maxTraining)
+            {
+                // Inform player they're too skilled to train
+                TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(TrainingTooSkilledId);
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
+                messageBox.SetTextTokens(tokens, guild);
+                messageBox.ClickAnywhereToClose = true;
+                uiManager.PushWindow(messageBox);
             }
             else
-                Debug.LogError("Invalid skill selected for training.");
-        }
-
-        int GetServicePrice()
-        {
-            // TODO: 400 * level, if non-member of temple
-            return 100 * playerEntity.Level;
+            {   // Train the skill
+                DaggerfallDateTime now = DaggerfallUnity.Instance.WorldTime.Now;
+                playerEntity.TimeOfLastSkillTraining = now.ToClassicDaggerfallTime();
+                now.RaiseTime(DaggerfallDateTime.SecondsPerHour * 3);
+                playerEntity.DeductGoldAmount(guild.GetTrainingPrice());
+                playerEntity.DecreaseFatigue(PlayerEntity.DefaultFatigueLoss * 180);
+                int skillAdvancementMultiplier = DaggerfallSkills.GetAdvancementMultiplier(skillToTrain);
+                short tallyAmount = (short)(UnityEngine.Random.Range(10, 21) * skillAdvancementMultiplier);
+                playerEntity.TallySkill(skillToTrain, tallyAmount);
+                DaggerfallUI.MessageBox(TrainSkillId);
+            }
         }
 
         #endregion
-
+/*
         #region Macro Handling
 
         public MacroDataSource GetMacroDataSource()
@@ -661,6 +729,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         #endregion
-
+    */
     }
 }

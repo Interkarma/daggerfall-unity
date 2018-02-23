@@ -47,7 +47,7 @@ namespace DaggerfallWorkshop
             if (buildingData.buildingType == DFLocation.BuildingTypes.GuildHall ||
                 buildingData.buildingType == DFLocation.BuildingTypes.Temple)
             {
-                DaggerfallUI.MessageBox(HardStrings.serviceDenied);
+                DaggerfallUI.MessageBox(HardStrings.accessMembersOnly);
             }
             else
             {

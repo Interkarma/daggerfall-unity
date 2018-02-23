@@ -135,7 +135,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string serviceMakePotions = "Make Potions";
         public const string serviceBuyPotions = "Buy Potions";
         public const string serviceBuySoulgems = "Buy Soulgems";
-        public const string serviceDenied = "You need to be a member to access this.";
+        public const string serviceMembersOnly = "My services are reserved for members only.";
+        public const string accessMembersOnly = "You need to be a member to access this.";
 
         public const string roomFreeForKnightSuchAsYou = "The room is free for a knight such as you.";
         public const string roomFreeDueToHeartsDay = "Room is free due to Heart's Day.";

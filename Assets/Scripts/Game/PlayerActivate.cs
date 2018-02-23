@@ -24,6 +24,7 @@ using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Banking;
+using DaggerfallWorkshop.Game.Guilds;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -744,12 +745,18 @@ namespace DaggerfallWorkshop.Game
             bool unlocked = false;
 
             DFLocation.BuildingTypes type = buildingSummary.BuildingType;
+            Debug.LogFormat("type: {0}, factionId: {1}", type, buildingSummary.FactionId);
 
-            // TODO: Guild structures can become unlocked 24hr depending on player rank
-
+            // Handle guild halls & TG/DB houses
+            if (type == DFLocation.BuildingTypes.GuildHall ||
+                (type == DFLocation.BuildingTypes.House2 && buildingSummary.FactionId != 0))
+            {
+                Guild guild = GameManager.Instance.GuildManager.GetGuild(buildingSummary.FactionId);
+                unlocked = guild.HallAccessAnytime() ? true : IsBuildingOpen(type);
+            }
             // Handle House1 through House4
             // TODO: Figure out the rest of house door calculations.
-            if (type >= DFLocation.BuildingTypes.House1 && type <= DFLocation.BuildingTypes.House4
+            else if (type >= DFLocation.BuildingTypes.House1 && type <= DFLocation.BuildingTypes.House4
                 && DaggerfallUnity.Instance.WorldTime.Now.IsDay)
             {
                 unlocked = true;
@@ -921,17 +928,19 @@ namespace DaggerfallWorkshop.Game
 
             // Get faction data.
             FactionFile.FactionData factionData;
+            FactionFile.FactionData buildingFactionData;
             if (playerEnterExit.IsPlayerInsideBuilding &&
-                GameManager.Instance.PlayerEntity.FactionData.GetFactionData(npc.Data.factionID, out factionData))
+                GameManager.Instance.PlayerEntity.FactionData.GetFactionData(npc.Data.factionID, out factionData) &&
+                GameManager.Instance.PlayerEntity.FactionData.GetFactionData(playerEnterExit.BuildingDiscoveryData.factionID, out buildingFactionData))
             {
                 UserInterfaceManager uiManager = DaggerfallUI.Instance.UserInterfaceManager;
-                Debug.LogFormat("faction id: {0}, social group: {1}, guild: {2}", 
-                    npc.Data.factionID, (FactionFile.SocialGroups)factionData.sgroup, (FactionFile.GuildGroups)factionData.ggroup);
+                Debug.LogFormat("faction id: {0}, social group: {1}, guild: {2}, building guild: {3}", 
+                    npc.Data.factionID, (FactionFile.SocialGroups)factionData.sgroup, (FactionFile.GuildGroups)factionData.ggroup, (FactionFile.GuildGroups)buildingFactionData.ggroup);
 
                 // Check if the NPC offers a guild service.
                 if (Enum.IsDefined(typeof(GuildServices), npc.Data.factionID))
                 {
-                    FactionFile.GuildGroups guild = (FactionFile.GuildGroups) factionData.ggroup;
+                    FactionFile.GuildGroups guild = (FactionFile.GuildGroups) buildingFactionData.ggroup;
                     GuildServices service = (GuildServices) npc.Data.factionID;
                     Debug.Log("NPC offers guild service: " + service.ToString());
                     uiManager.PushWindow(new DaggerfallGuildServicePopupWindow(uiManager, npc, guild, service));
