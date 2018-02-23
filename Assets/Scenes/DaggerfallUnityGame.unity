@@ -732,8 +732,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d4b5bc6bb87e4948b2d181e1f85fb20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  StartMethod: 5
-  SaveIndex: 232
+  StartMethod: 2
+  SaveIndex: -1
   PostStartMessage: 
   LaunchQuest: 
   EnableVideos: 1
