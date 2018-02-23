@@ -815,13 +815,8 @@ namespace DaggerfallWorkshop.Game
                 return null;
 
             ImgFile imgFile = new ImgFile(Path.Combine(dfUnity.Arena2Path, name), FileUsage.UseMemory, readOnly);            
-            Texture2D texture = null;
- 
-            // Custom texture
-            if (TextureReplacement.CustomImageExist(name))
-                texture = TextureReplacement.LoadCustomImage(name);
-            // Daggerfall texture
-            else
+            Texture2D texture;
+            if (!TextureReplacement.TryImportImage(name, out texture))
             {
                 imgFile.LoadPalette(Path.Combine(dfUnity.Arena2Path, imgFile.PaletteName));
                 texture = GetTextureFromImg(imgFile, format, readOnly);
@@ -870,14 +865,9 @@ namespace DaggerfallWorkshop.Game
                 return null;
 
             CifRciFile cifRciFile = new CifRciFile(Path.Combine(dfUnity.Arena2Path, name), FileUsage.UseMemory, true);
-            Texture2D texture=null;
-            
-            // Custom texture
-            if (TextureReplacement.CustomCifExist(name, record, frame))
-                texture = TextureReplacement.LoadCustomCif(name, record, frame);
-            // Daggerfall texture
-            else
-            { 
+            Texture2D texture;
+            if (!TextureReplacement.TryImportCifRci(name, record, frame, out texture))
+            {
                 cifRciFile.LoadPalette(Path.Combine(dfUnity.Arena2Path, cifRciFile.PaletteName));
                 DFBitmap bitmap = cifRciFile.GetDFBitmap(record, frame);
                 texture = new Texture2D(bitmap.Width, bitmap.Height, format, false);

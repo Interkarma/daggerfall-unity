@@ -13,6 +13,7 @@
  * TODO:
  * - PaperDoll CharacterLayer textures works only if resolution is the same as vanilla 
  *        (http://forums.dfworkshop.net/viewtopic.php?f=22&p=3547&sid=6a99dbcffad1a15b08dd5e157274b772#p3547)
+ * - Import textures/materials from mods
  */
 
 //#define DEBUG_TEXTURE_FORMAT
@@ -22,6 +23,7 @@ using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 using DaggerfallWorkshop.Game.UserInterface;
+using DaggerfallWorkshop.Game.Utility.ModSupport;
 
 namespace DaggerfallWorkshop.Utility.AssetInjection
 {
@@ -181,78 +183,41 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         /// <summary>
-        /// Search for image file on disk to replace .IMGs.
-        /// (imagefile.png, for example 'REST02I0.IMG.png').
+        /// Seek image from mods.
         /// </summary>
-        /// <param name="filename">Name of image.</param>
-        /// <returns>True if texture exists.</returns>
-        static public bool CustomImageExist(string filename)
+        /// <param name="name">Image name.</param>
+        /// <param name="tex">Imported image as texture.</param>
+        /// <returns>True if image imported.</returns>
+        public static bool TryImportImage(string name, out Texture2D tex)
         {
-            return TextureFileExist(imgPath, filename);
+            return TryImportTexture(imgPath, name, out tex);
         }
 
         /// <summary>
-        /// Import image from disk as texture2D
-        /// (imagefile.png, for example 'REST02I0.IMG.png').
+        /// Seek CifRci from mods.
         /// </summary>
-        /// <param name="filename">Name of image.</param>
-        /// <returns>Image.</returns>
-        static public Texture2D LoadCustomImage(string filename)
-        {
-            return ImportTextureFile(imgPath, filename);
-
-        }
-
-        /// <summary>
-        /// Search for image file on disk to replace .CIFs and .RCIs.
-        /// (filename_record-frame.png, for example 'INVE16I0.CIF_1-0.png').
-        /// </summary>
-        /// <param name="filename">Name of image.</param>
+        /// <param name="name">Image name.</param>
         /// <param name="record">Record index.</param>
-        /// <param name="frame">Frame index. It's different than zero only for weapon animations (WEAPONXX.CIF).</param> 
-        /// <returns>True if image exists.</returns>
-        static public bool CustomCifExist(string filename, int record, int frame = 0)
+        /// <param name="frame">Animation frame index</param>
+        /// <param name="tex">Imported image as texture.</param>
+        /// <returns>True if CifRci imported.</returns>
+        public static bool TryImportCifRci(string name, int record, int frame, out Texture2D tex)
         {
-            return TextureFileExist(cifRciPath, GetNameCifRci(filename, record, frame));
+            return TryImportTexture(cifRciPath, GetNameCifRci(name, record, frame), out tex);
         }
 
         /// <summary>
-        /// Import image as Texture2D to replace .CIFs and .RCIs.
-        /// (filename_record-frame.png, for example 'INVE16I0.CIF_1-0.png').
+        /// Seek CifRci with a specific metaltype from mods.
         /// </summary>
-        /// <param name="filename">Name of image.</param>
+        /// <param name="name">Image name.</param>
         /// <param name="record">Record index.</param>
-        /// <param name="frame">Frame index. It's different than zero only for weapon animations (WEAPONXX.CIF) </param> 
-        /// <returns>Image.</returns>
-        static public Texture2D LoadCustomCif(string filename, int record, int frame)
+        /// <param name="frame">Animation frame index</param>
+        /// <param name="metalType">Metal type.</param>
+        /// <param name="tex">Imported image as texture.</param>
+        /// <returns>True if CifRci imported.</returns>
+        public static bool TryImportCifRci(string name, int record, int frame, MetalTypes metalType, out Texture2D tex)
         {
-            return ImportTextureFile(cifRciPath, GetNameCifRci(filename, record, frame));
-        }
-
-        /// <summary>
-        /// Search for image on disk to replace .CIFs and .RCIs. for a specific metalType
-        /// (filename_record-frame_metalType.png, for example 'WEAPON04.CIF_0-0_Iron.Png').
-        /// </summary>
-        /// <param name="filename">Name of image.</param>
-        /// <param name="record">Record index.</param>
-        /// <param name="frame">Frame index. It's different than zero only for weapon animations (WEAPONXX.CIF) </param> 
-        /// <returns>True if generic or specific image exists.</returns>
-        static public bool CustomCifExist(string filename, int record, int frame, MetalTypes metalType)
-        {
-            return TextureFileExist(cifRciPath, GetNameCifRci(filename, record, frame, metalType));
-        }
-
-        /// <summary>
-        /// Import image from disk to replace .CIFs and .RCIs. for a specific metalType
-        /// (filename_record-frame_metalType.png', for example 'WEAPON04.CIF_0-0_Iron.Png').
-        /// </summary>
-        /// <param name="filename">Name of image.</param>
-        /// <param name="record">Record index.</param>
-        /// <param name="frame">Frame index. It's different than zero only for weapon animations (WEAPONXX.CIF) </param> 
-        /// <returns>Image for this metalType or generic image if metalType is None.</returns>
-        static public Texture2D LoadCustomCif(string filename, int record, int frame, MetalTypes metalType)
-        {
-            return ImportTextureFile(cifRciPath, GetNameCifRci(filename, record, frame, metalType));
+            return TryImportTexture(cifRciPath, GetNameCifRci(name, record, frame, metalType), out tex);
         }
 
         /// <summary>
@@ -782,6 +747,9 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// </summary>
         public static Vector2 GetSize(Texture2D texture, string textureName, bool allowXml = false)
         {
+            if (!DaggerfallUnity.Settings.MeshAndTextureReplacement)
+                return new Vector2(texture.width, texture.height);
+
             if (allowXml)
             {
                 // Get size from xml
@@ -795,15 +763,9 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 }
             }
 
-            // Get size from vanilla image
-            if (CustomImageExist(textureName))
-            {
-                ImageData imageData = ImageReader.GetImageData(textureName, createTexture: false);
-                return new Vector2(imageData.width, imageData.height);
-            }
-
-            // Get size from texture
-            return new Vector2(texture.width, texture.height);
+            // Get size from Daggerfall image
+            ImageData imageData = ImageReader.GetImageData(textureName, createTexture: false);
+            return new Vector2(imageData.width, imageData.height);
         }
 
         /// <summary>
@@ -811,15 +773,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// </summary>
         public static Vector2 GetSize(Texture2D texture, string textureName, int record, int frame = 0)
         {
-            // Get size from vanilla image
-            if (CustomCifExist(textureName, record, frame))
-            {
-                ImageData imageData = ImageReader.GetImageData(textureName, createTexture: false);
-                return new Vector2(imageData.width, imageData.height);
-            }
+            if (!DaggerfallUnity.Settings.MeshAndTextureReplacement)
+                return new Vector2(texture.width, texture.height);
 
-            // Get size from texture
-            return new Vector2(texture.width, texture.height);
+            // Get size from Daggerfall image
+            ImageData imageData = ImageReader.GetImageData(textureName, createTexture: false);
+            return new Vector2(imageData.width, imageData.height);
         }
 
         #endregion
@@ -879,6 +838,33 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             tex.Apply();
 
             return tex;
+        }
+
+        /// <summary>
+        /// Seek texture from modding locations.
+        /// </summary>
+        /// <param name="path">Path on disk (loose files only).</param>
+        /// <param name="name">Name of texture.</param>
+        /// <param name="tex">Imported texture.</param>
+        /// <returns>True if texture imported.</returns>
+        private static bool TryImportTexture(string path, string name, out Texture2D tex)
+        {
+            if (DaggerfallUnity.Settings.MeshAndTextureReplacement)
+            {
+                // Seek from loose files
+                if (File.Exists(Path.Combine(path, name + extension)))
+                {
+                    tex = ImportTextureFile(path, name);
+                    return true;
+                }
+
+                // Seek from mods
+                if (ModManager.Instance != null)
+                    return ModManager.Instance.TryGetAsset(name, false, out tex);
+            }
+
+            tex = null;
+            return false;
         }
 
         /// <summary>

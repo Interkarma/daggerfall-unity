@@ -233,11 +233,8 @@ namespace DaggerfallWorkshop.Utility
                     imageData.size = imgFile.GetSize(0);
 
                     // Texture pack support
-                    if (createTexture && AssetInjection.TextureReplacement.CustomImageExist(filename))
-                    {
-                        imageData.texture = AssetInjection.TextureReplacement.LoadCustomImage(filename);
+                    if (createTexture && AssetInjection.TextureReplacement.TryImportImage(filename, out imageData.texture))
                         createTexture = false;
-                    }
 
                     break;
 
@@ -251,11 +248,8 @@ namespace DaggerfallWorkshop.Utility
                     imageData.size = cifFile.GetSize(record);
 
                     // Texture pack support
-                    if (createTexture && AssetInjection.TextureReplacement.CustomCifExist(filename, record, frame))
-                    {
-                        imageData.texture = AssetInjection.TextureReplacement.LoadCustomCif(filename, record, frame);
+                    if (createTexture && AssetInjection.TextureReplacement.TryImportCifRci(filename, record, frame, out imageData.texture))
                         createTexture = false;
-                    }
 
                     break;
 
@@ -269,11 +263,8 @@ namespace DaggerfallWorkshop.Utility
                     imageData.size = cfaFile.GetSize(record);
 
                     // Texture pack support
-                    if (createTexture && AssetInjection.TextureReplacement.CustomCifExist(filename, record, frame))
-                    {
-                        imageData.texture = AssetInjection.TextureReplacement.LoadCustomCif(filename, record, frame);
+                    if (createTexture && AssetInjection.TextureReplacement.TryImportCifRci(filename, record, frame, out imageData.texture))
                         createTexture = false;
-                    }
 
                     break;
 
