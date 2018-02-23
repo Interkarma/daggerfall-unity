@@ -1031,7 +1031,8 @@ namespace DaggerfallWorkshop.Game.Serialization
             {
                 playerEnterExit.BuildingDiscoveryData = saveData.playerData.playerPosition.buildingDiscoveryData;
                 playerEnterExit.IsPlayerInsideOpenShop = saveData.playerData.playerPosition.insideOpenShop;
-                RestoreHousesData(saveData.bankDeeds.houses);
+                if (saveData.bankDeeds != null)
+                    RestoreHousesData(saveData.bankDeeds.houses);
             }
 
             // Restore faction data to player entity
