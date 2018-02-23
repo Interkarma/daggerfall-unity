@@ -732,8 +732,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d4b5bc6bb87e4948b2d181e1f85fb20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  StartMethod: 2
-  SaveIndex: -1
+  StartMethod: 5
+  SaveIndex: 232
   PostStartMessage: 
   LaunchQuest: 
   EnableVideos: 1
@@ -1762,6 +1762,12 @@ Prefab:
       propertyPath: ScreenWeapon
       value: 
       objectReference: {fileID: 2132483541}
+    - target: {fileID: 114492803959826104, guid: 53a45b46ca97a974f8e677f68c2a85e6,
+        type: 2}
+      propertyPath: ColdMissilePrefab
+      value: 
+      objectReference: {fileID: 114701158002484598, guid: 481b796491f5b9543b5711183faef15a,
+        type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 2}
   m_IsPrefabParent: 0
@@ -2169,7 +2175,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22400016, guid: 312abd0527754e047a6bfbc424f09ace, type: 2}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 11400006, guid: 312abd0527754e047a6bfbc424f09ace, type: 2}
       propertyPath: m_Value

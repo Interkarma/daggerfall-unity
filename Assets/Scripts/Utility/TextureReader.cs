@@ -865,7 +865,7 @@ namespace DaggerfallWorkshop.Utility
         #region Helpers
 
         // Textures that should receive emission map
-        // TODO: This should be set by a user-managed list somewhere
+        // TODO: Consider setting this from an external list
         DaggerfallTextureIndex[] emissiveTextures = new DaggerfallTextureIndex[]
         {
             // Mantellan Crux fire textures
@@ -904,6 +904,18 @@ namespace DaggerfallWorkshop.Utility
             new DaggerfallTextureIndex() { archive = 210, record = 27 },
             new DaggerfallTextureIndex() { archive = 210, record = 28 },
             new DaggerfallTextureIndex() { archive = 210, record = 29 },
+
+            // Spell missiles
+            new DaggerfallTextureIndex() { archive = 375, record = 0 },
+            new DaggerfallTextureIndex() { archive = 375, record = 1 },
+            new DaggerfallTextureIndex() { archive = 376, record = 0 },
+            new DaggerfallTextureIndex() { archive = 376, record = 1 },
+            new DaggerfallTextureIndex() { archive = 377, record = 0 },
+            new DaggerfallTextureIndex() { archive = 377, record = 1 },
+            new DaggerfallTextureIndex() { archive = 378, record = 0 },
+            new DaggerfallTextureIndex() { archive = 378, record = 1 },
+            new DaggerfallTextureIndex() { archive = 379, record = 0 },
+            new DaggerfallTextureIndex() { archive = 379, record = 1 },
         };
 
         public bool IsEmissive(int archive, int record)

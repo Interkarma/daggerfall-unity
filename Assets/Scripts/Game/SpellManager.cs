@@ -29,6 +29,12 @@ namespace DaggerfallWorkshop.Game
     {
         #region Fields
 
+        public DaggerfallMissile ColdMissilePrefab;
+        public DaggerfallMissile FireMissilePrefab;
+        public DaggerfallMissile MagicMissilePrefab;
+        public DaggerfallMissile PoisonMissilePrefab;
+        public DaggerfallMissile ShockMissilePrefab;        
+
         FakeSpell readySpell = null;
         FakeSpell lastSpell = null;
 
@@ -145,8 +151,11 @@ namespace DaggerfallWorkshop.Game
         {
             if (readySpell != null)
             {
-                // TODO: Emit spell into world
-                Debug.Log("Cast spell.");
+                // TEMP: Just hurling test missiles with no payload at this time
+                GameManager.Instance.PlayerSpellCasting.PlayOneShot(SpellTypes.Cold);
+                DaggerfallMissile missile = Instantiate(ColdMissilePrefab);
+                missile.UseSpellBillboardAnims(SpellTypes.Cold);
+                missile.ExecuteMobileMissile(transform.position + transform.forward * 1.0f, GameManager.Instance.MainCamera.transform.forward);
 
                 lastSpell = readySpell;
                 readySpell = null;

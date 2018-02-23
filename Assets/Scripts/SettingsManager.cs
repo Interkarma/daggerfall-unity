@@ -36,6 +36,7 @@ namespace DaggerfallWorkshop
         const string sectionVideo = "Video";
         const string sectionChildGuard = "ChildGuard";
         const string sectionGUI = "GUI";
+        const string sectionSpells = "Spells";
         const string sectionControls = "Controls";
         const string sectionStartup = "Startup";
         const string sectionExperimental = "Experimental";
@@ -101,6 +102,10 @@ namespace DaggerfallWorkshop
         public bool EnableModernConversationStyleInTalkWindow { get; set; }
         public int HelmAndShieldMaterialDisplay { get; set; }
 
+        // [Spells]
+        public bool EnableSpellLighting { get; set; }
+        public bool EnableSpellShadows { get; set; }
+
         // [Controls]
         public bool InvertMouseVertical { get; set; }
         public bool MouseLookSmoothing { get; set; }
@@ -141,6 +146,7 @@ namespace DaggerfallWorkshop
             // Read ini data to property cache
             MyDaggerfallPath = GetString(sectionDaggerfall, "MyDaggerfallPath");
             MyDaggerfallUnitySavePath = GetString(sectionDaggerfall, "MyDaggerfallUnitySavePath");
+
             ResolutionWidth = GetInt(sectionVideo, "ResolutionWidth");
             ResolutionHeight = GetInt(sectionVideo, "ResolutionHeight");
             VSync = GetBool(sectionVideo, "VSync");
@@ -154,7 +160,9 @@ namespace DaggerfallWorkshop
             InteriorLightShadows = GetBool(sectionVideo, "InteriorLightShadows");
             EnableTextureArrays = GetBool(sectionVideo, "EnableTextureArrays");
             RandomDungeonTextures = GetInt(sectionVideo, "RandomDungeonTextures", 0, 4);
+
             PlayerNudity = GetBool(sectionChildGuard, "PlayerNudity");
+
             ShowOptionsAtStart = GetBool(sectionGUI, "ShowOptionsAtStart");
             GUIFilterMode = GetInt(sectionGUI, "GUIFilterMode", 0, 2);
             VideoFilterMode = GetInt(sectionGUI, "VideoFilterMode");
@@ -175,6 +183,10 @@ namespace DaggerfallWorkshop
             ShopQualityPresentation = GetInt(sectionGUI, "ShopQualityPresentation", 0, 2);
             ShopQualityHUDDelay = GetInt(sectionGUI, "ShopQualityHUDDelay", 1, 10);
             ShowQuestJournalClocksAsCountdown = GetBool(sectionGUI, "ShowQuestJournalClocksAsCountdown");
+
+            EnableSpellLighting = GetBool(sectionSpells, "EnableSpellLighting");
+            EnableSpellShadows = GetBool(sectionSpells, "EnableSpellShadows");
+
             InvertMouseVertical = GetBool(sectionControls, "InvertMouseVertical");
             MouseLookSmoothing = GetBool(sectionControls, "MouseLookSmoothing");
             MouseLookSensitivity = GetFloat(sectionControls, "MouseLookSensitivity", 0.1f, 4.0f);
@@ -183,11 +195,14 @@ namespace DaggerfallWorkshop
             WeaponAttackThreshold = GetFloat(sectionControls, "WeaponAttackThreshold", 0.001f, 1.0f);
             WeaponSensitivity = GetFloat(sectionControls, "WeaponSensitivity", 0.1f, 10.0f);
             ClickToAttack = GetBool(sectionControls, "ClickToAttack");
+
             StartCellX = GetInt(sectionStartup, "StartCellX", 2, 997);
             StartCellY = GetInt(sectionStartup, "StartCellY", 2, 497);
             StartInDungeon = GetBool(sectionStartup, "StartInDungeon");
+
             HQTooltips = GetBool(sectionExperimental, "HQTooltips");
             TerrainDistance = GetInt(sectionExperimental, "TerrainDistance", 1, 4);
+
             LypyL_GameConsole = GetBool(sectionEnhancements, "LypyL_GameConsole");
             LypyL_ModSystem = GetBool(sectionEnhancements, "LypyL_ModSystem");
             MeshAndTextureReplacement = GetBool(sectionEnhancements, "MeshAndTextureReplacement");
@@ -202,6 +217,7 @@ namespace DaggerfallWorkshop
             // Write property cache to ini data
             SetString(sectionDaggerfall, "MyDaggerfallPath", MyDaggerfallPath);
             SetString(sectionDaggerfall, "MyDaggerfallUnitySavePath", MyDaggerfallUnitySavePath);
+
             SetInt(sectionVideo, "ResolutionWidth", ResolutionWidth);
             SetInt(sectionVideo, "ResolutionHeight", ResolutionHeight);
             SetBool(sectionVideo, "VSync", VSync);
@@ -215,7 +231,9 @@ namespace DaggerfallWorkshop
             SetBool(sectionVideo, "InteriorLightShadows", InteriorLightShadows);
             SetBool(sectionVideo, "EnableTextureArrays", EnableTextureArrays);
             SetInt(sectionVideo, "RandomDungeonTextures", RandomDungeonTextures);
+
             SetBool(sectionChildGuard, "PlayerNudity", PlayerNudity);
+
             SetBool(sectionGUI, "ShowOptionsAtStart", ShowOptionsAtStart);
             SetInt(sectionGUI, "GUIFilterMode", GUIFilterMode);
             SetInt(sectionGUI, "VideoFilterMode", VideoFilterMode);
@@ -234,6 +252,10 @@ namespace DaggerfallWorkshop
             SetInt(sectionGUI, "ShopQualityPresentation", ShopQualityPresentation);
             SetInt(sectionGUI, "ShopQualityHUDDelay", ShopQualityHUDDelay);
             SetBool(sectionGUI, "ShowQuestJournalClocksAsCountdown", ShowQuestJournalClocksAsCountdown);
+
+            SetBool(sectionSpells, "EnableSpellLighting", EnableSpellLighting);
+            SetBool(sectionSpells, "EnableSpellShadows", EnableSpellShadows);
+
             SetBool(sectionControls, "InvertMouseVertical", InvertMouseVertical);
             SetBool(sectionControls, "MouseLookSmoothing", MouseLookSmoothing);
             SetFloat(sectionControls, "MouseLookSensitivity", MouseLookSensitivity);
@@ -242,11 +264,14 @@ namespace DaggerfallWorkshop
             SetFloat(sectionControls, "WeaponAttackThreshold", WeaponAttackThreshold);
             SetFloat(sectionControls, "WeaponSensitivity", WeaponSensitivity);
             SetBool(sectionControls, "ClickToAttack", ClickToAttack);
+
             SetInt(sectionStartup, "StartCellX", StartCellX);
             SetInt(sectionStartup, "StartCellY", StartCellY);
             SetBool(sectionStartup, "StartInDungeon", StartInDungeon);
+
             SetBool(sectionExperimental, "HQTooltips", HQTooltips);
             SetInt(sectionExperimental, "TerrainDistance", TerrainDistance);
+
             SetBool(sectionEnhancements, "LypyL_GameConsole", LypyL_GameConsole);
             SetBool(sectionEnhancements, "LypyL_ModSystem", LypyL_ModSystem);
             SetBool(sectionEnhancements, "MeshAndTextureReplacement", MeshAndTextureReplacement);

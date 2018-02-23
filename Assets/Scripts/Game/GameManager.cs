@@ -62,6 +62,7 @@ namespace DaggerfallWorkshop.Game
         PlayerMotor playerMotor = null;
         FloatingOrigin floatingOrigin = null;
         FPSWeapon[] playerWeapons = new FPSWeapon[2];
+        FPSSpellCasting playerSpellCasting = null;
         PlayerActivate playerActivate = null;
         CharacterController playerController = null;
         SunlightManager sunlightManager = null;
@@ -238,6 +239,12 @@ namespace DaggerfallWorkshop.Game
         {
             get { return (playerWeapons[1]) ? playerWeapons[1] : playerWeapons[1] = GetComponentFromObject<FPSWeapon>(GetGameObjectWithName("Right Hand Weapon")); }
             set { playerWeapons[1] = value; }
+        }
+
+        public FPSSpellCasting PlayerSpellCasting
+        {
+            get { return (playerSpellCasting) ? playerSpellCasting : playerSpellCasting = GetComponentFromObject<FPSSpellCasting>(PlayerObject); }
+            set { playerSpellCasting = value; }
         }
 
         public PlayerActivate PlayerActivate

@@ -42,6 +42,10 @@ EnableEnhancedItemLists=False
 EnableModernConversationStyleInTalkWindow=False
 HelmAndShieldMaterialDisplay=0
 
+[Spells]
+EnableSpellLighting=True
+EnableSpellShadows=True
+
 [Controls]
 InvertMouseVertical=False
 MouseLookSmoothing=True

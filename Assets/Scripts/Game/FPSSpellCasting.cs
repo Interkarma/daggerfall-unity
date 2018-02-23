@@ -29,7 +29,6 @@ namespace DaggerfallWorkshop.Game
     /// and are never mixed with weapons directly on screen at same time.
     /// Opted to create a new class to play these animations and separate from FPSWeapon.
     /// </summary>
-    [RequireComponent(typeof(DaggerfallAudioSource))]
     public class FPSSpellCasting : MonoBehaviour
     {
         #region Fields
@@ -37,7 +36,7 @@ namespace DaggerfallWorkshop.Game
         const int nativeScreenWidth = 300;
         const int nativeScreenHeight = 200;
         const float smallFrameAdjust = 0.134f;
-        const float animSpeed = 0.1f;                               // Set slower than classic as easier to check frames during build-out
+        const float animSpeed = 0.05f;                              // Set slower than classic for now
 
         int[] frameIndices = new int[] { 0, 1, 2, 3, 4, 5, 0 };     // Animation starts and ends with frame 0
 
@@ -46,7 +45,6 @@ namespace DaggerfallWorkshop.Game
         Texture2D[] currentAnims;
         int currentFrame = -1;
 
-        DaggerfallAudioSource dfAudioSource;
         Rect leftHandPosition;
         Rect rightHandPosition;
         Rect leftHandAnimRect;
@@ -70,7 +68,6 @@ namespace DaggerfallWorkshop.Game
 
         void Start()
         {
-            dfAudioSource = GetComponent<DaggerfallAudioSource>();
             StartCoroutine(AnimateSpellCast());
         }
 
@@ -120,6 +117,20 @@ namespace DaggerfallWorkshop.Game
                 GUI.DrawTextureWithTexCoords(leftHandPosition, currentAnims[frameIndex], leftHandAnimRect);
                 GUI.DrawTextureWithTexCoords(rightHandPosition, currentAnims[frameIndex], rightHandAnimRect);
             }
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Play casting animation once only.
+        /// </summary>
+        /// <param name="spellType"></param>
+        public void PlayOneShot(SpellTypes spellType)
+        {
+            SetCurrentAnims(spellType);
+            currentFrame = 0;
         }
 
         #endregion
