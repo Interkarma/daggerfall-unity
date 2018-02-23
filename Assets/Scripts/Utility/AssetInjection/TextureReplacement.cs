@@ -183,6 +183,17 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         /// <summary>
+        /// Seek texture from mods.
+        /// </summary>
+        /// <param name="name">Texture name.</param>
+        /// <param name="tex">Imported texture.</param>
+        /// <returns>True if texture imported.</returns>
+        public static bool TryImportTexture(string name, out Texture2D tex)
+        {
+            return TryImportTexture(texturesPath, name, out tex);
+        }
+
+        /// <summary>
         /// Seek image from mods.
         /// </summary>
         /// <param name="name">Image name.</param>
@@ -779,6 +790,26 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             // Get size from Daggerfall image
             ImageData imageData = ImageReader.GetImageData(textureName, createTexture: false);
             return new Vector2(imageData.width, imageData.height);
+        }
+
+        /// <summary>
+        /// Read size associated with a texture from xml.
+        /// </summary>
+        public static bool TryGetSize(string textureName, out Vector2 size)
+        {
+            if (DaggerfallUnity.Settings.MeshAndTextureReplacement)
+            {
+                string path = Path.Combine(texturesPath, textureName);
+                if (XMLManager.XmlFileExists(path))
+                {
+                    var xml = new XMLManager(path);
+                    if (xml.TryGetVector2("width", "height", out size))
+                        return true;
+                }
+            }
+
+            size = new Vector2();
+            return false;
         }
 
         #endregion

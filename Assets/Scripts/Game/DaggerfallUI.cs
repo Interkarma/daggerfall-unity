@@ -896,6 +896,27 @@ namespace DaggerfallWorkshop.Game
             return texture;
         }
 
+        /// <summary>
+        /// Get a texture from resources with modding support.
+        /// </summary>
+        public static Texture2D GetTextureFromResources(string name)
+        {
+            Texture2D tex;
+            return TextureReplacement.TryImportTexture(name, out tex) ? tex : Resources.Load<Texture2D>(name);
+        }
+
+        /// <summary>
+        /// Get a texture from resources with modding support.
+        /// Size is read from xml or set as texture size.
+        /// </summary>
+        public static Texture2D GetTextureFromResources(string name, out Vector2 size)
+        {
+            Texture2D tex = GetTextureFromResources(name);
+            if (!TextureReplacement.TryGetSize(name, out size))
+                size = new Vector2(tex.width, tex.height);
+            return tex;
+        }
+
         public static DaggerfallMessageBox MessageBox(string message, bool wrapText = false, IMacroContextProvider mds = null)
         {
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(Instance.uiManager, Instance.uiManager.TopWindow, wrapText);
