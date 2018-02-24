@@ -4,6 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Michael Rauter (Nystul)
+// Contributors: Numidium
 
 using System;
 using DaggerfallWorkshop.Utility;
@@ -38,6 +39,7 @@ namespace DaggerfallWorkshop.Game
         {
             public ListItem currentQuestionListItem;
             public Races npcRace;
+            public Genders potentialQuestorGender;
         }
 
         public MacroDataSource GetMacroDataSource()
@@ -45,6 +47,10 @@ namespace DaggerfallWorkshop.Game
             TalkManagerContext context = new TalkManagerContext();
             context.currentQuestionListItem = this.currentQuestionListItem;
             context.npcRace = this.npcData.race;
+            if (this.currentQuestionListItem.questionType == QuestionType.Work)
+            {
+                context.potentialQuestorGender = TalkManager.Instance.GetQuestorGender();
+            }
             return new TalkManagerDataSource(context);
         }
 
@@ -137,6 +143,42 @@ namespace DaggerfallWorkshop.Game
                         break;
                 }
                 return DaggerfallUnity.Instance.TextProvider.GetRandomText((int)whichOath);
+            }
+
+            // He/She
+            public override string Pronoun()
+            {
+                switch (parent.potentialQuestorGender)
+                {
+                default:
+                case Game.Entity.Genders.Male:
+                    return HardStrings.pronounHe;
+                case Game.Entity.Genders.Female:
+                    return HardStrings.pronounShe;
+                }
+            }
+
+            // Him/Her
+            public override string Pronoun2()
+            {
+                switch (parent.potentialQuestorGender)
+                {
+                default:
+                case Game.Entity.Genders.Male:
+                    return HardStrings.pronounHim;
+                case Game.Entity.Genders.Female:
+                    return HardStrings.pronounHer;
+                }
+            }
+
+            public override string PotentialQuestorName()
+            {
+                return TalkManager.Instance.GetQuestorName();
+            }
+
+            public override string PotentialQuestorLocation()
+            {
+                return TalkManager.Instance.GetQuestorLocation();
             }
         }
     }

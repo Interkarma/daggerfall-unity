@@ -22,6 +22,7 @@ using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Questing;
+using System.Linq;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -265,6 +266,16 @@ namespace DaggerfallWorkshop.Game
         // faction IDs for factions listed in "tell me about"
         int[] infoFactionIDs = { 42, 40, 108, 129, 306, 353, 41, 67, 82, 84, 88, 92, 94, 106, 36, 83, 85, 89, 93, 95, 99, 107, 37, 368, 408, 409, 410, 411, 413, 414, 415, 416, 417, 98 };
 
+        // Data for "work" quests in the current town
+        struct npcBuildingPair
+        {
+            public StaticNPC.NPCData npc;
+            public DFLocation.BuildingData building;
+        }
+        Dictionary<int, npcBuildingPair> merchantRecords = new Dictionary<int, npcBuildingPair>();
+        int lastExteriorEntered;
+        int selectedKey;
+
         #endregion
 
         #region Properties
@@ -326,7 +337,11 @@ namespace DaggerfallWorkshop.Game
             PlayerGPS.OnMapPixelChanged += OnMapPixelChanged;
             PlayerEnterExit.OnTransitionExterior += OnTransitionToExterior;
             PlayerEnterExit.OnTransitionDungeonExterior += OnTransitionToDungeonExterior;
-            SaveLoadManager.OnLoad += OnLoadEvent;            
+            SaveLoadManager.OnLoad += OnLoadEvent;
+
+            // initialize work variables
+            lastExteriorEntered = 0;
+            selectedKey = -1;
         }
 
         void OnDestroy()
@@ -1090,9 +1105,17 @@ namespace DaggerfallWorkshop.Game
                     answer = GetAnswerAboutQuestTopic(listItem);
                     break;
                 case QuestionType.Work:
-                    answer = expandRandomTextRecord(8076);
-                    break;
-
+                    if (!WorkAvailable)
+                    {
+                        answer = expandRandomTextRecord(8078);
+                        break;
+                    }
+                    else
+                    {
+                        SetRandomQuestor(); // Pick a random Work questor from the pool
+                        answer = expandRandomTextRecord(8076);
+                        break;
+                    }
             }
 
             numQuestionsAsked++;
@@ -1342,6 +1365,118 @@ namespace DaggerfallWorkshop.Game
 
             // update topic list
             AssembleTopiclistTellMeAbout();
+        }
+        /// <summary>
+        /// Generates a pool of merchant NPCs in the exterior location that may offer quests.
+        /// </summary>
+        /// <param name="locationID">The current player location's index.</param>
+        public void SetMerchantQuestors(int locationID)
+        {
+            merchantRecords.Clear();
+            ContentReader.MapSummary mapSummary;
+            DFPosition mapPixel = GameManager.Instance.PlayerGPS.CurrentMapPixel;
+            DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out mapSummary);
+            DFLocation location = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(mapSummary.RegionIndex, mapSummary.MapIndex);
+            DFBlock[] blocks;
+            RMBLayout.GetLocationBuildingData(location, out blocks);
+            for (int i = 0; i < blocks.Length; i++)
+            {
+                for (int j = 0; j < blocks[i].RmbBlock.SubRecords.Length; j++)
+                {
+                    DFLocation.BuildingData building = blocks[i].RmbBlock.FldHeader.BuildingDataList[j];
+                    for (int k = 0; k < blocks[i].RmbBlock.SubRecords[j].Interior.BlockPeopleRecords.Length; k++)
+                    {
+                        FactionFile.FactionData fData;
+                        short fID = blocks[i].RmbBlock.SubRecords[j].Interior.BlockPeopleRecords[k].FactionID;
+                        GameManager.Instance.PlayerEntity.FactionData.GetFactionData(fID, out fData);
+                        if ((FactionFile.SocialGroups)fData.sgroup == FactionFile.SocialGroups.Merchants)
+                        {
+                            int randomChance = UnityEngine.Random.Range(0, 4); // 25% chance that a merchant will offer quests
+                            if (randomChance < 3) 
+                            {
+                                continue;
+                            }
+                            DFBlock.RmbBlockPeopleRecord peopleRecord = blocks[i].RmbBlock.SubRecords[j].Interior.BlockPeopleRecords[k];
+                            int x = peopleRecord.XPos;
+                            int y = peopleRecord.YPos;
+                            int z = peopleRecord.ZPos;
+                            int key = (int)peopleRecord.Position;
+                            if (!merchantRecords.ContainsKey(key))
+                            {
+                                npcBuildingPair nbPair = new npcBuildingPair();
+                                StaticNPC.NPCData npc = new StaticNPC.NPCData();
+                                npc.hash = x ^ y << 2 ^ z >> 2; // expression copied from StaticNPC.GetPositionHash because it's not visible here
+                                npc.flags = peopleRecord.Flags;
+                                npc.nameSeed = key;
+                                npc.gender = ((npc.flags & 32) == 32) ? Genders.Female : Genders.Male;
+                                npc.context = StaticNPC.Context.Building;
+                                npc.billboardArchiveIndex = peopleRecord.TextureArchive;
+                                npc.billboardRecordIndex = peopleRecord.TextureRecord;
+                                npc.nameBank = GameManager.Instance.PlayerGPS.GetNameBankOfCurrentRegion();
+                                nbPair.npc = npc;
+                                nbPair.building = building;
+                                merchantRecords.Add(key, nbPair);
+                            }
+                        }
+                    }
+                }
+            }
+            lastExteriorEntered = locationID;
+        }
+
+        public bool MerchantQuestorsAreSet(int locationID)
+        {
+            return (lastExteriorEntered == locationID);
+        }
+            
+        public bool MerchantOfferingQuest(int position)
+        {
+            return merchantRecords.ContainsKey(position) && !QuestMachine.Instance.IsLastNPCClickedAnActiveQuestor();
+        }
+
+        public void SetRandomQuestor()
+        {
+            if (!WorkAvailable) 
+            {
+                return;
+            }
+            System.Random rand = new System.Random();
+            selectedKey = merchantRecords.Keys.ToList()[rand.Next(merchantRecords.Count)];
+            Debug.Log("TalkManager: Picked random questor. Key: " + selectedKey + ", Pool Size: " + merchantRecords.Keys.Count);
+        }
+
+        public string GetQuestorName()
+        {
+            DFRandom.srand(merchantRecords[selectedKey].npc.nameSeed);
+            return DaggerfallUnity.Instance.NameHelper.FullName(merchantRecords[selectedKey].npc.nameBank, merchantRecords[selectedKey].npc.gender);
+        }
+
+        public Genders GetQuestorGender()
+        {
+            return merchantRecords[selectedKey].npc.gender;
+        }
+
+        public string GetQuestorLocation()
+        {
+            ContentReader.MapSummary mapSummary;
+            DFPosition mapPixel = GameManager.Instance.PlayerGPS.CurrentMapPixel;
+            if (!DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out mapSummary))
+            {
+                return "not found";
+            }
+            DFLocation location = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(mapSummary.RegionIndex, mapSummary.MapIndex);
+            DFLocation.BuildingData bld = merchantRecords[selectedKey].building;
+            return BuildingNames.GetName(bld.NameSeed, bld.BuildingType, bld.FactionId, location.Name, location.RegionName);
+        }
+
+        public void RemoveMerchantQuestor(int nameSeed)
+        {
+            merchantRecords.Remove(nameSeed);
+        }
+
+        public bool WorkAvailable
+        { 
+            get { return merchantRecords.Count != 0; }
         }
 
         #endregion

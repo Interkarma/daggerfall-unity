@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors: Numidium
 // 
 // Notes:
 //
@@ -1032,6 +1032,12 @@ namespace DaggerfallWorkshop.Game
                         holidayTextPrimed = true;
                     }
                     holidayTextLocation = location;
+
+                    // Generate a list of merchant NPCs to get work from
+                    if (!TalkManager.Instance.MerchantQuestorsAreSet(location.LocationIndex)) 
+                    {
+                        TalkManager.Instance.SetMerchantQuestors(location.LocationIndex);
+                    }
                 }
             }
         }

@@ -4,6 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Hazelnut
+// Contributors: Numidium
 
 using System;
 using DaggerfallConnect.Arena2;
@@ -178,6 +179,18 @@ namespace DaggerfallWorkshop.Utility
 
         public virtual string RoomHoursLeft()
         {   // %dwr
+            throw new NotImplementedException();
+        }
+
+        public virtual string PotentialQuestorName()
+        {
+            //%pqn
+            throw new NotImplementedException();
+        }
+
+        public virtual string PotentialQuestorLocation()
+        {
+            // %pqp
             throw new NotImplementedException();
         }
 
