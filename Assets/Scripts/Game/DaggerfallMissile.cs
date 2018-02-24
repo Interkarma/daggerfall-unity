@@ -12,8 +12,10 @@
 using UnityEngine;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Effects;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -29,6 +31,7 @@ namespace DaggerfallWorkshop.Game
     /// </summary>
     [RequireComponent(typeof(Light))]
     [RequireComponent(typeof(SphereCollider))]
+    [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(DaggerfallAudioSource))]
     public class DaggerfallMissile : MonoBehaviour
     {
@@ -37,7 +40,7 @@ namespace DaggerfallWorkshop.Game
         public float MovementSpeed = 12.0f;                     // Speed missile moves through world
         public float ColliderRadius = 0.5f;                     // Radius of missile contact sphere
         public bool AreaOfEffect = false;                       // Make this an area of effect explosion that triggers on contact with entity or environment
-        public float ExplosionRadius = 2.0f;                    // Radius of area of effect explosion
+        public float ExplosionRadius = 4.0f;                    // Radius of area of effect explosion
         public bool IsTouch = false;                            // Determines if missile performs a spherecast to entity target instead of firing a moving sphere
         public float TouchRange = 2.5f;                         // Maximum range for touch spherecast
         public bool EnableLight = true;                         // Show a light with this missile - player can force disable from settings
@@ -62,6 +65,7 @@ namespace DaggerfallWorkshop.Game
         Vector3 direction;
         Light myLight;
         SphereCollider myCollider;
+        Rigidbody myRigidbody;
         DaggerfallBillboard myBillboard;
         bool forceDisableSpellLighting;
         bool forceDisableSpellShadows;
@@ -84,6 +88,11 @@ namespace DaggerfallWorkshop.Game
             myCollider = GetComponent<SphereCollider>();
             myCollider.radius = ColliderRadius;
             myCollider.isTrigger = true;
+
+            // Setup rigidbody
+            myRigidbody = GetComponent<Rigidbody>();
+            myRigidbody.isKinematic = true;
+            myRigidbody.useGravity = false;
         }
 
         private void Update()
@@ -129,6 +138,55 @@ namespace DaggerfallWorkshop.Game
         #endregion
 
         #region Collision Handling
+
+        private void OnTriggerEnter(Collider other)
+        {
+            List<DaggerfallEntityBehaviour> entities = new List<DaggerfallEntityBehaviour>();
+
+            // Add targets
+            if (AreaOfEffect)
+            {
+                // AOE targets
+                Collider[] overlaps = Physics.OverlapSphere(transform.position, ExplosionRadius);
+                for (int i = 0; i < overlaps.Length; i++)
+                {
+                    DaggerfallEntityBehaviour aoeEntity = overlaps[i].GetComponent<DaggerfallEntityBehaviour>();
+                    if (aoeEntity)
+                    {
+                        entities.Add(aoeEntity);
+                    }
+                }
+            }
+            else
+            {
+                // Direct contact target
+                DaggerfallEntityBehaviour contactEntity = other.GetComponent<DaggerfallEntityBehaviour>();
+                if (contactEntity)
+                {
+                    entities.Add(contactEntity);
+                }
+            }
+
+            // Create list of found entities for debug output
+            string outputList = string.Empty;
+            foreach(var entity in entities)
+            {
+                outputList += entity.name + "; ";
+            }
+
+            // Output debug information
+            if (entities.Count > 0)
+            {
+                Debug.LogFormat("Missile hit {0} targets: {1}", entities.Count, outputList);
+            }
+            else
+            {
+                Debug.Log("Missile trigger");
+            }
+
+            Destroy(gameObject);
+        }
+
         #endregion
 
         #region Private Methods
