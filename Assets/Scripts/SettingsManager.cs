@@ -238,6 +238,7 @@ namespace DaggerfallWorkshop
             SetInt(sectionGUI, "GUIFilterMode", GUIFilterMode);
             SetInt(sectionGUI, "VideoFilterMode", VideoFilterMode);
             SetBool(sectionGUI, "Crosshair", Crosshair);
+            SetString(sectionGUI, "InteractionModeIcon", InteractionModeIcon);
             SetBool(sectionGUI, "SwapHealthAndFatigueColors", SwapHealthAndFatigueColors);
             SetFloat(sectionGUI, "DimAlphaStrength", DimAlphaStrength);
             SetBool(sectionGUI, "FreeScaling", FreeScaling);
