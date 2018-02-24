@@ -79,22 +79,59 @@ namespace DaggerfallWorkshop.Utility
         }
 
         /// <summary>
+        /// Converts a sub-rect to UV-styled relative coordinates.
+        /// Intended to get relative coordinates from classic image rects that can be used for replacement textures at higher resolutions.
+        /// The replacement texture must store sub-elements in proportionally the same place (i.e. be a direct upscale) as classic source.
+        /// </summary>
+        /// <param name="subRect">Input rect using pixel coordinates into classic texture.</param>
+        /// <param name="srcWidth">Full width of classic source texture.</param>
+        /// <param name="srcHeight">Full height of classic source texture.</param>
+        /// <returns>Converted Rect using relative coordinates.</returns>
+        public static Rect ConvertToRelativeSubRect(Rect subRect, int srcWidth, int srcHeight)
+        {
+            Vector2 position = new Vector2(subRect.x / srcWidth, subRect.y / srcHeight);
+            Vector2 size = new Vector2(subRect.width / srcWidth, subRect.height / srcHeight);
+
+            return new Rect(position, size);
+        }
+
+        /// <summary>
         /// Cuts out a sub-texture from source texture.
         /// Useful for slicing up native UI elements into smaller functional units.
         /// </summary>
         /// <param name="texture">Source texture. Must be readable.</param>
         /// <param name="subRect">Rectangle of source image to extract. Origin 0,0 is top-left.</param>
+        /// <param name="useRelativeCoords">Rect is UV-styled relative coordinates into source texture.</param>
         /// <returns>New Texture2D containing sub-texture.</returns>
-        public static Texture2D GetSubTexture(Texture2D texture, Rect subRect)
+        public static Texture2D GetSubTexture(Texture2D texture, Rect subRect, bool useRelativeCoords = false)
         {
             // Check ready
             if (texture == null)
                 return null;
 
-            // Get Color32 from source texture
-            Color32[] colors = texture.GetPixels32();
+            // Convert relative coordinates back to pixel coordinates within source texture
+            if (useRelativeCoords)
+            {
+                subRect.x = subRect.x * texture.width;
+                subRect.y = subRect.y * texture.height;
+                subRect.width = subRect.width * texture.width;
+                subRect.height = subRect.height * texture.height;
+            }
 
-            return GetSubTexture(colors, subRect, texture.width, texture.height);
+            // Use most efficient method available
+            if (SystemInfo.copyTextureSupport != UnityEngine.Rendering.CopyTextureSupport.None)
+            {
+                int srcY = texture.height - (int)subRect.y - (int)subRect.height;
+                Texture2D newTexture = new Texture2D((int)subRect.width, (int)subRect.height);
+                Graphics.CopyTexture(texture, 0, 0, (int)subRect.x, srcY, (int)subRect.width, (int)subRect.height, newTexture, 0, 0, 0, 0);
+                newTexture.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
+
+                return newTexture;
+            }
+            else
+            {
+                return GetSubTexture(texture.GetPixels32(), subRect, texture.width, texture.height);
+            }
         }
 
         /// <summary>
