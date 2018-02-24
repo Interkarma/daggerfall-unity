@@ -820,13 +820,8 @@ namespace DaggerfallWorkshop.Game
                 return null;
 
             ImgFile imgFile = new ImgFile(Path.Combine(dfUnity.Arena2Path, name), FileUsage.UseMemory, readOnly);            
-            Texture2D texture = null;
- 
-            // Custom texture
-            if (TextureReplacement.CustomImageExist(name))
-                texture = TextureReplacement.LoadCustomImage(name);
-            // Daggerfall texture
-            else
+            Texture2D texture;
+            if (!TextureReplacement.TryImportImage(name, out texture))
             {
                 imgFile.LoadPalette(Path.Combine(dfUnity.Arena2Path, imgFile.PaletteName));
                 texture = GetTextureFromImg(imgFile, format, readOnly);
@@ -875,14 +870,9 @@ namespace DaggerfallWorkshop.Game
                 return null;
 
             CifRciFile cifRciFile = new CifRciFile(Path.Combine(dfUnity.Arena2Path, name), FileUsage.UseMemory, true);
-            Texture2D texture=null;
-            
-            // Custom texture
-            if (TextureReplacement.CustomCifExist(name, record, frame))
-                texture = TextureReplacement.LoadCustomCif(name, record, frame);
-            // Daggerfall texture
-            else
-            { 
+            Texture2D texture;
+            if (!TextureReplacement.TryImportCifRci(name, record, frame, out texture))
+            {
                 cifRciFile.LoadPalette(Path.Combine(dfUnity.Arena2Path, cifRciFile.PaletteName));
                 DFBitmap bitmap = cifRciFile.GetDFBitmap(record, frame);
                 texture = new Texture2D(bitmap.Width, bitmap.Height, format, false);
@@ -909,6 +899,27 @@ namespace DaggerfallWorkshop.Game
             texture.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
 
             return texture;
+        }
+
+        /// <summary>
+        /// Get a texture from resources with modding support.
+        /// </summary>
+        public static Texture2D GetTextureFromResources(string name)
+        {
+            Texture2D tex;
+            return TextureReplacement.TryImportTexture(name, out tex) ? tex : Resources.Load<Texture2D>(name);
+        }
+
+        /// <summary>
+        /// Get a texture from resources with modding support.
+        /// Size is read from xml or set as texture size.
+        /// </summary>
+        public static Texture2D GetTextureFromResources(string name, out Vector2 size)
+        {
+            Texture2D tex = GetTextureFromResources(name);
+            if (!TextureReplacement.TryGetSize(name, out size))
+                size = new Vector2(tex.width, tex.height);
+            return tex;
         }
 
         public static DaggerfallMessageBox MessageBox(string message, bool wrapText = false, IMacroContextProvider mds = null)

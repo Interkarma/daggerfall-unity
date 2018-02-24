@@ -20,48 +20,43 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
     /// </summary>
     public class CustomVideoPlayer : BaseScreenComponent
     {
-        MovieTexture movieTexture;
-        readonly AudioSource audio;
+        #region Fields & Properties
 
-        public bool Playing { get; set; }
+        readonly AudioSource audioSource;
+        MovieTexture movieTexture;
+        bool isLoading;
+
+        public bool IsPlaying
+        {
+            get { return movieTexture.isPlaying || isLoading; }
+        }
+
+        #endregion
+
+        #region Constructors
 
         public CustomVideoPlayer() : base()
         {
-            this.audio = DaggerfallUI.Instance.gameObject.GetComponent<AudioSource>();
+            audioSource = DaggerfallUI.Instance.gameObject.GetComponent<AudioSource>();
         }
 
-        /// <summary>
-        /// Play specified video.
-        /// </summary>
-        /// <param name="movieTexture">Video.</param>
-        public void PlayVideo (MovieTexture video)
-        {
-            Playing = true;
+        #endregion
 
-            // Set filtermode
-            movieTexture = video;
-            movieTexture.filterMode = (FilterMode)DaggerfallUnity.Settings.VideoFilterMode;
-
-            // Get audio
-            audio.clip = movieTexture.audioClip;
-
-            // Play video and audio
-            movieTexture.Play();
-            audio.Play();
-        }
+        #region Overrides
 
         public override void Update()
         {
             base.Update();
 
-            // Get end of video
-            if ((movieTexture.isReadyToPlay) && (!movieTexture.isPlaying))
-                Playing = false;
+            if (isLoading && movieTexture.isReadyToPlay)
+            {
+                movieTexture.Play();
+                audioSource.clip = movieTexture.audioClip;
+                audioSource.Play();
+                isLoading = false;
+            }
         }
 
-        /// <summary>
-        /// Draw video on screen.
-        /// </summary>
         public override void Draw()
         {
             base.Draw();
@@ -70,14 +65,30 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), movieTexture, ScaleMode.StretchToFill);
         }
 
+        #endregion
+
+        #region Public Methods
+
         /// <summary>
-        /// Stop playing video.
+        /// Set movietexture and play it when it's ready.
         /// </summary>
-        public void StopVideo()
+        /// <param name="movieTexture">Video and audio to play.</param>
+        public void Play(MovieTexture movieTexture)
+        {
+            this.movieTexture = movieTexture;
+            movieTexture.filterMode = (FilterMode)DaggerfallUnity.Settings.VideoFilterMode;
+            isLoading = true;
+        }
+
+        /// <summary>
+        /// Stop playing current video.
+        /// </summary>
+        public void Stop()
         {
             movieTexture.Stop();
-            audio.Stop();
-            Dispose();
+            audioSource.Stop();
         }
+
+        #endregion
     }
 }

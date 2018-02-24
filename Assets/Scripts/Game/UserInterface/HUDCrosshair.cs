@@ -10,7 +10,6 @@
 //
 
 using UnityEngine;
-using DaggerfallWorkshop.Utility.AssetInjection;
  
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -47,12 +46,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void LoadAssets()
         {
-            if (TextureReplacement.CustomTextureExist(defaultCrosshairFilename))
-                CrosshairTexture = TextureReplacement.LoadCustomTexture(defaultCrosshairFilename);
-            else
-                CrosshairTexture = Resources.Load<Texture2D>(defaultCrosshairFilename);
-
-            crosshairSize = TextureReplacement.GetSize(CrosshairTexture, defaultCrosshairFilename, true);
+            CrosshairTexture = DaggerfallUI.GetTextureFromResources(defaultCrosshairFilename, out crosshairSize);
         }
     }
 }
