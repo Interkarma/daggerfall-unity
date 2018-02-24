@@ -103,6 +103,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         HorizontalSlider terrainDistance;
         HorizontalSlider shadowResolutionMode;
         Checkbox dungeonLightShadows;
+        Checkbox interiorLightShadows;
         Checkbox useLegacyDeferred;
 
         // Theme
@@ -228,6 +229,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             shadowResolutionMode = AddSlider(rightPanel, "Shadow Resolution", "Quality of shadows",
                 DaggerfallUnity.Settings.ShadowResolutionMode, "Low", "Medium", "High", "Very High");
             dungeonLightShadows = AddCheckbox(rightPanel, "Dungeon Light Shadows", "Dungeon lights cast shadows", DaggerfallUnity.Settings.DungeonLightShadows);
+            interiorLightShadows = AddCheckbox(rightPanel, "Interior Light Shadows", "Interior lights cast shadows", DaggerfallUnity.Settings.InteriorLightShadows);
             useLegacyDeferred = AddCheckbox(rightPanel, "Use Legacy Deferred", "Legacy rendering path", DaggerfallUnity.Settings.UseLegacyDeferred);
             string textureArrayLabel = "Texture Arrays: ";
             if (!SystemInfo.supports2DArrayTextures)
@@ -299,6 +301,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.TerrainDistance = terrainDistance.Value;
             DaggerfallUnity.Settings.ShadowResolutionMode = shadowResolutionMode.ScrollIndex;
             DaggerfallUnity.Settings.DungeonLightShadows = dungeonLightShadows.IsChecked;
+            DaggerfallUnity.Settings.InteriorLightShadows = interiorLightShadows.IsChecked;
             DaggerfallUnity.Settings.UseLegacyDeferred = useLegacyDeferred.IsChecked;
 
             /* Theme */
