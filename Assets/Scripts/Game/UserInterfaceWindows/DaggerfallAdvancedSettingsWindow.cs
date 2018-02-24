@@ -33,6 +33,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Fields
 
+        enum InteractionModeIconModes { none, classic, icons };
+
         const float topY = 8;
         readonly Vector2 topBarSize = new Vector2(318, 10);
         readonly Vector2 pageSize = new Vector2(318, 165);
@@ -63,7 +65,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         // Fonts
         DaggerfallFont titleFont        = DaggerfallUI.Instance.Font2;
-        //DaggerfallFont pageButtonFont   = DaggerfallUI.Instance.Font3;
+        DaggerfallFont pageButtonFont   = DaggerfallUI.Instance.Font3;
 
         int currentPage = 0;
         float y = 0;
@@ -102,6 +104,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         HorizontalSlider shadowResolutionMode;
         Checkbox dungeonLightShadows;
         Checkbox useLegacyDeferred;
+
+        // Theme
+        HorizontalSlider toolTipDelayInSeconds;
+        Button toolTipTextColor;
+        Button toolTipBackgroundColor;
+        Checkbox enableModernConversationStyleInTalkWindow;
+        HorizontalSlider interactionModeIcon;
 
         #endregion
 
@@ -154,6 +163,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             AddPage("GamePlay", Gameplay);
             AddPage("Video", Video);
+            AddPage("Theme", Theme);
         }
 
         private void Gameplay(Panel leftPanel, Panel rightPanel)
@@ -227,6 +237,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             AddInfo(rightPanel, textureArrayLabel, "Improved implementation of terrain textures, with better performance and modding support");
         }
 
+        private void Theme(Panel leftPanel, Panel rightPanel)
+        {
+            // Tooltips
+            AddSectionTitle(leftPanel, "Tooltips");
+            toolTipDelayInSeconds = AddSlider(leftPanel, "Delay", "Tooltip delay in seconds", 0, 10, DaggerfallUnity.Settings.ToolTipDelayInSeconds);
+            toolTipTextColor = AddColorPicker(leftPanel, "Text Color", "Font color for tooltips text", DaggerfallUnity.Settings.ToolTipTextColor);
+            toolTipBackgroundColor = AddColorPicker(leftPanel, "Background Color", "Background color for tooltips", DaggerfallUnity.Settings.ToolTipBackgroundColor);
+
+            // Others
+            AddSectionTitle(leftPanel, "Others");
+            enableModernConversationStyleInTalkWindow = AddCheckbox(leftPanel, "TalkWindow Modern Style", "Modern Conversation Style In TalkWindow", DaggerfallUnity.Settings.EnableModernConversationStyleInTalkWindow);
+            interactionModeIcon = AddSlider(leftPanel, "Interaction Mode Icon", "Style of contex icon for interaction mode",
+                Enum.IsDefined(typeof(InteractionModeIconModes), DaggerfallUnity.Settings.InteractionModeIcon) ? (int)Enum.Parse(typeof(InteractionModeIconModes), DaggerfallUnity.Settings.InteractionModeIcon) : 0,
+                Enum.GetNames(typeof(InteractionModeIconModes)));
+        }
+
         private void SaveSettings()
         {
             /* GamePlay */
@@ -275,6 +301,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.DungeonLightShadows = dungeonLightShadows.IsChecked;
             DaggerfallUnity.Settings.UseLegacyDeferred = useLegacyDeferred.IsChecked;
 
+            /* Theme */
+
+            DaggerfallUnity.Settings.ToolTipDelayInSeconds = toolTipDelayInSeconds.GetValue();
+            DaggerfallUnity.Settings.ToolTipTextColor = toolTipTextColor.BackgroundColor;
+            DaggerfallUnity.Settings.ToolTipBackgroundColor = toolTipBackgroundColor.BackgroundColor;
+
+            DaggerfallUnity.Settings.EnableModernConversationStyleInTalkWindow = enableModernConversationStyleInTalkWindow.IsChecked;
+            DaggerfallUnity.Settings.InteractionModeIcon = ((InteractionModeIconModes)interactionModeIcon.Value).ToString();
+
             DaggerfallUnity.Settings.SaveSettings();
         }
 
@@ -313,7 +348,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             pageButton.BackgroundColor = Color.clear;
             pageButton.Outline.Enabled = false;
             pageButton.Label.Text = title;
-            pageButton.Label.Font = DaggerfallUI.Instance.Font3;
+            pageButton.Label.Font = pageButtonFont;
             pageButton.Label.TextColor = pages.Count > 1 ? pageButtonUnselected : pageButtonSelected;
             pageButton.Label.ShadowColor = Color.clear;
             pageButton.OnMouseClick += PageButton_OnMouseClick;
@@ -517,6 +552,31 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return textBox;
         }
 
+        private Button AddColorPicker(Panel panel, string title, string toolTip, Color color)
+        {
+            TextLabel textLabel = new TextLabel();
+            textLabel.Position = new Vector2(0, y);
+            textLabel.TextScale = itemTextScale;
+            textLabel.Text = title;
+            textLabel.TextColor = itemColor;
+            textLabel.ShadowColor = Color.clear;
+            textLabel.ToolTip = defaultToolTip;
+            textLabel.ToolTipText = toolTip;
+            panel.Components.Add(textLabel);
+
+            Button colorPicker = new Button();
+            colorPicker.Position = new Vector2(panel.Size.x / 2, y);
+            colorPicker.AutoSize = AutoSizeModes.None;
+            colorPicker.Size = new Vector2(40, 6);
+            colorPicker.BackgroundColor = color;
+            colorPicker.Outline.Enabled = false;
+            colorPicker.OnMouseClick += ColorPicker_OnMouseClick;
+            panel.Components.Add(colorPicker);
+
+            y += itemSpacing;
+            return colorPicker;
+        }
+
         #endregion
 
         #region Event Handlers
@@ -548,6 +608,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void Resolution_OnScroll()
         {
             applyScreenChanges = true;
+        }
+
+        private void ColorPicker_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            var colorPicker = new ColorPicker(uiManager, this, (Button)sender);
+            uiManager.PushWindow(colorPicker);
         }
 
         #endregion
