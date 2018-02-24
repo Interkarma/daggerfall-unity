@@ -168,26 +168,18 @@ namespace DaggerfallWorkshop.Game
             {
                 Texture2D texture = null;
 
-                // Import custom texture or load classic texture
-                if (TextureReplacement.CustomCifExist(filename, record, 0, MetalTypes.None))
-                {
-                    texture = TextureReplacement.LoadCustomCif(filename, record, 0, MetalTypes.None);
-                }
-                else
-                {
-                    // Get Color32 array
-                    DFSize sz;
-                    Color32[] colors = cifFile.GetColor32(record, 0, 0, border, out sz);
+                // Get Color32 array
+                DFSize sz;
+                Color32[] colors = cifFile.GetColor32(record, 0, 0, border, out sz);
 
-                    // Dilate edges
-                    if (border > 0 && dilate)
-                        ImageProcessing.DilateColors(ref colors, sz);
+                // Dilate edges
+                if (border > 0 && dilate)
+                    ImageProcessing.DilateColors(ref colors, sz);
 
-                    // Create Texture2D
-                    texture = new Texture2D(sz.Width, sz.Height, TextureFormat.RGBA32, false);
-                    texture.SetPixels32(colors);
-                    texture.Apply(true);
-                }
+                // Create Texture2D
+                texture = new Texture2D(sz.Width, sz.Height, TextureFormat.RGBA32, false);
+                texture.SetPixels32(colors);
+                texture.Apply(true);
 
                 // Set filter mode and store in frames array
                 if (texture)
