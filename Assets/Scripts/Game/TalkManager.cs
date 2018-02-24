@@ -272,7 +272,7 @@ namespace DaggerfallWorkshop.Game
             public StaticNPC.NPCData npc;
             public DFLocation.BuildingData building;
         }
-        Dictionary<int, npcBuildingPair> merchantRecords;
+        Dictionary<int, npcBuildingPair> merchantRecords = new Dictionary<int, npcBuildingPair>();
         int lastExteriorEntered;
         int selectedKey;
 
@@ -1372,7 +1372,7 @@ namespace DaggerfallWorkshop.Game
         /// <param name="locationID">The current player location's index.</param>
         public void SetMerchantQuestors(int locationID)
         {
-            merchantRecords = new Dictionary<int, npcBuildingPair>();
+            merchantRecords.Clear();
             ContentReader.MapSummary mapSummary;
             DFPosition mapPixel = GameManager.Instance.PlayerGPS.CurrentMapPixel;
             DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out mapSummary);
