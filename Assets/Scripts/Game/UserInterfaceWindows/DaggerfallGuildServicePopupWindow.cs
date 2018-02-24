@@ -596,33 +596,33 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DFCareer.Skills.Archery, DFCareer.Skills.Backstabbing, DFCareer.Skills.Climbing, DFCareer.Skills.CriticalStrike,
                 DFCareer.Skills.Daedric, DFCareer.Skills.Destruction, DFCareer.Skills.Dodging, DFCareer.Skills.Running,
                 DFCareer.Skills.ShortBlade, DFCareer.Skills.Stealth, DFCareer.Skills.Streetwise, DFCareer.Skills.Swimming } },
-            { GuildServices.TAk_Training, new List<DFCareer.Skills>() {
-                DFCareer.Skills.Alteration, DFCareer.Skills.Archery, DFCareer.Skills.Daedric, DFCareer.Skills.Destruction,
-                DFCareer.Skills.Dragonish, DFCareer.Skills.LongBlade, DFCareer.Skills.Running, DFCareer.Skills.Stealth, DFCareer.Skills.Swimming } },
-            { GuildServices.TAr_Training, new List<DFCareer.Skills>() {
-                DFCareer.Skills.Axe, DFCareer.Skills.Backstabbing, DFCareer.Skills.Climbing, DFCareer.Skills.CriticalStrike,
-                DFCareer.Skills.Daedric, DFCareer.Skills.Destruction, DFCareer.Skills.Medical, DFCareer.Skills.Restoration, DFCareer.Skills.ShortBlade } },
-            { GuildServices.TDi_Training, new List<DFCareer.Skills>() {
-                DFCareer.Skills.Daedric, DFCareer.Skills.Etiquette, DFCareer.Skills.Harpy, DFCareer.Skills.Illusion, DFCareer.Skills.Lockpicking,
-                DFCareer.Skills.LongBlade, DFCareer.Skills.Nymph, DFCareer.Skills.Orcish, DFCareer.Skills.Restoration, DFCareer.Skills.Streetwise } },
-            { GuildServices.TJu_Training, new List<DFCareer.Skills>() {
-                DFCareer.Skills.Alteration, DFCareer.Skills.CriticalStrike, DFCareer.Skills.Daedric, DFCareer.Skills.Impish, DFCareer.Skills.Lockpicking,
-                DFCareer.Skills.Mercantile, DFCareer.Skills.Mysticism, DFCareer.Skills.ShortBlade, DFCareer.Skills.Thaumaturgy } },
-            { GuildServices.TKy_Training, new List<DFCareer.Skills>() {
-                DFCareer.Skills.Archery, DFCareer.Skills.Climbing, DFCareer.Skills.Daedric, DFCareer.Skills.Destruction,
-                DFCareer.Skills.Dodging, DFCareer.Skills.Dragonish, DFCareer.Skills.Harpy, DFCareer.Skills.Illusion,
-                DFCareer.Skills.Jumping, DFCareer.Skills.Running, DFCareer.Skills.Stealth } },
-            { GuildServices.TMa_Training, new List<DFCareer.Skills>() {
-                DFCareer.Skills.Archery, DFCareer.Skills.CriticalStrike, DFCareer.Skills.Daedric, DFCareer.Skills.Etiquette, DFCareer.Skills.Harpy,
-                DFCareer.Skills.Illusion, DFCareer.Skills.Medical, DFCareer.Skills.Nymph, DFCareer.Skills.Restoration, DFCareer.Skills.Streetwise } },
-            { GuildServices.TSt_Training, new List<DFCareer.Skills>() {
-                DFCareer.Skills.Axe, DFCareer.Skills.BluntWeapon, DFCareer.Skills.CriticalStrike, DFCareer.Skills.Daedric, DFCareer.Skills.Dodging,
-                DFCareer.Skills.Medical, DFCareer.Skills.Orcish, DFCareer.Skills.Restoration, DFCareer.Skills.Spriggan } },
-            { GuildServices.TZe_Training, new List<DFCareer.Skills>() {
-                DFCareer.Skills.BluntWeapon, DFCareer.Skills.Centaurian, DFCareer.Skills.Daedric, DFCareer.Skills.Etiquette,
-                DFCareer.Skills.Giantish, DFCareer.Skills.Harpy, DFCareer.Skills.Mercantile, DFCareer.Skills.Orcish,
-                DFCareer.Skills.Pickpocket, DFCareer.Skills.Spriggan, DFCareer.Skills.Streetwise, DFCareer.Skills.Thaumaturgy } },
         };
+
+        private List<DFCareer.Skills> GetTrainingSkills()
+        {
+            switch (service)
+            {
+                // Handle Temples even when not a member
+                case GuildServices.TAk_Training:
+                    return Temple.GetTrainingSkills(Temple.Divines.Akatosh);
+                case GuildServices.TAr_Training:
+                    return Temple.GetTrainingSkills(Temple.Divines.Arkay);
+                case GuildServices.TDi_Training:
+                    return Temple.GetTrainingSkills(Temple.Divines.Dibella);
+                case GuildServices.TJu_Training:
+                    return Temple.GetTrainingSkills(Temple.Divines.Julianos);
+                case GuildServices.TKy_Training:
+                    return Temple.GetTrainingSkills(Temple.Divines.Kynareth);
+                case GuildServices.TMa_Training:
+                    return Temple.GetTrainingSkills(Temple.Divines.Mara);
+                case GuildServices.TSt_Training:
+                    return Temple.GetTrainingSkills(Temple.Divines.Stendarr);
+                case GuildServices.TZe_Training:
+                    return Temple.GetTrainingSkills(Temple.Divines.Zenithar);
+                default:
+                    return guild.TrainingSkills;
+            }
+        }
 
         void TrainingService()
         {
@@ -666,21 +666,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     DaggerfallListPickerWindow skillPicker = new DaggerfallListPickerWindow(uiManager, this);
                     skillPicker.OnItemPicked += TrainingSkill_OnItemPicked;
 
-                    List<DFCareer.Skills> trainingSkills;   // Remove...
-                    if (guildTrainingSkills.TryGetValue(service, out trainingSkills))
-                    {
-                        foreach (DFCareer.Skills skill in trainingSkills)
-                            skillPicker.ListBox.AddItem(DaggerfallUnity.Instance.TextProvider.GetSkillName(skill));
+                    foreach (DFCareer.Skills skill in GetTrainingSkills())
+                        skillPicker.ListBox.AddItem(DaggerfallUnity.Instance.TextProvider.GetSkillName(skill));
 
-                        uiManager.PushWindow(skillPicker);
-                    }                                       // ... to here.
-                    else
-                    {
-                        foreach (DFCareer.Skills skill in guild.GetTrainingSkills())
-                            skillPicker.ListBox.AddItem(DaggerfallUnity.Instance.TextProvider.GetSkillName(skill));
-
-                        uiManager.PushWindow(skillPicker);
-                    }
+                    uiManager.PushWindow(skillPicker);
                 }
                 else
                     DaggerfallUI.MessageBox(notEnoughGoldId);
@@ -690,11 +679,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public void TrainingSkill_OnItemPicked(int index, string skillName)
         {
             CloseWindow();
-            List<DFCareer.Skills> trainingSkills = guild.GetTrainingSkills();
-            if (trainingSkills == null)
-                guildTrainingSkills.TryGetValue(service, out trainingSkills);
-
+            List<DFCareer.Skills> trainingSkills = GetTrainingSkills();
             DFCareer.Skills skillToTrain = trainingSkills[index];
+
             int maxTraining = 50;
             if (DaggerfallSkills.IsLanguageSkill(skillToTrain))     // BCHG: Language skill training is capped by char intelligence instead of 50%
                 maxTraining = playerEntity.Stats.PermanentIntelligence;

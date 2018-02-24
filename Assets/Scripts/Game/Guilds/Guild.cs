@@ -40,8 +40,15 @@ namespace DaggerfallWorkshop.Game.Guilds
         protected static int[] rankReqSkillLow = new int[]   {  4,  5,  9, 13, 17, 21, 25, 29, 33, 37 };
 
         protected static List<DFCareer.Skills> guildSkills;
-
         protected static List<DFCareer.Skills> trainingSkills;
+
+        #endregion
+
+        #region Properties
+
+        public virtual List<DFCareer.Skills> GuildSkills { get { return guildSkills; } }
+
+        public virtual List<DFCareer.Skills> TrainingSkills { get { return trainingSkills; } }
 
         #endregion
 
@@ -96,11 +103,11 @@ namespace DaggerfallWorkshop.Game.Guilds
             return --r;
         }
 
-        protected static void CalculateNumHighLowSkills(PlayerEntity playerEntity, int rank, out int high, out int low)
+        protected void CalculateNumHighLowSkills(PlayerEntity playerEntity, int rank, out int high, out int low)
         {
             high = 0;
             low = 0;
-            foreach (DFCareer.Skills skill in guildSkills)
+            foreach (DFCareer.Skills skill in GuildSkills)
             {
                 int skillVal = playerEntity.Skills.GetPermanentSkillValue(skill);
                 if (skillVal >= rankReqSkillHigh[rank])
@@ -236,11 +243,6 @@ namespace DaggerfallWorkshop.Game.Guilds
         {
             int costPerLev = IsMember() ? memberTrainingCost : nonMemberTrainingCost;
             return costPerLev * GameManager.Instance.PlayerEntity.Level;
-        }
-
-        public virtual List<DFCareer.Skills> GetTrainingSkills()
-        {
-            return trainingSkills;
         }
 
         #endregion
