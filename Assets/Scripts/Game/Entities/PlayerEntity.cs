@@ -310,6 +310,7 @@ namespace DaggerfallWorkshop.Game.Entity
             goldPieces = 0;
             timeOfLastSkillIncreaseCheck = 0;
             timeOfLastSkillTraining = 0;
+            rentedRooms.Clear();
             if (skillUses != null)
                 System.Array.Clear(skillUses, 0, skillUses.Length);
         }
