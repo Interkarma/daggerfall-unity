@@ -118,8 +118,15 @@ namespace DaggerfallWorkshop.Utility
                 subRect.height = subRect.height * texture.height;
             }
 
+            // Only use CopyTexture() for selected texture formats
+            bool useCopyTexture = false;
+            if (texture.format == TextureFormat.RGBA32 || texture.format == TextureFormat.ARGB32)
+            {
+                useCopyTexture = true;
+            }
+
             // Use most efficient method available
-            if (SystemInfo.copyTextureSupport != UnityEngine.Rendering.CopyTextureSupport.None)
+            if (SystemInfo.copyTextureSupport != UnityEngine.Rendering.CopyTextureSupport.None && useCopyTexture)
             {
                 int srcY = texture.height - (int)subRect.y - (int)subRect.height;
                 Texture2D newTexture = new Texture2D((int)subRect.width, (int)subRect.height);
