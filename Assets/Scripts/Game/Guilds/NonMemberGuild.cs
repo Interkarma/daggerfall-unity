@@ -14,6 +14,13 @@ namespace DaggerfallWorkshop.Game.Guilds
 {
     public class NonMemberGuild : Guild
     {
+        private bool canTrain = false;
+
+        public NonMemberGuild(bool canTrain = false)
+        {
+            this.canTrain = canTrain;
+        }
+
         public override bool IsMember()
         {
             return false;
@@ -34,9 +41,9 @@ namespace DaggerfallWorkshop.Game.Guilds
             throw new NotImplementedException();
         }
 
-        public override bool CanTrain()
+        public override bool Training()
         {
-            return false;
+            return canTrain;
         }
 
         public override bool IsEligibleToJoin(PlayerEntity playerEntity)

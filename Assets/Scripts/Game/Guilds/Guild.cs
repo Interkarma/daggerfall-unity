@@ -17,11 +17,14 @@ using DaggerfallWorkshop.Utility;
 namespace DaggerfallWorkshop.Game.Guilds
 {
     /// <summary>
-    ///  Guild objects define player status & benefits with the guild.
+    ///  Guild objects define player status and benefits with the guild.
     /// </summary>
     public abstract class Guild : IMacroContextProvider  // TODO: Extract interface?
     {
         #region Constants
+
+        public const int memberTrainingCost = 100;
+        public const int nonMemberTrainingCost = 400;
 
         protected const int DemotionId = 667;
         protected const int ExpulsionId = 668;
@@ -62,7 +65,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                 if (newRank != rank)
                 {
                     if (newRank > rank)         // Promotion
-                        tokens = TokensPromotion();
+                        tokens = TokensPromotion(newRank);
                     else if (newRank < 0)       // Expulsion
                         tokens = TokensExpulsion();
                     else if (newRank < rank)    // Demotion
@@ -112,7 +115,7 @@ namespace DaggerfallWorkshop.Game.Guilds
             return (date.Year * DaggerfallDateTime.DaysPerYear) + date.DayOfYear;
         }
 
-        public virtual TextFile.Token[] TokensPromotion()
+        public virtual TextFile.Token[] TokensPromotion(int newRank)
         {
             throw new NotImplementedException();
         }
@@ -154,19 +157,85 @@ namespace DaggerfallWorkshop.Game.Guilds
             return false;
         }
 
+        public virtual bool FreeHealing()
+        {
+            return false;
+        }
+
+        // Special benefits:
+
+        public virtual int ReducedRepairCost(int price)
+        {
+            return price;
+        }
+
+        public virtual int DeepBreath(int duration)
+        {
+            return duration;
+        }
+
         #endregion
 
-        #region Service: Training
+        #region Service Access:
 
-        public virtual bool CanTrain()
+        public virtual bool Training()
         {
             return IsMember();
         }
 
+        public virtual bool Library()
+        {
+            return false;
+        }
+
+        public virtual bool BuyPotions()
+        {
+            return false;
+        }
+
+        public virtual bool MakePotions()
+        {
+            return false;
+        }
+
+        public virtual bool BuyMagic()
+        {
+            return false;
+        }
+
+        public virtual bool MakeMagic()
+        {
+            return false;
+        }
+
+        public virtual bool BuySpells()
+        {
+            return false;
+        }
+
+        public virtual bool MakeSpells()
+        {
+            return false;
+        }
+
+        public virtual bool SoulGems()
+        {
+            return false;
+        }
+
+        public virtual bool Summoning()
+        {
+            return false;
+        }
+
+        #endregion
+
+        #region Service: Training
+
         public virtual int GetTrainingPrice()
         {
-            // TODO: 400 * level, if non-member of temple
-            return 100 * GameManager.Instance.PlayerEntity.Level;
+            int costPerLev = IsMember() ? memberTrainingCost : nonMemberTrainingCost;
+            return costPerLev * GameManager.Instance.PlayerEntity.Level;
         }
 
         public virtual List<DFCareer.Skills> GetTrainingSkills()

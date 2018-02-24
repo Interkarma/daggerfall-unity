@@ -77,6 +77,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                                                 "Knights of the Wheel", "Order of the Scarab", "Knights of the Hawk",
                                                 "Mages Guild", "Fighters Guild", "Tavern", "Library", "Weapon Smith",
                                                 "Armorer", "Alchemist", "Bank", "Bookstore", "Clothing store", "Gem store" };
+        // TODO: These temple names are not consistent with 4055-4062!
 
         public const string interactionIsNowInMode = "Interaction is now in %s mode.";
         public const string steal = "steal";

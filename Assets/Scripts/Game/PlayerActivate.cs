@@ -748,11 +748,16 @@ namespace DaggerfallWorkshop.Game
             Debug.LogFormat("type: {0}, factionId: {1}", type, buildingSummary.FactionId);
 
             // Handle guild halls & TG/DB houses
-            if (type == DFLocation.BuildingTypes.GuildHall ||
-                (type == DFLocation.BuildingTypes.House2 && buildingSummary.FactionId != 0))
+            if (type == DFLocation.BuildingTypes.GuildHall)
             {
                 Guild guild = GameManager.Instance.GuildManager.GetGuild(buildingSummary.FactionId);
                 unlocked = guild.HallAccessAnytime() ? true : IsBuildingOpen(type);
+            }
+            // Handle TG/DB houses
+            else if (type == DFLocation.BuildingTypes.House2 && buildingSummary.FactionId != 0)
+            {
+                Guild guild = GameManager.Instance.GuildManager.GetGuild(buildingSummary.FactionId);
+                unlocked = guild.IsMember();
             }
             // Handle House1 through House4
             // TODO: Figure out the rest of house door calculations.
@@ -940,10 +945,12 @@ namespace DaggerfallWorkshop.Game
                 // Check if the NPC offers a guild service.
                 if (Enum.IsDefined(typeof(GuildServices), npc.Data.factionID))
                 {
-                    FactionFile.GuildGroups guild = (FactionFile.GuildGroups) buildingFactionData.ggroup;
+                    FactionFile.GuildGroups guildGroup = (FactionFile.GuildGroups) buildingFactionData.ggroup;
+                    if (guildGroup == FactionFile.GuildGroups.None)
+                        guildGroup = (FactionFile.GuildGroups)factionData.ggroup;
                     GuildServices service = (GuildServices) npc.Data.factionID;
                     Debug.Log("NPC offers guild service: " + service.ToString());
-                    uiManager.PushWindow(new DaggerfallGuildServicePopupWindow(uiManager, npc, guild, service));
+                    uiManager.PushWindow(new DaggerfallGuildServicePopupWindow(uiManager, npc, guildGroup, service, playerEnterExit.BuildingDiscoveryData.factionID));
                 }
                 // Check if this NPC is a merchant.
                 else if ((FactionFile.SocialGroups) factionData.sgroup == FactionFile.SocialGroups.Merchants)

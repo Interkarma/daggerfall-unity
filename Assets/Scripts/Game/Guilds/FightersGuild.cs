@@ -6,12 +6,10 @@
 // Original Author: Hazelnut
 // Contributors:    
 
-using UnityEngine;
 using System.Collections.Generic;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
-using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.Guilds
 {
@@ -38,7 +36,7 @@ namespace DaggerfallWorkshop.Game.Guilds
             };
 
             guildSkills = new List<DFCareer.Skills>() {
-                DFCareer.Skills.Archery,    // 14
+                DFCareer.Skills.Archery,    // 14 melissa
                 DFCareer.Skills.Axe,        // 6
                 DFCareer.Skills.BluntWeapon,// 3
                 DFCareer.Skills.Giantish,   // 5
@@ -80,7 +78,7 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Guild Ranks
 
-        public override TextFile.Token[] TokensPromotion()
+        public override TextFile.Token[] TokensPromotion(int newRank)
         {
             return DaggerfallUnity.Instance.TextProvider.GetRSCTokens(PromotionMsgId);
         }
@@ -99,6 +97,11 @@ namespace DaggerfallWorkshop.Game.Guilds
             return rank >= 6;
         }
 
+        public override int ReducedRepairCost(int price)
+        {
+            return ((10 - rank) / 10) * price;
+        }
+
         #endregion
 
         #region Service: Training
@@ -109,7 +112,8 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public override TextFile.Token[] TokensIneligible(PlayerEntity playerEntity)
         {
-            int msgId = IneligibleBadRepId; // TODO conditionally switch with IneligibleLowSkillId
+            int rep = playerEntity.FactionData.GetReputation(GetFactionId());
+            int msgId = (rep < 0) ? IneligibleBadRepId : IneligibleLowSkillId;
             return DaggerfallUnity.Instance.TextProvider.GetRSCTokens(msgId);
         }
         public override TextFile.Token[] TokensEligible(PlayerEntity playerEntity)

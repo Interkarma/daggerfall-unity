@@ -12,6 +12,7 @@
 using UnityEngine;
 using System;
 using DaggerfallConnect;
+using DaggerfallWorkshop.Game.Guilds;
 
 namespace DaggerfallWorkshop.Game.Formulas
 {
@@ -716,7 +717,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             return cost;
         }
 
-        public static int CalculateItemRepairCost(int baseItemValue, int shopQuality, int condition, int max)
+        public static int CalculateItemRepairCost(int baseItemValue, int shopQuality, int condition, int max, Guild guild)
         {
             // Don't cost already repaired item
             if (condition == max)
@@ -730,6 +731,10 @@ namespace DaggerfallWorkshop.Game.Formulas
                 cost = 1;
 
             cost = CalculateCost(cost, shopQuality);
+
+            if (guild != null)
+                cost = guild.ReducedRepairCost(cost);
+
             return cost;
         }
 

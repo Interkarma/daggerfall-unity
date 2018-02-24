@@ -19,15 +19,17 @@ namespace DaggerfallWorkshop.Game.Guilds
     {
         // A base guild class defining non-membership.
         public static Guild guildNotMember = new NonMemberGuild();
+        // A base temple class defining non-membership.
+        public static Guild templeNotMember = new NonMemberGuild(true);
 
         private Dictionary<FactionFile.GuildGroups, Guild> memberships = new Dictionary<FactionFile.GuildGroups, Guild>();
 
-        public bool IsMember(FactionFile.GuildGroups guildGroup)
+        public bool HasJoined(FactionFile.GuildGroups guildGroup)
         {
             return memberships.ContainsKey(guildGroup);
         }
 
-        public Guild JoinGuild(FactionFile.GuildGroups guildGroup)
+        public Guild JoinGuild(FactionFile.GuildGroups guildGroup, int buildingFactionId = 0)
         {
             if (memberships.ContainsKey(guildGroup))
                 return memberships[guildGroup];
@@ -36,6 +38,14 @@ namespace DaggerfallWorkshop.Game.Guilds
             {
                 case FactionFile.GuildGroups.FightersGuild:
                     return new FightersGuild();
+
+                case FactionFile.GuildGroups.HolyOrder:
+                    Temple.Divines deity = (Temple.Divines) buildingFactionId;
+                    return new Temple(deity);
+/*                case FactionFile.GuildGroups.KnightlyOrder:
+                    Temple.Divines deity = (Temple.Divines) buildingFactionId;
+                    return new Temple(deity);
+*/
             }
             return null;
         }
@@ -49,11 +59,25 @@ namespace DaggerfallWorkshop.Game.Guilds
         /// <summary>
         /// Retrieve the guild object for the given guild group.
         /// </summary>
-        public Guild GetGuild(FactionFile.GuildGroups guildGroup)
+        /// <param name="guildGroup"></param>
+        /// <param name="buildingFactionId">Specify this to ensure only the temple of matching Divine is returned</param>
+        /// <returns>Guild object</returns>
+        public Guild GetGuild(FactionFile.GuildGroups guildGroup, int buildingFactionId = 0)
         {
             Guild guild;
             memberships.TryGetValue(guildGroup, out guild);
 
+            if (guildGroup == FactionFile.GuildGroups.HolyOrder && buildingFactionId > 0)
+            {
+                if (guild != null)
+                {
+                    Temple.Divines deity = (Temple.Divines) buildingFactionId;
+                    Temple temple = (Temple) guild;
+                    if (temple.Deity == deity)
+                        return guild;
+                }
+                return templeNotMember;
+            }
             return (guild != null) ? guild : guildNotMember;
         }
 
@@ -66,7 +90,7 @@ namespace DaggerfallWorkshop.Game.Guilds
             if (guildGroup == FactionFile.GuildGroups.None)
                 throw new Exception("Can't find guild for faction id: " + factionId);
 
-            return GetGuild(guildGroup);
+            return GetGuild(guildGroup, factionId);
         }
 
         private FactionFile.GuildGroups GetGuildGroup(int factionId)

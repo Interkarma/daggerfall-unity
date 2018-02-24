@@ -73,6 +73,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TSt_Training = 252,
         TKy_Training = 254,
         TKy_Buy_Spells = 497,
+        TDi_Make_Potions = 487,
+        TDi_Buy_Potions = 485,
+
+
+        // Knightly orders:
+        KO_Quests = 846,
+
     }
 
     public class DaggerfallGuildServicePopupWindow : DaggerfallPopupWindow
@@ -117,6 +124,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         StaticNPC serviceNPC;
         FactionFile.GuildGroups guildGroup;
         GuildServices service;
+        int buildingFactionId;  // Needed for temples & orders
 
         Guild guild;
         Quest offeredQuest = null;
@@ -127,16 +135,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Constructors
 
-        public DaggerfallGuildServicePopupWindow(IUserInterfaceManager uiManager, StaticNPC npc, FactionFile.GuildGroups guildGroup, GuildServices service)
+        public DaggerfallGuildServicePopupWindow(IUserInterfaceManager uiManager, StaticNPC npc, FactionFile.GuildGroups guildGroup, GuildServices service, int buildingFactionId)
             : base(uiManager)
         {
-            serviceNPC = npc;
-            this.guildGroup = guildGroup;
-            this.service = service;
             playerEntity = GameManager.Instance.PlayerEntity;
             guildManager = GameManager.Instance.GuildManager;
 
-            guild = guildManager.GetGuild(guildGroup);
+            serviceNPC = npc;
+            this.guildGroup = guildGroup;
+            this.service = service;
+            this.buildingFactionId = buildingFactionId;
+
+            guild = guildManager.GetGuild(guildGroup, buildingFactionId);
 
             // Clear background
             ParentPanel.BackgroundColor = Color.clear;
@@ -179,7 +189,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Join Guild button
             joinButton = DaggerfallUI.AddButton(joinButtonRect, mainPanel);
             joinButton.OnMouseClick += JoinButton_OnMouseClick;
-            if (guild.IsMember())  // TODO: use different image
+            if (guildManager.GetGuild(guildGroup).IsMember())  // TODO: use different image
                 joinButton.BackgroundColor = DaggerfallUI.DaggerfallUnityNotImplementedColor;
 
             // Talk button
@@ -213,11 +223,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
                 messageBox.SetTextTokens(updatedRank, guild);
                 messageBox.ClickAnywhereToClose = true;
-                messageBox.ParentPanel.BackgroundColor = Color.clear;
                 uiManager.PushWindow(messageBox);
             }
+            // Check for free healing (Temple members)
+            if (guild.FreeHealing() && playerEntity.CurrentHealth < playerEntity.MaxHealth)
+            {
+                playerEntity.SetHealth(playerEntity.MaxHealth);
+                DaggerfallUI.MessageBox(350);
+            }
         }
-
 
         #endregion
 
@@ -331,6 +345,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     uiManager.PushWindow(new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Identify, this));
                     break;
 
+                case GuildServices.FG_Repairs:
+                    CloseWindow();
+                    if (guild.IsMember())
+                        uiManager.PushWindow(new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Repair, this, guild));
+                    else
+                        DaggerfallUI.MessageBox(HardStrings.serviceMembersOnly);
+                    break;
+
                 case GuildServices.MG_Training:
                 case GuildServices.FG_Training:
                 case GuildServices.TG_Training:
@@ -382,7 +404,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void JoinButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             CloseWindow();
-            guild = guildManager.JoinGuild(guildGroup);
+            guild = guildManager.JoinGuild(guildGroup, buildingFactionId);
             if (guild == null)
             {
                 DaggerfallUI.MessageBox("Joining guild " + guildGroup + " not implemented.");
@@ -392,7 +414,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
                 if (guild.IsEligibleToJoin(playerEntity))
                 {
-                    Debug.Log("eligible");
                     messageBox.SetTextTokens(guild.TokensEligible(playerEntity));
                     messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
                     messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
@@ -402,7 +423,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     messageBox.SetTextTokens(guild.TokensIneligible(playerEntity));
                     messageBox.ClickAnywhereToClose = true;
-                    messageBox.ParentPanel.BackgroundColor = Color.clear;
                 }
                 uiManager.PushWindow(messageBox);
             }

@@ -86,7 +86,7 @@ namespace DaggerfallWorkshop.Utility
             { "%fn", null },  // Random first(?) name (Female?)
             { "%fn2", null }, // Same as _mn2 (?)
             { "%fnpc", null }, // ?
-            { "%fon", null }, // ?
+            { "%fon", null }, // Follower of divine
             { "%fpa", null }, // ?
             { "%fpc", null }, // ?
             { "%fx1", null }, // A faction in news
