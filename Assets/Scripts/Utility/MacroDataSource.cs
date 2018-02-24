@@ -20,7 +20,12 @@ namespace DaggerfallWorkshop.Utility
     // TODO: extract interface when complete set of handlers done? : IMacroDataSource
     {
         public virtual string GuildTitle()
-        {   // %pct
+        {   // %lev %pct
+            throw new NotImplementedException();
+        }
+
+        public virtual string Divine()
+        {   // %fon
             throw new NotImplementedException();
         }
 

@@ -282,7 +282,7 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Macro Handling
 
-        public MacroDataSource GetMacroDataSource()
+        public virtual MacroDataSource GetMacroDataSource()
         {
             return new GuildMacroDataSource(this);
         }
@@ -290,7 +290,7 @@ namespace DaggerfallWorkshop.Game.Guilds
         /// <summary>
         /// MacroDataSource context sensitive methods for guilds.
         /// </summary>
-        private class GuildMacroDataSource : MacroDataSource
+        protected class GuildMacroDataSource : MacroDataSource
         {
             private Guild parent;
             public GuildMacroDataSource(Guild guild)

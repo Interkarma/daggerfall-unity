@@ -40,8 +40,8 @@ namespace DaggerfallWorkshop.Game.Guilds
                     return new FightersGuild();
 
                 case FactionFile.GuildGroups.HolyOrder:
-                    Temple.Divines deity = (Temple.Divines) buildingFactionId;
-                    return new Temple(deity);
+                    return new Temple(Temple.GetDivine(buildingFactionId));
+
 /*                case FactionFile.GuildGroups.KnightlyOrder:
                     Temple.Divines deity = (Temple.Divines) buildingFactionId;
                     return new Temple(deity);
@@ -71,7 +71,7 @@ namespace DaggerfallWorkshop.Game.Guilds
             {
                 if (guild != null)
                 {
-                    Temple.Divines deity = (Temple.Divines) buildingFactionId;
+                    Temple.Divines deity = Temple.GetDivine(buildingFactionId);
                     Temple temple = (Temple) guild;
                     if (temple.Deity == deity)
                         return guild;

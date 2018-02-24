@@ -86,7 +86,7 @@ namespace DaggerfallWorkshop.Utility
             { "%fn", null },  // Random first(?) name (Female?)
             { "%fn2", null }, // Same as _mn2 (?)
             { "%fnpc", null }, // ?
-            { "%fon", null }, // Follower of divine
+            { "%fon", Divine }, // Follower of divine
             { "%fpa", null }, // ?
             { "%fpc", null }, // ?
             { "%fx1", null }, // A faction in news
@@ -680,8 +680,13 @@ namespace DaggerfallWorkshop.Utility
         #region Contextual macro handlers
 
         private static string GuildTitle(IMacroContextProvider mcp)
-        {   // %pct
+        {   // %lev %pct
             return mcp.GetMacroDataSource().GuildTitle();
+        }
+
+        private static string Divine(IMacroContextProvider mcp)
+        {   // %fon
+            return mcp.GetMacroDataSource().Divine();
         }
 
         private static string Amount(IMacroContextProvider mcp)

@@ -10,6 +10,9 @@ using System.Collections.Generic;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Utility;
+using System;
+using DaggerfallWorkshop.Game.Player;
 
 namespace DaggerfallWorkshop.Game.Guilds
 {
@@ -296,6 +299,23 @@ namespace DaggerfallWorkshop.Game.Guilds
             this.deity = deity;
         }
 
+        public static Divines GetDivine(int factionId)
+        {
+            // Temple hall:
+            if (Enum.IsDefined(typeof(Divines), factionId))
+                return (Divines) factionId;
+
+            // Templar order:
+            PersistentFactionData persistentFactionData = GameManager.Instance.PlayerEntity.FactionData;
+            FactionFile.FactionData factionData;
+            if (persistentFactionData.GetFactionData(factionId, out factionData))
+            {
+                if (Enum.IsDefined(typeof(Divines), factionData.parent))
+                    return (Divines) factionData.parent;
+            }
+            throw new ArgumentOutOfRangeException("There is no Divine that matches the factionId: "+ factionId);
+        }
+
         public DFCareer.Stats BlessingStat()
         {
             switch (deity)
@@ -436,6 +456,33 @@ namespace DaggerfallWorkshop.Game.Guilds
         }
 
         #endregion
+
+        #region Macro Handling
+
+        public override MacroDataSource GetMacroDataSource()
+        {
+            return new TempleMacroDataSource(this);
+        }
+
+        /// <summary>
+        /// MacroDataSource context sensitive methods for temples.
+        /// </summary>
+        protected class TempleMacroDataSource : GuildMacroDataSource
+        {
+            private Temple parent;
+            public TempleMacroDataSource(Temple guild) : base(guild)
+            {
+                parent = guild;
+            }
+
+            public override string Divine()
+            {
+                return parent.deity.ToString();
+            }
+        }
+
+        #endregion
+
     }
 
 }

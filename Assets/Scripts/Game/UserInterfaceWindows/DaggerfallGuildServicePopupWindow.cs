@@ -33,11 +33,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         MG_Training = 61,
         MG_Teleportation = 62,
         MG_Quests = 63,
-        MG_Make_Spells = 64,
-        MG_Buy_Magic_Items = 65,
-        MG_Daedra_Summoning = 66,
+        MG_MakeSpells = 64,
+        MG_BuyMagicItems = 65,
+        MG_DaedraSummoning = 66,
         MG_Identify = 801,
-        MG_Make_Magic_Items = 802,
+        MG_MakeMagicItems = 802,
 
         // Fighters Guild:
         FG_Training = 849,
@@ -47,21 +47,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // Thieves Guild:
         TG_Training = 803,
         TG_Quests = 804,
-        TG_Sell_Magic_Items = 805,
+        TG_SellMagicItems = 805,
         TG_Spymaster = 806,
 
         // Dark Brotherhood:
         DB_Quests = 807,
         DB_Training = 839,
-        DB_Make_Potions = 840,
-        DB_Buy_Potions = 841,
+        DB_MakePotions = 840,
+        DB_BuyPotions = 841,
         DB_Spymaster = 842,
-        DB_Buy_Soulgems = 843,
+        DB_BuySoulgems = 843,
 
         // Temples, generic:
         T_Quests = 240,
-        T_Make_Donation = 810,
-        T_Cure_Diseases = 813,
+        T_MakeDonation = 810,
+        T_CureDiseases = 813,
 
         // Temples, specific:
         TAr_Training = 241,
@@ -72,10 +72,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TDi_Training = 250,
         TSt_Training = 252,
         TKy_Training = 254,
-        TKy_Buy_Spells = 497,
-        TDi_Make_Potions = 487,
-        TDi_Buy_Potions = 485,
 
+        TKy_BuySpells = 497,
+
+        TDi_BuyPotions = 485,
+        TDi_MakePotions = 487,
+
+        // Templar orders
+        OAk_BuyPotions = 473,
+        OAk_MakePotions = 474,
+        OAk_DaedraSummoning = 475,
 
         // Knightly orders:
         KO_Quests = 846,
@@ -252,19 +258,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     return HardStrings.serviceIdentify;
 
                 case GuildServices.MG_Buy_Spells:
-                case GuildServices.TKy_Buy_Spells:
+                case GuildServices.TKy_BuySpells:
                     return HardStrings.serviceBuySpells;
 
-                case GuildServices.MG_Buy_Magic_Items:
+                case GuildServices.MG_BuyMagicItems:
                     return HardStrings.serviceBuyMagicItems;
 
-                case GuildServices.MG_Make_Spells:
+                case GuildServices.MG_MakeSpells:
                     return HardStrings.serviceMakeSpells;
 
-                case GuildServices.MG_Make_Magic_Items:
+                case GuildServices.MG_MakeMagicItems:
                     return HardStrings.serviceMakeMagicItems;
 
-                case GuildServices.MG_Daedra_Summoning:
+                case GuildServices.MG_DaedraSummoning:
                     return HardStrings.serviceDaedraSummon;
 
                 case GuildServices.MG_Teleportation:
@@ -287,26 +293,26 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 case GuildServices.FG_Repairs:
                     return HardStrings.serviceRepairs;
 
-                case GuildServices.TG_Sell_Magic_Items:
+                case GuildServices.TG_SellMagicItems:
                     return HardStrings.serviceBuyMagicItems;
 
                 case GuildServices.TG_Spymaster:
                 case GuildServices.DB_Spymaster:
                     return HardStrings.serviceSpymaster;
 
-                case GuildServices.DB_Make_Potions:
+                case GuildServices.DB_MakePotions:
                     return HardStrings.serviceMakePotions;
 
-                case GuildServices.DB_Buy_Potions:
+                case GuildServices.DB_BuyPotions:
                     return HardStrings.serviceBuyPotions;
 
-                case GuildServices.DB_Buy_Soulgems:
+                case GuildServices.DB_BuySoulgems:
                     return HardStrings.serviceBuySoulgems;
 
-                case GuildServices.T_Make_Donation:
+                case GuildServices.T_MakeDonation:
                     return HardStrings.serviceDonate;
 
-                case GuildServices.T_Cure_Diseases:
+                case GuildServices.T_CureDiseases:
                     return HardStrings.serviceCure;
 
                 default:
@@ -368,7 +374,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     TrainingService();
                     break;
 
-                case GuildServices.MG_Buy_Magic_Items:
+                case GuildServices.MG_BuyMagicItems:
                     CloseWindow();
                     DaggerfallTradeWindow tradeWindow = new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Buy, this);
                     tradeWindow.MerchantItems = GetMerchantItems();
@@ -414,7 +420,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
                 if (guild.IsEligibleToJoin(playerEntity))
                 {
-                    messageBox.SetTextTokens(guild.TokensEligible(playerEntity));
+                    messageBox.SetTextTokens(guild.TokensEligible(playerEntity), guild);
                     messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
                     messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
                     messageBox.OnButtonClick += ConfirmJoinGuild_OnButtonClick;
