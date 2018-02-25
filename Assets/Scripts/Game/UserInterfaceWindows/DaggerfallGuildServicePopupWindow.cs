@@ -23,71 +23,6 @@ using DaggerfallWorkshop.Game.Guilds;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
-    /// <summary>
-    /// Supported guild services.
-    /// </summary>
-    public enum GuildServices
-    {
-        // Mages Guild:
-        MG_Buy_Spells = 60,
-        MG_Training = 61,
-        MG_Teleportation = 62,
-        MG_Quests = 63,
-        MG_MakeSpells = 64,
-        MG_BuyMagicItems = 65,
-        MG_DaedraSummoning = 66,
-        MG_Identify = 801,
-        MG_MakeMagicItems = 802,
-
-        // Fighters Guild:
-        FG_Training = 849,
-        FG_Repairs = 850,
-        FG_Quests = 851,
-
-        // Thieves Guild:
-        TG_Training = 803,
-        TG_Quests = 804,
-        TG_SellMagicItems = 805,
-        TG_Spymaster = 806,
-
-        // Dark Brotherhood:
-        DB_Quests = 807,
-        DB_Training = 839,
-        DB_MakePotions = 840,
-        DB_BuyPotions = 841,
-        DB_Spymaster = 842,
-        DB_BuySoulgems = 843,
-
-        // Temples, generic:
-        T_Quests = 240,
-        T_MakeDonation = 810,
-        T_CureDiseases = 813,
-
-        // Temples, specific:
-        TAr_Training = 241,
-        TZe_Training = 243,
-        TMa_Training = 245,
-        TAk_Training = 247,
-        TJu_Training = 249,
-        TDi_Training = 250,
-        TSt_Training = 252,
-        TKy_Training = 254,
-
-        TKy_BuySpells = 497,
-
-        TDi_BuyPotions = 485,
-        TDi_MakePotions = 487,
-
-        // Templar orders
-        OAk_BuyPotions = 473,
-        OAk_MakePotions = 474,
-        OAk_DaedraSummoning = 475,
-
-        // Knightly orders:
-        KO_Quests = 846,
-
-    }
-
     public class DaggerfallGuildServicePopupWindow : DaggerfallPopupWindow
     {
         #region UI Rects
@@ -128,8 +63,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         PlayerEntity playerEntity;
         GuildManager guildManager;
 
-        StaticNPC serviceNPC;
         FactionFile.GuildGroups guildGroup;
+        StaticNPC serviceNPC;
+        GuildNpcServices npcService;
         GuildServices service;
         int buildingFactionId;  // Needed for temples & orders
 
@@ -142,15 +78,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Constructors
 
-        public DaggerfallGuildServicePopupWindow(IUserInterfaceManager uiManager, StaticNPC npc, FactionFile.GuildGroups guildGroup, GuildServices service, int buildingFactionId)
+        public DaggerfallGuildServicePopupWindow(IUserInterfaceManager uiManager, StaticNPC npc, FactionFile.GuildGroups guildGroup, int buildingFactionId)
             : base(uiManager)
         {
             playerEntity = GameManager.Instance.PlayerEntity;
             guildManager = GameManager.Instance.GuildManager;
 
             serviceNPC = npc;
+            npcService = (GuildNpcServices) npc.Data.factionID;
+            service = Services.GetService(npcService);
+            Debug.Log("NPC offers guild service: " + service.ToString());
+
             this.guildGroup = guildGroup;
-            this.service = service;
             this.buildingFactionId = buildingFactionId;
 
             guild = guildManager.GetGuild(guildGroup, buildingFactionId);
@@ -207,7 +146,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             serviceLabel.Position = new Vector2(0, 1);
             serviceLabel.ShadowPosition = Vector2.zero;
             serviceLabel.HorizontalAlignment = HorizontalAlignment.Center;
-            serviceLabel.Text = GetServiceLabelText();
+            serviceLabel.Text = Services.GetServiceLabelText(service);
             serviceButton = DaggerfallUI.AddButton(serviceButtonRect, mainPanel);
             serviceButton.Components.Add(serviceLabel);
             serviceButton.OnMouseClick += ServiceButton_OnMouseClick;
@@ -244,83 +183,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Private Methods
 
-        string GetServiceLabelText()
-        {
-            switch (service)
-            {
-                case GuildServices.FG_Quests:
-                case GuildServices.MG_Quests:
-                case GuildServices.TG_Quests:
-                case GuildServices.DB_Quests:
-                case GuildServices.T_Quests:
-                    return HardStrings.serviceQuests;
-
-                case GuildServices.MG_Identify:
-                    return HardStrings.serviceIdentify;
-
-                case GuildServices.MG_Buy_Spells:
-                case GuildServices.TKy_BuySpells:
-                    return HardStrings.serviceBuySpells;
-
-                case GuildServices.MG_BuyMagicItems:
-                    return HardStrings.serviceBuyMagicItems;
-
-                case GuildServices.MG_MakeSpells:
-                    return HardStrings.serviceMakeSpells;
-
-                case GuildServices.MG_MakeMagicItems:
-                    return HardStrings.serviceMakeMagicItems;
-
-                case GuildServices.MG_DaedraSummoning:
-                    return HardStrings.serviceDaedraSummon;
-
-                case GuildServices.MG_Teleportation:
-                    return HardStrings.serviceTeleport;
-
-                case GuildServices.MG_Training:
-                case GuildServices.FG_Training:
-                case GuildServices.TG_Training:
-                case GuildServices.DB_Training:
-                case GuildServices.TAk_Training:
-                case GuildServices.TAr_Training:
-                case GuildServices.TDi_Training:
-                case GuildServices.TJu_Training:
-                case GuildServices.TKy_Training:
-                case GuildServices.TMa_Training:
-                case GuildServices.TSt_Training:
-                case GuildServices.TZe_Training:
-                    return HardStrings.serviceTraining;
-
-                case GuildServices.FG_Repairs:
-                    return HardStrings.serviceRepairs;
-
-                case GuildServices.TG_SellMagicItems:
-                    return HardStrings.serviceBuyMagicItems;
-
-                case GuildServices.TG_Spymaster:
-                case GuildServices.DB_Spymaster:
-                    return HardStrings.serviceSpymaster;
-
-                case GuildServices.DB_MakePotions:
-                    return HardStrings.serviceMakePotions;
-
-                case GuildServices.DB_BuyPotions:
-                    return HardStrings.serviceBuyPotions;
-
-                case GuildServices.DB_BuySoulgems:
-                    return HardStrings.serviceBuySoulgems;
-
-                case GuildServices.T_MakeDonation:
-                    return HardStrings.serviceDonate;
-
-                case GuildServices.T_CureDiseases:
-                    return HardStrings.serviceCure;
-
-                default:
-                    return "?";
-            }
-        }
-
         void LoadTextures()
         {
             baseTexture = ImageReader.GetTexture(baseTextureName);
@@ -339,20 +201,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             switch (service)
             {
-                case GuildServices.FG_Quests:
-                case GuildServices.MG_Quests:
-                case GuildServices.TG_Quests:
-                case GuildServices.DB_Quests:
-                case GuildServices.T_Quests:
+                case GuildServices.Quests:
                     GetQuest();
                     break;
 
-                case GuildServices.MG_Identify:
+                case GuildServices.Identify:
                     CloseWindow();
                     uiManager.PushWindow(new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Identify, this));
                     break;
 
-                case GuildServices.FG_Repairs:
+                case GuildServices.Repair:
                     CloseWindow();
                     if (guild.IsMember())
                         uiManager.PushWindow(new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Repair, this, guild));
@@ -360,35 +218,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         DaggerfallUI.MessageBox(HardStrings.serviceMembersOnly);
                     break;
 
-                case GuildServices.MG_Training:
-                case GuildServices.FG_Training:
-                case GuildServices.TG_Training:
-                case GuildServices.DB_Training:
-                case GuildServices.TAk_Training:
-                case GuildServices.TAr_Training:
-                case GuildServices.TDi_Training:
-                case GuildServices.TJu_Training:
-                case GuildServices.TKy_Training:
-                case GuildServices.TMa_Training:
-                case GuildServices.TSt_Training:
-                case GuildServices.TZe_Training:
+                case GuildServices.Training:
                     TrainingService();
                     break;
 
-                case GuildServices.MG_BuyMagicItems:
+                case GuildServices.BuyMagicItems:   // TODO: switch items depending on npcService?
                     CloseWindow();
                     DaggerfallTradeWindow tradeWindow = new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Buy, this);
                     tradeWindow.MerchantItems = GetMerchantItems();
                     uiManager.PushWindow(tradeWindow);
                     break;
 
-                case GuildServices.MG_Teleportation:
+                case GuildServices.Teleport:
                     CloseWindow();
                     DaggerfallUI.Instance.DfTravelMapWindow.ActivateTeleportationTravel();
                     uiManager.PushWindow(DaggerfallUI.Instance.DfTravelMapWindow);
                     break;
 
-                case GuildServices.MG_Buy_Spells:
+                case GuildServices.BuySpells:
                     //uiManager.PushWindow(new DaggerfallBankingWindow(uiManager, this));
                     //break;
 
@@ -453,10 +300,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Service Handling: Quests
 
-        static Dictionary<GuildServices, string> guildQuestTables = new Dictionary<GuildServices, string>()
+        static Dictionary<GuildNpcServices, string> guildQuestTables = new Dictionary<GuildNpcServices, string>()
         {
-            { GuildServices.FG_Quests, tempFightersQuestsFilename },
-            { GuildServices.MG_Quests, tempMagesQuestsFilename },
+            { GuildNpcServices.FG_Quests, tempFightersQuestsFilename },
+            { GuildNpcServices.MG_Quests, tempMagesQuestsFilename },
         };
 
         void GetQuest()
@@ -469,7 +316,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
             }
 
-            if (guildQuestTables.ContainsKey(service))
+            if (guildQuestTables.ContainsKey(npcService))
             {
                 OfferGuildQuest();
             }
@@ -487,7 +334,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             string questName = string.Empty;
             try
             {
-                table = new Table(QuestMachine.Instance.GetTableSourceText(guildQuestTables[service]));
+                table = new Table(QuestMachine.Instance.GetTableSourceText(guildQuestTables[npcService]));
 
                 // Select a quest name at random from table
                 if (table == null || table.RowCount == 0)
@@ -589,17 +436,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Service Handling: Training
 
-        static Dictionary<GuildServices, List<DFCareer.Skills>> guildTrainingSkills = new Dictionary<GuildServices, List<DFCareer.Skills>>()
+        static Dictionary<GuildNpcServices, List<DFCareer.Skills>> guildTrainingSkills = new Dictionary<GuildNpcServices, List<DFCareer.Skills>>()
         {
-            { GuildServices.MG_Training, new List<DFCareer.Skills>() {
+            { GuildNpcServices.MG_Training, new List<DFCareer.Skills>() {
                 DFCareer.Skills.Alteration, DFCareer.Skills.Daedric, DFCareer.Skills.Destruction, DFCareer.Skills.Dragonish, 
                 DFCareer.Skills.Harpy, DFCareer.Skills.Illusion, DFCareer.Skills.Impish, DFCareer.Skills.Mysticism, 
                 DFCareer.Skills.Orcish, DFCareer.Skills.Restoration, DFCareer.Skills.Spriggan, DFCareer.Skills.Thaumaturgy } },
-            { GuildServices.TG_Training, new List<DFCareer.Skills>() {
+            { GuildNpcServices.TG_Training, new List<DFCareer.Skills>() {
                 DFCareer.Skills.Backstabbing, DFCareer.Skills.BluntWeapon, DFCareer.Skills.Climbing, DFCareer.Skills.Dodging,
                 DFCareer.Skills.Jumping, DFCareer.Skills.Lockpicking, DFCareer.Skills.Pickpocket,
                 DFCareer.Skills.ShortBlade, DFCareer.Skills.Stealth, DFCareer.Skills.Streetwise, DFCareer.Skills.Swimming } },
-            { GuildServices.DB_Training, new List<DFCareer.Skills>() {
+            { GuildNpcServices.DB_Training, new List<DFCareer.Skills>() {
                 DFCareer.Skills.Archery, DFCareer.Skills.Backstabbing, DFCareer.Skills.Climbing, DFCareer.Skills.CriticalStrike,
                 DFCareer.Skills.Daedric, DFCareer.Skills.Destruction, DFCareer.Skills.Dodging, DFCareer.Skills.Running,
                 DFCareer.Skills.ShortBlade, DFCareer.Skills.Stealth, DFCareer.Skills.Streetwise, DFCareer.Skills.Swimming } },
@@ -607,24 +454,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private List<DFCareer.Skills> GetTrainingSkills()
         {
-            switch (service)
+            switch (npcService)
             {
                 // Handle Temples even when not a member
-                case GuildServices.TAk_Training:
+                case GuildNpcServices.TAk_Training:
                     return Temple.GetTrainingSkills(Temple.Divines.Akatosh);
-                case GuildServices.TAr_Training:
+                case GuildNpcServices.TAr_Training:
                     return Temple.GetTrainingSkills(Temple.Divines.Arkay);
-                case GuildServices.TDi_Training:
+                case GuildNpcServices.TDi_Training:
                     return Temple.GetTrainingSkills(Temple.Divines.Dibella);
-                case GuildServices.TJu_Training:
+                case GuildNpcServices.TJu_Training:
                     return Temple.GetTrainingSkills(Temple.Divines.Julianos);
-                case GuildServices.TKy_Training:
+                case GuildNpcServices.TKy_Training:
                     return Temple.GetTrainingSkills(Temple.Divines.Kynareth);
-                case GuildServices.TMa_Training:
+                case GuildNpcServices.TMa_Training:
                     return Temple.GetTrainingSkills(Temple.Divines.Mara);
-                case GuildServices.TSt_Training:
+                case GuildNpcServices.TSt_Training:
                     return Temple.GetTrainingSkills(Temple.Divines.Stendarr);
-                case GuildServices.TZe_Training:
+                case GuildNpcServices.TZe_Training:
                     return Temple.GetTrainingSkills(Temple.Divines.Zenithar);
                 default:
                     return guild.TrainingSkills;
@@ -717,32 +564,5 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         #endregion
-/*
-        #region Macro Handling
-
-        public MacroDataSource GetMacroDataSource()
-        {
-            return new GuildServiceMacroDataSource(this);
-        }
-
-        /// <summary>
-        /// MacroDataSource context sensitive methods for guild services window.
-        /// </summary>
-        private class GuildServiceMacroDataSource : MacroDataSource
-        {
-            private DaggerfallGuildServicePopupWindow parent;
-            public GuildServiceMacroDataSource(DaggerfallGuildServicePopupWindow guildServiceWindow)
-            {
-                this.parent = guildServiceWindow;
-            }
-
-            public override string Amount()
-            {
-                return parent.GetServicePrice().ToString();
-            }
-        }
-
-        #endregion
-    */
     }
 }

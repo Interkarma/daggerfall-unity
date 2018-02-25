@@ -11,14 +11,11 @@
 
 using UnityEngine;
 using System;
-using System.Collections;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
-using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Entity;
-using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.Player;
@@ -943,14 +940,12 @@ namespace DaggerfallWorkshop.Game
                     npc.Data.factionID, (FactionFile.SocialGroups)factionData.sgroup, (FactionFile.GuildGroups)factionData.ggroup, (FactionFile.GuildGroups)buildingFactionData.ggroup);
 
                 // Check if the NPC offers a guild service.
-                if (Enum.IsDefined(typeof(GuildServices), npc.Data.factionID))
+                if (Enum.IsDefined(typeof(GuildNpcServices), npc.Data.factionID))
                 {
                     FactionFile.GuildGroups guildGroup = (FactionFile.GuildGroups) buildingFactionData.ggroup;
                     if (guildGroup == FactionFile.GuildGroups.None)
-                        guildGroup = (FactionFile.GuildGroups)factionData.ggroup;
-                    GuildServices service = (GuildServices) npc.Data.factionID;
-                    Debug.Log("NPC offers guild service: " + service.ToString());
-                    uiManager.PushWindow(new DaggerfallGuildServicePopupWindow(uiManager, npc, guildGroup, service, playerEnterExit.BuildingDiscoveryData.factionID));
+                        guildGroup = (FactionFile.GuildGroups) factionData.ggroup;
+                    uiManager.PushWindow(new DaggerfallGuildServicePopupWindow(uiManager, npc, guildGroup, playerEnterExit.BuildingDiscoveryData.factionID));
                 }
                 // Check if this NPC is a merchant.
                 else if ((FactionFile.SocialGroups) factionData.sgroup == FactionFile.SocialGroups.Merchants)
