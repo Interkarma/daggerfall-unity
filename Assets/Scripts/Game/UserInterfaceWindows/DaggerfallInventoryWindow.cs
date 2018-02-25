@@ -13,6 +13,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using DaggerfallConnect.Arena2;
+using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Entity;
@@ -890,36 +891,37 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Load source textures
             baseTexture = ImageReader.GetTexture(baseTextureName);
             goldTexture = ImageReader.GetTexture(goldTextureName);
+            DFSize baseSize = new DFSize(320, 200);
 
             // Cut out tab page not selected button textures
-            weaponsAndArmorNotSelected = ImageReader.GetSubTexture(baseTexture, weaponsAndArmorRect);
-            magicItemsNotSelected = ImageReader.GetSubTexture(baseTexture, magicItemsRect);
-            clothingAndMiscNotSelected = ImageReader.GetSubTexture(baseTexture, clothingAndMiscRect);
-            ingredientsNotSelected = ImageReader.GetSubTexture(baseTexture, ingredientsRect);
+            weaponsAndArmorNotSelected = ImageReader.GetSubTexture(baseTexture, weaponsAndArmorRect, baseSize);
+            magicItemsNotSelected = ImageReader.GetSubTexture(baseTexture, magicItemsRect, baseSize);
+            clothingAndMiscNotSelected = ImageReader.GetSubTexture(baseTexture, clothingAndMiscRect, baseSize);
+            ingredientsNotSelected = ImageReader.GetSubTexture(baseTexture, ingredientsRect, baseSize);
 
             // Cut out tab page selected button textures
-            weaponsAndArmorSelected = ImageReader.GetSubTexture(goldTexture, weaponsAndArmorRect);
-            magicItemsSelected = ImageReader.GetSubTexture(goldTexture, magicItemsRect);
-            clothingAndMiscSelected = ImageReader.GetSubTexture(goldTexture, clothingAndMiscRect);
-            ingredientsSelected = ImageReader.GetSubTexture(goldTexture, ingredientsRect);
+            weaponsAndArmorSelected = ImageReader.GetSubTexture(goldTexture, weaponsAndArmorRect, baseSize);
+            magicItemsSelected = ImageReader.GetSubTexture(goldTexture, magicItemsRect, baseSize);
+            clothingAndMiscSelected = ImageReader.GetSubTexture(goldTexture, clothingAndMiscRect, baseSize);
+            ingredientsSelected = ImageReader.GetSubTexture(goldTexture, ingredientsRect, baseSize);
 
             // Cut out action mode not selected buttons
-            wagonNotSelected = ImageReader.GetSubTexture(baseTexture, wagonButtonRect);
-            infoNotSelected = ImageReader.GetSubTexture(baseTexture, infoButtonRect);
-            equipNotSelected = ImageReader.GetSubTexture(baseTexture, equipButtonRect);
-            removeNotSelected = ImageReader.GetSubTexture(baseTexture, removeButtonRect);
-            useNotSelected = ImageReader.GetSubTexture(baseTexture, useButtonRect);
+            wagonNotSelected = ImageReader.GetSubTexture(baseTexture, wagonButtonRect, baseSize);
+            infoNotSelected = ImageReader.GetSubTexture(baseTexture, infoButtonRect, baseSize);
+            equipNotSelected = ImageReader.GetSubTexture(baseTexture, equipButtonRect, baseSize);
+            removeNotSelected = ImageReader.GetSubTexture(baseTexture, removeButtonRect, baseSize);
+            useNotSelected = ImageReader.GetSubTexture(baseTexture, useButtonRect, baseSize);
 
             // Cut out action mode selected buttons
-            wagonSelected = ImageReader.GetSubTexture(goldTexture, wagonButtonRect);
-            infoSelected = ImageReader.GetSubTexture(goldTexture, infoButtonRect);
-            equipSelected = ImageReader.GetSubTexture(goldTexture, equipButtonRect);
-            removeSelected = ImageReader.GetSubTexture(goldTexture, removeButtonRect);
-            useSelected = ImageReader.GetSubTexture(goldTexture, useButtonRect);
+            wagonSelected = ImageReader.GetSubTexture(goldTexture, wagonButtonRect, baseSize);
+            infoSelected = ImageReader.GetSubTexture(goldTexture, infoButtonRect, baseSize);
+            equipSelected = ImageReader.GetSubTexture(goldTexture, equipButtonRect, baseSize);
+            removeSelected = ImageReader.GetSubTexture(goldTexture, removeButtonRect, baseSize);
+            useSelected = ImageReader.GetSubTexture(goldTexture, useButtonRect, baseSize);
 
             // Cut out info panel texture from item maker
             Texture2D infoBaseTexture = ImageReader.GetTexture(infoTextureName);
-            infoTexture = ImageReader.GetSubTexture(infoBaseTexture, infoCutoutRect);
+            infoTexture = ImageReader.GetSubTexture(infoBaseTexture, infoCutoutRect, baseSize);
 
             // Load coins animation textures
             coinsAnimation = ImageReader.GetImageData(coinsAnimTextureName, 6, 0, true, false, true);

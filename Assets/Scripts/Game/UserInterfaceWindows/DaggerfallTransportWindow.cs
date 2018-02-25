@@ -6,6 +6,7 @@
 // Original Author: Hazelnut
 
 using UnityEngine;
+using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Items;
@@ -87,6 +88,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mainPanel.BackgroundTexture = baseTexture;
             mainPanel.Position = new Vector2(0, 50);
             mainPanel.Size = baseSize;
+            DFSize disabledTextureSize = new DFSize(122, 36);
 
             // Foot button
             footButton = DaggerfallUI.AddButton(footButtonRect, mainPanel);
@@ -97,21 +99,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (hasHorse) {
                 horseButton.OnMouseClick += HorseButton_OnMouseClick;
             } else {
-                horseButton.BackgroundTexture = ImageReader.GetSubTexture(disabledTexture, horseDisabledRect);
+                horseButton.BackgroundTexture = ImageReader.GetSubTexture(disabledTexture, horseDisabledRect, disabledTextureSize);
             }
             // Cart button
             cartButton = DaggerfallUI.AddButton(cartButtonRect, mainPanel);
             if (hasCart) {
                 cartButton.OnMouseClick += CartButton_OnMouseClick;
             } else {
-                cartButton.BackgroundTexture = ImageReader.GetSubTexture(disabledTexture, cartDisabledRect);
+                cartButton.BackgroundTexture = ImageReader.GetSubTexture(disabledTexture, cartDisabledRect, disabledTextureSize);
             }
             // Ship button
             shipButton = DaggerfallUI.AddButton(shipButtonRect, mainPanel);
             if (hasShip) {
                 shipButton.OnMouseClick += ShipButton_OnMouseClick;
             } else {
-                shipButton.BackgroundTexture = ImageReader.GetSubTexture(disabledTexture, shipDisabledRect);
+                shipButton.BackgroundTexture = ImageReader.GetSubTexture(disabledTexture, shipDisabledRect, disabledTextureSize);
             }
 
             // Exit button

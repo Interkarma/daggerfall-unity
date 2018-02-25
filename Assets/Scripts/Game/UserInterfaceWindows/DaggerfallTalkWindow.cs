@@ -195,6 +195,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         int toneLastUsed = -1;
 
         // position rect of arrow images is src image
+        DFSize arrowsFullSize = new DFSize(9, 152);
         Rect upArrowRectInSrcImg = new Rect(0, 0, 9, 16);
         Rect downArrowRectInSrcImg = new Rect(0, 136, 9, 16);
 
@@ -485,13 +486,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Cut out red up/down arrows (topic)
             Texture2D redArrowsTexture = ImageReader.GetTexture(redArrowsTextureName);
-            arrowTopicUpRed = ImageReader.GetSubTexture(redArrowsTexture, upArrowRectInSrcImg);
-            arrowTopicDownRed = ImageReader.GetSubTexture(redArrowsTexture, downArrowRectInSrcImg);
+            arrowTopicUpRed = ImageReader.GetSubTexture(redArrowsTexture, upArrowRectInSrcImg, arrowsFullSize);
+            arrowTopicDownRed = ImageReader.GetSubTexture(redArrowsTexture, downArrowRectInSrcImg, arrowsFullSize);
 
             // Cut out green up/down arrows (topic)
             Texture2D greenArrowsTexture = ImageReader.GetTexture(greenArrowsTextureName);
-            arrowTopicUpGreen = ImageReader.GetSubTexture(greenArrowsTexture, upArrowRectInSrcImg);
-            arrowTopicDownGreen = ImageReader.GetSubTexture(greenArrowsTexture, downArrowRectInSrcImg);
+            arrowTopicUpGreen = ImageReader.GetSubTexture(greenArrowsTexture, upArrowRectInSrcImg, arrowsFullSize);
+            arrowTopicDownGreen = ImageReader.GetSubTexture(greenArrowsTexture, downArrowRectInSrcImg, arrowsFullSize);
 
             Color32[] colors;
             Color32[] rotated;
@@ -524,12 +525,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             arrowTopicRightGreen.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
 
             // Cut out red up/down arrows (conversation)           
-            arrowConversationUpRed = ImageReader.GetSubTexture(redArrowsTexture, upArrowRectInSrcImg);
-            arrowConversationDownRed = ImageReader.GetSubTexture(redArrowsTexture, downArrowRectInSrcImg);
+            arrowConversationUpRed = ImageReader.GetSubTexture(redArrowsTexture, upArrowRectInSrcImg, arrowsFullSize);
+            arrowConversationDownRed = ImageReader.GetSubTexture(redArrowsTexture, downArrowRectInSrcImg, arrowsFullSize);
 
             // Cut out green up/down arrows (conversation)
-            arrowConversationUpGreen = ImageReader.GetSubTexture(greenArrowsTexture, upArrowRectInSrcImg);
-            arrowConversationDownGreen = ImageReader.GetSubTexture(greenArrowsTexture, downArrowRectInSrcImg);
+            arrowConversationUpGreen = ImageReader.GetSubTexture(greenArrowsTexture, upArrowRectInSrcImg, arrowsFullSize);
+            arrowConversationDownGreen = ImageReader.GetSubTexture(greenArrowsTexture, downArrowRectInSrcImg, arrowsFullSize);
 
             listboxConversation = new ListBox();
             listboxConversation.OnScroll += ListBoxConversation_OnScroll;

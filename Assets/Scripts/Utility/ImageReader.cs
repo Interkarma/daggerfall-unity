@@ -96,6 +96,23 @@ namespace DaggerfallWorkshop.Utility
         }
 
         /// <summary>
+        /// Cuts out a sub-texture from source texture using a virtual rect in a resolution-independent manner.
+        /// </summary>
+        /// <param name="texture">Source texture. Must be readable.</param>
+        /// <param name="subRect">Input rect using pixel coordinates into classic texture.</param>
+        /// <param name="srcSize">Full size of classic source texture.</param>
+        /// <returns>New Texture2D containing sub-texture.</returns>
+        public static Texture2D GetSubTexture(Texture2D texture, Rect subRect, DFSize srcSize)
+        {
+            // Cut classic textures with full rect to avoid rounding errors
+            if (texture.width == srcSize.Width && texture.height == srcSize.Height)
+                return GetSubTexture(texture, subRect, false);
+
+            // Support imported textures with a relative rect
+            return GetSubTexture(texture, ConvertToRelativeSubRect(subRect, srcSize.Width, srcSize.Height), true);
+        }
+
+        /// <summary>
         /// Cuts out a sub-texture from source texture.
         /// Useful for slicing up native UI elements into smaller functional units.
         /// </summary>
