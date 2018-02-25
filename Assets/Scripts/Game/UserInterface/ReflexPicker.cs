@@ -102,11 +102,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             playerReflexes = value;
 
-            highlightRect = new Rect(
-                0f,
-                ((9f * (4 - (int)value)) / highlightTexture.height),
-                1f,
-                9f / highlightTexture.height);
+            highlightRect = new Rect(0f, 0.2f * (4 - (int)value), 1f, 0.2f);
         }
 
         #endregion
