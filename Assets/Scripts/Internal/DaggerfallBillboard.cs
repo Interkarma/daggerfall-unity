@@ -36,6 +36,7 @@ namespace DaggerfallWorkshop
     {
         public int FramesPerSecond = 5;     // General FPS
         public bool OneShot = false;        // Plays animation once then destroys GameObject
+        public bool FaceY = false;          // Billboard should also face camera up/down
 
         [SerializeField]
         BillboardSummary summary = new BillboardSummary();
@@ -120,7 +121,8 @@ namespace DaggerfallWorkshop
             // Rotate to face camera in game
             if (mainCamera && Application.isPlaying)
             {
-                Vector3 viewDirection = -new Vector3(mainCamera.transform.forward.x, 0, mainCamera.transform.forward.z);
+                float y = (FaceY) ? mainCamera.transform.forward.y : 0;
+                Vector3 viewDirection = -new Vector3(mainCamera.transform.forward.x, y, mainCamera.transform.forward.z);
                 transform.LookAt(transform.position + viewDirection);
             }
         }
@@ -396,7 +398,8 @@ namespace DaggerfallWorkshop
                 if (sceneView)
                 {
                     // Editor camera stands in for player camera in edit mode
-                    Vector3 viewDirection = -new Vector3(sceneView.camera.transform.forward.x, 0, sceneView.camera.transform.forward.z);
+                    float y = (FaceY) ? mainCamera.transform.forward.y : 0;
+                    Vector3 viewDirection = -new Vector3(sceneView.camera.transform.forward.x, y, sceneView.camera.transform.forward.z);
                     transform.LookAt(transform.position + viewDirection);
                 }
             }

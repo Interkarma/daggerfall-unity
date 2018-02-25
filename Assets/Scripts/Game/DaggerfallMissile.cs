@@ -122,6 +122,7 @@ namespace DaggerfallWorkshop.Game
             GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(GetMissileTextureArchive(spellType), 0, transform);
             myBillboard = go.GetComponent<DaggerfallBillboard>();
             myBillboard.FramesPerSecond = BillboardFramesPerSecond;
+            myBillboard.FaceY = true;
             myBillboard.GetComponent<MeshRenderer>().receiveShadows = false;
         }
 
