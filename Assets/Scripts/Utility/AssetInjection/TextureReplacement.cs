@@ -183,6 +183,20 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         /// <summary>
+        /// Seek texture from mods with a specific dye.
+        /// </summary>
+        /// <param name="archive">Texture archive.</param>
+        /// <param name="record">Record index.</param>
+        /// <param name="frame">Animation frame index</param>
+        /// <param name="dye">Dye colour for armour, weapons, and clothing.</param>
+        /// <param name="tex">Imported texture.</param>
+        /// <returns>True if texture imported.</returns>
+        public static bool TryImportTexture(int archive, int record, int frame, DyeColors dye, out Texture2D tex)
+        {
+            return TryImportTexture(texturesPath, GetName(archive, record, frame, dye), out tex);
+        }
+
+        /// <summary>
         /// Seek texture from mods.
         /// </summary>
         /// <param name="name">Texture name.</param>
@@ -702,6 +716,21 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         static public string GetName (int archive, int record, int frame = 0)
         {
             return archive.ToString("D3") + "_" + record.ToString() + "-" + frame.ToString();
+        }
+
+        /// <summary>
+        /// Convert (archive, record, frame) to string name.
+        /// </summary>
+        /// <param name="archive">Archive index from TEXTURE.XXX</param>
+        /// <param name="record">Record index.</param>
+        /// <param name="frame">Frame index. It's different than zero only for animations.</param>
+        /// <param name="dye">Color Dye</param>
+        public static string GetName(int archive, int record, int frame, DyeColors dye)
+        {
+            if (dye == DyeColors.Unchanged)
+                return GetName(archive, record, frame);
+            else
+                return GetName(archive, record, frame) + "_" + dye;
         }
 
         /// <summary>
