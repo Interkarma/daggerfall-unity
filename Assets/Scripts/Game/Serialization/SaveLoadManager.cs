@@ -965,10 +965,6 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         IEnumerator LoadGame(string path)
         {
-            // DELETE: for testing only!
-            GameManager.Instance.PlayerMotor.runSpeedOverride = 30;
-            GameManager.Instance.PlayerMotor.useRunSpeedOverride = true;
-
             GameManager.Instance.PlayerDeath.ClearDeathAnimation();
             GameManager.Instance.PlayerMotor.CancelMovement = true;
             InputManager.Instance.ClearAllActions();

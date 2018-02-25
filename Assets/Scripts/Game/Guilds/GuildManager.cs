@@ -53,12 +53,15 @@ namespace DaggerfallWorkshop.Game.Guilds
                 case FactionFile.GuildGroups.FightersGuild:
                     return new FightersGuild();
 
+                case FactionFile.GuildGroups.MagesGuild:
+                    return new MagesGuild();
+
                 case FactionFile.GuildGroups.HolyOrder:
                     return new Temple(Temple.GetDivine(buildingFactionId));
 
 /*                case FactionFile.GuildGroups.KnightlyOrder:
                     Temple.Divines deity = (Temple.Divines) buildingFactionId;
-                    return new Temple(deity);
+                    return new KnightlyOrder(region);
 */
             }
             return null;

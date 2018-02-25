@@ -58,6 +58,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int TrainingToSoonId = 4023;
         const int TrainSkillId = 5221;
         const int notEnoughGoldId = 454;
+        const int insufficientRankId = 3100;
 
         Texture2D baseTexture;
         PlayerEntity playerEntity;
@@ -177,6 +178,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 playerEntity.SetHealth(playerEntity.MaxHealth);
                 DaggerfallUI.MessageBox(350);
             }
+            // TODO: Check for magicka restoration (sorcerers)
         }
 
         #endregion
@@ -199,11 +201,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ServiceButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            // Check access to service
             if (!guild.CanAccessService(service))
             {
-                DaggerfallUI.MessageBox(guild.IsMember() ? HardStrings.serviceSufficientRankOnly : HardStrings.serviceMembersOnly);
+                if (guild.IsMember())
+                {
+                    DaggerfallMessageBox msgBox = new DaggerfallMessageBox(uiManager, this);
+                    msgBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRandomTokens(insufficientRankId));
+                    msgBox.ClickAnywhereToClose = true;
+                    msgBox.Show();
+                }
+                else
+                {
+                    DaggerfallUI.MessageBox(HardStrings.serviceMembersOnly);
+                }
                 return;
             }
+            // Handle service
             switch (service)
             {
                 case GuildServices.Quests:
@@ -440,10 +454,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         static Dictionary<GuildNpcServices, List<DFCareer.Skills>> guildTrainingSkills = new Dictionary<GuildNpcServices, List<DFCareer.Skills>>()
         {
-            { GuildNpcServices.MG_Training, new List<DFCareer.Skills>() {
-                DFCareer.Skills.Alteration, DFCareer.Skills.Daedric, DFCareer.Skills.Destruction, DFCareer.Skills.Dragonish, 
-                DFCareer.Skills.Harpy, DFCareer.Skills.Illusion, DFCareer.Skills.Impish, DFCareer.Skills.Mysticism, 
-                DFCareer.Skills.Orcish, DFCareer.Skills.Restoration, DFCareer.Skills.Spriggan, DFCareer.Skills.Thaumaturgy } },
             { GuildNpcServices.TG_Training, new List<DFCareer.Skills>() {
                 DFCareer.Skills.Backstabbing, DFCareer.Skills.BluntWeapon, DFCareer.Skills.Climbing, DFCareer.Skills.Dodging,
                 DFCareer.Skills.Jumping, DFCareer.Skills.Lockpicking, DFCareer.Skills.Pickpocket,
