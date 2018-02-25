@@ -45,13 +45,14 @@ namespace DaggerfallWorkshop.Game
         public float TouchRange = 2.5f;                         // Maximum range for touch spherecast
         public bool EnableLight = true;                         // Show a light with this missile - player can force disable from settings
         public bool EnableShadows = true;                       // Light will cast shadows - player can force disable from settings
-        public float ExplosionIntensityMultiplier = 2.0f;       // Intensity of light during AOE explosion
         public Color[] PulseColors;                             // Array of colours for pulse cycle, light will lerp from item-to-item and loop back to start - ignored if empty
         public float PulseSpeed = 0f;                           // Time in seconds light will lerp between pulse colours - 0 to disable
         public float FlickerMaxInterval = 0f;                   // Maximum interval for random flicker - 0 to disable
         public int BillboardFramesPerSecond = 5;                // Speed of billboard animatation
-        public int ContactBillboardFramesPerSecond = 15;        // Speed of contact billboard animation
+        public int ImpactBillboardFramesPerSecond = 15;         // Speed of contact billboard animation
         public float LifespanInSeconds = 8f;                    // How long missile will persist in world before self-destructing if no target found
+        public float PostImpactLifespanInSeconds = 0.6f;        // Time in seconds missile will persist after impact
+        public float PostImpactLightMultiplier = 0f;            // Scale of light intensity and range during post-impact lifespan - use 1.0 for no change, 0.0 for lights-out
 
         #endregion
 
@@ -71,7 +72,11 @@ namespace DaggerfallWorkshop.Game
         bool forceDisableSpellLighting;
         bool forceDisableSpellShadows;
         float lifespan = 0f;
+        float postImpactLifespan = 0f;
         SpellTypes spellType = SpellTypes.None;
+        bool impactDetected = false;
+        float initialRange;
+        float initialIntensity;
 
         #endregion
 
@@ -86,6 +91,8 @@ namespace DaggerfallWorkshop.Game
             forceDisableSpellShadows = !DaggerfallUnity.Settings.EnableSpellShadows;
             if (forceDisableSpellLighting) myLight.enabled = false;
             if (forceDisableSpellShadows) myLight.shadows = LightShadows.None;
+            initialRange = myLight.range;
+            initialIntensity = myLight.intensity;
 
             // Setup collider
             myCollider = GetComponent<SphereCollider>();
@@ -100,13 +107,27 @@ namespace DaggerfallWorkshop.Game
 
         private void Update()
         {
-            // Transform missile along direction vector
-            transform.position += (direction * MovementSpeed) * Time.deltaTime;
+            // Handle missile lifespan pre and post-impact
+            if (!impactDetected)
+            {
+                // Transform missile along direction vector
+                transform.position += (direction * MovementSpeed) * Time.deltaTime;
 
-            // Update lifespan and self-destruct if expired (e.g. spell fired straight up and will never hit anything)
-            lifespan += Time.deltaTime;
-            if (lifespan > LifespanInSeconds)
-                Destroy(gameObject);
+                // Update lifespan and self-destruct if expired (e.g. spell fired straight up and will never hit anything)
+                lifespan += Time.deltaTime;
+                if (lifespan > LifespanInSeconds)
+                    Destroy(gameObject);
+            }
+            else
+            {
+                // Track post impact lifespan
+                postImpactLifespan += Time.deltaTime;
+                if (postImpactLifespan > PostImpactLifespanInSeconds)
+                    Destroy(gameObject);
+            }
+
+            // Update lighting effect
+            UpdateLight();
         }
 
         #endregion
@@ -117,20 +138,22 @@ namespace DaggerfallWorkshop.Game
         /// Easily set billboard animations by spell type.
         /// </summary>
         /// <param name="spellType"></param>
-        public void UseSpellBillboardAnims(SpellTypes spellType)
+        public void UseSpellBillboardAnims(SpellTypes spellType, int record = 0, bool oneShot = false)
         {
-            // Destroy any existing billboard component
+            // Destroy any existing billboard game object
             if (myBillboard)
             {
-                myBillboard.enabled = false;
-                Destroy(myBillboard);
+                myBillboard.gameObject.SetActive(false);
+                Destroy(myBillboard.gameObject);
             }
 
-            // Add billboard parented to this missile
-            GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(GetMissileTextureArchive(spellType), 0, transform);
+            // Add new billboard parented to this missile
+            GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(GetMissileTextureArchive(spellType), record, transform);
+            go.transform.localPosition = Vector3.zero;
             myBillboard = go.GetComponent<DaggerfallBillboard>();
             myBillboard.FramesPerSecond = BillboardFramesPerSecond;
             myBillboard.FaceY = true;
+            myBillboard.OneShot = oneShot;
             myBillboard.GetComponent<MeshRenderer>().receiveShadows = false;
 
             // Store spell type for target animation
@@ -179,37 +202,13 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
-            // Play spell target animation
+            // Play spell impact animation, this replaces spell missile animation
             if (spellType != SpellTypes.None)
             {
-                // Play target oneshot
-                GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(GetMissileTextureArchive(spellType), 1, null);
-                go.transform.position = transform.position;
-                DaggerfallBillboard c = go.GetComponent<DaggerfallBillboard>();
-                c.FramesPerSecond = ContactBillboardFramesPerSecond;
-                c.FaceY = true;
-                c.OneShot = true;
-                c.GetComponent<MeshRenderer>().receiveShadows = false;
+                UseSpellBillboardAnims(spellType, 1, true);
+                myBillboard.FramesPerSecond = ImpactBillboardFramesPerSecond;
+                impactDetected = true;
             }
-
-            //// Create list of found entities for debug output
-            //string outputList = string.Empty;
-            //foreach(var entity in entities)
-            //{
-            //    outputList += entity.name + "; ";
-            //}
-
-            //// Output debug information
-            //if (entities.Count > 0)
-            //{
-            //    Debug.LogFormat("Missile hit {0} targets: {1}", entities.Count, outputList);
-            //}
-            //else
-            //{
-            //    Debug.Log("Missile trigger");
-            //}
-
-            Destroy(gameObject);
         }
 
         #endregion
@@ -221,6 +220,13 @@ namespace DaggerfallWorkshop.Game
             // Do nothing if light disabled by missile properties or force disabled in user settings
             if (!EnableLight || forceDisableSpellLighting)
                 return;
+
+            // Scale post-impact
+            if (impactDetected)
+            {
+                myLight.range = initialRange * PostImpactLightMultiplier;
+                myLight.intensity = initialIntensity * PostImpactLightMultiplier;
+            }
         }
 
         int GetMissileTextureArchive(SpellTypes spellType)

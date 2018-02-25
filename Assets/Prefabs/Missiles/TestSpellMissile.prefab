@@ -209,13 +209,14 @@ MonoBehaviour:
   TouchRange: 2.5
   EnableLight: 1
   EnableShadows: 1
-  ExplosionIntensityMultiplier: 2
   PulseColors: []
   PulseSpeed: 0
   FlickerMaxInterval: 0
   BillboardFramesPerSecond: 5
-  ContactBillboardFramesPerSecond: 15
+  ImpactBillboardFramesPerSecond: 15
   LifespanInSeconds: 8
+  PostImpactLifespanInSeconds: 0.6
+  PostImpactLightMultiplier: 2
 --- !u!135 &135961771109985534
 SphereCollider:
   m_ObjectHideFlags: 1
