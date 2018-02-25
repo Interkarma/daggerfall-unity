@@ -114,15 +114,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void TalkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             CloseWindow();
-
-            // Check if merchant is offering work
-            if (TalkManager.Instance.MerchantOfferingQuest(merchantNPC.Data.nameSeed)) {
-                uiManager.PushWindow(new DaggerfallQuestOfferWindow(uiManager, merchantNPC, FactionFile.SocialGroups.Merchants));
-            }
-            else 
-            {
-                GameManager.Instance.TalkManager.TalkToStaticNPC(merchantNPC);
-            }
+            GameManager.Instance.TalkManager.TalkToStaticNPC(merchantNPC);
         }
 
         private void SellButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)

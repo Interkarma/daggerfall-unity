@@ -23,6 +23,7 @@ using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Questing;
 using System.Linq;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -325,6 +326,12 @@ namespace DaggerfallWorkshop.Game
             get {  return listTopicThing; }
         }
 
+        public int LastExteriorEntered
+        {
+            get { return lastExteriorEntered; }
+            set { lastExteriorEntered = value; }
+        }
+
         #endregion
 
         #region Unity
@@ -423,6 +430,10 @@ namespace DaggerfallWorkshop.Game
         // Player has clicked or static talk target or clicked the talk button inside a popup-window
         public void TalkToStaticNPC(StaticNPC targetNPC)
         {
+            if (TalkManager.Instance.MerchantOfferingQuest (targetNPC.Data.nameSeed)) {
+                DaggerfallUI.UIManager.PushWindow(new DaggerfallQuestOfferWindow (DaggerfallUI.UIManager, targetNPC, FactionFile.SocialGroups.Merchants));
+                return;
+            }
             currentNPCType = NPCType.Static;
 
             const int youGetNoResponseTextId = 7205;
@@ -1366,63 +1377,6 @@ namespace DaggerfallWorkshop.Game
             // update topic list
             AssembleTopiclistTellMeAbout();
         }
-        /// <summary>
-        /// Generates a pool of merchant NPCs in the exterior location that may offer quests.
-        /// </summary>
-        /// <param name="locationID">The current player location's index.</param>
-        public void SetMerchantQuestors(int locationID)
-        {
-            merchantRecords.Clear();
-            ContentReader.MapSummary mapSummary;
-            DFPosition mapPixel = GameManager.Instance.PlayerGPS.CurrentMapPixel;
-            DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out mapSummary);
-            DFLocation location = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(mapSummary.RegionIndex, mapSummary.MapIndex);
-            DFBlock[] blocks;
-            RMBLayout.GetLocationBuildingData(location, out blocks);
-            for (int i = 0; i < blocks.Length; i++)
-            {
-                for (int j = 0; j < blocks[i].RmbBlock.SubRecords.Length; j++)
-                {
-                    DFLocation.BuildingData building = blocks[i].RmbBlock.FldHeader.BuildingDataList[j];
-                    for (int k = 0; k < blocks[i].RmbBlock.SubRecords[j].Interior.BlockPeopleRecords.Length; k++)
-                    {
-                        FactionFile.FactionData fData;
-                        short fID = blocks[i].RmbBlock.SubRecords[j].Interior.BlockPeopleRecords[k].FactionID;
-                        GameManager.Instance.PlayerEntity.FactionData.GetFactionData(fID, out fData);
-                        if ((FactionFile.SocialGroups)fData.sgroup == FactionFile.SocialGroups.Merchants)
-                        {
-                            int randomChance = UnityEngine.Random.Range(0, 4); // 25% chance that a merchant will offer quests
-                            if (randomChance < 3) 
-                            {
-                                continue;
-                            }
-                            DFBlock.RmbBlockPeopleRecord peopleRecord = blocks[i].RmbBlock.SubRecords[j].Interior.BlockPeopleRecords[k];
-                            int x = peopleRecord.XPos;
-                            int y = peopleRecord.YPos;
-                            int z = peopleRecord.ZPos;
-                            int key = (int)peopleRecord.Position;
-                            if (!merchantRecords.ContainsKey(key))
-                            {
-                                npcBuildingPair nbPair = new npcBuildingPair();
-                                StaticNPC.NPCData npc = new StaticNPC.NPCData();
-                                npc.hash = x ^ y << 2 ^ z >> 2; // expression copied from StaticNPC.GetPositionHash because it's not visible here
-                                npc.flags = peopleRecord.Flags;
-                                npc.nameSeed = key;
-                                npc.gender = ((npc.flags & 32) == 32) ? Genders.Female : Genders.Male;
-                                npc.context = StaticNPC.Context.Building;
-                                npc.billboardArchiveIndex = peopleRecord.TextureArchive;
-                                npc.billboardRecordIndex = peopleRecord.TextureRecord;
-                                npc.nameBank = GameManager.Instance.PlayerGPS.GetNameBankOfCurrentRegion();
-                                nbPair.npc = npc;
-                                nbPair.building = building;
-                                merchantRecords.Add(key, nbPair);
-                            }
-                        }
-                    }
-                }
-            }
-            lastExteriorEntered = locationID;
-        }
 
         public bool MerchantQuestorsAreSet(int locationID)
         {
@@ -1537,6 +1491,7 @@ namespace DaggerfallWorkshop.Game
             RMBLayout.GetLocationBuildingData(location, out blocks);
             int width = location.Exterior.ExteriorData.Width;
             int height = location.Exterior.ExteriorData.Height;
+            merchantRecords.Clear();
 
             for (int y = 0; y < height; y++)
             {
@@ -1567,6 +1522,47 @@ namespace DaggerfallWorkshop.Game
                                                                         buildingSummary.NameSeed, buildingSummary.BuildingType, buildingSummary.FactionId, location.Name, location.RegionName);
                             DaggerfallUnity.LogMessage(exceptionMessage, true);
 
+                        }
+
+                        // Populate potential merchant questors
+                        for (int j = 0; j < blocks[index].RmbBlock.SubRecords.Length; j++)
+                        {
+                            DFLocation.BuildingData building = blocks[index].RmbBlock.FldHeader.BuildingDataList[j];
+                            for (int k = 0; k < blocks[index].RmbBlock.SubRecords[j].Interior.BlockPeopleRecords.Length; k++)
+                            {
+                                FactionFile.FactionData fData;
+                                short fID = blocks[index].RmbBlock.SubRecords[j].Interior.BlockPeopleRecords[k].FactionID;
+                                GameManager.Instance.PlayerEntity.FactionData.GetFactionData(fID, out fData);
+                                if ((FactionFile.SocialGroups)fData.sgroup == FactionFile.SocialGroups.Merchants)
+                                {
+                                    int randomChance = UnityEngine.Random.Range(0, 4); // 25% chance that a merchant will offer quests
+                                    if (randomChance < 3) 
+                                    {
+                                        continue;
+                                    }
+                                    DFBlock.RmbBlockPeopleRecord peopleRecord = blocks[index].RmbBlock.SubRecords[j].Interior.BlockPeopleRecords[k];
+                                    int personX = peopleRecord.XPos;
+                                    int personY = peopleRecord.YPos;
+                                    int personZ = peopleRecord.ZPos;
+                                    int key = (int)peopleRecord.Position;
+                                    if (!merchantRecords.ContainsKey(key))
+                                    {
+                                        npcBuildingPair nbPair = new npcBuildingPair();
+                                        StaticNPC.NPCData npc = new StaticNPC.NPCData();
+                                        npc.hash = personX ^ personY << 2 ^ personZ >> 2; // expression copied from StaticNPC.GetPositionHash because it's not visible here
+                                        npc.flags = peopleRecord.Flags;
+                                        npc.nameSeed = key;
+                                        npc.gender = ((npc.flags & 32) == 32) ? Genders.Female : Genders.Male;
+                                        npc.context = StaticNPC.Context.Building;
+                                        npc.billboardArchiveIndex = peopleRecord.TextureArchive;
+                                        npc.billboardRecordIndex = peopleRecord.TextureRecord;
+                                        npc.nameBank = GameManager.Instance.PlayerGPS.GetNameBankOfCurrentRegion();
+                                        nbPair.npc = npc;
+                                        nbPair.building = building;
+                                        merchantRecords.Add(key, nbPair);
+                                    }
+                                }
+                            }
                         }
                     }
                 }

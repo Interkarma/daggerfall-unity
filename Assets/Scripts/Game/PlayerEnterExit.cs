@@ -1033,11 +1033,7 @@ namespace DaggerfallWorkshop.Game
                     }
                     holidayTextLocation = location;
 
-                    // Generate a list of merchant NPCs to get work from
-                    if (!TalkManager.Instance.MerchantQuestorsAreSet(location.LocationIndex)) 
-                    {
-                        TalkManager.Instance.SetMerchantQuestors(location.LocationIndex);
-                    }
+                    TalkManager.Instance.LastExteriorEntered = location.LocationIndex;
                 }
             }
         }
