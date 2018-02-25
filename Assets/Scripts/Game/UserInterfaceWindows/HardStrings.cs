@@ -116,6 +116,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public const string skillImprove = "Your %s skill has improved.";
         public const string mustDistributeBonusPoints = "You must distribute all bonus points.";
+        public const string affiliation = "Affiliation";
+        public const string rank = "Rank";
 
         public const string serviceQuests = "Get Quest";
         public const string serviceSell = "Sell";
@@ -137,7 +139,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string serviceBuyPotions = "Buy Potions";
         public const string serviceBuySoulgems = "Buy Soulgems";
         public const string serviceMembersOnly = "My services are reserved for members only.";
-        public const string accessMembersOnly = "You need to be a member to access this.";
+        public const string accessMembersOnly = "You need to be a member of sufficient rank to access this.";
 
         public const string roomFreeForKnightSuchAsYou = "The room is free for a knight such as you.";
         public const string roomFreeDueToHeartsDay = "Room is free due to Heart's Day.";

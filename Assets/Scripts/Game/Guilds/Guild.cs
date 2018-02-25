@@ -88,7 +88,7 @@ namespace DaggerfallWorkshop.Game.Guilds
         protected virtual int CalculateNewRank(PlayerEntity playerEntity)
         {
             // Check reputation & skills
-            int rep = playerEntity.FactionData.GetReputation(GetFactionId());
+            int rep = GetReputation(playerEntity);
             if (rep < 0)
                 return -1;  // Expelled.
 
@@ -139,11 +139,24 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #endregion
 
-        #region Guild Membership and Faction
+        #region Guild Membership and Faction Data
 
         public abstract bool IsMember();
 
         public abstract int GetFactionId();
+
+        public virtual int GetReputation(PlayerEntity playerEntity)
+        {
+            return playerEntity.FactionData.GetReputation(GetFactionId());
+        }
+
+        public virtual string GetFactionName()
+        {
+            FactionFile.FactionData factionData;
+            if (DaggerfallUnity.Instance.ContentReader.FactionFileReader.GetFactionData(GetFactionId(), out factionData))
+                return factionData.name;
+            return "unknown-guild";
+        }
 
         public virtual string GetTitle()
         {

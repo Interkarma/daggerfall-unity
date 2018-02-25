@@ -23,8 +23,6 @@ namespace DaggerfallWorkshop.Game.Guilds
         protected const int IneligibleBadRepId = 745;
         protected const int IneligibleLowSkillId = 744;
         protected const int EligibleMsgId = 740;
-        protected const int WelcomeMsgId = 5290;
-        protected const int PromotionMsgIds = 5249;      // Kynareth specific
 
         protected const int PromotionBuyPotionsId = 6600;
         protected const int PromotionLibraryId = 6601;
@@ -36,7 +34,7 @@ namespace DaggerfallWorkshop.Game.Guilds
         protected const int PromotionMakeSpellsId = 6607;
         protected const int PromotionBuyMagicId = 6608;
         protected const int PromotionMakeMagicId = 6609;
-        protected const int PromotionTrainerId = 6610;
+        protected const int PromotionHighestId = 5241;
 
         #endregion
 
@@ -67,9 +65,12 @@ namespace DaggerfallWorkshop.Game.Guilds
             public readonly int makeSpells;
             public readonly int soulGems;
             public readonly int summoning;
-            public readonly int promotionMsgId; // Generic promotion msg.
+            public readonly int welcomeMsgId;   // Welcome msg.
+            public readonly int promotionMsgId; // Promotion msg.
+            public readonly int templeNameMsgId;
 
-            public RankBenefits(int library, int healing, int buyPotions, int makePotions, int buyMagic, int makeItems, int buySpells, int makeSpells, int soulGems, int summoning, int promotionMsgId)
+            public RankBenefits(int library, int healing, int buyPotions, int makePotions, int buyMagic, int makeItems, int buySpells, int makeSpells, int soulGems, int summoning,
+                                int welcomeMsgId, int promotionMsgId, int templeNameMsgId)
             {
                 this.library = library;
                 this.healing = healing;
@@ -81,11 +82,25 @@ namespace DaggerfallWorkshop.Game.Guilds
                 this.makeSpells = makeSpells;
                 this.soulGems = soulGems;
                 this.summoning = summoning;
+                this.welcomeMsgId = welcomeMsgId;
                 this.promotionMsgId = promotionMsgId;
+                this.templeNameMsgId = templeNameMsgId;
+            }
+
+            public int GetWelcomeMsgId()
+            {
+                return welcomeMsgId;
+            }
+
+            public int GetTempleNameMsgId()
+            {
+                return templeNameMsgId;
             }
 
             public int GetPromotionMsgId(int rank)
             {
+                if (rank == 9)
+                    return PromotionHighestId;
                 if (library == rank)
                     return PromotionBuyPotionsId;
                 if (healing == rank)
@@ -117,14 +132,14 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         static Dictionary<Divines, RankBenefits> templeRankBenefits = new Dictionary<Divines, RankBenefits>()
         {
-            { Divines.Akatosh,  new RankBenefits(2, 1, 4, 5,-1,-1,-1,-1,-1, 7, 5245) },
-            { Divines.Arkay,    new RankBenefits(3, 0, 1, 4,-1,-1,-1,-1, 4, 7, 5287) },
-            { Divines.Dibella,  new RankBenefits(4, 2, 1, 5,-1,-1,-1,-1,-1, 7, 5247) },
-            { Divines.Julianos, new RankBenefits(0, 2,-1,-1, 3, 5,-1,-1,-1, 6, 5246) },
-            { Divines.Kynareth, new RankBenefits(4, 1,-1,-1,-1,-1, 3, 6,-1, 7, 5249) },
-            { Divines.Mara,     new RankBenefits(4, 1, 2, 5,-1,-1,-1,-1,-1, 7, 5244) },
-            { Divines.Stendarr, new RankBenefits(4, 0, 2, 5,-1,-1,-1,-1,-1, 7, 5248) },
-            { Divines.Zenithar, new RankBenefits(4, 1, 1, 6,-1,-1,-1,-1,-1, 8, 5288) },
+            { Divines.Akatosh,  new RankBenefits(2, 1, 4, 5,-1,-1,-1,-1,-1, 7, 5290, 5245, 4058) },
+            { Divines.Arkay,    new RankBenefits(3, 0, 1, 4,-1,-1,-1,-1, 4, 7, 5287, 5242, 4055) },
+            { Divines.Dibella,  new RankBenefits(4, 2, 1, 5,-1,-1,-1,-1,-1, 7, 5290, 5247, 4059) },
+            { Divines.Julianos, new RankBenefits(0, 2,-1,-1, 3, 5,-1,-1,-1, 6, 6610, 5246, 4060) },
+            { Divines.Kynareth, new RankBenefits(4, 1,-1,-1,-1,-1, 3, 6,-1, 7, 5290, 5249, 4062) },
+            { Divines.Mara,     new RankBenefits(4, 1, 2, 5,-1,-1,-1,-1,-1, 7, 5289, 5244, 4057) },
+            { Divines.Stendarr, new RankBenefits(4, 0, 2, 5,-1,-1,-1,-1,-1, 7, 5289, 5248, 4061) },
+            { Divines.Zenithar, new RankBenefits(4, 1, 1, 6,-1,-1,-1,-1,-1, 8, 5288, 5243, 4056) },
         };
 
         static new Dictionary<Divines, List<DFCareer.Skills>> guildSkills = new Dictionary<Divines, List<DFCareer.Skills>>()
@@ -355,6 +370,24 @@ namespace DaggerfallWorkshop.Game.Guilds
             return (int) deity;
         }
 
+        public override string GetFactionName()
+        {
+            RankBenefits benefits = templeRankBenefits[deity];
+            TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(benefits.GetTempleNameMsgId());
+            return tokens[0].text;
+        }
+
+        public override string GetTitle()
+        {
+            if (GameManager.Instance.PlayerEntity.Gender == Genders.Female)
+                if (rank == 9)
+                    return "Matriarch";     // Not calling female chars 'Patriarch'!
+                else if (rank == 6)
+                    return "Sister";        // Not calling female chars 'Brother'!
+
+            return IsMember() ? rankTitles[rank] : "non-member";
+        }
+
         #endregion
 
         #region Guild Ranks
@@ -452,7 +485,8 @@ namespace DaggerfallWorkshop.Game.Guilds
         }
         public override TextFile.Token[] TokensWelcome()
         {
-            return DaggerfallUnity.Instance.TextProvider.GetRSCTokens(WelcomeMsgId);
+            RankBenefits benefits = templeRankBenefits[deity];
+            return DaggerfallUnity.Instance.TextProvider.GetRSCTokens(benefits.GetWelcomeMsgId());
         }
 
         #endregion

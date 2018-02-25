@@ -4,25 +4,20 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Hazelnut
 // 
 // Notes:
 //
 
 using UnityEngine;
 using System;
-using System.IO;
-using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
-using DaggerfallConnect.Utility;
-using DaggerfallWorkshop;
-using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
-using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Formulas;
+using DaggerfallWorkshop.Game.Guilds;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -32,6 +27,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     public class DaggerfallCharacterSheetWindow : DaggerfallPopupWindow
     {
         const string nativeImgName = "INFO00I0.IMG";
+        private const int noAffiliationsMsgId = 19;
 
         Texture2D nativeTexture;
         PlayerEntity playerEntity;
@@ -52,7 +48,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         const int minBonusPool = 4;        // The minimum number of free points to allocate on level up
         const int maxBonusPool = 6;        // The maximum number of free points to allocate on level up
-
         SoundClips levelUpSound = SoundClips.LevelUp;
 
         PlayerEntity PlayerEntity
@@ -99,6 +94,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 statLabels[i] = DaggerfallUI.AddDefaultShadowedTextLabel(pos, NativePanel);
                 pos.y += 24f;
             }
+
+            // Health button
+            Button healthButton = DaggerfallUI.AddButton(new Rect(4, 63, 128, 8), NativePanel);
+            healthButton.OnMouseClick += HealthButton_OnMouseClick;
+
+            // Affiliations button
+            Button affiliationsButton = DaggerfallUI.AddButton(new Rect(3, 84, 130, 8), NativePanel);
+            affiliationsButton.OnMouseClick += AffiliationsButton_OnMouseClick;
 
             // Primary skills button
             Button primarySkillsButton = DaggerfallUI.AddButton(new Rect(11, 106, 115, 8), NativePanel);
@@ -290,6 +293,46 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             messageBox.Show();
         }
 
+        void ShowAffiliationsDialog()
+        {
+            List<TextFile.Token> tokens = new List<TextFile.Token>();
+            List<Guild> guildMemberships = GameManager.Instance.GuildManager.GetMemberships();
+
+            if (guildMemberships.Count == 0)
+                DaggerfallUI.MessageBox(noAffiliationsMsgId);
+            else
+            {
+                TextFile.Token tab = TextFile.TabToken;
+                tab.x = 120;
+                tokens.Add(new TextFile.Token() {
+                    text = HardStrings.affiliation,
+                    formatting = TextFile.Formatting.TextHighlight
+                });
+                tokens.Add(tab);
+                tokens.Add(new TextFile.Token()
+                {
+                    text = HardStrings.rank,
+                    formatting = TextFile.Formatting.TextHighlight
+                });
+                tokens.Add(TextFile.NewLineToken);
+
+                foreach (Guild guild in guildMemberships)
+                {
+                    tokens.Add(TextFile.CreateTextToken(guild.GetFactionName()));
+                    tokens.Add(tab);
+                    tokens.Add(TextFile.CreateTextToken(guild.GetTitle() //)); DEBUG rep:
+                        + " rep:" + guild.GetReputation(playerEntity).ToString()));
+                    tokens.Add(TextFile.NewLineToken);
+                }
+
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
+                messageBox.SetTextTokens(tokens.ToArray(), null, false);
+                messageBox.ClickAnywhereToClose = true;
+                messageBox.Show();
+            }
+        }
+
+
         void UpdatePlayerValues()
         {
             // Handle leveling up
@@ -366,6 +409,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #endregion
 
         #region Event Handlers
+
+        private void HealthButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            DaggerfallMessageBox healthBox = DaggerfallUI.Instance.CreateHealthStatusBox(this);
+            healthBox.Show();
+        }
+
+        private void AffiliationsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            ShowAffiliationsDialog();
+        }
 
         private void PrimarySkillsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {

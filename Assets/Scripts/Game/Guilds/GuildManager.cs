@@ -24,6 +24,20 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         private Dictionary<FactionFile.GuildGroups, Guild> memberships = new Dictionary<FactionFile.GuildGroups, Guild>();
 
+        public List<Guild> GetMemberships()
+        {
+            List<Guild> guilds = new List<Guild>();
+            foreach (Guild guild in memberships.Values)
+                guilds.Add(guild);
+            return guilds;
+        }
+
+        public void AddMembership(FactionFile.GuildGroups guildGroup, Guild guild)
+        {
+            guild.Join();
+            memberships[guildGroup] = guild;
+        }
+
         public bool HasJoined(FactionFile.GuildGroups guildGroup)
         {
             return memberships.ContainsKey(guildGroup);
@@ -48,12 +62,6 @@ namespace DaggerfallWorkshop.Game.Guilds
 */
             }
             return null;
-        }
-
-        public void AddMembership(FactionFile.GuildGroups guildGroup, Guild guild)
-        {
-            guild.Join();
-            memberships[guildGroup] = guild;
         }
 
         /// <summary>

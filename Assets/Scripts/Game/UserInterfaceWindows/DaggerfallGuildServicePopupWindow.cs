@@ -116,6 +116,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string tempMagesQuestsFilename = "Temp-MagesGuild";
 
         const string baseTextureName = "GILD00I0.IMG";      // Join Guild / Talk / Service
+        const string memberTextureName = "GILD01I0.IMG";      // Join Guild / Talk / Service
 
         const int TrainingOfferId = 8;
         const int TrainingTooSkilledId = 4022;
