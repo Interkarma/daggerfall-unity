@@ -214,7 +214,7 @@ MonoBehaviour:
   PulseSpeed: 0
   FlickerMaxInterval: 0
   BillboardFramesPerSecond: 5
-  LifespanInSeconds: 10
+  LifespanInSeconds: 8
 --- !u!135 &135961771109985534
 SphereCollider:
   m_ObjectHideFlags: 1

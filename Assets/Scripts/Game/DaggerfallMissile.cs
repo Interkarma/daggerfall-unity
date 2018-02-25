@@ -50,7 +50,7 @@ namespace DaggerfallWorkshop.Game
         public float PulseSpeed = 0f;                           // Time in seconds light will lerp between pulse colours - 0 to disable
         public float FlickerMaxInterval = 0f;                   // Maximum interval for random flicker - 0 to disable
         public int BillboardFramesPerSecond = 5;                // Speed of billboard animatation
-        public float LifespanInSeconds = 10f;                   // How long missile will persist in world before self-destructing if no target found
+        public float LifespanInSeconds = 8f;                    // How long missile will persist in world before self-destructing if no target found
 
         #endregion
 
@@ -69,6 +69,7 @@ namespace DaggerfallWorkshop.Game
         DaggerfallBillboard myBillboard;
         bool forceDisableSpellLighting;
         bool forceDisableSpellShadows;
+        float lifespan = 0f;
 
         #endregion
 
@@ -99,6 +100,11 @@ namespace DaggerfallWorkshop.Game
         {
             // Transform missile along direction vector
             transform.position += (direction * MovementSpeed) * Time.deltaTime;
+
+            // Update lifespan and self-destruct if expired (e.g. spell fired straight up and will never hit anything)
+            lifespan += Time.deltaTime;
+            if (lifespan > LifespanInSeconds)
+                Destroy(gameObject);
         }
 
         #endregion
