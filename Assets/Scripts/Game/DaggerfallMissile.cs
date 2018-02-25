@@ -50,6 +50,7 @@ namespace DaggerfallWorkshop.Game
         public float PulseSpeed = 0f;                           // Time in seconds light will lerp between pulse colours - 0 to disable
         public float FlickerMaxInterval = 0f;                   // Maximum interval for random flicker - 0 to disable
         public int BillboardFramesPerSecond = 5;                // Speed of billboard animatation
+        public int ContactBillboardFramesPerSecond = 15;        // Speed of contact billboard animation
         public float LifespanInSeconds = 8f;                    // How long missile will persist in world before self-destructing if no target found
 
         #endregion
@@ -70,6 +71,7 @@ namespace DaggerfallWorkshop.Game
         bool forceDisableSpellLighting;
         bool forceDisableSpellShadows;
         float lifespan = 0f;
+        SpellTypes spellType = SpellTypes.None;
 
         #endregion
 
@@ -130,6 +132,9 @@ namespace DaggerfallWorkshop.Game
             myBillboard.FramesPerSecond = BillboardFramesPerSecond;
             myBillboard.FaceY = true;
             myBillboard.GetComponent<MeshRenderer>().receiveShadows = false;
+
+            // Store spell type for target animation
+            this.spellType = spellType;
         }
 
         /// <summary>
@@ -174,22 +179,35 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
-            // Create list of found entities for debug output
-            string outputList = string.Empty;
-            foreach(var entity in entities)
+            // Play spell target animation
+            if (spellType != SpellTypes.None)
             {
-                outputList += entity.name + "; ";
+                // Play target oneshot
+                GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(GetMissileTextureArchive(spellType), 1, null);
+                go.transform.position = transform.position;
+                DaggerfallBillboard c = go.GetComponent<DaggerfallBillboard>();
+                c.FramesPerSecond = ContactBillboardFramesPerSecond;
+                c.FaceY = true;
+                c.OneShot = true;
+                c.GetComponent<MeshRenderer>().receiveShadows = false;
             }
 
-            // Output debug information
-            if (entities.Count > 0)
-            {
-                Debug.LogFormat("Missile hit {0} targets: {1}", entities.Count, outputList);
-            }
-            else
-            {
-                Debug.Log("Missile trigger");
-            }
+            //// Create list of found entities for debug output
+            //string outputList = string.Empty;
+            //foreach(var entity in entities)
+            //{
+            //    outputList += entity.name + "; ";
+            //}
+
+            //// Output debug information
+            //if (entities.Count > 0)
+            //{
+            //    Debug.LogFormat("Missile hit {0} targets: {1}", entities.Count, outputList);
+            //}
+            //else
+            //{
+            //    Debug.Log("Missile trigger");
+            //}
 
             Destroy(gameObject);
         }

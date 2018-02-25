@@ -214,6 +214,7 @@ MonoBehaviour:
   PulseSpeed: 0
   FlickerMaxInterval: 0
   BillboardFramesPerSecond: 5
+  ContactBillboardFramesPerSecond: 15
   LifespanInSeconds: 8
 --- !u!135 &135961771109985534
 SphereCollider:
