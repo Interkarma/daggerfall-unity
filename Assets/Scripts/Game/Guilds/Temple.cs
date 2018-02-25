@@ -13,6 +13,7 @@ using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Utility;
 using System;
 using DaggerfallWorkshop.Game.Player;
+using UnityEngine;
 
 namespace DaggerfallWorkshop.Game.Guilds
 {
@@ -407,12 +408,43 @@ namespace DaggerfallWorkshop.Game.Guilds
             return (rank > 0);
         }
 
+        #endregion
+
+        #region Special temple benefits:
+
+        public override int FastTravel(int duration)
+        {
+            if (deity == Divines.Akatosh)
+            {
+                Debug.LogFormat("Akatosh FastTravel= {0} -{1} less days", duration, (duration - (int)(((95f - rank) / 100) * duration)) / 1440);
+                return (int)(((95f - rank) / 100) * duration);
+            }
+            else
+                return duration;
+        }
+
+        public override int ReducedCureCost(int price)
+        {
+            if (deity == Divines.Arkay)
+                return ((10 - rank) / 10) * price;
+            else
+                return price;
+        }
+
         public override int DeepBreath(int duration)
         {
             if (deity == Divines.Kynareth)
-                return ((10 + rank) / 10) * duration;
+            {
+                Debug.LogFormat("Kynareth DeepBreath= {0} +{1} extra seconds", duration, (int)((((10f + rank) / 10) - 1) * duration));
+                return (int)(((10f + rank) / 10) * duration);
+            }
             else
                 return duration;
+        }
+
+        public override bool AvoidDeath()
+        {
+            return false;
         }
 
         #endregion

@@ -182,9 +182,21 @@ namespace DaggerfallWorkshop.Game.Guilds
             return false;
         }
 
-        // Special benefits:
-
         public virtual int ReducedRepairCost(int price)
+        {
+            return price;
+        }
+
+        #endregion
+
+        #region Special temple benefits:
+
+        public virtual int FastTravel(int duration)
+        {
+            return duration;
+        }
+
+        public virtual int ReducedCureCost(int price)
         {
             return price;
         }
@@ -192,6 +204,11 @@ namespace DaggerfallWorkshop.Game.Guilds
         public virtual int DeepBreath(int duration)
         {
             return duration;
+        }
+
+        public virtual bool AvoidDeath()
+        {
+            return false;
         }
 
         #endregion

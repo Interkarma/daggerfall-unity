@@ -85,21 +85,50 @@ namespace DaggerfallWorkshop.Game.Guilds
         T_CureDiseases = 813,
 
         // Temples, specific:
-        TAr_Training = 241,
-        TZe_Training = 243,
-        TMa_Training = 245,
+        // Akatosh:
         TAk_Training = 247,
-        TJu_Training = 249,
+        TAk_BuyPotions = 473,
+        TAk_MakePotions = 474,
+        TAk_DaedraSummoning = 475,
+        // Arkay:
+        TAr_Training = 241,
+        TAr_BuyPotions = 453,
+        TAr_MakePotions = 454,
+        TAr_DaedraSummoning = 456,
+        TAr_BuySoulgems = 455,
+        // Dibella:
         TDi_Training = 250,
-        TSt_Training = 252,
-        TKy_Training = 254,
-
-        TKy_BuySpells = 497,
-
         TDi_BuyPotions = 485,
         TDi_MakePotions = 487,
+        TDi_DaedraSummoning = 488,
+        // Julianos:
+        TJu_Training = 249,
+        TJu_BuyMagicItems = 480,
+        TJu_MakeMagicItems = 481,
+        TJu_DaedraSummoning = 482,
+        // Kynareth:
+        TKy_Training = 254,
+        TKy_BuySpells = 496,
+        TKy_MakeSpells = 497,
+        TKy_DaedraSummoning = 498,
+        // Mara:
+        TMa_Training = 245,
+        TMa_BuyPotions = 468,
+        TMa_MakePotions = 469,
+        TMa_DaedraSummoning = 470,
+        // Stendarr
+        TSt_Training = 252,
+        TSt_BuyPotions = 490,
+        TSt_MakePotions = 491,
+        TSt_DaedraSummoning = 492,
+        // Zenithar:
+        TZe_Training = 243,
+        TZe_BuyPotions = 462,
+        TZe_MakePotions = 463,
+        TZe_DaedraSummoning = 464,
 
-        // Templar orders
+        // Templar orders:
+        // Akatosh:
         OAk_BuyPotions = 473,
         OAk_MakePotions = 474,
         OAk_DaedraSummoning = 475,
