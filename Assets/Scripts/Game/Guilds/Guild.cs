@@ -215,54 +215,30 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Service Access:
 
-        public virtual bool Training()
-        {
-            return IsMember();
-        }
-
-        public virtual bool Library()
+        public virtual bool CanAccessLibrary()
         {
             return false;
         }
 
-        public virtual bool BuyPotions()
+        public virtual bool CanAccessService(GuildServices service)
         {
-            return false;
-        }
-
-        public virtual bool MakePotions()
-        {
-            return false;
-        }
-
-        public virtual bool BuyMagic()
-        {
-            return false;
-        }
-
-        public virtual bool MakeMagic()
-        {
-            return false;
-        }
-
-        public virtual bool BuySpells()
-        {
-            return false;
-        }
-
-        public virtual bool MakeSpells()
-        {
-            return false;
-        }
-
-        public virtual bool SoulGems()
-        {
-            return false;
-        }
-
-        public virtual bool Summoning()
-        {
-            return false;
+            switch (service)
+            {
+                case GuildServices.Training:
+                    return IsMember();
+                case GuildServices.Quests:
+                    return true;
+                case GuildServices.Repair:
+                    return IsMember();
+                case GuildServices.Identify:
+                    return true;
+                case GuildServices.Donate:
+                    return true;
+                case GuildServices.CureDisease:
+                    return true;
+                default:
+                    return false;
+            }
         }
 
         #endregion

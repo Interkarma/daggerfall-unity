@@ -41,9 +41,12 @@ namespace DaggerfallWorkshop.Game.Guilds
             throw new NotImplementedException();
         }
 
-        public override bool Training()
+        public override bool CanAccessService(GuildServices service)
         {
-            return canTrain;
+            if (service == GuildServices.Training)
+                return canTrain;
+            else
+                return base.CanAccessService(service);
         }
 
         public override bool IsEligibleToJoin(PlayerEntity playerEntity)

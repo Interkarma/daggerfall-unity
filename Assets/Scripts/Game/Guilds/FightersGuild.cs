@@ -27,7 +27,7 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #endregion
 
-        #region Static Data: Init
+        #region Static Data
 
         static FightersGuild()
         {

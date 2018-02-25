@@ -43,7 +43,6 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public enum Divines
         {   // value = factionId
-            //None     = 0,
             Akatosh = 26,
             Arkay = 21,
             Dibella = 29,
@@ -66,8 +65,8 @@ namespace DaggerfallWorkshop.Game.Guilds
             public readonly int makeSpells;
             public readonly int soulGems;
             public readonly int summoning;
-            public readonly int welcomeMsgId;   // Welcome msg.
-            public readonly int promotionMsgId; // Promotion msg.
+            public readonly int welcomeMsgId;
+            public readonly int promotionMsgId;
             public readonly int templeNameMsgId;
 
             public RankBenefits(int library, int healing, int buyPotions, int makePotions, int buyMagic, int makeItems, int buySpells, int makeSpells, int soulGems, int summoning,
@@ -274,21 +273,6 @@ namespace DaggerfallWorkshop.Game.Guilds
             };
         }
 
-        /*            guildSkills = new List<DFCareer.Skills>() {  // Kynareth same as training? How to check?
-                        DFCareer.Skills.Archery,    // 26 tim
-                        DFCareer.Skills.Climbing,   // 16
-                        DFCareer.Skills.Daedric,    // 5
-                        DFCareer.Skills.Destruction,// 4
-                        DFCareer.Skills.Dodging,    // 20
-                        DFCareer.Skills.Dragonish,  // 6
-                        DFCareer.Skills.Harpy,      // 5
-                        DFCareer.Skills.Illusion,   // 3
-                        DFCareer.Skills.Jumping,    // 15
-                        DFCareer.Skills.Running,    // 19
-                        DFCareer.Skills.Stealth     // 10
-                    }; */
-
-
         #endregion
 
         #region Properties
@@ -451,54 +435,42 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Service Access:
 
-        public override bool Training()
-        {
-            return true;
-        }
-
-        public override bool Library()
+        public override bool CanAccessLibrary()
         {
             return (templeRankBenefits[deity].library <= rank);
         }
 
-        public override bool BuyPotions()
+        public override bool CanAccessService(GuildServices service)
         {
-            return (templeRankBenefits[deity].buyPotions <= rank);
-        }
-
-        public override bool MakePotions()
-        {
-            return (templeRankBenefits[deity].makePotions <= rank);
-        }
-
-        public override bool BuyMagic()
-        {
-            return (templeRankBenefits[deity].buyMagic <= rank);
-        }
-
-        public override bool MakeMagic()
-        {
-            return (templeRankBenefits[deity].makeMagic <= rank);
-        }
-
-        public override bool BuySpells()
-        {
-            return (templeRankBenefits[deity].buySpells <= rank);
-        }
-
-        public override bool MakeSpells()
-        {
-            return (templeRankBenefits[deity].makeSpells <= rank);
-        }
-
-        public override bool SoulGems()
-        {
-            return (templeRankBenefits[deity].soulGems <= rank);
-        }
-
-        public override bool Summoning()
-        {
-            return (templeRankBenefits[deity].library <= rank);
+            switch (service)
+            {
+                case GuildServices.Training:
+                    return true;
+                case GuildServices.Quests:
+                    return true;
+                case GuildServices.Donate:
+                    return true;
+                case GuildServices.CureDisease:
+                    return true;
+                case GuildServices.BuyPotions:
+                    return (templeRankBenefits[deity].buyPotions <= rank);
+                case GuildServices.MakePotions:
+                    return (templeRankBenefits[deity].makePotions <= rank);
+                case GuildServices.BuySpells:
+                    return (templeRankBenefits[deity].buySpells <= rank);
+                case GuildServices.MakeSpells:
+                    return (templeRankBenefits[deity].makeSpells <= rank);
+                case GuildServices.BuyMagicItems:
+                    return (templeRankBenefits[deity].buyMagic <= rank);
+                case GuildServices.MakeMagicItems:
+                    return (templeRankBenefits[deity].makeMagic <= rank);
+                case GuildServices.DaedraSummoning:
+                    return (templeRankBenefits[deity].summoning <= rank);
+                case GuildServices.BuySoulgems:
+                    return (templeRankBenefits[deity].soulGems <= rank);
+                default:
+                    return false;
+            }
         }
 
         #endregion

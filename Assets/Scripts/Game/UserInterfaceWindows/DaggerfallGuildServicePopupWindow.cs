@@ -199,6 +199,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ServiceButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            if (!guild.CanAccessService(service))
+            {
+                DaggerfallUI.MessageBox(guild.IsMember() ? HardStrings.serviceSufficientRankOnly : HardStrings.serviceMembersOnly);
+                return;
+            }
             switch (service)
             {
                 case GuildServices.Quests:
@@ -212,10 +217,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 case GuildServices.Repair:
                     CloseWindow();
-                    if (guild.IsMember())
-                        uiManager.PushWindow(new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Repair, this, guild));
-                    else
-                        DaggerfallUI.MessageBox(HardStrings.serviceMembersOnly);
+                    uiManager.PushWindow(new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Repair, this, guild));
                     break;
 
                 case GuildServices.Training:
@@ -481,32 +483,27 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void TrainingService()
         {
             CloseWindow();
-            if (guildGroup == FactionFile.GuildGroups.HolyOrder || guild.IsMember())
+            // Check enough time has passed since last trained
+            DaggerfallDateTime now = DaggerfallUnity.Instance.WorldTime.Now;
+            if ((now.ToClassicDaggerfallTime() - playerEntity.TimeOfLastSkillTraining) < 720)
             {
-                // Check enough time has passed since last trained
-                DaggerfallDateTime now = DaggerfallUnity.Instance.WorldTime.Now;
-                if ((now.ToClassicDaggerfallTime() - playerEntity.TimeOfLastSkillTraining) < 720)
-                {
-                    TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(TrainingToSoonId);
-                    DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
-                    messageBox.SetTextTokens(tokens);
-                    messageBox.ClickAnywhereToClose = true;
-                    messageBox.ParentPanel.BackgroundColor = Color.clear;
-                    uiManager.PushWindow(messageBox);
-                }
-                else
-                {   // Offer training price
-                    DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
-                    TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(TrainingOfferId);
-                    messageBox.SetTextTokens(tokens, guild);
-                    messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
-                    messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
-                    messageBox.OnButtonClick += ConfirmTraining_OnButtonClick;
-                    uiManager.PushWindow(messageBox);
-                }
+                TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(TrainingToSoonId);
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
+                messageBox.SetTextTokens(tokens);
+                messageBox.ClickAnywhereToClose = true;
+                messageBox.ParentPanel.BackgroundColor = Color.clear;
+                uiManager.PushWindow(messageBox);
             }
             else
-                DaggerfallUI.MessageBox(HardStrings.serviceMembersOnly);
+            {   // Offer training price
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
+                TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(TrainingOfferId);
+                messageBox.SetTextTokens(tokens, guild);
+                messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
+                messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
+                messageBox.OnButtonClick += ConfirmTraining_OnButtonClick;
+                uiManager.PushWindow(messageBox);
+            }
         }
 
         public void ConfirmTraining_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)

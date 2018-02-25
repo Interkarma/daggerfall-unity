@@ -46,6 +46,7 @@ namespace DaggerfallWorkshop.Game.Guilds
 
     /// <summary>
     /// Npc factionId mapped to Guild service offered.
+    /// Note this duplicates data from faction.txt mainly because guild flags are not consistent, and also for readability.
     /// </summary>
     public enum GuildNpcServices
     {
@@ -127,14 +128,10 @@ namespace DaggerfallWorkshop.Game.Guilds
         TZe_MakePotions = 463,
         TZe_DaedraSummoning = 464,
 
-        // Templar orders:
-        // Akatosh:
-        OAk_BuyPotions = 473,
-        OAk_MakePotions = 474,
-        OAk_DaedraSummoning = 475,
-
         // Knightly orders:
         KO_Quests = 846,
+        KO_Smith = 845,
+        KO_Seneschal = 848,
 
     }
 
@@ -178,9 +175,21 @@ namespace DaggerfallWorkshop.Game.Guilds
                     return GuildServices.CureDisease;
 
                 case GuildNpcServices.DB_BuyPotions:
+                case GuildNpcServices.TAk_BuyPotions:
+                case GuildNpcServices.TAr_BuyPotions:
+                case GuildNpcServices.TDi_BuyPotions:
+                case GuildNpcServices.TMa_BuyPotions:
+                case GuildNpcServices.TSt_BuyPotions:
+                case GuildNpcServices.TZe_BuyPotions:
                     return GuildServices.BuyPotions;
 
                 case GuildNpcServices.DB_MakePotions:
+                case GuildNpcServices.TAk_MakePotions:
+                case GuildNpcServices.TAr_MakePotions:
+                case GuildNpcServices.TDi_MakePotions:
+                case GuildNpcServices.TMa_MakePotions:
+                case GuildNpcServices.TSt_MakePotions:
+                case GuildNpcServices.TZe_MakePotions:
                     return GuildServices.MakePotions;
 
                 case GuildNpcServices.MG_BuySpells:
@@ -188,12 +197,15 @@ namespace DaggerfallWorkshop.Game.Guilds
                     return GuildServices.BuySpells;
 
                 case GuildNpcServices.MG_MakeSpells:
+                case GuildNpcServices.TKy_MakeSpells:
                     return GuildServices.MakeSpells;
 
                 case GuildNpcServices.MG_BuyMagicItems:
+                case GuildNpcServices.TJu_BuyMagicItems:
                     return GuildServices.BuyMagicItems;
 
                 case GuildNpcServices.MG_MakeMagicItems:
+                case GuildNpcServices.TJu_MakeMagicItems:
                     return GuildServices.MakeMagicItems;
 
                 case GuildNpcServices.TG_SellMagicItems:
@@ -203,6 +215,14 @@ namespace DaggerfallWorkshop.Game.Guilds
                     return GuildServices.Teleport;
 
                 case GuildNpcServices.MG_DaedraSummoning:
+                case GuildNpcServices.TAk_DaedraSummoning:
+                case GuildNpcServices.TAr_DaedraSummoning:
+                case GuildNpcServices.TDi_DaedraSummoning:
+                case GuildNpcServices.TJu_DaedraSummoning:
+                case GuildNpcServices.TKy_DaedraSummoning:
+                case GuildNpcServices.TMa_DaedraSummoning:
+                case GuildNpcServices.TSt_DaedraSummoning:
+                case GuildNpcServices.TZe_DaedraSummoning:
                     return GuildServices.DaedraSummoning;
 
                 case GuildNpcServices.TG_Spymaster:
@@ -210,6 +230,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                     return GuildServices.Spymaster;
 
                 case GuildNpcServices.DB_BuySoulgems:
+                case GuildNpcServices.TAr_BuySoulgems:
                     return GuildServices.BuySoulgems;
             }
             return GuildServices.None;

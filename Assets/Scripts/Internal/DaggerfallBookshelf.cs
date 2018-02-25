@@ -48,7 +48,7 @@ namespace DaggerfallWorkshop
             Guild guild = GameManager.Instance.GuildManager.GetGuild(factionID);
             if ((buildingData.buildingType == DFLocation.BuildingTypes.GuildHall ||
                  buildingData.buildingType == DFLocation.BuildingTypes.Temple) &&
-                 !guild.Library())
+                 !guild.CanAccessLibrary())
             {
                 DaggerfallUI.MessageBox(HardStrings.accessMembersOnly);
             }

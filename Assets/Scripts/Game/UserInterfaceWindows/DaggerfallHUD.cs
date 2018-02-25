@@ -186,7 +186,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 vitals.Fatigue = (float)entity.CurrentFatigue / (float)entity.MaxFatigue;
                 vitals.Magicka = (float)entity.CurrentMagicka / (float)entity.MaxMagicka;
                 vitals.Breath = (float)entity.CurrentBreath / (float)entity.MaxBreath;
-                Debug.LogFormat("breath%: {0} current: {1} max: {2}", vitals.Breath, entity.CurrentBreath, entity.MaxBreath);
             }
 
             // Cycle quest debugger state
