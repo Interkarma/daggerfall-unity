@@ -168,10 +168,13 @@ namespace DaggerfallWorkshop.Game
 
         private void PlayerSpellCasting_OnReleaseFrame()
         {
+            Vector3 missileDirection = GameManager.Instance.MainCamera.transform.forward;
+            Vector3 missilePosition = transform.position + Vector3.up * 0.35f + missileDirection * 0.85f;
+
             // TEMP: Just hurling test missiles with no payload at this time
             DaggerfallMissile missile = Instantiate(ColdMissilePrefab);
             missile.UseSpellBillboardAnims(SpellTypes.Cold);
-            missile.ExecuteMobileMissile(transform.position + transform.up * 0.25f + transform.forward * 0.85f, GameManager.Instance.MainCamera.transform.forward);
+            missile.ExecuteMobileMissile(missilePosition, missileDirection);
 
             lastSpell = readySpell;
             readySpell = null;
