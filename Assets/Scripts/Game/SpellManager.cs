@@ -81,6 +81,11 @@ namespace DaggerfallWorkshop.Game
 
         #region Unity
 
+        private void Awake()
+        {
+            GameManager.Instance.PlayerSpellCasting.OnReleaseFrame += PlayerSpellCasting_OnReleaseFrame;
+        }
+
         private void Start()
         {
             entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
@@ -107,8 +112,9 @@ namespace DaggerfallWorkshop.Game
                     return;
                 }
 
-                // Recast spell
-                if (InputManager.Instance.ActionStarted(InputManager.Actions.RecastSpell) && lastSpell != null)
+                // Recast spell - not available while playing another spell animation
+                if (InputManager.Instance.ActionStarted(InputManager.Actions.RecastSpell) && lastSpell != null &&
+                    !GameManager.Instance.PlayerSpellCasting.IsPlayingAnim)
                 {
                     SetReadySpell(lastSpell);
                     return;
@@ -153,13 +159,22 @@ namespace DaggerfallWorkshop.Game
             {
                 // TEMP: Just hurling test missiles with no payload at this time
                 GameManager.Instance.PlayerSpellCasting.PlayOneShot(SpellTypes.Cold);
-                DaggerfallMissile missile = Instantiate(ColdMissilePrefab);
-                missile.UseSpellBillboardAnims(SpellTypes.Cold);
-                missile.ExecuteMobileMissile(transform.position + transform.forward * 1.0f, GameManager.Instance.MainCamera.transform.forward);
-
-                lastSpell = readySpell;
-                readySpell = null;
             }
+        }
+
+        #endregion
+
+        #region Event Handling
+
+        private void PlayerSpellCasting_OnReleaseFrame()
+        {
+            // TEMP: Just hurling test missiles with no payload at this time
+            DaggerfallMissile missile = Instantiate(ColdMissilePrefab);
+            missile.UseSpellBillboardAnims(SpellTypes.Cold);
+            missile.ExecuteMobileMissile(transform.position + transform.up * 0.25f + transform.forward * 0.85f, GameManager.Instance.MainCamera.transform.forward);
+
+            lastSpell = readySpell;
+            readySpell = null;
         }
 
         #endregion

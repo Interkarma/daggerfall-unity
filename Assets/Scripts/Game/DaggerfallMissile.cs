@@ -38,9 +38,9 @@ namespace DaggerfallWorkshop.Game
         #region Unity Properties
 
         public float MovementSpeed = 12.0f;                     // Speed missile moves through world
-        public float ColliderRadius = 0.5f;                     // Radius of missile contact sphere
+        public float ColliderRadius = 0.45f;                    // Radius of missile contact sphere
         public bool AreaOfEffect = false;                       // Make this an area of effect explosion that triggers on contact with entity or environment
-        public float ExplosionRadius = 4.0f;                    // Radius of area of effect explosion
+        public float ExplosionRadius = 3.0f;                    // Radius of area of effect explosion
         public bool IsTouch = false;                            // Determines if missile performs a spherecast to entity target instead of firing a moving sphere
         public float TouchRange = 2.5f;                         // Maximum range for touch spherecast
         public bool EnableLight = true;                         // Show a light with this missile - player can force disable from settings

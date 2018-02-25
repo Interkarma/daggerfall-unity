@@ -335,7 +335,8 @@ namespace DaggerfallWorkshop.Game
                     uiManager.PushWindow(dfUnityMouseControlsWindow);
                     break;
                 case DaggerfallUIMessages.dfuiOpenSpellBookWindow:
-                    uiManager.PushWindow(dfSpellBookWindow);
+                    if (!GameManager.Instance.PlayerSpellCasting.IsPlayingAnim)
+                        uiManager.PushWindow(dfSpellBookWindow);
                     break;
                 case DaggerfallUIMessages.dfuiOpenTravelMapWindow:
                     if (!GameManager.Instance.IsPlayerInside)

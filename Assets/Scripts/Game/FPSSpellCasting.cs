@@ -35,8 +35,9 @@ namespace DaggerfallWorkshop.Game
 
         const int nativeScreenWidth = 300;
         const int nativeScreenHeight = 200;
+        const int releaseFrame = 5;
         const float smallFrameAdjust = 0.134f;
-        const float animSpeed = 0.05f;                              // Set slower than classic for now
+        const float animSpeed = 0.04f;                              // Set slower than classic for now
 
         int[] frameIndices = new int[] { 0, 1, 2, 3, 4, 5, 0 };     // Animation starts and ends with frame 0
 
@@ -129,6 +130,11 @@ namespace DaggerfallWorkshop.Game
         /// <param name="spellType"></param>
         public void PlayOneShot(SpellTypes spellType)
         {
+            // Do nothing if already playing anim
+            if (IsPlayingAnim)
+                return; 
+
+            // Start playing anim
             SetCurrentAnims(spellType);
             currentFrame = 0;
         }
@@ -264,8 +270,14 @@ namespace DaggerfallWorkshop.Game
             {
                 if (currentAnims != null && currentAnims.Length > 0 && currentFrame >= 0)
                 {
-                    // Step frame until end
+                    // Step frame
                     currentFrame++;
+
+                    // Trigger cast frame
+                    if (currentFrame == releaseFrame)
+                        RaiseOnReleaseFrameEvent();
+
+                    // Handle end of frames
                     if (currentFrame >= frameIndices.Length)
                         currentFrame = -1;
                 }
@@ -288,6 +300,18 @@ namespace DaggerfallWorkshop.Game
                 return false;
 
             return true;
+        }
+
+        #endregion
+
+        #region Events
+
+        public delegate void OnReleaseFrameEventHandler();
+        public event OnReleaseFrameEventHandler OnReleaseFrame;
+        protected virtual void RaiseOnReleaseFrameEvent()
+        {
+            if (OnReleaseFrame != null)
+                OnReleaseFrame();
         }
 
         #endregion
