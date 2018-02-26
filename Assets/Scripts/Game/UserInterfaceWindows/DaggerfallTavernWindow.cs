@@ -52,7 +52,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int howManyAdditionalDaysId = 5100;
         const int howManyDaysId = 5102;
 
-        readonly string[] tavernMenu =  {
+        static readonly string[] tavernMenu =  {
             HardStrings.tavernAle, HardStrings.tavernBeer, HardStrings.tavernMead, HardStrings.tavernWine,
             HardStrings.tavernBread, HardStrings.tavernBroth, HardStrings.tavernCheese, HardStrings.tavernFowl,
             HardStrings.tavernGruel, HardStrings.tavernPie, HardStrings.tavernStew };

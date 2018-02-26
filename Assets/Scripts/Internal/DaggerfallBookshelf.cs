@@ -7,6 +7,7 @@
 
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game;
+using DaggerfallWorkshop.Game.Guilds;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using System.Collections.Generic;
@@ -44,10 +45,12 @@ namespace DaggerfallWorkshop
             // TODO: Faction membership check here when implemented, just check building type for now..
             int factionID = buildingData.factionID;
             Debug.Log("Faction ID = " + factionID);
-            if (buildingData.buildingType == DFLocation.BuildingTypes.GuildHall ||
-                buildingData.buildingType == DFLocation.BuildingTypes.Temple)
+            Guild guild = GameManager.Instance.GuildManager.GetGuild(factionID);
+            if ((buildingData.buildingType == DFLocation.BuildingTypes.GuildHall ||
+                 buildingData.buildingType == DFLocation.BuildingTypes.Temple) &&
+                 !guild.CanAccessLibrary())
             {
-                DaggerfallUI.MessageBox(HardStrings.serviceDenied);
+                DaggerfallUI.MessageBox(HardStrings.accessMembersOnly);
             }
             else
             {

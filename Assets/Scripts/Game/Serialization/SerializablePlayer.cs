@@ -157,6 +157,8 @@ namespace DaggerfallWorkshop.Game.Serialization
                 data.playerPosition.exteriorDoors = playerEnterExit.ExteriorDoors;
                 data.playerPosition.buildingDiscoveryData = playerEnterExit.BuildingDiscoveryData;
             }
+            // Store guild memberships
+            data.guildMemberships = GameManager.Instance.GuildManager.GetMembershipData();
 
             return data;
         }
@@ -317,6 +319,9 @@ namespace DaggerfallWorkshop.Game.Serialization
             transportManager.TransportMode = data.transportMode;
             // Restore pre boarding ship position
             transportManager.BoardShipPosition = data.boardShipPosition;
+
+            // Restore guild memberships
+            GameManager.Instance.GuildManager.RestoreMembershipData(data.guildMemberships);
         }
 
         public void RestorePosition(PlayerPositionData_v1 positionData)

@@ -141,6 +141,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public bool weaponDrawn;
         public TransportModes transportMode;
         public PlayerPositionData_v1 boardShipPosition;  // Holds the player position from before boarding a ship.
+        public Dictionary<int, GuildMembership_v1> guildMemberships;
     }
 
     [fsObject("v1")]
@@ -203,6 +204,14 @@ namespace DaggerfallWorkshop.Game.Serialization
         public StaticDoor[] exteriorDoors;
         public PlayerGPS.DiscoveredBuilding buildingDiscoveryData;
         public WeatherType weather;
+    }
+
+    [fsObject("v1")]
+    public class GuildMembership_v1
+    {
+        public int rank;
+        public int lastRankChange;
+        public int variant;
     }
 
     [fsObject("v1")]

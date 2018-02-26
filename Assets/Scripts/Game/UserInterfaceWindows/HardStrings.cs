@@ -77,6 +77,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                                                 "Knights of the Wheel", "Order of the Scarab", "Knights of the Hawk",
                                                 "Mages Guild", "Fighters Guild", "Tavern", "Library", "Weapon Smith",
                                                 "Armorer", "Alchemist", "Bank", "Bookstore", "Clothing store", "Gem store" };
+        // TODO: These temple names are not consistent with 4055-4062!
 
         public const string interactionIsNowInMode = "Interaction is now in %s mode.";
         public const string steal = "steal";
@@ -115,6 +116,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public const string skillImprove = "Your %s skill has improved.";
         public const string mustDistributeBonusPoints = "You must distribute all bonus points.";
+        public const string affiliation = "Affiliation";
+        public const string rank = "Rank";
 
         public const string serviceQuests = "Get Quest";
         public const string serviceSell = "Sell";
@@ -135,7 +138,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string serviceMakePotions = "Make Potions";
         public const string serviceBuyPotions = "Buy Potions";
         public const string serviceBuySoulgems = "Buy Soulgems";
-        public const string serviceDenied = "You need to be a member to access this.";
+        public const string serviceMembersOnly = "My services are reserved for members only.";
+        public const string accessMembersOnly = "You need to be a member of sufficient rank to access this.";
 
         public const string roomFreeForKnightSuchAsYou = "The room is free for a knight such as you.";
         public const string roomFreeDueToHeartsDay = "Room is free due to Heart's Day.";

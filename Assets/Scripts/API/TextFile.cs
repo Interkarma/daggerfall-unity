@@ -99,6 +99,8 @@ namespace DaggerfallConnect.Arena2
         {
             Text = -1,
 
+            TextHighlight = -2,
+
             NewLineOffset = 0x00,
             SameLineOffset = 0x01,
             PullPreceeding = 0x02,
