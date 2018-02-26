@@ -95,13 +95,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Controls panel
             controlsPanel.HorizontalAlignment = HorizontalAlignment.Center;
-            controlsPanel.Size = new Vector2(nativeTexture.width, nativeTexture.height);
+            controlsPanel.Size = NativePanel.Size;
             controlsPanel.BackgroundTexture = nativeTexture;
             NativePanel.Components.Add(controlsPanel);
 
             // Mouse Look Alternative Controls Panel
             mLookAltPanel.Position = new Vector2(152, 100);
-            mLookAltPanel.Size = new Vector2(mLookAltTexture.width, mLookAltTexture.height);
+            mLookAltPanel.Size = new Vector2(168, 45);
             mLookAltPanel.BackgroundTexture = mLookAltTexture;
             controlsPanel.Components.Add(mLookAltPanel);
 
