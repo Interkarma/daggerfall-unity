@@ -20,6 +20,7 @@ using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -274,19 +275,29 @@ namespace DaggerfallWorkshop.Game.Items
                 data.offset = new DaggerfallConnect.Utility.DFPosition(237, 43);
             }
 
-            // Remove mask if requested
-            if (removeMask)
-                data.dfBitmap = ImageProcessing.ChangeMask(data.dfBitmap);
-
-            // Change dye or just update texture
-            ItemGroups group = item.ItemGroup;
-            DyeColors dye = (DyeColors)color;
-            if (group == ItemGroups.Weapons || group == ItemGroups.Armor)
-                data = ChangeDye(data, dye, DyeTargets.WeaponsAndArmor);
-            else if (item.ItemGroup == ItemGroups.MensClothing || item.ItemGroup == ItemGroups.WomensClothing)
-                data = ChangeDye(data, dye, DyeTargets.Clothing);
+            Texture2D tex;
+            if (!forPaperDoll && TextureReplacement.TryImportTexture(archive, record, 0, item.dyeColor, out tex))
+            {
+                // Assign imported texture
+                // Paperdoll is disabled for now
+                data.texture = tex;
+            }
             else
-                ImageReader.UpdateTexture(ref data);
+            {
+                // Remove mask if requested
+                if (removeMask)
+                    data.dfBitmap = ImageProcessing.ChangeMask(data.dfBitmap);
+
+                // Change dye or just update texture
+                ItemGroups group = item.ItemGroup;
+                DyeColors dye = (DyeColors)color;
+                if (group == ItemGroups.Weapons || group == ItemGroups.Armor)
+                    data = ChangeDye(data, dye, DyeTargets.WeaponsAndArmor);
+                else if (item.ItemGroup == ItemGroups.MensClothing || item.ItemGroup == ItemGroups.WomensClothing)
+                    data = ChangeDye(data, dye, DyeTargets.Clothing);
+                else
+                    ImageReader.UpdateTexture(ref data);
+            }
 
             // Add to cache
             itemImages.Add(key, data);

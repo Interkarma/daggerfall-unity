@@ -10,6 +10,8 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Banking;
 using System.Collections.Generic;
+using DaggerfallConnect;
+using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
@@ -23,6 +25,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Rect exitButtonRect = new Rect(150, 106, 40, 19);
         Rect upArrowRect = new Rect(0, 0, 9, 16);
         Rect downArrowRect = new Rect(0, 64, 9, 16);
+        DFSize arrowsFullSize = new DFSize(9, 80);
 
         #endregion
 
@@ -355,13 +358,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Cut out red up/down arrows
             Texture2D redArrowsTexture = ImageReader.GetTexture(redArrowsTextureName);
-            redUpArrow = ImageReader.GetSubTexture(redArrowsTexture, upArrowRect);
-            redDownArrow = ImageReader.GetSubTexture(redArrowsTexture, downArrowRect);
+            redUpArrow = ImageReader.GetSubTexture(redArrowsTexture, upArrowRect, arrowsFullSize);
+            redDownArrow = ImageReader.GetSubTexture(redArrowsTexture, downArrowRect, arrowsFullSize);
 
             // Cut out green up/down arrows
             Texture2D greenArrowsTexture = ImageReader.GetTexture(greenArrowsTextureName);
-            greenUpArrow = ImageReader.GetSubTexture(greenArrowsTexture, upArrowRect);
-            greenDownArrow = ImageReader.GetSubTexture(greenArrowsTexture, downArrowRect);
+            greenUpArrow = ImageReader.GetSubTexture(greenArrowsTexture, upArrowRect, arrowsFullSize);
+            greenDownArrow = ImageReader.GetSubTexture(greenArrowsTexture, downArrowRect, arrowsFullSize);
         }
 
         #endregion
