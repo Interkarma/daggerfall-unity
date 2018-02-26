@@ -124,7 +124,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected override void Setup()
         {
             // Load all textures
-            LoadTextures();
+            bool member = guildManager.GetGuild(guildGroup).IsMember();
+            LoadTextures(member);
 
             // Create interface panel
             mainPanel.HorizontalAlignment = HorizontalAlignment.Center;
@@ -134,10 +135,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mainPanel.Size = new Vector2(baseTexture.width, baseTexture.height);
 
             // Join Guild button
-            joinButton = DaggerfallUI.AddButton(joinButtonRect, mainPanel);
-            joinButton.OnMouseClick += JoinButton_OnMouseClick;
-            if (guildManager.GetGuild(guildGroup).IsMember())  // TODO: use different image
-                joinButton.BackgroundColor = DaggerfallUI.DaggerfallUnityNotImplementedColor;
+            if (!member)
+            {
+                joinButton = DaggerfallUI.AddButton(joinButtonRect, mainPanel);
+                joinButton.OnMouseClick += JoinButton_OnMouseClick;
+            }
 
             // Talk button
             talkButton = DaggerfallUI.AddButton(talkButtonRect, mainPanel);
@@ -185,9 +187,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Private Methods
 
-        void LoadTextures()
+        void LoadTextures(bool member)
         {
-            baseTexture = ImageReader.GetTexture(baseTextureName);
+            baseTexture = ImageReader.GetTexture(member ? memberTextureName : baseTextureName);
         }
 
         #endregion
