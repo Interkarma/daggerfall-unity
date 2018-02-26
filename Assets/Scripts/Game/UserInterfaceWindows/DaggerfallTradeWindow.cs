@@ -11,13 +11,14 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
+using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Banking;
-using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
@@ -501,8 +502,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 actionButtonsTexture = ImageReader.GetTexture(identifyButtonsTextureName);
             }
             actionButtonsGoldTexture = ImageReader.GetTexture(sellButtonsGoldTextureName);
-            selectNotSelected = ImageReader.GetSubTexture(actionButtonsTexture, selectButtonRect);
-            selectSelected = ImageReader.GetSubTexture(actionButtonsGoldTexture, selectButtonRect);
+            DFSize actionButtonsFullSize = new DFSize(39, 190);
+            selectNotSelected = ImageReader.GetSubTexture(actionButtonsTexture, selectButtonRect, actionButtonsFullSize);
+            selectSelected = ImageReader.GetSubTexture(actionButtonsGoldTexture, selectButtonRect, actionButtonsFullSize);
 
             costPanelTexture = ImageReader.GetTexture(costPanelTextureName);
         }

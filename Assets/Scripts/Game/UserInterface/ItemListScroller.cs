@@ -7,6 +7,7 @@
 
 using UnityEngine;
 using System.Collections.Generic;
+using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Items;
 
@@ -29,6 +30,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         };
         Rect upArrowRect = new Rect(0, 0, 9, 16);
         Rect downArrowRect = new Rect(0, 136, 9, 16);
+        DFSize arrowsFullSize = new DFSize(9, 152);
 
         Texture2D redUpArrow;
         Texture2D greenUpArrow;
@@ -400,20 +402,20 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             // Cut out red up/down arrows
             Texture2D redArrowsTexture = ImageReader.GetTexture(redArrowsTextureName);
-            redUpArrow = ImageReader.GetSubTexture(redArrowsTexture, upArrowRect);
-            redDownArrow = ImageReader.GetSubTexture(redArrowsTexture, downArrowRect);
+            redUpArrow = ImageReader.GetSubTexture(redArrowsTexture, upArrowRect, arrowsFullSize);
+            redDownArrow = ImageReader.GetSubTexture(redArrowsTexture, downArrowRect, arrowsFullSize);
 
             // Cut out green up/down arrows
             Texture2D greenArrowsTexture = ImageReader.GetTexture(greenArrowsTextureName);
-            greenUpArrow = ImageReader.GetSubTexture(greenArrowsTexture, upArrowRect);
-            greenDownArrow = ImageReader.GetSubTexture(greenArrowsTexture, downArrowRect);
+            greenUpArrow = ImageReader.GetSubTexture(greenArrowsTexture, upArrowRect, arrowsFullSize);
+            greenDownArrow = ImageReader.GetSubTexture(greenArrowsTexture, downArrowRect, arrowsFullSize);
 
             if (enhanced)
             {
                 itemListTextures = new Texture2D[listDisplayUnits];
                 Texture2D baseInvTexture = ImageReader.GetTexture(baseInvTextureName);
                 for (int i = 0; i < itemCutoutRects16.Length; i++)
-                    itemListTextures[i] = ImageReader.GetSubTexture(baseInvTexture, itemCutoutRects16[i]);
+                    itemListTextures[i] = ImageReader.GetSubTexture(baseInvTexture, itemCutoutRects16[i], new DFSize(320, 200));
             }
         }
 
