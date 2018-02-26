@@ -14,6 +14,7 @@ using DaggerfallWorkshop.Utility;
 using System;
 using DaggerfallWorkshop.Game.Player;
 using UnityEngine;
+using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop.Game.Guilds
 {
@@ -345,17 +346,13 @@ namespace DaggerfallWorkshop.Game.Guilds
             return IsMember();
         }
 
-        public override bool IsMember()
-        {
-            return rank >= 0;
-        }
-
         public override int GetFactionId()
         {
             return (int) deity;
         }
 
-        public override string GetFactionName()
+        // Temple guild names are different from affiliation
+        public override string GetGuildName()
         {
             RankBenefits benefits = templeRankBenefits[deity];
             TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(benefits.GetTempleNameMsgId());
@@ -408,7 +405,7 @@ namespace DaggerfallWorkshop.Game.Guilds
         }
 
         public override int ReducedCureCost(int price)
-        {
+        {// TEST
             if (deity == Divines.Arkay)
                 return ((10 - rank) / 10) * price;
             else
@@ -427,7 +424,7 @@ namespace DaggerfallWorkshop.Game.Guilds
         }
 
         public override bool AvoidDeath()
-        {
+        {// TODO
             return false;
         }
 
@@ -493,6 +490,23 @@ namespace DaggerfallWorkshop.Game.Guilds
         }
 
         #endregion
+
+
+        #region Serialization
+
+        internal override GuildMembership_v1 GetGuildData()
+        {
+            return new GuildMembership_v1() { rank = rank, lastRankChange = lastRankChange, variant = (int)deity };
+        }
+
+        internal override void RestoreGuildData(GuildMembership_v1 data)
+        {
+            base.RestoreGuildData(data);
+            deity = (Divines) data.variant;
+        }
+
+        #endregion
+
 
         #region Macro Handling
 

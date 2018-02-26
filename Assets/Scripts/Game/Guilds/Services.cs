@@ -6,6 +6,7 @@
 // Original Author: Hazelnut
 // Contributors:    
 
+using System;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game.Guilds
@@ -15,8 +16,6 @@ namespace DaggerfallWorkshop.Game.Guilds
     /// </summary>
     public enum GuildServices
     {
-        None,
-
         Training,
         Quests,
 
@@ -233,7 +232,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                 case GuildNpcServices.TAr_BuySoulgems:
                     return GuildServices.BuySoulgems;
             }
-            return GuildServices.None;
+            throw new Exception("Could not find a guildNpcService definition for npc with factionId: " + guildNpcService);
         }
 
         public static string GetServiceLabelText(GuildServices service)

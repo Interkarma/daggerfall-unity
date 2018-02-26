@@ -13,6 +13,7 @@ using System;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop.Game.Guilds
 {
@@ -122,10 +123,7 @@ namespace DaggerfallWorkshop.Game.Guilds
             return (date.Year * DaggerfallDateTime.DaysPerYear) + date.DayOfYear;
         }
 
-        public virtual TextFile.Token[] TokensPromotion(int newRank)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract TextFile.Token[] TokensPromotion(int newRank);
 
         public virtual TextFile.Token[] TokensDemotion()
         {
@@ -141,7 +139,10 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Guild Membership and Faction Data
 
-        public abstract bool IsMember();
+        public virtual bool IsMember()
+        {
+            return (rank >= 0);
+        }
 
         public abstract int GetFactionId();
 
@@ -150,7 +151,12 @@ namespace DaggerfallWorkshop.Game.Guilds
             return playerEntity.FactionData.GetReputation(GetFactionId());
         }
 
-        public virtual string GetFactionName()
+        public virtual string GetGuildName()
+        {
+            return GetAffiliation();
+        }
+
+        public virtual string GetAffiliation()
         {
             FactionFile.FactionData factionData;
             if (DaggerfallUnity.Instance.ContentReader.FactionFileReader.GetFactionData(GetFactionId(), out factionData))
@@ -270,17 +276,26 @@ namespace DaggerfallWorkshop.Game.Guilds
             return (rep >= rankReqReputation[0] && high > 0 && low + high > 1);
         }
 
-        public virtual TextFile.Token[] TokensIneligible(PlayerEntity playerEntity)
+        public abstract TextFile.Token[] TokensIneligible(PlayerEntity playerEntity);
+
+        public abstract TextFile.Token[] TokensEligible(PlayerEntity playerEntity);
+
+        public abstract TextFile.Token[] TokensWelcome();
+
+        #endregion
+
+
+        #region Serialization
+
+        internal virtual GuildMembership_v1 GetGuildData()
         {
-            throw new NotImplementedException();
+            return new GuildMembership_v1() { rank = rank, lastRankChange = lastRankChange };
         }
-        public virtual TextFile.Token[] TokensEligible(PlayerEntity playerEntity)
+
+        internal virtual void RestoreGuildData(GuildMembership_v1 data)
         {
-            throw new NotImplementedException();
-        }
-        public virtual TextFile.Token[] TokensWelcome()
-        {
-            throw new NotImplementedException();
+            rank = data.rank;
+            lastRankChange = data.lastRankChange;
         }
 
         #endregion

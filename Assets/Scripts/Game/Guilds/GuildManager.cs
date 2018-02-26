@@ -12,6 +12,7 @@ using DaggerfallConnect;
 using System;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Player;
+using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop.Game.Guilds
 {
@@ -48,6 +49,11 @@ namespace DaggerfallWorkshop.Game.Guilds
             if (memberships.ContainsKey(guildGroup))
                 return memberships[guildGroup];
 
+            return CreateGuildObj(guildGroup, buildingFactionId);
+        }
+
+        private Guild CreateGuildObj(FactionFile.GuildGroups guildGroup, int variant = 0)
+        {
             switch (guildGroup)
             {
                 case FactionFile.GuildGroups.FightersGuild:
@@ -57,7 +63,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                     return new MagesGuild();
 
                 case FactionFile.GuildGroups.HolyOrder:
-                    return new Temple(Temple.GetDivine(buildingFactionId));
+                    return new Temple(Temple.GetDivine(variant));
 
 /*                case FactionFile.GuildGroups.KnightlyOrder:
                     Temple.Divines deity = (Temple.Divines) buildingFactionId;
@@ -135,5 +141,34 @@ namespace DaggerfallWorkshop.Game.Guilds
 
             return guildGroup;
         }
+
+        public void ClearMembershipData()
+        {
+            memberships.Clear();
+        }
+
+        public Dictionary<int, GuildMembership_v1> GetMembershipData()
+        {
+            Dictionary<int, GuildMembership_v1> membershipData = new Dictionary<int, GuildMembership_v1>();
+            foreach (FactionFile.GuildGroups guildGroup in memberships.Keys)
+                membershipData[(int)guildGroup] = memberships[guildGroup].GetGuildData();
+            return membershipData;
+        }
+
+        public void RestoreMembershipData(Dictionary<int, GuildMembership_v1> data)
+        {
+            memberships.Clear();
+            if (data != null)
+            {
+                foreach (FactionFile.GuildGroups guildGroup in data.Keys)
+                {
+                    GuildMembership_v1 guildMembershipData = data[(int)guildGroup];
+                    Guild guild = CreateGuildObj(guildGroup, guildMembershipData.variant);
+                    guild.RestoreGuildData(guildMembershipData);
+                    memberships[guildGroup] = guild;
+                }
+            }
+        }
+
     }
 }

@@ -64,11 +64,6 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Guild Membership and Faction
 
-        public override bool IsMember()
-        {
-            return rank >= 0;
-        }
-
         public override int GetFactionId()
         {
             return factionId;

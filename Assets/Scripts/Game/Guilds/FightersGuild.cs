@@ -64,11 +64,6 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Guild Membership and Faction
 
-        public override bool IsMember()
-        {
-            return rank >= 0;
-        }
-
         public override int GetFactionId()
         {
             return factionId;
@@ -94,8 +89,7 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public override bool HallAccessAnytime()
         {
-            return rank >= 6;
-        }
+            return (rank >= 6);        }
 
         public override int ReducedRepairCost(int price)
         {

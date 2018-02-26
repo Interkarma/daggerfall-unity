@@ -53,6 +53,24 @@ namespace DaggerfallWorkshop.Game.Guilds
         {
             throw new NotImplementedException();
         }
+
+        public override TextFile.Token[] TokensPromotion(int newRank)
+        {
+            throw new NotImplementedException();
+        }
+        public override TextFile.Token[] TokensIneligible(PlayerEntity playerEntity)
+        {
+            throw new NotImplementedException();
+        }
+        public override TextFile.Token[] TokensEligible(PlayerEntity playerEntity)
+        {
+            throw new NotImplementedException();
+        }
+        public override TextFile.Token[] TokensWelcome()
+        {
+            throw new NotImplementedException();
+        }
+
     }
 
 }
