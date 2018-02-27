@@ -15,6 +15,9 @@ using DaggerfallWorkshop.Game.Weather;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.Magic;
 using DaggerfallWorkshop.Game.UserInterface;
+using DaggerfallConnect;
+using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace Wenzil.Console
 {
@@ -73,6 +76,64 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(StartQuest.name, StartQuest.usage, StartQuest.description, StartQuest.Execute);
 
             ConsoleCommandsDatabase.RegisterCommand(CastEffect.name, CastEffect.usage, CastEffect.description, CastEffect.Execute);
+
+            ConsoleCommandsDatabase.RegisterCommand(DumpBlock.name, DumpBlock.description, DumpBlock.usage, DumpBlock.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(DumpBuilding.name, DumpBuilding.description, DumpBuilding.usage, DumpBuilding.Execute);
+        }
+
+        private static class DumpBlock
+        {
+            public static readonly string name = "dumpblock";
+            public static readonly string error = "Failed to dump block";
+            public static readonly string usage = "dumpblock blockName";
+            public static readonly string description = "Dump a block to json file";
+
+            public static string Execute(params string[] args)
+            {
+                if (args.Length == 0)
+                {
+                    return HelpCommand.Execute(DumpBlock.name);
+                }
+                else
+                {
+                    DFBlock blockData;
+                    if (RMBLayout.GetBlockData(args[0], out blockData))
+                    {
+                        string blockJson = SaveLoadManager.Serialize(blockData.GetType(), blockData);
+                        File.WriteAllText(Path.Combine(Application.persistentDataPath, args[0]), blockJson);
+                        return "Block data json written to " + Path.Combine(Application.persistentDataPath, args[0]);
+                    }
+                    return error;
+                }
+            }
+        }
+
+        private static class DumpBuilding
+        {
+            public static readonly string name = "dumpbuilding";
+            public static readonly string error = "Failed to dump building";
+            public static readonly string usage = "dumpbuilding";
+            public static readonly string description = "Dump the current building player is inside to json file";
+
+            public static string Execute(params string[] args)
+            {
+                DaggerfallInterior interior = GameManager.Instance.PlayerEnterExit.Interior;
+                int blockIndex = interior.EntryDoor.blockIndex;
+                int recordIndex = interior.EntryDoor.recordIndex;
+
+                DFBlock blockData = DaggerfallUnity.Instance.ContentReader.BlockFileReader.GetBlock(blockIndex);
+                if (blockData.Type == DFBlock.BlockTypes.Rmb)
+                {
+                    string fileName = WorldDataReplacement.GetBuildingReplacementFilename(blockData.Name, blockIndex, recordIndex);
+                    BuildingReplacementData buildingData = new BuildingReplacementData() {
+                        rmbSubRecord = blockData.RmbBlock.SubRecords[recordIndex]
+                    };
+                    string buildingJson = SaveLoadManager.Serialize(buildingData.GetType(), buildingData);
+                    File.WriteAllText(Path.Combine(Application.persistentDataPath, fileName), buildingJson);
+                    return "Building data written to " + Path.Combine(Application.persistentDataPath, fileName);
+                }
+                return error;
+            }
         }
 
         private static class GodCommand
