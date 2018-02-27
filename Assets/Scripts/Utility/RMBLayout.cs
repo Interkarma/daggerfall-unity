@@ -11,11 +11,8 @@
 
 using UnityEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using DaggerfallConnect;
-using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game;
@@ -513,11 +510,23 @@ namespace DaggerfallWorkshop.Utility
                         throw new Exception("GetCompleteBuildingData() could not read block " + blockName);
 
                     // Assign building data for this block
+                    BuildingReplacementData buildingReplacementData;
                     for (int i = 0; i < block.RmbBlock.SubRecords.Length; i++)
                     {
                         DFLocation.BuildingData building = block.RmbBlock.FldHeader.BuildingDataList[i];
                         if (IsNamedBuilding(building.BuildingType))
                         {
+                            if (WorldDataReplacement.GetBuildingReplacementData(blockName, block.Index, i, out buildingReplacementData))
+                            {
+                                BuildingPoolItem bpi = new BuildingPoolItem();
+                                bpi.buildingData = new DFLocation.BuildingData()
+                                {
+                                    FactionId = buildingReplacementData.factionId,
+                                    BuildingType = (DFLocation.BuildingTypes)buildingReplacementData.buildingType,
+                                };
+                                bpi.used = false;
+                                namedBuildingPool.Add(bpi);
+                            }
                             // Try to find next building and merge data
                             BuildingPoolItem item;
                             if (!GetNextBuildingFromPool(namedBuildingPool, building.BuildingType, out item))
@@ -689,6 +698,17 @@ namespace DaggerfallWorkshop.Utility
                     if (modelData.Doors != null)
                         doorsOut.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, blockData.Index, recordCount, modelMatrix));
 
+/*                    if (obj.ModelIdNum == 324)
+                    {
+                        for (int i=0; i < modelData.SubMeshes.Length; i++)
+                        {
+                            ModelData.SubMeshData subData = modelData.SubMeshes[i];
+                            Debug.LogFormat("Tex arch: {0}  rec: {1}", subData.TextureArchive, subData.TextureRecord);
+                            if (subData.TextureArchive == 126)
+                                subData.TextureArchive = 133;
+                        }
+                    }
+*/
                     // Store building information for first model of record
                     // First model is main record structure, others are attachments like posts
                     // Only main structure is needed to resolve building after hit-test

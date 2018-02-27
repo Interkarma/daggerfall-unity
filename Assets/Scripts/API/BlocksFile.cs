@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -15,6 +15,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.IO;
 using DaggerfallConnect.Utility;
+using DaggerfallWorkshop.Utility.AssetInjection;
 #endregion
 
 namespace DaggerfallConnect.Arena2
@@ -697,16 +698,26 @@ namespace DaggerfallConnect.Arena2
             int recordCount = blocks[block].DFBlock.RmbBlock.FldHeader.NumBlockDataRecords;
             blocks[block].DFBlock.RmbBlock.SubRecords = new DFBlock.RmbSubRecord[recordCount];
             long position = reader.BaseStream.Position;
+            BuildingReplacementData buildingReplacementData;
             for (int i = 0; i < recordCount; i++)
             {
-                // Copy XZ position and Y rotation into subrecord data for convenience
-                blocks[block].DFBlock.RmbBlock.SubRecords[i].XPos = blocks[block].DFBlock.RmbBlock.FldHeader.BlockPositions[i].XPos;
-                blocks[block].DFBlock.RmbBlock.SubRecords[i].ZPos = blocks[block].DFBlock.RmbBlock.FldHeader.BlockPositions[i].ZPos;
-                blocks[block].DFBlock.RmbBlock.SubRecords[i].YRotation = blocks[block].DFBlock.RmbBlock.FldHeader.BlockPositions[i].YRotation;
+                if (WorldDataReplacement.GetBuildingReplacementData(blocks[block].Name, block, i, out buildingReplacementData))
+                {
+                    blocks[block].DFBlock.RmbBlock.SubRecords[i] = buildingReplacementData.rmbSubRecord;
+                    blocks[block].DFBlock.RmbBlock.FldHeader.BuildingDataList[i].FactionId = buildingReplacementData.factionId;
+                    blocks[block].DFBlock.RmbBlock.FldHeader.BuildingDataList[i].BuildingType = (DFLocation.BuildingTypes) buildingReplacementData.buildingType;
+                }
+                else
+                {
+                    // Copy XZ position and Y rotation into subrecord data for convenience
+                    blocks[block].DFBlock.RmbBlock.SubRecords[i].XPos = blocks[block].DFBlock.RmbBlock.FldHeader.BlockPositions[i].XPos;
+                    blocks[block].DFBlock.RmbBlock.SubRecords[i].ZPos = blocks[block].DFBlock.RmbBlock.FldHeader.BlockPositions[i].ZPos;
+                    blocks[block].DFBlock.RmbBlock.SubRecords[i].YRotation = blocks[block].DFBlock.RmbBlock.FldHeader.BlockPositions[i].YRotation;
 
-                // Read outside and inside block data
-                ReadRmbBlockSubRecord(reader, ref blocks[block].DFBlock.RmbBlock.SubRecords[i].Exterior);
-                ReadRmbBlockSubRecord(reader, ref blocks[block].DFBlock.RmbBlock.SubRecords[i].Interior);
+                    // Read outside and inside block data
+                    ReadRmbBlockSubRecord(reader, ref blocks[block].DFBlock.RmbBlock.SubRecords[i].Exterior);
+                    ReadRmbBlockSubRecord(reader, ref blocks[block].DFBlock.RmbBlock.SubRecords[i].Interior);
+                }
 
                 // Offset to next position (this ignores padding byte and ensures block reading is correctly stepped)
                 position += blocks[block].DFBlock.RmbBlock.FldHeader.BlockDataSizes[i];
