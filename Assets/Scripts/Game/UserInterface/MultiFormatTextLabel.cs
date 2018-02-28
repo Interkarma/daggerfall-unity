@@ -177,8 +177,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// </summary>
         /// <param name="text">Text for this label.</param>
         /// <param name="font">Font for this label.</param>
+        /// <param name="highlight">True to use DF highlight text color for this label.</param>
         /// <returns>TextLabel.</returns>
-        public TextLabel AddTextLabel(string text, PixelFont font = null)
+        public TextLabel AddTextLabel(string text, PixelFont font = null, bool highlight = false)
         {
             if (font == null)
                 font = GetFont();
@@ -197,7 +198,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 textLabel.MaxWidth = maxTextWidth;
             textLabel.Text = text;
             textLabel.Parent = this;
-            textLabel.TextColor = TextColor;
+            textLabel.TextColor = highlight ? DaggerfallUI.DaggerfallHighlightTextColor : TextColor;
             textLabel.ShadowColor = ShadowColor;
             textLabel.ShadowPosition = ShadowPosition;
 
@@ -298,6 +299,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
                         break;
                     case TextFile.Formatting.Text:
                         AddTextLabel(token.text, font);
+                        break;
+                    case TextFile.Formatting.TextHighlight:
+                        AddTextLabel(token.text, font, true);
                         break;
                     case TextFile.Formatting.InputCursorPositioner:
                         break;

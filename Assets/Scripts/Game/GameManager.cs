@@ -23,6 +23,7 @@ using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Questing;
+using DaggerfallWorkshop.Game.Guilds;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -73,6 +74,7 @@ namespace DaggerfallWorkshop.Game
         QuestMachine questMachine = null;
 		TransportManager transportManager = null;
         TalkManager talkManager = null;
+        GuildManager guildManager = null;
 
 
         #endregion
@@ -299,6 +301,12 @@ namespace DaggerfallWorkshop.Game
         {
             get { return (talkManager) ? talkManager : talkManager = GetComponentFromObject<TalkManager>(GetGameObjectWithName("TalkManager")); }
             set { talkManager = value; }
+        }
+
+        public GuildManager GuildManager
+        {
+            get { return (guildManager != null) ? guildManager : guildManager = new GuildManager(); }
+            set { guildManager = value; }
         }
 
         public bool IsPlayerOnHUD

@@ -328,6 +328,7 @@ namespace DaggerfallWorkshop.Game.Utility
             DaggerfallUI.Instance.PopToHUD();
             ResetWeaponManager();
             SaveLoadManager.ClearSceneCache(true);
+            GameManager.Instance.GuildManager.ClearMembershipData();
 
             // Must have a character document
             if (characterDocument == null)

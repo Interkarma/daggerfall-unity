@@ -86,7 +86,7 @@ namespace DaggerfallWorkshop.Utility
             { "%fn", null },  // Random first(?) name (Female?)
             { "%fn2", null }, // Same as _mn2 (?)
             { "%fnpc", null }, // ?
-            { "%fon", null }, // ?
+            { "%fon", Divine }, // Follower of divine
             { "%fpa", null }, // ?
             { "%fpc", null }, // ?
             { "%fx1", null }, // A faction in news
@@ -118,12 +118,12 @@ namespace DaggerfallWorkshop.Utility
             { "%key2", null },// Another location
             { "%kg", Weight },  //  Weight of items
             { "%kno", null }, // A knightly guild name
-            { "%lev", null }, // Rank in guild that you are in.
+            { "%lev", GuildTitle }, // Rank in guild that you are in.
             { "%lp", LocalPalace },  //  Local / palace (?) dungeon
             { "%ln", null },  //  Random lastname
             { "%loc", MarkLocationOnMap }, // Location marked on map (comment Nystul: this seems to be context dependent - it is used both in direction dialogs (7333) and map reveal dialogs (7332) - it seems to return the name of the building and reveal the map only if a 7332 dialog was chosen
             { "%lt1", null }, // Title of _fl1
-            { "%ltn", LocalReputation }, // In the eyes of the law you are.......
+            { "%ltn", LegalReputation }, // In the eyes of the law you are.......
             { "%luc", Luck }, // Luck
             { "%map", LocationRevealedByMapItem }, // Name of location revealed by a map item
             { "%mad", MagicResist }, // Resistance
@@ -466,7 +466,7 @@ namespace DaggerfallWorkshop.Utility
             }
         }
 
-        private static string LocalReputation(IMacroContextProvider mcp)
+        private static string LegalReputation(IMacroContextProvider mcp)
         {   // %ltn
             PlayerGPS gps = GameManager.Instance.PlayerGPS;
             int rep = GameManager.Instance.PlayerEntity.RegionData[gps.CurrentRegionIndex].LegalRep;
@@ -594,13 +594,6 @@ namespace DaggerfallWorkshop.Utility
             return GameManager.Instance.PlayerEntity.RaceTemplate.Name;
         }
 
-        private static string GuildTitle(IMacroContextProvider mcp)
-        {   // %pct
-            // Just use "Apprentice" for all %pct guild titles for now
-            // Guilds are not implemented yet, will need to move into a MacroDataSource
-            return "Apprentice";
-        }
-
         private static string GoldCarried(IMacroContextProvider mcp)
         {   // %gii
             return GameManager.Instance.PlayerEntity.GoldPieces.ToString();
@@ -685,6 +678,16 @@ namespace DaggerfallWorkshop.Utility
         // Contextual macro handlers - delegate to the macro data source provided by macro context provider.
         //
         #region Contextual macro handlers
+
+        private static string GuildTitle(IMacroContextProvider mcp)
+        {   // %lev %pct
+            return mcp.GetMacroDataSource().GuildTitle();
+        }
+
+        private static string Divine(IMacroContextProvider mcp)
+        {   // %fon
+            return mcp.GetMacroDataSource().Divine();
+        }
 
         private static string Amount(IMacroContextProvider mcp)
         {   // %a

@@ -17,6 +17,8 @@ using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Banking;
+using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Game.Guilds;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -408,6 +410,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else if ((inTown || !playerGPS.HasCurrentLocation) && playerEnterExit.IsPlayerInsideBuilding)
             {
+                // Check for guild hall rest privileges
+                if (GameManager.Instance.GuildManager.GetGuild(playerEnterExit.BuildingDiscoveryData.factionID).CanRest())
+                {
+                    playerEnterExit.Interior.FindMarker(out allocatedBed, DaggerfallInterior.InteriorMarkerTypes.Rest);
+                    return true;
+                }
+                // Check owned locations
                 string sceneName = DaggerfallInterior.GetSceneName(playerGPS.CurrentLocation.MapTableData.MapId, playerEnterExit.BuildingDiscoveryData.buildingKey);
                 if (SaveLoadManager.StateManager.ContainsPermanentScene(sceneName))
                 {

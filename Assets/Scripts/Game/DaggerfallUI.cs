@@ -38,6 +38,7 @@ namespace DaggerfallWorkshop.Game
 
         public static Color DaggerfallDefaultTextColor = new Color32(243, 239, 44, 255);
         public static Color DaggerfallDefaultInputTextColor = new Color32(227, 223, 0, 255);
+        public static Color DaggerfallHighlightTextColor = new Color32(219, 130, 40, 255);
         public static Color DaggerfallDefaultShadowColor = new Color32(93, 77, 12, 255);
         public static Color DaggerfallAlternateShadowColor1 = new Color32(44, 60, 60, 255);
         public static Color DaggerfallDefaultSelectedTextColor = new Color32(162, 36, 12, 255);
@@ -1017,12 +1018,18 @@ namespace DaggerfallWorkshop.Game
             statusBox.SetTextTokens(22);
 
             // Setup health info as the second message box.
-            DaggerfallMessageBox healthBox = new DaggerfallMessageBox(uiManager, statusBox);
-            healthBox.SetTextTokens(18);    // TODO: Various diseases are in msgs 100-117
-            healthBox.ClickAnywhereToClose = true;
+            DaggerfallMessageBox healthBox = CreateHealthStatusBox(statusBox);
             statusBox.AddNextMessageBox(healthBox);
 
             statusBox.Show();
+        }
+
+        public DaggerfallMessageBox CreateHealthStatusBox(IUserInterfaceWindow previous = null)
+        {
+            DaggerfallMessageBox healthBox = new DaggerfallMessageBox(uiManager, previous);
+            healthBox.SetTextTokens(18);    // TODO: Various diseases are in msgs 100-117
+            healthBox.ClickAnywhereToClose = true;
+            return healthBox;
         }
 
         void TickFade()
