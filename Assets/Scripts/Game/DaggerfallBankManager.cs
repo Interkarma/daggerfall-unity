@@ -120,8 +120,12 @@ namespace DaggerfallWorkshop.Game.Banking
 
         public static bool IsHouseOwned(int buildingKey)
         {
-            DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
-            return Houses[location.RegionIndex].buildingKey == buildingKey;
+            if (buildingKey > 0)
+            {
+                DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
+                return Houses[location.RegionIndex].buildingKey == buildingKey;
+            }
+            return false;
         }
 
         public static HouseData_v1[] Houses

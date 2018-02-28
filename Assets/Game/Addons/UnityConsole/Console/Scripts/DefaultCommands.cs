@@ -78,6 +78,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(CastEffect.name, CastEffect.usage, CastEffect.description, CastEffect.Execute);
 
             ConsoleCommandsDatabase.RegisterCommand(DumpBlock.name, DumpBlock.description, DumpBlock.usage, DumpBlock.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(DumpLocBlocks.name, DumpLocBlocks.description, DumpLocBlocks.usage, DumpLocBlocks.Execute);
             ConsoleCommandsDatabase.RegisterCommand(DumpBuilding.name, DumpBuilding.description, DumpBuilding.usage, DumpBuilding.Execute);
         }
 
@@ -104,6 +105,74 @@ namespace Wenzil.Console
                         return "Block data json written to " + Path.Combine(Application.persistentDataPath, args[0]);
                     }
                     return error;
+                }
+            }
+        }
+
+        private static class DumpLocBlocks
+        {
+            public static readonly string name = "dumplocblocks";
+            public static readonly string error = "Failed to dump locations";
+            public static readonly string usage = "dumplocblocks [blockName]";
+            public static readonly string description = "Dump the names of blocks for each location, or locations for a block, to json file";
+
+            public static string Execute(params string[] args)
+            {
+                MapsFile mapFileReader = DaggerfallUnity.Instance.ContentReader.MapFileReader;
+                if (args.Length > 1)
+                {
+                    return HelpCommand.Execute(DumpBlock.name);
+                }
+                else if (args.Length == 0)
+                {
+                    Dictionary<string, string[]> locBlocks = new Dictionary<string, string[]>();
+                    for (int region = 0; region < mapFileReader.RegionCount; region++)
+                    {
+                        DFRegion dfRegion = mapFileReader.GetRegion(region);
+                        for (int location = 0; location < dfRegion.LocationCount; location++)
+                        {
+                            DFLocation dfLoc = mapFileReader.GetLocation(region, location);
+                            locBlocks[dfLoc.Name] = dfLoc.Exterior.ExteriorData.BlockNames;
+                        }
+                    }
+                    string locJson = SaveLoadManager.Serialize(locBlocks.GetType(), locBlocks);
+                    string fileName = Path.Combine(Application.persistentDataPath, "LocationBlockNames.json");
+                    File.WriteAllText(fileName, locJson);
+                    return "Location block names json written to " + fileName;
+                }
+                else
+                {
+                    Dictionary<string, List<string>> regionLocs = new Dictionary<string, List<string>>();
+                    for (int region = 0; region < mapFileReader.RegionCount; region++)
+                    {
+                        DFRegion dfRegion = mapFileReader.GetRegion(region);
+                        if (string.IsNullOrEmpty(dfRegion.Name))
+                        {
+                            Debug.Log("region null: " + region);
+                            continue;
+                        }
+                        List<string> locs;
+                        if (regionLocs.ContainsKey(dfRegion.Name))
+                            locs = regionLocs[dfRegion.Name];
+                        else
+                        {
+                            locs = new List<string>();
+                            regionLocs[dfRegion.Name] = locs;
+                        }
+                        for (int location = 0; location < dfRegion.LocationCount; location++)
+                        {
+                            DFLocation dfLoc = mapFileReader.GetLocation(region, location);
+
+                            foreach (string blockName in dfLoc.Exterior.ExteriorData.BlockNames)
+                                if (blockName == args[0])
+                                    locs.Add(dfLoc.Name);
+                        }
+                    }
+                    string locJson = SaveLoadManager.Serialize(regionLocs.GetType(), regionLocs);
+                    string fileName = Path.Combine(Application.persistentDataPath, args[0] + "-locations.json");
+                    File.WriteAllText(fileName, locJson);
+                    return "Location block names json written to " + fileName;
+
                 }
             }
         }
