@@ -3,7 +3,7 @@
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
-// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
+// Original Author: Hazelnut
 // Contributors:    
 
 using DaggerfallConnect;
