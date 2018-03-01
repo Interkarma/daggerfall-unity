@@ -23,9 +23,10 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
     public struct BuildingReplacementData
     {
-        public ushort factionId;
-        public int buildingType;
-        public DFBlock.RmbSubRecord rmbSubRecord;
+        public ushort FactionId;
+        public int BuildingType;
+        public byte Quality;
+        public DFBlock.RmbSubRecord RmbSubRecord;
         // TODO: autoMapData for coloured map?
     }
 
@@ -80,7 +81,9 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                         string fileName = GetBuildingReplacementFilename(blockName, blockIndex, recordIndex);
                         string buildingReplacementJson = File.ReadAllText(Path.Combine(worldDataPath, fileName));
                         buildingData = (BuildingReplacementData) SaveLoadManager.Deserialize(typeof(BuildingReplacementData), buildingReplacementJson);
+#if !UNITY_EDITOR       // Cache building replacement data unless in editor
                         Buildings.Add(blockRecordId, buildingData);
+#endif
                         return true;
                     }
                 }
@@ -94,7 +97,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             return false;
         }
 
-        #endregion
+#endregion
 
     }
 }

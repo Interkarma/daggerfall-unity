@@ -523,11 +523,10 @@ namespace DaggerfallConnect
         /// <summary>
         /// Doors the player can open and close.
         /// </summary>
-        [fsObject(MemberSerialization = fsMemberSerialization.OptOut)]  // Otherwise 'This' is ignored, maybe change to 'Position' like other records?
         public struct RmbBlockDoorRecord
         {
             /// <summary>Offset of this object from start of RMB record. Not required unless you are extending the block reader.</summary>
-            internal Int32 This;
+            public Int32 Position;
 
             /// <summary>X position in 3D space.</summary>
             public Int32 XPos;
@@ -869,7 +868,7 @@ namespace DaggerfallConnect
         public struct RdbUnknownObject
         {
             /// <summary>Offset of this object from start of RDB record. Not required unless you are extending the block reader.</summary>
-            public Int32 This;
+            public Int32 Position;
 
             /// <summary>Offset to next object from start of RDB record. Not required unless you are extending the block reader.</summary>
             public Int32 Next;
@@ -899,7 +898,7 @@ namespace DaggerfallConnect
         public struct RdbObject
         {
             /// <summary>Offset of this object from start of RDB record. Not required unless you are extending the block reader.</summary>
-            internal Int32 This;
+            internal Int32 Position;
 
             /// <summary>Offset to next object from start of RDB record. Not required unless you are extending the block reader.</summary>
             internal Int32 Next;

@@ -703,9 +703,9 @@ namespace DaggerfallConnect.Arena2
             {
                 if (WorldDataReplacement.GetBuildingReplacementData(blocks[block].Name, block, i, out buildingReplacementData))
                 {
-                    blocks[block].DFBlock.RmbBlock.SubRecords[i] = buildingReplacementData.rmbSubRecord;
-                    blocks[block].DFBlock.RmbBlock.FldHeader.BuildingDataList[i].FactionId = buildingReplacementData.factionId;
-                    blocks[block].DFBlock.RmbBlock.FldHeader.BuildingDataList[i].BuildingType = (DFLocation.BuildingTypes) buildingReplacementData.buildingType;
+                    blocks[block].DFBlock.RmbBlock.SubRecords[i] = buildingReplacementData.RmbSubRecord;
+                    blocks[block].DFBlock.RmbBlock.FldHeader.BuildingDataList[i].FactionId = buildingReplacementData.FactionId;
+                    blocks[block].DFBlock.RmbBlock.FldHeader.BuildingDataList[i].BuildingType = (DFLocation.BuildingTypes) buildingReplacementData.BuildingType;
                 }
                 else
                 {
@@ -812,7 +812,7 @@ namespace DaggerfallConnect.Arena2
             blockData.BlockDoorRecords = new DFBlock.RmbBlockDoorRecord[numDoorRecords];
             for (int i = 0; i < numDoorRecords; i++)
             {
-                blockData.BlockDoorRecords[i].This = (Int32)reader.BaseStream.Position;
+                blockData.BlockDoorRecords[i].Position = (Int32)reader.BaseStream.Position;
                 blockData.BlockDoorRecords[i].XPos = reader.ReadInt32();
                 blockData.BlockDoorRecords[i].YPos = reader.ReadInt32();
                 blockData.BlockDoorRecords[i].ZPos = reader.ReadInt32();
@@ -944,7 +944,7 @@ namespace DaggerfallConnect.Arena2
             {
                 // Read object data
                 DFBlock.RdbUnknownObject obj = new DFBlock.RdbUnknownObject();
-                obj.This = (Int32)reader.BaseStream.Position;
+                obj.Position = (Int32)reader.BaseStream.Position;
                 obj.Next = reader.ReadInt32();
                 obj.Index = reader.ReadInt16();
                 obj.UnknownOffset = (UInt32)reader.ReadInt32();
@@ -1044,7 +1044,7 @@ namespace DaggerfallConnect.Arena2
             while (true)
             {
                 // Read object data
-                objectRoot.RdbObjects[index].This = (Int32)reader.BaseStream.Position;
+                objectRoot.RdbObjects[index].Position = (Int32)reader.BaseStream.Position;
                 objectRoot.RdbObjects[index].Next = reader.ReadInt32();
                 objectRoot.RdbObjects[index].Previous = reader.ReadInt32();
                 objectRoot.RdbObjects[index].Index = index;
@@ -1131,12 +1131,12 @@ namespace DaggerfallConnect.Arena2
             int index = 0;
             foreach (DFBlock.RdbObject obj in rdbObjects)
             {
-                if (obj.This ==
+                if (obj.Position ==
                     rdbObject.Resources.ModelResource.ActionResource.NextObjectOffset)
                 {
                     // Set target and and parent indices
                     rdbObject.Resources.ModelResource.ActionResource.NextObjectIndex = index;
-                    rdbObjects[index].Resources.ModelResource.ActionResource.PreviousObjectOffset = rdbObject.This;
+                    rdbObjects[index].Resources.ModelResource.ActionResource.PreviousObjectOffset = rdbObject.Position;
                     break;
                 }
                 index++;
