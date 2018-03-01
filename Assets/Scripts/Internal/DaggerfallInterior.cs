@@ -773,7 +773,7 @@ namespace DaggerfallWorkshop
 
                 // Add StaticNPC behaviour
                 StaticNPC npc = go.AddComponent<StaticNPC>();
-                npc.SetLayoutData(obj);
+                npc.SetLayoutData(obj, entryDoor.buildingKey);
 
                 // Disable people if shop or building is closed
                 DFLocation.BuildingTypes buildingType = buildingData.buildingType;
@@ -799,7 +799,7 @@ namespace DaggerfallWorkshop
             foreach (DFBlock.RmbBlockDoorRecord obj in recordData.Interior.BlockDoorRecords)
             {
                 // Create unique LoadID for save sytem
-                ulong loadID = (ulong)(blockData.Position + obj.This);
+                ulong loadID = (ulong)(blockData.Position + obj.Position);
 
                 // Get model transform
                 Vector3 modelRotation = new Vector3(0, -obj.YRotation / BlocksFile.RotationDivisor, 0);
