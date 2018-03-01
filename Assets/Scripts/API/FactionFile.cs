@@ -195,6 +195,31 @@ namespace DaggerfallConnect.Arena2
             get { return "FACTION.TXT"; }
         }
 
+        public static Dictionary<int, FactionData> CustomFactions { get { return customFactions; } }
+
+        #endregion
+
+        #region Custom faction registration
+
+        // Registry for custom factions.
+        private static Dictionary<int, FactionData> customFactions = new Dictionary<int, FactionData>();
+
+        /// <summary>
+        /// Register a custom faction not in the DF FACTION.TXT file
+        /// </summary>
+        /// <param name="factionId">faction id for the new faction</param>
+        /// <param name="factionData">faction data struct for new faction, including child list</param>
+        /// <returns>true if faction was registered, false if the faction id is already in use</returns>
+        public static bool RegisterCustomFaction(int factionId, FactionData factionData)
+        {
+            if (!customFactions.ContainsKey(factionId))
+            {
+                customFactions.Add(factionId, factionData);
+                return true;
+            }
+            return false;
+        }
+
         #endregion
 
         #region Constructors

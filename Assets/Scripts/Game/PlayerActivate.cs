@@ -941,7 +941,7 @@ namespace DaggerfallWorkshop.Game
                     npc.Data.factionID, (FactionFile.SocialGroups)factionData.sgroup, (FactionFile.GuildGroups)factionData.ggroup, (FactionFile.GuildGroups)buildingFactionData.ggroup);
 
                 // Check if the NPC offers a guild service.
-                if (Enum.IsDefined(typeof(GuildNpcServices), npc.Data.factionID))
+                if (Services.HasGuildService(npc.Data.factionID))
                 {
                     FactionFile.GuildGroups guildGroup = (FactionFile.GuildGroups) buildingFactionData.ggroup;
                     if (guildGroup == FactionFile.GuildGroups.None)

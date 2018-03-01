@@ -143,7 +143,7 @@ namespace DaggerfallWorkshop.Game.Guilds
             { Divines.Zenithar, new RankBenefits(4, 1, 1, 6,-1,-1,-1,-1,-1, 8, 5288, 5243, 4056) },
         };
 
-        static new Dictionary<Divines, List<DFCareer.Skills>> guildSkills = new Dictionary<Divines, List<DFCareer.Skills>>()
+        static Dictionary<Divines, List<DFCareer.Skills>> guildSkills = new Dictionary<Divines, List<DFCareer.Skills>>()
         {
             { Divines.Akatosh, new List<DFCareer.Skills>() {
                 DFCareer.Skills.Alteration,
@@ -231,7 +231,7 @@ namespace DaggerfallWorkshop.Game.Guilds
             } },
         };
 
-        static new Dictionary<Divines, List<DFCareer.Skills>> trainingSkills = new Dictionary<Divines, List<DFCareer.Skills>>()
+        static Dictionary<Divines, List<DFCareer.Skills>> trainingSkills = new Dictionary<Divines, List<DFCareer.Skills>>()
         {
             { Divines.Akatosh, new List<DFCareer.Skills>() {
                 DFCareer.Skills.Alteration, DFCareer.Skills.Archery, DFCareer.Skills.Daedric,
@@ -267,16 +267,15 @@ namespace DaggerfallWorkshop.Game.Guilds
                 DFCareer.Skills.Pickpocket, DFCareer.Skills.Spriggan, DFCareer.Skills.Streetwise, DFCareer.Skills.Thaumaturgy } },
         };
 
-        static Temple()
-        {
-            rankTitles = new string[] {
-                "Novice", "Initiate", "Acolyte", "Adept", "Curate", "Disciple", "Brother", "Diviner", "Master", "Patriarch"
-            };
-        }
-
         #endregion
 
-        #region Properties
+        #region Properties & Data
+
+        string[] rankTitles = new string[] {
+                "Novice", "Initiate", "Acolyte", "Adept", "Curate", "Disciple", "Brother", "Diviner", "Master", "Patriarch"
+        };
+
+        public override string[] RankTitles { get { return rankTitles; } }
 
         public override List<DFCareer.Skills> GuildSkills { get { return guildSkills[deity]; } }
 

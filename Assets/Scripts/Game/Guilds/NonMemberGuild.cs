@@ -9,12 +9,20 @@
 using System;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallConnect.Arena2;
+using System.Collections.Generic;
+using DaggerfallConnect;
 
 namespace DaggerfallWorkshop.Game.Guilds
 {
     public class NonMemberGuild : Guild
     {
         private bool canTrain = false;
+
+        public override string[] RankTitles { get { throw new NotImplementedException(); } }
+
+        public override List<DFCareer.Skills> GuildSkills { get { throw new NotImplementedException(); } }
+
+        public override List<DFCareer.Skills> TrainingSkills { get { throw new NotImplementedException(); } }
 
         public NonMemberGuild(bool canTrain = false)
         {

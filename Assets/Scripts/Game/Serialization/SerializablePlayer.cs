@@ -198,6 +198,8 @@ namespace DaggerfallWorkshop.Game.Serialization
             PlayerEntity entity = playerEntityBehaviour.Entity as PlayerEntity;
             entity.FactionData.FactionDict = factionData.factionDict;
             entity.FactionData.FactionNameToIDDict = factionData.factionNameToIDDict;
+            // Add any registered custom factions
+            entity.FactionData.AddCustomFactions();
         }
 
         public void RestoreSaveData(object dataIn)

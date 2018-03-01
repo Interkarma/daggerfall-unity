@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -74,6 +74,21 @@ namespace DaggerfallWorkshop.Game.Player
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// Adds any registered custom factions into existing save data or new games
+        /// </summary>
+        public void AddCustomFactions()
+        {
+            foreach (int id in FactionFile.CustomFactions.Keys)
+            {
+                if (!factionDict.ContainsKey(id))
+                {
+                    factionDict.Add(id, FactionFile.CustomFactions[id]);
+                    factionNameToIDDict.Add(FactionFile.CustomFactions[id].name, id);
+                }
+            }
+        }
 
         /// <summary>
         /// Gets faction data from faction ID.
@@ -246,6 +261,9 @@ namespace DaggerfallWorkshop.Game.Player
             // Get dictionaries
             factionDict = factionFile.FactionDict;
             factionNameToIDDict = factionFile.FactionNameToIDDict;
+
+            // Add any registered custom factions
+            AddCustomFactions();
 
             // Log message to see when faction data reset
             Debug.Log("PersistentFactionData.Reset() loaded fresh faction data.");
