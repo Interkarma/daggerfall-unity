@@ -13,6 +13,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Weather;
 using DaggerfallWorkshop.Game.Questing;
+using DaggerfallWorkshop.Game.Effects;
 using DaggerfallWorkshop.Game.UserInterface;
 
 namespace Wenzil.Console
@@ -70,6 +71,8 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(AddInventoryItem.name, AddInventoryItem.description, AddInventoryItem.usage, AddInventoryItem.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ShowBankWindow.name, ShowBankWindow.description, ShowBankWindow.usage, ShowBankWindow.Execute);
             ConsoleCommandsDatabase.RegisterCommand(StartQuest.name, StartQuest.usage, StartQuest.description, StartQuest.Execute);
+
+            ConsoleCommandsDatabase.RegisterCommand(CastEffect.name, CastEffect.usage, CastEffect.description, CastEffect.Execute);
         }
 
         private static class GodCommand
@@ -1366,7 +1369,51 @@ namespace Wenzil.Console
                 DaggerfallWorkshop.Game.Questing.QuestMachine.Instance.InstantiateQuest(args[0]);
                 return "Finished";
             }
+        }
 
+        private static class CastEffect
+        {
+            public static readonly string name = "casteffect";
+            public static readonly string description = "Cast single effect on self or target. Target is any entity under crosshair.";
+            public static readonly string usage = "casteffect self|target groupIndex subgroupIndex";
+
+            public static string Execute(params string[] args)
+            {
+                if (args == null || args.Length != 3)
+                    return usage;
+
+                // Get self or target gameobject
+                GameObject result = null;
+                if (args[0] == "self")
+                    result = GameManager.Instance.PlayerObject;
+                else if (args[0] == "target")
+                    return "'casteffect target' not implemented yet.";  // TODO: Cast ray to find target object
+                else
+                    return "must be 'casteffect self' or 'casteffect target'";
+
+                // Get group and subgroup indices
+                int groupIndex = -1, subgroupIndex = -1;
+                if (!int.TryParse(args[1], out groupIndex) || !int.TryParse(args[2], out subgroupIndex))
+                    return usage;
+
+                // Must have a gameobject by now
+                if (!result)
+                    return "casteffect could not find any GameObject";
+
+                // The gameobject must be an entity
+                DaggerfallEntityBehaviour entityBehaviour = result.GetComponent<DaggerfallEntityBehaviour>();
+                if (!entityBehaviour)
+                    return "casteffect could not find DaggerfallEntityBehaviour on specified GameObject (you must target an enemy or other valid entity)";
+
+                // The gameobject must have a spell manager
+                SpellManager spellManager = result.GetComponent<SpellManager>();
+                if (!spellManager)
+                    return "casteffect could not find SpellManager on specified GameObject";
+
+                // TODO: Send effect to resulting spell manager or error out if effect does not exist
+                
+                return string.Format("Cast effect {0} {1} on entity type {2} with name {3}", groupIndex, subgroupIndex, entityBehaviour.EntityType.ToString(), result.name);
+            }
         }
 
         private static class ExecuteScript
