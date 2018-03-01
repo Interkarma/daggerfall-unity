@@ -36,7 +36,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public DaggerfallDisease()
         {
             worldTime = DaggerfallUnity.Instance.WorldTime;
-            WorldTime.OnNewHour += OnNewHourEventHandler;
+            //WorldTime.OnNewHour += OnNewHourEventHandler;
         }
 
         public DaggerfallDisease(Diseases disease) : this()
@@ -54,7 +54,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public int GetMessageId()
         {
-            if (diseaseType == Diseases.None || contractedTime + incubationTime > worldTime.Now.ToSeconds())
+            if (diseaseType == Diseases.None) // || contractedTime + incubationTime > worldTime.Now.ToSeconds())
                 return 18;
             else
                 return (int) diseaseType;
@@ -77,6 +77,10 @@ namespace DaggerfallWorkshop.Game.Entity
                 diseaseType = data.disease;
                 contractedTime = data.diseaseContractedTime;
                 incubationTime = data.diseaseInclubationTime;
+            }
+            else
+            {
+                diseaseType = Diseases.None;
             }
         }
 

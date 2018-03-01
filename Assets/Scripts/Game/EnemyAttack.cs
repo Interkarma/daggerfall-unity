@@ -186,20 +186,24 @@ namespace DaggerfallWorkshop.Game
         {
             int damage = 0;
             EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
+            PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
 
             // Calculate damage
             damage = FormulaHelper.CalculateAttackDamage(entity, GameManager.Instance.PlayerEntity, (int)(Items.EquipSlots.RightHand), -1);
 
             // Tally player's dodging skill
-            GameManager.Instance.PlayerEntity.TallySkill(DFCareer.Skills.Dodging, 1);
+            playerEntity.TallySkill(DFCareer.Skills.Dodging, 1);
 
             if (damage > 0)
             {
                 GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", damage);
 
-                Diseases disease = FormulaHelper.CalculateChanceOfDisease(entity);
-                if (disease != Diseases.None)
-                    GameManager.Instance.PlayerEntity.Disease = new DaggerfallDisease(disease);
+                if (!playerEntity.Disease.IsDiseased())
+                {
+                    Diseases disease = FormulaHelper.CalculateChanceOfDisease(entity);
+                    if (disease != Diseases.None)
+                        playerEntity.Disease = new DaggerfallDisease(disease);
+                }
             }
 
             return damage;

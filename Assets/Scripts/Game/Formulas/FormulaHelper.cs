@@ -633,7 +633,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             DFCareer.EnemyGroups group = attacker.GetEnemyGroup();
             if (group == DFCareer.EnemyGroups.Animals || group == DFCareer.EnemyGroups.Undead)
             {
-                if (UnityEngine.Random.Range(0, 1000) > 600)
+                if (UnityEngine.Random.Range(0, 1000) > 6)
                     return (Diseases) UnityEngine.Random.Range(100, 117);
             }
             return Diseases.None;

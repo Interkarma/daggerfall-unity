@@ -1024,7 +1024,7 @@ namespace DaggerfallWorkshop.Game
         public DaggerfallMessageBox CreateHealthStatusBox(IUserInterfaceWindow previous = null)
         {
             DaggerfallMessageBox healthBox = new DaggerfallMessageBox(uiManager, previous);
-            healthBox.SetTextTokens(18);    // TODO: Various diseases are in msgs 100-117
+            healthBox.SetTextTokens(GameManager.Instance.PlayerEntity.Disease.GetMessageId());    // TODO: Various diseases are in msgs 100-117
             healthBox.ClickAnywhereToClose = true;
             return healthBox;
         }

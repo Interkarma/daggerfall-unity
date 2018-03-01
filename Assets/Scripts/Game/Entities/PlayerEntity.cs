@@ -314,6 +314,7 @@ namespace DaggerfallWorkshop.Game.Entity
             timeOfLastSkillIncreaseCheck = 0;
             timeOfLastSkillTraining = 0;
             rentedRooms.Clear();
+            disease = new DaggerfallDisease();
             if (skillUses != null)
                 System.Array.Clear(skillUses, 0, skillUses.Length);
          }
