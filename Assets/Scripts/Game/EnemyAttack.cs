@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -13,6 +13,7 @@ using UnityEngine;
 using System.Collections;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -185,15 +186,25 @@ namespace DaggerfallWorkshop.Game
         {
             int damage = 0;
             EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
+            PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
 
             // Calculate damage
-            damage = Formulas.FormulaHelper.CalculateAttackDamage(entity, GameManager.Instance.PlayerEntity, (int)(Items.EquipSlots.RightHand), -1);
+            damage = FormulaHelper.CalculateAttackDamage(entity, GameManager.Instance.PlayerEntity, (int)(Items.EquipSlots.RightHand), -1);
 
             // Tally player's dodging skill
-            GameManager.Instance.PlayerEntity.TallySkill(DFCareer.Skills.Dodging, 1);
+            playerEntity.TallySkill(DFCareer.Skills.Dodging, 1);
 
             if (damage > 0)
+            {
                 GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", damage);
+
+                if (!playerEntity.Disease.IsDiseased())
+                {
+                    Diseases disease = FormulaHelper.CalculateChanceOfDisease(entity);
+                    if (disease != Diseases.None)
+                        playerEntity.Disease = new DaggerfallDisease(disease);
+                }
+            }
 
             return damage;
         }

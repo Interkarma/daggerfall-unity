@@ -75,6 +75,8 @@ namespace DaggerfallWorkshop.Game.Entity
 
         protected uint lastTimePlayerAteOrDrankAtTavern = 0;
 
+        protected DaggerfallDisease disease = new DaggerfallDisease();
+
         protected RegionDataRecord[] regionData = new RegionDataRecord[62];
 
         private List<RoomRental_v1> rentedRooms = new List<RoomRental_v1>();
@@ -135,6 +137,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public RegionDataRecord[] RegionData { get { return regionData; } set { regionData = value; } }
         public uint LastGameMinutes { get { return lastGameMinutes; } set { lastGameMinutes = value; } }
         public List<RoomRental_v1> RentedRooms { get { return rentedRooms; } set { rentedRooms = value; } }
+        public DaggerfallDisease Disease { get { return disease; } set { disease = value; } }
 
         #endregion
 
@@ -311,9 +314,10 @@ namespace DaggerfallWorkshop.Game.Entity
             timeOfLastSkillIncreaseCheck = 0;
             timeOfLastSkillTraining = 0;
             rentedRooms.Clear();
+            disease = new DaggerfallDisease();
             if (skillUses != null)
                 System.Array.Clear(skillUses, 0, skillUses.Length);
-        }
+         }
 
         /// <summary>
         /// Assigns player entity settings from a character document.

@@ -10,10 +10,7 @@
 //
 
 using UnityEngine;
-using System;
 using System.IO;
-using System.Collections;
-using System.Collections.Generic;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
@@ -22,7 +19,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
-using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -1027,7 +1024,7 @@ namespace DaggerfallWorkshop.Game
         public DaggerfallMessageBox CreateHealthStatusBox(IUserInterfaceWindow previous = null)
         {
             DaggerfallMessageBox healthBox = new DaggerfallMessageBox(uiManager, previous);
-            healthBox.SetTextTokens(18);    // TODO: Various diseases are in msgs 100-117
+            healthBox.SetTextTokens(GameManager.Instance.PlayerEntity.Disease.GetMessageId());    // TODO: Various diseases are in msgs 100-117
             healthBox.ClickAnywhereToClose = true;
             return healthBox;
         }
