@@ -27,25 +27,23 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #endregion
 
-        #region Static Data
+        #region Properties & Data
 
-        static FightersGuild()
-        {
-            rankTitles = new string[] {
+        static string[] rankTitles = new string[] {
                 "Apprentice", "Journeyman", "Swordsman", "Protector", "Defender", "Warder", "Guardian", "Champion", "Warrior", "Master"
+        };
+
+        static List<DFCareer.Skills> guildSkills = new List<DFCareer.Skills>() {
+                DFCareer.Skills.Archery,
+                DFCareer.Skills.Axe,
+                DFCareer.Skills.BluntWeapon,
+                DFCareer.Skills.Giantish,
+                DFCareer.Skills.LongBlade,
+                DFCareer.Skills.Orcish,
+                DFCareer.Skills.ShortBlade,
             };
 
-            guildSkills = new List<DFCareer.Skills>() {
-                DFCareer.Skills.Archery,    // 14 melissa
-                DFCareer.Skills.Axe,        // 6
-                DFCareer.Skills.BluntWeapon,// 3
-                DFCareer.Skills.Giantish,   // 5
-                DFCareer.Skills.LongBlade,  // 30
-                DFCareer.Skills.Orcish,     // 6
-                DFCareer.Skills.ShortBlade, // 11
-            };
-
-            trainingSkills = new List<DFCareer.Skills>() {
+        static List<DFCareer.Skills> trainingSkills = new List<DFCareer.Skills>() {
                 DFCareer.Skills.Archery,
                 DFCareer.Skills.Axe,
                 DFCareer.Skills.BluntWeapon,
@@ -58,7 +56,12 @@ namespace DaggerfallWorkshop.Game.Guilds
                 DFCareer.Skills.ShortBlade,
                 DFCareer.Skills.Swimming
             };
-        }
+
+        public override string[] RankTitles { get { return rankTitles; } }
+
+        public override List<DFCareer.Skills> GuildSkills { get { return guildSkills; } }
+
+        public override List<DFCareer.Skills> TrainingSkills { get { return trainingSkills; } }
 
         #endregion
 
@@ -89,7 +92,8 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public override bool HallAccessAnytime()
         {
-            return (rank >= 6);        }
+            return (rank >= 6);
+        }
 
         public override int ReducedRepairCost(int price)
         {

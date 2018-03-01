@@ -321,7 +321,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     tokens.Add(TextFile.CreateTextToken(guild.GetAffiliation()));
                     tokens.Add(tab);
                     tokens.Add(TextFile.CreateTextToken(guild.GetTitle() //)); DEBUG rep:
-                        + " rep:" + guild.GetReputation(playerEntity).ToString()));
+                        + " (rep:" + guild.GetReputation(playerEntity).ToString() + ")"));
                     tokens.Add(TextFile.NewLineToken);
                 }
 

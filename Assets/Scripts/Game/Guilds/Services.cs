@@ -8,6 +8,7 @@
 
 using System;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using System.Collections.Generic;
 
 namespace DaggerfallWorkshop.Game.Guilds
 {
@@ -136,6 +137,41 @@ namespace DaggerfallWorkshop.Game.Guilds
 
     public static class Services
     {
+        public delegate void CustomGuildService();
+
+        // Store for extra guild NPC services (i.e. from mods)
+        private static Dictionary<int, GuildServices> guildNpcServices = new Dictionary<int, GuildServices>();
+        private static Dictionary<int, string> customNpcServiceNames = new Dictionary<int, string>();
+        private static Dictionary<int, CustomGuildService> customNpcServices = new Dictionary<int, CustomGuildService>();
+
+        public static bool HasGuildService(int npcFactionId)
+        {
+            return (Enum.IsDefined(typeof(GuildNpcServices), npcFactionId) ||
+                    guildNpcServices.ContainsKey(npcFactionId) ||
+                    customNpcServices.ContainsKey(npcFactionId));
+        }
+
+        public static bool RegisterGuildService(int npcFactionId, GuildServices service)
+        {
+            if (!guildNpcServices.ContainsKey(npcFactionId))
+            {
+                guildNpcServices.Add(npcFactionId, service);
+                return true;
+            }
+            return false;
+        }
+
+        public static bool RegisterGuildService(int npcFactionId, CustomGuildService service, string serviceName)
+        {
+            if (!customNpcServices.ContainsKey(npcFactionId))
+            {
+                customNpcServices.Add(npcFactionId, service);
+                customNpcServiceNames.Add(npcFactionId, serviceName);
+                return true;
+            }
+            return false;
+        }
+
         public static GuildServices GetService(GuildNpcServices guildNpcService)
         {
             switch (guildNpcService)
@@ -232,7 +268,17 @@ namespace DaggerfallWorkshop.Game.Guilds
                 case GuildNpcServices.TAr_BuySoulgems:
                     return GuildServices.BuySoulgems;
             }
-            throw new Exception("Could not find a guildNpcService definition for npc with factionId: " + guildNpcService);
+
+            GuildServices service;
+            if (guildNpcServices.TryGetValue((int) guildNpcService, out service))
+                return service;
+            else
+                return (GuildServices) guildNpcService;
+        }
+
+        public static bool GetCustomGuildService(int npcFactionId, out CustomGuildService customGuildService)
+        {
+            return customNpcServices.TryGetValue(npcFactionId, out customGuildService);
         }
 
         public static string GetServiceLabelText(GuildServices service)
@@ -274,7 +320,11 @@ namespace DaggerfallWorkshop.Game.Guilds
                 case GuildServices.BuySoulgems:
                     return HardStrings.serviceBuySoulgems;
                 default:
-                    return "?";
+                    string serviceName;
+                    if (customNpcServiceNames.TryGetValue((int)service, out serviceName))
+                        return serviceName;
+                    else
+                        return "?";
             }
         }
     }

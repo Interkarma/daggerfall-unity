@@ -8,7 +8,6 @@
 
 using UnityEngine;
 using System.Collections.Generic;
-using DaggerfallConnect;
 using System;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Player;
@@ -22,6 +21,19 @@ namespace DaggerfallWorkshop.Game.Guilds
         public static Guild guildNotMember = new NonMemberGuild();
         // A base temple class defining non-membership.
         public static Guild templeNotMember = new NonMemberGuild(true);
+
+        // Custom guild registry.
+        private static Dictionary<FactionFile.GuildGroups, Type> customGuilds = new Dictionary<FactionFile.GuildGroups, Type>();
+
+        public static bool RegisterCustomGuild(FactionFile.GuildGroups guildGroup, Type guildType)
+        {
+            if (!customGuilds.ContainsKey(guildGroup))
+            {
+                customGuilds.Add(guildGroup, guildType);
+                return true;
+            }
+            return false;
+        }
 
         private Dictionary<FactionFile.GuildGroups, Guild> memberships = new Dictionary<FactionFile.GuildGroups, Guild>();
 
@@ -69,8 +81,13 @@ namespace DaggerfallWorkshop.Game.Guilds
                     Temple.Divines deity = (Temple.Divines) buildingFactionId;
                     return new KnightlyOrder(region);
 */
+                default:
+                    Type guildType;
+                    if (customGuilds.TryGetValue(guildGroup, out guildType))
+                        return (Guild) Activator.CreateInstance(guildType);
+                    else
+                        return null;
             }
-            return null;
         }
 
         /// <summary>

@@ -219,7 +219,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
                 return;
             }
-            // Handle service
+            // Handle known service
             switch (service)
             {
                 case GuildServices.Quests:
@@ -253,13 +253,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     uiManager.PushWindow(DaggerfallUI.Instance.DfTravelMapWindow);
                     break;
 
-                case GuildServices.BuySpells:
+                //case GuildServices.BuySpells:
                     //uiManager.PushWindow(new DaggerfallBankingWindow(uiManager, this));
                     //break;
 
                 default:
                     CloseWindow();
-                    DaggerfallUI.MessageBox("Guild service not yet implemented.");
+                    Services.CustomGuildService customService;
+                    if (Services.GetCustomGuildService((int)service, out customService))
+                        customService();
+                    else
+                        DaggerfallUI.MessageBox("Guild service not yet implemented.");
                     break;
             }
         }
