@@ -46,7 +46,7 @@ namespace DaggerfallWorkshop.Game
         StartGameBehaviour startGameBehaviour = null;
         PlayerEntity playerEntity = null;
         DaggerfallEntityBehaviour playerEntityBehaviour = null;
-        SpellManager playerSpellManager = null;
+        MagicManager playerMagicManager = null;
         PlayerDeath playerDeath = null;
         PlayerGPS playerGPS  = null;
         PlayerEnterExit playerEnterExit = null;
@@ -136,10 +136,10 @@ namespace DaggerfallWorkshop.Game
             set { playerEntityBehaviour = value; }
         }
 
-        public SpellManager PlayerSpellManager
+        public MagicManager PlayerMagicManager
         {
-            get { return (playerSpellManager != null) ? playerSpellManager : playerSpellManager = GetComponentFromObject<SpellManager>(PlayerObject); }
-            set { playerSpellManager = value; }
+            get { return (playerMagicManager != null) ? playerMagicManager : playerMagicManager = GetComponentFromObject<MagicManager>(PlayerObject); }
+            set { playerMagicManager = value; }
         }
 
         public PlayerDeath PlayerDeath

@@ -18,14 +18,12 @@ using DaggerfallWorkshop.Game.UserInterfaceWindows;
 namespace DaggerfallWorkshop.Game
 {
     /// <summary>
-    /// Peered with a DaggerfallEntityBehaviour for spell casting and receiving.
-    /// Handles transmission of spells into world and provide for certain effect hooks.
-    /// Enemy AI can cast spells through this behaviour into world.
-    /// Player also casts spells through this behaviour with some additional coordination needed elsewhere.
-    /// Some spells will interface with non-entity object (e.g. doors and open spells).
-    /// Most likely to add an entity type to these objects later.
+    /// Peered with a DaggerfallEntityBehaviour for magic handling related to that entity.
+    /// Manages list of active magic effects currently operating on peered entity.
+    /// Used by player and enemies to send and receive magic effects from various sources.
+    /// NOTE: Under active development and subject to frequent change.
     /// </summary>
-    public class SpellManager : MonoBehaviour
+    public class MagicManager : MonoBehaviour
     {
         #region Fields
 

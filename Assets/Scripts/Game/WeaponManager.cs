@@ -218,9 +218,9 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Hide weapons and do nothing if spell is ready or cast animation in progress
-            if (GameManager.Instance.PlayerSpellManager)
+            if (GameManager.Instance.PlayerMagicManager)
             {
-                if (GameManager.Instance.PlayerSpellManager.HasReadySpell || GameManager.Instance.PlayerSpellCasting.IsPlayingAnim)
+                if (GameManager.Instance.PlayerMagicManager.HasReadySpell || GameManager.Instance.PlayerSpellCasting.IsPlayingAnim)
                 {
                     ShowWeapons(false);
                     return;
