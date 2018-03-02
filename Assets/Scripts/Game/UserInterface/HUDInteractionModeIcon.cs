@@ -23,7 +23,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const string iconGrabFilename = "icon-grab";
         const string iconInfoFilename = "icon-info";
         const string iconTalkFilename = "icon-talk";
-        const float iconScale = 0.5f;
+        const float iconScale = 0.8f;
+        const float minimalScale = 0.5f;
 
         const string classicStealFilename = "classic-steal";
         const string classicGrabFilename = "classic-grab";
@@ -102,32 +103,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 grabFilename = iconGrabFilename;
                 infoFilename = iconInfoFilename;
                 talkFilename = iconTalkFilename;
-                displayScale = iconScale;
+
+                if (DaggerfallUnity.Settings.InteractionModeIcon.ToLower() == "minimal")
+                    displayScale = minimalScale;
+                else
+                    displayScale = iconScale;
             }
 
-            if (TextureReplacement.CustomTextureExist(stealFilename))
-                StealTexture = TextureReplacement.LoadCustomTexture(stealFilename);
-            else
-                StealTexture = Resources.Load<Texture2D>(stealFilename);
-            stealSize = TextureReplacement.GetSize(StealTexture, stealFilename, true);
-
-            if (TextureReplacement.CustomTextureExist(grabFilename))
-                GrabTexture = TextureReplacement.LoadCustomTexture(grabFilename);
-            else
-                GrabTexture = Resources.Load<Texture2D>(grabFilename);
-            grabSize = TextureReplacement.GetSize(GrabTexture, grabFilename, true);
-
-            if (TextureReplacement.CustomTextureExist(infoFilename))
-                InfoTexture = TextureReplacement.LoadCustomTexture(infoFilename);
-            else
-                InfoTexture = Resources.Load<Texture2D>(infoFilename);
-            infoSize = TextureReplacement.GetSize(InfoTexture, infoFilename, true);
-
-            if (TextureReplacement.CustomTextureExist(talkFilename))
-                TalkTexture = TextureReplacement.LoadCustomTexture(talkFilename);
-            else
-                TalkTexture = Resources.Load<Texture2D>(talkFilename);
-            talkSize = TextureReplacement.GetSize(TalkTexture, talkFilename, true);
+            StealTexture = DaggerfallUI.GetTextureFromResources(stealFilename, out stealSize);
+            GrabTexture = DaggerfallUI.GetTextureFromResources(grabFilename, out grabSize);
+            InfoTexture = DaggerfallUI.GetTextureFromResources(infoFilename, out infoSize);
+            TalkTexture = DaggerfallUI.GetTextureFromResources(talkFilename, out talkSize);
         }
     }
 }
