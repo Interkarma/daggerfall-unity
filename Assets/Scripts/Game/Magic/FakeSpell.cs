@@ -16,7 +16,7 @@ using System.Collections.Generic;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
 
-namespace DaggerfallWorkshop.Game.Effects
+namespace DaggerfallWorkshop.Game.Magic
 {
     /// <summary>
     /// Fake spell class used to bootstrap effect system.

@@ -11,7 +11,7 @@
 
 using UnityEngine;
 using System;
-using DaggerfallWorkshop.Game.Effects;
+using DaggerfallWorkshop.Game.Magic;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 

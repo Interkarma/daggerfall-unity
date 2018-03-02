@@ -18,7 +18,7 @@ using System.Collections.Generic;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
-using DaggerfallWorkshop.Game.Effects;
+using DaggerfallWorkshop.Game.Magic;
 
 
 //Spellbook / spell buying effect text starts at 1200

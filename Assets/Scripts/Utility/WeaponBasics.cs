@@ -11,7 +11,7 @@
 
 using System;
 using System.Collections.Generic;
-using DaggerfallWorkshop.Game.Effects;
+using DaggerfallWorkshop.Game.Magic;
 
 namespace DaggerfallWorkshop.Utility
 {

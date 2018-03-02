@@ -19,7 +19,7 @@ using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
-using DaggerfallWorkshop.Game.Effects;
+using DaggerfallWorkshop.Game.Magic;
 
 namespace DaggerfallWorkshop.Game
 {

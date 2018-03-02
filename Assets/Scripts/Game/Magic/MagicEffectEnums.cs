@@ -14,7 +14,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace DaggerfallWorkshop.Game.Effects
+namespace DaggerfallWorkshop.Game.Magic
 {
     /// <summary>
     /// How this spell targets entities in world space.

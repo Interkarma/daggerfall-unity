@@ -14,7 +14,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
-using DaggerfallWorkshop.Game.Effects;
+using DaggerfallWorkshop.Game.Magic;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
