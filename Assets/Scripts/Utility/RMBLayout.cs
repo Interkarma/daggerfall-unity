@@ -516,8 +516,10 @@ namespace DaggerfallWorkshop.Utility
                         DFLocation.BuildingData building = block.RmbBlock.FldHeader.BuildingDataList[i];
                         if (IsNamedBuilding(building.BuildingType))
                         {
+                            // Check for replacement building data and use it if found
                             if (WorldDataReplacement.GetBuildingReplacementData(blockName, block.Index, i, out buildingReplacementData))
                             {
+                                // Use custom building values from replacement data, don't use pool or maps file
                                 building.NameSeed = location.Exterior.Buildings[0].NameSeed;
                                 building.FactionId = buildingReplacementData.FactionId;
                                 building.BuildingType = (DFLocation.BuildingTypes) buildingReplacementData.BuildingType;
@@ -697,17 +699,6 @@ namespace DaggerfallWorkshop.Utility
                     if (modelData.Doors != null)
                         doorsOut.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, blockData.Index, recordCount, modelMatrix));
 
-/*                    if (obj.ModelIdNum == 324)
-                    {
-                        for (int i=0; i < modelData.SubMeshes.Length; i++)
-                        {
-                            ModelData.SubMeshData subData = modelData.SubMeshes[i];
-                            Debug.LogFormat("Tex arch: {0}  rec: {1}", subData.TextureArchive, subData.TextureRecord);
-                            if (subData.TextureArchive == 126)
-                                subData.TextureArchive = 133;
-                        }
-                    }
-*/
                     // Store building information for first model of record
                     // First model is main record structure, others are attachments like posts
                     // Only main structure is needed to resolve building after hit-test

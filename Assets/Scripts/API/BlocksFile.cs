@@ -701,6 +701,7 @@ namespace DaggerfallConnect.Arena2
             BuildingReplacementData buildingReplacementData;
             for (int i = 0; i < recordCount; i++)
             {
+                // Check for replacement building data and use it if found
                 if (WorldDataReplacement.GetBuildingReplacementData(blocks[block].Name, block, i, out buildingReplacementData))
                 {
                     blocks[block].DFBlock.RmbBlock.SubRecords[i] = buildingReplacementData.RmbSubRecord;
