@@ -27,6 +27,7 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public static bool RegisterCustomGuild(FactionFile.GuildGroups guildGroup, Type guildType)
         {
+            Debug.Log("RegisterCustomGuild: " + guildGroup);
             if (!customGuilds.ContainsKey(guildGroup))
             {
                 customGuilds.Add(guildGroup, guildType);
