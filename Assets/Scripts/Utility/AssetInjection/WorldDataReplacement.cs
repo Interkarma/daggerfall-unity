@@ -12,6 +12,7 @@ using UnityEngine;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Serialization;
 using System.Collections.Generic;
+using DaggerfallWorkshop.Game.Utility.ModSupport;
 
 namespace DaggerfallWorkshop.Utility.AssetInjection
 {
@@ -49,6 +50,9 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         #region Fields & Properties
 
+        const int noReplacementBT = -1;
+        static readonly BuildingReplacementData noReplacementData = new BuildingReplacementData() { BuildingType = noReplacementBT };
+
         static readonly string worldDataPath = Path.Combine(Application.streamingAssetsPath, "WorldData");
 
         private Dictionary<BlockRecordId, BuildingReplacementData> buildings = new Dictionary<BlockRecordId, BuildingReplacementData>();
@@ -74,26 +78,41 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             if (DaggerfallUnity.Settings.MeshAndTextureReplacement)
             {
                 BlockRecordId blockRecordId = new BlockRecordId() { blockIndex = blockIndex, recordIndex = recordIndex };
-                if (!Buildings.ContainsKey(blockRecordId))
+                if (Buildings.ContainsKey(blockRecordId))
                 {
+                    buildingData = Buildings[blockRecordId];
+                    return (buildingData.BuildingType != noReplacementBT);
+                }
+                else
+                {
+                    string fileName = GetBuildingReplacementFilename(blockName, blockIndex, recordIndex);
+
+                    // Seek from loose files
                     if (File.Exists(Path.Combine(worldDataPath, GetBuildingReplacementFilename(blockName, blockIndex, recordIndex))))
                     {
-                        string fileName = GetBuildingReplacementFilename(blockName, blockIndex, recordIndex);
                         string buildingReplacementJson = File.ReadAllText(Path.Combine(worldDataPath, fileName));
-                        buildingData = (BuildingReplacementData) SaveLoadManager.Deserialize(typeof(BuildingReplacementData), buildingReplacementJson);
-#if !UNITY_EDITOR       // Cache building replacement data unless in editor
+                        buildingData = (BuildingReplacementData)SaveLoadManager.Deserialize(typeof(BuildingReplacementData), buildingReplacementJson);
+#if !UNITY_EDITOR       // Cache building replacement data, unless running in editor
                         Buildings.Add(blockRecordId, buildingData);
 #endif
                         return true;
                     }
-                }
-                else
-                {
-                    buildingData = Buildings[blockRecordId];
-                    return true;
+                    // Seek from mods
+                    TextAsset buildingReplacementJsonAsset;
+                    if (ModManager.Instance != null && ModManager.Instance.TryGetAsset(fileName, false, out buildingReplacementJsonAsset))
+                    {
+                        buildingData = (BuildingReplacementData)SaveLoadManager.Deserialize(typeof(BuildingReplacementData), buildingReplacementJsonAsset.text);
+#if !UNITY_EDITOR       // Cache building replacement data, unless running in editor
+                        Buildings.Add(blockRecordId, buildingData);
+#endif
+                        return true;
+                    }
+#if !UNITY_EDITOR   // Only look for replacement data once, unless running in editor
+                    Buildings.Add(blockRecordId, noReplacementData);
+#endif
                 }
             }
-            buildingData = new BuildingReplacementData();
+            buildingData = noReplacementData;
             return false;
         }
 

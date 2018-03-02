@@ -9,6 +9,7 @@
 using System;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace DaggerfallWorkshop.Game.Guilds
 {
@@ -153,6 +154,7 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public static bool RegisterGuildService(int npcFactionId, GuildServices service)
         {
+            Debug.Log("RegisterGuildService: " + npcFactionId);
             if (!guildNpcServices.ContainsKey(npcFactionId))
             {
                 guildNpcServices.Add(npcFactionId, service);
@@ -163,6 +165,7 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public static bool RegisterGuildService(int npcFactionId, CustomGuildService service, string serviceName)
         {
+            Debug.Log("RegisterGuildService: " + npcFactionId + " with service: " + serviceName);
             if (!customNpcServices.ContainsKey(npcFactionId))
             {
                 customNpcServices.Add(npcFactionId, service);
