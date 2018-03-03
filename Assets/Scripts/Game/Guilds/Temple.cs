@@ -390,13 +390,13 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #endregion
 
-        #region Special temple benefits:
+        #region Special guild benefits:
 
         public override int FastTravel(int duration)
         {
             if (deity == Divines.Akatosh)
             {
-                Debug.LogFormat("Akatosh FastTravel= {0} -{1} less days", duration, (duration - (int)(((95f - rank) / 100) * duration)) / 1440);
+                Debug.LogFormat("Akatosh FastTravel= {0} -{1} less hours", duration, duration - (int)(((95f - rank) / 100) * duration));
                 return (int)(((95f - rank) / 100) * duration);
             }
             else
