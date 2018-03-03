@@ -471,8 +471,17 @@ namespace DaggerfallWorkshop.Game.Entity
         {
             if (godMode)
                 return currentHealth = MaxHealth;
-            else
-                return base.SetHealth(amount);
+
+            currentHealth = Mathf.Clamp(amount, 0, MaxHealth);
+            if (currentHealth <= 0)
+            {
+                // Players can have avoid death benefit from guild memberships
+                if (GameManager.Instance.GuildManager.AvoidDeath())
+                    return currentHealth = 1;
+                else
+                    RaiseOnDeathEvent();
+            }
+            return currentHealth;
         }
 
         /// <summary>
