@@ -406,8 +406,16 @@ namespace DaggerfallWorkshop.Game.Formulas
 
                         if (DFRandom.rand() % 100 < 50 && minBaseDamage > 0 && CalculateSuccessfulHit(attacker, target, chanceToHitMod, null, struckBodyPart))
                         {
-                            damage += UnityEngine.Random.Range(minBaseDamage, maxBaseDamage + 1);
+                            int hitDamage = UnityEngine.Random.Range(minBaseDamage, maxBaseDamage + 1);
+                            // Apply special monster attack effects
+                            if (hitDamage > 0)
+                                OnMonsterHit(AIAttacker, target);
+
+                            // TODO: Apply Ring of Namira effect
+
+                            damage += hitDamage;
                         }
+
                         ++attackNumber;
                     }
                 }
@@ -432,6 +440,8 @@ namespace DaggerfallWorkshop.Game.Formulas
                             damage /= 2;
                         }
                     }
+
+                    // TODO: Apply strength bonus from Mace of Molag Bal
 
                     // Apply strength modifier
                     damage += DamageModifier(attacker.Stats.LiveStrength);
@@ -461,6 +471,9 @@ namespace DaggerfallWorkshop.Game.Formulas
             // Here, if an equipped shield covers the hit body part, it takes damage instead.
             if (weapon != null && damage > 0)
             {
+                // TODO: Inflict poison
+                // TODO: Inflict weapon magic effects
+                // TODO: If attacker is AI, apply Ring of Namira effect
                 weapon.DamageThroughPhysicalHit(damage, attacker);
 
                 Items.DaggerfallUnityItem shield = target.ItemEquipTable.GetItem(Items.EquipSlots.LeftHand);
@@ -488,6 +501,60 @@ namespace DaggerfallWorkshop.Game.Formulas
             }
 
             return damage;
+        }
+
+        public static void OnMonsterHit(EnemyEntity attacker, DaggerfallEntity target)
+        {
+            switch (attacker.CareerIndex)
+            {
+                case (int)MonsterCareers.Rat:
+                    if (UnityEngine.Random.Range(0, 100 + 1) <= 5)
+                        InflictDisease(target);
+                    break;
+                case (int)MonsterCareers.GiantBat:
+                    if (UnityEngine.Random.Range(0, 100 + 1) <= 2)
+                        InflictDisease(target);
+                    break;
+                case (int)MonsterCareers.Spider:
+                    // if target does not have paralyze (spell id 66), cast it
+                    break;
+                case (int)MonsterCareers.Werewolf:
+                    //uint random = DFRandom.rand();
+                    //if (random < 400)
+                    //  InflictLycanthropy (werewolf version)
+                    break;
+                case (int)MonsterCareers.Nymph:
+                    // Drain target fatigue
+                    break;
+                case (int)MonsterCareers.Wereboar:
+                    //uint random = DFRandom.rand();
+                    //if (random < 400)
+                    //  InflictLycanthropy (wereboar version)
+                    break;
+                case (int)MonsterCareers.Mummy:
+                    if (UnityEngine.Random.Range(1, 100 + 1) <= 5)
+                        InflictDisease(target);
+                    break;
+                case (int)MonsterCareers.GiantScorpion:
+                    // if target does not have paralyze (spell id 66), cast it
+                    break;
+                case (int)MonsterCareers.Vampire:
+                case (int)MonsterCareers.VampireAncient:
+                    uint random = DFRandom.rand();
+                    if (random >= 400)
+                    {
+                        if (UnityEngine.Random.Range(1, 100 + 1) <= 2)
+                            InflictDisease(target);
+                    }
+                    // else
+                    //{
+                    //    InflictVampirism
+                    //}
+                    break;
+
+                default:
+                    break;
+            }
         }
 
         public static bool CalculateSuccessfulHit(Entity.DaggerfallEntity attacker, Entity.DaggerfallEntity target, int chanceToHitMod, Items.DaggerfallUnityItem weapon, int struckBodyPart)
@@ -628,15 +695,18 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         #region Enemies
 
-        public static Diseases CalculateChanceOfDisease(EnemyEntity attacker)
+        public static void InflictDisease(DaggerfallEntity target)
         {
-            DFCareer.EnemyGroups group = attacker.GetEnemyGroup();
-            if (group == DFCareer.EnemyGroups.Animals || group == DFCareer.EnemyGroups.Undead)
+            PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+
+            if (target != playerEntity)
+                return;
+
+            if (!playerEntity.Disease.IsDiseased())
             {
-                if (UnityEngine.Random.Range(0, 1000) > 6)
-                    return (Diseases) UnityEngine.Random.Range(100, 117);
+                Diseases disease = (Diseases) UnityEngine.Random.Range(100, 117);
+                playerEntity.Disease = new DaggerfallDisease(disease);
             }
-            return Diseases.None;
         }
 
         // Generates health for enemy classes based on level and class
