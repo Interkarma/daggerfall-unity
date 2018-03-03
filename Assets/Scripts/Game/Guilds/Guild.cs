@@ -9,7 +9,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 using DaggerfallConnect;
-using System;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Utility;
@@ -24,6 +23,7 @@ namespace DaggerfallWorkshop.Game.Guilds
     {
         #region Constants
 
+        public const int defaultTrainingMax = 50;
         public const int memberTrainingCost = 100;
         public const int nonMemberTrainingCost = 400;
 
@@ -247,6 +247,11 @@ namespace DaggerfallWorkshop.Game.Guilds
         #endregion
 
         #region Service: Training
+
+        public virtual int GetTrainingMax(DFCareer.Skills skill)
+        {
+            return defaultTrainingMax;
+        }
 
         public virtual int GetTrainingPrice()
         {
