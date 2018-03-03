@@ -36,6 +36,8 @@ namespace DaggerfallWorkshop.Game.Guilds
             return false;
         }
 
+        #region Guild membership handling
+
         private Dictionary<FactionFile.GuildGroups, Guild> memberships = new Dictionary<FactionFile.GuildGroups, Guild>();
 
         public List<Guild> GetMemberships()
@@ -187,6 +189,28 @@ namespace DaggerfallWorkshop.Game.Guilds
                 }
             }
         }
+
+        #endregion
+
+        #region Special guild benefits
+
+        public virtual int FastTravel(int duration)
+        {
+            int newDuration = duration;
+            foreach (Guild guild in memberships.Values)
+                newDuration = guild.FastTravel(newDuration);
+            return newDuration;
+        }
+
+        public virtual int DeepBreath(int duration)
+        {
+            int newDuration = duration;
+            foreach (Guild guild in memberships.Values)
+                newDuration = guild.DeepBreath(newDuration);
+            return newDuration;
+        }
+
+        #endregion
 
     }
 }

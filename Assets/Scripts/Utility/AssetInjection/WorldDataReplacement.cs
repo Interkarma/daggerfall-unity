@@ -88,7 +88,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                     string fileName = GetBuildingReplacementFilename(blockName, blockIndex, recordIndex);
 
                     // Seek from loose files
-                    if (File.Exists(Path.Combine(worldDataPath, GetBuildingReplacementFilename(blockName, blockIndex, recordIndex))))
+                    if (File.Exists(Path.Combine(worldDataPath, fileName)))
                     {
                         string buildingReplacementJson = File.ReadAllText(Path.Combine(worldDataPath, fileName));
                         buildingData = (BuildingReplacementData)SaveLoadManager.Deserialize(typeof(BuildingReplacementData), buildingReplacementJson);

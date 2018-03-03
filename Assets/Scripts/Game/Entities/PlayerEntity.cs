@@ -244,7 +244,7 @@ namespace DaggerfallWorkshop.Game.Entity
                     {
                         if (currentBreath == 0)
                         {
-                            currentBreath = GameManager.Instance.GuildManager.GetGuild(FactionFile.GuildGroups.HolyOrder).DeepBreath(MaxBreath);
+                            currentBreath = GameManager.Instance.GuildManager.DeepBreath(MaxBreath);
                         }
                         if (breathUpdateTally > 18)
                         {
