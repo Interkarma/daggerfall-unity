@@ -428,17 +428,22 @@ namespace DaggerfallWorkshop.Game.Formulas
                     damage = UnityEngine.Random.Range(weapon.GetBaseDamageMin(), weapon.GetBaseDamageMax() + 1);
                     damage += damageModifiers;
 
-                    // Apply modifiers for Skeletal Warrior.
-                    if (AITarget != null && AITarget.CareerIndex == (int)Entity.MonsterCareers.SkeletalWarrior)
+                    // Apply damage modifier for Skeletal Warrior. Damage halved if using an edged weapon
+                    // rather than a blunt weapon.
+                    if (AITarget != null && AITarget.CareerIndex == (int)MonsterCareers.SkeletalWarrior
+                        && (weapon.flags & 0x10) == 0)
                     {
-                        if (weapon.NativeMaterialValue == (int)Items.WeaponMaterialTypes.Silver)
-                        {
-                            damage *= 2;
-                        }
-                        if ((weapon.flags & 0x10) == 0) // not a blunt weapon
-                        {
-                            damage /= 2;
-                        }
+                        damage /= 2;
+                    }
+
+                    // Apply modifier for werebeasts. In classic, this applies to the Skeletal Warrior, but this is
+                    // probably a mistake. The Skeletal Warrior ID is 15, just 1 off from the Wereboar ID of 14, and
+                    // silver = anti-werebeast is something used elsewhere in the TES series.
+                    if (AITarget != null && (AITarget.CareerIndex == (int)MonsterCareers.Wereboar
+                        || AITarget.CareerIndex == (int)MonsterCareers.Werewolf)
+                        && weapon.NativeMaterialValue == (int)Items.WeaponMaterialTypes.Silver)
+                    {
+                        damage *= 2;
                     }
 
                     // TODO: Apply strength bonus from Mace of Molag Bal
@@ -508,11 +513,12 @@ namespace DaggerfallWorkshop.Game.Formulas
             switch (attacker.CareerIndex)
             {
                 case (int)MonsterCareers.Rat:
-                    if (UnityEngine.Random.Range(0, 100 + 1) <= 5)
+                    if (UnityEngine.Random.Range(1, 100 + 1) <= 5)
                         InflictDisease(target);
                     break;
                 case (int)MonsterCareers.GiantBat:
-                    if (UnityEngine.Random.Range(0, 100 + 1) <= 2)
+                    // Note: Classic uses 2% chance, but DF Chronicles says 5% chance. Not sure which was intended.
+                    if (UnityEngine.Random.Range(1, 100 + 1) <= 2)
                         InflictDisease(target);
                     break;
                 case (int)MonsterCareers.Spider:
@@ -530,6 +536,11 @@ namespace DaggerfallWorkshop.Game.Formulas
                     //uint random = DFRandom.rand();
                     //if (random < 400)
                     //  InflictLycanthropy (wereboar version)
+                    break;
+                case (int)MonsterCareers.Zombie:
+                    // Nothing in classic. DF Chronicles says 2% chance of disease, which seems like it was probably intended.
+                    if (UnityEngine.Random.Range(1, 100 + 1) <= 2)
+                        InflictDisease(target);
                     break;
                 case (int)MonsterCareers.Mummy:
                     if (UnityEngine.Random.Range(1, 100 + 1) <= 5)
@@ -551,7 +562,9 @@ namespace DaggerfallWorkshop.Game.Formulas
                     //    InflictVampirism
                     //}
                     break;
-
+                case (int)MonsterCareers.Lamia:
+                    // Nothing in classic, but DF Chronicles says 2 pts of fatigue damage per health damage
+                    break;
                 default:
                     break;
             }
