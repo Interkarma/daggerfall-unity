@@ -210,6 +210,14 @@ namespace DaggerfallWorkshop.Game.Guilds
             return newDuration;
         }
 
+        public virtual bool AvoidDeath()
+        {
+            foreach (Guild guild in memberships.Values)
+                if (guild.AvoidDeath())
+                    return true;
+            return false;
+        }
+
         #endregion
 
     }

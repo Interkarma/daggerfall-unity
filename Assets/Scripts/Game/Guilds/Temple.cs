@@ -385,7 +385,7 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public override bool FreeHealing()
         {
-            return (rank > 0);
+            return (templeRankBenefits[deity].healing <= rank);
         }
 
         #endregion
@@ -399,8 +399,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                 Debug.LogFormat("Akatosh FastTravel= {0} -{1} less hours", duration, duration - (int)(((95f - rank) / 100) * duration));
                 return (int)(((95f - rank) / 100) * duration);
             }
-            else
-                return duration;
+            return duration;
         }
 
         public override int ReducedCureCost(int price)
@@ -418,12 +417,19 @@ namespace DaggerfallWorkshop.Game.Guilds
                 Debug.LogFormat("Kynareth DeepBreath= {0} +{1} extra seconds", duration, (int)((((10f + rank) / 10) - 1) * duration));
                 return (int)(((10f + rank) / 10) * duration);
             }
-            else
-                return duration;
+            return duration;
         }
 
         public override bool AvoidDeath()
-        {// TODO
+        {
+            if (deity == Divines.Stendarr &&
+                !GameManager.Instance.PlayerEnterExit.IsPlayerSubmerged &&
+                UnityEngine.Random.Range(1, 50) < rank)
+            {
+                Debug.LogFormat("Stendarr AvoidDeath= success");
+                // TODO: what is "weaker state" is it more than being left on 1 health?
+                return true;
+            }
             return false;
         }
 
