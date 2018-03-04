@@ -409,7 +409,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                             int hitDamage = UnityEngine.Random.Range(minBaseDamage, maxBaseDamage + 1);
                             // Apply special monster attack effects
                             if (hitDamage > 0)
-                                OnMonsterHit(AIAttacker, target);
+                                OnMonsterHit(AIAttacker, target, hitDamage);
 
                             // TODO: Apply Ring of Namira effect
 
@@ -508,7 +508,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             return damage;
         }
 
-        public static void OnMonsterHit(EnemyEntity attacker, DaggerfallEntity target)
+        public static void OnMonsterHit(EnemyEntity attacker, DaggerfallEntity target, int damage)
         {
             byte[] diseaseListA = { 1 };
             byte[] diseaseListB = { 1, 3, 5 };
@@ -536,7 +536,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                     //  InflictLycanthropy (werewolf version)
                     break;
                 case (int)MonsterCareers.Nymph:
-                    // Drain target fatigue
+                    FatigueDamage(target, damage);
                     break;
                 case (int)MonsterCareers.Wereboar:
                     //uint random = DFRandom.rand();
@@ -571,6 +571,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                     break;
                 case (int)MonsterCareers.Lamia:
                     // Nothing in classic, but DF Chronicles says 2 pts of fatigue damage per health damage
+                    FatigueDamage(target, damage);
                     break;
                 default:
                     break;
@@ -728,6 +729,22 @@ namespace DaggerfallWorkshop.Game.Formulas
                 Diseases disease = (Diseases)(diseaseChoice + 100); // Adding 100 to match to enums
                 playerEntity.Disease = new DaggerfallDisease(disease);
             }
+        }
+
+        public static void FatigueDamage(DaggerfallEntity target, int damage)
+        {
+            // In classic, nymphs do 10-30 fatigue damage per hit, and lamias don't do any.
+            // DF Chronicles says nymphs have "Energy Leech", which is a spell in
+            // the game and not what they use, and for lamias "Every 1 pt of health damage = 2 pts of fatigue damage".
+            // Lamia health damage is 5-15. Multiplying this by 2 may be where 10-30 came from. Nymph health damage is 1-5.
+            // Not sure what was intended here, but using the "Every 1 pt of health damage = 2 pts of fatigue damage"
+            // seems sensible, since the fatigue damage will scale to the health damage and lamias are a higher level opponent
+            // than nymphs and will do more fatigue damage.
+            target.SetFatigue(target.CurrentFatigue - ((damage * 2) * 64));
+
+            // TODO: When nymphs drain the player's fatigue level to 0, the player is supposed to fall asleep for 14 days
+            // and then wake up, according to DF Chronicles. This doesn't work correctly in classic. Classic does advance
+            // time 14 days but the player dies like normal because of the "collapse from exhaustion near monsters = die" code.
         }
 
         // Generates health for enemy classes based on level and class

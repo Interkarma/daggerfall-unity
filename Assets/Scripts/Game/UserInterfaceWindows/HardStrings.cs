@@ -91,7 +91,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public const string materialIneffective = "The material of the weapon you are using is ineffective.";
         public const string successfulBackstab = "Successful backstab!";
-        public const string languagePacified = "Pacified %e using %s skill.";
+
+        public const string languagePacified = "Pacified %e using %s skill."; // Not in classic.
 
         public const string lockpickingSuccess = "The lock clicks open.";
         public const string lockpickingFailure = "It does not unlock.";
@@ -147,6 +148,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public const string doesntNeedIdentifying = "This does not need to be identified.";
 
+        public const string exhaustedInWater = "Fatigue overcomes you and sends you to a watery grave...."; // Not in classic. Borrowed from Arena.
 
         // Words used by macro handlers:
 
