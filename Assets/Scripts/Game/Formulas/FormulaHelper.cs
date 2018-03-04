@@ -712,6 +712,50 @@ namespace DaggerfallWorkshop.Game.Formulas
             return damage;
         }
 
+        static int SavingThrow(DFCareer.EffectFlags effectFlags, DaggerfallEntity target)
+        {
+            PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+
+            int savingThrow = 50;
+            DFCareer.Tolerance toleranceFlags = 0;
+            int biographyMod = 0;
+
+            if (effectFlags == DFCareer.EffectFlags.Disease)
+            {
+                toleranceFlags = target.Career.Disease;
+                if (target == playerEntity)
+                    biographyMod = playerEntity.BiographyResistDiseaseMod;
+            }
+
+            if (toleranceFlags == DFCareer.Tolerance.Immune)
+                return 0;
+            if (toleranceFlags == DFCareer.Tolerance.CriticalWeakness)
+                return 100;
+            if (toleranceFlags == DFCareer.Tolerance.Resistant)
+                savingThrow = 25;
+            if (toleranceFlags == DFCareer.Tolerance.LowTolerance)
+                savingThrow = 75;
+
+            savingThrow += biographyMod;
+            Mathf.Clamp(savingThrow, 5, 95);
+
+            int percentDamageOrDuration = 0;
+            int roll = UnityEngine.Random.Range(1, 100 + 1);
+
+            if (roll <= savingThrow)
+            {
+                // Percent damage/duration is prorated at within 20 of failed roll, as described in DF Chronicles
+                if (savingThrow - 20 <= roll)
+                    percentDamageOrDuration = 100 - 5 * (savingThrow - roll);
+                else
+                    percentDamageOrDuration = 0;
+            }
+            else
+                percentDamageOrDuration = 100;
+
+            return percentDamageOrDuration;
+        }
+
         #endregion
 
         #region Enemies
@@ -723,8 +767,12 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (target != playerEntity)
                 return;
 
-            if (!playerEntity.Disease.IsDiseased())
+            // Player cannot catch diseases at level 1 in classic. Maybe to keep new players from dying at the start of the game.
+            if (!playerEntity.Disease.IsDiseased() && playerEntity.Level != 1)
             {
+                // Return if disease resisted
+                if (SavingThrow(DFCareer.EffectFlags.Disease, target) == 0)
+                    return;
                 int diseaseChoice = UnityEngine.Random.Range(diseaseList[0], diseaseList.Length);
                 Diseases disease = (Diseases)(diseaseChoice + 100); // Adding 100 to match to enums
                 playerEntity.Disease = new DaggerfallDisease(disease);
