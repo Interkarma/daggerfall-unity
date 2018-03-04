@@ -510,16 +510,22 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         public static void OnMonsterHit(EnemyEntity attacker, DaggerfallEntity target)
         {
+            byte[] diseaseListA = { 1 };
+            byte[] diseaseListB = { 1, 3, 5 };
+            byte[] diseaseListC = { 1, 2, 3, 4, 5, 6, 8, 9, 11, 13, 14 };
+
             switch (attacker.CareerIndex)
             {
                 case (int)MonsterCareers.Rat:
+                    // In classic rat can only give plague (diseaseListA), but DF Chronicles says plague, stomach rot and brain fever (diseaseListB).
+                    // Don't know which was intended. Using B since it has more variety.
                     if (UnityEngine.Random.Range(1, 100 + 1) <= 5)
-                        InflictDisease(target);
+                        InflictDisease(target, diseaseListB);
                     break;
                 case (int)MonsterCareers.GiantBat:
-                    // Note: Classic uses 2% chance, but DF Chronicles says 5% chance. Not sure which was intended.
+                    // Classic uses 2% chance, but DF Chronicles says 5% chance. Not sure which was intended.
                     if (UnityEngine.Random.Range(1, 100 + 1) <= 2)
-                        InflictDisease(target);
+                        InflictDisease(target, diseaseListB);
                     break;
                 case (int)MonsterCareers.Spider:
                     // if target does not have paralyze (spell id 66), cast it
@@ -539,12 +545,13 @@ namespace DaggerfallWorkshop.Game.Formulas
                     break;
                 case (int)MonsterCareers.Zombie:
                     // Nothing in classic. DF Chronicles says 2% chance of disease, which seems like it was probably intended.
+                    // Diseases listed in DF Chronicles match those of mummy (except missing cholera, probably a mistake)
                     if (UnityEngine.Random.Range(1, 100 + 1) <= 2)
-                        InflictDisease(target);
+                        InflictDisease(target, diseaseListC);
                     break;
                 case (int)MonsterCareers.Mummy:
                     if (UnityEngine.Random.Range(1, 100 + 1) <= 5)
-                        InflictDisease(target);
+                        InflictDisease(target, diseaseListC);
                     break;
                 case (int)MonsterCareers.GiantScorpion:
                     // if target does not have paralyze (spell id 66), cast it
@@ -555,7 +562,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                     if (random >= 400)
                     {
                         if (UnityEngine.Random.Range(1, 100 + 1) <= 2)
-                            InflictDisease(target);
+                            InflictDisease(target, diseaseListA);
                     }
                     // else
                     //{
@@ -708,7 +715,7 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         #region Enemies
 
-        public static void InflictDisease(DaggerfallEntity target)
+        public static void InflictDisease(DaggerfallEntity target, byte[] diseaseList)
         {
             PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
 
@@ -717,7 +724,8 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             if (!playerEntity.Disease.IsDiseased())
             {
-                Diseases disease = (Diseases) UnityEngine.Random.Range(100, 117);
+                int diseaseChoice = UnityEngine.Random.Range(diseaseList[0], diseaseList.Length);
+                Diseases disease = (Diseases)(diseaseChoice + 100); // Adding 100 to match to enums
                 playerEntity.Disease = new DaggerfallDisease(disease);
             }
         }
