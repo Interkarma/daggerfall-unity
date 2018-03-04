@@ -1127,7 +1127,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     foreach (DFBlock.RdbObject obj in group.RdbObjects)
                     {
                         // Get marker ID
-                        ulong markerID = (ulong)(blockData.Position + obj.This);
+                        ulong markerID = (ulong)(blockData.Position + obj.Position);
 
                         // Look for editor flats
                         Vector3 position = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;

@@ -219,7 +219,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
                 return;
             }
-            // Handle service
+            // Handle known service
             switch (service)
             {
                 case GuildServices.Quests:
@@ -228,7 +228,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 case GuildServices.Identify:
                     CloseWindow();
-                    uiManager.PushWindow(new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Identify, this));
+                    uiManager.PushWindow(new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Identify, this, guild));
                     break;
 
                 case GuildServices.Repair:
@@ -253,13 +253,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     uiManager.PushWindow(DaggerfallUI.Instance.DfTravelMapWindow);
                     break;
 
-                case GuildServices.BuySpells:
+                //case GuildServices.BuySpells:
                     //uiManager.PushWindow(new DaggerfallBankingWindow(uiManager, this));
                     //break;
 
                 default:
                     CloseWindow();
-                    DaggerfallUI.MessageBox("Guild service not yet implemented.");
+                    Services.CustomGuildService customService;
+                    if (Services.GetCustomGuildService((int)service, out customService))
+                        customService();
+                    else
+                        DaggerfallUI.MessageBox("Guild service not yet implemented.");
                     break;
             }
         }
@@ -545,11 +549,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             List<DFCareer.Skills> trainingSkills = GetTrainingSkills();
             DFCareer.Skills skillToTrain = trainingSkills[index];
 
-            int maxTraining = 50;
-            if (DaggerfallSkills.IsLanguageSkill(skillToTrain))     // BCHG: Language skill training is capped by char intelligence instead of 50%
-                maxTraining = playerEntity.Stats.PermanentIntelligence;
-
-            if (playerEntity.Skills.GetPermanentSkillValue(skillToTrain) > maxTraining)
+            if (playerEntity.Skills.GetPermanentSkillValue(skillToTrain) > guild.GetTrainingMax(skillToTrain))
             {
                 // Inform player they're too skilled to train
                 TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(TrainingTooSkilledId);
