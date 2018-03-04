@@ -228,7 +228,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 case GuildServices.Identify:
                     CloseWindow();
-                    uiManager.PushWindow(new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Identify, this));
+                    uiManager.PushWindow(new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Identify, this, guild));
                     break;
 
                 case GuildServices.Repair:

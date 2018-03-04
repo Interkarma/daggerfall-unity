@@ -16,7 +16,7 @@ using System.Collections.Generic;
 using System.IO;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Save;
-using UnityEngine;
+using DaggerfallWorkshop;
 #endregion
 
 namespace DaggerfallConnect.Arena2
@@ -213,7 +213,7 @@ namespace DaggerfallConnect.Arena2
         /// <returns>true if faction was registered, false if the faction id is already in use</returns>
         public static bool RegisterCustomFaction(int factionId, FactionData factionData)
         {
-            Debug.Log("RegisterCustomFaction: " + factionId);
+            DaggerfallUnity.LogMessage("RegisterCustomFaction: " + factionId, true);
             if (!customFactions.ContainsKey(factionId))
             {
                 customFactions.Add(factionId, factionData);

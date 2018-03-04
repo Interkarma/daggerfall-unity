@@ -388,9 +388,17 @@ namespace DaggerfallWorkshop.Game.Guilds
             return (templeRankBenefits[deity].healing <= rank);
         }
 
+        public override int ReducedCureCost(int price)
+        {// TEST
+            if (deity == Divines.Arkay)
+                return ((10 - rank) / 10) * price;
+            else
+                return price;
+        }
+
         #endregion
 
-        #region Special guild benefits:
+        #region Special benefits:
 
         public override int FastTravel(int duration)
         {
@@ -400,14 +408,6 @@ namespace DaggerfallWorkshop.Game.Guilds
                 return (int)(((95f - rank) / 100) * duration);
             }
             return duration;
-        }
-
-        public override int ReducedCureCost(int price)
-        {// TEST
-            if (deity == Divines.Arkay)
-                return ((10 - rank) / 10) * price;
-            else
-                return price;
         }
 
         public override int DeepBreath(int duration)
