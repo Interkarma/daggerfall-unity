@@ -278,6 +278,8 @@ namespace DaggerfallWorkshop.Game.Formulas
             bool success = (roll < chance);
             if (success)
                 player.TallySkill(languageSkill, 1);
+            else if (languageSkill != DFCareer.Skills.Etiquette && languageSkill != DFCareer.Skills.Streetwise)
+                player.TallySkill(languageSkill, 1);
 
             Debug.LogFormat("Pacification {3} using {0} skill: chance= {1}  roll= {2}", languageSkill, chance, roll, success ? "success" : "failure");
             return success;
