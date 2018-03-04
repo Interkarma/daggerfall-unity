@@ -102,9 +102,6 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #endregion
 
-        #region Service: Training
-
-        #endregion
 
         #region Joining
 

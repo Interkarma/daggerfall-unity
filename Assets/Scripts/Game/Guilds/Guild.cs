@@ -190,18 +190,23 @@ namespace DaggerfallWorkshop.Game.Guilds
             return price;
         }
 
-        #endregion
-
-        #region Special temple benefits:
-
-        public virtual int FastTravel(int duration)
+        public virtual int ReducedIdentifyCost(int price)
         {
-            return duration;
+            return price;
         }
 
         public virtual int ReducedCureCost(int price)
         {
             return price;
+        }
+
+        #endregion
+
+        #region Special benefits:
+
+        public virtual int FastTravel(int duration)
+        {
+            return duration;
         }
 
         public virtual int DeepBreath(int duration)
