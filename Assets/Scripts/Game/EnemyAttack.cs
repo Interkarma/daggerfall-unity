@@ -195,16 +195,7 @@ namespace DaggerfallWorkshop.Game
             playerEntity.TallySkill(DFCareer.Skills.Dodging, 1);
 
             if (damage > 0)
-            {
                 GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", damage);
-
-                if (!playerEntity.Disease.IsDiseased())
-                {
-                    Diseases disease = FormulaHelper.CalculateChanceOfDisease(entity);
-                    if (disease != Diseases.None)
-                        playerEntity.Disease = new DaggerfallDisease(disease);
-                }
-            }
 
             return damage;
         }

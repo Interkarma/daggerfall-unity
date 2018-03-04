@@ -842,21 +842,27 @@ namespace DaggerfallWorkshop.Game.Entity
 
             GameManager.Instance.PlayerMotor.CancelMovement = true;
 
-            if (!enemiesNearby)
-                tokens = textProvider.GetRSCTokens(youDropToTheGround1);
+            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
+
+            if (GameManager.Instance.PlayerEnterExit.IsPlayerSwimming)
+                messageBox.SetText(HardStrings.exhaustedInWater);
             else
-                tokens = textProvider.GetRSCTokens(youDropToTheGround2);
-
-            if (tokens != null && tokens.Length > 0)
             {
-                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
-                messageBox.SetTextTokens(tokens);
-                messageBox.ClickAnywhereToClose = true;
-                messageBox.ParentPanel.BackgroundColor = Color.clear;
-                messageBox.Show();
-            }
+                if (!enemiesNearby)
+                    tokens = textProvider.GetRSCTokens(youDropToTheGround1);
+                else
+                    tokens = textProvider.GetRSCTokens(youDropToTheGround2);
 
-            if (!enemiesNearby)
+                if (tokens != null && tokens.Length > 0)
+                {
+                    messageBox.SetTextTokens(tokens);
+                }
+            }
+            messageBox.ClickAnywhereToClose = true;
+            messageBox.ParentPanel.BackgroundColor = Color.clear;
+            messageBox.Show();
+
+            if (!enemiesNearby && !GameManager.Instance.PlayerEnterExit.IsPlayerSwimming)
             {
                 // TODO: Duplicates rest code in rest window. Should be unified.
                 DaggerfallUnity.Instance.WorldTime.Now.RaiseTime(1 * DaggerfallDateTime.SecondsPerHour);

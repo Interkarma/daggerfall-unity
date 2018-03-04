@@ -406,8 +406,16 @@ namespace DaggerfallWorkshop.Game.Formulas
 
                         if (DFRandom.rand() % 100 < 50 && minBaseDamage > 0 && CalculateSuccessfulHit(attacker, target, chanceToHitMod, null, struckBodyPart))
                         {
-                            damage += UnityEngine.Random.Range(minBaseDamage, maxBaseDamage + 1);
+                            int hitDamage = UnityEngine.Random.Range(minBaseDamage, maxBaseDamage + 1);
+                            // Apply special monster attack effects
+                            if (hitDamage > 0)
+                                OnMonsterHit(AIAttacker, target, hitDamage);
+
+                            // TODO: Apply Ring of Namira effect
+
+                            damage += hitDamage;
                         }
+
                         ++attackNumber;
                     }
                 }
@@ -420,18 +428,25 @@ namespace DaggerfallWorkshop.Game.Formulas
                     damage = UnityEngine.Random.Range(weapon.GetBaseDamageMin(), weapon.GetBaseDamageMax() + 1);
                     damage += damageModifiers;
 
-                    // Apply modifiers for Skeletal Warrior.
-                    if (AITarget != null && AITarget.CareerIndex == (int)Entity.MonsterCareers.SkeletalWarrior)
+                    // Apply damage modifier for Skeletal Warrior. Damage halved if using an edged weapon
+                    // rather than a blunt weapon.
+                    if (AITarget != null && AITarget.CareerIndex == (int)MonsterCareers.SkeletalWarrior
+                        && (weapon.flags & 0x10) == 0)
                     {
-                        if (weapon.NativeMaterialValue == (int)Items.WeaponMaterialTypes.Silver)
-                        {
-                            damage *= 2;
-                        }
-                        if ((weapon.flags & 0x10) == 0) // not a blunt weapon
-                        {
-                            damage /= 2;
-                        }
+                        damage /= 2;
                     }
+
+                    // Apply modifier for werebeasts. In classic, this applies to the Skeletal Warrior, but this is
+                    // probably a mistake. The Skeletal Warrior ID is 15, just 1 off from the Wereboar ID of 14, and
+                    // silver = anti-werebeast is something used elsewhere in the TES series.
+                    if (AITarget != null && (AITarget.CareerIndex == (int)MonsterCareers.Wereboar
+                        || AITarget.CareerIndex == (int)MonsterCareers.Werewolf)
+                        && weapon.NativeMaterialValue == (int)Items.WeaponMaterialTypes.Silver)
+                    {
+                        damage *= 2;
+                    }
+
+                    // TODO: Apply strength bonus from Mace of Molag Bal
 
                     // Apply strength modifier
                     damage += DamageModifier(attacker.Stats.LiveStrength);
@@ -461,6 +476,9 @@ namespace DaggerfallWorkshop.Game.Formulas
             // Here, if an equipped shield covers the hit body part, it takes damage instead.
             if (weapon != null && damage > 0)
             {
+                // TODO: Inflict poison
+                // TODO: Inflict weapon magic effects
+                // TODO: If attacker is AI, apply Ring of Namira effect
                 weapon.DamageThroughPhysicalHit(damage, attacker);
 
                 Items.DaggerfallUnityItem shield = target.ItemEquipTable.GetItem(Items.EquipSlots.LeftHand);
@@ -488,6 +506,76 @@ namespace DaggerfallWorkshop.Game.Formulas
             }
 
             return damage;
+        }
+
+        public static void OnMonsterHit(EnemyEntity attacker, DaggerfallEntity target, int damage)
+        {
+            byte[] diseaseListA = { 1 };
+            byte[] diseaseListB = { 1, 3, 5 };
+            byte[] diseaseListC = { 1, 2, 3, 4, 5, 6, 8, 9, 11, 13, 14 };
+
+            switch (attacker.CareerIndex)
+            {
+                case (int)MonsterCareers.Rat:
+                    // In classic rat can only give plague (diseaseListA), but DF Chronicles says plague, stomach rot and brain fever (diseaseListB).
+                    // Don't know which was intended. Using B since it has more variety.
+                    if (UnityEngine.Random.Range(1, 100 + 1) <= 5)
+                        InflictDisease(target, diseaseListB);
+                    break;
+                case (int)MonsterCareers.GiantBat:
+                    // Classic uses 2% chance, but DF Chronicles says 5% chance. Not sure which was intended.
+                    if (UnityEngine.Random.Range(1, 100 + 1) <= 2)
+                        InflictDisease(target, diseaseListB);
+                    break;
+                case (int)MonsterCareers.Spider:
+                    // if target does not have paralyze (spell id 66), cast it
+                    break;
+                case (int)MonsterCareers.Werewolf:
+                    //uint random = DFRandom.rand();
+                    //if (random < 400)
+                    //  InflictLycanthropy (werewolf version)
+                    break;
+                case (int)MonsterCareers.Nymph:
+                    FatigueDamage(target, damage);
+                    break;
+                case (int)MonsterCareers.Wereboar:
+                    //uint random = DFRandom.rand();
+                    //if (random < 400)
+                    //  InflictLycanthropy (wereboar version)
+                    break;
+                case (int)MonsterCareers.Zombie:
+                    // Nothing in classic. DF Chronicles says 2% chance of disease, which seems like it was probably intended.
+                    // Diseases listed in DF Chronicles match those of mummy (except missing cholera, probably a mistake)
+                    if (UnityEngine.Random.Range(1, 100 + 1) <= 2)
+                        InflictDisease(target, diseaseListC);
+                    break;
+                case (int)MonsterCareers.Mummy:
+                    if (UnityEngine.Random.Range(1, 100 + 1) <= 5)
+                        InflictDisease(target, diseaseListC);
+                    break;
+                case (int)MonsterCareers.GiantScorpion:
+                    // if target does not have paralyze (spell id 66), cast it
+                    break;
+                case (int)MonsterCareers.Vampire:
+                case (int)MonsterCareers.VampireAncient:
+                    uint random = DFRandom.rand();
+                    if (random >= 400)
+                    {
+                        if (UnityEngine.Random.Range(1, 100 + 1) <= 2)
+                            InflictDisease(target, diseaseListA);
+                    }
+                    // else
+                    //{
+                    //    InflictVampirism
+                    //}
+                    break;
+                case (int)MonsterCareers.Lamia:
+                    // Nothing in classic, but DF Chronicles says 2 pts of fatigue damage per health damage
+                    FatigueDamage(target, damage);
+                    break;
+                default:
+                    break;
+            }
         }
 
         public static bool CalculateSuccessfulHit(Entity.DaggerfallEntity attacker, Entity.DaggerfallEntity target, int chanceToHitMod, Items.DaggerfallUnityItem weapon, int struckBodyPart)
@@ -624,19 +712,87 @@ namespace DaggerfallWorkshop.Game.Formulas
             return damage;
         }
 
+        static int SavingThrow(DFCareer.EffectFlags effectFlags, DaggerfallEntity target)
+        {
+            PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+
+            int savingThrow = 50;
+            DFCareer.Tolerance toleranceFlags = 0;
+            int biographyMod = 0;
+
+            if (effectFlags == DFCareer.EffectFlags.Disease)
+            {
+                toleranceFlags = target.Career.Disease;
+                if (target == playerEntity)
+                    biographyMod = playerEntity.BiographyResistDiseaseMod;
+            }
+
+            if (toleranceFlags == DFCareer.Tolerance.Immune)
+                return 0;
+            if (toleranceFlags == DFCareer.Tolerance.CriticalWeakness)
+                return 100;
+            if (toleranceFlags == DFCareer.Tolerance.Resistant)
+                savingThrow = 25;
+            if (toleranceFlags == DFCareer.Tolerance.LowTolerance)
+                savingThrow = 75;
+
+            savingThrow += biographyMod;
+            Mathf.Clamp(savingThrow, 5, 95);
+
+            int percentDamageOrDuration = 0;
+            int roll = UnityEngine.Random.Range(1, 100 + 1);
+
+            if (roll <= savingThrow)
+            {
+                // Percent damage/duration is prorated at within 20 of failed roll, as described in DF Chronicles
+                if (savingThrow - 20 <= roll)
+                    percentDamageOrDuration = 100 - 5 * (savingThrow - roll);
+                else
+                    percentDamageOrDuration = 0;
+            }
+            else
+                percentDamageOrDuration = 100;
+
+            return percentDamageOrDuration;
+        }
+
         #endregion
 
         #region Enemies
 
-        public static Diseases CalculateChanceOfDisease(EnemyEntity attacker)
+        public static void InflictDisease(DaggerfallEntity target, byte[] diseaseList)
         {
-            DFCareer.EnemyGroups group = attacker.GetEnemyGroup();
-            if (group == DFCareer.EnemyGroups.Animals || group == DFCareer.EnemyGroups.Undead)
+            PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+
+            if (target != playerEntity)
+                return;
+
+            // Player cannot catch diseases at level 1 in classic. Maybe to keep new players from dying at the start of the game.
+            if (!playerEntity.Disease.IsDiseased() && playerEntity.Level != 1)
             {
-                if (UnityEngine.Random.Range(0, 1000) > 6)
-                    return (Diseases) UnityEngine.Random.Range(100, 117);
+                // Return if disease resisted
+                if (SavingThrow(DFCareer.EffectFlags.Disease, target) == 0)
+                    return;
+                int diseaseChoice = UnityEngine.Random.Range(diseaseList[0], diseaseList.Length);
+                Diseases disease = (Diseases)(diseaseChoice + 100); // Adding 100 to match to enums
+                playerEntity.Disease = new DaggerfallDisease(disease);
             }
-            return Diseases.None;
+        }
+
+        public static void FatigueDamage(DaggerfallEntity target, int damage)
+        {
+            // In classic, nymphs do 10-30 fatigue damage per hit, and lamias don't do any.
+            // DF Chronicles says nymphs have "Energy Leech", which is a spell in
+            // the game and not what they use, and for lamias "Every 1 pt of health damage = 2 pts of fatigue damage".
+            // Lamia health damage is 5-15. Multiplying this by 2 may be where 10-30 came from. Nymph health damage is 1-5.
+            // Not sure what was intended here, but using the "Every 1 pt of health damage = 2 pts of fatigue damage"
+            // seems sensible, since the fatigue damage will scale to the health damage and lamias are a higher level opponent
+            // than nymphs and will do more fatigue damage.
+            target.SetFatigue(target.CurrentFatigue - ((damage * 2) * 64));
+
+            // TODO: When nymphs drain the player's fatigue level to 0, the player is supposed to fall asleep for 14 days
+            // and then wake up, according to DF Chronicles. This doesn't work correctly in classic. Classic does advance
+            // time 14 days but the player dies like normal because of the "collapse from exhaustion near monsters = die" code.
         }
 
         // Generates health for enemy classes based on level and class
