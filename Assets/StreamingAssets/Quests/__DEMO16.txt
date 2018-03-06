@@ -1,16 +1,15 @@
----- Example quest to demonstrate rumor mill and dialog link
+---- Example quest to demonstrate rumors property of resource and dialog link
 ---- get information after (and only after) hearing the correct rumor
----- !!this is extending vanilla daggerfall's behaviour!!
 ---- once an npc talked about the rumor the linked dialog option
 ---- will be available in the tell me about section
----- rumor mill is using message 1020 here - one (and only one) of the
+---- rumors is using message 1020 here - one (and only one) of the
 ---- two answers is revealing the person name in tell me about section
 ---- (you have to switch dialog option and then it will show up in the
 ---- tell me about section)
 ---- you can then ask peasants for the correct place where the person
 ---- can be found
 
-Quest: __DEMO17
+Quest: __DEMO16
 
 QRC:
 
@@ -42,7 +41,7 @@ There are rumors about a mysterious person in town, but unfortunately I cannot p
 
 QBN:
 
-Person _thief_ face 81 faction The_Thieves_Guild anyInfo 1011
+Person _thief_ face 81 faction The_Thieves_Guild anyInfo 1011 rumors 1020
 Place _tavern_ local tavern
 
 --	Quest start-up:
@@ -50,4 +49,3 @@ Place _tavern_ local tavern
 	log 1010 step 0  
 	create npc _thief_ 
 	place npc _thief_ at _tavern_
-	rumor mill 1020 
