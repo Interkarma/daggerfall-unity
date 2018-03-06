@@ -7,7 +7,7 @@ Quest: __DEMO15
 QRC:
 
 Message:  1011
-_someperson_ used to posess _someitem_.
+_someperson_ used to possess _someitem_.
 
 Message:  1012
 It is said that _someitem_ has magical powers.
