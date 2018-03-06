@@ -802,12 +802,15 @@ namespace DaggerfallWorkshop.Game
             if (listRumorMill == null)
                 SetupRumorMill();
 
-            RumorMillEntry entry = new RumorMillEntry();
-            entry.rumorType = RumorType.QuestRumorMill;
-            entry.questID = questID;
-            entry.listRumorVariants = listTokens;
+            if (listTokens.Count > 0)
+            {
+                RumorMillEntry entry = new RumorMillEntry();
+                entry.rumorType = RumorType.QuestRumorMill;
+                entry.questID = questID;
+                entry.listRumorVariants = listTokens;
 
-            listRumorMill.Add(entry);
+                listRumorMill.Add(entry);
+            }
         }
 
         public void AddOrReplaceQuestProgressRumor(ulong questID, Message message)
