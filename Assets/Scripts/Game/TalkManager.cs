@@ -797,6 +797,19 @@ namespace DaggerfallWorkshop.Game
             listRumorMill.Add(entry);
         }
 
+        public void AddQuestRumorToRumorMill(ulong questID, List<TextFile.Token[]> listTokens)
+        {
+            if (listRumorMill == null)
+                SetupRumorMill();
+
+            RumorMillEntry entry = new RumorMillEntry();
+            entry.rumorType = RumorType.QuestRumorMill;
+            entry.questID = questID;
+            entry.listRumorVariants = listTokens;
+
+            listRumorMill.Add(entry);
+        }
+
         public void AddOrReplaceQuestProgressRumor(ulong questID, Message message)
         {
             if (listRumorMill == null)
@@ -1186,6 +1199,9 @@ namespace DaggerfallWorkshop.Game
 
             // update topic list
             AssembleTopiclistTellMeAbout();
+
+            // update rumor mill
+            GameManager.Instance.TalkManager.AddQuestRumorToRumorMill(questID, questResourceInfo.rumorsAnswers);
         }
 
         public void AddPersonTopic(ulong questID, DaggerfallWorkshop.Game.Questing.Person person)
