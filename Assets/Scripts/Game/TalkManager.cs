@@ -1181,6 +1181,9 @@ namespace DaggerfallWorkshop.Game
                 questResources.resourceInfo = new Dictionary<string, QuestResourceInfo>();
             }
 
+            if (resourceName == null || resourceName == "")
+                return;
+
             QuestResourceInfo questResourceInfo = new QuestResourceInfo();
             questResourceInfo.anyInfoAnswers = anyInfoAnswers;
             questResourceInfo.rumorsAnswers = rumorsAnswers;
@@ -1326,18 +1329,21 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
-            QuestResourceInfo questResource;
-            if (questResources.resourceInfo.ContainsKey(resourceName))
+            if (resourceName != null)
             {
-                questResource = questResources.resourceInfo[resourceName];
-            }
-            else
-            {
-                Debug.Log(String.Format("AddDialogLinkForQuestInfoResource() could not find a quest info resource with name {0}", resourceName));
-                return;
-            }
+                QuestResourceInfo questResource;
+                if (questResources.resourceInfo.ContainsKey(resourceName))
+                {
+                    questResource = questResources.resourceInfo[resourceName];
+                }
+                else
+                {
+                    Debug.Log(String.Format("AddDialogLinkForQuestInfoResource() could not find a quest info resource with name {0}", resourceName));
+                    return;
+                }
 
-            questResource.availableForDialog = true;
+                questResource.availableForDialog = true;
+            }
 
             // update topic list
             AssembleTopiclistTellMeAbout();
