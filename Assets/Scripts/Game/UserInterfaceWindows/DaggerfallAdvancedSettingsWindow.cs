@@ -33,7 +33,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Fields
 
-        enum InteractionModeIconModes { none, classic, icons };
+        enum InteractionModeIconModes { none, minimal, large, classic };
 
         const float topY = 8;
         readonly Vector2 topBarSize = new Vector2(318, 10);
