@@ -32,7 +32,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         const int defaultAsciiStart = 33;
 
-        string arena2Path;
+        //string arena2Path;
         FontName font;
         FntFile fntFile = new FntFile();
         Color backgroundColor = Color.clear;
@@ -61,14 +61,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public DaggerfallFont(FontName font = FontName.FONT0003)
         {
-            this.arena2Path = string.Empty;
+            //this.arena2Path = string.Empty;
             this.font = font;
             LoadFont();
         }
 
         public DaggerfallFont(string arena2Path, FontName font = FontName.FONT0003)
         {
-            this.arena2Path = arena2Path;
+            //this.arena2Path = arena2Path;
             this.font = font;
             LoadFont();
         }
@@ -181,7 +181,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             // Load font
             string filename = font.ToString() + ".FNT";
-            if (!fntFile.Load(Path.Combine(arena2Path, filename), FileUsage.UseMemory, true))
+            if (!fntFile.Load(Path.Combine(DaggerfallUI.Instance.FontsFolder, filename), FileUsage.UseMemory, true))
                 throw new Exception("DaggerfallFont failed to load font " + filename);
 
             // Start new glyph dictionary

@@ -29,6 +29,7 @@ namespace DaggerfallWorkshop.Game
     [RequireComponent(typeof(DaggerfallAudioSource))]
     public class DaggerfallUI : MonoBehaviour
     {
+        const string fontsFolderName = "Fonts";
         const string parchmentBorderRCIFile = "SPOP.RCI";
         const string splashVideo = "ANIM0001.VID";
         const string deathVideo = "ANIM0012.VID";
@@ -186,6 +187,11 @@ namespace DaggerfallWorkshop.Game
         public DaggerfallTravelMapWindow DfTravelMapWindow
         {
             get { return dfTravelMapWindow; }
+        }
+
+        public string FontsFolder
+        {
+            get { return Path.Combine(Application.streamingAssetsPath, fontsFolderName); }
         }
 
         public enum PopupStyle
@@ -484,12 +490,25 @@ namespace DaggerfallWorkshop.Game
         /// <returns>DaggerfallFont</returns>
         public DaggerfallFont GetFont(int index = 4)
         {
-            // Set path
-            string path = string.Empty;
-            if (dfUnity.IsPathValidated)
-                path = dfUnity.Arena2Path;
+            // Attempt to use StreamingAssets for FNT files
+            string path = FontsFolder;
+            if (!Directory.Exists(path))
+            {
+                Debug.LogErrorFormat("Fonts directory path {0} not found. Falling back to Arena2 folder.", path);
 
-            // Try to load font from either Daggerfall path or Resources
+                // Try Arena2 path
+                path = string.Empty;
+                if (dfUnity.IsPathValidated)
+                    path = dfUnity.Arena2Path;
+            }
+
+            // Must have a fonts path by now
+            if (string.IsNullOrEmpty(path))
+            {
+                throw new System.Exception("DaggerfallUI could not find a valid path for fonts in StreamingAssets/Fonts or fallback Arena2 folder.");
+            }
+
+            // Try to load font from target path
             switch (index)
             {
                 case 1:
