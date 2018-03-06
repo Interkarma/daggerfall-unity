@@ -447,8 +447,7 @@ namespace DaggerfallWorkshop.Game.Questing
             }
             else
             {
-                // Read quest source file as Latin-1 to ensure we get actual byte values
-                source = File.ReadAllLines(path, Encoding.GetEncoding("ISO-8859-1"));
+                source = File.ReadAllLines(path);
             }
 
             return source;
