@@ -1,4 +1,4 @@
----- Example quest to demonstrate location hints for dungeon locations
+---- Example quest to demonstrate direction hints for dungeon locations
 
 Quest: __DEMO19
 
