@@ -320,7 +320,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // First pass encodes ASCII and calculates final dimensions
             int width = 0;
-            asciiBytes = Encoding.ASCII.GetBytes(text);
+            asciiBytes = Encoding.Default.GetBytes(text);
             for (int i = startCharacterIndex; i < asciiBytes.Length; i++)
             {
                 // Invalid ASCII bytes are cast to a space character
