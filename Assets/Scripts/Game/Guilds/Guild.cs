@@ -9,7 +9,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 using DaggerfallConnect;
-using System;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Utility;
@@ -24,6 +23,7 @@ namespace DaggerfallWorkshop.Game.Guilds
     {
         #region Constants
 
+        public const int defaultTrainingMax = 50;
         public const int memberTrainingCost = 100;
         public const int nonMemberTrainingCost = 400;
 
@@ -34,22 +34,19 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Static Data
 
-        protected static string[] rankTitles;
-
         protected static int[] rankReqReputation = new int[] {  0, 10, 20, 30, 40, 50, 60, 70, 80, 90 };
         protected static int[] rankReqSkillHigh = new int[]  { 22, 23, 31, 39, 47, 55, 63, 71, 79, 87 };
         protected static int[] rankReqSkillLow = new int[]   {  4,  5,  9, 13, 17, 21, 25, 29, 33, 37 };
-
-        protected static List<DFCareer.Skills> guildSkills;
-        protected static List<DFCareer.Skills> trainingSkills;
 
         #endregion
 
         #region Properties
 
-        public virtual List<DFCareer.Skills> GuildSkills { get { return guildSkills; } }
+        public abstract string[] RankTitles { get; }
 
-        public virtual List<DFCareer.Skills> TrainingSkills { get { return trainingSkills; } }
+        public abstract List<DFCareer.Skills> GuildSkills { get; }
+
+        public abstract List<DFCareer.Skills> TrainingSkills { get; }
 
         #endregion
 
@@ -166,7 +163,7 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public virtual string GetTitle()
         {
-            return IsMember() ? rankTitles[rank] : "non-member";
+            return IsMember() ? RankTitles[rank] : "Expelled";
         }
 
         #endregion
@@ -193,18 +190,23 @@ namespace DaggerfallWorkshop.Game.Guilds
             return price;
         }
 
-        #endregion
-
-        #region Special temple benefits:
-
-        public virtual int FastTravel(int duration)
+        public virtual int ReducedIdentifyCost(int price)
         {
-            return duration;
+            return price;
         }
 
         public virtual int ReducedCureCost(int price)
         {
             return price;
+        }
+
+        #endregion
+
+        #region Special benefits:
+
+        public virtual int FastTravel(int duration)
+        {
+            return duration;
         }
 
         public virtual int DeepBreath(int duration)
@@ -250,6 +252,11 @@ namespace DaggerfallWorkshop.Game.Guilds
         #endregion
 
         #region Service: Training
+
+        public virtual int GetTrainingMax(DFCareer.Skills skill)
+        {
+            return defaultTrainingMax;
+        }
 
         public virtual int GetTrainingPrice()
         {

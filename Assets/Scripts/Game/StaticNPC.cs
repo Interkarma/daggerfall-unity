@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -133,13 +133,13 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Sets NPC data from RMB layout.
         /// </summary>
-        public void SetLayoutData(DFBlock.RmbBlockPeopleRecord obj)
+        public void SetLayoutData(DFBlock.RmbBlockPeopleRecord obj, int buildingKey = 0)
         {
             // Store common layout data
             npcData.hash = GetPositionHash(obj.XPos, obj.YPos, obj.ZPos);
             npcData.flags = obj.Flags;
             npcData.factionID = obj.FactionID;
-            npcData.nameSeed = (int)obj.Position;
+            npcData.nameSeed = (int) obj.Position ^ buildingKey;
             npcData.gender = ((npcData.flags & 32) == 32) ? Genders.Female : Genders.Male;
             npcData.context = Context.Building;
             npcData.billboardArchiveIndex = obj.TextureArchive;

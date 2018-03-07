@@ -45,9 +45,9 @@ namespace DaggerfallWorkshop.Game
         public MacroDataSource GetMacroDataSource()
         {
             TalkManagerContext context = new TalkManagerContext();
-            context.currentQuestionListItem = this.currentQuestionListItem;
+            context.currentQuestionListItem = currentQuestionListItem;
             context.npcRace = this.npcData.race;
-            if (this.currentQuestionListItem.questionType == QuestionType.Work)
+            if (currentQuestionListItem != null && currentQuestionListItem.questionType == QuestionType.Work)
             {
                 context.potentialQuestorGender = TalkManager.Instance.GetQuestorGender();
             }

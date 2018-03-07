@@ -237,8 +237,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             availableGoldLabel.Text = GameManager.Instance.PlayerEntity.GoldPieces.ToString();
             travelTimeMinutes = travelTimeCalculator.CalculateTravelTime(endPos, speedCautious, sleepModeInn, travelShip, hasHorse, hasCart);
 
-            // Players can have fast travel benefit from temple membership
-            travelTimeMinutes = GameManager.Instance.GuildManager.GetGuild(FactionFile.GuildGroups.HolyOrder).FastTravel(travelTimeMinutes);
+            // Players can have fast travel benefit from guild memberships
+            travelTimeMinutes = GameManager.Instance.GuildManager.FastTravel(travelTimeMinutes);
 
             int travelTimeDaysTotal = (travelTimeMinutes / 1440);
 

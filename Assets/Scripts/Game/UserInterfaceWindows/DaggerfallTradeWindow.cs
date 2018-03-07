@@ -147,6 +147,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             : base(uiManager, previous)
         {
             this.windowMode = windowMode;
+            this.guild = guild;
         }
 
         #endregion
@@ -347,7 +348,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                             break;
                         case WindowModes.Identify:
                             if (!item.IsIdentified)
-                                cost += FormulaHelper.CalculateItemIdentifyCost(item.value);
+                                cost += FormulaHelper.CalculateItemIdentifyCost(item.value, guild);
                             break;
                     }
                 }

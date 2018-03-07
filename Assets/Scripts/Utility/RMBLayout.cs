@@ -11,11 +11,8 @@
 
 using UnityEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using DaggerfallConnect;
-using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game;
@@ -513,27 +510,40 @@ namespace DaggerfallWorkshop.Utility
                         throw new Exception("GetCompleteBuildingData() could not read block " + blockName);
 
                     // Assign building data for this block
+                    BuildingReplacementData buildingReplacementData;
                     for (int i = 0; i < block.RmbBlock.SubRecords.Length; i++)
                     {
                         DFLocation.BuildingData building = block.RmbBlock.FldHeader.BuildingDataList[i];
                         if (IsNamedBuilding(building.BuildingType))
                         {
-                            // Try to find next building and merge data
-                            BuildingPoolItem item;
-                            if (!GetNextBuildingFromPool(namedBuildingPool, building.BuildingType, out item))
+                            // Check for replacement building data and use it if found
+                            if (WorldDataReplacement.GetBuildingReplacementData(blockName, block.Index, i, out buildingReplacementData))
                             {
-                                Debug.LogFormat("End of city building list reached without finding building type {0} in location {1}.{2}", building.BuildingType, location.RegionName, location.Name);
+                                // Use custom building values from replacement data, don't use pool or maps file
+                                building.NameSeed = location.Exterior.Buildings[0].NameSeed;
+                                building.FactionId = buildingReplacementData.FactionId;
+                                building.BuildingType = (DFLocation.BuildingTypes) buildingReplacementData.BuildingType;
+                                building.LocationId = location.Exterior.Buildings[0].LocationId;
+                                building.Quality = buildingReplacementData.Quality;
                             }
                             else
                             {
-                                // Copy found city building data to block level
-                                building.NameSeed = item.buildingData.NameSeed;
-                                building.FactionId = item.buildingData.FactionId;
-                                building.Sector = item.buildingData.Sector;
-                                building.LocationId = item.buildingData.LocationId;
-                                building.Quality = item.buildingData.Quality;
+                                // Try to find next building and merge data
+                                BuildingPoolItem item;
+                                if (!GetNextBuildingFromPool(namedBuildingPool, building.BuildingType, out item))
+                                {
+                                    Debug.LogFormat("End of city building list reached without finding building type {0} in location {1}.{2}", building.BuildingType, location.RegionName, location.Name);
+                                }
+                                else
+                                {
+                                    // Copy found city building data to block level
+                                    building.NameSeed = item.buildingData.NameSeed;
+                                    building.FactionId = item.buildingData.FactionId;
+                                    building.Sector = item.buildingData.Sector;
+                                    building.LocationId = item.buildingData.LocationId;
+                                    building.Quality = item.buildingData.Quality;
+                                }
                             }
-
                             // Set whatever building data we could find
                             block.RmbBlock.FldHeader.BuildingDataList[i] = building;
                         }
