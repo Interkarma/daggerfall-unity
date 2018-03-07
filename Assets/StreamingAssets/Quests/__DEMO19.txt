@@ -1,0 +1,46 @@
+---- Example quest to demonstrate direction hints for dungeon locations
+
+Quest: __DEMO19
+
+QRC:
+
+QuestorOffer:  [1000]
+<ce>            Interested in a test of your pathfinding abilities?
+
+RefuseQuest:  [1001]
+<ce>                Well, seems like you never know the right way, isn't it?
+
+AcceptQuest:  [1002]
+<ce>             Excellent! I would like to test if you are able to find ___lostdung_ on your own.
+<ce>             Do not expect help from me except for the one tip
+<ce>             to ask peasants about some information where ___lostdung_ might
+<ce>             be found.
+
+QuestLogEntry:  [1010]
+%qdt:
+ I was asked to find ___lostdung_ on my own.
+ The only advise I was given was to ask peasants
+ if they could provide some information about
+ where I might be able to find it.
+
+Message:  1011
+I only know that ___lostdung_ is a dangerous place.
+<--->
+You might want to look %di of this place.
+<--->
+You want to find ___lostdung_? It is %di of here.
+
+Message:  1012
+You have finally found ___lostdung_!
+
+QBN:
+
+Place _lostdung_ remote dungeon anyInfo 1011
+
+--	Quest start-up:
+	log 1010 step 0
+	pc at _lostdung_ set _S.00_
+
+_S.00_ task:
+	say 1012
+	end quest

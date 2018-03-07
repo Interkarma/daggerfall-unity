@@ -1,0 +1,52 @@
+---- Example quest to demonstrate rumors property of resource and dialog link
+---- get information after (and only after) hearing the correct rumor
+---- once an npc talked about the correct rumor the linked dialog option
+---- will be available in the tell me about section
+---- only one of the two rumors will reveal the chat topic about the person
+---- rumors is using message 1020 here
+---- (you have to switch dialog option and then it will show up in the
+---- tell me about section)
+---- you can then ask peasants for the correct place where the person
+---- can be found
+---- one (and only one) of the three possible answers is revealing the correct place
+
+Quest: __DEMO16
+
+QRC:
+
+QuestorOffer:  [1000]
+<ce>            There is quite a talk lately about a mysterious person. Would you be willing to find out more about the rumors?
+
+RefuseQuest:  [1001]
+<ce>                I am sorry to hear that. I understand,
+<ce>                  of course, but it is disappointing.
+
+AcceptQuest:  [1002]
+<ce>             That's good to hear. You need to ask around for news and rumors...
+
+QuestLogEntry:  [1010]
+%qdt:
+ I need to ask around for news and rumors about a mysterious person
+
+Message:  1011
+_thief_ was said to be a master thief.
+<--->
+_thief_ does all of the thieves guild footwork.
+<--->
+The _thief_ is that =thief_ down at _tavern_.
+
+Message:  1020
+_thief_ is in town. You should try to meet %g2. Just ask around where you can find _thief_.
+<--->
+There are rumors about a mysterious person in town, but unfortunately I cannot provide a name.
+
+QBN:
+
+Person _thief_ face 81 faction The_Thieves_Guild anyInfo 1011 rumors 1020
+Place _tavern_ local tavern
+
+--	Quest start-up:
+	dialog link for person _thief_ 
+	log 1010 step 0  
+	create npc _thief_ 
+	place npc _thief_ at _tavern_
