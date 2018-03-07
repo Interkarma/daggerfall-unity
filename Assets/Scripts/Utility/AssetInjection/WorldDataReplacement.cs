@@ -28,7 +28,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         public int BuildingType;
         public byte Quality;
         public DFBlock.RmbSubRecord RmbSubRecord;
-        // TODO: autoMapData for coloured map?
+        public byte[] AutoMapData;      // for coloured map (optional)
     }
 
     /// <summary>
