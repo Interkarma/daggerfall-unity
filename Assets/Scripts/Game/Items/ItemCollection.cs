@@ -31,6 +31,23 @@ namespace DaggerfallWorkshop.Game.Items
 
         #endregion
 
+        #region Custom item registry.
+
+        private static Dictionary<string, Type> customItems = new Dictionary<string, Type>();
+
+        public static bool RegisterCustomItem(string className, Type guildType)
+        {
+            DaggerfallUnity.LogMessage("RegisterCustomItem: " + className, true);
+            if (!customItems.ContainsKey(className))
+            {
+                customItems.Add(className, guildType);
+                return true;
+            }
+            return false;
+        }
+
+        #endregion
+
         #region Enums
 
         /// <summary>
@@ -420,10 +437,12 @@ namespace DaggerfallWorkshop.Game.Items
             {
                 if (itemArray[i].className != null)
                 {
-                    Type itemClassType = Type.GetType(itemArray[i].className);
+                    Type itemClassType;
+                    customItems.TryGetValue(itemArray[i].className, out itemClassType);
                     if (itemClassType != null)
                     {
                         DaggerfallUnityItem modItem = (DaggerfallUnityItem) Activator.CreateInstance(itemClassType);
+                        bool ench = modItem.IsEnchanted;
                         modItem.FromItemData(itemArray[i]);
                         AddItem(modItem, AddPosition.DontCare, true);
                         continue;
