@@ -31,7 +31,7 @@ namespace DaggerfallWorkshop.Game
         public DaggerfallMissile FireMissilePrefab;
         public DaggerfallMissile MagicMissilePrefab;
         public DaggerfallMissile PoisonMissilePrefab;
-        public DaggerfallMissile ShockMissilePrefab;        
+        public DaggerfallMissile ShockMissilePrefab;
 
         FakeSpell readySpell = null;
         FakeSpell lastSpell = null;

@@ -71,7 +71,7 @@ namespace DaggerfallWorkshop.Game.Magic
         public abstract string SubGroupName { get; }
         public abstract string GroupKey { get; }
         public virtual int ClassicKey { get { return 0; } }
-        public abstract int TextID { get; }
+        public virtual int TextID { get { return 0; } }
 
         public virtual TextFile.Token[] CustomText
         {
