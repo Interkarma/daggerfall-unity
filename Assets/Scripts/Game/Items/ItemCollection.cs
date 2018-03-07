@@ -162,7 +162,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// </summary>
         /// <param name="item">Item to add.</param>
         /// <param name="position">Position in list to insert item.</param>
-        public void AddItem(DaggerfallUnityItem item, AddPosition position = AddPosition.Back)
+        public void AddItem(DaggerfallUnityItem item, AddPosition position = AddPosition.Back, bool noStack = false)
         {
             if (item == null)
                 return;
@@ -170,7 +170,7 @@ namespace DaggerfallWorkshop.Game.Items
             // Add the item based on stack behaviour
             // TODO: Look at implementing proper stacking with max limits, split, merge, etc.
             DaggerfallUnityItem stack = FindExistingStack(item);
-            if (stack != null && !item.IsQuestItem)
+            if (stack != null && !item.IsQuestItem && !noStack)
             {
                 // Add to stack count
                 stack.stackCount += item.stackCount;
@@ -418,6 +418,17 @@ namespace DaggerfallWorkshop.Game.Items
             // Add items to this collection
             for(int i = 0; i < itemArray.Length; i++)
             {
+                if (itemArray[i].className != null)
+                {
+                    Type itemClassType = Type.GetType(itemArray[i].className);
+                    if (itemClassType != null)
+                    {
+                        DaggerfallUnityItem modItem = (DaggerfallUnityItem) Activator.CreateInstance(itemClassType);
+                        modItem.FromItemData(itemArray[i]);
+                        AddItem(modItem, AddPosition.DontCare, true);
+                        continue;
+                    }
+                }
                 DaggerfallUnityItem item = new DaggerfallUnityItem(itemArray[i]);
                 AddItem(item);
             }
@@ -434,7 +445,7 @@ namespace DaggerfallWorkshop.Game.Items
         public List<DaggerfallUnityItem> SearchItems(ItemGroups itemGroup, int templateIndex = -1)
         {
             List<DaggerfallUnityItem> results = new List<DaggerfallUnityItem>();
-            foreach (DaggerfallUnityItem item in items)
+            foreach (DaggerfallUnityItem item in items.Values)
             {
                 if (templateIndex == -1)
                 {
@@ -489,28 +500,13 @@ namespace DaggerfallWorkshop.Game.Items
         #region Private Methods
 
         /// <summary>
-        /// Determines if item is stackable.
-        /// Only ingredients, gold pieces and arrows are stackable.
-        /// </summary>
-        /// <param name="item">Item to check if stackable.</param>
-        /// <returns>True if item stackable.</returns>
-        bool IsStackable(DaggerfallUnityItem item)
-        {
-            if (item.IsIngredient || item.IsOfTemplate(ItemGroups.Currency, (int)Currency.Gold_pieces)
-                || item.IsOfTemplate(ItemGroups.Weapons, (int)Weapons.Arrow))
-                return true;
-            else
-                return false;
-        }
-
-        /// <summary>
         /// Finds existing stack of item.
         /// </summary>
         /// <param name="item">Item to find existing stack for.</param>
         /// <returns>Existing item stack, or null if no stack or not stackable.</returns>
         DaggerfallUnityItem FindExistingStack(DaggerfallUnityItem item)
         {
-            if (!IsStackable(item))
+            if (!item.IsStackable())
                 return null;
 
             ItemGroups itemGroup = item.ItemGroup;

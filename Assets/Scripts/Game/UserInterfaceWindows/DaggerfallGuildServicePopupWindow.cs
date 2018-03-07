@@ -387,7 +387,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             // Offer the quest to player
-            DaggerfallMessageBox messageBox = QuestMachine.Instance.CreateMessagePrompt(offeredQuest, (int)QuestMachine.QuestMessages.QuestorOffer);
+            DaggerfallMessageBox messageBox = QuestMachine.Instance.CreateMessagePrompt(offeredQuest, (int)QuestMachine.QuestMessages.QuestorOffer);// TODO - need to provide guild mcp for macros
             if (messageBox != null)
             {
                 messageBox.OnButtonClick += OfferQuest_OnButtonClick;

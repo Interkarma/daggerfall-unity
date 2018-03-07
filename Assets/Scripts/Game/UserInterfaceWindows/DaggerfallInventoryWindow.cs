@@ -1534,7 +1534,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else if (selectedActionMode == ActionModes.Use)
             {
-                UseItem(item);
+                // Allow item to handle its own use
+                if (item.UseItem(localItems))
+                    Refresh(false);
+                else
+                    UseItem(item);
             }
             else if (selectedActionMode == ActionModes.Remove)
             {
@@ -1577,7 +1581,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else if (selectedActionMode == ActionModes.Use)
             {
-                UseItem(item);
+                // Allow item to handle its own use
+                if (item.UseItem(localItems))
+                    Refresh(false);
+                else
+                    UseItem(item);
             }
             else if (selectedActionMode == ActionModes.Remove && CanCarry(item))
             {
