@@ -15,6 +15,7 @@ using System.Text.RegularExpressions;
 using System.Collections;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect.Arena2;
 using FullSerializer;
@@ -35,6 +36,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
         int spawnCount;                     // How many foes to spawn
         MobileTypes foeType;                // MobileType to spawn
+        Genders foeGender;                  // Gender of generated mobile
         bool injuredTrigger;                // True once enemy injured, rearmed each wave
         bool restrained;                    // True if enemy restrained by quest
         int killCount;                      // How many of this enemy spawn player has killed, does not rearm
@@ -120,7 +122,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 spawnCount = Mathf.Clamp(count, 1, maxSpawnCount);
 
                 // Assign name
-                SetFoeName();
+                SetFoeNameAndGender();
             }
         }
 
@@ -216,10 +218,8 @@ namespace DaggerfallWorkshop.Game.Questing
                 if (setupEnemy != null)
                 {
                     // Assign gender randomly
-                    MobileGender gender;
-                    if (UnityEngine.Random.Range(0f, 1f) < 0.5f)
-                        gender = MobileGender.Male;
-                    else
+                    MobileGender gender = MobileGender.Male;
+                    if (foeGender == Genders.Female)
                         gender = MobileGender.Female;
 
                     // Configure enemy
@@ -257,7 +257,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
         #region Private Methods
 
-        void SetFoeName()
+        void SetFoeNameAndGender()
         {
             // Set type name with fallback
             MobileEnemy enemy;
@@ -267,17 +267,31 @@ namespace DaggerfallWorkshop.Game.Questing
                 typeName = foeType.ToString();
 
             // Monster types get a random monster name
-            // Always treating monsters as male for now as they don't have any gender in game files
             if ((int)foeType < 128)
             {
+                // Assign a "monster name"
+                // Always treating monsters as male for now as they don't have any gender in game files
                 DFRandom.srand(DateTime.Now.Millisecond);
                 displayName = DaggerfallUnity.Instance.NameHelper.MonsterName();
+                foeGender = Genders.Male;
                 return;
             }
+            else
+            {
+                // Assign gender randomly
+                if (UnityEngine.Random.Range(0f, 1f) < 0.5f)
+                    foeGender = Genders.Male;
+                else
+                    foeGender = Genders.Female;
 
-            // TODO: Create a random humanoid foe name
-            // Will get to this testing quests that assign player to defeat and return a class-based NPC Foe
-            // Have more problems to solve before getting to name
+                // Set name seed and bank
+                int nameSeed = DateTime.Now.Millisecond;
+                NameHelper.BankTypes nameBank = GameManager.Instance.PlayerGPS.GetNameBankOfCurrentRegion();
+
+                // Generate a random name based on gender name bank
+                DFRandom.srand(nameSeed);
+                displayName = DaggerfallUnity.Instance.NameHelper.FullName(nameBank, foeGender);
+            }
         }
 
         #endregion
@@ -289,6 +303,7 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             public int spawnCount;
             public MobileTypes foeType;
+            public Genders foeGender;
             public bool injuredTrigger;
             public bool restrained;
             public int killCount;
@@ -301,6 +316,7 @@ namespace DaggerfallWorkshop.Game.Questing
             SaveData_v1 data = new SaveData_v1();
             data.spawnCount = spawnCount;
             data.foeType = foeType;
+            data.foeGender = foeGender;
             data.injuredTrigger = injuredTrigger;
             data.restrained = restrained;
             data.killCount = killCount;
@@ -318,6 +334,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
             spawnCount = data.spawnCount;
             foeType = data.foeType;
+            foeGender = data.foeGender;
             injuredTrigger = data.injuredTrigger;
             restrained = data.restrained;
             killCount = data.killCount;
