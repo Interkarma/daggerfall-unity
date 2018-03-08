@@ -237,7 +237,7 @@ namespace DaggerfallWorkshop.Utility
                         // Create unique LoadID for save sytem
                         ulong loadID = 0;
                         if (serialize)
-                            loadID = (ulong)(blockData.Position + obj.This);
+                            loadID = (ulong)(blockData.Position + obj.Position);
 
                         // Look for action doors
                         int modelReference = obj.Resources.ModelResource.ModelIndex;
@@ -347,19 +347,19 @@ namespace DaggerfallWorkshop.Utility
                             // Add special marker component for quest and item markers
                             if (record == 11 || record == 18)
                             {
-                                ulong markerID = (ulong)(blockData.Position + obj.This);
+                                ulong markerID = (ulong)(blockData.Position + obj.Position);
                                 DaggerfallMarker marker = flatObject.AddComponent<DaggerfallMarker>();
                                 marker.MarkerID = markerID;
                             }
 
                             //add editor flats to actionLinkDict
-                            if (!actionLinkDict.ContainsKey(obj.This))
+                            if (!actionLinkDict.ContainsKey(obj.Position))
                             {
                                 ActionLink link;
                                 link.gameObject = flatObject;
                                 link.nextKey = obj.Resources.FlatResource.NextObjectOffset;
                                 link.prevKey = -1;
-                                actionLinkDict.Add(obj.This, link);
+                                actionLinkDict.Add(obj.Position, link);
                             }
                         }
 
@@ -835,20 +835,20 @@ namespace DaggerfallWorkshop.Utility
                     triggerFlag = (DFBlock.RdbTriggerFlags)obj.TriggerFlag_StartingLock;
 
                 // Add action node to actionLink dictionary
-                if (!actionLinkDict.ContainsKey(rdbObj.This))
+                if (!actionLinkDict.ContainsKey(rdbObj.Position))
                 {
                     ActionLink link;
                     link.nextKey = obj.ActionResource.NextObjectOffset;
                     link.prevKey = obj.ActionResource.PreviousObjectOffset;
                     link.gameObject = go;
-                    actionLinkDict.Add(rdbObj.This, link);
+                    actionLinkDict.Add(rdbObj.Position, link);
                 }
             }
 
             // Create unique LoadID for save sytem
             ulong loadID = 0;
             if (serialize)
-                loadID = (ulong)(blockData.Position + rdbObj.This);
+                loadID = (ulong)(blockData.Position + rdbObj.Position);
 
             AddAction(go, description, soundID_Index, duration, magnitude, axis, triggerFlag, actionFlag, loadID);
 
@@ -883,19 +883,19 @@ namespace DaggerfallWorkshop.Utility
                 triggerFlag = (DFBlock.RdbTriggerFlags)obj.Flags;
 
             //add action node to actionLink dictionary
-            if (!actionLinkDict.ContainsKey(rdbObj.This))
+            if (!actionLinkDict.ContainsKey(rdbObj.Position))
             {
                 ActionLink link;
                 link.nextKey = obj.NextObjectOffset;
                 link.prevKey = -1;
                 link.gameObject = go;
-                actionLinkDict.Add(rdbObj.This, link);
+                actionLinkDict.Add(rdbObj.Position, link);
             }
 
             // Create unique LoadID for save sytem
             ulong loadID = 0;
             if (serialize)
-                loadID = (ulong)(blockData.Position + rdbObj.This);
+                loadID = (ulong)(blockData.Position + rdbObj.Position);
 
             AddAction(go, description, soundID_Index, duration, magnitude, axis, triggerFlag, actionFlag, loadID);
         }
@@ -1321,7 +1321,7 @@ namespace DaggerfallWorkshop.Utility
                 // Create unique LoadID for save sytem
                 ulong loadID = 0;
                 if (serialize)
-                    loadID = (ulong)(blockData.Position + obj.This);
+                    loadID = (ulong)(blockData.Position + obj.Position);
 
                 // Add enemy
                 AddEnemy(obj, type, parent, loadID);
@@ -1342,7 +1342,7 @@ namespace DaggerfallWorkshop.Utility
             // Create unique LoadID for save sytem
             ulong loadID = 0;
             if (serialize)
-                loadID = (ulong)(blockData.Position + obj.This);
+                loadID = (ulong)(blockData.Position + obj.Position);
 
             // Cast to enum
             MobileTypes type = (MobileTypes)(obj.Resources.FlatResource.FactionOrMobileId & 0xff);
@@ -1405,7 +1405,7 @@ namespace DaggerfallWorkshop.Utility
             // Create unique LoadID for save sytem
             ulong loadID = 0;
             if (serialize)
-                loadID = (ulong)(blockData.Position + obj.This);
+                loadID = (ulong)(blockData.Position + obj.Position);
 
             // Randomise container texture
             int iconIndex = UnityEngine.Random.Range(0, DaggerfallLootDataTables.randomTreasureIconIndices.Length);

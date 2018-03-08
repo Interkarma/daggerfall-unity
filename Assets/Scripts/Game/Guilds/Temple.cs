@@ -143,7 +143,7 @@ namespace DaggerfallWorkshop.Game.Guilds
             { Divines.Zenithar, new RankBenefits(4, 1, 1, 6,-1,-1,-1,-1,-1, 8, 5288, 5243, 4056) },
         };
 
-        static new Dictionary<Divines, List<DFCareer.Skills>> guildSkills = new Dictionary<Divines, List<DFCareer.Skills>>()
+        static Dictionary<Divines, List<DFCareer.Skills>> guildSkills = new Dictionary<Divines, List<DFCareer.Skills>>()
         {
             { Divines.Akatosh, new List<DFCareer.Skills>() {
                 DFCareer.Skills.Alteration,
@@ -231,7 +231,7 @@ namespace DaggerfallWorkshop.Game.Guilds
             } },
         };
 
-        static new Dictionary<Divines, List<DFCareer.Skills>> trainingSkills = new Dictionary<Divines, List<DFCareer.Skills>>()
+        static Dictionary<Divines, List<DFCareer.Skills>> trainingSkills = new Dictionary<Divines, List<DFCareer.Skills>>()
         {
             { Divines.Akatosh, new List<DFCareer.Skills>() {
                 DFCareer.Skills.Alteration, DFCareer.Skills.Archery, DFCareer.Skills.Daedric,
@@ -267,16 +267,15 @@ namespace DaggerfallWorkshop.Game.Guilds
                 DFCareer.Skills.Pickpocket, DFCareer.Skills.Spriggan, DFCareer.Skills.Streetwise, DFCareer.Skills.Thaumaturgy } },
         };
 
-        static Temple()
-        {
-            rankTitles = new string[] {
-                "Novice", "Initiate", "Acolyte", "Adept", "Curate", "Disciple", "Brother", "Diviner", "Master", "Patriarch"
-            };
-        }
-
         #endregion
 
-        #region Properties
+        #region Properties & Data
+
+        string[] rankTitles = new string[] {
+                "Novice", "Initiate", "Acolyte", "Adept", "Curate", "Disciple", "Brother", "Diviner", "Master", "Patriarch"
+        };
+
+        public override string[] RankTitles { get { return rankTitles; } }
 
         public override List<DFCareer.Skills> GuildSkills { get { return guildSkills[deity]; } }
 
@@ -386,22 +385,7 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public override bool FreeHealing()
         {
-            return (rank > 0);
-        }
-
-        #endregion
-
-        #region Special temple benefits:
-
-        public override int FastTravel(int duration)
-        {
-            if (deity == Divines.Akatosh)
-            {
-                Debug.LogFormat("Akatosh FastTravel= {0} -{1} less days", duration, (duration - (int)(((95f - rank) / 100) * duration)) / 1440);
-                return (int)(((95f - rank) / 100) * duration);
-            }
-            else
-                return duration;
+            return (templeRankBenefits[deity].healing <= rank);
         }
 
         public override int ReducedCureCost(int price)
@@ -412,6 +396,20 @@ namespace DaggerfallWorkshop.Game.Guilds
                 return price;
         }
 
+        #endregion
+
+        #region Special benefits:
+
+        public override int FastTravel(int duration)
+        {
+            if (deity == Divines.Akatosh)
+            {
+                Debug.LogFormat("Akatosh FastTravel= {0} -{1} less hours", duration, duration - (int)(((95f - rank) / 100) * duration));
+                return (int)(((95f - rank) / 100) * duration);
+            }
+            return duration;
+        }
+
         public override int DeepBreath(int duration)
         {
             if (deity == Divines.Kynareth)
@@ -419,12 +417,19 @@ namespace DaggerfallWorkshop.Game.Guilds
                 Debug.LogFormat("Kynareth DeepBreath= {0} +{1} extra seconds", duration, (int)((((10f + rank) / 10) - 1) * duration));
                 return (int)(((10f + rank) / 10) * duration);
             }
-            else
-                return duration;
+            return duration;
         }
 
         public override bool AvoidDeath()
-        {// TODO
+        {
+            if (deity == Divines.Stendarr &&
+                !GameManager.Instance.PlayerEnterExit.IsPlayerSubmerged &&
+                UnityEngine.Random.Range(1, 50) < rank)
+            {
+                Debug.LogFormat("Stendarr AvoidDeath= success");
+                // TODO: what is "weaker state" is it more than being left on 1 health?
+                return true;
+            }
             return false;
         }
 

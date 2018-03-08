@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -10,6 +10,7 @@
 //
 
 #region Using Statements
+using FullSerializer;
 using System;
 using System.Text;
 #endregion
@@ -248,6 +249,7 @@ namespace DaggerfallConnect
         /// <summary>
         /// Ground data to draw under a city block, such as ground textures, trees, rocks, etc.
         /// </summary>
+        [fsObject(MemberSerialization = fsMemberSerialization.OptIn)]   // FullSerializer can't do 2D arrays out of the box
         public struct RmbFldGroundData
         {
             /// <summary>Header with unknown data.</summary>
@@ -524,7 +526,7 @@ namespace DaggerfallConnect
         public struct RmbBlockDoorRecord
         {
             /// <summary>Offset of this object from start of RMB record. Not required unless you are extending the block reader.</summary>
-            internal Int32 This;
+            public Int32 Position;
 
             /// <summary>X position in 3D space.</summary>
             public Int32 XPos;
@@ -866,7 +868,7 @@ namespace DaggerfallConnect
         public struct RdbUnknownObject
         {
             /// <summary>Offset of this object from start of RDB record. Not required unless you are extending the block reader.</summary>
-            public Int32 This;
+            public Int32 Position;
 
             /// <summary>Offset to next object from start of RDB record. Not required unless you are extending the block reader.</summary>
             public Int32 Next;
@@ -896,7 +898,7 @@ namespace DaggerfallConnect
         public struct RdbObject
         {
             /// <summary>Offset of this object from start of RDB record. Not required unless you are extending the block reader.</summary>
-            internal Int32 This;
+            internal Int32 Position;
 
             /// <summary>Offset to next object from start of RDB record. Not required unless you are extending the block reader.</summary>
             internal Int32 Next;

@@ -235,7 +235,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// <summary>
         /// Checks if this item has magical properties.
         /// </summary>
-        public bool IsEnchanted
+        public virtual bool IsEnchanted
         {
             get { return GetIsEnchanted(); }
         }
@@ -508,6 +508,29 @@ namespace DaggerfallWorkshop.Game.Items
             return (TemplateIndex == templateIndex);
         }
 
+        /// Determines if item is stackable.
+        /// Only ingredients, gold pieces and arrows are stackable.
+        /// </summary>
+        /// <returns>True if item stackable.</returns>
+        public virtual bool IsStackable()
+        {
+            if (IsIngredient || 
+                IsOfTemplate(ItemGroups.Currency, (int) Currency.Gold_pieces) || 
+                IsOfTemplate(ItemGroups.Weapons, (int) Weapons.Arrow))
+                return true;
+            else
+                return false;
+        }
+
+        /// <summary>
+        /// Allow use of item to be implemented by item object and overridden
+        /// </summary>
+        /// <returns><c>true</c>, if item use was handled, <c>false</c> otherwise.</returns>
+        public virtual bool UseItem(ItemCollection collection)
+        {
+            return false;
+        }
+
         /// <summary>
         /// Cycles through variants.
         /// </summary>
@@ -560,7 +583,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// Gets item data for serialization.
         /// </summary>
         /// <returns>ItemData_v1.</returns>
-        public ItemData_v1 GetSaveData()
+        public virtual ItemData_v1 GetSaveData()
         {
             ItemData_v1 data = new ItemData_v1();
             data.uid = uid;
@@ -1183,7 +1206,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// <summary>
         /// Creates from a serialized item.
         /// </summary>
-        void FromItemData(ItemData_v1 data)
+        internal void FromItemData(ItemData_v1 data)
         {
             uid = data.uid;
             shortName = data.shortName;

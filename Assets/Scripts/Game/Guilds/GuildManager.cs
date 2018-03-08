@@ -8,7 +8,6 @@
 
 using UnityEngine;
 using System.Collections.Generic;
-using DaggerfallConnect;
 using System;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Player;
@@ -22,6 +21,22 @@ namespace DaggerfallWorkshop.Game.Guilds
         public static Guild guildNotMember = new NonMemberGuild();
         // A base temple class defining non-membership.
         public static Guild templeNotMember = new NonMemberGuild(true);
+
+        // Custom guild registry.
+        private static Dictionary<FactionFile.GuildGroups, Type> customGuilds = new Dictionary<FactionFile.GuildGroups, Type>();
+
+        public static bool RegisterCustomGuild(FactionFile.GuildGroups guildGroup, Type guildType)
+        {
+            DaggerfallUnity.LogMessage("RegisterCustomGuild: " + guildGroup, true);
+            if (!customGuilds.ContainsKey(guildGroup))
+            {
+                customGuilds.Add(guildGroup, guildType);
+                return true;
+            }
+            return false;
+        }
+
+        #region Guild membership handling
 
         private Dictionary<FactionFile.GuildGroups, Guild> memberships = new Dictionary<FactionFile.GuildGroups, Guild>();
 
@@ -69,8 +84,13 @@ namespace DaggerfallWorkshop.Game.Guilds
                     Temple.Divines deity = (Temple.Divines) buildingFactionId;
                     return new KnightlyOrder(region);
 */
+                default:
+                    Type guildType;
+                    if (customGuilds.TryGetValue(guildGroup, out guildType))
+                        return (Guild) Activator.CreateInstance(guildType);
+                    else
+                        return null;
             }
-            return null;
         }
 
         /// <summary>
@@ -169,6 +189,36 @@ namespace DaggerfallWorkshop.Game.Guilds
                 }
             }
         }
+
+        #endregion
+
+        #region Special guild benefits
+
+        public virtual int FastTravel(int duration)
+        {
+            int newDuration = duration;
+            foreach (Guild guild in memberships.Values)
+                newDuration = guild.FastTravel(newDuration);
+            return newDuration;
+        }
+
+        public virtual int DeepBreath(int duration)
+        {
+            int newDuration = duration;
+            foreach (Guild guild in memberships.Values)
+                newDuration = guild.DeepBreath(newDuration);
+            return newDuration;
+        }
+
+        public virtual bool AvoidDeath()
+        {
+            foreach (Guild guild in memberships.Values)
+                if (guild.AvoidDeath())
+                    return true;
+            return false;
+        }
+
+        #endregion
 
     }
 }

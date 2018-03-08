@@ -27,15 +27,13 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #endregion
 
-        #region Static Data
+        #region Properties & Data
 
-        static MagesGuild()
-        {
-            rankTitles = new string[] {
+        static string[] rankTitles = new string[] {
                 "Apprentice", "Journeyman", "Evoker", "Conjurer", "Magician", "Enchanter", "Warlock", "Wizard", "Master Wizard", "Archmage"
-            };
+        };
 
-            guildSkills = new List<DFCareer.Skills>() {
+        static List<DFCareer.Skills> guildSkills = new List<DFCareer.Skills>() {
                 DFCareer.Skills.Alteration,
                 DFCareer.Skills.Destruction,
                 DFCareer.Skills.Illusion,
@@ -44,7 +42,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                 DFCareer.Skills.Thaumaturgy
             };
 
-            trainingSkills = new List<DFCareer.Skills>() {
+        static List<DFCareer.Skills> trainingSkills = new List<DFCareer.Skills>() {
                 DFCareer.Skills.Alteration,
                 DFCareer.Skills.Daedric,
                 DFCareer.Skills.Destruction,
@@ -58,7 +56,12 @@ namespace DaggerfallWorkshop.Game.Guilds
                 DFCareer.Skills.Spriggan,
                 DFCareer.Skills.Thaumaturgy
             };
-        }
+
+        public override string[] RankTitles { get { return rankTitles; } }
+
+        public override List<DFCareer.Skills> GuildSkills { get { return guildSkills; } }
+
+        public override List<DFCareer.Skills> TrainingSkills { get { return trainingSkills; } }
 
         #endregion
 
