@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -183,6 +183,27 @@ namespace DaggerfallWorkshop.Utility
             int columnIndex = columnIndexDict[columnName];
 
             return columns[columnIndex].values[valueIndex];
+        }
+
+        /// <summary>
+        /// Gets specified value from column.
+        /// </summary>
+        /// <param name="columnName">Column name.</param>
+        /// <param name="index">Index of row.</param>
+        /// <returns>Value as string.</returns>
+        public string GetValue(string columnName, int index)
+        {
+            // Validate columnName
+            if (!HasColumn(columnName))
+                throw new Exception(string.Format("GetValue() columnName '{0}' does not exist.", columnName));
+
+            // Validate index
+            if (index < 0 || index > RowCount)
+                throw new Exception(string.Format("GetValue() index '{0}' does not exist.", index));
+
+            int columnIndex = GetColumnIndex(columnName);
+
+            return columns[columnIndex].values[index];
         }
 
         /// <summary>

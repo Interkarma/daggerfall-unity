@@ -75,6 +75,7 @@ namespace DaggerfallWorkshop.Game
 		TransportManager transportManager = null;
         TalkManager talkManager = null;
         GuildManager guildManager = null;
+        QuestTablesManager questTablesManager = null;
 
 
         #endregion
@@ -307,6 +308,12 @@ namespace DaggerfallWorkshop.Game
         {
             get { return (guildManager != null) ? guildManager : guildManager = new GuildManager(); }
             set { guildManager = value; }
+        }
+
+        public QuestTablesManager QuestTablesManager
+        {
+            get { return (questTablesManager != null) ? questTablesManager : questTablesManager = new QuestTablesManager(); }
+            set { questTablesManager = value; }
         }
 
         public bool IsPlayerOnHUD
