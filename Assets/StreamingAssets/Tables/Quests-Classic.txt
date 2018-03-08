@@ -1,0 +1,57 @@
+-- These classic quests are considered "mostly working" under quest system in current state
+-- Please use the Quest Hub forums for bug reports: http://forums.dfworkshop.net/viewforum.php?f=25
+
+-- name:        filename of QRC txt file
+-- group:       guild group from FactionFile.GuildGroups enum, or ?quest giver type?
+-- membership:  M=member, N=non-member, J=joining
+-- minRep:      minimum reputation required to be offered the quest (units can use X wildcard)
+-- notes:
+-   "reward bug" is a script error where reward is given before quest completed
+-   "questor clear bug" is a script error where clicking on questor will cause quest to end immediately after target complete
+-   "no hot-placement" is a DFU bug where resources cannot be placed to an active interior/dungeon. Need to exit and re-enter interior
+-   "needs more action support" means DFU quest system needs more development for these quests to work properly.
+
+schema: *name, group, membership, minRep, notes
+
+-- Classic: Fighters Guild
+M0B00Y00, FightersGuild, M, 0, Passed
+M0B00Y06, FightersGuild, M, 0, Passed with reward bug
+M0B00Y07, FightersGuild, M, 0, Passed with reward bug
+M0B00Y15, FightersGuild, M, 0, Passed with reward bug
+M0B00Y16, FightersGuild, M, 0, Passed
+-M0B00Y17, FightersGuild, M, 0, FAILED needs more action support
+M0B1XY01, FightersGuild, M, 1X, Passed
+M0B11Y18, FightersGuild, M, 11, FAILED needs more action support
+M0B20Y02, FightersGuild, M, 20, Passed with engine bugs ("injured _monster_ saying 1020" does not work)
+-M0B21Y19, FightersGuild, M, 21, FAILED needs more action support
+M0B30Y03, FightersGuild, M, 30, Passed
+M0B30Y04, FightersGuild, M, 30, Passed
+M0B30Y08, FightersGuild, M, 30, Passed with reward bug
+M0B40Y05, FightersGuild, M, 40, Passed with reward bug; possible to break if one-shotting spriggan
+M0B50Y09, FightersGuild, M, 50, Passed with reward bug
+M0B60Y10, FightersGuild, M, 60, Passed
+M0C00Y11, FightersGuild, N, 0, Passed with reward bug
+M0C00Y12, FightersGuild, N, 0, Passed with reward bug
+M0C00Y13, FightersGuild, N, 0, Passed with reward bug
+M0C00Y14, FightersGuild, N, 0, Passed with reward bug
+
+-- Classic: Mages Guild
+N0B00Y04, MagesGuild, M, 0, Passed
+N0B00Y06, MagesGuild, M, 0, Passed
+-N0B00Y08, MagesGuild, M, 0, needs sleep spell
+-N0B00Y09, MagesGuild, M, 0, Clock wants a travel time but quest has no Place resources.
+-N0B00Y16, MagesGuild, M, 0, needs open spell
+-N0B00Y17, MagesGuild, M, 0,
+-N0B10Y01, MagesGuild, M, 10,
+-N0B10Y03, MagesGuild, M, 10,
+-N0B11Y18, MagesGuild, M, 11,
+-N0B20Y02, MagesGuild, M, 20,
+-N0B20Y05, MagesGuild, M, 20,
+-N0B21Y14, MagesGuild, M, 21,
+-N0B30Y15, MagesGuild, M, 30,
+-N0B40Y07, MagesGuild, M, 40,
+-N0C00Y01, MagesGuild, N, 0, unfinished quest - no dialogue
+-N0C00Y10, MagesGuild, N, 0, interacts with talk system?
+N0C00Y11, MagesGuild, N, 0, Passed but no message shown when revealing dungeon: reveal _newdung_ saying 1080
+N0C00Y12, MagesGuild, N, 0, Passed
+N0C00Y13, MagesGuild, N, 0, Passed

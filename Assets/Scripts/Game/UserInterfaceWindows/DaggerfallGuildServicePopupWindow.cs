@@ -340,7 +340,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (guildQuestTables.ContainsKey(npcService))
             {
-                OfferGuildQuest();
+                MembershipStatus status = guild.IsMember() ? MembershipStatus.Member : MembershipStatus.Nonmember;
+                offeredQuest = GameManager.Instance.QuestTablesManager.GetGuildQuest(guildGroup, status, guild.GetReputation(playerEntity));
+                if (offeredQuest != null)
+                {
+                    // Log offered quest
+                    Debug.LogFormat("Offering quest {0} from Guild {1}", offeredQuest.QuestName, guildGroup);
+
+                    // Offer the quest to player
+                    DaggerfallMessageBox messageBox = QuestMachine.Instance.CreateMessagePrompt(offeredQuest, (int)QuestMachine.QuestMessages.QuestorOffer);// TODO - need to provide guild mcp for macros
+                    if (messageBox != null)
+                    {
+                        messageBox.OnButtonClick += OfferQuest_OnButtonClick;
+                        messageBox.Show();
+                    }
+                }
+                else
+                {
+                    ShowFailGetQuestMessage();
+                }
             }
             else
             {
@@ -382,7 +400,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 // Log exception, show random flavour text, and exit
                 Debug.LogErrorFormat("Exception during quest compile: {0}", ex.Message);
-                ShowFailCompileMessage();
+                ShowFailGetQuestMessage();
                 return;
             }
 
@@ -395,7 +413,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void ShowFailCompileMessage()
+        void ShowFailGetQuestMessage()
         {
             const int flavourMessageID = 600;
 
