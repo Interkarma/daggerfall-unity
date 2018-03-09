@@ -36,9 +36,9 @@ M0B50Y09, FightersGuild, M, 50, Passed
 M0B60Y10, FightersGuild, M, 60, Passed
 
 -- Classic: Mages Guild
--N0C00Y01, MagesGuild, N, 0, FAILED. Banish Daedra
+-N0C00Y01, MagesGuild, N, 0, FAILED. Banish Daedra spell and no dialogue
 -N0C00Y10, MagesGuild, N, 0, FAILED. player log says "Exception during quest compile: An element with the same key already exists in the dictionary."
-N0C00Y11, MagesGuild, N, 0, Passed
+N0C00Y11, MagesGuild, N, 0, Passed but no message shown when revealing dungeon: reveal _newdung_ saying 1080
 N0C00Y12, MagesGuild, N, 0, Passed
 N0C00Y13, MagesGuild, N, 0, Passed
 N0B00Y04, MagesGuild, M, 0, Passed
