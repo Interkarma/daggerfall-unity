@@ -54,9 +54,9 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public Quest GetGuildQuest(FactionFile.GuildGroups guildGroup, MembershipStatus status, int factionId, int rep)
         {
-            // TESTING ONLY - REMOVE! Reload every time (for now)
+#if UNITY_EDITOR    // Reload every time when in editor
             LoadQuestTables();
-
+#endif
             List<QuestData> guildQuests;
             if (guilds.TryGetValue(guildGroup, out guildQuests))
             {
