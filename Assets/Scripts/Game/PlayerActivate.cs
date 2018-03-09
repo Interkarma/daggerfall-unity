@@ -908,11 +908,6 @@ namespace DaggerfallWorkshop.Game
             // Store the NPC just clicked in quest engine
             QuestMachine.Instance.LastNPCClicked = npc;
 
-            // Check if this NPC is a quest giver and show temp guild quest popup
-            // This will be changed later when temp guild system replaced with real thing
-//            if (QuestorCheck(npc))
-//                return;
-
             // Handle quest NPC click and exit if linked to a Person resource
             QuestResourceBehaviour questResourceBehaviour = npc.gameObject.GetComponent<QuestResourceBehaviour>();
             if (questResourceBehaviour)
@@ -981,31 +976,6 @@ namespace DaggerfallWorkshop.Game
                 // otherwise open talk window
                 GameManager.Instance.TalkManager.TalkToStaticNPC(npc);
             }
-        }
-
-        // Check if NPC is a Questor
-        bool QuestorCheck(StaticNPC npc)
-        {
-            // Check if player clicked on supported guild questor
-            DaggerfallGuildPopupWindow.TempGuilds guild;
-            if (npc.Data.factionID == PersistentFactionData.fightersGuildQuestorFactionID)
-                guild = DaggerfallGuildPopupWindow.TempGuilds.Fighter;
-            else if (npc.Data.factionID == PersistentFactionData.magesGuildQuestorFactionID)
-                guild = DaggerfallGuildPopupWindow.TempGuilds.Mage;
-            else
-                guild = DaggerfallGuildPopupWindow.TempGuilds.None;
-
-            // Open guild service window
-            if (guild != DaggerfallGuildPopupWindow.TempGuilds.None)
-            {
-                DaggerfallGuildPopupWindow guildWindow = new DaggerfallGuildPopupWindow(DaggerfallUI.Instance.UserInterfaceManager);
-                guildWindow.CurrentGuild = guild;
-                guildWindow.CurrentService = DaggerfallGuildPopupWindow.TempGuildServices.Questor;
-                guildWindow.QuestorNPC = npc;
-                DaggerfallUI.Instance.UserInterfaceManager.PushWindow(guildWindow);
-                return true;
-            }
-            return false;
         }
 
         // Player has clicked on a pickpocket target in steal mode

@@ -322,12 +322,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Service Handling: Quests
 
-        static Dictionary<GuildNpcServices, string> guildQuestTables = new Dictionary<GuildNpcServices, string>()
-        {
-            { GuildNpcServices.FG_Quests, tempFightersQuestsFilename },
-            { GuildNpcServices.MG_Quests, tempMagesQuestsFilename },
-        };
-
         void GetQuest()
         {
             // Just exit if this NPC already involved in an active quest
@@ -338,78 +332,32 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
             }
 
-            if (guildQuestTables.ContainsKey(npcService))
-            {
-                MembershipStatus status = guild.IsMember() ? MembershipStatus.Member : MembershipStatus.Nonmember;
-                offeredQuest = GameManager.Instance.QuestTablesManager.GetGuildQuest(guildGroup, status, guild.GetReputation(playerEntity));
-                if (offeredQuest != null)
-                {
-                    // Log offered quest
-                    Debug.LogFormat("Offering quest {0} from Guild {1}", offeredQuest.QuestName, guildGroup);
+            // Get member status, including temple specific statuses
+            MembershipStatus status = guild.IsMember() ? MembershipStatus.Member : MembershipStatus.Nonmember;
+            if (guild.IsMember() && guildGroup == FactionFile.GuildGroups.HolyOrder)
+                status = (MembershipStatus) Enum.Parse(typeof(MembershipStatus), ((Temple)guild).Deity.ToString());
 
-                    // Offer the quest to player
-                    DaggerfallMessageBox messageBox = QuestMachine.Instance.CreateMessagePrompt(offeredQuest, (int)QuestMachine.QuestMessages.QuestorOffer);// TODO - need to provide guild mcp for macros
-                    if (messageBox != null)
-                    {
-                        messageBox.OnButtonClick += OfferQuest_OnButtonClick;
-                        messageBox.Show();
-                    }
-                }
-                else
+            // Get the faction id for affecting reputation on success/failure
+            int factionId = (guildGroup == FactionFile.GuildGroups.HolyOrder) ? buildingFactionId : guildManager.GetGuildFactionId(guildGroup);
+
+            // Select a quest at random from appropriate pool
+            offeredQuest = GameManager.Instance.QuestTablesManager.GetGuildQuest(guildGroup, status, factionId, guild.GetReputation(playerEntity));
+            if (offeredQuest != null)
+            {
+                // Log offered quest
+                Debug.LogFormat("Offering quest {0} from Guild {1} affecting factionId {2}", offeredQuest.QuestName, guildGroup, offeredQuest.FactionId);
+
+                // Offer the quest to player
+                DaggerfallMessageBox messageBox = QuestMachine.Instance.CreateMessagePrompt(offeredQuest, (int)QuestMachine.QuestMessages.QuestorOffer);// TODO - need to provide guild mcp for macros
+                if (messageBox != null)
                 {
-                    ShowFailGetQuestMessage();
+                    messageBox.OnButtonClick += OfferQuest_OnButtonClick;
+                    messageBox.Show();
                 }
             }
             else
             {
-                CloseWindow();
-                DaggerfallUI.MessageBox("Guild quests not yet implemented.");
-            }
-        }
-
-        void OfferGuildQuest()
-        {
-            // Load quests table each time so player can edit their local file at runtime
-            Table table = null;
-            string questName = string.Empty;
-            try
-            {
-                table = new Table(QuestMachine.Instance.GetTableSourceText(guildQuestTables[npcService]));
-
-                // Select a quest name at random from table
-                if (table == null || table.RowCount == 0)
-                    throw new Exception("Quests table is empty.");
-
-                questName = table.GetRow(UnityEngine.Random.Range(0, table.RowCount))[0];
-            }
-            catch (Exception ex)
-            {
-                DaggerfallUI.Instance.PopupMessage(ex.Message);
-                return;
-            }
-
-            // Log offered quest
-            Debug.LogFormat("Offering quest {0} from Guild {1}", questName, guildGroup);
-
-            // Parse quest
-            try
-            {
-                offeredQuest = QuestMachine.Instance.ParseQuest(questName);
-            }
-            catch (Exception ex)
-            {
-                // Log exception, show random flavour text, and exit
-                Debug.LogErrorFormat("Exception during quest compile: {0}", ex.Message);
                 ShowFailGetQuestMessage();
-                return;
-            }
-
-            // Offer the quest to player
-            DaggerfallMessageBox messageBox = QuestMachine.Instance.CreateMessagePrompt(offeredQuest, (int)QuestMachine.QuestMessages.QuestorOffer);// TODO - need to provide guild mcp for macros
-            if (messageBox != null)
-            {
-                messageBox.OnButtonClick += OfferQuest_OnButtonClick;
-                messageBox.Show();
             }
         }
 
