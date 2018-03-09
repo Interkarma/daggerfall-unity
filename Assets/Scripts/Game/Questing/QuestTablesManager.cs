@@ -63,10 +63,15 @@ namespace DaggerfallWorkshop.Game.Questing
                 MembershipStatus tplMemb = (guildGroup == FactionFile.GuildGroups.HolyOrder && status != MembershipStatus.Nonmember) ? MembershipStatus.Member : status;
                 List<QuestData> pool = new List<QuestData>();
                 foreach (QuestData quest in guildQuests)
-                    if ((status == (MembershipStatus)quest.membership || tplMemb == (MembershipStatus)quest.membership) && rep >= quest.minRep && (!quest.unitWildC || rep < quest.minRep + 10))
+                {
+                    if ((status == (MembershipStatus)quest.membership || tplMemb == (MembershipStatus)quest.membership) &&
+                        (rep >= quest.minRep || status == MembershipStatus.Nonmember) &&
+                        (!quest.unitWildC || rep < quest.minRep + 10))
+                    {
                         pool.Add(quest);
-
-                UnityEngine.Debug.Log("Quest pool = " + pool.Count);
+                    }
+                }
+                UnityEngine.Debug.Log("Quest pool has " + pool.Count);
                 // Choose random quest from pool and try to parse it
                 if (pool.Count > 0)
                 {
