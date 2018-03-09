@@ -36,6 +36,25 @@ namespace DaggerfallWorkshop.Game.Guilds
             return false;
         }
 
+        public int GetGuildFactionId(FactionFile.GuildGroups guildGroup)
+        {
+            switch (guildGroup)
+            {
+                case FactionFile.GuildGroups.FightersGuild:
+                    return FightersGuild.FactionId;
+
+                case FactionFile.GuildGroups.MagesGuild:
+                    return MagesGuild.FactionId;
+
+                default:
+                    Type guildType;
+                    if (customGuilds.TryGetValue(guildGroup, out guildType))
+                        return (int) guildType.GetProperty("FactionId").GetValue(null, null);
+                    else
+                        return 0;
+            }
+        }
+
         #region Guild membership handling
 
         private Dictionary<FactionFile.GuildGroups, Guild> memberships = new Dictionary<FactionFile.GuildGroups, Guild>();
@@ -139,7 +158,7 @@ namespace DaggerfallWorkshop.Game.Guilds
             {
                 guildGroup = (FactionFile.GuildGroups) factionData.ggroup;
 
-                // Handle temples... TODO is this needed since they are always open?
+                // Handle temples nested under deity
                 if (guildGroup == FactionFile.GuildGroups.None && factionData.children.Count > 0)
                 {
                     FactionFile.FactionData firstChild;

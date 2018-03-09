@@ -31,6 +31,9 @@ namespace DaggerfallWorkshop.Game.Questing
     {
         #region Fields
 
+        public const int QuestSuccessRep = 5;
+        public const int QuestFailureRep = -2;
+
         // Quest object collections
         Dictionary<int, Message> messages = new Dictionary<int, Message>();
         Dictionary<string, Task> tasks = new Dictionary<string, Task>();
@@ -49,6 +52,7 @@ namespace DaggerfallWorkshop.Game.Questing
         string questName;
         string displayName;
         DaggerfallDateTime questStartTime;
+        int factionId = 0;
 
         bool questTombstoned = false;
         DaggerfallDateTime questTombstoneTime;
@@ -141,6 +145,15 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             get { return displayName; }
             set { displayName = value; }
+        }
+
+        /// <summary>
+        /// Faction ID the quest will affect reputation of.
+        /// </summary>
+        public int FactionId
+        {
+            get { return factionId; }
+            set { factionId = value; }
         }
 
         /// <summary>
@@ -297,6 +310,13 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // remove all quest's questor messages about quest success/failure
             GameManager.Instance.TalkManager.RemoveQuestorPostQuestMessage(this.UID);
+
+            // Update faction reputation if this quest was for a specific faction
+            if (factionId > 0)
+            {
+                int repChange = QuestSuccess ? QuestSuccessRep : QuestFailureRep;
+                GameManager.Instance.PlayerEntity.FactionData.ChangeReputation(factionId, repChange, true);
+            }
         }
 
         public void StartTask(Symbol symbol)
