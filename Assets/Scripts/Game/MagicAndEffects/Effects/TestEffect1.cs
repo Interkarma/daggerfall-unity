@@ -18,7 +18,7 @@ using DaggerfallConnect.Arena2;
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
     // TODO: Implement first test effect
-    public class TestEffect1 : BaseMagicEffect
+    public class TestEffect1 : BaseEntityEffect
     {
         const string groupName = "Test";
         const string subGroupName = "Effect1";

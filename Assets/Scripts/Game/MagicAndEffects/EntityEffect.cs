@@ -18,9 +18,9 @@ using DaggerfallConnect.Arena2;
 namespace DaggerfallWorkshop.Game.MagicAndEffects
 {
     /// <summary>
-    /// Interface to a magic effect.
+    /// Interface to an entity effect.
     /// </summary>
-    public interface IMagicEffect
+    public interface IEntityEffect
     {
         /// <summary>
         /// Main group for this effect class in spellmaker (e.g. "Damage") - can be shared with other effects.
@@ -57,15 +57,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     }
 
     /// <summary>
-    /// Base implementation of a magic effect.
-    /// Magic effects are like "actions" for spells, potions, items, advantages, diseases, etc.
+    /// Base implementation of an entity effect.
+    /// Entity effects are like "actions" for spells, potions, items, advantages, diseases, etc.
     /// They generally perform work against one or more entities (e.g. damage or restore health).
     /// Some effects perform highly custom operations unique to player (e.g. anchor/teleport UI).
     /// Magic effects are scripted in C# so they have full access to engine and UI as required.
     /// Classic magic effects are included in build for cross-platform compatibility.
     /// Custom effects can be added later using mod system (todo:).
     /// </summary>
-    public abstract class BaseMagicEffect : IMagicEffect
+    public abstract class BaseEntityEffect : IEntityEffect
     {
         public abstract string GroupName { get; }
         public abstract string SubGroupName { get; }

@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
@@ -38,6 +39,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         DaggerfallEntityBehaviour entityBehaviour = null;
         bool isPlayerEntity = false;
         bool allowSelfDamage = true;
+
+        List<IEntityEffect> activeEffects = new List<IEntityEffect>();
 
         #endregion
 

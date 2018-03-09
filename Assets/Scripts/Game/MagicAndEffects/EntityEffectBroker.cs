@@ -20,12 +20,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     /// <summary>
     /// Enumerates available magic effects and coordinates their instantiation.
     /// </summary>
-    public class MagicEffectBroker : MonoBehaviour
+    public class EntityEffectBroker : MonoBehaviour
     {
         void Start()
         {
             // Test
-            IEnumerable<BaseMagicEffect> magicEffects = ReflectiveEnumerator.GetEnumerableOfType<BaseMagicEffect>();
+            IEnumerable<IEntityEffect> magicEffects = ReflectiveEnumerator.GetEnumerableOfType<IEntityEffect>();
         }
     }
 
