@@ -171,6 +171,7 @@ Place _dungeon_ remote dungeon
 Place _newdung_ remote dungeon
 
 Clock _traveltime_ 00:00 0 flag 17 range 0 2
+Clock _end_ 00:00
 
 
 --	Quest start-up:
@@ -186,6 +187,9 @@ _traveltime_ task:
 _giveingredient_ task:
 	toting _ingredient_ and _qgiver_ clicked 
 	give pc nothing 
+                start timer _end_
+
+_end_ task:
 	end quest 
 
 _dummymage_ task:
@@ -196,4 +200,5 @@ variable _map_
 variable _nomap_
 _S.05_ task:
 	when _map_ and _giveingredient_ 
-	reveal _newdung_ saying 1080 
+	reveal _newdung_
+                say 1080 

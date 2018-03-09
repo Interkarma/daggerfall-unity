@@ -97,6 +97,7 @@ Place _dungeon_ remote dungeon
 Place _newdung_ remote dungeon8
 
 Clock _2dung_ 00:00 0 flag 17 range 0 2
+Clock _end_ 00:00
 
 Foe _monster_ is Gargoyle
 
@@ -113,17 +114,24 @@ _2dung_ task:
 _S.01_ task:
 	killed 1 _monster_ saying 1011 
 
-_S.02_ task:
-	clicked npc _qgiver_ 
+_victory_ task:
+                when _S.01_ and _qgclicked_
 	give pc _gold_ 
+                start timer _end_
+
+_end_ task:
 	end quest 
 
+_qgclicked_ task:
+               clicked npc _qgiver_
+
 _clearclick_ task:
-	when _S.02_ and not _S.01_ 
-	clear _S.02_ _clearclick_ 
+	when _qgclicked_ and not _S.01_ 
+	clear _qgclicked_ _clearclick_ 
 
 variable _map_
 variable _nomap_
 _S.06_ task:
-	when _map_ and _S.02_ 
-	reveal _newdung_ saying 1080 
+	when _map_ and _victory_ 
+	reveal _newdung_
+                say 1080

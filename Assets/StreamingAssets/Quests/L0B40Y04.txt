@@ -15,7 +15,7 @@ QuestorOffer:  [1000]
 <ce>                 challenge of the experience. We have
 <ce>                a client who wants to call accounts on
 <ce>                    a member of the royal family of
-<ce>                       __mondung_. When I heard
+<ce>                       ___mondung_. When I heard
 <ce>                  that, I thought of you. Interested?
 
 RefuseQuest:  [1001]
@@ -26,9 +26,9 @@ RefuseQuest:  [1001]
 AcceptQuest:  [1002]
 <ce>                 I just knew you could not resist this
 <ce>                    one. Fair warning, your target,
-<ce>                  =knight_ is no pampered princeling.
+<ce>                  _knight_ is no pampered princeling.
 <ce>                  The client is also one of the royal
-<ce>                family, worried that =knight_ is going
+<ce>                family, worried that _knight_ is going
 <ce>                 to worm a way to the throne. And from
 <ce>                 what I've heard, %g has the power to
 <ce>                  do just that. Our client wants %g2
@@ -39,7 +39,7 @@ AcceptQuest:  [1002]
 
 QuestFail:  [1003]
 <ce>                   I don't know who you think you've
-<ce>                    killed, but it wasn't =knight_.
+<ce>                    killed, but it wasn't _knight_.
 <ce>                 Get your butt over to the palace and
 <ce>                    do what we were contracted for.
 
@@ -54,19 +54,19 @@ QuestComplete:  [1004]
 <ce>                         I'm very proud, %pcf.
 
 RumorsDuringQuest:  [1005]
-I know what I'm talking about. =knight_ is going to be our next ruler.
+I know what I'm talking about. _knight_ is going to be our next ruler.
 <--->
-Someday =knight_ going to be our ruler. Then we'll know real tyranny.
+Someday _knight_ going to be our ruler. Then we'll know real tyranny.
 
 RumorsPostfailure:  [1006]
-=knight_ left the court for a while, but %g'll be back. That's for certain.
+_knight_ left the court for a while, but %g'll be back. That's for certain.
 <--->
-And the royal opera continues. I wonder what made =knight_ leave court.
+And the royal opera continues. I wonder what made _knight_ leave court.
 
 RumorsPostsuccess:  [1007]
-They ought to declare it a %reg holiday. =knight_ death day! Hooray!
+They ought to declare it a %reg holiday. _knight_ death day! Hooray!
 <--->
-I can't help but be suspicious about =knight_'s sudden death. Too convenient.
+I can't help but be suspicious about _knight_'s sudden death. Too convenient.
 
 QuestorPostsuccess:  [1008]
 I'm still thinking about that knight's accounting. It was truly sublime, %pcf.
@@ -80,13 +80,13 @@ Message:  1020
 %qdt:
  My latest contract for the Dark Brotherhood
  in ___questgiver_ is a noble at _mondung_,
- in __mondung_, by the name of
- =knight_. The deed must be
+ in ___mondung_, by the name of
+ _knight_. The deed must be
  done in =1stparton_ days.
 
 Message:  1021
 <ce>                     "I could...have been your...
-<ce>                    next...ruler," moans =knight_.
+<ce>                    next...ruler," moans _knight_.
 <ce>                   The contract has been fulfilled.
 
 
@@ -98,7 +98,7 @@ Message:  1021
 --              %qdt occurs 1 time.
 --              %reg occurs 1 time.
 --       =1stparton_ occurs 3 times.
---          =knight_ occurs 14 times.
+--          _knight_ occurs 14 times.
 --    ___questgiver_ occurs 1 time.
 --        __mondung_ occurs 9 times.
 --          _reward_ occurs 1 time.

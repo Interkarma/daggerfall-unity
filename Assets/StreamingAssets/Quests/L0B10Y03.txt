@@ -37,11 +37,11 @@ RefuseQuest:  [1001]
 
 AcceptQuest:  [1002]
 <ce>                          Good. =target_ has
-<ce>                      a cousin in ___contact_ --
+<ce>                      a cousin in ___contacthome_ --
 <ce>                          a =contact_ called
 <ce>                             _contact_ who
 <ce>                   generally can be found at a place
-<ce>                        called __contact_. Talk
+<ce>                        called ___contacthome_. Talk
 <ce>                  to %g2 -- firmly -- and find where
 <ce>                %g3 cousin is. I'll give you =queston_
 <ce>                  days to take care of this business
@@ -89,7 +89,7 @@ QuestLogEntry:  [1010]
  a =contact_ named _contact_.
  I have =queston_ days to find what
  this cousin knows, track =target_
- down, and get back to __qgiver_.
+ down, and get back to ___qgiver_.
 
 Message:  1011
 <ce>                     I haven't heard from =target_
@@ -145,6 +145,7 @@ QBN:
 Person _qgiver_ group Questor male
 Person _contact_ face 176 group Innkeeper
 
+Place _contacthome_ remote random
 Place _mondung_ remote dungeon
 
 Clock _queston_ 00:00 0 flag 17 range 0 2
@@ -155,12 +156,16 @@ Foe _target_ is Vampire
 	start timer _queston_ 
 	log 1010 step 0 
 	place foe _target_ at _mondung_ 
+                place npc _contact_ at _contacthome_
 
 _queston_ task:
 	end quest 
 
 _qgclicked_ task:
-	clicked npc _qgiver_ 
+                clicked npc _qgiver_
+
+_reward_ task:
+	  when _qgclicked_ and _S.04_
 	give pc nothing 
 	end quest 
 

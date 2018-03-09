@@ -138,20 +138,23 @@ Foe _spider_ is Spider
 _2dung_ task:
 	end quest 
 
-_S.01_ task:
+_mondead_ task:
 	killed 1 _spider_ saying 1013 
 	killed 1 _tiger_ saying 1014 
 	killed 1 _harpy_ saying 1012 
 	killed 1 _bear_ saying 1011 
 
 _S.02_ task:
-	clicked npc _qgiver_ 
+	when _qgclicked_ and _mondead_ 
 	give pc _gold_ 
 	end quest 
 
 _clearclick_ task:
-	when _S.02_ and not _S.01_ 
-	clear _S.02_ _clearclick_ 
+	when _qgclicked_ and not _mondead_ 
+	clear _qgclicked_ _clearclick_ 
+
+_qgclicked_ task:
+	clicked npc _qgiver_ 
 
 variable _map_
 variable _nomap_

@@ -79,8 +79,8 @@ QuestorPostfailure:  [1009]
 
 QuestLogEntry:  [1010]
 %qdt:
- _qgiver_ of the Dark Brotherhood
- in __qgiver_, ___qgiver_
+ _qgiver_ of the Dark
+ Brotherhood in ___qgiver_
  has me paying a visit on =assassin_,
  a competing assassin, where %g is completing a contract
  in ___mondung_. If I can find any

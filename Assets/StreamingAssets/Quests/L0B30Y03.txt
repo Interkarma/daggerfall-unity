@@ -35,7 +35,7 @@ AcceptQuest:  [1002]
 <ce>                  dozen of the best, most destructive
 <ce>                  spellcasters in the realm. You will
 <ce>                find the sorcerer in the Mages Guild in
-<ce>                        __mondung_. The contract
+<ce>                        ___mondung_. The contract
 <ce>                     is valid for =1stparton_ days,
 <ce>                     and then you must be back and
 <ce>                     this wizard must be dead. Fair

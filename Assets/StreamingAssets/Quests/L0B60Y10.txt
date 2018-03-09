@@ -25,7 +25,7 @@ AcceptQuest:  [1002]
 <ce>                   We're talking about a veteran of
 <ce>                 the Betony war. Killed 9 men, if the
 <ce>                  stories are right. Go to _mondung_
-<ce>                     in __mondung_. You'll be able
+<ce>                     in ___mondung_. You'll be able
 <ce>                  to identify the mark easily because
 <ce>                   of the limp. A spear in the knee
 <ce>                  during the war caused it. Get back
@@ -34,7 +34,7 @@ AcceptQuest:  [1002]
 QuestFail:  [1003]
 <ce>                   I don't know who you think you've
 <ce>                   killed, but it wasn't the target.
-<ce>                      Get back to __mondung_ and
+<ce>                      Get back to ___mondung_ and
 <ce>                  finish what we were contracted for.
 
 QuestComplete:  [1004]
@@ -62,7 +62,7 @@ Message:  1020
 %qdt:
  My contract for the Dark Brotherhood
  in ___questgiver_ is a war hero at _mondung_,
- in __mondung_. The deed must be
+ in ___mondung_. The deed must be
  done in =1stparton_ days.
 
 Message:  1021
@@ -117,6 +117,10 @@ _pcgetsgold_ task:
 
 _qgclicked_ task:
 	clicked npc _questgiver_ 
+
+_clearclick_ task:
+               when _qgclicked_ and not _S.02_
+               clear _qgclicked_ _clearclick_
 
 _S.02_ task:
 	killed 1 _F.00_ saying 1021 

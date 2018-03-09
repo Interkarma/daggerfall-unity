@@ -38,13 +38,13 @@ QuestLogEntry:  [1010]
  I had a secret meeting with
  _apothecary_, a member of the
  Dark Brotherhood, the guild of
- assassins, in ___apothecary_.
+ assassins, in ___shop_.
  I was given a vial of _poison_
  to secretly put into the wine of
  _npc_ of _mansion_,
  in __mansion_.  According to
  _apothecary_, if I then go see
- _darkbmember_ in ___darkbmember_,
+ _darkbmember_ in ___darkbhood_,
  I will become a member of the Dark
  Brotherhood. I have =traveltime_ days to
  reach him, or the Brotherhood will
@@ -92,7 +92,7 @@ Message:  1015
 <ce>                        _mansion_ of __mansion_.
 <ce>               You have =traveltime_ days to do this and
 <ce>                       report to _darkbmember_ in
-<ce>                     ___darkbmember_. The blessings
+<ce>                     ___darkbhood_. The blessings
 <ce>                       of Mephala upon you, %pcn.
 
 Message:  1019
@@ -108,7 +108,7 @@ Message:  1020
     The Dark Brotherhood has been watching
  you. You have slain without sanction several
  times. You must now join us, or be counted
- as our foe. Travel to ___apothecary_
+ as our foe. Travel to ___shop_
  in %reg and see _apothecary_,
  who will give you further instructions.
  
@@ -143,9 +143,11 @@ Person _apothecary_ face 144 group Chemist
 Person _npc_ face 1 group Resident1
 
 Place _mansion_ remote house1
+Place _shop_ remote apothecary
+Place _darkbhood_ remote house2
 
-Clock _traveltime_ 00:00 0 flag 1 range 2 5
-Clock _S.01_ 00:00 0 flag 1 range 1 4
+Clock _traveltime_ 14.00:00 0 flag 1 range 2 5
+Clock _S.01_ 30.00:00 0 flag 1 range 1 4
 Clock _delay_ 01:00 0 flag 1 range 0 1
 
 Foe _F.00_ is 2 Assassin
@@ -157,6 +159,8 @@ Foe _F.02_ is 2 Nightblade
 	log 1012 step 0 
 	get item _letter_ 
 	say 1011 
+                place npc _apothecary_ at _shop_
+                place npc _darkbmember_ at _darkbhood_
 
 _traveltime_ task:
 	change repute with _darkbmember_ by -35 
@@ -169,6 +173,7 @@ _S.02_ task:
 	place item decanter at _mansion_ 
 	add dialog for location _mansion_ person _darkbmember_ 
 	start timer _traveltime_ 
+                stop timer _S.01_
 	log 1010 step 1 
 	get item _poison_ 
 	say 1015 
