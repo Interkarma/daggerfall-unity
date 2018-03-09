@@ -15,7 +15,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect.Arena2;
 
-namespace DaggerfallWorkshop.Game.Magic
+namespace DaggerfallWorkshop.Game.MagicAndEffects
 {
     /// <summary>
     /// Interface to a magic effect.

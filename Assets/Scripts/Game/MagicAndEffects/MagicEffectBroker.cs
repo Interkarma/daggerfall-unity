@@ -15,7 +15,7 @@ using System.Reflection;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace DaggerfallWorkshop.Game.Magic
+namespace DaggerfallWorkshop.Game.MagicAndEffects
 {
     /// <summary>
     /// Enumerates available magic effects and coordinates their instantiation.

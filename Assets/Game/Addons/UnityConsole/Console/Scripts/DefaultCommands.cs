@@ -13,7 +13,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Weather;
 using DaggerfallWorkshop.Game.Questing;
-using DaggerfallWorkshop.Game.Magic;
+using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Serialization;

@@ -11,11 +11,10 @@
 
 using UnityEngine;
 using System;
-using DaggerfallWorkshop.Game.Magic;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
-namespace DaggerfallWorkshop.Game
+namespace DaggerfallWorkshop.Game.MagicAndEffects
 {
     /// <summary>
     /// Peered with a DaggerfallEntityBehaviour for magic and effect handling related to that entity.

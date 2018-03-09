@@ -15,7 +15,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect.Arena2;
 
-namespace DaggerfallWorkshop.Game.Magic.MagicEffects
+namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
     // TODO: Implement first test effect
     public class TestEffect1 : BaseMagicEffect
