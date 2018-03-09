@@ -1535,10 +1535,10 @@ namespace Wenzil.Console
                 if (!entityBehaviour)
                     return "casteffect could not find DaggerfallEntityBehaviour on specified GameObject (you must target an enemy or other valid entity)";
 
-                // The gameobject must have a magic manager
-                MagicManager magicManager = result.GetComponent<MagicManager>();
-                if (!magicManager)
-                    return "casteffect could not find MagicManager on specified GameObject";
+                // The gameobject must have an effect manager
+                EntityEffectManager effectManager = result.GetComponent<EntityEffectManager>();
+                if (!effectManager)
+                    return "casteffect could not find EntityEffectManager on specified GameObject";
 
                 // TODO: Send effect to resulting magic manager or error out if effect does not exist
                 

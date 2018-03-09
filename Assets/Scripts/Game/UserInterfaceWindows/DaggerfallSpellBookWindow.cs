@@ -386,13 +386,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             //TODO
             Debug.Log("list box Double Clicked");
 
-            // TEMP: Issue a fake spell to player's magic manager
+            // TEMP: Issue a fake spell to player's effect manager
             // This will expand and eventually be replaced with real spells
             // Currently just setting up spellcasting front-end and animations
-            MagicManager playerMagicManager = GameManager.Instance.PlayerMagicManager;
-            if (playerMagicManager)
+            EntityEffectManager playerEffectManager = GameManager.Instance.PlayerEffectManager;
+            if (playerEffectManager)
             {
-                playerMagicManager.SetReadySpell(new FakeSpell());
+                playerEffectManager.SetReadySpell(new FakeSpell());
                 CloseWindow();
             }
         }

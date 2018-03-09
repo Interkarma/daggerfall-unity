@@ -18,12 +18,12 @@ using DaggerfallWorkshop.Game.UserInterfaceWindows;
 namespace DaggerfallWorkshop.Game
 {
     /// <summary>
-    /// Peered with a DaggerfallEntityBehaviour for magic handling related to that entity.
-    /// Manages list of active magic effects currently operating on peered entity.
+    /// Peered with a DaggerfallEntityBehaviour for magic and effect handling related to that entity.
+    /// Manages list of active effects currently operating on peered entity.
     /// Used by player and enemies to send and receive magic effects from various sources.
     /// NOTE: Under active development and subject to frequent change.
     /// </summary>
-    public class MagicManager : MonoBehaviour
+    public class EntityEffectManager : MonoBehaviour
     {
         #region Fields
 

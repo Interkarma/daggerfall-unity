@@ -83,10 +83,10 @@ namespace DaggerfallWorkshop.Game
                 return;
 
             // Do nothing if player has spell ready to cast as activate button is now used to fire spell
-            if (GameManager.Instance.PlayerMagicManager)
+            if (GameManager.Instance.PlayerEffectManager)
             {
                 // Handle pending spell cast
-                if (GameManager.Instance.PlayerMagicManager.HasReadySpell)
+                if (GameManager.Instance.PlayerEffectManager.HasReadySpell)
                 {
                     castPending = true;
                     return;
