@@ -54,18 +54,18 @@ N0B20Y02, MagesGuild, M, 20, Passed. Corpses don't disappear at the end of the q
 N0B20Y05, MagesGuild, M, 20, Passed. Lacks text variables in intro
 -N0B21Y14, MagesGuild, M, 21, FAILED. GetCurrentRegionFaction() needed
 N0B30Y15, MagesGuild, M, 30, Passed. Lacks spells on imp
--N0B40Y07, MagesGuild, M, 40, FAILED, Banish Daedra
+-N0B40Y07, MagesGuild, M, 40, FAILED Banish Daedra
 
 -- Classic: Temples (general)
-C0C00Y10, HolyOrder, N, 0,
-C0C00Y11, HolyOrder, N, 0,
+-C0C00Y10, HolyOrder, N, 0, Exception during quest compile: An element with the same key already exists in the dictionary.
+C0C00Y11, HolyOrder, N, 0, __qgiver_ resolves to BLANK
 C0C00Y12, HolyOrder, N, 0,
 C0C00Y13, HolyOrder, N, 0,
 C0B00Y00, HolyOrder, M, 0,
--C0B00Y01, HolyOrder, M, 0,
--C0B00Y02, HolyOrder, M, 0,
--C0B00Y03, HolyOrder, M, 0,
--C0B00Y04, HolyOrder, M, 0,
+-C0B00Y01, HolyOrder, M, 0, Exception during quest compile: An element with the same key already exists in the dictionary.
+-C0B00Y02, HolyOrder, M, 0, Action not found. Ignoring 'clicked _sneaker_ and at least 50 gold otherwise do _S.18_ '
+C0B00Y03, HolyOrder, M, 0,
+C0B00Y04, HolyOrder, M, 0,
 -C0B00Y14, HolyOrder, M, 0, Exception during quest compile: Could not find Item name item in items table
 C0B10Y05, HolyOrder, M, 10,
 C0B10Y06, HolyOrder, M, 10,
