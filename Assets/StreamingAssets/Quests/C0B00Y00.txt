@@ -110,6 +110,9 @@ _traveltime_ task:
 
 _questdone_ task:
 	clicked npc _qgiver_ 
+
+_success_ task:
+	when _questdone_ and _S.06_ 
 	give pc _gold_ 
 	end quest 
 

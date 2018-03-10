@@ -32,7 +32,7 @@ RefuseQuest:  [1001]
 
 AcceptQuest:  [1002]
 <ce>                      The dragon egg just hatched
-<ce>                        in ___dungeon_. I don't
+<ce>                        in ___mondung_. I don't
 <ce>                      know if there are any other
 <ce>                       dragonlings there or not.
 <ce>                       I can keep it all a secret
@@ -77,12 +77,12 @@ I heard a great joke. %jok
 The legal system in %reg has it good points and bad ones.
 
 RumorsPostfailure:  [1006]
-%kno went stomping about in ___dungeon_ for no reason.
+%kno went stomping about in ___mondung_ for no reason.
 
 RumorsPostsuccess:  [1007]
-The dragon in ___dungeon_ was fifty feet long!
+The dragon in ___mondung_ was fifty feet long!
 <--->
-The ___dungeon_ dragon was a hundred feet long!
+The ___mondung_ dragon was a hundred feet long!
 <--->
 The dragon that %ra slew ate forty cows for lunch!
 
@@ -97,7 +97,7 @@ QuestLogEntry:  [1010]
  _qgiver_ of
  ==qgiver_ in ___qgiver_
  told me that a dragon's egg
- hatched in ___dungeon_.
+ hatched in ___mondung_.
  I have =2dung_ days to slay
  the beast and bask in the
  glory of the deed.
@@ -121,7 +121,7 @@ Message:  1011
 --              %reg occurs 1 time.
 --           =2dung_ occurs 3 times.
 --         ==qgiver_ occurs 6 times.
---       ___dungeon_ occurs 5 times.
+--       _mondung_ occurs 5 times.
 --        ___qgiver_ occurs 3 times.
 
 QBN:
@@ -129,7 +129,7 @@ QBN:
 Person _qgiver_ group Questor male
 Person _local_ face 93 group Resident2
 
-Place _dungeon_ remote dungeon14
+Place _mondung_ remote dungeon
 
 Clock _2dung_ 00:00 0 flag 17 range 0 2
 
@@ -137,9 +137,9 @@ Foe _monster_ is Dragonling
 
 --	Quest start-up:
 	start timer _2dung_ 
-	reveal _dungeon_ 
+	reveal _mondung_ 
 	log 1010 step 0 
-	place foe _monster_ at _dungeon_ 
+	place foe _monster_ at _mondung_ 
 
 _2dung_ task:
 	end quest 
@@ -149,6 +149,9 @@ _S.01_ task:
 
 _S.02_ task:
 	clicked npc _qgiver_ 
+
+_success_ task:
+	when _S.02_ and _S.01_
 	give pc nothing 
 	change repute with _local_ by +6 
 	change repute with _qgiver_ by +10 

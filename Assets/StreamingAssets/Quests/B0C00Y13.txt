@@ -111,6 +111,9 @@ _S.01_ task:
 
 _questdone_ task:
 	clicked npc _qgiver_ 
+
+_success_ task:
+	when _S.03_ and _questdone_ 
 	give pc nothing 
 	end quest 
 
@@ -136,4 +139,3 @@ _S.07_ task:
 _clearclick_ task:
 	when not _S.03_ and _questdone_ 
 	clear _questdone_ _clearclick_ 
-	clear _questdone_ 

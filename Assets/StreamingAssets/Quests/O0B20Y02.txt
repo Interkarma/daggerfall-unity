@@ -60,7 +60,7 @@ QuestLogEntry:  [1010]
  steal the _magicitem_ from
  _mansion_ in __mansion_.
  I have =traveltime_ days to get
- it back to %g2 in __qgiver_
+ it back to %g2 in The Thieves Guild
  in ___qgiver_.
 
 
