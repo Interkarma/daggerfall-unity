@@ -194,6 +194,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public Diseases disease;
         public ulong diseaseContractedTime;
         public uint diseaseInclubationTime;
+        public byte diseaseDaysOfSymptoms;
     }
 
     [fsObject("v1")]

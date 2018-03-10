@@ -346,6 +346,41 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public void BeginButtonOnClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             Refresh();
+
+            // Warns player if they have an incubating disease
+            if (GameManager.Instance.PlayerEntity.Disease.IsDiseased() && !GameManager.Instance.PlayerEntity.Disease.HasFinishedIncubation())
+            {
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
+                TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(1010);
+                messageBox.SetTextTokens(tokens);
+                messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
+                messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
+                messageBox.OnButtonClick += ConfirmTravelPopupDiseasedButtonClick;
+                uiManager.PushWindow(messageBox);
+            }
+            else
+            {
+                CallFastTravelGoldCheck();
+            }
+        }
+
+        /// <summary>
+        /// Button handler for travel-with-incubating-disease confirmation pop up.
+        /// </summary>
+        void ConfirmTravelPopupDiseasedButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        {
+            sender.CloseWindow();
+
+            if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
+            {
+                CallFastTravelGoldCheck();
+            }
+            else
+                return;
+        }
+
+        void CallFastTravelGoldCheck()
+        {
             if (!enoughGoldCheck())
             {
                 showNotEnoughGoldPopup();
