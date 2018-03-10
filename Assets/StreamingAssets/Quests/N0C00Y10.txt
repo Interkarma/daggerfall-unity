@@ -4,7 +4,6 @@
 -- Questor: mage
 -- Repute: 0
 -- QuestId: 10
--- Edited for Daggerfall Unity by Jay_H
 Messages: 41
 Quest: N0C00Y10
 -- Message panels
@@ -76,7 +75,7 @@ QuestLogEntry:  [1010]
 <ce>                     _informant_ in _informant1_.
 <ce>                           %g seems to know
 <ce>                        everything that goes on
-<ce>                         around ___informant1_.
+<ce>                         around __informant1_.
                                      <--->
 <ce>                         You should ask at the
 <ce>                       local inns. They are full
@@ -94,16 +93,16 @@ QuestLogEntry:  [1010]
 <ce>                 You should probably visit a library.
 
 Message:  1011
-<ce>        This must be the book, which was stolen from _giver_.
+<ce>        This must be the book, which was stolen from __giver_.
 
 Message:  1025
 <ce>                   Hello, %pcn. Word is that you've
 <ce>                 been asking about me. I should know,
-<ce>                   all of ___informant1_'s news comes
+<ce>                   all of __informant1_'s news comes
 <ce>                          through these ears.
 <ce>              Enough about me. I did hear something about
 <ce>                _giver_'s misfortunes. You want to find
-<ce>                     _enemy_, %g has been looking
+<ce>                     _thief_, %g has been looking
 <ce>                    for a first printing of _book_
 <ce>                for some time. And %g is also the type
 <ce>                   who takes things without asking,
@@ -116,32 +115,32 @@ RumorsPostfailure:  [1006]
 <ce>                   new respect with the Mages Guild.
 
 Message:  1027
-_enemy_ lives at _house_ in __house_.
+_thief_ lives at _house_ in __house_.
 <--->
-_enemy_ does live in _house_.
+_thief_ does live in _house_.
 <--->
-_enemy_ spends %g3 nights at _house_.
+_thief_ spends %g3 nights at _house_.
 <--->
-You should try to find _enemy_ at home, %g does live in _house_.
+You should try to find _thief_ at home, %g does live in _house_.
 <--->
-_enemy_ does a lot of trading at _store_.
+_thief_ does a lot of trading at _store_.
 <--->
-You may want to start shopping at _store_, _enemy_ does.
+You may want to start shopping at _store_, _thief_ does.
 <--->
-_store_ is a popular place to trade stolen goods, which _enemy_ has a lot of.
+_store_ is a popular place to trade stolen goods, which _thief_ has a lot of.
 <--->
-_enemy_ has been seen at _store_.
+_thief_ has been seen at _store_.
 <--->
 _inn_ is a hang out for many thieves.
 <--->
-_enemy_ likes to drink at _inn_.
+_thief_ likes to drink at _inn_.
 <--->
-_enemy_'s favorite tavern is _inn_.
+_thief_'s favorite tavern is _inn_.
 <--->
-_enemy_'s favorite meals are served at _inn_.
+_thief_'s favorite meals are served at _inn_.
 
 Message:  1040
-<ce>                I hear you've been looking for _enemy_.
+<ce>                I hear you've been looking for _thief_.
 <ce>             Well, you've found %g2.  Now get lost before
 <ce>                 you make me really want to hurt you.
 
@@ -164,14 +163,14 @@ Message:  1040
 --       _informant_ occurs 1 time.
 --             _inn_ occurs 5 times.
 --           _store_ occurs 4 times.
---           _enemy_ occurs 24 times.
+--           _thief_ occurs 24 times.
 
 QBN:
 Item _book_ book1 anyInfo 1010 used 1011
 
 Person _informant_ face 245 group Group_6.0
 Person _giver_ group Questor male
-Person _enemy_ face 99 group Chemist anyInfo 1027 rumors 1027
+Person _thief_ face 99 group Chemist anyInfo 1027 rumors 1027
 
 Place _inn_ local tavern
 Place _store_ local weaponstore
@@ -184,10 +183,11 @@ Clock _S.01_ 10.00:00 0 flag 9 range 0 1
 Foe thiefFoe is Thief
 
 --	Quest start-up:
-	dialog link for person _enemy_ 
+	dialog link for person _thief_ 
 	dialog link for location _house_ person _informant_ 
 	start timer _S.01_ 
 	log 1003 step 0 
+	give item _book_ to thiefFoe 
 	place npc _informant_ at _informant1_ 
 
 variable _S.00_
@@ -208,7 +208,7 @@ _S.04_ task:
 
 _S.05_ task:
 	clicked npc _informant_ say 1025 
-	add dialog for person _enemy_ 
+	add dialog for person _thief_ 
 
 _S.06_ task:
 	toting _book_ and _giver_ clicked 
@@ -217,6 +217,4 @@ _S.06_ task:
 
 variable _S.07_
 _S.08_ task:
-	injured thiefFoe
-                say 1040 
-	give item _book_ to thiefFoe 
+	injured thiefFoe saying 1040 
