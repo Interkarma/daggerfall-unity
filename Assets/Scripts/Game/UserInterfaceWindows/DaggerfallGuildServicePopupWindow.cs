@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using DaggerfallWorkshop.Game.Questing;
 using System;
 using DaggerfallWorkshop.Game.Guilds;
+using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -57,10 +58,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int TrainingTooSkilledId = 4022;
         const int TrainingToSoonId = 4023;
         const int TrainSkillId = 5221;
-        const int notEnoughGoldId = 454;
-        const int insufficientRankId = 3100;
-        const int tooGenerousId = 702;
-        const int donationThanksId = 703;
+        const int NotEnoughGoldId = 454;
+        const int InsufficientRankId = 3100;
+        const int TooGenerousId = 702;
+        const int DonationThanksId = 703;
+        const int CuringOfferId = 8;    // TODO which message?
 
         Texture2D baseTexture;
         PlayerEntity playerEntity;
@@ -211,7 +213,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (guild.IsMember())
                 {
                     DaggerfallMessageBox msgBox = new DaggerfallMessageBox(uiManager, this);
-                    msgBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRandomTokens(insufficientRankId));
+                    msgBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRandomTokens(InsufficientRankId));
                     msgBox.ClickAnywhereToClose = true;
                     msgBox.Show();
                 }
@@ -514,7 +516,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     uiManager.PushWindow(skillPicker);
                 }
                 else
-                    DaggerfallUI.MessageBox(notEnoughGoldId);
+                    DaggerfallUI.MessageBox(NotEnoughGoldId);
             }
         }
 
@@ -583,14 +585,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                     // Show thanks message
                     DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
-                    messageBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRandomTokens(donationThanksId), this);
+                    messageBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRandomTokens(DonationThanksId), this);
                     messageBox.ClickAnywhereToClose = true;
                     uiManager.PushWindow(messageBox);
                 }
                 else
                 {
                     DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
-                    messageBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRandomTokens(tooGenerousId), this);
+                    messageBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRandomTokens(TooGenerousId), this);
                     messageBox.ClickAnywhereToClose = true;
                     uiManager.PushWindow(messageBox);
                 }
@@ -603,7 +605,39 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void CureDiseaseService()
         {
+            CloseWindow();
+            if (playerEntity.Disease.IsDiseased())
+            {
+                // Offer curing price
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
+                TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(TrainingOfferId);
+                messageBox.SetTextTokens(tokens, guild);
+                messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
+                messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
+                messageBox.OnButtonClick += ConfirmCuring_OnButtonClick;
+                uiManager.PushWindow(messageBox);
+            }
+            else
+            {   // Not diseased
+                DaggerfallUI.MessageBox(30);
+            }
+        }
 
+        private void ConfirmCuring_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        {
+            CloseWindow();
+            if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
+            {
+                int curingPrice = FormulaHelper.CalculateCuringCost();
+                if (playerEntity.GetGoldAmount() >= curingPrice)
+                {
+                    playerEntity.DeductGoldAmount(curingPrice);
+                    playerEntity.Disease = new DaggerfallDisease();
+                    DaggerfallUI.MessageBox("You are cured.");
+                }
+                else
+                    DaggerfallUI.MessageBox(NotEnoughGoldId);
+            }
         }
 
         #endregion

@@ -1075,6 +1075,11 @@ namespace DaggerfallWorkshop.Game.Formulas
             return amount;
         }
 
+        public static int CalculateCuringCost()
+        {
+            return 100;  // TODO - how is this worked out? what params?
+        }
+
         public static int ApplyRegionalPriceAdjustment(int cost)
         {
             Formula_1i del;
