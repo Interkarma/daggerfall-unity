@@ -54,6 +54,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// Effect must provide either a valid custom description or ID.
         /// </summary>
         TextFile.Token[] CustomText { get; }
+
+        /// <summary>
+        /// Factory a new entity effect of this type.
+        /// </summary>
+        /// <returns></returns>
+        IEntityEffect CreateNew();
     }
 
     /// <summary>
@@ -67,6 +73,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     /// </summary>
     public abstract class BaseEntityEffect : IEntityEffect
     {
+        #region Fields
+        #endregion
+
+        #region IEntityEffect
+
         public abstract string GroupName { get; }
         public abstract string SubGroupName { get; }
         public abstract string GroupKey { get; }
@@ -78,6 +89,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             get { return null; }
         }
 
+        #endregion
+
+        #region Public Virtual Methods
+
+        public abstract IEntityEffect CreateNew();
+
+        #endregion
+
+        #region Static Methods
+
         public static int MakeClassicKey(byte groupIndex, byte subgroupIndex)
         {
             return groupIndex << 8 + subgroupIndex;
@@ -88,5 +109,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             groupIndex = (byte)(key >> 8);
             subgroupIndex = (byte)(key & 0xff);
         }
+
+        #endregion
     }
 }

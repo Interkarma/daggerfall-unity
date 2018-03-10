@@ -32,41 +32,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         protected SpellTypes selectedSpellType;                 // How this spell manifests for cast animations, billboard effects, resist checks, etc.
         protected int spellCost;                                // Cost of this spell to cast - not used for now
 
-        protected List<SpellEffectSettings> effects = new List<SpellEffectSettings>();
+        //protected List<SpellEffectSettings> effects = new List<SpellEffectSettings>();
 
         protected DaggerfallEntityBehaviour casterEntityBehaviour;
-
-        #endregion
-
-        #region Structs
-
-        /// <summary>
-        /// Settings for a single spell effect.
-        /// Each spell has one or more effects with unique settings.
-        /// For example, the player and a lich might cast a fireball at each other at the same time.
-        /// This results in two unique invocations of the same "DamageHealth" effect with different values.
-        /// Certain properties are inherited from spell itself (e.g. touch/area or fire/cold).
-        /// The effect may not consume all settings depending on scripted behaviour of effect iself.
-        /// </summary>
-        public struct SpellEffectSettings
-        {
-            public string GroupKey;
-
-            public int DurationBase;
-            public int DurationBonus;
-            public int DurationBonusPerLevel;
-
-            public int ChanceBase;
-            public int ChanceBonus;
-            public int ChanceBonusPerLevel;
-            public int ChanceCostResult;
-
-            public int MagnitudeBaseMin;
-            public int MagnitudeBaseMax;
-            public int MagnitudeBonusMin;
-            public int MagnitudeBonusMax;
-            public int MagnitudeBonusPerLevel;
-        }
 
         #endregion
 

@@ -27,5 +27,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override string GroupName { get { return groupName; } }
         public override string SubGroupName { get { return subGroupName; } }
         public override string GroupKey { get { return groupKey; } }
+
+        public override IEntityEffect CreateNew()
+        {
+            TestEffect1 effect = new TestEffect1();
+
+            return effect;
+        }
     }
 }
