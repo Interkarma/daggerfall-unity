@@ -4,6 +4,7 @@
 -- Questor: mage
 -- Repute: 0
 -- QuestId: 11
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 81
 Quest: N0C00Y11
 -- Message panels

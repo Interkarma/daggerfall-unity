@@ -4,6 +4,7 @@
 -- Questor: temple
 -- Repute: 0
 -- QuestId: 11
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 81
 Quest: C0C00Y11
 -- Message panels

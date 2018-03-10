@@ -4,6 +4,7 @@
 -- Questor: Brotherhood
 -- Repute: 30
 -- QuestId: 9
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 22
 Quest: L0B30Y09
 -- Message panels

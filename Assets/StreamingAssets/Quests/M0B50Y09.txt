@@ -4,6 +4,7 @@
 -- Questor: fighter
 -- Repute: 50
 -- QuestId: 9
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 81
 Quest: M0B50Y09
 -- Message panels

@@ -4,6 +4,7 @@
 -- Questor: knight
 -- Repute: 60
 -- QuestId: 12
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 12
 Quest: B0B60Y12
 -- Message panels

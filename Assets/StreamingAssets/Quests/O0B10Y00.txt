@@ -4,6 +4,7 @@
 -- Questor: thief
 -- Repute: 10
 -- QuestId: 0
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 21
 Quest: O0B10Y00
 -- Message panels

@@ -4,6 +4,7 @@
 -- Questor: knight
 -- Repute: 80
 -- QuestId: 17
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 12
 Quest: B0B80Y17
 -- Message panels

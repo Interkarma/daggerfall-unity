@@ -4,6 +4,7 @@
 -- Questor: Stendarr
 -- Repute: 0
 -- QuestId: 0
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 31
 Quest: I0B00Y00
 -- Message panels
