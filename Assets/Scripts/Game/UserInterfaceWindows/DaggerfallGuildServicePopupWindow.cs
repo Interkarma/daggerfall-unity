@@ -23,7 +23,7 @@ using DaggerfallWorkshop.Game.Guilds;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
-    public class DaggerfallGuildServicePopupWindow : DaggerfallPopupWindow
+    public class DaggerfallGuildServicePopupWindow : DaggerfallPopupWindow, IMacroContextProvider
     {
         #region UI Rects
 
@@ -59,6 +59,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int TrainSkillId = 5221;
         const int notEnoughGoldId = 454;
         const int insufficientRankId = 3100;
+        const int tooGenerousId = 702;
+        const int donationThanksId = 703;
 
         Texture2D baseTexture;
         PlayerEntity playerEntity;
@@ -238,6 +240,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 case GuildServices.Training:
                     TrainingService();
+                    break;
+
+                case GuildServices.Donate:
+                    DonationService();
+                    break;
+
+                case GuildServices.CureDisease:
+                    CureDiseaseService();
                     break;
 
                 case GuildServices.BuyMagicItems:   // TODO: switch items depending on npcService?
@@ -473,7 +483,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
                 messageBox.SetTextTokens(tokens);
                 messageBox.ClickAnywhereToClose = true;
-                messageBox.ParentPanel.BackgroundColor = Color.clear;
                 uiManager.PushWindow(messageBox);
             }
             else
@@ -488,7 +497,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        public void ConfirmTraining_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        private void ConfirmTraining_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
             CloseWindow();
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
@@ -509,7 +518,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        public void TrainingSkill_OnItemPicked(int index, string skillName)
+        private void TrainingSkill_OnItemPicked(int index, string skillName)
         {
             CloseWindow();
             List<DFCareer.Skills> trainingSkills = GetTrainingSkills();
@@ -539,5 +548,92 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         #endregion
+
+        #region Service Handling: Donation
+
+        void DonationService()
+        {
+            CloseWindow();
+            DaggerfallInputMessageBox donationMsgBox = new DaggerfallInputMessageBox(uiManager, this);
+            donationMsgBox.SetTextBoxLabel(HardStrings.serviceDonateHowMuch);
+            donationMsgBox.TextPanelDistanceX = 6;
+            donationMsgBox.TextPanelDistanceY = 6;
+            donationMsgBox.TextBox.Numeric = true;
+            donationMsgBox.TextBox.MaxCharacters = 8;
+            donationMsgBox.TextBox.Text = "1000";
+            donationMsgBox.OnGotUserInput += DonationMsgBox_OnGotUserInput;
+            donationMsgBox.Show();
+        }
+
+        private void DonationMsgBox_OnGotUserInput(DaggerfallInputMessageBox sender, string input)
+        {
+            int amount = 0;
+            if (int.TryParse(input, out amount))
+            {
+                if (playerEntity.GetGoldAmount() > amount)
+                {
+                    // Deduct gold, change reputation and apply blessing
+                    playerEntity.DeductGoldAmount(amount);
+                    int factionId = guild.GetFactionId();
+                    if (guild.IsMember() && guild.GetType() == typeof(Temple))
+                        ((Temple)guild).Blessing(playerEntity, amount);     // TODO what happens when blessing is applied in classic? a message?
+                    else
+                        factionId = (int)Temple.GetDivine(buildingFactionId);
+                    playerEntity.FactionData.ChangeReputation(factionId, 1, true);
+
+                    // Show thanks message
+                    DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
+                    messageBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRandomTokens(donationThanksId), this);
+                    messageBox.ClickAnywhereToClose = true;
+                    uiManager.PushWindow(messageBox);
+                }
+                else
+                {
+                    DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
+                    messageBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRandomTokens(tooGenerousId), this);
+                    messageBox.ClickAnywhereToClose = true;
+                    uiManager.PushWindow(messageBox);
+                }
+            }
+        }
+
+        #endregion
+
+        #region Service Handling: CureDisease
+
+        void CureDiseaseService()
+        {
+
+        }
+
+        #endregion
+
+
+        #region Macro handling
+
+        public MacroDataSource GetMacroDataSource()
+        {
+            return new GuildServiceMacroDataSource(this);
+        }
+
+        /// <summary>
+        /// MacroDataSource context sensitive methods for guild services window.
+        /// </summary>
+        private class GuildServiceMacroDataSource : MacroDataSource
+        {
+            private DaggerfallGuildServicePopupWindow parent;
+            public GuildServiceMacroDataSource(DaggerfallGuildServicePopupWindow guildServiceWindow)
+            {
+                this.parent = guildServiceWindow;
+            }
+
+            public override string God()
+            {
+                return Temple.GetDivine(parent.buildingFactionId).ToString();
+            }
+        }
+
+        #endregion
+
     }
 }

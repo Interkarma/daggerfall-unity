@@ -15,6 +15,7 @@ using System;
 using DaggerfallWorkshop.Game.Player;
 using UnityEngine;
 using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game.Guilds
 {
@@ -37,6 +38,8 @@ namespace DaggerfallWorkshop.Game.Guilds
         protected const int PromotionBuyMagicId = 6608;
         protected const int PromotionMakeMagicId = 6609;
         protected const int PromotionHighestId = 5241;
+
+        private const DFCareer.Stats NoStat = (DFCareer.Stats)(-1);
 
         #endregion
 
@@ -316,7 +319,29 @@ namespace DaggerfallWorkshop.Game.Guilds
             throw new ArgumentOutOfRangeException("There is no Divine that matches the factionId: "+ factionId);
         }
 
-        public DFCareer.Stats BlessingStat()
+        public void Blessing(PlayerEntity playerEntity, int donationAmount)
+        {
+            int boost = FormulaHelper.CalculateTempleBlessing(donationAmount, GetReputation(playerEntity));
+            if (boost > 0)
+            {
+                DFCareer.Stats stat = BlessingStat();
+                if (stat != NoStat)
+                {
+                    // Apply stat blessing
+                    // TODO - wait for stat effects with timeouts to be implemented and use them
+                    Debug.Log("Blessing: boost stat " + stat);
+                }
+                else
+                {
+                    if (deity == Divines.Stendarr)
+                        Debug.Log("Blessing: boost legal rep");
+                    else if (deity == Divines.Zenithar)
+                        Debug.Log("Blessing: boost mercantile skill");
+                }
+            }
+        }
+
+        private DFCareer.Stats BlessingStat()
         {
             switch (deity)
             {
@@ -330,9 +355,8 @@ namespace DaggerfallWorkshop.Game.Guilds
                     return DFCareer.Stats.Endurance;
                 case Divines.Mara:
                     return DFCareer.Stats.Personality;
-
             }
-            return DFCareer.Stats.Endurance;
+            return NoStat;
         }
 
         #endregion
