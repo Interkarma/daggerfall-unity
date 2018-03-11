@@ -254,7 +254,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 case GuildServices.BuyMagicItems:   // TODO: switch items depending on npcService?
                     CloseWindow();
-                    DaggerfallTradeWindow tradeWindow = new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Buy, this);
+                    DaggerfallTradeWindow tradeWindow = new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Buy, this, guild);
                     tradeWindow.MerchantItems = GetMerchantItems();
                     uiManager.PushWindow(tradeWindow);
                     break;
@@ -266,8 +266,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     break;
 
                 //case GuildServices.BuySpells:
-                    //uiManager.PushWindow(new DaggerfallBankingWindow(uiManager, this));
-                    //break;
+                //uiManager.PushWindow(new DaggerfallBankingWindow(uiManager, this));
+                //break;
+
+                case GuildServices.ReceiveArmor:
+                    ReceiveArmorService();
+                    break;
+
+                case GuildServices.ReceiveHouse:
+                    ReceiveHouseService();
+                    break;
 
                 default:
                     CloseWindow();
@@ -638,6 +646,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 else
                     DaggerfallUI.MessageBox(NotEnoughGoldId);
             }
+        }
+
+        #endregion
+
+        #region Service Handling: Receive Armor / House (Knightly Orders only)
+
+        void ReceiveArmorService()
+        {
+            CloseWindow();
+            KnightlyOrder order = (KnightlyOrder) guild;
+            order.ReceiveArmor(playerEntity);
+        }
+
+        void ReceiveHouseService()
+        {
+            CloseWindow();
+            KnightlyOrder order = (KnightlyOrder) guild;
+            order.ReceiveHouse(playerEntity);
         }
 
         #endregion

@@ -13,6 +13,8 @@ using DaggerfallWorkshop.Game.Entity;
 using System;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game.Guilds
 {
@@ -28,6 +30,13 @@ namespace DaggerfallWorkshop.Game.Guilds
         protected const int PromotionFreeRoomsId = 5238;
         protected const int PromotionFreeShipsId = 5239;
         protected const int PromotionHouseId = 5240;
+        protected const int ArmorId = 463;
+        protected const int HouseId = 462;
+        protected const int NoArmorId = 461;
+        protected const int NoHouseId = 460;
+
+        private const int ArmorFlagMask = 1;
+        private const int HouseFlagMask = 2;
 
         #endregion
 
@@ -79,6 +88,8 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public Orders Order { get { return order; } }
 
+        int flags = 0;
+
         public KnightlyOrder(Orders order) : base()
         {
             this.order = order;
@@ -97,6 +108,15 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Guild Membership and Faction
 
+        public override TextFile.Token[] UpdateRank(PlayerEntity playerEntity)
+        {
+            TextFile.Token[] tokens = base.UpdateRank(playerEntity);
+            if (tokens != null)
+                flags = 0;
+
+            return tokens;
+        }
+
         public override int GetFactionId()
         {
             return (int) order;
@@ -112,7 +132,6 @@ namespace DaggerfallWorkshop.Game.Guilds
         }
 
         #endregion
-
 
         #region Guild Ranks
 
@@ -158,6 +177,61 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #endregion
 
+        #region Service Access:
+
+        public override bool CanAccessService(GuildServices service)
+        {
+            switch (service)
+            {
+                case GuildServices.Quests:
+                    return true;
+                case GuildServices.ReceiveArmor:
+                    return IsMember();
+                case GuildServices.ReceiveHouse:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        #endregion
+
+        #region Services
+
+        public void ReceiveArmor(PlayerEntity playerEntity)
+        {
+            if ((flags & ArmorFlagMask) > 0)
+            {
+                DaggerfallUI.MessageBox(NoArmorId);
+            }
+            else
+            {   // Give a random armor piece
+                Armor armor = (Armor) UnityEngine.Random.Range(102, 108);
+                ArmorMaterialTypes material = ArmorMaterialTypes.Iron + rank;
+                playerEntity.Items.AddItem(ItemBuilder.CreateArmor(playerEntity.Gender, playerEntity.Race, armor, material));
+                flags = flags | ArmorFlagMask;
+                DaggerfallUI.MessageBox(ArmorId);
+            }
+        }
+
+        public void ReceiveHouse(PlayerEntity playerEntity)
+        {
+            if (rank < 9)
+            {
+                DaggerfallUI.MessageBox(NoHouseId);
+            }
+            else if ((flags & HouseFlagMask) > 0)
+            {
+                DaggerfallUI.MessageBox(HardStrings.serviceReceiveHouseAlready);
+            }
+            else
+            {   // Give a house TODO
+                flags = flags | HouseFlagMask;
+                DaggerfallUI.MessageBox(HouseId);
+            }
+        }
+
+        #endregion
 
         #region Joining
 
@@ -181,13 +255,14 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         internal override GuildMembership_v1 GetGuildData()
         {
-            return new GuildMembership_v1() { rank = rank, lastRankChange = lastRankChange, variant = (int) order };
+            return new GuildMembership_v1() { rank = rank, lastRankChange = lastRankChange, variant = (int) order, flags = flags };
         }
 
         internal override void RestoreGuildData(GuildMembership_v1 data)
         {
             base.RestoreGuildData(data);
             order = (Orders) data.variant;
+            flags = data.flags;
         }
 
         #endregion

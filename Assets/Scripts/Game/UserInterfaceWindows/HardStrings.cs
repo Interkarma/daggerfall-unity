@@ -150,6 +150,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string serviceBuySoulgems = "Buy Soulgems";
         public const string serviceReceiveArmor = "Receive Armor";
         public const string serviceReceiveHouse = "Receive House";
+        public const string serviceReceiveHouseAlready = "You have already received your house.";
         public const string serviceMembersOnly = "My services are reserved for members only.";
         public const string accessMembersOnly = "You need to be a member of sufficient rank to access this.";
         public const string serviceDonateHowMuch = "Donate how much money : ";

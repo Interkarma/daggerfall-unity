@@ -222,6 +222,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public int rank;
         public int lastRankChange;
         public int variant;
+        public int flags;
     }
 
     [fsObject("v1")]
