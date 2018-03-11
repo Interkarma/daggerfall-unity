@@ -72,9 +72,10 @@ namespace DaggerfallWorkshop.Game.Guilds
             public readonly int welcomeMsgId;
             public readonly int promotionMsgId;
             public readonly int templeNameMsgId;
+            public readonly int blessingMsgId;
 
             public RankBenefits(int library, int healing, int buyPotions, int makePotions, int buyMagic, int makeItems, int buySpells, int makeSpells, int soulGems, int summoning,
-                                int welcomeMsgId, int promotionMsgId, int templeNameMsgId)
+                                int welcomeMsgId, int promotionMsgId, int templeNameMsgId, int blessingMsgId)
             {
                 this.library = library;
                 this.healing = healing;
@@ -89,6 +90,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                 this.welcomeMsgId = welcomeMsgId;
                 this.promotionMsgId = promotionMsgId;
                 this.templeNameMsgId = templeNameMsgId;
+                this.blessingMsgId = blessingMsgId;
             }
 
             public int GetWelcomeMsgId()
@@ -136,14 +138,14 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         static Dictionary<Divines, RankBenefits> templeRankBenefits = new Dictionary<Divines, RankBenefits>()
         {
-            { Divines.Akatosh,  new RankBenefits(2, 1, 4, 5,-1,-1,-1,-1,-1, 7, 5290, 5245, 4058) },
-            { Divines.Arkay,    new RankBenefits(3, 0, 1, 4,-1,-1,-1,-1, 4, 7, 5287, 5242, 4055) },
-            { Divines.Dibella,  new RankBenefits(4, 2, 1, 5,-1,-1,-1,-1,-1, 7, 5290, 5247, 4059) },
-            { Divines.Julianos, new RankBenefits(0, 2,-1,-1, 3, 5,-1,-1,-1, 6, 6610, 5246, 4060) },
-            { Divines.Kynareth, new RankBenefits(4, 1,-1,-1,-1,-1, 3, 6,-1, 7, 5290, 5249, 4062) },
-            { Divines.Mara,     new RankBenefits(4, 1, 2, 5,-1,-1,-1,-1,-1, 7, 5289, 5244, 4057) },
-            { Divines.Stendarr, new RankBenefits(4, 0, 2, 5,-1,-1,-1,-1,-1, 7, 5289, 5248, 4061) },
-            { Divines.Zenithar, new RankBenefits(4, 1, 1, 6,-1,-1,-1,-1,-1, 8, 5288, 5243, 4056) },
+            { Divines.Akatosh,  new RankBenefits(2, 1, 4, 5,-1,-1,-1,-1,-1, 7, 5290, 5245, 4058, 709) },
+            { Divines.Arkay,    new RankBenefits(3, 0, 1, 4,-1,-1,-1,-1, 4, 7, 5287, 5242, 4055, 0) },
+            { Divines.Dibella,  new RankBenefits(4, 2, 1, 5,-1,-1,-1,-1,-1, 7, 5290, 5247, 4059, 712) },
+            { Divines.Julianos, new RankBenefits(0, 2,-1,-1, 3, 5,-1,-1,-1, 6, 6610, 5246, 4060, 710) },
+            { Divines.Kynareth, new RankBenefits(4, 1,-1,-1,-1,-1, 3, 6,-1, 7, 5290, 5249, 4062, 717) },
+            { Divines.Mara,     new RankBenefits(4, 1, 2, 5,-1,-1,-1,-1,-1, 7, 5289, 5244, 4057, 707) },
+            { Divines.Stendarr, new RankBenefits(4, 0, 2, 5,-1,-1,-1,-1,-1, 7, 5289, 5248, 4061, 716) },
+            { Divines.Zenithar, new RankBenefits(4, 1, 1, 6,-1,-1,-1,-1,-1, 8, 5288, 5243, 4056, 705) },
         };
 
         static Dictionary<Divines, List<DFCareer.Skills>> guildSkills = new Dictionary<Divines, List<DFCareer.Skills>>()
@@ -338,6 +340,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                     else if (deity == Divines.Zenithar)
                         Debug.Log("Blessing: boost mercantile skill");
                 }
+                DaggerfallUI.MessageBox(templeRankBenefits[deity].blessingMsgId);
             }
         }
 
