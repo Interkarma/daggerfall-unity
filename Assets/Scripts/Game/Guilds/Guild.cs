@@ -185,11 +185,6 @@ namespace DaggerfallWorkshop.Game.Guilds
             return false;
         }
 
-        public virtual bool FreeTavernRooms()
-        {
-            return false;
-        }
-
         public virtual int ReducedRepairCost(int price)
         {
             return price;
@@ -208,6 +203,16 @@ namespace DaggerfallWorkshop.Game.Guilds
         #endregion
 
         #region Special benefits:
+
+        public virtual bool FreeTavernRooms()
+        {
+            return false;
+        }
+
+        public virtual bool FreeShipTravel()
+        {
+            return false;
+        }
 
         public virtual int FastTravel(int duration)
         {

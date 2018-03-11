@@ -175,6 +175,11 @@ namespace DaggerfallWorkshop.Game.Guilds
             return false;
         }
 
+        public override bool FreeShipTravel()
+        {
+            return (rank >= 6);
+        }
+
         #endregion
 
         #region Service Access:

@@ -231,7 +231,16 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Special guild benefits
 
-        public virtual int FastTravel(int duration)
+        public bool FreeShipTravel()
+        {
+            foreach (Guild guild in memberships.Values)
+                if (guild.FreeShipTravel())
+                    return true;
+
+            return false;
+        }
+
+        public int FastTravel(int duration)
         {
             int newDuration = duration;
             foreach (Guild guild in memberships.Values)
@@ -239,7 +248,7 @@ namespace DaggerfallWorkshop.Game.Guilds
             return newDuration;
         }
 
-        public virtual int DeepBreath(int duration)
+        public int DeepBreath(int duration)
         {
             int newDuration = duration;
             foreach (Guild guild in memberships.Values)
@@ -247,7 +256,7 @@ namespace DaggerfallWorkshop.Game.Guilds
             return newDuration;
         }
 
-        public virtual bool AvoidDeath()
+        public bool AvoidDeath()
         {
             foreach (Guild guild in memberships.Values)
                 if (guild.AvoidDeath())
