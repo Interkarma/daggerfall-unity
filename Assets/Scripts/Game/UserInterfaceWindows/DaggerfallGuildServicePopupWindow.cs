@@ -574,14 +574,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 if (playerEntity.GetGoldAmount() > amount)
                 {
-                    // Deduct gold, change reputation and apply blessing
+                    // Deduct gold, and apply blessing if member
                     playerEntity.DeductGoldAmount(amount);
                     int factionId = guild.GetFactionId();
                     if (guild.IsMember() && guild.GetType() == typeof(Temple))
                         ((Temple)guild).Blessing(playerEntity, amount);     // TODO what happens when blessing is applied in classic? a message?
                     else
                         factionId = (int)Temple.GetDivine(buildingFactionId);
-                    playerEntity.FactionData.ChangeReputation(factionId, 1, true);
+
+                    // Change reputation
+                    int rep = Math.Abs(playerEntity.FactionData.GetReputation(factionId));
+                    if (UnityEngine.Random.Range(1, 100) <= (2 * amount / rep + 1))
+                        playerEntity.FactionData.ChangeReputation(factionId, 1, true);
 
                     // Show thanks message
                     DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
