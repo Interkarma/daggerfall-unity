@@ -185,6 +185,11 @@ namespace DaggerfallWorkshop.Game.Guilds
             return false;
         }
 
+        public virtual bool FreeTavernRooms()
+        {
+            return false;
+        }
+
         public virtual int ReducedRepairCost(int price)
         {
             return price;

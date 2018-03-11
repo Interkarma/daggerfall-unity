@@ -309,7 +309,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
                 else
                 {
-                    messageBox.SetTextTokens(guild.TokensIneligible(playerEntity));
+                    messageBox.SetTextTokens(guild.TokensIneligible(playerEntity), guild);
                     messageBox.ClickAnywhereToClose = true;
                 }
                 uiManager.PushWindow(messageBox);
@@ -350,7 +350,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 status = (MembershipStatus) Enum.Parse(typeof(MembershipStatus), ((Temple)guild).Deity.ToString());
 
             // Get the faction id for affecting reputation on success/failure
-            int factionId = (guildGroup == FactionFile.GuildGroups.HolyOrder) ? buildingFactionId : guildManager.GetGuildFactionId(guildGroup);
+            int factionId = (guildGroup == FactionFile.GuildGroups.HolyOrder || guildGroup == FactionFile.GuildGroups.KnightlyOrder) ? buildingFactionId : guildManager.GetGuildFactionId(guildGroup);
 
             // Select a quest at random from appropriate pool
             offeredQuest = GameManager.Instance.QuestTablesManager.GetGuildQuest(guildGroup, status, factionId, guild.GetReputation(playerEntity));

@@ -16,6 +16,7 @@ using DaggerfallWorkshop.Game.Player;
 using UnityEngine;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Formulas;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game.Guilds
 {
@@ -57,7 +58,7 @@ namespace DaggerfallWorkshop.Game.Guilds
             Zenithar = 22
         }
 
-        struct RankBenefits
+        struct RankData
         {
             public readonly int library;
             public readonly int healing;
@@ -73,9 +74,10 @@ namespace DaggerfallWorkshop.Game.Guilds
             public readonly int promotionMsgId;
             public readonly int templeNameMsgId;
             public readonly int blessingMsgId;
+            public readonly string deityDesc;
 
-            public RankBenefits(int library, int healing, int buyPotions, int makePotions, int buyMagic, int makeItems, int buySpells, int makeSpells, int soulGems, int summoning,
-                                int welcomeMsgId, int promotionMsgId, int templeNameMsgId, int blessingMsgId)
+            public RankData(int library, int healing, int buyPotions, int makePotions, int buyMagic, int makeItems, int buySpells, int makeSpells, int soulGems, int summoning,
+                                int welcomeMsgId, int promotionMsgId, int templeNameMsgId, int blessingMsgId, string deityDesc)
             {
                 this.library = library;
                 this.healing = healing;
@@ -91,16 +93,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                 this.promotionMsgId = promotionMsgId;
                 this.templeNameMsgId = templeNameMsgId;
                 this.blessingMsgId = blessingMsgId;
-            }
-
-            public int GetWelcomeMsgId()
-            {
-                return welcomeMsgId;
-            }
-
-            public int GetTempleNameMsgId()
-            {
-                return templeNameMsgId;
+                this.deityDesc = deityDesc;
             }
 
             public int GetPromotionMsgId(int rank)
@@ -136,16 +129,16 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Static Data
 
-        static Dictionary<Divines, RankBenefits> templeRankBenefits = new Dictionary<Divines, RankBenefits>()
+        static Dictionary<Divines, RankData> templeData = new Dictionary<Divines, RankData>()
         {
-            { Divines.Akatosh,  new RankBenefits(2, 1, 4, 5,-1,-1,-1,-1,-1, 7, 5290, 5245, 4058, 709) },
-            { Divines.Arkay,    new RankBenefits(3, 0, 1, 4,-1,-1,-1,-1, 4, 7, 5287, 5242, 4055, 0) },
-            { Divines.Dibella,  new RankBenefits(4, 2, 1, 5,-1,-1,-1,-1,-1, 7, 5290, 5247, 4059, 712) },
-            { Divines.Julianos, new RankBenefits(0, 2,-1,-1, 3, 5,-1,-1,-1, 6, 6610, 5246, 4060, 710) },
-            { Divines.Kynareth, new RankBenefits(4, 1,-1,-1,-1,-1, 3, 6,-1, 7, 5290, 5249, 4062, 717) },
-            { Divines.Mara,     new RankBenefits(4, 1, 2, 5,-1,-1,-1,-1,-1, 7, 5289, 5244, 4057, 707) },
-            { Divines.Stendarr, new RankBenefits(4, 0, 2, 5,-1,-1,-1,-1,-1, 7, 5289, 5248, 4061, 716) },
-            { Divines.Zenithar, new RankBenefits(4, 1, 1, 6,-1,-1,-1,-1,-1, 8, 5288, 5243, 4056, 705) },
+            { Divines.Akatosh,  new RankData(2, 1, 4, 5,-1,-1,-1,-1,-1, 7, 5290, 5245, 4058, 709, HardStrings.akatoshDesc) },
+            { Divines.Arkay,    new RankData(3, 0, 1, 4,-1,-1,-1,-1, 4, 7, 5287, 5242, 4055, 0, HardStrings.arkayDesc) },
+            { Divines.Dibella,  new RankData(4, 2, 1, 5,-1,-1,-1,-1,-1, 7, 5290, 5247, 4059, 712, HardStrings.dibellaDesc) },
+            { Divines.Julianos, new RankData(0, 2,-1,-1, 3, 5,-1,-1,-1, 6, 6610, 5246, 4060, 710, HardStrings.julianosDesc) },
+            { Divines.Kynareth, new RankData(4, 1,-1,-1,-1,-1, 3, 6,-1, 7, 5290, 5249, 4062, 717, HardStrings.kynarethDesc) },
+            { Divines.Mara,     new RankData(4, 1, 2, 5,-1,-1,-1,-1,-1, 7, 5289, 5244, 4057, 707, HardStrings.maraDesc) },
+            { Divines.Stendarr, new RankData(4, 0, 2, 5,-1,-1,-1,-1,-1, 7, 5289, 5248, 4061, 716, HardStrings.stendarDesc) },
+            { Divines.Zenithar, new RankData(4, 1, 1, 6,-1,-1,-1,-1,-1, 8, 5288, 5243, 4056, 705, HardStrings.zenDesc) },
         };
 
         static Dictionary<Divines, List<DFCareer.Skills>> guildSkills = new Dictionary<Divines, List<DFCareer.Skills>>()
@@ -340,7 +333,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                     else if (deity == Divines.Zenithar)
                         Debug.Log("Blessing: boost mercantile skill");
                 }
-                DaggerfallUI.MessageBox(templeRankBenefits[deity].blessingMsgId);
+                DaggerfallUI.MessageBox(templeData[deity].blessingMsgId);
             }
         }
 
@@ -366,12 +359,6 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Guild Membership and Faction
 
-        // TESTING ONLY - REMOVE!
-        public override bool CanRest()
-        {
-            return IsMember();
-        }
-
         public override int GetFactionId()
         {
             return (int) deity;
@@ -380,8 +367,7 @@ namespace DaggerfallWorkshop.Game.Guilds
         // Temple guild names are different from affiliation
         public override string GetGuildName()
         {
-            RankBenefits benefits = templeRankBenefits[deity];
-            TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(benefits.GetTempleNameMsgId());
+            TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(templeData[deity].templeNameMsgId);
             return tokens[0].text;
         }
 
@@ -402,17 +388,22 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public override TextFile.Token[] TokensPromotion(int newRank)
         {
-            RankBenefits benefits = templeRankBenefits[deity];
-            return DaggerfallUnity.Instance.TextProvider.GetRSCTokens(benefits.GetPromotionMsgId(newRank));
+            return DaggerfallUnity.Instance.TextProvider.GetRSCTokens(templeData[deity].GetPromotionMsgId(newRank));
         }
 
         #endregion
 
         #region Benefits
 
+        // TESTING ONLY - REMOVE!
+        public override bool CanRest()
+        {
+            return IsMember();
+        }
+
         public override bool FreeHealing()
         {
-            return (templeRankBenefits[deity].healing <= rank);
+            return (templeData[deity].healing <= rank);
         }
 
         public override int ReducedCureCost(int price)
@@ -466,7 +457,7 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public override bool CanAccessLibrary()
         {
-            return (templeRankBenefits[deity].library <= rank);
+            return (templeData[deity].library <= rank);
         }
 
         public override bool CanAccessService(GuildServices service)
@@ -482,21 +473,21 @@ namespace DaggerfallWorkshop.Game.Guilds
                 case GuildServices.CureDisease:
                     return true;
                 case GuildServices.BuyPotions:
-                    return (templeRankBenefits[deity].buyPotions <= rank);
+                    return (templeData[deity].buyPotions <= rank);
                 case GuildServices.MakePotions:
-                    return (templeRankBenefits[deity].makePotions <= rank);
+                    return (templeData[deity].makePotions <= rank);
                 case GuildServices.BuySpells:
-                    return (templeRankBenefits[deity].buySpells <= rank);
+                    return (templeData[deity].buySpells <= rank);
                 case GuildServices.MakeSpells:
-                    return (templeRankBenefits[deity].makeSpells <= rank);
+                    return (templeData[deity].makeSpells <= rank);
                 case GuildServices.BuyMagicItems:
-                    return (templeRankBenefits[deity].buyMagic <= rank);
+                    return (templeData[deity].buyMagic <= rank);
                 case GuildServices.MakeMagicItems:
-                    return (templeRankBenefits[deity].makeMagic <= rank);
+                    return (templeData[deity].makeMagic <= rank);
                 case GuildServices.DaedraSummoning:
-                    return (templeRankBenefits[deity].summoning <= rank);
+                    return (templeData[deity].summoning <= rank);
                 case GuildServices.BuySoulgems:
-                    return (templeRankBenefits[deity].soulGems <= rank);
+                    return (templeData[deity].soulGems <= rank);
                 default:
                     return false;
             }
@@ -517,8 +508,7 @@ namespace DaggerfallWorkshop.Game.Guilds
         }
         public override TextFile.Token[] TokensWelcome()
         {
-            RankBenefits benefits = templeRankBenefits[deity];
-            return DaggerfallUnity.Instance.TextProvider.GetRSCTokens(benefits.GetWelcomeMsgId());
+            return DaggerfallUnity.Instance.TextProvider.GetRSCTokens(templeData[deity].welcomeMsgId);
         }
 
         #endregion
@@ -558,9 +548,13 @@ namespace DaggerfallWorkshop.Game.Guilds
                 parent = guild;
             }
 
-            public override string Divine()
+            public override string FactionOrderName()
             {
                 return parent.deity.ToString();
+            }
+            public override string GodDesc()
+            {
+                return templeData[parent.deity].deityDesc;
             }
         }
 

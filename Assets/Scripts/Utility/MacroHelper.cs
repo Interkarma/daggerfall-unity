@@ -86,7 +86,7 @@ namespace DaggerfallWorkshop.Utility
             { "%fn", null },  // Random first(?) name (Female?)
             { "%fn2", null }, // Same as _mn2 (?)
             { "%fnpc", null }, // ?
-            { "%fon", Divine }, // Follower of divine
+            { "%fon", FactionOrderName }, // Faction order name
             { "%fpa", null }, // ?
             { "%fpc", null }, // ?
             { "%fx1", null }, // A faction in news
@@ -97,7 +97,7 @@ namespace DaggerfallWorkshop.Utility
             { "%g2self", Pronoun2self },// Himself/Herself etc...
             { "%g3", Pronoun3 },  // His/Hers/Theirs etc...
             { "%gii", GoldCarried }, // Amount of gold in hand
-            { "%gdd", God }, // Typo of %god
+            { "%gdd", GodDesc }, // God description i.e. God of Logic
             { "%god", God }, // Some god (listed in TEXT.RSC)
             { "%gtp", null }, // Amount of fine
             { "%hea", HpMod }, // HP Modifier
@@ -685,9 +685,9 @@ namespace DaggerfallWorkshop.Utility
             return mcp.GetMacroDataSource().GuildTitle();
         }
 
-        private static string Divine(IMacroContextProvider mcp)
+        private static string FactionOrderName(IMacroContextProvider mcp)
         {   // %fon
-            return mcp.GetMacroDataSource().Divine();
+            return mcp.GetMacroDataSource().FactionOrderName();
         }
 
         private static string Amount(IMacroContextProvider mcp)
@@ -821,6 +821,11 @@ namespace DaggerfallWorkshop.Utility
         public static string HomeRegion(IMacroContextProvider mcp)
         {   // %hrn
             return mcp.GetMacroDataSource().HomeRegion();
+        }
+
+        public static string GodDesc(IMacroContextProvider mcp)
+        {   // %gdd
+            return mcp.GetMacroDataSource().GodDesc();
         }
 
         public static string God(IMacroContextProvider mcp)

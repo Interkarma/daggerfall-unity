@@ -24,7 +24,7 @@ namespace DaggerfallWorkshop.Utility
             throw new NotImplementedException();
         }
 
-        public virtual string Divine()
+        public virtual string FactionOrderName()
         {   // %fon
             throw new NotImplementedException();
         }
@@ -164,6 +164,11 @@ namespace DaggerfallWorkshop.Utility
 
         public virtual string HomeRegion()
         {   // %hrg
+            throw new NotImplementedException();
+        }
+
+        public virtual string GodDesc()
+        {   // %gdd
             throw new NotImplementedException();
         }
 
