@@ -371,6 +371,13 @@ namespace DaggerfallWorkshop.Game.Banking
             amount = playerEntity.DeductGoldAmount(amount);
             bankAccounts[regionIndex].accountGold -= amount;
 
+            AllocateHouseToPlayer(house, regionIndex);
+
+            return TransactionResult.PURCHASED_HOUSE;
+        }
+
+        public static void AllocateHouseToPlayer(BuildingSummary house, int regionIndex)
+        {
             // Set player owned house for this region
             DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
             int mapID = location.MapTableData.MapId;
@@ -383,8 +390,6 @@ namespace DaggerfallWorkshop.Game.Banking
 
             // Add interior scene to permanent list
             SaveLoadManager.StateManager.AddPermanentScene(DaggerfallInterior.GetSceneName(mapID, house.buildingKey));
-
-            return TransactionResult.PURCHASED_HOUSE;
         }
 
         public static TransactionResult SellHouse(int regionIndex)

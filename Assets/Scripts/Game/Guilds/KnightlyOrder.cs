@@ -15,6 +15,7 @@ using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Game.Banking;
 
 namespace DaggerfallWorkshop.Game.Guilds
 {
@@ -230,9 +231,26 @@ namespace DaggerfallWorkshop.Game.Guilds
                 DaggerfallUI.MessageBox(HardStrings.serviceReceiveHouseAlready);
             }
             else
-            {   // Give a house TODO
-                flags = flags | HouseFlagMask;
-                DaggerfallUI.MessageBox(HouseId);
+            {   // Give a house if one availiable
+                if (DaggerfallBankManager.OwnsHouse)
+                    DaggerfallUI.MessageBox((int)TransactionResult.ALREADY_OWN_HOUSE);
+                else
+                {
+                    BuildingDirectory buildingDirectory = GameManager.Instance.StreamingWorld.GetCurrentBuildingDirectory();
+                    if (buildingDirectory)
+                    {
+                        List<BuildingSummary> housesForSale = buildingDirectory.GetHousesForSale();
+                        if (housesForSale.Count > 0)
+                        {
+                            BuildingSummary house = housesForSale[UnityEngine.Random.Range(0, housesForSale.Count)];
+                            DaggerfallBankManager.AllocateHouseToPlayer(house, GameManager.Instance.PlayerGPS.CurrentRegionIndex);
+                            flags = flags | HouseFlagMask;
+                            DaggerfallUI.MessageBox(HouseId);
+                            return;
+                        }
+                    }
+                    DaggerfallUI.MessageBox((int)TransactionResult.NO_HOUSES_FOR_SALE);
+                }
             }
         }
 
