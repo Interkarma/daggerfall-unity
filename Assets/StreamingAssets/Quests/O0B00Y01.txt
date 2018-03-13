@@ -4,6 +4,7 @@
 -- Questor: thief
 -- Repute: 0
 -- QuestId: 1
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 31
 Quest: O0B00Y01
 -- Message panels
@@ -14,7 +15,7 @@ QuestorOffer:  [1000]
 <ce>                sort of assignment. One you should have
 <ce>                  no trouble with. All you gotta do is
 <ce>               bring this _weapons_ over to our agent in
-<ce>                          ___contact_, get %g3
+<ce>                          ___building_, get %g3
 <ce>                   payment for it, and bring it back.
 <ce>                    Think you can handle that, %pcf?
 
@@ -30,10 +31,10 @@ AcceptQuest:  [1002]
 <ce>                            =contact_, about
 <ce>                   what you'd expect. Supposed to be
 <ce>                    hanging around a nook they call
-<ce>                       __contact_ in ___contact_.
+<ce>                       _building_ in ___building_.
 <ce>                           Now, _contact_ has
 <ce>                    picked up some loot out there in
-<ce>                         ___contact_ and wants
+<ce>                         ___building_ and wants
 <ce>                   you to bring it back to us. If you
 <ce>                  think you can handle all that, we'll
 <ce>                expect you back here in =1stparton_ days
@@ -50,7 +51,7 @@ QuestComplete:  [1004]
 <ce>                       Oh, that's a nice _gems_.
 <ce>                           _contact_ gave you
 <ce>                      that? %oth, %g must be doing
-<ce>                        okay out in ___contact_.
+<ce>                        okay out in ___building_.
 <ce>                        Good going, %pcf. Here's
 <ce>                    _reward_ gold for your trouble.
 
@@ -62,7 +63,7 @@ The %t is apparently scared of assassination. The guards are out in force.
 RumorsPostfailure:  [1006]
 They arrested some =contact_. Apparently, %g was an arms dealer.
 <--->
-The Thieves Guild isn't so hot. One of them got arrested in __contact_.
+The Thieves Guild isn't so hot. One of them got arrested in _building_.
 
 RumorsPostsuccess:  [1007]
 I hear they're smuggling _weapons_s in. That takes a lot of nerve.
@@ -111,7 +112,7 @@ Message:  1030
  _questgiver_ of the Thieves Guild
  in ___questgiver_ has asked that I
  deliver this _weapons_ to _contact_
- in __contact_ in ___contact_,
+ in _building_ in ___building_,
  who will then give me some loot to bring back.
  I have =1stparton_ days to complete the task.
 
@@ -143,6 +144,7 @@ Item _gems_ gem
 Person _questgiver_ face 72 group Questor
 Person _contact_ face 80 group Group_5.0
 
+Place _building_ remote house1
 
 Clock _1stparton_ 00:00 0 flag 18 range 1 4
 
@@ -154,6 +156,7 @@ Foe _F.02_ is Spellsword
 	start timer _1stparton_ 
 	log 1030 step 0 
 	get item _weapons_ 
+                place npc _contact_ at _building_
 
 variable _pcgetsgold_
 _qgclicked_ task:

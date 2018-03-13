@@ -4,6 +4,7 @@
 -- Questor: thief
 -- Repute: 10
 -- QuestId: 7
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 21
 Quest: O0B10Y07
 -- Message panels
@@ -128,7 +129,7 @@ _S.02_ task:
 	create foe _battlemage_ every 12 minutes 5 times with 15% success 
 	create foe _F.02_ every 13 minutes 20 times with 15% success 
 
-variable _qgclicked_
 _S.04_ task:
-	clicked item _jewelry_ say 1020 
+	clicked item _jewelry_
+                say 1020
 	say 1015 

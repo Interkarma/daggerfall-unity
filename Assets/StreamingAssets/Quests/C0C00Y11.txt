@@ -4,6 +4,7 @@
 -- Questor: temple
 -- Repute: 0
 -- QuestId: 11
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 81
 Quest: C0C00Y11
 -- Message panels
@@ -128,6 +129,9 @@ _traveltime_ task:
 
 _questdone_ task:
 	clicked npc _qgiver_ 
+
+_success_ task:
+	when _questdone_ and _S.06_ 
 	give pc nothing 
 	end quest 
 
@@ -155,9 +159,12 @@ _S.07_ task:
 	injured _ghost_ saying 1011 
 	injured _skeleton_ saying 1011 
 
-variable _S.08_
+_S.08_ task:
+               start task _try_
+
+variable _try_
 _S.09_ task:
-	when _S.08_ and _questdone_ and not _S.06_ 
+	when _try_ and _questdone_ and not _S.06_ 
 	say 1012 
 	end quest 
 
@@ -169,4 +176,5 @@ variable _map_
 variable _nomap_
 _S.13_ task:
 	when _map_ and _questdone_ 
-	reveal _newdung_ saying 1080 
+                say 1080 
+	reveal _newdung_

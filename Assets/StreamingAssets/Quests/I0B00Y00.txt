@@ -4,6 +4,7 @@
 -- Questor: Stendarr
 -- Repute: 0
 -- QuestId: 0
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 31
 Quest: I0B00Y00
 -- Message panels
@@ -30,7 +31,7 @@ RefuseQuest:  [1001]
 AcceptQuest:  [1002]
 <ce>                  You have a kind heart indeed, %pcf.
 <ce>                  The _item_ we need is at a place in
-<ce>                     ___chemist_ called __chemist_.
+<ce>                     ___apoth_ called _apoth_.
 <ce>                           A =chemist_ named
 <ce>                         _chemist_ will give it
 <ce>                   to us for free if you are there in
@@ -86,8 +87,8 @@ Message:  1030
  find some _item_ and deliver it to them
  in =1stparton_ days.
  Someone named _chemist_ in
- ___chemist_ in a place called
- __chemist_ is willing to give some
+ ___apoth_ in a place called
+ _apoth_ is willing to give some
  if I am able to get there in time.
 
 
@@ -98,7 +99,7 @@ Message:  1030
 --       =1stparton_ occurs 2 times.
 --         =chemist_ occurs 3 times.
 --    ___questgiver_ occurs 1 time.
---        __chemist_ occurs 5 times.
+--        _apoth_ occurs 5 times.
 --            _item_ occurs 28 times.
 
 QBN:
@@ -108,6 +109,7 @@ Item _item_ large_plant
 Person _questgiver_ face 112 group Questor
 Person _chemist_ group Chemist female
 
+Place _apoth_ remote apothecary
 
 Clock _1stparton_ 00:00 0 flag 17 range 1 4
 
@@ -115,6 +117,7 @@ Clock _1stparton_ 00:00 0 flag 17 range 1 4
 --	Quest start-up:
 	start timer _1stparton_ 
 	log 1030 step 0 
+                place npc _chemist_ at _apoth_
 
 _1stparton_ task:
 	end quest 

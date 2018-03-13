@@ -4,6 +4,7 @@
 -- Questor: mage
 -- Repute: 10
 -- QuestId: 3
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 14
 Quest: N0B10Y03
 -- Message panels
@@ -171,11 +172,18 @@ _questdone_ task:
 	end quest 
 
 variable _S.10_
-variable _clearclick_
+
 _pcgetsgold_ task:
 	when _clickonqgiver_ and _S.05_ and not _S.07_ and not _S.02_ 
 	give pc _potion_ 
-	unset _clickonqgiver_ 
 	end quest 
+
+_clearclick_ task:
+               when _clickonqgiver_ and not _S.05_
+               clear _clearclick_ _clickonqgiver_
+
+_clearclick2_ task:
+               when _clickonqgiver_ and _S.02_
+               clear _clearclick2_ _clickonqgiver_
 
 variable _S.13_

@@ -4,6 +4,7 @@
 -- Questor: knight
 -- Repute: 60
 -- QuestId: 12
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 12
 Quest: B0B60Y12
 -- Message panels
@@ -142,6 +143,9 @@ _S.01_ task:
 
 _S.02_ task:
 	clicked npc _qgiver_ 
+
+_success_ task:
+	when _S.02_ and _S.01_ 
 	give pc nothing 
 	change repute with _local_ by +4 
 	change repute with _nobleman_ by +10 

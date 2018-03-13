@@ -4,6 +4,7 @@
 -- Questor: mage
 -- Repute: 0
 -- QuestId: 4
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 46
 Quest: N0B00Y04
 -- Message panels
@@ -174,7 +175,8 @@ Clock _traveltime_ 00:00 0 flag 17 range 0 2
 	log 1010 step 0 
 
 _traveltime_ task:
-	make _ingredient_ permanent saying 1045 
+	make _ingredient_ permanent
+                say 1045 
 	end quest 
 
 _S.01_ task:

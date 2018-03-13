@@ -4,6 +4,7 @@
 -- Questor: fighter
 -- Repute: 0
 -- QuestId: 11
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 12
 Quest: M0C00Y11
 -- Message panels
@@ -104,10 +105,13 @@ _S.01_ task:
 	killed 1 _monster_ saying 1011 
 
 _S.02_ task:
-	clicked npc _qgiver_ 
+	when _qgclicked_ and _S.01_ 
 	give pc nothing 
 	end quest 
 
+_qgclicked_ task:
+               clicked npc _qgiver_
+
 _clearclick_ task:
-	when _S.02_ and not _S.01_ 
-	clear _S.02_ _clearclick_ 
+	when _qgclicked_ and not _S.01_ 
+	clear _qgclicked_ _clearclick_ 

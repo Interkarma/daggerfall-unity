@@ -4,6 +4,7 @@
 -- Questor: thief
 -- Repute: 0
 -- QuestId: 0
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 31
 Quest: O0A0AL00
 -- Message panels
@@ -136,7 +137,7 @@ Message:  1018
 
 Message:  1019
 <ce>                             _thiefmember_
-<ce>                            ___thiefmember_
+<ce>                            ___endbuilding_
 
 Message:  1024
 %pcn,
@@ -148,7 +149,7 @@ Message:  1024
  face the consequences. Steal
  the _clothing_ from
  _mansion_
- in __mansion_
+ in ___mansion_
  if you desire to join us.
  You have =traveltime_ days.
 
@@ -168,7 +169,7 @@ Message:  1030
 --              %reg occurs 4 times.
 --      =traveltime_ occurs 2 times.
 --       ___dungeon_ occurs 1 time.
---   ___thiefmember_ occurs 1 time.
+--   ___endbuilding occurs 1 time.
 --        __mansion_ occurs 1 time.
 --        _clothing_ occurs 5 times.
 --         _mansion_ occurs 1 time.
@@ -185,6 +186,7 @@ Person _npc_ face 218 group Group_6.0
 
 Place _mansion_ remote house1
 Place _dungeon_ remote dungeon
+Place _endbuilding_ remote random
 
 Clock _traveltime_ 90.00:01 0 flag 1 range 0 1
 
@@ -194,6 +196,7 @@ Foe _F.00_ is Mage
 	place item _clothing_ at _mansion_ 
 	_letter_ used do _readletter_ 
 	give pc _letter_ notify 1020 
+                place npc _thiefmember_ at _endbuilding_
 
 _traveltime_ task:
 	end quest 

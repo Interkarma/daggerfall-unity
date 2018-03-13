@@ -4,6 +4,7 @@
 -- Questor: temple
 -- Repute: 10
 -- QuestId: 5
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 13
 Quest: C0B10Y05
 -- Message panels
@@ -107,7 +108,7 @@ Person _custodian_ face 1 group Group_5.0
 
 Place _dungeon_ remote dungeon
 
-Clock _traveltime_ 00:00 0 flag 1 range 0 2
+Clock _traveltime_ 00:00 0 flag 17 range 0 2
 
 Foe _orc1_ is Orc_shaman
 Foe _orc2_ is Orc_warlord

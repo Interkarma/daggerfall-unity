@@ -4,6 +4,7 @@
 -- Questor: temple
 -- Repute: 0
 -- QuestId: 13
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 12
 Quest: C0C00Y13
 -- Message panels
@@ -17,7 +18,7 @@ QuestorOffer:  [1000]
 <ce>                      So you are looking to curry
 <ce>                         favor with __qgiver_.
 <ce>                        Deliver this _religitem_
-<ce>                          to ___priest_ within
+<ce>                          to ___house_ within
 <ce>                      =traveltime_ days and I can
 <ce>                           speak well of you.
 
@@ -29,7 +30,7 @@ RefuseQuest:  [1001]
 AcceptQuest:  [1002]
 <ce>                       Here is the _religitem_.
 <ce>                          Take it to _priest_
-<ce>                      of __priest_ in ___priest_.
+<ce>                      of _house_ in ___house_.
 <ce>                     Oh, I almost forgot to mention
 <ce>                        that a rival temple may
 <ce>                      send out thugs to stop you.
@@ -59,15 +60,14 @@ QuestLogEntry:  [1010]
  _qgiver_, of __qgiver_,
  has given me a charge to
  deliver the _religitem_
- to _priest_ in __priest_ in
- ___priest_. It must be there within =traveltime_ days.
+ to _priest_ in _house_ in
+ ___house_. It must be there within =traveltime_ days.
 
 Message:  1011
 <ce>                         That _religitem_ will
-<ce>                      never make it to __priest_.
+<ce>                      never make it to _house_.
 <ce>                        Instead, I shall deliver
 <ce>                            them your head!
-
 
 -- Symbols used in the QRC file:
 --
@@ -78,7 +78,7 @@ Message:  1011
 --              %qdt occurs 1 time.
 --               %ra occurs 16 times.
 --      =traveltime_ occurs 9 times.
---        ___priest_ occurs 6 times.
+--        ___house_ occurs 6 times.
 --         __qgiver_ occurs 3 times.
 --          _priest_ occurs 5 times.
 --          _qgiver_ occurs 3 times.
@@ -91,9 +91,9 @@ Person _qgiver_ group Questor male
 Person _priest_ group Group_5.0 female
 Person _enemy_ face 176 group Local_4.0
 
+Place _house_ remote house1
 
-Clock _traveltime_ 00:00 0 flag 1 range 1 2
-Clock _delay_ 01:00 0 flag 1 range 0 1
+Clock _traveltime_ 00:00 0 flag 17 range 1 2
 
 Foe _thief_ is Thief
 Foe _spellsword_ is Spellsword
@@ -104,7 +104,7 @@ Foe _spellsword_ is Spellsword
 	start timer _traveltime_ 
 	log 1010 step 0 
 	get item _religitem_ 
-	create npc _priest_ 
+	place npc _priest_ at _house_
 
 _traveltime_ task:
 	change repute with _qgiver_ by -5 
@@ -113,11 +113,9 @@ _traveltime_ task:
 _questdone_ task:
 	toting _religitem_ and _priest_ clicked 
 	give pc nothing 
-	start timer _delay_ 
+	end quest 
 
 _S.02_ task:
 	injured _spellsword_ saying 1011 
 	injured _thief_ saying 1011 
 
-_delay_ task:
-	end quest 

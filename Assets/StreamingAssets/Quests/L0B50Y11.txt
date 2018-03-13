@@ -4,6 +4,7 @@
 -- Questor: Brotherhood
 -- Repute: 50
 -- QuestId: 11
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 32
 Quest: L0B50Y11
 -- Message panels
@@ -16,7 +17,7 @@ QuestorOffer:  [1000]
 <ce>                     a tough one. Do you want it?
 
 RefuseQuest:  [1001]
-<ce>                    Its not for the faint of heart.
+<ce>                    It's not for the faint of heart.
                                      <--->
 <ce>                  Understood. Come back when you are
 <ce>                       interested in real work.
@@ -78,13 +79,13 @@ Message:  1015
 
 Message:  1020
 <ce>                    _marknpc_ enjoys an occasional
-<ce>                rendevous with me. %g never stays long.
+<ce>                rendezvous with me. %g never stays long.
 <ce>                   %g just uses me for %g3 pleasure.
 <ce>                 For 50 gold I'll gladly sell %g2 out.
 
 Message:  1021
 <ce>                       Help! _marknpc_! There is
-<ce>                      an assassin in the house!.
+<ce>                      an assassin in the house!
 
 Message:  1022
 <ce>                      You killed _marknpc_! Just

@@ -4,6 +4,7 @@
 -- Questor: temple
 -- Repute: 0
 -- QuestId: 4
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 13
 Quest: C0B00Y04
 -- Message panels
@@ -51,7 +52,7 @@ QuestComplete:  [1004]
 RumorsDuringQuest:  [1005]
 That lunatic =priest_ is holed up in ___mondung_. Only an idiot would go there.
 <--->
-___mondung_ is a dangerous place for sane people. =priest_ won't last long.
+___mondung_ is a dangerous place for sane people. _priest_ won't last long.
 
 RumorsPostfailure:  [1006]
 Apparently, =priest_ is never coming back home.
@@ -112,7 +113,7 @@ Message:  1012
 --              %pct occurs 4 times.
 --              %qdt occurs 1 time.
 --               %ra occurs 1 time.
---          =priest_ occurs 49 times.
+--          _priest_ occurs 49 times.
 --         =queston_ occurs 8 times.
 --       ___mondung_ occurs 5 times.
 --        ___qgiver_ occurs 8 times.
@@ -150,6 +151,9 @@ _cick_ task:
 
 _S.04_ task:
 	clicked npc _qgiver_ 
+
+_success_ task:
+	when _S.04_ and _bonk_ 
 	give pc nothing 
 	end quest 
 

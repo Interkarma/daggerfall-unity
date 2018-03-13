@@ -4,6 +4,7 @@
 -- Questor: fighter
 -- Repute: 0
 -- QuestId: 15
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 21
 Quest: M0B00Y15
 -- Message panels
@@ -108,19 +109,22 @@ Foe _rats_ is Giant_rat
 _2dung_ task:
 	end quest 
 
-_S.01_ task:
+_mondead_ task:
 	killed 4 _rats_ 
 	killed 4 _monster_ 
 	say 1020 
 
 _S.02_ task:
-	clicked npc _qgiver_ 
+	when _qgclicked_ and _mondead_ 
 	give pc _reward_ 
 	end quest 
 
 _clearclick_ task:
-	when _S.02_ and not _S.01_ 
-	clear _S.02_ _clearclick_ 
+	when _qgclicked_ and not _mondead_ 
+	clear _qgclicked_ _clearclick_ 
+
+_qgclicked_ task:
+	clicked npc _qgiver_ 
 
 _S.04_ task:
 	create foe _rats_ every 3 minutes 7 times with 60% success 

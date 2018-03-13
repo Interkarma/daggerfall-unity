@@ -4,6 +4,7 @@
 -- Questor: fighter
 -- Repute: 0
 -- QuestId: 13
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 12
 Quest: M0C00Y13
 -- Message panels
@@ -15,7 +16,7 @@ QuestorOffer:  [1000]
 <ce>                  charity work. If I weren't short on
 <ce>                 fighter's right now, I'd have to send
 <ce>                 you away %pcn. I do need a fighter to
-<ce>                  chase off some barbarians that are
+<ce>                  chase off some barbarian that's
 <ce>                  running wild. Do it for me and I'll
 <ce>                    make sure everyone knows you're
 <ce>                     a stand up %ra. Is it a deal?
@@ -28,7 +29,7 @@ RefuseQuest:  [1001]
 AcceptQuest:  [1002]
 <ce>                    Get your sorry carcass over to
 <ce>                         _house_. Run off the
-<ce>                        barbarians by this time
+<ce>                        barbarian by this time
 <ce>                      tomorrow and you'll be OK.
 
 QuestComplete:  [1004]
@@ -46,22 +47,22 @@ RumorsPostfailure:  [1006]
 
 RumorsPostsuccess:  [1007]
 <ce>                  Aren't you the %ra that chased off
-<ce>                            the barbarians?
+<ce>                            the barbarian?
 
 QuestorPostsuccess:  [1008]
-<ce>               You managed those barbarians pretty well
+<ce>               You managed that barbarian pretty well
 <ce>                         %pcf. Not bad at all.
 
 QuestorPostfailure:  [1009]
-<ce>                  I trusted you to take care of those
-<ce>               barbarians. You failed, so I had to send
+<ce>                  I trusted you to take care of that
+<ce>               barbarian. You failed, so I had to send
 <ce>                        someone else to do it.
 
 QuestLogEntry:  [1010]
 %qdt: The Fighters
  Guild of ___qgiver_ has
  offered to let me to take
- care of some barbarians
+ care of some barbarian
  marauding _house_.
  I have one full day.
 
@@ -104,9 +105,16 @@ _S.01_ task:
 	killed 1 _monster_ saying 1011 
 
 _S.02_ task:
-	clicked npc _qgiver_ 
+	when _qgclicked_ and _S.01_ 
 	give pc nothing 
 	end quest 
+
+_qgclicked_ task:
+               clicked npc _qgiver_
+
+_clearclick_ task:
+	when _qgclicked_ and not _S.01_ 
+	clear _qgclicked_ _clearclick_ 
 
 _clearclick_ task:
 	when _S.02_ and not _S.01_ 

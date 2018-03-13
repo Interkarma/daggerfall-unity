@@ -4,6 +4,7 @@
 -- Questor: mage
 -- Repute: 11
 -- QuestId: 18
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 64
 Quest: N0B11Y18
 -- Message panels
@@ -26,7 +27,7 @@ AcceptQuest:  [1002]
 <ce>               of the Guild that are so important to its
 <ce>               continued survival.  We have learned that
 <ce>            %g is currently doing some kind of unsanctioned
-<ce>               research over in __rebelhouse_, apparently
+<ce>               research over in ___rebelhouse_, apparently
 <ce>            oblivious to %g3 danger.  You have =qtime_ days
 <ce>            to dispose of this menace and report back to me.
 
@@ -42,7 +43,7 @@ Message:  1020
 %qdt:
  I have undertaken to find and
  destroy a rebel mage, who currently
- resides in __rebelhouse_.  Once I
+ resides in ___rebelhouse_.  Once I
  have disposed of this mage, _rebel_,
  I am to report back to _questgiver_ of
  ___questgiver_'s Mages Guild.
@@ -53,7 +54,7 @@ Message:  1021
  I agreed to spare _rebel_'s life.
  %g said I should just tell _questgiver_
  that I found no sign of _rebel_ in 
- __rebelhouse_, except for a letter which
+ ___rebelhouse_, except for a letter which
  %g gave me.
 
 Message:  1030
@@ -176,11 +177,11 @@ QBN:
 Item _letter_ letter used 1040
 Item _reward_ magic_item
 
-Person _rebel_ face 1 named Baltham_Greyman
-Person _questgiver_ group Questor male
+Person _rebel_ face 1 named Baltham_Greyman male
+Person _qgiver_ group Questor male
 
 Place aide remote dungeon
-Place _rebelhouse_ remote house4
+Place _rebelhouse_ remote house1
 
 Clock _qtime_ 00:00 0 flag 17 range 0 2
 Clock _S.04_ 00:01 00:05
@@ -195,7 +196,7 @@ Foe _mage4_ is Mage
 Foe _F.04_ is Mage
 
 --	Quest start-up:
-	start timer boar 
+	start timer _qtime_
 	log 1020 step 0 
 	place npc _rebel_ at _rebelhouse_ 
 
@@ -206,6 +207,13 @@ _S.01_ task:
 	clicked npc _rebel_ 
 	prompt 1030 yes _S.02_ no _S.03_ 
 	place npc _rebel_ at aide 
+
+_qgclicked_ task:
+               clicked npc _qgiver_
+
+_clearclick_ task:
+	when _qgclicked_ and not _S.01_ 
+	clear _qgclicked_ _clearclick_ 
 
 _S.02_ task:
 	start quest 502 502 
@@ -221,8 +229,9 @@ _S.02_ task:
 _S.03_ task:
 	start timer _S.14_ 
 	say 1032 
-	cast Spell_Reflection spell on _mage1_ 
+                hide npc _rebel_
 	place foe _mage1_ at _rebelhouse_ 
+	cast Spell_Reflection spell on _mage1_ 
 
 _S.04_ task:
 	pc at _rebelhouse_ set _S.19_ 
@@ -282,13 +291,9 @@ _S.15_ task:
 	toting _letter_ and _questgiver_ clicked 
 	say 1041 
 
-_clickqgiver_ task:
-	clicked npc _questgiver_ 
-
 _success_ task:
-	when _clickqgiver_ and _S.08_ 
+	when _qgclicked_ and _S.08_ 
 	say 1042 
-	unset _clickqgiver_ 
 
 _pcgetsgold_ task:
 	when _S.15_ or _success_ 

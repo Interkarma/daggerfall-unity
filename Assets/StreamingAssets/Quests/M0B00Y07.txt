@@ -4,6 +4,7 @@
 -- Questor: fighter
 -- Repute: 0
 -- QuestId: 7
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 81
 Quest: M0B00Y07
 -- Message panels
@@ -114,18 +115,21 @@ Foe _bear_ is Grizzley_bear
 _2dung_ task:
 	end quest 
 
-_S.01_ task:
+_mondead_ task:
 	killed 1 _monster_ saying 1011 
 	killed 1 _bear_ saying 1012 
 
 _S.02_ task:
-	clicked npc _qgiver_ 
+	when _qgclicked_ and _mondead_ 
 	give pc _gold_ 
 	end quest 
 
 _clearclick_ task:
-	when _S.02_ and not _S.01_ 
-	clear _S.02_ _clearclick_ 
+	when _qgclicked_ and not _mondead_ 
+	clear _qgclicked_ _clearclick_ 
+
+_qgclicked_ task:
+	clicked npc _qgiver_ 
 
 variable _map_
 variable _nomap_

@@ -4,6 +4,7 @@
 -- Questor: fighter
 -- Repute: 30
 -- QuestId: 8
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 81
 Quest: M0B30Y08
 -- Message panels
@@ -115,17 +116,27 @@ Foe _monster_ is Zombie
 _2dung_ task:
 	end quest 
 
-_S.01_ task:
+_mondead_ task:
 	killed 1 _monster_ saying 1011 
 
 _S.02_ task:
-	clicked npc _qgiver_ 
+	when _qgclicked_ and _mondead_ and _nomap_
 	give pc _gold_ 
 	end quest 
 
+_mapvict_ task:
+	when _qgclicked_ and _mondead_ and _map_
+	give pc _gold_ 
+	reveal _newdung_
+                say 1080
+	end quest 
+
 _clearclick_ task:
-	when _S.02_ and not _S.01_ 
-	clear _S.02_ _clearclick_ 
+	when _qgclicked_ and not _mondead_ 
+	clear _qgclicked_ _clearclick_ 
+
+_qgclicked_ task:
+	clicked npc _qgiver_
 
 variable _S.04_
 _S.05_ task:
@@ -139,4 +150,4 @@ variable _map_
 variable _nomap_
 _S.09_ task:
 	when _map_ and _S.02_ 
-	reveal _newdung_ saying 1080 
+

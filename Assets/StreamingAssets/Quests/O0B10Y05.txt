@@ -4,6 +4,7 @@
 -- Questor: thief
 -- Repute: 10
 -- QuestId: 5
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 11
 Quest: O0B10Y05
 -- Message panels
@@ -88,7 +89,7 @@ QuestLogEntry:  [1010]
  painting from _townhouse_
  in __townhouse_. I got
  =traveltime_ days to get it back to
- _qgiver_ in __qgiver_ in
+ _qgiver_ in The Thieves Guild in
  ___qgiver_.
 
 
@@ -113,7 +114,7 @@ Item _gold_ gold
 
 Person _qgiver_ group Questor male
 
-Place _townhouse_ remote house4
+Place _townhouse_ remote house1
 
 Clock _traveltime_ 00:00 0 flag 17 range 0 2
 

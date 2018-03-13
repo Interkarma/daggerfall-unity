@@ -4,6 +4,7 @@
 -- Questor: mage
 -- Repute: 0
 -- QuestId: 12
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 21
 Quest: N0C00Y12
 -- Message panels
@@ -118,7 +119,6 @@ Foe _imp_ is Imp
 _pcgetsgold_ task:
 	when _qgclicked_ and _mondead_ 
 	give pc nothing 
-	unset _qgclicked_ 
 	end quest 
 
 variable _queston_
@@ -127,6 +127,10 @@ _mondead_ task:
 
 _qgclicked_ task:
 	clicked npc _qgiver_ 
+
+_reset_ task:
+               	when _qgclicked_ and not _mondead_
+                clear _qgclicked_
 
 _1stparton_ task:
 	end quest 

@@ -4,6 +4,7 @@
 -- Questor: thief
 -- Repute: 0
 -- QuestId: 12
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 36
 Quest: O0B00Y12
 -- Message panels
@@ -13,7 +14,7 @@ QuestorOffer:  [1000]
 <ce>                     %pcf, I got a job for you if
 <ce>                      you're interested.  A little
 <ce>                        package needs delivering
-<ce>                            to ___contact1_.
+<ce>                            to ___building1_.
 <ce>                            What do you say?
 
 RefuseQuest:  [1001]
@@ -22,9 +23,9 @@ RefuseQuest:  [1001]
 AcceptQuest:  [1002]
 <ce>                   Great.  Here's the package, some
 <ce>                      _drugs_.  It needs to be in
-<ce>                        ___contact1_ as soon as
+<ce>                        ___building1_ as soon as
 <ce>                       possible.  _contact1_ will
-<ce>                     meet you there in __contact1_.
+<ce>                     meet you there in _building1_.
 <ce>                      Be careful.  If word of this
 <ce>                       shipment leaks out, we may
 <ce>                    have a bit of trouble with some
@@ -60,10 +61,10 @@ QuestorPostfailure:  [1009]
 
 Message:  1020
 %qdt:
- I am on my way to ___contact1_
+ I am on my way to ___building1_
  with a shipment of _drugs_
  for _contact1_, who will
- meet me in __contact1_.
+ meet me in _building1_.
  I was warned to watch out
  for thugs from a rival smuggling
  ring.
@@ -72,19 +73,19 @@ Message:  1021
 %qdt:
  I just got a note from _contact1_
  saying %g was unable to meet me in
- ___contact1_.  %g told me to
- go to ___contact2_ instead,
+ ___building1_.  %g told me to
+ go to ___building2_ instead,
  and deliver the shipment to a
- =contact2_ in __contact2_.
+ _contact2_ in _building2_.
 
 Message:  1030
 %pcn --
  
- Sorry I couldn't meet you in ___contact1_
+ Sorry I couldn't meet you in ___building1_
  as planned.  The heat got too intense for me
  to wait around.  I've arranged an alternate
- drop in ___contact2_.  Look for a =contact2_
- waiting for you in __contact2_.
+ drop in ___building2_.  Look for a =contact2_
+ waiting for you in _building2_.
  
 <ce>                            Watch your back,
 <ce>                                    
@@ -109,8 +110,8 @@ Message:  1035
 --              %qdt occurs 2 times.
 --              %reg occurs 7 times.
 --        =contact2_ occurs 8 times.
---      ___contact1_ occurs 5 times.
---      ___contact2_ occurs 2 times.
+--      ___building1_ occurs 5 times.
+--      ___building2_ occurs 2 times.
 --       __contact1_ occurs 2 times.
 --       __contact2_ occurs 10 times.
 --        _contact1_ occurs 4 times.
@@ -126,6 +127,8 @@ Person _contact1_ group Group_5.1 female
 Person _questgiver_ group Questor male
 Person _contact2_ group Local_3.0 female
 
+Place _building1_ remote random
+Place _building2_ remote random
 
 Clock _qtime_ 00:00 0 flag 1 range 3 5
 Clock _S.01_ 1.00:00 2.18:40
@@ -138,7 +141,8 @@ Foe _enemy_ is Assassin
 	start timer _qtime_ 
 	log 1020 step 0 
 	get item _drugs_ 
-	create npc _contact1_ 
+	place npc _contact1_ at _building1_
+	place npc _contact2_ at _building2_
 
 _qtime_ task:
 	end quest 

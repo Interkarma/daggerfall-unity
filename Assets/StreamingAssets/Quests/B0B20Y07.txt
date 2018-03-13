@@ -4,6 +4,7 @@
 -- Questor: knight
 -- Repute: 20
 -- QuestId: 7
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 12
 Quest: B0B20Y07
 -- Message panels
@@ -126,8 +127,10 @@ _S.01_ task:
 
 _S.02_ task:
 	clicked npc _qgiver_ 
+
+_success_ task:
+	when _S.02_ and _S.01_ 
 	give pc nothing 
-	say QuestComplete 
 	change repute with _local_ by +4 
 	end quest 
 
