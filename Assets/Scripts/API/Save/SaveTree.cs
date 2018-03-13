@@ -382,6 +382,7 @@ namespace DaggerfallConnect.Save
         NPCFlat = 0x08,
         Spell = 0x09,
         GuildMembership = 0x0a,
+        DiseaseOrPoison = 0x0b,
         QBNData = 0x0e,
         QuestTree = 0x10,                           // Fixsave calls this "quest tree".
         EnemyMobile = 0x12,

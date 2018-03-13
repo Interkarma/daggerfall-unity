@@ -150,6 +150,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public const string exhaustedInWater = "Fatigue overcomes you and sends you to a watery grave...."; // Not in classic. Borrowed from Arena.
 
+        public const string youFeelSomewhatBad = "You feel somewhat bad.";
+
         // Words used by macro handlers:
 
         public const string pronounHe = "he";

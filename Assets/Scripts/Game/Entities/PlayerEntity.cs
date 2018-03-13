@@ -278,7 +278,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 }
             }
 
-            // Adjust regional prices and update climate weathers whenever the date has changed.
+            // Adjust regional prices and update climate weathers and diseases whenever the date has changed.
             uint lastDay = lastGameMinutes / 1440;
             uint currentDay = gameMinutes / 1440;
             int daysPast = (int)(currentDay - lastDay);
@@ -289,6 +289,12 @@ namespace DaggerfallWorkshop.Game.Entity
                 GameManager.Instance.WeatherManager.SetClimateWeathers();
                 GameManager.Instance.WeatherManager.UpdateWeatherFromClimateArray = true;
                 RemoveExpiredRentedRooms();
+
+                if (Disease.IsDiseased() && (Disease.HasFinishedIncubation()))
+                {
+                    for (int i = daysPast; i > 0; i--)
+                        Disease.ApplyDiseaseEffects(this);
+                }
             }
 
             lastGameMinutes = gameMinutes;
