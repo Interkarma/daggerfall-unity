@@ -285,6 +285,12 @@ namespace DaggerfallWorkshop.Game.Formulas
             return success;
         }
 
+        // Calculate whether the player is blessed when donating to a Temple.
+        public static int CalculateTempleBlessing(int donationAmount, int deityRep)
+        {
+            return 1;   // TODO Amount of stat boost, guessing what this formula might need...
+        }
+
         #endregion
 
         #region Damage
@@ -1067,6 +1073,11 @@ namespace DaggerfallWorkshop.Game.Formulas
             }
 
             return amount;
+        }
+
+        public static int CalculateCuringCost()
+        {
+            return 100;  // TODO - how is this worked out? what params?
         }
 
         public static int ApplyRegionalPriceAdjustment(int cost)

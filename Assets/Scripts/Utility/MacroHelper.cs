@@ -97,6 +97,7 @@ namespace DaggerfallWorkshop.Utility
             { "%g2self", Pronoun2self },// Himself/Herself etc...
             { "%g3", Pronoun3 },  // His/Hers/Theirs etc...
             { "%gii", GoldCarried }, // Amount of gold in hand
+            { "%gdd", God }, // Typo of %god
             { "%god", God }, // Some god (listed in TEXT.RSC)
             { "%gtp", null }, // Amount of fine
             { "%hea", HpMod }, // HP Modifier
