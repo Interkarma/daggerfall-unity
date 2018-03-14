@@ -1,0 +1,12 @@
+-- New DFU quests
+-- Please use the Quest Hub forums for bug reports: http://forums.dfworkshop.net/viewforum.php?f=25
+
+-- name:        filename of QRC txt file
+-- group:       guild group from FactionFile.GuildGroups enum, or ?quest giver type?
+-- membership:  M=member, N=non-member, J=joining
+-- minRep:      minimum reputation required to be offered the quest (units can use X wildcard)
+-- notes:
+
+schema: *name, group, membership, minRep, notes
+
+CUSTOM01, FightersGuild, M, 40, New quest exclusive to Daggerfall Unity - needs meta-data defining

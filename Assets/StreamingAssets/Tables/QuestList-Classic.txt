@@ -72,7 +72,7 @@ C0B10Y06, HolyOrder, M, 10, Passed. Deity names mismatch. Undefined building var
 C0B10Y07, HolyOrder, M, 10, Passed. Diety name mismatches.
 C0B10Y15, HolyOrder, M, 10, Passed. Diety name mismatches. Lich and object spawn far apart. Undefined building variable name: __questgiver_.
 -C0B20Y08, HolyOrder, M, 20, Identical to C0B10Y06.
-C0B3XY09, HolyOrder, M, 3X, Passed. Seducer spawn is problematic, sometimes far away or inaccessible. Diety name mismatches. 
+C0B3XY09, HolyOrder, M, 3X, Passed. Seducer spawn is problematic sometimes far away or inaccessible. Diety name mismatches. 
 
 -- Classic: Temples (specific)
 00B00Y00, HolyOrder, J, 0, Passed. Undefined enemy name.
