@@ -375,11 +375,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// </summary>
         public static List<string> GetTextAssetLines(TextAsset asset)
         {
-            StringReader reader = new StringReader(asset.text);
             List<string> lines = new List<string>();
             string line;
-            while ((line = reader.ReadLine()) != null)
-                lines.Add(line);
+            using (StringReader reader = new StringReader(asset.text)) {
+                while ((line = reader.ReadLine()) != null)
+                    lines.Add(line);
+            }
             return lines;
         }
 
