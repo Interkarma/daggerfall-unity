@@ -361,7 +361,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             int factionId = (guildGroup == FactionFile.GuildGroups.HolyOrder || guildGroup == FactionFile.GuildGroups.KnightlyOrder) ? buildingFactionId : guildManager.GetGuildFactionId(guildGroup);
 
             // Select a quest at random from appropriate pool
-            offeredQuest = GameManager.Instance.QuestTablesManager.GetGuildQuest(guildGroup, status, factionId, guild.GetReputation(playerEntity));
+            offeredQuest = GameManager.Instance.QuestListsManager.GetGuildQuest(guildGroup, status, factionId, guild.GetReputation(playerEntity));
             if (offeredQuest != null)
             {
                 // Log offered quest
