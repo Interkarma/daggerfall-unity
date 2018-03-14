@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -368,6 +368,19 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 return null;
             int startIndex = assetPath.LastIndexOfAny(new char[] { '\\', '/' }) + 1;
             return assetPath.Substring(startIndex).ToLower();
+        }
+
+        /// <summary>
+        /// Utility method for gettings lines of text from a text asset
+        /// </summary>
+        public static List<string> GetTextAssetLines(TextAsset asset)
+        {
+            StringReader reader = new StringReader(asset.text);
+            List<string> lines = new List<string>();
+            string line;
+            while ((line = reader.ReadLine()) != null)
+                lines.Add(line);
+            return lines;
         }
 
         #endregion

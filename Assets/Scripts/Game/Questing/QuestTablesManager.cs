@@ -13,6 +13,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Questing;
 using System.IO;
 using UnityEngine;
+using DaggerfallWorkshop.Game.Utility.ModSupport;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -112,7 +113,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     QuestData questData = pool[UnityEngine.Random.Range(0, pool.Count)];
                     try
                     {
-                        return InstantiateQuest(questData, factionId);
+                        return LoadQuest(questData, factionId);
                     }
                     catch (Exception ex)
                     {   // Log exception
@@ -123,7 +124,7 @@ namespace DaggerfallWorkshop.Game.Questing
             return null;
         }
 
-        private Quest InstantiateQuest(QuestData questData, int factionId)
+        private Quest LoadQuest(QuestData questData, int factionId)
         {
             // Append extension if not present
             string questName = questData.name;
@@ -131,41 +132,69 @@ namespace DaggerfallWorkshop.Game.Questing
                 questName += ".txt";
 
             // Attempt to load quest source file
+            Quest quest;
             string questFile = Path.Combine(questData.path, questName);
-            if (!File.Exists(questFile))
-                throw new Exception("Quest file " + questFile + " not found.");
-
-            Quest quest = QuestMachine.Instance.ParseQuest(File.ReadAllLines(questFile));
+            if (File.Exists(questFile))
+            {
+                quest = QuestMachine.Instance.ParseQuest(File.ReadAllLines(questFile));
+            }
+            else
+            {
+                // Seek from mods using name
+                TextAsset questAsset;
+                if (ModManager.Instance != null && ModManager.Instance.TryGetAsset(questName, false, out questAsset))
+                {
+                    List<string> lines = ModManager.GetTextAssetLines(questAsset);
+                    quest = QuestMachine.Instance.ParseQuest(lines.ToArray());
+                }
+                else
+                    throw new Exception("Quest file " + questFile + " not found.");
+            }
             quest.FactionId = factionId;
             return quest;
         }
 
         private void LoadQuestPack(string packName)
         {
-            // Attempt to find quest pack folder
+            // Attempt to find quest pack folder and load any quest lists
             string path = Path.Combine(QuestPacksFolder, packName);
-
-            if (!Directory.Exists(path))
-            {
-                Debug.LogErrorFormat("QuestPack directory {0} not found.", path);
-            }
-            else
+            if (Directory.Exists(path))
             {
                 string filePattern = questListPrefix + "*.txt";
                 string[] listFiles = Directory.GetFiles(path, filePattern, SearchOption.AllDirectories);
                 foreach (string listFile in listFiles)
                     LoadQuestList(listFile, path);
             }
+            else
+            {
+                // Seek from mods using pattern: QuestList-<packName>.txt
+                TextAsset questListAsset;
+                string fileName = questListPrefix + packName + ".txt";
+                if (ModManager.Instance != null && ModManager.Instance.TryGetAsset(fileName, false, out questListAsset))
+                {
+                    List<string> lines = ModManager.GetTextAssetLines(questListAsset);
+                    ParseQuestList(new Table(lines.ToArray()));
+                }
+                else
+                {
+                    Debug.LogErrorFormat("QuestPack {0} not found in a mod or at path {1}.", packName, path);
+                }
+            }
         }
 
-        private void LoadQuestList(string listFile, string questsPath)
+        private void LoadQuestList(string questListFilename, string questsPath)
         {
-            Table table = new Table(QuestMachine.Instance.GetTableSourceText(listFile));
-            for (int i = 0; i < table.RowCount; i++)
+            Table table = new Table(QuestMachine.Instance.GetTableSourceText(questListFilename));
+            ParseQuestList(table, questsPath);
+        }
+
+        private void ParseQuestList(Table questsTable, string questsPath = "")
+        {
+            for (int i = 0; i < questsTable.RowCount; i++)
             {
                 QuestData questData = new QuestData();
                 questData.path = questsPath;
-                string minRep = table.GetValue("minRep", i);
+                string minRep = questsTable.GetValue("minRep", i);
                 if (minRep.EndsWith("X"))
                 {
                     questData.unitWildC = true;
@@ -174,9 +203,9 @@ namespace DaggerfallWorkshop.Game.Questing
                 int d = 0;
                 if (int.TryParse(minRep, out d))
                 {
-                    questData.name = table.GetValue("name", i);
-                    questData.group = table.GetValue("group", i);
-                    questData.membership = table.GetValue("membership", i)[0];
+                    questData.name = questsTable.GetValue("name", i);
+                    questData.group = questsTable.GetValue("group", i);
+                    questData.membership = questsTable.GetValue("membership", i)[0];
                     questData.minRep = d;
 
                     // Is the group a guild group?
