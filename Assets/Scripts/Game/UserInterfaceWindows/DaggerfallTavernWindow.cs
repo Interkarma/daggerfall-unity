@@ -153,7 +153,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             if (daysToRent + daysAlreadyRented > 350)
+            {
                 DaggerfallUI.MessageBox(tooManyDaysFutureId);
+            }
+            else if (GameManager.Instance.GuildManager.GetGuild(FactionFile.GuildGroups.KnightlyOrder).FreeTavernRooms())
+            {
+                DaggerfallUI.MessageBox(HardStrings.roomFreeForKnightSuchAsYou);
+                RentRoom();
+            }
             else
             {
                 int cost = FormulaHelper.CalculateRoomCost(daysToRent);
@@ -175,38 +182,45 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
             {
                 PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
-                PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
                 if (playerEntity.GetGoldAmount() >= tradePrice)
                 {
                     playerEntity.DeductGoldAmount(tradePrice);
-                    int mapId = GameManager.Instance.PlayerGPS.CurrentLocation.MapTableData.MapId;
-                    string sceneName = DaggerfallInterior.GetSceneName(mapId, buildingData.buildingKey);
-                    if (rentedRoom == null)
-                    {
-                        // Get rest marker
-                        Vector3 restMarker;
-                        playerEnterExit.Interior.FindMarker(out restMarker, DaggerfallInterior.InteriorMarkerTypes.Rest, true);
-                        // Create room rental and add it to player rooms
-                        RoomRental_v1 room = new RoomRental_v1()
-                        {
-                            name = buildingData.displayName,
-                            mapID = mapId,
-                            buildingKey = buildingData.buildingKey,
-                            allocatedBed = restMarker,
-                            expiryTime = DaggerfallUnity.Instance.WorldTime.Now.ToSeconds() + (ulong)(DaggerfallDateTime.SecondsPerDay * daysToRent)
-                        };
-                        playerEntity.RentedRooms.Add(room);
-                        SaveLoadManager.StateManager.AddPermanentScene(sceneName);
-                        Debug.LogFormat("Rented room for {1} days. {0}", sceneName, daysToRent);
-                    }
-                    else
-                    {
-                        rentedRoom.expiryTime += (ulong)(DaggerfallDateTime.SecondsPerDay * daysToRent);
-                        Debug.LogFormat("Rented room for additional {1} days. {0}", sceneName, daysToRent);
-                    }
+                    RentRoom();
                 }
                 else
                     DaggerfallUI.MessageBox(notEnoughGoldId);
+            }
+        }
+
+        private void RentRoom()
+        {
+            PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+            PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
+
+            int mapId = GameManager.Instance.PlayerGPS.CurrentLocation.MapTableData.MapId;
+            string sceneName = DaggerfallInterior.GetSceneName(mapId, buildingData.buildingKey);
+            if (rentedRoom == null)
+            {
+                // Get rest marker
+                Vector3 restMarker;
+                playerEnterExit.Interior.FindMarker(out restMarker, DaggerfallInterior.InteriorMarkerTypes.Rest, true);
+                // Create room rental and add it to player rooms
+                RoomRental_v1 room = new RoomRental_v1()
+                {
+                    name = buildingData.displayName,
+                    mapID = mapId,
+                    buildingKey = buildingData.buildingKey,
+                    allocatedBed = restMarker,
+                    expiryTime = DaggerfallUnity.Instance.WorldTime.Now.ToSeconds() + (ulong)(DaggerfallDateTime.SecondsPerDay * daysToRent)
+                };
+                playerEntity.RentedRooms.Add(room);
+                SaveLoadManager.StateManager.AddPermanentScene(sceneName);
+                Debug.LogFormat("Rented room for {1} days. {0}", sceneName, daysToRent);
+            }
+            else
+            {
+                rentedRoom.expiryTime += (ulong)(DaggerfallDateTime.SecondsPerDay * daysToRent);
+                Debug.LogFormat("Rented room for additional {1} days. {0}", sceneName, daysToRent);
             }
         }
 

@@ -204,6 +204,16 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Special benefits:
 
+        public virtual bool FreeTavernRooms()
+        {
+            return false;
+        }
+
+        public virtual bool FreeShipTravel()
+        {
+            return false;
+        }
+
         public virtual int FastTravel(int duration)
         {
             return duration;

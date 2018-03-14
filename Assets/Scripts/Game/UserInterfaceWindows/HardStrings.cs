@@ -79,6 +79,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                                                 "Armorer", "Alchemist", "Bank", "Bookstore", "Clothing store", "Gem store" };
         // TODO: These temple names are not consistent with 4055-4062!
 
+        public const string arkayDesc = "God of Birth and Death";
+        public const string zenDesc = "God of Work and Commerce";
+        public const string maraDesc = "Goddess of Love";
+        public const string akatoshDesc = "God of Time";
+        public const string julianosDesc = "God of Logic";
+        public const string dibellaDesc = "Goddess of Beauty";
+        public const string stendarDesc = "God of Mercy";
+        public const string kynarethDesc = "Goddess of Air";
+
         public const string interactionIsNowInMode = "Interaction is now in %s mode.";
         public const string steal = "steal";
         public const string grab = "grab";
@@ -139,6 +148,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string serviceMakePotions = "Make Potions";
         public const string serviceBuyPotions = "Buy Potions";
         public const string serviceBuySoulgems = "Buy Soulgems";
+        public const string serviceReceiveArmor = "Receive Armor";
+        public const string serviceReceiveHouse = "Receive House";
+        public const string serviceReceiveHouseAlready = "You have already received your house.";
         public const string serviceMembersOnly = "My services are reserved for members only.";
         public const string accessMembersOnly = "You need to be a member of sufficient rank to access this.";
         public const string serviceDonateHowMuch = "Donate how much money : ";

@@ -173,7 +173,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Items.ItemCollection inventory = GameManager.Instance.PlayerEntity.Items;
             hasHorse = inventory.Contains(Items.ItemGroups.Transportation, (int)Items.Transportation.Horse);
             hasCart = inventory.Contains(Items.ItemGroups.Transportation, (int)Items.Transportation.Small_cart);
-            hasShip = Banking.DaggerfallBankManager.OwnsShip;
+            hasShip = Banking.DaggerfallBankManager.OwnsShip || GameManager.Instance.GuildManager.FreeShipTravel();
 
             if (base.IsSetup)
                 Refresh();

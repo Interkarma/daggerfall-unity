@@ -36,6 +36,10 @@ namespace DaggerfallWorkshop.Game.Guilds
             return false;
         }
 
+        /// <summary>
+        /// Get the faction id for a guild group.
+        /// Returns 0 for HolyOrder and KnightlyOrder since they have variants each with different faction ids.
+        /// </summary>
         public int GetGuildFactionId(FactionFile.GuildGroups guildGroup)
         {
             switch (guildGroup)
@@ -45,6 +49,10 @@ namespace DaggerfallWorkshop.Game.Guilds
 
                 case FactionFile.GuildGroups.MagesGuild:
                     return MagesGuild.FactionId;
+
+                case FactionFile.GuildGroups.HolyOrder:
+                case FactionFile.GuildGroups.KnightlyOrder:
+                    return 0;
 
                 default:
                     Type guildType;
@@ -99,10 +107,9 @@ namespace DaggerfallWorkshop.Game.Guilds
                 case FactionFile.GuildGroups.HolyOrder:
                     return new Temple(Temple.GetDivine(variant));
 
-/*                case FactionFile.GuildGroups.KnightlyOrder:
-                    Temple.Divines deity = (Temple.Divines) buildingFactionId;
-                    return new KnightlyOrder(region);
-*/
+                case FactionFile.GuildGroups.KnightlyOrder:
+                    return new KnightlyOrder(KnightlyOrder.GetOrder(variant));
+
                 default:
                     Type guildType;
                     if (customGuilds.TryGetValue(guildGroup, out guildType))
@@ -128,11 +135,22 @@ namespace DaggerfallWorkshop.Game.Guilds
                 if (guild != null)
                 {
                     Temple.Divines deity = Temple.GetDivine(buildingFactionId);
-                    Temple temple = (Temple) guild;
+                    Temple temple = (Temple)guild;
                     if (temple.Deity == deity)
                         return guild;
                 }
                 return templeNotMember;
+            }
+            else if (guildGroup == FactionFile.GuildGroups.KnightlyOrder && buildingFactionId > 0)
+            {
+                if (guild != null)
+                {
+                    KnightlyOrder.Orders order = KnightlyOrder.GetOrder(buildingFactionId);
+                    KnightlyOrder knightlyOrder = (KnightlyOrder)guild;
+                    if (knightlyOrder.Order == order)
+                        return guild;
+                }
+                return guildNotMember;
             }
             return (guild != null) ? guild : guildNotMember;
         }
@@ -213,7 +231,16 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Special guild benefits
 
-        public virtual int FastTravel(int duration)
+        public bool FreeShipTravel()
+        {
+            foreach (Guild guild in memberships.Values)
+                if (guild.FreeShipTravel())
+                    return true;
+
+            return false;
+        }
+
+        public int FastTravel(int duration)
         {
             int newDuration = duration;
             foreach (Guild guild in memberships.Values)
@@ -221,7 +248,7 @@ namespace DaggerfallWorkshop.Game.Guilds
             return newDuration;
         }
 
-        public virtual int DeepBreath(int duration)
+        public int DeepBreath(int duration)
         {
             int newDuration = duration;
             foreach (Guild guild in memberships.Values)
@@ -229,7 +256,7 @@ namespace DaggerfallWorkshop.Game.Guilds
             return newDuration;
         }
 
-        public virtual bool AvoidDeath()
+        public bool AvoidDeath()
         {
             foreach (Guild guild in memberships.Values)
                 if (guild.AvoidDeath())

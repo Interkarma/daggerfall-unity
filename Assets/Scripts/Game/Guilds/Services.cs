@@ -42,6 +42,9 @@ namespace DaggerfallWorkshop.Game.Guilds
         Spymaster,
         BuySoulgems,
 
+        ReceiveArmor,
+        ReceiveHouse,
+
     }
 
     /// <summary>
@@ -132,7 +135,6 @@ namespace DaggerfallWorkshop.Game.Guilds
         KO_Quests = 846,
         KO_Smith = 845,
         KO_Seneschal = 848,
-
     }
 
     public static class Services
@@ -197,6 +199,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                 case GuildNpcServices.TG_Quests:
                 case GuildNpcServices.DB_Quests:
                 case GuildNpcServices.T_Quests:
+                case GuildNpcServices.KO_Quests:
                     return GuildServices.Quests;
 
                 case GuildNpcServices.FG_Repair:
@@ -269,6 +272,11 @@ namespace DaggerfallWorkshop.Game.Guilds
                 case GuildNpcServices.DB_BuySoulgems:
                 case GuildNpcServices.TAr_BuySoulgems:
                     return GuildServices.BuySoulgems;
+
+                case GuildNpcServices.KO_Smith:
+                    return GuildServices.ReceiveArmor;
+                case GuildNpcServices.KO_Seneschal:
+                    return GuildServices.ReceiveHouse;
             }
 
             GuildServices service;
@@ -321,6 +329,11 @@ namespace DaggerfallWorkshop.Game.Guilds
                     return HardStrings.serviceSpymaster;
                 case GuildServices.BuySoulgems:
                     return HardStrings.serviceBuySoulgems;
+                case GuildServices.ReceiveArmor:
+                    return HardStrings.serviceReceiveArmor;
+                case GuildServices.ReceiveHouse:
+                    return HardStrings.serviceReceiveHouse;
+
                 default:
                     string serviceName;
                     if (customNpcServiceNames.TryGetValue((int)service, out serviceName))

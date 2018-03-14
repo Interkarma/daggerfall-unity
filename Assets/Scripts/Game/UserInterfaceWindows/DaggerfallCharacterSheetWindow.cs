@@ -303,7 +303,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else
             {
                 TextFile.Token tab = TextFile.TabToken;
-                tab.x = 120;
+                tab.x = 125;
                 tokens.Add(new TextFile.Token() {
                     text = HardStrings.affiliation,
                     formatting = TextFile.Formatting.TextHighlight
