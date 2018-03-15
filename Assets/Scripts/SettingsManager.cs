@@ -101,6 +101,7 @@ namespace DaggerfallWorkshop
         public bool EnableEnhancedItemLists { get; set; }
         public bool EnableModernConversationStyleInTalkWindow { get; set; }
         public int HelmAndShieldMaterialDisplay { get; set; }
+        public bool AccelerateUICopyTexture { get; set; }
 
         // [Spells]
         public bool EnableSpellLighting { get; set; }
@@ -183,6 +184,7 @@ namespace DaggerfallWorkshop
             ShopQualityPresentation = GetInt(sectionGUI, "ShopQualityPresentation", 0, 2);
             ShopQualityHUDDelay = GetInt(sectionGUI, "ShopQualityHUDDelay", 1, 10);
             ShowQuestJournalClocksAsCountdown = GetBool(sectionGUI, "ShowQuestJournalClocksAsCountdown");
+            AccelerateUICopyTexture = GetBool(sectionGUI, "AccelerateUICopyTexture");
 
             EnableSpellLighting = GetBool(sectionSpells, "EnableSpellLighting");
             EnableSpellShadows = GetBool(sectionSpells, "EnableSpellShadows");
@@ -253,6 +255,7 @@ namespace DaggerfallWorkshop
             SetInt(sectionGUI, "ShopQualityPresentation", ShopQualityPresentation);
             SetInt(sectionGUI, "ShopQualityHUDDelay", ShopQualityHUDDelay);
             SetBool(sectionGUI, "ShowQuestJournalClocksAsCountdown", ShowQuestJournalClocksAsCountdown);
+            SetBool(sectionGUI, "AccelerateUICopyTexture", AccelerateUICopyTexture);
 
             SetBool(sectionSpells, "EnableSpellLighting", EnableSpellLighting);
             SetBool(sectionSpells, "EnableSpellShadows", EnableSpellShadows);

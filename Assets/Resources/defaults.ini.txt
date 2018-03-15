@@ -41,6 +41,7 @@ EnableEnhancedItemLists=False
 EnableModernConversationStyleInTalkWindow=False
 HelmAndShieldMaterialDisplay=0
 InteractionModeIcon = minimal
+AccelerateUICopyTexture=False
 
 [Spells]
 EnableSpellLighting=True
