@@ -12,7 +12,7 @@ PlayerSettings:
   accelerometerFrequency: 60
   companyName: Daggerfall Workshop
   productName: Daggerfall Unity
-  defaultCursor: {fileID: 2800000, guid: 91c29223d6ebe994182279f8d1aceca6, type: 3}
+  defaultCursor: {fileID: 2800000, guid: 887ec86cd12e1624d8458c8d7950402a, type: 3}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13333334, g: 0.17254902, b: 0.21176471, a: 1}
   m_ShowUnitySplashScreen: 0
