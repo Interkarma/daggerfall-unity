@@ -183,6 +183,31 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         /// <summary>
+        /// Seek animated texture from mods with all frames.
+        /// </summary>
+        /// <param name="archive">Texture archive.</param>
+        /// <param name="record">Record index.</param>
+        /// <param name="texFrames">Imported texture frames.</param>
+        /// <returns>True if texture imported.</returns>
+        public static bool TryImportTexture(int archive, int record, out Texture2D[] texFrames)
+        {
+            return TryImportTexture(texturesPath, frame => GetName(archive, record, frame), out texFrames);
+        }
+
+        /// <summary>
+        /// Seek texture from mods.
+        /// </summary>
+        /// <param name="archive">Texture archive.</param>
+        /// <param name="record">Record index.</param>
+        /// <param name="frame">Animation frame index</param>
+        /// <param name="tex">Imported texture.</param>
+        /// <returns>True if texture imported.</returns>
+        public static bool TryImportTexture(int archive, int record, int frame, out Texture2D tex)
+        {
+            return TryImportTexture(texturesPath, GetName(archive, record, frame), out tex);
+        }
+
+        /// <summary>
         /// Seek texture from mods with a specific dye.
         /// </summary>
         /// <param name="archive">Texture archive.</param>
@@ -841,6 +866,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             return false;
         }
 
+        public static int FileNameToArchive(string filename)
+        {
+            return int.Parse(filename.Substring("TEXTURE.".Length));
+        }
+
         #endregion
 
         #region Private Methods
@@ -924,6 +954,30 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             }
 
             tex = null;
+            return false;
+        }
+
+        /// <summary>
+        /// Seek animated texture from modding locations with all frames.
+        /// </summary>
+        /// <param name="path">Path on disk (loose files only).</param>
+        /// <param name="getName">Get name of frame.</param>
+        /// <param name="texFrames">Imported texture frames.</param>
+        /// <returns>True if texture imported.</returns>
+        private static bool TryImportTexture(string path, Func<int, string> getName, out Texture2D[] texFrames)
+        {
+            int frame = 0;
+            Texture2D tex;
+            if (TryImportTexture(path, getName(frame), out tex))
+            {
+                var textures = new List<Texture2D>();
+                do textures.Add(tex);
+                while (TryImportTexture(path, getName(++frame), out tex));
+                texFrames = textures.ToArray();
+                return true;
+            }
+
+            texFrames = null;
             return false;
         }
 

@@ -281,6 +281,14 @@ namespace DaggerfallWorkshop.Utility
                     imageData.offset = textureFile.GetOffset(record);
                     imageData.scale = textureFile.GetScale(record);
                     imageData.size = textureFile.GetSize(record);
+
+                    // Texture pack support
+                    int archive = AssetInjection.TextureReplacement.FileNameToArchive(filename);
+                    if (createTexture && AssetInjection.TextureReplacement.TryImportTexture(archive, record, frame, out imageData.texture))
+                        createTexture = false;
+                    if (createAllFrameTextures && AssetInjection.TextureReplacement.TryImportTexture(archive, record, out imageData.animatedTextures))
+                        createAllFrameTextures = false;
+
                     break;
 
                 case ImageTypes.IMG:
