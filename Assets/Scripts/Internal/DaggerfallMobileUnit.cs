@@ -44,6 +44,7 @@ namespace DaggerfallWorkshop
 
         Camera mainCamera = null;
         MeshFilter meshFilter = null;
+        MeshRenderer meshRenderer = null;
 
         Vector3 cameraPosition;
         float enemyFacingAngle;
@@ -78,8 +79,7 @@ namespace DaggerfallWorkshop
             public MobileEnemy Enemy;                           // Mobile enemy settings
             public MobileStates EnemyState;                     // Animation state
             public MobileAnimation[] StateAnims;                // Animation frames for this state
-            public TextureReplacement.CustomEnemyMaterial 
-                CustomMaterial;                                 // Custom material
+            public EnemyImportedTextures ImportedTextures;      // Textures imported from mods
             public int AnimStateRecord;                         // Record number of animation state
         }
 
@@ -90,6 +90,7 @@ namespace DaggerfallWorkshop
                 // Get component references
                 mainCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
                 meshFilter = GetComponent<MeshFilter>();
+                meshRenderer = GetComponent<MeshRenderer>();
             }
         }
 
@@ -134,7 +135,6 @@ namespace DaggerfallWorkshop
 
             // Load enemy content
             int archive = GetTextureArchive();
-            summary.CustomMaterial.isCustom = TextureReplacement.EnemyHasCustomMaterial(archive);
             CacheRecordSizesAndFrames(dfUnity, archive);
             AssignMeshAndMaterial(dfUnity, archive);
 
@@ -338,14 +338,13 @@ namespace DaggerfallWorkshop
                 flip = !flip;
 
             // Update Record/Frame texture
-            if (summary.CustomMaterial.isCustom)
+            if (summary.ImportedTextures.HasImportedTextures)
             {
-                // Custom material: Update texture
-                if ((record < summary.CustomMaterial.MainTexture.Count) && (currentFrame < summary.CustomMaterial.MainTexture[record].Count))
-                    GetComponent<MeshRenderer>().material.mainTexture = summary.CustomMaterial.MainTexture[record][currentFrame];
-                else
-                    Debug.LogErrorFormat("Mobile Unit: imported archive {0} does not contain texture for record {1}, frame {2}",
-                        GetTextureArchive(), record, currentFrame);
+                if (meshRenderer == null)
+                    meshRenderer = GetComponent<MeshRenderer>();
+
+                // Assign imported texture
+                meshRenderer.material.mainTexture = summary.ImportedTextures.Textures[record][currentFrame];
             }
             else
             {
@@ -461,10 +460,9 @@ namespace DaggerfallWorkshop
                 int yChange = (int)(size.Height * (scale.Height / BlocksFile.ScaleDivisor));
                 finalSize.x = (size.Width + xChange);
                 finalSize.y = (size.Height + yChange);
-                
+
                 // Set optional scale
-                if (summary.CustomMaterial.isCustom)
-                    TextureReplacement.SetEnemyScale(archive, i, ref finalSize);
+                TextureReplacement.SetEnemyScale(archive, i, ref finalSize);
  
                 // Store final size and frame count
                 summary.RecordSizes[i] = finalSize * MeshReader.GlobalScale;
@@ -517,15 +515,18 @@ namespace DaggerfallWorkshop
             // Assign mesh
             meshFilter.sharedMesh = mesh;
 
-            // Get custom material if available
-            if (summary.CustomMaterial.isCustom)
-            {
-                TextureReplacement.SetupCustomEnemyMaterial(this.gameObject, archive, out summary.CustomMaterial.MainTexture);
-                return;
-            }
+            // Seek textures from mods
+            TextureReplacement.SetEnemyImportedTextures(archive, GetComponent<MeshFilter>(), ref summary.ImportedTextures);
 
-            // Load material atlas
-            Material material = dfUnity.MaterialReader.GetMaterialAtlas(
+            // Create material
+            Material material;
+            if (summary.ImportedTextures.HasImportedTextures)
+            {
+                material = MaterialReader.CreateStandardMaterial(MaterialReader.CustomBlendMode.Cutout);
+            }
+            else
+            {
+                material = dfUnity.MaterialReader.GetMaterialAtlas(
                 archive,
                 0,
                 4,
@@ -537,6 +538,7 @@ namespace DaggerfallWorkshop
                 0,
                 false,
                 true);
+            }
 
             // Set new enemy material
             GetComponent<MeshRenderer>().sharedMaterial = material;

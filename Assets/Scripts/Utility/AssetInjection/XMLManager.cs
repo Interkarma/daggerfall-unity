@@ -13,6 +13,7 @@ using System.Globalization;
 using System.IO;
 using System.Xml.Linq;
 using UnityEngine;
+using DaggerfallWorkshop.Game.Utility.ModSupport;
 
 namespace DaggerfallWorkshop.Utility.AssetInjection
 {
@@ -28,15 +29,22 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         #endregion
 
-        #region Public Methods
+        #region Constructors
 
         public XMLManager(string path)
         {
-            if (!path.EndsWith(extension))
-                path += extension;
-
+            AddExtensionIfMissing(ref path);
             this.xml = XElement.Load(path);
         }
+
+        public XMLManager(TextReader textReader)
+        {
+            this.xml = XElement.Load(textReader);
+        }
+
+        #endregion
+
+        #region Public Methods
 
         public bool TryGetString(string key, out string value)
         {
@@ -136,12 +144,56 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         #region Static Methods
 
+        /// <summary>
+        /// Loose files contain xml ?
+        /// </summary>
+        /// <param name="path">Path to xml.</param>
+        /// <returns>True if xml file exists.</returns>
         public static bool XmlFileExists(string path)
+        {
+            AddExtensionIfMissing(ref path);
+            return File.Exists(path);
+        }
+
+        /// <summary>
+        /// Seek xml from modding locations.
+        /// </summary>
+        /// <param name="directory">Directory on disk (loose files only).</param>
+        /// <param name="name">Name of xml.</param>
+        /// <param name="xml">XMLManager instance from imported xml.</param>
+        /// <returns>True if xml found and read.</returns>
+        public static bool TryReadXml(string directory, string name, out XMLManager xml)
+        {
+            AddExtensionIfMissing(ref name);
+
+            // Seek from loose files
+            string path = Path.Combine(directory, name);
+            if (XmlFileExists(path))
+            {
+                xml = new XMLManager(path);
+                return true;
+            }
+
+            // Seek from mods
+            if (ModManager.Instance != null)
+            {
+                TextAsset textAsset;
+                if (ModManager.Instance.TryGetAsset(name, false, out textAsset))
+                {
+                    using (var stringReader = new StringReader(textAsset.text))
+                        xml = new XMLManager(stringReader);
+                    return true;
+                }
+            }
+
+            xml = null;
+            return false;
+        }
+
+        private static void AddExtensionIfMissing(ref string path)
         {
             if (!path.EndsWith(extension))
                 path += extension;
-
-            return File.Exists(path);
         }
 
         #endregion
