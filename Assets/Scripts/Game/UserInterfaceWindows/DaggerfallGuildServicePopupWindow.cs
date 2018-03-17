@@ -75,7 +75,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         int buildingFactionId;  // Needed for temples & orders
 
         Guild guild;
+        PlayerGPS.DiscoveredBuilding buildingDiscoveryData;
         Quest offeredQuest = null;
+        int curingCost = 0;
 
         static ItemCollection merchantItems;    // Temporary
 
@@ -169,6 +171,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.OnPush();
 
+            buildingDiscoveryData = GameManager.Instance.PlayerEnterExit.BuildingDiscoveryData;
+            
             // Check guild advancement
             TextFile.Token[] updatedRank = guild.UpdateRank(playerEntity);
             if (updatedRank != null)
@@ -613,15 +617,33 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void CureDiseaseService()
         {
-            const int tradeMessageBaseId = 260; // TODO: Message based on bargaining result
-            int msgOffset = 0;
+            // TODO: curing lycanthropy and vampirism
             CloseWindow();
+            int numberOfDiseases = 1;   // TODO: Support multiple diseases
             if (playerEntity.Disease.IsDiseased())
             {
-                // Offer curing price. TODO: Message not showing correct amount.
+                // Calculate curing cost, and trade price after haggling
+                int baseCost = 250 * numberOfDiseases;
+                int cost = FormulaHelper.CalculateCost(baseCost, buildingDiscoveryData.quality);
+                int tradePrice = FormulaHelper.CalculateTradePrice(cost, buildingDiscoveryData.quality, false);
+
+                // Apply reduced cost due to guild rank or membership benefit (e.g. Arkay)
+                curingCost = guild.ReducedCureCost(tradePrice);
+
+                // Index correct message
+                const int tradeMessageBaseId = 260;
+                int msgOffset = 0;
+                if (cost >> 1 <= tradePrice)
+                {
+                    if (cost - (cost >> 2) <= tradePrice)
+                        msgOffset = 2;
+                    else
+                        msgOffset = 1;
+                }
+                // Offer curing at the calculated price.
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
                 TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(tradeMessageBaseId + msgOffset);
-                messageBox.SetTextTokens(tokens, guild);
+                messageBox.SetTextTokens(tokens, this);
                 messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
                 messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
                 messageBox.OnButtonClick += ConfirmCuring_OnButtonClick;
@@ -636,13 +658,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ConfirmCuring_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
             CloseWindow();
-            int templeQuality = GameManager.Instance.PlayerEnterExit.BuildingDiscoveryData.quality;
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
             {
-                int curingPrice = FormulaHelper.CalculateCuringCost(1, templeQuality, 0); // TODO: Support multiple diseases + curing lycanthropy and vampirism/pass in temple rank parameter
-                if (playerEntity.GetGoldAmount() >= curingPrice)
+                if (playerEntity.GetGoldAmount() >= curingCost)
                 {
-                    playerEntity.DeductGoldAmount(curingPrice);
+                    playerEntity.DeductGoldAmount(curingCost);
                     playerEntity.Disease = new DaggerfallDisease();
                     DaggerfallUI.MessageBox("You are cured.");
                 }
@@ -688,6 +708,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             public GuildServiceMacroDataSource(DaggerfallGuildServicePopupWindow guildServiceWindow)
             {
                 this.parent = guildServiceWindow;
+            }
+
+            public override string Amount()
+            {
+                return parent.curingCost.ToString();
+            }
+
+            public override string ShopName()
+            {
+                return parent.buildingDiscoveryData.displayName;
             }
 
             public override string God()
