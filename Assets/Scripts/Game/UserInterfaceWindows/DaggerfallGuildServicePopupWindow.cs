@@ -613,12 +613,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void CureDiseaseService()
         {
+            const int tradeMessageBaseId = 260; // TODO: Message based on bargaining result
+            int msgOffset = 0;
             CloseWindow();
             if (playerEntity.Disease.IsDiseased())
             {
-                // Offer curing price
+                // Offer curing price. TODO: Message not showing correct amount.
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
-                TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(TrainingOfferId);
+                TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(tradeMessageBaseId + msgOffset);
                 messageBox.SetTextTokens(tokens, guild);
                 messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
                 messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
@@ -634,9 +636,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ConfirmCuring_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
             CloseWindow();
+            int templeQuality = GameManager.Instance.PlayerEnterExit.BuildingDiscoveryData.quality;
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
             {
-                int curingPrice = FormulaHelper.CalculateCuringCost();
+                int curingPrice = FormulaHelper.CalculateCuringCost(1, templeQuality, 0); // TODO: Support multiple diseases + curing lycanthropy and vampirism/pass in temple rank parameter
                 if (playerEntity.GetGoldAmount() >= curingPrice)
                 {
                     playerEntity.DeductGoldAmount(curingPrice);

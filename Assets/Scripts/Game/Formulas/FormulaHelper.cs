@@ -1075,9 +1075,16 @@ namespace DaggerfallWorkshop.Game.Formulas
             return amount;
         }
 
-        public static int CalculateCuringCost()
+        public static int CalculateCuringCost(int numberOfDiseases, int templeQuality, int templeRank)
         {
-            return 100;  // TODO - how is this worked out? what params?
+            int baseCost = 250 * numberOfDiseases;
+            int costBeforeBartering = CalculateCost(baseCost, templeQuality);
+            int costAfterBartering = CalculateTradePrice(costBeforeBartering, templeQuality, false);
+            int rankModifier = ((10 - templeRank) << 8) / 10;
+
+            // TODO: Discount for Arkay
+
+            return (rankModifier * costAfterBartering) >> 8;
         }
 
         public static int ApplyRegionalPriceAdjustment(int cost)
