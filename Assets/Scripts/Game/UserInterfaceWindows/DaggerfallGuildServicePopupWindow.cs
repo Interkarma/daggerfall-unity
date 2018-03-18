@@ -617,10 +617,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void CureDiseaseService()
         {
-            // TODO: curing lycanthropy and vampirism
             CloseWindow();
-            int numberOfDiseases = 1;   // TODO: Support multiple diseases
+            int numberOfDiseases = 0;
             if (playerEntity.Disease.IsDiseased())
+                numberOfDiseases++; // TODO: Support multiple diseases
+
+            if (playerEntity.TimeToBecomeVampireOrWerebeast != 0)
+                numberOfDiseases++;
+
+            if (numberOfDiseases > 0)
             {
                 // Get base cost
                 int baseCost = 250 * numberOfDiseases;
@@ -668,6 +673,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     playerEntity.DeductGoldAmount(curingCost);
                     playerEntity.Disease = new DaggerfallDisease();
+                    playerEntity.TimeToBecomeVampireOrWerebeast = 0;
                     DaggerfallUI.MessageBox("You are cured.");
                 }
                 else

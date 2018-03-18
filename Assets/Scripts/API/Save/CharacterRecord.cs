@@ -79,6 +79,7 @@ namespace DaggerfallConnect.Save
             doc.startingLevelUpSkillSum = parsedData.startingLevelUpSkillSum;
             doc.minMetalToHit = parsedData.minMetalToHit;
             doc.armorValues = parsedData.armorValues;
+            doc.timeToBecomeVampireOrWerebeast = parsedData.timeToBecomeVampireOrWerebeast;
             doc.lastTimePlayerAteOrDrankAtTavern = parsedData.lastTimePlayerAteOrDrankAtTavern;
             doc.lastTimePlayerBoughtTraining = parsedData.lastTimePlayerBoughtTraining;
             doc.timeForThievesGuildLetter = parsedData.timeForThievesGuildLetter;

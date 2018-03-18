@@ -136,6 +136,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.playerEntity.timeForDarkBrotherhoodLetter = entity.TimeForDarkBrotherhoodLetter;
             data.playerEntity.thievesGuildRequirementTally = entity.ThievesGuildRequirementTally;
             data.playerEntity.darkBrotherhoodRequirementTally = entity.DarkBrotherhoodRequirementTally;
+            data.playerEntity.timeToBecomeVampireOrWerebeast = entity.TimeToBecomeVampireOrWerebeast;
             data.playerEntity.lastTimePlayerAteOrDrankAtTavern = entity.LastTimePlayerAteOrDrankAtTavern;
 
             data.playerEntity.regionData = entity.RegionData;
@@ -246,6 +247,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             entity.TimeForDarkBrotherhoodLetter = data.playerEntity.timeForDarkBrotherhoodLetter;
             entity.ThievesGuildRequirementTally = data.playerEntity.thievesGuildRequirementTally;
             entity.DarkBrotherhoodRequirementTally = data.playerEntity.darkBrotherhoodRequirementTally;
+            entity.TimeToBecomeVampireOrWerebeast = data.playerEntity.timeToBecomeVampireOrWerebeast;
             entity.LastTimePlayerAteOrDrankAtTavern = data.playerEntity.lastTimePlayerAteOrDrankAtTavern;
             entity.SetCurrentLevelUpSkillSum();
 

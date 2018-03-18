@@ -181,6 +181,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public uint timeForDarkBrotherhoodLetter;
         public int thievesGuildRequirementTally;
         public int darkBrotherhoodRequirementTally;
+        public uint timeToBecomeVampireOrWerebeast;
         public uint lastTimePlayerAteOrDrankAtTavern;
         public uint timeOfLastSkillTraining;
         public PlayerEntity.RegionDataRecord[] regionData;

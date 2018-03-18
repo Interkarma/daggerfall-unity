@@ -73,6 +73,7 @@ namespace DaggerfallWorkshop.Game.Entity
         protected int thievesGuildRequirementTally = 0;
         protected int darkBrotherhoodRequirementTally = 0;
 
+        protected uint timeToBecomeVampireOrWerebeast = 0;
         protected uint lastTimePlayerAteOrDrankAtTavern = 0;
 
         protected DaggerfallDisease disease = new DaggerfallDisease();
@@ -131,6 +132,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public uint TimeForDarkBrotherhoodLetter { get { return timeForDarkBrotherhoodLetter; } set { timeForDarkBrotherhoodLetter = value; } }
         public int ThievesGuildRequirementTally { get { return thievesGuildRequirementTally; } set { thievesGuildRequirementTally = value; } }
         public int DarkBrotherhoodRequirementTally { get { return darkBrotherhoodRequirementTally; } set { darkBrotherhoodRequirementTally = value; } }
+        public uint TimeToBecomeVampireOrWerebeast { get { return timeToBecomeVampireOrWerebeast; } set { timeToBecomeVampireOrWerebeast = value; } }
         public uint LastTimePlayerAteOrDrankAtTavern { get { return lastTimePlayerAteOrDrankAtTavern; } set { lastTimePlayerAteOrDrankAtTavern = value; } }
         public float CarriedWeight { get { return Items.GetWeight() + ((float)goldPieces / DaggerfallBankManager.gold1kg); } }
         public float WagonWeight { get { return WagonItems.GetWeight(); } }
@@ -360,6 +362,7 @@ namespace DaggerfallWorkshop.Game.Entity
             this.startingLevelUpSkillSum = character.startingLevelUpSkillSum;
             this.minMetalToHit = (WeaponMaterialTypes)character.minMetalToHit;
             this.armorValues = character.armorValues;
+            this.timeToBecomeVampireOrWerebeast = character.timeToBecomeVampireOrWerebeast;
             this.lastTimePlayerAteOrDrankAtTavern = character.lastTimePlayerAteOrDrankAtTavern;
             this.timeOfLastSkillTraining = character.lastTimePlayerBoughtTraining;
             this.timeForThievesGuildLetter = character.timeForThievesGuildLetter;
