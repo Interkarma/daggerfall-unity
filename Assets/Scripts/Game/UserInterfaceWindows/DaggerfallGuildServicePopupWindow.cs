@@ -622,20 +622,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             int numberOfDiseases = 1;   // TODO: Support multiple diseases
             if (playerEntity.Disease.IsDiseased())
             {
-                // Calculate curing cost, and trade price after haggling
+                // Get base cost
                 int baseCost = 250 * numberOfDiseases;
-                int cost = FormulaHelper.CalculateCost(baseCost, buildingDiscoveryData.quality);
-                int tradePrice = FormulaHelper.CalculateTradePrice(cost, buildingDiscoveryData.quality, false);
 
-                // Apply reduced cost due to guild rank or membership benefit (e.g. Arkay)
-                curingCost = guild.ReducedCureCost(tradePrice);
+                // Apply rank-based discount if this is an Arkay temple
+                baseCost = guild.ReducedCureCost(baseCost);
+
+                // Apply temple quality and regional price modifiers
+                int costBeforeBargaining = FormulaHelper.CalculateCost(baseCost, buildingDiscoveryData.quality);
+
+                // Apply bargaining to get final price
+                curingCost = FormulaHelper.CalculateTradePrice(costBeforeBargaining, buildingDiscoveryData.quality, false);
 
                 // Index correct message
                 const int tradeMessageBaseId = 260;
                 int msgOffset = 0;
-                if (cost >> 1 <= tradePrice)
+                if (costBeforeBargaining >> 1 <= curingCost)
                 {
-                    if (cost - (cost >> 2) <= tradePrice)
+                    if (costBeforeBargaining - (costBeforeBargaining >> 2) <= curingCost)
                         msgOffset = 2;
                     else
                         msgOffset = 1;

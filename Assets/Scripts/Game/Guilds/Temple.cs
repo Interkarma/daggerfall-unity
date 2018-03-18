@@ -408,11 +408,10 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public override int ReducedCureCost(int price)
         {
-            double mult = ((double)(10 - rank) / 10);
             if (deity == Divines.Arkay)
-                return (int) (mult * mult * price);
+                return (((10 - rank) << 8) / 10 * price) >> 8;
             else
-                return (int) (mult * price);
+                return price;
         }
 
         #endregion
