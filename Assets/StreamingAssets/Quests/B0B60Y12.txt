@@ -123,7 +123,7 @@ Person _qgiver_ group Questor male
 Person _nobleman_ group Resident1 female
 Person _local_ face 1 group Resident2
 
-Place _dungeon_ remote dungeon4
+Place _dungeon_ remote dungeon
 
 Clock _2dung_ 00:00 0 flag 17 range 0 2
 
