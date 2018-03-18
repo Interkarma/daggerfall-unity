@@ -184,13 +184,14 @@ namespace DaggerfallWorkshop.Game
 
         public bool TargetIsWithinYawAngle(float targetAngle)
         {
-            Vector3 directionToPlayer2D = directionToPlayer;
-            directionToPlayer2D.y = 0;
+            Vector3 toTarget = lastKnownPlayerPos - transform.position;
+            Vector3 directionToLastKnownTarget2D = toTarget.normalized;
+            directionToLastKnownTarget2D.y = 0;
 
             Vector3 enemyDirection2D = transform.forward;
             enemyDirection2D.y = 0;
 
-            float angle = Vector3.Angle(directionToPlayer2D, enemyDirection2D);
+            float angle = Vector3.Angle(directionToLastKnownTarget2D, enemyDirection2D);
             if (angle < targetAngle)
                 return true;
             else
