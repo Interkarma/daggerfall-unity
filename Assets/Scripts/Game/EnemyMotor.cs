@@ -355,7 +355,10 @@ namespace DaggerfallWorkshop.Game
             if (!senses.TargetIsWithinYawAngle(5.625f))
             {
                 TurnToTarget(direction.normalized);
-                return;
+                // Returning here is closer to classic behavior but disabling
+                // it provides an easy trick to make enemies harder to outmaneuver,
+                // since the enemy will resume moving. May revisit this later.
+                //return;
             }
 
             var motion = transform.forward * moveSpeed;
