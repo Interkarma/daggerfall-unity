@@ -291,7 +291,12 @@ namespace DaggerfallWorkshop.Game.Questing
                     break;
 
                 case MacroTypes.FactionMacro:           // Faction macro
-                    result = false;
+                    // Want name of guild, not the person
+                    FactionFile.FactionData guildData;
+                    if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(ParentQuest.FactionId, out guildData))
+                        textOut = guildData.name;
+                    else
+                        result = false;
                     break;
 
                 default:                                // Macro not supported
