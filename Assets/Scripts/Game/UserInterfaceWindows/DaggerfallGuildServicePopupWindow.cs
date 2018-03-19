@@ -109,7 +109,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         // TODO: replace with proper merchant item generation...
         // classic seems to have a deterministic method for generating magic items being sold
-        ItemCollection GetMerchantItems()
+        ItemCollection GetMerchantMagicItems()
         {
             if (merchantItems == null)
             {
@@ -271,9 +271,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 case GuildServices.BuyMagicItems:   // TODO: switch items depending on npcService?
                     CloseWindow();
-                    DaggerfallTradeWindow tradeWindow = new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Buy, this, guild);
-                    tradeWindow.MerchantItems = GetMerchantItems();
-                    uiManager.PushWindow(tradeWindow);
+                    uiManager.PushWindow(new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Buy, this, guild) {
+                        MerchantItems = GetMerchantMagicItems()
+                    });
                     break;
 
                 case GuildServices.Teleport:

@@ -522,8 +522,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// <returns>DaggerfallUnityItem</returns>
         public static DaggerfallUnityItem CreatePotion(byte recipe)
         {
-            return new DaggerfallUnityItem(ItemGroups.UselessItems1, 1)
-            {
+            return new DaggerfallUnityItem(ItemGroups.UselessItems1, 1) {
                 typeDependentData = recipe,
                 value = potionValues[recipe],
             };
