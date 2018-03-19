@@ -299,9 +299,70 @@ namespace DaggerfallWorkshop.Game.Entity
                 }
             }
 
+            for (uint l = 0; l < (gameMinutes - lastGameMinutes); ++l)
+                IntermittentMonsterSpawn(l + lastGameMinutes + 1);
+
             lastGameMinutes = gameMinutes;
 
             //HandleStartingCrimeGuildQuests(Entity as PlayerEntity);
+        }
+
+        public void IntermittentMonsterSpawn(uint Minutes)
+        {
+            //TODO: if (InOutsideWater)
+            //          return;
+            bool timeForSpawn = ((Minutes / 12) % 12) == 0;
+
+            //TODO: Monster spawns are prevented when time is advanced for: 1) Traveling 2) Loitering 3) Turning into vampire 4) In prison
+            bool preventMonsterSpawns = false;
+
+            if (!preventMonsterSpawns && timeForSpawn)
+            {
+                if (!GameManager.Instance.PlayerEnterExit.IsPlayerInside)
+                {
+                    uint timeOfDay = Minutes % 1440; // 1440 minutes in a day
+                    if (GameManager.Instance.PlayerGPS.IsPlayerInLocationRect)
+                    {
+                        if (timeOfDay < 360 || timeOfDay > 1080) // night
+                        {
+                            if (UnityEngine.Random.Range(0, 24) == 0)
+                            {
+                                MobileTypes enemy = RandomEncounters.ChooseRandomEnemy(false);
+                                // TODO: Spawn enemy
+                                //SpawnEnemyNearPlayerInLocation(enemy);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (timeOfDay >= 360 && timeOfDay <= 1080) // day
+                        {
+                            if (UnityEngine.Random.Range(0, 36) != 0)
+                                return;
+                        }
+                        else // night
+                            if (UnityEngine.Random.Range(0, 24) != 0)
+                            return;
+                        MobileTypes enemy = RandomEncounters.ChooseRandomEnemy(false);
+                        // TODO: Spawn enemy
+                        //SpawnEnemyNearPlayerInWilderness(enemy);
+                    }
+                } // in interior
+                else
+                {
+                    if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon)
+                    {
+                        // TODO: If in rest menu
+                        if (UnityEngine.Random.Range(0, 36) == 0)
+                        {
+                            // TODO: Not sure how enemy type is chosen here.
+                            MobileTypes enemy = RandomEncounters.ChooseRandomEnemy(false);
+                            // TODO: Spawn enemy
+                            //SpawnEnemyNearPlayerInLocation(enemy);
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
