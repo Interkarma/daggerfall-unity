@@ -745,6 +745,7 @@ namespace DaggerfallWorkshop.Game.Questing
             public bool questSuccess;
             public string questName;
             public string displayName;
+            public int factionId;
             public DaggerfallDateTime questStartTime;
             public bool questTombstoned;
             public DaggerfallDateTime questTombstoneTime;
@@ -764,6 +765,7 @@ namespace DaggerfallWorkshop.Game.Questing
             data.questSuccess = questSuccess;
             data.questName = questName;
             data.displayName = displayName;
+            data.factionId = factionId;
             data.questStartTime = questStartTime;
             data.questTombstoned = questTombstoned;
             data.questTombstoneTime = questTombstoneTime;
@@ -815,6 +817,7 @@ namespace DaggerfallWorkshop.Game.Questing
             questSuccess = data.questSuccess;
             questName = data.questName;
             displayName = data.displayName;
+            factionId = data.factionId;
             questStartTime = data.questStartTime;
             questTombstoned = data.questTombstoned;
             questTombstoneTime = data.questTombstoneTime;

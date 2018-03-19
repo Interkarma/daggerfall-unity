@@ -211,12 +211,18 @@ namespace DaggerfallWorkshop.Game.Guilds
                 DaggerfallUI.MessageBox(NoArmorId);
             }
             else
-            {   // Give a random armor piece
-                Armor armor = (Armor) UnityEngine.Random.Range(102, 108);
+            {   // Give a random armor piece, allowing player to choose one out of 3-6
+                ItemCollection rewardArmor = new ItemCollection();
                 ArmorMaterialTypes material = ArmorMaterialTypes.Iron + rank;
-                playerEntity.Items.AddItem(ItemBuilder.CreateArmor(playerEntity.Gender, playerEntity.Race, armor, material));
+                for (int i = UnityEngine.Random.Range(3, 7); i >= 0; i--)
+                {
+                    Armor armor = (Armor) UnityEngine.Random.Range(102, 109);
+                    rewardArmor.AddItem(ItemBuilder.CreateArmor(playerEntity.Gender, playerEntity.Race, armor, material));
+                }
                 flags = flags | ArmorFlagMask;
                 DaggerfallUI.MessageBox(ArmorId);
+                DaggerfallUI.Instance.InventoryWindow.SetChooseOne(rewardArmor);
+                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenInventoryWindow);
             }
         }
 

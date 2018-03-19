@@ -123,13 +123,13 @@ B0C00Y10, KnightlyOrder, N, 0, Passed.
 B0C00Y13, KnightlyOrder, N, 0, Passed.
 B0B00Y00, KnightlyOrder, M, 0, Passed. Undefined building variable name: __questgiver_.
 B0B00Y01, KnightlyOrder, M, 0, Passed. Undefined enemy name. Undefined building variable name: __questgiver_.
-B0B10Y04, KnightlyOrder, M, 10, Passed. Undefined building variable name: __questgiver_. Undefined variable %kno.
-B0B20Y07, KnightlyOrder, M, 20, Passed. Undefined variable: ==qgiver_.
+B0B10Y04, KnightlyOrder, M, 10, Passed. 
+B0B20Y07, KnightlyOrder, M, 20, Passed.
 B0B40Y08, KnightlyOrder, M, 40, Passed. Undefined variable: ==qgiver_.
 B0B40Y09, KnightlyOrder, M, 40, Passed.
 -B0B50Y11, KnightlyOrder, M, 50, FAILED. Requires GetCurrentRegionFaction(). Undefined variable: ==qgiver_.
-B0B60Y12, KnightlyOrder, M, 60, Passed. Undefined variable: ==qgiver_.
-B0B70Y14, KnightlyOrder, M, 70, Passed. Undefined variable: ==qgiver_.
+B0B60Y12, KnightlyOrder, M, 60, Passed.
+B0B70Y14, KnightlyOrder, M, 70, Passed.
 B0B70Y16, KnightlyOrder, M, 70, Passed. Undefined variable: ==qgiver_.
 -B0B71Y03, KnightlyOrder, M, 71, FAILED. Lots of work to do. Undefined building variable name: __questgiver_.
 B0B80Y17, KnightlyOrder, M, 80, Passed. Undefined variable: ==qgiver_.

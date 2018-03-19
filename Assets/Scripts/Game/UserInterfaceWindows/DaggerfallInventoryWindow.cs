@@ -156,6 +156,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         DaggerfallLoot lootTarget = null;
         bool usingWagon = false;
         bool allowDungeonWagonAccess = false;
+        bool chooseOne = false;
         bool shopShelfStealing = false;
         int lootTargetStartCount = 0;
 
@@ -219,6 +220,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public void AllowDungeonWagonAccess()
         {
             allowDungeonWagonAccess = true;
+        }
+
+        public void SetChooseOne(ItemCollection items)
+        {
+            chooseOne = true;
+            remoteItems = items;
         }
 
         public void SetShopShelfStealing()
@@ -488,11 +495,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Start a new dropped items target
             droppedItems.Clear();
-            remoteItems = droppedItems;
-            remoteTargetType = RemoteTargetTypes.Dropped;
-            dropIconArchive = DaggerfallLootDataTables.randomTreasureArchive;
-            dropIconTexture = -1;
-
+            if (chooseOne)
+            {
+                remoteTargetType = RemoteTargetTypes.Merchant;
+                dropIconArchive = DaggerfallLootDataTables.combatArchive;
+                dropIconTexture = 11;
+            }
+            else
+            {   // Set dropped items as default target
+                remoteItems = droppedItems;
+                remoteTargetType = RemoteTargetTypes.Dropped;
+                dropIconArchive = DaggerfallLootDataTables.randomTreasureArchive;
+                dropIconTexture = -1;
+            }
             // Use custom loot target if specified
             if (lootTarget != null)
             {
@@ -563,6 +578,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // Reset dungeon wagon access permission
             allowDungeonWagonAccess = false;
+
+            // Reset choose one mode
+            chooseOne = false;
 
             // Handle stealing and reset shop shelf stealing mode
             if (shopShelfStealing && remoteItems.Count < lootTargetStartCount)
@@ -1314,6 +1332,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             to.Transfer(item, from, order);
             Refresh(false);
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+
+            if (chooseOne)
+                CloseWindow();
         }
 
         protected void ShowInfoPopup(DaggerfallUnityItem item)
@@ -1543,7 +1564,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else if (selectedActionMode == ActionModes.Remove)
             {
                 // Transfer to remote items
-                if (remoteItems != null)
+                if (remoteItems != null && !chooseOne)
                 {
                     // Check wagon weight limit
                     if (!usingWagon || WagonCanHold(item))
