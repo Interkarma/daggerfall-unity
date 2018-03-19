@@ -80,8 +80,7 @@ namespace DaggerfallWorkshop
             public MobileTypes FixedEnemyType;                  // Type for fixed enemy marker
             public short WaterLevel;                            // Dungeon water level
             public bool CastleBlock;                            // Non-hostile area of main story castle dungeons
-            public TextureReplacement.CustomBillboard 
-                CustomBillboard;                                // Custom textures
+            public BillboardImportedTextures ImportedTextures;  // Textures imported from mods
         }
 
         void Start()
@@ -139,7 +138,7 @@ namespace DaggerfallWorkshop
                     summary.CurrentFrame++;
 
                     // Original Daggerfall textures
-                    if (!summary.CustomBillboard.isCustomAnimated)
+                    if (!summary.ImportedTextures.HasImportedTextures)
                     {
                         if (summary.CurrentFrame >= summary.AtlasIndices[summary.Record].frameCount)
                         {
@@ -163,19 +162,17 @@ namespace DaggerfallWorkshop
                     {
                         // Restart animation or destroy gameobject
                         // The game uses all -and only- textures found on disk, even if they are less or more than vanilla frames
-                        if (summary.CurrentFrame >= summary.CustomBillboard.NumberOfFrames)
+                        if (summary.CurrentFrame >= summary.ImportedTextures.FrameCount)
                         {
                             summary.CurrentFrame = 0;
                             if (OneShot)
                                 GameObject.Destroy(gameObject);
                         }
 
-                        // Set Main texture for current frame
-                        meshRenderer.materials[0].SetTexture("_MainTex", summary.CustomBillboard.MainTexture[summary.CurrentFrame]);
-
-                        // Set Emission map for current frame
-                        if (summary.CustomBillboard.isEmissive)
-                            meshRenderer.materials[0].SetTexture("_EmissionMap", summary.CustomBillboard.EmissionMap[summary.CurrentFrame]);
+                        // Set imported textures for current frame
+                        meshRenderer.material.SetTexture("_MainTex", summary.ImportedTextures.Albedo[summary.CurrentFrame]);
+                        if (summary.ImportedTextures.IsEmissive)
+                            meshRenderer.material.SetTexture("_EmissionMap", summary.ImportedTextures.Emission[summary.CurrentFrame]);
                     }
                 }
 
@@ -345,8 +342,7 @@ namespace DaggerfallWorkshop
             }
 
             // Import custom textures
-            if (TextureReplacement.CustomTextureExist(archive, record))
-                TextureReplacement.SetBillboardCustomMaterial(gameObject, ref summary);
+            TextureReplacement.SetBillboardImportedTextures(gameObject, ref summary);
 
             // Standalone billboards never cast shadows
             meshRenderer.shadowCastingMode = ShadowCastingMode.Off;
