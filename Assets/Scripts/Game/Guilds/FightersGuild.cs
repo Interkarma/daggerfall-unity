@@ -99,7 +99,7 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public override int ReducedRepairCost(int price)
         {
-            return ((10 - rank) / 10) * price;
+            return (((10 - rank) << 8) / 10 * price) >> 8;
         }
 
         #endregion

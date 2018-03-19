@@ -613,7 +613,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ModeActionButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (cost > 0)
+            if (cost > 0 || ((windowMode == WindowModes.Repair || windowMode == WindowModes.Identify) && remoteItems.Count > 0))
                 ShowTradePopup();
         }
 
