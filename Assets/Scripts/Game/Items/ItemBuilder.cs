@@ -44,6 +44,9 @@ namespace DaggerfallWorkshop.Game.Items
         // Enchantment point multipliers by material type. Iron through Daedric. Enchantment points is baseEnchanmentPoints * value / 4.
         static readonly short[] enchantmentPointMultipliersByMaterial = { 3, 4, 7, 5, 6, 5, 7, 8, 10, 12 };
 
+        // Value of potions indexed by recipe
+        static readonly ushort[] potionValues = { 25, 50, 50, 50, 75, 75, 75, 75, 100, 100, 100, 100, 125, 125, 125, 200, 200, 200, 250, 500 };
+
         private enum BodyMorphology
         {
             Argonian = 0,
@@ -510,6 +513,30 @@ namespace DaggerfallWorkshop.Game.Items
             DaggerfallUnityItem newItem = new DaggerfallUnityItem(itemGroup, groupIndex);
 
             return newItem;
+        }
+
+        /// <summary>
+        /// Creates a potion
+        /// </summary>
+        /// <param name="recipe">Recipe index for the potion</param>
+        /// <returns>DaggerfallUnityItem</returns>
+        public static DaggerfallUnityItem CreatePotion(byte recipe)
+        {
+            return new DaggerfallUnityItem(ItemGroups.UselessItems1, 1)
+            {
+                typeDependentData = recipe,
+                value = potionValues[recipe],
+            };
+        }
+
+        /// <summary>
+        /// Creates a random potion
+        /// </summary>
+        /// <returns>DaggerfallUnityItem</returns>
+        public static DaggerfallUnityItem CreateRandomPotion()
+        {
+            byte recipe = (byte) UnityEngine.Random.Range(0, 20);
+            return CreatePotion(recipe);
         }
 
         /// <summary>

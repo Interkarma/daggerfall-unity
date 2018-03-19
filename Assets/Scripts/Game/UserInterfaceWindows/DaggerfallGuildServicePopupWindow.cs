@@ -108,6 +108,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #region Setup Methods
 
         // TODO: replace with proper merchant item generation...
+        // classic seems to have a deterministic method for generating magic items being sold
         ItemCollection GetMerchantItems()
         {
             if (merchantItems == null)
@@ -123,6 +124,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 merchantItems = items;
             }
             return merchantItems;
+        }
+
+        // TODO: classic seems to generate each time player select buy potions.. should we make more persistent for DFU?
+        ItemCollection GetMerchantPotions()
+        {
+            ItemCollection potions = new ItemCollection();
+            for (int n = UnityEngine.Random.Range(12, 20); n > 0; n--)
+                potions.AddItem(ItemBuilder.CreateRandomPotion());
+            return potions;
         }
 
         protected override void Setup()
@@ -250,6 +260,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 case GuildServices.CureDisease:
                     CureDiseaseService();
+                    break;
+
+                case GuildServices.BuyPotions:
+                    CloseWindow();
+                    uiManager.PushWindow(new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Buy, this, guild) {
+                        MerchantItems = GetMerchantPotions()
+                    });
                     break;
 
                 case GuildServices.BuyMagicItems:   // TODO: switch items depending on npcService?

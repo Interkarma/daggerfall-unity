@@ -101,7 +101,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                 if (rank == 9)
                     return PromotionHighestId;
                 if (library == rank)
-                    return PromotionBuyPotionsId;
+                    return PromotionLibraryId;
                 if (healing == rank)
                     return PromotionHealingId;
                 if (buyPotions == rank)
@@ -548,6 +548,10 @@ namespace DaggerfallWorkshop.Game.Guilds
                 parent = guild;
             }
 
+            public override string God()
+            {
+                return parent.deity.ToString();
+            }
             public override string FactionOrderName()
             {
                 return parent.deity.ToString();
