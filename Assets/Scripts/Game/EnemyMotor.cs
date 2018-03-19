@@ -297,72 +297,44 @@ namespace DaggerfallWorkshop.Game
             // Bow attack for enemies that have the appropriate animation
             if (senses.PlayerInSight && 360 * MeshReader.GlobalScale < distance && distance < 2048 * MeshReader.GlobalScale)
             {
-                if (classicUpdate)
+                if (senses.TargetIsWithinYawAngle(22.5f))
                 {
-                    if (senses.TargetIsWithinYawAngle(22.5f))
+                    if (mobile.Summary.Enemy.HasRangedAttack1 && mobile.Summary.Enemy.ID > 129 && mobile.Summary.Enemy.ID != 132)
                     {
-                        if (mobile.Summary.Enemy.HasRangedAttack1 && mobile.Summary.Enemy.ID > 129 && mobile.Summary.Enemy.ID != 132)
+                        // Random chance to shoot bow
+                        if (DFRandom.rand() < 1000)
                         {
-                            // Random chance to shoot bow
-                            if (DFRandom.rand() < 1000)
-                            {
-                                if (mobile.Summary.Enemy.HasRangedAttack1 && !mobile.Summary.Enemy.HasRangedAttack2
-                                    && mobile.Summary.EnemyState != MobileStates.RangedAttack1)
-                                    mobile.ChangeEnemyState(MobileStates.RangedAttack1);
-                                else if (mobile.Summary.Enemy.HasRangedAttack2 && mobile.Summary.EnemyState != MobileStates.RangedAttack2)
-                                    mobile.ChangeEnemyState(MobileStates.RangedAttack2);
-                            }
-                            // Otherwise hold ground
-                            else if (!mobile.IsPlayingOneShot())
-                            {
-                                mobile.ChangeEnemyState(MobileStates.Idle);
-                            }
+                            if (mobile.Summary.Enemy.HasRangedAttack1 && !mobile.Summary.Enemy.HasRangedAttack2
+                                && mobile.Summary.EnemyState != MobileStates.RangedAttack1)
+                                mobile.ChangeEnemyState(MobileStates.RangedAttack1);
+                            else if (mobile.Summary.Enemy.HasRangedAttack2 && mobile.Summary.EnemyState != MobileStates.RangedAttack2)
+                                mobile.ChangeEnemyState(MobileStates.RangedAttack2);
                         }
-                        //else if (spellPoints > 0 && canCastRangeSpells && DFRandom.rand() % 40 == 0) TODO: Ranged spell shooting
-                        //          CastRangedSpell();
-                        //          Spell Cast Animation;
+                        // Otherwise hold ground
+                        else if (!mobile.IsPlayingOneShot())
+                            mobile.ChangeEnemyState(MobileStates.Idle);
                     }
+                    //else if (spellPoints > 0 && canCastRangeSpells && DFRandom.rand() % 40 == 0) TODO: Ranged spell shooting
+                    //          CastRangedSpell();
+                    //          Spell Cast Animation;
                     else
-                    {
-                        if (!mobile.IsPlayingOneShot())
-                            mobile.ChangeEnemyState(MobileStates.Move);
-                        TurnToTarget(direction.normalized);
-                        return;
-                    }
+                        // If no ranged attack, move towards target
+                        PursueTarget(direction, moveSpeed);
+                }
+                else
+                {
+                    if (!mobile.IsPlayingOneShot())
+                        mobile.ChangeEnemyState(MobileStates.Move);
+                    TurnToTarget(direction.normalized);
+                    return;
                 }
             }
             // Move towards target
             else if (distance > stopDistance)
-            {
-                if (!mobile.IsPlayingOneShot())
-                    mobile.ChangeEnemyState(MobileStates.Move);
-
-                if (!senses.TargetIsWithinYawAngle(5.625f))
-                {
-                    TurnToTarget(direction.normalized);
-                    return;
-                }
-
-                var motion = transform.forward * moveSpeed;
-
-                // Prevent rat stacks (enemies don't stand on shorter enemies)
-                AvoidEnemies(ref motion);
-
-                if (swims)
-                {
-                    WaterMove(motion);
-                }
-                else if (flies)
-                    controller.Move(motion * Time.deltaTime);
-                else
-                    controller.SimpleMove(motion);
-            }
+                PursueTarget(direction, moveSpeed);
             else if (!senses.TargetIsWithinYawAngle(22.5f))
-            {
                 TurnToTarget(direction.normalized);
-                return;
-            }
-            //else if
+            //else
             //{
             // TODO: Touch spells.
             //if (hasSpellPoints && attackCoolDownFinished && CanCastTouchSpells)
@@ -372,9 +344,36 @@ namespace DaggerfallWorkshop.Game
             //}
             //}
             else if (!senses.PlayerInSight && !senses.PlayerInEarshot)
-            {
                 mobile.ChangeEnemyState(MobileStates.Idle);
+        }
+
+        private void PursueTarget(Vector3 direction, float moveSpeed)
+        {
+            if (!mobile.IsPlayingOneShot())
+                mobile.ChangeEnemyState(MobileStates.Move);
+
+            if (!senses.TargetIsWithinYawAngle(5.625f))
+            {
+                TurnToTarget(direction.normalized);
+                // Returning here is closer to classic behavior but disabling
+                // it provides an easy trick to make enemies harder to outmaneuver,
+                // since the enemy will resume moving. May revisit this later.
+                //return;
             }
+
+            var motion = transform.forward * moveSpeed;
+
+            // Prevent rat stacks (enemies don't stand on shorter enemies)
+            AvoidEnemies(ref motion);
+
+            if (swims)
+            {
+                WaterMove(motion);
+            }
+            else if (flies)
+                controller.Move(motion * Time.deltaTime);
+            else
+                controller.SimpleMove(motion);
         }
 
 		private void WaterMove(Vector3 motion)
