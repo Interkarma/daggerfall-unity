@@ -155,6 +155,12 @@ namespace DaggerfallWorkshop.Game
             set { isRiding = value; }
         }
 
+        public bool IsClimbing
+        {
+            get { return isClimbing; }
+            set { isClimbing = value; }
+        }
+
         public bool IsMovingLessThanHalfSpeed
         {
             get
