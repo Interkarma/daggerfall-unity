@@ -1,27 +1,19 @@
-﻿// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Numidium
-// Contributors:
+// Contributors: Hazelnut
 
 using UnityEngine;
-using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
-using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
-    public class DaggerfallQuestOfferWindow : DaggerfallPopupWindow
+    public class DaggerfallQuestOfferWindow : DaggerfallQuestPopupWindow
     {
-
-        const string tempMerchantsQuestsFilename = "Temp-Merchants";
-        const string tempNobilityQuestsFilename = "Temp-Nobility";
-        string questsFilename;
-        Texture2D baseTexture;
-
         StaticNPC questorNPC;
-        Quest offeredQuest;
+        FactionFile.SocialGroups socialGroup;
 
         #region Constructors
 
@@ -29,18 +21,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             : base(uiManager)
         {
             questorNPC = npc;
-            TalkManager.Instance.RemoveMerchantQuestor(npc.Data.nameSeed); // Remove potential questor from pool after quest has been offered
-            // TODO - assemble quest lists for more social groups
-            switch (socialGroup)
-            {
-                default:
-                case FactionFile.SocialGroups.Merchants:
-                    questsFilename = tempMerchantsQuestsFilename;
-                    break;
-                case FactionFile.SocialGroups.Nobility:
-                    questsFilename = tempNobilityQuestsFilename;
-                    break;
-            }
+            this.socialGroup = socialGroup;
+
+            // Remove potential questor from pool after quest has been offered
+            TalkManager.Instance.RemoveMerchantQuestor(npc.Data.nameSeed);
+
             // Clear background
             ParentPanel.BackgroundColor = Color.clear;
         }
@@ -51,66 +36,46 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected override void Setup()
         {
-            Table table = new Table(QuestMachine.Instance.GetTableSourceText(tempMerchantsQuestsFilename));
-            string questName = table.GetRow(UnityEngine.Random.Range(0, table.RowCount))[0];
-            offeredQuest = QuestMachine.Instance.ParseQuest(questName);
-            // Offer the quest to player
-            DaggerfallMessageBox messageBox = QuestMachine.Instance.CreateMessagePrompt(offeredQuest, (int)QuestMachine.QuestMessages.QuestorOffer);
-            if (messageBox != null)
-            {
-                messageBox.OnButtonClick += OfferQuest_OnButtonClick;
-                messageBox.Show();
-            }
+            GetQuest();
         }
 
         #endregion
 
-        #region Event Handlers
+        #region Quest handling
 
-        private void OfferQuest_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        protected override void GetQuest()
         {
-            if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
+            // Just exit if this NPC already involved in an active quest
+            // If quest conditions are complete the quest system should pickup ending
+            if (QuestMachine.Instance.IsLastNPCClickedAnActiveQuestor())
             {
-                // Show accept message, add quest
-                sender.CloseWindow();
-                ShowQuestPopupMessage(offeredQuest, (int)QuestMachine.QuestMessages.AcceptQuest);
-                QuestMachine.Instance.InstantiateQuest(offeredQuest);
+                CloseWindow();
+                return;
+            }
+
+            // Get the faction id for affecting reputation on success/failure, and current rep
+            int factionId = questorNPC.Data.factionID;
+            int reputation = GameManager.Instance.PlayerEntity.FactionData.GetReputation(factionId);
+
+            // Select a quest at random from appropriate pool
+            offeredQuest = GameManager.Instance.QuestListsManager.GetSocialQuest(socialGroup, factionId, reputation);
+            if (offeredQuest != null)
+            {
+                // Log offered quest
+                Debug.LogFormat("Offering quest {0} from Social group {1} affecting factionId {2}", offeredQuest.QuestName, socialGroup, offeredQuest.FactionId);
+
+                // Offer the quest to player
+                DaggerfallMessageBox messageBox = QuestMachine.Instance.CreateMessagePrompt(offeredQuest, (int)QuestMachine.QuestMessages.QuestorOffer);// TODO - need to provide an mcp for macros
+                if (messageBox != null)
+                {
+                    messageBox.OnButtonClick += OfferQuest_OnButtonClick;
+                    messageBox.Show();
+                }
             }
             else
             {
-                // Show refuse message
-                sender.CloseWindow();
-                ShowQuestPopupMessage(offeredQuest, (int)QuestMachine.QuestMessages.RefuseQuest, true);
+                ShowFailGetQuestMessage();
             }
-        }
-
-        // Show a popup such as accept/reject message and close service window
-        void ShowQuestPopupMessage(Quest quest, int id, bool exitOnClose = true)
-        {
-            // Get message resource
-            Message message = quest.GetMessage(id);
-            if (message == null)
-                return;
-
-            // Setup popup message
-            TextFile.Token[] tokens = message.GetTextTokens();
-            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
-            messageBox.SetTextTokens(tokens);
-            messageBox.ClickAnywhereToClose = true;
-            messageBox.AllowCancel = true;
-            messageBox.ParentPanel.BackgroundColor = Color.clear;
-
-            // Exit on close if requested
-            if (exitOnClose)
-                messageBox.OnClose += QuestPopupMessage_OnClose;
-
-            // Present popup message
-            messageBox.Show();
-        }
-
-        private void QuestPopupMessage_OnClose()
-        {
-            CloseWindow();
         }
 
         #endregion
