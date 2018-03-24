@@ -872,14 +872,15 @@ namespace DaggerfallConnect.Arena2
             // Read all flat object records into array
             for (int i = 0; i < recordsOut.Length; i++)
             {
+                recordsOut[i].Position = reader.BaseStream.Position;
                 recordsOut[i].XPos = reader.ReadInt32();
                 recordsOut[i].YPos = reader.ReadInt32();
                 recordsOut[i].ZPos = reader.ReadInt32();
                 recordsOut[i].TextureBitfield = reader.ReadUInt16();
                 recordsOut[i].TextureArchive = recordsOut[i].TextureBitfield >> 7;
                 recordsOut[i].TextureRecord = recordsOut[i].TextureBitfield & 0x7f;
-                recordsOut[i].Unknown1 = reader.ReadInt16();
-                recordsOut[i].Unknown2 = reader.ReadByte();
+                recordsOut[i].FactionID = reader.ReadInt16();
+                recordsOut[i].Flags = reader.ReadByte();
             }
         }
 

@@ -347,9 +347,22 @@ namespace DaggerfallWorkshop.Utility
                 GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, flatsParent);
                 go.transform.position = billboardPosition;
                 AlignBillboardToBase(go);
+
                 // Add animal sound
                 if (obj.TextureArchive == TextureReader.AnimalsTextureArchive)
                     AddAnimalAudioSource(go);
+
+                // If flat record has a non-zero faction id, then it's an exterior NPC
+                if (obj.FactionID != 0)
+                {
+                    // Add RMB data to billboard
+                    DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
+                    dfBillboard.SetRMBPeopleData(obj.FactionID, obj.Flags, obj.Position);
+
+                    // Add StaticNPC behaviour
+                    StaticNPC npc = go.AddComponent<StaticNPC>();
+                    npc.SetLayoutData(obj);
+                }
             }
         }
 

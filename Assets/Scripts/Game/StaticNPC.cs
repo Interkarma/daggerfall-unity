@@ -147,6 +147,22 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
+        /// Sets NPC data from RMB layout flat record. (exterior NPCs)
+        /// </summary>
+        public void SetLayoutData(DFBlock.RmbBlockFlatObjectRecord obj)
+        {
+            // Store common layout data
+            npcData.hash = GetPositionHash(obj.XPos, obj.YPos, obj.ZPos);
+            npcData.flags = obj.Flags;
+            npcData.factionID = obj.FactionID;
+            npcData.nameSeed = (int) obj.Position;
+            npcData.gender = ((npcData.flags & 32) == 32) ? Genders.Female : Genders.Male;
+            npcData.context = Context.Custom;
+            npcData.billboardArchiveIndex = obj.TextureArchive;
+            npcData.billboardRecordIndex = obj.TextureRecord;
+        }
+
+        /// <summary>
         /// Sets NPC data from quest Person resource.
         /// </summary>
         /// <param name="person"></param>

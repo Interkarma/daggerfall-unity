@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -186,13 +186,7 @@ namespace DaggerfallWorkshop
         /// <param name="person"></param>
         public void SetRMBPeopleData(DFBlock.RmbBlockPeopleRecord person)
         {
-            // Add common data
-            summary.FactionOrMobileID = person.FactionID;
-            summary.FixedEnemyType = MobileTypes.None;
-            summary.Flags = person.Flags;
-
-            // TEMP: Add name seed
-            summary.NameSeed = (int)person.Position;
+            SetRMBPeopleData(person.FactionID, person.Flags, person.Position);
         }
 
         /// <summary>
@@ -200,12 +194,15 @@ namespace DaggerfallWorkshop
         /// </summary>
         /// <param name="factionID">FactionID of person.</param>
         /// <param name="flags">Person flags.</param>
-        public void SetRMBPeopleData(int factionID, int flags)
+        public void SetRMBPeopleData(int factionID, int flags, long position = 0)
         {
             // Add common data
             summary.FactionOrMobileID = factionID;
             summary.FixedEnemyType = MobileTypes.None;
             summary.Flags = flags;
+
+            // TEMP: Add name seed
+            summary.NameSeed = (int) position;
         }
 
         /// <summary>

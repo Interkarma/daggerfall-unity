@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -448,7 +448,7 @@ namespace DaggerfallWorkshop.Game
             if (factions == null || factions.Length == 0)
                 throw new Exception("TalkToStaticNPC() did not find a match for NPC faction.");
 
-            // Warn if more than 1 region is found
+            // Warn if more than 1 region is found (NOTE: this happens for Glenmoril Coven which clashes with Septim Empire - probably should remove this warning)
             if (factions.Length > 1)
                 Debug.LogWarningFormat("TalkToStaticNPC() found more than 1 matching NPC faction for region {0}.", oneBasedPlayerRegion);
 

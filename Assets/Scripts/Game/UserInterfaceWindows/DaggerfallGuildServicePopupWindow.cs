@@ -24,7 +24,7 @@ using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
-    public class DaggerfallGuildServicePopupWindow : DaggerfallPopupWindow, IMacroContextProvider
+    public class DaggerfallGuildServicePopupWindow : DaggerfallQuestPopupWindow, IMacroContextProvider
     {
         #region UI Rects
 
@@ -76,7 +76,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Guild guild;
         PlayerGPS.DiscoveredBuilding buildingDiscoveryData;
-        Quest offeredQuest = null;
         int curingCost = 0;
 
         static ItemCollection merchantItems;    // Temporary
@@ -363,7 +362,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Service Handling: Quests
 
-        void GetQuest()
+        protected override void GetQuest()
         {
             // Just exit if this NPC already involved in an active quest
             // If quest conditions are complete the quest system should pickup ending
@@ -400,65 +399,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 ShowFailGetQuestMessage();
             }
-        }
-
-        void ShowFailGetQuestMessage()
-        {
-            const int flavourMessageID = 600;
-
-            TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(flavourMessageID);
-            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
-            messageBox.SetTextTokens(tokens);
-            messageBox.ClickAnywhereToClose = true;
-            messageBox.AllowCancel = true;
-            messageBox.ParentPanel.BackgroundColor = Color.clear;
-            messageBox.Show();
-        }
-
-        // Show a popup such as accept/reject message close guild window
-        void ShowQuestPopupMessage(Quest quest, int id, bool exitOnClose = true)
-        {
-            // Get message resource
-            Message message = quest.GetMessage(id);
-            if (message == null)
-                return;
-
-            // Setup popup message
-            TextFile.Token[] tokens = message.GetTextTokens();
-            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
-            messageBox.SetTextTokens(tokens);
-            messageBox.ClickAnywhereToClose = true;
-            messageBox.AllowCancel = true;
-            messageBox.ParentPanel.BackgroundColor = Color.clear;
-
-            // Exit on close if requested
-            if (exitOnClose)
-                messageBox.OnClose += QuestPopupMessage_OnClose;
-
-            // Present popup message
-            messageBox.Show();
-        }
-
-        private void OfferQuest_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
-        {
-            if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
-            {
-                // Show accept message, add quest
-                sender.CloseWindow();
-                ShowQuestPopupMessage(offeredQuest, (int)QuestMachine.QuestMessages.AcceptQuest);
-                QuestMachine.Instance.InstantiateQuest(offeredQuest);
-            }
-            else
-            {
-                // Show refuse message
-                sender.CloseWindow();
-                ShowQuestPopupMessage(offeredQuest, (int)QuestMachine.QuestMessages.RefuseQuest, false);
-            }
-        }
-
-        private void QuestPopupMessage_OnClose()
-        {
-            CloseWindow();
         }
 
         #endregion
