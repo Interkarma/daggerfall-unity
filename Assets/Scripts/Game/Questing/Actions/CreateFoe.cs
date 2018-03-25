@@ -142,7 +142,7 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             // Get foe GameObjects
-            pendingFoeGameObjects = foe.CreateFoeGameObjects(Vector3.zero);
+            pendingFoeGameObjects = GameObjectHelper.CreateFoeGameObjects(Vector3.zero, foe.FoeType, foe.SpawnCount, MobileReactions.Hostile, foe);
             if (pendingFoeGameObjects == null || pendingFoeGameObjects.Length != foe.SpawnCount)
             {
                 SetComplete();
@@ -207,35 +207,6 @@ namespace DaggerfallWorkshop.Game.Questing
             // Feel just placing freely will yield best results overall
             PlaceFoeFreely(gameObjects, interiorParent.transform);
             return;
-
-            //// Use free spawn if no interior spawn points
-            //if (interiorParent.SpawnPoints.Length == 0)
-            //{
-            //    PlaceFoeFreely(gameObjects, interiorParent.transform);
-            //    return;
-            //}
-
-            //// Place using spawn points
-            //foreach (GameObject go in gameObjects)
-            //{
-            //    Vector3 spawnPosition;
-            //    bool spawnPositionFound = interiorParent.GetRandomSpawnPoint(out spawnPosition);
-            //    go.transform.parent = interiorParent.transform;
-
-            //    if (spawnPositionFound)
-            //    {
-            //        go.transform.localPosition = spawnPosition;
-            //    }
-            //    else
-            //    {
-            //        Debug.Log("Fallback placing behind player");
-            //        PlayerMotor playerMotor = GameManager.Instance.PlayerMotor;
-            //        go.transform.position = playerMotor.transform.position + -playerMotor.transform.forward;
-            //    }
-
-            //    FinalizeFoe(go);
-            //    pendingFoesSpawned++;
-            //}
         }
 
         // Place foe somewhere near player when inside a dungeon

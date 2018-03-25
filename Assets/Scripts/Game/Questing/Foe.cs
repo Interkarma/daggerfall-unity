@@ -191,68 +191,6 @@ namespace DaggerfallWorkshop.Game.Questing
             killCount += amount;
         }
 
-        /// <summary>
-        /// Creates enemy GameObjects based on spawn count specified in Foe resource (minimum of 1).
-        /// Only use this when live enemy is to be first added to scene. Do not use when linking to site or deserializing.
-        /// GameObjects created will be disabled, at origin, parentless, and have a new UID for LoadID.
-        /// Caller must otherwise complete GameObject setup to suit their needs.
-        /// </summary>
-        /// <param name="reaction">Foe is hostile by default but can optionally set to passive.</param>
-        /// <returns>GameObject[] array of 1-N foes. Array can be null or empty if create fails.</returns>
-        public GameObject[] CreateFoeGameObjects(Vector3 position, int spawnOverride = -1, MobileReactions reaction = MobileReactions.Hostile)
-        {
-            List<GameObject> gameObjects = new List<GameObject>();
-
-            // Get spawn count allowing for caller to override
-            int totalSpawns = (spawnOverride >= 1) ? spawnOverride : spawnCount;
-
-            // Generate GameObjects
-            for (int i = 0; i < totalSpawns; i++)
-            {
-                // Generate enemy
-                string name = string.Format("DaggerfallEnemy [{0}]", foeType.ToString());
-                GameObject go = GameObjectHelper.InstantiatePrefab(DaggerfallUnity.Instance.Option_EnemyPrefab.gameObject, name, null, position);
-                SetupDemoEnemy setupEnemy = go.GetComponent<SetupDemoEnemy>();
-                if (setupEnemy != null)
-                {
-                    // Assign gender randomly
-                    MobileGender gender;
-                    if (UnityEngine.Random.Range(0f, 1f) < 0.5f)
-                        gender = MobileGender.Male;
-                    else
-                        gender = MobileGender.Female;
-
-                    // Configure enemy
-                    setupEnemy.ApplyEnemySettings(foeType, reaction, gender);
-
-                    // Align non-flying units with ground
-                    DaggerfallMobileUnit mobileUnit = setupEnemy.GetMobileBillboardChild();
-                    if (mobileUnit.Summary.Enemy.Behaviour != MobileBehaviour.Flying)
-                        GameObjectHelper.AlignControllerToGround(go.GetComponent<CharacterController>());
-
-                    // Add QuestResourceBehaviour to GameObject
-                    QuestResourceBehaviour questResourceBehaviour = go.AddComponent<QuestResourceBehaviour>();
-                    questResourceBehaviour.AssignResource(this);
-                }
-
-                // Assign load id
-                DaggerfallEnemy enemy = go.GetComponent<DaggerfallEnemy>();
-                if (enemy)
-                {
-                    enemy.LoadID = DaggerfallUnity.NextUID;
-                    enemy.QuestSpawn = true;
-                }
-
-                // Disable GameObject, caller must set active when ready
-                go.SetActive(false);
-
-                // Add to list
-                gameObjects.Add(go);
-            }
-
-            return gameObjects.ToArray();
-        }
-
         #endregion
 
         #region Private Methods
