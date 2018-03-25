@@ -609,7 +609,8 @@ namespace DaggerfallConnect.Save
                 faction.vam = reader.ReadInt16();
                 faction.flags = reader.ReadInt16();
 
-                reader.BaseStream.Position += 8;            // Skip 8 unknown bytes
+                reader.BaseStream.Position += 4;            // Skip 4 unknown bytes
+                faction.randomValue = reader.ReadInt32();
 
                 faction.flat1 = reader.ReadInt16();
                 faction.flat2 = reader.ReadInt16();

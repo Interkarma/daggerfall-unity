@@ -254,15 +254,17 @@ namespace DaggerfallWorkshop.Game.Serialization
             entity.RentedRooms = (data.playerEntity.rentedRooms != null) ? data.playerEntity.rentedRooms.ToList() : new List<RoomRental_v1>();
             entity.Disease.RestoreSaveData(data.playerEntity.disease);
 
-            if (data.playerEntity.regionData != null)
-                entity.RegionData = data.playerEntity.regionData;
-            else // If data doesn't exist, initialize to random values
-                entity.InitializeRegionPrices();
-
             // Set time tracked in player entity
             entity.LastGameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
 
-            // Fill in missing data for saves
+            // Fill in missing data for saves.
+            // Older saves may have regionData non-null but Values, Flags and Flags2 are uninitialized.
+            // Just checking that any one of these is null is enough. Initialize to 0 (no conditions) for now to avoid null references.
+            if (data.playerEntity.regionData != null && data.playerEntity.regionData[0].Values != null)
+                entity.RegionData = data.playerEntity.regionData;
+            else // If data doesn't exist, initialize it
+                entity.InitializeRegionData();
+
             if (entity.StartingLevelUpSkillSum <= 0)
                 entity.EstimateStartingLevelUpSkillSum();
             if (entity.SkillUses == null)
