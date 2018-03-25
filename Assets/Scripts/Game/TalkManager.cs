@@ -271,7 +271,7 @@ namespace DaggerfallWorkshop.Game
         struct NpcBuildingPair
         {
             public StaticNPC.NPCData npc;
-            public BuildingSummary building;
+            public string buildingName;
         }
         Dictionary<int, NpcBuildingPair> merchantRecords = new Dictionary<int, NpcBuildingPair>();
         int lastExteriorEntered;
@@ -1432,15 +1432,7 @@ namespace DaggerfallWorkshop.Game
 
         public string GetQuestorLocation()
         {
-            ContentReader.MapSummary mapSummary;
-            DFPosition mapPixel = GameManager.Instance.PlayerGPS.CurrentMapPixel;
-            if (!DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out mapSummary))
-            {
-                return "not found";
-            }
-            DFLocation location = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(mapSummary.RegionIndex, mapSummary.MapIndex);
-            BuildingSummary buildingSummary = merchantRecords[selectedKey].building;
-            return BuildingNames.GetName(buildingSummary.NameSeed, buildingSummary.BuildingType, buildingSummary.FactionId, location.Name, location.RegionName);
+            return merchantRecords[selectedKey].buildingName;
         }
 
         public void RemoveMerchantQuestor(int nameSeed)
@@ -1515,6 +1507,7 @@ namespace DaggerfallWorkshop.Game
             {
                 merchantRecords.Clear();
                 populateQuestors = true;
+                Debug.Log("Populating questors");
             }
 
             for (int y = 0; y < height; y++)
@@ -1561,9 +1554,8 @@ namespace DaggerfallWorkshop.Game
                                 {
                                     int randomChance = UnityEngine.Random.Range(0, 4); // 25% chance that a merchant will offer quests
                                     if (randomChance < 3)
-                                    {
                                         continue;
-                                    }
+
                                     StaticNPC.NPCData npcData = new StaticNPC.NPCData();
                                     StaticNPC.SetLayoutData(ref npcData,
                                                             buildingNpcs[p].XPos, buildingNpcs[p].YPos, buildingNpcs[p].ZPos,
@@ -1578,12 +1570,15 @@ namespace DaggerfallWorkshop.Game
                                     {
                                         npcData.buildingKey = buildingSummary.buildingKey;
                                         npcData.nameBank = GameManager.Instance.PlayerGPS.GetNameBankOfCurrentRegion();
-                                        NpcBuildingPair nbPair = new NpcBuildingPair();
-                                        nbPair.npc = npcData;
-                                        nbPair.building = buildingSummary;
+                                        NpcBuildingPair nbPair = new NpcBuildingPair {
+                                            npc = npcData,
+                                            buildingName = BuildingNames.GetName(buildingSummary.NameSeed, buildingSummary.BuildingType, buildingSummary.FactionId, location.Name, location.RegionName)
+                                        };
+                                        if (nbPair.buildingName == string.Empty)
+                                            continue;
                                         merchantRecords.Add(npcData.nameSeed, nbPair);
                                         selectedKey = npcData.nameSeed;
-                                        Debug.LogFormat("Added questor ns={0} bk={1} name={2} building={3}", npcData.nameSeed, buildingSummary.buildingKey, GetQuestorName(), GetQuestorLocation());
+                                        Debug.LogFormat("Added questor ns={0} bk={1} name={2} building={3}", npcData.nameSeed, buildingSummary.buildingKey, GetQuestorName(), nbPair.buildingName);
                                     }
                                 }
                             }

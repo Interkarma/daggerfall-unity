@@ -961,6 +961,8 @@ namespace DaggerfallWorkshop.Game
                     // Tavern?
                     else if (playerEnterExit.BuildingDiscoveryData.buildingType == DFLocation.BuildingTypes.Tavern)
                         uiManager.PushWindow(new DaggerfallTavernWindow(uiManager, npc));
+                    else
+                        GameManager.Instance.TalkManager.TalkToStaticNPC(npc);
                 }
                 // Check if this NPC is part of a witches coven.
                 else if ((FactionFile.FactionTypes) factionData.type == FactionFile.FactionTypes.WitchesCoven)
