@@ -10,9 +10,6 @@
 //
 
 using UnityEngine;
-using System;
-using System.Collections;
-using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game.UserInterface;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows

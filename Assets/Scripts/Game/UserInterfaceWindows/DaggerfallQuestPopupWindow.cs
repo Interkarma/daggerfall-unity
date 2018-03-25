@@ -17,7 +17,7 @@ using DaggerfallWorkshop.Game.Questing;
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
     /// <summary>
-    /// Implementation of a (dummy) popup window that can offer quests.
+    /// Abstract class for popup windows that can offer quests.
     /// </summary>
     public abstract class DaggerfallQuestPopupWindow : DaggerfallPopupWindow
     {

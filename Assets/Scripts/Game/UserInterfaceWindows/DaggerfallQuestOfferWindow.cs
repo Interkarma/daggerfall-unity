@@ -10,6 +10,9 @@ using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
+    /// <summary>
+    /// Implementation of a (dummy) popup window that can offer quests.
+    /// </summary>
     public class DaggerfallQuestOfferWindow : DaggerfallQuestPopupWindow
     {
         StaticNPC questorNPC;
