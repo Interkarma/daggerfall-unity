@@ -1507,7 +1507,6 @@ namespace DaggerfallWorkshop.Game
             {
                 merchantRecords.Clear();
                 populateQuestors = true;
-                Debug.Log("Populating questors");
             }
 
             for (int y = 0; y < height; y++)
@@ -1517,7 +1516,6 @@ namespace DaggerfallWorkshop.Game
                     int index = y * width + x;
                     BuildingSummary[] buildingsInBlock = RMBLayout.GetBuildingData(blocks[index], x, y);
 
-                    //foreach (BuildingSummary buildingSummary in buildingsInBlock)
                     for (int i = 0; i < buildingsInBlock.Length; i++)
                     {
                         BuildingSummary buildingSummary = buildingsInBlock[i];
