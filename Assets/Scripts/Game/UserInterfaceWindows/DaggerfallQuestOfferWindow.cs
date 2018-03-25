@@ -36,6 +36,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected override void Setup()
         {
+            CloseWindow();
             GetQuest();
         }
 
@@ -76,6 +77,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 ShowFailGetQuestMessage();
             }
+        }
+
+        protected override void QuestPopupMessage_OnClose()
+        {
         }
 
         #endregion

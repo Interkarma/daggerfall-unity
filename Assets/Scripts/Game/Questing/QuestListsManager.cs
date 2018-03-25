@@ -262,7 +262,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 }
                 catch (Exception ex)
                 {   // Log exception
-                    DaggerfallUnity.LogMessage("Exception during quest compile: " + ex.Message, true);
+                    DaggerfallUnity.LogMessage("Exception for quest " + questData.name + " during quest compile: " + ex.Message, true);
                 }
             }
             return null;
