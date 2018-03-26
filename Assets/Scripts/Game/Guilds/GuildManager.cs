@@ -162,9 +162,9 @@ namespace DaggerfallWorkshop.Game.Guilds
         {
             FactionFile.GuildGroups guildGroup = GetGuildGroup(factionId);
             if (guildGroup == FactionFile.GuildGroups.None)
-                throw new Exception("Can't find guild for faction id: " + factionId);
-
-            return GetGuild(guildGroup, factionId);
+                return guildNotMember;
+            else
+                return GetGuild(guildGroup, factionId);
         }
 
         private FactionFile.GuildGroups GetGuildGroup(int factionId)
