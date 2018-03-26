@@ -20,6 +20,7 @@ using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop.Utility
@@ -1090,6 +1091,29 @@ namespace DaggerfallWorkshop.Utility
             }
 
             return gameObjects.ToArray();
+        }
+
+        /// <summary>
+        /// Create a new foe spawner.
+        /// The spawner will self-destroy once it has emitted foes into world around player.
+        /// </summary>
+        /// <param name="foeType">Type of foe to spawn.</param>
+        /// <param name="spawnCount">Number of duplicate foes to spawn.</param>
+        /// <param name="minDistance">Minimum distance from player.</param>
+        /// <param name="maxDistance">Maximum distance from player.</param>
+        /// <param name="parent">Parent GameObject. If none specified the most suitable parent will be selected automatically.</param>
+        /// <returns>FoeSpawner GameObject.</returns>
+        public static GameObject CreateFoeSpawner(MobileTypes foeType = MobileTypes.None, int spawnCount = 0, int minDistance = 4, int maxDistance = 20, Transform parent = null)
+        {
+            GameObject go = new GameObject();
+            FoeSpawner spawner = go.AddComponent<FoeSpawner>();
+            spawner.FoeType = foeType;
+            spawner.SpawnCount = spawnCount;
+            spawner.MinDistance = minDistance;
+            spawner.MaxDistance = maxDistance;
+            spawner.Parent = parent;
+
+            return go;
         }
 
         #endregion
