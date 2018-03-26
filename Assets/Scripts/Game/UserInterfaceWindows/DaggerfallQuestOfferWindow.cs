@@ -27,7 +27,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             this.socialGroup = socialGroup;
 
             // Remove potential questor from pool after quest has been offered
-            TalkManager.Instance.RemoveMerchantQuestor(npc.Data.nameSeed);
+            TalkManager.Instance.RemoveNpcQuestor(npc.Data.nameSeed);
 
             // Clear background
             ParentPanel.BackgroundColor = Color.clear;
