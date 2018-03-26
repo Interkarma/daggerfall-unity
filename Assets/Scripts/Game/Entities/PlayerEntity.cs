@@ -34,6 +34,8 @@ namespace DaggerfallWorkshop.Game.Entity
         #region Fields
 
         bool godMode = false;
+        bool preventEnemySpawns = false;
+        bool isResting = false;
 
         const int testPlayerLevel = 1;
         const string testPlayerName = "Nameless";
@@ -105,6 +107,8 @@ namespace DaggerfallWorkshop.Game.Entity
         #region Properties
 
         public bool GodMode { get { return godMode; } set { godMode = value; } }
+        public bool PreventEnemySpawns { get { return preventEnemySpawns; } set { preventEnemySpawns = value; } }
+        public bool IsResting { get { return isResting; } set { isResting = value; } }
         public Races Race { get { return (Races)RaceTemplate.ID; } }
         public RaceTemplate RaceTemplate { get { return raceTemplate; } set { raceTemplate = value; } }
         public int FaceIndex { get { return faceIndex; } set { faceIndex = value; } }
@@ -192,6 +196,9 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public override void Update(DaggerfallEntityBehaviour sender)
         {
+            if (SaveLoadManager.Instance.LoadInProgress)
+                return;
+
             if (CurrentHealth <= 0)
                 return;
 
@@ -299,9 +306,84 @@ namespace DaggerfallWorkshop.Game.Entity
                 }
             }
 
+            // TODO: Right now enemy spawns are only prevented when time has been raised for
+            // fast travel. They should later be prevented when time has been raised for
+            // 1) Turning into vampire 2) Serving prison sentence
+            // Classic also prevents enemy spawns during loitering,
+            // but this seems counterintuitive so it's not implemented in DF Unity for now
+            if (!preventEnemySpawns)
+            {
+                for (uint l = 0; l < (gameMinutes - lastGameMinutes); ++l)
+                    IntermittentEnemySpawn(l + lastGameMinutes + 1);
+            }
+
             lastGameMinutes = gameMinutes;
 
+            // Allow enemy spawns again if they have been disabled
+            if (preventEnemySpawns)
+                preventEnemySpawns = false;
+
+            // Reset isResting flag. If still resting DaggerfallRestWindow will set it to true again for the next update.
+            if (isResting)
+                isResting = false;
+
             //HandleStartingCrimeGuildQuests(Entity as PlayerEntity);
+        }
+
+        public void IntermittentEnemySpawn(uint Minutes)
+        {
+            //TODO: if (InOutsideWater)
+            //          return;
+            bool timeForSpawn = ((Minutes / 12) % 12) == 0;
+            if (!preventEnemySpawns && timeForSpawn)
+            {
+                if (!GameManager.Instance.PlayerEnterExit.IsPlayerInside)
+                {
+                    uint timeOfDay = Minutes % 1440; // 1440 minutes in a day
+                    if (GameManager.Instance.PlayerGPS.IsPlayerInLocationRect)
+                    {
+                        if (timeOfDay < 360 || timeOfDay > 1080) // night
+                        {
+                            if (UnityEngine.Random.Range(0, 24) == 0)
+                            {
+                                MobileTypes enemy = RandomEncounters.ChooseRandomEnemy(false);
+                                // TODO: Spawn enemy
+                                //SpawnEnemyNearPlayerInLocation(enemy);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (timeOfDay >= 360 && timeOfDay <= 1080) // day
+                        {
+                            if (UnityEngine.Random.Range(0, 36) != 0)
+                                return;
+                        }
+                        else // night
+                            if (UnityEngine.Random.Range(0, 24) != 0)
+                            return;
+                        MobileTypes enemy = RandomEncounters.ChooseRandomEnemy(false);
+                        // TODO: Spawn enemy
+                        //SpawnEnemyNearPlayerInWilderness(enemy);
+                    }
+                } // in interior
+                else
+                {
+                    if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon)
+                    {
+                        if (isResting)
+                        {
+                            if (UnityEngine.Random.Range(0, 36) == 0)
+                            {
+                                // TODO: Not sure how enemy type is chosen here.
+                                MobileTypes enemy = RandomEncounters.ChooseRandomEnemy(false);
+                                // TODO: Spawn enemy
+                                //SpawnEnemyNearPlayerInLocation(enemy);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>

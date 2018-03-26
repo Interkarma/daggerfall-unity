@@ -291,6 +291,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime(travelTimeMinutes * 60);
 
+            // Halt random enemy spawns for next playerEntity update so player isn't bombarded by spawned enemies at the end of a long trip
+            GameManager.Instance.PlayerEntity.PreventEnemySpawns = true;
+
             // Raise arrival time to just after 7am if cautious travel would otherwise arrive at night
             // Increasing this from 6am to 7am as game is quite dark on at 6am (in Daggerfall Unity, Daggerfall is lighter)
             // Will consider retuning lighting so this can be like classic, although +1 hours to travel time isn't likely to be a problem for now

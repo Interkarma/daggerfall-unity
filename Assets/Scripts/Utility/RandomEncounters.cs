@@ -11,15 +11,16 @@
 
 using System;
 using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Utility
 {
+    #region Encounter Tables
+
     /// <summary>
-    /// Static definitions for random encounters based on dungeon type (from FALL.EXE.
-    /// These are also in Daggerfall Chronicles, with almost all duplicate entries removed).
-    /// All lists have 20 entries.
+    /// Static definitions for random encounters based on dungeon type, from FALL.EXE.
+    /// All lists from classic have 20 entries.
     /// These are generally ordered from low-level through to high-level encounters.
-    /// There are also additional lists in FALL.EXE not shown here currently.
     /// </summary>
     public static class RandomEncounters
     {
@@ -547,7 +548,40 @@ namespace DaggerfallWorkshop.Utility
                 },
             },
 
-            // Cemetery - Index18 (TODO: Confirm and fill out)
+            /*
+            // Cemetery - Index18
+            new RandomEncounterTable()
+            {
+                Enemies = new MobileTypes[]
+                {
+                    MobileTypes.Rat,
+                    MobileTypes.Rat,
+                    MobileTypes.GiantBat,
+                    MobileTypes.Rat,
+                    MobileTypes.Thief,
+                    MobileTypes.GiantBat,
+                    MobileTypes.SkeletalWarrior,
+                    MobileTypes.GiantBat,
+                    MobileTypes.Orc,
+                    MobileTypes.Archer,
+                    MobileTypes.Orc,
+                    MobileTypes.Imp,
+                    MobileTypes.Orc,
+                    MobileTypes.Imp,
+                    MobileTypes.Zombie,
+                    MobileTypes.Mummy,
+                    MobileTypes.Bard,
+                    MobileTypes.Rogue,
+                    MobileTypes.Rat,
+                    MobileTypes.Rat,
+                    MobileTypes.Bard,
+                    MobileTypes.Monk,
+                    MobileTypes.Rogue,
+                },
+            },
+            */
+
+            // Cemetery - DF Unity version
             new RandomEncounterTable()
             {
                 DungeonType = DFRegion.DungeonTypes.Cemetery,
@@ -593,7 +627,907 @@ namespace DaggerfallWorkshop.Utility
                     MobileTypes.Wraith,
                     MobileTypes.Ghost,
                 },
-            }
+            },
+
+            // Desert, in location, night - Index20
+            new RandomEncounterTable()
+            {
+                Enemies = new MobileTypes[]
+                {
+                    MobileTypes.Rat,
+                    MobileTypes.GiantBat,
+                    MobileTypes.Thief,
+                    MobileTypes.Assassin,
+                    MobileTypes.Werewolf,
+                    MobileTypes.Rogue,
+                    MobileTypes.Wereboar,
+                    MobileTypes.Warrior,
+                    MobileTypes.Thief,
+                    MobileTypes.Acrobat,
+                    MobileTypes.Rogue,
+                    MobileTypes.Burglar,
+                    MobileTypes.Battlemage,
+                    MobileTypes.Mage,
+                    MobileTypes.Warrior,
+                    MobileTypes.Thief,
+                    MobileTypes.Orc,
+                    MobileTypes.Vampire,
+                    MobileTypes.GiantScorpion,
+                    MobileTypes.Assassin,
+                },
+            },
+
+            // Desert, not in location, day - Index21
+            new RandomEncounterTable()
+            {
+                Enemies = new MobileTypes[]
+                {
+                    MobileTypes.Rat,
+                    MobileTypes.SabertoothTiger,
+                    MobileTypes.SabertoothTiger,
+                    MobileTypes.Centaur,
+                    MobileTypes.Nymph,
+                    MobileTypes.Dragonling,
+                    MobileTypes.Harpy,
+                    MobileTypes.Giant,
+                    MobileTypes.Rogue,
+                    MobileTypes.GiantScorpion,
+                    MobileTypes.OrcShaman,
+                    MobileTypes.Assassin,
+                    MobileTypes.Thief,
+                    MobileTypes.Warrior,
+                    MobileTypes.OrcWarlord,
+                    MobileTypes.Spellsword,
+                    MobileTypes.Bard,
+                    MobileTypes.Rogue,
+                    MobileTypes.Assassin,
+                    MobileTypes.Knight,
+                },
+            },
+
+            // Desert, not in location, night - Index22
+            new RandomEncounterTable()
+            {
+                Enemies = new MobileTypes[]
+                {
+                    MobileTypes.GiantBat,
+                    MobileTypes.GiantBat,
+                    MobileTypes.SabertoothTiger,
+                    MobileTypes.Spider,
+                    MobileTypes.Orc,
+                    MobileTypes.Nightblade,
+                    MobileTypes.Assassin,
+                    MobileTypes.Werewolf,
+                    MobileTypes.Harpy,
+                    MobileTypes.Wereboar,
+                    MobileTypes.Mummy,
+                    MobileTypes.GiantScorpion,
+                    MobileTypes.FireAtronach,
+                    MobileTypes.OrcWarlord,
+                    MobileTypes.IronAtronach,
+                    MobileTypes.Warrior,
+                    MobileTypes.Nightblade,
+                    MobileTypes.Vampire,
+                    MobileTypes.Knight,
+                    MobileTypes.Dragonling,
+                },
+            },
+
+            // Mountain, in location, night - Index23
+            new RandomEncounterTable()
+            {
+                Enemies = new MobileTypes[]
+                {
+                    MobileTypes.Rat,
+                    MobileTypes.GiantBat,
+                    MobileTypes.Rogue,
+                    MobileTypes.Orc,
+                    MobileTypes.Assassin,
+                    MobileTypes.Spellsword,
+                    MobileTypes.Werewolf,
+                    MobileTypes.Knight,
+                    MobileTypes.Wereboar,
+                    MobileTypes.Warrior,
+                    MobileTypes.Mage,
+                    MobileTypes.Sorcerer,
+                    MobileTypes.Burglar,
+                    MobileTypes.Thief,
+                    MobileTypes.Monk,
+                    MobileTypes.Archer,
+                    MobileTypes.Warrior,
+                    MobileTypes.Barbarian,
+                    MobileTypes.Rogue,
+                    MobileTypes.Assassin,
+                },
+            },
+
+            // Mountain, not in location, day - Index24
+            new RandomEncounterTable()
+            {
+                Enemies = new MobileTypes[]
+                {
+                    MobileTypes.GrizzlyBear,
+                    MobileTypes.Spriggan,
+                    MobileTypes.Rogue,
+                    MobileTypes.Orc,
+                    MobileTypes.Nymph,
+                    MobileTypes.Harpy,
+                    MobileTypes.OrcSergeant,
+                    MobileTypes.Giant,
+                    MobileTypes.Knight,
+                    MobileTypes.OrcShaman,
+                    MobileTypes.Monk,
+                    MobileTypes.Archer,
+                    MobileTypes.Barbarian,
+                    MobileTypes.OrcWarlord,
+                    MobileTypes.IronAtronach,
+                    MobileTypes.Rogue,
+                    MobileTypes.Ranger,
+                    MobileTypes.Vampire,
+                    MobileTypes.Knight,
+                    MobileTypes.Assassin,
+                },
+            },
+
+            // Mountain, not in location, night - Index25
+            new RandomEncounterTable()
+            {
+                Enemies = new MobileTypes[]
+                {
+                    MobileTypes.GiantBat,
+                    MobileTypes.GrizzlyBear,
+                    MobileTypes.Spriggan,
+                    MobileTypes.Centaur,
+                    MobileTypes.Assassin,
+                    MobileTypes.Ranger,
+                    MobileTypes.Werewolf,
+                    MobileTypes.Dragonling,
+                    MobileTypes.OrcSergeant,
+                    MobileTypes.Giant,
+                    MobileTypes.Ghost,
+                    MobileTypes.OrcShaman,
+                    MobileTypes.Sorcerer,
+                    MobileTypes.Gargoyle,
+                    MobileTypes.Battlemage,
+                    MobileTypes.Wraith,
+                    MobileTypes.Spellsword,
+                    MobileTypes.Vampire,
+                    MobileTypes.Ranger,
+                    MobileTypes.Knight,
+                },
+            },
+
+            // Rainforest, in location, night - Index26
+            new RandomEncounterTable()
+            {
+                Enemies = new MobileTypes[]
+                {
+                    MobileTypes.Rat,
+                    MobileTypes.Thief,
+                    MobileTypes.Rat,
+                    MobileTypes.GiantBat,
+                    MobileTypes.Nightblade,
+                    MobileTypes.GiantBat,
+                    MobileTypes.Harpy,
+                    MobileTypes.Wereboar,
+                    MobileTypes.Bard,
+                    MobileTypes.Barbarian,
+                    MobileTypes.Rogue,
+                    MobileTypes.Thief,
+                    MobileTypes.Warrior,
+                    MobileTypes.Archer,
+                    MobileTypes.Assassin,
+                    MobileTypes.Battlemage,
+                    MobileTypes.Nightblade,
+                    MobileTypes.Vampire,
+                    MobileTypes.Warrior,
+                    MobileTypes.Knight,
+                },
+            },
+
+            // Rainforest, not in location, day - Index27
+            new RandomEncounterTable()
+            {
+                Enemies = new MobileTypes[]
+                {
+                    MobileTypes.Rat,
+                    MobileTypes.GrizzlyBear,
+                    MobileTypes.SabertoothTiger,
+                    MobileTypes.Spider,
+                    MobileTypes.Thief,
+                    MobileTypes.Harpy,
+                    MobileTypes.Rogue,
+                    MobileTypes.Giant,
+                    MobileTypes.Ranger,
+                    MobileTypes.GiantScorpion,
+                    MobileTypes.Warrior,
+                    MobileTypes.Knight,
+                    MobileTypes.Thief,
+                    MobileTypes.Barbarian,
+                    MobileTypes.Ranger,
+                    MobileTypes.Archer,
+                    MobileTypes.Acrobat,
+                    MobileTypes.Bard,
+                    MobileTypes.Mage,
+                    MobileTypes.Spellsword,
+                },
+            },
+
+            // Rainforest, not in location, night - Index28
+            new RandomEncounterTable()
+            {
+                Enemies = new MobileTypes[]
+                {
+                    MobileTypes.GiantBat,
+                    MobileTypes.GiantBat,
+                    MobileTypes.SabertoothTiger,
+                    MobileTypes.Spider,
+                    MobileTypes.Spellsword,
+                    MobileTypes.Rogue,
+                    MobileTypes.Werewolf,
+                    MobileTypes.Harpy,
+                    MobileTypes.Wereboar,
+                    MobileTypes.Giant,
+                    MobileTypes.Ghost,
+                    MobileTypes.GiantScorpion,
+                    MobileTypes.Werewolf,
+                    MobileTypes.SabertoothTiger,
+                    MobileTypes.Wraith,
+                    MobileTypes.Assassin,
+                    MobileTypes.Daedroth,
+                    MobileTypes.Nightblade,
+                    MobileTypes.Warrior,
+                    MobileTypes.Battlemage,
+                },
+            },
+
+            // Subtropical, in location, night - Index29
+            new RandomEncounterTable()
+            {
+                Enemies = new MobileTypes[]
+                {
+                    MobileTypes.Rat,
+                    MobileTypes.Burglar,
+                    MobileTypes.Thief,
+                    MobileTypes.Monk,
+                    MobileTypes.Sorcerer,
+                    MobileTypes.Bard,
+                    MobileTypes.Rogue,
+                    MobileTypes.Warrior,
+                    MobileTypes.Nightblade,
+                    MobileTypes.Thief,
+                    MobileTypes.Acrobat,
+                    MobileTypes.Ranger,
+                    MobileTypes.Archer,
+                    MobileTypes.Vampire,
+                    MobileTypes.Barbarian,
+                    MobileTypes.Warrior,
+                    MobileTypes.Mage,
+                    MobileTypes.Spellsword,
+                    MobileTypes.Assassin,
+                    MobileTypes.Knight,
+                },
+            },
+
+            // Subtropical, not in location, day - Index30
+            new RandomEncounterTable()
+            {
+                Enemies = new MobileTypes[]
+                {
+                    MobileTypes.Rat,
+                    MobileTypes.Imp,
+                    MobileTypes.GrizzlyBear,
+                    MobileTypes.SabertoothTiger,
+                    MobileTypes.Centaur,
+                    MobileTypes.Nymph,
+                    MobileTypes.Dragonling,
+                    MobileTypes.Giant,
+                    MobileTypes.Thief,
+                    MobileTypes.GiantScorpion,
+                    MobileTypes.Warrior,
+                    MobileTypes.Sorcerer,
+                    MobileTypes.Nightblade,
+                    MobileTypes.Rogue,
+                    MobileTypes.Knight,
+                    MobileTypes.Battlemage,
+                    MobileTypes.Monk,
+                    MobileTypes.Thief,
+                    MobileTypes.Barbarian,
+                    MobileTypes.Nightblade,
+                },
+            },
+
+            // Subtropical, not in location, night - Index31
+            new RandomEncounterTable()
+            {
+                Enemies = new MobileTypes[]
+                {
+                    MobileTypes.GiantBat,
+                    MobileTypes.GrizzlyBear,
+                    MobileTypes.SabertoothTiger,
+                    MobileTypes.Spider,
+                    MobileTypes.Zombie,
+                    MobileTypes.Werewolf,
+                    MobileTypes.Wereboar,
+                    MobileTypes.Harpy,
+                    MobileTypes.Ghost,
+                    MobileTypes.GiantScorpion,
+                    MobileTypes.Warrior,
+                    MobileTypes.Nightblade,
+                    MobileTypes.GrizzlyBear,
+                    MobileTypes.Barbarian,
+                    MobileTypes.Assassin,
+                    MobileTypes.Battlemage,
+                    MobileTypes.Bard,
+                    MobileTypes.Nightblade,
+                    MobileTypes.Lich,
+                    MobileTypes.Assassin,
+                },
+            },
+
+            // Swamp/woodlands, in location, night - Index32
+            new RandomEncounterTable()
+            {
+                Enemies = new MobileTypes[]
+                {
+                    MobileTypes.Rat,
+                    MobileTypes.GiantBat,
+                    MobileTypes.Burglar,
+                    MobileTypes.Bard,
+                    MobileTypes.Rogue,
+                    MobileTypes.Archer,
+                    MobileTypes.Werewolf,
+                    MobileTypes.Acrobat,
+                    MobileTypes.Wereboar,
+                    MobileTypes.Warrior,
+                    MobileTypes.Battlemage,
+                    MobileTypes.Burglar,
+                    MobileTypes.Monk,
+                    MobileTypes.Rogue,
+                    MobileTypes.Nightblade,
+                    MobileTypes.Assassin,
+                    MobileTypes.Thief,
+                    MobileTypes.Vampire,
+                    MobileTypes.Knight,
+                    MobileTypes.Battlemage,
+                },
+            },
+
+            // Swamp/woodlands, not in location, day - Index33
+            new RandomEncounterTable()
+            {
+                Enemies = new MobileTypes[]
+                {
+                    MobileTypes.Rat,
+                    MobileTypes.GrizzlyBear,
+                    MobileTypes.Spriggan,
+                    MobileTypes.Orc,
+                    MobileTypes.Centaur,
+                    MobileTypes.Dragonling,
+                    MobileTypes.OrcSergeant,
+                    MobileTypes.Wereboar,
+                    MobileTypes.Giant,
+                    MobileTypes.Archer,
+                    MobileTypes.OrcShaman,
+                    MobileTypes.Bard,
+                    MobileTypes.Barbarian,
+                    MobileTypes.OrcWarlord,
+                    MobileTypes.Battlemage,
+                    MobileTypes.Assassin,
+                    MobileTypes.Ranger,
+                    MobileTypes.Rogue,
+                    MobileTypes.Knight,
+                    MobileTypes.Spellsword,
+                },
+            },
+
+            // Swamp/woodlands, not in location, night - Index34
+            new RandomEncounterTable()
+            {
+                Enemies = new MobileTypes[]
+                {
+                    MobileTypes.GiantBat,
+                    MobileTypes.GrizzlyBear,
+                    MobileTypes.Spider,
+                    MobileTypes.Zombie,
+                    MobileTypes.Nightblade,
+                    MobileTypes.Knight,
+                    MobileTypes.Werewolf,
+                    MobileTypes.Dragonling,
+                    MobileTypes.Wereboar,
+                    MobileTypes.Giant,
+                    MobileTypes.Ranger,
+                    MobileTypes.Gargoyle,
+                    MobileTypes.Spellsword,
+                    MobileTypes.Monk,
+                    MobileTypes.Bard,
+                    MobileTypes.Rogue,
+                    MobileTypes.Ranger,
+                    MobileTypes.Nightblade,
+                    MobileTypes.Knight,
+                    MobileTypes.Sorcerer,
+                },
+            },
+
+            // Haunted woodlands, in location, night - Index35
+            new RandomEncounterTable()
+            {
+                Enemies = new MobileTypes[]
+                {
+                    MobileTypes.GiantBat,
+                    MobileTypes.Nightblade,
+                    MobileTypes.Burglar,
+                    MobileTypes.Zombie,
+                    MobileTypes.Rogue,
+                    MobileTypes.Monk,
+                    MobileTypes.Wereboar,
+                    MobileTypes.Barbarian,
+                    MobileTypes.Ghost,
+                    MobileTypes.Sorcerer,
+                    MobileTypes.Warrior,
+                    MobileTypes.Assassin,
+                    MobileTypes.Wraith,
+                    MobileTypes.Knight,
+                    MobileTypes.Battlemage,
+                    MobileTypes.Thief,
+                    MobileTypes.Rogue,
+                    MobileTypes.Vampire,
+                    MobileTypes.Barbarian,
+                    MobileTypes.VampireAncient,
+                },
+            },
+
+            // Haunted woodlands, not in location, day - Index36
+            new RandomEncounterTable()
+            {
+                Enemies = new MobileTypes[]
+                {
+                    MobileTypes.Imp,
+                    MobileTypes.GrizzlyBear,
+                    MobileTypes.Spriggan,
+                    MobileTypes.Spider,
+                    MobileTypes.Centaur,
+                    MobileTypes.Nymph,
+                    MobileTypes.Dragonling,
+                    MobileTypes.Harpy,
+                    MobileTypes.Giant,
+                    MobileTypes.Sorcerer,
+                    MobileTypes.OrcShaman,
+                    MobileTypes.Gargoyle,
+                    MobileTypes.Knight,
+                    MobileTypes.OrcWarlord,
+                    MobileTypes.IronAtronach,
+                    MobileTypes.Battlemage,
+                    MobileTypes.Assassin,
+                    MobileTypes.Archer,
+                    MobileTypes.Ranger,
+                    MobileTypes.Knight,
+                },
+            },
+
+            // Haunted woodlands, not in location, night - Index37
+            new RandomEncounterTable()
+            {
+                Enemies = new MobileTypes[]
+                {
+                    MobileTypes.GiantBat,
+                    MobileTypes.GrizzlyBear,
+                    MobileTypes.Spider,
+                    MobileTypes.Zombie,
+                    MobileTypes.SkeletalWarrior,
+                    MobileTypes.Werewolf,
+                    MobileTypes.Dragonling,
+                    MobileTypes.Wereboar,
+                    MobileTypes.Giant,
+                    MobileTypes.FleshAtronach,
+                    MobileTypes.Ghost,
+                    MobileTypes.FireAtronach,
+                    MobileTypes.Spider,
+                    MobileTypes.Wraith,
+                    MobileTypes.FrostDaedra,
+                    MobileTypes.IronAtronach,
+                    MobileTypes.Daedroth,
+                    MobileTypes.Vampire,
+                    MobileTypes.VampireAncient,
+                    MobileTypes.Lich,
+                },
+            },
+
+            // Unused - Index38
+            new RandomEncounterTable()
+            {
+                Enemies = new MobileTypes[]
+                {
+                    MobileTypes.Rat,
+                    MobileTypes.Rat,
+                    MobileTypes.Thief,
+                    MobileTypes.Rat,
+                    MobileTypes.Rat,
+                    MobileTypes.GiantBat,
+                    MobileTypes.GiantBat,
+                    MobileTypes.Zombie,
+                    MobileTypes.Ghost,
+                    MobileTypes.Rat,
+                    MobileTypes.Assassin,
+                    MobileTypes.GiantBat,
+                    MobileTypes.Rogue,
+                    MobileTypes.Rat,
+                    MobileTypes.GiantBat,
+                    MobileTypes.Rat,
+                    MobileTypes.GiantBat,
+                    MobileTypes.Rat,
+                    MobileTypes.Rat,
+                    MobileTypes.Vampire,
+                },
+            },
+
+            // Default building - Index39
+            new RandomEncounterTable()
+            {
+                Enemies = new MobileTypes[]
+                {
+                    MobileTypes.Thief,
+                    MobileTypes.Warrior,
+                    MobileTypes.Burglar,
+                    MobileTypes.Warrior,
+                    MobileTypes.Burglar,
+                    MobileTypes.Bard,
+                    MobileTypes.Warrior,
+                    MobileTypes.Acrobat,
+                    MobileTypes.Burglar,
+                    MobileTypes.Rogue,
+                    MobileTypes.Thief,
+                    MobileTypes.Warrior,
+                    MobileTypes.Burglar,
+                    MobileTypes.Nightblade,
+                    MobileTypes.Rogue,
+                    MobileTypes.Warrior,
+                    MobileTypes.Burglar,
+                    MobileTypes.Thief,
+                    MobileTypes.Warrior,
+                    MobileTypes.Rogue,
+                },
+            },
+
+            // Guildhall - Index40
+            new RandomEncounterTable()
+            {
+                Enemies = new MobileTypes[]
+                {
+                    MobileTypes.Mage,
+                    MobileTypes.Imp,
+                    MobileTypes.Battlemage,
+                    MobileTypes.Healer,
+                    MobileTypes.Nightblade,
+                    MobileTypes.Spellsword,
+                    MobileTypes.Mage,
+                    MobileTypes.Sorcerer,
+                    MobileTypes.Battlemage,
+                    MobileTypes.Healer,
+                    MobileTypes.FireAtronach,
+                    MobileTypes.Spellsword,
+                    MobileTypes.Mage,
+                    MobileTypes.Sorcerer,
+                    MobileTypes.Battlemage,
+                    MobileTypes.Nightblade,
+                    MobileTypes.Spellsword,
+                    MobileTypes.Mage,
+                    MobileTypes.DaedraSeducer,
+                    MobileTypes.Battlemage,
+                },
+            },
+
+            // Temple - Index41
+            new RandomEncounterTable()
+            {
+                Enemies = new MobileTypes[]
+                {
+                    MobileTypes.Monk,
+                    MobileTypes.Monk,
+                    MobileTypes.Knight,
+                    MobileTypes.Monk,
+                    MobileTypes.Monk,
+                    MobileTypes.Monk,
+                    MobileTypes.Monk,
+                    MobileTypes.Knight,
+                    MobileTypes.Monk,
+                    MobileTypes.Monk,
+                    MobileTypes.Monk,
+                    MobileTypes.Monk,
+                    MobileTypes.Monk,
+                    MobileTypes.Knight,
+                    MobileTypes.Monk,
+                    MobileTypes.Monk,
+                    MobileTypes.Monk,
+                    MobileTypes.Monk,
+                    MobileTypes.Monk,
+                    MobileTypes.Knight,
+                },
+            },
+
+            // Palace, House1 - Index42
+            new RandomEncounterTable()
+            {
+                Enemies = new MobileTypes[]
+                {
+                    MobileTypes.Warrior,
+                    MobileTypes.Archer,
+                    MobileTypes.Bard,
+                    MobileTypes.Spellsword,
+                    MobileTypes.Knight,
+                    MobileTypes.Warrior,
+                    MobileTypes.Knight,
+                    MobileTypes.Warrior,
+                    MobileTypes.Archer,
+                    MobileTypes.Bard,
+                    MobileTypes.Spellsword,
+                    MobileTypes.Knight,
+                    MobileTypes.Warrior,
+                    MobileTypes.Knight,
+                    MobileTypes.Warrior,
+                    MobileTypes.Archer,
+                    MobileTypes.Spellsword,
+                    MobileTypes.Knight,
+                    MobileTypes.Warrior,
+                    MobileTypes.Knight,
+                },
+            },
+
+            // House2 - Index43
+            new RandomEncounterTable()
+            {
+                Enemies = new MobileTypes[]
+                {
+                    MobileTypes.Bard,
+                    MobileTypes.Warrior,
+                    MobileTypes.Rogue,
+                    MobileTypes.Thief,
+                    MobileTypes.Warrior,
+                    MobileTypes.Spellsword,
+                    MobileTypes.Burglar,
+                    MobileTypes.Rogue,
+                    MobileTypes.Monk,
+                    MobileTypes.Mage,
+                    MobileTypes.Nightblade,
+                    MobileTypes.Acrobat,
+                    MobileTypes.Warrior,
+                    MobileTypes.Bard,
+                    MobileTypes.Healer,
+                    MobileTypes.Sorcerer,
+                    MobileTypes.Thief,
+                    MobileTypes.Vampire,
+                    MobileTypes.Rogue,
+                    MobileTypes.Warrior,
+                },
+            },
+
+            // House3 - Index44
+            new RandomEncounterTable()
+            {
+                Enemies = new MobileTypes[]
+                {
+                    MobileTypes.Rat,
+                    MobileTypes.Rat,
+                    MobileTypes.Burglar,
+                    MobileTypes.Thief,
+                    MobileTypes.Bard,
+                    MobileTypes.Monk,
+                    MobileTypes.Bard,
+                    MobileTypes.Healer,
+                    MobileTypes.Rogue,
+                    MobileTypes.Monk,
+                    MobileTypes.Burglar,
+                    MobileTypes.Thief,
+                    MobileTypes.Bard,
+                    MobileTypes.Rogue,
+                    MobileTypes.Ranger,
+                    MobileTypes.Burglar,
+                    MobileTypes.Thief,
+                    MobileTypes.Bard,
+                    MobileTypes.Monk,
+                    MobileTypes.Rogue,
+                },
+            },
         };
+        #endregion
+
+        #region Public methods
+
+        // Enemy selection method from classic. Returns an enemy ID based on environment and player level.
+        public static MobileTypes ChooseRandomEnemy(bool chooseUnderWaterEnemy)
+        {
+            int encounterTableIndex = 0;
+            Game.PlayerEnterExit playerEnterExit = Game.GameManager.Instance.PlayerEnterExit;
+            PlayerGPS playerGPS = Game.GameManager.Instance.PlayerGPS;
+
+            if (!playerEnterExit || !playerGPS)
+                return MobileTypes.None;
+
+            if (chooseUnderWaterEnemy)
+                encounterTableIndex = 19;
+            else if (playerEnterExit.IsPlayerInsideDungeon)
+                encounterTableIndex = ((int)playerGPS.CurrentLocationType);
+            else if (playerEnterExit.IsPlayerInsideBuilding)
+            {
+                DFLocation.BuildingTypes buildingType = playerEnterExit.BuildingType;
+
+                if (buildingType == DFLocation.BuildingTypes.GuildHall)
+                    encounterTableIndex = 40;
+                else if (buildingType == DFLocation.BuildingTypes.Temple)
+                    encounterTableIndex = 41;
+                else if (buildingType == DFLocation.BuildingTypes.Palace
+                    || buildingType == DFLocation.BuildingTypes.House1)
+                    encounterTableIndex = 42;
+                else if (buildingType == DFLocation.BuildingTypes.House2)
+                    encounterTableIndex = 43;
+                else if (buildingType == DFLocation.BuildingTypes.House3)
+                    encounterTableIndex = 44;
+                else
+                    encounterTableIndex = 39;
+            }
+            else
+            {
+                int climate = playerGPS.CurrentClimateIndex;
+                bool isDay = DaggerfallUnity.Instance.WorldTime.Now.IsDay;
+
+                if (playerGPS.IsPlayerInLocationRect)
+                {
+                    if (isDay)
+                        return MobileTypes.None;
+
+                    // Player in location rectangle, night
+                    switch (climate)
+                    {
+                        case (int)MapsFile.Climates.Desert:
+                        case (int)MapsFile.Climates.Desert2:
+                            encounterTableIndex = 20;
+                            break;
+                        case (int)MapsFile.Climates.Mountain:
+                            encounterTableIndex = 23;
+                            break;
+                        case (int)MapsFile.Climates.Rainforest:
+                            encounterTableIndex = 26;
+                            break;
+                        case (int)MapsFile.Climates.Subtropical:
+                            encounterTableIndex = 29;
+                            break;
+                        case (int)MapsFile.Climates.Swamp:
+                        case (int)MapsFile.Climates.MountainWoods:
+                        case (int)MapsFile.Climates.Woodlands:
+                            encounterTableIndex = 32;
+                            break;
+                        case (int)MapsFile.Climates.HauntedWoodlands:
+                            encounterTableIndex = 35;
+                            break;
+
+                        default:
+                            return MobileTypes.None;
+                    }
+                }
+                else
+                {
+                    if (isDay)
+                    {
+                        // Player not in location rectangle, day
+                        switch (climate)
+                        {
+                            case (int)MapsFile.Climates.Desert:
+                            case (int)MapsFile.Climates.Desert2:
+                                encounterTableIndex = 21;
+                                break;
+                            case (int)MapsFile.Climates.Mountain:
+                                encounterTableIndex = 24;
+                                break;
+                            case (int)MapsFile.Climates.Rainforest:
+                                encounterTableIndex = 27;
+                                break;
+                            case (int)MapsFile.Climates.Subtropical:
+                                encounterTableIndex = 30;
+                                break;
+                            case (int)MapsFile.Climates.Swamp:
+                            case (int)MapsFile.Climates.MountainWoods:
+                            case (int)MapsFile.Climates.Woodlands:
+                                encounterTableIndex = 33;
+                                break;
+                            case (int)MapsFile.Climates.HauntedWoodlands:
+                                encounterTableIndex = 36;
+                                break;
+
+                            default:
+                                return MobileTypes.None;
+                        }
+                    }
+                    else
+                    {
+                        // Player not in location rectangle, night
+                        switch (climate)
+                        {
+                            case (int)MapsFile.Climates.Desert:
+                            case (int)MapsFile.Climates.Desert2:
+                                encounterTableIndex = 22;
+                                break;
+                            case (int)MapsFile.Climates.Mountain:
+                                encounterTableIndex = 25;
+                                break;
+                            case (int)MapsFile.Climates.Rainforest:
+                                encounterTableIndex = 28;
+                                break;
+                            case (int)MapsFile.Climates.Subtropical:
+                                encounterTableIndex = 31;
+                                break;
+                            case (int)MapsFile.Climates.Swamp:
+                            case (int)MapsFile.Climates.MountainWoods:
+                            case (int)MapsFile.Climates.Woodlands:
+                                encounterTableIndex = 34;
+                                break;
+                            case (int)MapsFile.Climates.HauntedWoodlands:
+                                encounterTableIndex = 37;
+                                break;
+
+                            default:
+                                return MobileTypes.None;
+                        }
+                    }
+                }
+            }
+
+            int random = UnityEngine.Random.Range(1, 101);
+            int playerLevel = Game.GameManager.Instance.PlayerEntity.Level;
+            int min;
+            int max;
+
+            // Random/player level based adjustments from classic. These assume enemy lists of length 20.
+            if (random > 80)
+            {
+                if (random > 95)
+                {
+                    if (playerLevel <= 5)
+                    {
+                        min = 0;
+                        max = playerLevel + 2;
+                    }
+                    else
+                    {
+                        min = 0;
+                        max = 19;
+                    }
+                }
+                else
+                {
+                    min = 0;
+                    max = playerLevel + 1;
+                }
+            }
+            else
+            {
+                min = playerLevel - 3;
+                max = playerLevel + 3;
+            }
+            if (min < 0)
+            {
+                min = 0;
+                max = 5;
+            }
+            if (max > 19)
+            {
+                min = 14;
+                max = 19;
+            }
+
+            RandomEncounterTable encounterTable = EncounterTables[encounterTableIndex];
+
+            // Adding a check here (not in classic) for lists of shorter length than 20
+            if (max + 1 > encounterTable.Enemies.Length)
+            {
+                max = encounterTable.Enemies.Length - 1;
+                if (max >= 5)
+                    min = max - 5;
+                else
+                    min = UnityEngine.Random.Range(0, max);
+            }
+
+            return encounterTable.Enemies[UnityEngine.Random.Range(min, max + 1)];
+        }
     }
+    #endregion
 }

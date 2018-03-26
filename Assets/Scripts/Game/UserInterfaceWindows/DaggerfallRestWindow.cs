@@ -253,6 +253,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (uiManager.TopWindow != this)
                 return false;
 
+            // Set flag in playerEntity used for random enemy spawning
+            playerEntity.IsResting = true;
+
             // Loitering runs at a slower rate to rest
             float waitTime = (currentRestMode == RestModes.Loiter) ? loiterWaitTimePerHour : restWaitTimePerHour;
 
@@ -272,8 +275,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Checking for second time as quest tick above can perfectly align with rest ending
                 if (uiManager.TopWindow != this)
                     return false;
-
-                // TODO: Random spawns appropriate to player location
 
                 // Check if enemies nearby
                 if (GameManager.Instance.AreEnemiesNearby())
