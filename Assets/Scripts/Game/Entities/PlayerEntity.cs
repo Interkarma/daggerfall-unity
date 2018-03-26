@@ -86,7 +86,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
         // Fatigue loss per in-game minute
         public const int DefaultFatigueLoss = 11;
-        //public const int ClimbingFatigueLoss = 22;
+        public const int ClimbingFatigueLoss = 22;
         public const int RunningFatigueLoss = 88;
         public const int SwimmingFatigueLoss = 44;
 
@@ -229,7 +229,9 @@ namespace DaggerfallWorkshop.Game.Entity
                 if (lastGameMinutes != gameMinutes)
                 {
                     int amount = DefaultFatigueLoss;
-                    if (playerMotor.IsRunning)
+                    if (playerMotor.IsClimbing)
+                        amount = ClimbingFatigueLoss;
+                    else if (playerMotor.IsRunning)
                         amount = RunningFatigueLoss;
                     else if (GameManager.Instance.PlayerEnterExit.IsPlayerSwimming)
                     {
