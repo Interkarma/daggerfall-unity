@@ -433,6 +433,9 @@ namespace DaggerfallConnect
         /// </summary>
         public struct RmbBlockFlatObjectRecord
         {
+            /// <summary>Position of this record in stream.</summary>
+            public long Position;
+
             /// <summary>X position in 3D space.</summary>
             public Int32 XPos;
 
@@ -451,11 +454,11 @@ namespace DaggerfallConnect
             /// <summary>Texture record from bitfield. Used to determine which texture record to load from archive.</summary>
             public int TextureRecord;
 
-            /// <summary>Unknown.</summary>
-            internal Int16 Unknown1;
+            /// <summary>NPC faction. (for exterior NPCs)</summary>
+            public Int16 FactionID;
 
-            /// <summary>Unknown.</summary>
-            internal Byte Unknown2;
+            /// <summary> NPC flags. (Same as RmbBlockPeopleRecord, but for exterior NPCs)</summary>
+            public Byte Flags;
         }
 
         /// <summary>

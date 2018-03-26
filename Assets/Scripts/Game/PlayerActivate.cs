@@ -925,13 +925,14 @@ namespace DaggerfallWorkshop.Game
 
             // Get faction data.
             FactionFile.FactionData factionData;
-            if (playerEnterExit.IsPlayerInsideBuilding &&
-                GameManager.Instance.PlayerEntity.FactionData.GetFactionData(npc.Data.factionID, out factionData))
+            if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(npc.Data.factionID, out factionData))
             {
                 UserInterfaceManager uiManager = DaggerfallUI.Instance.UserInterfaceManager;
                 FactionFile.FactionData buildingFactionData = new FactionFile.FactionData();
-                if (!GameManager.Instance.PlayerEntity.FactionData.GetFactionData(playerEnterExit.BuildingDiscoveryData.factionID, out buildingFactionData))
+                if (!playerEnterExit.IsPlayerInsideBuilding ||
+                    !GameManager.Instance.PlayerEntity.FactionData.GetFactionData(playerEnterExit.BuildingDiscoveryData.factionID, out buildingFactionData))
                     buildingFactionData.ggroup = (int) FactionFile.GuildGroups.None;
+
                 Debug.LogFormat("faction id: {0}, social group: {1}, guild: {2}, building guild: {3}", 
                     npc.Data.factionID, (FactionFile.SocialGroups)factionData.sgroup, (FactionFile.GuildGroups)factionData.ggroup, (FactionFile.GuildGroups)buildingFactionData.ggroup);
 
@@ -960,6 +961,13 @@ namespace DaggerfallWorkshop.Game
                     // Tavern?
                     else if (playerEnterExit.BuildingDiscoveryData.buildingType == DFLocation.BuildingTypes.Tavern)
                         uiManager.PushWindow(new DaggerfallTavernWindow(uiManager, npc));
+                    else
+                        GameManager.Instance.TalkManager.TalkToStaticNPC(npc);
+                }
+                // Check if this NPC is part of a witches coven.
+                else if ((FactionFile.FactionTypes) factionData.type == FactionFile.FactionTypes.WitchesCoven)
+                {
+                    uiManager.PushWindow(new DaggerfallWitchesCovenPopupWindow(uiManager, npc));
                 }
                 // TODO - more checks for npc social types?
                 else // if no special handling had to be done for npc with social group of type merchant: talk to the static npc

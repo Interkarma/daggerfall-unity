@@ -119,15 +119,15 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public void SetLayoutData(DFBlock.RdbObject obj)
         {
-            // Store common layout data
-            npcData.hash = GetPositionHash(obj.XPos, obj.YPos, obj.ZPos);
-            npcData.flags = obj.Resources.FlatResource.Flags;
-            npcData.factionID = obj.Resources.FlatResource.FactionOrMobileId;
-            npcData.nameSeed = (int)obj.Resources.FlatResource.Position;
-            npcData.gender = ((npcData.flags & 32) == 32) ? Genders.Female : Genders.Male;
+            SetLayoutData(ref npcData,
+                obj.XPos, obj.YPos, obj.ZPos,
+                obj.Resources.FlatResource.Flags,
+                obj.Resources.FlatResource.FactionOrMobileId,
+                obj.Resources.FlatResource.TextureArchive,
+                obj.Resources.FlatResource.TextureRecord,
+                obj.Resources.FlatResource.Position,
+                0);
             npcData.context = Context.Dungeon;
-            npcData.billboardArchiveIndex = obj.Resources.FlatResource.TextureArchive;
-            npcData.billboardRecordIndex = obj.Resources.FlatResource.TextureRecord;
         }
 
         /// <summary>
@@ -135,15 +135,43 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public void SetLayoutData(DFBlock.RmbBlockPeopleRecord obj, int buildingKey = 0)
         {
-            // Store common layout data
-            npcData.hash = GetPositionHash(obj.XPos, obj.YPos, obj.ZPos);
-            npcData.flags = obj.Flags;
-            npcData.factionID = obj.FactionID;
-            npcData.nameSeed = (int) obj.Position ^ buildingKey;
-            npcData.gender = ((npcData.flags & 32) == 32) ? Genders.Female : Genders.Male;
+            SetLayoutData(ref npcData,
+                obj.XPos, obj.YPos, obj.ZPos,
+                obj.Flags,
+                obj.FactionID,
+                obj.TextureArchive,
+                obj.TextureRecord,
+                obj.Position,
+                buildingKey);
             npcData.context = Context.Building;
-            npcData.billboardArchiveIndex = obj.TextureArchive;
-            npcData.billboardRecordIndex = obj.TextureRecord;
+        }
+
+        /// <summary>
+        /// Sets NPC data from RMB layout flat record. (exterior NPCs)
+        /// </summary>
+        public void SetLayoutData(DFBlock.RmbBlockFlatObjectRecord obj)
+        {
+            SetLayoutData(ref npcData,
+                obj.XPos, obj.YPos, obj.ZPos,
+                obj.Flags,
+                obj.FactionID,
+                obj.TextureArchive,
+                obj.TextureRecord,
+                obj.Position,
+                0);
+            npcData.context = Context.Custom;
+        }
+
+        public static void SetLayoutData(ref NPCData data, int XPos, int YPos, int ZPos, int flags, int factionId, int archive, int record, long position, int buildingKey)
+        {
+            // Store common layout data
+            data.hash = GetPositionHash(XPos, YPos, ZPos);
+            data.flags = flags;
+            data.factionID = factionId;
+            data.billboardArchiveIndex = archive;
+            data.billboardRecordIndex = record;
+            data.nameSeed = (int)position ^ buildingKey;
+            data.gender = ((flags & 32) == 32) ? Genders.Female : Genders.Male;
         }
 
         /// <summary>
@@ -224,7 +252,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Creates a hash from fixed-point layout position.
         /// </summary>
-        int GetPositionHash(int x, int y, int z)
+        public static int GetPositionHash(int x, int y, int z)
         {
             return x ^ y << 2 ^ z >> 2;
         }

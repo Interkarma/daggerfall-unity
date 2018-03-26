@@ -57,6 +57,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
         // Quest data tables
         private Dictionary<FactionFile.GuildGroups, List<QuestData>> guilds;
+        private Dictionary<FactionFile.SocialGroups, List<QuestData>> social;
 
         // Registered quest lists
         private static List<string> questLists = new List<string>();
@@ -109,6 +110,7 @@ namespace DaggerfallWorkshop.Game.Questing
         public void LoadQuestLists()
         {
             guilds = new Dictionary<FactionFile.GuildGroups, List<QuestData>>();
+            social = new Dictionary<FactionFile.SocialGroups, List<QuestData>>();
 
             LoadQuestList(QuestListPrefix + "Classic", QuestMachine.QuestSourceFolder);
             LoadQuestList(QuestListPrefix + "DFU", QuestMachine.QuestSourceFolder);
@@ -180,6 +182,17 @@ namespace DaggerfallWorkshop.Game.Questing
                         }
                         guildQuests.Add(questData);
                     }
+                    else if (Enum.IsDefined(typeof(FactionFile.SocialGroups), questData.group))
+                    {
+                        FactionFile.SocialGroups socialGroup = (FactionFile.SocialGroups) Enum.Parse(typeof(FactionFile.SocialGroups), questData.group);
+                        List<QuestData> socialQuests;
+                        if (!social.TryGetValue(socialGroup, out socialQuests))
+                        {
+                            socialQuests = new List<QuestData>();
+                            social.Add(socialGroup, socialQuests);
+                        }
+                        socialQuests.Add(questData);
+                    }
                     // else TODO other groups
                 }
             }
@@ -205,25 +218,51 @@ namespace DaggerfallWorkshop.Game.Questing
                 foreach (QuestData quest in guildQuests)
                 {
                     if ((status == (MembershipStatus)quest.membership || tplMemb == (MembershipStatus)quest.membership) &&
-                        (rep >= quest.minRep || status == MembershipStatus.Nonmember) &&
-                        (!quest.unitWildC || rep < quest.minRep + 10))
+                        rep >= quest.minRep && (!quest.unitWildC || rep < quest.minRep + 10))
                     {
                         pool.Add(quest);
                     }
                 }
-                Debug.Log("Quest pool has " + pool.Count);
-                // Choose random quest from pool and try to parse it
-                if (pool.Count > 0)
+                return SelectQuest(pool, factionId);
+            }
+            return null;
+        }
+
+        public Quest GetSocialQuest(FactionFile.SocialGroups socialGroup, int factionId, int rep)
+        {
+#if UNITY_EDITOR    // Reload every time when in editor
+            LoadQuestLists();
+#endif
+            List<QuestData> socialQuests;
+            if (social.TryGetValue(socialGroup, out socialQuests))
+            {
+                List<QuestData> pool = new List<QuestData>();
+                foreach (QuestData quest in socialQuests)
                 {
-                    QuestData questData = pool[UnityEngine.Random.Range(0, pool.Count)];
-                    try
+                    if (rep >= quest.minRep && (!quest.unitWildC || rep < quest.minRep + 10))
                     {
-                        return LoadQuest(questData, factionId);
+                        pool.Add(quest);
                     }
-                    catch (Exception ex)
-                    {   // Log exception
-                        DaggerfallUnity.LogMessage("Exception during quest compile: " + ex.Message, true);
-                    }
+                }
+                return SelectQuest(pool, factionId);
+            }
+            return null;
+        }
+
+        private Quest SelectQuest(List<QuestData> pool, int factionId)
+        {
+            Debug.Log("Quest pool has " + pool.Count);
+            // Choose random quest from pool and try to parse it
+            if (pool.Count > 0)
+            {
+                QuestData questData = pool[UnityEngine.Random.Range(0, pool.Count)];
+                try
+                {
+                    return LoadQuest(questData, factionId);
+                }
+                catch (Exception ex)
+                {   // Log exception
+                    DaggerfallUnity.LogMessage("Exception for quest " + questData.name + " during quest compile: " + ex.Message, true);
                 }
             }
             return null;

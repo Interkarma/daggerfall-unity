@@ -113,17 +113,13 @@ namespace Wenzil.Console
         {
             public static readonly string name = "dumplocblocks";
             public static readonly string error = "Failed to dump locations";
-            public static readonly string usage = "dumplocblocks [blockName]";
-            public static readonly string description = "Dump the names of blocks for each location, or locations for a block, to json file";
+            public static readonly string usage = "dumplocblocks [blockName.RMB]*";
+            public static readonly string description = "Dump the names of blocks for each location, or locations for given block(s), to json file";
 
             public static string Execute(params string[] args)
             {
                 MapsFile mapFileReader = DaggerfallUnity.Instance.ContentReader.MapFileReader;
-                if (args.Length > 1)
-                {
-                    return HelpCommand.Execute(DumpBlock.name);
-                }
-                else if (args.Length == 0)
+                if (args.Length == 0)
                 {
                     Dictionary<string, string[]> locBlocks = new Dictionary<string, string[]>();
                     for (int region = 0; region < mapFileReader.RegionCount; region++)
@@ -164,12 +160,17 @@ namespace Wenzil.Console
                             DFLocation dfLoc = mapFileReader.GetLocation(region, location);
 
                             foreach (string blockName in dfLoc.Exterior.ExteriorData.BlockNames)
-                                if (blockName == args[0])
-                                    locs.Add(dfLoc.Name);
+                                for (int i = 0; i < args.Length; i++)
+                                    if (blockName == args[i])
+                                        locs.Add(dfLoc.Name);
                         }
                     }
                     string locJson = SaveLoadManager.Serialize(regionLocs.GetType(), regionLocs);
-                    string fileName = Path.Combine(Application.persistentDataPath, args[0] + "-locations.json");
+                    string blocks = "";
+                    for (int i = 0; i < args.Length; i++)
+                        blocks = blocks + "-" + args[i];
+
+                    string fileName = Path.Combine(Application.persistentDataPath, blocks.Substring(1) + "-locations.json");
                     File.WriteAllText(fileName, locJson);
                     return "Location block names json written to " + fileName;
 
@@ -194,7 +195,8 @@ namespace Wenzil.Console
                 if (blockData.Type == DFBlock.BlockTypes.Rmb)
                 {
                     string fileName = WorldDataReplacement.GetBuildingReplacementFilename(blockData.Name, blockIndex, recordIndex);
-                    BuildingReplacementData buildingData = new BuildingReplacementData() {
+                    BuildingReplacementData buildingData = new BuildingReplacementData()
+                    {
                         RmbSubRecord = blockData.RmbBlock.SubRecords[recordIndex]
                     };
                     string buildingJson = SaveLoadManager.Serialize(buildingData.GetType(), buildingData);
@@ -1431,10 +1433,10 @@ namespace Wenzil.Console
                 return "success";
 
             }
-            private static T RandomEnumValue<T> ()
+            private static T RandomEnumValue<T>()
             {
                 var v = Enum.GetValues(typeof(T));
-                return (T) v.GetValue(UnityEngine.Random.Range(0,v.Length-1));
+                return (T)v.GetValue(UnityEngine.Random.Range(0, v.Length - 1));
             }
         }
 
@@ -1477,7 +1479,7 @@ namespace Wenzil.Console
 
             public static string Execute(params string[] args)
             {
-                if(bankWindow == null)
+                if (bankWindow == null)
                     bankWindow = new DaggerfallWorkshop.Game.UserInterface.DaggerfallBankingWindow(DaggerfallUI.UIManager);
                 DaggerfallUI.UIManager.PushWindow(bankWindow);
                 return "Finished";
@@ -1541,7 +1543,7 @@ namespace Wenzil.Console
                     return "casteffect could not find EntityEffectManager on specified GameObject";
 
                 // TODO: Send effect to resulting magic manager or error out if effect does not exist
-                
+
                 return string.Format("Cast effect {0} {1} on entity type {2} with name {3}", groupIndex, subgroupIndex, entityBehaviour.EntityType.ToString(), result.name);
             }
         }

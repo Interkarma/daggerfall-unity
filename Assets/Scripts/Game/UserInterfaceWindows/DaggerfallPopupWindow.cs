@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -10,9 +10,6 @@
 //
 
 using UnityEngine;
-using System;
-using System.Collections;
-using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game.UserInterface;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
@@ -22,7 +19,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// Can optionally render previous window hierarchy before its own.
     /// Popups can be optionally cancelled at any time using the ESC key.
     /// </summary>
-    public class DaggerfallPopupWindow : DaggerfallBaseWindow
+    public abstract class DaggerfallPopupWindow : DaggerfallBaseWindow
     {
         IUserInterfaceWindow previousWindow;
 
