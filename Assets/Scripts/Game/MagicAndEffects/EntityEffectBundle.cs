@@ -19,7 +19,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 {
     /// <summary>
     /// Groups one or more effects for transport and execution.
-    /// A spell is one example of an effect bundle that carries multiple effects.
+    /// Most effects operate on a target entity (the receiver).
+    /// But may or may not have a caster entity (the sender).
+    /// Actual implementation is up to each effect script, the bundle simply carries effects
+    /// from sender to receiver by way of items, spell missiles, touch, area of effect, etc.
+    /// and handles their execution, settings, and lifespan.
+    /// Spells are an example of effect bundles that carry effects from one entity to another.
     /// </summary>
     public class EntityEffectBundle
     {
@@ -27,20 +32,38 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         EffectBundleSettings settings;
         List<IEntityEffect> effects = new List<IEntityEffect>();
+        DaggerfallEntityBehaviour casterEntityBehaviour = null;
 
         #endregion
 
         #region Properties
 
+        /// <summary>
+        /// Gets default effect bundle settings.
+        /// Default is target: none, duration: 1, chance: 100%, magnitude: 1 + 1 per level.
+        /// </summary>
         public EffectBundleSettings DefaultSettings
         {
             get { return GetDefaultSettings(); }
         }
 
+        /// <summary>
+        /// Gets or sets current effect bundle settings.
+        /// </summary>
         public EffectBundleSettings CurrentSettings
         {
             get { return settings; }
             set { ApplySettings(value); }
+        }
+
+        /// <summary>
+        /// Gets or sets caster entity (sender) of effect bundle where one is present.
+        /// Example of caster entity is an enemy mage or monster.
+        /// </summary>
+        public DaggerfallEntityBehaviour CasterEntityBehaviour
+        {
+            get { return casterEntityBehaviour; }
+            set { casterEntityBehaviour = value; }
         }
 
         #endregion
@@ -101,6 +124,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         EffectBundleSettings GetDefaultSettings()
         {
             EffectBundleSettings defaultSettings = new EffectBundleSettings();
+
+            // No target or magic type
+            defaultSettings.TargetType = TargetTypes.None;
+            defaultSettings.MagicType = MagicTypes.None;
 
             // Default duration is 1 second
             defaultSettings.DurationBase = 1;

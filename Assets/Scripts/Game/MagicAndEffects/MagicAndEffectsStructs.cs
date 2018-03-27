@@ -20,6 +20,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     /// </summary>
     public struct EffectBundleSettings
     {
+        public TargetTypes TargetType;
+        public MagicTypes MagicType;
+
         public int DurationBase;
         public int DurationBonus;
         public int DurationBonusPerLevel;

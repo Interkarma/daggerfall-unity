@@ -164,7 +164,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             if (readySpell != null)
             {
                 // TEMP: Just hurling test missiles with no payload at this time
-                GameManager.Instance.PlayerSpellCasting.PlayOneShot(SpellTypes.Cold);
+                GameManager.Instance.PlayerSpellCasting.PlayOneShot(MagicTypes.Cold);
             }
         }
 
@@ -182,7 +182,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
             // TEMP: Just hurling test missiles with no payload at this time
             DaggerfallMissile missile = Instantiate(ColdMissilePrefab);
-            missile.UseSpellBillboardAnims(SpellTypes.Cold);
+            missile.UseSpellBillboardAnims(MagicTypes.Cold);
             missile.ExecuteMobileMissile(missilePosition, missileDirection);
 
             lastSpell = readySpell;

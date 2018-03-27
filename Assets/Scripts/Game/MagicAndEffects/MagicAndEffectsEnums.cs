@@ -17,7 +17,7 @@ using System.Collections.Generic;
 namespace DaggerfallWorkshop.Game.MagicAndEffects
 {
     /// <summary>
-    /// How this spell targets entities in world space.
+    /// How an effect bundle targets entities in world space.
     /// Can be used as flags by effect system to declare supported targets.
     /// </summary>
     public enum TargetTypes
@@ -31,10 +31,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     }
 
     /// <summary>
-    /// How spell manifests for cast animations, billboard effects, resist checks, etc.
-    /// Can be used as flags by effect system to declare supported spell types.
+    /// How effect bundle manifests for cast animations, billboard effects, resist checks, etc.
+    /// Can be used as flags by effect system to declare supported effect types.
     /// </summary>
-    public enum SpellTypes
+    public enum MagicTypes
     {
         None = 0,
         Fire = 1,
