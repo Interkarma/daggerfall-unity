@@ -50,8 +50,8 @@ namespace DaggerfallWorkshop.Utility
             { "%ach", null }, // + Chance per
             { "%adr", null }, // + Duration per
             { "%agi", Agi }, //  Amount of Agility
-            { "%arm", ItemName }, //  Armour
             { "%ark", AttributeRating }, // What property attribute is considered
+            { "%arm", ItemName }, //  Armour
             { "%ba", BookAuthor },  // Book Author
             { "%bch", null }, // Base chance
             { "%bdr", null }, // Base Duration
@@ -126,8 +126,8 @@ namespace DaggerfallWorkshop.Utility
             { "%lt1", null }, // Title of _fl1
             { "%ltn", LegalReputation }, // In the eyes of the law you are.......
             { "%luc", Luck }, // Luck
-            { "%map", LocationRevealedByMapItem }, // Name of location revealed by a map item
             { "%mad", MagicResist }, // Resistance
+            { "%map", LocationRevealedByMapItem }, // Name of location revealed by a map item
             { "%mat", Material }, // Material
             { "%mit", null }, // Item
             { "%ml", MaxLoan },  // Max loan amount
