@@ -347,11 +347,7 @@ namespace DaggerfallWorkshop.Game.Entity
                         if (timeOfDay < 360 || timeOfDay > 1080) // night
                         {
                             if (UnityEngine.Random.Range(0, 24) == 0)
-                            {
-                                MobileTypes enemy = RandomEncounters.ChooseRandomEnemy(false);
-                                // TODO: Spawn enemy
-                                //SpawnEnemyNearPlayerInLocation(enemy);
-                            }
+                                GameObjectHelper.CreateFoeSpawner(RandomEncounters.ChooseRandomEnemy(false), 1);
                         }
                     }
                     else
@@ -364,9 +360,7 @@ namespace DaggerfallWorkshop.Game.Entity
                         else // night
                             if (UnityEngine.Random.Range(0, 24) != 0)
                             return;
-                        MobileTypes enemy = RandomEncounters.ChooseRandomEnemy(false);
-                        // TODO: Spawn enemy
-                        //SpawnEnemyNearPlayerInWilderness(enemy);
+                        GameObjectHelper.CreateFoeSpawner(RandomEncounters.ChooseRandomEnemy(false), 1);
                     }
                 } // in interior
                 else
@@ -376,12 +370,8 @@ namespace DaggerfallWorkshop.Game.Entity
                         if (isResting)
                         {
                             if (UnityEngine.Random.Range(0, 36) == 0)
-                            {
                                 // TODO: Not sure how enemy type is chosen here.
-                                MobileTypes enemy = RandomEncounters.ChooseRandomEnemy(false);
-                                // TODO: Spawn enemy
-                                //SpawnEnemyNearPlayerInLocation(enemy);
-                            }
+                                GameObjectHelper.CreateFoeSpawner(RandomEncounters.ChooseRandomEnemy(false), 1);
                         }
                     }
                 }

@@ -1346,7 +1346,7 @@ namespace DaggerfallWorkshop.Utility
             if (chooseUnderWaterEnemy)
                 encounterTableIndex = 19;
             else if (playerEnterExit.IsPlayerInsideDungeon)
-                encounterTableIndex = ((int)playerGPS.CurrentLocationType);
+                encounterTableIndex = ((int)playerEnterExit.Dungeon.Summary.DungeonType);
             else if (playerEnterExit.IsPlayerInsideBuilding)
             {
                 DFLocation.BuildingTypes buildingType = playerEnterExit.BuildingType;
