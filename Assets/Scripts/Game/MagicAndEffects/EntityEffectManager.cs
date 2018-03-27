@@ -40,7 +40,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         bool isPlayerEntity = false;
         bool allowSelfDamage = true;
 
-        List<IEntityEffect> activeEffects = new List<IEntityEffect>();
+        List<EntityEffectBundle> activeBundles = new List<EntityEffectBundle>();
 
         #endregion
 
@@ -100,6 +100,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Do nothing if no peer entity
             if (!entityBehaviour)
                 return;
+
+            // Tick effects operating on this entity
+            foreach (EntityEffectBundle bundle in activeBundles)
+            {
+                bundle.Tick(this);
+            }
 
             // Player can cast a spell, recast last spell, or abort current spell
             // Handling input here is similar to handling weapon input in WeaponManager
@@ -162,6 +168,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
         }
 
+        #endregion
+
+        #region Private Methods
         #endregion
 
         #region Event Handling

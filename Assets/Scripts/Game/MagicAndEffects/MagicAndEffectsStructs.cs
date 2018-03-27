@@ -27,7 +27,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public int ChanceBase;
         public int ChanceBonus;
         public int ChanceBonusPerLevel;
-        public int ChanceCostResult;
 
         public int MagnitudeBaseMin;
         public int MagnitudeBaseMax;
