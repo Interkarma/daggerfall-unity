@@ -31,6 +31,7 @@ namespace DaggerfallWorkshop.Game.Guilds
         protected const int PromotionFreeRoomsId = 5238;
         protected const int PromotionFreeShipsId = 5239;
         protected const int PromotionHouseId = 5240;
+        protected const int PromotionNoHouseId = 5241;  // TODO: Use if already own a house
         protected const int ArmorId = 463;
         protected const int HouseId = 462;
         protected const int NoArmorId = 461;

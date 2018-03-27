@@ -110,6 +110,12 @@ namespace DaggerfallWorkshop.Game.Guilds
                 case FactionFile.GuildGroups.KnightlyOrder:
                     return new KnightlyOrder(KnightlyOrder.GetOrder(variant));
 
+                case FactionFile.GuildGroups.GeneralPopulace:
+                    return new ThievesGuild();
+
+                case FactionFile.GuildGroups.DarkBrotherHood:
+                    return new DarkBrotherhood();
+
                 default:
                     Type guildType;
                     if (customGuilds.TryGetValue(guildGroup, out guildType))

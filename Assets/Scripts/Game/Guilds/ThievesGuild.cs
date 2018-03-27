@@ -10,56 +10,54 @@ using System.Collections.Generic;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
+using System;
 
 namespace DaggerfallWorkshop.Game.Guilds
 {
-    public class MagesGuild : Guild
+    public class ThievesGuild : Guild
     {
         #region Constants
 
-        protected const int IneligibleBadRepId = 612;
-        protected const int IneligibleLowSkillId = 611;
-        protected const int EligibleMsgId = 606;
-        protected const int WelcomeMsgId = 5293;
-        protected const int PromotionMsgId = 5236;
-        protected const int PromotionLibraryId = 5230;
-        protected const int PromotionMagicItemsId = 5231;
-        protected const int PromotionEnchantId = 5232;
-        protected const int PromotionSummonId = 5233;
-        protected const int PromotionTeleportId = 5233;
+        protected const int WelcomeMsgId = 5225;    // Not used AFAIK
+        protected const int PromotionMsgId = 5235;
+        protected const int PromotionFenceId = 5226;
+        protected const int PromotionSpymasterId = 5227;
+        protected const int PromotionMap1Id = 5228;
+        protected const int PromotionMap2Id = 5229;
+        protected const int BribesJudgeId = 550;
 
-        private const int factionId = 40;
+        private const int factionId = 42;
 
         #endregion
 
         #region Properties & Data
 
         static string[] rankTitles = new string[] {
-                "Apprentice", "Journeyman", "Evoker", "Conjurer", "Magician", "Enchanter", "Warlock", "Wizard", "Master Wizard", "Archmage"
+                "Apprentice", "Journeyman", "Filcher", "Crook", "Robber", "Bandit", "Thief", "Ringleader", "Mastermind", "Master Thief"
         };
 
         static List<DFCareer.Skills> guildSkills = new List<DFCareer.Skills>() {
-                DFCareer.Skills.Alteration,
-                DFCareer.Skills.Destruction,
-                DFCareer.Skills.Illusion,
-                DFCareer.Skills.Mysticism,
-                DFCareer.Skills.Restoration,
-                DFCareer.Skills.Thaumaturgy
+                DFCareer.Skills.Backstabbing,
+                DFCareer.Skills.Climbing,
+                DFCareer.Skills.Lockpicking,
+                DFCareer.Skills.Pickpocket,
+                DFCareer.Skills.ShortBlade,
+                DFCareer.Skills.Stealth,
+                DFCareer.Skills.Streetwise
             };
 
         static List<DFCareer.Skills> trainingSkills = new List<DFCareer.Skills>() {
-                DFCareer.Skills.Alteration,
-                DFCareer.Skills.Daedric,
-                DFCareer.Skills.Destruction,
-                DFCareer.Skills.Dragonish,
-                DFCareer.Skills.Harpy,
-                DFCareer.Skills.Illusion,
-                DFCareer.Skills.Impish,
-                DFCareer.Skills.Mysticism,
-                DFCareer.Skills.Orcish,
-                DFCareer.Skills.Restoration,
-                DFCareer.Skills.Spriggan,
-                DFCareer.Skills.Thaumaturgy
+                DFCareer.Skills.Backstabbing,
+                DFCareer.Skills.BluntWeapon,
+                DFCareer.Skills.Climbing,
+                DFCareer.Skills.Dodging,
+                DFCareer.Skills.Jumping,
+                DFCareer.Skills.Lockpicking,
+                DFCareer.Skills.Pickpocket,
+                DFCareer.Skills.ShortBlade,
+                DFCareer.Skills.Stealth,
+                DFCareer.Skills.Streetwise,
+                DFCareer.Skills.Swimming
             };
 
         public override string[] RankTitles { get { return rankTitles; } }
@@ -93,13 +91,13 @@ namespace DaggerfallWorkshop.Game.Guilds
             switch (rank)
             {
                 case 2:
-                    return PromotionLibraryId;
-                case 3:
-                    return PromotionMagicItemsId;
+                    return PromotionFenceId;
+                case 4:
+                    return PromotionSpymasterId;
                 case 6:
-                    return PromotionSummonId;
+                    return PromotionMap1Id;
                 case 8:
-                    return PromotionTeleportId;
+                    return PromotionMap2Id;
                 default:
                     return PromotionMsgId;
             }
@@ -117,17 +115,12 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public override bool HallAccessAnytime()
         {
-            return (rank >= 6);
+            return IsMember();
         }
 
         #endregion
 
         #region Service Access:
-
-        public override bool CanAccessLibrary()
-        {
-            return (rank >= 2);
-        }
 
         public override bool CanAccessService(GuildServices service)
         {
@@ -137,21 +130,9 @@ namespace DaggerfallWorkshop.Game.Guilds
                     return IsMember();
                 case GuildServices.Quests:
                     return true;
-                case GuildServices.Identify:
-                    return true;
-                case GuildServices.BuySpells:
-                    return true;
-                case GuildServices.MakeSpells:
-                    return IsMember();
                 case GuildServices.BuyMagicItems:
-                    return (rank >= 3);
-                case GuildServices.MakeMagicItems:
-                    return (rank >= 5);
-                case GuildServices.Teleport:
-                    return (rank >= 8);
-                case GuildServices.DaedraSummoning:
-                    return (rank >= 6);
-                case GuildServices.BuySoulgems:
+                    return (rank >= 2);
+                case GuildServices.Spymaster:
                     return (rank >= 4);
 
                 default:
@@ -165,12 +146,11 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public override TextFile.Token[] TokensIneligible(PlayerEntity playerEntity)
         {
-            int msgId = (GetReputation(playerEntity) < 0) ? IneligibleBadRepId : IneligibleLowSkillId;
-            return DaggerfallUnity.Instance.TextProvider.GetRandomTokens(msgId);
+            throw new NotImplementedException();
         }
         public override TextFile.Token[] TokensEligible(PlayerEntity playerEntity)
         {
-            return DaggerfallUnity.Instance.TextProvider.GetRSCTokens(EligibleMsgId);
+            throw new NotImplementedException();
         }
         public override TextFile.Token[] TokensWelcome()
         {

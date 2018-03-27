@@ -744,7 +744,7 @@ namespace DaggerfallWorkshop.Game
             DFLocation.BuildingTypes type = buildingSummary.BuildingType;
             Debug.LogFormat("type: {0}, factionId: {1}", type, buildingSummary.FactionId);
 
-            // Handle guild halls & TG/DB houses
+            // Handle guild halls
             if (type == DFLocation.BuildingTypes.GuildHall)
             {
                 Guild guild = GameManager.Instance.GuildManager.GetGuild(buildingSummary.FactionId);

@@ -10,56 +10,57 @@ using System.Collections.Generic;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
+using System;
 
 namespace DaggerfallWorkshop.Game.Guilds
 {
-    public class MagesGuild : Guild
+    public class DarkBrotherhood : Guild
     {
         #region Constants
 
-        protected const int IneligibleBadRepId = 612;
-        protected const int IneligibleLowSkillId = 611;
-        protected const int EligibleMsgId = 606;
-        protected const int WelcomeMsgId = 5293;
-        protected const int PromotionMsgId = 5236;
-        protected const int PromotionLibraryId = 5230;
-        protected const int PromotionMagicItemsId = 5231;
-        protected const int PromotionEnchantId = 5232;
-        protected const int PromotionSummonId = 5233;
-        protected const int PromotionTeleportId = 5233;
+        protected const int WelcomeMsgId = 5292;    // Not used AFAIK
+        protected const int PromotionMsgId = 5292;  // Can't find a better general promotion msg
+        protected const int PromotionBuyPotionsId = 6611;
+        protected const int PromotionMakePotionsId = 6612;
+        protected const int PromotionSoulGemsId = 6613;
+        protected const int PromotionSpymasterId = 6614;
+        protected const int BribesJudgeId = 551;
 
-        private const int factionId = 40;
+        private const int factionId = 108;
 
         #endregion
 
         #region Properties & Data
 
         static string[] rankTitles = new string[] {
-                "Apprentice", "Journeyman", "Evoker", "Conjurer", "Magician", "Enchanter", "Warlock", "Wizard", "Master Wizard", "Archmage"
+                "Apprentice", "Journeyman", "Operator", "Slayer", "Executioner", "Punisher", "Terminator", "Assassin", "Dark Brother", "Master Assassin"
         };
-
+        
         static List<DFCareer.Skills> guildSkills = new List<DFCareer.Skills>() {
-                DFCareer.Skills.Alteration,
+                DFCareer.Skills.Archery,
+                DFCareer.Skills.Backstabbing,
+                DFCareer.Skills.Climbing,
+                DFCareer.Skills.CriticalStrike,
+                DFCareer.Skills.Daedric,
                 DFCareer.Skills.Destruction,
-                DFCareer.Skills.Illusion,
-                DFCareer.Skills.Mysticism,
-                DFCareer.Skills.Restoration,
-                DFCareer.Skills.Thaumaturgy
+                DFCareer.Skills.ShortBlade,
+                DFCareer.Skills.Stealth,
+                DFCareer.Skills.Streetwise,
             };
 
         static List<DFCareer.Skills> trainingSkills = new List<DFCareer.Skills>() {
-                DFCareer.Skills.Alteration,
+                DFCareer.Skills.Archery,
+                DFCareer.Skills.Backstabbing,
+                DFCareer.Skills.Climbing,
+                DFCareer.Skills.CriticalStrike,
                 DFCareer.Skills.Daedric,
                 DFCareer.Skills.Destruction,
-                DFCareer.Skills.Dragonish,
-                DFCareer.Skills.Harpy,
-                DFCareer.Skills.Illusion,
-                DFCareer.Skills.Impish,
-                DFCareer.Skills.Mysticism,
-                DFCareer.Skills.Orcish,
-                DFCareer.Skills.Restoration,
-                DFCareer.Skills.Spriggan,
-                DFCareer.Skills.Thaumaturgy
+                DFCareer.Skills.Dodging,
+                DFCareer.Skills.Running,
+                DFCareer.Skills.ShortBlade,
+                DFCareer.Skills.Stealth,
+                DFCareer.Skills.Streetwise,
+                DFCareer.Skills.Swimming
             };
 
         public override string[] RankTitles { get { return rankTitles; } }
@@ -79,6 +80,15 @@ namespace DaggerfallWorkshop.Game.Guilds
             return factionId;
         }
 
+        public override string GetTitle()
+        {
+            if (GameManager.Instance.PlayerEntity.Gender == Genders.Female)
+                if (rank == 8)
+                    return "Dark Sister";        // Not calling female chars 'Brother'!
+
+            return IsMember() ? rankTitles[rank] : "non-member";
+        }
+
         #endregion
 
         #region Guild Ranks
@@ -92,14 +102,14 @@ namespace DaggerfallWorkshop.Game.Guilds
         {
             switch (rank)
             {
-                case 2:
-                    return PromotionLibraryId;
+                case 1:
+                    return PromotionBuyPotionsId;
                 case 3:
-                    return PromotionMagicItemsId;
-                case 6:
-                    return PromotionSummonId;
-                case 8:
-                    return PromotionTeleportId;
+                    return PromotionMakePotionsId;
+                case 5:
+                    return PromotionSoulGemsId;
+                case 7:
+                    return PromotionSpymasterId;
                 default:
                     return PromotionMsgId;
             }
@@ -117,17 +127,12 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public override bool HallAccessAnytime()
         {
-            return (rank >= 6);
+            return IsMember();
         }
 
         #endregion
 
         #region Service Access:
-
-        public override bool CanAccessLibrary()
-        {
-            return (rank >= 2);
-        }
 
         public override bool CanAccessService(GuildServices service)
         {
@@ -137,22 +142,14 @@ namespace DaggerfallWorkshop.Game.Guilds
                     return IsMember();
                 case GuildServices.Quests:
                     return true;
-                case GuildServices.Identify:
-                    return true;
-                case GuildServices.BuySpells:
-                    return true;
-                case GuildServices.MakeSpells:
-                    return IsMember();
-                case GuildServices.BuyMagicItems:
+                case GuildServices.BuyPotions:
+                    return (rank >= 1);
+                case GuildServices.MakePotions:
                     return (rank >= 3);
-                case GuildServices.MakeMagicItems:
-                    return (rank >= 5);
-                case GuildServices.Teleport:
-                    return (rank >= 8);
-                case GuildServices.DaedraSummoning:
-                    return (rank >= 6);
                 case GuildServices.BuySoulgems:
-                    return (rank >= 4);
+                    return (rank >= 5);
+                case GuildServices.Spymaster:
+                    return (rank >= 7);
 
                 default:
                     return false;
@@ -165,12 +162,11 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public override TextFile.Token[] TokensIneligible(PlayerEntity playerEntity)
         {
-            int msgId = (GetReputation(playerEntity) < 0) ? IneligibleBadRepId : IneligibleLowSkillId;
-            return DaggerfallUnity.Instance.TextProvider.GetRandomTokens(msgId);
+            throw new NotImplementedException();
         }
         public override TextFile.Token[] TokensEligible(PlayerEntity playerEntity)
         {
-            return DaggerfallUnity.Instance.TextProvider.GetRSCTokens(EligibleMsgId);
+            throw new NotImplementedException();
         }
         public override TextFile.Token[] TokensWelcome()
         {

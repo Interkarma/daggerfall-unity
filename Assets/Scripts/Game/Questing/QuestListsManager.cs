@@ -218,7 +218,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 foreach (QuestData quest in guildQuests)
                 {
                     if ((status == (MembershipStatus)quest.membership || tplMemb == (MembershipStatus)quest.membership) &&
-                        rep >= quest.minRep && (!quest.unitWildC || rep < quest.minRep + 10))
+                        (status == MembershipStatus.Nonmember || (rep >= quest.minRep && (!quest.unitWildC || rep < quest.minRep + 10))))
                     {
                         pool.Add(quest);
                     }

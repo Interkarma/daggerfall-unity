@@ -138,8 +138,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected override void Setup()
         {
-            // Load all textures
+            // Ascertain guild membership status, exempt Thieves Guild and Dark Brotherhood since should never find em until a member
             bool member = guildManager.GetGuild(guildGroup).IsMember();
+            if (guildGroup == FactionFile.GuildGroups.DarkBrotherHood || guildGroup == FactionFile.GuildGroups.GeneralPopulace)
+                member = true;
+
+            // Load all textures
             LoadTextures(member);
 
             // Create interface panel
