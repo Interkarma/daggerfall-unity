@@ -213,14 +213,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                     }
                 }
             }
-
-            // Thieves guild is general populace / underworld
-            if (guildGroup == FactionFile.GuildGroups.GeneralPopulace && (FactionFile.SocialGroups) factionData.sgroup == FactionFile.SocialGroups.Underworld)
-            {
-                Debug.Log("Theves Guild.");
-            }
-
-            Debug.LogFormat("faction id: {0}, social group: {1}, guild: {2}",
+            Debug.LogFormat("Got guild for faction id: {0}, social group: {1}, guild: {2}",
                 factionId, (FactionFile.SocialGroups)factionData.sgroup, guildGroup);
 
             return guildGroup;

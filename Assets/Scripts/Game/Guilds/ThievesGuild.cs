@@ -72,6 +72,12 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Guild Membership and Faction
 
+        public ThievesGuild()
+        {
+            // Register for location entry events so can auto discover guild houses.
+            PlayerGPS.OnEnterLocationRect += PlayerGPS_OnEnterLocationRect;
+        }
+
         public static int FactionId { get { return factionId; } }
 
         public override int GetFactionId()
@@ -160,6 +166,17 @@ namespace DaggerfallWorkshop.Game.Guilds
         }
 
         #endregion
-    }
 
+        #region Event handlers
+
+        private void PlayerGPS_OnEnterLocationRect(DFLocation location)
+        {
+            BuildingDirectory buildingDirectory = GameManager.Instance.StreamingWorld.GetCurrentBuildingDirectory();
+            if (buildingDirectory)
+                foreach (BuildingSummary building in buildingDirectory.GetBuildingsOfFaction(factionId))
+                    GameManager.Instance.PlayerGPS.DiscoverBuilding(building.buildingKey, GetGuildName());
+        }
+
+        #endregion
+    }
 }

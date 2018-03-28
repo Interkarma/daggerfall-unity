@@ -20,6 +20,7 @@ namespace DaggerfallWorkshop.Game.Questing
     {
         Nonmember = 'N',
         Member   = 'M',
+        Prospect = 'P',
         Akatosh  = 'T',
         Arkay    = 'A',
         Dibella  = 'D',

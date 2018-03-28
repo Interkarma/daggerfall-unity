@@ -139,6 +139,15 @@ namespace DaggerfallWorkshop.Game
             return buildings;
         }
 
+        public List<BuildingSummary> GetBuildingsOfFaction(int factionId)
+        {
+            List<BuildingSummary> faction = new List<BuildingSummary>();
+            foreach (BuildingSummary building in buildingDict.Values)
+                if (building.FactionId == factionId)
+                    faction.Add(building);
+            return faction;
+        }
+
         public List<BuildingSummary> GetHousesForSale()
         {
             // TODO: add other random houses.

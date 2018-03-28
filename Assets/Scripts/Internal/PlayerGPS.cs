@@ -668,15 +668,16 @@ namespace DaggerfallWorkshop
         /// Discover the specified building in current location.
         /// Does nothing if player not inside a location or building already discovered.
         /// </summary>
-        /// <param name="buildingKey"></param>
-        public void DiscoverBuilding(int buildingKey)
+        /// <param name="buildingKey">Building key of building to be discovered</param>
+        /// <param name="overrideName">If provided, ignore previous discovery and override the name</param>
+        public void DiscoverBuilding(int buildingKey, string overrideName = null)
         {
             // Must have a location loaded
             if (!CurrentLocation.Loaded)
                 return;
 
-            // Do nothing if building already discovered
-            if (HasDiscoveredBuilding(buildingKey))
+            // Do nothing if building already discovered, unless overriding name
+            if (overrideName == null && HasDiscoveredBuilding(buildingKey))
                 return;
 
             // Get building information
@@ -696,8 +697,10 @@ namespace DaggerfallWorkshop
             if (dl.discoveredBuildings == null)
                 dl.discoveredBuildings = new Dictionary<int, DiscoveredBuilding>();
 
-            // Add the building and store back to discovered location
-            dl.discoveredBuildings.Add(db.buildingKey, db);
+            // Add the building and store back to discovered location, overriding name if requested
+            if (overrideName != null)
+                db.displayName = overrideName;
+            dl.discoveredBuildings[db.buildingKey] = db;
             discoveredLocations[mapPixelID] = dl;
         }
 
@@ -762,10 +765,9 @@ namespace DaggerfallWorkshop
 
             // Check if name should be overridden (owned house / quest site)
             PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
-            if (DaggerfallBankManager.IsHouseOwned(buildingKey)) {
-                DaggerfallBankManager.IsHouseOwned(buildingKey);
+            if (DaggerfallBankManager.IsHouseOwned(buildingKey))
                 discoveredBuildingOut.displayName = HardStrings.playerResidence.Replace("%s", playerEntity.Name);
-            }
+
             return true;
         }
 

@@ -758,6 +758,7 @@ namespace DaggerfallWorkshop.Game
             }
             // Handle House1 through House4
             // TODO: Figure out the rest of house door calculations.
+            // TODO: Need to lock doors if quest target for stealing, and unlock for other quests.
             else if (type >= DFLocation.BuildingTypes.House1 && type <= DFLocation.BuildingTypes.House4
                 && DaggerfallUnity.Instance.WorldTime.Now.IsDay)
             {
