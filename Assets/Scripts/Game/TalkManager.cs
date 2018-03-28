@@ -267,15 +267,17 @@ namespace DaggerfallWorkshop.Game
         // faction IDs for factions listed in "tell me about"
         int[] infoFactionIDs = { 42, 40, 108, 129, 306, 353, 41, 67, 82, 84, 88, 92, 94, 106, 36, 83, 85, 89, 93, 95, 99, 107, 37, 368, 408, 409, 410, 411, 413, 414, 415, 416, 417, 98 };
 
-        // Data for "work" quests in the current town
-        struct NpcBuildingPair
+        // Data for NPC "work" quests in the current town
+        struct NpcWorkEntry
         {
             public StaticNPC.NPCData npc;
+            public FactionFile.SocialGroups socialGroup;
             public string buildingName;
         }
-        Dictionary<int, NpcBuildingPair> merchantRecords = new Dictionary<int, NpcBuildingPair>();
+
+        Dictionary<int, NpcWorkEntry> npcsWithWork = new Dictionary<int, NpcWorkEntry>();
         int lastExteriorEntered;
-        int selectedKey;
+        int selectedNpcWorkKey;
 
         #endregion
 
@@ -348,7 +350,7 @@ namespace DaggerfallWorkshop.Game
 
             // initialize work variables
             lastExteriorEntered = 0;
-            selectedKey = -1;
+            selectedNpcWorkKey = -1;
         }
 
         void OnDestroy()
@@ -430,8 +432,8 @@ namespace DaggerfallWorkshop.Game
         // Player has clicked or static talk target or clicked the talk button inside a popup-window
         public void TalkToStaticNPC(StaticNPC targetNPC)
         {
-            if (MerchantOfferingQuest(targetNPC.Data.nameSeed)) {
-                DaggerfallUI.UIManager.PushWindow(new DaggerfallQuestOfferWindow(DaggerfallUI.UIManager, targetNPC, FactionFile.SocialGroups.Merchants));
+            if (IsNpcOfferingQuest(targetNPC.Data.nameSeed)) {
+                DaggerfallUI.UIManager.PushWindow(new DaggerfallQuestOfferWindow(DaggerfallUI.UIManager, targetNPC, npcsWithWork[targetNPC.Data.nameSeed].socialGroup));
                 return;
             }
             currentNPCType = NPCType.Static;
@@ -1403,9 +1405,9 @@ namespace DaggerfallWorkshop.Game
             AssembleTopiclistTellMeAbout();
         }
 
-        public bool MerchantOfferingQuest(int nameSeed)
+        public bool IsNpcOfferingQuest(int nameSeed)
         {
-            return merchantRecords.ContainsKey(nameSeed) && !QuestMachine.Instance.IsLastNPCClickedAnActiveQuestor();
+            return npcsWithWork.ContainsKey(nameSeed) && !QuestMachine.Instance.IsLastNPCClickedAnActiveQuestor();
         }
 
         public void SetRandomQuestor()
@@ -1415,34 +1417,34 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
             System.Random rand = new System.Random();
-            selectedKey = merchantRecords.Keys.ToList()[rand.Next(merchantRecords.Count)];
-            Debug.Log("TalkManager: Picked random questor. Key: " + selectedKey + ", Pool Size: " + merchantRecords.Keys.Count);
+            selectedNpcWorkKey = npcsWithWork.Keys.ToList()[rand.Next(npcsWithWork.Count)];
+            Debug.Log("TalkManager: Picked random questor. Key: " + selectedNpcWorkKey + ", Pool Size: " + npcsWithWork.Keys.Count);
         }
 
         public string GetQuestorName()
         {
-            DFRandom.srand(merchantRecords[selectedKey].npc.nameSeed);
-            return DaggerfallUnity.Instance.NameHelper.FullName(merchantRecords[selectedKey].npc.nameBank, merchantRecords[selectedKey].npc.gender);
+            DFRandom.srand(npcsWithWork[selectedNpcWorkKey].npc.nameSeed);
+            return DaggerfallUnity.Instance.NameHelper.FullName(npcsWithWork[selectedNpcWorkKey].npc.nameBank, npcsWithWork[selectedNpcWorkKey].npc.gender);
         }
 
         public Genders GetQuestorGender()
         {
-            return merchantRecords[selectedKey].npc.gender;
+            return npcsWithWork[selectedNpcWorkKey].npc.gender;
         }
 
         public string GetQuestorLocation()
         {
-            return merchantRecords[selectedKey].buildingName;
+            return npcsWithWork[selectedNpcWorkKey].buildingName;
         }
 
-        public void RemoveMerchantQuestor(int nameSeed)
+        public void RemoveNpcQuestor(int nameSeed)
         {
-            merchantRecords.Remove(nameSeed);
+            npcsWithWork.Remove(nameSeed);
         }
 
         public bool WorkAvailable
         { 
-            get { return merchantRecords.Count != 0; }
+            get { return npcsWithWork.Count != 0; }
         }
 
         #endregion
@@ -1505,10 +1507,11 @@ namespace DaggerfallWorkshop.Game
             bool populateQuestors = false;
             if (lastExteriorEntered != GameManager.Instance.PlayerGPS.CurrentLocationIndex)
             {
-                merchantRecords.Clear();
+                npcsWithWork.Clear();
                 populateQuestors = true;
             }
 
+            int[] workStats = new int[12];
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)
@@ -1548,9 +1551,15 @@ namespace DaggerfallWorkshop.Game
                             {
                                 FactionFile.FactionData factionData;
                                 GameManager.Instance.PlayerEntity.FactionData.GetFactionData(buildingNpcs[p].FactionID, out factionData);
-                                if ((FactionFile.SocialGroups)factionData.sgroup == FactionFile.SocialGroups.Merchants)
+                                FactionFile.SocialGroups socialGroup = (FactionFile.SocialGroups) factionData.sgroup;
+                                if (socialGroup == FactionFile.SocialGroups.Merchants ||
+                                    socialGroup == FactionFile.SocialGroups.Commoners ||
+                                    socialGroup == FactionFile.SocialGroups.Nobility)
                                 {
-                                    int randomChance = UnityEngine.Random.Range(0, 4); // 25% chance that a merchant will offer quests
+                                    // 25% chance that an npc will offer quest.
+                                    // TODO: how does classic decide?
+                                    int randomChance = UnityEngine.Random.Range(0, 4);
+                                    workStats[(int)socialGroup]++;
                                     if (randomChance < 3)
                                         continue;
 
@@ -1564,19 +1573,24 @@ namespace DaggerfallWorkshop.Game
                                                             buildingNpcs[p].Position,
                                                             buildingSummary.buildingKey);
 
-                                    if (!merchantRecords.ContainsKey(npcData.nameSeed))
+                                    if (!npcsWithWork.ContainsKey(npcData.nameSeed))
                                     {
                                         npcData.buildingKey = buildingSummary.buildingKey;
                                         npcData.nameBank = GameManager.Instance.PlayerGPS.GetNameBankOfCurrentRegion();
-                                        NpcBuildingPair nbPair = new NpcBuildingPair {
+                                        NpcWorkEntry npcWork = new NpcWorkEntry {
                                             npc = npcData,
+                                            socialGroup = socialGroup,
                                             buildingName = BuildingNames.GetName(buildingSummary.NameSeed, buildingSummary.BuildingType, buildingSummary.FactionId, location.Name, location.RegionName)
                                         };
-                                        if (nbPair.buildingName == string.Empty)
+                                        if (npcWork.buildingName == string.Empty)
+                                        {
+                                            workStats[(int)socialGroup+8]++;
                                             continue;
-                                        merchantRecords.Add(npcData.nameSeed, nbPair);
-                                        selectedKey = npcData.nameSeed;
-                                        Debug.LogFormat("Added questor ns={0} bk={1} name={2} building={3}", npcData.nameSeed, buildingSummary.buildingKey, GetQuestorName(), nbPair.buildingName);
+                                        }
+                                        workStats[(int)socialGroup+4]++;
+                                        npcsWithWork.Add(npcData.nameSeed, npcWork);
+                                        selectedNpcWorkKey = npcData.nameSeed;
+                                        Debug.LogFormat("Added {4} questor: ns={0} bk={1} name={2} building={3}", npcData.nameSeed, buildingSummary.buildingKey, GetQuestorName(), npcWork.buildingName, socialGroup);
                                     }
                                 }
                             }
@@ -1584,6 +1598,9 @@ namespace DaggerfallWorkshop.Game
                     }
                 }
             }
+            if (populateQuestors)
+                Debug.LogFormat("Populated work availiable from NPCs. (allocated+noBuilding/candidates) Merchants: {0}(+{6})/{1}, Commoners: {2}(+{7})/{3}, Nobles: {4}(+{8})/{5}", 
+                    workStats[5], workStats[1], workStats[4], workStats[0], workStats[7], workStats[3], workStats[9], workStats[8], workStats[11]);
         }
 
         private string BuildingTypeToGroupString(DFLocation.BuildingTypes buildingType)
