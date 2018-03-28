@@ -13,6 +13,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DaggerfallWorkshop.Game.Entity;
 using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects
@@ -56,10 +57,55 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         TextFile.Token[] CustomText { get; }
 
         /// <summary>
+        /// Gets array DaggerfallStats.Count items wide.
+        /// Array items represent Strength, Intelligence, Willpower, etc.
+        /// Effect implementation should set modifier values for stats when part of payload.
+        /// For example, a "Damage Strength" effect would set the current modifier for Strength (such as -5 to Strength).
+        /// Use (int)DFCareer.State.StatName to get index.
+        /// </summary>
+        int[] StatMods { get; }
+
+        /// <summary>
+        /// Get array DaggerfallSkills.Count items wide.
+        /// Array items represent Medical, Etiquette, Streetwise, etc.
+        /// Effect implementation should set modifier values for skills when part of payload.
+        /// For example, a "Tongues" effect would set the current modifier for all language skills (such as +5 to Dragonish, +5 to Giantish, and so on).
+        /// Use (int)DFCareer.Skills.SkillName to get index.
+        /// </summary>
+        int[] SkillMods { get; }
+
+        /// <summary>
         /// Factory a new entity effect of this type.
         /// </summary>
         /// <returns></returns>
-        IEntityEffect CreateNew();
+        IEntityEffect CreateNew(EntityEffectBundle parentBundle);
+
+        /// <summary>
+        /// Called when effect is first attached to a bundle.
+        /// Use this for setup or immediate work performed only once.
+        /// </summary>
+        void Start();
+
+        /// <summary>
+        /// Called when bundle lifetime is at an end.
+        /// Use this for any wrap-up work.
+        /// </summary>
+        void End();
+
+        /// <summary>
+        /// Called every tick of effect system.
+        /// Use this for high frequency work performed every frame.
+        /// Does not run when game is paused.
+        /// </summary>
+        void Update();
+
+        /// <summary>
+        /// Called every game second elapsed.
+        /// Use this for work that ticks on one-second intervals.
+        /// If custom timing is needed, then effect should use Update() with its own timing.
+        /// Does not run when game is paused.
+        /// </summary>
+        void OneGameSecond();
     }
 
     /// <summary>
@@ -74,9 +120,39 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     public abstract class BaseEntityEffect : IEntityEffect
     {
         #region Fields
+
+        EntityEffectBundle parentBundle = null;
+        protected int[] statMods = new int[DaggerfallStats.Count];
+        protected int[] skillMods = new int[DaggerfallSkills.Count];
+
         #endregion
 
-        #region IEntityEffect
+        #region Properties
+
+        /// <summary>
+        /// Parent bundle this effect belongs to.
+        /// </summary>
+        public EntityEffectBundle ParentBundle
+        {
+            get { return parentBundle; }
+        }
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="parentBundle">Parent effect bundle owning this effect.</param>
+        public BaseEntityEffect(EntityEffectBundle parentBundle)
+        {
+            this.parentBundle = parentBundle;
+        }
+
+        #endregion
+
+        #region IEntityEffect Properties
 
         public abstract string GroupName { get; }
         public abstract string SubGroupName { get; }
@@ -89,12 +165,41 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             get { return null; }
         }
 
+        public int[] StatMods
+        {
+            get { return statMods; }
+        }
+
+        public int[] SkillMods
+        {
+            get { return skillMods; }
+        }
+
         #endregion
 
-        #region Public Virtual Methods
+        #region IEntityEffect Virtual Methods
 
-        public abstract IEntityEffect CreateNew();
+        public abstract IEntityEffect CreateNew(EntityEffectBundle parentBundle);
 
+        public virtual void Start()
+        {
+        }
+
+        public virtual void End()
+        {
+        }
+
+        public virtual void Update()
+        {
+        }
+
+        public virtual void OneGameSecond()
+        {
+        }
+
+        #endregion
+
+        #region IEntityEffect Public Methods
         #endregion
 
         #region Static Methods

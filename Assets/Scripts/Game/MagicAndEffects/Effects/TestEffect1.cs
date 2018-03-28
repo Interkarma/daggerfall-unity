@@ -28,9 +28,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override string SubGroupName { get { return subGroupName; } }
         public override string GroupKey { get { return groupKey; } }
 
-        public override IEntityEffect CreateNew()
+        public TestEffect1(EntityEffectBundle parentBundle)
+            : base(parentBundle)
         {
-            TestEffect1 effect = new TestEffect1();
+        }
+
+        public override IEntityEffect CreateNew(EntityEffectBundle parentBundle)
+        {
+            TestEffect1 effect = new TestEffect1(parentBundle);
 
             return effect;
         }
