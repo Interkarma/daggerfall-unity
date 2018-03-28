@@ -20,6 +20,7 @@ using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Banking;
+using DaggerfallWorkshop.Game.Guilds;
 
 namespace DaggerfallWorkshop
 {
@@ -784,7 +785,15 @@ namespace DaggerfallWorkshop
                 }
                 // Disable people if player owns this house
                 else if (DaggerfallBankManager.IsHouseOwned(buildingData.buildingKey))
+                {
                     go.SetActive(false);
+                }
+                // Disable people if this is TG/DB house and player is not a member
+                else if (buildingData.buildingType == DFLocation.BuildingTypes.House2 && buildingData.factionID != 0 &&
+                        !GameManager.Instance.GuildManager.GetGuild(buildingData.factionID).IsMember())
+                {
+                    go.SetActive(false);
+                }
             }
         }
 

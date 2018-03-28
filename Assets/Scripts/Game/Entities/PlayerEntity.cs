@@ -860,7 +860,7 @@ namespace DaggerfallWorkshop.Game.Entity
             {
                 thievesGuildRequirementTally = InviteSent;
                 timeForThievesGuildLetter = 0;
-                Questing.QuestMachine.Instance.InstantiateQuest("O0A0AL00", ThievesGuild.FactionId);
+                Questing.QuestMachine.Instance.InstantiateQuest(ThievesGuild.InitiationQuestName, ThievesGuild.FactionId);
             }
             if (darkBrotherhoodRequirementTally != InviteSent
                 && timeForDarkBrotherhoodLetter > 0
@@ -869,7 +869,7 @@ namespace DaggerfallWorkshop.Game.Entity
             {
                 darkBrotherhoodRequirementTally = InviteSent;
                 timeForDarkBrotherhoodLetter = 0;
-                Questing.QuestMachine.Instance.InstantiateQuest("L0A01L00", DarkBrotherhood.FactionId);
+                Questing.QuestMachine.Instance.InstantiateQuest(DarkBrotherhood.InitiationQuestName, DarkBrotherhood.FactionId);
             }
         }
 

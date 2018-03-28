@@ -12,6 +12,7 @@ using System;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Game.Questing;
 
 namespace DaggerfallWorkshop.Game.Guilds
 {
@@ -34,6 +35,26 @@ namespace DaggerfallWorkshop.Game.Guilds
                 return true;
             }
             return false;
+        }
+
+        public GuildManager()
+        {
+            // Listen for quest end events which trigger joining TG & DB.
+            QuestMachine.OnQuestEnded += QuestMachine_OnQuestEnded;
+        }
+
+        public void QuestMachine_OnQuestEnded(Quest quest)
+        {
+            if (quest.QuestName == ThievesGuild.InitiationQuestName)
+            {
+                Guild tg = CreateGuildObj(FactionFile.GuildGroups.GeneralPopulace);
+                AddMembership(FactionFile.GuildGroups.GeneralPopulace, tg);
+            }
+            if (quest.QuestName == DarkBrotherhood.InitiationQuestName)
+            {
+                Guild db = CreateGuildObj(FactionFile.GuildGroups.DarkBrotherHood);
+                AddMembership(FactionFile.GuildGroups.DarkBrotherHood, db);
+            }
         }
 
         /// <summary>

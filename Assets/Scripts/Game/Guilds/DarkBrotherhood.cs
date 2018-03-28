@@ -18,6 +18,8 @@ namespace DaggerfallWorkshop.Game.Guilds
     {
         #region Constants
 
+        public const string InitiationQuestName = "L0A01L00";
+
         protected const int WelcomeMsgId = 5292;    // Not used AFAIK
         protected const int PromotionMsgId = 5292;  // Can't find a better general promotion msg
         protected const int PromotionBuyPotionsId = 6611;
