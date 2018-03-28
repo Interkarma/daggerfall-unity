@@ -319,6 +319,14 @@ namespace DaggerfallWorkshop.Game.Entity
                     IntermittentEnemySpawn(l + lastGameMinutes + 1);
             }
 
+            // Update faction relationships, faction power levels and regional conditions (in progress)
+            uint minutesPassed = gameMinutes - lastGameMinutes;
+            for (int i = 0; i < minutesPassed; ++i)
+            {
+                if (((i + lastGameMinutes) % 40320) == 0) // 28 days
+                    FactionAndRegionConditionsUpdate();
+            }
+
             lastGameMinutes = gameMinutes;
 
             // Allow enemy spawns again if they have been disabled
@@ -908,9 +916,136 @@ namespace DaggerfallWorkshop.Game.Entity
             public ushort PriceAdjustment; // bytes 78 to 80
         }
 
-        public void InitializeRegionPrices()
+        public enum RegionDataFlags
         {
+            Condition0 = 0,
+            Condition1 = 1,
+            Condition2 = 2,
+            Condition3 = 3,
+            PlagueBeginning = 4,
+            PlagueOngoing = 5,
+            PlagueEnding = 6,
+            FamineBeginning = 7,
+            FamineOngoing = 8,
+            FamineEnding = 9,
+            WitchBurnings = 10,
+            CrimeWave = 11,
+            Condition12 = 12,
+            Condition13 = 13,
+            Condition14 = 14,
+            Condition15 = 15,
+            Condition16 = 16,
+            Condition17 = 17,
+            PersecutedTemple = 18,
+            PricesHigh = 19,
+            PricesLow = 20,
+            Condition21 = 21,
+            Condition22 = 22,
+            Condition23 = 23,
+            Condition24 = 24,
+            Condition25 = 25,
+            Condition26 = 26,
+            Condition27 = 27,
+            Condition28 = 28,
+            Condition29 = 29,
+        }
+
+        public void FactionAndRegionConditionsUpdate()
+        {
+            foreach (FactionFile.FactionData item in FactionData.FactionDict.Values)
+            {
+                /*
+                if (item.type == (int)FactionFile.FactionTypes.Province ||
+                    item.type == (int)FactionFile.FactionTypes.Group ||
+                    item.type == (int)FactionFile.FactionTypes.Subgroup)
+                {
+                    //TODO: Faction power changes
+                }*/
+
+                // Handle famine condition
+                if (item.region != -1  && item.type == (int)FactionFile.FactionTypes.Province)
+                {
+                    int alliesPower = 0;
+                    FactionFile.FactionData ally;
+                    if (item.ally1 != 0)
+                    {
+                        FactionData.GetFactionData(item.ally1, out ally);
+                        alliesPower += ally.power;
+                    }
+                    if (item.ally2 != 0)
+                    {
+                        FactionData.GetFactionData(item.ally1, out ally);
+                        alliesPower += ally.power;
+                    }
+                    if (item.ally3 != 0)
+                    {
+                        FactionData.GetFactionData(item.ally1, out ally);
+                        alliesPower += ally.power;
+                    }
+
+                    int alliesPowerMod = alliesPower / 10;
+
+                    if (regionData[item.region - 1].Flags[(int)RegionDataFlags.FamineEnding] == true)
+                        TurnOffConditionFlag(item.region, RegionDataFlags.FamineEnding);
+                    else if (regionData[item.region - 1].Flags[(int)RegionDataFlags.FamineOngoing] == true)
+                    {
+                        int powerLevel = item.randomValue / 5 + alliesPowerMod + item.power / 5;
+                        if (UnityEngine.Random.Range(0, 100 + 1) < powerLevel)
+                        {
+                            TurnOnConditionFlag(item.region, RegionDataFlags.FamineEnding);
+                        }
+                    }
+                    else if (regionData[item.region - 1].Flags[(int)RegionDataFlags.FamineBeginning] == true)
+                    {
+                        TurnOnConditionFlag(item.region, RegionDataFlags.FamineOngoing);
+                    }
+                    else if (UnityEngine.Random.Range(1, 100 + 1) <= 2)
+                    {
+                        int powerLevel = item.randomValue + alliesPowerMod;
+                        if (UnityEngine.Random.Range(0, 100 + 1) > powerLevel)
+                            TurnOnConditionFlag(item.region, RegionDataFlags.FamineBeginning);
+                    }
+                }
+                // TODO: Handle plague
+                // TODO: Handle temple persecution
+                // TODO: Handle crime wave
+                // TODO: Handle witch burnings
+            }
+        }
+
+        public void TurnOffConditionFlag(int regionID, RegionDataFlags flagID)
+        {
+            Debug.Log(DaggerfallUnity.Instance.ContentReader.MapFileReader.RegionNames[regionID - 1] + " turned off " + flagID);
+            regionData[regionID - 1].Flags[(int)flagID] = false;
+        }
+
+        public void TurnOnConditionFlag(int regionID, RegionDataFlags flagID)
+        {
+            Debug.Log(DaggerfallUnity.Instance.ContentReader.MapFileReader.RegionNames[regionID - 1] + " turned on " + flagID);
+            regionData[regionID = 1].Flags[(int)flagID] = true;
+        }
+
+        public void InitializeRegionData()
+        {
+            Debug.Log("Initializing region data");
             FormulaHelper.RandomizeInitialPriceAdjustments(ref regionData);
+
+            // TODO: Randomize values and flags. Their relationships are not fully understood yet so for now just initializing all to 0 and false.
+            for (int i = 0; i < regionData.Length; i++)
+            {
+                regionData[i].Values = new byte[29];
+
+                for (int j = 0; j < 29; j++)
+                    regionData[i].Values[j] = 0;
+
+                regionData[i].Flags = new bool[29];
+                for (int j = 0; j < 29; j++)
+                    regionData[i].Flags[j] = false;
+
+                regionData[i].Flags2 = new bool[14];
+                for (int j = 0; j < 14; j++)
+                    regionData[i].Flags2[j] = false;
+            }
         }
 
         #endregion

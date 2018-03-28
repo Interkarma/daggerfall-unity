@@ -394,8 +394,8 @@ namespace DaggerfallWorkshop.Game.Utility
             Banking.DaggerfallBankManager.SetupAccounts();
             Banking.DaggerfallBankManager.SetupHouses();
 
-            // Randomize initial region prices
-            playerEntity.InitializeRegionPrices();
+            // Initialize region data
+            playerEntity.InitializeRegionData();
 
             // Randomize weathers
             GameManager.Instance.WeatherManager.SetClimateWeathers();
@@ -552,7 +552,7 @@ namespace DaggerfallWorkshop.Game.Utility
             Banking.DaggerfallBankManager.ReadNativeBankData(bankRecords);
 
             // Get regional data.
-            playerEntity.RegionData= saveVars.RegionData;
+            playerEntity.RegionData = saveVars.RegionData;
 
             // Set time tracked by playerEntity for game minute-based updates
             playerEntity.LastGameMinutes = saveVars.GameTime;
