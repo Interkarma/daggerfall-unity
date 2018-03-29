@@ -22,14 +22,17 @@ namespace DaggerfallWorkshop.Game
             get { return bobStyle; }
         }
         private PlayerMotor playerMotor;
+        private Rigidbody RigidB;
         private Camera mainCamera;
+
         public Vector3 restPos; //local position where your camera would rest when it's not bobbing.
         public Vector3 camPos; // current positon of camera
         
-        public float transitionSpeed = 10f; //smooths out the transition from moving to not moving.
+        public float transitionSpeed = 20f; //smooths out the transition from moving to not moving.
         public float bobSpeed; //how quickly the player's head bobs.
         public float bobXAmount; //how dramatic the bob is in side motion.
         public float bobYAmount; //how dramatic the bob is in up/down motion.
+        public float bobScalar; // user controlled multiplier for strength of bob
 
         float timer = Mathf.PI / 2; //initialized as this value because this is where sin = 1. So, this will make the camera always start at the crest of the sin wave, simulating someone picking up their foot and starting to walk--you experience a bob upwards when you start walking as your foot pushes off the ground, the left and right bobs come as you walk.
         float beginTransitionTimer = 0; // timer for smoothing out beginning of headbob.
@@ -37,14 +40,19 @@ namespace DaggerfallWorkshop.Game
         void Start()
         {
             playerMotor = GetComponent<PlayerMotor>();
+            
             mainCamera = GameManager.Instance.MainCamera;
             camPos = mainCamera.transform.localPosition;
             restPos = mainCamera.transform.localPosition;
+            
+            bobScalar = 1.0f;
         }
 
         void Update()
         {
-            //Debug.Log("HeadBobber running!");
+            if (DaggerfallUnity.Settings.HeadBobbing == false)
+                return;
+
             GetBobbingStyle();
             SetParamsForBobbingStyle();
 
@@ -68,27 +76,31 @@ namespace DaggerfallWorkshop.Game
         public virtual void SetParamsForBobbingStyle()
         {
             switch (bobStyle)
-            { 
+            {
+                // TODO: adjust bob speed to match player footstep sound better
                 case BobbingStyle.Crouching:
-                    bobSpeed = 3.3f;
-                    bobXAmount = 0.08f;
-                    bobYAmount = 0.08f;
+                    // lot of swaying side to side as shifting legs and pushing up and off each leg
+                    bobSpeed = 3.25f;
+                    bobXAmount = 0.08f * bobScalar;
+                    bobYAmount = 0.07f * bobScalar;
                     break;
                 case BobbingStyle.Walking:
-                    bobSpeed = 6.6f;
-                    bobXAmount = 0.045f;
-                    bobYAmount = 0.062f;
+                    // More y than x because walking is pretty balanced side to side, just head bounce
+                    bobSpeed = 6.50f;
+                    bobXAmount = 0.045f * bobScalar;
+                    bobYAmount = 0.062f * bobScalar;
                     break;
                 case BobbingStyle.Running:
-                    bobSpeed = 6.6f;
-                    bobXAmount = 0.10f;
-                    bobYAmount = 0.11f;
+                    // both legs pushing off ground and lots of leaning side to side.
+                    bobSpeed = 6.50f;
+                    bobXAmount = 0.09f * bobScalar;
+                    bobYAmount = 0.11f * bobScalar;
                     break;
                 case BobbingStyle.Horse:
-                    //Need to adjust this
-                    bobSpeed = 6.6f;
-                    bobXAmount = 0.03f;
-                    bobYAmount = 0.115f;
+                    // horse has 4 legs: balanced, most force pushes player up.
+                    bobSpeed = 6.60f;
+                    bobXAmount = 0.03f * bobScalar;
+                    bobYAmount = 0.115f * bobScalar;
                     break;
                 default:
                     // error
@@ -102,13 +114,15 @@ namespace DaggerfallWorkshop.Game
 
             if (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0 && playerMotor.IsGrounded) //moving
             {
-                //Debug.Log("BobSpeed: " + bobSpeed + ", BobAmount: " + bobXAmount);
                 timer += bobSpeed * Time.deltaTime;
+
                 beginTransitionTimer += bobSpeed * Time.deltaTime;
                 newPosition = PlotPath();
 
                 if (beginTransitionTimer <= Mathf.PI / 2)
+                {
                     newPosition = InterpolateBeginTransition(); // smooth out beginning
+                }
             }
             else
             {
@@ -132,12 +146,15 @@ namespace DaggerfallWorkshop.Game
 
         public Vector3 InterpolateEndTransition() // interpolates a gradual path from moving to not moving.
         {
-            return new Vector3(Mathf.Lerp(camPos.x, restPos.x, transitionSpeed * Time.deltaTime), Mathf.Lerp(camPos.y, restPos.y, transitionSpeed * Time.deltaTime), Mathf.Lerp(camPos.z, restPos.z, transitionSpeed * Time.deltaTime)); //transition smoothly from walking to stopping.
+            float t = transitionSpeed * Time.deltaTime;
+            Debug.Log(t);
+            return new Vector3(Mathf.Lerp(camPos.x, restPos.x, t), Mathf.Lerp(camPos.y, restPos.y, t), Mathf.Lerp(camPos.z, restPos.z, t)); //transition smoothly from walking to stopping.
         }
 
         public Vector3 InterpolateBeginTransition() // interpolates a gradual path from not moving to moving.
         {
-            return new Vector3(Mathf.Lerp(camPos.x, restPos.x, transitionSpeed / Time.deltaTime), Mathf.Lerp(camPos.y, restPos.y, transitionSpeed / Time.deltaTime), Mathf.Lerp(camPos.z, restPos.z, transitionSpeed / Time.deltaTime)); //transition smoothly from walking to stopping.
+            float t = 0.5f; // transitionSpeed * Time.deltaTime;
+            return new Vector3(Mathf.LerpAngle(camPos.x, restPos.x, t), Mathf.Lerp(camPos.y, restPos.y, t), Mathf.Lerp(camPos.z, restPos.z, t)); //transition smoothly from walking to stopping.
         }
 
 

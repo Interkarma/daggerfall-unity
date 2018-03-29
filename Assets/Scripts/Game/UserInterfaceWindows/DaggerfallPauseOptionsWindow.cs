@@ -90,7 +90,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             headBobbingButton.OnMouseClick += HeadBobbingButton_OnMouseClick;
             headBobbingTick = DaggerfallUI.AddPanel(new Rect(64f, 3.2f, 3.7f, 3.2f), headBobbingButton);
             headBobbingTick.BackgroundColor = Color.red;
-            //headBobbingTick.BackgroundColor = Color.clear;
         }
 
         #region Event Handlers
@@ -143,11 +142,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void HeadBobbingButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            Debug.Log("Head Bobbing clicked, position: x: " + position.x + ", y: " + position.y);
-            if (headBobbingTick.BackgroundColor == Color.clear)
-                headBobbingTick.BackgroundColor = Color.red;
-            else if (headBobbingTick.BackgroundColor == Color.red)
-                headBobbingTick.BackgroundColor = Color.clear;
+            //Debug.Log("Head Bobbing clicked, position: x: " + position.x + ", y: " + position.y);
+            DaggerfallUnity.Settings.HeadBobbing = !DaggerfallUnity.Settings.HeadBobbing;
+            headBobbingTick.Enabled = DaggerfallUnity.Settings.HeadBobbing;
+            DaggerfallUnity.Settings.SaveSettings();
         }
         #endregion
     }
