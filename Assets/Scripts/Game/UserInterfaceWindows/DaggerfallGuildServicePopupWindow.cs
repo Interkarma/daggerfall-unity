@@ -409,18 +409,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Service Handling: Training
 
-        static Dictionary<GuildNpcServices, List<DFCareer.Skills>> guildTrainingSkills = new Dictionary<GuildNpcServices, List<DFCareer.Skills>>()
-        {
-            { GuildNpcServices.TG_Training, new List<DFCareer.Skills>() {
-                DFCareer.Skills.Backstabbing, DFCareer.Skills.BluntWeapon, DFCareer.Skills.Climbing, DFCareer.Skills.Dodging,
-                DFCareer.Skills.Jumping, DFCareer.Skills.Lockpicking, DFCareer.Skills.Pickpocket,
-                DFCareer.Skills.ShortBlade, DFCareer.Skills.Stealth, DFCareer.Skills.Streetwise, DFCareer.Skills.Swimming } },
-            { GuildNpcServices.DB_Training, new List<DFCareer.Skills>() {
-                DFCareer.Skills.Archery, DFCareer.Skills.Backstabbing, DFCareer.Skills.Climbing, DFCareer.Skills.CriticalStrike,
-                DFCareer.Skills.Daedric, DFCareer.Skills.Destruction, DFCareer.Skills.Dodging, DFCareer.Skills.Running,
-                DFCareer.Skills.ShortBlade, DFCareer.Skills.Stealth, DFCareer.Skills.Streetwise, DFCareer.Skills.Swimming } },
-        };
-
         private List<DFCareer.Skills> GetTrainingSkills()
         {
             switch (npcService)

@@ -190,7 +190,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 }
                 else
                 {
-                    throw new Exception(string.Format("Could not find place name in data table: '{0};", name));
+                    throw new Exception(string.Format("Could not find place name in data table: '{0}'", name));
                 }
 
                 // Handle place by scope
