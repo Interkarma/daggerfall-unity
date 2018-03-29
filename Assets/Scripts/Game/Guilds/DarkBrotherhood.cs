@@ -11,6 +11,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
 using System;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.Guilds
 {
@@ -21,7 +22,7 @@ namespace DaggerfallWorkshop.Game.Guilds
         public const string InitiationQuestName = "L0A01L00";
 
         protected const int WelcomeMsgId = 5292;    // Not used AFAIK
-        protected const int PromotionMsgId = 5292;  // Can't find a better general promotion msg
+        protected const int PromotionMsgId = 666;   // How appropriate!
         protected const int PromotionBuyPotionsId = 6611;
         protected const int PromotionMakePotionsId = 6612;
         protected const int PromotionSoulGemsId = 6613;
@@ -29,6 +30,8 @@ namespace DaggerfallWorkshop.Game.Guilds
         protected const int BribesJudgeId = 551;
 
         private const int factionId = 108;
+
+        private DFLocation revealedDungeon;
 
         #endregion
 
@@ -108,6 +111,7 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         private int GetPromotionMsgId(int rank)
         {
+            revealedDungeon = GameManager.Instance.PlayerGPS.DiscoverRandomLocation();
             switch (rank)
             {
                 case 1:
@@ -191,6 +195,33 @@ namespace DaggerfallWorkshop.Game.Guilds
             if (buildingDirectory)
                 foreach (BuildingSummary building in buildingDirectory.GetBuildingsOfFaction(factionId))
                     GameManager.Instance.PlayerGPS.DiscoverBuilding(building.buildingKey, GetGuildName());
+        }
+
+        #endregion
+
+
+        #region Macro Handling
+
+        public override MacroDataSource GetMacroDataSource()
+        {
+            return new DarkBrotherhoodMacroDataSource(this);
+        }
+
+        /// <summary>
+        /// MacroDataSource context sensitive methods for Dark Brotherhood.
+        /// </summary>
+        protected class DarkBrotherhoodMacroDataSource : GuildMacroDataSource
+        {
+            private DarkBrotherhood parent;
+            public DarkBrotherhoodMacroDataSource(DarkBrotherhood guild) : base(guild)
+            {
+                parent = guild;
+            }
+
+            public override string Dungeon()
+            {
+                return parent.revealedDungeon.Name;
+            }
         }
 
         #endregion

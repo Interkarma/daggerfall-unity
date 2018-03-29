@@ -306,7 +306,7 @@ namespace DaggerfallWorkshop.Game.Guilds
         }
 
         /// <summary>
-        /// MacroDataSource context sensitive methods for temples.
+        /// MacroDataSource context sensitive methods for knightly orders.
         /// </summary>
         protected class OrderMacroDataSource : GuildMacroDataSource
         {

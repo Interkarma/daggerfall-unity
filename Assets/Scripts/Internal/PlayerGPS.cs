@@ -664,6 +664,25 @@ namespace DaggerfallWorkshop
             discoveredLocations.Add(mapPixelID, dl);
         }
 
+        public DFLocation DiscoverRandomLocation()
+        {
+            // Get all undiscovered locations that exist in the current region
+            List<int> undiscoveredLocIdxs = new List<int>();
+            for (int i = 0; i < currentRegion.LocationCount; i++)
+                if (currentRegion.MapTable[i].Discovered == false && !HasDiscoveredLocation(currentRegion.MapTable[i].MapId & 0x000fffff))
+                    undiscoveredLocIdxs.Add(i);
+
+            // If there aren't any left, there's nothing to find. Classic will just keep returning a particular location over and over if this happens.
+            if (undiscoveredLocIdxs.Count == 0)
+                return new DFLocation();
+
+            // Choose a random location and discover it
+            int locIdx = UnityEngine.Random.Range(0, undiscoveredLocIdxs.Count);
+            DFLocation location = dfUnity.ContentReader.MapFileReader.GetLocation(CurrentRegionIndex, undiscoveredLocIdxs[locIdx]);
+            DiscoverLocation(CurrentRegionName, location.Name);
+            return location;
+        }
+
         /// <summary>
         /// Discover the specified building in current location.
         /// Does nothing if player not inside a location or building already discovered.

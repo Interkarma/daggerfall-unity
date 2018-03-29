@@ -11,6 +11,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
 using System;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.Guilds
 {
@@ -29,6 +30,8 @@ namespace DaggerfallWorkshop.Game.Guilds
         protected const int BribesJudgeId = 550;
 
         private const int factionId = 42;
+
+        private DFLocation revealedDungeon;
 
         #endregion
 
@@ -103,8 +106,10 @@ namespace DaggerfallWorkshop.Game.Guilds
                 case 4:
                     return PromotionSpymasterId;
                 case 6:
+                    revealedDungeon = GameManager.Instance.PlayerGPS.DiscoverRandomLocation();
                     return PromotionMap1Id;
                 case 8:
+                    revealedDungeon = GameManager.Instance.PlayerGPS.DiscoverRandomLocation();
                     return PromotionMap2Id;
                 default:
                     return PromotionMsgId;
@@ -175,6 +180,33 @@ namespace DaggerfallWorkshop.Game.Guilds
             if (buildingDirectory)
                 foreach (BuildingSummary building in buildingDirectory.GetBuildingsOfFaction(factionId))
                     GameManager.Instance.PlayerGPS.DiscoverBuilding(building.buildingKey, GetGuildName());
+        }
+
+        #endregion
+
+
+        #region Macro Handling
+
+        public override MacroDataSource GetMacroDataSource()
+        {
+            return new ThievesGuildMacroDataSource(this);
+        }
+
+        /// <summary>
+        /// MacroDataSource context sensitive methods for Thieves Guild.
+        /// </summary>
+        protected class ThievesGuildMacroDataSource : GuildMacroDataSource
+        {
+            private ThievesGuild parent;
+            public ThievesGuildMacroDataSource(ThievesGuild guild) : base(guild)
+            {
+                parent = guild;
+            }
+
+            public override string Dungeon()
+            {
+                return parent.revealedDungeon.Name;
+            }
         }
 
         #endregion

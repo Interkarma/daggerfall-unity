@@ -58,7 +58,7 @@ namespace DaggerfallWorkshop.Game.Guilds
         }
 
         /// <summary>
-        /// Get the faction id for a guild group.
+        /// Get the faction id for a guild group. (used for non-member quests)
         /// Returns 0 for HolyOrder and KnightlyOrder since they have variants each with different faction ids.
         /// </summary>
         public int GetGuildFactionId(FactionFile.GuildGroups guildGroup)
@@ -74,6 +74,12 @@ namespace DaggerfallWorkshop.Game.Guilds
                 case FactionFile.GuildGroups.HolyOrder:
                 case FactionFile.GuildGroups.KnightlyOrder:
                     return 0;
+
+                case FactionFile.GuildGroups.GeneralPopulace:
+                    return ThievesGuild.FactionId;
+
+                case FactionFile.GuildGroups.DarkBrotherHood:
+                    return DarkBrotherhood.FactionId;
 
                 default:
                     Type guildType;
