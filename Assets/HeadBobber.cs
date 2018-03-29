@@ -22,7 +22,7 @@ namespace DaggerfallWorkshop.Game
             get { return bobStyle; }
         }
         private PlayerMotor playerMotor;
-        private Rigidbody RigidB;
+        //private Rigidbody RigidB;
         private Camera mainCamera;
 
         public Vector3 restPos; //local position where your camera would rest when it's not bobbing.
@@ -46,6 +46,7 @@ namespace DaggerfallWorkshop.Game
             restPos = mainCamera.transform.localPosition;
             
             bobScalar = 1.0f;
+            bobSpeed = 1.20f;
         }
 
         void Update()
@@ -75,30 +76,27 @@ namespace DaggerfallWorkshop.Game
 
         public virtual void SetParamsForBobbingStyle()
         {
+            
             switch (bobStyle)
             {
                 // TODO: adjust bob speed to match player footstep sound better
                 case BobbingStyle.Crouching:
                     // lot of swaying side to side as shifting legs and pushing up and off each leg
-                    bobSpeed = 3.25f;
                     bobXAmount = 0.08f * bobScalar;
                     bobYAmount = 0.07f * bobScalar;
                     break;
                 case BobbingStyle.Walking:
                     // More y than x because walking is pretty balanced side to side, just head bounce
-                    bobSpeed = 6.50f;
                     bobXAmount = 0.045f * bobScalar;
                     bobYAmount = 0.062f * bobScalar;
                     break;
                 case BobbingStyle.Running:
                     // both legs pushing off ground and lots of leaning side to side.
-                    bobSpeed = 6.50f;
                     bobXAmount = 0.09f * bobScalar;
                     bobYAmount = 0.11f * bobScalar;
                     break;
                 case BobbingStyle.Horse:
                     // horse has 4 legs: balanced, most force pushes player up.
-                    bobSpeed = 6.60f;
                     bobXAmount = 0.03f * bobScalar;
                     bobYAmount = 0.115f * bobScalar;
                     break;
@@ -111,10 +109,13 @@ namespace DaggerfallWorkshop.Game
         public virtual Vector3 getNewPos()
         { 
             Vector3 newPosition;
+            float velocity = new Vector2(playerMotor.MoveDirection.x, playerMotor.MoveDirection.z).magnitude;
 
             if (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0 && playerMotor.IsGrounded) //moving
             {
-                timer += bobSpeed * Time.deltaTime;
+                timer += velocity * bobSpeed * Time.deltaTime;
+
+                //Debug.Log("Velocity: " + velocity);
 
                 beginTransitionTimer += bobSpeed * Time.deltaTime;
                 newPosition = PlotPath();
@@ -132,9 +133,12 @@ namespace DaggerfallWorkshop.Game
                 newPosition = InterpolateEndTransition();
             }
 
-            if (timer > Mathf.PI * 2) //completed a full cycle on the unit circle. Reset to 0 to avoid bloated values.
+            if (timer > Mathf.PI * 2 ) //completed a full cycle on the unit circle. Reset to 0 to avoid bloated values.
+            {
+                //Debug.Log("<============Cycle END=============>");
                 timer = 0;
-            // no reset for beginTransitionTimer until player releases movement buttons
+            }
+            // no reset here for beginTransitionTimer, player needs to release movement buttons first
 
             return newPosition;
         }
@@ -147,14 +151,13 @@ namespace DaggerfallWorkshop.Game
         public Vector3 InterpolateEndTransition() // interpolates a gradual path from moving to not moving.
         {
             float t = transitionSpeed * Time.deltaTime;
-            Debug.Log(t);
             return new Vector3(Mathf.Lerp(camPos.x, restPos.x, t), Mathf.Lerp(camPos.y, restPos.y, t), Mathf.Lerp(camPos.z, restPos.z, t)); //transition smoothly from walking to stopping.
         }
 
         public Vector3 InterpolateBeginTransition() // interpolates a gradual path from not moving to moving.
         {
-            float t = 0.5f; // transitionSpeed * Time.deltaTime;
-            return new Vector3(Mathf.LerpAngle(camPos.x, restPos.x, t), Mathf.Lerp(camPos.y, restPos.y, t), Mathf.Lerp(camPos.z, restPos.z, t)); //transition smoothly from walking to stopping.
+            float t = transitionSpeed * Time.deltaTime; ; // transitionSpeed * Time.deltaTime;
+            return new Vector3(Mathf.Lerp(camPos.x, restPos.x, t), Mathf.Lerp(camPos.y, restPos.y, t), Mathf.Lerp(camPos.z, restPos.z, t)); //transition smoothly from walking to stopping.
         }
 
 
