@@ -70,7 +70,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             mainPanel                       = DaggerfallUI.AddPanel(NativePanel, AutoSizeModes.None);
             mainPanel.BackgroundTexture     = background;
-            mainPanel.Size                  = new Vector2(background.width, background.height);
+            mainPanel.Size                  = new Vector2(225, 181);
             mainPanel.HorizontalAlignment   = HorizontalAlignment.Center;
             mainPanel.VerticalAlignment     = VerticalAlignment.Middle;
 

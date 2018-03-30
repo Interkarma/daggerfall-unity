@@ -82,7 +82,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             mainPanel                       = new Panel();
             mainPanel.BackgroundTexture     = nativeTexture;
-            mainPanel.Size                  = new Vector2(nativeTexture.width, nativeTexture.height);
+            mainPanel.Size                  = new Vector2(259, 164);
             mainPanel.HorizontalAlignment   = HorizontalAlignment.Center;
             mainPanel.VerticalAlignment     = VerticalAlignment.Middle;
             mainPanel.Name                  = "main_panel";
