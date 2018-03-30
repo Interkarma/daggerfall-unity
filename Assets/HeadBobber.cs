@@ -117,7 +117,7 @@ namespace DaggerfallWorkshop.Game
 
                 //Debug.Log("Velocity: " + velocity);
 
-                beginTransitionTimer += bobSpeed * Time.deltaTime;
+                beginTransitionTimer += velocity * bobSpeed * Time.deltaTime;
                 newPosition = PlotPath();
 
                 if (beginTransitionTimer <= Mathf.PI / 2)
