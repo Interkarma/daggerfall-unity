@@ -1042,8 +1042,42 @@ namespace DaggerfallWorkshop.Game
 
         public DaggerfallMessageBox CreateHealthStatusBox(IUserInterfaceWindow previous = null)
         {
+            const int youAreHealthyID = 18;
+
             DaggerfallMessageBox healthBox = new DaggerfallMessageBox(uiManager, previous);
-            healthBox.SetTextTokens(GameManager.Instance.PlayerEntity.Disease.GetMessageId());
+
+            // Show "You are healthy." if there are no diseases
+            if (GameManager.Instance.PlayerEntity.Diseases.Count == 0)
+                healthBox.SetTextTokens(youAreHealthyID);
+            else
+            {
+                // Get disease descriptions
+                TextFile.Token[] tokens = null;
+                foreach (DaggerfallDisease disease in GameManager.Instance.PlayerEntity.Diseases)
+                {
+                    if (disease.HasFinishedIncubation())
+                    {
+                        int id = disease.GetMessageId();
+                        if (tokens == null)
+                            tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(id);
+                        else // Concatenate descriptions for multiple diseases with a new line in-between
+                        {
+                            TextFile.Token[] tokens2 = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(id);
+                            TextFile.Token[] newTokens = new TextFile.Token[tokens.Length + tokens2.Length + 1];
+                            tokens.CopyTo(newTokens, 0);
+                            newTokens[tokens.Length] = TextFile.NewLineToken;
+                            tokens2.CopyTo(newTokens, tokens.Length + 1);
+                            tokens = newTokens;
+                        }
+                    }
+                }
+
+                // If no diseases were done with incubation, show "You are healthy."
+                if (tokens == null)
+                    healthBox.SetTextTokens(youAreHealthyID);
+                else
+                    healthBox.SetTextTokens(tokens);
+            }
             healthBox.ClickAnywhereToClose = true;
             return healthBox;
         }
