@@ -351,7 +351,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Refresh();
 
             // Warns player if they have a disease
-            if (GameManager.Instance.PlayerEntity.Disease.IsDiseased())
+            if (GameManager.Instance.PlayerEntity.Diseases.Count != 0)
             {
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
                 TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(1010);

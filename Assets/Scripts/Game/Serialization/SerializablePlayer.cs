@@ -141,7 +141,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             data.playerEntity.regionData = entity.RegionData;
             data.playerEntity.rentedRooms = entity.RentedRooms.ToArray();
-            data.playerEntity.disease = entity.Disease.GetSaveData();
+            data.playerEntity.diseases = entity.Diseases.ToArray();
 
             // Store player position data
             data.playerPosition = GetPlayerPositionData();
@@ -252,7 +252,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             entity.SetCurrentLevelUpSkillSum();
 
             entity.RentedRooms = (data.playerEntity.rentedRooms != null) ? data.playerEntity.rentedRooms.ToList() : new List<RoomRental_v1>();
-            entity.Disease.RestoreSaveData(data.playerEntity.disease);
+            entity.Diseases = (data.playerEntity.diseases != null) ? data.playerEntity.diseases.ToList() : new List<DaggerfallDisease>();
 
             // Set time tracked in player entity
             entity.LastGameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
