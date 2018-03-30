@@ -668,6 +668,16 @@ namespace DaggerfallWorkshop.Game.Questing
                     homePlaceSymbol = home.Symbol.Clone();
                     ParentQuest.AddResource(home);
                 }
+                else if (p1 == 0 && p2 >= 0)
+                {
+                    // Handle standard building types
+                    string buildingSymbol = string.Format("_{0}_building_", Symbol.Name);
+                    string buildingType = QuestMachine.Instance.PlacesTable.GetKeyForValue("p2", p2.ToString());
+                    string source = string.Format("Place {0} remote {1}", buildingSymbol, buildingType);
+                    Place building = new Place(ParentQuest, source);
+                    homePlaceSymbol = building.Symbol.Clone();
+                    ParentQuest.AddResource(building);
+                }
             }
 
             // Get faction data

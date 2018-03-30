@@ -744,7 +744,7 @@ namespace DaggerfallWorkshop.Game
             DFLocation.BuildingTypes type = buildingSummary.BuildingType;
             Debug.LogFormat("type: {0}, factionId: {1}", type, buildingSummary.FactionId);
 
-            // Handle guild halls & TG/DB houses
+            // Handle guild halls
             if (type == DFLocation.BuildingTypes.GuildHall)
             {
                 Guild guild = GameManager.Instance.GuildManager.GetGuild(buildingSummary.FactionId);
@@ -758,6 +758,7 @@ namespace DaggerfallWorkshop.Game
             }
             // Handle House1 through House4
             // TODO: Figure out the rest of house door calculations.
+            // TODO: Need to lock doors if quest target for stealing, and unlock for other quests.
             else if (type >= DFLocation.BuildingTypes.House1 && type <= DFLocation.BuildingTypes.House4
                 && DaggerfallUnity.Instance.WorldTime.Now.IsDay)
             {

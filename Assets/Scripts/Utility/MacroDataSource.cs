@@ -29,6 +29,11 @@ namespace DaggerfallWorkshop.Utility
             throw new NotImplementedException();
         }
 
+        public virtual string Dungeon()
+        {   // %dng
+            throw new NotImplementedException();
+        }
+
         public virtual string Amount()
         {   // %a
             throw new NotImplementedException();

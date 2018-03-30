@@ -5,6 +5,7 @@
 -- Repute: 01
 -- QuestId: 0
 -- Edited for Daggerfall Unity by Jay_H
+-- Temp changes to allow joining DB made by Hazelnut
 Messages: 21
 Quest: L0A01L00
 -- Message panels
@@ -39,13 +40,13 @@ QuestLogEntry:  [1010]
  I had a secret meeting with
  _apothecary_, a member of the
  Dark Brotherhood, the guild of
- assassins, in ___shop_.
+ assassins, in ___apothecary_.
  I was given a vial of _poison_
  to secretly put into the wine of
  _npc_ of _mansion_,
  in __mansion_.  According to
  _apothecary_, if I then go see
- _darkbmember_ in ___darkbhood_,
+ _darkbmember_ in ___darkbmember_,
  I will become a member of the Dark
  Brotherhood. I have =traveltime_ days to
  reach him, or the Brotherhood will
@@ -93,7 +94,7 @@ Message:  1015
 <ce>                        _mansion_ of __mansion_.
 <ce>               You have =traveltime_ days to do this and
 <ce>                       report to _darkbmember_ in
-<ce>                     ___darkbhood_. The blessings
+<ce>                     ___darkbmember_. The blessings
 <ce>                       of Mephala upon you, %pcn.
 
 Message:  1019
@@ -109,7 +110,7 @@ Message:  1020
     The Dark Brotherhood has been watching
  you. You have slain without sanction several
  times. You must now join us, or be counted
- as our foe. Travel to ___shop_
+ as our foe. Travel to ___apothecary_
  in %reg and see _apothecary_,
  who will give you further instructions.
  
@@ -144,8 +145,6 @@ Person _apothecary_ face 144 group Chemist
 Person _npc_ face 1 group Resident1
 
 Place _mansion_ remote house1
-Place _shop_ remote apothecary
-Place _darkbhood_ remote house2
 
 Clock _traveltime_ 14.00:00 0 flag 1 range 2 5
 Clock _S.01_ 30.00:00 0 flag 1 range 1 4
@@ -160,8 +159,6 @@ Foe _F.02_ is 2 Nightblade
 	log 1012 step 0 
 	get item _letter_ 
 	say 1011 
-                place npc _apothecary_ at _shop_
-                place npc _darkbmember_ at _darkbhood_
 
 _traveltime_ task:
 	change repute with _darkbmember_ by -35 
@@ -173,19 +170,25 @@ _S.02_ task:
 	pc at _mansion_ set _S.08_ 
 	place item decanter at _mansion_ 
 	add dialog for location _mansion_ person _darkbmember_ 
-	start timer _traveltime_ 
-                stop timer _S.01_
+	start timer _traveltime_
+    stop timer _S.01_
 	log 1010 step 1 
 	get item _poison_ 
 	say 1015 
 
 _S.03_ task:
+    when hasDecanter and hasPoison
 	give item _poison_ to _F.00_ 
 	say 1019 
 
+variable hasDecanter
+variable hasPoison
+
 _S.04_ task:
 	clicked item decanter 
-	have decanter and _poison_ do _S.03_ 
+--	have decanter and _poison_ do _S.03_
+    have decanter set hasDecanter
+    have poison set hasPoison
 	clear _S.11_ 
 
 _S.05_ task:
@@ -215,7 +218,10 @@ _S.09_ task:
 variable _S.10_
 _S.11_ task:
 	dropped decanter at _mansion_ 
-	clear _S.04_ 
+	clear _S.04_
+    -- End the quest here until quest system supports finding _darkbmember_
+    give pc nothing
+    end quest
 
 _delay_ task:
 	end quest 

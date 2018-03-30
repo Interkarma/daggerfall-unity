@@ -3,7 +3,7 @@
 
 -- name:        filename of QRC txt file
 -- group:       guild group from FactionFile.GuildGroups enum, or ?quest giver type?
--- membership:  N=non-member, M=member, T=Akatosh, A=Arkay, D=Dibella, J=Julianos, K=Kynareth, R=Mara, S=Stendarr, Z=Zenithar
+-- membership:  N=non-member, M=member, P=prospect, T=Akatosh, A=Arkay, D=Dibella, J=Julianos, K=Kynareth, R=Mara, S=Stendarr, Z=Zenithar
 -- minRep:      minimum reputation required to be offered the quest (units can use X wildcard)
 -- notes:
 -   "reward bug" is a script error where reward is given before quest completed
@@ -85,7 +85,7 @@ I0B00Y00, HolyOrder, S, 0, Passed.
 J0B00Y00, HolyOrder, Z, 0, Passed.
 
 -- Classic: Thieves Guild
-O0A0AL00, GeneralPopulace, N, 0, Passed. Set guild member to spawn in remote random; not sure if classic.
+O0A0AL00, GeneralPopulace, P, 0, Passed. Set guild member to spawn in remote random; not sure if classic.
 -O0B00Y00, GeneralPopulace, M, 0, Apparently an exact copy of O0B10Y00.
 O0B00Y01, GeneralPopulace, M, 0, Passed.
 -O0B00Y11, GeneralPopulace, M, 0, FAILED.
@@ -102,7 +102,10 @@ O0B2XY09, GeneralPopulace, M, 2X, Passed.
 O0B2XY10, GeneralPopulace, M, 2X, Passed.
 
 -- Classic: Dark Brotherhood
--L0A01L00, DarkBrotherHood, N, 0, FAILED, needs action support at mixing poison and decanter. Set quest timers as fixed 14 and 30 days to allow completion. Set 30 day timer to stop when 14 day timer begins for fairness.
+-L0A01L00, DarkBrotherHood, P, 0, FAILED, needs action support at mixing poison and decanter. (worked around this for now)
+- Set quest timers as fixed 14 and 30 days to allow completion. Set 30 day timer to stop when 14 day timer begins for fairness.
+- AddDialogLinkForQuestInfoResource() could not find a quest info resource with name Mastersly Manor
+- Unable to find DB member to finish quest, so changed to finish after poisoning decanter
 L0B00Y00, DarkBrotherHood, M, 0, Passed
 L0B00Y01, DarkBrotherHood, M, 0, Passed.
 L0B00Y02, DarkBrotherHood, M, 0, Passed. Various undefined names. Quest timer is tight due to multiple remote locations.

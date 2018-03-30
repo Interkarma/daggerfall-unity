@@ -23,6 +23,7 @@ using DaggerfallWorkshop.Utility;
 using UnityEngine;
 using System;
 using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Game.Guilds;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
@@ -74,6 +75,7 @@ namespace DaggerfallWorkshop.Game.Entity
         protected uint timeForDarkBrotherhoodLetter = 0;
         protected int thievesGuildRequirementTally = 0;
         protected int darkBrotherhoodRequirementTally = 0;
+        private const int InviteSent = 100;
 
         protected uint timeToBecomeVampireOrWerebeast = 0;
         protected uint lastTimePlayerAteOrDrankAtTavern = 0;
@@ -91,8 +93,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public const int SwimmingFatigueLoss = 44;
 
         private float classicUpdateTimer = 0f;
-        public const float ClassicUpdateInterval = 0.0625f; // Update every 1/16 of a second. An approximation of classic's update loop, which
-                                                            // varies with framerate.
+        public const float ClassicUpdateInterval = 0.0625f; // Update every 1/16 of a second. An approximation of classic's update loop, which varies with framerate.
         private int breathUpdateTally = 0;
 
         private int JumpingFatigueLoss = 11;        // According to DF Chronicles and verified in classic
@@ -337,7 +338,7 @@ namespace DaggerfallWorkshop.Game.Entity
             if (isResting)
                 isResting = false;
 
-            //HandleStartingCrimeGuildQuests(Entity as PlayerEntity);
+            HandleStartingCrimeGuildQuests();
         }
 
         public void IntermittentEnemySpawn(uint Minutes)
@@ -632,15 +633,11 @@ namespace DaggerfallWorkshop.Game.Entity
         /// </summary>
         public void TallyCrimeGuildRequirements(bool thievingCrime, byte amount)
         {
-            // TODO: all disabled until ready to have TG/DB quests active in DFU
-            if (thievingCrime || !thievingCrime)
-                return;
-
             if (thievingCrime)
             {
                 if (timeForThievesGuildLetter == 0)
                 {
-                    if (thievesGuildRequirementTally != 100) // Tally is set to 100 when the thieves guild quest line has already started
+                    if (thievesGuildRequirementTally != InviteSent) // Tally is set to 100 when the thieves guild quest line has already started
                     {
                         thievesGuildRequirementTally += amount;
                         if (thievesGuildRequirementTally >= 10)
@@ -655,7 +652,7 @@ namespace DaggerfallWorkshop.Game.Entity
             {
                 if (timeForDarkBrotherhoodLetter == 0)
                 {
-                    if (darkBrotherhoodRequirementTally != 100) // Tally is set to 100 when the thieves guild quest line has already started
+                    if (darkBrotherhoodRequirementTally != InviteSent) // Tally is set to 100 when the thieves guild quest line has already started
                     {
                         darkBrotherhoodRequirementTally += amount;
                         if (darkBrotherhoodRequirementTally >= 15)
@@ -856,23 +853,23 @@ namespace DaggerfallWorkshop.Game.Entity
 
         void HandleStartingCrimeGuildQuests()
         {
-            if (thievesGuildRequirementTally != 100
+            if (thievesGuildRequirementTally != InviteSent
                 && timeForThievesGuildLetter > 0
                 && timeForThievesGuildLetter < DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime()
                 && !GameManager.Instance.PlayerGPS.GetComponent<PlayerEnterExit>().IsPlayerInside)
             {
-                thievesGuildRequirementTally = 100;
+                thievesGuildRequirementTally = InviteSent;
                 timeForThievesGuildLetter = 0;
-                Questing.QuestMachine.Instance.InstantiateQuest("O0A0AL00");
+                Questing.QuestMachine.Instance.InstantiateQuest(ThievesGuild.InitiationQuestName, ThievesGuild.FactionId);
             }
-            if (darkBrotherhoodRequirementTally != 100
+            if (darkBrotherhoodRequirementTally != InviteSent
                 && timeForDarkBrotherhoodLetter > 0
                 && timeForDarkBrotherhoodLetter < DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime()
                 && !GameManager.Instance.PlayerGPS.GetComponent<PlayerEnterExit>().IsPlayerInside)
             {
-                darkBrotherhoodRequirementTally = 100;
+                darkBrotherhoodRequirementTally = InviteSent;
                 timeForDarkBrotherhoodLetter = 0;
-                Questing.QuestMachine.Instance.InstantiateQuest("L0A01L00");
+                Questing.QuestMachine.Instance.InstantiateQuest(DarkBrotherhood.InitiationQuestName, DarkBrotherhood.FactionId);
             }
         }
 

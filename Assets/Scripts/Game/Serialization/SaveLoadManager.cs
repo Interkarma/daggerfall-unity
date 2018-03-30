@@ -1026,13 +1026,14 @@ namespace DaggerfallWorkshop.Game.Serialization
             else
                 hasExteriorDoors = true;
 
-            // Restore building summary & house ownership early for interior layout code
+            // Restore building summary, house ownership, and guild membership early for interior layout code
             if (saveData.playerData.playerPosition.insideBuilding)
             {
                 playerEnterExit.BuildingDiscoveryData = saveData.playerData.playerPosition.buildingDiscoveryData;
                 playerEnterExit.IsPlayerInsideOpenShop = saveData.playerData.playerPosition.insideOpenShop;
                 if (saveData.bankDeeds != null)
                     RestoreHousesData(saveData.bankDeeds.houses);
+                GameManager.Instance.GuildManager.RestoreMembershipData(saveData.playerData.guildMemberships);
             }
 
             // Restore faction data to player entity

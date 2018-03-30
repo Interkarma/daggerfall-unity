@@ -329,8 +329,8 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Restore pre boarding ship position
             transportManager.BoardShipPosition = data.boardShipPosition;
 
-            // Restore guild memberships
-            GameManager.Instance.GuildManager.RestoreMembershipData(data.guildMemberships);
+            // Restore guild memberships - now done early in SaveLoadManager, not repeating here
+            //GameManager.Instance.GuildManager.RestoreMembershipData(data.guildMemberships);
         }
 
         public void RestorePosition(PlayerPositionData_v1 positionData)

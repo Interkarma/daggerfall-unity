@@ -72,7 +72,7 @@ namespace DaggerfallWorkshop.Utility
             { "%dat", Date }, // Date
             { "%di", LocationDirection },  // Direction
             { "%dip", null }, // Days in prison
-            { "%dng", null }, // Dungeon
+            { "%dng", Dungeon }, // Dungeon
             { "%dts", null }, // Daedra
             { "%dwr", RoomHoursLeft }, // Hours with room remaining.
             { "%ef", null },  // Local shop name
@@ -688,6 +688,11 @@ namespace DaggerfallWorkshop.Utility
         private static string FactionOrderName(IMacroContextProvider mcp)
         {   // %fon
             return mcp.GetMacroDataSource().FactionOrderName();
+        }
+
+        public static string Dungeon(IMacroContextProvider mcp)
+        {   // %dng
+            return mcp.GetMacroDataSource().Dungeon();
         }
 
         private static string Amount(IMacroContextProvider mcp)
