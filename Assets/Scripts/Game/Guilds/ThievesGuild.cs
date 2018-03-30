@@ -116,6 +116,13 @@ namespace DaggerfallWorkshop.Game.Guilds
             }
         }
 
+        protected override int CalculateNewRank(PlayerEntity playerEntity)
+        {
+            // Thieves guild never expel members (I assume at some point they 'retire' you instead!)
+            int newRank = base.CalculateNewRank(playerEntity);
+            return (newRank < 0) ? 0 : newRank;
+        }
+
         #endregion
 
         #region Benefits

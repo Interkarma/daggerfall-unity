@@ -214,7 +214,11 @@ namespace DaggerfallWorkshop.Game.Questing
             List<QuestData> guildQuests;
             if (guilds.TryGetValue(guildGroup, out guildQuests))
             {
+                // Modifications for Temple dual membership status
                 MembershipStatus tplMemb = (guildGroup == FactionFile.GuildGroups.HolyOrder && status != MembershipStatus.Nonmember) ? MembershipStatus.Member : status;
+                // Underworld guilds don't expel and continue to offer std quests below zero reputation
+                rep = ((guildGroup == FactionFile.GuildGroups.DarkBrotherHood || guildGroup == FactionFile.GuildGroups.GeneralPopulace) && rep < 0) ? 0 : rep;
+
                 List<QuestData> pool = new List<QuestData>();
                 foreach (QuestData quest in guildQuests)
                 {
