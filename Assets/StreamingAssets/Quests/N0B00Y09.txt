@@ -4,7 +4,6 @@
 -- Questor: mage
 -- Repute: 0
 -- QuestId: 9
--- Edited for Daggerfall Unity by Jay_H
 Messages: 23
 Quest: N0B00Y09
 -- Message panels
@@ -25,7 +24,7 @@ QuestorOffer:  [1000]
 <ce>              work of the renowned researcher and scholar,
 <ce>                   _scholar_. %g has agreed to donate
 <ce>              some of %g3 research to the Guild if we send
-<ce>                 someone to ___house_ to pick it up.
+<ce>                 someone to ___scholar_ to pick it up.
 <ce>                 Not surprisingly, %g fears Necromancer
 <ce>             intervention. I take it that you're as excited
 <ce>                 about this possibility as I am, %pct?
@@ -38,8 +37,8 @@ RefuseQuest:  [1001]
 
 AcceptQuest:  [1002]
 <ce>                   Grand, just grand. Now, _scholar_
-<ce>                  is staying in ___house_ in a place
-<ce>                    called _house_ for just a few
+<ce>                  is staying in ___scholar_ in a place
+<ce>                    called __scholar_ for just a few
 <ce>              days. The danger is the Necromancers. Those
 <ce>               reprobate spellslingers are interested in
 <ce>                      getting to _scholar_ and %g3
@@ -56,7 +55,7 @@ QuestComplete:  [1004]
 RumorsDuringQuest:  [1005]
 Maybe that _scholar_ is a celebrity to scholar types, but %g's just a =scholar_
 <--->
-It's an honor for ___house_ to host the renowned _scholar_'s visit to %reg.
+It's an honor for ___scholar_ to host the renowned _scholar_'s visit to %reg.
 
 RumorsPostfailure:  [1006]
 The Necromancers will be the dominant magical power in Tamriel in a few years.
@@ -80,18 +79,18 @@ QuestorPostfailure:  [1009]
 QuestLogEntry:  [1010]
 %qdt:
  The Mages Guild of ___qgiver_
- has sent me to ___house_
+ has sent me to ___scholar_
  where _scholar_, a renowned
  scholar, is staying at a place
- called _house_. I am
+ called __scholar_. I am
  to avoid the agents of the Necromancers,
  get _scholar_'s research
  from %g2 and return to the Mages Guild in
  no more than =queston_ days.
 
 Message:  1011
-                                _dbhouse_
-                                 ___dbhouse_
+                                __db_
+                                 ___db_
  
  
  
@@ -104,7 +103,7 @@ Message:  1011
  of the right-minded Mages Guild.
  
      You'll have a lovely bit of gold waiting
- for you here in ___dbhouse_ when you
+ for you here in ___db_ when you
  get here with the notes.
  
  
@@ -122,7 +121,7 @@ Message:  1012
  We can be great help to one another, but you could
  not wish for a worse enemy. When you have
  _scholar_'s research paper, bring it to
- me here at _dbhouse_ in ___dbhouse_.
+ me here at __db_ in ___db_.
  
      Fail not, or the wrath of Mephala, Queen of
  Oblivion be on you.
@@ -198,9 +197,9 @@ _scholar_ is a typical intellectual. No idea of what's going on
 <--->
 _scholar_'s very clever, but %g3 brains sometimes go to %g3 head
 <--->
-Talk to _db_ over in ___dbhouse_ -- %g's been asking about _scholar_ too.
+Talk to _db_ over in ___db_ -- %g's been asking about _scholar_ too.
 <--->
-A =db_ in _dbhouse_ was asking about _scholar_ as well.
+A =db_ in __db_ was asking about _scholar_ as well.
 
 Message:  1018
 <ce>                  What a thoughtful gift. I hope your
@@ -232,15 +231,15 @@ Message:  1020
  I received a threatening letter from
  _db_ of the Dark Brotherhood,
  telling me to bring _scholar_'s
- research paper to _dbhouse_ in
- ___dbhouse_ instead of the Mages Guild.
+ research paper to __db_ in
+ ___db_ instead of the Mages Guild.
 
 Message:  1021
 %qdt:
  _db_ of the Dark Brotherhood
  sent me a letter, congratulating me on my
  guile, and telling me that %g would be at
- a place called _dbhouse_ in ___dbhouse_
+ a place called __db_ in ___db_
  with a gold reward for bringing the
  research paper to %g2 instead of the
  Mages Guild.
@@ -250,6 +249,30 @@ Message:  1022
 <ce>                      hands you a letter and runs
 <ce>                         away into the alleys.
 
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 7 times.
+--               %g2 occurs 4 times.
+--               %g3 occurs 8 times.
+--              %pcf occurs 3 times.
+--              %pcn occurs 1 time.
+--              %pct occurs 7 times.
+--              %qdt occurs 3 times.
+--               %ra occurs 2 times.
+--              %reg occurs 2 times.
+--              =db_ occurs 1 time.
+--         =queston_ occurs 4 times.
+--         =scholar_ occurs 2 times.
+--            ___db_ occurs 13 times.
+--        ___qgiver_ occurs 2 times.
+--       ___scholar_ occurs 4 times.
+--             __db_ occurs 6 times.
+--        __scholar_ occurs 2 times.
+--              _db_ occurs 11 times.
+--          _dbgold_ occurs 2 times.
+--          _qgiver_ occurs 1 time.
+--         _scholar_ occurs 69 times.
 
 QBN:
 Item research1 letter used 1015
@@ -263,22 +286,20 @@ Person _qgiver_ group Questor male
 Person _db_ face 78 faction The_Dark_Brotherhood
 Person _scholar_ factiontype Temple female anyInfo 1017
 
-Place _house_ local house4
-Place _dbhouse_ remote house1
 
 Clock _queston_ 00:00 0 flag 17 range 1 2
 Clock _S.02_ 01:40 13:20
 Clock _S.05_ 06:40 23:20
 
+Foe _hunter_ is Orc_shaman
+
 --	Quest start-up:
 	start timer _queston_ 
 	log 1010 step 0 
-	pick one of _letter_ _S.04_ 
+	pick one of _letter_ _letter_ _S.04_ _S.04_ 
 	repute with _db_ exceeds 10 do _S.00_ 
 	letter34 used do _S.15_ 
 	letter35 used do _S.16_ 
-                place npc _scholar_ at _house_
-                place npc _db_ at _dbhouse_
 
 _S.00_ task:
 	start timer _S.02_ 

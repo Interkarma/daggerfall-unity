@@ -4,7 +4,6 @@
 -- Questor: temple
 -- Repute: 10
 -- QuestId: 7
--- Edited for Daggerfall Unity by Jay_H
 Messages: 12
 Quest: C0B10Y07
 -- Message panels
@@ -15,7 +14,7 @@ QuestorOffer:  [1000]
 <ce>                       __qgiver_ needs you to run
 <ce>                         an errand for us. This
 <ce>                          _religitem_ needs to
-<ce>                       be delivered to ___house_
+<ce>                       be delivered to ___priest_
 <ce>                     within =traveltime_ days. You
 <ce>                       will receive a temple fee
 <ce>                       of _gold_ gold pieces. Can
@@ -29,7 +28,7 @@ RefuseQuest:  [1001]
 AcceptQuest:  [1002]
 <ce>                       Here is the _religitem_.
 <ce>                          Take it to _priest_
-<ce>                      of _house_ in ___house_.
+<ce>                      of __priest_ in ___priest_.
 <ce>                     Oh, I almost forgot to mention
 <ce>                        that a rival temple may
 <ce>                      send out thugs to stop you.
@@ -87,13 +86,13 @@ QuestLogEntry:  [1010]
 %qdt:
  _qgiver_ of __qgiver_ has given me
  a charge to deliver the _religitem_
- to _priest_ in _house_ in
- ___house_. It must be there
+ to _priest_ in __priest_ in
+ ___priest_. It must be there
  within =traveltime_ days.
 
 Message:  1011
 <ce>                         That _religitem_ will
-<ce>                      never make it to _house_.
+<ce>                      never make it to __priest_.
 <ce>                        Instead, I shall deliver
 <ce>                            them your head!
 
@@ -110,7 +109,7 @@ Message:  1011
 --              %qdt occurs 1 time.
 --              %reg occurs 1 time.
 --      =traveltime_ occurs 3 times.
---        ___house_ occurs 6 times.
+--        ___priest_ occurs 6 times.
 --         __qgiver_ occurs 4 times.
 --            _gold_ occurs 2 times.
 --          _priest_ occurs 5 times.
@@ -125,9 +124,8 @@ Person _qgiver_ group Questor male
 Person _priest_ group Group_5.0
 Person _enemy_ face 176 group Local_4.0
 
-Place _house_ remote house1
 
-Clock _traveltime_ 00:00 0 flag 17 range 1 2
+Clock _traveltime_ 00:00 0 flag 1 range 1 2
 
 Foe _thief_ is Thief
 Foe _spellsword_ is Spellsword
@@ -138,7 +136,7 @@ Foe _spellsword_ is Spellsword
 	start timer _traveltime_ 
 	log 1010 step 0 
 	get item _religitem_ 
-	place npc _priest_ at _house_
+	create npc _priest_ 
 
 _traveltime_ task:
 	end quest 
