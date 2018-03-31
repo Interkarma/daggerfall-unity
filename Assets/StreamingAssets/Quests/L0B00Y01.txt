@@ -4,7 +4,6 @@
 -- Questor: Brotherhood
 -- Repute: 0
 -- QuestId: 1
--- Edited for Daggerfall Unity by Jay_H
 Messages: 14
 Quest: L0B00Y01
 -- Message panels
@@ -38,7 +37,7 @@ AcceptQuest:  [1002]
 <ce>                       =target_, having learned
 <ce>                  something during %g3 tenure in the
 <ce>               Brotherhood, has wisely hidden %g2-self,
-<ce>                  but we have a contact in ___tavern_,
+<ce>                  but we have a contact in __snitch_,
 <ce>                        a miserable =snitch_, a
 <ce>                        snitch named _snitch_.
 <ce>                    Talk to %g2 and get =target_'s
@@ -80,8 +79,8 @@ QuestLogEntry:  [1010]
  The Dark Brotherhood in ___qgiver_
  has sent me to a Brother who failed an
  assigment. I am to talk to a squealer
- named _snitch_ in _tavern_
- of ___tavern_ who will tell
+ named _snitch_ in __snitch_
+ of ___snitch_ who will tell
  me whither =target_ has fled.
 
 Message:  1011
@@ -126,7 +125,6 @@ QBN:
 Person _qgiver_ group Questor male
 Person _snitch_ factiontype Temple male
 
-Place _tavern_ remote tavern
 Place _mondung_ remote dungeon
 
 Clock _queston_ 00:00 0 flag 17 range 0 2
@@ -138,7 +136,6 @@ Foe _target_ is Assassin
 	start timer _queston_ 
 	log 1010 step 0 
 	place foe _target_ at _mondung_ 
-                place npc _snitch_ at _tavern_
 
 _queston_ task:
 	end quest 

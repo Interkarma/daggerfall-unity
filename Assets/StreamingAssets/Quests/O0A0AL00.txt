@@ -186,6 +186,7 @@ Person _npc_ face 218 group Group_6.0
 
 Place _mansion_ remote house1
 Place _dungeon_ remote dungeon
+-- Added to allow joining while quest system is still being finished:
 Place _endbuilding_ remote random
 
 Clock _traveltime_ 90.00:01 0 flag 1 range 0 1
