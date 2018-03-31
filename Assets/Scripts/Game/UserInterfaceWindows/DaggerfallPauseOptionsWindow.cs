@@ -89,7 +89,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Button headBobbingButton = DaggerfallUI.AddButton(new Rect(76, 47, 70, 8), optionsPanel);
             headBobbingButton.OnMouseClick += HeadBobbingButton_OnMouseClick;
             headBobbingTick = DaggerfallUI.AddPanel(new Rect(64f, 3.2f, 3.7f, 3.2f), headBobbingButton);
-            headBobbingTick.BackgroundColor = Color.red;
+            headBobbingTick.BackgroundColor = DaggerfallUI.DaggerfallUnityDefaultCheckboxToggleColor;
             headBobbingTick.Enabled = DaggerfallUnity.Settings.HeadBobbing;
         }
 
