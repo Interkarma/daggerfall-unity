@@ -452,8 +452,9 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             // Assign name - some types have their own individual name to use
-            if (factionData.type == (int)FactionFile.FactionTypes.Individual ||
-                factionData.type == (int)FactionFile.FactionTypes.Daedra)
+            if ((factionData.type == (int)FactionFile.FactionTypes.Individual ||
+                factionData.type == (int)FactionFile.FactionTypes.Daedra) &&
+                factionData.id != 0)
             {
                 // Use individual name
                 displayName = factionData.name;
@@ -746,7 +747,7 @@ namespace DaggerfallWorkshop.Game.Questing
         static public FactionFile.FactionData GetFactionData(int factionID)
         {
             FactionFile.FactionData factionData;
-            if (!GameManager.Instance.PlayerEntity.FactionData.GetFactionData(factionID, out factionData))
+            if (!GameManager.Instance.PlayerEntity.FactionData.GetFactionData(factionID, out factionData) && factionID != 0)
                 throw new Exception(string.Format("Could not find faction data for FactionID {0}", factionID));
 
             return factionData;
