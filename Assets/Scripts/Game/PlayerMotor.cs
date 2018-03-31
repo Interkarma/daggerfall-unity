@@ -209,6 +209,14 @@ namespace DaggerfallWorkshop.Game
             set { freezeMotor = value; }
         }
 
+        public Vector3 MoveDirection
+        {
+            get
+            {
+                return moveDirection;
+            }
+        }
+
         void Start()
         {
             controller = GetComponent<CharacterController>();
