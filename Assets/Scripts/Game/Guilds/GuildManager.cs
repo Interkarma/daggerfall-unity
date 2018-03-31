@@ -12,6 +12,7 @@ using System;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Game.Questing;
 
 namespace DaggerfallWorkshop.Game.Guilds
 {
@@ -36,8 +37,28 @@ namespace DaggerfallWorkshop.Game.Guilds
             return false;
         }
 
+        public GuildManager()
+        {
+            // Listen for quest end events which trigger joining TG & DB.
+            QuestMachine.OnQuestEnded += QuestMachine_OnQuestEnded;
+        }
+
+        public void QuestMachine_OnQuestEnded(Quest quest)
+        {
+            if (quest.QuestName == ThievesGuild.InitiationQuestName)
+            {
+                Guild tg = CreateGuildObj(FactionFile.GuildGroups.GeneralPopulace);
+                AddMembership(FactionFile.GuildGroups.GeneralPopulace, tg);
+            }
+            if (quest.QuestName == DarkBrotherhood.InitiationQuestName)
+            {
+                Guild db = CreateGuildObj(FactionFile.GuildGroups.DarkBrotherHood);
+                AddMembership(FactionFile.GuildGroups.DarkBrotherHood, db);
+            }
+        }
+
         /// <summary>
-        /// Get the faction id for a guild group.
+        /// Get the faction id for a guild group. (used for non-member quests)
         /// Returns 0 for HolyOrder and KnightlyOrder since they have variants each with different faction ids.
         /// </summary>
         public int GetGuildFactionId(FactionFile.GuildGroups guildGroup)
@@ -53,6 +74,12 @@ namespace DaggerfallWorkshop.Game.Guilds
                 case FactionFile.GuildGroups.HolyOrder:
                 case FactionFile.GuildGroups.KnightlyOrder:
                     return 0;
+
+                case FactionFile.GuildGroups.GeneralPopulace:
+                    return ThievesGuild.FactionId;
+
+                case FactionFile.GuildGroups.DarkBrotherHood:
+                    return DarkBrotherhood.FactionId;
 
                 default:
                     Type guildType;
@@ -109,6 +136,12 @@ namespace DaggerfallWorkshop.Game.Guilds
 
                 case FactionFile.GuildGroups.KnightlyOrder:
                     return new KnightlyOrder(KnightlyOrder.GetOrder(variant));
+
+                case FactionFile.GuildGroups.GeneralPopulace:
+                    return new ThievesGuild();
+
+                case FactionFile.GuildGroups.DarkBrotherHood:
+                    return new DarkBrotherhood();
 
                 default:
                     Type guildType;
@@ -186,14 +219,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                     }
                 }
             }
-
-            // Thieves guild is general populace / underworld
-            if (guildGroup == FactionFile.GuildGroups.GeneralPopulace && (FactionFile.SocialGroups) factionData.sgroup == FactionFile.SocialGroups.Underworld)
-            {
-                Debug.Log("Theves Guild.");
-            }
-
-            Debug.LogFormat("faction id: {0}, social group: {1}, guild: {2}",
+            Debug.LogFormat("Got guild for faction id: {0}, social group: {1}, guild: {2}",
                 factionId, (FactionFile.SocialGroups)factionData.sgroup, guildGroup);
 
             return guildGroup;

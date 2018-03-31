@@ -4,11 +4,9 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Hazelnut
-// Contributors:    
+// Contributors: Allofich
 
-using DaggerfallConnect;
-using DaggerfallWorkshop.Game.Serialization;
-using System.Collections.Generic;
+using DaggerfallConnect.Save;
 using UnityEngine;
 
 namespace DaggerfallWorkshop.Game.Entity
@@ -81,72 +79,59 @@ namespace DaggerfallWorkshop.Game.Entity
             new DiseaseData( 0,   1,   0,   0,   0,   0,   0,   0,   0,   0,   1,   2,    4,    3,   18), // Wizard Fever
         };
 
-        Diseases diseaseType = Diseases.None;
-        ulong contractedTime = 0;
-        uint incubationTime = 0;
-        public byte daysOfSymptoms = 0;
-        public int totalDamage = 0;
+        public Diseases diseaseType;
+        bool incubationOver = false;
+        byte daysOfSymptomsLeft = 0;
 
-        private const uint baseIncubation = 60 * 60 * 16;    // 16 hours
-
-        private WorldTime worldTime;
-
-        /*private static List<Diseases> affectsHealth = new List<Diseases>
-            { Diseases.BloodRot, Diseases.BrainFever };
-
-        private static Dictionary<Diseases, List<DFCareer.Stats>> affectedStats = new Dictionary<Diseases, List<DFCareer.Stats>>
-        {
-            { Diseases.BloodRot, new List<DFCareer.Stats>() { DFCareer.Stats.Personality, DFCareer.Stats.Willpower } },
-            { Diseases.BrainFever, new List<DFCareer.Stats>() { DFCareer.Stats.Personality, DFCareer.Stats.Willpower } },
-            { Diseases.CalironsCurse, new List<DFCareer.Stats>() { DFCareer.Stats.Strength, DFCareer.Stats.Speed, DFCareer.Stats.Agility } },
-        };*/
-
-        public DaggerfallDisease()
-        {
-            worldTime = DaggerfallUnity.Instance.WorldTime;
-            //WorldTime.OnNewHour += OnNewHourEventHandler;
-        }
-
-        public DaggerfallDisease(Diseases disease) : this()
+        public DaggerfallDisease(Diseases disease)
         {
             diseaseType = disease;
-            contractedTime = worldTime.Now.ToSeconds();
-            incubationTime = CalculateIncubationTime();
 
             // Get index to disease data
-            byte index = (byte)((byte)disease - 100);
+            byte index = (byte)disease;
 
             // Get length of stat-worsening if not cured.
             // If the minimum length of the disease is set to 0xFF, this means stats never stop falling until cured. Otherwise, get a random length.
-            daysOfSymptoms = diseaseData[index].daysOfSymptomsMin;
+            daysOfSymptomsLeft = diseaseData[index].daysOfSymptomsMin;
 
-            if (daysOfSymptoms != 0xFF)
-                daysOfSymptoms = (byte)Random.Range(diseaseData[index].daysOfSymptomsMin, diseaseData[index].daysOfSymptomsMax + 1);
+            if (daysOfSymptomsLeft != 0xFF)
+                daysOfSymptomsLeft = (byte)Random.Range(diseaseData[index].daysOfSymptomsMin, diseaseData[index].daysOfSymptomsMax + 1);
 
             Debug.Log("Contracted " + disease);
         }
 
+        public DaggerfallDisease(DiseaseOrPoisonRecord record)
+        {
+            diseaseType = (Diseases)record.ParsedData.ID;
+
+            if (record.ParsedData.incubationOver == 1)
+                incubationOver = true;
+
+            daysOfSymptomsLeft = (byte)record.ParsedData.daysOfSymptomsLeft;
+        }
+
         public void ApplyDiseaseEffects(PlayerEntity player)
         {
-            // Get index to disease data
-            byte index = (byte)((byte)diseaseType - 100);
-
             // A value of 0xFE for remaining days is used in classic for a disease that has run its course and is no longer
             // damaging stats
-            if (daysOfSymptoms == 0xFE)
+            if (daysOfSymptomsLeft == 0xFE)
                 return;
 
             // Count down remaining days for diseases with limited time.
-            if (daysOfSymptoms != 0xFF && (--daysOfSymptoms == 0))
+            if (daysOfSymptomsLeft != 0xFF && (--daysOfSymptomsLeft == 0))
             {
-                daysOfSymptoms = 0xFE;
+                daysOfSymptomsLeft = 0xFE;
                 // Classic returns here, which is probably a mistake, since it would shave off the final day from the expected number of days
             }
 
-            int damageAmount = Random.Range(diseaseData[index].minDamage, diseaseData[index].maxDamage + 1);
+            // Incubation is over and disease description now shows in status
+            if (!incubationOver)
+                incubationOver = true;
 
-            // Tally damage total. A tally like this seems to be used in classic for reversing stat damage when the disease is cured.
-            totalDamage += damageAmount;
+            // Get index to disease data
+            byte index = (byte)diseaseType;
+
+            int damageAmount = Random.Range(diseaseData[index].minDamage, diseaseData[index].maxDamage + 1);
 
             if (diseaseData[index].STR != 0)
             {
@@ -208,7 +193,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public bool HasFinishedIncubation()
         {
-            if (contractedTime + incubationTime <= DaggerfallUnity.Instance.WorldTime.Now.ToSeconds())
+            if (incubationOver)
                 return true;
             else
                 return false;
@@ -216,53 +201,9 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public Diseases Type { get { return diseaseType; } }
 
-        public bool IsDiseased() { return diseaseType != Diseases.None; }
-
         public int GetMessageId()
         {
-            if (diseaseType == Diseases.None || !HasFinishedIncubation())
-                return 18;
-            else
-                return (int) diseaseType;
+            return (int) diseaseType + 100;
         }
-
-        public DaggerfallDisease_v1 GetSaveData()
-        {
-            return new DaggerfallDisease_v1()
-            {
-                disease = diseaseType,
-                diseaseContractedTime = contractedTime,
-                diseaseInclubationTime = incubationTime,
-                diseaseDaysOfSymptoms = daysOfSymptoms,
-            };
-        }
-
-        public void RestoreSaveData(DaggerfallDisease_v1 data)
-        {
-            if (data != null)
-            {
-                diseaseType = data.disease;
-                contractedTime = data.diseaseContractedTime;
-                incubationTime = data.diseaseInclubationTime;
-                daysOfSymptoms = data.diseaseDaysOfSymptoms;
-            }
-            else
-            {
-                diseaseType = Diseases.None;
-            }
-        }
-
-        private uint CalculateIncubationTime()
-        {
-            int medical = GameManager.Instance.PlayerEntity.Skills.GetLiveSkillValue(DFCareer.Skills.Medical);
-            return (uint) (medical * baseIncubation) / 200;
-        }
-
-        protected virtual void OnNewHourEventHandler()
-        {
-            Debug.Log("Hour...");
-            // doesn't seem to work when resting.
-        }
-            
     }
 }

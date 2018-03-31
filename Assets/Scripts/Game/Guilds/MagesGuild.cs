@@ -22,6 +22,11 @@ namespace DaggerfallWorkshop.Game.Guilds
         protected const int EligibleMsgId = 606;
         protected const int WelcomeMsgId = 5293;
         protected const int PromotionMsgId = 5236;
+        protected const int PromotionLibraryId = 5230;
+        protected const int PromotionMagicItemsId = 5231;
+        protected const int PromotionEnchantId = 5232;
+        protected const int PromotionSummonId = 5233;
+        protected const int PromotionTeleportId = 5233;
 
         private const int factionId = 40;
 
@@ -80,7 +85,24 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public override TextFile.Token[] TokensPromotion(int newRank)
         {
-            return DaggerfallUnity.Instance.TextProvider.GetRSCTokens(PromotionMsgId);
+            return DaggerfallUnity.Instance.TextProvider.GetRandomTokens(GetPromotionMsgId(newRank));
+        }
+
+        private int GetPromotionMsgId(int rank)
+        {
+            switch (rank)
+            {
+                case 2:
+                    return PromotionLibraryId;
+                case 3:
+                    return PromotionMagicItemsId;
+                case 6:
+                    return PromotionSummonId;
+                case 8:
+                    return PromotionTeleportId;
+                default:
+                    return PromotionMsgId;
+            }
         }
 
         #endregion

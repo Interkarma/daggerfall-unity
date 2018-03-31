@@ -541,12 +541,14 @@ namespace DaggerfallWorkshop.Game.Questing
         /// Parse and instantiate a quest from quest name.
         /// </summary>
         /// <param name="questName">Quest name.</param>
+        /// <param name="factionId">Faction id. (optional)</param>
         /// <returns>Quest.</returns>
-        public Quest InstantiateQuest(string questName)
+        public Quest InstantiateQuest(string questName, int factionId = 0)
         {
             Quest quest = ParseQuest(questName);
             if (quest != null)
             {
+                quest.FactionId = factionId;
                 InstantiateQuest(quest);
                 return quest;
             }

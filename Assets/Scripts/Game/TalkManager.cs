@@ -24,6 +24,7 @@ using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Questing;
 using System.Linq;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Game.Player;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -433,7 +434,7 @@ namespace DaggerfallWorkshop.Game
         public void TalkToStaticNPC(StaticNPC targetNPC)
         {
             if (IsNpcOfferingQuest(targetNPC.Data.nameSeed)) {
-                DaggerfallUI.UIManager.PushWindow(new DaggerfallQuestOfferWindow(DaggerfallUI.UIManager, targetNPC, npcsWithWork[targetNPC.Data.nameSeed].socialGroup));
+                DaggerfallUI.UIManager.PushWindow(new DaggerfallQuestOfferWindow(DaggerfallUI.UIManager, npcsWithWork[targetNPC.Data.nameSeed].npc, npcsWithWork[targetNPC.Data.nameSeed].socialGroup));
                 return;
             }
             currentNPCType = NPCType.Static;
@@ -1546,11 +1547,27 @@ namespace DaggerfallWorkshop.Game
                         // Populate potential merchant questors in this building
                         if (populateQuestors)
                         {
+                            PersistentFactionData factions = GameManager.Instance.PlayerEntity.FactionData;
                             DFBlock.RmbBlockPeopleRecord[] buildingNpcs = blocks[index].RmbBlock.SubRecords[i].Interior.BlockPeopleRecords;
                             for (int p = 0; p < buildingNpcs.Length; p++)
                             {
                                 FactionFile.FactionData factionData;
-                                GameManager.Instance.PlayerEntity.FactionData.GetFactionData(buildingNpcs[p].FactionID, out factionData);
+                                // Assuming commoners (people of region) are NPCs with have faction ids of zero.
+                                if (buildingNpcs[p].FactionID == 0)
+                                {
+                                    // Get regional people faction id
+                                    FactionFile.FactionData[] factionsData = factions.FindFactions(
+                                        (int)FactionFile.FactionTypes.People, (int)FactionFile.SocialGroups.Commoners,
+                                        -1, GameManager.Instance.PlayerGPS.CurrentOneBasedRegionIndex);
+                                    if (factionsData.Length == 1)
+                                        factionData = factionsData[0];
+                                    else
+                                        continue;
+                                }
+                                else
+                                {
+                                    factions.GetFactionData(buildingNpcs[p].FactionID, out factionData);
+                                }
                                 FactionFile.SocialGroups socialGroup = (FactionFile.SocialGroups) factionData.sgroup;
                                 if (socialGroup == FactionFile.SocialGroups.Merchants ||
                                     socialGroup == FactionFile.SocialGroups.Commoners ||
@@ -1567,7 +1584,7 @@ namespace DaggerfallWorkshop.Game
                                     StaticNPC.SetLayoutData(ref npcData,
                                                             buildingNpcs[p].XPos, buildingNpcs[p].YPos, buildingNpcs[p].ZPos,
                                                             buildingNpcs[p].Flags,
-                                                            buildingNpcs[p].FactionID,
+                                                            factionData.id,
                                                             buildingNpcs[p].TextureArchive,
                                                             buildingNpcs[p].TextureRecord,
                                                             buildingNpcs[p].Position,
@@ -1590,7 +1607,7 @@ namespace DaggerfallWorkshop.Game
                                         workStats[(int)socialGroup+4]++;
                                         npcsWithWork.Add(npcData.nameSeed, npcWork);
                                         selectedNpcWorkKey = npcData.nameSeed;
-                                        Debug.LogFormat("Added {4} questor: ns={0} bk={1} name={2} building={3}", npcData.nameSeed, buildingSummary.buildingKey, GetQuestorName(), npcWork.buildingName, socialGroup);
+                                        Debug.LogFormat("Added {4} questor: ns={0} bk={1} name={2} building={3} factionId={5}", npcData.nameSeed, buildingSummary.buildingKey, GetQuestorName(), npcWork.buildingName, socialGroup, npcData.factionID);
                                     }
                                 }
                             }

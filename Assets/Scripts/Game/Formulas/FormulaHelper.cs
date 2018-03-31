@@ -877,14 +877,14 @@ namespace DaggerfallWorkshop.Game.Formulas
                 return;
 
             // Player cannot catch diseases at level 1 in classic. Maybe to keep new players from dying at the start of the game.
-            if (!playerEntity.Disease.IsDiseased() && playerEntity.Level != 1)
+            if (playerEntity.Level != 1)
             {
                 // Return if disease resisted
                 if (SavingThrow(DFCareer.EffectFlags.Disease, target) == 0)
                     return;
                 int diseaseChoice = UnityEngine.Random.Range(diseaseList[0], diseaseList.Length);
                 Diseases disease = (Diseases)(diseaseChoice + 100); // Adding 100 to match to enums
-                playerEntity.Disease = new DaggerfallDisease(disease);
+                playerEntity.Diseases.Add(new DaggerfallDisease(disease));
             }
         }
 

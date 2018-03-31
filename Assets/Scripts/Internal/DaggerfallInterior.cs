@@ -20,6 +20,7 @@ using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Banking;
+using DaggerfallWorkshop.Game.Guilds;
 
 namespace DaggerfallWorkshop
 {
@@ -749,6 +750,7 @@ namespace DaggerfallWorkshop
         {
             GameObject node = new GameObject("People Flats");
             node.transform.parent = this.transform;
+            bool isMemberOfBuildingGuild = GameManager.Instance.GuildManager.GetGuild(buildingData.factionID).IsMember();
 
             // Add block flats
             foreach (DFBlock.RmbBlockPeopleRecord obj in recordData.Interior.BlockPeopleRecords)
@@ -784,7 +786,20 @@ namespace DaggerfallWorkshop
                 }
                 // Disable people if player owns this house
                 else if (DaggerfallBankManager.IsHouseOwned(buildingData.buildingKey))
+                {
                     go.SetActive(false);
+                }
+                // Disable people if this is TG/DB house and player is not a member
+                else if (buildingData.buildingType == DFLocation.BuildingTypes.House2 && buildingData.factionID != 0 && !isMemberOfBuildingGuild)
+                {
+                    go.SetActive(false);
+                }
+                // Disable people if they are TG spymaster, but not in a legit TG house (TODO: spot any other instances for TG/DB)
+                else if (buildingData.buildingType == DFLocation.BuildingTypes.House2 && buildingData.factionID == 0 &&
+                         npc.Data.factionID == (int)GuildNpcServices.TG_Spymaster)
+                {
+                    go.SetActive(false);
+                }
             }
         }
 

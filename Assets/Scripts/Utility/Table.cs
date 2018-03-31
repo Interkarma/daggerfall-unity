@@ -228,6 +228,21 @@ namespace DaggerfallWorkshop.Utility
             columns[columnIndex].values[valueIndex] = value;
         }
 
+        public string GetKeyForValue(string columnName, string value)
+        {
+            // Validate columnName
+            if (!HasColumn(columnName))
+                throw new Exception(string.Format("GetKeyForValue() columnName '{0}' does not exist.", columnName));
+
+            int columnIndex = columnIndexDict[columnName];
+
+            for (int i = 0; i < RowCount; i++)
+                if (columns[columnIndex].values[i] == value)
+                    return columns[primaryColumnIndex].values[i];
+            return null;
+        }
+
+
         /// <summary>
         /// Gets column index by name.
         /// </summary>

@@ -43,6 +43,7 @@ namespace DaggerfallWorkshop.Game
         public static Color DaggerfallDefaultTextCursorColor = new Color32(154, 134, 0, 200);
         public static Color DaggerfallUnityDefaultToolTipBackgroundColor = new Color32(64, 64, 64, 210);
         public static Color DaggerfallUnityDefaultToolTipTextColor = new Color32(230, 230, 200, 255);
+        public static Color DaggerfallUnityDefaultCheckboxToggleColor = new Color32(146, 12, 4, 255);
         public static Color DaggerfallUnityNotImplementedColor = new Color(1, 0, 0, 0.5f);
         public static Vector2 DaggerfallDefaultShadowPos = Vector2.one;
 
@@ -1042,8 +1043,42 @@ namespace DaggerfallWorkshop.Game
 
         public DaggerfallMessageBox CreateHealthStatusBox(IUserInterfaceWindow previous = null)
         {
+            const int youAreHealthyID = 18;
+
             DaggerfallMessageBox healthBox = new DaggerfallMessageBox(uiManager, previous);
-            healthBox.SetTextTokens(GameManager.Instance.PlayerEntity.Disease.GetMessageId());
+
+            // Show "You are healthy." if there are no diseases
+            if (GameManager.Instance.PlayerEntity.Diseases.Count == 0)
+                healthBox.SetTextTokens(youAreHealthyID);
+            else
+            {
+                // Get disease descriptions
+                TextFile.Token[] tokens = null;
+                foreach (DaggerfallDisease disease in GameManager.Instance.PlayerEntity.Diseases)
+                {
+                    if (disease.HasFinishedIncubation())
+                    {
+                        int id = disease.GetMessageId();
+                        if (tokens == null)
+                            tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(id);
+                        else // Concatenate descriptions for multiple diseases with a new line in-between
+                        {
+                            TextFile.Token[] tokens2 = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(id);
+                            TextFile.Token[] newTokens = new TextFile.Token[tokens.Length + tokens2.Length + 1];
+                            tokens.CopyTo(newTokens, 0);
+                            newTokens[tokens.Length] = TextFile.NewLineToken;
+                            tokens2.CopyTo(newTokens, tokens.Length + 1);
+                            tokens = newTokens;
+                        }
+                    }
+                }
+
+                // If no diseases were done with incubation, show "You are healthy."
+                if (tokens == null)
+                    healthBox.SetTextTokens(youAreHealthyID);
+                else
+                    healthBox.SetTextTokens(tokens);
+            }
             healthBox.ClickAnywhereToClose = true;
             return healthBox;
         }

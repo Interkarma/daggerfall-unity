@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -35,6 +35,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Texture2D nativeTexture;
         Panel optionsPanel = new Panel();
+        Panel headBobbingTick = new Panel();
 
         public DaggerfallPauseOptionsWindow(IUserInterfaceManager uiManager, IUserInterfaceWindow previousWindow = null)
             :base(uiManager, previousWindow)
@@ -86,7 +87,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Head bobbing
             Button headBobbingButton = DaggerfallUI.AddButton(new Rect(76, 47, 70, 8), optionsPanel);
-            headBobbingButton.BackgroundColor = new Color(1, 0, 0, 0.5f);
+            headBobbingButton.OnMouseClick += HeadBobbingButton_OnMouseClick;
+            headBobbingTick = DaggerfallUI.AddPanel(new Rect(64f, 3.2f, 3.7f, 3.2f), headBobbingButton);
+            headBobbingTick.BackgroundColor = DaggerfallUI.DaggerfallUnityDefaultCheckboxToggleColor;
+            headBobbingTick.Enabled = DaggerfallUnity.Settings.HeadBobbing;
         }
 
         #region Event Handlers
@@ -137,6 +141,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             uiManager.PostMessage(DaggerfallUIMessages.dfuiOpenControlsWindow);
         }
 
+        private void HeadBobbingButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            //Debug.Log("Head Bobbing clicked, position: x: " + position.x + ", y: " + position.y);
+            DaggerfallUnity.Settings.HeadBobbing = !DaggerfallUnity.Settings.HeadBobbing;
+            headBobbingTick.Enabled = DaggerfallUnity.Settings.HeadBobbing;
+            DaggerfallUnity.Settings.SaveSettings();
+        }
         #endregion
     }
 }

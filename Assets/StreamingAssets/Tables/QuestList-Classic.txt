@@ -3,7 +3,7 @@
 
 -- name:        filename of QRC txt file
 -- group:       guild group from FactionFile.GuildGroups enum, or ?quest giver type?
--- membership:  N=non-member, M=member, T=Akatosh, A=Arkay, D=Dibella, J=Julianos, K=Kynareth, R=Mara, S=Stendarr, Z=Zenithar
+-- membership:  N=non-member, M=member, P=prospect, T=Akatosh, A=Arkay, D=Dibella, J=Julianos, K=Kynareth, R=Mara, S=Stendarr, Z=Zenithar
 -- minRep:      minimum reputation required to be offered the quest (units can use X wildcard)
 -- notes:
 -   "reward bug" is a script error where reward is given before quest completed
@@ -44,7 +44,7 @@ N0C00Y13, MagesGuild, N, 0, Passed
 N0B00Y04, MagesGuild, M, 0, Passed
 N0B00Y06, MagesGuild, M, 0, Passed
 -N0B00Y08, MagesGuild, M, 0, FAILED. Needs sleep spell
-N0B00Y09, MagesGuild, M, 0,  Placed scholar in house2; likely not correct. Placed db in house1; not sure if correct. Repute exceeds task not yet functional so invitation always arrives.
+-N0B00Y09, MagesGuild, M, 0, FAILED. Repute exceeds task not yet functional so invitation always arrives.
 -N0B00Y16, MagesGuild, M, 0, FAILED. Needs open spell
 -N0B00Y17, MagesGuild, M, 0, more testing needed
 N0B10Y01, MagesGuild, M, 10, Passed
@@ -58,20 +58,20 @@ N0B30Y15, MagesGuild, M, 30, Passed. Lacks spells on imp
 
 -- Classic: Temples (general)
 -C0C00Y10, HolyOrder, N, 0, FAILED. Player log says "Exception during quest compile: An element with the same key already exists in the dictionary."
-C0C00Y11, HolyOrder, N, 0, Passed. Undefined building variable name: __questgiver_. __qgiver_ resolves to BLANK
--C0C00Y12, HolyOrder, N, 0, FAILED. Needs rumor dialogue links. Undefined building variable name: __questgiver_.
-C0C00Y13, HolyOrder, N, 0, Passed. Undefined building variable name: __questgiver_.
-C0B00Y00, HolyOrder, M, 0, Passed. Undefined building variable name: __questgiver_.
+C0C00Y11, HolyOrder, N, 0, Passed. __qgiver_ resolves to BLANK
+C0C00Y12, HolyOrder, N, 0, Passed. Needs rumor dialogue links.
+-C0C00Y13, HolyOrder, N, 0, FAILED. Action not found. Ignoring 'create npc _priest_ '. Need to handle Group5.0 
+C0B00Y00, HolyOrder, M, 0, Passed.
 -C0B00Y01, HolyOrder, M, 0, FAILED. PLayer log says "Exception during quest compile: An element with the same key already exists in the dictionary."
 -C0B00Y02, HolyOrder, M, 0, FAILED. Needs a lot of work since NPCs don't respond properly. Action not found. Ignoring 'clicked _sneaker_ and at least 50 gold otherwise do _S.18_ '
-C0B00Y03, HolyOrder, M, 0, Passed. Undefined building variable name: __questgiver_.
--C0B00Y04, HolyOrder, M, 0, FAILED. Needs "remove foe" quest action. Undefined building variable name: __questgiver_.
+C0B00Y03, HolyOrder, M, 0, Passed.
+-C0B00Y04, HolyOrder, M, 0, FAILED. Needs "remove foe" quest action.
 -C0B00Y14, HolyOrder, M, 0, FAILED. Exception during quest compile: "Could not find Item name item in items table"
-C0B10Y05, HolyOrder, M, 10, Passed. Undefined building variable name: __questgiver_.
-C0B10Y06, HolyOrder, M, 10, Passed. Deity names mismatch. Undefined building variable name: __questgiver_.
-C0B10Y07, HolyOrder, M, 10, Passed. Diety name mismatches.
-C0B10Y15, HolyOrder, M, 10, Passed. Diety name mismatches. Lich and object spawn far apart. Undefined building variable name: __questgiver_.
--C0B20Y08, HolyOrder, M, 20, Identical to C0B10Y06.
+-C0B10Y05, HolyOrder, M, 10, FAILED. Action not found. Ignoring 'make pc ill with Witches'_Pox saying 1012 '
+C0B10Y06, HolyOrder, M, 10, Passed. Deity names mismatch. 
+-C0B10Y07, HolyOrder, M, 10, FAILED. Diety name mismatches. Action not found. Ignoring 'create npc _priest_ '. Need to handle Group5.0 
+C0B10Y15, HolyOrder, M, 10, Passed. Diety name mismatches. Lich and object spawn far apart.
+C0B20Y08, HolyOrder, M, 20, Identical to C0B10Y06.
 C0B3XY09, HolyOrder, M, 3X, Passed. Seducer spawn is problematic sometimes far away or inaccessible. Diety name mismatches. 
 
 -- Classic: Temples (specific)
@@ -85,12 +85,12 @@ I0B00Y00, HolyOrder, S, 0, Passed.
 J0B00Y00, HolyOrder, Z, 0, Passed.
 
 -- Classic: Thieves Guild
-O0A0AL00, GeneralPopulace, N, 0, Passed. Set guild member to spawn in remote random; not sure if classic.
--O0B00Y00, GeneralPopulace, M, 0, Apparently an exact copy of O0B10Y00.
-O0B00Y01, GeneralPopulace, M, 0, Passed.
--O0B00Y11, GeneralPopulace, M, 0, FAILED.
--O0B00Y12, GeneralPopulace, M, 0, FAILED. Something's wrong that prevents quest timers from initialilizing. Added building sinks for NPCs.
-O0B10Y00, GeneralPopulace, M, 10, Passed. Lacks quest condition "have ITEM set VARIABLE."
+O0A0AL00, GeneralPopulace, P, 0, Passed. Set guild member to spawn in remote random; not sure if classic.
+O0B00Y00, GeneralPopulace, M, 0, Apparently an exact copy of O0B10Y00.
+-O0B00Y01, GeneralPopulace, M, 0, FAILED. Need to handle Group5.0 
+-O0B00Y11, GeneralPopulace, M, 0, FAILED. Could not find local site with P2=17 in Daggerfall/Penbrugh. 
+-O0B00Y12, GeneralPopulace, M, 0, FAILED. Action not found. Ignoring 'create npc _contact1_ '
+O0B10Y00, GeneralPopulace, M, 10, Passed.
 O0B10Y03, GeneralPopulace, M, 10, Passed.
 O0B10Y05, GeneralPopulace, M, 10, Passed. Changed house4 to house1.
 O0B10Y06, GeneralPopulace, M, 10, Passed.
@@ -102,9 +102,12 @@ O0B2XY09, GeneralPopulace, M, 2X, Passed.
 O0B2XY10, GeneralPopulace, M, 2X, Passed.
 
 -- Classic: Dark Brotherhood
--L0A01L00, DarkBrotherHood, N, 0, FAILED, needs action support at mixing poison and decanter. Set quest timers as fixed 14 and 30 days to allow completion. Set 30 day timer to stop when 14 day timer begins for fairness.
+-L0A01L00, DarkBrotherHood, P, 0, FAILED, needs action support at mixing poison and decanter. (worked around this for now)
+- Set quest timers as fixed 14 and 30 days to allow completion. Set 30 day timer to stop when 14 day timer begins for fairness.
+- AddDialogLinkForQuestInfoResource() could not find a quest info resource with name Mastersly Manor
+- Unable to find DB member to finish quest, so changed to finish after poisoning decanter
 L0B00Y00, DarkBrotherHood, M, 0, Passed
-L0B00Y01, DarkBrotherHood, M, 0, Passed.
+-L0B00Y01, DarkBrotherHood, M, 0, FAILED. Need to handle Temple npc's (sgroup 5)
 L0B00Y02, DarkBrotherHood, M, 0, Passed. Various undefined names. Quest timer is tight due to multiple remote locations.
 L0B00Y03, DarkBrotherHood, M, 0, Passed. Enemy mage has no defined name.
 L0B10Y01, DarkBrotherHood, M, 10, Passed. Enemy bard has no defined name.
@@ -121,18 +124,18 @@ B0C00Y05, KnightlyOrder, N, 0, Passed. Undefined enemy name.
 B0C00Y06, KnightlyOrder, N, 0, Passed.
 B0C00Y10, KnightlyOrder, N, 0, Passed.
 B0C00Y13, KnightlyOrder, N, 0, Passed.
-B0B00Y00, KnightlyOrder, M, 0, Passed. Undefined building variable name: __questgiver_.
-B0B00Y01, KnightlyOrder, M, 0, Passed. Undefined enemy name. Undefined building variable name: __questgiver_.
+B0B00Y00, KnightlyOrder, M, 0, Passed.
+B0B00Y01, KnightlyOrder, M, 0, Passed.
 B0B10Y04, KnightlyOrder, M, 10, Passed. 
 B0B20Y07, KnightlyOrder, M, 20, Passed.
-B0B40Y08, KnightlyOrder, M, 40, Passed. Undefined variable: ==qgiver_.
+B0B40Y08, KnightlyOrder, M, 40, Passed.
 B0B40Y09, KnightlyOrder, M, 40, Passed.
--B0B50Y11, KnightlyOrder, M, 50, FAILED. Requires GetCurrentRegionFaction(). Undefined variable: ==qgiver_.
+B0B50Y11, KnightlyOrder, M, 50, Passed
 B0B60Y12, KnightlyOrder, M, 60, Passed.
 B0B70Y14, KnightlyOrder, M, 70, Passed.
-B0B70Y16, KnightlyOrder, M, 70, Passed. Undefined variable: ==qgiver_.
--B0B71Y03, KnightlyOrder, M, 71, FAILED. Lots of work to do. Undefined building variable name: __questgiver_.
-B0B80Y17, KnightlyOrder, M, 80, Passed. Undefined variable: ==qgiver_.
+B0B70Y16, KnightlyOrder, M, 70, Passed.
+-B0B71Y03, KnightlyOrder, M, 71, FAILED.	Discovered a new op-code: _0x3c_ 19
+B0B80Y17, KnightlyOrder, M, 80, Passed.
 -B0B81Y02, KnightlyOrder, M, 81, FAILED. Player log says "Exception during quest compile: Could not find Item name item in items table." "Item _I.06_ item class 17 subclass 13"
 
 -- Witches Covens
@@ -149,10 +152,10 @@ Q0C4XY04, Witches, N, 4X,
 
 -- Commoners
 A0C00Y00, Commoners, N, 0,
-A0C00Y04, Commoners, N, 0,
-A0C00Y06, Commoners, N, 0,
+-A0C00Y04, Commoners, N, 0, FAILED. Missing name and dialog from quest script - bad conversion?
+-A0C00Y06, Commoners, N, 0, FAILED. No master npc in the shop indicated
 A0C00Y07, Commoners, N, 0,
-A0C00Y08, Commoners, N, 0,
+A0C00Y08, Commoners, N, 0, Passed. questgiver name is incorrect (almost like a codename)
 A0C00Y10, Commoners, N, 0,
 A0C00Y11, Commoners, N, 0,
 A0C00Y12, Commoners, N, 0,

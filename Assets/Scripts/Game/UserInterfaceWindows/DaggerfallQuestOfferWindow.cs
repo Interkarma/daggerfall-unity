@@ -15,19 +15,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class DaggerfallQuestOfferWindow : DaggerfallQuestPopupWindow
     {
-        StaticNPC questorNPC;
+        StaticNPC.NPCData questorNPC;
         FactionFile.SocialGroups socialGroup;
 
         #region Constructors
 
-        public DaggerfallQuestOfferWindow(IUserInterfaceManager uiManager, StaticNPC npc, FactionFile.SocialGroups socialGroup)
+        public DaggerfallQuestOfferWindow(IUserInterfaceManager uiManager, StaticNPC.NPCData npc, FactionFile.SocialGroups socialGroup)
             : base(uiManager)
         {
             questorNPC = npc;
             this.socialGroup = socialGroup;
 
             // Remove potential questor from pool after quest has been offered
-            TalkManager.Instance.RemoveNpcQuestor(npc.Data.nameSeed);
+            //TalkManager.Instance.RemoveNpcQuestor(npc.Data.nameSeed);
 
             // Clear background
             ParentPanel.BackgroundColor = Color.clear;
@@ -58,7 +58,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             // Get the faction id for affecting reputation on success/failure, and current rep
-            int factionId = questorNPC.Data.factionID;
+            int factionId = questorNPC.factionID;
             int reputation = GameManager.Instance.PlayerEntity.FactionData.GetReputation(factionId);
 
             // Select a quest at random from appropriate pool

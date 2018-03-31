@@ -21,7 +21,6 @@ using DaggerfallConnect.Utility;
 using DaggerfallConnect.FallExe;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility;
-using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Entity;
@@ -40,6 +39,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const int paperDollHeight = 184;
         const int waistHeight = 40;
 
+        DFSize backgroundFullSize = new DFSize(125, 198);
         Rect backgroundSubRect = new Rect(8, 7, paperDollWidth, paperDollHeight);
 
         #endregion
@@ -223,21 +223,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             if (lastBackgroundName != entity.RaceTemplate.PaperDollBackground)
             {
-                Texture2D texture;
-                if (TextureReplacement.TryImportImage(entity.RaceTemplate.PaperDollBackground, out texture))
-                {
-                    // Import custom image. We assume the image provided is already wihout borders
-                    backgroundPanel.Size = new Vector2(paperDollWidth, paperDollHeight);
-                }
-                else
-                {
-                    // Use vanilla Daggerfall image and remove borders
-                    ImageData data = ImageReader.GetImageData(entity.RaceTemplate.PaperDollBackground, 0, 0, false, false);
-                    texture = ImageReader.GetSubTexture(data, backgroundSubRect);
-                    backgroundPanel.Size = new Vector2(texture.width, texture.height);
-                }
-
-                backgroundPanel.BackgroundTexture = texture;
+                Texture2D texture = ImageReader.GetTexture(entity.RaceTemplate.PaperDollBackground, 0, 0, false);
+                backgroundPanel.BackgroundTexture = ImageReader.GetSubTexture(texture, backgroundSubRect, backgroundFullSize);
+                backgroundPanel.Size = new Vector2(paperDollWidth, paperDollHeight);
                 lastBackgroundName = entity.RaceTemplate.PaperDollBackground;
             }
         }

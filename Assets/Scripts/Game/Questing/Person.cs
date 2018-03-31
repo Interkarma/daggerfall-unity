@@ -452,8 +452,9 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             // Assign name - some types have their own individual name to use
-            if (factionData.type == (int)FactionFile.FactionTypes.Individual ||
-                factionData.type == (int)FactionFile.FactionTypes.Daedra)
+            if ((factionData.type == (int)FactionFile.FactionTypes.Individual ||
+                factionData.type == (int)FactionFile.FactionTypes.Daedra) &&
+                factionData.id != 0)
             {
                 // Use individual name
                 displayName = factionData.name;
@@ -668,6 +669,16 @@ namespace DaggerfallWorkshop.Game.Questing
                     homePlaceSymbol = home.Symbol.Clone();
                     ParentQuest.AddResource(home);
                 }
+                else if (p1 == 0 && p2 >= 0)
+                {
+                    // Handle standard building types
+                    string buildingSymbol = string.Format("_{0}_building_", Symbol.Name);
+                    string buildingType = QuestMachine.Instance.PlacesTable.GetKeyForValue("p2", p2.ToString());
+                    string source = string.Format("Place {0} remote {1}", buildingSymbol, buildingType);
+                    Place building = new Place(ParentQuest, source);
+                    homePlaceSymbol = building.Symbol.Clone();
+                    ParentQuest.AddResource(building);
+                }
             }
 
             // Get faction data
@@ -736,7 +747,7 @@ namespace DaggerfallWorkshop.Game.Questing
         static public FactionFile.FactionData GetFactionData(int factionID)
         {
             FactionFile.FactionData factionData;
-            if (!GameManager.Instance.PlayerEntity.FactionData.GetFactionData(factionID, out factionData))
+            if (!GameManager.Instance.PlayerEntity.FactionData.GetFactionData(factionID, out factionData) && factionID != 0)
                 throw new Exception(string.Format("Could not find faction data for FactionID {0}", factionID));
 
             return factionData;

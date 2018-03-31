@@ -242,11 +242,14 @@ namespace DaggerfallConnect.Save
                     case RecordTypes.Spell:
                         record = new SpellRecord(reader, length);
                         break;
-                    case RecordTypes.Container:
-                        record = new ContainerRecord(reader, length);
+                    case RecordTypes.DiseaseOrPoison:
+                        record = new DiseaseOrPoisonRecord(reader, length);
                         break;
                     case RecordTypes.TrappedSoul:
                         record = new TrappedSoulRecord(reader, length);
+                        break;
+                    case RecordTypes.Container:
+                        record = new ContainerRecord(reader, length);
                         break;
                     //case RecordTypes.Door:
                     //    record = new SaveTreeBaseRecord(reader, length);    // Read then skip these records for now
