@@ -114,7 +114,7 @@ namespace DaggerfallWorkshop.Utility
             { "%imp", null }, // ?
             { "%int", Int }, // Amount of Intelligence
             { "%it", ItemName },  //  Item
-            { "%jok", null }, // A joke
+            { "%jok", Joke }, // A joke
             { "%key", DialogKeySubject }, // A location (?) (comment Nystul: it is the topic you are asking about (e.g. building, work, etc.) how it seems)
             { "%key2", null },// Another location
             { "%kg", Weight },  //  Weight of items
@@ -136,7 +136,7 @@ namespace DaggerfallWorkshop.Utility
             { "%mod", ArmourMod }, // Modification
             { "%n", NameDialogPartner },   // A random female first name (comment Nystul: I think it is just a random name - or maybe this is the reason that in vanilla all male mobile npcs have female names...)
             { "%nam", null }, // A random full name
-            { "%nrn", null }, // Noble of the current region
+            { "%nrn", null }, // Noble of the current region (used in: O0B00Y01)
             { "%nt", NearbyTavern },  // Nearby Tavern
             { "%ol1", null }, // Old lord of _fx1
             { "%olf", null }, // What happened to _ol1
@@ -602,6 +602,11 @@ namespace DaggerfallWorkshop.Utility
         private static string GoldCarried(IMacroContextProvider mcp)
         {   // %gii
             return GameManager.Instance.PlayerEntity.GoldPieces.ToString();
+        }
+
+        private static string Joke(IMacroContextProvider mcp)
+        {   // %jok
+            return DaggerfallUnity.Instance.TextProvider.GetRandomText(200);
         }
 
         private static string GreetingOrFollowUpText(IMacroContextProvider mcp)
