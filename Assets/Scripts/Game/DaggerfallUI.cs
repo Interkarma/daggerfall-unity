@@ -86,6 +86,7 @@ namespace DaggerfallWorkshop.Game
         DaggerfallTalkWindow dfTalkWindow;
         DaggerfallQuestJournalWindow dfQuestJournalWindow;
         DaggerfallSpellBookWindow dfSpellBookWindow;
+        DaggerfallSpellMakerWindow dfSpellMakerWindow;
         QuestMachineInspectorWindow dfQuestInspector;
 
         DaggerfallFontPlus fontPetrock32;
@@ -225,6 +226,7 @@ namespace DaggerfallWorkshop.Game
             dfQuestJournalWindow = new DaggerfallQuestJournalWindow(uiManager);
             dfTalkWindow = new DaggerfallTalkWindow(uiManager);
             dfSpellBookWindow = new DaggerfallSpellBookWindow(uiManager);
+            dfSpellMakerWindow = new DaggerfallSpellMakerWindow(uiManager);
 
             dfExteriorAutomapWindow = new DaggerfallExteriorAutomapWindow(uiManager);
 
@@ -342,6 +344,9 @@ namespace DaggerfallWorkshop.Game
                 case DaggerfallUIMessages.dfuiOpenSpellBookWindow:
                     if (!GameManager.Instance.PlayerSpellCasting.IsPlayingAnim)
                         uiManager.PushWindow(dfSpellBookWindow);
+                    break;
+                case DaggerfallUIMessages.dfuiOpenSpellMakerWindow:
+                    uiManager.PushWindow(dfSpellMakerWindow);
                     break;
                 case DaggerfallUIMessages.dfuiOpenTravelMapWindow:
                     if (!GameManager.Instance.IsPlayerInside)
