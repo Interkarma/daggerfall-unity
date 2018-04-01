@@ -140,6 +140,7 @@ namespace DaggerfallWorkshop
         public int record;                      // Original record
         public int frame;                       // Original frame
         public bool hasAlpha;                   // Original loaded with alpha cutout
+        public int alphaIndex;                  // Original alpha index (usually 0)
         public int width;                       // Original image width
         public int height;                      // Original image height
         public DFBitmap dfBitmap;               // Original indexed bitmap
