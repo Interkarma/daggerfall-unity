@@ -714,7 +714,7 @@ namespace DaggerfallWorkshop.Game.Questing
         public DaggerfallMessageBox CreateMessagePrompt(Message message)
         {
             TextFile.Token[] tokens = message.GetTextTokens();
-            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager, DaggerfallMessageBox.CommonMessageBoxButtons.YesNo, tokens, null);
+            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager, DaggerfallMessageBox.CommonMessageBoxButtons.YesNo, tokens);
             messageBox.ClickAnywhereToClose = false;
             messageBox.AllowCancel = false;
             messageBox.ParentPanel.BackgroundColor = Color.clear;

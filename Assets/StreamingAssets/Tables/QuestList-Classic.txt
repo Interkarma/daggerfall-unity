@@ -2,7 +2,7 @@
 -- Please use the Quest Hub forums for bug reports: http://forums.dfworkshop.net/viewforum.php?f=25
 
 -- name:        filename of QRC txt file
--- group:       guild group from FactionFile.GuildGroups enum, or ?quest giver type?
+-- group:       guild group from FactionFile.GuildGroups enum, or social group from FactionFile.SocialGroups enum
 -- membership:  N=non-member, M=member, P=prospect, T=Akatosh, A=Arkay, D=Dibella, J=Julianos, K=Kynareth, R=Mara, S=Stendarr, Z=Zenithar
 -- minRep:      minimum reputation required to be offered the quest (units can use X wildcard)
 -- notes:
