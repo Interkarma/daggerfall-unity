@@ -181,14 +181,14 @@ namespace DaggerfallWorkshop.Utility
             { "%ra", PlayerRace },  // Player's race
 			{ "%reg", CurrentRegion }, // Region
             { "%rn", null },  // Regent's Name
-            { "%rt", null },  // Regent's Title
+            { "%rt", RegentTitle },  // Regent's Title
             { "%spc", Magicka }, // Current Spell Points
             { "%ski", Skill }, // Mastered skill name
             { "%spd", Spd }, // Speed
             { "%spt", MagickaMax }, // Max spell points
             { "%str", Str }, // Amount of strength
             { "%sub", null }, // ?
-            { "%t", Title },  // Regent's Title
+            { "%t", RegentTitle },  // Regent's Title
             { "%tcn", null }, // Travel city name
             { "%thd", ToHitMod }, // Combat odds
             { "%tim", Time }, // Time
@@ -300,7 +300,8 @@ namespace DaggerfallWorkshop.Utility
         /// <returns>The expanded macro value.</returns>
         /// <param name="symbolStr">macro symbol string.</param>
         /// <param name="mcp">an object instance providing context for macro expansion.</param>
-        public static string GetValue(string symbolStr, IMacroContextProvider mcp)
+        /// <param name="diag">if set false, will suppress the diagnostic strings and leave macro's untouched</param>
+        public static string GetValue(string symbolStr, IMacroContextProvider mcp, bool diag = true)
         {
             if (macroHandlers.ContainsKey(symbolStr))
             {
@@ -310,13 +311,13 @@ namespace DaggerfallWorkshop.Utility
                     try {
                         return svp.Invoke(mcp);
                     } catch (NotImplementedException) {
-                        return symbolStr + "[srcDataUnknown]";
+                        return symbolStr + (diag ? "[srcDataUnknown]" : "");
                     }
                 } else {
-                    return symbolStr + "[unhandled]";
+                    return symbolStr + (diag ? "[unhandled]" : "");
                 }
             } else {
-                return symbolStr + "[undefined]";
+                return symbolStr + (diag ? "[undefined]" : "");
             }
         }
 
@@ -430,8 +431,8 @@ namespace DaggerfallWorkshop.Utility
             return HardStrings.tavern;
         }
 
-        private static string Title(IMacroContextProvider mcp)
-        {   // %t
+        private static string RegentTitle(IMacroContextProvider mcp)
+        {   // %rt %t
             PlayerGPS gps = GameManager.Instance.PlayerGPS;
             FactionFile.FactionData regionFaction;
             GameManager.Instance.PlayerEntity.FactionData.FindFactionByTypeAndRegion(7, gps.CurrentRegionIndex + 1, out regionFaction);

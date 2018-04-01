@@ -135,11 +135,11 @@ namespace DaggerfallWorkshop.Game.Questing
 
             public override string God()
             {
-                // Get god of current NPC or fallback
+                // Get god of current NPC or fall-through to non-quest macro handling
                 if (parent.LastPersonReferenced != null)
                     return parent.LastPersonReferenced.GodName;
                 else
-                    return "Arkay";
+                    return "%god";
             }
 
             public override string LocationDirection()

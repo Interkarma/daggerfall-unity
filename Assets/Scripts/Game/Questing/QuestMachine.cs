@@ -698,11 +698,11 @@ namespace DaggerfallWorkshop.Game.Questing
         /// Creates a yes/no prompt from quest message.
         /// Caller must set events and call Show() when ready.
         /// </summary>
-        public DaggerfallMessageBox CreateMessagePrompt(Quest quest, int id)
+        public DaggerfallMessageBox CreateMessagePrompt(Quest quest, int id, IMacroContextProvider mcp = null)
         {
             Message message = quest.GetMessage(id);
             if (message != null)
-                return CreateMessagePrompt(message);
+                return CreateMessagePrompt(message, mcp);
             else
                 return null;
         }
@@ -711,10 +711,10 @@ namespace DaggerfallWorkshop.Game.Questing
         /// Creates a yes/no prompt from quest message.
         /// Caller must set events and call Show() when ready.
         /// </summary>
-        public DaggerfallMessageBox CreateMessagePrompt(Message message)
+        public DaggerfallMessageBox CreateMessagePrompt(Message message, IMacroContextProvider mcp = null)
         {
             TextFile.Token[] tokens = message.GetTextTokens();
-            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager, DaggerfallMessageBox.CommonMessageBoxButtons.YesNo, tokens);
+            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager, DaggerfallMessageBox.CommonMessageBoxButtons.YesNo, tokens, null, mcp);
             messageBox.ClickAnywhereToClose = false;
             messageBox.AllowCancel = false;
             messageBox.ParentPanel.BackgroundColor = Color.clear;

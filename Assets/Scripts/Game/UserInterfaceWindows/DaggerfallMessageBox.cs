@@ -107,16 +107,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        public DaggerfallMessageBox(IUserInterfaceManager uiManager, CommonMessageBoxButtons buttons, TextFile.Token[] tokens, IUserInterfaceWindow previous = null)
+        public DaggerfallMessageBox(IUserInterfaceManager uiManager, CommonMessageBoxButtons buttons, TextFile.Token[] tokens, IUserInterfaceWindow previous = null, IMacroContextProvider mcp = null)
             : base(uiManager, previous)
         {
-            SetupBox(tokens, buttons);
+            SetupBox(tokens, buttons, mcp);
         }
 
-        public DaggerfallMessageBox(IUserInterfaceManager uiManager, CommonMessageBoxButtons buttons, int textId, IUserInterfaceWindow previous = null)
+        public DaggerfallMessageBox(IUserInterfaceManager uiManager, CommonMessageBoxButtons buttons, int textId, IUserInterfaceWindow previous = null, IMacroContextProvider mcp = null)
             : base(uiManager, previous)
         {
-            SetupBox(textId, buttons);
+            SetupBox(textId, buttons, mcp);
         }
 
         public DaggerfallMessageBox(IUserInterfaceManager uiManager, CommonMessageBoxButtons buttons, string text, IUserInterfaceWindow previous = null)
@@ -318,9 +318,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             messagePanel.Size = new Vector2(width, height);
         }
 
-        void SetupBox(TextFile.Token[] tokens, CommonMessageBoxButtons buttons)
+        void SetupBox(TextFile.Token[] tokens, CommonMessageBoxButtons buttons, IMacroContextProvider mcp = null)
         {
-            SetTextTokens(tokens);
+            SetTextTokens(tokens, mcp);
             switch (buttons)
             {
                 case CommonMessageBoxButtons.YesNo:
@@ -330,9 +330,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void SetupBox(int textId, CommonMessageBoxButtons buttons)
+        void SetupBox(int textId, CommonMessageBoxButtons buttons, IMacroContextProvider mcp = null)
         {
-            SetTextTokens(textId);
+            SetTextTokens(textId, mcp);
             switch (buttons)
             {
                 case CommonMessageBoxButtons.YesNo:

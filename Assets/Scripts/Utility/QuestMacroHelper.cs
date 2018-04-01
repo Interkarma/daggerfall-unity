@@ -71,7 +71,7 @@ namespace DaggerfallWorkshop.Utility
                     Macro macro = GetMacro(words[word]);
                     if (macro.type == MacroTypes.ContextMacro)
                     {
-                        words[word] = words[word].Replace(macro.token, MacroHelper.GetValue(macro.token, parentQuest));
+                        words[word] = words[word].Replace(macro.token, MacroHelper.GetValue(macro.token, parentQuest, false));
                     }
                     else
                     {

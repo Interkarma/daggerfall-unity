@@ -48,9 +48,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Fields
 
-        const string tempFightersQuestsFilename = "Temp-FightersQuests";
-        const string tempMagesQuestsFilename = "Temp-MagesGuild";
-
         const string baseTextureName = "GILD00I0.IMG";      // Join Guild / Talk / Service
         const string memberTextureName = "GILD01I0.IMG";      // Join Guild / Talk / Service
 
@@ -62,7 +59,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int InsufficientRankId = 3100;
         const int TooGenerousId = 702;
         const int DonationThanksId = 703;
-        const int CuringOfferId = 8;    // TODO which message?
 
         Texture2D baseTexture;
         PlayerEntity playerEntity;
@@ -392,7 +388,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 Debug.LogFormat("Offering quest {0} from Guild {1} affecting factionId {2}", offeredQuest.QuestName, guildGroup, offeredQuest.FactionId);
 
                 // Offer the quest to player
-                DaggerfallMessageBox messageBox = QuestMachine.Instance.CreateMessagePrompt(offeredQuest, (int)QuestMachine.QuestMessages.QuestorOffer);// TODO - need to provide guild mcp for macros
+                DaggerfallMessageBox messageBox = QuestMachine.Instance.CreateMessagePrompt(offeredQuest, (int)QuestMachine.QuestMessages.QuestorOffer, guild);
                 if (messageBox != null)
                 {
                     messageBox.OnButtonClick += OfferQuest_OnButtonClick;
