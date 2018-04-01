@@ -118,7 +118,7 @@ namespace DaggerfallWorkshop.Utility
             { "%key", DialogKeySubject }, // A location (?) (comment Nystul: it is the topic you are asking about (e.g. building, work, etc.) how it seems)
             { "%key2", null },// Another location
             { "%kg", Weight },  //  Weight of items
-            { "%kno", null }, // A knightly guild name
+            { "%kno", FactionOrderName }, // A knightly guild name
             { "%lev", GuildTitle }, // Rank in guild that you are in.
             { "%lp", LocalPalace },  //  Local / palace (?) dungeon
             { "%ln", null },  //  Random lastname
@@ -300,8 +300,8 @@ namespace DaggerfallWorkshop.Utility
         /// <returns>The expanded macro value.</returns>
         /// <param name="symbolStr">macro symbol string.</param>
         /// <param name="mcp">an object instance providing context for macro expansion.</param>
-        /// <param name="diag">if set false, will suppress the diagnostic strings and leave macro's untouched</param>
-        public static string GetValue(string symbolStr, IMacroContextProvider mcp, bool diag = true)
+        /// <param name="mcp2">an object instance providing secondary context for macro expansion.</param>
+        public static string GetValue(string symbolStr, IMacroContextProvider mcp, IMacroContextProvider mcp2 = null)
         {
             if (macroHandlers.ContainsKey(symbolStr))
             {
@@ -311,13 +311,16 @@ namespace DaggerfallWorkshop.Utility
                     try {
                         return svp.Invoke(mcp);
                     } catch (NotImplementedException) {
-                        return symbolStr + (diag ? "[srcDataUnknown]" : "");
+                        if (mcp2 != null) {
+                            try { return svp.Invoke(mcp2); } catch (NotImplementedException) { }
+                        }
+                        return symbolStr + "[srcDataUnknown]";
                     }
                 } else {
-                    return symbolStr + (diag ? "[unhandled]" : "");
+                    return symbolStr + "[unhandled]";
                 }
             } else {
-                return symbolStr + (diag ? "[undefined]" : "");
+                return symbolStr + "[undefined]";
             }
         }
 
