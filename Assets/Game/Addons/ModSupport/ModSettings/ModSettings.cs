@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -6,7 +6,8 @@
 // Original Author: TheLacus
 // Contributors:    
 // 
-// Notes:
+// Notes:           Parse code is required for legacy ini settings support.
+//                  Eventually key override will be used here.
 //
 
 using System;
@@ -27,7 +28,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         // Fields
         Mod mod;
         IniData userSettings;
-        ModSettingsConfiguration config;
+        ModSettingsData data;
 
         #region Public Methods
 
@@ -41,7 +42,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 throw new ArgumentException(string.Format("{0} has no settings.", mod.Title), "mod");
 
             this.mod = mod;
-            ModSettingsReader.GetSettings(mod, out userSettings, out config);
+            ModSettingsReader.GetSettings(mod, out userSettings, out data);
         }
 
         /// <summary>
@@ -55,11 +56,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             if (text != null)
                 return text;
 
-            ModSettingsKey key;
-            if (config.Key(section, name, ModSettingsKey.KeyType.Text, out key))
-                return key.text.text;
-
-            throw NewMissingKeyException(section, name);
+            return GetDefaultValue<string>(section, name);
         }
 
         /// <summary>
@@ -73,16 +70,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             if (int.TryParse(GetValue(section, name), out value))
                 return value;
 
-            ModSettingsKey key;
-            if (config.Key(section, name, out key))
-            {
-                if (key.type == ModSettingsKey.KeyType.Slider)
-                    return key.slider.value;
-                if (key.type == ModSettingsKey.KeyType.MultipleChoice)
-                    return key.multipleChoice.selected;
-            }
-
-            throw NewMissingKeyException(section, name);
+            return GetDefaultValue<int>(section, name);
         }
 
         /// <summary>
@@ -121,11 +109,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             if (float.TryParse(GetValue(section, name), NumberStyles.Float, CultureInfo.InvariantCulture, out value))
                 return value;
 
-            ModSettingsKey key;
-            if (config.Key(section, name, ModSettingsKey.KeyType.FloatSlider, out key))
-                return key.floatSlider.value;
-
-            throw NewMissingKeyException(section, name);
+            return GetDefaultValue<float>(section, name);
         }
 
         /// <summary>
@@ -164,11 +148,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             if (bool.TryParse(GetValue(section, name), out value))
                 return value;
 
-            ModSettingsKey key;
-            if (config.Key(section, name, ModSettingsKey.KeyType.Toggle, out key))
-                return key.toggle.value;
-
-            throw NewMissingKeyException(section, name);
+            return GetDefaultValue<bool>(section, name);
         }
 
         /// <summary>
@@ -182,11 +162,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             if (ColorUtility.TryParseHtmlString("#" + GetValue(section, name), out color))
                 return color;
 
-            ModSettingsKey key;
-            if (config.Key(section, name, ModSettingsKey.KeyType.Color, out key))
-                return key.color.color;
-
-            throw NewMissingKeyException(section, name);
+            return GetDefaultValue<Color32>(section, name);
         }
 
         /// <summary>
@@ -201,11 +177,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             if (int.TryParse(tuple.First, out first) && int.TryParse(tuple.Second, out second))
                 return new Tuple<int, int>(first, second);
 
-            ModSettingsKey key;
-            if (config.Key(section, name, ModSettingsKey.KeyType.Tuple, out key))
-                return new Tuple<int, int>(key.tuple.first, key.tuple.second);
-
-            throw NewMissingKeyException(section, name);
+            return GetDefaultValue<Tuple<int, int>>(section, name);
         }
 
         /// <summary>
@@ -220,11 +192,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             if (float.TryParse(tuple.First, out first) && float.TryParse(tuple.Second, out second))
                 return new Tuple<float, float>(first, second);
 
-            ModSettingsKey key;
-            if (config.Key(section, name, ModSettingsKey.KeyType.FloatTuple, out key))
-                return new Tuple<float, float>(key.tuple.first, key.tuple.second);
-
-            throw NewMissingKeyException(section, name);
+            return GetDefaultValue<Tuple<float, float>>(section, name);
         }
 
         /// <summary>
@@ -315,12 +283,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             catch { return new Tuple<string, string>(string.Empty, string.Empty); }
         }
 
-        /// <summary>
-        /// Helper that create and return a new KeyNotFoundException exception with a message.
-        /// </summary>
-        private Exception NewMissingKeyException(string section, string name)
+        private T GetDefaultValue<T>(string section, string name)
         {
-            return new KeyNotFoundException(string.Format("The key ({0},{1}) was not present in {2} settings.", section, name, mod.Title));
+            Key<T> key;
+            if (data.TryGetKey(section, name, out key))
+                return key.Value;
+                
+            throw new KeyNotFoundException(string.Format("The key ({0},{1}) was not present in {2} settings.", section, name, mod.Title)); 
         }
 
         #endregion
