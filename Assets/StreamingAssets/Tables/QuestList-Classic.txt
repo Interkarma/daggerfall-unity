@@ -2,7 +2,7 @@
 -- Please use the Quest Hub forums for bug reports: http://forums.dfworkshop.net/viewforum.php?f=25
 
 -- name:        filename of QRC txt file
--- group:       guild group from FactionFile.GuildGroups enum, or ?quest giver type?
+-- group:       guild group from FactionFile.GuildGroups enum, or social group from FactionFile.SocialGroups enum
 -- membership:  N=non-member, M=member, P=prospect, T=Akatosh, A=Arkay, D=Dibella, J=Julianos, K=Kynareth, R=Mara, S=Stendarr, Z=Zenithar
 -- minRep:      minimum reputation required to be offered the quest (units can use X wildcard)
 -- notes:
@@ -68,9 +68,9 @@ C0B00Y03, HolyOrder, M, 0, Passed.
 -C0B00Y04, HolyOrder, M, 0, FAILED. Needs "remove foe" quest action.
 -C0B00Y14, HolyOrder, M, 0, FAILED. Exception during quest compile: "Could not find Item name item in items table"
 -C0B10Y05, HolyOrder, M, 10, FAILED. Action not found. Ignoring 'make pc ill with Witches'_Pox saying 1012 '
-C0B10Y06, HolyOrder, M, 10, Passed. Deity names mismatch. 
--C0B10Y07, HolyOrder, M, 10, FAILED. Diety name mismatches. Action not found. Ignoring 'create npc _priest_ '. Need to handle Group5.0 
-C0B10Y15, HolyOrder, M, 10, Passed. Diety name mismatches. Lich and object spawn far apart.
+C0B10Y06, HolyOrder, M, 10, Passed.
+-C0B10Y07, HolyOrder, M, 10, FAILED. Action not found. Ignoring 'create npc _priest_ '. Need to handle Group5.0 
+C0B10Y15, HolyOrder, M, 10, Passed. Lich and object spawn far apart.
 C0B20Y08, HolyOrder, M, 20, Identical to C0B10Y06.
 C0B3XY09, HolyOrder, M, 3X, Passed. Seducer spawn is problematic sometimes far away or inaccessible. Diety name mismatches. 
 
@@ -94,7 +94,7 @@ O0B10Y00, GeneralPopulace, M, 10, Passed.
 O0B10Y03, GeneralPopulace, M, 10, Passed.
 O0B10Y05, GeneralPopulace, M, 10, Passed. Changed house4 to house1.
 O0B10Y06, GeneralPopulace, M, 10, Passed.
-O0B10Y07, GeneralPopulace, M, 10, Passed. Needs %rt text variable.
+O0B10Y07, GeneralPopulace, M, 10, Passed.
 O0B20Y02, GeneralPopulace, M, 20, Passed.
 O0B2XY04, GeneralPopulace, M, 2X, Passed.
 O0B2XY08, GeneralPopulace, M, 2X, Passed.
@@ -125,7 +125,7 @@ B0C00Y06, KnightlyOrder, N, 0, Passed.
 B0C00Y10, KnightlyOrder, N, 0, Passed.
 B0C00Y13, KnightlyOrder, N, 0, Passed.
 B0B00Y00, KnightlyOrder, M, 0, Passed.
-B0B00Y01, KnightlyOrder, M, 0, Passed.
+B0B00Y01, KnightlyOrder, M, 0, Passed. Undefined enemy name.
 B0B10Y04, KnightlyOrder, M, 10, Passed. 
 B0B20Y07, KnightlyOrder, M, 20, Passed.
 B0B40Y08, KnightlyOrder, M, 40, Passed.
@@ -210,7 +210,7 @@ R0C10Y21, Nobility, N, 10,
 R0C11Y03, Nobility, N, 11,
 R0C11Y16, Nobility, N, 11,
 R0C11Y19, Nobility, N, 11,
-R0C11Y26, Nobility, N, 11,
+R0C11Y26, Nobility, N, 11, Adds journal entries which need %qdat - assuming thats the date of entry and not quest start
 R0C11Y27, Nobility, N, 11,
 R0C11Y28, Nobility, N, 11,
 R0C20Y07, Nobility, N, 20,

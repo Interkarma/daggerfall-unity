@@ -27,7 +27,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             this.socialGroup = socialGroup;
 
             // Remove potential questor from pool after quest has been offered
-            //TalkManager.Instance.RemoveNpcQuestor(npc.Data.nameSeed);
+            TalkManager.Instance.RemoveNpcQuestor(npc.nameSeed);
 
             // Clear background
             ParentPanel.BackgroundColor = Color.clear;
@@ -69,7 +69,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 Debug.LogFormat("Offering quest {0} from Social group {1} affecting factionId {2}", offeredQuest.QuestName, socialGroup, offeredQuest.FactionId);
 
                 // Offer the quest to player
-                DaggerfallMessageBox messageBox = QuestMachine.Instance.CreateMessagePrompt(offeredQuest, (int)QuestMachine.QuestMessages.QuestorOffer);// TODO - need to provide an mcp for macros
+                DaggerfallMessageBox messageBox = QuestMachine.Instance.CreateMessagePrompt(offeredQuest, (int)QuestMachine.QuestMessages.QuestorOffer);// TODO - need to provide an mcp for macros?
                 if (messageBox != null)
                 {
                     messageBox.OnButtonClick += OfferQuest_OnButtonClick;

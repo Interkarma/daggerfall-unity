@@ -114,11 +114,11 @@ namespace DaggerfallWorkshop.Utility
             { "%imp", null }, // ?
             { "%int", Int }, // Amount of Intelligence
             { "%it", ItemName },  //  Item
-            { "%jok", null }, // A joke
+            { "%jok", Joke }, // A joke
             { "%key", DialogKeySubject }, // A location (?) (comment Nystul: it is the topic you are asking about (e.g. building, work, etc.) how it seems)
             { "%key2", null },// Another location
             { "%kg", Weight },  //  Weight of items
-            { "%kno", null }, // A knightly guild name
+            { "%kno", FactionOrderName }, // A knightly guild name
             { "%lev", GuildTitle }, // Rank in guild that you are in.
             { "%lp", LocalPalace },  //  Local / palace (?) dungeon
             { "%ln", null },  //  Random lastname
@@ -136,7 +136,7 @@ namespace DaggerfallWorkshop.Utility
             { "%mod", ArmourMod }, // Modification
             { "%n", NameDialogPartner },   // A random female first name (comment Nystul: I think it is just a random name - or maybe this is the reason that in vanilla all male mobile npcs have female names...)
             { "%nam", null }, // A random full name
-            { "%nrn", null }, // Noble of the current region
+            { "%nrn", null }, // Noble of the current region (used in: O0B00Y01)
             { "%nt", NearbyTavern },  // Nearby Tavern
             { "%ol1", null }, // Old lord of _fx1
             { "%olf", null }, // What happened to _ol1
@@ -181,14 +181,14 @@ namespace DaggerfallWorkshop.Utility
             { "%ra", PlayerRace },  // Player's race
 			{ "%reg", CurrentRegion }, // Region
             { "%rn", null },  // Regent's Name
-            { "%rt", null },  // Regent's Title
+            { "%rt", RegentTitle },  // Regent's Title
             { "%spc", Magicka }, // Current Spell Points
             { "%ski", Skill }, // Mastered skill name
             { "%spd", Spd }, // Speed
             { "%spt", MagickaMax }, // Max spell points
             { "%str", Str }, // Amount of strength
             { "%sub", null }, // ?
-            { "%t", Title },  // Regent's Title
+            { "%t", RegentTitle },  // Regent's Title
             { "%tcn", null }, // Travel city name
             { "%thd", ToHitMod }, // Combat odds
             { "%tim", Time }, // Time
@@ -300,7 +300,8 @@ namespace DaggerfallWorkshop.Utility
         /// <returns>The expanded macro value.</returns>
         /// <param name="symbolStr">macro symbol string.</param>
         /// <param name="mcp">an object instance providing context for macro expansion.</param>
-        public static string GetValue(string symbolStr, IMacroContextProvider mcp)
+        /// <param name="mcp2">an object instance providing secondary context for macro expansion.</param>
+        public static string GetValue(string symbolStr, IMacroContextProvider mcp, IMacroContextProvider mcp2 = null)
         {
             if (macroHandlers.ContainsKey(symbolStr))
             {
@@ -310,6 +311,9 @@ namespace DaggerfallWorkshop.Utility
                     try {
                         return svp.Invoke(mcp);
                     } catch (NotImplementedException) {
+                        if (mcp2 != null) {
+                            try { return svp.Invoke(mcp2); } catch (NotImplementedException) { }
+                        }
                         return symbolStr + "[srcDataUnknown]";
                     }
                 } else {
@@ -430,8 +434,8 @@ namespace DaggerfallWorkshop.Utility
             return HardStrings.tavern;
         }
 
-        private static string Title(IMacroContextProvider mcp)
-        {   // %t
+        private static string RegentTitle(IMacroContextProvider mcp)
+        {   // %rt %t
             PlayerGPS gps = GameManager.Instance.PlayerGPS;
             FactionFile.FactionData regionFaction;
             GameManager.Instance.PlayerEntity.FactionData.FindFactionByTypeAndRegion(7, gps.CurrentRegionIndex + 1, out regionFaction);
@@ -598,6 +602,11 @@ namespace DaggerfallWorkshop.Utility
         private static string GoldCarried(IMacroContextProvider mcp)
         {   // %gii
             return GameManager.Instance.PlayerEntity.GoldPieces.ToString();
+        }
+
+        private static string Joke(IMacroContextProvider mcp)
+        {   // %jok
+            return DaggerfallUnity.Instance.TextProvider.GetRandomText(200);
         }
 
         private static string GreetingOrFollowUpText(IMacroContextProvider mcp)

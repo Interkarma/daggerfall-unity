@@ -13,6 +13,7 @@ using UnityEngine;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Questing;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -36,7 +37,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(flavourMessageID);
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
-            messageBox.SetTextTokens(tokens);
+            messageBox.SetTextTokens(tokens, offeredQuest.ExternalMCP);
             messageBox.ClickAnywhereToClose = true;
             messageBox.AllowCancel = true;
             messageBox.ParentPanel.BackgroundColor = Color.clear;
@@ -54,7 +55,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Setup popup message
             TextFile.Token[] tokens = message.GetTextTokens();
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
-            messageBox.SetTextTokens(tokens);
+            messageBox.SetTextTokens(tokens, offeredQuest.ExternalMCP);
             messageBox.ClickAnywhereToClose = true;
             messageBox.AllowCancel = true;
             messageBox.ParentPanel.BackgroundColor = Color.clear;
