@@ -88,6 +88,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 #if UNITY_EDITOR
         private void SyncKey(string oldName, string newName)
         {
+            Keys.ChangeKey(Keys[oldName], newName);
             if (syncKeyCallback != null)
                 syncKeyCallback(name, oldName, newName);
         }
@@ -118,6 +119,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
     [fsObject("v1")]
     public abstract class Key
     {
+        const string TupleDelimiter = "<,>";
+
         string name;
 
 #if UNITY_EDITOR
@@ -135,17 +138,24 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         public abstract KeyType KeyType { get; }
         public abstract string TextValue { get; set; }
 
+        public abstract object ParseToObject(string serializedValue);
+
         public static Key NewDefaultKey()
         {
             return new ToggleKey();
         }
 
-        public static Tuple<string, string> GetTuple(string text)
+        public static string FormatTuple(object first, object second)
+        {
+            return string.Format("{0}{1}{2}", first, TupleDelimiter, second);
+        }
+
+        public static Tuple<string, string> SplitTuple(string text)
         {
             try
             {
-                int index = text.IndexOf(ModSettingsReader.tupleDelimiterChar);
-                return new Tuple<string, string>(text.Substring(0, index), text.Substring(index + ModSettingsReader.tupleDelimiterChar.Length));
+                int index = text.IndexOf(TupleDelimiter);
+                return new Tuple<string, string>(text.Substring(0, index), text.Substring(index + TupleDelimiter.Length));
             }
             catch { return new Tuple<string, string>(string.Empty, string.Empty); }
         }
@@ -173,6 +183,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         {
             get { return Serialize(Value); }
             set { Value = Deserialize(value); }
+        }
+
+        public sealed override object ParseToObject(string serializedValue)
+        {
+            return serializedValue != null ? Deserialize(serializedValue) : Value;
         }
 
         public virtual string Serialize(T value)
@@ -265,12 +280,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         public override string Serialize(Tuple<int, int> value)
         {
-            return string.Format("{0}<,>{1}", Value.First, Value.Second);
+            return FormatTuple(value.First, value.Second);
         }
 
         public override Tuple<int, int> Deserialize(string textValue)
         {
-            var tuple = GetTuple(textValue);
+            var tuple = SplitTuple(textValue);
             return new Tuple<int, int>(Parse(tuple.First, Value.First), Parse(tuple.Second, Value.Second));
         }
     }
@@ -284,12 +299,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         public override string Serialize(Tuple<float, float> value)
         {
-            return string.Format("{0}<,>{1}", Value.First, Value.Second);
+            return FormatTuple(value.First, value.Second);
         }
 
         public override Tuple<float, float> Deserialize(string textValue)
         {
-            var tuple = GetTuple(textValue);
+            var tuple = SplitTuple(textValue);
             return new Tuple<float, float>(Parse(tuple.First, Value.First), Parse(tuple.Second, Value.Second));
         }
     }

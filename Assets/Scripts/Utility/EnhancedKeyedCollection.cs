@@ -87,6 +87,23 @@ namespace DaggerfallWorkshop.Utility
             return (item = Items.FirstOrDefault(x => Equals(GetKeyForItem(x), key))) != null;
         }
 
+        /// <summary>
+        /// Gets a value from the collection or null. This is O(1) if lookup dictionary is created, otherwise is O(n).
+        /// </summary>
+        public virtual T2 GetValueOrDefault(T1 key)
+        {
+            T2 item;
+            return TryGetValue(key, out item) ? item : null;
+        }
+
+        /// <summary>
+        /// Changes the key associated with the specified element in the lookup dictionary.
+        /// </summary>
+        internal void ChangeKey(T2 item, T1 newKey)
+        {
+            base.ChangeItemKey(item, newKey);
+        }
+
         protected override void SetItem(int index, T2 item)
         {
             var key = GetKeyForItem(item);

@@ -10,8 +10,8 @@
 //
 
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 {
@@ -47,7 +47,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// </summary>
         public Section HiddenSection
         {
-            get { return Sections.FirstOrDefault(x => x.Name == ModSettingsReader.internalSection); }
+            get { return Sections.GetValueOrDefault(ModSettingsReader.internalSection); }
         }
 
         public Section this[int i]
@@ -198,6 +198,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         // Propagate section name change to presets
         private void SyncSection(string oldName, string name)
         {
+            Sections.ChangeKey(Sections[oldName], name);
             foreach (var preset in Presets)
             {
                 Dictionary<string, string> section;

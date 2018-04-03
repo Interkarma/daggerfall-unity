@@ -184,12 +184,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                             break;
 
                         case KeyType.TupleInt:
-                            var tuple = AddTuple(Key.GetTuple(keyData.Value));
+                            var tuple = AddTuple(Key.SplitTuple(keyData.Value));
                             tuple.First.Numeric = tuple.Second.Numeric = true;
                             break;
 
                         case KeyType.TupleFloat:
-                            AddTuple(Key.GetTuple(keyData.Value)); // TextBox.Numeric doesn't allow dot
+                            AddTuple(Key.SplitTuple(keyData.Value)); // TextBox.Numeric doesn't allow dot
                             break;
 
                         case KeyType.Text:
@@ -235,7 +235,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
                         case KeyType.TupleInt:
                         case KeyType.TupleFloat:
-                            string value = modTuples[tuple].First.ResultText + ModSettingsReader.tupleDelimiterChar + modTuples[tuple].Second.ResultText;
+                            string value = Key.FormatTuple(modTuples[tuple].First.ResultText, modTuples[tuple].First.ResultText);
                             data[section.Name][key.Name] = value;
                             tuple++;
                             break;
@@ -501,16 +501,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             slider.Indicator.TextColor = Color.white;
             slider.Indicator.ShadowColor = Color.clear;
             slider.Indicator.HorizontalTextAlignment = TextLabel.HorizontalTextAlignmentSetting.Right;
-        }
-
-        private Tuple<TextBox, TextBox> AddTuple(string values)
-        {
-            int index = values.IndexOf(ModSettingsReader.tupleDelimiterChar);
-            var tuple = new Tuple<TextBox, TextBox>(
-                GetTextbox(95, 19.6f, values.Substring(0, index)),
-                GetTextbox(116, 19.6f, values.Substring(index + ModSettingsReader.tupleDelimiterChar.Length)));
-            modTuples.Add(tuple);
-            return tuple;
         }
 
         private Tuple<TextBox, TextBox> AddTuple(Tuple<string, string> values)
