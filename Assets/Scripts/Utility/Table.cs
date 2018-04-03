@@ -34,6 +34,8 @@ namespace DaggerfallWorkshop.Utility
     {
         #region Fields
 
+        string[] inlineCommentSeparator = new string[] { "//" };
+
         int columnCount;
         int primaryColumnIndex;
         Column[] columns;
@@ -115,6 +117,13 @@ namespace DaggerfallWorkshop.Utility
                 // Skip empty lines
                 if (string.IsNullOrEmpty(text))
                     continue;
+
+                // Exclude anything to right of inline comment
+                string[] parts = text.Split(inlineCommentSeparator, StringSplitOptions.None);
+                if (parts == null || parts.Length < 1)
+                    continue;
+                else
+                    text = parts[0];
 
                 // Parse schema
                 if (text.StartsWith("schema:", StringComparison.InvariantCultureIgnoreCase))
