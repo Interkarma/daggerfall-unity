@@ -51,7 +51,8 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
-            if (DaggerfallUnity.Settings.HeadBobbing == false)
+            if (DaggerfallUnity.Settings.HeadBobbing == false ||
+                GameManager.Instance.PlayerEntity.CurrentHealth < 1)
                 return;
 
             GetBobbingStyle();
