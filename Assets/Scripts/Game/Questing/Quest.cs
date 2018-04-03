@@ -53,6 +53,7 @@ namespace DaggerfallWorkshop.Game.Questing
         string displayName;
         DaggerfallDateTime questStartTime;
         int factionId = 0;
+        IMacroContextProvider mcp = null;
 
         bool questTombstoned = false;
         DaggerfallDateTime questTombstoneTime;
@@ -154,6 +155,15 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             get { return factionId; }
             set { factionId = value; }
+        }
+
+        /// <summary>
+        /// External non-quest context provider.
+        /// </summary>
+        public IMacroContextProvider ExternalMCP
+        {
+            get { return mcp; }
+            set { mcp = value; }
         }
 
         /// <summary>

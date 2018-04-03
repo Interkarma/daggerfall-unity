@@ -36,10 +36,11 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="record">Which image record to read for multi-image files.</param>
         /// <param name="frame">Which frame to read for multi-frame images.</param>
         /// <param name="hasAlpha">Enable this for image cutouts.</param>
+        /// <param name="alphaIndex">Set the palette index for alpha check (default is 0).</param>
         /// <returns>Texture2D.</returns>
-        public static Texture2D GetTexture(string filename, int record = 0, int frame = 0, bool hasAlpha = false)
+        public static Texture2D GetTexture(string filename, int record = 0, int frame = 0, bool hasAlpha = false, int alphaIndex = 0)
         {
-            ImageData data = GetImageData(filename, record, frame, hasAlpha);
+            ImageData data = GetImageData(filename, record, frame, hasAlpha, true, false, alphaIndex);
             if (data.type == ImageTypes.None)
                 return null;
 
@@ -233,8 +234,9 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="hasAlpha">Enable this for image cutouts.</param>
         /// <param name="createTexture">Create a Texture2D.</param>
         /// <param name="createAllFrameTextures">Creates a Texture2D for every frame in a TEXTURE file (if greater than 1 frames).</param>
+        /// <param name="alphaIndex">Set palette index for alpha checks (default is 0).</param>
         /// <returns>ImageData. If result.type == ImageTypes.None then read failed.</returns>
-        public static ImageData GetImageData(string filename, int record = 0, int frame = 0, bool hasAlpha = false, bool createTexture = true, bool createAllFrameTextures = false)
+        public static ImageData GetImageData(string filename, int record = 0, int frame = 0, bool hasAlpha = false, bool createTexture = true, bool createAllFrameTextures = false, int alphaIndex = 0)
         {
             // Check API ready
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
@@ -259,6 +261,7 @@ namespace DaggerfallWorkshop.Utility
             imageData.record = record;
             imageData.frame = frame;
             imageData.hasAlpha = hasAlpha;
+            imageData.alphaIndex = alphaIndex;
 
             // Read supported image files
             DFBitmap dfBitmap = null;
@@ -379,7 +382,7 @@ namespace DaggerfallWorkshop.Utility
         public static void UpdateTexture(ref ImageData imageData)
         {
             // Get colors array
-            Color32[] colors = imageData.dfBitmap.GetColor32((imageData.hasAlpha) ? 0 : -1);
+            Color32[] colors = imageData.dfBitmap.GetColor32((imageData.hasAlpha) ? imageData.alphaIndex : -1);
             if (colors == null)
                 return;
 
@@ -395,7 +398,7 @@ namespace DaggerfallWorkshop.Utility
         public static void UpdateTexture(ref ImageData imageData, Color maskColor)
         {
             // Get colors array
-            Color32[] colors = imageData.dfBitmap.GetColor32((imageData.hasAlpha) ? 0 : -1, 0xff, maskColor);
+            Color32[] colors = imageData.dfBitmap.GetColor32((imageData.hasAlpha) ? imageData.alphaIndex : -1, 0xff, maskColor);
             if (colors == null)
                 return;
 

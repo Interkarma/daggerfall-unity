@@ -55,6 +55,10 @@ namespace DaggerfallWorkshop.Game
                 GameManager.Instance.PlayerEntity.CurrentHealth < 1)
                 return;
 
+            // Do nothing if player dead, otherwise they appear to stand back up when headbobber updates
+            if (GameManager.Instance.PlayerEntity.CurrentHealth <= 0)
+                return;
+
             GetBobbingStyle();
             SetParamsForBobbingStyle();
 

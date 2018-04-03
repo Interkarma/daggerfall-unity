@@ -1040,7 +1040,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 return;
 
             FactionFile.FactionData dsfactionData;
-            if (!GameManager.Instance.PlayerEntity.FactionData.GetFactionData(data.factionID, out dsfactionData))
+            if (!GameManager.Instance.PlayerEntity.FactionData.GetFactionData(data.factionID, out dsfactionData) && data.factionID != 0)
                 throw new Exception("Could not deserialize Person resource FactionID to FactionData");
 
             race = data.race;

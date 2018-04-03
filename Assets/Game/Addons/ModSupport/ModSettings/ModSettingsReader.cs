@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -17,6 +17,7 @@ using System.Linq;
 using UnityEngine;
 using IniParser;
 using IniParser.Model;
+using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 {
@@ -59,20 +60,23 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 return true;
 
             // Recreate file on disk using default values
-            ModSettingsConfiguration config;
-            if (TryGetConfig(mod, out config))
+            ModSettingsData data;
+            if (TryGetSettingsData(mod, out data))
             {
-                ResetSettings(mod, config);
+                ResetSettings(mod, data);
                 return true;
             }
 
             return false;
         }
 
-        public static void GetSettings(Mod mod, out IniData settings, out ModSettingsConfiguration config)
+        /// <summary>
+        /// Read user and default mod settings.
+        /// </summary>
+        public static void GetSettings(Mod mod, out IniData settings, out ModSettingsData data)
         {
             // Load config
-            if (!TryGetConfig(mod, out config))
+            if (!TryGetSettingsData(mod, out data))
                 throw new ArgumentException("Mod has no associated settings.");
 
             // Load serialized settings or recreate them
@@ -81,58 +85,59 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             {
                 settings = parser.ReadFile(path);
 
-                var header = settings.Sections.GetSectionData(internalSection);
-                if (header == null || header.Keys[settingsVersionKey] != config.version)
+                if (!string.IsNullOrEmpty(data.Version))
                 {
-                    ResetSettings(mod, ref settings, config);
-                    Debug.LogFormat("Settings for {0} are incompatible with current version. " +
-                        "New settings have been recreated with default values", mod.Title);
-                } 
+                    var header = settings.Sections.GetSectionData(internalSection);
+                    if (header == null || header.Keys[settingsVersionKey] != data.Version)
+                    {
+                        ResetSettings(mod, ref settings, data);
+                        Debug.LogFormat("Settings for {0} are incompatible with current version. " +
+                            "New settings have been recreated with default values", mod.Title);
+                    }
+                }
             }
             else
             {
                 settings = null;
-                ResetSettings(mod, ref settings, config);
+                ResetSettings(mod, ref settings, data);
                 Debug.LogFormat("Missing settings for {0}. " +
                     "New settings have been recreated with default values.", mod.Title);
             }
         }
 
-        public static bool TryGetConfig(Mod mod, out ModSettingsConfiguration config, bool legacySupport = true)
+        /// <summary>
+        /// Seek and load default settings from mod.
+        /// </summary>
+        public static bool TryGetSettingsData(Mod mod, out ModSettingsData data)
         {
-            if (mod.AssetBundle.Contains("modsettings.asset"))
+            if (mod.AssetBundle.Contains("modsettings.json"))
             {
-                config = mod.GetAsset<ModSettingsConfiguration>("modsettings.asset");
+                data = new ModSettingsData();
+                return TryDeserializeFromMod(mod, "modsettings.json", ref data);
+            }
+
+            // Legacy support
+            if (mod.AssetBundle.Contains(mod.Title + ".ini.txt"))
+            {
+                Debug.LogFormat("{0} is using a legacy modsettings format.", mod.Title);
+                data = LoadLegacySettingsFromMod(mod, mod.Title + ".ini.txt");
+                return true;
+            }
+            else if (mod.AssetBundle.Contains("modsettings.ini.txt"))
+            {
+                Debug.LogFormat("{0} is using a legacy modsettings format.", mod.Title);
+                data = LoadLegacySettingsFromMod(mod, "modsettings.ini.txt");
+                return true;
+            }
+            else if (mod.AssetBundle.Contains(mod.FileName + ".ini.txt"))
+            {
+                // Note: this is unsafe because file name can be changed by user.
+                Debug.LogWarningFormat("{0} is using an obsolete modsettings filename!", mod.Title);
+                data = LoadLegacySettingsFromMod(mod, mod.FileName + ".ini.txt");
                 return true;
             }
 
-            if (legacySupport)
-            {
-                // Support for old mods
-                if (mod.AssetBundle.Contains(mod.Title + ".ini.txt"))
-                {
-                    var data = GetIniDataFromTextAsset(mod.GetAsset<TextAsset>(mod.Title + ".ini.txt"));
-                    config = ParseIniToConfig(data);
-                    return true;
-                }
-                else if (mod.AssetBundle.Contains("modsettings.ini.txt"))
-                {
-                    var data = GetIniDataFromTextAsset(mod.GetAsset<TextAsset>("modsettings.ini.txt"));
-                    config = ParseIniToConfig(data);
-                    return true;
-                }
-
-                // Eventually this will no longer be supported as file name can be changed by user.
-                if (mod.AssetBundle.Contains(mod.FileName + ".ini.txt"))
-                {
-                    Debug.LogWarningFormat("{0} is using an obsolete modsettings filename!", mod.Title);
-                    var data = GetIniDataFromTextAsset(mod.GetAsset<TextAsset>(mod.FileName + ".ini.txt"));
-                    config = ParseIniToConfig(data);
-                    return true;
-                }
-            }
-
-            config = null;
+            data = null;
             return false;
         }
 
@@ -147,139 +152,82 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// <summary>
         /// Save default settings to disk.
         /// </summary>
-        public static void ResetSettings(Mod mod, ModSettingsConfiguration config)
+        public static void ResetSettings(Mod mod, ModSettingsData data)
         {
-            parser.WriteFile(SettingsPath(mod), ParseConfigToIni(config));
+            parser.WriteFile(SettingsPath(mod), ParseSettingsToIni(data));
         }
 
         /// <summary>
         /// Save default settings to disk and set them as current settings.
         /// </summary>
-        public static void ResetSettings(Mod mod, ref IniData settings, ModSettingsConfiguration config)
+        public static void ResetSettings(Mod mod, ref IniData settings, ModSettingsData data)
         {
-            settings = ParseConfigToIni(config);
-            parser.WriteFile(SettingsPath(mod), settings);
+            parser.WriteFile(SettingsPath(mod), settings = ParseSettingsToIni(data));
         }
 
         /// <summary>
         /// Import presets from mod and local presets from disk.
         /// </summary>
-        public static List<IniData> GetPresets (Mod mod)
+        public static List<Preset> GetPresets(Mod mod)
         {
-            List<IniData> presets = new List<IniData>();
+            var presets = new List<Preset>();
 
-            // Get presets from mod (TextAsset)
-            int index = 0;
-            while (mod.AssetBundle.Contains("settingspreset" + index + ".ini.txt"))
-            {
-                TextAsset presetFile = mod.GetAsset<TextAsset>("settingspreset" + index + ".ini.txt");
-                presets.Add(GetIniDataFromTextAsset(presetFile));
-                index++;
-            }
-
-            // Get preset from mod (Config)
-            ModSettingsConfiguration config;
-            if (TryGetConfig(mod, out config, false))
-            {
-                foreach (var presetName in config.presets)
-                {
-                    var presetConfig = mod.GetAsset<ModSettingsConfiguration>(presetName);
-                    presets.Add(ParseConfigToIni(presetConfig));
-                }
-            }
+            // Get presets from mod
+            if (mod.AssetBundle.Contains("modpresets.json"))
+                TryDeserializeFromMod(mod, "modpresets.json", ref presets);
 
             // Get presets from disk
             foreach (string path in Directory.GetFiles(mod.DirPath, mod.FileName + "preset*.ini"))
-                presets.Add(parser.ReadFile(path));
+            {
+                var preset = ParseIniToPreset(parser.ReadFile(path));
+                preset.DiskPath = path;
+                presets.Add(preset);
+            }
 
             return presets;
         }
 
+        /// <summary>
+        /// Copy values from user data to preset and save to disk as IniFile.
+        /// </summary>
         public static void CreatePreset(Mod mod, IniData data, Preset preset)
         {
-            IniData presetData = new IniData(data);
-            var section = new SectionData(internalSection);
-            section.Keys.AddKey("PresetName", preset.Title);
-            section.Keys.AddKey("Description", preset.Description);
-            section.Keys.AddKey("PresetAuthor", preset.Author);
-            section.Keys.AddKey("SettingsVersion", preset.Version);
-            presetData.Sections.Add(section);
+            // Set preset instance from current values
+            preset.Values.Clear();
+            foreach (var sectionData in data.Sections)
+            {
+                var pSection = new Dictionary<string, string>();
+                foreach (var keyData in sectionData.Keys)
+                    pSection.Add(keyData.KeyName, keyData.Value);
+                preset.Values.Add(sectionData.SectionName, pSection);
+            }
 
-            string name = string.Format("{0}preset{1}.ini", mod.FileName, preset.Title);
-            foreach (char c in Path.GetInvalidPathChars())
-                name = name.Replace(c, '_');
-            parser.WriteFile(Path.Combine(mod.DirPath, name), presetData);      
+            // Save to disk as Ini file
+            parser.WriteFile(preset.GetSafePath(mod), ParsePresetToIni(preset));  
         }
 
         #endregion
 
         #region Helper Methods
 
-        public static IniData ParseConfigToIni(ModSettingsConfiguration config)
+        public static IniData ParseSettingsToIni(ModSettingsData data)
         {
             var iniData = new IniData();
 
             // Header
             var header = new SectionData(internalSection);
-            header.Keys.AddKey(settingsVersionKey, config.version);
-
-            if (config.isPreset)
-            {
-                header.Keys.AddKey("PresetName", config.presetSettings.name);
-                header.Keys.AddKey("PresetAuthor", config.presetSettings.author);
-                header.Keys.AddKey("Description", config.presetSettings.description);
-            }
-
+            header.Keys.AddKey(settingsVersionKey, data.Version);
             iniData.Sections.Add(header);
 
             // Settings
-            foreach (var section in config.sections)
+            foreach (var section in data.Sections)
             {
-                var sectionData = new SectionData(section.name);
+                var sectionData = new SectionData(section.Name);
 
-                foreach (var key in section.keys)
-                {
-                    KeyData keyData = new KeyData(key.name);
+                foreach (var key in section.Keys)
+                    sectionData.Keys.AddKey(key.Name, key.TextValue);
 
-                    switch (key.type)
-                    {
-                        case ModSettingsKey.KeyType.Toggle:
-                            keyData.Value = key.toggle.value.ToString();
-                            break;
-
-                        case ModSettingsKey.KeyType.MultipleChoice:
-                            keyData.Value = key.multipleChoice.selected.ToString();
-                            break;
-
-                        case ModSettingsKey.KeyType.Slider:
-                            keyData.Value = key.slider.value.ToString();
-                            break;
-
-                        case ModSettingsKey.KeyType.FloatSlider:
-                            keyData.Value = key.floatSlider.value.ToString();
-                            break;
-
-                        case ModSettingsKey.KeyType.Tuple:
-                            keyData.Value = key.tuple.first + tupleDelimiterChar + key.tuple.second;
-                            break;
-
-                        case ModSettingsKey.KeyType.FloatTuple:
-                            keyData.Value = key.floatTuple.first + tupleDelimiterChar + key.floatTuple.second;
-                            break;
-
-                        case ModSettingsKey.KeyType.Text:
-                            keyData.Value = key.text.text;
-                            break;
-
-                        case ModSettingsKey.KeyType.Color:
-                            keyData.Value = key.color.HexColor;
-                            break;
-                    }
-
-                    sectionData.Keys.AddKey(keyData);
-                }
-
-                if (section.name == internalSection)
+                if (section.Name == internalSection)
                     iniData.Sections.GetSectionData(internalSection).Merge(sectionData);
                 else
                     iniData.Sections.Add(sectionData);
@@ -288,84 +236,100 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             return iniData;
         }
 
-        public static ModSettingsConfiguration ParseIniToConfig(IniData iniData)
+        public static void ParseIniToSettings(ModSettingsData data, IniData iniData)
         {
-            var config = ScriptableObject.CreateInstance(typeof(ModSettingsConfiguration)) as ModSettingsConfiguration;
-            ParseIniToConfig(iniData, config);
-            return config;
-        }
-
-        public static void ParseIniToConfig(IniData iniData, ModSettingsConfiguration config)
-        {
-            var configSections = new List<ModSettingsConfiguration.Section>();
+            data.Sections.Clear();
+#if UNITY_EDITOR
+            data.Presets.Clear();
+#endif
             foreach (SectionData section in iniData.Sections)
             {
-                var configSection = new ModSettingsConfiguration.Section();
-                configSection.name = section.SectionName;
+                var dataSection = new Section();
+                dataSection.Name = section.SectionName;
 
-                List<ModSettingsKey> keys = new List<ModSettingsKey>();
                 foreach (KeyData key in section.Keys)
                 {
-                    var configKey = new ModSettingsKey();
-                    configKey.name = key.KeyName;
-
+                    Key dataKey;
                     if (key.Value == "True" || key.Value == "False")
                     {
-                        configKey.type = ModSettingsKey.KeyType.Toggle;
-                        configKey.toggle = new ModSettingsKey.Toggle();
-                        configKey.toggle.value = bool.Parse(key.Value);
+                        dataKey = new ToggleKey();
                     }
                     else if (key.Value.Contains(tupleDelimiterChar))
                     {
-                        configKey.type = ModSettingsKey.KeyType.FloatTuple;
-                        configKey.floatTuple = new ModSettingsKey.FloatTuple();
-                        int index = key.Value.IndexOf(tupleDelimiterChar);
-                        float.TryParse(key.Value.Substring(0, index), out configKey.floatTuple.first);
-                        float.TryParse(key.Value.Substring(index + tupleDelimiterChar.Length), out configKey.floatTuple.second);
+                        dataKey = new TupleFloatKey();
                     }
                     else if (IsHexColor(key.Value))
                     {
-                        configKey.type = ModSettingsKey.KeyType.Color;
-                        configKey.color = new ModSettingsKey.Tint();
-                        configKey.color.HexColor = key.Value;
+                        dataKey = new ColorKey();
                     }
                     else
                     {
-                        configKey.type = ModSettingsKey.KeyType.Text;
-                        configKey.text = new ModSettingsKey.Text();
-                        configKey.text.text = key.Value;
+                        dataKey = new TextKey();
                     }
 
-                    keys.Add(configKey);
+                    if (section.SectionName == internalSection && key.KeyName == settingsVersionKey)
+                    {
+                        data.Version = key.Value;
+                        continue;
+                    }
+
+                    dataKey.Name = key.KeyName;
+                    dataKey.TextValue = key.Value;
+                    dataSection.Keys.Add(dataKey);
                 }
 
-                if (section.SectionName == internalSection)
+                if (dataSection.Keys.Count > 0)
+                    data.Sections.Add(dataSection);
+            }
+        }
+
+        public static IniData ParsePresetToIni(Preset preset)
+        {
+            var iniData = new IniData();
+
+            // Header
+            var header = new SectionData(internalSection);
+            header.Keys.AddKey(settingsVersionKey, preset.SettingsVersion);
+            header.Keys.AddKey("PresetName", preset.Title);
+            header.Keys.AddKey("PresetAuthor", preset.Author);
+            header.Keys.AddKey("Description", preset.Description);
+            iniData.Sections.Add(header);
+
+            // Settings
+            foreach (var section in preset.Values)
+            {
+                var sectionData = new SectionData(section.Key);
+                foreach (var key in section.Value)
+                    sectionData.Keys.AddKey(key.Key, key.Value);
+                iniData.Sections.Add(sectionData);
+            }
+
+            return iniData;
+        }
+
+        private static Preset ParseIniToPreset(IniData presetData)
+        {
+            var preset = new Preset();
+            foreach (var sectionData in presetData.Sections)
+            {
+                if (sectionData.SectionName == internalSection)
                 {
                     // Header
-                    config.version = section.Keys[settingsVersionKey];
-
-                    // Add section only if there are other hidden keys
-                    if (keys.Count > 1)
-                    {
-                        configSection.keys = keys.Where(x => x.name != settingsVersionKey).ToArray();
-                        configSections.Add(configSection);
-                    }
+                    preset.Title = sectionData.Keys["PresetName"];
+                    preset.Author = sectionData.Keys["PresetAuthor"];
+                    preset.Description = sectionData.Keys["Description"];
+                    preset.SettingsVersion = sectionData.Keys["SettingsVersion"];
                 }
                 else
                 {
                     // Settings
-                    configSection.keys = keys.ToArray();
-                    configSections.Add(configSection);
+                    var section = new Dictionary<string, string>();
+                    foreach (var keyData in sectionData.Keys)
+                        section.Add(keyData.KeyName, keyData.Value);
+                    preset.Values.Add(sectionData.SectionName, section);
                 }
             }
-            config.sections = configSections.ToArray();
-        }
-
-        public static bool IsHexColor(string stringColor)
-        {
-            int hexColor;
-            return (stringColor.Length == 8 &&
-                int.TryParse(stringColor, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out hexColor));
+            return preset;
         }
 
         /// <summary>
@@ -386,13 +350,30 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             return Path.Combine(mod.DirPath, mod.FileName + ".ini");
         }
 
-        private static IniData GetIniDataFromTextAsset (TextAsset textAsset)
+        private static bool TryDeserializeFromMod<T>(Mod mod, string assetName, ref T data)
         {
-            MemoryStream stream = new MemoryStream(textAsset.bytes);
-            StreamReader reader = new StreamReader(stream);
-            IniData iniData = parser.ReadData(reader);
-            reader.Close();
-            return iniData;
+            var textAsset = mod.GetAsset<TextAsset>(assetName);
+            fsResult fsResult = ModManager._serializer.TryDeserialize(fsJsonParser.Parse(textAsset.text), ref data);
+            if (fsResult.Failed)
+                Debug.LogErrorFormat("{0}: Failed to import {1}:\n{2}", mod.Title, assetName, fsResult.FormattedMessages);
+            return fsResult.Succeeded;
+        }
+
+        private static ModSettingsData LoadLegacySettingsFromMod(Mod mod, string assetName)
+        {
+            var data = new ModSettingsData();
+            var textAsset = mod.GetAsset<TextAsset>(assetName);
+            using (var stream = new MemoryStream(textAsset.bytes))
+            using (var reader = new StreamReader(stream))
+                ParseIniToSettings(data, parser.ReadData(reader));
+            return data;
+        }
+
+        private static bool IsHexColor(string stringColor)
+        {
+            int hexColor;
+            return (stringColor.Length == 8 &&
+                int.TryParse(stringColor, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out hexColor));
         }
 
         #endregion
