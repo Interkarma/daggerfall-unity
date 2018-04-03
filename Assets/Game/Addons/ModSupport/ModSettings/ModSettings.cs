@@ -6,18 +6,15 @@
 // Original Author: TheLacus
 // Contributors:    
 // 
-// Notes:           Parse code is required for legacy ini settings support.
-//                  Eventually key override will be used here.
+// Notes:
 //
 
 using System;
 using System.Linq;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
 using UnityEngine;
 using DaggerfallWorkshop.Utility;
-using IniParser.Model;
 
 namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 {
@@ -28,7 +25,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
     {
         // Fields
         readonly Mod mod;
-        readonly IniData userSettings;
         readonly ModSettingsData data;
 
         #region Public Methods
@@ -43,7 +39,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 throw new ArgumentException(string.Format("{0} has no settings.", mod.Title), "mod");
 
             this.mod = mod;
-            ModSettingsReader.GetSettings(mod, out userSettings, out data);
+            data = ModSettingsData.Make(mod);
+            data.LoadLocalValues();
         }
 
         /// <summary>
@@ -53,11 +50,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// <param name="name">Name of key.</param>
         public string GetString(string section, string name)
         {
-            string text = GetValue(section, name);
-            if (text != null)
-                return text;
-
-            return GetDefaultValue<string>(section, name);
+            return GetValue<string>(section, name);
         }
 
         /// <summary>
@@ -67,11 +60,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// <param name="name">Name of key.</param>
         public int GetInt(string section, string name)
         {
+            // Legacy support
             int value;
-            if (int.TryParse(GetValue(section, name), out value))
+            if (int.TryParse(GetTextValue(section, name), out value))
                 return value;
 
-            return GetDefaultValue<int>(section, name);
+            return GetValue<int>(section, name);
         }
 
         /// <summary>
@@ -81,6 +75,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// <param name="section">Name of section.</param>
         /// <param name="name">Name of key.</param>
         /// <param name="min">Minimum accepted value.</param>
+        [Obsolete("Set range from editor gui")]
         public int GetInt(string section, string name, int min)
         {
             return Mathf.Max(min, GetInt(section, name));
@@ -94,6 +89,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// <param name="name">Name of key.</param>
         /// <param name="min">Minimum accepted value.</param>
         /// <param name="max">Maximum accepted value.</param>
+        [Obsolete("Set range from editor gui")]
         public int GetInt(string section, string name, int min, int max)
         {
             return Mathf.Clamp(GetInt(section, name), min, max);
@@ -106,11 +102,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// <param name="name">Name of key.</param>
         public float GetFloat(string section, string name)
         {
+            // Legacy support
             float value;
-            if (float.TryParse(GetValue(section, name), NumberStyles.Float, CultureInfo.InvariantCulture, out value))
+            if (float.TryParse(GetTextValue(section, name), out value))
                 return value;
 
-            return GetDefaultValue<float>(section, name);
+            return GetValue<float>(section, name);
         }
 
         /// <summary>
@@ -120,6 +117,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// <param name="section">Name of section.</param>
         /// <param name="name">Name of key.</param>
         /// <param name="min">Minimum accepted value.</param>
+        [Obsolete("Set range from editor gui")]
         public float GetFloat(string section, string name, float min)
         {
             return Mathf.Max(min, GetFloat(section, name));
@@ -133,6 +131,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// <param name="name">Name of key.</param>
         /// <param name="min">Minimum accepted value.</param>
         /// <param name="max">Maximum accepted value.</param>
+        [Obsolete("Set range from editor gui")]
         public float GetFloat(string section, string name, float min, float max)
         {
             return Mathf.Clamp(GetFloat(section, name), min, max);
@@ -145,11 +144,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// <param name="name">Name of key.</param>
         public bool GetBool(string section, string name)
         {
+            // Legacy support
             bool value;
-            if (bool.TryParse(GetValue(section, name), out value))
+            if (bool.TryParse(GetTextValue(section, name), out value))
                 return value;
 
-            return GetDefaultValue<bool>(section, name);
+            return GetValue<bool>(section, name);
         }
 
         /// <summary>
@@ -159,11 +159,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// <param name="name">Name of key.</param>
         public Color GetColor(string section, string name)
         {
-            Color color;
-            if (ColorUtility.TryParseHtmlString("#" + GetValue(section, name), out color))
-                return color;
-
-            return GetDefaultValue<Color32>(section, name);
+            return GetValue<Color32>(section, name);
         }
 
         /// <summary>
@@ -173,12 +169,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// <param name="name">Name of key.</param>
         public Tuple<int, int> GetTupleInt(string section, string name)
         {
-            int first, second;
-            var tuple = Key.SplitTuple(GetValue(section, name));
-            if (int.TryParse(tuple.First, out first) && int.TryParse(tuple.Second, out second))
-                return new Tuple<int, int>(first, second);
-
-            return GetDefaultValue<Tuple<int, int>>(section, name);
+            return GetValue<Tuple<int, int>>(section, name);
         }
 
         /// <summary>
@@ -188,26 +179,18 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// <param name="name">Name of key.</param>
         public Tuple<float, float> GetTupleFloat(string section, string name)
         {
-            float first, second;
-            var tuple = Key.SplitTuple(GetValue(section, name));
-            if (float.TryParse(tuple.First, out first) && float.TryParse(tuple.Second, out second))
-                return new Tuple<float, float>(first, second);
-
-            return GetDefaultValue<Tuple<float, float>>(section, name);
+            return GetValue<Tuple<float, float>>(section, name);
         }
 
         /// <summary>
         /// Get a value from user settings or, as fallback, from default settings.
         /// </summary>
         /// <typeparam name="T">Type of value.</typeparam>
-        /// <param name="section">Name of section.</param>
-        /// <param name="name">Name of key.</param>
-        public T GetValue<T>(string section, string name)
+        /// <param name="sectionName">Name of section.</param>
+        /// <param name="keyName">Name of key.</param>
+        public T GetValue<T>(string sectionName, string keyName)
         {
-            var key = GetKey<T>(section, name);
-            string value = GetValue(section, name);
-
-            return value != null ? key.Deserialize(value) : key.Value;
+            return data.GetValue<T>(sectionName, keyName);
         }
 
         /// <summary>
@@ -228,7 +211,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             {
                 Key key;
                 if (section.Keys.TryGetValue(field.Name, out key))
-                    field.SetValue(instance, key.ParseToObject(GetValue(sectionName, field.Name)));
+                    field.SetValue(instance, key.ToObject());
             }
 
             if (includeProperties)
@@ -236,7 +219,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 {
                     Key key;
                     if (section.Keys.TryGetValue(property.Name, out key))
-                        property.SetValue(instance, key.ParseToObject(GetValue(sectionName, property.Name)), null);
+                        property.SetValue(instance, key.ToObject(), null);
                 }
         }
 
@@ -245,34 +228,16 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         #region Private Methods
 
         /// <summary>
-        /// Get value from user settings.
+        /// Get non type-safe value from user settings (legacy support).
         /// </summary>
-        private string GetValue(string section, string name)
+        private string GetTextValue(string section, string name)
         {
-            KeyDataCollection keyDataCollection = userSettings[section];
-            if (keyDataCollection != null)
-            {
-                string key = keyDataCollection[name];
-                if (key != null)
-                    return key;
-            }
+            Key key;
+            if (data.TryGetKey(section, name, out key))
+                return key.TextValue;
 
             Debug.LogErrorFormat("Failed to get ({0},{1}) for mod {2}.", section, name, mod.Title);
             return null;
-        }
-
-        private T GetDefaultValue<T>(string section, string name)
-        {
-            return GetKey<T>(section, name).Value;
-        }
-
-        private Key<T> GetKey<T>(string section, string name)
-        {
-            Key<T> key;
-            if (data.TryGetKey(section, name, out key))
-                return key;
-
-            throw new KeyNotFoundException(string.Format("The key ({0},{1}) was not present in {2} settings.", section, name, mod.Title));
         }
 
         #endregion

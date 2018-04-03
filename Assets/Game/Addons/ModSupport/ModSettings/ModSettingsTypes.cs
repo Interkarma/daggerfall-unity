@@ -11,18 +11,19 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+using UnityEditorInternal;
+#endif
+using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Utility;
 using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 {
-    /// <summary>
-    /// Type of setting key.
-    /// </summary>
-    public enum KeyType { Toggle, MultipleChoice, SliderInt, SliderFloat, TupleInt, TupleFloat, Text, Color }
+    #region Collections
 
     /// <summary>
     /// A collection of sections which can be accessed by index or name.
@@ -113,17 +114,37 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         }
     }
 
+    #endregion
+
+    #region Keys
+
+    /// <summary>
+    /// Type of setting key.
+    /// </summary>
+    public enum KeyType
+    {
+        Toggle,
+        MultipleChoice,
+        SliderInt,
+        SliderFloat,
+        TupleInt,
+        TupleFloat,
+        Text,
+        Color
+    }
+
     /// <summary>
     /// A single key with a name.
     /// </summary>
     [fsObject("v1")]
     public abstract class Key
     {
-        const string TupleDelimiter = "<,>";
-
         string name;
 
 #if UNITY_EDITOR
+        public delegate void HorizontalCallback(Rect rect, string prefixLabel, params Action<Rect>[] rects);
+        public delegate void VerticalCallback(Rect rect, int linesPerItem, params Action<Rect>[] rects);
+
         public Action<string, string> SyncKeyCallback {get; set;}
 #endif
         
@@ -134,30 +155,90 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             set { SetName(value);}
         }
         
-        public string Description {get; set;}
+        public string Description { get; set; }
         public abstract KeyType KeyType { get; }
+
+        /// <summary>
+        /// The value of this key as a serialized string.
+        /// </summary>
         public abstract string TextValue { get; set; }
 
-        public abstract object ParseToObject(string serializedValue);
+        /// <summary>
+        /// The value of this key casted to object.
+        /// </summary>
+        public abstract object ToObject();
 
-        public static Key NewDefaultKey()
+        /// <summary>
+        /// Draws a control on game window.
+        /// </summary>
+        public abstract object OnWindow(ModSettingsWindow window);
+
+        /// <summary>
+        /// Save value from a control.
+        /// </summary>
+        public abstract void OnSaveWindow(object control);
+
+#if UNITY_EDITOR
+        /// <summary>
+        /// Draws a control on editor window. Returns number of lines.
+        /// </summary>
+        public abstract int OnEditorWindow(Rect rect, HorizontalCallback horizontal, VerticalCallback vertical, Dictionary<string, object> cache);
+#endif
+
+        /// <summary>
+        /// Make a new instance of a key of the given type.
+        /// </summary>
+        public static Key Make(KeyType keyType = KeyType.Toggle)
         {
-            return new ToggleKey();
+            switch (keyType)
+            {
+                case KeyType.Toggle:
+                    return new ToggleKey();
+                case KeyType.MultipleChoice:
+                    return new MultipleChoiceKey();
+                case KeyType.SliderInt:
+                    return new SliderIntKey();
+                case KeyType.SliderFloat:
+                    return new SliderFloatKey();
+                case KeyType.TupleInt:
+                    return new TupleIntKey();
+                case KeyType.TupleFloat:
+                    return new TupleFloatKey();
+                case KeyType.Text:
+                    return new TextKey();
+                case KeyType.Color:
+                    return new ColorKey();
+            }
+
+            throw new ArgumentException(string.Format("KeyType {0} is not defined!", keyType));
         }
 
-        public static string FormatTuple(object first, object second)
+        /// <summary>
+        /// Join values in a single string.
+        /// </summary>
+        protected static string Join<T>(params T[] args)
         {
-            return string.Format("{0}{1}{2}", first, TupleDelimiter, second);
+            return string.Join(",", args.Select(x => x.ToString()).ToArray());
         }
 
-        public static Tuple<string, string> SplitTuple(string text)
+        /// <summary>
+        /// Get values from a string.
+        /// </summary>
+        protected static bool TrySplit<T>(string input, int count, out T[] items)
         {
             try
             {
-                int index = text.IndexOf(TupleDelimiter);
-                return new Tuple<string, string>(text.Substring(0, index), text.Substring(index + TupleDelimiter.Length));
+                string[] args = input.Split(new char[] { ',' }, count);
+                items = new T[args.Length];
+                for (int i = 0; i < args.Length; i++)
+                    items[i] = (T)Convert.ChangeType(args[i], typeof(T));
+                return true;
             }
-            catch { return new Tuple<string, string>(string.Empty, string.Empty); }
+            catch
+            {
+                items = new T[0];
+                return false;
+            }
         }
 
         private void SetName(string value)
@@ -177,37 +258,28 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
     /// </summary>
     public abstract class Key<T> : Key
     {
-        public T Value {get; set;}
+        /// <summary>
+        /// The value of this key.
+        /// </summary>
+        public T Value { get; set; }
 
-        public sealed override string TextValue 
+        public sealed override string TextValue
         {
-            get { return Serialize(Value); }
-            set { Value = Deserialize(value); }
+            get { return Serialize(); }
+            set { TryDeserialize(value); }
         }
 
-        public sealed override object ParseToObject(string serializedValue)
+        public sealed override object ToObject()
         {
-            return serializedValue != null ? Deserialize(serializedValue) : Value;
+            return Value;
         }
 
-        public virtual string Serialize(T value)
+        protected virtual string Serialize()
         {
-            return value.ToString();
+            return Value.ToString();
         }
 
-        public abstract T Deserialize (string text);
-
-        protected static int Parse(string textValue, int fallback)
-        {
-            int value;
-            return int.TryParse(textValue, out value) ? value : fallback;
-        }
-
-        protected static float Parse(string textValue, float fallback)
-        {
-            float value;
-            return float.TryParse(textValue, out value) ? value : fallback;
-        }
+        protected abstract void TryDeserialize(string text);
     }
 
     /// <summary>
@@ -217,10 +289,29 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
     {
         public override KeyType KeyType { get { return KeyType.Toggle; } }
 
-        public override bool Deserialize(string textValue)
+        public override object OnWindow(ModSettingsWindow window)
+        {
+            return window.LayoutCheckbox(Value);
+        }
+
+        public override void OnSaveWindow(object control)
+        {
+            Value = ((Checkbox)control).IsChecked;
+        }
+
+#if UNITY_EDITOR
+        public override int OnEditorWindow(Rect rect, HorizontalCallback horizontal, VerticalCallback vertical, Dictionary<string, object> cache)
+        {
+            horizontal(rect, null, (r) => Value = EditorGUI.Toggle(r, "Checked", Value));
+            return 1;
+        }
+#endif
+
+        protected override void TryDeserialize(string textValue)
         {
             bool value;
-            return bool.TryParse(textValue, out value) ? value : Value;
+            if (bool.TryParse(textValue, out value))
+                Value = value;
         }
     }
 
@@ -229,13 +320,58 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
     /// </summary>
     public class MultipleChoiceKey : Key<int>
     {
+#if UNITY_EDITOR
+        ReorderableList optionsEditor;
+#endif
+
         public List<string> Options = new List<string>();
 
         public override KeyType KeyType { get { return KeyType.MultipleChoice; } }
 
-        public override int Deserialize(string textValue)
+        public override object OnWindow(ModSettingsWindow window)
         {
-            return Mathf.Clamp(Parse(textValue, Value), 0, Options.Count);
+            return window.LayoutSlider(x => x.SetIndicator(Options.ToArray(), Value));
+        }
+
+        public override void OnSaveWindow(object control)
+        {
+            Value = ((HorizontalSlider)control).Value;
+        }
+
+#if UNITY_EDITOR
+        public override int OnEditorWindow(Rect rect, HorizontalCallback horizontal, VerticalCallback vertical, Dictionary<string, object> cache)
+        {
+            if (optionsEditor == null)
+            {
+                optionsEditor = new ReorderableList(Options, typeof(string), true, true, true, true);
+                optionsEditor.drawHeaderCallback = r =>
+                {
+                    EditorGUI.LabelField(r, "Options");
+                    if (GUI.Button(new Rect(r.x + r.width - 30, r.y, 30, EditorGUIUtility.singleLineHeight), (Texture2D)EditorGUIUtility.Load("icons/SettingsIcon.png"), EditorStyles.toolbarButton))
+                    {
+                        var menu = new GenericMenu();
+                        menu.AddItem(new GUIContent("Copy choices"), false, () => cache["options"] = Options.ToList());
+                        if (cache.ContainsKey("options"))
+                            menu.AddItem(new GUIContent("Paste choices"), false, () => { optionsEditor.list = Options = (List<string>)cache["options"]; });
+                        menu.ShowAsContext();
+                    }
+                };
+                optionsEditor.onAddCallback = x => x.list.Add(string.Empty);
+                optionsEditor.drawElementCallback = (r, i, a, f) => optionsEditor.list[i] = EditorGUI.TextField(new Rect(r.x, r.y, r.width, EditorGUIUtility.singleLineHeight), (string)optionsEditor.list[i]);
+            }
+
+            vertical(rect, 1,
+                (r) => Value = EditorGUI.Popup(r, "Selected", Value, Options.ToArray()),
+                (r) => optionsEditor.DoList(r));
+            return optionsEditor.count + 3;
+        }
+#endif
+
+        protected override void TryDeserialize(string textValue)
+        {
+            int value;
+            if (int.TryParse(textValue, out value))
+                Value = Mathf.Clamp(value, 0, Options.Count);
         }
     }
 
@@ -249,9 +385,35 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         public override KeyType KeyType { get { return KeyType.SliderInt; } }
 
-        public override int Deserialize(string textValue)
+        public override object OnWindow(ModSettingsWindow window)
         {
-            return Mathf.Clamp(Parse(textValue, Value), Min, Max);
+            return window.LayoutSlider(x => x.SetIndicator(Min, Max, Value));
+        }
+
+        public override void OnSaveWindow(object control)
+        {
+            Value = ((HorizontalSlider)control).Value;
+        }
+
+#if UNITY_EDITOR
+        public override int OnEditorWindow(Rect rect, HorizontalCallback horizontal, VerticalCallback vertical, Dictionary<string, object> cache)
+        {
+            vertical(rect, 1,
+                (line) => horizontal(line, null,
+                    (r) => Value = EditorGUI.IntSlider(r, "Value", Value, Min, Max)),
+                (line) => horizontal(line, "Range",
+                    (r) => Min = EditorGUI.IntField(r, "Min", Min),
+                    (r) => Max = EditorGUI.IntField(r, "Max", Max))
+            );
+            return 2;
+        }
+#endif
+
+        protected override void TryDeserialize(string textValue)
+        {
+            int value;
+            if (int.TryParse(textValue, out value))
+                Value = Mathf.Clamp(value, Min, Max);
         }
     }
 
@@ -265,9 +427,35 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         public override KeyType KeyType { get { return KeyType.SliderFloat; } }
 
-        public override float Deserialize(string textValue)
+        public override object OnWindow(ModSettingsWindow window)
         {
-            return Mathf.Clamp(Parse(textValue, Value), Min, Max);
+            return window.LayoutSlider(x => x.SetIndicator(Min, Max, Value));
+        }
+
+        public override void OnSaveWindow(object control)
+        {
+            Value = ((HorizontalSlider)control).GetValue();
+        }
+
+#if UNITY_EDITOR
+        public override int OnEditorWindow(Rect rect, HorizontalCallback horizontal, VerticalCallback vertical, Dictionary<string, object> cache)
+        {
+            vertical(rect, 1,
+                (line) => horizontal(line, null,
+                    (r) => Value = EditorGUI.Slider(r, "Value", Value, Min, Max)),
+                (line) => horizontal(line, "Range",
+                    (r) => Min = EditorGUI.FloatField(r, "Min", Min),
+                    (r) => Max = EditorGUI.FloatField(r, "Max", Max))
+            );
+            return 2;
+        }
+#endif
+
+        protected override void TryDeserialize(string textValue)
+        {
+            float value;
+            if (float.TryParse(textValue, out value))
+                Value = Mathf.Clamp(value, Min, Max);
         }
     }
 
@@ -278,15 +466,38 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
     {
         public override KeyType KeyType { get { return KeyType.TupleInt; } }
 
-        public override string Serialize(Tuple<int, int> value)
+        public override object OnWindow(ModSettingsWindow window)
         {
-            return FormatTuple(value.First, value.Second);
+            return window.LayoutTuple(Value.First.ToString(), Value.Second.ToString());
         }
 
-        public override Tuple<int, int> Deserialize(string textValue)
+        public override void OnSaveWindow(object control)
         {
-            var tuple = SplitTuple(textValue);
-            return new Tuple<int, int>(Parse(tuple.First, Value.First), Parse(tuple.Second, Value.Second));
+            var tuple = (Tuple<TextBox, TextBox>)control;
+            TryDeserialize(Join(tuple.First.ResultText, tuple.Second.ResultText));
+        }
+
+#if UNITY_EDITOR
+        public override int OnEditorWindow(Rect rect, HorizontalCallback horizontal, VerticalCallback vertical, Dictionary<string, object> cache)
+        {
+            if (Value == null) Value = Tuple<int, int>.Make(0, 100);
+            horizontal(rect, "Value",
+                (r) => Value.First = EditorGUI.IntField(r, "First", Value.First),
+                (r) => Value.Second = EditorGUI.IntField(r, "Second", Value.Second));
+            return 1;
+        }
+#endif
+
+        protected override string Serialize()
+        {
+            return Join(Value.First, Value.Second);
+        }
+
+        protected override void TryDeserialize(string textValue)
+        {
+            int[] args;
+            if (TrySplit(textValue, 2, out args))
+                Value = new Tuple<int, int>(args[0], args[1]);
         }
     }
 
@@ -297,15 +508,38 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
     {
         public override KeyType KeyType { get { return KeyType.TupleFloat; } }
 
-        public override string Serialize(Tuple<float, float> value)
+        public override object OnWindow(ModSettingsWindow window)
         {
-            return FormatTuple(value.First, value.Second);
+            return window.LayoutTuple(Value.First.ToString(), Value.Second.ToString());
         }
 
-        public override Tuple<float, float> Deserialize(string textValue)
+        public override void OnSaveWindow(object control)
         {
-            var tuple = SplitTuple(textValue);
-            return new Tuple<float, float>(Parse(tuple.First, Value.First), Parse(tuple.Second, Value.Second));
+            var tuple = (Tuple<TextBox, TextBox>)control;
+            TryDeserialize(Join(tuple.First.ResultText, tuple.Second.ResultText));
+        }
+
+#if UNITY_EDITOR
+        public override int OnEditorWindow(Rect rect, HorizontalCallback horizontal, VerticalCallback vertical, Dictionary<string, object> cache)
+        {
+            if (Value == null) Value = Tuple<float, float>.Make(0, 100);
+            horizontal(rect, "Value",
+                (r) => Value.First = EditorGUI.FloatField(r, "First", Value.First),
+                (r) => Value.Second = EditorGUI.FloatField(r, "Second", Value.Second));
+            return 1;
+        }
+#endif
+
+        protected override string Serialize()
+        {
+            return Join(Value.First, Value.Second);
+        }
+
+        protected override void TryDeserialize(string textValue)
+        {
+            int[] args;
+            if (TrySplit(textValue, 2, out args))
+                Value = new Tuple<float, float>(args[0], args[1]);
         }
     }
 
@@ -316,9 +550,27 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
     {
         public override KeyType KeyType { get { return KeyType.Text; } }
 
-        public override string Deserialize(string value)
+        public override object OnWindow(ModSettingsWindow window)
         {
-            return value;
+            return window.LayoutTextBox(Value);
+        }
+
+        public override void OnSaveWindow(object control)
+        {
+            Value = ((TextBox)control).ResultText;
+        }
+
+#if UNITY_EDITOR
+        public override int OnEditorWindow(Rect rect, HorizontalCallback horizontal, VerticalCallback vertical, Dictionary<string, object> cache)
+        {
+            vertical(rect, 3, (r => Value = EditorGUI.TextArea(r, Value)));
+            return 3;
+        }
+#endif
+
+        protected override void TryDeserialize(string textValue)
+        {
+            Value = textValue;
         }
     }
 
@@ -329,68 +581,93 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
     {
         public override KeyType KeyType { get { return KeyType.Color; } }
 
-        public override string Serialize(Color32 value)
+        public override object OnWindow(ModSettingsWindow window)
+        {
+            return window.LayoutColorPicker(Value);
+        }
+
+        public override void OnSaveWindow(object control)
+        {
+            Value = ((Button)control).BackgroundColor;
+        }
+
+#if UNITY_EDITOR
+        public override int OnEditorWindow(Rect rect, HorizontalCallback horizontal, VerticalCallback vertical, Dictionary<string, object> cache)
+        {
+            vertical(rect, 1, (r) => Value = EditorGUI.ColorField(r, "Color", Value));
+            return 1;
+        }
+#endif
+
+        protected override string Serialize()
         {
             return ColorUtility.ToHtmlStringRGBA(Value);
         }
-        
-        public override Color32 Deserialize(string hexColor)
+
+        protected override void TryDeserialize(string textValue)
         {
             Color color;
-            return ColorUtility.TryParseHtmlString("#" + hexColor, out color) ? color : (Color)Value;
+            if (ColorUtility.TryParseHtmlString("#" + textValue, out color))
+                Value = color;
         }
     }
+
+    #endregion
+
+    #region IPreset
 
     /// <summary>
     /// Holds a group of serialized values which can be merged in a corresponding <cref>ModSettingsData</cref> instance.
     /// </summary>
+    public interface IPreset
+    {
+        string SettingsVersion { get; set; }
+        Dictionary<string, Dictionary<string, string>> Values { get; set; }
+    }
+    
+    /// <summary>
+    /// Settings values serialized on disk.
+    /// </summary>
     [fsObject("v1")]
-    public class Preset
+    public class SettingsValues : IPreset
+    {
+        public string SettingsVersion { get; set; }
+        public Dictionary<string, Dictionary<string, string>> Values { get; set; }
+    }
+
+    /// <summary>
+    /// A group of settings values with meta properties.
+    /// </summary>
+    [fsObject("v1")]
+    public class Preset : IPreset
     {
         /// <summary>
         /// Title (does not correspond to filename).
         /// </summary>
-        public string Title;
+        public string Title { get; set; }
 
         /// <summary>
         /// Optional field (for imported presets).
         /// </summary>
-        public string Author;
+        public string Author { get; set; }
 
         /// <summary>
         /// Short description shown on GUI.
         /// </summary>
-        public string Description;
+        public string Description { get; set; }
 
         /// <summary>
         /// Version of target settings (not version of preset!)
         /// </summary>
-        public string SettingsVersion;
-
-        public Dictionary<string, Dictionary<string, string>> Values = new Dictionary<string, Dictionary<string, string>>();
+        public string SettingsVersion { get; set; }
 
         /// <summary>
-        /// Path on disk. This is not null only for local presets.
+        /// True if can be edited from gui.
         /// </summary>
         [fsIgnore]
-        public string DiskPath;
-        public bool HasPath
-        {
-            get { return DiskPath != null; }
-        }
+        public bool IsLocal;
 
-        public string GetSafePath(Mod mod)
-        {
-            if (!HasPath)
-            {
-                // Create a new path from title.
-                string name = string.Format("{0}preset{1}.ini", mod.FileName, Title);
-                foreach (char c in Path.GetInvalidPathChars())
-                    name = name.Replace(c, '_');
-                DiskPath = Path.Combine(mod.DirPath, name);
-            }
-            return DiskPath;
-        }
+        public Dictionary<string, Dictionary<string, string>> Values { get; set; }
 
 #if UNITY_EDITOR
 
@@ -416,6 +693,14 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                     SetState(sectionDict, key, value, () => string.Empty);
             }
         }
+        
+#endif
+        public Preset()
+        {
+            Values = new Dictionary<string, Dictionary<string, string>>();
+        }
+
+#if UNITY_EDITOR
 
         private static void SetState<T>(Dictionary<string, T> dict, string key, bool enabled, Func<T> init)
         {
@@ -423,6 +708,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             if (enabled) { if (!keyFound) dict.Add(key, init()); }
             else { if (keyFound) dict.Remove(key); }
         }
+
 #endif
     }
+
+    #endregion
 }

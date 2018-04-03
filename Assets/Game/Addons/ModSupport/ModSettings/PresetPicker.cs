@@ -9,6 +9,7 @@
 // Notes:
 //
 
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
@@ -55,6 +56,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         Color warningColor              = new Color(1, 0, 0, 0.4f);
 
         bool creationMode = false;
+        bool writeToDiskFlag = false;
 
         #endregion
 
@@ -64,6 +66,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         {
             get { return listBox.SelectedIndex == listBox.Count - 1; }
         }
+
+        /// <summary>
+        /// Write presets changes to disk.
+        /// </summary>
+        public Action WriteToDisk { private get; set; }
 
         #endregion
 
@@ -251,6 +258,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             ListBox_OnSelectItem();
         }
 
+        public override void OnPop()
+        {
+            if (writeToDiskFlag && WriteToDisk != null)
+                WriteToDisk();
+        }
+
         #endregion
 
         #region Private Methods
@@ -343,7 +356,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 versionLabel.Text = IsCompatible(version) ?
                     string.Empty : string.Format("Version mismatch! ({0}/{1})", version, targetVersion);
 
-                if (deleteButton.Enabled = saveButton.Enabled = presets[listBox.SelectedIndex].HasPath)
+                if (deleteButton.Enabled = saveButton.Enabled = presets[listBox.SelectedIndex].IsLocal)
                 {
                     Rect rect = listBox.GetItem(listBox.SelectedIndex).textLabel.Rectangle;
                     Vector2 position = mainPanel.ScreenToLocal(rect.position);
@@ -386,6 +399,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                     AddPreset(preset);
                     RaiseOnCreatePresetEvent(preset);
                     SetCreationMode(false);
+                    writeToDiskFlag = true;
                 }
                 else
                 {
@@ -402,6 +416,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         private void OverwriteButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             RaiseOnCreatePresetEvent(presets[listBox.SelectedIndex]);
+            writeToDiskFlag = true;
         }
 
         private void DeleteButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -409,7 +424,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             Preset preset = presets[listBox.SelectedIndex];
             listBox.RemoveItem(listBox.SelectedIndex);
             presets.RemoveAt(listBox.SelectedIndex);
-            RaiseOnDeletePresetEvent(preset);
+            writeToDiskFlag = true;
         }
 
         private void CreatorTitle_OnMouseLeave(BaseScreenComponent sender)
@@ -434,14 +449,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         {
             if (OnCreatePreset != null)
                 OnCreatePreset(preset);
-        }
-
-        public delegate void OnDeletePresetEventHandler(Preset preset);
-        public event OnDeletePresetEventHandler OnDeletePreset;
-        void RaiseOnDeletePresetEvent(Preset preset)
-        {
-            if (OnDeletePreset != null)
-                OnDeletePreset(preset);
         }
 
         #endregion
