@@ -77,7 +77,7 @@ namespace DaggerfallWorkshop.Game
         TalkManager talkManager = null;
         GuildManager guildManager = null;
         QuestListsManager questListsManager = null;
-
+        TextManager textManager = null;
 
         #endregion
 
@@ -315,6 +315,12 @@ namespace DaggerfallWorkshop.Game
         {
             get { return (questListsManager != null) ? questListsManager : questListsManager = new QuestListsManager(); }
             set { questListsManager = value; }
+        }
+
+        public TextManager TextManager
+        {
+            get { return (textManager) ? textManager : textManager = GetComponentFromObject<TextManager>(GetGameObjectWithName("TextManager")); }
+            set { textManager = value; }
         }
 
         public bool IsPlayerOnHUD
