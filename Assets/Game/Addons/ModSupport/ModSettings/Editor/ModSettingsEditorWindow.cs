@@ -25,11 +25,10 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
     {
         #region Fields
 
-        static string rootPath = Path.Combine(Path.Combine(Application.dataPath, "Game"), "Addons");
-        static fsSerializer fsSerializer = new fsSerializer();
+        static string rootPath;
 
         // Data
-        string targetPath = rootPath;
+        string targetPath;
         string modName = "None";
         string localPath;
         ModSettingsData data = new ModSettingsData();
@@ -83,6 +82,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         private void OnEnable()
         {
+            targetPath = rootPath = Path.Combine(Path.Combine(Application.dataPath, "Game"), "Addons");
+
             minSize = new Vector2(1000, 500);
             Load();
         }

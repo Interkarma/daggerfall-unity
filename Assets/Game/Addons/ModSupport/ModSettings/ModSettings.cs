@@ -11,12 +11,13 @@
 //
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
 using UnityEngine;
-using IniParser.Model;
 using DaggerfallWorkshop.Utility;
+using IniParser.Model;
 
 namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 {
@@ -26,9 +27,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
     public class ModSettings
     {
         // Fields
-        Mod mod;
-        IniData userSettings;
-        ModSettingsData data;
+        readonly Mod mod;
+        readonly IniData userSettings;
+        readonly ModSettingsData data;
 
         #region Public Methods
 
@@ -173,7 +174,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         public Tuple<int, int> GetTupleInt(string section, string name)
         {
             int first, second;
-            var tuple = GetTuple(section, name);
+            var tuple = Key.SplitTuple(GetValue(section, name));
             if (int.TryParse(tuple.First, out first) && int.TryParse(tuple.Second, out second))
                 return new Tuple<int, int>(first, second);
 
@@ -188,7 +189,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         public Tuple<float, float> GetTupleFloat(string section, string name)
         {
             float first, second;
-            var tuple = GetTuple(section, name);
+            var tuple = Key.SplitTuple(GetValue(section, name));
             if (float.TryParse(tuple.First, out first) && float.TryParse(tuple.Second, out second))
                 return new Tuple<float, float>(first, second);
 
@@ -196,36 +197,47 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         }
 
         /// <summary>
+        /// Get a value from user settings or, as fallback, from default settings.
+        /// </summary>
+        /// <typeparam name="T">Type of value.</typeparam>
+        /// <param name="section">Name of section.</param>
+        /// <param name="name">Name of key.</param>
+        public T GetValue<T>(string section, string name)
+        {
+            var key = GetKey<T>(section, name);
+            string value = GetValue(section, name);
+
+            return value != null ? key.Deserialize(value) : key.Value;
+        }
+
+        /// <summary>
         /// Deserialize a section of settings in a class.
         /// </summary>
         /// <typeparam name="T">Type of class.</typeparam>
-        /// <param name="section">Name of section.</param>
-        /// <param name="instance">Instance of class with keys as public fields.</param>
-        public void Deserialize<T>(string section, ref T instance) where T : class
+        /// <param name="sectionName">Name of section.</param>
+        /// <param name="instance">Instance of class with keys as public fields or properties.</param>
+        public void Deserialize<T>(string sectionName, ref T instance, bool includeProperties = false) where T : class
         {
-            if (!userSettings.Sections.ContainsSection(section))
+            const BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public;
+
+            Section section;
+            if (!data.Sections.TryGetValue(sectionName, out section))
+                throw new ArgumentException(string.Format("{0} does not contains section '{1}'", mod.Title, sectionName));
+
+            foreach (FieldInfo field in typeof(T).GetFields(bindingFlags))
             {
-                Debug.LogErrorFormat("Failed to parse section {0} for mod {1}", section, mod.Title);
-                return;
+                Key key;
+                if (section.Keys.TryGetValue(field.Name, out key))
+                    field.SetValue(instance, key.ParseToObject(GetValue(sectionName, field.Name)));
             }
 
-            KeyDataCollection sectionData = userSettings[section];
-            foreach (var field in typeof(T).GetFields(BindingFlags.Instance | BindingFlags.Public))
-            {
-                try
+            if (includeProperties)
+                foreach (PropertyInfo property in typeof(T).GetProperties(bindingFlags).Where(x => x.CanWrite))
                 {
-                    if (sectionData.ContainsKey(field.Name))
-                    {
-                        var value = GetValue(section, field.Name, field.FieldType);
-                        if (value != null)
-                            field.SetValue(instance, value);
-                    }
+                    Key key;
+                    if (section.Keys.TryGetValue(property.Name, out key))
+                        property.SetValue(instance, key.ParseToObject(GetValue(sectionName, property.Name)), null);
                 }
-                catch (Exception e)
-                {
-                    Debug.LogErrorFormat("Failed to parse section {0} for mod {1}\n{2}", section, mod.Title, e.ToString());
-                }
-            }
         }
 
         #endregion
@@ -249,47 +261,18 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             return null;
         }
 
-        /// <summary>
-        /// Get value for specified type.
-        /// </summary>
-        private object GetValue(string section, string name, Type type)
-        {
-            if (type == typeof(string))
-                return GetString(section, name);
-            else if (type == typeof(int))
-                return GetInt(section, name);
-            else if (type == typeof(float))
-                return GetFloat(section, name);
-            else if (type == typeof(bool))
-                return GetBool(section, name);
-            else if (type == typeof(Tuple<int, int>))
-                return GetTupleInt(section, name);
-            else if (type == typeof(Tuple<float, float>))
-                return GetTupleFloat(section, name);
-            if (type == typeof(Color))
-                return GetColor(section, name);
-
-            return null;
-        }
-
-        private Tuple<string, string> GetTuple(string section, string name)
-        {
-            try
-            {
-                string text = GetValue(section, name);
-                int index = text.IndexOf(ModSettingsReader.tupleDelimiterChar);
-                return new Tuple<string, string>(text.Substring(0, index), text.Substring(index + ModSettingsReader.tupleDelimiterChar.Length));
-            }
-            catch { return new Tuple<string, string>(string.Empty, string.Empty); }
-        }
-
         private T GetDefaultValue<T>(string section, string name)
+        {
+            return GetKey<T>(section, name).Value;
+        }
+
+        private Key<T> GetKey<T>(string section, string name)
         {
             Key<T> key;
             if (data.TryGetKey(section, name, out key))
-                return key.Value;
-                
-            throw new KeyNotFoundException(string.Format("The key ({0},{1}) was not present in {2} settings.", section, name, mod.Title)); 
+                return key;
+
+            throw new KeyNotFoundException(string.Format("The key ({0},{1}) was not present in {2} settings.", section, name, mod.Title));
         }
 
         #endregion

@@ -38,11 +38,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// </summary>
         public const string settingsVersionKey = "SettingsVersion";
 
-        /// <summary>
-        /// Delimiter between First and Second value of a tuple.
-        /// </summary>
-        public const string tupleDelimiterChar = "<,>";
-
         static FileIniDataParser parser = new FileIniDataParser();
 
         #endregion
@@ -253,10 +248,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                     if (key.Value == "True" || key.Value == "False")
                     {
                         dataKey = new ToggleKey();
-                    }
-                    else if (key.Value.Contains(tupleDelimiterChar))
-                    {
-                        dataKey = new TupleFloatKey();
                     }
                     else if (IsHexColor(key.Value))
                     {
