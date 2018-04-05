@@ -32,6 +32,20 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const string classicTalkFilename = "classic-talk";
         const float classicScale = 3f;
 
+        const string colourStealFilename = "colour-steal";
+        const string colourGrabFilename = "colour-grab";
+        const string colourInfoFilename = "colour-info";
+        const string colourTalkFilename = "colour-talk";
+        const float colourScale = 1f;
+
+        const string monoStealFilename = "mono-steal";
+        const string monoGrabFilename = "mono-grab";
+        const string monoInfoFilename = "mono-info";
+        const string monoTalkFilename = "mono-talk";
+        const float monoScale = 0.8f;
+
+        private const string IconsFolder = "Icons/";
+
         Vector2 stealSize;
         Vector2 grabSize;
         Vector2 infoSize;
@@ -89,31 +103,49 @@ namespace DaggerfallWorkshop.Game.UserInterface
             string infoFilename;
             string talkFilename;
 
-            if (DaggerfallUnity.Settings.InteractionModeIcon.ToLower() == "classic")
+            switch (DaggerfallUnity.Settings.InteractionModeIcon.ToLower())
             {
-                stealFilename = classicStealFilename;
-                grabFilename = classicGrabFilename;
-                infoFilename = classicInfoFilename;
-                talkFilename = classicTalkFilename;
-                displayScale = classicScale;
-            }
-            else
-            {
-                stealFilename = iconStealFilename;
-                grabFilename = iconGrabFilename;
-                infoFilename = iconInfoFilename;
-                talkFilename = iconTalkFilename;
+                case "classic":
+                    stealFilename = classicStealFilename;
+                    grabFilename = classicGrabFilename;
+                    infoFilename = classicInfoFilename;
+                    talkFilename = classicTalkFilename;
+                    displayScale = classicScale;
+                    break;
 
-                if (DaggerfallUnity.Settings.InteractionModeIcon.ToLower() == "minimal")
-                    displayScale = minimalScale;
-                else
-                    displayScale = iconScale;
+                case "monochrome":
+                    stealFilename = monoStealFilename;
+                    grabFilename = monoGrabFilename;
+                    infoFilename = monoInfoFilename;
+                    talkFilename = monoTalkFilename;
+                    displayScale = monoScale;
+                    break;
+
+                case "colour":
+                    stealFilename = colourStealFilename;
+                    grabFilename = colourGrabFilename;
+                    infoFilename = colourInfoFilename;
+                    talkFilename = colourTalkFilename;
+                    displayScale = colourScale;
+                    break;
+
+                default:
+                    stealFilename = iconStealFilename;
+                    grabFilename = iconGrabFilename;
+                    infoFilename = iconInfoFilename;
+                    talkFilename = iconTalkFilename;
+
+                    if (DaggerfallUnity.Settings.InteractionModeIcon.ToLower() == "minimal")
+                        displayScale = minimalScale;
+                    else
+                        displayScale = iconScale;
+                    break;
             }
 
-            StealTexture = DaggerfallUI.GetTextureFromResources(stealFilename, out stealSize);
-            GrabTexture = DaggerfallUI.GetTextureFromResources(grabFilename, out grabSize);
-            InfoTexture = DaggerfallUI.GetTextureFromResources(infoFilename, out infoSize);
-            TalkTexture = DaggerfallUI.GetTextureFromResources(talkFilename, out talkSize);
+            StealTexture = DaggerfallUI.GetTextureFromResources(IconsFolder + stealFilename, out stealSize);
+            GrabTexture = DaggerfallUI.GetTextureFromResources(IconsFolder + grabFilename, out grabSize);
+            InfoTexture = DaggerfallUI.GetTextureFromResources(IconsFolder + infoFilename, out infoSize);
+            TalkTexture = DaggerfallUI.GetTextureFromResources(IconsFolder + talkFilename, out talkSize);
         }
     }
 }
