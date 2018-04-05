@@ -19,14 +19,57 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 {
     /// <summary>
     /// Enumerates available magic effects and coordinates their instantiation.
+    /// Also coordinates "magic rounds" at 5-second intervals for all entity EntityEffectManager components active in scene.
     /// </summary>
     public class EntityEffectBroker : MonoBehaviour
     {
+        const float roundInterval = 5.0f;
+
+        int magicRoundsSinceStartup = 0;
+        float roundTimer = 0f;
+
+        /// <summary>
+        /// Gets the number of 5-second "magic rounds" since startup.
+        /// </summary>
+        public int MagicRoundsSinceStartup
+        {
+            get { return magicRoundsSinceStartup; }
+        }
+
         void Start()
         {
             // Test
             IEnumerable<IEntityEffect> magicEffects = ReflectiveEnumerator.GetEnumerableOfType<IEntityEffect>();
         }
+
+        void Update()
+        {
+            // Increment magic round timer when not paused
+            if (!GameManager.IsGamePaused)
+            {
+                roundTimer += Time.deltaTime;
+                if (roundTimer > roundInterval)
+                {
+                    RaiseOnNewMagicRoundEvent();
+                    magicRoundsSinceStartup++;
+                    roundTimer = 0;
+                    //Debug.Log("New magic round starting.");
+                }
+            }
+        }
+
+        #region Events
+
+        // OnNewMagicRound
+        public delegate void OnNewMagicRoundEventHandler();
+        public static event OnNewMagicRoundEventHandler OnNewMagicRound;
+        protected virtual void RaiseOnNewMagicRoundEvent()
+        {
+            if (OnNewMagicRound != null)
+                OnNewMagicRound();
+        }
+
+        #endregion
     }
 
     /// <summary>

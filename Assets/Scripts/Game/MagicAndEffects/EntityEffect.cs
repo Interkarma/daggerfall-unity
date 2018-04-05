@@ -81,7 +81,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         IEntityEffect CreateNew(EntityEffectBundle parentBundle);
 
         /// <summary>
-        /// Called when effect is first attached to a bundle.
+        /// Called by an EntityEffectManager when parent bundle is attached to an entity.
         /// Use this for setup or immediate work performed only once.
         /// </summary>
         void Start();
@@ -93,19 +93,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         void End();
 
         /// <summary>
-        /// Called every tick of effect system.
-        /// Use this for high frequency work performed every frame.
-        /// Does not run when game is paused.
+        /// Use this for any work performed at the start of a new "magic round".
         /// </summary>
-        void Update();
-
-        /// <summary>
-        /// Called every game second elapsed.
-        /// Use this for work that ticks on one-second intervals.
-        /// If custom timing is needed, then effect should use Update() with its own timing.
-        /// Does not run when game is paused.
-        /// </summary>
-        void OneGameSecond();
+        void MagicRound();
     }
 
     /// <summary>
@@ -189,11 +179,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
         }
 
-        public virtual void Update()
-        {
-        }
-
-        public virtual void OneGameSecond()
+        public virtual void MagicRound()
         {
         }
 

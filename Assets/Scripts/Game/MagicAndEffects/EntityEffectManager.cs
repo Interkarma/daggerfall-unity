@@ -84,6 +84,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         private void Awake()
         {
             GameManager.Instance.PlayerSpellCasting.OnReleaseFrame += PlayerSpellCasting_OnReleaseFrame;
+            EntityEffectBroker.OnNewMagicRound += EntityEffectBroker_OnNewMagicRound;
         }
 
         private void Start()
@@ -95,17 +96,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
         }
 
+        private void OnDestroy()
+        {
+            EntityEffectBroker.OnNewMagicRound -= EntityEffectBroker_OnNewMagicRound;
+        }
+
         private void Update()
         {
             // Do nothing if no peer entity
             if (!entityBehaviour)
                 return;
-
-            // Tick effects operating on this entity
-            foreach (EntityEffectBundle bundle in activeBundles)
-            {
-                bundle.Tick(this);
-            }
 
             // Player can cast a spell, recast last spell, or abort current spell
             // Handling input here is similar to handling weapon input in WeaponManager
@@ -171,6 +171,19 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         #endregion
 
         #region Private Methods
+
+        /// <summary>
+        /// Tick new "magic round" on all bundles attached to this entity.
+        /// </summary>
+        void DoMagicRound()
+        {
+            // Update effect bundles operating on this entity
+            foreach (EntityEffectBundle bundle in activeBundles)
+            {
+                bundle.MagicRound(this);
+            }
+        }
+
         #endregion
 
         #region Event Handling
@@ -187,6 +200,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
             lastSpell = readySpell;
             readySpell = null;
+        }
+
+        private void EntityEffectBroker_OnNewMagicRound()
+        {
+            DoMagicRound();
         }
 
         #endregion

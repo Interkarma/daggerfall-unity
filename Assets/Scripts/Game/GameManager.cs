@@ -47,6 +47,7 @@ namespace DaggerfallWorkshop.Game
         StartGameBehaviour startGameBehaviour = null;
         PlayerEntity playerEntity = null;
         DaggerfallEntityBehaviour playerEntityBehaviour = null;
+        EntityEffectBroker entityEffectBroker = null;
         EntityEffectManager playerEffectManager = null;
         PlayerDeath playerDeath = null;
         PlayerGPS playerGPS  = null;
@@ -142,6 +143,12 @@ namespace DaggerfallWorkshop.Game
         {
             get { return (playerEffectManager != null) ? playerEffectManager : playerEffectManager = GetComponentFromObject<EntityEffectManager>(PlayerObject); }
             set { playerEffectManager = value; }
+        }
+
+        public EntityEffectBroker EntityEffectBroker
+        {
+            get { return (entityEffectBroker != null) ? entityEffectBroker : entityEffectBroker = GetMonoBehaviour<EntityEffectBroker>(); }
+            set { entityEffectBroker = value; }
         }
 
         public PlayerDeath PlayerDeath

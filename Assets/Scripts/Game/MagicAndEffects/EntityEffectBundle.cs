@@ -108,12 +108,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         }
 
         /// <summary>
-        /// Ticks bundle and updates effects.
+        /// Called at start of every "magic round" to do any work related to effect.
+        /// Only called by owning EntityEffectManager once bundle is attached to an entity.
+        /// Is not called while bundle in transit (e.g. carried by a spell missile).
         /// </summary>
-        /// <param name="caller">The effect manage owning this bundle.</param>
-        public void Tick(EntityEffectManager caller)
+        /// <param name="caller">EntityEffectManager owning this bundle.</param>
+        public void MagicRound(EntityEffectManager caller)
         {
-
+            foreach (IEntityEffect effect in effects)
+            {
+                effect.MagicRound();
+            }
         }
 
         #endregion
