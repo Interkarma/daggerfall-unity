@@ -56,6 +56,7 @@ Handedness=0
 WeaponAttackThreshold=0.03
 WeaponSensitivity=1.0
 ClickToAttack = False
+CameraRecoil = True
 
 [Startup]
 StartCellX=109
