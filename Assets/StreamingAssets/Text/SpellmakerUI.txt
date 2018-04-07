@@ -2,21 +2,21 @@
 
 schema: *key,text
 
-addEffect,			Add effect
-buySpell,			Buy spell
-newSpell,			New spell
-exit,				Exit
-casterOnly,			Caster only
-byTouch,			By touch
-singleTargetAtRange,		Single target at range
-areaAroundCaster,		Area around caster
-areaAtRange,			Area at range
-fireBased,			Fire based
-coldBased,			Cold based
-poisonBased,			Poison based
-shockBased,			Shock based
-magicBased,			Magic based
-selectIcon,			Select icon
-nextIcon,			Next icon
-previousIcon,			Previous icon
-nameSpell,			Name spell
+addEffect,                  Add effect
+buySpell,                   Buy spell
+newSpell,                   New spell
+exit,                       Exit
+casterOnly,                 Caster only
+byTouch,                    By touch
+singleTargetAtRange,        Single target at range
+areaAroundCaster,           Area around caster
+areaAtRange,                Area at range
+fireBased,                  Fire based
+coldBased,                  Cold based
+poisonBased,                Poison based
+shockBased,                 Shock based
+magicBased,                 Magic based
+selectIcon,                 Select icon
+nextIcon,                   Next icon
+previousIcon,               Previous icon
+nameSpell,                  Name spell

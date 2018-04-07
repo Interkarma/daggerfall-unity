@@ -2,73 +2,73 @@
 
 schema: *key,text
 
-chameleon,			Chameleon
-charm,				Charm
-climbing,			Climbing
-comprehendLanguages,		Comprehend Languages
-continuousDamage,		Continuous Damage
-createItem,			Create Item
-cure,				Cure
-damage,				Damage
-detect,				Detect
-disintegrate,			Disintegrate
-dispel,				Dispel
-drain,				Drain
-elementalResistance,		Elemental Resistance
-fortifyAttribute,		Fortify Attribute
-freeAction,			Free Action
-heal,				Heal
-identify,			Identify
-invisibility,			Invisibility
-jumping,			Jumping
-levitate,			Levitate
-light,				Light
-lock,				Lock
-open,				Open
-pacify,				Pacify
-paralyze,			Paralyze
-regenerate,			Regenerate
-shadow,				Shadow
-shield,				Shield
-silence,			Silence
-slowfall,			Slowfall
-soulTrap,			Soul Trap
-spellAbsorption,		Spell Absorption
-spellReflection,		Spell Reflection
-spellResistance,		Spell Resistance
-teleport,			Teleport
-transfer,			Transfer
-waterBreathing,			Water Breathing
-waterWalking,			Water Walking
+chameleon,                  Chameleon
+charm,                      Charm
+climbing,                   Climbing
+comprehendLanguages,        Comprehend Languages
+continuousDamage,           Continuous Damage
+createItem,                 Create Item
+cure,                       Cure
+damage,                     Damage
+detect,                     Detect
+disintegrate,               Disintegrate
+dispel,                     Dispel
+drain,                      Drain
+elementalResistance,        Elemental Resistance
+fortifyAttribute,           Fortify Attribute
+freeAction,                 Free Action
+heal,                       Heal
+identify,                   Identify
+invisibility,               Invisibility
+jumping,                    Jumping
+levitate,                   Levitate
+light,                      Light
+lock,                       Lock
+open,                       Open
+pacify,                     Pacify
+paralyze,                   Paralyze
+regenerate,                 Regenerate
+shadow,                     Shadow
+shield,                     Shield
+silence,                    Silence
+slowfall,                   Slowfall
+soulTrap,                   Soul Trap
+spellAbsorption,            Spell Absorption
+spellReflection,            Spell Reflection
+spellResistance,            Spell Resistance
+teleport,                   Teleport
+transfer,                   Transfer
+waterBreathing,             Water Breathing
+waterWalking,               Water Walking
 
-agility,			Agility
-endurance,			Endurance
-intelligence,			Intelligence
-luck,				Luck
-personality,			Personality
-speed,				Speed
-strength,			Strength
-willpower,			Willpower
+agility,                    Agility
+endurance,                  Endurance
+intelligence,               Intelligence
+luck,                       Luck
+personality,                Personality
+speed,                      Speed
+strength,                   Strength
+willpower,                  Willpower
 
-fire,				Fire
-frost,				Frost
-magicka,			Magicka
-poison,				Poison
-shock,				Shock
+fire,                       Fire
+frost,                      Frost
+magicka,                    Magicka
+poison,                     Poison
+shock,                      Shock
 
-enemy,				Enemy
-magic,				Magic
-treasure,			Treasure
+enemy,                      Enemy
+magic,                      Magic
+treasure,                   Treasure
 
-fatigue,			Fatigue
-health,				Health
-spellPoints,			Spell Points
+fatigue,                    Fatigue
+health,                     Health
+spellPoints,                Spell Points
 
-disease,			Disease
-paralyzation,			Paralyzation
+disease,                    Disease
+paralyzation,               Paralyzation
 
-daedra,				Daedra
-undead,				Undead
+daedra,                     Daedra
+undead,                     Undead
 
-normal,				Normal
-true,				True
+normal,                     Normal
+true,                       True
