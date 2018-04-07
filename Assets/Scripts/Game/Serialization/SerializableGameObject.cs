@@ -422,6 +422,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public int loanTotal;
         public uint loanDueDate;
         public int regionIndex;
+        public bool hasDefaulted;
     }
 
     #endregion
