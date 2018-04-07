@@ -34,7 +34,7 @@ namespace DaggerfallWorkshop.Game.Banking
         NOT_PORT_TOWN           = 0285,
         ALREADY_OWN_HOUSE       = 0286,
         NO_HOUSES_FOR_SALE      = 0287,
-        ALREADY_DEFAULTED       = 0288,    // not used in game?
+        ALREADY_DEFAULTED       = 0288,
         ALREADY_HAVE_LOAN       = 0289,
         NOT_ENOUGH_ACCOUNT      = 0290,
         DEPOSIT_LOC             = 0291,
@@ -198,6 +198,14 @@ namespace DaggerfallWorkshop.Game.Banking
                 return false;
 
             return BankAccounts[regionIndex].loanTotal > 0;
+        }
+
+        public static bool HasDefaulted(int regionIndex)
+        {
+            if (!ValidateRegion(regionIndex))
+                return false;
+
+            return BankAccounts[regionIndex].hasDefaulted;
         }
 
         public static void SetupAccounts()
@@ -481,9 +489,7 @@ namespace DaggerfallWorkshop.Game.Banking
         private static TransactionResult BorrowLoan(int amount, int regionIndex)
         {
             TransactionResult result = TransactionResult.NONE;
-            if (HasLoan(regionIndex))
-                result = TransactionResult.ALREADY_HAVE_LOAN;
-            else if (amount < 100)
+            if (amount < 100)
                 result = TransactionResult.LOAN_REQUEST_TOO_LOW;
             else if (amount > CalculateMaxLoan())
                 result = TransactionResult.LOAN_REQUEST_TOO_HIGH;
@@ -538,7 +544,7 @@ namespace DaggerfallWorkshop.Game.Banking
                 record.accountGold      = reader.ReadInt32();
                 record.loanTotal        = reader.ReadInt32();
                 record.loanDueDate      = reader.ReadUInt32();
-                reader.BaseStream.Position++;   //skip over unused byte in each record
+                record.hasDefaulted     = reader.ReadBoolean();
                 record.regionIndex = count;
 
                 if (record.regionIndex >= BankAccounts.Length)

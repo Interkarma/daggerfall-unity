@@ -198,6 +198,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             base.OnPush();
             DaggerfallBankManager.OnTransaction += this.OnTransactionEventHandler;
             regionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
+            uint gameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+            uint paymentDueMinutes = DaggerfallBankManager.BankAccounts[regionIndex].loanDueDate;
+
+            // Set hasDefaulted flag (Note: Does not seem to ever be set in classic)
+            if (paymentDueMinutes != 0 && paymentDueMinutes < gameMinutes)
+                DaggerfallBankManager.BankAccounts[regionIndex].hasDefaulted = true;
         }
 
         public override void OnPop()
@@ -385,7 +391,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void LoanBorrowButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (DaggerfallBankManager.HasLoan(regionIndex))
+            if (DaggerfallBankManager.HasDefaulted(regionIndex))
+            {
+                GeneratePopup(TransactionResult.ALREADY_DEFAULTED);
+                ToggleTransactionInput(TransactionType.None);
+            }
+            else if (DaggerfallBankManager.HasLoan(regionIndex))
             {
                 GeneratePopup(TransactionResult.ALREADY_HAVE_LOAN);
                 ToggleTransactionInput(TransactionType.None);
