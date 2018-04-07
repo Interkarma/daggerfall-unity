@@ -1104,14 +1104,15 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         public static void ModifyPriceAdjustmentByRegion(ref PlayerEntity.RegionDataRecord[] regionData, int times)
         {
+            PlayerEntity player = GameManager.Instance.PlayerEntity;
             DaggerfallConnect.Arena2.FactionFile.FactionData merchantsFaction;
-            if (!GameManager.Instance.PlayerEntity.FactionData.GetFactionData(510, out merchantsFaction))
+            if (!player.FactionData.GetFactionData(510, out merchantsFaction))
                 return;
 
             for (int i = 0; i < regionData.Length; ++i)
             {
                 DaggerfallConnect.Arena2.FactionFile.FactionData regionFaction;
-                if (GameManager.Instance.PlayerEntity.FactionData.FindFactionByTypeAndRegion(7, i + 1, out regionFaction))
+                if (player.FactionData.FindFactionByTypeAndRegion(7, i + 1, out regionFaction))
                 {
                     for (int j = 0; j < times; ++j)
                     {
@@ -1123,6 +1124,18 @@ namespace DaggerfallWorkshop.Game.Formulas
                             regionData[i].PriceAdjustment = (ushort)(51 * regionData[i].PriceAdjustment / 50);
 
                         Mathf.Clamp(regionData[i].PriceAdjustment, 250, 4000);
+                        if (regionData[i].PriceAdjustment <= 2000)
+                        {
+                            if (regionData[i].PriceAdjustment >= 500)
+                            {
+                                player.TurnOffConditionFlag(i, PlayerEntity.RegionDataFlags.PricesHigh);
+                                player.TurnOffConditionFlag(i, PlayerEntity.RegionDataFlags.PricesLow);
+                            }
+                            else
+                                player.TurnOnConditionFlag(i, PlayerEntity.RegionDataFlags.PricesLow);
+                        }
+                        else
+                            player.TurnOnConditionFlag(i, PlayerEntity.RegionDataFlags.PricesHigh);
                     }
                 }
             }
