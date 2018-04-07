@@ -932,15 +932,16 @@ namespace DaggerfallWorkshop.Game.Entity
         #endregion
 
         #region RegionData
-        public struct RegionDataRecord // 80 bytes long
+        public struct RegionDataRecord
         {
-            public byte[] Values; // 29 bytes long
-            public bool[] Flags; // 29 bytes long
-            public bool[] Flags2; // 14 bytes long
-            // bytes 72 to 74 unknown
-            public short LegalRep; // bytes 74 to 76
-            public ushort Unknown; // bytes 76 to 78
-            public ushort PriceAdjustment; // bytes 78 to 80
+            public byte[] Values;
+            public bool[] Flags;
+            public bool[] Flags2;
+            public short LegalRep;
+            public byte PrecipitationOverride; // Never set by classic. In classic if this is non-0 the screen precipitation effect for classicWeatherTypes[PrecipitationOverride - 1] is forced.
+            public byte SeverePunishmentFlags; // 1 = player was banished from region, 2 = player was sent to dungeon for execution by region
+            public ushort IDOfPersecutedTemple;
+            public ushort PriceAdjustment;
         }
 
         public enum RegionDataFlags
@@ -979,6 +980,10 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public void FactionAndRegionConditionsUpdate()
         {
+            int[] TemplesAssociatedWithRegions =    { 106, 82, 0, 0, 0, 98, 0, 0, 0, 92, 0, 106, 0, 0, 0, 84, 36, 8, 84, 88, 82, 88, 98, 92, 0, 0, 82, 0,
+                                                        0, 0, 0, 0, 88, 94, 36, 94, 106, 84, 106, 106, 88, 98, 82, 98, 84, 94, 36, 88, 94, 36, 98, 84, 106,
+                                                       88, 106, 88, 92, 84, 98, 88, 82, 94};
+
             foreach (FactionFile.FactionData item in FactionData.FactionDict.Values)
             {
                 /*
@@ -1012,49 +1017,118 @@ namespace DaggerfallWorkshop.Game.Entity
 
                     int alliesPowerMod = alliesPower / 10;
 
+                    // Famine
                     if (regionData[item.region - 1].Flags[(int)RegionDataFlags.FamineEnding] == true)
-                        TurnOffConditionFlag(item.region, RegionDataFlags.FamineEnding);
+                        TurnOffConditionFlag(item.region - 1, RegionDataFlags.FamineEnding);
                     else if (regionData[item.region - 1].Flags[(int)RegionDataFlags.FamineOngoing] == true)
                     {
-                        int powerLevel = item.randomValue / 5 + alliesPowerMod + item.power / 5;
-                        if (UnityEngine.Random.Range(0, 100 + 1) < powerLevel)
-                        {
-                            TurnOnConditionFlag(item.region, RegionDataFlags.FamineEnding);
-                        }
+                        if (UnityEngine.Random.Range(0, 100 + 1) < item.randomValue / 5 + alliesPowerMod + item.power / 5)
+                            TurnOnConditionFlag(item.region - 1, RegionDataFlags.FamineEnding);
                     }
                     else if (regionData[item.region - 1].Flags[(int)RegionDataFlags.FamineBeginning] == true)
+                        TurnOnConditionFlag(item.region - 1, RegionDataFlags.FamineOngoing);
+                    else if (UnityEngine.Random.Range(1, 100 + 1) <= 2)
                     {
-                        TurnOnConditionFlag(item.region, RegionDataFlags.FamineOngoing);
+                        if (UnityEngine.Random.Range(0, 100 + 1) > item.randomValue + alliesPowerMod)
+                            TurnOnConditionFlag(item.region - 1, RegionDataFlags.FamineBeginning);
+                    }
+
+                    // Plague
+                    FactionFile.FactionData temple;
+                    FactionData.GetFactionData(TemplesAssociatedWithRegions[item.region - 1], out temple);
+
+                    if (regionData[item.region - 1].Flags[(int)RegionDataFlags.PlagueEnding] == true)
+                        TurnOffConditionFlag(item.region - 1, RegionDataFlags.PlagueEnding);
+                    else if (regionData[item.region - 1].Flags[(int)RegionDataFlags.PlagueOngoing] == true)
+                    {
+                        //if (temple.id != 0)
+                            //--temple.power;
+                        //--item.power;
+                        if (UnityEngine.Random.Range(0, 100 + 1) < item.power / 5 + item.randomValue / 5 + alliesPowerMod)
+                            TurnOnConditionFlag(item.region - 1, RegionDataFlags.PlagueEnding);
+                    }
+                    else if (regionData[item.region - 1].Flags[(int)RegionDataFlags.PlagueBeginning] == true)
+                    {
+                        //if (temple.id != 0)
+                            //--temple.power;
+                        //--item.power;
+                        TurnOnConditionFlag(item.region - 1, RegionDataFlags.PlagueOngoing);
                     }
                     else if (UnityEngine.Random.Range(1, 100 + 1) <= 2)
                     {
-                        int powerLevel = item.randomValue + alliesPowerMod;
-                        if (UnityEngine.Random.Range(0, 100 + 1) > powerLevel)
-                            TurnOnConditionFlag(item.region, RegionDataFlags.FamineBeginning);
+                        if (UnityEngine.Random.Range(0, 100 + 1) > item.randomValue + alliesPowerMod)
+                        {
+                            //if (temple.id != 0)
+                                //--temple.power;
+                            //--item.power;
+                            TurnOnConditionFlag(item.region - 1, RegionDataFlags.PlagueBeginning);
+                        }
+                    }
+
+                    // Persecuted temple
+                    if (TemplesAssociatedWithRegions[item.region - 1] != 0)
+                    {
+                        if (UnityEngine.Random.Range(0, 100 + 1) >= (temple.power - item.power + 5) / 5)
+                            TurnOffConditionFlag(item.region - 1, RegionDataFlags.PersecutedTemple);
+                        else if (temple.power >= 2 * item.power )
+                            TurnOffConditionFlag(item.region - 1, RegionDataFlags.PersecutedTemple);
+                        else
+                        {
+                            regionData[item.region - 1].IDOfPersecutedTemple = (ushort)temple.id;
+                            TurnOnConditionFlag(item.region - 1, RegionDataFlags.PersecutedTemple);
+                            //--temple.power;
+                        }
+                    }
+
+                    // Crime wave
+                    //if (regionData[item.region - 1].Flags[(int)RegionDataFlags.CrimeWave] == true)
+                        //--item.power;
+
+                    FactionFile.FactionData thievesGuild;
+                    FactionData.GetFactionData(42, out thievesGuild);
+
+                    FactionFile.FactionData darkBrotherhood;
+                    FactionData.GetFactionData(108, out darkBrotherhood);
+
+                    if (UnityEngine.Random.Range(0, 101) >= ((thievesGuild.power + darkBrotherhood.power) / 2 - item.power + 5) / 5)
+                        TurnOffConditionFlag(item.region - 1, RegionDataFlags.CrimeWave);
+                    else
+                    {
+                        TurnOnConditionFlag(item.region - 1, RegionDataFlags.CrimeWave);
+                        //--item.power;
+                    }
+
+                    // Witch burnings
+                    FactionFile.FactionData witches;
+                    FactionData.FindFactionByTypeAndRegion(8, item.region, out witches);
+                    //if (regionData[item.region - 1].Flags[(int)RegionDataFlags.WitchBurnings] == true)
+                        //--witches.power;
+                    if (witches.id != 0)
+                    {
+                        if (UnityEngine.Random.Range(0, 101) >= (witches.power - item.power + 5) / 5)
+                            TurnOffConditionFlag(item.region - 1, RegionDataFlags.WitchBurnings);
+                        else
+                        {
+                            TurnOnConditionFlag(item.region - 1, RegionDataFlags.WitchBurnings);
+                            //--witches.power;
+                        }
                     }
                 }
-                // TODO: Handle plague
-                // TODO: Handle temple persecution
-                // TODO: Handle crime wave
-                // TODO: Handle witch burnings
             }
         }
 
         public void TurnOffConditionFlag(int regionID, RegionDataFlags flagID)
         {
-            Debug.Log(DaggerfallUnity.Instance.ContentReader.MapFileReader.RegionNames[regionID - 1] + " turned off " + flagID);
-            regionData[regionID - 1].Flags[(int)flagID] = false;
+            regionData[regionID].Flags[(int)flagID] = false;
         }
 
         public void TurnOnConditionFlag(int regionID, RegionDataFlags flagID)
         {
-            Debug.Log(DaggerfallUnity.Instance.ContentReader.MapFileReader.RegionNames[regionID - 1] + " turned on " + flagID);
-            regionData[regionID = 1].Flags[(int)flagID] = true;
+            regionData[regionID].Flags[(int)flagID] = true;
         }
 
         public void InitializeRegionData()
         {
-            Debug.Log("Initializing region data");
             FormulaHelper.RandomizeInitialPriceAdjustments(ref regionData);
 
             // TODO: Randomize values and flags. Their relationships are not fully understood yet so for now just initializing all to 0 and false.

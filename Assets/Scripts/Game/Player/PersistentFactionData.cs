@@ -229,10 +229,7 @@ namespace DaggerfallWorkshop.Game.Player
                 return true;
             }
             else
-            {
-                Debug.LogFormat("PersistentFactionData.FindFactionByTypeAndRegion() couldn't find the requested faction. Type {0}, RegionIndex {1}", type, oneBasedRegionIndex);
                 return false;
-            }
         }
 
         /// <summary>

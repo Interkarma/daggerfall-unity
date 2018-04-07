@@ -578,10 +578,10 @@ namespace DaggerfallConnect.Save
                 for (int j = 0; j < 14; j++)
                     regionData.Flags2[j] = reader.ReadBoolean();
 
-                reader.BaseStream.Position += 2; // unknown
-
+                regionData.PrecipitationOverride = reader.ReadByte();
+                regionData.SeverePunishmentFlags = reader.ReadByte();
                 regionData.LegalRep = reader.ReadInt16();
-                regionData.Unknown = reader.ReadUInt16();
+                regionData.IDOfPersecutedTemple = reader.ReadUInt16();
                 regionData.PriceAdjustment = reader.ReadUInt16();
 
                 regionDataList.Add(regionData);
