@@ -26,8 +26,9 @@ namespace DaggerfallWorkshop.Game
         #region Fields
 
         const string textFolderName = "Text";
+        const string textColumn = "text";
 
-        Dictionary<string, Dictionary<int, string>> textDatabases = new Dictionary<string, Dictionary<int, string>>();
+        Dictionary<string, Table> textDatabases = new Dictionary<string, Table>();
 
         #endregion
 
@@ -58,12 +59,12 @@ namespace DaggerfallWorkshop.Game
         /// <param name="databaseName">Name of database.</param>
         /// <param name="key">Key of text in database.</param>
         /// <returns>True if both database and text key enumerated.</returns>
-        public bool HasText(string databaseName, int key)
+        public bool HasText(string databaseName, string key)
         {
             if (!HasDatabase(databaseName))
                 return false;
 
-            return textDatabases[databaseName].ContainsKey(key);
+            return textDatabases[databaseName].HasValue(key);
         }
 
         /// <summary>
@@ -72,13 +73,13 @@ namespace DaggerfallWorkshop.Game
         /// <param name="databaseName">Name of text database.</param>
         /// <param name="key">Key of text in database.</param>
         /// <returns>Text if found, otherwise return an error string instead.</returns>
-        public string GetText(string databaseName, int key)
+        public string GetText(string databaseName, string key)
         {
             // Show an error if text not found
             if (!HasText(databaseName, key))
                 return "<TextError-NotFound>";
 
-            return textDatabases[databaseName][key];
+            return textDatabases[databaseName].GetValue(textColumn, key);
         }
 
         #endregion
@@ -91,7 +92,7 @@ namespace DaggerfallWorkshop.Game
         protected void EnumerateTextDatabases()
         {
             // Get all text files in target path
-            Debug.Log("Enumerating text databases.");
+            Debug.Log("TextManager enumerating text databases.");
             string path = Path.Combine(Application.streamingAssetsPath, textFolderName);
             string[] files = Directory.GetFiles(path, "*.txt");
 
@@ -100,39 +101,21 @@ namespace DaggerfallWorkshop.Game
             {
                 try
                 {
-                    // Create table from text file, this will be our source of text rows
+                    // Create table from text file
                     Table table = new Table(File.ReadAllLines(file));
 
-                    // Get database name from filename
+                    // Get database key from filename
                     string databaseName = Path.GetFileNameWithoutExtension(file);
                     if (HasDatabase(databaseName))
                         throw new Exception(string.Format("TextManager database name {0} already exists.", databaseName));
 
-                    // Create new database
-                    Dictionary<int, string> database = new Dictionary<int, string>();
-                    for (int i = 0; i < table.RowCount; i++)
-                    {
-                        // Get row
-                        string[] row = table.GetRow(i);
-                        if (row == null || row.Length != 2)
-                            throw new Exception(string.Format("TextManager database {0} appears to have invalid schema.", file));
-
-                        // Get row key
-                        int key;
-                        if (!int.TryParse(row[0], out key))
-                            throw new Exception(string.Format("TextManager could not parse key value to int for database {0} at row {1}", file, i));
-
-                        // Add to dictionary
-                        database.Add(key, row[1]);
-                    }
-
                     // Assign database to collection
-                    textDatabases.Add(databaseName, database);
-                    Debug.LogFormat("TextManager read text database {0} with {1} entries", databaseName, database.Count);
+                    textDatabases.Add(databaseName, table);
+                    Debug.LogFormat("TextManager read text database table {0} with {1} rows", databaseName, table.RowCount);
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogFormat("TextManager unable to parse text database {0} with exception message {1}", file, ex.Message);
+                    Debug.LogFormat("TextManager unable to parse text database table {0} with exception message {1}", file, ex.Message);
                     continue;
                 }
             }

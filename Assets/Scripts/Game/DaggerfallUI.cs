@@ -101,8 +101,11 @@ namespace DaggerfallWorkshop.Game
 
         public UserInterfaceManager UserInterfaceManager { get { return uiManager; } }
 
-        public static DaggerfallFont DefaultFont { get { return Instance.GetFont(4); } }
+        public static DaggerfallFont LargeFont { get { return Instance.GetFont(1); } }
         public static DaggerfallFont TitleFont { get { return Instance.GetFont(2); } }
+        public static DaggerfallFont SmallFont { get { return Instance.GetFont(3); } }
+        public static DaggerfallFont DefaultFont { get { return Instance.GetFont(4); } }
+        
         public static IUserInterfaceManager UIManager { get { return Instance.uiManager; } }
 
         public bool FadeInProgress

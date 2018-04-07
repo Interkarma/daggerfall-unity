@@ -2,74 +2,73 @@
 
 schema: *key,text
 
-0,	Chameleon
-1,	Charm
-2,	Climbing
-3,	Comprehend Languages
-4,	Continuous Damage
-5,	Create Item
-6,	Cure
-7,	Damage
-8,	Detect
-9,	Disintegrate
-10,	Dispel
-11,	Drain
-12,	Elemental Resistance
-13,	Fortify Attribute
-14,	Free Action
-15,	Heal
-16,	Identify
-17,	Invisibility
-18,	Jumping
-19,	Levitate
-20,	Light
-21,	Lock
-22,	Open
-23,	Pacify
-24,	Palalyze
-25,	Regenerate
-26,	Shadow
-27,	Shield
-28,	Silence
-29,	Slowfall
-30,	Soul Trap
-31,	Spell Absorption
-32,	Spell Reflection
-33,	Spell Resistance
-34,	Teleport
-35,	Transfer
-36,	Weater Breathing
-37,	Water Walking
+chameleon,			Chameleon
+charm,				Charm
+climbing,			Climbing
+comprehendLanguages,		Comprehend Languages
+continuousDamage,		Continuous Damage
+createItem,			Create Item
+cure,				Cure
+damage,				Damage
+detect,				Detect
+disintegrate,			Disintegrate
+dispel,				Dispel
+drain,				Drain
+elementalResistance,		Elemental Resistance
+fortifyAttribute,		Fortify Attribute
+freeAction,			Free Action
+heal,				Heal
+identify,			Identify
+invisibility,			Invisibility
+jumping,			Jumping
+levitate,			Levitate
+light,				Light
+lock,				Lock
+open,				Open
+pacify,				Pacify
+paralyze,			Paralyze
+regenerate,			Regenerate
+shadow,				Shadow
+shield,				Shield
+silence,			Silence
+slowfall,			Slowfall
+soulTrap,			Soul Trap
+spellAbsorption,		Spell Absorption
+spellReflection,		Spell Reflection
+spellResistance,		Spell Resistance
+teleport,			Teleport
+transfer,			Transfer
+waterBreathing,			Water Breathing
+waterWalking,			Water Walking
 
-100,	Agility
-101,	Endurance
-102,	Intelligence
-103,	Luck
-104,	Personality
-105,	Speed
-106,	Strength
-107,	Willpower
+agility,			Agility
+endurance,			Endurance
+intelligence,			Intelligence
+luck,				Luck
+personality,			Personality
+speed,				Speed
+strength,			Strength
+willpower,			Willpower
 
-200,	Fire
-201,	Frost
-202,	Magicka
-203,	Poison
-204,	Shock
+fire,				Fire
+frost,				Frost
+magicka,			Magicka
+poison,				Poison
+shock,				Shock
 
-300,	Enemy
-301,	Magic
-302,	Treasure
+enemy,				Enemy
+magic,				Magic
+treasure,			Treasure
 
-400,	Fatigue
-401,	Health
-402,	Spell Points
+fatigue,			Fatigue
+health,				Health
+spellPoints,			Spell Points
 
-500,	Disease
-501,	Paralyzation
-502,	Poison
+disease,			Disease
+paralyzation,			Paralyzation
 
-600,	Daedra
-602,	Undead
+daedra,				Daedra
+undead,				Undead
 
-700,	Normal
-701,	True
+normal,				Normal
+true,				True
