@@ -56,6 +56,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
     public class Section
     {
         string name;
+        KeyCollection keys = new KeyCollection();
 
 #if UNITY_EDITOR
         Action<string, string, string> syncKeyCallback;
@@ -67,6 +68,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             set { SetSyncKeysCallback(value); }
         }
 #endif
+        /// <summary>
+        /// The name of this section.
+        /// </summary>
         [fsProperty()]
         public string Name
         {
@@ -74,7 +78,25 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             set { SetName(value); }
         }
 
-        public KeyCollection Keys = new KeyCollection();
+        /// <summary>
+        /// A short description for this section.
+        /// </summary>
+        public string Description { get; set; }
+
+        /// <summary>
+        /// This section contains experimental settings and/or should be edited only by advanced users.
+        /// </summary>
+        public bool IsAdvanced { get; set; }
+
+        /// <summary>
+        /// All the keys inside this section.
+        /// </summary>
+        [fsProperty()]
+        public KeyCollection Keys
+        {
+            get { return keys; }
+            set { keys = value; }
+        }
 
         public Key this[int index]
         {

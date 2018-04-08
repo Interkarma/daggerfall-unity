@@ -241,20 +241,26 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         private void Sections_DrawElementCallback(Rect rect, int index, bool isActive, bool isFocused)
         {
-            string sectionName = data.Sections[currentSection = index].Name;
+            Section section = data.Sections[currentSection = index];
 
             if (sectionsExpanded)
                 keys[index].DoList(rect);
             else if (IsPreset)
-                CurrentPreset[sectionName] = EditorGUI.ToggleLeft(LineRect(rect), sectionName, CurrentPreset[sectionName]);
+                CurrentPreset[section.Name] = EditorGUI.ToggleLeft(LineRect(rect), section.Name, CurrentPreset[section.Name]);
             else
-                data.Sections[index].Name = EditorGUI.TextField(LineRect(rect), sectionName);
+            {
+                GUILayoutHelper.Vertical(rect, 1,
+                    (line) => GUILayoutHelper.Horizontal(line, null,
+                        (r) => section.Name = EditorGUI.TextField(r, "Name", section.Name),
+                        (r) => section.IsAdvanced = EditorGUI.ToggleLeft(r, "Is Advanced or experimental", section.IsAdvanced)),
+                    (line) => section.Description = EditorGUI.TextField(line, "Description", section.Description));
+            }
         }
 
         private float Sections_ElementHeightCallback(int index)
         {
             if (!sectionsExpanded)
-                return lineHeight;
+                return IsPreset ? lineHeight : lineHeight * 3;
 
             float totalSize = 0;
             for (int i = 0; i < data.Sections[index].Keys.Count; i++)
@@ -299,7 +305,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         {
             Section section = data.Sections[currentSection];
             var style = new GUIStyle(EditorStyles.foldout);
-            if (section.Name == ModSettingsData.InternalSection)
+            if (section.IsAdvanced)
                 style.normal.textColor = Color.red;
 
             if (IsPreset)

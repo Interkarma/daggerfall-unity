@@ -32,11 +32,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         SettingsValues defaultValues;
         List<Preset> presets;
 
-        /// <summary>
-        /// Section which contains keys hidden from UI.
-        /// </summary>
-        public const string InternalSection = "Internal";
-
         #endregion
 
         #region Properties
@@ -66,22 +61,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// </summary>
         public SectionCollection Sections { get; set; }
 
-        /// <summary>
-        /// All sections shown on GUI.
-        /// </summary>
-        public IEnumerable<Section> VisibleSections
-        {
-            get { return Sections.Where(x => x.Name != InternalSection); }
-        }
-
-        /// <summary>
-        /// Section hidden from GUI. Can be null.
-        /// </summary>
-        public Section HiddenSection
-        {
-            get { return Sections.GetValueOrDefault(InternalSection); }
-        }
-
         public Section this[int index]
         {
             get { return Sections[index]; }
@@ -97,6 +76,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             get { return presets ?? (presets = new List<Preset>()); }
         }
 
+        [fsIgnore]
         public bool HasLoadedPresets { get; private set; }
 
         #endregion
@@ -377,7 +357,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                     else
                         dataKey = new TextKey();
 
-                    if (section.SectionName == InternalSection && key.KeyName == "SettingsVersion")
+                    if (section.SectionName == "Internal" && key.KeyName == "SettingsVersion")
                     {
                         Version = key.Value;
                         continue;

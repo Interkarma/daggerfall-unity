@@ -54,6 +54,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         Color sectionTitleColor       = new Color(0.53f, 0.81f, 0.98f, 1);  // light blue
         Color sectionTitleShadow      = new Color(0.3f, 0.45f, 0.54f, 1);
         Color backgroundTitleColor    = new Color(0, 0.8f, 0, 0.1f);        // green
+        Color backgroundTitleAdvColor = new Color(1, 0, 0, 0.1f);           // red
 
         readonly Mod mod;
         readonly ModSettingsData settings;  
@@ -227,11 +228,15 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         private void LoadSettings()
         {
-            foreach (Section section in settings.VisibleSections)
+            foreach (Section section in settings.Sections)
             {
-                // Add section title to window
-                AddSectionTitle(section.Name);
+                // Title
+                AddSectionTitle(section.Name, section.IsAdvanced);
                 MovePosition(spacing);
+
+                // Description
+                if (!string.IsNullOrEmpty(section.Description))
+                    MovePosition(AddSectionDescription(section.Description) + 2);
 
                 foreach (Key key in section.Keys)
                 {
@@ -254,7 +259,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// <param name="writeToDisk">Write settings to file on disk.</param>
         private void SaveSettings(bool writeToDisk = true)
         {
-            foreach (Section section in settings.VisibleSections)
+            foreach (Section section in settings.Sections)
                 foreach (Key key in section.Keys)
                     key.OnSaveWindow(UIControls[key]);
 
@@ -323,15 +328,15 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         #region Helper Methods
 
-        private void AddSectionTitle(string title)
+        private void AddSectionTitle(string title, bool isAdvanced)
         {
             Panel background = new Panel();
             background.Position = new Vector2(x, y - 0.5f);
             background.Size = new Vector2(140, 6.5f);
-            background.BackgroundColor = backgroundTitleColor;
+            background.BackgroundColor = isAdvanced ? backgroundTitleAdvColor : backgroundTitleColor;
             background.Outline.Enabled = true;
             background.Outline.Sides = Sides.Bottom;
-            background.Outline.Color = saveButtonColor;
+            background.Outline.Color = isAdvanced ? resetButtonColor : saveButtonColor;
             background.Outline.Thickness = 1;
             currentPanel.Components.Add(background);
 
@@ -343,6 +348,30 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             textLabel.Position = new Vector2(0, 0.5f);
             textLabel.HorizontalAlignment = HorizontalAlignment.Center;
             background.Components.Add(textLabel);
+        }
+
+        private int AddSectionDescription(string description)
+        {
+            const int width = 140;
+            const int margin = 1;
+            const int textMargin = 1;
+
+            Vector2 position = new Vector2(x + textMargin + margin, y + textMargin);
+            TextLabel textLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.Instance.Font4, position, description, currentPanel);
+            textLabel.TextScale = 0.6f;
+            textLabel.TextColor = sectionTitleColor;
+            textLabel.ShadowColor = Color.clear;
+            textLabel.WrapText = true;
+            textLabel.WrapWords = true;
+            textLabel.MaxWidth = width - (textMargin + margin) * 2;
+
+            int height = textLabel.TextHeight + 2;
+            Panel background = DaggerfallUI.AddPanel(new Rect(x + margin, y, width - margin * 2, height), currentPanel);
+            background.BackgroundColor = new Color(0.5f, 0.5f, 0.5f, 0.1f);
+            background.Outline.Enabled = true;
+            background.Outline.Color = new Color(0.7f, 0.7f, 0.7f, 0.1f);
+            background.Outline.Thickness = 1;
+            return height;
         }
 
         private TextLabel AddKeyName(string name)
