@@ -390,6 +390,24 @@ namespace DaggerfallWorkshop.Game.Entity
             }
         }
 
+        public void SpawnCityGuards(bool forceSpawn)
+        {
+            // Don't spawn if more than 10 enemies are already in the area
+            if (UnityEngine.Object.FindObjectsOfType<DaggerfallEntityBehaviour>().Length > 10)
+                return;
+
+            if (forceSpawn)
+            {
+                // TODO: First try to spawn guards from nearby townspeople. If townsperson is a guard spawn, or if is a non-guard 1/3 chance to spawn
+                // if out of player view.
+                // If none spawned, proceed with below
+                int randomNumber = UnityEngine.Random.Range(2, 5 + 1);
+                GameObjectHelper.CreateFoeSpawner(MobileTypes.Knight_CityWatch, randomNumber);
+            }
+            // TODO: If !forceSpawn, check for LOS from nearby guard townspeople and spawn from them if they see player.
+            // Otherwise, check for LOS from non-guard townspeople. If they see player, random countdown is set, after which guards will spawn.
+        }
+
         /// <summary>
         /// Resets entity to initial state.
         /// </summary>
