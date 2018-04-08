@@ -41,13 +41,16 @@ namespace DaggerfallWorkshop.Game
             bSwaying = false;
             timerStart = 5 * Mathf.PI;
             timer = timerStart;
+            recoilSetting = GetRecoilSetting(DaggerfallUnity.Settings.CameraRecoilStrength);
         }   
 	
 	    void Update ()
         {
-            if (DaggerfallUnity.Settings.CameraRecoil == false || 
+            if (GetRecoilSetting(DaggerfallUnity.Settings.CameraRecoilStrength) == CameraRecoilSetting.Off ||
                 GameManager.IsGamePaused) // prevent continuous spinning on pause
                 return;
+            else
+                recoilSetting = GetRecoilSetting(DaggerfallUnity.Settings.CameraRecoilStrength);
 
             int maxHealth = GameManager.Instance.PlayerEntity.MaxHealth;
             int currentHealth = GameManager.Instance.PlayerEntity.CurrentHealth;
@@ -86,9 +89,9 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        protected virtual CameraRecoilSetting GetRecoilSetting()
+        protected virtual CameraRecoilSetting GetRecoilSetting(int recoilStrength)
         {
-            switch (DaggerfallUnity.Settings.CameraRecoilStrength)
+            switch (recoilStrength)
             {
                 case 0: return CameraRecoilSetting.Off;
                 case 1: return CameraRecoilSetting.Low;
@@ -104,9 +107,23 @@ namespace DaggerfallWorkshop.Game
             swayAxis = UnityEngine.Random.insideUnitCircle.normalized;
         }
 
+        protected virtual float AdjustSeverityForSetting(float severityScalar)
+        {
+            switch (recoilSetting)
+            {
+                case CameraRecoilSetting.Off:       return severityScalar * 0f;
+                case CameraRecoilSetting.Low:       return severityScalar * 0.25f;
+                case CameraRecoilSetting.Medium:    return severityScalar * 0.50f;
+                case CameraRecoilSetting.High:      return severityScalar * 0.75f;
+                case CameraRecoilSetting.VeryHigh:  return severityScalar * 1f;
+                default: throw new Exception("Camera Recoil Setting not found!");
+            }
+        }
+
         protected virtual Vector3 GetRotationVector(int healthLost)
         {
-            const float maxSwaySeverity = 50f; // may need to adjust
+            const float baseMaxRecoilSeverity = 50f; // may need to adjust
+            float maxRecoilSeverity = AdjustSeverityForSetting(baseMaxRecoilSeverity);
 
             //TODO: decrease sway severity slightly for higher levels of player?
 
@@ -114,12 +131,14 @@ namespace DaggerfallWorkshop.Game
             float healthLostFactor = Mathf.Clamp((healthLost * 0.015f), 0.015f, 1f);
 
             // sway severity is a percentage of the timer remaining, and percentage of health lost factor
-            float swaySeverity = maxSwaySeverity * (timer / timerStart) * healthLostFactor;
+            float recoilSeverity = maxRecoilSeverity * (timer / timerStart) * healthLostFactor;
+
+            // recoilSeverity = baseMaxRecoilSeverity;  // uncomment to test a severity quick playtesting 
 
             //Debug.Log("xAmount: " + xAmount);
             //swayaxis provides direction for the sway
-            float xAngle = Mathf.Sin(timer) * swaySeverity * swayAxis.x;
-            float yAngle = Mathf.Sin(timer) * swaySeverity * swayAxis.y;
+            float xAngle = Mathf.Sin(timer) * recoilSeverity * swayAxis.x;
+            float yAngle = Mathf.Sin(timer) * recoilSeverity * swayAxis.y;
             
             Vector3 newViewPositon = new Vector3(xAngle, yAngle);
 
