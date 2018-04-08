@@ -67,7 +67,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     // Start swaying and timer countdown
                     bSwaying = true;
-                    Debug.Log("Percent loss: " + percentLost);
+                    //Debug.Log("Percent loss: " + percentLost);
 
                     // longer timer for more health percent lost
                     timerStart = CalculateTimerStart(percentLost);
