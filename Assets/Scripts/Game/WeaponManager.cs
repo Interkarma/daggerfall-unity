@@ -699,7 +699,11 @@ namespace DaggerfallWorkshop.Game
                 MobilePersonNPC mobileNpc = hit.transform.GetComponent<MobilePersonNPC>();
                 if (mobileNpc)
                 {
-                    // TODO: Create blood splash.
+                    EnemyBlood blood = hit.transform.GetComponent<EnemyBlood>();
+                    if (blood)
+                    {
+                        blood.ShowBloodSplash(0, hit.point);
+                    }
                     mobileNpc.Motor.gameObject.SetActive(false);
                     GameManager.Instance.PlayerEntity.TallyCrimeGuildRequirements(false, 5);
                 }
