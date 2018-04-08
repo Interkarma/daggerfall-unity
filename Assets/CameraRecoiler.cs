@@ -4,15 +4,33 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace DaggerfallWorkshop.Game
 {
+
+    public enum CameraRecoilSetting
+    {
+        Off,
+        Low,
+        Medium,
+        High,
+        VeryHigh
+    }
     public class CameraRecoiler : MonoBehaviour
     {
+        private CameraRecoilSetting recoilSetting;
+        public CameraRecoilSetting RecoilSetting
+        {
+            get
+            {
+                return recoilSetting;
+            }
+        }
+        
         protected Transform playerCamTransform;
         protected int previousHealth;
         protected bool bSwaying; // true if player is reeling from damage
         protected Vector2 swayAxis;
         protected float timerStart;
         protected float timer;
-        
+
         void Start ()
         {
             playerCamTransform = GameManager.Instance.MainCamera.transform;
@@ -23,7 +41,7 @@ namespace DaggerfallWorkshop.Game
             bSwaying = false;
             timerStart = 5 * Mathf.PI;
             timer = timerStart;
-    }
+        }   
 	
 	    void Update ()
         {
@@ -65,6 +83,19 @@ namespace DaggerfallWorkshop.Game
 
                 // keep swaying as long as there's time left
                 bSwaying = (timer > 0);
+            }
+        }
+
+        protected virtual CameraRecoilSetting GetRecoilSetting()
+        {
+            switch (DaggerfallUnity.Settings.CameraRecoilStrength)
+            {
+                case 0: return CameraRecoilSetting.Off;
+                case 1: return CameraRecoilSetting.Low;
+                case 2: return CameraRecoilSetting.Medium;
+                case 3: return CameraRecoilSetting.High;
+                case 4: return CameraRecoilSetting.VeryHigh;
+                default: throw new Exception("Camera recoil setting not found!");
             }
         }
 
