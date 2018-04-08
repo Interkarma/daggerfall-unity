@@ -15,6 +15,7 @@ using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Guilds;
 using DaggerfallWorkshop.Game.Entity;
 using System.Collections.Generic;
+using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Game.Formulas
 {
@@ -1096,22 +1097,22 @@ namespace DaggerfallWorkshop.Game.Formulas
             return adjustedCost;
         }
 
-        public static void RandomizeInitialPriceAdjustments(ref PlayerEntity.RegionDataRecord[] regionData)
+        public static void RandomizeInitialRegionalPrices(ref PlayerEntity.RegionDataRecord[] regionData)
         {
             for (int i = 0; i < regionData.Length; i++)
                 regionData[i].PriceAdjustment = (ushort)(UnityEngine.Random.Range(0, 501) + 750);
         }
 
-        public static void ModifyPriceAdjustmentByRegion(ref PlayerEntity.RegionDataRecord[] regionData, int times)
+        public static void UpdateRegionalPrices(ref PlayerEntity.RegionDataRecord[] regionData, int times)
         {
             PlayerEntity player = GameManager.Instance.PlayerEntity;
-            DaggerfallConnect.Arena2.FactionFile.FactionData merchantsFaction;
+            FactionFile.FactionData merchantsFaction;
             if (!player.FactionData.GetFactionData(510, out merchantsFaction))
                 return;
 
             for (int i = 0; i < regionData.Length; ++i)
             {
-                DaggerfallConnect.Arena2.FactionFile.FactionData regionFaction;
+                FactionFile.FactionData regionFaction;
                 if (player.FactionData.FindFactionByTypeAndRegion(7, i + 1, out regionFaction))
                 {
                     for (int j = 0; j < times; ++j)
