@@ -15,21 +15,23 @@ namespace DaggerfallWorkshop.Game
     }
     public class CameraRecoiler : MonoBehaviour
     {
-        private CameraRecoilSetting recoilSetting;
+        private CameraRecoilSetting cameraRecoilSetting;
         public CameraRecoilSetting RecoilSetting
         {
             get
             {
-                return recoilSetting;
+                return cameraRecoilSetting;
             }
         }
         
         protected Transform playerCamTransform;
         protected int previousHealth;
+        protected int healthLost;
         protected bool bSwaying; // true if player is reeling from damage
         protected Vector2 swayAxis;
         protected float timerStart;
         protected float timer;
+        protected const float baseMaxRecoilSeverity = 50f; // may need to adjust
 
         void Start ()
         {
@@ -39,9 +41,7 @@ namespace DaggerfallWorkshop.Game
                 previousHealth = GameManager.Instance.PlayerEntity.CurrentHealth;
 
             bSwaying = false;
-            timerStart = 5 * Mathf.PI;
-            timer = timerStart;
-            recoilSetting = GetRecoilSetting(DaggerfallUnity.Settings.CameraRecoilStrength);
+            cameraRecoilSetting = GetRecoilSetting(DaggerfallUnity.Settings.CameraRecoilStrength);
         }   
 	
 	    void Update ()
@@ -50,22 +50,29 @@ namespace DaggerfallWorkshop.Game
                 GameManager.IsGamePaused) // prevent continuous spinning on pause
                 return;
             else
-                recoilSetting = GetRecoilSetting(DaggerfallUnity.Settings.CameraRecoilStrength);
+                cameraRecoilSetting = GetRecoilSetting(DaggerfallUnity.Settings.CameraRecoilStrength);
 
             int maxHealth = GameManager.Instance.PlayerEntity.MaxHealth;
             int currentHealth = GameManager.Instance.PlayerEntity.CurrentHealth;
             int healthLost = previousHealth - currentHealth;
 
-            if (currentHealth < previousHealth)
+            // Detect Health loss
+            if (healthLost > 0)
             {
                 const float minPercentThreshold = 0.02f;
                 float percentLost = (float)healthLost / maxHealth;
-                //Debug.Log("Percent loss: " + percentLost);
+                
+                // useless to do it for less than a certain percentage
                 if (percentLost >= minPercentThreshold)
                 {
                     // Start swaying and timer countdown
                     bSwaying = true;
+                    Debug.Log("Percent loss: " + percentLost);
+
+                    // longer timer for more health percent lost
+                    timerStart = CalculateTimerStart(percentLost);
                     timer = timerStart;
+
                     // get a random unit vector axis for the sway direction
                     SetSwayAxis();
                     //Debug.Log("Start Swaying");
@@ -82,7 +89,8 @@ namespace DaggerfallWorkshop.Game
                 timer -= Time.deltaTime * timerSpeed;
 
                 // get new view rotation
-                playerCamTransform.Rotate(GetRotationVector(healthLost));
+                float rotationScalar = CalculateRotationScalar(healthLost);
+                playerCamTransform.Rotate(GetRotationVector(healthLost, rotationScalar));
 
                 // keep swaying as long as there's time left
                 bSwaying = (timer > 0);
@@ -107,42 +115,51 @@ namespace DaggerfallWorkshop.Game
             swayAxis = UnityEngine.Random.insideUnitCircle.normalized;
         }
 
-        protected virtual float AdjustSeverityForSetting(float severityScalar)
+        protected virtual float CalculateTimerStart(float percentHealthLost)
         {
-            switch (recoilSetting)
+            // Timer start should be increased for greater percentages of health lost
+            // in stages of each 20% lost
+            int piScalar = 5 + Mathf.FloorToInt(percentHealthLost * 5);
+            //Debug.Log("timerStart is PI * " + piScalar);
+            return piScalar * Mathf.PI;
+        }
+
+        protected virtual float AdjustForUserSetting(float maxRotationScalar)
+        {
+            switch (cameraRecoilSetting)
             {
-                case CameraRecoilSetting.Off:       return severityScalar * 0f;
-                case CameraRecoilSetting.Low:       return severityScalar * 0.25f;
-                case CameraRecoilSetting.Medium:    return severityScalar * 0.50f;
-                case CameraRecoilSetting.High:      return severityScalar * 0.75f;
-                case CameraRecoilSetting.VeryHigh:  return severityScalar * 1f;
+                case CameraRecoilSetting.Off:       return maxRotationScalar * 0f;
+                case CameraRecoilSetting.Low:       return maxRotationScalar * 0.25f;
+                case CameraRecoilSetting.Medium:    return maxRotationScalar * 0.50f;
+                case CameraRecoilSetting.High:      return maxRotationScalar * 0.75f;
+                case CameraRecoilSetting.VeryHigh:  return maxRotationScalar * 1f;
                 default: throw new Exception("Camera Recoil Setting not found!");
             }
         }
 
-        protected virtual Vector3 GetRotationVector(int healthLost)
-        {
-            const float baseMaxRecoilSeverity = 50f; // may need to adjust
-            float maxRecoilSeverity = AdjustSeverityForSetting(baseMaxRecoilSeverity);
-
-            //TODO: decrease sway severity slightly for higher levels of player?
+        protected virtual float CalculateRotationScalar(int healthLost)
+        { 
+            float maxRotationScalar = AdjustForUserSetting(baseMaxRecoilSeverity);
 
             // each point of health lost makes the sway %1.5 of max effectiveness, up to a max of 100% effectiveness.
             float healthLostFactor = Mathf.Clamp((healthLost * 0.015f), 0.015f, 1f);
 
             // sway severity is a percentage of the timer remaining, and percentage of health lost factor
-            float recoilSeverity = maxRecoilSeverity * (timer / timerStart) * healthLostFactor;
+            float rotationScalar = maxRotationScalar * (timer / timerStart) * healthLostFactor;
 
-            // recoilSeverity = baseMaxRecoilSeverity;  // uncomment to test a severity quick playtesting 
+            return rotationScalar;
+        }
 
+        protected virtual Vector3 GetRotationVector(int healthLost, float rotationScalar)
+        {
             //Debug.Log("xAmount: " + xAmount);
             //swayaxis provides direction for the sway
-            float xAngle = Mathf.Sin(timer) * recoilSeverity * swayAxis.x;
-            float yAngle = Mathf.Sin(timer) * recoilSeverity * swayAxis.y;
+            float xAngle = Mathf.Sin(timer) * rotationScalar * swayAxis.x;
+            float yAngle = Mathf.Sin(timer) * rotationScalar * swayAxis.y;
             
             Vector3 newViewPositon = new Vector3(xAngle, yAngle);
 
-            // return euler angles
+            // return vector for euler angles
             return newViewPositon;
         }
     }
