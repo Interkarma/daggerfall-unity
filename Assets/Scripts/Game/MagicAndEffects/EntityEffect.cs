@@ -40,9 +40,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         string GroupKey { get; }
 
         /// <summary>
-        /// Key value for legacy classic effect compatibility. Do not set this for non-classic effects.
+        /// Group index for legacy classic effect compatibility. Do not set this for non-classic effects.
         /// </summary>
-        int ClassicKey { get; }
+        int ClassicGroup { get; }
+
+        /// <summary>
+        /// Subgroup index for legacy classic effect compatibility. Do not set this for non-classic effects.
+        /// </summary>
+        int ClassicSubGroup { get; }
 
         /// <summary>
         /// TEXT.RSC ID description for this effect (effect descriptions start at ID 1500).
@@ -129,7 +134,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public abstract string GroupName { get; }
         public abstract string SubGroupName { get; }
         public abstract string GroupKey { get; }
-        public virtual int ClassicKey { get { return 0; } }
+        public virtual int ClassicGroup { get { return -1; } }
+        public virtual int ClassicSubGroup { get { return -1; } }
         public virtual int TextID { get { return 0; } }
 
         public virtual TextFile.Token[] CustomText

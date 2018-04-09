@@ -18,6 +18,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.MagicAndEffects;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -65,6 +66,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string colorSelectIconsFilename = "MASK04I0.IMG";
 
         const int alternateAlphaIndex = 12;
+
+        List<EntityEffectBroker.EffectKeyNamePair> enumeratedEffects = new List<EntityEffectBroker.EffectKeyNamePair>();
 
         #endregion
 
@@ -176,10 +179,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // Clear existing
             effectSubGroupPicker.ListBox.ClearItems();
+            enumeratedEffects.Clear();
 
-            // Populate subgroup names
-            string[] subGroupNames = GameManager.Instance.EntityEffectBroker.GetSubGroupNames(effectGroupPicker.ListBox.SelectedItem);
-            effectSubGroupPicker.ListBox.AddItems(subGroupNames);
+            // Enumerate subgroup effect key name pairs
+            enumeratedEffects = GameManager.Instance.EntityEffectBroker.GetEffectKeyNamePairs(effectGroupPicker.ListBox.SelectedItem);
+            if (enumeratedEffects.Count < 1)
+                throw new Exception(string.Format("Could not find any effects for group {0}", effectGroupPicker.ListBox.SelectedItem));
+
+            // Sort list by subgroup name
+            enumeratedEffects.Sort((s1, s2) => s1.subGroupName.CompareTo(s2.subGroupName));
+
+            // Populate subgroup names in list box
+            foreach(EntityEffectBroker.EffectKeyNamePair knp in enumeratedEffects)
+            {
+                effectSubGroupPicker.ListBox.AddItem(knp.subGroupName);
+            }
             effectSubGroupPicker.ListBox.SelectedIndex = 0;
 
             // Show effect subgroup picker
@@ -191,6 +205,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void AddEffectSubGroup_OnUseSelectedItem()
         {
+            EntityEffectBroker.EffectKeyNamePair knp = enumeratedEffects[effectSubGroupPicker.ListBox.SelectedIndex];
+
+            Debug.LogFormat("Selected effect {0} {1} with key {2}", knp.groupName, knp.subGroupName, knp.key);
         }
 
         #endregion

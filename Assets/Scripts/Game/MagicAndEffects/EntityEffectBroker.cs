@@ -23,11 +23,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     /// </summary>
     public class EntityEffectBroker : MonoBehaviour
     {
+        #region Fields
+
         const float roundInterval = 5.0f;
 
         int magicRoundsSinceStartup = 0;
         float roundTimer = 0f;
         IEnumerable<BaseEntityEffect> magicEffectTemplates;
+
+        #endregion
+
+        #region Properties
 
         /// <summary>
         /// Gets the number of 5-second "magic rounds" since startup.
@@ -36,6 +42,26 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             get { return magicRoundsSinceStartup; }
         }
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Stores an effect key and group/subgroup names.
+        /// </summary>
+        public struct EffectKeyNamePair
+        {
+            public string key;
+            public int classicGroup;
+            public int classicSubGroup;
+            public string groupName;
+            public string subGroupName;
+        }
+
+        #endregion
+
+        #region Unity
 
         void Start()
         {
@@ -59,6 +85,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 }
             }
         }
+
+        #endregion
 
         #region Public Methods
 
@@ -100,7 +128,34 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 subGroupNames.Add(effect.SubGroupName);
             }
 
+            // Sort if required
+            if (sortAlpha)
+                subGroupNames.Sort();
+
             return subGroupNames.ToArray();
+        }
+
+        /// <summary>
+        /// Gets all effect key name pairs belonging to group name.
+        /// </summary>
+        /// <param name="groupName">The group name to collect effects from.</param>
+        /// <returns>List of effect key name pairs.</returns>
+        public List<EffectKeyNamePair> GetEffectKeyNamePairs(string groupName)
+        {
+            List<EffectKeyNamePair> keyNamePairs = new List<EffectKeyNamePair>();
+
+            foreach (BaseEntityEffect effect in magicEffectTemplates.Where(effect => effect.GroupName == groupName))
+            {
+                EffectKeyNamePair knp = new EffectKeyNamePair();
+                knp.key = effect.GroupKey;
+                knp.classicGroup = effect.ClassicGroup;
+                knp.classicSubGroup = effect.ClassicSubGroup;
+                knp.groupName = effect.GroupName;
+                knp.subGroupName = effect.SubGroupName;
+                keyNamePairs.Add(knp);
+            }
+
+            return keyNamePairs;
         }
 
         #endregion
