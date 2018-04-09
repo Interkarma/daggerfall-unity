@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 114102110313281098}
   - component: {fileID: 114040605119886728}
   - component: {fileID: 136715391349249406}
+  - component: {fileID: 114017295900129130}
   m_Layer: 0
   m_Name: DaggerfallMobilePerson [Standalone]
   m_TagString: Untagged
@@ -112,6 +113,17 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1779995961696246}
   m_Mesh: {fileID: 0}
+--- !u!114 &114017295900129130
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1534471568425466}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1bf0109348ece14aa8bf1fc3afe830e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114040605119886728
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -135,8 +147,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5deea3c9f6717aa4484fe777b3986380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  race: 1
-  gender: 0
+  raceToBeSet: 1
+  genderToBeSet: 0
+  outfitVariantToBeSet: -1
 --- !u!114 &114597381660483322
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -148,9 +161,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1f4e1f7b3069e5408422bb490cd6527, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  race: 1
-  gender: 0
-  personVariant: -1
 --- !u!136 &136715391349249406
 CapsuleCollider:
   m_ObjectHideFlags: 1
