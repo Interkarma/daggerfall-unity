@@ -297,7 +297,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
             if (daysPast > 0)
             {
-                FormulaHelper.ModifyPriceAdjustmentByRegion(ref regionData, daysPast);
+                FormulaHelper.UpdateRegionalPrices(ref regionData, daysPast);
                 GameManager.Instance.WeatherManager.SetClimateWeathers();
                 GameManager.Instance.WeatherManager.UpdateWeatherFromClimateArray = true;
                 RemoveExpiredRentedRooms();
@@ -312,6 +312,23 @@ namespace DaggerfallWorkshop.Game.Entity
                 }
             }
 
+            // Normalize legal reputation and update faction power and regional conditions every certain number of days
+            uint minutesPassed = gameMinutes - lastGameMinutes;
+            for (int i = 0; i < minutesPassed; ++i)
+            {
+                // Normalize legal reputations towards 0
+                if (((i + lastGameMinutes) % 161280) == 0) // 112 days
+                    NormalizeReputations();
+
+                // Update faction relationships, faction power levels and regional conditions (in progress)
+                if (((i + lastGameMinutes) % 40320) == 0) // 28 days
+                    RegionPowerAndConditionsUpdate();
+
+                // TODO: Get vampire/werecreature quest
+                //if (((i + lastGameMinutes) % 120960) == 0) // 84 days
+                //    GetVampireOrWerecreatureQuest();
+            }
+
             // TODO: Right now enemy spawns are only prevented when time has been raised for
             // fast travel. They should later be prevented when time has been raised for
             // 1) Turning into vampire 2) Serving prison sentence
@@ -321,14 +338,6 @@ namespace DaggerfallWorkshop.Game.Entity
             {
                 for (uint l = 0; l < (gameMinutes - lastGameMinutes); ++l)
                     IntermittentEnemySpawn(l + lastGameMinutes + 1);
-            }
-
-            // Update faction relationships, faction power levels and regional conditions (in progress)
-            uint minutesPassed = gameMinutes - lastGameMinutes;
-            for (int i = 0; i < minutesPassed; ++i)
-            {
-                if (((i + lastGameMinutes) % 40320) == 0) // 28 days
-                    FactionAndRegionConditionsUpdate();
             }
 
             lastGameMinutes = gameMinutes;
@@ -978,7 +987,10 @@ namespace DaggerfallWorkshop.Game.Entity
             Condition29 = 29,
         }
 
-        public void FactionAndRegionConditionsUpdate()
+        /// <summary>
+        /// Update regional power and conditions. Called every certain number of game days.
+        /// </summary>
+        public void RegionPowerAndConditionsUpdate()
         {
             int[] TemplesAssociatedWithRegions =    { 106, 82, 0, 0, 0, 98, 0, 0, 0, 92, 0, 106, 0, 0, 0, 84, 36, 8, 84, 88, 82, 88, 98, 92, 0, 0, 82, 0,
                                                         0, 0, 0, 0, 88, 94, 36, 94, 106, 84, 106, 106, 88, 98, 82, 98, 84, 94, 36, 88, 94, 36, 98, 84, 106,
@@ -1127,9 +1139,12 @@ namespace DaggerfallWorkshop.Game.Entity
             regionData[regionID].Flags[(int)flagID] = true;
         }
 
+        /// <summary>
+        /// Initialize region data arrays.
+        /// </summary>
         public void InitializeRegionData()
         {
-            FormulaHelper.RandomizeInitialPriceAdjustments(ref regionData);
+            FormulaHelper.RandomizeInitialRegionalPrices(ref regionData);
 
             // TODO: Randomize values and flags. Their relationships are not fully understood yet so for now just initializing all to 0 and false.
             for (int i = 0; i < regionData.Length; i++)
@@ -1146,6 +1161,29 @@ namespace DaggerfallWorkshop.Game.Entity
                 regionData[i].Flags2 = new bool[14];
                 for (int j = 0; j < 14; j++)
                     regionData[i].Flags2[j] = false;
+            }
+        }
+
+        /// <summary>
+        /// Normalize reputations towards 0. Called every certain number of game days.
+        /// </summary>
+        public void NormalizeReputations()
+        {
+            for (int i = 0; i < 62; ++i)
+            {
+                if (regionData[i].LegalRep < 0)
+                    ++regionData[i].LegalRep;
+                else if (regionData[i].LegalRep > 0)
+                    --regionData[i].LegalRep;
+            }
+
+            List<int> keys = new List<int>(factionData.FactionDict.Keys);
+            foreach (int key in keys)
+            {
+                if (factionData.FactionDict[key].rep < 0)
+                    factionData.ChangeReputation(factionData.FactionDict[key].id, 1);
+                else if (factionData.FactionDict[key].rep > 0)
+                    factionData.ChangeReputation(factionData.FactionDict[key].id, -1);
             }
         }
 
