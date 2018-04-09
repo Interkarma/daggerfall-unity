@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace DaggerfallWorkshop.Game
 {
-    public class HeadRecoiler : MonoBehaviour
+    public class CameraRecoiler : MonoBehaviour
     {
         protected Transform playerCamTransform;
         protected int previousHealth;
