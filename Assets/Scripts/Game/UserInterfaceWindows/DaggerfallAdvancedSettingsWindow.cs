@@ -91,6 +91,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox modSystem;
         Checkbox assetImport;
         Checkbox compressModdedTextures;
+        HorizontalSlider cameraRecoilStrength;
 
         // Video
         HorizontalSlider resolution;
@@ -174,6 +175,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             startInDungeon = AddCheckbox(leftPanel, "Start In Dungeon", "Start new game inside the first dungeon", DaggerfallUnity.Settings.StartInDungeon);
             randomDungeonTextures = AddSlider(leftPanel, "Dungeon Textures", "Generates dungeon texture table from random seed",
                 DaggerfallUnity.Settings.RandomDungeonTextures, "classic", "climate", "climateOnly", "random", "randomOnly");
+            cameraRecoilStrength = AddSlider(leftPanel, "Camera Recoil Strength", "Strength of screen recoil when player takes damage.  Scales with damage.",
+                DaggerfallUnity.Settings.CameraRecoilStrength, "Off", "Low (25%)", "Medium (50%)", "High (75%)", "V. High(100%)");
 
             // GUI
             AddSectionTitle(leftPanel, "GUI");
@@ -279,6 +282,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.LypyL_ModSystem = modSystem.IsChecked;
             DaggerfallUnity.Settings.MeshAndTextureReplacement = assetImport.IsChecked;
             DaggerfallUnity.Settings.CompressModdedTextures = compressModdedTextures.IsChecked;
+            DaggerfallUnity.Settings.CameraRecoilStrength = cameraRecoilStrength.ScrollIndex;
 
             /* Video */
 

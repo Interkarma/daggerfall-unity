@@ -64,7 +64,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox leftHandWeapons;
         Checkbox playerNudity;
         Checkbox clickToAttack;
-        Checkbox cameraRecoil;
 
         Color unselectedTextColor = new Color(0.6f, 0.6f, 0.6f, 1f);
         Color selectedTextColor = new Color(0.0f, 0.8f, 0.0f, 1.0f);
@@ -446,7 +445,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             leftHandWeapons = AddOption(x, "Left Hand Weapons", "Draw weapons on left side of screen", GetLeftHandWeapons());
             playerNudity = AddOption(x, "Player Nudity", "Allow nudity on paper doll", DaggerfallUnity.Settings.PlayerNudity);
             clickToAttack = AddOption(x, "Click to attack", "Enable a simple click to trigger attacks", DaggerfallUnity.Settings.ClickToAttack);
-            cameraRecoil = AddOption(x, "Camera Recoil", "Enable screen to recoil when taking damage", DaggerfallUnity.Settings.CameraRecoil);
 
             // Setup mods checkboxes
             // TODO: Might rework this, but could still be useful for certain core mods later
@@ -706,7 +704,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.Handedness = GetHandedness(leftHandWeapons.IsChecked);
             DaggerfallUnity.Settings.PlayerNudity = playerNudity.IsChecked;
             DaggerfallUnity.Settings.ClickToAttack = clickToAttack.IsChecked;
-            DaggerfallUnity.Settings.CameraRecoil = cameraRecoil.IsChecked;
 
             DaggerfallUnity.Settings.SaveSettings();
             moveNextStage = true;
