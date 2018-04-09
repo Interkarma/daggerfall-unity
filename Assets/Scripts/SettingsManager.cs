@@ -198,7 +198,7 @@ namespace DaggerfallWorkshop
             WeaponAttackThreshold = GetFloat(sectionControls, "WeaponAttackThreshold", 0.001f, 1.0f);
             WeaponSensitivity = GetFloat(sectionControls, "WeaponSensitivity", 0.1f, 10.0f);
             ClickToAttack = GetBool(sectionControls, "ClickToAttack");
-            CameraRecoilStrength = GetInt(sectionControls, "CameraRecoilStrength");
+            CameraRecoilStrength = GetInt(sectionControls, "CameraRecoilStrength", 0, 4);
 
             StartCellX = GetInt(sectionStartup, "StartCellX", 2, 997);
             StartCellY = GetInt(sectionStartup, "StartCellY", 2, 497);
