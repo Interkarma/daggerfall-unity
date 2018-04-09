@@ -29,7 +29,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         int magicRoundsSinceStartup = 0;
         float roundTimer = 0f;
-        IEnumerable<BaseEntityEffect> magicEffectTemplates;
+        Dictionary<string, BaseEntityEffect> magicEffectTemplates = new Dictionary<string, BaseEntityEffect>();
 
         #endregion
 
@@ -67,7 +67,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             // Enumerate classes implementing an effect and create an instance to use as factory
             // TODO: Provide an external method for mods to register custom effects without reflections
-            magicEffectTemplates = ReflectiveEnumerator.GetEnumerableOfType<BaseEntityEffect>();
+            magicEffectTemplates.Clear();
+            IEnumerable<BaseEntityEffect> effectTemplates = ReflectiveEnumerator.GetEnumerableOfType<BaseEntityEffect>();
+            foreach(BaseEntityEffect effect in effectTemplates)
+            {
+                magicEffectTemplates.Add(effect.Key, effect);
+            }
         }
 
         void Update()
@@ -100,7 +105,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             List<string> groupNames = new List<string>();
 
             // Get group list without duplicates
-            foreach(BaseEntityEffect effect in magicEffectTemplates)
+            foreach(BaseEntityEffect effect in magicEffectTemplates.Values)
             {
                 if (!groupNames.Contains(effect.GroupName))
                     groupNames.Add(effect.GroupName);
@@ -123,7 +128,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             List<string> subGroupNames = new List<string>();
 
-            foreach (BaseEntityEffect effect in magicEffectTemplates.Where(effect => effect.GroupName == groupName))
+            foreach (BaseEntityEffect effect in magicEffectTemplates.Values.Where(effect => effect.GroupName == groupName))
             {
                 subGroupNames.Add(effect.SubGroupName);
             }
@@ -144,10 +149,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             List<EffectKeyNamePair> keyNamePairs = new List<EffectKeyNamePair>();
 
-            foreach (BaseEntityEffect effect in magicEffectTemplates.Where(effect => effect.GroupName == groupName))
+            foreach (BaseEntityEffect effect in magicEffectTemplates.Values.Where(effect => effect.GroupName == groupName))
             {
                 EffectKeyNamePair knp = new EffectKeyNamePair();
-                knp.key = effect.GroupKey;
+                knp.key = effect.Key;
                 knp.classicGroup = effect.ClassicGroup;
                 knp.classicSubGroup = effect.ClassicSubGroup;
                 knp.groupName = effect.GroupName;
@@ -156,6 +161,26 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
 
             return keyNamePairs;
+        }
+
+        /// <summary>
+        /// Determine if a key exists in the templates dictionary.
+        /// </summary>
+        /// <param name="key">Key for template.</param>
+        /// <returns>True if template exists.</returns>
+        public bool HasEffectTemplate(string key)
+        {
+            return magicEffectTemplates.ContainsKey(key);
+        }
+
+        /// <summary>
+        /// Gets interface to effect template.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns>IEntityEffect</returns>
+        public IEntityEffect GetEffectTemplate(string key)
+        {
+            return magicEffectTemplates[key];
         }
 
         #endregion

@@ -24,6 +24,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     public interface IEntityEffect
     {
         /// <summary>
+        /// Unique string key for this effect, usually equal to some combination of group+subgroup (e.g. "ContinuousDamage-Health").
+        /// Effects can use any text they wish for key provided it is unique.
+        /// </summary>
+        string Key { get; }
+
+        /// <summary>
         /// Main group for this effect class in spellmaker (e.g. "Damage") - can be shared with other effects.
         /// </summary>
         string GroupName { get; }
@@ -32,12 +38,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// Sub-group name for effect class in spellmaker (e.g. "Health") - must be unique within group.
         /// </summary>
         string SubGroupName { get; }
-
-        /// <summary>
-        /// Unique string key for this effect, usually equal to group+subgroup (e.g. "DamageHealth").
-        /// Effects can use any text as key provided it is unique.
-        /// </summary>
-        string GroupKey { get; }
 
         /// <summary>
         /// Group index for legacy classic effect compatibility. Do not set this for non-classic effects.
@@ -50,9 +50,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         int ClassicSubGroup { get; }
 
         /// <summary>
-        /// TEXT.RSC ID description for this effect (effect descriptions start at ID 1500).
+        /// TEXT.RSC ID description for this effect (effect descriptions start at ID 1500). Do not set this for non-classic effects.
         /// </summary>
-        int TextID { get; }
+        int ClassicTextID { get; }
 
         /// <summary>
         /// Custom description tokens for spell effect.
@@ -131,12 +131,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         #region IEntityEffect Properties
 
+        public abstract string Key { get; }
         public abstract string GroupName { get; }
         public abstract string SubGroupName { get; }
-        public abstract string GroupKey { get; }
         public virtual int ClassicGroup { get { return -1; } }
         public virtual int ClassicSubGroup { get { return -1; } }
-        public virtual int TextID { get { return 0; } }
+        public virtual int ClassicTextID { get { return 0; } }
 
         public virtual TextFile.Token[] CustomText
         {

@@ -22,11 +22,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class ContinuousDamageFatigue : BaseEntityEffect
     {
+        public override string Key { get { return "ContinuousDamage-Fatigue"; } }
         public override string GroupName { get { return TextManager.Instance.GetText("ClassicEffects", "continuousDamage"); } }
         public override string SubGroupName { get { return TextManager.Instance.GetText("ClassicEffects", "fatigue"); } }
-        public override string GroupKey { get { return "ContinuousDamage-Fatigue"; } }
 
         public override int ClassicGroup { get { return 4; } }
         public override int ClassicSubGroup { get { return 1; } }
+        public override int ClassicTextID { get { return 1505; } }
     }
 }

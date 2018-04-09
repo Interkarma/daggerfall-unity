@@ -44,6 +44,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         DaggerfallListPickerWindow effectGroupPicker;
         DaggerfallListPickerWindow effectSubGroupPicker;
+        DaggerfallEffectSettingsEditorWindow effectEditor;
 
         #endregion
 
@@ -97,6 +98,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetupLabels();
             SetupButtons();
             SetupPickers();
+
+            // Setup effect editor window
+            effectEditor = new DaggerfallEffectSettingsEditorWindow(uiManager, this);
         }
 
         #endregion
@@ -165,6 +169,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // Clear existing
             effectGroupPicker.ListBox.ClearItems();
+            tipLabel.Text = string.Empty;
 
             // Populate group names
             string[] groupNames = GameManager.Instance.EntityEffectBroker.GetGroupNames();
@@ -205,9 +210,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void AddEffectSubGroup_OnUseSelectedItem()
         {
-            EntityEffectBroker.EffectKeyNamePair knp = enumeratedEffects[effectSubGroupPicker.ListBox.SelectedIndex];
+            // Close effect pickers
+            effectGroupPicker.CloseWindow();
+            effectSubGroupPicker.CloseWindow();
 
-            Debug.LogFormat("Selected effect {0} {1} with key {2}", knp.groupName, knp.subGroupName, knp.key);
+            // Get selected effect from those on offer
+            EntityEffectBroker.EffectKeyNamePair knp = enumeratedEffects[effectSubGroupPicker.ListBox.SelectedIndex];
+            //Debug.LogFormat("Selected effect {0} {1} with key {2}", knp.groupName, knp.subGroupName, knp.key);
+
+            // Set editor effect description
+            IEntityEffect effect = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(knp.key);
+            if (effect != null)
+            {
+                effectEditor.SetDescriptionTokens(effect.ClassicTextID);
+            }
+
+            // Launch effect editor window
+            uiManager.PushWindow(effectEditor);
         }
 
         #endregion
