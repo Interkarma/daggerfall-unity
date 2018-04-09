@@ -480,6 +480,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             AddItem(text, out itemOut, position);
         }
 
+        public void AddItems(string[] items)
+        {
+            foreach (string item in items)
+                AddItem(item);
+        }
+
         public void RemoveItem(int index)
         {
             if (index < 0 || index >= listItems.Count)

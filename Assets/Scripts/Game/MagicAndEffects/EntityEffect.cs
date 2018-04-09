@@ -75,12 +75,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         int[] SkillMods { get; }
 
         /// <summary>
-        /// Factory a new entity effect of this type.
-        /// </summary>
-        /// <returns></returns>
-        IEntityEffect CreateNew(EntityEffectBundle parentBundle);
-
-        /// <summary>
         /// Called by an EntityEffectManager when parent bundle is attached to an entity.
         /// Use this for setup or immediate work performed only once.
         /// </summary>
@@ -111,33 +105,21 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     {
         #region Fields
 
-        EntityEffectBundle parentBundle = null;
         protected int[] statMods = new int[DaggerfallStats.Count];
         protected int[] skillMods = new int[DaggerfallSkills.Count];
 
         #endregion
 
         #region Properties
-
-        /// <summary>
-        /// Parent bundle this effect belongs to.
-        /// </summary>
-        public EntityEffectBundle ParentBundle
-        {
-            get { return parentBundle; }
-        }
-
         #endregion
 
         #region Constructors
 
         /// <summary>
-        /// Constructor.
+        /// Default constructor.
         /// </summary>
-        /// <param name="parentBundle">Parent effect bundle owning this effect.</param>
-        public BaseEntityEffect(EntityEffectBundle parentBundle)
+        public BaseEntityEffect()
         {
-            this.parentBundle = parentBundle;
         }
 
         #endregion
@@ -168,8 +150,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         #endregion
 
         #region IEntityEffect Virtual Methods
-
-        public abstract IEntityEffect CreateNew(EntityEffectBundle parentBundle);
 
         public virtual void Start()
         {

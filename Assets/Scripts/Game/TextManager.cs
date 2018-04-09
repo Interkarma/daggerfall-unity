@@ -34,7 +34,7 @@ namespace DaggerfallWorkshop.Game
 
         #region Unity
 
-        private void Start()
+        private void Awake()
         {
             EnumerateTextDatabases();    
         }
