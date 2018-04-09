@@ -41,6 +41,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextLabel effect2NameLabel;
         TextLabel effect3NameLabel;
 
+        DaggerfallListPickerWindow effectGroupPicker;
+        DaggerfallListPickerWindow effectSubGroupPicker;
+
         #endregion
 
         #region UI Textures
@@ -90,6 +93,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Setup controls
             SetupLabels();
             SetupButtons();
+            SetupPickers();
         }
 
         #endregion
@@ -129,13 +133,69 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             effect3NameLabel.ShadowPosition = Vector2.zero;
         }
 
+        void SetupPickers()
+        {
+            // Use a picker for effect group
+            effectGroupPicker = new DaggerfallListPickerWindow(uiManager, this);
+            effectGroupPicker.ListBox.OnUseSelectedItem += AddEffectGroupListBox_OnUseSelectedItem;
+
+            // Use another picker for effect subgroup
+            // This allows user to hit escape and return to effect group list, unlike classic which dumps whole spellmaker UI
+            effectSubGroupPicker = new DaggerfallListPickerWindow(uiManager, this);
+            effectSubGroupPicker.ListBox.OnUseSelectedItem += AddEffectSubGroup_OnUseSelectedItem;
+        }
+
         void SetupButtons()
         {
             // Add effect
             Button addEffectButton = DaggerfallUI.AddButton(addEffectButtonRect, NativePanel);
             addEffectButton.OnMouseEnter += AddEffectButton_OnMouseEnter;
             addEffectButton.OnMouseLeave += TipButton_OnMouseLeave;
+            addEffectButton.OnMouseClick += AddEffectButton_OnMouseClick;
         }
+
+        #endregion
+
+        #region Button Events
+
+        private void AddEffectButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            // Clear existing
+            effectGroupPicker.ListBox.ClearItems();
+
+            // Populate group names
+            string[] groupNames = GameManager.Instance.EntityEffectBroker.GetGroupNames();
+            effectGroupPicker.ListBox.AddItems(groupNames);
+            effectGroupPicker.ListBox.SelectedIndex = 0;
+
+            // Show effect group picker
+            uiManager.PushWindow(effectGroupPicker);
+        }
+
+        private void AddEffectGroupListBox_OnUseSelectedItem()
+        {
+            // Clear existing
+            effectSubGroupPicker.ListBox.ClearItems();
+
+            // Populate subgroup names
+            string[] subGroupNames = GameManager.Instance.EntityEffectBroker.GetSubGroupNames(effectGroupPicker.ListBox.SelectedItem);
+            effectSubGroupPicker.ListBox.AddItems(subGroupNames);
+            effectSubGroupPicker.ListBox.SelectedIndex = 0;
+
+            // Show effect subgroup picker
+            // Note: In classic the group name is now shown (and mostly obscured) behind the picker at first available effect slot
+            // This is not easily visible and not sure if this really communicates anything useful to user
+            // Daggerfall Unity also allows user to cancel via escape back to previous dialog, so changing this beheaviour intentionally
+            uiManager.PushWindow(effectSubGroupPicker);
+        }
+
+        private void AddEffectSubGroup_OnUseSelectedItem()
+        {
+        }
+
+        #endregion
+
+        #region Tip Events
 
         private void AddEffectButton_OnMouseEnter(BaseScreenComponent sender)
         {
@@ -147,9 +207,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             tipLabel.Text = string.Empty;
         }
 
-        #endregion
-
-        #region Tip Events
         #endregion
     }
 }

@@ -27,6 +27,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         int magicRoundsSinceStartup = 0;
         float roundTimer = 0f;
+        IEnumerable<BaseEntityEffect> magicEffectTemplates;
 
         /// <summary>
         /// Gets the number of 5-second "magic rounds" since startup.
@@ -38,8 +39,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         void Start()
         {
-            // Test
-            IEnumerable<IEntityEffect> magicEffects = ReflectiveEnumerator.GetEnumerableOfType<IEntityEffect>();
+            // Enumerate classes implementing an effect and create an instance to use as factory
+            // TODO: Provide an external method for mods to register custom effects without reflections
+            magicEffectTemplates = ReflectiveEnumerator.GetEnumerableOfType<BaseEntityEffect>();
         }
 
         void Update()
@@ -57,6 +59,51 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 }
             }
         }
+
+        #region Public Methods
+
+        /// <summary>
+        /// Gets group names of registered effects.
+        /// </summary>
+        /// <param name="sortAlpha">True to sort group names by alpha.</param>
+        /// <returns>Array of group names.</returns>
+        public string[] GetGroupNames(bool sortAlpha = true)
+        {
+            List<string> groupNames = new List<string>();
+
+            // Get group list without duplicates
+            foreach(BaseEntityEffect effect in magicEffectTemplates)
+            {
+                if (!groupNames.Contains(effect.GroupName))
+                    groupNames.Add(effect.GroupName);
+            }
+
+            // Sort if required
+            if (sortAlpha)
+                groupNames.Sort();
+
+            return groupNames.ToArray();
+        }
+
+        /// <summary>
+        /// Gets subgroup names of registered effects.
+        /// </summary>
+        /// <param name="groupName">The group name to collect subgroups of.</param>
+        /// <param name="sortAlpha">True to sort subgroup names by alpha.</param>
+        /// <returns>Array of subgroup names.</returns>
+        public string[] GetSubGroupNames(string groupName, bool sortAlpha = true)
+        {
+            List<string> subGroupNames = new List<string>();
+
+            foreach (BaseEntityEffect effect in magicEffectTemplates.Where(effect => effect.GroupName == groupName))
+            {
+                subGroupNames.Add(effect.SubGroupName);
+            }
+
+            return subGroupNames.ToArray();
+        }
+
+        #endregion
 
         #region Events
 
