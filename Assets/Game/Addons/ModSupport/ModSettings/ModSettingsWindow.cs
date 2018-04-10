@@ -504,23 +504,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             if (!settings.HasLoadedPresets)
                 settings.LoadPresets();
 
-            presetPicker = new PresetPicker(uiManager, this, settings.Version, settings.Presets);
-            presetPicker.OnPresetPicked += PresetPicker_OnPresetPicked;
-            presetPicker.OnCreatePreset += PresetPicker_OnCreatePreset;
-            presetPicker.WriteToDisk = () => settings.SavePresets();
+            presetPicker = new PresetPicker(uiManager, this, settings);
+            presetPicker.ApplyChangesCallback = () => RestartSettingsWindow();
             uiManager.PushWindow(presetPicker); 
-        }
-
-        private void PresetPicker_OnPresetPicked(int index)
-        {
-            settings.ApplyPreset(settings.Presets[index]);
-            RestartSettingsWindow();
-        }
-
-        private void PresetPicker_OnCreatePreset(Preset preset)
-        {
-            settings.FillPreset(preset, true);
-            preset.IsLocal = true;
         }
 
         private void ColorPicker_OnMouseClick(BaseScreenComponent sender, Vector2 position)

@@ -124,7 +124,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         {
             var settings = new SettingsValues();
             string path = SettingsPath;
-            if (TryDeserialize(path, ref settings) && (string.IsNullOrEmpty(Version) || Version == settings.SettingsVersion))
+            if (TryDeserialize(path, ref settings) && IsCompatible(settings))
             {
                 // Apply local values
                 ApplyPreset(settings);
@@ -194,6 +194,15 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         }
 
 #endif
+
+        /// <summary>
+        /// True if preset has the same version of this instance.
+        /// Do not rely on this for anything else.
+        /// </summary>
+        public bool IsCompatible(IPreset preset)
+        {
+            return string.IsNullOrEmpty(Version) || Version == preset.SettingsVersion;
+        }
 
         /// <summary>
         /// Override current values with a preset.
