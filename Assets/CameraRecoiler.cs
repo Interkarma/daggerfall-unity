@@ -1,7 +1,20 @@
-﻿using System;
+﻿// Project:         Daggerfall Tools For Unity
+// Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
+// Web Site:        http://www.dfworkshop.net
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Source Code:     https://github.com/Interkarma/daggerfall-unity
+// Original Author: Meteoric Dragon
+// Contributors:    
+// 
+// Notes:
+//
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DaggerfallWorkshop.Game.Serialization;
+
 namespace DaggerfallWorkshop.Game
 {
 
@@ -42,9 +55,11 @@ namespace DaggerfallWorkshop.Game
 
             bSwaying = false;
             cameraRecoilSetting = GetRecoilSetting(DaggerfallUnity.Settings.CameraRecoilStrength);
-        }   
-	
-	    void Update()
+
+            SaveLoadManager.OnLoad += SaveLoadManager_OnLoad;
+        }
+
+        void Update()
         {
             if (GetRecoilSetting(DaggerfallUnity.Settings.CameraRecoilStrength) == CameraRecoilSetting.Off ||
                 GameManager.IsGamePaused) // prevent continuous spinning on pause
@@ -161,6 +176,13 @@ namespace DaggerfallWorkshop.Game
 
             // return vector for euler angles
             return newViewPositon;
+        }
+
+        private void SaveLoadManager_OnLoad(SaveData_v1 saveData)
+        {
+            // Update previous health when loading game
+            // This prevents recoil firing because previous and current characters have different health amounts
+            previousHealth = GameManager.Instance.PlayerEntity.CurrentHealth;
         }
     }
 }
