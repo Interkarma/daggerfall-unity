@@ -28,5 +28,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override int ClassicGroup { get { return 4; } }
         public override int ClassicSubGroup { get { return 0; } }
         public override int ClassicTextID { get { return 1504; } }
+        public override bool SupportChance { get { return false; } }
     }
 }

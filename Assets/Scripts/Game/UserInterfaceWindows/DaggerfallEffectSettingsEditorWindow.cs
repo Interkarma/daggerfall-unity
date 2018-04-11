@@ -53,7 +53,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Properties
 
-        public TextFile.Token[] descriptionTokens;
+        /// <summary>
+        /// Gets or sets IEntityEffect template for effect editor.
+        /// </summary>
+        public IEntityEffect EffectTemplate { get; set; }
 
         #endregion
 
@@ -84,23 +87,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (IsSetup)
             {
-                SetEffectDescriptionText();
+                InitControlState();
             }
         }
 
         #endregion
 
         #region Public Methods
-
-        /// <summary>
-        /// Set description tokens from classic text ID.
-        /// </summary>
-        /// <param name="id">Classic text ID of message tokens.</param>
-        public void SetDescriptionTokens(int id)
-        {
-            descriptionTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(id);
-        }
-
         #endregion
 
         #region Private Methods
@@ -130,11 +123,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             descriptionLabel.HorizontalAlignment = HorizontalAlignment.Center;
             descriptionLabel.VerticalAlignment = VerticalAlignment.Middle;
             descriptionPanel.Components.Add(descriptionLabel);
-            SetEffectDescriptionText();
+            InitControlState();
         }
 
-        void SetEffectDescriptionText()
+        void InitControlState()
         {
+            // Must have an effect template set
+            if (EffectTemplate == null)
+                throw new Exception("DaggerfallEffectSettingsEditorWindow does not have an EffectTemplate set.");
+
+            // Get description text - effect must present either a classic TEXT.RSC ID or a custom token array
+            TextFile.Token[] descriptionTokens;
+            if (EffectTemplate.ClassicTextID != 0)
+                descriptionTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(EffectTemplate.ClassicTextID);
+            else if (EffectTemplate.CustomText != null)
+                descriptionTokens = EffectTemplate.CustomText;
+            else
+                throw new Exception(string.Format("DaggerfallEffectSettingsEditorWindow: EffectTemplate {0} does not present any description text.", EffectTemplate.Key));
+
             // Set description text
             if (descriptionTokens != null && descriptionTokens.Length > 0)
                 descriptionLabel.SetText(descriptionTokens);

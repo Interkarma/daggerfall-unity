@@ -62,6 +62,21 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         TextFile.Token[] CustomText { get; }
 
         /// <summary>
+        /// Effect supports Duration setting.
+        /// </summary>
+        bool SupportDuration { get; }
+
+        /// <summary>
+        /// Effect supports Chance setting.
+        /// </summary>
+        bool SupportChance { get; }
+        
+        /// <summary>
+        /// Effect supports Magnitude setting.
+        /// </summary>
+        bool SupportMagnitude { get; }
+
+        /// <summary>
         /// Gets array DaggerfallStats.Count items wide.
         /// Array items represent Strength, Intelligence, Willpower, etc.
         /// Effect implementation should set modifier values for stats when part of payload.
@@ -137,6 +152,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public virtual int ClassicGroup { get { return -1; } }
         public virtual int ClassicSubGroup { get { return -1; } }
         public virtual int ClassicTextID { get { return 0; } }
+        public virtual bool SupportDuration { get { return true; } }
+        public virtual bool SupportChance { get { return true; } }
+        public virtual bool SupportMagnitude { get { return true; } }
 
         public virtual TextFile.Token[] CustomText
         {

@@ -68,7 +68,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         const int alternateAlphaIndex = 12;
 
-        List<EntityEffectBroker.EffectKeyNamePair> enumeratedEffects = new List<EntityEffectBroker.EffectKeyNamePair>();
+        List<IEntityEffect> enumeratedEffectTemplates = new List<IEntityEffect>();
 
         #endregion
 
@@ -101,6 +101,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Setup effect editor window
             effectEditor = new DaggerfallEffectSettingsEditorWindow(uiManager, this);
+
+            // TEMP: Launch effect editor immediately to help with UI design process
+            // This will be removed after effect editor window is more functional
+            effectEditor.EffectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate("ContinuousDamage-Health");
+            uiManager.PushWindow(effectEditor);
         }
 
         #endregion
@@ -184,20 +189,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // Clear existing
             effectSubGroupPicker.ListBox.ClearItems();
-            enumeratedEffects.Clear();
+            enumeratedEffectTemplates.Clear();
 
             // Enumerate subgroup effect key name pairs
-            enumeratedEffects = GameManager.Instance.EntityEffectBroker.GetEffectKeyNamePairs(effectGroupPicker.ListBox.SelectedItem);
-            if (enumeratedEffects.Count < 1)
-                throw new Exception(string.Format("Could not find any effects for group {0}", effectGroupPicker.ListBox.SelectedItem));
+            enumeratedEffectTemplates = GameManager.Instance.EntityEffectBroker.GetEffectTemplates(effectGroupPicker.ListBox.SelectedItem);
+            if (enumeratedEffectTemplates.Count < 1)
+                throw new Exception(string.Format("Could not find any effect templates for group {0}", effectGroupPicker.ListBox.SelectedItem));
 
             // Sort list by subgroup name
-            enumeratedEffects.Sort((s1, s2) => s1.subGroupName.CompareTo(s2.subGroupName));
+            enumeratedEffectTemplates.Sort((s1, s2) => s1.SubGroupName.CompareTo(s2.SubGroupName));
 
             // Populate subgroup names in list box
-            foreach(EntityEffectBroker.EffectKeyNamePair knp in enumeratedEffects)
+            foreach(IEntityEffect effect in enumeratedEffectTemplates)
             {
-                effectSubGroupPicker.ListBox.AddItem(knp.subGroupName);
+                effectSubGroupPicker.ListBox.AddItem(effect.SubGroupName);
             }
             effectSubGroupPicker.ListBox.SelectedIndex = 0;
 
@@ -215,14 +220,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             effectSubGroupPicker.CloseWindow();
 
             // Get selected effect from those on offer
-            EntityEffectBroker.EffectKeyNamePair knp = enumeratedEffects[effectSubGroupPicker.ListBox.SelectedIndex];
-            //Debug.LogFormat("Selected effect {0} {1} with key {2}", knp.groupName, knp.subGroupName, knp.key);
-
-            // Set editor effect description
-            IEntityEffect effect = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(knp.key);
-            if (effect != null)
+            IEntityEffect effectTemplate = enumeratedEffectTemplates[effectSubGroupPicker.ListBox.SelectedIndex];
+            if (effectTemplate != null)
             {
-                effectEditor.SetDescriptionTokens(effect.ClassicTextID);
+                effectEditor.EffectTemplate = effectTemplate;
+                Debug.LogFormat("Selected effect {0} {1} with key {2}", effectTemplate.GroupName, effectTemplate.SubGroupName, effectTemplate.Key);
             }
 
             // Launch effect editor window

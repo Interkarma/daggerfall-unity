@@ -45,22 +45,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         #endregion
 
-        #region Properties
-
-        /// <summary>
-        /// Stores an effect key and group/subgroup names.
-        /// </summary>
-        public struct EffectKeyNamePair
-        {
-            public string key;
-            public int classicGroup;
-            public int classicSubGroup;
-            public string groupName;
-            public string subGroupName;
-        }
-
-        #endregion
-
         #region Unity
 
         void Start()
@@ -141,26 +125,20 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         }
 
         /// <summary>
-        /// Gets all effect key name pairs belonging to group name.
+        /// Gets interface to all effect templates belonging to group name.
         /// </summary>
         /// <param name="groupName">The group name to collect effects from.</param>
-        /// <returns>List of effect key name pairs.</returns>
-        public List<EffectKeyNamePair> GetEffectKeyNamePairs(string groupName)
+        /// <returns>List of effect templates.</returns>
+        public List<IEntityEffect> GetEffectTemplates(string groupName)
         {
-            List<EffectKeyNamePair> keyNamePairs = new List<EffectKeyNamePair>();
+            List<IEntityEffect> effectTemplates = new List<IEntityEffect>();
 
-            foreach (BaseEntityEffect effect in magicEffectTemplates.Values.Where(effect => effect.GroupName == groupName))
+            foreach (IEntityEffect effectTemplate in magicEffectTemplates.Values.Where(effect => effect.GroupName == groupName))
             {
-                EffectKeyNamePair knp = new EffectKeyNamePair();
-                knp.key = effect.Key;
-                knp.classicGroup = effect.ClassicGroup;
-                knp.classicSubGroup = effect.ClassicSubGroup;
-                knp.groupName = effect.GroupName;
-                knp.subGroupName = effect.SubGroupName;
-                keyNamePairs.Add(knp);
+                effectTemplates.Add(effectTemplate);
             }
 
-            return keyNamePairs;
+            return effectTemplates;
         }
 
         /// <summary>
