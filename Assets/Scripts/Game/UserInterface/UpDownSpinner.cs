@@ -33,11 +33,36 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Button downButton = new Button();
         TextLabel valueLabel = new TextLabel();
         int value = 0;
+        int minValue = 0;
+        int maxValue = 0;
 
+        /// <summary>
+        /// Gets or sets current value directly.
+        /// </summary>
         public int Value
         {
             get { return value; }
             set { SetValue(value); }
+        }
+
+        /// <summary>
+        /// Gets or sets minimum value.
+        /// If both MinValue and MaxValue are 0 then owner of control must handle up/down events as required.
+        /// </summary>
+        public int MinValue
+        {
+            get { return minValue; }
+            set { minValue = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets maximum value.
+        /// If both MinValue and MaxValue are 0 then owner of control must handle up/down events as required.
+        /// </summary>
+        public int MaxValue
+        {
+            get { return minValue; }
+            set { minValue = value; }
         }
 
         public UpDownSpinner()
@@ -75,19 +100,80 @@ namespace DaggerfallWorkshop.Game.UserInterface
             SetValue(this.value);
         }
 
-        void SetValue(int value)
+        public UpDownSpinner(Rect spinnerScreenRect, Rect upButtonRect, Rect downButtonRect, Rect valueLabelRect, int initialValue = 0, Texture2D customBackground = null, Panel parentPanel = null)
         {
-            this.value = value;
-            valueLabel.Text = value.ToString();
+            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
+            if (!dfUnity.IsReady)
+                return;
+
+            // Setup spinner panel
+            Position = new Vector2(spinnerScreenRect.xMin, spinnerScreenRect.yMin);
+            Size = new Vector2(spinnerScreenRect.width, spinnerScreenRect.height);
+            if (customBackground)
+            {
+                customBackground.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
+                backgroundTexture = customBackground;
+            }
+
+            // Add up/down buttons
+            Components.Add(upButton);
+            Components.Add(downButton);
+            upButton.Position = new Vector2(upButtonRect.xMin, upButtonRect.yMin);
+            upButton.Size = new Vector2(upButtonRect.width, upButtonRect.height);
+            upButton.OnMouseClick += UpButton_OnMouseClick;
+            downButton.Position = new Vector2(downButtonRect.xMin, downButtonRect.yMin);
+            downButton.Size = new Vector2(downButtonRect.width, downButtonRect.height);
+            downButton.OnMouseClick += DownButton_OnMouseClick;
+
+            // Add value label
+            Components.Add(valueLabel);
+            valueLabel.Position = new Vector2(valueLabelRect.xMin, valueLabelRect.yMin);
+            valueLabel.Size = new Vector2(valueLabelRect.width, valueLabelRect.height);
+            valueLabel.HorizontalAlignment = HorizontalAlignment.Center;
+            valueLabel.ShadowColor = DaggerfallUI.DaggerfallAlternateShadowColor1;
+            SetValue(initialValue);
+
+            // Add to parent panel
+            if (parentPanel != null)
+            {
+                parentPanel.Components.Add(this);
+            }
+        }
+
+        public void SetRange(int minValue, int maxValue)
+        {
+            // Set new range and reset current value to ensure clamped
+            this.minValue = minValue;
+            this.maxValue = maxValue;
+            SetValue(value);
+        }
+
+        public void SetValue(int value)
+        {
+            // Clamp values if ranges specified, otherwise accept whatever owner wants
+            if (minValue != 0 && maxValue != 0)
+                this.value = Mathf.Clamp(value, minValue, maxValue);
+            else
+                this.value = value;
+
+            valueLabel.Text = this.value.ToString();
         }
 
         void UpButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            // Auto +1 if ranges set
+            if (minValue != 0 && maxValue != 0)
+                SetValue(value + 1);
+
             RaiseOnUpButtonClicked();
         }
 
         void DownButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            // Auto -1 if ranges set
+            if (minValue != 0 && maxValue != 0)
+                SetValue(value - 1);
+
             RaiseOnDownButtonClicked();
         }
 

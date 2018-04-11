@@ -28,12 +28,42 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         DFSize baseSize = new DFSize(320, 200);
 
+        const int spinnerWidth = 24;
+        const int spinnerHeight = 16;
+
+        Rect spinnerUpButtonRect = new Rect(0, 0, spinnerWidth, 5);
+        Rect spinnerDownButtonRect = new Rect(0, 11, spinnerWidth, 5);
+        Rect spinnerValueLabelRect = new Rect(0, 5, spinnerWidth, 6);
+        Rect durationBaseSpinnerRect = new Rect(64, 94, spinnerWidth, spinnerHeight);
+        Rect durationPlusSpinnerRect = new Rect(104, 94, spinnerWidth, spinnerHeight);
+        Rect durationPerLevelSpinnerRect = new Rect(160, 94, spinnerWidth, spinnerHeight);
+        Rect chanceBaseSpinnerRect = new Rect(64, 114, spinnerWidth, spinnerHeight);
+        Rect chancePlusSpinnerRect = new Rect(104, 114, spinnerWidth, spinnerHeight);
+        Rect chancePerLevelSpinnerRect = new Rect(160, 114, spinnerWidth, spinnerHeight);
+        Rect magnitudeBaseMinSpinnerRect = new Rect(64, 134, spinnerWidth, spinnerHeight);
+        Rect magnitudeBaseMaxSpinnerRect = new Rect(104, 134, spinnerWidth, spinnerHeight);
+        Rect magnitudePlusMinSpinnerRect = new Rect(144, 134, spinnerWidth, spinnerHeight);
+        Rect magnitudePlusMaxSpinnerRect = new Rect(184, 134, spinnerWidth, spinnerHeight);
+        Rect magnitudePerLevelSpinnerRect = new Rect(235, 134, spinnerWidth, spinnerHeight);
+
         #endregion
 
         #region UI Controls
 
         Panel descriptionPanel;
         MultiFormatTextLabel descriptionLabel;
+
+        UpDownSpinner durationBaseSpinner;
+        UpDownSpinner durationPlusSpinner;
+        UpDownSpinner durationPerLevelSpinner;
+        UpDownSpinner chanceBaseSpinner;
+        UpDownSpinner chancePlusSpinner;
+        UpDownSpinner chancePerLevelSpinner;
+        UpDownSpinner magnitudeBaseMinSpinner;
+        UpDownSpinner magnitudeBaseMaxSpinner;
+        UpDownSpinner magnitudePlusMinSpinner;
+        UpDownSpinner magnitudePlusMaxSpinner;
+        UpDownSpinner magnitudePerLevelSpinner;
 
         #endregion
 
@@ -81,6 +111,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Setup controls
             SetupEffectDescriptionPanels();
+            SetupSpinners();
+            InitControlState();
         }
 
         public override void OnPush()
@@ -91,9 +123,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        #endregion
-
-        #region Public Methods
         #endregion
 
         #region Private Methods
@@ -109,7 +138,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Create parent panel to house effect description
             Panel descriptionParentPanel = DaggerfallUI.AddPanel(new Rect(5, 19, 312, 69), NativePanel);
             descriptionParentPanel.HorizontalAlignment = HorizontalAlignment.Center;
-            //descriptionParentPanel.BackgroundColor = Color.red;
 
             // Create description panel centred inside of parent
             descriptionPanel = DaggerfallUI.AddPanel(descriptionParentPanel, AutoSizeModes.None);
@@ -123,7 +151,37 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             descriptionLabel.HorizontalAlignment = HorizontalAlignment.Center;
             descriptionLabel.VerticalAlignment = VerticalAlignment.Middle;
             descriptionPanel.Components.Add(descriptionLabel);
-            InitControlState();
+        }
+
+        void SetupSpinners()
+        {
+            // Add spinner controls
+            durationBaseSpinner = new UpDownSpinner(durationBaseSpinnerRect, spinnerUpButtonRect, spinnerDownButtonRect, spinnerValueLabelRect, 0, null, NativePanel);
+            durationPlusSpinner = new UpDownSpinner(durationPlusSpinnerRect, spinnerUpButtonRect, spinnerDownButtonRect, spinnerValueLabelRect, 0, null, NativePanel);
+            durationPerLevelSpinner = new UpDownSpinner(durationPerLevelSpinnerRect, spinnerUpButtonRect, spinnerDownButtonRect, spinnerValueLabelRect, 0, null, NativePanel);
+            chanceBaseSpinner = new UpDownSpinner(chanceBaseSpinnerRect, spinnerUpButtonRect, spinnerDownButtonRect, spinnerValueLabelRect, 0, null, NativePanel);
+            chancePlusSpinner = new UpDownSpinner(chancePlusSpinnerRect, spinnerUpButtonRect, spinnerDownButtonRect, spinnerValueLabelRect, 0, null, NativePanel);
+            chancePerLevelSpinner = new UpDownSpinner(chancePerLevelSpinnerRect, spinnerUpButtonRect, spinnerDownButtonRect, spinnerValueLabelRect, 0, null, NativePanel);
+            magnitudeBaseMinSpinner = new UpDownSpinner(magnitudeBaseMinSpinnerRect, spinnerUpButtonRect, spinnerDownButtonRect, spinnerValueLabelRect, 0, null, NativePanel);
+            magnitudeBaseMaxSpinner = new UpDownSpinner(magnitudeBaseMaxSpinnerRect, spinnerUpButtonRect, spinnerDownButtonRect, spinnerValueLabelRect, 0, null, NativePanel);
+            magnitudePlusMinSpinner = new UpDownSpinner(magnitudePlusMinSpinnerRect, spinnerUpButtonRect, spinnerDownButtonRect, spinnerValueLabelRect, 0, null, NativePanel);
+            magnitudePlusMaxSpinner = new UpDownSpinner(magnitudePlusMaxSpinnerRect, spinnerUpButtonRect, spinnerDownButtonRect, spinnerValueLabelRect, 0, null, NativePanel);
+            magnitudePerLevelSpinner = new UpDownSpinner(magnitudePerLevelSpinnerRect, spinnerUpButtonRect, spinnerDownButtonRect, spinnerValueLabelRect, 0, null, NativePanel);
+
+            // Set spinner ranges
+            durationBaseSpinner.SetRange(1, 60);
+            durationPlusSpinner.SetRange(1, 60);
+            durationPerLevelSpinner.SetRange(1, 20);
+            chanceBaseSpinner.SetRange(1, 100);
+            chancePlusSpinner.SetRange(1, 100);
+            chancePerLevelSpinner.SetRange(1, 20);
+            magnitudeBaseMinSpinner.SetRange(1, 100);
+            magnitudeBaseMaxSpinner.SetRange(1, 100);
+            magnitudePlusMinSpinner.SetRange(1, 100);
+            magnitudePlusMaxSpinner.SetRange(1, 100);
+            magnitudePerLevelSpinner.SetRange(1, 20);
+
+            // Set spinner events
         }
 
         void InitControlState()
@@ -144,6 +202,52 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Set description text
             if (descriptionTokens != null && descriptionTokens.Length > 0)
                 descriptionLabel.SetText(descriptionTokens);
+
+            // Duration support
+            if (EffectTemplate.SupportDuration)
+            {
+                durationBaseSpinner.Enabled = true;
+                durationPlusSpinner.Enabled = true;
+                durationPerLevelSpinner.Enabled = true;
+            }
+            else
+            {
+                durationBaseSpinner.Enabled = false;
+                durationPlusSpinner.Enabled = false;
+                durationPerLevelSpinner.Enabled = false;
+            }
+
+            // Chance support
+            if (EffectTemplate.SupportChance)
+            {
+                chanceBaseSpinner.Enabled = true;
+                chancePlusSpinner.Enabled = true;
+                chancePerLevelSpinner.Enabled = true;
+            }
+            else
+            {
+                chanceBaseSpinner.Enabled = false;
+                chancePlusSpinner.Enabled = false;
+                chancePerLevelSpinner.Enabled = false;
+            }
+
+            // Magnitude support
+            if (EffectTemplate.SupportMagnitude)
+            {
+                magnitudeBaseMinSpinner.Enabled = true;
+                magnitudeBaseMaxSpinner.Enabled = true;
+                magnitudePlusMinSpinner.Enabled = true;
+                magnitudePlusMaxSpinner.Enabled = true;
+                magnitudePerLevelSpinner.Enabled = true;
+            }
+            else
+            {
+                magnitudeBaseMinSpinner.Enabled = false;
+                magnitudeBaseMaxSpinner.Enabled = false;
+                magnitudePlusMinSpinner.Enabled = false;
+                magnitudePlusMaxSpinner.Enabled = false;
+                magnitudePerLevelSpinner.Enabled = false;
+            }
         }
 
         #endregion

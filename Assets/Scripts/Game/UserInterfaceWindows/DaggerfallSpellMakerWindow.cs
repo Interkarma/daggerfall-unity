@@ -224,7 +224,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (effectTemplate != null)
             {
                 effectEditor.EffectTemplate = effectTemplate;
-                Debug.LogFormat("Selected effect {0} {1} with key {2}", effectTemplate.GroupName, effectTemplate.SubGroupName, effectTemplate.Key);
+                //Debug.LogFormat("Selected effect {0} {1} with key {2}", effectTemplate.GroupName, effectTemplate.SubGroupName, effectTemplate.Key);
             }
 
             // Launch effect editor window
