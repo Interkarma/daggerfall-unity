@@ -52,7 +52,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public int MinValue
         {
             get { return minValue; }
-            set { minValue = value; }
+            set { SetRange(value, MaxValue); }
         }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public int MaxValue
         {
             get { return minValue; }
-            set { minValue = value; }
+            set { SetRange(MinValue, value); }
         }
 
         public UpDownSpinner()
