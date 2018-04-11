@@ -337,7 +337,15 @@ namespace DaggerfallWorkshop.Game.Entity
             if (!preventEnemySpawns)
             {
                 for (uint l = 0; l < (gameMinutes - lastGameMinutes); ++l)
-                    IntermittentEnemySpawn(l + lastGameMinutes + 1);
+                {
+                    // Catch up time and break if something spawns
+                    if (IntermittentEnemySpawn(l + lastGameMinutes + 1))
+                    {
+                        Debug.Log("Breaking rest for incoming enemy spawn.");
+                        DaggerfallUI.Instance.BreakRestForEnemy(); // Notify UI system to break rest for enemy (does nothing if rest UI not active)
+                        break;
+                    }
+                }
             }
 
             lastGameMinutes = gameMinutes;
@@ -353,50 +361,77 @@ namespace DaggerfallWorkshop.Game.Entity
             HandleStartingCrimeGuildQuests();
         }
 
-        public void IntermittentEnemySpawn(uint Minutes)
+        public bool IntermittentEnemySpawn(uint Minutes)
         {
+            // Define minimum distance from player based on spawn locations
+            const int minDungeonDistance = 8;
+            const int minLocationDistance = 10;
+            const int minWildernessDistance = 10;
+
             //TODO: if (InOutsideWater)
             //          return;
+
+            // Do not allow spawns if not enough time has passed or spawns are suppressed for any reason
+            // Note - should not need the preventEnemySpawns check here as IntermittentEnemySpawn() is only called by Update() !preventEnemySpawns
             bool timeForSpawn = ((Minutes / 12) % 12) == 0;
-            if (!preventEnemySpawns && timeForSpawn)
+            if (!timeForSpawn || preventEnemySpawns)
+                return false;
+
+            // Spawns when player is outside
+            if (!GameManager.Instance.PlayerEnterExit.IsPlayerInside)
             {
-                if (!GameManager.Instance.PlayerEnterExit.IsPlayerInside)
+                uint timeOfDay = Minutes % 1440; // 1440 minutes in a day
+                if (GameManager.Instance.PlayerGPS.IsPlayerInLocationRect)
                 {
-                    uint timeOfDay = Minutes % 1440; // 1440 minutes in a day
-                    if (GameManager.Instance.PlayerGPS.IsPlayerInLocationRect)
+                    if (timeOfDay < 360 || timeOfDay > 1080)
                     {
-                        if (timeOfDay < 360 || timeOfDay > 1080) // night
+                        // In a location area at night
+                        if (UnityEngine.Random.Range(0, 24) == 0)
                         {
-                            if (UnityEngine.Random.Range(0, 24) == 0)
-                                GameObjectHelper.CreateFoeSpawner(RandomEncounters.ChooseRandomEnemy(false), 1);
+                            GameObjectHelper.CreateFoeSpawner(true, RandomEncounters.ChooseRandomEnemy(false), 1, minLocationDistance);
+                            return true;
                         }
+                    }
+                }
+                else
+                {
+                    if (timeOfDay >= 360 && timeOfDay <= 1080)
+                    {
+                        // Wilderness during day
+                        if (UnityEngine.Random.Range(0, 36) != 0)
+                            return false;
                     }
                     else
                     {
-                        if (timeOfDay >= 360 && timeOfDay <= 1080) // day
-                        {
-                            if (UnityEngine.Random.Range(0, 36) != 0)
-                                return;
-                        }
-                        else // night
-                            if (UnityEngine.Random.Range(0, 24) != 0)
-                            return;
-                        GameObjectHelper.CreateFoeSpawner(RandomEncounters.ChooseRandomEnemy(false), 1);
+                        // Wilderness at night
+                        if (UnityEngine.Random.Range(0, 24) != 0)
+                            return false;
                     }
-                } // in interior
-                else
+
+                    GameObjectHelper.CreateFoeSpawner(true, RandomEncounters.ChooseRandomEnemy(false), 1, minWildernessDistance);
+                    return true;
+                }
+            }
+
+            // Spawns when player is inside
+            if (GameManager.Instance.PlayerEnterExit.IsPlayerInside)
+            {
+                // Spawns when player is inside a dungeon
+                if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon)
                 {
-                    if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon)
+                    if (isResting)
                     {
-                        if (isResting)
+                        if (UnityEngine.Random.Range(0, 43) == 0) // Normally (0, 36) - making spawns ~20% less for rested dungeons
                         {
-                            if (UnityEngine.Random.Range(0, 36) == 0)
-                                // TODO: Not sure how enemy type is chosen here.
-                                GameObjectHelper.CreateFoeSpawner(RandomEncounters.ChooseRandomEnemy(false), 1);
+                            // TODO: Not sure how enemy type is chosen here.
+                            GameObjectHelper.CreateFoeSpawner(false, RandomEncounters.ChooseRandomEnemy(false), 1, minDungeonDistance);
+                            return true;
                         }
                     }
                 }
             }
+
+            return false;
         }
 
         public void SpawnCityGuards(bool forceSpawn)
@@ -411,7 +446,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 // if out of player view.
                 // If none spawned, proceed with below
                 int randomNumber = UnityEngine.Random.Range(2, 5 + 1);
-                GameObjectHelper.CreateFoeSpawner(MobileTypes.Knight_CityWatch, randomNumber);
+                GameObjectHelper.CreateFoeSpawner(true, MobileTypes.Knight_CityWatch, randomNumber);
             }
             // TODO: If !forceSpawn, check for LOS from nearby guard townspeople and spawn from them if they see player.
             // Otherwise, check for LOS from non-guard townspeople. If they see player, random countdown is set, after which guards will spawn.

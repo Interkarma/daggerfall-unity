@@ -34,6 +34,7 @@ namespace DaggerfallWorkshop.Game.Utility
         public float MinDistance = 4f;
         public float MaxDistance = 20f;
         public Transform Parent = null;
+        public bool LineOfSightCheck = true;
 
         public MobileTypes lastFoeType = MobileTypes.None;
         GameObject[] pendingFoeGameObjects;
@@ -124,14 +125,23 @@ namespace DaggerfallWorkshop.Game.Utility
             if (!gameObjects[pendingFoesSpawned].transform.parent)
                 gameObjects[pendingFoesSpawned].transform.parent = GetBestParent();
 
-            // Select a left or right direction outside of camera FOV
+            // Get roation of spawn ray
             Quaternion rotation;
-            float directionAngle = GameManager.Instance.MainCamera.fieldOfView;
-            directionAngle += UnityEngine.Random.Range(0f, 4f);
-            if (UnityEngine.Random.Range(0f, 1f) > 0.5f)
-                rotation = Quaternion.Euler(0, -directionAngle, 0);
+            if (LineOfSightCheck)
+            {
+                // Try to spawn outside of player's field of view
+                float directionAngle = GameManager.Instance.MainCamera.fieldOfView;
+                directionAngle += UnityEngine.Random.Range(0f, 4f);
+                if (UnityEngine.Random.Range(0f, 1f) > 0.5f)
+                    rotation = Quaternion.Euler(0, -directionAngle, 0);
+                else
+                    rotation = Quaternion.Euler(0, directionAngle, 0);
+            }
             else
-                rotation = Quaternion.Euler(0, directionAngle, 0);
+            {
+                // Don't care about player's field of view (e.g. at rest)
+                rotation = Quaternion.Euler(0, UnityEngine.Random.Range(0, 361), 0);
+            }
 
             // Get direction vector and create a new ray
             Vector3 angle = (rotation * Vector3.forward).normalized;
