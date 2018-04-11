@@ -157,6 +157,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 this.value = value;
 
             valueLabel.Text = this.value.ToString();
+
+            RaiseOnValueChanged();
         }
 
         void UpButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -178,6 +180,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         #region Events
+
+        public delegate void OnValueChangedHandler();
+        public event OnValueChangedHandler OnValueChanged;
+        void RaiseOnValueChanged()
+        {
+            if (OnValueChanged != null)
+                OnValueChanged();
+        }
 
         public delegate void OnUpButtonClickedHandler();
         public event OnUpButtonClickedHandler OnUpButtonClicked;

@@ -11,13 +11,10 @@
 
 using UnityEngine;
 using System;
-using System.Collections.Generic;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
-using DaggerfallWorkshop.Game.Entity;
-using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
@@ -46,6 +43,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Rect magnitudePlusMaxSpinnerRect = new Rect(184, 134, spinnerWidth, spinnerHeight);
         Rect magnitudePerLevelSpinnerRect = new Rect(235, 134, spinnerWidth, spinnerHeight);
 
+        Rect exitButtonRect = new Rect(281, 94, 24, 16);
+
         #endregion
 
         #region UI Controls
@@ -64,6 +63,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         UpDownSpinner magnitudePlusMinSpinner;
         UpDownSpinner magnitudePlusMaxSpinner;
         UpDownSpinner magnitudePerLevelSpinner;
+
+        Button exitButton;
 
         #endregion
 
@@ -112,6 +113,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Setup controls
             SetupEffectDescriptionPanels();
             SetupSpinners();
+            SetupButtons();
             InitControlState();
         }
 
@@ -182,6 +184,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             magnitudePerLevelSpinner.SetRange(1, 20);
 
             // Set spinner events
+            magnitudeBaseMinSpinner.OnValueChanged += MagnitudeBaseMinSpinner_OnValueChanged;
+            magnitudeBaseMaxSpinner.OnValueChanged += MagnitudeBaseMaxSpinner_OnValueChanged;
+            magnitudePlusMinSpinner.OnValueChanged += MagnitudePlusMinSpinner_OnValueChanged;
+            magnitudePlusMaxSpinner.OnValueChanged += MagnitudePlusMaxSpinner_OnValueChanged;
+        }
+
+        void SetupButtons()
+        {
+            // Exit button
+            exitButton = DaggerfallUI.AddButton(exitButtonRect, NativePanel);
+            exitButton.OnMouseClick += ExitButton_OnMouseClick;
+
         }
 
         void InitControlState()
@@ -248,6 +262,39 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 magnitudePlusMaxSpinner.Enabled = false;
                 magnitudePerLevelSpinner.Enabled = false;
             }
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        private void MagnitudeBaseMinSpinner_OnValueChanged()
+        {
+            if (magnitudeBaseMinSpinner.Value > magnitudeBaseMaxSpinner.Value)
+                magnitudeBaseMaxSpinner.Value = magnitudeBaseMinSpinner.Value;
+        }
+
+        private void MagnitudeBaseMaxSpinner_OnValueChanged()
+        {
+            if (magnitudeBaseMaxSpinner.Value < magnitudeBaseMinSpinner.Value)
+                magnitudeBaseMinSpinner.Value = magnitudeBaseMaxSpinner.Value;
+        }
+
+        private void MagnitudePlusMinSpinner_OnValueChanged()
+        {
+            if (magnitudePlusMinSpinner.Value > magnitudePlusMaxSpinner.Value)
+                magnitudePlusMaxSpinner.Value = magnitudePlusMinSpinner.Value;
+        }
+
+        private void MagnitudePlusMaxSpinner_OnValueChanged()
+        {
+            if (magnitudePlusMaxSpinner.Value < magnitudePlusMinSpinner.Value)
+                magnitudePlusMinSpinner.Value = magnitudePlusMaxSpinner.Value;
+        }
+
+        private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            CloseWindow();
         }
 
         #endregion
