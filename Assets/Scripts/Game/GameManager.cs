@@ -534,6 +534,18 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
+            // Also check for enemy spawners that might emit an enemy
+            FoeSpawner[] spawners = FindObjectsOfType<FoeSpawner>();
+            for (int i = 0; i < spawners.Length; i++)
+            {
+                // Is a spawner inside min distance?
+                if (Vector3.Distance(spawners[i].transform.position, PlayerController.transform.position) < minMonsterDistance)
+                {
+                    areEnemiesNearby = true;
+                    break;
+                }
+            }
+
             return areEnemiesNearby;
         }
 

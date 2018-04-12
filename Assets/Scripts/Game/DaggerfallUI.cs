@@ -585,17 +585,6 @@ namespace DaggerfallWorkshop.Game
             panel.SetMargins(Margins.All, 10);
         }
 
-        /// <summary>
-        /// Forcibly break rest if player is currently resting and another system wants to spawn an enemy.
-        /// </summary>
-        public void BreakRestForEnemy()
-        {
-            if (uiManager.TopWindow is DaggerfallRestWindow)
-            {
-                (uiManager.TopWindow as DaggerfallRestWindow).ForceEnemyBrokeRest = true;
-            }
-        }
-
         void LoadDaggerfallParchmentTextures()
         {
             if (daggerfallParchmentTextures == null || daggerfallParchmentTextures.Length == 0)

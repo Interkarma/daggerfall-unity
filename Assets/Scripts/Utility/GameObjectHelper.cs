@@ -1106,6 +1106,7 @@ namespace DaggerfallWorkshop.Utility
         /// <returns>FoeSpawner GameObject.</returns>
         public static GameObject CreateFoeSpawner(bool lineOfSightCheck = true, MobileTypes foeType = MobileTypes.None, int spawnCount = 0, int minDistance = 4, int maxDistance = 20, Transform parent = null)
         {
+            // Create new foe spawner
             GameObject go = new GameObject();
             FoeSpawner spawner = go.AddComponent<FoeSpawner>();
             spawner.LineOfSightCheck = lineOfSightCheck;
@@ -1114,6 +1115,11 @@ namespace DaggerfallWorkshop.Utility
             spawner.MinDistance = minDistance;
             spawner.MaxDistance = maxDistance;
             spawner.Parent = parent;
+
+            // Assign position on top of player
+            // Spawner can be placed anywhere to work, but rest system considers a spawner to be an enemy "in potentia" for purposes of breaking rest and travel
+            // Placing spawner on player at moment of creation will trigger the nearby enemy check even while spawn is pending
+            spawner.transform.position = GameManager.Instance.PlayerObject.transform.position;
 
             return go;
         }

@@ -340,11 +340,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 {
                     // Catch up time and break if something spawns
                     if (IntermittentEnemySpawn(l + lastGameMinutes + 1))
-                    {
-                        Debug.Log("Breaking rest for incoming enemy spawn.");
-                        DaggerfallUI.Instance.BreakRestForEnemy(); // Notify UI system to break rest for enemy (does nothing if rest UI not active)
                         break;
-                    }
                 }
             }
 

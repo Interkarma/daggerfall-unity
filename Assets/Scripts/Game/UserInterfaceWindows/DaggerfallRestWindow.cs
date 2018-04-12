@@ -72,26 +72,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         int totalHours = 0;
         float waitTimer = 0;
         bool enemyBrokeRest = false;
-        bool forceEnemyBrokeRest = false;
         int remainingHoursRented = -1;
         Vector3 allocatedBed;
 
         PlayerEntity playerEntity;
         DaggerfallHUD hud;
-
-        #endregion
-
-        #region Properties
-
-        /// <summary>
-        /// Gets or sets bool to force break rest when enemy incoming.
-        /// This allows random enemy spawners to break rest whenever they place an enemy.
-        /// </summary>
-        public bool ForceEnemyBrokeRest
-        {
-            get { return forceEnemyBrokeRest; }
-            set { forceEnemyBrokeRest = value; }
-        }
 
         #endregion
 
@@ -183,11 +168,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     EndRest();
                 else if (TickRest())
                     EndRest();
-                else if (forceEnemyBrokeRest)
-                {
-                    enemyBrokeRest = true;
-                    EndRest();
-                }
             }
         }
 
@@ -211,7 +191,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             totalHours = 0;
             waitTimer = 0;
             enemyBrokeRest = false;
-            forceEnemyBrokeRest = false;
 
             // Get references
             playerEntity = GameManager.Instance.PlayerEntity;
