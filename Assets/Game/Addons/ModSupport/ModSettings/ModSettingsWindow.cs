@@ -9,19 +9,15 @@
 // Notes:
 //
 
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
-using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 {
     /// <summary>
-    /// A graphical window to edit mod settings, wich are saved in a ini file.
-    /// Supports applying presets created by modders and users,
-    /// as well as restoring default values.
+    /// A graphical window to edit mod settings. Supports applying presets as well as creating new ones.
     /// </summary>
     public class ModSettingsWindow : DaggerfallPopupWindow
     {
@@ -33,7 +29,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         Paginator paginator;
         PresetPicker presetPicker;
 
-        Dictionary<Key, object> UIControls = new Dictionary<Key, object>();
+        Dictionary<Key, BaseScreenComponent> UIControls = new Dictionary<Key, BaseScreenComponent>();
 
         #endregion
 
@@ -64,6 +60,20 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         #endregion
 
+        #region Properties
+
+        internal IUserInterfaceManager UiManager
+        {
+            get { return uiManager; }
+        }
+
+        internal float TextScale
+        {
+            get { return textScale; }
+        }
+
+        #endregion
+
         #region Constructors
 
         /// <summary>
@@ -78,71 +88,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             settings = ModSettingsData.Make(mod);
             settings.SaveDefaults();
             settings.LoadLocalValues();
-        }
-
-        #endregion
-
-        #region UI Controls Layout
-
-        internal Checkbox LayoutCheckbox(bool isChecked)
-        {
-            Checkbox checkbox = new Checkbox()
-            {
-                Position = new Vector2(x + 95, y),
-                Size = new Vector2(2, 2),
-                CheckBoxColor = Color.white,
-                IsChecked = isChecked
-            };
-            currentPanel.Components.Add(checkbox);
-            return checkbox;
-        }
-
-        internal HorizontalSlider LayoutSlider(Action<HorizontalSlider> setIndicator)
-        {
-            MovePosition(6);
-
-            var slider = new HorizontalSlider();
-            slider.Position = new Vector2(x, y);
-            slider.Size = new Vector2(80.0f, 4.0f);
-            slider.DisplayUnits = 20;
-            slider.BackgroundColor = new Color(0.5f, 0.5f, 0.5f, 0.3f);
-            slider.TintColor = new Color(153, 153, 0);
-            currentPanel.Components.Add(slider);
-            setIndicator(slider);
-            slider.IndicatorOffset = 15;
-            slider.Indicator.TextScale = textScale;
-            slider.Indicator.TextColor = Color.white;
-            slider.Indicator.ShadowColor = Color.clear;
-            slider.Indicator.HorizontalTextAlignment = TextLabel.HorizontalTextAlignmentSetting.Right;
-            return slider;
-        }
-
-        internal TextBox LayoutTextBox(string text)
-        {
-            return GetTextbox(95, 40, text);
-        }
-
-        internal Tuple<TextBox, TextBox> LayoutTuple(string first, string second)
-        {
-            var tuple = new Tuple<TextBox, TextBox>(
-                GetTextbox(95, 19.6f, first),
-                GetTextbox(116, 19.6f, second));
-            return tuple;
-        }
-
-        internal Button LayoutColorPicker(Color32 color)
-        {
-            Button colorPicker = new Button()
-            {
-                Position = new Vector2(x + 95, y),
-                AutoSize = AutoSizeModes.None,
-                Size = new Vector2(40, 6),
-            };
-            colorPicker.Outline.Enabled = true;
-            colorPicker.BackgroundColor = color;
-            colorPicker.OnMouseClick += ColorPicker_OnMouseClick;
-            currentPanel.Components.Add(colorPicker);
-            return colorPicker;
         }
 
         #endregion
@@ -245,10 +190,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                     settingName.ToolTip = defaultToolTip;
                     settingName.ToolTipText = key.Description;
 
-                    // Layout key control
-                    UIControls.Add(key, key.OnWindow(this));
+                    int height = 6;
+                    BaseScreenComponent control = key.OnWindow(this, x, y, ref height);
+                    currentPanel.Components.Add(control);
+                    UIControls.Add(key, control);
 
-                    MovePosition(spacing);
+                    MovePosition(height + 2);
                 }
             }
         }
@@ -408,37 +355,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             return button;
         }
 
-        private TextBox GetTextbox(float positionOffset, float sizeLenght, string text)
-        {
-            TextBox textBox = new TextBox()
-            {
-                Position = new Vector2(x + positionOffset, y),
-                AutoSize = AutoSizeModes.None,
-                FixedSize = true,
-                Size = new Vector2(sizeLenght, 6),
-                Numeric = false,
-                MaxCharacters = 20,
-                DefaultText = text,
-                UseFocus = true,
-                HasFocusOutlineColor = Color.green,
-                LostFocusOutlineColor = Color.white,
-            };
-            textBox.Outline.Enabled = true;
-            currentPanel.Components.Add(textBox);
-            return textBox;
-        }
-
         private void AddPage()
         {
-            Panel panel = new Panel()
-            {
-                BackgroundColor = Color.clear,
-                Position = new Vector2(0, 0),
-                Size = new Vector2(320, 175),
-                Enabled = false
-            };
+            Panel panel = DaggerfallUI.AddPanel(new Rect(0, 0, 320, 175), modSettingsPanel);
+            panel.BackgroundColor = Color.clear;
             panel.Outline.Enabled = false;
-            modSettingsPanel.Components.Add(panel);
+            panel.Enabled = false;
             modSettingsPages.Add(panel);
             currentPanel = panel;
         }
@@ -507,12 +429,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             presetPicker = new PresetPicker(uiManager, this, settings);
             presetPicker.ApplyChangesCallback = () => RestartSettingsWindow();
             uiManager.PushWindow(presetPicker); 
-        }
-
-        private void ColorPicker_OnMouseClick(BaseScreenComponent sender, Vector2 position)
-        {
-            var colorPicker = new ColorPicker(uiManager, this, (Button)sender);
-            uiManager.PushWindow(colorPicker);
         }
 
         #endregion

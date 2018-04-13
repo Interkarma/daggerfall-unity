@@ -324,10 +324,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         private void ListBox_OnSelectItem()
         {
-            Preset preset = SelectedPreset;
-
             if (creationMode)
             {
+                Preset preset = SelectedPreset;
                 creatorTitle.Text = preset.Title;
                 creatorDescription.Text = preset.Description;
 
@@ -343,6 +342,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             }
             else
             {
+                Preset preset = SelectedPreset;
                 descriptionLabel.Text = preset.Description;
                 authorLabel.Text = !string.IsNullOrEmpty(preset.Author) ? string.Format("Author: {0}", preset.Author) : string.Empty;
                 versionLabel.Text = settings.IsCompatible(preset) ?

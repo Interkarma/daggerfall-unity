@@ -746,8 +746,10 @@ namespace DaggerfallWorkshop.Game
             TextBox textBox = new TextBox(font);
             textBox.Position = rect.position;
             textBox.Size = rect.size;
+            textBox.FixedSize = true;
             textBox.DefaultText = defaultText;
-            textBox.MaxCharacters = maxCharacters;
+            if (maxCharacters > 0)
+                textBox.MaxCharacters = maxCharacters;
             textBox.UseFocus = true;
             textBox.Outline.Enabled = true;
 

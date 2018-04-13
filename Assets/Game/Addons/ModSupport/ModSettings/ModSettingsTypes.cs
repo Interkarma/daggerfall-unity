@@ -193,12 +193,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// <summary>
         /// Draws a control on game window.
         /// </summary>
-        public abstract object OnWindow(ModSettingsWindow window);
+        public abstract BaseScreenComponent OnWindow(ModSettingsWindow window, float x, float y, ref int height);
 
         /// <summary>
         /// Save value from a control.
         /// </summary>
-        public abstract void OnSaveWindow(object control);
+        public abstract void OnSaveWindow(BaseScreenComponent control);
 
 #if UNITY_EDITOR
         /// <summary>
@@ -256,8 +256,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                     items[i] = (T)Convert.ChangeType(args[i], typeof(T));
                 return true;
             }
-            catch
+            catch (Exception e)
             {
+                Debug.LogFormat("Failed to split values from {0}\n{1}", input, e.ToString());
                 items = new T[0];
                 return false;
             }
@@ -311,12 +312,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
     {
         public override KeyType KeyType { get { return KeyType.Toggle; } }
 
-        public override object OnWindow(ModSettingsWindow window)
+        public override BaseScreenComponent OnWindow(ModSettingsWindow window, float x, float y, ref int height)
         {
-            return window.LayoutCheckbox(Value);
+            return DaggerfallUI.AddCheckbox(new Vector2(x + 95, y), Value);
         }
 
-        public override void OnSaveWindow(object control)
+        public override void OnSaveWindow(BaseScreenComponent control)
         {
             Value = ((Checkbox)control).IsChecked;
         }
@@ -350,12 +351,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         public override KeyType KeyType { get { return KeyType.MultipleChoice; } }
 
-        public override object OnWindow(ModSettingsWindow window)
+        public override BaseScreenComponent OnWindow(ModSettingsWindow window, float x, float y, ref int height)
         {
-            return window.LayoutSlider(x => x.SetIndicator(Options.ToArray(), Value));
+            height += 6;
+            return DaggerfallUI.AddSlider(new Vector2(x, y + 6), slider => slider.SetIndicator(Options.ToArray(), Value), window.TextScale);
         }
 
-        public override void OnSaveWindow(object control)
+        public override void OnSaveWindow(BaseScreenComponent control)
         {
             Value = ((HorizontalSlider)control).Value;
         }
@@ -407,12 +409,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         public override KeyType KeyType { get { return KeyType.SliderInt; } }
 
-        public override object OnWindow(ModSettingsWindow window)
+        public override BaseScreenComponent OnWindow(ModSettingsWindow window, float x, float y, ref int height)
         {
-            return window.LayoutSlider(x => x.SetIndicator(Min, Max, Value));
+            height += 6;
+            return DaggerfallUI.AddSlider(new Vector2(x, y + 6), slider => slider.SetIndicator(Min, Max, Value), window.TextScale);
         }
 
-        public override void OnSaveWindow(object control)
+        public override void OnSaveWindow(BaseScreenComponent control)
         {
             Value = ((HorizontalSlider)control).Value;
         }
@@ -449,12 +452,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         public override KeyType KeyType { get { return KeyType.SliderFloat; } }
 
-        public override object OnWindow(ModSettingsWindow window)
+        public override BaseScreenComponent OnWindow(ModSettingsWindow window, float x, float y, ref int height)
         {
-            return window.LayoutSlider(x => x.SetIndicator(Min, Max, Value));
+            height += 6;
+            return DaggerfallUI.AddSlider(new Vector2(x, y + 6), slider => slider.SetIndicator(Min, Max, Value), window.TextScale);
         }
 
-        public override void OnSaveWindow(object control)
+        public override void OnSaveWindow(BaseScreenComponent control)
         {
             Value = ((HorizontalSlider)control).GetValue();
         }
@@ -488,15 +492,14 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
     {
         public override KeyType KeyType { get { return KeyType.TupleInt; } }
 
-        public override object OnWindow(ModSettingsWindow window)
+        public override BaseScreenComponent OnWindow(ModSettingsWindow window, float x, float y, ref int height)
         {
-            return window.LayoutTuple(Value.First.ToString(), Value.Second.ToString());
+            return MultiTextBox.Make(new Rect(x + 95, y, 40, 6), mt => mt.DoLayout(Value.First, Value.Second));
         }
 
-        public override void OnSaveWindow(object control)
+        public override void OnSaveWindow(BaseScreenComponent control)
         {
-            var tuple = (Tuple<TextBox, TextBox>)control;
-            TryDeserialize(Join(tuple.First.ResultText, tuple.Second.ResultText));
+            Value = ((MultiTextBox)control).GetIntTuple();
         }
 
 #if UNITY_EDITOR
@@ -530,15 +533,14 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
     {
         public override KeyType KeyType { get { return KeyType.TupleFloat; } }
 
-        public override object OnWindow(ModSettingsWindow window)
+        public override BaseScreenComponent OnWindow(ModSettingsWindow window, float x, float y, ref int height)
         {
-            return window.LayoutTuple(Value.First.ToString(), Value.Second.ToString());
+            return MultiTextBox.Make(new Rect(x + 95, y, 40, 6), mt => mt.DoLayout(Value.First, Value.Second));
         }
 
-        public override void OnSaveWindow(object control)
+        public override void OnSaveWindow(BaseScreenComponent control)
         {
-            var tuple = (Tuple<TextBox, TextBox>)control;
-            TryDeserialize(Join(tuple.First.ResultText, tuple.Second.ResultText));
+            Value = ((MultiTextBox)control).GetFloatTuple();
         }
 
 #if UNITY_EDITOR
@@ -559,7 +561,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         protected override void TryDeserialize(string textValue)
         {
-            int[] args;
+            float[] args;
             if (TrySplit(textValue, 2, out args))
                 Value = new Tuple<float, float>(args[0], args[1]);
         }
@@ -572,12 +574,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
     {
         public override KeyType KeyType { get { return KeyType.Text; } }
 
-        public override object OnWindow(ModSettingsWindow window)
+        public override BaseScreenComponent OnWindow(ModSettingsWindow window, float x, float y, ref int height)
         {
-            return window.LayoutTextBox(Value);
+            height += 6;
+            return DaggerfallUI.AddTextBoxWithFocus(new Rect(x, y + 6, 140, 6), Value);
         }
 
-        public override void OnSaveWindow(object control)
+        public override void OnSaveWindow(BaseScreenComponent control)
         {
             Value = ((TextBox)control).ResultText;
         }
@@ -603,12 +606,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
     {
         public override KeyType KeyType { get { return KeyType.Color; } }
 
-        public override object OnWindow(ModSettingsWindow window)
+        public override BaseScreenComponent OnWindow(ModSettingsWindow window, float x, float y, ref int height)
         {
-            return window.LayoutColorPicker(Value);
+            return DaggerfallUI.AddColorPicker(new Vector2(x + 95, y), Value, window.UiManager, window);
         }
 
-        public override void OnSaveWindow(object control)
+        public override void OnSaveWindow(BaseScreenComponent control)
         {
             Value = ((Button)control).BackgroundColor;
         }
@@ -707,7 +710,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// </summary>
         public bool this[string section, string key]
         {
-            get { return Values.Values.Any(x => x.ContainsKey(key)); }
+            get
+            {
+                Dictionary<string, string> sectionDict;
+                return Values.TryGetValue(section, out sectionDict) && sectionDict.ContainsKey(key);
+            }
             set
             {
                 Dictionary<string, string> sectionDict;
