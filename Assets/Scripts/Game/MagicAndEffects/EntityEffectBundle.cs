@@ -39,24 +39,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         #region Properties
 
         /// <summary>
-        /// Gets default effect bundle settings.
-        /// Default is target: none, duration: 1, chance: 100%, magnitude: 1 + 1 per level.
-        /// </summary>
-        public EffectBundleSettings DefaultSettings
-        {
-            get { return GetDefaultSettings(); }
-        }
-
-        /// <summary>
-        /// Gets or sets current effect bundle settings.
-        /// </summary>
-        public EffectBundleSettings CurrentSettings
-        {
-            get { return settings; }
-            set { ApplySettings(value); }
-        }
-
-        /// <summary>
         /// Gets or sets caster entity (sender) of effect bundle where one is present.
         /// Example of caster entity is an enemy mage or monster.
         /// </summary>
@@ -75,15 +57,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// </summary>
         public EntityEffectBundle()
         {
-            ApplySettings(DefaultSettings);
-        }
-
-        /// <summary>
-        /// Settings constructor.
-        /// </summary>
-        public EntityEffectBundle(EffectBundleSettings settings)
-        {
-            ApplySettings(settings);
         }
 
         #endregion
@@ -96,7 +69,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public void Clear()
         {
             effects.Clear();
-            ApplySettings(DefaultSettings);
         }
 
         /// <summary>
@@ -119,41 +91,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             {
                 effect.MagicRound();
             }
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        // Applies default settings when not specified
-        EffectBundleSettings GetDefaultSettings()
-        {
-            EffectBundleSettings defaultSettings = new EffectBundleSettings();
-
-            // No target or magic type
-            defaultSettings.TargetType = TargetTypes.None;
-            defaultSettings.MagicType = MagicTypes.None;
-
-            // Default duration is 1 second
-            defaultSettings.DurationBase = 1;
-
-            // Default chance is 100%
-            defaultSettings.ChanceBase = 100;
-
-            // Default magnitude is 1-1 + 1-1 per level
-            defaultSettings.MagnitudeBaseMin = 1;
-            defaultSettings.MagnitudeBonusMax = 1;
-            defaultSettings.MagnitudeBonusMin = 1;
-            defaultSettings.MagnitudeBonusMax = 1;
-            defaultSettings.MagnitudeBonusPerLevel = 1;
-
-            return defaultSettings;
-        }
-
-        // Change current settings
-        public void ApplySettings(EffectBundleSettings settings)
-        {
-            this.settings = settings;
         }
 
         #endregion

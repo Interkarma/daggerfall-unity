@@ -43,4 +43,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         Shock = 8,
         Magic = 16,
     }
+
+    /// <summary>
+    /// Supported bundle types.
+    /// This helps determine lifetime and usage of a bundle.
+    /// </summary>
+    public enum BundleTypes
+    {
+        None,
+        Spell,
+    }
 }

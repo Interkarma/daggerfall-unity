@@ -77,8 +77,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #region Fields
 
         const string baseTextureFilename = "MASK05I0.IMG";
+        const string noEffectTemplateError = "DaggerfallEffectSettingsEditorWindow does not have an EffectTemplate set.";
 
         const int alternateAlphaIndex = 12;
+
+        IEntityEffect effectTemplate = null;
+        bool userExit;
 
         #endregion
 
@@ -87,7 +91,30 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// <summary>
         /// Gets or sets IEntityEffect template for effect editor.
         /// </summary>
-        public IEntityEffect EffectTemplate { get; set; }
+        public IEntityEffect EffectTemplate
+        {
+            get { return effectTemplate; }
+            set { SetEffectTemplate(value); }
+        }
+
+        /// <summary>
+        /// Gets or sets effect entry details after using settings window.
+        /// Setting entry will also assign EffectTemplate based on entry key.
+        /// </summary>
+        public EffectEntry EffectEntry
+        {
+            get { return GetEffectEntry(); }
+            set { SetEffectEntry(value); }
+        }
+
+        /// <summary>
+        /// Set to true when user clicks "exit" button to accept changes.
+        /// If user cancels settings UI with escape key this will be false.
+        /// </summary>
+        public bool UserExit
+        {
+            get { return userExit; }
+        }
 
         #endregion
 
@@ -119,6 +146,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public override void OnPush()
         {
+            userExit = false;
+            
             if (IsSetup)
             {
                 InitControlState();
@@ -195,14 +224,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Exit button
             exitButton = DaggerfallUI.AddButton(exitButtonRect, NativePanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
-
         }
 
         void InitControlState()
         {
             // Must have an effect template set
             if (EffectTemplate == null)
-                throw new Exception("DaggerfallEffectSettingsEditorWindow does not have an EffectTemplate set.");
+                throw new Exception(noEffectTemplateError);
 
             // Get description text - effect must present either a classic TEXT.RSC ID or a custom token array
             TextFile.Token[] descriptionTokens;
@@ -264,6 +292,85 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        EffectEntry GetEffectEntry()
+        {
+            if (!IsSetup)
+                return new EffectEntry();
+
+            // Must have an effect template set
+            if (EffectTemplate == null)
+                throw new Exception(noEffectTemplateError);
+
+            // Create settings for effect from UI controls
+            EffectSettings effectSettings = new EffectSettings();
+            effectSettings.DurationBase = durationBaseSpinner.Value;
+            effectSettings.DurationPlus = durationPlusSpinner.Value;
+            effectSettings.DurationPerLevel = durationPerLevelSpinner.Value;
+            effectSettings.ChanceBase = chanceBaseSpinner.Value;
+            effectSettings.ChancePlus = chancePlusSpinner.Value;
+            effectSettings.ChancePerLevel = chancePerLevelSpinner.Value;
+            effectSettings.MagnitudeBaseMin = magnitudeBaseMinSpinner.Value;
+            effectSettings.MagnitudeBaseMax = magnitudeBaseMaxSpinner.Value;
+            effectSettings.MagnitudePlusMin = magnitudePlusMinSpinner.Value;
+            effectSettings.MagnitudePlusMax = magnitudePlusMaxSpinner.Value;
+            effectSettings.MagnitudePerLevel = magnitudePerLevelSpinner.Value;
+
+            // Create entry
+            EffectEntry effectEntry = new EffectEntry();
+            effectEntry.Key = EffectTemplate.Key;
+            effectEntry.Settings = effectSettings;
+
+            return effectEntry;
+        }
+
+        void SetEffectEntry(EffectEntry entry)
+        {
+            if (!IsSetup)
+                return;
+
+            // Assign effect template based on entry key
+            EffectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(entry.Key);
+            if (EffectTemplate == null)
+                throw new Exception(string.Format("SetEffectEntry() could not find effect key {0}", entry.Key));
+
+            // Assign settings to spinners
+            durationBaseSpinner.Value = entry.Settings.DurationBase;
+            durationPlusSpinner.Value = entry.Settings.DurationPlus;
+            durationPerLevelSpinner.Value = entry.Settings.DurationPerLevel;
+            chanceBaseSpinner.Value = entry.Settings.ChanceBase;
+            chancePlusSpinner.Value = entry.Settings.ChancePlus;
+            chancePerLevelSpinner.Value = entry.Settings.ChancePerLevel;
+            magnitudeBaseMinSpinner.Value = entry.Settings.MagnitudeBaseMin;
+            magnitudeBaseMaxSpinner.Value = entry.Settings.MagnitudeBaseMax;
+            magnitudePlusMinSpinner.Value = entry.Settings.MagnitudePlusMin;
+            magnitudePlusMaxSpinner.Value = entry.Settings.MagnitudePlusMax;
+            magnitudePerLevelSpinner.Value = entry.Settings.MagnitudePerLevel;
+        }
+
+        void SetSpinners(EffectSettings settings)
+        {
+            if (!IsSetup)
+                return;
+
+            durationBaseSpinner.Value = settings.DurationBase;
+            durationPlusSpinner.Value = settings.DurationPlus;
+            durationPerLevelSpinner.Value = settings.DurationPerLevel;
+            chanceBaseSpinner.Value = settings.ChanceBase;
+            chancePlusSpinner.Value = settings.ChancePlus;
+            chancePerLevelSpinner.Value = settings.ChancePerLevel;
+            magnitudeBaseMinSpinner.Value = settings.MagnitudeBaseMin;
+            magnitudeBaseMaxSpinner.Value = settings.MagnitudeBaseMax;
+            magnitudePlusMinSpinner.Value = settings.MagnitudePlusMin;
+            magnitudePlusMaxSpinner.Value = settings.MagnitudePlusMax;
+            magnitudePerLevelSpinner.Value = settings.MagnitudePerLevel;
+        }
+
+        void SetEffectTemplate(IEntityEffect effectTemplate)
+        {
+            this.effectTemplate = effectTemplate;
+            SetSpinners(new EffectSettings());
+        }
+
         #endregion
 
         #region Event Handlers
@@ -294,6 +401,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            userExit = true;
             CloseWindow();
         }
 

@@ -9,10 +9,6 @@
 // Notes:
 //
 
-using UnityEngine;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallConnect.Arena2;
 
@@ -38,6 +34,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// Sub-group name for effect class in spellmaker (e.g. "Health") - must be unique within group.
         /// </summary>
         string SubGroupName { get; }
+
+        /// <summary>
+        /// Display name of effect. Usually GroupName + " " + SubGroupName (e.g. "Continuous Damage Health")
+        /// </summary>
+        string DisplayName { get; }
 
         /// <summary>
         /// Group index for legacy classic effect compatibility. Do not set this for non-classic effects.
@@ -75,6 +76,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// Effect supports Magnitude setting.
         /// </summary>
         bool SupportMagnitude { get; }
+
+        /// <summary>
+        /// Gets or sets current effect settings.
+        /// </summary>
+        EffectSettings Settings { get; set; }
 
         /// <summary>
         /// Gets array DaggerfallStats.Count items wide.
@@ -127,6 +133,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         protected int[] statMods = new int[DaggerfallStats.Count];
         protected int[] skillMods = new int[DaggerfallSkills.Count];
+        protected EffectSettings settings = new EffectSettings();
 
         #endregion
 
@@ -140,6 +147,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// </summary>
         public BaseEntityEffect()
         {
+            settings = GetDefaultSettings();
         }
 
         #endregion
@@ -155,6 +163,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public virtual bool SupportDuration { get { return true; } }
         public virtual bool SupportChance { get { return true; } }
         public virtual bool SupportMagnitude { get { return true; } }
+
+        public virtual string DisplayName
+        {
+            get { return string.Format("{0} {1}", GroupName, SubGroupName); }
+        }
+
+        public virtual EffectSettings Settings
+        {
+            get { return settings; }
+            set { settings = value; }
+        }
 
         public virtual TextFile.Token[] CustomText
         {
@@ -189,7 +208,33 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         #endregion
 
-        #region IEntityEffect Public Methods
+        #region Private Methods
+
+        // Applies default settings when not specified
+        EffectSettings GetDefaultSettings()
+        {
+            EffectSettings defaultSettings = new EffectSettings();
+
+            // Default duration is 1 + 1 per level
+            defaultSettings.DurationBase = 1;
+            defaultSettings.DurationPlus = 1;
+            defaultSettings.DurationPerLevel = 1;
+
+            // Default chance is 1 + 1 per level
+            defaultSettings.ChanceBase = 1;
+            defaultSettings.ChancePlus = 1;
+            defaultSettings.ChancePerLevel = 1;
+
+            // Default magnitude is 1-1 + 1-1 per level
+            defaultSettings.MagnitudeBaseMin = 1;
+            defaultSettings.MagnitudeBaseMax = 1;
+            defaultSettings.MagnitudePlusMin = 1;
+            defaultSettings.MagnitudePlusMax = 1;
+            defaultSettings.MagnitudePerLevel = 1;
+
+            return defaultSettings;
+        }
+
         #endregion
 
         #region Static Methods

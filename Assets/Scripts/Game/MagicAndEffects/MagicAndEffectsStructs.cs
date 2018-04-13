@@ -13,28 +13,44 @@ using System;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects
 {
-
     /// <summary>
-    /// Settings for an entity effect bunde.
-    /// Some effects in bundle may not consume all settings depending on scripted behaviour of effect iself.
+    /// Duration, Chance, Magnitude settings for an effect.
     /// </summary>
-    public struct EffectBundleSettings
+    public struct EffectSettings
     {
-        public TargetTypes TargetType;
-        public MagicTypes MagicType;
-
         public int DurationBase;
-        public int DurationBonus;
-        public int DurationBonusPerLevel;
+        public int DurationPlus;
+        public int DurationPerLevel;
 
         public int ChanceBase;
-        public int ChanceBonus;
-        public int ChanceBonusPerLevel;
+        public int ChancePlus;
+        public int ChancePerLevel;
 
         public int MagnitudeBaseMin;
         public int MagnitudeBaseMax;
-        public int MagnitudeBonusMin;
-        public int MagnitudeBonusMax;
-        public int MagnitudeBonusPerLevel;
+        public int MagnitudePlusMin;
+        public int MagnitudePlusMax;
+        public int MagnitudePerLevel;
+    }
+
+    /// <summary>
+    /// For storing effect in bundle settings.
+    /// </summary>
+    public struct EffectEntry
+    {
+        public string Key;
+        public EffectSettings Settings;
+    }
+
+    /// <summary>
+    /// Settings for an entity effect bundle.
+    /// </summary>
+    public struct EffectBundleSettings
+    {
+        public BundleTypes BundleType;
+        public TargetTypes TargetType;
+        public MagicTypes MagicType;
+
+        public EffectEntry[] Effects;
     }
 }

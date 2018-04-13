@@ -12,12 +12,9 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
-using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
-using DaggerfallWorkshop.Game.Entity;
-using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
@@ -67,8 +64,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string colorSelectIconsFilename = "MASK04I0.IMG";
 
         const int alternateAlphaIndex = 12;
+        const int maxEffectsPerSpell = 3;
 
         List<IEntityEffect> enumeratedEffectTemplates = new List<IEntityEffect>();
+
+        EffectEntry[] effectEntries = new EffectEntry[maxEffectsPerSpell];
+
+        int editOrDeleteSlot = -1;
 
         #endregion
 
@@ -101,11 +103,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Setup effect editor window
             effectEditor = new DaggerfallEffectSettingsEditorWindow(uiManager, this);
+            effectEditor.OnClose += EffectEditor_OnClose;
 
             // TEMP: Launch effect editor immediately to help with UI design process
             // This will be removed after effect editor window is more functional
-            effectEditor.EffectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate("ContinuousDamage-Health");
-            uiManager.PushWindow(effectEditor);
+            //effectEditor.EffectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate("ContinuousDamage-Health");
+            //uiManager.PushWindow(effectEditor);
+        }
+
+        public override void OnPush()
+        {
+            InitEffectSlots();
+
+            if (IsSetup)
+            {
+                effect1NameLabel.Text = string.Empty;
+                effect2NameLabel.Text = string.Empty;
+                effect3NameLabel.Text = string.Empty;
+            }
         }
 
         #endregion
@@ -128,18 +143,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Effect1
             Panel effect1NamePanel = DaggerfallUI.AddPanel(effect1NameRect, NativePanel);
+            effect1NamePanel.OnMouseClick += Effect1NamePanel_OnMouseClick;
             effect1NameLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.LargeFont, Vector2.zero, string.Empty, effect1NamePanel);
             effect1NameLabel.HorizontalAlignment = HorizontalAlignment.Center;
             effect1NameLabel.ShadowPosition = Vector2.zero;
 
             // Effect2
             Panel effect2NamePanel = DaggerfallUI.AddPanel(effect2NameRect, NativePanel);
+            effect2NamePanel.OnMouseClick += Effect2NamePanel_OnMouseClick;
             effect2NameLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.LargeFont, Vector2.zero, string.Empty, effect2NamePanel);
             effect2NameLabel.HorizontalAlignment = HorizontalAlignment.Center;
             effect2NameLabel.ShadowPosition = Vector2.zero;
 
             // Effect3
             Panel effect3NamePanel = DaggerfallUI.AddPanel(effect3NameRect, NativePanel);
+            effect3NamePanel.OnMouseClick += Effect3NamePanel_OnMouseClick;
             effect3NameLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.LargeFont, Vector2.zero, string.Empty, effect3NamePanel);
             effect3NameLabel.HorizontalAlignment = HorizontalAlignment.Center;
             effect3NameLabel.ShadowPosition = Vector2.zero;
@@ -166,12 +184,97 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             addEffectButton.OnMouseClick += AddEffectButton_OnMouseClick;
         }
 
+        void InitEffectSlots()
+        {
+            effectEntries = new EffectEntry[maxEffectsPerSpell];
+            for (int i = 0; i < maxEffectsPerSpell; i++)
+            {
+                effectEntries[i] = new EffectEntry();
+            }
+        }
+
+        void ClearEffectSlot(int slot)
+        {
+            effectEntries[slot] = new EffectEntry();
+            UpdateSlotText(slot, string.Empty);
+        }
+
+        int GetFreeEffectSlotIndex()
+        {
+            for (int i = 0; i < maxEffectsPerSpell; i++)
+            {
+                if (string.IsNullOrEmpty(effectEntries[i].Key))
+                    return i;
+            }
+
+            return -1;
+        }
+
+        void UpdateSlotText(int slot, string text)
+        {
+            // Get text label to update
+            TextLabel label = null;
+            switch (slot)
+            {
+                case 0:
+                    label = effect1NameLabel;
+                    break;
+                case 1:
+                    label = effect2NameLabel;
+                    break;
+                case 2:
+                    label = effect3NameLabel;
+                    break;
+                default:
+                    return;
+            }
+
+            // Set label text
+            label.Text = text;
+        }
+
+        void EditOrDeleteSlot(int slot)
+        {
+            const int howToAlterSpell = 1708;
+
+            // Do nothing if slot not set
+            if (string.IsNullOrEmpty(effectEntries[slot].Key))
+                return;
+
+            // Offer to edit or delete effect
+            editOrDeleteSlot = slot;
+            DaggerfallMessageBox mb = new DaggerfallMessageBox(uiManager, this);
+            mb.SetTextTokens(howToAlterSpell);
+            Button editButton = mb.AddButton(DaggerfallMessageBox.MessageBoxButtons.Edit);
+            editButton.OnMouseClick += EditButton_OnMouseClick;
+            Button deleteButton = mb.AddButton(DaggerfallMessageBox.MessageBoxButtons.Delete);
+            deleteButton.OnMouseClick += DeleteButton_OnMouseClick;
+            mb.OnButtonClick += EditOrDeleteSpell_OnButtonClick;
+            mb.OnCancel += EditOrDeleteSpell_OnCancel;
+            mb.Show();
+        }
+
         #endregion
 
         #region Button Events
 
         private void AddEffectButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            const int noMoreThan3Effects = 1707;
+
+            // Must have a free effect slot
+            if (GetFreeEffectSlotIndex() == -1)
+            {
+                DaggerfallMessageBox mb = new DaggerfallMessageBox(
+                    uiManager,
+                    DaggerfallMessageBox.CommonMessageBoxButtons.Nothing,
+                    DaggerfallUnity.Instance.TextProvider.GetRSCTokens(noMoreThan3Effects),
+                    this);
+                mb.ClickAnywhereToClose = true;
+                mb.Show();
+                return;
+            }
+
             // Clear existing
             effectGroupPicker.ListBox.ClearItems();
             tipLabel.Text = string.Empty;
@@ -229,6 +332,63 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Launch effect editor window
             uiManager.PushWindow(effectEditor);
+        }
+
+        private void EditOrDeleteSpell_OnCancel(DaggerfallPopupWindow sender)
+        {
+            editOrDeleteSlot = -1;
+        }
+
+        private void EditOrDeleteSpell_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        {
+            sender.CloseWindow();
+        }
+
+        private void DeleteButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            // Delete effect entry
+            ClearEffectSlot(editOrDeleteSlot);
+            editOrDeleteSlot = -1;
+        }
+
+        private void EditButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            // Edit effect entry
+            effectEditor.EffectEntry = effectEntries[editOrDeleteSlot];
+            uiManager.PushWindow(effectEditor);
+        }
+
+        #endregion
+
+        #region Effect Editor Events
+
+        private void EffectEditor_OnClose()
+        {
+            // Only proceed if user hit "exit" to accept changes
+            // Otherwise this is a result of user cancelling with escape key
+            if (!effectEditor.UserExit)
+                return;
+
+            // Assign effect entry to slot
+            int slot = (editOrDeleteSlot == -1) ? GetFreeEffectSlotIndex() : editOrDeleteSlot;
+            effectEntries[slot] = effectEditor.EffectEntry;
+            UpdateSlotText(slot, effectEditor.EffectTemplate.DisplayName);
+            editOrDeleteSlot = -1;
+        }
+
+        private void Effect1NamePanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            EditOrDeleteSlot(0);
+        }
+
+        private void Effect2NamePanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            EditOrDeleteSlot(1);
+        }
+
+        private void Effect3NamePanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            EditOrDeleteSlot(2);
         }
 
         #endregion
