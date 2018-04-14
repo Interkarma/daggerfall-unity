@@ -45,29 +45,30 @@ namespace DaggerfallWorkShop.Game
 
             if (toggleAction != CrouchToggleAction.DoNothing)
             {
-                float change = toggleActionSpeed * Time.deltaTime;
-                if (toggleAction == CrouchToggleAction.DoCrouching)
-                    change = -1 * change;
+                float yChangePerFrame = toggleActionSpeed * Time.deltaTime;
+                float upCollisionDistance = standHeight / 2f;
+                float downCollisionDistance = crouchHeight / 2f;
+                bool bHitHead = (WayIsBlocked(upCollisionDistance) && toggleAction == CrouchToggleAction.DoStanding);
+                bool bHitButt = (WayIsBlocked(downCollisionDistance) && toggleAction == CrouchToggleAction.DoCrouching); ;
 
-                //if (WayIsBlocked(change))
-                /*if ((controller.collisionFlags & CollisionFlags.Above) != 0)
+                if (toggleAction == CrouchToggleAction.DoCrouching)
+                    yChangePerFrame *= -1;
+                
+                if (bHitButt || bHitHead)
                 {
                     // reverse direction as if bumped into the blocking object
-                    if (toggleAction == CrouchToggleAction.DoCrouching)
-                    { 
+                    if (bHitButt)
                         toggleAction = CrouchToggleAction.DoStanding;
-                        playerMotor.IsCrouching = false;
-                    }
                     else
-                    {
                         toggleAction = CrouchToggleAction.DoCrouching;
-                        playerMotor.IsCrouching = true;
-                    }
-                }*/
 
-                controller.height = Mathf.Clamp(controller.height + change, crouchHeight, standHeight);
+                    playerMotor.IsCrouching = !playerMotor.IsCrouching;
+                    yChangePerFrame *= -1; // reverse player Y direction
+                }
 
-                controller.transform.position += new Vector3(0, change / 2.0f);
+                controller.height = Mathf.Clamp(controller.height + yChangePerFrame, crouchHeight, standHeight);
+
+                controller.transform.position += new Vector3(0, yChangePerFrame / 2.0f);
                 if (toggleAction == CrouchToggleAction.DoCrouching)
                     bFinished = (controller.height <= crouchHeight);
                 else
@@ -77,12 +78,20 @@ namespace DaggerfallWorkShop.Game
             if (bFinished)
             {
                 //Debug.Log("Controller.height = " + controller.height);
-                Debug.Log("Controller.transform.position.y" + controller.transform.position.y);
+                //Debug.Log("Controller.transform.position.y" + controller.transform.position.y);
 
                 toggleAction = CrouchToggleAction.DoNothing;
             }
         }
 
+        private bool HitHead(float distance)
+        {
+            return (WayIsBlocked(distance) && toggleAction == CrouchToggleAction.DoStanding);
+        }
+        private bool HitButt(float distance)
+        {
+            return (WayIsBlocked(distance) && toggleAction == CrouchToggleAction.DoCrouching);
+        }
         private bool WayIsBlocked(float distance)
         { 
             RaycastHit hit;
