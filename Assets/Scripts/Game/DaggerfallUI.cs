@@ -58,6 +58,8 @@ namespace DaggerfallWorkshop.Game
         DaggerfallSongPlayer dfSongPlayer;
         UserInterfaceManager uiManager = new UserInterfaceManager();
 
+        SpellIconCollection spellIconCollection;
+
         Texture2D[] daggerfallParchmentTextures;
         DaggerfallFont[] daggerfallFonts = new DaggerfallFont[5];
         char lastCharacterTyped;
@@ -209,6 +211,14 @@ namespace DaggerfallWorkshop.Game
             Petrock_32,
         }
 
+        /// <summary>
+        /// Gets spell icon collection for UI systems.
+        /// </summary>
+        public SpellIconCollection SpellIconCollection
+        {
+            get { return spellIconCollection; }
+        }
+
         void Awake()
         {
             dfUnity = DaggerfallUnity.Instance;
@@ -244,6 +254,9 @@ namespace DaggerfallWorkshop.Game
         {
             // Post start message
             PostMessage(startupMessage);
+
+            // Load spell icon collection
+            spellIconCollection = new SpellIconCollection();
         }
 
         void Update()

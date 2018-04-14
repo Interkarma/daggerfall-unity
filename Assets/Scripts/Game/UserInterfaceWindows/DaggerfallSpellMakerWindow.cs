@@ -26,6 +26,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         DFSize selectedIconsBaseSize = new DFSize(40, 80);
 
         Vector2 tipLabelPos = new Vector2(5, 22);
+        Vector2 nameLabelPos = new Vector2(60, 185);
         Rect effect1NameRect = new Rect(3, 30, 230, 9);
         Rect effect2NameRect = new Rect(3, 62, 230, 9);
         Rect effect3NameRect = new Rect(3, 94, 230, 9);
@@ -68,10 +69,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextLabel effect1NameLabel;
         TextLabel effect2NameLabel;
         TextLabel effect3NameLabel;
+        TextLabel spellNameLabel;
 
         DaggerfallListPickerWindow effectGroupPicker;
         DaggerfallListPickerWindow effectSubGroupPicker;
         DaggerfallEffectSettingsEditorWindow effectEditor;
+
+        Button selectIconButton;
 
         Button casterOnlyButton;
         Button byTouchButton;
@@ -90,7 +94,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #region UI Textures
 
         Texture2D baseTexture;
-        Texture2D effectSetupOverlayTexture;
         Texture2D selectedIconsTexture;
 
         Texture2D casterOnlySelectedTexture;
@@ -112,13 +115,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string textDatabase = "SpellmakerUI";
 
         const string baseTextureFilename = "INFO01I0.IMG";
-        const string effectSetupOverlayFilename = "MASK05I0.IMG";
         const string goldSelectIconsFilename = "MASK01I0.IMG";
         const string colorSelectIconsFilename = "MASK04I0.IMG";
 
         const int alternateAlphaIndex = 12;
         const int maxEffectsPerSpell = 3;
-
+        const int defaultSpellIcon = 1;
         const TargetTypes defaultTargetFlags = EntityEffectBroker.TargetFlags_All;
         const ElementTypes defaultElementFlags = EntityEffectBroker.ElementFlags_MagicOnly;
 
@@ -127,11 +129,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         EffectEntry[] effectEntries = new EffectEntry[maxEffectsPerSpell];
 
         int editOrDeleteSlot = -1;
-        TargetTypes allowedTargets = EntityEffectBroker.TargetFlags_All;
-        ElementTypes allowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
-
+        TargetTypes allowedTargets = defaultTargetFlags;
+        ElementTypes allowedElements = defaultElementFlags;
         TargetTypes selectedTarget = TargetTypes.CasterOnly;
         ElementTypes selectedElement = ElementTypes.Magic;
+        int selectedIcon = defaultSpellIcon;
 
         #endregion
 
@@ -161,6 +163,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetupLabels();
             SetupButtons();
             SetupPickers();
+            SetIcon(selectedIcon);
 
             // Setup effect editor window
             effectEditor = new DaggerfallEffectSettingsEditorWindow(uiManager, this);
@@ -178,13 +181,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             allowedTargets = defaultTargetFlags;
             allowedElements = defaultElementFlags;
+            selectedIcon = defaultSpellIcon;
 
             if (IsSetup)
             {
                 effect1NameLabel.Text = string.Empty;
                 effect2NameLabel.Text = string.Empty;
                 effect3NameLabel.Text = string.Empty;
+                spellNameLabel.Text = string.Empty;
                 UpdateAllowedButtons();
+                SetIcon(selectedIcon);
             }
         }
 
@@ -196,7 +202,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // Load source textures
             baseTexture = ImageReader.GetTexture(baseTextureFilename, 0, 0, true, alternateAlphaIndex);
-            effectSetupOverlayTexture = ImageReader.GetTexture(effectSetupOverlayFilename);
             selectedIconsTexture = ImageReader.GetTexture(goldSelectIconsFilename);
 
             // Load target texture
@@ -217,6 +222,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // Tip label
             tipLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, tipLabelPos, string.Empty, NativePanel);
+
+            // Name label
+            spellNameLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, nameLabelPos, string.Empty, NativePanel);
+            spellNameLabel.ShadowPosition = Vector2.zero;
 
             // Effect1
             Panel effect1NamePanel = DaggerfallUI.AddPanel(effect1NameRect, NativePanel);
@@ -281,7 +290,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Icons
             AddTipButton(nextIconButtonRect, "nextIcon", NextIconButton_OnMouseClick);
             AddTipButton(previousIconButtonRect, "previousIcon", PreviousIconButton_OnMouseClick);
-            Button selectIconButton = AddTipButton(selectIconButtonRect, "selectIcon", NextIconButton_OnMouseClick);
+            selectIconButton = AddTipButton(selectIconButtonRect, "selectIcon", NextIconButton_OnMouseClick);
             selectIconButton.OnRightMouseClick += PreviousIconButton_OnMouseClick;
 
             // Select default buttons
@@ -550,6 +559,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        void SetIcon(int index)
+        {
+            selectedIcon = index;
+            selectIconButton.BackgroundTexture = DaggerfallUI.Instance.SpellIconCollection.GetIcon(selectedIcon);
+        }
+
         #endregion
 
         #region Button Events
@@ -650,14 +665,28 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void NextIconButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            int index = selectedIcon + 1;
+            if (index >= DaggerfallUI.Instance.SpellIconCollection.Count)
+                index = 0;
+
+            SetIcon(index);
         }
 
         private void PreviousIconButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            int index = selectedIcon - 1;
+            if (index < 0)
+                index = DaggerfallUI.Instance.SpellIconCollection.Count - 1;
+
+            SetIcon(index);
         }
 
         private void NameSpellButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallInputMessageBox mb = new DaggerfallInputMessageBox(uiManager, this);
+            mb.SetTextBoxLabel(TextManager.Instance.GetText("SpellmakerUI", "enterSpellName") + " ");
+            mb.OnGotUserInput += EnterName_OnGotUserInput;
+            mb.Show();
         }
 
         private void AddEffectGroupListBox_OnUseSelectedItem()
@@ -763,6 +792,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void Effect3NamePanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             EditOrDeleteSlot(2);
+        }
+
+        private void EnterName_OnGotUserInput(DaggerfallInputMessageBox sender, string input)
+        {
+            spellNameLabel.Text = input;
         }
 
         #endregion

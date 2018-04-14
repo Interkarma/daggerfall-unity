@@ -20,3 +20,4 @@ selectIcon,                 Select icon
 nextIcon,                   Next icon
 previousIcon,               Previous icon
 nameSpell,                  Name spell
+enterSpellName,             Enter spell name :

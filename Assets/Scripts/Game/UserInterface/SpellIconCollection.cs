@@ -108,6 +108,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 // Extract texture
                 Texture2D iconTexture = new Texture2D(dim, dim);
                 Graphics.CopyTexture(spellIconAtlas, 0, 0, srcX, srcY, dim, dim, iconTexture, 0, 0, 0, 0);
+                iconTexture.filterMode = DaggerfallUnity.Instance.MaterialReader.MainFilterMode;
                 spellIcons.Add(iconTexture);
 
                 // Step to next source icon position and wrap to next row
