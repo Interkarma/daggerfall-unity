@@ -25,10 +25,27 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         DFSize baseSize = new DFSize(320, 200);
         Vector2 tipLabelPos = new Vector2(5, 22);
-        Rect effect1NameRect = new Rect(3, 30, 314, 9);
-        Rect effect2NameRect = new Rect(3, 62, 314, 9);
-        Rect effect3NameRect = new Rect(3, 94, 314, 9);
+        Rect effect1NameRect = new Rect(3, 30, 230, 9);
+        Rect effect2NameRect = new Rect(3, 62, 230, 9);
+        Rect effect3NameRect = new Rect(3, 94, 230, 9);
         Rect addEffectButtonRect = new Rect(244, 114, 28, 28);
+        Rect buyButtonRect = new Rect(244, 147, 24, 16);
+        Rect newButtonRect = new Rect(244, 163, 24, 16);
+        Rect exitButtonRect = new Rect(244, 179, 24, 16);
+        Rect casterOnlyButtonRect = new Rect(275, 114, 24, 16);
+        Rect byTouchButtonRect = new Rect(275, 130, 24, 16);
+        Rect singleTargetAtRangeButtonRect = new Rect(275, 146, 24, 16);
+        Rect areaAroundCasterButtonRect = new Rect(275, 162, 24, 16);
+        Rect areaAtRangeButtonRect = new Rect(275, 178, 24, 16);
+        Rect fireBasedButtonRect = new Rect(299, 114, 16, 16);
+        Rect coldBasedButtonRect = new Rect(299, 130, 16, 16);
+        Rect poisonBasedButtonRect = new Rect(299, 146, 16, 16);
+        Rect shockBasedButtonRect = new Rect(299, 162, 16, 16);
+        Rect magicBasedButtonRect = new Rect(299, 178, 16, 16);
+        Rect nextIconButtonRect = new Rect(275, 80, 9, 16);
+        Rect previousIconButtonRect = new Rect(275, 96, 9, 16);
+        Rect selectIconButtonRect = new Rect(288, 94, 16, 16);
+        Rect nameSpellButtonRect = new Rect(59, 184, 142, 7);
 
         #endregion
 
@@ -143,6 +160,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Effect1
             Panel effect1NamePanel = DaggerfallUI.AddPanel(effect1NameRect, NativePanel);
+            effect1NamePanel.HorizontalAlignment = HorizontalAlignment.Center;
             effect1NamePanel.OnMouseClick += Effect1NamePanel_OnMouseClick;
             effect1NameLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.LargeFont, Vector2.zero, string.Empty, effect1NamePanel);
             effect1NameLabel.HorizontalAlignment = HorizontalAlignment.Center;
@@ -150,6 +168,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Effect2
             Panel effect2NamePanel = DaggerfallUI.AddPanel(effect2NameRect, NativePanel);
+            effect2NamePanel.HorizontalAlignment = HorizontalAlignment.Center;
             effect2NamePanel.OnMouseClick += Effect2NamePanel_OnMouseClick;
             effect2NameLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.LargeFont, Vector2.zero, string.Empty, effect2NamePanel);
             effect2NameLabel.HorizontalAlignment = HorizontalAlignment.Center;
@@ -157,6 +176,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Effect3
             Panel effect3NamePanel = DaggerfallUI.AddPanel(effect3NameRect, NativePanel);
+            effect3NamePanel.HorizontalAlignment = HorizontalAlignment.Center;
             effect3NamePanel.OnMouseClick += Effect3NamePanel_OnMouseClick;
             effect3NameLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.LargeFont, Vector2.zero, string.Empty, effect3NamePanel);
             effect3NameLabel.HorizontalAlignment = HorizontalAlignment.Center;
@@ -177,11 +197,43 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void SetupButtons()
         {
-            // Add effect
-            Button addEffectButton = DaggerfallUI.AddButton(addEffectButtonRect, NativePanel);
-            addEffectButton.OnMouseEnter += AddEffectButton_OnMouseEnter;
-            addEffectButton.OnMouseLeave += TipButton_OnMouseLeave;
-            addEffectButton.OnMouseClick += AddEffectButton_OnMouseClick;
+            // Control
+            AddTipButton(addEffectButtonRect, "addEffect", AddEffectButton_OnMouseClick);
+            AddTipButton(buyButtonRect, "buySpell", BuyButton_OnMouseClick);
+            AddTipButton(newButtonRect, "newSpell", NewSpellButton_OnMouseClick);
+            AddTipButton(exitButtonRect, "exit", ExitButton_OnMouseClick);
+            AddTipButton(nameSpellButtonRect, "nameSpell", NameSpellButton_OnMouseClick);
+
+            // Target
+            AddTipButton(casterOnlyButtonRect, "casterOnly", CasterOnlyButton_OnMouseClick);
+            AddTipButton(byTouchButtonRect, "byTouch", ByTouchButton_OnMouseClick);
+            AddTipButton(singleTargetAtRangeButtonRect, "singleTargetAtRange", SingleTargetAtRangeButton_OnMouseClick);
+            AddTipButton(areaAroundCasterButtonRect, "areaAroundCaster", AreaAroundCasterButton_OnMouseClick);
+            AddTipButton(areaAtRangeButtonRect, "areaAtRange", AreaAtRangeButton_OnMouseClick);
+
+            // Element
+            AddTipButton(fireBasedButtonRect, "fireBased", FireBasedButton_OnMouseClick);
+            AddTipButton(coldBasedButtonRect, "coldBased", ColdBasedButton_OnMouseClick);
+            AddTipButton(poisonBasedButtonRect, "poisonBased", PoisonBasedButton_OnMouseClick);
+            AddTipButton(shockBasedButtonRect, "shockBased", ShockBasedButton_OnMouseClick);
+            AddTipButton(magicBasedButtonRect, "magicBased", MagicBasedButton_OnMouseClick);
+
+            // Icons
+            AddTipButton(nextIconButtonRect, "nextIcon", NextIconButton_OnMouseClick);
+            AddTipButton(previousIconButtonRect, "previousIcon", PreviousIconButton_OnMouseClick);
+            Button selectIconButton = AddTipButton(selectIconButtonRect, "selectIcon", NextIconButton_OnMouseClick);
+            selectIconButton.OnRightMouseClick += PreviousIconButton_OnMouseClick;
+        }
+
+        Button AddTipButton(Rect rect, string tipID, BaseScreenComponent.OnMouseClickHandler handler)
+        {
+            Button tipButton = DaggerfallUI.AddButton(rect, NativePanel);
+            tipButton.OnMouseEnter += TipButton_OnMouseEnter;
+            tipButton.OnMouseLeave += TipButton_OnMouseLeave;
+            tipButton.OnMouseClick += handler;
+            tipButton.Tag = tipID;
+
+            return tipButton;
         }
 
         void InitEffectSlots()
@@ -286,6 +338,70 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Show effect group picker
             uiManager.PushWindow(effectGroupPicker);
+        }
+
+        private void BuyButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+        }
+
+        private void NewSpellButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+        }
+
+        private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+        }
+
+        private void CasterOnlyButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+        }
+
+        private void ByTouchButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+        }
+
+        private void SingleTargetAtRangeButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+        }
+
+        private void AreaAroundCasterButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+        }
+
+        private void AreaAtRangeButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+        }
+
+        private void FireBasedButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+        }
+
+        private void ColdBasedButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+        }
+
+        private void PoisonBasedButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+        }
+
+        private void ShockBasedButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+        }
+
+        private void MagicBasedButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+        }
+
+        private void NextIconButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+        }
+
+        private void PreviousIconButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+        }
+
+        private void NameSpellButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
         }
 
         private void AddEffectGroupListBox_OnUseSelectedItem()
@@ -395,14 +511,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Tip Events
 
-        private void AddEffectButton_OnMouseEnter(BaseScreenComponent sender)
+        bool lockTip = false;
+        private void TipButton_OnMouseEnter(BaseScreenComponent sender)
         {
-            tipLabel.Text = TextManager.Instance.GetText(textDatabase, "addEffect");
+            // Lock tip if already has text, this means we are changing directly to adjacent button
+            // This prevents OnMouseLeave event from previous button wiping tip text of new button
+            if (!string.IsNullOrEmpty(tipLabel.Text))
+                lockTip = true;
+
+            tipLabel.Text = TextManager.Instance.GetText(textDatabase, sender.Tag as string);
         }
 
         private void TipButton_OnMouseLeave(BaseScreenComponent sender)
         {
-            tipLabel.Text = string.Empty;
+            // Clear tip when not locked, otherwise reset tip lock
+            if (!lockTip)
+                tipLabel.Text = string.Empty;
+            else
+                lockTip = false;
         }
 
         #endregion
