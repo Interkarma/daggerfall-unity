@@ -9,10 +9,7 @@
 // Notes:
 //
 
-using UnityEngine;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects
 {
@@ -20,6 +17,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     /// How an effect bundle targets entities in world space.
     /// Can be used as flags by effect system to declare supported targets.
     /// </summary>
+    [Flags]
     public enum TargetTypes
     {
         None = 0,
@@ -34,6 +32,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     /// How effect bundle manifests for cast animations, billboard effects, resist checks, etc.
     /// Can be used as flags by effect system to declare supported elements.
     /// </summary>
+    [Flags]
     public enum ElementTypes
     {
         None = 0,

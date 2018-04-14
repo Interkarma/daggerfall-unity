@@ -78,6 +78,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         bool SupportMagnitude { get; }
 
         /// <summary>
+        /// Targets supported by this effect.
+        /// </summary>
+        TargetTypes AllowedTargets { get; }
+
+        /// <summary>
+        /// Elements supported by this effect.
+        /// </summary>
+        ElementTypes AllowedElements { get; }
+
+        /// <summary>
         /// Gets or sets current effect settings.
         /// </summary>
         EffectSettings Settings { get; set; }
@@ -163,6 +173,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public virtual bool SupportDuration { get { return true; } }
         public virtual bool SupportChance { get { return true; } }
         public virtual bool SupportMagnitude { get { return true; } }
+        public virtual TargetTypes AllowedTargets { get { return EntityEffectBroker.TargetFlags_All; } }
+        public virtual ElementTypes AllowedElements { get { return EntityEffectBroker.ElementFlags_MagicOnly; } }
 
         public virtual string DisplayName
         {

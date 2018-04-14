@@ -119,11 +119,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int alternateAlphaIndex = 12;
         const int maxEffectsPerSpell = 3;
 
+        const TargetTypes defaultTargetFlags = EntityEffectBroker.TargetFlags_All;
+        const ElementTypes defaultElementFlags = EntityEffectBroker.ElementFlags_MagicOnly;
+
         List<IEntityEffect> enumeratedEffectTemplates = new List<IEntityEffect>();
 
         EffectEntry[] effectEntries = new EffectEntry[maxEffectsPerSpell];
 
         int editOrDeleteSlot = -1;
+        TargetTypes allowedTargets = EntityEffectBroker.TargetFlags_All;
+        ElementTypes allowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
+
+        TargetTypes selectedTarget = TargetTypes.CasterOnly;
+        ElementTypes selectedElement = ElementTypes.Magic;
 
         #endregion
 
@@ -168,11 +176,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             InitEffectSlots();
 
+            allowedTargets = defaultTargetFlags;
+            allowedElements = defaultElementFlags;
+
             if (IsSetup)
             {
                 effect1NameLabel.Text = string.Empty;
                 effect2NameLabel.Text = string.Empty;
                 effect3NameLabel.Text = string.Empty;
+                UpdateAllowedButtons();
             }
         }
 
@@ -271,6 +283,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             AddTipButton(previousIconButtonRect, "previousIcon", PreviousIconButton_OnMouseClick);
             Button selectIconButton = AddTipButton(selectIconButtonRect, "selectIcon", NextIconButton_OnMouseClick);
             selectIconButton.OnRightMouseClick += PreviousIconButton_OnMouseClick;
+
+            // Select default buttons
+            UpdateAllowedButtons();
         }
 
         Button AddTipButton(Rect rect, string tipID, BaseScreenComponent.OnMouseClickHandler handler)
@@ -297,13 +312,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             effectEntries[slot] = new EffectEntry();
             UpdateSlotText(slot, string.Empty);
+            UpdateAllowedButtons();
         }
 
-        int GetFreeEffectSlotIndex()
+        int GetFirstFreeEffectSlotIndex()
         {
             for (int i = 0; i < maxEffectsPerSpell; i++)
             {
                 if (string.IsNullOrEmpty(effectEntries[i].Key))
+                    return i;
+            }
+
+            return -1;
+        }
+
+        int GetFirstUsedEffectSlotIndex()
+        {
+            for (int i = 0; i < maxEffectsPerSpell; i++)
+            {
+                if (!string.IsNullOrEmpty(effectEntries[i].Key))
                     return i;
             }
 
@@ -356,7 +383,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void SetSpellTarget(TargetTypes targetType)
         {
-            // TODO: Exclude target types based on effects added
+            // Exclude target types based on effects added
+            if ((allowedTargets & targetType) == TargetTypes.None)
+                return;
 
             // Clear buttons
             casterOnlyButton.BackgroundTexture = null;
@@ -368,7 +397,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Set selected icon
             switch (targetType)
             {
-                default:
                 case TargetTypes.CasterOnly:
                     casterOnlyButton.BackgroundTexture = casterOnlySelectedTexture;
                     break;
@@ -385,11 +413,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     areaAtRangeButton.BackgroundTexture = areaAtRangeSelectedTexture;
                     break;
             }
+
+            selectedTarget = targetType;
         }
 
         void SetSpellElement(ElementTypes elementType)
         {
-            // TODO: Exclude element types based on effects added
+            // Exclude element types based on effects added
+            if ((allowedElements & elementType) == ElementTypes.None)
+                return;
 
             // Clear buttons
             fireBasedButton.BackgroundTexture = null;
@@ -413,10 +445,108 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 case ElementTypes.Shock:
                     shockBasedButton.BackgroundTexture = shockBasedSelectedTexture;
                     break;
-                default:
                 case ElementTypes.Magic:
                     magicBasedButton.BackgroundTexture = magicBasedSelectedTexture;
                     break;
+            }
+
+            selectedElement = elementType;
+        }
+
+        void UpdateAllowedButtons()
+        {
+            // First effect added defines available buttons
+            // Future effects will be filtered by compatibility with first effect
+            // As user can add or delete effects from any slot, first effect may not be slot 0
+            int slot = GetFirstUsedEffectSlotIndex();
+            if (slot != -1)
+            {
+                IEntityEffect effectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(effectEntries[slot].Key);
+                if (effectTemplate != null)
+                {
+                    // Set allowed buttons based on first effect
+                    // Future effects will be filtered based on first effect added
+                    allowedTargets = effectTemplate.AllowedTargets;
+                    allowedElements = effectTemplate.AllowedElements;
+                    EnforceSelectedButtons();
+                }
+            }
+            else
+            {
+                // Set defaults when no effects added
+                allowedTargets = defaultTargetFlags;
+                allowedElements = defaultElementFlags;
+                SetSpellTarget(TargetTypes.CasterOnly);
+                SetSpellElement(ElementTypes.Magic);
+                EnforceSelectedButtons();
+                return;
+            }
+        }
+
+        void EnforceSelectedButtons()
+        {
+            if ((allowedTargets & selectedTarget) == TargetTypes.None)
+                SelectFirstAllowedTargetType();
+
+            if ((allowedElements & selectedElement) == ElementTypes.None)
+                SelectFirstAllowedElementType();
+        }
+
+        void SelectFirstAllowedTargetType()
+        {
+            if ((allowedTargets & TargetTypes.CasterOnly) == TargetTypes.CasterOnly)
+            {
+                SetSpellTarget(TargetTypes.CasterOnly);
+                return;
+            }
+            else if ((allowedTargets & TargetTypes.ByTouch) == TargetTypes.ByTouch)
+            {
+                SetSpellTarget(TargetTypes.ByTouch);
+                return;
+            }
+            else if ((allowedTargets & TargetTypes.SingleTargetAtRange) == TargetTypes.SingleTargetAtRange)
+            {
+                SetSpellTarget(TargetTypes.SingleTargetAtRange);
+                return;
+            }
+            else if ((allowedTargets & TargetTypes.AreaAroundCaster) == TargetTypes.AreaAroundCaster)
+            {
+                SetSpellTarget(TargetTypes.AreaAroundCaster);
+                return;
+            }
+            else if ((allowedTargets & TargetTypes.AreaAtRange) == TargetTypes.AreaAtRange)
+            {
+                SetSpellTarget(TargetTypes.AreaAtRange);
+                return;
+            }
+        }
+
+        void SelectFirstAllowedElementType()
+        {
+            if ((allowedElements & ElementTypes.Fire) == ElementTypes.Fire)
+            {
+                SetSpellElement(ElementTypes.Fire);
+                return;
+            }
+            else if ((allowedElements & ElementTypes.Cold) == ElementTypes.Cold)
+            {
+                SetSpellElement(ElementTypes.Cold);
+                return;
+            }
+            else if ((allowedElements & ElementTypes.Poison) == ElementTypes.Poison)
+            {
+                SetSpellElement(ElementTypes.Poison);
+                return;
+            }
+            else if ((allowedElements & ElementTypes.Shock) == ElementTypes.Shock)
+            {
+                SetSpellElement(ElementTypes.Shock);
+                return;
+            }
+            else if ((allowedElements & ElementTypes.Magic) == ElementTypes.Magic)
+            {
+                SetSpellElement(ElementTypes.Magic);
+                return;
             }
         }
 
@@ -429,7 +559,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             const int noMoreThan3Effects = 1707;
 
             // Must have a free effect slot
-            if (GetFreeEffectSlotIndex() == -1)
+            if (GetFirstFreeEffectSlotIndex() == -1)
             {
                 DaggerfallMessageBox mb = new DaggerfallMessageBox(
                     uiManager,
@@ -444,6 +574,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Clear existing
             effectGroupPicker.ListBox.ClearItems();
             tipLabel.Text = string.Empty;
+
+            // TODO: Filter out effects incompatible with any effects already added (e.g. incompatible target types)
 
             // Populate group names
             string[] groupNames = GameManager.Instance.EntityEffectBroker.GetGroupNames();
@@ -610,10 +742,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
 
             // Assign effect entry to slot
-            int slot = (editOrDeleteSlot == -1) ? GetFreeEffectSlotIndex() : editOrDeleteSlot;
+            int slot = (editOrDeleteSlot == -1) ? GetFirstFreeEffectSlotIndex() : editOrDeleteSlot;
             effectEntries[slot] = effectEditor.EffectEntry;
             UpdateSlotText(slot, effectEditor.EffectTemplate.DisplayName);
             editOrDeleteSlot = -1;
+
+            UpdateAllowedButtons();
         }
 
         private void Effect1NamePanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)

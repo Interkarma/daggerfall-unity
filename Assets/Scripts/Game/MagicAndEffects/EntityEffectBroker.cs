@@ -25,6 +25,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     {
         #region Fields
 
+        public const TargetTypes TargetFlags_None = TargetTypes.None;
+        public const TargetTypes TargetFlags_Self = TargetTypes.CasterOnly;
+        public const TargetTypes TargetFlags_Other = TargetTypes.ByTouch | TargetTypes.SingleTargetAtRange | TargetTypes.AreaAroundCaster | TargetTypes.AreaAtRange;
+        public const TargetTypes TargetFlags_All = TargetTypes.CasterOnly | TargetTypes.ByTouch | TargetTypes.SingleTargetAtRange | TargetTypes.AreaAroundCaster | TargetTypes.AreaAtRange;
+
+        public const ElementTypes ElementFlags_None = ElementTypes.None;
+        public const ElementTypes ElementFlags_All = ElementTypes.Fire | ElementTypes.Cold | ElementTypes.Poison | ElementTypes.Shock | ElementTypes.Magic;
+        public const ElementTypes ElementFlags_MagicOnly = ElementTypes.Magic;
+
         const float roundInterval = 5.0f;
 
         int magicRoundsSinceStartup = 0;
