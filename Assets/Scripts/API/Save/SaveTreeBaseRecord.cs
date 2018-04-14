@@ -27,7 +27,7 @@ namespace DaggerfallConnect.Save
 
         // Constants
         public const int RecordRootLength = 71;
-        public const int DungeonDataLengthMultiplier = 39;
+        public const int LightDataLengthMultiplier = 39;
 
         // Source data from file stream
         protected long streamPosition;
@@ -160,10 +160,10 @@ namespace DaggerfallConnect.Save
             if (length <= 0)
                 return;
 
-            // Peek record type and adjust for dungeon size
+            // Peek record type and adjust for light size
             recordType = SaveTree.PeekRecordType(reader);
-            if (recordType == RecordTypes.DungeonInformation)
-                streamLength *= DungeonDataLengthMultiplier;
+            if (recordType == RecordTypes.Light)
+                streamLength *= LightDataLengthMultiplier;
 
             // Read raw record data
             streamData = reader.ReadBytes(streamLength);

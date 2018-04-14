@@ -370,47 +370,63 @@ namespace DaggerfallConnect.Save
     }
 
     /// <summary>
-    /// Types of SaveTree records encountered.
-    /// Save viewer program "chunktcl" used to identify some.
+    /// Types of SaveTree records/Daggerfall game objects.
+    /// "Classic name" refers to the name found in FALL.EXE for this object type. These names only go as far as "OneShot".
     /// </summary>
     public enum RecordTypes
     {
         Null = 0x00,
-        Item = 0x02,
-        Character = 0x03,
-        CharacterPositionRecord = 0x04,             // This record, not the position record in the header, determines where player is when game loads.
-        CharacterCamera = 0x05,                     // Guessing that this is the player camera. Has the same position as CharacterPositionRecord, and changing the roll value with a hex editor will cause the screen to be rotated on game load.
-        Interactable3dObject = 0x06,                // Levers, switches, moving platforms, etc.
-        DungeonInformation = 0x07,                  // Length MUST be multiplied by 39 (0x27)
-        NPCFlat = 0x08,
-        Spell = 0x09,
-        GuildMembership = 0x0a,
-        DiseaseOrPoison = 0x0b,
-        QBNData = 0x0e,
-        QuestTree = 0x10,                           // Fixsave calls this "quest tree".
-        EnemyMobile = 0x12,
-        TrappedSoul = 0x14,                                // Souls held in soul traps.
-        SpellcastingCreatureListHead = 0x16,
-        UserOptions = 0x17,                         // Fixsave calls this "user options"
-        LocationName1 = 0x18,                       // Possibly logbook entries. chunktcl calls this "Logbook"
-        BankAccount = 0x19,
-        PotionMix = 0x1f,
-        Door = 0x20,
-        Treasure = 0x21,
-        Marker = 0x22,                              // Spawn markers, quest markers, teleport markers, etc.
-        UnknownItemRecord = 0x24,                   // Possibly items on store shelves
-        MysteryRecord1 = 0x27,                      // Referenced but does not exist in file
-        LocationName2 = 0x28,                       // Possibly for quests. chunktcl calls this "Quest site"
-        LocationName3 = 0x29,                       // Possible for quests. chunktcl calls this "Quest NPC"
+        World = 0x01,                               // Classic name = World. Parent of various objects.
+        Item = 0x02,                                // Classic name = Flat
+        Character = 0x03,                           // Classic name = User
+        CharacterPositionRecord = 0x04,             // Classic name = Move. This record, not the position in the SAVETREE.DAT header, determines where player is when the game loads.
+        CharacterCamera = 0x05,                     // Classic name = Eye. The player's view. Has the same position as CharacterPositionRecord.
+        Interactable3dObject = 0x06,                // Classic name = 3D. Levers, switches, moving platforms, etc.
+        Light = 0x07,                               // Classic name = Light (name from Daggerfall demo FALL.EXE). Created for lights in dungeons and projectile spells.
+        NPCFlat = 0x08,                             // Classic name = Person.
+        Spell = 0x09,                               // Classic name = Spell
+        GuildMembership = 0x0a,                     // Classic name = Guild
+        DiseaseOrPoison = 0x0b,                     // Classic name = Condition
+        UnusedClass = 0x0c,                         // Classic name = Class. Seems to be unused.
+        UnusedKeyword = 0x0d,                       // Classic name = Keyword. Seems to be unused.
+        QBNData = 0x0e,                             // Classic name = Quest
+        UnusedKeyHolder = 0x0f,                     // Classic name = Keyholder. Seems to be unused. May have originally been for storing door keys like in Arena.
+        QuestHolder = 0x10,                         // Classic name = QuestHolder. Fixsave calls this "quest tree".
+        UnusedNPC = 0x11,                           // Classic name = NPC. Seems to be unused
+        EnemyMobile = 0x12,                         // Classic name = Monster
+        Trap = 0x13,                                // Classic name = Trap
+        TrappedSoul = 0x14,                         // Classic name = Soul
+        // 0x15 unused
+        SpellcastingCreatureListHead = 0x16,        // Classic name = Holder
+        Options = 0x17,                             // Classic name = Options. Fixsave calls this "user options"
+        Logbook = 0x18,                             // Classic name = Logbook
+        BankAccount = 0x19,                         // Classic name = BankHolder
+        UnusedBankInfo = 0x1a,                      // Classic name = BankInfo. Seems to be unused.
+        UnusedSafetyBox = 0x1b,                     // Classic name = SafetyBox. Seems to be unused.
+        OldClass = 0x1c,                            // Classic name = OldClass. Stores player's class when they've been transformed to vampire/werething.
+        OldGuild = 0x1d,                            // Classic name = OldGuild. Stores player's guild affiliations when they've been transformed to vampire/werething.
+        UnusedBless = 0x1e,                         // Classic name = Bless. Seems to be unused.
+        Potion = 0x1f,                              // Classic name = Potion
+        Door = 0x20,                                // Classic name = Door
+        Treasure = 0x21,                            // Classic name = Scene
+        Marker = 0x22,                              // Classic name = Marker. Spawn markers, quest markers, teleport markers, etc.
+        UnusedRumor = 0x23,                         // Classic name = Rumor. Seems to be unused.
+        Goods = 0x24,                               // Classic name = Goods. Items on store shelves.
+        UnusedDeed = 0x25,                          // Classic name = Deed. Seems to be unused.
+        House = 0x26,                               // Classic name = House
+        NonWorld = 0x27,                            // Classic name = NonWorld. Parent of various objects.
+        RegionMark = 0x28,                          // Classic name = RegionMark
+        NPCMark = 0x29,                             // Classic name = NPCmark
+        OneShot = 0x2a,                             // Classic name = OneShot. Hit effect (blood spray, magic sparkles)
         MysteryRecord2 = 0x2b,                      // Referenced but does not exist in file
         Corpse = 0x2c,                              // Dead mobile
         NPC = 0x2d,
         GenericNPC = 0x2e,
-        DungeonData = 0x33,                         // Huge but mostly zero filled
-        Container = 0x34,                           // Fixsave calls this "item holder"
+        DungeonAutomapData = 0x33,                  // Huge but mostly zero filled
+        Container = 0x34,                           // Fixsave calls this "item holder." 0 = weapons & armor, 1 = magic items, 2 = clothing & misc, 3 = ingredients, 4 = wagon, 5 = house, 6 = ship, 7 = tavern rooms, 8 = item repairers
         NPCMobile = 0x35,                           // Mobile NPCs wandering around outside
         ItemLeftForRepair = 0x36,
-        Unknown2 = 0x40,                            // All are part of a 'container'. chunktcl calls this "Visited?"
+        TavernRoom = 0x40,                          // Stores information for player items left in tavern.
         QuestNPC = 0x41,                            // Fixsave calls this "quest NPC". chunktcl calls this "Qbn questor"
     }
 
