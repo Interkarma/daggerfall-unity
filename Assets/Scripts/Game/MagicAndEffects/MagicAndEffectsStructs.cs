@@ -49,7 +49,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     {
         public BundleTypes BundleType;
         public TargetTypes TargetType;
-        public MagicTypes MagicType;
+        public ElementTypes ElementType;
 
         public EffectEntry[] Effects;
     }

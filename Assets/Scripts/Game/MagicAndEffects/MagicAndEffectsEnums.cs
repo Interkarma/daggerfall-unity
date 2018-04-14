@@ -32,9 +32,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
     /// <summary>
     /// How effect bundle manifests for cast animations, billboard effects, resist checks, etc.
-    /// Can be used as flags by effect system to declare supported effect types.
+    /// Can be used as flags by effect system to declare supported elements.
     /// </summary>
-    public enum MagicTypes
+    public enum ElementTypes
     {
         None = 0,
         Fire = 1,

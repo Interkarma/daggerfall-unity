@@ -23,8 +23,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         #region UI Rects
 
-        DFSize baseSize = new DFSize(320, 200);
-
         const int spinnerWidth = 24;
         const int spinnerHeight = 16;
 

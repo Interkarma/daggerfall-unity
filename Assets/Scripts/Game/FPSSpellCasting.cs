@@ -40,9 +40,8 @@ namespace DaggerfallWorkshop.Game
         const float animSpeed = 0.04f;                              // Set slower than classic for now
 
         int[] frameIndices = new int[] { 0, 1, 2, 3, 4, 5, 0 };     // Animation starts and ends with frame 0
-
-        MagicTypes currentAnimType = MagicTypes.None;
-        Dictionary<MagicTypes, Texture2D[]> castAnims = new Dictionary<MagicTypes, Texture2D[]>();
+        ElementTypes currentAnimType = ElementTypes.None;
+        Dictionary<ElementTypes, Texture2D[]> castAnims = new Dictionary<ElementTypes, Texture2D[]>();
         Texture2D[] currentAnims;
         int currentFrame = -1;
 
@@ -127,15 +126,15 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Play casting animation once only.
         /// </summary>
-        /// <param name="magicType"></param>
-        public void PlayOneShot(MagicTypes magicType)
+        /// <param name="elementType"></param>
+        public void PlayOneShot(ElementTypes elementType)
         {
             // Do nothing if already playing anim
             if (IsPlayingAnim)
                 return; 
 
             // Start playing anim
-            SetCurrentAnims(magicType);
+            SetCurrentAnims(elementType);
             currentFrame = 0;
         }
 
@@ -148,18 +147,18 @@ namespace DaggerfallWorkshop.Game
         /// This happens the first time a spell is cast and stored for re-casting.
         /// It's likely player will use a wide variety of spell types in normal play.
         /// </summary>
-        void SetCurrentAnims(MagicTypes magicType, int border = 0, bool dilate = false)
+        void SetCurrentAnims(ElementTypes elementType, int border = 0, bool dilate = false)
         {
             // Attempt to get current anims
-            if (castAnims.ContainsKey(magicType))
+            if (castAnims.ContainsKey(elementType))
             {
-                currentAnimType = magicType;
-                currentAnims = castAnims[magicType];
+                currentAnimType = elementType;
+                currentAnims = castAnims[elementType];
                 return;
             }
 
             // Load spellcast file
-            string filename = WeaponBasics.GetMagicAnimFilename(magicType);
+            string filename = WeaponBasics.GetMagicAnimFilename(elementType);
             string path = Path.Combine(DaggerfallUnity.Instance.Arena2Path, filename);
             CifRciFile cifFile = new CifRciFile();
             if (!cifFile.Load(path, FileUsage.UseMemory, true))
@@ -196,10 +195,10 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Add frames array to dictionary
-            castAnims.Add(magicType, frames);
+            castAnims.Add(elementType, frames);
 
             // Use as current anims
-            currentAnimType = magicType;
+            currentAnimType = elementType;
             currentAnims = frames;
         }
 
@@ -233,7 +232,7 @@ namespace DaggerfallWorkshop.Game
             // Determine frame offset based on source animation
             offset = 0f;
             if (frameIndex == 0 || frameIndex == 5 ||                           // Frames 0 and 5 are always small frames
-                currentAnimType == MagicTypes.Fire && frameIndex == 4)          // Fire frame 4 is also a small frame
+                currentAnimType == ElementTypes.Fire && frameIndex == 4)          // Fire frame 4 is also a small frame
             {
                 offset = smallFrameAdjust;
             }

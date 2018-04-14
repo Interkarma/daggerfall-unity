@@ -169,22 +169,22 @@ namespace DaggerfallWorkshop.Utility
             }
         }
 
-        public static string GetMagicAnimFilename(MagicTypes effectType)
+        public static string GetMagicAnimFilename(ElementTypes elementType)
         {
-            switch (effectType)
+            switch (elementType)
             {
-                case MagicTypes.Fire:
+                case ElementTypes.Fire:
                     return "FIRE00C6.CIF";
-                case MagicTypes.Cold:
+                case ElementTypes.Cold:
                     return "FRST00C6.CIF";
-                case MagicTypes.Poison:
+                case ElementTypes.Poison:
                     return "POIS00C6.CIF";
-                case MagicTypes.Shock:
+                case ElementTypes.Shock:
                     return "SHOK00C6.CIF";
-                case MagicTypes.Magic:
+                case ElementTypes.Magic:
                     return "MJIC00C6.CIF";
                 default:
-                    throw new Exception("Unsupported spell type.");
+                    throw new Exception("Unsupported element type.");
             }
         }
 

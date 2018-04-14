@@ -73,7 +73,7 @@ namespace DaggerfallWorkshop.Game
         bool forceDisableSpellShadows;
         float lifespan = 0f;
         float postImpactLifespan = 0f;
-        MagicTypes magicType = MagicTypes.None;
+        ElementTypes elementType = ElementTypes.None;
         bool impactDetected = false;
         float initialRange;
         float initialIntensity;
@@ -137,8 +137,8 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Easily set billboard animations by spell type.
         /// </summary>
-        /// <param name="magicType"></param>
-        public void UseSpellBillboardAnims(MagicTypes magicType, int record = 0, bool oneShot = false)
+        /// <param name="elementType"></param>
+        public void UseSpellBillboardAnims(ElementTypes elementType, int record = 0, bool oneShot = false)
         {
             // Destroy any existing billboard game object
             if (myBillboard)
@@ -148,7 +148,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Add new billboard parented to this missile
-            GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(GetMissileTextureArchive(magicType), record, transform);
+            GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(GetMissileTextureArchive(elementType), record, transform);
             go.transform.localPosition = Vector3.zero;
             myBillboard = go.GetComponent<DaggerfallBillboard>();
             myBillboard.FramesPerSecond = BillboardFramesPerSecond;
@@ -157,7 +157,7 @@ namespace DaggerfallWorkshop.Game
             myBillboard.GetComponent<MeshRenderer>().receiveShadows = false;
 
             // Store spell type for target animation
-            this.magicType = magicType;
+            this.elementType = elementType;
         }
 
         /// <summary>
@@ -203,9 +203,9 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Play spell impact animation, this replaces spell missile animation
-            if (magicType != MagicTypes.None)
+            if (elementType != ElementTypes.None)
             {
-                UseSpellBillboardAnims(magicType, 1, true);
+                UseSpellBillboardAnims(elementType, 1, true);
                 myBillboard.FramesPerSecond = ImpactBillboardFramesPerSecond;
                 impactDetected = true;
             }
@@ -229,20 +229,20 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        int GetMissileTextureArchive(MagicTypes magicType)
+        int GetMissileTextureArchive(ElementTypes elementType)
         {
-            switch (magicType)
+            switch (elementType)
             {
                 default:
-                case MagicTypes.Cold:
+                case ElementTypes.Cold:
                     return coldMissileArchive;
-                case MagicTypes.Fire:
+                case ElementTypes.Fire:
                     return fireMissileArchive;
-                case MagicTypes.Magic:
+                case ElementTypes.Magic:
                     return magicMissileArchive;
-                case MagicTypes.Poison:
+                case ElementTypes.Poison:
                     return poisonMissileArchive;
-                case MagicTypes.Shock:
+                case ElementTypes.Shock:
                     return shockMissileArchive;
             }
         }

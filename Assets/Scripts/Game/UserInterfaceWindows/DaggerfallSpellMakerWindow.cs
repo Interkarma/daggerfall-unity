@@ -23,7 +23,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         #region UI Rects
 
-        DFSize baseSize = new DFSize(320, 200);
+        DFSize selectedIconsBaseSize = new DFSize(40, 80);
+
         Vector2 tipLabelPos = new Vector2(5, 22);
         Rect effect1NameRect = new Rect(3, 30, 230, 9);
         Rect effect2NameRect = new Rect(3, 62, 230, 9);
@@ -47,6 +48,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Rect selectIconButtonRect = new Rect(288, 94, 16, 16);
         Rect nameSpellButtonRect = new Rect(59, 184, 142, 7);
 
+        Rect casterOnlySubRect = new Rect(0, 0, 24, 16);
+        Rect byTouchSubRect = new Rect(0, 16, 24, 16);
+        Rect singleTargetAtRangeSubRect = new Rect(0, 32, 24, 16);
+        Rect areaAroundCasterSubRect = new Rect(0, 48, 24, 16);
+        Rect areaAtRangeSubRect = new Rect(0, 64, 24, 16);
+
+        Rect fireBasedSubRect = new Rect(24, 0, 16, 16);
+        Rect coldBasedSubRect = new Rect(24, 16, 16, 16);
+        Rect poisonBasedSubRect = new Rect(24, 32, 16, 16);
+        Rect shockBasedSubRect = new Rect(24, 48, 16, 16);
+        Rect magicBasedSubRect = new Rect(24, 64, 16, 16);
+
         #endregion
 
         #region UI Controls
@@ -60,14 +73,37 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         DaggerfallListPickerWindow effectSubGroupPicker;
         DaggerfallEffectSettingsEditorWindow effectEditor;
 
+        Button casterOnlyButton;
+        Button byTouchButton;
+        Button singleTargetAtRangeButton;
+        Button areaAroundCasterButton;
+        Button areaAtRangeButton;
+
+        Button fireBasedButton;
+        Button coldBasedButton;
+        Button poisonBasedButton;
+        Button shockBasedButton;
+        Button magicBasedButton;
+
         #endregion
 
         #region UI Textures
 
         Texture2D baseTexture;
         Texture2D effectSetupOverlayTexture;
-        Texture2D goldSelectIconsTexture;
-        Texture2D colorSelectIconsTexture;
+        Texture2D selectedIconsTexture;
+
+        Texture2D casterOnlySelectedTexture;
+        Texture2D byTouchSelectedTexture;
+        Texture2D singleTargetAtRangeSelectedTexture;
+        Texture2D areaAroundCasterSelectedTexture;
+        Texture2D areaAtRangeSelectedTexture;
+
+        Texture2D fireBasedSelectedTexture;
+        Texture2D coldBasedSelectedTexture;
+        Texture2D poisonBasedSelectedTexture;
+        Texture2D shockBasedSelectedTexture;
+        Texture2D magicBasedSelectedTexture;
 
         #endregion
 
@@ -149,8 +185,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Load source textures
             baseTexture = ImageReader.GetTexture(baseTextureFilename, 0, 0, true, alternateAlphaIndex);
             effectSetupOverlayTexture = ImageReader.GetTexture(effectSetupOverlayFilename);
-            goldSelectIconsTexture = ImageReader.GetTexture(goldSelectIconsFilename);
-            colorSelectIconsTexture = ImageReader.GetTexture(colorSelectIconsFilename);
+            selectedIconsTexture = ImageReader.GetTexture(goldSelectIconsFilename);
+
+            // Load target texture
+            casterOnlySelectedTexture = ImageReader.GetSubTexture(selectedIconsTexture, casterOnlySubRect, selectedIconsBaseSize);
+            byTouchSelectedTexture = ImageReader.GetSubTexture(selectedIconsTexture, byTouchSubRect, selectedIconsBaseSize);
+            singleTargetAtRangeSelectedTexture = ImageReader.GetSubTexture(selectedIconsTexture, singleTargetAtRangeSubRect, selectedIconsBaseSize);
+            areaAroundCasterSelectedTexture = ImageReader.GetSubTexture(selectedIconsTexture, areaAroundCasterSubRect, selectedIconsBaseSize);
+            areaAtRangeSelectedTexture = ImageReader.GetSubTexture(selectedIconsTexture, areaAtRangeSubRect, selectedIconsBaseSize);
+
+            fireBasedSelectedTexture = ImageReader.GetSubTexture(selectedIconsTexture, fireBasedSubRect, selectedIconsBaseSize);
+            coldBasedSelectedTexture = ImageReader.GetSubTexture(selectedIconsTexture, coldBasedSubRect, selectedIconsBaseSize);
+            poisonBasedSelectedTexture = ImageReader.GetSubTexture(selectedIconsTexture, poisonBasedSubRect, selectedIconsBaseSize);
+            shockBasedSelectedTexture = ImageReader.GetSubTexture(selectedIconsTexture, shockBasedSubRect, selectedIconsBaseSize);
+            magicBasedSelectedTexture = ImageReader.GetSubTexture(selectedIconsTexture, magicBasedSubRect, selectedIconsBaseSize);
         }
 
         void SetupLabels()
@@ -205,18 +253,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             AddTipButton(nameSpellButtonRect, "nameSpell", NameSpellButton_OnMouseClick);
 
             // Target
-            AddTipButton(casterOnlyButtonRect, "casterOnly", CasterOnlyButton_OnMouseClick);
-            AddTipButton(byTouchButtonRect, "byTouch", ByTouchButton_OnMouseClick);
-            AddTipButton(singleTargetAtRangeButtonRect, "singleTargetAtRange", SingleTargetAtRangeButton_OnMouseClick);
-            AddTipButton(areaAroundCasterButtonRect, "areaAroundCaster", AreaAroundCasterButton_OnMouseClick);
-            AddTipButton(areaAtRangeButtonRect, "areaAtRange", AreaAtRangeButton_OnMouseClick);
+            casterOnlyButton = AddTipButton(casterOnlyButtonRect, "casterOnly", CasterOnlyButton_OnMouseClick);
+            byTouchButton = AddTipButton(byTouchButtonRect, "byTouch", ByTouchButton_OnMouseClick);
+            singleTargetAtRangeButton = AddTipButton(singleTargetAtRangeButtonRect, "singleTargetAtRange", SingleTargetAtRangeButton_OnMouseClick);
+            areaAroundCasterButton = AddTipButton(areaAroundCasterButtonRect, "areaAroundCaster", AreaAroundCasterButton_OnMouseClick);
+            areaAtRangeButton = AddTipButton(areaAtRangeButtonRect, "areaAtRange", AreaAtRangeButton_OnMouseClick);
 
             // Element
-            AddTipButton(fireBasedButtonRect, "fireBased", FireBasedButton_OnMouseClick);
-            AddTipButton(coldBasedButtonRect, "coldBased", ColdBasedButton_OnMouseClick);
-            AddTipButton(poisonBasedButtonRect, "poisonBased", PoisonBasedButton_OnMouseClick);
-            AddTipButton(shockBasedButtonRect, "shockBased", ShockBasedButton_OnMouseClick);
-            AddTipButton(magicBasedButtonRect, "magicBased", MagicBasedButton_OnMouseClick);
+            fireBasedButton = AddTipButton(fireBasedButtonRect, "fireBased", FireBasedButton_OnMouseClick);
+            coldBasedButton = AddTipButton(coldBasedButtonRect, "coldBased", ColdBasedButton_OnMouseClick);
+            poisonBasedButton = AddTipButton(poisonBasedButtonRect, "poisonBased", PoisonBasedButton_OnMouseClick);
+            shockBasedButton = AddTipButton(shockBasedButtonRect, "shockBased", ShockBasedButton_OnMouseClick);
+            magicBasedButton = AddTipButton(magicBasedButtonRect, "magicBased", MagicBasedButton_OnMouseClick);
 
             // Icons
             AddTipButton(nextIconButtonRect, "nextIcon", NextIconButton_OnMouseClick);
@@ -306,6 +354,72 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mb.Show();
         }
 
+        void SetSpellTarget(TargetTypes targetType)
+        {
+            // TODO: Exclude target types based on effects added
+
+            // Clear buttons
+            casterOnlyButton.BackgroundTexture = null;
+            byTouchButton.BackgroundTexture = null;
+            singleTargetAtRangeButton.BackgroundTexture = null;
+            areaAroundCasterButton.BackgroundTexture = null;
+            areaAtRangeButton.BackgroundTexture = null;
+
+            // Set selected icon
+            switch (targetType)
+            {
+                default:
+                case TargetTypes.CasterOnly:
+                    casterOnlyButton.BackgroundTexture = casterOnlySelectedTexture;
+                    break;
+                case TargetTypes.ByTouch:
+                    byTouchButton.BackgroundTexture = byTouchSelectedTexture;
+                    break;
+                case TargetTypes.SingleTargetAtRange:
+                    singleTargetAtRangeButton.BackgroundTexture = singleTargetAtRangeSelectedTexture;
+                    break;
+                case TargetTypes.AreaAroundCaster:
+                    areaAroundCasterButton.BackgroundTexture = areaAroundCasterSelectedTexture;
+                    break;
+                case TargetTypes.AreaAtRange:
+                    areaAtRangeButton.BackgroundTexture = areaAtRangeSelectedTexture;
+                    break;
+            }
+        }
+
+        void SetSpellElement(ElementTypes elementType)
+        {
+            // TODO: Exclude element types based on effects added
+
+            // Clear buttons
+            fireBasedButton.BackgroundTexture = null;
+            coldBasedButton.BackgroundTexture = null;
+            poisonBasedButton.BackgroundTexture = null;
+            shockBasedButton.BackgroundTexture = null;
+            magicBasedButton.BackgroundTexture = null;
+
+            // Set selected icon
+            switch (elementType)
+            {
+                case ElementTypes.Fire:
+                    fireBasedButton.BackgroundTexture = fireBasedSelectedTexture;
+                    break;
+                case ElementTypes.Cold:
+                    coldBasedButton.BackgroundTexture = coldBasedSelectedTexture;
+                    break;
+                case ElementTypes.Poison:
+                    poisonBasedButton.BackgroundTexture = poisonBasedSelectedTexture;
+                    break;
+                case ElementTypes.Shock:
+                    shockBasedButton.BackgroundTexture = shockBasedSelectedTexture;
+                    break;
+                default:
+                case ElementTypes.Magic:
+                    magicBasedButton.BackgroundTexture = magicBasedSelectedTexture;
+                    break;
+            }
+        }
+
         #endregion
 
         #region Button Events
@@ -354,42 +468,52 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void CasterOnlyButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            SetSpellTarget(TargetTypes.CasterOnly);
         }
 
         private void ByTouchButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            SetSpellTarget(TargetTypes.ByTouch);
         }
 
         private void SingleTargetAtRangeButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            SetSpellTarget(TargetTypes.SingleTargetAtRange);
         }
 
         private void AreaAroundCasterButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            SetSpellTarget(TargetTypes.AreaAroundCaster);
         }
 
         private void AreaAtRangeButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            SetSpellTarget(TargetTypes.AreaAtRange);
         }
 
         private void FireBasedButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            SetSpellElement(ElementTypes.Fire);
         }
 
         private void ColdBasedButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            SetSpellElement(ElementTypes.Cold);
         }
 
         private void PoisonBasedButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            SetSpellElement(ElementTypes.Poison);
         }
 
         private void ShockBasedButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            SetSpellElement(ElementTypes.Shock);
         }
 
         private void MagicBasedButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            SetSpellElement(ElementTypes.Magic);
         }
 
         private void NextIconButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)

@@ -29,7 +29,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         protected string displayName;                           // Display name of spell
         protected TargetTypes selectedTargetType;               // How this spell targets entities in world space
-        protected MagicTypes selectedSpellType;                 // How this spell manifests for cast animations, billboard effects, resist checks, etc.
+        protected ElementTypes selectedSpellType;                 // How this spell manifests for cast animations, billboard effects, resist checks, etc.
         protected int spellCost;                                // Cost of this spell to cast - not used for now
 
         //protected List<SpellEffectSettings> effects = new List<SpellEffectSettings>();
