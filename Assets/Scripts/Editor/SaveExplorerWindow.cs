@@ -54,7 +54,7 @@ namespace DaggerfallWorkshop
         int selectedSave = 0;
 
         Vector2 scrollPos;
-        bool showFactionsFoldout = true;
+        bool showFactionsFoldout = false;
         bool showItemsFoldout = false;
         bool showSaveTreeFoldout = false;
 
@@ -385,12 +385,15 @@ namespace DaggerfallWorkshop
                     }
                 }
 
-                // Tag wagon container
+                // Tag container types
                 if (recordType == RecordTypes.Container && parent.RecordType == RecordTypes.Character)
                 {
+                    string[] tags = {" [Weapons & Armor]", " [Magic Items]", " [Clothing & Misc]", " [Ingredients]", " [Wagon]",
+                                     " [House]", " [Ship]", " [Tavern Rooms]", " [Item Repairers]"};
+
                     ContainerRecord containerRecord = (ContainerRecord)parent.Children[i];
-                    if (containerRecord.IsWagon)
-                        textLabel += " [Wagon]";
+
+                    textLabel += tags[containerRecord.RecordRoot.SpriteIndex];
                 }
 
                 EditorGUILayout.LabelField(textLabel);
