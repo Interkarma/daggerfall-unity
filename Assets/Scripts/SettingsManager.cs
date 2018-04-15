@@ -117,6 +117,8 @@ namespace DaggerfallWorkshop
         public float WeaponSensitivity { get; set; }
         public bool ClickToAttack { get; set; }
         public int CameraRecoilStrength { get; set; }
+        public float MusicVolume { get; set; }
+        public float SoundVolume { get; set; }
 
         // [Startup]
         public int StartCellX { get; set; }
@@ -199,6 +201,8 @@ namespace DaggerfallWorkshop
             WeaponSensitivity = GetFloat(sectionControls, "WeaponSensitivity", 0.1f, 10.0f);
             ClickToAttack = GetBool(sectionControls, "ClickToAttack");
             CameraRecoilStrength = GetInt(sectionControls, "CameraRecoilStrength", 0, 4);
+            SoundVolume = GetFloat(sectionControls, "SoundVolume", 0f, 1.0f);
+            MusicVolume = GetFloat(sectionControls, "MusicVolume", 0f, 1.0f);
 
             StartCellX = GetInt(sectionStartup, "StartCellX", 2, 997);
             StartCellY = GetInt(sectionStartup, "StartCellY", 2, 497);
@@ -271,6 +275,8 @@ namespace DaggerfallWorkshop
             SetFloat(sectionControls, "WeaponSensitivity", WeaponSensitivity);
             SetBool(sectionControls, "ClickToAttack", ClickToAttack);
             SetInt(sectionControls, "CameraRecoilStrength", CameraRecoilStrength);
+            SetFloat(sectionControls, "SoundVolume", SoundVolume);
+            SetFloat(sectionControls, "MusicVolume", MusicVolume);
 
             SetInt(sectionStartup, "StartCellX", StartCellX);
             SetInt(sectionStartup, "StartCellY", StartCellY);
