@@ -101,6 +101,7 @@ namespace DaggerfallWorkshop
                 CurrentTime = audioSource.timeSamples;
                 EndTime = audioSource.clip.samples;
             }
+            audioSource.volume = DaggerfallUnity.Settings.MusicVolume;
         }
 
         void LateUpdate()
