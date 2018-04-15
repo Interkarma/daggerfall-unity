@@ -21,3 +21,4 @@ nextIcon,                   Next icon
 previousIcon,               Previous icon
 nameSpell,                  Name spell
 enterSpellName,             Enter spell name :
+noEffectsError,            You must add at least one effect to this spell.

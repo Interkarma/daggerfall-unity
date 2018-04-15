@@ -17,6 +17,7 @@ using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Weather;
 using DaggerfallWorkshop.Game.Questing;
+using DaggerfallWorkshop.Game.MagicAndEffects;
 using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Serialization
@@ -187,6 +188,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public PlayerEntity.RegionDataRecord[] regionData;
         public RoomRental_v1[] rentedRooms;
         public DaggerfallDisease[] diseases;
+        public EffectBundleSettings[] spellbook;
     }
 
     [fsObject("v1")]

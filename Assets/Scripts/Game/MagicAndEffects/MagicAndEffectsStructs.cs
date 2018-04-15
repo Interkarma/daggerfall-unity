@@ -16,6 +16,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     /// <summary>
     /// Duration, Chance, Magnitude settings for an effect.
     /// </summary>
+    [Serializable]
     public struct EffectSettings
     {
         public int DurationBase;
@@ -36,6 +37,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     /// <summary>
     /// For storing effect in bundle settings.
     /// </summary>
+    [Serializable]
     public struct EffectEntry
     {
         public string Key;
@@ -45,12 +47,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     /// <summary>
     /// Settings for an entity effect bundle.
     /// </summary>
+    [Serializable]
     public struct EffectBundleSettings
     {
+        public int Version;
         public BundleTypes BundleType;
         public TargetTypes TargetType;
         public ElementTypes ElementType;
-
+        public string Name;
+        public int IconIndex;
         public EffectEntry[] Effects;
     }
 }

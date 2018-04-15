@@ -73,6 +73,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(ExecuteScript.name, ExecuteScript.description, ExecuteScript.usage, ExecuteScript.Execute);
             ConsoleCommandsDatabase.RegisterCommand(AddInventoryItem.name, AddInventoryItem.description, AddInventoryItem.usage, AddInventoryItem.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ShowBankWindow.name, ShowBankWindow.description, ShowBankWindow.usage, ShowBankWindow.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(ShowSpellmakerWindow.name, ShowSpellmakerWindow.description, ShowSpellmakerWindow.usage, ShowSpellmakerWindow.Execute);
             ConsoleCommandsDatabase.RegisterCommand(StartQuest.name, StartQuest.usage, StartQuest.description, StartQuest.Execute);
 
             ConsoleCommandsDatabase.RegisterCommand(CastEffect.name, CastEffect.usage, CastEffect.description, CastEffect.Execute);
@@ -1486,6 +1487,19 @@ namespace Wenzil.Console
 
             }
 
+        }
+
+        private static class ShowSpellmakerWindow
+        {
+            public static readonly string name = "showspellmaker";
+            public static readonly string description = "Opens a spellmaker window for creating spells";
+            public static readonly string usage = "showspellmaker";
+
+            public static string Execute(params string[] args)
+            {
+                DaggerfallUI.UIManager.PostMessage(DaggerfallUIMessages.dfuiOpenSpellMakerWindow);
+                return "Finished";
+            }
         }
 
         private static class StartQuest

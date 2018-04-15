@@ -179,9 +179,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             InitEffectSlots();
 
+            SetDefaults();
+        }
+
+        void SetDefaults()
+        {
             allowedTargets = defaultTargetFlags;
             allowedElements = defaultElementFlags;
             selectedIcon = defaultSpellIcon;
+
+            for (int i = 0; i < maxEffectsPerSpell; i++)
+            {
+                effectEntries[i] = new EffectEntry();
+            }
 
             if (IsSetup)
             {
@@ -565,6 +575,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             selectIconButton.BackgroundTexture = DaggerfallUI.Instance.SpellIconCollection.GetIcon(selectedIcon);
         }
 
+        List<EffectEntry> GetEffectEntries()
+        {
+            // Get a list of actual effect entries and ignore empty slots
+            List<EffectEntry> effects = new List<EffectEntry>();
+            for (int i = 0; i < maxEffectsPerSpell; i++)
+            {
+                if (!string.IsNullOrEmpty(effectEntries[i].Key))
+                    effects.Add(effectEntries[i]);
+            }
+
+            return effects;
+        }
+
         #endregion
 
         #region Button Events
@@ -603,14 +626,76 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void BuyButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            //const int notEnoughGold = 1702;
+            //const int noSpellBook = 1703;
+            const int youMustChooseAName = 1704;
+            const int spellHasBeenInscribed = 1705;
+
+            // TODO:
+            //   Implement costs and remove gold from player and block if user does not have enough gold (message 1702)
+            //   Spells will be free (both gold and spell points) during build-out of effect system.
+
+            // NOTES:
+            //  In classic, player must have a spellbook item in their inventory (message 1703).
+            //  In Daggerfall Unity, the spellbook is a permanent item that all players own and cannot be removed.
+            //  This is to prevent player accidentally dropping or selling their spellbook.
+            //  So not performing spellbook check at this time and 1703 is never shown.
+
+            // Spell must have at least one effect - adding custom message
+            List<EffectEntry> effects = GetEffectEntries();
+            if (effects.Count == 0)
+            {
+                DaggerfallMessageBox mbNoEffects = DaggerfallUI.MessageBox(TextManager.Instance.GetText("SpellmakerUI", "noEffectsError"));
+                mbNoEffects.ClickAnywhereToClose = true;
+                mbNoEffects.PreviousWindow = this;
+                mbNoEffects.Show();
+                return;
+            }
+
+            // Spell must have a name
+            if (string.IsNullOrEmpty(spellNameLabel.Text))
+            {
+                DaggerfallMessageBox mbNoName = DaggerfallUI.MessageBox(youMustChooseAName);
+                mbNoName.ClickAnywhereToClose = true;
+                mbNoName.PreviousWindow = this;
+                mbNoName.Show();
+                return;
+            }
+
+            // Create effect bundle settings
+            EffectBundleSettings spell = new EffectBundleSettings();
+            spell.Version = 1;
+            spell.BundleType = BundleTypes.Spell;
+            spell.TargetType = selectedTarget;
+            spell.ElementType = selectedElement;
+            spell.Name = spellNameLabel.Text;
+            spell.IconIndex = selectedIcon;
+            spell.Effects = effects.ToArray();
+
+            // Add to player entity spellbook
+            GameManager.Instance.PlayerEntity.AddSpell(spell);
+
+            // Notify player and exit when this messagebox is dismissed
+            DaggerfallMessageBox mbComplete = DaggerfallUI.MessageBox(spellHasBeenInscribed);
+            mbComplete.ClickAnywhereToClose = true;
+            mbComplete.PreviousWindow = this;
+            mbComplete.OnClose += SpellHasBeenInscribed_OnClose;
+            mbComplete.Show();
+        }
+
+        private void SpellHasBeenInscribed_OnClose()
+        {
+            SetDefaults();
         }
 
         private void NewSpellButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            SetDefaults();
         }
 
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            CloseWindow();
         }
 
         private void CasterOnlyButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
