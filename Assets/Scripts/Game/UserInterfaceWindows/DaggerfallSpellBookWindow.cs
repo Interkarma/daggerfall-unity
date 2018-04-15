@@ -3,8 +3,8 @@
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
-// Original Author: Lypyl (lypyldfa@dgmail.com)
-// Contributors:    Gavin Clayton (interkarma@dfworkshop.net)
+// Original Author: Lypyl (lypyldf@gmail.com), Gavin Clayton (interkarma@dfworkshop.net)
+// Contributors:    
 // 
 // Notes:
 //
@@ -95,7 +95,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             listBox.MaxCharacters           = 22;
             listBox.Name                    = "spell_list";
             listBox.OnMouseClick            += listBox_OnMouseClickHandler;
-            listBox.OnMouseDoubleClick      += listBox_OnMouseDoubleClickHandler;
+            listBox.OnUseSelectedItem       += listBox_OnUseSelectedItem;
+            //listBox.OnMouseDoubleClick      += listBox_OnMouseDoubleClickHandler;
             listBox.OnMouseScrollDown       += listBox_OnMouseScroll;
             listBox.OnMouseScrollUp         += listBox_OnMouseScroll;
             mainPanel.Components.Add(listBox);
@@ -226,9 +227,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 SetEffectLabel(labels, new string[] { labels[0].Name, labels[1].Name });
             }
 
-            for (int i = 0; i < 50; i++)
+            EffectBundleSettings[] spellbook = GameManager.Instance.PlayerEntity.GetSpells();
+            if (spellbook != null)
             {
-                listBox.AddItem(i + "- spell name");
+                for (int i = 0; i < spellbook.Length; i++)
+                {
+                    listBox.AddItem(spellbook[i].Name);
+                }
             }
 
 #if LAYOUT
@@ -380,12 +385,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Refresh = true;
         }
 
-        //handles double clicks on the spell list
-        void listBox_OnMouseDoubleClickHandler(BaseScreenComponent sender, Vector2 position)
-        {
-            //TODO
-            Debug.Log("list box Double Clicked");
+        ////handles double clicks on the spell list
+        //void listBox_OnMouseDoubleClickHandler(BaseScreenComponent sender, Vector2 position)
+        //{
+        //    //TODO
+        //    Debug.Log("list box Double Clicked");
 
+        //    // TEMP: Issue a fake spell to player's effect manager
+        //    // This will expand and eventually be replaced with real spells
+        //    // Currently just setting up spellcasting front-end and animations
+        //    EntityEffectManager playerEffectManager = GameManager.Instance.PlayerEffectManager;
+        //    if (playerEffectManager)
+        //    {
+        //        playerEffectManager.SetReadySpell(new FakeSpell());
+        //        CloseWindow();
+        //    }
+        //}
+
+        private void listBox_OnUseSelectedItem()
+        {
             // TEMP: Issue a fake spell to player's effect manager
             // This will expand and eventually be replaced with real spells
             // Currently just setting up spellcasting front-end and animations

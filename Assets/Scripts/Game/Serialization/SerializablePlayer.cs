@@ -138,6 +138,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.playerEntity.darkBrotherhoodRequirementTally = entity.DarkBrotherhoodRequirementTally;
             data.playerEntity.timeToBecomeVampireOrWerebeast = entity.TimeToBecomeVampireOrWerebeast;
             data.playerEntity.lastTimePlayerAteOrDrankAtTavern = entity.LastTimePlayerAteOrDrankAtTavern;
+            data.playerEntity.spellbook = entity.SerializeSpellbook();
 
             data.playerEntity.regionData = entity.RegionData;
             data.playerEntity.rentedRooms = entity.RentedRooms.ToArray();
@@ -331,6 +332,8 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             // Restore guild memberships - now done early in SaveLoadManager, not repeating here
             //GameManager.Instance.GuildManager.RestoreMembershipData(data.guildMemberships);
+
+            entity.DeserializeSpellbook(data.playerEntity.spellbook);
         }
 
         public void RestorePosition(PlayerPositionData_v1 positionData)

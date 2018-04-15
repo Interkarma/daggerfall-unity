@@ -19,6 +19,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Game.MagicAndEffects;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
@@ -49,6 +50,9 @@ namespace DaggerfallWorkshop.Game.Entity
         protected sbyte[] armorValues = new sbyte[NumberBodyParts];
 
         bool quiesce = false;
+
+        // Temp entity spellbook
+        List<EffectBundleSettings> spellbook = new List<EffectBundleSettings>();
 
         #endregion
 
@@ -308,6 +312,66 @@ namespace DaggerfallWorkshop.Game.Entity
                     }
                 }
             }
+        }
+
+        #endregion
+
+        #region Temp Spellbook Helpers
+
+        // NOTES:
+        //  Likely to add a custom spell collection class later for spellbook
+        //  Currently just need to wire up different ends of the systems and a simple collection will do here
+        //  These old v1 spells will be removed at some point in future when ready
+
+        public int SpellbookCount()
+        {
+            return spellbook.Count;
+        }
+
+        public bool GetSpell(int index, out EffectBundleSettings spell)
+        {
+            if (index < 0 || index > spellbook.Count - 1)
+            {
+                spell = new EffectBundleSettings();
+                return false;
+            }
+
+            spell = spellbook[index];
+            return false;
+        }
+
+        public EffectBundleSettings[] GetSpells()
+        {
+            return spellbook.ToArray();
+        }
+
+        public void AddSpell(EffectBundleSettings spell)
+        {
+            // Daggerfall appears to add new spells to front of list
+            // This may be changed later in Daggerfall Unity to use an alpha sorted list
+            spellbook.Insert(0, spell);
+        }
+
+        public void DeleteSpell(int index)
+        {
+            if (index < 0 || index > spellbook.Count - 1)
+                return;
+
+            spellbook.RemoveAt(index);
+        }
+
+        public EffectBundleSettings[] SerializeSpellbook()
+        {
+            return spellbook.ToArray();
+        }
+
+        public void DeserializeSpellbook(EffectBundleSettings[] otherSpellbook)
+        {
+            if (otherSpellbook == null || otherSpellbook.Length == 0)
+                return;
+
+            spellbook = new List<EffectBundleSettings>();
+            spellbook.AddRange(otherSpellbook);
         }
 
         #endregion
