@@ -19,6 +19,9 @@ using DaggerfallWorkshop.Game.MagicAndEffects;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
+    /// <summary>
+    /// Spellmaker UI.
+    /// </summary>
     public class DaggerfallSpellMakerWindow : DaggerfallPopupWindow
     {
         #region UI Rects
