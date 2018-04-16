@@ -22,7 +22,6 @@ namespace DaggerfallWorkshop.Game
             get { return bobStyle; }
         }
         private PlayerMotor playerMotor;
-        //private Rigidbody RigidB;
         private Camera mainCamera;
 
         public Vector3 restPos; //local position where your camera would rest when it's not bobbing.
@@ -121,14 +120,14 @@ namespace DaggerfallWorkshop.Game
                 beginTransitionTimer += velocity * bobSpeed * Time.deltaTime;
                 newPosition = PlotPath();
 
-                if (beginTransitionTimer <= Mathf.PI / 2)
+                if (beginTransitionTimer <= Mathf.PI)
                 {
-                    newPosition = InterpolateBeginTransition(); // smooth out beginning
+                    newPosition = InterpolateBeginTransition(newPosition); // smooth out beginning
                 }
             }
             else
             {
-                timer = Mathf.PI / 2; //reinitialize
+                timer = Mathf.PI; //reinitialize
                 beginTransitionTimer = 0; // reset
 
                 newPosition = InterpolateEndTransition();
@@ -155,10 +154,10 @@ namespace DaggerfallWorkshop.Game
             return new Vector3(Mathf.Lerp(camPos.x, restPos.x, t), Mathf.Lerp(camPos.y, restPos.y, t), Mathf.Lerp(camPos.z, restPos.z, t)); //transition smoothly from walking to stopping.
         }
 
-        public Vector3 InterpolateBeginTransition() // interpolates a gradual path from not moving to moving.
+        public Vector3 InterpolateBeginTransition(Vector3 newPosition) // interpolates a gradual path from not moving to moving.
         {
-            float t = transitionSpeed * Time.deltaTime; ; // transitionSpeed * Time.deltaTime;
-            return new Vector3(Mathf.Lerp(camPos.x, restPos.x, t), Mathf.Lerp(camPos.y, restPos.y, t), Mathf.Lerp(camPos.z, restPos.z, t)); //transition smoothly from walking to stopping.
+            float t = (timer % Mathf.PI) / Mathf.PI;
+            return new Vector3(Mathf.Lerp(camPos.x, newPosition.x, t), Mathf.Lerp(camPos.y, newPosition.y, t), Mathf.Lerp(camPos.z, newPosition.x, t)); //transition smoothly from stopped to moving.
         }
 
 
