@@ -445,21 +445,31 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return textLabel;
         }
 
+        private void AddLabel(Panel panel, string label, string toolTip)
+        {
+            TextLabel titleLabel = new TextLabel();
+            titleLabel.Position = new Vector2(0, y);
+            titleLabel.TextScale = itemTextScale;
+            titleLabel.Text = label;
+            titleLabel.TextColor = itemColor;
+            titleLabel.ShadowColor = Color.clear;
+            titleLabel.ToolTip = defaultToolTip;
+            titleLabel.ToolTipText = toolTip;
+            panel.Components.Add(titleLabel);
+        }
+
         /// <summary>
         /// Add a checkbox option.
         /// </summary>
         private Checkbox AddCheckbox(Panel panel, string text, string tip, bool isChecked)
         {
-            Checkbox checkbox = new Checkbox();
+            Checkbox checkbox = DaggerfallUI.AddCheckbox(new Vector2(0, y), isChecked, panel);
             checkbox.Label.Text = text;
             checkbox.Label.TextColor = itemColor;
             checkbox.Label.TextScale = itemTextScale;
             checkbox.CheckBoxColor = itemColor;
             checkbox.ToolTip = defaultToolTip;
             checkbox.ToolTipText = tip;
-            checkbox.IsChecked = isChecked;
-            checkbox.Position = new Vector2(0, y);
-            panel.Components.Add(checkbox);
             y += itemSpacing;
 
             return checkbox;
@@ -470,11 +480,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private HorizontalSlider AddSlider(Panel panel, string title, string toolTip, int minValue, int maxValue, int startValue)
         {
-            var slider = GetBaseSlider(panel, title, toolTip);
-            slider.SetIndicator(minValue, maxValue, startValue);
-            slider.IndicatorOffset = 15;
-            slider.Indicator.ShadowColor = Color.clear;
-            return slider;
+            return AddSlider(panel, title, toolTip, (x) => x.SetIndicator(minValue, maxValue, startValue));
         }
 
         /// <summary>
@@ -482,11 +488,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private HorizontalSlider AddSlider(Panel panel, string title, string toolTip, float minValue, float maxValue, float startValue)
         {
-            var slider = GetBaseSlider(panel, title, toolTip);
-            slider.SetIndicator(minValue, maxValue, startValue);
-            slider.IndicatorOffset = 15;
-            slider.Indicator.ShadowColor = Color.clear;
-            return slider;
+            return AddSlider(panel, title, toolTip, (x) => x.SetIndicator(minValue, maxValue, startValue));
         }
 
         /// <summary>
@@ -494,36 +496,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private HorizontalSlider AddSlider(Panel panel, string title, string toolTip, int selected, params string[] choices)
         {
-            var slider = GetBaseSlider(panel, title, toolTip);
-            slider.SetIndicator(choices, selected);
-            slider.IndicatorOffset = 15;
-            slider.Indicator.ShadowColor = Color.clear;
-            return slider;
+            return AddSlider(panel, title, toolTip, (x) => x.SetIndicator(choices, selected));
         }
 
-        private HorizontalSlider GetBaseSlider(Panel panel, string title, string toolTip)
+        private HorizontalSlider AddSlider(Panel panel, string title, string toolTip, Action<HorizontalSlider> setIndicator)
         {
-            // Title
-            TextLabel titleLabel = new TextLabel();
-            titleLabel.Position = new Vector2(0, y);
-            titleLabel.TextScale = itemTextScale;
-            titleLabel.Text = title;
-            titleLabel.TextColor = itemColor;
-            titleLabel.ShadowColor = Color.clear;
-            titleLabel.ToolTip = defaultToolTip;
-            titleLabel.ToolTipText = toolTip;
-            panel.Components.Add(titleLabel);
-
+            AddLabel(panel, title, toolTip);
             y += 6;
-
-            // Slider
-            var slider = new HorizontalSlider();
-            slider.Position = new Vector2(0, y);
-            slider.Size = new Vector2(80.0f, 4.0f);
-            slider.DisplayUnits = 20;
-            slider.BackgroundColor = sliderBackgroundColor;
-            slider.TintColor = new Color(153, 153, 0);
-            panel.Components.Add(slider);
+            HorizontalSlider slider = DaggerfallUI.AddSlider(new Vector2(0, y), setIndicator, itemTextScale, panel);
 
             y += itemSpacing;
             return slider;
@@ -531,18 +511,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private TextBox AddTextbox(Panel panel, string title, string toolTip, string text)
         {
-            // Title
-            TextLabel titleLabel = new TextLabel();
-            titleLabel.Position = new Vector2(0, y);
-            titleLabel.TextScale = itemTextScale;
-            titleLabel.Text = title;
-            titleLabel.TextColor = itemColor;
-            titleLabel.ShadowColor = Color.clear;
-            titleLabel.ToolTip = defaultToolTip;
-            titleLabel.ToolTipText = toolTip;
-            panel.Components.Add(titleLabel);
-
-            // TextBox
+            AddLabel(panel, title, toolTip);
             TextBox textBox = new TextBox();
             textBox.Position = new Vector2(0, y);
             textBox.HorizontalAlignment = HorizontalAlignment.Right;
@@ -561,24 +530,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private Button AddColorPicker(Panel panel, string title, string toolTip, Color color)
         {
-            TextLabel textLabel = new TextLabel();
-            textLabel.Position = new Vector2(0, y);
-            textLabel.TextScale = itemTextScale;
-            textLabel.Text = title;
-            textLabel.TextColor = itemColor;
-            textLabel.ShadowColor = Color.clear;
-            textLabel.ToolTip = defaultToolTip;
-            textLabel.ToolTipText = toolTip;
-            panel.Components.Add(textLabel);
-
-            Button colorPicker = new Button();
-            colorPicker.Position = new Vector2(panel.Size.x / 2, y);
-            colorPicker.AutoSize = AutoSizeModes.None;
-            colorPicker.Size = new Vector2(40, 6);
-            colorPicker.BackgroundColor = color;
-            colorPicker.Outline.Enabled = false;
-            colorPicker.OnMouseClick += ColorPicker_OnMouseClick;
-            panel.Components.Add(colorPicker);
+            AddLabel(panel, title, toolTip);
+            Button colorPicker = DaggerfallUI.AddColorPicker(new Vector2(panel.Size.x / 2, y), color, uiManager, this, panel);
 
             y += itemSpacing;
             return colorPicker;
@@ -615,12 +568,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void Resolution_OnScroll()
         {
             applyScreenChanges = true;
-        }
-
-        private void ColorPicker_OnMouseClick(BaseScreenComponent sender, Vector2 position)
-        {
-            var colorPicker = new ColorPicker(uiManager, this, (Button)sender);
-            uiManager.PushWindow(colorPicker);
         }
 
         #endregion

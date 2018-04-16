@@ -10,6 +10,7 @@
 //
 
 using UnityEngine;
+using System;
 using System.IO;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
@@ -721,6 +722,18 @@ namespace DaggerfallWorkshop.Game
             return button;
         }
 
+        public static Checkbox AddCheckbox(Vector2 position, bool isChecked, Panel panel = null)
+        {
+            Checkbox checkbox = new Checkbox();
+            checkbox.Position = position;
+            checkbox.Size = new Vector2(2, 2);
+            checkbox.CheckBoxColor = Color.white;
+            checkbox.IsChecked = isChecked;
+            if (panel != null)
+                panel.Components.Add(checkbox);
+            return checkbox;
+        }
+
         public static TextLabel AddTextLabel(PixelFont font, Vector2 position, string text, Panel panel = null, int glyphSpacing = 1)
         {
             TextLabel textLabel = new TextLabel();
@@ -743,6 +756,24 @@ namespace DaggerfallWorkshop.Game
             textBox.DefaultText = defaultText;
             textBox.MaxCharacters = maxCharacters;
             textBox.TextOffset = 2;
+
+            if (panel != null)
+                panel.Components.Add(textBox);
+
+            return textBox;
+        }
+
+        public static TextBox AddTextBoxWithFocus(Rect rect, string defaultText, Panel panel = null, int maxCharacters = -1, DaggerfallFont font = null)
+        {
+            TextBox textBox = new TextBox(font);
+            textBox.Position = rect.position;
+            textBox.Size = rect.size;
+            textBox.FixedSize = true;
+            textBox.DefaultText = defaultText;
+            if (maxCharacters > 0)
+                textBox.MaxCharacters = maxCharacters;
+            textBox.UseFocus = true;
+            textBox.Outline.Enabled = true;
 
             if (panel != null)
                 panel.Components.Add(textBox);
@@ -773,6 +804,41 @@ namespace DaggerfallWorkshop.Game
             textLabel.ShadowPosition = DaggerfallDefaultShadowPos;
 
             return textLabel;
+        }
+
+        public static HorizontalSlider AddSlider(Vector2 position, Action<HorizontalSlider> setIndicator, float textScale = 1, Panel panel = null)
+        {
+            var slider = new HorizontalSlider();
+            slider.Position = position;
+            slider.Size = new Vector2(80.0f, 4.0f);
+            slider.DisplayUnits = 20;
+            slider.BackgroundColor = new Color(0.5f, 0.5f, 0.5f, 0.3f);
+            slider.TintColor = new Color(153, 153, 0);
+            if (panel != null)
+                panel.Components.Add(slider);
+
+            setIndicator(slider);
+            slider.IndicatorOffset = 15;
+            slider.Indicator.TextScale = textScale;
+            slider.Indicator.TextColor = Color.white;
+            slider.Indicator.ShadowColor = Color.clear;
+            slider.Indicator.HorizontalTextAlignment = TextLabel.HorizontalTextAlignmentSetting.Right;
+            return slider;
+        }
+
+        public static Button AddColorPicker(Vector2 position, Color32 color, IUserInterfaceManager uiManager, DaggerfallBaseWindow previous = null, Panel panel = null)
+        {
+            Button preview = new Button();
+            preview.Position = position;
+            preview.AutoSize = AutoSizeModes.None;
+            preview.Size = new Vector2(40, 6);
+            preview.Outline.Enabled = true;
+            preview.BackgroundColor = color;
+            preview.OnMouseClick += (BaseScreenComponent sender, Vector2 pos) =>
+                uiManager.PushWindow(new ColorPicker(uiManager, previous, (Button)sender));
+            if (panel != null)
+                panel.Components.Add(preview);
+            return preview;
         }
 
         public static Outline AddOutline(Rect rect, Color color, Panel panel = null)
