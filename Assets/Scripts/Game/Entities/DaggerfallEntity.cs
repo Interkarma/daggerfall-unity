@@ -347,9 +347,9 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public void AddSpell(EffectBundleSettings spell)
         {
-            // Daggerfall appears to add new spells to front of list
-            // This may be changed later in Daggerfall Unity to use an alpha sorted list
-            spellbook.Insert(0, spell);
+            // Just add spell to end of list for now
+            // When implemented, the real collection class will allow for custom sorting
+            spellbook.Add(spell);
         }
 
         public void DeleteSpell(int index)
