@@ -9,17 +9,9 @@
 // Notes:
 //
 
-//#define LAYOUT
-
 using UnityEngine;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using DaggerfallWorkshop.Game.UserInterface;
-using DaggerfallConnect.Arena2;
-using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.MagicAndEffects;
-
 
 //Spellbook / spell buying effect text starts at 1200
 //spell creator effect text starts at index 15xx. 
@@ -27,27 +19,44 @@ using DaggerfallWorkshop.Game.MagicAndEffects;
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
     /// <summary>
-    /// The Spellbook window.  Still very much a W.I.P.
+    /// Spellbook UI.
     /// </summary>
     public class DaggerfallSpellBookWindow : DaggerfallPopupWindow
     {
-        const string SPELLBOOKIMAGENAME     = "SPBK00I0.IMG";
-        const string ICONIMAGENAME          = "ICON00I0.IMG";
-        const string RANGEICONSIMAGENAME    = "MASK04I0.IMG";
-        const string CHANGETEXT             = "Enter Spell Name: ";
+        #region UI Rects
 
+        Vector2 spellNameLabelPos = new Vector2(123, 2);
+        Vector2 spellPointsLabelPos = new Vector2(214, 2);
 
-        Texture2D nativeTexture;
+        Rect mainPanelRect = new Rect(0, 0, 259, 164);
+        Rect spellsListBoxRect = new Rect(5, 13, 110, 130);
+        Rect deleteButtonRect = new Rect(3, 152, 38, 9);
+        Rect upButtonRect = new Rect(48, 152, 38, 9);
+        Rect downButtonRect = new Rect(132, 152, 38, 9);
+        Rect sortButtonRect = new Rect(90, 152, 38, 9);
+        Rect upArrowButtonRect = new Rect(121, 11, 9, 16);
+        Rect downArrowButtonRect = new Rect(121, 132, 9, 16);
+        Rect exitButtonRect = new Rect(216, 149, 43, 15);
+        Rect spellsListScrollBarRect =  new Rect(122, 28, 7, 103);
+        Rect spellIconPanelRect = new Rect(149.25f, 14, 16, 16);
+        Rect spellTargetPanelRect = new Rect(182, 14, 25, 16);
+        Rect spellElementIconPanelRect = new Rect(223, 14, 16, 16);
+        Rect effect1PanelRect = new Rect(138, 40, 118, 28);
+        Rect effect2PanelRect = new Rect(138, 78, 118, 28);
+        Rect effect3PanelRect = new Rect(138, 116, 118, 28);
 
-        ListBox listBox;                    //main spell list
-        VerticalScrollBar scrollBar;
+        #endregion
+
+        #region UI Controls
+
+        ListBox spellsListBox;
+        VerticalScrollBar spellsListScrollBar;
 
         Panel mainPanel;
-        Panel spellIcon;
-        Panel spellRangeIcon;
-        Panel spellElementIcon;
+        Panel spellIconPanel;
+        Panel spellTargetIconPanel;
+        Panel spellElementIconPanel;
         Panel[] spellEffectPanels;
-
 
         Button exitButton;
         Button deleteButton;
@@ -57,209 +66,221 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button upArrowButton;
         Button downArrowButton;
 
-        TextLabel spellName;                    //name of selected spell at top
-        TextLabel spellPoints;                  //spell points label at top
-        TextLabel[] spellEffectLabels;          //effect labels - 2 for each effect (6 total)
+        TextLabel spellNameLabel;
+        TextLabel spellPointsLabel;
+        TextLabel[] spellEffectLabels;
 
-        int SelectedIndex   { get { return listBox.SelectedIndex; } }
-        bool ValidIndex     { get { return SelectedIndex >= 0 && SelectedIndex < listBox.Count; } }
+        #endregion
+
+        #region UI Textures
+
+        Texture2D baseTexture;
+
+        #endregion
+
+        #region Fields
+
+        const string textDatabase = "SpellmakerUI";
+
+        const string spellBookTextureFilename = "SPBK00I0.IMG";
+        const string ICONIMAGENAME = "ICON00I0.IMG";
+        const string RANGEICONSIMAGENAME = "MASK04I0.IMG";
+        const string CHANGETEXT = "Enter Spell Name: ";
+
+        #endregion
+
+        #region Properties
+
+        int SelectedIndex   { get { return spellsListBox.SelectedIndex; } }
+        bool ValidIndex     { get { return SelectedIndex >= 0 && SelectedIndex < spellsListBox.Count; } }
         bool Refresh        { get; set; }
+
+        #endregion
+
+        #region Constructors
 
         public DaggerfallSpellBookWindow(IUserInterfaceManager uiManager, DaggerfallBaseWindow previous = null)
             : base(uiManager, previous)
         {
         }
 
+        #endregion
+
+        #region Setup Methods
+
         protected override void Setup()
         {
-            base.Setup();
+            // Load all textures used by spellbook window
+            LoadTextures();
 
+            // Always dim background
             ParentPanel.BackgroundColor = ScreenDimColor;
 
-            nativeTexture = DaggerfallUI.GetTextureFromImg(SPELLBOOKIMAGENAME);
-            if (!nativeTexture)
-                throw new Exception("DaggerfallTravelMap: Could not load native texture.");
+            // Setup main layout
+            SetupMain();
 
-            mainPanel                       = new Panel();
-            mainPanel.BackgroundTexture     = nativeTexture;
-            mainPanel.Size                  = new Vector2(259, 164);
-            mainPanel.HorizontalAlignment   = HorizontalAlignment.Center;
-            mainPanel.VerticalAlignment     = VerticalAlignment.Middle;
-            mainPanel.Name                  = "main_panel";
-            NativePanel.Components.Add(mainPanel);
-
-            listBox = new ListBox();
-            listBox.Position                = new Vector2(5, 12);
-            listBox.Size                    = new Vector2(111, 132);
-            listBox.RowsDisplayed           = 16;
-            listBox.MaxCharacters           = 22;
-            listBox.Name                    = "spell_list";
-            listBox.OnMouseClick            += listBox_OnMouseClickHandler;
-            listBox.OnUseSelectedItem       += listBox_OnUseSelectedItem;
-            //listBox.OnMouseDoubleClick      += listBox_OnMouseDoubleClickHandler;
-            listBox.OnMouseScrollDown       += listBox_OnMouseScroll;
-            listBox.OnMouseScrollUp         += listBox_OnMouseScroll;
-            mainPanel.Components.Add(listBox);
-
-            deleteButton                = DaggerfallUI.AddButton(new Rect(3, 152, 38, 9), mainPanel);
-            deleteButton.Name           = "delete_button";
-            deleteButton.OnMouseClick   += deleteButton_OnMouseClick;
-
-            upButton                    = DaggerfallUI.AddButton(new Rect(48, 152, 38, 9), mainPanel);
-            upButton.Name                = "up_button";
-            upButton.OnMouseClick       += swapButton_OnMouseClick;
-
-            sortButton                  = DaggerfallUI.AddButton(new Rect(90, 152, 38, 9), mainPanel);
-            sortButton.Name             = "sort_button";
-            sortButton.OnMouseClick     += sortButton_OnMouseClick;
-
-            downButton                  = DaggerfallUI.AddButton(new Rect(132, 152, 38, 9), mainPanel);
-            downButton.Name             = "down_button";
-            downButton.OnMouseClick     += swapButton_OnMouseClick;
-
-            upArrowButton               = DaggerfallUI.AddButton(new Rect(121, 11, 9, 16), mainPanel);
-            upArrowButton.Name          = "upArrow_button";
-            upArrowButton.OnMouseClick  += arrowButton_OnMouseClick;
-
-            downArrowButton             = DaggerfallUI.AddButton(new Rect(121, 132, 9, 16), mainPanel);
-            downArrowButton.Name        = "downArrow_button";
-            downArrowButton.OnMouseClick += arrowButton_OnMouseClick;
-
-            exitButton                  = DaggerfallUI.AddButton(new Rect(216, 149, 42.5f, 14.5f), mainPanel);
-            exitButton.Name             = "exit_button";
-            exitButton.OnMouseClick     += exitButton_OnMouseClick;
-
-            scrollBar                       = new VerticalScrollBar();
-            scrollBar.HorizontalAlignment   = HorizontalAlignment.None;
-            scrollBar.VerticalAlignment     = VerticalAlignment.None;
-            scrollBar.Position              = new Vector2(122, 28);
-            scrollBar.Size                  = new Vector2(7, 103);
-            scrollBar.TotalUnits            = listBox.Count;
-            scrollBar.DisplayUnits          = listBox.RowsDisplayed;
-            scrollBar.ScrollIndex           = 0;
-            scrollBar.Name                  = "scrollbar";
-            scrollBar.OnScroll              += ScrollBar_OnScroll;
-            mainPanel.Components.Add(scrollBar);
-
-            spellIcon                       = DaggerfallUI.AddPanel(new Rect(149.25f, 14, 16, 16), mainPanel);
-            spellIcon.Name                  = "spell_icon";
-            spellIcon.BackgroundTextureLayout = BackgroundLayout.StretchToFill;
-
-            spellRangeIcon                  = DaggerfallUI.AddPanel(new Rect(182, 14, 25, 16), mainPanel);
-            spellRangeIcon.Name             = "spellRange_icon";
-            spellRangeIcon.BackgroundTextureLayout = BackgroundLayout.StretchToFill;
-
-            spellElementIcon                = DaggerfallUI.AddPanel(new Rect(223, 14, 16, 16), mainPanel);
-            spellElementIcon.Name           = "spellEffect_icon";
-            spellElementIcon.BackgroundTextureLayout = BackgroundLayout.StretchToFill;
-
-            spellName                   = new TextLabel();
-            spellName.Position          = new Vector2(123, 1);
-            spellName.Size              = new Vector2(122, 7);
-            spellName.MaxCharacters     = 18;
-            spellName.Name              = "spellName_label";
-            spellName.OnMouseClick      += spellName_OnMouseClick;
-            mainPanel.Components.Add(spellName);
-
-            spellPoints                 = new TextLabel();
-            spellPoints.Position        = new Vector2(214, 1.5f);
-            spellPoints.Size            = new Vector2(40, 7);
-            spellPoints.MaxCharacters   = 12;
-            spellPoints.Text            = "1000/1000";
-            spellPoints.Name            = "spellPoints_label";
-            mainPanel.Components.Add(spellPoints);
-
-            spellEffectPanels = new Panel[3];
-
-            spellEffectPanels[0]              = new Panel();
-            spellEffectPanels[0].Position     = new Vector2(138, 40);
-            spellEffectPanels[0].Size         = new Vector2(118, 28);
-            spellEffectPanels[0].Name         = "effect_top";
-            spellEffectPanels[0].OnMouseClick += SpellEffectPanelClick;
-            mainPanel.Components.Add(spellEffectPanels[0]);
-
-            spellEffectPanels[1]              = new Panel();
-            spellEffectPanels[1].Position     = new Vector2(138, 78);
-            spellEffectPanels[1].Size         = new Vector2(118, 28);
-            spellEffectPanels[1].Name         = "effect_middle";
-            spellEffectPanels[1].OnMouseClick += SpellEffectPanelClick;
-            mainPanel.Components.Add(spellEffectPanels[1]);
-
-            spellEffectPanels[2]              = new Panel();
-            spellEffectPanels[2].Position     = new Vector2(138, 116);
-            spellEffectPanels[2].Size         = new Vector2(118, 28);
-            spellEffectPanels[2].Name         = "effect_bottom";
-            spellEffectPanels[2].OnMouseClick += SpellEffectPanelClick;
-            mainPanel.Components.Add(spellEffectPanels[2]);
-
-            //configure effect labels
-            spellEffectLabels               = new TextLabel[spellEffectPanels.Length * 2];
-
-            for (int i = 0; i < spellEffectLabels.Length; i++)
-            {
-                spellEffectLabels[i]                        = new TextLabel();
-                spellEffectLabels[i].MaxCharacters          = 24;
-                spellEffectLabels[i].Text                   = string.Format("index: {0} panel: {1}", i, i/2);
-                spellEffectLabels[i].Name                   = "effect_label_" + i;
-                spellEffectLabels[i].HorizontalAlignment    = HorizontalAlignment.Center;
-
-                if (i % 2 == 0)
-                    spellEffectLabels[i].Position           = new Vector2(spellEffectLabels[i].Position.x, spellEffectPanels[i/2].Size.y *.125f);
-                else
-                    spellEffectLabels[i].Position           = new Vector2(spellEffectLabels[i].Position.x, spellEffectPanels[i/2].Size.y * .5f);
-
-                spellEffectPanels[i/2].Components.Add(spellEffectLabels[i]);
-            }
+            // Setup controls
+            SetupButtons();
+            SetupIcons();
+            SetupLabels();
 
             Refresh = true;
 
             //##below just fills in examples for testing until spells are implemented
 
-            spellIcon.BackgroundTexture = GetSpellIcon(34);
-            spellRangeIcon.BackgroundTexture = GetSpellRangeIcon(0);
-            spellElementIcon.BackgroundTexture = GetElementTypeIcon(0);
-            spellName.Text = "selected spell";
+            //spellIcon.BackgroundTexture = GetSpellIcon(34);
+            //spellTargetIcon.BackgroundTexture = GetSpellRangeIcon(0);
+            //spellElementIcon.BackgroundTexture = GetElementTypeIcon(0);
+            //spellName.Text = "selected spell";
 
+            //for (int i = 0; i < spellEffectPanels.Length; i++)
+            //{
+            //    var labels = GetEffectLabels(i);
+            //    SetEffectLabel(labels, new string[] { labels[0].Name, labels[1].Name });
+            //}
 
-            for (int i = 0; i < spellEffectPanels.Length; i++)
-            {
-                var labels = GetEffectLabels(i);
-                SetEffectLabel(labels, new string[] { labels[0].Name, labels[1].Name });
-            }
-
+            // TEMP: Inject player spells
             EffectBundleSettings[] spellbook = GameManager.Instance.PlayerEntity.GetSpells();
             if (spellbook != null)
             {
                 for (int i = 0; i < spellbook.Length; i++)
                 {
-                    listBox.AddItem(spellbook[i].Name);
+                    spellsListBox.AddItem(spellbook[i].Name);
                 }
             }
-
-#if LAYOUT
-            SetBackgroundColors();
-#endif
-
         }
 
         public override void OnPush()
         {
-            base.OnPush();
-        }
-
-        public override void OnPop()
-        {
-            base.OnPop();
+            // TODO: Set defaults
         }
 
         public override void Update()
         {
             base.Update();
 
-
             if (Refresh)
                 UpdateSelection();
+        }
 
+        #endregion
+
+        #region Private Methods
+
+        void LoadTextures()
+        {
+            baseTexture = DaggerfallUI.GetTextureFromImg(spellBookTextureFilename);
+        }
+
+        void SetupMain()
+        {
+            // Main panel
+            mainPanel = DaggerfallUI.AddPanel(mainPanelRect, NativePanel);
+            mainPanel.BackgroundTexture = baseTexture;
+            mainPanel.HorizontalAlignment = HorizontalAlignment.Center;
+            mainPanel.VerticalAlignment = VerticalAlignment.Middle;
+
+            // Spells list
+            spellsListBox = new ListBox();
+            spellsListBox.Position = new Vector2(spellsListBoxRect.x, spellsListBoxRect.y);
+            spellsListBox.Size = new Vector2(spellsListBoxRect.width, spellsListBoxRect.height);
+            spellsListBox.RowsDisplayed = 16;
+            spellsListBox.MaxCharacters = 22;
+            spellsListBox.OnMouseClick += listBox_OnMouseClickHandler;
+            spellsListBox.OnUseSelectedItem += listBox_OnUseSelectedItem;
+            spellsListBox.OnMouseScrollDown += listBox_OnMouseScroll;
+            spellsListBox.OnMouseScrollUp += listBox_OnMouseScroll;
+            mainPanel.Components.Add(spellsListBox);
+
+            // Spells list scroller
+            spellsListScrollBar = new VerticalScrollBar();
+            spellsListScrollBar.HorizontalAlignment = HorizontalAlignment.None;
+            spellsListScrollBar.VerticalAlignment = VerticalAlignment.None;
+            spellsListScrollBar.Position = new Vector2(spellsListScrollBarRect.x, spellsListScrollBarRect.y);
+            spellsListScrollBar.Size = new Vector2(spellsListScrollBarRect.width, spellsListScrollBarRect.height);
+            spellsListScrollBar.TotalUnits = spellsListBox.Count;
+            spellsListScrollBar.DisplayUnits = spellsListBox.RowsDisplayed;
+            spellsListScrollBar.ScrollIndex = 0;
+            spellsListScrollBar.OnScroll += SpellsListScrollBar_OnScroll;
+            mainPanel.Components.Add(spellsListScrollBar);
+
+            // Spell effect panels
+            spellEffectPanels = new Panel[3];
+            spellEffectPanels[0] = DaggerfallUI.AddPanel(effect1PanelRect, mainPanel);
+            spellEffectPanels[0].OnMouseClick += SpellEffectPanelClick;
+            spellEffectPanels[1] = DaggerfallUI.AddPanel(effect2PanelRect, mainPanel);
+            spellEffectPanels[1].OnMouseClick += SpellEffectPanelClick;
+            spellEffectPanels[2] = DaggerfallUI.AddPanel(effect3PanelRect, mainPanel);
+            spellEffectPanels[2].OnMouseClick += SpellEffectPanelClick;
+        }
+
+        void SetupButtons()
+        {
+            // Bottom row buttons
+            deleteButton = DaggerfallUI.AddButton(deleteButtonRect, mainPanel);
+            deleteButton.OnMouseClick += deleteButton_OnMouseClick;
+            upButton = DaggerfallUI.AddButton(upButtonRect, mainPanel);
+            upButton.OnMouseClick += swapButton_OnMouseClick;
+            sortButton = DaggerfallUI.AddButton(sortButtonRect, mainPanel);
+            sortButton.OnMouseClick += sortButton_OnMouseClick;
+            downButton = DaggerfallUI.AddButton(downButtonRect, mainPanel);
+            downButton.OnMouseClick += swapButton_OnMouseClick;
+            exitButton = DaggerfallUI.AddButton(exitButtonRect, mainPanel);
+            exitButton.OnMouseClick += exitButton_OnMouseClick;
+
+            // Scroller buttons
+            upArrowButton = DaggerfallUI.AddButton(upArrowButtonRect, mainPanel);
+            upArrowButton.OnMouseClick += arrowButton_OnMouseClick;
+            downArrowButton = DaggerfallUI.AddButton(downArrowButtonRect, mainPanel);
+            downArrowButton.OnMouseClick += arrowButton_OnMouseClick;
+        }
+
+        void SetupIcons()
+        {
+            spellIconPanel = DaggerfallUI.AddPanel(spellIconPanelRect, mainPanel);
+            spellIconPanel.BackgroundColor = Color.black;
+            spellIconPanel.BackgroundTextureLayout = BackgroundLayout.StretchToFill;
+
+            spellTargetIconPanel = DaggerfallUI.AddPanel(spellTargetPanelRect, mainPanel);
+            spellTargetIconPanel.BackgroundColor = Color.black;
+            spellTargetIconPanel.BackgroundTextureLayout = BackgroundLayout.StretchToFill;
+
+            spellElementIconPanel = DaggerfallUI.AddPanel(spellElementIconPanelRect, mainPanel);
+            spellElementIconPanel.BackgroundColor = Color.black;
+            spellElementIconPanel.BackgroundTextureLayout = BackgroundLayout.StretchToFill;
+        }
+
+        void SetupLabels()
+        {
+            // Spell name
+            spellNameLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, spellNameLabelPos, string.Empty, mainPanel);
+            spellNameLabel.ShadowColor = DaggerfallUI.DaggerfallAlternateShadowColor1;
+            spellNameLabel.MaxCharacters = 18;
+            spellNameLabel.OnMouseClick += SpellNameLabel_OnMouseClick;
+
+            // Spell points
+            spellPointsLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, spellPointsLabelPos, string.Empty, mainPanel);
+            spellPointsLabel.ShadowColor = DaggerfallUI.DaggerfallAlternateShadowColor1;
+
+            // Effects
+            spellEffectLabels = new TextLabel[spellEffectPanels.Length * 2];
+
+            //spellEffectLabels = new TextLabel[spellEffectPanels.Length * 2];
+            //for (int i = 0; i < spellEffectLabels.Length; i++)
+            //{
+            //    spellEffectLabels[i] = new TextLabel();
+            //    spellEffectLabels[i].MaxCharacters = 24;
+            //    spellEffectLabels[i].Text = string.Format("index: {0} panel: {1}", i, i / 2);
+            //    spellEffectLabels[i].Name = "effect_label_" + i;
+            //    spellEffectLabels[i].HorizontalAlignment = HorizontalAlignment.Center;
+
+            //    if (i % 2 == 0)
+            //        spellEffectLabels[i].Position = new Vector2(spellEffectLabels[i].Position.x, spellEffectPanels[i / 2].Size.y * .125f);
+            //    else
+            //        spellEffectLabels[i].Position = new Vector2(spellEffectLabels[i].Position.x, spellEffectPanels[i / 2].Size.y * .5f);
+
+            //    spellEffectPanels[i / 2].Components.Add(spellEffectLabels[i]);
+            //}
         }
 
         //updates labels / icons etc. when something has changed
@@ -267,20 +288,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (!ValidIndex)
             {
-                if(listBox.Count > 0)
+                if(spellsListBox.Count > 0)
                 {
-                    listBox.SelectedIndex = 0;
-                    scrollBar.ScrollIndex = 0;
+                    spellsListBox.SelectedIndex = 0;
+                    spellsListScrollBar.ScrollIndex = 0;
                 }
                 else
                     return;
             }
 
-            scrollBar.Reset(listBox.RowsDisplayed, listBox.Count, listBox.ScrollIndex);
-            scrollBar.TotalUnits = listBox.Count;
-            scrollBar.ScrollIndex = listBox.ScrollIndex;
-            spellName.Text = listBox.SelectedItem;
-
+            spellsListScrollBar.Reset(spellsListBox.RowsDisplayed, spellsListBox.Count, spellsListBox.ScrollIndex);
+            spellsListScrollBar.TotalUnits = spellsListBox.Count;
+            spellsListScrollBar.ScrollIndex = spellsListBox.ScrollIndex;
+            spellNameLabel.Text = spellsListBox.SelectedItem;
 
             ///TODO:
             ///1. set spell icons
@@ -354,7 +374,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return iconTexture;
         }
 
-        #region event_handlers
+        #endregion
+
+        #region Events
 
         //handles clicks on the effect panels
         void SpellEffectPanelClick(BaseScreenComponent sender, Vector2 position)
@@ -422,10 +444,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Refresh = true;
         }
 
-        void ScrollBar_OnScroll()
+        void SpellsListScrollBar_OnScroll()
         {
-            Debug.Log("Scroll bar scrolling: " + listBox.ScrollIndex);
-            listBox.ScrollIndex = scrollBar.ScrollIndex;
+            //Debug.Log("Scroll bar scrolling: " + spellsListBox.ScrollIndex);
+            spellsListBox.ScrollIndex = spellsListScrollBar.ScrollIndex;
 
             Refresh = true;
         }
@@ -435,9 +457,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             Debug.Log("Arrow button clicked: " + sender.Name);
             if(sender.Name == upArrowButton.Name)
-                listBox.SelectPrevious();
+                spellsListBox.SelectPrevious();
             else if(sender.Name == downArrowButton.Name)
-                listBox.SelectNext();
+                spellsListBox.SelectNext();
 
             Refresh = true;
         }
@@ -463,10 +485,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             Debug.Log("swap position button clicked: " + sender.Name);
 
-            if(sender.Name == downButton.Name && listBox.SelectedIndex < listBox.Count-1)
-                listBox.SwapItems(listBox.SelectedIndex, ++listBox.SelectedIndex);
-            else if(sender.Name == upButton.Name && listBox.SelectedIndex > 0)
-                listBox.SwapItems(listBox.SelectedIndex, --listBox.SelectedIndex);
+            if(sender.Name == downButton.Name && spellsListBox.SelectedIndex < spellsListBox.Count-1)
+                spellsListBox.SwapItems(spellsListBox.SelectedIndex, ++spellsListBox.SelectedIndex);
+            else if(sender.Name == upButton.Name && spellsListBox.SelectedIndex > 0)
+                spellsListBox.SwapItems(spellsListBox.SelectedIndex, --spellsListBox.SelectedIndex);
 
             Refresh = true;
         }
@@ -480,7 +502,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         //spell name shown above spell icons
-        public void spellName_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        public void SpellNameLabel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             Debug.Log("SpellName label clicked");
 
@@ -490,7 +512,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallInputMessageBox renameSpellPrompt;
             renameSpellPrompt = new DaggerfallInputMessageBox(this.uiManager, this);
             renameSpellPrompt.SetTextBoxLabel(CHANGETEXT);
-            renameSpellPrompt.TextBox.Text = listBox.SelectedItem;
+            renameSpellPrompt.TextBox.Text = spellsListBox.SelectedItem;
             renameSpellPrompt.OnGotUserInput += renameSpellPromptHandler;
             uiManager.PushWindow(renameSpellPrompt);
 
@@ -506,44 +528,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
 
             //TODO - 
-            listBox.AddItem(input, listBox.SelectedIndex);
-            listBox.RemoveItem(SelectedIndex+1);
+            spellsListBox.AddItem(input, spellsListBox.SelectedIndex);
+            spellsListBox.RemoveItem(SelectedIndex+1);
 
         }
 
         #endregion
-
-
-#if LAYOUT
-
-        void SetBackgroundColors()
-        {
-            Color[] colors = new Color[]{
-                new Color(0,0,0, .75f),
-                new Color(1,0,0, .75f),
-                new Color(0,1,0, .75f),
-                new Color(0,0,0, .75f),
-                new Color(1, 1, 1, 0.75f),
-                new Color(1, 1, 0, 0.75f),
-                new Color(1, 0, 1, 0.75f),
-                new Color(0, 1, 1, 0.75f),
-            };
-
-
-            int i = 0;
-            int color_index = 0;
-            while (i < mainPanel.Components.Count)
-            {
-                if (color_index >= colors.Length)
-                    color_index = 0;
-
-                mainPanel.Components[i].BackgroundColor = colors[color_index];
-                i++;
-                color_index++;
-            }
-        }
-
-#endif
-
     }
 }
