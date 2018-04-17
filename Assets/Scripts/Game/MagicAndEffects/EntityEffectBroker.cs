@@ -167,6 +167,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// <returns>IEntityEffect</returns>
         public IEntityEffect GetEffectTemplate(string key)
         {
+            if (!HasEffectTemplate(key))
+                return null;
+
             return magicEffectTemplates[key];
         }
 
