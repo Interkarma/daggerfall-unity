@@ -369,10 +369,11 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public void DeserializeSpellbook(EffectBundleSettings[] otherSpellbook)
         {
+            spellbook = new List<EffectBundleSettings>();
+
             if (otherSpellbook == null || otherSpellbook.Length == 0)
                 return;
 
-            spellbook = new List<EffectBundleSettings>();
             spellbook.AddRange(otherSpellbook);
         }
 

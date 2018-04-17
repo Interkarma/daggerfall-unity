@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects
 {
@@ -85,6 +86,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             GameManager.Instance.PlayerSpellCasting.OnReleaseFrame += PlayerSpellCasting_OnReleaseFrame;
             EntityEffectBroker.OnNewMagicRound += EntityEffectBroker_OnNewMagicRound;
+            SaveLoadManager.OnLoad += SaveLoadManager_OnLoad;
         }
 
         private void Start()
@@ -205,6 +207,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         private void EntityEffectBroker_OnNewMagicRound()
         {
             DoMagicRound();
+        }
+
+        private void SaveLoadManager_OnLoad(SaveData_v1 saveData)
+        {
+            lastSpell = null;
+            readySpell = null;
         }
 
         #endregion
