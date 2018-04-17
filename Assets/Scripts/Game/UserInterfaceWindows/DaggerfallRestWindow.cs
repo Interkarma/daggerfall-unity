@@ -407,6 +407,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 CloseWindow();
                 DaggerfallUI.MessageBox(cityCampingIllegal);
+
+                // Register crime and start spawning guards
+                playerEntity.CrimeCommitted = PlayerEntity.Crimes.Vagrancy;
+                playerEntity.SpawnCityGuards(true);
+
                 return false;
             }
             else if ((inTown || !playerGPS.HasCurrentLocation) && playerEnterExit.IsPlayerInsideBuilding)

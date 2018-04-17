@@ -566,6 +566,9 @@ namespace DaggerfallWorkshop.Game.Utility
             // TODO: Import classic spellbook
             playerEntity.DeserializeSpellbook(null);
 
+            // Get last type of crime committed
+            playerEntity.CrimeCommitted = (PlayerEntity.Crimes)saveVars.CrimeCommitted;
+
             // Get weather
             byte[] climateWeathers = saveVars.ClimateWeathers;
 

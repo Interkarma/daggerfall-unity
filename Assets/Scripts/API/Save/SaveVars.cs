@@ -36,7 +36,7 @@ namespace DaggerfallConnect.Save
         const int globalVarsCount = 64;
 
         const int isDayOffset = 0x391;
-        const int typeOfCrimeCommittedOffset = 0x3A3;
+        const int crimeCommittedOffset = 0x3A3;
         const int inDungeonWaterOffset = 0x3A6;
         const int breathRemainingOffset = 0x3AB;
         const int climateWeathersOffset = 0x3B7;
@@ -83,7 +83,7 @@ namespace DaggerfallConnect.Save
         short lastSpellCost = 0; // The cost of the last spell that was readied. If the spell is aborted, these spell points are returned.
 
         bool isDay = false;
-        byte typeOfCrimeCommitted = 0;
+        byte crimeCommitted = 0;
         bool inDungeonWater = false;
         int breathRemaining = 0;
         byte[] climateWeathers; // Weather in each of the six weather climates
@@ -258,9 +258,9 @@ namespace DaggerfallConnect.Save
         /// <summary>
         /// Gets type of crime committed by player from savevars.
         /// </summary>
-        public byte TypeOfCrimeCommitted
+        public byte CrimeCommitted
         {
-            get { return typeOfCrimeCommitted; }
+            get { return crimeCommitted; }
         }
 
         /// <summary>
@@ -416,7 +416,7 @@ namespace DaggerfallConnect.Save
             ReadGlobalVars(reader);
             ReadLastSpellCost(reader);
             ReadIsDay(reader);
-            ReadTypeOfCrimeCommitted(reader);
+            ReadCrimeCommitted(reader);
             ReadInDungeonWater(reader);
             ReadClimateWeathers(reader);
             ReadWeaponDrawn(reader);
@@ -490,10 +490,10 @@ namespace DaggerfallConnect.Save
                 isDay = true;
         }
 
-        void ReadTypeOfCrimeCommitted(BinaryReader reader)
+        void ReadCrimeCommitted(BinaryReader reader)
         {
-            reader.BaseStream.Position = typeOfCrimeCommittedOffset;
-            typeOfCrimeCommitted = reader.ReadByte();
+            reader.BaseStream.Position = crimeCommittedOffset;
+            crimeCommitted = reader.ReadByte();
         }
 
         void ReadInDungeonWater(BinaryReader reader)

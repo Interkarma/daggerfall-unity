@@ -84,6 +84,8 @@ namespace DaggerfallWorkshop.Game.Entity
 
         protected RegionDataRecord[] regionData = new RegionDataRecord[62];
 
+        protected Crimes crimeCommitted = 0;
+
         private List<RoomRental_v1> rentedRooms = new List<RoomRental_v1>();
 
         // Fatigue loss per in-game minute
@@ -145,6 +147,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public uint LastGameMinutes { get { return lastGameMinutes; } set { lastGameMinutes = value; } }
         public List<RoomRental_v1> RentedRooms { get { return rentedRooms; } set { rentedRooms = value; } }
         public List<DaggerfallDisease> Diseases { get { return diseases; } set { diseases = value; } }
+        public Crimes CrimeCommitted { get { return crimeCommitted; } set { crimeCommitted = value; } }
 
         #endregion
 
@@ -442,7 +445,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 // if out of player view.
                 // If none spawned, proceed with below
                 int randomNumber = UnityEngine.Random.Range(2, 5 + 1);
-                GameObjectHelper.CreateFoeSpawner(true, MobileTypes.Knight_CityWatch, randomNumber);
+                GameObjectHelper.CreateFoeSpawner(true, MobileTypes.Knight_CityWatch, randomNumber, (int)(1032 * MeshReader.GlobalScale), (int)(3096 * MeshReader.GlobalScale));
             }
             // TODO: If !forceSpawn, check for LOS from nearby guard townspeople and spawn from them if they see player.
             // Otherwise, check for LOS from non-guard townspeople. If they see player, random countdown is set, after which guards will spawn.
@@ -1234,6 +1237,29 @@ namespace DaggerfallWorkshop.Game.Entity
                 else if (factionData.FactionDict[key].rep > 0)
                     factionData.ChangeReputation(factionData.FactionDict[key].id, -1);
             }
+        }
+
+        #endregion
+
+        #region Crime
+
+        public enum Crimes
+        {
+            None = 0,
+            Attempted_Breaking_And_Entering = 1,
+            Trespassing = 2,
+            Breaking_And_Entering = 3,
+            Assault = 4,
+            Murder = 5,
+            Tax_Evasion = 6,
+            Criminal_Conspiracy = 7,
+            Vagrancy = 8,
+            Smuggling = 9,
+            Piracy = 10,
+            High_Treason = 11,
+            Pickpocketing = 12,
+            Theft = 13,
+            Treason = 14,
         }
 
         #endregion
