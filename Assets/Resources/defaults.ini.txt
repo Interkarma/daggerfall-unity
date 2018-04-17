@@ -57,6 +57,8 @@ WeaponAttackThreshold=0.03
 WeaponSensitivity=1.0
 ClickToAttack = False
 CameraRecoilStrength = 3
+SoundVolume = 1.0
+MusicVolume = 1.0
 
 [Startup]
 StartCellX=109
