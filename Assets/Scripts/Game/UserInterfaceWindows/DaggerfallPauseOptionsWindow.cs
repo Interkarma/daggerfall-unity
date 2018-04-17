@@ -113,6 +113,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void SoundBar_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             //Debug.Log("Sound bar clicked, position: x: " + position.x + ", y: " + position.y);
+            
+            return; // TODO: Delete when ready to tie sound effect scaling setting to appropriate places in code
 
             // resize panel to where user clicked
             soundBar.Size = new Vector2(position.x, 3.5f);
