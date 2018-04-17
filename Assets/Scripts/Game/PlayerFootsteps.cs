@@ -211,9 +211,9 @@ namespace DaggerfallWorkshop.Game
             if (distance > threshold && customAudioSource && clip1 && clip2)
             {
                 if (!alternateStep)
-                    customAudioSource.PlayOneShot(clip1, FootstepVolumeScale * DaggerfallUnity.Settings.SoundVolume);
+                    customAudioSource.PlayOneShot(clip1, FootstepVolumeScale);
                 else
-                    customAudioSource.PlayOneShot(clip2, FootstepVolumeScale * DaggerfallUnity.Settings.SoundVolume);
+                    customAudioSource.PlayOneShot(clip2, FootstepVolumeScale);
 
                 alternateStep = (!alternateStep);
                 distance = 0f;
