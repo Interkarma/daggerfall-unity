@@ -193,9 +193,9 @@ namespace DaggerfallWorkshop.Game
 
             // Random chance favors bark sound
             if (Random.value > 0.8f)
-                dfAudioSource.AudioSource.PlayOneShot(moveClip, volumeScale);
+                dfAudioSource.AudioSource.PlayOneShot(moveClip, volumeScale * DaggerfallUnity.Settings.SoundVolume);
             else
-                dfAudioSource.AudioSource.PlayOneShot(barkClip, volumeScale);
+                dfAudioSource.AudioSource.PlayOneShot(barkClip, volumeScale * DaggerfallUnity.Settings.SoundVolume);
         }
 
         private bool IgnoreHumanSounds()
