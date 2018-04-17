@@ -16,8 +16,6 @@ using System.Linq;
 using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
-using DaggerfallWorkshop.Utility;
-using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 {
@@ -31,7 +29,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         string targetPath;
         string modName = "None";
         string localPath;
-        ModSettingsData data = new ModSettingsData();
+        ModSettingsData data;
 
         // Presets
         int currentPreset;
@@ -58,6 +56,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         float lineHeight;
         Vector2 mainScrollPosition = new Vector2(0, 0);
         Vector2 presetsScrollPosition = new Vector2(0, 0);
+
+        Dictionary<string, object> cache = new Dictionary<string, object>();
 
         #endregion
 
@@ -94,7 +94,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
             GUILayoutHelper.Vertical(() =>
             {
-                LayoutArea(new Rect(0, 0, 3 * position.width / 8, position.height), () =>
+                GUILayoutHelper.Area(new Rect(0, 0, 3 * position.width / 8, position.height), () =>
                 {
                     EditorGUILayout.Space();
 
@@ -138,7 +138,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
                     DrawHeader("Presets");
                     EditorGUILayout.HelpBox("Pre-defined values for all or a set of settings. Author is an optional field.", MessageType.None);
-                    ScrollView(ref presetsScrollPosition, () => presets.DoLayoutList());
+                    presetsScrollPosition = GUILayoutHelper.ScrollView(presetsScrollPosition, () => presets.DoLayoutList());
                     EditorGUILayout.Space();
                     if (presets.index != -1)
                     {
@@ -155,27 +155,20 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                     {
                         string iniPath;
                         if (!string.IsNullOrEmpty(iniPath = EditorUtility.OpenFilePanel("Select ini file", rootPath, "ini")))
-                            ModSettingsReader.ParseIniToSettings(data, new IniParser.FileIniDataParser().ReadFile(iniPath));
-                    }
-                    else if (GUILayout.Button("Export INI"))
-                    {
-                        string iniPath;
-                        if (!string.IsNullOrEmpty(iniPath = EditorUtility.SaveFilePanel("Select target file", rootPath, "modsettings", "ini")))
-                            new IniParser.FileIniDataParser().WriteFile(iniPath, ModSettingsReader.ParseSettingsToIni(data));
+                            data.ImportLegacyIni(new IniParser.FileIniDataParser().ReadFile(iniPath));
                     }
                     else if (GUILayout.Button("Merge presets"))
                     {
                         string path;
-                        var newPresets = new List<Preset>();
-                        if (!string.IsNullOrEmpty(path = EditorUtility.OpenFilePanel("Select preset file", rootPath, "json")) && TryDeserialize(newPresets, path))
-                            data.Presets.AddRange(newPresets);
+                        if (!string.IsNullOrEmpty(path = EditorUtility.OpenFilePanel("Select preset file", rootPath, "json")))
+                            data.LoadPresets(path, true);
                     }
 
                     EditorGUILayout.Space();
                 });
 
                 float areaWidth = 5 * position.width / 8;
-                LayoutArea(new Rect(position.width - areaWidth, 0, areaWidth, position.height), () =>
+                GUILayoutHelper.Area(new Rect(position.width - areaWidth, 0, areaWidth, position.height), () =>
                 {
                     EditorGUILayout.Space();
 
@@ -193,7 +186,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                         }
                     }
 
-                    ScrollView(ref mainScrollPosition, () =>
+                    mainScrollPosition = GUILayoutHelper.ScrollView(mainScrollPosition, () =>
                     {
                         sections.DoLayoutList();
 
@@ -248,20 +241,26 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         private void Sections_DrawElementCallback(Rect rect, int index, bool isActive, bool isFocused)
         {
-            string sectionName = data.Sections[currentSection = index].Name;
+            Section section = data.Sections[currentSection = index];
 
             if (sectionsExpanded)
                 keys[index].DoList(rect);
             else if (IsPreset)
-                CurrentPreset[sectionName] = EditorGUI.ToggleLeft(LineRect(rect), sectionName, CurrentPreset[sectionName]);
+                CurrentPreset[section.Name] = EditorGUI.ToggleLeft(LineRect(rect), section.Name, CurrentPreset[section.Name]);
             else
-                data.Sections[index].Name = EditorGUI.TextField(LineRect(rect), sectionName);
+            {
+                GUILayoutHelper.Vertical(rect, 1,
+                    (line) => GUILayoutHelper.Horizontal(line, null,
+                        (r) => section.Name = EditorGUI.TextField(r, "Name", section.Name),
+                        (r) => section.IsAdvanced = EditorGUI.ToggleLeft(r, "Is Advanced or experimental", section.IsAdvanced)),
+                    (line) => section.Description = EditorGUI.TextField(line, "Description", section.Description));
+            }
         }
 
         private float Sections_ElementHeightCallback(int index)
         {
             if (!sectionsExpanded)
-                return lineHeight;
+                return IsPreset ? lineHeight : lineHeight * 3;
 
             float totalSize = 0;
             for (int i = 0; i < data.Sections[index].Keys.Count; i++)
@@ -306,7 +305,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         {
             Section section = data.Sections[currentSection];
             var style = new GUIStyle(EditorStyles.foldout);
-            if (section.Name == ModSettingsReader.internalSection)
+            if (section.IsAdvanced)
                 style.normal.textColor = Color.red;
 
             if (IsPreset)
@@ -319,7 +318,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             if (!sectionExpanded.ContainsKey(currentSection))
                 sectionExpanded.Add(currentSection, false);
             sectionExpanded[currentSection] = EditorGUI.Foldout(LineRect(rect), sectionExpanded[currentSection],
-                ModSettingsReader.FormattedName(section.Name), style);
+                ModSettingsData.FormattedName(section.Name), style);
         }
 
         private void Keys_DrawElementCallback(Rect rect, int index, bool isActive, bool isFocused)
@@ -331,7 +330,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
             if (!sectionExpanded[currentSection])
             {
-                EditorGUI.LabelField(LineRect(rect), ModSettingsReader.FormattedName(key.Name));
+                EditorGUI.LabelField(LineRect(rect), ModSettingsData.FormattedName(key.Name));
                 SetKeySize(currentSection, index, lineHeight);
                 return;
             }
@@ -355,96 +354,14 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
             using (new EditorGUI.DisabledScope(IsPreset && !CurrentPreset[section.Name]))
             {
-                int lines = 4;
-                switch (key.KeyType)
-                {
-                    case KeyType.Toggle:
-                        var toggle = (ToggleKey)key;
-                        toggle.Value = EditorGUI.Toggle(LineRect(rect, line++), "Checked", toggle.Value);
-                        break;
+                rect.y += lineHeight * 3;
+                int lines = key.OnEditorWindow(
+                    rect,
+                    (subrect, label, rects) => GUILayoutHelper.Horizontal(subrect, label, rects),
+                    (subrect, linesPerItem, rects) => GUILayoutHelper.Vertical(subrect, linesPerItem, rects),
+                    cache);
 
-                    case KeyType.MultipleChoice:
-                        var mult = (MultipleChoiceKey)key;
-                        mult.Value = EditorGUI.Popup(LineRect(rect, line++), "Selected", mult.Value, mult.Options.ToArray());
-                        using (new EditorGUI.DisabledScope(IsPreset))
-                        {
-                            string dictKey = data[currentSection].Name + "-" + key.Name;
-                            ReorderableList options;
-                            if (!multipleChoices.TryGetValue(dictKey, out options))
-                            {
-                                options = new ReorderableList(mult.Options, typeof(string), true, true, true, true);
-                                options.drawHeaderCallback = r =>
-                                {
-                                    EditorGUI.LabelField(r, "Options");
-                                    if (GUI.Button(new Rect(r.x + r.width - 30, r.y, 30, EditorGUIUtility.singleLineHeight), (Texture2D)EditorGUIUtility.Load("icons/SettingsIcon.png"), EditorStyles.toolbarButton))
-                                    {
-                                        var menu = new GenericMenu();
-                                        menu.AddItem(new GUIContent("Copy choices"), false, () => cachedChoices = mult.Options.ToList());
-                                        if (cachedChoices != null)
-                                            menu.AddItem(new GUIContent("Paste choices"), false, () => {options.list = mult.Options = cachedChoices;});
-                                        menu.ShowAsContext();
-                                    }
-                                };
-                                options.onAddCallback = x => x.list.Add(string.Empty);
-                                options.drawElementCallback = (r, i, a, f) => options.list[i] = EditorGUI.TextField(LineRect(r), (string)options.list[i]);
-                                multipleChoices.Add(dictKey, options);
-                            }
-                            options.DoList(LineRect(rect, line++));
-                            lines += options.list.Count == 0 ? 3 : options.list.Count + 2;
-                        }
-                        break;
-
-                    case KeyType.SliderInt:
-                        var slider = (SliderIntKey)key;
-                        slider.Value = EditorGUI.IntSlider(LineRect(rect, line++), "Value", slider.Value, slider.Min, slider.Max);
-                        using (new EditorGUI.DisabledScope(IsPreset))
-                        {
-                            slider.Min = EditorGUI.IntField(HalfLineRect(rect, line), "Min", slider.Min);
-                            slider.Max = EditorGUI.IntField(HalfLineRect(rect, line++, true), "Max", slider.Max);
-                        }
-                        lines++;
-                        break;
-
-                    case KeyType.SliderFloat:
-                        var fslider = (SliderFloatKey)key;
-                        fslider.Value = EditorGUI.Slider(LineRect(rect, line++), "Value", fslider.Value, fslider.Min, fslider.Max);
-                        using (new EditorGUI.DisabledScope(IsPreset))
-                        {
-                            fslider.Min = EditorGUI.FloatField(HalfLineRect(rect, line), "Min", fslider.Min);
-                            fslider.Max = EditorGUI.FloatField(HalfLineRect(rect, line++, true), "Max", fslider.Max);
-                        }
-                        lines++;
-                        break;
-
-                    case KeyType.TupleInt:
-                        var tuple = (TupleIntKey)key;
-                        if (tuple.Value == null) tuple.Value = Tuple<int, int>.Make(0, 100);
-                        tuple.Value.First = EditorGUI.IntField(HalfLineRect(rect, line), "First", tuple.Value.First);
-                        tuple.Value.Second = EditorGUI.IntField(HalfLineRect(rect, line++, true), "Second", tuple.Value.Second);
-                        lines++;
-                        break;
-
-                    case KeyType.TupleFloat:
-                        var ftuple = (TupleFloatKey)key;
-                        if (ftuple.Value == null) ftuple.Value = Tuple<float, float>.Make(0, 1);
-                        ftuple.Value.First = EditorGUI.FloatField(HalfLineRect(rect, line), "First", ftuple.Value.First);
-                        ftuple.Value.Second = EditorGUI.FloatField(HalfLineRect(rect, line++, true), "Second", ftuple.Value.Second);
-                        lines++;
-                        break;
-
-                    case KeyType.Text:
-                        var text = (TextKey)key;
-                        text.Value = EditorGUI.TextArea(new Rect(rect.x, rect.y + 3 * lineHeight, rect.width, EditorGUIUtility.singleLineHeight * 3), text.Value);
-                        lines += 2;
-                        break;
-
-                    case KeyType.Color:
-                        var color = (ColorKey)key;
-                        color.Value = EditorGUI.ColorField(LineRect(rect, line++), "Color", color.Value);
-                        break;
-                }
-
-                SetKeySize(currentSection, index, (lines + 1) * lineHeight);
+                SetKeySize(currentSection, index, (lines + 4) * lineHeight);
             }
         }
 
@@ -457,7 +374,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         private void Keys_OnAddCallback(ReorderableList l)
         {
-            var key = Key.NewDefaultKey();
+            var key = Key.Make();
             key.Name = GetUniqueName(((KeyCollection)l.list).Select(x => x.Name).ToList(), "Key");
             l.list.Add(key);
 
@@ -477,8 +394,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         private void Load()
         {
-            if (!TryDeserialize(data, SettingsPath))
-                data = new ModSettingsData();
+            data = ModSettingsData.Make(SettingsPath);
+            data.SaveDefaults();
+            data.LoadPresets(PresetPath);
 
             sections = new ReorderableList(data.Sections, typeof(SectionCollection), true, true, true, true);
             sections.drawHeaderCallback = Sections_DrawHeaderCallback;
@@ -500,14 +418,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 keys.Add(key);
             }
 
-            TryDeserialize(data.Presets, PresetPath);
-
             presets = new ReorderableList(data.Presets, typeof(Preset), true, true, true, true);
             presets.drawHeaderCallback = r => presetsExpanded = EditorGUI.Foldout(r, presetsExpanded,  "Presets");
             presets.drawElementCallback = Presets_DrawElementCallback;
             presets.elementHeightCallback = x => presetsExpanded ? lineHeight : 0;
-
-            data.SaveDefaults();
+            
             currentPreset = -1;
             LoadPreset(-1);
             data.SyncPresets();
@@ -517,21 +432,15 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         private void Save()
         {
-            // Save defaults
-            TrySerialize(data, SettingsPath);
-
-            // Save presets            
-            if (data.Presets.Count > 0)
-                TrySerialize(data.Presets, PresetPath);
-            else if (File.Exists(PresetPath))
-                File.Delete(PresetPath);
+            data.Save(SettingsPath);
+            data.SavePresets(PresetPath);
         }
 
         private void LoadPreset(int index)
         {
             // Save current preset
             if (IsPreset)
-                data.UpdatePreset(data.Presets[currentPreset]);
+                data.FillPreset(data.Presets[currentPreset], false);
             else
                 data.SaveDefaults();
 
@@ -578,32 +487,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         #region Static Helpers
 
-        private static bool TryDeserialize<T>(T data, string path)
-        {
-            if (!File.Exists(path))
-                return false;
-
-            fsResult fsResult = ModManager._serializer.TryDeserialize(fsJsonParser.Parse(File.ReadAllText(path)), ref data);
-            if (fsResult.Failed)
-                Debug.LogErrorFormat("Failed to deserialize '{0}':\n{1}", path, fsResult.FormattedMessages);
-            return fsResult.Succeeded;
-        }
-
-        private static bool TrySerialize<T>(T data, string path)
-        {
-            fsData fsData;
-            fsResult fsResult = ModManager._serializer.TrySerialize(data, out fsData);
-            if (fsResult.Succeeded)
-            {
-                using (StreamWriter writer = new StreamWriter(path, false))
-                    writer.WriteLine(fsJsonPrinter.PrettyJson(fsData));
-                return true;
-            }
-
-            Debug.LogErrorFormat("Failed to serialize '{0}':\n{1}", path, fsResult.FormattedMessages);
-            return false;
-        }
-
         private static bool IconButton(string iconName, string tooltip)
         {
             var icon = (Texture2D)EditorGUIUtility.Load(string.Format("icons/{0}.png", iconName));
@@ -615,20 +498,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             EditorGUILayout.Separator();
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
             GUILayout.Label(title, EditorStyles.boldLabel);
-        }
-
-        private static void LayoutArea(Rect rect, Action callback)
-        {
-            GUILayout.BeginArea(rect);
-            callback();
-            GUILayout.EndArea();
-        }
-
-        private static void ScrollView(ref Vector2 position, Action callback)
-        {
-            position = EditorGUILayout.BeginScrollView(position);
-            callback();
-            EditorGUILayout.EndScrollView();
         }
 
         // Same as ObjectNames.GetUniqueName but without spaces.

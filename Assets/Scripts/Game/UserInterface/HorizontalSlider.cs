@@ -301,9 +301,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 return;
 
             if (value >= 0)
-                indicator.Position = new Vector2(Position.x + Size.x + value, Position.y);
+                indicator.Position = new Vector2(Size.x + value, 0);
             else
-                indicator.Position = new Vector2(Position.x + value, Position.y);
+                indicator.Position = new Vector2(value, 0);
         }
 
         void DrawSlider()
@@ -337,7 +337,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (indicator == null)
             {
                 indicator = new TextLabel();
-                indicator.Parent = Parent;
+                indicator.Parent = this;
             }
 
             minValue = min;

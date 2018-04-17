@@ -127,7 +127,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             this.FileName = name;
             this.dirPath = dirPath;
             this.LoadSourceCodeFromModBundle();
-            this.HasSettings = ModSettings.ModSettingsReader.HasSettings(this);
+            this.HasSettings = ModSettings.ModSettingsData.HasSettings(this);
 #if DEBUG
             Debug.Log(string.Format("Finished Mod setup: {0}",this.Title));
 #endif
@@ -332,6 +332,14 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                     return t;
             }
             return t;
+        }
+
+        /// <summary>
+        /// Import settings for this mod.
+        /// </summary>
+        public ModSettings.ModSettings GetSettings()
+        {
+            return new ModSettings.ModSettings(this);
         }
 
         #region setup

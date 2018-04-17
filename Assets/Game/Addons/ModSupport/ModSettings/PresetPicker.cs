@@ -9,8 +9,8 @@
 // Notes:
 //
 
+using System;
 using System.Linq;
-using System.Collections.Generic;
 using UnityEngine;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
@@ -29,8 +29,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         const int titleMaxChars = 20;
         const int descriptionMaxChars = 35;
 
-        readonly List<Preset> presets;
-        readonly string targetVersion;
+        readonly ModSettingsData settings;
 
         Panel mainPanel                 = new Panel();
         Panel infoPanel                 = new Panel();
@@ -55,6 +54,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         Color warningColor              = new Color(1, 0, 0, 0.4f);
 
         bool creationMode = false;
+        bool writeToDiskFlag = false;
 
         #endregion
 
@@ -65,15 +65,21 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             get { return listBox.SelectedIndex == listBox.Count - 1; }
         }
 
+        Preset SelectedPreset
+        {
+            get { return settings.Presets[listBox.SelectedIndex]; }
+        }
+
+        public Action ApplyChangesCallback { private get; set; }
+
         #endregion
 
         #region Constructors
 
-        public PresetPicker(IUserInterfaceManager uiManager, DaggerfallBaseWindow previousWindow, string targetVersion, List<Preset> presets)
+        public PresetPicker(IUserInterfaceManager uiManager, DaggerfallBaseWindow previousWindow, ModSettingsData settings)
             : base(uiManager, previousWindow)
         {
-            this.targetVersion = targetVersion;
-            this.presets = presets;
+            this.settings = settings;
         }
 
         #endregion
@@ -243,12 +249,18 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         {
             base.OnPush();
 
-            foreach (var preset in presets)
+            foreach (Preset preset in settings.Presets)
                 RegisterPreset(preset);
             AddPresetCreator();
 
             paginator.Total = listBox.Count;
             ListBox_OnSelectItem();
+        }
+
+        public override void OnPop()
+        {
+            if (writeToDiskFlag)
+                settings.SavePresets();
         }
 
         #endregion
@@ -267,7 +279,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
             ListBox.ListItem itemOut;
             listBox.AddItem(preset.Title, out itemOut, position);
-            itemOut.textColor = IsCompatible(preset.SettingsVersion) ? titleColor : warningColor;
+            itemOut.textColor = settings.IsCompatible(preset) ? titleColor : warningColor;
             itemOut.selectedTextColor = selectedTitleColor;
             itemOut.shadowColor = Color.clear;
         }
@@ -277,8 +289,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// </summary>
         private void AddPreset(Preset preset)
         {
-            presets.Add(preset);
-            RegisterPreset(preset, presets.Count -1);
+            settings.Presets.Add(preset);
+            RegisterPreset(preset, settings.Presets.Count -1);
             paginator.Total += 1;
         }
 
@@ -306,11 +318,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 creatorDescription.Text = creatorTitle.Text = string.Empty;
         }
 
-        private bool IsCompatible(string version)
-        {
-            return string.IsNullOrEmpty(targetVersion) || version == targetVersion;
-        }
-
         #endregion
 
         #region Event Handlers
@@ -319,8 +326,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         {
             if (creationMode)
             {
-                creatorTitle.Text = presets[listBox.SelectedIndex].Title;
-                creatorDescription.Text = presets[listBox.SelectedIndex].Description;
+                Preset preset = SelectedPreset;
+                creatorTitle.Text = preset.Title;
+                creatorDescription.Text = preset.Description;
 
                 deleteButton.Enabled = saveButton.Enabled = false;
             }
@@ -334,16 +342,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             }
             else
             {
-                descriptionLabel.Text = presets[listBox.SelectedIndex].Description;
+                Preset preset = SelectedPreset;
+                descriptionLabel.Text = preset.Description;
+                authorLabel.Text = !string.IsNullOrEmpty(preset.Author) ? string.Format("Author: {0}", preset.Author) : string.Empty;
+                versionLabel.Text = settings.IsCompatible(preset) ?
+                    string.Empty : string.Format("Version mismatch! ({0}/{1})", preset.SettingsVersion, settings.Version);
 
-                string author = presets[listBox.SelectedIndex].Author;
-                authorLabel.Text = !string.IsNullOrEmpty(author) ? string.Format("Author: {0}", author) : string.Empty;
-
-                string version = presets[listBox.SelectedIndex].SettingsVersion;
-                versionLabel.Text = IsCompatible(version) ?
-                    string.Empty : string.Format("Version mismatch! ({0}/{1})", version, targetVersion);
-
-                if (deleteButton.Enabled = saveButton.Enabled = presets[listBox.SelectedIndex].HasPath)
+                if (deleteButton.Enabled = saveButton.Enabled = preset.IsLocal)
                 {
                     Rect rect = listBox.GetItem(listBox.SelectedIndex).textLabel.Rectangle;
                     Vector2 position = mainPanel.ScreenToLocal(rect.position);
@@ -377,71 +382,55 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             {
                 if (creationMode)
                 {
+                    // New preset from current values
                     var preset = new Preset()
                     {
                         Title = creatorTitle.ResultText,
                         Description = creatorDescription.ResultText,
-                        SettingsVersion = targetVersion
+                        SettingsVersion = settings.Version,
+                        IsLocal = true
                     };
+                    settings.FillPreset(preset, true);
                     AddPreset(preset);
-                    RaiseOnCreatePresetEvent(preset);
                     SetCreationMode(false);
+                    writeToDiskFlag = true;
                 }
                 else
                 {
+                    // Open editor
                     SetCreationMode(true);
                 }
             }
             else
             {
-                RaiseOnPresetPickedEvent();
+                // Apply preset and close
+                // TODO: preview ?
+                settings.ApplyPreset(SelectedPreset);
+                if (ApplyChangesCallback != null)
+                    ApplyChangesCallback();
                 CloseWindow();
             }
         }
 
         private void OverwriteButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            RaiseOnCreatePresetEvent(presets[listBox.SelectedIndex]);
+            settings.FillPreset(SelectedPreset, true);
+            writeToDiskFlag = true;
         }
 
         private void DeleteButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            Preset preset = presets[listBox.SelectedIndex];
             listBox.RemoveItem(listBox.SelectedIndex);
-            presets.RemoveAt(listBox.SelectedIndex);
-            RaiseOnDeletePresetEvent(preset);
+            settings.Presets.RemoveAt(listBox.SelectedIndex);
+            writeToDiskFlag = true;
         }
 
         private void CreatorTitle_OnMouseLeave(BaseScreenComponent sender)
         {
-            if (presets.Any(x => x.Title == creatorTitle.Text))
+            if (settings.Presets.Any(x => x.Title == creatorTitle.Text))
                 creatorTitle.BackgroundColor = Color.red;
             else if (creatorTitle.BackgroundColor != Color.clear)
                 creatorTitle.BackgroundColor = Color.clear;
-        }
-
-        public delegate void OnPresetPickedEventHandler(int index);
-        public event OnPresetPickedEventHandler OnPresetPicked;
-        void RaiseOnPresetPickedEvent()
-        {
-            if (OnPresetPicked != null)
-                OnPresetPicked(listBox.SelectedIndex);
-        }
-
-        public delegate void OnCreatePresetEventHandler(Preset preset);
-        public event OnCreatePresetEventHandler OnCreatePreset;
-        void RaiseOnCreatePresetEvent(Preset preset)
-        {
-            if (OnCreatePreset != null)
-                OnCreatePreset(preset);
-        }
-
-        public delegate void OnDeletePresetEventHandler(Preset preset);
-        public event OnDeletePresetEventHandler OnDeletePreset;
-        void RaiseOnDeletePresetEvent(Preset preset)
-        {
-            if (OnDeletePreset != null)
-                OnDeletePreset(preset);
         }
 
         #endregion
