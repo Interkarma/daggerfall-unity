@@ -563,6 +563,9 @@ namespace DaggerfallWorkshop.Game.Utility
             // Get breath remaining if player was submerged (0 if they were not in the water)
             playerEntity.CurrentBreath = saveVars.BreathRemaining;
 
+            // TODO: Import classic spellbook
+            playerEntity.DeserializeSpellbook(null);
+
             // Get weather
             byte[] climateWeathers = saveVars.ClimateWeathers;
 
