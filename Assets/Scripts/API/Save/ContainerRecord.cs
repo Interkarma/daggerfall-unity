@@ -38,14 +38,6 @@ namespace DaggerfallConnect.Save
             set { parsedData = value; }
         }
 
-        /// <summary>
-        /// Returns true if this is a wagon.
-        /// </summary>
-        public bool IsWagon
-        {
-            get { return WagonCheck(); }
-        }
-
         #endregion
 
         #region Structures
@@ -94,18 +86,6 @@ namespace DaggerfallConnect.Save
 
             // Close stream
             reader.Close();
-        }
-
-        bool WagonCheck()
-        {
-            // Must have data
-            if (parsedData.unknown == null || parsedData.unknown.Length == 0)
-                return false;
-
-            if (recordRoot.SpriteIndex == 4)
-                return true;
-            else
-                return false;
         }
 
         #endregion
