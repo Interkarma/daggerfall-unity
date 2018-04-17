@@ -335,9 +335,11 @@ namespace DaggerfallWorkshop.Game.Entity
                 spell = new EffectBundleSettings();
                 return false;
             }
-
-            spell = spellbook[index];
-            return false;
+            else
+            {
+                spell = spellbook[index];
+                return true;
+            }
         }
 
         public EffectBundleSettings[] GetSpells()

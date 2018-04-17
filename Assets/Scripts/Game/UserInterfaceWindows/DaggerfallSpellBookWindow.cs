@@ -145,14 +145,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 for (int i = 0; i < spellbook.Length; i++)
                 {
-                    spellsListBox.AddItem(spellbook[i].Name);
+                    // All spell costs are zero for now - not implemented
+                    spellsListBox.AddItem(string.Format("0 - {0}", spellbook[i].Name));
                 }
             }
+
+            SetDefaults();
         }
 
         public override void OnPush()
         {
-            // TODO: Set defaults
+            if (IsSetup)
+            {
+                SetDefaults();
+            }
         }
 
         public override void Update()
@@ -161,6 +167,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (Refresh)
                 UpdateSelection();
+        }
+
+        void SetDefaults()
+        {
+            // Set spell points label
+            int curSpellPoints = GameManager.Instance.PlayerEntity.CurrentMagicka;
+            int maxSpellPoints = GameManager.Instance.PlayerEntity.MaxMagicka;
+            spellPointsLabel.Text = string.Format("{0}/{1}", curSpellPoints, maxSpellPoints);
         }
 
         #endregion
@@ -286,6 +300,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         //updates labels / icons etc. when something has changed
         void UpdateSelection()
         {
+            // Validate
             if (!ValidIndex)
             {
                 if(spellsListBox.Count > 0)
@@ -297,10 +312,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     return;
             }
 
+            // Update spell list scroller
             spellsListScrollBar.Reset(spellsListBox.RowsDisplayed, spellsListBox.Count, spellsListBox.ScrollIndex);
             spellsListScrollBar.TotalUnits = spellsListBox.Count;
             spellsListScrollBar.ScrollIndex = spellsListBox.ScrollIndex;
-            spellNameLabel.Text = spellsListBox.SelectedItem;
+
+            // Update spell name label
+            EffectBundleSettings spell;
+            if (GameManager.Instance.PlayerEntity.GetSpell(spellsListBox.SelectedIndex, out spell))
+                spellNameLabel.Text = spell.Name;
 
             ///TODO:
             ///1. set spell icons
