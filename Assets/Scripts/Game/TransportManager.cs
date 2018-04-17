@@ -149,7 +149,7 @@ namespace DaggerfallWorkshop.Game
                 // Time for a whinney?
                 if (neighTime < Time.time)
                 {
-                    dfAudioSource.AudioSource.PlayOneShot(neighClip, RidingVolumeScale);
+                    dfAudioSource.AudioSource.PlayOneShot(neighClip, RidingVolumeScale * DaggerfallUnity.Settings.SoundVolume);
                     neighTime = Time.time + Random.Range(2, 30);
                 }
             }
