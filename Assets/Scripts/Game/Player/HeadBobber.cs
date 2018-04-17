@@ -25,7 +25,6 @@ namespace DaggerfallWorkshop.Game
         private Camera mainCamera;
 
         public Vector3 restPos; //local position where your camera would rest when it's not bobbing.
-        public Vector3 camPos; // current positon of camera
         
         public float transitionSpeed = 20f; //smooths out the transition from moving to not moving.
         public float bobSpeed; //how quickly the player's head bobs.
@@ -35,23 +34,28 @@ namespace DaggerfallWorkshop.Game
 
         float timer = Mathf.PI / 2; //initialized as this value because this is where sin = 1. So, this will make the camera always start at the crest of the sin wave, simulating someone picking up their foot and starting to walk--you experience a bob upwards when you start walking as your foot pushes off the ground, the left and right bobs come as you walk.
         float beginTransitionTimer = 0; // timer for smoothing out beginning of headbob.
+        float endTransitionTimer = 0; // timer for smoothing out end of headbob. 
+        const float endTimerMax = 0.5f;
+        const float beginTimerMax = Mathf.PI;
+        private bool bIsStopping;
 
         void Start()
         {
             playerMotor = GetComponent<PlayerMotor>();
             
             mainCamera = GameManager.Instance.MainCamera;
-            camPos = mainCamera.transform.localPosition;
             restPos = mainCamera.transform.localPosition;
             
             bobScalar = 1.0f;
             bobSpeed = 1.20f;
+            bIsStopping = false;
         }
 
         void Update()
         {
             if (DaggerfallUnity.Settings.HeadBobbing == false ||
-                GameManager.Instance.PlayerEntity.CurrentHealth < 1)
+                GameManager.Instance.PlayerEntity.CurrentHealth < 1 ||
+                GameManager.IsGamePaused)
                 return;
 
             GetBobbingStyle();
@@ -108,37 +112,46 @@ namespace DaggerfallWorkshop.Game
 
         public virtual Vector3 getNewPos()
         { 
-            Vector3 newPosition;
+            Vector3 newPosition = restPos;
             float velocity = new Vector2(playerMotor.MoveDirection.x, playerMotor.MoveDirection.z).magnitude;
-
-            if (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0 && playerMotor.IsGrounded) //moving
-            {
+            
+            if ((Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0) && playerMotor.IsGrounded)
+            {   // player is moving on ground
+                
                 timer += velocity * bobSpeed * Time.deltaTime;
-
-                //Debug.Log("Velocity: " + velocity);
-
                 beginTransitionTimer += velocity * bobSpeed * Time.deltaTime;
+
                 newPosition = PlotPath();
 
                 if (beginTransitionTimer <= Mathf.PI)
                 {
-                    newPosition = InterpolateBeginTransition(newPosition); // smooth out beginning
+                    newPosition = InterpolateBeginTransition(newPosition); // smooth out start of player's movement
                 }
+                bIsStopping = true; // next branch of if/else will evaluate to true only after releasing keys.
+                endTransitionTimer = 0;
             }
-            else
+            else if (bIsStopping && endTransitionTimer <= endTimerMax)
             {
-                timer = Mathf.PI; //reinitialize
+                // player is stopping moving now
+                //Debug.Log("Stopped moving");
+                timer = Mathf.PI; //reinitialize for next start
                 beginTransitionTimer = 0; // reset
 
-                newPosition = InterpolateEndTransition();
+                endTransitionTimer += Time.deltaTime;
+
+                newPosition = InterpolateEndTransition(endTransitionTimer);
+            }
+            else if (bIsStopping)// endTransitionTimer reached max
+            {
+                Debug.Log("End Transition Reset");
+                endTransitionTimer = 0;
+                bIsStopping = false;
             }
 
             if (timer > Mathf.PI * 2 ) //completed a full cycle on the unit circle. Reset to 0 to avoid bloated values.
             {
-                //Debug.Log("<============Cycle END=============>");
                 timer = 0;
             }
-            // no reset here for beginTransitionTimer, player needs to release movement buttons first
 
             return newPosition;
         }
@@ -148,16 +161,17 @@ namespace DaggerfallWorkshop.Game
             return new Vector3(Mathf.Cos(timer) * bobXAmount, restPos.y + Mathf.Abs((Mathf.Sin(timer) * bobYAmount)), restPos.z); //abs val of y for a parabolic path
         }
 
-        public Vector3 InterpolateEndTransition() // interpolates a gradual path from moving to not moving.
+        public Vector3 InterpolateEndTransition(float endTimer) // interpolates a gradual path from moving to not moving.
         {
-            float t = transitionSpeed * Time.deltaTime;
-            return new Vector3(Mathf.Lerp(camPos.x, restPos.x, t), Mathf.Lerp(camPos.y, restPos.y, t), Mathf.Lerp(camPos.z, restPos.z, t)); //transition smoothly from walking to stopping.
+            float t = (endTimer / endTimerMax); 
+            Vector3 camPos = mainCamera.transform.localPosition;
+            return Vector3.Lerp(camPos, restPos, t);
         }
 
         public Vector3 InterpolateBeginTransition(Vector3 newPosition) // interpolates a gradual path from not moving to moving.
         {
             float t = (timer % Mathf.PI) / Mathf.PI;
-            return new Vector3(Mathf.Lerp(camPos.x, newPosition.x, t), Mathf.Lerp(camPos.y, newPosition.y, t), Mathf.Lerp(camPos.z, newPosition.x, t)); //transition smoothly from stopped to moving.
+            return Vector3.Lerp(restPos, newPosition, t);
         }
 
 
