@@ -575,7 +575,7 @@ namespace DaggerfallWorkshop.Game.Entity
                         newItem.TrappedSoulType = MobileTypes.None;
                 }
                 // Add to local inventory or wagon
-                if (containerRecord.IsWagon)
+                if (containerRecord.RecordRoot.SpriteIndex == 4) // Wagon containers have sprite index 4
                     wagonItems.AddItem(newItem);
                 else
                     items.AddItem(newItem);

@@ -145,14 +145,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 for (int i = 0; i < spellbook.Length; i++)
                 {
-                    spellsListBox.AddItem(spellbook[i].Name);
+                    // All spell costs are zero for now - not implemented
+                    spellsListBox.AddItem(string.Format("0 - {0}", spellbook[i].Name));
                 }
             }
+
+            SetDefaults();
         }
 
         public override void OnPush()
         {
-            // TODO: Set defaults
+            if (IsSetup)
+            {
+                SetDefaults();
+            }
         }
 
         public override void Update()
@@ -161,6 +167,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (Refresh)
                 UpdateSelection();
+        }
+
+        void SetDefaults()
+        {
+            // Set spell points label
+            int curSpellPoints = GameManager.Instance.PlayerEntity.CurrentMagicka;
+            int maxSpellPoints = GameManager.Instance.PlayerEntity.MaxMagicka;
+            spellPointsLabel.Text = string.Format("{0}/{1}", curSpellPoints, maxSpellPoints);
         }
 
         #endregion
@@ -262,30 +276,28 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             spellPointsLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, spellPointsLabelPos, string.Empty, mainPanel);
             spellPointsLabel.ShadowColor = DaggerfallUI.DaggerfallAlternateShadowColor1;
 
-            // Effects
+            // Effect labels
             spellEffectLabels = new TextLabel[spellEffectPanels.Length * 2];
+            for (int i = 0; i < spellEffectLabels.Length; i++)
+            {
+                spellEffectLabels[i] = new TextLabel();
+                spellEffectLabels[i].MaxCharacters = 24;
+                spellEffectLabels[i].HorizontalAlignment = HorizontalAlignment.Center;
+                spellEffectLabels[i].ShadowColor = DaggerfallUI.DaggerfallAlternateShadowColor1;
 
-            //spellEffectLabels = new TextLabel[spellEffectPanels.Length * 2];
-            //for (int i = 0; i < spellEffectLabels.Length; i++)
-            //{
-            //    spellEffectLabels[i] = new TextLabel();
-            //    spellEffectLabels[i].MaxCharacters = 24;
-            //    spellEffectLabels[i].Text = string.Format("index: {0} panel: {1}", i, i / 2);
-            //    spellEffectLabels[i].Name = "effect_label_" + i;
-            //    spellEffectLabels[i].HorizontalAlignment = HorizontalAlignment.Center;
+                if (i % 2 == 0)
+                    spellEffectLabels[i].Position = new Vector2(0, 5);
+                else
+                    spellEffectLabels[i].Position = new Vector2(0, 17);
 
-            //    if (i % 2 == 0)
-            //        spellEffectLabels[i].Position = new Vector2(spellEffectLabels[i].Position.x, spellEffectPanels[i / 2].Size.y * .125f);
-            //    else
-            //        spellEffectLabels[i].Position = new Vector2(spellEffectLabels[i].Position.x, spellEffectPanels[i / 2].Size.y * .5f);
-
-            //    spellEffectPanels[i / 2].Components.Add(spellEffectLabels[i]);
-            //}
+                spellEffectPanels[i / 2].Components.Add(spellEffectLabels[i]);
+            }
         }
 
         //updates labels / icons etc. when something has changed
         void UpdateSelection()
         {
+            // Validate
             if (!ValidIndex)
             {
                 if(spellsListBox.Count > 0)
@@ -297,30 +309,61 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     return;
             }
 
+            // Update spell list scroller
             spellsListScrollBar.Reset(spellsListBox.RowsDisplayed, spellsListBox.Count, spellsListBox.ScrollIndex);
             spellsListScrollBar.TotalUnits = spellsListBox.Count;
             spellsListScrollBar.ScrollIndex = spellsListBox.ScrollIndex;
-            spellNameLabel.Text = spellsListBox.SelectedItem;
 
-            ///TODO:
-            ///1. set spell icons
-            ///2. set spell effect labels
-            ///3. update magica cost
+            // Get spell and exit if spell index not found
+            EffectBundleSettings spell;
+            if (!GameManager.Instance.PlayerEntity.GetSpell(spellsListBox.SelectedIndex, out spell))
+                return;
+
+            // Update spell name label
+            spellNameLabel.Text = spell.Name;
+
+            // Update effect labels
+            for (int i = 0; i < 3; i++)
+            {
+                if (i < spell.Effects.Length)
+                    SetEffectLabels(spell.Effects[i].Key, i);
+                else
+                    SetEffectLabels(string.Empty, i);
+            }
+
+            // TODO:
+            //  Set spell icons
+            //  Set spell effect labels
+            //  Update magica cost
 
             Refresh = false;
         }
 
-        //set the text for the effect label
-        void SetEffectLabel(TextLabel[] labels, string[] effectDescriptions)
+        void SetEffectLabels(string key, int effectIndex)
         {
-            if (labels == null || labels.Length < 2)
-                return;
-            else if (effectDescriptions == null || effectDescriptions.Length < 2)
-                return;
+            int labelIndex = effectIndex * 2;
 
-            labels[0].Text = effectDescriptions[0];
-            labels[1].Text = effectDescriptions[1];
+            // Just clear labels if no effect key
+            if (string.IsNullOrEmpty(key))
+            {
+                spellEffectLabels[labelIndex].Text = string.Empty;
+                spellEffectLabels[labelIndex + 1].Text = string.Empty;
+                return;
+            }
 
+            // Get interface to effect
+            IEntityEffect effect = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(key);
+            if (effect == null)
+            {
+                // Handle effect not found
+                spellEffectLabels[labelIndex].Text = TextManager.Instance.GetText(textDatabase, "effectNotFoundError");
+                spellEffectLabels[labelIndex + 1].Text = string.Empty;
+                return;
+            }
+
+            // Update labels
+            spellEffectLabels[labelIndex].Text = effect.GroupName;
+            spellEffectLabels[labelIndex + 1].Text = effect.SubGroupName;
         }
 
         //Spellbook / spell buying effect text starts at 1200
@@ -485,10 +528,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             Debug.Log("swap position button clicked: " + sender.Name);
 
-            if(sender.Name == downButton.Name && spellsListBox.SelectedIndex < spellsListBox.Count-1)
-                spellsListBox.SwapItems(spellsListBox.SelectedIndex, ++spellsListBox.SelectedIndex);
-            else if(sender.Name == upButton.Name && spellsListBox.SelectedIndex > 0)
-                spellsListBox.SwapItems(spellsListBox.SelectedIndex, --spellsListBox.SelectedIndex);
+            //if(sender.Name == downButton.Name && spellsListBox.SelectedIndex < spellsListBox.Count-1)
+            //    spellsListBox.SwapItems(spellsListBox.SelectedIndex, ++spellsListBox.SelectedIndex);
+            //else if(sender.Name == upButton.Name && spellsListBox.SelectedIndex > 0)
+            //    spellsListBox.SwapItems(spellsListBox.SelectedIndex, --spellsListBox.SelectedIndex);
 
             Refresh = true;
         }

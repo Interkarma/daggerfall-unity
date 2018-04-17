@@ -54,7 +54,7 @@ namespace DaggerfallWorkshop
         int selectedSave = 0;
 
         Vector2 scrollPos;
-        bool showFactionsFoldout = true;
+        bool showFactionsFoldout = false;
         bool showItemsFoldout = false;
         bool showSaveTreeFoldout = false;
 
@@ -120,7 +120,7 @@ namespace DaggerfallWorkshop
                     EditorGUILayout.Space();
                     showSaveTreeFoldout = GUILayoutHelper.Foldout(showSaveTreeFoldout, new GUIContent("SaveTree"), () =>
                     {
-                        EditorGUILayout.HelpBox("Temporarily Filtering out records of type Door and UnknownItemRecord to keep list manageable.", MessageType.Info);
+                        EditorGUILayout.HelpBox("Temporarily Filtering out records of type Door and Goods to keep list manageable.", MessageType.Info);
 
                         DisplaySaveTree(currentSaveTree.RootRecord);
                     });
@@ -363,7 +363,7 @@ namespace DaggerfallWorkshop
             for (int i = 0; i < parent.Children.Count; i++)
             {
                 RecordTypes recordType = parent.Children[i].RecordType;
-                if (recordType == RecordTypes.Door || recordType == RecordTypes.UnknownItemRecord)
+                if (recordType == RecordTypes.Door || recordType == RecordTypes.Goods)
                     continue;
 
                 string textLabel = recordType.ToString();
@@ -385,12 +385,15 @@ namespace DaggerfallWorkshop
                     }
                 }
 
-                // Tag wagon container
+                // Tag container types
                 if (recordType == RecordTypes.Container && parent.RecordType == RecordTypes.Character)
                 {
+                    string[] tags = {" [Weapons & Armor]", " [Magic Items]", " [Clothing & Misc]", " [Ingredients]", " [Wagon]",
+                                     " [House]", " [Ship]", " [Tavern Rooms]", " [Item Repairers]"};
+
                     ContainerRecord containerRecord = (ContainerRecord)parent.Children[i];
-                    if (containerRecord.IsWagon)
-                        textLabel += " [Wagon]";
+
+                    textLabel += tags[containerRecord.RecordRoot.SpriteIndex];
                 }
 
                 EditorGUILayout.LabelField(textLabel);
