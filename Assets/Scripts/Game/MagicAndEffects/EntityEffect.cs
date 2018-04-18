@@ -88,6 +88,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         ElementTypes AllowedElements { get; }
 
         /// <summary>
+        /// Crafting stations supported by this effect.
+        /// </summary>
+        MagicCraftingStations AllowedCraftingStations { get; }
+
+        /// <summary>
         /// Gets or sets current effect settings.
         /// </summary>
         EffectSettings Settings { get; set; }
@@ -175,6 +180,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public virtual bool SupportMagnitude { get { return true; } }
         public virtual TargetTypes AllowedTargets { get { return EntityEffectBroker.TargetFlags_All; } }
         public virtual ElementTypes AllowedElements { get { return EntityEffectBroker.ElementFlags_MagicOnly; } }
+        public virtual MagicCraftingStations AllowedCraftingStations { get { return MagicCraftingStations.SpellMaker; } }
 
         public virtual string DisplayName
         {

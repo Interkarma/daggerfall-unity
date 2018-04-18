@@ -44,6 +44,21 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     }
 
     /// <summary>
+    /// Flags defining which magic crafting stations can serve this effect.
+    /// What constitutes a magic crafting station is likely to expand over time.
+    /// For example, custom character creator is potentially a type of crafting station for advantages/disadvantages.
+    /// Just leaving as main three stations (spellmaker, potionmaker, itemmaker) for now.
+    /// </summary>
+    [Flags]
+    public enum MagicCraftingStations
+    {
+        None = 0,
+        SpellMaker = 1,
+        PotionMaker = 2,
+        ItemMaker = 4,
+    }
+
+    /// <summary>
     /// Supported bundle types.
     /// This helps determine lifetime and usage of a bundle.
     /// </summary>

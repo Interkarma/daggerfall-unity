@@ -115,8 +115,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Fields
 
-        const string textDatabase = "SpellmakerUI";
+        const MagicCraftingStations thisMagicStation = MagicCraftingStations.SpellMaker;
 
+        const string textDatabase = "SpellmakerUI";
         const string baseTextureFilename = "INFO01I0.IMG";
         const string goldSelectIconsFilename = "MASK01I0.IMG";
         const string colorSelectIconsFilename = "MASK04I0.IMG";
@@ -171,11 +172,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Setup effect editor window
             effectEditor = new DaggerfallEffectSettingsEditorWindow(uiManager, this);
             effectEditor.OnClose += EffectEditor_OnClose;
-
-            // TEMP: Launch effect editor immediately to help with UI design process
-            // This will be removed after effect editor window is more functional
-            //effectEditor.EffectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate("ContinuousDamage-Health");
-            //uiManager.PushWindow(effectEditor);
         }
 
         public override void OnPush()
@@ -619,7 +615,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // TODO: Filter out effects incompatible with any effects already added (e.g. incompatible target types)
 
             // Populate group names
-            string[] groupNames = GameManager.Instance.EntityEffectBroker.GetGroupNames();
+            string[] groupNames = GameManager.Instance.EntityEffectBroker.GetGroupNames(true, thisMagicStation);
             effectGroupPicker.ListBox.AddItems(groupNames);
             effectGroupPicker.ListBox.SelectedIndex = 0;
 
@@ -784,7 +780,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             enumeratedEffectTemplates.Clear();
 
             // Enumerate subgroup effect key name pairs
-            enumeratedEffectTemplates = GameManager.Instance.EntityEffectBroker.GetEffectTemplates(effectGroupPicker.ListBox.SelectedItem);
+            enumeratedEffectTemplates = GameManager.Instance.EntityEffectBroker.GetEffectTemplates(effectGroupPicker.ListBox.SelectedItem, thisMagicStation);
             if (enumeratedEffectTemplates.Count < 1)
                 throw new Exception(string.Format("Could not find any effect templates for group {0}", effectGroupPicker.ListBox.SelectedItem));
 

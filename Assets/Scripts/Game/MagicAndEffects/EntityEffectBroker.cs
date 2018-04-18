@@ -34,6 +34,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public const ElementTypes ElementFlags_MagicOnly = ElementTypes.Magic;
         public const ElementTypes ElementFlags_All = ElementTypes.Fire | ElementTypes.Cold | ElementTypes.Poison | ElementTypes.Shock | ElementTypes.Magic;
 
+        public const MagicCraftingStations MagicCraftingFlags_None = MagicCraftingStations.None;
+        public const MagicCraftingStations MagicCraftingFlags_All = MagicCraftingStations.SpellMaker | MagicCraftingStations.PotionMaker | MagicCraftingStations.ItemMaker;
+
         const float roundInterval = 5.0f;
 
         int magicRoundsSinceStartup = 0;
@@ -92,14 +95,20 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// Gets group names of registered effects.
         /// </summary>
         /// <param name="sortAlpha">True to sort group names by alpha.</param>
+        /// <param name="craftingStations">Filter by allowed magic crafting stations.</param>
         /// <returns>Array of group names.</returns>
-        public string[] GetGroupNames(bool sortAlpha = true)
+        public string[] GetGroupNames(bool sortAlpha = true, MagicCraftingStations craftingStations = MagicCraftingFlags_All)
         {
             List<string> groupNames = new List<string>();
 
-            // Get group list without duplicates
+            // Get group list
             foreach(BaseEntityEffect effect in magicEffectTemplates.Values)
             {
+                // Skip effects not fitting at least one station requirement
+                if ((craftingStations & effect.AllowedCraftingStations) == 0)
+                    continue;
+
+                // Ignore duplicate groups
                 if (!groupNames.Contains(effect.GroupName))
                     groupNames.Add(effect.GroupName);
             }
@@ -116,13 +125,18 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// </summary>
         /// <param name="groupName">The group name to collect subgroups of.</param>
         /// <param name="sortAlpha">True to sort subgroup names by alpha.</param>
+        /// <param name="craftingStations">Filter by allowed magic crafting stations.</param>
         /// <returns>Array of subgroup names.</returns>
-        public string[] GetSubGroupNames(string groupName, bool sortAlpha = true)
+        public string[] GetSubGroupNames(string groupName, bool sortAlpha = true, MagicCraftingStations craftingStations = MagicCraftingFlags_All)
         {
             List<string> subGroupNames = new List<string>();
 
             foreach (BaseEntityEffect effect in magicEffectTemplates.Values.Where(effect => effect.GroupName == groupName))
             {
+                // Skip effects not fitting at least one station requirement
+                if ((craftingStations & effect.AllowedCraftingStations) == 0)
+                    continue;
+
                 subGroupNames.Add(effect.SubGroupName);
             }
 
@@ -137,13 +151,18 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// Gets interface to all effect templates belonging to group name.
         /// </summary>
         /// <param name="groupName">The group name to collect effects from.</param>
+        /// <param name="craftingStations">Filter by allowed magic crafting stations.</param>
         /// <returns>List of effect templates.</returns>
-        public List<IEntityEffect> GetEffectTemplates(string groupName)
+        public List<IEntityEffect> GetEffectTemplates(string groupName, MagicCraftingStations craftingStations = MagicCraftingFlags_All)
         {
             List<IEntityEffect> effectTemplates = new List<IEntityEffect>();
 
             foreach (IEntityEffect effectTemplate in magicEffectTemplates.Values.Where(effect => effect.GroupName == groupName))
             {
+                // Skip effects not fitting at least one station requirement
+                if ((craftingStations & effectTemplate.AllowedCraftingStations) == 0)
+                    continue;
+
                 effectTemplates.Add(effectTemplate);
             }
 

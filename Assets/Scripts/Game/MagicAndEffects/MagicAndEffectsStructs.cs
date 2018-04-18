@@ -45,6 +45,20 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     }
 
     /// <summary>
+    /// Stores an effect group / subgroup pair as read from classic save.
+    /// This is only used when importing character spellbook from classic.
+    /// During startup any legacy spells will be migrated to Daggerfall Unity spells
+    /// provided all classic group / subgroup pairs can be resolved to a known effect key.
+    /// </summary>
+    [Serializable]
+    public struct LegacyEffectEntry
+    {
+        public int Group;
+        public int SubGroup;
+        public EffectSettings Settings;
+    }
+
+    /// <summary>
     /// Settings for an entity effect bundle.
     /// </summary>
     [Serializable]
@@ -57,5 +71,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public string Name;
         public int IconIndex;
         public EffectEntry[] Effects;
+        public LegacyEffectEntry[] LegacyEffects;
     }
 }
