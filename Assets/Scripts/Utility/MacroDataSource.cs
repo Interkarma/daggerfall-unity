@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Hazelnut
-// Contributors: Numidium
+// Contributors:    Numidium, Gavin Clayton
 
 using System;
 using DaggerfallConnect.Arena2;
@@ -222,6 +222,72 @@ namespace DaggerfallWorkshop.Utility
 
         public virtual TextFile.Token[] MagicPowers(TextFile.Formatting format)
         {   // %mpw
+            throw new NotImplementedException();
+        }
+
+        public virtual string DurationBase()
+        {
+            // %bdr
+            throw new NotImplementedException();
+        }
+
+        public virtual string DurationPlus()
+        {
+            // %adr
+            throw new NotImplementedException();
+        }
+
+        public virtual string DurationPerLevel()
+        {
+            // %cld
+            throw new NotImplementedException();
+        }
+
+        public virtual string ChanceBase()
+        {
+            // %bch
+            throw new NotImplementedException();
+        }
+
+        public virtual string ChancePlus()
+        {
+            // %ach
+            throw new NotImplementedException();
+        }
+
+        public virtual string ChancePerLevel()
+        {
+            // %clc
+            throw new NotImplementedException();
+        }
+
+        public virtual string MagnitudeBaseMin()
+        {
+            // %1bm
+            throw new NotImplementedException();
+        }
+
+        public virtual string MagnitudeBaseMax()
+        {
+            // %2bm
+            throw new NotImplementedException();
+        }
+
+        public virtual string MagnitudePlusMin()
+        {
+            // %1am
+            throw new NotImplementedException();
+        }
+
+        public virtual string MagnitudePlusMax()
+        {
+            // %2am
+            throw new NotImplementedException();
+        }
+
+        public virtual string MagnitudePerLevel()
+        {
+            // %clc
             throw new NotImplementedException();
         }
 

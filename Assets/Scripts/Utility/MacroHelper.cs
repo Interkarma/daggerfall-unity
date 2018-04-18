@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Hazelnut
-// Contributors: Numidium
+// Contributors:    Numidium, Gavin Clayton
 
 using System;
 using System.Collections.Generic;
@@ -37,30 +37,30 @@ namespace DaggerfallWorkshop.Utility
 
         static Dictionary<string, MacroHandler> macroHandlers = new Dictionary<string, MacroHandler>()
         {
-            { "%1am", null }, // 1st + Magnitude
-            { "%1bm", null }, // 1st base Magnitude
+            { "%1am", MagnitudePlusMin }, // 1st + Magnitude
+            { "%1bm", MagnitudeBaseMin }, // 1st base Magnitude
             { "%1com", GreetingOrFollowUpText },// Greeting (?)
             { "%1hn", null }, // ?
-            { "%2am", null }, // 2nd + Magnitude
-            { "%2bm", null }, // 2nd Base Magnitude
+            { "%2am", MagnitudePlusMax }, // 2nd + Magnitude
+            { "%2bm", MagnitudeBaseMax }, // 2nd Base Magnitude
             { "%2com", DummyResolve2com },// ? (comment Nystul: it seems to be used in questions about work - it seems to be resolved to an empty string but not sure what else this macro does)
             { "%2hn", null }, // ?
             { "%3hn", null }, // ?
             { "%a", Amount },   // Cost of somthing.
-            { "%ach", null }, // + Chance per
-            { "%adr", null }, // + Duration per
+            { "%ach", ChancePlus }, // + Chance plus
+            { "%adr", DurationPlus }, // + Duration plus
             { "%agi", Agi }, //  Amount of Agility
             { "%ark", AttributeRating }, // What property attribute is considered
             { "%arm", ItemName }, //  Armour
             { "%ba", BookAuthor },  // Book Author
-            { "%bch", null }, // Base chance
-            { "%bdr", null }, // Base Duration
+            { "%bch", ChanceBase }, // Base chance
+            { "%bdr", DurationBase }, // Base Duration
             { "%bn", null },  // ?
             { "%bt", ItemName },  // Book title
             { "%cbl", null }, // Cash balance in current region
-            { "%clc", null }, // Per level (Chance)
-            { "%cld", null }, // Per level (Duration)
-            { "%clm", null }, // Per level (Magnitude)
+            { "%clc", ChancePerLevel }, // Per level (Chance)
+            { "%cld", DurationPerLevel }, // Per level (Duration)
+            { "%clm", MagnitudePerLevel }, // Per level (Magnitude)
             { "%cn", CityName },  // City name
             { "%cn2", CityName2 }, // City name #2
             { "%cpn", ShopName }, // Current shop name
@@ -877,6 +877,72 @@ namespace DaggerfallWorkshop.Utility
         {
             // %pqp
             return mcp.GetMacroDataSource().PotentialQuestorLocation();
+        }
+
+        public static string DurationBase(IMacroContextProvider mcp)
+        {
+            // %bdr
+            return mcp.GetMacroDataSource().DurationBase();
+        }
+
+        public static string DurationPlus(IMacroContextProvider mcp)
+        {
+            // %adr
+            return mcp.GetMacroDataSource().DurationPlus();
+        }
+
+        public static string DurationPerLevel(IMacroContextProvider mcp)
+        {
+            // %cld
+            return mcp.GetMacroDataSource().DurationPerLevel();
+        }
+
+        public static string ChanceBase(IMacroContextProvider mcp)
+        {
+            // %bch
+            return mcp.GetMacroDataSource().ChanceBase();
+        }
+
+        public static string ChancePlus(IMacroContextProvider mcp)
+        {
+            // %ach
+            return mcp.GetMacroDataSource().ChancePlus();
+        }
+
+        public static string ChancePerLevel(IMacroContextProvider mcp)
+        {
+            // %clc
+            return mcp.GetMacroDataSource().ChancePerLevel();
+        }
+
+        public static string MagnitudeBaseMin(IMacroContextProvider mcp)
+        {
+            // %1bm
+            return mcp.GetMacroDataSource().MagnitudeBaseMin();
+        }
+
+        public static string MagnitudeBaseMax(IMacroContextProvider mcp)
+        {
+            // %2bm
+            return mcp.GetMacroDataSource().MagnitudeBaseMax();
+        }
+
+        public static string MagnitudePlusMin(IMacroContextProvider mcp)
+        {
+            // %1am
+            return mcp.GetMacroDataSource().MagnitudePlusMin();
+        }
+
+        public static string MagnitudePlusMax(IMacroContextProvider mcp)
+        {
+            // %2am
+            return mcp.GetMacroDataSource().MagnitudePlusMax();
+        }
+
+        public static string MagnitudePerLevel(IMacroContextProvider mcp)
+        {
+            // %clm
+            return mcp.GetMacroDataSource().MagnitudePerLevel();
         }
 
         #endregion

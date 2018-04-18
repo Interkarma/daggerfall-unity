@@ -181,15 +181,46 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         /// <summary>
         /// Gets interface to effect template.
+        /// Use this to query properties to all effects with this key.
         /// </summary>
-        /// <param name="key"></param>
-        /// <returns>IEntityEffect</returns>
+        /// <param name="key">Effect key.</param>
+        /// <returns>Interface to effect template only (has default effect settings).</returns>
         public IEntityEffect GetEffectTemplate(string key)
         {
             if (!HasEffectTemplate(key))
                 return null;
 
             return magicEffectTemplates[key];
+        }
+
+        /// <summary>
+        /// Creates a new instance of effect with specified settings.
+        /// Use this to create a new effect with unique settings for actual use.
+        /// </summary>
+        /// <param name="effectEntry">EffectEntry with effect settings.</param>
+        /// <returns>Interface to new effect instance.</returns>
+        public IEntityEffect InstantiateEffect(EffectEntry effectEntry)
+        {
+            return InstantiateEffect(effectEntry.Key, effectEntry.Settings);
+        }
+
+        /// <summary>
+        /// Creates a new instance of effect with specified settings.
+        /// Use this to create a new effect with unique settings for actual use.
+        /// </summary>
+        /// <param name="key">Effect key.</param>
+        /// <param name="settings">Effect settings.</param>
+        /// <returns>Interface to new effect instance.</returns>
+        public IEntityEffect InstantiateEffect(string key, EffectSettings settings)
+        {
+            if (!HasEffectTemplate(key))
+                return null;
+
+            IEntityEffect effectTemplate = magicEffectTemplates[key];
+            IEntityEffect effectInstance = Activator.CreateInstance(effectTemplate.GetType()) as IEntityEffect;
+            effectInstance.Settings = settings;
+
+            return effectInstance;
         }
 
         #endregion

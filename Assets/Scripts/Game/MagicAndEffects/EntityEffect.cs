@@ -11,13 +11,14 @@
 
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects
 {
     /// <summary>
     /// Interface to an entity effect.
     /// </summary>
-    public interface IEntityEffect
+    public interface IEntityEffect : IMacroContextProvider
     {
         /// <summary>
         /// Unique string key for this effect, usually equal to some combination of group+subgroup (e.g. "ContinuousDamage-Health").
@@ -140,7 +141,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     /// Classic magic effects are included in build for cross-platform compatibility.
     /// Custom effects can be added later using mod system (todo:).
     /// </summary>
-    public abstract class BaseEntityEffect : IEntityEffect
+    public abstract partial class BaseEntityEffect : IEntityEffect
     {
         #region Fields
 

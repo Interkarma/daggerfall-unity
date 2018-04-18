@@ -12,9 +12,7 @@
 using UnityEngine;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.MagicAndEffects;
-
-//Spellbook / spell buying effect text starts at 1200
-//spell creator effect text starts at index 15xx. 
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -352,7 +350,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             DaggerfallMessageBox spellEffectPopup = new DaggerfallMessageBox(uiManager, this);
             spellEffectPopup.ClickAnywhereToClose = true;
-            spellEffectPopup.SetTextTokens(effect.SpellBookDescription);
+            spellEffectPopup.SetTextTokens(effect.SpellBookDescription, effect);
             spellEffectPopup.Show();
         }
 
@@ -401,10 +399,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else
                 return;
 
-            // Get effect template
-            IEntityEffect effect = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(spell.Effects[effectIndex].Key);
-
-            // Show effect description
+            // Create effect instance with settings and show popup
+            IEntityEffect effect = GameManager.Instance.EntityEffectBroker.InstantiateEffect(spell.Effects[effectIndex]);
             ShowEffectPopup(effect);
         }
 
