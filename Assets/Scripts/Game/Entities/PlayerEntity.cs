@@ -84,7 +84,8 @@ namespace DaggerfallWorkshop.Game.Entity
 
         protected RegionDataRecord[] regionData = new RegionDataRecord[62];
 
-        protected Crimes crimeCommitted = 0;
+        protected Crimes crimeCommitted = 0; // TODO: Save/load
+        protected bool haveShownSurrenderToGuardsDialogue = false; // TODO: Save/load
 
         private List<RoomRental_v1> rentedRooms = new List<RoomRental_v1>();
 
@@ -148,6 +149,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public List<RoomRental_v1> RentedRooms { get { return rentedRooms; } set { rentedRooms = value; } }
         public List<DaggerfallDisease> Diseases { get { return diseases; } set { diseases = value; } }
         public Crimes CrimeCommitted { get { return crimeCommitted; } set { crimeCommitted = value; } }
+        public bool HaveShownSurrenderToGuardsDialogue { get { return haveShownSurrenderToGuardsDialogue; } set { haveShownSurrenderToGuardsDialogue = value; } }
 
         #endregion
 
@@ -358,6 +360,13 @@ namespace DaggerfallWorkshop.Game.Entity
                 isResting = false;
 
             HandleStartingCrimeGuildQuests();
+
+            // Reset surrender to guards dialogue if no guards are nearby
+            if (haveShownSurrenderToGuardsDialogue == true)
+            {
+                if (GameManager.Instance.HowManyEnemiesOfType(MobileTypes.Knight_CityWatch, true) == 0)
+                    haveShownSurrenderToGuardsDialogue = false;
+            }
         }
 
         public bool IntermittentEnemySpawn(uint Minutes)
@@ -435,8 +444,8 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public void SpawnCityGuards(bool forceSpawn)
         {
-            // Don't spawn if more than 10 enemies are already in the area
-            if (UnityEngine.Object.FindObjectsOfType<DaggerfallEntityBehaviour>().Length > 10)
+            // Don't spawn if more than 10 guards are already in the area
+            if (GameManager.Instance.HowManyEnemiesOfType(MobileTypes.Knight_CityWatch) > 10)
                 return;
 
             if (forceSpawn)

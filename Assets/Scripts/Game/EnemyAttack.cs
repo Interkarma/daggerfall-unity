@@ -14,6 +14,7 @@ using System.Collections;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Formulas;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -184,6 +185,8 @@ namespace DaggerfallWorkshop.Game
 
         private int ApplyDamageToPlayer()
         {
+            const int doYouSurrenderToGuardsTextID = 15;
+
             int damage = 0;
             EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
             PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
@@ -195,9 +198,33 @@ namespace DaggerfallWorkshop.Game
             playerEntity.TallySkill(DFCareer.Skills.Dodging, 1);
 
             if (damage > 0)
+            {
+                // If hit by a guard, show the surrender dialogue
+                if (!playerEntity.HaveShownSurrenderToGuardsDialogue && entity.MobileEnemy.ID == (int)MobileTypes.Knight_CityWatch)
+                {
+                    DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
+                    messageBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRSCTokens(doYouSurrenderToGuardsTextID));
+                    messageBox.ParentPanel.BackgroundColor = Color.clear;
+                    messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
+                    messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
+                    messageBox.OnButtonClick += SurrenderToGuardsDialogue_OnButtonClick;
+                    messageBox.Show();
+
+                    playerEntity.HaveShownSurrenderToGuardsDialogue = true;
+                }
                 GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", damage);
+            }
 
             return damage;
+        }
+
+        private void SurrenderToGuardsDialogue_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        {
+            sender.CloseWindow();
+            if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
+            {
+                DaggerfallUI.MessageBox("Not implemented yet.");
+            }
         }
 
         #endregion
