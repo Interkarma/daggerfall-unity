@@ -268,7 +268,7 @@ namespace DaggerfallWorkshop.Game
 
             // Set version text
             versionFont = new DaggerfallFontPlus(Resources.Load<Texture2D>("Kingthings-Petrock-Light-PixelFont"), 16, 16, 32);
-            versionText = string.Format("Daggerfall Unity {0} {1}", VersionInfo.DaggerfallUnityStatus, VersionInfo.DaggerfallUnityVersion);
+            versionText = string.Format("{0} {1} {2}", VersionInfo.DaggerfallUnityProductName, VersionInfo.DaggerfallUnityStatus, VersionInfo.DaggerfallUnityVersion);
             versionTextWidth = versionFont.GetCharacterWidth(versionText, -1, versionTextScale);
         }
 
