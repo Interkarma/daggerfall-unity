@@ -143,7 +143,6 @@ namespace DaggerfallWorkshop.Game
             }
             else if (bIsStopping)// endTransitionTimer reached max
             {
-                Debug.Log("End Transition Reset");
                 endTransitionTimer = 0;
                 bIsStopping = false;
             }
