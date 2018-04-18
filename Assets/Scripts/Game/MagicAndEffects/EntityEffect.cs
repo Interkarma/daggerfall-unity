@@ -51,16 +51,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         int ClassicSubGroup { get; }
 
         /// <summary>
-        /// TEXT.RSC ID description for this effect (effect descriptions start at ID 1500). Do not set this for non-classic effects.
+        /// Text tokens for spellmaker UI if required.
         /// </summary>
-        int ClassicTextID { get; }
+        TextFile.Token[] SpellMakerDescription { get; }
 
         /// <summary>
-        /// Custom description tokens for spell effect.
-        /// Overrides TextID when non-null.
-        /// Effect must provide either a valid custom description or ID.
+        /// Text tokens for spellbook UI if required.
         /// </summary>
-        TextFile.Token[] CustomText { get; }
+        TextFile.Token[] SpellBookDescription { get; }
 
         /// <summary>
         /// Effect supports Duration setting.
@@ -174,7 +172,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public abstract string SubGroupName { get; }
         public virtual int ClassicGroup { get { return -1; } }
         public virtual int ClassicSubGroup { get { return -1; } }
-        public virtual int ClassicTextID { get { return 0; } }
         public virtual bool SupportDuration { get { return true; } }
         public virtual bool SupportChance { get { return true; } }
         public virtual bool SupportMagnitude { get { return true; } }
@@ -193,7 +190,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             set { settings = value; }
         }
 
-        public virtual TextFile.Token[] CustomText
+        public virtual TextFile.Token[] SpellMakerDescription
+        {
+            get { return null; }
+        }
+
+        public virtual TextFile.Token[] SpellBookDescription
         {
             get { return null; }
         }

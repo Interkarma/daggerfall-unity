@@ -205,10 +205,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Spell effect panels
             spellEffectPanels = new Panel[3];
             spellEffectPanels[0] = DaggerfallUI.AddPanel(effect1PanelRect, mainPanel);
+            spellEffectPanels[0].Name = "effect1Panel";
             spellEffectPanels[0].OnMouseClick += SpellEffectPanelClick;
             spellEffectPanels[1] = DaggerfallUI.AddPanel(effect2PanelRect, mainPanel);
+            spellEffectPanels[1].Name = "effect2Panel";
             spellEffectPanels[1].OnMouseClick += SpellEffectPanelClick;
             spellEffectPanels[2] = DaggerfallUI.AddPanel(effect3PanelRect, mainPanel);
+            spellEffectPanels[2].Name = "effect3Panel";
             spellEffectPanels[2].OnMouseClick += SpellEffectPanelClick;
         }
 
@@ -342,11 +345,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             spellEffectLabels[labelIndex + 1].Text = effect.SubGroupName;
         }
 
-        void ShowEffectPopup(int textIndex)
+        void ShowEffectPopup(IEntityEffect effect)
         {
+            if (effect == null)
+                return;
+
             DaggerfallMessageBox spellEffectPopup = new DaggerfallMessageBox(uiManager, this);
             spellEffectPopup.ClickAnywhereToClose = true;
-            spellEffectPopup.SetTextTokens(textIndex);
+            spellEffectPopup.SetTextTokens(effect.SpellBookDescription);
             spellEffectPopup.Show();
         }
 
@@ -377,26 +383,29 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Events
 
-        //handles clicks on the effect panels
         void SpellEffectPanelClick(BaseScreenComponent sender, Vector2 position)
         {
-            //Debug.Log("spell effect panel clicked: " + sender.Name);
+            // Get spell and exit if spell index not found
+            EffectBundleSettings spell;
+            if (!GameManager.Instance.PlayerEntity.GetSpell(spellsListBox.SelectedIndex, out spell))
+                return;
 
-            //int testTextIndex = 1200;   //just for testing - 
-            //                            //need to get index for this effect from spell when implemented
+            // Get effect index of panel clicked
+            int effectIndex;
+            if (sender.Name == spellEffectPanels[0].Name && spell.Effects.Length >= 1)
+                effectIndex = 0;
+            else if (sender.Name == spellEffectPanels[1].Name && spell.Effects.Length >= 2)
+                effectIndex = 1;
+            else if (sender.Name == spellEffectPanels[2].Name && spell.Effects.Length >= 3)
+                effectIndex = 2;
+            else
+                return;
 
-            //if (sender.Name == spellEffectPanels[0].Name)
-            //{
-            //    ShowEffectPopup(testTextIndex);
-            //}
-            //else if (sender.Name == spellEffectPanels[1].Name)
-            //{
-            //    ShowEffectPopup(testTextIndex);
-            //}
-            //else if (sender.Name == spellEffectPanels[2].Name)
-            //{
-            //    ShowEffectPopup(testTextIndex);
-            //}
+            // Get effect template
+            IEntityEffect effect = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(spell.Effects[effectIndex].Key);
+
+            // Show effect description
+            ShowEffectPopup(effect);
         }
 
         private void SpellsListBox_OnSelectItem()

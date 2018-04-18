@@ -230,17 +230,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (EffectTemplate == null)
                 throw new Exception(noEffectTemplateError);
 
-            // Get description text - effect must present either a classic TEXT.RSC ID or a custom token array
-            TextFile.Token[] descriptionTokens;
-            if (EffectTemplate.ClassicTextID != 0)
-                descriptionTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(EffectTemplate.ClassicTextID);
-            else if (EffectTemplate.CustomText != null)
-                descriptionTokens = EffectTemplate.CustomText;
+            // Get description text
+            TextFile.Token[] descriptionTokens = EffectTemplate.SpellMakerDescription;
+            if (descriptionTokens == null || descriptionTokens.Length == 0)
+                throw new Exception(string.Format("DaggerfallEffectSettingsEditorWindow: EffectTemplate {0} does not present any spellmaker description text.", EffectTemplate.Key));
             else
-                throw new Exception(string.Format("DaggerfallEffectSettingsEditorWindow: EffectTemplate {0} does not present any description text.", EffectTemplate.Key));
-
-            // Set description text
-            if (descriptionTokens != null && descriptionTokens.Length > 0)
                 descriptionLabel.SetText(descriptionTokens);
 
             // Duration support

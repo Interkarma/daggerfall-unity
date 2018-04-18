@@ -9,10 +9,6 @@
 // Notes:
 //
 
-using UnityEngine;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
@@ -25,10 +21,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override string Key { get { return "ContinuousDamage-Fatigue"; } }
         public override string GroupName { get { return TextManager.Instance.GetText("ClassicEffects", "continuousDamage"); } }
         public override string SubGroupName { get { return TextManager.Instance.GetText("ClassicEffects", "fatigue"); } }
-
         public override int ClassicGroup { get { return 4; } }
         public override int ClassicSubGroup { get { return 1; } }
-        public override int ClassicTextID { get { return 1505; } }
+        public override TextFile.Token[] SpellMakerDescription { get { return DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1505); } }
+        public override TextFile.Token[] SpellBookDescription { get { return DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1205); } }
         public override bool SupportChance { get { return false; } }
         public override TargetTypes AllowedTargets { get { return EntityEffectBroker.TargetFlags_Other; } }
         public override ElementTypes AllowedElements { get { return EntityEffectBroker.ElementFlags_All; } }
