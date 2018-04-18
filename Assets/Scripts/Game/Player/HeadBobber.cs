@@ -62,7 +62,7 @@ namespace DaggerfallWorkshop.Game
             SetParamsForBobbingStyle();
 
             Vector3 newCameraPosition = getNewPos();
-            mainCamera.transform.localPosition = newCameraPosition;
+            mainCamera.transform.localPosition += newCameraPosition - mainCamera.transform.localPosition;
         }
 
         public virtual void GetBobbingStyle()
