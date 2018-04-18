@@ -13,6 +13,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.MagicAndEffects;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -33,10 +35,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
         #region Fields
 
         const string spellIconsFile = "ICON00I0.IMG";
+        const string spellTargetAndElementIconsFile = "MASK04I0.IMG";
         const int spellIconsRowCount = 20;
         const int spellIconsCount = 69;
+        const int spellTargetIconsCount = 5;
+        const int spellElementIconsCount = 5;
 
         List<Texture2D> spellIcons = new List<Texture2D>();
+        List<Texture2D> spellTargetIcons = new List<Texture2D>();
+        List<Texture2D> spellElementIcons = new List<Texture2D>();
 
         #endregion
 
@@ -45,9 +52,25 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// <summary>
         /// Static count of expected spell icons (always 69).
         /// </summary>
-        public int Count
+        public int SpellIconCount
         {
             get { return spellIconsCount; }
+        }
+
+        /// <summary>
+        /// Static count of expected spell target icons (always 5).
+        /// </summary>
+        public int TargetIconCount
+        {
+            get { return spellTargetIconsCount; }
+        }
+
+        /// <summary>
+        /// Static count of expected spell element icons (always 5).
+        /// </summary>
+        public int ElementIconCount
+        {
+            get { return spellElementIconsCount; }
         }
 
         #endregion
@@ -60,6 +83,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public SpellIconCollection()
         {
             LoadSpellIcons();
+            LoadSpellTargetAndElementIcons();
         }
 
         #endregion
@@ -69,12 +93,72 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// <summary>
         /// Get spell icon texture from index.
         /// </summary>
-        public Texture2D GetIcon(int index)
+        public Texture2D GetSpellIcon(int index)
         {
             if (index < 0 || index >= spellIcons.Count)
                 return null;
 
             return spellIcons[index];
+        }
+
+        /// <summary>
+        /// Get spell target icon texture.
+        /// </summary>
+        public Texture2D GetSpellTargetIcon(TargetTypes targetType)
+        {
+            int index;
+            switch(targetType)
+            {
+                case TargetTypes.CasterOnly:
+                    index = 0;
+                    break;
+                case TargetTypes.ByTouch:
+                    index = 1;
+                    break;
+                case TargetTypes.SingleTargetAtRange:
+                    index = 2;
+                    break;
+                case TargetTypes.AreaAroundCaster:
+                    index = 3;
+                    break;
+                case TargetTypes.AreaAtRange:
+                    index = 4;
+                    break;
+                default:
+                    return null;
+            }
+
+            return spellTargetIcons[index];
+        }
+
+        /// <summary>
+        /// Get spell element icon texture.
+        /// </summary>
+        public Texture2D GetSpellElementIcon(ElementTypes elementType)
+        {
+            int index;
+            switch(elementType)
+            {
+                case ElementTypes.Fire:
+                    index = 0;
+                    break;
+                case ElementTypes.Cold:
+                    index = 1;
+                    break;
+                case ElementTypes.Poison:
+                    index = 2;
+                    break;
+                case ElementTypes.Shock:
+                    index = 3;
+                    break;
+                case ElementTypes.Magic:
+                    index = 4;
+                    break;
+                default:
+                    return null;
+            }
+
+            return spellElementIcons[index];
         }
 
         #endregion
@@ -103,7 +187,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Read icons to their own texture (remembering Unity textures are flipped vertically)
             int srcX = 0, srcY = spellIconAtlas.height - dim;
-            for (int i = 0; i < Count; i++)
+            for (int i = 0; i < SpellIconCount; i++)
             {
                 // Extract texture
                 Texture2D iconTexture = new Texture2D(dim, dim);
@@ -121,7 +205,47 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
 
             // Log success
-            Debug.LogFormat("Loaded {0} spell icons for UI with a dimension of {1}x{2} each.", Count, dim, dim);
+            //Debug.LogFormat("Loaded {0} spell icons for UI with a dimension of {1}x{2} each.", spellIcons.Count, dim, dim);
+        }
+
+        void LoadSpellTargetAndElementIcons()
+        {
+            const int targetIconWidth = 24;
+            const int elementIconWidth = 16;
+            const int height = 16;
+
+            // Clear existing collections
+            spellTargetIcons.Clear();
+            spellElementIcons.Clear();
+
+            // Get source atlas
+            Texture2D spellTargetAndElementIconAtlas = DaggerfallUI.GetTextureFromImg(spellTargetAndElementIconsFile, TextureFormat.ARGB32, false);
+            if (spellTargetAndElementIconAtlas == null)
+            {
+                Debug.LogError("Could not load spell target and element icons atlas texture.");
+                return;
+            }
+
+            // Read target icons to their own atlas
+            Rect targetIconRect = new Rect(0, 0, targetIconWidth, height);
+            for (int i = 0; i < spellTargetIconsCount; i++)
+            {
+                Texture2D iconTexture = ImageReader.GetSubTexture(spellTargetAndElementIconAtlas, targetIconRect);
+                spellTargetIcons.Add(iconTexture);
+                targetIconRect.y = targetIconRect.y + height;
+            }
+
+            // Read element icons to their own atlas
+            Rect elementIconRect = new Rect(targetIconWidth, 0, elementIconWidth, height);
+            for (int i = 0; i < spellElementIconsCount; i++)
+            {
+                Texture2D iconTexture = ImageReader.GetSubTexture(spellTargetAndElementIconAtlas, elementIconRect);
+                spellElementIcons.Add(iconTexture);
+                elementIconRect.y = elementIconRect.y + height;
+            }
+
+            // Log success
+            Debug.LogFormat("Loaded {0} spell target icons and {1} element icons.", spellTargetIcons.Count, spellElementIcons.Count);
         }
 
         #endregion

@@ -575,7 +575,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void SetIcon(int index)
         {
             selectedIcon = index;
-            selectIconButton.BackgroundTexture = DaggerfallUI.Instance.SpellIconCollection.GetIcon(selectedIcon);
+            selectIconButton.BackgroundTexture = DaggerfallUI.Instance.SpellIconCollection.GetSpellIcon(selectedIcon);
         }
 
         List<EffectEntry> GetEffectEntries()
@@ -754,7 +754,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void NextIconButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             int index = selectedIcon + 1;
-            if (index >= DaggerfallUI.Instance.SpellIconCollection.Count)
+            if (index >= DaggerfallUI.Instance.SpellIconCollection.SpellIconCount)
                 index = 0;
 
             SetIcon(index);
@@ -764,7 +764,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             int index = selectedIcon - 1;
             if (index < 0)
-                index = DaggerfallUI.Instance.SpellIconCollection.Count - 1;
+                index = DaggerfallUI.Instance.SpellIconCollection.SpellIconCount - 1;
 
             SetIcon(index);
         }
