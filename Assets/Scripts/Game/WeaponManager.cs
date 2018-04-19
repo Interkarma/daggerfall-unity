@@ -705,9 +705,10 @@ namespace DaggerfallWorkshop.Game
                         blood.ShowBloodSplash(0, hit.point);
                     }
                     mobileNpc.Motor.gameObject.SetActive(false);
-                    GameManager.Instance.PlayerEntity.TallyCrimeGuildRequirements(false, 5);
-                    // TODO: LOS check from each townsperson. If seen, start spawning guards as below.
-                    GameManager.Instance.PlayerEntity.SpawnCityGuards(true);
+                    playerEntity.TallyCrimeGuildRequirements(false, 5);
+                    // TODO: LOS check from each townsperson. If seen, register crime and start spawning guards as below.
+                    playerEntity.CrimeCommitted = PlayerEntity.Crimes.Murder;
+                    playerEntity.SpawnCityGuards(true);
                 }
             }
         }

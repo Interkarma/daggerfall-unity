@@ -84,6 +84,9 @@ namespace DaggerfallWorkshop.Game.Entity
 
         protected RegionDataRecord[] regionData = new RegionDataRecord[62];
 
+        protected Crimes crimeCommitted = 0; // TODO: Save/load
+        protected bool haveShownSurrenderToGuardsDialogue = false; // TODO: Save/load
+
         private List<RoomRental_v1> rentedRooms = new List<RoomRental_v1>();
 
         // Fatigue loss per in-game minute
@@ -145,6 +148,8 @@ namespace DaggerfallWorkshop.Game.Entity
         public uint LastGameMinutes { get { return lastGameMinutes; } set { lastGameMinutes = value; } }
         public List<RoomRental_v1> RentedRooms { get { return rentedRooms; } set { rentedRooms = value; } }
         public List<DaggerfallDisease> Diseases { get { return diseases; } set { diseases = value; } }
+        public Crimes CrimeCommitted { get { return crimeCommitted; } set { crimeCommitted = value; } }
+        public bool HaveShownSurrenderToGuardsDialogue { get { return haveShownSurrenderToGuardsDialogue; } set { haveShownSurrenderToGuardsDialogue = value; } }
 
         #endregion
 
@@ -355,6 +360,13 @@ namespace DaggerfallWorkshop.Game.Entity
                 isResting = false;
 
             HandleStartingCrimeGuildQuests();
+
+            // Reset surrender to guards dialogue if no guards are nearby
+            if (haveShownSurrenderToGuardsDialogue == true)
+            {
+                if (GameManager.Instance.HowManyEnemiesOfType(MobileTypes.Knight_CityWatch, true) == 0)
+                    haveShownSurrenderToGuardsDialogue = false;
+            }
         }
 
         public bool IntermittentEnemySpawn(uint Minutes)
@@ -432,8 +444,8 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public void SpawnCityGuards(bool forceSpawn)
         {
-            // Don't spawn if more than 10 enemies are already in the area
-            if (UnityEngine.Object.FindObjectsOfType<DaggerfallEntityBehaviour>().Length > 10)
+            // Don't spawn if more than 10 guards are already in the area
+            if (GameManager.Instance.HowManyEnemiesOfType(MobileTypes.Knight_CityWatch) > 10)
                 return;
 
             if (forceSpawn)
@@ -442,7 +454,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 // if out of player view.
                 // If none spawned, proceed with below
                 int randomNumber = UnityEngine.Random.Range(2, 5 + 1);
-                GameObjectHelper.CreateFoeSpawner(true, MobileTypes.Knight_CityWatch, randomNumber);
+                GameObjectHelper.CreateFoeSpawner(true, MobileTypes.Knight_CityWatch, randomNumber, (int)(1032 * MeshReader.GlobalScale), (int)(3096 * MeshReader.GlobalScale));
             }
             // TODO: If !forceSpawn, check for LOS from nearby guard townspeople and spawn from them if they see player.
             // Otherwise, check for LOS from non-guard townspeople. If they see player, random countdown is set, after which guards will spawn.
@@ -1234,6 +1246,44 @@ namespace DaggerfallWorkshop.Game.Entity
                 else if (factionData.FactionDict[key].rep > 0)
                     factionData.ChangeReputation(factionData.FactionDict[key].id, -1);
             }
+        }
+
+        #endregion
+
+        #region Crime
+
+        public enum Crimes
+        {
+            None = 0,
+            Attempted_Breaking_And_Entering = 1,
+            Trespassing = 2,
+            Breaking_And_Entering = 3,
+            Assault = 4,
+            Murder = 5,
+            Tax_Evasion = 6,
+            Criminal_Conspiracy = 7,
+            Vagrancy = 8,
+            Smuggling = 9,
+            Piracy = 10,
+            High_Treason = 11,
+            Pickpocketing = 12,
+            Theft = 13,
+            Treason = 14,
+        }
+
+        // Values after index 0 are from FALL.EXE. It does not seem to have a valid value for the last crime "Treason," so just using half of "High Treason" value here.
+        short[] reputationLossPerCrime = { 0x00, 0x0A, 0x05, 0x0A, 0x08, 0x14, 0x0A, 0x02, 0x01, 0x02, 0x02, 0x4B, 0x02, 0x08, 0x24 };
+
+        public void LowerRepForCrime()
+        {
+            int regionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
+
+            // Lower legal reputation
+            regionData[regionIndex].LegalRep -= reputationLossPerCrime[(int)crimeCommitted];
+
+            // TODO: Faction reputation adjustments
+            //FactionFile.FactionData peopleFaction;
+            //FactionData.FindFactionByTypeAndRegion(15, regionIndex + 1, out peopleFaction);
         }
 
         #endregion

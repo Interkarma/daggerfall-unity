@@ -1031,6 +1031,13 @@ namespace DaggerfallWorkshop.Game
                 string notSuccessfulMessage = HardStrings.youAreNotSuccessful;
                 DaggerfallUI.Instance.PopupMessage(notSuccessfulMessage);
 
+                // Register crime and start spawning guards.
+                if (target == null) // target is a townsperson
+                {
+                    player.CrimeCommitted = PlayerEntity.Crimes.Pickpocketing;
+                    player.SpawnCityGuards(true);
+                }
+
                 // Make enemies in an area aggressive if player failed to pickpocket a non-hostile one.
                 EnemyMotor enemyMotor = null;
                 if (target != null)

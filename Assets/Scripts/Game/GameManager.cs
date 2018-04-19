@@ -503,7 +503,7 @@ namespace DaggerfallWorkshop.Game
         /// Determines if enemies are nearby. Uses include whether player is able to rest or not.
         /// Based on minimum distance to nearest monster, and if monster can actually sense player.
         /// </summary>
-        /// <param name="minMonsterDistance">Monsters must be at least this far away.</param>
+        /// <param name="minMonsterDistance">Monsters must be at least this close.</param>
         /// <returns>True if enemies are nearby.</returns>
         public bool AreEnemiesNearby(float minMonsterDistance = 12f)
         {
@@ -547,6 +547,47 @@ namespace DaggerfallWorkshop.Game
             }
 
             return areEnemiesNearby;
+        }
+
+        /// <summary>
+        /// Gets how many enemies of a given type exist.
+        /// </summary>
+        /// <param name="type">Enemy type to search for.</param>
+        /// <param name="stopLookingIfFound">Return as soon as an enemy of given type is found.</param>
+        /// <returns>Number of this enemy type.</returns>
+        public int HowManyEnemiesOfType(MobileTypes type, bool stopLookingIfFound = false)
+        {
+            int numberOfEnemies = 0;
+            DaggerfallEntityBehaviour[] entityBehaviours = FindObjectsOfType<DaggerfallEntityBehaviour>();
+            for (int i = 0; i < entityBehaviours.Length; i++)
+            {
+                DaggerfallEntityBehaviour entityBehaviour = entityBehaviours[i];
+                if (entityBehaviour.EntityType == EntityTypes.EnemyMonster || entityBehaviour.EntityType == EntityTypes.EnemyClass)
+                {
+                    EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
+                    if (entity.MobileEnemy.ID == (int)type)
+                    {
+                        numberOfEnemies++;
+                        if (stopLookingIfFound)
+                            return numberOfEnemies;
+                    }
+                }
+            }
+
+            // Also check for enemy spawners that might emit an enemy
+            FoeSpawner[] spawners = FindObjectsOfType<FoeSpawner>();
+            for (int i = 0; i < spawners.Length; i++)
+            {
+                // Is a spawner inside min distance?
+                if (spawners[i].FoeType == type)
+                {
+                    numberOfEnemies++;
+                    if (stopLookingIfFound)
+                        return numberOfEnemies;
+                }
+            }
+
+            return numberOfEnemies;
         }
 
         /// <summary>
