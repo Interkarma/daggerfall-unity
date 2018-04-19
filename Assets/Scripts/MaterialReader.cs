@@ -299,66 +299,78 @@ namespace DaggerfallWorkshop
                 return cm.material;
             }
 
-            // Create new texture settings
-            GetTextureSettings settings = TextureReader.CreateTextureSettings(archive, record, frame, alphaIndex, borderSize, dilate);
-            settings.autoEmissionForWindows = true;
-            settings.sharpen = Sharpen;
-            if (GenerateNormals)
-            {
-                settings.createNormalMap = true;
-                settings.normalStrength = NormalTextureStrength;
-            }
-
-            // Set emissive for self-illuminated textures
-            if (textureReader.IsEmissive(archive, record))
-            {
-                settings.createEmissionMap = true;
-                settings.emissionIndex = -1;
-            }
-
-            // Get texture
-            GetTextureResults results = textureReader.GetTexture2D(settings, AlphaTextureFormat, NonAlphaTextureFormat);
-            rectOut = results.singleRect;
-
-            // Create material
             Material material;
-            if (isBillboard)
-                material = CreateStandardMaterial(CustomBlendMode.Cutout);
+            GetTextureResults results;
+
+            // Try to import a material from mods, otherwise create a standard material
+            // and import textures from Daggerfall files and loose files.
+            if (!TextureReplacement.CustomTextureExist(archive, record, frame) &&
+                TextureReplacement.TryImportMaterial(archive, record, frame, out material))
+            {
+                results = TextureReplacement.MakeResults(material, archive, record);
+            }
             else
-                material = CreateStandardMaterial();
-
-            // Setup material
-            material.name = FormatName(archive, record);
-            material.mainTexture = results.albedoMap;
-            material.mainTexture.filterMode = MainFilterMode;
-
-            // Setup normal map
-            bool importedNormals = TextureReplacement.CustomNormalExist(settings.archive, settings.record, settings.frame);
-            if ((GenerateNormals || importedNormals) && results.normalMap != null)
             {
-                results.normalMap.filterMode = MainFilterMode;
-                material.SetTexture("_BumpMap", results.normalMap);
-                material.EnableKeyword("_NORMALMAP");
-            }
+                // Create new texture settings
+                GetTextureSettings settings = TextureReader.CreateTextureSettings(archive, record, frame, alphaIndex, borderSize, dilate);
+                settings.autoEmissionForWindows = true;
+                settings.sharpen = Sharpen;
+                if (GenerateNormals)
+                {
+                    settings.createNormalMap = true;
+                    settings.normalStrength = NormalTextureStrength;
+                }
 
-            // Setup emission map
-            if (results.isEmissive && !results.isWindow && results.emissionMap != null)
-            {
-                results.emissionMap.filterMode = MainFilterMode;
-                material.SetTexture("_EmissionMap", results.emissionMap);
-                material.SetColor("_EmissionColor", Color.white);
-                material.EnableKeyword("_EMISSION");
-            }
-            else if (results.isEmissive && results.isWindow && results.emissionMap != null)
-            {
-                results.emissionMap.filterMode = MainFilterMode;
-                material.SetTexture("_EmissionMap", results.emissionMap);
-                material.SetColor("_EmissionColor", DayWindowColor * DayWindowIntensity);
-                material.EnableKeyword("_EMISSION");
-            }
+                // Set emissive for self-illuminated textures
+                if (textureReader.IsEmissive(archive, record))
+                {
+                    settings.createEmissionMap = true;
+                    settings.emissionIndex = -1;
+                }
 
-            // Import additional custom components of material
-            TextureReplacement.CustomizeMaterial(archive, record, frame, material);
+                // Get texture
+                results = textureReader.GetTexture2D(settings, AlphaTextureFormat, NonAlphaTextureFormat);
+
+                // Create material
+                if (isBillboard)
+                    material = CreateStandardMaterial(CustomBlendMode.Cutout);
+                else
+                    material = CreateStandardMaterial();
+
+                // Setup material
+                material.name = FormatName(archive, record);
+                material.mainTexture = results.albedoMap;
+                material.mainTexture.filterMode = MainFilterMode;
+
+                // Setup normal map
+                bool importedNormals = TextureReplacement.CustomNormalExist(settings.archive, settings.record, settings.frame);
+                if ((GenerateNormals || importedNormals) && results.normalMap != null)
+                {
+                    results.normalMap.filterMode = MainFilterMode;
+                    material.SetTexture("_BumpMap", results.normalMap);
+                    material.EnableKeyword("_NORMALMAP");
+                }
+
+                // Setup emission map
+                if (results.isEmissive && !results.isWindow && results.emissionMap != null)
+                {
+                    results.emissionMap.filterMode = MainFilterMode;
+                    material.SetTexture("_EmissionMap", results.emissionMap);
+                    material.SetColor("_EmissionColor", Color.white);
+                    material.EnableKeyword("_EMISSION");
+                }
+                else if (results.isEmissive && results.isWindow && results.emissionMap != null)
+                {
+                    results.emissionMap.filterMode = MainFilterMode;
+                    material.SetTexture("_EmissionMap", results.emissionMap);
+                    material.SetColor("_EmissionColor", DayWindowColor * DayWindowIntensity);
+                    material.EnableKeyword("_EMISSION");
+                }
+
+                // Import additional custom components of material
+                TextureReplacement.CustomizeMaterial(archive, record, frame, material);
+
+            }
 
             // Setup cached material
             DFSize size = results.textureFile.GetSize(record);
@@ -374,7 +386,7 @@ namespace DaggerfallWorkshop
                 albedoMap = results.albedoMap,
                 normalMap = results.normalMap,
                 emissionMap = results.emissionMap,
-                singleRect = rectOut,
+                singleRect = rectOut = results.singleRect,
                 material = material,
                 filterMode = MainFilterMode,
                 isWindow = results.isWindow,

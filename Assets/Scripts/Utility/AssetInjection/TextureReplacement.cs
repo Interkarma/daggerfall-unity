@@ -13,7 +13,6 @@
  * TODO:
  * - PaperDoll CharacterLayer textures works only if resolution is the same as vanilla 
  *        (http://forums.dfworkshop.net/viewtopic.php?f=22&p=3547&sid=6a99dbcffad1a15b08dd5e157274b772#p3547)
- * - Import materials from mods
  * - Import terrain textures from mods
  */
 
@@ -114,6 +113,19 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         #region Textures Import
 
         /// <summary>
+        /// Seek material from mods.
+        /// </summary>
+        /// <param name="archive">Texture archive.</param>
+        /// <param name="record">Record index.</param>
+        /// <param name="frame">Animation frame index.</param>
+        /// <param name="material">Imported material.</param>
+        /// <returns>True if material imported.</returns>
+        public static bool TryImportMaterial(int archive, int record, int frame, out Material material)
+        {
+            return TryImportMaterial(GetName(archive, record, frame), out material);
+        }
+
+        /// <summary>
         /// Search for image files on disk to use as textures on models or billboards
         /// (archive_record-frame.png, for example '86_3-0.png').
         /// </summary>
@@ -178,7 +190,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// </summary>
         /// <param name="archive">Texture archive.</param>
         /// <param name="record">Record index.</param>
-        /// <param name="frame">Animation frame index</param>
+        /// <param name="frame">Animation frame index.</param>
         /// <param name="tex">Imported texture.</param>
         /// <returns>True if texture imported.</returns>
         public static bool TryImportTexture(int archive, int record, int frame, out Texture2D tex)
@@ -725,6 +737,30 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         /// <summary>
+        /// Makes texture results for given material.
+        /// </summary>
+        /// <param name="material">Unity material.</param>
+        /// <param name="archive">Texture archive.</param>
+        /// <param name="record">Record index.</param>
+        /// <returns>Results for the given material.</returns>
+        public static GetTextureResults MakeResults(Material material, int archive, int record)
+        {
+            string path = Path.Combine(DaggerfallUnity.Instance.MaterialReader.TextureReader.Arena2Path, TextureFile.IndexToFileName(archive));
+            TextureFile textureFile = new TextureFile(path, FileUsage.UseMemory, true);
+            FilterMode filterMode = DaggerfallUnity.Instance.MaterialReader.MainFilterMode;
+            return new GetTextureResults()
+            {
+                albedoMap = GetTextureOrDefault(material, "_MainTex", filterMode),
+                normalMap = GetTextureOrDefault(material, "_BumpMap", filterMode),
+                emissionMap = GetTextureOrDefault(material, "_EmissionMap", filterMode),
+                singleRect = new Rect(0, 0, 1, 1),
+                isWindow = ClimateSwaps.IsExteriorWindow(archive, record),
+                isEmissive = material.HasProperty("_EmissionMap"),
+                textureFile = textureFile
+            };
+        }
+
+        /// <summary>
         /// Get a safe size for a control based on resolution of img.
         /// </summary>
         public static Vector2 GetSize(Texture2D texture, string textureName, bool allowXml = false)
@@ -845,6 +881,25 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             tex.Apply();
 
             return tex;
+        }
+
+        /// <summary>
+        /// Seek material from mods.
+        /// </summary>
+        /// <param name="name">Name of material.</param>
+        /// <param name="material">Imported material.</param>
+        /// <returns>True if material imported.</returns>
+        private static bool TryImportMaterial(string name, out Material material)
+        {
+            if (DaggerfallUnity.Settings.MeshAndTextureReplacement)
+            {
+                // Seek from mods
+                if (ModManager.Instance != null)
+                    return ModManager.Instance.TryGetAsset(name, false, out material);
+            }
+
+            material = null;
+            return false;
         }
 
         /// <summary>
@@ -969,6 +1024,18 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             }
 
             return false;
+        }
+
+        private static Texture2D GetTextureOrDefault(Material material, string textureName, FilterMode filterMode)
+        {
+            Texture2D tex;
+            if (material.HasProperty(textureName) && (tex = (Texture2D)material.GetTexture(textureName)) != null)
+            {
+                tex.filterMode = filterMode;
+                return tex;
+            }
+
+            return null;
         }
 
         #endregion
