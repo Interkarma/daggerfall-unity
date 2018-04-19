@@ -32,12 +32,15 @@ namespace DaggerfallWorkshop.Game
         public float bobYAmount; //how dramatic the bob is in up/down motion.
         public float bobScalar; // user controlled multiplier for strength of bob
 
+        float landingTimerDown;
+        float landingTimerUp;
         float timer = Mathf.PI / 2; //initialized as this value because this is where sin = 1. So, this will make the camera always start at the crest of the sin wave, simulating someone picking up their foot and starting to walk--you experience a bob upwards when you start walking as your foot pushes off the ground, the left and right bobs come as you walk.
         float beginTransitionTimer = 0; // timer for smoothing out beginning of headbob.
         float endTransitionTimer = 0; // timer for smoothing out end of headbob. 
         const float endTimerMax = 0.5f;
         const float beginTimerMax = Mathf.PI;
         private bool bIsStopping;
+        private bool readyToLand;
 
         void Start()
         {
@@ -62,7 +65,7 @@ namespace DaggerfallWorkshop.Game
             SetParamsForBobbingStyle();
 
             Vector3 newCameraPosition = getNewPos();
-            mainCamera.transform.localPosition = newCameraPosition;
+            mainCamera.transform.localPosition += newCameraPosition - mainCamera.transform.localPosition;
         }
 
         public virtual void GetBobbingStyle()
@@ -143,7 +146,6 @@ namespace DaggerfallWorkshop.Game
             }
             else if (bIsStopping)// endTransitionTimer reached max
             {
-                Debug.Log("End Transition Reset");
                 endTransitionTimer = 0;
                 bIsStopping = false;
             }
@@ -153,7 +155,40 @@ namespace DaggerfallWorkshop.Game
                 timer = 0;
             }
 
+            applyBounceAmount(ref newPosition);
+
             return newPosition;
+        }
+
+        public void applyBounceAmount(ref Vector3 newPosition)
+        {
+            if (!playerMotor.IsGrounded)
+            {
+                readyToLand = true;
+                landingTimerUp = 0f;
+                landingTimerDown = 0f;
+            }
+            else if (playerMotor.IsGrounded && readyToLand)
+            {
+                const float bounceMax = 0.17f;
+                const float timerMax = 0.10f;
+                float t;
+                // apply landing bob
+                if (landingTimerDown < timerMax)
+                {
+                    landingTimerDown += Time.deltaTime;
+                    t = (landingTimerDown / timerMax);
+                    newPosition += new Vector3(newPosition.x, Mathf.Lerp(restPos.y, restPos.y - bounceMax, t)) - newPosition;
+                }
+                else if (landingTimerUp < timerMax)
+                {
+                    landingTimerUp += Time.deltaTime;
+                    t = (landingTimerUp / timerMax);
+                    newPosition += new Vector3(newPosition.x, Mathf.Lerp(restPos.y - bounceMax, restPos.y, t)) - newPosition;
+                }
+                else
+                    readyToLand = false;
+            }
         }
 
         public virtual Vector3 PlotPath()
