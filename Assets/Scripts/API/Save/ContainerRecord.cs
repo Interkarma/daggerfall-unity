@@ -38,6 +38,14 @@ namespace DaggerfallConnect.Save
             set { parsedData = value; }
         }
 
+         /// <summary>
+         /// Returns true if this is a wagon.
+         /// </summary>
+         public bool IsWagon
+         {
+            get { return WagonCheck(); }
+         }
+
         #endregion
 
         #region Structures
@@ -45,7 +53,6 @@ namespace DaggerfallConnect.Save
         /// <summary>
         /// Container records have a variable number of unknown bytes.
         /// Can often be just a single byte, so does not seem to be reliably useful.
-        /// First byte seems to indicate wagon container if value is 150.
         /// </summary>
         public struct ContainerRecordData
         {
@@ -86,6 +93,14 @@ namespace DaggerfallConnect.Save
 
             // Close stream
             reader.Close();
+        }
+
+        bool WagonCheck()
+        {
+            if (recordRoot.SpriteIndex == 4)
+                return true;
+            else
+                return false;
         }
 
         #endregion

@@ -372,6 +372,8 @@ namespace DaggerfallConnect.Save
     /// <summary>
     /// Types of SaveTree records/Daggerfall game objects.
     /// "Classic name" refers to the name found in FALL.EXE for this object type. These names only go as far as "OneShot".
+    /// The name "Light" is not in the list of names in the retail FALL.EXE but can be found in one of the Daggerfall demo executables
+    /// where each name is preceded by "OBJ_" as "OBJ_LIGHT".
     /// </summary>
     public enum RecordTypes
     {
@@ -382,7 +384,7 @@ namespace DaggerfallConnect.Save
         CharacterPositionRecord = 0x04,             // Classic name = Move. This record, not the position in the SAVETREE.DAT header, determines where player is when the game loads.
         CharacterCamera = 0x05,                     // Classic name = Eye. The player's view. Has the same position as CharacterPositionRecord.
         Interactable3dObject = 0x06,                // Classic name = 3D. Levers, switches, moving platforms, etc.
-        Light = 0x07,                               // Classic name = Light (name from Daggerfall demo FALL.EXE). Created for lights in dungeons and projectile spells.
+        Light = 0x07,                               // Classic name = Light. Created for lights in dungeons and for projectile spells.
         NPCFlat = 0x08,                             // Classic name = Person.
         Spell = 0x09,                               // Classic name = Spell
         GuildMembership = 0x0a,                     // Classic name = Guild
@@ -390,7 +392,7 @@ namespace DaggerfallConnect.Save
         UnusedClass = 0x0c,                         // Classic name = Class. Seems to be unused.
         UnusedKeyword = 0x0d,                       // Classic name = Keyword. Seems to be unused.
         QBNData = 0x0e,                             // Classic name = Quest
-        UnusedKeyHolder = 0x0f,                     // Classic name = Keyholder. Seems to be unused. May have originally been for storing door keys like in Arena.
+        UnusedKeyHolder = 0x0f,                     // Classic name = Keyholder. Seems to be unused.
         QuestHolder = 0x10,                         // Classic name = QuestHolder. Fixsave calls this "quest tree".
         UnusedNPC = 0x11,                           // Classic name = NPC. Seems to be unused
         EnemyMobile = 0x12,                         // Classic name = Monster
@@ -423,7 +425,7 @@ namespace DaggerfallConnect.Save
         NPC = 0x2d,
         GenericNPC = 0x2e,
         DungeonAutomapData = 0x33,                  // Huge but mostly zero filled
-        Container = 0x34,                           // Fixsave calls this "item holder." 0 = weapons & armor, 1 = magic items, 2 = clothing & misc, 3 = ingredients, 4 = wagon, 5 = house, 6 = ship, 7 = tavern rooms, 8 = item repairers
+        Container = 0x34,                           // Fixsave calls this "item holder". 0 = weapons & armor, 1 = magic items, 2 = clothing & misc, 3 = ingredients, 4 = wagon, 5 = house, 6 = ship, 7 = tavern rooms, 8 = item repairers
         NPCMobile = 0x35,                           // Mobile NPCs wandering around outside
         ItemLeftForRepair = 0x36,
         TavernRoom = 0x40,                          // Stores information for player items left in tavern.
