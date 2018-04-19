@@ -1271,6 +1271,21 @@ namespace DaggerfallWorkshop.Game.Entity
             Treason = 14,
         }
 
+        // Values after index 0 are from FALL.EXE. It does not seem to have a valid value for the last crime "Treason," so just using half of "High Treason" value here.
+        short[] reputationLossPerCrime = { 0x00, 0x0A, 0x05, 0x0A, 0x08, 0x14, 0x0A, 0x02, 0x01, 0x02, 0x02, 0x4B, 0x02, 0x08, 0x24 };
+
+        public void LowerRepForCrime()
+        {
+            int regionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
+
+            // Lower legal reputation
+            regionData[regionIndex].LegalRep -= reputationLossPerCrime[(int)crimeCommitted];
+
+            // TODO: Faction reputation adjustments
+            //FactionFile.FactionData peopleFaction;
+            //FactionData.FindFactionByTypeAndRegion(15, regionIndex + 1, out peopleFaction);
+        }
+
         #endregion
 
         #region Event Handlers

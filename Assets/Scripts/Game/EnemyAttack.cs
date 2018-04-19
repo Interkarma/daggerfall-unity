@@ -199,9 +199,11 @@ namespace DaggerfallWorkshop.Game
 
             if (damage > 0)
             {
-                // If hit by a guard, show the surrender dialogue
+                // If hit by a guard, lower reputation and show the surrender dialogue
                 if (!playerEntity.HaveShownSurrenderToGuardsDialogue && entity.MobileEnemy.ID == (int)MobileTypes.Knight_CityWatch)
                 {
+                    playerEntity.LowerRepForCrime();
+
                     DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
                     messageBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRSCTokens(doYouSurrenderToGuardsTextID));
                     messageBox.ParentPanel.BackgroundColor = Color.clear;
