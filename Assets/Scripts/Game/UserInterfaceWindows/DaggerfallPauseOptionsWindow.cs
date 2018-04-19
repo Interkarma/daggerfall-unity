@@ -36,6 +36,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Texture2D nativeTexture;
         Panel optionsPanel = new Panel();
         Panel headBobbingTick = new Panel();
+        Panel musicBar = new Panel();
+        Panel soundBar = new Panel();
+        const float barMaxLength = 109.1f;
+
 
         public DaggerfallPauseOptionsWindow(IUserInterfaceManager uiManager, IUserInterfaceWindow previousWindow = null)
             :base(uiManager, previousWindow)
@@ -77,6 +81,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             //loadButton.BackgroundColor = DaggerfallUI.DaggerfallUnityNotImplementedColor;
             loadButton.OnMouseClick += LoadButton_OnMouseClick;
 
+            // Sound Bar
+            Button soundPanel = DaggerfallUI.AddButton(new Rect(6.15f, 23.20f, barMaxLength, 5.5f), optionsPanel);
+            soundPanel.OnMouseClick += SoundBar_OnMouseClick;
+            soundBar = DaggerfallUI.AddPanel(new Rect(0f, 1f, DaggerfallUnity.Settings.SoundVolume * barMaxLength, 3.5f), soundPanel);
+            soundBar.BackgroundColor = DaggerfallUI.DaggerfallUnityDefaultCheckboxToggleColor;
+
+            // Music Bar
+            Button musicPanel = DaggerfallUI.AddButton(new Rect(6.15f, 30.85f, barMaxLength, 5.5f), optionsPanel);
+            musicPanel.OnMouseClick += MusicBar_OnMouseClick;
+            musicBar = DaggerfallUI.AddPanel(new Rect(0f, 1f, DaggerfallUnity.Settings.MusicVolume * barMaxLength, 3.5f), musicPanel);
+            musicBar.BackgroundColor = DaggerfallUI.DaggerfallUnityDefaultCheckboxToggleColor;
+
             // Controls
             Button controlsButton = DaggerfallUI.AddButton(new Rect(5, 60, 70, 17), optionsPanel);
             controlsButton.OnMouseClick += ControlsButton_OnMouseClick;
@@ -94,6 +110,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         #region Event Handlers
+        private void SoundBar_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            // resize panel to where user clicked
+            soundBar.Size = new Vector2(position.x, 3.5f);
+            DaggerfallUnity.Settings.SoundVolume = (position.x / barMaxLength);
+            DaggerfallUnity.Settings.SaveSettings();
+        }
+        private void MusicBar_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            // resize panel to where user clicked
+            musicBar.Size = new Vector2(position.x, 3.5f);
+            DaggerfallUnity.Settings.MusicVolume = (position.x / barMaxLength);
+            DaggerfallUnity.Settings.SaveSettings();
+        }
 
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
