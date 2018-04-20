@@ -86,6 +86,10 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
+            // Do nothing if player inside
+            if (GameManager.Instance.PlayerEnterExit.IsPlayerInside)
+                return;
+
             SetAmbientEffects();
             //PollWeatherChanges();
             SetSunlightScale();
