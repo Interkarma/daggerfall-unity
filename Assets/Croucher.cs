@@ -22,17 +22,24 @@ namespace DaggerfallWorkShop.Game
         public float toggleActionSpeed;
         private PlayerMotor playerMotor;
         private CharacterController controller;
+        private HeadBobber headBobber;
+        private Camera mainCamera;
         private float crouchHeight;
         private float standHeight;
+        private float crouchTimer;
+        private float standTimer;
+        private float timerSpeed = 3f;
+        private const float timerMax = 0.3f;
 
         private void Start()
         {
             playerMotor = GetComponent<PlayerMotor>();
             controller = GetComponent<CharacterController>();
+            headBobber = GetComponent<HeadBobber>();
+            mainCamera = GameManager.Instance.MainCamera;
             standHeight = playerMotor.standingHeight;
             crouchHeight = playerMotor.crouchingHeight;
-            toggleAction = CrouchToggleAction.DoNothing;
-            toggleActionSpeed = 12f;         
+            toggleAction = CrouchToggleAction.DoNothing;       
         }
 
         // perform whatever action CrouchToggleAction is set to.
@@ -45,16 +52,30 @@ namespace DaggerfallWorkShop.Game
 
             if (toggleAction != CrouchToggleAction.DoNothing)
             {
-                float yChangePerFrame = toggleActionSpeed * Time.deltaTime;
+                float newYAmt = 0f;
+                if (toggleAction == CrouchToggleAction.DoCrouching)
+                {
+                    crouchTimer += Time.deltaTime * timerSpeed;
+                    float t = (crouchTimer / timerMax);
+                    newYAmt = Mathf.Lerp(0f, -1 * (standHeight - crouchHeight) / 2f, t);
+                }
+                else if (toggleAction == CrouchToggleAction.DoStanding)
+                {
+                    standTimer += Time.deltaTime * timerSpeed;
+                    float t = (standTimer / timerMax);
+                    newYAmt = Mathf.Lerp(0f, (standHeight - crouchHeight) / 2f, t);
+                }
+
+                #region BumpInto
+                /*
                 float upCollisionDistance = standHeight / 2f;
                 float downCollisionDistance = crouchHeight / 2f;
                 bool bHitHead = (WayIsBlocked(upCollisionDistance) && toggleAction == CrouchToggleAction.DoStanding);
-                bool bHitButt = (WayIsBlocked(downCollisionDistance) && toggleAction == CrouchToggleAction.DoCrouching); ;
-
-                if (toggleAction == CrouchToggleAction.DoCrouching)
-                    yChangePerFrame *= -1;
-                
-                if (bHitButt || bHitHead)
+                bool bHitButt = (WayIsBlocked(downCollisionDistance) && toggleAction == CrouchToggleAction.DoCrouching); 
+                */
+                #endregion
+                #region BumpInto
+                /*if (bHitButt || bHitHead)
                 {
                     // reverse direction as if bumped into the blocking object
                     if (bHitButt)
@@ -64,25 +85,54 @@ namespace DaggerfallWorkShop.Game
 
                     playerMotor.IsCrouching = !playerMotor.IsCrouching;
                     yChangePerFrame *= -1; // reverse player Y direction
-                }
+                }*/
+                #endregion
 
-                controller.height = Mathf.Clamp(controller.height + yChangePerFrame, crouchHeight, standHeight);
+                ChangeMainCameraPosition(newYAmt);
 
-                controller.transform.position += new Vector3(0, yChangePerFrame / 2.0f);
-                if (toggleAction == CrouchToggleAction.DoCrouching)
-                    bFinished = (controller.height <= crouchHeight);
-                else
-                    bFinished = (controller.height >= standHeight);
+                bFinished = (crouchTimer >= timerMax || standTimer >= timerMax);
             }
 
             if (bFinished)
             {
-                //Debug.Log("Controller.height = " + controller.height);
-                //Debug.Log("Controller.transform.position.y" + controller.transform.position.y);
+                if (toggleAction == CrouchToggleAction.DoCrouching)
+                    ChangeMainCameraPosition((standHeight - crouchHeight) / 2f);
+                else
+                    ChangeMainCameraPosition( -1 * (standHeight - crouchHeight) / 2f);
 
+                DoSnapToggleAction();
+                crouchTimer = 0;
+                standTimer = 0;
                 toggleAction = CrouchToggleAction.DoNothing;
             }
         }
+
+        private void DoSnapToggleAction()
+        {
+            if (playerMotor.IsCrouching)
+            {
+                controller.height = crouchHeight;
+                Vector3 pos = controller.transform.position;
+                pos.y -= (standHeight - crouchHeight) / 2.0f;
+                controller.transform.position = pos;
+            }
+            else if (!playerMotor.IsCrouching)
+            {
+                controller.height = standHeight;
+                Vector3 pos = controller.transform.position;
+                pos.y += (standHeight - crouchHeight) / 2.0f;
+                controller.transform.position = pos;
+            }
+        }
+
+        private void ChangeMainCameraPosition(float yAmt)
+        {   
+            //Vector3 newPos = new Vector3(headBobber.restPos.x, headBobber.restPos.y + yAmt);
+            //headBobber.restPos += newPos - headBobber.restPos;
+            headBobber.restPos += new Vector3(0, yAmt) - headBobber.restPos;
+            //mainCamera.transform.localPosition += headBobber.restPos - mainCamera.transform.localPosition;
+            mainCamera.transform.localPosition += new Vector3(0, yAmt) - mainCamera.transform.localPosition;
+        } 
 
         private bool HitHead(float distance)
         {
