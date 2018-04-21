@@ -1286,6 +1286,27 @@ namespace DaggerfallWorkshop.Game.Entity
             FactionData.ChangeReputation(peopleFaction.id, -(reputationLossPerCrime[(int)crimeCommitted] / 2));
         }
 
+        public void SurrenderToCityGuards(bool voluntarySurrender)
+        {
+            int regionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
+            short legalRep = regionData[regionIndex].LegalRep;
+
+            //SetHealth(1);
+            if (legalRep < -20 && !voluntarySurrender)
+                SetHealth(0);
+            else if (legalRep < -20 || legalRep > 0)
+                CourtWindow(CrimeCommitted);
+            else if ((DFRandom.rand() & 1) != 0 && !voluntarySurrender)
+                SetHealth(0);
+            else
+                CourtWindow(CrimeCommitted);
+        }
+
+        public void CourtWindow(Crimes crimeCommitted)
+        {
+            DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenCourtWindow);
+        }
+
         #endregion
 
         #region Event Handlers

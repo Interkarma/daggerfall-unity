@@ -58,6 +58,9 @@ namespace DaggerfallWorkshop.Game
         // Status info messages
         public const string dfuiStatusInfo = "dfuiStatusInfo";
 
+        // Court messages
+        public const string dfuiOpenCourtWindow = "dfuiOpenCourtWindow";
+
         // "Debug" window messages
         public const string dfuiOpenQuestInspector = "dfuiOpenQuestInspector";
     }
