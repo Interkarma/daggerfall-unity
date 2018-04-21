@@ -35,8 +35,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public DaggerfallMissile PoisonMissilePrefab;
         public DaggerfallMissile ShockMissilePrefab;
 
-        FakeSpell readySpell = null;
-        FakeSpell lastSpell = null;
+        Spell readySpell = null;
+        Spell lastSpell = null;
 
         DaggerfallEntityBehaviour entityBehaviour = null;
         bool isPlayerEntity = false;
@@ -53,12 +53,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             get { return (readySpell != null); }
         }
 
-        public FakeSpell ReadySpell
+        public Spell ReadySpell
         {
             get { return readySpell; }
         }
 
-        public FakeSpell LastSpell
+        public Spell LastSpell
         {
             get { return lastSpell; }
         }
@@ -148,7 +148,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// For player entity, this will display "press button to fire spell" message.
         /// </summary>
         /// <param name="spell"></param>
-        public void SetReadySpell(FakeSpell spell)
+        public void SetReadySpell(Spell spell)
         {
             readySpell = spell;
 
@@ -167,8 +167,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             if (readySpell != null)
             {
-                // TEMP: Just hurling test missiles with no payload at this time
-                GameManager.Instance.PlayerSpellCasting.PlayOneShot(ElementTypes.Cold);
+                // Play casting animation based on element type
+                GameManager.Instance.PlayerSpellCasting.PlayOneShot(readySpell.Settings.ElementType);
             }
         }
 
@@ -200,13 +200,32 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         private void PlayerSpellCasting_OnReleaseFrame()
         {
+            // Get missile vectors
             Vector3 missileDirection = GameManager.Instance.MainCamera.transform.forward;
             Vector3 missilePosition = transform.position + Vector3.up * 0.35f + missileDirection * 0.85f;
 
-            // TEMP: Just hurling test missiles with no payload at this time
-            DaggerfallMissile missile = Instantiate(ColdMissilePrefab);
-            missile.UseSpellBillboardAnims(ElementTypes.Cold);
-            missile.ExecuteMobileMissile(missilePosition, missileDirection);
+            // Instatiate missile prefab based on element type
+            DaggerfallMissile missile;
+            switch(readySpell.Settings.ElementType)
+            {
+                case ElementTypes.Cold:
+                    missile = Instantiate(ColdMissilePrefab);
+                    break;
+                default:
+                    return;
+            }
+
+            // Setup missile
+            missile.UseSpellBillboardAnims(readySpell.Settings.ElementType);
+            missile.Spell = readySpell;
+            // TODO: Setup based on target type
+            
+            // TODO: Execute missile based on target type
+
+            //// TEMP: Just hurling test missiles with no payload at this time
+            //DaggerfallMissile 
+            //missile.UseSpellBillboardAnims(ElementTypes.Cold);
+            //missile.ExecuteMobileMissile(missilePosition, missileDirection);
 
             lastSpell = readySpell;
             readySpell = null;

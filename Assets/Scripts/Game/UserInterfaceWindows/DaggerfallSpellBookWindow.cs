@@ -286,26 +286,26 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             spellsListScrollBar.ScrollIndex = spellsListBox.ScrollIndex;
 
             // Get spell and exit if spell index not found
-            EffectBundleSettings spell;
-            if (!GameManager.Instance.PlayerEntity.GetSpell(spellsListBox.SelectedIndex, out spell))
+            EffectBundleSettings spellSettings;
+            if (!GameManager.Instance.PlayerEntity.GetSpell(spellsListBox.SelectedIndex, out spellSettings))
                 return;
 
             // Update spell name label
-            spellNameLabel.Text = spell.Name;
+            spellNameLabel.Text = spellSettings.Name;
 
             // Update effect labels
             for (int i = 0; i < 3; i++)
             {
-                if (i < spell.Effects.Length)
-                    SetEffectLabels(spell.Effects[i].Key, i);
+                if (i < spellSettings.Effects.Length)
+                    SetEffectLabels(spellSettings.Effects[i].Key, i);
                 else
                     SetEffectLabels(string.Empty, i);
             }
 
             // Update spell icons
-            spellIconPanel.BackgroundTexture = GetSpellIcon(spell.IconIndex);
-            spellTargetIconPanel.BackgroundTexture = GetSpellTargetIcon(spell.TargetType);
-            spellElementIconPanel.BackgroundTexture = GetSpellElementIcon(spell.ElementType);
+            spellIconPanel.BackgroundTexture = GetSpellIcon(spellSettings.IconIndex);
+            spellTargetIconPanel.BackgroundTexture = GetSpellTargetIcon(spellSettings.TargetType);
+            spellElementIconPanel.BackgroundTexture = GetSpellElementIcon(spellSettings.ElementType);
         }
 
         void ClearEffectLabels()
@@ -384,23 +384,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void SpellEffectPanelClick(BaseScreenComponent sender, Vector2 position)
         {
             // Get spell and exit if spell index not found
-            EffectBundleSettings spell;
-            if (!GameManager.Instance.PlayerEntity.GetSpell(spellsListBox.SelectedIndex, out spell))
+            EffectBundleSettings spellSettings;
+            if (!GameManager.Instance.PlayerEntity.GetSpell(spellsListBox.SelectedIndex, out spellSettings))
                 return;
 
             // Get effect index of panel clicked
             int effectIndex;
-            if (sender.Name == spellEffectPanels[0].Name && spell.Effects.Length >= 1)
+            if (sender.Name == spellEffectPanels[0].Name && spellSettings.Effects.Length >= 1)
                 effectIndex = 0;
-            else if (sender.Name == spellEffectPanels[1].Name && spell.Effects.Length >= 2)
+            else if (sender.Name == spellEffectPanels[1].Name && spellSettings.Effects.Length >= 2)
                 effectIndex = 1;
-            else if (sender.Name == spellEffectPanels[2].Name && spell.Effects.Length >= 3)
+            else if (sender.Name == spellEffectPanels[2].Name && spellSettings.Effects.Length >= 3)
                 effectIndex = 2;
             else
                 return;
 
             // Create effect instance with settings and show popup
-            IEntityEffect effect = GameManager.Instance.EntityEffectBroker.InstantiateEffect(spell.Effects[effectIndex]);
+            IEntityEffect effect = GameManager.Instance.EntityEffectBroker.InstantiateEffect(spellSettings.Effects[effectIndex]);
             ShowEffectPopup(effect);
         }
 
@@ -411,13 +411,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void SpellsListBox_OnUseSelectedItem()
         {
-            // TEMP: Issue a fake spell to player's effect manager
-            // This will expand and eventually be replaced with real spells
-            // Currently just setting up spellcasting front-end and animations
+            // Get spell settings and exit if spell index not found
+            EffectBundleSettings spellSettings;
+            if (!GameManager.Instance.PlayerEntity.GetSpell(spellsListBox.SelectedIndex, out spellSettings))
+                return;
+
+            // Assign to player effect manager as ready spell
             EntityEffectManager playerEffectManager = GameManager.Instance.PlayerEffectManager;
             if (playerEffectManager)
             {
-                playerEffectManager.SetReadySpell(new FakeSpell());
+                playerEffectManager.SetReadySpell(new Spell(spellSettings));
                 CloseWindow();
             }
         }
