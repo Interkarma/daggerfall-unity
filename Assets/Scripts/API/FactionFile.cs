@@ -175,6 +175,10 @@ namespace DaggerfallConnect.Arena2
             public int vam;
             public int rank;
             public int randomValue;
+            public int randomPowerBonus;
+            public int ptrToNextFactionAtSameHierarchyLevel;
+            public int ptrToFirstChildFaction;
+            public int ptrToParentFaction;
 
             public List<int> children;
         }

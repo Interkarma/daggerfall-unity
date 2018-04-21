@@ -609,8 +609,8 @@ namespace DaggerfallConnect.Save
                 faction.vam = reader.ReadInt16();
                 faction.flags = reader.ReadInt16();
 
-                reader.BaseStream.Position += 4;            // Skip 4 unknown bytes
-                faction.randomValue = reader.ReadInt32();
+                faction.randomValue = reader.ReadInt32();           // Completely random value
+                faction.randomPowerBonus = reader.ReadInt32();      // Random(0, 50) + 20
 
                 faction.flat1 = reader.ReadInt16();
                 faction.flat2 = reader.ReadInt16();
@@ -630,7 +630,9 @@ namespace DaggerfallConnect.Save
                 faction.enemy2 = reader.ReadInt32();
                 faction.enemy3 = reader.ReadInt32();
 
-                reader.BaseStream.Position += 12;           // Skip 12 unknown bytes
+                faction.ptrToNextFactionAtSameHierarchyLevel = reader.ReadInt32();
+                faction.ptrToFirstChildFaction = reader.ReadInt32();
+                faction.ptrToParentFaction = reader.ReadInt32();
 
                 factions.Add(faction);
             }
