@@ -11,6 +11,11 @@ namespace DaggerfallWorkShop.Game
         DoStanding,
         DoCrouching
     }
+
+    //Added the RequireComponent attribute to make sure that following components are indeed on this GameObject, since they are require to make this code work
+    [RequireComponent(typeof(PlayerMotor))]
+    [RequireComponent(typeof(CharacterController))]
+    [RequireComponent(typeof(HeadBobber))]
     public class Croucher : MonoBehaviour
     {
         private CrouchToggleAction toggleAction;
@@ -19,17 +24,18 @@ namespace DaggerfallWorkShop.Game
             get { return toggleAction; }
             set { toggleAction = value; }
         }
-        public float toggleActionSpeed;
         private PlayerMotor playerMotor;
         private CharacterController controller;
         private HeadBobber headBobber;
         private Camera mainCamera;
         private float crouchHeight;
         private float standHeight;
+        private float controllerPosChangeDistance;
+        private float camCrouchLevel;
+        private float camStandLevel;
         private float crouchTimer;
-        private float standTimer;
-        private float timerSpeed = 3f;
-        private const float timerMax = 0.3f;
+
+        private const float timerMax = 0.1f;
 
         private void Start()
         {
@@ -39,120 +45,98 @@ namespace DaggerfallWorkShop.Game
             mainCamera = GameManager.Instance.MainCamera;
             standHeight = playerMotor.standingHeight;
             crouchHeight = playerMotor.crouchingHeight;
-            toggleAction = CrouchToggleAction.DoNothing;       
+            controllerPosChangeDistance = (standHeight - crouchHeight) / 2f;
+
+            camStandLevel = mainCamera.transform.localPosition.y; //With the assumption that the camera begins at correct standing position height
+            camCrouchLevel = camStandLevel - controllerPosChangeDistance; //we want the camera to lower the same amount as the character
         }
 
-        // perform whatever action CrouchToggleAction is set to.
         private void Update()
         {
             if (toggleAction == CrouchToggleAction.DoNothing)
                 return;
 
+            if (toggleAction == CrouchToggleAction.DoCrouching)
+                DoCrouch();
+            else
+                DoStand();
+        }
+        private void DoCrouch() // first lower camera, perform snap crouch last 
+        {
             bool bFinished = false;
 
-            if (toggleAction != CrouchToggleAction.DoNothing)
-            {
-                float newYAmt = 0f;
-                if (toggleAction == CrouchToggleAction.DoCrouching)
-                {
-                    crouchTimer += Time.deltaTime * timerSpeed;
-                    float t = (crouchTimer / timerMax);
-                    newYAmt = Mathf.Lerp(0f, -1 * (standHeight - crouchHeight) / 2f, t);
-                }
-                else if (toggleAction == CrouchToggleAction.DoStanding)
-                {
-                    standTimer += Time.deltaTime * timerSpeed;
-                    float t = (standTimer / timerMax);
-                    newYAmt = Mathf.Lerp(0f, (standHeight - crouchHeight) / 2f, t);
-                }
+            crouchTimer += Time.deltaTime;
+            float t = Mathf.Clamp((crouchTimer / timerMax), 0, 1);
 
-                #region BumpInto
-                /*
-                float upCollisionDistance = standHeight / 2f;
-                float downCollisionDistance = crouchHeight / 2f;
-                bool bHitHead = (WayIsBlocked(upCollisionDistance) && toggleAction == CrouchToggleAction.DoStanding);
-                bool bHitButt = (WayIsBlocked(downCollisionDistance) && toggleAction == CrouchToggleAction.DoCrouching); 
-                */
-                #endregion
-                #region BumpInto
-                /*if (bHitButt || bHitHead)
-                {
-                    // reverse direction as if bumped into the blocking object
-                    if (bHitButt)
-                        toggleAction = CrouchToggleAction.DoStanding;
-                    else
-                        toggleAction = CrouchToggleAction.DoCrouching;
+            UpdateCameraPosition(Mathf.Lerp(camStandLevel, camCrouchLevel, t));
 
-                    playerMotor.IsCrouching = !playerMotor.IsCrouching;
-                    yChangePerFrame *= -1; // reverse player Y direction
-                }*/
-                #endregion
-
-                ChangeMainCameraPosition(newYAmt);
-
-                bFinished = (crouchTimer >= timerMax || standTimer >= timerMax);
-            }
+            bFinished = (crouchTimer >= timerMax);
 
             if (bFinished)
             {
-                if (toggleAction == CrouchToggleAction.DoCrouching)
-                    ChangeMainCameraPosition((standHeight - crouchHeight) / 2f);
-                else
-                    ChangeMainCameraPosition( -1 * (standHeight - crouchHeight) / 2f);
+                controller.height = crouchHeight;
+                controller.transform.position -= new Vector3(0, controllerPosChangeDistance);
+                UpdateCameraPosition(mainCamera.transform.localPosition.y + controllerPosChangeDistance);
 
-                DoSnapToggleAction();
-                crouchTimer = 0;
-                standTimer = 0;
+                crouchTimer = 0f;
                 toggleAction = CrouchToggleAction.DoNothing;
             }
-        }
 
-        private void DoSnapToggleAction()
+        }
+        private void DoStand() // perform snap crouch first, lower camera last
         {
-            if (playerMotor.IsCrouching)
-            {
-                controller.height = crouchHeight;
-                Vector3 pos = controller.transform.position;
-                pos.y -= (standHeight - crouchHeight) / 2.0f;
-                controller.transform.position = pos;
-            }
-            else if (!playerMotor.IsCrouching)
+            bool bFinished = false;
+
+            if (controller.height < standHeight)
             {
                 controller.height = standHeight;
-                Vector3 pos = controller.transform.position;
-                pos.y += (standHeight - crouchHeight) / 2.0f;
-                controller.transform.position = pos;
+                controller.transform.position += new Vector3(0, controllerPosChangeDistance);
+            }
+
+            if (controller.height >= standHeight)
+            { 
+                crouchTimer += Time.deltaTime;
+                float t = Mathf.Clamp((crouchTimer / timerMax), 0, 1);
+           
+                UpdateCameraPosition(Mathf.Lerp(camCrouchLevel, camStandLevel, t));
+
+                bFinished = (crouchTimer >= timerMax);
+                if (bFinished)
+                {
+                    crouchTimer = 0f;
+                    toggleAction = CrouchToggleAction.DoNothing;
+                }
             }
         }
 
-        private void ChangeMainCameraPosition(float yAmt)
-        {   
-            //Vector3 newPos = new Vector3(headBobber.restPos.x, headBobber.restPos.y + yAmt);
-            //headBobber.restPos += newPos - headBobber.restPos;
-            headBobber.restPos += new Vector3(0, yAmt) - headBobber.restPos;
-            //mainCamera.transform.localPosition += headBobber.restPos - mainCamera.transform.localPosition;
-            mainCamera.transform.localPosition += new Vector3(0, yAmt) - mainCamera.transform.localPosition;
-        } 
+        private void UpdateCameraPosition(float yPosMod)
+        {
+            Vector3 camPos = mainCamera.transform.localPosition;
+            headBobber.restPos.y = yPosMod;
+            mainCamera.transform.localPosition = new Vector3(camPos.x, yPosMod, camPos.z);
+        }
 
-        private bool HitHead(float distance)
+        private void ControllerCrouchToggle()
         {
-            return (WayIsBlocked(distance) && toggleAction == CrouchToggleAction.DoStanding);
+            if (toggleAction == CrouchToggleAction.DoCrouching)
+            {
+                controller.height = crouchHeight;
+                controller.transform.position -= new Vector3(0, controllerPosChangeDistance);
+            }
+            else if (toggleAction == CrouchToggleAction.DoStanding)
+            {
+                controller.height = standHeight;
+                controller.transform.position += new Vector3(0, controllerPosChangeDistance);
+            }
         }
-        private bool HitButt(float distance)
-        {
-            return (WayIsBlocked(distance) && toggleAction == CrouchToggleAction.DoCrouching);
-        }
-        private bool WayIsBlocked(float distance)
+
+        private bool CanStand()
         { 
             RaycastHit hit;
-            Vector3 direction;
-            if (toggleAction == CrouchToggleAction.DoCrouching)
-                direction = Vector3.down;
-            else
-                direction = Vector3.up;
+            float distance = controllerPosChangeDistance;
 
-            Ray ray = new Ray(transform.position, direction);
-            return Physics.Raycast(ray, out hit, distance); 
+            Ray ray = new Ray(controller.transform.position, Vector3.up);
+            return !Physics.Raycast(ray, out hit, distance); 
         }
     }
 }
