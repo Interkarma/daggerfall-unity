@@ -252,14 +252,21 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Update all effects for all bundles
             foreach (InstancedBundle bundle in instancedBundles)
             {
+                bool hasRemainingEffectRounds = false;
                 foreach (IEntityEffect effect in bundle.effects)
                 {
-                    // TODO: Expire bundle once all effects have 0 rounds remaining
+                    // Update effects with remaining rounds
                     if (effect.RoundsRemaining > 0)
                     {
                         effect.MagicRound(this, bundle.caster);
-                        effect.RemoveRound();
+                        if (effect.RemoveRound() > 0)
+                            hasRemainingEffectRounds = true;
                     }
+                }
+
+                // TODO: Expire this bundle once all effects have 0 rounds remaining
+                if (!hasRemainingEffectRounds)
+                {
                 }
             }
         }
@@ -276,29 +283,34 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         private void PlayerSpellCasting_OnReleaseFrame()
         {
+            DaggerfallMissile missile = null;
+
             // Assign bundle directly to self if target is caster
+            // Otherwise instatiate missile prefab based on element type
             if (readySpell.Settings.TargetType == TargetTypes.CasterOnly)
             {
                 AssignBundle(readySpell);
             }
             else
             {
-
+                switch (readySpell.Settings.ElementType)
+                {
+                    case ElementTypes.Fire:
+                        missile = Instantiate(FireMissilePrefab);
+                        break;
+                    case ElementTypes.Cold:
+                        missile = Instantiate(ColdMissilePrefab);
+                        break;
+                    default:
+                        return;
+                }
             }
 
-            //// Instatiate missile prefab based on element type
-            //DaggerfallMissile missile = null;
-            //switch (readySpell.Settings.ElementType)
-            //{
-            //    case ElementTypes.Fire:
-            //        missile = Instantiate(FireMissilePrefab);
-            //        break;
-            //    case ElementTypes.Cold:
-            //        missile = Instantiate(ColdMissilePrefab);
-            //        break;
-            //    default:
-            //        return;
-            //}
+            // Configure missile
+            if (missile)
+            {
+                missile.Payload = readySpell;
+            }
 
             //// Set defaults
             //missile.IsTouch = false;

@@ -202,10 +202,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MovementSpeed: 15
-  ColliderRadius: 0.4
-  AreaOfEffect: 0
+  ColliderRadius: 0.45
   ExplosionRadius: 3
-  IsTouch: 0
   TouchRange: 2.5
   EnableLight: 1
   EnableShadows: 1

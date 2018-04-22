@@ -10,8 +10,6 @@
 //
 
 using UnityEngine;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.MagicAndEffects;
@@ -23,10 +21,9 @@ namespace DaggerfallWorkshop.Game
     /// Missile component for spell casters and archers.
     /// Designed to handle missile role in abstract way for other systems.
     /// Collects list of affected entities for involved system to process.
-    /// Supports touch, target at range, area of effect, etc.
+    /// Supports touch, target at range, area of effect.
     /// Has some basic lighting effects that might expand later.
     /// Does not currently support serialization, but this will be added later.
-    /// Not all settings are fully implemented or exposed to editor at this time.
     /// Currently ranged missiles can only move in a straight line as per classic.
     /// </summary>
     [RequireComponent(typeof(Light))]
@@ -39,9 +36,7 @@ namespace DaggerfallWorkshop.Game
 
         public float MovementSpeed = 12.0f;                     // Speed missile moves through world
         public float ColliderRadius = 0.45f;                    // Radius of missile contact sphere
-        public bool AreaOfEffect = false;                       // Make this an area of effect explosion that triggers on contact with entity or environment
         public float ExplosionRadius = 3.0f;                    // Radius of area of effect explosion
-        public bool IsTouch = false;                            // Determines if missile performs a spherecast to entity target instead of firing a moving sphere
         public float TouchRange = 2.5f;                         // Maximum range for touch spherecast
         public bool EnableLight = true;                         // Show a light with this missile - player can force disable from settings
         public bool EnableShadows = true;                       // Light will cast shadows - player can force disable from settings
@@ -52,7 +47,7 @@ namespace DaggerfallWorkshop.Game
         public int ImpactBillboardFramesPerSecond = 15;         // Speed of contact billboard animation
         public float LifespanInSeconds = 8f;                    // How long missile will persist in world before self-destructing if no target found
         public float PostImpactLifespanInSeconds = 0.6f;        // Time in seconds missile will persist after impact
-        public float PostImpactLightMultiplier = 0f;            // Scale of light intensity and range during post-impact lifespan - use 1.0 for no change, 0.0 for lights-out
+        public float PostImpactLightMultiplier = 1f;            // Scale of light intensity and range during post-impact lifespan - use 1.0 for no change, 0.0 for lights-out
 
         #endregion
 
@@ -73,12 +68,16 @@ namespace DaggerfallWorkshop.Game
         bool forceDisableSpellShadows;
         float lifespan = 0f;
         float postImpactLifespan = 0f;
+        TargetTypes targetType = TargetTypes.None;
         ElementTypes elementType = ElementTypes.None;
+        DaggerfallEntityBehaviour caster = null;
+        bool missileReleased = false;
         bool impactDetected = false;
         float initialRange;
         float initialIntensity;
-
         EntityEffectBundle payload;
+
+        List<DaggerfallEntityBehaviour> targetEntities = new List<DaggerfallEntityBehaviour>();
 
         #endregion
 
@@ -86,13 +85,44 @@ namespace DaggerfallWorkshop.Game
 
         /// <summary>
         /// Gets or sets effect bundle payload carried by this missile.
-        /// Any DaggerfallEntityBehaviour objects struck by this missile will
+        /// Any DaggerfallEntityBehaviour objects hit by this missile will
         /// receive instance of bundle payload against their EntityEffectManager on contact.
         /// </summary>
         public EntityEffectBundle Payload
         {
             get { return payload; }
             set { payload = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets target type.
+        /// Target is set automatically from payload when available.
+        /// </summary>
+        public TargetTypes TargetType
+        {
+            get { return targetType; }
+            set { targetType = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets element type.
+        /// Element is set automatically from payload when available.
+        /// </summary>
+        public ElementTypes ElementType
+        {
+            get { return elementType; }
+            set { elementType = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets caster who is origin of missile.
+        /// This must be set for all missile target types.
+        /// Caster is set automatically from payload when available.
+        /// </summary>
+        public DaggerfallEntityBehaviour Caster
+        {
+            get { return caster; }
+            set { caster = value; }
         }
 
         #endregion
@@ -120,10 +150,50 @@ namespace DaggerfallWorkshop.Game
             myRigidbody = GetComponent<Rigidbody>();
             myRigidbody.isKinematic = true;
             myRigidbody.useGravity = false;
+
+            // Use payload when available
+            if (payload != null)
+            {
+                // Set payload missile properties
+                caster = payload.CasterEntityBehaviour;
+                targetType = payload.Settings.TargetType;
+                elementType = payload.Settings.ElementType;
+
+                // Set spell billboard anims automatically from payload for mobile missiles
+                if (targetType == TargetTypes.SingleTargetAtRange ||
+                    targetType == TargetTypes.AreaAtRange)
+                {
+                    UseSpellBillboardAnims(elementType);
+                }
+            }
         }
 
         private void Update()
         {
+            // Exit if no caster
+            if (!caster)
+                return;
+
+            // Execute based on target type
+            if (!missileReleased)
+            {
+                switch (targetType)
+                {
+                    case TargetTypes.ByTouch:
+                        DoTouch();
+                        break;
+                    case TargetTypes.SingleTargetAtRange:
+                    case TargetTypes.AreaAtRange:
+                        DoMissile();
+                        break;
+                    case TargetTypes.AreaAroundCaster:
+                        DoAreaOfEffect(caster.transform.position, true);
+                        break;
+                    default:
+                        return;
+                }
+            }
+
             // Handle missile lifespan pre and post-impact
             if (!impactDetected)
             {
@@ -143,19 +213,143 @@ namespace DaggerfallWorkshop.Game
                     Destroy(gameObject);
             }
 
-            // Update lighting effect
+            // Update light
             UpdateLight();
         }
 
         #endregion
 
-        #region Public Methods
+        #region Collision Handling
 
-        /// <summary>
-        /// Easily set billboard animations by spell type.
-        /// </summary>
-        /// <param name="elementType"></param>
-        public void UseSpellBillboardAnims(ElementTypes elementType, int record = 0, bool oneShot = false)
+        private void OnTriggerEnter(Collider other)
+        {
+            // Play spell impact animation, this replaces spell missile animation
+            if (elementType != ElementTypes.None && targetType != TargetTypes.ByTouch)
+            {
+                UseSpellBillboardAnims(elementType, 1, true);
+                myBillboard.FramesPerSecond = ImpactBillboardFramesPerSecond;
+                impactDetected = true;
+            }
+
+            // If entity was hit then add to target list
+            DaggerfallEntityBehaviour entityBehaviour = other.transform.GetComponent<DaggerfallEntityBehaviour>();
+            if (entityBehaviour)
+            {
+                targetEntities.Add(entityBehaviour);
+                Debug.LogFormat("Missile hit target {0} by range", entityBehaviour.name);
+            }
+
+            // If missile is area at range
+            if (targetType == TargetTypes.AreaAtRange)
+            {
+                DoAreaOfEffect(transform.position);
+            }
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        // Touch can hit a single target at close range
+        // NOTE: In classic touch will not fire unless valid target in range
+        // TODO: Change to spherecast for easier hits - fix problem here and in WeaponManager when player capsule touching target capsule
+        void DoTouch()
+        {
+            transform.position = caster.transform.position;
+
+            Physics.IgnoreCollision(caster.GetComponent<Collider>(), this.GetComponent<Collider>());
+
+            RaycastHit hit;
+            Ray ray = new Ray(GetAimPosition(), GetAimDirection());
+            if (Physics.Raycast(ray, out hit, TouchRange))
+            {
+                DaggerfallEntityBehaviour entityBehaviour = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
+                if (entityBehaviour && entityBehaviour != caster)
+                {
+                    targetEntities.Add(entityBehaviour);
+                    Debug.LogFormat("Missile hit target {0} by touch", entityBehaviour.name);
+                }
+            }
+
+            // Touch always shows impact flash then expires
+            missileReleased = true;
+            impactDetected = true;
+        }
+
+        // Missile can hit environment or target at range
+        void DoMissile()
+        {
+            Physics.IgnoreCollision(caster.GetComponent<Collider>(), this.GetComponent<Collider>());
+            direction = GetAimDirection();
+            transform.position = GetAimPosition() + direction * ColliderRadius;
+            missileReleased = true;
+        }
+
+        void DoAreaOfEffect(Vector3 position, bool ignoreCaster = false)
+        {
+            List<DaggerfallEntityBehaviour> entities = new List<DaggerfallEntityBehaviour>();
+
+            transform.position = position;
+            impactDetected = true;
+            missileReleased = true;
+
+            // Ignore caster
+            if (ignoreCaster)
+                Physics.IgnoreCollision(caster.GetComponent<Collider>(), this.GetComponent<Collider>());
+
+            // Collect AOE targets and ignore duplicates
+            Collider[] overlaps = Physics.OverlapSphere(position, ExplosionRadius);
+            for (int i = 0; i < overlaps.Length; i++)
+            {
+                DaggerfallEntityBehaviour aoeEntity = overlaps[i].GetComponent<DaggerfallEntityBehaviour>();
+
+                if (ignoreCaster && aoeEntity == caster)
+                    continue;
+                
+                if (aoeEntity && !targetEntities.Contains(aoeEntity))
+                {
+                    entities.Add(aoeEntity);
+                    Debug.LogFormat("Missile hit target {0} by AOE", aoeEntity.name);
+                }
+            }
+        }
+
+        // Get missile aim position from player or enemy mobile
+        Vector3 GetAimPosition()
+        {
+            // Aim position is from eye level for player or origin for other mobile
+            // Player must aim from camera position or it feels out of alignment
+            Vector3 aimPosition = caster.transform.position;
+            if (caster == GameManager.Instance.PlayerEntityBehaviour)
+            {
+                aimPosition = GameManager.Instance.MainCamera.transform.position;
+            }
+
+            return aimPosition;
+        }
+
+        // Get missile aim direction from player or enemy mobile
+        Vector3 GetAimDirection()
+        {
+            // Aim direction should be from camera for player or facing for other mobile
+            Vector3 aimDirection = Vector3.zero;
+            if (caster == GameManager.Instance.PlayerEntityBehaviour)
+            {
+                aimDirection = GameManager.Instance.MainCamera.transform.forward;
+            }
+            else
+            {
+                EnemySenses enemySenses = caster.GetComponent<EnemySenses>();
+                if (enemySenses)
+                {
+                    aimDirection = enemySenses.DirectionToPlayer;
+                }
+            }
+
+            return aimDirection;
+        }
+
+        void UseSpellBillboardAnims(ElementTypes elementType, int record = 0, bool oneShot = false)
         {
             // Destroy any existing billboard game object
             if (myBillboard)
@@ -172,65 +366,7 @@ namespace DaggerfallWorkshop.Game
             myBillboard.FaceY = true;
             myBillboard.OneShot = oneShot;
             myBillboard.GetComponent<MeshRenderer>().receiveShadows = false;
-
-            // Store spell type for target animation
-            this.elementType = elementType;
         }
-
-        /// <summary>
-        /// Execute moving missile from starting point with given trajectory.
-        /// Be careful not to start while intersecting with another collider (e.g. player) as this might trigger missile prematurely.
-        /// </summary>
-        public void ExecuteMobileMissile(Vector3 worldPosition, Vector3 direction)
-        {
-            transform.position = worldPosition;
-            this.direction = direction;
-        }
-
-        #endregion
-
-        #region Collision Handling
-
-        private void OnTriggerEnter(Collider other)
-        {
-            List<DaggerfallEntityBehaviour> entities = new List<DaggerfallEntityBehaviour>();
-
-            // Add targets
-            if (AreaOfEffect)
-            {
-                // AOE targets
-                Collider[] overlaps = Physics.OverlapSphere(transform.position, ExplosionRadius);
-                for (int i = 0; i < overlaps.Length; i++)
-                {
-                    DaggerfallEntityBehaviour aoeEntity = overlaps[i].GetComponent<DaggerfallEntityBehaviour>();
-                    if (aoeEntity)
-                    {
-                        entities.Add(aoeEntity);
-                    }
-                }
-            }
-            else
-            {
-                // Direct contact target
-                DaggerfallEntityBehaviour contactEntity = other.GetComponent<DaggerfallEntityBehaviour>();
-                if (contactEntity)
-                {
-                    entities.Add(contactEntity);
-                }
-            }
-
-            // Play spell impact animation, this replaces spell missile animation
-            if (elementType != ElementTypes.None)
-            {
-                UseSpellBillboardAnims(elementType, 1, true);
-                myBillboard.FramesPerSecond = ImpactBillboardFramesPerSecond;
-                impactDetected = true;
-            }
-        }
-
-        #endregion
-
-        #region Private Methods
 
         void UpdateLight()
         {
