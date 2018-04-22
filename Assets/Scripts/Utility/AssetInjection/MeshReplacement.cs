@@ -305,7 +305,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                         // Override Daggerfall material with textures from loose files
                         int archive, record;
                         if (TextureReplacement.IsDaggerfallTexture(materials[i].name, out archive, out record)
-                            && TextureReplacement.CustomTextureExist(archive, record, 0))
+                            && TextureReplacement.TextureExistsAmongLooseFiles(archive, record, 0))
                         {
                             CachedMaterial cachedMaterialOut;
                             if (materialReader.GetCachedMaterial(archive, record, 0, out cachedMaterialOut))

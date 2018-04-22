@@ -304,7 +304,7 @@ namespace DaggerfallWorkshop
 
             // Try to import a material from mods, otherwise create a standard material
             // and import textures from Daggerfall files and loose files.
-            if (!TextureReplacement.CustomTextureExist(archive, record, frame) &&
+            if (!TextureReplacement.TextureExistsAmongLooseFiles(archive, record, frame) &&
                 TextureReplacement.TryImportMaterial(archive, record, frame, out material))
             {
                 results = TextureReplacement.MakeResults(material, archive, record);
@@ -343,7 +343,7 @@ namespace DaggerfallWorkshop
                 material.mainTexture.filterMode = MainFilterMode;
 
                 // Setup normal map
-                bool importedNormals = TextureReplacement.CustomNormalExist(settings.archive, settings.record, settings.frame);
+                bool importedNormals = TextureReplacement.TextureExistsAmongLooseFiles(settings.archive, settings.record, settings.frame, TextureMap.Normal);
                 if ((GenerateNormals || importedNormals) && results.normalMap != null)
                 {
                     results.normalMap.filterMode = MainFilterMode;
