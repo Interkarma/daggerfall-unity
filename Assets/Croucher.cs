@@ -34,6 +34,7 @@ namespace DaggerfallWorkShop.Game
         private float camCrouchLevel;
         private float camStandLevel;
         private float crouchTimer;
+        private bool bStandController;
 
         private const float timerMax = 0.1f;
 
@@ -74,39 +75,34 @@ namespace DaggerfallWorkShop.Game
 
             if (bFinished)
             {
-                controller.height = crouchHeight;
-                controller.transform.position -= new Vector3(0, controllerPosChangeDistance);
+                ControllerCrouchToggle();
                 UpdateCameraPosition(mainCamera.transform.localPosition.y + controllerPosChangeDistance);
 
+                bStandController = true;
                 crouchTimer = 0f;
                 toggleAction = CrouchToggleAction.DoNothing;
             }
 
         }
-        private void DoStand() // perform snap crouch first, lower camera last
+        private void DoStand() // perform snap stand first, lower camera last
         {
             bool bFinished = false;
 
-            if (controller.height < standHeight)
-            {
-                controller.height = standHeight;
-                controller.transform.position += new Vector3(0, controllerPosChangeDistance);
-            }
+            if (controller.height == crouchHeight)
+                ControllerCrouchToggle();
 
-            if (controller.height >= standHeight)
-            { 
-                crouchTimer += Time.deltaTime;
-                float t = Mathf.Clamp((crouchTimer / timerMax), 0, 1);
+            crouchTimer += Time.deltaTime;
+            float t = Mathf.Clamp((crouchTimer / timerMax), 0, 1);
            
-                UpdateCameraPosition(Mathf.Lerp(camCrouchLevel, camStandLevel, t));
+            UpdateCameraPosition(Mathf.Lerp(camCrouchLevel, camStandLevel, t));
 
-                bFinished = (crouchTimer >= timerMax);
-                if (bFinished)
-                {
-                    crouchTimer = 0f;
-                    toggleAction = CrouchToggleAction.DoNothing;
-                }
+            bFinished = (crouchTimer >= timerMax);
+            if (bFinished)
+            {
+                crouchTimer = 0f;
+                toggleAction = CrouchToggleAction.DoNothing;
             }
+
         }
 
         private void UpdateCameraPosition(float yPosMod)
@@ -120,13 +116,17 @@ namespace DaggerfallWorkShop.Game
         {
             if (toggleAction == CrouchToggleAction.DoCrouching)
             {
+                Debug.Log("Crouching, Controller position is " + controller.transform.position.y + ", setting it to " + (controller.transform.position.y - controllerPosChangeDistance));
                 controller.height = crouchHeight;
                 controller.transform.position -= new Vector3(0, controllerPosChangeDistance);
+                playerMotor.IsCrouching = true;
             }
             else if (toggleAction == CrouchToggleAction.DoStanding)
             {
+                Debug.Log("Standing, Controller position is " + controller.transform.position.y + ", setting it to " + (controller.transform.position.y + controllerPosChangeDistance));
                 controller.height = standHeight;
                 controller.transform.position += new Vector3(0, controllerPosChangeDistance);
+                playerMotor.IsCrouching = false;
             }
         }
 
@@ -135,7 +135,7 @@ namespace DaggerfallWorkShop.Game
             RaycastHit hit;
             float distance = controllerPosChangeDistance;
 
-            Ray ray = new Ray(controller.transform.position, Vector3.up);
+            Ray ray = new Ray(mainCamera.transform.position, Vector3.up);
             return !Physics.Raycast(ray, out hit, distance); 
         }
     }

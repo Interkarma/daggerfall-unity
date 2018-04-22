@@ -374,7 +374,7 @@ namespace DaggerfallWorkshop.Game
 
                 if (!riding)
                 {
-                    if (!isCrouching)
+                    if (!isCrouching && myCroucher.ToggleAction != CrouchToggleAction.DoStanding) // don't set to standing height while croucher is standing the player
                         controller.height = standingHeight;
 
                     try
@@ -638,7 +638,6 @@ namespace DaggerfallWorkshop.Game
                         myCroucher.ToggleAction = CrouchToggleAction.DoStanding;
                     else
                         myCroucher.ToggleAction = CrouchToggleAction.DoCrouching;
-                    isCrouching = !isCrouching;
                 }
                 /*if (myCroucher.ToggleAction != CrouchToggleAction.DoNothing)
                 {
