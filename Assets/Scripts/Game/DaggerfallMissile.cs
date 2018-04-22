@@ -78,21 +78,21 @@ namespace DaggerfallWorkshop.Game
         float initialRange;
         float initialIntensity;
 
-        Spell spell;
+        EntityEffectBundle payload;
 
         #endregion
 
         #region Properties
 
         /// <summary>
-        /// Gets or sets spell carried by this missile.
+        /// Gets or sets effect bundle payload carried by this missile.
         /// Any DaggerfallEntityBehaviour objects struck by this missile will
-        /// receive spell effect bundle payload against their EntityEffectManager on contact.
+        /// receive instance of bundle payload against their EntityEffectManager on contact.
         /// </summary>
-        public Spell Spell
+        public EntityEffectBundle Payload
         {
-            get { return spell; }
-            set { spell = value; }
+            get { return payload; }
+            set { payload = value; }
         }
 
         #endregion

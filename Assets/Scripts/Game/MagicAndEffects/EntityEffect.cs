@@ -9,6 +9,7 @@
 // Notes:
 //
 
+using UnityEngine;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
@@ -77,6 +78,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         bool SupportMagnitude { get; }
 
         /// <summary>
+        /// Gets number of magic rounds remaining.
+        /// </summary>
+        int RoundsRemaining { get; }
+
+        /// <summary>
         /// Targets supported by this effect.
         /// </summary>
         TargetTypes AllowedTargets { get; }
@@ -115,6 +121,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         int[] SkillMods { get; }
 
         /// <summary>
+        /// Called to assign total lifetime of effect in magic rounds.
+        /// If no caster is specified in bundle then duration will default to caster level 1.
+        /// If duration not supported then effect will persist for 1 magic round only.
+        /// </summary>
+        void SetDuration(DaggerfallEntityBehaviour caster = null);
+
+        /// <summary>
         /// Called by an EntityEffectManager when parent bundle is attached to an entity.
         /// Use this for setup or immediate work performed only once.
         /// </summary>
@@ -127,9 +140,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         void End();
 
         /// <summary>
-        /// Use this for any work performed at the start of a new "magic round".
+        /// Use this for any work performed every magic round.
+        /// If no caster specified then effect will default to caster level 1.
         /// </summary>
-        void MagicRound();
+        void MagicRound(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null);
+
+        /// <summary>
+        /// Removes a magic round from total lifetime.
+        /// </summary>
+        /// <returns>Total number of magic rounds remaining. 0 means effect is expired.</returns>
+        int RemoveRound();
     }
 
     /// <summary>
@@ -149,9 +169,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         protected int[] skillMods = new int[DaggerfallSkills.Count];
         protected EffectSettings settings = new EffectSettings();
 
-        #endregion
+        int roundsRemaining;
 
-        #region Properties
         #endregion
 
         #region Constructors
@@ -176,6 +195,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public virtual bool SupportDuration { get { return true; } }
         public virtual bool SupportChance { get { return true; } }
         public virtual bool SupportMagnitude { get { return true; } }
+        public virtual int RoundsRemaining {  get { return roundsRemaining; } }
         public virtual TargetTypes AllowedTargets { get { return EntityEffectBroker.TargetFlags_All; } }
         public virtual ElementTypes AllowedElements { get { return EntityEffectBroker.ElementFlags_MagicOnly; } }
         public virtual MagicCraftingStations AllowedCraftingStations { get { return MagicCraftingStations.SpellMaker; } }
@@ -215,6 +235,24 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         #region IEntityEffect Virtual Methods
 
+        public virtual void SetDuration(DaggerfallEntityBehaviour caster = null)
+        {
+            if (caster == null)
+                Debug.LogWarningFormat("SetDuration() for {0} has no caster.", Key);
+
+            if (SupportDuration)
+            {
+                int casterLevel = (caster) ? caster.Entity.Level : 1;
+                roundsRemaining = settings.DurationBase + settings.DurationPlus * (int)Mathf.Floor(casterLevel / settings.DurationPerLevel);
+            }
+            else
+            {
+                roundsRemaining = 1;
+            }
+
+            Debug.LogFormat("Effect '{0}' will run for {1} magic rounds", Key, roundsRemaining);
+        }
+
         public virtual void Start()
         {
         }
@@ -223,8 +261,54 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
         }
 
-        public virtual void MagicRound()
+        public virtual void MagicRound(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
         {
+        }
+
+        public virtual int RemoveRound()
+        {
+            if (roundsRemaining == 0)
+            {
+                return 0;
+            }
+            else
+            {
+                roundsRemaining--;
+                if (roundsRemaining == 0)
+                    End();
+
+                return roundsRemaining;
+            }
+        }
+
+        #endregion
+
+        #region Protected Helpers
+
+        protected DaggerfallEntityBehaviour GetPeeredEntityBehaviour(EntityEffectManager manager)
+        {
+            if (manager == null)
+                return null;
+
+            return manager.GetComponent<DaggerfallEntityBehaviour>();
+        }
+
+        protected int GetMagnitude(DaggerfallEntityBehaviour caster = null)
+        {
+            if (caster == null)
+                Debug.LogWarningFormat("GetMagnitude() for {0} has no caster.", Key);
+
+            int magnitude = 0;
+            if (SupportMagnitude)
+            {
+                int casterLevel = (caster) ? caster.Entity.Level : 1;
+                int baseMagnitude = Random.Range(settings.MagnitudeBaseMin, settings.MagnitudeBaseMax + 1);
+                int plusMagnitude = Random.Range(settings.MagnitudePlusMin, settings.MagnitudePlusMax + 1);
+                int multiplier = (int)Mathf.Floor(casterLevel / settings.MagnitudePerLevel);
+                magnitude = baseMagnitude + plusMagnitude * multiplier;
+            }
+
+            return magnitude;
         }
 
         #endregion

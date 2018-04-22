@@ -743,61 +743,6 @@ Prefab:
       propertyPath: DungeonParent
       value: 
       objectReference: {fileID: 620133648}
-    - target: {fileID: 198914617358180576, guid: 53a45b46ca97a974f8e677f68c2a85e6,
-        type: 2}
-      propertyPath: moveWithTransform
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 198237622866876544, guid: 53a45b46ca97a974f8e677f68c2a85e6,
-        type: 2}
-      propertyPath: moveWithTransform
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 198237622866876544, guid: 53a45b46ca97a974f8e677f68c2a85e6,
-        type: 2}
-      propertyPath: moveWithCustomTransform
-      value: 
-      objectReference: {fileID: 1891957993}
-    - target: {fileID: 198237622866876544, guid: 53a45b46ca97a974f8e677f68c2a85e6,
-        type: 2}
-      propertyPath: ShapeModule.boxX
-      value: 150
-      objectReference: {fileID: 0}
-    - target: {fileID: 198237622866876544, guid: 53a45b46ca97a974f8e677f68c2a85e6,
-        type: 2}
-      propertyPath: ShapeModule.boxZ
-      value: 150
-      objectReference: {fileID: 0}
-    - target: {fileID: 199790231770314352, guid: 53a45b46ca97a974f8e677f68c2a85e6,
-        type: 2}
-      propertyPath: m_MaxParticleSize
-      value: 0.075
-      objectReference: {fileID: 0}
-    - target: {fileID: 199790231770314352, guid: 53a45b46ca97a974f8e677f68c2a85e6,
-        type: 2}
-      propertyPath: m_CastShadows
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 198914617358180576, guid: 53a45b46ca97a974f8e677f68c2a85e6,
-        type: 2}
-      propertyPath: ShapeModule.boxX
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 198914617358180576, guid: 53a45b46ca97a974f8e677f68c2a85e6,
-        type: 2}
-      propertyPath: ShapeModule.boxZ
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 198237622866876544, guid: 53a45b46ca97a974f8e677f68c2a85e6,
-        type: 2}
-      propertyPath: prewarm
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 199343292276428214, guid: 53a45b46ca97a974f8e677f68c2a85e6,
-        type: 2}
-      propertyPath: m_MaxParticleSize
-      value: 0.25
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 2}
   m_IsPrefabParent: 0
@@ -2023,10 +1968,6 @@ MonoBehaviour:
     type: 2}
   m_PrefabInternal: {fileID: 334547542}
   m_Script: {fileID: 11500000, guid: 12e531286826ff44e9d880d9de35257e, type: 3}
---- !u!4 &1891957993 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400000, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 2}
-  m_PrefabInternal: {fileID: 334547542}
 --- !u!114 &1891957996 stripped
 MonoBehaviour:
   m_PrefabParentObject: {fileID: 114379227581842172, guid: 53a45b46ca97a974f8e677f68c2a85e6,
@@ -2262,7 +2203,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22400016, guid: 312abd0527754e047a6bfbc424f09ace, type: 2}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 11400006, guid: 312abd0527754e047a6bfbc424f09ace, type: 2}
       propertyPath: m_Value

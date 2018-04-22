@@ -29,20 +29,37 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     {
         #region Fields
 
-        public DaggerfallMissile ColdMissilePrefab;
+        const int minAcceptedSpellVersion = 1;
+
         public DaggerfallMissile FireMissilePrefab;
-        public DaggerfallMissile MagicMissilePrefab;
+        public DaggerfallMissile ColdMissilePrefab;
         public DaggerfallMissile PoisonMissilePrefab;
         public DaggerfallMissile ShockMissilePrefab;
+        public DaggerfallMissile MagicMissilePrefab;
 
-        Spell readySpell = null;
-        Spell lastSpell = null;
+        EntityEffectBundle readySpell = null;
+        EntityEffectBundle lastSpell = null;
+        bool instantCast = false;
 
         DaggerfallEntityBehaviour entityBehaviour = null;
         bool isPlayerEntity = false;
         bool allowSelfDamage = true;
 
-        List<EntityEffectBundle> activeBundles = new List<EntityEffectBundle>();
+        List<InstancedBundle> instancedBundles = new List<InstancedBundle>();
+
+        #endregion
+
+        #region Structs
+
+        /// <summary>
+        /// Stores an instanced effect bundle for executing effects.
+        /// </summary>
+        struct InstancedBundle
+        {
+            public EffectBundleSettings settings;
+            public DaggerfallEntityBehaviour caster;
+            public List<IEntityEffect> effects;
+        }
 
         #endregion
 
@@ -53,12 +70,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             get { return (readySpell != null); }
         }
 
-        public Spell ReadySpell
+        public EntityEffectBundle ReadySpell
         {
             get { return readySpell; }
         }
 
-        public Spell LastSpell
+        public EntityEffectBundle LastSpell
         {
             get { return lastSpell; }
         }
@@ -111,6 +128,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             if (!entityBehaviour)
                 return;
 
+            // Fire instant cast spells
+            if (readySpell != null && instantCast)
+            {
+                CastReadySpell();
+                return;
+            }
+
             // Player can cast a spell, recast last spell, or abort current spell
             // Handling input here is similar to handling weapon input in WeaponManager
             if (isPlayerEntity)
@@ -147,12 +171,18 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// Assigns a new spell to be cast.
         /// For player entity, this will display "press button to fire spell" message.
         /// </summary>
-        /// <param name="spell"></param>
-        public void SetReadySpell(Spell spell)
+        public void SetReadySpell(EntityEffectBundle spell)
         {
-            readySpell = spell;
+            // Spell must appear valid
+            if (spell == null || spell.Settings.Version < minAcceptedSpellVersion)
+                return;
 
-            if (isPlayerEntity)
+            // Assign spell - caster only spells are cast instantly
+            readySpell = spell;
+            if (readySpell.Settings.TargetType == TargetTypes.CasterOnly)
+                instantCast = true;
+
+            if (isPlayerEntity && ! instantCast)
             {
                 DaggerfallUI.AddHUDText(HardStrings.pressButtonToFireSpell);
             }
@@ -165,11 +195,49 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         public void CastReadySpell()
         {
-            if (readySpell != null)
+            // Play casting animation based on element type
+            // Spell is released by event handler PlayerSpellCasting_OnReleaseFrame
+            GameManager.Instance.PlayerSpellCasting.PlayOneShot(readySpell.Settings.ElementType);
+
+            // TODO: Do not need to show spellcasting animations for certain spell effects
+        }
+
+        public void AssignBundle(EntityEffectBundle sourceBundle)
+        {
+            // Source bundle must have one or more effects
+            if (sourceBundle.Settings.Effects == null || sourceBundle.Settings.Effects.Length == 0)
             {
-                // Play casting animation based on element type
-                GameManager.Instance.PlayerSpellCasting.PlayOneShot(readySpell.Settings.ElementType);
+                Debug.Log("AssignBundle() could not assign bundle as source has no effects");
+                return;
             }
+
+            // Create new instanced bundle and copy settings from source bundle
+            InstancedBundle instancedBundle = new InstancedBundle();
+            instancedBundle.settings = sourceBundle.Settings;
+            instancedBundle.caster = sourceBundle.CasterEntityBehaviour;
+            instancedBundle.effects = new List<IEntityEffect>();
+
+            // Instantiate all effects in this bundle
+            for (int i = 0; i < instancedBundle.settings.Effects.Length; i++)
+            {
+                IEntityEffect effect = GameManager.Instance.EntityEffectBroker.InstantiateEffect(instancedBundle.settings.Effects[i]);
+                if (effect == null)
+                {
+                    Debug.LogFormat("AssignBundle() could not add effect as key '{0}' was not found by broker.");
+                    continue;
+                }
+
+                // Start effect
+                effect.SetDuration(sourceBundle.CasterEntityBehaviour);
+                effect.Start();
+                effect.MagicRound(this, sourceBundle.CasterEntityBehaviour);
+                effect.RemoveRound();
+
+                instancedBundle.effects.Add(effect);
+            }
+
+            // Add instanced bundle
+            instancedBundles.Add(instancedBundle);
         }
 
         #endregion
@@ -177,14 +245,22 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         #region Private Methods
 
         /// <summary>
-        /// Tick new "magic round" on all bundles attached to this entity.
+        /// Tick new "magic round" on all instanced bundles for this entity.
         /// </summary>
         void DoMagicRound()
         {
-            // Update effect bundles operating on this entity
-            foreach (EntityEffectBundle bundle in activeBundles)
+            // Update all effects for all bundles
+            foreach (InstancedBundle bundle in instancedBundles)
             {
-                bundle.MagicRound(this);
+                foreach (IEntityEffect effect in bundle.effects)
+                {
+                    // TODO: Expire bundle once all effects have 0 rounds remaining
+                    if (effect.RoundsRemaining > 0)
+                    {
+                        effect.MagicRound(this, bundle.caster);
+                        effect.RemoveRound();
+                    }
+                }
             }
         }
 
@@ -200,35 +276,78 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         private void PlayerSpellCasting_OnReleaseFrame()
         {
-            // Get missile vectors
-            Vector3 missileDirection = GameManager.Instance.MainCamera.transform.forward;
-            Vector3 missilePosition = transform.position + Vector3.up * 0.35f + missileDirection * 0.85f;
-
-            // Instatiate missile prefab based on element type
-            DaggerfallMissile missile;
-            switch(readySpell.Settings.ElementType)
+            // Assign bundle directly to self if target is caster
+            if (readySpell.Settings.TargetType == TargetTypes.CasterOnly)
             {
-                case ElementTypes.Cold:
-                    missile = Instantiate(ColdMissilePrefab);
-                    break;
-                default:
-                    return;
+                AssignBundle(readySpell);
+            }
+            else
+            {
+
             }
 
-            // Setup missile
-            missile.UseSpellBillboardAnims(readySpell.Settings.ElementType);
-            missile.Spell = readySpell;
-            // TODO: Setup based on target type
-            
-            // TODO: Execute missile based on target type
+            //// Instatiate missile prefab based on element type
+            //DaggerfallMissile missile = null;
+            //switch (readySpell.Settings.ElementType)
+            //{
+            //    case ElementTypes.Fire:
+            //        missile = Instantiate(FireMissilePrefab);
+            //        break;
+            //    case ElementTypes.Cold:
+            //        missile = Instantiate(ColdMissilePrefab);
+            //        break;
+            //    default:
+            //        return;
+            //}
 
-            //// TEMP: Just hurling test missiles with no payload at this time
-            //DaggerfallMissile 
-            //missile.UseSpellBillboardAnims(ElementTypes.Cold);
-            //missile.ExecuteMobileMissile(missilePosition, missileDirection);
+            //// Set defaults
+            //missile.IsTouch = false;
+            //missile.AreaOfEffect = false;
+
+            //// A missile can be used for touch, ranged, area around caster, area at range
+            //switch (readySpell.Settings.TargetType)
+            //{
+            //    case TargetTypes.ByTouch:
+            //        missile.IsTouch = true;
+            //        break;
+            //    case TargetTypes.SingleTargetAtRange:
+            //        break;
+            //    case TargetTypes.AreaAroundCaster:
+            //        break;
+            //    case TargetTypes.AreaAtRange:
+            //        missile.AreaOfEffect = true;
+            //        break;
+            //}
+
+            // Setup missile
+            //missile.UseSpellBillboardAnims(readySpell.Settings.ElementType);
+            //missile.Spell = readySpell;
+
+            //// Check if this is a ranged spell
+            //bool rangedTarget = false;
+            //if (readySpell.Settings.TargetType == TargetTypes.SingleTargetAtRange ||
+            //    readySpell.Settings.TargetType == TargetTypes.AreaAtRange)
+            //{
+            //    rangedTarget = true;
+            //}
+
+            //if (rangedTarget)
+            //{
+            //    // Get missile vectors
+            //    Vector3 missileDirection = GameManager.Instance.MainCamera.transform.forward;
+            //    Vector3 missilePosition = transform.position + Vector3.up * 0.35f + missileDirection * 0.85f;
+
+            //    // TODO: Execute missile based on target type
+
+            //    //// TEMP: Just hurling test missiles with no payload at this time
+            //    //DaggerfallMissile 
+            //    //missile.UseSpellBillboardAnims(ElementTypes.Cold);
+            //    //missile.ExecuteMobileMissile(missilePosition, missileDirection);
+            //}
 
             lastSpell = readySpell;
             readySpell = null;
+            instantCast = false;
         }
 
         private void EntityEffectBroker_OnNewMagicRound()

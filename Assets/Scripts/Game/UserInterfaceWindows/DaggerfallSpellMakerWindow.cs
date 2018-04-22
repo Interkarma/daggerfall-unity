@@ -473,25 +473,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void UpdateAllowedButtons()
         {
-            // First effect added defines available buttons
-            // Future effects will be filtered by compatibility with first effect
-            // As user can add or delete effects from any slot, first effect may not be slot 0
-            int slot = GetFirstUsedEffectSlotIndex();
-            if (slot != -1)
+            // Set defaults when no effects added
+            if (GetFirstUsedEffectSlotIndex() == -1)
             {
-                IEntityEffect effectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(effectEntries[slot].Key);
-                if (effectTemplate != null)
-                {
-                    // Set allowed buttons based on first effect
-                    // Future effects will be filtered based on first effect added
-                    allowedTargets = effectTemplate.AllowedTargets;
-                    allowedElements = effectTemplate.AllowedElements;
-                    EnforceSelectedButtons();
-                }
-            }
-            else
-            {
-                // Set defaults when no effects added
                 allowedTargets = defaultTargetFlags;
                 allowedElements = defaultElementFlags;
                 SetSpellTarget(TargetTypes.CasterOnly);
@@ -499,6 +483,28 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 EnforceSelectedButtons();
                 return;
             }
+
+            // Combine flags
+            allowedTargets = EntityEffectBroker.TargetFlags_All;
+            allowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
+            for (int i = 0; i < maxEffectsPerSpell; i++)
+            {
+                // Must be a valid entry
+                if (!string.IsNullOrEmpty(effectEntries[i].Key))
+                {
+                    // Get effect template
+                    IEntityEffect effectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(effectEntries[i].Key);
+
+                    // Allowed targets are least permissive result set from combined target flags
+                    allowedTargets = allowedTargets & effectTemplate.AllowedTargets;
+
+                    // Allowed elements are most permissive result set from combined element flags (magic always allowed)
+                    allowedElements = allowedElements | effectTemplate.AllowedElements;
+                }
+            }
+
+            // Ensure a valid button is selected
+            EnforceSelectedButtons();
         }
 
         void EnforceSelectedButtons()

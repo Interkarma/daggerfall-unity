@@ -420,7 +420,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             EntityEffectManager playerEffectManager = GameManager.Instance.PlayerEffectManager;
             if (playerEffectManager)
             {
-                playerEffectManager.SetReadySpell(new Spell(spellSettings));
+                playerEffectManager.SetReadySpell(new EntityEffectBundle(spellSettings, GameManager.Instance.PlayerEntityBehaviour));
                 CloseWindow();
             }
         }

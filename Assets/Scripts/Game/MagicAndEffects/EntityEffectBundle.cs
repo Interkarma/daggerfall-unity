@@ -9,29 +9,18 @@
 // Notes:
 //
 
-using UnityEngine;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects
 {
     /// <summary>
-    /// Groups one or more effects for transport and execution.
-    /// Most effects operate on a target entity (the receiver).
-    /// But may or may not have a caster entity (the sender).
-    /// Actual implementation is up to each effect script, the bundle simply carries effects
-    /// from sender to receiver by way of items, spell missiles, touch, area of effect, etc.
-    /// and handles their execution, settings, and lifespan.
-    /// Spells are an example of effect bundles that carry effects from one entity to another.
+    /// Stores effect settings for transport to an entity.
     /// </summary>
     public class EntityEffectBundle
     {
         #region Fields
 
         EffectBundleSettings settings;
-        List<IEntityEffect> effects = new List<IEntityEffect>();
         DaggerfallEntityBehaviour casterEntityBehaviour = null;
 
         #endregion
@@ -48,6 +37,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             set { casterEntityBehaviour = value; }
         }
 
+        /// <summary>
+        /// Gets or sets effect bundle settings.
+        /// </summary>
+        public EffectBundleSettings Settings
+        {
+            get { return settings; }
+            set { settings = value; }
+        }
+
         #endregion
 
         #region Constructor
@@ -59,38 +57,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
         }
 
-        #endregion
-
-        #region Public Methods
-
         /// <summary>
-        /// Empty bundle. Clears all effects and restores default settings.
+        /// Settings + caster constructor.
         /// </summary>
-        public void Clear()
+        /// <param name="settings">Settings of this effect bundle.</param>
+        /// <param name="casterEntityBehaviour">Caster of this effect bundle (optional).</param>
+        public EntityEffectBundle(EffectBundleSettings settings, DaggerfallEntityBehaviour casterEntityBehaviour = null)
         {
-            effects.Clear();
-        }
-
-        /// <summary>
-        /// Add a single effect to bundle.
-        /// </summary>
-        public void AddEffect(IEntityEffect effect)
-        {
-            effects.Add(effect);
-        }
-
-        /// <summary>
-        /// Called at start of every "magic round" to do any work related to effect.
-        /// Only called by owning EntityEffectManager once bundle is attached to an entity.
-        /// Is not called while bundle in transit (e.g. carried by a spell missile).
-        /// </summary>
-        /// <param name="caller">EntityEffectManager owning this bundle.</param>
-        public void MagicRound(EntityEffectManager caller)
-        {
-            foreach (IEntityEffect effect in effects)
-            {
-                effect.MagicRound();
-            }
+            this.settings = settings;
+            this.casterEntityBehaviour = casterEntityBehaviour;
         }
 
         #endregion

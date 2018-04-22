@@ -26,7 +26,7 @@ GameObject:
   - component: {fileID: 114701158002484598}
   - component: {fileID: 54482902062701562}
   m_Layer: 0
-  m_Name: TestSpellMissile
+  m_Name: ColdMissile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -201,9 +201,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 927ece42bfa9465449615806dc107aed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MovementSpeed: 12
-  ColliderRadius: 0.45
-  AreaOfEffect: 1
+  MovementSpeed: 15
+  ColliderRadius: 0.4
+  AreaOfEffect: 0
   ExplosionRadius: 3
   IsTouch: 0
   TouchRange: 2.5
@@ -227,5 +227,5 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 0.4
   m_Center: {x: 0, y: 0, z: 0}

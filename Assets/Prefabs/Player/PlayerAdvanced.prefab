@@ -1107,12 +1107,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9ffab243d560eb4698f5f394d36eb67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  FireMissilePrefab: {fileID: 114701158002484598, guid: 738ed1902aee8694d83f5b5fbf151bd8,
+    type: 2}
   ColdMissilePrefab: {fileID: 114701158002484598, guid: 481b796491f5b9543b5711183faef15a,
     type: 2}
-  FireMissilePrefab: {fileID: 0}
-  MagicMissilePrefab: {fileID: 0}
   PoisonMissilePrefab: {fileID: 0}
   ShockMissilePrefab: {fileID: 0}
+  MagicMissilePrefab: {fileID: 0}
 --- !u!114 &114583161180529142
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1222,7 +1223,7 @@ ParticleSystem:
   lengthInSec: 10
   speed: 1
   looping: 1
-  prewarm: 1
+  prewarm: 0
   playOnAwake: 1
   autoRandomSeed: 1
   startDelay:
@@ -1264,8 +1265,8 @@ ParticleSystem:
       m_PostInfinity: 2
       m_RotationOrder: 4
     minMaxState: 0
-  moveWithTransform: 0
-  moveWithCustomTransform: {fileID: 0}
+  moveWithTransform: 1
+  moveWithCustomTransform: {fileID: 400000}
   scalingMode: 2
   randomSeed: 0
   InitialModule:
@@ -1654,9 +1655,9 @@ ParticleSystem:
     radius: 1
     angle: 25
     length: 5
-    boxX: 50
+    boxX: 150
     boxY: 1
-    boxZ: 50
+    boxZ: 150
     arc: 360
     placementMode: 0
     m_Mesh: {fileID: 0}
@@ -8983,7 +8984,7 @@ ParticleSystem:
       m_PostInfinity: 2
       m_RotationOrder: 4
     minMaxState: 0
-  moveWithTransform: 0
+  moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 2
   randomSeed: 0
@@ -9373,9 +9374,9 @@ ParticleSystem:
     radius: 1
     angle: 25
     length: 5
-    boxX: 50
+    boxX: 100
     boxY: 1
-    boxZ: 50
+    boxZ: 100
     arc: 360
     placementMode: 0
     m_Mesh: {fileID: 0}
@@ -11460,7 +11461,7 @@ ParticleSystemRenderer:
   m_RenderMode: 0
   m_SortMode: 0
   m_MinParticleSize: 0
-  m_MaxParticleSize: 0.5
+  m_MaxParticleSize: 0.25
   m_CameraVelocityScale: 0
   m_VelocityScale: 0
   m_LengthScale: 2
@@ -11582,7 +11583,7 @@ ParticleSystemRenderer:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1620007807851924}
   m_Enabled: 1
-  m_CastShadows: 1
+  m_CastShadows: 0
   m_ReceiveShadows: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 0
@@ -11610,7 +11611,7 @@ ParticleSystemRenderer:
   m_RenderMode: 0
   m_SortMode: 0
   m_MinParticleSize: 0
-  m_MaxParticleSize: 0.2
+  m_MaxParticleSize: 0.075
   m_CameraVelocityScale: 0
   m_VelocityScale: 0
   m_LengthScale: 2
