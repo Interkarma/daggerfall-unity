@@ -59,8 +59,9 @@ namespace DaggerfallWorkShop.Game
 
             if (toggleAction == CrouchToggleAction.DoCrouching)
                 DoCrouch();
-            else
+            else if (toggleAction == CrouchToggleAction.DoStanding && CanStand())
                 DoStand();
+            
         }
         private void DoCrouch() // first lower camera, perform snap crouch last 
         {
@@ -116,14 +117,12 @@ namespace DaggerfallWorkShop.Game
         {
             if (toggleAction == CrouchToggleAction.DoCrouching)
             {
-                Debug.Log("Crouching, Controller position is " + controller.transform.position.y + ", setting it to " + (controller.transform.position.y - controllerPosChangeDistance));
                 controller.height = crouchHeight;
                 controller.transform.position -= new Vector3(0, controllerPosChangeDistance);
                 playerMotor.IsCrouching = true;
             }
             else if (toggleAction == CrouchToggleAction.DoStanding)
             {
-                Debug.Log("Standing, Controller position is " + controller.transform.position.y + ", setting it to " + (controller.transform.position.y + controllerPosChangeDistance));
                 controller.height = standHeight;
                 controller.transform.position += new Vector3(0, controllerPosChangeDistance);
                 playerMotor.IsCrouching = false;
@@ -132,11 +131,12 @@ namespace DaggerfallWorkShop.Game
 
         private bool CanStand()
         { 
-            RaycastHit hit;
+            //RaycastHit hit;
             float distance = controllerPosChangeDistance;
 
-            Ray ray = new Ray(mainCamera.transform.position, Vector3.up);
-            return !Physics.Raycast(ray, out hit, distance); 
+            Ray ray = new Ray(controller.transform.position, Vector3.up);
+            //return !Physics.Raycast(ray, out hit, distance); 
+            return !Physics.SphereCast(ray, controller.radius, distance);
         }
     }
 }
