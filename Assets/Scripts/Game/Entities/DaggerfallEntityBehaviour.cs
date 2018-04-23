@@ -60,7 +60,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
         #region Unity
 
-        void Start()
+        private void Awake()
         {
             SetEntityType(EntityType);
         }
@@ -96,6 +96,9 @@ namespace DaggerfallWorkshop.Game.Entity
                 case EntityTypes.Player:
                     Entity = new PlayerEntity();
                     break;
+                case EntityTypes.CivilianNPC:
+                    Entity = new CivilianEntity();
+                    break; 
             }
 
             lastEntityType = type;
