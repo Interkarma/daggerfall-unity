@@ -331,6 +331,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         private void PlayerSpellCasting_OnReleaseFrame()
         {
+            // TODO: Split missile generation from player spell casting so monsters can also cast spells
+            // Using player as sole testing platform for now
+
             DaggerfallMissile missile = null;
 
             // Must have a ready spell
@@ -352,6 +355,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                         break;
                     case ElementTypes.Cold:
                         missile = Instantiate(ColdMissilePrefab);
+                        break;
+                    case ElementTypes.Poison:
+                        missile = Instantiate(PoisonMissilePrefab);
                         break;
                     default:
                         return;

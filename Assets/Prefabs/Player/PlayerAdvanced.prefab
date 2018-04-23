@@ -1123,7 +1123,8 @@ MonoBehaviour:
     type: 2}
   ColdMissilePrefab: {fileID: 114701158002484598, guid: 481b796491f5b9543b5711183faef15a,
     type: 2}
-  PoisonMissilePrefab: {fileID: 0}
+  PoisonMissilePrefab: {fileID: 114701158002484598, guid: d6d8b5ee1acb1424591a58ec6aa291d1,
+    type: 2}
   ShockMissilePrefab: {fileID: 0}
   MagicMissilePrefab: {fileID: 0}
 --- !u!114 &114583161180529142
