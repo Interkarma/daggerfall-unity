@@ -1095,14 +1095,14 @@ namespace DaggerfallWorkshop.Game.Entity
                         TurnOffConditionFlag(item.region - 1, RegionDataFlags.FamineEnding);
                     else if (regionData[item.region - 1].Flags[(int)RegionDataFlags.FamineOngoing] == true)
                     {
-                        if (UnityEngine.Random.Range(0, 100 + 1) < item.randomValue / 5 + alliesPowerMod + item.power / 5)
+                        if (UnityEngine.Random.Range(0, 100 + 1) < item.randomPowerBonus / 5 + alliesPowerMod + item.power / 5)
                             TurnOnConditionFlag(item.region - 1, RegionDataFlags.FamineEnding);
                     }
                     else if (regionData[item.region - 1].Flags[(int)RegionDataFlags.FamineBeginning] == true)
                         TurnOnConditionFlag(item.region - 1, RegionDataFlags.FamineOngoing);
                     else if (UnityEngine.Random.Range(1, 100 + 1) <= 2)
                     {
-                        if (UnityEngine.Random.Range(0, 100 + 1) > item.randomValue + alliesPowerMod)
+                        if (UnityEngine.Random.Range(0, 100 + 1) > item.randomPowerBonus + alliesPowerMod)
                             TurnOnConditionFlag(item.region - 1, RegionDataFlags.FamineBeginning);
                     }
 
@@ -1117,7 +1117,7 @@ namespace DaggerfallWorkshop.Game.Entity
                         //if (temple.id != 0)
                             //--temple.power;
                         //--item.power;
-                        if (UnityEngine.Random.Range(0, 100 + 1) < item.power / 5 + item.randomValue / 5 + alliesPowerMod)
+                        if (UnityEngine.Random.Range(0, 100 + 1) < item.power / 5 + item.randomPowerBonus / 5 + alliesPowerMod)
                             TurnOnConditionFlag(item.region - 1, RegionDataFlags.PlagueEnding);
                     }
                     else if (regionData[item.region - 1].Flags[(int)RegionDataFlags.PlagueBeginning] == true)
@@ -1129,7 +1129,7 @@ namespace DaggerfallWorkshop.Game.Entity
                     }
                     else if (UnityEngine.Random.Range(1, 100 + 1) <= 2)
                     {
-                        if (UnityEngine.Random.Range(0, 100 + 1) > item.randomValue + alliesPowerMod)
+                        if (UnityEngine.Random.Range(0, 100 + 1) > item.randomPowerBonus + alliesPowerMod)
                         {
                             //if (temple.id != 0)
                                 //--temple.power;
@@ -1281,9 +1281,30 @@ namespace DaggerfallWorkshop.Game.Entity
             // Lower legal reputation
             regionData[regionIndex].LegalRep -= reputationLossPerCrime[(int)crimeCommitted];
 
-            // TODO: Faction reputation adjustments
-            //FactionFile.FactionData peopleFaction;
-            //FactionData.FindFactionByTypeAndRegion(15, regionIndex + 1, out peopleFaction);
+            FactionFile.FactionData peopleFaction;
+            FactionData.FindFactionByTypeAndRegion(15, regionIndex + 1, out peopleFaction);
+            FactionData.ChangeReputation(peopleFaction.id, -(reputationLossPerCrime[(int)crimeCommitted] / 2));
+        }
+
+        public void SurrenderToCityGuards(bool voluntarySurrender)
+        {
+            int regionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
+            short legalRep = regionData[regionIndex].LegalRep;
+
+            //SetHealth(1);
+            if (legalRep < -20 && !voluntarySurrender)
+                SetHealth(0);
+            else if (legalRep < -20 || legalRep > 0)
+                CourtWindow(CrimeCommitted);
+            else if ((DFRandom.rand() & 1) != 0 && !voluntarySurrender)
+                SetHealth(0);
+            else
+                CourtWindow(CrimeCommitted);
+        }
+
+        public void CourtWindow(Crimes crimeCommitted)
+        {
+            DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenCourtWindow);
         }
 
         #endregion

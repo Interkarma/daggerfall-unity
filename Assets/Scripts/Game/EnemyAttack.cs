@@ -192,7 +192,7 @@ namespace DaggerfallWorkshop.Game
             PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
 
             // Calculate damage
-            damage = FormulaHelper.CalculateAttackDamage(entity, GameManager.Instance.PlayerEntity, (int)(Items.EquipSlots.RightHand), -1);
+            damage = FormulaHelper.CalculateAttackDamage(entity, playerEntity, (int)(Items.EquipSlots.RightHand), -1);
 
             // Tally player's dodging skill
             playerEntity.TallySkill(DFCareer.Skills.Dodging, 1);
@@ -214,7 +214,11 @@ namespace DaggerfallWorkshop.Game
 
                     playerEntity.HaveShownSurrenderToGuardsDialogue = true;
                 }
-                GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", damage);
+
+                if (entity.MobileEnemy.ID == (int)MobileTypes.Knight_CityWatch && playerEntity.CurrentHealth <= damage)
+                    playerEntity.SurrenderToCityGuards(false);
+                else
+                    GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", damage);
             }
 
             return damage;
@@ -224,9 +228,7 @@ namespace DaggerfallWorkshop.Game
         {
             sender.CloseWindow();
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
-            {
-                DaggerfallUI.MessageBox("Not implemented yet.");
-            }
+                GameManager.Instance.PlayerEntity.SurrenderToCityGuards(true);
         }
 
         #endregion
