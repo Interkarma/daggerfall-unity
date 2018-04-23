@@ -84,6 +84,73 @@ namespace DaggerfallWorkshop.Game.Entity
 
         #endregion
 
+        #region Special Damage Methods
+
+        /// <summary>
+        /// Cause damage to entity health with additional logic.
+        /// </summary>
+        /// <param name="source">Source entity.</param>
+        /// <param name="amount">Amount to damage health.</param>
+        public void DamageHealthFromSource(DaggerfallEntityBehaviour source, int amount, bool showBlood, Vector3 bloodPosition)
+        {
+            // Remove health amount
+            Entity.DecreaseHealth(amount);
+
+            // Determine if source is player
+            if (source == GameManager.Instance.PlayerEntityBehaviour)
+                HandleAttackByPlayer();
+
+            // Show blood
+            if (showBlood)
+            {
+                EnemyBlood blood = transform.GetComponent<EnemyBlood>();
+                if (blood)
+                    blood.ShowBloodSplash(0, bloodPosition);
+            }
+        }
+
+        /// <summary>
+        /// Handle shared logic when player attacks entity.
+        /// </summary>
+        void HandleAttackByPlayer()
+        {
+            // Handle civilian NPC crime reporting
+            if (EntityType == EntityTypes.CivilianNPC)
+            {
+                PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+                MobilePersonNPC mobileNpc = transform.GetComponent<MobilePersonNPC>();
+                if (mobileNpc)
+                {
+                    playerEntity.TallyCrimeGuildRequirements(false, 5);
+                    // TODO: LOS check from each townsperson. If seen, register crime and start spawning guards as below.
+                    playerEntity.CrimeCommitted = PlayerEntity.Crimes.Murder;
+                    playerEntity.SpawnCityGuards(true);
+
+                    // Disable when dead
+                    // Civilians usually only take one hit, but this just respects entity health value
+                    if (Entity.CurrentHealth == 0)
+                        mobileNpc.Motor.gameObject.SetActive(false);
+                }
+            }
+
+            // Handle mobile enemy aggro
+            if (EntityType == EntityTypes.EnemyClass || EntityType == EntityTypes.EnemyMonster)
+            {
+                // Make enemy aggressive to player
+                EnemyMotor enemyMotor = transform.GetComponent<EnemyMotor>();
+                if (enemyMotor)
+                {
+                    if (!enemyMotor.IsHostile)
+                    {
+                        GameManager.Instance.MakeEnemiesHostile();
+                    }
+                    enemyMotor.MakeEnemyHostileToPlayer(GameManager.Instance.PlayerObject);
+                }
+            }
+        }
+
+        #endregion
+
         #region Private Methods
 
         void SetEntityType(EntityTypes type)

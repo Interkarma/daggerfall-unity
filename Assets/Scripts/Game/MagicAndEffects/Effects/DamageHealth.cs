@@ -41,9 +41,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             // Implement effect
             int magnitude = GetMagnitude(caster);
-            entityBehaviour.Entity.DecreaseHealth(magnitude);
+            entityBehaviour.DamageHealthFromSource(caster, magnitude, false, Vector3.zero);
 
-            Debug.LogFormat("{0} decremented {1}'s health by {2} points", Key, entityBehaviour.EntityType.ToString(), magnitude);
+            //Debug.LogFormat("{0} decremented {1}'s health by {2} points", Key, entityBehaviour.EntityType.ToString(), magnitude);
         }
     }
 }

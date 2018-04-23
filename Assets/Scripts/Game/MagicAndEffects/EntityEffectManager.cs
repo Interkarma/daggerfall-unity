@@ -259,21 +259,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
             // Add instanced bundle
             instancedBundles.Add(instancedBundle);
-
-            // Make target aggressive to player when casting spells at them
-            // Ignore this when caster and target the same
-            if (sourceBundle.CasterEntityBehaviour == GameManager.Instance.PlayerEntityBehaviour &&
-                sourceBundle.CasterEntityBehaviour != entityBehaviour)
-            {
-                EnemyMotor enemyMotor = entityBehaviour.GetComponent<EnemyMotor>();
-                if (enemyMotor)
-                {
-                    if (!enemyMotor.IsHostile)
-                        GameManager.Instance.MakeEnemiesHostile();
-
-                    enemyMotor.MakeEnemyHostileToPlayer(GameManager.Instance.PlayerObject);
-                }
-            }
         }
 
         /// <summary>
