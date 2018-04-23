@@ -73,6 +73,7 @@ namespace DaggerfallWorkshop.Game
         DaggerfallEntityBehaviour caster = null;
         bool missileReleased = false;
         bool impactDetected = false;
+        bool assignedTargets = false;
         float initialRange;
         float initialIntensity;
         EntityEffectBundle payload;
@@ -123,6 +124,16 @@ namespace DaggerfallWorkshop.Game
         {
             get { return caster; }
             set { caster = value; }
+        }
+
+        /// <summary>
+        /// Gets all target entities affected by this missile.
+        /// Any effect bundle payload will be applied automatically.
+        /// Use this property and OnComplete event for custom work.
+        /// </summary>
+        public DaggerfallEntityBehaviour[] Targets
+        {
+            get { return targetEntities.ToArray(); }
         }
 
         #endregion
@@ -207,6 +218,14 @@ namespace DaggerfallWorkshop.Game
             }
             else
             {
+                // Notify listeners work is done and automatically assign payload to targets
+                if (!assignedTargets)
+                {
+                    RaiseOnCompleteEvent();
+                    AssignPayloadToTargets();
+                    assignedTargets = true;
+                }
+
                 // Track post impact lifespan
                 postImpactLifespan += Time.deltaTime;
                 if (postImpactLifespan > PostImpactLifespanInSeconds)
@@ -285,14 +304,13 @@ namespace DaggerfallWorkshop.Game
             missileReleased = true;
         }
 
+        // AOE can strike any number of targets within range with an option to exclude caster
         void DoAreaOfEffect(Vector3 position, bool ignoreCaster = false)
         {
             List<DaggerfallEntityBehaviour> entities = new List<DaggerfallEntityBehaviour>();
 
             transform.position = position;
-            impactDetected = true;
-            missileReleased = true;
-
+            
             // Ignore caster
             if (ignoreCaster)
                 Physics.IgnoreCollision(caster.GetComponent<Collider>(), this.GetComponent<Collider>());
@@ -312,6 +330,13 @@ namespace DaggerfallWorkshop.Game
                     Debug.LogFormat("Missile hit target {0} by AOE", aoeEntity.name);
                 }
             }
+
+            // Add collection to target entities
+            if (entities.Count > 0)
+                targetEntities.AddRange(entities);
+
+            impactDetected = true;
+            missileReleased = true;
         }
 
         // Get missile aim position from player or enemy mobile
@@ -398,6 +423,36 @@ namespace DaggerfallWorkshop.Game
                 case ElementTypes.Shock:
                     return shockMissileArchive;
             }
+        }
+
+        void AssignPayloadToTargets()
+        {
+            if (payload == null || targetEntities.Count == 0)
+                return;
+
+            foreach (DaggerfallEntityBehaviour entityBehaviour in targetEntities)
+            {
+                // Target must have an effect manager component
+                EntityEffectManager effectManager = entityBehaviour.GetComponent<EntityEffectManager>();
+                if (!effectManager)
+                    continue;
+
+                // Instantiate payload bundle on target
+                effectManager.AssignBundle(payload);
+            }
+        }
+
+        #endregion
+
+        #region Events
+
+        // OnComplete
+        public delegate void OnCompleteEventHandler();
+        public static event OnCompleteEventHandler OnComplete;
+        protected virtual void RaiseOnCompleteEvent()
+        {
+            if (OnComplete != null)
+                OnComplete();
         }
 
         #endregion

@@ -39,6 +39,7 @@ GameObject:
   - component: {fileID: 11452974}
   - component: {fileID: 11435454}
   - component: {fileID: 11449422}
+  - component: {fileID: 114919659270182526}
   m_Layer: 0
   m_Name: DaggerfallEnemy [Game Serializable]
   m_TagString: Untagged
@@ -446,3 +447,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 420769a70c7e2c84ca1bf7d3123e1feb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114919659270182526
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 140354}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9ffab243d560eb4698f5f394d36eb67, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  FireMissilePrefab: {fileID: 0}
+  ColdMissilePrefab: {fileID: 0}
+  PoisonMissilePrefab: {fileID: 0}
+  ShockMissilePrefab: {fileID: 0}
+  MagicMissilePrefab: {fileID: 0}

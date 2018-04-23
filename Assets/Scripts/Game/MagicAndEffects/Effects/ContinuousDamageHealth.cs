@@ -9,7 +9,9 @@
 // Notes:
 //
 
+using UnityEngine;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
@@ -28,5 +30,19 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override bool SupportChance { get { return false; } }
         public override TargetTypes AllowedTargets { get { return EntityEffectBroker.TargetFlags_Other; } }
         public override ElementTypes AllowedElements { get { return EntityEffectBroker.ElementFlags_All; } }
+
+        public override void MagicRound(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
+        {
+            // Get peered entity gameobject
+            DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
+            if (!entityBehaviour)
+                return;
+
+            // Implement effect
+            int magnitude = GetMagnitude(caster);
+            entityBehaviour.Entity.DecreaseHealth(magnitude);
+
+            Debug.LogFormat("Effect {0} damaged {1} by {2} health points and has {3} magic rounds remaining.", Key, entityBehaviour.name, magnitude, RoundsRemaining);
+        }
     }
 }

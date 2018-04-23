@@ -102,7 +102,19 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         private void Awake()
         {
-            GameManager.Instance.PlayerSpellCasting.OnReleaseFrame += PlayerSpellCasting_OnReleaseFrame;
+            // Check if this is player's effect manager
+            // We do some extra coordination for player
+            entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
+            if (entityBehaviour)
+            {
+                isPlayerEntity = (entityBehaviour.EntityType == EntityTypes.Player);
+            }
+
+            // Only player listens for release frame
+            if (isPlayerEntity)
+                GameManager.Instance.PlayerSpellCasting.OnReleaseFrame += PlayerSpellCasting_OnReleaseFrame;
+
+            // Wire up events
             EntityEffectBroker.OnNewMagicRound += EntityEffectBroker_OnNewMagicRound;
             SaveLoadManager.OnLoad += SaveLoadManager_OnLoad;
             StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
@@ -110,11 +122,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         private void Start()
         {
-            entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
-            if (entityBehaviour)
-            {
-                isPlayerEntity = (entityBehaviour.EntityType == EntityTypes.Player);
-            }
         }
 
         private void OnDestroy()
@@ -284,6 +291,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         private void PlayerSpellCasting_OnReleaseFrame()
         {
             DaggerfallMissile missile = null;
+
+            // Must have a ready spell
+            if (readySpell == null)
+                return;
 
             // Assign bundle directly to self if target is caster
             // Otherwise instatiate missile prefab based on element type
