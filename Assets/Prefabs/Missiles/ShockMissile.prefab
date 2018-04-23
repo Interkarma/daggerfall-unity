@@ -26,7 +26,7 @@ GameObject:
   - component: {fileID: 114701158002484598}
   - component: {fileID: 54482902062701562}
   m_Layer: 0
-  m_Name: FireMissile
+  m_Name: ShockMissile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -149,7 +149,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 7
   m_Type: 2
-  m_Color: {r: 0.6039216, g: 0.09411765, b: 0.03137255, a: 1}
+  m_Color: {r: 0.26666668, g: 0.4862745, b: 0.7529412, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30

@@ -350,14 +350,20 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             {
                 switch (readySpell.Settings.ElementType)
                 {
-                    case ElementTypes.Fire:
-                        missile = Instantiate(FireMissilePrefab);
-                        break;
                     case ElementTypes.Cold:
                         missile = Instantiate(ColdMissilePrefab);
                         break;
+                    case ElementTypes.Fire:
+                        missile = Instantiate(FireMissilePrefab);
+                        break;
                     case ElementTypes.Poison:
                         missile = Instantiate(PoisonMissilePrefab);
+                        break;
+                    case ElementTypes.Shock:
+                        missile = Instantiate(ShockMissilePrefab);
+                        break;
+                    case ElementTypes.Magic:
+                        missile = Instantiate(MagicMissilePrefab);
                         break;
                     default:
                         return;
