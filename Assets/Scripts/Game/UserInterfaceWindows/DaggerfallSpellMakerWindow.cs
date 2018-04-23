@@ -128,6 +128,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const TargetTypes defaultTargetFlags = EntityEffectBroker.TargetFlags_All;
         const ElementTypes defaultElementFlags = EntityEffectBroker.ElementFlags_MagicOnly;
 
+        const SoundClips inscribeGrimoire = SoundClips.ParchmentScratching;
+
         List<IEntityEffect> enumeratedEffectTemplates = new List<IEntityEffect>();
 
         EffectEntry[] effectEntries = new EffectEntry[maxEffectsPerSpell];
@@ -601,6 +603,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             const int noMoreThan3Effects = 1707;
 
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+
             // Must have a free effect slot
             if (GetFirstFreeEffectSlotIndex() == -1)
             {
@@ -635,6 +639,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             //const int noSpellBook = 1703;
             const int youMustChooseAName = 1704;
             const int spellHasBeenInscribed = 1705;
+
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
 
             // TODO:
             //   Implement costs and remove gold from player and block if user does not have enough gold (message 1702)
@@ -680,6 +686,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Add to player entity spellbook
             GameManager.Instance.PlayerEntity.AddSpell(spell);
 
+            DaggerfallUI.Instance.PlayOneShot(inscribeGrimoire);
+
             // Notify player and exit when this messagebox is dismissed
             DaggerfallMessageBox mbComplete = DaggerfallUI.MessageBox(spellHasBeenInscribed);
             mbComplete.ClickAnywhereToClose = true;
@@ -696,61 +704,73 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void NewSpellButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SetDefaults();
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             CloseWindow();
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
         private void CasterOnlyButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SetSpellTarget(TargetTypes.CasterOnly);
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
         private void ByTouchButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SetSpellTarget(TargetTypes.ByTouch);
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
         private void SingleTargetAtRangeButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SetSpellTarget(TargetTypes.SingleTargetAtRange);
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
         private void AreaAroundCasterButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SetSpellTarget(TargetTypes.AreaAroundCaster);
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
         private void AreaAtRangeButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SetSpellTarget(TargetTypes.AreaAtRange);
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
         private void FireBasedButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SetSpellElement(ElementTypes.Fire);
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
         private void ColdBasedButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SetSpellElement(ElementTypes.Cold);
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
         private void PoisonBasedButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SetSpellElement(ElementTypes.Poison);
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
         private void ShockBasedButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SetSpellElement(ElementTypes.Shock);
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
         private void MagicBasedButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SetSpellElement(ElementTypes.Magic);
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
         private void NextIconButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -760,6 +780,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 index = 0;
 
             SetIcon(index);
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
         private void PreviousIconButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -769,10 +790,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 index = DaggerfallUI.Instance.SpellIconCollection.SpellIconCount - 1;
 
             SetIcon(index);
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
         private void NameSpellButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             DaggerfallInputMessageBox mb = new DaggerfallInputMessageBox(uiManager, this);
             mb.SetTextBoxLabel(TextManager.Instance.GetText("SpellmakerUI", "enterSpellName") + " ");
             mb.OnGotUserInput += EnterName_OnGotUserInput;
@@ -838,6 +861,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void DeleteButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             // Delete effect entry
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             ClearEffectSlot(editOrDeleteSlot);
             editOrDeleteSlot = -1;
         }

@@ -80,7 +80,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         const string textDatabase = "SpellmakerUI";
         const string spellBookTextureFilename = "SPBK00I0.IMG";
-        //const string CHANGETEXT = "Enter Spell Name: ";
+
+        const SoundClips openSpellBook = SoundClips.OpenBook;
+        const SoundClips closeSpellBook = SoundClips.PageTurn;
 
         #endregion
 
@@ -122,6 +124,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 RefreshSpellsList();
                 SetDefaults();
             }
+
+            DaggerfallUI.Instance.PlayOneShot(openSpellBook);
+        }
+
+        public override void OnPop()
+        {
+            DaggerfallUI.Instance.PlayOneShot(closeSpellBook);
         }
 
         void SetDefaults()
@@ -473,7 +482,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             DaggerfallInputMessageBox renameSpellPrompt;
             renameSpellPrompt = new DaggerfallInputMessageBox(uiManager, this);
-            //renameSpellPrompt.SetTextBoxLabel(CHANGETEXT);
+            renameSpellPrompt.SetTextBoxLabel(TextManager.Instance.GetText("SpellmakerUI", "enterSpellName") + " ");
             renameSpellPrompt.TextBox.Text = spellsListBox.SelectedItem;
             renameSpellPrompt.OnGotUserInput += RenameSpellPromptHandler;
             uiManager.PushWindow(renameSpellPrompt);
