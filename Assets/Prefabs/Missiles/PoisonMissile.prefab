@@ -215,6 +215,7 @@ MonoBehaviour:
   LifespanInSeconds: 8
   PostImpactLifespanInSeconds: 0.6
   PostImpactLightMultiplier: 2
+  ImpactSound: 87
 --- !u!135 &135961771109985534
 SphereCollider:
   m_ObjectHideFlags: 1

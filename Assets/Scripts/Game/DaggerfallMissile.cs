@@ -48,6 +48,7 @@ namespace DaggerfallWorkshop.Game
         public float LifespanInSeconds = 8f;                    // How long missile will persist in world before self-destructing if no target found
         public float PostImpactLifespanInSeconds = 0.6f;        // Time in seconds missile will persist after impact
         public float PostImpactLightMultiplier = 1f;            // Scale of light intensity and range during post-impact lifespan - use 1.0 for no change, 0.0 for lights-out
+        public SoundClips ImpactSound = SoundClips.None;        // Impact sound of missile
 
         #endregion
 
@@ -62,6 +63,7 @@ namespace DaggerfallWorkshop.Game
         Vector3 direction;
         Light myLight;
         SphereCollider myCollider;
+        DaggerfallAudioSource audioSource;
         Rigidbody myRigidbody;
         DaggerfallBillboard myBillboard;
         bool forceDisableSpellLighting;
@@ -73,7 +75,7 @@ namespace DaggerfallWorkshop.Game
         DaggerfallEntityBehaviour caster = null;
         bool missileReleased = false;
         bool impactDetected = false;
-        bool assignedTargets = false;
+        bool impactAssigned = false;
         float initialRange;
         float initialIntensity;
         EntityEffectBundle payload;
@@ -139,6 +141,11 @@ namespace DaggerfallWorkshop.Game
         #endregion
 
         #region Unity
+
+        private void Awake()
+        {
+            audioSource = transform.GetComponent<DaggerfallAudioSource>();
+        }
 
         private void Start()
         {
@@ -222,18 +229,23 @@ namespace DaggerfallWorkshop.Game
             }
             else
             {
-                // Notify listeners work is done and automatically assign payload to targets
-                if (!assignedTargets)
+                // Notify listeners work is done and automatically assign impact
+                if (!impactAssigned)
                 {
+                    PlayImpactSound();
                     RaiseOnCompleteEvent();
                     AssignPayloadToTargets();
-                    assignedTargets = true;
+                    impactAssigned = true;
                 }
 
-                // Track post impact lifespan
+                // Track post impact lifespan and allow impact clip to finish playing
                 postImpactLifespan += Time.deltaTime;
                 if (postImpactLifespan > PostImpactLifespanInSeconds)
-                    Destroy(gameObject);
+                {
+                    myLight.enabled = false;
+                    if (ImpactSound != SoundClips.None && !audioSource.IsPlaying())
+                        Destroy(gameObject);
+                }
             }
 
             // Update light
@@ -436,6 +448,15 @@ namespace DaggerfallWorkshop.Game
 
                 // Instantiate payload bundle on target
                 effectManager.AssignBundle(payload);
+            }
+        }
+
+        void PlayImpactSound()
+        {
+            if (audioSource && ImpactSound != SoundClips.None)
+            {
+                // Using doppler of zero as classic does not appear to use 3D sound for spell impact
+                audioSource.PlayOneShot(ImpactSound, 0);
             }
         }
 

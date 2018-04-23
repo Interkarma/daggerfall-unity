@@ -127,13 +127,12 @@ namespace DaggerfallWorkshop
         CastSpell3 = 83,
         CastSpell4 = 84,
         CastSpell5 = 85,
-        CastSpell6 = 86,
 
-        Clash = 87,
-
-        SpellEffectZap = 88,
-        SpellEffectExplosion = 89,
-        SpellEffectBurn = 90,
+        SpellImpactMagic = 86,
+        SpellImpactPoison = 87,
+        SpellImpactShock = 88,
+        SpellImpactFire = 89,
+        SpellImpactCold = 90,
 
         FallDamage = 91,
         FallHard = 92,

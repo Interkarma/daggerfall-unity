@@ -227,6 +227,14 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
+        /// Check if AudioSource is playing a clip.
+        /// </summary>
+        public bool IsPlaying()
+        {
+            return (audioSource) ? audioSource.isPlaying : false;
+        }
+
+        /// <summary>
         /// Get AudioClip from sound index.
         /// </summary>
         public AudioClip GetAudioClip(int soundIndex)

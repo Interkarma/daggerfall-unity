@@ -127,7 +127,7 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
-    m_RotationOrder: 4
+    m_RotationOrder: 0
   reverbZoneMixCustomCurve:
     serializedVersion: 2
     m_Curve:
@@ -215,6 +215,7 @@ MonoBehaviour:
   LifespanInSeconds: 8
   PostImpactLifespanInSeconds: 0.6
   PostImpactLightMultiplier: 2
+  ImpactSound: 90
 --- !u!135 &135961771109985534
 SphereCollider:
   m_ObjectHideFlags: 1
