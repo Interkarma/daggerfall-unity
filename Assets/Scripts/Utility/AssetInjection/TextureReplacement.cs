@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
@@ -64,6 +65,27 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
     /// </summary>
     public static class TextureReplacement
     {
+        #region Uniforms
+
+        static class Uniforms
+        {
+            internal const string MetallicGlossMapKeyword   = "_METALLICGLOSSMAP";
+
+            internal static readonly int MainTex            = Shader.PropertyToID("_MainTex");
+            internal static readonly int EmissionMap        = Shader.PropertyToID("_EmissionMap");
+            internal static readonly int BumpMap            = Shader.PropertyToID("_BumpMap");
+            internal static readonly int Metallic           = Shader.PropertyToID("_Metallic");
+            internal static readonly int Glossiness         = Shader.PropertyToID("_Glossiness");
+            internal static readonly int MetallicGlossMap   = Shader.PropertyToID("_MetallicGlossMap");
+
+            internal static readonly int[] Textures = new int[]
+            {
+                MainTex, EmissionMap, BumpMap, MetallicGlossMap
+            };
+        }
+
+        #endregion
+
         #region Fields
 
         const string extension = ".png";
@@ -85,6 +107,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                     TextureFormat.DXT5 :
                     TextureFormat.ARGB32;
             }
+        }
+
+        static FilterMode MainFilterMode
+        {
+            get { return DaggerfallUnity.Instance.MaterialReader.MainFilterMode; }
         }
 
         /// <summary>
@@ -303,8 +330,9 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             Texture2D metallicGloss;
             if (TryImportTextureFromLooseFiles(archive, record, frame, TextureMap.MetallicGloss, out metallicGloss))
             {
-                material.EnableKeyword("_METALLICGLOSSMAP");
-                material.SetTexture("_MetallicGlossMap", metallicGloss);
+                metallicGloss.filterMode = MainFilterMode;
+                material.EnableKeyword(Uniforms.MetallicGlossMapKeyword);
+                material.SetTexture(Uniforms.MetallicGlossMap, metallicGloss);
             }
 
             // Properties
@@ -316,12 +344,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 // Metallic parameter
                 float metallic;
                 if (xml.TryGetFloat("metallic", out metallic))
-                    material.SetFloat("_Metallic", metallic);
+                    material.SetFloat(Uniforms.Metallic, metallic);
 
                 // Smoothness parameter
                 float smoothness;
                 if (xml.TryGetFloat("smoothness", out smoothness))
-                    material.SetFloat("_Glossiness", smoothness);
+                    material.SetFloat(Uniforms.Glossiness, smoothness);
             }
         }
 
@@ -347,9 +375,9 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             if (summary.ImportedTextures.HasImportedTextures = hasImportedTextures)
             {
                 // Set texture on material
-                meshRenderer.material.SetTexture("_MainTex", albedo);
+                meshRenderer.material.SetTexture(Uniforms.MainTex, albedo);
                 if (isEmissive)
-                    meshRenderer.material.SetTexture("_EmissionMap", emission);
+                    meshRenderer.material.SetTexture(Uniforms.EmissionMap, emission);
 
                 // Import animation frames
                 var albedoTextures = new List<Texture2D>();
@@ -583,17 +611,29 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         {
             string path = Path.Combine(DaggerfallUnity.Instance.MaterialReader.TextureReader.Arena2Path, TextureFile.IndexToFileName(archive));
             TextureFile textureFile = new TextureFile(path, FileUsage.UseMemory, true);
-            FilterMode filterMode = DaggerfallUnity.Instance.MaterialReader.MainFilterMode;
             return new GetTextureResults()
             {
-                albedoMap = GetTextureOrDefault(material, "_MainTex", filterMode),
-                normalMap = GetTextureOrDefault(material, "_BumpMap", filterMode),
-                emissionMap = GetTextureOrDefault(material, "_EmissionMap", filterMode),
+                albedoMap = GetTextureOrDefault(material, Uniforms.MainTex),
+                normalMap = GetTextureOrDefault(material, Uniforms.BumpMap),
+                emissionMap = GetTextureOrDefault(material, Uniforms.EmissionMap),
                 singleRect = new Rect(0, 0, 1, 1),
                 isWindow = ClimateSwaps.IsExteriorWindow(archive, record),
-                isEmissive = material.HasProperty("_EmissionMap"),
+                isEmissive = material.HasProperty(Uniforms.EmissionMap),
                 textureFile = textureFile
             };
+        }
+
+        /// <summary>
+        /// Assign current filtermode to all standard shader textures of the given material.
+        /// </summary>
+        public static void AssignFiltermode(Material material)
+        {
+            FilterMode filterMode = MainFilterMode;
+            foreach (var property in Uniforms.Textures.Where(x => material.HasProperty(x)))
+            {
+                Texture tex = material.GetTexture(property);
+                if (tex) tex.filterMode = filterMode;
+            }
         }
 
         /// <summary>
@@ -833,7 +873,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             }
             else if (TryImportTexture(archive, record, frame, out albedo))
             {
-                var filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
+                var filterMode = MainFilterMode;
 
                 albedo.filterMode = filterMode;
                 cachedMaterial.albedoMap = albedo;
@@ -853,16 +893,9 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             return false;
         }
 
-        private static Texture2D GetTextureOrDefault(Material material, string textureName, FilterMode filterMode)
+        private static Texture2D GetTextureOrDefault(Material material, int propertyID)
         {
-            Texture2D tex;
-            if (material.HasProperty(textureName) && (tex = (Texture2D)material.GetTexture(textureName)) != null)
-            {
-                tex.filterMode = filterMode;
-                return tex;
-            }
-
-            return null;
+            return material.HasProperty(propertyID) ? (Texture2D)material.GetTexture(propertyID) : null;
         }
 
         #endregion

@@ -10,7 +10,6 @@
 //
 
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -27,14 +26,6 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
     public static class MeshReplacement
     {
         #region Fields
-
-        static readonly int[] Uniforms = new int[]
-        {
-            Shader.PropertyToID("_MainTex"),
-            Shader.PropertyToID("_BumpMap"),
-            Shader.PropertyToID("_EmissionMap"),
-            Shader.PropertyToID("_MetallicGlossMap")
-        };
 
         static Func<float> getTreeScaleCallback = () => Random.Range(0.6f, 1.4f);
         static Func<Color32> getTreeColorCallback = () => Color.Lerp(Color.white, Color.grey, Random.value);
@@ -316,12 +307,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                         }
 
                         // Assign filtermode to textures
-                        FilterMode filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
-                        foreach (var property in Uniforms.Where(x => materials[i].HasProperty(x)))
-                        {
-                            Texture tex = materials[i].GetTexture(property);
-                            if (tex) tex.filterMode = filterMode;
-                        }
+                        TextureReplacement.AssignFiltermode(materials[i]);
                     }
                     else
                     {

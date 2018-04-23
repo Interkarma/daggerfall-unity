@@ -308,6 +308,7 @@ namespace DaggerfallWorkshop
                 TextureReplacement.TryImportMaterial(archive, record, frame, out material))
             {
                 results = TextureReplacement.MakeResults(material, archive, record);
+                TextureReplacement.AssignFiltermode(material);
             }
             else
             {
