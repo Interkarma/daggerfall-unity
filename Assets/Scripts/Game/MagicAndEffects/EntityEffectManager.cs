@@ -256,6 +256,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// </summary>
         void DoMagicRound()
         {
+            // Do nothing further if entity has perished
+            if (entityBehaviour.Entity.CurrentHealth <= 0)
+            {
+                // TODO: Remove all effect bundles from entity before it expires
+                return;
+            }
+
             // Update all effects for all bundles
             foreach (InstancedBundle bundle in instancedBundles)
             {
@@ -322,51 +329,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             {
                 missile.Payload = readySpell;
             }
-
-            //// Set defaults
-            //missile.IsTouch = false;
-            //missile.AreaOfEffect = false;
-
-            //// A missile can be used for touch, ranged, area around caster, area at range
-            //switch (readySpell.Settings.TargetType)
-            //{
-            //    case TargetTypes.ByTouch:
-            //        missile.IsTouch = true;
-            //        break;
-            //    case TargetTypes.SingleTargetAtRange:
-            //        break;
-            //    case TargetTypes.AreaAroundCaster:
-            //        break;
-            //    case TargetTypes.AreaAtRange:
-            //        missile.AreaOfEffect = true;
-            //        break;
-            //}
-
-            // Setup missile
-            //missile.UseSpellBillboardAnims(readySpell.Settings.ElementType);
-            //missile.Spell = readySpell;
-
-            //// Check if this is a ranged spell
-            //bool rangedTarget = false;
-            //if (readySpell.Settings.TargetType == TargetTypes.SingleTargetAtRange ||
-            //    readySpell.Settings.TargetType == TargetTypes.AreaAtRange)
-            //{
-            //    rangedTarget = true;
-            //}
-
-            //if (rangedTarget)
-            //{
-            //    // Get missile vectors
-            //    Vector3 missileDirection = GameManager.Instance.MainCamera.transform.forward;
-            //    Vector3 missilePosition = transform.position + Vector3.up * 0.35f + missileDirection * 0.85f;
-
-            //    // TODO: Execute missile based on target type
-
-            //    //// TEMP: Just hurling test missiles with no payload at this time
-            //    //DaggerfallMissile 
-            //    //missile.UseSpellBillboardAnims(ElementTypes.Cold);
-            //    //missile.ExecuteMobileMissile(missilePosition, missileDirection);
-            //}
 
             lastSpell = readySpell;
             readySpell = null;
