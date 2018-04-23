@@ -250,7 +250,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 roundsRemaining = 1;
             }
 
-            Debug.LogFormat("Effect '{0}' will run for {1} magic rounds", Key, roundsRemaining);
+            //Debug.LogFormat("Effect '{0}' will run for {1} magic rounds", Key, roundsRemaining);
         }
 
         public virtual void Start()

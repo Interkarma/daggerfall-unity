@@ -46,6 +46,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         bool allowSelfDamage = true;
 
         List<InstancedBundle> instancedBundles = new List<InstancedBundle>();
+        List<InstancedBundle> bundlesToRemove = new List<InstancedBundle>();
+        bool clearBundles = false;
 
         #endregion
 
@@ -122,6 +124,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         private void Start()
         {
+            // Listen for entity death to remove effect bundles
+            if (entityBehaviour && entityBehaviour.Entity != null)
+            {
+                entityBehaviour.Entity.OnDeath += Entity_OnDeath;
+            }
         }
 
         private void OnDestroy()
@@ -167,6 +174,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     AbortReadySpell();
                     return;
                 }
+            }
+
+            // Clear bundles if scheduled - doing here ensures not currently iterating bundles during a magic round
+            if (clearBundles)
+            {
+                ClearBundles();
+                clearBundles = false;
             }
         }
 
@@ -214,7 +228,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Source bundle must have one or more effects
             if (sourceBundle.Settings.Effects == null || sourceBundle.Settings.Effects.Length == 0)
             {
-                Debug.Log("AssignBundle() could not assign bundle as source has no effects");
+                Debug.LogWarning("AssignBundle() could not assign bundle as source has no effects");
                 return;
             }
 
@@ -230,7 +244,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 IEntityEffect effect = GameManager.Instance.EntityEffectBroker.InstantiateEffect(instancedBundle.settings.Effects[i]);
                 if (effect == null)
                 {
-                    Debug.LogFormat("AssignBundle() could not add effect as key '{0}' was not found by broker.");
+                    Debug.LogWarningFormat("AssignBundle() could not add effect as key '{0}' was not found by broker.");
                     continue;
                 }
 
@@ -247,6 +261,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             instancedBundles.Add(instancedBundle);
         }
 
+        /// <summary>
+        /// Wipe all effect bundles from this entity.
+        /// </summary>
+        public void ClearBundles()
+        {
+            instancedBundles.Clear();
+        }
+
         #endregion
 
         #region Private Methods
@@ -256,12 +278,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// </summary>
         void DoMagicRound()
         {
-            // Do nothing further if entity has perished
-            if (entityBehaviour.Entity.CurrentHealth <= 0)
-            {
-                // TODO: Remove all effect bundles from entity before it expires
+            // Do nothing further if entity has perished or object disabled
+            if (entityBehaviour.Entity.CurrentHealth <= 0 || !entityBehaviour.enabled)
                 return;
-            }
 
             // Update all effects for all bundles
             foreach (InstancedBundle bundle in instancedBundles)
@@ -278,11 +297,26 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     }
                 }
 
-                // TODO: Expire this bundle once all effects have 0 rounds remaining
+                // Expire this bundle once all effects have 0 rounds remaining
                 if (!hasRemainingEffectRounds)
-                {
-                }
+                    bundlesToRemove.Add(bundle);
             }
+
+            // Remove any bundles pending deletion
+            if (bundlesToRemove.Count > 0)
+            {
+                foreach (InstancedBundle bundle in bundlesToRemove)
+                {
+                    RemoveBundle(bundle);
+                }
+                bundlesToRemove.Clear();
+            }
+        }
+
+        void RemoveBundle(InstancedBundle bundle)
+        {
+            instancedBundles.Remove(bundle);
+            //Debug.LogFormat("Expired bundle {0} with {1} effects", bundle.settings.Name, bundle.settings.Effects.Length);
         }
 
         void ClearReadySpellHistory()
@@ -348,6 +382,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         private void StartGameBehaviour_OnNewGame()
         {
             ClearReadySpellHistory();
+        }
+
+        private void Entity_OnDeath(DaggerfallEntity entity)
+        {
+            clearBundles = true;
+            entityBehaviour.Entity.OnDeath -= Entity_OnDeath;
+            //Debug.LogFormat("Cleared all effect bundles after death of {0}", entity.Name);
         }
 
         #endregion

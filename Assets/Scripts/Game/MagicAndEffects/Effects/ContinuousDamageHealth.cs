@@ -42,7 +42,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             int magnitude = GetMagnitude(caster);
             entityBehaviour.Entity.DecreaseHealth(magnitude);
 
-            Debug.LogFormat("Effect {0} damaged {1} by {2} health points and has {3} magic rounds remaining.", Key, entityBehaviour.name, magnitude, RoundsRemaining);
+            //Debug.LogFormat("Effect {0} damaged {1} by {2} health points and has {3} magic rounds remaining.", Key, entityBehaviour.name, magnitude, RoundsRemaining - 1);
         }
     }
 }
