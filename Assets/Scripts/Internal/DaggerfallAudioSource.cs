@@ -214,7 +214,7 @@ namespace DaggerfallWorkshop
         /// </summary>
         public void PlayOneShot(SoundClips soundClip, float spatialBlend = 1, float volumeScale = 1f)
         {
-            PlayOneShot((int)soundClip, spatialBlend, volumeScale * DaggerfallUnity.Settings.SoundVolume);
+            PlayOneShot((int)soundClip, spatialBlend, volumeScale);
         }
 
         /// <summary>
@@ -223,7 +223,7 @@ namespace DaggerfallWorkshop
         public void PlayOneShot(uint soundID, float spatialBlend = 1, float volumeScale = 1f)
         {
             int soundIndex = dfUnity.SoundReader.GetSoundIndex(soundID);
-            PlayOneShot(soundIndex, spatialBlend, volumeScale * DaggerfallUnity.Settings.SoundVolume);
+            PlayOneShot(soundIndex, spatialBlend, volumeScale);
         }
 
         /// <summary>
