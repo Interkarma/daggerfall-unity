@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using DaggerfallConnect;
+using DaggerfallWorkShop.Game;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -115,6 +116,7 @@ namespace DaggerfallWorkshop.Game
         private uint timeOfLastClimbingCheck = 0;
         private bool showClimbingModeMessage = true;
         private Vector2 lastHorizontalPosition = Vector2.zero;
+        private Croucher myCroucher;
 
         private CollisionFlags collisionFlags = 0;
 
@@ -226,6 +228,7 @@ namespace DaggerfallWorkshop.Game
             slideLimit = controller.slopeLimit - .1f;
             jumpTimer = antiBunnyHopFactor;
             mainCamera = GameManager.Instance.MainCamera;
+            myCroucher = GetComponent<Croucher>();
 
             fakeLevitate = GetComponent<FakeLevitate>();
         }
@@ -371,7 +374,7 @@ namespace DaggerfallWorkshop.Game
 
                 if (!riding)
                 {
-                    if (!isCrouching)                    
+                    if (!isCrouching && myCroucher.ToggleAction != CrouchToggleAction.DoStanding) // don't set to standing height while croucher is standing the player
                         controller.height = standingHeight;
 
                     try
@@ -630,10 +633,18 @@ namespace DaggerfallWorkshop.Game
 
                 // Toggle crouching
                 if (InputManager.Instance.ActionComplete(InputManager.Actions.Crouch))
-                    isCrouching = !isCrouching;
-
+                {
+                    if (isCrouching)
+                        myCroucher.ToggleAction = CrouchToggleAction.DoStanding;
+                    else
+                        myCroucher.ToggleAction = CrouchToggleAction.DoCrouching;
+                }
+                /*if (myCroucher.ToggleAction != CrouchToggleAction.DoNothing)
+                {
+                    myCroucher.DoToggleAction();
+                }*/
                 // Manage crouching height
-                if (isCrouching && !wasCrouching)
+                /*if (isCrouching && !wasCrouching)
                 {
                     controller.height = crouchingHeight;
                     Vector3 pos = controller.transform.position;
@@ -648,7 +659,8 @@ namespace DaggerfallWorkshop.Game
                     pos.y += (standingHeight - crouchingHeight) / 2.0f;
                     controller.transform.position = pos;
                     wasCrouching = isCrouching;
-                }
+                }*/
+
             }
 
             if (smoothFollower != null && controller != null)
@@ -662,8 +674,8 @@ namespace DaggerfallWorkshop.Game
                 {
                     smoothFollowerReset = true;
                 }
-            
-                if (smoothFollowerReset) 
+
+                if (smoothFollowerReset)
                 {
                     smoothFollowerPrevWorldPos = transform.position;
                     smoothFollowerReset = false;
