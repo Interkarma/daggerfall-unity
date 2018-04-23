@@ -31,6 +31,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         const int minAcceptedSpellVersion = 1;
 
+        const int magicCastSoundID = 349;
+        const int poisonCastSoundID = 350;
+        const int shockCastSoundID = 351;
+        const int fireCastSoundID = 352;
+        const int coldCastSoundID = 353; 
+
         public DaggerfallMissile FireMissilePrefab;
         public DaggerfallMissile ColdMissilePrefab;
         public DaggerfallMissile PoisonMissilePrefab;
@@ -205,7 +211,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
             if (isPlayerEntity && ! instantCast)
             {
-                DaggerfallUI.AddHUDText(HardStrings.pressButtonToFireSpell);
+                DaggerfallUI.AddHUDText(HardStrings.pressButtonToFireSpell, 0.4f);
             }
         }
 
@@ -325,6 +331,45 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             readySpell = null;
         }
 
+        int GetCastSoundID(ElementTypes elementType)
+        {
+            switch (readySpell.Settings.ElementType)
+            {
+                case ElementTypes.Cold:
+                    return coldCastSoundID;
+                    break;
+                case ElementTypes.Fire:
+                    return fireCastSoundID;
+                case ElementTypes.Poison:
+                    return poisonCastSoundID;
+                case ElementTypes.Shock:
+                    return shockCastSoundID;
+                case ElementTypes.Magic:
+                    return magicCastSoundID;
+                default:
+                    return -1;
+            }
+        }
+
+        DaggerfallMissile InstantiateMissile(ElementTypes elementType)
+        {
+            switch (elementType)
+            {
+                case ElementTypes.Cold:
+                    return Instantiate(ColdMissilePrefab);
+                case ElementTypes.Fire:
+                    return Instantiate(FireMissilePrefab);
+                case ElementTypes.Poison:
+                    return Instantiate(PoisonMissilePrefab);
+                case ElementTypes.Shock:
+                    return Instantiate(ShockMissilePrefab);
+                case ElementTypes.Magic:
+                    return Instantiate(MagicMissilePrefab);
+                default:
+                    return null;
+            }
+        }
+
         #endregion
 
         #region Event Handling
@@ -334,11 +379,20 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // TODO: Split missile generation from player spell casting so monsters can also cast spells
             // Using player as sole testing platform for now
 
-            DaggerfallMissile missile = null;
-
             // Must have a ready spell
             if (readySpell == null)
                 return;
+
+            // Play cast sound from caster audio source
+            if (readySpell.CasterEntityBehaviour)
+            {
+                int castSoundID = GetCastSoundID(readySpell.Settings.ElementType);
+                DaggerfallAudioSource audioSource = readySpell.CasterEntityBehaviour.GetComponent<DaggerfallAudioSource>();
+                if (castSoundID != -1 && audioSource)
+                {
+                    audioSource.PlayOneShot((uint)castSoundID);
+                }
+            }
 
             // Assign bundle directly to self if target is caster
             // Otherwise instatiate missile prefab based on element type
@@ -348,32 +402,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
             else
             {
-                switch (readySpell.Settings.ElementType)
-                {
-                    case ElementTypes.Cold:
-                        missile = Instantiate(ColdMissilePrefab);
-                        break;
-                    case ElementTypes.Fire:
-                        missile = Instantiate(FireMissilePrefab);
-                        break;
-                    case ElementTypes.Poison:
-                        missile = Instantiate(PoisonMissilePrefab);
-                        break;
-                    case ElementTypes.Shock:
-                        missile = Instantiate(ShockMissilePrefab);
-                        break;
-                    case ElementTypes.Magic:
-                        missile = Instantiate(MagicMissilePrefab);
-                        break;
-                    default:
-                        return;
-                }
-            }
-
-            // Configure missile
-            if (missile)
-            {
-                missile.Payload = readySpell;
+                DaggerfallMissile missile = InstantiateMissile(readySpell.Settings.ElementType);
+                if (missile)
+                    missile.Payload = readySpell;
             }
 
             lastSpell = readySpell;

@@ -177,6 +177,10 @@ namespace DaggerfallWorkshop.Game
                     UseSpellBillboardAnims(elementType);
                 }
             }
+
+            // Ignore missile collision with caster (this is a different check to AOE targets)
+            if (caster)
+                Physics.IgnoreCollision(caster.GetComponent<Collider>(), this.GetComponent<Collider>());
         }
 
         private void Update()
@@ -276,8 +280,6 @@ namespace DaggerfallWorkshop.Game
         {
             transform.position = caster.transform.position;
 
-            Physics.IgnoreCollision(caster.GetComponent<Collider>(), this.GetComponent<Collider>());
-
             RaycastHit hit;
             Ray ray = new Ray(GetAimPosition(), GetAimDirection());
             if (Physics.Raycast(ray, out hit, TouchRange))
@@ -298,7 +300,6 @@ namespace DaggerfallWorkshop.Game
         // Missile can hit environment or target at range
         void DoMissile()
         {
-            Physics.IgnoreCollision(caster.GetComponent<Collider>(), this.GetComponent<Collider>());
             direction = GetAimDirection();
             transform.position = GetAimPosition() + direction * ColliderRadius;
             missileReleased = true;
@@ -310,10 +311,6 @@ namespace DaggerfallWorkshop.Game
             List<DaggerfallEntityBehaviour> entities = new List<DaggerfallEntityBehaviour>();
 
             transform.position = position;
-            
-            // Ignore caster
-            if (ignoreCaster)
-                Physics.IgnoreCollision(caster.GetComponent<Collider>(), this.GetComponent<Collider>());
 
             // Collect AOE targets and ignore duplicates
             Collider[] overlaps = Physics.OverlapSphere(position, ExplosionRadius);
