@@ -420,6 +420,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         private void SaveLoadManager_OnLoad(SaveData_v1 saveData)
         {
             ClearReadySpellHistory();
+            ClearBundles();
         }
 
         private void StartGameBehaviour_OnNewGame()
