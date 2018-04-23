@@ -23,7 +23,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override string Key { get { return "ContinuousDamage-SpellPoints"; } }
         public override string GroupName { get { return TextManager.Instance.GetText("ClassicEffects", "continuousDamage"); } }
         public override string SubGroupName { get { return TextManager.Instance.GetText("ClassicEffects", "spellPoints"); } }
-        public override int ClassicGroup { get { return 4; } }
+        public override int ClassicGroup { get { return 1; } }
         public override int ClassicSubGroup { get { return 2; } }
         public override TextFile.Token[] SpellMakerDescription { get { return DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1506); } }
         public override TextFile.Token[] SpellBookDescription { get { return DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1206); } }
