@@ -84,6 +84,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const SoundClips openSpellBook = SoundClips.OpenBook;
         const SoundClips closeSpellBook = SoundClips.PageTurn;
 
+        int deleteSpellIndex = -1;
+
         #endregion
 
         #region Constructors
@@ -456,10 +458,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void DeleteButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            // TODO: Prompt and delete spell
+            // Prompt and delete spell
+            deleteSpellIndex = spellsListBox.SelectedIndex;
+            DaggerfallMessageBox mb = new DaggerfallMessageBox(uiManager, DaggerfallMessageBox.CommonMessageBoxButtons.YesNo, TextManager.Instance.GetText(textDatabase, "deleteSpell"), this);
+            mb.OnButtonClick += DeleteSpellConfirm_OnButtonClick;            
+            mb.Show();
         }
 
-        //handles clicks on exit button - close window w/o selecting spell
+        private void DeleteSpellConfirm_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        {
+            if (deleteSpellIndex != -1 && messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
+            {
+                spellsListBox.RemoveItem(deleteSpellIndex);
+                deleteSpellIndex = -1;
+                RefreshSpellsList();
+            }
+
+            CloseWindow();
+        }
+
         void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             CloseWindow();
@@ -482,7 +499,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             DaggerfallInputMessageBox renameSpellPrompt;
             renameSpellPrompt = new DaggerfallInputMessageBox(uiManager, this);
-            renameSpellPrompt.SetTextBoxLabel(TextManager.Instance.GetText("SpellmakerUI", "enterSpellName") + " ");
+            renameSpellPrompt.SetTextBoxLabel(TextManager.Instance.GetText(textDatabase, "enterSpellName") + " ");
             renameSpellPrompt.TextBox.Text = spellsListBox.SelectedItem;
             renameSpellPrompt.OnGotUserInput += RenameSpellPromptHandler;
             uiManager.PushWindow(renameSpellPrompt);
