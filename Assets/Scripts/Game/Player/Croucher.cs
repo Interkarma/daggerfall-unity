@@ -34,7 +34,7 @@ namespace DaggerfallWorkShop.Game
         private float camCrouchLevel;
         private float camStandLevel;
         private float crouchTimer;
-        private bool bStandController;
+        //private bool bStandController;
 
         private const float timerMax = 0.1f;
 
@@ -79,7 +79,7 @@ namespace DaggerfallWorkShop.Game
                 ControllerCrouchToggle();
                 UpdateCameraPosition(mainCamera.transform.localPosition.y + controllerPosChangeDistance);
 
-                bStandController = true;
+                //bStandController = true;
                 crouchTimer = 0f;
                 toggleAction = CrouchToggleAction.DoNothing;
             }

@@ -49,7 +49,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         Dictionary<string, float> keysSizes = new Dictionary<string, float>();
         List<List<string>> keyNames = new List<List<string>>();
         List<string> cachedChoices;
-        Dictionary<string, ReorderableList> multipleChoices = new Dictionary<string, ReorderableList>();
+        //Dictionary<string, ReorderableList> multipleChoices = new Dictionary<string, ReorderableList>();
         bool duplicateKeys = false;
 
         // Layout

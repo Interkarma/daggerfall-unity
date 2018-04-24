@@ -41,7 +41,7 @@ namespace DaggerfallWorkshop.Game
         public float crouchingHeight = 0.45f;
         public float crouchingJumpDelta = 0.8f;
         bool isCrouching = false;
-        bool wasCrouching = false;
+        //bool wasCrouching = false;
 
         // TODO: Placeholder integration of horse & cart riding - using same speed for cart to simplify PlayerMotor integration
         // and avoid adding any references to TransportManager.

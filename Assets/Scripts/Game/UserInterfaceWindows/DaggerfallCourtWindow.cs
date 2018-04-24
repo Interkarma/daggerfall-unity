@@ -25,7 +25,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Texture2D nativeTexture;
         Panel courtPanel = new Panel();
-        private float timer = 0f;
+        //private float timer = 0f;
 
         public DaggerfallCourtWindow(IUserInterfaceManager uiManager, IUserInterfaceWindow previousWindow = null)
             : base(uiManager, previousWindow)

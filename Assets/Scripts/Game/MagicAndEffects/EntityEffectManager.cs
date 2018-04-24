@@ -337,7 +337,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             {
                 case ElementTypes.Cold:
                     return coldCastSoundID;
-                    break;
                 case ElementTypes.Fire:
                     return fireCastSoundID;
                 case ElementTypes.Poison:

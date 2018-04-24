@@ -42,7 +42,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 return;
 
             // TODO: Implement effect
-            int magnitude = GetMagnitude(caster);
+            //int magnitude = GetMagnitude(caster);
         }
     }
 }
