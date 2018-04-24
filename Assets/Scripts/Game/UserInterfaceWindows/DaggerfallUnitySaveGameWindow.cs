@@ -111,10 +111,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mainPanel.VerticalAlignment = VerticalAlignment.Middle;
             mainPanel.Size = mainPanelSize;
             mainPanel.Outline.Enabled = true;
-            if (TextureReplacement.CustomTextureExist("mainPanelBackgroundColor"))
-                mainPanel.BackgroundTexture = TextureReplacement.LoadCustomTexture("mainPanelBackgroundColor");
-            else
-                mainPanel.BackgroundColor = mainPanelBackgroundColor;
+            SetBackground(mainPanel, mainPanelBackgroundColor, "mainPanelBackgroundColor");
             NativePanel.Components.Add(mainPanel);
 
             // Prompt
@@ -127,10 +124,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             namePanel.Position = new Vector2(4, 12);
             namePanel.Size = new Vector2(272, 9);
             namePanel.Outline.Enabled = true;
-            if (TextureReplacement.CustomTextureExist("namePanelBackgroundColor"))
-                namePanel.BackgroundTexture = TextureReplacement.LoadCustomTexture("namePanelBackgroundColor");
-            else
-                namePanel.BackgroundColor = namePanelBackgroundColor;
+            SetBackground(namePanel, namePanelBackgroundColor, "namePanelBackgroundColor");
             mainPanel.Components.Add(namePanel);
 
             // Name input
@@ -150,10 +144,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             savesList.Position = new Vector2(2, 2);
             savesList.Size = new Vector2(91, 129);
             savesList.TextColor = savesListTextColor;
-            if (TextureReplacement.CustomTextureExist("savesListBackgroundColor"))
-                savesList.BackgroundTexture = TextureReplacement.LoadCustomTexture("savesListBackgroundColor");
-            else
-                savesList.BackgroundColor = savesListBackgroundColor;
+            SetBackground(savesList, savesListBackgroundColor, "savesListBackgroundColor");
             savesList.ShadowPosition = Vector2.zero;
             savesList.RowsDisplayed = 16;
             savesList.OnScroll += SavesList_OnScroll;
@@ -172,10 +163,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             goButton.Position = new Vector2(108, 150);
             goButton.Size = new Vector2(40, 16);
             goButton.Label.ShadowColor = Color.black;
-            if (TextureReplacement.CustomTextureExist("saveButtonBackgroundColor"))
-                TextureReplacement.SetCustomButton(ref goButton, "saveButtonBackgroundColor");
-            else
-                goButton.BackgroundColor = saveButtonBackgroundColor;
+            SetBackground(goButton, saveButtonBackgroundColor, "saveButtonBackgroundColor");
             goButton.Outline.Enabled = true;
             goButton.OnMouseClick += SaveLoadEventHandler;
             mainPanel.Components.Add(goButton);
@@ -186,10 +174,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             switchClassicButton.Label.Text = "Classic";
             //switchClassicButton.Label.TextColor = new Color(0.6f, 0.3f, 0.6f);
             switchClassicButton.Label.ShadowColor = Color.black;
-            if (TextureReplacement.CustomTextureExist("switchClassicButtonBackgroundColor"))
-                TextureReplacement.SetCustomButton(ref switchClassicButton, "switchClassicButtonBackgroundColor");
-            else
-                switchClassicButton.BackgroundColor = new Color(0.2f, 0.2f, 0);
+            SetBackground(switchClassicButton, new Color(0.2f, 0.2f, 0), "switchClassicButtonBackgroundColor");
             switchClassicButton.Outline.Enabled = true;
             switchClassicButton.OnMouseClick += SwitchClassicButton_OnMouseClick;
             mainPanel.Components.Add(switchClassicButton);
@@ -200,10 +185,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             cancelButton.Size = new Vector2(40, 16);
             cancelButton.Label.Text = "Cancel";
             cancelButton.Label.ShadowColor = Color.black;
-            if (TextureReplacement.CustomTextureExist("cancelButtonBackgroundColor"))
-                TextureReplacement.SetCustomButton(ref cancelButton, "cancelButtonBackgroundColor");
-            else
-                cancelButton.BackgroundColor = cancelButtonBackgroundColor;
+            SetBackground(cancelButton, cancelButtonBackgroundColor, "cancelButtonBackgroundColor");
             cancelButton.Outline.Enabled = true;
             cancelButton.OnMouseClick += CancelButton_OnMouseClick;
             mainPanel.Components.Add(cancelButton);
@@ -212,10 +194,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             screenshotPanel.Position = new Vector2(108, 25);
             screenshotPanel.Size = new Vector2(168, 95);
             screenshotPanel.BackgroundTextureLayout = BackgroundLayout.ScaleToFit;
-            if (TextureReplacement.CustomTextureExist("screenshotPanelBackgroundColor"))
-                screenshotPanel.BackgroundTexture = TextureReplacement.LoadCustomTexture("screenshotPanelBackgroundColor");
-            else
-                screenshotPanel.BackgroundColor = savesListBackgroundColor;
+            SetBackground(screenshotPanel, savesListBackgroundColor, "screenshotPanelBackgroundColor");
             screenshotPanel.Outline.Enabled = true;
             mainPanel.Components.Add(screenshotPanel);
 
@@ -254,10 +233,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             deleteSaveButton.HorizontalAlignment = HorizontalAlignment.Center;
             deleteSaveButton.Label.Text = "Delete Save";
             deleteSaveButton.Label.ShadowColor = Color.black;
-            if (TextureReplacement.CustomTextureExist("deleteSaveButtonBackgroundColor"))
-                TextureReplacement.SetCustomButton(ref deleteSaveButton, "deleteSaveButtonBackgroundColor");
-            else
-                deleteSaveButton.BackgroundColor = namePanelBackgroundColor;
+            SetBackground(deleteSaveButton, namePanelBackgroundColor, "deleteSaveButtonBackgroundColor");
             deleteSaveButton.Outline.Enabled = false;
             deleteSaveButton.OnMouseClick += DeleteSaveButton_OnMouseClick;
             savesPanel.Components.Add(deleteSaveButton);
@@ -267,10 +243,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             switchCharButton.Size = new Vector2(60, 8);
             switchCharButton.Label.Text = "Switch Char";
             switchCharButton.Label.ShadowColor = Color.black;
-            if (TextureReplacement.CustomTextureExist("switchCharButtonBackgroundColor"))
-                TextureReplacement.SetCustomButton(ref switchCharButton, "switchCharButtonBackgroundColor");
-            else
-                switchCharButton.BackgroundColor = saveButtonBackgroundColor;
+            SetBackground(switchCharButton, saveButtonBackgroundColor, "switchCharButtonBackgroundColor");
             switchCharButton.OnMouseClick += SwitchCharButton_OnMouseClick;
             mainPanel.Components.Add(switchCharButton);
         }
@@ -436,6 +409,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 else
                     switchCharButton.Enabled = false;
             }
+        }
+
+        void SetBackground(BaseScreenComponent panel, Color color, string textureName)
+        {
+            Texture2D tex;
+            if (TextureReplacement.TryImportTexture(textureName, out tex))
+                panel.BackgroundTexture = tex;
+            else
+                panel.BackgroundColor = color;
+        }
+
+        void SetBackground(Button button, Color color, string textureName)
+        {
+            if (!TextureReplacement.TryCustomizeButton(ref button, textureName))
+                button.BackgroundColor = color;
         }
 
         #endregion
