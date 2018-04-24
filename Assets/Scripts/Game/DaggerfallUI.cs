@@ -220,6 +220,8 @@ namespace DaggerfallWorkshop.Game
             Petrock_32,
         }
 
+        public bool ShowVersionText { get; set; }
+
         /// <summary>
         /// Gets spell icon collection for UI systems.
         /// </summary>
@@ -338,7 +340,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Draw version text when paused
-            if (GameManager.IsGamePaused)
+            if (ShowVersionText)
             {
                 Vector2 versionTextPos = new Vector2(Screen.width - versionTextWidth, 0);
                 versionFont.DrawText(versionText, versionTextPos, versionTextScaleVector2, versionTextColor);

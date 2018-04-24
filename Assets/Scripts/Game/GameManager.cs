@@ -472,6 +472,8 @@ namespace DaggerfallWorkshop.Game
         bool hudDisabledByPause = false;
         public void PauseGame(bool pause, bool hideHUD = false)
         {
+            DaggerfallUI.Instance.ShowVersionText = pause;
+
             if (pause && !isGamePaused)
             {
                 savedTimeScale = Time.timeScale;
