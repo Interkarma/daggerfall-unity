@@ -16,6 +16,7 @@ using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.MagicAndEffects;
+using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -211,6 +212,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             magnitudePerLevelSpinner.SetRange(1, 20);
 
             // Set spinner events
+            durationBaseSpinner.OnValueChanged += DurationBaseSpinner_OnValueChanged;
+            durationPlusSpinner.OnValueChanged += DurationPlusSpinner_OnValueChanged;
+            durationPerLevelSpinner.OnValueChanged += DurationPerLevelSpinner_OnValueChanged;
+            chanceBaseSpinner.OnValueChanged += ChanceBaseSpinner_OnValueChanged;
+            chancePlusSpinner.OnValueChanged += ChancePlusSpinner_OnValueChanged;
+            chancePerLevelSpinner.OnValueChanged += ChancePerLevelSpinner_OnValueChanged;
             magnitudeBaseMinSpinner.OnValueChanged += MagnitudeBaseMinSpinner_OnValueChanged;
             magnitudeBaseMaxSpinner.OnValueChanged += MagnitudeBaseMaxSpinner_OnValueChanged;
             magnitudePlusMinSpinner.OnValueChanged += MagnitudePlusMinSpinner_OnValueChanged;
@@ -363,32 +370,78 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetSpinners(new EffectSettings());
         }
 
+        void UpdateEffectGoldCost()
+        {
+            int goldCost = FormulaHelper.GetEffectGoldCost(50, 0, 40, 120, durationBaseSpinner.Value, durationPlusSpinner.Value, durationPerLevelSpinner.Value);
+            int spellPointCost = FormulaHelper.GetEffectSpellPointCost(50, 0, 40, 120, 2, durationBaseSpinner.Value, durationPlusSpinner.Value, durationPerLevelSpinner.Value);
+
+            Debug.LogFormat("Gold: {0} SpellPoints: {1}", goldCost, spellPointCost);
+        }
+
         #endregion
 
         #region Event Handlers
+
+        private void DurationBaseSpinner_OnValueChanged()
+        {
+            UpdateEffectGoldCost();
+        }
+
+        private void DurationPlusSpinner_OnValueChanged()
+        {
+            UpdateEffectGoldCost();
+        }
+
+        private void DurationPerLevelSpinner_OnValueChanged()
+        {
+            UpdateEffectGoldCost();
+        }
+
+        private void ChanceBaseSpinner_OnValueChanged()
+        {
+            UpdateEffectGoldCost();
+        }
+
+        private void ChancePlusSpinner_OnValueChanged()
+        {
+            UpdateEffectGoldCost();
+        }
+
+        private void ChancePerLevelSpinner_OnValueChanged()
+        {
+            UpdateEffectGoldCost();
+        }
 
         private void MagnitudeBaseMinSpinner_OnValueChanged()
         {
             if (magnitudeBaseMinSpinner.Value > magnitudeBaseMaxSpinner.Value)
                 magnitudeBaseMaxSpinner.Value = magnitudeBaseMinSpinner.Value;
+
+            UpdateEffectGoldCost();
         }
 
         private void MagnitudeBaseMaxSpinner_OnValueChanged()
         {
             if (magnitudeBaseMaxSpinner.Value < magnitudeBaseMinSpinner.Value)
                 magnitudeBaseMinSpinner.Value = magnitudeBaseMaxSpinner.Value;
+
+            UpdateEffectGoldCost();
         }
 
         private void MagnitudePlusMinSpinner_OnValueChanged()
         {
             if (magnitudePlusMinSpinner.Value > magnitudePlusMaxSpinner.Value)
                 magnitudePlusMaxSpinner.Value = magnitudePlusMinSpinner.Value;
+
+            UpdateEffectGoldCost();
         }
 
         private void MagnitudePlusMaxSpinner_OnValueChanged()
         {
             if (magnitudePlusMaxSpinner.Value < magnitudePlusMinSpinner.Value)
                 magnitudePlusMinSpinner.Value = magnitudePlusMaxSpinner.Value;
+
+            UpdateEffectGoldCost();
         }
 
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
