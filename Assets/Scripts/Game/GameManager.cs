@@ -394,7 +394,7 @@ namespace DaggerfallWorkshop.Game
         void Start()
         {
             // Try to set all properties at startup
-            GetProperties();
+            //GetProperties();
 
             // Log welcome message
             Debug.Log("Welcome to Daggerfall Unity " + VersionInfo.DaggerfallUnityVersion);
@@ -726,7 +726,11 @@ namespace DaggerfallWorkshop.Game
         {
             T result = (T)GameObject.FindObjectOfType<T>();
             if (result == null)
-                throw new Exception(string.Format("GameManager could not find {0}.", typeof(T)));
+            {
+                string errorText = string.Format("GameManager could not find {0}.", typeof(T));
+                Debug.LogError(errorText);
+                throw new Exception(errorText);
+            }
             else
                 return result;
         }
@@ -748,7 +752,9 @@ namespace DaggerfallWorkshop.Game
             }
             else if(obj == null && string.IsNullOrEmpty(tag))
             {
-                throw new Exception(string.Format("GameManager could not find component type {0} - both object & string were null.", typeof(T)));
+                string errorText = string.Format("GameManager could not find component type {0} - both object & string were null.", typeof(T));
+                Debug.LogError(errorText);
+                throw new Exception(errorText);
             }
             
             if(obj != null)
@@ -756,7 +762,11 @@ namespace DaggerfallWorkshop.Game
                 result = obj.GetComponent<T>();
             }
             if (result == null)
-                throw new Exception(string.Format("GameManager could not find component type {0} on object {1}.", typeof(T), obj.name));
+            {
+                string errorText = string.Format("GameManager could not find component type {0} on object {1}.", typeof(T), obj.name);
+                Debug.LogError(errorText);
+                throw new Exception(errorText);
+            }
             else
                 return result;
         }
@@ -768,11 +778,19 @@ namespace DaggerfallWorkshop.Game
         /// <returns></returns>
         public static GameObject GetGameObjectWithTag(string tag)
         {
-            if(string.IsNullOrEmpty(tag))
-                throw new Exception(string.Format("GameManager could not find GameObject with tag as string was null or empty"));
+            if (string.IsNullOrEmpty(tag))
+            {
+                string errorText = string.Format("GameManager could not find GameObject with tag as string was null or empty");
+                Debug.LogError(errorText);
+                throw new Exception(errorText);
+            }
             GameObject result = GameObject.FindGameObjectWithTag(tag);
             if (result == null)
-                throw new Exception(string.Format("GameManager could not find GameObject with tag {0}", tag));
+            {
+                string errorText = string.Format("GameManager could not find GameObject with tag {0}", tag);
+                Debug.LogError(errorText);
+                throw new Exception(errorText);
+            }
             else
                 return result;
         }
@@ -785,10 +803,18 @@ namespace DaggerfallWorkshop.Game
         public static GameObject GetGameObjectWithName(string name)
         {
             if (string.IsNullOrEmpty(name))
-                throw new Exception(string.Format("GameManager could not find GameObject with name as string was null or empty"));
+            {
+                string errorText = string.Format("GameManager could not find GameObject with name as string was null or empty");
+                Debug.LogError(errorText);
+                throw new Exception(errorText);
+            }
             GameObject result = GameObject.Find(name);
             if (result == null)
-                throw new Exception(string.Format("GameManager could not find GameObject with name {0}", name));
+            {
+                string errorText = string.Format("GameManager could not find GameObject with name {0}", name);
+                Debug.LogError(errorText);
+                throw new Exception(errorText);
+            }
             else
                 return result;
         }
