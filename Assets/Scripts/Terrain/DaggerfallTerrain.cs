@@ -136,14 +136,14 @@ namespace DaggerfallWorkshop
                     currentWorldClimate = MapData.worldClimate;
 
                     // Assign textures (propagate material settings from tileMaterial to terrainMaterial)
-                    terrainMaterial.SetTexture("_TileTexArr", tileMaterial.GetTexture("_TileTexArr"));
-                    terrainMaterial.SetTexture("_TileNormalMapTexArr", tileMaterial.GetTexture("_TileNormalMapTexArr"));
-                    if (tileMaterial.IsKeywordEnabled("_NORMALMAP"))
-                        terrainMaterial.EnableKeyword("_NORMALMAP");
+                    terrainMaterial.SetTexture(TileTexArrUniforms.TileTexArr, tileMaterial.GetTexture(TileTexArrUniforms.TileTexArr));
+                    terrainMaterial.SetTexture(TileTexArrUniforms.TileNormalMapTexArr, tileMaterial.GetTexture(TileTexArrUniforms.TileNormalMapTexArr));
+                    if (tileMaterial.IsKeywordEnabled(KeyWords.NormalMap))
+                        terrainMaterial.EnableKeyword(KeyWords.NormalMap);
                     else
-                        terrainMaterial.DisableKeyword("_NORMALMAP");
-                    terrainMaterial.SetTexture("_TileMetallicGlossMapTexArr", tileMaterial.GetTexture("_TileMetallicGlossMapTexArr"));
-                    terrainMaterial.SetTexture("_TilemapTex", tileMapTexture);
+                        terrainMaterial.DisableKeyword(KeyWords.NormalMap);
+                    terrainMaterial.SetTexture(TileTexArrUniforms.TileMetallicGlossMapTexArr, tileMaterial.GetTexture(TileTexArrUniforms.TileMetallicGlossMapTexArr));
+                    terrainMaterial.SetTexture(TileTexArrUniforms.TilemapTex, tileMapTexture);
                 }
                 else
                 {
@@ -153,9 +153,9 @@ namespace DaggerfallWorkshop
                     currentWorldClimate = MapData.worldClimate;
 
                     // Assign textures
-                    terrainMaterial.SetTexture("_TileAtlasTex", tileSetMaterial.GetTexture("_TileAtlasTex"));
-                    terrainMaterial.SetTexture("_TilemapTex", tileMapTexture);
-                    terrainMaterial.SetInt("_TilemapDim", tilemapDimension);
+                    terrainMaterial.SetTexture(TileUniforms.TileAtlasTex, tileSetMaterial.GetTexture(TileUniforms.TileAtlasTex));
+                    terrainMaterial.SetTexture(TileUniforms.TilemapTex, tileMapTexture);
+                    terrainMaterial.SetInt(TileUniforms.TilemapDim, tilemapDimension);
                 }
             }
         }
