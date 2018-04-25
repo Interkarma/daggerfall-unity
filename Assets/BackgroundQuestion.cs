@@ -40,16 +40,39 @@ namespace DaggerfallWorkshop.Game
         private int questionID;
         private string question;
 
-        private Dictionary<char, string> answerDictionary;
+        private Dictionary<char, string> answerTexts;
+        private Dictionary<char, Action> answerResults;
         private char[] answerKeys = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' };
+        private char selectedAnswerIndex;
 
+        #region Properties
         public int QuestionID  {  get { return questionID; } }
         public CareerCheckList Careers { get { return careers; } }
         public string Question   {  get { return question; } }
         /// <summary>
         /// Char refers to the character indexing the answer, string is the text answer for that character to display
         /// </summary>
-        public Dictionary<char, string> AnswerDictionary  { get { return answerDictionary; }  }
+        public Dictionary<char, string> AnswerDictionary  { get { return answerTexts; }  }
+        /// <summary>
+        /// Dictionary of Actions to execute for each selectable answer
+        /// </summary>
+        public Dictionary<char, Action> AnswerResults { get; set; }
+        public char SelectedAnswerIndex
+        {
+            get { return selectedAnswerIndex; }
+            set
+            {
+                for (int i = 0; i < answerKeys.Length; i++)
+                {
+                    if (Char.ToLower(value) == answerKeys[i])
+                        selectedAnswerIndex = value;
+                    else
+                        Debug.LogError("An illegal value was entered for a background question's selected answer.");
+                }
+                    
+            }
+        }
+        #endregion
 
         /// <summary>
         /// Creates a background question for use in the background questions section of character creation
@@ -66,10 +89,24 @@ namespace DaggerfallWorkshop.Game
             // Only add as many as there are keys and don't add keys without an answer
             while (i < answers.Length && i < answerKeys.Length)
             {
-                answerDictionary.Add(answerKeys[i], answers[i]); 
+                answerTexts.Add(answerKeys[i], answers[i]); 
                 i++;
             }
             careers = classList;    
 	    }
+
+        /// <summary>
+        /// uses index to select which Action to call, if no index is provided, Question's selectedAnswerIndex is used
+        /// </summary>
+        /// <param name="index">Character index to use to call Action</param>
+        public void ExecuteAnswerResults(char index = ' ')
+        {
+            if (index == ' ')
+                index = selectedAnswerIndex;
+            else
+                SelectedAnswerIndex = index;
+            // call the Action indexed by selected answer
+            answerResults[selectedAnswerIndex]();
+        }
     }
 }
