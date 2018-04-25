@@ -381,7 +381,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             float offsetGold, offsetSpellPoints, factor, costA, costB;
             int skillValue = GameManager.Instance.PlayerEntity.Skills.GetLiveSkillValue((DFCareer.Skills)effectTemplate.Properties.MagicSkill);
 
-            int durationGoldCost = 0, durationSpellCost = 0;
+            // Duration costs
+            int durationGoldCost = 0, durationSpellPointCost = 0;
             if (effectTemplate.Properties.SupportDuration)
             {
                 offsetGold = effectTemplate.Properties.DurationCosts.OffsetGold;
@@ -391,11 +392,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 costB = effectTemplate.Properties.DurationCosts.CostB;
 
                 durationGoldCost = FormulaHelper.GetEffectGoldCost(offsetGold, costA, costB, durationBaseSpinner.Value, durationPlusSpinner.Value, durationPerLevelSpinner.Value);
-                durationSpellCost = FormulaHelper.GetEffectSpellPointCost(skillValue, offsetSpellPoints, factor, costA, costB, durationBaseSpinner.Value, durationPlusSpinner.Value, durationPerLevelSpinner.Value);
+                durationSpellPointCost = FormulaHelper.GetEffectSpellPointCost(skillValue, offsetSpellPoints, factor, costA, costB, durationBaseSpinner.Value, durationPlusSpinner.Value, durationPerLevelSpinner.Value);
 
-                Debug.LogFormat("Duration: gold {0} spellpoints {1}", durationGoldCost, durationSpellCost);
+                //Debug.LogFormat("Duration: gold {0} spellpoints {1}", durationGoldCost, durationSpellPointCost);
             }
 
+            // Chance costs
             int chanceGoldCost = 0, chanceSpellPointCost = 0;
             if (effectTemplate.Properties.SupportChance)
             {
@@ -408,9 +410,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 chanceGoldCost = FormulaHelper.GetEffectGoldCost(offsetGold, costA, costB, chanceBaseSpinner.Value, chancePlusSpinner.Value, chancePerLevelSpinner.Value);
                 chanceSpellPointCost = FormulaHelper.GetEffectSpellPointCost(skillValue, offsetSpellPoints, factor, costA, costB, chanceBaseSpinner.Value, chancePlusSpinner.Value, chancePerLevelSpinner.Value);
 
-                Debug.LogFormat("Chance: gold {0} spellpoints {1}", chanceGoldCost, chanceSpellPointCost);
+                //Debug.LogFormat("Chance: gold {0} spellpoints {1}", chanceGoldCost, chanceSpellPointCost);
             }
 
+            // Magnitude costs
             int magnitudeGoldCost = 0, magnitudeSpellPointCost = 0;
             if (effectTemplate.Properties.SupportMagnitude)
             {
@@ -426,8 +429,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 magnitudeGoldCost = FormulaHelper.GetEffectGoldCost(offsetGold, costA, costB, magnitudeBase, magnitudePlus, magnitudePerLevelSpinner.Value);
                 magnitudeSpellPointCost = FormulaHelper.GetEffectSpellPointCost(skillValue, offsetSpellPoints, factor, costA, costB, magnitudeBase, magnitudePlus, magnitudePerLevelSpinner.Value);
 
-                Debug.LogFormat("Magnitude: gold {0} spellpoints {1}", magnitudeGoldCost, magnitudeSpellPointCost);
+                //Debug.LogFormat("Magnitude: gold {0} spellpoints {1}", magnitudeGoldCost, magnitudeSpellPointCost);
             }
+
+            // Add costs together - this does not appear to yield exact results in all cases
+            // even when each component cost is correct individually. Tends to be most inaccurate at
+            // low settings and less inaccurate at max settings. Some more work is likely needed here
+            // but this is "good enough" for the current stage of development.
+            int finalGoldCost = durationGoldCost + chanceGoldCost + magnitudeGoldCost;
+            int finalSpellPointCost = durationSpellPointCost + chanceSpellPointCost + magnitudeSpellPointCost;
+
+            //Debug.LogFormat("Costs: gold {0} spellpoints {1}", finalGoldCost, finalSpellPointCost);
         }
 
         #endregion
