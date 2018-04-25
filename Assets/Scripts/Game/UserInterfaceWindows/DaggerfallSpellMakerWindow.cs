@@ -74,6 +74,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextLabel effect1NameLabel;
         TextLabel effect2NameLabel;
         TextLabel effect3NameLabel;
+        TextLabel maxSpellPointsLabel;
+        TextLabel moneyLabel;
+        TextLabel goldCostLabel;
+        TextLabel spellPointCostLabel;
         TextLabel spellNameLabel;
 
         DaggerfallListPickerWindow effectGroupPicker;
@@ -143,6 +147,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         ElementTypes selectedElement = ElementTypes.Magic;
         int selectedIcon = defaultSpellIcon;
 
+        int totalGoldCost = 0;
+        int totalSpellPointCost = 0;
+
         #endregion
 
         #region Constructors
@@ -172,6 +179,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetupButtons();
             SetupPickers();
             SetIcon(selectedIcon);
+            SetStatusLabels();
 
             // Setup effect editor window
             effectEditor = new DaggerfallEffectSettingsEditorWindow(uiManager, this);
@@ -182,7 +190,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void OnPush()
         {
             InitEffectSlots();
-
+            
             SetDefaults();
         }
 
@@ -205,7 +213,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 spellNameLabel.Text = string.Empty;
                 UpdateAllowedButtons();
                 SetIcon(selectedIcon);
+                SetStatusLabels();
             }
+        }
+
+        void SetStatusLabels()
+        {
+            maxSpellPointsLabel.Text = GameManager.Instance.PlayerEntity.MaxMagicka.ToString();
+            moneyLabel.Text = GameManager.Instance.PlayerEntity.GoldPieces.ToString();
+            goldCostLabel.Text = totalGoldCost.ToString();
+            spellPointCostLabel.Text = totalSpellPointCost.ToString();
         }
 
         #endregion
@@ -236,6 +253,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // Tip label
             tipLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, tipLabelPos, string.Empty, NativePanel);
+
+            // Status labels
+            maxSpellPointsLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, new Vector2(43, 149), string.Empty, NativePanel);
+            moneyLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, new Vector2(39, 158), string.Empty, NativePanel);
+            goldCostLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, new Vector2(59, 167), string.Empty, NativePanel);
+            spellPointCostLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, new Vector2(70, 176), string.Empty, NativePanel);
 
             // Name label
             spellNameLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, nameLabelPos, string.Empty, NativePanel);
@@ -623,13 +646,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void UpdateSpellCosts()
         {
-            // TODO: Multipliers for target type
+            // Note: Daggerfall shows gold cost 0 and spellpoint cost 5 with no effects added
+            // Not copying this behaviour at this time intentionally as it seems unclear for an invalid
+            // spell to have any casting cost at all - may change later
+            totalGoldCost = 0;
+            totalSpellPointCost = 0;
 
             // Do nothing when effect editor not setup or not used effect slots
             // This means there is nothing to calculate
             if (!effectEditor.IsSetup || CountUsedEffectSlots() == 0)
             {
-                // NOTE: Daggerfall shows gold cost 0 and spellpoint cost 5 with no effects added
+                SetStatusLabels();
                 return;
             }
 
@@ -643,8 +670,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (string.IsNullOrEmpty(effectEntries[i].Key))
                     continue;
 
-                FormulaHelper.CalculateEffectCosts(effectEntries[i]);
+                int goldCost, spellPointCost;
+                FormulaHelper.CalculateEffectCosts(effectEntries[i], out goldCost, out spellPointCost);
+                totalGoldCost += goldCost;
+                totalSpellPointCost += spellPointCost;
             }
+
+            // Update display
+            SetStatusLabels();
+
+            // TODO: Multipliers for target type
         }
 
         #endregion

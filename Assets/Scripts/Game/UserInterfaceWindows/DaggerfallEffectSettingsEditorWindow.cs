@@ -137,6 +137,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetupButtons();
             InitControlState();
 
+            IsSetup = true;
             UpdateCosts();
         }
 

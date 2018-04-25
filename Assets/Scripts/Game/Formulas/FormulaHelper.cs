@@ -1147,7 +1147,7 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         #region Spell Costs
 
-        public static void CalculateEffectCosts(EffectEntry effectEntry)
+        public static void CalculateEffectCosts(EffectEntry effectEntry, out int goldCostOut, out int spellPointCostOut)
         {
             // Get effect template
             IEntityEffect effectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(effectEntry.Key);
@@ -1224,6 +1224,9 @@ namespace DaggerfallWorkshop.Game.Formulas
             // Will continue to refine this as more effects come online and they can be checked for accuracy against classic
             finalGoldCost = finalGoldCost - durationMinGoldCost - chanceMinGoldCost;
             finalSpellPointCost = finalSpellPointCost - durationMinSpellPointCost - chanceMinSpellPointCost;
+
+            goldCostOut = finalGoldCost;
+            spellPointCostOut = finalSpellPointCost;
 
             //Debug.LogFormat("Costs: gold {0} spellpoints {1}", finalGoldCost, finalSpellPointCost);
         }
