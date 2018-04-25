@@ -92,7 +92,7 @@ namespace DaggerfallWorkshop.Game
         public CharacterController controller;
 
         private Camera mainCamera;
-        private float defaultCameraHeight;
+        //private float defaultCameraHeight;
 
         private Vector3 moveDirection = Vector3.zero;
         private bool grounded = false;
