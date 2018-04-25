@@ -40,8 +40,8 @@ namespace DaggerfallWorkshop.Game
         private int questionID;
         private string question;
 
-        private Dictionary<char, string> answerTexts;
-        private Dictionary<char, Action> answerResults;
+        private Dictionary<char, string> answerTexts = new Dictionary<char, string>();
+        private Dictionary<char, Action> answerResults = new Dictionary<char, Action>();
         private char[] answerKeys = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' };
         private char selectedAnswerIndex;
 
@@ -62,14 +62,18 @@ namespace DaggerfallWorkshop.Game
             get { return selectedAnswerIndex; }
             set
             {
+                bool bIllegal = true;
                 for (int i = 0; i < answerKeys.Length; i++)
                 {
                     if (Char.ToLower(value) == answerKeys[i])
+                    {
                         selectedAnswerIndex = value;
-                    else
-                        Debug.LogError("An illegal value was entered for a background question's selected answer.");
+                        bIllegal = false;
+                        break;
+                    }                      
                 }
-                    
+                if (bIllegal)
+                    Debug.LogError("An illegal value was entered for a background question's selected answer.");     
             }
         }
         #endregion
