@@ -16,6 +16,7 @@ using DaggerfallWorkshop;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Weather;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -44,11 +45,13 @@ namespace DaggerfallWorkshop.Game
         public SongFiles[] InteriorSongs = _interiorSongs;
         public SongFiles[] PalaceSongs = _palaceSongs;
         public SongFiles[] CastleSongs = _castleSongs;
+        public SongFiles[] CourtSongs = _courtSongs;
 
         DaggerfallUnity dfUnity;
         DaggerfallSongPlayer songPlayer;
         PlayerEnterExit playerEnterExit;
         PlayerWeather playerWeather;
+        PlayerEntity playerEntity;
 
         PlayerMusicEnvironment currentPlayerMusicEnvironment;
         PlayerMusicEnvironment lastPlayerMusicEnvironment;
@@ -62,6 +65,7 @@ namespace DaggerfallWorkshop.Game
         SongFiles currentSong;
         int currentSongIndex = 0;
         bool playSong = true;
+        bool playingArrestedMusic = false;
 
         #endregion
 
@@ -121,6 +125,10 @@ namespace DaggerfallWorkshop.Game
             if (LocalPlayerGPS == null)
                 LocalPlayerGPS = GameManager.Instance.PlayerGPS;
 
+            // Get player entity
+            if (playerEntity == null)
+                playerEntity = GameManager.Instance.PlayerEntity;
+
             // Get streaming world if not set
             if (StreamingWorld == null)
                 StreamingWorld = GameManager.Instance.StreamingWorld;
@@ -159,7 +167,8 @@ namespace DaggerfallWorkshop.Game
             if (currentPlayerMusicEnvironment != lastPlayerMusicEnvironment || 
                 currentPlayerMusicWeather != lastPlayerMusicWeather ||
                 currentPlayerMusicTime != lastPlayerMusicTime ||
-                (!songPlayer.IsPlaying && playSong))
+                (!songPlayer.IsPlaying && playSong) ||
+                playingArrestedMusic != playerEntity.Arrested)
             {
                 lastPlayerMusicEnvironment = currentPlayerMusicEnvironment;
                 lastPlayerMusicWeather = currentPlayerMusicWeather;
@@ -422,6 +431,16 @@ namespace DaggerfallWorkshop.Game
 
         void AssignPlaylist()
         {
+            // Court window
+            if (playerEntity.Arrested)
+            {
+                playingArrestedMusic = true;
+                currentPlaylist = CourtSongs;
+                return;
+            }
+            else
+                playingArrestedMusic = false;
+
             // Weather music in cities and wilderness at day
             if (!dfUnity.WorldTime.Now.IsNight &&
                 currentPlayerMusicWeather != PlayerMusicWeather.Normal &&
@@ -768,6 +787,12 @@ namespace DaggerfallWorkshop.Game
         static SongFiles[] _castleSongs = new SongFiles[]
         {
             SongFiles.song_gpalac,
+        };
+
+        // Court
+        static SongFiles[] _courtSongs = new SongFiles[]
+        {
+            SongFiles.song_11,
         };
 
         #endregion

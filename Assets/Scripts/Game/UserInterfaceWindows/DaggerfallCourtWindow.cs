@@ -25,7 +25,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Texture2D nativeTexture;
         Panel courtPanel = new Panel();
-        //private float timer = 0f;
 
         public DaggerfallCourtWindow(IUserInterfaceManager uiManager, IUserInterfaceWindow previousWindow = null)
             : base(uiManager, previousWindow)
@@ -46,6 +45,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.Components.Add(courtPanel);
 
             DaggerfallUI.MessageBox("Not implemented yet. Press ESC to exit.");
+        }
+
+        public override void OnPop()
+        {
+            GameManager.Instance.PlayerEntity.Arrested = false;
         }
     }
 }
