@@ -11,12 +11,10 @@
 
 using UnityEngine;
 using System;
-using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.MagicAndEffects;
-using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -81,7 +79,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int alternateAlphaIndex = 12;
 
         IEntityEffect effectTemplate = null;
-        bool userExit;
 
         #endregion
 
@@ -106,14 +103,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             set { SetEffectEntry(value); }
         }
 
-        /// <summary>
-        /// Set to true when user clicks "exit" button to accept changes.
-        /// If user cancels settings UI with escape key this will be false.
-        /// </summary>
-        public bool UserExit
-        {
-            get { return userExit; }
-        }
+        #endregion
+
+        #region Events
+
+        public delegate void OnSettingsChangedHandler();
+        public event OnSettingsChangedHandler OnSettingsChanged;
 
         #endregion
 
@@ -146,9 +141,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         public override void OnPush()
-        {
-            userExit = false;
-            
+        {   
             if (IsSetup)
             {
                 InitControlState();
@@ -297,26 +290,27 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         EffectEntry GetEffectEntry()
         {
-            if (!IsSetup)
-                return new EffectEntry();
-
             // Must have an effect template set
             if (EffectTemplate == null)
                 throw new Exception(noEffectTemplateError);
 
-            // Create settings for effect from UI controls
+            // Create settings for effect
             EffectSettings effectSettings = new EffectSettings();
-            effectSettings.DurationBase = durationBaseSpinner.Value;
-            effectSettings.DurationPlus = durationPlusSpinner.Value;
-            effectSettings.DurationPerLevel = durationPerLevelSpinner.Value;
-            effectSettings.ChanceBase = chanceBaseSpinner.Value;
-            effectSettings.ChancePlus = chancePlusSpinner.Value;
-            effectSettings.ChancePerLevel = chancePerLevelSpinner.Value;
-            effectSettings.MagnitudeBaseMin = magnitudeBaseMinSpinner.Value;
-            effectSettings.MagnitudeBaseMax = magnitudeBaseMaxSpinner.Value;
-            effectSettings.MagnitudePlusMin = magnitudePlusMinSpinner.Value;
-            effectSettings.MagnitudePlusMax = magnitudePlusMaxSpinner.Value;
-            effectSettings.MagnitudePerLevel = magnitudePerLevelSpinner.Value;
+            if (IsSetup)
+            {
+                // Assign from UI control when setup
+                effectSettings.DurationBase = durationBaseSpinner.Value;
+                effectSettings.DurationPlus = durationPlusSpinner.Value;
+                effectSettings.DurationPerLevel = durationPerLevelSpinner.Value;
+                effectSettings.ChanceBase = chanceBaseSpinner.Value;
+                effectSettings.ChancePlus = chancePlusSpinner.Value;
+                effectSettings.ChancePerLevel = chancePerLevelSpinner.Value;
+                effectSettings.MagnitudeBaseMin = magnitudeBaseMinSpinner.Value;
+                effectSettings.MagnitudeBaseMax = magnitudeBaseMaxSpinner.Value;
+                effectSettings.MagnitudePlusMin = magnitudePlusMinSpinner.Value;
+                effectSettings.MagnitudePlusMax = magnitudePlusMaxSpinner.Value;
+                effectSettings.MagnitudePerLevel = magnitudePerLevelSpinner.Value;
+            }
 
             // Create entry
             EffectEntry effectEntry = new EffectEntry();
@@ -376,95 +370,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void UpdateCosts()
         {
-            // TODO: Multipliers for target type
-
-            //float offsetGold, offsetSpellPoints, factor, costA, costB;
-            int skillValue = GameManager.Instance.PlayerEntity.Skills.GetLiveSkillValue((DFCareer.Skills)effectTemplate.Properties.MagicSkill);
-
-            // Duration costs
-            int durationMinGoldCost = 0, durationMinSpellPointCost = 0;
-            int durationGoldCost = 0, durationSpellPointCost = 0;
-            if (effectTemplate.Properties.SupportDuration)
-            {
-                GetCosts(
-                    out durationMinGoldCost,
-                    out durationMinSpellPointCost,
-                    out durationGoldCost,
-                    out durationSpellPointCost,
-                    effectTemplate.Properties.DurationCosts,
-                    skillValue,
-                    durationBaseSpinner.Value,
-                    durationPlusSpinner.Value,
-                    durationPerLevelSpinner.Value);
-
-                //Debug.LogFormat("Duration: gold {0} spellpoints {1}", durationGoldCost, durationSpellPointCost);
-            }
-
-            // Chance costs
-            int chanceMinGoldCost = 0, chanceMinSpellPointCost = 0;
-            int chanceGoldCost = 0, chanceSpellPointCost = 0;
-            if (effectTemplate.Properties.SupportChance)
-            {
-                GetCosts(
-                    out chanceMinGoldCost,
-                    out chanceMinSpellPointCost,
-                    out chanceGoldCost,
-                    out chanceSpellPointCost,
-                    effectTemplate.Properties.ChanceCosts,
-                    skillValue,
-                    chanceBaseSpinner.Value,
-                    chancePlusSpinner.Value,
-                    chancePerLevelSpinner.Value);
-
-                //Debug.LogFormat("Chance: gold {0} spellpoints {1}", chanceGoldCost, chanceSpellPointCost);
-            }
-
-            // Magnitude costs
-            int magnitudeMinGoldCost = 0, magnitudeMinSpellPointCost = 0;
-            int magnitudeGoldCost = 0, magnitudeSpellPointCost = 0;
-            if (effectTemplate.Properties.SupportMagnitude)
-            {
-                int magnitudeBase = magnitudeBaseMinSpinner.Value + (magnitudeBaseMaxSpinner.Value - magnitudeBaseMinSpinner.Value) / 2;
-                int magnitudePlus = magnitudePlusMinSpinner.Value + (magnitudePlusMaxSpinner.Value - magnitudePlusMinSpinner.Value) / 2;
-                GetCosts(
-                    out magnitudeMinGoldCost,
-                    out magnitudeMinSpellPointCost,
-                    out magnitudeGoldCost,
-                    out magnitudeSpellPointCost,
-                    effectTemplate.Properties.MagnitudeCosts,
-                    skillValue,
-                    magnitudeBase,
-                    magnitudePlus,
-                    magnitudePerLevelSpinner.Value);
-
-                //Debug.LogFormat("Magnitude: gold {0} spellpoints {1}", magnitudeGoldCost, magnitudeSpellPointCost);
-            }
-
-            // Add costs together
-            int finalGoldCost = durationGoldCost + chanceGoldCost + magnitudeGoldCost;
-            int finalSpellPointCost = durationSpellPointCost + chanceSpellPointCost + magnitudeSpellPointCost;
-
-            // Subtract min costs - this is involved somehow in final total but not yet sure of exact formula
-            // Will continue to refine this as more effects come online and they can be checked for accuracy against classic
-            finalGoldCost = finalGoldCost - durationMinGoldCost - chanceMinGoldCost;
-            finalSpellPointCost = finalSpellPointCost - durationMinSpellPointCost - chanceMinSpellPointCost;
-
-            Debug.LogFormat("Costs: gold {0} spellpoints {1}", finalGoldCost, finalSpellPointCost);
-        }
-
-        void GetCosts(out int minGoldCost, out int minSpellPointCost, out int goldCost, out int spellPointCost, EffectCosts costs, int skillValue, int starting, int increase, int perLevel)
-        {
-            float offsetGold = costs.OffsetGold;
-            float offsetSpellPoints = costs.OffsetSpellPoints;
-            float factor = costs.Factor;
-            float costA = costs.CostA;
-            float costB = costs.CostB;
-
-            minGoldCost = FormulaHelper.GetEffectGoldCost(offsetGold, costA, costB, 1, 1, 1);
-            minSpellPointCost = FormulaHelper.GetEffectSpellPointCost(skillValue, offsetSpellPoints, factor, costA, costB, 1, 1, 1);
-
-            goldCost = FormulaHelper.GetEffectGoldCost(offsetGold, costA, costB, starting, increase, perLevel);
-            spellPointCost = FormulaHelper.GetEffectSpellPointCost(skillValue, offsetSpellPoints, factor, costA, costB, starting, increase, perLevel);
+            if (OnSettingsChanged != null)
+                OnSettingsChanged();
         }
 
         #endregion
@@ -540,7 +447,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            userExit = true;
             CloseWindow();
         }
 

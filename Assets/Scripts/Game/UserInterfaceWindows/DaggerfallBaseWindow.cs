@@ -75,10 +75,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             get { return (dfUnity != null) ? dfUnity : dfUnity = DaggerfallUnity.Instance; }
         }
 
-        protected bool IsSetup
+        public bool IsSetup
         {
             get { return isSetup; }
-            set { isSetup = value; }
+            protected set { isSetup = value; }
         }
 
         protected Panel NativePanel

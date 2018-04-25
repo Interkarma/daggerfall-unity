@@ -14,6 +14,7 @@ using System;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Guilds;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.MagicAndEffects;
 using System.Collections.Generic;
 using DaggerfallConnect.Arena2;
 
@@ -1144,24 +1145,129 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         #endregion
 
-        #region SpellMaker
+        #region Spell Costs
 
-        // Just makes formulas more readable
-        static int trunc(double value) { return (int)Math.Truncate(value); }
+        public static void CalculateEffectCosts(EffectEntry effectEntry)
+        {
+            // Get effect template
+            IEntityEffect effectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(effectEntry.Key);
+            if (effectTemplate == null)
+                throw new Exception(string.Format("CalculateEffectCosts() could not get effect key {0}", effectEntry.Key));
+
+            // Get related skill
+            int skillValue = GameManager.Instance.PlayerEntity.Skills.GetLiveSkillValue((DFCareer.Skills)effectTemplate.Properties.MagicSkill);
+
+            // Duration costs
+            int durationMinGoldCost = 0, durationMinSpellPointCost = 0;
+            int durationGoldCost = 0, durationSpellPointCost = 0;
+            if (effectTemplate.Properties.SupportDuration)
+            {
+                GetEffectComponentCosts(
+                    out durationMinGoldCost,
+                    out durationMinSpellPointCost,
+                    out durationGoldCost,
+                    out durationSpellPointCost,
+                    effectTemplate.Properties.DurationCosts,
+                    skillValue,
+                    effectEntry.Settings.DurationBase,
+                    effectEntry.Settings.DurationPlus,
+                    effectEntry.Settings.DurationPerLevel);
+
+                //Debug.LogFormat("Duration: gold {0} spellpoints {1}", durationGoldCost, durationSpellPointCost);
+            }
+
+            // Chance costs
+            int chanceMinGoldCost = 0, chanceMinSpellPointCost = 0;
+            int chanceGoldCost = 0, chanceSpellPointCost = 0;
+            if (effectTemplate.Properties.SupportChance)
+            {
+                GetEffectComponentCosts(
+                    out chanceMinGoldCost,
+                    out chanceMinSpellPointCost,
+                    out chanceGoldCost,
+                    out chanceSpellPointCost,
+                    effectTemplate.Properties.ChanceCosts,
+                    skillValue,
+                    effectEntry.Settings.ChanceBase,
+                    effectEntry.Settings.ChancePlus,
+                    effectEntry.Settings.ChancePerLevel);
+
+                //Debug.LogFormat("Chance: gold {0} spellpoints {1}", chanceGoldCost, chanceSpellPointCost);
+            }
+
+            // Magnitude costs
+            int magnitudeMinGoldCost = 0, magnitudeMinSpellPointCost = 0;
+            int magnitudeGoldCost = 0, magnitudeSpellPointCost = 0;
+            if (effectTemplate.Properties.SupportMagnitude)
+            {
+                int magnitudeBase = effectEntry.Settings.MagnitudeBaseMin + (effectEntry.Settings.MagnitudeBaseMax - effectEntry.Settings.MagnitudeBaseMin) / 2;
+                int magnitudePlus = effectEntry.Settings.MagnitudePlusMin + (effectEntry.Settings.MagnitudePlusMax - effectEntry.Settings.MagnitudePlusMin) / 2;
+                GetEffectComponentCosts(
+                    out magnitudeMinGoldCost,
+                    out magnitudeMinSpellPointCost,
+                    out magnitudeGoldCost,
+                    out magnitudeSpellPointCost,
+                    effectTemplate.Properties.MagnitudeCosts,
+                    skillValue,
+                    magnitudeBase,
+                    magnitudePlus,
+                    effectEntry.Settings.MagnitudePerLevel);
+
+                //Debug.LogFormat("Magnitude: gold {0} spellpoints {1}", magnitudeGoldCost, magnitudeSpellPointCost);
+            }
+
+            // Add costs together
+            int finalGoldCost = durationGoldCost + chanceGoldCost + magnitudeGoldCost;
+            int finalSpellPointCost = durationSpellPointCost + chanceSpellPointCost + magnitudeSpellPointCost;
+
+            // Subtract min costs - this is involved somehow in final total but not yet sure of exact formula
+            // Will continue to refine this as more effects come online and they can be checked for accuracy against classic
+            finalGoldCost = finalGoldCost - durationMinGoldCost - chanceMinGoldCost;
+            finalSpellPointCost = finalSpellPointCost - durationMinSpellPointCost - chanceMinSpellPointCost;
+
+            //Debug.LogFormat("Costs: gold {0} spellpoints {1}", finalGoldCost, finalSpellPointCost);
+        }
+
+        static void GetEffectComponentCosts(
+            out int minGoldCost,
+            out int minSpellPointCost,
+            out int goldCost,
+            out int spellPointCost,
+            EffectCosts costs,
+            int skillValue,
+            int starting,
+            int increase,
+            int perLevel)
+        {
+            float offsetGold = costs.OffsetGold;
+            float offsetSpellPoints = costs.OffsetSpellPoints;
+            float factor = costs.Factor;
+            float costA = costs.CostA;
+            float costB = costs.CostB;
+
+            minGoldCost = GetEffectGoldCost(offsetGold, costA, costB, 1, 1, 1);
+            minSpellPointCost = GetEffectSpellPointCost(skillValue, offsetSpellPoints, factor, costA, costB, 1, 1, 1);
+
+            goldCost = GetEffectGoldCost(offsetGold, costA, costB, starting, increase, perLevel);
+            spellPointCost = GetEffectSpellPointCost(skillValue, offsetSpellPoints, factor, costA, costB, starting, increase, perLevel);
+        }
 
         // Get effect gold cost
-        public static int GetEffectGoldCost(float offsetGold, float valueA, float valueB, int starting, int increase, int perLevel)
+        static int GetEffectGoldCost(float offsetGold, float valueA, float valueB, int starting, int increase, int perLevel)
         {
             return (int)(offsetGold + valueA * starting + valueB * trunc(increase / perLevel));
         }
 
         // Get effect spell points cost
-        public static int GetEffectSpellPointCost(int skillValue, float offsetSpellPoints, float factor, float valueA, float valueB, int starting, int increase, int perLevel)
+        static int GetEffectSpellPointCost(int skillValue, float offsetSpellPoints, float factor, float valueA, float valueB, int starting, int increase, int perLevel)
         {
             float valueC = 550 - skillValue * 5;
             float valueD = valueC * valueB / valueA;
             return (int)(factor * offsetSpellPoints + trunc(factor * valueC * starting) + trunc(factor * valueD * trunc(increase / perLevel))) / 100;
         }
+
+        // Just makes formulas more readable
+        static int trunc(double value) { return (int)Math.Truncate(value); }
 
         #endregion
     }

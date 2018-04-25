@@ -12,10 +12,12 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using DaggerfallConnect;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.MagicAndEffects;
+using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -173,6 +175,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Setup effect editor window
             effectEditor = new DaggerfallEffectSettingsEditorWindow(uiManager, this);
+            effectEditor.OnSettingsChanged += EffectEditor_OnSettingsChanged;
             effectEditor.OnClose += EffectEditor_OnClose;
         }
 
@@ -357,6 +360,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return -1;
         }
 
+        int CountUsedEffectSlots()
+        {
+            int total = 0;
+            for (int i = 0; i < maxEffectsPerSpell; i++)
+            {
+                if (!string.IsNullOrEmpty(effectEntries[i].Key))
+                    total++;
+            }
+
+            return total;
+        }
+
         void UpdateSlotText(int slot, string text)
         {
             // Get text label to update
@@ -378,6 +393,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Set label text
             label.Text = text;
+        }
+
+        void AddAndEditSlot(IEntityEffect effectTemplate)
+        {
+            effectEditor.EffectTemplate = effectTemplate;
+            int slot = GetFirstFreeEffectSlotIndex();
+            effectEntries[slot] = effectEditor.EffectEntry;
+            UpdateSlotText(slot, effectEditor.EffectTemplate.DisplayName);
+            UpdateAllowedButtons();
+            editOrDeleteSlot = slot;
+            uiManager.PushWindow(effectEditor);
         }
 
         void EditOrDeleteSlot(int slot)
@@ -593,6 +619,32 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             return effects;
+        }
+
+        void UpdateSpellCosts()
+        {
+            // TODO: Multipliers for target type
+
+            // Do nothing when effect editor not setup or not used effect slots
+            // This means there is nothing to calculate
+            if (!effectEditor.IsSetup || CountUsedEffectSlots() == 0)
+            {
+                // NOTE: Daggerfall shows gold cost 0 and spellpoint cost 5 with no effects added
+                return;
+            }
+
+            // Update slot being edited with current effect editor settings
+            if (editOrDeleteSlot != -1)
+                effectEntries[editOrDeleteSlot] = effectEditor.EffectEntry;
+
+            // Add costs for each active effect slot
+            for (int i = 0; i < maxEffectsPerSpell; i++)
+            {
+                if (string.IsNullOrEmpty(effectEntries[i].Key))
+                    continue;
+
+                FormulaHelper.CalculateEffectCosts(effectEntries[i]);
+            }
         }
 
         #endregion
@@ -817,8 +869,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (enumeratedEffectTemplates.Count == 1 && string.IsNullOrEmpty(enumeratedEffectTemplates[0].Properties.SubGroupName))
             {
                 effectGroupPicker.CloseWindow();
-                effectEditor.EffectTemplate = enumeratedEffectTemplates[0];
-                uiManager.PushWindow(effectEditor);
+                AddAndEditSlot(enumeratedEffectTemplates[0]);
+                //uiManager.PushWindow(effectEditor);
                 return;
             }
 
@@ -849,12 +901,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             IEntityEffect effectTemplate = enumeratedEffectTemplates[effectSubGroupPicker.ListBox.SelectedIndex];
             if (effectTemplate != null)
             {
-                effectEditor.EffectTemplate = effectTemplate;
+                AddAndEditSlot(effectTemplate);
                 //Debug.LogFormat("Selected effect {0} {1} with key {2}", effectTemplate.GroupName, effectTemplate.SubGroupName, effectTemplate.Key);
             }
-
-            // Launch effect editor window
-            uiManager.PushWindow(effectEditor);
         }
 
         private void EditOrDeleteSpell_OnCancel(DaggerfallPopupWindow sender)
@@ -888,18 +937,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void EffectEditor_OnClose()
         {
-            // Only proceed if user hit "exit" to accept changes
-            // Otherwise this is a result of user cancelling with escape key
-            if (!effectEditor.UserExit)
-                return;
-
-            // Assign effect entry to slot
-            int slot = (editOrDeleteSlot == -1) ? GetFirstFreeEffectSlotIndex() : editOrDeleteSlot;
-            effectEntries[slot] = effectEditor.EffectEntry;
-            UpdateSlotText(slot, effectEditor.EffectTemplate.DisplayName);
             editOrDeleteSlot = -1;
-
             UpdateAllowedButtons();
+        }
+
+        private void EffectEditor_OnSettingsChanged()
+        {
+            UpdateSpellCosts();
         }
 
         private void Effect1NamePanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
