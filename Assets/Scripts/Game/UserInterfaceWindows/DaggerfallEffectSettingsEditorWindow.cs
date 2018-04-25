@@ -378,68 +378,93 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // TODO: Multipliers for target type
 
-            float offsetGold, offsetSpellPoints, factor, costA, costB;
+            //float offsetGold, offsetSpellPoints, factor, costA, costB;
             int skillValue = GameManager.Instance.PlayerEntity.Skills.GetLiveSkillValue((DFCareer.Skills)effectTemplate.Properties.MagicSkill);
 
             // Duration costs
+            int durationMinGoldCost = 0, durationMinSpellPointCost = 0;
             int durationGoldCost = 0, durationSpellPointCost = 0;
             if (effectTemplate.Properties.SupportDuration)
             {
-                offsetGold = effectTemplate.Properties.DurationCosts.OffsetGold;
-                offsetSpellPoints = effectTemplate.Properties.DurationCosts.OffsetSpellPoints;
-                factor = effectTemplate.Properties.DurationCosts.Factor;
-                costA = effectTemplate.Properties.DurationCosts.CostA;
-                costB = effectTemplate.Properties.DurationCosts.CostB;
-
-                durationGoldCost = FormulaHelper.GetEffectGoldCost(offsetGold, costA, costB, durationBaseSpinner.Value, durationPlusSpinner.Value, durationPerLevelSpinner.Value);
-                durationSpellPointCost = FormulaHelper.GetEffectSpellPointCost(skillValue, offsetSpellPoints, factor, costA, costB, durationBaseSpinner.Value, durationPlusSpinner.Value, durationPerLevelSpinner.Value);
+                GetCosts(
+                    out durationMinGoldCost,
+                    out durationMinSpellPointCost,
+                    out durationGoldCost,
+                    out durationSpellPointCost,
+                    effectTemplate.Properties.DurationCosts,
+                    skillValue,
+                    durationBaseSpinner.Value,
+                    durationPlusSpinner.Value,
+                    durationPerLevelSpinner.Value);
 
                 //Debug.LogFormat("Duration: gold {0} spellpoints {1}", durationGoldCost, durationSpellPointCost);
             }
 
             // Chance costs
+            int chanceMinGoldCost = 0, chanceMinSpellPointCost = 0;
             int chanceGoldCost = 0, chanceSpellPointCost = 0;
             if (effectTemplate.Properties.SupportChance)
             {
-                offsetGold = effectTemplate.Properties.ChanceCosts.OffsetGold;
-                offsetSpellPoints = effectTemplate.Properties.ChanceCosts.OffsetSpellPoints;
-                factor = effectTemplate.Properties.ChanceCosts.Factor;
-                costA = effectTemplate.Properties.ChanceCosts.CostA;
-                costB = effectTemplate.Properties.ChanceCosts.CostB;
-
-                chanceGoldCost = FormulaHelper.GetEffectGoldCost(offsetGold, costA, costB, chanceBaseSpinner.Value, chancePlusSpinner.Value, chancePerLevelSpinner.Value);
-                chanceSpellPointCost = FormulaHelper.GetEffectSpellPointCost(skillValue, offsetSpellPoints, factor, costA, costB, chanceBaseSpinner.Value, chancePlusSpinner.Value, chancePerLevelSpinner.Value);
+                GetCosts(
+                    out chanceMinGoldCost,
+                    out chanceMinSpellPointCost,
+                    out chanceGoldCost,
+                    out chanceSpellPointCost,
+                    effectTemplate.Properties.ChanceCosts,
+                    skillValue,
+                    chanceBaseSpinner.Value,
+                    chancePlusSpinner.Value,
+                    chancePerLevelSpinner.Value);
 
                 //Debug.LogFormat("Chance: gold {0} spellpoints {1}", chanceGoldCost, chanceSpellPointCost);
             }
 
             // Magnitude costs
+            int magnitudeMinGoldCost = 0, magnitudeMinSpellPointCost = 0;
             int magnitudeGoldCost = 0, magnitudeSpellPointCost = 0;
             if (effectTemplate.Properties.SupportMagnitude)
             {
-                offsetGold = effectTemplate.Properties.MagnitudeCosts.OffsetGold;
-                offsetSpellPoints = effectTemplate.Properties.MagnitudeCosts.OffsetSpellPoints;
-                factor = effectTemplate.Properties.MagnitudeCosts.Factor;
-                costA = effectTemplate.Properties.MagnitudeCosts.CostA;
-                costB = effectTemplate.Properties.MagnitudeCosts.CostB;
-
                 int magnitudeBase = magnitudeBaseMinSpinner.Value + (magnitudeBaseMaxSpinner.Value - magnitudeBaseMinSpinner.Value) / 2;
                 int magnitudePlus = magnitudePlusMinSpinner.Value + (magnitudePlusMaxSpinner.Value - magnitudePlusMinSpinner.Value) / 2;
-
-                magnitudeGoldCost = FormulaHelper.GetEffectGoldCost(offsetGold, costA, costB, magnitudeBase, magnitudePlus, magnitudePerLevelSpinner.Value);
-                magnitudeSpellPointCost = FormulaHelper.GetEffectSpellPointCost(skillValue, offsetSpellPoints, factor, costA, costB, magnitudeBase, magnitudePlus, magnitudePerLevelSpinner.Value);
+                GetCosts(
+                    out magnitudeMinGoldCost,
+                    out magnitudeMinSpellPointCost,
+                    out magnitudeGoldCost,
+                    out magnitudeSpellPointCost,
+                    effectTemplate.Properties.MagnitudeCosts,
+                    skillValue,
+                    magnitudeBase,
+                    magnitudePlus,
+                    magnitudePerLevelSpinner.Value);
 
                 //Debug.LogFormat("Magnitude: gold {0} spellpoints {1}", magnitudeGoldCost, magnitudeSpellPointCost);
             }
 
-            // Add costs together - this does not appear to yield exact results in all cases
-            // even when each component cost is correct individually. Tends to be most inaccurate at
-            // low settings and less inaccurate at max settings. Some more work is likely needed here
-            // but this is "good enough" for the current stage of development.
+            // Add costs together
             int finalGoldCost = durationGoldCost + chanceGoldCost + magnitudeGoldCost;
             int finalSpellPointCost = durationSpellPointCost + chanceSpellPointCost + magnitudeSpellPointCost;
 
-            //Debug.LogFormat("Costs: gold {0} spellpoints {1}", finalGoldCost, finalSpellPointCost);
+            // Subtract min costs - this is involved somehow in final total but not yet sure of exact formula
+            // Will continue to refine this as more effects come online and they can be checked for accuracy against classic
+            finalGoldCost = finalGoldCost - durationMinGoldCost - chanceMinGoldCost;
+            finalSpellPointCost = finalSpellPointCost - durationMinSpellPointCost - chanceMinSpellPointCost;
+
+            Debug.LogFormat("Costs: gold {0} spellpoints {1}", finalGoldCost, finalSpellPointCost);
+        }
+
+        void GetCosts(out int minGoldCost, out int minSpellPointCost, out int goldCost, out int spellPointCost, EffectCosts costs, int skillValue, int starting, int increase, int perLevel)
+        {
+            float offsetGold = costs.OffsetGold;
+            float offsetSpellPoints = costs.OffsetSpellPoints;
+            float factor = costs.Factor;
+            float costA = costs.CostA;
+            float costB = costs.CostB;
+
+            minGoldCost = FormulaHelper.GetEffectGoldCost(offsetGold, costA, costB, 1, 1, 1);
+            minSpellPointCost = FormulaHelper.GetEffectSpellPointCost(skillValue, offsetSpellPoints, factor, costA, costB, 1, 1, 1);
+
+            goldCost = FormulaHelper.GetEffectGoldCost(offsetGold, costA, costB, starting, increase, perLevel);
+            spellPointCost = FormulaHelper.GetEffectSpellPointCost(skillValue, offsetSpellPoints, factor, costA, costB, starting, increase, perLevel);
         }
 
         #endregion
