@@ -34,8 +34,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
             //properties.AllowedCraftingStations = EntityEffectBroker.MagicCraftingFlags_None;
             properties.MagicSkill = DFCareer.MagicSkills.Illusion;
-            properties.CostA = 20;
-            properties.CostB = 80;
+            properties.DurationCosts = MakeEffectCosts(20, 80);
         }
 
         public override void MagicRound(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)

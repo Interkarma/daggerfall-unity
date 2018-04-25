@@ -32,8 +32,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_All;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
             properties.MagicSkill = DFCareer.MagicSkills.Restoration;
-            properties.CostA = 20;
-            properties.CostB = 28;
+            properties.MagnitudeCosts = MakeEffectCosts(20, 28);
         }
 
         public override void MagicRound(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)

@@ -16,25 +16,25 @@ using DaggerfallWorkshop.Game.Entity;
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
     /// <summary>
-    /// Continuous Damage - Spell Points
+    /// Regenerate
     /// </summary>
-    public class ContinuousDamageSpellPoints : BaseEntityEffect
+    public class Regenerate : BaseEntityEffect
     {
         public override void SetProperties()
         {
-            properties.Key = "ContinuousDamage-SpellPoints";
-            properties.ClassicKey = MakeClassicKey(1, 2);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "continuousDamage");
-            properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "spellPoints");
-            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1506);
-            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1206);
+            properties.Key = "Regenerate";
+            properties.ClassicKey = MakeClassicKey(18, 255);
+            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "regenerate");
+            properties.SubGroupName = string.Empty;
+            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1566);
+            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1266);
             properties.SupportDuration = true;
             properties.SupportMagnitude = true;
-            properties.AllowedTargets = EntityEffectBroker.TargetFlags_Other;
-            properties.AllowedElements = EntityEffectBroker.ElementFlags_All;
-            //properties.AllowedCraftingStations = EntityEffectBroker.MagicCraftingFlags_None;
-            properties.MagicSkill = DFCareer.MagicSkills.Destruction;
-            // TODO: Confirm costs
+            properties.AllowedTargets = EntityEffectBroker.TargetFlags_All;
+            properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
+            properties.MagicSkill = DFCareer.MagicSkills.Restoration;
+            properties.DurationCosts = MakeEffectCosts(100, 20, 5, 16, 48);
+            properties.MagnitudeCosts = MakeEffectCosts(8, 8, 0.4f, 120, 4500);
         }
 
         public override void MagicRound(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
@@ -45,7 +45,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 return;
 
             // TODO: Implement effect
-            //int magnitude = GetMagnitude(caster);
         }
     }
 }

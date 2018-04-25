@@ -72,3 +72,5 @@ undead,                     Undead
 
 normal,                     Normal
 true,                       True
+
+noName,                     <no-name>

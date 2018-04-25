@@ -135,7 +135,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             properties.AllowedElements = ElementTypes.Magic;
             properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
             properties.MagicSkill = DFCareer.MagicSkills.None;
-            properties.Factor = 1;
 
             // Set default settings
             settings = GetDefaultSettings();
@@ -299,9 +298,18 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             // Get display name or manufacture a default from group names
             if (!string.IsNullOrEmpty(properties.DisplayName))
+            {
                 return properties.DisplayName;
+            }
             else
-                return properties.DisplayName = string.Format("{0} {1}", properties.GroupName, properties.SubGroupName);
+            {
+                if (!string.IsNullOrEmpty(properties.GroupName) && !string.IsNullOrEmpty(properties.SubGroupName))
+                    return properties.DisplayName = string.Format("{0} {1}", properties.GroupName, properties.SubGroupName);
+                else if (!string.IsNullOrEmpty(properties.GroupName) && string.IsNullOrEmpty(properties.SubGroupName))
+                    return properties.DisplayName = properties.GroupName;
+                else
+                    return properties.DisplayName = TextManager.Instance.GetText("ClassicEffect", "noName");
+            }
         }
 
         #endregion
@@ -317,6 +325,18 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             groupIndex = (byte)(key >> 8);
             subgroupIndex = (byte)(key & 0xff);
+        }
+
+        public static EffectCosts MakeEffectCosts(float costA, float costB, float factor = 1, float offsetGold = 0, float offsetSpellPoints = 0)
+        {
+            EffectCosts costs = new EffectCosts();
+            costs.OffsetGold = offsetGold;
+            costs.OffsetSpellPoints = offsetSpellPoints;
+            costs.Factor = factor;
+            costs.CostA = costA;
+            costs.CostB = costB;
+
+            return costs;
         }
 
         #endregion

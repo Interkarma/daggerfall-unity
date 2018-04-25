@@ -35,11 +35,22 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public ElementTypes AllowedElements;                        // Elements allowed by this effect
         public MagicCraftingStations AllowedCraftingStations;       // Magic stations that can consume this effect (e.g. spellmaker, itemmaker)
         public DFCareer.MagicSkills MagicSkill;                     // Related magic skill for this effect
-        public int OffsetGold;                                      // Increase base gold cost
-        public int OffsetSpellPoints;                               // Increase base spellpoint cost
-        public int Factor;                                          // Scaling factor applied to spellpoint cost
-        public int CostA;                                           // First magic number related to costs
-        public int CostB;                                           // Second magic number related to costs
+        public EffectCosts DurationCosts;                           // Duration cost values
+        public EffectCosts ChanceCosts;                             // Chance cost values
+        public EffectCosts MagnitudeCosts;                          // Magnitude cost values
+    }
+
+    /// <summary>
+    /// Allows tuning of cost per setting.
+    /// </summary>
+    [Serializable]
+    public struct EffectCosts
+    {
+        public float OffsetGold;                                    // Increase base gold cost
+        public float OffsetSpellPoints;                             // Increase base spellpoint cost
+        public float Factor;                                        // Scaling factor applied to spellpoint cost
+        public float CostA;                                         // First magic number related to costs
+        public float CostB;                                         // Second magic number related to costs
     }
 
     /// <summary>
