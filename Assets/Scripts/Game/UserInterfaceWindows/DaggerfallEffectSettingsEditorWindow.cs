@@ -225,6 +225,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             magnitudeBaseMaxSpinner.OnValueChanged += MagnitudeBaseMaxSpinner_OnValueChanged;
             magnitudePlusMinSpinner.OnValueChanged += MagnitudePlusMinSpinner_OnValueChanged;
             magnitudePlusMaxSpinner.OnValueChanged += MagnitudePlusMaxSpinner_OnValueChanged;
+            magnitudePerLevelSpinner.OnValueChanged += MagnitudePerLevelSpinner_OnValueChanged;
         }
 
         void SetupButtons()
@@ -419,18 +420,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 costA = effectTemplate.Properties.MagnitudeCosts.CostA;
                 costB = effectTemplate.Properties.MagnitudeCosts.CostB;
 
-                int magnitudeBase = magnitudeBaseMinSpinner.Value;
-                int magnitudePlus = magnitudePlusMinSpinner.Value;
+                int magnitudeBase = magnitudeBaseMinSpinner.Value + (magnitudeBaseMaxSpinner.Value - magnitudeBaseMinSpinner.Value) / 2;
+                int magnitudePlus = magnitudePlusMinSpinner.Value + (magnitudePlusMaxSpinner.Value - magnitudePlusMinSpinner.Value) / 2;
 
                 magnitudeGoldCost = FormulaHelper.GetEffectGoldCost(offsetGold, costA, costB, magnitudeBase, magnitudePlus, magnitudePerLevelSpinner.Value);
                 magnitudeSpellPointCost = FormulaHelper.GetEffectSpellPointCost(skillValue, offsetSpellPoints, factor, costA, costB, magnitudeBase, magnitudePlus, magnitudePerLevelSpinner.Value);
 
                 Debug.LogFormat("Magnitude: gold {0} spellpoints {1}", magnitudeGoldCost, magnitudeSpellPointCost);
             }
-
-            //int goldCost = FormulaHelper.GetEffectGoldCost(0, 40, 120, durationBaseSpinner.Value, durationPlusSpinner.Value, durationPerLevelSpinner.Value);
-            //int spellPointCost = FormulaHelper.GetEffectSpellPointCost(50, 0, 40, 120, 2, durationBaseSpinner.Value, durationPlusSpinner.Value, durationPerLevelSpinner.Value);
-            //Debug.LogFormat("Gold: {0} SpellPoints: {1}", goldCost, spellPointCost);
         }
 
         #endregion
@@ -496,6 +493,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (magnitudePlusMaxSpinner.Value < magnitudePlusMinSpinner.Value)
                 magnitudePlusMinSpinner.Value = magnitudePlusMaxSpinner.Value;
 
+            UpdateCosts();
+        }
+
+        private void MagnitudePerLevelSpinner_OnValueChanged()
+        {
             UpdateCosts();
         }
 
