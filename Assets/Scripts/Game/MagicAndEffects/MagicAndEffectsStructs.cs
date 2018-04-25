@@ -10,9 +10,38 @@
 //
 
 using System;
+using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects
 {
+    /// <summary>
+    /// Defines properties intrinsic to an effect.
+    /// </summary>
+    [Serializable]
+    public struct EffectProperties
+    {
+        public string Key;                                          // Unique key to identify effect
+        public int ClassicKey;                                      // Unique key only for matching classic effect group/subgroup
+        public string GroupName;                                    // Group display name (used by crafting stations)
+        public string SubGroupName;                                 // SubGroup display name (used by crafting stations)
+        public string DisplayName;                                  // Display name (used by crafting stations)
+        public TextFile.Token[] SpellMakerDescription;              // Description for spellmaker
+        public TextFile.Token[] SpellBookDescription;               // Description for spellbook
+        public bool SupportDuration;                                // Uses duration
+        public bool SupportChance;                                  // Uses chance
+        public bool SupportMagnitude;                               // Uses magnitude
+        public TargetTypes AllowedTargets;                          // Targets allowed by this effect
+        public ElementTypes AllowedElements;                        // Elements allowed by this effect
+        public MagicCraftingStations AllowedCraftingStations;       // Magic stations that can consume this effect (e.g. spellmaker, itemmaker)
+        public DFCareer.MagicSkills MagicSkill;                     // Related magic skill for this effect
+        public int OffsetGold;                                      // Increase base gold cost
+        public int OffsetSpellPoints;                               // Increase base spellpoint cost
+        public int Factor;                                          // Scaling factor applied to spellpoint cost
+        public int CostA;                                           // First magic number related to costs
+        public int CostB;                                           // Second magic number related to costs
+    }
+
     /// <summary>
     /// Duration, Chance, Magnitude settings for an effect.
     /// </summary>

@@ -473,6 +473,20 @@ namespace DaggerfallConnect
         }
 
         /// <summary>
+        /// Magic skills only - values match main skills enum.
+        /// </summary>
+        public enum MagicSkills
+        {
+            None = -1,
+            Destruction = 22,
+            Restoration = 23,
+            Illusion = 24,
+            Alteration = 25,
+            Thaumaturgy = 26,
+            Mysticism = 27,
+        }
+
+        /// <summary>
         /// Spell point multipliers
         /// </summary>
         public enum SpellPointMultipliers

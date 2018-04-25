@@ -10,7 +10,7 @@
 //
 
 using UnityEngine;
-using DaggerfallConnect.Arena2;
+using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
@@ -20,17 +20,22 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class DamageHealth : BaseEntityEffect
     {
-        public override string Key { get { return "Damage-Health"; } }
-        public override string GroupName { get { return TextManager.Instance.GetText("ClassicEffects", "damage"); } }
-        public override string SubGroupName { get { return TextManager.Instance.GetText("ClassicEffects", "health"); } }
-        public override int ClassicGroup { get { return 4; } }
-        public override int ClassicSubGroup { get { return 0; } }
-        public override TextFile.Token[] SpellMakerDescription { get { return DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1512); } }
-        public override TextFile.Token[] SpellBookDescription { get { return DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1212); } }
-        public override bool SupportDuration { get { return false; } }
-        public override bool SupportChance { get { return false; } }
-        public override TargetTypes AllowedTargets { get { return EntityEffectBroker.TargetFlags_Other; } }
-        public override ElementTypes AllowedElements { get { return EntityEffectBroker.ElementFlags_All; } }
+        public override void SetProperties()
+        {
+            properties.Key = "Damage-Health";
+            properties.ClassicKey = MakeClassicKey(4, 0);
+            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "damage");
+            properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "health");
+            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1512);
+            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1212);
+            properties.SupportMagnitude = true;
+            properties.AllowedTargets = EntityEffectBroker.TargetFlags_Other;
+            properties.AllowedElements = EntityEffectBroker.ElementFlags_All;
+            //properties.AllowedCraftingStations = EntityEffectBroker.MagicCraftingFlags_None;
+            properties.MagicSkill = DFCareer.MagicSkills.Destruction;
+            properties.CostA = 20;
+            properties.CostB = 28;
+        }
 
         public override void MagicRound(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
         {

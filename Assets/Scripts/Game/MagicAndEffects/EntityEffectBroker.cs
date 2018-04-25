@@ -105,12 +105,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             foreach(BaseEntityEffect effect in magicEffectTemplates.Values)
             {
                 // Skip effects not fitting at least one station requirement
-                if ((craftingStations & effect.AllowedCraftingStations) == 0)
+                if ((craftingStations & effect.Properties.AllowedCraftingStations) == 0)
                     continue;
 
                 // Ignore duplicate groups
-                if (!groupNames.Contains(effect.GroupName))
-                    groupNames.Add(effect.GroupName);
+                if (!groupNames.Contains(effect.Properties.GroupName))
+                    groupNames.Add(effect.Properties.GroupName);
             }
 
             // Sort if required
@@ -131,13 +131,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             List<string> subGroupNames = new List<string>();
 
-            foreach (BaseEntityEffect effect in magicEffectTemplates.Values.Where(effect => effect.GroupName == groupName))
+            foreach (BaseEntityEffect effect in magicEffectTemplates.Values.Where(effect => effect.Properties.GroupName == groupName))
             {
                 // Skip effects not fitting at least one station requirement
-                if ((craftingStations & effect.AllowedCraftingStations) == 0)
+                if ((craftingStations & effect.Properties.AllowedCraftingStations) == 0)
                     continue;
 
-                subGroupNames.Add(effect.SubGroupName);
+                subGroupNames.Add(effect.Properties.SubGroupName);
             }
 
             // Sort if required
@@ -157,10 +157,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             List<IEntityEffect> effectTemplates = new List<IEntityEffect>();
 
-            foreach (IEntityEffect effectTemplate in magicEffectTemplates.Values.Where(effect => effect.GroupName == groupName))
+            foreach (IEntityEffect effectTemplate in magicEffectTemplates.Values.Where(effect => effect.Properties.GroupName == groupName))
             {
                 // Skip effects not fitting at least one station requirement
-                if ((craftingStations & effectTemplate.AllowedCraftingStations) == 0)
+                if ((craftingStations & effectTemplate.Properties.AllowedCraftingStations) == 0)
                     continue;
 
                 effectTemplates.Add(effectTemplate);

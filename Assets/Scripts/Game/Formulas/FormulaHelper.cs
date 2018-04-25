@@ -1146,23 +1146,25 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         #region SpellMaker
 
-        public static int GetEffectGoldCost(int skillValue, int offsetGold, int valueA, int valueB, int starting, int increase, int perLevel)
+        // Just makes formulas more readable
+        static int trunc(double value) { return (int)Math.Truncate(value); }
+
+        // Get effect gold cost
+        public static int GetEffectGoldCost(int offsetGold, int valueA, int valueB, int starting, int increase, int perLevel)
         {
-            int valueC = 550 - skillValue * 5;
+            // TODO: Multipliers for target type
+
             return offsetGold + valueA * starting + valueB * trunc(increase / perLevel);
         }
 
-        public static int GetEffectSpellPointCost(int skillValue, int offsetMag, int valueA, int valueB, int factor, int starting, int increase, int perLevel)
+        // Get effect spell points cost
+        public static int GetEffectSpellPointCost(int skillValue, int offsetSpellPoints, int valueA, int valueB, int factor, int starting, int increase, int perLevel)
         {
+            // TODO: Multipliers for target type
+
             int valueC = 550 - skillValue * 5;
             int valueD = valueC * valueB / valueA;
-            return (factor * offsetMag + trunc(factor * valueC * starting) + trunc(factor * valueD * trunc(increase / perLevel))) / 100;
-        }
-
-        // Makes above more readable
-        static int trunc(double value)
-        {
-            return (int)Math.Truncate(value);
+            return (factor * offsetSpellPoints + trunc(factor * valueC * starting) + trunc(factor * valueD * trunc(increase / perLevel))) / 100;
         }
 
         #endregion

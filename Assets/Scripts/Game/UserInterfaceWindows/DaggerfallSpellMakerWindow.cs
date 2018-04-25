@@ -498,10 +498,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     IEntityEffect effectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(effectEntries[i].Key);
 
                     // Allowed targets are least permissive result set from combined target flags
-                    allowedTargets = allowedTargets & effectTemplate.AllowedTargets;
+                    allowedTargets = allowedTargets & effectTemplate.Properties.AllowedTargets;
 
                     // Allowed elements are most permissive result set from combined element flags (magic always allowed)
-                    allowedElements = allowedElements | effectTemplate.AllowedElements;
+                    allowedElements = allowedElements | effectTemplate.Properties.AllowedElements;
                 }
             }
 
@@ -814,12 +814,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 throw new Exception(string.Format("Could not find any effect templates for group {0}", effectGroupPicker.ListBox.SelectedItem));
 
             // Sort list by subgroup name
-            enumeratedEffectTemplates.Sort((s1, s2) => s1.SubGroupName.CompareTo(s2.SubGroupName));
+            enumeratedEffectTemplates.Sort((s1, s2) => s1.Properties.SubGroupName.CompareTo(s2.Properties.SubGroupName));
 
             // Populate subgroup names in list box
             foreach(IEntityEffect effect in enumeratedEffectTemplates)
             {
-                effectSubGroupPicker.ListBox.AddItem(effect.SubGroupName);
+                effectSubGroupPicker.ListBox.AddItem(effect.Properties.SubGroupName);
             }
             effectSubGroupPicker.ListBox.SelectedIndex = 0;
 

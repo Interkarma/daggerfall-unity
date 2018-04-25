@@ -16,26 +16,27 @@ using DaggerfallWorkshop.Game.Entity;
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
     /// <summary>
-    /// Continuous Damage - Fatigue
+    /// Chameleon - True
     /// </summary>
-    public class ContinuousDamageFatigue : BaseEntityEffect
+    public class ChameleonTrue : BaseEntityEffect
     {
         public override void SetProperties()
         {
-            properties.Key = "ContinuousDamage-Fatigue";
-            properties.ClassicKey = MakeClassicKey(1, 1);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "continuousDamage");
-            properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "fatigue");
-            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1505);
-            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1205);
+            properties.Key = "Chameleon-True";
+            properties.ClassicKey = MakeClassicKey(23, 1);
+            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "chameleon");
+            properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "true");
+            properties.DisplayName = string.Format("{0} ({1})", properties.GroupName, properties.SubGroupName);
+            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1572);
+            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1272);
             properties.SupportDuration = true;
-            properties.SupportMagnitude = true;
-            properties.AllowedTargets = EntityEffectBroker.TargetFlags_Other;
-            properties.AllowedElements = EntityEffectBroker.ElementFlags_All;
+            properties.AllowedTargets = EntityEffectBroker.TargetFlags_All;
+            properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
             //properties.AllowedCraftingStations = EntityEffectBroker.MagicCraftingFlags_None;
-            properties.MagicSkill = DFCareer.MagicSkills.Destruction;
-            properties.CostA = 20;
-            properties.CostB = 28;
+            properties.MagicSkill = DFCareer.MagicSkills.Illusion;
+            properties.Factor = 2;
+            properties.CostA = 40;
+            properties.CostB = 120;
         }
 
         public override void MagicRound(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
@@ -46,7 +47,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 return;
 
             // TODO: Implement effect
-            //int magnitude = GetMagnitude(caster);
         }
     }
 }

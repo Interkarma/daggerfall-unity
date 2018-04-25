@@ -11,8 +11,8 @@
 
 using UnityEngine;
 using System;
+using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
-using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.MagicAndEffects;
@@ -141,6 +141,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetupSpinners();
             SetupButtons();
             InitControlState();
+
+            UpdateCosts();
         }
 
         public override void OnPush()
@@ -150,6 +152,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (IsSetup)
             {
                 InitControlState();
+                UpdateCosts();
             }
         }
 
@@ -238,14 +241,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 throw new Exception(noEffectTemplateError);
 
             // Get description text
-            TextFile.Token[] descriptionTokens = EffectTemplate.SpellMakerDescription;
+            TextFile.Token[] descriptionTokens = EffectTemplate.Properties.SpellMakerDescription;
             if (descriptionTokens == null || descriptionTokens.Length == 0)
                 throw new Exception(string.Format("DaggerfallEffectSettingsEditorWindow: EffectTemplate {0} does not present any spellmaker description text.", EffectTemplate.Key));
             else
                 descriptionLabel.SetText(descriptionTokens);
 
             // Duration support
-            if (EffectTemplate.SupportDuration)
+            if (EffectTemplate.Properties.SupportDuration)
             {
                 durationBaseSpinner.Enabled = true;
                 durationPlusSpinner.Enabled = true;
@@ -259,7 +262,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             // Chance support
-            if (EffectTemplate.SupportChance)
+            if (EffectTemplate.Properties.SupportChance)
             {
                 chanceBaseSpinner.Enabled = true;
                 chancePlusSpinner.Enabled = true;
@@ -273,7 +276,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             // Magnitude support
-            if (EffectTemplate.SupportMagnitude)
+            if (EffectTemplate.Properties.SupportMagnitude)
             {
                 magnitudeBaseMinSpinner.Enabled = true;
                 magnitudeBaseMaxSpinner.Enabled = true;
@@ -370,12 +373,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetSpinners(new EffectSettings());
         }
 
-        void UpdateEffectGoldCost()
+        void UpdateCosts()
         {
-            int goldCost = FormulaHelper.GetEffectGoldCost(50, 0, 40, 120, durationBaseSpinner.Value, durationPlusSpinner.Value, durationPerLevelSpinner.Value);
-            int spellPointCost = FormulaHelper.GetEffectSpellPointCost(50, 0, 40, 120, 2, durationBaseSpinner.Value, durationPlusSpinner.Value, durationPerLevelSpinner.Value);
+            int skillValue = GameManager.Instance.PlayerEntity.Skills.GetLiveSkillValue((DFCareer.Skills)effectTemplate.Properties.MagicSkill);
+            int offsetGold = effectTemplate.Properties.OffsetGold;
+            int offsetSpellPoints = effectTemplate.Properties.OffsetSpellPoints;
+            int costA = effectTemplate.Properties.CostA;
+            int costB = effectTemplate.Properties.CostB;
+            int factor = effectTemplate.Properties.Factor;
 
-            Debug.LogFormat("Gold: {0} SpellPoints: {1}", goldCost, spellPointCost);
+            int durationGoldCost = FormulaHelper.GetEffectGoldCost(offsetGold, costA, costB, durationBaseSpinner.Value, durationPlusSpinner.Value, durationPerLevelSpinner.Value);
+            int durationSpellCost = FormulaHelper.GetEffectSpellPointCost(skillValue, offsetSpellPoints, costA, costB, factor, durationBaseSpinner.Value, durationPlusSpinner.Value, durationPerLevelSpinner.Value);
+
+            Debug.LogFormat("Duration: gold {0} spellpoints {1}", durationGoldCost, durationSpellCost);
+
+            //int goldCost = FormulaHelper.GetEffectGoldCost(0, 40, 120, durationBaseSpinner.Value, durationPlusSpinner.Value, durationPerLevelSpinner.Value);
+            //int spellPointCost = FormulaHelper.GetEffectSpellPointCost(50, 0, 40, 120, 2, durationBaseSpinner.Value, durationPlusSpinner.Value, durationPerLevelSpinner.Value);
+            //Debug.LogFormat("Gold: {0} SpellPoints: {1}", goldCost, spellPointCost);
         }
 
         #endregion
@@ -384,32 +398,32 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void DurationBaseSpinner_OnValueChanged()
         {
-            UpdateEffectGoldCost();
+            UpdateCosts();
         }
 
         private void DurationPlusSpinner_OnValueChanged()
         {
-            UpdateEffectGoldCost();
+            UpdateCosts();
         }
 
         private void DurationPerLevelSpinner_OnValueChanged()
         {
-            UpdateEffectGoldCost();
+            UpdateCosts();
         }
 
         private void ChanceBaseSpinner_OnValueChanged()
         {
-            UpdateEffectGoldCost();
+            UpdateCosts();
         }
 
         private void ChancePlusSpinner_OnValueChanged()
         {
-            UpdateEffectGoldCost();
+            UpdateCosts();
         }
 
         private void ChancePerLevelSpinner_OnValueChanged()
         {
-            UpdateEffectGoldCost();
+            UpdateCosts();
         }
 
         private void MagnitudeBaseMinSpinner_OnValueChanged()
@@ -417,7 +431,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (magnitudeBaseMinSpinner.Value > magnitudeBaseMaxSpinner.Value)
                 magnitudeBaseMaxSpinner.Value = magnitudeBaseMinSpinner.Value;
 
-            UpdateEffectGoldCost();
+            UpdateCosts();
         }
 
         private void MagnitudeBaseMaxSpinner_OnValueChanged()
@@ -425,7 +439,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (magnitudeBaseMaxSpinner.Value < magnitudeBaseMinSpinner.Value)
                 magnitudeBaseMinSpinner.Value = magnitudeBaseMaxSpinner.Value;
 
-            UpdateEffectGoldCost();
+            UpdateCosts();
         }
 
         private void MagnitudePlusMinSpinner_OnValueChanged()
@@ -433,7 +447,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (magnitudePlusMinSpinner.Value > magnitudePlusMaxSpinner.Value)
                 magnitudePlusMaxSpinner.Value = magnitudePlusMinSpinner.Value;
 
-            UpdateEffectGoldCost();
+            UpdateCosts();
         }
 
         private void MagnitudePlusMaxSpinner_OnValueChanged()
@@ -441,7 +455,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (magnitudePlusMaxSpinner.Value < magnitudePlusMinSpinner.Value)
                 magnitudePlusMinSpinner.Value = magnitudePlusMaxSpinner.Value;
 
-            UpdateEffectGoldCost();
+            UpdateCosts();
         }
 
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)

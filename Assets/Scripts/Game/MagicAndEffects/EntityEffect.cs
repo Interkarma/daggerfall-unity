@@ -10,8 +10,8 @@
 //
 
 using UnityEngine;
+using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
-using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects
@@ -22,85 +22,31 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     public interface IEntityEffect : IMacroContextProvider
     {
         /// <summary>
-        /// Unique string key for this effect, usually equal to some combination of group+subgroup (e.g. "ContinuousDamage-Health").
-        /// Effects can use any text they wish for key provided it is unique.
+        /// Gets effect properties.
+        /// </summary>
+        EffectProperties Properties { get; }
+        
+        /// <summary>
+        /// Gets or sets current effect settings.
+        /// </summary>
+        EffectSettings Settings { get; set; }
+
+        /// <summary>
+        /// Gets key from properties.
         /// </summary>
         string Key { get; }
 
         /// <summary>
-        /// Main group for this effect class in spellmaker (e.g. "Damage") - can be shared with other effects.
-        /// </summary>
-        string GroupName { get; }
-
-        /// <summary>
-        /// Sub-group name for effect class in spellmaker (e.g. "Health") - must be unique within group.
-        /// </summary>
-        string SubGroupName { get; }
-
-        /// <summary>
-        /// Display name of effect. Usually GroupName + " " + SubGroupName (e.g. "Continuous Damage Health")
+        /// Gets display name from properties or construct one from Group+SubGroup text in properties.
+        /// This allows effects to set a custom display name or just roll with automatic names.
+        /// Daggerfall appears to use first token of spellmaker/spellbook description, but we want more control for effect mods.
         /// </summary>
         string DisplayName { get; }
-
-        /// <summary>
-        /// Group index for legacy classic effect compatibility. Do not set this for non-classic effects.
-        /// </summary>
-        int ClassicGroup { get; }
-
-        /// <summary>
-        /// Subgroup index for legacy classic effect compatibility. Do not set this for non-classic effects.
-        /// </summary>
-        int ClassicSubGroup { get; }
-
-        /// <summary>
-        /// Text tokens for spellmaker UI if required.
-        /// </summary>
-        TextFile.Token[] SpellMakerDescription { get; }
-
-        /// <summary>
-        /// Text tokens for spellbook UI if required.
-        /// </summary>
-        TextFile.Token[] SpellBookDescription { get; }
-
-        /// <summary>
-        /// Effect supports Duration setting.
-        /// </summary>
-        bool SupportDuration { get; }
-
-        /// <summary>
-        /// Effect supports Chance setting.
-        /// </summary>
-        bool SupportChance { get; }
-        
-        /// <summary>
-        /// Effect supports Magnitude setting.
-        /// </summary>
-        bool SupportMagnitude { get; }
 
         /// <summary>
         /// Gets number of magic rounds remaining.
         /// </summary>
         int RoundsRemaining { get; }
-
-        /// <summary>
-        /// Targets supported by this effect.
-        /// </summary>
-        TargetTypes AllowedTargets { get; }
-
-        /// <summary>
-        /// Elements supported by this effect.
-        /// </summary>
-        ElementTypes AllowedElements { get; }
-
-        /// <summary>
-        /// Crafting stations supported by this effect.
-        /// </summary>
-        MagicCraftingStations AllowedCraftingStations { get; }
-
-        /// <summary>
-        /// Gets or sets current effect settings.
-        /// </summary>
-        EffectSettings Settings { get; set; }
 
         /// <summary>
         /// Gets array DaggerfallStats.Count items wide.
@@ -165,9 +111,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     {
         #region Fields
 
+        protected EffectProperties properties = new EffectProperties();
+        protected EffectSettings settings = new EffectSettings();
         protected int[] statMods = new int[DaggerfallStats.Count];
         protected int[] skillMods = new int[DaggerfallSkills.Count];
-        protected EffectSettings settings = new EffectSettings();
 
         int roundsRemaining;
 
@@ -180,45 +127,41 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// </summary>
         public BaseEntityEffect()
         {
+            // Set default properties
+            properties.SupportDuration = false;
+            properties.SupportChance = false;
+            properties.SupportMagnitude = false;
+            properties.AllowedTargets = TargetTypes.CasterOnly;
+            properties.AllowedElements = ElementTypes.Magic;
+            properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
+            properties.MagicSkill = DFCareer.MagicSkills.None;
+            properties.Factor = 1;
+
+            // Set default settings
             settings = GetDefaultSettings();
+
+            // Allow effect to set own properties
+            SetProperties();
         }
 
         #endregion
 
         #region IEntityEffect Properties
 
-        public abstract string Key { get; }
-        public abstract string GroupName { get; }
-        public abstract string SubGroupName { get; }
-        public virtual int ClassicGroup { get { return -1; } }
-        public virtual int ClassicSubGroup { get { return -1; } }
-        public virtual bool SupportDuration { get { return true; } }
-        public virtual bool SupportChance { get { return true; } }
-        public virtual bool SupportMagnitude { get { return true; } }
-        public virtual int RoundsRemaining {  get { return roundsRemaining; } }
-        public virtual TargetTypes AllowedTargets { get { return EntityEffectBroker.TargetFlags_All; } }
-        public virtual ElementTypes AllowedElements { get { return EntityEffectBroker.ElementFlags_MagicOnly; } }
-        public virtual MagicCraftingStations AllowedCraftingStations { get { return MagicCraftingStations.SpellMaker; } }
-
-        public virtual string DisplayName
+        public EffectProperties Properties
         {
-            get { return string.Format("{0} {1}", GroupName, SubGroupName); }
+            get { return properties; }
         }
 
-        public virtual EffectSettings Settings
+        public EffectSettings Settings
         {
             get { return settings; }
             set { settings = value; }
         }
 
-        public virtual TextFile.Token[] SpellMakerDescription
+        public int RoundsRemaining
         {
-            get { return null; }
-        }
-
-        public virtual TextFile.Token[] SpellBookDescription
-        {
-            get { return null; }
+            get { return roundsRemaining; }
         }
 
         public int[] StatMods
@@ -231,16 +174,28 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             get { return skillMods; }
         }
 
+        public string Key
+        {
+            get { return properties.Key; }
+        }
+
+        public string DisplayName
+        {
+            get { return GetDisplayName(); }
+        }
+
         #endregion
 
         #region IEntityEffect Virtual Methods
 
+        public abstract void SetProperties();
+
         public virtual void SetDuration(DaggerfallEntityBehaviour caster = null)
         {
             if (caster == null)
-                Debug.LogWarningFormat("SetDuration() for {0} has no caster.", Key);
+                Debug.LogWarningFormat("SetDuration() for {0} has no caster.", properties.Key);
 
-            if (SupportDuration)
+            if (properties.SupportDuration)
             {
                 int casterLevel = (caster) ? caster.Entity.Level : 1;
                 roundsRemaining = settings.DurationBase + settings.DurationPlus * (int)Mathf.Floor(casterLevel / settings.DurationPerLevel);
@@ -296,10 +251,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         protected int GetMagnitude(DaggerfallEntityBehaviour caster = null)
         {
             if (caster == null)
-                Debug.LogWarningFormat("GetMagnitude() for {0} has no caster.", Key);
+                Debug.LogWarningFormat("GetMagnitude() for {0} has no caster.", properties.Key);
 
             int magnitude = 0;
-            if (SupportMagnitude)
+            if (properties.SupportMagnitude)
             {
                 int casterLevel = (caster) ? caster.Entity.Level : 1;
                 int baseMagnitude = Random.Range(settings.MagnitudeBaseMin, settings.MagnitudeBaseMax + 1);
@@ -338,6 +293,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             defaultSettings.MagnitudePerLevel = 1;
 
             return defaultSettings;
+        }
+
+        string GetDisplayName()
+        {
+            // Get display name or manufacture a default from group names
+            if (!string.IsNullOrEmpty(properties.DisplayName))
+                return properties.DisplayName;
+            else
+                return properties.DisplayName = string.Format("{0} {1}", properties.GroupName, properties.SubGroupName);
         }
 
         #endregion
