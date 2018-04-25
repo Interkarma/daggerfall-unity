@@ -29,7 +29,14 @@ namespace DaggerfallWorkshop.Game
         Ranger = 32768,
         Barbarian = 65536,
         Warrior = 131702,
-        Knight = 262144
+        Knight = 262144,
+        AllMagicUsers = Custom + Mage + Spellsword + Battlemage + Sorcerer + Healer + Nightblade + Bard,
+        AllNonMagicUsers = Burglar + Rogue + Acrobat + Thief + Assassin + Monk + Archer + Ranger + Barbarian + Warrior + Knight,
+        AllMagi = Custom + Mage + Spellsword + Battlemage + Sorcerer + Healer + Nightblade,
+        AllRogues = Bard + Burglar + Rogue + Acrobat + Thief + Assassin,
+        AllWarriors = Monk + Archer + Ranger + Barbarian + Warrior + Knight,
+        AllClasses = Custom + Mage + Spellsword + Battlemage + Sorcerer + Healer + Nightblade + Bard + 
+            Burglar + Rogue + Acrobat + Thief + Assassin + Monk + Archer + Ranger + Barbarian + Warrior + Knight
     }
     public class BackgroundQuestion
     {
@@ -49,10 +56,12 @@ namespace DaggerfallWorkshop.Game
         public int QuestionID  {  get { return questionID; } }
         public CareerCheckList Careers { get { return careers; } }
         public string Question   {  get { return question; } }
+
         /// <summary>
         /// Char refers to the character indexing the answer, string is the text answer for that character to display
         /// </summary>
         public Dictionary<char, string> AnswerDictionary  { get { return answerTexts; }  }
+
         /// <summary>
         /// Dictionary of Actions to execute for each selectable answer
         /// </summary>
@@ -111,6 +120,30 @@ namespace DaggerfallWorkshop.Game
                 SelectedAnswerIndex = index;
             // call the Action indexed by selected answer
             answerResults[selectedAnswerIndex]();
+        }
+
+        /// <summary>
+        /// Has the selectedAnswerIndex been assigned?
+        /// </summary>
+        /// <returns>returns true if selectedAnswerIndex has been assigned a legal value</returns>
+        public bool hasBeenAnswered()
+        {
+            for (int i = 0; i < answerKeys.Length; i++)
+            {
+                if (selectedAnswerIndex == answerKeys[i])
+                    return true;
+            }
+            
+            return false;
+        }
+        /// <summary>
+        /// Does this question apply to thisClass?
+        /// </summary>
+        /// <param name="thisClass">Class to search for in question</param>
+        /// <returns>returns true if thisClass applies to the question</returns>
+        public bool AppliesToClass(CareerCheckList thisClass)
+        {
+            return ((careers & thisClass) == (thisClass));
         }
     }
 }

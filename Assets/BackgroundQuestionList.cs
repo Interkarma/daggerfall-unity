@@ -16,7 +16,7 @@ namespace DaggerfallWorkshop.Game
             
             // unit test
             string[] strings = { "Answer a", "answer b", "Answer c", "answer d", "Answer e", "answer f", "Answer g", "answer h" };
-            List.Add(new BackgroundQuestion(1, "This is a question", strings, CareerCheckList.Acrobat | CareerCheckList.Assassin));
+            List.Add(new BackgroundQuestion(1, "This is a question", strings, CareerCheckList.Acrobat | CareerCheckList.Assassin | CareerCheckList.Healer));
 
             
         }
