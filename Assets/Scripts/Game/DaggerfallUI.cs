@@ -41,6 +41,7 @@ namespace DaggerfallWorkshop.Game
         public static Color DaggerfallDefaultShadowColor = new Color32(93, 77, 12, 255);
         public static Color DaggerfallAlternateShadowColor1 = new Color32(44, 60, 60, 255);
         public static Color DaggerfallDefaultSelectedTextColor = new Color32(162, 36, 12, 255);
+        public static Color DaggerfallUnityDrainedTextColor = new Color32(190, 85, 24, 255);
         public static Color DaggerfallDefaultTextCursorColor = new Color32(154, 134, 0, 200);
         public static Color DaggerfallUnityDefaultToolTipBackgroundColor = new Color32(64, 64, 64, 210);
         public static Color DaggerfallUnityDefaultToolTipTextColor = new Color32(230, 230, 200, 255);

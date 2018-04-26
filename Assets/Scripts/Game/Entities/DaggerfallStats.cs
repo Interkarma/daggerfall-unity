@@ -137,7 +137,8 @@ namespace DaggerfallWorkshop.Game.Entity
             int mod = mods[(int)stat];
             int value = GetPermanentStatValue(stat) + mod;
 
-            // TODO: Any other clamping or processing
+            // Clamp live stat to 1-100
+            value = Mathf.Clamp(value, 1, 100);
 
             return (short)value;
         }
@@ -196,6 +197,14 @@ namespace DaggerfallWorkshop.Game.Entity
                 default:
                     return 0;
             }
+        }
+
+        /// <summary>
+        /// Assign mods from effect manager.
+        /// </summary>
+        public void AssignMods(int[] statMods)
+        {
+            Array.Copy(statMods, mods, Count);
         }
 
         #endregion

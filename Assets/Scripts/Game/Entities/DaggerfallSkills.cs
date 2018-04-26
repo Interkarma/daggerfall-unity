@@ -387,6 +387,14 @@ namespace DaggerfallWorkshop.Game.Entity
             SetPermanentSkillValue((DFCareer.Skills)index, value);
         }
 
+        /// <summary>
+        /// Assign mods from effect manager.
+        /// </summary>
+        public void AssignMods(int[] skillMods)
+        {
+            Array.Copy(skillMods, mods, Count);
+        }
+
         #endregion
 
         #region Static Methods

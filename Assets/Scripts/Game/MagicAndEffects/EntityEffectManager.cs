@@ -49,11 +49,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         DaggerfallEntityBehaviour entityBehaviour = null;
         bool isPlayerEntity = false;
-        bool allowSelfDamage = true;
 
         List<InstancedBundle> instancedBundles = new List<InstancedBundle>();
         List<InstancedBundle> bundlesToRemove = new List<InstancedBundle>();
         bool clearBundles = false;
+
+        int[] combinedStatMods = new int[DaggerfallStats.Count];
+        int[] combinedSkillMods = new int[DaggerfallSkills.Count];
+        float refreshModsTimer = 0;
+        const float refreshModsDelay = 0.2f;
 
         #endregion
 
@@ -62,7 +66,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// <summary>
         /// Stores an instanced effect bundle for executing effects.
         /// </summary>
-        struct InstancedBundle
+        public struct InstancedBundle
         {
             public EffectBundleSettings settings;
             public DaggerfallEntityBehaviour caster;
@@ -98,10 +102,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             get { return isPlayerEntity; }
         }
 
-        public bool AllowSelfDamage
+        public InstancedBundle[] EffectBundles
         {
-            get { return allowSelfDamage; }
-            set { allowSelfDamage = value; }
+            get { return instancedBundles.ToArray(); }
         }
 
         #endregion
@@ -147,6 +150,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Do nothing if no peer entity
             if (!entityBehaviour)
                 return;
+
+            // Refresh mods more frequently than magic rounds, but not too frequently
+            refreshModsTimer += Time.deltaTime;
+            if (refreshModsTimer > refreshModsDelay)
+            {
+                UpdateEntityMods();
+                refreshModsTimer = 0;
+            }
 
             // Fire instant cast spells
             if (readySpell != null && instantCast)
@@ -243,6 +254,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             instancedBundle.settings = sourceBundle.Settings;
             instancedBundle.caster = sourceBundle.CasterEntityBehaviour;
             instancedBundle.effects = new List<IEntityEffect>();
+            instancedBundles.Add(instancedBundle);
+            //Debug.LogFormat("Adding bundle {0}", instancedBundle.GetHashCode());
 
             // Instantiate all effects in this bundle
             for (int i = 0; i < instancedBundle.settings.Effects.Length; i++)
@@ -255,12 +268,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 }
 
                 // Start effect
-                effect.Start(this, sourceBundle.CasterEntityBehaviour);
                 instancedBundle.effects.Add(effect);
+                effect.Start(this, sourceBundle.CasterEntityBehaviour);
             }
-
-            // Add instanced bundle
-            instancedBundles.Add(instancedBundle);
         }
 
         /// <summary>
@@ -310,6 +320,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 foreach (InstancedBundle bundle in bundlesToRemove)
                 {
                     RemoveBundle(bundle);
+                    //Debug.LogFormat("Removing bundle {0}", bundle.GetHashCode());
                 }
                 bundlesToRemove.Clear();
             }
@@ -317,6 +328,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         void RemoveBundle(InstancedBundle bundle)
         {
+            foreach (IEntityEffect effect in bundle.effects)
+                effect.End();
+
             instancedBundles.Remove(bundle);
             //Debug.LogFormat("Expired bundle {0} with {1} effects", bundle.settings.Name, bundle.settings.Effects.Length);
         }
@@ -362,6 +376,43 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     return Instantiate(MagicMissilePrefab);
                 default:
                     return null;
+            }
+        }
+
+        void UpdateEntityMods()
+        {
+            // Clear all mods
+            Array.Clear(combinedStatMods, 0, DaggerfallStats.Count);
+            Array.Clear(combinedSkillMods, 0, DaggerfallSkills.Count);
+
+            // Add together every mod for every live effect
+            foreach (InstancedBundle bundle in instancedBundles)
+            {
+                foreach (IEntityEffect effect in bundle.effects)
+                {
+                    MergeStatMods(effect, ref combinedStatMods);
+                    MergeSkillMods(effect, ref combinedSkillMods);
+                }
+            }
+
+            // Assign to host entity
+            entityBehaviour.Entity.Stats.AssignMods(combinedStatMods);
+            entityBehaviour.Entity.Skills.AssignMods(combinedSkillMods);
+        }
+
+        void MergeStatMods(IEntityEffect effect, ref int[] combinedStatMods)
+        {
+            for (int i = 0; i < effect.StatMods.Length; i++)
+            {
+                combinedStatMods[i] += effect.StatMods[i];
+            }
+        }
+
+        void MergeSkillMods(IEntityEffect effect, ref int[] combinedSkillMods)
+        {
+            for (int i = 0; i < effect.SkillMods.Length; i++)
+            {
+                combinedSkillMods[i] += effect.SkillMods[i];
             }
         }
 

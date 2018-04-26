@@ -271,7 +271,7 @@ namespace DaggerfallWorkshop.Game
             if (entityBehaviour)
             {
                 targetEntities.Add(entityBehaviour);
-                Debug.LogFormat("Missile hit target {0} by range", entityBehaviour.name);
+                //Debug.LogFormat("Missile hit target {0} by range", entityBehaviour.name);
             }
 
             // If missile is area at range
@@ -300,7 +300,7 @@ namespace DaggerfallWorkshop.Game
                 if (entityBehaviour && entityBehaviour != caster)
                 {
                     targetEntities.Add(entityBehaviour);
-                    Debug.LogFormat("Missile hit target {0} by touch", entityBehaviour.name);
+                    //Debug.LogFormat("Missile hit target {0} by touch", entityBehaviour.name);
                 }
             }
 
@@ -336,7 +336,7 @@ namespace DaggerfallWorkshop.Game
                 if (aoeEntity && !targetEntities.Contains(aoeEntity))
                 {
                     entities.Add(aoeEntity);
-                    Debug.LogFormat("Missile hit target {0} by AOE", aoeEntity.name);
+                    //Debug.LogFormat("Missile hit target {0} by AOE", aoeEntity.name);
                 }
             }
 

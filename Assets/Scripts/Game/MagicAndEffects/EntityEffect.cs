@@ -9,6 +9,7 @@
 // Notes:
 //
 
+using System;
 using UnityEngine;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
@@ -99,13 +100,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         protected EffectProperties properties = new EffectProperties();
         protected EffectSettings settings = new EffectSettings();
-        protected int[] statMods = new int[DaggerfallStats.Count];
-        protected int[] skillMods = new int[DaggerfallSkills.Count];
-
         protected DaggerfallEntityBehaviour caster = null;
         protected EntityEffectManager manager = null;
 
         int roundsRemaining;
+        int[] statMods = new int[DaggerfallStats.Count];
+        int[] skillMods = new int[DaggerfallSkills.Count];
 
         #endregion
 
@@ -210,23 +210,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// <summary>
         /// Called to remove a magic round.
         /// Child classes should call base.RemoveRound() when overriding to properly count rounds.
-        /// Otherwise child class will need to manually count rounds and call End() when appropriate.
+        /// Otherwise child class will need to manually count rounds.
         /// </summary>
         /// <returns></returns>
         protected virtual int RemoveRound()
         {
-            if (roundsRemaining == 0)
-            {
+            if (roundsRemaining <= 0)
                 return 0;
-            }
             else
-            {
-                roundsRemaining--;
-                if (roundsRemaining == 0)
-                    End();
-
-                return roundsRemaining;
-            }
+                return --roundsRemaining;
         }
 
         #endregion
@@ -250,13 +242,23 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             if (properties.SupportMagnitude)
             {
                 int casterLevel = (caster) ? caster.Entity.Level : 1;
-                int baseMagnitude = Random.Range(settings.MagnitudeBaseMin, settings.MagnitudeBaseMax + 1);
-                int plusMagnitude = Random.Range(settings.MagnitudePlusMin, settings.MagnitudePlusMax + 1);
+                int baseMagnitude = UnityEngine.Random.Range(settings.MagnitudeBaseMin, settings.MagnitudeBaseMax + 1);
+                int plusMagnitude = UnityEngine.Random.Range(settings.MagnitudePlusMin, settings.MagnitudePlusMax + 1);
                 int multiplier = (int)Mathf.Floor(casterLevel / settings.MagnitudePerLevel);
                 magnitude = baseMagnitude + plusMagnitude * multiplier;
             }
 
             return magnitude;
+        }
+
+        protected void SetStatMod(DFCareer.Stats stat, int value)
+        {
+            statMods[(int)stat] = value;
+        }
+
+        protected void SetSkillMod(DFCareer.Skills skill, int value)
+        {
+            skillMods[(int)skill] = value;
         }
 
         #endregion

@@ -375,6 +375,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     statLabels[i].Text = PlayerEntity.Stats.GetLiveStatValue(i).ToString();
                 else
                     statLabels[i].Text = ""; // If leveling, statsRollout will fill in the stat labels.
+
+                // Handle stat below permanent color
+                if (PlayerEntity.Stats.GetLiveStatValue(i) < PlayerEntity.Stats.GetPermanentStatValue(i))
+                    statLabels[i].TextColor = DaggerfallUI.DaggerfallUnityDrainedTextColor;
             }
         }
 

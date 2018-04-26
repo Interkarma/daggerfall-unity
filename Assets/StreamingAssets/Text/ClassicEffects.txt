@@ -74,3 +74,5 @@ normal,                     Normal
 true,                       True
 
 noName,                     <no-name>
+
+youFeelDrained,             You feel drained.
