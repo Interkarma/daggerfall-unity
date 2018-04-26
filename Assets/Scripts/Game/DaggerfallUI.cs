@@ -205,6 +205,11 @@ namespace DaggerfallWorkshop.Game
             get { return dfTravelMapWindow; }
         }
 
+        public DaggerfallCourtWindow DfCourtWindow
+        {
+            get { return dfCourtWindow; }
+        }
+
         public string FontsFolder
         {
             get { return Path.Combine(Application.streamingAssetsPath, fontsFolderName); }

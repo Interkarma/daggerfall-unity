@@ -1297,14 +1297,14 @@ namespace DaggerfallWorkshop.Game.Entity
             if (legalRep < -20 && !voluntarySurrender)
                 SetHealth(0);
             else if (legalRep < -20 || legalRep > 0)
-                CourtWindow(CrimeCommitted);
+                CourtWindow();
             else if ((DFRandom.rand() & 1) != 0 && !voluntarySurrender)
                 SetHealth(0);
             else
-                CourtWindow(CrimeCommitted);
+                CourtWindow();
         }
 
-        public void CourtWindow(Crimes crimeCommitted)
+        public void CourtWindow()
         {
             arrested = true;
             DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenCourtWindow);
