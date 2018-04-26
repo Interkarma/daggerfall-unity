@@ -86,6 +86,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
         protected Crimes crimeCommitted = 0; // TODO: Save/load
         protected bool haveShownSurrenderToGuardsDialogue = false; // TODO: Save/load
+        protected bool arrested = false;
 
         private List<RoomRental_v1> rentedRooms = new List<RoomRental_v1>();
 
@@ -150,6 +151,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public List<DaggerfallDisease> Diseases { get { return diseases; } set { diseases = value; } }
         public Crimes CrimeCommitted { get { return crimeCommitted; } set { crimeCommitted = value; } }
         public bool HaveShownSurrenderToGuardsDialogue { get { return haveShownSurrenderToGuardsDialogue; } set { haveShownSurrenderToGuardsDialogue = value; } }
+        public bool Arrested { get { return arrested; } set { arrested = value; } }
 
         #endregion
 
@@ -1295,15 +1297,16 @@ namespace DaggerfallWorkshop.Game.Entity
             if (legalRep < -20 && !voluntarySurrender)
                 SetHealth(0);
             else if (legalRep < -20 || legalRep > 0)
-                CourtWindow(CrimeCommitted);
+                CourtWindow();
             else if ((DFRandom.rand() & 1) != 0 && !voluntarySurrender)
                 SetHealth(0);
             else
-                CourtWindow(CrimeCommitted);
+                CourtWindow();
         }
 
-        public void CourtWindow(Crimes crimeCommitted)
+        public void CourtWindow()
         {
+            arrested = true;
             DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenCourtWindow);
         }
 
