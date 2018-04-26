@@ -255,11 +255,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 }
 
                 // Start effect
-                effect.SetDuration(sourceBundle.CasterEntityBehaviour);
-                effect.Start();
-                effect.MagicRound(this, sourceBundle.CasterEntityBehaviour);
-                effect.RemoveRound();
-
+                effect.Start(this, sourceBundle.CasterEntityBehaviour);
                 instancedBundle.effects.Add(effect);
             }
 
@@ -297,8 +293,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     // Update effects with remaining rounds
                     if (effect.RoundsRemaining > 0)
                     {
-                        effect.MagicRound(this, bundle.caster);
-                        if (effect.RemoveRound() > 0)
+                        effect.MagicRound();
+                        if (effect.RoundsRemaining > 0)
                             hasRemainingEffectRounds = true;
                     }
                 }

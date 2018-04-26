@@ -67,35 +67,21 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         int[] SkillMods { get; }
 
         /// <summary>
-        /// Called to assign total lifetime of effect in magic rounds.
-        /// If no caster is specified in bundle then duration will default to caster level 1.
-        /// If duration not supported then effect will persist for 1 magic round only.
-        /// </summary>
-        void SetDuration(DaggerfallEntityBehaviour caster = null);
-
-        /// <summary>
-        /// Called by an EntityEffectManager when parent bundle is attached to an entity.
+        /// Called by an EntityEffectManager when parent bundle is attached to host entity.
         /// Use this for setup or immediate work performed only once.
         /// </summary>
-        void Start();
+        void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null);
+
+        /// <summary>
+        /// Use this for any work performed every magic round.
+        /// </summary>
+        void MagicRound();
 
         /// <summary>
         /// Called when bundle lifetime is at an end.
         /// Use this for any wrap-up work.
         /// </summary>
         void End();
-
-        /// <summary>
-        /// Use this for any work performed every magic round.
-        /// If no caster specified then effect will default to caster level 1.
-        /// </summary>
-        void MagicRound(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null);
-
-        /// <summary>
-        /// Removes a magic round from total lifetime.
-        /// </summary>
-        /// <returns>Total number of magic rounds remaining. 0 means effect is expired.</returns>
-        int RemoveRound();
     }
 
     /// <summary>
@@ -115,6 +101,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         protected EffectSettings settings = new EffectSettings();
         protected int[] statMods = new int[DaggerfallStats.Count];
         protected int[] skillMods = new int[DaggerfallSkills.Count];
+
+        protected DaggerfallEntityBehaviour caster = null;
+        protected EntityEffectManager manager = null;
 
         int roundsRemaining;
 
@@ -158,7 +147,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             set { settings = value; }
         }
 
-        public int RoundsRemaining
+        public virtual int RoundsRemaining
         {
             get { return roundsRemaining; }
         }
@@ -189,37 +178,42 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         public abstract void SetProperties();
 
-        public virtual void SetDuration(DaggerfallEntityBehaviour caster = null)
+        /// <summary>
+        /// Starts effect running when first attached to an entity.
+        /// Executes a MagicRound() tick immediately.
+        /// Child classes must call base.Start() when overriding.
+        /// </summary>
+        public virtual void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
         {
-            if (caster == null)
-                Debug.LogWarningFormat("SetDuration() for {0} has no caster.", properties.Key);
-
-            if (properties.SupportDuration)
-            {
-                int casterLevel = (caster) ? caster.Entity.Level : 1;
-                roundsRemaining = settings.DurationBase + settings.DurationPlus * (int)Mathf.Floor(casterLevel / settings.DurationPerLevel);
-            }
-            else
-            {
-                roundsRemaining = 1;
-            }
-
-            //Debug.LogFormat("Effect '{0}' will run for {1} magic rounds", Key, roundsRemaining);
+            this.manager = manager;
+            this.caster = caster;
+            SetDuration();
+            MagicRound();
         }
 
-        public virtual void Start()
-        {
-        }
-
+        /// <summary>
+        /// Called to perform any cleanup at end of lifetime, or when manually removed from host.
+        /// </summary>
         public virtual void End()
         {
         }
 
-        public virtual void MagicRound(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
+        /// <summary>
+        /// Called to execute effect payload on host and count down a magic round.
+        /// Child classes must call base.MagicRound() when overriding to properly count rounds.
+        /// </summary>
+        public virtual void MagicRound()
         {
+            RemoveRound();
         }
 
-        public virtual int RemoveRound()
+        /// <summary>
+        /// Called to remove a magic round.
+        /// Child classes should call base.RemoveRound() when overriding to properly count rounds.
+        /// Otherwise child class will need to manually count rounds and call End() when appropriate.
+        /// </summary>
+        /// <returns></returns>
+        protected virtual int RemoveRound()
         {
             if (roundsRemaining == 0)
             {
@@ -310,6 +304,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 else
                     return properties.DisplayName = TextManager.Instance.GetText("ClassicEffect", "noName");
             }
+        }
+
+        void SetDuration()
+        {
+            int casterLevel = (caster) ? caster.Entity.Level : 1;
+            if (properties.SupportDuration)
+                roundsRemaining = settings.DurationBase + settings.DurationPlus * (int)Mathf.Floor(casterLevel / settings.DurationPerLevel);
+            else
+                roundsRemaining = 0;
+
+            //Debug.LogFormat("Effect '{0}' will run for {1} magic rounds", Key, roundsRemaining);
         }
 
         #endregion

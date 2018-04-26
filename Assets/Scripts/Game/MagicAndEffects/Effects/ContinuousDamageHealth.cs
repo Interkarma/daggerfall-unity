@@ -38,8 +38,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.MagnitudeCosts = MakeEffectCosts(40, 28);
         }
 
-        public override void MagicRound(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
+        public override void MagicRound()
         {
+            base.MagicRound();
+
             // Get peered entity gameobject
             DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
             if (!entityBehaviour)
@@ -49,7 +51,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             int magnitude = GetMagnitude(caster);
             entityBehaviour.DamageHealthFromSource(caster, magnitude, false, Vector3.zero);
 
-            //Debug.LogFormat("Effect {0} damaged {1} by {2} health points and has {3} magic rounds remaining.", Key, entityBehaviour.name, magnitude, RoundsRemaining - 1);
+            //Debug.LogFormat("Effect {0} damaged {1} by {2} health points and has {3} magic rounds remaining.", Key, entityBehaviour.name, magnitude, RoundsRemaining);
         }
     }
 }

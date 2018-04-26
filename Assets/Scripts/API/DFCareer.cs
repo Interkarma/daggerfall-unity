@@ -416,6 +416,7 @@ namespace DaggerfallConnect
         /// </summary>
         public enum Stats
         {
+            None = -1,
             Strength = 0,
             Intelligence = 1,
             Willpower = 2,

@@ -37,12 +37,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.DurationCosts = MakeEffectCosts(20, 80);
         }
 
-        public override void MagicRound(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
+        public override void MagicRound()
         {
-            // Get peered entity gameobject
-            DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
-            if (!entityBehaviour)
-                return;
+            base.MagicRound();
+
+            //// Get peered entity gameobject
+            //DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
+            //if (!entityBehaviour)
+            //    return;
 
             // TODO: Implement effect
         }
