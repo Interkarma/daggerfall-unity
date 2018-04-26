@@ -394,8 +394,11 @@ namespace DaggerfallWorkshop.Game
 
         private void TurnToTarget(Vector3 targetDirection)
         {
+            const float turnSpeed = 30f;
+            //const float turnSpeed = 11.25f;
+
             if (classicUpdate)
-                transform.forward = Vector3.RotateTowards(transform.forward, targetDirection, 11.25f * Mathf.Deg2Rad, 0.0f);
+                transform.forward = Vector3.RotateTowards(transform.forward, targetDirection, turnSpeed * Mathf.Deg2Rad, 0.0f);
         }
 
         private void OpenDoors()
