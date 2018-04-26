@@ -65,26 +65,6 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
     /// </summary>
     public static class TextureReplacement
     {
-        #region Uniforms
-
-        static class Uniforms
-        {
-            internal const string MetallicGlossMapKeyword   = "_METALLICGLOSSMAP";
-
-            internal static readonly int MainTex            = Shader.PropertyToID("_MainTex");
-            internal static readonly int EmissionMap        = Shader.PropertyToID("_EmissionMap");
-            internal static readonly int BumpMap            = Shader.PropertyToID("_BumpMap");
-            internal static readonly int Metallic           = Shader.PropertyToID("_Metallic");
-            internal static readonly int Glossiness         = Shader.PropertyToID("_Glossiness");
-            internal static readonly int MetallicGlossMap   = Shader.PropertyToID("_MetallicGlossMap");
-
-            internal static readonly int[] Textures = new int[]
-            {
-                MainTex, EmissionMap, BumpMap, MetallicGlossMap
-            };
-        }
-
-        #endregion
 
         #region Fields
 
@@ -333,7 +313,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             if (TryImportTextureFromLooseFiles(archive, record, frame, TextureMap.MetallicGloss, out metallicGloss))
             {
                 metallicGloss.filterMode = MainFilterMode;
-                material.EnableKeyword(Uniforms.MetallicGlossMapKeyword);
+                material.EnableKeyword(KeyWords.MetallicGlossMap);
                 material.SetTexture(Uniforms.MetallicGlossMap, metallicGloss);
             }
 
