@@ -957,6 +957,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             ClearEffectSlot(editOrDeleteSlot);
             editOrDeleteSlot = -1;
+            UpdateSpellCosts();
         }
 
         private void EditButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)

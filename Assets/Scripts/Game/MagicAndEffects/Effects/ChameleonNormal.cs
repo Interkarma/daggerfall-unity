@@ -32,7 +32,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.SupportDuration = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_All;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
-            //properties.AllowedCraftingStations = EntityEffectBroker.MagicCraftingFlags_None;
+            properties.AllowedCraftingStations = EntityEffectBroker.MagicCraftingFlags_None;
             properties.MagicSkill = DFCareer.MagicSkills.Illusion;
             properties.DurationCosts = MakeEffectCosts(20, 80);
         }

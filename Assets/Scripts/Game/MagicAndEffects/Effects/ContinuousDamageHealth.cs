@@ -33,7 +33,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_Other;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_All;
             properties.MagicSkill = DFCareer.MagicSkills.Destruction;
-            // TODO: Confirm costs
+            // TODO: Confirm costs - these are just fudge costs for now
+            properties.DurationCosts = MakeEffectCosts(28, 8);
+            properties.MagnitudeCosts = MakeEffectCosts(40, 28);
         }
 
         public override void MagicRound(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)

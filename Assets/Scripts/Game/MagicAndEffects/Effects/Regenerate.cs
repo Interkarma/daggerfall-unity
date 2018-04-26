@@ -32,6 +32,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.SupportMagnitude = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_All;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
+            properties.AllowedCraftingStations = EntityEffectBroker.MagicCraftingFlags_None;
             properties.MagicSkill = DFCareer.MagicSkills.Restoration;
             properties.DurationCosts = MakeEffectCosts(100, 20, 5, 16);
             properties.MagnitudeCosts = MakeEffectCosts(8, 8, 0.4f, 120);

@@ -1149,6 +1149,8 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         public static void CalculateEffectCosts(EffectEntry effectEntry, out int goldCostOut, out int spellPointCostOut)
         {
+            int activeComponents = 0;
+
             // Get effect template
             IEntityEffect effectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(effectEntry.Key);
             if (effectTemplate == null)
@@ -1162,6 +1164,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             int durationGoldCost = 0, durationSpellPointCost = 0;
             if (effectTemplate.Properties.SupportDuration)
             {
+                activeComponents++;
                 GetEffectComponentCosts(
                     out durationMinGoldCost,
                     out durationMinSpellPointCost,
@@ -1181,6 +1184,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             int chanceGoldCost = 0, chanceSpellPointCost = 0;
             if (effectTemplate.Properties.SupportChance)
             {
+                activeComponents++;
                 GetEffectComponentCosts(
                     out chanceMinGoldCost,
                     out chanceMinSpellPointCost,
@@ -1200,6 +1204,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             int magnitudeGoldCost = 0, magnitudeSpellPointCost = 0;
             if (effectTemplate.Properties.SupportMagnitude)
             {
+                activeComponents++;
                 int magnitudeBase = effectEntry.Settings.MagnitudeBaseMin + (effectEntry.Settings.MagnitudeBaseMax - effectEntry.Settings.MagnitudeBaseMin) / 2;
                 int magnitudePlus = effectEntry.Settings.MagnitudePlusMin + (effectEntry.Settings.MagnitudePlusMax - effectEntry.Settings.MagnitudePlusMin) / 2;
                 GetEffectComponentCosts(
@@ -1220,10 +1225,14 @@ namespace DaggerfallWorkshop.Game.Formulas
             int finalGoldCost = durationGoldCost + chanceGoldCost + magnitudeGoldCost;
             int finalSpellPointCost = durationSpellPointCost + chanceSpellPointCost + magnitudeSpellPointCost;
 
-            // Subtract min costs - this is involved somehow in final total but not yet sure of exact formula
+            // Subtract min costs when using multiple components
+            // this is involved somehow in final total but not yet sure of exact formula
             // Will continue to refine this as more effects come online and they can be checked for accuracy against classic
-            finalGoldCost = finalGoldCost - durationMinGoldCost - chanceMinGoldCost;
-            finalSpellPointCost = finalSpellPointCost - durationMinSpellPointCost - chanceMinSpellPointCost;
+            if (activeComponents > 1)
+            {
+                finalGoldCost = finalGoldCost - durationMinGoldCost - chanceMinGoldCost;
+                finalSpellPointCost = finalSpellPointCost - durationMinSpellPointCost - chanceMinSpellPointCost;
+            }
 
             goldCostOut = finalGoldCost;
             spellPointCostOut = finalSpellPointCost;
