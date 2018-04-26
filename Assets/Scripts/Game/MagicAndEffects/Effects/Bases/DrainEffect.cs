@@ -27,7 +27,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         const string textDatabase = "ClassicEffects";
 
         protected int magnitude = 0;
-        protected DFCareer.Stats stat = DFCareer.Stats.None;
+        protected DFCareer.Stats drainStat = DFCareer.Stats.None;
 
         int roundsRemaining = 1;
         bool isIncumbent = false;
@@ -66,13 +66,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             {
                 isIncumbent = true;
                 IncreaseMagnitude(amount);
-                Debug.LogFormat("Creating incumbent Drain {0} effect with magnitude {1}", stat.ToString(), magnitude);
+                Debug.LogFormat("Creating incumbent Drain {0} effect with magnitude {1}", drainStat.ToString(), magnitude);
             }
             else
             {
                 incumbent.IncreaseMagnitude(amount);
                 roundsRemaining = 0;
-                Debug.LogFormat("Increasing incumbent Drain {0} effect by amount {1}, total magnitude is now {2}", stat.ToString(), amount, incumbent.magnitude);
+                Debug.LogFormat("Increasing incumbent Drain {0} effect by amount {1}, total magnitude is now {2}", drainStat.ToString(), amount, incumbent.magnitude);
             }
 
             // Output "you feel drained."
@@ -89,7 +89,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                     {
                         // Must be same stat type as incoming and flagged as incumbent
                         DrainEffect drainEffect = (DrainEffect)effect;
-                        if (drainEffect.stat == stat && drainEffect.isIncumbent)
+                        if (drainEffect.drainStat == drainStat && drainEffect.isIncumbent)
                             return drainEffect;
                     }
                 }
@@ -104,13 +104,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             // Do not allow magnitude to reduce stat below 1
             // Stats class will not allow values below 1 and this prevents drain from going into invisible "healing debt"
-            int current = host.Entity.Stats.GetPermanentStatValue(stat);
+            int current = host.Entity.Stats.GetPermanentStatValue(drainStat);
             if (current - (magnitude + amount) < 1)
                 magnitude = current - 1;
             else
                 magnitude += amount;
 
-            SetStatMod(stat, -magnitude);
+            SetStatMod(drainStat, -magnitude);
         }
 
         #endregion

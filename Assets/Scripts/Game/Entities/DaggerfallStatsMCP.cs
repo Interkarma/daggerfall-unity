@@ -64,56 +64,56 @@ namespace DaggerfallWorkshop.Game.Entity
             public override string Str()
             {
                 lastStat = DFCareer.Stats.Strength;
-                lastStatValue = parent.Strength;
+                lastStatValue = parent.LiveStrength;
                 return lastStatValue.ToString();
             }
 
             public override string Int()
             {
                 lastStat = DFCareer.Stats.Intelligence;
-                lastStatValue = parent.Intelligence;
+                lastStatValue = parent.LiveIntelligence;
                 return lastStatValue.ToString();
             }
 
             public override string Wil()
             {
                 lastStat = DFCareer.Stats.Willpower;
-                lastStatValue = parent.Willpower;
+                lastStatValue = parent.LiveWillpower;
                 return lastStatValue.ToString();
             }
 
             public override string Agi()
             {
                 lastStat = DFCareer.Stats.Agility;
-                lastStatValue = parent.Agility;
+                lastStatValue = parent.LiveAgility;
                 return lastStatValue.ToString();
             }
 
             public override string End()
             {
                 lastStat = DFCareer.Stats.Endurance;
-                lastStatValue = parent.Endurance;
+                lastStatValue = parent.LiveEndurance;
                 return lastStatValue.ToString();
             }
 
             public override string Per()
             {
                 lastStat = DFCareer.Stats.Personality;
-                lastStatValue = parent.Personality;
+                lastStatValue = parent.LivePersonality;
                 return lastStatValue.ToString();
             }
 
             public override string Spd()
             {
                 lastStat = DFCareer.Stats.Speed;
-                lastStatValue = parent.Speed;
+                lastStatValue = parent.LiveSpeed;
                 return lastStatValue.ToString();
             }
 
             public override string Luck()
             {
                 lastStat = DFCareer.Stats.Luck;
-                lastStatValue = parent.Luck;
+                lastStatValue = parent.LiveLuck;
                 return lastStatValue.ToString();
             }
                 

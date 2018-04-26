@@ -33,7 +33,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.AllowedElements = EntityEffectBroker.ElementFlags_All;
             properties.MagicSkill = DFCareer.MagicSkills.Destruction;
             properties.MagnitudeCosts = MakeEffectCosts(8, 100, 0.4f, 116);
-            stat = DFCareer.Stats.Strength;
+            drainStat = DFCareer.Stats.Strength;
         }
     }
 }
