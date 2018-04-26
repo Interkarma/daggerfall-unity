@@ -39,6 +39,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextLabel fatigueLabel = new TextLabel();
         TextLabel healthLabel = new TextLabel();
         TextLabel encumbranceLabel = new TextLabel();
+        Panel[] statPanels = new Panel[DaggerfallStats.Count];
         TextLabel[] statLabels = new TextLabel[DaggerfallStats.Count];
         PaperDoll characterPortrait = new PaperDoll();
 
@@ -88,11 +89,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             encumbranceLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(90, 74), NativePanel);
 
             // Setup stat labels
-            Vector2 pos = new Vector2(150, 17);
+            Vector2 panelPos = new Vector2(141, 17);
             for (int i = 0; i < DaggerfallStats.Count; i++)
             {
-                statLabels[i] = DaggerfallUI.AddDefaultShadowedTextLabel(pos, NativePanel);
-                pos.y += 24f;
+                statPanels[i] = DaggerfallUI.AddPanel(new Rect(panelPos.x, panelPos.y, 28, 6), NativePanel);
+                statLabels[i] = DaggerfallUI.AddDefaultShadowedTextLabel(Vector2.zero, statPanels[i]);
+                statLabels[i].HorizontalAlignment = HorizontalAlignment.Center;
+                panelPos.y += 24f;
             }
 
             // Health button
@@ -142,7 +145,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
 
             // Attribute popup text
-            pos = new Vector2(141, 6);
+            Vector2 pos = new Vector2(141, 6);
             for (int i = 0; i < DaggerfallStats.Count; i++)
             {
                 Rect rect = new Rect(pos.x, pos.y, 28, 20);

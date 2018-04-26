@@ -45,6 +45,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         DaggerfallStats workingStats = new DaggerfallStats();
         int bonusPool = 0;
         Color modifiedStatTextColor = Color.green;
+        Panel[] statPanels = new Panel[DaggerfallStats.Count];
         TextLabel[] statLabels = new TextLabel[DaggerfallStats.Count];
         bool characterSheetPositioning = false;
 
@@ -72,27 +73,35 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (onCharacterSheet)
                 characterSheetPositioning = true;
 
-            // Add stat labels
+            // Add stat panels and labels
             font = DaggerfallUI.DefaultFont;
 
-            Vector2 pos;
-
+            Vector2 panelPos, panelSize;
             if (!onCharacterSheet)
-                pos = new Vector2(19, 33);
+            {
+                panelPos = new Vector2(8, 33);
+                panelSize = new Vector2(34, 6);
+            }
             else
-                pos = new Vector2(150, 17);
+            {
+                panelPos = new Vector2(141, 17);
+                panelSize = new Vector2(28, 6);
+            }
 
             for (int i = 0; i < DaggerfallStats.Count; i++)
             {
-                statLabels[i] = DaggerfallUI.AddTextLabel(font, pos, string.Empty, this);
+                statPanels[i] = DaggerfallUI.AddPanel(new Rect(panelPos.x, panelPos.y, panelSize.x, panelSize.y), this);
+                statLabels[i] = DaggerfallUI.AddTextLabel(font, Vector2.zero, string.Empty, statPanels[i]);
+                statLabels[i].HorizontalAlignment = HorizontalAlignment.Center;
                 statLabels[i].ShadowColor = DaggerfallUI.DaggerfallAlternateShadowColor1;
                 if (!onCharacterSheet)
-                    pos.y += 22f;
+                    panelPos.y += 22f;
                 else
-                    pos.y += 24f;
+                    panelPos.y += 24f;
             }
 
             // Add stat select buttons
+            Vector2 pos;
             if (!onCharacterSheet)
                 pos = new Vector2(7, 20);
             else
