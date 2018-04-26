@@ -129,7 +129,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Spellbook button
             Button spellBookButton = DaggerfallUI.AddButton(new Rect(69, 151, 65, 12), NativePanel);
-            spellBookButton.BackgroundColor = DaggerfallUI.DaggerfallUnityNotImplementedColor;
+            spellBookButton.OnMouseClick += SpellBookButton_OnMouseClick;
+            //spellBookButton.BackgroundColor = DaggerfallUI.DaggerfallUnityNotImplementedColor;
 
             // Logbook button
             Button logBookButton = DaggerfallUI.AddButton(new Rect(3, 165, 65, 12), NativePanel);
@@ -451,6 +452,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void InventoryButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             uiManager.PostMessage(DaggerfallUIMessages.dfuiOpenInventoryWindow);
+        }
+
+        private void SpellBookButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            uiManager.PostMessage(DaggerfallUIMessages.dfuiOpenSpellBookWindow);
         }
 
         private void LogBookButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
