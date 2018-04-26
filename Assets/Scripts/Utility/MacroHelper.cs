@@ -64,14 +64,14 @@ namespace DaggerfallWorkshop.Utility
             { "%cn", CityName },  // City name
             { "%cn2", CityName2 }, // City name #2
             { "%cpn", ShopName }, // Current shop name
-            { "%cri", null }, // Accused crime
+            { "%cri", Crime }, // Accused crime
             { "%crn", CurrentRegion }, // Current Region
             { "%ct", CityType }, // City type? e.g city, town, village?
             { "%dae", null }, // A daedra
             { "%dam", DmgMod }, // Damage modifyer
             { "%dat", Date }, // Date
             { "%di", LocationDirection },  // Direction
-            { "%dip", null }, // Days in prison
+            { "%dip", DaysInPrison }, // Days in prison
             { "%dng", Dungeon }, // Dungeon
             { "%dts", null }, // Daedra
             { "%dwr", RoomHoursLeft }, // Hours with room remaining.
@@ -99,7 +99,7 @@ namespace DaggerfallWorkshop.Utility
             { "%gii", GoldCarried }, // Amount of gold in hand
             { "%gdd", GodDesc }, // God description i.e. God of Logic
             { "%god", God }, // Some god (listed in TEXT.RSC)
-            { "%gtp", null }, // Amount of fine
+            { "%gtp", GoldToPay }, // Amount of fine
             { "%hea", HpMod }, // HP Modifier
             { "%hmd", HealRateMod }, // Healing rate modifer
             { "%hnr", null }, // Honorific in guild/faction
@@ -147,7 +147,7 @@ namespace DaggerfallWorkshop.Utility
             { "%pcn", PlayerName }, // Character's full name
             { "%pct", GuildTitle }, // Player guild title/rank
             { "%pdg", null }, // Days in jail
-            { "%pen", null }, // Prison sentence
+            { "%pen", Penalty }, // Crime penalty
             { "%per", Per }, // Amount of Personality
             { "%plq", null }, // Place of something in log.
             { "%pnq", null }, // Person of something in log
@@ -469,6 +469,69 @@ namespace DaggerfallWorkshop.Utility
                 default:
                     return HardStrings.Lord;
             }
+        }
+
+        private static string Crime(IMacroContextProvider mcp)
+        {   // %cri
+            switch ((int)GameManager.Instance.PlayerEntity.CrimeCommitted)
+            {
+                case 1:
+                    return HardStrings.Attempted_Breaking_And_Entering;
+                case 2:
+                    return HardStrings.Trespassing;
+                case 3:
+                    return HardStrings.Breaking_And_Entering;
+                case 4:
+                    return HardStrings.Assault;
+                case 5:
+                    return HardStrings.Murder;
+                case 6:
+                    return HardStrings.Tax_Evasion;
+                case 7:
+                    return HardStrings.Criminal_Conspiracy;
+                case 8:
+                    return HardStrings.Vagrancy;
+                case 9:
+                    return HardStrings.Smuggling;
+                case 10:
+                    return HardStrings.Piracy;
+                case 11:
+                    return HardStrings.High_Treason;
+                case 12:
+                    return HardStrings.Pickpocketing;
+                case 13:
+                    return HardStrings.Theft;
+                case 14:
+                    return HardStrings.Treason;
+                default:
+                    return "None";
+            }
+        }
+
+        private static string Penalty(IMacroContextProvider mcp)
+        {   // %pen
+            int punishmentType = DaggerfallUI.Instance.DfCourtWindow.PunishmentType;
+
+            if (punishmentType == 2)
+            {
+                TextFile.Token[] tokens = { TextFile.CreateTextToken(HardStrings.Regular_Punishment_String) };
+                ExpandMacros(ref tokens);
+                return tokens[0].text;
+            }
+            else if (punishmentType == 1)
+                return HardStrings.Execution;
+            else return HardStrings.Banishment;
+
+        }
+
+        private static string GoldToPay(IMacroContextProvider mcp)
+        {   // %gtp
+            return DaggerfallUI.Instance.DfCourtWindow.Fine.ToString();
+        }
+
+        private static string DaysInPrison(IMacroContextProvider mcp)
+        {   // %dip
+            return DaggerfallUI.Instance.DfCourtWindow.DaysInPrison.ToString();
         }
 
         private static string LegalReputation(IMacroContextProvider mcp)

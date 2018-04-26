@@ -226,7 +226,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string local = "local";
         public const string tavern = "tavern";
 
+        public const string Attempted_Breaking_And_Entering = "Attempted Breaking and Entering";
+        public const string Trespassing = "Trespassing";
+        public const string Breaking_And_Entering = "Breaking and Entering";
+        public const string Assault = "Assault";
+        public const string Murder = "Murder";
+        public const string Tax_Evasion = "Tax Evasion";
+        public const string Criminal_Conspiracy = "Criminal Conspiracy";
+        public const string Vagrancy = "Vagrancy";
+        public const string Smuggling = "Smuggling";
+        public const string Piracy = "Piracy";
+        public const string High_Treason = "High Treason";
+        public const string Pickpocketing = "Pickpocketing";
+        public const string Theft = "Theft";
+        public const string Treason = "Treason";
 
+        public const string Regular_Punishment_String = "%gtp gold pieces in fines and %dip days in prison";
+        public const string Banishment = "Banishment";
+        public const string Execution = "Execution";
 
         public const string cannotChangeTransportationIndoors = "You cannot change transportation indoors.";
         public const string cannotTravelWithEnemiesNearby = "You cannot travel with enemies nearby.";

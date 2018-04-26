@@ -130,6 +130,11 @@ Prefab:
     m_Modifications:
     - target: {fileID: 114000014236563532, guid: 48d7e9ceb6b670f478927df5fbd99043,
         type: 2}
+      propertyPath: CourtSongs.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000014236563532, guid: 48d7e9ceb6b670f478927df5fbd99043,
+        type: 2}
       propertyPath: DungeonInteriorSongs.Array.size
       value: 14
       objectReference: {fileID: 0}
@@ -185,6 +190,11 @@ Prefab:
       propertyPath: DungeonInteriorSongs.Array.data[14]
       value: 42
       objectReference: {fileID: 0}
+    - target: {fileID: 114000014236563532, guid: 48d7e9ceb6b670f478927df5fbd99043,
+        type: 2}
+      propertyPath: CourtSongs.Array.data[0]
+      value: 18
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 48d7e9ceb6b670f478927df5fbd99043, type: 2}
   m_IsPrefabParent: 0
@@ -199,6 +209,11 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 1374841684}
     m_Modifications:
+    - target: {fileID: 114000014236563532, guid: 48d7e9ceb6b670f478927df5fbd99043,
+        type: 2}
+      propertyPath: CourtSongs.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 405984, guid: 48d7e9ceb6b670f478927df5fbd99043, type: 2}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -253,6 +268,11 @@ Prefab:
       propertyPath: StreamingWorld
       value: 
       objectReference: {fileID: 401895382}
+    - target: {fileID: 114000014236563532, guid: 48d7e9ceb6b670f478927df5fbd99043,
+        type: 2}
+      propertyPath: CourtSongs.Array.data[0]
+      value: 115
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 48d7e9ceb6b670f478927df5fbd99043, type: 2}
   m_IsPrefabParent: 0
@@ -1981,6 +2001,11 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 1551452251}
     m_Modifications:
+    - target: {fileID: 114000014236563532, guid: 48d7e9ceb6b670f478927df5fbd99043,
+        type: 2}
+      propertyPath: CourtSongs.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 405984, guid: 48d7e9ceb6b670f478927df5fbd99043, type: 2}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -2035,6 +2060,11 @@ Prefab:
       propertyPath: StreamingWorld
       value: 
       objectReference: {fileID: 401895382}
+    - target: {fileID: 114000014236563532, guid: 48d7e9ceb6b670f478927df5fbd99043,
+        type: 2}
+      propertyPath: CourtSongs.Array.data[0]
+      value: 18
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 48d7e9ceb6b670f478927df5fbd99043, type: 2}
   m_IsPrefabParent: 0
