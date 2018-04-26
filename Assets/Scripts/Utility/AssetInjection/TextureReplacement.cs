@@ -267,10 +267,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="tex">Imported texture.</param>
         /// <returns>True if texture imported.</returns>
         public static bool TryImportTextureFromLooseFiles(int archive, int record, int frame, TextureMap textureMap, out Texture2D tex)
-        {
-            string path = Path.Combine(texturesPath, GetName(archive, record, frame, textureMap));
+        { 
             if (DaggerfallUnity.Settings.MeshAndTextureReplacement)
-                return TryImportTextureFromDisk(path, textureMap == TextureMap.Normal, true, out tex);
+            {
+                string path = Path.Combine(texturesPath, GetName(archive, record, frame, textureMap));
+                return TryImportTextureFromDisk(path, true, textureMap == TextureMap.Normal, out tex);
+            }
 
             tex = null;
             return false;           
