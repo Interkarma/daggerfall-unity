@@ -47,7 +47,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     public struct EffectCosts
     {
         public float OffsetGold;                                    // Increase base gold cost
-        public float OffsetSpellPoints;                             // Increase base spellpoint cost
         public float Factor;                                        // Scaling factor applied to spellpoint cost
         public float CostA;                                         // First magic number related to costs
         public float CostB;                                         // Second magic number related to costs

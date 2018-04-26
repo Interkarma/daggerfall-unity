@@ -1168,10 +1168,10 @@ namespace DaggerfallWorkshop.Game.Formulas
                     out durationGoldCost,
                     out durationSpellPointCost,
                     effectTemplate.Properties.DurationCosts,
-                    skillValue,
                     effectEntry.Settings.DurationBase,
                     effectEntry.Settings.DurationPlus,
-                    effectEntry.Settings.DurationPerLevel);
+                    effectEntry.Settings.DurationPerLevel,
+                    skillValue);
 
                 //Debug.LogFormat("Duration: gold {0} spellpoints {1}", durationGoldCost, durationSpellPointCost);
             }
@@ -1187,10 +1187,10 @@ namespace DaggerfallWorkshop.Game.Formulas
                     out chanceGoldCost,
                     out chanceSpellPointCost,
                     effectTemplate.Properties.ChanceCosts,
-                    skillValue,
                     effectEntry.Settings.ChanceBase,
                     effectEntry.Settings.ChancePlus,
-                    effectEntry.Settings.ChancePerLevel);
+                    effectEntry.Settings.ChancePerLevel,
+                    skillValue);
 
                 //Debug.LogFormat("Chance: gold {0} spellpoints {1}", chanceGoldCost, chanceSpellPointCost);
             }
@@ -1208,10 +1208,10 @@ namespace DaggerfallWorkshop.Game.Formulas
                     out magnitudeGoldCost,
                     out magnitudeSpellPointCost,
                     effectTemplate.Properties.MagnitudeCosts,
-                    skillValue,
                     magnitudeBase,
                     magnitudePlus,
-                    effectEntry.Settings.MagnitudePerLevel);
+                    effectEntry.Settings.MagnitudePerLevel,
+                    skillValue);
 
                 //Debug.LogFormat("Magnitude: gold {0} spellpoints {1}", magnitudeGoldCost, magnitudeSpellPointCost);
             }
@@ -1237,36 +1237,32 @@ namespace DaggerfallWorkshop.Game.Formulas
             out int goldCost,
             out int spellPointCost,
             EffectCosts costs,
-            int skillValue,
             int starting,
             int increase,
-            int perLevel)
+            int perLevel,
+            int skillValue)
         {
-            float offsetGold = costs.OffsetGold;
-            float offsetSpellPoints = costs.OffsetSpellPoints;
-            float factor = costs.Factor;
-            float costA = costs.CostA;
-            float costB = costs.CostB;
+            minGoldCost = GetEffectGoldCost(costs, 1, 1, 1);
+            minSpellPointCost = GetEffectSpellPointCost(costs, 1, 1, 1, skillValue);
 
-            minGoldCost = GetEffectGoldCost(offsetGold, costA, costB, 1, 1, 1);
-            minSpellPointCost = GetEffectSpellPointCost(skillValue, offsetSpellPoints, factor, costA, costB, 1, 1, 1);
-
-            goldCost = GetEffectGoldCost(offsetGold, costA, costB, starting, increase, perLevel);
-            spellPointCost = GetEffectSpellPointCost(skillValue, offsetSpellPoints, factor, costA, costB, starting, increase, perLevel);
+            goldCost = GetEffectGoldCost(costs, starting, increase, perLevel);
+            spellPointCost = GetEffectSpellPointCost(costs, starting, increase, perLevel, skillValue);
         }
 
         // Get effect gold cost
-        static int GetEffectGoldCost(float offsetGold, float valueA, float valueB, int starting, int increase, int perLevel)
+        static int GetEffectGoldCost(EffectCosts costs, int starting, int increase, int perLevel)
         {
-            return (int)(offsetGold + valueA * starting + valueB * trunc(increase / perLevel));
+            return (int)(costs.OffsetGold + costs.CostA * starting + costs.CostB * trunc(increase / perLevel));
         }
 
         // Get effect spell points cost
-        static int GetEffectSpellPointCost(int skillValue, float offsetSpellPoints, float factor, float valueA, float valueB, int starting, int increase, int perLevel)
+        static int GetEffectSpellPointCost(EffectCosts costs, int starting, int increase, int perLevel, int skillValue)
         {
             float valueC = 550 - skillValue * 5;
-            float valueD = valueC * valueB / valueA;
-            return (int)(factor * offsetSpellPoints + trunc(factor * valueC * starting) + trunc(factor * valueD * trunc(increase / perLevel))) / 100;
+            float valueD = valueC * costs.CostB / costs.CostA;
+            float offsetMag = costs.OffsetGold * valueC / costs.CostA;
+
+            return (int)(costs.Factor * offsetMag + trunc(costs.Factor * valueC * starting) + trunc(costs.Factor * valueD * trunc(increase / perLevel))) / 100;
         }
 
         // Just makes formulas more readable
