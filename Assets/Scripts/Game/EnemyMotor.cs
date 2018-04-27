@@ -391,7 +391,7 @@ namespace DaggerfallWorkshop.Game
 
         private void TurnToTarget(Vector3 targetDirection)
         {
-            const float turnSpeed = 30f;
+            const float turnSpeed = 20f;
             //const float turnSpeed = 11.25f;
 
             if (classicUpdate)
