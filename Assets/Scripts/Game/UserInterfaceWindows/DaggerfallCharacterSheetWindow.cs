@@ -372,7 +372,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             encumbranceLabel.Text = string.Format("{0}/{1}", (int)PlayerEntity.CarriedWeight, PlayerEntity.MaxEncumbrance);
 
             // Update stat labels
-            // TODO: Colour blue/red based on whether stat mod has change above/below permanent value
             for (int i = 0; i < DaggerfallStats.Count; i++)
             {
                 if (!leveling)
@@ -380,9 +379,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 else
                     statLabels[i].Text = ""; // If leveling, statsRollout will fill in the stat labels.
 
-                // Handle stat below permanent color
+                // Handle stat colour changes
                 if (PlayerEntity.Stats.GetLiveStatValue(i) < PlayerEntity.Stats.GetPermanentStatValue(i))
-                    statLabels[i].TextColor = DaggerfallUI.DaggerfallUnityDrainedTextColor;
+                    statLabels[i].TextColor = DaggerfallUI.DaggerfallUnityStatDrainedTextColor;
+                else if (PlayerEntity.Stats.GetLiveStatValue(i) > PlayerEntity.Stats.GetPermanentStatValue(i))
+                    statLabels[i].TextColor = DaggerfallUI.DaggerfallUnityStatIncreasedTextColor;
+                else
+                    statLabels[i].TextColor = DaggerfallUI.DaggerfallDefaultTextColor;
             }
         }
 
