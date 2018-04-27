@@ -35,6 +35,7 @@ namespace DaggerfallWorkshop.Game
         float meleeTimer = 0;
         bool isMeleeAttackingPreHitFrame;
         bool isShootingPreHitFrame;
+        int damage = 0;
 
         void Start()
         {
@@ -135,7 +136,7 @@ namespace DaggerfallWorkshop.Game
             {
                 EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
 
-                int damage = 0;
+                damage = 0;
 
                 // Are we still in range and facing player? Then apply melee damage.
                 if (senses.DistanceToPlayer < MeleeDistance && senses.PlayerInSight)
@@ -147,18 +148,8 @@ namespace DaggerfallWorkshop.Game
                 if (weapon == null)
                     weapon = entity.ItemEquipTable.GetItem(Items.EquipSlots.LeftHand);
 
-                if (damage > 0)
-                {
-                    // TODO: Play hit and parry sounds on other AI characters once attacks against other AI are possible
-                    if (weapon != null)
-                        GameManager.Instance.PlayerObject.SendMessage("PlayWeaponHitSound");
-                    else
-                        GameManager.Instance.PlayerObject.SendMessage("PlayWeaponlessHitSound");
-                }
-                else if (sounds)
-                {
+                if (damage <= 0)
                     sounds.PlayMissSound(weapon);
-                }
             }
         }
 
@@ -169,13 +160,10 @@ namespace DaggerfallWorkshop.Game
                 // Can we see player? Then apply damage.
                 if (senses.PlayerInSight)
                 {
-                    int damage = ApplyDamageToPlayer();
+                    damage = ApplyDamageToPlayer();
 
                     // Play arrow sound and add arrow to player inventory
                     GameManager.Instance.PlayerObject.SendMessage("PlayArrowSound");
-
-                    if (damage > 0)
-                        GameManager.Instance.PlayerObject.SendMessage("PlayWeaponHitSound");
 
                     Items.DaggerfallUnityItem arrow = Items.ItemBuilder.CreateItem(Items.ItemGroups.Weapons, (int)Items.Weapons.Arrow);
                     GameManager.Instance.PlayerEntity.Items.AddItem(arrow);
@@ -187,7 +175,6 @@ namespace DaggerfallWorkshop.Game
         {
             const int doYouSurrenderToGuardsTextID = 15;
 
-            int damage = 0;
             EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
             PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
 
@@ -199,26 +186,30 @@ namespace DaggerfallWorkshop.Game
 
             if (damage > 0)
             {
-                // If hit by a guard, lower reputation and show the surrender dialogue
-                if (!playerEntity.HaveShownSurrenderToGuardsDialogue && entity.MobileEnemy.ID == (int)MobileTypes.Knight_CityWatch)
+                if (entity.MobileEnemy.ID == (int)MobileTypes.Knight_CityWatch)
                 {
-                    playerEntity.LowerRepForCrime();
+                    // If hit by a guard, lower reputation and show the surrender dialogue
+                    if (!playerEntity.HaveShownSurrenderToGuardsDialogue)
+                    {
+                        playerEntity.LowerRepForCrime();
 
-                    DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
-                    messageBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRSCTokens(doYouSurrenderToGuardsTextID));
-                    messageBox.ParentPanel.BackgroundColor = Color.clear;
-                    messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
-                    messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
-                    messageBox.OnButtonClick += SurrenderToGuardsDialogue_OnButtonClick;
-                    messageBox.Show();
+                        DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
+                        messageBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRSCTokens(doYouSurrenderToGuardsTextID));
+                        messageBox.ParentPanel.BackgroundColor = Color.clear;
+                        messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
+                        messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
+                        messageBox.OnButtonClick += SurrenderToGuardsDialogue_OnButtonClick;
+                        messageBox.Show();
 
-                    playerEntity.HaveShownSurrenderToGuardsDialogue = true;
+                        playerEntity.HaveShownSurrenderToGuardsDialogue = true;
+                    }
+                    // Surrender dialogue has been shown and player refused to surrender
+                    // Guard damages player if player can survive hit, or if hit is fatal but guard rejects player's forced surrender
+                    else if (playerEntity.CurrentHealth > damage || !playerEntity.SurrenderToCityGuards(false))
+                        SendDamageToPlayer();
                 }
-
-                if (entity.MobileEnemy.ID == (int)MobileTypes.Knight_CityWatch && playerEntity.CurrentHealth <= damage)
-                    playerEntity.SurrenderToCityGuards(false);
                 else
-                    GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", damage);
+                    SendDamageToPlayer();
             }
 
             return damage;
@@ -229,6 +220,22 @@ namespace DaggerfallWorkshop.Game
             sender.CloseWindow();
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
                 GameManager.Instance.PlayerEntity.SurrenderToCityGuards(true);
+            else
+                SendDamageToPlayer();
+        }
+
+        private void SendDamageToPlayer()
+        {
+            GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", damage);
+
+            EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
+            Items.DaggerfallUnityItem weapon = entity.ItemEquipTable.GetItem(Items.EquipSlots.RightHand);
+            if (weapon == null)
+                weapon = entity.ItemEquipTable.GetItem(Items.EquipSlots.LeftHand);
+            if (weapon != null)
+                GameManager.Instance.PlayerObject.SendMessage("PlayWeaponHitSound");
+            else
+                GameManager.Instance.PlayerObject.SendMessage("PlayWeaponlessHitSound");
         }
 
         #endregion
