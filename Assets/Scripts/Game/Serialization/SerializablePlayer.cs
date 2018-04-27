@@ -140,6 +140,8 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.playerEntity.timeToBecomeVampireOrWerebeast = entity.TimeToBecomeVampireOrWerebeast;
             data.playerEntity.lastTimePlayerAteOrDrankAtTavern = entity.LastTimePlayerAteOrDrankAtTavern;
             data.playerEntity.spellbook = entity.SerializeSpellbook();
+            data.playerEntity.crimeCommitted = entity.CrimeCommitted;
+            data.playerEntity.haveShownSurrenderToGuardsDialogue = entity.HaveShownSurrenderToGuardsDialogue;
 
             data.playerEntity.regionData = entity.RegionData;
             data.playerEntity.rentedRooms = entity.RentedRooms.ToArray();
@@ -254,6 +256,8 @@ namespace DaggerfallWorkshop.Game.Serialization
             entity.DarkBrotherhoodRequirementTally = data.playerEntity.darkBrotherhoodRequirementTally;
             entity.TimeToBecomeVampireOrWerebeast = data.playerEntity.timeToBecomeVampireOrWerebeast;
             entity.LastTimePlayerAteOrDrankAtTavern = data.playerEntity.lastTimePlayerAteOrDrankAtTavern;
+            entity.CrimeCommitted = data.playerEntity.crimeCommitted;
+            entity.HaveShownSurrenderToGuardsDialogue = data.playerEntity.haveShownSurrenderToGuardsDialogue;
             entity.SetCurrentLevelUpSkillSum();
 
             entity.RentedRooms = (data.playerEntity.rentedRooms != null) ? data.playerEntity.rentedRooms.ToList() : new List<RoomRental_v1>();

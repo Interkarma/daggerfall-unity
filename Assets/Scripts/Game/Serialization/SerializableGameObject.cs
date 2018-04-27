@@ -190,6 +190,8 @@ namespace DaggerfallWorkshop.Game.Serialization
         public DaggerfallDisease[] diseases;
         public EffectBundleSettings[] spellbook;
         public EntityEffectManager.EffectBundleSaveData_v1[] instancedEffectBundles;
+        public PlayerEntity.Crimes crimeCommitted;
+        public bool haveShownSurrenderToGuardsDialogue;
     }
 
     [fsObject("v1")]
