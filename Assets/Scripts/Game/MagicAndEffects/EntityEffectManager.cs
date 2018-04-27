@@ -127,7 +127,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
             // Wire up events
             EntityEffectBroker.OnNewMagicRound += EntityEffectBroker_OnNewMagicRound;
-            SaveLoadManager.OnLoad += SaveLoadManager_OnLoad;
+            SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
             StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
         }
 
@@ -463,7 +463,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             DoMagicRound();
         }
 
-        private void SaveLoadManager_OnLoad(SaveData_v1 saveData)
+        private void SaveLoadManager_OnStartLoad(SaveData_v1 saveData)
         {
             ClearReadySpellHistory();
             ClearBundles();
