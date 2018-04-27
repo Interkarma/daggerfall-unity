@@ -16,24 +16,24 @@ using DaggerfallWorkshop.Game.Entity;
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
     /// <summary>
-    /// Drain - Agility
+    /// Drain - Endurance
     /// </summary>
-    public class DrainAgility : DrainEffect
+    public class DrainEndurance : DrainEffect
     {
         public override void SetProperties()
         {
-            properties.Key = "Drain-Agility";
-            properties.ClassicKey = MakeClassicKey(7, 3);
+            properties.Key = "Drain-Endurance";
+            properties.ClassicKey = MakeClassicKey(7, 4);
             properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "drain");
-            properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "agility");
-            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1522);
-            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1222);
+            properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "endurance");
+            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1523);
+            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1223);
             properties.SupportMagnitude = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_Other;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_All;
             properties.MagicSkill = DFCareer.MagicSkills.Destruction;
             properties.MagnitudeCosts = MakeEffectCosts(8, 100, 0.4f, 116);
-            drainStat = DFCareer.Stats.Agility;
+            drainStat = DFCareer.Stats.Endurance;
         }
     }
 }
