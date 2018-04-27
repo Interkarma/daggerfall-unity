@@ -279,7 +279,7 @@ namespace DaggerfallWorkshop.Game
 
         void SelectCurrentSong()
         {
-            if (currentPlaylist == null)
+            if (currentPlaylist == null || currentPlaylist.Length == 0)
                 return;
 
             UnityEngine.Random.InitState(DateTime.Now.Millisecond);

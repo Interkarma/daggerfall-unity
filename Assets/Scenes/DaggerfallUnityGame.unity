@@ -128,16 +128,6 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 620133649}
     m_Modifications:
-    - target: {fileID: 114000014236563532, guid: 48d7e9ceb6b670f478927df5fbd99043,
-        type: 2}
-      propertyPath: CourtSongs.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114000014236563532, guid: 48d7e9ceb6b670f478927df5fbd99043,
-        type: 2}
-      propertyPath: DungeonInteriorSongs.Array.size
-      value: 14
-      objectReference: {fileID: 0}
     - target: {fileID: 405984, guid: 48d7e9ceb6b670f478927df5fbd99043, type: 2}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -169,31 +159,6 @@ Prefab:
     - target: {fileID: 405984, guid: 48d7e9ceb6b670f478927df5fbd99043, type: 2}
       propertyPath: m_RootOrder
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114000014236563532, guid: 48d7e9ceb6b670f478927df5fbd99043,
-        type: 2}
-      propertyPath: LocalPlayerGPS
-      value: 
-      objectReference: {fileID: 1891957992}
-    - target: {fileID: 114000014236563532, guid: 48d7e9ceb6b670f478927df5fbd99043,
-        type: 2}
-      propertyPath: StreamingWorld
-      value: 
-      objectReference: {fileID: 401895382}
-    - target: {fileID: 114000014236563532, guid: 48d7e9ceb6b670f478927df5fbd99043,
-        type: 2}
-      propertyPath: DungeonInteriorSongs.Array.data[13]
-      value: 42
-      objectReference: {fileID: 0}
-    - target: {fileID: 114000014236563532, guid: 48d7e9ceb6b670f478927df5fbd99043,
-        type: 2}
-      propertyPath: DungeonInteriorSongs.Array.data[14]
-      value: 42
-      objectReference: {fileID: 0}
-    - target: {fileID: 114000014236563532, guid: 48d7e9ceb6b670f478927df5fbd99043,
-        type: 2}
-      propertyPath: CourtSongs.Array.data[0]
-      value: 18
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 48d7e9ceb6b670f478927df5fbd99043, type: 2}
@@ -209,11 +174,6 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 1374841684}
     m_Modifications:
-    - target: {fileID: 114000014236563532, guid: 48d7e9ceb6b670f478927df5fbd99043,
-        type: 2}
-      propertyPath: CourtSongs.Array.size
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 405984, guid: 48d7e9ceb6b670f478927df5fbd99043, type: 2}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -245,33 +205,6 @@ Prefab:
     - target: {fileID: 405984, guid: 48d7e9ceb6b670f478927df5fbd99043, type: 2}
       propertyPath: m_RootOrder
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8202900, guid: 48d7e9ceb6b670f478927df5fbd99043, type: 2}
-      propertyPath: panLevelCustomCurve.m_RotationOrder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8202900, guid: 48d7e9ceb6b670f478927df5fbd99043, type: 2}
-      propertyPath: spreadCustomCurve.m_RotationOrder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8202900, guid: 48d7e9ceb6b670f478927df5fbd99043, type: 2}
-      propertyPath: reverbZoneMixCustomCurve.m_RotationOrder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114000014236563532, guid: 48d7e9ceb6b670f478927df5fbd99043,
-        type: 2}
-      propertyPath: LocalPlayerGPS
-      value: 
-      objectReference: {fileID: 1891957992}
-    - target: {fileID: 114000014236563532, guid: 48d7e9ceb6b670f478927df5fbd99043,
-        type: 2}
-      propertyPath: StreamingWorld
-      value: 
-      objectReference: {fileID: 401895382}
-    - target: {fileID: 114000014236563532, guid: 48d7e9ceb6b670f478927df5fbd99043,
-        type: 2}
-      propertyPath: CourtSongs.Array.data[0]
-      value: 115
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 48d7e9ceb6b670f478927df5fbd99043, type: 2}
@@ -2001,11 +1934,6 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 1551452251}
     m_Modifications:
-    - target: {fileID: 114000014236563532, guid: 48d7e9ceb6b670f478927df5fbd99043,
-        type: 2}
-      propertyPath: CourtSongs.Array.size
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 405984, guid: 48d7e9ceb6b670f478927df5fbd99043, type: 2}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -2037,33 +1965,6 @@ Prefab:
     - target: {fileID: 405984, guid: 48d7e9ceb6b670f478927df5fbd99043, type: 2}
       propertyPath: m_RootOrder
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8202900, guid: 48d7e9ceb6b670f478927df5fbd99043, type: 2}
-      propertyPath: panLevelCustomCurve.m_RotationOrder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8202900, guid: 48d7e9ceb6b670f478927df5fbd99043, type: 2}
-      propertyPath: spreadCustomCurve.m_RotationOrder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8202900, guid: 48d7e9ceb6b670f478927df5fbd99043, type: 2}
-      propertyPath: reverbZoneMixCustomCurve.m_RotationOrder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114000014236563532, guid: 48d7e9ceb6b670f478927df5fbd99043,
-        type: 2}
-      propertyPath: LocalPlayerGPS
-      value: 
-      objectReference: {fileID: 1891957992}
-    - target: {fileID: 114000014236563532, guid: 48d7e9ceb6b670f478927df5fbd99043,
-        type: 2}
-      propertyPath: StreamingWorld
-      value: 
-      objectReference: {fileID: 401895382}
-    - target: {fileID: 114000014236563532, guid: 48d7e9ceb6b670f478927df5fbd99043,
-        type: 2}
-      propertyPath: CourtSongs.Array.data[0]
-      value: 18
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 48d7e9ceb6b670f478927df5fbd99043, type: 2}
@@ -2233,7 +2134,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22400016, guid: 312abd0527754e047a6bfbc424f09ace, type: 2}
       propertyPath: m_SizeDelta.y
-      value: 16
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 11400006, guid: 312abd0527754e047a6bfbc424f09ace, type: 2}
       propertyPath: m_Value
