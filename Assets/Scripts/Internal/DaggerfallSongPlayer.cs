@@ -40,7 +40,7 @@ namespace DaggerfallWorkshop
 
         [Range(0.0f, 10.0f)]
         public float Gain = 5.0f;
-        public string SoundBank = "chorium.sf2";
+        public string SoundBank = "TimGM6mb.sf2";
         public string SongFolder = "Songs/";
         public SongFiles Song = SongFiles.song_none;
 
