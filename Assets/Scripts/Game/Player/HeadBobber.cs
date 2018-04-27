@@ -34,11 +34,14 @@ namespace DaggerfallWorkshop.Game
 
         float landingTimerDown;
         float landingTimerUp;
+        float nodDownTimer;
+        float nodTimer;
         float timer = Mathf.PI / 2; //initialized as this value because this is where sin = 1. So, this will make the camera always start at the crest of the sin wave, simulating someone picking up their foot and starting to walk--you experience a bob upwards when you start walking as your foot pushes off the ground, the left and right bobs come as you walk.
         float beginTransitionTimer = 0; // timer for smoothing out beginning of headbob.
         float endTransitionTimer = 0; // timer for smoothing out end of headbob. 
         const float endTimerMax = 0.5f;
         const float beginTimerMax = Mathf.PI;
+        bool bDoNod;
         private bool bIsStopping;
         private bool readyToLand;
 
@@ -66,6 +69,32 @@ namespace DaggerfallWorkshop.Game
 
             Vector3 newCameraPosition = getNewPos();
             mainCamera.transform.localPosition += newCameraPosition - mainCamera.transform.localPosition;
+            if (bDoNod)
+                mainCamera.transform.Rotate(GetRotationVector());
+        }
+
+        protected Vector3 GetRotationVector()
+        {
+            const float timerMax = Mathf.PI / 2;
+            const float nodStrength = 2.5f;
+
+            if (nodTimer < timerMax)
+            {
+                nodTimer += Time.deltaTime * 18;
+            }
+            else if (nodTimer < timerMax * 2)
+            {
+                nodTimer += Time.deltaTime * 12;
+            }
+            else
+            {
+                nodTimer = 0;
+                bDoNod = false;
+            }
+
+            Vector3 newViewPositon = new Vector3(Mathf.Abs(Mathf.Sin(nodTimer) * nodStrength), 0);
+            // return vector for euler angles
+            return newViewPositon;
         }
 
         public virtual void GetBobbingStyle()
@@ -193,6 +222,7 @@ namespace DaggerfallWorkshop.Game
 
         public virtual Vector3 PlotPath()
         {
+
             return new Vector3(Mathf.Cos(timer) * bobXAmount, restPos.y + Mathf.Abs((Mathf.Sin(timer) * bobYAmount)), restPos.z); //abs val of y for a parabolic path
         }
 
