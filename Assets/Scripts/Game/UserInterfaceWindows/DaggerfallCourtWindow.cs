@@ -134,12 +134,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 // TODO: Chance to free player if in Dark Brotherhood or Thieves Guild
 
-                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this, false, 105);
                 messageBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRSCTokens(courtTextID1));
-                messageBox.ParentPanel.BackgroundColor = Color.clear;
+                messageBox.ScreenDimColor = new Color32(0, 0, 0, 0);
                 messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Guilty);
                 messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.NotGuilty);
                 messageBox.OnButtonClick += GuiltyNotGuilty_OnButtonClick;
+                messageBox.ParentPanel.VerticalAlignment = VerticalAlignment.Bottom;
                 uiManager.PushWindow(messageBox);
                 state = 1;
             }

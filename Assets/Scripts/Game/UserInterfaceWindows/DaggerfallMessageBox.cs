@@ -37,6 +37,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         MessageBoxButtons selectedButton = MessageBoxButtons.Cancel;
         bool clickAnywhereToClose = false;
         DaggerfallMessageBox nextMessageBox;
+        int customYPos = -1;
 
         /// <summary>
         /// Default message box buttons are indices into BUTTONS.RCI.
@@ -95,7 +96,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             set { clickAnywhereToClose = value; }
         }
 
-        public DaggerfallMessageBox(IUserInterfaceManager uiManager, IUserInterfaceWindow previous = null, bool wrapText = false)
+        public DaggerfallMessageBox(IUserInterfaceManager uiManager, IUserInterfaceWindow previous = null, bool wrapText = false, int posY = -1)
             : base(uiManager, previous)
         {
             if (wrapText)
@@ -105,6 +106,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // it is the widest text can be without making the parchment textures expand off the edges of the screen.
                 label.MaxTextWidth = 288;
             }
+
+            if (posY > -1)
+                customYPos = posY;
         }
 
         public DaggerfallMessageBox(IUserInterfaceManager uiManager, CommonMessageBoxButtons buttons, TextFile.Token[] tokens, IUserInterfaceWindow previous = null, IMacroContextProvider mcp = null)
@@ -133,7 +137,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.Setup();
 
             messagePanel.HorizontalAlignment = HorizontalAlignment.Center;
-            messagePanel.VerticalAlignment = VerticalAlignment.Middle;
+
+            if (customYPos > -1)
+            {
+                messagePanel.VerticalAlignment = VerticalAlignment.None;
+                messagePanel.Position = new Vector2(messagePanel.Position.x, customYPos);
+            }
+            else
+                messagePanel.VerticalAlignment = VerticalAlignment.Middle;
+
             DaggerfallUI.Instance.SetDaggerfallPopupStyle(DaggerfallUI.PopupStyle.Parchment, messagePanel);
             NativePanel.Components.Add(messagePanel);
 
