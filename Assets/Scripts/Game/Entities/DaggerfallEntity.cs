@@ -80,11 +80,11 @@ namespace DaggerfallWorkshop.Game.Entity
         public ItemCollection Items { get { return items; } set { items.ReplaceAll(value); } }
         public ItemEquipTable ItemEquipTable { get { return equipTable; } }
         public int MaxHealth { get { return maxHealth; } set { maxHealth = value; } }
-        public int CurrentHealth { get { return currentHealth; } set { SetHealth(value); } }
+        public int CurrentHealth { get { return GetCurrentHealth(); } set { SetHealth(value); } }
         public int MaxFatigue { get { return (stats.LiveStrength + stats.LiveEndurance) * 64; } }
-        public int CurrentFatigue { get { return currentFatigue; } set { SetFatigue(value); } }
+        public int CurrentFatigue { get { return GetCurrentFatigue(); } set { SetFatigue(value); } }
         public int MaxMagicka { get { return FormulaHelper.SpellPoints(stats.LiveIntelligence, career.SpellPointMultiplierValue); } }
-        public int CurrentMagicka { get { return currentMagicka; } set { SetMagicka(value); } }
+        public int CurrentMagicka { get { return GetCurrentMagicka(); } set { SetMagicka(value); } }
         public int MaxBreath { get { return stats.LiveEndurance / 2; } }
         public int CurrentBreath { get { return currentBreath; } set { SetBreath(value); } }
         public WeaponMaterialTypes MinMetalToHit { get { return minMetalToHit; } set { minMetalToHit = value; } }
@@ -109,10 +109,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
         #endregion
 
-        #region Temporary Effects
-
-        // Following are temporary effects for initial releases
-        // Will be migrated to a full effect system later
+        #region Status Changes
 
         public int IncreaseHealth(int amount)
         {
@@ -183,6 +180,30 @@ namespace DaggerfallWorkshop.Game.Entity
             currentHealth = MaxHealth;
             currentFatigue = MaxFatigue;
             currentMagicka = MaxMagicka;
+        }
+
+        int GetCurrentHealth()
+        {
+            if (currentHealth > maxHealth)
+                currentHealth = maxHealth;
+
+            return currentHealth;
+        }
+
+        int GetCurrentFatigue()
+        {
+            if (currentFatigue > MaxFatigue)
+                currentFatigue = MaxFatigue;
+
+            return currentFatigue;
+        }
+
+        int GetCurrentMagicka()
+        {
+            if (currentMagicka > MaxMagicka)
+                currentMagicka = MaxMagicka;
+
+            return currentMagicka;
         }
 
         #endregion
