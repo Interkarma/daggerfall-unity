@@ -70,7 +70,6 @@ namespace DaggerfallWorkshop.Game.Entity
         // Mods are temporary changes to skill values from effects
         // Default is 0 - effects can raise/lower mod values during their lifecycle
         // This is designed so that effects are never operating on permanent skill values
-        [SerializeField]
         int[] mods = new int[Count];
 
         #endregion
