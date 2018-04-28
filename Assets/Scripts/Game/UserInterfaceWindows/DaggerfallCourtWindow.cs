@@ -13,6 +13,8 @@ using UnityEngine;
 using System;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using DaggerfallConnect.Utility;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -22,7 +24,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     public class DaggerfallCourtWindow : DaggerfallPopupWindow
     {
         const string nativeImgName = "CORT01I0.img";
-        const int courtTextID1 = 8050;
+        const int courtTextStart = 8050;
+        const int courtTextFoundGuilty = 8055;
+        const int courtTextExecuted = 8060;
+        const int courtTextBanished = 8063;
 
         Texture2D nativeTexture;
         Panel courtPanel = new Panel();
@@ -135,7 +140,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // TODO: Chance to free player if in Dark Brotherhood or Thieves Guild
 
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this, false, 105);
-                messageBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRSCTokens(courtTextID1));
+                messageBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRSCTokens(courtTextStart));
                 messageBox.ScreenDimColor = new Color32(0, 0, 0, 0);
                 messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Guilty);
                 messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.NotGuilty);
@@ -144,18 +149,101 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 uiManager.PushWindow(messageBox);
                 state = 1;
             }
-        }
+            else if (state == 2)
+            {
+                DaggerfallUI.MessageBox(courtTextFoundGuilty);
+                state = 3;
+            }
+            else if (state == 3)
+            {
+                PositionPlayerAtLocationEntrance();
+                //ServeTime(daysInPrison);
+                //HealPlayer();
+                playerEntity.RaiseLegalRepForDoingSentence();
+                state = 100;
+            }
+            else if (state == 5)
+            {
+                DaggerfallUI.MessageBox(courtTextBanished);
+                //playerEntity.SetHeavyPunishmentFlags(currentRegionID, 1);
+                PositionPlayerAtLocationEntrance();
+                state = 100;
+            }
+            else if (state == 6)
+            {
+                DaggerfallUI.MessageBox(courtTextExecuted);
+                //playerEntity.SetHeavyPunishmentFlags(currentRegionID, 2);
+                state = 7;
+            }
+            else if (state == 7)
+            {
+                PositionPlayerAtLocationEntrance();
+                state = 100;
+            }
+            else if (state == 100)
+            {
+                ReleaseFromJail();
+            }
+    }
 
         private void GuiltyNotGuilty_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
             sender.CloseWindow();
-            DaggerfallUI.MessageBox("Not implemented yet. Press ESC to exit.");
+            if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Guilty)
+            {
+                if (punishmentType != 0)
+                {
+                    if (punishmentType == 1)
+                        state = 6;
+                    else
+                    {
+                        fine >>= 1;
+                        daysInPrison >>= 1;
+                        playerEntity.DeductGoldAmount(fine);
+
+                        // Classic gives a legal reputation raise here, probably a bug since it means you get a separate raise
+                        // for paying the fine and for serving prison time.
+                        if (daysInPrison > 0)
+                            state = 3;
+                        else
+                        {
+                            // Give the reputation raise here if no prison time will be served.
+                            PositionPlayerAtLocationEntrance();
+                            ReleaseFromJail();
+                        }
+                    }
+                }
+                else
+                    state = 5;
+            }
+            else
+                DaggerfallUI.MessageBox("Not implemented yet. Press ESC to exit.");
         }
 
         public override void OnPop()
         {
             GameManager.Instance.PlayerEntity.Arrested = false;
             state = 0;
+        }
+
+        public void PositionPlayerAtLocationEntrance()
+        {
+            DFPosition mapPixel = GameManager.Instance.PlayerGPS.CurrentMapPixel;
+            ContentReader.MapSummary mapSummary;
+            if (DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out mapSummary))
+            {
+                StreamingWorld world = GameManager.Instance.StreamingWorld;
+                StreamingWorld.RepositionMethods reposition = StreamingWorld.RepositionMethods.None;
+                reposition = StreamingWorld.RepositionMethods.RandomStartMarker;
+                world.TeleportToCoordinates(mapPixel.X, mapPixel.Y, reposition);
+            }
+        }
+
+        public void ReleaseFromJail()
+        {
+            DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime(240 * 60);
+            playerEntity.CrimeCommitted = Entity.PlayerEntity.Crimes.None;
+            CancelWindow();
         }
     }
 }
