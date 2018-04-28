@@ -189,6 +189,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public RoomRental_v1[] rentedRooms;
         public DaggerfallDisease[] diseases;
         public EffectBundleSettings[] spellbook;
+        public EntityEffectManager.EffectBundleSaveData_v1[] instancedEffectBundles;
     }
 
     [fsObject("v1")]

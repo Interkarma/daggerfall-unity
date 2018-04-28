@@ -196,6 +196,17 @@ namespace DaggerfallWorkshop.Game.Serialization
         }
 
         /// <summary>
+        /// Gets enemy by LoadID if present in enemy serialization list.
+        /// </summary>
+        public SerializableEnemy GetEnemy(ulong id)
+        {
+            if (!ContainsEnemy(id))
+                return null;
+
+            return SerializableEnemies[id] as SerializableEnemy;
+        }
+
+        /// <summary>
         /// Check if a LoadID is already in action door serialization list.
         /// </summary>
         public bool ContainsActionDoor(ulong id)

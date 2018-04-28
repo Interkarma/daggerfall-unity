@@ -20,6 +20,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// One example is a drain effect which only adds to the magnitude of incumbent drain for same stat.
     /// Another example is an effect which tops up the duration of same effect in progress.
     /// This classes establishes a base for these incumbent effects to coordinate.
+    /// NOTE: Unflagged incumbent effects (IsIncumbent == false) do not persist beyond AddState() call.
     /// </summary>
     public abstract class IncumbentEffect : BaseEntityEffect
     {
@@ -31,7 +32,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             AttachHost();
         }
 
-        protected bool IsIncumbent
+        public bool IsIncumbent
         {
             get { return isIncumbent; }
         }
@@ -41,7 +42,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             IncumbentEffect incumbent = FindIncumbent();
             if (incumbent == null)
             {
-                // First instance of effect on this host becomes incumbent
+                // First instance of effect on this host becomes flagged incumbent
                 isIncumbent = true;
                 BecomeIncumbent();
 
@@ -49,8 +50,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             }
             else
             {
-                // Subsequent instances add to state of incumbent
-                incumbent.AddState(this);
+                // Subsequent instances add to state of flagged incumbent
+                AddState(incumbent);
 
                 //Debug.LogFormat("Adding state to incumbent effect '{0}' on host '{1}'", incumbent.DisplayName, incumbent.manager.name);
             }

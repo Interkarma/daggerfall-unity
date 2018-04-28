@@ -29,9 +29,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         protected int magnitude = 0;
         protected DFCareer.Stats drainStat = DFCareer.Stats.None;
-
         int roundsRemaining = 1;
-        bool isIncumbent = false;
 
         // Drain effects are permanent until healed so we manage our own lifecycle
         protected override int RemoveRound()

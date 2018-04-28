@@ -12,6 +12,7 @@
 using UnityEngine;
 using System;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.MagicAndEffects;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -162,6 +163,9 @@ namespace DaggerfallWorkshop.Game.Serialization
             }
             // Store guild memberships
             data.guildMemberships = GameManager.Instance.GuildManager.GetMembershipData();
+
+            // Store instanced effect bundles
+            data.playerEntity.instancedEffectBundles = GetComponent<EntityEffectManager>().GetInstancedBundlesSaveData();
 
             return data;
         }
