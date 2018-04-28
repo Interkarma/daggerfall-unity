@@ -20,7 +20,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// One example is a drain effect which only adds to the magnitude of incumbent drain for same stat.
     /// Another example is an effect which tops up the duration of same effect in progress.
     /// This classes establishes a base for these incumbent effects to coordinate.
-    /// NOTE: Unflagged incumbent effects (IsIncumbent == false) do not persist beyond AddState() call.
+    /// NOTES:
+    ///  Unflagged incumbent effects (IsIncumbent == false) do not persist beyond AddState() call.
+    ///  They will never receive a single MagicRound() call and are never saved/loaded.
+    ///  The flagged incumbent (IsIncumbent == true) receives MagicRound() calls and is saved/load as normal.
     /// </summary>
     public abstract class IncumbentEffect : BaseEntityEffect
     {
@@ -63,7 +66,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             EntityEffectManager.InstancedBundle[] bundles = manager.EffectBundles;
             foreach (EntityEffectManager.InstancedBundle bundle in bundles)
             {
-                foreach (IEntityEffect effect in bundle.effects)
+                foreach (IEntityEffect effect in bundle.liveEffects)
                 {
                     if (effect is IncumbentEffect)
                     {

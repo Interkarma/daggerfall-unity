@@ -234,22 +234,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 return --roundsRemaining;
         }
 
-        /// <summary>
-        /// Override to provide save data for effect.
-        /// Not all effects need to be stateful.
-        /// </summary>
-        public virtual object GetSaveData()
-        {
-            return null;
-        }
-
-        /// <summary>
-        /// Override to restore save data for effect.
-        /// </summary>
-        public virtual void RestoreSaveData(object dataIn)
-        {
-        }
-
         #endregion
 
         #region Protected Helpers
@@ -378,39 +362,20 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         #region Serialization
 
-        [fsObject("v1")]
-        public struct EffectSaveData_v1
+        /// <summary>
+        /// Override to provide save data for effect.
+        /// Not all effects need to be stateful.
+        /// </summary>
+        public virtual object GetSaveData()
         {
-            public int roundsRemaining;
-            public int[] statMods;
-            public int[] skillMods;
-            public object effectSpecific;
+            return null;
         }
 
         /// <summary>
-        /// Get full effect save data including effect specific data.
+        /// Override to restore save data for effect.
         /// </summary>
-        public EffectSaveData_v1 GetEffectSaveData()
+        public virtual void RestoreSaveData(object dataIn)
         {
-            EffectSaveData_v1 effectData = new EffectSaveData_v1();
-            effectData.roundsRemaining = roundsRemaining;
-            effectData.statMods = statMods;
-            effectData.skillMods = skillMods;
-            effectData.effectSpecific = GetSaveData();
-
-            return effectData;
-        }
-
-        /// <summary>
-        /// Restore full effect save data including effect specific data.
-        /// </summary>
-        public void RestoreEffectSaveData(EffectSaveData_v1 data)
-        {
-            roundsRemaining = data.roundsRemaining;
-            statMods = data.statMods;
-            skillMods = data.skillMods;
-
-            RestoreSaveData(data.effectSpecific);
         }
 
         #endregion

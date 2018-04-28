@@ -9,10 +9,9 @@
 // Notes:
 //
 
-using UnityEngine;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
-using System;
+using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
@@ -29,18 +28,18 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         protected int magnitude = 0;
         protected DFCareer.Stats drainStat = DFCareer.Stats.None;
-        int roundsRemaining = 1;
+        int forcedRoundsRemaining = 1;
 
         // Drain effects are permanent until healed so we manage our own lifecycle
         protected override int RemoveRound()
         {
-            return roundsRemaining;
+            return forcedRoundsRemaining;
         }
 
         // Always present at least one round remaining so effect system does not remove
         public override int RoundsRemaining
         {
-            get { return roundsRemaining; }
+            get { return forcedRoundsRemaining; }
         }
 
         protected override bool IsLikeKind(IncumbentEffect other)
@@ -81,5 +80,38 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             SetStatMod(drainStat, -magnitude);
         }
+
+        #region Serialization
+
+        [fsObject("v1")]
+        public struct SaveData_v1
+        {
+            public int magnitude;
+            public DFCareer.Stats drainStat;
+            public int forcedRoundsRemaining;
+        }
+
+        public override object GetSaveData()
+        {
+            SaveData_v1 data = new SaveData_v1();
+            data.magnitude = magnitude;
+            data.drainStat = drainStat;
+            data.forcedRoundsRemaining = forcedRoundsRemaining;
+
+            return data;
+        }
+
+        public override void RestoreSaveData(object dataIn)
+        {
+            SaveData_v1 data = (SaveData_v1)dataIn;
+            if (dataIn == null)
+                return;
+
+            magnitude = data.magnitude;
+            drainStat = data.drainStat;
+            forcedRoundsRemaining = data.forcedRoundsRemaining;
+        }
+
+        #endregion
     }
 }

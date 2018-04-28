@@ -70,11 +70,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// </summary>
         public struct InstancedBundle
         {
-            public EffectBundleSettings settings;
+            public int version;
+            public BundleTypes bundleType;
+            public TargetTypes targetType;
+            public ElementTypes elementType;
+            public string name;
+            public int iconIndex;
             public DaggerfallEntityBehaviour caster;
             public EntityTypes casterEntityType;
             public ulong casterLoadID;
-            public List<IEntityEffect> effects;
+            public List<IEntityEffect> liveEffects;
         }
 
         #endregion
@@ -255,8 +260,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
             // Create new instanced bundle and copy settings from source bundle
             InstancedBundle instancedBundle = new InstancedBundle();
-            instancedBundle.settings = sourceBundle.Settings;
-            instancedBundle.effects = new List<IEntityEffect>();
+            instancedBundle.version = sourceBundle.Settings.Version;
+            instancedBundle.bundleType = sourceBundle.Settings.BundleType;
+            instancedBundle.targetType = sourceBundle.Settings.TargetType;
+            instancedBundle.elementType = sourceBundle.Settings.ElementType;
+            instancedBundle.name = sourceBundle.Settings.Name;
+            instancedBundle.iconIndex = sourceBundle.Settings.IconIndex;
+            instancedBundle.liveEffects = new List<IEntityEffect>();
             if (sourceBundle.CasterEntityBehaviour)
             {
                 instancedBundle.caster = sourceBundle.CasterEntityBehaviour;
@@ -265,9 +275,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
 
             // Instantiate all effects in this bundle
-            for (int i = 0; i < instancedBundle.settings.Effects.Length; i++)
+            for (int i = 0; i < sourceBundle.Settings.Effects.Length; i++)
             {
-                IEntityEffect effect = GameManager.Instance.EntityEffectBroker.InstantiateEffect(instancedBundle.settings.Effects[i]);
+                IEntityEffect effect = GameManager.Instance.EntityEffectBroker.InstantiateEffect(sourceBundle.Settings.Effects[i]);
                 if (effect == null)
                 {
                     Debug.LogWarningFormat("AssignBundle() could not add effect as key '{0}' was not found by broker.");
@@ -282,11 +292,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     continue;
 
                 // Add effect
-                instancedBundle.effects.Add(effect);
+                instancedBundle.liveEffects.Add(effect);
             }
 
             // Add bundles with at least one effect
-            if (instancedBundle.effects.Count > 0)
+            if (instancedBundle.liveEffects.Count > 0)
             {
                 instancedBundles.Add(instancedBundle);
                 //Debug.LogFormat("Adding bundle {0}", instancedBundle.GetHashCode());
@@ -319,7 +329,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             {
                 // Run effects for this bundle
                 bool hasRemainingEffectRounds = false;
-                foreach (IEntityEffect effect in bundle.effects)
+                foreach (IEntityEffect effect in bundle.liveEffects)
                 {
                     // Update effects with remaining rounds
                     if (effect.RoundsRemaining > 0)
@@ -349,7 +359,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         void RemoveBundle(InstancedBundle bundle)
         {
-            foreach (IEntityEffect effect in bundle.effects)
+            foreach (IEntityEffect effect in bundle.liveEffects)
                 effect.End();
 
             instancedBundles.Remove(bundle);
@@ -409,7 +419,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Add together every mod for every live effect
             foreach (InstancedBundle bundle in instancedBundles)
             {
-                foreach (IEntityEffect effect in bundle.effects)
+                foreach (IEntityEffect effect in bundle.liveEffects)
                 {
                     MergeStatMods(effect, ref combinedStatMods);
                     MergeSkillMods(effect, ref combinedSkillMods);
@@ -542,10 +552,27 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         [fsObject("v1")]
         public struct EffectBundleSaveData_v1
         {
-            public EffectBundleSettings settings;
+            public int version;
+            public BundleTypes bundleType;
+            public TargetTypes targetType;
+            public ElementTypes elementType;
+            public string name;
+            public int iconIndex;
             public EntityTypes casterEntityType;
             public ulong casterLoadID;
-            public BaseEntityEffect.EffectSaveData_v1[] effects;
+            public EffectSaveData_v1[] liveEffects;
+        }
+
+        [fsObject("v1")]
+        public struct EffectSaveData_v1
+        {
+            public string key;
+            public EffectSettings effectSettings;
+            public int roundsRemaining;
+            public int[] statMods;
+            public int[] skillMods;
+            public bool isIncumbent;
+            public object effectSpecific;
         }
 
         /// <summary>
@@ -554,24 +581,47 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public EffectBundleSaveData_v1[] GetInstancedBundlesSaveData()
         {
             List<EffectBundleSaveData_v1> bundlesSaveData = new List<EffectBundleSaveData_v1>();
-
             foreach (InstancedBundle bundle in instancedBundles)
             {
-                EffectBundleSaveData_v1 data = new EffectBundleSaveData_v1();
-                data.settings = bundle.settings;
-                data.casterEntityType = bundle.casterEntityType;
-                data.casterLoadID = bundle.casterLoadID;
+                EffectBundleSaveData_v1 bundleData = new EffectBundleSaveData_v1();
+                bundleData.version = bundle.version;
+                bundleData.bundleType = bundle.bundleType;
+                bundleData.targetType = bundle.targetType;
+                bundleData.elementType = bundle.elementType;
+                bundleData.name = bundle.name;
+                bundleData.iconIndex = bundle.iconIndex;
+                bundleData.casterEntityType = bundle.casterEntityType;
+                bundleData.casterLoadID = bundle.casterLoadID;
 
-                //foreach (IEntityEffect effect in bundle.effects)
-                //{
-                //    // TODO: Get effect data
-                //    effect.GetSaveData();
-                //}
+                List<EffectSaveData_v1> liveEffectsSaveData = new List<EffectSaveData_v1>();
+                foreach (IEntityEffect effect in bundle.liveEffects)
+                {
+                    EffectSaveData_v1 effectData = GetEffectSaveData(effect);
+                    liveEffectsSaveData.Add(effectData);
+                }
 
-                bundlesSaveData.Add(data);
+                bundleData.liveEffects = liveEffectsSaveData.ToArray();
+                bundlesSaveData.Add(bundleData);
             }
 
             return bundlesSaveData.ToArray();
+        }
+
+        /// <summary>
+        /// Get full effect save data including effect specific data.
+        /// </summary>
+        public EffectSaveData_v1 GetEffectSaveData(IEntityEffect effect)
+        {
+            EffectSaveData_v1 effectData = new EffectSaveData_v1();
+            effectData.key = effect.Key;
+            effectData.effectSettings = effect.Settings;
+            effectData.roundsRemaining = effect.RoundsRemaining;
+            effectData.statMods = effect.StatMods;
+            effectData.skillMods = effect.SkillMods;
+            effectData.isIncumbent = (effect is IncumbentEffect) ? (effect as IncumbentEffect).IsIncumbent : false;
+            effectData.effectSpecific = effect.GetSaveData();
+
+            return effectData;
         }
 
         ///// <summary>
