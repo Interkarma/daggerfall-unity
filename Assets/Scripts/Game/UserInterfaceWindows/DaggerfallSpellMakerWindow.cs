@@ -884,6 +884,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             DaggerfallInputMessageBox mb = new DaggerfallInputMessageBox(uiManager, this);
+            mb.TextBox.Text = spellNameLabel.Text;
             mb.SetTextBoxLabel(TextManager.Instance.GetText("SpellmakerUI", "enterSpellName") + " ");
             mb.OnGotUserInput += EnterName_OnGotUserInput;
             mb.Show();

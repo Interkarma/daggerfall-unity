@@ -13,6 +13,7 @@ using UnityEngine;
 using System;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 
@@ -61,6 +62,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         UpDownSpinner magnitudePlusMaxSpinner;
         UpDownSpinner magnitudePerLevelSpinner;
 
+        TextLabel spellCostLabel;
         Button exitButton;
 
         #endregion
@@ -136,6 +138,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetupSpinners();
             SetupButtons();
             InitControlState();
+
+            // Spell cost label
+            spellCostLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, new Vector2(275, 119), string.Empty, NativePanel);
 
             IsSetup = true;
             UpdateCosts();
@@ -373,6 +378,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (OnSettingsChanged != null)
                 OnSettingsChanged();
+
+            // Get spell cost
+            int goldCost, spellPointCost;
+            FormulaHelper.CalculateEffectCosts(EffectEntry, out goldCost, out spellPointCost);
+            spellCostLabel.Text = spellPointCost.ToString();
         }
 
         #endregion
