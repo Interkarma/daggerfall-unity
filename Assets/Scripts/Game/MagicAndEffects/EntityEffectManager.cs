@@ -299,7 +299,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             if (instancedBundle.liveEffects.Count > 0)
             {
                 instancedBundles.Add(instancedBundle);
-                //Debug.LogFormat("Adding bundle {0}", instancedBundle.GetHashCode());
+                Debug.LogFormat("Adding bundle {0}", instancedBundle.GetHashCode());
             }
         }
 
@@ -351,7 +351,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 foreach (InstancedBundle bundle in bundlesToRemove)
                 {
                     RemoveBundle(bundle);
-                    //Debug.LogFormat("Removing bundle {0}", bundle.GetHashCode());
+                    Debug.LogFormat("Removing bundle {0}", bundle.GetHashCode());
                 }
                 bundlesToRemove.Clear();
             }

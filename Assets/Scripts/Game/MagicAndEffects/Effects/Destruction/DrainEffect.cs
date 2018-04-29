@@ -30,6 +30,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         protected DFCareer.Stats drainStat = DFCareer.Stats.None;
         int forcedRoundsRemaining = 1;
 
+        public int Magnitude
+        {
+            get { return magnitude; }
+        }
+
+        public DFCareer.Stats DrainStat
+        {
+            get { return drainStat; }
+        }
+
         // Drain effects are permanent until healed so we manage our own lifecycle
         protected override int RemoveRound()
         {
@@ -55,8 +65,22 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         protected override void AddState(IncumbentEffect incumbent)
         {
+            if (forcedRoundsRemaining == 0)
+                return;
+
             (incumbent as DrainEffect).IncreaseMagnitude(GetMagnitude(caster));
             ShowPlayerDrained();
+        }
+
+        public virtual void Heal(int amount)
+        {
+            // Can only heal incumbent
+            if (!IsIncumbent)
+                return;
+
+            // Reduce magnitude and cancel effect once reduced to 0
+            if (DecreaseMagnitude(amount) == 0)
+                forcedRoundsRemaining = 0;
         }
 
         void ShowPlayerDrained()
@@ -66,7 +90,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "youFeelDrained"));
         }
 
-        void IncreaseMagnitude(int amount)
+        int IncreaseMagnitude(int amount)
         {
             DaggerfallEntityBehaviour host = GetPeeredEntityBehaviour(manager);
 
@@ -79,6 +103,19 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 magnitude += amount;
 
             SetStatMod(drainStat, -magnitude);
+
+            return magnitude;
+        }
+
+        int DecreaseMagnitude(int amount)
+        {
+            magnitude -= amount;
+            if (magnitude < 0)
+                magnitude = 0;
+
+            SetStatMod(drainStat, -magnitude);
+
+            return magnitude;
         }
 
         #region Serialization
