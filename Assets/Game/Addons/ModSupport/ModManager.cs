@@ -276,6 +276,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             return selection.ToArray();
         }
 
+        public IEnumerable<Mod> GetAllModsWithSaveData()
+        {
+            return from mod in Mods
+                   where mod.SaveDataInterface != null
+                   select mod;
+        }
+
         /// <summary>
         /// Get all asset names from mod
         /// </summary>
