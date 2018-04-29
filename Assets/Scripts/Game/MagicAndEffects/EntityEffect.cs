@@ -77,6 +77,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null);
 
         /// <summary>
+        /// Called by an EntityEffect manage when parent bundle is resumed from save.
+        /// </summary>
+        void Resume(EntityEffectManager.EffectSaveData_v1 effectData, EntityEffectManager manager, DaggerfallEntityBehaviour caster = null);
+
+        /// <summary>
         /// Use this for any work performed every magic round.
         /// </summary>
         void MagicRound();
@@ -195,6 +200,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// Starts effect running when first attached to an entity.
         /// Executes a MagicRound() tick immediately.
         /// Child classes must call base.Start() when overriding.
+        /// NOTE: Start() is only called when effect is first instantiated - it not called again on load, see Resume().
         /// </summary>
         public virtual void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
         {
@@ -202,6 +208,18 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             this.caster = caster;
             SetDuration();
             MagicRound();
+        }
+
+        /// <summary>
+        /// Restarts effect running after deserialization. Does not execute a MagicRound() tick.
+        /// </summary>
+        public virtual void Resume(EntityEffectManager.EffectSaveData_v1 effectData, EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
+        {
+            this.manager = manager;
+            this.caster = caster;
+            roundsRemaining = effectData.roundsRemaining;
+            statMods = effectData.statMods;
+            skillMods = effectData.skillMods;
         }
 
         /// <summary>

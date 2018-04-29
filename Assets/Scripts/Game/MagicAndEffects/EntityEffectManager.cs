@@ -461,25 +461,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
         }
 
-        DaggerfallEntityBehaviour GetCasterReference(EntityTypes entityType, ulong loadID)
-        {
-            // Only supporting caster reference for player and enemies at this time
-            if (entityType == EntityTypes.Player)
-            {
-                return GameManager.Instance.PlayerEntityBehaviour;
-            }
-            else if (entityType == EntityTypes.EnemyMonster || entityType == EntityTypes.EnemyClass)
-            {
-                SerializableEnemy serializableEnemy = SaveLoadManager.StateManager.GetEnemy(loadID);
-                if (serializableEnemy)
-                    return serializableEnemy.GetComponent<DaggerfallEntityBehaviour>();
-            }
-
-            Debug.LogErrorFormat("Failed to find caster reference for LoadID {0}", loadID);
-
-            return null;
-        }
-
         #endregion
 
         #region Event Handling
@@ -624,27 +605,88 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             return effectData;
         }
 
-        ///// <summary>
-        ///// Restore instanced bundles save data.
-        ///// </summary>
-        //public void RestoreInstancedBundleSaveData(EffectBundleSaveData_v1 data)
-        //{
-        //    //// Only supporting player and enemy entity types as casters for now
-        //    //if (data.casterEntityType == EntityTypes.Player)
-        //    //{
-        //    //    caster = GameManager.Instance.PlayerEntityBehaviour;
-        //    //}
-        //    //else if (data.casterEntityType == EntityTypes.EnemyMonster || data.casterEntityType == EntityTypes.EnemyClass)
-        //    //{
-        //    //    SerializableEnemy serializableEnemy = SaveLoadManager.StateManager.GetEnemy(data.casterLoadID);
-        //    //    if (!serializableEnemy)
-        //    //        throw new Exception(string.Format("EntityEffect.RestoreEffectSaveData() could not find SerializableEnemy for LoadID {0} in StateManager.", data.casterLoadID));
+        /// <summary>
+        /// Restore instanced bundles save data.
+        /// </summary>
+        public void RestoreInstancedBundleSaveData(EffectBundleSaveData_v1[] data)
+        {
+            instancedBundles.Clear();
 
-        //    //    caster = serializableEnemy.GetComponent<DaggerfallEntityBehaviour>();
-        //    //    if (!caster)
-        //    //        throw new Exception(string.Format("EntityEffect.RestoreEffectSaveData() could not find DaggerfallEntityBehaviour for LoadID {0} in StateManager.", data.casterLoadID));
-        //    //}
-        //}
+            if (data == null || data.Length == 0)
+                return;
+
+            foreach(EffectBundleSaveData_v1 bundleData in data)
+            {
+                InstancedBundle instancedBundle = new InstancedBundle();
+                instancedBundle.version = bundleData.version;
+                instancedBundle.bundleType = bundleData.bundleType;
+                instancedBundle.targetType = bundleData.targetType;
+                instancedBundle.elementType = bundleData.elementType;
+                instancedBundle.name = bundleData.name;
+                instancedBundle.iconIndex = bundleData.iconIndex;
+                instancedBundle.casterEntityType = bundleData.casterEntityType;
+                instancedBundle.casterLoadID = bundleData.casterLoadID;
+                instancedBundle.liveEffects = new List<IEntityEffect>();
+
+                // Relink caster reference
+                if (bundleData.casterEntityType != EntityTypes.None && bundleData.casterLoadID != 0)
+                {
+                    instancedBundle.caster = GetCasterReference(bundleData.casterEntityType, bundleData.casterLoadID);
+                }
+
+                // Resume effects
+                foreach(EffectSaveData_v1 effectData in bundleData.liveEffects)
+                {
+                    IEntityEffect effect = GameManager.Instance.EntityEffectBroker.InstantiateEffect(effectData.key, effectData.effectSettings);
+                    if (effect == null)
+                    {
+                        Debug.LogWarningFormat("RestoreInstancedBundleSaveData() could not restore effect as key '{0}' was not found by broker.");
+                        continue;
+                    }
+
+                    // Resume effect
+                    effect.Resume(effectData, this, instancedBundle.caster);
+                    effect.RestoreSaveData(effectData.effectSpecific);
+
+                    instancedBundle.liveEffects.Add(effect);
+                }
+
+                instancedBundles.Add(instancedBundle);
+            }
+        }
+
+        /// <summary>
+        /// Helper to relink caster type and ID back to a real DaggerfallEntityBehaviour in scene.
+        /// May experience concurrency issues once enemies start casting spells as very likely that
+        /// player will save while under effect of a bundle cast by an enemy monster.
+        /// Likewise possible for monster A and monster B to both catch each other in their AOEs and
+        /// have a co-depdendency on each other as caster. So the first monster loaded will not be
+        /// able to find reference for second monster as it has not been loaded yet.
+        /// Already have strategies in mind to resolve this, depending on how bad problem is in practice.
+        /// Don't want to "prematurely optimise" until this is actually a problem worth fixing.
+        /// </summary>
+        DaggerfallEntityBehaviour GetCasterReference(EntityTypes entityType, ulong loadID)
+        {
+            DaggerfallEntityBehaviour caster = null;
+
+            // Only supporting player and enemy entity types as casters for now
+            if (entityType == EntityTypes.Player)
+            {
+                caster = GameManager.Instance.PlayerEntityBehaviour;
+            }
+            else if (entityType == EntityTypes.EnemyMonster || entityType == EntityTypes.EnemyClass)
+            {
+                SerializableEnemy serializableEnemy = SaveLoadManager.StateManager.GetEnemy(loadID);
+                if (!serializableEnemy)
+                    throw new Exception(string.Format("EntityEffect.RestoreEffectSaveData() could not find SerializableEnemy for LoadID {0} in StateManager.", loadID));
+
+                caster = serializableEnemy.GetComponent<DaggerfallEntityBehaviour>();
+                if (!caster)
+                    throw new Exception(string.Format("EntityEffect.RestoreEffectSaveData() could not find DaggerfallEntityBehaviour for LoadID {0} in StateManager.", loadID));
+            }
+
+            return caster;
+        }
 
         #endregion
     }

@@ -35,6 +35,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             AttachHost();
         }
 
+        public override void Resume(EntityEffectManager.EffectSaveData_v1 effectData, EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
+        {
+            base.Resume(effectData, manager, caster);
+            isIncumbent = effectData.isIncumbent;
+        }
+
         public bool IsIncumbent
         {
             get { return isIncumbent; }

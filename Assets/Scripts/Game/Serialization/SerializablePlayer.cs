@@ -338,6 +338,9 @@ namespace DaggerfallWorkshop.Game.Serialization
             //GameManager.Instance.GuildManager.RestoreMembershipData(data.guildMemberships);
 
             entity.DeserializeSpellbook(data.playerEntity.spellbook);
+
+            // Restore instanced effect bundles
+            GetComponent<EntityEffectManager>().RestoreInstancedBundleSaveData(data.playerEntity.instancedEffectBundles);
         }
 
         public void RestorePosition(PlayerPositionData_v1 positionData)
