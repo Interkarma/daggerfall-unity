@@ -14,6 +14,7 @@ namespace DaggerfallWorkshop.Game
     }
 
     [RequireComponent(typeof(CharacterController))]
+    [RequireComponent(typeof(PlayerFootsteps))]
     public class HeadBobber : MonoBehaviour
     {
         private BobbingStyle bobStyle = BobbingStyle.Walking;
@@ -30,18 +31,17 @@ namespace DaggerfallWorkshop.Game
         public float bobSpeed; //how quickly the player's head bobs.
         public float bobXAmount; //how dramatic the bob is in side motion.
         public float bobYAmount; //how dramatic the bob is in up/down motion.
+        public float nodXAmount; // for the nodding motion
+        public float nodYAmount; 
         public float bobScalar; // user controlled multiplier for strength of bob
 
         float landingTimerDown;
         float landingTimerUp;
-        float nodDownTimer;
-        float nodTimer;
         float timer = Mathf.PI / 2; //initialized as this value because this is where sin = 1. So, this will make the camera always start at the crest of the sin wave, simulating someone picking up their foot and starting to walk--you experience a bob upwards when you start walking as your foot pushes off the ground, the left and right bobs come as you walk.
         float beginTransitionTimer = 0; // timer for smoothing out beginning of headbob.
         float endTransitionTimer = 0; // timer for smoothing out end of headbob. 
         const float endTimerMax = 0.5f;
         const float beginTimerMax = Mathf.PI;
-        bool bDoNod;
         private bool bIsStopping;
         private bool readyToLand;
 
@@ -53,7 +53,7 @@ namespace DaggerfallWorkshop.Game
             restPos = mainCamera.transform.localPosition;
             
             bobScalar = 1.0f;
-            bobSpeed = 1.20f;
+            bobSpeed = GetComponent<PlayerFootsteps>().WalkStepInterval / 2.0f; // 1.20f;
             bIsStopping = false;
         }
 
@@ -67,34 +67,11 @@ namespace DaggerfallWorkshop.Game
             GetBobbingStyle();
             SetParamsForBobbingStyle();
 
-            Vector3 newCameraPosition = getNewPos();
+            Vector3 newCameraPosition = restPos;
+            Vector3 newCameraRotation = new Vector3();
+            getNewPos(ref newCameraPosition, ref newCameraRotation);
             mainCamera.transform.localPosition += newCameraPosition - mainCamera.transform.localPosition;
-            if (bDoNod)
-                mainCamera.transform.Rotate(GetRotationVector());
-        }
-
-        protected Vector3 GetRotationVector()
-        {
-            const float timerMax = Mathf.PI / 2;
-            const float nodStrength = 2.5f;
-
-            if (nodTimer < timerMax)
-            {
-                nodTimer += Time.deltaTime * 18;
-            }
-            else if (nodTimer < timerMax * 2)
-            {
-                nodTimer += Time.deltaTime * 12;
-            }
-            else
-            {
-                nodTimer = 0;
-                bDoNod = false;
-            }
-
-            Vector3 newViewPositon = new Vector3(Mathf.Abs(Mathf.Sin(nodTimer) * nodStrength), 0);
-            // return vector for euler angles
-            return newViewPositon;
+            mainCamera.transform.Rotate(newCameraRotation);
         }
 
         public virtual void GetBobbingStyle()
@@ -109,7 +86,6 @@ namespace DaggerfallWorkshop.Game
                 bobStyle = BobbingStyle.Walking;
 
         }
-
         public virtual void SetParamsForBobbingStyle()
         {
             
@@ -120,21 +96,29 @@ namespace DaggerfallWorkshop.Game
                     // lot of swaying side to side as shifting legs and pushing up and off each leg
                     bobXAmount = 0.08f * bobScalar;
                     bobYAmount = 0.07f * bobScalar;
+                    nodXAmount = 0.5f;
+                    nodYAmount = 0.2f;
                     break;
                 case BobbingStyle.Walking:
                     // More y than x because walking is pretty balanced side to side, just head bounce
                     bobXAmount = 0.045f * bobScalar;
                     bobYAmount = 0.062f * bobScalar;
+                    nodXAmount = 0.25f;
+                    nodYAmount = 0.1f;
                     break;
                 case BobbingStyle.Running:
                     // both legs pushing off ground and lots of leaning side to side.
                     bobXAmount = 0.09f * bobScalar;
                     bobYAmount = 0.11f * bobScalar;
+                    nodXAmount = 0.6f;
+                    nodYAmount = 0.15f;
                     break;
                 case BobbingStyle.Horse:
                     // horse has 4 legs: balanced, most force pushes player up.
                     bobXAmount = 0.03f * bobScalar;
                     bobYAmount = 0.115f * bobScalar;
+                    nodXAmount = 0.2f;
+                    nodYAmount = 0.1f;
                     break;
                 default:
                     // error
@@ -142,18 +126,24 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        public virtual Vector3 getNewPos()
+        public virtual void getNewPos(ref Vector3 newPosition, ref Vector3 newRotation)
         { 
-            Vector3 newPosition = restPos;
             float velocity = new Vector2(playerMotor.MoveDirection.x, playerMotor.MoveDirection.z).magnitude;
-            
+            float timeIncrement = velocity * bobSpeed * Time.deltaTime;
+
             if ((Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0) && playerMotor.IsGrounded)
             {   // player is moving on ground
-                
-                timer += velocity * bobSpeed * Time.deltaTime;
-                beginTransitionTimer += velocity * bobSpeed * Time.deltaTime;
+                if (endTransitionTimer > 0) // if we were stopping, but started again, re-initialize timer here.
+                {
+                    endTransitionTimer = 0;
+                    timer = Mathf.PI;
+                }
+                    
+                timer += timeIncrement;
+                beginTransitionTimer += timeIncrement;
 
                 newPosition = PlotPath();
+                newRotation = PlotRotation();  
 
                 if (beginTransitionTimer <= Mathf.PI)
                 {
@@ -165,17 +155,19 @@ namespace DaggerfallWorkshop.Game
             else if (bIsStopping && endTransitionTimer <= endTimerMax)
             {
                 // player is stopping moving now
-                //Debug.Log("Stopped moving");
-                timer = Mathf.PI; //reinitialize for next start
+                if (timer > 0)
+                    timer = Mathf.Max(timer - timeIncrement, 0); // timer de-increments for rotation to return to original position
                 beginTransitionTimer = 0; // reset
 
                 endTransitionTimer += Time.deltaTime;
 
                 newPosition = InterpolateEndTransition(endTransitionTimer);
+                newRotation = PlotRotation();
             }
             else if (bIsStopping)// endTransitionTimer reached max
             {
                 endTransitionTimer = 0;
+                timer = Mathf.PI;
                 bIsStopping = false;
             }
 
@@ -185,8 +177,6 @@ namespace DaggerfallWorkshop.Game
             }
 
             applyBounceAmount(ref newPosition);
-
-            return newPosition;
         }
 
         public void applyBounceAmount(ref Vector3 newPosition)
@@ -220,9 +210,15 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        protected Vector3 PlotRotation()
+        {
+            Vector3 newViewPositon = new Vector3(Mathf.Abs(Mathf.Sin(timer) * nodXAmount), -1 * Mathf.Sin(timer) * nodYAmount);
+            // return vector for euler angles
+            return newViewPositon;
+        }
+
         public virtual Vector3 PlotPath()
         {
-
             return new Vector3(Mathf.Cos(timer) * bobXAmount, restPos.y + Mathf.Abs((Mathf.Sin(timer) * bobYAmount)), restPos.z); //abs val of y for a parabolic path
         }
 
