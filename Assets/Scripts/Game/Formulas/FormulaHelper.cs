@@ -535,22 +535,17 @@ namespace DaggerfallWorkshop.Game.Formulas
                     damage = UnityEngine.Random.Range(weapon.GetBaseDamageMin(), weapon.GetBaseDamageMax() + 1);
                     damage += damageModifiers;
 
-                    // Apply damage modifier for Skeletal Warrior. Damage halved if using an edged weapon
-                    // rather than a blunt weapon.
-                    if (AITarget != null && AITarget.CareerIndex == (int)MonsterCareers.SkeletalWarrior
-                        && (weapon.flags & 0x10) == 0)
+                    if (AITarget != null && AITarget.CareerIndex == (int)MonsterCareers.SkeletalWarrior)
                     {
-                        damage /= 2;
-                    }
+                        // Apply edged-weapon damage modifier for Skeletal Warrior
+                        if ((weapon.flags & 0x10) == 0)
+                            damage /= 2;
 
-                    // Apply modifier for werebeasts. In classic, this applies to the Skeletal Warrior, but this is
-                    // probably a mistake. The Skeletal Warrior ID is 15, just 1 off from the Wereboar ID of 14, and
-                    // silver = anti-werebeast is something used elsewhere in the TES series.
-                    if (AITarget != null && (AITarget.CareerIndex == (int)MonsterCareers.Wereboar
-                        || AITarget.CareerIndex == (int)MonsterCareers.Werewolf)
-                        && weapon.NativeMaterialValue == (int)Items.WeaponMaterialTypes.Silver)
-                    {
-                        damage *= 2;
+                        // Apply silver weapon damage modifier for Skeletal Warrior
+                        // Arena applies a silver weapon damage bonus for undead enemies, which
+                        // is probably where this comes from.
+                        if (weapon.NativeMaterialValue == (int)Items.WeaponMaterialTypes.Silver)
+                            damage *= 2;
                     }
 
                     // TODO: Apply strength bonus from Mace of Molag Bal
