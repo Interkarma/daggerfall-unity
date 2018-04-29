@@ -136,6 +136,16 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         bool Ignore { get; set; }
     }
 
+    /// <summary>
+    /// Takes part of load/save logic.
+    /// </summary>
+    public interface IHasModSaveData
+    {
+        Type SaveDataType { get; }                      // Type of save data object.
+        object NewSaveData();                           // Make empty/default save data.
+        object GetSaveData();                           // Gets data to be serialized or null.
+        void RestoreSaveData(object saveData);          // Apply deserialized data.
+    }
 
     public delegate void DFModMessageReceiver(string message, object data, DFModMessageCallback callBack);
     public delegate void DFModMessageCallback(string message, object data);

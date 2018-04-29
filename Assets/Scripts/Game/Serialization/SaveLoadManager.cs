@@ -19,6 +19,7 @@ using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Banking;
+using DaggerfallWorkshop.Game.Utility.ModSupport;
 
 namespace DaggerfallWorkshop.Game.Serialization
 {
@@ -303,6 +304,8 @@ namespace DaggerfallWorkshop.Game.Serialization
             File.Delete(Path.Combine(path, screenshotFilename));
             File.Delete(Path.Combine(path, containerDataFilename));
             File.Delete(Path.Combine(path, automapDataFilename));
+            foreach (Mod mod in ModManager.Instance.GetAllModsWithSaveData())
+                File.Delete(Path.Combine(path, GetModDataFilename(mod)));
 
             // Attempt to delete path itself
             // Even if delete fails path should be invalid with save info removed
@@ -952,6 +955,21 @@ namespace DaggerfallWorkshop.Game.Serialization
                 Debug.Log(message);
             }
 
+            // Save mod data
+            foreach (Mod mod in ModManager.Instance.GetAllModsWithSaveData())
+            {
+                object modData = mod.SaveDataInterface.GetSaveData();
+                if (modData != null)
+                {
+                    string modDataJson = Serialize(modData.GetType(), modData);
+                    WriteSaveFile(Path.Combine(path, GetModDataFilename(mod)), modDataJson);
+                }
+                else
+                {
+                    File.Delete(Path.Combine(path, GetModDataFilename(mod)));
+                }
+            }
+
             // Save screenshot
             byte[] bytes = screenshot.EncodeToJPG();
             File.WriteAllBytes(Path.Combine(path, screenshotFilename), bytes);
@@ -1143,6 +1161,18 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Clear any orphaned quest items
             RemoveAllOrphanedQuestItems();
 
+            // Restore mod data
+            foreach (Mod mod in ModManager.Instance.GetAllModsWithSaveData())
+            {
+                string modDataPath = Path.Combine(path, GetModDataFilename(mod));
+                object modData;
+                if (File.Exists(modDataPath))
+                    modData = Deserialize(mod.SaveDataInterface.SaveDataType, ReadSaveFile(modDataPath));
+                else
+                    modData = mod.SaveDataInterface.NewSaveData();
+                mod.SaveDataInterface.RestoreSaveData(modData);
+            }
+
             // Lower load in progress flag
             loadInProgress = false;
 
@@ -1167,6 +1197,12 @@ namespace DaggerfallWorkshop.Game.Serialization
             {
                 Debug.LogFormat("Removed {0} orphaned quest items.", count);
             }
+        }
+
+        private static string GetModDataFilename(Mod mod)
+        {
+            // Use filename because title may contains invalid path chars.
+            return string.Format("mod_{0}.txt", mod.FileName);
         }
 
         #endregion

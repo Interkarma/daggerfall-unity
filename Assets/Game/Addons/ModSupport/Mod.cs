@@ -90,6 +90,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
         public string[] AssetNames { get { return (assetNames != null) ? assetNames : assetNames = GetAllAssetNames(); } }
 
+        public IHasModSaveData SaveDataInterface { internal get; set; }
+
 
         #endregion
 
