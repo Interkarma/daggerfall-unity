@@ -304,8 +304,11 @@ namespace DaggerfallWorkshop.Game.Serialization
             File.Delete(Path.Combine(path, screenshotFilename));
             File.Delete(Path.Combine(path, containerDataFilename));
             File.Delete(Path.Combine(path, automapDataFilename));
-            foreach (Mod mod in ModManager.Instance.GetAllModsWithSaveData())
-                File.Delete(Path.Combine(path, GetModDataFilename(mod)));
+            if (ModManager.Instance != null)
+            {
+                foreach (Mod mod in ModManager.Instance.GetAllModsWithSaveData())
+                    File.Delete(Path.Combine(path, GetModDataFilename(mod)));
+            }
 
             // Attempt to delete path itself
             // Even if delete fails path should be invalid with save info removed
@@ -956,17 +959,20 @@ namespace DaggerfallWorkshop.Game.Serialization
             }
 
             // Save mod data
-            foreach (Mod mod in ModManager.Instance.GetAllModsWithSaveData())
+            if (ModManager.Instance != null)
             {
-                object modData = mod.SaveDataInterface.GetSaveData();
-                if (modData != null)
+                foreach (Mod mod in ModManager.Instance.GetAllModsWithSaveData())
                 {
-                    string modDataJson = Serialize(modData.GetType(), modData);
-                    WriteSaveFile(Path.Combine(path, GetModDataFilename(mod)), modDataJson);
-                }
-                else
-                {
-                    File.Delete(Path.Combine(path, GetModDataFilename(mod)));
+                    object modData = mod.SaveDataInterface.GetSaveData();
+                    if (modData != null)
+                    {
+                        string modDataJson = Serialize(modData.GetType(), modData);
+                        WriteSaveFile(Path.Combine(path, GetModDataFilename(mod)), modDataJson);
+                    }
+                    else
+                    {
+                        File.Delete(Path.Combine(path, GetModDataFilename(mod)));
+                    }
                 }
             }
 
@@ -1164,21 +1170,16 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Check mod manager is available
             if (ModManager.Instance != null)
             {
-                // Get IEnumerable for mods with save data and perform null check
-                IEnumerable<Mod> modsWithSaveData = ModManager.Instance.GetAllModsWithSaveData();
-                if (modsWithSaveData != null)
+                // Restore mod data
+                foreach (Mod mod in ModManager.Instance.GetAllModsWithSaveData())
                 {
-                    // Restore mod data
-                    foreach (Mod mod in modsWithSaveData)
-                    {
-                        string modDataPath = Path.Combine(path, GetModDataFilename(mod));
-                        object modData;
-                        if (File.Exists(modDataPath))
-                            modData = Deserialize(mod.SaveDataInterface.SaveDataType, ReadSaveFile(modDataPath));
-                        else
-                            modData = mod.SaveDataInterface.NewSaveData();
-                        mod.SaveDataInterface.RestoreSaveData(modData);
-                    }
+                    string modDataPath = Path.Combine(path, GetModDataFilename(mod));
+                    object modData;
+                    if (File.Exists(modDataPath))
+                        modData = Deserialize(mod.SaveDataInterface.SaveDataType, ReadSaveFile(modDataPath));
+                    else
+                        modData = mod.SaveDataInterface.NewSaveData();
+                    mod.SaveDataInterface.RestoreSaveData(modData);
                 }
             }
 
