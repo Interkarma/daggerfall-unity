@@ -1161,16 +1161,25 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Clear any orphaned quest items
             RemoveAllOrphanedQuestItems();
 
-            // Restore mod data
-            foreach (Mod mod in ModManager.Instance.GetAllModsWithSaveData())
+            // Check mod manager is available
+            if (ModManager.Instance != null)
             {
-                string modDataPath = Path.Combine(path, GetModDataFilename(mod));
-                object modData;
-                if (File.Exists(modDataPath))
-                    modData = Deserialize(mod.SaveDataInterface.SaveDataType, ReadSaveFile(modDataPath));
-                else
-                    modData = mod.SaveDataInterface.NewSaveData();
-                mod.SaveDataInterface.RestoreSaveData(modData);
+                // Get IEnumerable for mods with save data and perform null check
+                IEnumerable<Mod> modsWithSaveData = ModManager.Instance.GetAllModsWithSaveData();
+                if (modsWithSaveData != null)
+                {
+                    // Restore mod data
+                    foreach (Mod mod in modsWithSaveData)
+                    {
+                        string modDataPath = Path.Combine(path, GetModDataFilename(mod));
+                        object modData;
+                        if (File.Exists(modDataPath))
+                            modData = Deserialize(mod.SaveDataInterface.SaveDataType, ReadSaveFile(modDataPath));
+                        else
+                            modData = mod.SaveDataInterface.NewSaveData();
+                        mod.SaveDataInterface.RestoreSaveData(modData);
+                    }
+                }
             }
 
             // Lower load in progress flag
