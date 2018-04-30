@@ -302,7 +302,7 @@ namespace DaggerfallWorkshop.Game
                     if (mobile.Summary.Enemy.HasRangedAttack1 && mobile.Summary.Enemy.ID > 129 && mobile.Summary.Enemy.ID != 132)
                     {
                         // Random chance to shoot bow
-                        if (DFRandom.rand() < 1000)
+                        if (classicUpdate && DFRandom.rand() < 1000)
                         {
                             if (mobile.Summary.Enemy.HasRangedAttack1 && !mobile.Summary.Enemy.HasRangedAttack2
                                 && mobile.Summary.EnemyState != MobileStates.RangedAttack1)
