@@ -26,6 +26,8 @@ namespace DaggerfallWorkshop
     [RequireComponent(typeof(AudioSource))]
     public class DaggerfallSongPlayer : MonoBehaviour
     {
+        const string sourceFolderName = "SoundFonts";
+        const string defaultSoundFontFilename = "TimGM6mb.sf2";
         const int sampleRate = 48000;
         const int polyphony = 100;
 
@@ -40,7 +42,6 @@ namespace DaggerfallWorkshop
 
         [Range(0.0f, 10.0f)]
         public float Gain = 5.0f;
-        public string SoundBank = "TimGM6mb.sf2";
         public string SongFolder = "Songs/";
         public SongFiles Song = SongFiles.song_none;
 
@@ -232,12 +233,26 @@ namespace DaggerfallWorkshop
                 midiSynthesizer = new Synthesizer(sampleRate, channels, bufferLength / numBuffers, numBuffers, polyphony);
 
                 // Load bank data
-                byte[] bankData = LoadBank(SoundBank);
+                string filename = DaggerfallUnity.Settings.SoundFont;
+                byte[] bankData = LoadBank(filename);
+                if (bankData == null)
+                {
+                    // Attempt to fallback to default internal soundfont
+                    bankData = LoadDefaultSoundFont();
+                    filename = defaultSoundFontFilename;
+                    Debug.LogFormat("Using default SoundFont {0}", defaultSoundFontFilename);
+                }
+                else
+                {
+                    Debug.LogFormat("Trying custom SoundFont {0}", filename);
+                }
+
+                // Assign to synth
                 if (bankData == null)
                     return false;
                 else
                 {
-                    midiSynthesizer.LoadBank(new MyMemoryFile(bankData, SoundBank));
+                    midiSynthesizer.LoadBank(new MyMemoryFile(bankData, filename));
                     midiSynthesizer.ResetSynthControls(); // Need to do this for bank to load properly, don't know why
                 }
             }
@@ -264,13 +279,33 @@ namespace DaggerfallWorkshop
 
         private byte[] LoadBank(string filename)
         {
-            TextAsset asset = Resources.Load<TextAsset>(filename);
+            // Do nothing if no filename set
+            if (string.IsNullOrEmpty(filename))
+                return null;
+
+            // Check file exists
+            string path = Path.Combine(Application.streamingAssetsPath, sourceFolderName);
+            string filePath = Path.Combine(path, filename);
+            if (!File.Exists(filePath))
+            {
+                // Fallback to default sound font
+                Debug.LogFormat("Could not find file '{0}', falling back to default soundfont {1}.", filePath, defaultSoundFontFilename);
+                return null;
+            }
+
+            // Load data
+            return File.ReadAllBytes(filePath);
+        }
+
+        private byte[] LoadDefaultSoundFont()
+        {
+            TextAsset asset = Resources.Load<TextAsset>(defaultSoundFontFilename);
             if (asset != null)
             {
                 return asset.bytes;
             }
 
-            DaggerfallUnity.LogMessage(string.Format("DaggerfallSongPlayer: Bank file '{0}' not found.", filename));
+            DaggerfallUnity.LogMessage(string.Format("DaggerfallSongPlayer: Bank file '{0}' not found.", defaultSoundFontFilename));
 
             return null;
         }

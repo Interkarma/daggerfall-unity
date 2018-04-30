@@ -34,6 +34,7 @@ namespace DaggerfallWorkshop
 
         const string sectionDaggerfall = "Daggerfall";
         const string sectionVideo = "Video";
+        const string sectionAudio = "Audio";
         const string sectionChildGuard = "ChildGuard";
         const string sectionGUI = "GUI";
         const string sectionSpells = "Spells";
@@ -76,6 +77,9 @@ namespace DaggerfallWorkshop
         public bool InteriorLightShadows { get; set; }
         public bool EnableTextureArrays { get; set; }
         public int RandomDungeonTextures { get; set; }
+
+        // [Audio]
+        public string SoundFont { get; set; }
 
         // [ChildGuard]
         public bool PlayerNudity { get; set; }
@@ -165,6 +169,8 @@ namespace DaggerfallWorkshop
             EnableTextureArrays = GetBool(sectionVideo, "EnableTextureArrays");
             RandomDungeonTextures = GetInt(sectionVideo, "RandomDungeonTextures", 0, 4);
 
+            SoundFont = GetString(sectionAudio, "SoundFont");
+
             PlayerNudity = GetBool(sectionChildGuard, "PlayerNudity");
 
             ShowOptionsAtStart = GetBool(sectionGUI, "ShowOptionsAtStart");
@@ -239,6 +245,8 @@ namespace DaggerfallWorkshop
             SetBool(sectionVideo, "InteriorLightShadows", InteriorLightShadows);
             SetBool(sectionVideo, "EnableTextureArrays", EnableTextureArrays);
             SetInt(sectionVideo, "RandomDungeonTextures", RandomDungeonTextures);
+
+            SetString (sectionAudio, "SoundFont", SoundFont);
 
             SetBool(sectionChildGuard, "PlayerNudity", PlayerNudity);
 

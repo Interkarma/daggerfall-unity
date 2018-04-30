@@ -411,7 +411,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowDebugString: 0
   Gain: 3
-  SoundBank: chorium.sf2
   SongFolder: Songs/
   Song: -1
 --- !u!1 &102824930

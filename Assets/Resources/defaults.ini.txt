@@ -17,6 +17,9 @@ InteriorLightShadows=True
 EnableTextureArrays=True
 RandomDungeonTextures=0
 
+[Audio]
+SoundFont=
+
 [ChildGuard]
 PlayerNudity=False
 
