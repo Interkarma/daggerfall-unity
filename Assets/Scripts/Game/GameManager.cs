@@ -593,6 +593,25 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
+        /// Clears the area of enemies.
+        /// </summary>
+        public void ClearEnemies()
+        {
+            DaggerfallEntityBehaviour[] entityBehaviours = FindObjectsOfType<DaggerfallEntityBehaviour>();
+            for (int i = 0; i < entityBehaviours.Length; i++)
+            {
+                DaggerfallEntityBehaviour entityBehaviour = entityBehaviours[i];
+                if (entityBehaviour.EntityType == EntityTypes.EnemyMonster || entityBehaviour.EntityType == EntityTypes.EnemyClass)
+                    Destroy(entityBehaviour);
+            }
+
+            // Also check for enemy spawners that might emit an enemy
+            FoeSpawner[] spawners = FindObjectsOfType<FoeSpawner>();
+            for (int i = 0; i < spawners.Length; i++)
+                Destroy(spawners[i]);
+        }
+
+        /// <summary>
         /// Make all enemies in an area go hostile.
         /// </summary>
         public void MakeEnemiesHostile()

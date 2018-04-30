@@ -15,6 +15,7 @@ using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
+using DaggerfallConnect;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -27,7 +28,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int courtTextStart = 8050;
         const int courtTextFoundGuilty = 8055;
         const int courtTextExecuted = 8060;
+        const int courtTextFreeToGo = 8062;
         const int courtTextBanished = 8063;
+        const int courtTextHowConvince = 8064;
 
         Texture2D nativeTexture;
         Panel courtPanel = new Panel();
@@ -74,7 +77,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.Update();
 
-            if (state == 0)
+            if (state == 0) // Starting
             {
                 regionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
 
@@ -147,44 +150,59 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 messageBox.OnButtonClick += GuiltyNotGuilty_OnButtonClick;
                 messageBox.ParentPanel.VerticalAlignment = VerticalAlignment.Bottom;
                 uiManager.PushWindow(messageBox);
-                state = 1;
+                state = 1; // Done with initial message
             }
-            else if (state == 2)
+            else if (state == 2) // Found guilty
             {
-                DaggerfallUI.MessageBox(courtTextFoundGuilty);
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this, false, 149);
+                messageBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRSCTokens(courtTextFoundGuilty));
+                messageBox.ScreenDimColor = new Color32(0, 0, 0, 0);
+                messageBox.ParentPanel.VerticalAlignment = VerticalAlignment.Bottom;
+                messageBox.ClickAnywhereToClose = true;
+                uiManager.PushWindow(messageBox);
                 state = 3;
             }
-            else if (state == 3)
+            else if (state == 3) // Serve prison sentence
             {
                 PositionPlayerAtLocationEntrance();
-                //ServeTime(daysInPrison);
-                //HealPlayer();
+                ServeTime(daysInPrison);
                 playerEntity.RaiseLegalRepForDoingSentence();
                 state = 100;
             }
-            else if (state == 5)
+            else if (state == 4) // Banished
             {
-                DaggerfallUI.MessageBox(courtTextBanished);
-                //playerEntity.SetHeavyPunishmentFlags(currentRegionID, 1);
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this, false, 149);
+                messageBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRSCTokens(courtTextBanished));
+                messageBox.ScreenDimColor = new Color32(0, 0, 0, 0);
+                messageBox.ParentPanel.VerticalAlignment = VerticalAlignment.Bottom;
+                messageBox.ClickAnywhereToClose = true;
+                uiManager.PushWindow(messageBox);
+                playerEntity.RegionData[regionIndex].SeverePunishmentFlags |= 1;
                 PositionPlayerAtLocationEntrance();
                 state = 100;
             }
-            else if (state == 6)
+            // Note: Seems like an execution sentence can't be given in classic. It can't be given here, either.
+            else if (state == 5) // Execution
             {
-                DaggerfallUI.MessageBox(courtTextExecuted);
-                //playerEntity.SetHeavyPunishmentFlags(currentRegionID, 2);
-                state = 7;
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this, false, 149);
+                messageBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRSCTokens(courtTextExecuted));
+                messageBox.ScreenDimColor = new Color32(0, 0, 0, 0);
+                messageBox.ParentPanel.VerticalAlignment = VerticalAlignment.Bottom;
+                messageBox.ClickAnywhereToClose = true;
+                uiManager.PushWindow(messageBox);
+                playerEntity.RegionData[regionIndex].SeverePunishmentFlags |= 2;
+                state = 6;
             }
-            else if (state == 7)
+            else if (state == 6) // Reposition player at entrance
             {
                 PositionPlayerAtLocationEntrance();
                 state = 100;
             }
-            else if (state == 100)
+            else if (state == 100) // Done
             {
                 ReleaseFromJail();
             }
-    }
+        }
 
         private void GuiltyNotGuilty_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
@@ -194,7 +212,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (punishmentType != 0)
                 {
                     if (punishmentType == 1)
-                        state = 6;
+                        state = 5;
                     else
                     {
                         fine >>= 1;
@@ -209,15 +227,87 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         {
                             // Give the reputation raise here if no prison time will be served.
                             PositionPlayerAtLocationEntrance();
+
+                            // Oversight in classic: Does not refill vital signs when releasing in this case, so player is left with 1 health.
+                            playerEntity.FillVitalSigns();
                             ReleaseFromJail();
                         }
                     }
                 }
                 else
-                    state = 5;
+                    state = 4;
+            }
+            else // Pleading not guilty
+            {
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this, false, 127);
+                messageBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRSCTokens(courtTextHowConvince));
+                messageBox.ScreenDimColor = new Color32(0, 0, 0, 0);
+                messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Debate);
+                messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Lie);
+                messageBox.OnButtonClick += DebateLie_OnButtonClick;
+                messageBox.ParentPanel.VerticalAlignment = VerticalAlignment.Bottom;
+                uiManager.PushWindow(messageBox);
+            }
+            Update();
+        }
+
+        private void DebateLie_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        {
+            sender.CloseWindow();
+            int playerSkill = 0;
+            if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Debate)
+            {
+                playerSkill = playerEntity.Skills.GetLiveSkillValue(DFCareer.Skills.Etiquette);
+                playerEntity.TallySkill(DFCareer.Skills.Etiquette, 1);
             }
             else
-                DaggerfallUI.MessageBox("Not implemented yet. Press ESC to exit.");
+            {
+                playerSkill = playerEntity.Skills.GetLiveSkillValue(DFCareer.Skills.Streetwise);
+                playerEntity.TallySkill(DFCareer.Skills.Streetwise, 1);
+            }
+
+            int chanceToGoFree = playerEntity.RegionData[regionIndex].LegalRep +
+                (playerSkill + playerEntity.Stats.GetLiveStatValue(DFCareer.Stats.Personality)) / 2;
+
+            if (chanceToGoFree > 95)
+                chanceToGoFree = 95;
+            else if (chanceToGoFree < 5)
+                chanceToGoFree = 5;
+
+            if (UnityEngine.Random.Range(1, 101) > chanceToGoFree)
+            {
+                // Banishment
+                if (punishmentType == 0)
+                    state = 4;
+                // Execution
+                else if (punishmentType == 1)
+                    state = 5;
+                // Prison/Fine
+                else
+                {
+                    int roll = playerEntity.RegionData[regionIndex].LegalRep + UnityEngine.Random.Range(1, 101);
+                    if (roll < 25)
+                        fine *= 2;
+                    else if (roll > 75)
+                        fine >>= 1;
+
+                    state = 2;
+                }
+            }
+            else
+            {
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this, false, 149);
+                messageBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRSCTokens(courtTextFreeToGo));
+                messageBox.ScreenDimColor = new Color32(0, 0, 0, 0);
+                messageBox.ParentPanel.VerticalAlignment = VerticalAlignment.Bottom;
+                messageBox.ClickAnywhereToClose = true;
+                uiManager.PushWindow(messageBox);
+
+                // Oversight in classic: Does not refill vital signs when releasing in this case, so player is left with 1 health.
+                playerEntity.FillVitalSigns();
+                state = 6;
+            }
+            Update();
         }
 
         public override void OnPop()
@@ -239,10 +329,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        public void ServeTime(int daysInPrison)
+        {
+            // TODO: Prison screen
+            playerEntity.PreventEnemySpawns = true;
+            DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime(daysInPrison * 1440 * 60);
+            playerEntity.FillVitalSigns();
+        }
+
         public void ReleaseFromJail()
         {
+            playerEntity.PreventEnemySpawns = true;
             DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime(240 * 60);
             playerEntity.CrimeCommitted = Entity.PlayerEntity.Crimes.None;
+            GameManager.Instance.ClearEnemies();
             CancelWindow();
         }
     }
