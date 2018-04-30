@@ -174,6 +174,8 @@ namespace DaggerfallWorkshop.Game
         int currentKeySubjectBuildingKey = -1;
         int reactionToPlayer = 0;
 
+
+        //The lists that contain the topics to select
         List<ListItem> listTopicTellMeAbout;
         List<ListItem> listTopicLocation;
         List<ListItem> listTopicPerson;
@@ -973,7 +975,7 @@ namespace DaggerfallWorkshop.Game
             if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.DoesNotKnowAboutItem)
                 answer = getRecordIdByNpcsSocialGroup(7281, 7280, 7280, 7283, 7282, 7284); // messages if npc does not know
             else
-            {                
+            {
                 answer = getRecordIdByNpcsSocialGroup(7271, 7270, 7270, 7273, 7272, 7274); // location related messages if npc knows
             }
             return answer;
