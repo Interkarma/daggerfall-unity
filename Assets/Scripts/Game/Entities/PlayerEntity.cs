@@ -1308,7 +1308,7 @@ namespace DaggerfallWorkshop.Game.Entity
             if (CurrentHealth <= 0)
                 return false;
 
-            //SetHealth(1);
+            SetHealth(1);
             if (legalRep < -20 && !voluntarySurrender)
                 return false;
             else if (legalRep < -20 || legalRep > 0)
