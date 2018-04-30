@@ -350,6 +350,8 @@ namespace DaggerfallWorkshop.Game
             PlayerEnterExit.OnTransitionExterior += OnTransitionToExterior;
             PlayerEnterExit.OnTransitionDungeonExterior += OnTransitionToDungeonExterior;
             SaveLoadManager.OnLoad += OnLoadEvent;
+            QuestMachine.OnQuestStarted += OnQuestStarted;
+            QuestMachine.OnQuestEnded += OnQuestEnded;
 
             // initialize work variables
             lastExteriorEntered = 0;
@@ -363,6 +365,8 @@ namespace DaggerfallWorkshop.Game
             PlayerEnterExit.OnTransitionExterior -= OnTransitionToExterior;
             PlayerEnterExit.OnTransitionDungeonExterior -= OnTransitionToDungeonExterior;
             SaveLoadManager.OnLoad -= OnLoadEvent;
+            QuestMachine.OnQuestStarted -= OnQuestStarted;
+            QuestMachine.OnQuestEnded -= OnQuestEnded;
         }
 
         void OnEnable()
@@ -1241,13 +1245,15 @@ namespace DaggerfallWorkshop.Game
                 questResourceInfo.anyInfoAnswers = null;
                 questResourceInfo.rumorsAnswers = null;
                 questResourceInfo.resourceType = QuestInfoResourceType.Person;
-                questResourceInfo.availableForDialog = false;
+                questResourceInfo.questResource = person;
+                questResourceInfo.availableForDialog = false; // default to not available (dialog link command checked later to make them appear)
+                if (person.IsQuestor) // questors are always available for dialog
+                    questResourceInfo.availableForDialog = true;
                 questResourceInfo.hasEntryInTellMeAbout = false;
                 questResourceInfo.hasEntryInWhereIs = true;
                 questResourceInfo.dialogLinkedLocations = new List<string>();
                 questResourceInfo.dialogLinkedPersons = new List<string>();
-                questResourceInfo.dialogLinkedThings = new List<string>();
-                questResourceInfo.questResource = person;
+                questResourceInfo.dialogLinkedThings = new List<string>();                
             }
 
             //QuestMacroHelper macroHelper = new QuestMacroHelper();
@@ -1919,7 +1925,22 @@ namespace DaggerfallWorkshop.Game
                         string captionString = questResourceInfo.Key;
                         item.caption = captionString;
 
-                        bool IsPlayerInSameLocationWorldCell = false;  //((Questing.Person)questResourceInfo.Value.questResource).IsPlayerInSameLocationWorldCell();
+                        bool IsPlayerInSameLocationWorldCell = false;
+
+                        // in case person is questor check if questor is in same mapID
+                        Questing.Person person = (Questing.Person)questResourceInfo.Value.questResource;
+                        if (person.IsQuestor == true && person.QuestorData.mapID == GameManager.Instance.PlayerGPS.CurrentMapID)
+                            IsPlayerInSameLocationWorldCell = true;
+
+                        /*
+                        try
+                        {
+                            IsPlayerInSameLocationWorldCell = ((Questing.Person)questResourceInfo.Value.questResource).IsPlayerInSameLocationWorldCell();
+                        }
+                        catch (Exception e)
+                        {
+                        }*/
+
                         if (questResourceInfo.Value.availableForDialog && // only make it available for talk if it is not "hidden" by dialog link command
                             questResourceInfo.Value.hasEntryInWhereIs &&
                             IsPlayerInSameLocationWorldCell)
@@ -1931,7 +1952,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         private void AssembleTopicListThing()
-        {
+        {            
             listTopicThing = new List<ListItem>();
             for (int i = 0; i < 30; i++)
             {
@@ -1940,7 +1961,7 @@ namespace DaggerfallWorkshop.Game
                 item.questionType = QuestionType.Thing;
                 item.caption = "thing " + i;
                 listTopicThing.Add(item);
-            }
+            }            
         }
 
         /// <summary>
@@ -2051,6 +2072,16 @@ namespace DaggerfallWorkshop.Game
         void OnLoadEvent(SaveData_v1 saveData)
         {
             AssembleTopicLists();
+        }
+
+        void OnQuestStarted(Quest quest)
+        {
+            // AssembleTopicLists(); // note by Nystul: check if really necessary since resources are added as talk options when quest resources are parsed anyway
+        }
+
+        void OnQuestEnded(Quest quest)
+        {
+            // AssembleTopicLists(); // note by Nystul: check if really necessary since resources are added as talk options when quest resources are parsed anyway
         }
 
         private string getRecordIdByNpcsSocialGroup(int textRecordIdDefault, int textRecordIdGuildMembers, int textRecordIdMerchants, int textRecordIdNobility, int textRecordIdScholars, int textRecordIdUnderworld)
