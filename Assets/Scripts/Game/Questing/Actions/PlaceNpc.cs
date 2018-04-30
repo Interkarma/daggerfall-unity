@@ -90,7 +90,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
             // Assign Person to Place
             place.AssignQuestResource(person.Symbol);
-            person.SetAssignedPlaceSymbol(Symbol);
+            person.SetAssignedPlaceSymbol(placeSymbol);
 
             SetComplete();
         }
