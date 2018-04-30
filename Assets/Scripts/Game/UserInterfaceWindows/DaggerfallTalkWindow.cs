@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Michael Rauter (Nystul)
-// Contributors:    
+// Contributors:    Kenny Stepney (TheExceptionist)
 // 
 // Notes:
 //
@@ -1197,10 +1197,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // inListboxTopicContentUpdate to false again before!)
             if (inListboxTopicContentUpdate)
                 return;
+
+            if (index < 0 || index >= listboxTopic.Count) 
+                return;
+
             inListboxTopicContentUpdate = true;
 
-            if (index < 0 || index >= listboxTopic.Count)
-                return;
 
             TalkManager.ListItem listItem = listCurrentTopics[index];
             if (listItem.type == TalkManager.ListItemType.NavigationBack)
