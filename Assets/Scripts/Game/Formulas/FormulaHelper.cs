@@ -1235,6 +1235,28 @@ namespace DaggerfallWorkshop.Game.Formulas
             //Debug.LogFormat("Costs: gold {0} spellpoints {1}", finalGoldCost, finalSpellPointCost);
         }
 
+        public static int ApplyTargetCostMultiplier(int cost, TargetTypes targetType)
+        {
+            switch (targetType)
+            {
+                case TargetTypes.CasterOnly:                // x1.0
+                case TargetTypes.ByTouch:
+                    // These do not change costs, just including here for completeness
+                    break;
+                case TargetTypes.SingleTargetAtRange:       // x1.5
+                    cost = (int)(cost * 1.5f);
+                    break;
+                case TargetTypes.AreaAroundCaster:          // x2.0
+                    cost = (int)(cost * 2.0f);
+                    break;
+                case TargetTypes.AreaAtRange:               // x2.5
+                    cost = (int)(cost * 2.5f);
+                    break;
+            }
+
+            return cost;
+        }
+
         static void GetEffectComponentCosts(
             out int minGoldCost,
             out int minSpellPointCost,

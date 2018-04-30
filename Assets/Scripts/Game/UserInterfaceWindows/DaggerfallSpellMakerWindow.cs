@@ -484,6 +484,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             selectedTarget = targetType;
+            UpdateSpellCosts();
         }
 
         void SetSpellElement(ElementTypes elementType)
@@ -654,7 +655,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Do nothing when effect editor not setup or not used effect slots
             // This means there is nothing to calculate
-            if (!effectEditor.IsSetup || CountUsedEffectSlots() == 0)
+            if (effectEditor == null || !effectEditor.IsSetup || CountUsedEffectSlots() == 0)
             {
                 SetStatusLabels();
                 return;
@@ -676,10 +677,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 totalSpellPointCost += spellPointCost;
             }
 
+            // Multipliers for target type
+            totalGoldCost = FormulaHelper.ApplyTargetCostMultiplier(totalGoldCost, selectedTarget);
+            totalSpellPointCost = FormulaHelper.ApplyTargetCostMultiplier(totalSpellPointCost, selectedTarget);
+
             // Update display
             SetStatusLabels();
-
-            // TODO: Multipliers for target type
         }
 
         #endregion
