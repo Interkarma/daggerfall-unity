@@ -31,7 +31,9 @@ namespace DaggerfallWorkshop.Game.Entity
     public abstract class DaggerfallEntity
     {
         #region Fields
+
         public const int NumberBodyParts = 7;
+        public const int FatigueMultiplier = 64;
 
         protected Genders gender;
         protected DFCareer career = new DFCareer();

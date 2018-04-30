@@ -91,8 +91,13 @@ namespace DaggerfallWorkshop.Game.Entity
         /// </summary>
         /// <param name="source">Source entity.</param>
         /// <param name="amount">Amount to damage fatigue.</param>
-        public void DamageFatigueFromSource(DaggerfallEntityBehaviour source, int amount)
+        public void DamageFatigueFromSource(DaggerfallEntityBehaviour source, int amount, bool assignMultiplier = false)
         {
+            // Optionally assign fatigue multiplier
+            // This seems to be case for spell effects that damage fatigue
+            if (assignMultiplier)
+                amount *= DaggerfallEntity.FatigueMultiplier;
+
             // Remove fatigue amount
             Entity.DecreaseFatigue(amount);
 

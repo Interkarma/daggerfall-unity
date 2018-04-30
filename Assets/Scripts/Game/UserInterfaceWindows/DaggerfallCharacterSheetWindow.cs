@@ -367,7 +367,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             classLabel.Text = PlayerEntity.Career.Name;
             levelLabel.Text = PlayerEntity.Level.ToString();
             goldLabel.Text = PlayerEntity.GetGoldAmount().ToString();
-            fatigueLabel.Text = string.Format("{0}/{1}", PlayerEntity.CurrentFatigue / 64, PlayerEntity.MaxFatigue / 64);
+            fatigueLabel.Text = string.Format("{0}/{1}", PlayerEntity.CurrentFatigue / DaggerfallEntity.FatigueMultiplier, PlayerEntity.MaxFatigue / DaggerfallEntity.FatigueMultiplier);
             healthLabel.Text = string.Format("{0}/{1}", PlayerEntity.CurrentHealth, PlayerEntity.MaxHealth);
             encumbranceLabel.Text = string.Format("{0}/{1}", (int)PlayerEntity.CarriedWeight, PlayerEntity.MaxEncumbrance);
 
@@ -500,7 +500,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void UpdateSecondaryStatLabels()
         {
             DaggerfallStats workingStats = statsRollout.WorkingStats;
-            fatigueLabel.Text = string.Format("{0}/{1}", PlayerEntity.CurrentFatigue / 64, workingStats.LiveStrength + workingStats.LiveEndurance);
+            fatigueLabel.Text = string.Format("{0}/{1}", PlayerEntity.CurrentFatigue / DaggerfallEntity.FatigueMultiplier, workingStats.LiveStrength + workingStats.LiveEndurance);
             encumbranceLabel.Text = string.Format("{0}/{1}", (int)PlayerEntity.CarriedWeight, FormulaHelper.MaxEncumbrance(workingStats.LiveStrength));
         }
 
