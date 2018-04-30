@@ -374,9 +374,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                     if (GUI.Button(new Rect(r.x + r.width - 30, r.y, 30, EditorGUIUtility.singleLineHeight), (Texture2D)EditorGUIUtility.Load("icons/SettingsIcon.png"), EditorStyles.toolbarButton))
                     {
                         var menu = new GenericMenu();
-                        menu.AddItem(new GUIContent("Copy choices"), false, () => cache["options"] = Options.ToList());
+                        menu.AddItem(new GUIContent("Copy"), false, () => cache["options"] = Options);
                         if (cache.ContainsKey("options"))
-                            menu.AddItem(new GUIContent("Paste choices"), false, () => { optionsEditor.list = Options = (List<string>)cache["options"]; });
+                        {
+                            menu.AddItem(new GUIContent("Paste"), false, () => { optionsEditor.list = Options = ((List<string>)cache["options"]).ToList(); });
+                            menu.AddItem(new GUIContent("Paste (linked)"), false, () => { optionsEditor.list = Options = (List<string>)cache["options"]; });
+                        }
+                        menu.AddItem(new GUIContent("Unlink"), false, () => optionsEditor.list = Options = Options.ToList());
                         menu.ShowAsContext();
                     }
                 };
