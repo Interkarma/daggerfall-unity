@@ -189,7 +189,7 @@ namespace DaggerfallWorkshop.Game
                 if (entity.MobileEnemy.ID == (int)MobileTypes.Knight_CityWatch)
                 {
                     // If hit by a guard, lower reputation and show the surrender dialogue
-                    if (!playerEntity.HaveShownSurrenderToGuardsDialogue)
+                    if (!playerEntity.HaveShownSurrenderToGuardsDialogue && playerEntity.CrimeCommitted != PlayerEntity.Crimes.None)
                     {
                         playerEntity.LowerRepForCrime();
 

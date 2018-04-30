@@ -158,6 +158,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 messageBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRSCTokens(courtTextFoundGuilty));
                 messageBox.ScreenDimColor = new Color32(0, 0, 0, 0);
                 messageBox.ParentPanel.VerticalAlignment = VerticalAlignment.Bottom;
+                messageBox.ClickAnywhereToClose = true;
                 uiManager.PushWindow(messageBox);
                 state = 3;
             }
@@ -174,6 +175,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 messageBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRSCTokens(courtTextBanished));
                 messageBox.ScreenDimColor = new Color32(0, 0, 0, 0);
                 messageBox.ParentPanel.VerticalAlignment = VerticalAlignment.Bottom;
+                messageBox.ClickAnywhereToClose = true;
                 uiManager.PushWindow(messageBox);
                 playerEntity.RegionData[regionIndex].SeverePunishmentFlags |= 1;
                 PositionPlayerAtLocationEntrance();
@@ -186,6 +188,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 messageBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRSCTokens(courtTextExecuted));
                 messageBox.ScreenDimColor = new Color32(0, 0, 0, 0);
                 messageBox.ParentPanel.VerticalAlignment = VerticalAlignment.Bottom;
+                messageBox.ClickAnywhereToClose = true;
                 uiManager.PushWindow(messageBox);
                 playerEntity.RegionData[regionIndex].SeverePunishmentFlags |= 2;
                 state = 6;
@@ -224,6 +227,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         {
                             // Give the reputation raise here if no prison time will be served.
                             PositionPlayerAtLocationEntrance();
+
+                            // Oversight in classic: Does not refill vital signs when releasing in this case, so player is left with 1 health.
+                            playerEntity.FillVitalSigns();
                             ReleaseFromJail();
                         }
                     }
@@ -242,6 +248,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 messageBox.ParentPanel.VerticalAlignment = VerticalAlignment.Bottom;
                 uiManager.PushWindow(messageBox);
             }
+            Update();
         }
 
         private void DebateLie_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
@@ -293,12 +300,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 messageBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRSCTokens(courtTextFreeToGo));
                 messageBox.ScreenDimColor = new Color32(0, 0, 0, 0);
                 messageBox.ParentPanel.VerticalAlignment = VerticalAlignment.Bottom;
+                messageBox.ClickAnywhereToClose = true;
                 uiManager.PushWindow(messageBox);
 
-                // Oversight in classic: Does not refill vital signs unless prison time is served, so player is left with 1 health.
+                // Oversight in classic: Does not refill vital signs when releasing in this case, so player is left with 1 health.
                 playerEntity.FillVitalSigns();
                 state = 6;
             }
+            Update();
         }
 
         public override void OnPop()
@@ -322,15 +331,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public void ServeTime(int daysInPrison)
         {
-            // TODO
+            // TODO: Prison screen
+            playerEntity.PreventEnemySpawns = true;
             DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime(daysInPrison * 1440 * 60);
             playerEntity.FillVitalSigns();
         }
 
         public void ReleaseFromJail()
         {
+            playerEntity.PreventEnemySpawns = true;
             DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime(240 * 60);
             playerEntity.CrimeCommitted = Entity.PlayerEntity.Crimes.None;
+            GameManager.Instance.ClearEnemies();
             CancelWindow();
         }
     }
