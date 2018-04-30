@@ -665,23 +665,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (editOrDeleteSlot != -1)
                 effectEntries[editOrDeleteSlot] = effectEditor.EffectEntry;
 
-            // Add costs for each active effect slot
-            for (int i = 0; i < maxEffectsPerSpell; i++)
-            {
-                if (string.IsNullOrEmpty(effectEntries[i].Key))
-                    continue;
-
-                int goldCost, spellPointCost;
-                FormulaHelper.CalculateEffectCosts(effectEntries[i], out goldCost, out spellPointCost);
-                totalGoldCost += goldCost;
-                totalSpellPointCost += spellPointCost;
-            }
-
-            // Multipliers for target type
-            totalGoldCost = FormulaHelper.ApplyTargetCostMultiplier(totalGoldCost, selectedTarget);
-            totalSpellPointCost = FormulaHelper.ApplyTargetCostMultiplier(totalSpellPointCost, selectedTarget);
-
-            // Update display
+            // Get total costs
+            FormulaHelper.CalculateTotalEffectCosts(effectEntries, selectedTarget, out totalGoldCost, out totalSpellPointCost);
             SetStatusLabels();
         }
 

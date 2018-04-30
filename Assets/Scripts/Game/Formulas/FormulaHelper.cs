@@ -1142,6 +1142,36 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         #region Spell Costs
 
+        /// <summary>
+        /// Performs complete gold and spellpoint costs for an array of effects.
+        /// Also calculates multipliers for target type.
+        /// </summary>
+        /// <param name="effectEntries">EffectEntry array for spell.</param>
+        /// <param name="targetType">Target type of spell.</param>
+        /// <param name="totalGoldCostOut">Total gold cost out.</param>
+        /// <param name="totalSpellPointCostOut">Total spellpoint cost out.</param>
+        public static void CalculateTotalEffectCosts(EffectEntry[] effectEntries, TargetTypes targetType, out int totalGoldCostOut, out int totalSpellPointCostOut)
+        {
+            totalGoldCostOut = 0;
+            totalSpellPointCostOut = 0;
+
+            // Add costs for each active effect slot
+            for (int i = 0; i < effectEntries.Length; i++)
+            {
+                if (string.IsNullOrEmpty(effectEntries[i].Key))
+                    continue;
+
+                int goldCost, spellPointCost;
+                CalculateEffectCosts(effectEntries[i], out goldCost, out spellPointCost);
+                totalGoldCostOut += goldCost;
+                totalSpellPointCostOut += spellPointCost;
+            }
+
+            // Multipliers for target type
+            totalGoldCostOut = ApplyTargetCostMultiplier(totalGoldCostOut, targetType);
+            totalSpellPointCostOut = ApplyTargetCostMultiplier(totalSpellPointCostOut, targetType);
+        }
+
         public static void CalculateEffectCosts(EffectEntry effectEntry, out int goldCostOut, out int spellPointCostOut)
         {
             int activeComponents = 0;

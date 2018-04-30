@@ -12,6 +12,7 @@
 using UnityEngine;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.MagicAndEffects;
+using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
@@ -164,8 +165,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 for (int i = 0; i < spellbook.Length; i++)
                 {
-                    // All spell costs are zero for now - not implemented
-                    spellsListBox.AddItem(string.Format("0 - {0}", spellbook[i].Name));
+                    // Show spell name and cost
+                    // Costs can change based on player skills and stats so must be calculated each time
+                    int goldCost, spellPointCost;
+                    FormulaHelper.CalculateTotalEffectCosts(spellbook[i].Effects, spellbook[i].TargetType, out goldCost, out spellPointCost);
+                    spellsListBox.AddItem(string.Format("{0} - {1}", spellPointCost, spellbook[i].Name));
                 }
             }
         }
