@@ -135,11 +135,23 @@ namespace DaggerfallWorkshop.Game.Questing
 
             public override string God()
             {
-                // Get god of current NPC or fall-through to non-quest macro handling
+                // Get god of last Person referenced by dialog stream
                 if (parent.LastPersonReferenced != null)
                     return parent.LastPersonReferenced.GodName;
-                else
-                    return "%god";
+
+                // Attempt to get god of questor Person
+                // This fixes a crash when handing in quest and expanding questor dialog without a previous Person reference
+                Symbol[] questors = parent.GetQuestors();
+                if (questors != null && questors.Length > 0)
+                    return parent.GetPerson(questors[0]).GodName;
+
+                // Otherwise just provide a random god name for whomever is speaking to player
+                // Better just to provide something than let let game loop crash
+                return Person.GetRandomGodName();
+
+                // Fall-through to non-quest macro handling
+                // Disabling this at it causes exception stream from null MCP
+                //return "%god";
             }
 
             public override string LocationDirection()

@@ -526,12 +526,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
         void AssignGod()
         {
-            const int minGodID = 4077;
-            const int maxGodID = 4084;
-
-            // Select a random god for this NPC
-            int godID = UnityEngine.Random.Range(minGodID, maxGodID + 1);
-            godName = DaggerfallUnity.Instance.TextProvider.GetRandomText(godID);
+            godName = GetRandomGodName();
         }
 
         void AddConversationTopics()
@@ -751,6 +746,16 @@ namespace DaggerfallWorkshop.Game.Questing
                 throw new Exception(string.Format("Could not find faction data for FactionID {0}", factionID));
 
             return factionData;
+        }
+
+        public static string GetRandomGodName()
+        {
+            const int minGodID = 4077;
+            const int maxGodID = 4084;
+
+            // Select a random god for this NPC
+            int godID = UnityEngine.Random.Range(minGodID, maxGodID + 1);
+            return DaggerfallUnity.Instance.TextProvider.GetRandomText(godID);
         }
 
         #endregion
