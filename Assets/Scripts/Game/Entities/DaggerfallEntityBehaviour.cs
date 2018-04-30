@@ -87,6 +87,21 @@ namespace DaggerfallWorkshop.Game.Entity
         #region Special Damage Methods
 
         /// <summary>
+        /// Cause fatigue damage to entity with additional logic.
+        /// </summary>
+        /// <param name="source">Source entity.</param>
+        /// <param name="amount">Amount to damage fatigue.</param>
+        public void DamageFatigueFromSource(DaggerfallEntityBehaviour source, int amount)
+        {
+            // Remove fatigue amount
+            Entity.DecreaseFatigue(amount);
+
+            // Determine if source is player
+            if (source == GameManager.Instance.PlayerEntityBehaviour)
+                HandleAttackByPlayer();
+        }
+
+        /// <summary>
         /// Cause damage to entity health with additional logic.
         /// </summary>
         /// <param name="source">Source entity.</param>
@@ -110,9 +125,24 @@ namespace DaggerfallWorkshop.Game.Entity
         }
 
         /// <summary>
+        /// Cause spell point damage to entity with additional logic.
+        /// </summary>
+        /// <param name="source">Source entity.</param>
+        /// <param name="amount">Amount to damage spell points.</param>
+        public void DamageMagickaFromSource(DaggerfallEntityBehaviour source, int amount)
+        {
+            // Remove fatigue amount
+            Entity.DecreaseMagicka(amount);
+
+            // Determine if source is player
+            if (source == GameManager.Instance.PlayerEntityBehaviour)
+                HandleAttackByPlayer();
+        }
+
+        /// <summary>
         /// Handle shared logic when player attacks entity.
         /// </summary>
-        void HandleAttackByPlayer()
+        public void HandleAttackByPlayer()
         {
             // Handle civilian NPC crime reporting
             if (EntityType == EntityTypes.CivilianNPC)

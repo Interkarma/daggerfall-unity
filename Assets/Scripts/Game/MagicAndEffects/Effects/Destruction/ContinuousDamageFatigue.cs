@@ -32,7 +32,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.SupportMagnitude = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_Other;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_All;
-            properties.AllowedCraftingStations = EntityEffectBroker.MagicCraftingFlags_None;
             properties.MagicSkill = DFCareer.MagicSkills.Destruction;
             properties.DurationCosts = MakeEffectCosts(20, 8, 1, 68);
             properties.MagnitudeCosts = MakeEffectCosts(40, 28, 2, 28);
@@ -42,13 +41,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             base.MagicRound();
 
-            //// Get peered entity gameobject
-            //DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
-            //if (!entityBehaviour)
-            //    return;
+            // Get peered entity gameobject
+            DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
+            if (!entityBehaviour)
+                return;
 
-            // TODO: Implement effect
-            //int magnitude = GetMagnitude(caster);
+            // Implement effect
+            int magnitude = GetMagnitude(caster);
+            entityBehaviour.DamageFatigueFromSource(caster, magnitude);
+
+            Debug.LogFormat("Effect {0} damaged {1} by {2} fatigue points and has {3} magic rounds remaining.", Key, entityBehaviour.name, magnitude, RoundsRemaining);
         }
     }
 }
