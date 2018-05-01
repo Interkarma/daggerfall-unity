@@ -1177,6 +1177,12 @@ namespace DaggerfallWorkshop.Game
                 return getRecordIdByNpcsSocialGroup(7276, 7275, 7275, 7278, 7277, 7279); // quest topic related messages if npc knows
         }
 
+
+        public void ForceTopicListsUpdate()
+        {
+            AssembleTopicLists();
+        }
+
         public void AddQuestTopicWithInfoAndRumors(ulong questID, QuestResource questResource, string resourceName, QuestInfoResourceType resourceType, List<TextFile.Token[]> anyInfoAnswers, List<TextFile.Token[]> rumorsAnswers)
         {
             QuestResources questResources;
@@ -1929,17 +1935,32 @@ namespace DaggerfallWorkshop.Game
 
                         // in case person is questor check if questor is in same mapID
                         Questing.Person person = (Questing.Person)questResourceInfo.Value.questResource;
-                        if (person.IsQuestor == true && person.QuestorData.mapID == GameManager.Instance.PlayerGPS.CurrentMapID)
-                            IsPlayerInSameLocationWorldCell = true;
-
-                        /*
-                        try
+                        if (person.IsQuestor == true)
                         {
-                            IsPlayerInSameLocationWorldCell = ((Questing.Person)questResourceInfo.Value.questResource).IsPlayerInSameLocationWorldCell();
+                            if (person.QuestorData.mapID == GameManager.Instance.PlayerGPS.CurrentMapID)
+                                IsPlayerInSameLocationWorldCell = true;
                         }
-                        catch (Exception e)
+                        else
                         {
-                        }*/
+                            /*
+                            try
+                            {
+                                IsPlayerInSameLocationWorldCell = ((Questing.Person)questResourceInfo.Value.questResource).IsPlayerInSameLocationWorldCell();
+                            }
+                            catch (Exception e)
+                            {
+                            }*/
+
+                            Symbol assignedPlaceSymbol = person.GetAssignedPlaceSymbol();
+
+                            if (assignedPlaceSymbol != null)
+                            {
+                                Quest quest = GameManager.Instance.QuestMachine.GetQuest(questID);
+                                Place assignedPlace = quest.GetPlace(assignedPlaceSymbol);  // Gets actual place resource
+                                if (assignedPlace.SiteDetails.mapId == GameManager.Instance.PlayerGPS.CurrentMapID)
+                                    IsPlayerInSameLocationWorldCell = true;
+                            }
+                        }
 
                         if (questResourceInfo.Value.availableForDialog && // only make it available for talk if it is not "hidden" by dialog link command
                             questResourceInfo.Value.hasEntryInWhereIs &&
