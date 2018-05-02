@@ -1175,11 +1175,13 @@ namespace DaggerfallWorkshop.Game.Formulas
         public static void CalculateEffectCosts(EffectEntry effectEntry, out int goldCostOut, out int spellPointCostOut)
         {
             int activeComponents = 0;
+            goldCostOut = 0;
+            spellPointCostOut = 0;
 
             // Get effect template
             IEntityEffect effectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(effectEntry.Key);
             if (effectTemplate == null)
-                throw new Exception(string.Format("CalculateEffectCosts() could not get effect key {0}", effectEntry.Key));
+                return;
 
             // Get related skill
             int skillValue = GameManager.Instance.PlayerEntity.Skills.GetLiveSkillValue((DFCareer.Skills)effectTemplate.Properties.MagicSkill);
