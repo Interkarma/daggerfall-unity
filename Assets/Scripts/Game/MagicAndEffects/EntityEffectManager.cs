@@ -300,6 +300,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             {
                 instancedBundles.Add(instancedBundle);
                 Debug.LogFormat("Adding bundle {0}", instancedBundle.GetHashCode());
+
+                if (isPlayerEntity)
+                    RaiseOnPlayerAssignBundle();
             }
         }
 
@@ -309,6 +312,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public void ClearBundles()
         {
             instancedBundles.Clear();
+
+            if (isPlayerEntity)
+                RaiseOnPlayerRemoveBundle();
         }
 
         #endregion
@@ -364,6 +370,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
             instancedBundles.Remove(bundle);
             //Debug.LogFormat("Expired bundle {0} with {1} effects", bundle.settings.Name, bundle.settings.Effects.Length);
+
+            if (isPlayerEntity)
+                RaiseOnPlayerRemoveBundle();
         }
 
         void ClearReadySpellHistory()
@@ -371,7 +380,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             lastSpell = null;
             readySpell = null;
         }
-
+        
         int GetCastSoundID(ElementTypes elementType)
         {
             switch (readySpell.Settings.ElementType)
@@ -610,7 +619,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// </summary>
         public void RestoreInstancedBundleSaveData(EffectBundleSaveData_v1[] data)
         {
-            instancedBundles.Clear();
+            ClearBundles();
 
             if (data == null || data.Length == 0)
                 return;
@@ -686,6 +695,28 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
 
             return caster;
+        }
+
+        #endregion
+
+        #region Events
+
+        // OnPlayerAssignBundle
+        public delegate void OnPlayerAssignBundleEventHandler();
+        public event OnPlayerAssignBundleEventHandler OnPlayerAssignBundle;
+        protected virtual void RaiseOnPlayerAssignBundle()
+        {
+            if (OnPlayerAssignBundle != null)
+                OnPlayerAssignBundle();
+        }
+
+        // OnPlayerRemoveBundle
+        public delegate void OnPlayerRemoveBundleEventHandler();
+        public event OnPlayerRemoveBundleEventHandler OnPlayerRemoveBundle;
+        protected virtual void RaiseOnPlayerRemoveBundle()
+        {
+            if (OnPlayerRemoveBundle != null)
+                OnPlayerRemoveBundle();
         }
 
         #endregion

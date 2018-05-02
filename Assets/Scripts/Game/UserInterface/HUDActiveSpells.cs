@@ -14,12 +14,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Game.MagicAndEffects;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
     /// <summary>
-    /// Displays active spell icons on player on HUD.
-    /// This is only to experiment with HUD UI layouts at present. Not intended for live use.
+    /// Displays active spell icons on player HUD.
     /// </summary>
     public class HUDActiveSpells : Panel
     {
@@ -33,6 +33,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const int classicHorzSpacing = 24;
 
         List<ActiveSpell> activeSelfList = new List<ActiveSpell>();
+        List<ActiveSpell> activeOtherList = new List<ActiveSpell>();
 
         #endregion
 
@@ -62,74 +63,69 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public HUDActiveSpells()
             : base()
         {
-            // Add some test spells
-            AddSelfSpell(0, "Free Action");
-            AddSelfSpell(1, "Speed");
-            AddSelfSpell(2, "Light");
-            AddSelfSpell(3, "Water Breathing");
-            AddSelfSpell(4, "Water Walking");
-            AddSelfSpell(5, "Levitation");
-            AddSelfSpell(6, "Strength");
-            AddSelfSpell(7, "Witty Retorts");
-            AddSelfSpell(8, "Enhanced Kung Fu");
-            AddSelfSpell(9, "Aura of Terror");
+            EntityEffectBroker.OnNewMagicRound += EntityEffectBroker_OnNewMagicRound;
         }
 
         #endregion
 
         #region Public Methods
 
-        /// <summary>
-        /// Adds an active spell to self icon area.
-        /// </summary>
-        public void AddSelfSpell(int iconIndex, string displayName)
-        {
-            ActiveSpell spell = new ActiveSpell();
-            spell.iconIndex = iconIndex;
-            spell.displayName = displayName;
-            activeSelfList.Add(spell);
-            Refresh();
-        }
+        ///// <summary>
+        ///// Adds an active spell to self icon area.
+        ///// </summary>
+        //public void AddSelfSpell(int iconIndex, string displayName)
+        //{
+        //    ActiveSpell spell = new ActiveSpell();
+        //    spell.iconIndex = iconIndex;
+        //    spell.displayName = displayName;
+        //    activeSelfList.Add(spell);
+        //    Refresh();
+        //}
 
-        /// <summary>
-        /// Manually refresh spell icon layout.
-        /// </summary>
-        public void Refresh()
-        {
-            ClearChildren();
+        ///// <summary>
+        ///// Manually refresh spell icon layout.
+        ///// </summary>
+        //public void Refresh()
+        //{
+        //    ClearChildren();
 
-            // Can show up to first 10 spells at present
-            int count = 0;
-            float posX = classicSelfStartX;
-            float posY = classicSelfStartY;
-            foreach (ActiveSpell spell in activeSelfList)
-            {
-                Panel panel = new Panel();
-                panel.BackgroundColor = Color.black;
-                //panel.BackgroundTexture = DaggerfallUnity.Instance.ContentReader.SpellIconCollection.GetIcon(spell.iconIndex);
-                Components.Add(panel);
+        //    // Can show up to first 10 spells at present
+        //    int count = 0;
+        //    float posX = classicSelfStartX;
+        //    float posY = classicSelfStartY;
+        //    foreach (ActiveSpell spell in activeSelfList)
+        //    {
+        //        Panel panel = new Panel();
+        //        panel.BackgroundColor = Color.black;
+        //        //panel.BackgroundTexture = DaggerfallUnity.Instance.ContentReader.SpellIconCollection.GetIcon(spell.iconIndex);
+        //        Components.Add(panel);
 
-                // Classic layout
-                panel.Size = new Vector2(16, 16);
-                panel.Position = new Vector2(posX, posY);
-                posX += classicHorzSpacing;
-                if (++count > 9)
-                    break;
-            }
-        }
+        //        // Classic layout
+        //        panel.Size = new Vector2(16, 16);
+        //        panel.Position = new Vector2(posX, posY);
+        //        posX += classicHorzSpacing;
+        //        if (++count > 9)
+        //            break;
+        //    }
+        //}
 
         #endregion
 
         #region Private Methods
 
-        void ClearChildren()
-        {
-            Components.Clear();
-        }
+        //void ClearChildren()
+        //{
+        //    Components.Clear();
+        //}
 
         #endregion
 
-        #region Overrides
+        #region Event Handlers
+
+        private void EntityEffectBroker_OnNewMagicRound()
+        {
+        }
+
         #endregion
     }
 }

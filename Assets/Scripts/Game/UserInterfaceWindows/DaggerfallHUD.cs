@@ -102,7 +102,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ShowInteractionModeIcon = DaggerfallUnity.Settings.InteractionModeIcon.ToLower() != "none";
             ShowEscortingFaces = true;
             ShowLocalQuestPlaces = true;
-            ShowActiveSpells = false;
+            ShowActiveSpells = true;
 
             // Get references
             player = GameObject.FindGameObjectWithTag("Player");
@@ -116,10 +116,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected override void Setup()
         {
-            //activeSpells.Size = NativePanel.Size;
-            //activeSpells.AutoSize = AutoSizeModes.ScaleToFit;
-            //activeSpells.HorizontalAlignment = HorizontalAlignment.Center;
-            //NativePanel.Components.Add(activeSpells);
+            activeSpells.Size = NativePanel.Size;
+            activeSpells.AutoSize = AutoSizeModes.ScaleToFit;
+            activeSpells.HorizontalAlignment = HorizontalAlignment.Center;
+            NativePanel.Components.Add(activeSpells);
 
             popupText.Size = NativePanel.Size;
             NativePanel.Components.Add(popupText);
