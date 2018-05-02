@@ -1140,19 +1140,19 @@ namespace Wenzil.Console
                 if (args == null || args.Length != 1)
                     return HelpCommand.Execute(name);
 
-                FakeLevitate fakeLevitate = GameManager.Instance.PlayerMotor.GetComponent<FakeLevitate>();
-                if (!fakeLevitate)
-                    return "Could not find FakeLevitate component peered with PlayerMotor.";
+                LevitateMotor levitateMotor = GameManager.Instance.PlayerMotor.GetComponent<LevitateMotor>();
+                if (!levitateMotor)
+                    return "Could not find LevitateMotor component peered with PlayerMotor.";
 
                 string state = args[0];
                 if (string.Compare(state, "on", true) == 0)
                 {
-                    fakeLevitate.IsLevitating = true;
+                    levitateMotor.IsLevitating = true;
                     return "Player is now levitating";
                 }
                 else if (string.Compare(state, "off", true) == 0)
                 {
-                    fakeLevitate.IsLevitating = false;
+                    levitateMotor.IsLevitating = false;
                     return "Player is no longer levitating";
                 }
 

@@ -19,7 +19,7 @@ namespace DaggerfallWorkshop.Game
     /// This is just so player can navigate Mantellan Crux and other places where levitation useful, and to allow for work on swimming mechanics.
     /// Will be removed after PlayerMotor refactor and magic system able to perform job properly.
     /// </summary>
-    public class FakeLevitate : MonoBehaviour
+    public class LevitateMotor : MonoBehaviour
     {
         bool playerLevitating = false;
         bool playerSwimming = false;

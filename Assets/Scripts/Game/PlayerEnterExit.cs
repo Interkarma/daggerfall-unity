@@ -45,7 +45,7 @@ namespace DaggerfallWorkshop.Game
         StreamingWorld world;
         PlayerGPS playerGPS;
         Entity.DaggerfallEntityBehaviour player;
-        FakeLevitate fakeLevitate;
+        LevitateMotor levitateMotor;
 
         List<StaticDoor> exteriorDoors = new List<StaticDoor>();
 
@@ -223,7 +223,7 @@ namespace DaggerfallWorkshop.Game
         {
             // Wire event for when player enters a new location
             PlayerGPS.OnEnterLocationRect += PlayerGPS_OnEnterLocationRect;
-            fakeLevitate = GetComponent<FakeLevitate>();
+            levitateMotor = GetComponent<LevitateMotor>();
         }
 
         void Update()
@@ -265,14 +265,14 @@ namespace DaggerfallWorkshop.Game
             if (blockWaterLevel == 10000 || (player.transform.position.y + (50 * MeshReader.GlobalScale) - 0.95f) >= (blockWaterLevel * -1 * MeshReader.GlobalScale))
             {
                 isPlayerSwimming = false;
-                fakeLevitate.IsSwimming = false;
+                levitateMotor.IsSwimming = false;
             }
             else
             {
                 if (!isPlayerSwimming)
                     SendMessage("PlayLargeSplash", SendMessageOptions.DontRequireReceiver);
                 isPlayerSwimming = true;
-                fakeLevitate.IsSwimming = true;
+                levitateMotor.IsSwimming = true;
             }
 
             // Check if player is submerged and needs to start holding breath
