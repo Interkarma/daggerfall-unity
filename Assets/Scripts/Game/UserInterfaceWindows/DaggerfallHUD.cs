@@ -117,7 +117,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected override void Setup()
         {
             activeSpells.Size = NativePanel.Size;
-            activeSpells.AutoSize = AutoSizeModes.ScaleToFit;
             activeSpells.HorizontalAlignment = HorizontalAlignment.Center;
             NativePanel.Components.Add(activeSpells);
 
