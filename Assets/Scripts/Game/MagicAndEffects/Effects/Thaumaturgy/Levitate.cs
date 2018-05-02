@@ -45,13 +45,19 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
         {
             base.Start(manager, caster);
-            GameManager.Instance.PlayerMotor.GetComponent<LevitateMotor>().IsLevitating = true;
+            StartLevitating();
+        }
+
+        public override void Resume(EntityEffectManager.EffectSaveData_v1 effectData, EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
+        {
+            base.Resume(effectData, manager, caster);
+            StartLevitating();
         }
 
         public override void End()
         {
             base.End();
-            GameManager.Instance.PlayerMotor.GetComponent<LevitateMotor>().IsLevitating = false;
+            StopLevitating();
         }
 
         protected override bool IsLikeKind(IncumbentEffect other)
@@ -67,6 +73,36 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             // Stack my rounds onto incumbent
             incumbent.RoundsRemaining += RoundsRemaining;
+        }
+
+        void StartLevitating()
+        {
+            // Get peered entity gameobject
+            DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
+            if (!entityBehaviour)
+                return;
+
+            // Enable levitaion based on entity type
+            if (entityBehaviour.EntityType == EntityTypes.Player)
+                GameManager.Instance.PlayerMotor.GetComponent<LevitateMotor>().IsLevitating = true;
+
+            // TODO: Support changing monsters to levitating by adjusting behaviour to a flying creature
+            //if (entityBehaviour.EntityType == EntityTypes.EnemyMonster || entityBehaviour.EntityType == EntityTypes.EnemyClass)
+        }
+
+        void StopLevitating()
+        {
+            // Get peered entity gameobject
+            DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
+            if (!entityBehaviour)
+                return;
+
+            // Disable levitaion based on entity type
+            if (entityBehaviour.EntityType == EntityTypes.Player)
+                GameManager.Instance.PlayerMotor.GetComponent<LevitateMotor>().IsLevitating = false;
+
+            // TODO: Stop monster from levitating by restoring normal state
+            //if (entityBehaviour.EntityType == EntityTypes.EnemyMonster || entityBehaviour.EntityType == EntityTypes.EnemyClass)
         }
     }
 }

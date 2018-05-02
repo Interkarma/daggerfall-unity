@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using DaggerfallWorkshop.Game.MagicAndEffects;
+using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -65,6 +66,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             EntityEffectBroker.OnNewMagicRound += UpdateIcons;
             GameManager.Instance.PlayerEffectManager.OnPlayerAssignBundle += UpdateIcons;
             GameManager.Instance.PlayerEffectManager.OnPlayerRemoveBundle += UpdateIcons;
+            SaveLoadManager.OnLoad += SaveLoadManager_OnLoad; ;
 
             InitIcons();
         }
@@ -189,6 +191,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 if (++count > maxIconPool - 1)
                     break;
             }
+        }
+
+        private void SaveLoadManager_OnLoad(SaveData_v1 saveData)
+        {
+            UpdateIcons();
         }
 
         #endregion

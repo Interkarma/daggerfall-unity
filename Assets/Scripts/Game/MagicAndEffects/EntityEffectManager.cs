@@ -636,12 +636,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 instancedBundle.casterEntityType = bundleData.casterEntityType;
                 instancedBundle.casterLoadID = bundleData.casterLoadID;
                 instancedBundle.liveEffects = new List<IEntityEffect>();
-
-                // Relink caster reference
-                if (bundleData.casterEntityType != EntityTypes.None && bundleData.casterLoadID != 0)
-                {
-                    instancedBundle.caster = GetCasterReference(bundleData.casterEntityType, bundleData.casterLoadID);
-                }
+                instancedBundle.caster = GetCasterReference(bundleData.casterEntityType, bundleData.casterLoadID);
 
                 // Resume effects
                 foreach(EffectSaveData_v1 effectData in bundleData.liveEffects)
@@ -683,7 +678,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             {
                 caster = GameManager.Instance.PlayerEntityBehaviour;
             }
-            else if (entityType == EntityTypes.EnemyMonster || entityType == EntityTypes.EnemyClass)
+            else if ((entityType == EntityTypes.EnemyMonster || entityType == EntityTypes.EnemyClass) && loadID != 0)
             {
                 SerializableEnemy serializableEnemy = SaveLoadManager.StateManager.GetEnemy(loadID);
                 if (!serializableEnemy)
