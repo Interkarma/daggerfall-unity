@@ -555,7 +555,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     }
                 }
 
-                GameManager.Instance.TalkManager.AddQuestTopicWithInfoAndRumors(this.ParentQuest.UID, this, this.displayName, TalkManager.QuestInfoResourceType.Person, anyInfoAnswers, anyRumorsAnswers);                
+                GameManager.Instance.TalkManager.AddQuestTopicWithInfoAndRumors(this.ParentQuest.UID, this, this.displayName, TalkManager.QuestInfoResourceType.Person, anyInfoAnswers, anyRumorsAnswers);
             }
 
             GameManager.Instance.TalkManager.AddPersonTopic(this.ParentQuest.UID, this);
