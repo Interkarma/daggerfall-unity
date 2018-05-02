@@ -163,7 +163,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             //bitmap.Data = (byte[])paperDollIndices.Clone();
             //Color32[] testColors = bitmap.GetColor32(255);
             //string path = @"d:\test\blits\selection.png";
-            //Texture2D texture = ImageProcessing.MakeTexture2D(ref testColors, paperDollWidth, paperDollHeight, TextureFormat.RGBA32, false);
+            //Texture2D texture = ImageProcessing.MakeTexture2D(ref testColors, paperDollWidth, paperDollHeight, TextureFormat.ARGB32, false);
             //ImageProcessing.SaveTextureAsPng(texture, path);
         }
 
@@ -395,7 +395,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             //// Generate a test texture
             //string path = @"d:\test\blits\" + imageCounter++;
-            //Texture2D texture = ImageProcessing.MakeTexture2D(ref paperDollColors, paperDollWidth, paperDollHeight, TextureFormat.RGBA32, false);
+            //Texture2D texture = ImageProcessing.MakeTexture2D(ref paperDollColors, paperDollWidth, paperDollHeight, TextureFormat.ARGB32, false);
             //ImageProcessing.SaveTextureAsPng(texture, path);
         }
 

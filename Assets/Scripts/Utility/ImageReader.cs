@@ -138,7 +138,7 @@ namespace DaggerfallWorkshop.Utility
 
             // Only use CopyTexture() acceleration when enabled and for selected texture formats
             bool accelerate = DaggerfallUnity.Settings.AccelerateUICopyTexture;
-            if (texture.format != TextureFormat.RGBA32 && texture.format != TextureFormat.ARGB32)
+            if (texture.format != TextureFormat.ARGB32 && texture.format != TextureFormat.ARGB32)
                 accelerate = false;
 
             // Use most efficient method available

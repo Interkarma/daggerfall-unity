@@ -89,7 +89,7 @@ namespace DaggerfallWorkshop
             // Create tileMap texture
             if (tileMapTexture == null)
             {
-                tileMapTexture = new Texture2D(tilemapDimension, tilemapDimension, TextureFormat.RGB24, false);
+                tileMapTexture = new Texture2D(tilemapDimension, tilemapDimension, TextureFormat.ARGB32, false);
                 tileMapTexture.filterMode = FilterMode.Point;
                 tileMapTexture.wrapMode = TextureWrapMode.Clamp;
             }

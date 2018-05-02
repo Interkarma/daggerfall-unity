@@ -592,7 +592,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             textureHeight = (height < minTextureDim) ? minTextureDim : height;
 
             // Create target texture and init to clear
-            Texture2D texture = new Texture2D(textureWidth, textureHeight, TextureFormat.RGBA32, false);
+            Texture2D texture = new Texture2D(textureWidth, textureHeight, TextureFormat.ARGB32, false);
             Color32[] colors = texture.GetPixels32();
             for (int i = 0; i < colors.Length; i++)
             {

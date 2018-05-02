@@ -1058,6 +1058,10 @@ Prefab:
       propertyPath: Option_DungeonWaterPlaneOffset.z
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 11400008, guid: 0811f78212229814d8c469c916304789, type: 2}
+      propertyPath: AlphaTextureFormat
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0811f78212229814d8c469c916304789, type: 2}
   m_IsPrefabParent: 0
@@ -2133,7 +2137,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22400016, guid: 312abd0527754e047a6bfbc424f09ace, type: 2}
       propertyPath: m_SizeDelta.y
-      value: 16
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 11400006, guid: 312abd0527754e047a6bfbc424f09ace, type: 2}
       propertyPath: m_Value
@@ -2145,7 +2149,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22400010, guid: 312abd0527754e047a6bfbc424f09ace, type: 2}
       propertyPath: m_AnchorMin.y
-      value: 0.000000059604645
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 312abd0527754e047a6bfbc424f09ace, type: 2}

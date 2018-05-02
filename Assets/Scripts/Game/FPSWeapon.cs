@@ -476,7 +476,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Pack textures into atlas
-            Texture2D atlas = new Texture2D(2048, 2048, TextureFormat.RGBA32, false);
+            Texture2D atlas = new Texture2D(2048, 2048, TextureFormat.ARGB32, false);
             rectsOut = atlas.PackTextures(textures.ToArray(), padding, 2048);
             indicesOut = indices.ToArray();
 
@@ -522,7 +522,7 @@ namespace DaggerfallWorkshop.Game
                 ImageProcessing.DilateColors(ref colors, sz);
 
             // Create Texture2D
-            Texture2D texture = new Texture2D(sz.Width, sz.Height, TextureFormat.RGBA32, false);
+            Texture2D texture = new Texture2D(sz.Width, sz.Height, TextureFormat.ARGB32, false);
             texture.SetPixels32(colors);
             texture.Apply(true);
 

@@ -278,13 +278,13 @@ namespace DaggerfallWorkshop
             // Create new textures
             if (!IsNight || !showNightSky)
             {
-                westTexture = new Texture2D(dayWidth, dayHeight, TextureFormat.RGB24, false);
-                eastTexture = new Texture2D(dayWidth, dayHeight, TextureFormat.RGB24, false);
+                westTexture = new Texture2D(dayWidth, dayHeight, TextureFormat.ARGB32, false);
+                eastTexture = new Texture2D(dayWidth, dayHeight, TextureFormat.ARGB32, false);
             }
             else
             {
-                westTexture = new Texture2D(nightWidth, nightHeight, TextureFormat.RGB24, false);
-                eastTexture = new Texture2D(nightWidth, nightHeight, TextureFormat.RGB24, false);
+                westTexture = new Texture2D(nightWidth, nightHeight, TextureFormat.ARGB32, false);
+                eastTexture = new Texture2D(nightWidth, nightHeight, TextureFormat.ARGB32, false);
             }
 
             // Set pixels, flipping hemisphere if required
