@@ -64,7 +64,6 @@ namespace DaggerfallWorkshop
             var propFogWindowIntensity = Prop("FogWindowIntensity");
             var propCustomWindowIntensity = Prop("CustomWindowIntensity");
             var propAlphaTextureFormat = Prop("AlphaTextureFormat");
-            var propNonAlphaTextureFormat = Prop("NonAlphaTextureFormat");
 
             EditorGUILayout.Space();
             if (!propAtlasTextures.boolValue ||

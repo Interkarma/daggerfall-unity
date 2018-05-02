@@ -220,7 +220,7 @@ namespace DaggerfallWorkshop
             CustomBlendMode blendMode = CustomBlendMode.Opaque,
             CustomSmoothnessMapChannel smoothnessChannel = CustomSmoothnessMapChannel.AlbedoAlpha,
             float metallic = 0,
-            float glossiness = 1)
+            float glossiness = 0)
         {
             // Create material
             Shader shader = Shader.Find(_StandardShaderName);
