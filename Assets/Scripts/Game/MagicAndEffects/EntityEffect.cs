@@ -48,9 +48,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         string DisplayName { get; }
 
         /// <summary>
-        /// Gets number of magic rounds remaining.
+        /// Gets or sets number of magic rounds remaining.
         /// </summary>
-        int RoundsRemaining { get; }
+        int RoundsRemaining { get; set; }
 
         /// <summary>
         /// Gets array DaggerfallStats.Count items wide.
@@ -169,6 +169,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public virtual int RoundsRemaining
         {
             get { return roundsRemaining; }
+            set { roundsRemaining = value; }
         }
 
         public int[] StatMods
