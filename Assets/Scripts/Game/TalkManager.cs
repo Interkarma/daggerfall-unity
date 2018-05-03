@@ -1226,25 +1226,36 @@ namespace DaggerfallWorkshop.Game
             questResourceInfo.anyInfoAnswers = anyInfoAnswers;
             questResourceInfo.rumorsAnswers = rumorsAnswers;
             questResourceInfo.resourceType = resourceType;
-            questResourceInfo.availableForDialog = true;
-            questResourceInfo.hasEntryInTellMeAbout = true;
+
+            // questResourceInfo.availableForDialog = true; // already set by QuestResourceInfo constructor
+            
+            //if (resourceType == QuestInfoResourceType.Person && person.IsQuestor) // questors are always available for dialog
+            //    questResourceInfo.availableForDialog = true;
+            
+            if (questResourceInfo.anyInfoAnswers != null || questResourceInfo.rumorsAnswers != null)
+                questResourceInfo.hasEntryInTellMeAbout = true;
+
             if (resourceType == QuestInfoResourceType.Person || resourceType == QuestInfoResourceType.Location)
                 questResourceInfo.hasEntryInWhereIs = true;
             else
                 questResourceInfo.hasEntryInWhereIs = false;
+
             questResourceInfo.questResource = questResource;
          
             questResources.resourceInfo[resourceName] = questResourceInfo;
 
             dictQuestInfo[questID] = questResources;
 
-            // update topic list
-            AssembleTopiclistTellMeAbout();
+            // update topic lists
+            //AssembleTopiclistTellMeAbout();
+            AssembleTopicLists();
 
             // update rumor mill
-            GameManager.Instance.TalkManager.AddQuestRumorToRumorMill(questID, questResourceInfo.rumorsAnswers);
+            if (questResourceInfo.rumorsAnswers != null)
+                GameManager.Instance.TalkManager.AddQuestRumorToRumorMill(questID, questResourceInfo.rumorsAnswers);
         }
 
+        /*
         public void AddPersonTopic(ulong questID, DaggerfallWorkshop.Game.Questing.Person person)
         {
             string resourceName = person.DisplayName;
@@ -1270,14 +1281,11 @@ namespace DaggerfallWorkshop.Game
                 questResourceInfo = new QuestResourceInfo();
             }
                 
-            questResourceInfo.anyInfoAnswers = null;
-            questResourceInfo.rumorsAnswers = null;
             questResourceInfo.resourceType = QuestInfoResourceType.Person;
             questResourceInfo.questResource = person;
             questResourceInfo.availableForDialog = true;
             if (person.IsQuestor) // questors are always available for dialog
                 questResourceInfo.availableForDialog = true;
-            questResourceInfo.hasEntryInTellMeAbout = false;
             questResourceInfo.hasEntryInWhereIs = true;
 
             questResources.resourceInfo[resourceName] = questResourceInfo;
@@ -1286,6 +1294,7 @@ namespace DaggerfallWorkshop.Game
             // update topic list
             AssembleTopicListPerson();
         }
+        */
 
         public void DialogLinkForQuestInfoResource(ulong questID, string resourceName, QuestInfoResourceType resourceType, string linkedResourceName = null, QuestInfoResourceType linkedResourceType = QuestInfoResourceType.NotSet)
         {
