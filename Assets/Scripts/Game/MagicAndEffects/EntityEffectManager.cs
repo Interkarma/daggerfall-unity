@@ -526,6 +526,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         private void StartGameBehaviour_OnNewGame()
         {
             ClearReadySpellHistory();
+            ClearBundles();
         }
 
         private void Entity_OnDeath(DaggerfallEntity entity)

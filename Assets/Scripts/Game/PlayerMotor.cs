@@ -3,6 +3,8 @@ using System;
 using System.Collections;
 using DaggerfallConnect;
 using DaggerfallWorkShop.Game;
+using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -229,8 +231,11 @@ namespace DaggerfallWorkshop.Game
             jumpTimer = antiBunnyHopFactor;
             mainCamera = GameManager.Instance.MainCamera;
             myCroucher = GetComponent<Croucher>();
-
             levitateMotor = GetComponent<LevitateMotor>();
+
+            // Allow for resetting specific player state on new game or when game starts loading
+            SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
+            StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
         }
 
         void FixedUpdate()
@@ -587,7 +592,7 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
-            // Do nothing if player fake levitating - replacement motor will take over movement.
+            // Do nothing if player levitating - replacement motor will take over movement.
             // Don't return here for swimming because player should still be able to crouch when swimming.
             if (levitateMotor && levitateMotor.IsLevitating)
                 return;
@@ -759,5 +764,31 @@ namespace DaggerfallWorkshop.Game
             float swimSpeed = (baseSpeed * (player.Skills.GetLiveSkillValue(DFCareer.Skills.Swimming) / 200f)) + (baseSpeed / 4);
             return swimSpeed;
         }
+
+        #region Private Methods
+
+        void ResetPlayerState()
+        {
+            // Cancel levitation at start of loading a new save game
+            // This prevents levitation flag carrying over and effect system can still restore it if needed
+            if (levitateMotor)
+                levitateMotor.IsLevitating = false;
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        private void StartGameBehaviour_OnNewGame()
+        {
+            ResetPlayerState();
+        }
+
+        private void SaveLoadManager_OnStartLoad(SaveData_v1 saveData)
+        {
+            ResetPlayerState();
+        }
+
+        #endregion
     }
 }

@@ -82,12 +82,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             if (!entityBehaviour)
                 return;
 
-            // Enable levitaion based on entity type
+            // Enable levitation for player or enemies
             if (entityBehaviour.EntityType == EntityTypes.Player)
+            {
                 GameManager.Instance.PlayerMotor.GetComponent<LevitateMotor>().IsLevitating = true;
-
-            // TODO: Support changing monsters to levitating by adjusting behaviour to a flying creature
-            //if (entityBehaviour.EntityType == EntityTypes.EnemyMonster || entityBehaviour.EntityType == EntityTypes.EnemyClass)
+            }
+            else if (entityBehaviour.EntityType == EntityTypes.EnemyMonster || entityBehaviour.EntityType == EntityTypes.EnemyClass)
+            {
+                EnemyMotor enemyMotor = entityBehaviour.GetComponent<EnemyMotor>();
+                if (enemyMotor)
+                    enemyMotor.IsLevitating = true;
+            }
         }
 
         void StopLevitating()
@@ -97,12 +102,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             if (!entityBehaviour)
                 return;
 
-            // Disable levitaion based on entity type
+            // Disable levitation for player or enemies
             if (entityBehaviour.EntityType == EntityTypes.Player)
+            {
                 GameManager.Instance.PlayerMotor.GetComponent<LevitateMotor>().IsLevitating = false;
-
-            // TODO: Stop monster from levitating by restoring normal state
-            //if (entityBehaviour.EntityType == EntityTypes.EnemyMonster || entityBehaviour.EntityType == EntityTypes.EnemyClass)
+            }
+            else if (entityBehaviour.EntityType == EntityTypes.EnemyMonster || entityBehaviour.EntityType == EntityTypes.EnemyClass)
+            {
+                EnemyMotor enemyMotor = entityBehaviour.GetComponent<EnemyMotor>();
+                if (enemyMotor)
+                    enemyMotor.IsLevitating = false;
+            }
         }
     }
 }
