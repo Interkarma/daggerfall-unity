@@ -293,7 +293,11 @@ namespace DaggerfallWorkshop.Game
         }
 
         Dictionary<int, NpcWorkEntry> npcsWithWork = new Dictionary<int, NpcWorkEntry>();
-        int lastExteriorEntered;
+
+        // note Nystul: I changed the name from former lastExteriorEntered into exteriorUsedForQuestors to better reflect that a specific exterior was used to build questor dictionary
+        //              Since there was a bug that
+        int exteriorUsedForQuestors;
+        
         int selectedNpcWorkKey;
 
         #endregion
@@ -345,11 +349,13 @@ namespace DaggerfallWorkshop.Game
             get {  return listTopicThing; }
         }
 
-        public int LastExteriorEntered
+        /*
+        public int ExteriorUsedForQuestors
         {
-            get { return lastExteriorEntered; }
-            set { lastExteriorEntered = value; }
+            get { return exteriorUsedForQuestors; }
+            set { exteriorUsedForQuestors = value; }
         }
+        */
 
         #endregion
 
@@ -364,11 +370,11 @@ namespace DaggerfallWorkshop.Game
             PlayerEnterExit.OnTransitionExterior += OnTransitionToExterior;
             PlayerEnterExit.OnTransitionDungeonExterior += OnTransitionToDungeonExterior;
             SaveLoadManager.OnLoad += OnLoadEvent;
-            QuestMachine.OnQuestStarted += OnQuestStarted;
-            QuestMachine.OnQuestEnded += OnQuestEnded;
+            //QuestMachine.OnQuestStarted += OnQuestStarted;
+            //QuestMachine.OnQuestEnded += OnQuestEnded;
 
             // initialize work variables
-            lastExteriorEntered = 0;
+            exteriorUsedForQuestors = 0;
             selectedNpcWorkKey = -1;
         }
 
@@ -379,8 +385,8 @@ namespace DaggerfallWorkshop.Game
             PlayerEnterExit.OnTransitionExterior -= OnTransitionToExterior;
             PlayerEnterExit.OnTransitionDungeonExterior -= OnTransitionToDungeonExterior;
             SaveLoadManager.OnLoad -= OnLoadEvent;
-            QuestMachine.OnQuestStarted -= OnQuestStarted;
-            QuestMachine.OnQuestEnded -= OnQuestEnded;
+            //QuestMachine.OnQuestStarted -= OnQuestStarted;
+            //QuestMachine.OnQuestEnded -= OnQuestEnded;
         }
 
         void OnEnable()
@@ -1554,7 +1560,7 @@ namespace DaggerfallWorkshop.Game
             int width = location.Exterior.ExteriorData.Width;
             int height = location.Exterior.ExteriorData.Height;
             bool populateQuestors = false;
-            if (lastExteriorEntered != GameManager.Instance.PlayerGPS.CurrentLocationIndex)
+            if (exteriorUsedForQuestors != GameManager.Instance.PlayerGPS.CurrentLocationIndex)
             {
                 npcsWithWork.Clear();
                 populateQuestors = true;
@@ -1659,6 +1665,7 @@ namespace DaggerfallWorkshop.Game
                                     }
                                 }
                             }
+                            exteriorUsedForQuestors = GameManager.Instance.PlayerGPS.CurrentLocationIndex; // once
                         }
                     }
                 }
@@ -2141,27 +2148,28 @@ namespace DaggerfallWorkshop.Game
         private void OnMapPixelChanged(DFPosition mapPixel)
         {
             rebuildTopicLists = true;
-            //AssembleTopicLists();
+            //AssembleTopicLists(); // if we don't want to build talk topic lists on demand - we can uncomment this and it will be build here
         }
 
         private void OnTransitionToExterior(PlayerEnterExit.TransitionEventArgs args)
         {
             rebuildTopicLists = true;
-            //AssembleTopicLists();
+            //AssembleTopicLists(); // if we don't want to build talk topic lists on demand - we can uncomment this and it will be build here
         }
 
         private void OnTransitionToDungeonExterior(PlayerEnterExit.TransitionEventArgs args)
         {
             rebuildTopicLists = true;
-            //AssembleTopicLists();
+            //AssembleTopicLists(); // if we don't want to build talk topic lists on demand - we can uncomment this and it will be build here
         }
 
         void OnLoadEvent(SaveData_v1 saveData)
         {
             rebuildTopicLists = true;
-            //AssembleTopicLists();
+            //AssembleTopicLists(); // if we don't want to build talk topic lists on demand - we can uncomment this and it will be build here
         }
 
+        /*
         void OnQuestStarted(Quest quest)
         {
             // AssembleTopicLists(); // note by Nystul: check if really necessary since resources are added as talk options when quest resources are parsed anyway
@@ -2171,6 +2179,7 @@ namespace DaggerfallWorkshop.Game
         {
             // AssembleTopicLists(); // note by Nystul: check if really necessary since resources are added as talk options when quest resources are parsed anyway
         }
+        */
 
         #endregion         
     }

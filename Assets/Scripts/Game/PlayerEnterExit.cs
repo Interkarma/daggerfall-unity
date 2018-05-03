@@ -1033,7 +1033,12 @@ namespace DaggerfallWorkshop.Game
                     }
                     holidayTextLocation = location;
 
-                    TalkManager.Instance.LastExteriorEntered = location.LocationIndex;
+                    // note Nystul: this next line is not enough to manage questor dictionary update since player might load a savegame in an interior -
+                    // so this never gets triggered and questor list is rebuild always as a consequence
+                    // a better thing is if talkmanager handles all this by itself without making changes to PlayerEnterExit necessary and use events/delegates
+                    // -> so I will outcomment next line but leave it in so that original author stumbles across this comment
+                    // fixed this in TalkManager class
+                    // TalkManager.Instance.LastExteriorEntered = location.LocationIndex;
                 }
             }
         }
