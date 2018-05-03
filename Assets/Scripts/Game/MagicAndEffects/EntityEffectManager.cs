@@ -288,8 +288,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 effect.Start(this, sourceBundle.CasterEntityBehaviour);
 
                 // Do not add unflagged incumbent effects
+                // But allow for an icon refresh as duration might have changed and we want to update this sooner than next magic round
                 if (effect is IncumbentEffect && !(effect as IncumbentEffect).IsIncumbent)
+                {
+                    RaiseOnAssignBundle();
                     continue;
+                }
 
                 // Add effect
                 instancedBundle.liveEffects.Add(effect);
@@ -299,10 +303,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             if (instancedBundle.liveEffects.Count > 0)
             {
                 instancedBundles.Add(instancedBundle);
+                RaiseOnAssignBundle();
                 Debug.LogFormat("Adding bundle {0}", instancedBundle.GetHashCode());
-
-                if (isPlayerEntity)
-                    RaiseOnPlayerAssignBundle();
             }
         }
 
@@ -312,9 +314,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public void ClearBundles()
         {
             instancedBundles.Clear();
-
-            if (isPlayerEntity)
-                RaiseOnPlayerRemoveBundle();
+            RaiseOnRemoveBundle();
         }
 
         #endregion
@@ -369,10 +369,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 effect.End();
 
             instancedBundles.Remove(bundle);
+            RaiseOnRemoveBundle();
             //Debug.LogFormat("Expired bundle {0} with {1} effects", bundle.settings.Name, bundle.settings.Effects.Length);
-
-            if (isPlayerEntity)
-                RaiseOnPlayerRemoveBundle();
         }
 
         void ClearReadySpellHistory()
@@ -697,22 +695,31 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         #region Events
 
-        // OnPlayerAssignBundle
-        public delegate void OnPlayerAssignBundleEventHandler();
-        public event OnPlayerAssignBundleEventHandler OnPlayerAssignBundle;
-        protected virtual void RaiseOnPlayerAssignBundle()
+        // OnAssignBundle
+        public delegate void OnAssignBundleEventHandler();
+        public event OnAssignBundleEventHandler OnAssignBundle;
+        protected virtual void RaiseOnAssignBundle()
         {
-            if (OnPlayerAssignBundle != null)
-                OnPlayerAssignBundle();
+            if (OnAssignBundle != null)
+                OnAssignBundle();
         }
 
-        // OnPlayerRemoveBundle
-        public delegate void OnPlayerRemoveBundleEventHandler();
-        public event OnPlayerRemoveBundleEventHandler OnPlayerRemoveBundle;
-        protected virtual void RaiseOnPlayerRemoveBundle()
+        // OnRemoveBundle
+        public delegate void OnRemoveBundleEventHandler();
+        public event OnRemoveBundleEventHandler OnRemoveBundle;
+        protected virtual void RaiseOnRemoveBundle()
         {
-            if (OnPlayerRemoveBundle != null)
-                OnPlayerRemoveBundle();
+            if (OnRemoveBundle != null)
+                OnRemoveBundle();
+        }
+
+        // OnAddIncumbentState
+        public delegate void OnAddIncumbentStateEventHandler();
+        public event OnAddIncumbentStateEventHandler OnAddIncumbentState;
+        protected virtual void RaiseOnAddIncumbentState()
+        {
+            if (OnAddIncumbentState != null)
+                OnAddIncumbentState();
         }
 
         #endregion

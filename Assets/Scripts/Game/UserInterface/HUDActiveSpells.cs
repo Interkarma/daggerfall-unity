@@ -24,6 +24,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
     {
         #region Fields
 
+        const float blinkInterval = 0.25f;
         const int maxIconRow = 10;
         const int maxIconPool = 20;
 
@@ -38,6 +39,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         List<ActiveSpellIcon> activeSelfList = new List<ActiveSpellIcon>();
         List<ActiveSpellIcon> activeOtherList = new List<ActiveSpellIcon>();
 
+        bool blinkState = false;
+        float blinkTimer = 0;
+
         #endregion
 
         #region Structs & Enums
@@ -50,7 +54,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             public int iconIndex;
             public string displayName;
             public bool expiring;
-            public int bundleIndex;
+            public int poolIndex;
         }
 
         #endregion
@@ -62,11 +66,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             AutoSize = AutoSizeModes.None;
 
-            // Update icon state for player every round or when a bundle is assigned and removed
+            // Update icon state for player every round or when a bundle is assigned, removed, or state added
             EntityEffectBroker.OnNewMagicRound += UpdateIcons;
-            GameManager.Instance.PlayerEffectManager.OnPlayerAssignBundle += UpdateIcons;
-            GameManager.Instance.PlayerEffectManager.OnPlayerRemoveBundle += UpdateIcons;
-            SaveLoadManager.OnLoad += SaveLoadManager_OnLoad; ;
+            GameManager.Instance.PlayerEffectManager.OnAssignBundle += UpdateIcons;
+            GameManager.Instance.PlayerEffectManager.OnRemoveBundle += UpdateIcons;
+            GameManager.Instance.PlayerEffectManager.OnAddIncumbentState += UpdateIcons;
+            SaveLoadManager.OnLoad += SaveLoadManager_OnLoad;
 
             InitIcons();
         }
@@ -79,12 +84,40 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             base.Update();
 
-            // TODO: Flash expiring icons
+            // Run blink timer
+            blinkTimer += Time.deltaTime;
+            if (blinkTimer > blinkInterval)
+            {
+                blinkTimer -= blinkInterval;
+                blinkState = !blinkState;
+            }
+
+            // Blink expiring icons when game not paused
+            // Otherwise always show icons when paused
+            if (!GameManager.IsGamePaused)
+            {
+                SetIconBlinkState(activeSelfList, blinkState);
+                SetIconBlinkState(activeOtherList, blinkState);
+            }
+            else
+            {
+                SetIconBlinkState(activeSelfList, true);
+                SetIconBlinkState(activeOtherList, true);
+            }
         }
 
         #endregion
 
         #region Private Methods
+
+        void SetIconBlinkState(List<ActiveSpellIcon> icons, bool state)
+        {
+            foreach(ActiveSpellIcon spell in icons)
+            {
+                if (spell.expiring)
+                    iconPool[spell.poolIndex].Enabled = state;
+            }
+        }
 
         int GetMaxRoundsRemaining(EntityEffectManager.InstancedBundle bundle)
         {
@@ -164,7 +197,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 ActiveSpellIcon item = new ActiveSpellIcon();
                 item.displayName = bundle.name;
                 item.iconIndex = bundle.iconIndex;
-                item.bundleIndex = i;
+                item.poolIndex = i;
                 item.expiring = (maxRoundsRemaining <= 2) ? true : false;
                 if (bundle.caster == null || bundle.caster != GameManager.Instance.PlayerEntityBehaviour)
                     activeOtherList.Add(item);
