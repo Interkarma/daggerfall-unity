@@ -26,7 +26,9 @@ namespace DaggerfallWorkshop
     /// </summary>
     public class WorldTime : MonoBehaviour
     {
+        [HideInInspector]
         public DaggerfallDateTime DaggerfallDateTime = new DaggerfallDateTime();
+        public float RaiseTimeInSeconds = 0;
         public float TimeScale = 12f;
         public bool ShowDebugString = false;
 
@@ -57,6 +59,11 @@ namespace DaggerfallWorkshop
 
         void Update()
         {
+            if (RaiseTimeInSeconds > 0)
+            {
+                DaggerfallDateTime.RaiseTime(RaiseTimeInSeconds);
+                RaiseTimeInSeconds = 0;
+            }
             DaggerfallDateTime.RaiseTime(Time.deltaTime * TimeScale);
             RaiseEvents();
         }
