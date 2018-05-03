@@ -167,6 +167,7 @@ namespace DaggerfallWorkshop.Game
 
         string nameNPC = "";
 
+        bool rebuildTopicLists = true; // flag to indicate that topic lists need to be rebuild next time talkwindow is opened
 
         ListItem currentQuestionListItem = null; // current question list item        
         string currentKeySubject = "";
@@ -182,7 +183,7 @@ namespace DaggerfallWorkshop.Game
         List<ListItem> listTopicThing;
 
         int numQuestionsAsked = 0;
-        string questionOpeningText = ""; // randomize PC opening text only once for every new question so save it in this string after creating it
+        string questionOpeningText = ""; // randomize PC opening text only once for every new question so save it in this string after creating it (so opening text does not change when picking different questions/topics)
 
         bool markLocationOnMap = false;
 
@@ -564,6 +565,11 @@ namespace DaggerfallWorkshop.Game
             numQuestionsAsked = 0;
             questionOpeningText = "";
             currentQuestionListItem = null;
+            if (rebuildTopicLists)
+            {
+                AssembleTopicLists();
+                rebuildTopicLists = false;
+            }
             SetupRumorMill();
         }
 
@@ -1195,7 +1201,8 @@ namespace DaggerfallWorkshop.Game
 
         public void ForceTopicListsUpdate()
         {
-            AssembleTopicLists();
+            rebuildTopicLists = true;
+            //AssembleTopicLists();
         }
 
         public void AddQuestTopicWithInfoAndRumors(ulong questID, QuestResource questResource, string resourceName, QuestInfoResourceType resourceType, List<TextFile.Token[]> anyInfoAnswers, List<TextFile.Token[]> rumorsAnswers)
@@ -1248,7 +1255,8 @@ namespace DaggerfallWorkshop.Game
 
             // update topic lists
             //AssembleTopiclistTellMeAbout();
-            AssembleTopicLists();
+            //AssembleTopicLists();
+            rebuildTopicLists = true;
 
             // update rumor mill
             if (questResourceInfo.rumorsAnswers != null)
@@ -1399,10 +1407,11 @@ namespace DaggerfallWorkshop.Game
             }
 
             // update topic lists
-            AssembleTopiclistTellMeAbout();
-            AssembleTopicListLocation();
-            AssembleTopicListPerson();
-            AssembleTopicListThing();
+            rebuildTopicLists = true;
+            //AssembleTopiclistTellMeAbout();
+            //AssembleTopicListLocation();
+            //AssembleTopicListPerson();
+            //AssembleTopicListThing();
         }
 
         /// <summary>
@@ -2098,40 +2107,6 @@ namespace DaggerfallWorkshop.Game
             return (tokens[0].text);
         }
 
-        #endregion
-
-        #region event handlers
-
-        private void OnMapPixelChanged(DFPosition mapPixel)
-        {
-            AssembleTopicLists();
-        }
-
-        private void OnTransitionToExterior(PlayerEnterExit.TransitionEventArgs args)
-        {
-            AssembleTopicLists();
-        }
-
-        private void OnTransitionToDungeonExterior(PlayerEnterExit.TransitionEventArgs args)
-        {
-            AssembleTopicLists();
-        }
-
-        void OnLoadEvent(SaveData_v1 saveData)
-        {
-            AssembleTopicLists();
-        }
-
-        void OnQuestStarted(Quest quest)
-        {
-            // AssembleTopicLists(); // note by Nystul: check if really necessary since resources are added as talk options when quest resources are parsed anyway
-        }
-
-        void OnQuestEnded(Quest quest)
-        {
-            // AssembleTopicLists(); // note by Nystul: check if really necessary since resources are added as talk options when quest resources are parsed anyway
-        }
-
         private string getRecordIdByNpcsSocialGroup(int textRecordIdDefault, int textRecordIdGuildMembers, int textRecordIdMerchants, int textRecordIdNobility, int textRecordIdScholars, int textRecordIdUnderworld)
         {
             switch (npcData.socialGroup)
@@ -2156,6 +2131,45 @@ namespace DaggerfallWorkshop.Game
                 case FactionFile.SocialGroups.Underworld:
                     return expandRandomTextRecord(textRecordIdUnderworld); // todo: this needs to be tested with a npc of social group underworld in vanilla df
             }
+        }
+
+
+        #endregion
+
+        #region event handlers
+
+        private void OnMapPixelChanged(DFPosition mapPixel)
+        {
+            rebuildTopicLists = true;
+            //AssembleTopicLists();
+        }
+
+        private void OnTransitionToExterior(PlayerEnterExit.TransitionEventArgs args)
+        {
+            rebuildTopicLists = true;
+            //AssembleTopicLists();
+        }
+
+        private void OnTransitionToDungeonExterior(PlayerEnterExit.TransitionEventArgs args)
+        {
+            rebuildTopicLists = true;
+            //AssembleTopicLists();
+        }
+
+        void OnLoadEvent(SaveData_v1 saveData)
+        {
+            rebuildTopicLists = true;
+            //AssembleTopicLists();
+        }
+
+        void OnQuestStarted(Quest quest)
+        {
+            // AssembleTopicLists(); // note by Nystul: check if really necessary since resources are added as talk options when quest resources are parsed anyway
+        }
+
+        void OnQuestEnded(Quest quest)
+        {
+            // AssembleTopicLists(); // note by Nystul: check if really necessary since resources are added as talk options when quest resources are parsed anyway
         }
 
         #endregion         
