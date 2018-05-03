@@ -18,7 +18,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// <summary>
     /// Continuous Damage - Spell Points
     /// </summary>
-    public class ContinuousDamageSpellPoints : BaseEntityEffect
+    public class ContinuousDamageSpellPoints : IncumbentEffect
     {
         public override void SetProperties()
         {
@@ -51,6 +51,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             entityBehaviour.DamageMagickaFromSource(caster, magnitude);
 
             Debug.LogFormat("Effect {0} damaged {1} by {2} spell points points and has {3} magic rounds remaining.", Key, entityBehaviour.name, magnitude, RoundsRemaining);
+        }
+
+        protected override bool IsLikeKind(IncumbentEffect other)
+        {
+            return (other is ContinuousDamageSpellPoints);
+        }
+
+        protected override void AddState(IncumbentEffect incumbent)
+        {
+            // Stack my rounds onto incumbent
+            incumbent.RoundsRemaining += RoundsRemaining;
         }
     }
 }

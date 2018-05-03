@@ -65,10 +65,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             return (other is Levitate);
         }
 
-        protected override void BecomeIncumbent()
-        {
-        }
-
         protected override void AddState(IncumbentEffect incumbent)
         {
             // Stack my rounds onto incumbent
