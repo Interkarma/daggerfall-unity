@@ -41,6 +41,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         bool blinkState = false;
         float blinkTimer = 0;
+        ToolTip defaultToolTip = null;
 
         #endregion
 
@@ -101,8 +102,23 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
             else
             {
+                // Disable blink and update tooltips when paused
                 SetIconBlinkState(activeSelfList, true);
                 SetIconBlinkState(activeOtherList, true);
+                if (defaultToolTip != null)
+                    defaultToolTip.Update();
+            }
+        }
+
+        public override void Draw()
+        {
+            base.Draw();
+
+            if (GameManager.IsGamePaused)
+            {
+                // Draw tooltips only when paused
+                if (defaultToolTip != null)
+                    defaultToolTip.Draw();
             }
         }
 
@@ -147,12 +163,24 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void InitIcons()
         {
+            // Setup default tooltip
+            if (DaggerfallUnity.Settings.EnableToolTips)
+            {
+                defaultToolTip = new ToolTip();
+                defaultToolTip.ToolTipDelay = DaggerfallUnity.Settings.ToolTipDelayInSeconds;
+                defaultToolTip.BackgroundColor = DaggerfallUnity.Settings.ToolTipBackgroundColor;
+                defaultToolTip.TextColor = DaggerfallUnity.Settings.ToolTipTextColor;
+                defaultToolTip.Parent = this;
+            }
+
+            // Setup icon panels
             for (int i = 0; i < iconPool.Length; i++)
             {
                 iconPool[i] = new Panel();
                 iconPool[i].BackgroundColor = Color.black;
                 iconPool[i].AutoSize = AutoSizeModes.None;
                 iconPool[i].Enabled = false;
+                iconPool[i].ToolTip = defaultToolTip;
                 Components.Add(iconPool[i]);
             }
         }
@@ -219,6 +247,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 iconPool[count].BackgroundTexture = DaggerfallUI.Instance.SpellIconCollection.GetSpellIcon(spell.iconIndex);
                 iconPool[count].Position = new Vector2(xpos, ypos);
                 iconPool[count].Size = new Vector2(width, height);
+                iconPool[count].ToolTipText = spell.displayName;
                 xpos += xspacing;
                 ypos += yspacing;
                 if (++count > maxIconPool - 1)
