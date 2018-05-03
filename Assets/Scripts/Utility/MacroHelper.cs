@@ -713,18 +713,6 @@ namespace DaggerfallWorkshop.Utility
             }
         }
 
-        //private static string DialogLocationDirection(IMacroContextProvider mcp)
-        //{
-        //    // %di
-        //    return GameManager.Instance.TalkManager.GetKeySubjectLocationDirection();
-        //}
-
-        //private static string DialogHint(IMacroContextProvider mcp)
-        //{
-        //    // %hnt
-        //    return GameManager.Instance.TalkManager.GetKeySubjectLocationHint();
-        //}
-
         private static string MarkLocationOnMap(IMacroContextProvider mcp)
         {
             // %loc
