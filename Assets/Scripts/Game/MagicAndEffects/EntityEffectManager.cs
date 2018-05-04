@@ -31,6 +31,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     {
         #region Fields
 
+        const string textDatabase = "ClassicEffects";
         const int minAcceptedSpellVersion = 1;
 
         const int magicCastSoundID = 349;
@@ -277,6 +278,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Instantiate all effects in this bundle
             for (int i = 0; i < sourceBundle.Settings.Effects.Length; i++)
             {
+                // Instantiate effect
                 IEntityEffect effect = GameManager.Instance.EntityEffectBroker.InstantiateEffect(sourceBundle.Settings.Effects[i]);
                 if (effect == null)
                 {
@@ -284,8 +286,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     continue;
                 }
 
-                // Start effect
+                // Start effect and do not proceed if chance failed
                 effect.Start(this, sourceBundle.CasterEntityBehaviour);
+                if (effect.Properties.SupportChance && !effect.ChanceSuccess)
+                {
+                    // Output "save versus spell made." if the host manager is player
+                    if (isPlayerEntity)
+                        DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "saveVersusSpellMade"));
+
+                    continue;
+                }
 
                 // Do not add unflagged incumbent effects
                 // But allow for an icon refresh as duration might have changed and we want to update this sooner than next magic round
@@ -558,6 +568,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             public string key;
             public EffectSettings effectSettings;
             public int roundsRemaining;
+            public bool chanceSuccess;
             public int[] statMods;
             public int[] skillMods;
             public bool isIncumbent;
@@ -605,6 +616,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             effectData.key = effect.Key;
             effectData.effectSettings = effect.Settings;
             effectData.roundsRemaining = effect.RoundsRemaining;
+            effectData.chanceSuccess = effect.ChanceSuccess;
             effectData.statMods = effect.StatMods;
             effectData.skillMods = effect.SkillMods;
             effectData.isIncumbent = (effect is IncumbentEffect) ? (effect as IncumbentEffect).IsIncumbent : false;

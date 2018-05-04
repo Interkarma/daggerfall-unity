@@ -1,4 +1,4 @@
-- Text database for classic effects shown in spellmaker UI. These text items were previously hardcoded into FALL.EXE.
+- Text database for classic effects. These text items were previously hardcoded into FALL.EXE.
 
 schema: *key,text
 
@@ -76,3 +76,5 @@ true,                       True
 noName,                     <no-name>
 
 youFeelDrained,             You feel drained.
+youAreParalyzed,            You are paralyzed.
+saveVersusSpellMade,        Save versus spell made.

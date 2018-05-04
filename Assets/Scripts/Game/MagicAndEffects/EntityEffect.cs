@@ -53,6 +53,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         int RoundsRemaining { get; set; }
 
         /// <summary>
+        /// Gets flag stating if effect passed a chance check on start.
+        /// </summary>
+        bool ChanceSuccess { get; }
+
+        /// <summary>
         /// Gets array DaggerfallStats.Count items wide.
         /// Array items represent Strength, Intelligence, Willpower, etc.
         /// Effect implementation should set modifier values for stats when part of payload.
@@ -122,6 +127,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         protected EntityEffectManager manager = null;
 
         int roundsRemaining;
+        bool chanceSuccess = false;
         int[] statMods = new int[DaggerfallStats.Count];
         int[] skillMods = new int[DaggerfallSkills.Count];
 
@@ -172,6 +178,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             set { roundsRemaining = value; }
         }
 
+        public virtual bool ChanceSuccess
+        {
+            get { return chanceSuccess; }
+        }
+
         public int[] StatMods
         {
             get { return statMods; }
@@ -209,7 +220,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             this.manager = manager;
             this.caster = caster;
             SetDuration();
-            MagicRound();
+            SetChance();
+
+            // Perform first magic round automatically if chance not supported or chance succeeded
+            // If chance failed then effect will be immediately dropped by manager when assiging bundle
+            if (!properties.SupportChance || chanceSuccess)
+                MagicRound();
         }
 
         /// <summary>
@@ -220,6 +236,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             this.manager = manager;
             this.caster = caster;
             roundsRemaining = effectData.roundsRemaining;
+            chanceSuccess = effectData.chanceSuccess;
             statMods = effectData.statMods;
             skillMods = effectData.skillMods;
         }
@@ -350,6 +367,26 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 roundsRemaining = 0;
 
             //Debug.LogFormat("Effect '{0}' will run for {1} magic rounds", Key, roundsRemaining);
+        }
+
+        void SetChance()
+        {
+            if (!properties.SupportChance)
+            {
+                chanceSuccess = true;
+                return;
+            }
+
+            int chance = 0;
+            int casterLevel = (caster) ? caster.Entity.Level : 1;
+            if (properties.SupportChance)
+                chance = settings.ChanceBase + settings.ChancePlus * (int)Mathf.Floor(casterLevel / settings.ChancePerLevel);
+            else
+                roundsRemaining = 0;
+
+            chanceSuccess = (UnityEngine.Random.Range(1, 100) <= chance);
+
+            //Debug.LogFormat("Effect '{0}' has a {1}% chance of succeeding", Key, chance);
         }
 
         #endregion
