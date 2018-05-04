@@ -39,6 +39,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.ChanceCosts = MakeEffectCosts(28, 100, 1.4f);
         }
 
+        public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
+        {
+            base.Start(manager, caster);
+            PlayerAggro();
+        }
+
         public override void MagicRound()
         {
             base.MagicRound();
@@ -90,10 +96,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 return;
 
             entityBehaviour.Entity.IsParalyzed = true;
-
-            // Cause aggro if source is player
-            if (caster == GameManager.Instance.PlayerEntityBehaviour)
-                entityBehaviour.HandleAttackByPlayer();
+            PlayerAggro();
         }
 
         void StopParalyzation()

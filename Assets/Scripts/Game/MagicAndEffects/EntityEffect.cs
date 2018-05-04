@@ -302,6 +302,18 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             return magnitude;
         }
 
+        protected void PlayerAggro()
+        {
+            // Get peered entity gameobject
+            DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
+            if (!entityBehaviour)
+                return;
+
+            // Cause aggro if source is player
+            if (caster == GameManager.Instance.PlayerEntityBehaviour)
+                entityBehaviour.HandleAttackByPlayer();
+        }
+
         protected void SetStatMod(DFCareer.Stats stat, int value)
         {
             statMods[(int)stat] = value;
