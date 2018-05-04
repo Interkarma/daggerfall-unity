@@ -20,6 +20,7 @@ namespace DaggerfallWorkshop.Game.Entity
         /// </summary>
         public override void SetEntityDefaults()
         {
+            MaxHealth = 1;
             CurrentHealth = 1;
         }
     }

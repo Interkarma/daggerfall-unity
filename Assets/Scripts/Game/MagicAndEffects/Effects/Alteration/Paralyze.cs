@@ -90,6 +90,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 return;
 
             entityBehaviour.Entity.IsParalyzed = true;
+
+            // Cause aggro if source is player
+            if (caster == GameManager.Instance.PlayerEntityBehaviour)
+                entityBehaviour.HandleAttackByPlayer();
         }
 
         void StopParalyzation()

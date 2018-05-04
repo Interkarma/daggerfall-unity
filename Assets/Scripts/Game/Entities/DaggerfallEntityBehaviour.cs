@@ -156,15 +156,22 @@ namespace DaggerfallWorkshop.Game.Entity
                 MobilePersonNPC mobileNpc = transform.GetComponent<MobilePersonNPC>();
                 if (mobileNpc)
                 {
-                    playerEntity.TallyCrimeGuildRequirements(false, 5);
-                    // TODO: LOS check from each townsperson. If seen, register crime and start spawning guards as below.
-                    playerEntity.CrimeCommitted = PlayerEntity.Crimes.Murder;
-                    playerEntity.SpawnCityGuards(true);
+                    // Handle assault or murder
+                    if (Entity.CurrentHealth > 0)
+                    {
+                        playerEntity.CrimeCommitted = PlayerEntity.Crimes.Assault;
+                        playerEntity.SpawnCityGuards(true);
+                    }
+                    else
+                    {
+                        playerEntity.TallyCrimeGuildRequirements(false, 5);
+                        // TODO: LOS check from each townsperson. If seen, register crime and start spawning guards as below.
+                        playerEntity.CrimeCommitted = PlayerEntity.Crimes.Murder;
+                        playerEntity.SpawnCityGuards(true);
 
-                    // Disable when dead
-                    // Civilians usually only take one hit, but this just respects entity health value
-                    if (Entity.CurrentHealth == 0)
+                        // Disable when dead
                         mobileNpc.Motor.gameObject.SetActive(false);
+                    }
                 }
             }
 
