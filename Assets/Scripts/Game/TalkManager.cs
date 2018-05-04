@@ -960,27 +960,6 @@ namespace DaggerfallWorkshop.Game
             return answer;
         }
 
-        public string GetLocationOnMap(int buildingKey)
-        {
-            string answer;
-
-            // inject location of interest as key subject and redo afterwards - kind of a hack - might find a cleaner solution in the future
-            
-            //KeySubjectType backupKeySubjectType = this.currentKeySubjectType;
-            string backupKeySubject = this.currentKeySubject; // backup current key subject
-
-            BuildingInfo buildingInfo = listBuildings.Find(x => x.buildingKey == buildingKey);
-            this.currentKeySubject = buildingInfo.name;
-
-            markLocationOnMap = true; // only reveal on purpose
-            answer = expandRandomTextRecord(7332);
-            markLocationOnMap = false; // don't forget so future %loc macro resolving when preprocessing messages does not reveal location
-
-            this.currentKeySubject = backupKeySubject; // restore old key subject
-
-            return answer;
-        }
-
         public string GetKeySubjectLocationHint()
         {
             string answer;
@@ -1006,16 +985,20 @@ namespace DaggerfallWorkshop.Game
         {
             string answer;
 
-            if (GameManager.Instance.IsPlayerInside)
-            {
-                answer = expandRandomTextRecord(7333);
-            }
-            else
-            {
-                string nameNPC = currentQuestionListItem.caption;
-                int buildingKey = GameManager.Instance.TalkManager.GetBuildingKeyForPersonResource(currentQuestionListItem.questID, nameNPC);
-                answer = GameManager.Instance.TalkManager.GetLocationOnMap(buildingKey);                
-            }
+            string nameNPC = this.currentKeySubject; // currentQuestionListItem.caption;
+            int buildingKey = GameManager.Instance.TalkManager.GetBuildingKeyForPersonResource(currentQuestionListItem.questID, nameNPC);
+
+            string backupKeySubject = this.currentKeySubject; // backup current key subject
+
+            BuildingInfo buildingInfo = listBuildings.Find(x => x.buildingKey == buildingKey);
+            this.currentKeySubject = buildingInfo.name;
+            this.currentKeySubjectBuildingKey = buildingKey;
+
+            markLocationOnMap = true; // only reveal on purpose
+            answer = GetKeySubjectLocationHint();
+            markLocationOnMap = false; // don't forget so future %loc macro resolving when preprocessing messages does not reveal location
+
+            this.currentKeySubject = backupKeySubject; // restore old key subject           
 
             return answer;
         }
@@ -1503,7 +1486,42 @@ namespace DaggerfallWorkshop.Game
             dictQuestInfo = data.dictQuestInfo;
             if (dictQuestInfo == null)
                 dictQuestInfo = new Dictionary<ulong, QuestResources>();
-            
+
+            ulong[] questIDs = GameManager.Instance.QuestMachine.GetAllQuests();            
+
+            foreach (ulong questID in questIDs)
+            {
+                Quest quest = GameManager.Instance.QuestMachine.GetQuest(questID);
+                if (dictQuestInfo.ContainsKey(questID))
+                {
+                    QuestResources questInfo = dictQuestInfo[questID]; // get questInfo containing orphaned list of quest resources
+
+                    QuestResource[] questResources = quest.GetAllResources(typeof(Person)); // get list of person quest resources                   
+                    for (int i=0; i < questResources.Length; i++)
+                    {
+                        Questing.Person person = (Questing.Person)(questResources[i]);
+                        string key = person.DisplayName;
+
+                        if (questInfo.resourceInfo.ContainsKey(key)) // if orphaned list of quest resources contains a matching entry
+                        {
+                            questInfo.resourceInfo[key].questResource = person; // update (relink) it
+                        }
+                    }
+
+                    questResources = quest.GetAllResources(typeof(Place)); // get list of place quest resources                   
+                    for (int i = 0; i < questResources.Length; i++)
+                    {
+                        Questing.Place place = (Questing.Place)(questResources[i]);
+                        string key = place.SiteDetails.locationName;
+
+                        if (questInfo.resourceInfo.ContainsKey(key)) // if orphaned list of quest resources contains a matching entry
+                        {
+                            questInfo.resourceInfo[key].questResource = place; // update (relink) it
+                        }
+                    }
+                }
+            }
+
             listRumorMill = data.listRumorMill;
             if (listRumorMill == null)
             {

@@ -68,29 +68,9 @@ namespace DaggerfallWorkshop.Game
 
             public override string LocationDirection()
             {
-                //if (parent.questionType == QuestionType.QuestLocation)
-                //{
-                //    return GameManager.Instance.TalkManager.GetQuestLocationDirection();
-                //}
-                //else if (parent.questionType == QuestionType.LocalBuilding)
-                if (parent.currentQuestionListItem.questionType == QuestionType.LocalBuilding)
+                if (parent.currentQuestionListItem.questionType == QuestionType.LocalBuilding || parent.currentQuestionListItem.questionType == QuestionType.Person)
                 {
                     return GameManager.Instance.TalkManager.GetKeySubjectLocationCompassDirection();
-                }
-                else if (parent.currentQuestionListItem.questionType == QuestionType.Person)
-                {
-                    /*
-                    if (GameManager.Instance.PlayerEnterExit.IsPlayerInside)
-                    {
-                        //return GameManager.Instance.TalkManager.GetKeySubjectLocationDirection();
-                    }
-                    else
-                    {
-                        string nameNPC = this.parent.currentQuestionListItem.caption;
-                        int buildingKey = GameManager.Instance.TalkManager.GetBuildingKeyForPersonResource(this.parent.currentQuestionListItem.questID, nameNPC);
-                        return GameManager.Instance.TalkManager.GetLocationOnMap(buildingKey);
-                    }
-                    */
                 }
                 return "never mind...";
             }
@@ -117,6 +97,10 @@ namespace DaggerfallWorkshop.Game
                 if (parent.currentQuestionListItem.questionType == QuestionType.LocalBuilding)
                 {
                     return GameManager.Instance.TalkManager.GetKeySubjectLocationHint();
+                }
+                else if (parent.currentQuestionListItem.questionType == QuestionType.Person)
+                {
+                    return GameManager.Instance.TalkManager.GetKeySubjectPersonHint();
                 }
                 else if (parent.currentQuestionListItem.questionType == QuestionType.QuestLocation || parent.currentQuestionListItem.questionType == QuestionType.QuestPerson || parent.currentQuestionListItem.questionType == QuestionType.QuestItem)
                 {
