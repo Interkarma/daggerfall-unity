@@ -1027,17 +1027,6 @@ namespace DaggerfallWorkshop.Game.Serialization
                 GameManager.Instance.PlayerGPS.ClearDiscoveryData();
             }
 
-            // Restore conversation data
-            if (!string.IsNullOrEmpty(conversationDataJson))
-            {
-                TalkManager.SaveDataConversation conversationData = Deserialize(typeof(TalkManager.SaveDataConversation), conversationDataJson) as TalkManager.SaveDataConversation;
-                GameManager.Instance.TalkManager.RestoreConversationData(conversationData);
-            }
-            else
-            {                
-                GameManager.Instance.TalkManager.RestoreConversationData(null);
-            }
-
             // Must have PlayerEnterExit to respawn player at saved location
             PlayerEnterExit playerEnterExit = stateManager.SerializablePlayer.GetComponent<PlayerEnterExit>();
             if (!playerEnterExit)
@@ -1078,6 +1067,17 @@ namespace DaggerfallWorkshop.Game.Serialization
             {
                 QuestMachine.QuestMachineData_v1 questData = Deserialize(typeof(QuestMachine.QuestMachineData_v1), questDataJson) as QuestMachine.QuestMachineData_v1;
                 QuestMachine.Instance.RestoreSaveData(questData);
+            }
+
+            // Restore conversation data (must be done after quest data restoration)
+            if (!string.IsNullOrEmpty(conversationDataJson))
+            {
+                TalkManager.SaveDataConversation conversationData = Deserialize(typeof(TalkManager.SaveDataConversation), conversationDataJson) as TalkManager.SaveDataConversation;
+                GameManager.Instance.TalkManager.RestoreConversationData(conversationData);
+            }
+            else
+            {
+                GameManager.Instance.TalkManager.RestoreConversationData(null);
             }
 
             // Raise reposition flag if terrain sampler changed
