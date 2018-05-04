@@ -1288,7 +1288,7 @@ namespace DaggerfallWorkshop.Game.Entity
             FactionData.ChangeReputation(peopleFaction.id, -(reputationLossPerCrime[(int)crimeCommitted] / 2));
         }
 
-        public void RaiseLegalRepForDoingSentence()
+        public void RaiseReputationForDoingSentence()
         {
             int regionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
             regionData[regionIndex].LegalRep += (short)(halfOfLegalRepPlayerLostFromCrime - 1);
