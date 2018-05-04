@@ -104,9 +104,12 @@ namespace DaggerfallWorkshop.Game
             if (!enableMouseLook)
                 return;
 
-            // Suppress mouse look if player is swinging weapon
-            if (InputManager.Instance.HasAction(InputManager.Actions.SwingWeapon) && !DaggerfallUnity.Settings.ClickToAttack)
+            // Suppress mouse look if player is swinging weapon or paralyzed
+            if (InputManager.Instance.HasAction(InputManager.Actions.SwingWeapon) && !DaggerfallUnity.Settings.ClickToAttack ||
+                GameManager.Instance.PlayerEntity.IsParalyzed)
+            {
                 applyLook = false;
+            }
 
             Vector2 rawMouseDelta = new Vector2(InputManager.Instance.LookX, InputManager.Instance.LookY);
 

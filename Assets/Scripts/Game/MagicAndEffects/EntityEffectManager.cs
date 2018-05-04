@@ -169,6 +169,20 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 refreshModsTimer = 0;
             }
 
+            // Clear bundles if scheduled - doing here ensures not currently iterating bundles during a magic round
+            if (clearBundles)
+            {
+                ClearBundles();
+                clearBundles = false;
+            }
+
+            // Clear ready spell and exit if paralyzed
+            if (entityBehaviour.Entity.IsParalyzed)
+            {
+                readySpell = null;
+                return;
+            }
+
             // Fire instant cast spells
             if (readySpell != null && instantCast)
             {
@@ -203,12 +217,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 }
             }
 
-            // Clear bundles if scheduled - doing here ensures not currently iterating bundles during a magic round
-            if (clearBundles)
-            {
-                ClearBundles();
-                clearBundles = false;
-            }
+            // TODO: Allow enemies to cast their spells
         }
 
         #endregion

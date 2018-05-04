@@ -49,6 +49,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             base.Resume(effectData, manager, caster);
             StartParalyzation();
+            ShowPlayerParalyzed();
         }
 
         public override void End()

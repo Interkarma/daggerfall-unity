@@ -230,6 +230,13 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
+            // Do nothing if player paralyzed
+            if (GameManager.Instance.PlayerEntity.IsParalyzed)
+            {
+                ShowWeapons(false);
+                return;
+            }
+
             // Toggle weapon sheath
             if (!isAttacking && InputManager.Instance.ActionStarted(InputManager.Actions.ReadyWeapon))
                 ToggleSheath();

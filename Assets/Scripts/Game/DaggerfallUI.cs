@@ -389,7 +389,7 @@ namespace DaggerfallWorkshop.Game
                     uiManager.PushWindow(dfUnityMouseControlsWindow);
                     break;
                 case DaggerfallUIMessages.dfuiOpenSpellBookWindow:
-                    if (!GameManager.Instance.PlayerSpellCasting.IsPlayingAnim)
+                    if (!GameManager.Instance.PlayerSpellCasting.IsPlayingAnim && !GameManager.Instance.PlayerEntity.IsParalyzed)
                         uiManager.PushWindow(dfSpellBookWindow);
                     break;
                 case DaggerfallUIMessages.dfuiOpenCourtWindow:
