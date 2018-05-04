@@ -12,18 +12,21 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using DaggerfallConnect;
-using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Game.MagicAndEffects;
+using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
     /// <summary>
-    /// Displays active spell icons on player on HUD.
-    /// This is only to experiment with HUD UI layouts at present. Not intended for live use.
+    /// Displays active spell icons on player HUD.
     /// </summary>
     public class HUDActiveSpells : Panel
     {
         #region Fields
+
+        const float blinkInterval = 0.25f;
+        const int maxIconRow = 10;
+        const int maxIconPool = 20;
 
         const int classicSelfStartX = 51;
         const int classicSelfStartY = 16;
@@ -32,27 +35,27 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const int classicIconDim = 16;
         const int classicHorzSpacing = 24;
 
-        List<ActiveSpell> activeSelfList = new List<ActiveSpell>();
+        Panel[] iconPool = new Panel[maxIconPool];
+        List<ActiveSpellIcon> activeSelfList = new List<ActiveSpellIcon>();
+        List<ActiveSpellIcon> activeOtherList = new List<ActiveSpellIcon>();
+
+        bool blinkState = false;
+        float blinkTimer = 0;
+        ToolTip defaultToolTip = null;
 
         #endregion
 
         #region Structs & Enums
 
         /// <summary>
-        /// Stores information for display.
+        /// Stores information for icon display.
         /// </summary>
-        public struct ActiveSpell
+        public struct ActiveSpellIcon
         {
             public int iconIndex;
             public string displayName;
-        }
-
-        /// <summary>
-        /// Display styles for active spells on player as shown on HUD.
-        /// </summary>
-        public enum DisplayStyles
-        {
-            Classic,        // Classic horizontal row of icons with only light enhancements to placement handling
+            public bool expiring;
+            public int poolIndex;
         }
 
         #endregion
@@ -62,59 +65,60 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public HUDActiveSpells()
             : base()
         {
-            // Add some test spells
-            AddSelfSpell(0, "Free Action");
-            AddSelfSpell(1, "Speed");
-            AddSelfSpell(2, "Light");
-            AddSelfSpell(3, "Water Breathing");
-            AddSelfSpell(4, "Water Walking");
-            AddSelfSpell(5, "Levitation");
-            AddSelfSpell(6, "Strength");
-            AddSelfSpell(7, "Witty Retorts");
-            AddSelfSpell(8, "Enhanced Kung Fu");
-            AddSelfSpell(9, "Aura of Terror");
+            AutoSize = AutoSizeModes.None;
+
+            // Update icon state for player every round or when a bundle is assigned, removed, or state added
+            EntityEffectBroker.OnNewMagicRound += UpdateIcons;
+            GameManager.Instance.PlayerEffectManager.OnAssignBundle += UpdateIcons;
+            GameManager.Instance.PlayerEffectManager.OnRemoveBundle += UpdateIcons;
+            GameManager.Instance.PlayerEffectManager.OnAddIncumbentState += UpdateIcons;
+            SaveLoadManager.OnLoad += SaveLoadManager_OnLoad;
+
+            InitIcons();
         }
 
         #endregion
 
         #region Public Methods
 
-        /// <summary>
-        /// Adds an active spell to self icon area.
-        /// </summary>
-        public void AddSelfSpell(int iconIndex, string displayName)
+        public override void Update()
         {
-            ActiveSpell spell = new ActiveSpell();
-            spell.iconIndex = iconIndex;
-            spell.displayName = displayName;
-            activeSelfList.Add(spell);
-            Refresh();
+            base.Update();
+
+            // Run blink timer
+            blinkTimer += Time.deltaTime;
+            if (blinkTimer > blinkInterval)
+            {
+                blinkTimer -= blinkInterval;
+                blinkState = !blinkState;
+            }
+
+            // Blink expiring icons when game not paused
+            // Otherwise always show icons when paused
+            if (!GameManager.IsGamePaused)
+            {
+                SetIconBlinkState(activeSelfList, blinkState);
+                SetIconBlinkState(activeOtherList, blinkState);
+            }
+            else
+            {
+                // Disable blink and update tooltips when paused
+                SetIconBlinkState(activeSelfList, true);
+                SetIconBlinkState(activeOtherList, true);
+                if (defaultToolTip != null)
+                    defaultToolTip.Update();
+            }
         }
 
-        /// <summary>
-        /// Manually refresh spell icon layout.
-        /// </summary>
-        public void Refresh()
+        public override void Draw()
         {
-            ClearChildren();
+            base.Draw();
 
-            // Can show up to first 10 spells at present
-            int count = 0;
-            float posX = classicSelfStartX;
-            float posY = classicSelfStartY;
-            foreach (ActiveSpell spell in activeSelfList)
+            if (GameManager.IsGamePaused)
             {
-                Panel panel = new Panel();
-                panel.BackgroundColor = Color.black;
-                //panel.BackgroundTexture = DaggerfallUnity.Instance.ContentReader.SpellIconCollection.GetIcon(spell.iconIndex);
-                Components.Add(panel);
-
-                // Classic layout
-                panel.Size = new Vector2(16, 16);
-                panel.Position = new Vector2(posX, posY);
-                posX += classicHorzSpacing;
-                if (++count > 9)
-                    break;
+                // Draw tooltips only when paused
+                if (defaultToolTip != null)
+                    defaultToolTip.Draw();
             }
         }
 
@@ -122,14 +126,140 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #region Private Methods
 
-        void ClearChildren()
+        void SetIconBlinkState(List<ActiveSpellIcon> icons, bool state)
         {
-            Components.Clear();
+            foreach(ActiveSpellIcon spell in icons)
+            {
+                if (spell.expiring)
+                    iconPool[spell.poolIndex].Enabled = state;
+            }
         }
 
-        #endregion
+        int GetMaxRoundsRemaining(EntityEffectManager.InstancedBundle bundle)
+        {
+            // Get most remaining rounds of all effects
+            // A spell can have multiple effects with different round durations
+            int maxRoundsRemaining = 0;
+            foreach (IEntityEffect effect in bundle.liveEffects)
+            {
+                if (effect.RoundsRemaining > maxRoundsRemaining)
+                    maxRoundsRemaining = effect.RoundsRemaining;
+            }
 
-        #region Overrides
+            return maxRoundsRemaining;
+        }
+
+        bool HasEffectWithIcon(EntityEffectManager.InstancedBundle bundle)
+        {
+            // At least one effect must must to show an icon
+            foreach (IEntityEffect effect in bundle.liveEffects)
+            {
+                if (effect.Properties.ShowSpellIcon)
+                    return true;
+            }
+
+            return false;
+        }
+
+        void InitIcons()
+        {
+            // Setup default tooltip
+            if (DaggerfallUnity.Settings.EnableToolTips)
+            {
+                defaultToolTip = new ToolTip();
+                defaultToolTip.ToolTipDelay = DaggerfallUnity.Settings.ToolTipDelayInSeconds;
+                defaultToolTip.BackgroundColor = DaggerfallUnity.Settings.ToolTipBackgroundColor;
+                defaultToolTip.TextColor = DaggerfallUnity.Settings.ToolTipTextColor;
+                defaultToolTip.Parent = this;
+            }
+
+            // Setup icon panels
+            for (int i = 0; i < iconPool.Length; i++)
+            {
+                iconPool[i] = new Panel();
+                iconPool[i].BackgroundColor = Color.black;
+                iconPool[i].AutoSize = AutoSizeModes.None;
+                iconPool[i].Enabled = false;
+                iconPool[i].ToolTip = defaultToolTip;
+                Components.Add(iconPool[i]);
+            }
+        }
+
+        void ClearIcons()
+        {
+            for (int i = 0; i < iconPool.Length; i++)
+            {
+                iconPool[i].BackgroundTexture = null;
+                iconPool[i].Enabled = false;
+            }
+
+            activeSelfList.Clear();
+            activeOtherList.Clear();
+        }
+
+        void UpdateIcons()
+        {
+            ClearIcons();
+
+            // Get all effect bundles currently operating on player
+            EntityEffectManager playerEffectManager = GameManager.Instance.PlayerEffectManager;
+            EntityEffectManager.InstancedBundle[] effectBundles = playerEffectManager.EffectBundles;
+            if (effectBundles == null || effectBundles.Length == 0)
+                return;
+
+            // Sort icons into active spells in self and other icon lists
+            for (int i = 0;  i < effectBundles.Length; i++)
+            {
+                EntityEffectManager.InstancedBundle bundle = effectBundles[i];
+
+                // Don't add effect icon for instant spells, must have at least 1 round remaining
+                bool showIcon = HasEffectWithIcon(bundle);
+                int maxRoundsRemaining = GetMaxRoundsRemaining(bundle);
+                if (!showIcon || maxRoundsRemaining == 0)
+                    continue;
+
+                // Setup icon information and sort into self (player is caster) or other (player not caster)
+                // Need to check where spells cast by RDB actions are placed (e.g. click skull to cast levitate)
+                // And offensive spells the player catches themselves with
+                // Will need to refine how this works as more effects and situations become available
+                ActiveSpellIcon item = new ActiveSpellIcon();
+                item.displayName = bundle.name;
+                item.iconIndex = bundle.iconIndex;
+                item.poolIndex = i;
+                item.expiring = (maxRoundsRemaining <= 2) ? true : false;
+                if (bundle.caster == null || bundle.caster != GameManager.Instance.PlayerEntityBehaviour)
+                    activeOtherList.Add(item);
+                else
+                    activeSelfList.Add(item);
+            }
+
+            // Update icon panels in pooled collection
+            AlignIcons(activeSelfList, classicSelfStartX, classicSelfStartY, classicIconDim, classicIconDim, classicHorzSpacing);
+            AlignIcons(activeOtherList, classicOtherStartX, classicOtherStartY, classicIconDim, classicIconDim, classicHorzSpacing);
+        }
+
+        void AlignIcons(List<ActiveSpellIcon> icons, float xpos, float ypos, float width, float height, float xspacing, float yspacing = 0)
+        {
+            int count = 0;
+            foreach (ActiveSpellIcon spell in icons)
+            {
+                iconPool[count].Enabled = true;
+                iconPool[count].BackgroundTexture = DaggerfallUI.Instance.SpellIconCollection.GetSpellIcon(spell.iconIndex);
+                iconPool[count].Position = new Vector2(xpos, ypos);
+                iconPool[count].Size = new Vector2(width, height);
+                iconPool[count].ToolTipText = spell.displayName;
+                xpos += xspacing;
+                ypos += yspacing;
+                if (++count > maxIconPool - 1)
+                    break;
+            }
+        }
+
+        private void SaveLoadManager_OnLoad(SaveData_v1 saveData)
+        {
+            UpdateIcons();
+        }
+
         #endregion
     }
 }

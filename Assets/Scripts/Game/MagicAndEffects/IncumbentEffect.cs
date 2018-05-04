@@ -87,8 +87,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             return null;
         }
 
+        protected virtual void BecomeIncumbent()
+        {
+        }
+
         protected abstract bool IsLikeKind(IncumbentEffect other);
-        protected abstract void BecomeIncumbent();
         protected abstract void AddState(IncumbentEffect incumbent);
     }
 }

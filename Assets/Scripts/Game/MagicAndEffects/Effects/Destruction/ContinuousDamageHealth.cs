@@ -18,7 +18,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// <summary>
     /// Continuous Damage - Health
     /// </summary>
-    public class ContinuousDamageHealth : BaseEntityEffect
+    public class ContinuousDamageHealth : IncumbentEffect
     {
         public override void SetProperties()
         {
@@ -51,6 +51,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             entityBehaviour.DamageHealthFromSource(caster, magnitude, false, Vector3.zero);
 
             //Debug.LogFormat("Effect {0} damaged {1} by {2} health points and has {3} magic rounds remaining.", Key, entityBehaviour.name, magnitude, RoundsRemaining);
+        }
+
+        protected override bool IsLikeKind(IncumbentEffect other)
+        {
+            return (other is ContinuousDamageHealth);
+        }
+
+        protected override void AddState(IncumbentEffect incumbent)
+        {
+            // Stack my rounds onto incumbent
+            incumbent.RoundsRemaining += RoundsRemaining;
         }
     }
 }

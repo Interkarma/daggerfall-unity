@@ -28,6 +28,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public string DisplayName;                                  // Display name (used by crafting stations)
         public TextFile.Token[] SpellMakerDescription;              // Description for spellmaker
         public TextFile.Token[] SpellBookDescription;               // Description for spellbook
+        public bool ShowSpellIcon;                                  // True to make spell show icon on player HUD
         public bool SupportDuration;                                // Uses duration
         public bool SupportChance;                                  // Uses chance
         public bool SupportMagnitude;                               // Uses magnitude

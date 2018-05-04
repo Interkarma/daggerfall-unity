@@ -72,6 +72,8 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
+            bool applyLook = true;
+
             // Ensure the cursor always locked when set
             if (lockCursor && enableMouseLook)
             {
@@ -102,9 +104,12 @@ namespace DaggerfallWorkshop.Game
             if (!enableMouseLook)
                 return;
 
-            // Suppress mouse look if player is swinging weapon
-            if (InputManager.Instance.HasAction(InputManager.Actions.SwingWeapon) && !DaggerfallUnity.Settings.ClickToAttack)
-                return;
+            // Suppress mouse look if player is swinging weapon or paralyzed
+            if (InputManager.Instance.HasAction(InputManager.Actions.SwingWeapon) && !DaggerfallUnity.Settings.ClickToAttack ||
+                GameManager.Instance.PlayerEntity.IsParalyzed)
+            {
+                applyLook = false;
+            }
 
             Vector2 rawMouseDelta = new Vector2(InputManager.Instance.LookX, InputManager.Instance.LookY);
 
@@ -129,16 +134,22 @@ namespace DaggerfallWorkshop.Game
                 _mouseAbsolute += _smoothMouse;
 
                 // Update pitch and yaw
-                Yaw += _smoothMouse.x;
-                Pitch += -_smoothMouse.y;
+                if (applyLook)
+                {
+                    Yaw += _smoothMouse.x;
+                    Pitch += -_smoothMouse.y;
+                }
             }
             else
             {
                 // Just use scaled raw mouse input without any smoothing
                 rawMouseDelta = Vector2.Scale(rawMouseDelta, new Vector2(sensitivityX, sensitivityY));
                 _mouseAbsolute += rawMouseDelta;
-                Yaw += rawMouseDelta.x;
-                Pitch += -rawMouseDelta.y;
+                if (applyLook)
+                {
+                    Yaw += rawMouseDelta.x;
+                    Pitch += -rawMouseDelta.y;
+                }
             }
 
             // If there's a character body that acts as a parent to the camera

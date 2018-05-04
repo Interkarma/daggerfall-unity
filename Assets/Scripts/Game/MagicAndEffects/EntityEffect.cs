@@ -48,9 +48,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         string DisplayName { get; }
 
         /// <summary>
-        /// Gets number of magic rounds remaining.
+        /// Gets or sets number of magic rounds remaining.
         /// </summary>
-        int RoundsRemaining { get; }
+        int RoundsRemaining { get; set; }
+
+        /// <summary>
+        /// Gets flag stating if effect passed a chance check on start.
+        /// If always false if effect does not support chance component.
+        /// </summary>
+        bool ChanceSuccess { get; }
 
         /// <summary>
         /// Gets array DaggerfallStats.Count items wide.
@@ -122,6 +128,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         protected EntityEffectManager manager = null;
 
         int roundsRemaining;
+        bool chanceSuccess = false;
         int[] statMods = new int[DaggerfallStats.Count];
         int[] skillMods = new int[DaggerfallSkills.Count];
 
@@ -135,6 +142,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public BaseEntityEffect()
         {
             // Set default properties
+            properties.ShowSpellIcon = true;
             properties.SupportDuration = false;
             properties.SupportChance = false;
             properties.SupportMagnitude = false;
@@ -168,6 +176,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public virtual int RoundsRemaining
         {
             get { return roundsRemaining; }
+            set { roundsRemaining = value; }
+        }
+
+        public virtual bool ChanceSuccess
+        {
+            get { return chanceSuccess; }
         }
 
         public int[] StatMods
@@ -207,7 +221,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             this.manager = manager;
             this.caster = caster;
             SetDuration();
-            MagicRound();
+            SetChance();
+
+            // Perform first magic round automatically if chance not supported or chance succeeded
+            // If chance failed then effect will be immediately dropped by manager when assiging bundle
+            if (!properties.SupportChance || chanceSuccess)
+                MagicRound();
         }
 
         /// <summary>
@@ -218,6 +237,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             this.manager = manager;
             this.caster = caster;
             roundsRemaining = effectData.roundsRemaining;
+            chanceSuccess = effectData.chanceSuccess;
             statMods = effectData.statMods;
             skillMods = effectData.skillMods;
         }
@@ -280,6 +300,18 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
 
             return magnitude;
+        }
+
+        protected void PlayerAggro()
+        {
+            // Get peered entity gameobject
+            DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
+            if (!entityBehaviour)
+                return;
+
+            // Cause aggro if source is player
+            if (caster == GameManager.Instance.PlayerEntityBehaviour)
+                entityBehaviour.HandleAttackByPlayer();
         }
 
         protected void SetStatMod(DFCareer.Stats stat, int value)
@@ -348,6 +380,24 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 roundsRemaining = 0;
 
             //Debug.LogFormat("Effect '{0}' will run for {1} magic rounds", Key, roundsRemaining);
+        }
+
+        void SetChance()
+        {
+            if (!properties.SupportChance)
+                return;
+
+            int chance = 0;
+            int casterLevel = (caster) ? caster.Entity.Level : 1;
+            if (properties.SupportChance)
+                chance = settings.ChanceBase + settings.ChancePlus * (int)Mathf.Floor(casterLevel / settings.ChancePerLevel);
+            else
+                roundsRemaining = 0;
+
+            int roll = UnityEngine.Random.Range(1, 100);
+            chanceSuccess = (roll <= chance);
+
+            //Debug.LogFormat("Effect '{0}' has a {1}% chance of succeeding and rolled {2} for a {3}", Key, chance, roll, (chanceSuccess) ? "success" : "fail");
         }
 
         #endregion

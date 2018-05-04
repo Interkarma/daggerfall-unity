@@ -39,7 +39,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Panel musicBar = new Panel();
         Panel soundBar = new Panel();
         const float barMaxLength = 109.1f;
-
+        DaggerfallHUD hud;
 
         public DaggerfallPauseOptionsWindow(IUserInterfaceManager uiManager, IUserInterfaceWindow previousWindow = null)
             :base(uiManager, previousWindow)
@@ -109,7 +109,41 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             headBobbingTick.Enabled = DaggerfallUnity.Settings.HeadBobbing;
         }
 
+        public override void OnPush()
+        {
+            base.OnPush();
+
+            hud = DaggerfallUI.Instance.DaggerfallHUD;
+        }
+
+        public override void Update()
+        {
+            base.Update();
+
+            // Update pause-persistent HUD elements
+            if (hud != null)
+            {
+                hud.ActiveSpells.Update();
+                hud.EscortingFaces.Update();
+                hud.HUDVitals.Update();
+            }
+        }
+
+        public override void Draw()
+        {
+            base.Draw();
+
+            // Draw pause-persistent HUD elements
+            if (hud != null)
+            {
+                hud.ActiveSpells.Draw();
+                hud.EscortingFaces.Draw();
+                hud.HUDVitals.Draw();
+            }
+        }
+
         #region Event Handlers
+
         private void SoundBar_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             // make it easier to max out volume

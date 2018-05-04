@@ -2,7 +2,8 @@ using UnityEngine;
 using System;
 using System.Collections;
 using DaggerfallConnect;
-using DaggerfallWorkShop.Game;
+using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -122,7 +123,7 @@ namespace DaggerfallWorkshop.Game
 
         private bool cancelMovement = false;
 
-        FakeLevitate fakeLevitate;
+        LevitateMotor levitateMotor;
         float freezeMotor = 0;
 
         public bool IsGrounded
@@ -229,8 +230,11 @@ namespace DaggerfallWorkshop.Game
             jumpTimer = antiBunnyHopFactor;
             mainCamera = GameManager.Instance.MainCamera;
             myCroucher = GetComponent<Croucher>();
+            levitateMotor = GetComponent<LevitateMotor>();
 
-            fakeLevitate = GetComponent<FakeLevitate>();
+            // Allow for resetting specific player state on new game or when game starts loading
+            SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
+            StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
         }
 
         void FixedUpdate()
@@ -260,15 +264,15 @@ namespace DaggerfallWorkshop.Game
             if (isClimbing)
                 collisionFlags = CollisionFlags.Sides;
             // Get collision flags for swimming as well, so it's possible to climb out of water TODO: Collision flags from swimming aren't working
-            else if (fakeLevitate.IsSwimming)
-                collisionFlags = fakeLevitate.CollisionFlags;
+            else if (levitateMotor.IsSwimming)
+                collisionFlags = levitateMotor.CollisionFlags;
 
             // Climbing
             uint gameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
             if (!InputManager.Instance.HasAction(InputManager.Actions.MoveForwards)
                 || (collisionFlags & CollisionFlags.Sides) == 0
                 || failedClimbingCheck
-                || fakeLevitate.IsLevitating
+                || levitateMotor.IsLevitating
                 || isRiding
                 || Vector2.Distance(lastHorizontalPosition, new Vector2(controller.transform.position.x, controller.transform.position.z)) >= (0.003f)) // Approximation based on observing classic in-game
             {
@@ -317,8 +321,8 @@ namespace DaggerfallWorkshop.Game
                 ClimbMovement();
             }
 
-            // Do nothing if player fake levitating/swimming or climbing - replacement motor will take over movement for levitating/swimming
-            if (fakeLevitate && (fakeLevitate.IsLevitating || fakeLevitate.IsSwimming) || isClimbing)
+            // Do nothing if player levitating/swimming or climbing - replacement motor will take over movement for levitating/swimming
+            if (levitateMotor && (levitateMotor.IsLevitating || levitateMotor.IsSwimming) || isClimbing)
                 return;
 
             //float inputX = Input.GetAxis("Horizontal");
@@ -327,6 +331,14 @@ namespace DaggerfallWorkshop.Game
             float inputY = InputManager.Instance.Vertical;
             // If both horizontal and vertical are used simultaneously, limit speed (if allowed), so the total doesn't exceed normal move speed
             float inputModifyFactor = (inputX != 0.0f && inputY != 0.0f && limitDiagonalSpeed) ? .7071f : 1.0f;
+
+            // Cancel all movement input if player is paralyzed
+            // Player should still be able to fall or move with platforms
+            if (GameManager.Instance.PlayerEntity.IsParalyzed)
+            {
+                inputX = 0;
+                inputY = 0;
+            }
 
             // Player assumed to be in movement for now
             standingStill = false;
@@ -587,9 +599,9 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
-            // Do nothing if player fake levitating - replacement motor will take over movement.
+            // Do nothing if player levitating - replacement motor will take over movement.
             // Don't return here for swimming because player should still be able to crouch when swimming.
-            if (fakeLevitate && fakeLevitate.IsLevitating)
+            if (levitateMotor && levitateMotor.IsLevitating)
                 return;
 
             if (isRiding && !riding)
@@ -759,5 +771,31 @@ namespace DaggerfallWorkshop.Game
             float swimSpeed = (baseSpeed * (player.Skills.GetLiveSkillValue(DFCareer.Skills.Swimming) / 200f)) + (baseSpeed / 4);
             return swimSpeed;
         }
+
+        #region Private Methods
+
+        void ResetPlayerState()
+        {
+            // Cancel levitation at start of loading a new save game
+            // This prevents levitation flag carrying over and effect system can still restore it if needed
+            if (levitateMotor)
+                levitateMotor.IsLevitating = false;
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        private void StartGameBehaviour_OnNewGame()
+        {
+            ResetPlayerState();
+        }
+
+        private void SaveLoadManager_OnStartLoad(SaveData_v1 saveData)
+        {
+            ResetPlayerState();
+        }
+
+        #endregion
     }
 }

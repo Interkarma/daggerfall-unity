@@ -96,8 +96,7 @@ namespace DaggerfallWorkshop
         public FilterMode SkyFilterMode = FilterMode.Point;
         public bool MipMaps = true;
         public bool ReadableTextures = false;
-        public SupportedAlphaTextureFormats AlphaTextureFormat = SupportedAlphaTextureFormats.RGBA32;
-        public SupportedNonAlphaTextureFormats NonAlphaTextureFormat = SupportedNonAlphaTextureFormats.RGB24;
+        public SupportedAlphaTextureFormats AlphaTextureFormat = SupportedAlphaTextureFormats.ARGB32;
 
         // Window settings
         public Color DayWindowColor = new Color32(89, 154, 178, 0xff);
@@ -221,7 +220,7 @@ namespace DaggerfallWorkshop
             CustomBlendMode blendMode = CustomBlendMode.Opaque,
             CustomSmoothnessMapChannel smoothnessChannel = CustomSmoothnessMapChannel.AlbedoAlpha,
             float metallic = 0,
-            float glossiness = 1)
+            float glossiness = 0)
         {
             // Create material
             Shader shader = Shader.Find(_StandardShaderName);
@@ -380,7 +379,7 @@ namespace DaggerfallWorkshop
                 }
 
                 // Get texture
-                results = textureReader.GetTexture2D(settings, AlphaTextureFormat, NonAlphaTextureFormat);
+                results = textureReader.GetTexture2D(settings, AlphaTextureFormat);
 
                 // Create material
                 if (isBillboard)
@@ -525,7 +524,7 @@ namespace DaggerfallWorkshop
 
             // Setup material
             material.name = string.Format("TEXTURE.{0:000} [Atlas]", archive);
-            GetTextureResults results = textureReader.GetTexture2DAtlas(settings, AlphaTextureFormat, NonAlphaTextureFormat);
+            GetTextureResults results = textureReader.GetTexture2DAtlas(settings, AlphaTextureFormat);
 
             material.mainTexture = results.albedoMap;
             material.mainTexture.filterMode = MainFilterMode;

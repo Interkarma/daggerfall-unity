@@ -55,7 +55,7 @@ namespace DaggerfallWorkshop
         public void SetClimate(DaggerfallUnity dfUnity, int archive, ClimateSeason season)
         {
             // Create tileMap texture
-            Texture2D tileMapTexture = new Texture2D(tileMapDim, tileMapDim, TextureFormat.RGB24, false);
+            Texture2D tileMapTexture = new Texture2D(tileMapDim, tileMapDim, TextureFormat.ARGB32, false);
             tileMapTexture.SetPixels32(tileMap);
             tileMapTexture.Apply(false, true);
             tileMapTexture.filterMode = FilterMode.Point;

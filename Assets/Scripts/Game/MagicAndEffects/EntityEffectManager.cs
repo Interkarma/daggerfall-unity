@@ -31,6 +31,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     {
         #region Fields
 
+        const string textDatabase = "ClassicEffects";
         const int minAcceptedSpellVersion = 1;
 
         const int magicCastSoundID = 349;
@@ -168,6 +169,20 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 refreshModsTimer = 0;
             }
 
+            // Clear bundles if scheduled - doing here ensures not currently iterating bundles during a magic round
+            if (clearBundles)
+            {
+                ClearBundles();
+                clearBundles = false;
+            }
+
+            // Clear ready spell and exit if paralyzed
+            if (entityBehaviour.Entity.IsParalyzed)
+            {
+                readySpell = null;
+                return;
+            }
+
             // Fire instant cast spells
             if (readySpell != null && instantCast)
             {
@@ -202,12 +217,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 }
             }
 
-            // Clear bundles if scheduled - doing here ensures not currently iterating bundles during a magic round
-            if (clearBundles)
-            {
-                ClearBundles();
-                clearBundles = false;
-            }
+            // TODO: Allow enemies to cast their spells
         }
 
         #endregion
@@ -277,6 +287,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Instantiate all effects in this bundle
             for (int i = 0; i < sourceBundle.Settings.Effects.Length; i++)
             {
+                // Instantiate effect
                 IEntityEffect effect = GameManager.Instance.EntityEffectBroker.InstantiateEffect(sourceBundle.Settings.Effects[i]);
                 if (effect == null)
                 {
@@ -284,12 +295,24 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     continue;
                 }
 
-                // Start effect
+                // Start effect and do not proceed if chance failed
                 effect.Start(this, sourceBundle.CasterEntityBehaviour);
+                if (effect.Properties.SupportChance && !effect.ChanceSuccess)
+                {
+                    // Output "save versus spell made." if the host manager is player
+                    if (isPlayerEntity)
+                        DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "saveVersusSpellMade"));
+
+                    continue;
+                }
 
                 // Do not add unflagged incumbent effects
+                // But allow for an icon refresh as duration might have changed and we want to update this sooner than next magic round
                 if (effect is IncumbentEffect && !(effect as IncumbentEffect).IsIncumbent)
+                {
+                    RaiseOnAssignBundle();
                     continue;
+                }
 
                 // Add effect
                 instancedBundle.liveEffects.Add(effect);
@@ -299,6 +322,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             if (instancedBundle.liveEffects.Count > 0)
             {
                 instancedBundles.Add(instancedBundle);
+                RaiseOnAssignBundle();
                 Debug.LogFormat("Adding bundle {0}", instancedBundle.GetHashCode());
             }
         }
@@ -309,6 +333,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public void ClearBundles()
         {
             instancedBundles.Clear();
+            RaiseOnRemoveBundle();
         }
 
         #endregion
@@ -363,6 +388,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 effect.End();
 
             instancedBundles.Remove(bundle);
+            RaiseOnRemoveBundle();
             //Debug.LogFormat("Expired bundle {0} with {1} effects", bundle.settings.Name, bundle.settings.Effects.Length);
         }
 
@@ -371,7 +397,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             lastSpell = null;
             readySpell = null;
         }
-
+        
         int GetCastSoundID(ElementTypes elementType)
         {
             switch (readySpell.Settings.ElementType)
@@ -517,6 +543,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         private void StartGameBehaviour_OnNewGame()
         {
             ClearReadySpellHistory();
+            ClearBundles();
         }
 
         private void Entity_OnDeath(DaggerfallEntity entity)
@@ -550,6 +577,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             public string key;
             public EffectSettings effectSettings;
             public int roundsRemaining;
+            public bool chanceSuccess;
             public int[] statMods;
             public int[] skillMods;
             public bool isIncumbent;
@@ -597,6 +625,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             effectData.key = effect.Key;
             effectData.effectSettings = effect.Settings;
             effectData.roundsRemaining = effect.RoundsRemaining;
+            effectData.chanceSuccess = effect.ChanceSuccess;
             effectData.statMods = effect.StatMods;
             effectData.skillMods = effect.SkillMods;
             effectData.isIncumbent = (effect is IncumbentEffect) ? (effect as IncumbentEffect).IsIncumbent : false;
@@ -610,7 +639,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// </summary>
         public void RestoreInstancedBundleSaveData(EffectBundleSaveData_v1[] data)
         {
-            instancedBundles.Clear();
+            ClearBundles();
 
             if (data == null || data.Length == 0)
                 return;
@@ -627,12 +656,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 instancedBundle.casterEntityType = bundleData.casterEntityType;
                 instancedBundle.casterLoadID = bundleData.casterLoadID;
                 instancedBundle.liveEffects = new List<IEntityEffect>();
-
-                // Relink caster reference
-                if (bundleData.casterEntityType != EntityTypes.None && bundleData.casterLoadID != 0)
-                {
-                    instancedBundle.caster = GetCasterReference(bundleData.casterEntityType, bundleData.casterLoadID);
-                }
+                instancedBundle.caster = GetCasterReference(bundleData.casterEntityType, bundleData.casterLoadID);
 
                 // Resume effects
                 foreach(EffectSaveData_v1 effectData in bundleData.liveEffects)
@@ -674,7 +698,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             {
                 caster = GameManager.Instance.PlayerEntityBehaviour;
             }
-            else if (entityType == EntityTypes.EnemyMonster || entityType == EntityTypes.EnemyClass)
+            else if ((entityType == EntityTypes.EnemyMonster || entityType == EntityTypes.EnemyClass) && loadID != 0)
             {
                 SerializableEnemy serializableEnemy = SaveLoadManager.StateManager.GetEnemy(loadID);
                 if (!serializableEnemy)
@@ -686,6 +710,37 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
 
             return caster;
+        }
+
+        #endregion
+
+        #region Events
+
+        // OnAssignBundle
+        public delegate void OnAssignBundleEventHandler();
+        public event OnAssignBundleEventHandler OnAssignBundle;
+        protected virtual void RaiseOnAssignBundle()
+        {
+            if (OnAssignBundle != null)
+                OnAssignBundle();
+        }
+
+        // OnRemoveBundle
+        public delegate void OnRemoveBundleEventHandler();
+        public event OnRemoveBundleEventHandler OnRemoveBundle;
+        protected virtual void RaiseOnRemoveBundle()
+        {
+            if (OnRemoveBundle != null)
+                OnRemoveBundle();
+        }
+
+        // OnAddIncumbentState
+        public delegate void OnAddIncumbentStateEventHandler();
+        public event OnAddIncumbentStateEventHandler OnAddIncumbentState;
+        protected virtual void RaiseOnAddIncumbentState()
+        {
+            if (OnAddIncumbentState != null)
+                OnAddIncumbentState();
         }
 
         #endregion

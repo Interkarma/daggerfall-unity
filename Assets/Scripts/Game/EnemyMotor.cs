@@ -40,6 +40,8 @@ namespace DaggerfallWorkshop.Game
         bool swims;                                 // The enemy can swim
         int enemyLayerMask;                         // Layer mask for Enemies to optimize collision checks
 
+        bool isLevitating;                          // Allow non-flying enemy to levitate
+
         bool isAttackFollowsPlayerSet;              // For setting if the enemy will follow the player or not during an attack
         bool attackFollowsPlayer;                   // For setting if the enemy will follow the player or not during an attack
 
@@ -47,6 +49,12 @@ namespace DaggerfallWorkshop.Game
         bool classicUpdate = false;
         float knockBackSpeed;                       // While non-zero, this enemy will be knocked backwards at this speed
         Vector3 knockBackDirection;                 // Direction to travel while being knocked back
+
+        public bool IsLevitating
+        {
+            get { return isLevitating; }
+            set { isLevitating = value; }
+        }
 
         public bool IsHostile
         {
@@ -170,6 +178,26 @@ namespace DaggerfallWorkshop.Game
 
         private void Move()
         {
+            // Cancel movement and animations if paralyzed, but still allow gavity to take effect
+            // This will have the (intentional for now) side-effect of making paralyzed flying enemies fall out of the air
+            // Paralyzed swimming enemies will just freeze in place
+            // Freezing anims also prevents the attack from triggering until paralysis cleared
+            if (entityBehaviour.Entity.IsParalyzed)
+            {
+                mobile.FreezeAnims = true;
+
+                if (swims)
+                    controller.Move(Vector3.zero);
+                else
+                    controller.SimpleMove(Vector3.zero);
+
+                return;
+            }
+            else
+            {
+                mobile.FreezeAnims = false;
+            }
+
             // If hit, get knocked back
             if (knockBackSpeed > 0)
             {
@@ -193,7 +221,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     WaterMove(motion);
                 }
-                else if (flies)
+                else if (flies || isLevitating)
                     controller.Move(motion * Time.deltaTime);
                 else
                     controller.SimpleMove(motion);
@@ -263,7 +291,7 @@ namespace DaggerfallWorkshop.Game
             targetPos = senses.LastKnownPlayerPos;
 
             // Flying enemies and slaughterfish aim for player face
-            if (flies || (swims && mobile.Summary.Enemy.ID == (int)MonsterCareers.Slaughterfish))
+            if (flies || isLevitating || (swims && mobile.Summary.Enemy.ID == (int)MonsterCareers.Slaughterfish))
                 targetPos.y += 0.9f;
             else
             {
@@ -367,7 +395,7 @@ namespace DaggerfallWorkshop.Game
             {
                 WaterMove(motion);
             }
-            else if (flies)
+            else if (flies || isLevitating)
                 controller.Move(motion * Time.deltaTime);
             else
                 controller.SimpleMove(motion);
@@ -385,7 +413,7 @@ namespace DaggerfallWorkshop.Game
 				{
 					motion.y = 0;
 				}
-				controller.Move(motion * Time.deltaTime);
+                controller.Move(motion * Time.deltaTime);
 			}
 		}
 

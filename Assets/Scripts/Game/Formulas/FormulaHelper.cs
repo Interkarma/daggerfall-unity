@@ -1175,11 +1175,13 @@ namespace DaggerfallWorkshop.Game.Formulas
         public static void CalculateEffectCosts(EffectEntry effectEntry, out int goldCostOut, out int spellPointCostOut)
         {
             int activeComponents = 0;
+            goldCostOut = 0;
+            spellPointCostOut = 0;
 
             // Get effect template
             IEntityEffect effectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(effectEntry.Key);
             if (effectTemplate == null)
-                throw new Exception(string.Format("CalculateEffectCosts() could not get effect key {0}", effectEntry.Key));
+                return;
 
             // Get related skill
             int skillValue = GameManager.Instance.PlayerEntity.Skills.GetLiveSkillValue((DFCareer.Skills)effectTemplate.Properties.MagicSkill);
@@ -1250,10 +1252,18 @@ namespace DaggerfallWorkshop.Game.Formulas
             int finalGoldCost = durationGoldCost + chanceGoldCost + magnitudeGoldCost;
             int finalSpellPointCost = durationSpellPointCost + chanceSpellPointCost + magnitudeSpellPointCost;
 
-            // Subtract min costs when using multiple components
-            // this is involved somehow in final total but not yet sure of exact formula
-            // Will continue to refine this as more effects come online and they can be checked for accuracy against classic
-            if (activeComponents > 1)
+            //// Subtract min costs when using multiple components
+            //// this is involved somehow in final total but not yet sure of exact formula
+            //// Will continue to refine this as more effects come online and they can be checked for accuracy against classic
+            //if (activeComponents > 1)
+            //{
+            //    finalGoldCost = finalGoldCost - durationMinGoldCost - chanceMinGoldCost;
+            //    finalSpellPointCost = finalSpellPointCost - durationMinSpellPointCost - chanceMinSpellPointCost;
+            //}
+
+            // Remove min costs only when magnitude supported
+            // Still working out how multiple components are combined as more effects come online
+            if (effectTemplate.Properties.SupportMagnitude)
             {
                 finalGoldCost = finalGoldCost - durationMinGoldCost - chanceMinGoldCost;
                 finalSpellPointCost = finalSpellPointCost - durationMinSpellPointCost - chanceMinSpellPointCost;

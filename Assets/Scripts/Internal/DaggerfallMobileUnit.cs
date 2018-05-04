@@ -52,6 +52,7 @@ namespace DaggerfallWorkshop
         int currentFrame;
         int lastFrameAnimated;
         bool restartAnims = true;
+        bool freezeAnims = false;
 
         public MobileUnitSummary Summary
         {
@@ -66,6 +67,12 @@ namespace DaggerfallWorkshop
         public int LastFrameAnimated
         {
             get { return lastFrameAnimated; }
+        }
+
+        public bool FreezeAnims
+        {
+            get { return freezeAnims; }
+            set { freezeAnims = value; }
         }
 
         [Serializable]
@@ -155,6 +162,10 @@ namespace DaggerfallWorkshop
         /// <returns>Frames per second of new state.</returns>
         public float ChangeEnemyState(MobileStates state)
         {
+            // Don't change state during animation freeze
+            if (freezeAnims)
+                return 0;
+
             // Only change if in a different state
             if (summary.EnemyState != state)
             {
@@ -377,7 +388,7 @@ namespace DaggerfallWorkshop
             float fps = 10;
             while (true)
             {
-                if (summary.IsSetup && summary.StateAnims != null && summary.StateAnims.Length > 0)
+                if (!freezeAnims && summary.IsSetup && summary.StateAnims != null && summary.StateAnims.Length > 0)
                 {
                     // Update enemy and fps
                     OrientEnemy(lastOrientation);

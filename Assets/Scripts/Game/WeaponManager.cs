@@ -27,6 +27,9 @@ namespace DaggerfallWorkshop.Game
     /// </summary>
     public class WeaponManager : MonoBehaviour
     {
+        const float defaultBowReach = 50f;
+        const float defaultWeaponReach = 2.5f;
+
         // Max time-length of a trail of mouse positions for attack gestures
         private const float MaxGestureSeconds = 1.0f;
 
@@ -225,6 +228,13 @@ namespace DaggerfallWorkshop.Game
                     ShowWeapons(false);
                     return;
                 }
+            }
+
+            // Do nothing if player paralyzed
+            if (GameManager.Instance.PlayerEntity.IsParalyzed)
+            {
+                ShowWeapons(false);
+                return;
             }
 
             // Toggle weapon sheath
@@ -434,6 +444,9 @@ namespace DaggerfallWorkshop.Game
 
         void ApplyWeapon()
         {
+            if (!ScreenWeapon)
+                return;
+
             if (usingRightHand)
             {
                 if (currentRightHandWeapon == null)
@@ -448,6 +461,12 @@ namespace DaggerfallWorkshop.Game
                 else
                     SetWeapon(ScreenWeapon, currentLeftHandWeapon);
             }
+
+            // Adjust reach attributes by weapon type
+            if (ScreenWeapon.WeaponType == WeaponTypes.Bow)
+                ScreenWeapon.Reach = defaultBowReach;
+            else
+                ScreenWeapon.Reach = defaultWeaponReach;
         }
 
         void SetMelee(FPSWeapon target)
@@ -469,16 +488,6 @@ namespace DaggerfallWorkshop.Game
             target.MetalType = DaggerfallUnity.Instance.ItemHelper.ConvertItemMaterialToAPIMetalType(weapon);
             target.DrawWeaponSound = weapon.GetEquipSound();
             target.SwingWeaponSound = weapon.GetSwingSound();
-
-            // Adjust attributes by weapon type
-            if (target.WeaponType == WeaponTypes.Bow)
-            {
-                target.Reach = 50f;
-            }
-            else
-            {
-                target.Reach = 2.5f;
-            }
         }
 
         #endregion

@@ -64,7 +64,6 @@ namespace DaggerfallWorkshop
             var propFogWindowIntensity = Prop("FogWindowIntensity");
             var propCustomWindowIntensity = Prop("CustomWindowIntensity");
             var propAlphaTextureFormat = Prop("AlphaTextureFormat");
-            var propNonAlphaTextureFormat = Prop("NonAlphaTextureFormat");
 
             EditorGUILayout.Space();
             if (!propAtlasTextures.boolValue ||
@@ -92,7 +91,6 @@ namespace DaggerfallWorkshop
 
             EditorGUILayout.Space();
             propAlphaTextureFormat.enumValueIndex = (int)(SupportedAlphaTextureFormats)EditorGUILayout.EnumPopup(new GUIContent("Alpha Texture Format", "TextureFormat of alpha-enabled textures such as billboard cutouts."), (SupportedAlphaTextureFormats)propAlphaTextureFormat.enumValueIndex);
-            propNonAlphaTextureFormat.enumValueIndex = (int)(SupportedNonAlphaTextureFormats)EditorGUILayout.EnumPopup(new GUIContent("Non-Alpha Texture Format", "TextureFormat of non-alpha textures."), (SupportedNonAlphaTextureFormats)propNonAlphaTextureFormat.enumValueIndex);
 
             EditorGUILayout.Space();
             propDayWindowColor.colorValue = EditorGUILayout.ColorField(new GUIContent("Day Window Colour", "The colour of windows by day."), propDayWindowColor.colorValue);

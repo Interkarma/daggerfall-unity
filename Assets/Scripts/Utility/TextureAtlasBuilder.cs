@@ -146,7 +146,7 @@ namespace DaggerfallWorkshop.Utility
             }
 
             // Create atlas texture
-            atlasTexture = new Texture2D(maxAtlasDim, maxAtlasDim, TextureFormat.RGBA32, mipMaps);
+            atlasTexture = new Texture2D(maxAtlasDim, maxAtlasDim, TextureFormat.ARGB32, mipMaps);
             Rect[] rects = atlasTexture.PackTextures(textureRefs, padding, maxAtlasDim, !stayReadable);
 
             // Shrink UV rect to compensate for internal border

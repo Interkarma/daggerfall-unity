@@ -51,6 +51,7 @@ namespace DaggerfallWorkshop.Game
         int seekCount;
 
         // References
+        DaggerfallEntityBehaviour entityBehaviour;
         MobilePersonBillboard mobileBillboard;
 
         #endregion
@@ -148,6 +149,7 @@ namespace DaggerfallWorkshop.Game
         private void Awake()
         {
             // Cache references
+            entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
             mobileBillboard = GetComponentInChildren<MobilePersonBillboard>();
 
             // Need to repath if floating origin ticks while in range
@@ -165,6 +167,13 @@ namespace DaggerfallWorkshop.Game
             // Do nothing if game paused
             if (GameManager.IsGamePaused)
                 return;
+
+            // Do nothing if paralyzed
+            if (entityBehaviour.Entity.IsParalyzed)
+            {
+                mobileBillboard.IsIdle = false;
+                return;
+            }
 
             // Must have a navgrid assigned
             if (!cityNavigation)

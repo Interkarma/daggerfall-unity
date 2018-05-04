@@ -14,15 +14,6 @@ using System;
 namespace DaggerfallWorkshop
 {
     /// <summary>
-    /// Supported non-alpha texture formats for texture reader.
-    /// </summary>
-    public enum SupportedNonAlphaTextureFormats
-    {
-        RGB565,
-        RGB24,
-    }
-
-    /// <summary>
     /// Supported alpha texture formats for texure reader.
     /// </summary>
     public enum SupportedAlphaTextureFormats
