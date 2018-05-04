@@ -2,7 +2,6 @@ using UnityEngine;
 using System;
 using System.Collections;
 using DaggerfallConnect;
-using DaggerfallWorkShop.Game;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Serialization;
 

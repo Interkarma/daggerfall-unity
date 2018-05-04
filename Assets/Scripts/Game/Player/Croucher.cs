@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace DaggerfallWorkShop.Game
+namespace DaggerfallWorkshop.Game
 {
     public enum CrouchToggleAction
     {
