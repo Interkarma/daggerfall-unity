@@ -19,6 +19,8 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 
 namespace DaggerfallWorkshop.Game.Entity
@@ -50,6 +52,7 @@ namespace DaggerfallWorkshop.Game.Entity
         protected int currentBreath;
         protected WeaponMaterialTypes minMetalToHit;
         protected sbyte[] armorValues = new sbyte[NumberBodyParts];
+        protected bool isParalyzed;
 
         bool quiesce = false;
 
@@ -67,6 +70,17 @@ namespace DaggerfallWorkshop.Game.Entity
         {
             get { return quiesce; }
             set { quiesce = value; }
+        }
+
+        /// <summary>
+        /// Gets or set paralyzation flag.
+        /// Each entity type will need to act on paralyzation in their own unique way.
+        /// Note: This value is intentionally not serialized. It should only be set by live effects.
+        /// </summary>
+        public bool IsParalyzed
+        {
+            get { return isParalyzed; }
+            set { isParalyzed = value; }
         }
 
         #endregion
@@ -97,6 +111,17 @@ namespace DaggerfallWorkshop.Game.Entity
         public int ToHitModifier { get { return FormulaHelper.ToHitModifier(stats.LiveAgility); } }
         public int HitPointsModifier { get { return FormulaHelper.HitPointsModifier(stats.LiveEndurance); } }
         public int HealingRateModifier { get { return FormulaHelper.HealingRateModifier(stats.LiveEndurance); } }
+
+        #endregion
+
+        #region Constructors
+
+        public DaggerfallEntity()
+        {
+            // Allow for resetting specific player state on new game or when game starts loading
+            SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
+            StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
+        }
 
         #endregion
 
@@ -412,6 +437,16 @@ namespace DaggerfallWorkshop.Game.Entity
         {
         }
 
+        /// <summary>
+        /// Called when starting a new game or when a game starts to load.
+        /// Used to clear out any state that should not persist to a new game session.
+        /// </summary>
+        protected virtual void ResetEntityState()
+        {
+            isParalyzed = false;
+            SetEntityDefaults();
+        }
+
         #endregion
 
         #region Temporary Events
@@ -473,6 +508,20 @@ namespace DaggerfallWorkshop.Game.Entity
                 throw new Exception("Could not load " + MonsterFile.Filename);
 
             return monsterFile.GetMonsterClass((int)career);
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        private void StartGameBehaviour_OnNewGame()
+        {
+            ResetEntityState();
+        }
+
+        private void SaveLoadManager_OnStartLoad(SaveData_v1 saveData)
+        {
+            ResetEntityState();
         }
 
         #endregion
