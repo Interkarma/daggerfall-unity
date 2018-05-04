@@ -384,9 +384,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             else
                 roundsRemaining = 0;
 
-            chanceSuccess = (UnityEngine.Random.Range(1, 100) <= chance);
+            int roll = UnityEngine.Random.Range(1, 100);
+            chanceSuccess = (roll <= chance);
 
-            //Debug.LogFormat("Effect '{0}' has a {1}% chance of succeeding", Key, chance);
+            //Debug.LogFormat("Effect '{0}' has a {1}% chance of succeeding and rolled {2} for a {3}", Key, chance, roll, (chanceSuccess) ? "success" : "fail");
         }
 
         #endregion

@@ -20,6 +20,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class Paralyze : IncumbentEffect
     {
+        const string textDatabase = "ClassicEffects";
+
         public override void SetProperties()
         {
             properties.Key = "Paralyze";
@@ -40,10 +42,24 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
         {
             base.Start(manager, caster);
+            StartParalyzation();
+        }
 
-            // TODO: Roll chance
+        public override void Resume(EntityEffectManager.EffectSaveData_v1 effectData, EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
+        {
+            base.Resume(effectData, manager, caster);
+            StartParalyzation();
+        }
 
-            // TODO: Paralyze target
+        public override void End()
+        {
+            base.End();
+            StopParalyzation();
+        }
+
+        protected override void BecomeIncumbent()
+        {
+            ShowPlayerParalyzed();
         }
 
         protected override bool IsLikeKind(IncumbentEffect other)
@@ -55,6 +71,34 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             // Stack my rounds onto incumbent
             incumbent.RoundsRemaining += RoundsRemaining;
+            ShowPlayerParalyzed();
+        }
+
+        void ShowPlayerParalyzed()
+        {
+            // Output "You are paralyzed." if the host manager is player
+            if (manager.EntityBehaviour == GameManager.Instance.PlayerEntityBehaviour)
+                DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "youAreParalyzed"));
+        }
+
+        void StartParalyzation()
+        {
+            // Get peered entity gameobject
+            DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
+            if (!entityBehaviour)
+                return;
+
+            entityBehaviour.Entity.IsParalyzed = true;
+        }
+
+        void StopParalyzation()
+        {
+            // Get peered entity gameobject
+            DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
+            if (!entityBehaviour)
+                return;
+
+            entityBehaviour.Entity.IsParalyzed = false;
         }
     }
 }
