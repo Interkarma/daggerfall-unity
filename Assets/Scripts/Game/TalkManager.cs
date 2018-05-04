@@ -415,6 +415,14 @@ namespace DaggerfallWorkshop.Game
 
         #region Public Methods
 
+        public void resetNPCKnowledge()
+        {
+            resetNPCKnowledgeInTopicListRecursively(listTopicLocation);
+            resetNPCKnowledgeInTopicListRecursively(listTopicPerson);
+            resetNPCKnowledgeInTopicListRecursively(listTopicThing);
+            resetNPCKnowledgeInTopicListRecursively(listTopicTellMeAbout);
+        }
+
         // Player has clicked on a mobile talk target
         public void TalkToMobileNPC(MobilePersonNPC targetNPC)
         {
@@ -449,8 +457,12 @@ namespace DaggerfallWorkshop.Game
 
             if (reactionToPlayer >= -20)
             {
-                DaggerfallUI.UIManager.PushWindow(DaggerfallUI.Instance.TalkWindow);
                 GameManager.Instance.TalkManager.SetTargetNPC(targetNPC, reactionToPlayer);
+                DaggerfallUI.UIManager.PushWindow(DaggerfallUI.Instance.TalkWindow);
+
+                // reset npc knowledge, for now it resets every time the npc has changed (player talked to new npc)
+                // TODO: match classic daggerfall - in classic npc remember their knowledge about topics for their time of existence
+                resetNPCKnowledge();
             }
             else
             {
@@ -496,8 +508,12 @@ namespace DaggerfallWorkshop.Game
 
             if (reactionToPlayer >= -20)
             {
-                DaggerfallUI.UIManager.PushWindow(DaggerfallUI.Instance.TalkWindow);
                 GameManager.Instance.TalkManager.SetTargetNPC(targetNPC, reactionToPlayer);
+                DaggerfallUI.UIManager.PushWindow(DaggerfallUI.Instance.TalkWindow);
+
+                // reset npc knowledge, for now it resets every time the npc has changed (player talked to new npc)
+                // TODO: match classic daggerfall - in classic npc remember their knowledge about topics for their time of existence
+                resetNPCKnowledge();
             }
             else
             {
@@ -525,13 +541,6 @@ namespace DaggerfallWorkshop.Game
             npcData.race = targetMobileNPC.Race;
 
             this.reactionToPlayer = reactionToPlayer;
-
-            // reset npc knowledge, for now it resets every time the npc has changed (player talked to new npc)
-            // TODO: match classic daggerfall - in classic npc remember their knowledge about topics for their time of existence
-            resetNPCKnowledgeInTopicListRecursively(listTopicLocation);
-            resetNPCKnowledgeInTopicListRecursively(listTopicPerson);
-            resetNPCKnowledgeInTopicListRecursively(listTopicThing);
-            resetNPCKnowledgeInTopicListRecursively(listTopicTellMeAbout);
         }
 
         public void SetTargetNPC(StaticNPC targetNPC, int reactionToPlayer)
@@ -560,12 +569,7 @@ namespace DaggerfallWorkshop.Game
 
             this.reactionToPlayer = reactionToPlayer;
 
-            // reset npc knowledge, for now it resets every time the npc has changed (player talked to new npc)
-            // TODO: match classic daggerfall - in classic npc remember their knowledge about topics for their time of existence
-            resetNPCKnowledgeInTopicListRecursively(listTopicLocation);
-            resetNPCKnowledgeInTopicListRecursively(listTopicPerson);
-            resetNPCKnowledgeInTopicListRecursively(listTopicThing);
-            resetNPCKnowledgeInTopicListRecursively(listTopicTellMeAbout);
+            AssembleTopicListPerson(); // update "Where Is" -> "Person" list since this list may hide the questor (if talking to the questor)
         }
 
         public void StartNewConversation()
@@ -2051,6 +2055,7 @@ namespace DaggerfallWorkshop.Game
                         item.caption = captionString;
 
                         bool IsPlayerInSameLocationWorldCell = false;
+                        bool dialogPartnerIsSamePersonAsPersonResource = false;
 
                         // in case person is questor check if questor is in same mapID
                         Questing.Person person = (Questing.Person)questResourceInfo.Value.questResource;
@@ -2058,6 +2063,13 @@ namespace DaggerfallWorkshop.Game
                         {
                             if (person.QuestorData.mapID == GameManager.Instance.PlayerGPS.CurrentMapID)
                                 IsPlayerInSameLocationWorldCell = true;
+
+                            // test if dialog partner is same person as person resource
+                            if (GameManager.Instance.IsPlayerInside)
+                            {                              
+                                if (this.targetStaticNPC != null && this.currentNPCType == NPCType.Static && this.targetStaticNPC.Data.buildingKey == GameManager.Instance.PlayerEnterExit.Interior.EntryDoor.buildingKey && this.nameNPC == captionString)
+                                    dialogPartnerIsSamePersonAsPersonResource = true;                            
+                            }                            
                         }
                         else
                         {
@@ -2081,9 +2093,10 @@ namespace DaggerfallWorkshop.Game
                             }
                         }
 
-                        if (questResourceInfo.Value.availableForDialog && // only make it available for talk if it is not "hidden" by dialog link command
+                        if (!dialogPartnerIsSamePersonAsPersonResource && // only make it available for talk if dialog partner is not the same person as the person resource talked about
+                            questResourceInfo.Value.availableForDialog && // only make it available for talk if it is not "hidden" by dialog link command
                             questResourceInfo.Value.hasEntryInWhereIs &&
-                            IsPlayerInSameLocationWorldCell)
+                            IsPlayerInSameLocationWorldCell) // only make it available for talk if person resource is in same world map location as player
                             listTopicPerson.Add(item);
                     }
 
