@@ -178,6 +178,26 @@ namespace DaggerfallWorkshop.Game
 
         private void Move()
         {
+            // Cancel movement and animations if paralyzed, but still allow gavity to take effect
+            // This will have the (intentional for now) side-effect of making paralyzed flying enemies fall out of the air
+            // Paralyzed swimming enemies will just freeze in place
+            // Freezing anims also prevents the attack from triggering until paralysis cleared
+            if (entityBehaviour.Entity.IsParalyzed)
+            {
+                mobile.FreezeAnims = true;
+
+                if (swims)
+                    controller.Move(Vector3.zero);
+                else
+                    controller.SimpleMove(Vector3.zero);
+
+                return;
+            }
+            else
+            {
+                mobile.FreezeAnims = false;
+            }
+
             // If hit, get knocked back
             if (knockBackSpeed > 0)
             {
@@ -393,7 +413,7 @@ namespace DaggerfallWorkshop.Game
 				{
 					motion.y = 0;
 				}
-				controller.Move(motion * Time.deltaTime);
+                controller.Move(motion * Time.deltaTime);
 			}
 		}
 
