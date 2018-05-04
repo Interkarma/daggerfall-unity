@@ -314,6 +314,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     zoomPosition = currentMousePos;
                     zoom = !zoom;
+                    borderPanel.Enabled = !borderPanel.Enabled;
                     draw = true;
                 }
                 else if (Input.GetKey(KeyCode.LeftShift) && zoom)   //scrolling while zoomed in
