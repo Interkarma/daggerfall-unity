@@ -39,9 +39,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.ChanceCosts = MakeEffectCosts(28, 100, 1.4f);
         }
 
-        public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
+        public override void MagicRound()
         {
-            base.Start(manager, caster);
+            base.MagicRound();
             StartParalyzation();
         }
 

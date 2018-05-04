@@ -54,6 +54,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         /// <summary>
         /// Gets flag stating if effect passed a chance check on start.
+        /// If always false if effect does not support chance component.
         /// </summary>
         bool ChanceSuccess { get; }
 
@@ -372,10 +373,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         void SetChance()
         {
             if (!properties.SupportChance)
-            {
-                chanceSuccess = true;
                 return;
-            }
 
             int chance = 0;
             int casterLevel = (caster) ? caster.Entity.Level : 1;
