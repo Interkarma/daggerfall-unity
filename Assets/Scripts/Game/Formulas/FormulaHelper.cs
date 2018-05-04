@@ -1252,10 +1252,18 @@ namespace DaggerfallWorkshop.Game.Formulas
             int finalGoldCost = durationGoldCost + chanceGoldCost + magnitudeGoldCost;
             int finalSpellPointCost = durationSpellPointCost + chanceSpellPointCost + magnitudeSpellPointCost;
 
-            // Subtract min costs when using multiple components
-            // this is involved somehow in final total but not yet sure of exact formula
-            // Will continue to refine this as more effects come online and they can be checked for accuracy against classic
-            if (activeComponents > 1)
+            //// Subtract min costs when using multiple components
+            //// this is involved somehow in final total but not yet sure of exact formula
+            //// Will continue to refine this as more effects come online and they can be checked for accuracy against classic
+            //if (activeComponents > 1)
+            //{
+            //    finalGoldCost = finalGoldCost - durationMinGoldCost - chanceMinGoldCost;
+            //    finalSpellPointCost = finalSpellPointCost - durationMinSpellPointCost - chanceMinSpellPointCost;
+            //}
+
+            // Remove min costs only when magnitude supported
+            // Still working out how multiple components are combined as more effects come online
+            if (effectTemplate.Properties.SupportMagnitude)
             {
                 finalGoldCost = finalGoldCost - durationMinGoldCost - chanceMinGoldCost;
                 finalSpellPointCost = finalSpellPointCost - durationMinSpellPointCost - chanceMinSpellPointCost;
