@@ -117,7 +117,7 @@ namespace DaggerfallWorkshop.Game
         private uint timeOfLastClimbingCheck = 0;
         private bool showClimbingModeMessage = true;
         private Vector2 lastHorizontalPosition = Vector2.zero;
-        private Croucher myCroucher;
+        private PlayerHeightChanger heightChanger;
 
         private CollisionFlags collisionFlags = 0;
 
@@ -229,7 +229,7 @@ namespace DaggerfallWorkshop.Game
             slideLimit = controller.slopeLimit - .1f;
             jumpTimer = antiBunnyHopFactor;
             mainCamera = GameManager.Instance.MainCamera;
-            myCroucher = GetComponent<Croucher>();
+            heightChanger = GetComponent<PlayerHeightChanger>();
             levitateMotor = GetComponent<LevitateMotor>();
 
             // Allow for resetting specific player state on new game or when game starts loading
@@ -386,7 +386,7 @@ namespace DaggerfallWorkshop.Game
 
                 if (!riding)
                 {
-                    if (!isCrouching && myCroucher.ToggleAction != CrouchToggleAction.DoStanding) // don't set to standing height while croucher is standing the player
+                    if (!isCrouching && heightChanger.HeightAction != HeightChangeAction.DoStanding) // don't set to standing height while croucher is standing the player
                         controller.height = standingHeight;
 
                     try
@@ -647,9 +647,9 @@ namespace DaggerfallWorkshop.Game
                 if (InputManager.Instance.ActionComplete(InputManager.Actions.Crouch))
                 {
                     if (isCrouching)
-                        myCroucher.ToggleAction = CrouchToggleAction.DoStanding;
+                        heightChanger.HeightAction = HeightChangeAction.DoStanding;
                     else
-                        myCroucher.ToggleAction = CrouchToggleAction.DoCrouching;
+                        heightChanger.HeightAction = HeightChangeAction.DoCrouching;
                 }
                 /*if (myCroucher.ToggleAction != CrouchToggleAction.DoNothing)
                 {

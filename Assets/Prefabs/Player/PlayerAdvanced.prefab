@@ -1227,6 +1227,8 @@ MonoBehaviour:
   bobSpeed: 0
   bobXAmount: 0
   bobYAmount: 0
+  nodXAmount: 0
+  nodYAmount: 0
   bobScalar: 0
 --- !u!198 &198237622866876544
 ParticleSystem:

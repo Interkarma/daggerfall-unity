@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace DaggerfallWorkshop.Game
 {
-    public enum CrouchToggleAction
+    public enum HeightChangeAction
     {
         DoNothing,
         DoStanding,
@@ -16,13 +16,13 @@ namespace DaggerfallWorkshop.Game
     [RequireComponent(typeof(PlayerMotor))]
     [RequireComponent(typeof(CharacterController))]
     [RequireComponent(typeof(HeadBobber))]
-    public class Croucher : MonoBehaviour
+    public class PlayerHeightChanger : MonoBehaviour
     {
-        private CrouchToggleAction toggleAction;
-        public CrouchToggleAction ToggleAction
+        private HeightChangeAction heightAction;
+        public HeightChangeAction HeightAction
         {
-            get { return toggleAction; }
-            set { toggleAction = value; }
+            get { return heightAction; }
+            set { heightAction = value; }
         }
         private PlayerMotor playerMotor;
         private CharacterController controller;
@@ -54,12 +54,12 @@ namespace DaggerfallWorkshop.Game
 
         private void Update()
         {
-            if (toggleAction == CrouchToggleAction.DoNothing)
+            if (heightAction == HeightChangeAction.DoNothing)
                 return;
 
-            if (toggleAction == CrouchToggleAction.DoCrouching)
+            if (heightAction == HeightChangeAction.DoCrouching)
                 DoCrouch();
-            else if (toggleAction == CrouchToggleAction.DoStanding && CanStand())
+            else if (heightAction == HeightChangeAction.DoStanding && CanStand())
                 DoStand();
             
         }
@@ -81,7 +81,7 @@ namespace DaggerfallWorkshop.Game
 
                 //bStandController = true;
                 crouchTimer = 0f;
-                toggleAction = CrouchToggleAction.DoNothing;
+                heightAction = HeightChangeAction.DoNothing;
             }
 
         }
@@ -101,7 +101,7 @@ namespace DaggerfallWorkshop.Game
             if (bFinished)
             {
                 crouchTimer = 0f;
-                toggleAction = CrouchToggleAction.DoNothing;
+                heightAction = HeightChangeAction.DoNothing;
             }
 
         }
@@ -115,13 +115,13 @@ namespace DaggerfallWorkshop.Game
 
         private void ControllerCrouchToggle()
         {
-            if (toggleAction == CrouchToggleAction.DoCrouching)
+            if (heightAction == HeightChangeAction.DoCrouching)
             {
                 controller.height = crouchHeight;
                 controller.transform.position -= new Vector3(0, controllerPosChangeDistance);
                 playerMotor.IsCrouching = true;
             }
-            else if (toggleAction == CrouchToggleAction.DoStanding)
+            else if (heightAction == HeightChangeAction.DoStanding)
             {
                 controller.height = standHeight;
                 controller.transform.position += new Vector3(0, controllerPosChangeDistance);
