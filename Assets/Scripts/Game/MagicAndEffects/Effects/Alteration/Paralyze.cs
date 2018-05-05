@@ -85,7 +85,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             // Output "You are paralyzed." if the host manager is player
             if (manager.EntityBehaviour == GameManager.Instance.PlayerEntityBehaviour)
-                DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "youAreParalyzed"));
+                DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "youAreParalyzed"), 1.5f);
         }
 
         void StartParalyzation()

@@ -176,13 +176,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 clearBundles = false;
             }
 
-            // Clear ready spell and exit if paralyzed
-            if (entityBehaviour.Entity.IsParalyzed)
-            {
-                readySpell = null;
-                return;
-            }
-
             // Fire instant cast spells
             if (readySpell != null && instantCast)
             {
