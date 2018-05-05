@@ -146,6 +146,7 @@ namespace DaggerfallWorkshop.Game
                 float prevHeight = playerMotor.IsCrouching ? crouchHeight : standHeight;
                 pos.y += (rideHeight - prevHeight) / 2.0f;
                 controller.transform.position = pos;
+                playerMotor.IsCrouching = false;
                 heightAction = HeightChangeAction.DoNothing;
             }
             else if (heightAction == HeightChangeAction.DoDismounting)
@@ -157,6 +158,7 @@ namespace DaggerfallWorkshop.Game
                 pos = controller.transform.position;
                 pos.y -= (rideHeight - standHeight) / 2.0f;
                 controller.transform.position = pos;
+                playerMotor.IsCrouching = false;
                 heightAction = HeightChangeAction.DoNothing;
             }
         }
