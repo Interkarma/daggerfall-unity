@@ -638,27 +638,6 @@ namespace DaggerfallWorkshop.Game
                     else
                         heightChanger.HeightAction = HeightChangeAction.DoCrouching;
                 }
-                /*if (myCroucher.ToggleAction != CrouchToggleAction.DoNothing)
-                {
-                    myCroucher.DoToggleAction();
-                }*/
-                // Manage crouching height
-                /*if (isCrouching && !wasCrouching)
-                {
-                    controller.height = crouchingHeight;
-                    Vector3 pos = controller.transform.position;
-                    pos.y -= (standingHeight - crouchingHeight) / 2.0f;
-                    controller.transform.position = pos;
-                    wasCrouching = isCrouching;
-                }
-                else if (!isCrouching && wasCrouching)
-                {
-                    controller.height = standingHeight;
-                    Vector3 pos = controller.transform.position;
-                    pos.y += (standingHeight - crouchingHeight) / 2.0f;
-                    controller.transform.position = pos;
-                    wasCrouching = isCrouching;
-                }*/
 
             }
 

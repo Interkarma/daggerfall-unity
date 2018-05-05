@@ -39,7 +39,6 @@ namespace DaggerfallWorkshop.Game
         private float camCrouchLevel;
         private float camStandLevel;
         private float crouchTimer;
-        //private bool bStandController;
 
         private const float timerMax = 0.1f;
 
@@ -88,7 +87,6 @@ namespace DaggerfallWorkshop.Game
                 ControllerHeightChange();
                 UpdateCameraPosition(mainCamera.transform.localPosition.y + crouchChangeDistance);
 
-                //bStandController = true;
                 crouchTimer = 0f;
                 heightAction = HeightChangeAction.DoNothing;
             }
@@ -168,8 +166,7 @@ namespace DaggerfallWorkshop.Game
             //RaycastHit hit;
             float distance = crouchChangeDistance;
 
-            Ray ray = new Ray(controller.transform.position, Vector3.up);
-            //return !Physics.Raycast(ray, out hit, distance); 
+            Ray ray = new Ray(controller.transform.position, Vector3.up); 
             return !Physics.SphereCast(ray, controller.radius, distance);
         }
     }
