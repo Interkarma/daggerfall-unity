@@ -729,7 +729,21 @@ namespace DaggerfallWorkshop.Game
         {
             BuildingInfo buildingInfo = listBuildings.Find(x => x.buildingKey == currentKeySubjectBuildingKey);
             if (buildingInfo.buildingKey != 0)
-                GameManager.Instance.PlayerGPS.DiscoverBuilding(buildingInfo.buildingKey);
+            {
+                if (buildingInfo.buildingType == DFLocation.BuildingTypes.House1 ||
+                    buildingInfo.buildingType == DFLocation.BuildingTypes.House2 ||
+                    buildingInfo.buildingType == DFLocation.BuildingTypes.House3 ||
+                    buildingInfo.buildingType == DFLocation.BuildingTypes.House4 ||
+                    buildingInfo.buildingType == DFLocation.BuildingTypes.House5 ||
+                    buildingInfo.buildingType == DFLocation.BuildingTypes.House6)
+                {
+                    GameManager.Instance.PlayerGPS.DiscoverBuilding(buildingInfo.buildingKey, currentKeySubject);
+                }
+                else
+                {
+                    GameManager.Instance.PlayerGPS.DiscoverBuilding(buildingInfo.buildingKey);
+                }
+            }
         }
 
         public string GetQuestionText(TalkManager.ListItem listItem, DaggerfallTalkWindow.TalkTone talkTone)
@@ -1982,6 +1996,7 @@ namespace DaggerfallWorkshop.Game
                             // captionString = buildingName;
 
                             item.caption = captionString;
+                            item.buildingKey = place.SiteDetails.buildingKey;
 
                             if (questResourceInfo.Value.availableForDialog && questResourceInfo.Value.hasEntryInWhereIs)
                             {
