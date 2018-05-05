@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Michael Rauter (Nystul)
-// Contributors: Numidium   
+// Contributors:    Numidium   
 // 
 // Notes:
 //
@@ -730,14 +730,9 @@ namespace DaggerfallWorkshop.Game
             BuildingInfo buildingInfo = listBuildings.Find(x => x.buildingKey == currentKeySubjectBuildingKey);
             if (buildingInfo.buildingKey != 0)
             {
-                if (buildingInfo.buildingType == DFLocation.BuildingTypes.House1 ||
-                    buildingInfo.buildingType == DFLocation.BuildingTypes.House2 ||
-                    buildingInfo.buildingType == DFLocation.BuildingTypes.House3 ||
-                    buildingInfo.buildingType == DFLocation.BuildingTypes.House4 ||
-                    buildingInfo.buildingType == DFLocation.BuildingTypes.House5 ||
-                    buildingInfo.buildingType == DFLocation.BuildingTypes.House6)
+                if (checkBuildingTypeHouse(buildingInfo.buildingType))
                 {
-                    GameManager.Instance.PlayerGPS.DiscoverBuilding(buildingInfo.buildingKey, currentKeySubject);
+                    GameManager.Instance.PlayerGPS.DiscoverBuilding(buildingInfo.buildingKey); //, currentKeySubject);
                 }
                 else
                 {
@@ -1422,7 +1417,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         public void RemoveQuestInfoTopicsForSpecificQuest(ulong questID)
-        {
+        {            
             if (dictQuestInfo.ContainsKey(questID))
             {
                 dictQuestInfo.Remove(questID);
@@ -1483,6 +1478,8 @@ namespace DaggerfallWorkshop.Game
 
         public DFLocation.BuildingTypes GetBuildingTypeForBuildingKey(int buildingKey)
         {
+            if (listBuildings == null)
+                GetBuildingList();
             List<BuildingInfo> matchingBuildings = listBuildings.FindAll(x => x.buildingKey == buildingKey);
             if (matchingBuildings.Count == 0)
                 throw new Exception(String.Format("GetBuildingTypeForBuildingKey(): no building with the queried key found"));
@@ -1524,7 +1521,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     QuestResources questInfo = dictQuestInfo[questID]; // get questInfo containing orphaned list of quest resources
 
-                    QuestResource[] questResources = quest.GetAllResources(typeof(Person)); // get list of person quest resources                   
+                    QuestResource[] questResources = quest.GetAllResources(typeof(Person)); // get list of person quest resources
                     for (int i=0; i < questResources.Length; i++)
                     {
                         Questing.Person person = (Questing.Person)(questResources[i]);
@@ -1844,6 +1841,18 @@ namespace DaggerfallWorkshop.Game
             return false;
         }
 
+        private bool checkBuildingTypeHouse(DFLocation.BuildingTypes buildingType)
+        {
+            if (buildingType == DFLocation.BuildingTypes.House1 ||
+                buildingType == DFLocation.BuildingTypes.House2 ||
+                buildingType == DFLocation.BuildingTypes.House3 ||
+                buildingType == DFLocation.BuildingTypes.House4 ||
+                buildingType == DFLocation.BuildingTypes.House5 ||
+                buildingType == DFLocation.BuildingTypes.House6)
+                return true;
+            return false;
+        }
+
         private void resetNPCKnowledgeInTopicListRecursively(List<ListItem> list)
         {
             for (int i = 0; i < list.Count; i++)
@@ -1976,12 +1985,7 @@ namespace DaggerfallWorkshop.Game
                         Questing.Place place = (Questing.Place)questResourceInfo.Value.questResource;
                         DFLocation.BuildingTypes buildingType = GameManager.Instance.TalkManager.GetBuildingTypeForBuildingKey(place.SiteDetails.buildingKey);
 
-                        if (buildingType == DFLocation.BuildingTypes.House1 ||
-                            buildingType == DFLocation.BuildingTypes.House2 ||
-                            buildingType == DFLocation.BuildingTypes.House3 ||
-                            buildingType == DFLocation.BuildingTypes.House4 ||
-                            buildingType == DFLocation.BuildingTypes.House5 ||
-                            buildingType == DFLocation.BuildingTypes.House6)
+                        if (checkBuildingTypeHouse(buildingType))
                         {
                             ListItem item = new ListItem();
                             item.type = ListItemType.Item;
