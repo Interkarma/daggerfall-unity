@@ -1467,6 +1467,16 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        public DFLocation.BuildingTypes GetBuildingTypeForBuildingKey(int buildingKey)
+        {
+            List<BuildingInfo> matchingBuildings = listBuildings.FindAll(x => x.buildingKey == buildingKey);
+            if (matchingBuildings.Count == 0)
+                throw new Exception(String.Format("GetBuildingTypeForBuildingKey(): no building with the queried key found"));
+            else if (matchingBuildings.Count > 1 )
+                throw new Exception(String.Format("GetBuildingTypeForBuildingKey(): more than one building with the queried key found"));
+            return matchingBuildings[0].buildingType;
+        }
+
         /// <summary>
         /// Gets conversation dictionary for save.
         /// </summary>
@@ -1516,7 +1526,12 @@ namespace DaggerfallWorkshop.Game
                     for (int i = 0; i < questResources.Length; i++)
                     {
                         Questing.Place place = (Questing.Place)(questResources[i]);
-                        string key = place.SiteDetails.locationName;
+                        
+                        string namePlace = place.SiteDetails.buildingName; // use building name as default
+                        if (namePlace == null) // no building?
+                            namePlace = place.SiteDetails.locationName; // use dungeon name
+
+                        string key = namePlace;
 
                         if (questInfo.resourceInfo.ContainsKey(key)) // if orphaned list of quest resources contains a matching entry
                         {
@@ -1931,22 +1946,75 @@ namespace DaggerfallWorkshop.Game
                     listTopicLocation.Add(itemBuildingTypeGroup);
                 }
             }
-            
+
+
+            itemBuildingTypeGroup = new ListItem();
+            itemBuildingTypeGroup.type = ListItemType.ItemGroup;
+            itemBuildingTypeGroup.caption = "General";
+            listTopicLocation.Add(itemBuildingTypeGroup);
+
+            foreach (KeyValuePair<ulong, QuestResources> questInfo in dictQuestInfo)
+            {
+                foreach (KeyValuePair<string, QuestResourceInfo> questResourceInfo in questInfo.Value.resourceInfo)
+                {
+                    if (questResourceInfo.Value.resourceType == QuestInfoResourceType.Location)
+                    {
+                        Questing.Place place = (Questing.Place)questResourceInfo.Value.questResource;
+                        DFLocation.BuildingTypes buildingType = GameManager.Instance.TalkManager.GetBuildingTypeForBuildingKey(place.SiteDetails.buildingKey);
+
+                        if (buildingType == DFLocation.BuildingTypes.House1 ||
+                            buildingType == DFLocation.BuildingTypes.House2 ||
+                            buildingType == DFLocation.BuildingTypes.House3 ||
+                            buildingType == DFLocation.BuildingTypes.House4 ||
+                            buildingType == DFLocation.BuildingTypes.House5 ||
+                            buildingType == DFLocation.BuildingTypes.House6)
+                        {
+                            ListItem item = new ListItem();
+                            item.type = ListItemType.Item;
+                            item.questionType = QuestionType.LocalBuilding;
+
+                            ulong questID = questInfo.Key;
+                            item.questID = questID;
+
+                            string captionString = questResourceInfo.Key;
+                            // Questing.Place place = (Questing.Place)questResourceInfo.Value.questResource;
+                            // string buildingName = place.SiteDetails.buildingName;
+                            // captionString = buildingName;
+
+                            item.caption = captionString;
+
+                            if (questResourceInfo.Value.availableForDialog && questResourceInfo.Value.hasEntryInWhereIs)
+                            {
+                                if (itemBuildingTypeGroup.listChildItems == null)
+                                {
+                                    ListItem itemPreviousList;
+                                    itemPreviousList = new ListItem();
+                                    itemPreviousList.type = ListItemType.NavigationBack;
+                                    itemPreviousList.caption = "Previous List";
+                                    itemPreviousList.listParentItems = listTopicLocation;
+                                    itemBuildingTypeGroup.listChildItems = new List<ListItem>();
+                                    itemBuildingTypeGroup.listChildItems.Add(itemPreviousList);
+                                }
+                                itemBuildingTypeGroup.listChildItems.Add(item);
+                            }
+                        }
+                    }
+                }
+            }
+
             matchingBuildings = listBuildings.FindAll(x => x.buildingType == DFLocation.BuildingTypes.Palace);
             if (matchingBuildings.Count > 0)
             {
-                itemBuildingTypeGroup = new ListItem();
-                itemBuildingTypeGroup.type = ListItemType.ItemGroup;
-                itemBuildingTypeGroup.caption = "General";
-                listTopicLocation.Add(itemBuildingTypeGroup);
-
-                ListItem itemPreviousList;
-                itemPreviousList = new ListItem();
-                itemPreviousList.type = ListItemType.NavigationBack;
-                itemPreviousList.caption = "Previous List";
-                itemPreviousList.listParentItems = listTopicLocation;
-                itemBuildingTypeGroup.listChildItems = new List<ListItem>();
-                itemBuildingTypeGroup.listChildItems.Add(itemPreviousList);
+                if (itemBuildingTypeGroup.listChildItems == null)
+                {
+                    ListItem itemPreviousList;
+                    itemPreviousList = new ListItem();
+                    itemPreviousList.type = ListItemType.NavigationBack;
+                    itemPreviousList.caption = "Previous List";
+                    itemPreviousList.listParentItems = listTopicLocation;
+                    itemBuildingTypeGroup.listChildItems = new List<ListItem>();
+                    itemBuildingTypeGroup.listChildItems.Add(itemPreviousList);
+                }                
 
                 foreach (BuildingInfo buildingInfo in matchingBuildings)
                 {
