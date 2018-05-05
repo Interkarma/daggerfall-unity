@@ -606,25 +606,12 @@ namespace DaggerfallWorkshop.Game
 
             if (isRiding && !riding)
             {
-                Vector3 pos = mainCamera.transform.localPosition;
-                pos.y = (ridingHeight / 2) - eyeHeight;
-                mainCamera.transform.localPosition = pos;
-                controller.height = ridingHeight;
-                pos = controller.transform.position;
-                float prevHeight = isCrouching ? crouchingHeight : standingHeight;
-                pos.y += (ridingHeight - prevHeight) / 2.0f;
-                controller.transform.position = pos;
+                heightChanger.HeightAction = HeightChangeAction.DoMounting;
                 riding = true;
             }
             else if (!isRiding && riding)
             {
-                Vector3 pos = mainCamera.transform.localPosition;
-                pos.y = (standingHeight / 2) - eyeHeight;
-                mainCamera.transform.localPosition = pos;
-                controller.height = standingHeight;
-                pos = controller.transform.position;
-                pos.y -= (ridingHeight - standingHeight) / 2.0f;
-                controller.transform.position = pos;
+                heightChanger.HeightAction = HeightChangeAction.DoDismounting;
                 riding = false;
             }
             else if (!isRiding)

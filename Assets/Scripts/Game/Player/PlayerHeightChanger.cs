@@ -9,7 +9,9 @@ namespace DaggerfallWorkshop.Game
     {
         DoNothing,
         DoStanding,
-        DoCrouching
+        DoCrouching,
+        DoMounting,
+        DoDismounting
     }
 
     //Added the RequireComponent attribute to make sure that following components are indeed on this GameObject, since they are require to make this code work
@@ -30,7 +32,10 @@ namespace DaggerfallWorkshop.Game
         private Camera mainCamera;
         private float crouchHeight;
         private float standHeight;
-        private float controllerPosChangeDistance;
+        private float rideHeight;
+        private float eyeHeight;
+        private float crouchChangeDistance;
+        private float rideChangeDistance;
         private float camCrouchLevel;
         private float camStandLevel;
         private float crouchTimer;
@@ -44,12 +49,14 @@ namespace DaggerfallWorkshop.Game
             controller = GetComponent<CharacterController>();
             headBobber = GetComponent<HeadBobber>();
             mainCamera = GameManager.Instance.MainCamera;
+            rideHeight = playerMotor.ridingHeight;
             standHeight = playerMotor.standingHeight;
             crouchHeight = playerMotor.crouchingHeight;
-            controllerPosChangeDistance = (standHeight - crouchHeight) / 2f;
-
+            eyeHeight = playerMotor.eyeHeight;
+            crouchChangeDistance = (standHeight - crouchHeight) / 2f;
+            rideChangeDistance = (rideHeight - standHeight) / 2f;
             camStandLevel = mainCamera.transform.localPosition.y; //With the assumption that the camera begins at correct standing position height
-            camCrouchLevel = camStandLevel - controllerPosChangeDistance; //we want the camera to lower the same amount as the character
+            camCrouchLevel = camStandLevel - crouchChangeDistance; //we want the camera to lower the same amount as the character
         }
 
         private void Update()
@@ -61,6 +68,8 @@ namespace DaggerfallWorkshop.Game
                 DoCrouch();
             else if (heightAction == HeightChangeAction.DoStanding && CanStand())
                 DoStand();
+            else
+                ControllerHeightChange();
             
         }
         private void DoCrouch() // first lower camera, perform snap crouch last 
@@ -76,8 +85,8 @@ namespace DaggerfallWorkshop.Game
 
             if (bFinished)
             {
-                ControllerCrouchToggle();
-                UpdateCameraPosition(mainCamera.transform.localPosition.y + controllerPosChangeDistance);
+                ControllerHeightChange();
+                UpdateCameraPosition(mainCamera.transform.localPosition.y + crouchChangeDistance);
 
                 //bStandController = true;
                 crouchTimer = 0f;
@@ -90,7 +99,7 @@ namespace DaggerfallWorkshop.Game
             bool bFinished = false;
 
             if (controller.height == crouchHeight)
-                ControllerCrouchToggle();
+                ControllerHeightChange();
 
             crouchTimer += Time.deltaTime;
             float t = Mathf.Clamp((crouchTimer / timerMax), 0, 1);
@@ -113,26 +122,49 @@ namespace DaggerfallWorkshop.Game
             mainCamera.transform.localPosition = new Vector3(camPos.x, yPosMod, camPos.z);
         }
 
-        private void ControllerCrouchToggle()
+        private void ControllerHeightChange()
         {
             if (heightAction == HeightChangeAction.DoCrouching)
             {
                 controller.height = crouchHeight;
-                controller.transform.position -= new Vector3(0, controllerPosChangeDistance);
+                controller.transform.position -= new Vector3(0, crouchChangeDistance);
                 playerMotor.IsCrouching = true;
             }
             else if (heightAction == HeightChangeAction.DoStanding)
             {
                 controller.height = standHeight;
-                controller.transform.position += new Vector3(0, controllerPosChangeDistance);
+                controller.transform.position += new Vector3(0, crouchChangeDistance);
                 playerMotor.IsCrouching = false;
+            }
+            else if (heightAction == HeightChangeAction.DoMounting)
+            {
+                Vector3 pos = mainCamera.transform.localPosition;
+                pos.y = (rideHeight / 2) - eyeHeight;
+                mainCamera.transform.localPosition = pos;
+                controller.height = rideHeight;
+                pos = controller.transform.position;
+                float prevHeight = playerMotor.IsCrouching ? crouchHeight : standHeight;
+                pos.y += (rideHeight - prevHeight) / 2.0f;
+                controller.transform.position = pos;
+                heightAction = HeightChangeAction.DoNothing;
+            }
+            else if (heightAction == HeightChangeAction.DoDismounting)
+            {
+                Vector3 pos = mainCamera.transform.localPosition;
+                pos.y = (standHeight / 2) - eyeHeight;
+                mainCamera.transform.localPosition = pos;
+                controller.height = standHeight;
+                pos = controller.transform.position;
+                pos.y -= (rideHeight - standHeight) / 2.0f;
+                controller.transform.position = pos;
+                heightAction = HeightChangeAction.DoNothing;
             }
         }
 
         private bool CanStand()
         { 
             //RaycastHit hit;
-            float distance = controllerPosChangeDistance;
+            float distance = crouchChangeDistance;
 
             Ray ray = new Ray(controller.transform.position, Vector3.up);
             //return !Physics.Raycast(ray, out hit, distance); 
