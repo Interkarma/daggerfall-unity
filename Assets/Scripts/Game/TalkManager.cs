@@ -1773,7 +1773,7 @@ namespace DaggerfallWorkshop.Game
                                     }
                                 }
                             }
-                            exteriorUsedForQuestors = GameManager.Instance.PlayerGPS.CurrentLocationIndex; // once
+                            exteriorUsedForQuestors = GameManager.Instance.PlayerGPS.CurrentLocationIndex; // create only once for current location
                         }
                     }
                 }
@@ -2326,38 +2326,26 @@ namespace DaggerfallWorkshop.Game
         private void OnMapPixelChanged(DFPosition mapPixel)
         {
             rebuildTopicLists = true;
-            //AssembleTopicLists(); // if we don't want to build talk topic lists on demand - we can uncomment this and it will be build here
+            GetBuildingList(); // create building list and especially "any work" questors
         }
 
         private void OnTransitionToExterior(PlayerEnterExit.TransitionEventArgs args)
         {
             rebuildTopicLists = true;
-            //AssembleTopicLists(); // if we don't want to build talk topic lists on demand - we can uncomment this and it will be build here
+            GetBuildingList(); // create building list and especially "any work" questors
         }
 
         private void OnTransitionToDungeonExterior(PlayerEnterExit.TransitionEventArgs args)
         {
             rebuildTopicLists = true;
-            //AssembleTopicLists(); // if we don't want to build talk topic lists on demand - we can uncomment this and it will be build here
+            GetBuildingList(); // create building list and especially "any work" questors
         }
 
         void OnLoadEvent(SaveData_v1 saveData)
         {
             rebuildTopicLists = true;
-            //AssembleTopicLists(); // if we don't want to build talk topic lists on demand - we can uncomment this and it will be build here
+            GetBuildingList(); // create building list and especially "any work" questors            
         }
-
-        /*
-        void OnQuestStarted(Quest quest)
-        {
-            // AssembleTopicLists(); // note by Nystul: check if really necessary since resources are added as talk options when quest resources are parsed anyway
-        }
-
-        void OnQuestEnded(Quest quest)
-        {
-            // AssembleTopicLists(); // note by Nystul: check if really necessary since resources are added as talk options when quest resources are parsed anyway
-        }
-        */
 
         #endregion         
     }
