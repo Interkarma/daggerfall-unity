@@ -602,13 +602,13 @@ namespace DaggerfallWorkshop.Game
             {
                 DaggerfallEntityBehaviour entityBehaviour = entityBehaviours[i];
                 if (entityBehaviour.EntityType == EntityTypes.EnemyMonster || entityBehaviour.EntityType == EntityTypes.EnemyClass)
-                    Destroy(entityBehaviour);
+                    Destroy(entityBehaviour.gameObject);
             }
 
             // Also check for enemy spawners that might emit an enemy
             FoeSpawner[] spawners = FindObjectsOfType<FoeSpawner>();
             for (int i = 0; i < spawners.Length; i++)
-                Destroy(spawners[i]);
+                Destroy(spawners[i].gameObject);
         }
 
         /// <summary>

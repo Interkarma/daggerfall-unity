@@ -107,6 +107,9 @@ namespace DaggerfallWorkshop.Game.Entity
                 return;
             }
 
+            if (careerIndex == (int)MobileTypes.Knight_CityWatch)
+                level += UnityEngine.Random.Range(3, 7);
+
             this.mobileEnemy = mobileEnemy;
             this.entityType = entityType;
             name = career.Name;
