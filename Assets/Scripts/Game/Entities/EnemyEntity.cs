@@ -34,6 +34,22 @@ namespace DaggerfallWorkshop.Game.Entity
         MobileEnemy mobileEnemy;
         bool pickpocketByPlayerAttempted = false;
 
+        // From FALL.EXE offset 0x1C0F14
+        static byte[] ImpSpells            = { 0x07, 0x0A, 0x1D, 0x2C };
+        static byte[] GhostSpells          = { 0x22 };
+        static byte[] OrcShamanSpells      = { 0x06, 0x07, 0x16, 0x19, 0x1F };
+        static byte[] WraithSpells         = { 0x1C, 0x1F };
+        static byte[] FrostDaedraSpells    = { 0x10, 0x14 };
+        static byte[] FireDaedraSpells     = { 0x0E, 0x19 };
+        static byte[] DaedrothSpells       = { 0x16, 0x17, 0x1F };
+        static byte[] VampireSpells        = { 0x33 };
+        static byte[] SeducerSpells        = { 0x34, 0x43 };
+        static byte[] VampireAncientSpells = { 0x08, 0x32 };
+        static byte[] DaedraLordSpells     = { 0x08, 0x0A, 0x0E, 0x3C, 0x43 };
+        static byte[] LichSpells           = { 0x08, 0x0A, 0x0E, 0x22, 0x3C };
+        static byte[] AncientLichSpells    = { 0x08, 0x0A, 0x0E, 0x1D, 0x1F, 0x22, 0x3C };
+        static byte[][] EnemyClassSpells   = { FrostDaedraSpells, DaedrothSpells, OrcShamanSpells, VampireAncientSpells, DaedraLordSpells, LichSpells, AncientLichSpells };
+
         #endregion
 
         #region Properties
@@ -145,6 +161,41 @@ namespace DaggerfallWorkshop.Game.Entity
             else if (entityType == EntityTypes.EnemyClass)
             {
                 SetEnemyEquipment(UnityEngine.Random.Range(0, 2)); // 0 or 1
+            }
+
+            // Assign spell lists
+            if (careerIndex == (int)MonsterCareers.Imp)
+                SetEnemySpells(ImpSpells);
+            else if (careerIndex == (int)MonsterCareers.Ghost)
+                SetEnemySpells(GhostSpells);
+            else if (careerIndex == (int)MonsterCareers.OrcShaman)
+                SetEnemySpells(OrcShamanSpells);
+            else if (careerIndex == (int)MonsterCareers.Wraith)
+                SetEnemySpells(WraithSpells);
+            else if (careerIndex == (int)MonsterCareers.FrostDaedra)
+                SetEnemySpells(FrostDaedraSpells);
+            else if (careerIndex == (int)MonsterCareers.FireDaedra)
+                SetEnemySpells(FireDaedraSpells);
+            else if (careerIndex == (int)MonsterCareers.Daedroth)
+                SetEnemySpells(DaedrothSpells);
+            else if (careerIndex == (int)MonsterCareers.Vampire)
+                SetEnemySpells(VampireSpells);
+            else if (careerIndex == (int)MonsterCareers.DaedraSeducer)
+                SetEnemySpells(SeducerSpells);
+            else if (careerIndex == (int)MonsterCareers.VampireAncient)
+                SetEnemySpells(VampireAncientSpells);
+            else if (careerIndex == (int)MonsterCareers.DaedraLord)
+                SetEnemySpells(DaedraLordSpells);
+            else if (careerIndex == (int)MonsterCareers.Lich)
+                SetEnemySpells(LichSpells);
+            else if (careerIndex == (int)MonsterCareers.AncientLich)
+                SetEnemySpells(AncientLichSpells);
+            else if (entityType == EntityTypes.EnemyClass && mobileEnemy.CastsMagic)
+            {
+                int spellListLevel = level / 3;
+                if (spellListLevel > 6)
+                    spellListLevel = 6;
+                SetEnemySpells(EnemyClassSpells[spellListLevel]);
             }
 
             // Chance of adding map
@@ -283,7 +334,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 // Note: In classic, the above applies for equipment-using monsters as well as enemy classes.
                 // The resulting armor values are often 60. Due to the +40 to hit against monsters this makes
                 // monsters with equipment very easy to hit, and 60 is a worse value than any value monsters
-                // have in their definition. To avoid this, in DF Unity the equipment valuesare only used if
+                // have in their definition. To avoid this, in DF Unity the equipment values are only used if
                 // they are better than the value in the definition.
                 for (int i = 0; i < ArmorValues.Length; i++)
                 {
@@ -293,6 +344,22 @@ namespace DaggerfallWorkshop.Game.Entity
                     }
                 }
             }
+        }
+
+        public void SetEnemySpells(byte[] spellList)
+        {
+            //MaxMagicka = 10 * level + 100; TODO: Enemies should be able to set maximum spell points independent of the rules used by the player.
+            currentMagicka = MaxMagicka;
+            skills.SetPermanentSkillValue(DFCareer.Skills.Destruction, 80);
+            skills.SetPermanentSkillValue(DFCareer.Skills.Restoration, 80);
+            skills.SetPermanentSkillValue(DFCareer.Skills.Illusion, 80);
+            skills.SetPermanentSkillValue(DFCareer.Skills.Alteration, 80);
+            skills.SetPermanentSkillValue(DFCareer.Skills.Thaumaturgy, 80);
+            skills.SetPermanentSkillValue(DFCareer.Skills.Mysticism, 80);
+
+            // Iterate over spellList and assign data from SPELLS.STD
+
+            return;
         }
 
         public DFCareer.EnemyGroups GetEnemyGroup()

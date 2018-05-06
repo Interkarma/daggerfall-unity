@@ -1444,6 +1444,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 3,
                 LootTableKey = "U",
                 HitFrame = 3,
+                CastsMagic = true,
             },
 
             // Spellsword
@@ -1467,6 +1468,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 1,
                 LootTableKey = "P",
                 HitFrame = 3,
+                CastsMagic = true,
             },
 
             // Battlemage
@@ -1490,6 +1492,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 2,
                 LootTableKey = "U",
                 HitFrame = 3,
+                CastsMagic = true,
             },
 
             // Sorcerer
@@ -1513,6 +1516,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 3,
                 LootTableKey = "U",
                 HitFrame = 3,
+                CastsMagic = false,
             },
 
             // Healer
@@ -1536,6 +1540,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 1,
                 LootTableKey = "U",
                 HitFrame = 3,
+                CastsMagic = true,
             },
 
             // Nightblade
@@ -1559,6 +1564,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 1,
                 LootTableKey = "U",
                 HitFrame = 3,
+                CastsMagic = true,
             },
 
             // Bard
@@ -1582,6 +1588,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 2,
                 LootTableKey = "O",
                 HitFrame = 3,
+                CastsMagic = false,
             },
 
             // Burglar
@@ -1605,6 +1612,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 1,
                 LootTableKey = "O",
                 HitFrame = 3,
+                CastsMagic = false,
             },
 
             // Rogue
@@ -1628,6 +1636,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 1,
                 LootTableKey = "O",
                 HitFrame = 3,
+                CastsMagic = false,
             },
 
             // Acrobat
@@ -1651,6 +1660,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 0,
                 LootTableKey = "O",
                 HitFrame = 3,
+                CastsMagic = false,
             },
 
             // Thief
@@ -1674,6 +1684,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 2,
                 LootTableKey = "O",
                 HitFrame = 3,
+                CastsMagic = false,
             },
 
             // Assassin
@@ -1697,6 +1708,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 0,
                 LootTableKey = "O",
                 HitFrame = 3,
+                CastsMagic = false,
             },
 
             // Monk
@@ -1720,6 +1732,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 1,
                 LootTableKey = "T",
                 HitFrame = 3,
+                CastsMagic = false,
             },
 
             // Archer
@@ -1744,6 +1757,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 0,
                 LootTableKey = "C",
                 HitFrame = 3,
+                CastsMagic = false,
             },
 
             // Ranger
@@ -1767,6 +1781,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 1,
                 LootTableKey = "C",
                 HitFrame = 3,
+                CastsMagic = false,
             },
 
             // Barbarian
@@ -1790,6 +1805,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 0,
                 LootTableKey = "T",
                 HitFrame = 3,
+                CastsMagic = false,
             },
 
             // Warrior
@@ -1813,6 +1829,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 0,
                 LootTableKey = "T",
                 HitFrame = 3,
+                CastsMagic = false,
             },
 
             // Knight
@@ -1836,6 +1853,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 1,
                 LootTableKey = "T",
                 HitFrame = 3,
+                CastsMagic = false,
             },
 
             // City Watch - The Haltmeister
@@ -1858,6 +1876,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = true,
                 MapChance = 0,
                 HitFrame = 3,
+                CastsMagic = false,
             },
         };
 
