@@ -92,6 +92,8 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             place.AssignQuestResource(person.Symbol);
             person.SetAssignedPlaceSymbol(placeSymbol);
 
+            TalkManager.Instance.ForceTopicListsUpdate();
+
             SetComplete();
         }
 

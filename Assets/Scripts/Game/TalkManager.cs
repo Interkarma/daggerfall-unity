@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Michael Rauter (Nystul)
-// Contributors: Numidium   
+// Contributors:    Numidium   
 // 
 // Notes:
 //
@@ -167,6 +167,7 @@ namespace DaggerfallWorkshop.Game
 
         string nameNPC = "";
 
+        bool rebuildTopicLists = true; // flag to indicate that topic lists need to be rebuild next time talkwindow is opened
 
         ListItem currentQuestionListItem = null; // current question list item        
         string currentKeySubject = "";
@@ -182,7 +183,7 @@ namespace DaggerfallWorkshop.Game
         List<ListItem> listTopicThing;
 
         int numQuestionsAsked = 0;
-        string questionOpeningText = ""; // randomize PC opening text only once for every new question so save it in this string after creating it
+        string questionOpeningText = ""; // randomize PC opening text only once for every new question so save it in this string after creating it (so opening text does not change when picking different questions/topics)
 
         bool markLocationOnMap = false;
 
@@ -216,6 +217,19 @@ namespace DaggerfallWorkshop.Game
         // quest info answers about quest resource
         public class QuestResourceInfo
         {
+            public QuestResourceInfo()
+            {
+                this.anyInfoAnswers = null;
+                this.rumorsAnswers = null;
+                this.resourceType = QuestInfoResourceType.NotSet;
+                this.availableForDialog = true;
+                this.hasEntryInTellMeAbout = false;
+                this.dialogLinkedLocations = new List<string>();
+                this.dialogLinkedPersons = new List<string>();
+                this.dialogLinkedThings = new List<string>();
+                this.questResource = null;
+            }
+
             public QuestInfoResourceType resourceType;
             public List<TextFile.Token[]> anyInfoAnswers;
             public List<TextFile.Token[]> rumorsAnswers;
@@ -279,7 +293,13 @@ namespace DaggerfallWorkshop.Game
         }
 
         Dictionary<int, NpcWorkEntry> npcsWithWork = new Dictionary<int, NpcWorkEntry>();
-        int lastExteriorEntered;
+
+        // note Nystul: I changed the name from former lastExteriorEntered into exteriorUsedForQuestors to better reflect that a specific exterior was used to build questor dictionary
+        //              Since there was a bug when player loaded save game where character is in interior environment and thus this flag was always zero,
+        //              resulting in rebuilding of the dict on every call to GetBuildingList() - flag is now set to false after first creation (if exterior changes it is set to true again
+        //              for forcing rebuilding - this was already implemented correctly)
+        int exteriorUsedForQuestors;
+        
         int selectedNpcWorkKey;
 
         #endregion
@@ -331,11 +351,13 @@ namespace DaggerfallWorkshop.Game
             get {  return listTopicThing; }
         }
 
-        public int LastExteriorEntered
+        /*
+        public int ExteriorUsedForQuestors
         {
-            get { return lastExteriorEntered; }
-            set { lastExteriorEntered = value; }
+            get { return exteriorUsedForQuestors; }
+            set { exteriorUsedForQuestors = value; }
         }
+        */
 
         #endregion
 
@@ -350,11 +372,11 @@ namespace DaggerfallWorkshop.Game
             PlayerEnterExit.OnTransitionExterior += OnTransitionToExterior;
             PlayerEnterExit.OnTransitionDungeonExterior += OnTransitionToDungeonExterior;
             SaveLoadManager.OnLoad += OnLoadEvent;
-            QuestMachine.OnQuestStarted += OnQuestStarted;
-            QuestMachine.OnQuestEnded += OnQuestEnded;
+            //QuestMachine.OnQuestStarted += OnQuestStarted;
+            //QuestMachine.OnQuestEnded += OnQuestEnded;
 
             // initialize work variables
-            lastExteriorEntered = 0;
+            exteriorUsedForQuestors = 0;
             selectedNpcWorkKey = -1;
         }
 
@@ -365,8 +387,8 @@ namespace DaggerfallWorkshop.Game
             PlayerEnterExit.OnTransitionExterior -= OnTransitionToExterior;
             PlayerEnterExit.OnTransitionDungeonExterior -= OnTransitionToDungeonExterior;
             SaveLoadManager.OnLoad -= OnLoadEvent;
-            QuestMachine.OnQuestStarted -= OnQuestStarted;
-            QuestMachine.OnQuestEnded -= OnQuestEnded;
+            //QuestMachine.OnQuestStarted -= OnQuestStarted;
+            //QuestMachine.OnQuestEnded -= OnQuestEnded;
         }
 
         void OnEnable()
@@ -392,6 +414,14 @@ namespace DaggerfallWorkshop.Game
         #endregion
 
         #region Public Methods
+
+        public void resetNPCKnowledge()
+        {
+            resetNPCKnowledgeInTopicListRecursively(listTopicLocation);
+            resetNPCKnowledgeInTopicListRecursively(listTopicPerson);
+            resetNPCKnowledgeInTopicListRecursively(listTopicThing);
+            resetNPCKnowledgeInTopicListRecursively(listTopicTellMeAbout);
+        }
 
         // Player has clicked on a mobile talk target
         public void TalkToMobileNPC(MobilePersonNPC targetNPC)
@@ -427,8 +457,12 @@ namespace DaggerfallWorkshop.Game
 
             if (reactionToPlayer >= -20)
             {
-                DaggerfallUI.UIManager.PushWindow(DaggerfallUI.Instance.TalkWindow);
                 GameManager.Instance.TalkManager.SetTargetNPC(targetNPC, reactionToPlayer);
+                DaggerfallUI.UIManager.PushWindow(DaggerfallUI.Instance.TalkWindow);
+
+                // reset npc knowledge, for now it resets every time the npc has changed (player talked to new npc)
+                // TODO: match classic daggerfall - in classic npc remember their knowledge about topics for their time of existence
+                resetNPCKnowledge();
             }
             else
             {
@@ -474,8 +508,12 @@ namespace DaggerfallWorkshop.Game
 
             if (reactionToPlayer >= -20)
             {
-                DaggerfallUI.UIManager.PushWindow(DaggerfallUI.Instance.TalkWindow);
                 GameManager.Instance.TalkManager.SetTargetNPC(targetNPC, reactionToPlayer);
+                DaggerfallUI.UIManager.PushWindow(DaggerfallUI.Instance.TalkWindow);
+
+                // reset npc knowledge, for now it resets every time the npc has changed (player talked to new npc)
+                // TODO: match classic daggerfall - in classic npc remember their knowledge about topics for their time of existence
+                resetNPCKnowledge();
             }
             else
             {
@@ -503,13 +541,6 @@ namespace DaggerfallWorkshop.Game
             npcData.race = targetMobileNPC.Race;
 
             this.reactionToPlayer = reactionToPlayer;
-
-            // reset npc knowledge, for now it resets every time the npc has changed (player talked to new npc)
-            // TODO: match classic daggerfall - in classic npc remember their knowledge about topics for their time of existence
-            resetNPCKnowledgeInTopicListRecursively(listTopicLocation);
-            resetNPCKnowledgeInTopicListRecursively(listTopicPerson);
-            resetNPCKnowledgeInTopicListRecursively(listTopicThing);
-            resetNPCKnowledgeInTopicListRecursively(listTopicTellMeAbout);
         }
 
         public void SetTargetNPC(StaticNPC targetNPC, int reactionToPlayer)
@@ -538,12 +569,7 @@ namespace DaggerfallWorkshop.Game
 
             this.reactionToPlayer = reactionToPlayer;
 
-            // reset npc knowledge, for now it resets every time the npc has changed (player talked to new npc)
-            // TODO: match classic daggerfall - in classic npc remember their knowledge about topics for their time of existence
-            resetNPCKnowledgeInTopicListRecursively(listTopicLocation);
-            resetNPCKnowledgeInTopicListRecursively(listTopicPerson);
-            resetNPCKnowledgeInTopicListRecursively(listTopicThing);
-            resetNPCKnowledgeInTopicListRecursively(listTopicTellMeAbout);
+            AssembleTopicListPerson(); // update "Where Is" -> "Person" list since this list may hide the questor (if talking to the questor)
         }
 
         public void StartNewConversation()
@@ -551,6 +577,11 @@ namespace DaggerfallWorkshop.Game
             numQuestionsAsked = 0;
             questionOpeningText = "";
             currentQuestionListItem = null;
+            if (rebuildTopicLists)
+            {
+                AssembleTopicLists();
+                rebuildTopicLists = false;
+            }
             SetupRumorMill();
         }
 
@@ -672,7 +703,7 @@ namespace DaggerfallWorkshop.Game
                 return "nevermind...";
         }
 
-        public string GetKeySubjectLocationDirection()
+        public string GetKeySubjectLocationCompassDirection()
         {
             // note Nystul:
             // I reused coordinate mapping from buildings from exterior automap layout implementation here
@@ -697,7 +728,17 @@ namespace DaggerfallWorkshop.Game
         public void MarkKeySubjectLocationOnMap()
         {
             BuildingInfo buildingInfo = listBuildings.Find(x => x.buildingKey == currentKeySubjectBuildingKey);
-            GameManager.Instance.PlayerGPS.DiscoverBuilding(buildingInfo.buildingKey);
+            if (buildingInfo.buildingKey != 0)
+            {
+                if (checkBuildingTypeHouse(buildingInfo.buildingType))
+                {
+                    GameManager.Instance.PlayerGPS.DiscoverBuilding(buildingInfo.buildingKey); //, currentKeySubject);
+                }
+                else
+                {
+                    GameManager.Instance.PlayerGPS.DiscoverBuilding(buildingInfo.buildingKey);
+                }
+            }
         }
 
         public string GetQuestionText(TalkManager.ListItem listItem, DaggerfallTalkWindow.TalkTone talkTone)
@@ -727,6 +768,7 @@ namespace DaggerfallWorkshop.Game
                     question = expandRandomTextRecord(7225 + toneIndex);
                     break;
                 case QuestionType.Person:
+                    currentKeySubjectType = KeySubjectType.Person;
                     question = expandRandomTextRecord(7225 + toneIndex);
                     break;
                 case QuestionType.Thing:
@@ -914,24 +956,62 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        public string GetKeySubjectLocationDirection()
+        {
+            string answer;
+            markLocationOnMap = false; // when preprocessing messages in expandRandomTextRecord() do not reveal location accidentally (no %loc macro resolving)
+            answer = expandRandomTextRecord(7333);
+            return answer;
+        }
+
+        public string GetKeySubjectLocationOnMap()
+        {
+            string answer;
+            markLocationOnMap = true; // only reveal on purpose
+            answer = expandRandomTextRecord(7332);
+            markLocationOnMap = false; // don't forget so future %loc macro resolving when preprocessing messages does not reveal location
+            return answer;
+        }
+
         public string GetKeySubjectLocationHint()
         {
             string answer;
+
+            // TODO: take into account if npc likes player or not
 
             // chances unknown - so there is a 75% chance for now that npc gives location direction hints and a 25% chance that npc will reveal location on map
             // always only give directional hints if player is inside
             int randomNum = UnityEngine.Random.Range(0, 4);
             if (randomNum > 0 || GameManager.Instance.IsPlayerInside)
             {
-                markLocationOnMap = false;
-                answer = expandRandomTextRecord(7333);
+                answer = GetKeySubjectLocationDirection();
             }
             else
             {
-                markLocationOnMap = true;
-                answer = expandRandomTextRecord(7332);
-                markLocationOnMap = false;
+                answer = GetKeySubjectLocationOnMap();
             }
+
+            return answer;
+        }
+
+        public string GetKeySubjectPersonHint()
+        {
+            string answer;
+
+            string nameNPC = this.currentKeySubject; // currentQuestionListItem.caption;
+            int buildingKey = GameManager.Instance.TalkManager.GetBuildingKeyForPersonResource(currentQuestionListItem.questID, nameNPC);
+
+            string backupKeySubject = this.currentKeySubject; // backup current key subject
+
+            BuildingInfo buildingInfo = listBuildings.Find(x => x.buildingKey == buildingKey);
+            this.currentKeySubject = buildingInfo.name;
+            this.currentKeySubjectBuildingKey = buildingKey;
+
+            markLocationOnMap = true; // only reveal on purpose
+            answer = GetKeySubjectLocationHint();
+            markLocationOnMap = false; // don't forget so future %loc macro resolving when preprocessing messages does not reveal location
+
+            this.currentKeySubject = backupKeySubject; // restore old key subject           
 
             return answer;
         }
@@ -956,13 +1036,15 @@ namespace DaggerfallWorkshop.Game
                 if (dictQuestInfo[listItem.questID].resourceInfo.ContainsKey(listItem.caption))
                 {
                     List<TextFile.Token[]> answers = dictQuestInfo[listItem.questID].resourceInfo[listItem.caption].rumorsAnswers;
+                    if (answers.Count == 0) // if no rumors are available, fall back to anyInfoAnswers
+                        answers = dictQuestInfo[listItem.questID].resourceInfo[listItem.caption].anyInfoAnswers;
                     return getAnswerFromTokensArray(listItem.questID, answers);
                 }
             }
             return "Never mind..."; // error case - should never ever occur
         }
 
-        public string GetAnswerAboutLocation(TalkManager.ListItem listItem)
+        public string GetAnswerWhereIs(TalkManager.ListItem listItem)
         {
             string answer;
 
@@ -976,12 +1058,11 @@ namespace DaggerfallWorkshop.Game
                     listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.KnowsAboutItem;
             }
 
-            if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.DoesNotKnowAboutItem)
+            // TODO: take into account if npc likes you for answers here as well (use different sets here depending on how much npc likes you)
+            if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.DoesNotKnowAboutItem)                
                 answer = getRecordIdByNpcsSocialGroup(7281, 7280, 7280, 7283, 7282, 7284); // messages if npc does not know
             else
-            {
                 answer = getRecordIdByNpcsSocialGroup(7271, 7270, 7270, 7273, 7272, 7274); // location related messages if npc knows
-            }
             return answer;
         }
 
@@ -1124,13 +1205,13 @@ namespace DaggerfallWorkshop.Game
                     answer = GetOrganizationInfo(listItem);
                     break;
                 case QuestionType.LocalBuilding:
-                    answer = GetAnswerAboutLocation(listItem);
+                    answer = GetAnswerWhereIs(listItem);
                     break;
                 case QuestionType.Person:
-                    answer = getRecordIdByNpcsSocialGroup(7281, 7280, 7280, 7283, 7282, 7284); // messages if npc does not know
+                    answer = GetAnswerWhereIs(listItem);
                     break;
                 case QuestionType.Thing:
-                    answer = "not implemented";
+                    answer = GetAnswerWhereIs(listItem); // actually never reached since there are no where is type questions for things in vanilla df
                     break;
                 case QuestionType.Regional:
                     answer = GetAnswerAboutRegionalBuilding(listItem);
@@ -1177,6 +1258,13 @@ namespace DaggerfallWorkshop.Game
                 return getRecordIdByNpcsSocialGroup(7276, 7275, 7275, 7278, 7277, 7279); // quest topic related messages if npc knows
         }
 
+
+        public void ForceTopicListsUpdate()
+        {
+            rebuildTopicLists = true;
+            //AssembleTopicLists();
+        }
+
         public void AddQuestTopicWithInfoAndRumors(ulong questID, QuestResource questResource, string resourceName, QuestInfoResourceType resourceType, List<TextFile.Token[]> anyInfoAnswers, List<TextFile.Token[]> rumorsAnswers)
         {
             QuestResources questResources;
@@ -1193,47 +1281,6 @@ namespace DaggerfallWorkshop.Game
             if (resourceName == null || resourceName == "")
                 return;
 
-            QuestResourceInfo questResourceInfo = new QuestResourceInfo();
-            questResourceInfo.anyInfoAnswers = anyInfoAnswers;
-            questResourceInfo.rumorsAnswers = rumorsAnswers;
-            questResourceInfo.resourceType = resourceType;
-            questResourceInfo.availableForDialog = true;
-            questResourceInfo.hasEntryInTellMeAbout = true;
-            if (resourceType == QuestInfoResourceType.Person || resourceType == QuestInfoResourceType.Location)
-                questResourceInfo.hasEntryInWhereIs = true;
-            else
-                questResourceInfo.hasEntryInWhereIs = false;
-            questResourceInfo.dialogLinkedLocations = new List<string>();
-            questResourceInfo.dialogLinkedPersons = new List<string>();
-            questResourceInfo.dialogLinkedThings = new List<string>();
-            questResourceInfo.questResource = questResource;
-         
-            questResources.resourceInfo[resourceName] = questResourceInfo;
-
-            dictQuestInfo[questID] = questResources;
-
-            // update topic list
-            AssembleTopiclistTellMeAbout();
-
-            // update rumor mill
-            GameManager.Instance.TalkManager.AddQuestRumorToRumorMill(questID, questResourceInfo.rumorsAnswers);
-        }
-
-        public void AddPersonTopic(ulong questID, DaggerfallWorkshop.Game.Questing.Person person)
-        {
-            string resourceName = person.DisplayName;
-
-            QuestResources questResources;
-            if (dictQuestInfo.ContainsKey(questID))
-            {
-                questResources = dictQuestInfo[questID];
-            }
-            else
-            {
-                questResources = new QuestResources();
-                questResources.resourceInfo = new Dictionary<string, QuestResourceInfo>();
-            }
-
             QuestResourceInfo questResourceInfo;
             if (questResources.resourceInfo.ContainsKey(resourceName))
             {
@@ -1242,27 +1289,36 @@ namespace DaggerfallWorkshop.Game
             else
             {
                 questResourceInfo = new QuestResourceInfo();
-                questResourceInfo.anyInfoAnswers = null;
-                questResourceInfo.rumorsAnswers = null;
-                questResourceInfo.resourceType = QuestInfoResourceType.Person;
-                questResourceInfo.questResource = person;
-                questResourceInfo.availableForDialog = false; // default to not available (dialog link command checked later to make them appear)
-                if (person.IsQuestor) // questors are always available for dialog
-                    questResourceInfo.availableForDialog = true;
-                questResourceInfo.hasEntryInTellMeAbout = false;
-                questResourceInfo.hasEntryInWhereIs = true;
-                questResourceInfo.dialogLinkedLocations = new List<string>();
-                questResourceInfo.dialogLinkedPersons = new List<string>();
-                questResourceInfo.dialogLinkedThings = new List<string>();                
             }
+            questResourceInfo.anyInfoAnswers = anyInfoAnswers;
+            questResourceInfo.rumorsAnswers = rumorsAnswers;
+            questResourceInfo.resourceType = resourceType;
 
-            //QuestMacroHelper macroHelper = new QuestMacroHelper();
+            // questResourceInfo.availableForDialog = true; // already set by QuestResourceInfo constructor
             
+            //if (resourceType == QuestInfoResourceType.Person && person.IsQuestor) // questors are always available for dialog
+            //    questResourceInfo.availableForDialog = true;
+            
+            if (questResourceInfo.anyInfoAnswers != null || questResourceInfo.rumorsAnswers != null)
+                questResourceInfo.hasEntryInTellMeAbout = true;
+
+            if (resourceType == QuestInfoResourceType.Person || resourceType == QuestInfoResourceType.Location)
+                questResourceInfo.hasEntryInWhereIs = true;
+            else
+                questResourceInfo.hasEntryInWhereIs = false;
+
+            questResourceInfo.questResource = questResource;
+         
             questResources.resourceInfo[resourceName] = questResourceInfo;
+
             dictQuestInfo[questID] = questResources;
-            
-            // update topic list
-            AssembleTopicListPerson();
+
+            // update topic lists
+            rebuildTopicLists = true;
+
+            // update rumor mill
+            if (questResourceInfo.rumorsAnswers != null)
+                GameManager.Instance.TalkManager.AddQuestRumorToRumorMill(questID, questResourceInfo.rumorsAnswers);
         }
 
         public void DialogLinkForQuestInfoResource(ulong questID, string resourceName, QuestInfoResourceType resourceType, string linkedResourceName = null, QuestInfoResourceType linkedResourceType = QuestInfoResourceType.NotSet)
@@ -1356,22 +1412,80 @@ namespace DaggerfallWorkshop.Game
                 questResource.availableForDialog = true;
             }
 
-            // update topic list
-            AssembleTopiclistTellMeAbout();
+            // update topic lists
+            AssembleTopicLists();
         }
 
         public void RemoveQuestInfoTopicsForSpecificQuest(ulong questID)
-        {
+        {            
             if (dictQuestInfo.ContainsKey(questID))
             {
                 dictQuestInfo.Remove(questID);
             }
 
             // update topic lists
-            AssembleTopiclistTellMeAbout();
-            AssembleTopicListLocation();
-            AssembleTopicListPerson();
-            AssembleTopicListThing();
+            rebuildTopicLists = true;
+            //AssembleTopiclistTellMeAbout();
+            //AssembleTopicListLocation();
+            //AssembleTopicListPerson();
+            //AssembleTopicListThing();
+        }
+
+        public int GetBuildingKeyForPersonResource(ulong questID, string resourceName)
+        {
+            if (!dictQuestInfo.ContainsKey(questID))
+            {
+                throw new Exception(String.Format("GetBuildingKeyForPersonResource(): could not find quest with questID {0}", questID));                
+            }
+
+            QuestResources questResources = dictQuestInfo[questID];
+
+            if (resourceName == null || resourceName == "")
+                throw new Exception("GetBuildingKeyForPersonResource(): - no valid resourceName was provided.");
+
+            QuestResourceInfo questResourceInfo;
+            if (questResources.resourceInfo.ContainsKey(resourceName))
+            {
+                questResourceInfo = questResources.resourceInfo[resourceName];
+            }
+            else
+            {
+                throw new Exception(String.Format("GetBuildingKeyForPersonResource(): could not find resource with resourceName {1} for quest with questID {0}", questID, resourceName));
+            }
+
+            if (questResourceInfo.resourceType != QuestInfoResourceType.Person)
+                throw new Exception(String.Format("GetBuildingKeyForPersonResource(): resource is not of type Person but was expected to be"));
+
+            Quest quest = GameManager.Instance.QuestMachine.GetQuest(questID);
+
+            Questing.Person person = (Questing.Person)questResourceInfo.questResource;
+
+            if (person.IsQuestor)
+            {
+                return person.QuestorData.buildingKey;
+            }
+            else
+            {
+                Symbol assignedPlaceSymbol = person.GetAssignedPlaceSymbol();
+                if (assignedPlaceSymbol == null)
+                    throw new Exception(String.Format("GetBuildingKeyForPersonResource(): resource is not of type Person but was expected to be"));
+
+                Place assignedPlace = quest.GetPlace(assignedPlaceSymbol);
+
+                return assignedPlace.SiteDetails.buildingKey;
+            }
+        }
+
+        public DFLocation.BuildingTypes GetBuildingTypeForBuildingKey(int buildingKey)
+        {
+            if (listBuildings == null)
+                GetBuildingList();
+            List<BuildingInfo> matchingBuildings = listBuildings.FindAll(x => x.buildingKey == buildingKey);
+            if (matchingBuildings.Count == 0)
+                throw new Exception(String.Format("GetBuildingTypeForBuildingKey(): no building with the queried key found"));
+            else if (matchingBuildings.Count > 1 )
+                throw new Exception(String.Format("GetBuildingTypeForBuildingKey(): more than one building with the queried key found"));
+            return matchingBuildings[0].buildingType;
         }
 
         /// <summary>
@@ -1397,7 +1511,47 @@ namespace DaggerfallWorkshop.Game
             dictQuestInfo = data.dictQuestInfo;
             if (dictQuestInfo == null)
                 dictQuestInfo = new Dictionary<ulong, QuestResources>();
-            
+
+            ulong[] questIDs = GameManager.Instance.QuestMachine.GetAllQuests();            
+
+            foreach (ulong questID in questIDs)
+            {
+                Quest quest = GameManager.Instance.QuestMachine.GetQuest(questID);
+                if (dictQuestInfo.ContainsKey(questID))
+                {
+                    QuestResources questInfo = dictQuestInfo[questID]; // get questInfo containing orphaned list of quest resources
+
+                    QuestResource[] questResources = quest.GetAllResources(typeof(Person)); // get list of person quest resources
+                    for (int i=0; i < questResources.Length; i++)
+                    {
+                        Questing.Person person = (Questing.Person)(questResources[i]);
+                        string key = person.DisplayName;
+
+                        if (questInfo.resourceInfo.ContainsKey(key)) // if orphaned list of quest resources contains a matching entry
+                        {
+                            questInfo.resourceInfo[key].questResource = person; // update (relink) it
+                        }
+                    }
+
+                    questResources = quest.GetAllResources(typeof(Place)); // get list of place quest resources                   
+                    for (int i = 0; i < questResources.Length; i++)
+                    {
+                        Questing.Place place = (Questing.Place)(questResources[i]);
+                        
+                        string namePlace = place.SiteDetails.buildingName; // use building name as default
+                        if (namePlace == null) // no building?
+                            namePlace = place.SiteDetails.locationName; // use dungeon name
+
+                        string key = namePlace;
+
+                        if (questInfo.resourceInfo.ContainsKey(key)) // if orphaned list of quest resources contains a matching entry
+                        {
+                            questInfo.resourceInfo[key].questResource = place; // update (relink) it
+                        }
+                    }
+                }
+            }
+
             listRumorMill = data.listRumorMill;
             if (listRumorMill == null)
             {
@@ -1514,7 +1668,7 @@ namespace DaggerfallWorkshop.Game
             int width = location.Exterior.ExteriorData.Width;
             int height = location.Exterior.ExteriorData.Height;
             bool populateQuestors = false;
-            if (lastExteriorEntered != GameManager.Instance.PlayerGPS.CurrentLocationIndex)
+            if (exteriorUsedForQuestors != GameManager.Instance.PlayerGPS.CurrentLocationIndex)
             {
                 npcsWithWork.Clear();
                 populateQuestors = true;
@@ -1619,6 +1773,7 @@ namespace DaggerfallWorkshop.Game
                                     }
                                 }
                             }
+                            exteriorUsedForQuestors = GameManager.Instance.PlayerGPS.CurrentLocationIndex; // create only once for current location
                         }
                     }
                 }
@@ -1682,6 +1837,18 @@ namespace DaggerfallWorkshop.Game
                 buildingType == DFLocation.BuildingTypes.Special4 ||
                 buildingType == DFLocation.BuildingTypes.Town23 ||
                 buildingType == DFLocation.BuildingTypes.Town4)
+                return true;
+            return false;
+        }
+
+        private bool checkBuildingTypeHouse(DFLocation.BuildingTypes buildingType)
+        {
+            if (buildingType == DFLocation.BuildingTypes.House1 ||
+                buildingType == DFLocation.BuildingTypes.House2 ||
+                buildingType == DFLocation.BuildingTypes.House3 ||
+                buildingType == DFLocation.BuildingTypes.House4 ||
+                buildingType == DFLocation.BuildingTypes.House5 ||
+                buildingType == DFLocation.BuildingTypes.House6)
                 return true;
             return false;
         }
@@ -1802,22 +1969,71 @@ namespace DaggerfallWorkshop.Game
                     listTopicLocation.Add(itemBuildingTypeGroup);
                 }
             }
-            
+
+
+            itemBuildingTypeGroup = new ListItem();
+            itemBuildingTypeGroup.type = ListItemType.ItemGroup;
+            itemBuildingTypeGroup.caption = "General";
+            listTopicLocation.Add(itemBuildingTypeGroup);
+
+            foreach (KeyValuePair<ulong, QuestResources> questInfo in dictQuestInfo)
+            {
+                foreach (KeyValuePair<string, QuestResourceInfo> questResourceInfo in questInfo.Value.resourceInfo)
+                {
+                    if (questResourceInfo.Value.resourceType == QuestInfoResourceType.Location)
+                    {
+                        Questing.Place place = (Questing.Place)questResourceInfo.Value.questResource;
+                        DFLocation.BuildingTypes buildingType = GameManager.Instance.TalkManager.GetBuildingTypeForBuildingKey(place.SiteDetails.buildingKey);
+
+                        if (checkBuildingTypeHouse(buildingType))
+                        {
+                            ListItem item = new ListItem();
+                            item.type = ListItemType.Item;
+                            item.questionType = QuestionType.LocalBuilding;
+
+                            ulong questID = questInfo.Key;
+                            item.questID = questID;
+
+                            string captionString = questResourceInfo.Key;
+                            // Questing.Place place = (Questing.Place)questResourceInfo.Value.questResource;
+                            // string buildingName = place.SiteDetails.buildingName;
+                            // captionString = buildingName;
+
+                            item.caption = captionString;
+                            item.buildingKey = place.SiteDetails.buildingKey;
+
+                            if (questResourceInfo.Value.availableForDialog && questResourceInfo.Value.hasEntryInWhereIs)
+                            {
+                                if (itemBuildingTypeGroup.listChildItems == null)
+                                {
+                                    ListItem itemPreviousList;
+                                    itemPreviousList = new ListItem();
+                                    itemPreviousList.type = ListItemType.NavigationBack;
+                                    itemPreviousList.caption = "Previous List";
+                                    itemPreviousList.listParentItems = listTopicLocation;
+                                    itemBuildingTypeGroup.listChildItems = new List<ListItem>();
+                                    itemBuildingTypeGroup.listChildItems.Add(itemPreviousList);
+                                }
+                                itemBuildingTypeGroup.listChildItems.Add(item);
+                            }
+                        }
+                    }
+                }
+            }
+
             matchingBuildings = listBuildings.FindAll(x => x.buildingType == DFLocation.BuildingTypes.Palace);
             if (matchingBuildings.Count > 0)
             {
-                itemBuildingTypeGroup = new ListItem();
-                itemBuildingTypeGroup.type = ListItemType.ItemGroup;
-                itemBuildingTypeGroup.caption = "General";
-                listTopicLocation.Add(itemBuildingTypeGroup);
-
-                ListItem itemPreviousList;
-                itemPreviousList = new ListItem();
-                itemPreviousList.type = ListItemType.NavigationBack;
-                itemPreviousList.caption = "Previous List";
-                itemPreviousList.listParentItems = listTopicLocation;
-                itemBuildingTypeGroup.listChildItems = new List<ListItem>();
-                itemBuildingTypeGroup.listChildItems.Add(itemPreviousList);
+                if (itemBuildingTypeGroup.listChildItems == null)
+                {
+                    ListItem itemPreviousList;
+                    itemPreviousList = new ListItem();
+                    itemPreviousList.type = ListItemType.NavigationBack;
+                    itemPreviousList.caption = "Previous List";
+                    itemPreviousList.listParentItems = listTopicLocation;
+                    itemBuildingTypeGroup.listChildItems = new List<ListItem>();
+                    itemBuildingTypeGroup.listChildItems.Add(itemPreviousList);
+                }                
 
                 foreach (BuildingInfo buildingInfo in matchingBuildings)
                 {
@@ -1926,24 +2142,48 @@ namespace DaggerfallWorkshop.Game
                         item.caption = captionString;
 
                         bool IsPlayerInSameLocationWorldCell = false;
+                        bool dialogPartnerIsSamePersonAsPersonResource = false;
 
                         // in case person is questor check if questor is in same mapID
                         Questing.Person person = (Questing.Person)questResourceInfo.Value.questResource;
-                        if (person.IsQuestor == true && person.QuestorData.mapID == GameManager.Instance.PlayerGPS.CurrentMapID)
-                            IsPlayerInSameLocationWorldCell = true;
-
-                        /*
-                        try
+                        if (person.IsQuestor == true)
                         {
-                            IsPlayerInSameLocationWorldCell = ((Questing.Person)questResourceInfo.Value.questResource).IsPlayerInSameLocationWorldCell();
+                            if (person.QuestorData.mapID == GameManager.Instance.PlayerGPS.CurrentMapID)
+                                IsPlayerInSameLocationWorldCell = true;
+
+                            // test if dialog partner is same person as person resource
+                            if (GameManager.Instance.IsPlayerInside)
+                            {                              
+                                if (this.targetStaticNPC != null && this.currentNPCType == NPCType.Static && this.targetStaticNPC.Data.buildingKey == GameManager.Instance.PlayerEnterExit.Interior.EntryDoor.buildingKey && this.nameNPC == captionString)
+                                    dialogPartnerIsSamePersonAsPersonResource = true;                            
+                            }                            
                         }
-                        catch (Exception e)
+                        else
                         {
-                        }*/
+                            /*
+                            try
+                            {
+                                IsPlayerInSameLocationWorldCell = ((Questing.Person)questResourceInfo.Value.questResource).IsPlayerInSameLocationWorldCell();
+                            }
+                            catch (Exception e)
+                            {
+                            }*/
 
-                        if (questResourceInfo.Value.availableForDialog && // only make it available for talk if it is not "hidden" by dialog link command
+                            Symbol assignedPlaceSymbol = person.GetAssignedPlaceSymbol();
+
+                            if (assignedPlaceSymbol != null)
+                            {
+                                Quest quest = GameManager.Instance.QuestMachine.GetQuest(questID);
+                                Place assignedPlace = quest.GetPlace(assignedPlaceSymbol);  // Gets actual place resource
+                                if (assignedPlace.SiteDetails.mapId == GameManager.Instance.PlayerGPS.CurrentMapID)
+                                    IsPlayerInSameLocationWorldCell = true;
+                            }
+                        }
+
+                        if (!dialogPartnerIsSamePersonAsPersonResource && // only make it available for talk if dialog partner is not the same person as the person resource talked about
+                            questResourceInfo.Value.availableForDialog && // only make it available for talk if it is not "hidden" by dialog link command
                             questResourceInfo.Value.hasEntryInWhereIs &&
-                            IsPlayerInSameLocationWorldCell)
+                            IsPlayerInSameLocationWorldCell) // only make it available for talk if person resource is in same world map location as player
                             listTopicPerson.Add(item);
                     }
 
@@ -1954,6 +2194,7 @@ namespace DaggerfallWorkshop.Game
         private void AssembleTopicListThing()
         {            
             listTopicThing = new List<ListItem>();
+            /*
             for (int i = 0; i < 30; i++)
             {
                 ListItem item = new ListItem();
@@ -1961,7 +2202,8 @@ namespace DaggerfallWorkshop.Game
                 item.questionType = QuestionType.Thing;
                 item.caption = "thing " + i;
                 listTopicThing.Add(item);
-            }            
+            }
+            */
         }
 
         /// <summary>
@@ -2050,40 +2292,6 @@ namespace DaggerfallWorkshop.Game
             return (tokens[0].text);
         }
 
-        #endregion
-
-        #region event handlers
-
-        private void OnMapPixelChanged(DFPosition mapPixel)
-        {
-            AssembleTopicLists();
-        }
-
-        private void OnTransitionToExterior(PlayerEnterExit.TransitionEventArgs args)
-        {
-            AssembleTopicLists();
-        }
-
-        private void OnTransitionToDungeonExterior(PlayerEnterExit.TransitionEventArgs args)
-        {
-            AssembleTopicLists();
-        }
-
-        void OnLoadEvent(SaveData_v1 saveData)
-        {
-            AssembleTopicLists();
-        }
-
-        void OnQuestStarted(Quest quest)
-        {
-            // AssembleTopicLists(); // note by Nystul: check if really necessary since resources are added as talk options when quest resources are parsed anyway
-        }
-
-        void OnQuestEnded(Quest quest)
-        {
-            // AssembleTopicLists(); // note by Nystul: check if really necessary since resources are added as talk options when quest resources are parsed anyway
-        }
-
         private string getRecordIdByNpcsSocialGroup(int textRecordIdDefault, int textRecordIdGuildMembers, int textRecordIdMerchants, int textRecordIdNobility, int textRecordIdScholars, int textRecordIdUnderworld)
         {
             switch (npcData.socialGroup)
@@ -2108,6 +2316,35 @@ namespace DaggerfallWorkshop.Game
                 case FactionFile.SocialGroups.Underworld:
                     return expandRandomTextRecord(textRecordIdUnderworld); // todo: this needs to be tested with a npc of social group underworld in vanilla df
             }
+        }
+
+
+        #endregion
+
+        #region event handlers
+
+        private void OnMapPixelChanged(DFPosition mapPixel)
+        {
+            rebuildTopicLists = true;
+            GetBuildingList(); // create building list and especially "any work" questors
+        }
+
+        private void OnTransitionToExterior(PlayerEnterExit.TransitionEventArgs args)
+        {
+            rebuildTopicLists = true;
+            GetBuildingList(); // create building list and especially "any work" questors
+        }
+
+        private void OnTransitionToDungeonExterior(PlayerEnterExit.TransitionEventArgs args)
+        {
+            rebuildTopicLists = true;
+            GetBuildingList(); // create building list and especially "any work" questors
+        }
+
+        void OnLoadEvent(SaveData_v1 saveData)
+        {
+            rebuildTopicLists = true;
+            GetBuildingList(); // create building list and especially "any work" questors            
         }
 
         #endregion         

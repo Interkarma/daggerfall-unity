@@ -72,9 +72,10 @@ namespace DaggerfallWorkshop.Game.Questing
             // first create dialog link for just the separated resources (which will hide them)
             if (place != null)
             {
-                namePlace = place.SiteDetails.locationName;
-                if (namePlace == null)
-                    namePlace = place.Name; // workaround to prevent exception, TODO: correct name resolving for local houses/residences
+                namePlace = place.SiteDetails.buildingName; // use building name as default
+                if (namePlace == null) // no building?
+                    namePlace = place.SiteDetails.locationName; // use dungeon name
+
                 GameManager.Instance.TalkManager.DialogLinkForQuestInfoResource(ParentQuest.UID, namePlace, TalkManager.QuestInfoResourceType.Location);
             }
             if (person != null)

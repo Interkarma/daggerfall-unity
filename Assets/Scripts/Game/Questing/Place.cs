@@ -985,10 +985,12 @@ namespace DaggerfallWorkshop.Game.Questing
 
         void AddConversationTopics()
         {
+            List<TextFile.Token[]> anyInfoAnswers = null;
+            List<TextFile.Token[]> anyRumorsAnswers = null;
             if (this.InfoMessageID != -1)
             {
                 Message message = this.ParentQuest.GetMessage(this.InfoMessageID);
-                List<TextFile.Token[]> anyInfoAnswers = new List<TextFile.Token[]>();                
+                anyInfoAnswers = new List<TextFile.Token[]>();                
                 if (message != null)
                 {
                     for (int i = 0; i < message.VariantCount; i++)
@@ -999,7 +1001,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 }
 
                 message = this.ParentQuest.GetMessage(this.RumorsMessageID);
-                List<TextFile.Token[]> anyRumorsAnswers = new List<TextFile.Token[]>();
+                anyRumorsAnswers = new List<TextFile.Token[]>();
                 if (message != null)
                 {                    
                     for (int i = 0; i < message.VariantCount; i++)
@@ -1008,11 +1010,13 @@ namespace DaggerfallWorkshop.Game.Questing
                         anyRumorsAnswers.Add(tokens);
                     }
                 }
-
-                string captionString;
-                this.ExpandMacro(MacroTypes.NameMacro3, out captionString);
-                GameManager.Instance.TalkManager.AddQuestTopicWithInfoAndRumors(this.ParentQuest.UID, this, captionString, TalkManager.QuestInfoResourceType.Location, anyInfoAnswers, anyRumorsAnswers);
             }
+
+            string captionString;
+            this.ExpandMacro(MacroTypes.NameMacro1, out captionString); // first try to resolve building name (if this fails it is a dungeon...)
+            if (captionString == null) // if building name resolving failed
+                this.ExpandMacro(MacroTypes.NameMacro3, out captionString); // resolve dungeon name
+            GameManager.Instance.TalkManager.AddQuestTopicWithInfoAndRumors(this.ParentQuest.UID, this, captionString, TalkManager.QuestInfoResourceType.Location, anyInfoAnswers, anyRumorsAnswers);
         }
 
         #endregion

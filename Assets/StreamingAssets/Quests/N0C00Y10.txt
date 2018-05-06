@@ -108,12 +108,6 @@ Message:  1025
 <ce>                   who takes things without asking,
 <ce>                       if you know what I mean.
 
-RumorsPostfailure:  [1006]
-<ce>                    You have shown yourself to be a
-<ce>                       trustworthy agent, %pcn.
-<ce>                   You have earned a small amount of
-<ce>                   new respect with the Mages Guild.
-
 Message:  1027
 _thief_ lives at _house_ in __house_.
 <--->
