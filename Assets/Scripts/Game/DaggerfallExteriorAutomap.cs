@@ -26,6 +26,7 @@ using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.Questing;
 using Wenzil.Console;
 
 namespace DaggerfallWorkshop.Game
@@ -762,9 +763,34 @@ namespace DaggerfallWorkshop.Game
                             PlayerGPS.DiscoveredBuilding discoveredBuilding;
                             if (GameManager.Instance.PlayerGPS.GetDiscoveredBuilding(buildingSummary.buildingKey, out discoveredBuilding))
                             {
-                                // only create nameplates for buildings different than "Residence"
-                                if (discoveredBuilding.displayName != "Residence")
+                                
+                                if (!RMBLayout.IsResidence(buildingSummary.BuildingType)) // guilds, shops, taverns, palace (general case)
+                                {
                                     newBuildingNameplate.name = discoveredBuilding.displayName;
+                                }
+                                else if (RMBLayout.IsResidence(buildingSummary.BuildingType)) // residence handling
+                                {
+                                    // check if residence is involved in active quest (this might be replaced by function call - for now I implemented this by myself
+                                    string buildingQuestName = string.Empty; // string.Empty if building not involved in active quest
+                                    ulong[] questIDs = GameManager.Instance.QuestMachine.GetAllActiveQuests();
+                                    foreach (ulong questID in questIDs)
+                                    {
+                                        Quest quest = GameManager.Instance.QuestMachine.GetQuest(questID);
+                                        QuestResource[] questResources = quest.GetAllResources(typeof(Place)); // get list of place quest resources
+                                        foreach (QuestResource questResource in questResources)
+                                        {
+                                            Questing.Place place = (Questing.Place)(questResource);
+                                            if (place.SiteDetails.buildingKey == discoveredBuilding.buildingKey)
+                                            {
+                                                buildingQuestName = place.SiteDetails.buildingName; // get buildingName if involved in active quest
+                                            }
+                                        }
+                                    }
+
+                                    // only show nameplate if residence is involved in a quest
+                                    if (!string.IsNullOrEmpty(buildingQuestName))
+                                        newBuildingNameplate.name = buildingQuestName;
+                                }
                             }
                             else if (this.revealUndiscoveredBuildings)
                             {

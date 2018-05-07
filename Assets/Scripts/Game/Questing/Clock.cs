@@ -227,6 +227,14 @@ namespace DaggerfallWorkshop.Game.Questing
                     clockTimeInSeconds = GetTravelTimeInSeconds();
                 }
 
+                // HACK: Also check for travel time when flag & 1 and clock time otherwise 0
+                // This seems to indicate an automatic Place from derived from Person?
+                // Keep seperate to above until more research is done
+                if ((flag & 1) == 1 && clockTimeInSeconds == 0)
+                {
+                    clockTimeInSeconds = GetTravelTimeInSeconds();
+                }
+
                 // Set timer value in seconds
                 InitialiseTimer(clockTimeInSeconds);
             }

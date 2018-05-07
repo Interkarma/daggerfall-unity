@@ -34,6 +34,7 @@ GameObject:
   - component: {fileID: 114863256343619774}
   - component: {fileID: 114189154217185308}
   - component: {fileID: 114126215008192106}
+  - component: {fileID: 114232921892998986}
   m_Layer: 0
   m_Name: PlayerAdvanced
   m_TagString: Player
@@ -554,10 +555,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c9bfb03a8545a343883f7d2606b5814, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkSpeedOverride: 6
-  useWalkSpeedOverride: 0
-  runSpeedOverride: 11
-  useRunSpeedOverride: 0
   standingHeight: 1.78
   eyeHeight: 0.09
   crouchingHeight: 0.45
@@ -1061,6 +1058,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18474689034f2b543b96b936e271914b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114232921892998986
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 923e44bd2b461494586a0930c79739f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  walkSpeedOverride: 6
+  useWalkSpeedOverride: 0
+  runSpeedOverride: 11
+  useRunSpeedOverride: 0
 --- !u!114 &114338371543951144
 MonoBehaviour:
   m_ObjectHideFlags: 1

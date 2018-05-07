@@ -350,16 +350,16 @@ namespace Wenzil.Console
             public static string Execute(params string[] args)
             {
                 int speed;
-                PlayerMotor playerMotor = GameManager.Instance.PlayerMotor;//GameObject.FindObjectOfType<PlayerMotor>();
+                PlayerSpeedChanger speedChanger = GameManager.Instance.SpeedChanger;
 
-                if (playerMotor == null)
+                if (speedChanger == null)
                     return error;
 
                 if (args == null || args.Length < 1)
                 {
                     try
                     {
-                        Console.Log(string.Format("Current Walk Speed: {0}", playerMotor.GetWalkSpeed(GameManager.Instance.PlayerEntity)));
+                        Console.Log(string.Format("Current Walk Speed: {0}", speedChanger.GetWalkSpeed(GameManager.Instance.PlayerEntity)));
                         return HelpCommand.Execute(SetWalkSpeed.name);
 
                     }
@@ -373,13 +373,13 @@ namespace Wenzil.Console
                     return error;
                 else if (speed == -1)
                 {
-                    playerMotor.useWalkSpeedOverride = false;
+                    speedChanger.useWalkSpeedOverride = false;
                     return string.Format("Walk speed set to default.");
                 }
                 else
                 {
-                    playerMotor.useWalkSpeedOverride = true;
-                    playerMotor.walkSpeedOverride = speed;
+                    speedChanger.useWalkSpeedOverride = true;
+                    speedChanger.walkSpeedOverride = speed;
                     return string.Format("Walk speed set to: {0}", speed);
                 }
 
@@ -396,16 +396,16 @@ namespace Wenzil.Console
             public static string Execute(params string[] args)
             {
                 int speed;
-                PlayerMotor playerMotor = GameManager.Instance.PlayerMotor;//GameObject.FindObjectOfType<PlayerMotor>();
+                PlayerSpeedChanger speedChanger = GameManager.Instance.SpeedChanger;//GameObject.FindObjectOfType<PlayerMotor>();
 
-                if (playerMotor == null)
+                if (speedChanger == null)
                     return error;
 
                 if (args == null || args.Length < 1)
                 {
                     try
                     {
-                        Console.Log(string.Format("Current RunSpeed: {0}", playerMotor.GetRunSpeed(playerMotor.GetWalkSpeed(GameManager.Instance.PlayerEntity))));
+                        Console.Log(string.Format("Current RunSpeed: {0}", speedChanger.GetRunSpeed(speedChanger.GetWalkSpeed(GameManager.Instance.PlayerEntity))));
                         return HelpCommand.Execute(SetRunSpeed.name);
 
                     }
@@ -422,13 +422,13 @@ namespace Wenzil.Console
                 }
                 else if (speed == -1)
                 {
-                    playerMotor.useRunSpeedOverride = false;
+                    speedChanger.useRunSpeedOverride = false;
                     return string.Format("Run speed set to default.");
                 }
                 else
                 {
-                    playerMotor.runSpeedOverride = speed;
-                    playerMotor.useRunSpeedOverride = true;
+                    speedChanger.runSpeedOverride = speed;
+                    speedChanger.useRunSpeedOverride = true;
                     return string.Format("Run speed set to: {0}", speed);
                 }
             }

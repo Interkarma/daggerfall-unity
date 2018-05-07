@@ -16,13 +16,6 @@ namespace DaggerfallWorkshop.Game
     [RequireComponent(typeof(CharacterController))]
     public class PlayerMotor : MonoBehaviour
     {
-        // Daggerfall base speed constants. (courtesy Allofich)
-        public const float classicToUnitySpeedUnitRatio = 39.5f; // was estimated from comparing a walk over the same distance in classic and DF Unity
-        public const float dfWalkBase = 150f;
-        private const float dfCrouchBase = 50f;
-        private const float dfRideBase = dfWalkBase + 225f;
-        private const float dfCartBase = dfWalkBase + 100f;
-
         // Moving platform support
         Transform activePlatform;
         Vector3 activeLocalPlatformPoint;
@@ -30,12 +23,6 @@ namespace DaggerfallWorkshop.Game
         //Vector3 lastPlatformVelocity;
         Quaternion activeLocalPlatformRotation;
         Quaternion activeGlobalPlatformRotation;
-
-        public float walkSpeedOverride = 6.0f;
-        public bool useWalkSpeedOverride = false;
-
-        public float runSpeedOverride = 11.0f;
-        public bool useRunSpeedOverride = false;
 
         public float standingHeight = 1.78f;
         public float eyeHeight = 0.09f;         // Eye height is 9cm below top of capsule.
@@ -118,6 +105,7 @@ namespace DaggerfallWorkshop.Game
         private bool showClimbingModeMessage = true;
         private Vector2 lastHorizontalPosition = Vector2.zero;
         private PlayerHeightChanger heightChanger;
+        private PlayerSpeedChanger speedChanger;
 
         private CollisionFlags collisionFlags = 0;
 
@@ -133,7 +121,7 @@ namespace DaggerfallWorkshop.Game
 
         public bool IsRunning
         {
-            get { return speed == GetRunSpeed(GetBaseSpeed()); }
+            get { return speed == speedChanger.GetRunSpeed(speedChanger.GetBaseSpeed()); }
         }
 
         public bool IsStandingStill
@@ -174,9 +162,9 @@ namespace DaggerfallWorkshop.Game
                 }
                 if (isCrouching)
                 {
-                    return (GetWalkSpeed(GameManager.Instance.PlayerEntity) / 2) >= speed;
+                    return (speedChanger.GetWalkSpeed(GameManager.Instance.PlayerEntity) / 2) >= speed;
                 }
-                return (GetBaseSpeed() / 2) >= speed;
+                return (speedChanger.GetBaseSpeed() / 2) >= speed;
             }
         }
 
@@ -223,8 +211,9 @@ namespace DaggerfallWorkshop.Game
         void Start()
         {
             controller = GetComponent<CharacterController>();
+            speedChanger = GetComponent<PlayerSpeedChanger>();
             myTransform = transform;
-            speed = GetBaseSpeed();
+            speed = speedChanger.GetBaseSpeed();
             rayDistance = controller.height * .5f + controller.radius;
             slideLimit = controller.slopeLimit - .1f;
             jumpTimer = antiBunnyHopFactor;
@@ -382,7 +371,7 @@ namespace DaggerfallWorkshop.Game
                 }
 
                 // Get walking/crouching/riding speed
-                speed = GetBaseSpeed();
+                speed = speedChanger.GetBaseSpeed();
 
                 if (!riding)
                 {
@@ -393,11 +382,11 @@ namespace DaggerfallWorkshop.Game
                     {
                         // If running isn't on a toggle, then use the appropriate speed depending on whether the run button is down
                         if (!toggleRun && InputManager.Instance.HasAction(InputManager.Actions.Run))
-                            speed = GetRunSpeed(speed);
+                            speed = speedChanger.GetRunSpeed(speed);
                     }
                     catch
                     {
-                        speed = GetRunSpeed(speed);
+                        speed = speedChanger.GetRunSpeed(speed);
                     }
                 }
 
@@ -405,7 +394,7 @@ namespace DaggerfallWorkshop.Game
                 if (InputManager.Instance.HasAction(InputManager.Actions.Sneak))
                 {
                     speed /= 2;
-                    speed -= (1 / classicToUnitySpeedUnitRatio);
+                    speed -= (1 / PlayerSpeedChanger.classicToUnitySpeedUnitRatio);
                 }
 
                 // If sliding (and it's allowed), or if we're on an object tagged "Slide", get a vector pointing down the slope we're on
@@ -621,13 +610,13 @@ namespace DaggerfallWorkshop.Game
                     // If the run button is set to toggle, then switch between walk/run speed. (We use Update for this...
                     // FixedUpdate is a poor place to use GetButtonDown, since it doesn't necessarily run every frame and can miss the event)
                     if (toggleRun && grounded && InputManager.Instance.HasAction(InputManager.Actions.Run))
-                        speed = (speed == GetBaseSpeed() ? GetRunSpeed(speed) : GetBaseSpeed());
+                        speed = (speed == speedChanger.GetBaseSpeed() ? speedChanger.GetRunSpeed(speed) : speedChanger.GetBaseSpeed());
                     //if (toggleRun && grounded && Input.GetButtonDown("Run"))
                     //    speed = (speed == walkSpeed ? runSpeed : walkSpeed);
                 }
                 catch
                 {
-                    speed = GetRunSpeed(speed);
+                    speed = speedChanger.GetRunSpeed(speed);
                 }
 
                 // Toggle crouching
@@ -645,7 +634,7 @@ namespace DaggerfallWorkshop.Game
             {
                 float distanceMoved = Vector3.Distance(smoothFollowerPrevWorldPos, smoothFollower.position);        // Assuming the follower is a child of this motor transform we can get the distance travelled.
                 float maxPossibleDistanceByMotorVelocity = controller.velocity.magnitude * 2.0f * Time.deltaTime;   // Theoretically the max distance the motor can carry the player with a generous margin.
-                float speedThreshold = GetRunSpeed(speed) * Time.deltaTime;                                         // Without question any distance travelled less than the running speed is legal.
+                float speedThreshold = speedChanger.GetRunSpeed(speed) * Time.deltaTime;                                         // Without question any distance travelled less than the running speed is legal.
 
                 // NOTE: Maybe the min distance should also include the height different between crouching / standing.
                 if (distanceMoved > speedThreshold && distanceMoved > maxPossibleDistanceByMotorVelocity)
@@ -698,44 +687,6 @@ namespace DaggerfallWorkshop.Game
         {
             falling = false;
             fallStartLevel = transform.position.y;
-        }
-
-        public float GetBaseSpeed()
-        {
-            Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
-            float baseSpeed = 0;
-            float playerSpeed = player.Stats.LiveSpeed;
-            if (isCrouching)
-                baseSpeed = (playerSpeed + dfCrouchBase) / classicToUnitySpeedUnitRatio;
-            else if (riding)
-                baseSpeed = (playerSpeed + dfRideBase) / classicToUnitySpeedUnitRatio;
-            else
-                baseSpeed = GetWalkSpeed(player);
-            return baseSpeed;
-        }
-
-        public float GetWalkSpeed(Entity.PlayerEntity player)
-        {
-            if (useWalkSpeedOverride == true)
-                return walkSpeedOverride;
-            else
-                return (player.Stats.LiveSpeed + dfWalkBase) / classicToUnitySpeedUnitRatio;
-        }
-
-        public float GetRunSpeed(float baseSpeed)
-        {
-            if (useRunSpeedOverride)
-                return runSpeedOverride;
-            Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
-            float runSpeed = baseSpeed * (1.25f + (player.Skills.GetLiveSkillValue(DFCareer.Skills.Running) / 200f));
-            return runSpeed;
-        }
-
-        public float GetSwimSpeed(float baseSpeed)
-        {
-            Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
-            float swimSpeed = (baseSpeed * (player.Skills.GetLiveSkillValue(DFCareer.Skills.Swimming) / 200f)) + (baseSpeed / 4);
-            return swimSpeed;
         }
 
         #region Private Methods

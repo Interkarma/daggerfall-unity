@@ -36,6 +36,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         EffectSettings Settings { get; set; }
 
         /// <summary>
+        /// Gets the caster entity behaviour of this effect (can return null).
+        /// </summary>
+        DaggerfallEntityBehaviour Caster { get; }
+
+        /// <summary>
         /// Gets key from properties.
         /// </summary>
         string Key { get; }
@@ -171,6 +176,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             get { return settings; }
             set { settings = value; }
+        }
+
+        public DaggerfallEntityBehaviour Caster
+        {
+            get { return caster; }
         }
 
         public virtual int RoundsRemaining
@@ -309,9 +319,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             if (!entityBehaviour)
                 return;
 
-            // Cause aggro if source is player
-            if (caster == GameManager.Instance.PlayerEntityBehaviour)
-                entityBehaviour.HandleAttackByPlayer();
+            // Cause aggro based on attack source
+            entityBehaviour.HandleAttackFromSource(caster);
         }
 
         protected void SetStatMod(DFCareer.Stats stat, int value)

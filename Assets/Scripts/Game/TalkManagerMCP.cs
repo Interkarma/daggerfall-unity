@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Michael Rauter (Nystul)
-// Contributors: Numidium
+// Contributors:    Numidium
 
 using System;
 using DaggerfallWorkshop.Utility;
@@ -68,14 +68,9 @@ namespace DaggerfallWorkshop.Game
 
             public override string LocationDirection()
             {
-                //if (parent.questionType == QuestionType.QuestLocation)
-                //{
-                //    return GameManager.Instance.TalkManager.GetQuestLocationDirection();
-                //}
-                //else if (parent.questionType == QuestionType.LocalBuilding)
-                if (parent.currentQuestionListItem.questionType == QuestionType.LocalBuilding)
+                if (parent.currentQuestionListItem.questionType == QuestionType.LocalBuilding || parent.currentQuestionListItem.questionType == QuestionType.Person)
                 {
-                    return GameManager.Instance.TalkManager.GetKeySubjectLocationDirection();
+                    return GameManager.Instance.TalkManager.GetKeySubjectLocationCompassDirection();
                 }
                 return "never mind...";
             }
@@ -85,6 +80,10 @@ namespace DaggerfallWorkshop.Game
                 if (parent.currentQuestionListItem.questionType == QuestionType.LocalBuilding)
                 {
                     return GameManager.Instance.TalkManager.GetKeySubjectLocationHint();
+                }
+                else if (parent.currentQuestionListItem.questionType == QuestionType.Person)
+                {
+                    return GameManager.Instance.TalkManager.GetKeySubjectPersonHint();
                 }
                 else if (parent.currentQuestionListItem.questionType == QuestionType.QuestLocation || parent.currentQuestionListItem.questionType == QuestionType.QuestPerson || parent.currentQuestionListItem.questionType == QuestionType.QuestItem)
                 {
@@ -98,6 +97,10 @@ namespace DaggerfallWorkshop.Game
                 if (parent.currentQuestionListItem.questionType == QuestionType.LocalBuilding)
                 {
                     return GameManager.Instance.TalkManager.GetKeySubjectLocationHint();
+                }
+                else if (parent.currentQuestionListItem.questionType == QuestionType.Person)
+                {
+                    return GameManager.Instance.TalkManager.GetKeySubjectPersonHint();
                 }
                 else if (parent.currentQuestionListItem.questionType == QuestionType.QuestLocation || parent.currentQuestionListItem.questionType == QuestionType.QuestPerson || parent.currentQuestionListItem.questionType == QuestionType.QuestItem)
                 {
