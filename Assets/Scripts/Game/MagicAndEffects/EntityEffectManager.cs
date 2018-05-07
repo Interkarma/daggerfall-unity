@@ -17,6 +17,7 @@ using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
+using DaggerfallWorkshop.Game.Formulas;
 using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects
@@ -245,11 +246,24 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         public void CastReadySpell()
         {
+            // Must have a ready spell
+            if (readySpell == null)
+                return;
+
+            // Get spellpoint costs of this spell
+            int totalGoldCost, totalSpellPointCost;
+            FormulaHelper.CalculateTotalEffectCosts(readySpell.Settings.Effects, readySpell.Settings.TargetType, out totalGoldCost, out totalSpellPointCost);
+
+            // TODO: Enforce spellpoint costs - all spells are free to cast right now, even at 0 mana
+            // This is to allow for easier testing during build-out stages
+
+            // Deduct spellpoint cost from entity
+            entityBehaviour.Entity.DecreaseMagicka(totalSpellPointCost);
+
             // Play casting animation based on element type
             // Spell is released by event handler PlayerSpellCasting_OnReleaseFrame
-            GameManager.Instance.PlayerSpellCasting.PlayOneShot(readySpell.Settings.ElementType);
-
             // TODO: Do not need to show spellcasting animations for certain spell effects
+            GameManager.Instance.PlayerSpellCasting.PlayOneShot(readySpell.Settings.ElementType);
         }
 
         public void AssignBundle(EntityEffectBundle sourceBundle)
