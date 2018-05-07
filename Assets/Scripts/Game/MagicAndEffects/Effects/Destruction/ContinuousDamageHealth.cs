@@ -48,7 +48,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             // Implement effect
             int magnitude = GetMagnitude(caster);
-            entityBehaviour.DamageHealthFromEffect(this, magnitude, false, Vector3.zero);
+            entityBehaviour.DamageHealthFromSource(this, magnitude, false, Vector3.zero);
 
             //Debug.LogFormat("Effect {0} damaged {1} by {2} health points and has {3} magic rounds remaining.", Key, entityBehaviour.name, magnitude, RoundsRemaining);
         }

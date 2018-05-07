@@ -319,9 +319,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             if (!entityBehaviour)
                 return;
 
-            // Cause aggro if source is player
-            if (caster == GameManager.Instance.PlayerEntityBehaviour)
-                entityBehaviour.HandleAttackByPlayer();
+            // Cause aggro based on attack source
+            entityBehaviour.HandleAttackFromSource(caster);
         }
 
         protected void SetStatMod(DFCareer.Stats stat, int value)

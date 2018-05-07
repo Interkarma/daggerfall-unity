@@ -48,7 +48,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             // Implement effect
             int magnitude = GetMagnitude(caster);
-            entityBehaviour.DamageFatigueFromEffect(this, magnitude, true);
+            entityBehaviour.DamageFatigueFromSource(this, magnitude, true);
 
             Debug.LogFormat("Effect {0} damaged {1} by {2} fatigue points and has {3} magic rounds remaining.", Key, entityBehaviour.name, magnitude, RoundsRemaining);
         }

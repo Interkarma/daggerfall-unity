@@ -82,9 +82,43 @@ namespace DaggerfallWorkshop.Game.Entity
         /// <summary>
         /// Cause fatigue damage to entity with additional logic.
         /// </summary>
-        /// <param name="effect">Source effect.</param>
+        /// <param name="sourceEffect">Source effect.</param>
         /// <param name="amount">Amount to damage fatigue.</param>
-        public void DamageFatigueFromEffect(IEntityEffect effect, int amount, bool assignMultiplier = false)
+        /// <param name="assignMultiplier">Optionally assign fatigue multiplier.</param>
+        public void DamageFatigueFromSource(IEntityEffect sourceEffect, int amount, bool assignMultiplier = false)
+        {
+            DamageFatigueFromSource(sourceEffect.Caster, amount, assignMultiplier);
+        }
+
+        /// <summary>
+        /// Cause damage to entity health with additional logic.
+        /// </summary>
+        /// <param name="sourceEffect">Source effect.</param>
+        /// <param name="amount">Amount to damage health.</param>
+        /// <param name="showBlood">Show blood splash.</param>
+        /// <param name="bloodPosition">Blood splash position.</param>
+        public void DamageHealthFromSource(IEntityEffect sourceEffect, int amount, bool showBlood, Vector3 bloodPosition)
+        {
+            DamageHealthFromSource(sourceEffect.Caster, amount, showBlood, bloodPosition);
+        }
+
+        /// <summary>
+        /// Cause spell point damage to entity with additional logic.
+        /// </summary>
+        /// <param name="sourceEffect">Source effect.</param>
+        /// <param name="amount">Amount to damage spell points.</param>
+        public void DamageMagickaFromSource(IEntityEffect sourceEffect, int amount)
+        {
+            DamageMagickaFromSource(sourceEffect.Caster, amount);
+        }
+
+        /// <summary>
+        /// Cause fatigue damage to entity with additional logic.
+        /// </summary>
+        /// <param name="source">Source entity behaviour.</param>
+        /// <param name="amount">Amount to damage fatigue.</param>
+        /// <param name="assignMultiplier">Optionally assign fatigue multiplier.</param>
+        public void DamageFatigueFromSource(DaggerfallEntityBehaviour sourceEntityBehaviour, int amount, bool assignMultiplier = false)
         {
             // Optionally assign fatigue multiplier
             // This seems to be case for spell effects that damage fatigue
@@ -94,24 +128,24 @@ namespace DaggerfallWorkshop.Game.Entity
             // Remove fatigue amount
             Entity.DecreaseFatigue(amount);
 
-            // Determine if source is player
-            if (effect.Caster == GameManager.Instance.PlayerEntityBehaviour)
-                HandleAttackByPlayer();
+            // Post-attack logic on source
+            HandleAttackFromSource(sourceEntityBehaviour);
         }
 
         /// <summary>
         /// Cause damage to entity health with additional logic.
         /// </summary>
-        /// <param name="effect">Source effect.</param>
+        /// <param name="source">Source entity behaviour.</param>
         /// <param name="amount">Amount to damage health.</param>
-        public void DamageHealthFromEffect(IEntityEffect effect, int amount, bool showBlood, Vector3 bloodPosition)
+        /// <param name="showBlood">Show blood splash.</param>
+        /// <param name="bloodPosition">Blood splash position.</param>
+        public void DamageHealthFromSource(DaggerfallEntityBehaviour sourceEntityBehaviour, int amount, bool showBlood, Vector3 bloodPosition)
         {
             // Remove health amount
             Entity.DecreaseHealth(amount);
 
-            // Determine if source is player
-            if (effect.Caster == GameManager.Instance.PlayerEntityBehaviour)
-                HandleAttackByPlayer();
+            // Post-attack logic on source
+            HandleAttackFromSource(sourceEntityBehaviour);
 
             // Show blood
             if (showBlood)
@@ -125,61 +159,64 @@ namespace DaggerfallWorkshop.Game.Entity
         /// <summary>
         /// Cause spell point damage to entity with additional logic.
         /// </summary>
-        /// <param name="effect">Source effect.</param>
+        /// <param name="source">Source entity behaviour.</param>
         /// <param name="amount">Amount to damage spell points.</param>
-        public void DamageMagickaFromEffect(IEntityEffect effect, int amount)
+        public void DamageMagickaFromSource(DaggerfallEntityBehaviour sourceEntityBehaviour, int amount)
         {
             // Remove fatigue amount
             Entity.DecreaseMagicka(amount);
 
-            // Determine if source is player
-            if (effect.Caster == GameManager.Instance.PlayerEntityBehaviour)
-                HandleAttackByPlayer();
+            // Post-attack logic on source
+            HandleAttackFromSource(sourceEntityBehaviour);
         }
 
         /// <summary>
         /// Handle shared logic when player attacks entity.
         /// </summary>
-        public void HandleAttackByPlayer()
+        public void HandleAttackFromSource(DaggerfallEntityBehaviour sourceEntityBehaviour)
         {
-            // Handle civilian NPC crime reporting
-            if (EntityType == EntityTypes.CivilianNPC)
+            // When source is player
+            if (sourceEntityBehaviour == GameManager.Instance.PlayerEntityBehaviour)
             {
-                PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
-                MobilePersonNPC mobileNpc = transform.GetComponent<MobilePersonNPC>();
-                if (mobileNpc)
+                // Handle civilian NPC crime reporting
+                if (EntityType == EntityTypes.CivilianNPC)
                 {
-                    // Handle assault or murder
-                    if (Entity.CurrentHealth > 0)
+                    PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+                    MobilePersonNPC mobileNpc = transform.GetComponent<MobilePersonNPC>();
+                    if (mobileNpc)
                     {
-                        playerEntity.CrimeCommitted = PlayerEntity.Crimes.Assault;
-                        playerEntity.SpawnCityGuards(true);
-                    }
-                    else
-                    {
-                        playerEntity.TallyCrimeGuildRequirements(false, 5);
-                        // TODO: LOS check from each townsperson. If seen, register crime and start spawning guards as below.
-                        playerEntity.CrimeCommitted = PlayerEntity.Crimes.Murder;
-                        playerEntity.SpawnCityGuards(true);
+                        // Handle assault or murder
+                        if (Entity.CurrentHealth > 0)
+                        {
+                            playerEntity.CrimeCommitted = PlayerEntity.Crimes.Assault;
+                            playerEntity.SpawnCityGuards(true);
+                        }
+                        else
+                        {
+                            playerEntity.TallyCrimeGuildRequirements(false, 5);
+                            // TODO: LOS check from each townsperson. If seen, register crime and start spawning guards as below.
+                            playerEntity.CrimeCommitted = PlayerEntity.Crimes.Murder;
+                            playerEntity.SpawnCityGuards(true);
 
-                        // Disable when dead
-                        mobileNpc.Motor.gameObject.SetActive(false);
+                            // Disable when dead
+                            mobileNpc.Motor.gameObject.SetActive(false);
+                        }
                     }
                 }
-            }
 
-            // Handle mobile enemy aggro
-            if (EntityType == EntityTypes.EnemyClass || EntityType == EntityTypes.EnemyMonster)
-            {
-                // Make enemy aggressive to player
-                EnemyMotor enemyMotor = transform.GetComponent<EnemyMotor>();
-                if (enemyMotor)
+                // Handle mobile enemy aggro
+                if (EntityType == EntityTypes.EnemyClass || EntityType == EntityTypes.EnemyMonster)
                 {
-                    if (!enemyMotor.IsHostile)
+                    // Make enemy aggressive to player
+                    EnemyMotor enemyMotor = transform.GetComponent<EnemyMotor>();
+                    if (enemyMotor)
                     {
-                        GameManager.Instance.MakeEnemiesHostile();
+                        if (!enemyMotor.IsHostile)
+                        {
+                            GameManager.Instance.MakeEnemiesHostile();
+                        }
+                        enemyMotor.MakeEnemyHostileToPlayer(GameManager.Instance.PlayerObject);
                     }
-                    enemyMotor.MakeEnemyHostileToPlayer(GameManager.Instance.PlayerObject);
                 }
             }
         }
