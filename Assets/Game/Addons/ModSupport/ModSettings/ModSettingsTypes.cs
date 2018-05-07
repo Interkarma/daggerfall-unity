@@ -581,7 +581,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         public override BaseScreenComponent OnWindow(ModSettingsWindow window, float x, float y, ref int height)
         {
             height += 6;
-            return DaggerfallUI.AddTextBoxWithFocus(new Rect(x, y + 6, 140, 6), Value);
+            return DaggerfallUI.AddTextBoxWithFocus(new Rect(x + 2, y + 6, window.LineWidth - 4, 6), Value);
         }
 
         public override void OnSaveWindow(BaseScreenComponent control)
