@@ -191,8 +191,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool inDragMode() { return leftMouseDownOnPanelAutomap || rightMouseDownOnPanelAutomap; }
 
         Texture2D nativeTexture; // background image will be stored in this Texture2D
-        
-        Color[] pixelsCaption; // caption texture (guilds, shops, taverns caption line) will be stored in here
 
         Color[] backgroundOriginal; // texture with orignial background will be stored in here
         Color[] backgroundAlternative1; // texture with first alternative background will be stored in here
