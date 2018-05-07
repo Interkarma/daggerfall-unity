@@ -230,8 +230,8 @@ namespace DaggerfallWorkshop.Game
         
         public PlayerSpeedChanger SpeedChanger
         {
-            get { return (speedChanger) ? speedChanger : speedChanger = GetMonoBehaviour<PlayerSpeedChanger>(); }
-            set { speedChanger = value; }
+            get { return (speedChanger) ? speedChanger : speedChanger = GetComponentFromObject<PlayerSpeedChanger>(PlayerObject); }
+                set { speedChanger = value; }
         }
 
         public PlayerMotor PlayerMotor
