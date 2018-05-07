@@ -157,6 +157,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public int level;
         public DaggerfallStats stats;
         public DaggerfallSkills skills;
+        public DaggerfallResistances resistances;
         public int maxHealth;
         public int currentHealth;
         public int currentFatigue;

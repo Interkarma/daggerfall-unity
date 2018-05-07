@@ -474,6 +474,22 @@ namespace DaggerfallConnect
         }
 
         /// <summary>
+        /// Combining elemental and other resistances for unified handling.
+        /// These values do not map to any particular classic data.
+        /// </summary>
+        public enum Resistances
+        {
+            None = -1,
+            Fire = 0,
+            Cold = 1,
+            Poison = 2,
+            Shock = 3,
+            Magic = 4,
+            Disease = 5,
+            Paralysis = 6,
+        }
+
+        /// <summary>
         /// Magic skills only - values match main skills enum.
         /// </summary>
         public enum MagicSkills

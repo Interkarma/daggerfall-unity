@@ -111,6 +111,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.playerEntity.level = entity.Level;
             data.playerEntity.stats = entity.Stats;
             data.playerEntity.skills = entity.Skills;
+            data.playerEntity.resistances = entity.Resistances;
             data.playerEntity.maxHealth = entity.MaxHealth;
             data.playerEntity.currentHealth = entity.CurrentHealth;
             data.playerEntity.currentFatigue = entity.CurrentFatigue;
@@ -228,6 +229,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             entity.Level = data.playerEntity.level;
             entity.Stats = data.playerEntity.stats;
             entity.Skills = data.playerEntity.skills;
+            entity.Resistances = (data.playerEntity.resistances != null) ? data.playerEntity.resistances : new DaggerfallResistances();
             entity.MaxHealth = data.playerEntity.maxHealth;
             entity.CurrentHealth = data.playerEntity.currentHealth;
             entity.CurrentFatigue = data.playerEntity.currentFatigue;
