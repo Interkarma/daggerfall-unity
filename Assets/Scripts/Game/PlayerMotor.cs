@@ -13,6 +13,7 @@ namespace DaggerfallWorkshop.Game
     //
     // Extended for moving platforms, and ceiling hits, and other tweaks.
     //
+    [RequireComponent(typeof(PlayerSpeedChanger))]
     [RequireComponent(typeof(CharacterController))]
     public class PlayerMotor : MonoBehaviour
     {
@@ -79,7 +80,7 @@ namespace DaggerfallWorkshop.Game
         [HideInInspector, NonSerialized]
         public CharacterController controller;
 
-        private Camera mainCamera;
+        //private Camera mainCamera;
         //private float defaultCameraHeight;
 
         private Vector3 moveDirection = Vector3.zero;
@@ -217,7 +218,7 @@ namespace DaggerfallWorkshop.Game
             rayDistance = controller.height * .5f + controller.radius;
             slideLimit = controller.slopeLimit - .1f;
             jumpTimer = antiBunnyHopFactor;
-            mainCamera = GameManager.Instance.MainCamera;
+            //mainCamera = GameManager.Instance.MainCamera;
             heightChanger = GetComponent<PlayerHeightChanger>();
             levitateMotor = GetComponent<LevitateMotor>();
 

@@ -6,14 +6,9 @@ using UnityEngine;
 
 namespace DaggerfallWorkshop.Game
 {
-    //Added the RequireComponent attribute to make sure that following components are indeed on this GameObject, since they are require to make this code work
-    [RequireComponent(typeof(PlayerMotor))]
-    [RequireComponent(typeof(CharacterController))]
     public class PlayerSpeedChanger : MonoBehaviour
     {
         private PlayerMotor playerMotor;
-        private CharacterController controller;
-        private Camera mainCamera;
 
         // Daggerfall base speed constants. (courtesy Allofich)
         public const float classicToUnitySpeedUnitRatio = 39.5f; // was estimated from comparing a walk over the same distance in classic and DF Unity
@@ -30,9 +25,7 @@ namespace DaggerfallWorkshop.Game
 
         private void Start()
         {
-            playerMotor = GameManager.Instance.PlayerMotor;//GetComponent<PlayerMotor>();
-            controller = GetComponent<CharacterController>();
-            mainCamera = GameManager.Instance.MainCamera;
+            playerMotor = GameManager.Instance.PlayerMotor;
         }
 
         private void Update()
