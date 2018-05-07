@@ -10,14 +10,7 @@
 //
 
 using UnityEngine;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using DaggerfallConnect;
-using DaggerfallConnect.Arena2;
-using DaggerfallWorkshop.Game.Formulas;
-using DaggerfallWorkshop.Game.Player;
-using DaggerfallWorkshop;
+using DaggerfallWorkshop.Game.MagicAndEffects;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
@@ -89,9 +82,9 @@ namespace DaggerfallWorkshop.Game.Entity
         /// <summary>
         /// Cause fatigue damage to entity with additional logic.
         /// </summary>
-        /// <param name="source">Source entity.</param>
+        /// <param name="effect">Source effect.</param>
         /// <param name="amount">Amount to damage fatigue.</param>
-        public void DamageFatigueFromSource(DaggerfallEntityBehaviour source, int amount, bool assignMultiplier = false)
+        public void DamageFatigueFromEffect(IEntityEffect effect, int amount, bool assignMultiplier = false)
         {
             // Optionally assign fatigue multiplier
             // This seems to be case for spell effects that damage fatigue
@@ -102,22 +95,22 @@ namespace DaggerfallWorkshop.Game.Entity
             Entity.DecreaseFatigue(amount);
 
             // Determine if source is player
-            if (source == GameManager.Instance.PlayerEntityBehaviour)
+            if (effect.Caster == GameManager.Instance.PlayerEntityBehaviour)
                 HandleAttackByPlayer();
         }
 
         /// <summary>
         /// Cause damage to entity health with additional logic.
         /// </summary>
-        /// <param name="source">Source entity.</param>
+        /// <param name="effect">Source effect.</param>
         /// <param name="amount">Amount to damage health.</param>
-        public void DamageHealthFromSource(DaggerfallEntityBehaviour source, int amount, bool showBlood, Vector3 bloodPosition)
+        public void DamageHealthFromEffect(IEntityEffect effect, int amount, bool showBlood, Vector3 bloodPosition)
         {
             // Remove health amount
             Entity.DecreaseHealth(amount);
 
             // Determine if source is player
-            if (source == GameManager.Instance.PlayerEntityBehaviour)
+            if (effect.Caster == GameManager.Instance.PlayerEntityBehaviour)
                 HandleAttackByPlayer();
 
             // Show blood
@@ -132,15 +125,15 @@ namespace DaggerfallWorkshop.Game.Entity
         /// <summary>
         /// Cause spell point damage to entity with additional logic.
         /// </summary>
-        /// <param name="source">Source entity.</param>
+        /// <param name="effect">Source effect.</param>
         /// <param name="amount">Amount to damage spell points.</param>
-        public void DamageMagickaFromSource(DaggerfallEntityBehaviour source, int amount)
+        public void DamageMagickaFromEffect(IEntityEffect effect, int amount)
         {
             // Remove fatigue amount
             Entity.DecreaseMagicka(amount);
 
             // Determine if source is player
-            if (source == GameManager.Instance.PlayerEntityBehaviour)
+            if (effect.Caster == GameManager.Instance.PlayerEntityBehaviour)
                 HandleAttackByPlayer();
         }
 

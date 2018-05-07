@@ -36,6 +36,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         EffectSettings Settings { get; set; }
 
         /// <summary>
+        /// Gets the caster entity behaviour of this effect (can return null).
+        /// </summary>
+        DaggerfallEntityBehaviour Caster { get; }
+
+        /// <summary>
         /// Gets key from properties.
         /// </summary>
         string Key { get; }
@@ -171,6 +176,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             get { return settings; }
             set { settings = value; }
+        }
+
+        public DaggerfallEntityBehaviour Caster
+        {
+            get { return caster; }
         }
 
         public virtual int RoundsRemaining
