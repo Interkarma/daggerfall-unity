@@ -104,7 +104,7 @@ namespace DaggerfallWorkshop.Game
         private uint timeOfLastClimbingCheck = 0;
         private bool showClimbingModeMessage = true;
         private Vector2 lastHorizontalPosition = Vector2.zero;
-        private Croucher myCroucher;
+        private PlayerHeightChanger heightChanger;
         private PlayerSpeedChanger speedChanger;
 
         private CollisionFlags collisionFlags = 0;
@@ -218,7 +218,7 @@ namespace DaggerfallWorkshop.Game
             slideLimit = controller.slopeLimit - .1f;
             jumpTimer = antiBunnyHopFactor;
             mainCamera = GameManager.Instance.MainCamera;
-            myCroucher = GetComponent<Croucher>();
+            heightChanger = GetComponent<PlayerHeightChanger>();
             levitateMotor = GetComponent<LevitateMotor>();
 
             // Allow for resetting specific player state on new game or when game starts loading
@@ -375,7 +375,7 @@ namespace DaggerfallWorkshop.Game
 
                 if (!riding)
                 {
-                    if (!isCrouching && myCroucher.ToggleAction != CrouchToggleAction.DoStanding) // don't set to standing height while croucher is standing the player
+                    if (!isCrouching && heightChanger.HeightAction != HeightChangeAction.DoStanding) // don't set to standing height while croucher is standing the player
                         controller.height = standingHeight;
 
                     try
@@ -595,25 +595,12 @@ namespace DaggerfallWorkshop.Game
 
             if (isRiding && !riding)
             {
-                Vector3 pos = mainCamera.transform.localPosition;
-                pos.y = (ridingHeight / 2) - eyeHeight;
-                mainCamera.transform.localPosition = pos;
-                controller.height = ridingHeight;
-                pos = controller.transform.position;
-                float prevHeight = isCrouching ? crouchingHeight : standingHeight;
-                pos.y += (ridingHeight - prevHeight) / 2.0f;
-                controller.transform.position = pos;
+                heightChanger.HeightAction = HeightChangeAction.DoMounting;
                 riding = true;
             }
             else if (!isRiding && riding)
             {
-                Vector3 pos = mainCamera.transform.localPosition;
-                pos.y = (standingHeight / 2) - eyeHeight;
-                mainCamera.transform.localPosition = pos;
-                controller.height = standingHeight;
-                pos = controller.transform.position;
-                pos.y -= (ridingHeight - standingHeight) / 2.0f;
-                controller.transform.position = pos;
+                heightChanger.HeightAction = HeightChangeAction.DoDismounting;
                 riding = false;
             }
             else if (!isRiding)
@@ -636,31 +623,10 @@ namespace DaggerfallWorkshop.Game
                 if (InputManager.Instance.ActionComplete(InputManager.Actions.Crouch))
                 {
                     if (isCrouching)
-                        myCroucher.ToggleAction = CrouchToggleAction.DoStanding;
+                        heightChanger.HeightAction = HeightChangeAction.DoStanding;
                     else
-                        myCroucher.ToggleAction = CrouchToggleAction.DoCrouching;
+                        heightChanger.HeightAction = HeightChangeAction.DoCrouching;
                 }
-                /*if (myCroucher.ToggleAction != CrouchToggleAction.DoNothing)
-                {
-                    myCroucher.DoToggleAction();
-                }*/
-                // Manage crouching height
-                /*if (isCrouching && !wasCrouching)
-                {
-                    controller.height = crouchingHeight;
-                    Vector3 pos = controller.transform.position;
-                    pos.y -= (standingHeight - crouchingHeight) / 2.0f;
-                    controller.transform.position = pos;
-                    wasCrouching = isCrouching;
-                }
-                else if (!isCrouching && wasCrouching)
-                {
-                    controller.height = standingHeight;
-                    Vector3 pos = controller.transform.position;
-                    pos.y += (standingHeight - crouchingHeight) / 2.0f;
-                    controller.transform.position = pos;
-                    wasCrouching = isCrouching;
-                }*/
 
             }
 
