@@ -24,6 +24,7 @@ namespace DaggerfallWorkshop.Game
         bool playerLevitating = false;
         bool playerSwimming = false;
         PlayerMotor playerMotor;
+        PlayerSpeedChanger speedChanger;
         Camera playerCamera;
         float moveSpeed = 4.0f;
         CollisionFlags collisionFlags = 0;
@@ -48,6 +49,7 @@ namespace DaggerfallWorkshop.Game
         private void Start()
         {
             playerMotor = GetComponent<PlayerMotor>();
+            speedChanger = GetComponent<PlayerSpeedChanger>();
             playerCamera = GameManager.Instance.MainCamera;
         }
 
@@ -88,13 +90,13 @@ namespace DaggerfallWorkshop.Game
                     direction.y = 0;
 
                 Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
-                float baseSpeed = playerMotor.GetBaseSpeed();
-                moveSpeed = playerMotor.GetSwimSpeed(baseSpeed);
+                float baseSpeed = speedChanger.GetBaseSpeed();
+                moveSpeed = speedChanger.GetSwimSpeed(baseSpeed);
             }
 
             // There's a fixed speed for up/down movement
             if (upOrDown)
-                moveSpeed = 80f / PlayerMotor.classicToUnitySpeedUnitRatio;
+                moveSpeed = 80f / PlayerSpeedChanger.classicToUnitySpeedUnitRatio;
 
             collisionFlags = playerMotor.controller.Move(direction * moveSpeed * Time.deltaTime);
             // Reset to levitate speed in case it has been changed by swimming

@@ -109,7 +109,7 @@ namespace DaggerfallWorkshop.Game
             {
                 // Take the speed of movement during the attack animation and hit frame into account when calculating attack range
                 EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
-                float attackSpeed = ((entity.Stats.LiveSpeed + PlayerMotor.dfWalkBase) / PlayerMotor.classicToUnitySpeedUnitRatio) / EnemyMotor.AttackSpeedDivisor;
+                float attackSpeed = ((entity.Stats.LiveSpeed + PlayerSpeedChanger.dfWalkBase) / PlayerSpeedChanger.classicToUnitySpeedUnitRatio) / EnemyMotor.AttackSpeedDivisor;
                 float timeUntilHit = mobile.Summary.Enemy.HitFrame / DaggerfallWorkshop.Utility.EnemyBasics.PrimaryAttackAnimSpeed;
 
                 if (senses.DistanceToPlayer >= (MeleeDistance + (attackSpeed * timeUntilHit)))
