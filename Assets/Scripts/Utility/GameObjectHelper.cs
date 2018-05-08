@@ -802,6 +802,10 @@ namespace DaggerfallWorkshop.Utility
                         if (resource == null)
                             continue;
 
+                        // Skip resources already injected into scene
+                        if (resource.IsPlaced)
+                            continue;
+
                         // Inject to scene based on resource type
                         if (resource is Person && enableNPCs)
                         {
@@ -827,6 +831,10 @@ namespace DaggerfallWorkshop.Utility
                             // Get target resource
                             QuestResource resource = quest.GetResource(target);
                             if (resource == null)
+                                continue;
+
+                            // Skip resources already injected into scene
+                            if (resource.IsPlaced)
                                 continue;
 
                             // Inject into scene
@@ -888,6 +896,9 @@ namespace DaggerfallWorkshop.Utility
 
             // Set tag
             go.tag = QuestMachine.questPersonTag;
+
+            // Flag resource as placed for this session
+            person.IsPlaced = true;
         }
 
         /// <summary>
@@ -926,6 +937,9 @@ namespace DaggerfallWorkshop.Utility
             //  * This should be rearmed at the beginning of each wave
             //  * Only first wounding of a wave will trigger "injured aFoe" until rearmed on next wave
             foe.RearmInjured();
+
+            // Flag resource as placed for this session
+            foe.IsPlaced = true;
         }
 
         /// <summary>
@@ -975,6 +989,9 @@ namespace DaggerfallWorkshop.Utility
             // Assign a trigger collider for clicks
             SphereCollider collider = go.AddComponent<SphereCollider>();
             collider.isTrigger = true;
+
+            // Flag resource as placed for this session
+            item.IsPlaced = true;
         }
 
         /// <summary>
