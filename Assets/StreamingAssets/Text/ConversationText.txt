@@ -1,0 +1,32 @@
+- Text database for conversations used in talk window.
+
+schema: *key,text
+
+east,						east
+northeast,                  northeast
+north,						north
+northwest,                  northwest
+west,						west
+southwest,					southwest
+south,						south
+southeast,					southeast
+AnyNews,					Any news?
+PreviousList,				Previous List
+General,					General
+Regional,					Regional
+Alchemists,					Alchemists
+Armorers,					Armorers
+Banks,						Banks
+Bookstores,					Bookstores
+Clothingstores,				Clothing stores
+Gemstores,					Gem stores
+Generalstores,				General stores
+Guilds,						Guilds
+Libraries,					Libraries
+Pawnshops,					Pawn shops
+Taverns,					Taverns
+Weaponsmiths,				Weapon smiths
+Localtemples,				Local temples
+toBeReplacedStringRegional,	Any
+replacementStringRegional,	any
+resolvingError,				never mind...
