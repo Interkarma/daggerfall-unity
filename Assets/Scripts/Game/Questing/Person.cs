@@ -75,7 +75,7 @@ namespace DaggerfallWorkshop.Game.Questing
             get { return race; }
         }
 
-        public Genders Gender
+        public override Genders Gender
         {
             get { return npcGender; }
         }
@@ -264,7 +264,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // Store this person in quest as last Person encountered
             // This will be used for subsequent pronoun macros, etc.
-            ParentQuest.LastPersonReferenced = this;
+            ParentQuest.LastResourceReferenced = this;
 
             textOut = string.Empty;
             bool result = true;

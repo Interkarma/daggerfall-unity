@@ -36,10 +36,10 @@ namespace DaggerfallWorkshop.Game.Questing
             // He/She
             public override string Pronoun()
             {
-                if (parent.LastPersonReferenced == null)
+                if (parent.LastResourceReferenced == null)
                     return HardStrings.pronounHe;
 
-                switch (parent.LastPersonReferenced.Gender)
+                switch (parent.LastResourceReferenced.Gender)
                 {
                     default:
                     case Game.Entity.Genders.Male:
@@ -51,10 +51,10 @@ namespace DaggerfallWorkshop.Game.Questing
             // Him/Her
             public override string Pronoun2()
             {
-                if (parent.LastPersonReferenced == null)
+                if (parent.LastResourceReferenced == null)
                     return HardStrings.pronounHim;
 
-                switch (parent.LastPersonReferenced.Gender)
+                switch (parent.LastResourceReferenced.Gender)
                 {
                     default:
                     case Game.Entity.Genders.Male:
@@ -67,10 +67,10 @@ namespace DaggerfallWorkshop.Game.Questing
             // Himself/Herself
             public override string Pronoun2self()
             {
-                if (parent.LastPersonReferenced == null)
+                if (parent.LastResourceReferenced == null)
                     return HardStrings.pronounHimself;
 
-                switch (parent.LastPersonReferenced.Gender)
+                switch (parent.LastResourceReferenced.Gender)
                 {
                     default:
                     case Game.Entity.Genders.Male:
@@ -83,10 +83,10 @@ namespace DaggerfallWorkshop.Game.Questing
             // His/Hers
             public override string Pronoun3()
             {
-                if (parent.LastPersonReferenced == null)
+                if (parent.LastResourceReferenced == null)
                     return HardStrings.pronounHis;
 
-                switch (parent.LastPersonReferenced.Gender)
+                switch (parent.LastResourceReferenced.Gender)
                 {
                     default:
                     case Game.Entity.Genders.Male:
@@ -130,14 +130,25 @@ namespace DaggerfallWorkshop.Game.Questing
 
             public override string HomeRegion()
             {
-                return (parent.LastPersonReferenced != null) ? parent.LastPersonReferenced.HomeRegionName : "";
+                // Must be a Person
+                if (parent.lastResourceReferenced is Person)
+                {
+                    return (parent.lastResourceReferenced != null) ? (parent.lastResourceReferenced as Person).HomeRegionName : string.Empty;
+                }
+                else
+                {
+                    return string.Empty;
+                }
             }
 
             public override string God()
             {
                 // Get god of last Person referenced by dialog stream
-                if (parent.LastPersonReferenced != null)
-                    return parent.LastPersonReferenced.GodName;
+                if (parent.lastResourceReferenced is Person)
+                {
+                    if (parent.lastResourceReferenced != null)
+                        return (parent.lastResourceReferenced as Person).GodName;
+                }
 
                 // Attempt to get god of questor Person
                 // This fixes a crash when handing in quest and expanding questor dialog without a previous Person reference

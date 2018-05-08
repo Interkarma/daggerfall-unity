@@ -59,7 +59,7 @@ namespace DaggerfallWorkshop.Game.Questing
         DaggerfallDateTime questTombstoneTime;
 
         Place lastPlaceReferenced = null;
-        Person lastPersonReferenced = null;
+        QuestResource lastResourceReferenced = null;
         bool questBreak = false;
 
         int ticksToEnd = 0;
@@ -186,14 +186,14 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
-        /// Gets or sets last Person resource encountered during macro expand.
+        /// Gets or sets last QuestResource for Person/Foe encountered during macro expand.
         /// This will be used to resolve pronoun, god, oath, etc.
         /// Can return null so caller should have a fail-over plan.
         /// </summary>
-        public Person LastPersonReferenced
+        public QuestResource LastResourceReferenced
         {
-            get { return lastPersonReferenced; }
-            set { lastPersonReferenced = value; }
+            get { return lastResourceReferenced; }
+            set { lastResourceReferenced = value; }
         }
 
         /// <summary>
