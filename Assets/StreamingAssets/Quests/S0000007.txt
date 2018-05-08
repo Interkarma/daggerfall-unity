@@ -327,7 +327,7 @@ Message:  1036
 
 QBN:
 Item _letter_ letter used 1018
-Item _I.01_ letter used 1017
+-Item _I.01_ letter used 1017
 Item _relic_ magic_item used 1026
 
 Person _cyndassa_ named Cyndassa atHome anyInfo 1019
@@ -352,7 +352,7 @@ Clock _S.32_ 00:02 00:02
 
 Foe _brother_ is Werewolf
 Foe talisman is 2 Werewolf
-Foe boar is Wereboar
+-Foe boar is Wereboar
 
 --	Quest start-up:
 	dialog link for person _wereBrother_ 
@@ -366,7 +366,7 @@ Foe boar is Wereboar
 	repute with _barmaid_ exceeds 4 do _S.11_ 
 	pc at glenmorilCoven set _S.30_ 
 	pc at _mondung_ set _S.14_ 
-	_I.01_ used do _S.34_ 
+	-_I.01_ used do _S.34_ 
 
 _2mondung_ task:
 	drop _cyndassa_ as questor 
@@ -395,6 +395,7 @@ _S.05_ task:
 	start timer _delay_ 
 	change repute with courtier by +10 
 	change repute with _cyndassa_ by +15 
+	end quest
 
 _S.06_ task:
 	clicked npc _cyndassa_ 
@@ -406,7 +407,7 @@ _S.08_ task:
 	clicked npc _barmaid_ 
 
 yes task:
-	place item _I.01_ at _L.02_ 
+	-place item _I.01_ at _L.02_ 
 	place item _letter_ at _L.01_ 
 	log 1023 step 0 
 	reveal _mondung_ in province 19 at 255132 
@@ -439,7 +440,7 @@ _S.19_ task:
 
 _S.20_ task:
 	when _S.14_ and _S.16_ 
-	place foe boar at _L.02_ 
+	-place foe boar at _L.02_ 
 
 _S.21_ task:
 	when _S.17_ and _S.16_ 
