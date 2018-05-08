@@ -564,6 +564,8 @@ namespace DaggerfallWorkshop.Game
             npcData.race = targetMobileNPC.Race;
 
             this.reactionToPlayer = reactionToPlayer;
+
+            AssembleTopicListPerson(); // update "Where Is" -> "Person" list since this list may hide the questor (if talking to the questor)
         }
 
         public void SetTargetNPC(StaticNPC targetNPC, int reactionToPlayer, ref bool sameTalkTargetAsBefore)
@@ -622,8 +624,6 @@ namespace DaggerfallWorkshop.Game
             const int likePlayerGreetingTextId = 7208;
             const int veryLikePlayerGreetingTextId = 7209;
 
-            string greetingString = "";
-
             if (currentNPCType == NPCType.Static)
             {
                 foreach(KeyValuePair<ulong, TextFile.Token[]> entry in dictQuestorPostQuestMessage)
@@ -644,35 +644,21 @@ namespace DaggerfallWorkshop.Game
                                 // expand tokens and reveal dialog-linked resources
                                 QuestMacroHelper macroHelper = new QuestMacroHelper();
                                 macroHelper.ExpandQuestMessage(GameManager.Instance.QuestMachine.GetQuest(questID), ref tokens, true);
-                                greetingString = TokensToString(tokens);
-
-                                return (greetingString);                                
+                                return TokensToString(tokens);                              
                             }
                         }
                     }
                 }
             }
 
-            if (reactionToPlayer >= 0)
-            {
-                if (reactionToPlayer >= 10)
-                {
-                    if (reactionToPlayer >= 30)
-                        greetingString = expandRandomTextRecord(veryLikePlayerGreetingTextId);
-                    else
-                        greetingString = expandRandomTextRecord(likePlayerGreetingTextId);
-                }
-                else
-                {
-                    greetingString = expandRandomTextRecord(neutralToPlayerGreetingTextId);
-                }
-            }
-            else
-            {
-                greetingString = expandRandomTextRecord(dislikePlayerGreetingTextId);
-            }
-            
-            return (greetingString);
+            if (reactionToPlayer >= 30)
+                return expandRandomTextRecord(veryLikePlayerGreetingTextId);
+            else if (reactionToPlayer >= 10)
+                return expandRandomTextRecord(likePlayerGreetingTextId);
+            else if (reactionToPlayer >= 0)
+                return expandRandomTextRecord(neutralToPlayerGreetingTextId);
+            else            
+                return expandRandomTextRecord(dislikePlayerGreetingTextId);
         }
 
         public string GetPCGreetingText(DaggerfallTalkWindow.TalkTone talkTone)
@@ -1082,46 +1068,26 @@ namespace DaggerfallWorkshop.Game
             if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.DoesNotKnowAboutItem)
             {
                 // messages if npc does not know
-                if (reactionToPlayer >= 0)
-                {
-                    if (reactionToPlayer >= 10)
-                    {
-                        if (reactionToPlayer >= 30)
-                            return getRecordIdByNpcsSocialGroup(veryLikePlayerDoesNotKnowWhereIsDefault, veryLikePlayerDoesNotKnowWhereIsGuildMembers, veryLikePlayerDoesNotKnowWhereIsMerchants, veryLikePlayerDoesNotKnowWhereIsScholars, veryLikePlayerDoesNotKnowWhereIsNobility, veryLikePlayerDoesNotKnowWhereIsUnderworld);
-                        else
-                            return getRecordIdByNpcsSocialGroup(likePlayerDoesNotKnowWhereIsDefault, likePlayerDoesNotKnowWhereIsGuildMembers, likePlayerDoesNotKnowWhereIsMerchants, likePlayerDoesNotKnowWhereIsScholars, likePlayerDoesNotKnowWhereIsNobility, likePlayerDoesNotKnowWhereIsUnderworld);
-                    }
-                    else
-                    {
-                        return getRecordIdByNpcsSocialGroup(neutralToPlayerDoesNotKnowWhereIsDefault, neutralToPlayerDoesNotKnowWhereIsGuildMembers, neutralToPlayerDoesNotKnowWhereIsMerchants, neutralToPlayerDoesNotKnowWhereIsScholars, neutralToPlayerDoesNotKnowWhereIsNobility, neutralToPlayerDoesNotKnowWhereIsUnderworld);
-                    }
-                }
+                if (reactionToPlayer >= 30)
+                    return getRecordIdByNpcsSocialGroup(veryLikePlayerDoesNotKnowWhereIsDefault, veryLikePlayerDoesNotKnowWhereIsGuildMembers, veryLikePlayerDoesNotKnowWhereIsMerchants, veryLikePlayerDoesNotKnowWhereIsScholars, veryLikePlayerDoesNotKnowWhereIsNobility, veryLikePlayerDoesNotKnowWhereIsUnderworld);
+                else if (reactionToPlayer >= 10)
+                    return getRecordIdByNpcsSocialGroup(likePlayerDoesNotKnowWhereIsDefault, likePlayerDoesNotKnowWhereIsGuildMembers, likePlayerDoesNotKnowWhereIsMerchants, likePlayerDoesNotKnowWhereIsScholars, likePlayerDoesNotKnowWhereIsNobility, likePlayerDoesNotKnowWhereIsUnderworld);
+                else if (reactionToPlayer >= 0)
+                    return getRecordIdByNpcsSocialGroup(neutralToPlayerDoesNotKnowWhereIsDefault, neutralToPlayerDoesNotKnowWhereIsGuildMembers, neutralToPlayerDoesNotKnowWhereIsMerchants, neutralToPlayerDoesNotKnowWhereIsScholars, neutralToPlayerDoesNotKnowWhereIsNobility, neutralToPlayerDoesNotKnowWhereIsUnderworld);
                 else
-                {
                     return getRecordIdByNpcsSocialGroup(dislikePlayerDoesNotKnowWhereIsDefault, dislikePlayerDoesNotKnowWhereIsGuildMembers, dislikePlayerDoesNotKnowWhereIsMerchants, dislikePlayerDoesNotKnowWhereIsScholars, dislikePlayerDoesNotKnowWhereIsNobility, dislikePlayerDoesNotKnowWhereIsUnderworld);
-                }
             }
             else
             {
                 // location related messages if npc knows
-                if (reactionToPlayer >= 0)
-                {
-                    if (reactionToPlayer >= 10)
-                    {
-                        if (reactionToPlayer >= 30)
-                            return getRecordIdByNpcsSocialGroup(veryLikePlayerAnswerWhereIsDefault, veryLikePlayerAnswerWhereIsGuildMembers, veryLikePlayerAnswerWhereIsMerchants, veryLikePlayerAnswerWhereIsScholars, veryLikePlayerAnswerWhereIsNobility, veryLikePlayerAnswerWhereIsUnderworld);
-                        else
-                            return getRecordIdByNpcsSocialGroup(likePlayerAnswerWhereIsDefault, likePlayerAnswerWhereIsGuildMembers, likePlayerAnswerWhereIsMerchants, likePlayerAnswerWhereIsScholars, likePlayerAnswerWhereIsNobility, likePlayerAnswerWhereIsUnderworld);
-                    }
-                    else
-                    {
-                        return getRecordIdByNpcsSocialGroup(neutralToPlayerAnswerWhereIsDefault, neutralToPlayerAnswerWhereIsGuildMembers, neutralToPlayerAnswerWhereIsMerchants, neutralToPlayerAnswerWhereIsScholars, neutralToPlayerAnswerWhereIsNobility, neutralToPlayerAnswerWhereIsUnderworld);
-                    }
-                }
+                if (reactionToPlayer >= 30)
+                    return getRecordIdByNpcsSocialGroup(veryLikePlayerAnswerWhereIsDefault, veryLikePlayerAnswerWhereIsGuildMembers, veryLikePlayerAnswerWhereIsMerchants, veryLikePlayerAnswerWhereIsScholars, veryLikePlayerAnswerWhereIsNobility, veryLikePlayerAnswerWhereIsUnderworld);
+                else if (reactionToPlayer >= 10)
+                    return getRecordIdByNpcsSocialGroup(likePlayerAnswerWhereIsDefault, likePlayerAnswerWhereIsGuildMembers, likePlayerAnswerWhereIsMerchants, likePlayerAnswerWhereIsScholars, likePlayerAnswerWhereIsNobility, likePlayerAnswerWhereIsUnderworld);
+                else if (reactionToPlayer >= 0)
+                    return getRecordIdByNpcsSocialGroup(neutralToPlayerAnswerWhereIsDefault, neutralToPlayerAnswerWhereIsGuildMembers, neutralToPlayerAnswerWhereIsMerchants, neutralToPlayerAnswerWhereIsScholars, neutralToPlayerAnswerWhereIsNobility, neutralToPlayerAnswerWhereIsUnderworld);
                 else
-                {
                     return getRecordIdByNpcsSocialGroup(dislikePlayerAnswerWhereIsDefault, dislikePlayerAnswerWhereIsGuildMembers, dislikePlayerAnswerWhereIsMerchants, dislikePlayerAnswerWhereIsScholars, dislikePlayerAnswerWhereIsNobility, dislikePlayerAnswerWhereIsUnderworld);
-                }
             }
         }
 
@@ -1313,46 +1279,26 @@ namespace DaggerfallWorkshop.Game
             if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.DoesNotKnowAboutItem)
             {
                 // messages if npc does not know
-                if (reactionToPlayer >= 0)
-                {
-                    if (reactionToPlayer >= 10)
-                    {
-                        if (reactionToPlayer >= 30)
-                            return getRecordIdByNpcsSocialGroup(veryLikePlayerDoesNotKnowWhereIsDefault, veryLikePlayerDoesNotKnowWhereIsGuildMembers, veryLikePlayerDoesNotKnowWhereIsMerchants, veryLikePlayerDoesNotKnowWhereIsScholars, veryLikePlayerDoesNotKnowWhereIsNobility, veryLikePlayerDoesNotKnowWhereIsUnderworld);
-                        else
-                            return getRecordIdByNpcsSocialGroup(likePlayerDoesNotKnowWhereIsDefault, likePlayerDoesNotKnowWhereIsGuildMembers, likePlayerDoesNotKnowWhereIsMerchants, likePlayerDoesNotKnowWhereIsScholars, likePlayerDoesNotKnowWhereIsNobility, likePlayerDoesNotKnowWhereIsUnderworld);
-                    }
-                    else
-                    {
-                        return getRecordIdByNpcsSocialGroup(neutralToPlayerDoesNotKnowWhereIsDefault, neutralToPlayerDoesNotKnowWhereIsGuildMembers, neutralToPlayerDoesNotKnowWhereIsMerchants, neutralToPlayerDoesNotKnowWhereIsScholars, neutralToPlayerDoesNotKnowWhereIsNobility, neutralToPlayerDoesNotKnowWhereIsUnderworld);
-                    }
-                }
+                if (reactionToPlayer >= 30)
+                    return getRecordIdByNpcsSocialGroup(veryLikePlayerDoesNotKnowWhereIsDefault, veryLikePlayerDoesNotKnowWhereIsGuildMembers, veryLikePlayerDoesNotKnowWhereIsMerchants, veryLikePlayerDoesNotKnowWhereIsScholars, veryLikePlayerDoesNotKnowWhereIsNobility, veryLikePlayerDoesNotKnowWhereIsUnderworld);
+                else if (reactionToPlayer >= 10)
+                    return getRecordIdByNpcsSocialGroup(likePlayerDoesNotKnowWhereIsDefault, likePlayerDoesNotKnowWhereIsGuildMembers, likePlayerDoesNotKnowWhereIsMerchants, likePlayerDoesNotKnowWhereIsScholars, likePlayerDoesNotKnowWhereIsNobility, likePlayerDoesNotKnowWhereIsUnderworld);
+                else if (reactionToPlayer >= 0)
+                    return getRecordIdByNpcsSocialGroup(neutralToPlayerDoesNotKnowWhereIsDefault, neutralToPlayerDoesNotKnowWhereIsGuildMembers, neutralToPlayerDoesNotKnowWhereIsMerchants, neutralToPlayerDoesNotKnowWhereIsScholars, neutralToPlayerDoesNotKnowWhereIsNobility, neutralToPlayerDoesNotKnowWhereIsUnderworld);
                 else
-                {
                     return getRecordIdByNpcsSocialGroup(dislikePlayerDoesNotKnowWhereIsDefault, dislikePlayerDoesNotKnowWhereIsGuildMembers, dislikePlayerDoesNotKnowWhereIsMerchants, dislikePlayerDoesNotKnowWhereIsScholars, dislikePlayerDoesNotKnowWhereIsNobility, dislikePlayerDoesNotKnowWhereIsUnderworld);
-                }
             }
             else
             {
                 // location related messages if npc knows
-                if (reactionToPlayer >= 0)
-                {
-                    if (reactionToPlayer >= 10)
-                    {
-                        if (reactionToPlayer >= 30)
-                            return getRecordIdByNpcsSocialGroup(veryLikePlayerAnswerWhereIsDefault, veryLikePlayerAnswerWhereIsGuildMembers, veryLikePlayerAnswerWhereIsMerchants, veryLikePlayerAnswerWhereIsScholars, veryLikePlayerAnswerWhereIsNobility, veryLikePlayerAnswerWhereIsUnderworld);
-                        else
-                            return getRecordIdByNpcsSocialGroup(likePlayerAnswerWhereIsDefault, likePlayerAnswerWhereIsGuildMembers, likePlayerAnswerWhereIsMerchants, likePlayerAnswerWhereIsScholars, likePlayerAnswerWhereIsNobility, likePlayerAnswerWhereIsUnderworld);
-                    }
-                    else
-                    {
-                        return getRecordIdByNpcsSocialGroup(neutralToPlayerAnswerWhereIsDefault, neutralToPlayerAnswerWhereIsGuildMembers, neutralToPlayerAnswerWhereIsMerchants, neutralToPlayerAnswerWhereIsScholars, neutralToPlayerAnswerWhereIsNobility, neutralToPlayerAnswerWhereIsUnderworld);
-                    }
-                }
+                if (reactionToPlayer >= 30)
+                    return getRecordIdByNpcsSocialGroup(veryLikePlayerAnswerWhereIsDefault, veryLikePlayerAnswerWhereIsGuildMembers, veryLikePlayerAnswerWhereIsMerchants, veryLikePlayerAnswerWhereIsScholars, veryLikePlayerAnswerWhereIsNobility, veryLikePlayerAnswerWhereIsUnderworld);
+                else if (reactionToPlayer >= 10)
+                    return getRecordIdByNpcsSocialGroup(likePlayerAnswerWhereIsDefault, likePlayerAnswerWhereIsGuildMembers, likePlayerAnswerWhereIsMerchants, likePlayerAnswerWhereIsScholars, likePlayerAnswerWhereIsNobility, likePlayerAnswerWhereIsUnderworld);
+                else if (reactionToPlayer >= 0)
+                    return getRecordIdByNpcsSocialGroup(neutralToPlayerAnswerWhereIsDefault, neutralToPlayerAnswerWhereIsGuildMembers, neutralToPlayerAnswerWhereIsMerchants, neutralToPlayerAnswerWhereIsScholars, neutralToPlayerAnswerWhereIsNobility, neutralToPlayerAnswerWhereIsUnderworld);
                 else
-                {
                     return getRecordIdByNpcsSocialGroup(dislikePlayerAnswerWhereIsDefault, dislikePlayerAnswerWhereIsGuildMembers, dislikePlayerAnswerWhereIsMerchants, dislikePlayerAnswerWhereIsScholars, dislikePlayerAnswerWhereIsNobility, dislikePlayerAnswerWhereIsUnderworld);
-                }
             }
         }
 
@@ -2019,8 +1965,6 @@ namespace DaggerfallWorkshop.Game
                     ulong questID = questInfo.Key;
                     itemQuestTopic.questID = questID;
                     string captionString = questResourceInfo.Key;
-                    //QuestMacroHelper macroHelper = new QuestMacroHelper();
-                    //macroHelper.ExpandQuestString(GameManager.Instance.QuestMachine.GetQuest(questID), ref captionString);
                     itemQuestTopic.caption = captionString;
 
                     if (questResourceInfo.Value.availableForDialog && questResourceInfo.Value.hasEntryInTellMeAbout) // only make it available for talk if it is not "hidden" by dialog link command
@@ -2106,10 +2050,6 @@ namespace DaggerfallWorkshop.Game
                             item.questID = questID;
 
                             string captionString = questResourceInfo.Key;
-                            // Questing.Place place = (Questing.Place)questResourceInfo.Value.questResource;
-                            // string buildingName = place.SiteDetails.buildingName;
-                            // captionString = buildingName;
-
                             item.caption = captionString;
                             item.buildingKey = place.SiteDetails.buildingKey;
 
@@ -2281,7 +2221,7 @@ namespace DaggerfallWorkshop.Game
                         }
                         else
                         {
-                            /*
+                            /* - note: found a different way to do it via mapId
                             try
                             {
                                 IsPlayerInSameLocationWorldCell = ((Questing.Person)questResourceInfo.Value.questResource).IsPlayerInSameLocationWorldCell();
@@ -2315,16 +2255,6 @@ namespace DaggerfallWorkshop.Game
         private void AssembleTopicListThing()
         {            
             listTopicThing = new List<ListItem>();
-            /*
-            for (int i = 0; i < 30; i++)
-            {
-                ListItem item = new ListItem();
-                item.type = ListItemType.Item;
-                item.questionType = QuestionType.Thing;
-                item.caption = "thing " + i;
-                listTopicThing.Add(item);
-            }
-            */
         }
 
         /// <summary>
