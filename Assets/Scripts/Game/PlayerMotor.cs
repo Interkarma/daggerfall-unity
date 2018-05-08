@@ -98,7 +98,6 @@ namespace DaggerfallWorkshop.Game
         private bool jumping = false;
         private bool standingStill = false;
 
-
         private ClimbingMotor climbingMotor;
         private PlayerHeightChanger heightChanger;
         private PlayerSpeedChanger speedChanger;
@@ -241,6 +240,7 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
+            // Handle climbing
             climbingMotor.ClimbingCheck(ref collisionFlags);
 
             if (climbingMotor.IsClimbing)

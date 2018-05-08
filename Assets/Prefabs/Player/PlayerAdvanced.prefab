@@ -35,6 +35,7 @@ GameObject:
   - component: {fileID: 114189154217185308}
   - component: {fileID: 114126215008192106}
   - component: {fileID: 114232921892998986}
+  - component: {fileID: 114607307154016044}
   m_Layer: 0
   m_Name: PlayerAdvanced
   m_TagString: Player
@@ -1160,6 +1161,17 @@ MonoBehaviour:
   heightDensity: 2
   startDistance: 0
   fogShader: {fileID: 4800000, guid: 70d8568987ac0499f952b54c7c13e265, type: 3}
+--- !u!114 &114607307154016044
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 727122ccc0158b8439805f6f3b64b449, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114619655177981728
 MonoBehaviour:
   m_ObjectHideFlags: 1
