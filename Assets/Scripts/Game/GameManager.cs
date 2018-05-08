@@ -63,6 +63,7 @@ namespace DaggerfallWorkshop.Game
         GameObject streamingTarget = null;
         SaveLoadManager saveLoadManager = null;
         PlayerMotor playerMotor = null;
+        ClimbingMotor climbingMotor = null;
         PlayerSpeedChanger speedChanger = null;
         FloatingOrigin floatingOrigin = null;
         FPSWeapon[] playerWeapons = new FPSWeapon[2];
@@ -238,6 +239,12 @@ namespace DaggerfallWorkshop.Game
         {
             get { return (playerMotor) ? playerMotor : playerMotor = GetComponentFromObject<PlayerMotor>(PlayerObject); }
             set { playerMotor = value; }
+        }
+
+        public ClimbingMotor ClimbingMotor
+        {
+            get { return (climbingMotor) ? climbingMotor : climbingMotor = GetComponentFromObject<ClimbingMotor>(PlayerObject); }
+            set { climbingMotor = value; }
         }
 
         public FloatingOrigin FloatingOrigin
