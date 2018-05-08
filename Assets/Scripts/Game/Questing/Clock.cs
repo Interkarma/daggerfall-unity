@@ -234,7 +234,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     // Perform another check for travel time if total time 0
                     // This ensures player has travel time from automatic NPCs
                     if (clockTimeInSeconds == 0)
-                        GetTravelTimeInSeconds();
+                        clockTimeInSeconds = GetTravelTimeInSeconds();
 
                     // Add range
                     int randomDays = UnityEngine.Random.Range(minRange, maxRange + 1);
