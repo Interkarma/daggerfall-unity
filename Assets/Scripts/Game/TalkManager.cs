@@ -128,7 +128,7 @@ namespace DaggerfallWorkshop.Game
         const int dislikePlayerDoesNotKnowWhereIsMerchants = 7251;
         const int dislikePlayerDoesNotKnowWhereIsNobility = 7252;
         const int dislikePlayerDoesNotKnowWhereIsScholars = 7253;
-        const int dislikePlayerDoesNotKnowWhereIsUnderworld = 7251; // no matching underworld set (7254 is empty), use 7251 instead
+        const int dislikePlayerDoesNotKnowWhereIsUnderworld = 7304; // no matching underworld set (7254 is empty), used 7304 since it seems to fit (note: not in list of uesp)
         // neutral does not know set
         const int neutralToPlayerDoesNotKnowWhereIsDefault = 7266;
         const int neutralToPlayerDoesNotKnowWhereIsGuildMembers = 7265;
@@ -195,8 +195,8 @@ namespace DaggerfallWorkshop.Game
         }
 
         // current target npc for conversion
-        //MobilePersonNPC targetMobileNPC = null;
         StaticNPC targetStaticNPC = null;
+
         public class NPCData
         {
             public Races race;
@@ -214,6 +214,8 @@ namespace DaggerfallWorkshop.Game
         MobilePersonNPC lastTargetMobileNPC = null;
         StaticNPC lastTargetStaticNPC = null;
         NPCType currentNPCType = NPCType.Unset;
+        bool sameTalkTargetAsBefore = false; // used to indicate same dialog partner / talk target as in conversation before
+        bool alreadyRejectedOnce = false; // used to display rejection text first time to a random rejection text, from 2nd time (for same npc) to msg "you get no response"
 
         public enum KeySubjectType
         {
@@ -511,26 +513,13 @@ namespace DaggerfallWorkshop.Game
         {
             currentNPCType = NPCType.Mobile;
 
-            const int youGetNoResponseTextId = 7205;
-
             // Get reaction to player
             int reactionToPlayer = GetReactionToPlayer();
 
-            if (reactionToPlayer >= -20)
-            {
-                bool sameTalkTargetAsBefore = false;
-                GameManager.Instance.TalkManager.SetTargetNPC(targetNPC, reactionToPlayer, ref sameTalkTargetAsBefore);
-                DaggerfallUI.UIManager.PushWindow(DaggerfallUI.Instance.TalkWindow);
+            sameTalkTargetAsBefore = false;
+            GameManager.Instance.TalkManager.SetTargetNPC(targetNPC, reactionToPlayer, ref sameTalkTargetAsBefore);
 
-                // reset npc knowledge, for now it resets every time the npc has changed (player talked to new npc)
-                // TODO: match classic daggerfall - in classic npc remember their knowledge about topics for their time of existence
-                if (!sameTalkTargetAsBefore)
-                    ResetNPCKnowledge();
-            }
-            else
-            {
-                DaggerfallUI.MessageBox(youGetNoResponseTextId);
-            }            
+            TalkToNpc();
         }
 
         // Player has clicked or static talk target or clicked the talk button inside a popup-window
@@ -542,26 +531,13 @@ namespace DaggerfallWorkshop.Game
             }
             currentNPCType = NPCType.Static;
 
-            const int youGetNoResponseTextId = 7205;
-
             // Get reaction to player
             int reactionToPlayer = GetReactionToPlayer();
 
-            if (reactionToPlayer >= -20)
-            {
-                bool sameTalkTargetAsBefore = false;
-                GameManager.Instance.TalkManager.SetTargetNPC(targetNPC, reactionToPlayer, ref sameTalkTargetAsBefore);
-                DaggerfallUI.UIManager.PushWindow(DaggerfallUI.Instance.TalkWindow);
+            sameTalkTargetAsBefore = false;
+            GameManager.Instance.TalkManager.SetTargetNPC(targetNPC, reactionToPlayer, ref sameTalkTargetAsBefore);
 
-                // reset npc knowledge, for now it resets every time the npc has changed (player talked to new npc)
-                // TODO: match classic daggerfall - in classic npc remember their knowledge about topics for their time of existence
-                if (!sameTalkTargetAsBefore)
-                    ResetNPCKnowledge();
-            }
-            else
-            {
-                DaggerfallUI.MessageBox(youGetNoResponseTextId); // TODO: rejection text handling (vanilla gives different texts)
-            }
+            TalkToNpc();
         }
 
         public void SetTargetNPC(MobilePersonNPC targetMobileNPC, int reactionToPlayer, ref bool sameTalkTargetAsBefore)
@@ -573,6 +549,8 @@ namespace DaggerfallWorkshop.Game
                 sameTalkTargetAsBefore = true;
                 return;
             }
+
+            alreadyRejectedOnce = false;
 
             DaggerfallUI.Instance.TalkWindow.SetNPCPortrait(DaggerfallTalkWindow.FacePortraitArchive.CommonFaces, targetMobileNPC.PersonFaceRecordId);
 
@@ -597,6 +575,8 @@ namespace DaggerfallWorkshop.Game
                 sameTalkTargetAsBefore = true;
                 return;
             }
+
+            alreadyRejectedOnce = false;
 
             this.targetStaticNPC = targetNPC;
 
@@ -1729,6 +1709,36 @@ namespace DaggerfallWorkshop.Game
         #endregion
 
         #region Private Methods
+
+        private void TalkToNpc()
+        {
+            const int dialogRejectionTextId = 8571;
+            const int youGetNoResponseTextId = 7205;
+
+            if (reactionToPlayer >= -20)
+            {
+                DaggerfallUI.UIManager.PushWindow(DaggerfallUI.Instance.TalkWindow);
+
+                // reset npc knowledge, for now it resets every time the npc has changed (player talked to new npc)
+                // TODO: match classic daggerfall - in classic npc remember their knowledge about topics for their time of existence
+                if (!sameTalkTargetAsBefore)
+                    ResetNPCKnowledge();
+            }
+            else
+            {
+                if (alreadyRejectedOnce)
+                {
+                    DaggerfallUI.MessageBox(youGetNoResponseTextId);
+                }
+                else
+                {
+                    string responseText = DaggerfallUnity.Instance.TextProvider.GetRandomText(dialogRejectionTextId);
+                    DaggerfallUI.MessageBox(responseText);
+                    alreadyRejectedOnce = true;
+                }
+            }
+        }
+
 
         private void SetupRumorMill()
         {
