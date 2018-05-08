@@ -227,12 +227,18 @@ namespace DaggerfallWorkshop.Game.Questing
                     clockTimeInSeconds = GetTravelTimeInSeconds();
                 }
 
-                // HACK: Also check for travel time when flag & 1 and clock time otherwise 0
-                // This seems to indicate an automatic Place from derived from Person?
-                // Keep seperate to above until more research is done
-                if ((flag & 1) == 1 && clockTimeInSeconds == 0)
+                // HACK: Add range of time in days when flag & 1 and maxRange > 0
+                // Still not positive this is the correct usage of minRange - maxRange
+                if ((flag & 1) == 1 && maxRange > 0)
                 {
-                    clockTimeInSeconds = GetTravelTimeInSeconds();
+                    // Perform another check for travel time if total time 0
+                    // This ensures player has travel time from automatic NPCs
+                    if (clockTimeInSeconds == 0)
+                        GetTravelTimeInSeconds();
+
+                    // Add range
+                    int randomDays = UnityEngine.Random.Range(minRange, maxRange + 1);
+                    clockTimeInSeconds += randomDays * DaggerfallDateTime.SecondsPerDay;
                 }
 
                 // Set timer value in seconds
