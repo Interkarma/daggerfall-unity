@@ -25,6 +25,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     public class DaggerfallCourtWindow : DaggerfallPopupWindow
     {
         const string nativeImgName = "CORT01I0.img";
+        const int courtTextTG = 550;
+        const int courtTextDB = 551;
         const int courtTextStart = 8050;
         const int courtTextFoundGuilty = 8055;
         const int courtTextExecuted = 8060;
@@ -140,9 +142,51 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     fine = playerGold;
                 }
 
-                // TODO: Chance to free player if in Dark Brotherhood or Thieves Guild
+                DaggerfallMessageBox messageBox;
+                if ( crimeType == 4 || crimeType == 3) // Assault or murder
+                {
+                    // If player is a member of the Dark Brotherhood, they may be rescued for a violent crime
+                    Guilds.Guild guild = GameManager.Instance.GuildManager.GetGuild(42);
+                    if (guild.IsMember())
+                    {
+                        if (guild.Rank >= UnityEngine.Random.Range(0, 20))
+                        {
+                            messageBox = new DaggerfallMessageBox(uiManager, this, false, 149);
+                            messageBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRSCTokens(courtTextDB));
+                            messageBox.ScreenDimColor = new Color32(0, 0, 0, 0);
+                            messageBox.ParentPanel.VerticalAlignment = VerticalAlignment.Bottom;
+                            messageBox.ClickAnywhereToClose = true;
+                            uiManager.PushWindow(messageBox);
+                            playerEntity.FillVitalSigns();
+                            playerEntity.RaiseReputationForDoingSentence();
+                            state = 100;
+                            return;
+                        }
+                    }
+                }
+                if (crimeType <= 2 || crimeType == 11) // Attempted breaking and entering, trespassing, breaking and entering, pickpocketing
+                {
+                    // If player is a member of the Thieves Guild, they may be rescued for a thieving crime
+                    Guilds.Guild guild = GameManager.Instance.GuildManager.GetGuild(108);
+                    if (guild.IsMember())
+                    {
+                        if (guild.Rank >= UnityEngine.Random.Range(0, 20))
+                        {
+                            messageBox = new DaggerfallMessageBox(uiManager, this, false, 149);
+                            messageBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRSCTokens(courtTextTG));
+                            messageBox.ScreenDimColor = new Color32(0, 0, 0, 0);
+                            messageBox.ParentPanel.VerticalAlignment = VerticalAlignment.Bottom;
+                            messageBox.ClickAnywhereToClose = true;
+                            uiManager.PushWindow(messageBox);
+                            playerEntity.FillVitalSigns();
+                            playerEntity.RaiseReputationForDoingSentence();
+                            state = 100;
+                            return;
+                        }
+                    }
+                }
 
-                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this, false, 105);
+                messageBox = new DaggerfallMessageBox(uiManager, this, false, 105);
                 messageBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRSCTokens(courtTextStart));
                 messageBox.ScreenDimColor = new Color32(0, 0, 0, 0);
                 messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Guilty);
@@ -166,7 +210,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 PositionPlayerAtLocationEntrance();
                 ServeTime(daysInPrison);
-                playerEntity.RaiseLegalRepForDoingSentence();
+                playerEntity.RaiseReputationForDoingSentence();
                 state = 100;
             }
             else if (state == 4) // Banished
@@ -226,8 +270,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         else
                         {
                             // Give the reputation raise here if no prison time will be served.
+                            playerEntity.RaiseReputationForDoingSentence();
                             PositionPlayerAtLocationEntrance();
-
                             // Oversight in classic: Does not refill vital signs when releasing in this case, so player is left with 1 health.
                             playerEntity.FillVitalSigns();
                             ReleaseFromJail();
@@ -304,7 +348,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 uiManager.PushWindow(messageBox);
 
                 // Oversight in classic: Does not refill vital signs when releasing in this case, so player is left with 1 health.
+                // Also does not repair reputation.
                 playerEntity.FillVitalSigns();
+                playerEntity.RaiseReputationForDoingSentence();
                 state = 6;
             }
             Update();

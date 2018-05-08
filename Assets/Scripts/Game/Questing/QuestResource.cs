@@ -20,6 +20,9 @@ namespace DaggerfallWorkshop.Game.Questing
         bool isHidden = false;
 
         [NonSerialized]
+        bool isPlaced = false;      // Ensures resource is only placed once by "place item, place foe, etc."
+
+        [NonSerialized]
         QuestResourceBehaviour questResourceBehaviour = null;
 
         /// <summary>
@@ -86,6 +89,17 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             get { return isHidden; }
             set { SetHidden(value); }
+        }
+
+        /// <summary>
+        /// Helps track if a resource has already been placed in scene by either layout logic or hot-placement logic.
+        /// Prevents duplicate resources being injected when a mix of layout and hot-placement is used.
+        /// This property is not serialized and is only used during scene layout process.
+        /// </summary>
+        public bool IsPlaced
+        {
+            get { return isPlaced; }
+            set { isPlaced = value; }
         }
 
         /// <summary>

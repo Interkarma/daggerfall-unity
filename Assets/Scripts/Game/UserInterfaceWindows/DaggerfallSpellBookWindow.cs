@@ -473,7 +473,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (deleteSpellIndex != -1 && messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
             {
-                spellsListBox.RemoveItem(deleteSpellIndex);
+                GameManager.Instance.PlayerEntity.DeleteSpell(deleteSpellIndex);
                 deleteSpellIndex = -1;
                 RefreshSpellsList();
             }

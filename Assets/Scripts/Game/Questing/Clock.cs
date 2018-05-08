@@ -227,6 +227,20 @@ namespace DaggerfallWorkshop.Game.Questing
                     clockTimeInSeconds = GetTravelTimeInSeconds();
                 }
 
+                // HACK: Add range of time in days when flag & 1 and maxRange > 0
+                // Still not positive this is the correct usage of minRange - maxRange
+                if ((flag & 1) == 1 && maxRange > 0)
+                {
+                    // Perform another check for travel time if total time 0
+                    // This ensures player has travel time from automatic NPCs
+                    if (clockTimeInSeconds == 0)
+                        clockTimeInSeconds = GetTravelTimeInSeconds();
+
+                    // Add range
+                    int randomDays = UnityEngine.Random.Range(minRange, maxRange + 1);
+                    clockTimeInSeconds += randomDays * DaggerfallDateTime.SecondsPerDay;
+                }
+
                 // Set timer value in seconds
                 InitialiseTimer(clockTimeInSeconds);
             }

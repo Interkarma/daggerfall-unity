@@ -151,10 +151,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         bool HasEffectWithIcon(EntityEffectManager.InstancedBundle bundle)
         {
-            // At least one effect must must to show an icon
+            // At least one effect with remaining rounds must want to show an icon
             foreach (IEntityEffect effect in bundle.liveEffects)
             {
-                if (effect.Properties.ShowSpellIcon)
+                if (effect.Properties.ShowSpellIcon && effect.RoundsRemaining > 0)
                     return true;
             }
 

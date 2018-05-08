@@ -183,6 +183,7 @@ namespace DaggerfallWorkshop.Game
             // Update previous health when loading game
             // This prevents recoil firing because previous and current characters have different health amounts
             previousHealth = GameManager.Instance.PlayerEntity.CurrentHealth;
+            bSwaying = false;
         }
     }
 }

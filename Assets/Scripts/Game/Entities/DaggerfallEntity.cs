@@ -43,6 +43,7 @@ namespace DaggerfallWorkshop.Game.Entity
         protected int level;
         protected DaggerfallStats stats = new DaggerfallStats();
         protected DaggerfallSkills skills = new DaggerfallSkills();
+        protected DaggerfallResistances resistances = new DaggerfallResistances();
         protected ItemCollection items = new ItemCollection();
         protected ItemEquipTable equipTable = new ItemEquipTable();
         protected int maxHealth;
@@ -93,6 +94,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public int Level { get { return level; } set { level = value; } }
         public DaggerfallStats Stats { get { return stats; } set { stats.Copy(value); } }
         public DaggerfallSkills Skills { get { return skills; } set { skills.Copy(value); } }
+        public DaggerfallResistances Resistances { get { return resistances; } set { resistances.Copy(value); } }
         public ItemCollection Items { get { return items; } set { items.ReplaceAll(value); } }
         public ItemEquipTable ItemEquipTable { get { return equipTable; } }
         public int MaxHealth { get { return maxHealth; } set { maxHealth = value; } }
