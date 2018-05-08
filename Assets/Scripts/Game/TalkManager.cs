@@ -1246,8 +1246,7 @@ namespace DaggerfallWorkshop.Game
 
         public void ForceTopicListsUpdate()
         {
-            rebuildTopicLists = true;
-            //AssembleTopicLists();
+            AssembleTopicLists();
         }
 
         public void AddQuestTopicWithInfoAndRumors(ulong questID, QuestResource questResource, string resourceName, QuestInfoResourceType resourceType, List<TextFile.Token[]> anyInfoAnswers, List<TextFile.Token[]> rumorsAnswers)
@@ -1368,7 +1367,7 @@ namespace DaggerfallWorkshop.Game
             AssembleTopiclistTellMeAbout();
         }
 
-        public void AddDialogForQuestInfoResource(ulong questID, string resourceName, QuestInfoResourceType resourceType)
+        public void AddDialogForQuestInfoResource(ulong questID, string resourceName, QuestInfoResourceType resourceType, bool instantRebuildTopicLists = true)
         {
             QuestResources questResources;
             if (dictQuestInfo.ContainsKey(questID))
@@ -1398,7 +1397,10 @@ namespace DaggerfallWorkshop.Game
             }
 
             // update topic lists
-            AssembleTopicLists();
+            if (instantRebuildTopicLists == true)
+                AssembleTopicLists();
+            else
+                rebuildTopicLists = true;
         }
 
         public void RemoveQuestInfoTopicsForSpecificQuest(ulong questID)
@@ -1410,10 +1412,6 @@ namespace DaggerfallWorkshop.Game
 
             // update topic lists
             rebuildTopicLists = true;
-            //AssembleTopiclistTellMeAbout();
-            //AssembleTopicListLocation();
-            //AssembleTopicListPerson();
-            //AssembleTopicListThing();
         }
 
         public int GetBuildingKeyForPersonResource(ulong questID, string resourceName)
@@ -1943,12 +1941,6 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
-
-            itemBuildingTypeGroup = new ListItem();
-            itemBuildingTypeGroup.type = ListItemType.ItemGroup;
-            itemBuildingTypeGroup.caption = (TextManager.Instance.GetText(textDatabase, "General"));
-            listTopicLocation.Add(itemBuildingTypeGroup);
-
             foreach (KeyValuePair<ulong, QuestResources> questInfo in dictQuestInfo)
             {
                 foreach (KeyValuePair<string, QuestResourceInfo> questResourceInfo in questInfo.Value.resourceInfo)
@@ -1956,6 +1948,9 @@ namespace DaggerfallWorkshop.Game
                     if (questResourceInfo.Value.resourceType == QuestInfoResourceType.Location)
                     {
                         Questing.Place place = (Questing.Place)questResourceInfo.Value.questResource;
+                        // (fix bug reports http://forums.dfworkshop.net/viewtopic.php?f=24&t=996, http://forums.dfworkshop.net/viewtopic.php?f=24&t=997)
+                        if (place.Scope != Place.Scopes.Local) // only build entries for place quest resources that are local
+                            continue;
                         DFLocation.BuildingTypes buildingType = GameManager.Instance.TalkManager.GetBuildingTypeForBuildingKey(place.SiteDetails.buildingKey);
 
                         if (RMBLayout.IsResidence(buildingType))
@@ -1977,6 +1972,11 @@ namespace DaggerfallWorkshop.Game
 
                             if (questResourceInfo.Value.availableForDialog && questResourceInfo.Value.hasEntryInWhereIs)
                             {
+                                itemBuildingTypeGroup = new ListItem();
+                                itemBuildingTypeGroup.type = ListItemType.ItemGroup;
+                                itemBuildingTypeGroup.caption = (TextManager.Instance.GetText(textDatabase, "General"));
+                                listTopicLocation.Add(itemBuildingTypeGroup);
+
                                 if (itemBuildingTypeGroup.listChildItems == null)
                                 {
                                     ListItem itemPreviousList;
@@ -1997,6 +1997,11 @@ namespace DaggerfallWorkshop.Game
             matchingBuildings = listBuildings.FindAll(x => x.buildingType == DFLocation.BuildingTypes.Palace);
             if (matchingBuildings.Count > 0)
             {
+                itemBuildingTypeGroup = new ListItem();
+                itemBuildingTypeGroup.type = ListItemType.ItemGroup;
+                itemBuildingTypeGroup.caption = (TextManager.Instance.GetText(textDatabase, "General"));
+                listTopicLocation.Add(itemBuildingTypeGroup);
+
                 if (itemBuildingTypeGroup.listChildItems == null)
                 {
                     ListItem itemPreviousList;
