@@ -92,6 +92,64 @@ namespace DaggerfallWorkshop.Game
         #region Fields
 
         const string textDatabase = "ConversationText";
+
+        // dislike answer set (doesn't tell)
+        const int dislikePlayerAnswerWhereIsDefault = 7256;
+        const int dislikePlayerAnswerWhereIsGuildMembers = 7255;
+        const int dislikePlayerAnswerWhereIsMerchants = 7256;
+        const int dislikePlayerAnswerWhereIsNobility = 7258;
+        const int dislikePlayerAnswerWhereIsScholars = 7257;
+        const int dislikePlayerAnswerWhereIsUnderworld = 7259;
+        // neutral answer set
+        const int neutralToPlayerAnswerWhereIsDefault = 7271;
+        const int neutralToPlayerAnswerWhereIsGuildMembers = 7270;
+        const int neutralToPlayerAnswerWhereIsMerchants = 7271;
+        const int neutralToPlayerAnswerWhereIsScholars = 7272;
+        const int neutralToPlayerAnswerWhereIsNobility = 7273;
+        const int neutralToPlayerAnswerWhereIsUnderworld = 7274;
+        // like answer set
+        const int likePlayerAnswerWhereIsDefault = 7291;
+        const int likePlayerAnswerWhereIsGuildMembers = 7290;
+        const int likePlayerAnswerWhereIsMerchants = 7291;
+        const int likePlayerAnswerWhereIsScholars = 7292;
+        const int likePlayerAnswerWhereIsNobility = 7293;
+        const int likePlayerAnswerWhereIsUnderworld = 7294;
+        // very like answer set
+        const int veryLikePlayerAnswerWhereIsDefault = 7286;
+        const int veryLikePlayerAnswerWhereIsGuildMembers = 7285;
+        const int veryLikePlayerAnswerWhereIsMerchants = 7286;
+        const int veryLikePlayerAnswerWhereIsScholars = 7287;
+        const int veryLikePlayerAnswerWhereIsNobility = 7288;
+        const int veryLikePlayerAnswerWhereIsUnderworld = 7289;
+
+        // dislike does not know set
+        const int dislikePlayerDoesNotKnowWhereIsDefault = 7251;
+        const int dislikePlayerDoesNotKnowWhereIsGuildMembers = 7250;
+        const int dislikePlayerDoesNotKnowWhereIsMerchants = 7251;
+        const int dislikePlayerDoesNotKnowWhereIsNobility = 7252;
+        const int dislikePlayerDoesNotKnowWhereIsScholars = 7253;
+        const int dislikePlayerDoesNotKnowWhereIsUnderworld = 7251; // no matching underworld set (7254 is empty), use 7251 instead
+        // neutral does not know set
+        const int neutralToPlayerDoesNotKnowWhereIsDefault = 7266;
+        const int neutralToPlayerDoesNotKnowWhereIsGuildMembers = 7265;
+        const int neutralToPlayerDoesNotKnowWhereIsMerchants = 7266;
+        const int neutralToPlayerDoesNotKnowWhereIsScholars = 7267;
+        const int neutralToPlayerDoesNotKnowWhereIsNobility = 7268;
+        const int neutralToPlayerDoesNotKnowWhereIsUnderworld = 7269;
+        // like does not know set
+        const int likePlayerDoesNotKnowWhereIsDefault = 7281;
+        const int likePlayerDoesNotKnowWhereIsGuildMembers = 7280;
+        const int likePlayerDoesNotKnowWhereIsMerchants = 7281;
+        const int likePlayerDoesNotKnowWhereIsScholars = 7282;
+        const int likePlayerDoesNotKnowWhereIsNobility = 7283;
+        const int likePlayerDoesNotKnowWhereIsUnderworld = 7284;
+        // very like does not know set
+        const int veryLikePlayerDoesNotKnowWhereIsDefault = 7281;
+        const int veryLikePlayerDoesNotKnowWhereIsGuildMembers = 7280;
+        const int veryLikePlayerDoesNotKnowWhereIsMerchants = 7281;
+        const int veryLikePlayerDoesNotKnowWhereIsScholars = 7282;
+        const int veryLikePlayerDoesNotKnowWhereIsNobility = 7283;
+        const int veryLikePlayerDoesNotKnowWhereIsUnderworld = 7284;
      
         // specifies entry type of list item in topic lists
         public enum ListItemType
@@ -502,7 +560,7 @@ namespace DaggerfallWorkshop.Game
             }
             else
             {
-                DaggerfallUI.MessageBox(youGetNoResponseTextId);
+                DaggerfallUI.MessageBox(youGetNoResponseTextId); // TODO: rejection text handling (vanilla gives different texts)
             }
         }
 
@@ -1031,24 +1089,60 @@ namespace DaggerfallWorkshop.Game
 
         public string GetAnswerWhereIs(TalkManager.ListItem listItem)
         {
-            string answer;
-
             if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.NotSet)
             {
-                // chances unknown - so there is a 50% chance for now that npc knows
+                // chances unknown - so there is a 50% chance for now that npc knows - TODO: apply correct chances here
                 int randomNum = UnityEngine.Random.Range(0, 2);
                 if (randomNum == 0)
                     listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.DoesNotKnowAboutItem;
                 else
                     listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.KnowsAboutItem;
             }
-
-            // TODO: take into account if npc likes you for answers here as well (use different sets here depending on how much npc likes you)
-            if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.DoesNotKnowAboutItem)                
-                answer = getRecordIdByNpcsSocialGroup(7281, 7280, 7280, 7283, 7282, 7284); // messages if npc does not know
+            
+            if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.DoesNotKnowAboutItem)
+            {
+                // messages if npc does not know
+                if (reactionToPlayer >= 0)
+                {
+                    if (reactionToPlayer >= 10)
+                    {
+                        if (reactionToPlayer >= 30)
+                            return getRecordIdByNpcsSocialGroup(veryLikePlayerDoesNotKnowWhereIsDefault, veryLikePlayerDoesNotKnowWhereIsGuildMembers, veryLikePlayerDoesNotKnowWhereIsMerchants, veryLikePlayerDoesNotKnowWhereIsScholars, veryLikePlayerDoesNotKnowWhereIsNobility, veryLikePlayerDoesNotKnowWhereIsUnderworld);
+                        else
+                            return getRecordIdByNpcsSocialGroup(likePlayerDoesNotKnowWhereIsDefault, likePlayerDoesNotKnowWhereIsGuildMembers, likePlayerDoesNotKnowWhereIsMerchants, likePlayerDoesNotKnowWhereIsScholars, likePlayerDoesNotKnowWhereIsNobility, likePlayerDoesNotKnowWhereIsUnderworld);
+                    }
+                    else
+                    {
+                        return getRecordIdByNpcsSocialGroup(neutralToPlayerDoesNotKnowWhereIsDefault, neutralToPlayerDoesNotKnowWhereIsGuildMembers, neutralToPlayerDoesNotKnowWhereIsMerchants, neutralToPlayerDoesNotKnowWhereIsScholars, neutralToPlayerDoesNotKnowWhereIsNobility, neutralToPlayerDoesNotKnowWhereIsUnderworld);
+                    }
+                }
+                else
+                {
+                    return getRecordIdByNpcsSocialGroup(dislikePlayerDoesNotKnowWhereIsDefault, dislikePlayerDoesNotKnowWhereIsGuildMembers, dislikePlayerDoesNotKnowWhereIsMerchants, dislikePlayerDoesNotKnowWhereIsScholars, dislikePlayerDoesNotKnowWhereIsNobility, dislikePlayerDoesNotKnowWhereIsUnderworld);
+                }
+            }
             else
-                answer = getRecordIdByNpcsSocialGroup(7271, 7270, 7270, 7273, 7272, 7274); // location related messages if npc knows
-            return answer;
+            {
+                // location related messages if npc knows
+                if (reactionToPlayer >= 0)
+                {
+                    if (reactionToPlayer >= 10)
+                    {
+                        if (reactionToPlayer >= 30)
+                            return getRecordIdByNpcsSocialGroup(veryLikePlayerAnswerWhereIsDefault, veryLikePlayerAnswerWhereIsGuildMembers, veryLikePlayerAnswerWhereIsMerchants, veryLikePlayerAnswerWhereIsScholars, veryLikePlayerAnswerWhereIsNobility, veryLikePlayerAnswerWhereIsUnderworld);
+                        else
+                            return getRecordIdByNpcsSocialGroup(likePlayerAnswerWhereIsDefault, likePlayerAnswerWhereIsGuildMembers, likePlayerAnswerWhereIsMerchants, likePlayerAnswerWhereIsScholars, likePlayerAnswerWhereIsNobility, likePlayerAnswerWhereIsUnderworld);
+                    }
+                    else
+                    {
+                        return getRecordIdByNpcsSocialGroup(neutralToPlayerAnswerWhereIsDefault, neutralToPlayerAnswerWhereIsGuildMembers, neutralToPlayerAnswerWhereIsMerchants, neutralToPlayerAnswerWhereIsScholars, neutralToPlayerAnswerWhereIsNobility, neutralToPlayerAnswerWhereIsUnderworld);
+                    }
+                }
+                else
+                {
+                    return getRecordIdByNpcsSocialGroup(dislikePlayerAnswerWhereIsDefault, dislikePlayerAnswerWhereIsGuildMembers, dislikePlayerAnswerWhereIsMerchants, dislikePlayerAnswerWhereIsScholars, dislikePlayerAnswerWhereIsNobility, dislikePlayerAnswerWhereIsUnderworld);
+                }
+            }
         }
 
         public string GetAnswerAboutRegionalBuilding(TalkManager.ListItem listItem)
@@ -1181,7 +1275,6 @@ namespace DaggerfallWorkshop.Game
             {
                 case QuestionType.NoQuestion:
                 default:
-                    answer = getRecordIdByNpcsSocialGroup(7281, 7280, 7280, 7283, 7282, 7284); // messages if npc does not know
                     break;
                 case QuestionType.News:
                     answer = GetNewsOrRumors();
@@ -1209,13 +1302,13 @@ namespace DaggerfallWorkshop.Game
                 case QuestionType.Work:
                     if (!WorkAvailable)
                     {
-                        answer = expandRandomTextRecord(8078);
+                        answer = expandRandomTextRecord(8078); // TODO: find when 8075 should be used
                         break;
                     }
                     else
                     {
                         SetRandomQuestor(); // Pick a random Work questor from the pool
-                        answer = expandRandomTextRecord(8076);
+                        answer = expandRandomTextRecord(8076); // TODO: find when 8077 should be used
                         break;
                     }
             }
@@ -1238,9 +1331,49 @@ namespace DaggerfallWorkshop.Game
             }
 
             if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.DoesNotKnowAboutItem)
-                return getRecordIdByNpcsSocialGroup(7281, 7280, 7280, 7283, 7282, 7284); // messages if npc does not know
+            {
+                // messages if npc does not know
+                if (reactionToPlayer >= 0)
+                {
+                    if (reactionToPlayer >= 10)
+                    {
+                        if (reactionToPlayer >= 30)
+                            return getRecordIdByNpcsSocialGroup(veryLikePlayerDoesNotKnowWhereIsDefault, veryLikePlayerDoesNotKnowWhereIsGuildMembers, veryLikePlayerDoesNotKnowWhereIsMerchants, veryLikePlayerDoesNotKnowWhereIsScholars, veryLikePlayerDoesNotKnowWhereIsNobility, veryLikePlayerDoesNotKnowWhereIsUnderworld);
+                        else
+                            return getRecordIdByNpcsSocialGroup(likePlayerDoesNotKnowWhereIsDefault, likePlayerDoesNotKnowWhereIsGuildMembers, likePlayerDoesNotKnowWhereIsMerchants, likePlayerDoesNotKnowWhereIsScholars, likePlayerDoesNotKnowWhereIsNobility, likePlayerDoesNotKnowWhereIsUnderworld);
+                    }
+                    else
+                    {
+                        return getRecordIdByNpcsSocialGroup(neutralToPlayerDoesNotKnowWhereIsDefault, neutralToPlayerDoesNotKnowWhereIsGuildMembers, neutralToPlayerDoesNotKnowWhereIsMerchants, neutralToPlayerDoesNotKnowWhereIsScholars, neutralToPlayerDoesNotKnowWhereIsNobility, neutralToPlayerDoesNotKnowWhereIsUnderworld);
+                    }
+                }
+                else
+                {
+                    return getRecordIdByNpcsSocialGroup(dislikePlayerDoesNotKnowWhereIsDefault, dislikePlayerDoesNotKnowWhereIsGuildMembers, dislikePlayerDoesNotKnowWhereIsMerchants, dislikePlayerDoesNotKnowWhereIsScholars, dislikePlayerDoesNotKnowWhereIsNobility, dislikePlayerDoesNotKnowWhereIsUnderworld);
+                }
+            }
             else
-                return getRecordIdByNpcsSocialGroup(7276, 7275, 7275, 7278, 7277, 7279); // quest topic related messages if npc knows
+            {
+                // location related messages if npc knows
+                if (reactionToPlayer >= 0)
+                {
+                    if (reactionToPlayer >= 10)
+                    {
+                        if (reactionToPlayer >= 30)
+                            return getRecordIdByNpcsSocialGroup(veryLikePlayerAnswerWhereIsDefault, veryLikePlayerAnswerWhereIsGuildMembers, veryLikePlayerAnswerWhereIsMerchants, veryLikePlayerAnswerWhereIsScholars, veryLikePlayerAnswerWhereIsNobility, veryLikePlayerAnswerWhereIsUnderworld);
+                        else
+                            return getRecordIdByNpcsSocialGroup(likePlayerAnswerWhereIsDefault, likePlayerAnswerWhereIsGuildMembers, likePlayerAnswerWhereIsMerchants, likePlayerAnswerWhereIsScholars, likePlayerAnswerWhereIsNobility, likePlayerAnswerWhereIsUnderworld);
+                    }
+                    else
+                    {
+                        return getRecordIdByNpcsSocialGroup(neutralToPlayerAnswerWhereIsDefault, neutralToPlayerAnswerWhereIsGuildMembers, neutralToPlayerAnswerWhereIsMerchants, neutralToPlayerAnswerWhereIsScholars, neutralToPlayerAnswerWhereIsNobility, neutralToPlayerAnswerWhereIsUnderworld);
+                    }
+                }
+                else
+                {
+                    return getRecordIdByNpcsSocialGroup(dislikePlayerAnswerWhereIsDefault, dislikePlayerAnswerWhereIsGuildMembers, dislikePlayerAnswerWhereIsMerchants, dislikePlayerAnswerWhereIsScholars, dislikePlayerAnswerWhereIsNobility, dislikePlayerAnswerWhereIsUnderworld);
+                }
+            }
         }
 
 
@@ -2270,7 +2403,7 @@ namespace DaggerfallWorkshop.Game
             return (tokens[0].text);
         }
 
-        private string getRecordIdByNpcsSocialGroup(int textRecordIdDefault, int textRecordIdGuildMembers, int textRecordIdMerchants, int textRecordIdNobility, int textRecordIdScholars, int textRecordIdUnderworld)
+        private string getRecordIdByNpcsSocialGroup(int textRecordIdDefault, int textRecordIdGuildMembers, int textRecordIdMerchants, int textRecordIdScholars, int textRecordIdNobility, int textRecordIdUnderworld)
         {
             switch (npcData.socialGroup)
             {
