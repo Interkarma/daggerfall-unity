@@ -49,6 +49,7 @@ namespace DaggerfallWorkshop.Game
         float distanceToTarget;
         float distanceToPlayer;
         int seekCount;
+        int moveCount;
 
         // References
         DaggerfallEntityBehaviour entityBehaviour;
@@ -104,10 +105,20 @@ namespace DaggerfallWorkshop.Game
 
         /// <summary>
         /// Gets consecutive number of times this mobile has searched for a new tile.
+        /// This count is reset every time mobile moves to a new tile.
         /// </summary>
         public int SeekCount
         {
             get { return seekCount; }
+        }
+
+        /// <summary>
+        /// Gets total number of times this mobile has moved to a new time.
+        /// This count is reset when mobile is recycled.
+        /// </summary>
+        public int MoveCount
+        {
+            get { return moveCount; }
         }
 
         /// <summary>
@@ -244,6 +255,7 @@ namespace DaggerfallWorkshop.Game
         public void InitMotor()
         {
             seekCount = 0;
+            moveCount = 0;
             SetFacing(MobileDirection.Random);
             currentNavPosition = new DFPosition(-1, -1);
             targetNavPosition = new DFPosition(-1, -1);
@@ -341,11 +353,12 @@ namespace DaggerfallWorkshop.Game
             // Update distance to target
             distanceToTarget = Vector3.Distance(transform.position, targetScenePosition);
 
-            // If distance below threshold find a new tile
+            // If distance below threshold start seeking a new tile
             if (distanceToTarget < 0.1f)
             {
                 currentNavPosition = targetNavPosition;
                 ChangeState(MobileStates.SeekingTile);
+                moveCount++;
             }
         }
 

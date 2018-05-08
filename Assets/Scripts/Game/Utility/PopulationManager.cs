@@ -204,6 +204,15 @@ namespace DaggerfallWorkshop.Game.Utility
                 }
 
                 populationPool[i] = poolItem;
+
+                // Do not render active mobile until it has made at least 1 full tile move
+                // This hides skating effect while unit aligning to navigation grid
+                if (poolItem.active && poolItem.npc.Billboard)
+                {
+                    MeshRenderer billboardRenderer = poolItem.npc.Billboard.GetComponent<MeshRenderer>();
+                    if (billboardRenderer)
+                        billboardRenderer.enabled = (poolItem.npc.Motor.MoveCount > 0) ? true : false;
+                }
             }
         }
 
