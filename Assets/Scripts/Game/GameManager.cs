@@ -246,6 +246,7 @@ namespace DaggerfallWorkshop.Game
         {
             get { return (climbingMotor) ? climbingMotor : climbingMotor = GetComponentFromObject<ClimbingMotor>(PlayerObject); }
             set { climbingMotor = value; }
+        }
 
         public FrictionMotor FrictionMotor
         {
