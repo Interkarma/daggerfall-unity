@@ -196,6 +196,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         public abstract BaseScreenComponent OnWindow(ModSettingsWindow window, float x, float y, ref int height);
 
         /// <summary>
+        /// Sets value to a control.
+        /// </summary>
+        public abstract void OnRefreshWindow(BaseScreenComponent control);
+
+        /// <summary>
         /// Save value from a control.
         /// </summary>
         public abstract void OnSaveWindow(BaseScreenComponent control);
@@ -317,6 +322,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             return DaggerfallUI.AddCheckbox(new Vector2(x + 95, y), Value);
         }
 
+        public override void OnRefreshWindow(BaseScreenComponent control)
+        {
+            ((Checkbox)control).IsChecked = Value;
+        }
+
         public override void OnSaveWindow(BaseScreenComponent control)
         {
             Value = ((Checkbox)control).IsChecked;
@@ -355,6 +365,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         {
             height += 6;
             return DaggerfallUI.AddSlider(new Vector2(x, y + 6), slider => slider.SetIndicator(Options.ToArray(), Value), window.TextScale);
+        }
+
+        public override void OnRefreshWindow(BaseScreenComponent control)
+        {
+            ((HorizontalSlider)control).Value = Value;
         }
 
         public override void OnSaveWindow(BaseScreenComponent control)
@@ -419,6 +434,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             return DaggerfallUI.AddSlider(new Vector2(x, y + 6), slider => slider.SetIndicator(Min, Max, Value), window.TextScale);
         }
 
+        public override void OnRefreshWindow(BaseScreenComponent control)
+        {
+            ((HorizontalSlider)control).Value = Value;
+        }
+
         public override void OnSaveWindow(BaseScreenComponent control)
         {
             Value = ((HorizontalSlider)control).Value;
@@ -462,6 +482,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             return DaggerfallUI.AddSlider(new Vector2(x, y + 6), slider => slider.SetIndicator(Min, Max, Value), window.TextScale);
         }
 
+        public override void OnRefreshWindow(BaseScreenComponent control)
+        {
+            ((HorizontalSlider)control).SetValue(Value);
+        }
+
         public override void OnSaveWindow(BaseScreenComponent control)
         {
             Value = ((HorizontalSlider)control).GetValue();
@@ -499,6 +524,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         public override BaseScreenComponent OnWindow(ModSettingsWindow window, float x, float y, ref int height)
         {
             return MultiTextBox.Make(new Rect(x + 95, y, 40, 6), mt => mt.DoLayout(Value.First, Value.Second));
+        }
+
+        public override void OnRefreshWindow(BaseScreenComponent control)
+        {
+            ((MultiTextBox)control).DoLayout(Value.First, Value.Second);
         }
 
         public override void OnSaveWindow(BaseScreenComponent control)
@@ -540,6 +570,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         public override BaseScreenComponent OnWindow(ModSettingsWindow window, float x, float y, ref int height)
         {
             return MultiTextBox.Make(new Rect(x + 95, y, 40, 6), mt => mt.DoLayout(Value.First, Value.Second));
+        }
+
+        public override void OnRefreshWindow(BaseScreenComponent control)
+        {
+            ((MultiTextBox)control).DoLayout(Value.First, Value.Second);
         }
 
         public override void OnSaveWindow(BaseScreenComponent control)
@@ -584,6 +619,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             return DaggerfallUI.AddTextBoxWithFocus(new Rect(x + 2, y + 6, window.LineWidth - 4, 6), Value);
         }
 
+        public override void OnRefreshWindow(BaseScreenComponent control)
+        {
+            ((TextBox)control).DefaultText = Value;
+        }
+
         public override void OnSaveWindow(BaseScreenComponent control)
         {
             Value = ((TextBox)control).ResultText;
@@ -613,6 +653,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         public override BaseScreenComponent OnWindow(ModSettingsWindow window, float x, float y, ref int height)
         {
             return DaggerfallUI.AddColorPicker(new Vector2(x + 95, y), Value, window.UiManager, window);
+        }
+
+        public override void OnRefreshWindow(BaseScreenComponent control)
+        {
+            ((Button)control).BackgroundColor = Value;
         }
 
         public override void OnSaveWindow(BaseScreenComponent control)

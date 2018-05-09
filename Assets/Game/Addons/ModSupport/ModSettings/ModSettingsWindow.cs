@@ -29,13 +29,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         #region UI Controls
 
-        Panel modSettingsPanel                              = new Panel();
-        List<Panel> modSettingsPages                        = new List<Panel>();
+        Panel mainPanel                                     = new Panel();
+        List<Panel> pages                                   = new List<Panel>();
         Dictionary<Key, BaseScreenComponent> uiControls     = new Dictionary<Key, BaseScreenComponent>();
 
         Paginator paginator;
         PresetPicker presetPicker;
-        Panel currentPanel;
 
         #endregion
 
@@ -63,7 +62,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         Color sectionDescriptionOutlineColor        = new Color(0.7f, 0.7f, 0.7f, 0.1f);
 
         readonly Mod mod;
-        readonly ModSettingsData settings;  
+        readonly ModSettingsData settings;
 
         int x = startX;
         int y = startY;
@@ -113,48 +112,21 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         {
             // Setup base panel
             ParentPanel.BackgroundColor = Color.clear;
-            modSettingsPanel.BackgroundColor = panelBackgroundColor;
-            modSettingsPanel.Outline.Enabled = true;
-            modSettingsPanel.HorizontalAlignment = HorizontalAlignment.Center;
-            modSettingsPanel.Position = new Vector2(0, 8);
-            modSettingsPanel.Size = pageRect.size;
-            NativePanel.Components.Add(modSettingsPanel);
+            mainPanel.BackgroundColor = panelBackgroundColor;
+            mainPanel.Outline.Enabled = true;
+            mainPanel.HorizontalAlignment = HorizontalAlignment.Center;
+            mainPanel.Position = new Vector2(0, 8);
+            mainPanel.Size = pageRect.size;
+            NativePanel.Components.Add(mainPanel);
 
-            // Initialize window
-            Init();
-        }
-
-        public override void Update()
-        {
-            base.Update();
-
-            if (modSettingsPages.Count > 1)
-            {
-                if (Input.GetKeyDown(nextPageKey))
-                    paginator.Next();
-                else if (Input.GetKeyDown(previousPageKey))
-                    paginator.Previous();
-            }
-        }
-
-        #endregion
-
-        #region Panel Setup
-
-        /// <summary>
-        /// Add controls and load settings.
-        /// </summary>
-        private void Init()
-        {
             // Title
             TextLabel titleLabel = new TextLabel();
-            titleLabel.Text = mod.Title; // + " settings";
+            titleLabel.Text = mod.Title;
             titleLabel.Font = DaggerfallUI.Instance.Font2;
             titleLabel.TextScale = 0.75f;
             titleLabel.Position = new Vector2(0, 3);
             titleLabel.HorizontalAlignment = HorizontalAlignment.Center;
-            modSettingsPanel.Components.Add(titleLabel);
-            currentPanel = modSettingsPanel;
+            mainPanel.Components.Add(titleLabel);
 
             // Reset button
             Button resetButton = GetButton("Reset", HorizontalAlignment.Left, resetButtonColor);
@@ -171,23 +143,44 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             // Presets button
             Button presetButton = new Button();
             presetButton.Size = new Vector2(35, 9);
-            presetButton.Position = new Vector2(currentPanel.Size.x - 37, 2);
+            presetButton.Position = new Vector2(mainPanel.Size.x - 37, 2);
             presetButton.Label.Text = "Presets";
             presetButton.Label.Font = DaggerfallUI.Instance.Font3;
             presetButton.Label.TextScale = 0.8f;
             presetButton.Label.TextColor = sectionTitleColor;
             presetButton.Label.ShadowColor = sectionTitleShadow;
             presetButton.OnMouseClick += PresetButton_OnMouseClick;
-            currentPanel.Components.Add(presetButton);
+            mainPanel.Components.Add(presetButton);
 
-            // Create first page and load settings
-            AddPage();
-            currentPanel.Enabled = true;
+            // Load settings
             LoadSettings();
         }
 
+        public override void Update()
+        {
+            base.Update();
+
+            if (paginator != null)
+            {
+                if (Input.GetKeyDown(nextPageKey))
+                    paginator.Next();
+                else if (Input.GetKeyDown(previousPageKey))
+                    paginator.Previous();
+            }
+        }
+
+        #endregion
+
+        #region Panel Setup
+
+        /// <summary>
+        /// Create controls for settings and load current values.
+        /// </summary>
         private void LoadSettings()
         {
+            // Init first page
+            AddPage(true);
+
             foreach (Section section in settings.Sections)
             {
                 // Title
@@ -207,6 +200,15 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                     AddAtNextPosition(height, keyLabel, control);
                 }
             }
+        }
+
+        /// <summary>
+        /// Set controls values from settings.
+        /// </summary>
+        private void RefreshControls()
+        {
+            foreach (var uiControl in uiControls)
+                uiControl.Key.OnRefreshWindow(uiControl.Value);
         }
 
         /// <summary>
@@ -248,7 +250,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 if (x != startX)
                 {
                     // Add another page
-                    AddPage();
+                    AddPage(false);
                     if (paginator == null)
                     {
                         paginator = new Paginator();
@@ -258,9 +260,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                         paginator.Position = new Vector2(startX + 3, 3.5f);
                         paginator.Size = new Vector2(35, 6);
                         paginator.OnSelected += Paginator_OnSelected;
-                        modSettingsPanel.Components.Add(paginator);
+                        mainPanel.Components.Add(paginator);
                     }
-                    paginator.Total = modSettingsPages.Count;
+                    paginator.Total = pages.Count;
 
                     // Move to left column
                     y = startY;
@@ -274,28 +276,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 }
             }
 
-            // Add components to current panel
+            // Add components to last panel
             foreach (var component in components)
-                currentPanel.Components.Add(component);
+                pages[pages.Count - 1].Components.Add(component);
 
             // Insert space after components.
             // Avoid creating empty panel before is required
             y += Mathf.Min(height + finalSpacing, columnHeight - y - 1);
-        }
-
-        /// <summary>
-        /// Remove all components and initialize the window again.
-        /// </summary>
-        private void RestartSettingsWindow()
-        {
-            modSettingsPanel.Components.Clear();
-            modSettingsPages.Clear();
-            uiControls.Clear();
-
-            x = startX;
-            y = startY;
-
-            Init();
         }
 
         #endregion
@@ -379,18 +366,21 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             };
             button.Outline.Enabled = true;
             button.Label.Text = label;
-            currentPanel.Components.Add(button);
+            mainPanel.Components.Add(button);
             return button;
         }
 
-        private void AddPage()
+        /// <summary>
+        /// Creates a new page.
+        /// </summary>
+        /// <param name="enabled">Start enabled?</param>
+        private void AddPage(bool enabled)
         {
-            Panel panel = DaggerfallUI.AddPanel(pageRect, modSettingsPanel);
+            Panel panel = DaggerfallUI.AddPanel(pageRect, mainPanel);
             panel.BackgroundColor = Color.clear;
             panel.Outline.Enabled = false;
-            panel.Enabled = false;
-            modSettingsPages.Add(panel);
-            currentPanel = panel;
+            panel.Enabled = enabled;
+            pages.Add(panel);
         }
 
         #endregion
@@ -399,8 +389,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         private void Paginator_OnSelected(int previous, int selected)
         {
-            modSettingsPages[previous].Enabled = false;
-            modSettingsPages[selected].Enabled = true;
+            pages[previous].Enabled = false;
+            pages[selected].Enabled = true;
         }
 
         /// <summary>
@@ -442,11 +432,10 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
             {
                 settings.RestoreDefaults();
-                CloseWindow();
-                RestartSettingsWindow();
+                RefreshControls();
             }
-            else
-                CloseWindow();
+
+            CloseWindow();
         }
 
         private void PresetButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -455,7 +444,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 settings.LoadPresets();
 
             presetPicker = new PresetPicker(uiManager, this, settings);
-            presetPicker.ApplyChangesCallback = () => RestartSettingsWindow();
+            presetPicker.ApplyChangesCallback = RefreshControls;
             uiManager.PushWindow(presetPicker);
         }
 
