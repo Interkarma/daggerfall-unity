@@ -31,6 +31,7 @@ namespace DaggerfallWorkshop.Game
         public Vector3 ContactPoint
         {
             get { return contactPoint; }
+            set { contactPoint = value; }
         }
         public bool PlayerControl
         {
