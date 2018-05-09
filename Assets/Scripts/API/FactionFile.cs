@@ -50,6 +50,484 @@ namespace DaggerfallConnect.Arena2
 
         #region Enums
 
+        /// <summary>
+        /// Faction IDs in Daggerfall's FACTION.TXT file.
+        /// </summary>
+        public enum FactionIDs
+        {
+            Clavicus_Vile = 1,
+            Mehrunes_Dagon = 2,
+            Molag_Bal = 3,
+            Hircine = 4,
+            Sanguine = 5,
+            Peryite = 6,
+            Malacath = 7,
+            Hermaeus_Mora = 8,
+            Sheogorath = 9,
+            Boethiah = 10,
+            Namira = 11,
+            Meridia = 12,
+            Vaernima = 13,
+            Nocturnal = 14,
+            Mephala = 15,
+            Azura = 16,
+            Oblivion = 17,
+
+            Arkay = 21,
+            Zen = 22,
+            Mara = 24,
+            Ebonarm = 25,
+            Akatosh = 26,
+            Julianos = 27,
+            Dibella = 29,
+            Stendarr = 33,
+            Kynareth = 35,
+
+            The_Temple_of_Kynareth = 36,
+            The_Kynaran_Order = 37,
+
+            The_Mages_Guild = 40,
+            The_Fighters_Guild = 41,
+            The_Thieves_Guild = 42,
+
+            The_Academics = 60,
+            The_Patricians = 61,
+            The_Travelers_League = 62,
+            The_Mercenary_Mages = 63,
+            The_Isolationists = 64,
+            The_Utility_Mages = 65,
+            The_Cabal = 66,
+            The_Order_of_the_Lamp = 67,
+            The_Archmagister = 68,
+            The_Guildmagister = 69,
+            The_Master_of_Academia = 70,
+            The_Master_of_Incunabula = 71,
+            The_Master_at_Arms = 72,
+            The_Palatinus = 73,
+            The_Master_of_the_Scry = 74,
+            The_Master_of_Initiates = 76,
+            The_Guildmaster = 77, // A second "The Master of Initiates" in FACTION.TXT is also 77
+
+            The_Order_of_Arkay = 82,
+            The_Knights_of_the_Circle = 83,
+
+            The_Resolution_of_Zen = 84,
+            The_Knights_of_Iron = 85,
+
+            The_Benevolence_of_Mara = 88,
+            The_Maran_Knights = 89,
+
+            The_Citadel_of_Ebonarm = 90,
+            The_Battlelords = 91,
+
+            The_Akatosh_Chantry = 92,
+            The_Order_of_the_Hour = 93,
+
+            The_Schools_of_Julianos = 94,
+            The_Knights_Mentor = 95,
+
+            The_House_of_Dibella = 98,
+            The_Order_of_the_Lily = 99,
+
+            The_Temple_of_Stendarr = 106,
+            The_Crusaders = 107,
+
+            The_Dark_Brotherhood = 108,
+
+            The_Blades = 129,
+
+            The_Vraseth = 150,
+            The_Haarvenu = 151,
+            The_Thrafey = 152,
+            The_Lyrezi = 153,
+            The_Montalion = 154,
+            The_Khulari = 155,
+            The_Garlythi = 156,
+            The_Anthotis = 157,
+            The_Selenu = 158,
+
+            People_of_Glenumbra_Moors = 194,
+            Court_of_Glenumbra_Moors = 195,
+            Glenumbra_Moors = 196,
+
+            People_of_Balfiera = 198,
+            Isle_of_Balfiera = 199,
+
+            Dwynnen = 200,
+            Daggerfall = 201,
+            Glenpoint = 202,
+            Betony = 203,
+            Sentinel = 204,
+            Anticlere = 205,
+            Lainlyn = 206,
+            Wayrest = 207,
+            Northmoor = 208,
+            Menevia = 209,
+            Alcaire = 210,
+            Koegria = 211,
+            Bhoraine = 212,
+            Kambria = 213,
+            Phrygia = 214,
+            Urvaius = 215,
+            Ykalon = 216,
+            Daenia = 217,
+            Shalgora = 218,
+            Abibon_Gora = 219,
+            Kairou = 220,
+            Pothago = 221,
+            Myrkwasa = 222,
+            Ayasofya = 223,
+            Tigonus = 224,
+            Kozanset = 225,
+            Satakalaam = 226,
+            Totambu = 227,
+            Mournoth = 228,
+            Ephesus = 229,
+            Santaki = 230,
+            Antiphyllos = 231,
+            Bergama = 232,
+            Gavaudon = 233,
+            Tulune = 234,
+            Ilessan_Hills = 235,
+            Cybiades = 236,
+
+            Temple_Missionaries = 240,
+            Teachers_of_Arkay = 241,
+
+            Random_Noble = 242,
+
+            Teahers_of_Zen = 243,
+
+            Court_of_Balfiera = 244,
+
+            Teachers_of_Mara = 245,
+
+            Court_of_Lainlyn = 246,
+
+            Teachers_of_Akatosh = 247,
+            Teachers_of_Julianos = 249,
+            Teachers_of_Dibella = 250,
+            Teachers_of_Stendarr = 252,
+            Teachers_of_Kynareth = 254,
+
+            The_Oracle = 301,
+            The_Acolyte = 302,
+
+            Nulfaga = 303,
+            Skakmat = 304,
+
+            King_of_Worms = 305,
+            The_Necromancers = 306,
+
+            The_Septim_Empire = 350,
+            The_Great_Knight = 351,
+            Lady_Brisienna = 352,
+
+            The_Underking = 353,
+            Agents_of_The_Underking = 354,
+
+            Lord_Harth = 355,
+
+            The_Night_Mother = 356,
+
+            Gortwog = 357,
+            Orsinium = 358,
+
+            Lord_Plessington = 359,
+            Lord_Kilbar = 360,
+
+            Chulmore_Quill = 361,
+            The_Quill_Circus = 362,
+
+            Medora = 363,
+
+            King_Gothryd = 364,
+            Queen_Aubki = 365,
+            Mynisera = 366,
+            Lord_Bridwell = 367,
+            The_Knights_of_the_Dragon = 368,
+
+            Popudax = 369,
+            Lord_Coulder = 370,
+            Mobar = 371,
+            The_Royal_Guard = 372,
+
+            The_Crow = 373,
+            Thyr_Topfield = 374,
+            Lord_Bertram_Spode = 375,
+            Baltham_Greyman = 376,
+            Lady_Bridwell = 377,
+            Sylch_Greenwood = 378,
+            Baron_Shrike = 379,
+
+            Queen_Akorithi = 380,
+            Prince_Greklith = 381,
+            Prince_Lhotun = 382,
+            Lord_Vhosek = 383,
+            The_Royal_Guards = 384,
+            Charvek_si = 385,
+            Lord_Kavar = 386,
+            Lord_Provlith = 387,
+            Thaik = 388,
+            Whitka = 389,
+
+            King_Eadwyre = 390,
+            Queen_Barenziah = 391,
+            Princess_Elysana = 392,
+            Prince_Helseth = 393,
+            Princess_Morgiah = 394,
+            Lord_Castellian = 395,
+            Karethys = 396,
+            Lord_Darkworth = 397,
+            Lord_Woodborne = 398,
+
+            The_Squid = 399,
+            Lady_Doryanna_Flyte = 400,
+            Lord_Auberon_Flyte = 401,
+            Lord_Quistley = 402,
+            Farrington = 403,
+            Lord_Perwright = 404,
+            Baroness_Dhemka = 405,
+            Lord_Khane = 406,
+            Britsa = 407,
+
+            The_Order_of_the_Candle = 408,
+            The_Knights_of_the_Rose = 409,
+            The_Knights_of_the_Flame = 410,
+            The_Host_of_the_Horn = 411,
+            The_Host_of_the_True_Horn = 412,
+            The_Knights_of_the_Owl = 413,
+            The_Order_of_the_Raven = 414,
+            The_Knights_of_the_Wheel = 415,
+            The_Order_of_the_Scarab = 416,
+            The_Knights_of_the_Hawk = 417,
+            The_Order_of_the_Cup = 418,
+
+            The_Glenmoril_Witches = 419,
+            The_Dust_Witches = 420,
+            The_Witches_of_Devilrock = 421,
+            The_Tamarilyn_Witches = 422,
+            The_Sisters_of_the_Bluff = 423,
+            The_Daughters_of_Wroth = 424,
+            The_Skeffington_Witches = 425,
+            The_Witches_of_the_Marsh = 426,
+            The_Mountain_Witches = 427,
+            The_Daggerfall_Witches = 428,
+            The_Beldama = 429,
+            The_Sisters_of_Kykos = 430,
+            The_Tide_Witches = 431,
+            The_Witches_of_Alcaire = 432,
+
+            Generic_Temple = 450,
+
+            Apothecaries_of_Arkay = 453,
+            Mixers_of_Arkay = 454,
+            Binders_of_Arkay = 455,
+            Summoners_of_Arkay = 456,
+
+            Apothecaries_of_Zen = 462,
+            Mixers_of_Zen = 463,
+            Summonists_of_Zen = 464,
+
+            Apothecaries_of_Mara = 468,
+            Mixers_of_Mara = 469,
+            Summoners_of_Mara = 470,
+
+            Apothecaries_of_Akatosh = 473,
+            Mixers_of_Akatosh = 474,
+            Summoners_of_Akatosh = 475,
+
+            Crafters_of_Julianos = 480,
+            Smiths_of_Julianos = 481,
+            Summoners_of_Julianos = 482,
+
+            Apothecaries_of_Dibella = 485,
+            Mixers_of_Dibella = 487,
+            Summoners_of_Dibella = 488,
+
+            Apothecaries_of_Stendarr = 490,
+            Mixers_of_Stendarr = 491,
+            Summoners_of_Stendarr = 492,
+
+            Enchanters_of_Kynareth = 496,
+            Spellsmiths_of_Kynareth = 497,
+            Summoners_of_Kynareth = 498,
+
+            Court_of_Wayrest = 499,
+
+            Cyndassa = 500,
+            Lady_Northbridge = 501,
+
+            Wrothgaria = 502,
+            Court_of_Wrothgaria = 503,
+            People_of_Wrothgaria = 504,
+
+            Dragontail = 505,
+            Court_of_Dragontail = 506,
+            People_of_Dragontail = 507,
+
+            Alikra = 508,
+            Court_of_Alikra = 509,
+
+            The_Merchants = 510,
+            The_Bards = 511,
+            The_Prostitutes = 512,
+            The_Fey = 513,
+            Children = 514,
+            Dancers = 515,
+
+            Court_of_Dwynnen = 516,
+            People_of_Dwynnen = 517,
+
+            People_of_Daggerfall = 518,
+
+            Court_of_Betony = 519,
+            People_of_Betony = 520,
+
+            Court_of_Glenpoint = 521,
+            People_of_Glenpoint = 522,
+
+            People_of_Sentinel = 523,
+            People_of_Anticlere = 524,
+            People_of_Lainlyn = 525,
+            People_of_Wayrest = 526,
+
+            Court_of_Northmoor = 527,
+            People_of_Northmoor = 528,
+
+            Court_of_Menevia = 529,
+            People_of_Menevia = 530,
+
+            Court_of_Alcaire = 531,
+            People_of_Alcaire = 532,
+
+            Court_of_Koegria = 533,
+            People_of_Koegria = 534,
+
+            Court_of_Bhoraine = 535,
+            People_of_Bhoraine = 536,
+
+            Court_of_Kambria = 537,
+            People_of_Kambria = 538,
+
+            Court_of_Phrygia = 539,
+            People_of_Phrygia = 540,
+
+            Court_of_Urvaius = 541,
+            People_of_Urvaius = 542,
+
+            Court_of_Ykalon = 543,
+            People_of_Ykalon = 544,
+
+            Court_of_Daenia = 545,
+            People_of_Daenia = 546,
+
+            Court_of_Shalgora = 547, // Name is duplicate "Court of Koegria" in FACTION.TXT
+            People_of_Shalgora = 548, // Name is duplicate "People of Koegria" in FACTION.TXT
+
+            Court_of_Abibon_Gora = 549,
+            People_of_Abibon_Gora = 550,
+
+            Court_of_Kairou = 551,
+            People_of_Kairou = 552,
+
+            Court_of_Pothago = 553,
+            People_of_Pothago = 554,
+
+            Court_of_Myrkwasa = 555,
+            People_of_Myrkwasa = 556,
+
+            Court_of_Ayasofya = 557,
+            People_of_Ayasofya = 558,
+
+            Court_of_Tigonus = 559,
+            People_of_Tigonus = 560,
+
+            Court_of_Kozanset = 561,
+            People_of_Kozanset = 562,
+
+            Court_of_Satakalaam = 563,
+            People_of_Satakalaam = 564,
+
+            Court_of_Totambu = 565,
+            People_of_Totambu = 566,
+
+            Court_of_Mournoth = 567,
+            People_of_Mournoth = 568,
+
+            Court_of_Ephesus = 569,
+            People_of_Ephesus = 570,
+
+            Court_of_Santaki = 571,
+            People_of_Santaki = 572,
+
+            Court_of_Antiphyllos = 573,
+            People_of_Antiphyllos = 574,
+
+            Court_of_Bergama = 575,
+            People_of_Bergama = 576,
+
+            Court_of_Gavaudon = 577,
+            People_of_Gavaudon = 578,
+
+            Court_of_Tulune = 579,
+            People_of_Tulune = 580,
+
+            Court_of_Ilessen_Hills = 581,
+            People_of_Ilessen_Hills = 582,
+
+            Court_of_Cybiades = 583,
+            People_of_Cybiades = 584,
+
+            People_of_Alikra = 590,
+
+            Dakfron = 591,
+            Court_of_Dakfron = 592,
+            People_of_Dakfron = 593,
+
+            Court_of_Daggerfall = 595,
+            Court_of_Sentinel = 596,
+            Court_of_Anticlere = 597,
+
+            Court_of_Orsinium = 598,
+            People_of_Orsinium = 599,
+
+            The_Odylic_Mages = 801,
+            The_Crafters = 802,
+
+            The_Shadow_Trainers = 803,
+            The_Shadow_Schemers = 804,
+            The_Shadow_Appraisers = 805,
+            The_Shadow_Spies = 806,
+
+            Dark_Slayers = 807,
+
+            Temple_Treasurers = 810,
+            Temple_Blessers = 811,
+            Temple_Healers = 813,
+
+            Dark_Trainers = 839,
+            Dark_Mixers = 840,
+            Venom_Masters = 841,
+            Dark_Plotters = 842,
+            Dark_Binders = 843,
+
+            Generic_Knightly_Order = 844,
+            Smiths = 845,
+            Questers = 846,
+            Healers = 847,
+            Seneschal = 848,
+
+            Fighter_Trainers = 849,
+            Fighter_Equippers = 850,
+            Fighter_Questers = 851,
+
+            Random_Ruler = 852,
+            Random_Knight = 853,
+
+            Secret_of_Oblivion = 977,
+        }
+
         public enum FactionTypes
         {
             None = -1,

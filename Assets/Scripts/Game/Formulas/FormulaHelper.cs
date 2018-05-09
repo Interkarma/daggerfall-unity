@@ -1103,7 +1103,7 @@ namespace DaggerfallWorkshop.Game.Formulas
         {
             PlayerEntity player = GameManager.Instance.PlayerEntity;
             FactionFile.FactionData merchantsFaction;
-            if (!player.FactionData.GetFactionData(510, out merchantsFaction))
+            if (!player.FactionData.GetFactionData((int)FactionFile.FactionIDs.The_Merchants, out merchantsFaction))
                 return;
 
             for (int i = 0; i < regionData.Length; ++i)

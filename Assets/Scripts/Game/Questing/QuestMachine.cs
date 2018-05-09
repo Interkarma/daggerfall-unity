@@ -979,8 +979,8 @@ namespace DaggerfallWorkshop.Game.Questing
             else if (stage == 2)
             {
                 GameManager.Instance.PlayerEntity.GlobalVars.SetGlobalVar(31, true);        // MetLadyBrisienna globalvar
-                GameManager.Instance.PlayerEntity.FactionData.ChangeReputation(365, 20);    // Aubk-i +20
-                GameManager.Instance.PlayerEntity.FactionData.ChangeReputation(394, 20);    // Morgiah +20
+                GameManager.Instance.PlayerEntity.FactionData.ChangeReputation((int)FactionFile.FactionIDs.Queen_Aubki, 20);
+                GameManager.Instance.PlayerEntity.FactionData.ChangeReputation((int)FactionFile.FactionIDs.Princess_Morgiah, 20);
 
                 GameManager.Instance.PlayerEntity.Level = 3;
                 InstantiateQuest("S0000999");
@@ -988,14 +988,14 @@ namespace DaggerfallWorkshop.Game.Questing
             }
             else if (stage == 3)
             {
-                GameManager.Instance.PlayerEntity.FactionData.ChangeReputation(391, 20);    // Queen Barenziah +20
+                GameManager.Instance.PlayerEntity.FactionData.ChangeReputation((int)FactionFile.FactionIDs.Queen_Barenziah, 20);
                 GameManager.Instance.PlayerEntity.Level = 9;
                 InstantiateQuest("__MQSTAGE03");
                 InstantiateQuest("S0000977");
             }
             else if (stage == 4)
             {
-                GameManager.Instance.PlayerEntity.FactionData.ChangeReputation(380, 20);    // Queen Akorithi +20
+                GameManager.Instance.PlayerEntity.FactionData.ChangeReputation((int)FactionFile.FactionIDs.Queen_Akorithi, 20);
                 GameManager.Instance.PlayerEntity.Level = 8;
                 InstantiateQuest("__MQSTAGE04");
                 InstantiateQuest("S0000977");

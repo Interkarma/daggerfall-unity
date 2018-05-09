@@ -375,7 +375,7 @@ namespace DaggerfallWorkshop.Game
                         currentPlayerMusicEnvironment = PlayerMusicEnvironment.Tavern;
                         break;
                     case DFLocation.BuildingTypes.GuildHall:
-                        if (playerEnterExit.FactionID == 40)
+                        if (playerEnterExit.FactionID == (int)FactionFile.FactionIDs.The_Mages_Guild)
                         {
                             currentPlayerMusicEnvironment = PlayerMusicEnvironment.MagesGuild;
                         }
