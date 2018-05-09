@@ -51,19 +51,8 @@ namespace DaggerfallWorkshop.Game
         // Units that player can fall before a falling damage function is run. To disable, type "infinity" in the inspector
         public float fallingDamageThreshold = 10.0f;
 
-        // If the player ends up on a slope which is at least the Slope Limit as set on the character controller, then he will slide down
-        public bool slideWhenOverSlopeLimit = false;
-
-        // If checked and the player is on an object tagged "Slide", he will slide down it regardless of the slope limit
-        public bool slideOnTaggedObjects = false;
-
-        public float slideSpeed = 12.0f;
-
         // If checked, then the player can change direction while in the air
         public bool airControl = false;
-
-        // Small amounts of this results in bumping when walking down slopes, but large amounts results in falling too fast
-        public float antiBumpFactor = .75f;
 
         // Player must be grounded for at least this many physics frames before being able to jump again; set to 0 to allow bunny hopping
         public int antiBunnyHopFactor = 1;
@@ -87,13 +76,8 @@ namespace DaggerfallWorkshop.Game
         private bool grounded = false;
         private Transform myTransform;
         private float speed;
-        private RaycastHit hit;
         private float fallStartLevel;
         private bool falling;
-        private float slideLimit;
-        private float rayDistance;
-        private Vector3 contactPoint;
-        private bool playerControl = false;
         private int jumpTimer;
         private bool jumping = false;
         private bool standingStill = false;
@@ -107,6 +91,7 @@ namespace DaggerfallWorkshop.Game
         private Vector2 lastHorizontalPosition = Vector2.zero;
         private PlayerHeightChanger heightChanger;
         private PlayerSpeedChanger speedChanger;
+        private FrictionMotor frictionMotor;
 
         private CollisionFlags collisionFlags = 0;
 
@@ -118,6 +103,11 @@ namespace DaggerfallWorkshop.Game
         public bool IsGrounded
         {
             get { return grounded; }
+        }
+
+        public float Speed
+        {
+            get { return speed; }
         }
 
         public bool IsRunning
@@ -174,11 +164,6 @@ namespace DaggerfallWorkshop.Game
             get { return activePlatform; }
         }
 
-        public Vector3 ContactPoint
-        {
-            get { return contactPoint; }
-        }
-
         /// <summary>
         /// Cancels all movement impulses next frame.
         /// Used to scrub movement impulse when player dies, opens inventory, or loads game.
@@ -215,12 +200,10 @@ namespace DaggerfallWorkshop.Game
             speedChanger = GetComponent<PlayerSpeedChanger>();
             myTransform = transform;
             speed = speedChanger.GetBaseSpeed();
-            rayDistance = controller.height * .5f + controller.radius;
-            slideLimit = controller.slopeLimit - .1f;
             jumpTimer = antiBunnyHopFactor;
-            //mainCamera = GameManager.Instance.MainCamera;
             heightChanger = GetComponent<PlayerHeightChanger>();
             levitateMotor = GetComponent<LevitateMotor>();
+            frictionMotor = GetComponent<FrictionMotor>();
 
             // Allow for resetting specific player state on new game or when game starts loading
             SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
@@ -315,8 +298,6 @@ namespace DaggerfallWorkshop.Game
             if (levitateMotor && (levitateMotor.IsLevitating || levitateMotor.IsSwimming) || isClimbing)
                 return;
 
-            //float inputX = Input.GetAxis("Horizontal");
-            //float inputY = Input.GetAxis("Vertical");
             float inputX = InputManager.Instance.Horizontal;
             float inputY = InputManager.Instance.Vertical;
             // If both horizontal and vertical are used simultaneously, limit speed (if allowed), so the total doesn't exceed normal move speed
@@ -341,22 +322,6 @@ namespace DaggerfallWorkshop.Game
 
                 if (jumping)
                     jumping = false;
-                bool sliding = false;
-                // See if surface immediately below should be slid down. We use this normally rather than a ControllerColliderHit point,
-                // because that interferes with step climbing amongst other annoyances
-                if (Physics.Raycast(myTransform.position, -Vector3.up, out hit, rayDistance))
-                {
-                    if (Vector3.Angle(hit.normal, Vector3.up) > slideLimit)
-                        sliding = true;
-                }
-                // However, just raycasting straight down from the center can fail when on steep slopes
-                // So if the above raycast didn't catch anything, raycast down from the stored ControllerColliderHit point instead
-                else
-                {
-                    Physics.Raycast(contactPoint + Vector3.up, -Vector3.up, out hit);
-                    if (Vector3.Angle(hit.normal, Vector3.up) > slideLimit)
-                        sliding = true;
-                }
 
                 // If we were falling, and we fell a vertical distance greater than the threshold, run a falling damage routine
                 if (falling)
@@ -398,22 +363,8 @@ namespace DaggerfallWorkshop.Game
                     speed -= (1 / PlayerSpeedChanger.classicToUnitySpeedUnitRatio);
                 }
 
-                // If sliding (and it's allowed), or if we're on an object tagged "Slide", get a vector pointing down the slope we're on
-                if ((sliding && slideWhenOverSlopeLimit) || (slideOnTaggedObjects && hit.collider.tag == "Slide"))
-                {
-                    Vector3 hitNormal = hit.normal;
-                    moveDirection = new Vector3(hitNormal.x, -hitNormal.y, hitNormal.z);
-                    Vector3.OrthoNormalize(ref hitNormal, ref moveDirection);
-                    moveDirection *= slideSpeed;
-                    playerControl = false;
-                }
-                // Otherwise recalculate moveDirection directly from axes, adding a bit of -y to avoid bumping down inclines
-                else
-                {
-                    moveDirection = new Vector3(inputX * inputModifyFactor, -antiBumpFactor, inputY * inputModifyFactor);
-                    moveDirection = myTransform.TransformDirection(moveDirection) * speed;
-                    playerControl = true;
-                }
+                // checks if sliding and applies movement to moveDirection if true
+                frictionMotor.MoveIfSliding(ref moveDirection);
 
                 try
                 {
@@ -449,7 +400,7 @@ namespace DaggerfallWorkshop.Game
                 }
 
                 // If air control is allowed, check movement but don't touch the y component
-                if (airControl && playerControl)
+                if (airControl && frictionMotor.PlayerControl)
                 {
                     moveDirection.x = inputX * speed * inputModifyFactor;
                     moveDirection.z = inputY * speed * inputModifyFactor;
@@ -655,9 +606,9 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Store point that we're in contact with for use in FixedUpdate if needed
-        void OnControllerColliderHit(ControllerColliderHit hit)
+        /*void OnControllerColliderHit(ControllerColliderHit hit)
         {
-            contactPoint = hit.point;
+            frictionMotor.ContactPoint = hit.point;
 
             // Don't consider enemies as moving platforms
             // Otherwise, if we're positioned just right on top of one, the player camera gets unstable
@@ -668,7 +619,7 @@ namespace DaggerfallWorkshop.Game
             // Get active platform
             if (hit.moveDirection.y < -0.9 && hit.normal.y > 0.5)
                 activePlatform = hit.collider.transform;
-        }
+        }*/
 
         // If falling damage occured, this is the place to do something about it. You can make the player
         // have hitpoints and remove some of them based on the distance fallen, add sound effects, etc.
