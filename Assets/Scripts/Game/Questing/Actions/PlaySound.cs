@@ -106,6 +106,13 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         {
             var gameSeconds = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToSeconds();
 
+            // Attempt to reload clip if not available
+            // This can happen if player loads a game after action created
+            if (clip == null && soundIndex != 0)
+            {
+                clip = DaggerfallUnity.Instance.SoundReader.GetAudioClip(soundIndex);
+            }
+
             if (lastTimePlayed + interval <= gameSeconds)
             {
                 var source = QuestMachine.Instance.GetComponent<AudioSource>();
