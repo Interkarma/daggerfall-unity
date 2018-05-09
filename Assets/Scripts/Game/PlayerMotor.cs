@@ -51,19 +51,8 @@ namespace DaggerfallWorkshop.Game
         // Units that player can fall before a falling damage function is run. To disable, type "infinity" in the inspector
         public float fallingDamageThreshold = 10.0f;
 
-        // If the player ends up on a slope which is at least the Slope Limit as set on the character controller, then he will slide down
-        public bool slideWhenOverSlopeLimit = false;
-
-        // If checked and the player is on an object tagged "Slide", he will slide down it regardless of the slope limit
-        public bool slideOnTaggedObjects = false;
-
-        public float slideSpeed = 12.0f;
-
         // If checked, then the player can change direction while in the air
         public bool airControl = false;
-
-        // Small amounts of this results in bumping when walking down slopes, but large amounts results in falling too fast
-        public float antiBumpFactor = .75f;
 
         // Player must be grounded for at least this many physics frames before being able to jump again; set to 0 to allow bunny hopping
         public int antiBunnyHopFactor = 1;
@@ -87,26 +76,16 @@ namespace DaggerfallWorkshop.Game
         private bool grounded = false;
         private Transform myTransform;
         private float speed;
-        private RaycastHit hit;
         private float fallStartLevel;
         private bool falling;
-        private float slideLimit;
-        private float rayDistance;
-        private Vector3 contactPoint;
-        private bool playerControl = false;
         private int jumpTimer;
         private bool jumping = false;
         private bool standingStill = false;
 
-        private bool failedClimbingCheck = false;
-        private bool isClimbing = false;
-        private float climbingStartTimer = 0;
-        private float climbingContinueTimer = 0;
-        private uint timeOfLastClimbingCheck = 0;
-        private bool showClimbingModeMessage = true;
-        private Vector2 lastHorizontalPosition = Vector2.zero;
+        private ClimbingMotor climbingMotor;
         private PlayerHeightChanger heightChanger;
         private PlayerSpeedChanger speedChanger;
+        private FrictionMotor frictionMotor;
 
         private CollisionFlags collisionFlags = 0;
 
@@ -118,6 +97,11 @@ namespace DaggerfallWorkshop.Game
         public bool IsGrounded
         {
             get { return grounded; }
+        }
+
+        public float Speed
+        {
+            get { return speed; }
         }
 
         public bool IsRunning
@@ -147,12 +131,6 @@ namespace DaggerfallWorkshop.Game
             set { isRiding = value; }
         }
 
-        public bool IsClimbing
-        {
-            get { return isClimbing; }
-            set { isClimbing = value; }
-        }
-
         public bool IsMovingLessThanHalfSpeed
         {
             get
@@ -172,11 +150,6 @@ namespace DaggerfallWorkshop.Game
         public Transform ActivePlatform
         {
             get { return activePlatform; }
-        }
-
-        public Vector3 ContactPoint
-        {
-            get { return contactPoint; }
         }
 
         /// <summary>
@@ -215,12 +188,11 @@ namespace DaggerfallWorkshop.Game
             speedChanger = GetComponent<PlayerSpeedChanger>();
             myTransform = transform;
             speed = speedChanger.GetBaseSpeed();
-            rayDistance = controller.height * .5f + controller.radius;
-            slideLimit = controller.slopeLimit - .1f;
             jumpTimer = antiBunnyHopFactor;
-            //mainCamera = GameManager.Instance.MainCamera;
+            climbingMotor = GetComponent<ClimbingMotor>();
             heightChanger = GetComponent<PlayerHeightChanger>();
             levitateMotor = GetComponent<LevitateMotor>();
+            frictionMotor = GetComponent<FrictionMotor>();
 
             // Allow for resetting specific player state on new game or when game starts loading
             SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
@@ -251,72 +223,18 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
-            if (isClimbing)
-                collisionFlags = CollisionFlags.Sides;
-            // Get collision flags for swimming as well, so it's possible to climb out of water TODO: Collision flags from swimming aren't working
-            else if (levitateMotor.IsSwimming)
-                collisionFlags = levitateMotor.CollisionFlags;
+            // Handle climbing
+            climbingMotor.ClimbingCheck(ref collisionFlags);
 
-            // Climbing
-            uint gameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
-            if (!InputManager.Instance.HasAction(InputManager.Actions.MoveForwards)
-                || (collisionFlags & CollisionFlags.Sides) == 0
-                || failedClimbingCheck
-                || levitateMotor.IsLevitating
-                || isRiding
-                || Vector2.Distance(lastHorizontalPosition, new Vector2(controller.transform.position.x, controller.transform.position.z)) >= (0.003f)) // Approximation based on observing classic in-game
-            {
-                isClimbing = false;
-                showClimbingModeMessage = true;
-                climbingStartTimer = 0;
-                timeOfLastClimbingCheck = gameMinutes;
-            }
-            else
-            {
-                if (climbingStartTimer <= (systemTimerUpdatesPerSecond * 14))
-                    climbingStartTimer += Time.deltaTime;
-                else
-                {
-                    if (!isClimbing)
-                    {
-                        if (showClimbingModeMessage)
-                            DaggerfallUI.AddHUDText(UserInterfaceWindows.HardStrings.climbingMode);
-                        // Disable further showing of climbing mode message until current climb attempt is stopped
-                        // to keep it from filling message log
-                        showClimbingModeMessage = false;
-                        isClimbing = true;
-                    }
-
-                    // Initial check to start climbing
-                    if ((gameMinutes - timeOfLastClimbingCheck) > 18)
-                    {
-                        Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
-                        player.TallySkill(DFCareer.Skills.Climbing, 1);
-                        timeOfLastClimbingCheck = gameMinutes;
-                        if (UnityEngine.Random.Range(1, 101) > 95)
-                        {
-                            if (UnityEngine.Random.Range(1, 101) > player.Skills.GetLiveSkillValue(DFCareer.Skills.Climbing))
-                            {
-                                isClimbing = false;
-                                failedClimbingCheck = true;
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (isClimbing)
+            if (climbingMotor.IsClimbing)
             {
                 falling = false;
-                ClimbMovement();
             }
 
             // Do nothing if player levitating/swimming or climbing - replacement motor will take over movement for levitating/swimming
-            if (levitateMotor && (levitateMotor.IsLevitating || levitateMotor.IsSwimming) || isClimbing)
+            if (levitateMotor && (levitateMotor.IsLevitating || levitateMotor.IsSwimming) || climbingMotor.IsClimbing)
                 return;
 
-            //float inputX = Input.GetAxis("Horizontal");
-            //float inputY = Input.GetAxis("Vertical");
             float inputX = InputManager.Instance.Horizontal;
             float inputY = InputManager.Instance.Vertical;
             // If both horizontal and vertical are used simultaneously, limit speed (if allowed), so the total doesn't exceed normal move speed
@@ -341,22 +259,6 @@ namespace DaggerfallWorkshop.Game
 
                 if (jumping)
                     jumping = false;
-                bool sliding = false;
-                // See if surface immediately below should be slid down. We use this normally rather than a ControllerColliderHit point,
-                // because that interferes with step climbing amongst other annoyances
-                if (Physics.Raycast(myTransform.position, -Vector3.up, out hit, rayDistance))
-                {
-                    if (Vector3.Angle(hit.normal, Vector3.up) > slideLimit)
-                        sliding = true;
-                }
-                // However, just raycasting straight down from the center can fail when on steep slopes
-                // So if the above raycast didn't catch anything, raycast down from the stored ControllerColliderHit point instead
-                else
-                {
-                    Physics.Raycast(contactPoint + Vector3.up, -Vector3.up, out hit);
-                    if (Vector3.Angle(hit.normal, Vector3.up) > slideLimit)
-                        sliding = true;
-                }
 
                 // If we were falling, and we fell a vertical distance greater than the threshold, run a falling damage routine
                 if (falling)
@@ -398,22 +300,8 @@ namespace DaggerfallWorkshop.Game
                     speed -= (1 / PlayerSpeedChanger.classicToUnitySpeedUnitRatio);
                 }
 
-                // If sliding (and it's allowed), or if we're on an object tagged "Slide", get a vector pointing down the slope we're on
-                if ((sliding && slideWhenOverSlopeLimit) || (slideOnTaggedObjects && hit.collider.tag == "Slide"))
-                {
-                    Vector3 hitNormal = hit.normal;
-                    moveDirection = new Vector3(hitNormal.x, -hitNormal.y, hitNormal.z);
-                    Vector3.OrthoNormalize(ref hitNormal, ref moveDirection);
-                    moveDirection *= slideSpeed;
-                    playerControl = false;
-                }
-                // Otherwise recalculate moveDirection directly from axes, adding a bit of -y to avoid bumping down inclines
-                else
-                {
-                    moveDirection = new Vector3(inputX * inputModifyFactor, -antiBumpFactor, inputY * inputModifyFactor);
-                    moveDirection = myTransform.TransformDirection(moveDirection) * speed;
-                    playerControl = true;
-                }
+                // checks if sliding and applies movement to moveDirection if true
+                frictionMotor.MoveIfSliding(ref moveDirection);
 
                 try
                 {
@@ -449,7 +337,7 @@ namespace DaggerfallWorkshop.Game
                 }
 
                 // If air control is allowed, check movement but don't touch the y component
-                if (airControl && playerControl)
+                if (airControl && frictionMotor.PlayerControl)
                 {
                     moveDirection.x = inputX * speed * inputModifyFactor;
                     moveDirection.z = inputY * speed * inputModifyFactor;
@@ -495,9 +383,6 @@ namespace DaggerfallWorkshop.Game
             // Move the controller, and set grounded true or false depending on whether we're standing on something
             collisionFlags = controller.Move(moveDirection * Time.deltaTime);
 
-            // Get pre-movement position for climbing check
-            lastHorizontalPosition = new Vector2(controller.transform.position.x, controller.transform.position.z);
-
             grounded = (collisionFlags & CollisionFlags.Below) != 0;
 
             // Moving platforms support
@@ -509,29 +394,6 @@ namespace DaggerfallWorkshop.Game
                 // If you want to support moving platform rotation as well:
                 activeGlobalPlatformRotation = transform.rotation;
                 activeLocalPlatformRotation = Quaternion.Inverse(activePlatform.rotation) * transform.rotation;
-            }
-        }
-
-        private void ClimbMovement()
-        {
-            controller.Move(Vector3.up * Time.deltaTime);
-            if (climbingContinueTimer <= (systemTimerUpdatesPerSecond * 15))
-                climbingContinueTimer += Time.deltaTime;
-            else
-            {
-                climbingContinueTimer = 0;
-                Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
-                player.TallySkill(DFCareer.Skills.Climbing, 1);
-                int skill = player.Skills.GetLiveSkillValue(DFCareer.Skills.Climbing);
-                if (player.Race == Entity.Races.Khajiit)
-                    skill += 30;
-                Mathf.Clamp(skill, 5, 95);
-
-                if ((UnityEngine.Random.Range(1, 101) > 90)
-                    || (UnityEngine.Random.Range(1, 101) > skill))
-                {
-                    isClimbing = false;
-                }
             }
         }
 
@@ -655,9 +517,9 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Store point that we're in contact with for use in FixedUpdate if needed
-        void OnControllerColliderHit(ControllerColliderHit hit)
+        /*void OnControllerColliderHit(ControllerColliderHit hit)
         {
-            contactPoint = hit.point;
+            frictionMotor.ContactPoint = hit.point;
 
             // Don't consider enemies as moving platforms
             // Otherwise, if we're positioned just right on top of one, the player camera gets unstable
@@ -668,7 +530,7 @@ namespace DaggerfallWorkshop.Game
             // Get active platform
             if (hit.moveDirection.y < -0.9 && hit.normal.y > 0.5)
                 activePlatform = hit.collider.transform;
-        }
+        }*/
 
         // If falling damage occured, this is the place to do something about it. You can make the player
         // have hitpoints and remove some of them based on the distance fallen, add sound effects, etc.
