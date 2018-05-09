@@ -424,6 +424,18 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
+        /// Gets the city navigation component for current player position.
+        /// </summary>
+        /// <returns>CityNavigation or null if player not inside a location map pixel.</returns>
+        public CityNavigation GetCurrentCityNavigation()
+        {
+            if (!currentPlayerLocationObject)
+                return null;
+
+            return currentPlayerLocationObject.GetComponent<CityNavigation>();
+        }
+
+        /// <summary>
         /// Gets terrain transform at mapPixelX, mapPixelY.
         /// </summary>
         /// <returns>DaggerfallTerrain Transform if found, or null if not currently in world.</returns>

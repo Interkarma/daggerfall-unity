@@ -15,6 +15,7 @@ using System.Text.RegularExpressions;
 using System.Collections;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect.Arena2;
 using FullSerializer;
@@ -35,6 +36,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
         int spawnCount;                     // How many foes to spawn
         MobileTypes foeType;                // MobileType to spawn
+        Genders humanoidGender;             // Foe gender for humanoid foes
         bool injuredTrigger;                // True once enemy injured, rearmed each wave
         bool restrained;                    // True if enemy restrained by quest
         int killCount;                      // How many of this enemy spawn player has killed, does not rearm
@@ -48,6 +50,11 @@ namespace DaggerfallWorkshop.Game.Questing
         public MobileTypes FoeType
         {
             get { return foeType; }
+        }
+
+        public override Genders Gender
+        {
+            get { return ((int)foeType < 128) ? Genders.Male : humanoidGender; }
         }
 
         public int SpawnCount
@@ -126,6 +133,10 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public override bool ExpandMacro(MacroTypes macro, out string textOut)
         {
+            // Store this foe in quest as last Foe encountered
+            // This will be used for subsequent pronoun macros, etc.
+            ParentQuest.LastResourceReferenced = this;
+
             textOut = string.Empty;
             bool result = true;
             switch (macro)
@@ -213,9 +224,13 @@ namespace DaggerfallWorkshop.Game.Questing
                 return;
             }
 
-            // TODO: Create a random humanoid foe name
-            // Will get to this testing quests that assign player to defeat and return a class-based NPC Foe
-            // Have more problems to solve before getting to name
+            // Randomly assign a gender for humanoid foes
+            humanoidGender = (UnityEngine.Random.Range(0.0f, 1.0f) < 0.5f) ? Genders.Male : Genders.Female;
+
+            // Create a random display name for humanoid foes
+            DFRandom.srand(DateTime.Now.Millisecond);
+            NameHelper.BankTypes nameBank = GameManager.Instance.PlayerGPS.GetNameBankOfCurrentRegion();
+            displayName = DaggerfallUnity.Instance.NameHelper.FullName(nameBank, humanoidGender);
         }
 
         #endregion
@@ -227,6 +242,7 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             public int spawnCount;
             public MobileTypes foeType;
+            public Genders humanoidGender;
             public bool injuredTrigger;
             public bool restrained;
             public int killCount;
@@ -239,6 +255,7 @@ namespace DaggerfallWorkshop.Game.Questing
             SaveData_v1 data = new SaveData_v1();
             data.spawnCount = spawnCount;
             data.foeType = foeType;
+            data.humanoidGender = humanoidGender;
             data.injuredTrigger = injuredTrigger;
             data.restrained = restrained;
             data.killCount = killCount;
@@ -256,6 +273,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
             spawnCount = data.spawnCount;
             foeType = data.foeType;
+            humanoidGender = data.humanoidGender;
             injuredTrigger = data.injuredTrigger;
             restrained = data.restrained;
             killCount = data.killCount;

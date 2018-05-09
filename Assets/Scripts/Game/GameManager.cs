@@ -65,6 +65,7 @@ namespace DaggerfallWorkshop.Game
         PlayerMotor playerMotor = null;
         ClimbingMotor climbingMotor = null;
         PlayerSpeedChanger speedChanger = null;
+        FrictionMotor frictionMotor = null;
         FloatingOrigin floatingOrigin = null;
         FPSWeapon[] playerWeapons = new FPSWeapon[2];
         FPSSpellCasting playerSpellCasting = null;
@@ -245,6 +246,11 @@ namespace DaggerfallWorkshop.Game
         {
             get { return (climbingMotor) ? climbingMotor : climbingMotor = GetComponentFromObject<ClimbingMotor>(PlayerObject); }
             set { climbingMotor = value; }
+
+        public FrictionMotor FrictionMotor
+        {
+            get { return (frictionMotor) ? frictionMotor : frictionMotor = GetComponentFromObject<FrictionMotor>(PlayerObject); }
+            set { frictionMotor = value; }
         }
 
         public FloatingOrigin FloatingOrigin

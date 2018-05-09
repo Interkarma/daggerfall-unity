@@ -72,7 +72,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     return GameManager.Instance.TalkManager.GetKeySubjectLocationCompassDirection();
                 }
-                return "never mind...";
+                return TextManager.Instance.GetText(textDatabase, "resolvingError");
             }
 
             public override string DialogHint()
@@ -89,7 +89,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     return GameManager.Instance.TalkManager.GetDialogHint(parent.currentQuestionListItem);
                 }
-                return "never mind...";
+                return TextManager.Instance.GetText(textDatabase, "resolvingError");
             }
 
             public override string DialogHint2()
@@ -106,7 +106,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     return GameManager.Instance.TalkManager.GetDialogHint2(parent.currentQuestionListItem);
                 }
-                return "never mind...";
+                return TextManager.Instance.GetText(textDatabase, "resolvingError");
             }
             public override string Oath()
             {

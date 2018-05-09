@@ -1,5 +1,6 @@
 ﻿using System;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Entity;
 using System.Text.RegularExpressions;
 using FullSerializer;
 
@@ -18,6 +19,9 @@ namespace DaggerfallWorkshop.Game.Questing
         int rumorsMessageID = -1;
         bool hasPlayerClicked = false;
         bool isHidden = false;
+
+        [NonSerialized]
+        bool isPlaced = false;      // Ensures resource is only placed once by "place item, place foe, etc."
 
         [NonSerialized]
         QuestResourceBehaviour questResourceBehaviour = null;
@@ -86,6 +90,26 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             get { return isHidden; }
             set { SetHidden(value); }
+        }
+
+        /// <summary>
+        /// Helps track if a resource has already been placed in scene by either layout logic or hot-placement logic.
+        /// Prevents duplicate resources being injected when a mix of layout and hot-placement is used.
+        /// This property is not serialized and is only used during scene layout process.
+        /// </summary>
+        public bool IsPlaced
+        {
+            get { return isPlaced; }
+            set { isPlaced = value; }
+        }
+
+        /// <summary>
+        /// Gets resource gender where available.
+        /// Will default to Male if inheriting class does not override.
+        /// </summary>
+        public virtual Genders Gender
+        {
+            get { return Genders.Male; }
         }
 
         /// <summary>
