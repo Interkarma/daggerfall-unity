@@ -35,8 +35,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_Other;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_All;
             properties.MagicSkill = DFCareer.MagicSkills.Alteration;
-            properties.DurationCosts = MakeEffectCosts(28, 100, 1.4f);
-            properties.ChanceCosts = MakeEffectCosts(28, 100, 1.4f);
+            properties.DurationCosts = MakeEffectCosts(28, 100);
+            properties.ChanceCosts = MakeEffectCosts(28, 100);
         }
 
         public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
