@@ -29,6 +29,21 @@ namespace DaggerfallWorkshop.Utility
             throw new NotImplementedException();
         }
 
+        public virtual string FactionPC()
+        {   // %fpc
+            throw new NotImplementedException();
+        }
+
+        public virtual string GuildNPC()
+        {   // %fnpc
+            throw new NotImplementedException();
+        }
+
+        public virtual string FactionName()
+        {   // %fpa
+            throw new NotImplementedException();
+        }
+
         public virtual string Dungeon()
         {   // %dng
             throw new NotImplementedException();
@@ -154,6 +169,11 @@ namespace DaggerfallWorkshop.Utility
         }
         public virtual string Pronoun3()
         {   // %g3
+            throw new NotImplementedException();
+        }
+
+        public virtual string Honorific()
+        {   // %hnr
             throw new NotImplementedException();
         }
 

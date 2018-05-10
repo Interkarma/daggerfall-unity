@@ -25,6 +25,7 @@ using DaggerfallWorkshop.Game.Questing;
 using System.Linq;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Player;
+using DaggerfallWorkshop.Game.Guilds;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -199,8 +200,10 @@ namespace DaggerfallWorkshop.Game
 
         public class NPCData
         {
-            public Races race;
+            public Races race;            
             public FactionFile.SocialGroups socialGroup;
+            public FactionFile.GuildGroups guildGroup;
+            public FactionFile.FactionData factionData; // only used for static npcs
         }
         NPCData npcData;
 
@@ -351,7 +354,7 @@ namespace DaggerfallWorkshop.Game
         struct NpcWorkEntry
         {
             public StaticNPC.NPCData npc;
-            public FactionFile.SocialGroups socialGroup;
+            public FactionFile.SocialGroups socialGroup;            
             public string buildingName;
         }
 
@@ -561,6 +564,7 @@ namespace DaggerfallWorkshop.Game
 
             npcData = new NPCData();
             npcData.socialGroup = FactionFile.SocialGroups.Commoners;
+            npcData.guildGroup = FactionFile.GuildGroups.None;
             npcData.race = targetMobileNPC.Race;
 
             this.reactionToPlayer = reactionToPlayer;
@@ -593,10 +597,12 @@ namespace DaggerfallWorkshop.Game
             DaggerfallUI.Instance.TalkWindow.UpdateNameNPC();
 
             FactionFile.FactionData factionData;
-            GameManager.Instance.PlayerEntity.FactionData.GetFactionData(targetStaticNPC.Data.factionID, out factionData);
+            GameManager.Instance.PlayerEntity.FactionData.GetFactionData(targetStaticNPC.Data.factionID, out factionData);            
 
             npcData = new NPCData();
             npcData.socialGroup = (FactionFile.SocialGroups)factionData.sgroup;
+            npcData.guildGroup = (FactionFile.GuildGroups)factionData.ggroup;
+            npcData.factionData = factionData;
             npcData.race = Races.Breton; // TODO: find a way to get race for static npc
 
             this.reactionToPlayer = reactionToPlayer;
@@ -624,6 +630,14 @@ namespace DaggerfallWorkshop.Game
             const int likePlayerGreetingTextId = 7208;
             const int veryLikePlayerGreetingTextId = 7209;
 
+            const int isInSameGuildLikePlayerGreetingTextId = 8550;
+            const int isInSameGuildNeutralPlayerGreetingTextId = 8551;
+
+            const int isInSameHolyOrderLikePlayerGreetingTextId = 8553;
+            const int isInSameHolyOrderNeutralPlayerGreetingTextId = 8554;
+
+            // note Nystul: did not find any use of text record ids 8556 - 8569 in my testing - but some of them might be used by nobles of the courtyards
+
             if (currentNPCType == NPCType.Static)
             {
                 foreach(KeyValuePair<ulong, TextFile.Token[]> entry in dictQuestorPostQuestMessage)
@@ -648,6 +662,24 @@ namespace DaggerfallWorkshop.Game
                             }
                         }
                     }
+                }
+            }
+
+            if (GameManager.Instance.GuildManager.GetGuild(npcData.guildGroup, (int)GameManager.Instance.PlayerEnterExit.FactionID).IsMember())
+            {
+                if (npcData.guildGroup == FactionFile.GuildGroups.HolyOrder) // holy orders use message 8553, 8554
+                {
+                    if (reactionToPlayer >= 30) // what reputation is needed to show like greeting message?
+                        return expandRandomTextRecord(isInSameHolyOrderLikePlayerGreetingTextId);
+                    else if (reactionToPlayer >= 0) // not sure here - are member greeting messages also shown if npc dislikes pc (but still talks to pc)?
+                        return expandRandomTextRecord(isInSameHolyOrderNeutralPlayerGreetingTextId);
+                }
+                else // all other guilds (including Knightly Orders) seem to use messages 8550, 8551
+                {
+                    if (reactionToPlayer >= 30) // what reputation is needed to show like greeting message?
+                        return expandRandomTextRecord(isInSameGuildLikePlayerGreetingTextId);
+                    else if (reactionToPlayer >= 0) // not sure here - are member greeting messages also shown if npc dislikes pc (but still talks to pc)?
+                        return expandRandomTextRecord(isInSameGuildNeutralPlayerGreetingTextId);
                 }
             }
 
@@ -1051,6 +1083,38 @@ namespace DaggerfallWorkshop.Game
                 }
             }
             return TextManager.Instance.GetText(textDatabase, "resolvingError"); // error case - should never ever occur
+        }
+
+        public string GetGuildNPC()
+        {
+            return GameManager.Instance.GuildManager.GetGuild((int)GameManager.Instance.PlayerEnterExit.FactionID).GetGuildName();
+        }
+
+        public string GetFactionPC()
+        {
+            if (npcData.guildGroup == FactionFile.GuildGroups.HolyOrder)
+                return GetFactionName();
+            else
+                return GetGuildNPC();
+        }
+
+        public string GetFactionName()
+        {
+            if (npcData.guildGroup == FactionFile.GuildGroups.HolyOrder)
+            {
+                Temple temple = (Temple)GameManager.Instance.GuildManager.GetGuild(npcData.guildGroup, (int)GameManager.Instance.PlayerEnterExit.FactionID);
+                MacroDataSource mcp = temple.GetMacroDataSource();
+                return mcp.FactionOrderName();
+            }
+            return TextManager.Instance.GetText(textDatabase, "resolvingError");
+        }
+
+        public string getHonoric()
+        {
+            if (GameManager.Instance.PlayerEntity.Gender == Genders.Male)
+                return TextManager.Instance.GetText(textDatabase, "Sir");
+            else
+                return TextManager.Instance.GetText(textDatabase, "Madam");
         }
 
         public string GetAnswerWhereIs(TalkManager.ListItem listItem)
@@ -1661,6 +1725,10 @@ namespace DaggerfallWorkshop.Game
             const int dialogRejectionTextId = 8571;
             const int youGetNoResponseTextId = 7205;
 
+            const int isInSameGuildDislikePlayerRefusingToTalkTextId = 8552;
+
+            const int isInSameHolyOrderDislikePlayerRefusingToTalkTextId = 8555;
+
             if (reactionToPlayer >= -20)
             {
                 DaggerfallUI.UIManager.PushWindow(DaggerfallUI.Instance.TalkWindow);
@@ -1678,7 +1746,18 @@ namespace DaggerfallWorkshop.Game
                 }
                 else
                 {
-                    string responseText = DaggerfallUnity.Instance.TextProvider.GetRandomText(dialogRejectionTextId);
+                    string responseText;
+                    if (GameManager.Instance.GuildManager.GetGuild(npcData.guildGroup, (int)GameManager.Instance.PlayerEnterExit.FactionID).IsMember())
+                    {
+                        if (npcData.guildGroup == FactionFile.GuildGroups.HolyOrder) // holy orders use message 8554
+                            responseText = DaggerfallUnity.Instance.TextProvider.GetRandomText(isInSameHolyOrderDislikePlayerRefusingToTalkTextId);
+                        else // all other guilds (including Knightly Orders) seem to use message 8552
+                            responseText = DaggerfallUnity.Instance.TextProvider.GetRandomText(isInSameGuildDislikePlayerRefusingToTalkTextId);
+                    }
+                    else
+                    {
+                        responseText = DaggerfallUnity.Instance.TextProvider.GetRandomText(dialogRejectionTextId);
+                    }
                     DaggerfallUI.MessageBox(responseText);
                     alreadyRejectedOnce = true;
                 }
