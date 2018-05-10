@@ -424,11 +424,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             subgroupIndex = (byte)(key & 0xff);
         }
 
-        public static EffectCosts MakeEffectCosts(float costA, float costB, float factor = 1, float offsetGold = 0)
+        public static EffectCosts MakeEffectCosts(float costA, float costB, float offsetGold = 0)
         {
             EffectCosts costs = new EffectCosts();
             costs.OffsetGold = offsetGold;
-            costs.Factor = factor;
             costs.CostA = costA;
             costs.CostB = costB;
 

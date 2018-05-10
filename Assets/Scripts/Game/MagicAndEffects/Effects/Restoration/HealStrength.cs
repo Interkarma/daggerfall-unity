@@ -33,7 +33,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
             properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
             properties.MagicSkill = DFCareer.MagicSkills.Restoration;
-            properties.MagnitudeCosts = MakeEffectCosts(40, 28, 2);
+            properties.MagnitudeCosts = MakeEffectCosts(40, 28);
             healStat = DFCareer.Stats.Strength;
         }
     }
