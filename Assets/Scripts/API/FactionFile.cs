@@ -196,7 +196,7 @@ namespace DaggerfallConnect.Arena2
 
             Random_Noble = 242,
 
-            Teahers_of_Zen = 243,
+            Teachers_of_Zen = 243,
 
             Court_of_Balfiera = 244,
 
