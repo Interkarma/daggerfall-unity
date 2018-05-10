@@ -355,23 +355,26 @@ namespace DaggerfallWorkshop.Game
                     moveDirection.y = -moveDirection.y;
             }
 
-            // Moving platform support
-            if (activePlatform != null)
+            if (grounded)
             {
-                var newGlobalPlatformPoint = activePlatform.TransformPoint(activeLocalPlatformPoint);
-                var moveDistance = (newGlobalPlatformPoint - activeGlobalPlatformPoint);
-                if (moveDistance != Vector3.zero)
-                    controller.Move(moveDistance);
-                //lastPlatformVelocity = (newGlobalPlatformPoint - activeGlobalPlatformPoint) / Time.deltaTime;
+                // Moving platform support
+                if (activePlatform != null)
+                {
+                    var newGlobalPlatformPoint = activePlatform.TransformPoint(activeLocalPlatformPoint);
+                    var moveDistance = (newGlobalPlatformPoint - activeGlobalPlatformPoint);
+                    if (moveDistance != Vector3.zero)
+                        controller.Move(moveDistance);
+                    //lastPlatformVelocity = (newGlobalPlatformPoint - activeGlobalPlatformPoint) / Time.deltaTime;
 
-                // If you want to support moving platform rotation as well:
-                var newGlobalPlatformRotation = activePlatform.rotation * activeLocalPlatformRotation;
-                var rotationDiff = newGlobalPlatformRotation * Quaternion.Inverse(activeGlobalPlatformRotation);
+                    // If you want to support moving platform rotation as well:
+                    var newGlobalPlatformRotation = activePlatform.rotation * activeLocalPlatformRotation;
+                    var rotationDiff = newGlobalPlatformRotation * Quaternion.Inverse(activeGlobalPlatformRotation);
 
-                // Prevent rotation of the local up vector
-                rotationDiff = Quaternion.FromToRotation(rotationDiff * transform.up, transform.up) * rotationDiff;
+                    // Prevent rotation of the local up vector
+                    rotationDiff = Quaternion.FromToRotation(rotationDiff * transform.up, transform.up) * rotationDiff;
 
-                transform.rotation = rotationDiff * transform.rotation;
+                    transform.rotation = rotationDiff * transform.rotation;
+                }
             }
             //else
             //{
@@ -517,7 +520,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Store point that we're in contact with for use in FixedUpdate if needed
-        /*void OnControllerColliderHit(ControllerColliderHit hit)
+        void OnControllerColliderHit(ControllerColliderHit hit)
         {
             frictionMotor.ContactPoint = hit.point;
 
@@ -530,7 +533,7 @@ namespace DaggerfallWorkshop.Game
             // Get active platform
             if (hit.moveDirection.y < -0.9 && hit.normal.y > 0.5)
                 activePlatform = hit.collider.transform;
-        }*/
+        }
 
         // If falling damage occured, this is the place to do something about it. You can make the player
         // have hitpoints and remove some of them based on the distance fallen, add sound effects, etc.

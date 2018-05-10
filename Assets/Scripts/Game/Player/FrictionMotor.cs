@@ -56,11 +56,11 @@ namespace DaggerfallWorkshop.Game
 
         public void MoveIfSliding(ref Vector3 moveDirection)
         {
-            CheckIfSliding();
+            CheckFooting();
             SlideMovement(ref moveDirection);
         }
 
-        private void CheckIfSliding()
+        private void CheckFooting()
         {
             sliding = false;
             // See if surface immediately below should be slid down. We use this normally rather than a ControllerColliderHit point,
