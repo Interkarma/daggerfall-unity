@@ -105,6 +105,7 @@ namespace DaggerfallWorkshop.Game.Entity
         private bool CheckedCurrentJump = false;
 
         PlayerMotor playerMotor = null;
+        ClimbingMotor climbingMotor = null;
         protected uint lastGameMinutes = 0;         // Being tracked in order to perform updates based on changes in the current game minute
         private bool gameStarted = false;
 
@@ -223,6 +224,8 @@ namespace DaggerfallWorkshop.Game.Entity
 
             if (playerMotor == null)
                 playerMotor = GameManager.Instance.PlayerMotor;
+            if (climbingMotor == null)
+                climbingMotor = GameManager.Instance.ClimbingMotor;
 
             uint gameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
             // Wait until game has started and the game time has been set.
@@ -238,7 +241,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 if (lastGameMinutes != gameMinutes)
                 {
                     int amount = DefaultFatigueLoss;
-                    if (playerMotor.IsClimbing)
+                    if (climbingMotor != null && climbingMotor.IsClimbing)
                         amount = ClimbingFatigueLoss;
                     else if (playerMotor.IsRunning)
                         amount = RunningFatigueLoss;
@@ -1161,10 +1164,10 @@ namespace DaggerfallWorkshop.Game.Entity
                         //--item.power;
 
                     FactionFile.FactionData thievesGuild;
-                    FactionData.GetFactionData(42, out thievesGuild);
+                    FactionData.GetFactionData((int)FactionFile.FactionIDs.The_Thieves_Guild, out thievesGuild);
 
                     FactionFile.FactionData darkBrotherhood;
-                    FactionData.GetFactionData(108, out darkBrotherhood);
+                    FactionData.GetFactionData((int)FactionFile.FactionIDs.The_Dark_Brotherhood, out darkBrotherhood);
 
                     if (UnityEngine.Random.Range(0, 101) >= ((thievesGuild.power + darkBrotherhood.power) / 2 - item.power + 5) / 5)
                         TurnOffConditionFlag(item.region - 1, RegionDataFlags.CrimeWave);

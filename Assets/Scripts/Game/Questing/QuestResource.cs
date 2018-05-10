@@ -1,5 +1,6 @@
 ﻿using System;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Entity;
 using System.Text.RegularExpressions;
 using FullSerializer;
 
@@ -100,6 +101,15 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             get { return isPlaced; }
             set { isPlaced = value; }
+        }
+
+        /// <summary>
+        /// Gets resource gender where available.
+        /// Will default to Male if inheriting class does not override.
+        /// </summary>
+        public virtual Genders Gender
+        {
+            get { return Genders.Male; }
         }
 
         /// <summary>

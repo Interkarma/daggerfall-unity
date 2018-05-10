@@ -33,8 +33,8 @@ namespace DaggerfallWorkshop.Game.Player
         const int maxReputation = 100;
 
         // TEMP: Faction IDs for curated quest givers
-        public const int fightersGuildQuestorFactionID = 851;
-        public const int magesGuildQuestorFactionID = 63;
+        public const int fightersGuildQuestorFactionID = (int)FactionFile.FactionIDs.Fighter_Questers;
+        public const int magesGuildQuestorFactionID = (int)FactionFile.FactionIDs.The_Mercenary_Mages;
 
         Dictionary<int, FactionFile.FactionData> factionDict = new Dictionary<int, FactionFile.FactionData>();
         Dictionary<string, int> factionNameToIDDict = new Dictionary<string, int>();

@@ -73,6 +73,7 @@ namespace DaggerfallWorkshop.Game.Questing
             action.spawnInterval = (uint)Parser.ParseInt(match.Groups["minutes"].Value) * 60;
             action.spawnMaxTimes = Parser.ParseInt(match.Groups["count"].Value);
             action.spawnChance = Parser.ParseInt(match.Groups["percent"].Value);
+            action.lastSpawnTime = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToSeconds();
 
             // Handle infinite
             if (!string.IsNullOrEmpty(match.Groups["infinite"].Value))
@@ -348,6 +349,7 @@ namespace DaggerfallWorkshop.Game.Questing
         public struct SaveData_v1
         {
             public Symbol foeSymbol;
+            public ulong lastSpawnTime;
             public uint spawnInterval;
             public int spawnMaxTimes;
             public int spawnChance;
@@ -359,6 +361,7 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             SaveData_v1 data = new SaveData_v1();
             data.foeSymbol = foeSymbol;
+            data.lastSpawnTime = lastSpawnTime;
             data.spawnInterval = spawnInterval;
             data.spawnMaxTimes = spawnMaxTimes;
             data.spawnChance = spawnChance;
@@ -375,11 +378,16 @@ namespace DaggerfallWorkshop.Game.Questing
                 return;
 
             foeSymbol = data.foeSymbol;
+            lastSpawnTime = data.lastSpawnTime;
             spawnInterval = data.spawnInterval;
             spawnMaxTimes = data.spawnMaxTimes;
             spawnChance = data.spawnChance;
             spawnCounter = data.spawnCounter;
             isSendAction = data.isSendAction;
+
+            // Set timer to current game time if not loaded from save
+            if (lastSpawnTime == 0)
+                lastSpawnTime = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToSeconds();
         }
 
         #endregion

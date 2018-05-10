@@ -1451,11 +1451,12 @@ namespace Wenzil.Console
             public static string Execute(params string[] args)
             {
                 PlayerMotor playerMotor = GameManager.Instance.PlayerMotor;
+                FrictionMotor frictionMotor = GameManager.Instance.FrictionMotor;
                 CharacterController cc = GameManager.Instance.PlayerController;
                 playerMotor.ClearFallingDamage();
 
                 RaycastHit hitInfo;
-                Vector3 origin = playerMotor.ContactPoint;
+                Vector3 origin = frictionMotor.ContactPoint;
                 origin.y += cc.height;
                 Ray ray = new Ray(origin, Vector3.down);
                 if (!(Physics.Raycast(ray, out hitInfo, cc.height * 2)))
@@ -1464,9 +1465,9 @@ namespace Wenzil.Console
                 }
                 else
                 {
-                    GameManager.Instance.PlayerObject.transform.position = playerMotor.ContactPoint;
+                    GameManager.Instance.PlayerObject.transform.position = frictionMotor.ContactPoint;
                     playerMotor.FixStanding(cc.height / 2);
-                    return "Finished - moved to last known good location at " + playerMotor.ContactPoint.ToString();
+                    return "Finished - moved to last known good location at " + frictionMotor.ContactPoint.ToString();
                 }
             }
         }

@@ -34,7 +34,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.AllowedElements = ElementTypes.Magic;
             properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
             properties.MagicSkill = DFCareer.MagicSkills.Thaumaturgy;
-            properties.DurationCosts = MakeEffectCosts(60, 100, 3);
+            properties.DurationCosts = MakeEffectCosts(60, 100);
         }
 
         public override void MagicRound()

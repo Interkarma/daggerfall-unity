@@ -153,7 +153,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             properties.SupportMagnitude = false;
             properties.AllowedTargets = TargetTypes.CasterOnly;
             properties.AllowedElements = ElementTypes.Magic;
-            properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
+            properties.AllowedCraftingStations = MagicCraftingStations.None;
             properties.MagicSkill = DFCareer.MagicSkills.None;
 
             // Set default settings
@@ -328,9 +328,19 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             statMods[(int)stat] = value;
         }
 
+        protected void ChangeStatMod(DFCareer.Stats stat, int amount)
+        {
+            statMods[(int)stat] += amount;
+        }
+
         protected void SetSkillMod(DFCareer.Skills skill, int value)
         {
             skillMods[(int)skill] = value;
+        }
+
+        protected void ChangeSkillMod(DFCareer.Skills skill, int amount)
+        {
+            skillMods[(int)skill] += amount;
         }
 
         #endregion
@@ -424,11 +434,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             subgroupIndex = (byte)(key & 0xff);
         }
 
-        public static EffectCosts MakeEffectCosts(float costA, float costB, float factor = 1, float offsetGold = 0)
+        public static EffectCosts MakeEffectCosts(float costA, float costB, float offsetGold = 0)
         {
             EffectCosts costs = new EffectCosts();
             costs.OffsetGold = offsetGold;
-            costs.Factor = factor;
             costs.CostA = costA;
             costs.CostB = costB;
 
