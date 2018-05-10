@@ -342,7 +342,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
             // TODO: Right now enemy spawns are only prevented when time has been raised for
             // fast travel. They should later be prevented when time has been raised for
-            // 1) Turning into vampire 2) Serving prison sentence
+            // turning into vampire
             // Classic also prevents enemy spawns during loitering,
             // but this seems counterintuitive so it's not implemented in DF Unity for now
             if (!preventEnemySpawns)
@@ -352,6 +352,21 @@ namespace DaggerfallWorkshop.Game.Entity
                     // Catch up time and break if something spawns
                     if (IntermittentEnemySpawn(l + lastGameMinutes + 1))
                         break;
+
+                    // Handle guards appearing for low-legal rep player
+                    int regionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
+                    if (regionData[regionIndex].LegalRep < -10 && UnityEngine.Random.Range(1, 101) < 5)
+                    {
+                        crimeCommitted = Crimes.Criminal_Conspiracy;
+                        SpawnCityGuards(false);
+                    }
+
+                    // Handle guards appearing for banished player
+                    if ((regionData[regionIndex].SeverePunishmentFlags & 1) != 0 && UnityEngine.Random.Range(1, 101) < 10)
+                    {
+                        crimeCommitted = Crimes.Criminal_Conspiracy;
+                        SpawnCityGuards(false);
+                    }
                 }
             }
 
@@ -454,16 +469,18 @@ namespace DaggerfallWorkshop.Game.Entity
             if (GameManager.Instance.HowManyEnemiesOfType(MobileTypes.Knight_CityWatch) > 10)
                 return;
 
-            if (forceSpawn)
-            {
-                // TODO: First try to spawn guards from nearby townspeople. If townsperson is a guard spawn, or if is a non-guard 1/3 chance to spawn
+            //if (forceSpawn)
+            //{
+                // TODO: First try to spawn guards from nearby townspeople. For each townsperson, if townsperson is a guard spawn, or if is a non-guard 1/3 chance to spawn
                 // if out of player view.
-                // If none spawned, proceed with below
+                // If no guards spawned from this, then use the below
                 int randomNumber = UnityEngine.Random.Range(2, 5 + 1);
                 GameObjectHelper.CreateFoeSpawner(true, MobileTypes.Knight_CityWatch, randomNumber, (int)(1032 * MeshReader.GlobalScale), (int)(3096 * MeshReader.GlobalScale));
-            }
-            // TODO: If !forceSpawn, check for LOS from nearby guard townspeople and spawn from them if they see player.
-            // Otherwise, check for LOS from non-guard townspeople. If they see player, random countdown is set, after which guards will spawn.
+            //}
+            // TODO: If !forceSpawn, the result of an LOS check from nearby guard townspeople is used and guards spawn from them if they saw player.
+            // The LOS check is not done constantly, it is triggered by a few types of event, such as killing a townsperson, attempting to pick a lock, etc.
+            // If no guards saw the event, use the LOS result from non-guard townspeople. If they saw it, a random countdown is set, after which guards will spawn.
+
         }
 
         /// <summary>
