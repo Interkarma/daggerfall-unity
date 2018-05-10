@@ -75,6 +75,12 @@ namespace DaggerfallWorkshop.Utility
                     }
                     else
                     {
+                        // fix for bug when parent quest is no longer available (http://forums.dfworkshop.net/viewtopic.php?f=24&t=1002) in case
+                        // quest injected entries and rumors stay in list due to other bugs
+                        // so parentQuest is no longer available
+                        if (parentQuest == null)
+                            return;
+
                         // Ask resource to expand macro if possible
                         QuestResource resource = parentQuest.GetResource(macro.symbol);
                         if (resource != null)
