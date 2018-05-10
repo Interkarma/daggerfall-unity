@@ -153,7 +153,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             properties.SupportMagnitude = false;
             properties.AllowedTargets = TargetTypes.CasterOnly;
             properties.AllowedElements = ElementTypes.Magic;
-            properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
+            properties.AllowedCraftingStations = MagicCraftingStations.None;
             properties.MagicSkill = DFCareer.MagicSkills.None;
 
             // Set default settings

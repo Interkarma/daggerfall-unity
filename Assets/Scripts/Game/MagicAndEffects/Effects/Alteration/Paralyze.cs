@@ -34,6 +34,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.SupportChance = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_Other;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_All;
+            properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
             properties.MagicSkill = DFCareer.MagicSkills.Alteration;
             properties.DurationCosts = MakeEffectCosts(28, 100, 1.4f);
             properties.ChanceCosts = MakeEffectCosts(28, 100, 1.4f);

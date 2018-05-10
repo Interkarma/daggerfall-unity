@@ -31,6 +31,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.SupportMagnitude = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_Other;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_All;
+            properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
             properties.MagicSkill = DFCareer.MagicSkills.Destruction;
             properties.MagnitudeCosts = MakeEffectCosts(20, 28);
         }
