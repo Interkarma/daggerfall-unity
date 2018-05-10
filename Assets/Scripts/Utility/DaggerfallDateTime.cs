@@ -31,6 +31,7 @@ namespace DaggerfallWorkshop.Utility
         // Time multipliers
         public const int SecondsPerMinute = 60;
         public const int MinutesPerHour = 60;
+        public const int MinutesPerDay = 1440;
         public const int HoursPerDay = 24;
         public const int DaysPerWeek = 7;
         public const int DaysPerMonth = 30;

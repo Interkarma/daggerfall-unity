@@ -12,6 +12,7 @@
 using System;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using FullSerializer;
 
@@ -19,24 +20,23 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
     /// <summary>
     /// Disease effect base.
-    /// Does all the heavy lifting for incubation, reducing stats, serialization, etc. based on disease data provided.
-    /// Designed to handle both classic diseases and to give new disease effect mods enough virtual hooks to override with custom behaviour.
+    /// Does all the heavy lifting for time management, reducing stats, curing, serialization, etc.
+    /// Child class can just use a custom DiseaseData matrix or override virtuals to do completely their own thing.
     /// </summary>
     public abstract class DiseaseEffect : IncumbentEffect
     {
         #region Fields
 
-        const string textDatabase = "ClassicEffects";
         const int permanentDiseaseValue = 0xff;
-        const int incubationTimeInSeconds = 3 * DaggerfallDateTime.SecondsPerDay; // Using 3 days for incubation period - is this common to all diseases?
+        const int completedDiseaseValue = 0xfe;
 
         protected int forcedRoundsRemaining = 1;
         protected Diseases classicDiseaseType = Diseases.None;
         protected DaggerfallDisease.DiseaseData diseaseData;
         protected TextFile.Token[] contractedMessageTokens;
-        protected ulong startIncubationTime;
         protected bool incubationOver = false;
-        protected int daysOfSymptomsLeft = 0;
+        protected uint lastDay;
+        protected int daysOfSymptomsLeft;
 
         #endregion
 
@@ -79,18 +79,18 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         protected override void BecomeIncumbent()
         {
+            // Store first day of infection - diseases operate in 24-hour ticks from the very next day after infection
+            lastDay = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() / DaggerfallDateTime.MinutesPerDay;
+
             // If disease not permanent then set a range for how long stats will fall
             // Otherwise stats will continue to fall until cured
             if (!IsDiseasePermanent())
                 daysOfSymptomsLeft = (byte)UnityEngine.Random.Range(diseaseData.daysOfSymptomsMin, diseaseData.daysOfSymptomsMax + 1);
-
-            // Start incubation from this moment
-            startIncubationTime = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToSeconds();
         }
 
         protected override void AddState(IncumbentEffect incumbent)
         {
-            // Player cannot catch same disease twice so do nothing further here
+            // Host cannot catch same disease twice so do nothing further here
             // Specific diseases can override and do something else if they require
         }
 
@@ -107,20 +107,86 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         /// <summary>
         /// Executes default work on disease based on data.
+        /// This runs once every magic tick so will implement own timer to run on a daily tick.
         /// A custom disease can override to perform their own logic.
         /// </summary>
         protected virtual void UpdateDisease()
         {
-            // Run incubation period
+            // Get current day and number of days that have passed (e.g. fast travel can progress time several days)
+            uint currentDay = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() / DaggerfallDateTime.MinutesPerDay;
+            int daysPast = (int)(currentDay - lastDay);
+
+            // Do nothing if still same day or disease has run its course
+            // if this is same day host contracted disease it is considered incubation time
+            if (daysPast == 0 || daysOfSymptomsLeft == completedDiseaseValue)
+                return;
+
+            // Raise incubation over flag on first tick
             if (!incubationOver)
+                incubationOver = true;
+
+            // Increment effects for this day
+            for (int i = 0; i < daysPast; i++)
             {
-                if (startIncubationTime + incubationTimeInSeconds > DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToSeconds())
-                    incubationOver = true;
-                else
-                    return;
+                IncrementDailyDiseaseEffects();
             }
 
-            // TODO: Track disease progression and update mod payload
+            // Kill host if any stat is reduced to 0
+            DaggerfallEntityBehaviour host = GetPeeredEntityBehaviour(manager);
+            for (int i = 0; i < DaggerfallStats.Count; i++)
+            {
+                if (host.Entity.Stats.GetLiveStatValue(i) == 0)
+                {
+                    host.Entity.CurrentHealth = 0;
+                    return;
+                }
+            }
+
+            // Update day tracking
+            lastDay = currentDay;
+
+            // Count down days remaining
+            if (!IsDiseasePermanent())
+            {
+                if (--daysOfSymptomsLeft == 0)
+                    EndDisease();
+            }
+
+            // Output alert text
+            DaggerfallUI.AddHUDText(UserInterfaceWindows.HardStrings.youFeelSomewhatBad);
+        }
+
+        /// <summary>
+        /// Apply DiseaseData effects for each day passed - custom diseases can override this to do whatever they want for effect payload
+        /// They don't even need to call this base to apply basic DiseaseData effects if they don't want to 
+        /// </summary>
+        protected virtual void IncrementDailyDiseaseEffects()
+        {
+            // Get amount of damage for number of days past
+            int damageAmount = UnityEngine.Random.Range(diseaseData.minDamage, diseaseData.maxDamage + 1);
+
+            // This is a twist on DiseaseData - using it like a mult matrix by building on how it uses a byte value to indicate active components
+            // This means custom (non-classic) DiseaseData can use 0 (no effect), 1 (normal effect), or 2-255 to accelerate stat decay even faster
+            // This also simplifies the need to perform a conditional check for each element as a 0 will cancel any change for that component
+            DaggerfallEntityBehaviour host = GetPeeredEntityBehaviour(manager);
+            ChangeStatMod(DFCareer.Stats.Strength, diseaseData.STR * damageAmount);
+            ChangeStatMod(DFCareer.Stats.Intelligence, diseaseData.INT * damageAmount);
+            ChangeStatMod(DFCareer.Stats.Willpower, diseaseData.WIL * damageAmount);
+            ChangeStatMod(DFCareer.Stats.Agility, diseaseData.AGI * damageAmount);
+            ChangeStatMod(DFCareer.Stats.Endurance, diseaseData.END * damageAmount);
+            ChangeStatMod(DFCareer.Stats.Personality, diseaseData.PER * damageAmount);
+            ChangeStatMod(DFCareer.Stats.Speed, diseaseData.SPD * damageAmount);
+            ChangeStatMod(DFCareer.Stats.Luck, diseaseData.LUC * damageAmount);
+            host.Entity.DecreaseHealth(diseaseData.HEA * damageAmount);
+            host.Entity.DecreaseFatigue(diseaseData.FAT * damageAmount);
+            host.Entity.DecreaseMagicka(diseaseData.SPL * damageAmount);
+        }
+
+        protected virtual void EndDisease()
+        {
+            // Set disease as completed and allow effect system to expire effect
+            daysOfSymptomsLeft = completedDiseaseValue;
+            forcedRoundsRemaining = 0;
         }
 
         protected TextFile.Token[] GetClassicContractedMessageTokens(Diseases diseaseType)
@@ -174,9 +240,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         public virtual void CureDisease()
         {
-            // TODO: Handle curing disease - just allowing effect to expire out for now
-            forcedRoundsRemaining = 0;
-            daysOfSymptomsLeft = 0;
+            EndDisease();
         }
 
         public static string GetClassicDiseaseEffectKey(Diseases diseaseType)
@@ -192,8 +256,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public struct SaveData_v1
         {
             public int forcedRoundsRemaining;
-            public Diseases classicDiseaseType;
             public bool incubationOver;
+            public uint lastDay;
             public int daysOfSymptomsLeft;
         }
 
@@ -201,8 +265,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             SaveData_v1 data = new SaveData_v1();
             data.forcedRoundsRemaining = forcedRoundsRemaining;
-            data.classicDiseaseType = classicDiseaseType;
             data.incubationOver = incubationOver;
+            data.lastDay = lastDay;
             data.daysOfSymptomsLeft = daysOfSymptomsLeft;
 
             return data;
@@ -215,8 +279,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 return;
 
             forcedRoundsRemaining = data.forcedRoundsRemaining;
-            classicDiseaseType = data.classicDiseaseType;
             incubationOver = data.incubationOver;
+            lastDay = data.lastDay;
             daysOfSymptomsLeft = data.daysOfSymptomsLeft;
         }
 
