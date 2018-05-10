@@ -1187,7 +1187,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             int skillValue = GameManager.Instance.PlayerEntity.Skills.GetLiveSkillValue((DFCareer.Skills)effectTemplate.Properties.MagicSkill);
 
             // Duration costs
-			int durationGoldCost = 0;
+            int durationGoldCost = 0;
             if (effectTemplate.Properties.SupportDuration)
             {
                 activeComponents++;
@@ -1203,7 +1203,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             }
 
             // Chance costs
-			int chanceGoldCost = 0;
+            int chanceGoldCost = 0;
             if (effectTemplate.Properties.SupportChance)
             {
                 activeComponents++;
@@ -1219,7 +1219,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             }
 
             // Magnitude costs
-			int magnitudeGoldCost = 0;
+            int magnitudeGoldCost = 0;
             if (effectTemplate.Properties.SupportMagnitude)
             {
                 activeComponents++;
@@ -1237,8 +1237,8 @@ namespace DaggerfallWorkshop.Game.Formulas
             }
 
             // Add gold costs together and calculate spellpoint cost from the result
-			goldCostOut = durationGoldCost + chanceGoldCost + magnitudeGoldCost;
-			spellPointCostOut = goldCostOut * (110 - skillValue)/400;
+            goldCostOut = durationGoldCost + chanceGoldCost + magnitudeGoldCost;
+            spellPointCostOut = goldCostOut * (110 - skillValue) / 400;
 
             //Debug.LogFormat("Costs: gold {0} spellpoints {1}", finalGoldCost, finalSpellPointCost);
         }
@@ -1274,8 +1274,8 @@ namespace DaggerfallWorkshop.Game.Formulas
             int skillValue)
         {
 
-			//Calculate effect gold cost, spellpoint cost is calculated from gold cost after adding up for duration, chance and magnitude
-			goldCost = trunc(costs.OffsetGold + costs.CostA * starting + costs.CostB * trunc(increase / perLevel));
+            //Calculate effect gold cost, spellpoint cost is calculated from gold cost after adding up for duration, chance and magnitude
+            goldCost = trunc(costs.OffsetGold + costs.CostA * starting + costs.CostB * trunc(increase / perLevel));
         }
 
         // Just makes formulas more readable
