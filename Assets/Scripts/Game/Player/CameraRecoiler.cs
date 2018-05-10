@@ -38,6 +38,7 @@ namespace DaggerfallWorkshop.Game
         }
         
         protected Transform playerCamTransform;
+        protected int previousMaxHealth;
         protected int previousHealth;
         protected int healthLost;
         protected bool bSwaying; // true if player is reeling from damage
@@ -50,13 +51,15 @@ namespace DaggerfallWorkshop.Game
         {
             playerCamTransform = GameManager.Instance.MainCamera.transform;
 
+            // Get starting health and max health
             if (GameManager.Instance != null && GameManager.Instance.PlayerEntity != null)
+            {
+                previousMaxHealth = GameManager.Instance.PlayerEntity.MaxHealth;
                 previousHealth = GameManager.Instance.PlayerEntity.CurrentHealth;
+            }
 
             bSwaying = false;
             cameraRecoilSetting = GetRecoilSetting(DaggerfallUnity.Settings.CameraRecoilStrength);
-
-            SaveLoadManager.OnLoad += SaveLoadManager_OnLoad;
         }
 
         void Update()
@@ -67,11 +70,20 @@ namespace DaggerfallWorkshop.Game
             else
                 cameraRecoilSetting = GetRecoilSetting(DaggerfallUnity.Settings.CameraRecoilStrength);
 
+            // Check max health hasn't changed - this can indicate user has loaded a different character
+            // or current character has levelled up or changed in some way and the cached health values need to be refreshed.
+            // Just reset values and exit for this frame as the current relative health lost calculation is not valid when MaxHealth changes.
             int maxHealth = GameManager.Instance.PlayerEntity.MaxHealth;
             int currentHealth = GameManager.Instance.PlayerEntity.CurrentHealth;
-            int healthLost = previousHealth - currentHealth;
+            if (maxHealth != previousMaxHealth)
+            {
+                previousMaxHealth = maxHealth;
+                previousHealth = currentHealth;
+                return;
+            }
 
             // Detect Health loss
+            int healthLost = previousHealth - currentHealth;
             if (healthLost > 0)
             {
                 const float minPercentThreshold = 0.02f;
@@ -176,14 +188,6 @@ namespace DaggerfallWorkshop.Game
 
             // return vector for euler angles
             return newViewPositon;
-        }
-
-        private void SaveLoadManager_OnLoad(SaveData_v1 saveData)
-        {
-            // Update previous health when loading game
-            // This prevents recoil firing because previous and current characters have different health amounts
-            previousHealth = GameManager.Instance.PlayerEntity.CurrentHealth;
-            bSwaying = false;
         }
     }
 }
