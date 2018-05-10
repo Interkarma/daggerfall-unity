@@ -185,6 +185,7 @@ namespace DaggerfallWorkshop.Game.Entity
     /// </summary>
     public enum Diseases
     {
+        None = -1,
         WitchesPox = 0,
         Plague = 1,
         YellowFever = 2,
