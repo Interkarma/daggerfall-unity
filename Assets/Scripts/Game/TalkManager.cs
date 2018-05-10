@@ -345,13 +345,14 @@ namespace DaggerfallWorkshop.Game
             public Dictionary<ulong, QuestResources> dictQuestInfo;
             public List<RumorMillEntry> listRumorMill;
             public Dictionary<ulong, TextFile.Token[]> dictQuestorPostQuestMessage;
+            public Dictionary<int, NpcWorkEntry> npcsWithWork;
         }
 
         // faction IDs for factions listed in "tell me about"
         int[] infoFactionIDs = { 42, 40, 108, 129, 306, 353, 41, 67, 82, 84, 88, 92, 94, 106, 36, 83, 85, 89, 93, 95, 99, 107, 37, 368, 408, 409, 410, 411, 413, 414, 415, 416, 417, 98 };
 
         // Data for NPC "work" quests in the current town
-        struct NpcWorkEntry
+        public struct NpcWorkEntry
         {
             public StaticNPC.NPCData npc;
             public FactionFile.SocialGroups socialGroup;            
@@ -1603,6 +1604,7 @@ namespace DaggerfallWorkshop.Game
             saveDataConversation.dictQuestInfo = dictQuestInfo;
             saveDataConversation.listRumorMill = listRumorMill;
             saveDataConversation.dictQuestorPostQuestMessage = dictQuestorPostQuestMessage;
+            saveDataConversation.npcsWithWork = npcsWithWork;
             return saveDataConversation;
         }
 
@@ -1669,6 +1671,9 @@ namespace DaggerfallWorkshop.Game
             {
                 dictQuestorPostQuestMessage = new Dictionary<ulong, TextFile.Token[]>();
             }
+
+            if (data.npcsWithWork != null)
+                npcsWithWork = data.npcsWithWork;
 
             // update topic list
             AssembleTopiclistTellMeAbout();
