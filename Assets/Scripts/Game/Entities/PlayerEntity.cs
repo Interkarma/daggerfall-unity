@@ -1164,10 +1164,10 @@ namespace DaggerfallWorkshop.Game.Entity
                         //--item.power;
 
                     FactionFile.FactionData thievesGuild;
-                    FactionData.GetFactionData(42, out thievesGuild);
+                    FactionData.GetFactionData((int)FactionFile.FactionIDs.The_Thieves_Guild, out thievesGuild);
 
                     FactionFile.FactionData darkBrotherhood;
-                    FactionData.GetFactionData(108, out darkBrotherhood);
+                    FactionData.GetFactionData((int)FactionFile.FactionIDs.The_Dark_Brotherhood, out darkBrotherhood);
 
                     if (UnityEngine.Random.Range(0, 101) >= ((thievesGuild.power + darkBrotherhood.power) / 2 - item.power + 5) / 5)
                         TurnOffConditionFlag(item.region - 1, RegionDataFlags.CrimeWave);
