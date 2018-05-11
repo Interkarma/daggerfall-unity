@@ -155,7 +155,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             }
 
             // Output alert text
-            DaggerfallUI.AddHUDText(UserInterfaceWindows.HardStrings.youFeelSomewhatBad);
+            DaggerfallUI.AddHUDText(UserInterfaceWindows.HardStrings.youFeelSomewhatBad, 2.5f);
         }
 
         /// <summary>
@@ -171,14 +171,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // This means custom (non-classic) DiseaseData can use 0 (no effect), 1 (normal effect), or 2-255 to accelerate stat decay even faster
             // This also simplifies the need to perform a conditional check for each element as a 0 will cancel any change for that component
             DaggerfallEntityBehaviour host = GetPeeredEntityBehaviour(manager);
-            ChangeStatMod(DFCareer.Stats.Strength, diseaseData.STR * damageAmount);
-            ChangeStatMod(DFCareer.Stats.Intelligence, diseaseData.INT * damageAmount);
-            ChangeStatMod(DFCareer.Stats.Willpower, diseaseData.WIL * damageAmount);
-            ChangeStatMod(DFCareer.Stats.Agility, diseaseData.AGI * damageAmount);
-            ChangeStatMod(DFCareer.Stats.Endurance, diseaseData.END * damageAmount);
-            ChangeStatMod(DFCareer.Stats.Personality, diseaseData.PER * damageAmount);
-            ChangeStatMod(DFCareer.Stats.Speed, diseaseData.SPD * damageAmount);
-            ChangeStatMod(DFCareer.Stats.Luck, diseaseData.LUC * damageAmount);
+            ChangeStatMod(DFCareer.Stats.Strength, -diseaseData.STR * damageAmount);
+            ChangeStatMod(DFCareer.Stats.Intelligence, -diseaseData.INT * damageAmount);
+            ChangeStatMod(DFCareer.Stats.Willpower, -diseaseData.WIL * damageAmount);
+            ChangeStatMod(DFCareer.Stats.Agility, -diseaseData.AGI * damageAmount);
+            ChangeStatMod(DFCareer.Stats.Endurance, -diseaseData.END * damageAmount);
+            ChangeStatMod(DFCareer.Stats.Personality, -diseaseData.PER * damageAmount);
+            ChangeStatMod(DFCareer.Stats.Speed, -diseaseData.SPD * damageAmount);
+            ChangeStatMod(DFCareer.Stats.Luck, -diseaseData.LUC * damageAmount);
             host.Entity.DecreaseHealth(diseaseData.HEA * damageAmount);
             host.Entity.DecreaseFatigue(diseaseData.FAT * damageAmount);
             host.Entity.DecreaseMagicka(diseaseData.SPL * damageAmount);
