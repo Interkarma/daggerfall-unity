@@ -80,8 +80,6 @@ namespace DaggerfallWorkshop.Game.Entity
         protected uint timeToBecomeVampireOrWerebeast = 0;
         protected uint lastTimePlayerAteOrDrankAtTavern = 0;
 
-        protected List<DaggerfallDisease> diseases = new List<DaggerfallDisease>();
-
         protected RegionDataRecord[] regionData = new RegionDataRecord[62];
 
         protected Crimes crimeCommitted = 0; // TODO: Save/load
@@ -150,7 +148,6 @@ namespace DaggerfallWorkshop.Game.Entity
         public RegionDataRecord[] RegionData { get { return regionData; } set { regionData = value; } }
         public uint LastGameMinutes { get { return lastGameMinutes; } set { lastGameMinutes = value; } }
         public List<RoomRental_v1> RentedRooms { get { return rentedRooms; } set { rentedRooms = value; } }
-        public List<DaggerfallDisease> Diseases { get { return diseases; } set { diseases = value; } }
         public Crimes CrimeCommitted { get { return crimeCommitted; } set { crimeCommitted = value; } }
         public bool HaveShownSurrenderToGuardsDialogue { get { return haveShownSurrenderToGuardsDialogue; } set { haveShownSurrenderToGuardsDialogue = value; } }
         public bool Arrested { get { return arrested; } set { arrested = value; } }
@@ -312,15 +309,6 @@ namespace DaggerfallWorkshop.Game.Entity
                 GameManager.Instance.WeatherManager.SetClimateWeathers();
                 GameManager.Instance.WeatherManager.UpdateWeatherFromClimateArray = true;
                 RemoveExpiredRentedRooms();
-
-                if (Diseases.Count != 0)
-                {
-                    for (int i = daysPast; i > 0; i--)
-                    {
-                        foreach (DaggerfallDisease disease in Diseases)
-                            disease.ApplyDiseaseEffects(this);
-                    }
-                }
             }
 
             // Normalize legal reputation and update faction power and regional conditions every certain number of days
@@ -501,7 +489,6 @@ namespace DaggerfallWorkshop.Game.Entity
             timeOfLastSkillIncreaseCheck = 0;
             timeOfLastSkillTraining = 0;
             rentedRooms.Clear();
-            diseases = new List<DaggerfallDisease>();
             if (skillUses != null)
                 System.Array.Clear(skillUses, 0, skillUses.Length);
          }
@@ -637,15 +624,13 @@ namespace DaggerfallWorkshop.Game.Entity
             // Find all diseases and poisons
             List<SaveTreeBaseRecord> diseaseAndPoisonRecords = saveTree.FindRecords(RecordTypes.DiseaseOrPoison, characterRecord);
 
-            diseases.Clear();
-
             // Add Daggerfall Unity diseases and poisons
             foreach (var record in diseaseAndPoisonRecords)
             {
                 if ((record as DiseaseOrPoisonRecord).ParsedData.ID < 100) // is a disease
                 {
-                    DaggerfallDisease newDisease = new DaggerfallDisease((DiseaseOrPoisonRecord)record);
-                    diseases.Add(newDisease);
+                    // TODO: Import classic disease effect to player effect manager and set properties
+                    //DaggerfallDisease_Deprecated newDisease = new DaggerfallDisease_Deprecated((DiseaseOrPoisonRecord)record);
                 }
                 // TODO: Poisons
             }

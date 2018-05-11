@@ -54,6 +54,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             set { daysOfSymptomsLeft = value; }
         }
 
+        public TextFile.Token[] ContractedMessageTokens
+        {
+            get { return contractedMessageTokens; }
+        }
+
         #endregion
 
         #region Overrides
@@ -79,6 +84,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
         {
+            // Player must be greater than level 1 to acquire a disease
+            DaggerfallEntityBehaviour host = GetPeeredEntityBehaviour(manager);
+            if (host.EntityType == EntityTypes.Player && host.Entity.Level < 2)
+            {
+                forcedRoundsRemaining = 0;
+                return;
+            }
+
             // Store first day of infection - diseases operate in 24-hour ticks from the very next day after infection
             lastDay = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() / DaggerfallDateTime.MinutesPerDay;
 
@@ -114,6 +127,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         /// </summary>
         protected virtual void UpdateDisease()
         {
+            // Do nothing if expiring out
+            if (forcedRoundsRemaining == 0)
+                return;
+
             // Get current day and number of days that have passed (e.g. fast travel can progress time several days)
             uint currentDay = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() / DaggerfallDateTime.MinutesPerDay;
             int daysPast = (int)(currentDay - lastDay);

@@ -1534,7 +1534,7 @@ namespace Wenzil.Console
                 if (!int.TryParse(args[0], out index))
                     return string.Format("Could not parse argument `{0}` to a number", args[0]);
                 if (index < 0 || index > 16)
-                    return string.Format("Index {0} is out range. Must be 0-16.");
+                    return string.Format("Index {0} is out range. Must be 0-16.", index);
 
                 // Infect player
                 Diseases disease = (Diseases)index;

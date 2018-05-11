@@ -12,7 +12,7 @@ using DaggerfallWorkshop.Game.MagicAndEffects;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
-    public class DaggerfallDisease
+    public class DaggerfallDisease_Deprecated
     {
         // Disease data. Found in FALL.EXE (1.07.213) from offset 0x1C0053.
         public DiseaseData[] diseaseData = new DiseaseData[]
@@ -40,7 +40,7 @@ namespace DaggerfallWorkshop.Game.Entity
         bool incubationOver = false;
         byte daysOfSymptomsLeft = 0;
 
-        public DaggerfallDisease(Diseases disease)
+        public DaggerfallDisease_Deprecated(Diseases disease)
         {
             diseaseType = disease;
 
@@ -57,7 +57,7 @@ namespace DaggerfallWorkshop.Game.Entity
             Debug.Log("Contracted " + disease);
         }
 
-        public DaggerfallDisease(DiseaseOrPoisonRecord record)
+        public DaggerfallDisease_Deprecated(DiseaseOrPoisonRecord record)
         {
             diseaseType = (Diseases)record.ParsedData.ID;
 
