@@ -289,6 +289,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 //uiManager.PushWindow(new DaggerfallBankingWindow(uiManager, this));
                 //break;
 
+                case GuildServices.MakeSpells:
+                    CloseWindow();
+                    uiManager.PushWindow(DaggerfallUI.Instance.DfSpellMakerWindow);
+                    break;
+
                 case GuildServices.ReceiveArmor:
                     ReceiveArmorService();
                     break;

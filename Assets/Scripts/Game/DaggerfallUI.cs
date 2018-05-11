@@ -213,6 +213,11 @@ namespace DaggerfallWorkshop.Game
             get { return dfCourtWindow; }
         }
 
+        public DaggerfallSpellMakerWindow DfSpellMakerWindow
+        {
+            get { return dfSpellMakerWindow; }
+        }
+
         public string FontsFolder
         {
             get { return Path.Combine(Application.streamingAssetsPath, fontsFolderName); }
