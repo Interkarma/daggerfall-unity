@@ -394,15 +394,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         public void CureAllDiseases()
         {
-            // Cure all disease effects
+            // Cure all disease bundles
             InstancedBundle[] bundles = GetDiseaseBundles();
             foreach (InstancedBundle bundle in bundles)
             {
-                foreach (IEntityEffect effect in bundle.liveEffects)
-                {
-                    if (effect is DiseaseEffect)
-                        (effect as DiseaseEffect).CureDisease();
-                }
+                RemoveBundle(bundle);
+                Debug.LogFormat("Removing disease bundle {0}", bundle.GetHashCode());
             }
         }
 
