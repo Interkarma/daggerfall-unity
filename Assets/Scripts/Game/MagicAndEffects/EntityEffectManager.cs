@@ -266,6 +266,41 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             GameManager.Instance.PlayerSpellCasting.PlayOneShot(readySpell.Settings.ElementType);
         }
 
+        /// <summary>
+        /// Helper to create a classic disease effect bundle.
+        /// </summary>
+        /// <param name="diseaseType">Classic disease type.</param>
+        /// <returns>EntityEffectBundle.</returns>
+        public EntityEffectBundle CreateDisease(Diseases diseaseType)
+        {
+            EffectBundleSettings settings = new EffectBundleSettings()
+            {
+                Version = 1,
+                BundleType = BundleTypes.Disease,
+                Effects = new EffectEntry[] { new EffectEntry(DiseaseEffect.GetClassicDiseaseEffectKey(diseaseType)) },
+            };
+
+            return new EntityEffectBundle(settings, entityBehaviour);
+        }
+
+        /// <summary>
+        /// Helper to create a disease effect bundle from any effect key.
+        /// This is just here for testing right now as no custom diseases exist.
+        /// </summary>
+        /// <param name="key">Effect key to use as infection.</param>
+        /// <returns>EntityEffectBundle.</returns>
+        public EntityEffectBundle CreateDisease(string key)
+        {
+            EffectBundleSettings settings = new EffectBundleSettings()
+            {
+                Version = 1,
+                BundleType = BundleTypes.Disease,
+                Effects = new EffectEntry[] { new EffectEntry(key) },
+            };
+
+            return new EntityEffectBundle(settings, entityBehaviour);
+        }
+
         public void AssignBundle(EntityEffectBundle sourceBundle)
         {
             // Source bundle must have one or more effects

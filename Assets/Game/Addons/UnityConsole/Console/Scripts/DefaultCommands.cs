@@ -76,7 +76,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(ShowSpellmakerWindow.name, ShowSpellmakerWindow.description, ShowSpellmakerWindow.usage, ShowSpellmakerWindow.Execute);
             ConsoleCommandsDatabase.RegisterCommand(StartQuest.name, StartQuest.usage, StartQuest.description, StartQuest.Execute);
 
-            ConsoleCommandsDatabase.RegisterCommand(CastEffect.name, CastEffect.usage, CastEffect.description, CastEffect.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(DiseasePlayer.name, DiseasePlayer.usage, DiseasePlayer.description, DiseasePlayer.Execute);
 
             ConsoleCommandsDatabase.RegisterCommand(DumpBlock.name, DumpBlock.description, DumpBlock.usage, DumpBlock.Execute);
             ConsoleCommandsDatabase.RegisterCommand(DumpLocBlocks.name, DumpLocBlocks.description, DumpLocBlocks.usage, DumpLocBlocks.Execute);
@@ -1518,48 +1518,30 @@ namespace Wenzil.Console
             }
         }
 
-        private static class CastEffect
+        private static class DiseasePlayer
         {
-            public static readonly string name = "casteffect";
-            public static readonly string description = "Cast single effect on self or target. Target is any entity under crosshair.";
-            public static readonly string usage = "casteffect self|target groupIndex subgroupIndex";
+            public static readonly string name = "diseaseplayer";
+            public static readonly string description = "Infect player with a classic disease.";
+            public static readonly string usage = "diseaseplayer index (a number 0-17)";
 
             public static string Execute(params string[] args)
             {
-                if (args == null || args.Length != 3)
+                if (args == null || args.Length != 1)
                     return usage;
 
-                // Get self or target gameobject
-                GameObject result = null;
-                if (args[0] == "self")
-                    result = GameManager.Instance.PlayerObject;
-                else if (args[0] == "target")
-                    return "'casteffect target' not implemented yet.";  // TODO: Cast ray to find target object
-                else
-                    return "must be 'casteffect self' or 'casteffect target'";
+                // Get index and validate range
+                int index;
+                if (!int.TryParse(args[0], out index))
+                    return string.Format("Could not parse argument `{0}` to a number", args[0]);
+                if (index < 0 || index > 17)
+                    return string.Format("Index {0} is out range. Must be 0-17.");
 
-                // Get group and subgroup indices
-                int groupIndex = -1, subgroupIndex = -1;
-                if (!int.TryParse(args[1], out groupIndex) || !int.TryParse(args[2], out subgroupIndex))
-                    return usage;
-
-                // Must have a gameobject by now
-                if (!result)
-                    return "casteffect could not find any GameObject";
-
-                // The gameobject must be an entity
-                DaggerfallEntityBehaviour entityBehaviour = result.GetComponent<DaggerfallEntityBehaviour>();
-                if (!entityBehaviour)
-                    return "casteffect could not find DaggerfallEntityBehaviour on specified GameObject (you must target an enemy or other valid entity)";
-
-                // The gameobject must have an effect manager
-                EntityEffectManager effectManager = result.GetComponent<EntityEffectManager>();
-                if (!effectManager)
-                    return "casteffect could not find EntityEffectManager on specified GameObject";
-
-                // TODO: Send effect to resulting magic manager or error out if effect does not exist
-
-                return string.Format("Cast effect {0} {1} on entity type {2} with name {3}", groupIndex, subgroupIndex, entityBehaviour.EntityType.ToString(), result.name);
+                // Infect player
+                Diseases disease = (Diseases)index;
+                EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateDisease(disease);
+                GameManager.Instance.PlayerEffectManager.AssignBundle(bundle);
+                
+                return string.Format("Player infected with {0}", disease.ToString());
             }
         }
 

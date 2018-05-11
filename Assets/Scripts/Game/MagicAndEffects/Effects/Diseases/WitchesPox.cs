@@ -22,6 +22,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             Diseases diseaseType = Diseases.WitchesPox;
 
             properties.Key = GetClassicDiseaseEffectKey(diseaseType);
+            properties.ShowSpellIcon = false;
             classicDiseaseType = diseaseType;
             diseaseData = GetClassicDiseaseData(diseaseType);
             contractedMessageTokens = GetClassicContractedMessageTokens(diseaseType);

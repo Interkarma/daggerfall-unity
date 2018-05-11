@@ -82,6 +82,18 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     {
         public string Key;
         public EffectSettings Settings;
+
+        public EffectEntry(string key)
+        {
+            Key = key;
+            Settings = new EffectSettings();
+        }
+
+        public EffectEntry(string key, EffectSettings settings)
+        {
+            Key = key;
+            Settings = settings;
+        }
     }
 
     /// <summary>

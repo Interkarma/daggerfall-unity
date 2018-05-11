@@ -77,7 +77,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             UpdateDisease();
         }
 
-        protected override void BecomeIncumbent()
+        public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
         {
             // Store first day of infection - diseases operate in 24-hour ticks from the very next day after infection
             lastDay = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() / DaggerfallDateTime.MinutesPerDay;
@@ -86,6 +86,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Otherwise stats will continue to fall until cured
             if (!IsDiseasePermanent())
                 daysOfSymptomsLeft = (byte)UnityEngine.Random.Range(diseaseData.daysOfSymptomsMin, diseaseData.daysOfSymptomsMax + 1);
+
+            base.Start(manager, caster);
         }
 
         protected override void AddState(IncumbentEffect incumbent)
@@ -162,7 +164,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         /// </summary>
         protected virtual void IncrementDailyDiseaseEffects()
         {
-            // Get amount of damage for number of days past
+            // Get amount of damage for today
             int damageAmount = UnityEngine.Random.Range(diseaseData.minDamage, diseaseData.maxDamage + 1);
 
             // This is a twist on DiseaseData - using it like a mult matrix by building on how it uses a byte value to indicate active components
