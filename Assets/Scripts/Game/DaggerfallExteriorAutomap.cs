@@ -27,6 +27,7 @@ using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Questing;
+using DaggerfallWorkshop.Game.Guilds;
 using Wenzil.Console;
 
 namespace DaggerfallWorkshop.Game
@@ -764,7 +765,7 @@ namespace DaggerfallWorkshop.Game
                             if (GameManager.Instance.PlayerGPS.GetDiscoveredBuilding(buildingSummary.buildingKey, out discoveredBuilding))
                             {
                                 
-                                if (!RMBLayout.IsResidence(buildingSummary.BuildingType)) // guilds, shops, taverns, palace (general case)
+                                if (!RMBLayout.IsResidence(buildingSummary.BuildingType) || buildingSummary.FactionId == Guilds.ThievesGuild.FactionId || buildingSummary.FactionId == Guilds.DarkBrotherhood.FactionId) // guilds, shops, taverns, palace (general case)
                                 {
                                     newBuildingNameplate.name = discoveredBuilding.displayName;
                                 }
