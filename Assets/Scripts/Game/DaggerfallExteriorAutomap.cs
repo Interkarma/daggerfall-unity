@@ -780,7 +780,7 @@ namespace DaggerfallWorkshop.Game
                                         foreach (QuestResource questResource in questResources)
                                         {
                                             Questing.Place place = (Questing.Place)(questResource);
-                                            if (place.SiteDetails.buildingKey == discoveredBuilding.buildingKey)
+                                            if (place.SiteDetails.buildingKey == discoveredBuilding.buildingKey && GameManager.Instance.TalkManager.BuildingIsQuestResourceAndPlayerHasLearnedAbout(place.SiteDetails.buildingKey))
                                             {
                                                 buildingQuestName = place.SiteDetails.buildingName; // get buildingName if involved in active quest
                                             }

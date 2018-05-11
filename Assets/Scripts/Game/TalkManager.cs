@@ -290,6 +290,7 @@ namespace DaggerfallWorkshop.Game
                 this.resourceType = QuestInfoResourceType.NotSet;
                 this.availableForDialog = true;
                 this.hasEntryInTellMeAbout = false;
+                this.questPlaceResourceMarkedLocationOnMap = false;
                 this.dialogLinkedLocations = new List<string>();
                 this.dialogLinkedPersons = new List<string>();
                 this.dialogLinkedThings = new List<string>();
@@ -302,6 +303,7 @@ namespace DaggerfallWorkshop.Game
             public bool availableForDialog; // if it will show up in talk window (any dialog link for this resource will set this false, if no dialog link is present it will be set to true)
             public bool hasEntryInTellMeAbout; // if resource will get entry in section "Tell Me About" (anyInfo or rumors available)
             public bool hasEntryInWhereIs; // if resource will get entry in section "Where Is" (e.g. person resources)
+            public bool questPlaceResourceMarkedLocationOnMap; // used if resource is place resource - indicates if an npc marked the resource on the map
             public List<string> dialogLinkedLocations; // list of location quest resources dialog-linked to this quest resource
             public List<string> dialogLinkedPersons; // list of person quest resources dialog-linked to this quest resource
             public List<string> dialogLinkedThings; // list of thing quest resources dialog-linked to this quest resource
@@ -779,6 +781,8 @@ namespace DaggerfallWorkshop.Game
             BuildingInfo buildingInfo = listBuildings.Find(x => x.buildingKey == currentKeySubjectBuildingKey);
             if (buildingInfo.buildingKey != 0)
             {
+                if (dictQuestInfo.ContainsKey(currentQuestionListItem.questID) && dictQuestInfo[currentQuestionListItem.questID].resourceInfo.ContainsKey(currentKeySubject))
+                    dictQuestInfo[currentQuestionListItem.questID].resourceInfo[currentKeySubject].questPlaceResourceMarkedLocationOnMap = true;
                 GameManager.Instance.PlayerGPS.DiscoverBuilding(buildingInfo.buildingKey);
             }
         }
@@ -1593,6 +1597,37 @@ namespace DaggerfallWorkshop.Game
             else if (matchingBuildings.Count > 1 )
                 throw new Exception(String.Format("GetBuildingTypeForBuildingKey(): more than one building with the queried key found"));
             return matchingBuildings[0].buildingType;
+        }
+
+        public bool BuildingIsQuestResourceAndPlayerHasLearnedAbout(int buildingKey)
+        {
+            foreach (ulong questID in GameManager.Instance.QuestMachine.GetAllActiveQuests())
+            {
+                Quest quest = GameManager.Instance.QuestMachine.GetQuest(questID);
+
+                if (dictQuestInfo.ContainsKey(questID))
+                {
+                    QuestResources questInfo = dictQuestInfo[questID]; // get questInfo containing orphaned list of quest resources
+
+                    QuestResource[] questResources = quest.GetAllResources(typeof(Place)); // get list of place quest resources
+                    for (int i = 0; i < questResources.Length; i++)
+                    {
+                        Questing.Place place = (Questing.Place)(questResources[i]);
+                        int key = place.SiteDetails.buildingKey;
+                        string name = place.SiteDetails.buildingName;
+
+                        if (key != buildingKey)
+                            continue;
+
+                        if (questInfo.resourceInfo.ContainsKey(name))
+                        {
+                            if (questInfo.resourceInfo[name].availableForDialog && questInfo.resourceInfo[name].questPlaceResourceMarkedLocationOnMap)
+                                return true;
+                        }
+                    }
+                }
+            }
+            return false;
         }
 
         /// <summary>
