@@ -2075,7 +2075,7 @@ namespace DaggerfallWorkshop.Game
 
             GetBuildingList();
 
-            ListItem itemBuildingTypeGroup;
+            ListItem itemBuildingTypeGroup = null;
             List<BuildingInfo> matchingBuildings = new List<BuildingInfo>();
 
             foreach (DFLocation.BuildingTypes buildingType in Enum.GetValues(typeof(DFLocation.BuildingTypes)))
@@ -2112,6 +2112,7 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
+            bool alreadyCreatedGeneralSubSection = false;
             foreach (KeyValuePair<ulong, QuestResources> questInfo in dictQuestInfo)
             {
                 foreach (KeyValuePair<string, QuestResourceInfo> questResourceInfo in questInfo.Value.resourceInfo)
@@ -2139,10 +2140,14 @@ namespace DaggerfallWorkshop.Game
 
                             if (questResourceInfo.Value.availableForDialog && questResourceInfo.Value.hasEntryInWhereIs)
                             {
-                                itemBuildingTypeGroup = new ListItem();
-                                itemBuildingTypeGroup.type = ListItemType.ItemGroup;
-                                itemBuildingTypeGroup.caption = (TextManager.Instance.GetText(textDatabase, "General"));
-                                listTopicLocation.Add(itemBuildingTypeGroup);
+                                if (!alreadyCreatedGeneralSubSection)
+                                {
+                                    itemBuildingTypeGroup = new ListItem();
+                                    itemBuildingTypeGroup.type = ListItemType.ItemGroup;
+                                    itemBuildingTypeGroup.caption = (TextManager.Instance.GetText(textDatabase, "General"));
+                                    listTopicLocation.Add(itemBuildingTypeGroup);
+                                    alreadyCreatedGeneralSubSection = true;
+                                }
 
                                 if (itemBuildingTypeGroup.listChildItems == null)
                                 {
@@ -2164,10 +2169,14 @@ namespace DaggerfallWorkshop.Game
             matchingBuildings = listBuildings.FindAll(x => x.buildingType == DFLocation.BuildingTypes.Palace);
             if (matchingBuildings.Count > 0)
             {
-                itemBuildingTypeGroup = new ListItem();
-                itemBuildingTypeGroup.type = ListItemType.ItemGroup;
-                itemBuildingTypeGroup.caption = (TextManager.Instance.GetText(textDatabase, "General"));
-                listTopicLocation.Add(itemBuildingTypeGroup);
+                if (!alreadyCreatedGeneralSubSection)
+                {
+                    itemBuildingTypeGroup = new ListItem();
+                    itemBuildingTypeGroup.type = ListItemType.ItemGroup;
+                    itemBuildingTypeGroup.caption = (TextManager.Instance.GetText(textDatabase, "General"));
+                    listTopicLocation.Add(itemBuildingTypeGroup);
+                    alreadyCreatedGeneralSubSection = true;
+                }
 
                 if (itemBuildingTypeGroup.listChildItems == null)
                 {
