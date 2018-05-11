@@ -316,9 +316,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 effect.Start(this, sourceBundle.CasterEntityBehaviour);
                 if (effect.Properties.SupportChance && !effect.ChanceSuccess)
                 {
-                    // Output "save versus spell made." if the host manager is player
-                    if (isPlayerEntity)
+                    // Output failure messages
+                    if (isPlayerEntity && sourceBundle.Settings.TargetType == TargetTypes.CasterOnly)
+                    {
+                        // Output "spell effect failed." for caster only spells
+                        DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "spellEffectFailed"));
+                    }
+                    else if (isPlayerEntity)
+                    {
+                        // Output "save versus spell made." for external contact spells
                         DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "saveVersusSpellMade"));
+                    }
 
                     continue;
                 }
