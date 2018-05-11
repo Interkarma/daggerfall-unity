@@ -497,6 +497,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Assign to host entity
             entityBehaviour.Entity.Stats.AssignMods(combinedStatMods);
             entityBehaviour.Entity.Skills.AssignMods(combinedSkillMods);
+
+            // Kill host if any stat is reduced to 1
+            for (int i = 0; i < DaggerfallStats.Count; i++)
+            {
+                if (entityBehaviour.Entity.Stats.GetLiveStatValue(i) == 1)
+                {
+                    entityBehaviour.Entity.CurrentHealth = 0;
+                    return;
+                }
+            }
         }
 
         void MergeStatMods(IEntityEffect effect, ref int[] combinedStatMods)

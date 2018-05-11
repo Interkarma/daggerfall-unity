@@ -133,17 +133,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 IncrementDailyDiseaseEffects();
             }
 
-            // Kill host if any stat is reduced to 0
-            DaggerfallEntityBehaviour host = GetPeeredEntityBehaviour(manager);
-            for (int i = 0; i < DaggerfallStats.Count; i++)
-            {
-                if (host.Entity.Stats.GetLiveStatValue(i) == 0)
-                {
-                    host.Entity.CurrentHealth = 0;
-                    return;
-                }
-            }
-
             // Update day tracking
             lastDay = currentDay;
 
