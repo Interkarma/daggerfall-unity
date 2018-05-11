@@ -125,9 +125,8 @@ namespace DaggerfallConnect.Save
             parsedData.baseHealth = reader.ReadInt16();
 
             reader.BaseStream.Position = 0x60;
-            parsedData.timePlayerBecameWerebeast = reader.ReadUInt32();
-
-            reader.BaseStream.Position = 0x6c;
+            parsedData.lastTimeUrgeToHuntInnocentSatisfied = reader.ReadUInt32();
+            parsedData.timeAfterWhichShieldEffectWillEnd = reader.ReadUInt32();
             parsedData.unknownLycanthropy = reader.ReadInt16();
 
             reader.BaseStream.Position = 0x74;
@@ -180,6 +179,7 @@ namespace DaggerfallConnect.Save
             reader.BaseStream.Position = 0x211;
             parsedData.timeForThievesGuildLetter = reader.ReadUInt32();
             parsedData.timeForDarkBrotherhoodLetter = reader.ReadUInt32();
+            parsedData.shieldEffectAmount = reader.ReadUInt32();
 
             reader.BaseStream.Position = 0x21f;
             parsedData.darkBrotherhoodRequirementTally = reader.ReadByte();
@@ -305,7 +305,8 @@ namespace DaggerfallConnect.Save
             public UInt32 skillsRaisedThisLevel2; // Flags for skills 32 through 34.
             public Int32 startingLevelUpSkillSum; // The starting total of all the primary skills, the two top major skills and the top minor skill
             public Int16 baseHealth;
-            public UInt32 timePlayerBecameWerebeast; // Needs confirming
+            public UInt32 lastTimeUrgeToHuntInnocentSatisfied;
+            public UInt32 timeAfterWhichShieldEffectWillEnd;
             public Int16 unknownLycanthropy; // Lycanthropy stage? Set when inflicted with lycanthropy.
             public UInt32 playerHouse; // Building ID of player's house. 0 if player doesn't own a house.
             public UInt32 playerShip; // Probably same type of data as above, for player's ship. 0 if player doesn't own a ship.
@@ -351,6 +352,7 @@ namespace DaggerfallConnect.Save
             public UInt32 lastTimePlayerBoughtTraining;
             public UInt32 timeForThievesGuildLetter;
             public UInt32 timeForDarkBrotherhoodLetter;
+            public UInt32 shieldEffectAmount;
             public Byte vampireClan;
             public Byte effectStrength; // Used for Open and Shade effects at least.
             public Byte darkBrotherhoodRequirementTally;
