@@ -6,57 +6,14 @@
 // Original Author: Hazelnut
 // Contributors: Allofich
 
-using DaggerfallConnect.Save;
 using UnityEngine;
+using DaggerfallConnect.Save;
+using DaggerfallWorkshop.Game.MagicAndEffects;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
-    public class DaggerfallDisease
+    public class DaggerfallDisease_Deprecated
     {
-        public struct DiseaseData
-        {
-            // Affected stats
-            public byte STR;
-            public byte INT;
-            public byte WIL;
-            public byte AGI;
-            public byte END;
-            public byte PER;
-            public byte SPD;
-            public byte LUC;
-            public byte HEA;
-            public byte FAT;
-            public byte SPL;
-            public byte minDamage;
-            public byte maxDamage;
-            public byte daysOfSymptomsMin; // 0xFF means never-ending
-            public byte daysOfSymptomsMax;
-
-            // Constructor
-            public DiseaseData(byte STRp, byte INTp,
-                byte WILp, byte AGIp, byte ENDp, byte PERp,
-                byte SPDp, byte LUCp, byte HEAp, byte FATp,
-                byte SPLp, byte minDamagep, byte maxDamagep,
-                byte daysOfSymptomsMinp, byte daysOfSymptomsMaxp)
-            {
-                STR = STRp;
-                INT = INTp;
-                WIL = WILp;
-                AGI = AGIp;
-                END = ENDp;
-                PER = PERp;
-                SPD = SPDp;
-                LUC = LUCp;
-                HEA = HEAp;
-                FAT = FATp;
-                SPL = SPLp;
-                minDamage = minDamagep;
-                maxDamage = maxDamagep;
-                daysOfSymptomsMin = daysOfSymptomsMinp;
-                daysOfSymptomsMax = daysOfSymptomsMaxp;
-            }
-        }
-
         // Disease data. Found in FALL.EXE (1.07.213) from offset 0x1C0053.
         public DiseaseData[] diseaseData = new DiseaseData[]
         {              //  STR  INT  WIL  AGI  END  PER  SPD  LUC  HEA  FAT  SPL MIND  MAXD  MINS  MAXS
@@ -83,7 +40,7 @@ namespace DaggerfallWorkshop.Game.Entity
         bool incubationOver = false;
         byte daysOfSymptomsLeft = 0;
 
-        public DaggerfallDisease(Diseases disease)
+        public DaggerfallDisease_Deprecated(Diseases disease)
         {
             diseaseType = disease;
 
@@ -100,7 +57,7 @@ namespace DaggerfallWorkshop.Game.Entity
             Debug.Log("Contracted " + disease);
         }
 
-        public DaggerfallDisease(DiseaseOrPoisonRecord record)
+        public DaggerfallDisease_Deprecated(DiseaseOrPoisonRecord record)
         {
             diseaseType = (Diseases)record.ParsedData.ID;
 

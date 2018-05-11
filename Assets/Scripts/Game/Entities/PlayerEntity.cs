@@ -80,8 +80,6 @@ namespace DaggerfallWorkshop.Game.Entity
         protected uint timeToBecomeVampireOrWerebeast = 0;
         protected uint lastTimePlayerAteOrDrankAtTavern = 0;
 
-        protected List<DaggerfallDisease> diseases = new List<DaggerfallDisease>();
-
         protected RegionDataRecord[] regionData = new RegionDataRecord[62];
 
         protected Crimes crimeCommitted = 0; // TODO: Save/load
@@ -150,7 +148,6 @@ namespace DaggerfallWorkshop.Game.Entity
         public RegionDataRecord[] RegionData { get { return regionData; } set { regionData = value; } }
         public uint LastGameMinutes { get { return lastGameMinutes; } set { lastGameMinutes = value; } }
         public List<RoomRental_v1> RentedRooms { get { return rentedRooms; } set { rentedRooms = value; } }
-        public List<DaggerfallDisease> Diseases { get { return diseases; } set { diseases = value; } }
         public Crimes CrimeCommitted { get { return crimeCommitted; } set { crimeCommitted = value; } }
         public bool HaveShownSurrenderToGuardsDialogue { get { return haveShownSurrenderToGuardsDialogue; } set { haveShownSurrenderToGuardsDialogue = value; } }
         public bool Arrested { get { return arrested; } set { arrested = value; } }
@@ -312,15 +309,6 @@ namespace DaggerfallWorkshop.Game.Entity
                 GameManager.Instance.WeatherManager.SetClimateWeathers();
                 GameManager.Instance.WeatherManager.UpdateWeatherFromClimateArray = true;
                 RemoveExpiredRentedRooms();
-
-                if (Diseases.Count != 0)
-                {
-                    for (int i = daysPast; i > 0; i--)
-                    {
-                        foreach (DaggerfallDisease disease in Diseases)
-                            disease.ApplyDiseaseEffects(this);
-                    }
-                }
             }
 
             // Normalize legal reputation and update faction power and regional conditions every certain number of days
@@ -342,7 +330,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
             // TODO: Right now enemy spawns are only prevented when time has been raised for
             // fast travel. They should later be prevented when time has been raised for
-            // 1) Turning into vampire 2) Serving prison sentence
+            // turning into vampire
             // Classic also prevents enemy spawns during loitering,
             // but this seems counterintuitive so it's not implemented in DF Unity for now
             if (!preventEnemySpawns)
@@ -352,6 +340,21 @@ namespace DaggerfallWorkshop.Game.Entity
                     // Catch up time and break if something spawns
                     if (IntermittentEnemySpawn(l + lastGameMinutes + 1))
                         break;
+
+                    // Handle guards appearing for low-legal rep player
+                    int regionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
+                    if (regionData[regionIndex].LegalRep < -10 && UnityEngine.Random.Range(1, 101) < 5)
+                    {
+                        crimeCommitted = Crimes.Criminal_Conspiracy;
+                        SpawnCityGuards(false);
+                    }
+
+                    // Handle guards appearing for banished player
+                    if ((regionData[regionIndex].SeverePunishmentFlags & 1) != 0 && UnityEngine.Random.Range(1, 101) < 10)
+                    {
+                        crimeCommitted = Crimes.Criminal_Conspiracy;
+                        SpawnCityGuards(false);
+                    }
                 }
             }
 
@@ -454,16 +457,18 @@ namespace DaggerfallWorkshop.Game.Entity
             if (GameManager.Instance.HowManyEnemiesOfType(MobileTypes.Knight_CityWatch) > 10)
                 return;
 
-            if (forceSpawn)
-            {
-                // TODO: First try to spawn guards from nearby townspeople. If townsperson is a guard spawn, or if is a non-guard 1/3 chance to spawn
+            //if (forceSpawn)
+            //{
+                // TODO: First try to spawn guards from nearby townspeople. For each townsperson, if townsperson is a guard spawn, or if is a non-guard 1/3 chance to spawn
                 // if out of player view.
-                // If none spawned, proceed with below
+                // If no guards spawned from this, then use the below
                 int randomNumber = UnityEngine.Random.Range(2, 5 + 1);
                 GameObjectHelper.CreateFoeSpawner(true, MobileTypes.Knight_CityWatch, randomNumber, (int)(1032 * MeshReader.GlobalScale), (int)(3096 * MeshReader.GlobalScale));
-            }
-            // TODO: If !forceSpawn, check for LOS from nearby guard townspeople and spawn from them if they see player.
-            // Otherwise, check for LOS from non-guard townspeople. If they see player, random countdown is set, after which guards will spawn.
+            //}
+            // TODO: If !forceSpawn, the result of an LOS check from nearby guard townspeople is used and guards spawn from them if they saw player.
+            // The LOS check is not done constantly, it is triggered by a few types of event, such as killing a townsperson, attempting to pick a lock, etc.
+            // If no guards saw the event, use the LOS result from non-guard townspeople. If they saw it, a random countdown is set, after which guards will spawn.
+
         }
 
         /// <summary>
@@ -484,7 +489,6 @@ namespace DaggerfallWorkshop.Game.Entity
             timeOfLastSkillIncreaseCheck = 0;
             timeOfLastSkillTraining = 0;
             rentedRooms.Clear();
-            diseases = new List<DaggerfallDisease>();
             if (skillUses != null)
                 System.Array.Clear(skillUses, 0, skillUses.Length);
          }
@@ -620,15 +624,13 @@ namespace DaggerfallWorkshop.Game.Entity
             // Find all diseases and poisons
             List<SaveTreeBaseRecord> diseaseAndPoisonRecords = saveTree.FindRecords(RecordTypes.DiseaseOrPoison, characterRecord);
 
-            diseases.Clear();
-
             // Add Daggerfall Unity diseases and poisons
             foreach (var record in diseaseAndPoisonRecords)
             {
                 if ((record as DiseaseOrPoisonRecord).ParsedData.ID < 100) // is a disease
                 {
-                    DaggerfallDisease newDisease = new DaggerfallDisease((DiseaseOrPoisonRecord)record);
-                    diseases.Add(newDisease);
+                    // TODO: Import classic disease effect to player effect manager and set properties
+                    //DaggerfallDisease_Deprecated newDisease = new DaggerfallDisease_Deprecated((DiseaseOrPoisonRecord)record);
                 }
                 // TODO: Poisons
             }

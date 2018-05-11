@@ -188,7 +188,6 @@ namespace DaggerfallWorkshop.Game.Serialization
         public uint timeOfLastSkillTraining;
         public PlayerEntity.RegionDataRecord[] regionData;
         public RoomRental_v1[] rentedRooms;
-        public DaggerfallDisease[] diseases;
         public EffectBundleSettings[] spellbook;
         public EntityEffectManager.EffectBundleSaveData_v1[] instancedEffectBundles;
         public PlayerEntity.Crimes crimeCommitted;

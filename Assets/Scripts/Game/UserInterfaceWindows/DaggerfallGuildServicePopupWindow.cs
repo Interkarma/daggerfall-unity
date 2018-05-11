@@ -564,9 +564,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void CureDiseaseService()
         {
             CloseWindow();
-            int numberOfDiseases = 0;
-            foreach (DaggerfallDisease disease in playerEntity.Diseases)
-                numberOfDiseases++;
+            int numberOfDiseases = GameManager.Instance.PlayerEffectManager.DiseaseCount;
 
             if (playerEntity.TimeToBecomeVampireOrWerebeast != 0)
                 numberOfDiseases++;
@@ -618,7 +616,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (playerEntity.GetGoldAmount() >= curingCost)
                 {
                     playerEntity.DeductGoldAmount(curingCost);
-                    playerEntity.Diseases.Clear();
+                    GameManager.Instance.PlayerEffectManager.CureAllDiseases();
                     playerEntity.TimeToBecomeVampireOrWerebeast = 0;
                     DaggerfallUI.MessageBox("You are cured.");
                 }

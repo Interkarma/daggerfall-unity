@@ -118,6 +118,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             get { return instancedBundles.ToArray(); }
         }
 
+        public int DiseaseCount
+        {
+            get { return GetDiseaseCount(); }
+        }
+
+        public InstancedBundle[] DiseaseBundles
+        {
+            get { return GetDiseaseBundles(); }
+        }
+
         #endregion
 
         #region Unity
@@ -306,9 +316,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 effect.Start(this, sourceBundle.CasterEntityBehaviour);
                 if (effect.Properties.SupportChance && !effect.ChanceSuccess)
                 {
-                    // Output "save versus spell made." if the host manager is player
-                    if (isPlayerEntity)
+                    // Output failure messages
+                    if (isPlayerEntity && sourceBundle.Settings.TargetType == TargetTypes.CasterOnly)
+                    {
+                        // Output "spell effect failed." for caster only spells
+                        DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "spellEffectFailed"));
+                    }
+                    else if (isPlayerEntity)
+                    {
+                        // Output "save versus spell made." for external contact spells
                         DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "saveVersusSpellMade"));
+                    }
 
                     continue;
                 }
@@ -341,6 +359,80 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             instancedBundles.Clear();
             RaiseOnRemoveBundle();
+        }
+
+        #endregion
+
+        #region Diseases
+
+        /// <summary>
+        /// Helper to create a classic disease effect bundle.
+        /// </summary>
+        /// <param name="diseaseType">Classic disease type.</param>
+        /// <returns>EntityEffectBundle.</returns>
+        public EntityEffectBundle CreateDisease(Diseases diseaseType)
+        {
+            EffectBundleSettings settings = new EffectBundleSettings()
+            {
+                Version = 1,
+                BundleType = BundleTypes.Disease,
+                Effects = new EffectEntry[] { new EffectEntry(DiseaseEffect.GetClassicDiseaseEffectKey(diseaseType)) },
+            };
+
+            return new EntityEffectBundle(settings, entityBehaviour);
+        }
+
+        /// <summary>
+        /// Helper to create a disease effect bundle from any effect key.
+        /// This is just here for testing right now as no custom diseases exist.
+        /// </summary>
+        /// <param name="key">Effect key to use as infection.</param>
+        /// <returns>EntityEffectBundle.</returns>
+        public EntityEffectBundle CreateDisease(string key)
+        {
+            EffectBundleSettings settings = new EffectBundleSettings()
+            {
+                Version = 1,
+                BundleType = BundleTypes.Disease,
+                Effects = new EffectEntry[] { new EffectEntry(key) },
+            };
+
+            return new EntityEffectBundle(settings, entityBehaviour);
+        }
+
+        public void CureAllDiseases()
+        {
+            // Cure all disease bundles
+            InstancedBundle[] bundles = GetDiseaseBundles();
+            foreach (InstancedBundle bundle in bundles)
+            {
+                RemoveBundle(bundle);
+                Debug.LogFormat("Removing disease bundle {0}", bundle.GetHashCode());
+            }
+        }
+
+        int GetDiseaseCount()
+        {
+            int count = 0;
+            foreach (InstancedBundle bundle in instancedBundles)
+            {
+                if (bundle.bundleType == BundleTypes.Disease)
+                    count++;
+            }
+
+            return count;
+        }
+
+        InstancedBundle[] GetDiseaseBundles()
+        {
+            List<InstancedBundle> diseaseBundles = new List<InstancedBundle>();
+            foreach (InstancedBundle bundle in instancedBundles)
+            {
+                if (bundle.bundleType == BundleTypes.Disease)
+                    diseaseBundles.Add(bundle);
+            }
+
+            return diseaseBundles.ToArray();
         }
 
         #endregion
@@ -462,6 +554,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Assign to host entity
             entityBehaviour.Entity.Stats.AssignMods(combinedStatMods);
             entityBehaviour.Entity.Skills.AssignMods(combinedSkillMods);
+
+            // Kill host if any stat is reduced to 1
+            for (int i = 0; i < DaggerfallStats.Count; i++)
+            {
+                if (entityBehaviour.Entity.Stats.GetLiveStatValue(i) == 1)
+                {
+                    entityBehaviour.Entity.CurrentHealth = 0;
+                    return;
+                }
+            }
         }
 
         void MergeStatMods(IEntityEffect effect, ref int[] combinedStatMods)

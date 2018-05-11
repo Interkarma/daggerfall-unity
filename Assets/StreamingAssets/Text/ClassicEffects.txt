@@ -78,3 +78,4 @@ noName,                     <no-name>
 youFeelDrained,             You feel drained.
 youAreParalyzed,            You are paralyzed.
 saveVersusSpellMade,        Save versus spell made.
+spellEffectFailed,          Spell effect failed.

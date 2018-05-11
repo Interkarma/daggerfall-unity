@@ -866,10 +866,19 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         #region Enemies
 
+        /// <summary>
+        /// Inflict a classic disease onto player.
+        /// </summary>
+        /// <param name="target">Target entity - must be player.</param>
+        /// <param name="diseaseList">Array of disease indices matching Diseases enum.</param>
         public static void InflictDisease(DaggerfallEntity target, byte[] diseaseList)
         {
-            PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+            // Must have a valid disease list
+            if (diseaseList == null || diseaseList.Length == 0)
+                return;
 
+            // Only allow player to catch a disease this way
+            PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
             if (target != playerEntity)
                 return;
 
@@ -879,9 +888,18 @@ namespace DaggerfallWorkshop.Game.Formulas
                 // Return if disease resisted
                 if (SavingThrow(DFCareer.EffectFlags.Disease, target) == 0)
                     return;
-                int diseaseChoice = UnityEngine.Random.Range(diseaseList[0], diseaseList.Length);
-                Diseases disease = (Diseases)(diseaseChoice + 100); // Adding 100 to match to enums
-                playerEntity.Diseases.Add(new DaggerfallDisease(disease));
+
+                // Select a random disease from disease array and validate range
+                int diseaseIndex = UnityEngine.Random.Range(0, diseaseList.Length);
+                if (diseaseIndex < 0 || diseaseIndex > 16)
+                    return;
+
+                // Infect player
+                Diseases diseaseType = (Diseases)diseaseList[diseaseIndex];
+                EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateDisease(diseaseType);
+                GameManager.Instance.PlayerEffectManager.AssignBundle(bundle);
+
+                Debug.LogFormat("Infected player with disease {0}", diseaseType.ToString());
             }
         }
 

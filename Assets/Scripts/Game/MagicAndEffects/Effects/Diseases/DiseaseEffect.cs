@@ -32,7 +32,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         protected int forcedRoundsRemaining = 1;
         protected Diseases classicDiseaseType = Diseases.None;
-        protected DaggerfallDisease.DiseaseData diseaseData;
+        protected DiseaseData diseaseData;
         protected TextFile.Token[] contractedMessageTokens;
         protected bool incubationOver = false;
         protected uint lastDay;
@@ -52,6 +52,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             get { return daysOfSymptomsLeft; }
             set { daysOfSymptomsLeft = value; }
+        }
+
+        public TextFile.Token[] ContractedMessageTokens
+        {
+            get { return contractedMessageTokens; }
         }
 
         #endregion
@@ -77,8 +82,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             UpdateDisease();
         }
 
-        protected override void BecomeIncumbent()
+        public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
         {
+            // Player must be greater than level 1 to acquire a disease
+            DaggerfallEntityBehaviour host = GetPeeredEntityBehaviour(manager);
+            if (host.EntityType == EntityTypes.Player && host.Entity.Level < 2)
+            {
+                forcedRoundsRemaining = 0;
+                return;
+            }
+
             // Store first day of infection - diseases operate in 24-hour ticks from the very next day after infection
             lastDay = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() / DaggerfallDateTime.MinutesPerDay;
 
@@ -86,6 +99,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Otherwise stats will continue to fall until cured
             if (!IsDiseasePermanent())
                 daysOfSymptomsLeft = (byte)UnityEngine.Random.Range(diseaseData.daysOfSymptomsMin, diseaseData.daysOfSymptomsMax + 1);
+
+            base.Start(manager, caster);
         }
 
         protected override void AddState(IncumbentEffect incumbent)
@@ -112,6 +127,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         /// </summary>
         protected virtual void UpdateDisease()
         {
+            // Do nothing if expiring out
+            if (forcedRoundsRemaining == 0)
+                return;
+
             // Get current day and number of days that have passed (e.g. fast travel can progress time several days)
             uint currentDay = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() / DaggerfallDateTime.MinutesPerDay;
             int daysPast = (int)(currentDay - lastDay);
@@ -131,29 +150,21 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 IncrementDailyDiseaseEffects();
             }
 
-            // Kill host if any stat is reduced to 0
-            DaggerfallEntityBehaviour host = GetPeeredEntityBehaviour(manager);
-            for (int i = 0; i < DaggerfallStats.Count; i++)
-            {
-                if (host.Entity.Stats.GetLiveStatValue(i) == 0)
-                {
-                    host.Entity.CurrentHealth = 0;
-                    return;
-                }
-            }
-
             // Update day tracking
             lastDay = currentDay;
 
             // Count down days remaining
             if (!IsDiseasePermanent())
             {
-                if (--daysOfSymptomsLeft == 0)
+                if ((daysOfSymptomsLeft -= daysPast) <= 0)
+                {
+                    daysOfSymptomsLeft = 0;
                     EndDisease();
+                }
             }
 
             // Output alert text
-            DaggerfallUI.AddHUDText(UserInterfaceWindows.HardStrings.youFeelSomewhatBad);
+            DaggerfallUI.AddHUDText(UserInterfaceWindows.HardStrings.youFeelSomewhatBad, 2.5f);
         }
 
         /// <summary>
@@ -162,21 +173,21 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         /// </summary>
         protected virtual void IncrementDailyDiseaseEffects()
         {
-            // Get amount of damage for number of days past
+            // Get amount of damage for today
             int damageAmount = UnityEngine.Random.Range(diseaseData.minDamage, diseaseData.maxDamage + 1);
 
             // This is a twist on DiseaseData - using it like a mult matrix by building on how it uses a byte value to indicate active components
             // This means custom (non-classic) DiseaseData can use 0 (no effect), 1 (normal effect), or 2-255 to accelerate stat decay even faster
             // This also simplifies the need to perform a conditional check for each element as a 0 will cancel any change for that component
             DaggerfallEntityBehaviour host = GetPeeredEntityBehaviour(manager);
-            ChangeStatMod(DFCareer.Stats.Strength, diseaseData.STR * damageAmount);
-            ChangeStatMod(DFCareer.Stats.Intelligence, diseaseData.INT * damageAmount);
-            ChangeStatMod(DFCareer.Stats.Willpower, diseaseData.WIL * damageAmount);
-            ChangeStatMod(DFCareer.Stats.Agility, diseaseData.AGI * damageAmount);
-            ChangeStatMod(DFCareer.Stats.Endurance, diseaseData.END * damageAmount);
-            ChangeStatMod(DFCareer.Stats.Personality, diseaseData.PER * damageAmount);
-            ChangeStatMod(DFCareer.Stats.Speed, diseaseData.SPD * damageAmount);
-            ChangeStatMod(DFCareer.Stats.Luck, diseaseData.LUC * damageAmount);
+            ChangeStatMod(DFCareer.Stats.Strength, -diseaseData.STR * damageAmount);
+            ChangeStatMod(DFCareer.Stats.Intelligence, -diseaseData.INT * damageAmount);
+            ChangeStatMod(DFCareer.Stats.Willpower, -diseaseData.WIL * damageAmount);
+            ChangeStatMod(DFCareer.Stats.Agility, -diseaseData.AGI * damageAmount);
+            ChangeStatMod(DFCareer.Stats.Endurance, -diseaseData.END * damageAmount);
+            ChangeStatMod(DFCareer.Stats.Personality, -diseaseData.PER * damageAmount);
+            ChangeStatMod(DFCareer.Stats.Speed, -diseaseData.SPD * damageAmount);
+            ChangeStatMod(DFCareer.Stats.Luck, -diseaseData.LUC * damageAmount);
             host.Entity.DecreaseHealth(diseaseData.HEA * damageAmount);
             host.Entity.DecreaseFatigue(diseaseData.FAT * damageAmount);
             host.Entity.DecreaseMagicka(diseaseData.SPL * damageAmount);
@@ -198,32 +209,32 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 return DaggerfallUnity.Instance.TextProvider.GetRSCTokens(100 + (int)diseaseType);
         }
 
-        protected DaggerfallDisease.DiseaseData GetClassicDiseaseData(Diseases diseaseType)
+        protected DiseaseData GetClassicDiseaseData(Diseases diseaseType)
         {
             // Only supports classic diseases, otherwise effect must provide own disease data
             if (diseaseType == Diseases.None)
-                return new DaggerfallDisease.DiseaseData();
+                return new DiseaseData();
 
             // Disease data. Found in FALL.EXE (1.07.213) from offset 0x1C0053.
-            DaggerfallDisease.DiseaseData[] diseaseDataSources = new DaggerfallDisease.DiseaseData[]
+            DiseaseData[] diseaseDataSources = new DiseaseData[]
             {                                //  STR  INT  WIL  AGI  END  PER  SPD  LUC  HEA  FAT  SPL MIND  MAXD  MINS  MAXS
-                new DaggerfallDisease.DiseaseData( 1,   0,   0,   0,   1,   0,   0,   0,   1,   0,   0,   2,   10, 0xFF, 0xFF), // Witches' Pox
-                new DaggerfallDisease.DiseaseData( 1,   0,   1,   1,   1,   1,   1,   1,   1,   1,   1,   3,   30, 0xFF, 0xFF), // Plague
-                new DaggerfallDisease.DiseaseData( 0,   0,   1,   0,   1,   0,   0,   0,   1,   0,   0,   5,   10, 0xFF, 0xFF), // Yellow Fever
-                new DaggerfallDisease.DiseaseData( 0,   0,   0,   0,   0,   0,   0,   0,   1,   0,   0,   1,    5, 0xFF, 0xFF), // Stomach Rot
-                new DaggerfallDisease.DiseaseData( 1,   0,   1,   1,   0,   0,   0,   0,   0,   0,   0,   2,   10, 0xFF, 0xFF), // Consumption
-                new DaggerfallDisease.DiseaseData( 0,   0,   1,   0,   0,   1,   0,   0,   1,   0,   0,   1,    5, 0xFF, 0xFF), // Brain Fever
-                new DaggerfallDisease.DiseaseData( 1,   0,   1,   1,   0,   0,   0,   0,   0,   0,   0,   2,   10, 0xFF, 0xFF), // Swamp Rot
-                new DaggerfallDisease.DiseaseData( 1,   0,   0,   1,   0,   0,   1,   0,   0,   0,   0,   5,   10,    3,   18), // Caliron's Curse
-                new DaggerfallDisease.DiseaseData( 1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   5,   30, 0xFF, 0xFF), // Cholera
-                new DaggerfallDisease.DiseaseData( 1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   0,   5,   30, 0xFF, 0xFF), // Leprosy
-                new DaggerfallDisease.DiseaseData( 1,   0,   0,   0,   1,   0,   0,   0,   1,   0,   0,   2,    4, 0xFF, 0xFF), // Wound Rot
-                new DaggerfallDisease.DiseaseData( 0,   0,   0,   0,   1,   1,   0,   0,   0,   1,   0,   2,   10, 0xFF, 0xFF), // Red Death
-                new DaggerfallDisease.DiseaseData( 0,   0,   1,   0,   0,   1,   0,   0,   1,   0,   0,   5,   10,    3,   18), // Blood Rot
-                new DaggerfallDisease.DiseaseData( 0,   1,   0,   0,   1,   0,   0,   0,   1,   0,   0,   2,   10, 0xFF, 0xFF), // Typhoid Fever
-                new DaggerfallDisease.DiseaseData( 0,   1,   1,   0,   0,   1,   0,   0,   0,   0,   0,   2,   10, 0xFF, 0xFF), // Dementia
-                new DaggerfallDisease.DiseaseData( 0,   1,   0,   0,   0,   0,   0,   0,   0,   0,   1,   5,   10, 0xFF, 0xFF), // Chrondiasis
-                new DaggerfallDisease.DiseaseData( 0,   1,   0,   0,   0,   0,   0,   0,   0,   0,   1,   2,    4,    3,   18), // Wizard Fever
+                new DiseaseData( 1,   0,   0,   0,   1,   0,   0,   0,   1,   0,   0,   2,   10, 0xFF, 0xFF), // Witches' Pox
+                new DiseaseData( 1,   0,   1,   1,   1,   1,   1,   1,   1,   1,   1,   3,   30, 0xFF, 0xFF), // Plague
+                new DiseaseData( 0,   0,   1,   0,   1,   0,   0,   0,   1,   0,   0,   5,   10, 0xFF, 0xFF), // Yellow Fever
+                new DiseaseData( 0,   0,   0,   0,   0,   0,   0,   0,   1,   0,   0,   1,    5, 0xFF, 0xFF), // Stomach Rot
+                new DiseaseData( 1,   0,   1,   1,   0,   0,   0,   0,   0,   0,   0,   2,   10, 0xFF, 0xFF), // Consumption
+                new DiseaseData( 0,   0,   1,   0,   0,   1,   0,   0,   1,   0,   0,   1,    5, 0xFF, 0xFF), // Brain Fever
+                new DiseaseData( 1,   0,   1,   1,   0,   0,   0,   0,   0,   0,   0,   2,   10, 0xFF, 0xFF), // Swamp Rot
+                new DiseaseData( 1,   0,   0,   1,   0,   0,   1,   0,   0,   0,   0,   5,   10,    3,   18), // Caliron's Curse
+                new DiseaseData( 1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   5,   30, 0xFF, 0xFF), // Cholera
+                new DiseaseData( 1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   0,   5,   30, 0xFF, 0xFF), // Leprosy
+                new DiseaseData( 1,   0,   0,   0,   1,   0,   0,   0,   1,   0,   0,   2,    4, 0xFF, 0xFF), // Wound Rot
+                new DiseaseData( 0,   0,   0,   0,   1,   1,   0,   0,   0,   1,   0,   2,   10, 0xFF, 0xFF), // Red Death
+                new DiseaseData( 0,   0,   1,   0,   0,   1,   0,   0,   1,   0,   0,   5,   10,    3,   18), // Blood Rot
+                new DiseaseData( 0,   1,   0,   0,   1,   0,   0,   0,   1,   0,   0,   2,   10, 0xFF, 0xFF), // Typhoid Fever
+                new DiseaseData( 0,   1,   1,   0,   0,   1,   0,   0,   0,   0,   0,   2,   10, 0xFF, 0xFF), // Dementia
+                new DiseaseData( 0,   1,   0,   0,   0,   0,   0,   0,   0,   0,   1,   5,   10, 0xFF, 0xFF), // Chrondiasis
+                new DiseaseData( 0,   1,   0,   0,   0,   0,   0,   0,   0,   0,   1,   2,    4,    3,   18), // Wizard Fever
             };
 
             return diseaseDataSources[(int)diseaseType];

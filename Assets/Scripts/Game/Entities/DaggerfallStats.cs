@@ -136,8 +136,8 @@ namespace DaggerfallWorkshop.Game.Entity
             int mod = mods[(int)stat];
             int value = GetPermanentStatValue(stat) + mod;
 
-            // Clamp live stat to 0-100
-            value = Mathf.Clamp(value, 0, 100);
+            // Clamp live stat to 1-100
+            value = Mathf.Clamp(value, 1, 100);
 
             return (short)value;
         }

@@ -20,7 +20,8 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
-using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.MagicAndEffects;
+using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -1167,27 +1168,40 @@ namespace DaggerfallWorkshop.Game
             DaggerfallMessageBox healthBox = new DaggerfallMessageBox(uiManager, previous);
 
             // Show "You are healthy." if there are no diseases
-            if (GameManager.Instance.PlayerEntity.Diseases.Count == 0)
+            if (GameManager.Instance.PlayerEffectManager.DiseaseCount == 0)
+            {
                 healthBox.SetTextTokens(youAreHealthyID);
+            }
             else
             {
-                // Get disease descriptions
+                EntityEffectManager playerEffectManager = GameManager.Instance.PlayerEffectManager;
+
+                // Get disease descriptions for each disease effect
                 TextFile.Token[] tokens = null;
-                foreach (DaggerfallDisease disease in GameManager.Instance.PlayerEntity.Diseases)
+                EntityEffectManager.InstancedBundle[] bundles = playerEffectManager.DiseaseBundles;
+                foreach (EntityEffectManager.InstancedBundle bundle in bundles)
                 {
-                    if (disease.HasFinishedIncubation())
+                    foreach (IEntityEffect effect in bundle.liveEffects)
                     {
-                        int id = disease.GetMessageId();
-                        if (tokens == null)
-                            tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(id);
-                        else // Concatenate descriptions for multiple diseases with a new line in-between
+                        if (effect is DiseaseEffect)
                         {
-                            TextFile.Token[] tokens2 = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(id);
-                            TextFile.Token[] newTokens = new TextFile.Token[tokens.Length + tokens2.Length + 1];
-                            tokens.CopyTo(newTokens, 0);
-                            newTokens[tokens.Length] = TextFile.NewLineToken;
-                            tokens2.CopyTo(newTokens, tokens.Length + 1);
-                            tokens = newTokens;
+                            DiseaseEffect disease = (DiseaseEffect)effect;
+                            if (disease.IncubationOver)
+                            {
+                                if (tokens == null)
+                                {
+                                    tokens = disease.ContractedMessageTokens;
+                                }
+                                else // Concatenate descriptions for multiple diseases with a new line in-between
+                                {
+                                    TextFile.Token[] tokens2 = disease.ContractedMessageTokens;
+                                    TextFile.Token[] newTokens = new TextFile.Token[tokens.Length + tokens2.Length + 1];
+                                    tokens.CopyTo(newTokens, 0);
+                                    newTokens[tokens.Length] = TextFile.NewLineToken;
+                                    tokens2.CopyTo(newTokens, tokens.Length + 1);
+                                    tokens = newTokens;
+                                }
+                            }
                         }
                     }
                 }

@@ -15,11 +15,11 @@ using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
-    public class WitchesPox : DiseaseEffect
+    public class Cholera : DiseaseEffect
     {
         public override void SetProperties()
         {
-            Diseases diseaseType = Diseases.WitchesPox;
+            Diseases diseaseType = Diseases.Cholera;
 
             properties.Key = GetClassicDiseaseEffectKey(diseaseType);
             properties.ShowSpellIcon = false;
