@@ -164,6 +164,12 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Joining
 
+        override public void Join()
+        {
+            base.Join();
+            RevealGuildHallOnMap();
+        }
+
         public override TextFile.Token[] TokensIneligible(PlayerEntity playerEntity)
         {
             throw new NotImplementedException();
@@ -183,6 +189,15 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         private void PlayerGPS_OnEnterLocationRect(DFLocation location)
         {
+            RevealGuildHallOnMap();
+        }
+
+        #endregion
+
+        #region Private Functions
+
+        private void RevealGuildHallOnMap()
+        {
             BuildingDirectory buildingDirectory = GameManager.Instance.StreamingWorld.GetCurrentBuildingDirectory();
             if (buildingDirectory)
                 foreach (BuildingSummary building in buildingDirectory.GetBuildingsOfFaction(factionId))
@@ -190,7 +205,6 @@ namespace DaggerfallWorkshop.Game.Guilds
         }
 
         #endregion
-
 
         #region Macro Handling
 
