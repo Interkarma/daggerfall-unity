@@ -28,7 +28,7 @@ Taverns,					Taverns
 Weaponsmiths,				Weapon smiths
 Localtemples,				Local temples
 Sir,						Sir
-Madam,						Madam
+Ma'am,						Ma'am
 toBeReplacedStringRegional,	Any
 replacementStringRegional,	any
 resolvingError,				never mind...

@@ -1115,7 +1115,7 @@ namespace DaggerfallWorkshop.Game
             if (GameManager.Instance.PlayerEntity.Gender == Genders.Male)
                 return TextManager.Instance.GetText(textDatabase, "Sir");
             else
-                return TextManager.Instance.GetText(textDatabase, "Madam");
+                return TextManager.Instance.GetText(textDatabase, "Ma'am");
         }
 
         public string GetAnswerWhereIs(TalkManager.ListItem listItem)
