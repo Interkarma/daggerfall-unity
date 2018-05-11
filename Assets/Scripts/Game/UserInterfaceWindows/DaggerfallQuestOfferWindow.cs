@@ -84,6 +84,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected override void QuestPopupMessage_OnClose()
         {
+            CloseWindow();
         }
 
         #endregion
