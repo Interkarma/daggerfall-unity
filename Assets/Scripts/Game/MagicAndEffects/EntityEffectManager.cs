@@ -394,7 +394,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         public void CureAllDiseases()
         {
-            // TODO: Cure all disease effects
+            // Cure all disease effects
+            InstancedBundle[] bundles = GetDiseaseBundles();
+            foreach (InstancedBundle bundle in bundles)
+            {
+                foreach (IEntityEffect effect in bundle.liveEffects)
+                {
+                    if (effect is DiseaseEffect)
+                        (effect as DiseaseEffect).CureDisease();
+                }
+            }
         }
 
         int GetDiseaseCount()
