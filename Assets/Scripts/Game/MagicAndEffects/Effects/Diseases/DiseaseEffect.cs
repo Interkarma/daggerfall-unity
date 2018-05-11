@@ -156,8 +156,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Count down days remaining
             if (!IsDiseasePermanent())
             {
-                if (--daysOfSymptomsLeft == 0)
+                if ((daysOfSymptomsLeft -= daysPast) <= 0)
+                {
+                    daysOfSymptomsLeft = 0;
                     EndDisease();
+                }
             }
 
             // Output alert text
