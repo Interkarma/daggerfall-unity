@@ -1522,7 +1522,7 @@ namespace Wenzil.Console
         {
             public static readonly string name = "diseaseplayer";
             public static readonly string description = "Infect player with a classic disease.";
-            public static readonly string usage = "diseaseplayer index (a number 0-17)";
+            public static readonly string usage = "diseaseplayer index (a number 0-16)";
 
             public static string Execute(params string[] args)
             {
@@ -1533,8 +1533,8 @@ namespace Wenzil.Console
                 int index;
                 if (!int.TryParse(args[0], out index))
                     return string.Format("Could not parse argument `{0}` to a number", args[0]);
-                if (index < 0 || index > 17)
-                    return string.Format("Index {0} is out range. Must be 0-17.");
+                if (index < 0 || index > 16)
+                    return string.Format("Index {0} is out range. Must be 0-16.");
 
                 // Infect player
                 Diseases disease = (Diseases)index;

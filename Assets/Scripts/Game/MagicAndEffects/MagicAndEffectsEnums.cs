@@ -68,4 +68,29 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         Spell,
         Disease,
     }
+
+    /// <summary>
+    /// Diseases the player can catch. (msgs 100-116)
+    /// </summary>
+    public enum Diseases
+    {
+        None = -1,
+        WitchesPox = 0,
+        Plague = 1,
+        YellowFever = 2,
+        StomachRot = 3,
+        Consumption = 4,
+        BrainFever = 5,
+        SwampRot = 6,
+        CalironsCurse = 7,
+        Cholera = 8,
+        Leprosy = 9,
+        WoundRot = 10,
+        RedDeath = 11,
+        BloodRot = 12,
+        TyphoidFever = 13,
+        Dementia = 14,
+        Chrondiasis = 15,
+        WizardFever = 16,
+    }
 }

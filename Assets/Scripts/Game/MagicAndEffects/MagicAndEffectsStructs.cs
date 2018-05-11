@@ -125,4 +125,52 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public EffectEntry[] Effects;
         public LegacyEffectEntry[] LegacyEffects;
     }
+
+    /// <summary>
+    /// Settings for a basic disease effect.
+    /// </summary>
+    [Serializable]
+    public struct DiseaseData
+    {
+        // Affected stats
+        public byte STR;
+        public byte INT;
+        public byte WIL;
+        public byte AGI;
+        public byte END;
+        public byte PER;
+        public byte SPD;
+        public byte LUC;
+        public byte HEA;
+        public byte FAT;
+        public byte SPL;
+        public byte minDamage;
+        public byte maxDamage;
+        public byte daysOfSymptomsMin; // 0xFF means never-ending
+        public byte daysOfSymptomsMax;
+
+        // Constructor
+        public DiseaseData(byte STRp, byte INTp,
+            byte WILp, byte AGIp, byte ENDp, byte PERp,
+            byte SPDp, byte LUCp, byte HEAp, byte FATp,
+            byte SPLp, byte minDamagep, byte maxDamagep,
+            byte daysOfSymptomsMinp, byte daysOfSymptomsMaxp)
+        {
+            STR = STRp;
+            INT = INTp;
+            WIL = WILp;
+            AGI = AGIp;
+            END = ENDp;
+            PER = PERp;
+            SPD = SPDp;
+            LUC = LUCp;
+            HEA = HEAp;
+            FAT = FATp;
+            SPL = SPLp;
+            minDamage = minDamagep;
+            maxDamage = maxDamagep;
+            daysOfSymptomsMin = daysOfSymptomsMinp;
+            daysOfSymptomsMax = daysOfSymptomsMaxp;
+        }
+    }
 }
