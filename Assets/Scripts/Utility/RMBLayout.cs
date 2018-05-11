@@ -142,7 +142,7 @@ namespace DaggerfallWorkshop.Utility
             // Add models and static props
             GameObject modelsNode = new GameObject("Models");
             modelsNode.transform.parent = go.transform;
-            AddModels(dfUnity, ref blockData, out modelDoors, out modelBuildings, combiner, modelsNode.transform);
+            AddModels(dfUnity, layoutX, layoutY, ref blockData, out modelDoors, out modelBuildings, combiner, modelsNode.transform);
             AddProps(dfUnity, ref blockData, out propDoors, combiner, modelsNode.transform);
 
             // Combine list of doors found in models and props
@@ -677,6 +677,8 @@ namespace DaggerfallWorkshop.Utility
 
         private static void AddModels(
             DaggerfallUnity dfUnity,
+            int layoutX,
+            int layoutY,
             ref DFBlock blockData,
             out List<StaticDoor> doorsOut,
             out List<StaticBuilding> buildingsOut,
@@ -709,14 +711,22 @@ namespace DaggerfallWorkshop.Utility
                     dfUnity.MeshReader.GetModelData(obj.ModelIdNum, out modelData);
 
                     // Does this model have doors?
+                    StaticDoor[] staticDoors = null;
                     if (modelData.Doors != null)
-                        doorsOut.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, blockData.Index, recordCount, modelMatrix));
+                    {
+                        staticDoors = GameObjectHelper.GetStaticDoors(ref modelData, blockData.Index, recordCount, modelMatrix);
+                        doorsOut.AddRange(staticDoors);
+                    }
 
                     // Store building information for first model of record
                     // First model is main record structure, others are attachments like posts
                     // Only main structure is needed to resolve building after hit-test
+                    int buildingKey = 0;
                     if (firstModel)
                     {
+                        // Create building key for this record - considered experimental for now
+                        buildingKey = BuildingDirectory.MakeBuildingKey((byte)layoutX, (byte)layoutY, (byte)recordCount);
+
                         StaticBuilding staticBuilding = new StaticBuilding();
                         staticBuilding.modelMatrix = modelMatrix;
                         staticBuilding.recordIndex = recordCount;
@@ -725,6 +735,9 @@ namespace DaggerfallWorkshop.Utility
                         buildingsOut.Add(staticBuilding);
                         firstModel = false;
                     }
+
+                    // if (buildingKey != 0) then this should be the building key for this record
+                    // if (staticDoors != null && staticDoors.Length > 0) then this should have all the initial door data (basically position stuff) for this building
 
                     // Import custom GameObject
                     if (MeshReplacement.ImportCustomGameobject(obj.ModelIdNum, parent, modelMatrix) != null)
