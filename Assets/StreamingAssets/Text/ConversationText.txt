@@ -27,6 +27,8 @@ Pawnshops,					Pawn shops
 Taverns,					Taverns
 Weaponsmiths,				Weapon smiths
 Localtemples,				Local temples
+Sir,						Sir
+Madam,						Madam
 toBeReplacedStringRegional,	Any
 replacementStringRegional,	any
 resolvingError,				never mind...

@@ -85,10 +85,10 @@ namespace DaggerfallWorkshop.Utility
             { "%fl2", null }, // Lord of _fx2
             { "%fn", null },  // Random first(?) name (Female?)
             { "%fn2", null }, // Same as _mn2 (?)
-            { "%fnpc", null }, // ?
+            { "%fnpc", GuildNPC }, // faction of npc that is dialog partner
             { "%fon", FactionOrderName }, // Faction order name
-            { "%fpa", null }, // ?
-            { "%fpc", null }, // ?
+            { "%fpa", FactionName }, // faction name? of dialog partner - should return "Kynareth" for npc that are members of "Temple of Kynareth"
+            { "%fpc", FactionPC }, // faction of pc that is from importance to dialog partner (same as his faction)
             { "%fx1", null }, // A faction in news
             { "%fx2", null }, // Another faction in news
             { "%g", Pronoun },   // He/She etc...
@@ -102,7 +102,7 @@ namespace DaggerfallWorkshop.Utility
             { "%gtp", GoldToPay }, // Amount of fine
             { "%hea", HpMod }, // HP Modifier
             { "%hmd", HealRateMod }, // Healing rate modifer
-            { "%hnr", null }, // Honorific in guild/faction
+            { "%hnr", Honorific }, // Honorific in guild/faction (note Nystul: vanilla resolved this for my male character to "Sir")
             { "%hnt", DialogHint }, // context "Tell Me About": anyInfo message, context place: Direction of location. (comment Nystul: it is either a location direction hint or a map reveal)
             { "%hnt2", DialogHint2 }, // context "Tell Me About": rumors message
             { "%hol", null }, // Holiday
@@ -611,6 +611,11 @@ namespace DaggerfallWorkshop.Utility
             return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? HardStrings.pronounHers : HardStrings.pronounHis;
         }
 
+        private static string Honorific(IMacroContextProvider mcp)
+        {   // %hnr
+            return GameManager.Instance.TalkManager.getHonoric();
+        }
+
         private static string DmgMod(IMacroContextProvider mcp)
         {   // %dam
             return GameManager.Instance.PlayerEntity.DamageModifier.ToString("+0;-0;0");
@@ -688,6 +693,21 @@ namespace DaggerfallWorkshop.Utility
         {
             // %n
             return GameManager.Instance.TalkManager.NameNPC;
+        }
+
+        private static string FactionPC(IMacroContextProvider mcp)
+        {   // %fpc
+            return GameManager.Instance.TalkManager.GetFactionPC();
+        }
+
+        private static string GuildNPC(IMacroContextProvider mcp)
+        {   // %fnpc
+            return GameManager.Instance.TalkManager.GetGuildNPC();
+        }
+
+        private static string FactionName(IMacroContextProvider mcp)
+        {   // %fpa
+            return GameManager.Instance.TalkManager.GetFactionName();
         }
 
         private static string DialogKeySubject(IMacroContextProvider mcp)

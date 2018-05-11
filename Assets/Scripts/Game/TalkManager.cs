@@ -25,6 +25,7 @@ using DaggerfallWorkshop.Game.Questing;
 using System.Linq;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Player;
+using DaggerfallWorkshop.Game.Guilds;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -92,6 +93,64 @@ namespace DaggerfallWorkshop.Game
         #region Fields
 
         const string textDatabase = "ConversationText";
+
+        // dislike answer set (doesn't tell)
+        const int dislikePlayerAnswerWhereIsDefault = 7256;
+        const int dislikePlayerAnswerWhereIsGuildMembers = 7255;
+        const int dislikePlayerAnswerWhereIsMerchants = 7256;
+        const int dislikePlayerAnswerWhereIsNobility = 7258;
+        const int dislikePlayerAnswerWhereIsScholars = 7257;
+        const int dislikePlayerAnswerWhereIsUnderworld = 7259;
+        // neutral answer set
+        const int neutralToPlayerAnswerWhereIsDefault = 7271;
+        const int neutralToPlayerAnswerWhereIsGuildMembers = 7270;
+        const int neutralToPlayerAnswerWhereIsMerchants = 7271;
+        const int neutralToPlayerAnswerWhereIsScholars = 7272;
+        const int neutralToPlayerAnswerWhereIsNobility = 7273;
+        const int neutralToPlayerAnswerWhereIsUnderworld = 7274;
+        // like answer set
+        const int likePlayerAnswerWhereIsDefault = 7291;
+        const int likePlayerAnswerWhereIsGuildMembers = 7290;
+        const int likePlayerAnswerWhereIsMerchants = 7291;
+        const int likePlayerAnswerWhereIsScholars = 7292;
+        const int likePlayerAnswerWhereIsNobility = 7293;
+        const int likePlayerAnswerWhereIsUnderworld = 7294;
+        // very like answer set
+        const int veryLikePlayerAnswerWhereIsDefault = 7286;
+        const int veryLikePlayerAnswerWhereIsGuildMembers = 7285;
+        const int veryLikePlayerAnswerWhereIsMerchants = 7286;
+        const int veryLikePlayerAnswerWhereIsScholars = 7287;
+        const int veryLikePlayerAnswerWhereIsNobility = 7288;
+        const int veryLikePlayerAnswerWhereIsUnderworld = 7289;
+
+        // dislike does not know set
+        const int dislikePlayerDoesNotKnowWhereIsDefault = 7251;
+        const int dislikePlayerDoesNotKnowWhereIsGuildMembers = 7250;
+        const int dislikePlayerDoesNotKnowWhereIsMerchants = 7251;
+        const int dislikePlayerDoesNotKnowWhereIsNobility = 7252;
+        const int dislikePlayerDoesNotKnowWhereIsScholars = 7253;
+        const int dislikePlayerDoesNotKnowWhereIsUnderworld = 7304; // no matching underworld set (7254 is empty), used 7304 since it seems to fit (note: not in list of uesp)
+        // neutral does not know set
+        const int neutralToPlayerDoesNotKnowWhereIsDefault = 7266;
+        const int neutralToPlayerDoesNotKnowWhereIsGuildMembers = 7265;
+        const int neutralToPlayerDoesNotKnowWhereIsMerchants = 7266;
+        const int neutralToPlayerDoesNotKnowWhereIsScholars = 7267;
+        const int neutralToPlayerDoesNotKnowWhereIsNobility = 7268;
+        const int neutralToPlayerDoesNotKnowWhereIsUnderworld = 7269;
+        // like does not know set
+        const int likePlayerDoesNotKnowWhereIsDefault = 7281;
+        const int likePlayerDoesNotKnowWhereIsGuildMembers = 7280;
+        const int likePlayerDoesNotKnowWhereIsMerchants = 7281;
+        const int likePlayerDoesNotKnowWhereIsScholars = 7282;
+        const int likePlayerDoesNotKnowWhereIsNobility = 7283;
+        const int likePlayerDoesNotKnowWhereIsUnderworld = 7284;
+        // very like does not know set
+        const int veryLikePlayerDoesNotKnowWhereIsDefault = 7281;
+        const int veryLikePlayerDoesNotKnowWhereIsGuildMembers = 7280;
+        const int veryLikePlayerDoesNotKnowWhereIsMerchants = 7281;
+        const int veryLikePlayerDoesNotKnowWhereIsScholars = 7282;
+        const int veryLikePlayerDoesNotKnowWhereIsNobility = 7283;
+        const int veryLikePlayerDoesNotKnowWhereIsUnderworld = 7284;
      
         // specifies entry type of list item in topic lists
         public enum ListItemType
@@ -137,12 +196,14 @@ namespace DaggerfallWorkshop.Game
         }
 
         // current target npc for conversion
-        //MobilePersonNPC targetMobileNPC = null;
         StaticNPC targetStaticNPC = null;
+
         public class NPCData
         {
-            public Races race;
+            public Races race;            
             public FactionFile.SocialGroups socialGroup;
+            public FactionFile.GuildGroups guildGroup;
+            public FactionFile.FactionData factionData; // only used for static npcs
         }
         NPCData npcData;
 
@@ -156,6 +217,8 @@ namespace DaggerfallWorkshop.Game
         MobilePersonNPC lastTargetMobileNPC = null;
         StaticNPC lastTargetStaticNPC = null;
         NPCType currentNPCType = NPCType.Unset;
+        bool sameTalkTargetAsBefore = false; // used to indicate same dialog partner / talk target as in conversation before
+        bool alreadyRejectedOnce = false; // used to display rejection text first time to a random rejection text, from 2nd time (for same npc) to msg "you get no response"
 
         public enum KeySubjectType
         {
@@ -282,16 +345,17 @@ namespace DaggerfallWorkshop.Game
             public Dictionary<ulong, QuestResources> dictQuestInfo;
             public List<RumorMillEntry> listRumorMill;
             public Dictionary<ulong, TextFile.Token[]> dictQuestorPostQuestMessage;
+            public Dictionary<int, NpcWorkEntry> npcsWithWork;
         }
 
         // faction IDs for factions listed in "tell me about"
         int[] infoFactionIDs = { 42, 40, 108, 129, 306, 353, 41, 67, 82, 84, 88, 92, 94, 106, 36, 83, 85, 89, 93, 95, 99, 107, 37, 368, 408, 409, 410, 411, 413, 414, 415, 416, 417, 98 };
 
         // Data for NPC "work" quests in the current town
-        struct NpcWorkEntry
+        public struct NpcWorkEntry
         {
             public StaticNPC.NPCData npc;
-            public FactionFile.SocialGroups socialGroup;
+            public FactionFile.SocialGroups socialGroup;            
             public string buildingName;
         }
 
@@ -453,26 +517,13 @@ namespace DaggerfallWorkshop.Game
         {
             currentNPCType = NPCType.Mobile;
 
-            const int youGetNoResponseTextId = 7205;
-
             // Get reaction to player
             int reactionToPlayer = GetReactionToPlayer();
 
-            if (reactionToPlayer >= -20)
-            {
-                bool sameTalkTargetAsBefore = false;
-                GameManager.Instance.TalkManager.SetTargetNPC(targetNPC, reactionToPlayer, ref sameTalkTargetAsBefore);
-                DaggerfallUI.UIManager.PushWindow(DaggerfallUI.Instance.TalkWindow);
+            sameTalkTargetAsBefore = false;
+            GameManager.Instance.TalkManager.SetTargetNPC(targetNPC, reactionToPlayer, ref sameTalkTargetAsBefore);
 
-                // reset npc knowledge, for now it resets every time the npc has changed (player talked to new npc)
-                // TODO: match classic daggerfall - in classic npc remember their knowledge about topics for their time of existence
-                if (!sameTalkTargetAsBefore)
-                    ResetNPCKnowledge();
-            }
-            else
-            {
-                DaggerfallUI.MessageBox(youGetNoResponseTextId);
-            }            
+            TalkToNpc();
         }
 
         // Player has clicked or static talk target or clicked the talk button inside a popup-window
@@ -484,26 +535,13 @@ namespace DaggerfallWorkshop.Game
             }
             currentNPCType = NPCType.Static;
 
-            const int youGetNoResponseTextId = 7205;
-
             // Get reaction to player
             int reactionToPlayer = GetReactionToPlayer();
 
-            if (reactionToPlayer >= -20)
-            {
-                bool sameTalkTargetAsBefore = false;
-                GameManager.Instance.TalkManager.SetTargetNPC(targetNPC, reactionToPlayer, ref sameTalkTargetAsBefore);
-                DaggerfallUI.UIManager.PushWindow(DaggerfallUI.Instance.TalkWindow);
+            sameTalkTargetAsBefore = false;
+            GameManager.Instance.TalkManager.SetTargetNPC(targetNPC, reactionToPlayer, ref sameTalkTargetAsBefore);
 
-                // reset npc knowledge, for now it resets every time the npc has changed (player talked to new npc)
-                // TODO: match classic daggerfall - in classic npc remember their knowledge about topics for their time of existence
-                if (!sameTalkTargetAsBefore)
-                    ResetNPCKnowledge();
-            }
-            else
-            {
-                DaggerfallUI.MessageBox(youGetNoResponseTextId);
-            }
+            TalkToNpc();
         }
 
         public void SetTargetNPC(MobilePersonNPC targetMobileNPC, int reactionToPlayer, ref bool sameTalkTargetAsBefore)
@@ -516,6 +554,8 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
+            alreadyRejectedOnce = false;
+
             DaggerfallUI.Instance.TalkWindow.SetNPCPortrait(DaggerfallTalkWindow.FacePortraitArchive.CommonFaces, targetMobileNPC.PersonFaceRecordId);
 
             lastTargetMobileNPC = targetMobileNPC;
@@ -525,9 +565,12 @@ namespace DaggerfallWorkshop.Game
 
             npcData = new NPCData();
             npcData.socialGroup = FactionFile.SocialGroups.Commoners;
+            npcData.guildGroup = FactionFile.GuildGroups.None;
             npcData.race = targetMobileNPC.Race;
 
             this.reactionToPlayer = reactionToPlayer;
+
+            AssembleTopicListPerson(); // update "Where Is" -> "Person" list since this list may hide the questor (if talking to the questor)
         }
 
         public void SetTargetNPC(StaticNPC targetNPC, int reactionToPlayer, ref bool sameTalkTargetAsBefore)
@@ -539,6 +582,8 @@ namespace DaggerfallWorkshop.Game
                 sameTalkTargetAsBefore = true;
                 return;
             }
+
+            alreadyRejectedOnce = false;
 
             this.targetStaticNPC = targetNPC;
 
@@ -553,10 +598,12 @@ namespace DaggerfallWorkshop.Game
             DaggerfallUI.Instance.TalkWindow.UpdateNameNPC();
 
             FactionFile.FactionData factionData;
-            GameManager.Instance.PlayerEntity.FactionData.GetFactionData(targetStaticNPC.Data.factionID, out factionData);
+            GameManager.Instance.PlayerEntity.FactionData.GetFactionData(targetStaticNPC.Data.factionID, out factionData);            
 
             npcData = new NPCData();
             npcData.socialGroup = (FactionFile.SocialGroups)factionData.sgroup;
+            npcData.guildGroup = (FactionFile.GuildGroups)factionData.ggroup;
+            npcData.factionData = factionData;
             npcData.race = Races.Breton; // TODO: find a way to get race for static npc
 
             this.reactionToPlayer = reactionToPlayer;
@@ -584,7 +631,13 @@ namespace DaggerfallWorkshop.Game
             const int likePlayerGreetingTextId = 7208;
             const int veryLikePlayerGreetingTextId = 7209;
 
-            string greetingString = "";
+            const int isInSameGuildLikePlayerGreetingTextId = 8550;
+            const int isInSameGuildNeutralPlayerGreetingTextId = 8551;
+
+            const int isInSameHolyOrderLikePlayerGreetingTextId = 8553;
+            const int isInSameHolyOrderNeutralPlayerGreetingTextId = 8554;
+
+            // note Nystul: did not find any use of text record ids 8556 - 8569 in my testing - but some of them might be used by nobles of the courtyards
 
             if (currentNPCType == NPCType.Static)
             {
@@ -606,35 +659,39 @@ namespace DaggerfallWorkshop.Game
                                 // expand tokens and reveal dialog-linked resources
                                 QuestMacroHelper macroHelper = new QuestMacroHelper();
                                 macroHelper.ExpandQuestMessage(GameManager.Instance.QuestMachine.GetQuest(questID), ref tokens, true);
-                                greetingString = TokensToString(tokens);
-
-                                return (greetingString);                                
+                                return TokensToString(tokens);                              
                             }
                         }
                     }
                 }
             }
 
-            if (reactionToPlayer >= 0)
+            if (GameManager.Instance.GuildManager.GetGuild(npcData.guildGroup, (int)GameManager.Instance.PlayerEnterExit.FactionID).IsMember())
             {
-                if (reactionToPlayer >= 10)
+                if (npcData.guildGroup == FactionFile.GuildGroups.HolyOrder) // holy orders use message 8553, 8554
                 {
-                    if (reactionToPlayer >= 30)
-                        greetingString = expandRandomTextRecord(veryLikePlayerGreetingTextId);
-                    else
-                        greetingString = expandRandomTextRecord(likePlayerGreetingTextId);
+                    if (reactionToPlayer >= 30) // what reputation is needed to show like greeting message?
+                        return expandRandomTextRecord(isInSameHolyOrderLikePlayerGreetingTextId);
+                    else if (reactionToPlayer >= 0) // not sure here - are member greeting messages also shown if npc dislikes pc (but still talks to pc)?
+                        return expandRandomTextRecord(isInSameHolyOrderNeutralPlayerGreetingTextId);
                 }
-                else
+                else // all other guilds (including Knightly Orders) seem to use messages 8550, 8551
                 {
-                    greetingString = expandRandomTextRecord(neutralToPlayerGreetingTextId);
+                    if (reactionToPlayer >= 30) // what reputation is needed to show like greeting message?
+                        return expandRandomTextRecord(isInSameGuildLikePlayerGreetingTextId);
+                    else if (reactionToPlayer >= 0) // not sure here - are member greeting messages also shown if npc dislikes pc (but still talks to pc)?
+                        return expandRandomTextRecord(isInSameGuildNeutralPlayerGreetingTextId);
                 }
             }
-            else
-            {
-                greetingString = expandRandomTextRecord(dislikePlayerGreetingTextId);
-            }
-            
-            return (greetingString);
+
+            if (reactionToPlayer >= 30)
+                return expandRandomTextRecord(veryLikePlayerGreetingTextId);
+            else if (reactionToPlayer >= 10)
+                return expandRandomTextRecord(likePlayerGreetingTextId);
+            else if (reactionToPlayer >= 0)
+                return expandRandomTextRecord(neutralToPlayerGreetingTextId);
+            else            
+                return expandRandomTextRecord(dislikePlayerGreetingTextId);
         }
 
         public string GetPCGreetingText(DaggerfallTalkWindow.TalkTone talkTone)
@@ -1029,26 +1086,74 @@ namespace DaggerfallWorkshop.Game
             return TextManager.Instance.GetText(textDatabase, "resolvingError"); // error case - should never ever occur
         }
 
+        public string GetGuildNPC()
+        {
+            return GameManager.Instance.GuildManager.GetGuild((int)GameManager.Instance.PlayerEnterExit.FactionID).GetGuildName();
+        }
+
+        public string GetFactionPC()
+        {
+            if (npcData.guildGroup == FactionFile.GuildGroups.HolyOrder)
+                return GetFactionName();
+            else
+                return GetGuildNPC();
+        }
+
+        public string GetFactionName()
+        {
+            if (npcData.guildGroup == FactionFile.GuildGroups.HolyOrder)
+            {
+                Temple temple = (Temple)GameManager.Instance.GuildManager.GetGuild(npcData.guildGroup, (int)GameManager.Instance.PlayerEnterExit.FactionID);
+                MacroDataSource mcp = temple.GetMacroDataSource();
+                return mcp.FactionOrderName();
+            }
+            return TextManager.Instance.GetText(textDatabase, "resolvingError");
+        }
+
+        public string getHonoric()
+        {
+            if (GameManager.Instance.PlayerEntity.Gender == Genders.Male)
+                return TextManager.Instance.GetText(textDatabase, "Sir");
+            else
+                return TextManager.Instance.GetText(textDatabase, "Madam");
+        }
+
         public string GetAnswerWhereIs(TalkManager.ListItem listItem)
         {
-            string answer;
-
             if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.NotSet)
             {
-                // chances unknown - so there is a 50% chance for now that npc knows
+                // chances unknown - so there is a 50% chance for now that npc knows - TODO: apply correct chances here
                 int randomNum = UnityEngine.Random.Range(0, 2);
                 if (randomNum == 0)
                     listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.DoesNotKnowAboutItem;
                 else
                     listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.KnowsAboutItem;
             }
-
-            // TODO: take into account if npc likes you for answers here as well (use different sets here depending on how much npc likes you)
-            if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.DoesNotKnowAboutItem)                
-                answer = getRecordIdByNpcsSocialGroup(7281, 7280, 7280, 7283, 7282, 7284); // messages if npc does not know
+            
+            if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.DoesNotKnowAboutItem)
+            {
+                // messages if npc does not know
+                if (reactionToPlayer >= 30)
+                    return getRecordIdByNpcsSocialGroup(veryLikePlayerDoesNotKnowWhereIsDefault, veryLikePlayerDoesNotKnowWhereIsGuildMembers, veryLikePlayerDoesNotKnowWhereIsMerchants, veryLikePlayerDoesNotKnowWhereIsScholars, veryLikePlayerDoesNotKnowWhereIsNobility, veryLikePlayerDoesNotKnowWhereIsUnderworld);
+                else if (reactionToPlayer >= 10)
+                    return getRecordIdByNpcsSocialGroup(likePlayerDoesNotKnowWhereIsDefault, likePlayerDoesNotKnowWhereIsGuildMembers, likePlayerDoesNotKnowWhereIsMerchants, likePlayerDoesNotKnowWhereIsScholars, likePlayerDoesNotKnowWhereIsNobility, likePlayerDoesNotKnowWhereIsUnderworld);
+                else if (reactionToPlayer >= 0)
+                    return getRecordIdByNpcsSocialGroup(neutralToPlayerDoesNotKnowWhereIsDefault, neutralToPlayerDoesNotKnowWhereIsGuildMembers, neutralToPlayerDoesNotKnowWhereIsMerchants, neutralToPlayerDoesNotKnowWhereIsScholars, neutralToPlayerDoesNotKnowWhereIsNobility, neutralToPlayerDoesNotKnowWhereIsUnderworld);
+                else
+                    return getRecordIdByNpcsSocialGroup(dislikePlayerDoesNotKnowWhereIsDefault, dislikePlayerDoesNotKnowWhereIsGuildMembers, dislikePlayerDoesNotKnowWhereIsMerchants, dislikePlayerDoesNotKnowWhereIsScholars, dislikePlayerDoesNotKnowWhereIsNobility, dislikePlayerDoesNotKnowWhereIsUnderworld);
+            }
             else
-                answer = getRecordIdByNpcsSocialGroup(7271, 7270, 7270, 7273, 7272, 7274); // location related messages if npc knows
-            return answer;
+            {
+                // location related messages if npc knows
+                if (reactionToPlayer >= 30)
+                    return getRecordIdByNpcsSocialGroup(veryLikePlayerAnswerWhereIsDefault, veryLikePlayerAnswerWhereIsGuildMembers, veryLikePlayerAnswerWhereIsMerchants, veryLikePlayerAnswerWhereIsScholars, veryLikePlayerAnswerWhereIsNobility, veryLikePlayerAnswerWhereIsUnderworld);
+                else if (reactionToPlayer >= 10)
+                    return getRecordIdByNpcsSocialGroup(likePlayerAnswerWhereIsDefault, likePlayerAnswerWhereIsGuildMembers, likePlayerAnswerWhereIsMerchants, likePlayerAnswerWhereIsScholars, likePlayerAnswerWhereIsNobility, likePlayerAnswerWhereIsUnderworld);
+                else if (reactionToPlayer >= 0)
+                    return getRecordIdByNpcsSocialGroup(neutralToPlayerAnswerWhereIsDefault, neutralToPlayerAnswerWhereIsGuildMembers, neutralToPlayerAnswerWhereIsMerchants, neutralToPlayerAnswerWhereIsScholars, neutralToPlayerAnswerWhereIsNobility, neutralToPlayerAnswerWhereIsUnderworld);
+                else
+                    return getRecordIdByNpcsSocialGroup(dislikePlayerAnswerWhereIsDefault, dislikePlayerAnswerWhereIsGuildMembers, dislikePlayerAnswerWhereIsMerchants, dislikePlayerAnswerWhereIsScholars, dislikePlayerAnswerWhereIsNobility, dislikePlayerAnswerWhereIsUnderworld);
+            }
         }
 
         public string GetAnswerAboutRegionalBuilding(TalkManager.ListItem listItem)
@@ -1181,7 +1286,6 @@ namespace DaggerfallWorkshop.Game
             {
                 case QuestionType.NoQuestion:
                 default:
-                    answer = getRecordIdByNpcsSocialGroup(7281, 7280, 7280, 7283, 7282, 7284); // messages if npc does not know
                     break;
                 case QuestionType.News:
                     answer = GetNewsOrRumors();
@@ -1209,13 +1313,13 @@ namespace DaggerfallWorkshop.Game
                 case QuestionType.Work:
                     if (!WorkAvailable)
                     {
-                        answer = expandRandomTextRecord(8078);
+                        answer = expandRandomTextRecord(8078); // TODO: find when 8075 should be used
                         break;
                     }
                     else
                     {
                         SetRandomQuestor(); // Pick a random Work questor from the pool
-                        answer = expandRandomTextRecord(8076);
+                        answer = expandRandomTextRecord(8076); // TODO: find when 8077 should be used
                         break;
                     }
             }
@@ -1238,9 +1342,29 @@ namespace DaggerfallWorkshop.Game
             }
 
             if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.DoesNotKnowAboutItem)
-                return getRecordIdByNpcsSocialGroup(7281, 7280, 7280, 7283, 7282, 7284); // messages if npc does not know
+            {
+                // messages if npc does not know
+                if (reactionToPlayer >= 30)
+                    return getRecordIdByNpcsSocialGroup(veryLikePlayerDoesNotKnowWhereIsDefault, veryLikePlayerDoesNotKnowWhereIsGuildMembers, veryLikePlayerDoesNotKnowWhereIsMerchants, veryLikePlayerDoesNotKnowWhereIsScholars, veryLikePlayerDoesNotKnowWhereIsNobility, veryLikePlayerDoesNotKnowWhereIsUnderworld);
+                else if (reactionToPlayer >= 10)
+                    return getRecordIdByNpcsSocialGroup(likePlayerDoesNotKnowWhereIsDefault, likePlayerDoesNotKnowWhereIsGuildMembers, likePlayerDoesNotKnowWhereIsMerchants, likePlayerDoesNotKnowWhereIsScholars, likePlayerDoesNotKnowWhereIsNobility, likePlayerDoesNotKnowWhereIsUnderworld);
+                else if (reactionToPlayer >= 0)
+                    return getRecordIdByNpcsSocialGroup(neutralToPlayerDoesNotKnowWhereIsDefault, neutralToPlayerDoesNotKnowWhereIsGuildMembers, neutralToPlayerDoesNotKnowWhereIsMerchants, neutralToPlayerDoesNotKnowWhereIsScholars, neutralToPlayerDoesNotKnowWhereIsNobility, neutralToPlayerDoesNotKnowWhereIsUnderworld);
+                else
+                    return getRecordIdByNpcsSocialGroup(dislikePlayerDoesNotKnowWhereIsDefault, dislikePlayerDoesNotKnowWhereIsGuildMembers, dislikePlayerDoesNotKnowWhereIsMerchants, dislikePlayerDoesNotKnowWhereIsScholars, dislikePlayerDoesNotKnowWhereIsNobility, dislikePlayerDoesNotKnowWhereIsUnderworld);
+            }
             else
-                return getRecordIdByNpcsSocialGroup(7276, 7275, 7275, 7278, 7277, 7279); // quest topic related messages if npc knows
+            {
+                // location related messages if npc knows
+                if (reactionToPlayer >= 30)
+                    return getRecordIdByNpcsSocialGroup(veryLikePlayerAnswerWhereIsDefault, veryLikePlayerAnswerWhereIsGuildMembers, veryLikePlayerAnswerWhereIsMerchants, veryLikePlayerAnswerWhereIsScholars, veryLikePlayerAnswerWhereIsNobility, veryLikePlayerAnswerWhereIsUnderworld);
+                else if (reactionToPlayer >= 10)
+                    return getRecordIdByNpcsSocialGroup(likePlayerAnswerWhereIsDefault, likePlayerAnswerWhereIsGuildMembers, likePlayerAnswerWhereIsMerchants, likePlayerAnswerWhereIsScholars, likePlayerAnswerWhereIsNobility, likePlayerAnswerWhereIsUnderworld);
+                else if (reactionToPlayer >= 0)
+                    return getRecordIdByNpcsSocialGroup(neutralToPlayerAnswerWhereIsDefault, neutralToPlayerAnswerWhereIsGuildMembers, neutralToPlayerAnswerWhereIsMerchants, neutralToPlayerAnswerWhereIsScholars, neutralToPlayerAnswerWhereIsNobility, neutralToPlayerAnswerWhereIsUnderworld);
+                else
+                    return getRecordIdByNpcsSocialGroup(dislikePlayerAnswerWhereIsDefault, dislikePlayerAnswerWhereIsGuildMembers, dislikePlayerAnswerWhereIsMerchants, dislikePlayerAnswerWhereIsScholars, dislikePlayerAnswerWhereIsNobility, dislikePlayerAnswerWhereIsUnderworld);
+            }
         }
 
 
@@ -1480,6 +1604,7 @@ namespace DaggerfallWorkshop.Game
             saveDataConversation.dictQuestInfo = dictQuestInfo;
             saveDataConversation.listRumorMill = listRumorMill;
             saveDataConversation.dictQuestorPostQuestMessage = dictQuestorPostQuestMessage;
+            saveDataConversation.npcsWithWork = npcsWithWork;
             return saveDataConversation;
         }
 
@@ -1547,6 +1672,9 @@ namespace DaggerfallWorkshop.Game
                 dictQuestorPostQuestMessage = new Dictionary<ulong, TextFile.Token[]>();
             }
 
+            if (data.npcsWithWork != null)
+                npcsWithWork = data.npcsWithWork;
+
             // update topic list
             AssembleTopiclistTellMeAbout();
         }
@@ -1596,6 +1724,51 @@ namespace DaggerfallWorkshop.Game
         #endregion
 
         #region Private Methods
+
+        private void TalkToNpc()
+        {
+            const int dialogRejectionTextId = 8571;
+            const int youGetNoResponseTextId = 7205;
+
+            const int isInSameGuildDislikePlayerRefusingToTalkTextId = 8552;
+
+            const int isInSameHolyOrderDislikePlayerRefusingToTalkTextId = 8555;
+
+            if (reactionToPlayer >= -20)
+            {
+                DaggerfallUI.UIManager.PushWindow(DaggerfallUI.Instance.TalkWindow);
+
+                // reset npc knowledge, for now it resets every time the npc has changed (player talked to new npc)
+                // TODO: match classic daggerfall - in classic npc remember their knowledge about topics for their time of existence
+                if (!sameTalkTargetAsBefore)
+                    ResetNPCKnowledge();
+            }
+            else
+            {
+                if (alreadyRejectedOnce)
+                {
+                    DaggerfallUI.MessageBox(youGetNoResponseTextId);
+                }
+                else
+                {
+                    string responseText;
+                    if (GameManager.Instance.GuildManager.GetGuild(npcData.guildGroup, (int)GameManager.Instance.PlayerEnterExit.FactionID).IsMember())
+                    {
+                        if (npcData.guildGroup == FactionFile.GuildGroups.HolyOrder) // holy orders use message 8554
+                            responseText = DaggerfallUnity.Instance.TextProvider.GetRandomText(isInSameHolyOrderDislikePlayerRefusingToTalkTextId);
+                        else // all other guilds (including Knightly Orders) seem to use message 8552
+                            responseText = DaggerfallUnity.Instance.TextProvider.GetRandomText(isInSameGuildDislikePlayerRefusingToTalkTextId);
+                    }
+                    else
+                    {
+                        responseText = DaggerfallUnity.Instance.TextProvider.GetRandomText(dialogRejectionTextId);
+                    }
+                    DaggerfallUI.MessageBox(responseText);
+                    alreadyRejectedOnce = true;
+                }
+            }
+        }
+
 
         private void SetupRumorMill()
         {
@@ -1876,8 +2049,6 @@ namespace DaggerfallWorkshop.Game
                     ulong questID = questInfo.Key;
                     itemQuestTopic.questID = questID;
                     string captionString = questResourceInfo.Key;
-                    //QuestMacroHelper macroHelper = new QuestMacroHelper();
-                    //macroHelper.ExpandQuestString(GameManager.Instance.QuestMachine.GetQuest(questID), ref captionString);
                     itemQuestTopic.caption = captionString;
 
                     if (questResourceInfo.Value.availableForDialog && questResourceInfo.Value.hasEntryInTellMeAbout) // only make it available for talk if it is not "hidden" by dialog link command
@@ -1963,10 +2134,6 @@ namespace DaggerfallWorkshop.Game
                             item.questID = questID;
 
                             string captionString = questResourceInfo.Key;
-                            // Questing.Place place = (Questing.Place)questResourceInfo.Value.questResource;
-                            // string buildingName = place.SiteDetails.buildingName;
-                            // captionString = buildingName;
-
                             item.caption = captionString;
                             item.buildingKey = place.SiteDetails.buildingKey;
 
@@ -2138,7 +2305,7 @@ namespace DaggerfallWorkshop.Game
                         }
                         else
                         {
-                            /*
+                            /* - note: found a different way to do it via mapId
                             try
                             {
                                 IsPlayerInSameLocationWorldCell = ((Questing.Person)questResourceInfo.Value.questResource).IsPlayerInSameLocationWorldCell();
@@ -2172,16 +2339,6 @@ namespace DaggerfallWorkshop.Game
         private void AssembleTopicListThing()
         {            
             listTopicThing = new List<ListItem>();
-            /*
-            for (int i = 0; i < 30; i++)
-            {
-                ListItem item = new ListItem();
-                item.type = ListItemType.Item;
-                item.questionType = QuestionType.Thing;
-                item.caption = "thing " + i;
-                listTopicThing.Add(item);
-            }
-            */
         }
 
         /// <summary>
@@ -2270,7 +2427,7 @@ namespace DaggerfallWorkshop.Game
             return (tokens[0].text);
         }
 
-        private string getRecordIdByNpcsSocialGroup(int textRecordIdDefault, int textRecordIdGuildMembers, int textRecordIdMerchants, int textRecordIdNobility, int textRecordIdScholars, int textRecordIdUnderworld)
+        private string getRecordIdByNpcsSocialGroup(int textRecordIdDefault, int textRecordIdGuildMembers, int textRecordIdMerchants, int textRecordIdScholars, int textRecordIdNobility, int textRecordIdUnderworld)
         {
             switch (npcData.socialGroup)
             {

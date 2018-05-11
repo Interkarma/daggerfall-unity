@@ -203,6 +203,7 @@ _S.04_ task:
 
 _S.05_ task:
 	clicked npc _informant_ say 1025 
+	add dialog for person _thief_ 
 	log 1035 step 1 
 
 _S.06_ task:

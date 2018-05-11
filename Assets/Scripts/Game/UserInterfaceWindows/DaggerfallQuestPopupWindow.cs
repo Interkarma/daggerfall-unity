@@ -84,6 +84,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // may revisit this later)
                 GameManager.Instance.TalkManager.RemoveQuestInfoTopicsForSpecificQuest(offeredQuest.UID);
 
+                // remove quest rumors (rumor mill command) for this quest from talk manager
+                GameManager.Instance.TalkManager.RemoveQuestRumorsFromRumorMill(offeredQuest.UID);
+
+                // remove quest progress rumors for this quest from talk manager
+                GameManager.Instance.TalkManager.RemoveQuestProgressRumorsFromRumorMill(offeredQuest.UID);
+
                 // Show refuse message
                 sender.CloseWindow();
                 ShowQuestPopupMessage(offeredQuest, (int)QuestMachine.QuestMessages.RefuseQuest, false);
