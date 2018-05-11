@@ -149,8 +149,8 @@ namespace DaggerfallConnect.Save
             parsedData.magicEffects1 = reader.ReadByte();
             parsedData.magicEffects2 = reader.ReadByte();
             parsedData.magicEffects3 = reader.ReadByte();
+            parsedData.magicEffects4 = reader.ReadByte();
 
-            reader.BaseStream.Position = 0x8D;
             parsedData.currentSpellPoints = reader.ReadInt16();
             parsedData.maxSpellPoints = reader.ReadInt16();
 
@@ -315,9 +315,10 @@ namespace DaggerfallConnect.Save
             public Byte level;
             public PlayerReflexes reflexes;
             public UInt32 physicalGold;
-            public Byte magicEffects1; // x1 = paralyzed, x4 = invisible, x8 = levitating, x20 = lock, x40 = open
-            public Byte magicEffects2; // x1 = silenced, x10 = chameleon, x20 = shade, x40 = slowfall
-            public Byte magicEffects3; // x1 = jump, x8 = waterbreathing,, x10 = waterwalking
+            public Byte magicEffects1; // x1 = paralyzed, x4 = invisible, x8 = levitating, x10 = light, x20 = lock, x40 = open, x80 = regenerating
+            public Byte magicEffects2; // x1 = silenced, x2 = spell absorption, x4 = spell reflection, x8 = spell resistance, x10 = chameleon, x20 = shade, x40 = slowfall, x80 = climbing
+            public Byte magicEffects3; // x1 = jumping, x2 = free action, x4 = lycanthropy, x8 = water breathing, x10 = water walking, x20 = diminution (not implemented), x40 = shield, x80 = detect
+            public Byte magicEffects4; // x1 = darkness, x2 = tongues, x4 = intensify fire (not implemented), x8 = diminish fire (not implemented)
             public Int16 currentSpellPoints;
             public Int16 maxSpellPoints;
             public Int16 reputationCommoners;
