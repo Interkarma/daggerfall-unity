@@ -159,13 +159,23 @@ namespace DaggerfallWorkshop.Game.Entity
             return currentHealth;
         }
 
-        public int IncreaseFatigue(int amount)
+        public int IncreaseFatigue(int amount, bool assignMultiplier = false)
         {
+            // Optionally assign fatigue multiplier
+            // This seems to be case for spell effects that heal fatigue
+            if (assignMultiplier)
+                amount *= FatigueMultiplier;
+
             return SetFatigue(currentFatigue + amount);
         }
 
-        public int DecreaseFatigue(int amount)
+        public int DecreaseFatigue(int amount, bool assignMultiplier = false)
         {
+            // Optionally assign fatigue multiplier
+            // This seems to be case for spell effects that damage fatigue
+            if (assignMultiplier)
+                amount *= FatigueMultiplier;
+
             return SetFatigue(currentFatigue - amount);
         }
 

@@ -18,6 +18,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// <summary>
     /// Heal drain effect base.
     /// Looks for an incumbent DrainEffect to heal.
+    /// NOTE: Does not currently heal attribute loss from disease. Need to confirm if this is allowed in classic.
     /// </summary>
     public abstract class HealEffect : BaseEntityEffect
     {

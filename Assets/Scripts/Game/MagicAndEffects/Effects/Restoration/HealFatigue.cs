@@ -16,24 +16,24 @@ using DaggerfallWorkshop.Game.Entity;
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
     /// <summary>
-    /// Chameleon - True
+    /// Heal - Fatigue
     /// </summary>
-    public class CureParalyzation : BaseEntityEffect
+    public class HealFatigue : BaseEntityEffect
     {
         public override void SetProperties()
         {
-            properties.Key = "Cure-Paralyzation";
-            properties.ClassicKey = MakeClassicKey(3, 2);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "cure");
-            properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "paralyzation");
-            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1511);
-            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1211);
-            properties.SupportChance = true;
+            properties.Key = "Heal-Fatigue";
+            properties.ClassicKey = MakeClassicKey(10, 9);
+            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "heal");
+            properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "fatigue");
+            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1549);
+            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1249);
+            properties.SupportMagnitude = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_All;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
             properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
             properties.MagicSkill = DFCareer.MagicSkills.Restoration;
-            properties.ChanceCosts = MakeEffectCosts(20, 140);
+            properties.MagnitudeCosts = MakeEffectCosts(8, 28);
         }
 
         public override void MagicRound()
@@ -45,7 +45,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             if (!entityBehaviour)
                 return;
 
-            entityBehaviour.Entity.IsParalyzed = false;
+            // Implement effect
+            int magnitude = GetMagnitude(caster);
+            entityBehaviour.Entity.IncreaseFatigue(magnitude, true);
+
+            //Debug.LogFormat("{0} incremented {1}'s fatigue by {2} points", Key, entityBehaviour.EntityType.ToString(), magnitude);
         }
     }
 }
