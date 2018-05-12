@@ -773,7 +773,7 @@ namespace DaggerfallWorkshop.Game
                                 }
                                 else if (RMBLayout.IsResidence(buildingSummary.BuildingType)) // residence handling
                                 {
-                                    // check if residence is involved in active quest (this might be replaced by function call - for now I implemented this by myself
+                                    // check if residence is involved in active quest (this might be replaced by function call - for now I implemented this by myself)
                                     string buildingQuestName = string.Empty; // string.Empty if building not involved in active quest
                                     ulong[] questIDs = GameManager.Instance.QuestMachine.GetAllActiveQuests();
                                     foreach (ulong questID in questIDs)
