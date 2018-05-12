@@ -247,8 +247,11 @@ namespace DaggerfallWorkshop.Game.Guilds
                 {
                     GuildMembership_v1 guildMembershipData = data[(int)guildGroup];
                     Guild guild = CreateGuildObj(guildGroup, guildMembershipData.variant);
-                    guild.RestoreGuildData(guildMembershipData);
-                    memberships[guildGroup] = guild;
+                    if (guild != null)
+                    {
+                        guild.RestoreGuildData(guildMembershipData);
+                        memberships[guildGroup] = guild;
+                    }
                 }
             }
         }
