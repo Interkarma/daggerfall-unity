@@ -960,7 +960,7 @@ namespace DaggerfallWorkshop
             autoRepositionMethod = autoReposition;
             InitWorld();
             // Clear falling damage so player doesn't take damage if they were in the air before a transition
-            GameManager.Instance.PlayerMotor.ClearFallingDamage();
+            GameManager.Instance.AcrobatMotor.ClearFallingDamage();
             RaiseOnTeleportToCoordinatesEvent(worldPos);
         }
 

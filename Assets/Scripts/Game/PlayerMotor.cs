@@ -28,7 +28,7 @@ namespace DaggerfallWorkshop.Game
         public float standingHeight = 1.78f;
         public float eyeHeight = 0.09f;         // Eye height is 9cm below top of capsule.
         public float crouchingHeight = 0.45f;
-        public float crouchingJumpDelta = 0.8f;
+
         bool isCrouching = false;
         //bool wasCrouching = false;
 
@@ -45,17 +45,7 @@ namespace DaggerfallWorkshop.Game
         // There must be a button set up in the Input Manager called "Run"
         public bool toggleRun = false;
 
-        public float jumpSpeed = 8.0f;
-        public float gravity = 20.0f;
 
-        // Units that player can fall before a falling damage function is run. To disable, type "infinity" in the inspector
-        public float fallingDamageThreshold = 10.0f;
-
-        // If checked, then the player can change direction while in the air
-        public bool airControl = false;
-
-        // Player must be grounded for at least this many physics frames before being able to jump again; set to 0 to allow bunny hopping
-        public int antiBunnyHopFactor = 1;
 
         public float systemTimerUpdatesPerSecond = .055f; // Number of updates per second by the system timer at memory location 0x46C.
                                                           // Used for timing various things in classic.
@@ -74,18 +64,16 @@ namespace DaggerfallWorkshop.Game
 
         private Vector3 moveDirection = Vector3.zero;
         private bool grounded = false;
-        private Transform myTransform;
         private float speed;
-        private float fallStartLevel;
-        private bool falling;
-        private int jumpTimer;
-        private bool jumping = false;
+
+
         private bool standingStill = false;
 
         private ClimbingMotor climbingMotor;
         private PlayerHeightChanger heightChanger;
         private PlayerSpeedChanger speedChanger;
         private FrictionMotor frictionMotor;
+        private AcrobatMotor acrobatMotor;
 
         private CollisionFlags collisionFlags = 0;
 
@@ -116,7 +104,7 @@ namespace DaggerfallWorkshop.Game
 
         public bool IsJumping
         {
-            get { return jumping; }
+            get { return acrobatMotor.Jumping; }
         }
 
         public bool IsCrouching
@@ -186,13 +174,13 @@ namespace DaggerfallWorkshop.Game
         {
             controller = GetComponent<CharacterController>();
             speedChanger = GetComponent<PlayerSpeedChanger>();
-            myTransform = transform;
             speed = speedChanger.GetBaseSpeed();
-            jumpTimer = antiBunnyHopFactor;
+
             climbingMotor = GetComponent<ClimbingMotor>();
             heightChanger = GetComponent<PlayerHeightChanger>();
             levitateMotor = GetComponent<LevitateMotor>();
             frictionMotor = GetComponent<FrictionMotor>();
+            acrobatMotor = GetComponent<AcrobatMotor>();
 
             // Allow for resetting specific player state on new game or when game starts loading
             SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
@@ -207,7 +195,7 @@ namespace DaggerfallWorkshop.Game
                 moveDirection = Vector3.zero;
                 cancelMovement = false;
                 ClearActivePlatform();
-                ClearFallingDamage();
+                acrobatMotor.ClearFallingDamage();
                 return;
             }
 
@@ -228,7 +216,7 @@ namespace DaggerfallWorkshop.Game
 
             if (climbingMotor.IsClimbing)
             {
-                falling = false;
+                acrobatMotor.Falling = false;
             }
 
             // Do nothing if player levitating/swimming or climbing - replacement motor will take over movement for levitating/swimming
@@ -257,21 +245,9 @@ namespace DaggerfallWorkshop.Game
                 // Casting moveDirection to a Vector2 so constant downward force of gravity not included in magnitude
                 standingStill = (new Vector2(moveDirection.x, moveDirection.z).magnitude == 0);
 
-                if (jumping)
-                    jumping = false;
+                acrobatMotor.Jumping = false;
 
-                // If we were falling, and we fell a vertical distance greater than the threshold, run a falling damage routine
-                if (falling)
-                {
-                    falling = false;
-                    float fallDistance = fallStartLevel - myTransform.position.y;
-                    if (fallDistance > fallingDamageThreshold)
-                        FallingDamageAlert(fallDistance);
-                    else if (fallDistance > fallingDamageThreshold / 2f)
-                        BadFallDetected(fallDistance);
-                    //if (myTransform.position.y < fallStartLevel - fallingDamageThreshold)
-                    //    FallingDamageAlert(fallDistance);
-                }
+                acrobatMotor.CheckFallingDamage();
 
                 // Get walking/crouching/riding speed
                 speed = speedChanger.GetBaseSpeed();
@@ -303,50 +279,16 @@ namespace DaggerfallWorkshop.Game
                 // checks if sliding and applies movement to moveDirection if true
                 frictionMotor.MoveIfSliding(ref moveDirection);
 
-                try
-                {
-                    // Jump! But only if the jump button has been released and player has been grounded for a given number of frames
-                    if (!InputManager.Instance.HasAction(InputManager.Actions.Jump))
-                        jumpTimer++;
-                    //if (!Input.GetButton("Jump"))
-                    //    jumpTimer++;
-                    else if (jumpTimer >= antiBunnyHopFactor)
-                    {
-                        moveDirection.y = jumpSpeed;
-                        jumpTimer = 0;
-                        jumping = true;
-
-                        // Modify crouching jump speed
-                        if (isCrouching)
-                            moveDirection.y *= crouchingJumpDelta;
-                    }
-                    else
-                        jumping = false;
-                }
-                catch
-                {
-                }
+                acrobatMotor.DoJump(ref moveDirection);
             }
             else
             {
-                // If we stepped over a cliff or something, set the height at which we started falling
-                if (!falling)
-                {
-                    falling = true;
-                    fallStartLevel = myTransform.position.y;
-                }
+                acrobatMotor.CheckInitFall();
 
-                // If air control is allowed, check movement but don't touch the y component
-                if (airControl && frictionMotor.PlayerControl)
-                {
-                    moveDirection.x = inputX * speed * inputModifyFactor;
-                    moveDirection.z = inputY * speed * inputModifyFactor;
-                    moveDirection = myTransform.TransformDirection(moveDirection);
-                }
+                acrobatMotor.CheckAirControl(ref moveDirection, speed, inputModifyFactor);
             }
 
-            // Apply gravity
-            moveDirection.y -= gravity * Time.deltaTime;
+            acrobatMotor.ApplyGravity(ref moveDirection);
 
             // If we hit something above us AND we are moving up, reverse vertical movement
             if ((controller.collisionFlags & CollisionFlags.Above) != 0)
@@ -401,16 +343,6 @@ namespace DaggerfallWorkshop.Game
         public void ClearActivePlatform()
         {
             activePlatform = null;
-        }
-
-        // Call this when floating origin ticks on Y
-        // to ensure player doesn't die by jumping right at threshold
-        public void AdjustFallStart(float y)
-        {
-            if (falling)
-            {
-                fallStartLevel += y;
-            }
         }
 
         /// <summary>
@@ -532,25 +464,9 @@ namespace DaggerfallWorkshop.Game
                 activePlatform = hit.collider.transform;
         }
 
-        // If falling damage occured, this is the place to do something about it. You can make the player
-        // have hitpoints and remove some of them based on the distance fallen, add sound effects, etc.
-        void FallingDamageAlert(float fallDistance)
-        {
-            SendMessage("ApplyPlayerFallDamage", fallDistance, SendMessageOptions.DontRequireReceiver);
-        }
 
-        // This was a bad fall, but not enough to damage player.
-        // Might want to play a sound or animation however.
-        void BadFallDetected(float fallDistance)
-        {
-            SendMessage("HardFallAlert", fallDistance, SendMessageOptions.DontRequireReceiver);
-        }
 
-        public void ClearFallingDamage()
-        {
-            falling = false;
-            fallStartLevel = transform.position.y;
-        }
+
 
         #region Private Methods
 

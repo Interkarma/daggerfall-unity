@@ -882,7 +882,7 @@ namespace DaggerfallWorkshop.Game
             if (Physics.Raycast(ray, out hit, controller.height * 2f))
             {
                 // Clear falling damage so player doesn't take damage if they transitioned into a dungeon while jumping
-                GameManager.Instance.PlayerMotor.ClearFallingDamage();
+                GameManager.Instance.AcrobatMotor.ClearFallingDamage();
                 // Position player at hit position plus just over half controller height up
                 Vector3 pos = hit.point;
                 pos.y += controller.height / 2f + 0.25f;
