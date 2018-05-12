@@ -37,6 +37,7 @@ GameObject:
   - component: {fileID: 114232921892998986}
   - component: {fileID: 114607307154016044}
   - component: {fileID: 114549470222698842}
+  - component: {fileID: 114101796857139080}
   m_Layer: 0
   m_Name: PlayerAdvanced
   m_TagString: Player
@@ -560,15 +561,9 @@ MonoBehaviour:
   standingHeight: 1.78
   eyeHeight: 0.09
   crouchingHeight: 0.45
-  crouchingJumpDelta: 0.8
   ridingHeight: 2.6
   limitDiagonalSpeed: 1
   toggleRun: 0
-  jumpSpeed: 8
-  gravity: 20
-  fallingDamageThreshold: 10
-  airControl: 0
-  antiBunnyHopFactor: 1
   systemTimerUpdatesPerSecond: 0.055
   smoothFollower: {fileID: 4832112164805246}
   smoothFollowerLerpSpeed: 25
@@ -1021,6 +1016,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdd1e06d5ea6c744c820a21d91c27407, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114101796857139080
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36bb43919da808741adb733009f14b91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  jumpSpeed: 8
+  gravity: 20
+  crouchingJumpDelta: 0.8
+  fallingDamageThreshold: 10
+  airControl: 0
+  antiBunnyHopFactor: 1
 --- !u!114 &114121517922970790
 MonoBehaviour:
   m_ObjectHideFlags: 1

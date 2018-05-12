@@ -63,6 +63,7 @@ namespace DaggerfallWorkshop.Game
         GameObject streamingTarget = null;
         SaveLoadManager saveLoadManager = null;
         PlayerMotor playerMotor = null;
+        AcrobatMotor acrobatMotor = null;
         ClimbingMotor climbingMotor = null;
         PlayerSpeedChanger speedChanger = null;
         FrictionMotor frictionMotor = null;
@@ -240,6 +241,12 @@ namespace DaggerfallWorkshop.Game
         {
             get { return (playerMotor) ? playerMotor : playerMotor = GetComponentFromObject<PlayerMotor>(PlayerObject); }
             set { playerMotor = value; }
+        }
+
+        public AcrobatMotor AcrobatMotor
+        {
+            get { return (acrobatMotor) ? acrobatMotor : acrobatMotor = GetComponentFromObject<AcrobatMotor>(PlayerObject); }
+            set { acrobatMotor = value; }
         }
 
         public ClimbingMotor ClimbingMotor
