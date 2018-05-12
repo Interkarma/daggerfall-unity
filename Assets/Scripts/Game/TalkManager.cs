@@ -1887,7 +1887,8 @@ namespace DaggerfallWorkshop.Game
                             float xPosBuilding = blockLayout[index].rect.xpos + (int)(buildingSummary.Position.x / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * ExteriorAutomap.blockSizeWidth) - GameManager.Instance.ExteriorAutomap.LocationWidth * ExteriorAutomap.blockSizeWidth * 0.5f;
                             float yPosBuilding = blockLayout[index].rect.ypos + (int)(buildingSummary.Position.z / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * ExteriorAutomap.blockSizeHeight) - GameManager.Instance.ExteriorAutomap.LocationHeight * ExteriorAutomap.blockSizeHeight * 0.5f;
                             item.position = new Vector2(xPosBuilding, yPosBuilding);
-                            listBuildings.Add(item);
+                            if (item.buildingKey != 0)
+                                listBuildings.Add(item);
                         }
                         catch (Exception e)
                         {
@@ -2230,6 +2231,7 @@ namespace DaggerfallWorkshop.Game
                     item.type = ListItemType.Item;
                     item.questionType = QuestionType.LocalBuilding;
                     item.caption = buildingInfo.name;
+                    item.buildingKey = buildingInfo.buildingKey;
                     itemBuildingTypeGroup.listChildItems.Add(item);
                 }
             }
