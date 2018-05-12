@@ -131,7 +131,7 @@ namespace DaggerfallWorkshop.Game
             float velocity = new Vector2(playerMotor.MoveDirection.x, playerMotor.MoveDirection.z).magnitude;
             float timeIncrement = velocity * bobSpeed * Time.deltaTime;
 
-            if ((Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0) && playerMotor.IsGrounded)
+            if (InputManager.Instance.Horizontal != 0 || InputManager.Instance.Vertical != 0)
             {   // player is moving on ground
                 if (endTransitionTimer > 0) // if we were stopping, but started again, re-initialize timer here.
                 {
