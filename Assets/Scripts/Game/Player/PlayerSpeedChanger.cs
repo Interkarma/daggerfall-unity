@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace DaggerfallWorkshop.Game
 {
+    [RequireComponent(typeof(PlayerMotor))]
     public class PlayerSpeedChanger : MonoBehaviour
     {
         private PlayerMotor playerMotor;

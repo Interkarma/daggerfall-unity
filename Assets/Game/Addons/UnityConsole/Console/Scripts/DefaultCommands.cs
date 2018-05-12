@@ -602,16 +602,16 @@ namespace Wenzil.Console
             public static string Execute(params string[] args)
             {
                 int gravity = 0;
-                PlayerMotor playerMotor = GameManager.Instance.PlayerMotor;//GameObject.FindObjectOfType<PlayerMotor>();
+                AcrobatMotor acrobatMotor = GameManager.Instance.AcrobatMotor;
 
-                if (playerMotor == null)
+                if (acrobatMotor == null)
                     return error;
 
                 if (args == null || args.Length < 1)
                 {
                     try
                     {
-                        Console.Log(string.Format("Current gravity: {0}", playerMotor.gravity));
+                        Console.Log(string.Format("Current gravity: {0}", acrobatMotor.gravity));
                         return HelpCommand.Execute(SetGravity.name);
                     }
                     catch
@@ -624,8 +624,8 @@ namespace Wenzil.Console
                     return error;
                 else
                 {
-                    playerMotor.gravity = gravity;
-                    return string.Format("Gravity set to: {0}", playerMotor.gravity);
+                    acrobatMotor.gravity = gravity;
+                    return string.Format("Gravity set to: {0}", acrobatMotor.gravity);
                 }
 
             }
@@ -641,9 +641,9 @@ namespace Wenzil.Console
             public static string Execute(params string[] args)
             {
                 int speed;
-                PlayerMotor playerMotor = GameManager.Instance.PlayerMotor;//GameObject.FindObjectOfType<PlayerMotor>();
+                AcrobatMotor acrobatMotor = GameManager.Instance.AcrobatMotor;
 
-                if (playerMotor == null)
+                if (acrobatMotor == null)
                 {
                     return error;
                 }
@@ -651,7 +651,7 @@ namespace Wenzil.Console
                 {
                     try
                     {
-                        Console.Log(string.Format("Current Jump Speed: {0}", playerMotor.jumpSpeed));
+                        Console.Log(string.Format("Current Jump Speed: {0}", acrobatMotor.jumpSpeed));
                         return HelpCommand.Execute(SetJumpSpeed.name);
                     }
                     catch
@@ -663,8 +663,8 @@ namespace Wenzil.Console
                     return error;
                 else
                 {
-                    playerMotor.jumpSpeed = speed;
-                    return string.Format("Jump speed set to: {0}", playerMotor.jumpSpeed);
+                    acrobatMotor.jumpSpeed = speed;
+                    return string.Format("Jump speed set to: {0}", acrobatMotor.jumpSpeed);
                 }
             }
         }
@@ -678,15 +678,14 @@ namespace Wenzil.Console
 
             public static string Execute(params string[] args)
             {
+                AcrobatMotor acrobatMotor = GameManager.Instance.AcrobatMotor;
 
-                PlayerMotor playerMotor = GameManager.Instance.PlayerMotor;//GameObject.FindObjectOfType<PlayerMotor>();
-
-                if (playerMotor == null)
+                if (acrobatMotor == null)
                     return error;
                 else
                 {
-                    playerMotor.airControl = !playerMotor.airControl;
-                    return string.Format("air control set to: {0}", playerMotor.airControl);
+                    acrobatMotor.airControl = !acrobatMotor.airControl;
+                    return string.Format("air control set to: {0}", acrobatMotor.airControl);
                 }
             }
         }
@@ -1358,7 +1357,7 @@ namespace Wenzil.Console
                 RaycastHit hitInfo;
                 Vector3 origin = Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0));
                 Ray ray = new Ray(origin + Camera.main.transform.forward * .2f, Camera.main.transform.forward);
-                GameManager.Instance.PlayerMotor.ClearFallingDamage();
+                GameManager.Instance.AcrobatMotor.ClearFallingDamage();
                 if (!(Physics.Raycast(ray, out hitInfo, maxDistance)))
                 {
                     Console.Log("Didn't hit anything...");
@@ -1450,10 +1449,10 @@ namespace Wenzil.Console
 
             public static string Execute(params string[] args)
             {
-                PlayerMotor playerMotor = GameManager.Instance.PlayerMotor;
+                AcrobatMotor acrobatMotor = GameManager.Instance.AcrobatMotor;
                 FrictionMotor frictionMotor = GameManager.Instance.FrictionMotor;
                 CharacterController cc = GameManager.Instance.PlayerController;
-                playerMotor.ClearFallingDamage();
+                acrobatMotor.ClearFallingDamage();
 
                 RaycastHit hitInfo;
                 Vector3 origin = frictionMotor.ContactPoint;
@@ -1466,7 +1465,7 @@ namespace Wenzil.Console
                 else
                 {
                     GameManager.Instance.PlayerObject.transform.position = frictionMotor.ContactPoint;
-                    playerMotor.FixStanding(cc.height / 2);
+                    GameManager.Instance.PlayerMotor.FixStanding(cc.height / 2);
                     return "Finished - moved to last known good location at " + frictionMotor.ContactPoint.ToString();
                 }
             }
