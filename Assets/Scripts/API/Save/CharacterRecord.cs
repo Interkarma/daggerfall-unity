@@ -189,6 +189,11 @@ namespace DaggerfallConnect.Save
 
             reader.BaseStream.Position = 0x224;
             parsedData.biographyReactionMod = reader.ReadSByte();
+            parsedData.resistanceToFire = reader.ReadByte();
+            parsedData.resistanceToFrost = reader.ReadByte();
+            parsedData.resistanceToDiseaseAndPoison = reader.ReadByte();
+            parsedData.resistanceToShock = reader.ReadByte();
+            parsedData.resistanceToMagicka = reader.ReadByte();
 
             reader.BaseStream.Position = 0x230;
             parsedData.career = ReadCareer(reader);
@@ -316,10 +321,10 @@ namespace DaggerfallConnect.Save
             public Byte level;
             public PlayerReflexes reflexes;
             public UInt32 physicalGold;
-            public Byte magicEffects1; // x1 = paralyzed, x4 = invisible, x8 = levitating, x10 = light, x20 = lock, x40 = open, x80 = regenerating
+            public Byte magicEffects1; // x1 = paralyzed, x2 = resist fire, x4 = invisible, x8 = levitating, x10 = light, x20 = lock, x40 = open, x80 = regenerating
             public Byte magicEffects2; // x1 = silenced, x2 = spell absorption, x4 = spell reflection, x8 = spell resistance, x10 = chameleon, x20 = shade, x40 = slowfall, x80 = climbing
             public Byte magicEffects3; // x1 = jumping, x2 = free action, x4 = lycanthropy, x8 = water breathing, x10 = water walking, x20 = diminution (not implemented), x40 = shield, x80 = detect
-            public Byte magicEffects4; // x1 = darkness, x2 = tongues, x4 = intensify fire (not implemented), x8 = diminish fire (not implemented)
+            public Byte magicEffects4; // x1 = darkness, x2 = tongues, x4 = intensify fire (not implemented), x8 = diminish fire (not implemented), x10 = resist frost, x20 = resist disease/poison, x40 = resist shock, 0x80 = resist magicka
             public Int16 currentSpellPoints;
             public Int16 maxSpellPoints;
             public Int16 reputationCommoners;
@@ -358,6 +363,11 @@ namespace DaggerfallConnect.Save
             public Byte darkBrotherhoodRequirementTally;
             public Byte thievesGuildRequirementTally;
             public SByte biographyReactionMod;
+            public Byte resistanceToFire;
+            public Byte resistanceToFrost;
+            public Byte resistanceToDiseaseAndPoison;
+            public Byte resistanceToShock;
+            public Byte resistanceToMagicka;
             public DFCareer career;
         }
 
