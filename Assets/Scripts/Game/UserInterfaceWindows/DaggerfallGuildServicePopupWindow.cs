@@ -302,6 +302,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     ReceiveHouseService();
                     break;
 
+                case GuildServices.Spymaster:
+                    GameManager.Instance.TalkManager.TalkToStaticNPC(QuestMachine.Instance.LastNPCClicked, true);
+                    break;
+
                 default:
                     CloseWindow();
                     Services.CustomGuildService customService;

@@ -600,7 +600,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Player has clicked or static talk target or clicked the talk button inside a popup-window
-        public void TalkToStaticNPC(StaticNPC targetNPC)
+        public void TalkToStaticNPC(StaticNPC targetNPC, bool isSpyMaster = false)
         {
             if (IsNpcOfferingQuest(targetNPC.Data.nameSeed)) {
                 DaggerfallUI.UIManager.PushWindow(new DaggerfallQuestOfferWindow(DaggerfallUI.UIManager, npcsWithWork[targetNPC.Data.nameSeed].npc, npcsWithWork[targetNPC.Data.nameSeed].socialGroup));
@@ -615,6 +615,7 @@ namespace DaggerfallWorkshop.Game
             GameManager.Instance.TalkManager.SetTargetNPC(targetNPC, reactionToPlayer, ref sameTalkTargetAsBefore);
 
             npcData.numAnswersGiven = 0; // important to reset this here so even if npcs is the same as previous talk session pc will can one correct answer (as implemented in vanilla df)
+            npcData.isSpyMaster = isSpyMaster;
 
             TalkToNpc();
         }
@@ -720,7 +721,16 @@ namespace DaggerfallWorkshop.Game
             const int isInSameHolyOrderLikePlayerGreetingTextId = 8553;
             const int isInSameHolyOrderNeutralPlayerGreetingTextId = 8554;
 
+            const int spyMasterGreetingTextId = 402;
+
             // note Nystul: did not find any use of text record ids 8556 - 8569 in my testing - but some of them might be used by nobles of the courtyards
+
+
+            if (npcData.isSpyMaster)
+            {
+                TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(spyMasterGreetingTextId);
+                return TokensToString(tokens);
+            }
 
             if (currentNPCType == NPCType.Static)
             {
@@ -742,7 +752,7 @@ namespace DaggerfallWorkshop.Game
                                 // expand tokens and reveal dialog-linked resources
                                 QuestMacroHelper macroHelper = new QuestMacroHelper();
                                 macroHelper.ExpandQuestMessage(GameManager.Instance.QuestMachine.GetQuest(questID), ref tokens, true);
-                                return TokensToString(tokens);                              
+                                return TokensToString(tokens);
                             }
                         }
                     }
@@ -2538,7 +2548,7 @@ namespace DaggerfallWorkshop.Game
             for (int i = 0; i < tokens.Length; i++)
             {
                 string textFragment = tokens[i].text;
-                if (textFragment.Length > 0 && i < textFragment.Length)
+                if (textFragment != null && textFragment.Length > 0 && i < textFragment.Length)
                     returnString += textFragment;
                 else
                     returnString += " ";
