@@ -763,8 +763,8 @@ namespace DaggerfallWorkshop.Game
             float scale = MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale;
             playerPos.x = ((GameManager.Instance.PlayerGPS.transform.position.x) % scale) / scale;
             playerPos.y = ((GameManager.Instance.PlayerGPS.transform.position.z) % scale) / scale;
-            int refWidth = (int)(DaggerfallExteriorAutomap.blockSizeWidth * DaggerfallExteriorAutomap.numMaxBlocksX * GameManager.Instance.ExteriorAutomap.LayoutMultiplier);
-            int refHeight = (int)(DaggerfallExteriorAutomap.blockSizeHeight * DaggerfallExteriorAutomap.numMaxBlocksY * GameManager.Instance.ExteriorAutomap.LayoutMultiplier);
+            int refWidth = (int)(ExteriorAutomap.blockSizeWidth * ExteriorAutomap.numMaxBlocksX * GameManager.Instance.ExteriorAutomap.LayoutMultiplier);
+            int refHeight = (int)(ExteriorAutomap.blockSizeHeight * ExteriorAutomap.numMaxBlocksY * GameManager.Instance.ExteriorAutomap.LayoutMultiplier);
             playerPos.x *= refWidth;
             playerPos.y *= refHeight;
             playerPos.x -= refWidth * 0.5f;
@@ -1852,7 +1852,7 @@ namespace DaggerfallWorkshop.Game
                 DaggerfallUnity.LogMessage("error when loading location for in TalkManager.GetBuildingList", true);
             }
 
-            DaggerfallExteriorAutomap.BlockLayout[] blockLayout = GameManager.Instance.ExteriorAutomap.ExteriorLayout;
+            ExteriorAutomap.BlockLayout[] blockLayout = GameManager.Instance.ExteriorAutomap.ExteriorLayout;
 
             DFBlock[] blocks;
             RMBLayout.GetLocationBuildingData(location, out blocks);
@@ -1884,8 +1884,8 @@ namespace DaggerfallWorkshop.Game
                             item.name = locationName;
                             item.buildingKey = buildingSummary.buildingKey;
                             // compute building position in map coordinate system                     
-                            float xPosBuilding = blockLayout[index].rect.xpos + (int)(buildingSummary.Position.x / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * DaggerfallExteriorAutomap.blockSizeWidth) - GameManager.Instance.ExteriorAutomap.LocationWidth * DaggerfallExteriorAutomap.blockSizeWidth * 0.5f;
-                            float yPosBuilding = blockLayout[index].rect.ypos + (int)(buildingSummary.Position.z / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * DaggerfallExteriorAutomap.blockSizeHeight) - GameManager.Instance.ExteriorAutomap.LocationHeight * DaggerfallExteriorAutomap.blockSizeHeight * 0.5f;
+                            float xPosBuilding = blockLayout[index].rect.xpos + (int)(buildingSummary.Position.x / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * ExteriorAutomap.blockSizeWidth) - GameManager.Instance.ExteriorAutomap.LocationWidth * ExteriorAutomap.blockSizeWidth * 0.5f;
+                            float yPosBuilding = blockLayout[index].rect.ypos + (int)(buildingSummary.Position.z / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * ExteriorAutomap.blockSizeHeight) - GameManager.Instance.ExteriorAutomap.LocationHeight * ExteriorAutomap.blockSizeHeight * 0.5f;
                             item.position = new Vector2(xPosBuilding, yPosBuilding);
                             listBuildings.Add(item);
                         }

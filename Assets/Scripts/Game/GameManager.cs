@@ -74,8 +74,8 @@ namespace DaggerfallWorkshop.Game
         SunlightManager sunlightManager = null;
         ItemHelper itemHelper = null;
         StateManager stateManager = null;
-        DaggerfallAutomap interiorAutomap = null;
-        DaggerfallExteriorAutomap exteriorAutomap = null;
+        Automap interiorAutomap = null;
+        ExteriorAutomap exteriorAutomap = null;
         QuestMachine questMachine = null;
 		TransportManager transportManager = null;
         TalkManager talkManager = null;
@@ -302,15 +302,15 @@ namespace DaggerfallWorkshop.Game
             set { itemHelper = value; }
         }
 
-        public DaggerfallAutomap InteriorAutomap
+        public Automap InteriorAutomap
         {
-            get { return (interiorAutomap != null) ? interiorAutomap : interiorAutomap = GetComponentFromObject<DaggerfallAutomap>(GetGameObjectWithName("InteriorAutomap")); }
+            get { return (interiorAutomap != null) ? interiorAutomap : interiorAutomap = GetComponentFromObject<Automap>(GetGameObjectWithName("InteriorAutomap")); }
             set { interiorAutomap = value; }
         }
 
-        public DaggerfallExteriorAutomap ExteriorAutomap
+        public ExteriorAutomap ExteriorAutomap
         {
-            get { return (exteriorAutomap != null) ? exteriorAutomap : exteriorAutomap = GetComponentFromObject<DaggerfallExteriorAutomap>(GetGameObjectWithName("ExteriorAutomap")); }
+            get { return (exteriorAutomap != null) ? exteriorAutomap : exteriorAutomap = GetComponentFromObject<ExteriorAutomap>(GetGameObjectWithName("ExteriorAutomap")); }
             set { exteriorAutomap = value; }
         }
 

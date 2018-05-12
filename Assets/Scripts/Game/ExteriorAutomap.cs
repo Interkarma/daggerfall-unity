@@ -35,17 +35,17 @@ namespace DaggerfallWorkshop.Game
     /// <summary>
     /// this class provides the automap core functionality like geometry creation and discovery mechanism 
     /// </summary>
-    public class DaggerfallExteriorAutomap : MonoBehaviour
+    public class ExteriorAutomap : MonoBehaviour
     {
         #region Singleton
-        private static DaggerfallExteriorAutomap _instance;
+        private static ExteriorAutomap _instance;
 
-        public static DaggerfallExteriorAutomap instance
+        public static ExteriorAutomap instance
         {
             get
             {
                 if (_instance == null)
-                    _instance = GameObject.FindObjectOfType<DaggerfallExteriorAutomap>();
+                    _instance = GameObject.FindObjectOfType<ExteriorAutomap>();
                 return _instance;
             }
             private set { _instance = value; }
@@ -54,7 +54,7 @@ namespace DaggerfallWorkshop.Game
 
         #region Fields
 
-        GameObject gameobjectExteriorAutomap = null; // used to hold reference to instance of GameObject "ExteriorAutomap" (which has script Game/DaggerfallExteriorAutomap.cs attached)
+        GameObject gameobjectExteriorAutomap = null; // used to hold reference to instance of GameObject "ExteriorAutomap" (which has script Game/ExteriorAutomap.cs attached)
 
         GameObject gameobjectCustomCanvas = null; // used to hold reference to instance of GameObject with the custom canvas used for drawing the exterior automap        
 
@@ -78,8 +78,8 @@ namespace DaggerfallWorkshop.Game
         ExteriorAutomapViewMode currentExteriorAutomapViewMode = ExteriorAutomapViewMode.Original; // currently selected exterior automap view mode     
 
         // flag that indicates if external script should reset automap settings (set via Property ResetAutomapSettingsSignalForExternalScript checked and erased by DaggerfallExteriorAutomapWindow script)
-        // this might look weirds - why not just notify the DaggerfallExteriorAutomapWindow class you may ask... - I wanted to make DaggerfallExteriorAutomap inaware and independent of the actual GUI implementation
-        // so communication will always be only from DaggerfallExteriorAutomapWindow to DaggerfallExteriorAutomap class - so into other direction it works in that way that DaggerfallExteriorAutomap will pull
+        // this might look weirds - why not just notify the DaggerfallExteriorAutomapWindow class you may ask... - I wanted to make ExteriorAutomap inaware and independent of the actual GUI implementation
+        // so communication will always be only from DaggerfallExteriorAutomapWindow to ExteriorAutomap class - so into other direction it works in that way that ExteriorAutomap will pull
         // from DaggerfallExteriorAutomapWindow via flags - this is why this flag and its Property ResetAutomapSettingsSignalForExternalScript exist
         bool resetAutomapSettingsFromExternalScript = false;
 
@@ -424,7 +424,7 @@ namespace DaggerfallWorkshop.Game
             gameObjectPlayerAdvanced = GameObject.Find("PlayerAdvanced");
             if (!gameObjectPlayerAdvanced)
             {
-                DaggerfallUnity.LogMessage("GameObject \"PlayerAdvanced\" not found! in script DaggerfallExteriorAutomap (in function Awake())", true);
+                DaggerfallUnity.LogMessage("GameObject \"PlayerAdvanced\" not found! in script ExteriorAutomap (in function Awake())", true);
                 if (Application.isEditor)
                     Debug.Break();
                 else
@@ -434,7 +434,7 @@ namespace DaggerfallWorkshop.Game
             gameobjectExteriorAutomap = GameObject.Find("Automap/ExteriorAutomap");
             if (gameobjectExteriorAutomap == null)
             {
-                DaggerfallUnity.LogMessage("GameObject \"Automap/ExteriorAutomap\" missing! Create a GameObject called \"Automap\" in root of hierarchy and add a GameObject \"ExteriorAutomap\" to it, to this add script Game/DaggerfallExteriorAutomap!\"", true);
+                DaggerfallUnity.LogMessage("GameObject \"Automap/ExteriorAutomap\" missing! Create a GameObject called \"Automap\" in root of hierarchy and add a GameObject \"ExteriorAutomap\" to it, to this add script Game/ExteriorAutomap!\"", true);
                 if (Application.isEditor)
                     Debug.Break();
                 else
@@ -1930,13 +1930,13 @@ namespace DaggerfallWorkshop.Game
                         return "this command only has an effect when outside and at a location";
                     }
 
-                    DaggerfallExteriorAutomap daggerfallExteriorAutomap = DaggerfallExteriorAutomap.instance;
-                    if (daggerfallExteriorAutomap == null)
+                    ExteriorAutomap exteriorAutomap = ExteriorAutomap.instance;
+                    if (exteriorAutomap == null)
                     {
-                        return "DaggerfallExteriorAutomap instance not found";
+                        return "ExteriorAutomap instance not found";
                     }
 
-                    daggerfallExteriorAutomap.RevealUndiscoveredBuildings = true;
+                    exteriorAutomap.RevealUndiscoveredBuildings = true;
                     return "undiscovered buildings have been revealed (temporary) on the exterior automap";
                 }
             }
@@ -1955,13 +1955,13 @@ namespace DaggerfallWorkshop.Game
                         return "this command only has an effect when outside and at a location";
                     }
 
-                    DaggerfallExteriorAutomap daggerfallExteriorAutomap = DaggerfallExteriorAutomap.instance;
-                    if (daggerfallExteriorAutomap == null)
+                    ExteriorAutomap exteriorAutomap = ExteriorAutomap.instance;
+                    if (exteriorAutomap == null)
                     {
-                        return "DaggerfallExteriorAutomap instance not found";
+                        return "ExteriorAutomap instance not found";
                     }
 
-                    daggerfallExteriorAutomap.RevealUndiscoveredBuildings = false;
+                    exteriorAutomap.RevealUndiscoveredBuildings = false;
 
                     return "undiscovered buildings have been hidden on the exterior automap again";
                 }

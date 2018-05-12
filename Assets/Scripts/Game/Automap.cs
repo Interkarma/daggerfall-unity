@@ -31,23 +31,23 @@ using Wenzil.Console;
 
 namespace DaggerfallWorkshop.Game
 {
-    using AutomapGeometryModelState = DaggerfallAutomap.AutomapGeometryBlockState.AutomapGeometryBlockElementState.AutomapGeometryModelState;
-    using AutomapGeometryBlockElementState = DaggerfallAutomap.AutomapGeometryBlockState.AutomapGeometryBlockElementState;
+    using AutomapGeometryModelState = Automap.AutomapGeometryBlockState.AutomapGeometryBlockElementState.AutomapGeometryModelState;
+    using AutomapGeometryBlockElementState = Automap.AutomapGeometryBlockState.AutomapGeometryBlockElementState;
 
     /// <summary>
     /// this class provides the automap core functionality like geometry creation and discovery mechanism 
     /// </summary>
-    public class DaggerfallAutomap : MonoBehaviour
+    public class Automap : MonoBehaviour
     {
         #region Singleton
-        private static DaggerfallAutomap _instance;
+        private static Automap _instance;
 
-        public static DaggerfallAutomap instance
+        public static Automap instance
         {
             get
             {
                 if (_instance == null)
-                    _instance = GameObject.FindObjectOfType<DaggerfallAutomap>();
+                    _instance = GameObject.FindObjectOfType<Automap>();
                 return _instance;
             }
             private set { _instance = value; }
@@ -141,7 +141,7 @@ namespace DaggerfallWorkshop.Game
 
         const float scanRateGeometryDiscoveryInHertz = 5.0f; // n times per second the discovery of new geometry/meshes is checked
 
-        GameObject gameobjectAutomap = null; // used to hold reference to instance of GameObject "Automap" (which has script Game/DaggerfallAutomap.cs attached)
+        GameObject gameobjectAutomap = null; // used to hold reference to instance of GameObject "Automap" (which has script Game/Automap.cs attached)
 
         GameObject gameobjectGeometry = null; // used to hold reference to instance of GameObject with level geometry used for automap        
 
@@ -173,8 +173,8 @@ namespace DaggerfallWorkshop.Game
         AutomapRenderMode currentAutomapRenderMode = AutomapRenderMode.Cutout; // currently selected automap render mode (default value: cutout)        
 
         // flag that indicates if external script should reset automap settings (set via Property ResetAutomapSettingsSignalForExternalScript checked and erased by DaggerfallAutomapWindow script)
-        // this might look weirds - why not just notify the DaggerfallAutomapWindow class you may ask... - I wanted to make DaggerfallAutomap inaware and independent of the actual GUI implementation
-        // so communication will always be only from DaggerfallAutomapWindow to DaggerfallAutomap class - so into other direction it works in that way that DaggerfallAutomap will pull
+        // this might look weirds - why not just notify the DaggerfallAutomapWindow class you may ask... - I wanted to make Automap inaware and independent of the actual GUI implementation
+        // so communication will always be only from DaggerfallAutomapWindow to Automap class - so into other direction it works in that way that Automap will pull
         // from DaggerfallAutomapWindow via flags - this is why this flag and its Property ResetAutomapSettingsSignalForExternalScript exist
         bool resetAutomapSettingsFromExternalScript = false;
 
@@ -323,7 +323,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-        /// DaggerfallAutomapWindow script will use this to signal this script to update when anything changed that requires DaggerfallAutomap to update - TODO: check if this can done with an event (if events work with gui windows)
+        /// DaggerfallAutomapWindow script will use this to signal this script to update when anything changed that requires Automap to update - TODO: check if this can done with an event (if events work with gui windows)
         /// </summary>
         public void forceUpdate()
         {
@@ -457,7 +457,7 @@ namespace DaggerfallWorkshop.Game
             gameObjectPlayerAdvanced = GameObject.Find("PlayerAdvanced");
             if (!gameObjectPlayerAdvanced)
             {
-                DaggerfallUnity.LogMessage("GameObject \"PlayerAdvanced\" not found! in script DaggerfallAutomap (in function Awake())", true);
+                DaggerfallUnity.LogMessage("GameObject \"PlayerAdvanced\" not found! in script Automap (in function Awake())", true);
                 if (Application.isEditor)
                     Debug.Break();
                 else
@@ -507,7 +507,7 @@ namespace DaggerfallWorkshop.Game
             gameobjectAutomap = GameObject.Find("Automap/InteriorAutomap");
             if (gameobjectAutomap == null)
             {
-                DaggerfallUnity.LogMessage("GameObject \"Automap/InteriorAutomap\" missing! Create a GameObject called \"Automap\" in root of hierarchy and add a GameObject \"InternalAutomap\" to it, to this add script Game/DaggerfallAutomap!\"", true);
+                DaggerfallUnity.LogMessage("GameObject \"Automap/InteriorAutomap\" missing! Create a GameObject called \"Automap\" in root of hierarchy and add a GameObject \"InternalAutomap\" to it, to this add script Game/Automap!\"", true);
                 if (Application.isEditor)
                     Debug.Break();
                 else
@@ -1752,10 +1752,10 @@ namespace DaggerfallWorkshop.Game
                         return "this command only has an effect when inside a dungeon";
                     }
 
-                    DaggerfallAutomap daggerfallAutomap = DaggerfallAutomap.instance;
+                    Automap daggerfallAutomap = Automap.instance;
                     if (daggerfallAutomap == null)
                     {
-                        return "DaggerfallAutomap instance not found";
+                        return "Automap instance not found";
                     }
 
                     daggerfallAutomap.RevealAll();
@@ -1777,13 +1777,13 @@ namespace DaggerfallWorkshop.Game
                         return "this command only has an effect when inside a dungeon";
                     }
 
-                    DaggerfallAutomap daggerfallAutomap = DaggerfallAutomap.instance;
-                    if (daggerfallAutomap == null)
+                    Automap automap = Automap.instance;
+                    if (automap == null)
                     {
-                        return "DaggerfallAutomap instance not found";
+                        return "Automap instance not found";
                     }
 
-                    daggerfallAutomap.HideAll();
+                    automap.HideAll();
 
                     return "hide complete on automap";
                 }
@@ -1799,10 +1799,10 @@ namespace DaggerfallWorkshop.Game
 
                 public static string Execute(params string[] args)
                 {
-                    DaggerfallAutomap daggerfallAutomap = DaggerfallAutomap.instance;
+                    Automap daggerfallAutomap = Automap.instance;
                     if (daggerfallAutomap == null)
                     {
-                        return "DaggerfallAutomap instance not found";
+                        return "Automap instance not found";
                     }
 
                     bool oldDebugTeleportMode = daggerfallAutomap.DebugTeleportMode;
