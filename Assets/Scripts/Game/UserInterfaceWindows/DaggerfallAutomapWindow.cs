@@ -168,9 +168,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string nativeImgName = "AMAP00I0.IMG";
         const string nativeImgNameGrid3D = "AMAP01I0.IMG";
 
-        DaggerfallAutomap daggerfallAutomap = null; // used to communicate with DaggerfallAutomap class
+        Automap automap = null; // used to communicate with Automap class
 
-        GameObject gameobjectAutomap = null; // used to hold reference to instance of GameObject "Automap" (which has script Game/DaggerfallAutomap.cs attached)
+        GameObject gameobjectAutomap = null; // used to hold reference to instance of GameObject "Automap" (which has script Game/Automap.cs attached)
 
         Camera cameraAutomap = null; // camera for automap camera
 
@@ -483,7 +483,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         /// <summary>
-        /// called when automap window is pushed - resets automap settings to default settings and signals DaggerfallAutomap class
+        /// called when automap window is pushed - resets automap settings to default settings and signals Automap class
         /// </summary>
         public override void OnPush()
         {
@@ -492,12 +492,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (!isSetup) // if Setup() has not run, run it now
                 Setup();
 
-            daggerfallAutomap.IsOpenAutomap = true; // signal DaggerfallAutomap script that automap is open and it should do its stuff in its Update() function            
+            automap.IsOpenAutomap = true; // signal Automap script that automap is open and it should do its stuff in its Update() function            
 
-            daggerfallAutomap.updateAutomapStateOnWindowPush(); // signal DaggerfallAutomap script that automap window was opened and that it should update its state (updates player marker arrow)
+            automap.updateAutomapStateOnWindowPush(); // signal Automap script that automap window was opened and that it should update its state (updates player marker arrow)
 
             // get automap camera
-            cameraAutomap = daggerfallAutomap.CameraAutomap;
+            cameraAutomap = automap.CameraAutomap;
 
             // create automap render texture and Texture2D used in conjuction with automap camera to render automap level geometry and display it in panel
             Rect positionPanelRenderAutomap = dummyPanelAutomap.Rectangle;
@@ -520,9 +520,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // reset values to default whenever automap window is opened
             resetRotationPivotAxisPosition(); // reset rotation pivot axis
-            daggerfallAutomap.SlicingBiasY = defaultSlicingBiasY; // reset slicing y-bias
+            automap.SlicingBiasY = defaultSlicingBiasY; // reset slicing y-bias
 
-            if (daggerfallAutomap.ResetAutomapSettingsSignalForExternalScript == true) // signaled to reset automap settings
+            if (automap.ResetAutomapSettingsSignalForExternalScript == true) // signaled to reset automap settings
             {
                 // get initial values for camera transform for view from top
                 resetCameraTransformViewFromTop();
@@ -546,7 +546,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     ActionSwitchToAutomapRenderModeTransparent(); // set automap render mode to transparent (since people that don't know the map functionality often think cutout mode is a bug)
                 }
 
-                daggerfallAutomap.ResetAutomapSettingsSignalForExternalScript = false; // indicate the settings were reset
+                automap.ResetAutomapSettingsSignalForExternalScript = false; // indicate the settings were reset
             }
             else
             {
@@ -585,7 +585,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         /// <summary>
-        /// called when automap window is popped - destroys resources and signals DaggerfallAutomap class
+        /// called when automap window is popped - destroys resources and signals Automap class
         /// </summary>
         public override void OnPop()
         {
@@ -600,7 +600,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     break;
             }
 
-            daggerfallAutomap.IsOpenAutomap = false; // signal DaggerfallAutomap script that automap was closed
+            automap.IsOpenAutomap = false; // signal Automap script that automap was closed
 
             // destroy the other gameobjects as well so they don't use system resources
 
@@ -616,7 +616,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 UnityEngine.Object.Destroy(textureAutomap);
             }
 
-            daggerfallAutomap.updateAutomapStateOnWindowPop(); // signal DaggerfallAutomap script that automap window was closed
+            automap.updateAutomapStateOnWindowPop(); // signal Automap script that automap window was closed
         }
 
         /// <summary>
@@ -632,7 +632,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // debug teleport mode action
             if (
-                (daggerfallAutomap.DebugTeleportMode == true) &&
+                (automap.DebugTeleportMode == true) &&
                 leftMouseClickedOnPanelAutomap && // make sure click happened in panel area
                 Input.GetMouseButtonDown(0) && // make sure click was issued in this frame
                 ((Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.LeftShift)) || (Input.GetKey(KeyCode.RightControl) && Input.GetKey(KeyCode.RightShift)))
@@ -641,7 +641,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 //Vector2 mousePosition = new Vector2((Input.mousePosition.x / Screen.width) * panelRenderAutomap.Size.x, (Input.mousePosition.y / Screen.height) * panelRenderAutomap.Size.y);
                 Vector2 mousePosition = panelRenderAutomap.ScaledMousePosition;
                 mousePosition.y = panelRenderAutomap.Size.y - mousePosition.y;
-                daggerfallAutomap.tryTeleportPlayerToDungeonSegmentAtScreenPosition(mousePosition);
+                automap.tryTeleportPlayerToDungeonSegmentAtScreenPosition(mousePosition);
                 updateAutomapView();
             }
             
@@ -935,7 +935,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #region Private Methods
 
         /// <summary>
-        /// tests for availability and initializes class resources like GameObject for automap, DaggerfallAutomap class and layerAutomap
+        /// tests for availability and initializes class resources like GameObject for automap, Automap class and layerAutomap
         /// </summary>
         private void initGlobalResources()
         {
@@ -944,23 +944,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 gameobjectAutomap = GameObject.Find("Automap/InteriorAutomap");
                 if (gameobjectAutomap == null)
                 {
-                    DaggerfallUnity.LogMessage("GameObject \"Automap/InteriorAutomap\" missing! Create a GameObject called \"Automap\" in root of hierarchy and add a GameObject \"InternalAutomap\" to it, to this add script Game/DaggerfallAutomap!\"", true);
+                    DaggerfallUnity.LogMessage("GameObject \"Automap/InteriorAutomap\" missing! Create a GameObject called \"Automap\" in root of hierarchy and add a GameObject \"InternalAutomap\" to it, to this add script Game/Automap!\"", true);
                 }
             }
 
-            if (!daggerfallAutomap)
+            if (!automap)
             {
-                daggerfallAutomap = gameobjectAutomap.GetComponent<DaggerfallAutomap>();
-                if (daggerfallAutomap == null)
+                automap = gameobjectAutomap.GetComponent<Automap>();
+                if (automap == null)
                 {
-                    DaggerfallUnity.LogMessage("Script DafferfallAutomap is missing in GameObject \"Automap\"! GameObject \"Automap\" must have script Game/DaggerfallAutomap attached!\"", true);
+                    DaggerfallUnity.LogMessage("Script Automap is missing in GameObject \"Automap\"! GameObject \"Automap\" must have script Game/Automap attached!\"", true);
                 }
             }
 
             gameObjectPlayerAdvanced = GameObject.Find("PlayerAdvanced");
             if (!gameObjectPlayerAdvanced)
             {
-                DaggerfallUnity.LogMessage("GameObject \"PlayerAdvanced\" not found! in script DaggerfallAutomap (in function Awake())", true);
+                DaggerfallUnity.LogMessage("GameObject \"PlayerAdvanced\" not found! in script AutomapWindow (in function initGlobalResources())", true);
                 if (Application.isEditor)
                     Debug.Break();
                 else
@@ -1101,7 +1101,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void resetRotationPivotAxisPositionViewFromTop()
         {
             rotationPivotAxisPositionViewFromTop = gameObjectPlayerAdvanced.transform.position;
-            daggerfallAutomap.RotationPivotAxisPosition = rotationPivotAxisPositionViewFromTop;
+            automap.RotationPivotAxisPosition = rotationPivotAxisPositionViewFromTop;
         }
 
         /// <summary>
@@ -1110,7 +1110,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void resetRotationPivotAxisPositionView3D()
         {
             rotationPivotAxisPositionView3D = gameObjectPlayerAdvanced.transform.position;
-            daggerfallAutomap.RotationPivotAxisPosition = rotationPivotAxisPositionView3D;
+            automap.RotationPivotAxisPosition = rotationPivotAxisPositionView3D;
         }
 
         /// <summary>
@@ -1132,11 +1132,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 case AutomapViewMode.View2D:
                     rotationPivotAxisPositionViewFromTop += translation;
-                    daggerfallAutomap.RotationPivotAxisPosition = rotationPivotAxisPositionViewFromTop;
+                    automap.RotationPivotAxisPosition = rotationPivotAxisPositionViewFromTop;
                     break;
                 case AutomapViewMode.View3D:
                     rotationPivotAxisPositionView3D += translation;
-                    daggerfallAutomap.RotationPivotAxisPosition = rotationPivotAxisPositionView3D;
+                    automap.RotationPivotAxisPosition = rotationPivotAxisPositionView3D;
                     break;
                 default:
                     break;
@@ -1166,11 +1166,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         /// <summary>
-        /// updates the automap view - signals DaggerfallAutomap class to update and renders the automap level geometry afterwards into the automap render panel
+        /// updates the automap view - signals Automap class to update and renders the automap level geometry afterwards into the automap render panel
         /// </summary>
         private void updateAutomapView()
         {
-            daggerfallAutomap.forceUpdate();
+            automap.forceUpdate();
 
             if ((!cameraAutomap) || (!renderTextureAutomap))
                 return;
@@ -1443,7 +1443,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionIncreaseSliceLevel()
         {
-            daggerfallAutomap.SlicingBiasY += Vector3.up.y * moveUpDownSpeed * Time.unscaledDeltaTime;
+            automap.SlicingBiasY += Vector3.up.y * moveUpDownSpeed * Time.unscaledDeltaTime;
             updateAutomapView();
         }
 
@@ -1452,7 +1452,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionDecreaseSliceLevel()
         {
-            daggerfallAutomap.SlicingBiasY += Vector3.down.y * moveUpDownSpeed * Time.unscaledDeltaTime;
+            automap.SlicingBiasY += Vector3.down.y * moveUpDownSpeed * Time.unscaledDeltaTime;
             updateAutomapView();
         }
 
@@ -1461,7 +1461,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionMoveSliceLevel(float bias)
         {
-            daggerfallAutomap.SlicingBiasY += Vector3.down.y * bias * Time.unscaledDeltaTime;
+            automap.SlicingBiasY += Vector3.down.y * bias * Time.unscaledDeltaTime;
             updateAutomapView();
         }
 
@@ -1518,7 +1518,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionSwitchToNextAutomapRenderMode()
         {
-            daggerfallAutomap.switchToNextAutomapRenderMode();
+            automap.switchToNextAutomapRenderMode();
             updateAutomapView();
         }
 
@@ -1527,7 +1527,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionSwitchToAutomapRenderModeTransparent()
         {
-            daggerfallAutomap.switchToAutomapRenderModeTransparent();
+            automap.switchToAutomapRenderModeTransparent();
             updateAutomapView();
         }
 
@@ -1536,7 +1536,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionSwitchToAutomapRenderModeWireframe()
         {
-            daggerfallAutomap.switchToAutomapRenderModeWireframe();
+            automap.switchToAutomapRenderModeWireframe();
             updateAutomapView();
         }
 
@@ -1545,7 +1545,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionSwitchToAutomapRenderModeCutout()
         {
-            daggerfallAutomap.switchToAutomapRenderModeCutout();
+            automap.switchToAutomapRenderModeCutout();
             updateAutomapView();
         }
 
@@ -1602,7 +1602,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     saveCameraTransformView3D();
                     restoreOldCameraTransformViewFromTop();
                     cameraAutomap.fieldOfView = fieldOfViewCameraMode2D;
-                    daggerfallAutomap.RotationPivotAxisPosition = rotationPivotAxisPositionViewFromTop;
+                    automap.RotationPivotAxisPosition = rotationPivotAxisPositionViewFromTop;
                     updateAutomapView();
                     break;
                 case AutomapViewMode.View3D:
@@ -1611,7 +1611,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     saveCameraTransformViewFromTop();
                     restoreOldCameraTransformView3D();
                     cameraAutomap.fieldOfView = fieldOfViewCameraMode3D;
-                    daggerfallAutomap.RotationPivotAxisPosition = rotationPivotAxisPositionView3D;
+                    automap.RotationPivotAxisPosition = rotationPivotAxisPositionView3D;
                     updateAutomapView();
                     break;
                 default:
@@ -1626,7 +1626,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // reset values to default
             resetRotationPivotAxisPosition(); // reset rotation pivot axis
-            daggerfallAutomap.SlicingBiasY = defaultSlicingBiasY; // reset slicing y-bias
+            automap.SlicingBiasY = defaultSlicingBiasY; // reset slicing y-bias
             resetCameraPosition();
             switch (automapViewMode)
             {
@@ -1667,7 +1667,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionSwitchFocusToNextBeaconObject()
         {
-            GameObject gameobjectInFocus = daggerfallAutomap.switchFocusToNextObject();
+            GameObject gameobjectInFocus = automap.switchFocusToNextObject();
             SwitchFocusToGameObject(gameobjectInFocus);
         }
 
@@ -1734,7 +1734,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             leftMouseClickedOnPanelAutomap = true; // used for debug teleport mode clicks
 
-            if (daggerfallAutomap.DebugTeleportMode && ((Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.LeftShift)) || (Input.GetKey(KeyCode.RightControl) && Input.GetKey(KeyCode.RightShift))))
+            if (automap.DebugTeleportMode && ((Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.LeftShift)) || (Input.GetKey(KeyCode.RightControl) && Input.GetKey(KeyCode.RightShift))))
                 return;
 
             Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);

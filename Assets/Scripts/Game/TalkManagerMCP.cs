@@ -89,6 +89,10 @@ namespace DaggerfallWorkshop.Game
                 {
                     return GameManager.Instance.TalkManager.GetDialogHint(parent.currentQuestionListItem);
                 }
+                else if (parent.currentQuestionListItem.questionType == QuestionType.OrganizationInfo)
+                {
+                    return GameManager.Instance.TalkManager.GetOrganizationInfo(parent.currentQuestionListItem);
+                }
                 return TextManager.Instance.GetText(textDatabase, "resolvingError");
             }
 
@@ -105,6 +109,10 @@ namespace DaggerfallWorkshop.Game
                 else if (parent.currentQuestionListItem.questionType == QuestionType.QuestLocation || parent.currentQuestionListItem.questionType == QuestionType.QuestPerson || parent.currentQuestionListItem.questionType == QuestionType.QuestItem)
                 {
                     return GameManager.Instance.TalkManager.GetDialogHint2(parent.currentQuestionListItem);
+                }
+                else if (parent.currentQuestionListItem.questionType == QuestionType.OrganizationInfo)
+                {
+                    return GameManager.Instance.TalkManager.GetOrganizationInfo(parent.currentQuestionListItem);
                 }
                 return TextManager.Instance.GetText(textDatabase, "resolvingError");
             }
