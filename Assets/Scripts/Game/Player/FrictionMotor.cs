@@ -97,6 +97,15 @@ namespace DaggerfallWorkshop.Game
             {
                 float inputX = InputManager.Instance.Horizontal;
                 float inputY = InputManager.Instance.Vertical;
+
+                // Cancel all movement input if player is paralyzed
+                // Player should still be able to fall or move with platforms
+                if (GameManager.Instance.PlayerEntity.IsParalyzed)
+                {
+                    inputX = 0;
+                    inputY = 0;
+                }
+
                 float inputModifyFactor = (inputX != 0.0f && inputY != 0.0f && playerMotor.limitDiagonalSpeed) ? .7071f : 1.0f;
                 moveDirection = new Vector3(inputX * inputModifyFactor, -antiBumpFactor, inputY * inputModifyFactor);
                 moveDirection = myTransform.TransformDirection(moveDirection) * playerMotor.Speed;

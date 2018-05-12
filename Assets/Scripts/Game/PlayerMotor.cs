@@ -223,19 +223,6 @@ namespace DaggerfallWorkshop.Game
             if (levitateMotor && (levitateMotor.IsLevitating || levitateMotor.IsSwimming) || climbingMotor.IsClimbing)
                 return;
 
-            float inputX = InputManager.Instance.Horizontal;
-            float inputY = InputManager.Instance.Vertical;
-            // If both horizontal and vertical are used simultaneously, limit speed (if allowed), so the total doesn't exceed normal move speed
-            float inputModifyFactor = (inputX != 0.0f && inputY != 0.0f && limitDiagonalSpeed) ? .7071f : 1.0f;
-
-            // Cancel all movement input if player is paralyzed
-            // Player should still be able to fall or move with platforms
-            if (GameManager.Instance.PlayerEntity.IsParalyzed)
-            {
-                inputX = 0;
-                inputY = 0;
-            }
-
             // Player assumed to be in movement for now
             standingStill = false;
 
@@ -285,7 +272,7 @@ namespace DaggerfallWorkshop.Game
             {
                 acrobatMotor.CheckInitFall();
 
-                acrobatMotor.CheckAirControl(ref moveDirection, speed, inputModifyFactor);
+                acrobatMotor.CheckAirControl(ref moveDirection, speed);
             }
 
             acrobatMotor.ApplyGravity(ref moveDirection);

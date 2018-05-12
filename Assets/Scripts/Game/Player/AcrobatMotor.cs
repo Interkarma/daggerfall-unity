@@ -57,6 +57,10 @@ namespace DaggerfallWorkshop.Game
         /// <param name="moveDirection"></param>
         public void DoJump(ref Vector3 moveDirection)
         {
+            // Cancel jump if player is paralyzed
+            if (GameManager.Instance.PlayerEntity.IsParalyzed)
+                return;
+
             try
             {
                 if (!InputManager.Instance.HasAction(InputManager.Actions.Jump))
@@ -85,11 +89,21 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         /// <param name="moveDirection">the Vector to adjust for movement</param>
         /// <param name="speed">The speed multiplier</param>
-        /// <param name="inputModifyFactor">Multiplier used to limit diagonal speed</param>
-        public void CheckAirControl(ref Vector3 moveDirection, float speed, float inputModifyFactor)
+        public void CheckAirControl(ref Vector3 moveDirection, float speed)
         {
             float inputX = InputManager.Instance.Horizontal;
             float inputY = InputManager.Instance.Vertical;
+
+            // Cancel all movement input if player is paralyzed
+            // Player should still be able to fall or move with platforms
+            if (GameManager.Instance.PlayerEntity.IsParalyzed)
+            {
+                inputX = 0;
+                inputY = 0;
+            }
+
+            float inputModifyFactor = (inputX != 0.0f && inputY != 0.0f && playerMotor.limitDiagonalSpeed) ? .7071f : 1.0f;
+
             if (airControl && frictionMotor.PlayerControl)
             {
                 moveDirection.x = inputX * speed * inputModifyFactor;

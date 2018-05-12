@@ -58,6 +58,10 @@ namespace DaggerfallWorkshop.Game
             if (!playerMotor || !playerCamera || (!playerLevitating && !playerSwimming))
                 return;
 
+            // Cancel levitate movement if player is paralyzed
+            if (GameManager.Instance.PlayerEntity.IsParalyzed)
+                return;
+
             // Forward/backwards
             if (InputManager.Instance.HasAction(InputManager.Actions.MoveForwards))
                 Move(playerCamera.transform.forward);
