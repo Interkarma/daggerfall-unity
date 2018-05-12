@@ -6,6 +6,8 @@ using UnityEngine;
 
 namespace DaggerfallWorkshop.Game
 {
+    [RequireComponent(typeof(PlayerMotor))]
+    [RequireComponent(typeof(CharacterController))]
     public class FrictionMotor : MonoBehaviour
     {
         // If the player ends up on a slope which is at least the Slope Limit as set on the character controller, then he will slide down

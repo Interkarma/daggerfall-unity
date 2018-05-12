@@ -6,8 +6,9 @@ using DaggerfallConnect;
 namespace DaggerfallWorkshop.Game
 {
 
+    [RequireComponent(typeof(PlayerMotor))]
+    [RequireComponent(typeof(LevitateMotor))]
     [RequireComponent(typeof(CharacterController))]
-    [RequireComponent(typeof(PlayerFootsteps))]
     public class ClimbingMotor : MonoBehaviour
     {
         private PlayerMotor playerMotor;
