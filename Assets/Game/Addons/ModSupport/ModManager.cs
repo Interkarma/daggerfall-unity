@@ -762,7 +762,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 mod.MessageReceiver(message, data, callback);
         }
 
-
+        /// <summary>
+        /// Gets a localized string for a mod system text.
+        /// </summary>
+        internal static string GetText(string key)
+        {
+            return TextManager.Instance.GetText("ModSystem", key);
+        }
 
         #region events
         //public delegate void NewObjectCreatedHandler(object obj, SetupOptions options);

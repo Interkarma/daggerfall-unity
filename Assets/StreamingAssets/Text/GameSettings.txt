@@ -1,0 +1,118 @@
+- Text database for game settings window.
+
+schema: *key,text
+
+- Tabs and section titles
+
+gamePlay,                                           GamePlay
+video,                                              Video
+theme,                                              Theme
+
+game,                                               Game
+gui,                                                GUI
+controls,                                           Controls
+enhancements,                                       Enhancements
+basic,                                              Basic
+advanced,                                           Advanced
+tooltips,                                           Tooltips
+others,                                             Others
+
+- Settings and tooltip descriptions
+
+startInDungeon,                                     Start In Dungeon
+startInDungeonInfo,                                 Start new game inside the first dungeon
+randomDungeonTextures,                              Dungeon Textures
+randomDungeonTexturesInfo,                          Generates dungeon texture table from random seed
+cameraRecoilStrength,                               Camera Recoil Strength
+cameraRecoilStrengthInfo,                           Strength of screen recoil when player takes damage. Scales with damage.
+crosshair,                                          Crosshair
+crosshairInfo,                                      Enable Crosshair on HUD
+toolTips,                                           Tool Tips
+toolTipsInfo,                                       Shows informations about GUI items
+helmAndShieldMaterialDisplay,                       Helm and Shield Material Display
+helmAndShieldMaterialDisplayInfo,                   Show material for helms and shields in info popups and tooltips
+inventoryInfoPanel,                                 Inventory Info Panel
+inventoryInfoPanelInfo,                             Inventory Info Panel
+enhancedItemLists,                                  Enhanced Item Lists
+enhancedItemListsInfo,                              Inventory 16x item grid
+mouseSensitivity,                                   Mouse Sensitivity
+mouseSensitivityInfo,                               Mouse look sensitivity.
+weaponSensitivity,                                  Weapon Sensitivity
+weaponSensitivityInfo,                              Sensitivity of weapon swings to mouse movements
+weaponAttackThreshold,                              WeaponAttackThreshold
+weaponAttackThresholdInfo,                          Minimum mouse gesture travel distance for an attack
+gameConsole,                                        Game Console
+gameConsoleInfo,                                    Enable input for console commands
+modSystem,                                          Mod System
+modSystemInfo,                                      Enable support for mods.
+assetImport,                                        Allow Custom Assets
+assetImportInfo,                                    Import assets from enabled mods and loose files.
+compressModdedTextures,                             Compress Modded Textures
+compressModdedTexturesInfo,                         Import textures with a compressed format which uses less graphics memory.
+
+resolution,                                         Resolution
+resolutionInfo,                                     Screen resolution
+fullscreen,                                         Fullscreen
+fullscreenInfo,                                     Enable fullscreen
+qualityLevel,                                       Quality Level
+qualityLevelInfo,                                   General graphic quality
+mainFilterMode,                                     Main Filter
+mainFilterModeInfo,                                 Filter for game textures
+guiFilterMode,                                      GUI Filter
+guiFilterModeInfo,                                  Filter for HUD images
+videoFilterMode,                                    Video Filter
+videoFilterModeInfo,                                Filter for movies
+fovSlider,                                          Field Of View   
+fovSliderInfo,                                      The observable world that is seen at any given moment
+terrainDistance,                                    Terrain Distance
+terrainDistanceInfo,                                Maximum distance of active terrains from player position
+shadowResolutionMode,                               Shadow Resolution
+shadowResolutionModeInfo,                           Quality of shadows
+dungeonLightShadows,                                Dungeon Light Shadows
+dungeonLightShadowsInfo,                            Dungeon lights cast shadows
+interiorLightShadows,                               Interior Light Shadows
+interiorLightShadowsInfo,                           Interior lights cast shadows
+useLegacyDeferred,                                  Use Legacy Deferred
+useLegacyDeferredInfo,                              Legacy rendering path
+
+toolTipDelayInSeconds,                              Delay
+toolTipDelayInSecondsInfo,                          Tooltip delay in seconds
+toolTipTextColor,                                   Text Color
+toolTipTextColorInfo,                               Font color for tooltips text
+toolTipBackgroundColor,                             Background Color
+toolTipBackgroundColorInfo,                         Background color for tooltips
+enableModernConversationStyleInTalkWindow,          TalkWindow Modern Style
+enableModernConversationStyleInTalkWindowInfo,      Modern Conversation Style In TalkWindow
+interactionModeIcon,                                Interaction Mode Icon
+interactionModeIconInfo,                            Style of contex icon for interaction mode
+
+- Options shared among sliders. Missing keys use default text.
+
+Off,                                                Off
+On,                                                 On
+HQ,                                                 HQ
+
+Low,                                                Low
+Medium,                                             Medium
+High,                                               High
+Very High,                                          Very High   
+
+Low (25%),                                          Low (25%)
+Medium (50%),                                       Medium (50%)
+High (75%),                                         High (75%)
+V. High(100%),                                      V. High(100%)
+
+Point,                                              Point
+Bilinear,                                           Bilinear
+Trilinear,                                          Trilinear   
+
+none,                                               none
+classic,                                            classic
+climate,                                            climate
+climateOnly,                                        climateOnly
+random,                                             random
+randomOnly,                                         randomOnly
+minimal,                                            minimal
+large,                                              large
+colour,                                             colour
+monochrome,                                         monochrome
