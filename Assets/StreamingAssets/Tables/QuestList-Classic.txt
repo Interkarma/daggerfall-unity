@@ -102,7 +102,7 @@ O0B2XY09, GeneralPopulace, M, 2X, Passed.
 O0B2XY10, GeneralPopulace, M, 2X, Passed.
 
 -- Classic: Dark Brotherhood
--L0A01L00, DarkBrotherHood, P, 0, FAILED, needs action support at mixing poison and decanter. (worked around this for now)
+-L0A01L00, DarkBrotherHood, P, 1, FAILED, needs action support at mixing poison and decanter. (worked around this for now)
 - Set quest timers as fixed 14 and 30 days to allow completion. Set 30 day timer to stop when 14 day timer begins for fairness.
 - AddDialogLinkForQuestInfoResource() could not find a quest info resource with name Mastersly Manor
 - Unable to find DB member to finish quest, so changed to finish after poisoning decanter
@@ -162,7 +162,7 @@ A0C00Y12, Commoners, N, 0,
 A0C00Y14, Commoners, N, 0,
 A0C00Y15, Commoners, N, 0,
 A0C00Y16, Commoners, N, 0,
-A0C00Y17, Commoners, N, 1,
+A0C00Y17, Commoners, N, 0,
 A0C01Y01, Commoners, N, 1,
 A0C01Y03, Commoners, N, 1,
 A0C01Y06, Commoners, N, 1,
