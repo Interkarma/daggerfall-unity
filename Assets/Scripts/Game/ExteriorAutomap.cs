@@ -765,9 +765,7 @@ namespace DaggerfallWorkshop.Game
                             if (GameManager.Instance.PlayerGPS.GetDiscoveredBuilding(buildingSummary.buildingKey, out discoveredBuilding))
                             {
                                 // show guilds, shops, taverns, palace (general case), show thieves guild and dark brotherhood guild halls if member
-                                if (!RMBLayout.IsResidence(buildingSummary.BuildingType) ||
-                                    (buildingSummary.FactionId == Guilds.ThievesGuild.FactionId && GameManager.Instance.GuildManager.HasJoined(FactionFile.GuildGroups.GeneralPopulace)) ||
-                                    (buildingSummary.FactionId == Guilds.DarkBrotherhood.FactionId && GameManager.Instance.GuildManager.HasJoined(FactionFile.GuildGroups.DarkBrotherHood)))
+                                if (!RMBLayout.IsResidence(buildingSummary.BuildingType) || discoveredBuilding.isOverrideName)
                                 {
                                     newBuildingNameplate.name = discoveredBuilding.displayName;
                                 }

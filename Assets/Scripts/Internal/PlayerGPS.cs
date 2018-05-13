@@ -85,6 +85,8 @@ namespace DaggerfallWorkshop
         {
             public int buildingKey;
             public string displayName;
+            public string oldDisplayName;
+            public bool isOverrideName;
             public int factionID;
             public int quality;
             public DFLocation.BuildingTypes buildingType;
@@ -718,7 +720,16 @@ namespace DaggerfallWorkshop
 
             // Add the building and store back to discovered location, overriding name if requested
             if (overrideName != null)
+            {
+                if (!db.isOverrideName)
+                    db.oldDisplayName = db.displayName;
                 db.displayName = overrideName;
+                db.isOverrideName = true;
+            }
+
+            if (db.oldDisplayName == db.displayName)
+                db.isOverrideName = false;
+
             dl.discoveredBuildings[db.buildingKey] = db;
             discoveredLocations[mapPixelID] = dl;
         }
