@@ -21,6 +21,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     public class Paralyze : IncumbentEffect
     {
         const string textDatabase = "ClassicEffects";
+        bool awakeAlert = true;
 
         public override void SetProperties()
         {
@@ -56,18 +57,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             base.Resume(effectData, manager, caster);
             StartParalyzation();
-            ShowPlayerParalyzed();
         }
 
         public override void End()
         {
             base.End();
             StopParalyzation();
-        }
-
-        protected override void BecomeIncumbent()
-        {
-            ShowPlayerParalyzed();
         }
 
         protected override bool IsLikeKind(IncumbentEffect other)
@@ -79,14 +74,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             // Stack my rounds onto incumbent
             incumbent.RoundsRemaining += RoundsRemaining;
-            ShowPlayerParalyzed();
-        }
-
-        void ShowPlayerParalyzed()
-        {
-            // Output "You are paralyzed." if the host manager is player
-            if (manager.EntityBehaviour == GameManager.Instance.PlayerEntityBehaviour)
-                DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "youAreParalyzed"), 1.5f);
         }
 
         void StartParalyzation()
@@ -98,6 +85,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             entityBehaviour.Entity.IsParalyzed = true;
             PlayerAggro();
+
+            // Output "You are paralyzed." if the host manager is player
+            if (awakeAlert && manager.EntityBehaviour == GameManager.Instance.PlayerEntityBehaviour)
+            {
+                DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "youAreParalyzed"), 1.5f);
+                awakeAlert = false;
+            }
         }
 
         void StopParalyzation()
