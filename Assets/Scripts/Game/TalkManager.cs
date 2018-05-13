@@ -721,16 +721,7 @@ namespace DaggerfallWorkshop.Game
             const int isInSameHolyOrderLikePlayerGreetingTextId = 8553;
             const int isInSameHolyOrderNeutralPlayerGreetingTextId = 8554;
 
-            const int spyMasterGreetingTextId = 402;
-
             // note Nystul: did not find any use of text record ids 8556 - 8569 in my testing - but some of them might be used by nobles of the courtyards
-
-
-            if (npcData.isSpyMaster)
-            {
-                TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(spyMasterGreetingTextId);
-                return TokensToString(tokens);
-            }
 
             if (currentNPCType == NPCType.Static)
             {
