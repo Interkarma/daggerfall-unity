@@ -872,9 +872,9 @@ namespace DaggerfallWorkshop.Game.Formulas
                 savingThrow = 75;
 
             savingThrow += biographyMod + modifier;
-            if (effectType == 1 && target == playerEntity && playerEntity.Race == Races.Nord)
+            if (elementType == 1 && target == playerEntity && playerEntity.Race == Races.Nord)
                 savingThrow += 30;
-            else if (effectType == 4 && target == playerEntity && playerEntity.Race == Races.Breton)
+            else if (elementType == 4 && target == playerEntity && playerEntity.Race == Races.Breton)
                 savingThrow += 30;
 
             Mathf.Clamp(savingThrow, 5, 95);
