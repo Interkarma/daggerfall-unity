@@ -241,9 +241,6 @@ namespace DaggerfallWorkshop.Game
 
                 if (!riding)
                 {
-                    if (!isCrouching && heightChanger.HeightAction != HeightChangeAction.DoStanding) // don't set to standing height while croucher is standing the player
-                        controller.height = standingHeight;
-
                     try
                     {
                         // If running isn't on a toggle, then use the appropriate speed depending on whether the run button is down
