@@ -353,9 +353,31 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         }
 
         /// <summary>
+        /// Cancels all remaining rounds of any active incumbent effect of type T and calls End() on that effect.
+        /// If incumbent effect T is only live effect in bundle then whole bundle will be removed.
+        /// If other effects remain in bundle then incumbent effect will stop operation and bundle will expire when other effects allow it.
+        /// Does nothing if no incumbent effect of type T found.
+        /// </summary>
+        /// <typeparam name="T">IncumbentEffect type T to end.</typeparam>
+        public void EndIncumbentEffect<T>()
+        {
+            foreach (InstancedBundle bundle in instancedBundles)
+            {
+                foreach(IEntityEffect effect in bundle.liveEffects)
+                {
+                    if (effect is T)
+                    {
+                        effect.RoundsRemaining = 0;
+                        effect.End();
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Wipe all effect bundles from this entity.
         /// </summary>
-        public void ClearBundles()
+        private void ClearBundles()
         {
             instancedBundles.Clear();
             RaiseOnRemoveBundle();

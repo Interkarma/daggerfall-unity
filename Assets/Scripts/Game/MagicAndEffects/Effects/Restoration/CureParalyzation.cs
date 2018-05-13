@@ -39,13 +39,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void MagicRound()
         {
             base.MagicRound();
-
-            // Get peered entity gameobject
-            DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
-            if (!entityBehaviour)
-                return;
-
-            entityBehaviour.Entity.IsParalyzed = false;
+            manager.EndIncumbentEffect<Paralyze>();
         }
     }
 }
