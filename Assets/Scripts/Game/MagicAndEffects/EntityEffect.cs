@@ -325,21 +325,33 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         protected void SetStatMod(DFCareer.Stats stat, int value)
         {
+            if (stat == DFCareer.Stats.None)
+                return;
+
             statMods[(int)stat] = value;
         }
 
         protected void ChangeStatMod(DFCareer.Stats stat, int amount)
         {
+            if (stat == DFCareer.Stats.None)
+                return;
+
             statMods[(int)stat] += amount;
         }
 
         protected void SetSkillMod(DFCareer.Skills skill, int value)
         {
+            if (skill == DFCareer.Skills.None)
+                return;
+
             skillMods[(int)skill] = value;
         }
 
         protected void ChangeSkillMod(DFCareer.Skills skill, int amount)
         {
+            if (skill == DFCareer.Skills.None)
+                return;
+
             skillMods[(int)skill] += amount;
         }
 
