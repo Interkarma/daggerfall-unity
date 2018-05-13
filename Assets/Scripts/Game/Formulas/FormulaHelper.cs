@@ -818,15 +818,44 @@ namespace DaggerfallWorkshop.Game.Formulas
             return damage;
         }
 
-        static int SavingThrow(DFCareer.EffectFlags effectFlags, DaggerfallEntity target)
+        static int SavingThrow(int elementType, DFCareer.EffectFlags effectFlags, DaggerfallEntity target, int modifier)
         {
-            PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+            // elementTypes are 0 = fire, 1 = frost, 2 = disease/poison, 3 = shock, 4 = magick
+
+            // int[] SavingThrowResistFlags = { 0x02, 0x10000000, 0x20000000, 0x40000000, 0x80000000 }; These map to classic magicEffects 1 through 4 concatenated together as 4 bytes.
+            // if (target.magicEffects & SavingThrowResistTypes[elementType]
+            //{
+            //      int chance = target.ResistanceTo(elementType);
+            //      if (UnityEngine.Random.Range(1, 100 + 1) <= chance)
+            //          return 0;
+            //}
 
             int savingThrow = 50;
             DFCareer.Tolerance toleranceFlags = 0;
             int biographyMod = 0;
 
-            if (effectFlags == DFCareer.EffectFlags.Disease)
+            PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+            if (effectFlags == DFCareer.EffectFlags.Paralysis)
+                toleranceFlags = target.Career.Paralysis;
+            if (effectFlags == DFCareer.EffectFlags.Magic)
+            {
+                toleranceFlags = target.Career.Magic;
+                if (target == playerEntity)
+                    biographyMod = playerEntity.BiographyResistMagicMod;
+            }
+            else if (effectFlags == DFCareer.EffectFlags.Poison)
+            {
+                toleranceFlags = target.Career.Poison;
+                if (target == playerEntity)
+                    biographyMod = playerEntity.BiographyResistPoisonMod;
+            }
+            else if (effectFlags == DFCareer.EffectFlags.Fire)
+                toleranceFlags = target.Career.Fire;
+            else if (effectFlags == DFCareer.EffectFlags.Frost)
+                toleranceFlags = target.Career.Frost;
+            else if (effectFlags == DFCareer.EffectFlags.Shock)
+                toleranceFlags = target.Career.Shock;
+            else if (effectFlags == DFCareer.EffectFlags.Disease)
             {
                 toleranceFlags = target.Career.Disease;
                 if (target == playerEntity)
@@ -842,7 +871,12 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (toleranceFlags == DFCareer.Tolerance.LowTolerance)
                 savingThrow = 75;
 
-            savingThrow += biographyMod;
+            savingThrow += biographyMod + modifier;
+            if (effectType == 1 && target == playerEntity && playerEntity.Race == Races.Nord)
+                savingThrow += 30;
+            else if (effectType == 4 && target == playerEntity && playerEntity.Race == Races.Breton)
+                savingThrow += 30;
+
             Mathf.Clamp(savingThrow, 5, 95);
 
             int percentDamageOrDuration = 0;
@@ -886,7 +920,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (playerEntity.Level != 1)
             {
                 // Return if disease resisted
-                if (SavingThrow(DFCareer.EffectFlags.Disease, target) == 0)
+                if (SavingThrow(2, DFCareer.EffectFlags.Disease, target, 0) == 0)
                     return;
 
                 // Select a random disease from disease array and validate range
