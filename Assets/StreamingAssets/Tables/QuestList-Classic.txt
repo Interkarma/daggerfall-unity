@@ -36,7 +36,7 @@ M0B50Y09, FightersGuild, M, 50, Passed
 M0B60Y10, FightersGuild, M, 60, Passed
 
 -- Classic: Mages Guild
--N0C00Y01, MagesGuild, N, 0, FAILED. Broken in vanilla DF: QRC file is missing
+-N0C00Y01, MagesGuild, N, 0, BROKEN. QRC file is missing in DF+DFQFIX.
 N0C00Y10, MagesGuild, N, 0, Passed after fixing duplicate RumorsPostfailure entry
 N0C00Y11, MagesGuild, N, 0, Passed but no message shown when revealing dungeon: reveal _newdung_ saying 1080
 N0C00Y12, MagesGuild, N, 0, Passed
@@ -152,7 +152,7 @@ Q0C4XY04, Witches, N, 4X,
 
 -- Commoners
 A0C00Y00, Commoners, N, 0,
--A0C00Y04, Commoners, N, 0, FAILED. Broken in vanilla DF: QRC file is missing
+-A0C00Y04, Commoners, N, 0, BROKEN. QRC file is missing in DF+DFQFIX
 -A0C00Y06, Commoners, N, 0, FAILED. No master npc in the shop indicated
 A0C00Y07, Commoners, N, 0,
 A0C00Y08, Commoners, N, 0, Passed. questgiver name is incorrect (almost like a codename)
@@ -216,6 +216,6 @@ R0C11Y28, Nobility, N, 11,
 R0C20Y07, Nobility, N, 20,
 R0C20Y22, Nobility, N, 20,
 R0C30Y25, Nobility, N, 30,
--R0C40Y23, Nobility, N, 40, FAILED. Broken in vanilla DF: QRC file is missing
+-R0C40Y23, Nobility, N, 40, BROKEN. QRC file is missing in DF+DFQFIX
 R0C4XY23, Nobility, N, 4X,
 R0C60Y24, Nobility, N, 60,
