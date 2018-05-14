@@ -17,14 +17,6 @@ namespace DaggerfallWorkshop.Game
     [RequireComponent(typeof(CharacterController))]
     public class PlayerMotor : MonoBehaviour
     {
-        // Moving platform support
-        Transform activePlatform;
-        Vector3 activeLocalPlatformPoint;
-        Vector3 activeGlobalPlatformPoint;
-        //Vector3 lastPlatformVelocity;
-        Quaternion activeLocalPlatformRotation;
-        Quaternion activeGlobalPlatformRotation;
-
         public float standingHeight = 1.78f;
         public float eyeHeight = 0.09f;         // Eye height is 9cm below top of capsule.
         public float crouchingHeight = 0.45f;
@@ -45,8 +37,6 @@ namespace DaggerfallWorkshop.Game
         // There must be a button set up in the Input Manager called "Run"
         public bool toggleRun = false;
 
-
-
         public float systemTimerUpdatesPerSecond = .055f; // Number of updates per second by the system timer at memory location 0x46C.
                                                           // Used for timing various things in classic.
 
@@ -59,13 +49,9 @@ namespace DaggerfallWorkshop.Game
         [HideInInspector, NonSerialized]
         public CharacterController controller;
 
-        //private Camera mainCamera;
-        //private float defaultCameraHeight;
-
         private Vector3 moveDirection = Vector3.zero;
         private bool grounded = false;
         private float speed;
-
 
         private bool standingStill = false;
 
@@ -74,6 +60,7 @@ namespace DaggerfallWorkshop.Game
         private PlayerSpeedChanger speedChanger;
         private FrictionMotor frictionMotor;
         private AcrobatMotor acrobatMotor;
+        private PlayerGroundMotor groundMotor;
 
         private CollisionFlags collisionFlags = 0;
 
@@ -135,11 +122,6 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        public Transform ActivePlatform
-        {
-            get { return activePlatform; }
-        }
-
         /// <summary>
         /// Cancels all movement impulses next frame.
         /// Used to scrub movement impulse when player dies, opens inventory, or loads game.
@@ -175,7 +157,7 @@ namespace DaggerfallWorkshop.Game
             controller = GetComponent<CharacterController>();
             speedChanger = GetComponent<PlayerSpeedChanger>();
             speed = speedChanger.GetBaseSpeed();
-
+            groundMotor = GetComponent<PlayerGroundMotor>();
             climbingMotor = GetComponent<ClimbingMotor>();
             heightChanger = GetComponent<PlayerHeightChanger>();
             levitateMotor = GetComponent<LevitateMotor>();
@@ -194,7 +176,7 @@ namespace DaggerfallWorkshop.Game
             {
                 moveDirection = Vector3.zero;
                 cancelMovement = false;
-                ClearActivePlatform();
+                groundMotor.ClearActivePlatform();
                 acrobatMotor.ClearFallingDamage();
                 return;
             }
@@ -281,52 +263,7 @@ namespace DaggerfallWorkshop.Game
                     moveDirection.y = -moveDirection.y;
             }
 
-            // Moving platform support
-            if (activePlatform != null)
-            {
-                var newGlobalPlatformPoint = activePlatform.TransformPoint(activeLocalPlatformPoint);
-                var moveDistance = (newGlobalPlatformPoint - activeGlobalPlatformPoint);
-                if (moveDistance != Vector3.zero)
-                    controller.Move(moveDistance);
-                //lastPlatformVelocity = (newGlobalPlatformPoint - activeGlobalPlatformPoint) / Time.deltaTime;
-
-                // If you want to support moving platform rotation as well:
-                var newGlobalPlatformRotation = activePlatform.rotation * activeLocalPlatformRotation;
-                var rotationDiff = newGlobalPlatformRotation * Quaternion.Inverse(activeGlobalPlatformRotation);
-
-                // Prevent rotation of the local up vector
-                rotationDiff = Quaternion.FromToRotation(rotationDiff * transform.up, transform.up) * rotationDiff;
-
-                transform.rotation = rotationDiff * transform.rotation;
-            }
-            //else
-            //{
-            //    lastPlatformVelocity = Vector3.zero;
-            //}
-
-            activePlatform = null;
-
-            // Move the controller, and set grounded true or false depending on whether we're standing on something
-            collisionFlags = controller.Move(moveDirection * Time.deltaTime);
-
-            grounded = (collisionFlags & CollisionFlags.Below) != 0;
-
-            // Moving platforms support
-            if (activePlatform != null)
-            {
-                activeGlobalPlatformPoint = transform.position;
-                activeLocalPlatformPoint = activePlatform.InverseTransformPoint(transform.position);
-
-                // If you want to support moving platform rotation as well:
-                activeGlobalPlatformRotation = transform.rotation;
-                activeLocalPlatformRotation = Quaternion.Inverse(activePlatform.rotation) * transform.rotation;
-            }
-        }
-
-        // Reset moving platform logic to new player position
-        public void ClearActivePlatform()
-        {
-            activePlatform = null;
+            groundMotor.MoveOnGround(moveDirection, ref collisionFlags, ref grounded);
         }
 
         /// <summary>
@@ -445,12 +382,8 @@ namespace DaggerfallWorkshop.Game
 
             // Get active platform
             if (hit.moveDirection.y < -0.9 && hit.normal.y > 0.5)
-                activePlatform = hit.collider.transform;
+                groundMotor.ActivePlatform = hit.collider.transform;
         }
-
-
-
-
 
         #region Private Methods
 

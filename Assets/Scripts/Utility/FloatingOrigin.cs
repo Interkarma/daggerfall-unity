@@ -39,6 +39,7 @@ namespace DaggerfallWorkshop.Utility
 
         PlayerMotor playerMotor = null;
         AcrobatMotor acrobatMotor = null;
+        PlayerGroundMotor groundMotor = null;
         DFPosition lastMapPixel;
         DFPosition currentMapPixel;
         //bool forceFloatingOriginUpdate = false;
@@ -79,6 +80,10 @@ namespace DaggerfallWorkshop.Utility
             acrobatMotor = Player.GetComponent<AcrobatMotor>();
             if (!acrobatMotor)
                 throw new Exception("Player object does not have an AcrobatMotor.");
+
+            groundMotor = Player.GetComponent<PlayerGroundMotor>();
+            if (!groundMotor)
+                throw new Exception("Player object does not have a PlayerGroundMotor.");
         }
 
         void Start()
@@ -149,7 +154,7 @@ namespace DaggerfallWorkshop.Utility
 
         void Initialize()
         {
-            playerMotor.ClearActivePlatform();
+            groundMotor.ClearActivePlatform();
             DFPosition mapPixel = StreamingWorld.LocalPlayerGPS.CurrentMapPixel;
             currentMapPixel = mapPixel;
             lastMapPixel = mapPixel;
@@ -171,7 +176,7 @@ namespace DaggerfallWorkshop.Utility
 
         void OffsetPlayerController(Vector3 offset)
         {
-            playerMotor.ClearActivePlatform();
+            groundMotor.ClearActivePlatform();
             acrobatMotor.AdjustFallStart(offset.y);
             playerMotor.transform.position += offset;
             StreamingWorld.OffsetWorldCompensation(offset, true);
