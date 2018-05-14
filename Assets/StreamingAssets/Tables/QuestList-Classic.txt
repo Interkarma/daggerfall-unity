@@ -164,7 +164,7 @@ A0C00Y00, Commoners, N, 0,
 A0C00Y07, Commoners, N, 0,
 A0C00Y08, Commoners, N, 0, Passed. questgiver name is incorrect (almost like a codename)
 A0C00Y10, Commoners, N, 0,
-A0C00Y11, Commoners, N, 0,
+-A0C00Y11, Commoners, N, 0, FAILED. The _healer_ does not respond. Need to handle 'clicked anNPC and at least anAmount gold otherwise do aTask'.
 A0C00Y12, Commoners, N, 0,
 A0C00Y14, Commoners, N, 0,
 A0C00Y15, Commoners, N, 0,
