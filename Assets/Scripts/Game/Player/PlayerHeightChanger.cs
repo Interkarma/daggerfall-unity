@@ -32,9 +32,8 @@ namespace DaggerfallWorkshop.Game
         private Camera mainCamera;
         private float standHeight = 1.78f;
         private float crouchHeight = 0.45f;
-        private float ridingHeight = 2.6f;   // Height of a horse plus seated rider. (1.6m + 1m)
+        private float rideHeight = 2.6f;   // Height of a horse plus seated rider. (1.6m + 1m)
         private float eyeHeight = 0.09f;         // Eye height is 9cm below top of capsule.
-        private float rideHeight;
         private float crouchChangeDistance;
         private float rideChangeDistance;
         private float camCrouchLevel;
