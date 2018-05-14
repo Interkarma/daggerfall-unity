@@ -22,10 +22,13 @@ namespace DaggerfallWorkshop.Game.Questing
     {
         Symbol npcSymbol;
         int id;
+        int goldAmount;
+        Symbol taskSymbol;
 
         public override string Pattern
         {
-            get { return @"clicked npc (?<anNPC>[a-zA-Z0-9_.-]+) say (?<id>\d+)|" +
+            get { return @"clicked (?<anNPC>[a-zA-Z0-9_.-]+) and at least (?<goldAmount>\d+) gold otherwise do (?<taskName>[a-zA-Z0-9_.]+)|" +
+                         @"clicked npc (?<anNPC>[a-zA-Z0-9_.-]+) say (?<id>\d+)|" +
                          @"clicked npc (?<anNPC>[a-zA-Z0-9_.-]+) say (?<idName>\w+)|" +
                          @"clicked npc (?<anNPC>[a-zA-Z0-9_.-]+)"; }
         }
@@ -56,6 +59,10 @@ namespace DaggerfallWorkshop.Game.Questing
                 action.id = Parser.ParseInt(table.GetValue("id", idName));
             }
 
+            // Read gold amount and task name for "clicked anNPC and at least goldAmount gold otherwise do taskName"
+            action.goldAmount = Parser.ParseInt(match.Groups["goldAmount"].Value);
+            action.taskSymbol = new Symbol(match.Groups["taskName"].Value);
+
             return action;
         }
 
@@ -75,6 +82,24 @@ namespace DaggerfallWorkshop.Game.Questing
             // Check player clicked flag
             if (person.HasPlayerClicked)
             {
+                // When a gold amount and task is specified, the player must have that amount of gold or another task is called
+                if (goldAmount > 0 && taskSymbol != null && !string.IsNullOrEmpty(taskSymbol.Name))
+                {
+                    // Does player have enough gold?
+                    if (GameManager.Instance.PlayerEntity.GoldPieces >= goldAmount)
+                    {
+                        // Then deduct gold and fire trigger
+                        GameManager.Instance.PlayerEntity.GoldPieces -= goldAmount;
+                        return true;
+                    }
+                    else
+                    {
+                        // Otherwise trigger secondary task and exit without firing trigger
+                        ParentQuest.StartTask(taskSymbol);
+                        return false;
+                    }
+                }
+
                 //person.RearmPlayerClick();
                 if (id != 0)
                     ParentQuest.ShowMessagePopup(id);
@@ -92,6 +117,8 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             public Symbol npcSymbol;
             public int id;
+            public int goldAmount;
+            public Symbol taskSymbol;
         }
 
         public override object GetSaveData()
@@ -99,6 +126,8 @@ namespace DaggerfallWorkshop.Game.Questing
             SaveData_v1 data = new SaveData_v1();
             data.npcSymbol = npcSymbol;
             data.id = id;
+            data.goldAmount = goldAmount;
+            data.taskSymbol = taskSymbol;
 
             return data;
         }
@@ -111,6 +140,8 @@ namespace DaggerfallWorkshop.Game.Questing
 
             npcSymbol = data.npcSymbol;
             id = data.id;
+            goldAmount = data.goldAmount;
+            taskSymbol = data.taskSymbol;
         }
 
         #endregion
