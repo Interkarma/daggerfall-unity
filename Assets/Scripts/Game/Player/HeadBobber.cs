@@ -74,7 +74,7 @@ namespace DaggerfallWorkshop.Game
             mainCamera.transform.Rotate(newCameraRotation);
         }
 
-        public virtual void GetBobbingStyle()
+        protected virtual void GetBobbingStyle()
         {
             if (playerMotor.IsRunning)
                 bobStyle = BobbingStyle.Running;
@@ -86,7 +86,7 @@ namespace DaggerfallWorkshop.Game
                 bobStyle = BobbingStyle.Walking;
 
         }
-        public virtual void SetParamsForBobbingStyle()
+        protected virtual void SetParamsForBobbingStyle()
         {
             
             switch (bobStyle)
@@ -126,7 +126,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        public virtual void getNewPos(ref Vector3 newPosition, ref Vector3 newRotation)
+        protected virtual void getNewPos(ref Vector3 newPosition, ref Vector3 newRotation)
         { 
             float velocity = new Vector2(playerMotor.MoveDirection.x, playerMotor.MoveDirection.z).magnitude;
             float timeIncrement = velocity * bobSpeed * Time.deltaTime;
@@ -179,7 +179,7 @@ namespace DaggerfallWorkshop.Game
             applyBounceAmount(ref newPosition);
         }
 
-        public void applyBounceAmount(ref Vector3 newPosition)
+        protected void applyBounceAmount(ref Vector3 newPosition)
         {
             if (!playerMotor.IsGrounded)
             {
@@ -217,19 +217,19 @@ namespace DaggerfallWorkshop.Game
             return newViewPositon;
         }
 
-        public virtual Vector3 PlotPath()
+        protected virtual Vector3 PlotPath()
         {
             return new Vector3(Mathf.Cos(timer) * bobXAmount, restPos.y + Mathf.Abs((Mathf.Sin(timer) * bobYAmount)), restPos.z); //abs val of y for a parabolic path
         }
 
-        public Vector3 InterpolateEndTransition(float endTimer) // interpolates a gradual path from moving to not moving.
+        protected Vector3 InterpolateEndTransition(float endTimer) // interpolates a gradual path from moving to not moving.
         {
             float t = (endTimer / endTimerMax); 
             Vector3 camPos = mainCamera.transform.localPosition;
             return Vector3.Lerp(camPos, restPos, t);
         }
 
-        public Vector3 InterpolateBeginTransition(Vector3 newPosition) // interpolates a gradual path from not moving to moving.
+        protected Vector3 InterpolateBeginTransition(Vector3 newPosition) // interpolates a gradual path from not moving to moving.
         {
             float t = (timer % Mathf.PI) / Mathf.PI;
             return Vector3.Lerp(restPos, newPosition, t);

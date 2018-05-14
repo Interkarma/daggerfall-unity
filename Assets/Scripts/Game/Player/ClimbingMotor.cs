@@ -33,11 +33,10 @@ namespace DaggerfallWorkshop.Game
             controller = GetComponent<CharacterController>();
         }
 
-        void Update()
-        {
-
-        }
-
+        /// <summary>
+        /// Perform climbing check, and if successful, start climbing movement.
+        /// </summary>
+        /// <param name="collisionFlags"></param>
         public void ClimbingCheck(ref CollisionFlags collisionFlags)
         {
             // Get pre-movement position for climbing check

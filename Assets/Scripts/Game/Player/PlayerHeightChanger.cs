@@ -30,10 +30,11 @@ namespace DaggerfallWorkshop.Game
         private CharacterController controller;
         private HeadBobber headBobber;
         private Camera mainCamera;
-        private float crouchHeight;
-        private float standHeight;
+        private float standHeight = 1.78f;
+        private float crouchHeight = 0.45f;
+        private float ridingHeight = 2.6f;   // Height of a horse plus seated rider. (1.6m + 1m)
+        private float eyeHeight = 0.09f;         // Eye height is 9cm below top of capsule.
         private float rideHeight;
-        private float eyeHeight;
         private float crouchChangeDistance;
         private float rideChangeDistance;
         private float camCrouchLevel;
@@ -48,10 +49,6 @@ namespace DaggerfallWorkshop.Game
             controller = GetComponent<CharacterController>();
             headBobber = GetComponent<HeadBobber>();
             mainCamera = GameManager.Instance.MainCamera;
-            rideHeight = playerMotor.ridingHeight;
-            standHeight = playerMotor.standingHeight;
-            crouchHeight = playerMotor.crouchingHeight;
-            eyeHeight = playerMotor.eyeHeight;
 
             crouchChangeDistance = (standHeight - crouchHeight) / 2f;
             rideChangeDistance = (rideHeight - standHeight) / 2f - eyeHeight;

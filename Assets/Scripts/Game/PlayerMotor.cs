@@ -17,24 +17,12 @@ namespace DaggerfallWorkshop.Game
     [RequireComponent(typeof(CharacterController))]
     public class PlayerMotor : MonoBehaviour
     {
-        // Moving platform support
-        Transform activePlatform;
-        Vector3 activeLocalPlatformPoint;
-        Vector3 activeGlobalPlatformPoint;
-        //Vector3 lastPlatformVelocity;
-        Quaternion activeLocalPlatformRotation;
-        Quaternion activeGlobalPlatformRotation;
-
-        public float standingHeight = 1.78f;
-        public float eyeHeight = 0.09f;         // Eye height is 9cm below top of capsule.
-        public float crouchingHeight = 0.45f;
-
+        #region Fields
         bool isCrouching = false;
-        //bool wasCrouching = false;
 
         // TODO: Placeholder integration of horse & cart riding - using same speed for cart to simplify PlayerMotor integration
         // and avoid adding any references to TransportManager.
-        public float ridingHeight = 2.6f;   // Height of a horse plus seated rider. (1.6m + 1m)
+
         bool isRiding = false;
         private bool riding = false;
 
@@ -44,8 +32,6 @@ namespace DaggerfallWorkshop.Game
         // If checked, the run key toggles between running and walking. Otherwise player runs if the key is held down and walks otherwise
         // There must be a button set up in the Input Manager called "Run"
         public bool toggleRun = false;
-
-
 
         public float systemTimerUpdatesPerSecond = .055f; // Number of updates per second by the system timer at memory location 0x46C.
                                                           // Used for timing various things in classic.
@@ -59,13 +45,9 @@ namespace DaggerfallWorkshop.Game
         [HideInInspector, NonSerialized]
         public CharacterController controller;
 
-        //private Camera mainCamera;
-        //private float defaultCameraHeight;
-
         private Vector3 moveDirection = Vector3.zero;
         private bool grounded = false;
         private float speed;
-
 
         private bool standingStill = false;
 
@@ -74,6 +56,7 @@ namespace DaggerfallWorkshop.Game
         private PlayerSpeedChanger speedChanger;
         private FrictionMotor frictionMotor;
         private AcrobatMotor acrobatMotor;
+        private PlayerGroundMotor groundMotor;
 
         private CollisionFlags collisionFlags = 0;
 
@@ -81,7 +64,9 @@ namespace DaggerfallWorkshop.Game
 
         LevitateMotor levitateMotor;
         float freezeMotor = 0;
+        #endregion
 
+        #region Properties
         public bool IsGrounded
         {
             get { return grounded; }
@@ -135,11 +120,6 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        public Transform ActivePlatform
-        {
-            get { return activePlatform; }
-        }
-
         /// <summary>
         /// Cancels all movement impulses next frame.
         /// Used to scrub movement impulse when player dies, opens inventory, or loads game.
@@ -169,13 +149,15 @@ namespace DaggerfallWorkshop.Game
                 return moveDirection;
             }
         }
+        #endregion
 
+        #region Event Handlers
         void Start()
         {
             controller = GetComponent<CharacterController>();
             speedChanger = GetComponent<PlayerSpeedChanger>();
             speed = speedChanger.GetBaseSpeed();
-
+            groundMotor = GetComponent<PlayerGroundMotor>();
             climbingMotor = GetComponent<ClimbingMotor>();
             heightChanger = GetComponent<PlayerHeightChanger>();
             levitateMotor = GetComponent<LevitateMotor>();
@@ -194,7 +176,7 @@ namespace DaggerfallWorkshop.Game
             {
                 moveDirection = Vector3.zero;
                 cancelMovement = false;
-                ClearActivePlatform();
+                groundMotor.ClearActivePlatform();
                 acrobatMotor.ClearFallingDamage();
                 return;
             }
@@ -241,9 +223,6 @@ namespace DaggerfallWorkshop.Game
 
                 if (!riding)
                 {
-                    if (!isCrouching && heightChanger.HeightAction != HeightChangeAction.DoStanding) // don't set to standing height while croucher is standing the player
-                        controller.height = standingHeight;
-
                     try
                     {
                         // If running isn't on a toggle, then use the appropriate speed depending on whether the run button is down
@@ -284,88 +263,7 @@ namespace DaggerfallWorkshop.Game
                     moveDirection.y = -moveDirection.y;
             }
 
-            // Moving platform support
-            if (activePlatform != null)
-            {
-                var newGlobalPlatformPoint = activePlatform.TransformPoint(activeLocalPlatformPoint);
-                var moveDistance = (newGlobalPlatformPoint - activeGlobalPlatformPoint);
-                if (moveDistance != Vector3.zero)
-                    controller.Move(moveDistance);
-                //lastPlatformVelocity = (newGlobalPlatformPoint - activeGlobalPlatformPoint) / Time.deltaTime;
-
-                // If you want to support moving platform rotation as well:
-                var newGlobalPlatformRotation = activePlatform.rotation * activeLocalPlatformRotation;
-                var rotationDiff = newGlobalPlatformRotation * Quaternion.Inverse(activeGlobalPlatformRotation);
-
-                // Prevent rotation of the local up vector
-                rotationDiff = Quaternion.FromToRotation(rotationDiff * transform.up, transform.up) * rotationDiff;
-
-                transform.rotation = rotationDiff * transform.rotation;
-            }
-            //else
-            //{
-            //    lastPlatformVelocity = Vector3.zero;
-            //}
-
-            activePlatform = null;
-
-            // Move the controller, and set grounded true or false depending on whether we're standing on something
-            collisionFlags = controller.Move(moveDirection * Time.deltaTime);
-
-            grounded = (collisionFlags & CollisionFlags.Below) != 0;
-
-            // Moving platforms support
-            if (activePlatform != null)
-            {
-                activeGlobalPlatformPoint = transform.position;
-                activeLocalPlatformPoint = activePlatform.InverseTransformPoint(transform.position);
-
-                // If you want to support moving platform rotation as well:
-                activeGlobalPlatformRotation = transform.rotation;
-                activeLocalPlatformRotation = Quaternion.Inverse(activePlatform.rotation) * transform.rotation;
-            }
-        }
-
-        // Reset moving platform logic to new player position
-        public void ClearActivePlatform()
-        {
-            activePlatform = null;
-        }
-
-        /// <summary>
-        /// Attempts to find the ground position below player, even if player is jumping/falling
-        /// </summary>
-        /// <param name="distance">Distance to fire ray.</param>
-        /// <returns>Hit point on surface below player, or player position if hit not found in distance.</returns>
-        public Vector3 FindGroundPosition(float distance = 10)
-        {
-            RaycastHit hit;
-            Ray ray = new Ray(transform.position, Vector3.down);
-            if (Physics.Raycast(ray, out hit, distance))
-                return hit.point;
-
-            return transform.position;
-        }
-
-        // Snap player to ground
-        public bool FixStanding(float extraHeight = 0, float extraDistance = 0)
-        {
-            RaycastHit hit;
-            Ray ray = new Ray(transform.position + (Vector3.up * extraHeight), Vector3.down);
-            if (Physics.Raycast(ray, out hit, (controller.height * 2) + extraHeight + extraDistance))
-            {
-                // Position player at hit position plus just over half controller height up
-                transform.position = hit.point + Vector3.up * (controller.height * 0.65f);
-                return true;
-            }
-
-            return false;
-        }
-
-        // Gets distance between position and player
-        public float DistanceToPlayer(Vector3 position)
-        {
-            return Vector3.Distance(transform.position, position);
+            groundMotor.MoveOnGround(moveDirection, ref collisionFlags, ref grounded);
         }
 
         void Update()
@@ -448,26 +346,8 @@ namespace DaggerfallWorkshop.Game
 
             // Get active platform
             if (hit.moveDirection.y < -0.9 && hit.normal.y > 0.5)
-                activePlatform = hit.collider.transform;
+                groundMotor.ActivePlatform = hit.collider.transform;
         }
-
-
-
-
-
-        #region Private Methods
-
-        void ResetPlayerState()
-        {
-            // Cancel levitation at start of loading a new save game
-            // This prevents levitation flag carrying over and effect system can still restore it if needed
-            if (levitateMotor)
-                levitateMotor.IsLevitating = false;
-        }
-
-        #endregion
-
-        #region Event Handlers
 
         private void StartGameBehaviour_OnNewGame()
         {
@@ -477,6 +357,56 @@ namespace DaggerfallWorkshop.Game
         private void SaveLoadManager_OnStartLoad(SaveData_v1 saveData)
         {
             ResetPlayerState();
+        }
+
+        #endregion
+
+        #region Public Methods
+        /// <summary>
+        /// Attempts to find the ground position below player, even if player is jumping/falling
+        /// </summary>
+        /// <param name="distance">Distance to fire ray.</param>
+        /// <returns>Hit point on surface below player, or player position if hit not found in distance.</returns>
+        public Vector3 FindGroundPosition(float distance = 10)
+        {
+            RaycastHit hit;
+            Ray ray = new Ray(transform.position, Vector3.down);
+            if (Physics.Raycast(ray, out hit, distance))
+                return hit.point;
+
+            return transform.position;
+        }
+
+        // Snap player to ground
+        public bool FixStanding(float extraHeight = 0, float extraDistance = 0)
+        {
+            RaycastHit hit;
+            Ray ray = new Ray(transform.position + (Vector3.up * extraHeight), Vector3.down);
+            if (Physics.Raycast(ray, out hit, (controller.height * 2) + extraHeight + extraDistance))
+            {
+                // Position player at hit position plus just over half controller height up
+                transform.position = hit.point + Vector3.up * (controller.height * 0.65f);
+                return true;
+            }
+
+            return false;
+        }
+
+        // Gets distance between position and player
+        public float DistanceToPlayer(Vector3 position)
+        {
+            return Vector3.Distance(transform.position, position);
+        }
+        #endregion
+
+        #region Private Methods
+
+        void ResetPlayerState()
+        {
+            // Cancel levitation at start of loading a new save game
+            // This prevents levitation flag carrying over and effect system can still restore it if needed
+            if (levitateMotor)
+                levitateMotor.IsLevitating = false;
         }
 
         #endregion
