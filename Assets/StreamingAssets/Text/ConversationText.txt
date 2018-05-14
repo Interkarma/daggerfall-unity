@@ -2,33 +2,33 @@
 
 schema: *key,text
 
-east,						east
-northeast,                  northeast
-north,						north
-northwest,                  northwest
-west,						west
-southwest,					southwest
-south,						south
-southeast,					southeast
-AnyNews,					Any news?
-PreviousList,				Previous List
-General,					General
-Regional,					Regional
-Alchemists,					Alchemists
-Armorers,					Armorers
-Banks,						Banks
-Bookstores,					Bookstores
-Clothingstores,				Clothing stores
-Gemstores,					Gem stores
-Generalstores,				General stores
-Guilds,						Guilds
-Libraries,					Libraries
-Pawnshops,					Pawn shops
-Taverns,					Taverns
-Weaponsmiths,				Weapon smiths
-Localtemples,				Local temples
-Sir,						Sir
-Ma'am,						Ma'am
-toBeReplacedStringRegional,	Any
-replacementStringRegional,	any
-resolvingError,				never mind...
+east,                           east
+northeast,                      northeast
+north,                          north
+northwest,                      northwest
+west,                           west
+southwest,                      southwest
+south,                          south
+southeast,                      southeast
+AnyNews,                        Any news?
+PreviousList,                   Previous List
+General,                        General
+Regional,                       Regional
+Alchemists,                     Alchemists
+Armorers,                       Armorers
+Banks,                          Banks
+Bookstores,                     Bookstores
+Clothingstores,                 Clothing stores
+Gemstores,                      Gem stores
+Generalstores,                  General stores
+Guilds,                         Guilds
+Libraries,                      Libraries
+Pawnshops,                      Pawn shops
+Taverns,                        Taverns
+Weaponsmiths,                   Weapon smiths
+Localtemples,                   Local temples
+Sir,                            Sir
+Ma'am,                          Ma'am
+toBeReplacedStringRegional,     Any
+replacementStringRegional,      any
+resolvingError,                 never mind...
