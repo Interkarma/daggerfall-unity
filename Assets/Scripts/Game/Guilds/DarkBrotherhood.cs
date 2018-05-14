@@ -82,6 +82,14 @@ namespace DaggerfallWorkshop.Game.Guilds
         {
             // Register for location entry events so can auto discover guild houses.
             PlayerGPS.OnEnterLocationRect += PlayerGPS_OnEnterLocationRect;
+            StreamingWorld.OnAvailableLocationGameObject += StreamingWorld_OnAvailableLocationGameObject;
+        }
+
+        ~DarkBrotherhood()
+        {
+            // Unregister events
+            PlayerGPS.OnEnterLocationRect -= PlayerGPS_OnEnterLocationRect;
+            StreamingWorld.OnAvailableLocationGameObject -= StreamingWorld_OnAvailableLocationGameObject;
         }
 
         public static int FactionId { get { return factionId; } }
@@ -203,6 +211,11 @@ namespace DaggerfallWorkshop.Game.Guilds
         #region Event handlers
 
         private void PlayerGPS_OnEnterLocationRect(DFLocation location)
+        {
+            RevealGuildHallOnMap();
+        }
+
+        private void StreamingWorld_OnAvailableLocationGameObject()
         {
             RevealGuildHallOnMap();
         }

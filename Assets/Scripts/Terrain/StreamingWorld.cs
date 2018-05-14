@@ -612,6 +612,9 @@ namespace DaggerfallWorkshop
 
             // Update current player location object once location update complete
             currentPlayerLocationObject = GetPlayerLocationObject();
+
+            // Raise event
+            RaiseOnAvailableLocationGameObjectEvent();
         }
 
         private IEnumerator UpdateLocation(int index, bool allowYield)
@@ -1571,6 +1574,15 @@ namespace DaggerfallWorkshop
         {
             if (OnCreateLocationGameObject != null)
                 OnCreateLocationGameObject(dfLocation);
+        }
+
+        // OnAvailableLocationGameObject
+        public delegate void OnAvailableLocationGameObjectHandler();
+        public static event OnAvailableLocationGameObjectHandler OnAvailableLocationGameObject;
+        protected virtual void RaiseOnAvailableLocationGameObjectEvent()
+        {
+            if (OnAvailableLocationGameObject != null)
+                OnAvailableLocationGameObject();
         }
 
         #endregion
