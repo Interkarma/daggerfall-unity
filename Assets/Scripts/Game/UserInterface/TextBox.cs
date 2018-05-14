@@ -12,11 +12,14 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.IO;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
+    public enum NumericMode { Natural, Integer, Float }
+
     /// <summary>
     /// Implements a single line text edit box.
     /// </summary>
@@ -35,6 +38,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Vector2 maxSize = Vector2.zero;
         bool readOnly = false;
         bool numeric = false;
+        NumericMode numericMode = NumericMode.Natural;
         bool upperOnly = false;
         bool fixedSize = false;
 
@@ -114,6 +118,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set { numeric = value; }
         }
 
+        public NumericMode NumericMode
+        {
+            get { return numericMode; }
+            set { numericMode = value; }
+        }
+
         public bool UpperOnly
         {
             get { return upperOnly; }
@@ -188,12 +198,35 @@ namespace DaggerfallWorkshop.Game.UserInterface
             char character = DaggerfallUI.Instance.LastCharacterTyped;
             if (character != 0 && text.Length < maxCharacters)
             {
-                // For numeric only accept characters 0-9
                 if (numeric)
                 {
+                    const char minus = '-';
+                    const char dot = '.';
+
                     int value = (int)character;
                     if (value < 0x30 || value > 0x39)
-                        return;
+                    {
+                        if (character == minus)
+                        {
+                            // Allow negative numbers only if not natural
+                            if (numericMode == NumericMode.Natural)
+                                return;
+
+                            if (cursorPosition != 0 || (text.Length > 0 && text[0] == minus))
+                                return;
+                        }
+                        else if (character == dot)
+                        {
+                            // Allow dot for floats
+                            if (numericMode != NumericMode.Float || text.Contains(dot))
+                                return;
+                        }
+                        else
+                        {
+                            // For numeric only accept characters 0 - 9
+                            return;
+                        }
+                    }
                 }
 
                 // For upper only, force everything to caps
