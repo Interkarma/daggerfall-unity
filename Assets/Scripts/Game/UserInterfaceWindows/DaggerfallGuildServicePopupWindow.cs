@@ -303,7 +303,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     break;
 
                 case GuildServices.Spymaster:
-                    GameManager.Instance.TalkManager.TalkToStaticNPC(QuestMachine.Instance.LastNPCClicked, true);
+                    const int spyMasterGreetingTextId = 402;
+                    DaggerfallMessageBox msgBox = new DaggerfallMessageBox(uiManager, this);
+                    msgBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRandomTokens(spyMasterGreetingTextId));
+                    msgBox.ClickAnywhereToClose = true;
+                    msgBox.OnClose += SpyMasterGreetingPopUp_OnClose;
+                    msgBox.Show();                    
                     break;
 
                 default:
@@ -654,6 +659,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #endregion
 
+        #region Service Handling: SpyMaster
+
+        // Message box closed, talk to SpyMaster
+        private void SpyMasterGreetingPopUp_OnClose()
+        {
+            GameManager.Instance.TalkManager.TalkToStaticNPC(QuestMachine.Instance.LastNPCClicked, true);
+        }
+
+        #endregion
 
         #region Macro handling
 

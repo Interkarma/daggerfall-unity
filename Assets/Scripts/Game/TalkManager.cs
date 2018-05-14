@@ -352,6 +352,13 @@ namespace DaggerfallWorkshop.Game
         // quest info answers about quest resource
         public class QuestResourceInfo
         {
+            public enum BuildingLocationHintTypeGiven
+            {
+                None,
+                ReceivedDirectionalHints,
+                LocationWasMarkedOnMap
+            }
+
             public QuestResourceInfo()
             {
                 this.anyInfoAnswers = null;
@@ -359,7 +366,7 @@ namespace DaggerfallWorkshop.Game
                 this.resourceType = QuestInfoResourceType.NotSet;
                 this.availableForDialog = true;
                 this.hasEntryInTellMeAbout = false;
-                this.questPlaceResourceMarkedLocationOnMap = false;
+                this.questPlaceResourceHintTypeReceived = BuildingLocationHintTypeGiven.None;
                 this.dialogLinkedLocations = new List<string>();
                 this.dialogLinkedPersons = new List<string>();
                 this.dialogLinkedThings = new List<string>();
@@ -372,7 +379,7 @@ namespace DaggerfallWorkshop.Game
             public bool availableForDialog; // if it will show up in talk window (any dialog link for this resource will set this false, if no dialog link is present it will be set to true)
             public bool hasEntryInTellMeAbout; // if resource will get entry in section "Tell Me About" (anyInfo or rumors available)
             public bool hasEntryInWhereIs; // if resource will get entry in section "Where Is" (e.g. person resources)
-            public bool questPlaceResourceMarkedLocationOnMap; // used if resource is place resource - indicates if an npc marked the resource on the map
+            public BuildingLocationHintTypeGiven questPlaceResourceHintTypeReceived; // used if resource is place resource - indicates if an npc gave directional hints or already marked the resource on the map
             public List<string> dialogLinkedLocations; // list of location quest resources dialog-linked to this quest resource
             public List<string> dialogLinkedPersons; // list of person quest resources dialog-linked to this quest resource
             public List<string> dialogLinkedThings; // list of thing quest resources dialog-linked to this quest resource
@@ -721,16 +728,7 @@ namespace DaggerfallWorkshop.Game
             const int isInSameHolyOrderLikePlayerGreetingTextId = 8553;
             const int isInSameHolyOrderNeutralPlayerGreetingTextId = 8554;
 
-            const int spyMasterGreetingTextId = 402;
-
             // note Nystul: did not find any use of text record ids 8556 - 8569 in my testing - but some of them might be used by nobles of the courtyards
-
-
-            if (npcData.isSpyMaster)
-            {
-                TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(spyMasterGreetingTextId);
-                return TokensToString(tokens);
-            }
 
             if (currentNPCType == NPCType.Static)
             {
@@ -863,6 +861,12 @@ namespace DaggerfallWorkshop.Game
 
             BuildingInfo buildingInfo = listBuildings.Find(x => x.buildingKey == currentKeySubjectBuildingKey);
 
+            if (dictQuestInfo.ContainsKey(currentQuestionListItem.questID) && dictQuestInfo[currentQuestionListItem.questID].resourceInfo.ContainsKey(currentKeySubject))
+            {
+                if (dictQuestInfo[currentQuestionListItem.questID].resourceInfo[currentKeySubject].questPlaceResourceHintTypeReceived != QuestResourceInfo.BuildingLocationHintTypeGiven.LocationWasMarkedOnMap)
+                    dictQuestInfo[currentQuestionListItem.questID].resourceInfo[currentKeySubject].questPlaceResourceHintTypeReceived = QuestResourceInfo.BuildingLocationHintTypeGiven.ReceivedDirectionalHints;
+            }
+
             Vector2 vecDirectionToTarget = buildingInfo.position - playerPos;
             return DirectionVector2DirectionHintString(vecDirectionToTarget);
         }
@@ -873,7 +877,7 @@ namespace DaggerfallWorkshop.Game
             if (buildingInfo.buildingKey != 0)
             {
                 if (dictQuestInfo.ContainsKey(currentQuestionListItem.questID) && dictQuestInfo[currentQuestionListItem.questID].resourceInfo.ContainsKey(currentKeySubject))
-                    dictQuestInfo[currentQuestionListItem.questID].resourceInfo[currentKeySubject].questPlaceResourceMarkedLocationOnMap = true;
+                    dictQuestInfo[currentQuestionListItem.questID].resourceInfo[currentKeySubject].questPlaceResourceHintTypeReceived = QuestResourceInfo.BuildingLocationHintTypeGiven.LocationWasMarkedOnMap;
                 GameManager.Instance.PlayerGPS.DiscoverBuilding(buildingInfo.buildingKey);
             }
         }
@@ -1518,6 +1522,10 @@ namespace DaggerfallWorkshop.Game
 
             dictQuestInfo[questID] = questResources;
 
+            // undiscover residences when they are a quest resource (named residence) when creating quest resource
+            // otherwise previously discovered residences will automatically show up on the automap when used in a quest
+            UndiscoverQuestResidence(questID, resourceName, questResourceInfo);
+
             // update topic lists
             rebuildTopicLists = true;
 
@@ -1603,10 +1611,10 @@ namespace DaggerfallWorkshop.Game
 
             if (resourceName != null)
             {
-                QuestResourceInfo questResource;
+                QuestResourceInfo questResourceInfo;
                 if (questResources.resourceInfo.ContainsKey(resourceName))
                 {
-                    questResource = questResources.resourceInfo[resourceName];
+                    questResourceInfo = questResources.resourceInfo[resourceName];
                 }
                 else
                 {
@@ -1614,7 +1622,11 @@ namespace DaggerfallWorkshop.Game
                     return;
                 }
 
-                questResource.availableForDialog = true;
+                questResourceInfo.availableForDialog = true;
+
+                // undiscover residences when they are a quest resource (named residence) when "add dialog" is done for this quest resource
+                // otherwise previously discovered residences will automatically show up on the automap when used in a quest
+                UndiscoverQuestResidence(questID, resourceName, questResourceInfo);
             }
 
             // update topic lists
@@ -1692,8 +1704,13 @@ namespace DaggerfallWorkshop.Game
             return matchingBuildings[0].buildingType;
         }
 
-        public bool BuildingIsQuestResourceAndPlayerHasLearnedAbout(int buildingKey)
+        public bool IsBuildingQuestResource(int buildingKey, ref string overrideBuildingName, ref bool pcLearnedAboutExistence, ref bool receivedDirectionalHints, ref bool locationWasMarkedOnMapByNPC)
         {
+            pcLearnedAboutExistence = false;
+            receivedDirectionalHints = false;
+            locationWasMarkedOnMapByNPC = false;
+            overrideBuildingName = string.Empty;
+
             foreach (ulong questID in GameManager.Instance.QuestMachine.GetAllActiveQuests())
             {
                 Quest quest = GameManager.Instance.QuestMachine.GetQuest(questID);
@@ -1714,12 +1731,23 @@ namespace DaggerfallWorkshop.Game
 
                         if (questInfo.resourceInfo.ContainsKey(name))
                         {
-                            if (questInfo.resourceInfo[name].availableForDialog && questInfo.resourceInfo[name].questPlaceResourceMarkedLocationOnMap)
-                                return true;
+                            if (questInfo.resourceInfo[name].availableForDialog) 
+                                pcLearnedAboutExistence = true;
+
+                            if (questInfo.resourceInfo[name].questPlaceResourceHintTypeReceived >= QuestResourceInfo.BuildingLocationHintTypeGiven.ReceivedDirectionalHints)
+                                receivedDirectionalHints = true;
+
+                            if (questInfo.resourceInfo[name].questPlaceResourceHintTypeReceived == QuestResourceInfo.BuildingLocationHintTypeGiven.LocationWasMarkedOnMap)
+                                locationWasMarkedOnMapByNPC = true;
+
+                            overrideBuildingName = name;
+
+                            return true;
                         }
                     }
                 }
             }
+
             return false;
         }
 
@@ -2124,6 +2152,29 @@ namespace DaggerfallWorkshop.Game
                 buildingType == DFLocation.BuildingTypes.Town4)
                 return true;
             return false;
+        }
+
+        private void UndiscoverQuestResidence(ulong questID, string resourceName, QuestResourceInfo questResourceInfo)
+        {
+            Quest quest = GameManager.Instance.QuestMachine.GetQuest(questID);
+            if (quest == null)
+                return;
+
+            if (questResourceInfo.resourceType == QuestInfoResourceType.Location)
+            {
+                QuestResource[] allQuestResources = quest.GetAllResources(typeof(Place)); // get list of place quest resources
+                for (int i = 0; i < allQuestResources.Length; i++)
+                {
+                    Questing.Place place = (Questing.Place)(allQuestResources[i]);
+                    int key = place.SiteDetails.buildingKey;
+                    string name = place.SiteDetails.buildingName;
+
+                    if (name != resourceName)
+                        continue;
+
+                    GameManager.Instance.PlayerGPS.UndiscoverBuilding(key, true);
+                }
+            }
         }
 
         private void ResetNPCKnowledgeInTopicListRecursively(List<ListItem> list)

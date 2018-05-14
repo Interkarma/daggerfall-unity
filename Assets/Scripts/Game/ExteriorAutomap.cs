@@ -781,9 +781,14 @@ namespace DaggerfallWorkshop.Game
                                         foreach (QuestResource questResource in questResources)
                                         {
                                             Questing.Place place = (Questing.Place)(questResource);
-                                            if (place.SiteDetails.buildingKey == discoveredBuilding.buildingKey && GameManager.Instance.TalkManager.BuildingIsQuestResourceAndPlayerHasLearnedAbout(place.SiteDetails.buildingKey))
+                                            bool pcLearnedAboutExistence = false;
+                                            bool receivedDirectionalHints = false;
+                                            bool locationWasMarkedOnMapByNPC = false;
+                                            string overrideBuildingName = string.Empty;
+                                            if (place.SiteDetails.buildingKey == discoveredBuilding.buildingKey && GameManager.Instance.TalkManager.IsBuildingQuestResource(buildingSummary.buildingKey, ref overrideBuildingName, ref pcLearnedAboutExistence, ref receivedDirectionalHints, ref locationWasMarkedOnMapByNPC))
                                             {
-                                                buildingQuestName = place.SiteDetails.buildingName; // get buildingName if involved in active quest
+                                                if (pcLearnedAboutExistence)
+                                                    buildingQuestName = place.SiteDetails.buildingName; // get buildingName if involved in active quest (same as overrideBuildingName)
                                             }
                                         }
                                     }

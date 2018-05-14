@@ -735,6 +735,39 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
+        /// Undiscover the specified building in current location.
+        /// used to undiscover residences when they are a quest resource (named residence) when "add dialog" is done for this quest resource or on quest startup
+        /// otherwise previously discovered residences will automatically show up on the automap when used in a quest
+        /// </summary>
+        /// <param name="buildingKey">Building key of building to be undiscovered</param>
+        /// <param name="onlyIfResidence">gets undiscovered only if buildingType is residence</param>
+        public void UndiscoverBuilding(int buildingKey, bool onlyIfResidence = false)
+        {
+            // Must have a location loaded
+            if (!CurrentLocation.Loaded)
+                return;
+
+            // Get building information
+            DiscoveredBuilding db;
+            if (!GetBuildingDiscoveryData(buildingKey, out db))
+                return;
+
+            // Get location discovery
+            int mapPixelID = MapsFile.GetMapPixelIDFromLongitudeLatitude((int)CurrentLocation.MapTableData.Longitude, CurrentLocation.MapTableData.Latitude);
+            DiscoveredLocation dl = new DiscoveredLocation();
+            if (discoveredLocations.ContainsKey(mapPixelID))
+            {
+                dl = discoveredLocations[mapPixelID];
+            }
+
+            if (onlyIfResidence && !RMBLayout.IsResidence(db.buildingType))
+                return;
+
+            if (dl.discoveredBuildings.ContainsKey(db.buildingKey))
+                dl.discoveredBuildings.Remove(db.buildingKey);
+        }
+
+        /// <summary>
         /// Check if player has discovered location.
         /// MapPixelID is derived from longitude/latitude or MapPixelX, MapPixelY.
         /// See MapsFile.GetMapPixelID() and MapsFile.GetMapPixelIDFromLongitudeLatitude().
@@ -893,9 +926,22 @@ namespace DaggerfallWorkshop
             string buildingName;
             if (RMBLayout.IsResidence(buildingSummary.BuildingType))
             {
-                // Residence
-                // TODO: Link to quest system active sites
+                // Residence                
                 buildingName = HardStrings.residence;
+
+                // Link to quest system active sites
+                // note Nystul: do this via TalkManager, this might seem odd at first glance but there is a reason to do so:
+                //              get info from TalkManager if pc learned about existence of the building (i.e. its name)
+                //              either through dialog ("add dialog" or by dialog-link) or quest (quest did not hide location via "dialog link" command)
+                bool pcLearnedAboutExistence = false;
+                bool receivedDirectionalHints = false;
+                bool locationWasMarkedOnMapByNPC = false;
+                string overrideBuildingName = string.Empty;
+                if (GameManager.Instance.TalkManager.IsBuildingQuestResource(buildingSummary.buildingKey, ref overrideBuildingName, ref pcLearnedAboutExistence, ref receivedDirectionalHints, ref locationWasMarkedOnMapByNPC))
+                {
+                    if (pcLearnedAboutExistence)
+                        buildingName = overrideBuildingName;
+                }
             }
             else
             {
