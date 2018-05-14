@@ -17,6 +17,7 @@ namespace DaggerfallWorkshop.Game
     [RequireComponent(typeof(CharacterController))]
     public class PlayerMotor : MonoBehaviour
     {
+        #region Fields
         bool isCrouching = false;
 
         // TODO: Placeholder integration of horse & cart riding - using same speed for cart to simplify PlayerMotor integration
@@ -63,7 +64,9 @@ namespace DaggerfallWorkshop.Game
 
         LevitateMotor levitateMotor;
         float freezeMotor = 0;
+        #endregion
 
+        #region Properties
         public bool IsGrounded
         {
             get { return grounded; }
@@ -146,7 +149,9 @@ namespace DaggerfallWorkshop.Game
                 return moveDirection;
             }
         }
+        #endregion
 
+        #region Event Handlers
         void Start()
         {
             controller = GetComponent<CharacterController>();
@@ -261,42 +266,6 @@ namespace DaggerfallWorkshop.Game
             groundMotor.MoveOnGround(moveDirection, ref collisionFlags, ref grounded);
         }
 
-        /// <summary>
-        /// Attempts to find the ground position below player, even if player is jumping/falling
-        /// </summary>
-        /// <param name="distance">Distance to fire ray.</param>
-        /// <returns>Hit point on surface below player, or player position if hit not found in distance.</returns>
-        public Vector3 FindGroundPosition(float distance = 10)
-        {
-            RaycastHit hit;
-            Ray ray = new Ray(transform.position, Vector3.down);
-            if (Physics.Raycast(ray, out hit, distance))
-                return hit.point;
-
-            return transform.position;
-        }
-
-        // Snap player to ground
-        public bool FixStanding(float extraHeight = 0, float extraDistance = 0)
-        {
-            RaycastHit hit;
-            Ray ray = new Ray(transform.position + (Vector3.up * extraHeight), Vector3.down);
-            if (Physics.Raycast(ray, out hit, (controller.height * 2) + extraHeight + extraDistance))
-            {
-                // Position player at hit position plus just over half controller height up
-                transform.position = hit.point + Vector3.up * (controller.height * 0.65f);
-                return true;
-            }
-
-            return false;
-        }
-
-        // Gets distance between position and player
-        public float DistanceToPlayer(Vector3 position)
-        {
-            return Vector3.Distance(transform.position, position);
-        }
-
         void Update()
         {
             // Do nothing if player levitating - replacement motor will take over movement.
@@ -380,20 +349,6 @@ namespace DaggerfallWorkshop.Game
                 groundMotor.ActivePlatform = hit.collider.transform;
         }
 
-        #region Private Methods
-
-        void ResetPlayerState()
-        {
-            // Cancel levitation at start of loading a new save game
-            // This prevents levitation flag carrying over and effect system can still restore it if needed
-            if (levitateMotor)
-                levitateMotor.IsLevitating = false;
-        }
-
-        #endregion
-
-        #region Event Handlers
-
         private void StartGameBehaviour_OnNewGame()
         {
             ResetPlayerState();
@@ -402,6 +357,56 @@ namespace DaggerfallWorkshop.Game
         private void SaveLoadManager_OnStartLoad(SaveData_v1 saveData)
         {
             ResetPlayerState();
+        }
+
+        #endregion
+
+        #region Public Methods
+        /// <summary>
+        /// Attempts to find the ground position below player, even if player is jumping/falling
+        /// </summary>
+        /// <param name="distance">Distance to fire ray.</param>
+        /// <returns>Hit point on surface below player, or player position if hit not found in distance.</returns>
+        public Vector3 FindGroundPosition(float distance = 10)
+        {
+            RaycastHit hit;
+            Ray ray = new Ray(transform.position, Vector3.down);
+            if (Physics.Raycast(ray, out hit, distance))
+                return hit.point;
+
+            return transform.position;
+        }
+
+        // Snap player to ground
+        public bool FixStanding(float extraHeight = 0, float extraDistance = 0)
+        {
+            RaycastHit hit;
+            Ray ray = new Ray(transform.position + (Vector3.up * extraHeight), Vector3.down);
+            if (Physics.Raycast(ray, out hit, (controller.height * 2) + extraHeight + extraDistance))
+            {
+                // Position player at hit position plus just over half controller height up
+                transform.position = hit.point + Vector3.up * (controller.height * 0.65f);
+                return true;
+            }
+
+            return false;
+        }
+
+        // Gets distance between position and player
+        public float DistanceToPlayer(Vector3 position)
+        {
+            return Vector3.Distance(transform.position, position);
+        }
+        #endregion
+
+        #region Private Methods
+
+        void ResetPlayerState()
+        {
+            // Cancel levitation at start of loading a new save game
+            // This prevents levitation flag carrying over and effect system can still restore it if needed
+            if (levitateMotor)
+                levitateMotor.IsLevitating = false;
         }
 
         #endregion
