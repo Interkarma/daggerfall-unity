@@ -108,7 +108,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             var titleLabel = new TextLabel(DaggerfallUI.Instance.Font3);
             titleLabel.Position = new Vector2(5, 0);
             titleLabel.VerticalAlignment = VerticalAlignment.Middle;
-            titleLabel.Text = "Presets";
+            titleLabel.Text = ModManager.GetText("presets");
             titleLabel.TextColor = new Color(0.88f, 0.95f, 0.95f, 1);
             titleLabel.ShadowColor = Color.clear;
             titlePanel.Components.Add(titleLabel);
@@ -122,7 +122,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             helpButton.Label.TextColor = Color.white;
             helpButton.Label.TextScale = 0.8f;
             helpButton.ToolTip = defaultToolTip;
-            helpButton.ToolTipText = "Load/Save settings values for this mod.";
+            helpButton.ToolTipText = ModManager.GetText("presetsInfo");
             titlePanel.Components.Add(helpButton);
 
             var cancelButton = new Button();
@@ -196,7 +196,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             loadButton.Size = new Vector2(30, 10);
             loadButton.Position = new Vector2(60, 0);
             loadButton.VerticalAlignment = VerticalAlignment.Middle;
-            loadButton.Label.Text = "Load";
+            loadButton.Label.Text = ModManager.GetText("load");
             loadButton.Label.Font = DaggerfallUI.Instance.Font3;
             loadButton.Label.ShadowColor = Color.clear;
             loadButton.Label.TextColor = Color.blue;
@@ -206,7 +206,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             saveButton.Size = new Vector2(10, 10);
             saveButton.Position = new Vector2(100, 0);
             saveButton.VerticalAlignment = VerticalAlignment.Middle;
-            saveButton.Label.Text = "Save";
+            saveButton.Label.Text = ModManager.GetText("save");
             saveButton.Label.Font = DaggerfallUI.Instance.Font3;
             saveButton.Label.ShadowColor = Color.clear;
             saveButton.Label.TextColor = Color.blue;
@@ -231,7 +231,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
             creatorTitle.Size = new Vector2(30, 10);
             creatorTitle.Position = new Vector2(5, 2);
-            creatorTitle.DefaultText = "<title>";
+            creatorTitle.DefaultText = ModManager.GetText("emptyTitle");
             creatorTitle.MaxCharacters = titleMaxChars;
             creatorTitle.UseFocus = true;
             creatorTitle.OnMouseLeave += CreatorTitle_OnMouseLeave;
@@ -239,7 +239,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
             creatorDescription.Size = new Vector2(100, 10);
             creatorDescription.Position = new Vector2(5, 10);
-            creatorDescription.DefaultText = "<description>";
+            creatorDescription.DefaultText = ModManager.GetText("emptyDescription");
             creatorDescription.MaxCharacters = descriptionMaxChars;
             creatorDescription.UseFocus = true;
             creatorPanel.Components.Add(creatorDescription);
@@ -273,9 +273,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         private void RegisterPreset(Preset preset, int position = -1)
         {
             if (string.IsNullOrEmpty(preset.Title))
-                preset.Title = "<Unknown>";
+                preset.Title = ModManager.GetText("missingTitle");
             if (string.IsNullOrEmpty(preset.Description))
-                preset.Description = "<Missing description>";
+                preset.Description = ModManager.GetText("missingDescription");
 
             ListBox.ListItem itemOut;
             listBox.AddItem(preset.Title, out itemOut, position);
@@ -300,7 +300,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         private void AddPresetCreator()
         {
             ListBox.ListItem itemOut;
-            listBox.AddItem("<New Preset>", out itemOut);
+            listBox.AddItem(ModManager.GetText("newPreset"), out itemOut);
             itemOut.textLabel.TextScale = 0.6f;
             itemOut.textLabel.Font = DaggerfallUI.Instance.Font4;
             itemOut.textColor = Color.green;
@@ -334,7 +334,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             }
             else if (CreationModeSelected)
             {
-                descriptionLabel.Text = "Create a new presets from current values.";
+                descriptionLabel.Text = ModManager.GetText("newPresetInfo");
                 authorLabel.Text = string.Empty;
                 versionLabel.Text = string.Empty;
 
@@ -344,9 +344,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             {
                 Preset preset = SelectedPreset;
                 descriptionLabel.Text = preset.Description;
-                authorLabel.Text = !string.IsNullOrEmpty(preset.Author) ? string.Format("Author: {0}", preset.Author) : string.Empty;
+                authorLabel.Text = !string.IsNullOrEmpty(preset.Author) ? string.Format("{0}: {1}", ModManager.GetText("author"), preset.Author) : string.Empty;
                 versionLabel.Text = settings.IsCompatible(preset) ?
-                    string.Empty : string.Format("Version mismatch! ({0}/{1})", preset.SettingsVersion, settings.Version);
+                    string.Empty : string.Format("{0} ({1}/{2})", ModManager.GetText("versionMismatch"), preset.SettingsVersion, settings.Version);
 
                 if (deleteButton.Enabled = saveButton.Enabled = preset.IsLocal)
                 {

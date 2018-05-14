@@ -71,7 +71,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
 
         modsFound.HorizontalAlignment = HorizontalAlignment.Center;
         modsFound.Position = new Vector2(10, 20);
-        modsFound.Text = "Mods Found: ";
+        modsFound.Text = string.Format("{0}: ", ModManager.GetText("modsFound"));
         ModListPanel.Components.Add(modsFound);
 
         modList.BackgroundColor = new Color(0.1f, 0.1f, 0.1f, 0.5f);
@@ -102,11 +102,11 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
 
 
         backButton.Size = new Vector2(45, 12);
-        backButton.Label.Text = "< Options";
+        backButton.Label.Text = string.Format("< {0}", ModManager.GetText("backToOptions"));
         backButton.Label.ShadowPosition = Vector2.zero;
         backButton.Label.TextColor = Color.gray;
         backButton.ToolTip = defaultToolTip;
-        backButton.ToolTipText = "Back to options without saving changes";
+        backButton.ToolTipText = ModManager.GetText("backToOptionsInfo");
         backButton.VerticalAlignment = VerticalAlignment.Top;
         backButton.HorizontalAlignment = HorizontalAlignment.Left;
         backButton.OnMouseClick +=  BackButton_OnMouseClick;
@@ -116,7 +116,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         increaseLoadOrderButton.Position = new Vector2(62, 150);
         increaseLoadOrderButton.Outline.Enabled = true;
         increaseLoadOrderButton.BackgroundColor = textColor;
-        increaseLoadOrderButton.Label.Text = "Increase";
+        increaseLoadOrderButton.Label.Text = ModManager.GetText("increase");
         increaseLoadOrderButton.OnMouseClick += IncreaseLoadOrderButton_OnMouseClick;
         ModListPanel.Components.Add(increaseLoadOrderButton);
 
@@ -124,7 +124,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         decreaseLoadOrderButton.Position = new Vector2(21, 150);
         decreaseLoadOrderButton.Outline.Enabled = true;
         decreaseLoadOrderButton.BackgroundColor = textColor;
-        decreaseLoadOrderButton.Label.Text = "Lower";
+        decreaseLoadOrderButton.Label.Text = ModManager.GetText("lower");
         decreaseLoadOrderButton.OnMouseClick += DecreaseLoadOrderButton_OnMouseClick;
         ModListPanel.Components.Add(decreaseLoadOrderButton);
 
@@ -133,8 +133,8 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         enableAllButton.Outline.Enabled = true;
         enableAllButton.BackgroundColor = textColor;
         enableAllButton.VerticalAlignment = VerticalAlignment.Bottom;
-        enableAllButton.Label.Text = "ALL ON";
-        enableAllButton.ToolTipText = "Enable All Mods";
+        enableAllButton.Label.Text = ModManager.GetText("enableAll");
+        enableAllButton.ToolTipText = ModManager.GetText("enableAllInfo");
         enableAllButton.OnMouseClick += EnableAllButton_OnMouseClick;
         ModListPanel.Components.Add(enableAllButton);
 
@@ -143,8 +143,8 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         disableAllButton.Outline.Enabled = true;
         disableAllButton.BackgroundColor = textColor;
         disableAllButton.VerticalAlignment = VerticalAlignment.Bottom;
-        disableAllButton.Label.Text = "ALL OFF";
-        disableAllButton.ToolTipText = "Disable All Mods";
+        disableAllButton.Label.Text = ModManager.GetText("disableAll");
+        disableAllButton.ToolTipText = ModManager.GetText("disableAllInfo");
         disableAllButton.OnMouseClick += DisableAllButton_OnMouseClick;
         ModListPanel.Components.Add(disableAllButton);
 
@@ -156,11 +156,11 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         ModPanel.Size = new Vector2(200, 175);
         NativePanel.Components.Add(ModPanel);
 
-        modEnabledCheckBox.Label.Text = "Enabled";
+        modEnabledCheckBox.Label.Text = ModManager.GetText("enabled");
         modEnabledCheckBox.Label.TextColor = selectedTextColor;
         modEnabledCheckBox.CheckBoxColor = selectedTextColor;
         modEnabledCheckBox.ToolTip = defaultToolTip;
-        modEnabledCheckBox.ToolTipText = "Toggle Mod";
+        modEnabledCheckBox.ToolTipText = ModManager.GetText("enabledInfo");
         modEnabledCheckBox.IsChecked = true;
         modEnabledCheckBox.Position = new Vector2(1, 25);
         modEnabledCheckBox.OnToggleState += modEnabledCheckBox_OnToggleState;
@@ -196,7 +196,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         showModDescriptionButton.Size = new Vector2(75, 12);
         showModDescriptionButton.HorizontalAlignment = HorizontalAlignment.Center;
 
-        showModDescriptionButton.Label.Text = "Mod Description";
+        showModDescriptionButton.Label.Text = ModManager.GetText("modDescription");
         showModDescriptionButton.BackgroundColor = textColor;
         showModDescriptionButton.Outline.Enabled = true;
         showModDescriptionButton.OnMouseClick += ShowModDescriptionPopUp_OnMouseClick;
@@ -207,8 +207,8 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         refreshButton.Outline.Enabled = true;
         refreshButton.BackgroundColor = textColor;
         refreshButton.HorizontalAlignment = HorizontalAlignment.Center;
-        refreshButton.Label.Text = "Refresh";
-        refreshButton.Label.ToolTipText = "Check for changes in mod directory";
+        refreshButton.Label.Text = ModManager.GetText("refresh");
+        refreshButton.Label.ToolTipText = ModManager.GetText("RrefreshInfo");
         refreshButton.OnMouseClick += RefreshButton_OnMouseClick;
         ModPanel.Components.Add(refreshButton);
 
@@ -217,8 +217,8 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         saveAndCloseButton.BackgroundColor = textColor;
         saveAndCloseButton.VerticalAlignment = VerticalAlignment.Bottom;
         saveAndCloseButton.HorizontalAlignment = HorizontalAlignment.Center;
-        saveAndCloseButton.Label.Text = "Save and Close";
-        saveAndCloseButton.Label.ToolTipText = "Save changes and return to options menu";
+        saveAndCloseButton.Label.Text = ModManager.GetText("saveClose");
+        saveAndCloseButton.Label.ToolTipText = ModManager.GetText("saveCloseInfo");
         saveAndCloseButton.OnMouseClick += SaveAndCloseButton_OnMouseClick;
         ModPanel.Components.Add(saveAndCloseButton);
 
@@ -227,8 +227,8 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         extractFilesButton.Outline.Enabled = true;
         extractFilesButton.BackgroundColor = textColor;
         extractFilesButton.HorizontalAlignment = HorizontalAlignment.Center;
-        extractFilesButton.Label.Text = "Extract Text";
-        extractFilesButton.Label.ToolTipText = "Extract Text Assets";
+        extractFilesButton.Label.Text = ModManager.GetText("extractText");
+        extractFilesButton.Label.ToolTipText = ModManager.GetText("extractTextInfo");
         extractFilesButton.OnMouseClick += ExtractFilesButton_OnMouseClick;
         ModPanel.Components.Add(extractFilesButton);
 
@@ -237,8 +237,8 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         modSettingsButton.Outline.Enabled = true;
         modSettingsButton.BackgroundColor = textColor;
         modSettingsButton.HorizontalAlignment = HorizontalAlignment.Center;
-        modSettingsButton.Label.Text = "Settings";
-        modSettingsButton.Label.ToolTipText = "Change mod settings";
+        modSettingsButton.Label.Text = ModManager.GetText("settings");
+        modSettingsButton.Label.ToolTipText = ModManager.GetText("settingsInfo");
         modSettingsButton.OnMouseClick += ModSettingsButton_OnMouseClick;
         modSettingsButton.Enabled = false;
         ModPanel.Components.Add(modSettingsButton);
@@ -309,12 +309,12 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
 
     void UpdateModPanel()
     {
-        modLoadPriorityLabel.Text   = "Load Priority: ";
-        modTitleLabel.Text          = "Selected: ";
-        modVersionLabel.Text        = "Version: ";
-        modAuthorLabel.Text         = "Author: ";
-        modAuthorContactLabel.Text  = "Contact: ";
-        modDFTFUVersionLabel.Text   = "DFUnity Version: ";
+        modLoadPriorityLabel.Text   = string.Format("{0}: ", ModManager.GetText("modLoadPriority"));
+        modTitleLabel.Text          = string.Format("{0}: ", ModManager.GetText("modTitle"));
+        modVersionLabel.Text        = string.Format("{0}: ", ModManager.GetText("modVersion"));
+        modAuthorLabel.Text         = string.Format("{0}: ", ModManager.GetText("modAuthor"));
+        modAuthorContactLabel.Text  = string.Format("{0}: ", ModManager.GetText("modAuthorContact"));
+        modDFTFUVersionLabel.Text   = string.Format("{0}: ", ModManager.GetText("modDFTFUVersion"));
 
         if (modSettings.Length < 1 || currentSelection < 0)
         {

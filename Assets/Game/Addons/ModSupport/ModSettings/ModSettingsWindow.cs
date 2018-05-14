@@ -129,22 +129,22 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             mainPanel.Components.Add(titleLabel);
 
             // Reset button
-            Button resetButton = GetButton("Reset", HorizontalAlignment.Left, resetButtonColor);
+            Button resetButton = GetButton(ModManager.GetText("reset"), HorizontalAlignment.Left, resetButtonColor);
             resetButton.OnMouseClick += ResetButton_OnMouseClick;
 
             // Save button
-            Button saveButton = GetButton("Save", HorizontalAlignment.Center, saveButtonColor);
+            Button saveButton = GetButton(ModManager.GetText("save"), HorizontalAlignment.Center, saveButtonColor);
             saveButton.OnMouseClick += SaveButton_OnMouseClick;
 
             // Cancel button
-            Button cancelButton = GetButton("Cancel", HorizontalAlignment.Right, cancelButtonColor);
+            Button cancelButton = GetButton(ModManager.GetText("cancel"), HorizontalAlignment.Right, cancelButtonColor);
             cancelButton.OnMouseClick += CancelButton_OnMouseClick;
 
             // Presets button
             Button presetButton = new Button();
             presetButton.Size = new Vector2(35, 9);
             presetButton.Position = new Vector2(mainPanel.Size.x - 37, 2);
-            presetButton.Label.Text = "Presets";
+            presetButton.Label.Text = ModManager.GetText("presets");
             presetButton.Label.Font = DaggerfallUI.Instance.Font3;
             presetButton.Label.TextScale = 0.8f;
             presetButton.Label.TextColor = sectionTitleColor;
@@ -417,7 +417,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         {
             // Open confirmation message box
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
-            messageBox.SetText("Revert all settings to default values?");
+            messageBox.SetText(ModManager.GetText("resetConfirmation"));
             messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
             messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Cancel);
             messageBox.OnButtonClick += ConfirmReset_OnButtonClick;
