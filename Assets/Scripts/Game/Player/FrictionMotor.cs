@@ -81,7 +81,7 @@ namespace DaggerfallWorkshop.Game
                     sliding = true;
             }
         }
-        public void SlideMovement(ref Vector3 moveDirection)
+        private void SlideMovement(ref Vector3 moveDirection)
         {
             // If sliding (and it's allowed), or if we're on an object tagged "Slide", get a vector pointing down the slope we're on
             if ((sliding && slideWhenOverSlopeLimit) || (slideOnTaggedObjects && hit.collider.tag == "Slide"))
