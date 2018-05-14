@@ -2,7 +2,7 @@
 -- Total amount of classic DF quests (including broken): 249.
 --   Main quests and tutorials: 36 (supported by the engine itself and not listed here)
 --   Cure were/vamp: 2 (unsupported yet, not listed here)
--- The remaining 111 quests (including broken) and only them are listed here.
+-- The remaining 211 quests (including broken) and only them are listed here.
 --
 -- These classic quests are considered "mostly working" under quest system in current state
 -- Please use the Quest Hub forums for bug reports: http://forums.dfworkshop.net/viewforum.php?f=25
