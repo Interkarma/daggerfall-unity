@@ -17,16 +17,11 @@ namespace DaggerfallWorkshop.Game
     [RequireComponent(typeof(CharacterController))]
     public class PlayerMotor : MonoBehaviour
     {
-        public float standingHeight = 1.78f;
-        public float eyeHeight = 0.09f;         // Eye height is 9cm below top of capsule.
-        public float crouchingHeight = 0.45f;
-
         bool isCrouching = false;
-        //bool wasCrouching = false;
 
         // TODO: Placeholder integration of horse & cart riding - using same speed for cart to simplify PlayerMotor integration
         // and avoid adding any references to TransportManager.
-        public float ridingHeight = 2.6f;   // Height of a horse plus seated rider. (1.6m + 1m)
+
         bool isRiding = false;
         private bool riding = false;
 
