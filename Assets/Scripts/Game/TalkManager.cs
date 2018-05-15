@@ -2301,8 +2301,8 @@ namespace DaggerfallWorkshop.Game
                     {
                         Questing.Place place = (Questing.Place)questResourceInfo.Value.questResource;
                         // (fix bug reports http://forums.dfworkshop.net/viewtopic.php?f=24&t=996, http://forums.dfworkshop.net/viewtopic.php?f=24&t=997)
-                        // only build entries for place quest resources that are local and in same location
-                        if (place.Scope != Place.Scopes.Local || GameManager.Instance.PlayerGPS.CurrentLocation.MapTableData.MapId != place.SiteDetails.mapId)
+                        // only build entries for place quest resources that are in same location as pc
+                        if (GameManager.Instance.PlayerGPS.CurrentLocation.MapTableData.MapId != place.SiteDetails.mapId)
                             continue;
                         DFLocation.BuildingTypes buildingType = GameManager.Instance.TalkManager.GetBuildingTypeForBuildingKey(place.SiteDetails.buildingKey);
 
