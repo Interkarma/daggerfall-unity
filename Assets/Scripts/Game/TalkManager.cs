@@ -2245,7 +2245,10 @@ namespace DaggerfallWorkshop.Game
                         case QuestInfoResourceType.Location:
                             itemQuestTopic.questionType = QuestionType.QuestLocation;
                             Questing.Place place = (Questing.Place)questResourceInfo.Value.questResource;
-                            captionString = place.SiteDetails.buildingName;
+                            if (place.SiteDetails.buildingName != null)
+                                captionString = place.SiteDetails.buildingName;
+                            else
+                                captionString = place.SiteDetails.locationName;
                             break;
                         case QuestInfoResourceType.Person:
                             itemQuestTopic.questionType = QuestionType.QuestPerson;
