@@ -1732,24 +1732,23 @@ namespace DaggerfallWorkshop.Game
                     for (int i = 0; i < questResources.Length; i++)
                     {
                         Questing.Place place = (Questing.Place)(questResources[i]);
-                        int key = place.SiteDetails.buildingKey;
-                        string name = place.SiteDetails.buildingName;
+                        string key = place.Symbol.Name;
 
-                        if (key != buildingKey)
+                        if (place.SiteDetails.buildingKey != buildingKey)
                             continue;
 
-                        if (questInfo.resourceInfo.ContainsKey(name))
+                        if (questInfo.resourceInfo.ContainsKey(key))
                         {
-                            if (questInfo.resourceInfo[name].availableForDialog) 
+                            if (questInfo.resourceInfo[key].availableForDialog) 
                                 pcLearnedAboutExistence = true;
 
-                            if (questInfo.resourceInfo[name].questPlaceResourceHintTypeReceived >= QuestResourceInfo.BuildingLocationHintTypeGiven.ReceivedDirectionalHints)
+                            if (questInfo.resourceInfo[key].questPlaceResourceHintTypeReceived >= QuestResourceInfo.BuildingLocationHintTypeGiven.ReceivedDirectionalHints)
                                 receivedDirectionalHints = true;
 
-                            if (questInfo.resourceInfo[name].questPlaceResourceHintTypeReceived == QuestResourceInfo.BuildingLocationHintTypeGiven.LocationWasMarkedOnMap)
+                            if (questInfo.resourceInfo[key].questPlaceResourceHintTypeReceived == QuestResourceInfo.BuildingLocationHintTypeGiven.LocationWasMarkedOnMap)
                                 locationWasMarkedOnMapByNPC = true;
 
-                            overrideBuildingName = name;
+                            overrideBuildingName = place.SiteDetails.buildingName;
 
                             return true;
                         }
