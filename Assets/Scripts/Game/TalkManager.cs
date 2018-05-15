@@ -250,6 +250,7 @@ namespace DaggerfallWorkshop.Game
         {
             public ListItemType type = ListItemType.Item; // list item can be either a normal item, a navigation item (to get to parent list) or an item group (contains list of child items)
             public string caption = "undefined";
+            public string key = String.Empty;
             public QuestionType questionType = QuestionType.NoQuestion;
             public NPCKnowledgeAboutItem npcKnowledgeAboutItem = NPCKnowledgeAboutItem.NotSet;
             public int buildingKey = -1; // used for listitems that are buildings to identify buildings
@@ -861,10 +862,10 @@ namespace DaggerfallWorkshop.Game
 
             BuildingInfo buildingInfo = listBuildings.Find(x => x.buildingKey == currentKeySubjectBuildingKey);
 
-            if (dictQuestInfo.ContainsKey(currentQuestionListItem.questID) && dictQuestInfo[currentQuestionListItem.questID].resourceInfo.ContainsKey(currentKeySubject))
+            if (dictQuestInfo.ContainsKey(currentQuestionListItem.questID) && dictQuestInfo[currentQuestionListItem.questID].resourceInfo.ContainsKey(currentQuestionListItem.key))
             {
-                if (dictQuestInfo[currentQuestionListItem.questID].resourceInfo[currentKeySubject].questPlaceResourceHintTypeReceived != QuestResourceInfo.BuildingLocationHintTypeGiven.LocationWasMarkedOnMap)
-                    dictQuestInfo[currentQuestionListItem.questID].resourceInfo[currentKeySubject].questPlaceResourceHintTypeReceived = QuestResourceInfo.BuildingLocationHintTypeGiven.ReceivedDirectionalHints;
+                if (dictQuestInfo[currentQuestionListItem.questID].resourceInfo[currentQuestionListItem.key].questPlaceResourceHintTypeReceived != QuestResourceInfo.BuildingLocationHintTypeGiven.LocationWasMarkedOnMap)
+                    dictQuestInfo[currentQuestionListItem.questID].resourceInfo[currentQuestionListItem.key].questPlaceResourceHintTypeReceived = QuestResourceInfo.BuildingLocationHintTypeGiven.ReceivedDirectionalHints;
             }
 
             Vector2 vecDirectionToTarget = buildingInfo.position - playerPos;
@@ -876,8 +877,8 @@ namespace DaggerfallWorkshop.Game
             BuildingInfo buildingInfo = listBuildings.Find(x => x.buildingKey == currentKeySubjectBuildingKey);
             if (buildingInfo.buildingKey != 0)
             {
-                if (dictQuestInfo.ContainsKey(currentQuestionListItem.questID) && dictQuestInfo[currentQuestionListItem.questID].resourceInfo.ContainsKey(currentKeySubject))
-                    dictQuestInfo[currentQuestionListItem.questID].resourceInfo[currentKeySubject].questPlaceResourceHintTypeReceived = QuestResourceInfo.BuildingLocationHintTypeGiven.LocationWasMarkedOnMap;
+                if (dictQuestInfo.ContainsKey(currentQuestionListItem.questID) && dictQuestInfo[currentQuestionListItem.questID].resourceInfo.ContainsKey(currentQuestionListItem.key))
+                    dictQuestInfo[currentQuestionListItem.questID].resourceInfo[currentQuestionListItem.key].questPlaceResourceHintTypeReceived = QuestResourceInfo.BuildingLocationHintTypeGiven.LocationWasMarkedOnMap;
                 GameManager.Instance.PlayerGPS.DiscoverBuilding(buildingInfo.buildingKey);
             }
         }
@@ -890,6 +891,8 @@ namespace DaggerfallWorkshop.Game
             currentTalkTone = talkTone;
 
             currentKeySubject = listItem.caption; // set key to current caption for now (which is in case of buildings the building name)
+
+            currentQuestionListItem = listItem;
 
             switch (listItem.questionType)
             {
@@ -1136,8 +1139,13 @@ namespace DaggerfallWorkshop.Game
         {
             string answer;
 
-            string nameNPC = this.currentKeySubject; // currentQuestionListItem.caption;
-            int buildingKey = GameManager.Instance.TalkManager.GetBuildingKeyForPersonResource(currentQuestionListItem.questID, nameNPC);
+            string key = currentQuestionListItem.key;
+
+            // override key if it is explicitly set (by quest person resources, place resources)
+            if (currentQuestionListItem.key != String.Empty)
+                key = currentQuestionListItem.key;
+            
+            int buildingKey = GameManager.Instance.TalkManager.GetBuildingKeyForPersonResource(currentQuestionListItem.questID, key);
 
             string backupKeySubject = this.currentKeySubject; // backup current key subject
 
@@ -1158,9 +1166,9 @@ namespace DaggerfallWorkshop.Game
         {
             if (dictQuestInfo.ContainsKey(listItem.questID))
             {
-                if (dictQuestInfo[listItem.questID].resourceInfo.ContainsKey(listItem.caption))
+                if (dictQuestInfo[listItem.questID].resourceInfo.ContainsKey(listItem.key))
                 {
-                    List<TextFile.Token[]> answers = dictQuestInfo[listItem.questID].resourceInfo[listItem.caption].anyInfoAnswers;
+                    List<TextFile.Token[]> answers = dictQuestInfo[listItem.questID].resourceInfo[listItem.key].anyInfoAnswers;
                     return GetAnswerFromTokensArray(listItem.questID, answers);
                 }
             }
@@ -1171,16 +1179,16 @@ namespace DaggerfallWorkshop.Game
         {
             if (dictQuestInfo.ContainsKey(listItem.questID))
             {
-                if (dictQuestInfo[listItem.questID].resourceInfo.ContainsKey(listItem.caption))
+                if (dictQuestInfo[listItem.questID].resourceInfo.ContainsKey(listItem.key))
                 {
                     List<TextFile.Token[]> answers;
                     if (npcData.isSpyMaster) // spymaster only gives "true" answers (anyinfo messages) also for %hnt2
-                        answers = dictQuestInfo[listItem.questID].resourceInfo[listItem.caption].anyInfoAnswers;
+                        answers = dictQuestInfo[listItem.questID].resourceInfo[listItem.key].anyInfoAnswers;
                     else // everybody else gives rumors here for %hnt2
-                        answers = dictQuestInfo[listItem.questID].resourceInfo[listItem.caption].rumorsAnswers;
+                        answers = dictQuestInfo[listItem.questID].resourceInfo[listItem.key].rumorsAnswers;
 
                     if (answers.Count == 0) // if no rumors are available, fall back to anyInfoAnswers
-                        answers = dictQuestInfo[listItem.questID].resourceInfo[listItem.caption].anyInfoAnswers;
+                        answers = dictQuestInfo[listItem.questID].resourceInfo[listItem.key].anyInfoAnswers;
                     return GetAnswerFromTokensArray(listItem.questID, answers);
                 }
             }
@@ -1522,9 +1530,14 @@ namespace DaggerfallWorkshop.Game
 
             dictQuestInfo[questID] = questResources;
 
-            // undiscover residences when they are a quest resource (named residence) when creating quest resource
-            // otherwise previously discovered residences will automatically show up on the automap when used in a quest
-            UndiscoverQuestResidence(questID, resourceName, questResourceInfo);
+            /*
+            if (questResourceInfo.resourceType == QuestInfoResourceType.Location)
+            {
+                // undiscover residences when they are a quest resource (named residence) when creating quest resource
+                // otherwise previously discovered residences will automatically show up on the automap when used in a quest            
+                UndiscoverQuestResidence(questID, resourceName, questResourceInfo);
+            }
+            */
 
             // update topic lists
             rebuildTopicLists = true;
@@ -1623,10 +1636,6 @@ namespace DaggerfallWorkshop.Game
                 }
 
                 questResourceInfo.availableForDialog = true;
-
-                // undiscover residences when they are a quest resource (named residence) when "add dialog" is done for this quest resource
-                // otherwise previously discovered residences will automatically show up on the automap when used in a quest
-                UndiscoverQuestResidence(questID, resourceName, questResourceInfo);
             }
 
             // update topic lists
@@ -1784,12 +1793,13 @@ namespace DaggerfallWorkshop.Game
                 if (dictQuestInfo.ContainsKey(questID))
                 {
                     QuestResources questInfo = dictQuestInfo[questID]; // get questInfo containing orphaned list of quest resources
-
+                    
                     QuestResource[] questResources = quest.GetAllResources(typeof(Person)); // get list of person quest resources
                     for (int i=0; i < questResources.Length; i++)
                     {
                         Questing.Person person = (Questing.Person)(questResources[i]);
-                        string key = person.DisplayName;
+
+                        string key = person.Symbol.Name;
 
                         if (questInfo.resourceInfo.ContainsKey(key)) // if orphaned list of quest resources contains a matching entry
                         {
@@ -1801,18 +1811,28 @@ namespace DaggerfallWorkshop.Game
                     for (int i = 0; i < questResources.Length; i++)
                     {
                         Questing.Place place = (Questing.Place)(questResources[i]);
-                        
-                        string namePlace = place.SiteDetails.buildingName; // use building name as default
-                        if (namePlace == null) // no building?
-                            namePlace = place.SiteDetails.locationName; // use dungeon name
 
-                        string key = namePlace;
+                        string key = place.Symbol.Name;
 
                         if (questInfo.resourceInfo.ContainsKey(key)) // if orphaned list of quest resources contains a matching entry
                         {
                             questInfo.resourceInfo[key].questResource = place; // update (relink) it
                         }
                     }
+
+                    questResources = quest.GetAllResources(typeof(Item)); // get list of item quest resources                   
+                    for (int i = 0; i < questResources.Length; i++)
+                    {
+                        Questing.Item item = (Questing.Item)(questResources[i]);
+
+                        string key = item.Symbol.Name;
+
+                        if (questInfo.resourceInfo.ContainsKey(key)) // if orphaned list of quest resources contains a matching entry
+                        {
+                            questInfo.resourceInfo[key].questResource = item; // update (relink) it
+                        }
+                    }
+
                 }
             }
 
@@ -2166,13 +2186,13 @@ namespace DaggerfallWorkshop.Game
                 for (int i = 0; i < allQuestResources.Length; i++)
                 {
                     Questing.Place place = (Questing.Place)(allQuestResources[i]);
-                    int key = place.SiteDetails.buildingKey;
-                    string name = place.SiteDetails.buildingName;
+                    int buildingKey = place.SiteDetails.buildingKey;
+                    string name = place.Symbol.Name;
 
                     if (name != resourceName)
                         continue;
 
-                    GameManager.Instance.PlayerGPS.UndiscoverBuilding(key, true);
+                    GameManager.Instance.PlayerGPS.UndiscoverBuilding(buildingKey, true);
                 }
             }
         }
@@ -2210,26 +2230,36 @@ namespace DaggerfallWorkshop.Game
                 {
                     ListItem itemQuestTopic = new ListItem();
                     itemQuestTopic.type = ListItemType.Item;
+                    string captionString = String.Empty;
                     switch (questResourceInfo.Value.resourceType)
                     {
                         case QuestInfoResourceType.NotSet:
                         default:
                             itemQuestTopic.questionType = QuestionType.NoQuestion;
+                            
                             break;
                         case QuestInfoResourceType.Location:
                             itemQuestTopic.questionType = QuestionType.QuestLocation;
+                            Questing.Place place = (Questing.Place)questResourceInfo.Value.questResource;
+                            captionString = place.SiteDetails.buildingName;
                             break;
                         case QuestInfoResourceType.Person:
                             itemQuestTopic.questionType = QuestionType.QuestPerson;
+                            Questing.Person person = (Questing.Person)questResourceInfo.Value.questResource;
+                            captionString = person.DisplayName;
                             break;
                         case QuestInfoResourceType.Thing:
                             itemQuestTopic.questionType = QuestionType.QuestItem;
+                            Questing.Item item = (Questing.Item)questResourceInfo.Value.questResource;
+                            captionString = item.DaggerfallUnityItem.ItemName;
                             break;
                     }
                     ulong questID = questInfo.Key;
                     itemQuestTopic.questID = questID;
-                    string captionString = questResourceInfo.Key;
+                    
                     itemQuestTopic.caption = captionString;
+
+                    itemQuestTopic.key = questResourceInfo.Key;
 
                     if (questResourceInfo.Value.availableForDialog && questResourceInfo.Value.hasEntryInTellMeAbout) // only make it available for talk if it is not "hidden" by dialog link command
                         listTopicTellMeAbout.Add(itemQuestTopic);
@@ -2315,9 +2345,11 @@ namespace DaggerfallWorkshop.Game
                             ulong questID = questInfo.Key;
                             item.questID = questID;
 
-                            string captionString = questResourceInfo.Key;
+                            string captionString = place.SiteDetails.buildingName;
                             item.caption = captionString;
                             item.buildingKey = place.SiteDetails.buildingKey;
+
+                            item.key = questResourceInfo.Key;
 
                             if (questResourceInfo.Value.availableForDialog && questResourceInfo.Value.hasEntryInWhereIs)
                             {
@@ -2467,6 +2499,8 @@ namespace DaggerfallWorkshop.Game
                 {
                     if (questResourceInfo.Value.resourceType == QuestInfoResourceType.Person)
                     {
+                        Questing.Person person = (Questing.Person)questResourceInfo.Value.questResource;
+
                         ListItem item = new ListItem();
                         item.type = ListItemType.Item;
                         item.questionType = QuestionType.Person;
@@ -2474,14 +2508,14 @@ namespace DaggerfallWorkshop.Game
                         ulong questID = questInfo.Key;
                         item.questID = questID;
 
-                        string captionString = questResourceInfo.Key;
+                        string captionString = person.DisplayName;
                         item.caption = captionString;
+                        item.key = questResourceInfo.Key;
 
                         bool IsPlayerInSameLocationWorldCell = false;
                         bool dialogPartnerIsSamePersonAsPersonResource = false;
 
-                        // in case person is questor check if questor is in same mapID
-                        Questing.Person person = (Questing.Person)questResourceInfo.Value.questResource;
+                        // in case person is questor check if questor is in same mapID                        
                         if (person.IsQuestor == true)
                         {
                             if (person.QuestorData.mapID == GameManager.Instance.PlayerGPS.CurrentMapID)

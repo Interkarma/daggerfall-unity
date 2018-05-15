@@ -67,23 +67,18 @@ namespace DaggerfallWorkshop.Game.Questing
             // Get related Item resource
             Item item = ParentQuest.GetItem(itemSymbol);
 
-            string namePlace = "", namePerson = "", nameItem = "";
-
             // add dialog for resources
             if (place != null)
             {
-                namePlace = place.SiteDetails.locationName;
-                GameManager.Instance.TalkManager.AddDialogForQuestInfoResource(ParentQuest.UID, namePlace, TalkManager.QuestInfoResourceType.Location, false);
+                GameManager.Instance.TalkManager.AddDialogForQuestInfoResource(ParentQuest.UID, place.Symbol.Name, TalkManager.QuestInfoResourceType.Location, false);
             }
             if (person != null)
             {
-                namePerson = person.DisplayName;
-                GameManager.Instance.TalkManager.AddDialogForQuestInfoResource(ParentQuest.UID, namePerson, TalkManager.QuestInfoResourceType.Person, false);
+                GameManager.Instance.TalkManager.AddDialogForQuestInfoResource(ParentQuest.UID, person.Symbol.Name, TalkManager.QuestInfoResourceType.Person, false);
             }
             if (item != null)
             {
-                nameItem = item.DaggerfallUnityItem.ItemName;
-                GameManager.Instance.TalkManager.AddDialogForQuestInfoResource(ParentQuest.UID, nameItem, TalkManager.QuestInfoResourceType.Thing, false);
+                GameManager.Instance.TalkManager.AddDialogForQuestInfoResource(ParentQuest.UID, item.Symbol.Name, TalkManager.QuestInfoResourceType.Thing, false);
             }
 
             SetComplete();

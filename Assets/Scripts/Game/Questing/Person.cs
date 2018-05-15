@@ -558,8 +558,8 @@ namespace DaggerfallWorkshop.Game.Questing
                 }                
             }
 
-            GameManager.Instance.TalkManager.AddQuestTopicWithInfoAndRumors(this.ParentQuest.UID, this, this.displayName, TalkManager.QuestInfoResourceType.Person, anyInfoAnswers, anyRumorsAnswers);
-            //GameManager.Instance.TalkManager.AddPersonTopic(this.ParentQuest.UID, this);
+            string key = this.Symbol.Name; // this.Symbol.Name + "["+ this.displayName + "]";
+            GameManager.Instance.TalkManager.AddQuestTopicWithInfoAndRumors(this.ParentQuest.UID, this, key, TalkManager.QuestInfoResourceType.Person, anyInfoAnswers, anyRumorsAnswers);
         }
 
         Genders GetGender(string genderName)

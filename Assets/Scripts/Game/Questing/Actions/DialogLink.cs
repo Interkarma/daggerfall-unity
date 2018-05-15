@@ -72,21 +72,22 @@ namespace DaggerfallWorkshop.Game.Questing
             // first create dialog link for just the separated resources (which will hide them)
             if (place != null)
             {
+                /*
                 namePlace = place.SiteDetails.buildingName; // use building name as default
                 if (namePlace == null) // no building?
                     namePlace = place.SiteDetails.locationName; // use dungeon name
-
-                GameManager.Instance.TalkManager.DialogLinkForQuestInfoResource(ParentQuest.UID, namePlace, TalkManager.QuestInfoResourceType.Location);
+                */
+                GameManager.Instance.TalkManager.DialogLinkForQuestInfoResource(ParentQuest.UID, place.Symbol.Name, TalkManager.QuestInfoResourceType.Location);
             }
             if (person != null)
             {
                 namePerson = person.DisplayName;
-                GameManager.Instance.TalkManager.DialogLinkForQuestInfoResource(ParentQuest.UID, namePerson, TalkManager.QuestInfoResourceType.Person);
+                GameManager.Instance.TalkManager.DialogLinkForQuestInfoResource(ParentQuest.UID, person.Symbol.Name, TalkManager.QuestInfoResourceType.Person);
             }
             if (item != null)
             {
                 nameItem = item.DaggerfallUnityItem.ItemName;
-                GameManager.Instance.TalkManager.DialogLinkForQuestInfoResource(ParentQuest.UID, nameItem, TalkManager.QuestInfoResourceType.Thing);
+                GameManager.Instance.TalkManager.DialogLinkForQuestInfoResource(ParentQuest.UID, item.Symbol.Name, TalkManager.QuestInfoResourceType.Thing);
             }
 
             // then create dialog links between the resources
