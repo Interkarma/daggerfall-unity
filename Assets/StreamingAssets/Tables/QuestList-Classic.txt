@@ -1,3 +1,9 @@
+-- A quest is considered classic if it is included in vanilla Daggerfall or CompUSA Special Edition official add-on.
+-- Total amount of classic DF quests (including broken): 249.
+--   Main quests and tutorials: 36 (supported by the engine itself and not listed here)
+--   Cure were/vamp: 2 (unsupported yet, not listed here)
+-- The remaining 211 quests (including broken) and only them are listed here.
+--
 -- These classic quests are considered "mostly working" under quest system in current state
 -- Please use the Quest Hub forums for bug reports: http://forums.dfworkshop.net/viewforum.php?f=25
 
@@ -31,6 +37,7 @@ M0B20Y02, FightersGuild, M, 20, Passed
 M0B30Y03, FightersGuild, M, 30, Passed
 M0B30Y04, FightersGuild, M, 30, Passed
 M0B30Y08, FightersGuild, M, 30, Passed
+-M0B40Y04, FightersGuild, M, 40, BROKEN. QBN file is missing in DF+DFQFIX.
 M0B40Y05, FightersGuild, M, 40, Passed. Possible to break if one-shotting spriggan
 M0B50Y09, FightersGuild, M, 50, Passed
 M0B60Y10, FightersGuild, M, 60, Passed
@@ -157,7 +164,7 @@ A0C00Y00, Commoners, N, 0,
 A0C00Y07, Commoners, N, 0,
 A0C00Y08, Commoners, N, 0, Passed. questgiver name is incorrect (almost like a codename)
 A0C00Y10, Commoners, N, 0,
-A0C00Y11, Commoners, N, 0,
+-A0C00Y11, Commoners, N, 0, FAILED. The _healer_ does not respond. Need to handle 'clicked anNPC and at least anAmount gold otherwise do aTask'.
 A0C00Y12, Commoners, N, 0,
 A0C00Y14, Commoners, N, 0,
 A0C00Y15, Commoners, N, 0,
@@ -187,6 +194,19 @@ K0C01Y00, Merchants, N, 1,
 K0C01Y10, Merchants, N, 1,
 K0C0XY01, Merchants, N, 0X,
 K0C30Y03, Merchants, N, 30,
+
+-- Vampires
+-P0A01L00, Vampires, P, 1,
+-P0B00L01, Vampires, M, 0,
+-P0B00L03, Vampires, M, 0,
+-P0B00L04, Vampires, M, 0,
+-P0B00L06, Vampires, M, 0,
+-P0B01L02, Vampires, M, 1,
+-P0B10L07, Vampires, M, 10,
+-P0B10L08, Vampires, M, 10, In vanilla DF P0B10L08.QBN file is missing but P0B1XL08.QBN is used instead.
+-P0B10L10, Vampires, M, 10,
+-P0B1XL08, Vampires, M, 1X, BROKEN. QBN file is a counterpart of P0B10L08.QRC
+-P0B20L09, Vampires, M, 20,
 
 -- Nobility
 R0C10Y00, Nobility, N, 10,
@@ -219,3 +239,22 @@ R0C30Y25, Nobility, N, 30,
 -R0C40Y23, Nobility, N, 40, BROKEN. QRC file is missing in DF+DFQFIX
 R0C4XY23, Nobility, N, 4X,
 R0C60Y24, Nobility, N, 60,
+
+-- Daedra Princes
+-10C00Y00
+-20C00Y00
+-30C00Y00
+-40C00Y00
+-50C00Y00
+-60C00Y00
+-70C00Y00
+-80C00Y00, BROKEN. QRC file is missing in DF+DFQFIX. QBN is a dupe of 80C0XY00.
+-80C0XY00
+-90C00Y00
+-T0C00Y00
+-U0C00Y00
+-V0C00Y00
+-W0C00Y00
+-X0C00Y00
+-Y0C00Y00
+-Z0C00Y00
