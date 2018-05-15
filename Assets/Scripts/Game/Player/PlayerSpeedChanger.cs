@@ -33,7 +33,10 @@ namespace DaggerfallWorkshop.Game
         {
 
         }
-
+        /// <summary>
+        /// Get LiveSpeed adjusted for swimming, walking, crouching or riding
+        /// </summary>
+        /// <returns>Speed based on player.Stats.LiveSpeed</returns>
         public float GetBaseSpeed()
         {
             Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
@@ -49,7 +52,11 @@ namespace DaggerfallWorkshop.Game
                 baseSpeed = GetWalkSpeed(player);
             return baseSpeed;
         }
-
+        /// <summary>
+        /// Get LiveSpeed adjusted for walking
+        /// </summary>
+        /// <param name="player">the PlayerEntity to use</param>
+        /// <returns></returns>
         public float GetWalkSpeed(Entity.PlayerEntity player)
         {
             if (useWalkSpeedOverride == true)
@@ -57,7 +64,11 @@ namespace DaggerfallWorkshop.Game
             else
                 return (player.Stats.LiveSpeed + dfWalkBase) / classicToUnitySpeedUnitRatio;
         }
-
+        /// <summary>
+        /// Get LiveSpeed adjusted for running
+        /// </summary>
+        /// <param name="baseSpeed"></param>
+        /// <returns></returns>
         public float GetRunSpeed(float baseSpeed)
         {
             if (useRunSpeedOverride)
@@ -67,6 +78,11 @@ namespace DaggerfallWorkshop.Game
             return runSpeed;
         }
 
+        /// <summary>
+        /// Get LiveSpeed adjusted for swimming
+        /// </summary>
+        /// <param name="baseSpeed"></param>
+        /// <returns></returns>
         public float GetSwimSpeed(float baseSpeed)
         {
             Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
