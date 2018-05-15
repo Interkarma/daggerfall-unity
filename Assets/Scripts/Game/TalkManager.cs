@@ -1530,14 +1530,12 @@ namespace DaggerfallWorkshop.Game
 
             dictQuestInfo[questID] = questResources;
 
-            /*
             if (questResourceInfo.resourceType == QuestInfoResourceType.Location)
             {
                 // undiscover residences when they are a quest resource (named residence) when creating quest resource
                 // otherwise previously discovered residences will automatically show up on the automap when used in a quest            
                 UndiscoverQuestResidence(questID, resourceName, questResourceInfo);
             }
-            */
 
             // update topic lists
             rebuildTopicLists = true;
@@ -1636,6 +1634,13 @@ namespace DaggerfallWorkshop.Game
                 }
 
                 questResourceInfo.availableForDialog = true;
+
+                if (questResourceInfo.resourceType == QuestInfoResourceType.Location)
+                {
+                    // undiscover residences when they are a quest resource (named residence) when "add dialog" is done for this quest resource
+                    // otherwise previously discovered residences will automatically show up on the automap when used in a quest
+                    UndiscoverQuestResidence(questID, resourceName, questResourceInfo);
+                }
             }
 
             // update topic lists
