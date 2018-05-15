@@ -199,6 +199,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             allowedTargets = defaultTargetFlags;
             allowedElements = defaultElementFlags;
             selectedIcon = defaultSpellIcon;
+            editOrDeleteSlot = -1;
 
             for (int i = 0; i < maxEffectsPerSpell; i++)
             {
@@ -354,10 +355,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void ClearEffectSlot(int slot)
+        void ClearPendingDeleteEffectSlot()
         {
-            effectEntries[slot] = new EffectEntry();
-            UpdateSlotText(slot, string.Empty);
+            if (editOrDeleteSlot == -1)
+                return;
+
+            effectEntries[editOrDeleteSlot] = new EffectEntry();
+            UpdateSlotText(editOrDeleteSlot, string.Empty);
+            editOrDeleteSlot = -1;
             UpdateAllowedButtons();
         }
 
@@ -944,8 +949,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // Delete effect entry
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
-            ClearEffectSlot(editOrDeleteSlot);
-            editOrDeleteSlot = -1;
+            ClearPendingDeleteEffectSlot();
             UpdateSpellCosts();
         }
 

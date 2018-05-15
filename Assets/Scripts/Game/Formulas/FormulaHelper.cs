@@ -1288,8 +1288,15 @@ namespace DaggerfallWorkshop.Game.Formulas
                 //Debug.LogFormat("Magnitude: gold {0} spellpoints {1}", magnitudeGoldCost, magnitudeSpellPointCost);
             }
 
+            // If there are no active components (e.g. Teleport) then fudge some costs
+            // This gives the same casting cost outcome as classic and supplies a reasonable gold cost
+            // Note: Classic does not assign a gold cost when a zero-component effect is the only effect present, which seems like a bug
+            int fudgeGoldCost = 0;
+            if (activeComponents == 0)
+                GetEffectComponentCosts(out fudgeGoldCost, BaseEntityEffect.MakeEffectCosts(60, 100, 160), 1, 1, 1, skillValue);
+
             // Add gold costs together and calculate spellpoint cost from the result
-            goldCostOut = durationGoldCost + chanceGoldCost + magnitudeGoldCost;
+            goldCostOut = durationGoldCost + chanceGoldCost + magnitudeGoldCost + fudgeGoldCost;
             spellPointCostOut = goldCostOut * (110 - skillValue) / 400;
 
             //Debug.LogFormat("Costs: gold {0} spellpoints {1}", finalGoldCost, finalSpellPointCost);
