@@ -268,30 +268,9 @@ namespace DaggerfallWorkshop.Game
                     else
                         heightChanger.HeightAction = HeightChangeAction.DoCrouching;
                 }
-
             }
 
-            if (smoothFollower != null && controller != null)
-            {
-                float distanceMoved = Vector3.Distance(smoothFollowerPrevWorldPos, smoothFollower.position);        // Assuming the follower is a child of this motor transform we can get the distance travelled.
-                float maxPossibleDistanceByMotorVelocity = controller.velocity.magnitude * 2.0f * Time.deltaTime;   // Theoretically the max distance the motor can carry the player with a generous margin.
-                float speedThreshold = speedChanger.GetRunSpeed(speed) * Time.deltaTime;                                         // Without question any distance travelled less than the running speed is legal.
-
-                // NOTE: Maybe the min distance should also include the height different between crouching / standing.
-                if (distanceMoved > speedThreshold && distanceMoved > maxPossibleDistanceByMotorVelocity)
-                {
-                    smoothFollowerReset = true;
-                }
-
-                if (smoothFollowerReset)
-                {
-                    smoothFollowerPrevWorldPos = transform.position;
-                    smoothFollowerReset = false;
-                }
-
-                smoothFollower.position = Vector3.Lerp(smoothFollowerPrevWorldPos, transform.position, smoothFollowerLerpSpeed * Time.smoothDeltaTime);
-                smoothFollowerPrevWorldPos = smoothFollower.position;
-            }
+            UpdateSmoothFollower();
         }
 
         // Store point that we're in contact with for use in FixedUpdate if needed
@@ -362,6 +341,30 @@ namespace DaggerfallWorkshop.Game
 
         #region Private Methods
 
+        void UpdateSmoothFollower()
+        {
+            if (smoothFollower != null && controller != null)
+            {
+                float distanceMoved = Vector3.Distance(smoothFollowerPrevWorldPos, smoothFollower.position);        // Assuming the follower is a child of this motor transform we can get the distance travelled.
+                float maxPossibleDistanceByMotorVelocity = controller.velocity.magnitude * 2.0f * Time.deltaTime;   // Theoretically the max distance the motor can carry the player with a generous margin.
+                float speedThreshold = speedChanger.GetRunSpeed(speed) * Time.deltaTime;                                         // Without question any distance travelled less than the running speed is legal.
+
+                // NOTE: Maybe the min distance should also include the height different between crouching / standing.
+                if (distanceMoved > speedThreshold && distanceMoved > maxPossibleDistanceByMotorVelocity)
+                {
+                    smoothFollowerReset = true;
+                }
+
+                if (smoothFollowerReset)
+                {
+                    smoothFollowerPrevWorldPos = transform.position;
+                    smoothFollowerReset = false;
+                }
+
+                smoothFollower.position = Vector3.Lerp(smoothFollowerPrevWorldPos, transform.position, smoothFollowerLerpSpeed * Time.smoothDeltaTime);
+                smoothFollowerPrevWorldPos = smoothFollower.position;
+            }
+        }
         void ResetPlayerState()
         {
             // Cancel levitation at start of loading a new save game
