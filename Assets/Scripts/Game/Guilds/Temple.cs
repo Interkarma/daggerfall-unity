@@ -284,6 +284,11 @@ namespace DaggerfallWorkshop.Game.Guilds
             return trainingSkills[deity];
         }
 
+        public static string GetDeityDesc(Divines deity)
+        {
+            return templeData[deity].deityDesc;
+        }
+
         #endregion
 
         #region Temple Deity
@@ -552,7 +557,7 @@ namespace DaggerfallWorkshop.Game.Guilds
             }
             public override string GodDesc()
             {
-                return templeData[parent.deity].deityDesc;
+                return GetDeityDesc(parent.deity);
             }
         }
 
