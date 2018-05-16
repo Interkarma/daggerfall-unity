@@ -2557,11 +2557,15 @@ namespace DaggerfallWorkshop.Game
                             }
                         }
 
-                        if (!dialogPartnerIsSamePersonAsPersonResource && // only make it available for talk if dialog partner is not the same person as the person resource talked about
-                            questResourceInfo.Value.availableForDialog && // only make it available for talk if it is not "hidden" by dialog link command
-                            questResourceInfo.Value.hasEntryInWhereIs &&
-                            IsPlayerInSameLocationWorldCell) // only make it available for talk if person resource is in same world map location as player
+                        // only make it available for talk if...
+                        if (!dialogPartnerIsSamePersonAsPersonResource &&   // dialog partner is not the same person as the person resource talked about
+                            questResourceInfo.Value.availableForDialog &&   // it is not "hidden" by dialog link command
+                            questResourceInfo.Value.hasEntryInWhereIs &&    // it is meant to have an entry in the where is section (currently this is always true, TODO: check if we can get rid of this)
+                            !person.IsHidden &&                             // if person resource is not hidden
+                            IsPlayerInSameLocationWorldCell)                // if person resource is in same world map location as player
+                        {
                             listTopicPerson.Add(item);
+                        }
                     }
 
                 }
