@@ -29,7 +29,7 @@ namespace DaggerfallWorkshop.Game.Guilds
         protected const int PromotionSpymasterId = 6614;
         protected const int BribesJudgeId = 551;
 
-        private const int factionId = 108;
+        private const int factionId = (int) FactionFile.FactionIDs.The_Dark_Brotherhood;
 
         private DFLocation revealedDungeon;
 
@@ -145,12 +145,6 @@ namespace DaggerfallWorkshop.Game.Guilds
         #endregion
 
         #region Benefits
-
-        // TESTING ONLY - REMOVE!
-        public override bool CanRest()
-        {
-            return IsMember();
-        }
 
         public override bool HallAccessAnytime()
         {

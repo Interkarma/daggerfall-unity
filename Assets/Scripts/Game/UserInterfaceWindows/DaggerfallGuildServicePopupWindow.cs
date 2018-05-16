@@ -701,6 +701,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 return Temple.GetDivine(parent.buildingFactionId).ToString();
             }
+
+            public override string GodDesc()
+            {
+                return Temple.GetDeityDesc((Temple.Divines) parent.buildingFactionId);
+            }
         }
 
         #endregion

@@ -284,6 +284,11 @@ namespace DaggerfallWorkshop.Game.Guilds
             return trainingSkills[deity];
         }
 
+        public static string GetDeityDesc(Divines deity)
+        {
+            return templeData[deity].deityDesc;
+        }
+
         #endregion
 
         #region Temple Deity
@@ -394,12 +399,6 @@ namespace DaggerfallWorkshop.Game.Guilds
         #endregion
 
         #region Benefits
-
-        // TESTING ONLY - REMOVE!
-        public override bool CanRest()
-        {
-            return IsMember();
-        }
 
         public override bool FreeHealing()
         {
@@ -558,7 +557,7 @@ namespace DaggerfallWorkshop.Game.Guilds
             }
             public override string GodDesc()
             {
-                return templeData[parent.deity].deityDesc;
+                return GetDeityDesc(parent.deity);
             }
         }
 
