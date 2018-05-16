@@ -29,10 +29,6 @@ namespace DaggerfallWorkshop.Game
         // If true, diagonal speed (when strafing + moving forward or back) can't exceed normal move speed; otherwise it's about 1.4 times faster
         public bool limitDiagonalSpeed = true;
 
-        // If checked, the run key toggles between running and walking. Otherwise player runs if the key is held down and walks otherwise
-        // There must be a button set up in the Input Manager called "Run"
-        public bool toggleRun = false;
-
         public float systemTimerUpdatesPerSecond = .055f; // Number of updates per second by the system timer at memory location 0x46C.
                                                           // Used for timing various things in classic.
 
@@ -218,34 +214,10 @@ namespace DaggerfallWorkshop.Game
 
                 acrobatMotor.CheckFallingDamage();
 
-                // Get walking/crouching/riding speed
-                speed = speedChanger.GetBaseSpeed();
-
-                if (!riding)
-                {
-                    try
-                    {
-                        // If running isn't on a toggle, then use the appropriate speed depending on whether the run button is down
-                        if (!toggleRun && InputManager.Instance.HasAction(InputManager.Actions.Run))
-                            speed = speedChanger.GetRunSpeed(speed);
-                    }
-                    catch
-                    {
-                        speed = speedChanger.GetRunSpeed(speed);
-                    }
-                }
-
-                // Handle sneak key. Reduces movement speed to half, then subtracts 1 in classic speed units
-                if (InputManager.Instance.HasAction(InputManager.Actions.Sneak))
-                {
-                    speed /= 2;
-                    speed -= (1 / PlayerSpeedChanger.classicToUnitySpeedUnitRatio);
-                }
-
                 // checks if sliding and applies movement to moveDirection if true
                 frictionMotor.MoveIfSliding(ref moveDirection);
 
-                acrobatMotor.DoJump(ref moveDirection);
+                acrobatMotor.HandleJumpInput(ref moveDirection);
             }
             else
             {
@@ -273,6 +245,9 @@ namespace DaggerfallWorkshop.Game
             if (levitateMotor && levitateMotor.IsLevitating)
                 return;
 
+            speed = speedChanger.GetBaseSpeed();
+            speedChanger.HandleInputSpeedAdjustment(ref speed);
+
             if (isRiding && !riding)
             {
                 heightChanger.HeightAction = HeightChangeAction.DoMounting;
@@ -285,20 +260,6 @@ namespace DaggerfallWorkshop.Game
             }
             else if (!isRiding)
             {
-                try
-                {
-                    // If the run button is set to toggle, then switch between walk/run speed. (We use Update for this...
-                    // FixedUpdate is a poor place to use GetButtonDown, since it doesn't necessarily run every frame and can miss the event)
-                    if (toggleRun && grounded && InputManager.Instance.HasAction(InputManager.Actions.Run))
-                        speed = (speed == speedChanger.GetBaseSpeed() ? speedChanger.GetRunSpeed(speed) : speedChanger.GetBaseSpeed());
-                    //if (toggleRun && grounded && Input.GetButtonDown("Run"))
-                    //    speed = (speed == walkSpeed ? runSpeed : walkSpeed);
-                }
-                catch
-                {
-                    speed = speedChanger.GetRunSpeed(speed);
-                }
-
                 // Toggle crouching
                 if (InputManager.Instance.ActionComplete(InputManager.Actions.Crouch))
                 {
