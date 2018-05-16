@@ -803,7 +803,7 @@ namespace DaggerfallWorkshop.Utility
                             continue;
 
                         // Skip resources already injected into scene
-                        if (resource.IsPlaced)
+                        if (IsAlreadyInjected(resource))
                             continue;
 
                         // Inject to scene based on resource type
@@ -834,7 +834,7 @@ namespace DaggerfallWorkshop.Utility
                                 continue;
 
                             // Skip resources already injected into scene
-                            if (resource.IsPlaced)
+                            if (IsAlreadyInjected(resource))
                                 continue;
 
                             // Inject into scene
@@ -844,6 +844,27 @@ namespace DaggerfallWorkshop.Utility
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Tests if a resource has already been assigned to a QuestResourceBehaviour in scene.
+        /// Slightly expensive but only runs once at layout time or when "place thing" is called.
+        /// </summary>
+        /// <param name="resource">QuestResource to check if already in scene.</param>
+        /// <returns>True if QuestResource already assigned to a QuestResourceBehaviour in scene.</returns>
+        static bool IsAlreadyInjected(QuestResource resource)
+        {
+            QuestResourceBehaviour[] resourceBehaviours = Resources.FindObjectsOfTypeAll<QuestResourceBehaviour>();
+            if (resourceBehaviours == null || resourceBehaviours.Length == 0)
+                return false;
+
+            foreach(QuestResourceBehaviour resourceBehaviour in resourceBehaviours)
+            {
+                if (resourceBehaviour.TargetResource == resource)
+                    return true;
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -896,9 +917,6 @@ namespace DaggerfallWorkshop.Utility
 
             // Set tag
             go.tag = QuestMachine.questPersonTag;
-
-            // Flag resource as placed for this session
-            person.IsPlaced = true;
         }
 
         /// <summary>
@@ -937,9 +955,6 @@ namespace DaggerfallWorkshop.Utility
             //  * This should be rearmed at the beginning of each wave
             //  * Only first wounding of a wave will trigger "injured aFoe" until rearmed on next wave
             foe.RearmInjured();
-
-            // Flag resource as placed for this session
-            foe.IsPlaced = true;
         }
 
         /// <summary>
@@ -989,9 +1004,6 @@ namespace DaggerfallWorkshop.Utility
             // Assign a trigger collider for clicks
             SphereCollider collider = go.AddComponent<SphereCollider>();
             collider.isTrigger = true;
-
-            // Flag resource as placed for this session
-            item.IsPlaced = true;
         }
 
         /// <summary>
