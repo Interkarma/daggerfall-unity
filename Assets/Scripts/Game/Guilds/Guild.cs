@@ -34,9 +34,9 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Static Data
 
-        protected static int[] rankReqReputation = new int[] {  0, 10, 20, 30, 40, 50, 60, 70, 80, 90 };
-        protected static int[] rankReqSkillHigh = new int[]  { 22, 23, 31, 39, 47, 55, 63, 71, 79, 87 };
-        protected static int[] rankReqSkillLow = new int[]   {  4,  5,  9, 13, 17, 21, 25, 29, 33, 37 };
+        public static int[] rankReqReputation = new int[] {  0, 10, 20, 30, 40, 50, 60, 70, 80, 90 };
+        public static int[] rankReqSkillHigh = new int[]  { 22, 23, 31, 39, 47, 55, 63, 71, 79, 87 };
+        public static int[] rankReqSkillLow = new int[]   {  4,  5,  9, 13, 17, 21, 25, 29, 33, 37 };
 
         #endregion
 
@@ -56,7 +56,7 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         protected int lastRankChange = 0;
 
-        public int Rank { get { return rank; } }
+        public int Rank { get { return rank; } set { rank = value; } }
 
         public virtual TextFile.Token[] UpdateRank(PlayerEntity playerEntity)
         {

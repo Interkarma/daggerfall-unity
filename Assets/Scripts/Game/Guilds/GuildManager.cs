@@ -13,6 +13,9 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Questing;
+using Wenzil.Console;
+using Wenzil.Console.Commands;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.Guilds
 {
@@ -41,6 +44,9 @@ namespace DaggerfallWorkshop.Game.Guilds
         {
             // Listen for quest end events which trigger joining TG & DB.
             QuestMachine.OnQuestEnded += QuestMachine_OnQuestEnded;
+
+            // Register console commands
+            GuildConsoleCommands.RegisterCommands();
         }
 
         public void QuestMachine_OnQuestEnded(Quest quest)
@@ -296,4 +302,128 @@ namespace DaggerfallWorkshop.Game.Guilds
         #endregion
 
     }
+
+    #region Guild Console Commands
+
+    public static class GuildConsoleCommands
+    {
+        public static void RegisterCommands()
+        {
+            try {
+                ConsoleCommandsDatabase.RegisterCommand(GuildJoin.name, GuildJoin.description, GuildJoin.usage, GuildJoin.Execute);
+                ConsoleCommandsDatabase.RegisterCommand(GuildRank.name, GuildRank.description, GuildRank.usage, GuildRank.Execute);
+            }
+            catch (Exception e) {
+                DaggerfallUnity.LogMessage(string.Format("Error registering GuildManager console commands: {0}", e.Message), true);
+            }
+        }
+
+        private static class GuildJoin
+        {
+            public static readonly string name = "guildjoin";
+            public static readonly string description = "Join a guild";
+            public static readonly string usage = "guildjoin guildGroupName [factionId]";
+
+            public static string Execute(params string[] args)
+            {
+                if (args.Length == 0)
+                {
+                    return HelpCommand.Execute(name);
+                }
+                else
+                {
+                    GuildManager guildManager = GameManager.Instance.GuildManager;
+
+                    // Is the group a guild group?
+                    if (Enum.IsDefined(typeof(FactionFile.GuildGroups), args[0]))
+                    {
+                        FactionFile.GuildGroups guildGroup = (FactionFile.GuildGroups)Enum.Parse(typeof(FactionFile.GuildGroups), args[0]);
+
+                        if (guildManager.HasJoined(guildGroup))
+                        {
+                            return "Already a member.";
+                        }
+                        else if (guildGroup == FactionFile.GuildGroups.HolyOrder || guildGroup == FactionFile.GuildGroups.KnightlyOrder)
+                        {
+                            if (args.Length > 1)
+                            {
+                                int factionId = int.Parse(args[1]);
+                                Guild guild = guildManager.JoinGuild(guildGroup, factionId);
+                                guildManager.AddMembership(guildGroup, guild);
+                                return "Guild joined.";
+                            }
+                            else
+                            {
+                                return "Need a faction id for temples & knightly orders.";
+                            }
+                        }
+                        else
+                        {
+                            Guild guild = guildManager.JoinGuild(guildGroup);
+                            guildManager.AddMembership(guildGroup, guild);
+                            return "Guild " + guildGroup.ToString() + " joined.";
+                        }
+                    }
+                    else
+                    {
+                        return "Not a recognised guild group, see FactionFile.GuildGroups enum.";
+                    }
+                }
+            }
+        }
+
+        private static class GuildRank
+        {
+            public static readonly string name = "guildrank";
+            public static readonly string description = "Set rank in a guild that you are a member of";
+            public static readonly string usage = "guildrank guildGroupName rank";
+
+            public static string Execute(params string[] args)
+            {
+                if (args.Length != 2)
+                {
+                    return HelpCommand.Execute(name);
+                }
+                else
+                {
+                    GuildManager guildManager = GameManager.Instance.GuildManager;
+                    PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+
+                    // Is the group a guild group?
+                    if (Enum.IsDefined(typeof(FactionFile.GuildGroups), args[0]))
+                    {
+                        FactionFile.GuildGroups guildGroup = (FactionFile.GuildGroups)Enum.Parse(typeof(FactionFile.GuildGroups), args[0]);
+
+                        if (guildManager.HasJoined(guildGroup))
+                        {
+                            int newRank = int.Parse(args[1]);
+                            if (newRank > 0 && newRank < 10)
+                            {
+                                Guild guild = guildManager.GetGuild(guildGroup);
+                                int rep = guild.GetReputation(playerEntity);
+                                int newRep = Guild.rankReqReputation[newRank];
+                                playerEntity.FactionData.ChangeReputation(guild.GetFactionId(), newRep - rep, true);
+                                guild.Rank = newRank;
+                                return "Rank & reputation updated.";
+                            }
+                            else
+                            {
+                                return "Rank must be between 1 and 9.";
+                            }
+                        }
+                        else
+                        {
+                            return "Not a member of that guild.";
+                        }
+                    }
+                    else
+                    {
+                        return "Not a recognised guild group, see FactionFile.GuildGroups enum.";
+                    }
+                }
+            }
+        }
+    }
+
+    #endregion
 }
