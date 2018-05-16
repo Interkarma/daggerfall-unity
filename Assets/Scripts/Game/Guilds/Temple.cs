@@ -395,12 +395,6 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Benefits
 
-        // TESTING ONLY - REMOVE!
-        public override bool CanRest()
-        {
-            return IsMember();
-        }
-
         public override bool FreeHealing()
         {
             return (templeData[deity].healing <= rank);

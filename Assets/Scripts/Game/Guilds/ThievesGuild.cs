@@ -29,7 +29,7 @@ namespace DaggerfallWorkshop.Game.Guilds
         protected const int PromotionMap2Id = 5229;
         protected const int BribesJudgeId = 550;
 
-        private const int factionId = 42;
+        private const int factionId = (int) FactionFile.FactionIDs.The_Thieves_Guild;
 
         private DFLocation revealedDungeon;
 
@@ -134,12 +134,6 @@ namespace DaggerfallWorkshop.Game.Guilds
         #endregion
 
         #region Benefits
-
-        // TESTING ONLY - REMOVE!
-        public override bool CanRest()
-        {
-            return IsMember();
-        }
 
         public override bool HallAccessAnytime()
         {

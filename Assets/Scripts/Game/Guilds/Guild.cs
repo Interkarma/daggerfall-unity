@@ -63,7 +63,7 @@ namespace DaggerfallWorkshop.Game.Guilds
             TextFile.Token[] tokens = null;
 
             // Have 28 days passed?
-            if (CalculateDaySinceZero(DaggerfallUnity.Instance.WorldTime.Now) >= lastRankChange + 1) //28)
+            if (CalculateDaySinceZero(DaggerfallUnity.Instance.WorldTime.Now) >= lastRankChange + 28)
             {
                 // Does player qualify for promotion / demotion?
                 int newRank = CalculateNewRank(playerEntity);

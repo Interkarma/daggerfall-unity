@@ -23,7 +23,7 @@ namespace DaggerfallWorkshop.Game.Guilds
         protected const int WelcomeMsgId = 684;
         protected const int PromotionMsgId = 686;
 
-        private const int factionId = 41;
+        private const int factionId = (int) FactionFile.FactionIDs.The_Fighters_Guild;
 
         #endregion
 

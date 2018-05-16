@@ -28,7 +28,7 @@ namespace DaggerfallWorkshop.Game.Guilds
         protected const int PromotionSummonId = 5233;
         protected const int PromotionTeleportId = 5233;
 
-        private const int factionId = 40;
+        private const int factionId = (int) FactionFile.FactionIDs.The_Mages_Guild;
 
         #endregion
 
@@ -108,12 +108,6 @@ namespace DaggerfallWorkshop.Game.Guilds
         #endregion
 
         #region Benefits
-
-        // TESTING ONLY - REMOVE!
-        public override bool CanRest()
-        {
-            return IsMember();
-        }
 
         public override bool HallAccessAnytime()
         {
