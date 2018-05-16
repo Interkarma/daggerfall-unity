@@ -39,6 +39,10 @@ namespace DaggerfallWorkshop.Game
 
         }
 
+        /// <summary>
+        /// Determines how speed should be changed based on player's input
+        /// </summary>
+        /// <param name="speed"></param>
         public void HandleInputSpeedAdjustment(ref float speed)
         {
             if (!playerMotor.IsRiding && playerMotor.IsGrounded)

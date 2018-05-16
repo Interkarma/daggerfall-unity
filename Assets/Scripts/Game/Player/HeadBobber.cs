@@ -5,6 +5,9 @@ using DaggerfallConnect;
 
 namespace DaggerfallWorkshop.Game
 {
+    /// <summary>
+    /// Defines the Head-bobbing pattern used by HeadBobber
+    /// </summary>
     public enum BobbingStyle
     {
         Crouching,
@@ -25,15 +28,17 @@ namespace DaggerfallWorkshop.Game
         private PlayerMotor playerMotor;
         private Camera mainCamera;
 
-        public Vector3 restPos; //local position where your camera would rest when it's not bobbing.
-        
-        public float transitionSpeed = 20f; //smooths out the transition from moving to not moving.
-        public float bobSpeed; //how quickly the player's head bobs.
-        public float bobXAmount; //how dramatic the bob is in side motion.
-        public float bobYAmount; //how dramatic the bob is in up/down motion.
-        public float nodXAmount; // for the nodding motion
-        public float nodYAmount; 
-        public float bobScalar; // user controlled multiplier for strength of bob
+        private Vector3 restPos; //local position where your camera would rest when it's not bobbing.
+        public Vector3 RestPos
+        { get { return restPos; } set { restPos = value; } }
+
+        private float transitionSpeed = 20f; //smooths out the transition from moving to not moving.
+        private float bobSpeed; //how quickly the player's head bobs.
+        private float bobXAmount; //how dramatic the bob is in side motion.
+        private float bobYAmount; //how dramatic the bob is in up/down motion.
+        private float nodXAmount; // for the nodding motion
+        private float nodYAmount; 
+        private const float bobScalar = 1.0f; // user controlled multiplier for strength of bob
 
         float landingTimerDown;
         float landingTimerUp;
@@ -52,7 +57,6 @@ namespace DaggerfallWorkshop.Game
             mainCamera = GameManager.Instance.MainCamera;
             restPos = mainCamera.transform.localPosition;
             
-            bobScalar = 1.0f;
             bobSpeed = GetComponent<PlayerFootsteps>().WalkStepInterval / 2.0f; // 1.20f;
             bIsStopping = false;
         }
@@ -74,7 +78,7 @@ namespace DaggerfallWorkshop.Game
             mainCamera.transform.Rotate(newCameraRotation);
         }
 
-        protected virtual void GetBobbingStyle()
+        protected void GetBobbingStyle()
         {
             if (playerMotor.IsRunning)
                 bobStyle = BobbingStyle.Running;
@@ -86,7 +90,7 @@ namespace DaggerfallWorkshop.Game
                 bobStyle = BobbingStyle.Walking;
 
         }
-        protected virtual void SetParamsForBobbingStyle()
+        protected void SetParamsForBobbingStyle()
         {
             
             switch (bobStyle)
@@ -126,7 +130,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        protected virtual void getNewPos(ref Vector3 newPosition, ref Vector3 newRotation)
+        protected void getNewPos(ref Vector3 newPosition, ref Vector3 newRotation)
         { 
             float velocity = new Vector2(playerMotor.MoveDirection.x, playerMotor.MoveDirection.z).magnitude;
             float timeIncrement = velocity * bobSpeed * Time.deltaTime;
@@ -176,10 +180,10 @@ namespace DaggerfallWorkshop.Game
                 timer = 0;
             }
 
-            applyBounceAmount(ref newPosition);
+            applyLandingBounce(ref newPosition);
         }
 
-        protected void applyBounceAmount(ref Vector3 newPosition)
+        protected void applyLandingBounce(ref Vector3 newPosition)
         {
             if (!playerMotor.IsGrounded)
             {
@@ -217,7 +221,7 @@ namespace DaggerfallWorkshop.Game
             return newViewPositon;
         }
 
-        protected virtual Vector3 PlotPath()
+        protected Vector3 PlotPath()
         {
             return new Vector3(Mathf.Cos(timer) * bobXAmount, restPos.y + Mathf.Abs((Mathf.Sin(timer) * bobYAmount)), restPos.z); //abs val of y for a parabolic path
         }

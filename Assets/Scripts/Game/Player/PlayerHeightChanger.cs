@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace DaggerfallWorkshop.Game
 {
+    /// <summary>
+    /// Tells HeightChanger.Update() which method to call to change controller height and camera position
+    /// </summary>
     public enum HeightChangeAction
     {
         DoNothing,
@@ -59,6 +62,9 @@ namespace DaggerfallWorkshop.Game
             camRideLevel = camStandLevel + rideChangeDistance ;
         }
 
+        /// <summary>
+        /// Determines what Height-changing action should be taken based on player's input and PlayerMotor.IsRiding
+        /// </summary>
         public void HandlePlayerInput()
         {
             if (playerMotor.IsRiding && !toggleRiding)
@@ -102,7 +108,7 @@ namespace DaggerfallWorkshop.Game
             
         }
 
-        private void DoCrouch() // first lower camera, height last 
+        private void DoCrouch() // first lower camera, Controller height last 
         {
             heightTimer += Time.deltaTime;
             float t = Mathf.Clamp((heightTimer / timerMax), 0, 1);
@@ -118,7 +124,6 @@ namespace DaggerfallWorkshop.Game
                 heightAction = HeightChangeAction.DoNothing;
             }
         }
-
         private void DoStand() // adjust height first, camera last
         {
             if (controller.height == crouchHeight)
@@ -174,7 +179,7 @@ namespace DaggerfallWorkshop.Game
         private void UpdateCameraPosition(float yPosMod)
         {
             Vector3 camPos = mainCamera.transform.localPosition;
-            headBobber.restPos.y = yPosMod;  // not sure if neccessary.
+            headBobber.RestPos = new Vector3(headBobber.RestPos.x, yPosMod);
             mainCamera.transform.localPosition = new Vector3(camPos.x, yPosMod, camPos.z);
         }
 
@@ -209,6 +214,10 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        /// <summary>
+        /// Does the player have enough room to stand from crouching position?
+        /// </summary>
+        /// <returns>returns true if enough room</returns>
         private bool CanStand()
         { 
             float distance = crouchChangeDistance;
