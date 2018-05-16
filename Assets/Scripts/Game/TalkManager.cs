@@ -2217,6 +2217,7 @@ namespace DaggerfallWorkshop.Game
             AssembleTopicListLocation();
             AssembleTopicListPerson();
             AssembleTopicListThing();
+            DaggerfallUI.Instance.TalkWindow.UpdateListBoxTopic();
         }
 
         private void AssembleTopiclistTellMeAbout()

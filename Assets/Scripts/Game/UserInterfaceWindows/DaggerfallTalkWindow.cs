@@ -289,8 +289,26 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public override void Update()
         {
             base.Update();
+        }
 
-            UpdateLabels();
+        public void UpdateListBoxTopic()
+        {
+            if (listboxTopic != null)
+            {
+                if (selectedTalkOption == TalkOption.TellMeAbout)
+                {
+                    SetListboxTopics(ref listboxTopic, TalkManager.Instance.ListTopicTellMeAbout);
+                }
+                else if (selectedTalkOption == TalkOption.WhereIs)
+                {
+                    if (selectedTalkCategory == TalkCategory.Location)
+                        SetListboxTopics(ref listboxTopic, TalkManager.Instance.ListTopicLocation);
+                    else if (selectedTalkCategory == TalkCategory.People)
+                        SetListboxTopics(ref listboxTopic, TalkManager.Instance.ListTopicPerson);
+                    else if (selectedTalkCategory == TalkCategory.Things)
+                        SetListboxTopics(ref listboxTopic, TalkManager.Instance.ListTopicThings);
+                }
+            }
         }
 
         public void SetNPCPortrait(FacePortraitArchive facePortraitArchive, int recordId)
@@ -561,8 +579,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             UpdateScrollBarConversation();
             UpdateScrollButtonsConversation();
 
-            UpdateLabels();
-
             isSetup = true;
         }
 
@@ -808,11 +824,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             //lengthOfLongestItemInListBox = 0;
             widthOfLongestItemInListBox = 0;
             listboxTopic.MaxHorizontalScrollIndex = 0;
-        }
-
-        void UpdateLabels()
-        {
-
         }
 
         void UpdateCheckboxes()
