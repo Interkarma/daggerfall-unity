@@ -40,6 +40,7 @@ namespace DaggerfallWorkshop.Game
         private float camStandLevel;
         private float camRideLevel;
         private float heightTimer;
+        private bool toggleRiding;
         private const float timerMax = 0.1f;
 
         private void Start()
@@ -56,6 +57,33 @@ namespace DaggerfallWorkshop.Game
             camStandLevel = mainCamera.transform.localPosition.y; //With the assumption that the camera begins at correct standing position height
             camCrouchLevel = camStandLevel - crouchChangeDistance; //we want the camera to lower the same amount as the character
             camRideLevel = camStandLevel + rideChangeDistance ;
+        }
+
+        public void HandlePlayerInput()
+        {
+            if (playerMotor.IsRiding && !toggleRiding)
+            { 
+                heightAction = HeightChangeAction.DoMounting;
+                toggleRiding = true;
+            }   
+            else if (!playerMotor.IsRiding && toggleRiding)
+            {
+                heightAction = HeightChangeAction.DoDismounting;
+                toggleRiding = false;
+            }
+            else if (!playerMotor.IsRiding)
+            {
+                // Toggle crouching
+                if (InputManager.Instance.ActionComplete(InputManager.Actions.Crouch))
+                {
+                    if (playerMotor.IsCrouching)
+                        heightAction = HeightChangeAction.DoStanding;
+                    else
+                        heightAction = HeightChangeAction.DoCrouching;
+                }
+            }
+
+                
         }
 
         private void Update()
@@ -122,6 +150,7 @@ namespace DaggerfallWorkshop.Game
             {
                 heightTimer = 0f;
                 heightAction = HeightChangeAction.DoNothing;
+                playerMotor.IsRiding = true;
             }
         }
         private void DoDismount() // adjust height first, camera last
@@ -138,6 +167,7 @@ namespace DaggerfallWorkshop.Game
             {
                 heightTimer = 0f;
                 heightAction = HeightChangeAction.DoNothing;
+                playerMotor.IsRiding = false;
             }
         }
 

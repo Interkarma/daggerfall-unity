@@ -24,7 +24,6 @@ namespace DaggerfallWorkshop.Game
         // and avoid adding any references to TransportManager.
 
         bool isRiding = false;
-        private bool riding = false;
 
         // If true, diagonal speed (when strafing + moving forward or back) can't exceed normal move speed; otherwise it's about 1.4 times faster
         public bool limitDiagonalSpeed = true;
@@ -248,27 +247,7 @@ namespace DaggerfallWorkshop.Game
             speed = speedChanger.GetBaseSpeed();
             speedChanger.HandleInputSpeedAdjustment(ref speed);
 
-            if (isRiding && !riding)
-            {
-                heightChanger.HeightAction = HeightChangeAction.DoMounting;
-                riding = true;
-            }
-            else if (!isRiding && riding)
-            {
-                heightChanger.HeightAction = HeightChangeAction.DoDismounting;
-                riding = false;
-            }
-            else if (!isRiding)
-            {
-                // Toggle crouching
-                if (InputManager.Instance.ActionComplete(InputManager.Actions.Crouch))
-                {
-                    if (isCrouching)
-                        heightChanger.HeightAction = HeightChangeAction.DoStanding;
-                    else
-                        heightChanger.HeightAction = HeightChangeAction.DoCrouching;
-                }
-            }
+            heightChanger.HandlePlayerInput();
 
             UpdateSmoothFollower();
         }
