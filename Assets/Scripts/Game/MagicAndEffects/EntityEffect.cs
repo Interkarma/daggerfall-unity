@@ -232,11 +232,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             this.caster = caster;
             SetDuration();
             SetChance();
-
-            // Perform first magic round automatically if chance not supported or chance succeeded
-            // If chance failed then effect will be immediately dropped by manager when assiging bundle
-            if (!properties.SupportChance || chanceSuccess)
-                MagicRound();
         }
 
         /// <summary>

@@ -341,6 +341,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
                 // Add effect
                 instancedBundle.liveEffects.Add(effect);
+
+                // At this point effect is ready and gets initial magic round
+                effect.MagicRound();
             }
 
             // Add bundles with at least one effect
