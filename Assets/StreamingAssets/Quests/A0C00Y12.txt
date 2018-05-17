@@ -189,20 +189,14 @@ _S.01_ task:
 _S.02_ task:
 	daily from 00:00 to 08:00 
 	pc at _house_ set _S.09_ 
-	place npc _thief_ at _house_
-	hide npc _thief_
 
 _S.03_ task:
 	daily from 16:02 to 23:59 
 	pc at _inn_ set _S.10_ 
-	place npc _thief_ at _inn_
-	hide npc _thief_
 
 _S.04_ task:
 	daily from 08:01 to 16:01 
-	pc at _store_ set _S.11_ 
-	place npc _thief_ at _store_
-	hide npc _thief_
+	pc at _store_ set _S.11_ _
 
 _S.05_ task:
 	clicked npc _informant_ say 1025 
@@ -221,7 +215,7 @@ _S.08_ task:
 	say 1030 
 
 _S.09_ task:
-	place foe thiefFoe at _house_ 
+	place foe thiefFoe at _house_
 
 _S.10_ task:
 	place foe thiefFoe at _inn_ 
