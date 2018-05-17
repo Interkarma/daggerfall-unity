@@ -26,6 +26,7 @@ using System.Linq;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Guilds;
+using Wenzil.Console;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -294,6 +295,8 @@ namespace DaggerfallWorkshop.Game
         bool sameTalkTargetAsBefore = false; // used to indicate same dialog partner / talk target as in conversation before
         bool alreadyRejectedOnce = false; // used to display a random rejection text first time when talking to a npc that dislikes pc, trying to talk a 2nd time (for same npc) pc gets msg "you get no response"
 
+        bool consoleCommandFlag_npcsKnowEverything = false; // used for console commands "npc_knowsEverything" and "npc_knowsUsual"
+
         public enum KeySubjectType
         {
             Unset,
@@ -512,6 +515,12 @@ namespace DaggerfallWorkshop.Game
             get {  return listTopicThing; }
         }
 
+        public bool ConsoleCommandFlag_npcsKnowEverything
+        {
+            get { return consoleCommandFlag_npcsKnowEverything; }
+            set { consoleCommandFlag_npcsKnowEverything = value; }
+        }        
+
         #endregion
 
         #region Unity
@@ -552,7 +561,16 @@ namespace DaggerfallWorkshop.Game
 
         void Start()
         {
+            // register console commands
+            try
+            {
+                TalkConsoleCommands.RegisterCommands();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError(string.Format("Error Registering Talk Console commands: {0}", ex.Message));
 
+            }
         }
 
         void Update()
@@ -954,7 +972,7 @@ namespace DaggerfallWorkshop.Game
         public string GetNewsOrRumors()
         {
             const int outOfNewsRecordIndex = 1457;
-            if (npcData.numAnswersGivenTellMeAboutOrRumors < maxNumAnswersNpcGivesTellMeAboutOrRumors || npcData.isSpyMaster)
+            if (npcData.numAnswersGivenTellMeAboutOrRumors < maxNumAnswersNpcGivesTellMeAboutOrRumors || npcData.isSpyMaster || consoleCommandFlag_npcsKnowEverything)
             {
                 string news = TextManager.Instance.GetText(textDatabase, "resolvingError");
                 int randomIndex = UnityEngine.Random.Range(0, listRumorMill.Count);
@@ -1201,7 +1219,7 @@ namespace DaggerfallWorkshop.Game
                 if (dictQuestInfo[listItem.questID].resourceInfo.ContainsKey(listItem.key))
                 {
                     List<TextFile.Token[]> answers;
-                    if (npcData.isSpyMaster) // spymaster only gives "true" answers (anyinfo messages) also for %hnt2
+                    if (npcData.isSpyMaster) // spymaster only gives "true" answers (anyinfo messages) also for %hnt2 (note: intended that consoleCommandFlag_npcsKnowEverything does not apply here)
                         answers = dictQuestInfo[listItem.questID].resourceInfo[listItem.key].anyInfoAnswers;
                     else // everybody else gives rumors here for %hnt2
                         answers = dictQuestInfo[listItem.questID].resourceInfo[listItem.key].rumorsAnswers;
@@ -1252,7 +1270,7 @@ namespace DaggerfallWorkshop.Game
             {
                 // decide here if npcs knows question's answer (spymaster always knows)
                 float randomFloat = UnityEngine.Random.Range(0.0f, 1.0f);
-                if (randomFloat < npcData.chanceKnowsSomethingAboutWhereIs || npcData.isSpyMaster)
+                if (randomFloat < npcData.chanceKnowsSomethingAboutWhereIs || npcData.isSpyMaster || consoleCommandFlag_npcsKnowEverything)
                     listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.KnowsAboutItem;                
                 else
                     listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.DoesNotKnowAboutItem;
@@ -1463,13 +1481,13 @@ namespace DaggerfallWorkshop.Game
             {
                 // decide here if npcs knows question's answer (spymaster always knows)
                 float randomFloat = UnityEngine.Random.Range(0.0f, 1.0f);
-                if (randomFloat < chanceNPCknowsSomthing || npcData.isSpyMaster)
+                if (randomFloat < chanceNPCknowsSomthing || npcData.isSpyMaster || consoleCommandFlag_npcsKnowEverything)
                     listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.KnowsAboutItem;
                 else
                     listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.DoesNotKnowAboutItem;
             }
 
-            if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.DoesNotKnowAboutItem || (npcData.numAnswersGivenTellMeAboutOrRumors >= maxNumAnswersNpcGivesTellMeAboutOrRumors && !npcData.isSpyMaster))
+            if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.DoesNotKnowAboutItem || (npcData.numAnswersGivenTellMeAboutOrRumors >= maxNumAnswersNpcGivesTellMeAboutOrRumors && !npcData.isSpyMaster && !consoleCommandFlag_npcsKnowEverything))
             {
                 // messages if npc does not know
                 if (reactionToPlayer >= 30)
@@ -2836,6 +2854,54 @@ namespace DaggerfallWorkshop.Game
             GetBuildingList(); // create building list and especially "any work" questors            
         }
 
-        #endregion         
+        #endregion
+
+        #region console_commands
+
+        public static class TalkConsoleCommands
+        {
+            public static void RegisterCommands()
+            {
+                try
+                {
+                    ConsoleCommandsDatabase.RegisterCommand(TalkNpcsKnowEverything.name, TalkNpcsKnowEverything.description, TalkNpcsKnowEverything.usage, TalkNpcsKnowEverything.Execute);
+                    ConsoleCommandsDatabase.RegisterCommand(TalkNpcsKnowUsual.name, TalkNpcsKnowUsual.description, TalkNpcsKnowUsual.usage, TalkNpcsKnowUsual.Execute);
+                }
+                catch (System.Exception ex)
+                {
+                    DaggerfallUnity.LogMessage(ex.Message, true);
+                }
+            }
+
+            private static class TalkNpcsKnowEverything
+            {
+                public static readonly string name = "talk_npcsKnowEverything";
+                public static readonly string description = "NPCs know everything and do not run out of answers";
+                public static readonly string usage = "talk_npcsKnowEverything";
+
+
+                public static string Execute(params string[] args)
+                {
+                    GameManager.Instance.TalkManager.ConsoleCommandFlag_npcsKnowEverything = true;
+                    return "NPCS know everything now";
+                }
+            }
+
+            private static class TalkNpcsKnowUsual
+            {
+                public static readonly string name = "talk_npcsKnowUsual";
+                public static readonly string description = "NPCs know the usual number of things and run out of answers";
+                public static readonly string usage = "talk_npcsKnowUsual";
+
+
+                public static string Execute(params string[] args)
+                {
+                    GameManager.Instance.TalkManager.ConsoleCommandFlag_npcsKnowEverything = false;
+                    return "NPCS know the usual stuff now";
+                }
+            }
+        }
+
+        #endregion
     }
 }
