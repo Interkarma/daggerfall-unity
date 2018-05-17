@@ -328,7 +328,7 @@ namespace DaggerfallWorkshop.Game
         List<ListItem> listTopicPerson;
         List<ListItem> listTopicThing;
 
-        int numQuestionsAsked = 0;
+        int numQuestionsAsked = 0; // used to determine if greetings text or follow up text needs to be used (not to mix up with npcData.numAnswersGivenTellMeAboutOrRumors)
         string questionOpeningText = ""; // randomize PC opening text only once for every new question so save it in this string after creating it (so opening text does not change when picking different questions/topics)
 
         bool markLocationOnMap = false; // flag to guide the macrohelper (macro resolving) to either give directional hints or mark buildings on the map
@@ -954,7 +954,7 @@ namespace DaggerfallWorkshop.Game
         public string GetNewsOrRumors()
         {
             const int outOfNewsRecordIndex = 1457;
-            if (npcData.numAnswersGivenTellMeAboutOrRumors < maxNumAnswersNpcGivesTellMeAboutOrRumors)
+            if (npcData.numAnswersGivenTellMeAboutOrRumors < maxNumAnswersNpcGivesTellMeAboutOrRumors || npcData.isSpyMaster)
             {
                 string news = TextManager.Instance.GetText(textDatabase, "resolvingError");
                 int randomIndex = UnityEngine.Random.Range(0, listRumorMill.Count);
@@ -1463,13 +1463,13 @@ namespace DaggerfallWorkshop.Game
             {
                 // decide here if npcs knows question's answer (spymaster always knows)
                 float randomFloat = UnityEngine.Random.Range(0.0f, 1.0f);
-                if (npcData.isSpyMaster ||(randomFloat < chanceNPCknowsSomthing && npcData.numAnswersGivenTellMeAboutOrRumors < maxNumAnswersNpcGivesTellMeAboutOrRumors))
+                if (randomFloat < chanceNPCknowsSomthing || npcData.isSpyMaster)
                     listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.KnowsAboutItem;
                 else
                     listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.DoesNotKnowAboutItem;
             }
 
-            if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.DoesNotKnowAboutItem)
+            if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.DoesNotKnowAboutItem || (npcData.numAnswersGivenTellMeAboutOrRumors >= maxNumAnswersNpcGivesTellMeAboutOrRumors && !npcData.isSpyMaster))
             {
                 // messages if npc does not know
                 if (reactionToPlayer >= 30)
@@ -1483,6 +1483,8 @@ namespace DaggerfallWorkshop.Game
             }
             else
             {
+                npcData.numAnswersGivenTellMeAboutOrRumors++;
+
                 // location related messages if npc knows
                 if (reactionToPlayer >= 30)
                     return getRecordIdByNpcsSocialGroup(veryLikePlayerAnswerTellMeAboutDefault, veryLikePlayerAnswerTellMeAboutGuildMembers, veryLikePlayerAnswerTellMeAboutMerchants, veryLikePlayerAnswerTellMeAboutScholars, veryLikePlayerAnswerTellMeAboutNobility, veryLikePlayerAnswerTellMeAboutUnderworld);
