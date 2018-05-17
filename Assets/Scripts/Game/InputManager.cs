@@ -401,6 +401,9 @@ namespace DaggerfallWorkshop.Game
         // Bind a KeyCode to an action
         public void SetBinding(KeyCode code, Actions action)
         {
+            // Not allowing multi-bind at this time as the front-end doesn't support it
+            ClearBinding(action);
+
             if (!actionKeyDict.ContainsKey(code))
             {
                 actionKeyDict.Add(code, action);
