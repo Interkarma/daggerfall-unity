@@ -216,6 +216,8 @@ namespace DaggerfallWorkshop.Game
         const float DefaultChanceKnowsSomethingAboutOrganizationsMobileNPC = 0.0f; // chances unknown
         const float ChanceToRevealLocationOnMap = 0.25f; //chances unknown
 
+        const int maxNumAnswersNpcGivesTellMeAboutOrRumors = 1; // maximum number of answers npc gives about "tell me about" question or rumors
+
         // specifies entry type of list item in topic lists
         public enum ListItemType
         {
@@ -246,16 +248,17 @@ namespace DaggerfallWorkshop.Game
             KnowsAboutItem
         }
 
+        // this class is used to specify an entry in the topic lists and holds information about this specific topic/the question and other related data
         public class ListItem
         {
             public ListItemType type = ListItemType.Item; // list item can be either a normal item, a navigation item (to get to parent list) or an item group (contains list of child items)
-            public string caption = "undefined";
-            public string key = String.Empty;
-            public QuestionType questionType = QuestionType.NoQuestion;
-            public NPCKnowledgeAboutItem npcKnowledgeAboutItem = NPCKnowledgeAboutItem.NotSet;
+            public string caption = "undefined"; // the caption text that is displayed for this topic in the left sub window of the talk window
+            public string key = String.Empty; // the key used for entries belonging to quest resources, is String.Empty if the entry is not a quest resource
+            public QuestionType questionType = QuestionType.NoQuestion; // the question type of the entry (see description of QuestionType)
+            public NPCKnowledgeAboutItem npcKnowledgeAboutItem = NPCKnowledgeAboutItem.NotSet; // the knowledge of the current npc talk partner about this topic
             public int buildingKey = -1; // used for listitems that are buildings to identify buildings
-            public ulong questID = 0; // used for listitems that are question about quest resources
-            public int index = -1;
+            public ulong questID = 0; // the questID of the quest to which this ListItem belongs to (if this ListItem belongs to a topic/question about a quest resource)
+            public int index = -1; // the index of the ListItem in the topic list (e.g. 2nd entry of the topic list - every ListItem belongs to a certain topic list)
             public List<ListItem> listChildItems = null; // null if type == ListItemType.Navigation or ListItemType.Item, only contains a list if type == ListItemType.ItemGroup
             public List<ListItem> listParentItems = null; // null if type == ListItemType.ItemGroup or ListItemType.Item, only contains a list if type == ListItemType.Navigation
         }
@@ -263,32 +266,33 @@ namespace DaggerfallWorkshop.Game
         // current target npc for conversion
         StaticNPC targetStaticNPC = null;
 
+        // this class holds information about a npc talk partner
         public class NPCData
         {
             public Races race;            
             public FactionFile.SocialGroups socialGroup;
             public FactionFile.GuildGroups guildGroup;
             public FactionFile.FactionData factionData; // only used for static npcs
-            public float chanceKnowsSomethingAboutWhereIs; // the chance that the current npc knows the answer to pc's "where is" question
-            public float chanceKnowsSomethingAboutQuest; // the chance that the current npc knows the answer to pc's quest related question
-            public float chanceKnowsSomethingAboutOrganizations; // the chance that the current npc knows the answer to pc's question about organizations
-            public int numAnswersGiven; // the number of answers or rumors given by the npc (answers about npc knew something)
+            public float chanceKnowsSomethingAboutWhereIs; // the general chance that the current npc knows the answer to pc's "where is" question
+            public float chanceKnowsSomethingAboutQuest; // the general chance that the current npc knows the answer to pc's quest related question
+            public float chanceKnowsSomethingAboutOrganizations; // the general chance that the current npc knows the answer to pc's question about organizations
+            public int numAnswersGivenTellMeAboutOrRumors; // the number of (successful) answers to a "tell me about" question or rumors given by the npc (answers about npc knew something)
             public bool isSpyMaster;
         }
         NPCData npcData;
 
-        // last target npc for a conversion
+        // type of npc talk partners for a conversion
         enum NPCType
         {
             Static,
             Mobile,
             Unset
         }
-        MobilePersonNPC lastTargetMobileNPC = null;
-        StaticNPC lastTargetStaticNPC = null;
-        NPCType currentNPCType = NPCType.Unset;
+        MobilePersonNPC lastTargetMobileNPC = null; // the last mobile npc talk partner
+        StaticNPC lastTargetStaticNPC = null; // the last static npc talk partner
+        NPCType currentNPCType = NPCType.Unset; // current type of npc talk partner
         bool sameTalkTargetAsBefore = false; // used to indicate same dialog partner / talk target as in conversation before
-        bool alreadyRejectedOnce = false; // used to display rejection text first time to a random rejection text, from 2nd time (for same npc) to msg "you get no response"
+        bool alreadyRejectedOnce = false; // used to display a random rejection text first time when talking to a npc that dislikes pc, trying to talk a 2nd time (for same npc) pc gets msg "you get no response"
 
         public enum KeySubjectType
         {
@@ -305,14 +309,15 @@ namespace DaggerfallWorkshop.Game
 
         bool rebuildTopicLists = true; // flag to indicate that topic lists need to be rebuild next time talkwindow is opened
 
+        // when an instant rebuild is forced these 4 flags indicate which topic lists need to be created
         bool instantRebuildTopicListTellMeAbout = false;
         bool instantRebuildTopicListLocation = false;
         bool instantRebuildTopicListPerson = false;
         bool instantRebuildTopicListThing = false;
 
-        ListItem currentQuestionListItem = null; // current question list item        
+        ListItem currentQuestionListItem = null; // current question list item selected on topic list       
         string currentKeySubject = "";
-        KeySubjectType currentKeySubjectType = KeySubjectType.Unset;
+        KeySubjectType currentKeySubjectType = KeySubjectType.Unset; 
         int currentKeySubjectBuildingKey = -1; // building key of building if key subject is building, also used when person's location is determined if person is in a building
         int reactionToPlayer = 0;
 
@@ -328,15 +333,19 @@ namespace DaggerfallWorkshop.Game
 
         bool markLocationOnMap = false; // flag to guide the macrohelper (macro resolving) to either give directional hints or mark buildings on the map
 
+        // the current selected talk tone in the talk window
         DaggerfallTalkWindow.TalkTone currentTalkTone = DaggerfallTalkWindow.TalkTone.Normal;
 
+        // meta data for buildings used in location topic list
         struct BuildingInfo
         {
             public string name;
             public DFLocation.BuildingTypes buildingType;
             public int buildingKey;
             public Vector2 position;
-        }       
+        }
+
+        // the list of buildings in the current location used for location topic list
         List<BuildingInfo> listBuildings = null;
 
         short[] FactionsAndBuildings = { 0x1A, 0x15, 0x1D, 0x1B, 0x23, 0x18, 0x21, 0x16, 0x19E, 0x170, 0x19D, 0x198, 0x19A, 0x19B, 0x199, 0x19F, 0x1A0,
@@ -358,6 +367,7 @@ namespace DaggerfallWorkshop.Game
         // quest info answers about quest resource
         public class QuestResourceInfo
         {
+            // used for quest place resources - which type of hints were given by npc about a quest place resource
             public enum BuildingLocationHintTypeGiven
             {
                 None,
@@ -515,8 +525,6 @@ namespace DaggerfallWorkshop.Game
             PlayerEnterExit.OnTransitionExterior += OnTransitionToExterior;
             PlayerEnterExit.OnTransitionDungeonExterior += OnTransitionToDungeonExterior;
             SaveLoadManager.OnLoad += OnLoadEvent;
-            //QuestMachine.OnQuestStarted += OnQuestStarted;
-            //QuestMachine.OnQuestEnded += OnQuestEnded;
 
             // initialize work variables
             exteriorUsedForQuestors = 0;
@@ -530,8 +538,6 @@ namespace DaggerfallWorkshop.Game
             PlayerEnterExit.OnTransitionExterior -= OnTransitionToExterior;
             PlayerEnterExit.OnTransitionDungeonExterior -= OnTransitionToDungeonExterior;
             SaveLoadManager.OnLoad -= OnLoadEvent;
-            //QuestMachine.OnQuestStarted -= OnQuestStarted;
-            //QuestMachine.OnQuestEnded -= OnQuestEnded;
         }
 
         void OnEnable()
@@ -607,7 +613,7 @@ namespace DaggerfallWorkshop.Game
             sameTalkTargetAsBefore = false;
             GameManager.Instance.TalkManager.SetTargetNPC(targetNPC, reactionToPlayer, ref sameTalkTargetAsBefore);
 
-            npcData.numAnswersGiven = 0; // important to reset this here so even if npcs is the same as previous talk session pc will can one correct answer (as implemented in vanilla df)
+            npcData.numAnswersGivenTellMeAboutOrRumors = 0; // important to reset this here so even if npcs is the same as previous talk session pc will give one correct answer if npc knows about topic (as implemented in vanilla df)
 
             TalkToNpc();
         }
@@ -627,7 +633,7 @@ namespace DaggerfallWorkshop.Game
             sameTalkTargetAsBefore = false;
             GameManager.Instance.TalkManager.SetTargetNPC(targetNPC, reactionToPlayer, ref sameTalkTargetAsBefore);
 
-            npcData.numAnswersGiven = 0; // important to reset this here so even if npcs is the same as previous talk session pc will can one correct answer (as implemented in vanilla df)
+            npcData.numAnswersGivenTellMeAboutOrRumors = 0; // important to reset this here so even if npcs is the same as previous talk session pc will can one correct answer if npc knows about topic (as implemented in vanilla df)
             npcData.isSpyMaster = isSpyMaster;
 
             TalkToNpc();
@@ -947,30 +953,38 @@ namespace DaggerfallWorkshop.Game
 
         public string GetNewsOrRumors()
         {
-            string news = TextManager.Instance.GetText(textDatabase, "resolvingError");
-            int randomIndex = UnityEngine.Random.Range(0, listRumorMill.Count);
-            RumorMillEntry entry = listRumorMill[randomIndex];
-            if (entry.rumorType == RumorType.CommonRumor)
+            const int outOfNewsRecordIndex = 1457;
+            if (npcData.numAnswersGivenTellMeAboutOrRumors < maxNumAnswersNpcGivesTellMeAboutOrRumors)
             {
-                if (entry.listRumorVariants != null)
+                string news = TextManager.Instance.GetText(textDatabase, "resolvingError");
+                int randomIndex = UnityEngine.Random.Range(0, listRumorMill.Count);
+                RumorMillEntry entry = listRumorMill[randomIndex];
+                if (entry.rumorType == RumorType.CommonRumor)
                 {
-                    TextFile.Token[] tokens = entry.listRumorVariants[0];
-                    MacroHelper.ExpandMacros(ref tokens, this);
-                    news = tokens[0].text;
+                    if (entry.listRumorVariants != null)
+                    {
+                        TextFile.Token[] tokens = entry.listRumorVariants[0];
+                        MacroHelper.ExpandMacros(ref tokens, this);
+                        news = tokens[0].text;
+                    }
                 }
-            }
-            else if (entry.rumorType == RumorType.QuestRumorMill || entry.rumorType == RumorType.QuestProgressRumor)
-            {
-                int variant = UnityEngine.Random.Range(0, entry.listRumorVariants.Count);
-                TextFile.Token[] tokens = entry.listRumorVariants[variant];
+                else if (entry.rumorType == RumorType.QuestRumorMill || entry.rumorType == RumorType.QuestProgressRumor)
+                {
+                    int variant = UnityEngine.Random.Range(0, entry.listRumorVariants.Count);
+                    TextFile.Token[] tokens = entry.listRumorVariants[variant];
 
-                // expand tokens and reveal dialog-linked resources
-                QuestMacroHelper macroHelper = new QuestMacroHelper();
-                macroHelper.ExpandQuestMessage(GameManager.Instance.QuestMachine.GetQuest(entry.questID), ref tokens, true);
-                news = TokensToString(tokens);                
+                    // expand tokens and reveal dialog-linked resources
+                    QuestMacroHelper macroHelper = new QuestMacroHelper();
+                    macroHelper.ExpandQuestMessage(GameManager.Instance.QuestMachine.GetQuest(entry.questID), ref tokens, true);
+                    news = TokensToString(tokens);
+                }
+
+                npcData.numAnswersGivenTellMeAboutOrRumors++;
+
+                return (news);
             }
-            
-            return (news);
+            else
+                return expandRandomTextRecord(outOfNewsRecordIndex);
         }
 
         public string GetOrganizationInfo(TalkManager.ListItem listItem)
@@ -1405,7 +1419,7 @@ namespace DaggerfallWorkshop.Game
                     answer = GetNewsOrRumors();
                     break;
                 case QuestionType.OrganizationInfo:
-                    answer = GetAnswerAboutTellMeAboutTopic(listItem, npcData.chanceKnowsSomethingAboutOrganizations);
+                    answer = GetAnswerTellMeAboutTopic(listItem, npcData.chanceKnowsSomethingAboutOrganizations);
                     break;
                 case QuestionType.LocalBuilding:
                     answer = GetAnswerWhereIs(listItem);
@@ -1422,7 +1436,7 @@ namespace DaggerfallWorkshop.Game
                 case QuestionType.QuestLocation:
                 case QuestionType.QuestPerson:
                 case QuestionType.QuestItem:
-                    answer = GetAnswerAboutTellMeAboutTopic(listItem, npcData.chanceKnowsSomethingAboutQuest);
+                    answer = GetAnswerTellMeAboutTopic(listItem, npcData.chanceKnowsSomethingAboutQuest);
                     break;
                 case QuestionType.Work:
                     if (!WorkAvailable)
@@ -1443,13 +1457,13 @@ namespace DaggerfallWorkshop.Game
             return answer;
         }
 
-        public string GetAnswerAboutTellMeAboutTopic(TalkManager.ListItem listItem, float chanceNPCknowsSomthing)
+        public string GetAnswerTellMeAboutTopic(TalkManager.ListItem listItem, float chanceNPCknowsSomthing)
         {
             if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.NotSet)
             {
                 // decide here if npcs knows question's answer (spymaster always knows)
                 float randomFloat = UnityEngine.Random.Range(0.0f, 1.0f);
-                if (randomFloat < chanceNPCknowsSomthing || npcData.isSpyMaster)
+                if (npcData.isSpyMaster ||(randomFloat < chanceNPCknowsSomthing && npcData.numAnswersGivenTellMeAboutOrRumors < maxNumAnswersNpcGivesTellMeAboutOrRumors))
                     listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.KnowsAboutItem;
                 else
                     listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.DoesNotKnowAboutItem;
