@@ -71,6 +71,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             Nothing,
             YesNo,
+            AnchorTeleport,
         }
 
         public int ButtonSpacing
@@ -333,35 +334,32 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void SetupBox(TextFile.Token[] tokens, CommonMessageBoxButtons buttons, IMacroContextProvider mcp = null)
         {
             SetTextTokens(tokens, mcp);
-            switch (buttons)
-            {
-                case CommonMessageBoxButtons.YesNo:
-                    AddButton(MessageBoxButtons.Yes);
-                    AddButton(MessageBoxButtons.No);
-                    break;
-            }
+            AddCommonButtons(buttons);
         }
 
         void SetupBox(int textId, CommonMessageBoxButtons buttons, IMacroContextProvider mcp = null)
         {
             SetTextTokens(textId, mcp);
+            AddCommonButtons(buttons);
+        }
+
+        void SetupBox(string text, CommonMessageBoxButtons buttons)
+        {
+            SetText(text);
+            AddCommonButtons(buttons);
+        }
+
+        void AddCommonButtons(CommonMessageBoxButtons buttons)
+        {
             switch (buttons)
             {
                 case CommonMessageBoxButtons.YesNo:
                     AddButton(MessageBoxButtons.Yes);
                     AddButton(MessageBoxButtons.No);
                     break;
-            }
-        }
-
-        void SetupBox(string text, CommonMessageBoxButtons buttons)
-        {
-            SetText(text);
-            switch (buttons)
-            {
-                case CommonMessageBoxButtons.YesNo:
-                    AddButton(MessageBoxButtons.Yes);
-                    AddButton(MessageBoxButtons.No);
+                case CommonMessageBoxButtons.AnchorTeleport:
+                    AddButton(MessageBoxButtons.Anchor);
+                    AddButton(MessageBoxButtons.Teleport);
                     break;
             }
         }

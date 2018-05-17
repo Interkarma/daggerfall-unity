@@ -791,6 +791,11 @@ namespace DaggerfallWorkshop.Utility
                 if (place == null)
                     throw new Exception(string.Format("Could not find Place symbol {0} in quest UID {1}", link.placeSymbol, link.questUID));
 
+                // Get all quest resource behaviours already in scene
+                // Slightly expensive but only runs once at layout time or when "place thing" is called
+                // Helps ensure a resource is not injected twice
+                QuestResourceBehaviour[] resourceBehaviours = Resources.FindObjectsOfTypeAll<QuestResourceBehaviour>();
+
                 // Get selected spawn QuestMarker for this Place
                 QuestMarker spawnMarker = place.SiteDetails.questSpawnMarkers[place.SiteDetails.selectedQuestSpawnMarker];
                 if (spawnMarker.targetResources != null)
@@ -803,7 +808,7 @@ namespace DaggerfallWorkshop.Utility
                             continue;
 
                         // Skip resources already injected into scene
-                        if (IsAlreadyInjected(resource))
+                        if (IsAlreadyInjected(resourceBehaviours, resource))
                             continue;
 
                         // Inject to scene based on resource type
@@ -834,7 +839,7 @@ namespace DaggerfallWorkshop.Utility
                                 continue;
 
                             // Skip resources already injected into scene
-                            if (IsAlreadyInjected(resource))
+                            if (IsAlreadyInjected(resourceBehaviours, resource))
                                 continue;
 
                             // Inject into scene
@@ -847,18 +852,17 @@ namespace DaggerfallWorkshop.Utility
         }
 
         /// <summary>
-        /// Tests if a resource has already been assigned to a QuestResourceBehaviour in scene.
-        /// Slightly expensive but only runs once at layout time or when "place thing" is called.
+        /// Tests if a resource is assigned inside a QuestResourceBehaviour array.
         /// </summary>
+        /// <param name="resourceBehaviours">Array of quest resource behaviours in scene.</param>
         /// <param name="resource">QuestResource to check if already in scene.</param>
-        /// <returns>True if QuestResource already assigned to a QuestResourceBehaviour in scene.</returns>
-        static bool IsAlreadyInjected(QuestResource resource)
+        /// <returns>True if QuestResource already assigned to a QuestResourceBehaviour.</returns>
+        static bool IsAlreadyInjected(QuestResourceBehaviour[] resourceBehaviours, QuestResource resource)
         {
-            QuestResourceBehaviour[] resourceBehaviours = Resources.FindObjectsOfTypeAll<QuestResourceBehaviour>();
             if (resourceBehaviours == null || resourceBehaviours.Length == 0)
                 return false;
 
-            foreach(QuestResourceBehaviour resourceBehaviour in resourceBehaviours)
+            foreach (QuestResourceBehaviour resourceBehaviour in resourceBehaviours)
             {
                 if (resourceBehaviour.TargetResource == resource)
                     return true;
