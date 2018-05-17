@@ -2217,7 +2217,7 @@ namespace DaggerfallWorkshop.Game
             AssembleTopicListLocation();
             AssembleTopicListPerson();
             AssembleTopicListThing();
-            DaggerfallUI.Instance.TalkWindow.UpdateListBoxTopic();
+            DaggerfallUI.Instance.TalkWindow.UpdateListboxTopic();
         }
 
         private void AssembleTopiclistTellMeAbout()
@@ -2562,7 +2562,6 @@ namespace DaggerfallWorkshop.Game
                         if (!dialogPartnerIsSamePersonAsPersonResource &&   // dialog partner is not the same person as the person resource talked about
                             questResourceInfo.Value.availableForDialog &&   // it is not "hidden" by dialog link command
                             questResourceInfo.Value.hasEntryInWhereIs &&    // it is meant to have an entry in the where is section (currently this is always true, TODO: check if we can get rid of this)
-                            !person.IsHidden &&                             // if person resource is not hidden
                             IsPlayerInSameLocationWorldCell)                // if person resource is in same world map location as player
                         {
                             listTopicPerson.Add(item);
