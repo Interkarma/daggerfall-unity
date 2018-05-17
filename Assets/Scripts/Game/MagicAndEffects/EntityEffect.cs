@@ -147,6 +147,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public BaseEntityEffect()
         {
             // Set default properties
+            properties.GroupName = string.Empty;
+            properties.SubGroupName = string.Empty;
             properties.ShowSpellIcon = true;
             properties.SupportDuration = false;
             properties.SupportChance = false;
