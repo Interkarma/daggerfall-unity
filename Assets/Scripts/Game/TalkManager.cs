@@ -305,6 +305,11 @@ namespace DaggerfallWorkshop.Game
 
         bool rebuildTopicLists = true; // flag to indicate that topic lists need to be rebuild next time talkwindow is opened
 
+        bool instantRebuildTopicListTellMeAbout = false;
+        bool instantRebuildTopicListLocation = false;
+        bool instantRebuildTopicListPerson = false;
+        bool instantRebuildTopicListThing = false;
+
         ListItem currentQuestionListItem = null; // current question list item        
         string currentKeySubject = "";
         KeySubjectType currentKeySubjectType = KeySubjectType.Unset;
@@ -1635,17 +1640,32 @@ namespace DaggerfallWorkshop.Game
 
                 questResourceInfo.availableForDialog = true;
 
+                if (questResourceInfo.hasEntryInTellMeAbout)
+                {
+                    instantRebuildTopicListTellMeAbout = true;
+                }
+
                 if (questResourceInfo.resourceType == QuestInfoResourceType.Location)
                 {
+                    instantRebuildTopicListLocation = true;
+
                     // undiscover residences when they are a quest resource (named residence) when "add dialog" is done for this quest resource
                     // otherwise previously discovered residences will automatically show up on the automap when used in a quest
                     UndiscoverQuestResidence(questID, resourceName, questResourceInfo);
+                }
+                else if (questResourceInfo.resourceType == QuestInfoResourceType.Person)
+                {
+                    instantRebuildTopicListPerson = true;
+                }
+                else if (questResourceInfo.resourceType == QuestInfoResourceType.Thing)
+                {
+                    instantRebuildTopicListThing = true;
                 }
             }
 
             // update topic lists
             if (instantRebuildTopicLists == true)
-                AssembleTopicLists();
+                AssembleTopicLists(true);
             else
                 rebuildTopicLists = true;
         }
@@ -2211,17 +2231,39 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        private void AssembleTopicLists()
+        private void AssembleTopicLists(bool isInstantRebuild = false)
         {
-            AssembleTopiclistTellMeAbout();
-            AssembleTopicListLocation();
-            AssembleTopicListPerson();
-            AssembleTopicListThing();
-            DaggerfallUI.Instance.TalkWindow.UpdateListboxTopic();
+            if (!isInstantRebuild)
+            {
+                AssembleTopiclistTellMeAbout();
+                AssembleTopicListLocation();
+                AssembleTopicListPerson();
+                AssembleTopicListThing();
+            }
+            else
+            {
+                if (instantRebuildTopicListTellMeAbout)
+                    AssembleTopiclistTellMeAbout();
+                if (instantRebuildTopicListLocation)
+                    AssembleTopicListLocation();
+                if (instantRebuildTopicListPerson)
+                    AssembleTopicListPerson();
+                if (instantRebuildTopicListThing)
+                    AssembleTopicListThing();
+                instantRebuildTopicListTellMeAbout = false;
+                instantRebuildTopicListLocation = false;
+                instantRebuildTopicListPerson = false;
+                instantRebuildTopicListThing = false;
+                DaggerfallUI.Instance.TalkWindow.UpdateListboxTopic();
+            }
         }
 
         private void AssembleTopiclistTellMeAbout()
         {
+            List<ListItem> oldTopicList = null;
+            if (listTopicTellMeAbout != null)
+                oldTopicList = listTopicTellMeAbout; // store old topic list to inject some of the info into new list
+
             listTopicTellMeAbout = new List<ListItem>();
             ListItem itemAnyNews = new ListItem();
             itemAnyNews.type = ListItemType.Item;
@@ -2267,7 +2309,7 @@ namespace DaggerfallWorkshop.Game
                     
                     itemQuestTopic.caption = captionString;
 
-                    itemQuestTopic.key = questResourceInfo.Key;
+                    itemQuestTopic.key = questResourceInfo.Key;                    
 
                     if (questResourceInfo.Value.availableForDialog && questResourceInfo.Value.hasEntryInTellMeAbout) // only make it available for talk if it is not "hidden" by dialog link command
                         listTopicTellMeAbout.Add(itemQuestTopic);
@@ -2285,10 +2327,26 @@ namespace DaggerfallWorkshop.Game
                 itemOrganizationInfo.index = i;
                 listTopicTellMeAbout.Add(itemOrganizationInfo);
             }
+
+            if (oldTopicList != null)
+            {
+                for (int i = 0; i < listTopicTellMeAbout.Count; i++)
+                {
+                    ListItem oldItem = oldTopicList.Find(x => x.caption == listTopicTellMeAbout[i].caption);
+                    if (oldItem != null)
+                    {
+                        listTopicTellMeAbout[i].npcKnowledgeAboutItem = oldItem.npcKnowledgeAboutItem;
+                    }
+                }
+            }
         }
 
         private void AssembleTopicListLocation()
         {
+            List<ListItem> oldTopicList = null;
+            if (listTopicLocation != null)
+                oldTopicList = listTopicLocation; // store old topic list to inject some of the info into new list
+
             listTopicLocation = new List<ListItem>();
 
             GetBuildingList();
@@ -2435,6 +2493,18 @@ namespace DaggerfallWorkshop.Game
 
             AddRegionalItems(ref itemBuildingTypeGroup);
             listTopicLocation.Add(itemBuildingTypeGroup);
+
+            if (oldTopicList != null)
+            {
+                for (int i = 0; i < listTopicLocation.Count; i++)
+                {
+                    ListItem oldItem = oldTopicList.Find(x => x.caption == listTopicLocation[i].caption);
+                    if (oldItem != null)
+                    {
+                        listTopicLocation[i].npcKnowledgeAboutItem = oldItem.npcKnowledgeAboutItem;
+                    }
+                }
+            }
         }
 
         private void AddRegionalItems(ref ListItem itemBuildingTypeGroup)
@@ -2499,6 +2569,10 @@ namespace DaggerfallWorkshop.Game
 
         private void AssembleTopicListPerson()
         {
+            List<ListItem> oldTopicList = null;
+            if (listTopicLocation != null)
+                oldTopicList = listTopicLocation; // store old topic list to inject some of the info into new list
+
             listTopicPerson = new List<ListItem>();
 
             foreach (KeyValuePair<ulong, QuestResources> questInfo in dictQuestInfo)
@@ -2570,11 +2644,39 @@ namespace DaggerfallWorkshop.Game
 
                 }
             }
+
+            if (oldTopicList != null)
+            {
+                for (int i = 0; i < listTopicPerson.Count; i++)
+                {
+                    ListItem oldItem = oldTopicList.Find(x => x.caption == listTopicPerson[i].caption);
+                    if (oldItem != null)
+                    {
+                        listTopicPerson[i].npcKnowledgeAboutItem = oldItem.npcKnowledgeAboutItem;
+                    }
+                }
+            }
         }
 
         private void AssembleTopicListThing()
-        {            
+        {
+            List<ListItem> oldTopicList = null;
+            if (listTopicLocation != null)
+                oldTopicList = listTopicLocation; // store old topic list to inject some of the info into new list
+
             listTopicThing = new List<ListItem>();
+
+            if (oldTopicList != null)
+            {
+                for (int i = 0; i < listTopicThing.Count; i++)
+                {
+                    ListItem oldItem = oldTopicList.Find(x => x.caption == listTopicThing[i].caption);
+                    if (oldItem != null)
+                    {
+                        listTopicThing[i].npcKnowledgeAboutItem = oldItem.npcKnowledgeAboutItem;
+                    }
+                }
+            }
         }
 
         /// <summary>

@@ -308,8 +308,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
                         SetListboxTopics(ref listboxTopic, TalkManager.Instance.ListTopicPerson);
                     else if (selectedTalkCategory == TalkCategory.Things)
                         SetListboxTopics(ref listboxTopic, TalkManager.Instance.ListTopicThings);
-                }
-                SelectTopicFromTopicList(listboxTopic.FindIndex(oldTopic), true);
+                }                
+                listboxTopic.SelectedIndex = listboxTopic.FindIndex(oldTopic);
+                UpdateQuestion(listboxTopic.SelectedIndex);
             }                
         }
 
