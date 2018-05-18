@@ -169,6 +169,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         ItemCollection.AddPosition preferredOrder = ItemCollection.AddPosition.DontCare;
 
+        KeyCode toggleClosedBinding;
+
         #endregion
 
         #region Enums
@@ -294,6 +296,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             UpdateAccessoryItemsDisplay();
             UpdateLocalTargetIcon();
             UpdateRemoteTargetIcon();
+
+            // Store toggle closed binding for this window
+            toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.Inventory);
+        }
+
+        public override void Update()
+        {
+            base.Update();
+
+            // Toggle window closed with same hotkey used to open it
+            if (Input.GetKeyUp(toggleClosedBinding))
+                CloseWindow();
         }
 
         protected void SetupItemListScrollers()
