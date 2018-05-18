@@ -29,12 +29,12 @@ Weaponsmiths,                   Weapon smiths
 Localtemples,                   Local temples
 Sir,                            Sir
 Ma'am,                          Ma'am
-oldLeaderFate0,					died of heart failure
-oldLeaderFate1,					fell and struck his head
-oldLeaderFate2,					died of the plague
-oldLeaderFate3,					stepped down under pressure
-oldLeaderFate4,					was overthrown
-oldLeaderFate5,					was found murdered in his bed
+oldLeaderFate0,                 died of heart failure
+oldLeaderFate1,                 fell and struck his head
+oldLeaderFate2,                 died of the plague
+oldLeaderFate3,                 stepped down under pressure
+oldLeaderFate4,                 was overthrown
+oldLeaderFate5,                 was found murdered in his bed
 toBeReplacedStringRegional,     Any
 replacementStringRegional,      any
 resolvingError,                 never mind...
