@@ -127,10 +127,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Overrides
 
-        /// <summary>
-        /// perform on update:
-        ///     - check for transport hotkey button press and react accordingly
-        /// </summary>
         public override void Update()
         {
             base.Update();

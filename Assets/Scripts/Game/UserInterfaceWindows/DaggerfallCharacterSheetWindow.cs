@@ -162,10 +162,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             characterPortrait.Refresh();
         }
 
-        /// <summary>
-        /// perform on update:
-        ///     - check for character sheet hotkey button press and react accordingly
-        /// </summary>
         public override void Update()
         {
             base.Update();

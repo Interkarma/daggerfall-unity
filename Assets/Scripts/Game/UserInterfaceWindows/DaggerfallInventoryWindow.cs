@@ -660,6 +660,27 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #endregion
 
+        #region Overrides
+
+        public override void Update()
+        {
+            base.Update();
+
+            // check for global inventory hotkey and close window if pressed
+            KeyCode[] hotKeyCodesInventory = InputManager.Instance.GetBindings(InputManager.Actions.Inventory);
+            for (int i = 0; i < hotKeyCodesInventory.Length; i++)
+            {
+                if (Input.GetKeyDown(hotKeyCodesInventory[i]))
+                {
+                    CloseWindow();
+                    Input.ResetInputAxes(); // prevents inventory window to reopen immediately after closing
+                    break;
+                }
+            }
+        }
+
+        #endregion
+
         #region Public Methods
 
         /// <summary>
@@ -687,30 +708,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 paperDoll.Refresh();
         }
 
-        /// <summary>
-        /// perform on update:
-        ///     - check for inventory hotkey button press and react accordingly
-        /// </summary>
-        public override void Update()
-        {
-            base.Update();
-
-            // check for global inventory hotkey and close window if pressed
-            KeyCode[] hotKeyCodesInventory = InputManager.Instance.GetBindings(InputManager.Actions.Inventory);
-            for (int i = 0; i < hotKeyCodesInventory.Length; i++)
-            {
-                if (Input.GetKeyDown(hotKeyCodesInventory[i]))
-                {
-                    CloseWindow();
-                    Input.ResetInputAxes(); // prevents inventory window to reopen immediately after closing
-                    break;
-                }
-            }
-        }
-
         #endregion
 
-            #region Helper Methods
+        #region Helper Methods
 
         protected void SelectTabPage(TabPages tabPage)
         {
