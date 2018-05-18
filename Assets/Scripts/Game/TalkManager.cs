@@ -983,7 +983,7 @@ namespace DaggerfallWorkshop.Game
                     {
                         TextFile.Token[] tokens = entry.listRumorVariants[0];
                         MacroHelper.ExpandMacros(ref tokens, this);
-                        news = tokens[0].text;
+                        news = TokensToString(tokens, false);
                     }
                 }
                 else if (entry.rumorType == RumorType.QuestRumorMill || entry.rumorType == RumorType.QuestProgressRumor)
@@ -1256,12 +1256,17 @@ namespace DaggerfallWorkshop.Game
             return TextManager.Instance.GetText(textDatabase, "resolvingError");
         }
 
-        public string getHonoric()
+        public string GetHonoric()
         {
             if (GameManager.Instance.PlayerEntity.Gender == Genders.Male)
                 return TextManager.Instance.GetText(textDatabase, "Sir");
             else
                 return TextManager.Instance.GetText(textDatabase, "Ma'am");
+        }
+
+        public string GetOldLeaderFateString(int index)
+        {
+            return TextManager.Instance.GetText(textDatabase, String.Format("oldLeaderFate{0}", index));
         }
 
         public string GetAnswerWhereIs(TalkManager.ListItem listItem)
@@ -2015,12 +2020,14 @@ namespace DaggerfallWorkshop.Game
                     RumorMillEntry entry = new RumorMillEntry();
 
                     TextFile.Token[] tokens;
-                    int randomNum = UnityEngine.Random.Range(0, 12);
+                    int randomNum = UnityEngine.Random.Range(0, 20);
                     if (randomNum >= 0 && randomNum <= 9)
                         tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(1400 + randomNum);
                     else if (randomNum == 10)
                         tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(1456);
-                    else if (randomNum == 11)
+                    else if (randomNum >= 11 && randomNum <= 15)
+                        tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(1480);
+                    else if (randomNum >= 16 && randomNum <= 20)
                         tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(1481);
                     else
                         tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(1457);
@@ -2774,21 +2781,23 @@ namespace DaggerfallWorkshop.Game
 
         }
 
-        private string TokensToString(TextFile.Token[] tokens)
+        private string TokensToString(TextFile.Token[] tokens, bool addSpaceAtTokenEnd = true)
         {
             // create return string from expanded tokens
             string returnString = "";
+            string seperatorString = " ";
+            if (!addSpaceAtTokenEnd)
+                seperatorString = "";
             for (int i = 0; i < tokens.Length; i++)
             {
                 string textFragment = tokens[i].text;
                 if (textFragment != null && textFragment.Length > 0 && i < textFragment.Length)
                     returnString += textFragment;
                 else
-                    returnString += " ";
+                    returnString += seperatorString;
             }
             return returnString;
         }
-
 
         private string expandRandomTextRecord(int recordIndex)
         {

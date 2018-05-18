@@ -81,8 +81,8 @@ namespace DaggerfallWorkshop.Utility
             { "%fcn", LocationOfRegionalBuilding }, // Location with regional building asked about
             { "%fe", null },  // ?
             { "%fea", null }, // ?
-            { "%fl1", null }, // Lord of _fx1
-            { "%fl2", null }, // Lord of _fx2
+            { "%fl1", LordOfFaction1 }, // Lord of _fx1
+            { "%fl2", LordOfFaction2 }, // Lord of _fx2
             { "%fn", null },  // Random first(?) name (Female?)
             { "%fn2", null }, // Same as _mn2 (?)
             { "%fnpc", GuildNPC }, // faction of npc that is dialog partner
@@ -123,7 +123,7 @@ namespace DaggerfallWorkshop.Utility
             { "%lp", LocalPalace },  //  Local / palace (?) dungeon
             { "%ln", null },  //  Random lastname
             { "%loc", MarkLocationOnMap }, // Location marked on map (comment Nystul: this seems to be context dependent - it is used both in direction dialogs (7333) and map reveal dialogs (7332) - it seems to return the name of the building and reveal the map only if a 7332 dialog was chosen
-            { "%lt1", null }, // Title of _fl1
+            { "%lt1", TitleOfLordOfFaction1 }, // Title of _fl1
             { "%ltn", LegalReputation }, // In the eyes of the law you are.......
             { "%luc", Luck }, // Luck
             { "%mad", MagicResist }, // Resistance
@@ -138,8 +138,8 @@ namespace DaggerfallWorkshop.Utility
             { "%nam", null }, // A random full name
             { "%nrn", null }, // Noble of the current region (used in: O0B00Y01)
             { "%nt", NearbyTavern },  // Nearby Tavern
-            { "%ol1", null }, // Old lord of _fx1
-            { "%olf", null }, // What happened to _ol1
+            { "%ol1", OldLordOfFaction1 }, // Old lord of _fx1
+            { "%olf", OldLeaderFate }, // What happened to _ol1
             { "%on", null },  // ?
             { "%oth", Oath }, // An oath (listed in TEXT.RSC)
             { "%pc", null },  // ?
@@ -637,7 +637,7 @@ namespace DaggerfallWorkshop.Utility
 
         private static string Honorific(IMacroContextProvider mcp)
         {   // %hnr
-            return GameManager.Instance.TalkManager.getHonoric();
+            return GameManager.Instance.TalkManager.GetHonoric();
         }
 
         private static string DmgMod(IMacroContextProvider mcp)
@@ -755,6 +755,32 @@ namespace DaggerfallWorkshop.Utility
                 id = tmpId + 1; // by just adding 1 to tmpIds >= idAFactionInNewsLastPicked -> so we will end up with an id in ranges [200, idAFactionInNewsLastPicked) union (idAFactionInNewsLastPicked, 236]
             factions.GetFactionData(id, out fd);
             return fd.name;
+        }
+
+        public static string OldLeaderFate(IMacroContextProvider mcp)
+        {   // %olf
+            int index = UnityEngine.Random.Range(0, 5);
+            return TalkManager.Instance.GetOldLeaderFateString(index);
+        }
+
+        public static string OldLordOfFaction1(IMacroContextProvider mcp)
+        {   // %ol1
+            return "[placeholder for an old lord]";
+        }
+
+        public static string LordOfFaction1(IMacroContextProvider mcp)
+        {   // %fl1
+            return "[placeholder for faction1 lord]";
+        }
+
+        public static string LordOfFaction2(IMacroContextProvider mcp)
+        {   // %fl2
+            return "[placeholder for faction2 lord]";
+        }
+
+        public static string TitleOfLordOfFaction1(IMacroContextProvider mcp)
+        {   // %lt1
+            return "[placeholder for title of faction1 lord]";
         }
 
         private static string DialogKeySubject(IMacroContextProvider mcp)
