@@ -647,10 +647,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // check hotkeys and assign actions
 
             // first check global hotkeys
-            KeyCode[] openCloseAutomapKeyCode = InputManager.Instance.GetBindings(InputManager.Actions.AutoMap);
-            for (int i = 0; i < openCloseAutomapKeyCode.Length; i++)
+            KeyCode[] hotkeyCodesAutomap = InputManager.Instance.GetBindings(InputManager.Actions.AutoMap);
+            for (int i = 0; i < hotkeyCodesAutomap.Length; i++)
             {
-                if (Input.GetKeyDown(openCloseAutomapKeyCode[i]))
+                if (Input.GetKeyDown(hotkeyCodesAutomap[i]))
                 {
                     CloseWindow();
                     Input.ResetInputAxes(); // prevents automap window to reopen immediately after closing
