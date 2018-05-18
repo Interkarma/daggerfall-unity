@@ -177,7 +177,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (Input.GetKeyDown(hotKeyCodesCharacterSheet[i]))
                 {
                     CloseWindow();
-                    Input.ResetInputAxes(); // prevents inventory window to reopen immediately after closing
+                    Input.ResetInputAxes(); // prevents character sheet window to reopen immediately after closing
                     break;
                 }
             }

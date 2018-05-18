@@ -160,7 +160,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (Input.GetKeyDown(hotKeyCodesRest[i]))
                 {
                     CloseWindow();
-                    Input.ResetInputAxes(); // prevents inventory window to reopen immediately after closing
+                    Input.ResetInputAxes(); // prevents rest window to reopen immediately after closing
                     break;
                 }
             }

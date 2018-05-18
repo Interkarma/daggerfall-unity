@@ -145,7 +145,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (Input.GetKeyDown(hotKeyCodesLogBook[i]))
                 {
                     CloseWindow();
-                    Input.ResetInputAxes(); // prevents inventory window to reopen immediately after closing
+                    Input.ResetInputAxes(); // prevents log book window to reopen immediately after closing
                     break;
                 }
             }
