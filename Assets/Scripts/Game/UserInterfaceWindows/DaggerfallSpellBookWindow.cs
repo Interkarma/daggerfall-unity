@@ -176,6 +176,27 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #endregion
 
+        #region Overrides
+
+        public override void Update()
+        {
+            base.Update();
+
+            // check for global cast spell (spell book) hotkey and close window if pressed
+            KeyCode[] hotKeySpellBook = InputManager.Instance.GetBindings(InputManager.Actions.CastSpell);
+            for (int i = 0; i < hotKeySpellBook.Length; i++)
+            {
+                if (Input.GetKeyDown(hotKeySpellBook[i]))
+                {
+                    CloseWindow();
+                    Input.ResetInputAxes(); // prevents spell book window to reopen immediately after closing
+                    break;
+                }
+            }
+        }
+
+        #endregion
+
         #region Private Methods
 
         void LoadTextures()
