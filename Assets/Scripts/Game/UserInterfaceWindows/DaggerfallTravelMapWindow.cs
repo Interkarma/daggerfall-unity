@@ -284,6 +284,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.Update();
 
+            // check for global travel map hotkey and close window if pressed
+            KeyCode[] hotKeyCodesTravelMap = InputManager.Instance.GetBindings(InputManager.Actions.TravelMap);
+            for (int i = 0; i < hotKeyCodesTravelMap.Length; i++)
+            {
+                if (Input.GetKeyDown(hotKeyCodesTravelMap[i]))
+                {
+                    CloseWindow();
+                    Input.ResetInputAxes(); // prevents inventory window to reopen immediately after closing
+                    break;
+                }
+            }
+
             //input handling
 
             Vector2 currentMousePos = new Vector2((NativePanel.ScaledMousePosition.x), (NativePanel.ScaledMousePosition.y));

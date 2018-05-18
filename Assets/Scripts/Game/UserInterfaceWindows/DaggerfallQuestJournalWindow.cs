@@ -137,6 +137,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 lastMessageIndex = currentMessageIndex;
                 SetText();
             }
+
+            // check for global log book (quest journal) hotkey and close window if pressed
+            KeyCode[] hotKeyCodesLogBook = InputManager.Instance.GetBindings(InputManager.Actions.LogBook);
+            for (int i = 0; i < hotKeyCodesLogBook.Length; i++)
+            {
+                if (Input.GetKeyDown(hotKeyCodesLogBook[i]))
+                {
+                    CloseWindow();
+                    Input.ResetInputAxes(); // prevents log book window to reopen immediately after closing
+                    break;
+                }
+            }
         }
 
 

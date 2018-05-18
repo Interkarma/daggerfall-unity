@@ -125,6 +125,27 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #endregion
 
+        #region Overrides
+
+        public override void Update()
+        {
+            base.Update();
+
+            // check for global transport hotkey and close window if pressed
+            KeyCode[] hotKeyCodesTransport = InputManager.Instance.GetBindings(InputManager.Actions.Transport);
+            for (int i = 0; i < hotKeyCodesTransport.Length; i++)
+            {
+                if (Input.GetKeyDown(hotKeyCodesTransport[i]))
+                {
+                    CloseWindow();
+                    Input.ResetInputAxes(); // prevents transport window to reopen immediately after closing
+                    break;
+                }
+            }
+        }
+
+        #endregion
+
         #region Private Methods
 
         void LoadTextures()

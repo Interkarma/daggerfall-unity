@@ -153,6 +153,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.Update();
 
+            // check for global rest hotkey and close window if pressed
+            KeyCode[] hotKeyCodesRest = InputManager.Instance.GetBindings(InputManager.Actions.Rest);
+            for (int i = 0; i < hotKeyCodesRest.Length; i++)
+            {
+                if (Input.GetKeyDown(hotKeyCodesRest[i]))
+                {
+                    CloseWindow();
+                    Input.ResetInputAxes(); // prevents rest window to reopen immediately after closing
+                    break;
+                }
+            }
+
             // Update HUD
             if (hud != null)
             {
