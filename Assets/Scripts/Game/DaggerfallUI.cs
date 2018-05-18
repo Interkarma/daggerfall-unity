@@ -1157,10 +1157,12 @@ namespace DaggerfallWorkshop.Game
         {
             // Setup status info as the first message box.
             DaggerfallMessageBox statusBox = new DaggerfallMessageBox(Instance.uiManager, Instance.uiManager.TopWindow);
+            statusBox.KeyCodesThatCloseMessageBox = InputManager.Instance.GetBindings(InputManager.Actions.Status);
             statusBox.SetTextTokens(22);
 
             // Setup health info as the second message box.
             DaggerfallMessageBox healthBox = CreateHealthStatusBox(statusBox);
+            healthBox.KeyCodesThatCloseMessageBox = InputManager.Instance.GetBindings(InputManager.Actions.Status);
             statusBox.AddNextMessageBox(healthBox);
 
             statusBox.Show();
