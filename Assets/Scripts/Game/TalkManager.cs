@@ -2010,7 +2010,7 @@ namespace DaggerfallWorkshop.Game
                 listRumorMill = new List<RumorMillEntry>();
             if (listRumorMill.Count == 0)
             {
-                for (int i = 0; i < 10; i++) // setup 10 random comman rumors (this is very early work in progress)
+                for (int i = 0; i < 10; i++) // setup 10 random common rumors (this is very early work in progress)
                 {
                     RumorMillEntry entry = new RumorMillEntry();
 
