@@ -520,11 +520,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.getKeyModifiers(Input.GetKey(KeyCode.LeftControl), Input.GetKey(KeyCode.RightControl), Input.GetKey(KeyCode.LeftShift), Input.GetKey(KeyCode.RightShift), Input.GetKey(KeyCode.LeftAlt), Input.GetKey(KeyCode.RightAlt));
 
             // check hotkeys and assign actions
+
             // first check global hotkeys
-            KeyCode[] openCloseAutomapKeyCode = InputManager.Instance.GetBindings(InputManager.Actions.AutoMap);
-            for (int i = 0; i < openCloseAutomapKeyCode.Length; i++)
+            KeyCode[] openCloseExteriorAutomapKeyCode = InputManager.Instance.GetBindings(InputManager.Actions.AutoMap);
+            for (int i = 0; i < openCloseExteriorAutomapKeyCode.Length; i++)
             {
-                if (Input.GetKeyDown(openCloseAutomapKeyCode[i]))
+                if (Input.GetKeyDown(openCloseExteriorAutomapKeyCode[i]))
                 {
                     CloseWindow();
                     Input.ResetInputAxes(); // prevents automap window to reopen immediately after closing

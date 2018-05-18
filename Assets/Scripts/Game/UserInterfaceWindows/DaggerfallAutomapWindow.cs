@@ -645,6 +645,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             // check hotkeys and assign actions
+
             // first check global hotkeys
             KeyCode[] openCloseAutomapKeyCode = InputManager.Instance.GetBindings(InputManager.Actions.AutoMap);
             for (int i = 0; i < openCloseAutomapKeyCode.Length; i++)
