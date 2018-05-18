@@ -212,11 +212,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.Update();
 
             bool extraCloseKeyPressed = false;
-            // first check keyCodesThatCloseCurrentMessageBox
-            for (int i = 0; i < keyCodesThatCloseCurrentMessageBox.Length; i++)
+            if (keyCodesThatCloseCurrentMessageBox != null)
             {
-                if (Input.GetKeyDown(keyCodesThatCloseCurrentMessageBox[i]))
-                    extraCloseKeyPressed = true;
+                // first check keyCodesThatCloseCurrentMessageBox
+                for (int i = 0; i < keyCodesThatCloseCurrentMessageBox.Length; i++)
+                {
+                    if (Input.GetKeyDown(keyCodesThatCloseCurrentMessageBox[i]))
+                        extraCloseKeyPressed = true;
+                }
             }
 
             if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter) || extraCloseKeyPressed)
