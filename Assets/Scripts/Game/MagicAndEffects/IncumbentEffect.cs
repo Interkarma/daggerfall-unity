@@ -87,6 +87,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             return null;
         }
 
+        /// <summary>
+        /// Resign as incumbent effect.
+        /// This allows an incumbent to immediately allow for a new incumbent to take over its post.
+        /// Useful for when incumbent does not want to receive any further AddState() calls and cannot wait for magic round tick to expire.
+        /// </summary>
+        protected void ResignAsIncumbent()
+        {
+            isIncumbent = false;
+        }
+
         protected virtual void BecomeIncumbent()
         {
         }
