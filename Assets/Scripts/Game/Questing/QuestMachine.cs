@@ -288,6 +288,7 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new TotingItemAndClickedNpc(null));
             RegisterAction(new DailyFrom(null));
             RegisterAction(new DroppedItemAtPlace(null));
+            RegisterAction(new SkillLevel(null));
 
             // Register default actions
             RegisterAction(new EndQuest(null));

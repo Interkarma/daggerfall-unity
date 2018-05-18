@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -45,12 +45,12 @@ namespace DaggerfallWorkshop.Game.Questing
             // Factory new action
             SkillLevel action = new SkillLevel(parentQuest);
             string skillName = match.Groups["skillName"].Value;
-            if (!Enum.IsDefined(typeof(DFCareer.Skills), skillName, true))
+            if (!Enum.IsDefined(typeof(DFCareer.Skills), skillName))
             {
                 SetComplete();   
                 throw new Exception(string.Format("SkillLevel: Skill name {0} is not a known Daggerfall skill", skillName));
             }
-            action.skill = Enum.Parse(typeof(DFCareer.Skills), skillName, true);
+            action.skill = (DFCareer.Skills) Enum.Parse(typeof(DFCareer.Skills), skillName);
             action.minSkillValue = Parser.ParseInt(match.Groups["minSkillValue"].Value);
 
             return action;
