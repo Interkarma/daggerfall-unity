@@ -38,6 +38,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool clickAnywhereToClose = false;
         DaggerfallMessageBox nextMessageBox;
         int customYPos = -1;
+        KeyCode[] keyCodesThatCloseCurrentMessageBox; // these keycodes will close messagebox when nextMessageBox == null or show nextMessageBox otherwise
 
         /// <summary>
         /// Default message box buttons are indices into BUTTONS.RCI.
@@ -95,6 +96,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             get { return clickAnywhereToClose; }
             set { clickAnywhereToClose = value; }
+        }
+
+        // these keycodes will close messagebox when nextMessageBox == null or show nextMessageBox otherwise
+        public KeyCode[] KeyCodesThatCloseCurrentMessageBox
+        {
+            get { return keyCodesThatCloseCurrentMessageBox; }
+            set { keyCodesThatCloseCurrentMessageBox = value; }
         }
 
         public DaggerfallMessageBox(IUserInterfaceManager uiManager, IUserInterfaceWindow previous = null, bool wrapText = false, int posY = -1)
@@ -202,9 +210,28 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void Update()
         {
             base.Update();
-        
-            if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
-              CloseWindow();
+
+            bool extraCloseKeyPressed = false;
+            // first check keyCodesThatCloseCurrentMessageBox
+            for (int i = 0; i < keyCodesThatCloseCurrentMessageBox.Length; i++)
+            {
+                if (Input.GetKeyDown(keyCodesThatCloseCurrentMessageBox[i]))
+                    extraCloseKeyPressed = true;
+            }
+
+            if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter) || extraCloseKeyPressed)
+            {
+                // show nextMessageBox
+                if (this.nextMessageBox != null)
+                {
+                    nextMessageBox.Show();
+                }
+                else // or close if there is no next message box to show
+                {
+                    CloseWindow();
+                    Input.ResetInputAxes(); // prevents messagebox to reopen immediately after closing
+                }
+            }
         }
 
         public Button AddButton(MessageBoxButtons messageBoxButton)
