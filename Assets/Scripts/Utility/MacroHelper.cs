@@ -238,6 +238,9 @@ namespace DaggerfallWorkshop.Utility
             int multilineIdx = 0;
             TextFile.Token[] multilineTokens = null;
 
+            // this dictionary is used check for previous resolving of a specific macro in the current call to ExpandMacros before expanding macros
+            // if macro (macro string used as dict key) has been expanded before use previous expanded string (value of this dict) as result
+            // this dict is newly created (and thus empty) for every new call to this function call so macros will be expanded in future calls to ExpandMacros
             Dictionary<string, string> macrosExpandedAlready = new Dictionary<string, string>();
 
             for (int tokenIdx = 0; tokenIdx < tokens.Length; tokenIdx++)
@@ -735,27 +738,22 @@ namespace DaggerfallWorkshop.Utility
         {   // %fx1
             PersistentFactionData factions = GameManager.Instance.PlayerEntity.FactionData;
             int id = UnityEngine.Random.Range(200, 236);
-            FactionFile.FactionData fd;            
-            factions.GetFactionData(GameManager.Instance.PlayerGPS.CurrentPoliticIndex, out fd);
-            for (int i = 0; i < 10; i++)
-                if (factions.GetFactionData(id, out fd))
-                    break;
-
+            FactionFile.FactionData fd;
+            factions.GetFactionData(id, out fd);
             idAFactionInNewsLastPicked = fd.id;
-
             return fd.name;
         }
 
         public static string AnotherFactionInNews(IMacroContextProvider mcp)
         {   // %fx2
             PersistentFactionData factions = GameManager.Instance.PlayerEntity.FactionData;
-            int id = UnityEngine.Random.Range(200, 236);
+            // get random number between 200 and 235 now since we might add a + 1 for an id >= idAFactionInNewsLastPicked later to prevent same faction as for %fx1
+            int tmpId = UnityEngine.Random.Range(200, 235);
             FactionFile.FactionData fd;
-            factions.GetFactionData(GameManager.Instance.PlayerGPS.CurrentPoliticIndex, out fd);
-            for (int i = 0; i < 100; i++)
-                if (factions.GetFactionData(id, out fd) && fd.id != idAFactionInNewsLastPicked)
-                    break;
-
+            int id = tmpId;
+            if (tmpId >= idAFactionInNewsLastPicked) // make sure to create an id != idAFactionInNewsLastPicked
+                id = tmpId + 1; // by just adding 1 to tmpIds >= idAFactionInNewsLastPicked -> so we will end up with an id in ranges [200, idAFactionInNewsLastPicked) union (idAFactionInNewsLastPicked, 236]
+            factions.GetFactionData(id, out fd);
             return fd.name;
         }
 
