@@ -162,6 +162,27 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             characterPortrait.Refresh();
         }
 
+        /// <summary>
+        /// perform on update:
+        ///     - check for character sheet hotkey button press and react accordingly
+        /// </summary>
+        public override void Update()
+        {
+            base.Update();
+
+            // check for global character sheet hotkey and close window if pressed
+            KeyCode[] hotKeyCodesCharacterSheet = InputManager.Instance.GetBindings(InputManager.Actions.CharacterSheet);
+            for (int i = 0; i < hotKeyCodesCharacterSheet.Length; i++)
+            {
+                if (Input.GetKeyDown(hotKeyCodesCharacterSheet[i]))
+                {
+                    CloseWindow();
+                    Input.ResetInputAxes(); // prevents inventory window to reopen immediately after closing
+                    break;
+                }
+            }
+        }
+
         public override void OnPush()
         {
             Refresh();
