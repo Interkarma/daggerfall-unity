@@ -89,8 +89,8 @@ namespace DaggerfallWorkshop.Utility
             { "%fon", FactionOrderName }, // Faction order name
             { "%fpa", FactionName }, // faction name? of dialog partner - should return "Kynareth" for npc that are members of "Temple of Kynareth"
             { "%fpc", FactionPC }, // faction of pc that is from importance to dialog partner (same as his faction)
-            { "%fx1", null }, // A faction in news
-            { "%fx2", null }, // Another faction in news
+            { "%fx1", AFactionInNews }, // A faction in news
+            { "%fx2", AnotherFactionInNews }, // Another faction in news
             { "%g", Pronoun },   // He/She etc...
             { "%g1", Pronoun },  // He/She ???
             { "%g2", Pronoun2 },  // Him/Her etc...
@@ -217,6 +217,12 @@ namespace DaggerfallWorkshop.Utility
 
         #endregion
 
+        #region fields (some macros need state (e.g. %fn2 depends on %fn1
+
+        static int idAFactionInNewsLastPicked = -1;
+
+        #endregion
+
         // Any punctuation characters that can be on the end of a macro symbol need adding here.
         static char[] PUNCTUATION = { '.', ',', '\'', '?', '!' };
 
@@ -231,6 +237,8 @@ namespace DaggerfallWorkshop.Utility
             string tokenText;
             int multilineIdx = 0;
             TextFile.Token[] multilineTokens = null;
+
+            Dictionary<string, string> macrosExpandedAlready = new Dictionary<string, string>();
 
             for (int tokenIdx = 0; tokenIdx < tokens.Length; tokenIdx++)
             {
@@ -256,17 +264,30 @@ namespace DaggerfallWorkshop.Utility
                             {
                                 string prefix = words[wordIdx].Substring(0, pos);
                                 string macro = words[wordIdx].Substring(pos);
+
+                                // don't expand macros several times in same expand macro command (when still in one run of this function)
+                                // since some macros produce different results when expanded several times (macros with random generated names, e.g. %fx1, %fx2)
+                                if (macrosExpandedAlready.ContainsKey(macro))
+                                {
+                                    words[wordIdx] = prefix + macrosExpandedAlready[macro];
+                                    break;
+                                }
+
                                 if (macro.StartsWith("%"))
                                 {
                                     int macroLen;
                                     if ((macroLen = macro.IndexOfAny(PUNCTUATION)) > 0)
                                     {
                                         string symbolStr = macro.Substring(0, macroLen);
-                                        words[wordIdx] = prefix + GetValue(symbolStr, mcp) + macro.Substring(macroLen);
+                                        string expandedString = GetValue(symbolStr, mcp);
+                                        words[wordIdx] = prefix + expandedString + macro.Substring(macroLen);
+                                        macrosExpandedAlready[macro] = expandedString;
                                     }
                                     else
                                     {
-                                        words[wordIdx] = prefix + GetValue(macro, mcp);
+                                        string expandedString = GetValue(macro, mcp);
+                                        words[wordIdx] = prefix + expandedString;
+                                        macrosExpandedAlready[macro] = expandedString;
                                     }
                                 }
                             }
@@ -708,6 +729,34 @@ namespace DaggerfallWorkshop.Utility
         private static string FactionName(IMacroContextProvider mcp)
         {   // %fpa
             return GameManager.Instance.TalkManager.GetFactionName();
+        }
+
+        public static string AFactionInNews(IMacroContextProvider mcp)
+        {   // %fx1
+            PersistentFactionData factions = GameManager.Instance.PlayerEntity.FactionData;
+            int id = UnityEngine.Random.Range(200, 236);
+            FactionFile.FactionData fd;            
+            factions.GetFactionData(GameManager.Instance.PlayerGPS.CurrentPoliticIndex, out fd);
+            for (int i = 0; i < 10; i++)
+                if (factions.GetFactionData(id, out fd))
+                    break;
+
+            idAFactionInNewsLastPicked = fd.id;
+
+            return fd.name;
+        }
+
+        public static string AnotherFactionInNews(IMacroContextProvider mcp)
+        {   // %fx2
+            PersistentFactionData factions = GameManager.Instance.PlayerEntity.FactionData;
+            int id = UnityEngine.Random.Range(200, 236);
+            FactionFile.FactionData fd;
+            factions.GetFactionData(GameManager.Instance.PlayerGPS.CurrentPoliticIndex, out fd);
+            for (int i = 0; i < 100; i++)
+                if (factions.GetFactionData(id, out fd) && fd.id != idAFactionInNewsLastPicked)
+                    break;
+
+            return fd.name;
         }
 
         private static string DialogKeySubject(IMacroContextProvider mcp)

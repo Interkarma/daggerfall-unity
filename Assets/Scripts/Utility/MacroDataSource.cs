@@ -217,6 +217,16 @@ namespace DaggerfallWorkshop.Utility
             throw new NotImplementedException();
         }
 
+        public virtual string AFactionInNews()
+        {   // %fx1
+            throw new NotImplementedException();
+        }
+
+        public virtual string AnotherFactionInNews()
+        {   // %fx2
+            throw new NotImplementedException();
+        }
+
         public virtual string RoomHoursLeft()
         {   // %dwr
             throw new NotImplementedException();
