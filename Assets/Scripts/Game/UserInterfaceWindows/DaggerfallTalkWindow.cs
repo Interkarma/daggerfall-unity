@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Michael Rauter (Nystul)
-// Contributors:    Kenny Stepney (TheExceptionist)
+// Contributors:
 // 
 // Notes:
 //
@@ -289,8 +289,29 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public override void Update()
         {
             base.Update();
+        }
 
-            UpdateLabels();
+        public void UpdateListboxTopic()
+        {               
+            if (listboxTopic != null)
+            {
+                string oldTopic = listboxTopic.SelectedItem;
+                if (selectedTalkOption == TalkOption.TellMeAbout)
+                {
+                    SetListboxTopics(ref listboxTopic, TalkManager.Instance.ListTopicTellMeAbout);
+                }
+                else if (selectedTalkOption == TalkOption.WhereIs)
+                {
+                    if (selectedTalkCategory == TalkCategory.Location)
+                        SetListboxTopics(ref listboxTopic, TalkManager.Instance.ListTopicLocation);
+                    else if (selectedTalkCategory == TalkCategory.People)
+                        SetListboxTopics(ref listboxTopic, TalkManager.Instance.ListTopicPerson);
+                    else if (selectedTalkCategory == TalkCategory.Things)
+                        SetListboxTopics(ref listboxTopic, TalkManager.Instance.ListTopicThings);
+                }                
+                listboxTopic.SelectedIndex = listboxTopic.FindIndex(oldTopic);
+                UpdateQuestion(listboxTopic.SelectedIndex);
+            }                
         }
 
         public void SetNPCPortrait(FacePortraitArchive facePortraitArchive, int recordId)
@@ -561,8 +582,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             UpdateScrollBarConversation();
             UpdateScrollButtonsConversation();
 
-            UpdateLabels();
-
             isSetup = true;
         }
 
@@ -808,11 +827,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             //lengthOfLongestItemInListBox = 0;
             widthOfLongestItemInListBox = 0;
             listboxTopic.MaxHorizontalScrollIndex = 0;
-        }
-
-        void UpdateLabels()
-        {
-
         }
 
         void UpdateCheckboxes()
@@ -1184,7 +1198,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             UpdateScrollButtonsConversation();
         }
 
-        void SelectTopicFromTopicList(int index)
+        void SelectTopicFromTopicList(int index, bool forceExecution = false)
         {
             // guard execution - this is important because I encountered a issue with listbox and double-click:
             // when changing listbox content and updating the listbox in the double click event callback the
@@ -1195,15 +1209,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // "previous" item on linked second list)
             // SIDE NOTE: don't use return inside this function (or if you do, don't forget to set
             // inListboxTopicContentUpdate to false again before!)
-            if (inListboxTopicContentUpdate)
+            if (inListboxTopicContentUpdate && !forceExecution)
                 return;
+            inListboxTopicContentUpdate = true;
 
             if (index < 0 || index >= listboxTopic.Count) 
                 return;
 
-            inListboxTopicContentUpdate = true;
-
-
+            listboxTopic.SelectedIndex = index;
             TalkManager.ListItem listItem = listCurrentTopics[index];
             if (listItem.type == TalkManager.ListItemType.NavigationBack)
             {
@@ -1226,7 +1239,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 string answer = TalkManager.Instance.GetAnswerText(listItem);
 
                 SetQuestionAnswerPairInConversationListbox(currentQuestion, answer);
-                
+
                 UpdateQuestion(listboxTopic.SelectedIndex); // and get new question text for textlabel
             }
             inListboxTopicContentUpdate = false;

@@ -81,16 +81,16 @@ namespace DaggerfallWorkshop.Utility
             { "%fcn", LocationOfRegionalBuilding }, // Location with regional building asked about
             { "%fe", null },  // ?
             { "%fea", null }, // ?
-            { "%fl1", null }, // Lord of _fx1
-            { "%fl2", null }, // Lord of _fx2
+            { "%fl1", LordOfFaction1 }, // Lord of _fx1
+            { "%fl2", LordOfFaction2 }, // Lord of _fx2
             { "%fn", null },  // Random first(?) name (Female?)
             { "%fn2", null }, // Same as _mn2 (?)
             { "%fnpc", GuildNPC }, // faction of npc that is dialog partner
             { "%fon", FactionOrderName }, // Faction order name
             { "%fpa", FactionName }, // faction name? of dialog partner - should return "Kynareth" for npc that are members of "Temple of Kynareth"
             { "%fpc", FactionPC }, // faction of pc that is from importance to dialog partner (same as his faction)
-            { "%fx1", null }, // A faction in news
-            { "%fx2", null }, // Another faction in news
+            { "%fx1", AFactionInNews }, // A faction in news
+            { "%fx2", AnotherFactionInNews }, // Another faction in news
             { "%g", Pronoun },   // He/She etc...
             { "%g1", Pronoun },  // He/She ???
             { "%g2", Pronoun2 },  // Him/Her etc...
@@ -123,7 +123,7 @@ namespace DaggerfallWorkshop.Utility
             { "%lp", LocalPalace },  //  Local / palace (?) dungeon
             { "%ln", null },  //  Random lastname
             { "%loc", MarkLocationOnMap }, // Location marked on map (comment Nystul: this seems to be context dependent - it is used both in direction dialogs (7333) and map reveal dialogs (7332) - it seems to return the name of the building and reveal the map only if a 7332 dialog was chosen
-            { "%lt1", null }, // Title of _fl1
+            { "%lt1", TitleOfLordOfFaction1 }, // Title of _fl1
             { "%ltn", LegalReputation }, // In the eyes of the law you are.......
             { "%luc", Luck }, // Luck
             { "%mad", MagicResist }, // Resistance
@@ -138,8 +138,8 @@ namespace DaggerfallWorkshop.Utility
             { "%nam", null }, // A random full name
             { "%nrn", null }, // Noble of the current region (used in: O0B00Y01)
             { "%nt", NearbyTavern },  // Nearby Tavern
-            { "%ol1", null }, // Old lord of _fx1
-            { "%olf", null }, // What happened to _ol1
+            { "%ol1", OldLordOfFaction1 }, // Old lord of _fx1
+            { "%olf", OldLeaderFate }, // What happened to _ol1
             { "%on", null },  // ?
             { "%oth", Oath }, // An oath (listed in TEXT.RSC)
             { "%pc", null },  // ?
@@ -179,7 +179,7 @@ namespace DaggerfallWorkshop.Utility
             { "%r4", null },  // Nobilitys rep
             { "%r5", null },  // Underworld rep
             { "%ra", PlayerRace },  // Player's race
-			{ "%reg", CurrentRegion }, // Region
+			{ "%reg", RegionInContext }, // Region in context
             { "%rn", null },  // Regent's Name
             { "%rt", RegentTitle },  // Regent's Title
             { "%spc", Magicka }, // Current Spell Points
@@ -217,6 +217,23 @@ namespace DaggerfallWorkshop.Utility
 
         #endregion
 
+        #region fields (some macros need state (e.g. %fn2 depends on %fn1)
+
+        static int idFaction1InNews = -1;
+        static int idFaction1Ruler = -1;
+
+        #endregion
+
+        #region Public Functions
+
+        public static void ResetFactionAndRulerIds()
+        {
+            idFaction1InNews = -1;
+            idFaction1Ruler = -1;
+        }
+
+        #endregion
+
         // Any punctuation characters that can be on the end of a macro symbol need adding here.
         static char[] PUNCTUATION = { '.', ',', '\'', '?', '!' };
 
@@ -231,6 +248,11 @@ namespace DaggerfallWorkshop.Utility
             string tokenText;
             int multilineIdx = 0;
             TextFile.Token[] multilineTokens = null;
+
+            // this dictionary is used check for previous resolving of a specific macro in the current call to ExpandMacros before expanding macros
+            // if macro (macro string used as dict key) has been expanded before use previous expanded string (value of this dict) as result
+            // this dict is newly created (and thus empty) for every new call to this function call so macros will be expanded in future calls to ExpandMacros
+            Dictionary<string, string> macrosExpandedAlready = new Dictionary<string, string>();
 
             for (int tokenIdx = 0; tokenIdx < tokens.Length; tokenIdx++)
             {
@@ -256,17 +278,30 @@ namespace DaggerfallWorkshop.Utility
                             {
                                 string prefix = words[wordIdx].Substring(0, pos);
                                 string macro = words[wordIdx].Substring(pos);
+
+                                // don't expand macros several times in same expand macro command (when still in one run of this function)
+                                // since some macros produce different results when expanded several times (macros with random generated names, e.g. %fx1, %fx2)
+                                if (macrosExpandedAlready.ContainsKey(macro))
+                                {
+                                    words[wordIdx] = prefix + macrosExpandedAlready[macro];
+                                    continue;
+                                }
+
                                 if (macro.StartsWith("%"))
                                 {
                                     int macroLen;
                                     if ((macroLen = macro.IndexOfAny(PUNCTUATION)) > 0)
                                     {
                                         string symbolStr = macro.Substring(0, macroLen);
-                                        words[wordIdx] = prefix + GetValue(symbolStr, mcp) + macro.Substring(macroLen);
+                                        string expandedString = GetValue(symbolStr, mcp);
+                                        words[wordIdx] = prefix + expandedString + macro.Substring(macroLen);
+                                        macrosExpandedAlready[macro] = expandedString;
                                     }
                                     else
                                     {
-                                        words[wordIdx] = prefix + GetValue(macro, mcp);
+                                        string expandedString = GetValue(macro, mcp);
+                                        words[wordIdx] = prefix + expandedString;
+                                        macrosExpandedAlready[macro] = expandedString;
                                     }
                                 }
                             }
@@ -613,7 +648,7 @@ namespace DaggerfallWorkshop.Utility
 
         private static string Honorific(IMacroContextProvider mcp)
         {   // %hnr
-            return GameManager.Instance.TalkManager.getHonoric();
+            return GameManager.Instance.TalkManager.GetHonoric();
         }
 
         private static string DmgMod(IMacroContextProvider mcp)
@@ -710,6 +745,181 @@ namespace DaggerfallWorkshop.Utility
             return GameManager.Instance.TalkManager.GetFactionName();
         }
 
+        public static string AFactionInNews(IMacroContextProvider mcp)
+        {   // %fx1
+            PersistentFactionData factions = GameManager.Instance.PlayerEntity.FactionData;
+            int id;
+            if (idFaction1Ruler == -1) // no previous %ol1
+            {
+                id = UnityEngine.Random.Range(0, TalkManager.factionsUsedForFactionInNews.Count - 1);
+                idFaction1InNews = id;
+            }
+            else
+            {
+                id = idFaction1Ruler;
+            }
+            FactionFile.FactionData fd;
+            factions.GetFactionData((int)TalkManager.factionsUsedForFactionInNews[id], out fd);
+            return fd.name;
+        }
+
+        public static string AnotherFactionInNews(IMacroContextProvider mcp)
+        {   // %fx2
+            PersistentFactionData factions = GameManager.Instance.PlayerEntity.FactionData;
+            // get random number between 0 and factionsUsedForFactionInNews.Count - 2 now since we might add a + 1 for an id >= idFaction1InNews later to prevent same faction as for %fx1
+            int id = UnityEngine.Random.Range(0, TalkManager.factionsUsedForFactionInNews.Count - 1);
+            FactionFile.FactionData fd;
+            if (id >= idFaction1InNews) // make sure to create an id != idFaction1InNews
+                id += 1; // by just adding 1 if id >= idFaction1InNews -> so we will end up with an id in ranges [0, idFaction1InNews) union (idFaction1InNews, factionsUsedForFactionInNews.Count]
+            factions.GetFactionData((int)TalkManager.factionsUsedForFactionInNews[id], out fd);
+            return fd.name;
+        }
+
+        public static string OldLeaderFate(IMacroContextProvider mcp)
+        {   // %olf
+            int index = UnityEngine.Random.Range(0, 5);
+            return TalkManager.Instance.GetOldLeaderFateString(index);
+        }
+
+        private static string HelperCreateLordNameForFaction(int factionId)
+        {
+            PersistentFactionData factions = GameManager.Instance.PlayerEntity.FactionData;
+            FactionFile.FactionData fd;
+            factions.GetFactionData(factionId, out fd);
+
+            Genders gender = (Genders)((fd.ruler + 1) % 2); // even entries are female titles/genders, odd entries are male ones
+
+            Races race = (Races)fd.race;
+
+            Game.Utility.NameHelper.BankTypes nameBankType;
+            switch (race)
+            {
+                case Races.Argonian:
+                case Races.Breton:
+                case Races.Khajiit:
+                default:
+                    nameBankType = Game.Utility.NameHelper.BankTypes.Breton;
+                    break;
+                case Races.DarkElf:
+                    nameBankType = Game.Utility.NameHelper.BankTypes.DarkElf;
+                    break;
+                case Races.HighElf:
+                    nameBankType = Game.Utility.NameHelper.BankTypes.HighElf;
+                    break;
+                case Races.WoodElf:
+                    nameBankType = Game.Utility.NameHelper.BankTypes.WoodElf;
+                    break;
+                case Races.Nord:
+                    nameBankType = Game.Utility.NameHelper.BankTypes.Nord;
+                    break;
+                case Races.Redguard:
+                    nameBankType = Game.Utility.NameHelper.BankTypes.Redguard;
+                    break;
+            }
+            return DaggerfallUnity.Instance.NameHelper.FullName(nameBankType, gender);
+        }
+
+        public static string OldLordOfFaction1(IMacroContextProvider mcp)
+        {   // %ol1                    
+            int id;
+            if (idFaction1Ruler == -1)
+            {
+                id = UnityEngine.Random.Range(0, TalkManager.factionsUsedForRulers.Count - 1);
+                idFaction1Ruler = id;
+            }
+            else
+            {
+                id = idFaction1Ruler;
+            }
+            return HelperCreateLordNameForFaction((int)TalkManager.factionsUsedForRulers[id]);
+        }
+
+        public static string LordOfFaction1(IMacroContextProvider mcp)
+        {   // %fl1
+            int id;
+            if (idFaction1Ruler == -1)
+            {
+                id = UnityEngine.Random.Range(0, TalkManager.factionsUsedForRulers.Count - 1);
+                idFaction1Ruler = id;
+            }
+            else
+            {
+                id = idFaction1Ruler;
+            }
+            return HelperCreateLordNameForFaction((int)TalkManager.factionsUsedForRulers[id]);
+        }
+
+        public static string LordOfFaction2(IMacroContextProvider mcp)
+        {   // %fl2
+            // get random number between 0 and factionsUsedForRulers.Count - 2 now since we might add a + 1 for an id >= idFaction1Ruler later to prevent same faction as for %fl1
+            int id = UnityEngine.Random.Range(0, TalkManager.factionsUsedForRulers.Count - 2);
+            if (id >= idFaction1Ruler) // make sure to create an id != idFaction1Ruler
+                id += 1; // by just adding 1 if id >= idFaction1InNews -> so we will end up with an id in ranges [0, idFaction1Ruler) union (idFaction1InNews, factionsUsedForFactionRulers.Count]
+            return HelperCreateLordNameForFaction((int)TalkManager.factionsUsedForRulers[id]);
+        }
+
+        public static string TitleOfLordOfFaction1(IMacroContextProvider mcp)
+        {   // %lt1
+            int id;
+            if (idFaction1Ruler == -1)
+            {
+                id = UnityEngine.Random.Range(0, TalkManager.factionsUsedForRulers.Count - 1);
+                idFaction1Ruler = id;
+            }
+            else
+            {
+                id = idFaction1Ruler;
+            }
+
+            PersistentFactionData factions = GameManager.Instance.PlayerEntity.FactionData;
+            FactionFile.FactionData fd;
+            factions.GetFactionData((int)TalkManager.factionsUsedForRulers[id], out fd);
+
+            switch (fd.ruler)
+            {
+                case 1:
+                    return HardStrings.King;
+                case 2:
+                    return HardStrings.Queen;
+                case 3:
+                    return HardStrings.Duke;
+                case 4:
+                    return HardStrings.Duchess;
+                case 5:
+                    return HardStrings.Marquis;
+                case 6:
+                    return HardStrings.Marquise;
+                case 7:
+                    return HardStrings.Count;
+                case 8:
+                    return HardStrings.Countess;
+                case 9:
+                    return HardStrings.Baron;
+                case 10:
+                    return HardStrings.Baroness;
+                case 11:
+                    return HardStrings.Lord;
+                case 12:
+                    return HardStrings.Lady;
+                default:
+                    return HardStrings.Lord;
+            }
+        }
+
+        public static string RegionInContext(IMacroContextProvider mcp)
+        {   // %reg
+            if (idFaction1Ruler != -1)
+            {
+                //return DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegionName((int)TalkManager.factionsUsedForRulers[idFaction1Ruler]); // not mapping to same regions for some reason as FactionFile.FactionIDs enum
+                string regionName = Enum.GetName(typeof(FactionFile.FactionIDs), (FactionFile.FactionIDs)TalkManager.factionsUsedForRulers[idFaction1Ruler]);
+                regionName = regionName.Replace('_', ' ');
+                return regionName;
+
+            }
+            else
+                return CurrentRegion(mcp);
+        }
+
         private static string DialogKeySubject(IMacroContextProvider mcp)
         {
             // %key
@@ -727,7 +937,10 @@ namespace DaggerfallWorkshop.Utility
                 case TalkManager.KeySubjectType.Work:
                     return GameManager.Instance.TalkManager.GetWorkString();
                 case TalkManager.KeySubjectType.QuestTopic:
-                    return GameManager.Instance.TalkManager.CurrentKeySubject;
+                    if (GameManager.Instance.TalkManager.CurrentQuestionListItem != null)
+                        return GameManager.Instance.TalkManager.CurrentQuestionListItem.caption;
+                    else
+                        return GameManager.Instance.TalkManager.CurrentKeySubject;
                 case TalkManager.KeySubjectType.Organization:
                     return GameManager.Instance.TalkManager.CurrentKeySubject;
             }
