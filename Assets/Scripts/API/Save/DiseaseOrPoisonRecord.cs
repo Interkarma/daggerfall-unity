@@ -92,7 +92,7 @@ namespace DaggerfallConnect.Save
             // Copy base record data
             base.CopyTo(other);
 
-            // Copy item data
+            // Copy parsed data
             other.parsedData = this.parsedData;
         }
 

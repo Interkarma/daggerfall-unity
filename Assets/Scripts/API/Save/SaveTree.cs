@@ -242,6 +242,9 @@ namespace DaggerfallConnect.Save
                     case RecordTypes.Spell:
                         record = new SpellRecord(reader, length);
                         break;
+                    case RecordTypes.GuildMembership:
+                        record = new GuildMembershipRecord(reader, length);
+                        break;
                     case RecordTypes.DiseaseOrPoison:
                         record = new DiseaseOrPoisonRecord(reader, length);
                         break;

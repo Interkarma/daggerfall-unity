@@ -127,7 +127,7 @@ namespace DaggerfallWorkshop.Game.Guilds
             return CreateGuildObj(guildGroup, buildingFactionId);
         }
 
-        private Guild CreateGuildObj(FactionFile.GuildGroups guildGroup, int variant = 0)
+        public Guild CreateGuildObj(FactionFile.GuildGroups guildGroup, int variant = 0)
         {
             switch (guildGroup)
             {
@@ -206,7 +206,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                 return GetGuild(guildGroup, factionId);
         }
 
-        private FactionFile.GuildGroups GetGuildGroup(int factionId)
+        public FactionFile.GuildGroups GetGuildGroup(int factionId)
         {
             PersistentFactionData persistentFactionData = GameManager.Instance.PlayerEntity.FactionData;
             FactionFile.GuildGroups guildGroup = FactionFile.GuildGroups.None;

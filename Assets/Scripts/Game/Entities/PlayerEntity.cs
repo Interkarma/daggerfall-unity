@@ -612,6 +612,36 @@ namespace DaggerfallWorkshop.Game.Entity
         }
 
         /// <summary>
+        /// Assigns guild memberships to player from classic save tree.
+        /// </summary>
+        public void AssignGuildMemberships(SaveTree saveTree)
+        {
+            // Find character record, should always be a singleton
+            CharacterRecord characterRecord = (CharacterRecord)saveTree.FindRecord(RecordTypes.Character);
+            if (characterRecord == null)
+                return;
+
+            // Find all guild memberships
+            List<SaveTreeBaseRecord> guildMembershipRecords = saveTree.FindRecords(RecordTypes.GuildMembership, characterRecord);
+
+            // Add Daggerfall Unity guild memberships
+            GuildManager guildManager = GameManager.Instance.GuildManager;
+            foreach (GuildMembershipRecord record in guildMembershipRecords)
+            {
+                FactionFile.GuildGroups guildGroup = guildManager.GetGuildGroup(record.ParsedData.factionID);
+                Guild guild = guildManager.CreateGuildObj(guildGroup, record.ParsedData.factionID);
+                guild.Rank = record.ParsedData.rank;
+
+                // Note: In classic, time of last rank change is measured by minute, not day
+                DaggerfallDateTime tempTime = new DaggerfallDateTime();
+                tempTime.FromClassicDaggerfallTime(record.ParsedData.timeOfLastRankChange);
+                guild.LastRankChange = Guild.CalculateDaySinceZero(tempTime);
+
+                guildManager.AddMembership(guildGroup, guild);
+            }
+        }
+
+        /// <summary>
         /// Assigns diseases and poisons to player from classic save tree.
         /// </summary>
         public void AssignDiseasesAndPoisons(SaveTree saveTree)
