@@ -128,8 +128,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button upstairsButton;
         Button downstairsButton;
 
-        // definitions of hotkey sequences
-        readonly HotkeySequence HotkeySequence_CloseMap = new HotkeySequence(KeyCode.M, HotkeySequence.KeyModifiers.None);        
+        // definitions of hotkey sequences      
         readonly HotkeySequence HotkeySequence_SwitchAutomapGridMode = new HotkeySequence(KeyCode.Space, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_ResetView = new HotkeySequence(KeyCode.Backspace, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_ResetRotationPivotAxisView = new HotkeySequence(KeyCode.Backspace, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
@@ -646,11 +645,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             
             // check hotkeys and assign actions
-            if (Input.GetKeyDown(HotkeySequence_CloseMap.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_CloseMap.modifiers))
-            {                
-                CloseWindow();
-                Input.ResetInputAxes(); // prevents automap window to reopen immediately after closing
-            }
             if (Input.GetKeyDown(HotkeySequence_SwitchAutomapGridMode.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_SwitchAutomapGridMode.modifiers))
             {
                 ActionChangeAutomapGridMode();

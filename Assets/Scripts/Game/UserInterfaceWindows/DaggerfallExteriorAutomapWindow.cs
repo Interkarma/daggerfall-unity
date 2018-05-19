@@ -114,7 +114,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button downstairsButton;
 
         // definitions of hotkey sequences
-        readonly HotkeySequence HotkeySequence_CloseMap = new HotkeySequence(KeyCode.M, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_FocusPlayerPosition = new HotkeySequence(KeyCode.Tab, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_ResetView = new HotkeySequence(KeyCode.Backspace, HotkeySequence.KeyModifiers.None);      
         readonly HotkeySequence HotkeySequence_SwitchToNextExteriorAutomapViewMode = new HotkeySequence(KeyCode.Return, HotkeySequence.KeyModifiers.None);
@@ -521,11 +520,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.getKeyModifiers(Input.GetKey(KeyCode.LeftControl), Input.GetKey(KeyCode.RightControl), Input.GetKey(KeyCode.LeftShift), Input.GetKey(KeyCode.RightShift), Input.GetKey(KeyCode.LeftAlt), Input.GetKey(KeyCode.RightAlt));
             
             // check hotkeys and assign actions
-            if (Input.GetKeyDown(HotkeySequence_CloseMap.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_CloseMap.modifiers))
-            {                
-                CloseWindow();
-                Input.ResetInputAxes(); // prevents automap window to reopen immediately after closing
-            }
             if (Input.GetKeyDown(HotkeySequence_FocusPlayerPosition.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_FocusPlayerPosition.modifiers))
             {
                 ActionFocusPlayerPosition();
