@@ -122,9 +122,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// </summary>
         /// <param name="size">Number of textboxes.</param>
         /// <param name="isNumeric">Accept only numeric chars.</param>
-        public void DoLayout(int size, bool isNumeric = false)
+        public void DoLayout(int size, bool isNumeric = false, NumericMode numericMode = NumericMode.Natural)
         {
-            DoLayout(Enumerable.Range(0, size).Select(x => string.Empty).ToArray(), isNumeric);
+            DoLayout(Enumerable.Range(0, size).Select(x => string.Empty).ToArray(), isNumeric, numericMode);
         }
 
         /// <summary>
@@ -142,7 +142,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// <param name="defaultValues">Default values in the requested order.</param>
         public void DoLayout(params int[] defaultValues)
         {
-            DoLayout(defaultValues.Select(x => x.ToString()).ToArray(), true);
+            DoLayout(defaultValues.Select(x => x.ToString()).ToArray(), true, NumericMode.Integer);
         }
 
         /// <summary>
@@ -151,7 +151,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// <param name="defaultValues">Default values in the requested order.</param>
         public void DoLayout(params float[] defaultValues)
         {
-            DoLayout(defaultValues.Select(x => x.ToString()).ToArray(), false);
+            DoLayout(defaultValues.Select(x => x.ToString()).ToArray(), true, NumericMode.Float);
         }
 
         /// <summary>
@@ -197,14 +197,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// <summary>
         /// Gets all result values in the layout order.
         /// </summary>
-        /// <remarks>Numeric doesn't allow dot so we check for bad input for now.</remarks>
         public IEnumerable<float> GetFloatValues()
         {
-            foreach (string text in GetInput())
-            {
-                float value;
-                yield return float.TryParse(text, out value) ? value : 0;
-            }
+            return GetInput().Select(x => float.Parse(x));
         }
 
         /// <summary>
@@ -212,8 +207,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// </summary>
         public float GetFloatValue(int index)
         {
-            float value;
-            return float.TryParse(TextBoxes[index].ResultText, out value) ? value : 0;
+            return float.Parse(TextBoxes[index].ResultText);
         }
 
         /// <summary>
@@ -257,7 +251,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #region Private Methods
 
-        private void DoLayout(string[] defaultText, bool isNumeric)
+        private void DoLayout(string[] defaultText, bool isNumeric, NumericMode numericMode = NumericMode.Natural)
         {
             if (Components.Count > 0)
                 Components.Clear();
@@ -309,6 +303,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                 TextBoxes[i] = DaggerfallUI.AddTextBoxWithFocus(new Rect(new Vector2(x, y), size), defaultText[i], this);
                 TextBoxes[i].Numeric = isNumeric;
+                TextBoxes[i].NumericMode = numericMode;
                 TextBoxes[i].UseFocus = true;
                 TextBoxes[i].Outline.Enabled = enableOutline;
                 if (OnAddTextBoxCallback != null)
