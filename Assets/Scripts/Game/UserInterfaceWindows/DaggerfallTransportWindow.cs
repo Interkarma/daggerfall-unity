@@ -56,6 +56,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Vector2 baseSize;
 
+        KeyCode toggleClosedBinding;
+
         #endregion
 
         #region Constructors
@@ -121,13 +123,29 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
 
             NativePanel.Components.Add(mainPanel);
+
+            // Store toggle closed binding for this window
+            toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.Transport);
         }
 
         #endregion
 
-        #region Private Methods
+        #region Overrides
 
-        void LoadTextures()
+        public override void Update()
+        {
+            base.Update();
+
+            // Toggle window closed with same hotkey used to open it
+            if (Input.GetKeyUp(toggleClosedBinding))
+                CloseWindow();
+        }
+
+        #endregion
+
+            #region Private Methods
+
+            void LoadTextures()
         {
             ImageData baseData = ImageReader.GetImageData(baseTextureName);
             baseTexture = baseData.texture;
