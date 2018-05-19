@@ -29,7 +29,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string nativeImgName = "INFO00I0.IMG";
         private const int noAffiliationsMsgId = 19;
 
-        Texture2D nativeTexture;
+        #region UI Controls
+
         PlayerEntity playerEntity;
         TextLabel nameLabel = new TextLabel();
         TextLabel raceLabel = new TextLabel();
@@ -43,6 +44,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextLabel[] statLabels = new TextLabel[DaggerfallStats.Count];
         PaperDoll characterPortrait = new PaperDoll();
 
+        #endregion
+
+        #region UI Textures
+
+        Texture2D nativeTexture;
+
+        #endregion
+
+        #region Fields
+
         StatsRollout statsRollout;
 
         bool leveling = false;
@@ -51,15 +62,29 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int maxBonusPool = 6;        // The maximum number of free points to allocate on level up
         SoundClips levelUpSound = SoundClips.LevelUp;
 
+        KeyCode toggleClosedBinding;
+
+        #endregion
+
+        #region Properties
+
         PlayerEntity PlayerEntity
         {
             get { return (playerEntity != null) ? playerEntity : playerEntity = GameManager.Instance.PlayerEntity; }
         }
 
+        #endregion
+
+        #region Constructors
+
         public DaggerfallCharacterSheetWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
         {
         }
+
+        #endregion
+
+        #region Setup Methods
 
         protected override void Setup()
         {
@@ -160,6 +185,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Update player paper doll for first time
             UpdatePlayerValues();
             characterPortrait.Refresh();
+
+            // Store toggle closed binding for this window
+            toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.CharacterSheet);
+        }
+
+        public override void Update()
+        {
+            base.Update();
+
+            // Toggle window closed with same hotkey used to open it
+            if (Input.GetKeyUp(toggleClosedBinding))
+                CloseWindow();
         }
 
         public override void OnPush()
@@ -181,6 +218,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             base.CancelWindow();
         }
+
+        #endregion
 
         #region Private Methods
 
