@@ -6,10 +6,10 @@ using UnityEngine;
 
 namespace DaggerfallWorkshop.Game
 {
-    [RequireComponent(typeof(PlayerMotor))]
+    //[RequireComponent(typeof(PlayerMotor))]
     public class PlayerGroundMotor : MonoBehaviour
     {
-        private PlayerMotor playerMotor;
+        //private PlayerMotor playerMotor;
         private CharacterController controller;
         // Moving platform support
         Transform activePlatform;
@@ -27,7 +27,7 @@ namespace DaggerfallWorkshop.Game
 
         private void Start()
         {
-            playerMotor = GameManager.Instance.PlayerMotor;
+            //playerMotor = GameManager.Instance.PlayerMotor;
             controller = GetComponent<CharacterController>();
         }
 

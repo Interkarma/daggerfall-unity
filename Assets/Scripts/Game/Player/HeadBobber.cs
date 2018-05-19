@@ -32,7 +32,7 @@ namespace DaggerfallWorkshop.Game
         public Vector3 RestPos
         { get { return restPos; } set { restPos = value; } }
 
-        private float transitionSpeed = 20f; //smooths out the transition from moving to not moving.
+        //private float transitionSpeed = 20f; //smooths out the transition from moving to not moving.
         private float bobSpeed; //how quickly the player's head bobs.
         private float bobXAmount; //how dramatic the bob is in side motion.
         private float bobYAmount; //how dramatic the bob is in up/down motion.
