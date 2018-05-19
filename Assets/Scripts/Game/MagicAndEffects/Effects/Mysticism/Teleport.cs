@@ -145,7 +145,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 return;
 
             // Is player in same interior as anchor?
-            if (IsSameInterior())
+            bool sameInterior = IsSameInterior();
+            if (sameInterior)
             {
                 // Just need to move player
                 serializablePlayer.RestorePosition(anchorPosition);
@@ -163,6 +164,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 PlayerEnterExit.OnRespawnerComplete += PlayerEnterExit_OnRespawnerComplete;
                 playerEnterExit.RestorePositionHelper(anchorPosition, false);
             }
+
+            // When moving anywhere other than same interior trigger a fade so transition appears smoother
+            if (!sameInterior)
+                DaggerfallUI.Instance.FadeHUDFromBlack();
 
             // End and resign
             // Player will need to create a new teleport with a new anchor from here
