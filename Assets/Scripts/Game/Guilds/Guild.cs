@@ -58,6 +58,8 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public int Rank { get { return rank; } set { rank = value; } }
 
+        public int LastRankChange { get { return lastRankChange; } set { lastRankChange = value; } }
+
         public virtual TextFile.Token[] UpdateRank(PlayerEntity playerEntity)
         {
             TextFile.Token[] tokens = null;
@@ -115,7 +117,7 @@ namespace DaggerfallWorkshop.Game.Guilds
             }
         }
 
-        private static int CalculateDaySinceZero(DaggerfallDateTime date)
+        public static int CalculateDaySinceZero(DaggerfallDateTime date)
         {
             return (date.Year * DaggerfallDateTime.DaysPerYear) + date.DayOfYear;
         }
