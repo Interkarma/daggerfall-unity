@@ -279,6 +279,7 @@ namespace DaggerfallWorkshop.Game.Questing
             // Register trigger conditions
             RegisterAction(new WhenNpcIsAvailable(null));
             RegisterAction(new WhenReputeWith(null));
+            RegisterAction(new WhenSkillLevel(null));
             RegisterAction(new WhenTask(null));
             RegisterAction(new ClickedNpc(null));
             RegisterAction(new ClickedItem(null));
