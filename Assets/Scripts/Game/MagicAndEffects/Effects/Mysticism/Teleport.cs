@@ -153,9 +153,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             }
             else
             {
+                // Cache scene before departing
+                if (!playerEnterExit.IsPlayerInside)
+                    SaveLoadManager.CacheScene(GameManager.Instance.StreamingWorld.SceneName);      // Player is outside
+                else if (playerEnterExit.IsPlayerInsideBuilding)
+                    SaveLoadManager.CacheScene(playerEnterExit.Interior.name);                      // Player inside a building
+
                 // Need to load some other part of the world again - player could be anywhere
-                // Esnure scene is cached for current location before departing
-                SaveLoadManager.CacheScene(GameManager.Instance.StreamingWorld.SceneName);
                 PlayerEnterExit.OnRespawnerComplete += PlayerEnterExit_OnRespawnerComplete;
                 playerEnterExit.RestorePositionHelper(anchorPosition, false);
             }
@@ -230,10 +234,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 return;
             }
 
-            // Restore final position, unwire event, and restore cache
+            // Restore final position and unwire event
             serializablePlayer.RestorePosition(anchorPosition);
             PlayerEnterExit.OnRespawnerComplete -= PlayerEnterExit_OnRespawnerComplete;
-            SaveLoadManager.RestoreCachedScene(GameManager.Instance.StreamingWorld.SceneName);
+
+            // Restore scene cache on arrival
+            if (!playerEnterExit.IsPlayerInside)
+                SaveLoadManager.RestoreCachedScene(GameManager.Instance.StreamingWorld.SceneName);      // Player is outside
+            else if (playerEnterExit.IsPlayerInsideBuilding)
+                SaveLoadManager.RestoreCachedScene(playerEnterExit.Interior.name);                      // Player inside a building
         }
 
         private void EffectActionPrompt_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
