@@ -1,5 +1,6 @@
 ﻿using DaggerfallConnect;
 using DaggerfallWorkshop.Game;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +11,10 @@ namespace DaggerfallWorkshop.Game
     public class PlayerSpeedChanger : MonoBehaviour
     {
         private PlayerMotor playerMotor;
+
+        // If checked, the run key toggles between running and walking. Otherwise player runs if the key is held down and walks otherwise
+        // There must be a button set up in the Input Manager called "Run"
+        public bool toggleRun = false;
 
         // Daggerfall base speed constants. (courtesy Allofich)
         public const float classicToUnitySpeedUnitRatio = 39.5f; // was estimated from comparing a walk over the same distance in classic and DF Unity
@@ -32,6 +37,38 @@ namespace DaggerfallWorkshop.Game
         private void Update()
         {
 
+        }
+
+        /// <summary>
+        /// Determines how speed should be changed based on player's input
+        /// </summary>
+        /// <param name="speed"></param>
+        public void HandleInputSpeedAdjustment(ref float speed)
+        {
+            if (!playerMotor.IsRiding && playerMotor.IsGrounded)
+            {
+                if (InputManager.Instance.HasAction(InputManager.Actions.Run))
+                {
+                    try
+                    {
+                        // If running isn't on a toggle, then use the appropriate speed depending on whether the run button is down
+                        if (!toggleRun)
+                            speed = GetRunSpeed(speed);
+                        else
+                            speed = (speed == GetBaseSpeed() ? GetRunSpeed(speed) : GetBaseSpeed());
+                    }
+                    catch
+                    {
+                        speed = GetRunSpeed(speed);
+                    }
+                }
+                // Handle sneak key. Reduces movement speed to half, then subtracts 1 in classic speed units
+                else if(InputManager.Instance.HasAction(InputManager.Actions.Sneak))
+                {
+                    speed /= 2;
+                    speed -= (1 / classicToUnitySpeedUnitRatio);
+                }
+            }
         }
         /// <summary>
         /// Get LiveSpeed adjusted for swimming, walking, crouching or riding

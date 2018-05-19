@@ -24,14 +24,9 @@ namespace DaggerfallWorkshop.Game
         // and avoid adding any references to TransportManager.
 
         bool isRiding = false;
-        private bool riding = false;
 
         // If true, diagonal speed (when strafing + moving forward or back) can't exceed normal move speed; otherwise it's about 1.4 times faster
         public bool limitDiagonalSpeed = true;
-
-        // If checked, the run key toggles between running and walking. Otherwise player runs if the key is held down and walks otherwise
-        // There must be a button set up in the Input Manager called "Run"
-        public bool toggleRun = false;
 
         public float systemTimerUpdatesPerSecond = .055f; // Number of updates per second by the system timer at memory location 0x46C.
                                                           // Used for timing various things in classic.
@@ -218,34 +213,10 @@ namespace DaggerfallWorkshop.Game
 
                 acrobatMotor.CheckFallingDamage();
 
-                // Get walking/crouching/riding speed
-                speed = speedChanger.GetBaseSpeed();
-
-                if (!riding)
-                {
-                    try
-                    {
-                        // If running isn't on a toggle, then use the appropriate speed depending on whether the run button is down
-                        if (!toggleRun && InputManager.Instance.HasAction(InputManager.Actions.Run))
-                            speed = speedChanger.GetRunSpeed(speed);
-                    }
-                    catch
-                    {
-                        speed = speedChanger.GetRunSpeed(speed);
-                    }
-                }
-
-                // Handle sneak key. Reduces movement speed to half, then subtracts 1 in classic speed units
-                if (InputManager.Instance.HasAction(InputManager.Actions.Sneak))
-                {
-                    speed /= 2;
-                    speed -= (1 / PlayerSpeedChanger.classicToUnitySpeedUnitRatio);
-                }
-
                 // checks if sliding and applies movement to moveDirection if true
                 frictionMotor.MoveIfSliding(ref moveDirection);
 
-                acrobatMotor.DoJump(ref moveDirection);
+                acrobatMotor.HandleJumpInput(ref moveDirection);
             }
             else
             {
@@ -273,64 +244,12 @@ namespace DaggerfallWorkshop.Game
             if (levitateMotor && levitateMotor.IsLevitating)
                 return;
 
-            if (isRiding && !riding)
-            {
-                heightChanger.HeightAction = HeightChangeAction.DoMounting;
-                riding = true;
-            }
-            else if (!isRiding && riding)
-            {
-                heightChanger.HeightAction = HeightChangeAction.DoDismounting;
-                riding = false;
-            }
-            else if (!isRiding)
-            {
-                try
-                {
-                    // If the run button is set to toggle, then switch between walk/run speed. (We use Update for this...
-                    // FixedUpdate is a poor place to use GetButtonDown, since it doesn't necessarily run every frame and can miss the event)
-                    if (toggleRun && grounded && InputManager.Instance.HasAction(InputManager.Actions.Run))
-                        speed = (speed == speedChanger.GetBaseSpeed() ? speedChanger.GetRunSpeed(speed) : speedChanger.GetBaseSpeed());
-                    //if (toggleRun && grounded && Input.GetButtonDown("Run"))
-                    //    speed = (speed == walkSpeed ? runSpeed : walkSpeed);
-                }
-                catch
-                {
-                    speed = speedChanger.GetRunSpeed(speed);
-                }
+            speed = speedChanger.GetBaseSpeed();
+            speedChanger.HandleInputSpeedAdjustment(ref speed);
 
-                // Toggle crouching
-                if (InputManager.Instance.ActionComplete(InputManager.Actions.Crouch))
-                {
-                    if (isCrouching)
-                        heightChanger.HeightAction = HeightChangeAction.DoStanding;
-                    else
-                        heightChanger.HeightAction = HeightChangeAction.DoCrouching;
-                }
+            heightChanger.HandlePlayerInput();
 
-            }
-
-            if (smoothFollower != null && controller != null)
-            {
-                float distanceMoved = Vector3.Distance(smoothFollowerPrevWorldPos, smoothFollower.position);        // Assuming the follower is a child of this motor transform we can get the distance travelled.
-                float maxPossibleDistanceByMotorVelocity = controller.velocity.magnitude * 2.0f * Time.deltaTime;   // Theoretically the max distance the motor can carry the player with a generous margin.
-                float speedThreshold = speedChanger.GetRunSpeed(speed) * Time.deltaTime;                                         // Without question any distance travelled less than the running speed is legal.
-
-                // NOTE: Maybe the min distance should also include the height different between crouching / standing.
-                if (distanceMoved > speedThreshold && distanceMoved > maxPossibleDistanceByMotorVelocity)
-                {
-                    smoothFollowerReset = true;
-                }
-
-                if (smoothFollowerReset)
-                {
-                    smoothFollowerPrevWorldPos = transform.position;
-                    smoothFollowerReset = false;
-                }
-
-                smoothFollower.position = Vector3.Lerp(smoothFollowerPrevWorldPos, transform.position, smoothFollowerLerpSpeed * Time.smoothDeltaTime);
-                smoothFollowerPrevWorldPos = smoothFollower.position;
-            }
+            UpdateSmoothFollower();
         }
 
         // Store point that we're in contact with for use in FixedUpdate if needed
@@ -401,6 +320,30 @@ namespace DaggerfallWorkshop.Game
 
         #region Private Methods
 
+        void UpdateSmoothFollower()
+        {
+            if (smoothFollower != null && controller != null)
+            {
+                float distanceMoved = Vector3.Distance(smoothFollowerPrevWorldPos, smoothFollower.position);        // Assuming the follower is a child of this motor transform we can get the distance travelled.
+                float maxPossibleDistanceByMotorVelocity = controller.velocity.magnitude * 2.0f * Time.deltaTime;   // Theoretically the max distance the motor can carry the player with a generous margin.
+                float speedThreshold = speedChanger.GetRunSpeed(speed) * Time.deltaTime;                                         // Without question any distance travelled less than the running speed is legal.
+
+                // NOTE: Maybe the min distance should also include the height different between crouching / standing.
+                if (distanceMoved > speedThreshold && distanceMoved > maxPossibleDistanceByMotorVelocity)
+                {
+                    smoothFollowerReset = true;
+                }
+
+                if (smoothFollowerReset)
+                {
+                    smoothFollowerPrevWorldPos = transform.position;
+                    smoothFollowerReset = false;
+                }
+
+                smoothFollower.position = Vector3.Lerp(smoothFollowerPrevWorldPos, transform.position, smoothFollowerLerpSpeed * Time.smoothDeltaTime);
+                smoothFollowerPrevWorldPos = smoothFollower.position;
+            }
+        }
         void ResetPlayerState()
         {
             // Cancel levitation at start of loading a new save game
