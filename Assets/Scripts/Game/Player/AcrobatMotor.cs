@@ -55,7 +55,7 @@ namespace DaggerfallWorkshop.Game
         /// Jump! But only if the jump button has been released and player has been grounded for a given number of frames
         /// </summary>
         /// <param name="moveDirection"></param>
-        public void DoJump(ref Vector3 moveDirection)
+        public void HandleJumpInput(ref Vector3 moveDirection)
         {
             // Cancel jump if player is paralyzed
             if (GameManager.Instance.PlayerEntity.IsParalyzed)
