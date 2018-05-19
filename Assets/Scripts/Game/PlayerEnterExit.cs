@@ -309,7 +309,8 @@ namespace DaggerfallWorkshop.Game
             bool insideBuilding,
             StaticDoor[] exteriorDoors = null,
             bool forceReposition = false,
-            bool importEnemies = true)
+            bool importEnemies = true,
+            bool start = true)
         {
             // Mark any existing world data for destruction
             if (dungeon)
@@ -327,10 +328,10 @@ namespace DaggerfallWorkshop.Game
             // Start respawn process
             isRespawning = true;
             SetExteriorDoors(exteriorDoors);
-            StartCoroutine(Respawner(worldX, worldZ, insideDungeon, insideBuilding, forceReposition, importEnemies));
+            StartCoroutine(Respawner(worldX, worldZ, insideDungeon, insideBuilding, forceReposition, importEnemies, start));
         }
 
-        IEnumerator Respawner(int worldX, int worldZ, bool insideDungeon, bool insideBuilding, bool forceReposition, bool importEnemies)
+        IEnumerator Respawner(int worldX, int worldZ, bool insideDungeon, bool insideBuilding, bool forceReposition, bool importEnemies, bool start = true)
         {
             // Wait for end of frame so existing world data can be removed
             yield return new WaitForEndOfFrame();
@@ -392,7 +393,7 @@ namespace DaggerfallWorkshop.Game
                 DFLocation location;
                 world.TeleportToCoordinates(pos.X, pos.Y, StreamingWorld.RepositionMethods.None);
                 dfUnity.ContentReader.GetLocation(summary.RegionIndex, summary.MapIndex, out location);
-                StartBuildingInterior(location, exteriorDoors[0]);
+                StartBuildingInterior(location, exteriorDoors[0], start);
                 world.suppressWorld = true;
             }
             else
@@ -405,6 +406,8 @@ namespace DaggerfallWorkshop.Game
 
             // Lower respawn flag
             isRespawning = false;
+
+            RaiseOnRespawnerCompleteEvent();
         }
 
         public void ShowHolidayText()
@@ -426,6 +429,75 @@ namespace DaggerfallWorkshop.Game
             // Set holiday text timer to a somewhat large value so it doesn't show again and again if the player is repeatedly crossing the
             // border of a city.
             holidayTextTimer = 10f;
+        }
+
+        /// <summary>
+        /// Helper to reposition player to anywhere in world either at load or during player.
+        /// </summary>
+        /// <param name="playerPosition">Player position data.</param>
+        /// <param name="start">Use true if this is a load/start operation, otherwise false.</param>
+        public void RestorePositionHelper(PlayerPositionData_v1 playerPosition, bool start)
+        {
+            // Raise reposition flag if terrain sampler changed
+            // This is required as changing terrain samplers will invalidate serialized player coordinates
+            bool repositionPlayer = false;
+            if (playerPosition.terrainSamplerName != DaggerfallUnity.Instance.TerrainSampler.ToString() ||
+                playerPosition.terrainSamplerVersion != DaggerfallUnity.Instance.TerrainSampler.Version)
+            {
+                repositionPlayer = true;
+                if (DaggerfallUI.Instance.DaggerfallHUD != null)
+                    DaggerfallUI.Instance.DaggerfallHUD.PopupText.AddText("Terrain sampler changed. Repositioning player.");
+            }
+
+            // Check exterior doors are included in save, we need these to exit building
+            bool hasExteriorDoors;
+            if (playerPosition.exteriorDoors == null || playerPosition.exteriorDoors.Length == 0)
+                hasExteriorDoors = false;
+            else
+                hasExteriorDoors = true;
+
+            // Raise reposition flag if player is supposed to start indoors but building has no doors
+            if (playerPosition.insideBuilding && !hasExteriorDoors)
+            {
+                repositionPlayer = true;
+                if (DaggerfallUI.Instance.DaggerfallHUD != null)
+                    DaggerfallUI.Instance.DaggerfallHUD.PopupText.AddText("Building has no exterior doors. Repositioning player.");
+            }
+
+            // Start the respawn process based on saved player location
+            if (playerPosition.insideDungeon && !repositionPlayer)
+            {
+                // Start in dungeon
+                RespawnPlayer(
+                    playerPosition.worldPosX,
+                    playerPosition.worldPosZ,
+                    true,
+                    false);
+            }
+            else if (playerPosition.insideBuilding && hasExteriorDoors && !repositionPlayer)
+            {
+                // Start in building
+                RespawnPlayer(
+                    playerPosition.worldPosX,
+                    playerPosition.worldPosZ,
+                    playerPosition.insideDungeon,
+                    playerPosition.insideBuilding,
+                    playerPosition.exteriorDoors,
+                    false,
+                    false,
+                    start);
+            }
+            else
+            {
+                // Start outside
+                RespawnPlayer(
+                    playerPosition.worldPosX,
+                    playerPosition.worldPosZ,
+                    false,
+                    false,
+                    null,
+                    repositionPlayer);
+            }
         }
 
         #endregion
@@ -721,7 +793,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Starts player inside building with no exterior world.
         /// </summary>
-        public void StartBuildingInterior(DFLocation location, StaticDoor exteriorDoor)
+        public void StartBuildingInterior(DFLocation location, StaticDoor exteriorDoor, bool start = true)
         {
             // Ensure we have component references
             if (!ReferenceComponents())
@@ -730,7 +802,7 @@ namespace DaggerfallWorkshop.Game
             // Discover building
             GameManager.Instance.PlayerGPS.DiscoverBuilding(exteriorDoor.buildingKey);
 
-            TransitionInterior(null, exteriorDoor);
+            TransitionInterior(null, exteriorDoor, false, start);
         }
 
         public void DisableAllParents(bool cleanup = true)
@@ -1110,6 +1182,15 @@ namespace DaggerfallWorkshop.Game
         {
             if (OnMovePlayerToDungeonStart != null)
                 OnMovePlayerToDungeonStart();
+        }
+
+        // OnRespawnerComplete
+        public delegate void OnRespawnerCompleteEventHandler();
+        public static event OnRespawnerCompleteEventHandler OnRespawnerComplete;
+        protected virtual void RaiseOnRespawnerCompleteEvent()
+        {
+            if (OnRespawnerComplete != null)
+                OnRespawnerComplete();
         }
 
         #endregion

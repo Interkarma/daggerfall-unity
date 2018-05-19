@@ -1032,13 +1032,6 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (!playerEnterExit)
                 yield break;
 
-            // Check exterior doors are included in save, we need these to exit building
-            bool hasExteriorDoors;
-            if (saveData.playerData.playerPosition.exteriorDoors == null || saveData.playerData.playerPosition.exteriorDoors.Length == 0)
-                hasExteriorDoors = false;
-            else
-                hasExteriorDoors = true;
-
             // Restore building summary, house ownership, and guild membership early for interior layout code
             if (saveData.playerData.playerPosition.insideBuilding)
             {
@@ -1080,56 +1073,8 @@ namespace DaggerfallWorkshop.Game.Serialization
                 GameManager.Instance.TalkManager.RestoreConversationData(null);
             }
 
-            // Raise reposition flag if terrain sampler changed
-            // This is required as changing terrain samplers will invalidate serialized player coordinates
-            bool repositionPlayer = false;
-            if (saveData.playerData.playerPosition.terrainSamplerName != DaggerfallUnity.Instance.TerrainSampler.ToString() ||
-                saveData.playerData.playerPosition.terrainSamplerVersion != DaggerfallUnity.Instance.TerrainSampler.Version)
-            {
-                repositionPlayer = true;
-                if (DaggerfallUI.Instance.DaggerfallHUD != null)
-                    DaggerfallUI.Instance.DaggerfallHUD.PopupText.AddText("Terrain sampler changed. Repositioning player.");
-            }
-
-            // Raise reposition flag if player is supposed to start indoors but building has no doors
-            if (saveData.playerData.playerPosition.insideBuilding && !hasExteriorDoors)
-            {
-                repositionPlayer = true;
-                if (DaggerfallUI.Instance.DaggerfallHUD != null)
-                    DaggerfallUI.Instance.DaggerfallHUD.PopupText.AddText("Building has no exterior doors. Repositioning player.");
-            }
-
-            // Start the respawn process based on saved player location
-            if (saveData.playerData.playerPosition.insideDungeon && !repositionPlayer)
-            {
-                // Start in dungeon
-                playerEnterExit.RespawnPlayer(
-                    saveData.playerData.playerPosition.worldPosX,
-                    saveData.playerData.playerPosition.worldPosZ,
-                    true,
-                    false);
-            }
-            else if (saveData.playerData.playerPosition.insideBuilding && hasExteriorDoors && !repositionPlayer)
-            {
-                // Start in building
-                playerEnterExit.RespawnPlayer(
-                    saveData.playerData.playerPosition.worldPosX,
-                    saveData.playerData.playerPosition.worldPosZ,
-                    saveData.playerData.playerPosition.insideDungeon,
-                    saveData.playerData.playerPosition.insideBuilding,
-                    saveData.playerData.playerPosition.exteriorDoors);
-            }
-            else
-            {
-                // Start outside
-                playerEnterExit.RespawnPlayer(
-                    saveData.playerData.playerPosition.worldPosX,
-                    saveData.playerData.playerPosition.worldPosZ,
-                    false,
-                    false,
-                    null,
-                    repositionPlayer);
-            }
+            // Restore player position to world
+            playerEnterExit.RestorePositionHelper(saveData.playerData.playerPosition, true);
 
             // Smash to black while respawning
             DaggerfallUI.Instance.SmashHUDToBlack();
