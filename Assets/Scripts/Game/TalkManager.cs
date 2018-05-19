@@ -211,6 +211,36 @@ namespace DaggerfallWorkshop.Game
         const int veryLikePlayerDoesNotKnowTellMeAboutNobility = 7283;
         const int veryLikePlayerDoesNotKnowTellMeAboutUnderworld = 7284;
 
+        public static List<FactionFile.FactionIDs> factionsUsedForFactionInNews = new List<FactionFile.FactionIDs>()
+        {
+            FactionFile.FactionIDs.Abibon_Gora, FactionFile.FactionIDs.Alcaire, FactionFile.FactionIDs.Alikra, FactionFile.FactionIDs.Anticlere,
+            FactionFile.FactionIDs.Antiphyllos, FactionFile.FactionIDs.Ayasofya, FactionFile.FactionIDs.Bergama, FactionFile.FactionIDs.Betony,
+            FactionFile.FactionIDs.Bhoraine, FactionFile.FactionIDs.Cybiades, FactionFile.FactionIDs.Daenia, FactionFile.FactionIDs.Daggerfall,
+            FactionFile.FactionIDs.Dakfron, FactionFile.FactionIDs.Dragontail, FactionFile.FactionIDs.Dwynnen, FactionFile.FactionIDs.Ephesus,
+            FactionFile.FactionIDs.Gavaudon, FactionFile.FactionIDs.Glenpoint, FactionFile.FactionIDs.Ilessan_Hills, FactionFile.FactionIDs.Isle_of_Balfiera,
+            FactionFile.FactionIDs.Kairou, FactionFile.FactionIDs.Kambria, FactionFile.FactionIDs.Koegria, FactionFile.FactionIDs.Kozanset,
+            FactionFile.FactionIDs.Lainlyn, FactionFile.FactionIDs.Menevia, FactionFile.FactionIDs.Mournoth, FactionFile.FactionIDs.Myrkwasa,
+            FactionFile.FactionIDs.Northmoor, FactionFile.FactionIDs.Orsinium, FactionFile.FactionIDs.Phrygia, FactionFile.FactionIDs.Pothago,
+            FactionFile.FactionIDs.Santaki, FactionFile.FactionIDs.Satakalaam, FactionFile.FactionIDs.Sentinel, FactionFile.FactionIDs.Shalgora,
+            FactionFile.FactionIDs.Tigonus, FactionFile.FactionIDs.Totambu, FactionFile.FactionIDs.Tulune, FactionFile.FactionIDs.Urvaius,
+            FactionFile.FactionIDs.Wayrest, FactionFile.FactionIDs.Wrothgaria, FactionFile.FactionIDs.Ykalon
+        };
+
+        public static List<FactionFile.FactionIDs> factionsUsedForRulers = new List<FactionFile.FactionIDs>()
+        {
+            FactionFile.FactionIDs.Abibon_Gora, FactionFile.FactionIDs.Alcaire, FactionFile.FactionIDs.Alikra,
+            FactionFile.FactionIDs.Antiphyllos, FactionFile.FactionIDs.Ayasofya, FactionFile.FactionIDs.Bergama, FactionFile.FactionIDs.Betony,
+            FactionFile.FactionIDs.Bhoraine, FactionFile.FactionIDs.Cybiades, FactionFile.FactionIDs.Daenia,
+            FactionFile.FactionIDs.Dakfron, FactionFile.FactionIDs.Dragontail, FactionFile.FactionIDs.Dwynnen, FactionFile.FactionIDs.Ephesus,
+            FactionFile.FactionIDs.Gavaudon, FactionFile.FactionIDs.Glenpoint, FactionFile.FactionIDs.Ilessan_Hills,
+            FactionFile.FactionIDs.Kairou, FactionFile.FactionIDs.Kambria, FactionFile.FactionIDs.Koegria, FactionFile.FactionIDs.Kozanset,
+            FactionFile.FactionIDs.Lainlyn, FactionFile.FactionIDs.Menevia, FactionFile.FactionIDs.Mournoth, FactionFile.FactionIDs.Myrkwasa,
+            FactionFile.FactionIDs.Northmoor, FactionFile.FactionIDs.Phrygia, FactionFile.FactionIDs.Pothago,
+            FactionFile.FactionIDs.Santaki, FactionFile.FactionIDs.Satakalaam, FactionFile.FactionIDs.Shalgora,
+            FactionFile.FactionIDs.Tigonus, FactionFile.FactionIDs.Totambu, FactionFile.FactionIDs.Tulune, FactionFile.FactionIDs.Urvaius,
+            FactionFile.FactionIDs.Wrothgaria, FactionFile.FactionIDs.Ykalon
+        };
+
         const float DefaultChanceKnowsSomethingAboutWhereIs = 0.5f; // chances unknown
         const float DefaultChanceKnowsSomethingAboutQuest = 0.5f; // chances unknown
         const float DefaultChanceKnowsSomethingAboutOrganizationsStaticNPC = 0.5f; // chances unknown
@@ -982,7 +1012,9 @@ namespace DaggerfallWorkshop.Game
                     if (entry.listRumorVariants != null)
                     {
                         TextFile.Token[] tokens = entry.listRumorVariants[0];
+                        MacroHelper.ResetFactionAndRulerIds(); // reset so that a new set of rulers and factions can be generated
                         MacroHelper.ExpandMacros(ref tokens, this);
+                        MacroHelper.ResetFactionAndRulerIds(); // reset again so %reg macro may resolve to current region if needed
                         news = TokensToString(tokens, false);
                     }
                 }
@@ -2791,7 +2823,7 @@ namespace DaggerfallWorkshop.Game
             for (int i = 0; i < tokens.Length; i++)
             {
                 string textFragment = tokens[i].text;
-                if (textFragment != null && textFragment.Length > 0 && i < textFragment.Length)
+                if (textFragment != null && textFragment != string.Empty)
                     returnString += textFragment;
                 else
                     returnString += seperatorString;
