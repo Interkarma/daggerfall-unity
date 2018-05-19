@@ -217,6 +217,41 @@ namespace DaggerfallWorkshop.Utility
             throw new NotImplementedException();
         }
 
+        public virtual string AFactionInNews()
+        {   // %fx1
+            throw new NotImplementedException();
+        }
+
+        public virtual string AnotherFactionInNews()
+        {   // %fx2
+            throw new NotImplementedException();
+        }
+
+        public virtual string OldLordOfFaction1()
+        {   // %ol1
+            throw new NotImplementedException();
+        }
+
+        public virtual string LordOfFaction1()
+        {   // %fl1
+            throw new NotImplementedException();
+        }
+
+        public virtual string LordOfFaction2()
+        {   // %fl2
+            throw new NotImplementedException();
+        }
+
+        public virtual string TitleOfLordOfFaction1()
+        {   // %lt1
+            throw new NotImplementedException();
+        }
+
+        public virtual string OldLeaderFate()
+        {   // %olf
+            throw new NotImplementedException();
+        }
+
         public virtual string RoomHoursLeft()
         {   // %dwr
             throw new NotImplementedException();
