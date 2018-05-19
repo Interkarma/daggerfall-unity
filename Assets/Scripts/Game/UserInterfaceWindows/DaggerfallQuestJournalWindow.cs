@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -71,6 +71,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mainPanel.Size                  = new Vector2(320, 200);
             mainPanel.HorizontalAlignment   = HorizontalAlignment.Center;
             mainPanel.VerticalAlignment     = VerticalAlignment.Middle;
+            mainPanel.OnMouseScrollDown     += MainPanel_OnMouseScrollDown;
+            mainPanel.OnMouseScrollUp       += MainPanel_OnMouseScrollUp;
 
             dialogButton                    = new Button();
             dialogButton.Position           = new Vector2(32, 187);
@@ -162,6 +164,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (currentMessageIndex + 1 < questMessages.Count)
                 currentMessageIndex += 1;
 
+        }
+
+        void MainPanel_OnMouseScrollUp(BaseScreenComponent sender)
+        {
+            upArrowButton_OnMouseClick(sender, Vector2.zero);
+        }
+
+        void MainPanel_OnMouseScrollDown(BaseScreenComponent sender)
+        {
+            downArrowButton_OnMouseClick(sender, Vector2.zero);
         }
 
         public void exitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
