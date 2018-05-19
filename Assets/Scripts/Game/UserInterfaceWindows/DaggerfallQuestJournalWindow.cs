@@ -32,12 +32,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
     public class DaggerfallQuestJournalWindow : DaggerfallPopupWindow
     {
-        const string nativeImgName  = "LGBK00I0.IMG";
-        const int maxLines          = 19;
-        int lastMessageIndex        = -1;
-        int currentMessageIndex     = 0;
+        #region Fields
+
+        const string nativeImgName = "LGBK00I0.IMG";
+
+        const int maxLines = 19;
+        int lastMessageIndex = -1;
+        int currentMessageIndex = 0;
 
         List<Message> questMessages;
+
+        KeyCode toggleClosedBinding;
+
+        #endregion
+
+        #region UI Controls
 
         MultiFormatTextLabel questLogLabel;
 
@@ -48,11 +57,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button downArrowButton;
         Button exitButton;
 
+        #endregion
+
+        #region Constructors
 
         public DaggerfallQuestJournalWindow(UserInterfaceManager uiManager) : base(uiManager) 
         {
         }
 
+        #endregion
+
+        #region Setup Methods
 
         protected override void Setup()
         {
@@ -110,10 +125,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             questMessages = QuestMachine.Instance.GetAllQuestLogMessages();
             SetText();
 
+            // Store toggle closed binding for this window
+            toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.LogBook);
+
 #if LAYOUT
             SetBackgroundColors();
 #endif
         }
+
+        #endregion
+
+        #region Overrides
 
         public override void OnPush()
         {
@@ -134,6 +156,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.Update();
 
+            // Toggle window closed with same hotkey used to open it
+            if (Input.GetKeyUp(toggleClosedBinding))
+                CloseWindow();
+
             if (lastMessageIndex != currentMessageIndex)
             {
                 lastMessageIndex = currentMessageIndex;
@@ -141,8 +167,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        #endregion
 
-#region events
+        #region events
 
         public void dialogButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
@@ -182,7 +209,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             CloseWindow();
         }
 
-#endregion
+        #endregion
+
+        #region region Private Methods
 
         private void SetText()
         {
@@ -253,5 +282,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 #endif
+        #endregion
     }
 }

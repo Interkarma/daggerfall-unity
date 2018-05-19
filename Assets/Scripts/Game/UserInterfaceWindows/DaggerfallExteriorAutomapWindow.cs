@@ -114,7 +114,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button downstairsButton;
 
         // definitions of hotkey sequences
-        readonly HotkeySequence HotkeySequence_CloseMap = new HotkeySequence(KeyCode.M, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_FocusPlayerPosition = new HotkeySequence(KeyCode.Tab, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_ResetView = new HotkeySequence(KeyCode.Backspace, HotkeySequence.KeyModifiers.None);      
         readonly HotkeySequence HotkeySequence_SwitchToNextExteriorAutomapViewMode = new HotkeySequence(KeyCode.Return, HotkeySequence.KeyModifiers.None);
@@ -145,6 +144,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         readonly HotkeySequence HotkeySequence_MinZoom1 = new HotkeySequence(KeyCode.PageDown, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
         readonly HotkeySequence HotkeySequence_MinZoom2 = new HotkeySequence(KeyCode.KeypadPlus, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
         readonly HotkeySequence HotkeySequence_MaxZoom2 = new HotkeySequence(KeyCode.KeypadMinus, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
+
+        KeyCode toggleClosedBinding;
 
         const string nativeImgName = "AMAP00I0.IMG";
         const string nativeImgNameCaption = "TOWN00I0.IMG";
@@ -210,7 +211,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         int oldRenderTextureExteriorAutomapWidth; // used to store previous width of exterior automap render texture to react to changes to NativePanel's size and react accordingly by setting texture up with new widht and height again
         int oldRenderTextureExteriorAutomapHeight; // used to store previous height of exterior automap render texture to react to changes to NativePanel's size and react accordingly by setting texture up with new widht and height again
 		
-        bool isSetup = false;
+        bool isSetup = false;        
 
         public Panel PanelRenderAutomap
         {
@@ -444,6 +445,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             compass.Scale = scale;
             NativePanel.Components.Add(compass);
 
+            // Store toggle closed binding for this window
+            toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.AutoMap);
+
             isSetup = true;
         }
 
@@ -518,14 +522,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.Update();
             resizeGUIelementsOnDemand();
 
+            // Toggle window closed with same hotkey used to open it
+            if (Input.GetKeyUp(toggleClosedBinding))
+                CloseWindow();
+
             HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.getKeyModifiers(Input.GetKey(KeyCode.LeftControl), Input.GetKey(KeyCode.RightControl), Input.GetKey(KeyCode.LeftShift), Input.GetKey(KeyCode.RightShift), Input.GetKey(KeyCode.LeftAlt), Input.GetKey(KeyCode.RightAlt));
             
             // check hotkeys and assign actions
-            if (Input.GetKeyDown(HotkeySequence_CloseMap.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_CloseMap.modifiers))
-            {                
-                CloseWindow();
-                Input.ResetInputAxes(); // prevents automap window to reopen immediately after closing
-            }
             if (Input.GetKeyDown(HotkeySequence_FocusPlayerPosition.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_FocusPlayerPosition.modifiers))
             {
                 ActionFocusPlayerPosition();

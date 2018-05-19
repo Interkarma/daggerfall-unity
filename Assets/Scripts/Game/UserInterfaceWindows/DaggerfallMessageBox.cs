@@ -39,6 +39,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         DaggerfallMessageBox nextMessageBox;
         int customYPos = -1;
 
+        KeyCode extraProceedBinding = KeyCode.None;
+
         /// <summary>
         /// Default message box buttons are indices into BUTTONS.RCI.
         /// </summary>
@@ -95,6 +97,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             get { return clickAnywhereToClose; }
             set { clickAnywhereToClose = value; }
+        }
+
+        public KeyCode ExtraProceedBinding
+        {
+            get { return extraProceedBinding; }
+            set { extraProceedBinding = value; }
         }
 
         public DaggerfallMessageBox(IUserInterfaceManager uiManager, IUserInterfaceWindow previous = null, bool wrapText = false, int posY = -1)
@@ -202,9 +210,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void Update()
         {
             base.Update();
-        
-            if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
-              CloseWindow();
+
+            if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyUp(extraProceedBinding))
+            {
+                // if there is a nested next message box show it
+                if (this.nextMessageBox != null)
+                {
+                    nextMessageBox.Show();
+                }
+                else // or close window if there is no next message box to show
+                {
+                    CloseWindow();                    
+                }
+            }
         }
 
         public Button AddButton(MessageBoxButtons messageBoxButton)
