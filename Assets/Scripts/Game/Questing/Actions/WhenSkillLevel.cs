@@ -19,17 +19,17 @@ namespace DaggerfallWorkshop.Game.Questing
     /// <summary>
     /// Triggers when player has reached specified skill level or higher.
     /// </summary>
-    public class SkillLevel : ActionTemplate
+    public class WhenSkillLevel : ActionTemplate
     {
         DFCareer.Skills skill;
         int minSkillValue;
 
         public override string Pattern
         {
-            get { return @"skill (?<skillName>\w+) (?<minSkillValue>\d+)"; }
+            get { return @"when skill (?<skillName>\w+) is at least (?<minSkillValue>\d+)"; }
         }
 
-        public SkillLevel(Quest parentQuest)
+        public WhenSkillLevel(Quest parentQuest)
             : base(parentQuest)
         {
             IsTriggerCondition = true;
@@ -43,7 +43,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 return null;
 
             // Factory new action
-            SkillLevel action = new SkillLevel(parentQuest);
+            WhenSkillLevel action = new WhenSkillLevel(parentQuest);
             string skillName = match.Groups["skillName"].Value;
             if (!Enum.IsDefined(typeof(DFCareer.Skills), skillName))
             {
