@@ -78,6 +78,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         PlayerEntity playerEntity;
         DaggerfallHUD hud;
 
+        KeyCode toggleClosedBinding;
+
         #endregion
 
         #region Enums
@@ -143,6 +145,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Stop button
             stopButton = DaggerfallUI.AddButton(stopButtonRect, counterPanel);
             stopButton.OnMouseClick += StopButton_OnMouseClick;
+
+            // Store toggle closed binding for this window
+            toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.Rest);
         }
 
         #endregion
@@ -152,6 +157,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void Update()
         {
             base.Update();
+
+            // Toggle window closed with same hotkey used to open it
+            if (Input.GetKeyUp(toggleClosedBinding))
+                CloseWindow();
 
             // Update HUD
             if (hud != null)
