@@ -26,8 +26,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class DaggerfallCharacterSheetWindow : DaggerfallPopupWindow
     {
+        #region Fields
         const string nativeImgName = "INFO00I0.IMG";
         private const int noAffiliationsMsgId = 19;
+
+        StatsRollout statsRollout;
+
+        bool leveling = false;
+
+        const int minBonusPool = 4;        // The minimum number of free points to allocate on level up
+        const int maxBonusPool = 6;        // The maximum number of free points to allocate on level up
+        SoundClips levelUpSound = SoundClips.LevelUp;
+
+        KeyCode toggleClosedBinding;
+
+        #endregion
 
         #region UI Controls
 
@@ -49,20 +62,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #region UI Textures
 
         Texture2D nativeTexture;
-
-        #endregion
-
-        #region Fields
-
-        StatsRollout statsRollout;
-
-        bool leveling = false;
-
-        const int minBonusPool = 4;        // The minimum number of free points to allocate on level up
-        const int maxBonusPool = 6;        // The maximum number of free points to allocate on level up
-        SoundClips levelUpSound = SoundClips.LevelUp;
-
-        KeyCode toggleClosedBinding;
 
         #endregion
 
@@ -189,6 +188,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Store toggle closed binding for this window
             toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.CharacterSheet);
         }
+
+        #endregion
+
+        #region Overrides
 
         public override void Update()
         {
