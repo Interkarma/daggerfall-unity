@@ -66,6 +66,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Vector2 scaledMousePosition;
 
         Color backgroundColor = Color.clear;
+        Color mouseOverBackgroundColor = Color.clear;
         Texture2D backgroundColorTexture;
         protected Texture2D backgroundTexture;
         protected Texture2D[] animatedBackgroundTextures;
@@ -275,6 +276,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             get { return backgroundColor; }
             set { SetBackgroundColor(value); }
+        }
+
+        /// <summary>
+        /// Gets or sets alternate background colour when mouse is over control.
+        /// This colour will replace any other background colour for the time mouse is over control.
+        /// </summary>
+        public Color MouseOverBackgroundColor
+        {
+            get { return mouseOverBackgroundColor; }
+            set { SetMouseOverBackgroundColor(value); }
         }
 
         /// <summary>
@@ -672,15 +683,22 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 myRect = new Rect(new Vector2(Rectangle.xMin + leftCut, Rectangle.yMin + topCut), new Vector2(Rectangle.width - leftCut - rightCut, Rectangle.height - topCut - bottomCut));
             }
 
-            // Draw background colour if not clear
-            if (backgroundColor != Color.clear && backgroundColorTexture)
+            // Draw background colour or mouse over background colour
+            if (mouseOverComponent && mouseOverBackgroundColor != Color.clear && backgroundColorTexture)
+            {
+                Color color = GUI.color;
+                GUI.color = mouseOverBackgroundColor;
+                GUI.DrawTexture(myRect, backgroundColorTexture, ScaleMode.StretchToFill);
+                GUI.color = color;
+            }
+            else if (backgroundColor != Color.clear && backgroundColorTexture)
             {
                 Color color = GUI.color;
                 GUI.color = backgroundColor;
                 GUI.DrawTexture(myRect, backgroundColorTexture, ScaleMode.StretchToFill);
                 GUI.color = color;
             }
-            
+
             // Draw background texture if present
             if (backgroundTexture)
             {
@@ -1182,7 +1200,25 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// <param name="color">Color to use as background colour.</param>
         private void SetBackgroundColor(Color color)
         {
+            CreateBackgroundColorTexture();
             backgroundColor = color;
+        }
+
+        /// <summary>
+        /// Sets mouse over background color and updates texture.
+        /// </summary>
+        /// <param name="color">Color to use as mouse over background colour.</param>
+        private void SetMouseOverBackgroundColor(Color color)
+        {
+            CreateBackgroundColorTexture();
+            mouseOverBackgroundColor = color;
+        }
+
+        /// <summary>
+        /// Create a white texture for background colour setups.
+        /// </summary>
+        private void CreateBackgroundColorTexture()
+        {
             if (backgroundColorTexture == null)
             {
                 backgroundColorTexture = new Texture2D(colorTextureDim, colorTextureDim);
