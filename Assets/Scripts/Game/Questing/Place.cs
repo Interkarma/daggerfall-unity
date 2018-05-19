@@ -1024,7 +1024,7 @@ namespace DaggerfallWorkshop.Game.Questing
             this.ExpandMacro(MacroTypes.NameMacro1, out captionString); // first try to resolve building name (if this fails it is a dungeon...)
             if (captionString == null) // if building name resolving failed
                 this.ExpandMacro(MacroTypes.NameMacro3, out captionString); // resolve dungeon name
-            string key = this.Symbol.Name; //siteDetails.regionName + "_" + siteDetails.locationName + captionString;
+            string key = this.Symbol.Name;
             GameManager.Instance.TalkManager.AddQuestTopicWithInfoAndRumors(this.ParentQuest.UID, this, key, TalkManager.QuestInfoResourceType.Location, anyInfoAnswers, anyRumorsAnswers);
         }
 

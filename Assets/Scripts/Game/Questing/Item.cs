@@ -370,7 +370,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 }                
             }
 
-            string key = this.Symbol.Name; //this.Symbol.Name + "[" + this.item.ItemName + "]";
+            string key = this.Symbol.Name;
             GameManager.Instance.TalkManager.AddQuestTopicWithInfoAndRumors(this.ParentQuest.UID, this, key, TalkManager.QuestInfoResourceType.Thing, anyInfoAnswers, anyRumorsAnswers);
         }
 
