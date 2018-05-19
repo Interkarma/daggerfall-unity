@@ -87,6 +87,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         int deleteSpellIndex = -1;
 
+        KeyCode toggleClosedBinding;
+
         #endregion
 
         #region Constructors
@@ -118,6 +120,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             RefreshSpellsList();
             SetDefaults();
+
+            // Store toggle closed binding for this window
+            toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.CastSpell);
         }
 
         public override void OnPush()
@@ -152,6 +157,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Select default spell
             spellsListBox.SelectedIndex = 0;
+        }
+
+        public override void Update()
+        {
+            base.Update();
+
+            // Toggle window closed with same hotkey used to open it
+            if (Input.GetKeyUp(toggleClosedBinding))
+                CloseWindow();
         }
 
         void RefreshSpellsList()
