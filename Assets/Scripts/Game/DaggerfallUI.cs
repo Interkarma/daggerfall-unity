@@ -49,6 +49,8 @@ namespace DaggerfallWorkshop.Game
         public static Color DaggerfallUnityDefaultToolTipTextColor = new Color32(230, 230, 200, 255);
         public static Color DaggerfallUnityDefaultCheckboxToggleColor = new Color32(146, 12, 4, 255);
         public static Color DaggerfallUnityNotImplementedColor = new Color(1, 0, 0, 0.5f);
+        public static Color DaggerfallPrisonDaysUntilFreedomColor = new Color32(232, 196, 76, 255);
+        public static Color DaggerfallPrisonDaysUntilFreedomShadowColor = new Color32(48, 36, 20, 255);
         public static Vector2 DaggerfallDefaultShadowPos = Vector2.one;
 
         public FilterMode globalFilterMode = FilterMode.Point;

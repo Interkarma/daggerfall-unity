@@ -14,6 +14,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -60,6 +61,7 @@ namespace DaggerfallWorkshop.Game
             // Use events to capture a couple of edge cases
             StreamingWorld.OnInitWorld += StreamingWorld_OnInitWorld;
             SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
+            DaggerfallCourtWindow.OnCourtScreen += DaggerfallCourtWindow_OnCourtScreen;
         }
 
         void Update()
@@ -208,6 +210,12 @@ namespace DaggerfallWorkshop.Game
             // Loading a character with same MaxHealth but lower current health
             // would also trigger a sway on load
             // This resets on any load so sway is cleared for incoming character
+            ResetRecoil();
+        }
+
+        private void DaggerfallCourtWindow_OnCourtScreen()
+        {
+            // Clear sway when player goes to court screen
             ResetRecoil();
         }
     }

@@ -36,6 +36,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
         bool godMode = false;
         bool preventEnemySpawns = false;
+        bool preventNormalizingReputations = false;
         bool isResting = false;
 
         const int testPlayerLevel = 1;
@@ -113,6 +114,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public bool GodMode { get { return godMode; } set { godMode = value; } }
         public bool PreventEnemySpawns { get { return preventEnemySpawns; } set { preventEnemySpawns = value; } }
+        public bool PreventNormalizingReputations { get { return preventNormalizingReputations; } set { preventNormalizingReputations = value; } }
         public bool IsResting { get { return isResting; } set { isResting = value; } }
         public Races Race { get { return (Races)RaceTemplate.ID; } }
         public RaceTemplate RaceTemplate { get { return raceTemplate; } set { raceTemplate = value; } }
@@ -316,7 +318,7 @@ namespace DaggerfallWorkshop.Game.Entity
             for (int i = 0; i < minutesPassed; ++i)
             {
                 // Normalize legal reputations towards 0
-                if (((i + lastGameMinutes) % 161280) == 0) // 112 days
+                if (((i + lastGameMinutes) % 161280) == 0 && !preventNormalizingReputations) // 112 days
                     NormalizeReputations();
 
                 // Update faction relationships, faction power levels and regional conditions (in progress)
@@ -363,6 +365,10 @@ namespace DaggerfallWorkshop.Game.Entity
             // Allow enemy spawns again if they have been disabled
             if (preventEnemySpawns)
                 preventEnemySpawns = false;
+
+            // Allow normalizing reputations again if it was disabled
+            if (preventNormalizingReputations)
+                preventNormalizingReputations = false;
 
             // Reset isResting flag. If still resting DaggerfallRestWindow will set it to true again for the next update.
             if (isResting)
