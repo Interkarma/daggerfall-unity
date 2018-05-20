@@ -3,6 +3,7 @@ using DaggerfallWorkshop.Game.Serialization;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -55,7 +56,7 @@ namespace DaggerfallWorkshop.Game
             camStandLevel = standHeight / 2f;
             camRideLevel = rideHeight / 2f - eyeHeight;
 
-            // Use events to capture a couple of edge cases
+            // Use event to set whether player is crouched on load
             SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
         }
 
@@ -190,14 +191,14 @@ namespace DaggerfallWorkshop.Game
 
         private void SnapToggleCrouching()
         {
-            if (playerMotor.IsCrouching)
+            if (playerMotor.IsCrouching && controller.height != crouchHeight)
             {
                 controller.height = crouchHeight;
                 Vector3 pos = controller.transform.position;
                 pos.y -= (standHeight - crouchHeight) / 2.0f;
                 controller.transform.position = pos;
             }
-            else if (!playerMotor.IsCrouching)
+            else if (!playerMotor.IsCrouching && controller.height != standHeight)
             {
                 controller.height = standHeight;
                 Vector3 pos = controller.transform.position;

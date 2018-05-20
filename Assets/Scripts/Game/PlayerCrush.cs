@@ -35,17 +35,13 @@ namespace DaggerfallWorkshop.Game
             // If player is standing, crushing object forces them into a crouch, 
             if (!playerMotor.IsCrouching && heightChanger.HeightAction != HeightChangeAction.DoCrouching)
             {
-                Debug.Log("Force Crouch");
                 heightChanger.HeightAction = HeightChangeAction.DoCrouching;
             }
             // if player already crouching, then kill.
             else if (playerMotor.IsCrouching)
             {
                 GameManager.Instance.PlayerEntity.SetHealth(0);
-                Debug.Log("Crush!");
             }
-
-
         }
     }
 }
