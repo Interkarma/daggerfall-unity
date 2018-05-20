@@ -281,13 +281,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public override void Update()
         {
-            // important to happen before base.Update()
-            if (Input.GetKeyUp(exitKey) && RegionSelected)
-            {
-                CloseRegionPanel();
-                Input.ResetInputAxes();
-            }
-
             base.Update();
 
             // Toggle window closed with same hotkey used to open it
