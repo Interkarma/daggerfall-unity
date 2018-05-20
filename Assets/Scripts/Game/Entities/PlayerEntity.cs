@@ -627,24 +627,9 @@ namespace DaggerfallWorkshop.Game.Entity
             if (characterRecord == null)
                 return;
 
-            // Find all guild memberships
+            // Find all guild memberships, and add Daggerfall Unity guild memberships
             List<SaveTreeBaseRecord> guildMembershipRecords = saveTree.FindRecords(RecordTypes.GuildMembership, characterRecord);
-
-            // Add Daggerfall Unity guild memberships
-            GuildManager guildManager = GameManager.Instance.GuildManager;
-            foreach (GuildMembershipRecord record in guildMembershipRecords)
-            {
-                FactionFile.GuildGroups guildGroup = guildManager.GetGuildGroup(record.ParsedData.factionID);
-                Guild guild = guildManager.CreateGuildObj(guildGroup, record.ParsedData.factionID);
-                guild.Rank = record.ParsedData.rank;
-
-                // Note: In classic, time of last rank change is measured by minute, not day
-                DaggerfallDateTime tempTime = new DaggerfallDateTime();
-                tempTime.FromClassicDaggerfallTime(record.ParsedData.timeOfLastRankChange);
-                guild.LastRankChange = Guild.CalculateDaySinceZero(tempTime);
-
-                guildManager.AddMembership(guildGroup, guild);
-            }
+            GameManager.Instance.GuildManager.ImportMembershipData(guildMembershipRecords);
         }
 
         /// <summary>
