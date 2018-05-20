@@ -609,8 +609,8 @@ namespace DaggerfallConnect.Save
                 faction.vam = reader.ReadInt16();
                 faction.flags = reader.ReadInt16();
 
-                faction.randomValue = reader.ReadInt32();           // Completely random value
-                faction.randomPowerBonus = reader.ReadInt32();      // Random(0, 50) + 20
+                faction.rulerNameSeed = reader.ReadUInt32();
+                faction.rulerPowerBonus = reader.ReadInt32();      // Random(0, 50) + 20
 
                 faction.flat1 = reader.ReadInt16();
                 faction.flat2 = reader.ReadInt16();

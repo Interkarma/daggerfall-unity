@@ -31,6 +31,8 @@ namespace DaggerfallWorkshop.Game.Player
 
         const int minReputation = -100;
         const int maxReputation = 100;
+        const int minPower = 1;
+        const int maxPower = 100;
 
         // TEMP: Faction IDs for curated quest givers
         public const int fightersGuildQuestorFactionID = (int)FactionFile.FactionIDs.Fighter_Questers;
@@ -38,6 +40,79 @@ namespace DaggerfallWorkshop.Game.Player
 
         Dictionary<int, FactionFile.FactionData> factionDict = new Dictionary<int, FactionFile.FactionData>();
         Dictionary<string, int> factionNameToIDDict = new Dictionary<string, int>();
+
+        // Regions bordering each region. In FALL.EXE at 0x1B5C68. Includes unused region "Bjoulsae River".
+        // This data is used in a strange way. The order is different from the faction IDs of regions in the released game
+        // (which is the order by which it is accessed), so regions access borders for seemingly unrelated regions.
+        // Those regions are treated as permanent faction enemies, if they are already an enemy, until a war between the two factions has finished.
+        // Maybe regions were supposed to access their own bordering regions.
+        // In classic the access is off by one (due to FACTION.TXT's region IDs being 1-based and the call not taking that into account),
+        // so the first entry (Alik'r Desert's border regions) is unused and the last region (Cybiades) uses out-of-range data.
+
+                                                                             // Borders of:
+        byte[] borderRegions = { 44, 45, 47, 21, 56, 48, 49,  2, 55, 12, 57, // Alik'r Desert
+                                  1, 49, 55, 12, 54, 53, 52, 50, 23, 10,  0, // Dragontail Mountains
+                                 22, 40, 39, 17, 38, 37, 10,  0,  0,  0,  0, // Dwynnen
+                                  6, 37, 36, 35, 34, 24, 51, 23,  2,  0,  0, // Isle of Balfiera
+                                  1, 55,  2,  0,  0,  0,  0,  0,  0,  0,  0, // Dak'fron
+                                 24, 53, 58, 51,  0,  0,  0,  0,  0,  0,  0, // Bjoulsae River
+                                 39,  6, 38, 36, 35, 34, 27, 24, 58,  0,  0, // Wrothgarian Mountains
+                                 20, 59, 19, 43, 61,  0,  0,  0,  0,  0,  0, // Daggerfall
+                                 18, 59, 60, 33, 61,  0,  0,  0,  0,  0,  0, //
+                                 18, 59,  0,  0,  0,  0,  0,  0,  0,  0,  0, // Betony
+                                 47,  1, 56, 48, 62,  0,  0,  0,  0,  0,  0, //
+                                 43, 42, 40,  6,  0,  0,  0,  0,  0,  0,  0, // Anticlere
+                                  2, 50, 52, 51, 10,  0,  0,  0,  0,  0,  0, //
+                                 16, 58, 17, 27, 34, 10, 53, 51,  0,  0,  0, //
+                                 17, 34, 24,  0,  0,  0,  0,  0,  0,  0,  0, //
+                                 60, 19, 61, 41,  0,  0,  0,  0,  0,  0,  0, //
+                                 10, 35, 17, 27, 24,  0,  0,  0,  0,  0,  0, // Menevia
+                                 10, 36, 17, 34,  0,  0,  0,  0,  0,  0,  0, // Alcaire
+                                 10, 37, 38, 17, 35,  0,  0,  0,  0,  0,  0, // Koegria
+                                 10,  6, 38, 36,  0,  0,  0,  0,  0,  0,  0, // Bhoriane
+                                 37,  6, 17, 36,  0,  0,  0,  0,  0,  0,  0, // Kambria
+                                 41, 40,  6, 17,  0,  0,  0,  0,  0,  0,  0, // Phrygias
+                                 22, 42, 41, 39,  6,  0,  0,  0,  0,  0,  0,
+                                 33, 61, 42, 40, 39,  0,  0,  0,  0,  0,  0,
+                                 22, 43, 61, 41, 40,  0,  0,  0,  0,  0,  0,
+                                 18, 61, 42, 22,  0,  0,  0,  0,  0,  0,  0,
+                                 45,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+                                 44, 46, 47,  1,  0,  0,  0,  0,  0,  0,  0,
+                                 45, 47,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+                                 46, 45,  1, 21,  0,  0,  0,  0,  0,  0,  0,
+                                 21, 56,  1, 49, 62,  0,  0,  0,  0,  0,  0,
+                                 48,  1,  2, 62,  0,  0,  0,  0,  0,  0,  0,
+                                  2, 52, 23,  0,  0,  0,  0,  0,  0,  0,  0,
+                                 10, 23, 52, 53, 16, 24,  0,  0,  0,  0,  0,
+                                 23, 50,  2, 53, 51,  0,  0,  0,  0,  0,  0,
+                                 51, 52,  2, 16, 58, 24,  0,  0,  0,  0,  0,
+                                  2,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+                                  1, 12,  2,  0,  0,  0,  0,  0,  0,  0,  0,
+                                  1, 21, 48,  0,  0,  0,  0,  0,  0,  0,  0,
+                                  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+                                 24, 17, 16, 53,  0,  0,  0,  0,  0,  0,  0,
+                                 18, 19, 60, 20,  0,  0,  0,  0,  0,  0,  0,
+                                 33, 19, 59,  0,  0,  0,  0,  0,  0,  0,  0,
+                                 18, 19, 33, 41, 42, 43,  0,  0,  0,  0,  0,
+                                 21, 48, 49,  0,  0,  0,  0,  0,  0,  0,  0,
+                                  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+                                  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+                                  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+                                  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+                                  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+                                  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+                                  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+                                  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+                                  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+                                  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+                                  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+                                  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+                                  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+                                  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+                                  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+                                  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+                                  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+                               };
 
         #endregion
 
@@ -298,5 +373,304 @@ namespace DaggerfallWorkshop.Game.Player
         }
 
         #endregion
+
+        #region Power
+
+        /// <summary>
+        /// Change power value by amount.
+        /// </summary>
+        public bool ChangePower(int factionID, int amount)
+        {
+            if (factionDict.ContainsKey(factionID))
+            {
+                FactionFile.FactionData factionData = factionDict[factionID];
+                factionData.power = Mathf.Clamp(factionData.power + amount, minPower, maxPower);
+                factionDict[factionID] = factionData;
+                return true;
+            }
+
+            return false;
+        }
+
+        #endregion
+
+        #region Allies and Enemies
+
+        /// <summary>
+        /// Get the number of common allies and enemies between these two functions.
+        /// </summary>
+        public int GetNumberOfCommonAlliesAndEnemies(int factionID1, int factionID2)
+        {
+            // Note: This function seems wrong in classic. It looks for how many of
+            // faction2's allies are allies of faction1's allies, and adds this with how many of faction2's enemies
+            // are enemies of faction1's enemies. The result is used to determine the likelihood of faction1 and faction2 starting
+            // or ending an alliance or rivalry but the ally/enemy relationships considered seem contradictory.
+            // I'm assuming the intention was more like how many enemies and allies are shared between faction1 and faction2,
+            // which is what is done here.
+
+            int count = 0;
+
+            if (factionDict.ContainsKey(factionID1) && factionDict.ContainsKey(factionID2))
+            {
+                FactionFile.FactionData factionData1 = factionDict[factionID1];
+                FactionFile.FactionData factionData2 = factionDict[factionID2];
+
+                int[] alliesOf1 = { factionData1.ally1, factionData1.ally2, factionData1.ally3 };
+                int[] alliesOf2 = { factionData2.ally1, factionData2.ally2, factionData2.ally3 };
+                int[] enemiesOf1 = { factionData1.enemy1, factionData1.enemy2, factionData1.enemy3 };
+                int[] enemiesOf2 = { factionData2.enemy1, factionData2.enemy2, factionData2.enemy3 };
+
+                for (int i = 0; i < 3; ++i)
+                {
+                    for (int j = 0; j < 3; ++j)
+                    {
+                        if (alliesOf1[i] == alliesOf2[j])
+                            count++;
+                        if (enemiesOf1[i] == enemiesOf2[j])
+                            count++;
+                    }
+                }
+            }
+
+            return count;
+        }
+
+        /// <summary>
+        /// Check whether faction 2 is in faction 1's ally list.
+        /// </summary>
+        public bool IsFaction2AnAllyOfFaction1(int factionID1, int factionID2)
+        {
+            if (factionDict.ContainsKey(factionID1) && factionDict.ContainsKey(factionID2))
+            {
+                FactionFile.FactionData factionData1 = factionDict[factionID1];
+
+                int[] alliesOf1 = { factionData1.ally1, factionData1.ally2, factionData1.ally3 };
+
+                for (int i = 0; i < 3; ++i)
+                {
+                    if (factionID2 == alliesOf1[i])
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Check whether faction 2 is in faction 1's enemy list.
+        /// </summary>
+        public bool IsFaction2AnEnemyOfFaction1(int factionID1, int factionID2)
+        {
+            if (factionDict.ContainsKey(factionID1) && factionDict.ContainsKey(factionID2))
+            {
+                FactionFile.FactionData factionData1 = factionDict[factionID1];
+
+                int[] enemiesOf1 = { factionData1.enemy1, factionData1.enemy2, factionData1.enemy3 };
+
+                for (int i = 0; i < 3; ++i)
+                {
+                    if (factionID2 == enemiesOf1[i])
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Get faction2 relation to faction1. Returns 1 if faction2 is the parent of faction1, 2 if faction1 and faction2 share the same parent
+        /// 3 if faction2 is a child of faction1, and 0 if none of the above.
+        /// </summary>
+        public int GetFaction2ARelationToFaction1(int factionID1, int factionID2)
+        {
+            if (factionDict.ContainsKey(factionID1) && factionDict.ContainsKey(factionID2))
+            {
+                FactionFile.FactionData factionData1 = factionDict[factionID1];
+
+                if (factionData1.parent == factionID2)
+                    return 1;
+
+                if (factionDict.ContainsKey(factionData1.parent))
+                {
+                    FactionFile.FactionData parentData = factionDict[factionData1.parent];
+                    if (parentData.children.Contains(factionID2))
+                        return 2;
+                }
+
+                if (factionData1.children != null && factionData1.children.Contains(factionID2))
+                    return 3;
+            }
+
+            return 0;
+        }
+
+
+        /// <summary>
+        /// Start ally state between two factions.
+        /// Faction 2 only adds Faction 1 as an ally if it has room.
+        /// </summary>
+        public bool StartFactionAllies(int factionID1, int allyNumberForFaction1, int factionID2)
+        {
+            if (factionDict.ContainsKey(factionID1) && factionDict.ContainsKey(factionID2))
+            {
+                FactionFile.FactionData factionData1 = factionDict[factionID1];
+                FactionFile.FactionData factionData2 = factionDict[factionID2];
+
+                if (allyNumberForFaction1 == 0)
+                    factionData1.ally1 = factionID2;
+                else if (allyNumberForFaction1 == 1)
+                    factionData1.ally2 = factionID2;
+                else if (allyNumberForFaction1 == 2)
+                    factionData1.ally3 = factionID2;
+
+                if (factionData2.ally1 == 0)
+                    factionData2.ally1 = factionID1;
+                else if (factionData2.ally2 == 0)
+                    factionData2.ally2 = factionID1;
+                else if (factionData2.ally3 == 0)
+                    factionData2.ally3 = factionID1;
+
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// End ally state between two factions.
+        /// </summary>
+        public bool EndFactionAllies(int factionID1, int factionID2)
+        {
+            if (factionDict.ContainsKey(factionID1) && factionDict.ContainsKey(factionID2))
+            {
+                FactionFile.FactionData factionData1 = factionDict[factionID1];
+                FactionFile.FactionData factionData2 = factionDict[factionID2];
+
+                if (factionData1.ally1 == factionID2)
+                    factionData1.ally1 = 0;
+                if (factionData1.ally2 == factionID2)
+                    factionData1.ally2 = 0;
+                if (factionData1.ally3 == factionID2)
+                    factionData1.ally3 = 0;
+
+                if (factionData2.ally1 == factionID1)
+                    factionData2.ally1 = 0;
+                if (factionData2.ally2 == factionID1)
+                    factionData2.ally2 = 0;
+                if (factionData2.ally3 == factionID1)
+                    factionData2.ally3 = 0;
+
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Start enemy state between two factions.
+        /// Faction 2 only adds faction 1 as an enemy if it has room.
+        /// </summary>
+        public bool StartFactionEnemies(int factionID1, int enemyNumberForFaction1, int factionID2)
+        {
+            if (factionDict.ContainsKey(factionID1) && factionDict.ContainsKey(factionID2))
+            {
+                FactionFile.FactionData factionData1 = factionDict[factionID1];
+                FactionFile.FactionData factionData2 = factionDict[factionID2];
+
+                if (enemyNumberForFaction1 == 0)
+                    factionData1.enemy1 = factionID2;
+                else if (enemyNumberForFaction1 == 1)
+                    factionData1.enemy2 = factionID2;
+                else if (enemyNumberForFaction1 == 2)
+                    factionData1.enemy3 = factionID2;
+
+                if (factionData2.enemy1 == 0)
+                    factionData2.enemy1 = factionID1;
+                else if (factionData2.enemy2 == 0)
+                    factionData2.enemy2 = factionID1;
+                else if (factionData2.enemy3 == 0)
+                    factionData2.enemy3 = factionID1;
+
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// End enemy state between two factions.
+        /// </summary>
+        public bool EndFactionEnemies(int factionID1, int factionID2)
+        {
+            if (factionDict.ContainsKey(factionID1) && factionDict.ContainsKey(factionID2))
+            {
+                FactionFile.FactionData factionData1 = factionDict[factionID1];
+                FactionFile.FactionData factionData2 = factionDict[factionID2];
+
+                if (factionData1.enemy1 == factionID2)
+                    factionData1.enemy1 = 0;
+                if (factionData1.enemy2 == factionID2)
+                    factionData1.enemy2 = 0;
+                if (factionData1.enemy3 == factionID2)
+                    factionData1.enemy3 = 0;
+
+                if (factionData2.enemy1 == factionID1)
+                    factionData2.enemy1 = 0;
+                if (factionData2.enemy2 == factionID1)
+                    factionData2.enemy2 = 0;
+                if (factionData2.enemy3 == factionID1)
+                    factionData2.enemy3 = 0;
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool IsFaction2APotentialWarEnemyOfFaction1(int factionID1, int factionID2)
+        {
+            if (factionDict.ContainsKey(factionID1) && factionDict.ContainsKey(factionID2))
+            {
+                FactionFile.FactionData factionData1 = factionDict[factionID1];
+                FactionFile.FactionData factionData2 = factionDict[factionID2];
+
+                return factionData1.region != -1 && factionData1.type == (int)FactionFile.FactionTypes.Province
+                    && factionData2.region != -1 && factionData2.type == (int)FactionFile.FactionTypes.Province
+                    && IsFaction2AnEnemyOfFaction1(factionID1, factionID2)
+                    && IsEnemyStatePermanentUntilWarOver(factionData1, factionData2);
+            }
+            return false;
+        }
+
+        public bool IsEnemyStatePermanentUntilWarOver(FactionFile.FactionData faction1, FactionFile.FactionData faction2)
+        {
+            if (faction1.region != -1 && faction2.region != -1)
+            {
+                for (int i = 0; i < 11; ++i)
+                {
+                    if (borderRegions[11 * (faction1.region - 1) + i] == faction2.region)
+                        return true;
+                }
+            }
+            return false;
+        }
+
+        public bool SetNewRulerData(int factionID)
+        {
+            if (factionDict.ContainsKey(factionID))
+            {
+                FactionFile.FactionData faction = factionDict[factionID];
+                faction.rulerPowerBonus = DFRandom.random_range_inclusive(0, 50) + 20;
+                uint random = DFRandom.rand() << 16;
+                faction.rulerNameSeed = DFRandom.rand() | random;
+
+                return true;
+            }
+
+            return false;
+        }
+
+        #endregion
+
     }
 }
