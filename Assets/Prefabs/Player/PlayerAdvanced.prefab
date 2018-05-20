@@ -39,6 +39,8 @@ GameObject:
   - component: {fileID: 114549470222698842}
   - component: {fileID: 114101796857139080}
   - component: {fileID: 114220683863726122}
+  - component: {fileID: 114033680799267548}
+  - component: {fileID: 135216212425773840}
   m_Layer: 0
   m_Name: PlayerAdvanced
   m_TagString: Player
@@ -559,10 +561,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c9bfb03a8545a343883f7d2606b5814, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  standingHeight: 1.78
-  eyeHeight: 0.09
-  crouchingHeight: 0.45
-  ridingHeight: 2.6
   limitDiagonalSpeed: 1
   toggleRun: 0
   systemTimerUpdatesPerSecond: 0.055
@@ -1006,6 +1004,17 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 2
+--- !u!114 &114033680799267548
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e13b282693fb9b46bf1262c8c84685e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114097946917833764
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1058,6 +1067,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcffcd439a0b0a94e846036ea849c8ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  standHeight: 1.78
+  crouchHeight: 0.45
 --- !u!114 &114189154217185308
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1290,6 +1301,18 @@ MonoBehaviour:
   nodXAmount: 0
   nodYAmount: 0
   bobScalar: 0
+--- !u!135 &135216212425773840
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.23
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!198 &198237622866876544
 ParticleSystem:
   m_ObjectHideFlags: 1
