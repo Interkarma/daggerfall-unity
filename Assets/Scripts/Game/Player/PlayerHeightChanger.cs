@@ -1,4 +1,5 @@
 ﻿using DaggerfallWorkshop.Game;
+using DaggerfallWorkshop.Game.Serialization;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -48,14 +49,14 @@ namespace DaggerfallWorkshop.Game
             controller = GetComponent<CharacterController>();
             headBobber = GetComponent<HeadBobber>();
             mainCamera = GameManager.Instance.MainCamera;
-
             crouchChangeDistance = (standHeight - crouchHeight) / 2f;
             rideChangeDistance = (rideHeight - standHeight) / 2f - eyeHeight;
-            // local positions for camera at each height level
-            // TODO: Make sure assumption isn't wrong that camera begins at correct standing position height
-            camStandLevel = mainCamera.transform.localPosition.y; //With the assumption that the camera begins at correct standing position height
-            camCrouchLevel = camStandLevel - crouchChangeDistance; //we want the camera to lower the same amount as the character
-            camRideLevel = camStandLevel + rideChangeDistance ;
+            camCrouchLevel = crouchHeight / 2f;
+            camStandLevel = standHeight / 2f;
+            camRideLevel = rideHeight / 2f - eyeHeight;
+
+            // Use events to capture a couple of edge cases
+            SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
         }
 
         private void Update()
@@ -148,7 +149,6 @@ namespace DaggerfallWorkshop.Game
 
         private void ControllerHeightChange()
         {
-            playerMotor.IsCrouching = false;
             if (heightAction == HeightChangeAction.DoCrouching)
             {
                 controller.height = crouchHeight;
@@ -159,6 +159,7 @@ namespace DaggerfallWorkshop.Game
             {
                 controller.height = standHeight;
                 controller.transform.position += new Vector3(0, crouchChangeDistance);
+                playerMotor.IsCrouching = false;
             }
             else if (heightAction == HeightChangeAction.DoMounting)
             {
@@ -167,6 +168,7 @@ namespace DaggerfallWorkshop.Game
                 float prevHeight = playerMotor.IsCrouching ? crouchHeight : standHeight;
                 pos.y += (rideHeight - prevHeight) / 2.0f;
                 controller.transform.position = pos;
+                playerMotor.IsCrouching = false;
             }
             else if (heightAction == HeightChangeAction.DoDismounting)
             {
@@ -174,6 +176,7 @@ namespace DaggerfallWorkshop.Game
                 Vector3 pos = controller.transform.position;
                 pos.y -= (rideHeight - standHeight) / 2.0f;
                 controller.transform.position = pos;
+                playerMotor.IsCrouching = false;
             }
         }
 
@@ -183,6 +186,33 @@ namespace DaggerfallWorkshop.Game
 
             Ray ray = new Ray(controller.transform.position, Vector3.up); 
             return !Physics.SphereCast(ray, controller.radius, distance);
+        }
+
+        private void SetIsCrouching()
+        {
+            
+            // Old code for reference
+            /* if (isCrouching && !wasCrouching)
+            {
+                controller.height = crouchingHeight;
+                Vector3 pos = controller.transform.position;
+                pos.y -= (standingHeight - crouchingHeight) / 2.0f;
+                controller.transform.position = pos;
+                wasCrouching = isCrouching;
+            }
+            else if (!isCrouching && wasCrouching)
+            {
+                controller.height = standingHeight;
+                Vector3 pos = controller.transform.position;
+                pos.y += (standingHeight - crouchingHeight) / 2.0f;
+                controller.transform.position = pos;
+                wasCrouching = isCrouching;
+    -       }*/
+        }
+
+        private void SaveLoadManager_OnStartLoad(SaveData_v1 saveData)
+        {
+            SetIsCrouching();
         }
     }
 }
