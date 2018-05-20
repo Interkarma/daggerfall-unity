@@ -196,8 +196,8 @@ Item _letter_ letter used 1031
 
 Person _victim_ face 5 group Group_5.2
 Person _questgiver_ group Questor male
-Person _daughter_ face 3 faction People_of_Sentinel
-Person _darkb_ faction The_Dark_Brotherhood female anyInfo 1015 rumors 1016
+Person _daughter_ face 3 faction People_of_Sentinel female
+Person _darkb_ faction The_Dark_Brotherhood anyInfo 1015 rumors 1016
 
 Place _victimhouse_ local house4
 Place _daughterhouse_ remote house4
