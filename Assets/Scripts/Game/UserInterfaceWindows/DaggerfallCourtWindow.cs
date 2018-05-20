@@ -26,7 +26,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class DaggerfallCourtWindow : DaggerfallPopupWindow
     {
-        const string nativeImgName = "CORT01I0.img";
+        const string nativeImgName = "CORT01I0.IMG";
+        const string nativeImgName2 = "PRIS00I0.IMG";
         const int courtTextTG = 550;
         const int courtTextDB = 551;
         const int courtTextStart = 8050;
@@ -39,11 +40,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Texture2D nativeTexture;
         Panel courtPanel = new Panel();
         Entity.PlayerEntity playerEntity;
+        TextLabel daysUntilFreedomLabel;
         int regionIndex;
         int punishmentType;
         int fine;
         int daysInPrison;
+        int daysInPrisonLeft;
         int state;
+        bool inPrison;
+        bool repositionPlayer;
+
+        float prisonUpdateTimer = 0f;
+        float prisonUpdateInterval = 0.3f; // Approximated to classic based on measuring a video recording.
 
         // From FALL.EXE offset 0x1B34E0
         byte[] PenaltyPerLegalRepPoint  = {  0x05,  0x05,  0x06,  0x06,   0x0A,   0x05,  0x05,  0x03,  0x08,  0x08, 0x00,  0x06,  0x00, 0x00 };
@@ -73,8 +81,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             courtPanel.BackgroundTexture = nativeTexture;
             NativePanel.Components.Add(courtPanel);
 
+            // Cancel any camera recoil
+            RaiseOnCourtScreenEvent();
+
+            // Add days until freedom label
+            daysUntilFreedomLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, new Vector2(156, 165), string.Empty, NativePanel);
+            daysUntilFreedomLabel.TextColor = DaggerfallUI.DaggerfallPrisonDaysUntilFreedomColor;
+            daysUntilFreedomLabel.ShadowColor = DaggerfallUI.DaggerfallPrisonDaysUntilFreedomShadowColor;
+            daysUntilFreedomLabel.HorizontalAlignment = HorizontalAlignment.Center;
+
             playerEntity = GameManager.Instance.PlayerEntity;
-            state = 0;
+            AllowCancel = false;
         }
 
         public override void Update()
@@ -145,7 +162,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
 
                 DaggerfallMessageBox messageBox;
-                if ( crimeType == 4 || crimeType == 3) // Assault or murder
+                if (crimeType == 4 || crimeType == 3) // Assault or murder
                 {
                     // If player is a member of the Dark Brotherhood, they may be rescued for a violent crime
                     Guilds.Guild guild = GameManager.Instance.GuildManager.GetGuild((int)FactionFile.FactionIDs.The_Dark_Brotherhood);
@@ -179,6 +196,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                             messageBox.ScreenDimColor = new Color32(0, 0, 0, 0);
                             messageBox.ParentPanel.VerticalAlignment = VerticalAlignment.Bottom;
                             messageBox.ClickAnywhereToClose = true;
+                            messageBox.AllowCancel = false;
                             uiManager.PushWindow(messageBox);
                             playerEntity.FillVitalSigns();
                             playerEntity.RaiseReputationForDoingSentence();
@@ -195,6 +213,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.NotGuilty);
                 messageBox.OnButtonClick += GuiltyNotGuilty_OnButtonClick;
                 messageBox.ParentPanel.VerticalAlignment = VerticalAlignment.Bottom;
+                messageBox.AllowCancel = false;
                 uiManager.PushWindow(messageBox);
                 state = 1; // Done with initial message
             }
@@ -205,14 +224,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 messageBox.ScreenDimColor = new Color32(0, 0, 0, 0);
                 messageBox.ParentPanel.VerticalAlignment = VerticalAlignment.Bottom;
                 messageBox.ClickAnywhereToClose = true;
+                messageBox.AllowCancel = false;
                 uiManager.PushWindow(messageBox);
                 state = 3;
             }
             else if (state == 3) // Serve prison sentence
             {
-                PositionPlayerAtLocationEntrance();
-                ServeTime(daysInPrison);
+                inPrison = true;
+                SwitchToPrisonScreen();
+                daysInPrisonLeft = daysInPrison;
                 playerEntity.RaiseReputationForDoingSentence();
+                repositionPlayer = true;
                 state = 100;
             }
             else if (state == 4) // Banished
@@ -222,9 +244,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 messageBox.ScreenDimColor = new Color32(0, 0, 0, 0);
                 messageBox.ParentPanel.VerticalAlignment = VerticalAlignment.Bottom;
                 messageBox.ClickAnywhereToClose = true;
+                messageBox.AllowCancel = false;
                 uiManager.PushWindow(messageBox);
                 playerEntity.RegionData[regionIndex].SeverePunishmentFlags |= 1;
-                PositionPlayerAtLocationEntrance();
+                repositionPlayer = true;
                 state = 100;
             }
             // Note: Seems like an execution sentence can't be given in classic. It can't be given here, either.
@@ -235,18 +258,38 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 messageBox.ScreenDimColor = new Color32(0, 0, 0, 0);
                 messageBox.ParentPanel.VerticalAlignment = VerticalAlignment.Bottom;
                 messageBox.ClickAnywhereToClose = true;
+                messageBox.AllowCancel = false;
                 uiManager.PushWindow(messageBox);
                 playerEntity.RegionData[regionIndex].SeverePunishmentFlags |= 2;
                 state = 6;
             }
             else if (state == 6) // Reposition player at entrance
             {
-                PositionPlayerAtLocationEntrance();
+                repositionPlayer = true;
                 state = 100;
             }
             else if (state == 100) // Done
             {
-                ReleaseFromJail();
+                if (inPrison)
+                {
+                    if (Input.GetKey(exitKey)) // Speed up prison day countdown. Not in classic.
+                        prisonUpdateInterval = 0.001f;
+                    else
+                        prisonUpdateInterval = 0.3f;
+
+                    if (prisonUpdateTimer == 0)
+                        prisonUpdateTimer = Time.realtimeSinceStartup;
+
+                    if (Time.realtimeSinceStartup < prisonUpdateTimer + prisonUpdateInterval)
+                        return;
+                    else
+                    {
+                        prisonUpdateTimer = Time.realtimeSinceStartup;
+                        UpdatePrisonScreen();
+                    }
+                }
+                else
+                    ReleaseFromPrison();
             }
         }
 
@@ -273,10 +316,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         {
                             // Give the reputation raise here if no prison time will be served.
                             playerEntity.RaiseReputationForDoingSentence();
-                            PositionPlayerAtLocationEntrance();
+                            repositionPlayer = true;
                             // Oversight in classic: Does not refill vital signs when releasing in this case, so player is left with 1 health.
                             playerEntity.FillVitalSigns();
-                            ReleaseFromJail();
+                            ReleaseFromPrison();
                         }
                     }
                 }
@@ -292,6 +335,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Lie);
                 messageBox.OnButtonClick += DebateLie_OnButtonClick;
                 messageBox.ParentPanel.VerticalAlignment = VerticalAlignment.Bottom;
+                messageBox.AllowCancel = false;
                 uiManager.PushWindow(messageBox);
             }
             Update();
@@ -347,6 +391,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 messageBox.ScreenDimColor = new Color32(0, 0, 0, 0);
                 messageBox.ParentPanel.VerticalAlignment = VerticalAlignment.Bottom;
                 messageBox.ClickAnywhereToClose = true;
+                messageBox.AllowCancel = false;
                 uiManager.PushWindow(messageBox);
 
                 // Oversight in classic: Does not refill vital signs when releasing in this case, so player is left with 1 health.
@@ -360,8 +405,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public override void OnPop()
         {
+            // Reset variables
             GameManager.Instance.PlayerEntity.Arrested = false;
             state = 0;
+            prisonUpdateTimer = 0f;
+            inPrison = false;
+            repositionPlayer = false;
+            daysUntilFreedomLabel.Text = string.Empty;
+
+            // Return native texture to court screen
+            nativeTexture = DaggerfallUI.GetTextureFromImg(nativeImgName);
+            if (!nativeTexture)
+                throw new Exception("DaggerfallCourtWindow: Could not load native texture.");
+            courtPanel.Size = TextureReplacement.GetSize(nativeTexture, nativeImgName);
+            courtPanel.BackgroundTexture = nativeTexture;
+
+            base.CancelWindow();
         }
 
         public void PositionPlayerAtLocationEntrance()
@@ -377,21 +436,55 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        public void ServeTime(int daysInPrison)
+        public void UpdatePrisonScreen()
         {
-            // TODO: Prison screen
-            playerEntity.PreventEnemySpawns = true;
-            DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime(daysInPrison * 1440 * 60);
-            playerEntity.FillVitalSigns();
+            daysInPrisonLeft--;
+            daysUntilFreedomLabel.Text = HardStrings.daysUntilFreedom;
+            daysUntilFreedomLabel.Text = daysUntilFreedomLabel.Text.Replace("%d", daysInPrisonLeft.ToString());
+
+            if (daysInPrisonLeft == 0)
+            {
+                playerEntity.PreventEnemySpawns = true;
+                playerEntity.PreventNormalizingReputations = true;
+                DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime(daysInPrison * 1440 * 60);
+                inPrison = false;
+                playerEntity.FillVitalSigns();
+            }
         }
 
-        public void ReleaseFromJail()
+        public void ReleaseFromPrison()
         {
             playerEntity.PreventEnemySpawns = true;
             DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime(240 * 60);
             playerEntity.CrimeCommitted = Entity.PlayerEntity.Crimes.None;
+            if (repositionPlayer)
+                PositionPlayerAtLocationEntrance();
             GameManager.Instance.ClearEnemies();
             CancelWindow();
+        }
+
+        // OnCourtSceen. Used for resetting camera recoil.
+        public delegate void OnCourtScreenEventHandler();
+        public static event OnCourtScreenEventHandler OnCourtScreen;
+        protected virtual void RaiseOnCourtScreenEvent()
+        {
+            if (OnCourtScreen != null)
+                OnCourtScreen();
+        }
+
+        private void SwitchToPrisonScreen()
+        {
+            // Load native texture
+            nativeTexture = DaggerfallUI.GetTextureFromImg(nativeImgName2);
+            if (!nativeTexture)
+                throw new Exception("DaggerfallCourtWindow: Could not load native texture.");
+
+            // Native court panel
+            courtPanel.Size = TextureReplacement.GetSize(nativeTexture, nativeImgName2);
+            courtPanel.BackgroundTexture = nativeTexture;
+
+            daysUntilFreedomLabel.Text = HardStrings.daysUntilFreedom;
+            daysUntilFreedomLabel.Text = daysUntilFreedomLabel.Text.Replace("%d", daysInPrison.ToString());
         }
     }
 }
