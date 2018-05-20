@@ -16,6 +16,7 @@ using DaggerfallWorkshop.Game.Questing;
 using Wenzil.Console;
 using Wenzil.Console.Commands;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallConnect.Save;
 
 namespace DaggerfallWorkshop.Game.Guilds
 {
@@ -127,7 +128,7 @@ namespace DaggerfallWorkshop.Game.Guilds
             return CreateGuildObj(guildGroup, buildingFactionId);
         }
 
-        public Guild CreateGuildObj(FactionFile.GuildGroups guildGroup, int variant = 0)
+        private Guild CreateGuildObj(FactionFile.GuildGroups guildGroup, int variant = 0)
         {
             switch (guildGroup)
             {
@@ -206,7 +207,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                 return GetGuild(guildGroup, factionId);
         }
 
-        public FactionFile.GuildGroups GetGuildGroup(int factionId)
+        private FactionFile.GuildGroups GetGuildGroup(int factionId)
         {
             PersistentFactionData persistentFactionData = GameManager.Instance.PlayerEntity.FactionData;
             FactionFile.GuildGroups guildGroup = FactionFile.GuildGroups.None;
@@ -246,7 +247,7 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public void RestoreMembershipData(Dictionary<int, GuildMembership_v1> data)
         {
-            memberships.Clear();
+            ClearMembershipData();
             if (data != null)
             {
                 foreach (FactionFile.GuildGroups guildGroup in data.Keys)
@@ -259,6 +260,24 @@ namespace DaggerfallWorkshop.Game.Guilds
                         memberships[guildGroup] = guild;
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// Imports guild membership records from classic save data.
+        /// </summary>
+        public void ImportMembershipData(List<SaveTreeBaseRecord> guildMembershipRecords)
+        {
+            ClearMembershipData();
+            foreach (GuildMembershipRecord record in guildMembershipRecords)
+            {
+                FactionFile.GuildGroups guildGroup = GetGuildGroup(record.ParsedData.factionID);
+                Guild guild = CreateGuildObj(guildGroup, record.ParsedData.factionID);
+                AddMembership(guildGroup, guild);
+
+                // Set rank and time from parsed data.
+                guild.Rank = record.ParsedData.rank;
+                guild.ImportLastRankChange(record.ParsedData.timeOfLastRankChange);
             }
         }
 
