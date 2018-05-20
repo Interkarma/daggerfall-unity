@@ -188,31 +188,28 @@ namespace DaggerfallWorkshop.Game
             return !Physics.SphereCast(ray, controller.radius, distance);
         }
 
-        private void SetIsCrouching()
+        private void SnapToggleCrouching()
         {
-            
-            // Old code for reference
-            /* if (isCrouching && !wasCrouching)
+            if (playerMotor.IsCrouching)
             {
-                controller.height = crouchingHeight;
+                controller.height = crouchHeight;
                 Vector3 pos = controller.transform.position;
-                pos.y -= (standingHeight - crouchingHeight) / 2.0f;
+                pos.y -= (standHeight - crouchHeight) / 2.0f;
                 controller.transform.position = pos;
-                wasCrouching = isCrouching;
             }
-            else if (!isCrouching && wasCrouching)
+            else if (!playerMotor.IsCrouching)
             {
-                controller.height = standingHeight;
+                controller.height = standHeight;
                 Vector3 pos = controller.transform.position;
-                pos.y += (standingHeight - crouchingHeight) / 2.0f;
+                pos.y += (standHeight - crouchHeight) / 2.0f;
                 controller.transform.position = pos;
-                wasCrouching = isCrouching;
-    -       }*/
+            }
         }
 
         private void SaveLoadManager_OnStartLoad(SaveData_v1 saveData)
         {
-            SetIsCrouching();
+            playerMotor.IsCrouching = saveData.playerData.playerPosition.isCrouching;
+            SnapToggleCrouching();
         }
     }
 }
