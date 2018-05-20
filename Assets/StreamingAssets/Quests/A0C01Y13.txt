@@ -242,8 +242,8 @@ Item _magicsword_ magic_item
 
 Person _giver_ group Questor male anyInfo 1022 rumors 1022
 Person informant2 face 1 group Innkeeper
-Person _sister_ face 19 group Group_6.0
-Person _lover_ face 117 group Group_6.0 anyInfo 1030 rumors 1030
+Person _sister_ face 19 group Group_6.0 female
+Person _lover_ face 117 group Group_6.0 male anyInfo 1030 rumors 1030
 
 Place _givershouse_ local house2
 Place _sistershouse_ local house2
