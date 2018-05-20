@@ -786,6 +786,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 TalkManager.ListItem item = listTopic[i];
                 ListBox.ListItem listboxItem;
+                if (item.caption == null) // this is a check to detect problems arising from old save data - where caption end up as null
+                {
+                    item.caption = item.key; //  just try to take key as caption then (answers might still be broken)
+                    if (item.caption == String.Empty)
+                        item.caption = TextManager.Instance.GetText(TalkManager.TextDatabase, "resolvingError");
+                }
+                else if (item.caption == String.Empty)
+                {
+                    item.caption = TextManager.Instance.GetText(TalkManager.TextDatabase, "resolvingError");
+                }
                 listboxTopic.AddItem(item.caption, out listboxItem);
                 if (item.type == TalkManager.ListItemType.NavigationBack)
                 {
