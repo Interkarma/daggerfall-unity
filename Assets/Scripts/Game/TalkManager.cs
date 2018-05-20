@@ -1954,7 +1954,12 @@ namespace DaggerfallWorkshop.Game
 
                 }
             }
+
             listRumorMill = data.listRumorMill;
+            if (listRumorMill == null)
+            {
+                SetupRumorMill();
+            }
 
             // search for orphaned entries in rumor mill
             for (int i = listRumorMill.Count - 1; i >= 0; i--)
@@ -1965,11 +1970,6 @@ namespace DaggerfallWorkshop.Game
                     Debug.Log(String.Format("save data contains orphaned rumors for quest with id {0}. Removing these rumors...", questID));
                     listRumorMill.Remove(listRumorMill[i]);
                 }
-            }
-
-            if (listRumorMill == null)
-            {
-                SetupRumorMill();
             }
 
             dictQuestorPostQuestMessage = data.dictQuestorPostQuestMessage;
