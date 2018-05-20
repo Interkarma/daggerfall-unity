@@ -161,6 +161,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             RaiseOnValueChanged();
         }
 
+        public void SetMouseOverBackgroundColor(Color color)
+        {
+            upButton.MouseOverBackgroundColor = color;
+            downButton.MouseOverBackgroundColor = color;
+        }
+
         void UpButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             // Auto +1 if ranges set

@@ -59,6 +59,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         DFRegion currentDFRegion;
         ContentReader.MapSummary locationSummary;
 
+        KeyCode toggleClosedBinding;
+
         Panel borderPanel;
         Panel regionTextureOverlayPanel;
 
@@ -284,6 +286,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.Update();
 
+            // Toggle window closed with same hotkey used to open it
+            if (Input.GetKeyUp(toggleClosedBinding))
+                CloseWindow();
+
             //input handling
 
             Vector2 currentMousePos = new Vector2((NativePanel.ScaledMousePosition.x), (NativePanel.ScaledMousePosition.y));
@@ -450,6 +456,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.Components.Add(verticalArrowButton);
             verticalArrowButton.Name = "verticalArrowButton";
             verticalArrowButton.OnMouseClick += ArrowButtonClickHandler;
+
+            // Store toggle closed binding for this window
+            toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.TravelMap);
 
         }
 

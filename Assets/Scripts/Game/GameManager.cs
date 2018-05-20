@@ -440,7 +440,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Handle in-game windows
-            if (InputManager.Instance.ActionStarted(InputManager.Actions.CharacterSheet))
+            if (InputManager.Instance.ActionComplete(InputManager.Actions.CharacterSheet))
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenCharacterSheetWindow);
             }
@@ -448,7 +448,7 @@ namespace DaggerfallWorkshop.Game
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenInventoryWindow);
             }
-            else if (InputManager.Instance.ActionStarted(InputManager.Actions.TravelMap))
+            else if (InputManager.Instance.ActionComplete(InputManager.Actions.TravelMap))
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenTravelMapWindow);
             }
@@ -474,7 +474,7 @@ namespace DaggerfallWorkshop.Game
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiStatusInfo);
             }
 
-            if (InputManager.Instance.ActionStarted(InputManager.Actions.AutoMap))
+            if (InputManager.Instance.ActionComplete(InputManager.Actions.AutoMap))
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenAutomap);
             }

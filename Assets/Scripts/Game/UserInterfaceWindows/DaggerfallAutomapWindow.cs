@@ -128,8 +128,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button upstairsButton;
         Button downstairsButton;
 
-        // definitions of hotkey sequences
-        readonly HotkeySequence HotkeySequence_CloseMap = new HotkeySequence(KeyCode.M, HotkeySequence.KeyModifiers.None);        
+        // definitions of hotkey sequences  
         readonly HotkeySequence HotkeySequence_SwitchAutomapGridMode = new HotkeySequence(KeyCode.Space, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_ResetView = new HotkeySequence(KeyCode.Backspace, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_ResetRotationPivotAxisView = new HotkeySequence(KeyCode.Backspace, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
@@ -164,6 +163,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         readonly HotkeySequence HotkeySequence_ZoomOut = new HotkeySequence(KeyCode.KeypadMinus, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_IncreaseCameraFieldOfFiew = new HotkeySequence(KeyCode.KeypadMultiply, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_DecreaseCameraFieldOfFiew = new HotkeySequence(KeyCode.KeypadDivide, HotkeySequence.KeyModifiers.None);
+
+        KeyCode toggleClosedBinding;
 
         const string nativeImgName = "AMAP00I0.IMG";
         const string nativeImgNameGrid3D = "AMAP01I0.IMG";
@@ -479,6 +480,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             compass.Scale = scale;
             NativePanel.Components.Add(compass);
 
+            // Store toggle closed binding for this window
+            toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.AutoMap);
+
             isSetup = true;
         }
 
@@ -628,6 +632,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.Update();
             resizeGUIelementsOnDemand();
 
+            // Toggle window closed with same hotkey used to open it
+            if (Input.GetKeyUp(toggleClosedBinding))
+                CloseWindow();
+
             HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.getKeyModifiers(Input.GetKey(KeyCode.LeftControl), Input.GetKey(KeyCode.RightControl), Input.GetKey(KeyCode.LeftShift), Input.GetKey(KeyCode.RightShift), Input.GetKey(KeyCode.LeftAlt), Input.GetKey(KeyCode.RightAlt));
 
             // debug teleport mode action
@@ -646,11 +654,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             
             // check hotkeys and assign actions
-            if (Input.GetKeyDown(HotkeySequence_CloseMap.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_CloseMap.modifiers))
-            {                
-                CloseWindow();
-                Input.ResetInputAxes(); // prevents automap window to reopen immediately after closing
-            }
             if (Input.GetKeyDown(HotkeySequence_SwitchAutomapGridMode.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_SwitchAutomapGridMode.modifiers))
             {
                 ActionChangeAutomapGridMode();

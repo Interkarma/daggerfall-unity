@@ -541,6 +541,9 @@ namespace DaggerfallWorkshop.Game.Utility
             // Assign items to player entity
             playerEntity.AssignItems(saveTree);
 
+            // Assign guild memberships
+            playerEntity.AssignGuildMemberships(saveTree);
+
             // Assign diseases and poisons to player entity
             playerEntity.AssignDiseasesAndPoisons(saveTree);
 

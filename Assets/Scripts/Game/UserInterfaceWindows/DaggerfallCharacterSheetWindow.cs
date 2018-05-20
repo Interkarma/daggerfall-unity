@@ -26,10 +26,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class DaggerfallCharacterSheetWindow : DaggerfallPopupWindow
     {
+        #region Fields
         const string nativeImgName = "INFO00I0.IMG";
         private const int noAffiliationsMsgId = 19;
 
-        Texture2D nativeTexture;
+        StatsRollout statsRollout;
+
+        bool leveling = false;
+
+        const int minBonusPool = 4;        // The minimum number of free points to allocate on level up
+        const int maxBonusPool = 6;        // The maximum number of free points to allocate on level up
+        SoundClips levelUpSound = SoundClips.LevelUp;
+
+        KeyCode toggleClosedBinding;
+
+        #endregion
+
+        #region UI Controls
+
         PlayerEntity playerEntity;
         TextLabel nameLabel = new TextLabel();
         TextLabel raceLabel = new TextLabel();
@@ -43,23 +57,33 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextLabel[] statLabels = new TextLabel[DaggerfallStats.Count];
         PaperDoll characterPortrait = new PaperDoll();
 
-        StatsRollout statsRollout;
+        #endregion
 
-        bool leveling = false;
+        #region UI Textures
 
-        const int minBonusPool = 4;        // The minimum number of free points to allocate on level up
-        const int maxBonusPool = 6;        // The maximum number of free points to allocate on level up
-        SoundClips levelUpSound = SoundClips.LevelUp;
+        Texture2D nativeTexture;
+
+        #endregion
+
+        #region Properties
 
         PlayerEntity PlayerEntity
         {
             get { return (playerEntity != null) ? playerEntity : playerEntity = GameManager.Instance.PlayerEntity; }
         }
 
+        #endregion
+
+        #region Constructors
+
         public DaggerfallCharacterSheetWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
         {
         }
+
+        #endregion
+
+        #region Setup Methods
 
         protected override void Setup()
         {
@@ -160,6 +184,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Update player paper doll for first time
             UpdatePlayerValues();
             characterPortrait.Refresh();
+
+            // Store toggle closed binding for this window
+            toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.CharacterSheet);
+        }
+
+        #endregion
+
+        #region Overrides
+
+        public override void Update()
+        {
+            base.Update();
+
+            // Toggle window closed with same hotkey used to open it
+            if (Input.GetKeyUp(toggleClosedBinding))
+                CloseWindow();
         }
 
         public override void OnPush()
@@ -181,6 +221,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             base.CancelWindow();
         }
+
+        #endregion
 
         #region Private Methods
 

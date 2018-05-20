@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -32,12 +32,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
     public class DaggerfallQuestJournalWindow : DaggerfallPopupWindow
     {
-        const string nativeImgName  = "LGBK00I0.IMG";
-        const int maxLines          = 19;
-        int lastMessageIndex        = -1;
-        int currentMessageIndex     = 0;
+        #region Fields
+
+        const string nativeImgName = "LGBK00I0.IMG";
+
+        const int maxLines = 19;
+        int lastMessageIndex = -1;
+        int currentMessageIndex = 0;
 
         List<Message> questMessages;
+
+        KeyCode toggleClosedBinding;
+
+        #endregion
+
+        #region UI Controls
 
         MultiFormatTextLabel questLogLabel;
 
@@ -48,11 +57,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button downArrowButton;
         Button exitButton;
 
+        #endregion
+
+        #region Constructors
 
         public DaggerfallQuestJournalWindow(UserInterfaceManager uiManager) : base(uiManager) 
         {
         }
 
+        #endregion
+
+        #region Setup Methods
 
         protected override void Setup()
         {
@@ -71,6 +86,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mainPanel.Size                  = new Vector2(320, 200);
             mainPanel.HorizontalAlignment   = HorizontalAlignment.Center;
             mainPanel.VerticalAlignment     = VerticalAlignment.Middle;
+            mainPanel.OnMouseScrollDown     += MainPanel_OnMouseScrollDown;
+            mainPanel.OnMouseScrollUp       += MainPanel_OnMouseScrollUp;
 
             dialogButton                    = new Button();
             dialogButton.Position           = new Vector2(32, 187);
@@ -108,10 +125,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             questMessages = QuestMachine.Instance.GetAllQuestLogMessages();
             SetText();
 
+            // Store toggle closed binding for this window
+            toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.LogBook);
+
 #if LAYOUT
             SetBackgroundColors();
 #endif
         }
+
+        #endregion
+
+        #region Overrides
 
         public override void OnPush()
         {
@@ -132,6 +156,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.Update();
 
+            // Toggle window closed with same hotkey used to open it
+            if (Input.GetKeyUp(toggleClosedBinding))
+                CloseWindow();
+
             if (lastMessageIndex != currentMessageIndex)
             {
                 lastMessageIndex = currentMessageIndex;
@@ -139,8 +167,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        #endregion
 
-#region events
+        #region events
 
         public void dialogButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
@@ -164,13 +193,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         }
 
+        void MainPanel_OnMouseScrollUp(BaseScreenComponent sender)
+        {
+            upArrowButton_OnMouseClick(sender, Vector2.zero);
+        }
+
+        void MainPanel_OnMouseScrollDown(BaseScreenComponent sender)
+        {
+            downArrowButton_OnMouseClick(sender, Vector2.zero);
+        }
+
         public void exitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             //Debug.Log("button clicked: " + sender.Name);
             CloseWindow();
         }
 
-#endregion
+        #endregion
+
+        #region region Private Methods
 
         private void SetText()
         {
@@ -241,5 +282,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 #endif
+        #endregion
     }
 }

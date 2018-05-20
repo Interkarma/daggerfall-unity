@@ -80,6 +80,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         const int alternateAlphaIndex = 12;
 
+        Color hotButtonColor = new Color32(200, 200, 200, 100);
+
         IEntityEffect effectTemplate = null;
 
         #endregion
@@ -199,6 +201,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             magnitudePlusMinSpinner = new UpDownSpinner(magnitudePlusMinSpinnerRect, spinnerUpButtonRect, spinnerDownButtonRect, spinnerValueLabelRect, 0, null, NativePanel);
             magnitudePlusMaxSpinner = new UpDownSpinner(magnitudePlusMaxSpinnerRect, spinnerUpButtonRect, spinnerDownButtonRect, spinnerValueLabelRect, 0, null, NativePanel);
             magnitudePerLevelSpinner = new UpDownSpinner(magnitudePerLevelSpinnerRect, spinnerUpButtonRect, spinnerDownButtonRect, spinnerValueLabelRect, 0, null, NativePanel);
+
+            // Set spinner mouse over colours
+            durationBaseSpinner.SetMouseOverBackgroundColor(hotButtonColor);
+            durationPlusSpinner.SetMouseOverBackgroundColor(hotButtonColor);
+            durationPerLevelSpinner.SetMouseOverBackgroundColor(hotButtonColor);
+            chanceBaseSpinner.SetMouseOverBackgroundColor(hotButtonColor);
+            chancePlusSpinner.SetMouseOverBackgroundColor(hotButtonColor);
+            chancePerLevelSpinner.SetMouseOverBackgroundColor(hotButtonColor);
+            magnitudeBaseMinSpinner.SetMouseOverBackgroundColor(hotButtonColor);
+            magnitudeBaseMaxSpinner.SetMouseOverBackgroundColor(hotButtonColor);
+            magnitudePlusMinSpinner.SetMouseOverBackgroundColor(hotButtonColor);
+            magnitudePlusMaxSpinner.SetMouseOverBackgroundColor(hotButtonColor);
+            magnitudePerLevelSpinner.SetMouseOverBackgroundColor(hotButtonColor);
 
             // Set spinner ranges
             durationBaseSpinner.SetRange(1, 60);
