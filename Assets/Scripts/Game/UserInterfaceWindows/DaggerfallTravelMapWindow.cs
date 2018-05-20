@@ -231,9 +231,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Populate the offset dict
             PopulateRegionOffsetDict();
 
-            // Don't allow automatic cancel, we will handle this locally
-            AllowCancel = false;
-
             // Load picker colours
             regionPickerBitmap = DaggerfallUI.GetImgBitmap(regionPickerImgName);
 
@@ -284,11 +281,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public override void Update()
         {
+            // important to happen before base.Update()
+            if (Input.GetKeyUp(exitKey) && RegionSelected)
+            {
+                CloseRegionPanel();
+                Input.ResetInputAxes();
+            }
+
             base.Update();
 
             // Toggle window closed with same hotkey used to open it
             if (Input.GetKeyUp(toggleClosedBinding))
-                CloseWindow();
+            {
+                if (RegionSelected)
+                    CloseRegionPanel();
+                else
+                    CloseWindow();             
+            }
 
             //input handling
 
@@ -301,14 +310,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     UpdateMouseOverLocation();
                 else
                     UpdateMouseOverRegion();
-            }
-
-            if (Input.GetKeyDown(exitKey))      //exit key will cancel any identifying actions if any
-            {                                   //if not ident. it will just close region panel or exit travel map
-                if (FindingLocation || identifying)
-                    StopIdentify(false);
-                else
-                    CloseTravelWindows();
             }
 
             UpdateRegionLabel();
