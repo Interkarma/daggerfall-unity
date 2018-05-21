@@ -664,7 +664,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // Message box closed, talk to SpyMaster
         private void SpyMasterGreetingPopUp_OnClose()
         {
-            GameManager.Instance.TalkManager.TalkToStaticNPC(QuestMachine.Instance.LastNPCClicked, true);
+            GameManager.Instance.TalkManager.TalkToStaticNPC(QuestMachine.Instance.LastNPCClicked, true, true);
         }
 
         #endregion
