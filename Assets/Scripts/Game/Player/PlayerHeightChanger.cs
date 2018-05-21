@@ -1,7 +1,9 @@
 ﻿using DaggerfallWorkshop.Game;
+using DaggerfallWorkshop.Game.Serialization;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -33,8 +35,8 @@ namespace DaggerfallWorkshop.Game
         private CharacterController controller;
         private HeadBobber headBobber;
         private Camera mainCamera;
-        private float standHeight = 1.78f;
-        private float crouchHeight = 0.45f;
+        public float standHeight = 1.78f;
+        public float crouchHeight = 0.45f;
         private float rideHeight = 2.6f;   // Height of a horse plus seated rider. (1.6m + 1m)
         private float eyeHeight = 0.09f;         // Eye height is 9cm below top of capsule.
         private float crouchChangeDistance;
@@ -52,14 +54,14 @@ namespace DaggerfallWorkshop.Game
             controller = GetComponent<CharacterController>();
             headBobber = GetComponent<HeadBobber>();
             mainCamera = GameManager.Instance.MainCamera;
-
             crouchChangeDistance = (standHeight - crouchHeight) / 2f;
             rideChangeDistance = (rideHeight - standHeight) / 2f - eyeHeight;
-            // local positions for camera at each height level
-            // TODO: Make sure assumption isn't wrong that camera begins at correct standing position height
-            camStandLevel = mainCamera.transform.localPosition.y; //With the assumption that the camera begins at correct standing position height
-            camCrouchLevel = camStandLevel - crouchChangeDistance; //we want the camera to lower the same amount as the character
-            camRideLevel = camStandLevel + rideChangeDistance ;
+            camCrouchLevel = crouchHeight / 2f;
+            camStandLevel = standHeight / 2f;
+            camRideLevel = rideHeight / 2f - eyeHeight;
+
+            // Use event to set whether player is crouched on load
+            SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
         }
 
         /// <summary>
@@ -105,7 +107,6 @@ namespace DaggerfallWorkshop.Game
                 DoMount();
             else
                 DoDismount();
-            
         }
 
         private void DoCrouch() // first lower camera, Controller height last 
@@ -185,7 +186,6 @@ namespace DaggerfallWorkshop.Game
 
         private void ControllerHeightChange()
         {
-            playerMotor.IsCrouching = false;
             if (heightAction == HeightChangeAction.DoCrouching)
             {
                 controller.height = crouchHeight;
@@ -196,6 +196,7 @@ namespace DaggerfallWorkshop.Game
             {
                 controller.height = standHeight;
                 controller.transform.position += new Vector3(0, crouchChangeDistance);
+                playerMotor.IsCrouching = false;
             }
             else if (heightAction == HeightChangeAction.DoMounting)
             {
@@ -204,6 +205,7 @@ namespace DaggerfallWorkshop.Game
                 float prevHeight = playerMotor.IsCrouching ? crouchHeight : standHeight;
                 pos.y += (rideHeight - prevHeight) / 2.0f;
                 controller.transform.position = pos;
+                playerMotor.IsCrouching = false;
             }
             else if (heightAction == HeightChangeAction.DoDismounting)
             {
@@ -211,6 +213,7 @@ namespace DaggerfallWorkshop.Game
                 Vector3 pos = controller.transform.position;
                 pos.y -= (rideHeight - standHeight) / 2.0f;
                 controller.transform.position = pos;
+                playerMotor.IsCrouching = false;
             }
         }
 
@@ -224,6 +227,30 @@ namespace DaggerfallWorkshop.Game
 
             Ray ray = new Ray(controller.transform.position, Vector3.up); 
             return !Physics.SphereCast(ray, controller.radius, distance);
+        }
+
+        private void SnapToggleCrouching()
+        {
+            if (playerMotor.IsCrouching && controller.height != crouchHeight)
+            {
+                controller.height = crouchHeight;
+                Vector3 pos = controller.transform.position;
+                pos.y -= (standHeight - crouchHeight) / 2.0f;
+                controller.transform.position = pos;
+            }
+            else if (!playerMotor.IsCrouching && controller.height != standHeight)
+            {
+                controller.height = standHeight;
+                Vector3 pos = controller.transform.position;
+                pos.y += (standHeight - crouchHeight) / 2.0f;
+                controller.transform.position = pos;
+            }
+        }
+
+        private void SaveLoadManager_OnStartLoad(SaveData_v1 saveData)
+        {
+            playerMotor.IsCrouching = saveData.playerData.playerPosition.isCrouching;
+            SnapToggleCrouching();
         }
     }
 }
