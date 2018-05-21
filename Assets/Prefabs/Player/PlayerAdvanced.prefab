@@ -40,7 +40,6 @@ GameObject:
   - component: {fileID: 114101796857139080}
   - component: {fileID: 114220683863726122}
   - component: {fileID: 114033680799267548}
-  - component: {fileID: 135216212425773840}
   m_Layer: 0
   m_Name: PlayerAdvanced
   m_TagString: Player
@@ -1301,18 +1300,6 @@ MonoBehaviour:
   nodXAmount: 0
   nodYAmount: 0
   bobScalar: 0
---- !u!135 &135216212425773840
-SphereCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100000}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.23
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!198 &198237622866876544
 ParticleSystem:
   m_ObjectHideFlags: 1
