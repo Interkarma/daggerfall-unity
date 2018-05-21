@@ -595,8 +595,9 @@ namespace DaggerfallWorkshop.Game
                 return;
 
             // Fire ray along player facing using weapon range
+            // Origin point of ray is set back slightly to fix issue where strikes against enemy capsules touching player capsule do not connect
             RaycastHit hit;
-            Ray ray = new Ray(mainCamera.transform.position, mainCamera.transform.forward);
+            Ray ray = new Ray(mainCamera.transform.position + -mainCamera.transform.forward * 0.1f, mainCamera.transform.forward);
             if (Physics.SphereCast(ray, SphereCastRadius, out hit, weapon.Reach - SphereCastRadius))
             {
                 // Check if hit has an DaggerfallAction component
