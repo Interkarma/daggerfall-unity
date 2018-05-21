@@ -964,7 +964,7 @@ namespace DaggerfallWorkshop.Game
                     else if (playerEnterExit.BuildingDiscoveryData.buildingType == DFLocation.BuildingTypes.Tavern)
                         uiManager.PushWindow(new DaggerfallTavernWindow(uiManager, npc));
                     else
-                        GameManager.Instance.TalkManager.TalkToStaticNPC(npc);
+                        GameManager.Instance.TalkManager.TalkToStaticNPC(npc, false);
                 }
                 // Check if this NPC is part of a witches coven.
                 else if ((FactionFile.FactionTypes) factionData.type == FactionFile.FactionTypes.WitchesCoven)
@@ -974,7 +974,7 @@ namespace DaggerfallWorkshop.Game
                 // TODO - more checks for npc social types?
                 else // if no special handling had to be done for npc with social group of type merchant: talk to the static npc
                 {
-                    GameManager.Instance.TalkManager.TalkToStaticNPC(npc);
+                    GameManager.Instance.TalkManager.TalkToStaticNPC(npc, false);
                 }
             }
             else // if no special handling had to be done (all remaining npcs of the remaining social groups not handled explicitely above): default is talk to the static npc
@@ -984,7 +984,7 @@ namespace DaggerfallWorkshop.Game
                     return; // if guard was clicked don't open talk window
 
                 // otherwise open talk window
-                GameManager.Instance.TalkManager.TalkToStaticNPC(npc);
+                GameManager.Instance.TalkManager.TalkToStaticNPC(npc, false);
             }
         }
 
