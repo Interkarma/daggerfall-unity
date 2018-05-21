@@ -103,7 +103,7 @@ namespace DaggerfallWorkshop.Game
             //    moveSpeed = 80f / PlayerSpeedChanger.classicToUnitySpeedUnitRatio;
 
             // HACK: Faster levitate speed for testing in branch - REVERT WHEN TESTING COMPLETE!
-            moveSpeed = 200f;
+            moveSpeed = 50f;
             collisionFlags = playerMotor.controller.Move(direction * moveSpeed * Time.deltaTime);
 
             //// Reset to levitate speed in case it has been changed by swimming
