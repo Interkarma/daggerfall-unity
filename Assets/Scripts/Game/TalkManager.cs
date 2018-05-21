@@ -672,10 +672,10 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Player has clicked or static talk target or clicked the talk button inside a popup-window
-        public void TalkToStaticNPC(StaticNPC targetNPC, bool isSpyMaster = false)
+        public void TalkToStaticNPC(StaticNPC targetNPC, bool menu = true, bool isSpyMaster = false)
         {
             if (IsNpcOfferingQuest(targetNPC.Data.nameSeed)) {
-                DaggerfallUI.UIManager.PushWindow(new DaggerfallQuestOfferWindow(DaggerfallUI.UIManager, npcsWithWork[targetNPC.Data.nameSeed].npc, npcsWithWork[targetNPC.Data.nameSeed].socialGroup));
+                DaggerfallUI.UIManager.PushWindow(new DaggerfallQuestOfferWindow(DaggerfallUI.UIManager, npcsWithWork[targetNPC.Data.nameSeed].npc, npcsWithWork[targetNPC.Data.nameSeed].socialGroup, menu));
                 return;
             }
             currentNPCType = NPCType.Static;
