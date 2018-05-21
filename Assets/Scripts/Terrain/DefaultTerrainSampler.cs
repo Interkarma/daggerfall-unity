@@ -33,9 +33,13 @@ namespace DaggerfallWorkshop
         // Max terrain height of this sampler implementation
         const float maxTerrainHeight = 1539f;
 
+        /// <summary>
+        /// Version 1 : Initial default sampler version
+        /// Version 2 : Upgraded to support floating Y changes
+        /// </summary>
         public override int Version
         {
-            get { return 1; }
+            get { return 2; }
         }
 
         public DefaultTerrainSampler()

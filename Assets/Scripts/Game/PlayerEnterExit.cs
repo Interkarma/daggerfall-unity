@@ -440,9 +440,11 @@ namespace DaggerfallWorkshop.Game
         {
             // Raise reposition flag if terrain sampler changed
             // This is required as changing terrain samplers will invalidate serialized player coordinates
+            // Make an exception for dungeons as exterior world does not matter
             bool repositionPlayer = false;
-            if (playerPosition.terrainSamplerName != DaggerfallUnity.Instance.TerrainSampler.ToString() ||
-                playerPosition.terrainSamplerVersion != DaggerfallUnity.Instance.TerrainSampler.Version)
+            if ((playerPosition.terrainSamplerName != DaggerfallUnity.Instance.TerrainSampler.ToString() ||
+                playerPosition.terrainSamplerVersion != DaggerfallUnity.Instance.TerrainSampler.Version) &&
+                !playerPosition.insideDungeon)
             {
                 repositionPlayer = true;
                 if (DaggerfallUI.Instance.DaggerfallHUD != null)
@@ -465,7 +467,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Start the respawn process based on saved player location
-            if (playerPosition.insideDungeon && !repositionPlayer)
+            if (playerPosition.insideDungeon/* && !repositionPlayer*/) // Do not need to resposition outside for dungeons
             {
                 // Start in dungeon
                 RespawnPlayer(

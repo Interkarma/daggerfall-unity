@@ -176,6 +176,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         {
             PlayerPositionData_v1 playerPosition = new PlayerPositionData_v1();
             playerPosition.position = transform.position;
+            playerPosition.worldCompensation = GameManager.Instance.StreamingWorld.WorldCompensation;
             playerPosition.yaw = playerMouseLook.Yaw;
             playerPosition.pitch = playerMouseLook.Pitch;
             playerPosition.isCrouching = playerMotor.IsCrouching;
@@ -306,8 +307,10 @@ namespace DaggerfallWorkshop.Game.Serialization
                 hasExteriorDoors = true;
 
             // Lower player position flag if player outside and terrain sampler changed
-            if (data.playerPosition.terrainSamplerName != DaggerfallUnity.Instance.TerrainSampler.ToString() ||
-                data.playerPosition.terrainSamplerVersion != DaggerfallUnity.Instance.TerrainSampler.Version)
+            // Make an exception for dungeons as exterior world does not matter
+            if ((data.playerPosition.terrainSamplerName != DaggerfallUnity.Instance.TerrainSampler.ToString() ||
+                data.playerPosition.terrainSamplerVersion != DaggerfallUnity.Instance.TerrainSampler.Version) &&
+                !data.playerPosition.insideDungeon)
             {
                 restorePlayerPosition = false;
             }

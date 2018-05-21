@@ -198,6 +198,7 @@ namespace DaggerfallWorkshop.Game.Serialization
     public class PlayerPositionData_v1
     {
         public Vector3 position;
+        public Vector3 worldCompensation;
         public float yaw;
         public float pitch;
         public bool isCrouching;
