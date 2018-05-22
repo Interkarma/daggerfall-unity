@@ -39,7 +39,7 @@ namespace DaggerfallWorkshop
         /// </summary>
         public override int Version
         {
-            get { return 2; }
+            get { return 1; }
         }
 
         public DefaultTerrainSampler()

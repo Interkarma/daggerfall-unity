@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using System;
+using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using System.Collections.Generic;
@@ -177,6 +178,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             PlayerPositionData_v1 playerPosition = new PlayerPositionData_v1();
             playerPosition.position = transform.position;
             playerPosition.worldCompensation = GameManager.Instance.StreamingWorld.WorldCompensation;
+            playerPosition.floatingOriginVersion = FloatingOrigin.floatingOriginVersion;
             playerPosition.yaw = playerMouseLook.Yaw;
             playerPosition.pitch = playerMouseLook.Pitch;
             playerPosition.isCrouching = playerMotor.IsCrouching;
@@ -352,9 +354,20 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         public void RestorePosition(PlayerPositionData_v1 positionData)
         {
+            bool isOutside = (!positionData.insideBuilding && !positionData.insideDungeon);
+
+            // Handle loading downlevel floating origin versions while player is outside (player will be aligned to ground)
+            if (isOutside &&  positionData.floatingOriginVersion < FloatingOrigin.floatingOriginVersion)
+            {
+                playerMouseLook.Yaw = positionData.yaw;
+                playerMouseLook.Pitch = positionData.pitch;
+                playerMotor.IsCrouching = positionData.isCrouching;
+                return;
+            }
+
             // Player Y position must also be adjusted by the difference between current and restored world compensation
             float diffY = 0;
-            if (!positionData.insideBuilding && !positionData.insideDungeon)
+            if (isOutside)
                 diffY = GameManager.Instance.StreamingWorld.WorldCompensation.y - positionData.worldCompensation.y;
 
             transform.position = positionData.position + new Vector3(0, diffY, 0);
