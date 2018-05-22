@@ -487,6 +487,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         Dictionary<int, NpcWorkEntry> npcsWithWork = new Dictionary<int, NpcWorkEntry>();
+        Dictionary<int, bool> castleNPCsSpokenTo = new Dictionary<int, bool>();
 
         // note Nystul: I changed the name from former lastExteriorEntered into exteriorUsedForQuestors to better reflect that a specific exterior was used to build questor dictionary
         //              Since there was a bug when player loaded save game where character is in interior environment and thus this flag was always zero,
@@ -563,6 +564,7 @@ namespace DaggerfallWorkshop.Game
             PlayerGPS.OnMapPixelChanged += OnMapPixelChanged;
             PlayerEnterExit.OnTransitionExterior += OnTransitionToExterior;
             PlayerEnterExit.OnTransitionDungeonExterior += OnTransitionToDungeonExterior;
+            PlayerEnterExit.OnTransitionDungeonInterior += OnTransitionToDungeonInterior;
             SaveLoadManager.OnLoad += OnLoadEvent;
 
             // initialize work variables
@@ -576,6 +578,7 @@ namespace DaggerfallWorkshop.Game
             PlayerGPS.OnMapPixelChanged -= OnMapPixelChanged;
             PlayerEnterExit.OnTransitionExterior -= OnTransitionToExterior;
             PlayerEnterExit.OnTransitionDungeonExterior -= OnTransitionToDungeonExterior;
+            PlayerEnterExit.OnTransitionDungeonInterior -= OnTransitionToDungeonInterior;
             SaveLoadManager.OnLoad -= OnLoadEvent;
         }
 
@@ -671,6 +674,14 @@ namespace DaggerfallWorkshop.Game
         {
             if (IsNpcOfferingQuest(targetNPC.Data.nameSeed)) {
                 DaggerfallUI.UIManager.PushWindow(new DaggerfallQuestOfferWindow(DaggerfallUI.UIManager, npcsWithWork[targetNPC.Data.nameSeed].npc, npcsWithWork[targetNPC.Data.nameSeed].socialGroup));
+                return;
+            }
+            else if (IsCastleNpcOfferingQuest(targetNPC.Data.nameSeed))
+            {
+                FactionFile.FactionData targetFactionData;
+                PersistentFactionData factionsData = GameManager.Instance.PlayerEntity.FactionData;
+                factionsData.GetFactionData(targetNPC.Data.factionID, out targetFactionData);
+                DaggerfallUI.UIManager.PushWindow(new DaggerfallQuestOfferWindow(DaggerfallUI.UIManager, targetNPC.Data, (FactionFile.SocialGroups)targetFactionData.sgroup));
                 return;
             }
             currentNPCType = NPCType.Static;
@@ -1955,6 +1966,25 @@ namespace DaggerfallWorkshop.Game
             return npcsWithWork.ContainsKey(nameSeed) && !QuestMachine.Instance.IsLastNPCClickedAnActiveQuestor();
         }
 
+        public bool IsCastleNpcOfferingQuest(int nameSeed)
+        {
+            if (!GameManager.Instance.IsPlayerInsideCastle || castleNPCsSpokenTo.ContainsKey(nameSeed) || QuestMachine.Instance.IsLastNPCClickedAnActiveQuestor())
+            {
+                return false;
+            }
+            // 1 in 6 chance that a castle NPC is offering a quest
+            // TODO: Determine probability in classic.
+            int rand = UnityEngine.Random.Range(0, 6);
+            bool result = false;
+            if (rand == 5)
+            {
+                result = true;
+            }
+            castleNPCsSpokenTo.Add(nameSeed, true); // Don't offer more than one quest at a time.
+            Debug.Log("TalkManager: Added in-castle potential questor to list. Key: " + nameSeed + " Pool Size: " + castleNPCsSpokenTo.Keys.Count);
+            return result;
+        }
+
         public void SetRandomQuestor()
         {
             if (!WorkAvailable) 
@@ -2887,6 +2917,11 @@ namespace DaggerfallWorkshop.Game
         {
             rebuildTopicLists = true;
             GetBuildingList(); // create building list and especially "any work" questors
+        }
+
+        private void OnTransitionToDungeonInterior(PlayerEnterExit.TransitionEventArgs args)
+        {
+            castleNPCsSpokenTo.Clear();
         }
 
         void OnLoadEvent(SaveData_v1 saveData)
