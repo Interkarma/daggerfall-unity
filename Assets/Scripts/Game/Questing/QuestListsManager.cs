@@ -52,6 +52,7 @@ namespace DaggerfallWorkshop.Game.Questing
     /// </summary>
     public class QuestListsManager
     {
+        public const string InitAtGameStart = "InitAtGameStart";
         public const string QuestListPrefix = "QuestList-";
         private const string QuestListPattern = QuestListPrefix + "*.txt";
         private const string QuestPacksFolderName = "QuestPacks";
@@ -59,6 +60,7 @@ namespace DaggerfallWorkshop.Game.Questing
         // Quest data tables
         private Dictionary<FactionFile.GuildGroups, List<QuestData>> guilds;
         private Dictionary<FactionFile.SocialGroups, List<QuestData>> social;
+        private List<QuestData> init;
 
         // Registered quest lists
         private static List<string> questLists = new List<string>();
@@ -112,6 +114,7 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             guilds = new Dictionary<FactionFile.GuildGroups, List<QuestData>>();
             social = new Dictionary<FactionFile.SocialGroups, List<QuestData>>();
+            init = new List<QuestData>();
 
             LoadQuestList(QuestListPrefix + "Classic", QuestMachine.QuestSourceFolder);
             LoadQuestList(QuestListPrefix + "DFU", QuestMachine.QuestSourceFolder);
@@ -183,6 +186,7 @@ namespace DaggerfallWorkshop.Game.Questing
                         }
                         guildQuests.Add(questData);
                     }
+                    // Is the group a social group?
                     else if (Enum.IsDefined(typeof(FactionFile.SocialGroups), questData.group))
                     {
                         FactionFile.SocialGroups socialGroup = (FactionFile.SocialGroups) Enum.Parse(typeof(FactionFile.SocialGroups), questData.group);
@@ -194,6 +198,11 @@ namespace DaggerfallWorkshop.Game.Questing
                         }
                         socialQuests.Add(questData);
                     }
+                    // Is this a quest initialised when a new game is started?
+                    else if (questData.group == InitAtGameStart)
+                    {
+                        init.Add(questData);
+                    }
                     // else TODO other groups
                 }
             }
@@ -202,6 +211,18 @@ namespace DaggerfallWorkshop.Game.Questing
         #endregion
 
         #region Quest Loading
+
+        /// <summary>
+        /// Initialises and starts any quests marked InitAtGameStart
+        /// </summary>
+        public void InitAtGameStartQuests()
+        {
+            foreach (QuestData questData in init)
+            {
+                Quest quest = LoadQuest(questData, 0);
+                QuestMachine.Instance.InstantiateQuest(quest);
+            }
+        }
 
         /// <summary>
         /// Get a random quest for a guild from appropriate subset.
