@@ -353,7 +353,9 @@ namespace DaggerfallWorkshop.Game.Serialization
         public void RestorePosition(PlayerPositionData_v1 positionData)
         {
             // Player Y position must also be adjusted by the difference between current and restored world compensation
-            float diffY = GameManager.Instance.StreamingWorld.WorldCompensation.y - positionData.worldCompensation.y;
+            float diffY = 0;
+            if (!positionData.insideBuilding && !positionData.insideDungeon)
+                diffY = GameManager.Instance.StreamingWorld.WorldCompensation.y - positionData.worldCompensation.y;
 
             transform.position = positionData.position + new Vector3(0, diffY, 0);
             playerMouseLook.Yaw = positionData.yaw;
