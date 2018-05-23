@@ -94,7 +94,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             {
                 DaggerfallBillboard billboard = loot.GetComponent<DaggerfallBillboard>();
 
-                // Interiors need special handling to ensure loot is always placed correctly for pre and post floating y saves
+                // Interiors and exteriors need special handling to ensure loot is always placed correctly for pre and post floating y saves
                 // Dungeons are not involved with floating y and don't need any changes
                 WorldContext lootContext = GetLootWorldContext(loot);
                 if (lootContext == WorldContext.Interior)
