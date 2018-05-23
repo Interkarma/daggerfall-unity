@@ -1,7 +1,4 @@
 using UnityEngine;
-using System;
-using System.Collections;
-using DaggerfallConnect;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -9,46 +6,37 @@ namespace DaggerfallWorkshop.Game
     [RequireComponent(typeof(CharacterController))]
     public class AcrobatMotor : MonoBehaviour
     {
-        private PlayerMotor playerMotor;
-        private FrictionMotor frictionMotor;
-        private Transform myTransform;
         public float jumpSpeed = 8.0f;
         public float gravity = 20.0f;
         public float crouchingJumpDelta = 0.8f;
-
-        // Units that player can fall before a falling damage function is run. To disable, type "infinity" in the inspector
         public float fallingDamageThreshold = 10.0f;
-
-        // If checked, then the player can change direction while in the air
         public bool airControl = false;
 
-        // Player must be grounded for at least this many physics frames before being able to jump again; set to 0 to allow bunny hopping
-        public int antiBunnyHopFactor = 1;
+        PlayerMotor playerMotor;
+        FrictionMotor frictionMotor;
+        Transform myTransform;
+
         private float fallStartLevel;
         private bool falling;
-        private int jumpTimer;
         private bool jumping = false;
+
         public bool Jumping
         {
             get { return jumping; }
             set { jumping = value; }
         }
+
         public bool Falling
         {
             get { return falling; }
             set { falling = value; }
         }
+
         void Start()
         {
             playerMotor = GetComponent<PlayerMotor>();
             frictionMotor = GetComponent<FrictionMotor>();
             myTransform = playerMotor.transform;
-            jumpTimer = antiBunnyHopFactor;
-        }
-
-        void Update()
-        {
-
         }
 
         /// <summary>
@@ -61,27 +49,18 @@ namespace DaggerfallWorkshop.Game
             if (GameManager.Instance.PlayerEntity.IsParalyzed)
                 return;
 
-            try
+            if (InputManager.Instance.HasAction(InputManager.Actions.Jump))
             {
-                if (!InputManager.Instance.HasAction(InputManager.Actions.Jump))
-                    jumpTimer++;
-                //if (!Input.GetButton("Jump"))
-                //    jumpTimer++;
-                else if (jumpTimer >= antiBunnyHopFactor)
-                {
-                    moveDirection.y = jumpSpeed;
-                    jumpTimer = 0;
-                    jumping = true;
+                moveDirection.y = jumpSpeed;
+                jumping = true;
 
-                    // Modify crouching jump speed
-                    if (playerMotor.IsCrouching)
-                        moveDirection.y *= crouchingJumpDelta;
-                }
-                else
-                    jumping = false;
+                // Modify crouching jump speed
+                if (playerMotor.IsCrouching)
+                    moveDirection.y *= crouchingJumpDelta;
             }
-            catch
+            else
             {
+                jumping = false;
             }
         }
         /// <summary>
@@ -113,7 +92,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-        /// // If we stepped over a cliff or something, set the height at which we started falling
+        /// If we stepped over a cliff or something, set the height at which we started falling
         /// </summary>
         public void CheckInitFall()
         {
@@ -123,6 +102,7 @@ namespace DaggerfallWorkshop.Game
                 fallStartLevel = myTransform.position.y;
             }
         }
+
         public void ApplyGravity(ref Vector3 moveDirection)
         {
             moveDirection.y -= gravity * Time.deltaTime;
@@ -141,8 +121,6 @@ namespace DaggerfallWorkshop.Game
                     FallingDamageAlert(fallDistance);
                 else if (fallDistance > fallingDamageThreshold / 2f)
                     BadFallDetected(fallDistance);
-                //if (myTransform.position.y < fallStartLevel - fallingDamageThreshold)
-                //    FallingDamageAlert(fallDistance);
             }
         }
 

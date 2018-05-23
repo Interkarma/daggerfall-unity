@@ -58,6 +58,7 @@ HeadBobbing=True
 Handedness=0
 WeaponAttackThreshold=0.03
 WeaponSensitivity=1.0
+MovementAcceleration=5.0
 ClickToAttack = False
 CameraRecoilStrength = 3
 SoundVolume = 1.0

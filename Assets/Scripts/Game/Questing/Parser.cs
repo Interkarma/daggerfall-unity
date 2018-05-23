@@ -372,7 +372,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     break;
 
                 // Trim and look for pure white-space to end block
-                string text = linesIn[++currentLine].TrimEnd('\r');
+                string text = linesIn[++currentLine].Trim();
                 if (string.IsNullOrEmpty(text))
                     break;
             }
