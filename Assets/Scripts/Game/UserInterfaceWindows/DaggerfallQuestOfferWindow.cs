@@ -27,7 +27,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             this.socialGroup = socialGroup;
 
             // Remove potential questor from pool after quest has been offered
-            TalkManager.Instance.RemoveNpcQuestor(npc.nameSeed);
+            if (!GameManager.Instance.IsPlayerInsideCastle)
+                TalkManager.Instance.RemoveNpcQuestor(npc.nameSeed);
 
             // Clear background
             ParentPanel.BackgroundColor = Color.clear;
@@ -39,7 +40,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected override void Setup()
         {
-            CloseWindow();
             GetQuest();
         }
 
@@ -76,7 +76,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     messageBox.Show();
                 }
             }
-            else
+            else if (!GameManager.Instance.IsPlayerInsideCastle) // Failed get quest messages do not appear inside castles in classic.
             {
                 ShowFailGetQuestMessage();
             }

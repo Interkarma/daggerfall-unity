@@ -92,7 +92,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 // Show refuse message
                 sender.CloseWindow();
-                ShowQuestPopupMessage(offeredQuest, (int)QuestMachine.QuestMessages.RefuseQuest, false);
+                ShowQuestPopupMessage(offeredQuest, (int)QuestMachine.QuestMessages.RefuseQuest);
             }
         }
 

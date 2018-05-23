@@ -1972,11 +1972,11 @@ namespace DaggerfallWorkshop.Game
             {
                 return false;
             }
-            // 1 in 6 chance that a castle NPC is offering a quest
+            // 25% chance that a castle NPC is offering a quest
             // TODO: Determine probability in classic.
-            int rand = UnityEngine.Random.Range(0, 6);
+            int rand = UnityEngine.Random.Range(0, 4);
             bool result = false;
-            if (rand == 5)
+            if (rand == 0)
             {
                 result = true;
             }
@@ -2707,7 +2707,7 @@ namespace DaggerfallWorkshop.Game
                                 IsPlayerInSameLocationWorldCell = true;
 
                             // test if dialog partner is same person as person resource
-                            if (GameManager.Instance.IsPlayerInside)
+                            if (GameManager.Instance.IsPlayerInside && !GameManager.Instance.IsPlayerInsideCastle)
                             {                              
                                 if (this.targetStaticNPC != null && this.currentNPCType == NPCType.Static && this.targetStaticNPC.Data.buildingKey == GameManager.Instance.PlayerEnterExit.Interior.EntryDoor.buildingKey && this.nameNPC == captionString)
                                     dialogPartnerIsSamePersonAsPersonResource = true;                            
