@@ -637,6 +637,7 @@ namespace DaggerfallWorkshop.Utility
             loot.LoadID = loadID;
             loot.customDrop = true;
             loot.playerOwned = true;
+            loot.WorldContext = playerEnterExit.WorldContext;
 
             // If dropped outside ask StreamingWorld to track loose object
             if (!GameManager.Instance.IsPlayerInside)
