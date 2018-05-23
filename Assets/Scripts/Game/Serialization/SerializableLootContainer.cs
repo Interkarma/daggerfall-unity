@@ -64,6 +64,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.containerImage = loot.ContainerImage;
             data.currentPosition = loot.transform.position;
             data.localPosition = loot.transform.localPosition;
+            data.worldCompensation = GameManager.Instance.StreamingWorld.WorldCompensation;
             data.worldContext = loot.WorldContext;
             data.textureArchive = loot.TextureArchive;
             data.textureRecord = loot.TextureRecord;
@@ -100,10 +101,12 @@ namespace DaggerfallWorkshop.Game.Serialization
                 {
                     RestoreInteriorPositionHandler(loot, data, lootContext);
                 }
+                else if (lootContext == WorldContext.Exterior)
+                {
+                    RestoreExteriorPositionHandler(loot, data, lootContext);
+                }
                 else
                 {
-                    // NOTE: Exteriors also just fall through to here for now, will look at refinement soon - don't set their new loot context yet
-                    if (lootContext != WorldContext.Exterior) loot.WorldContext = lootContext;
                     loot.transform.position = data.currentPosition;
                 }
 
@@ -143,6 +146,21 @@ namespace DaggerfallWorkshop.Game.Serialization
         #endregion
 
         #region Private Methods
+
+        void RestoreExteriorPositionHandler(DaggerfallLoot loot, LootContainerData_v1 data, WorldContext lootContext)
+        {
+            // If loot context matches serialized world context then loot was saved after floating y change
+            // Need to get relative difference between current and serialized world compensation to get actual y position
+            if (lootContext == data.worldContext)
+            {
+                float diffY = GameManager.Instance.StreamingWorld.WorldCompensation.y - data.worldCompensation.y;
+                loot.transform.position = data.currentPosition + new Vector3(0, diffY, 0);
+                return;
+            }
+
+            // Otherwise we migrate a legacy exterior position by adjusting for world compensation
+            loot.transform.position = data.currentPosition + GameManager.Instance.StreamingWorld.WorldCompensation;
+        }
 
         void RestoreInteriorPositionHandler(DaggerfallLoot loot, LootContainerData_v1 data, WorldContext lootContext)
         {
