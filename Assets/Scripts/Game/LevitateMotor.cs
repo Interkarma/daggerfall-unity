@@ -98,16 +98,13 @@ namespace DaggerfallWorkshop.Game
                 moveSpeed = speedChanger.GetSwimSpeed(baseSpeed);
             }
 
-            //// There's a fixed speed for up/down movement
-            //if (upOrDown)
-            //    moveSpeed = 80f / PlayerSpeedChanger.classicToUnitySpeedUnitRatio;
+            // There's a fixed speed for up/down movement
+            if (upOrDown)
+                moveSpeed = 80f / PlayerSpeedChanger.classicToUnitySpeedUnitRatio;
 
-            // HACK: Faster levitate speed for testing in branch - REVERT WHEN TESTING COMPLETE!
-            moveSpeed = 50f;
             collisionFlags = playerMotor.controller.Move(direction * moveSpeed * Time.deltaTime);
-
-            //// Reset to levitate speed in case it has been changed by swimming
-            //moveSpeed = 4.0f;
+            // Reset to levitate speed in case it has been changed by swimming
+            moveSpeed = 4.0f;
         }
 
         void SetLevitating(bool levitating)
