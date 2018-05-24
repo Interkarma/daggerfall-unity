@@ -170,10 +170,10 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Restore enemy position and migrate to floating y support for exteriors
             // Interiors seem to be working fine at this stage with any additional support
             // Dungeons are not involved with floating y and don't need any changes
-            WorldContext lootContext = GetEnemyWorldContext(enemy);
-            if (lootContext == WorldContext.Exterior)
+            WorldContext enemyContext = GetEnemyWorldContext(enemy);
+            if (enemyContext == WorldContext.Exterior)
             {
-                RestoreExteriorPositionHandler(enemy, data, lootContext);
+                RestoreExteriorPositionHandler(enemy, data, enemyContext);
             }
             else
             {
@@ -206,7 +206,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         void RestoreExteriorPositionHandler(DaggerfallEnemy enemy, EnemyData_v1 data, WorldContext enemyContext)
         {
-            // If loot context matches serialized world context then loot was saved after floating y change
+            // If enemy context matches serialized world context then enemy was saved after floating y change
             // Need to get relative difference between current and serialized world compensation to get actual y position
             if (enemyContext == data.worldContext)
             {
