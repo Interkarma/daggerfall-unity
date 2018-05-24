@@ -17,14 +17,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         StaticNPC.NPCData questorNPC;
         FactionFile.SocialGroups socialGroup;
+        bool menu;
 
         #region Constructors
 
-        public DaggerfallQuestOfferWindow(IUserInterfaceManager uiManager, StaticNPC.NPCData npc, FactionFile.SocialGroups socialGroup)
+        public DaggerfallQuestOfferWindow(IUserInterfaceManager uiManager, StaticNPC.NPCData npc, FactionFile.SocialGroups socialGroup, bool menu)
             : base(uiManager)
         {
             questorNPC = npc;
             this.socialGroup = socialGroup;
+            this.menu = menu;
 
             // Remove potential questor from pool after quest has been offered
             if (!GameManager.Instance.IsPlayerInsideCastle)
@@ -40,6 +42,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected override void Setup()
         {
+            CloseWindow();
             GetQuest();
         }
 
@@ -84,7 +87,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected override void QuestPopupMessage_OnClose()
         {
-            CloseWindow();
+            // Close popup menu if talk was initiated from one
+            if (menu) {
+                CloseWindow();
+            }
         }
 
         #endregion

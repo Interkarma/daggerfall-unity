@@ -473,6 +473,7 @@ namespace DaggerfallWorkshop.Game
             public List<RumorMillEntry> listRumorMill;
             public Dictionary<ulong, TextFile.Token[]> dictQuestorPostQuestMessage;
             public Dictionary<int, NpcWorkEntry> npcsWithWork;
+            public Dictionary<int, bool> castleNPCsSpokenTo = new Dictionary<int, bool>();
         }
 
         // faction IDs for factions listed in "tell me about"
@@ -673,7 +674,7 @@ namespace DaggerfallWorkshop.Game
         public void TalkToStaticNPC(StaticNPC targetNPC, bool isSpyMaster = false)
         {
             if (IsNpcOfferingQuest(targetNPC.Data.nameSeed)) {
-                DaggerfallUI.UIManager.PushWindow(new DaggerfallQuestOfferWindow(DaggerfallUI.UIManager, npcsWithWork[targetNPC.Data.nameSeed].npc, npcsWithWork[targetNPC.Data.nameSeed].socialGroup));
+                DaggerfallUI.UIManager.PushWindow(new DaggerfallQuestOfferWindow(DaggerfallUI.UIManager, npcsWithWork[targetNPC.Data.nameSeed].npc, npcsWithWork[targetNPC.Data.nameSeed].socialGroup, true));
                 return;
             }
             else if (IsCastleNpcOfferingQuest(targetNPC.Data.nameSeed))
@@ -681,7 +682,7 @@ namespace DaggerfallWorkshop.Game
                 FactionFile.FactionData targetFactionData;
                 PersistentFactionData factionsData = GameManager.Instance.PlayerEntity.FactionData;
                 factionsData.GetFactionData(targetNPC.Data.factionID, out targetFactionData);
-                DaggerfallUI.UIManager.PushWindow(new DaggerfallQuestOfferWindow(DaggerfallUI.UIManager, targetNPC.Data, (FactionFile.SocialGroups)targetFactionData.sgroup));
+                DaggerfallUI.UIManager.PushWindow(new DaggerfallQuestOfferWindow(DaggerfallUI.UIManager, targetNPC.Data, (FactionFile.SocialGroups)targetFactionData.sgroup, false));
                 return;
             }
             currentNPCType = NPCType.Static;
@@ -1876,6 +1877,7 @@ namespace DaggerfallWorkshop.Game
             saveDataConversation.listRumorMill = listRumorMill;
             saveDataConversation.dictQuestorPostQuestMessage = dictQuestorPostQuestMessage;
             saveDataConversation.npcsWithWork = npcsWithWork;
+            saveDataConversation.castleNPCsSpokenTo = castleNPCsSpokenTo;
             return saveDataConversation;
         }
 
@@ -1956,6 +1958,9 @@ namespace DaggerfallWorkshop.Game
 
             if (data.npcsWithWork != null)
                 npcsWithWork = data.npcsWithWork;
+
+            if (data.castleNPCsSpokenTo != null)
+                castleNPCsSpokenTo = data.castleNPCsSpokenTo;
 
             // update topic list
             AssembleTopiclistTellMeAbout();
