@@ -33,6 +33,7 @@ namespace DaggerfallWorkshop.Game
         PlayerGPS playerGPS;
         PlayerEnterExit playerEnterExit;        // Example component to enter/exit buildings
         GameObject mainCamera;
+        int playerLayerMask = 0;
 
         Transform deferredInteriorDoorOwner;    // Used to defer interior transition after popup message
         StaticDoor deferredInteriorDoor;
@@ -75,6 +76,7 @@ namespace DaggerfallWorkshop.Game
             playerGPS = GetComponent<PlayerGPS>();
             playerEnterExit = GetComponent<PlayerEnterExit>();
             mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
+            playerLayerMask = LayerMask.NameToLayer("Player");
         }
 
         void Update()
@@ -115,12 +117,11 @@ namespace DaggerfallWorkshop.Game
             {
                 // TODO: Clean all this up
 
-                // Ray origin is slightly below camera height to ensure it originates inside player's own collider
-                // This prevents ray from intersecting with player's own collider and blocking looting or low triggers
-                Ray ray = new Ray(transform.position + Vector3.up * 0.7f, mainCamera.transform.forward);
+                // Fire ray into scene for hit tests (excluding player so their ray does not intersect self)
+                Ray ray = new Ray(transform.position + Vector3.up * 0.8f, mainCamera.transform.forward);
                 RaycastHit hit;
                 RayDistance = 75f; // Approximates classic at full view distance (default setting). Classic seems to do raycasts for as far as it can render objects.
-                bool hitSomething = Physics.Raycast(ray, out hit, RayDistance);
+                bool hitSomething = Physics.Raycast(ray, out hit, RayDistance, playerLayerMask);
                 if (hitSomething)
                 {
                     bool hitBuilding = false;
@@ -963,7 +964,7 @@ namespace DaggerfallWorkshop.Game
                     else if (playerEnterExit.BuildingDiscoveryData.buildingType == DFLocation.BuildingTypes.Tavern)
                         uiManager.PushWindow(new DaggerfallTavernWindow(uiManager, npc));
                     else
-                        GameManager.Instance.TalkManager.TalkToStaticNPC(npc);
+                        GameManager.Instance.TalkManager.TalkToStaticNPC(npc, false);
                 }
                 // Check if this NPC is part of a witches coven.
                 else if ((FactionFile.FactionTypes) factionData.type == FactionFile.FactionTypes.WitchesCoven)
@@ -973,7 +974,7 @@ namespace DaggerfallWorkshop.Game
                 // TODO - more checks for npc social types?
                 else // if no special handling had to be done for npc with social group of type merchant: talk to the static npc
                 {
-                    GameManager.Instance.TalkManager.TalkToStaticNPC(npc);
+                    GameManager.Instance.TalkManager.TalkToStaticNPC(npc, false);
                 }
             }
             else // if no special handling had to be done (all remaining npcs of the remaining social groups not handled explicitely above): default is talk to the static npc
@@ -983,7 +984,7 @@ namespace DaggerfallWorkshop.Game
                     return; // if guard was clicked don't open talk window
 
                 // otherwise open talk window
-                GameManager.Instance.TalkManager.TalkToStaticNPC(npc);
+                GameManager.Instance.TalkManager.TalkToStaticNPC(npc, false);
             }
         }
 

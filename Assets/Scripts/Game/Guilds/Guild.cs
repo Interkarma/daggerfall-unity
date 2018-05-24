@@ -58,7 +58,13 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public int Rank { get { return rank; } set { rank = value; } }
 
-        public int LastRankChange { get { return lastRankChange; } set { lastRankChange = value; } }
+        public virtual void ImportLastRankChange(uint timeOfLastRankChange)
+        {
+            // In classic, time of last rank change is measured by minute, not day
+            DaggerfallDateTime classicTime = new DaggerfallDateTime();
+            classicTime.FromClassicDaggerfallTime(timeOfLastRankChange);
+            lastRankChange = CalculateDaySinceZero(classicTime);
+        }
 
         public virtual TextFile.Token[] UpdateRank(PlayerEntity playerEntity)
         {

@@ -28,11 +28,12 @@ namespace DaggerfallWorkshop.Game
     {
         #region Fields
 
+        public const float minAcceleration = 1.0f;
+        public const float maxAcceleration = 10.0f;
+
         const string keyBindsFilename = "KeyBinds.txt";
 
-        const float acceleration = 3f;
-        const float friction = 4f;
-        const float deadZone = 0.1f;
+        const float deadZone = 0.05f;
         const float frameSkipTotal = 5;
 
         KeyCode[] reservedKeys = new KeyCode[] { KeyCode.Escape, KeyCode.BackQuote };
@@ -54,6 +55,7 @@ namespace DaggerfallWorkshop.Game
         bool negHorizontalImpulse;
         bool posVerticalImpulse;
         bool negVerticalImpulse;
+        float acceleration = 5.0f;
 
         #endregion
 
@@ -228,6 +230,9 @@ namespace DaggerfallWorkshop.Game
 
         void Start()
         {
+            // Read acceleration/deceleration setting
+            acceleration = DaggerfallUnity.Settings.MovementAcceleration;
+
             try
             {
                 // Load a keybind file if possible
@@ -614,7 +619,12 @@ namespace DaggerfallWorkshop.Game
         // Apply force to horizontal axis
         void ApplyHorizontalForce(float scale)
         {
-            horizontal = Mathf.Clamp(horizontal + (acceleration * scale) * Time.deltaTime, -1, 1);
+            // Use acceleration setting or "just go" at max value
+            if (acceleration < maxAcceleration)
+                horizontal = Mathf.Clamp(horizontal + (acceleration * scale) * Time.deltaTime, -1, 1);
+            else
+                horizontal = scale;
+
             if (scale < 0)
                 negHorizontalImpulse = true;
             else if (scale > 0)
@@ -624,7 +634,12 @@ namespace DaggerfallWorkshop.Game
         // Apply force to vertical axis
         void ApplyVerticalForce(float scale)
         {
-            vertical = Mathf.Clamp(vertical + (acceleration * scale) * Time.deltaTime, -1, 1);
+            // Use acceleration setting or "just go" at max value
+            if (acceleration < maxAcceleration)
+                vertical = Mathf.Clamp(vertical + (acceleration * scale) * Time.deltaTime, -1, 1);
+            else
+                vertical = scale;
+
             if (scale < 0)
                 negVerticalImpulse = true;
             else if (scale > 0)
@@ -634,15 +649,31 @@ namespace DaggerfallWorkshop.Game
         // Apply friction to decelerate inactive movement impulses towards 0
         void ApplyFriction()
         {
-            if (!posVerticalImpulse && vertical > 0)
-                vertical = Mathf.Clamp(vertical - friction * Time.deltaTime, 0, vertical);
-            if (!negVerticalImpulse && vertical < 0)
-                vertical = Mathf.Clamp(vertical + friction * Time.deltaTime, vertical, 0);
+            // Use acceleration setting or "just stop" at max value
+            if (acceleration < maxAcceleration)
+            {
+                if (!posVerticalImpulse && vertical > 0)
+                    vertical = Mathf.Clamp(vertical - acceleration * Time.deltaTime, 0, vertical);
+                if (!negVerticalImpulse && vertical < 0)
+                    vertical = Mathf.Clamp(vertical + acceleration * Time.deltaTime, vertical, 0);
 
-            if (!posHorizontalImpulse && horizontal > 0)
-                horizontal = Mathf.Clamp(horizontal - friction * Time.deltaTime, 0, horizontal);
-            if (!negHorizontalImpulse && horizontal < 0)
-                horizontal = Mathf.Clamp(horizontal + friction * Time.deltaTime, horizontal, 0);
+                if (!posHorizontalImpulse && horizontal > 0)
+                    horizontal = Mathf.Clamp(horizontal - acceleration * Time.deltaTime, 0, horizontal);
+                if (!negHorizontalImpulse && horizontal < 0)
+                    horizontal = Mathf.Clamp(horizontal + acceleration * Time.deltaTime, horizontal, 0);
+            }
+            else
+            {
+                if (!posVerticalImpulse && vertical > 0)
+                    vertical = 0;
+                if (!negVerticalImpulse && vertical < 0)
+                    vertical = 0;
+
+                if (!posHorizontalImpulse && horizontal > 0)
+                    horizontal = 0;
+                if (!negHorizontalImpulse && horizontal < 0)
+                    horizontal = 0;
+            }
         }
 
         // Updates look axes based on supported input

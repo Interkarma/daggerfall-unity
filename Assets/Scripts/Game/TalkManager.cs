@@ -547,6 +547,11 @@ namespace DaggerfallWorkshop.Game
             get {  return listTopicThing; }
         }
 
+        public static string TextDatabase
+        {
+            get { return textDatabase; }
+        }
+
         public bool ConsoleCommandFlag_npcsKnowEverything
         {
             get { return consoleCommandFlag_npcsKnowEverything; }
@@ -671,10 +676,10 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Player has clicked or static talk target or clicked the talk button inside a popup-window
-        public void TalkToStaticNPC(StaticNPC targetNPC, bool isSpyMaster = false)
+        public void TalkToStaticNPC(StaticNPC targetNPC, bool menu = true, bool isSpyMaster = false)
         {
             if (IsNpcOfferingQuest(targetNPC.Data.nameSeed)) {
-                DaggerfallUI.UIManager.PushWindow(new DaggerfallQuestOfferWindow(DaggerfallUI.UIManager, npcsWithWork[targetNPC.Data.nameSeed].npc, npcsWithWork[targetNPC.Data.nameSeed].socialGroup, true));
+                DaggerfallUI.UIManager.PushWindow(new DaggerfallQuestOfferWindow(DaggerfallUI.UIManager, npcsWithWork[targetNPC.Data.nameSeed].npc, npcsWithWork[targetNPC.Data.nameSeed].socialGroup, menu));
                 return;
             }
             else if (IsCastleNpcOfferingQuest(targetNPC.Data.nameSeed))
@@ -682,7 +687,7 @@ namespace DaggerfallWorkshop.Game
                 FactionFile.FactionData targetFactionData;
                 PersistentFactionData factionsData = GameManager.Instance.PlayerEntity.FactionData;
                 factionsData.GetFactionData(targetNPC.Data.factionID, out targetFactionData);
-                DaggerfallUI.UIManager.PushWindow(new DaggerfallQuestOfferWindow(DaggerfallUI.UIManager, targetNPC.Data, (FactionFile.SocialGroups)targetFactionData.sgroup, false));
+                DaggerfallUI.UIManager.PushWindow(new DaggerfallQuestOfferWindow(DaggerfallUI.UIManager, targetNPC.Data, (FactionFile.SocialGroups)targetFactionData.sgroup, menu));
                 return;
             }
             currentNPCType = NPCType.Static;
@@ -912,7 +917,7 @@ namespace DaggerfallWorkshop.Game
             else if (angle >= 292.5f && angle < 337.5f)
                 return TextManager.Instance.GetText(textDatabase, "southeast");
             else
-                return "nevermind...";
+                return TextManager.Instance.GetText(textDatabase, "resolvingError");
         }
 
         public string GetKeySubjectLocationCompassDirection()
@@ -1893,13 +1898,32 @@ namespace DaggerfallWorkshop.Game
             if (dictQuestInfo == null)
                 dictQuestInfo = new Dictionary<ulong, QuestResources>();
 
-            ulong[] questIDs = GameManager.Instance.QuestMachine.GetAllQuests();            
-
+            ulong[] questIDs = GameManager.Instance.QuestMachine.GetAllQuests();
+            
+            // search for orphaned entries in dictQuestInfo
+            List<ulong> idsToDelete = new List<ulong>();
+            foreach (KeyValuePair<ulong, QuestResources> questResourceInfo in dictQuestInfo)
+            {
+                if (GameManager.Instance.QuestMachine.GetQuest(questResourceInfo.Key) == null)
+                {                    
+                    idsToDelete.Add(questResourceInfo.Key);
+                }
+            }
+            for (int i = idsToDelete.Count - 1; i >= 0; i--)
+            {
+                Debug.Log(String.Format("save data contains orphaned quest info for quest with id {0}. Removing these entries...", idsToDelete[i]));
+                dictQuestInfo.Remove(idsToDelete[i]);
+            }   
+            
+            // for each running quest
             foreach (ulong questID in questIDs)
             {
                 Quest quest = GameManager.Instance.QuestMachine.GetQuest(questID);
+                // test if there exists a dictQuestInfo entry
                 if (dictQuestInfo.ContainsKey(questID))
                 {
+                    //if yes relink quest resources
+
                     QuestResources questInfo = dictQuestInfo[questID]; // get questInfo containing orphaned list of quest resources
                     
                     QuestResource[] questResources = quest.GetAllResources(typeof(Person)); // get list of person quest resources
@@ -1909,7 +1933,7 @@ namespace DaggerfallWorkshop.Game
 
                         string key = person.Symbol.Name;
 
-                        if (questInfo.resourceInfo.ContainsKey(key)) // if orphaned list of quest resources contains a matching entry
+                        if (questInfo.resourceInfo.ContainsKey(key)) // if list of quest resources contains a matching entry
                         {
                             questInfo.resourceInfo[key].questResource = person; // update (relink) it
                         }
@@ -1922,7 +1946,7 @@ namespace DaggerfallWorkshop.Game
 
                         string key = place.Symbol.Name;
 
-                        if (questInfo.resourceInfo.ContainsKey(key)) // if orphaned list of quest resources contains a matching entry
+                        if (questInfo.resourceInfo.ContainsKey(key)) // if list of quest resources contains a matching entry
                         {
                             questInfo.resourceInfo[key].questResource = place; // update (relink) it
                         }
@@ -1935,7 +1959,7 @@ namespace DaggerfallWorkshop.Game
 
                         string key = item.Symbol.Name;
 
-                        if (questInfo.resourceInfo.ContainsKey(key)) // if orphaned list of quest resources contains a matching entry
+                        if (questInfo.resourceInfo.ContainsKey(key)) // if list of quest resources contains a matching entry
                         {
                             questInfo.resourceInfo[key].questResource = item; // update (relink) it
                         }
@@ -1948,6 +1972,17 @@ namespace DaggerfallWorkshop.Game
             if (listRumorMill == null)
             {
                 SetupRumorMill();
+            }
+
+            // search for orphaned entries in rumor mill
+            for (int i = listRumorMill.Count - 1; i >= 0; i--)
+            {
+                ulong questID = listRumorMill[i].questID;
+                if (GameManager.Instance.QuestMachine.GetQuest(questID) == null)
+                {
+                    Debug.Log(String.Format("save data contains orphaned rumors for quest with id {0}. Removing these rumors...", questID));
+                    listRumorMill.Remove(listRumorMill[i]);
+                }
             }
 
             dictQuestorPostQuestMessage = data.dictQuestorPostQuestMessage;
@@ -2409,7 +2444,8 @@ namespace DaggerfallWorkshop.Game
                         case QuestInfoResourceType.Thing:
                             itemQuestTopic.questionType = QuestionType.QuestItem;
                             Questing.Item item = (Questing.Item)questResourceInfo.Value.questResource;
-                            captionString = item.DaggerfallUnityItem.ItemName;
+                            if (item != null && item.DaggerfallUnityItem != null)
+                                captionString = item.DaggerfallUnityItem.ItemName;
                             break;
                     }
                     ulong questID = questInfo.Key;

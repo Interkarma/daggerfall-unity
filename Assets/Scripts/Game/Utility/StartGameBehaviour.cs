@@ -416,6 +416,8 @@ namespace DaggerfallWorkshop.Game.Utility
                 QuestMachine.Instance.InstantiateQuest(LaunchQuest);
                 LaunchQuest = string.Empty;
             }
+            // Launch any InitAtGameStart quests
+            GameManager.Instance.QuestListsManager.InitAtGameStartQuests();
 
             if (OnStartGame != null)
                 OnStartGame(this, null);

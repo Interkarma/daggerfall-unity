@@ -88,6 +88,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox enhancedItemLists;
         HorizontalSlider mouseSensitivity;
         HorizontalSlider weaponSensitivity;
+        HorizontalSlider movementAcceleration;
         TextBox weaponAttackThreshold;
         Checkbox gameConsole;
         Checkbox modSystem;
@@ -196,6 +197,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             AddSectionTitle(rightPanel, "controls");
             mouseSensitivity = AddSlider(rightPanel, "mouseSensitivity", 0.1f, 4.0f, DaggerfallUnity.Settings.MouseLookSensitivity);
             weaponSensitivity = AddSlider(rightPanel, "weaponSensitivity", 0.1f, 10.0f, DaggerfallUnity.Settings.WeaponSensitivity);
+            movementAcceleration = AddSlider(rightPanel, "movementAcceleration", InputManager.minAcceleration, InputManager.maxAcceleration, DaggerfallUnity.Settings.MovementAcceleration);
             weaponAttackThreshold = AddTextbox(rightPanel, "weaponAttackThreshold", DaggerfallUnity.Settings.WeaponAttackThreshold.ToString());
 
             // Enhancements
@@ -274,6 +276,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             DaggerfallUnity.Settings.MouseLookSensitivity = mouseSensitivity.GetValue();
             DaggerfallUnity.Settings.WeaponSensitivity = weaponSensitivity.GetValue();
+            DaggerfallUnity.Settings.MovementAcceleration = movementAcceleration.GetValue();
             float weaponAttackThresholdValue;
             if (float.TryParse(weaponAttackThreshold.Text, out weaponAttackThresholdValue))
                 DaggerfallUnity.Settings.WeaponAttackThreshold = Mathf.Clamp(weaponAttackThresholdValue, 0.001f, 1.0f);

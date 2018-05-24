@@ -38,6 +38,8 @@ enhancedItemListsInfo,                              Inventory 16x item grid
 mouseSensitivity,                                   Mouse Sensitivity
 mouseSensitivityInfo,                               Mouse look sensitivity.
 weaponSensitivity,                                  Weapon Sensitivity
+movementAcceleration,                               Movement Acceleration
+movementAccelerationInfo,                           Movement acceleration/deceleration rate (max=instant)
 weaponSensitivityInfo,                              Sensitivity of weapon swings to mouse movements
 weaponAttackThreshold,                              WeaponAttackThreshold
 weaponAttackThresholdInfo,                          Minimum mouse gesture travel distance for an attack
