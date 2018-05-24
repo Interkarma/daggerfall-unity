@@ -98,7 +98,10 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.loadID = LoadID;
             data.gameObjectName = entityBehaviour.gameObject.name;
             data.currentPosition = enemy.transform.position;
+            data.localPosition = enemy.transform.localPosition;
             data.currentRotation = enemy.transform.rotation;
+            data.worldContext = entity.WorldContext;
+            data.worldCompensation = GameManager.Instance.StreamingWorld.WorldCompensation;
             data.entityType = entity.EntityType;
             data.careerName = entity.Career.Name;
             data.careerIndex = entity.CareerIndex;
@@ -154,7 +157,6 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             // Restore enemy data
             entityBehaviour.gameObject.name = data.gameObjectName;
-            enemy.transform.position = data.currentPosition;
             enemy.transform.rotation = data.currentRotation;
             entity.Items.DeserializeItems(data.items);
             entity.ItemEquipTable.DeserializeEquipTable(data.equipTable, entity.Items);
@@ -164,6 +166,20 @@ namespace DaggerfallWorkshop.Game.Serialization
             entity.CurrentMagicka = data.currentMagicka;
             motor.IsHostile = data.isHostile;
             senses.HasEncounteredPlayer = data.hasEncounteredPlayer;
+
+            // Restore enemy position and migrate to floating y support for exteriors
+            // Interiors seem to be working fine at this stage with any additional support
+            // Dungeons are not involved with floating y and don't need any changes
+            WorldContext lootContext = GetEnemyWorldContext(enemy);
+            if (lootContext == WorldContext.Exterior)
+            {
+                RestoreExteriorPositionHandler(enemy, data, lootContext);
+            }
+            else
+            {
+                // Everything else
+                enemy.transform.position = data.currentPosition;
+            }
 
             // Disable dead enemies
             if (data.isDead)
@@ -187,6 +203,39 @@ namespace DaggerfallWorkshop.Game.Serialization
         #endregion
 
         #region Private Methods
+
+        void RestoreExteriorPositionHandler(DaggerfallEnemy enemy, EnemyData_v1 data, WorldContext enemyContext)
+        {
+            // If loot context matches serialized world context then loot was saved after floating y change
+            // Need to get relative difference between current and serialized world compensation to get actual y position
+            if (enemyContext == data.worldContext)
+            {
+                float diffY = GameManager.Instance.StreamingWorld.WorldCompensation.y - data.worldCompensation.y;
+                enemy.transform.position = data.currentPosition + new Vector3(0, diffY, 0);
+                return;
+            }
+
+            // Otherwise we migrate a legacy exterior position by adjusting for world compensation
+            enemy.transform.position = data.currentPosition + GameManager.Instance.StreamingWorld.WorldCompensation;
+        }
+
+        WorldContext GetEnemyWorldContext(DaggerfallEnemy enemy)
+        {
+            // Must be a parented enemy
+            if (!enemy || !enemy.transform.parent)
+                return WorldContext.Nothing;
+
+            // Interior
+            if (enemy.transform.parent.GetComponentInParent<DaggerfallInterior>())
+                return WorldContext.Interior;
+
+            // Dungeon
+            if (enemy.transform.parent.GetComponentInParent<DaggerfallDungeon>())
+                return WorldContext.Dungeon;
+
+            // Exterior (loose world object)
+            return WorldContext.Exterior;
+        }
 
         bool HasChanged()
         {

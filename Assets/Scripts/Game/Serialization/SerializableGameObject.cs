@@ -316,7 +316,10 @@ namespace DaggerfallWorkshop.Game.Serialization
         public ulong loadID;
         public string gameObjectName;
         public Vector3 currentPosition;
+        public Vector3 localPosition;
         public Quaternion currentRotation;
+        public WorldContext worldContext;
+        public Vector3 worldCompensation;
         public bool isDead;
         public int startingHealth;
         public int currentHealth;
