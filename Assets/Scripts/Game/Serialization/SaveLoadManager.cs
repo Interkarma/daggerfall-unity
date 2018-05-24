@@ -304,6 +304,10 @@ namespace DaggerfallWorkshop.Game.Serialization
             File.Delete(Path.Combine(path, screenshotFilename));
             File.Delete(Path.Combine(path, containerDataFilename));
             File.Delete(Path.Combine(path, automapDataFilename));
+            File.Delete(Path.Combine(path, conversationDataFilename));
+            File.Delete(Path.Combine(path, discoveryDataFilename));
+            File.Delete(Path.Combine(path, factionDataFilename));
+            File.Delete(Path.Combine(path, questDataFilename));
             if (ModManager.Instance != null)
             {
                 foreach (Mod mod in ModManager.Instance.GetAllModsWithSaveData())
