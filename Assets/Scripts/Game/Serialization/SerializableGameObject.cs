@@ -199,6 +199,7 @@ namespace DaggerfallWorkshop.Game.Serialization
     {
         public Vector3 position;
         public Vector3 worldCompensation;
+        public WorldContext worldContext;
         public int floatingOriginVersion;
         public float yaw;
         public float pitch;

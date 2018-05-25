@@ -29,7 +29,7 @@ namespace DaggerfallWorkshop.Utility
     {
         #region Fields
 
-        public const int floatingOriginVersion = 2;
+        public const int floatingOriginVersion = 3;
 
         const float verticalThreshold = 800f;
 

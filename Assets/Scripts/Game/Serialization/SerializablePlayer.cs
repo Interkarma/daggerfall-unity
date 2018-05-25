@@ -178,6 +178,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             PlayerPositionData_v1 playerPosition = new PlayerPositionData_v1();
             playerPosition.position = transform.position;
             playerPosition.worldCompensation = GameManager.Instance.StreamingWorld.WorldCompensation;
+            playerPosition.worldContext = playerEnterExit.WorldContext;
             playerPosition.floatingOriginVersion = FloatingOrigin.floatingOriginVersion;
             playerPosition.yaw = playerMouseLook.Yaw;
             playerPosition.pitch = playerMouseLook.Pitch;
@@ -354,23 +355,24 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         public void RestorePosition(PlayerPositionData_v1 positionData)
         {
-            bool isOutside = (!positionData.insideBuilding && !positionData.insideDungeon);
-
-            // Handle loading downlevel floating origin versions while player is outside (player will be aligned to ground)
-            if (isOutside &&  positionData.floatingOriginVersion < FloatingOrigin.floatingOriginVersion)
+            // Floating origin v2 saves are only missing world context
+            WorldContext playerContext = playerEnterExit.WorldContext;
+            if (positionData.floatingOriginVersion == 2)
             {
-                playerMouseLook.Yaw = positionData.yaw;
-                playerMouseLook.Pitch = positionData.pitch;
-                playerMotor.IsCrouching = positionData.isCrouching;
-                return;
+                positionData.worldContext = playerContext;
             }
 
-            // Player Y position must also be adjusted by the difference between current and restored world compensation
-            float diffY = 0;
-            if (isOutside)
-                diffY = GameManager.Instance.StreamingWorld.WorldCompensation.y - positionData.worldCompensation.y;
+            // Restore position
+            if (playerContext == WorldContext.Exterior)
+            {
+                RestoreExteriorPositionHandler(gameObject, positionData, playerContext);
+            }
+            else
+            {
+                transform.position = positionData.position;
+            }
 
-            transform.position = positionData.position + new Vector3(0, diffY, 0);
+            // Restore orientation and crouch state
             playerMouseLook.Yaw = positionData.yaw;
             playerMouseLook.Pitch = positionData.pitch;
             playerMotor.IsCrouching = positionData.isCrouching;
@@ -379,6 +381,21 @@ namespace DaggerfallWorkshop.Game.Serialization
         #endregion
 
         #region Private Methods
+
+        void RestoreExteriorPositionHandler(GameObject player, PlayerPositionData_v1 data, WorldContext playerContext)
+        {
+            // If player context matches serialized world context then player was saved after floating y change
+            // Need to get relative difference between current and serialized world compensation to get actual y position
+            if (playerContext == data.worldContext)
+            {
+                float diffY = GameManager.Instance.StreamingWorld.WorldCompensation.y - data.worldCompensation.y;
+                player.transform.position = data.position + new Vector3(0, diffY, 0);
+                return;
+            }
+
+            // Otherwise we migrate a legacy exterior position by adjusting for world compensation
+            player.transform.position = data.position + GameManager.Instance.StreamingWorld.WorldCompensation;
+        }
 
         StreamingWorld FindStreamingWorld()
         {

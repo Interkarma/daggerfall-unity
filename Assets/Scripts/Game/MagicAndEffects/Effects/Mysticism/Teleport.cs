@@ -255,20 +255,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             sender.CloseWindow();
 
-            // Safety to handle old anchors set before floating y upgrade to prevent player being hurled into abyss
-            if (anchorPosition != null && anchorPosition.floatingOriginVersion < FloatingOrigin.floatingOriginVersion)
-            {
-                // Only allow anchor if player still inside same dungeon as this is safe
-                // Player would probably appreciate not being trapped in a dungeon by this change
-                // All other legacy anchors are destroyed
-                if (!playerEnterExit.IsPlayerInsideDungeon || !IsSameInterior())
-                {
-                    //Debug.LogWarningFormat("Anchor floatingOriginVersion {0} is less than current version {1}, destroying anchor", anchorPosition.floatingOriginVersion, FloatingOrigin.floatingOriginVersion);
-                    anchorPosition = null;
-                    anchorSet = false;
-                }
-            }
-
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Anchor)
             {
                 SetAnchor();
