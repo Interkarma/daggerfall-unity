@@ -9,6 +9,7 @@
 // Notes:
 //
 
+using UnityEngine;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
 using FullSerializer;
@@ -26,6 +27,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     public abstract class TransferEffect : IncumbentEffect
     {
         const string textDatabase = "ClassicEffects";
+        const float maxLinkDistance = 25f;
 
         protected DFCareer.Stats transferStat = DFCareer.Stats.None;
         int[] casterStatMods = new int[DaggerfallStats.Count];
@@ -48,6 +50,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             return forcedRoundsRemaining;
         }
 
+        public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
+        {
+            base.Start(manager, caster);
+            PlayerAggro();
+        }
+
         protected override bool IsLikeKind(IncumbentEffect other)
         {
             return (other is TransferEffect && (other as TransferEffect).transferStat == transferStat) ? true : false;
@@ -64,7 +72,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             }
 
             // Local entity is drained by magnitude, caster is fortified by magnitude
-            // Link will end once target expires
+            // Link will end once target is dead, passes out of scope, or exceeds maxLinkDistance
             int magnitude = GetMagnitude(caster);
             SetStatMod(transferStat, -magnitude);
             casterStatMods[(int)transferStat] = magnitude;
@@ -78,12 +86,31 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             base.MagicRound();
 
-            // Send stat mods to player effect manager
-            if (caster)
+            // Caster must still be in range or vampiric link ends
+            if (!CheckCasterDistance())
             {
-                EntityEffectManager casterManager = caster.GetComponent<EntityEffectManager>();
-                casterManager.MergeDirectStatMods(casterStatMods);
+                forcedRoundsRemaining = 0;
+                ResignAsIncumbent();
+                return;
             }
+
+            // Send stat mods to caster effect manager
+            EntityEffectManager casterManager = caster.GetComponent<EntityEffectManager>();
+            casterManager.MergeDirectStatMods(casterStatMods);
+        }
+
+        bool CheckCasterDistance()
+        {
+            // If caster null then end immediately
+            if (!caster)
+                return false;
+
+            // Get distance to caster
+            float distance = Vector3.Distance(manager.transform.position, caster.transform.position);
+            if (distance > maxLinkDistance)
+                return false;
+
+            return true;
         }
 
         #region Serialization
