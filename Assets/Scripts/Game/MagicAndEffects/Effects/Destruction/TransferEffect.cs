@@ -17,23 +17,35 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
     /// <summary>
     /// Transfer effect base.
-    /// This is a two-part effect that will drain target attribute by an amount and fortify caster by same amount.
-    /// Note: This has been reworked from the rather useless version of this effect in classic, which does not actually
-    /// transfer anything. It only seems to drain the target and there's no real sense of anything happening at all.
-    /// In this version of effect, both Duration and Magnitude are supported.
-    /// The effect will not stack magnitude, only duration will be added to incumbent.
+    /// This is a two-part effect that will drain target attribute by an amount and fortify same caster attribute by same amount.
+    /// Note: This has been reworked from the rather useless version of this effect in classic, which does not actually transfer anything.
+    /// Classic only seems to drain the target and there's no real sense of anything happening at all.
+    /// In this version of effect, caster establishes a vampiric drain on target until the target expires or passes out of scope.
+    /// At this time intended to be cast by player only. Current design would render effect permanent if cast onto player.
     /// </summary>
     public abstract class TransferEffect : IncumbentEffect
     {
         const string textDatabase = "ClassicEffects";
 
         protected DFCareer.Stats transferStat = DFCareer.Stats.None;
-
-        bool isCasterCopy = false;
+        int[] casterStatMods = new int[DaggerfallStats.Count];
+        int forcedRoundsRemaining = 1;
 
         public DFCareer.Stats TransferStat
         {
             get { return transferStat; }
+        }
+
+        // Always present at least one round remaining so effect system does not remove
+        public override int RoundsRemaining
+        {
+            get { return forcedRoundsRemaining; }
+        }
+
+        // Transfer effects is permanent until dead or healed so we manage our own lifecycle
+        protected override int RemoveRound()
+        {
+            return forcedRoundsRemaining;
         }
 
         protected override bool IsLikeKind(IncumbentEffect other)
@@ -43,18 +55,35 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         protected override void BecomeIncumbent()
         {
-            // Roll for random magnitude
+            // At this time intended to be cast by player only
+            if (caster != GameManager.Instance.PlayerEntityBehaviour)
+            {
+                forcedRoundsRemaining = 0;
+                ResignAsIncumbent();
+                return;
+            }
+
+            // Local entity is drained by magnitude, caster is fortified by magnitude
+            // Link will end once target expires
             int magnitude = GetMagnitude(caster);
-
-            // TODO: Assign debuff to target
-
-            // TODO: Reflect caster-version of this effect back to caster
+            SetStatMod(transferStat, -magnitude);
+            casterStatMods[(int)transferStat] = magnitude;
         }
 
         protected override void AddState(IncumbentEffect incumbent)
         {
-            // Stack my rounds onto incumbent
-            incumbent.RoundsRemaining += RoundsRemaining;
+        }
+
+        public override void MagicRound()
+        {
+            base.MagicRound();
+
+            // Send stat mods to player effect manager
+            if (caster)
+            {
+                EntityEffectManager casterManager = caster.GetComponent<EntityEffectManager>();
+                casterManager.MergeDirectStatMods(casterStatMods);
+            }
         }
 
         #region Serialization
@@ -63,14 +92,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public struct SaveData_v1
         {
             public DFCareer.Stats transferStat;
-            public bool isCasterCopy;
+            public int[] casterStatMods;
+            public int forcedRoundsRemaining;
         }
 
         public override object GetSaveData()
         {
             SaveData_v1 data = new SaveData_v1();
             data.transferStat = transferStat;
-            data.isCasterCopy = isCasterCopy;
+            data.casterStatMods = casterStatMods;
+            data.forcedRoundsRemaining = forcedRoundsRemaining;
 
             return data;
         }
@@ -82,7 +113,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 return;
 
             transferStat = data.transferStat;
-            isCasterCopy = data.isCasterCopy;
+            casterStatMods = data.casterStatMods;
+            forcedRoundsRemaining = data.forcedRoundsRemaining;
         }
 
         #endregion

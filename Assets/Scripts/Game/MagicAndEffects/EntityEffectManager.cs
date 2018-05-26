@@ -58,6 +58,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         List<InstancedBundle> bundlesToRemove = new List<InstancedBundle>();
         bool clearBundles = false;
 
+        int[] directStatMods = new int[DaggerfallStats.Count];
+        int[] directSkillMods = new int[DaggerfallSkills.Count];
         int[] combinedStatMods = new int[DaggerfallStats.Count];
         int[] combinedSkillMods = new int[DaggerfallSkills.Count];
         float refreshModsTimer = 0;
@@ -386,6 +388,38 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             RaiseOnRemoveBundle();
         }
 
+        /// <summary>
+        /// Merge custom stat mods directly into this entity.
+        /// Changes reset at the start of each magic round.
+        /// </summary>
+        /// <param name="statMods">Stat mods array, must be DaggerfallStats.Count length.</param>
+        public void MergeDirectStatMods(int[] statMods)
+        {
+            if (statMods == null || statMods.Length != DaggerfallStats.Count)
+                return;
+
+            for (int i = 0; i < statMods.Length; i++)
+            {
+                directStatMods[i] += statMods[i];
+            }
+        }
+
+        /// <summary>
+        /// Merge custom skill mods directly into this entity.
+        /// Changes reset at the start of each magic round.
+        /// </summary>
+        /// <param name="skillMods">Skill mods array, must be DaggerfallSkills.Count length.</param>
+        public void MergeDirectSkillMods(int[] skillMods)
+        {
+            if (skillMods == null || skillMods.Length != DaggerfallSkills.Count)
+                return;
+
+            for (int i = 0; i < skillMods.Length; i++)
+            {
+                directSkillMods[i] += skillMods[i];
+            }
+        }
+
         #endregion
 
         #region Diseases
@@ -576,6 +610,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 }
             }
 
+            // Add direct mods on this entity
+            MergeDirectMods();
+
             // Assign to host entity
             entityBehaviour.Entity.Stats.AssignMods(combinedStatMods);
             entityBehaviour.Entity.Skills.AssignMods(combinedSkillMods);
@@ -604,6 +641,19 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             for (int i = 0; i < effect.SkillMods.Length; i++)
             {
                 combinedSkillMods[i] += effect.SkillMods[i];
+            }
+        }
+
+        void MergeDirectMods()
+        {
+            for (int i = 0; i < combinedStatMods.Length; i++)
+            {
+                combinedStatMods[i] += directStatMods[i];
+            }
+
+            for (int i = 0; i < combinedSkillMods.Length; i++)
+            {
+                combinedSkillMods[i] += directSkillMods[i];
             }
         }
 
@@ -665,6 +715,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         private void EntityEffectBroker_OnNewMagicRound()
         {
+            // Clear direct mods
+            Array.Clear(directStatMods, 0, DaggerfallStats.Count);
+            Array.Clear(directSkillMods, 0, DaggerfallSkills.Count);
+
             DoMagicRound();
         }
 

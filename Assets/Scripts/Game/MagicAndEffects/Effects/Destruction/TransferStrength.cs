@@ -28,9 +28,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "strength");
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1550);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1250);
-            properties.SupportDuration = true;
             properties.SupportMagnitude = true;
-            properties.ShowSpellIcon = true;
+            properties.ShowSpellIcon = false;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_Other;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
             properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
