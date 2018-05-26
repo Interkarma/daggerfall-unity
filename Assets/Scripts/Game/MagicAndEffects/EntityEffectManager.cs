@@ -399,7 +399,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             EffectBundleSettings settings = new EffectBundleSettings()
             {
-                Version = 1,
+                Version = EntityEffectBroker.CurrentSpellVersion,
                 BundleType = BundleTypes.Disease,
                 Effects = new EffectEntry[] { new EffectEntry(DiseaseEffect.GetClassicDiseaseEffectKey(diseaseType)) },
             };
@@ -417,7 +417,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             EffectBundleSettings settings = new EffectBundleSettings()
             {
-                Version = 1,
+                Version = EntityEffectBroker.CurrentSpellVersion,
                 BundleType = BundleTypes.Disease,
                 Effects = new EffectEntry[] { new EffectEntry(key) },
             };

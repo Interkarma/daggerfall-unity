@@ -755,7 +755,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Create effect bundle settings
             EffectBundleSettings spell = new EffectBundleSettings();
-            spell.Version = 1;
+            spell.Version = EntityEffectBroker.CurrentSpellVersion;
             spell.BundleType = BundleTypes.Spell;
             spell.TargetType = selectedTarget;
             spell.ElementType = selectedElement;

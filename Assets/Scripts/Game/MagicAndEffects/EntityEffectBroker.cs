@@ -25,6 +25,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     {
         #region Fields
 
+        public const int CurrentSpellVersion = 1;
+
         public const TargetTypes TargetFlags_None = TargetTypes.None;
         public const TargetTypes TargetFlags_Self = TargetTypes.CasterOnly;
         public const TargetTypes TargetFlags_Other = TargetTypes.ByTouch | TargetTypes.SingleTargetAtRange | TargetTypes.AreaAroundCaster | TargetTypes.AreaAtRange;
