@@ -1202,7 +1202,8 @@ namespace DaggerfallWorkshop.Game.Formulas
         /// <param name="targetType">Target type of spell.</param>
         /// <param name="totalGoldCostOut">Total gold cost out.</param>
         /// <param name="totalSpellPointCostOut">Total spellpoint cost out.</param>
-        public static void CalculateTotalEffectCosts(EffectEntry[] effectEntries, TargetTypes targetType, out int totalGoldCostOut, out int totalSpellPointCostOut)
+        /// <param name="casterEntity">Caster entity. Assumed to be player if null.</param>
+        public static void CalculateTotalEffectCosts(EffectEntry[] effectEntries, TargetTypes targetType, out int totalGoldCostOut, out int totalSpellPointCostOut, DaggerfallEntity casterEntity = null)
         {
             totalGoldCostOut = 0;
             totalSpellPointCostOut = 0;
@@ -1214,7 +1215,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                     continue;
 
                 int goldCost, spellPointCost;
-                CalculateEffectCosts(effectEntries[i], out goldCost, out spellPointCost);
+                CalculateEffectCosts(effectEntries[i], out goldCost, out spellPointCost, casterEntity);
                 totalGoldCostOut += goldCost;
                 totalSpellPointCostOut += spellPointCost;
             }
@@ -1224,9 +1225,11 @@ namespace DaggerfallWorkshop.Game.Formulas
             totalSpellPointCostOut = ApplyTargetCostMultiplier(totalSpellPointCostOut, targetType);
         }
 
-        public static void CalculateEffectCosts(EffectEntry effectEntry, out int goldCostOut, out int spellPointCostOut)
+        /// <summary>
+        /// Calculate effect costs from an EffectEntry.
+        /// </summary>
+        public static void CalculateEffectCosts(EffectEntry effectEntry, out int goldCostOut, out int spellPointCostOut, DaggerfallEntity casterEntity = null)
         {
-            int activeComponents = 0;
             goldCostOut = 0;
             spellPointCostOut = 0;
 
@@ -1235,20 +1238,42 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (effectTemplate == null)
                 return;
 
+            CalculateEffectCosts(effectTemplate, effectEntry.Settings, out goldCostOut, out spellPointCostOut, casterEntity);
+        }
+
+        /// <summary>
+        /// Calculates effect costs from an IEntityEffect and custom settings.
+        /// </summary>
+        public static void CalculateEffectCosts(IEntityEffect effect, EffectSettings settings, out int goldCostOut, out int spellPointCostOut, DaggerfallEntity casterEntity = null)
+        {
+            int activeComponents = 0;
+            goldCostOut = 0;
+            spellPointCostOut = 0;
+
             // Get related skill
-            int skillValue = GameManager.Instance.PlayerEntity.Skills.GetLiveSkillValue((DFCareer.Skills)effectTemplate.Properties.MagicSkill);
+            int skillValue = 0;
+            if (casterEntity == null)
+            {
+                // From player
+                skillValue = GameManager.Instance.PlayerEntity.Skills.GetLiveSkillValue((DFCareer.Skills)effect.Properties.MagicSkill);
+            }
+            else
+            {
+                // From another entity
+                skillValue = casterEntity.Skills.GetLiveSkillValue((DFCareer.Skills)effect.Properties.MagicSkill);
+            }
 
             // Duration costs
             int durationGoldCost = 0;
-            if (effectTemplate.Properties.SupportDuration)
+            if (effect.Properties.SupportDuration)
             {
                 activeComponents++;
                 GetEffectComponentCosts(
                     out durationGoldCost,
-                    effectTemplate.Properties.DurationCosts,
-                    effectEntry.Settings.DurationBase,
-                    effectEntry.Settings.DurationPlus,
-                    effectEntry.Settings.DurationPerLevel,
+                    effect.Properties.DurationCosts,
+                    settings.DurationBase,
+                    settings.DurationPlus,
+                    settings.DurationPerLevel,
                     skillValue);
 
                 //Debug.LogFormat("Duration: gold {0} spellpoints {1}", durationGoldCost, durationSpellPointCost);
@@ -1256,15 +1281,15 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             // Chance costs
             int chanceGoldCost = 0;
-            if (effectTemplate.Properties.SupportChance)
+            if (effect.Properties.SupportChance)
             {
                 activeComponents++;
                 GetEffectComponentCosts(
                     out chanceGoldCost,
-                    effectTemplate.Properties.ChanceCosts,
-                    effectEntry.Settings.ChanceBase,
-                    effectEntry.Settings.ChancePlus,
-                    effectEntry.Settings.ChancePerLevel,
+                    effect.Properties.ChanceCosts,
+                    settings.ChanceBase,
+                    settings.ChancePlus,
+                    settings.ChancePerLevel,
                     skillValue);
 
                 //Debug.LogFormat("Chance: gold {0} spellpoints {1}", chanceGoldCost, chanceSpellPointCost);
@@ -1272,17 +1297,17 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             // Magnitude costs
             int magnitudeGoldCost = 0;
-            if (effectTemplate.Properties.SupportMagnitude)
+            if (effect.Properties.SupportMagnitude)
             {
                 activeComponents++;
-                int magnitudeBase = (effectEntry.Settings.MagnitudeBaseMax + effectEntry.Settings.MagnitudeBaseMin) / 2;
-                int magnitudePlus = (effectEntry.Settings.MagnitudePlusMax + effectEntry.Settings.MagnitudePlusMin) / 2;
+                int magnitudeBase = (settings.MagnitudeBaseMax + settings.MagnitudeBaseMin) / 2;
+                int magnitudePlus = (settings.MagnitudePlusMax + settings.MagnitudePlusMin) / 2;
                 GetEffectComponentCosts(
                     out magnitudeGoldCost,
-                    effectTemplate.Properties.MagnitudeCosts,
+                    effect.Properties.MagnitudeCosts,
                     magnitudeBase,
                     magnitudePlus,
-                    effectEntry.Settings.MagnitudePerLevel,
+                    settings.MagnitudePerLevel,
                     skillValue);
 
                 //Debug.LogFormat("Magnitude: gold {0} spellpoints {1}", magnitudeGoldCost, magnitudeSpellPointCost);
@@ -1306,6 +1331,7 @@ namespace DaggerfallWorkshop.Game.Formulas
         {
             switch (targetType)
             {
+                default:
                 case TargetTypes.CasterOnly:                // x1.0
                 case TargetTypes.ByTouch:
                     // These do not change costs, just including here for completeness

@@ -12,6 +12,7 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Serialization;
@@ -62,6 +63,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         int[] directSkillMods = new int[DaggerfallSkills.Count];
         int[] combinedStatMods = new int[DaggerfallStats.Count];
         int[] combinedSkillMods = new int[DaggerfallSkills.Count];
+        int[] combinedResistanceMods = new int[DaggerfallResistances.Count];
         float refreshModsTimer = 0;
         const float refreshModsDelay = 0.2f;
 
@@ -314,8 +316,26 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     continue;
                 }
 
-                // Start effect and do not proceed if chance failed
+                // Spell absorption - must have a caster entity set
+                if (sourceBundle.CasterEntityBehaviour)
+                {
+                    int absorbSpellPoints;
+                    if (TryAbsorption(effect, sourceBundle.Settings.TargetType, sourceBundle.CasterEntityBehaviour.Entity, out absorbSpellPoints))
+                    {
+                        // Spell passed all checks and was absorbed - return cost output to target
+                        entityBehaviour.Entity.IncreaseMagicka(absorbSpellPoints);
+
+                        // Output "Spell was absorbed."
+                        DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "spellAbsorbed"));
+
+                        continue;
+                    }
+                }
+
+                // Start effect
                 effect.Start(this, sourceBundle.CasterEntityBehaviour);
+
+                // Do not proceed if chance failed
                 if (effect.Properties.SupportChance &&
                     effect.Properties.ChanceFunction == ChanceFunction.OnCast &&
                     !effect.ChanceSuccess)
@@ -323,12 +343,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     // Output failure messages
                     if (isPlayerEntity && sourceBundle.Settings.TargetType == TargetTypes.CasterOnly)
                     {
-                        // Output "spell effect failed." for caster only spells
+                        // Output "Spell effect failed." for caster only spells
                         DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "spellEffectFailed"));
                     }
                     else if (isPlayerEntity)
                     {
-                        // Output "save versus spell made." for external contact spells
+                        // Output "Save versus spell made." for external contact spells
                         DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "saveVersusSpellMade"));
                     }
 
@@ -360,6 +380,24 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         }
 
         /// <summary>
+        /// Searches all effects in all bundles to find incumbent of type T.
+        /// </summary>
+        /// <typeparam name="T">Found incumbent effect of type T or null.</typeparam>
+        public IEntityEffect FindIncumbentEffect<T>()
+        {
+            foreach (InstancedBundle bundle in instancedBundles)
+            {
+                foreach (IEntityEffect effect in bundle.liveEffects)
+                {
+                    if (effect is T)
+                        return effect;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Cancels all remaining rounds of any active incumbent effect of type T and calls End() on that effect.
         /// If incumbent effect T is only live effect in bundle then whole bundle will be removed.
         /// If other effects remain in bundle then incumbent effect will stop operation and bundle will expire when other effects allow it.
@@ -368,16 +406,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// <typeparam name="T">IncumbentEffect type T to end.</typeparam>
         public void EndIncumbentEffect<T>()
         {
-            foreach (InstancedBundle bundle in instancedBundles)
+            IEntityEffect effect = FindIncumbentEffect<T>();
+            if (effect != null)
             {
-                foreach(IEntityEffect effect in bundle.liveEffects)
-                {
-                    if (effect is T)
-                    {
-                        effect.RoundsRemaining = 0;
-                        effect.End();
-                    }
-                }
+                effect.RoundsRemaining = 0;
+                effect.End();
             }
         }
 
@@ -420,6 +453,96 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             {
                 directSkillMods[i] += skillMods[i];
             }
+        }
+
+        #endregion
+
+        #region Spell Absorption
+
+        /// <summary>
+        /// Tests incoming effect for spell absorption. If absorption succeeds the entity will
+        /// block effect and recover spell points equal to the casting cost of blocked effect.
+        /// If target does not have enough spell points free to absorb effect cost then effect will NOT be absorbed.
+        /// For example if player has 0 of 50 spell points available, they can absorb an incoming effect costing up to 50 spell points.
+        /// An effect costing 51 spell points cannot be absorbed. It's "all or nothing".
+        /// Notes:
+        ///  - There are two variants of spell absorption in Daggerfall.
+        ///     - Career-based: This is the "none / in light / in darkness / always" assigned to entity career kit.
+        ///     - Effect-based: Generated by having an active Spell Absorption effect from a spell or item.
+        ///  - In classic effect-based absorption from spells/items will override career-based absorption. Not sure if bug.
+        ///  - Career-based absorption will always succeed chance check.
+        ///  - Spell-based will roll for check on each absorb attempt.
+        /// </summary>
+        /// <param name="effect">Incoming effect.</param>
+        /// <param name="targetType">Source bundle target type for spell cost calculation.</param>
+        /// <param name="casterEntity">Source caster entity behaviour for spell cost calculation.</param>
+        /// <param name="absorbSpellPointsOut">Number of spell points absorbed. Only valid when returning true.</param>
+        /// <returns>True if absorbed.</returns>
+        bool TryAbsorption(IEntityEffect effect, TargetTypes targetType, DaggerfallEntity casterEntity, out int absorbSpellPointsOut)
+        {
+            absorbSpellPointsOut = 0;
+
+            // Effect cannot be null
+            if (effect == null)
+                return false;
+
+            // Currently only absorbing Destruction magic - not sure on status of absorbing other magic schools
+            // This is to prevent something as benign as a self-heal from player being blocked and absorbed
+            // With current design, absorption is checked for ALL incoming effects to entity so require some sanity checks
+            if (effect.Properties.MagicSkill != DFCareer.MagicSkills.Destruction)
+                return false;
+
+            // Get casting cost for this effect
+            int effectCastingCost = GetEffectCastingCost(effect, targetType, casterEntity);
+
+            // The entity must have this many spell points free to absorb incoming effect
+            int availableSpellPoints = entityBehaviour.Entity.MaxMagicka - entityBehaviour.Entity.CurrentMagicka;
+            if (effectCastingCost > availableSpellPoints)
+                return false;
+            else
+                absorbSpellPointsOut = effectCastingCost;
+
+            // Check if entity has an absorb incumbent running
+            SpellAbsorption absorbEffect = FindIncumbentEffect<SpellAbsorption>() as SpellAbsorption;
+            if (absorbEffect != null)
+                return TryEffectBasedAbsorption(effect, absorbEffect, casterEntity);
+
+            // Handle career-based absorption
+            if (entityBehaviour.Entity.Career.SpellAbsorption != DFCareer.SpellAbsorptionFlags.None)
+                return TryCareerBasedAbsorption(effect, casterEntity);
+
+            return false;
+        }
+
+        int GetEffectCastingCost(IEntityEffect effect, TargetTypes targetType, DaggerfallEntity casterEntity)
+        {
+            int goldCost, spellPointCost;
+            FormulaHelper.CalculateEffectCosts(effect, effect.Settings, out goldCost, out spellPointCost, casterEntity);
+            spellPointCost = FormulaHelper.ApplyTargetCostMultiplier(spellPointCost, targetType);
+
+            //Debug.LogFormat("Calculated {0} spell point cost for effect {1}", spellPointCost, effect.Key);
+
+            return spellPointCost;
+        }
+
+        bool TryEffectBasedAbsorption(IEntityEffect effect, SpellAbsorption absorbEffect, DaggerfallEntity casterEntity)
+        {
+            return RollAbsorptionChance(absorbEffect, casterEntity);
+        }
+
+        bool TryCareerBasedAbsorption(IEntityEffect effect, DaggerfallEntity casterEntity)
+        {
+            // TODO: Implement career absorption in light / in darkness / always
+
+            return false;
+        }
+
+        bool RollAbsorptionChance(SpellAbsorption absorbEffect, DaggerfallEntity casterEntity)
+        {
+            int chance = absorbEffect.Settings.ChanceBase + absorbEffect.Settings.ChancePlus * (int)Mathf.Floor(casterEntity.Level / absorbEffect.Settings.ChancePerLevel);
+            int roll = UnityEngine.Random.Range(1, 100);
+
+            return (roll <= chance);
         }
 
         #endregion

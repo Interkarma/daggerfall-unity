@@ -79,3 +79,6 @@ youFeelDrained,             You feel drained.
 youAreParalyzed,            You are paralyzed.
 saveVersusSpellMade,        Save versus spell made.
 spellEffectFailed,          Spell effect failed.
+spellAbsorbed,              Spell was absorbed.
+spellReflected,             Spell was reflected.
+spellResisted,              Spell was resisted.
