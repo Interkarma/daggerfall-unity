@@ -532,7 +532,27 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         bool TryCareerBasedAbsorption(IEntityEffect effect, DaggerfallEntity casterEntity)
         {
-            // TODO: Implement career absorption in light / in darkness / always
+            // Always resists
+            DFCareer.SpellAbsorptionFlags spellAbsorption = casterEntity.Career.SpellAbsorption;
+            if (spellAbsorption == DFCareer.SpellAbsorptionFlags.Always)
+                return true;
+
+            // Resist in darkness (inside building or dungeon or outside at night)
+            // Use player for inside/outside context - everything is where the player is
+            if (spellAbsorption == DFCareer.SpellAbsorptionFlags.InDarkness)
+            {
+                if (GameManager.Instance.PlayerEnterExit.IsPlayerInside)
+                    return true;
+                else if (DaggerfallUnity.Instance.WorldTime.Now.IsNight)
+                    return true;
+            }
+
+            // Resist in light (outside during the day)
+            if (spellAbsorption == DFCareer.SpellAbsorptionFlags.InLight)
+            {
+                if (!GameManager.Instance.PlayerEnterExit.IsPlayerInside && DaggerfallUnity.Instance.WorldTime.Now.IsDay)
+                    return true;
+            }
 
             return false;
         }
