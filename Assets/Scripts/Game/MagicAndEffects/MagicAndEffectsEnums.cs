@@ -70,6 +70,19 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     }
 
     /// <summary>
+    /// Determines how effect chance will function.
+    /// OnCast: is checked at cast time by EntityEffectManager receiving effect - effect is rejected on failure.
+    /// Custom: is always allowed by EntityEffectManager, but still generates ChanceSuccess flag on Start().
+    /// This allows custom chance handling elsewhere by either by the effect itself or elsewhere in effect back-end.
+    /// A Custom chance effect can then decide to check for ChanceSuccess at any time, even do something else entirely.
+    /// </summary>
+    public enum ChanceFunction
+    {
+        OnCast,
+        Custom,
+    }
+
+    /// <summary>
     /// Diseases the player can catch. (msgs 100-116)
     /// </summary>
     public enum Diseases

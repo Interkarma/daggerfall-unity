@@ -316,7 +316,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
                 // Start effect and do not proceed if chance failed
                 effect.Start(this, sourceBundle.CasterEntityBehaviour);
-                if (effect.Properties.SupportChance && !effect.ChanceSuccess)
+                if (effect.Properties.SupportChance &&
+                    effect.Properties.ChanceFunction == ChanceFunction.OnCast &&
+                    !effect.ChanceSuccess)
                 {
                     // Output failure messages
                     if (isPlayerEntity && sourceBundle.Settings.TargetType == TargetTypes.CasterOnly)
