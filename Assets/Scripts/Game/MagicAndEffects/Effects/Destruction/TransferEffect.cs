@@ -17,133 +17,31 @@ using FullSerializer;
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
     /// <summary>
-    /// Transfer effect base.
-    /// This is a two-part effect that will drain target attribute by an amount and fortify same caster attribute by same amount.
-    /// Note: This has been reworked from the rather useless version of this effect in classic, which does not actually transfer anything.
-    /// Classic only seems to drain the target and there's no real sense of anything happening at all.
-    /// In this version of effect, caster establishes a vampiric drain on target until the target expires or passes out of scope.
-    /// At this time intended to be cast by player only. Current design would render effect permanent if cast onto player.
+    /// Base class for Transfer stat effect classes.
+    /// Essentially a DrainEffect on target with a HealEffect step for caster.
     /// </summary>
-    public abstract class TransferEffect : IncumbentEffect
+    public abstract class TransferEffect : DrainEffect
     {
-        const string textDatabase = "ClassicEffects";
-        const float maxLinkDistance = 25f;
-
-        protected DFCareer.Stats transferStat = DFCareer.Stats.None;
-        int[] casterStatMods = new int[DaggerfallStats.Count];
-        int forcedRoundsRemaining = 1;
-
-        public DFCareer.Stats TransferStat
-        {
-            get { return transferStat; }
-        }
-
-        // Always present at least one round remaining so effect system does not remove
-        public override int RoundsRemaining
-        {
-            get { return forcedRoundsRemaining; }
-        }
-
-        // Transfer effects is permanent until dead or healed so we manage our own lifecycle
-        protected override int RemoveRound()
-        {
-            return forcedRoundsRemaining;
-        }
-
-        public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
-        {
-            base.Start(manager, caster);
-            PlayerAggro();
-        }
-
-        protected override bool IsLikeKind(IncumbentEffect other)
-        {
-            return (other is TransferEffect && (other as TransferEffect).transferStat == transferStat) ? true : false;
-        }
-
         protected override void BecomeIncumbent()
         {
-            // At this time intended to be cast by player only
-            if (caster != GameManager.Instance.PlayerEntityBehaviour)
-            {
-                forcedRoundsRemaining = 0;
-                ResignAsIncumbent();
-                return;
-            }
-
-            // Local entity is drained by magnitude, caster is fortified by magnitude
-            // Link will end once target is dead, passes out of scope, or exceeds maxLinkDistance
-            int magnitude = GetMagnitude(caster);
-            SetStatMod(transferStat, -magnitude);
-            casterStatMods[(int)transferStat] = magnitude;
+            base.BecomeIncumbent();
+            HealCaster();
         }
 
         protected override void AddState(IncumbentEffect incumbent)
         {
+            base.AddState(incumbent);
+            HealCaster();
         }
 
-        public override void MagicRound()
+        void HealCaster()
         {
-            base.MagicRound();
-
-            // Caster must still be in range or vampiric link ends
-            if (!CheckCasterDistance())
+            if (caster)
             {
-                forcedRoundsRemaining = 0;
-                ResignAsIncumbent();
-                return;
+                DrainEffect incumbentDrain = caster.GetComponent<EntityEffectManager>().FindDrainStatIncumbent(drainStat);
+                if (incumbentDrain != null)
+                    incumbentDrain.Heal(lastMagnitudeIncreaseAmount);
             }
-
-            // Send stat mods to caster effect manager
-            EntityEffectManager casterManager = caster.GetComponent<EntityEffectManager>();
-            casterManager.MergeDirectStatMods(casterStatMods);
         }
-
-        bool CheckCasterDistance()
-        {
-            // If caster null then end immediately
-            if (!caster)
-                return false;
-
-            // Get distance to caster
-            float distance = Vector3.Distance(manager.transform.position, caster.transform.position);
-            if (distance > maxLinkDistance)
-                return false;
-
-            return true;
-        }
-
-        #region Serialization
-
-        [fsObject("v1")]
-        public struct SaveData_v1
-        {
-            public DFCareer.Stats transferStat;
-            public int[] casterStatMods;
-            public int forcedRoundsRemaining;
-        }
-
-        public override object GetSaveData()
-        {
-            SaveData_v1 data = new SaveData_v1();
-            data.transferStat = transferStat;
-            data.casterStatMods = casterStatMods;
-            data.forcedRoundsRemaining = forcedRoundsRemaining;
-
-            return data;
-        }
-
-        public override void RestoreSaveData(object dataIn)
-        {
-            SaveData_v1 data = (SaveData_v1)dataIn;
-            if (dataIn == null)
-                return;
-
-            transferStat = data.transferStat;
-            casterStatMods = data.casterStatMods;
-            forcedRoundsRemaining = data.forcedRoundsRemaining;
-        }
-
-        #endregion
     }
 }

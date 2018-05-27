@@ -398,6 +398,29 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         }
 
         /// <summary>
+        /// Searches all effects in all bundles to find DrainEffect incumbent for a specific stat.
+        /// </summary>
+        /// <param name="drainStat">The stat being drained.</param>
+        /// <returns>DrainEffect incumbent for drainStat, or null if not found.</returns>
+        public DrainEffect FindDrainStatIncumbent(DFCareer.Stats drainStat)
+        {
+            foreach (InstancedBundle bundle in instancedBundles)
+            {
+                foreach (IEntityEffect effect in bundle.liveEffects)
+                {
+                    if (effect is DrainEffect)
+                    {
+                        DrainEffect drainEffect = effect as DrainEffect;
+                        if (drainEffect.IsIncumbent && drainEffect.DrainStat == drainStat)
+                            return drainEffect;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Cancels all remaining rounds of any active incumbent effect of type T and calls End() on that effect.
         /// If incumbent effect T is only live effect in bundle then whole bundle will be removed.
         /// If other effects remain in bundle then incumbent effect will stop operation and bundle will expire when other effects allow it.

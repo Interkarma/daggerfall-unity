@@ -35,7 +35,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
             properties.MagicSkill = DFCareer.MagicSkills.Destruction;
             properties.MagnitudeCosts = MakeEffectCosts(60, 100, 40);
-            transferStat = DFCareer.Stats.Strength;
+            drainStat = DFCareer.Stats.Strength;
         }
     }
 }

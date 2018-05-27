@@ -28,7 +28,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             base.MagicRound();
 
-            DrainEffect incumbentDrain = FindDrainStatIncumbent();
+            DrainEffect incumbentDrain = manager.FindDrainStatIncumbent(healStat);
             if (incumbentDrain != null)
             {
                 int magnitude = GetMagnitude(caster);
@@ -39,27 +39,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             {
                 Debug.LogFormat("Could not find incumbent Drain {0} on target", healStat.ToString());
             }
-        }
-
-        DrainEffect FindDrainStatIncumbent()
-        {
-            // Search for any matching incumbents on this host
-            EntityEffectManager.InstancedBundle[] bundles = manager.EffectBundles;
-            foreach (EntityEffectManager.InstancedBundle bundle in bundles)
-            {
-                foreach (IEntityEffect effect in bundle.liveEffects)
-                {
-                    if (effect is DrainEffect)
-                    {
-                        // Heal stat must match drain stat
-                        DrainEffect drainEffect = effect as DrainEffect;
-                        if (drainEffect.IsIncumbent && drainEffect.DrainStat == healStat)
-                            return drainEffect;
-                    }
-                }
-            }
-
-            return null;
         }
     }
 }
