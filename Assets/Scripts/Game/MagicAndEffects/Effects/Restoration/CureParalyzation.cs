@@ -16,7 +16,7 @@ using DaggerfallWorkshop.Game.Entity;
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
     /// <summary>
-    /// Chameleon - True
+    /// CureParalyzation
     /// </summary>
     public class CureParalyzation : BaseEntityEffect
     {
