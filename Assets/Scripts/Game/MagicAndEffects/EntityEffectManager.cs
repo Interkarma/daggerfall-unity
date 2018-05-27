@@ -492,17 +492,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             if (effect.Properties.MagicSkill != DFCareer.MagicSkills.Destruction)
                 return false;
 
-            // Calculate number of spell points entity must absorb
-            int effectCastingCost = GetEffectCastingCost(effect, targetType, casterEntity);
-            int maxAbsorption = (entityBehaviour.Entity.Stats.LiveIntelligence + entityBehaviour.Entity.Stats.LiveWillpower) / 2;
-            int absorbRequirement = (maxAbsorption < effectCastingCost) ? maxAbsorption : effectCastingCost;
+            // Get casting cost for this effect
+            // Costs are calculated as if target cast the spell, not the actual caster
+            // Note that if player self-absorbs a spell this will be equal anyway
+            int effectCastingCost = GetEffectCastingCost(effect, targetType, entityBehaviour.Entity);
 
             // The entity must have enough spell points free to absorb incoming effect
             int availableSpellPoints = entityBehaviour.Entity.MaxMagicka - entityBehaviour.Entity.CurrentMagicka;
-            if (absorbRequirement > availableSpellPoints)
+            if (effectCastingCost > availableSpellPoints)
                 return false;
             else
-                absorbSpellPointsOut = absorbRequirement;
+                absorbSpellPointsOut = effectCastingCost;
 
             // Check if entity has an absorb incumbent running
             SpellAbsorption absorbEffect = FindIncumbentEffect<SpellAbsorption>() as SpellAbsorption;
