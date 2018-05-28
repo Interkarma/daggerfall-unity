@@ -75,7 +75,18 @@ true,                       True
 
 noName,                     <no-name>
 
-youFeelDrained,             You feel drained.
+youAreSilenced,             You are silenced.
 youAreParalyzed,            You are paralyzed.
+youFeelDrained,             You feel drained.
+youAreFortified,            You are fortified.
+youAreInvisible,            You are invisible.
+youAreLevitating,           You are levitating.
+youAreRegenerating,         You are regenerating.
+youAreBlending,             You are blending.
+youAreAShade,               You are a shade.
+slowFallActive,             Slow fall active.
 saveVersusSpellMade,        Save versus spell made.
 spellEffectFailed,          Spell effect failed.
+spellAbsorbed,              Spell was absorbed.
+spellReflected,             Spell was reflected.
+spellResisted,              Spell was resisted.

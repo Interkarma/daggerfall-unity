@@ -28,6 +28,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         protected int magnitude = 0;
         protected DFCareer.Stats drainStat = DFCareer.Stats.None;
+        protected int lastMagnitudeIncreaseAmount = 0;
         int forcedRoundsRemaining = 1;
 
         public int Magnitude
@@ -52,6 +53,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             get { return forcedRoundsRemaining; }
         }
 
+        public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
+        {
+            base.Start(manager, caster);
+            PlayerAggro();
+        }
+
         protected override bool IsLikeKind(IncumbentEffect other)
         {
             return (other is DrainEffect && (other as DrainEffect).drainStat == drainStat) ? true : false;
@@ -59,7 +66,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         protected override void BecomeIncumbent()
         {
-            IncreaseMagnitude(GetMagnitude(caster));
+            lastMagnitudeIncreaseAmount = GetMagnitude(caster);
+            IncreaseMagnitude(lastMagnitudeIncreaseAmount);
             ShowPlayerDrained();
         }
 
@@ -68,7 +76,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             if (forcedRoundsRemaining == 0)
                 return;
 
-            (incumbent as DrainEffect).IncreaseMagnitude(GetMagnitude(caster));
+            lastMagnitudeIncreaseAmount = GetMagnitude(caster);
+            (incumbent as DrainEffect).IncreaseMagnitude(lastMagnitudeIncreaseAmount);
             ShowPlayerDrained();
         }
 

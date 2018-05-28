@@ -55,6 +55,7 @@ namespace DaggerfallWorkshop.Game.Entity
         protected WeaponMaterialTypes minMetalToHit;
         protected sbyte[] armorValues = new sbyte[NumberBodyParts];
         protected bool isParalyzed;
+        protected bool isSilenced;
 
         bool quiesce = false;
 
@@ -86,6 +87,15 @@ namespace DaggerfallWorkshop.Game.Entity
         }
 
         /// <summary>
+        /// Gets or sets silenced flag.
+        /// Note: This value is intentionally not serialized. It should only be set by live effects.
+        /// </summary>
+        public bool IsSilenced
+        {
+            get { return isSilenced; }
+            set { isSilenced = value; }
+        }
+
         /// Gets or sets world context of this entity for floating origin support.
         /// Not required by all systems but this is a nice central place for mobiles.
         /// </summary>
@@ -467,6 +477,7 @@ namespace DaggerfallWorkshop.Game.Entity
         protected virtual void ResetEntityState()
         {
             isParalyzed = false;
+            isSilenced = false;
             SetEntityDefaults();
         }
 

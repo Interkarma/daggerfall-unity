@@ -652,8 +652,8 @@ namespace DaggerfallConnect.Arena2
             public int maxf;
             public int vam;
             public int rank;
-            public int randomValue;
-            public int randomPowerBonus;
+            public uint rulerNameSeed;
+            public int rulerPowerBonus;
             public int ptrToNextFactionAtSameHierarchyLevel;
             public int ptrToFirstChildFaction;
             public int ptrToParentFaction;
@@ -978,6 +978,11 @@ namespace DaggerfallConnect.Arena2
                     // Currently only using name to id lookup for to find region faction quickly
                     //UnityEngine.Debug.LogWarningFormat("Duplicate name detected " + faction.name);
                 }
+
+                // Calculate ruler name seed and ruler bonus in same manner as classic. These are not read from FACTION.TXT.
+                uint random = DFRandom.rand() << 16;
+                faction.rulerNameSeed = DFRandom.rand() | random;
+                faction.rulerPowerBonus = DFRandom.random_range_inclusive(0, 50) + 20;
 
                 previousFaction = faction;
             }

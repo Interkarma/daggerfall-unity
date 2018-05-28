@@ -12,34 +12,41 @@
 using UnityEngine;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
+using System;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
     /// <summary>
-    /// CureParalyzation
+    /// Spell Absorption
     /// </summary>
-    public class CureParalyzation : BaseEntityEffect
+    public class SpellAbsorption : IncumbentEffect
     {
         public override void SetProperties()
         {
-            properties.Key = "Cure-Paralyzation";
-            properties.ClassicKey = MakeClassicKey(3, 2);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "cure");
-            properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "paralyzation");
-            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1511);
-            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1211);
+            properties.Key = "SpellAbsorption";
+            properties.ClassicKey = MakeClassicKey(20, 255);
+            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "spellAbsorption");
+            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1568);
+            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1268);
+            properties.SupportDuration = true;
             properties.SupportChance = true;
+            properties.ChanceFunction = ChanceFunction.Custom;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_All;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
             properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
             properties.MagicSkill = DFCareer.MagicSkills.Restoration;
-            properties.ChanceCosts = MakeEffectCosts(20, 140);
+            properties.DurationCosts = MakeEffectCosts(28, 140);
+            properties.ChanceCosts = MakeEffectCosts(28, 140);
         }
 
-        public override void MagicRound()
+        protected override bool IsLikeKind(IncumbentEffect other)
         {
-            base.MagicRound();
-            manager.EndIncumbentEffect<Paralyze>();
+            return (other.Key == Key) ? true : false;
+        }
+
+        protected override void AddState(IncumbentEffect incumbent)
+        {
+            incumbent.RoundsRemaining += RoundsRemaining;
         }
     }
 }

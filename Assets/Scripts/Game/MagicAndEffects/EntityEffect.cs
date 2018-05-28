@@ -311,6 +311,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         protected void PlayerAggro()
         {
+            // Caster must be player
+            if (caster != GameManager.Instance.PlayerEntityBehaviour)
+                return;
+
             // Get peered entity gameobject
             DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
             if (!entityBehaviour)

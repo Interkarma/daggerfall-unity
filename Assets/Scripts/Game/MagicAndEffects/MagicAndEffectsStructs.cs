@@ -32,6 +32,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public bool SupportDuration;                                // Uses duration
         public bool SupportChance;                                  // Uses chance
         public bool SupportMagnitude;                               // Uses magnitude
+        public ChanceFunction ChanceFunction;                       // Determines if chance check is done OnCast (by manager) or Custom (elsewhere)
         public TargetTypes AllowedTargets;                          // Targets allowed by this effect
         public ElementTypes AllowedElements;                        // Elements allowed by this effect
         public MagicCraftingStations AllowedCraftingStations;       // Magic stations that can consume this effect (e.g. spellmaker, itemmaker)

@@ -321,13 +321,23 @@ namespace DaggerfallWorkshop.Game.Entity
                 if (((i + lastGameMinutes) % 161280) == 0 && !preventNormalizingReputations) // 112 days
                     NormalizeReputations();
 
-                // Update faction relationships, faction power levels and regional conditions (in progress)
-                if (((i + lastGameMinutes) % 40320) == 0) // 28 days
-                    RegionPowerAndConditionsUpdate();
+                // Update faction powers
+                if (((i + lastGameMinutes) % 10080) == 0) // 7 days
+                    RegionPowerAndConditionsUpdate(false);
+
+                // Update regional conditions
+                // In classic this version of the function is called within the conditional for the above, when both
+                // (i + lastGameMinutes) % 10080) == 0 and (i + lastGameMinutes) % 54720) == 0) are true, or every 266 days.
+                // I'm pretty sure it was supposed to be every 38 days.
+                if (((i + lastGameMinutes) % 54720) == 0) // 38 days
+                {
+                    RegionPowerAndConditionsUpdate(true);
+                    // GetVampireOrWerecreatureQuest(); Non-cure quest
+                }
 
                 // TODO: Get vampire/werecreature quest
                 //if (((i + lastGameMinutes) % 120960) == 0) // 84 days
-                //    GetVampireOrWerecreatureQuest();
+                //    GetVampireOrWerecreatureQuest(); cure quest
             }
 
             // TODO: Right now enemy spawns are only prevented when time has been raised for
@@ -696,9 +706,9 @@ namespace DaggerfallWorkshop.Game.Entity
             currentHealth = Mathf.Clamp(amount, 0, MaxHealth);
             if (currentHealth <= 0)
             {
-                // Players can have avoid death benefit from guild memberships
+                // Players can have avoid death benefit from guild memberships, leaves them on 10% hp
                 if (GameManager.Instance.GuildManager.AvoidDeath())
-                    return currentHealth = 1;
+                    return currentHealth = (int) (MaxHealth * 0.1f);
                 else
                     RaiseOnDeathEvent();
             }
@@ -1033,9 +1043,9 @@ namespace DaggerfallWorkshop.Game.Entity
         #region RegionData
         public struct RegionDataRecord
         {
-            public byte[] Values;
-            public bool[] Flags;
-            public bool[] Flags2;
+            public byte[] Values; // Unused?
+            public bool[] Flags; // Region condition flags
+            public bool[] Flags2; // Flags for groupings of the region condition flags. If a condition is set its group flag will also be set.
             public short LegalRep;
             public byte PrecipitationOverride; // Never set by classic. In classic if this is non-0 the screen precipitation effect for classicWeatherTypes[PrecipitationOverride - 1] is forced.
             public byte SeverePunishmentFlags; // 1 = player was banished from region, 2 = player was sent to dungeon for execution by region
@@ -1045,10 +1055,10 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public enum RegionDataFlags
         {
-            Condition0 = 0,
-            Condition1 = 1,
-            Condition2 = 2,
-            Condition3 = 3,
+            WarBeginning = 0,
+            WarOngoing = 1,
+            WarWon = 2,
+            WarLost = 3,
             PlagueBeginning = 4,
             PlagueOngoing = 5,
             PlagueEnding = 6,
@@ -1057,176 +1067,544 @@ namespace DaggerfallWorkshop.Game.Entity
             FamineEnding = 9,
             WitchBurnings = 10,
             CrimeWave = 11,
-            Condition12 = 12,
-            Condition13 = 13,
-            Condition14 = 14,
-            Condition15 = 15,
-            Condition16 = 16,
-            Condition17 = 17,
+            NewRuler = 12,
+            BadHarvest = 13,
+            TGMInJail = 14,
+            TGMSetFree = 15,
+            TGMExecuted = 16,
+            NewTGM = 17,
             PersecutedTemple = 18,
             PricesHigh = 19,
             PricesLow = 20,
-            Condition21 = 21,
-            Condition22 = 22,
-            Condition23 = 23,
-            Condition24 = 24,
-            Condition25 = 25,
-            Condition26 = 26,
-            Condition27 = 27,
-            Condition28 = 28,
-            Condition29 = 29,
+            HappyHoliday = 21,
+            ScaryHoliday = 22,
+            HolyHoliday = 23,
+            MadWizardNearby = 24,
+            MadWizardDies = 25,
+            Condition26 = 26, // Unused
+            Condition27 = 27, // Unused
+            Condition28 = 28, // Unused
+            Condition29 = 29, // Unused
         }
+
+        byte[] flagsToFlags2Map = { 0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 6, 7, 8, 9, 3, 3, 3, 3, 10, 4, 4, 11, 12, 13, 5, 5, 0, 0, 0, 0 };
 
         /// <summary>
         /// Update regional power and conditions. Called every certain number of game days.
         /// </summary>
-        public void RegionPowerAndConditionsUpdate()
+        public void RegionPowerAndConditionsUpdate(bool updateConditions)
         {
             int[] TemplesAssociatedWithRegions =    { 106, 82, 0, 0, 0, 98, 0, 0, 0, 92, 0, 106, 0, 0, 0, 84, 36, 8, 84, 88, 82, 88, 98, 92, 0, 0, 82, 0,
                                                         0, 0, 0, 0, 88, 94, 36, 94, 106, 84, 106, 106, 88, 98, 82, 98, 84, 94, 36, 88, 94, 36, 98, 84, 106,
                                                        88, 106, 88, 92, 84, 98, 88, 82, 94};
 
-            foreach (FactionFile.FactionData item in FactionData.FactionDict.Values)
+            List<int> keys = new List<int>(factionData.FactionDict.Keys);
+            foreach (int key in keys)
             {
-                /*
-                if (item.type == (int)FactionFile.FactionTypes.Province ||
-                    item.type == (int)FactionFile.FactionTypes.Group ||
-                    item.type == (int)FactionFile.FactionTypes.Subgroup)
+                if (factionData.FactionDict[key].type == (int)FactionFile.FactionTypes.Province ||
+                        factionData.FactionDict[key].type == (int)FactionFile.FactionTypes.Group ||
+                        factionData.FactionDict[key].type == (int)FactionFile.FactionTypes.Subgroup)
                 {
-                    //TODO: Faction power changes
-                }*/
-
-                // Handle famine condition
-                if (item.region != -1  && item.type == (int)FactionFile.FactionTypes.Province)
-                {
+                    // Get power mod from allies
+                    int[] allies = { factionData.FactionDict[key].ally1, factionData.FactionDict[key].ally2, factionData.FactionDict[key].ally3 };
                     int alliesPower = 0;
-                    FactionFile.FactionData ally;
-                    if (item.ally1 != 0)
+                    for (int i = 0; i < 3; i++)
                     {
-                        FactionData.GetFactionData(item.ally1, out ally);
-                        alliesPower += ally.power;
+                        FactionFile.FactionData ally;
+                        if (FactionData.GetFactionData(allies[i], out ally))
+                            alliesPower += ally.power;
                     }
-                    if (item.ally2 != 0)
-                    {
-                        FactionData.GetFactionData(item.ally1, out ally);
-                        alliesPower += ally.power;
-                    }
-                    if (item.ally3 != 0)
-                    {
-                        FactionData.GetFactionData(item.ally1, out ally);
-                        alliesPower += ally.power;
-                    }
-
                     int alliesPowerMod = alliesPower / 10;
 
-                    // Famine
-                    if (regionData[item.region - 1].Flags[(int)RegionDataFlags.FamineEnding] == true)
-                        TurnOffConditionFlag(item.region - 1, RegionDataFlags.FamineEnding);
-                    else if (regionData[item.region - 1].Flags[(int)RegionDataFlags.FamineOngoing] == true)
+                    // Get power mod from enemies
+                    int[] enemies = { factionData.FactionDict[key].enemy1, factionData.FactionDict[key].enemy2, factionData.FactionDict[key].enemy3 };
+                    int enemiesPower = 0;
+                    for (int i = 0; i < 3; i++)
                     {
-                        if (UnityEngine.Random.Range(0, 100 + 1) < item.randomPowerBonus / 5 + alliesPowerMod + item.power / 5)
-                            TurnOnConditionFlag(item.region - 1, RegionDataFlags.FamineEnding);
+                        FactionFile.FactionData enemy;
+                        if (FactionData.GetFactionData(enemies[i], out enemy))
+                            enemiesPower += enemy.power;
                     }
-                    else if (regionData[item.region - 1].Flags[(int)RegionDataFlags.FamineBeginning] == true)
-                        TurnOnConditionFlag(item.region - 1, RegionDataFlags.FamineOngoing);
-                    else if (UnityEngine.Random.Range(1, 100 + 1) <= 2)
-                    {
-                        if (UnityEngine.Random.Range(0, 100 + 1) > item.randomPowerBonus + alliesPowerMod)
-                            TurnOnConditionFlag(item.region - 1, RegionDataFlags.FamineBeginning);
-                    }
+                    int enemiesPowerMod = enemiesPower / 10;
 
-                    // Plague
-                    FactionFile.FactionData temple;
-                    FactionData.GetFactionData(TemplesAssociatedWithRegions[item.region - 1], out temple);
-
-                    if (regionData[item.region - 1].Flags[(int)RegionDataFlags.PlagueEnding] == true)
-                        TurnOffConditionFlag(item.region - 1, RegionDataFlags.PlagueEnding);
-                    else if (regionData[item.region - 1].Flags[(int)RegionDataFlags.PlagueOngoing] == true)
+                    // Get power mod from parent
+                    FactionFile.FactionData parent;
+                    int parentPowerMod = 0;
+                    if (factionData.FactionDict[key].parent != 0)
                     {
-                        //if (temple.id != 0)
-                            //--temple.power;
-                        //--item.power;
-                        if (UnityEngine.Random.Range(0, 100 + 1) < item.power / 5 + item.randomPowerBonus / 5 + alliesPowerMod)
-                            TurnOnConditionFlag(item.region - 1, RegionDataFlags.PlagueEnding);
-                    }
-                    else if (regionData[item.region - 1].Flags[(int)RegionDataFlags.PlagueBeginning] == true)
-                    {
-                        //if (temple.id != 0)
-                            //--temple.power;
-                        //--item.power;
-                        TurnOnConditionFlag(item.region - 1, RegionDataFlags.PlagueOngoing);
-                    }
-                    else if (UnityEngine.Random.Range(1, 100 + 1) <= 2)
-                    {
-                        if (UnityEngine.Random.Range(0, 100 + 1) > item.randomPowerBonus + alliesPowerMod)
-                        {
-                            //if (temple.id != 0)
-                                //--temple.power;
-                            //--item.power;
-                            TurnOnConditionFlag(item.region - 1, RegionDataFlags.PlagueBeginning);
-                        }
+                        FactionData.GetFactionData(factionData.FactionDict[key].parent, out parent);
+                        parentPowerMod = parent.power / 10;
                     }
 
-                    // Persecuted temple
-                    if (TemplesAssociatedWithRegions[item.region - 1] != 0)
-                    {
-                        if (UnityEngine.Random.Range(0, 100 + 1) >= (temple.power - item.power + 5) / 5)
-                            TurnOffConditionFlag(item.region - 1, RegionDataFlags.PersecutedTemple);
-                        else if (temple.power >= 2 * item.power )
-                            TurnOffConditionFlag(item.region - 1, RegionDataFlags.PersecutedTemple);
-                        else
-                        {
-                            regionData[item.region - 1].IDOfPersecutedTemple = (ushort)temple.id;
-                            TurnOnConditionFlag(item.region - 1, RegionDataFlags.PersecutedTemple);
-                            //--temple.power;
-                        }
-                    }
-
-                    // Crime wave
-                    //if (regionData[item.region - 1].Flags[(int)RegionDataFlags.CrimeWave] == true)
-                        //--item.power;
-
-                    FactionFile.FactionData thievesGuild;
-                    FactionData.GetFactionData((int)FactionFile.FactionIDs.The_Thieves_Guild, out thievesGuild);
-
-                    FactionFile.FactionData darkBrotherhood;
-                    FactionData.GetFactionData((int)FactionFile.FactionIDs.The_Dark_Brotherhood, out darkBrotherhood);
-
-                    if (UnityEngine.Random.Range(0, 101) >= ((thievesGuild.power + darkBrotherhood.power) / 2 - item.power + 5) / 5)
-                        TurnOffConditionFlag(item.region - 1, RegionDataFlags.CrimeWave);
+                    // Raise or lower power based on power of parent, allies, random power bonus and enemies
+                    if (parentPowerMod + alliesPowerMod + factionData.FactionDict[key].rulerPowerBonus - enemiesPowerMod <= UnityEngine.Random.Range(0, 100 + 1))
+                        factionData.ChangePower(factionData.FactionDict[key].id, -1);
                     else
+                        factionData.ChangePower(factionData.FactionDict[key].id, 1);
+
+                    // Raise power if children more powerful
+                    if (factionData.FactionDict[key].children != null)
                     {
-                        TurnOnConditionFlag(item.region - 1, RegionDataFlags.CrimeWave);
-                        //--item.power;
+                        foreach (int childID in factionData.FactionDict[key].children)
+                        {
+                            FactionFile.FactionData child;
+                            if (FactionData.GetFactionData(childID, out child) && child.power > factionData.FactionDict[key].power)
+                            {
+                                factionData.ChangePower(factionData.FactionDict[key].id, 1);
+                                break;
+                            }
+                        }
                     }
 
-                    // Witch burnings
-                    FactionFile.FactionData witches;
-                    FactionData.FindFactionByTypeAndRegion(8, item.region, out witches);
-                    //if (regionData[item.region - 1].Flags[(int)RegionDataFlags.WitchBurnings] == true)
-                        //--witches.power;
-                    if (witches.id != 0)
+                    // Update conditions
+                    if (updateConditions == true)
                     {
-                        if (UnityEngine.Random.Range(0, 101) >= (witches.power - item.power + 5) / 5)
-                            TurnOffConditionFlag(item.region - 1, RegionDataFlags.WitchBurnings);
-                        else
+                        // Chance to end faction alliances
+                        int factionPowerMod = factionData.FactionDict[key].power / 5;
+                        for (int i = 0; i < 3; ++i)
                         {
-                            TurnOnConditionFlag(item.region - 1, RegionDataFlags.WitchBurnings);
-                            //--witches.power;
+                            if (allies[i] != 0)
+                            {
+                                int powerSum = factionPowerMod + factionData.FactionDict[key].rulerPowerBonus;
+                                if ((powerSum + factionData.GetNumberOfCommonAlliesAndEnemies(factionData.FactionDict[key].id, allies[i]) * 3) / 5 + 70 < UnityEngine.Random.Range(0, 100 + 1))
+                                {
+                                    factionData.EndFactionAllies(factionData.FactionDict[key].id, allies[i]);
+                                    // AddNewRumor 1402
+                                }
+                            }
                         }
+
+                        // Update allies array
+                        allies = new int[] { factionData.FactionDict[key].ally1, factionData.FactionDict[key].ally2, factionData.FactionDict[key].ally3 };
+
+                        // Chance to end faction rivalries
+                        for (int i = 0; i < 3; ++i)
+                        {
+                            FactionFile.FactionData enemy;
+                            if (FactionData.GetFactionData(enemies[i], out enemy) && !factionData.IsEnemyStatePermanentUntilWarOver(factionData.FactionDict[key], enemy))
+                            {
+                                int powerSum = factionPowerMod + factionData.FactionDict[key].rulerPowerBonus;
+                                if ((powerSum + factionData.GetNumberOfCommonAlliesAndEnemies(factionData.FactionDict[key].id, enemies[i]) * 3) / 5 > UnityEngine.Random.Range(0, 100 + 1))
+                                {
+                                    factionData.EndFactionEnemies(factionData.FactionDict[key].id, enemies[i]);
+                                    // AddNewRumor 1403
+                                }
+                            }
+                        }
+
+                        // Update enemies array
+                        enemies = new int[] { factionData.FactionDict[key].enemy1, factionData.FactionDict[key].enemy2, factionData.FactionDict[key].enemy3 };
+
+                        // Chance to start new alliances
+                        for (int i = 0; i < 3; ++i)
+                        {
+                            if (allies[i] == 0)
+                            {
+                                FactionFile.FactionData random;
+                                List<int> keys2 = new List<int>(factionData.FactionDict.Keys);
+                                int count = keys2.Count;
+
+                                do
+                                {
+                                    int randomKeyIndex = UnityEngine.Random.Range(0, count);
+                                    FactionData.GetFactionData(factionData.FactionDict[keys2[randomKeyIndex]].id, out random);
+                                    keys2.Remove(keys[randomKeyIndex]);
+                                    count--;
+                                }
+                                while (random.type != (int)FactionFile.FactionTypes.Province &&
+                                       random.type != (int)FactionFile.FactionTypes.Group &&
+                                       random.type != (int)FactionFile.FactionTypes.Subgroup &&
+                                       count > 0);
+
+                                if (!factionData.IsFaction2AnAllyOfFaction1(factionData.FactionDict[key].id, random.id)
+                                      && !factionData.IsFaction2AnEnemyOfFaction1(factionData.FactionDict[key].id, random.id)
+                                      && !factionData.IsFaction2AnEnemyOfFaction1(factionData.FactionDict[key].ally1, random.id)
+                                      && !factionData.IsFaction2AnEnemyOfFaction1(factionData.FactionDict[key].ally2, random.id)
+                                      && !factionData.IsFaction2AnEnemyOfFaction1(factionData.FactionDict[key].ally3, random.id)
+                                      && !factionData.IsFaction2AnAllyOfFaction1(factionData.FactionDict[key].enemy1, random.id)
+                                      && !factionData.IsFaction2AnAllyOfFaction1(factionData.FactionDict[key].enemy2, random.id)
+                                      && !factionData.IsFaction2AnAllyOfFaction1(factionData.FactionDict[key].enemy3, random.id)
+                                      && factionData.GetFaction2ARelationToFaction1(factionData.FactionDict[key].id, random.id) == 0)
+                                {
+                                    int powerSum = factionPowerMod + factionData.FactionDict[key].rulerPowerBonus;
+                                    if ((powerSum + factionData.GetNumberOfCommonAlliesAndEnemies(factionData.FactionDict[key].id, random.id) * 3) / 5 > UnityEngine.Random.Range(0, 100 + 1))
+                                    {
+                                        //if (factionData.FactionDict[key].type == (int)FactionFile.FactionTypes.Province && factionData.FactionDict[key].region != -1)
+                                        //AddNewRumor 1481
+                                        //if (random.type == (int)FactionFile.FactionTypes.Province && random.region != -1)
+                                        //AddNewRumor 1481
+                                        factionData.StartFactionAllies(factionData.FactionDict[key].id, i, random.id);
+                                        //AddNewRumor 1400
+                                    }
+                                }
+                                break;
+                            }
+                        }
+
+                        // Update allies array
+                        allies = new int[] { factionData.FactionDict[key].ally1, factionData.FactionDict[key].ally2, factionData.FactionDict[key].ally3 };
+
+                        int warEnemyID = 0;
+                        if (factionData.IsFaction2APotentialWarEnemyOfFaction1(factionData.FactionDict[key].id, factionData.FactionDict[key].enemy1))
+                            warEnemyID = factionData.FactionDict[key].enemy1;
+                        else if (factionData.IsFaction2APotentialWarEnemyOfFaction1(factionData.FactionDict[key].id, factionData.FactionDict[key].enemy2))
+                            warEnemyID = factionData.FactionDict[key].enemy2;
+                        else if (factionData.IsFaction2APotentialWarEnemyOfFaction1(factionData.FactionDict[key].id, factionData.FactionDict[key].enemy3))
+                            warEnemyID = factionData.FactionDict[key].enemy3;
+
+                        if (warEnemyID != 0)
+                        {
+                            FactionFile.FactionData warEnemy;
+                            if (FactionData.GetFactionData(warEnemyID, out warEnemy))
+                            {
+                                if (regionData[factionData.FactionDict[key].region - 1].Flags[(int)RegionDataFlags.WarWon] || regionData[factionData.FactionDict[key].region - 1].Flags[(int)RegionDataFlags.WarLost])
+                                {
+                                    ResetWarDataForRegion(factionData.FactionDict[key].id);
+                                    ResetWarDataForRegion(warEnemyID);
+
+                                    factionData.EndFactionEnemies(factionData.FactionDict[key].id, warEnemyID);
+                                }
+                                else if (regionData[factionData.FactionDict[key].region - 1].Flags[(int)RegionDataFlags.WarBeginning])
+                                {
+                                    //AddNewRumor 1479
+                                    //AddNewRumor 1479
+                                    TurnOnConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.WarOngoing);
+                                    TurnOnConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.WarOngoing);
+                                }
+                                else if (regionData[factionData.FactionDict[key].region - 1].Flags[(int)RegionDataFlags.WarOngoing])
+                                {
+                                    if (UnityEngine.Random.Range(1, 100 + 1) > 5)
+                                    {
+                                        int combinedPower = factionData.FactionDict[key].power + alliesPower / 5;
+
+                                        // Get power of enemy's allies
+                                        int[] warEnemyallies = { warEnemy.ally1, warEnemy.ally2, warEnemy.ally3 };
+                                        int warEnemyAlliesPower = 0;
+                                        for (int i = 0; i < 3; i++)
+                                        {
+                                            FactionFile.FactionData ally;
+                                            if (FactionData.GetFactionData(warEnemyallies[i], out ally))
+                                                warEnemyAlliesPower += ally.power;
+                                        }
+
+                                        int combinedEnemyPower = warEnemy.power + warEnemyAlliesPower / 5;
+
+                                        int powerLoss = UnityEngine.Random.Range(1, combinedEnemyPower / 10 + 1);
+                                        int enemyPowerLoss = UnityEngine.Random.Range(1, combinedPower / 10 + 1);
+
+                                        factionData.ChangePower(factionData.FactionDict[key].id, powerLoss);
+                                        factionData.ChangePower(warEnemy.id, enemyPowerLoss);
+
+                                        combinedPower = -powerLoss;
+                                        combinedEnemyPower -= enemyPowerLoss;
+
+                                        if (combinedPower - combinedEnemyPower > combinedEnemyPower)
+                                        {
+                                            // AddNewRumor 1408
+                                            factionData.ChangePower(factionData.FactionDict[key].id, warEnemy.power / 2);
+                                            TurnOnConditionFlag(warEnemy.region - 1, RegionDataFlags.WarLost);
+                                            TurnOnConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.WarWon);
+                                        }
+                                        else if (combinedEnemyPower - combinedPower > combinedPower)
+                                        {
+                                            // AddNewRumor 1408
+                                            factionData.ChangePower(warEnemy.id, factionData.FactionDict[key].power / 2);
+                                            TurnOnConditionFlag(warEnemy.region - 1, RegionDataFlags.WarWon);
+                                            TurnOnConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.WarLost);
+                                        }
+                                        //else
+                                        //AddNewRumor 1407
+                                    }
+                                    else
+                                    {
+                                        TurnOffConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.WarOngoing);
+                                        TurnOffConditionFlag(warEnemy.region - 1, RegionDataFlags.WarOngoing);
+                                    }
+                                }
+                            }
+                        }
+
+                        // Update enemies array
+                        enemies = new int[] { factionData.FactionDict[key].enemy1, factionData.FactionDict[key].enemy2, factionData.FactionDict[key].enemy3 };
+
+                        // Chance to start new rivalry and, if it's a region, a war
+                        for (int i = 0; i < 3; ++i)
+                        {
+                            if (enemies[i] == 0)
+                            {
+                                FactionFile.FactionData random;
+                                List<int> keys2 = new List<int>(factionData.FactionDict.Keys);
+                                int count = keys2.Count;
+
+                                do
+                                {
+                                    int randomKeyIndex = UnityEngine.Random.Range(0, count);
+                                    FactionData.GetFactionData(factionData.FactionDict[keys2[randomKeyIndex]].id, out random);
+                                    keys2.Remove(keys[randomKeyIndex]);
+                                    count--;
+                                }
+                                while (random.type != (int)FactionFile.FactionTypes.Province &&
+                                       random.type != (int)FactionFile.FactionTypes.Group &&
+                                       random.type != (int)FactionFile.FactionTypes.Subgroup &&
+                                       count > 0);
+
+                                if (!factionData.IsFaction2AnAllyOfFaction1(factionData.FactionDict[key].id, random.id)
+                                    && !factionData.IsFaction2AnEnemyOfFaction1(factionData.FactionDict[key].id, random.id)
+                                    && !factionData.IsFaction2AnEnemyOfFaction1(factionData.FactionDict[key].ally1, random.id)
+                                    && !factionData.IsFaction2AnEnemyOfFaction1(factionData.FactionDict[key].ally2, random.id)
+                                    && !factionData.IsFaction2AnEnemyOfFaction1(factionData.FactionDict[key].ally3, random.id)
+                                    && !factionData.IsFaction2AnAllyOfFaction1(factionData.FactionDict[key].enemy1, random.id)
+                                    && !factionData.IsFaction2AnAllyOfFaction1(factionData.FactionDict[key].enemy2, random.id)
+                                    && !factionData.IsFaction2AnAllyOfFaction1(factionData.FactionDict[key].enemy3, random.id))
+                                {
+                                    int relation = factionData.GetFaction2ARelationToFaction1(factionData.FactionDict[key].id, random.id);
+                                    if (relation != 1 && relation != 3)
+                                    {
+                                        int mod = 0;
+                                        if (relation == 2)
+                                            mod = 10;
+                                        int powerSum = factionPowerMod + factionData.FactionDict[key].rulerPowerBonus;
+                                        if (mod + (powerSum + factionData.GetNumberOfCommonAlliesAndEnemies(factionData.FactionDict[key].id, random.id) * 3) / 5 + 70 < UnityEngine.Random.Range(0, 100 + 1))
+                                        {
+                                            //if (factionData.FactionDict[key].region != -1 && factionData.FactionDict[key].type == (int)FactionFile.FactionTypes.Province)
+                                            //AddNewRumor 1482
+                                            //if (random.region != -1 && random.type == (int)FactionFile.FactionTypes.Province)
+                                            //AddNewRumor 1482
+                                            factionData.StartFactionEnemies(factionData.FactionDict[key].id, i, random.id);
+                                            if (factionData.FactionDict[key].region != -1 && factionData.FactionDict[key].type == (int)FactionFile.FactionTypes.Province
+                                                && random.region != -1 && random.type == (int)FactionFile.FactionTypes.Province
+                                                && factionData.IsEnemyStatePermanentUntilWarOver(factionData.FactionDict[key], random))
+                                            {
+                                                // AddNewRumor 1407
+                                                // AddNewRumor 1479
+                                                // AddNewRumor 1479
+                                                TurnOnConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.WarBeginning);
+                                                TurnOnConditionFlag(random.region - 1, RegionDataFlags.WarBeginning);
+                                            }
+                                        }
+                                    }
+                                }
+                                break;
+                            }
+                        }
+
+                        // Chance for new ruler
+                        if ((factionData.FactionDict[key].flags & 0x10) == 0)
+                        {
+                            int mod = factionData.FactionDict[key].rulerPowerBonus / 3;
+                            if (UnityEngine.Random.Range(0, 100 + 1) > mod + 70)
+                            {
+                                //if (factionData.FactionDict[key].region != -1 && factionData.FactionDict[key].type == (int)FactionFile.FactionTypes.Province)
+                                // AddNewRumor 1480
+                                factionData.SetNewRulerData(factionData.FactionDict[key].id);
+                                // if ( PlayerIsRelatedToFaction(factionData.FactionDict[key]) )
+                                // AddNewRumor 1406
+                            }
+                        }
+
+                        // Handle other conditions
+                        if (factionData.FactionDict[key].region != -1 && factionData.FactionDict[key].type == (int)FactionFile.FactionTypes.Province)
+                        {
+                            // Get power mod from allies
+                            allies = new int[] { factionData.FactionDict[key].ally1, factionData.FactionDict[key].ally2, factionData.FactionDict[key].ally3 };
+                            alliesPower = 0;
+                            for (int i = 0; i < 3; i++)
+                            {
+                                FactionFile.FactionData ally;
+                                if (FactionData.GetFactionData(allies[i], out ally))
+                                    alliesPower += ally.power;
+                            }
+                            alliesPowerMod = alliesPower / 10;
+
+                            // Famine
+                            if (regionData[factionData.FactionDict[key].region - 1].Flags[(int)RegionDataFlags.FamineEnding] == true)
+                                TurnOffConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.FamineEnding);
+                            else if (regionData[factionData.FactionDict[key].region - 1].Flags[(int)RegionDataFlags.FamineOngoing] == true)
+                            {
+                                if (UnityEngine.Random.Range(0, 100 + 1) < factionData.FactionDict[key].rulerPowerBonus / 5 + alliesPowerMod + factionData.FactionDict[key].power / 5)
+                                    TurnOnConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.FamineEnding);
+                            }
+                            else if (regionData[factionData.FactionDict[key].region - 1].Flags[(int)RegionDataFlags.FamineBeginning] == true)
+                                TurnOnConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.FamineOngoing);
+                            else if (UnityEngine.Random.Range(1, 100 + 1) <= 2)
+                            {
+                                if (UnityEngine.Random.Range(0, 100 + 1) > factionData.FactionDict[key].rulerPowerBonus + alliesPowerMod)
+                                    TurnOnConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.FamineBeginning);
+                            }
+
+                            // Plague
+                            FactionFile.FactionData temple;
+                            FactionData.GetFactionData(TemplesAssociatedWithRegions[factionData.FactionDict[key].region - 1], out temple);
+
+                            if (regionData[factionData.FactionDict[key].region - 1].Flags[(int)RegionDataFlags.PlagueEnding] == true)
+                                TurnOffConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.PlagueEnding);
+                            else if (regionData[factionData.FactionDict[key].region - 1].Flags[(int)RegionDataFlags.PlagueOngoing] == true)
+                            {
+                                if (temple.id != 0)
+                                    factionData.ChangePower(temple.id, -1);
+                                factionData.ChangePower(factionData.FactionDict[key].id, -1);
+                                if (UnityEngine.Random.Range(0, 100 + 1) < factionData.FactionDict[key].power / 5 + factionData.FactionDict[key].rulerPowerBonus / 5 + alliesPowerMod)
+                                    TurnOnConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.PlagueEnding);
+                            }
+                            else if (regionData[factionData.FactionDict[key].region - 1].Flags[(int)RegionDataFlags.PlagueBeginning] == true)
+                            {
+                                if (temple.id != 0)
+                                    factionData.ChangePower(temple.id, -1);
+                                factionData.ChangePower(factionData.FactionDict[key].id, -1);
+                                TurnOnConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.PlagueOngoing);
+                            }
+                            else if (UnityEngine.Random.Range(1, 100 + 1) <= 2)
+                            {
+                                if (UnityEngine.Random.Range(0, 100 + 1) > factionData.FactionDict[key].rulerPowerBonus + alliesPowerMod)
+                                {
+                                    if (temple.id != 0)
+                                        factionData.ChangePower(temple.id, -1);
+                                    factionData.ChangePower(factionData.FactionDict[key].id, -1);
+                                    TurnOnConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.PlagueBeginning);
+                                }
+                            }
+
+                            // Persecuted temple
+                            if (TemplesAssociatedWithRegions[factionData.FactionDict[key].region - 1] != 0)
+                            {
+                                if (UnityEngine.Random.Range(0, 100 + 1) >= (temple.power - factionData.FactionDict[key].power + 5) / 5)
+                                    TurnOffConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.PersecutedTemple);
+                                else if (temple.power >= 2 * factionData.FactionDict[key].power)
+                                    TurnOffConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.PersecutedTemple);
+                                else
+                                {
+                                    regionData[factionData.FactionDict[key].region - 1].IDOfPersecutedTemple = (ushort)temple.id;
+                                    TurnOnConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.PersecutedTemple);
+                                    factionData.ChangePower(temple.id, -1);
+                                }
+                            }
+
+                            // Crime wave
+                            if (regionData[factionData.FactionDict[key].region - 1].Flags[(int)RegionDataFlags.CrimeWave] == true)
+                                factionData.ChangePower(factionData.FactionDict[key].id, -1);
+
+                            FactionFile.FactionData thievesGuild;
+                            FactionData.GetFactionData((int)FactionFile.FactionIDs.The_Thieves_Guild, out thievesGuild);
+
+                            FactionFile.FactionData darkBrotherhood;
+                            FactionData.GetFactionData((int)FactionFile.FactionIDs.The_Dark_Brotherhood, out darkBrotherhood);
+
+                            if (UnityEngine.Random.Range(0, 101) >= ((thievesGuild.power + darkBrotherhood.power) / 2 - factionData.FactionDict[key].power + 5) / 5)
+                                TurnOffConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.CrimeWave);
+                            else
+                            {
+                                TurnOnConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.CrimeWave);
+                                factionData.ChangePower(factionData.FactionDict[key].id, -1);
+                            }
+
+                            // Witch burnings
+                            FactionFile.FactionData witches;
+                            FactionData.FindFactionByTypeAndRegion(8, factionData.FactionDict[key].region, out witches);
+                            if (regionData[factionData.FactionDict[key].region - 1].Flags[(int)RegionDataFlags.WitchBurnings] == true)
+                                factionData.ChangePower(witches.id, -1);
+                            if (witches.id != 0)
+                            {
+                                if (UnityEngine.Random.Range(0, 101) >= (witches.power - factionData.FactionDict[key].power + 5) / 5)
+                                    TurnOffConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.WitchBurnings);
+                                else
+                                {
+                                    TurnOnConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.WitchBurnings);
+                                    factionData.ChangePower(witches.id, -1);
+                                }
+                            }
+                        }
+
+                        int numberOfCrimeWaves = 0;
+                        int numberOfPricesHigh = 0;
+                        int numberOfPricesLow = 0;
+                        int numberOfFamines = 0;
+                        int numberOfWars = 0;
+
+                        if (factionData.FactionDict[key].region != -1 && factionData.FactionDict[key].type == (int)FactionFile.FactionTypes.Province)
+                        {
+                            if (regionData[factionData.FactionDict[key].region - 1].Flags[(int)RegionDataFlags.CrimeWave] == true)
+                                ++numberOfCrimeWaves;
+                            if (regionData[factionData.FactionDict[key].region - 1].Flags[(int)RegionDataFlags.PricesHigh] == true)
+                                ++numberOfPricesHigh;
+                            if (regionData[factionData.FactionDict[key].region - 1].Flags[(int)RegionDataFlags.PricesLow] == true)
+                                ++numberOfPricesLow;
+                            if (regionData[factionData.FactionDict[key].region - 1].Flags2[2])
+                                ++numberOfFamines;
+                            if (regionData[factionData.FactionDict[key].region - 1].Flags2[0])
+                                ++numberOfWars;
+                        }
+
+                        FactionFile.FactionData thievesGuild2;
+                        FactionData.GetFactionData((int)FactionFile.FactionIDs.The_Thieves_Guild, out thievesGuild2);
+                        factionData.ChangePower(thievesGuild2.id, numberOfCrimeWaves);
+
+                        FactionFile.FactionData darkBrotherhood2;
+                        FactionData.GetFactionData((int)FactionFile.FactionIDs.The_Dark_Brotherhood, out darkBrotherhood2);
+                        factionData.ChangePower(darkBrotherhood2.id, numberOfCrimeWaves);
+
+                        FactionFile.FactionData merchants;
+                        FactionData.GetFactionData((int)FactionFile.FactionIDs.The_Merchants, out merchants);
+                        if (numberOfPricesHigh >= 3)
+                            factionData.ChangePower(merchants.id, 1);
+
+                        if (numberOfPricesLow >= 3)
+                            factionData.ChangePower(merchants.id, -1);
+
+                        if (numberOfFamines >= 3)
+                            factionData.ChangePower(merchants.id, -1);
+
+                        if (numberOfWars >= 3)
+                            factionData.ChangePower(merchants.id, 1);
                     }
                 }
             }
         }
 
-        public void TurnOffConditionFlag(int regionID, RegionDataFlags flagID)
-        {
-            regionData[regionID].Flags[(int)flagID] = false;
-        }
 
         public void TurnOnConditionFlag(int regionID, RegionDataFlags flagID)
         {
+            byte[] valuesMin = { 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x01, 0x0A, 0x0A, 0x01, 0x01, 0x01, 0x01, 0x0A, 0x0A, 0x0A, 0x01, 0x01, 0x01, 0x05, 0x01};
+            byte[] valuesMax = { 0x0A, 0x0A, 0x0A, 0x0A, 0x1E, 0x1E, 0x1E, 0x1E, 0x1E, 0x1E, 0x0A, 0x0A, 0x64, 0x14, 0x14, 0x01, 0x01, 0x01, 0x64, 0x14, 0x14, 0x01, 0x01, 0x01, 0x1E, 0x01};
+
+            // Turn off other flags in same group
+            if (regionData[regionID].Flags2[flagsToFlags2Map[(int)flagID]])
+            {
+                for (int i = 0; i < 29; ++i)
+                {
+                    if (flagsToFlags2Map[(int)flagID] == flagsToFlags2Map[i])
+                        regionData[regionID].Flags[i] = false;
+                }
+            }
+
+            byte value = (byte)UnityEngine.Random.Range(valuesMin[(int)flagID], valuesMax[(int)flagID] + 1);
+            regionData[regionID].Values[(int)flagID] = value;
             regionData[regionID].Flags[(int)flagID] = true;
+            regionData[regionID].Flags2[flagsToFlags2Map[(int)flagID]] = true;
+        }
+
+        public void TurnOffConditionFlag(int regionID, RegionDataFlags flagID)
+        {
+            regionData[regionID].Flags[(int)flagID] = false;
+            regionData[regionID].Flags2[flagsToFlags2Map[(int)flagID]] = false;
+        }
+
+        public void ResetWarDataForRegion(int factionID)
+        {
+            FactionFile.FactionData faction;
+            if (FactionData.GetFactionData(factionID, out faction))
+            {
+                int regionID = faction.region;
+
+                if (regionID != -1 && faction.type == (int)FactionFile.FactionTypes.Province)
+                {
+                    regionData[regionID - 1].Flags[(int)RegionDataFlags.WarBeginning] = false;
+                    regionData[regionID - 1].Flags[(int)RegionDataFlags.WarOngoing] = false;
+                    regionData[regionID - 1].Flags[(int)RegionDataFlags.WarWon] = false;
+                    regionData[regionID - 1].Flags[(int)RegionDataFlags.WarLost] = false;
+                    regionData[regionID - 1].Flags2[flagsToFlags2Map[(int)RegionDataFlags.WarBeginning]] = false;
+                    regionData[regionID - 1].Values[(int)RegionDataFlags.WarOngoing] = 0;
+                }
+            }
         }
 
         /// <summary>
@@ -1235,8 +1613,6 @@ namespace DaggerfallWorkshop.Game.Entity
         public void InitializeRegionData()
         {
             FormulaHelper.RandomizeInitialRegionalPrices(ref regionData);
-
-            // TODO: Randomize values and flags. Their relationships are not fully understood yet so for now just initializing all to 0 and false.
             for (int i = 0; i < regionData.Length; i++)
             {
                 regionData[i].Values = new byte[29];
@@ -1251,6 +1627,12 @@ namespace DaggerfallWorkshop.Game.Entity
                 regionData[i].Flags2 = new bool[14];
                 for (int j = 0; j < 14; j++)
                     regionData[i].Flags2[j] = false;
+            }
+
+            for (int i = 0; i < 12; ++i)
+            {
+                RegionPowerAndConditionsUpdate(false);
+                RegionPowerAndConditionsUpdate(true);
             }
         }
 

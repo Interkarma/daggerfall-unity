@@ -18,8 +18,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// <summary>
     /// Regenerate
     /// </summary>
-    public class Regenerate : BaseEntityEffect
+    public class Regenerate : IncumbentEffect
     {
+        const string textDatabase = "ClassicEffects";
+
         public override void SetProperties()
         {
             properties.Key = "Regenerate";
@@ -32,22 +34,45 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.SupportMagnitude = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_All;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
-            properties.AllowedCraftingStations = EntityEffectBroker.MagicCraftingFlags_None;
+            properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
             properties.MagicSkill = DFCareer.MagicSkills.Restoration;
             properties.DurationCosts = MakeEffectCosts(100, 20);
             properties.MagnitudeCosts = MakeEffectCosts(8, 8);
+        }
+
+        public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
+        {
+            base.Start(manager, caster);
+
+            // Output "You are regenerating." if the host manager is player
+            if (manager.EntityBehaviour == GameManager.Instance.PlayerEntityBehaviour)
+            {
+                DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "youAreRegenerating"), 1.5f);
+            }
+        }
+
+        protected override bool IsLikeKind(IncumbentEffect other)
+        {
+            return (other is Regenerate);
+        }
+
+        protected override void AddState(IncumbentEffect incumbent)
+        {
+            // Stack my rounds onto incumbent
+            incumbent.RoundsRemaining += RoundsRemaining;
         }
 
         public override void MagicRound()
         {
             base.MagicRound();
 
-            //// Get peered entity gameobject
-            //DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
-            //if (!entityBehaviour)
-            //    return;
+            // Get peered entity gameobject
+            DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
+            if (!entityBehaviour)
+                return;
 
-            // TODO: Implement effect
+            // Increase target health
+            entityBehaviour.Entity.IncreaseHealth(GetMagnitude(caster));
         }
     }
 }

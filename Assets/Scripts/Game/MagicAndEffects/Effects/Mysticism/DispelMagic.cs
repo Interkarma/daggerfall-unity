@@ -16,30 +16,32 @@ using DaggerfallWorkshop.Game.Entity;
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
     /// <summary>
-    /// CureParalyzation
+    /// Dispel - Magic
     /// </summary>
-    public class CureParalyzation : BaseEntityEffect
+    public class DispelMagic : BaseEntityEffect
     {
         public override void SetProperties()
         {
-            properties.Key = "Cure-Paralyzation";
-            properties.ClassicKey = MakeClassicKey(3, 2);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "cure");
-            properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "paralyzation");
-            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1511);
-            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1211);
+            properties.Key = "Dispel-Magic";
+            properties.ClassicKey = MakeClassicKey(6, 0);
+            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "dispel");
+            properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "magic");
+            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1516);
+            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1216);
             properties.SupportChance = true;
-            properties.AllowedTargets = EntityEffectBroker.TargetFlags_All;
+            properties.AllowedTargets = EntityEffectBroker.TargetFlags_Self;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
             properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
-            properties.MagicSkill = DFCareer.MagicSkills.Restoration;
-            properties.ChanceCosts = MakeEffectCosts(20, 140);
+            properties.MagicSkill = DFCareer.MagicSkills.Mysticism;
+            properties.ChanceCosts = MakeEffectCosts(120, 180);
         }
 
         public override void MagicRound()
         {
             base.MagicRound();
-            manager.EndIncumbentEffect<Paralyze>();
+
+            // Clear all spell bundles on target - including this one
+            manager.ClearSpellBundles();
         }
     }
 }
