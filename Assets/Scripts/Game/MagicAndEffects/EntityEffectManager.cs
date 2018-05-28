@@ -238,6 +238,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// </summary>
         public void SetReadySpell(EntityEffectBundle spell)
         {
+            // Do nothing if silenced
+            if (SilenceCheck())
+                return;
+
             // Spell must appear valid
             if (spell == null || spell.Settings.Version < minAcceptedSpellVersion)
                 return;
@@ -260,6 +264,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         public void CastReadySpell()
         {
+            // Do nothing if silenced
+            if (SilenceCheck())
+                return;
+
             // Must have a ready spell
             if (readySpell == null)
                 return;
@@ -839,6 +847,22 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             {
                 return 0;
             }
+        }
+
+        bool SilenceCheck()
+        {
+            if (entityBehaviour.Entity.IsSilenced)
+            {
+                // Output "You are silenced." if the host manager is player
+                // Just to let them know why casting isn't working
+                if (entityBehaviour == GameManager.Instance.PlayerEntityBehaviour)
+                    DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "youAreSilenced"), 1.5f);
+
+                readySpell = null;
+                return true;
+            }
+
+            return false;
         }
 
         #endregion

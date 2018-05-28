@@ -54,6 +54,7 @@ namespace DaggerfallWorkshop.Game.Entity
         protected WeaponMaterialTypes minMetalToHit;
         protected sbyte[] armorValues = new sbyte[NumberBodyParts];
         protected bool isParalyzed;
+        protected bool isSilenced;
 
         bool quiesce = false;
 
@@ -82,6 +83,16 @@ namespace DaggerfallWorkshop.Game.Entity
         {
             get { return isParalyzed; }
             set { isParalyzed = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets silenced flag.
+        /// Note: This value is intentionally not serialized. It should only be set by live effects.
+        /// </summary>
+        public bool IsSilenced
+        {
+            get { return isSilenced; }
+            set { isSilenced = value; }
         }
 
         #endregion
@@ -456,6 +467,7 @@ namespace DaggerfallWorkshop.Game.Entity
         protected virtual void ResetEntityState()
         {
             isParalyzed = false;
+            isSilenced = false;
             SetEntityDefaults();
         }
 
