@@ -486,6 +486,27 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
         }
 
+        public void ClearSpellBundles()
+        {
+            foreach (InstancedBundle bundle in instancedBundles)
+            {
+                // Expire spell bundles
+                if (bundle.bundleType == BundleTypes.Spell)
+                    bundlesToRemove.Add(bundle);
+            }
+
+            // Remove any bundles pending deletion
+            if (bundlesToRemove.Count > 0)
+            {
+                foreach (InstancedBundle bundle in bundlesToRemove)
+                {
+                    RemoveBundle(bundle);
+                    Debug.LogFormat("Removing bundle {0}", bundle.GetHashCode());
+                }
+                bundlesToRemove.Clear();
+            }
+        }
+
         #endregion
 
         #region Spell Absorption
