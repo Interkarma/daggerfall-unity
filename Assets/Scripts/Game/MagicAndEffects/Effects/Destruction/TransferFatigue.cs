@@ -51,6 +51,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             int magnitude = GetMagnitude(caster);
             entityBehaviour.Entity.DecreaseFatigue(magnitude);
             caster.Entity.IncreaseFatigue(magnitude, true);
+            PlayerAggro();
         }
     }
 }

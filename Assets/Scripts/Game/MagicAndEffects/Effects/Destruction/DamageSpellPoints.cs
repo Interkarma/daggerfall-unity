@@ -12,30 +12,28 @@
 using UnityEngine;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
-using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
     /// <summary>
-    /// Transfer - Health
+    /// Damage - Spell Points
     /// </summary>
-    public class TransferHealth : BaseEntityEffect
+    public class DamageSpellPoints : BaseEntityEffect
     {
         public override void SetProperties()
         {
-            properties.Key = "Transfer-Health";
-            properties.ClassicKey = MakeClassicKey(11, 8);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "transfer");
-            properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "health");
-            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1558);
-            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1258);
+            properties.Key = "Damage-SpellPoints";
+            properties.ClassicKey = MakeClassicKey(4, 2);
+            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "damage");
+            properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "spellPoints");
+            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1514);
+            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1214);
             properties.SupportMagnitude = true;
-            properties.ShowSpellIcon = false;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_Other;
-            properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
+            properties.AllowedElements = EntityEffectBroker.ElementFlags_All;
             properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
             properties.MagicSkill = DFCareer.MagicSkills.Destruction;
-            properties.MagnitudeCosts = MakeEffectCosts(60, 100, 40);
+            properties.MagnitudeCosts = MakeEffectCosts(20, 28);
         }
 
         public override void MagicRound()
@@ -44,13 +42,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             // Get peered entity gameobject
             DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
-            if (!entityBehaviour || !caster)
+            if (!entityBehaviour)
                 return;
 
-            // Damage health on target and heal health of caster
+            // Damage spell points on target
             int magnitude = GetMagnitude(caster);
-            entityBehaviour.Entity.DecreaseHealth(magnitude);
-            caster.Entity.IncreaseHealth(magnitude);
+            entityBehaviour.Entity.DecreaseMagicka(magnitude);
             PlayerAggro();
         }
     }
