@@ -26,6 +26,7 @@ namespace DaggerfallWorkshop
         // Used to align random icon to surface marker is placed on
         public const int randomTreasureMarkerDim = 40;
 
+        public WorldContext WorldContext = WorldContext.Nothing;
         public LootContainerTypes ContainerType = LootContainerTypes.Nothing;
         public InventoryContainerImages ContainerImage = InventoryContainerImages.Chest;
         public string entityName = string.Empty;

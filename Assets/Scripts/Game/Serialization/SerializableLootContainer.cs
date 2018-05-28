@@ -63,6 +63,9 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.containerType = loot.ContainerType;
             data.containerImage = loot.ContainerImage;
             data.currentPosition = loot.transform.position;
+            data.localPosition = loot.transform.localPosition;
+            data.worldCompensation = GameManager.Instance.StreamingWorld.WorldCompensation;
+            data.worldContext = loot.WorldContext;
             data.textureArchive = loot.TextureArchive;
             data.textureRecord = loot.TextureRecord;
             data.stockedDate = loot.stockedDate;
@@ -91,8 +94,21 @@ namespace DaggerfallWorkshop.Game.Serialization
             {
                 DaggerfallBillboard billboard = loot.GetComponent<DaggerfallBillboard>();
 
-                // Restore position
-                loot.transform.position = data.currentPosition;
+                // Interiors and exteriors need special handling to ensure loot is always placed correctly for pre and post floating y saves
+                // Dungeons are not involved with floating y and don't need any changes
+                WorldContext lootContext = GetLootWorldContext(loot);
+                if (lootContext == WorldContext.Interior)
+                {
+                    RestoreInteriorPositionHandler(loot, data, lootContext);
+                }
+                else if (lootContext == WorldContext.Exterior)
+                {
+                    RestoreExteriorPositionHandler(loot, data, lootContext);
+                }
+                else
+                {
+                    loot.transform.position = data.currentPosition;
+                }
 
                 // Restore appearance
                 if (MeshReplacement.ImportCustomFlatGameobject(data.textureArchive, data.textureRecord, Vector3.zero, loot.transform))
@@ -130,6 +146,62 @@ namespace DaggerfallWorkshop.Game.Serialization
         #endregion
 
         #region Private Methods
+
+        void RestoreExteriorPositionHandler(DaggerfallLoot loot, LootContainerData_v1 data, WorldContext lootContext)
+        {
+            // If loot context matches serialized world context then loot was saved after floating y change
+            // Need to get relative difference between current and serialized world compensation to get actual y position
+            if (lootContext == data.worldContext)
+            {
+                float diffY = GameManager.Instance.StreamingWorld.WorldCompensation.y - data.worldCompensation.y;
+                loot.transform.position = data.currentPosition + new Vector3(0, diffY, 0);
+                return;
+            }
+
+            // Otherwise we migrate a legacy exterior position by adjusting for world compensation
+            loot.transform.position = data.currentPosition + GameManager.Instance.StreamingWorld.WorldCompensation;
+        }
+
+        void RestoreInteriorPositionHandler(DaggerfallLoot loot, LootContainerData_v1 data, WorldContext lootContext)
+        {
+            // If loot context matches serialized world context then loot was saved after floating y change
+            // Can simply restore local position relative to parent interior
+            if (lootContext == data.worldContext)
+            {
+                loot.transform.localPosition = data.localPosition;
+                return;
+            }
+
+            // Otherwise we need to migrate a legacy interior position to floating y
+            if (GameManager.Instance.PlayerEnterExit.LastInteriorStartFlag)
+            {
+                // Loading interior uses serialized absolute position (as interior also serialized this way)
+                loot.transform.position = data.currentPosition;
+            }
+            else
+            {
+                // Transition to interior must offset serialized absolute position by floating y compensation
+                loot.transform.position = data.currentPosition + GameManager.Instance.StreamingWorld.WorldCompensation;
+            }
+        }
+
+        WorldContext GetLootWorldContext(DaggerfallLoot loot)
+        {
+            // Must be a parented loot container
+            if (!loot || !loot.transform.parent)
+                return WorldContext.Nothing;
+
+            // Interior
+            if (loot.transform.parent.GetComponentInParent<DaggerfallInterior>())
+                return WorldContext.Interior;
+
+            // Dungeon
+            if (loot.transform.parent.GetComponentInParent<DaggerfallDungeon>())
+                return WorldContext.Dungeon;
+
+            // Exterior (loose world object)
+            return WorldContext.Exterior;
+        }
 
         bool HasChanged()
         {

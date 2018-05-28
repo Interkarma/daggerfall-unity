@@ -303,10 +303,10 @@ namespace DaggerfallWorkshop.Game.Utility
                 GameObject terrainObject = GameManager.Instance.StreamingWorld.GetTerrainFromPixel(dfLocation.Summary.MapPixelX, dfLocation.Summary.MapPixelY);
                 if (terrainObject)
                 {
-                    // Sample actual terrain height at this scene position for Y
+                    // Sample actual terrain height at this scene position for Y and adjust for world compensation
                     Terrain terrain = terrainObject.GetComponent<Terrain>();
                     float height = terrain.SampleHeight(result);
-                    result.y = height;
+                    result.y = height + GameManager.Instance.StreamingWorld.WorldCompensation.y;
                 }
             }
 
