@@ -706,9 +706,9 @@ namespace DaggerfallWorkshop.Game.Entity
             currentHealth = Mathf.Clamp(amount, 0, MaxHealth);
             if (currentHealth <= 0)
             {
-                // Players can have avoid death benefit from guild memberships
+                // Players can have avoid death benefit from guild memberships, leaves them on 10% hp
                 if (GameManager.Instance.GuildManager.AvoidDeath())
-                    return currentHealth = 1;
+                    return currentHealth = (int) (MaxHealth * 0.1f);
                 else
                     RaiseOnDeathEvent();
             }
