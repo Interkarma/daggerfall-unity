@@ -32,7 +32,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.SupportMagnitude = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_All;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
-            properties.AllowedCraftingStations = EntityEffectBroker.MagicCraftingFlags_None;
+            properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
             properties.MagicSkill = DFCareer.MagicSkills.Restoration;
             properties.DurationCosts = MakeEffectCosts(100, 20);
             properties.MagnitudeCosts = MakeEffectCosts(8, 8);
@@ -42,12 +42,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             base.MagicRound();
 
-            //// Get peered entity gameobject
-            //DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
-            //if (!entityBehaviour)
-            //    return;
+            // Get peered entity gameobject
+            DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
+            if (!entityBehaviour)
+                return;
 
-            // TODO: Implement effect
+            // Increase target health
+            entityBehaviour.Entity.IncreaseHealth(GetMagnitude(caster));
         }
     }
 }
