@@ -22,6 +22,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public abstract class TransferEffect : DrainEffect
     {
+        protected override bool IsLikeKind(IncumbentEffect other)
+        {
+            return (other is TransferEffect && (other as TransferEffect).drainStat == drainStat) ? true : false;
+        }
+
         protected override void BecomeIncumbent()
         {
             base.BecomeIncumbent();

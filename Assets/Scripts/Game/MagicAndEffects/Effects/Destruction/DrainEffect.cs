@@ -66,7 +66,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         protected override void BecomeIncumbent()
         {
-            lastMagnitudeIncreaseAmount = IncreaseMagnitude(GetMagnitude(caster));
+            lastMagnitudeIncreaseAmount = GetMagnitude(caster);
+            IncreaseMagnitude(lastMagnitudeIncreaseAmount);
             ShowPlayerDrained();
         }
 
@@ -75,7 +76,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             if (forcedRoundsRemaining == 0)
                 return;
 
-            lastMagnitudeIncreaseAmount = (incumbent as DrainEffect).IncreaseMagnitude(GetMagnitude(caster));
+            lastMagnitudeIncreaseAmount = GetMagnitude(caster);
+            (incumbent as DrainEffect).IncreaseMagnitude(lastMagnitudeIncreaseAmount);
             ShowPlayerDrained();
         }
 
