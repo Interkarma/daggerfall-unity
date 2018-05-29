@@ -145,6 +145,8 @@ namespace DaggerfallWorkshop.Utility
                                 break;
                             }
                         }
+                        if (a[a.Length - 1] == '.')
+                            a = a.Remove(a.Length - 1); // remove character '.' from castle text record entry if it is last character
                     }
                     else
                     {
