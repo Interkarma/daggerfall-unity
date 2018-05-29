@@ -177,8 +177,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// </summary>
         private void AddWindow(UserInterfaceWindow window)
         {
-            DaggerfallUI.Instance.ClearRenderTarget();
-
             windows.Push(window);
             window.OnPush();
             if(window.PauseWhileOpen && GameManager.HasInstance)
@@ -190,8 +188,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// </summary>
         private void RemoveWindow()
         {
-            DaggerfallUI.Instance.ClearRenderTarget();
-
             UserInterfaceWindow oldWindow = TopWindow;
             if (oldWindow != null)
             {

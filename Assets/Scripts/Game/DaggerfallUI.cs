@@ -64,7 +64,6 @@ namespace DaggerfallWorkshop.Game
         DaggerfallSongPlayer dfSongPlayer;
         UserInterfaceManager uiManager = new UserInterfaceManager();
         UserInterfaceRenderTarget renderTarget = null;
-        Texture2D clearTexture;
 
         SpellIconCollection spellIconCollection;
 
@@ -254,8 +253,6 @@ namespace DaggerfallWorkshop.Game
 
         void Awake()
         {
-            clearTexture = CreateSolidTexture(Color.clear, 8);
-
             dfUnity = DaggerfallUnity.Instance;
             audioSource = GetComponent<AudioSource>();
             audioSource.spatialBlend = 0;
@@ -342,6 +339,9 @@ namespace DaggerfallWorkshop.Game
 
         void OnGUI()
         {
+            RenderTexture oldRenderTexture = RenderTexture.active;
+            RenderTexture.active = RenderTarget.BackBufferTexture;
+
             // Store key downs for alternate input (e.g. text box input)
             // Possible to get multiple keydown events per frame, one with character, one with keycode
             // Only accept character or keycode if valid
@@ -354,13 +354,11 @@ namespace DaggerfallWorkshop.Game
                     lastKeyCode = Event.current.keyCode;
             }
 
+            if (Event.current.type != EventType.Repaint)
+                return;
+
             // Set depth of GUI to appear on top of other elements
             GUI.depth = 0;
-
-            // Clear render target before drawing rest of UI stack
-            //RenderTarget.DrawTexture(RenderTarget.TargetRect, clearTexture, ScaleMode.StretchToFill);
-            //RenderTarget.DrawTextureWithTexCoords(RenderTarget.TargetRect, clearTexture, new Rect(0, 0, 1, 1), true);
-            //Graphics.Blit(clearTexture, RenderTarget.TargetTexture);
 
             // Draw top window
             if (uiManager.TopWindow != null)
@@ -374,6 +372,9 @@ namespace DaggerfallWorkshop.Game
                 Vector2 versionTextPos = new Vector2(Screen.width - versionTextWidth, 0);
                 versionFont.DrawText(versionText, versionTextPos, versionTextScaleVector2, versionTextColor);
             }
+
+            RenderTexture.active = oldRenderTexture;
+            RenderTarget.Present();
         }
 
         void ProcessMessages()
@@ -725,11 +726,6 @@ namespace DaggerfallWorkshop.Game
             fadeTimer = 0;
             fadeTotalTime = 0;
             fadeInProgress = false;
-        }
-        
-        public void ClearRenderTarget()
-        {
-            Graphics.Blit(clearTexture, RenderTarget.TargetTexture);
         }
 
         #endregion
