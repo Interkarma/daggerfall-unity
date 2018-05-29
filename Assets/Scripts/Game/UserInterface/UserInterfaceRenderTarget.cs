@@ -139,25 +139,25 @@ namespace DaggerfallWorkshop.Game.UserInterface
             targetTexture.name = string.Format("DaggerfallUI RenderTexture {0}", createCount++);
             targetTexture.Create();
             targetRect = new Rect(0, 0, width, height);
-            UpdateNonDiageticOutput();
+            UpdateNonDiegeticOutput();
             RaiseOnCreateTargetTexture();
 
             Debug.LogFormat("Created UI RenderTexture with dimensions {0}, {1}", width, height);
         }
 
-        void UpdateNonDiageticOutput()
+        void UpdateNonDiegeticOutput()
         {
             // Must be able to find output canvas object
-            GameObject nonDiageticUIOutput = GameManager.Instance.NonDiageticUIOutput;
-            if (!nonDiageticUIOutput)
+            GameObject nonDiegeticUIOutput = GameManager.Instance.NonDiegeticUIOutput;
+            if (!nonDiegeticUIOutput)
                 return;
 
             // Output canvas object must be active
-            if (!nonDiageticUIOutput.activeInHierarchy)
+            if (!nonDiegeticUIOutput.activeInHierarchy)
                 return;
 
             // Get raw image component
-            RawImage rawImage = nonDiageticUIOutput.GetComponent<RawImage>();
+            RawImage rawImage = nonDiegeticUIOutput.GetComponent<RawImage>();
             if (!rawImage)
                 return;
 
