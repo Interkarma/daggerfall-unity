@@ -1080,15 +1080,20 @@ namespace DaggerfallWorkshop.Game
                 else // in dungeon
                 {
                     DaggerfallDungeon.DungeonSummary ds = GameManager.Instance.PlayerEnterExit.Dungeon.Summary;
-                    string castleName = "";
+                    string dungeonName = "";
                     if (ds.RegionName == "Daggerfall" && ds.LocationName == "Daggerfall")
-                        castleName = ExpandRandomTextRecord(475);
+                        dungeonName = ExpandRandomTextRecord(475);
                     else if (ds.RegionName == "Wayrest" && ds.LocationName == "Wayrest")
-                        castleName = ExpandRandomTextRecord(476);
+                        dungeonName = ExpandRandomTextRecord(476);
                     else if (ds.RegionName == "Sentinel" && ds.LocationName == "Sentinel")
-                        castleName = ExpandRandomTextRecord(477);
-                    castleName = castleName.Remove(castleName.Length-1); // remove character '.' from castle text record entry
-                    return String.Format(TextManager.Instance.GetText(textDatabase, "AnswerTextWhereAmI"), castleName, GameManager.Instance.PlayerEnterExit.Dungeon.Summary.RegionName);
+                        dungeonName = ExpandRandomTextRecord(477);
+                    else
+                    {
+                        dungeonName = GameManager.Instance.PlayerEnterExit.Dungeon.Summary.LocationName;
+                    }
+                    if (dungeonName[dungeonName.Length - 1] == '.')
+                        dungeonName = dungeonName.Remove(dungeonName.Length - 1); // remove character '.' from castle text record entry
+                    return String.Format(TextManager.Instance.GetText(textDatabase, "AnswerTextWhereAmI"), dungeonName, GameManager.Instance.PlayerEnterExit.Dungeon.Summary.RegionName);
                 }
             }
             else
@@ -1373,7 +1378,42 @@ namespace DaggerfallWorkshop.Game
                 else
                     listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.DoesNotKnowAboutItem;
             }
-            
+
+            // test if npc is asked about building and is in the same building -> then he/she should know about building
+            if (listItem.questionType == QuestionType.LocalBuilding || listItem.questionType == QuestionType.QuestLocation)
+            {
+                if (GameManager.Instance.IsPlayerInside)
+                {
+                    if (GameManager.Instance.PlayerEnterExit.ExteriorDoors.Length > 0 && listItem.buildingKey == GameManager.Instance.PlayerEnterExit.ExteriorDoors[0].buildingKey)
+                    {
+                        listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.KnowsAboutItem;
+                    }
+                    else // in dungeon
+                    {
+                        DaggerfallDungeon.DungeonSummary ds = GameManager.Instance.PlayerEnterExit.Dungeon.Summary;
+                        string dungeonName = "";
+                        if (ds.RegionName == "Daggerfall" && ds.LocationName == "Daggerfall")
+                            dungeonName = ExpandRandomTextRecord(475);
+                        else if (ds.RegionName == "Wayrest" && ds.LocationName == "Wayrest")
+                            dungeonName = ExpandRandomTextRecord(476);
+                        else if (ds.RegionName == "Sentinel" && ds.LocationName == "Sentinel")
+                            dungeonName = ExpandRandomTextRecord(477);
+                        else
+                        {
+                            dungeonName = GameManager.Instance.PlayerEnterExit.Dungeon.Summary.LocationName;
+                        }
+                        if (dungeonName[dungeonName.Length-1] == '.')
+                            dungeonName = dungeonName.Remove(dungeonName.Length - 1); // remove character '.' from castle text record entry
+
+                        if (dungeonName == listItem.caption)
+                        {
+                            listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.KnowsAboutItem;
+                        }
+                    }
+                }
+            }
+
+
             if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.DoesNotKnowAboutItem)
             {
                 // messages if npc does not know
