@@ -14,6 +14,7 @@ using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Utility;
 using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
@@ -197,8 +198,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         // Checks if player is in same building or dungeon interior as anchor
         bool IsSameInterior()
         {
-            // Reject if outside
-            if (!playerEnterExit.IsPlayerInside)
+            // Reject if outside or anchor not set
+            if (!playerEnterExit.IsPlayerInside || anchorPosition == null)
                 return false;
 
             // Test depends on if player is inside a building or a dungeon

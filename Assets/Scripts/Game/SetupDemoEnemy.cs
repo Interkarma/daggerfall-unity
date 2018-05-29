@@ -93,6 +93,9 @@ namespace DaggerfallWorkshop.Game
                     EnemyEntity entity = new EnemyEntity();
                     entityBehaviour.Entity = entity;
 
+                    // Enemies are initially added to same world context as player
+                    entity.WorldContext = GameManager.Instance.PlayerEnterExit.WorldContext;
+
                     int enemyIndex = (int)EnemyType;
                     if (enemyIndex >= 0 && enemyIndex <= 42)
                     {

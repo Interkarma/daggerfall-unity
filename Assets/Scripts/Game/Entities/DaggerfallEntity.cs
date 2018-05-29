@@ -46,6 +46,7 @@ namespace DaggerfallWorkshop.Game.Entity
         protected DaggerfallResistances resistances = new DaggerfallResistances();
         protected ItemCollection items = new ItemCollection();
         protected ItemEquipTable equipTable = new ItemEquipTable();
+        protected WorldContext worldContext = WorldContext.Nothing;
         protected int maxHealth;
         protected int currentHealth;
         protected int currentFatigue;
@@ -93,6 +94,15 @@ namespace DaggerfallWorkshop.Game.Entity
         {
             get { return isSilenced; }
             set { isSilenced = value; }
+        }
+
+        /// Gets or sets world context of this entity for floating origin support.
+        /// Not required by all systems but this is a nice central place for mobiles.
+        /// </summary>
+        public WorldContext WorldContext
+        {
+            get { return worldContext; }
+            set { worldContext = value; }
         }
 
         #endregion

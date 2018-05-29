@@ -1169,7 +1169,7 @@ namespace DaggerfallWorkshop
                 // Get target position at terrain height + player standing height
                 // This is our minimum height before player falls through world
                 Vector3 targetPosition = new Vector3(position.x, 0, position.z);
-                float height = terrain.SampleHeight(targetPosition + terrain.transform.position);// + worldCompensation.y;
+                float height = terrain.SampleHeight(targetPosition + terrain.transform.position) + worldCompensation.y;
                 targetPosition.y = height + controller.height / 2f + 0.15f;
 
                 // If desired position is higher then minimum position then we can safely use that

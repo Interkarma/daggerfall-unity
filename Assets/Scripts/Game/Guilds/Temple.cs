@@ -441,10 +441,9 @@ namespace DaggerfallWorkshop.Game.Guilds
         {
             if (deity == Divines.Stendarr &&
                 !GameManager.Instance.PlayerEnterExit.IsPlayerSubmerged &&
-                UnityEngine.Random.Range(1, 50) < rank)
+                UnityEngine.Random.Range(0, 50) < rank)
             {
-                Debug.LogFormat("Stendarr AvoidDeath= success");
-                // TODO: what is "weaker state" is it more than being left on 1 health?
+                DaggerfallUI.AddHUDText(HardStrings.avoidDeath);
                 return true;
             }
             return false;

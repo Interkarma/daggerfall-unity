@@ -198,6 +198,9 @@ namespace DaggerfallWorkshop.Game.Serialization
     public class PlayerPositionData_v1
     {
         public Vector3 position;
+        public Vector3 worldCompensation;
+        public WorldContext worldContext;
+        public int floatingOriginVersion;
         public float yaw;
         public float pitch;
         public bool isCrouching;
@@ -314,7 +317,10 @@ namespace DaggerfallWorkshop.Game.Serialization
         public ulong loadID;
         public string gameObjectName;
         public Vector3 currentPosition;
+        public Vector3 localPosition;
         public Quaternion currentRotation;
+        public WorldContext worldContext;
+        public Vector3 worldCompensation;
         public bool isDead;
         public int startingHealth;
         public int currentHealth;
@@ -340,12 +346,12 @@ namespace DaggerfallWorkshop.Game.Serialization
     public class LootContainerData_v1
     {
         public ulong loadID;
-        //public int worldKey;
-        //public WorldContext worldContext;
+        public WorldContext worldContext;
         public LootContainerTypes containerType;
         public InventoryContainerImages containerImage;
         public Vector3 currentPosition;
-        //public Vector3 localPosition;
+        public Vector3 localPosition;
+        public Vector3 worldCompensation;
         public int textureArchive;
         public int textureRecord;
         public string lootTableKey;
