@@ -31,7 +31,7 @@ namespace DaggerfallWorkshop.Utility
 
         public const int floatingOriginVersion = 3;
 
-        const float verticalThreshold = 800f;
+        const float verticalThreshold = 500f;
 
         public StreamingWorld StreamingWorld;
         public GameObject Player;
