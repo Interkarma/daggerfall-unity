@@ -13,6 +13,8 @@ southeast,                      southeast
 AnyNews,                        Any news?
 WhereAmI,                       Where am I?
 AnswerTextWhereAmI,             You are in {0} in {1}.
+YouAreInSameBuilding,           You have found {0}. You are in it.
+NpcInSameBuilding,              {0} is around here in {1}.
 PreviousList,                   Previous List
 General,                        General
 Regional,                       Regional

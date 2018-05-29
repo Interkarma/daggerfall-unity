@@ -289,6 +289,7 @@ namespace DaggerfallWorkshop.Game
             public QuestionType questionType = QuestionType.NoQuestion; // the question type of the entry (see description of QuestionType)
             public NPCKnowledgeAboutItem npcKnowledgeAboutItem = NPCKnowledgeAboutItem.NotSet; // the knowledge of the current npc talk partner about this topic
             public int buildingKey = -1; // used for listitems that are buildings to identify buildings
+            public bool npcInSameBuildingAsTopic = false; // used for listitems that are buildings to mark if npc talk partner is in very same building (and thus should always give an answer)
             public ulong questID = 0; // the questID of the quest to which this ListItem belongs to (if this ListItem belongs to a topic/question about a quest resource)
             public int index = -1; // the index of the ListItem in the topic list (e.g. 2nd entry of the topic list - every ListItem belongs to a certain topic list)
             public List<ListItem> listChildItems = null; // null if type == ListItemType.Navigation or ListItemType.Item, only contains a list if type == ListItemType.ItemGroup
@@ -1077,7 +1078,7 @@ namespace DaggerfallWorkshop.Game
                         return String.Format(TextManager.Instance.GetText(textDatabase, "AnswerTextWhereAmI"), currentBuilding.name, GameManager.Instance.PlayerGPS.CurrentLocation.Name);
                     }
                 }
-                else // in dungeon
+                else if (GameManager.Instance.IsPlayerInsideCastle || GameManager.Instance.IsPlayerInsideDungeon) // in dungeon
                 {
                     DaggerfallDungeon.DungeonSummary ds = GameManager.Instance.PlayerEnterExit.Dungeon.Summary;
                     string dungeonName = "";
@@ -1238,8 +1239,10 @@ namespace DaggerfallWorkshop.Game
         public string GetKeySubjectLocationDirection()
         {
             string answer;
+
             markLocationOnMap = false; // when preprocessing messages in ExpandRandomTextRecord() do not reveal location accidentally (no %loc macro resolving)
             answer = ExpandRandomTextRecord(7333);
+
             return answer;
         }
 
@@ -1379,7 +1382,7 @@ namespace DaggerfallWorkshop.Game
                     listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.DoesNotKnowAboutItem;
             }
 
-            // test if npc is asked about building and is in the same building -> then he/she should know about building
+            // test if npc is asked about building and is in the same building (also for quest persons) -> then he/she should know about building
             if (listItem.questionType == QuestionType.LocalBuilding || listItem.questionType == QuestionType.QuestLocation)
             {
                 if (GameManager.Instance.IsPlayerInside)
@@ -1387,8 +1390,9 @@ namespace DaggerfallWorkshop.Game
                     if (GameManager.Instance.PlayerEnterExit.ExteriorDoors.Length > 0 && listItem.buildingKey == GameManager.Instance.PlayerEnterExit.ExteriorDoors[0].buildingKey)
                     {
                         listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.KnowsAboutItem;
+                        listItem.npcInSameBuildingAsTopic = true;
                     }
-                    else // in dungeon
+                    else if (GameManager.Instance.IsPlayerInsideCastle || GameManager.Instance.IsPlayerInsideDungeon) // in dungeon
                     {
                         DaggerfallDungeon.DungeonSummary ds = GameManager.Instance.PlayerEnterExit.Dungeon.Summary;
                         string dungeonName = "";
@@ -1408,6 +1412,7 @@ namespace DaggerfallWorkshop.Game
                         if (dungeonName == listItem.caption)
                         {
                             listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.KnowsAboutItem;
+                            listItem.npcInSameBuildingAsTopic = true;
                         }
                     }
                 }
@@ -1428,6 +1433,30 @@ namespace DaggerfallWorkshop.Game
             }
             else
             {
+                // check if npc is in same building if topic is building
+                if (currentQuestionListItem.questionType == QuestionType.LocalBuilding && currentQuestionListItem.npcInSameBuildingAsTopic)
+                    return String.Format(TextManager.Instance.GetText(textDatabase, "YouAreInSameBuilding"), currentQuestionListItem.caption);
+
+                // check if npc is in same building as quest person when asking about quest person via "Where is"->"Person"
+                if (currentQuestionListItem.questionType == QuestionType.Person)
+                {
+                    string key = currentQuestionListItem.key;
+                    int buildingKey = GameManager.Instance.TalkManager.GetBuildingKeyForPersonResource(currentQuestionListItem.questID, key);
+
+                    if (GameManager.Instance.IsPlayerInside && GameManager.Instance.PlayerEnterExit.ExteriorDoors.Length > 0 && buildingKey == GameManager.Instance.PlayerEnterExit.ExteriorDoors[0].buildingKey)
+                    {
+                        currentQuestionListItem.npcInSameBuildingAsTopic = true;
+
+                        string buildingName = GameManager.Instance.TalkManager.GetBuildingNameForBuildingKey(buildingKey);
+
+                        if (buildingName != string.Empty)
+                            return String.Format(TextManager.Instance.GetText(textDatabase, "NpcInSameBuilding"), currentQuestionListItem.caption, buildingName);
+                        else
+                            return TextManager.Instance.GetText(textDatabase, "resolvingError");
+                    }
+                }
+
+
                 // location related messages if npc knows
                 if (reactionToPlayer >= 30)
                     return getRecordIdByNpcsSocialGroup(veryLikePlayerAnswerWhereIsDefault, veryLikePlayerAnswerWhereIsGuildMembers, veryLikePlayerAnswerWhereIsMerchants, veryLikePlayerAnswerWhereIsScholars, veryLikePlayerAnswerWhereIsNobility, veryLikePlayerAnswerWhereIsUnderworld);
@@ -1911,6 +1940,18 @@ namespace DaggerfallWorkshop.Game
             else if (matchingBuildings.Count > 1 )
                 throw new Exception(String.Format("GetBuildingTypeForBuildingKey(): more than one building with the queried key found"));
             return matchingBuildings[0].buildingType;
+        }
+
+        public string GetBuildingNameForBuildingKey(int buildingKey)
+        {
+            if (listBuildings == null)
+                GetBuildingList();
+            List<BuildingInfo> matchingBuildings = listBuildings.FindAll(x => x.buildingKey == buildingKey);
+            if (matchingBuildings.Count == 0)
+                throw new Exception(String.Format("GetBuildingNameForBuildingKey(): no building with the queried key found"));
+            else if (matchingBuildings.Count > 1)
+                throw new Exception(String.Format("GetBuildingNameForBuildingKey(): more than one building with the queried key found"));
+            return matchingBuildings[0].name;
         }
 
         public bool IsBuildingQuestResource(int buildingKey, ref string overrideBuildingName, ref bool pcLearnedAboutExistence, ref bool receivedDirectionalHints, ref bool locationWasMarkedOnMapByNPC)
@@ -2456,6 +2497,7 @@ namespace DaggerfallWorkshop.Game
             for (int i = 0; i < list.Count; i++)
             {
                 list[i].npcKnowledgeAboutItem = NPCKnowledgeAboutItem.NotSet;
+                list[i].npcInSameBuildingAsTopic = false;
                 if (list[i].type == ListItemType.ItemGroup && list[i].listChildItems != null)
                     ResetNPCKnowledgeInTopicListRecursively(list[i].listChildItems);
             }
