@@ -339,9 +339,6 @@ namespace DaggerfallWorkshop.Game
 
         void OnGUI()
         {
-            RenderTexture oldRenderTexture = RenderTexture.active;
-            RenderTexture.active = RenderTarget.BackBufferTexture;
-
             // Store key downs for alternate input (e.g. text box input)
             // Possible to get multiple keydown events per frame, one with character, one with keycode
             // Only accept character or keycode if valid
@@ -373,7 +370,6 @@ namespace DaggerfallWorkshop.Game
                 versionFont.DrawText(versionText, versionTextPos, versionTextScaleVector2, versionTextColor);
             }
 
-            RenderTexture.active = oldRenderTexture;
             RenderTarget.Present();
         }
 

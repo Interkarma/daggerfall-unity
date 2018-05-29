@@ -131,7 +131,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (!IsReady(GetBackBufferTexture()))
                 return;
 
+            RenderTexture oldRt = RenderTexture.active;
+            RenderTexture.active = BackBufferTexture;
+
             GUI.DrawTexture(position, image);
+
+            RenderTexture.active = oldRt;
         }
 
         public void DrawTexture(Rect position, Texture2D image, ScaleMode scaleMode, bool alphaBlend = true, float imageAspect = 0)
@@ -139,7 +144,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (!IsReady(GetBackBufferTexture()))
                 return;
 
+            RenderTexture oldRt = RenderTexture.active;
+            RenderTexture.active = BackBufferTexture;
+
             GUI.DrawTexture(position, image, scaleMode, alphaBlend);
+
+            RenderTexture.active = oldRt;
         }
 
         public void DrawTextureWithTexCoords(Rect position, Texture image, Rect texCoords, bool alphaBlend = true)
@@ -147,7 +157,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (!IsReady(GetBackBufferTexture()))
                 return;
 
+            RenderTexture oldRt = RenderTexture.active;
+            RenderTexture.active = BackBufferTexture;
+
             GUI.DrawTextureWithTexCoords(position, image, texCoords, alphaBlend);
+
+            RenderTexture.active = oldRt;
         }
 
         #endregion
