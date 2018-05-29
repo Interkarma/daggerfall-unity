@@ -63,6 +63,8 @@ namespace DaggerfallWorkshop.Game
         DaggerfallAudioSource dfAudioSource;
         DaggerfallSongPlayer dfSongPlayer;
         UserInterfaceManager uiManager = new UserInterfaceManager();
+        UserInterfaceRenderTarget renderTarget = null;
+        Texture2D clearTexture;
 
         SpellIconCollection spellIconCollection;
 
@@ -123,6 +125,11 @@ namespace DaggerfallWorkshop.Game
         public static DaggerfallFont DefaultFont { get { return Instance.GetFont(4); } }
         
         public static IUserInterfaceManager UIManager { get { return Instance.uiManager; } }
+
+        public UserInterfaceRenderTarget RenderTarget
+        {
+            get { return (renderTarget) ? renderTarget : renderTarget = GetComponent<UserInterfaceRenderTarget>(); }
+        }
 
         public bool FadeInProgress
         {
@@ -247,6 +254,8 @@ namespace DaggerfallWorkshop.Game
 
         void Awake()
         {
+            clearTexture = CreateSolidTexture(Color.clear, 8);
+
             dfUnity = DaggerfallUnity.Instance;
             audioSource = GetComponent<AudioSource>();
             audioSource.spatialBlend = 0;
@@ -347,6 +356,11 @@ namespace DaggerfallWorkshop.Game
 
             // Set depth of GUI to appear on top of other elements
             GUI.depth = 0;
+
+            // Clear render target before drawing rest of UI stack
+            //RenderTarget.DrawTexture(RenderTarget.TargetRect, clearTexture, ScaleMode.StretchToFill);
+            //RenderTarget.DrawTextureWithTexCoords(RenderTarget.TargetRect, clearTexture, new Rect(0, 0, 1, 1), true);
+            //Graphics.Blit(clearTexture, RenderTarget.TargetTexture);
 
             // Draw top window
             if (uiManager.TopWindow != null)
@@ -711,6 +725,11 @@ namespace DaggerfallWorkshop.Game
             fadeTimer = 0;
             fadeTotalTime = 0;
             fadeInProgress = false;
+        }
+        
+        public void ClearRenderTarget()
+        {
+            Graphics.Blit(clearTexture, RenderTarget.TargetTexture);
         }
 
         #endregion
@@ -1093,6 +1112,23 @@ namespace DaggerfallWorkshop.Game
             messageBox.ClickAnywhereToClose = true;
             messageBox.Show();
             return messageBox;
+        }
+
+        public static Texture2D CreateSolidTexture(Color color, int dim)
+        {
+            Texture2D texture = null;
+
+            texture = new Texture2D(dim, dim);
+            Color32[] colors = new Color32[dim * dim];
+            for (int i = 0; i < colors.Length; i++)
+            {
+                colors[i] = color;
+            }
+            texture.SetPixels32(colors);
+            texture.Apply(false, true);
+            texture.filterMode = FilterMode.Point;
+
+            return texture;
         }
 
         #endregion

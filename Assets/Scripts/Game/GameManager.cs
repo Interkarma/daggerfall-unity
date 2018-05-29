@@ -82,6 +82,7 @@ namespace DaggerfallWorkshop.Game
         TalkManager talkManager = null;
         GuildManager guildManager = null;
         QuestListsManager questListsManager = null;
+        GameObject nonDiageticUI = null;
 
         #endregion
 
@@ -374,6 +375,12 @@ namespace DaggerfallWorkshop.Game
         public bool IsPlayerInsideCastle
         {
             get { return PlayerEnterExit.IsPlayerInsideDungeonCastle; }
+        }
+
+        public GameObject NonDiageticUIOutput
+        {
+            get { return (nonDiageticUI) ? nonDiageticUI : nonDiageticUI = GetGameObjectWithName("NonDiageticUIOutput"); }
+            set { nonDiageticUI = value; }
         }
 
         #endregion

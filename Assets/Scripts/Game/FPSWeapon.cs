@@ -99,9 +99,9 @@ namespace DaggerfallWorkshop.Game
                 GUI.depth = 1;
                 Texture2D tex;
                 if (CustomTextures.TryGetValue((int)weaponState + "-" + currentFrame, out tex))
-                    GUI.DrawTexture(weaponPosition, tex);
+                    DaggerfallUI.Instance.RenderTarget.DrawTexture(weaponPosition, tex);
                 else
-                    GUI.DrawTextureWithTexCoords(weaponPosition, weaponAtlas, curAnimRect);
+                    DaggerfallUI.Instance.RenderTarget.DrawTextureWithTexCoords(weaponPosition, weaponAtlas, curAnimRect);
             }
         }
 
