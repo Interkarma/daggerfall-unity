@@ -11,6 +11,8 @@ southwest,                      southwest
 south,                          south
 southeast,                      southeast
 AnyNews,                        Any news?
+WhereAmI,                       Where am I?
+AnswerTextWhereAmI,             You are in {0} in {1}.
 PreviousList,                   Previous List
 General,                        General
 Regional,                       Regional
