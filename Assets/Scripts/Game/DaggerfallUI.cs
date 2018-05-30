@@ -364,7 +364,7 @@ namespace DaggerfallWorkshop.Game
             // Set depth of GUI to appear on top of other elements
             GUI.depth = 0;
 
-            RenderTarget.ClearTargetTexture();
+            RenderTarget.Clear();
 
             // Draw top window
             if (uiManager.TopWindow != null)

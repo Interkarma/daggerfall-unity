@@ -23,7 +23,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         int createCount = 0;
         RenderTexture targetTexture = null;
-        Texture2D clearTexture = null;
         Rect targetRect = new Rect();
 
         #endregion
@@ -53,7 +52,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         private void Awake()
         {
             targetTexture = CheckTargetTexture(targetTexture);
-            clearTexture = DaggerfallUI.CreateSolidTexture(Color.clear, 8);
             UpdateNonDiegeticOutput();
         }
 
@@ -64,19 +62,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #endregion
 
-        #region Public Methods
-
-        /// <summary>
-        /// Sets the target texture to clear.
-        /// </summary>
-        public void ClearTargetTexture()
-        {
-            Graphics.Blit(clearTexture, targetTexture);
-        }
-
-        #endregion
-
         #region Drawing Methods
+
+        public void Clear()
+        {
+            GL.Clear(true, true, Color.clear);
+        }
 
         public void DrawTexture(Rect position, Texture2D image)
         {

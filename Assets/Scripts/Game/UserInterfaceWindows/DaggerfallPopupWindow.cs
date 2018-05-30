@@ -23,14 +23,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         IUserInterfaceWindow previousWindow;
 
-        Color screenDimColor = new Color32(0, 0, 0, 128);
+        //Color screenDimColor = new Color32(0, 0, 0, 128);
+        Color screenDimColor = Color.clear;
         bool allowCancel = true;
         bool cancelled = false;
 
         public Color ScreenDimColor
         {
             get { return GetScreenDimColor(); }
-            set { screenDimColor = value; }
+            set { screenDimColor = Color.clear;/*value*/; }
         }
 
         public bool AllowCancel
@@ -54,7 +55,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             : base(uiManager, screenWidth, screenHeight)
         {
             this.previousWindow = previousWindow;
-            this.screenDimColor.a = DaggerfallUnity.Settings.DimAlphaStrength;
+            this.screenDimColor.a = 0; //DaggerfallUnity.Settings.DimAlphaStrength;
         }
 
         protected override void Setup()

@@ -561,7 +561,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   limitDiagonalSpeed: 1
-  toggleRun: 0
   systemTimerUpdatesPerSecond: 0.055
   smoothFollower: {fileID: 4832112164805246}
   smoothFollowerLerpSpeed: 25
@@ -587,7 +586,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2c69e8292036a13498bf8d5749391b75, type: 3}
   m_Name: 
@@ -1041,7 +1040,6 @@ MonoBehaviour:
   crouchingJumpDelta: 0.8
   fallingDamageThreshold: 10
   airControl: 0
-  antiBunnyHopFactor: 1
 --- !u!114 &114121517922970790
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1101,6 +1099,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 923e44bd2b461494586a0930c79739f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  toggleRun: 0
   walkSpeedOverride: 6
   useWalkSpeedOverride: 0
   runSpeedOverride: 11
@@ -1292,14 +1291,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a5e1a08077a1254c9fa89e62375a542, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  restPos: {x: 0, y: 0, z: 0}
-  transitionSpeed: 10
-  bobSpeed: 0
-  bobXAmount: 0
-  bobYAmount: 0
-  nodXAmount: 0
-  nodYAmount: 0
-  bobScalar: 0
 --- !u!198 &198237622866876544
 ParticleSystem:
   m_ObjectHideFlags: 1
