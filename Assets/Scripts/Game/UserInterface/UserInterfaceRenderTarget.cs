@@ -51,13 +51,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private void Awake()
         {
-            targetTexture = CheckTargetTexture(targetTexture);
+            CheckTargetTexture();
             UpdateNonDiegeticOutput();
         }
 
         private void Update()
         {
-            targetTexture = CheckTargetTexture(targetTexture);
+            CheckTargetTexture();
         }
 
         #endregion
@@ -76,7 +76,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public void DrawTexture(Rect position, Texture2D image)
         {
-            if (!IsReady(targetTexture))
+            if (!IsReady())
                 return;
 
             RenderTexture oldRt = RenderTexture.active;
@@ -89,7 +89,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public void DrawTexture(Rect position, Texture2D image, ScaleMode scaleMode, bool alphaBlend = true, float imageAspect = 0)
         {
-            if (!IsReady(targetTexture))
+            if (!IsReady())
                 return;
 
             RenderTexture oldRt = RenderTexture.active;
@@ -102,7 +102,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public void DrawTextureWithTexCoords(Rect position, Texture image, Rect texCoords, bool alphaBlend = true)
         {
-            if (!IsReady(targetTexture))
+            if (!IsReady())
                 return;
 
             RenderTexture oldRt = RenderTexture.active;
@@ -118,24 +118,24 @@ namespace DaggerfallWorkshop.Game.UserInterface
         #region Render Texture Management
 
         // Check render texture is non-null and created
-        bool IsReady(RenderTexture targetTexture)
+        bool IsReady()
         {
             return (targetTexture != null && targetTexture.IsCreated());
         }
 
         // Check render texture and recreate if not valid
-        RenderTexture CheckTargetTexture(RenderTexture targetTexture)
+        void CheckTargetTexture()
         {
             // Just using screen dimensions for now while solving problems of redirecting rendering from UI components
             // Aiming for a baseline of 1:1 functionality with current setup before changing anything further
             int width = Screen.width;
             int height = Screen.height;
-            targetRect = new Rect(0, 0, width, height);
 
             // Just return same texture if still valid
-            if (!IsReady(targetTexture) || targetTexture.width != width || targetTexture.height != height)
+            if (!IsReady() || targetTexture.width != width || targetTexture.height != height)
             {
                 // Create target texture matching screen dimensions
+                targetRect = new Rect(0, 0, width, height);
                 targetTexture = new RenderTexture(width, height, 0, RenderTextureFormat.ARGB32);
                 targetTexture.name = string.Format("DaggerfallUI RenderTexture {0}", createCount++);
                 targetTexture.Create();
@@ -143,8 +143,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 RaiseOnCreateTargetTexture();
                 Debug.LogFormat("Created UI RenderTexture with dimensions {0}, {1}", width, height);
             }
-
-            return targetTexture;
         }
 
         void UpdateNonDiegeticOutput()
