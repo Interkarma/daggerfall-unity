@@ -1039,12 +1039,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 results.x = (int)Math.Floor(pos.x / zoomfactor * scale + zoomOffset.x + origin.x);
                 float diffy = height / zoomfactor - pos.y;
-                results.y = (int)Math.Floor(height - ((pos.y - 0.5f) / zoomfactor) - zoomOffset.y - diffy + origin.y);
+                results.y = (int)Math.Floor(height - pos.y / zoomfactor - zoomOffset.y - diffy + origin.y);
             }
             else
             {
                 results.x = (int)Math.Floor(origin.x + pos.x);
-                results.y = (int)Math.Floor(origin.y + pos.y + 0.5f);
+                results.y = (int)Math.Floor(origin.y + pos.y);
             }
 
             //coordsLabel.Text = string.Format("{0}, {1}", results.x, results.y);
