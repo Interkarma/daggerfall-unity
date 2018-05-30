@@ -113,7 +113,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void YesButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            DaggerfallUI.Instance.SmashHUDToBlack();
+            DaggerfallUI.Instance.FadeBehaviour.SmashHUDToBlack();
 
             // Teleport to destination.
             PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
@@ -126,7 +126,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             travelWindow.CloseTravelWindows();
             CloseWindow();
 
-            DaggerfallUI.Instance.FadeHUDFromBlack();
+            DaggerfallUI.Instance.FadeBehaviour.FadeHUDFromBlack();
         }
 
         #endregion

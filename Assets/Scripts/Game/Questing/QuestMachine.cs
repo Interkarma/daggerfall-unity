@@ -244,7 +244,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // Do not tick while HUD fading or load in progress
             // This is to prevent quest popups or other actions while player/world unavailable
-            if (DaggerfallUI.Instance == null || DaggerfallUI.Instance.FadeInProgress ||
+            if (DaggerfallUI.Instance == null || DaggerfallUI.Instance.FadeBehaviour.FadeInProgress ||
                 SaveLoadManager.Instance == null || SaveLoadManager.Instance.LoadInProgress)
             {
                 return;

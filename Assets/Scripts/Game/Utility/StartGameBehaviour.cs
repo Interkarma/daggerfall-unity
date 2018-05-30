@@ -402,7 +402,7 @@ namespace DaggerfallWorkshop.Game.Utility
 
             // Start game
             GameManager.Instance.PauseGame(false);
-            DaggerfallUI.Instance.FadeHUDFromBlack();
+            DaggerfallUI.Instance.FadeBehaviour.FadeHUDFromBlack();
             DaggerfallUI.PostMessage(PostStartMessage);
 
             lastStartMethod = StartMethods.NewCharacter;
@@ -593,7 +593,7 @@ namespace DaggerfallWorkshop.Game.Utility
             // Start game
             DaggerfallUI.Instance.PopToHUD();
             GameManager.Instance.PauseGame(false);
-            DaggerfallUI.Instance.FadeHUDFromBlack();
+            DaggerfallUI.Instance.FadeBehaviour.FadeHUDFromBlack();
             DaggerfallUI.PostMessage(PostStartMessage);
 
             lastStartMethod = StartMethods.LoadClassicSave;

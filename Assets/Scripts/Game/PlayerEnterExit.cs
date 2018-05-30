@@ -648,7 +648,7 @@ namespace DaggerfallWorkshop.Game
 
             // Fade in from black
             if (doFade)
-                DaggerfallUI.Instance.FadeHUDFromBlack();
+                DaggerfallUI.Instance.FadeBehaviour.FadeHUDFromBlack();
         }
 
         /// <summary>
@@ -687,7 +687,7 @@ namespace DaggerfallWorkshop.Game
 
             // Fade in from black
             if (doFade)
-                DaggerfallUI.Instance.FadeHUDFromBlack();
+                DaggerfallUI.Instance.FadeBehaviour.FadeHUDFromBlack();
         }
 
         #endregion
@@ -764,7 +764,7 @@ namespace DaggerfallWorkshop.Game
 
             // Fade in from black
             if (doFade)
-                DaggerfallUI.Instance.FadeHUDFromBlack();
+                DaggerfallUI.Instance.FadeBehaviour.FadeHUDFromBlack();
         }
 
         /// <summary>
@@ -946,7 +946,7 @@ namespace DaggerfallWorkshop.Game
 
             // Fade in from black
             if (doFade)
-                DaggerfallUI.Instance.FadeHUDFromBlack();
+                DaggerfallUI.Instance.FadeBehaviour.FadeHUDFromBlack();
         }
 
         #endregion

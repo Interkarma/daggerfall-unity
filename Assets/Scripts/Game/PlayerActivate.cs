@@ -904,7 +904,7 @@ namespace DaggerfallWorkshop.Game
             // Do nothing if no NPC passed or fade in progress
             // Quest machine does not tick while fading (to prevent things happening while screen is black)
             // But this can result in player clicking a quest NPC before quest state ticks after load and breaking quest
-            if (!npc || DaggerfallUI.Instance.FadeInProgress)
+            if (!npc || DaggerfallUI.Instance.FadeBehaviour.FadeInProgress)
                 return;
 
             // Store the NPC just clicked in quest engine

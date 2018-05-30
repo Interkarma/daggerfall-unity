@@ -28,6 +28,7 @@ namespace DaggerfallWorkshop.Game
     /// <summary>
     /// Implements Daggerfall's user interface with internal UI system.
     /// </summary>
+    [RequireComponent(typeof(FadeBehaviour))]
     [RequireComponent(typeof(DaggerfallAudioSource))]
     public class DaggerfallUI : MonoBehaviour
     {
@@ -72,14 +73,7 @@ namespace DaggerfallWorkshop.Game
         char lastCharacterTyped;
         KeyCode lastKeyCode;
         GameObject nonDiegeticUI = null;
-
-        bool fadeInProgress;
-        Panel fadeTargetPanel;
-        float fadeTimer;
-        float fadeTotalTime;
-        float fadeDuration;
-        Color fadeStartColor;
-        Color fadeEndColor;
+        FadeBehaviour fadeBehaviour = null;
 
         string versionText;
         DaggerfallFontPlus versionFont;
@@ -131,11 +125,6 @@ namespace DaggerfallWorkshop.Game
             get { return (renderTarget) ? renderTarget : renderTarget = GetComponent<UserInterfaceRenderTarget>(); }
         }
 
-        public bool FadeInProgress
-        {
-            get { return fadeInProgress; }
-        }
-
         public AudioSource AudioSource
         {
             get { return audioSource; }
@@ -149,6 +138,11 @@ namespace DaggerfallWorkshop.Game
         public DaggerfallSongPlayer DaggerfallSongPlayer
         {
             get { return dfSongPlayer; }
+        }
+
+        public FadeBehaviour FadeBehaviour
+        {
+            get { return fadeBehaviour; }
         }
 
         public FilterMode GlobalFilterMode
@@ -265,6 +259,7 @@ namespace DaggerfallWorkshop.Game
             audioSource.spatialBlend = 0;
             dfAudioSource = GetComponent<DaggerfallAudioSource>();
             dfSongPlayer = GetComponent<DaggerfallSongPlayer>();
+            fadeBehaviour = GetComponent<FadeBehaviour>();
 
             dfPauseOptionsWindow = new DaggerfallPauseOptionsWindow(uiManager);
             dfCharacterSheetWindow = new DaggerfallCharacterSheetWindow(uiManager);
@@ -306,10 +301,6 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
-            // Progress fade
-            if (fadeInProgress)
-                TickFade();
-
             // HUD is always first window on stack when ready
             if (dfUnity.IsPathValidated && !hudSetup)
             {
@@ -687,48 +678,6 @@ namespace DaggerfallWorkshop.Game
         {
             if (dfAudioSource)
                 dfAudioSource.PlayOneShot(clip, 0);
-        }
-
-        public void SmashHUDToBlack()
-        {
-            dfHUD.ParentPanel.BackgroundColor = Color.black;
-        }
-
-        public void FadeHUDToBlack(float fadeDuration = 0.5f)
-        {
-            if (dfHUD == null)
-                return;
-
-            fadeTargetPanel = dfHUD.ParentPanel;
-            fadeStartColor = Color.clear;
-            fadeEndColor = Color.black;
-            this.fadeDuration = fadeDuration;
-            fadeTargetPanel.BackgroundColor = Color.clear;
-            fadeInProgress = true;
-        }
-
-        public void FadeHUDFromBlack(float fadeDuration = 0.5f)
-        {
-            if (dfHUD == null)
-                return;
-
-            fadeTargetPanel = dfHUD.ParentPanel;
-            fadeStartColor = Color.black;
-            fadeEndColor = Color.clear;
-            this.fadeDuration = fadeDuration;
-            fadeTargetPanel.BackgroundColor = Color.black;
-            fadeInProgress = true;
-        }
-
-        public void ClearFade()
-        {
-            if (dfHUD == null)
-                return;
-
-            dfHUD.ParentPanel.BackgroundColor = Color.clear;
-            fadeTimer = 0;
-            fadeTotalTime = 0;
-            fadeInProgress = false;
         }
 
         #endregion
@@ -1258,34 +1207,6 @@ namespace DaggerfallWorkshop.Game
             }
             healthBox.ClickAnywhereToClose = true;
             return healthBox;
-        }
-
-        void TickFade()
-        {
-            const float fadeStep = 0.02f;
-
-            // Must have a HUD to fade
-            if (dfHUD == null || !fadeInProgress)
-                return;
-
-            // Change fade setting
-            fadeTimer += Time.deltaTime;
-            if (fadeTimer > fadeStep)
-            {
-                fadeTotalTime += fadeStep;
-                float progress = fadeTotalTime / fadeDuration;
-                fadeTargetPanel.BackgroundColor = Color.Lerp(fadeStartColor, fadeEndColor, progress);
-                fadeTimer = 0;
-            }
-
-            // Handle fade completion
-            if (fadeTotalTime > fadeDuration)
-            {
-                fadeTargetPanel.BackgroundColor = fadeEndColor;
-                fadeTimer = 0;
-                fadeTotalTime = 0;
-                fadeInProgress = false;
-            }
         }
 
         // Re-init game with specified video

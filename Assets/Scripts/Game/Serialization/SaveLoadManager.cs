@@ -1097,7 +1097,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             playerEnterExit.RestorePositionHelper(saveData.playerData.playerPosition, true);
 
             // Smash to black while respawning
-            DaggerfallUI.Instance.SmashHUDToBlack();
+            DaggerfallUI.Instance.FadeBehaviour.SmashHUDToBlack();
 
             // Keep yielding frames until world is ready again
             while (playerEnterExit.IsRespawning)
@@ -1152,7 +1152,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             loadInProgress = false;
 
             // Fade out from black
-            DaggerfallUI.Instance.FadeHUDFromBlack(1.0f);
+            DaggerfallUI.Instance.FadeBehaviour.FadeHUDFromBlack(1.0f);
 
             // Raise OnLoad event
             RaiseOnLoadEvent(saveData);

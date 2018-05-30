@@ -119,7 +119,7 @@ namespace DaggerfallWorkshop.Game
         {
             if (deathInProgress)
             {
-                DaggerfallUI.Instance.ClearFade();
+                DaggerfallUI.Instance.FadeBehaviour.ClearFade();
                 deathInProgress = false;
                 InputManager.Instance.IsPaused = false;
                 ResetCamera();
@@ -158,7 +158,7 @@ namespace DaggerfallWorkshop.Game
             startCameraHeight = mainCamera.transform.localPosition.y;
             targetCameraHeight = playerController.height - (playerController.height * 1.25f);
             currentCameraHeight = startCameraHeight;
-            DaggerfallUI.Instance.FadeHUDToBlack(FadeDuration);
+            DaggerfallUI.Instance.FadeBehaviour.FadeHUDToBlack(FadeDuration);
 
             // There are 3 pain-like sounds for each race/gender. The third one, used here, sounds like
             // it may have been meant for when the player dies.

@@ -168,7 +168,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             // When moving anywhere other than same interior trigger a fade so transition appears smoother
             if (!sameInterior)
-                DaggerfallUI.Instance.FadeHUDFromBlack();
+                DaggerfallUI.Instance.FadeBehaviour.FadeHUDFromBlack();
 
             // End and resign
             // Player will need to create a new teleport with a new anchor from here

@@ -211,7 +211,7 @@ namespace DaggerfallWorkshop.Game
             {
                 GameManager.Instance.PlayerMotor.CancelMovement = true;
                 SerializablePlayer serializablePlayer = GetComponent<SerializablePlayer>();
-                DaggerfallUI.Instance.SmashHUDToBlack();
+                DaggerfallUI.Instance.FadeBehaviour.SmashHUDToBlack();
                 StreamingWorld world = GameManager.Instance.StreamingWorld;
                 DFPosition shipCoords = DaggerfallBankManager.GetShipCoords();
 
@@ -245,7 +245,7 @@ namespace DaggerfallWorkshop.Game
                     world.TeleportToCoordinates(shipCoords.X, shipCoords.Y, StreamingWorld.RepositionMethods.RandomStartMarker);
                     SaveLoadManager.RestoreCachedScene(world.SceneName);
                 }
-                DaggerfallUI.Instance.FadeHUDFromBlack();
+                DaggerfallUI.Instance.FadeBehaviour.FadeHUDFromBlack();
                 mode = TransportModes.Foot;
             }
         }
