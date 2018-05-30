@@ -201,7 +201,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected override void Setup()
         {
-            ParentPanel.BackgroundColor = ScreenDimColor;
+            ParentPanel.BackgroundColor = Color.black;
 
             // Set location pixel colors and identify flash color from palette file
             DFPalette colors = new DFPalette();
