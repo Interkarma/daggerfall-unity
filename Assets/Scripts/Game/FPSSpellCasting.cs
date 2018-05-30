@@ -99,6 +99,8 @@ namespace DaggerfallWorkshop.Game
             //    currentFrame = 0;
             //}
 
+            GUI.depth = 1;
+
             // Must be ready
             if (!ReadyCheck() || GameManager.IsGamePaused)
                 return;
@@ -113,7 +115,6 @@ namespace DaggerfallWorkshop.Game
                 int frameIndex = frameIndices[currentFrame];
 
                 // Draw spell cast texture behind other HUD elements
-                GUI.depth = 1;
                 DaggerfallUI.Instance.RenderTarget.DrawTextureWithTexCoords(leftHandPosition, currentAnims[frameIndex], leftHandAnimRect);
                 DaggerfallUI.Instance.RenderTarget.DrawTextureWithTexCoords(rightHandPosition, currentAnims[frameIndex], rightHandAnimRect);
             }

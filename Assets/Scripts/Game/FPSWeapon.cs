@@ -80,6 +80,8 @@ namespace DaggerfallWorkshop.Game
 
         void OnGUI()
         {
+            GUI.depth = 1;
+
             // Must be ready
             if (!ReadyCheck() || WeaponType == WeaponTypes.None || GameManager.IsGamePaused)
                 return;
@@ -96,7 +98,6 @@ namespace DaggerfallWorkshop.Game
             if (Event.current.type.Equals(EventType.Repaint) && ShowWeapon)
             {
                 // Draw weapon texture behind other HUD elements
-                GUI.depth = 1;
                 Texture2D tex;
                 if (CustomTextures.TryGetValue((int)weaponState + "-" + currentFrame, out tex))
                     DaggerfallUI.Instance.RenderTarget.DrawTexture(weaponPosition, tex);

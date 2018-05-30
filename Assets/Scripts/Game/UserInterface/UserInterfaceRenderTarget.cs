@@ -60,6 +60,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
             CheckTargetTexture();
         }
 
+        private void OnGUI()
+        {
+            // Clear behind everything else
+            GUI.depth = 10;
+
+            if (Event.current.type != EventType.Repaint)
+                return;
+
+            if (IsReady())
+                Clear();
+        }
+
         #endregion
 
         #region Drawing Methods

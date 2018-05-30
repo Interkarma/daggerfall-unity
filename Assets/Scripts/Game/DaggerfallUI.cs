@@ -346,6 +346,9 @@ namespace DaggerfallWorkshop.Game
 
         void OnGUI()
         {
+            // Set depth of GUI to appear on top of other elements
+            GUI.depth = 0;
+
             // Store key downs for alternate input (e.g. text box input)
             // Possible to get multiple keydown events per frame, one with character, one with keycode
             // Only accept character or keycode if valid
@@ -361,10 +364,7 @@ namespace DaggerfallWorkshop.Game
             if (Event.current.type != EventType.Repaint)
                 return;
 
-            // Set depth of GUI to appear on top of other elements
-            GUI.depth = 0;
-
-            RenderTarget.Clear();
+            //RenderTarget.Clear();
 
             // Draw top window
             if (uiManager.TopWindow != null)
