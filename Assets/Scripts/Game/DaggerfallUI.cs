@@ -71,6 +71,7 @@ namespace DaggerfallWorkshop.Game
         DaggerfallFont[] daggerfallFonts = new DaggerfallFont[5];
         char lastCharacterTyped;
         KeyCode lastKeyCode;
+        GameObject nonDiegeticUI = null;
 
         bool fadeInProgress;
         Panel fadeTargetPanel;
@@ -229,6 +230,12 @@ namespace DaggerfallWorkshop.Game
         public string FontsFolder
         {
             get { return Path.Combine(Application.streamingAssetsPath, fontsFolderName); }
+        }
+
+        public GameObject NonDiegeticUIOutput
+        {
+            get { return (nonDiegeticUI) ? nonDiegeticUI : nonDiegeticUI = GameManager.GetGameObjectWithName("NonDiegeticUIOutput"); }
+            set { nonDiegeticUI = value; }
         }
 
         public enum PopupStyle

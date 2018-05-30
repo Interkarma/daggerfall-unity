@@ -154,7 +154,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         void UpdateNonDiegeticOutput()
         {
             // Must be able to find output canvas object
-            GameObject nonDiegeticUIOutput = GameManager.Instance.NonDiegeticUIOutput;
+            GameObject nonDiegeticUIOutput = DaggerfallUI.Instance.NonDiegeticUIOutput;
             if (!nonDiegeticUIOutput)
                 return;
 
