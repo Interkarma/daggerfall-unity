@@ -181,6 +181,11 @@ namespace DaggerfallWorkshop.Game.Utility
                     poolItem.scheduleEnable = false;
                     poolItem.npc.RandomiseNPC(GetEntityRace());
                     poolItem.npc.Motor.InitMotor();
+
+                    // Adjust billboard position for actual size
+                    Vector2 size = poolItem.npc.Billboard.GetBillboardSize();
+                    if (Mathf.Abs(size.y - 2f) > 0.1f)
+                        poolItem.npc.Billboard.transform.Translate(0, (size.y - 2f) * 0.52f, 0);
                 }
 
                 // Get distance to player
@@ -200,6 +205,7 @@ namespace DaggerfallWorkshop.Game.Utility
                     poolItem.npc.Motor.gameObject.SetActive(false);
                     poolItem.active = false;
                     poolItem.scheduleEnable = false;
+                    poolItem.npc.Billboard.transform.localPosition = Vector3.zero;
                     poolItem.scheduleRecycle = false;
                 }
 
