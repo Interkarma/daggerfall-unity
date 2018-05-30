@@ -439,7 +439,10 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             }
         }
 
-        public static void SetEnemyScale(int archive, int record, ref Vector2 size)
+        /// <summary>
+        /// Read scale from xml and apply to given vector.
+        /// </summary>
+        public static void SetBillboardScale(int archive, int record, ref Vector2 size)
         {
             if (!DaggerfallUnity.Settings.MeshAndTextureReplacement)
                 return;

@@ -20,6 +20,7 @@ using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop
 {
@@ -261,6 +262,9 @@ namespace DaggerfallWorkshop
                 int yChange = (int)(size.Height * (scale.Height / BlocksFile.ScaleDivisor));
                 finalSize.x = (size.Width + xChange);
                 finalSize.y = (size.Height + yChange);
+
+                // Set optional scale
+                TextureReplacement.SetBillboardScale(textureArchive, i, ref finalSize);
 
                 // Store final size and frame count
                 recordSizes[i] = finalSize * MeshReader.GlobalScale;

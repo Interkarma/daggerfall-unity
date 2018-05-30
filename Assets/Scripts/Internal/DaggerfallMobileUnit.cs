@@ -473,7 +473,7 @@ namespace DaggerfallWorkshop
                 finalSize.y = (size.Height + yChange);
 
                 // Set optional scale
-                TextureReplacement.SetEnemyScale(archive, i, ref finalSize);
+                TextureReplacement.SetBillboardScale(archive, i, ref finalSize);
  
                 // Store final size and frame count
                 summary.RecordSizes[i] = finalSize * MeshReader.GlobalScale;
