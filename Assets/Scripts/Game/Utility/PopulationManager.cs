@@ -205,8 +205,9 @@ namespace DaggerfallWorkshop.Game.Utility
                     poolItem.npc.Motor.gameObject.SetActive(false);
                     poolItem.active = false;
                     poolItem.scheduleEnable = false;
-                    poolItem.npc.Billboard.transform.localPosition = Vector3.zero;
                     poolItem.scheduleRecycle = false;
+                    if (poolItem.npc.Billboard)
+                        poolItem.npc.Billboard.transform.localPosition = Vector3.zero;
                 }
 
                 populationPool[i] = poolItem;
