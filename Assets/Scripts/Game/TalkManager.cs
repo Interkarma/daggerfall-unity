@@ -1067,7 +1067,7 @@ namespace DaggerfallWorkshop.Game
                 if (GameManager.Instance.PlayerEnterExit.ExteriorDoors.Length > 0) // in building
                 {
                     PlayerGPS.DiscoveredBuilding discoveredBuilding;
-                    if (GameManager.Instance.PlayerGPS.GetDiscoveredBuilding(GameManager.Instance.PlayerEnterExit.ExteriorDoors[0].buildingKey, out discoveredBuilding))
+                    if (GameManager.Instance.PlayerGPS.GetAnyBuilding(GameManager.Instance.PlayerEnterExit.ExteriorDoors[0].buildingKey, out discoveredBuilding))
                     {
                         return String.Format(TextManager.Instance.GetText(textDatabase, "AnswerTextWhereAmI"), discoveredBuilding.displayName, GameManager.Instance.PlayerGPS.CurrentLocation.Name);
                     }
