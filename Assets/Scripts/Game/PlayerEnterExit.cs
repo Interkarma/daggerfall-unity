@@ -661,6 +661,38 @@ namespace DaggerfallWorkshop.Game
             if (!ReferenceComponents() || !interior || !isPlayerInside)
                 return;
 
+            // Redirect to coroutine verion for fade support
+            if (doFade)
+            {
+                StartCoroutine(FadedTransitionExterior());
+                return;
+            }
+
+            // Perform transition
+            BuildingTransitionExteriorLogic();
+        }
+
+        private IEnumerator FadedTransitionExterior()
+        {
+            // Smash to black
+            DaggerfallUI.Instance.FadeBehaviour.SmashHUDToBlack();
+            yield return new WaitForEndOfFrame();
+
+            // Perform transition
+            BuildingTransitionExteriorLogic();
+
+            // Increase fade time if outside world not ready
+            // This indicates a first-time transition on fresh load
+            float fadeTime = 0.7f;
+            if (!GameManager.Instance.StreamingWorld.IsInit)
+                fadeTime = 1.5f;
+
+            // Fade in from black
+            DaggerfallUI.Instance.FadeBehaviour.FadeHUDFromBlack(fadeTime);
+        }
+
+        private void BuildingTransitionExteriorLogic()
+        {
             // Raise event
             RaiseOnPreTransitionEvent(TransitionType.ToBuildingExterior);
 
@@ -684,10 +716,6 @@ namespace DaggerfallWorkshop.Game
 
             // Fire event
             RaiseOnTransitionExteriorEvent();
-
-            // Fade in from black
-            if (doFade)
-                DaggerfallUI.Instance.FadeBehaviour.FadeHUDFromBlack();
         }
 
         #endregion

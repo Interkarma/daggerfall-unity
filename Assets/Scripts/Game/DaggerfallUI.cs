@@ -308,6 +308,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     dfHUD = new DaggerfallHUD(uiManager);
                     uiManager.PushWindow(dfHUD);
+                    fadeBehaviour.FadeTargetPanel = dfHUD.ParentPanel;
                     Debug.Log("HUD pushed to stack.");
                 }
                 hudSetup = true;

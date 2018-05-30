@@ -19,7 +19,7 @@ namespace DaggerfallWorkshop.Game
     /// </summary>
     public class FadeBehaviour : MonoBehaviour
     {
-        bool allowFade = false;
+        bool allowFade = true;
         bool fadeInProgress;
         Panel fadeTargetPanel;
         float fadeTimer;
@@ -44,6 +44,11 @@ namespace DaggerfallWorkshop.Game
         public bool FadeInProgress
         {
             get { return fadeInProgress; }
+        }
+
+        private void OnGUI()
+        {
+            TickFade();
         }
 
         public void SmashHUDToBlack()
