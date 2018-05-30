@@ -63,6 +63,7 @@ namespace DaggerfallWorkshop.Game
         DaggerfallAudioSource dfAudioSource;
         DaggerfallSongPlayer dfSongPlayer;
         UserInterfaceManager uiManager = new UserInterfaceManager();
+        UserInterfaceRenderTarget renderTarget = null;
 
         SpellIconCollection spellIconCollection;
 
@@ -70,6 +71,7 @@ namespace DaggerfallWorkshop.Game
         DaggerfallFont[] daggerfallFonts = new DaggerfallFont[5];
         char lastCharacterTyped;
         KeyCode lastKeyCode;
+        GameObject nonDiegeticUI = null;
 
         bool fadeInProgress;
         Panel fadeTargetPanel;
@@ -84,7 +86,7 @@ namespace DaggerfallWorkshop.Game
         const float versionTextScale = 1.0f;
         Vector2 versionTextScaleVector2 = new Vector2(versionTextScale, versionTextScale);
         float versionTextWidth;
-        Color versionTextColor = new Color(1, 1, 1, 0.5f);
+        Color versionTextColor = new Color(0.6f, 0.6f, 0.6f, 1);
 
         bool hudSetup = false;
         DaggerfallHUD dfHUD;
@@ -123,6 +125,11 @@ namespace DaggerfallWorkshop.Game
         public static DaggerfallFont DefaultFont { get { return Instance.GetFont(4); } }
         
         public static IUserInterfaceManager UIManager { get { return Instance.uiManager; } }
+
+        public UserInterfaceRenderTarget RenderTarget
+        {
+            get { return (renderTarget) ? renderTarget : renderTarget = GetComponent<UserInterfaceRenderTarget>(); }
+        }
 
         public bool FadeInProgress
         {
@@ -223,6 +230,12 @@ namespace DaggerfallWorkshop.Game
         public string FontsFolder
         {
             get { return Path.Combine(Application.streamingAssetsPath, fontsFolderName); }
+        }
+
+        public GameObject NonDiegeticUIOutput
+        {
+            get { return (nonDiegeticUI) ? nonDiegeticUI : nonDiegeticUI = GameManager.GetGameObjectWithName("NonDiegeticUIOutput"); }
+            set { nonDiegeticUI = value; }
         }
 
         public enum PopupStyle
@@ -333,6 +346,9 @@ namespace DaggerfallWorkshop.Game
 
         void OnGUI()
         {
+            // Set depth of GUI to appear on top of other elements
+            GUI.depth = 0;
+
             // Store key downs for alternate input (e.g. text box input)
             // Possible to get multiple keydown events per frame, one with character, one with keycode
             // Only accept character or keycode if valid
@@ -345,8 +361,10 @@ namespace DaggerfallWorkshop.Game
                     lastKeyCode = Event.current.keyCode;
             }
 
-            // Set depth of GUI to appear on top of other elements
-            GUI.depth = 0;
+            if (Event.current.type != EventType.Repaint)
+                return;
+
+            //RenderTarget.Clear();
 
             // Draw top window
             if (uiManager.TopWindow != null)
@@ -1093,6 +1111,23 @@ namespace DaggerfallWorkshop.Game
             messageBox.ClickAnywhereToClose = true;
             messageBox.Show();
             return messageBox;
+        }
+
+        public static Texture2D CreateSolidTexture(Color color, int dim)
+        {
+            Texture2D texture = null;
+
+            texture = new Texture2D(dim, dim);
+            Color32[] colors = new Color32[dim * dim];
+            for (int i = 0; i < colors.Length; i++)
+            {
+                colors[i] = color;
+            }
+            texture.SetPixels32(colors);
+            texture.Apply(false, true);
+            texture.filterMode = FilterMode.Point;
+
+            return texture;
         }
 
         #endregion

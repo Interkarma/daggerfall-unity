@@ -75,10 +75,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             dstRect.height *= amount;
 
             if (ProgressTexture)
-                GUI.DrawTextureWithTexCoords(dstRect, ProgressTexture, srcRect, false);
+                DaggerfallUI.Instance.RenderTarget.DrawTextureWithTexCoords(dstRect, ProgressTexture, srcRect, false);
             else if (ColorTexture)
             {
-                GUI.DrawTextureWithTexCoords(dstRect, ColorTexture, srcRect, false);
+                DaggerfallUI.Instance.RenderTarget.DrawTextureWithTexCoords(dstRect, ColorTexture, srcRect, false);
             }
         }
     }

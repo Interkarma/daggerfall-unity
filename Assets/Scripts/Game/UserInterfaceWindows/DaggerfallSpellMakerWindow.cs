@@ -172,6 +172,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ParentPanel.BackgroundColor = ScreenDimColor;
 
             // Setup native panel background
+            NativePanel.BackgroundColor = new Color(0, 0, 0, 0.75f);
             NativePanel.BackgroundTexture = baseTexture;
 
             // Setup controls

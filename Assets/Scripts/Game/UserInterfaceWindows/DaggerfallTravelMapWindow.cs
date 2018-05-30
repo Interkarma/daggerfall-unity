@@ -203,7 +203,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected override void Setup()
         {
-            ParentPanel.BackgroundColor = ScreenDimColor;
+            ParentPanel.BackgroundColor = Color.black;
 
             //NativePanel.Components.Add(coordsLabel);
 

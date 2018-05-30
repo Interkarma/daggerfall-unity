@@ -151,7 +151,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 float temp = rect.yMin;
                 rect.yMin = rect.yMax;
                 rect.yMax = temp;
-                GUI.DrawTexture(rect, vidTexture, ScaleMode.StretchToFill);
+                DaggerfallUI.Instance.RenderTarget.DrawTexture(rect, vidTexture, ScaleMode.StretchToFill);
             }
         }
 

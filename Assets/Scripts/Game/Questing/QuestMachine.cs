@@ -415,7 +415,8 @@ namespace DaggerfallWorkshop.Game.Questing
             lastNPCClicked = null;
 
             // Clear debugger state
-            DaggerfallUI.Instance.DaggerfallHUD.PlaceMarker.ClearSiteTargets();
+            if (DaggerfallUI.Instance.DaggerfallHUD != null)
+                DaggerfallUI.Instance.DaggerfallHUD.PlaceMarker.ClearSiteTargets();
         }
 
         /// <summary>

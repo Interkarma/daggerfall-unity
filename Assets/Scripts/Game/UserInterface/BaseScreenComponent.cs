@@ -688,14 +688,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 Color color = GUI.color;
                 GUI.color = mouseOverBackgroundColor;
-                GUI.DrawTexture(myRect, backgroundColorTexture, ScaleMode.StretchToFill);
+                DaggerfallUI.Instance.RenderTarget.DrawTexture(myRect, backgroundColorTexture, ScaleMode.StretchToFill);
                 GUI.color = color;
             }
             else if (backgroundColor != Color.clear && backgroundColorTexture)
             {
                 Color color = GUI.color;
                 GUI.color = backgroundColor;
-                GUI.DrawTexture(myRect, backgroundColorTexture, ScaleMode.StretchToFill);
+                DaggerfallUI.Instance.RenderTarget.DrawTexture(myRect, backgroundColorTexture, ScaleMode.StretchToFill);
                 GUI.color = color;
             }
 
@@ -706,15 +706,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 {
                     case BackgroundLayout.Tile:
                         backgroundTexture.wrapMode = TextureWrapMode.Repeat;
-                        GUI.DrawTextureWithTexCoords(myRect, backgroundTexture, new Rect(0, 0, myRect.width / backgroundTexture.width, myRect.height / backgroundTexture.height));
+                        DaggerfallUI.Instance.RenderTarget.DrawTextureWithTexCoords(myRect, backgroundTexture, new Rect(0, 0, myRect.width / backgroundTexture.width, myRect.height / backgroundTexture.height));
                         break;
                     case BackgroundLayout.StretchToFill:
                         backgroundTexture.wrapMode = TextureWrapMode.Clamp;
-                        GUI.DrawTexture(myRect, backgroundTexture, ScaleMode.StretchToFill);
+                        DaggerfallUI.Instance.RenderTarget.DrawTexture(myRect, backgroundTexture, ScaleMode.StretchToFill);
                         break;
                     case BackgroundLayout.ScaleToFit:
                         backgroundTexture.wrapMode = TextureWrapMode.Clamp;
-                        GUI.DrawTexture(myRect, backgroundTexture, ScaleMode.ScaleToFit);
+                        DaggerfallUI.Instance.RenderTarget.DrawTexture(myRect, backgroundTexture, ScaleMode.ScaleToFit);
                         break;
                 }
             }
@@ -1220,17 +1220,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         private void CreateBackgroundColorTexture()
         {
             if (backgroundColorTexture == null)
-            {
-                backgroundColorTexture = new Texture2D(colorTextureDim, colorTextureDim);
-                Color32[] colors = new Color32[colorTextureDim * colorTextureDim];
-                for (int i = 0; i < colors.Length; i++)
-                {
-                    colors[i] = Color.white;
-                }
-                backgroundColorTexture.SetPixels32(colors);
-                backgroundColorTexture.Apply(false, true);
-                backgroundColorTexture.filterMode = FilterMode.Point;
-            }
+                backgroundColorTexture = DaggerfallUI.CreateSolidTexture(Color.white, colorTextureDim);
         }
 
         /// <summary>
