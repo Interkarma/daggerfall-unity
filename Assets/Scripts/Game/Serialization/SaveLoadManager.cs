@@ -934,12 +934,28 @@ namespace DaggerfallWorkshop.Game.Serialization
             string discoveryDataJson = Serialize(discoveryData.GetType(), discoveryData);
             string conversationDataJson = Serialize(conversationData.GetType(), conversationData);
 
+            //// Attempt to hide UI for screenshot
+            //bool rawImageEnabled = false;
+            //UnityEngine.UI.RawImage rawImage = DaggerfallUI.Instance.RenderTarget.GetDiegeticCanvasRawImage();
+            //if (rawImage)
+            //{
+            //    rawImageEnabled = rawImage.enabled;
+            //    rawImage.enabled = false;
+            //}
+
             // Create screenshot for save
             // TODO: Hide UI for screenshot or use a different method
+            yield return new WaitForEndOfFrame();
             yield return new WaitForEndOfFrame();
             Texture2D screenshot = new Texture2D(Screen.width, Screen.height);
             screenshot.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
             screenshot.Apply();
+
+            //// Restore UI after screenshot
+            //if (rawImageEnabled)
+            //{
+            //    rawImage.enabled = true;
+            //}
 
             // Save data to files
             WriteSaveFile(Path.Combine(path, saveDataFilename), saveDataJson);

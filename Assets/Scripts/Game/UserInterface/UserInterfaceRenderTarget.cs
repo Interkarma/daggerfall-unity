@@ -74,6 +74,33 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #endregion
 
+        #region Public Methods
+
+        /// <summary>
+        /// Gets diegetic canvas output raw image (if enabled)
+        /// </summary>
+        /// <returns>RawImage or null.</returns>
+        public RawImage GetDiegeticCanvasRawImage()
+        {
+            // Must be able to find output canvas object
+            GameObject nonDiegeticUIOutput = DaggerfallUI.Instance.NonDiegeticUIOutput;
+            if (!nonDiegeticUIOutput)
+                return null;
+
+            // Output canvas object must be active
+            if (!nonDiegeticUIOutput.activeInHierarchy)
+                return null;
+
+            // Get raw image component
+            RawImage rawImage = nonDiegeticUIOutput.GetComponent<RawImage>();
+            if (!rawImage)
+                return null;
+
+            return rawImage;
+        }
+
+        #endregion
+
         #region Drawing Methods
 
         public void Clear()
@@ -159,17 +186,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void UpdateNonDiegeticOutput()
         {
-            // Must be able to find output canvas object
-            GameObject nonDiegeticUIOutput = DaggerfallUI.Instance.NonDiegeticUIOutput;
-            if (!nonDiegeticUIOutput)
-                return;
-
-            // Output canvas object must be active
-            if (!nonDiegeticUIOutput.activeInHierarchy)
-                return;
-
             // Get raw image component
-            RawImage rawImage = nonDiegeticUIOutput.GetComponent<RawImage>();
+            RawImage rawImage = GetDiegeticCanvasRawImage();
             if (!rawImage)
                 return;
 
