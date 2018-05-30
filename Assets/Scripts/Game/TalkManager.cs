@@ -261,6 +261,7 @@ namespace DaggerfallWorkshop.Game
         {
             NoQuestion, // used for list entries that are not of ListItemType item
             News, // used for "any news" question
+            WhereAmI, // used for "Where am I?" question
             OrganizationInfo, // used for "tell me about" -> organizations
             Work, // used for "where is" -> "work"
             LocalBuilding, // used for "where is" -> "location"
@@ -288,6 +289,7 @@ namespace DaggerfallWorkshop.Game
             public QuestionType questionType = QuestionType.NoQuestion; // the question type of the entry (see description of QuestionType)
             public NPCKnowledgeAboutItem npcKnowledgeAboutItem = NPCKnowledgeAboutItem.NotSet; // the knowledge of the current npc talk partner about this topic
             public int buildingKey = -1; // used for listitems that are buildings to identify buildings
+            public bool npcInSameBuildingAsTopic = false; // used for listitems that are buildings to mark if npc talk partner is in very same building (and thus should always give an answer)
             public ulong questID = 0; // the questID of the quest to which this ListItem belongs to (if this ListItem belongs to a topic/question about a quest resource)
             public int index = -1; // the index of the ListItem in the topic list (e.g. 2nd entry of the topic list - every ListItem belongs to a certain topic list)
             public List<ListItem> listChildItems = null; // null if type == ListItemType.Navigation or ListItemType.Item, only contains a list if type == ListItemType.ItemGroup
@@ -839,33 +841,33 @@ namespace DaggerfallWorkshop.Game
                 if (npcData.guildGroup == FactionFile.GuildGroups.HolyOrder) // holy orders use message 8553, 8554
                 {
                     if (reactionToPlayer >= 30) // what reputation is needed to show like greeting message?
-                        return expandRandomTextRecord(isInSameHolyOrderLikePlayerGreetingTextId);
+                        return ExpandRandomTextRecord(isInSameHolyOrderLikePlayerGreetingTextId);
                     else if (reactionToPlayer >= 0) // not sure here - are member greeting messages also shown if npc dislikes pc (but still talks to pc)?
-                        return expandRandomTextRecord(isInSameHolyOrderNeutralPlayerGreetingTextId);
+                        return ExpandRandomTextRecord(isInSameHolyOrderNeutralPlayerGreetingTextId);
                 }
                 else // all other guilds (including Knightly Orders) seem to use messages 8550, 8551
                 {
                     if (reactionToPlayer >= 30) // what reputation is needed to show like greeting message?
-                        return expandRandomTextRecord(isInSameGuildLikePlayerGreetingTextId);
+                        return ExpandRandomTextRecord(isInSameGuildLikePlayerGreetingTextId);
                     else if (reactionToPlayer >= 0) // not sure here - are member greeting messages also shown if npc dislikes pc (but still talks to pc)?
-                        return expandRandomTextRecord(isInSameGuildNeutralPlayerGreetingTextId);
+                        return ExpandRandomTextRecord(isInSameGuildNeutralPlayerGreetingTextId);
                 }
             }
 
             if (reactionToPlayer >= 30)
-                return expandRandomTextRecord(veryLikePlayerGreetingTextId);
+                return ExpandRandomTextRecord(veryLikePlayerGreetingTextId);
             else if (reactionToPlayer >= 10)
-                return expandRandomTextRecord(likePlayerGreetingTextId);
+                return ExpandRandomTextRecord(likePlayerGreetingTextId);
             else if (reactionToPlayer >= 0)
-                return expandRandomTextRecord(neutralToPlayerGreetingTextId);
+                return ExpandRandomTextRecord(neutralToPlayerGreetingTextId);
             else            
-                return expandRandomTextRecord(dislikePlayerGreetingTextId);
+                return ExpandRandomTextRecord(dislikePlayerGreetingTextId);
         }
 
         public string GetPCGreetingText(DaggerfallTalkWindow.TalkTone talkTone)
         {
             int toneIndex = DaggerfallTalkWindow.TalkToneToIndex(talkTone);
-            string greetingString = expandRandomTextRecord(7215 + toneIndex);
+            string greetingString = ExpandRandomTextRecord(7215 + toneIndex);
 
             return (greetingString);
         }
@@ -873,7 +875,7 @@ namespace DaggerfallWorkshop.Game
         public string GetPCFollowUpText(DaggerfallTalkWindow.TalkTone talkTone)
         {
             int toneIndex = DaggerfallTalkWindow.TalkToneToIndex(talkTone);
-            string followUpString = expandRandomTextRecord(7218 + toneIndex);
+            string followUpString = ExpandRandomTextRecord(7218 + toneIndex);
             return (followUpString);
         }
 
@@ -891,7 +893,7 @@ namespace DaggerfallWorkshop.Game
 
         public string GetWorkString()
         {
-            return expandRandomTextRecord(7211);
+            return ExpandRandomTextRecord(7211);
         }
 
         public string DirectionVector2DirectionHintString(Vector2 vecDirectionToTarget)
@@ -976,20 +978,23 @@ namespace DaggerfallWorkshop.Game
                 default:
                     break;
                 case QuestionType.News:
-                    question = expandRandomTextRecord(7231 + toneIndex);
+                    question = ExpandRandomTextRecord(7231 + toneIndex);
+                    break;
+                case QuestionType.WhereAmI:
+                    question = TextManager.Instance.GetText(textDatabase, "WhereAmI");
                     break;
                 case QuestionType.OrganizationInfo:
                     currentKeySubjectType = KeySubjectType.Organization;
-                    question = expandRandomTextRecord(7212 + toneIndex);
+                    question = ExpandRandomTextRecord(7212 + toneIndex);
                     break;
                 case QuestionType.LocalBuilding:
                     currentKeySubjectType = KeySubjectType.Building;
                     currentKeySubjectBuildingKey = listItem.buildingKey;
-                    question = expandRandomTextRecord(7225 + toneIndex);
+                    question = ExpandRandomTextRecord(7225 + toneIndex);
                     break;
                 case QuestionType.Person:
                     currentKeySubjectType = KeySubjectType.Person;
-                    question = expandRandomTextRecord(7225 + toneIndex);
+                    question = ExpandRandomTextRecord(7225 + toneIndex);
                     break;
                 case QuestionType.Thing:
                     question = "not implemented"; // vanilla df did not implement this as well
@@ -1000,17 +1005,17 @@ namespace DaggerfallWorkshop.Game
                     // Improvement over classic. Make "Any" lower-case since it will be in the middle of a sentence.
                     currentKeySubject = currentKeySubject.Replace(TextManager.Instance.GetText(textDatabase, "toBeReplacedStringRegional"), TextManager.Instance.GetText(textDatabase, "replacementStringRegional"));
 
-                    question = expandRandomTextRecord(7225 + toneIndex);
+                    question = ExpandRandomTextRecord(7225 + toneIndex);
                     break;
                 case QuestionType.QuestLocation:
                 case QuestionType.QuestPerson:
                 case QuestionType.QuestItem:
                     currentKeySubjectType = KeySubjectType.QuestTopic;
-                    question = expandRandomTextRecord(7212 + toneIndex);
+                    question = ExpandRandomTextRecord(7212 + toneIndex);
                     break;
                 case QuestionType.Work:
                     currentKeySubjectType = KeySubjectType.Work;
-                    question = expandRandomTextRecord(7212 + toneIndex);
+                    question = ExpandRandomTextRecord(7212 + toneIndex);
                     break;
             }            
             return question;
@@ -1051,13 +1056,59 @@ namespace DaggerfallWorkshop.Game
                 return (news);
             }
             else
-                return expandRandomTextRecord(outOfNewsRecordIndex);
+                return ExpandRandomTextRecord(outOfNewsRecordIndex);
+        }
+
+        public string GetAnswerWhereAmI()
+        {
+            // all npcs know this answer
+            if (GameManager.Instance.IsPlayerInside)
+            {
+                if (GameManager.Instance.PlayerEnterExit.ExteriorDoors.Length > 0) // in building
+                {
+                    PlayerGPS.DiscoveredBuilding discoveredBuilding;
+                    if (GameManager.Instance.PlayerGPS.GetAnyBuilding(GameManager.Instance.PlayerEnterExit.ExteriorDoors[0].buildingKey, out discoveredBuilding))
+                    {
+                        return String.Format(TextManager.Instance.GetText(textDatabase, "AnswerTextWhereAmI"), discoveredBuilding.displayName, GameManager.Instance.PlayerGPS.CurrentLocation.Name);
+                    }
+                    else
+                    {
+                        // fallback if no discovery info was found
+                        BuildingInfo currentBuilding = listBuildings.Find(x => x.buildingKey == GameManager.Instance.PlayerEnterExit.ExteriorDoors[0].buildingKey);
+                        return String.Format(TextManager.Instance.GetText(textDatabase, "AnswerTextWhereAmI"), currentBuilding.name, GameManager.Instance.PlayerGPS.CurrentLocation.Name);
+                    }
+                }
+                else if (GameManager.Instance.IsPlayerInsideCastle || GameManager.Instance.IsPlayerInsideDungeon) // in dungeon
+                {
+                    DaggerfallDungeon.DungeonSummary ds = GameManager.Instance.PlayerEnterExit.Dungeon.Summary;
+                    string dungeonName = "";
+                    if (ds.RegionName == "Daggerfall" && ds.LocationName == "Daggerfall")
+                        dungeonName = ExpandRandomTextRecord(475);
+                    else if (ds.RegionName == "Wayrest" && ds.LocationName == "Wayrest")
+                        dungeonName = ExpandRandomTextRecord(476);
+                    else if (ds.RegionName == "Sentinel" && ds.LocationName == "Sentinel")
+                        dungeonName = ExpandRandomTextRecord(477);
+                    else
+                    {
+                        dungeonName = GameManager.Instance.PlayerEnterExit.Dungeon.Summary.LocationName;
+                    }
+
+                    dungeonName = dungeonName.TrimEnd('.'); // remove character '.' from castle text record entry
+
+                    return String.Format(TextManager.Instance.GetText(textDatabase, "AnswerTextWhereAmI"), dungeonName, GameManager.Instance.PlayerEnterExit.Dungeon.Summary.RegionName);
+                }
+            }
+            else
+            {
+                return String.Format(TextManager.Instance.GetText(textDatabase, "AnswerTextWhereAmI"), GameManager.Instance.PlayerGPS.CurrentLocation.Name, GameManager.Instance.PlayerGPS.CurrentRegionName);
+            }
+            return TextManager.Instance.GetText(textDatabase, "resolvingError");
         }
 
         public string GetOrganizationInfo(TalkManager.ListItem listItem)
         {           
             int index = (listItem.index > 7 ? listItem.index + 1 : listItem.index); // note Nystul: this looks error-prone because we are assuming specific indices here -> what if this changes some day?
-            return expandRandomTextRecord(860 + index);
+            return ExpandRandomTextRecord(860 + index);
         }
 
         public void AddQuestRumorToRumorMill(ulong questID, Message message)
@@ -1189,8 +1240,10 @@ namespace DaggerfallWorkshop.Game
         public string GetKeySubjectLocationDirection()
         {
             string answer;
-            markLocationOnMap = false; // when preprocessing messages in expandRandomTextRecord() do not reveal location accidentally (no %loc macro resolving)
-            answer = expandRandomTextRecord(7333);
+
+            markLocationOnMap = false; // when preprocessing messages in ExpandRandomTextRecord() do not reveal location accidentally (no %loc macro resolving)
+            answer = ExpandRandomTextRecord(7333);
+
             return answer;
         }
 
@@ -1198,7 +1251,7 @@ namespace DaggerfallWorkshop.Game
         {
             string answer;
             markLocationOnMap = true; // only reveal on purpose
-            answer = expandRandomTextRecord(7332);
+            answer = ExpandRandomTextRecord(7332);
             markLocationOnMap = false; // don't forget so future %loc macro resolving when preprocessing messages does not reveal location
             return answer;
         }
@@ -1329,7 +1382,44 @@ namespace DaggerfallWorkshop.Game
                 else
                     listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.DoesNotKnowAboutItem;
             }
-            
+
+            // test if npc is asked about building and is in the same building (also for quest persons) -> then he/she should know about building
+            if (listItem.questionType == QuestionType.LocalBuilding || listItem.questionType == QuestionType.QuestLocation)
+            {
+                if (GameManager.Instance.IsPlayerInside)
+                {
+                    if (GameManager.Instance.PlayerEnterExit.ExteriorDoors.Length > 0 && listItem.buildingKey == GameManager.Instance.PlayerEnterExit.ExteriorDoors[0].buildingKey)
+                    {
+                        listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.KnowsAboutItem;
+                        listItem.npcInSameBuildingAsTopic = true;
+                    }
+                    else if (GameManager.Instance.IsPlayerInsideCastle || GameManager.Instance.IsPlayerInsideDungeon) // in dungeon
+                    {
+                        DaggerfallDungeon.DungeonSummary ds = GameManager.Instance.PlayerEnterExit.Dungeon.Summary;
+                        string dungeonName = "";
+                        if (ds.RegionName == "Daggerfall" && ds.LocationName == "Daggerfall")
+                            dungeonName = ExpandRandomTextRecord(475);
+                        else if (ds.RegionName == "Wayrest" && ds.LocationName == "Wayrest")
+                            dungeonName = ExpandRandomTextRecord(476);
+                        else if (ds.RegionName == "Sentinel" && ds.LocationName == "Sentinel")
+                            dungeonName = ExpandRandomTextRecord(477);
+                        else
+                        {
+                            dungeonName = GameManager.Instance.PlayerEnterExit.Dungeon.Summary.LocationName;
+                        }
+
+                        dungeonName = dungeonName.TrimEnd('.'); // remove character '.' from castle text record entry
+
+                        if (dungeonName == listItem.caption)
+                        {
+                            listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.KnowsAboutItem;
+                            listItem.npcInSameBuildingAsTopic = true;
+                        }
+                    }
+                }
+            }
+
+
             if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.DoesNotKnowAboutItem)
             {
                 // messages if npc does not know
@@ -1344,6 +1434,30 @@ namespace DaggerfallWorkshop.Game
             }
             else
             {
+                // check if npc is in same building if topic is building
+                if (currentQuestionListItem.questionType == QuestionType.LocalBuilding && currentQuestionListItem.npcInSameBuildingAsTopic)
+                    return String.Format(TextManager.Instance.GetText(textDatabase, "YouAreInSameBuilding"), currentQuestionListItem.caption);
+
+                // check if npc is in same building as quest person when asking about quest person via "Where is"->"Person"
+                if (currentQuestionListItem.questionType == QuestionType.Person)
+                {
+                    string key = currentQuestionListItem.key;
+                    int buildingKey = GameManager.Instance.TalkManager.GetBuildingKeyForPersonResource(currentQuestionListItem.questID, key);
+
+                    if (GameManager.Instance.IsPlayerInside && GameManager.Instance.PlayerEnterExit.ExteriorDoors.Length > 0 && buildingKey == GameManager.Instance.PlayerEnterExit.ExteriorDoors[0].buildingKey)
+                    {
+                        currentQuestionListItem.npcInSameBuildingAsTopic = true;
+
+                        string buildingName = GameManager.Instance.TalkManager.GetBuildingNameForBuildingKey(buildingKey);
+
+                        if (buildingName != string.Empty)
+                            return String.Format(TextManager.Instance.GetText(textDatabase, "NpcInSameBuilding"), currentQuestionListItem.caption, buildingName);
+                        else
+                            return TextManager.Instance.GetText(textDatabase, "resolvingError");
+                    }
+                }
+
+
                 // location related messages if npc knows
                 if (reactionToPlayer >= 30)
                     return getRecordIdByNpcsSocialGroup(veryLikePlayerAnswerWhereIsDefault, veryLikePlayerAnswerWhereIsGuildMembers, veryLikePlayerAnswerWhereIsMerchants, veryLikePlayerAnswerWhereIsScholars, veryLikePlayerAnswerWhereIsNobility, veryLikePlayerAnswerWhereIsUnderworld);
@@ -1359,9 +1473,9 @@ namespace DaggerfallWorkshop.Game
         public string GetAnswerAboutRegionalBuilding(TalkManager.ListItem listItem)
         {
             if (GetRegionalLocationCityName(listItem))
-                return expandRandomTextRecord(10);
+                return ExpandRandomTextRecord(10);
             else
-                return expandRandomTextRecord(11);
+                return ExpandRandomTextRecord(11);
         }
 
         public bool GetRegionalLocationCityName(TalkManager.ListItem listItem)
@@ -1490,6 +1604,9 @@ namespace DaggerfallWorkshop.Game
                 case QuestionType.News:
                     answer = GetNewsOrRumors();
                     break;
+                case QuestionType.WhereAmI:
+                    answer = GetAnswerWhereAmI();
+                    break;
                 case QuestionType.OrganizationInfo:
                     answer = GetAnswerTellMeAboutTopic(listItem, npcData.chanceKnowsSomethingAboutOrganizations);
                     break;
@@ -1513,13 +1630,13 @@ namespace DaggerfallWorkshop.Game
                 case QuestionType.Work:
                     if (!WorkAvailable)
                     {
-                        answer = expandRandomTextRecord(8078); // TODO: find when 8075 should be used
+                        answer = ExpandRandomTextRecord(8078); // TODO: find when 8075 should be used
                         break;
                     }
                     else
                     {
                         SetRandomQuestor(); // Pick a random Work questor from the pool
-                        answer = expandRandomTextRecord(8076); // TODO: find when 8077 should be used
+                        answer = ExpandRandomTextRecord(8076); // TODO: find when 8077 should be used
                         break;
                     }
             }
@@ -1824,6 +1941,18 @@ namespace DaggerfallWorkshop.Game
             else if (matchingBuildings.Count > 1 )
                 throw new Exception(String.Format("GetBuildingTypeForBuildingKey(): more than one building with the queried key found"));
             return matchingBuildings[0].buildingType;
+        }
+
+        public string GetBuildingNameForBuildingKey(int buildingKey)
+        {
+            if (listBuildings == null)
+                GetBuildingList();
+            List<BuildingInfo> matchingBuildings = listBuildings.FindAll(x => x.buildingKey == buildingKey);
+            if (matchingBuildings.Count == 0)
+                throw new Exception(String.Format("GetBuildingNameForBuildingKey(): no building with the queried key found"));
+            else if (matchingBuildings.Count > 1)
+                throw new Exception(String.Format("GetBuildingNameForBuildingKey(): more than one building with the queried key found"));
+            return matchingBuildings[0].name;
         }
 
         public bool IsBuildingQuestResource(int buildingKey, ref string overrideBuildingName, ref bool pcLearnedAboutExistence, ref bool receivedDirectionalHints, ref bool locationWasMarkedOnMapByNPC)
@@ -2369,6 +2498,7 @@ namespace DaggerfallWorkshop.Game
             for (int i = 0; i < list.Count; i++)
             {
                 list[i].npcKnowledgeAboutItem = NPCKnowledgeAboutItem.NotSet;
+                list[i].npcInSameBuildingAsTopic = false;
                 if (list[i].type == ListItemType.ItemGroup && list[i].listChildItems != null)
                     ResetNPCKnowledgeInTopicListRecursively(list[i].listChildItems);
             }
@@ -2413,6 +2543,12 @@ namespace DaggerfallWorkshop.Game
             itemAnyNews.questionType = QuestionType.News;
             itemAnyNews.caption = (TextManager.Instance.GetText(textDatabase, "AnyNews"));
             listTopicTellMeAbout.Add(itemAnyNews);
+
+            ListItem itemWhereAmI = new ListItem();
+            itemWhereAmI.type = ListItemType.Item;
+            itemWhereAmI.questionType = QuestionType.WhereAmI;
+            itemWhereAmI.caption = (TextManager.Instance.GetText(textDatabase, "WhereAmI"));
+            listTopicTellMeAbout.Add(itemWhereAmI);
 
             foreach (KeyValuePair<ulong, QuestResources> questInfo in dictQuestInfo)
             {
@@ -2902,7 +3038,7 @@ namespace DaggerfallWorkshop.Game
             return returnString;
         }
 
-        private string expandRandomTextRecord(int recordIndex)
+        private string ExpandRandomTextRecord(int recordIndex)
         {
             TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(recordIndex);
 
@@ -2923,17 +3059,17 @@ namespace DaggerfallWorkshop.Game
                 case FactionFile.SocialGroups.SGroup9:
                 case FactionFile.SocialGroups.SupernaturalBeings:
                 default:
-                    return expandRandomTextRecord(textRecordIdDefault);
+                    return ExpandRandomTextRecord(textRecordIdDefault);
                 case FactionFile.SocialGroups.GuildMembers:
-                    return expandRandomTextRecord(textRecordIdGuildMembers);
+                    return ExpandRandomTextRecord(textRecordIdGuildMembers);
                 case FactionFile.SocialGroups.Merchants:
-                    return expandRandomTextRecord(textRecordIdMerchants);
+                    return ExpandRandomTextRecord(textRecordIdMerchants);
                 case FactionFile.SocialGroups.Nobility:
-                    return expandRandomTextRecord(textRecordIdNobility);
+                    return ExpandRandomTextRecord(textRecordIdNobility);
                 case FactionFile.SocialGroups.Scholars:
-                    return expandRandomTextRecord(textRecordIdScholars);
+                    return ExpandRandomTextRecord(textRecordIdScholars);
                 case FactionFile.SocialGroups.Underworld:
-                    return expandRandomTextRecord(textRecordIdUnderworld); // todo: this needs to be tested with a npc of social group underworld in vanilla df
+                    return ExpandRandomTextRecord(textRecordIdUnderworld); // todo: this needs to be tested with a npc of social group underworld in vanilla df
             }
         }
 
