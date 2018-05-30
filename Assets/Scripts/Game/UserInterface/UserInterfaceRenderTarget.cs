@@ -66,7 +66,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public void Clear()
         {
+            RenderTexture oldRt = RenderTexture.active;
+            RenderTexture.active = targetTexture;
+
             GL.Clear(true, true, Color.clear);
+
+            RenderTexture.active = oldRt;
         }
 
         public void DrawTexture(Rect position, Texture2D image)
