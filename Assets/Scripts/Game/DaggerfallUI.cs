@@ -86,7 +86,7 @@ namespace DaggerfallWorkshop.Game
         const float versionTextScale = 1.0f;
         Vector2 versionTextScaleVector2 = new Vector2(versionTextScale, versionTextScale);
         float versionTextWidth;
-        Color versionTextColor = new Color(1, 1, 1, 0.5f);
+        Color versionTextColor = new Color(0.6f, 0.6f, 0.6f, 1);
 
         bool hudSetup = false;
         DaggerfallHUD dfHUD;
