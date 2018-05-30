@@ -357,6 +357,8 @@ namespace DaggerfallWorkshop.Game
             // Set depth of GUI to appear on top of other elements
             GUI.depth = 0;
 
+            RenderTarget.ClearTargetTexture();
+
             // Draw top window
             if (uiManager.TopWindow != null)
             {
@@ -369,8 +371,6 @@ namespace DaggerfallWorkshop.Game
                 Vector2 versionTextPos = new Vector2(Screen.width - versionTextWidth, 0);
                 versionFont.DrawText(versionText, versionTextPos, versionTextScaleVector2, versionTextColor);
             }
-
-            RenderTarget.Present();
         }
 
         void ProcessMessages()

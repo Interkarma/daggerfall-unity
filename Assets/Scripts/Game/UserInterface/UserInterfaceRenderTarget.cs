@@ -16,38 +16,26 @@ namespace DaggerfallWorkshop.Game.UserInterface
 {
     /// <summary>
     /// Manages the render target texture for UI systems and provides helpers for drawing UI components.
-    /// Used a double-buffered rendering setup with a backbuffer texture and a presentation texture.
-    /// The front and back textures are swapped at the end of every UI draw operation.
     /// </summary>
     public class UserInterfaceRenderTarget : MonoBehaviour
     {
         #region Fields
 
         int createCount = 0;
-        RenderTexture targetTextureA = null;
-        RenderTexture targetTextureB = null;
+        RenderTexture targetTexture = null;
         Texture2D clearTexture = null;
         Rect targetRect = new Rect();
-        bool flip = false;
 
         #endregion
 
         #region Properties
 
         /// <summary>
-        /// Gets current presentation texture.
+        /// Gets current render target texture.
         /// </summary>
-        public RenderTexture PresentationTexture
+        public RenderTexture TargetTexture
         {
-            get { return GetPresentationTexture(); }
-        }
-
-        /// <summary>
-        /// Gets current backbuffer texture.
-        /// </summary>
-        public RenderTexture BackBufferTexture
-        {
-            get { return GetBackBufferTexture(); }
+            get { return targetTexture; }
         }
 
         /// <summary>
@@ -64,16 +52,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private void Awake()
         {
-            targetTextureA = CheckTargetTexture(targetTextureA);
-            targetTextureB = CheckTargetTexture(targetTextureB);
+            targetTexture = CheckTargetTexture(targetTexture);
             clearTexture = DaggerfallUI.CreateSolidTexture(Color.clear, 8);
             UpdateNonDiegeticOutput();
         }
 
         private void Update()
         {
-            targetTextureA = CheckTargetTexture(targetTextureA);
-            targetTextureB = CheckTargetTexture(targetTextureB);
+            targetTexture = CheckTargetTexture(targetTexture);
         }
 
         #endregion
@@ -81,45 +67,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
         #region Public Methods
 
         /// <summary>
-        /// Flip presentation and backbuffer texture so latest render becomes presentation texture.
-        /// Updates non-diegetic canvas if currently enabled. If not using default non-diegetic canvas
-        /// then some other system (e.g. a diegetic quad) must present UI to end user.
+        /// Sets the target texture to clear.
         /// </summary>
-        public void Present()
+        public void ClearTargetTexture()
         {
-            flip = !flip;
-            UpdateNonDiegeticOutput();
-            ClearBackBufferTexture();
-        }
-
-        /// <summary>
-        /// Sets the backbuffer to clear.
-        /// </summary>
-        public void ClearBackBufferTexture()
-        {
-            Graphics.Blit(clearTexture, GetBackBufferTexture());
-        }
-
-        /// <summary>
-        /// Sets the presentation texture to clear.
-        /// </summary>
-        public void ClearPresentationTexture()
-        {
-            Graphics.Blit(clearTexture, GetPresentationTexture());
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        RenderTexture GetPresentationTexture()
-        {
-            return (flip) ? targetTextureA : targetTextureB;
-        }
-
-        RenderTexture GetBackBufferTexture()
-        {
-            return (flip) ? targetTextureB : targetTextureA;
+            Graphics.Blit(clearTexture, targetTexture);
         }
 
         #endregion
@@ -128,11 +80,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public void DrawTexture(Rect position, Texture2D image)
         {
-            if (!IsReady(GetBackBufferTexture()))
+            if (!IsReady(targetTexture))
                 return;
 
             RenderTexture oldRt = RenderTexture.active;
-            RenderTexture.active = BackBufferTexture;
+            RenderTexture.active = targetTexture;
 
             GUI.DrawTexture(position, image);
 
@@ -141,11 +93,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public void DrawTexture(Rect position, Texture2D image, ScaleMode scaleMode, bool alphaBlend = true, float imageAspect = 0)
         {
-            if (!IsReady(GetBackBufferTexture()))
+            if (!IsReady(targetTexture))
                 return;
 
             RenderTexture oldRt = RenderTexture.active;
-            RenderTexture.active = BackBufferTexture;
+            RenderTexture.active = targetTexture;
 
             GUI.DrawTexture(position, image, scaleMode, alphaBlend);
 
@@ -154,11 +106,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public void DrawTextureWithTexCoords(Rect position, Texture image, Rect texCoords, bool alphaBlend = true)
         {
-            if (!IsReady(GetBackBufferTexture()))
+            if (!IsReady(targetTexture))
                 return;
 
             RenderTexture oldRt = RenderTexture.active;
-            RenderTexture.active = BackBufferTexture;
+            RenderTexture.active = targetTexture;
 
             GUI.DrawTextureWithTexCoords(position, image, texCoords, alphaBlend);
 
@@ -191,6 +143,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 targetTexture = new RenderTexture(width, height, 0, RenderTextureFormat.ARGB32);
                 targetTexture.name = string.Format("DaggerfallUI RenderTexture {0}", createCount++);
                 targetTexture.Create();
+                UpdateNonDiegeticOutput();
                 RaiseOnCreateTargetTexture();
                 Debug.LogFormat("Created UI RenderTexture with dimensions {0}, {1}", width, height);
             }
@@ -214,8 +167,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (!rawImage)
                 return;
 
-            // Set presentation render texture to raw image output
-            rawImage.texture = GetPresentationTexture();
+            // Set target render texture to raw image output
+            rawImage.texture = targetTexture;
             rawImage.SetNativeSize();
         }
 
