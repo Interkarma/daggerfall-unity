@@ -1092,8 +1092,9 @@ namespace DaggerfallWorkshop.Game
                     {
                         dungeonName = GameManager.Instance.PlayerEnterExit.Dungeon.Summary.LocationName;
                     }
-                    if (dungeonName[dungeonName.Length - 1] == '.')
-                        dungeonName = dungeonName.Remove(dungeonName.Length - 1); // remove character '.' from castle text record entry
+
+                    dungeonName = dungeonName.TrimEnd('.'); // remove character '.' from castle text record entry
+
                     return String.Format(TextManager.Instance.GetText(textDatabase, "AnswerTextWhereAmI"), dungeonName, GameManager.Instance.PlayerEnterExit.Dungeon.Summary.RegionName);
                 }
             }
@@ -1406,8 +1407,8 @@ namespace DaggerfallWorkshop.Game
                         {
                             dungeonName = GameManager.Instance.PlayerEnterExit.Dungeon.Summary.LocationName;
                         }
-                        if (dungeonName[dungeonName.Length-1] == '.')
-                            dungeonName = dungeonName.Remove(dungeonName.Length - 1); // remove character '.' from castle text record entry
+
+                        dungeonName = dungeonName.TrimEnd('.'); // remove character '.' from castle text record entry
 
                         if (dungeonName == listItem.caption)
                         {
