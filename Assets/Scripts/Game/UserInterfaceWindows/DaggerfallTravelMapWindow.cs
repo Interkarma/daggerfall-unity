@@ -134,6 +134,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Vector2 zoomOffset = Vector2.zero;
         Vector2 zoomPosition = Vector2.zero;
 
+        //TextLabel coordsLabel = new TextLabel();
+
         #endregion
 
         #region Properties
@@ -202,6 +204,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected override void Setup()
         {
             ParentPanel.BackgroundColor = ScreenDimColor;
+
+            //NativePanel.Components.Add(coordsLabel);
 
             // Set location pixel colors and identify flash color from palette file
             DFPalette colors = new DFPalette();
@@ -1024,30 +1028,28 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Vector2 GetCoordinates()
         {
-            Vector2 results = Vector2.zero;
             string mapName = selectedRegionMapNames[mapIndex];
             Vector2 origin = offsetLookup[mapName];
             scale = GetRegionMapScale(selectedRegion);
-            results.x = lastMousePos.x;
-            results.y = lastMousePos.y;
+
+            Vector2 results = Vector2.zero;
+            Vector2 pos = regionTextureOverlayPanel.ScaledMousePosition;
 
             if (zoom)
             {
-                results.x = (int)(results.x / zoomfactor * scale + zoomOffset.x + origin.x);
-                int diffy = (int)(height / zoomfactor - lastMousePos.y);
-                results.y = (int)(height - ((results.y - 10) / zoomfactor) - zoomOffset.y - diffy - 10 + origin.y);
+                results.x = (int)Math.Floor(pos.x / zoomfactor * scale + zoomOffset.x + origin.x);
+                float diffy = height / zoomfactor - pos.y;
+                results.y = (int)Math.Floor(height - ((pos.y - 0.5f) / zoomfactor) - zoomOffset.y - diffy + origin.y);
             }
             else
             {
-                results.x = (int)((results.x / scale) + origin.x);
-                results.y = (int)((results.y / scale) + origin.y - regionPanelOffset);
+                results.x = (int)Math.Floor(origin.x + pos.x);
+                results.y = (int)Math.Floor(origin.y + pos.y + 0.5f);
             }
 
-            results.x = (int)(Math.Round(results.x));
-            results.y = (int)(Math.Round(results.y));
+            //coordsLabel.Text = string.Format("{0}, {1}", results.x, results.y);
 
             return results;
-
         }
 
 
@@ -1060,8 +1062,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             locationSelected = false;
             mouseOverRegion = selectedRegion;
 
-
-            if (lastMousePos.x < regionPanelOffset || lastMousePos.x > regionTextureOverlayPanelRect.width - regionPanelOffset || lastMousePos.y < regionPanelOffset || lastMousePos.y > regionTextureOverlayPanel.Size.y + regionPanelOffset)
+            if (lastMousePos.x < 0 || lastMousePos.x > regionTextureOverlayPanelRect.width || lastMousePos.y < regionPanelOffset || lastMousePos.y > regionTextureOverlayPanel.Size.y + regionPanelOffset)
                 return;
 
             Vector2 coordinates = GetCoordinates();
