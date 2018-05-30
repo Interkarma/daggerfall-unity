@@ -26,7 +26,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class DaggerfallHUD : DaggerfallBaseWindow
     {
-        float crosshairScale = 0.5f;
+        float crosshairScale = 0.75f;
 
         PopupText popupText = new PopupText();
         TextLabel midScreenTextLabel = new TextLabel();
