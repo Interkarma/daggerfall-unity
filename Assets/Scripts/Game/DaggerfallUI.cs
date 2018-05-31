@@ -99,7 +99,6 @@ namespace DaggerfallWorkshop.Game
         DaggerfallSpellBookWindow dfSpellBookWindow;
         DaggerfallSpellMakerWindow dfSpellMakerWindow;
         DaggerfallCourtWindow dfCourtWindow;
-        QuestMachineInspectorWindow dfQuestInspector;
 
         DaggerfallFontPlus fontPetrock32;
 
@@ -277,8 +276,6 @@ namespace DaggerfallWorkshop.Game
             dfCourtWindow = new DaggerfallCourtWindow(uiManager);
 
             dfExteriorAutomapWindow = new DaggerfallExteriorAutomapWindow(uiManager);
-
-            dfQuestInspector = new QuestMachineInspectorWindow(uiManager);
 
             Questing.Actions.GivePc.OnOfferPending += GivePc_OnOfferPending;
 
@@ -475,9 +472,6 @@ namespace DaggerfallWorkshop.Game
                         if (GameManager.Instance.PlayerController.isGrounded)
                             uiManager.PushWindow(new DaggerfallTransportWindow(uiManager));
                     }
-                    break;
-                case DaggerfallUIMessages.dfuiOpenQuestInspector:
-                    uiManager.PushWindow(dfQuestInspector);
                     break;
                 case DaggerfallUIMessages.dfuiOpenBookReaderWindow:
                     uiManager.PushWindow(dfBookReaderWindow);
