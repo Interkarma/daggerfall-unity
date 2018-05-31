@@ -67,6 +67,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Color unselectedTextColor = new Color(0.6f, 0.6f, 0.6f, 1f);
         Color selectedTextColor = new Color(0.0f, 0.8f, 0.0f, 1.0f);
+        Color secondaryTextColor = new Color(0.8f, 0.8f, 0.8f, 1.0f);
 
         #endregion
 
@@ -87,7 +88,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         string testText;
         string okText;
 
-        Color backgroundColor = new Color(0, 0, 0, 0.7f);
+        Color backgroundColor = new Color(0, 0, 0, 0.8f);
         Color confirmEnabledBackgroundColor = new Color(0.0f, 0.5f, 0.0f, 0.4f);
         Color confirmDisabledBackgroundColor = new Color(0.5f, 0.0f, 0.0f, 0.4f);
 
@@ -209,7 +210,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             versionLabel.Position = new Vector2(0, 1);
             versionLabel.HorizontalAlignment = HorizontalAlignment.Right;
             versionLabel.ShadowPosition = Vector2.zero;
-            versionLabel.TextColor = Color.gray;
+            versionLabel.TextColor = secondaryTextColor;
             versionLabel.Text = VersionInfo.DaggerfallUnityVersion;
             browserPanel.Components.Add(versionLabel);
 
@@ -423,7 +424,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             settingsPathLabel.Position = new Vector2(0, 170);
             settingsPathLabel.HorizontalAlignment = HorizontalAlignment.Center;
             settingsPathLabel.ShadowPosition = Vector2.zero;
-            settingsPathLabel.TextColor = Color.gray;
+            settingsPathLabel.TextColor = secondaryTextColor;
             settingsPathLabel.BackgroundColor = backgroundColor;
             optionsPanel.Components.Add(settingsPathLabel);
 
@@ -466,7 +467,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             restartButton.Size = new Vector2(45, 12);
             restartButton.Label.Text = string.Format("< {0}", GetText("restart"));
             restartButton.Label.ShadowPosition = Vector2.zero;
-            restartButton.Label.TextColor = Color.gray;
+            restartButton.Label.TextColor = secondaryTextColor;
             restartButton.ToolTip = defaultToolTip;
             restartButton.ToolTipText = GetText("restartInfo");
             restartButton.VerticalAlignment = VerticalAlignment.Top;
