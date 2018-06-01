@@ -10,7 +10,6 @@
 //
 
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -20,6 +19,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
     public class UserInterfaceRenderTarget : MonoBehaviour
     {
         #region Fields
+
+        int customWidth = 0;
+        int customHeight = 0;
+        int customGUIDepth = 0;
+        Panel customParentPanel;
 
         int createCount = 0;
         RenderTexture targetTexture = null;
@@ -45,60 +49,82 @@ namespace DaggerfallWorkshop.Game.UserInterface
             get { return targetRect; }
         }
 
+        /// <summary>
+        /// Gets or sets a custom width for target texture.
+        /// </summary>
+        public int CustomWidth
+        {
+            get { return customWidth; }
+            set { customWidth = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets a custom height for target texture.
+        /// </summary>
+        public int CustomHeight
+        {
+            get { return customHeight; }
+            set { customHeight = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets a custom GUI.Depth for OnGUI() draws.
+        /// </summary>
+        public int CustomGUIDepth
+        {
+            get { return customGUIDepth; }
+            set { customGUIDepth = value; }
+        }
+
+        /// <summary>
+        /// Gets custom parent panel for adding custom own UI controls.
+        /// This will be set to custom width/height dimensions.
+        /// </summary>
+        Panel CustomParentPanel
+        {
+            get { return customParentPanel; }
+        }
+
         #endregion
 
         #region Unity
 
-        private void Awake()
+        private void Start()
         {
+            customParentPanel = new Panel();
             CheckTargetTexture();
-            UpdateNonDiegeticOutput();
         }
 
         private void Update()
         {
             CheckTargetTexture();
+
+            // Update parent panel
+            customParentPanel.Update();
         }
 
         private void OnGUI()
         {
-            // Clear behind everything else
-            GUI.depth = 10;
+            // Set depth
+            GUI.depth = customGUIDepth;
 
             if (Event.current.type != EventType.Repaint)
                 return;
 
             if (IsReady())
+            {
+                // Clear UI
                 Clear();
+
+                // Draw parent panel
+                GUI.depth = 0;
+                customParentPanel.Draw();
+            }
         }
 
         #endregion
 
         #region Public Methods
-
-        /// <summary>
-        /// Gets diegetic canvas output raw image (if enabled)
-        /// </summary>
-        /// <returns>RawImage or null.</returns>
-        public RawImage GetDiegeticCanvasRawImage()
-        {
-            // Must be able to find output canvas object
-            GameObject nonDiegeticUIOutput = DaggerfallUI.Instance.NonDiegeticUIOutput;
-            if (!nonDiegeticUIOutput)
-                return null;
-
-            // Output canvas object must be active
-            if (!nonDiegeticUIOutput.activeInHierarchy)
-                return null;
-
-            // Get raw image component
-            RawImage rawImage = nonDiegeticUIOutput.GetComponent<RawImage>();
-            if (!rawImage)
-                return null;
-
-            return rawImage;
-        }
-
         #endregion
 
         #region Drawing Methods
@@ -165,10 +191,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
         // Check render texture and recreate if not valid
         void CheckTargetTexture()
         {
-            // Just using screen dimensions for now while solving problems of redirecting rendering from UI components
-            // Aiming for a baseline of 1:1 functionality with current setup before changing anything further
-            int width = Screen.width;
-            int height = Screen.height;
+            // Use either screen or custom dimensions
+            int width = (customWidth == 0) ? Screen.width : customWidth;
+            int height = (customHeight == 0) ? Screen.height : customHeight;
+
+            // Set custom panel size
+            customParentPanel.Size = new Vector2(width, height);
 
             // Just return same texture if still valid
             if (!IsReady() || targetTexture.width != width || targetTexture.height != height)
@@ -178,22 +206,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 targetTexture = new RenderTexture(width, height, 0, RenderTextureFormat.ARGB32);
                 targetTexture.name = string.Format("DaggerfallUI RenderTexture {0}", createCount++);
                 targetTexture.Create();
-                UpdateNonDiegeticOutput();
                 RaiseOnCreateTargetTexture();
                 Debug.LogFormat("Created UI RenderTexture with dimensions {0}, {1}", width, height);
             }
-        }
-
-        void UpdateNonDiegeticOutput()
-        {
-            // Get raw image component
-            RawImage rawImage = GetDiegeticCanvasRawImage();
-            if (!rawImage)
-                return;
-
-            // Set target render texture to raw image output
-            rawImage.texture = targetTexture;
-            rawImage.SetNativeSize();
         }
 
         #endregion

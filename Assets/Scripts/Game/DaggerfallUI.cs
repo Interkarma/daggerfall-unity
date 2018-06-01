@@ -30,6 +30,7 @@ namespace DaggerfallWorkshop.Game
     /// </summary>
     [RequireComponent(typeof(FadeBehaviour))]
     [RequireComponent(typeof(DaggerfallAudioSource))]
+    [RequireComponent(typeof(UserInterfaceRenderTarget))]
     public class DaggerfallUI : MonoBehaviour
     {
         const string fontsFolderName = "Fonts";
@@ -274,10 +275,13 @@ namespace DaggerfallWorkshop.Game
             dfSpellBookWindow = new DaggerfallSpellBookWindow(uiManager);
             dfSpellMakerWindow = new DaggerfallSpellMakerWindow(uiManager);
             dfCourtWindow = new DaggerfallCourtWindow(uiManager);
-
             dfExteriorAutomapWindow = new DaggerfallExteriorAutomapWindow(uiManager);
 
+            RenderTarget.OnCreateTargetTexture += RenderTarget_OnCreateTargetTexture;
             Questing.Actions.GivePc.OnOfferPending += GivePc_OnOfferPending;
+
+            // We only use our render target for texture clearing, set it well behind everything else
+            RenderTarget.CustomGUIDepth = 10;
 
             SetupSingleton();
         }
@@ -1225,6 +1229,41 @@ namespace DaggerfallWorkshop.Game
             }
 
             return false;
+        }
+
+        void RenderTarget_OnCreateTargetTexture()
+        {
+            // Get raw image component
+            UnityEngine.UI.RawImage rawImage = FindNonDiegeticCanvasRawImage();
+            if (!rawImage)
+                return;
+
+            // Set target render texture to raw image output
+            rawImage.texture = RenderTarget.TargetTexture;
+            rawImage.SetNativeSize();
+        }
+
+        /// <summary>
+        /// Gets non-diegetic canvas output raw image (if enabled)
+        /// </summary>
+        /// <returns>RawImage or null.</returns>
+        UnityEngine.UI.RawImage FindNonDiegeticCanvasRawImage()
+        {
+            // Must be able to find output canvas object
+            GameObject nonDiegeticUIOutput = DaggerfallUI.Instance.NonDiegeticUIOutput;
+            if (!nonDiegeticUIOutput)
+                return null;
+
+            // Output canvas object must be active
+            if (!nonDiegeticUIOutput.activeInHierarchy)
+                return null;
+
+            // Get raw image component
+            UnityEngine.UI.RawImage rawImage = nonDiegeticUIOutput.GetComponent<UnityEngine.UI.RawImage>();
+            if (!rawImage)
+                return null;
+
+            return rawImage;
         }
 
         #endregion
