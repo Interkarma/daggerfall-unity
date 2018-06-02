@@ -32,6 +32,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextLabel midScreenTextLabel = new TextLabel();
         HUDCrosshair crosshair = new HUDCrosshair();
         HUDVitals vitals = new HUDVitals();
+        HUDFlicker flicker = new HUDFlicker();
         HUDCompass compass = new HUDCompass();
         HUDInteractionModeIcon interactionModeIcon = new HUDInteractionModeIcon();
         HUDPlaceMarker placeMarker = new HUDPlaceMarker();
@@ -112,6 +113,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ParentPanel.Components.Add(vitals);
             ParentPanel.Components.Add(compass);
             ParentPanel.Components.Add(interactionModeIcon);
+            ParentPanel.Components.Add(flicker);
         }
 
         protected override void Setup()
