@@ -35,6 +35,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             const int flavourMessageID = 600;
 
+            if (offeredQuest == null)
+                return;
+
             TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(flavourMessageID);
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
             messageBox.SetTextTokens(tokens, offeredQuest.ExternalMCP);
