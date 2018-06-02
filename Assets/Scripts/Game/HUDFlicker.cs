@@ -56,9 +56,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                 if ((alphaState == AlphaState.Increasing && alphaFadeValue > alphaMax) ||
                     (alphaState == AlphaState.Decreasing && alphaFadeValue < alphaMin))
-                    ReverseStateDirection();
+                    ReverseAlphaDirection();
                 else if (alphaFadeValue != alphaMin)
-                    RandomlyReverseState();
+                    RandomlyReverseAlphaDirection();
             }
             // Slow Exit out If player's health goes above threshold
             else if (alphaState != AlphaState.Resetting && alphaState != AlphaState.None)
@@ -73,7 +73,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
-        private void RandomlyReverseState()
+        private void RandomlyReverseAlphaDirection()
         {
             const float minChance = -0.01f; // negative so it takes a little while before it can reverse at least.
             const float chanceStep = 0.008f;
@@ -89,11 +89,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 // chance gets reset each time it's randomly reversed.
                 chanceReverseState = minChance;
-                ReverseStateDirection();
+                ReverseAlphaDirection();
             }
         }
 
-        private void ReverseStateDirection()
+        private void ReverseAlphaDirection()
         {
             if (alphaState == AlphaState.Increasing)
                 alphaState = AlphaState.Decreasing;
@@ -115,7 +115,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public override void Draw()
         {
-            
             AlphaStateControl();
             SetAlphaSpeed();
             AlphaChange();
