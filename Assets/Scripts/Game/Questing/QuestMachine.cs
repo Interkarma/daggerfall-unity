@@ -380,9 +380,19 @@ namespace DaggerfallWorkshop.Game.Questing
             questsToRemove.Clear();
             foreach (Quest quest in quests.Values)
             {
-                // Tick active quests
-                if (!quest.QuestComplete)
-                    quest.Update();
+                try
+                {
+                    // Tick active quests
+                    if (!quest.QuestComplete)
+                        quest.Update();
+                }
+                catch (Exception ex)
+                {
+                    LogFormat(quest, "Error in quest follows. Terminating quest runtime.");
+                    LogFormat(ex.Message);
+                    RaiseOnQuestErrorTerminationEvent(quest);
+                    questsToRemove.Add(quest);
+                }
 
                 // Schedule completed quests for tombstoning
                 if (quest.QuestComplete && !quest.QuestTombstoned)
@@ -569,17 +579,14 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <param name="questName">Quest name.</param>
         /// <param name="factionId">Faction id. (optional)</param>
         /// <returns>Quest.</returns>
-        public Quest InstantiateQuest(string questName, int factionId = 0)
+        public void InstantiateQuest(string questName, int factionId = 0)
         {
             Quest quest = ParseQuest(questName);
             if (quest != null)
             {
                 quest.FactionId = factionId;
                 InstantiateQuest(quest);
-                return quest;
             }
-
-            return null;
         }
 
         /// <summary>
@@ -767,7 +774,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     {
                         if (IsNPCDataEqual(person.QuestorData, lastNPCClicked.Data))
                         {
-                            LogFormat("This person is used in quest {0} as Person {1}", person.ParentQuest.UID, person.Symbol.Original);
+                            LogFormat(quest, "This person is used in quest as Person {1}", person.ParentQuest.UID, person.Symbol.Original);
                             return true;
                         }
                     }
@@ -1189,7 +1196,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 QuestMarker marker = siteDetails.questSpawnMarkers[siteDetails.selectedQuestItemMarker];
                 if (marker.targetResources == null)
                 {
-                    Log("IsIndividualQuestNPCAtSiteLink() found a SiteLink with no targetResources assigned.");
+                    Log(quest, "IsIndividualQuestNPCAtSiteLink() found a SiteLink with no targetResources assigned.");
                     continue;
                 }
 
@@ -1343,7 +1350,7 @@ namespace DaggerfallWorkshop.Game.Questing
                         if (existingResource.Symbol.Equals(resource.Symbol))
                         {
                             spawnMarker.targetResources.Remove(existingResource.Symbol);
-                            LogFormat("Removed spawn {0} from {1}", existingResource.Symbol.Original, place.Symbol.Original);
+                            LogFormat(quest, "Removed spawn {0} from {1}", existingResource.Symbol.Original, place.Symbol.Original);
                             break;
                         }
                     }
@@ -1365,7 +1372,7 @@ namespace DaggerfallWorkshop.Game.Questing
                         if (existingResource.Symbol.Equals(resource.Symbol))
                         {
                             itemMarker.targetResources.Remove(existingResource.Symbol);
-                            LogFormat("Removed item {0} from {1}", existingResource.Symbol.Original, place.Symbol.Original);
+                            LogFormat(quest, "Removed item {0} from {1}", existingResource.Symbol.Original, place.Symbol.Original);
                             break;
                         }
                     }
@@ -1636,6 +1643,15 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             if (OnQuestEnded != null)
                 OnQuestEnded(quest);
+        }
+
+        // OnQuestErrorTermination
+        public delegate void OnQuestErrorTerminationEventHandler(Quest quest);
+        public static event OnQuestErrorTerminationEventHandler OnQuestErrorTermination;
+        protected virtual void RaiseOnQuestErrorTerminationEvent(Quest quest)
+        {
+            if (OnQuestErrorTermination != null)
+                OnQuestErrorTermination(quest);
         }
 
         #endregion
