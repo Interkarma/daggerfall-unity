@@ -23,7 +23,7 @@ namespace DaggerfallWorkshop.Game
         protected int previousMaxHealth;
         protected int previousHealth;
         public int healthLost;
-        public float percentHealthLost;
+        public float healthLostPercent;
 
         void Start()
         {
@@ -57,7 +57,7 @@ namespace DaggerfallWorkshop.Game
             healthLost = previousHealth - currentHealth;
             if (healthLost > 0)
             {
-                percentHealthLost = (float)healthLost / maxHealth;
+                healthLostPercent = (float)healthLost / maxHealth;
             }
 
             // reset previous health to detect next health loss
