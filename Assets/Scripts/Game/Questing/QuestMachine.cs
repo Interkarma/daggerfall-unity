@@ -52,6 +52,9 @@ namespace DaggerfallWorkshop.Game.Questing
         const string questSourceFolderName = "Quests";
         const string questTablesFolderName = "Tables";
 
+        // Log file
+        const string questLogFilename = "quest_log.txt";
+
         // Table constants
         const string globalVarsTableFilename = "Quests-GlobalVars";
         const string staticMessagesTableFilename = "Quests-StaticMessages";
@@ -188,6 +191,14 @@ namespace DaggerfallWorkshop.Game.Questing
             get { return true; }
         }
 
+        /// <summary>
+        /// Gets full path to quest log file.
+        /// </summary>
+        private static string LogPath
+        {
+            get { return Path.Combine(Application.persistentDataPath, questLogFilename); }
+        }
+
         #endregion
 
         #region Enums
@@ -228,6 +239,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
         void Start()
         {
+            ClearLog();
             RegisterActionTemplates();
         }
 
@@ -445,7 +457,7 @@ namespace DaggerfallWorkshop.Game.Questing
             string path = Path.Combine(QuestSourceFolder, questName);
             if (!File.Exists(path))
             {
-                Debug.LogErrorFormat("Quest filename path {0} not found.", path);
+                LogFormat(questName, "Quest filename path {0} not found.", path);
             }
             else
             {
@@ -473,7 +485,7 @@ namespace DaggerfallWorkshop.Game.Questing
             string path = Path.Combine(TablesSourceFolder, tableName);
             if (!File.Exists(path))
             {
-                Debug.LogErrorFormat("Table filename path {0} not found.", path);
+                LogFormat("Table filename path {0} not found.", path);
             }
             else
             {
@@ -516,13 +528,14 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <returns>Quest object if successfully parsed, otherwise null.</returns>
         public Quest ParseQuest(string questName)
         {
-            Debug.LogFormat("Parsing quest {0}", questName);
-
             string[] source = GetQuestSourceText(questName);
             if (source == null || source.Length == 0)
-                throw new Exception(string.Format("Could not load quest '{0}' or source file is empty/invalid.", questName));
+            {
+                LogFormat("Could not load quest '{0}' or source file is empty/invalid.", questName);
+                return null;
+            }
 
-            return ParseQuest(source);
+            return ParseQuest(questName, source);
         }
 
         /// <summary>
@@ -530,13 +543,24 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         /// <param name="questSource">Array of lines from quuest source file.</param>
         /// <returns>Quest.</returns>
-        public Quest ParseQuest(string[] questSource)
+        public Quest ParseQuest(string questName, string[] questSource)
         {
-            // Parse quest
-            Parser parser = new Parser();
-            Quest quest = parser.Parse(questSource);
+            LogFormat("Parsing quest {0}", questName);
 
-            return quest;
+            try
+            {
+                // Parse quest
+                Parser parser = new Parser();
+                Quest quest = parser.Parse(questSource);
+
+                return quest;
+            }
+            catch (Exception ex)
+            {
+                LogFormat("Parsing quest {0}\r\n{1}", questName, ex.Message);
+
+                return null;
+            }
         }
 
         /// <summary>
@@ -743,7 +767,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     {
                         if (IsNPCDataEqual(person.QuestorData, lastNPCClicked.Data))
                         {
-                            Debug.LogFormat("This person is used in quest {0} as Person {1}", person.ParentQuest.UID, person.Symbol.Original);
+                            LogFormat("This person is used in quest {0} as Person {1}", person.ParentQuest.UID, person.Symbol.Original);
                             return true;
                         }
                     }
@@ -1165,7 +1189,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 QuestMarker marker = siteDetails.questSpawnMarkers[siteDetails.selectedQuestItemMarker];
                 if (marker.targetResources == null)
                 {
-                    Debug.Log("IsIndividualQuestNPCAtSiteLink() found a SiteLink with no targetResources assigned.");
+                    Log("IsIndividualQuestNPCAtSiteLink() found a SiteLink with no targetResources assigned.");
                     continue;
                 }
 
@@ -1319,7 +1343,7 @@ namespace DaggerfallWorkshop.Game.Questing
                         if (existingResource.Symbol.Equals(resource.Symbol))
                         {
                             spawnMarker.targetResources.Remove(existingResource.Symbol);
-                            Debug.LogFormat("Removed spawn {0} from {1}", existingResource.Symbol.Original, place.Symbol.Original);
+                            LogFormat("Removed spawn {0} from {1}", existingResource.Symbol.Original, place.Symbol.Original);
                             break;
                         }
                     }
@@ -1341,7 +1365,7 @@ namespace DaggerfallWorkshop.Game.Questing
                         if (existingResource.Symbol.Equals(resource.Symbol))
                         {
                             itemMarker.targetResources.Remove(existingResource.Symbol);
-                            Debug.LogFormat("Removed item {0} from {1}", existingResource.Symbol.Original, place.Symbol.Original);
+                            LogFormat("Removed item {0} from {1}", existingResource.Symbol.Original, place.Symbol.Original);
                             break;
                         }
                     }
@@ -1421,15 +1445,59 @@ namespace DaggerfallWorkshop.Game.Questing
             switch (siteLink.siteType)
             {
                 case SiteTypes.Building:
-                    Debug.LogFormat("Created Building SiteLink to {0} in {1}/{2}", place.SiteDetails.buildingName, place.SiteDetails.regionName, place.SiteDetails.locationName);
+                    LogFormat(parentQuest, "Created Building SiteLink to {0} in {1}/{2}", place.SiteDetails.buildingName, place.SiteDetails.regionName, place.SiteDetails.locationName);
                     break;
                 case SiteTypes.Dungeon:
                     if (siteLink.magicNumberIndex == 0)
-                        Debug.LogFormat("Created Dungeon SiteLink to {0}/{1}", place.SiteDetails.regionName, place.SiteDetails.locationName);
+                        LogFormat(parentQuest, "Created Dungeon SiteLink to {0}/{1}", place.SiteDetails.regionName, place.SiteDetails.locationName);
                     else
-                        Debug.LogFormat("Created Dungeon SiteLink to {0}/{1}, index {2}", place.SiteDetails.regionName, place.SiteDetails.locationName, siteLink.magicNumberIndex);
+                        LogFormat(parentQuest, "Created Dungeon SiteLink to {0}/{1}, index {2}", place.SiteDetails.regionName, place.SiteDetails.locationName, siteLink.magicNumberIndex);
                     break;
             }
+        }
+
+        #endregion
+
+        #region Log Management
+
+        static void ClearLog()
+        {
+            string text = string.Format(
+                "Starting new quest log {0} {1}\r\n{2} version {3}\r\n\r\n",
+                DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString(),
+                VersionInfo.DaggerfallUnityProductName,
+                VersionInfo.DaggerfallUnityVersion);
+
+            File.WriteAllText(LogPath, text);
+        }
+
+        public static void Log(string text)
+        {
+            if (!File.Exists(LogPath))
+                ClearLog();
+
+            using (StreamWriter sw = File.AppendText(LogPath))
+            {
+                sw.Write(text);
+                sw.Write("\r\n\r\n");
+            }
+
+            Debug.Log(text);
+        }
+
+        public static void Log(Quest quest, string text)
+        {
+            Log(string.Format("[{0}] {1}", quest.QuestName, text));
+        }
+
+        public static void LogFormat(string text, params object[] p)
+        {
+            Log(string.Format(text, p));
+        }
+
+        public static void LogFormat(Quest quest, string text, params object[] p)
+        {
+            Log(quest, string.Format(text, p));
         }
 
         #endregion
