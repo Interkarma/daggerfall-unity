@@ -39,9 +39,7 @@ namespace DaggerfallWorkshop.Game
         }
         
         protected Transform playerCamTransform;
-        protected int previousMaxHealth;
-        protected int previousHealth;
-        protected int healthLost;
+        protected HealthLossDetector healthDetector;
         protected bool bSwaying; // true if player is reeling from damage
         protected Vector2 swayAxis;
         protected float timerStart;
@@ -51,6 +49,7 @@ namespace DaggerfallWorkshop.Game
         void Start()
         {
             playerCamTransform = GameManager.Instance.MainCamera.transform;
+            healthDetector = GetComponent<HealthLossDetector>();
 
             // Get starting health and max health
             if (GameManager.Instance != null && GameManager.Instance.PlayerEntity != null)
@@ -72,33 +71,22 @@ namespace DaggerfallWorkshop.Game
             else
                 cameraRecoilSetting = GetRecoilSetting(DaggerfallUnity.Settings.CameraRecoilStrength);
 
-            // Check max health hasn't changed - this can indicate user has loaded a different character
-            // or current character has levelled up or changed in some way and the cached health values need to be refreshed.
-            // Just reset values and exit for this frame as the current relative health lost calculation is not valid when MaxHealth changes.
-            int maxHealth = GameManager.Instance.PlayerEntity.MaxHealth;
-            int currentHealth = GameManager.Instance.PlayerEntity.CurrentHealth;
-            if (maxHealth != previousMaxHealth)
-            {
-                ResetRecoil();
-                return;
-            }
-
+            int healthLost = healthDetector.healthLost;
+            float healthLostPercent = healthDetector.healthLostPercent;
             // Detect Health loss
-            int healthLost = previousHealth - currentHealth;
             if (healthLost > 0)
             {
                 const float minPercentThreshold = 0.02f;
-                float percentLost = (float)healthLost / maxHealth;
 
                 // useless to do it for less than a certain percentage
-                if (percentLost >= minPercentThreshold)
+                if (healthLostPercent > minPercentThreshold)
                 {
                     // Start swaying and timer countdown
                     bSwaying = true;
                     //Debug.Log("Percent loss: "  percentLost);
 
                     // longer timer for more health percent lost
-                    timerStart = CalculateTimerStart(percentLost);
+                    timerStart = CalculateTimerStart(healthLostPercent);
                     timer = timerStart;
 
                     // get a random unit vector axis for the sway direction
@@ -106,9 +94,6 @@ namespace DaggerfallWorkshop.Game
                     //Debug.Log("Start Swaying");
                 }
             }
-
-            // reset previous health to detect next health loss
-            previousHealth = currentHealth;  
 
             // do swaying
             if (bSwaying)
@@ -193,8 +178,6 @@ namespace DaggerfallWorkshop.Game
 
         public void ResetRecoil()
         {
-            previousMaxHealth = GameManager.Instance.PlayerEntity.MaxHealth;
-            previousHealth = GameManager.Instance.PlayerEntity.CurrentHealth;
             bSwaying = false;
         }
 
