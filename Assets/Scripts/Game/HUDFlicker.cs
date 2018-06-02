@@ -126,7 +126,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             float max = GameManager.Instance.PlayerEntity.MaxHealth;
             float current = GameManager.Instance.PlayerEntity.CurrentHealth;
-            return ((current / max) < flickerHealthThreshold);
+            return ((GameManager.Instance.PlayerEntity.CurrentHealthPercent) < flickerHealthThreshold);
         }
     }
 }
