@@ -20,19 +20,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
         private float alphaSpeed = fadeFast;
         private const float alphaMax = 0.4f;
         private const float alphaMin = 0.1f;
-        private const int flickerCountThreshold = 4;
-        private int flickerCount = 0;
+        private const int reversalCountThreshold = 7;
+        private int reversalCount = 0;
         private float alphaFadeValue = 0.0f;
         private const float flickerHealthThreshold = 0.25f;
 
-        public HUDFlicker()
-        {
-            //backgroundTexture = __ExternalAssets.iTween.CameraTexture(new Color(0, 0, 0, 1));
-        }
-
         private void AlphaChange()
         {
-            // increment alpha depending on FadeCycle
+            // increment alpha depending on State
             if (alphaState == AlphaState.Decreasing || alphaState == AlphaState.Resetting)
             {
                 alphaFadeValue -= alphaSpeed * Time.deltaTime;
@@ -45,38 +40,33 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 alphaFadeValue = 0;
             }
-            
         }
-        private void FlickerStateControl()
+        private void AlphaStateControl()
         {
-            RandomlyReverseState();
+            bool isBelowThreshold = IsBelowThreshold();
             // reverse if alpha reached max or min
-            if (alphaFadeValue >= alphaMax && alphaState == AlphaState.Increasing)
+            if (isBelowThreshold)
             {
-                alphaState = AlphaState.Decreasing;
-            }
-            else if (alphaFadeValue <= alphaMin && alphaState == AlphaState.Decreasing)
-            {
-                alphaState = AlphaState.Increasing;
-                flickerCount++;
-            }
+                // Start Flickering
+                if (alphaState == AlphaState.None)
+                { 
+                    alphaState = AlphaState.Increasing;
+                    alphaFadeValue = alphaMin;
+                }
 
-            // Start Flicker
-            if (IsBelowThreshold() && alphaState == AlphaState.None)
-            { 
-                alphaState = AlphaState.Increasing;
+                if ((alphaState == AlphaState.Increasing && alphaFadeValue > alphaMax) ||
+                    (alphaState == AlphaState.Decreasing && alphaFadeValue < alphaMin))
+                    ReverseStateDirection();
+                else if (alphaFadeValue != alphaMin)
+                    RandomlyReverseState();
             }
             // Slow Exit out If player's health goes above threshold
-            else if (!IsBelowThreshold() 
-                &&
-                ( alphaState == AlphaState.Increasing 
-                || alphaState == AlphaState.Decreasing)
-                )
+            else if (alphaState != AlphaState.Resetting && alphaState != AlphaState.None)
             {
                 alphaState = AlphaState.Resetting;
-                flickerCount = 0;
+                reversalCount = 0;
             }
-            // Finish Flicker Exit
+            // Finish Exit
             else if ( alphaState == AlphaState.Resetting && alphaFadeValue <= 0)
             {
                 alphaState = AlphaState.None;
@@ -97,29 +87,36 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // randomly reverse alpha
             if (Random.Range(0f, 1f) < chanceReverseState)
             {
-                //Debug.Log("Reversed AlphaState");
                 // chance gets reset each time it's randomly reversed.
                 chanceReverseState = minChance;
-                if (alphaState == AlphaState.Increasing)
-                    alphaState = AlphaState.Decreasing;
-                else if (alphaState == AlphaState.Decreasing)
-                    alphaState = AlphaState.Increasing;
+                ReverseStateDirection();
             }
+        }
+
+        private void ReverseStateDirection()
+        {
+            if (alphaState == AlphaState.Increasing)
+                alphaState = AlphaState.Decreasing;
+            else if (alphaState == AlphaState.Decreasing)
+                alphaState = AlphaState.Increasing;
+            reversalCount++;
+            //Debug.Log("Reversed AlphaState");
         }
 
         private void SetAlphaSpeed()
         {
             if (alphaState == AlphaState.Resetting)
                 alphaSpeed = fadeFast * 0.3f;
-            else if (flickerCount > flickerCountThreshold)
+            else if (reversalCount > reversalCountThreshold)
                 alphaSpeed = fadeSlow;
-            else if (flickerCount <= flickerCountThreshold)
+            else if (reversalCount <= reversalCountThreshold)
                 alphaSpeed = fadeFast;
         }
 
         public override void Draw()
         {
-            FlickerStateControl();
+            
+            AlphaStateControl();
             SetAlphaSpeed();
             AlphaChange();
 
