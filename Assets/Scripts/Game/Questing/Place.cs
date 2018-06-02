@@ -454,7 +454,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // Must have found at least one site
             if (foundSites == null || foundSites.Length == 0)
-                throw new Exception(string.Format("Could not find local site with P2={0} in {1}/{2}.", p2, location.RegionName, location.Name));
+                throw new Exception(string.Format("Could not find local site for {0} with P2={1} in {2}/{3}.", Symbol.Original,  p2, location.RegionName, location.Name));
 
             // Select a random site from available list
             int selectedIndex = UnityEngine.Random.Range(0, foundSites.Length);
