@@ -556,7 +556,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <returns>Quest.</returns>
         public Quest ParseQuest(string questName, string[] questSource)
         {
-            LogFormat("Parsing quest {0}", questName);
+            LogFormat("\r\n\r\nParsing quest {0}", questName);
 
             try
             {
@@ -568,7 +568,7 @@ namespace DaggerfallWorkshop.Game.Questing
             }
             catch (Exception ex)
             {
-                LogFormat("Parsing quest {0}\r\n{1}", questName, ex.Message);
+                LogFormat("Parsing quest {0} FAILED!\r\n{1}", questName, ex.Message);
 
                 return null;
             }
@@ -1487,7 +1487,7 @@ namespace DaggerfallWorkshop.Game.Questing
             using (StreamWriter sw = File.AppendText(LogPath))
             {
                 sw.Write(text);
-                sw.Write("\r\n\r\n");
+                sw.Write("\r\n");
             }
 
             Debug.Log(text);

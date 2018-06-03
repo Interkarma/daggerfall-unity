@@ -541,13 +541,14 @@ namespace DaggerfallWorkshop.Game.Questing
 
                     homePlaceSymbol = homePlace.Symbol;
                     ParentQuest.AddResource(homePlace);
+                    LogHomePlace(homePlace);
                     return;
                 }
             }
 
             // For other NPCs use default scope and building type
             Place.Scopes scope = Place.Scopes.Remote;
-            DFLocation.BuildingTypes buildingType = DFLocation.BuildingTypes.House2;
+            string buildingTypeString = "house2";
 
             // Adjust scope and building type based on faction hints
             int p1 = 0, p2 = 0, p3 = 0;
@@ -569,7 +570,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 else if (p1 == 0 && p2 >= 0 && p2 <= 20 && p3 == 0)
                 {
                     // Set to a specific building type
-                    buildingType = (DFLocation.BuildingTypes)p2;
+                    buildingTypeString = QuestMachine.Instance.PlacesTable.GetKeyForValue("p2", p2.ToString());
                 }
             }
 
@@ -582,20 +583,12 @@ namespace DaggerfallWorkshop.Game.Questing
             else
                 throw new Exception("AssignHomeTown() scope must be either 'local' or 'remote'.");
 
-            // Get building type string
-            string buildingTypeString = string.Empty;
-            if (!string.IsNullOrEmpty(factionTableKey))
-                buildingTypeString = QuestMachine.Instance.PlacesTable.GetKeyForValue("p2", p2.ToString());
-            else if (buildingType == DFLocation.BuildingTypes.House2)
-                buildingTypeString = "house2";
-            else
-                throw new Exception("AssignHomeTown() building type must be either 'house2' or business type.");
-
             // Create the home location
             string source = string.Format("Place {0} {1} {2}", symbolName, scopeString, buildingTypeString);
-            Place building = new Place(ParentQuest, source);
-            homePlaceSymbol = building.Symbol.Clone();
-            ParentQuest.AddResource(building);
+            homePlace = new Place(ParentQuest, source);
+            homePlaceSymbol = homePlace.Symbol.Clone();
+            ParentQuest.AddResource(homePlace);
+            LogHomePlace(homePlace);
 
 
             //
@@ -686,6 +679,11 @@ namespace DaggerfallWorkshop.Game.Questing
             //        ParentQuest.AddResource(building);
             //    }
             //}
+        }
+
+        void LogHomePlace(Place homePlace)
+        {
+            QuestMachine.LogFormat(ParentQuest, "Assigned Person {0} a home Place {1}/{2} in building {3}", Symbol.Original, HomeRegionName, HomeTownName, HomeBuildingName);
         }
 
         void AssignGod()

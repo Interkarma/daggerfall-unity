@@ -965,7 +965,7 @@ namespace DaggerfallWorkshop.Game.Questing
             if (RMBLayout.IsResidence(buildingType))
             {
                 // Generate a random surname for this residence
-                DFRandom.srand(Time.renderedFrameCount);
+                //DFRandom.srand(Time.renderedFrameCount);
                 string surname = DaggerfallUnity.Instance.NameHelper.Surname(Utility.NameHelper.BankTypes.Breton);
                 buildingName = HardStrings.theNamedResidence.Replace("%s", surname);
             }
