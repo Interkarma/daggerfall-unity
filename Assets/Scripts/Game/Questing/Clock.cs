@@ -403,12 +403,35 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
+        /// Gets combined travel time to every place.
+        /// This should ensure player has enough time to complete quest when several locations are involved.
+        /// Only used when automatic time calculation is required.
+        /// </summary>
+        /// <param name="returnTrip">Use return trip multiplier. Only applied once for total, not for every place.</param>
+        /// <returns>Combined travel time in seconds.</returns>
+        int GetTravelTimeInSeconds(bool returnTrip = true)
+        {
+            int travelTimeMinutes = 0;
+            QuestResource[] placeResources = ParentQuest.GetAllResources(typeof(Place));
+            foreach (QuestResource place in placeResources)
+            {
+                travelTimeMinutes += GetTravelTimeInSeconds(place as Place, false);
+            }
+
+            // Apply return trip multiplier
+            if (returnTrip)
+                travelTimeMinutes = (int)(travelTimeMinutes * returnTripMultiplier);
+
+            return travelTimeMinutes;
+        }
+
+        /// <summary>
         /// Gets travel time based on overworld map logic.
         /// </summary>
         /// <param name="place">Target place resource. If null will use first place defined in quest.</param>
         /// <param name="returnTrip">Use return trip multiplier.</param>
         /// <returns>Travel time in seconds.</returns>
-        int GetTravelTimeInSeconds(Place place = null, bool returnTrip = true)
+        int GetTravelTimeInSeconds(Place place, bool returnTrip = true)
         {
             if (place == null)
             {
