@@ -318,7 +318,8 @@ namespace DaggerfallWorkshop.Game.Questing
             // This only happens for very specific NPC types
             // Equivalent to calling "place anNPC at aPlace" from script
             // Will not be called again as assignment is permanent for duration of quest
-            if (homePlaceSymbol != null && !assignedToHome)
+            // Does not attempt to place a questor as they should be statically place or moved manually
+            if (homePlaceSymbol != null && !assignedToHome && !isQuestor)
             {
                 Place home = ParentQuest.GetPlace(homePlaceSymbol);
                 if (home == null)
