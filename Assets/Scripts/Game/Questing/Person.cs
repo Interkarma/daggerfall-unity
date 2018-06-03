@@ -47,6 +47,7 @@ namespace DaggerfallWorkshop.Game.Questing
         string factionTableKey = string.Empty;
         FactionFile.FactionData factionData;
         StaticNPC.NPCData questorData;
+        bool discoveredThroughTalkManager = false;
 
         #endregion
 
@@ -126,6 +127,12 @@ namespace DaggerfallWorkshop.Game.Questing
         public StaticNPC.NPCData QuestorData
         {
             get { return questorData; }
+        }
+
+        public bool DiscoveredThroughTalkManager
+        {
+            get { return discoveredThroughTalkManager; }
+            set { discoveredThroughTalkManager = value; }
         }
 
         #endregion
@@ -351,6 +358,7 @@ namespace DaggerfallWorkshop.Game.Questing
             
             // Assign to home place
             homePlace.AssignQuestResource(Symbol);
+            SetAssignedPlaceSymbol(homePlace.Symbol);
             assignedToHome = true;
 
             return true;
@@ -1163,6 +1171,7 @@ namespace DaggerfallWorkshop.Game.Questing
             public int factionID;
             public string factionTableKey;
             public StaticNPC.NPCData questorData;
+            public bool discoveredThroughTalkManager;
         }
 
         public override object GetSaveData()
@@ -1184,6 +1193,7 @@ namespace DaggerfallWorkshop.Game.Questing
             data.factionID = factionData.id;
             data.factionTableKey = factionTableKey;
             data.questorData = questorData;
+            data.discoveredThroughTalkManager = discoveredThroughTalkManager;
 
             return data;
         }
@@ -1214,6 +1224,7 @@ namespace DaggerfallWorkshop.Game.Questing
             factionData = dsfactionData;
             factionTableKey = data.factionTableKey;
             questorData = data.questorData;
+            discoveredThroughTalkManager = data.discoveredThroughTalkManager;
         }
 
         #endregion
