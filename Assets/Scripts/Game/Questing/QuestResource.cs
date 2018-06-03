@@ -12,6 +12,8 @@ namespace DaggerfallWorkshop.Game.Questing
     /// </summary>
     public abstract class QuestResource : IDisposable
     {
+        public const string BLANK = "BLANK";
+
         Quest parentQuest = null;
         Symbol symbol;
         int infoMessageID = -1;

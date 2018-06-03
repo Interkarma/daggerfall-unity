@@ -264,6 +264,60 @@ namespace DaggerfallWorkshop.Game.Questing
         #region Public Methods
 
         /// <summary>
+        /// Sets up Place resource directly from current player location.
+        /// Player must currently be in a town or dungeon location.
+        /// </summary>
+        /// <returns>True if location configured or false if could not be configured (e.g. player not in town or dungeon).</returns>
+        public bool ConfigureFromPlayerLocation(string symbolName)
+        {
+            // Must have a location
+            if (!GameManager.Instance.PlayerGPS.HasCurrentLocation)
+                return false;
+
+            // Get player current location
+            DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
+
+            // Get current site type
+            SiteTypes siteType;
+            int buildingKey = 0;
+            string buildingName = string.Empty;
+            switch (GameManager.Instance.PlayerEnterExit.WorldContext)
+            {
+                case WorldContext.Dungeon:
+                    siteType = SiteTypes.Dungeon;
+                    break;
+                case WorldContext.Interior:
+                    siteType = SiteTypes.Building;
+                    buildingKey = GameManager.Instance.PlayerEnterExit.BuildingDiscoveryData.buildingKey;
+                    buildingName = GameManager.Instance.PlayerEnterExit.BuildingDiscoveryData.displayName;
+                    break;
+                case WorldContext.Exterior:
+                    siteType = SiteTypes.Town;
+                    break;
+                default:
+                    return false;
+            }
+
+            // Configure new site details
+            siteDetails = new SiteDetails();
+            siteDetails.questUID = ParentQuest.UID;
+            siteDetails.siteType = siteType;
+            siteDetails.mapId = location.MapTableData.MapId;
+            siteDetails.locationId = location.Exterior.ExteriorData.LocationId;
+            siteDetails.buildingKey = buildingKey;
+            siteDetails.buildingName = buildingName;
+            siteDetails.regionName = location.RegionName;
+            siteDetails.locationName = location.Name;
+            siteDetails.questSpawnMarkers = null;
+            siteDetails.questItemMarkers = null;
+
+            // Assign symbol
+            Symbol = new Symbol(symbolName);
+
+            return true;
+        }
+
+        /// <summary>
         /// Assigns a quest resource to this Place site.
         /// Supports Persons, Foes, Items from within same quest as Place.
         /// Quest must have previously created SiteLink for layout builders to discover assigned resources.
@@ -871,24 +925,11 @@ namespace DaggerfallWorkshop.Game.Questing
                                 continue;
 
                             // Get building name based on type
-                            string buildingName;
-                            if (RMBLayout.IsResidence(buildingType) || RMBLayout.IsResidence(wildcardType))
-                            {
-                                // Generate a random surname for this residence
-                                DFRandom.srand(Time.renderedFrameCount);
-                                string surname = DaggerfallUnity.Instance.NameHelper.Surname(Utility.NameHelper.BankTypes.Breton);
-                                buildingName = HardStrings.theNamedResidence.Replace("%s", surname);
-                            }
-                            else
-                            {
-                                // Use fixed name
-                                buildingName = BuildingNames.GetName(
-                                    buildingSummary[i].NameSeed,
-                                    buildingSummary[i].BuildingType,
-                                    buildingSummary[i].FactionId,
-                                    location.Name,
-                                    location.RegionName);
-                            }
+                            string buildingName = GetBuildingName(
+                                (wildcardFound) ? wildcardType : buildingType,
+                                location,
+                                buildingSummary,
+                                i);
 
                             // Configure new site details
                             SiteDetails site = new SiteDetails();
@@ -916,6 +957,30 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             return foundSites.ToArray();
+        }
+
+        string GetBuildingName(DFLocation.BuildingTypes buildingType, DFLocation location, BuildingSummary[] buildingSummary, int buildingIndex)
+        {
+            string buildingName = string.Empty;
+            if (RMBLayout.IsResidence(buildingType))
+            {
+                // Generate a random surname for this residence
+                DFRandom.srand(Time.renderedFrameCount);
+                string surname = DaggerfallUnity.Instance.NameHelper.Surname(Utility.NameHelper.BankTypes.Breton);
+                buildingName = HardStrings.theNamedResidence.Replace("%s", surname);
+            }
+            else
+            {
+                // Use fixed name
+                buildingName = BuildingNames.GetName(
+                    buildingSummary[buildingIndex].NameSeed,
+                    buildingSummary[buildingIndex].BuildingType,
+                    buildingSummary[buildingIndex].FactionId,
+                    location.Name,
+                    location.RegionName);
+            }
+
+            return buildingName;
         }
 
         /// <summary>

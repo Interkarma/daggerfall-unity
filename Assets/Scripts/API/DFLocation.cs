@@ -89,6 +89,7 @@ namespace DaggerfallConnect
         /// </summary>
         public enum BuildingTypes
         {
+            None = -1,
             Alchemist,
             HouseForSale,
             Armorer,

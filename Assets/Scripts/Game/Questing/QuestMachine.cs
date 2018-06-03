@@ -315,6 +315,7 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new PlayVideo(null));
             RegisterAction(new PcAt(null));
             RegisterAction(new CreateNpcAt(null));
+            RegisterAction(new CreateNpc(null));
             RegisterAction(new PlaceNpc(null));
             RegisterAction(new PlaceItem(null));
             RegisterAction(new GivePc(null));
