@@ -286,6 +286,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Spell is released by event handler PlayerSpellCasting_OnReleaseFrame
             // TODO: Do not need to show spellcasting animations for certain spell effects
             GameManager.Instance.PlayerSpellCasting.PlayOneShot(readySpell.Settings.ElementType);
+
+            // Clear ready spell
+            lastSpell = readySpell;
+            readySpell = null;
         }
 
         public void AssignBundle(EntityEffectBundle sourceBundle)
@@ -923,8 +927,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     missile.Payload = readySpell;
             }
 
-            lastSpell = readySpell;
-            readySpell = null;
             instantCast = false;
         }
 
