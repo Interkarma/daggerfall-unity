@@ -51,6 +51,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         EntityEffectBundle readySpell = null;
         EntityEffectBundle lastSpell = null;
         bool instantCast = false;
+        bool castInProgress = false;
 
         DaggerfallEntityBehaviour entityBehaviour = null;
         bool isPlayerEntity = false;
@@ -268,8 +269,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             if (SilenceCheck())
                 return;
 
-            // Must have a ready spell
-            if (readySpell == null)
+            // Must have a ready spell and a previous cast must not be in progress
+            if (readySpell == null || castInProgress)
                 return;
 
             // Get spellpoint costs of this spell
@@ -287,10 +288,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // TODO: Do not need to show spellcasting animations for certain spell effects
             GameManager.Instance.PlayerSpellCasting.PlayOneShot(readySpell.Settings.ElementType);
 
-            // Clear ready spell
-            lastSpell = readySpell;
-            readySpell = null;
-            instantCast = false;
+            // Block further casting attempts until previous cast is complete
+            castInProgress = true;
         }
 
         public void AssignBundle(EntityEffectBundle sourceBundle)
@@ -927,6 +926,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 if (missile)
                     missile.Payload = readySpell;
             }
+
+            // Clear ready spell and reset casting
+            lastSpell = readySpell;
+            readySpell = null;
+            instantCast = false;
+            castInProgress = false;
         }
 
         private void EntityEffectBroker_OnNewMagicRound()
