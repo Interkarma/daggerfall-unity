@@ -14,18 +14,28 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Increasing
         }
         private AlphaState alphaState;
+        private HealthLossDetector healthDetector;
         private float chanceReverseState;
         private const float fadeFast = 3.7f;
         private const float fadeSlow = 0.1f;
         private float alphaSpeed = fadeFast;
-        private const float alphaMax = 0.4f;
-        private const float alphaMin = 0.1f;
-        private const int reversalCountThreshold = 7;
+        private const float alphaUpperMax = 0.4f;
+        private const float alphaLowerMax = 0.1f;
+        private float alphaUpper;
+        private float alphaLower;
+        private int reversalCountThreshold;
+        private const int reversalCountThresholdMax = 10;
+
         private int reversalCount = 0;
         private float alphaFadeValue = 0.0f;
-        private const float flickerHealthThreshold = 0.25f;
+        private const float flickerHealthThreshold = 0.35f; // Health percentage that flicker is triggered at.
 
-        private void AlphaChange()
+        public HUDFlicker()
+        {
+            healthDetector = GameManager.Instance.HealthLossDetector;
+        }
+
+        private void AlphaValueChange()
         {
             // increment alpha depending on State
             if (alphaState == AlphaState.Decreasing || alphaState == AlphaState.Resetting)
@@ -51,16 +61,21 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 if (alphaState == AlphaState.None)
                 { 
                     alphaState = AlphaState.Increasing;
-                    alphaFadeValue = alphaMin;
+                    alphaFadeValue = alphaLower;
                 }
 
-                if ((alphaState == AlphaState.Increasing && alphaFadeValue > alphaMax) ||
-                    (alphaState == AlphaState.Decreasing && alphaFadeValue < alphaMin))
+                // TODO: doesn't seem to flash fast every time health is lost
+                // each loss of health resets reversal count so it flickers again.
+                if (healthDetector.healthLost > 0)
+                    reversalCount = 0;
+
+                if ((alphaState == AlphaState.Increasing && alphaFadeValue > alphaUpper) ||
+                    (alphaState == AlphaState.Decreasing && alphaFadeValue < alphaLower))
                     ReverseAlphaDirection();
-                else if (alphaFadeValue != alphaMin)
+                else if (alphaFadeValue != alphaLower)
                     RandomlyReverseAlphaDirection();
             }
-            // Slow Exit out If player's health goes above threshold
+            // Slow Exit out if player's health goes above threshold
             else if (alphaState != AlphaState.Resetting && alphaState != AlphaState.None)
             {
                 alphaState = AlphaState.Resetting;
@@ -103,28 +118,59 @@ namespace DaggerfallWorkshop.Game.UserInterface
             //Debug.Log("Reversed AlphaState");
         }
 
-        private void SetAlphaSpeed()
+        /// <summary>
+        /// Sets how fast the screen flashes and number of flashes before going to slow throb
+        /// </summary>
+        private void SetStunSeverity()
         {
+            // stun multiplier max is 1
+            float stunMultiplier = Mathf.Max(0.5f, 1 - CurrentPercentOfHealthThreshold());
+            // max number of times the alpha will reverse direction before slowing down
+            reversalCountThreshold = (int)Mathf.Ceil(stunMultiplier * reversalCountThresholdMax);
+            alphaLower = stunMultiplier * alphaLowerMax;
+            alphaUpper = stunMultiplier * alphaUpperMax;
+
+            // Resetting somewhat quickly
             if (alphaState == AlphaState.Resetting)
+            { 
                 alphaSpeed = fadeFast * 0.3f;
+            }
+            // throb slow because health loss isn't fresh anymore
             else if (reversalCount > reversalCountThreshold)
+            {
                 alphaSpeed = fadeSlow;
+            }
+            // Flash fast because health loss is fresh.
             else if (reversalCount <= reversalCountThreshold)
+            {
                 alphaSpeed = fadeFast;
+            }   
         }
-
-        public override void Draw()
+        /// <summary>
+        /// Finds the percentage of health between 0 and the threshold of the flicker.
+        /// </summary>
+        /// <returns></returns>
+        private float CurrentPercentOfHealthThreshold()
         {
-            AlphaStateControl();
-            SetAlphaSpeed();
-            AlphaChange();
-
-            Parent.BackgroundColor = new Color(0, 0, 0, alphaFadeValue);
-            base.Draw();
+            return GameManager.Instance.PlayerEntity.CurrentHealthPercent / flickerHealthThreshold;
         }
         private bool IsBelowThreshold()
         {
             return ((GameManager.Instance.PlayerEntity.CurrentHealthPercent) < flickerHealthThreshold);
+        }
+        public override void Draw()
+        {
+            AlphaStateControl();
+            if (alphaState != AlphaState.None)
+                SetStunSeverity();
+            AlphaValueChange();
+
+            float redValue = 0;
+            if (reversalCount <= reversalCountThreshold)
+                redValue = alphaFadeValue;
+
+            Parent.BackgroundColor = new Color(0, 0, 0, alphaFadeValue);
+            base.Draw();
         }
     }
 }
