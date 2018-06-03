@@ -290,6 +290,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Clear ready spell
             lastSpell = readySpell;
             readySpell = null;
+            instantCast = false;
         }
 
         public void AssignBundle(EntityEffectBundle sourceBundle)
@@ -926,8 +927,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 if (missile)
                     missile.Payload = readySpell;
             }
-
-            instantCast = false;
         }
 
         private void EntityEffectBroker_OnNewMagicRound()
