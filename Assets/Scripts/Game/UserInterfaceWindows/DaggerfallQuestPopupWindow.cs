@@ -35,12 +35,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             const int flavourMessageID = 600;
 
-            if (offeredQuest == null)
-                return;
-
+            // Display random flavour message such as "You're too late I gave the job to some spellsword"
+            // This is a generic fallback hanlder, does not require quest data or MCP for this popup
             TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(flavourMessageID);
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
-            messageBox.SetTextTokens(tokens, offeredQuest.ExternalMCP);
+            messageBox.SetTextTokens(tokens);
             messageBox.ClickAnywhereToClose = true;
             messageBox.AllowCancel = true;
             messageBox.ParentPanel.BackgroundColor = Color.clear;
