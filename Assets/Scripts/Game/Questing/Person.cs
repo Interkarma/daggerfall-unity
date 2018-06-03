@@ -318,29 +318,43 @@ namespace DaggerfallWorkshop.Game.Questing
             // This only happens for very specific NPC types
             // Equivalent to calling "place anNPC at aPlace" from script
             // Will not be called again as assignment is permanent for duration of quest
-            // Does not attempt to place a questor as they should be statically place or moved manually
-            if (homePlaceSymbol != null && !assignedToHome && !isQuestor)
+            if (homePlaceSymbol != null && !assignedToHome)
             {
                 Place home = ParentQuest.GetPlace(homePlaceSymbol);
                 if (home == null)
                     return;
 
+                // Hot-place NPC at this location when player enters
                 if (home.IsPlayerHere())
-                {
-                    // Create SiteLink if not already present
-                    if (!QuestMachine.HasSiteLink(ParentQuest, homePlaceSymbol))
-                        QuestMachine.CreateSiteLink(ParentQuest, homePlaceSymbol);
-
-                    // Hot-place NPC at this location
-                    home.AssignQuestResource(Symbol);
-                    assignedToHome = true;
-                }
+                    PlaceAtHome();
             }
         }
 
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// Places NPC to home. This can happen automatically when player enters building or when
+        /// quest script uses "create npc" action to automatically assign Person to home.
+        /// </summary>
+        public bool PlaceAtHome()
+        {
+            // Does not attempt to place a questor as they should be statically place or moved manually
+            Place homePlace = ParentQuest.GetPlace(homePlaceSymbol);
+            if (homePlace == null || isQuestor)
+                return false;
+
+            // Create SiteLink if not already present
+            if (!QuestMachine.HasSiteLink(ParentQuest, homePlaceSymbol))
+                QuestMachine.CreateSiteLink(ParentQuest, homePlaceSymbol);
+            
+            // Assign to home place
+            homePlace.AssignQuestResource(Symbol);
+            assignedToHome = true;
+
+            return true;
+        }
 
         /// <summary>
         /// Gets home Place resource assigned to this NPC (if any).
@@ -561,10 +575,10 @@ namespace DaggerfallWorkshop.Game.Questing
                 p3 = Parser.ParseInt(QuestMachine.Instance.FactionsTable.GetValue("p3", factionTableKey));
 
                 // Set based on parameters
-                if (p1 == 0 && p2 == -3)
+                if (p1 == 0 && p2 == -3 || p1 == 0 && p2 == -4)
                 {
                     // For local types set to local place
-                    // This will support Local_3.0 - Local_3.3
+                    // This will support Local_3.0 - Local_4.10k
                     // Referencing quest Sx009 where player must locate and click an NPC with only a home location to go by
                     scope = Place.Scopes.Local;
                 }
@@ -684,7 +698,14 @@ namespace DaggerfallWorkshop.Game.Questing
 
         void LogHomePlace(Place homePlace)
         {
-            QuestMachine.LogFormat(ParentQuest, "Assigned Person {0} a home Place {1}/{2} in building {3}", Symbol.Original, HomeRegionName, HomeTownName, HomeBuildingName);
+            QuestMachine.LogFormat(
+                ParentQuest,
+                "Generated Home for Person {0} [{1}] at '{2}/{3}' in building '{4}'",
+                Symbol.Original,
+                DisplayName,
+                HomeRegionName,
+                HomeTownName,
+                HomeBuildingName);
         }
 
         void AssignGod()

@@ -61,8 +61,12 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 throw new Exception(string.Format("Could not find Person resource symbol {0}", npcSymbol));
             }
 
-            // Just output some debug text for now
-            QuestMachine.LogFormat("TODO (Debug Only): Created NPC {0} in {1}/{2} for building {3}", person.DisplayName, person.HomeRegionName, person.HomeTownName, person.HomeBuildingName);
+            // Assign Person to their own home Place (if any)
+            bool result = person.PlaceAtHome();
+            if (result)
+                QuestMachine.LogFormat(ParentQuest, "CreateNpc automatically placed {0} [{1}] at '{2}/{3}' in building '{4}'", person.Symbol.Original, person.DisplayName, person.HomeRegionName, person.HomeTownName, person.HomeBuildingName);
+            else
+                QuestMachine.LogFormat(ParentQuest, "CreateNpc could not automatically place {0} [{1}] as they have no home Place generated", person.Symbol.Original, person.DisplayName);
 
             SetComplete();
         }
