@@ -100,6 +100,14 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
+        /// Gets current count of all active SiteLinks.
+        /// </summary>
+        public int SiteLinkCount
+        {
+            get { return siteLinks.Count; }
+        }
+
+        /// <summary>
         /// Gets Quests source folder in StreamingAssets.
         /// </summary>
         public static string QuestSourceFolder

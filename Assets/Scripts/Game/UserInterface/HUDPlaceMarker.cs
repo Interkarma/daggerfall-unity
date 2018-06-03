@@ -24,6 +24,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
     public class HUDPlaceMarker : Panel
     {
         List<SiteTarget> siteTargets = new List<SiteTarget>();
+        int lastSiteLinkCount = 0;
 
         struct SiteTarget
         {
@@ -46,6 +47,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public override void Update()
         {
             base.Update();
+
+            // Refresh site targets when SiteLink count changes
+            if (lastSiteLinkCount != QuestMachine.Instance.SiteLinkCount)
+            {
+                RefreshSiteTargets();
+            }
 
             // Disable markers if inside or no targets, or quest debugger hidden
             bool enableMarkers = true;
@@ -158,6 +165,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 ClearSiteTargets();
                 return;
             }
+
+            // Update SiteLink count
+            lastSiteLinkCount = QuestMachine.Instance.SiteLinkCount;
         }
 
         #endregion
