@@ -19,8 +19,8 @@ using FullSerializer;
 namespace DaggerfallWorkshop.Game.Questing.Actions
 {
     /// <summary>
-    /// Tipton calls this "create npc" but its true function seems to reserve a quest site
-    /// before linking resources. "create npc" is usually followed by "place npc"
+    /// Tipton calls this "create npc at" but its true function seems to reserve a quest site
+    /// before linking resources. "create npc at" is usually followed by "place npc"
     /// but can also be followed by "place item" or "create foe" for example.
     /// This action likely initiates some book-keeping in Daggerfall's quest system.
     /// In Daggerfall Unity this creates a SiteLink in QuestMachine.
