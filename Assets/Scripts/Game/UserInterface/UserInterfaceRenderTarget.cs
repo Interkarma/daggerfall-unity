@@ -25,11 +25,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         int customWidth = 0;
         int customHeight = 0;
-        Panel customParentPanel;
+        Panel parentPanel;
 
         int createCount = 0;
         RenderTexture targetTexture = null;
         Rect targetRect = new Rect();
+        Color clearColor = Color.clear;
 
         #endregion
 
@@ -73,9 +74,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// Gets custom parent panel for adding custom own UI controls.
         /// This will be set to custom width/height dimensions.
         /// </summary>
-        public Panel CustomParentPanel
+        public Panel ParentPanel
         {
-            get { return customParentPanel; }
+            get { return parentPanel; }
+        }
+
+        /// <summary>
+        /// Gets or sets custom clear colour.
+        /// </summary>
+        public Color ClearColor
+        {
+            get { return clearColor; }
+            set { clearColor = value; }
         }
 
         #endregion
@@ -84,7 +94,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private void Awake()
         {
-            customParentPanel = new Panel();
+            parentPanel = new Panel();
         }
 
         private void Start()
@@ -97,7 +107,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             CheckTargetTexture();
 
             // Update parent panel
-            customParentPanel.Update();
+            parentPanel.Update();
         }
 
         private void OnGUI()
@@ -113,10 +123,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (IsReady())
             {
                 // Clear UI
-                Clear();
+                Clear(clearColor);
 
                 // Draw parent panel
-                customParentPanel.Draw();
+                parentPanel.Draw();
             }
 
             RenderTexture.active = oldRt;
@@ -132,6 +142,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public void Clear()
         {
             GL.Clear(true, true, Color.clear);
+        }
+
+        public void Clear(Color color)
+        {
+            GL.Clear(true, true, color);
         }
 
         public void DrawTexture(Rect position, Texture2D image)
@@ -176,7 +191,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             int height = (customHeight == 0) ? Screen.height : customHeight;
 
             // Set custom panel size
-            customParentPanel.Size = new Vector2(width, height);
+            parentPanel.Size = new Vector2(width, height);
 
             // Just return same texture if still valid
             if (!IsReady() || targetTexture.width != width || targetTexture.height != height)
