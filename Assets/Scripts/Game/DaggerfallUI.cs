@@ -280,9 +280,6 @@ namespace DaggerfallWorkshop.Game
             RenderTarget.OnCreateTargetTexture += RenderTarget_OnCreateTargetTexture;
             Questing.Actions.GivePc.OnOfferPending += GivePc_OnOfferPending;
 
-            // We only use our render target for texture clearing, set it well behind everything else
-            RenderTarget.CustomGUIDepth = 10;
-
             SetupSingleton();
         }
 
@@ -357,7 +354,10 @@ namespace DaggerfallWorkshop.Game
             if (Event.current.type != EventType.Repaint)
                 return;
 
-            //RenderTarget.Clear();
+            RenderTexture oldRt = RenderTexture.active;
+            RenderTexture.active = RenderTarget.TargetTexture;
+
+            RenderTarget.Clear();
 
             // Draw top window
             if (uiManager.TopWindow != null)
@@ -371,6 +371,8 @@ namespace DaggerfallWorkshop.Game
                 Vector2 versionTextPos = new Vector2(Screen.width - versionTextWidth, 0);
                 versionFont.DrawText(versionText, versionTextPos, versionTextScaleVector2, versionTextColor);
             }
+
+            RenderTexture.active = oldRt;
         }
 
         void ProcessMessages()

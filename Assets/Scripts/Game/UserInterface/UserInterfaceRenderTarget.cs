@@ -21,10 +21,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
         #region Fields
 
         public UnityEngine.UI.RawImage OutputImage;
+        public bool EnableCustomStack = false;
 
         int customWidth = 0;
         int customHeight = 0;
-        int customGUIDepth = 0;
         Panel customParentPanel;
 
         int createCount = 0;
@@ -70,15 +70,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         /// <summary>
-        /// Gets or sets a custom GUI.Depth for OnGUI() draws.
-        /// </summary>
-        public int CustomGUIDepth
-        {
-            get { return customGUIDepth; }
-            set { customGUIDepth = value; }
-        }
-
-        /// <summary>
         /// Gets custom parent panel for adding custom own UI controls.
         /// This will be set to custom width/height dimensions.
         /// </summary>
@@ -91,9 +82,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #region Unity
 
-        private void Start()
+        private void Awake()
         {
             customParentPanel = new Panel();
+        }
+
+        private void Start()
+        {
             CheckTargetTexture();
         }
 
@@ -107,11 +102,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private void OnGUI()
         {
-            // Set depth
-            GUI.depth = customGUIDepth;
+            GUI.depth = 0;
 
-            if (Event.current.type != EventType.Repaint)
+            if (Event.current.type != EventType.Repaint || !EnableCustomStack)
                 return;
+
+            RenderTexture oldRt = RenderTexture.active;
+            RenderTexture.active = targetTexture;
 
             if (IsReady())
             {
@@ -119,9 +116,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 Clear();
 
                 // Draw parent panel
-                GUI.depth = 0;
                 customParentPanel.Draw();
             }
+
+            RenderTexture.active = oldRt;
         }
 
         #endregion
@@ -133,12 +131,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public void Clear()
         {
-            RenderTexture oldRt = RenderTexture.active;
-            RenderTexture.active = targetTexture;
-
             GL.Clear(true, true, Color.clear);
-
-            RenderTexture.active = oldRt;
         }
 
         public void DrawTexture(Rect position, Texture2D image)
@@ -146,12 +139,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (!IsReady())
                 return;
 
-            RenderTexture oldRt = RenderTexture.active;
-            RenderTexture.active = targetTexture;
-
             GUI.DrawTexture(position, image);
-
-            RenderTexture.active = oldRt;
         }
 
         public void DrawTexture(Rect position, Texture2D image, ScaleMode scaleMode, bool alphaBlend = true, float imageAspect = 0)
@@ -159,12 +147,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (!IsReady())
                 return;
 
-            RenderTexture oldRt = RenderTexture.active;
-            RenderTexture.active = targetTexture;
-
             GUI.DrawTexture(position, image, scaleMode, alphaBlend);
-
-            RenderTexture.active = oldRt;
         }
 
         public void DrawTextureWithTexCoords(Rect position, Texture image, Rect texCoords, bool alphaBlend = true)
@@ -172,12 +155,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (!IsReady())
                 return;
 
-            RenderTexture oldRt = RenderTexture.active;
-            RenderTexture.active = targetTexture;
-
             GUI.DrawTextureWithTexCoords(position, image, texCoords, alphaBlend);
-
-            RenderTexture.active = oldRt;
         }
 
         #endregion
