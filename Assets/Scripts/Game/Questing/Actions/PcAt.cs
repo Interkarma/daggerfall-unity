@@ -26,6 +26,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         Symbol placeSymbol;
         Symbol taskSymbol;
         int textId;
+        bool textShown;
 
         public override string Pattern
         {
@@ -33,8 +34,12 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // Docs use form "pc at aPlace do aTask"
             // But observed quests actually seem to use "pc at aPlace set aTask"
             // Probably a change between writing of docs and Template v1.11.
+            // Supporting both variants as quest authors are working from docs
             // Docs also missing "pc at aPlace set aTask saying nnnn"
-            get { return @"pc at (?<aPlace>\w+) set (?<aTask>[a-zA-Z0-9_.]+) saying (?<id>\d+)|pc at (?<aPlace>\w+) set (?<aTask>[a-zA-Z0-9_.]+)"; }
+            get { return @"pc at (?<aPlace>\w+) set (?<aTask>[a-zA-Z0-9_.]+) saying (?<id>\d+)|" +
+                         @"pc at (?<aPlace>\w+) set (?<aTask>[a-zA-Z0-9_.]+)|" +
+                         @"pc at (?<aPlace>\w+) do (?<aTask>[a-zA-Z0-9_.]+) saying (?<id>\d+)|" +
+                         @"pc at (?<aPlace>\w+) do (?<aTask>[a-zA-Z0-9_.]+)"; }
         }
 
         public PcAt(Quest parentQuest)
@@ -77,9 +82,12 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             if (result)
             {
                 // "saying" popup
-                // TODO: Should this run every time or only once?
-                if (textId != 0)
+                // Only display this once or player can get a popup loop
+                if (textId != 0 && !textShown)
+                {
                     ParentQuest.ShowMessagePopup(textId);
+                    textShown = true;
+                }
 
                 // Start target task
                 ParentQuest.StartTask(taskSymbol);
@@ -99,6 +107,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             public Symbol placeSymbol;
             public Symbol taskSymbol;
             public int textId;
+            public bool textShown;
         }
 
         public override object GetSaveData()
@@ -107,6 +116,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             data.placeSymbol = placeSymbol;
             data.taskSymbol = taskSymbol;
             data.textId = textId;
+            data.textShown = textShown;
 
             return data;
         }
@@ -120,6 +130,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             placeSymbol = data.placeSymbol;
             taskSymbol = data.taskSymbol;
             textId = data.textId;
+            textShown = data.textShown;
         }
 
         #endregion
