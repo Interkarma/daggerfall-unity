@@ -32,6 +32,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         BaseScreenComponent parent;
         Vector2 position;
         Vector2 size;
+        Vector2 rootSize;
         bool useFocus = false;
 
         ToolTip toolTip = null;
@@ -193,6 +194,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             get { return size; }
             internal set { size = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets root size when no parent is avaialable.
+        /// Should only be set for root panel in UI stack.
+        /// If root size is not set then screen dimensions will be used.
+        /// </summary>
+        public Vector2 RootSize
+        {
+            get { return rootSize; }
+            set { rootSize = value; }
         }
 
         /// <summary>
@@ -1000,9 +1012,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Rect parentRect = new Rect();
 
             if (parent != null)
+            {
                 parentRect = parent.Rectangle;
+            }
             else
-                parentRect = new Rect(0, 0, Screen.width, Screen.height);
+            {
+                if (rootSize == Vector2.zero)
+                    parentRect = new Rect(0, 0, Screen.width, Screen.height);
+                else
+                    parentRect = new Rect(0, 0, rootSize.x, rootSize.y);
+            }
 
             return parentRect;
         }
