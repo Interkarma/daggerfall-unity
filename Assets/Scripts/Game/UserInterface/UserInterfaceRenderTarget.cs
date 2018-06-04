@@ -20,6 +20,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
     {
         #region Fields
 
+        public UnityEngine.UI.RawImage OutputImage;
+
         int customWidth = 0;
         int customHeight = 0;
         int customGUIDepth = 0;
@@ -80,7 +82,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// Gets custom parent panel for adding custom own UI controls.
         /// This will be set to custom width/height dimensions.
         /// </summary>
-        Panel CustomParentPanel
+        public Panel CustomParentPanel
         {
             get { return customParentPanel; }
         }
@@ -206,8 +208,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 targetTexture = new RenderTexture(width, height, 0, RenderTextureFormat.ARGB32);
                 targetTexture.name = string.Format("DaggerfallUI RenderTexture {0}", createCount++);
                 targetTexture.Create();
-                RaiseOnCreateTargetTexture();
                 Debug.LogFormat("Created UI RenderTexture with dimensions {0}, {1}", width, height);
+
+                // Update output image to new render texture if one is set
+                if (OutputImage)
+                    OutputImage.texture = targetTexture;
+
+                // Raise event to notify other systems target texture has changed
+                RaiseOnCreateTargetTexture();
             }
         }
 

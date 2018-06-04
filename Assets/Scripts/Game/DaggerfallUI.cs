@@ -1238,8 +1238,7 @@ namespace DaggerfallWorkshop.Game
             if (!rawImage)
                 return;
 
-            // Set target render texture to raw image output
-            rawImage.texture = RenderTarget.TargetTexture;
+            // Set target render texture to use native size
             rawImage.SetNativeSize();
         }
 
@@ -1250,16 +1249,15 @@ namespace DaggerfallWorkshop.Game
         UnityEngine.UI.RawImage FindNonDiegeticCanvasRawImage()
         {
             // Must be able to find output canvas object
-            GameObject nonDiegeticUIOutput = DaggerfallUI.Instance.NonDiegeticUIOutput;
-            if (!nonDiegeticUIOutput)
+            if (!NonDiegeticUIOutput)
                 return null;
 
             // Output canvas object must be active
-            if (!nonDiegeticUIOutput.activeInHierarchy)
+            if (!NonDiegeticUIOutput.activeInHierarchy)
                 return null;
 
             // Get raw image component
-            UnityEngine.UI.RawImage rawImage = nonDiegeticUIOutput.GetComponent<UnityEngine.UI.RawImage>();
+            UnityEngine.UI.RawImage rawImage = NonDiegeticUIOutput.GetComponent<UnityEngine.UI.RawImage>();
             if (!rawImage)
                 return null;
 
