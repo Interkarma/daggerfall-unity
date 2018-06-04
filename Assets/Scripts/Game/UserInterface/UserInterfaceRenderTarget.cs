@@ -31,6 +31,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         RenderTexture targetTexture = null;
         Rect targetRect = new Rect();
         Color clearColor = Color.clear;
+        FilterMode filterMode;
 
         #endregion
 
@@ -88,6 +89,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set { clearColor = value; }
         }
 
+        /// <summary>
+        /// Gets or sets render texture filter mode.
+        /// </summary>
+        public FilterMode FilterMode
+        {
+            get { return filterMode; }
+            set { filterMode = value; }
+        }
+
         #endregion
 
         #region Unity
@@ -95,6 +105,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         private void Awake()
         {
             parentPanel = new Panel();
+            filterMode = DaggerfallUI.Instance.GlobalFilterMode;
         }
 
         private void Start()
@@ -132,9 +143,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             RenderTexture.active = oldRt;
         }
 
-        #endregion
-
-        #region Public Methods
         #endregion
 
         #region Drawing Methods
@@ -190,8 +198,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             int width = (customWidth == 0) ? Screen.width : customWidth;
             int height = (customHeight == 0) ? Screen.height : customHeight;
 
-            // Set custom panel size
-            parentPanel.Size = new Vector2(width, height);
+            // Set custom panel root size and scale
+            // Unity likes to scale drawing to render texture by current screen dimensions
+            // This is a hack to use panel scaling to compensate
+            float scaleX = (float)Screen.width / (float)CustomWidth;
+            float scaleY = (float)Screen.height / (float)CustomHeight;
+            parentPanel.RootSize = new Vector2(width, height);
+            parentPanel.Scale = new Vector2(scaleX, scaleY);
+            parentPanel.AutoSize = AutoSizeModes.None;
 
             // Just return same texture if still valid
             if (!IsReady() || targetTexture.width != width || targetTexture.height != height)
@@ -199,6 +213,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 // Create target texture matching screen dimensions
                 targetRect = new Rect(0, 0, width, height);
                 targetTexture = new RenderTexture(width, height, 0, RenderTextureFormat.ARGB32);
+                targetTexture.filterMode = filterMode;
                 targetTexture.name = string.Format("DaggerfallUI RenderTexture {0}", createCount++);
                 targetTexture.Create();
                 Debug.LogFormat("Created UI RenderTexture with dimensions {0}, {1}", width, height);
