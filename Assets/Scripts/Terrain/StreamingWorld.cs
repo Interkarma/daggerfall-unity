@@ -1178,6 +1178,10 @@ namespace DaggerfallWorkshop
 
                 // Move player object to new position
                 LocalPlayerGPS.transform.position = targetPosition;
+
+                // Clear falling damage so player doesn't take damage after reposition
+                GameManager.Instance.AcrobatMotor.ClearFallingDamage();
+
                 ResyncWorldCoordinates();
             }
             else
