@@ -18,12 +18,14 @@ using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game
 {
-    public class HealthLossDetector : MonoBehaviour
+    public class HealthChangeDetector : MonoBehaviour
     {
         protected int previousMaxHealth;
         protected int previousHealth;
-        public int healthLost;
-        public float healthLostPercent;
+        public float HealthLostPercent { get; private set; }
+        public float HealthGainPercent { get { return -1 * HealthLostPercent; } }
+        public int HealthLost { get; private set; }
+        public int HealthGain { get { return -1 * HealthLost; } }
 
         void Start()
         {
@@ -54,10 +56,11 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Detect Health loss
-            healthLost = previousHealth - currentHealth;
-            if (healthLost > 0)
+            HealthLost = previousHealth - currentHealth;
+            if (HealthLost > 0)
             {
-                healthLostPercent = (float)healthLost / maxHealth;
+                HealthLostPercent = (float)HealthLost / maxHealth;
+                //Debug.Log("Health Lost: " + HealthLost);
             }
 
             // reset previous health to detect next health loss

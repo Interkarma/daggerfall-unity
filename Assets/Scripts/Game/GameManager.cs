@@ -72,7 +72,7 @@ namespace DaggerfallWorkshop.Game
         FPSSpellCasting playerSpellCasting = null;
         PlayerActivate playerActivate = null;
         CharacterController playerController = null;
-        HealthLossDetector healthLossDetector = null;
+        HealthChangeDetector healthChangeDetector = null;
         SunlightManager sunlightManager = null;
         ItemHelper itemHelper = null;
         StateManager stateManager = null;
@@ -298,10 +298,10 @@ namespace DaggerfallWorkshop.Game
             set { playerController = value; }
         }
 
-        public HealthLossDetector HealthLossDetector
+        public HealthChangeDetector HealthChangeDetector
         {
-            get { return (healthLossDetector) ? healthLossDetector : healthLossDetector = GetComponentFromObject<HealthLossDetector>(PlayerObject); }
-            set { healthLossDetector = value; }
+            get { return (healthChangeDetector) ? healthChangeDetector : healthChangeDetector = GetComponentFromObject<HealthChangeDetector>(PlayerObject); }
+            set { healthChangeDetector = value; }
         }
 
         public SunlightManager SunlightManager
