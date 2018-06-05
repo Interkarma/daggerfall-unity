@@ -19,10 +19,13 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
     {
         Symbol itemSymbol;
         Symbol placeSymbol;
+        int textId;
+        bool textShown;
 
         public override string Pattern
         {
-            get { return @"dropped (?<anItem>[a-zA-Z0-9_.-]+) at (?<aPlace>[a-zA-Z0-9_.-]+)"; }
+            get { return @"dropped (?<anItem>[a-zA-Z0-9_.-]+) at (?<aPlace>[a-zA-Z0-9_.-]+) saying (?<id>\d+)|" +
+                         @"dropped (?<anItem>[a-zA-Z0-9_.-]+) at (?<aPlace>[a-zA-Z0-9_.-]+)"; }
         }
 
         public DroppedItemAtPlace(Quest parentQuest)
@@ -43,12 +46,19 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             DroppedItemAtPlace action = new DroppedItemAtPlace(parentQuest);
             action.itemSymbol = new Symbol(match.Groups["anItem"].Value);
             action.placeSymbol = new Symbol(match.Groups["aPlace"].Value);
+            action.textId = Parser.ParseInt(match.Groups["id"].Value);
 
             return action;
         }
 
         public override bool CheckTrigger(Task caller)
         {
+            // Always return true once owning Task is triggered
+            // Another action will need to rearm/unset this task if another click is required
+            // This seems to fit how classic works based on current observation
+            if (caller.IsTriggered)
+                return true;
+
             // Attempt to get Item resource
             Item item = ParentQuest.GetItem(itemSymbol);
             if (item == null)
@@ -65,17 +75,27 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // Allow drop only when player at correct location
             if (place.IsPlayerHere())
             {
-                item.DaggerfallUnityItem.AllowQuestItemRemoval = true;
+                item.AllowDrop = true;
             }
             else
             {
-                item.DaggerfallUnityItem.AllowQuestItemRemoval = false;
+                item.AllowDrop = false;
                 return false;
             }
 
             // Handle player dropped
             if (item.PlayerDropped)
+            {
+                // Show text
+                if (textId != 0 && !textShown)
+                {
+                    ParentQuest.ShowMessagePopup(textId);
+                    textShown = true;
+                }
+
+                SetComplete();
                 return true;
+            }
 
             return false;
         }
@@ -87,6 +107,8 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         {
             public Symbol itemSymbol;
             public Symbol placeSymbol;
+            public int textId;
+            public bool textShown;
         }
 
         public override object GetSaveData()
@@ -94,6 +116,8 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             SaveData_v1 data = new SaveData_v1();
             data.itemSymbol = itemSymbol;
             data.placeSymbol = placeSymbol;
+            data.textId = textId;
+            data.textShown = textShown;
 
             return data;
         }
@@ -106,6 +130,8 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
             itemSymbol = data.itemSymbol;
             placeSymbol = data.placeSymbol;
+            textId = data.textId;
+            textShown = data.textShown;
         }
 
         #endregion

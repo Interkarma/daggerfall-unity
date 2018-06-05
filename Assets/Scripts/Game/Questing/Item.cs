@@ -44,6 +44,7 @@ namespace DaggerfallWorkshop.Game.Questing
         bool artifact = false;
         bool useClicked = false;
         bool actionWatching = false;
+        bool allowDrop = false;
         bool playerDropped = false;
         DaggerfallUnityItem item = null;
 
@@ -80,6 +81,15 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             get { return actionWatching; }
             set { actionWatching = value; }
+        }
+
+        /// <summary>
+        /// This flag determines if quest item can be removed from main item collection.
+        /// </summary>
+        public bool AllowDrop
+        {
+            get { return allowDrop; }
+            set { allowDrop = value; }
         }
 
         /// <summary>
@@ -384,6 +394,7 @@ namespace DaggerfallWorkshop.Game.Questing
             public bool artifact;
             public bool useClicked;
             public bool actionWatching;
+            public bool allowDrop;
             public bool playerDropped;
             public ItemData_v1 item;
         }
@@ -395,6 +406,7 @@ namespace DaggerfallWorkshop.Game.Questing
             data.artifact = artifact;
             data.useClicked = useClicked;
             data.actionWatching = actionWatching;
+            data.allowDrop = allowDrop;
             data.playerDropped = playerDropped;
             data.item = item.GetSaveData();
 
@@ -410,6 +422,7 @@ namespace DaggerfallWorkshop.Game.Questing
             artifact = data.artifact;
             useClicked = data.useClicked;
             actionWatching = data.actionWatching;
+            allowDrop = data.allowDrop;
             playerDropped = data.playerDropped;
             item = new DaggerfallUnityItem(data.item);
         }
