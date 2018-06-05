@@ -79,7 +79,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 Rect topRect = rect;
                 topRect.height = outlineThickness * LocalScale.y;
-                DaggerfallUI.Instance.RenderTarget.DrawTexture(topRect, outlineTexture);
+                GUI.DrawTexture(topRect, outlineTexture);
             }
 
             // Left
@@ -87,7 +87,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 Rect leftRect = rect;
                 leftRect.width = outlineThickness * LocalScale.x;
-                DaggerfallUI.Instance.RenderTarget.DrawTexture(leftRect, outlineTexture);
+                GUI.DrawTexture(leftRect, outlineTexture);
             }
 
             // Right
@@ -96,7 +96,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 Rect rightRect = rect;
                 rightRect.x = rect.xMax;
                 rightRect.width = outlineThickness * LocalScale.x;
-                DaggerfallUI.Instance.RenderTarget.DrawTexture(rightRect, outlineTexture);
+                GUI.DrawTexture(rightRect, outlineTexture);
             }
 
             // Bottom
@@ -106,7 +106,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 bottomRect.y = rect.yMax;
                 bottomRect.width += outlineThickness * LocalScale.y;
                 bottomRect.height = outlineThickness * LocalScale.y;
-                DaggerfallUI.Instance.RenderTarget.DrawTexture(bottomRect, outlineTexture);
+                GUI.DrawTexture(bottomRect, outlineTexture);
             }
         }
 

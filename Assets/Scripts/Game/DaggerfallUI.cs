@@ -30,7 +30,6 @@ namespace DaggerfallWorkshop.Game
     /// </summary>
     [RequireComponent(typeof(FadeBehaviour))]
     [RequireComponent(typeof(DaggerfallAudioSource))]
-    [RequireComponent(typeof(UserInterfaceRenderTarget))]
     public class DaggerfallUI : MonoBehaviour
     {
         const string fontsFolderName = "Fonts";
@@ -65,7 +64,7 @@ namespace DaggerfallWorkshop.Game
         DaggerfallAudioSource dfAudioSource;
         DaggerfallSongPlayer dfSongPlayer;
         UserInterfaceManager uiManager = new UserInterfaceManager();
-        UserInterfaceRenderTarget renderTarget = null;
+        bool enableDefaultUserInterface = true;
 
         SpellIconCollection spellIconCollection;
 
@@ -73,7 +72,6 @@ namespace DaggerfallWorkshop.Game
         DaggerfallFont[] daggerfallFonts = new DaggerfallFont[5];
         char lastCharacterTyped;
         KeyCode lastKeyCode;
-        GameObject nonDiegeticUI = null;
         FadeBehaviour fadeBehaviour = null;
 
         string versionText;
@@ -120,9 +118,10 @@ namespace DaggerfallWorkshop.Game
         
         public static IUserInterfaceManager UIManager { get { return Instance.uiManager; } }
 
-        public UserInterfaceRenderTarget RenderTarget
+        public bool EnableDefaultUserInterface
         {
-            get { return (renderTarget) ? renderTarget : renderTarget = GetComponent<UserInterfaceRenderTarget>(); }
+            get { return enableDefaultUserInterface; }
+            set { enableDefaultUserInterface = value; }
         }
 
         public AudioSource AudioSource
@@ -226,12 +225,6 @@ namespace DaggerfallWorkshop.Game
             get { return Path.Combine(Application.streamingAssetsPath, fontsFolderName); }
         }
 
-        public GameObject NonDiegeticUIOutput
-        {
-            get { return (nonDiegeticUI) ? nonDiegeticUI : nonDiegeticUI = GameManager.GetGameObjectWithName("NonDiegeticUIOutput"); }
-            set { nonDiegeticUI = value; }
-        }
-
         public enum PopupStyle
         {
             Parchment,
@@ -277,7 +270,6 @@ namespace DaggerfallWorkshop.Game
             dfCourtWindow = new DaggerfallCourtWindow(uiManager);
             dfExteriorAutomapWindow = new DaggerfallExteriorAutomapWindow(uiManager);
 
-            RenderTarget.OnCreateTargetTexture += RenderTarget_OnCreateTargetTexture;
             Questing.Actions.GivePc.OnOfferPending += GivePc_OnOfferPending;
 
             SetupSingleton();
@@ -299,34 +291,37 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
-            // HUD is always first window on stack when ready
-            if (dfUnity.IsPathValidated && !hudSetup)
+            if (enableDefaultUserInterface)
             {
-                if (enableHUD)
+                // HUD is always first window on stack when ready
+                if (dfUnity.IsPathValidated && !hudSetup)
                 {
-                    dfHUD = new DaggerfallHUD(uiManager);
-                    uiManager.PushWindow(dfHUD);
-                    fadeBehaviour.FadeTargetPanel = dfHUD.ParentPanel;
-                    Debug.Log("HUD pushed to stack.");
+                    if (enableHUD)
+                    {
+                        dfHUD = new DaggerfallHUD(uiManager);
+                        uiManager.PushWindow(dfHUD);
+                        fadeBehaviour.FadeTargetPanel = dfHUD.ParentPanel;
+                        Debug.Log("HUD pushed to stack.");
+                    }
+                    hudSetup = true;
                 }
-                hudSetup = true;
-            }
 
-            // Route messages to top window or handle locally
-            if (uiManager.MessageCount > 0)
-            {
-                // Top window has first chance at message
+                // Route messages to top window or handle locally
+                if (uiManager.MessageCount > 0)
+                {
+                    // Top window has first chance at message
+                    if (uiManager.TopWindow != null)
+                        uiManager.TopWindow.ProcessMessages();
+
+                    // Then process locally
+                    ProcessMessages();
+                }
+
+                // Update top window
                 if (uiManager.TopWindow != null)
-                    uiManager.TopWindow.ProcessMessages();
-
-                // Then process locally
-                ProcessMessages();
-            }
-
-            // Update top window
-            if (uiManager.TopWindow != null)
-            {
-                uiManager.TopWindow.Update();
+                {
+                    uiManager.TopWindow.Update();
+                }
             }
 
             // Clear key state every frame
@@ -351,28 +346,21 @@ namespace DaggerfallWorkshop.Game
                     lastKeyCode = Event.current.keyCode;
             }
 
-            if (Event.current.type != EventType.Repaint)
-                return;
-
-            RenderTexture oldRt = RenderTexture.active;
-            RenderTexture.active = RenderTarget.TargetTexture;
-
-            RenderTarget.Clear();
-
-            // Draw top window
-            if (uiManager.TopWindow != null)
+            if (enableDefaultUserInterface && Event.current.type == EventType.Repaint)
             {
-                uiManager.TopWindow.Draw();
-            }
+                // Draw top window
+                if (uiManager.TopWindow != null)
+                {
+                    uiManager.TopWindow.Draw();
+                }
 
-            // Draw version text when paused
-            if (ShowVersionText)
-            {
-                Vector2 versionTextPos = new Vector2(Screen.width - versionTextWidth, 0);
-                versionFont.DrawText(versionText, versionTextPos, versionTextScaleVector2, versionTextColor);
+                // Draw version text when paused
+                if (ShowVersionText)
+                {
+                    Vector2 versionTextPos = new Vector2(Screen.width - versionTextWidth, 0);
+                    versionFont.DrawText(versionText, versionTextPos, versionTextScaleVector2, versionTextColor);
+                }
             }
-
-            RenderTexture.active = oldRt;
         }
 
         void ProcessMessages()
@@ -1231,39 +1219,6 @@ namespace DaggerfallWorkshop.Game
             }
 
             return false;
-        }
-
-        void RenderTarget_OnCreateTargetTexture()
-        {
-            // Get raw image component
-            UnityEngine.UI.RawImage rawImage = FindNonDiegeticCanvasRawImage();
-            if (!rawImage)
-                return;
-
-            // Set target render texture to use native size
-            rawImage.SetNativeSize();
-        }
-
-        /// <summary>
-        /// Gets non-diegetic canvas output raw image (if enabled)
-        /// </summary>
-        /// <returns>RawImage or null.</returns>
-        UnityEngine.UI.RawImage FindNonDiegeticCanvasRawImage()
-        {
-            // Must be able to find output canvas object
-            if (!NonDiegeticUIOutput)
-                return null;
-
-            // Output canvas object must be active
-            if (!NonDiegeticUIOutput.activeInHierarchy)
-                return null;
-
-            // Get raw image component
-            UnityEngine.UI.RawImage rawImage = NonDiegeticUIOutput.GetComponent<UnityEngine.UI.RawImage>();
-            if (!rawImage)
-                return null;
-
-            return rawImage;
         }
 
         #endregion

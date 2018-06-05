@@ -100,9 +100,9 @@ namespace DaggerfallWorkshop.Game
                 // Draw weapon texture behind other HUD elements
                 Texture2D tex;
                 if (CustomTextures.TryGetValue((int)weaponState + "-" + currentFrame, out tex))
-                    DaggerfallUI.Instance.RenderTarget.DrawTexture(weaponPosition, tex);
+                    GUI.DrawTexture(weaponPosition, tex);
                 else
-                    DaggerfallUI.Instance.RenderTarget.DrawTextureWithTexCoords(weaponPosition, weaponAtlas, curAnimRect);
+                    GUI.DrawTextureWithTexCoords(weaponPosition, weaponAtlas, curAnimRect);
             }
         }
 

@@ -216,9 +216,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Rect topRect = new Rect(totalRect.x, totalRect.y + thumbY, totalRect.width, topTextureHeight);
             Rect bodyRect = new Rect(totalRect.x, topRect.yMax, totalRect.width, thumbHeight - topTextureHeight - bottomTextureHeight);
             Rect bottomRect = new Rect(totalRect.x, bodyRect.yMax, totalRect.width, bottomTextureHeight);
-            DaggerfallUI.Instance.RenderTarget.DrawTexture(topRect, vScrollThumbTop, ScaleMode.StretchToFill);
-            DaggerfallUI.Instance.RenderTarget.DrawTexture(bodyRect, vScrollThumbBody, ScaleMode.StretchToFill);
-            DaggerfallUI.Instance.RenderTarget.DrawTexture(bottomRect, vScrollThumbBottom, ScaleMode.StretchToFill);
+            GUI.DrawTexture(topRect, vScrollThumbTop, ScaleMode.StretchToFill);
+            GUI.DrawTexture(bodyRect, vScrollThumbBody, ScaleMode.StretchToFill);
+            GUI.DrawTexture(bottomRect, vScrollThumbBottom, ScaleMode.StretchToFill);
         }
 
         #endregion

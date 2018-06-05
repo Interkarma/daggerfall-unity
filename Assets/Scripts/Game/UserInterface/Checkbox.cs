@@ -127,9 +127,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Color guiColor = GUI.color;
             GUI.color = checkboxColor;
             if (!isChecked)
-                DaggerfallUI.Instance.RenderTarget.DrawTexture(rect, uncheckedTexture);
+                GUI.DrawTexture(rect, uncheckedTexture);
             else
-                DaggerfallUI.Instance.RenderTarget.DrawTexture(rect, checkedTexture);
+                GUI.DrawTexture(rect, checkedTexture);
 
             // Restore previous color
             GUI.color = guiColor;

@@ -60,7 +60,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             base.Draw();
 
-            DaggerfallUI.Instance.RenderTarget.DrawTextureWithTexCoords(buttonRect, highlightTexture, highlightRect);
+            GUI.DrawTextureWithTexCoords(buttonRect, highlightTexture, highlightRect);
         }
 
         #region Private Methods

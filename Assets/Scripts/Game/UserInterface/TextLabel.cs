@@ -274,12 +274,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 shadowRect.x += shadowPosition.x * LocalScale.x;
                 shadowRect.y += shadowPosition.y * LocalScale.y;
                 GUI.color = shadowColor;
-                DaggerfallUI.Instance.RenderTarget.DrawTextureWithTexCoords(shadowRect, textureToDraw, innerRect);
+                GUI.DrawTextureWithTexCoords(shadowRect, textureToDraw, innerRect);
             }
 
             // Draw text
             GUI.color = textColor;
-            DaggerfallUI.Instance.RenderTarget.DrawTextureWithTexCoords(totalRect, textureToDraw, innerRect);
+            GUI.DrawTextureWithTexCoords(totalRect, textureToDraw, innerRect);
 
             // Restore starting colour
             GUI.color = guiColor;
