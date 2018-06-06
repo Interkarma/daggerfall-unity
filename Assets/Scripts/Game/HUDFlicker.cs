@@ -6,17 +6,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
 {
     public abstract class HUDFlicker
     {
-        protected enum AlphaDirection
+        public enum AlphaDirection
         {
             None,
             Decreasing,
             Increasing
         }
         protected AlphaDirection alphaDirection;
-        protected float chanceReverseState;
+        protected float chanceReverseState = 0;
         protected float alphaSpeed;
         protected float alphaUpper;
         protected float alphaLower;
+        protected float initialAlpha;
         public float AlphaValue { get; protected set; }
         protected int reversalCount = 0;
         protected int reversalCountThreshold;
@@ -27,16 +28,20 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Init();
         }
         public abstract void Init();
-        public virtual void SetAlphaDirection(bool randomReversal = true)
+        public virtual void InitAlphaDirection(AlphaDirection direct)
         {
-            if (alphaDirection == AlphaDirection.None)
-            {
+            if (direct == AlphaDirection.Decreasing)
+                AlphaValue = alphaUpper;
+            else if (direct == AlphaDirection.Increasing)
                 AlphaValue = alphaLower;
-                alphaDirection = AlphaDirection.Increasing;
-            }
+
+            alphaDirection = direct;
+        }
+        public virtual void CheckReverseAlphaDirection(bool randomReversal = true)
+        {
             // Alpha Direction Reversal Check
-            if ((alphaDirection == AlphaDirection.Increasing && AlphaValue > alphaUpper) ||
-                (alphaDirection == AlphaDirection.Decreasing && AlphaValue < alphaLower))
+            if ((alphaDirection == AlphaDirection.Increasing && AlphaValue >= alphaUpper) ||
+                (alphaDirection == AlphaDirection.Decreasing && AlphaValue <= alphaLower))
                 ReverseAlphaDirection();
             else if (randomReversal && AlphaValue >= alphaLower && AlphaValue <= alphaUpper)
                 RandomlyReverseAlphaDirection();
@@ -56,21 +61,22 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 AlphaValue = 0;
             }
+            AlphaValue = Mathf.Clamp(AlphaValue, 0, 1);
         }
-        public void Cycle()
+        public virtual void Cycle()
         {
             if (!IsBurnedOut)
             {
-                SetAlphaDirection();
+                //InitAlphaDirection();
+                CheckReverseAlphaDirection();
                 SetAlphaValue();
             }
         }
 
-        public void Reset()
+        public virtual void Reset()
         {
             IsBurnedOut = false;
             reversalCount = 0;
-            chanceReverseState = 0;
         }
  
         protected void RandomlyReverseAlphaDirection()
