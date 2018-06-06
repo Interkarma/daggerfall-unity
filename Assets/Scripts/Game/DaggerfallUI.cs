@@ -64,7 +64,8 @@ namespace DaggerfallWorkshop.Game
         DaggerfallAudioSource dfAudioSource;
         DaggerfallSongPlayer dfSongPlayer;
         UserInterfaceManager uiManager = new UserInterfaceManager();
-        bool enableDefaultUserInterface = true;
+        UserInterfaceRenderTarget customRenderTarget = null;
+        Vector2? customMousePosition = null;
 
         SpellIconCollection spellIconCollection;
 
@@ -118,10 +119,16 @@ namespace DaggerfallWorkshop.Game
         
         public static IUserInterfaceManager UIManager { get { return Instance.uiManager; } }
 
-        public bool EnableDefaultUserInterface
+        public UserInterfaceRenderTarget CustomRenderTarget
         {
-            get { return enableDefaultUserInterface; }
-            set { enableDefaultUserInterface = value; }
+            get { return customRenderTarget; }
+            set { customRenderTarget = value; }
+        }
+
+        public Vector2? CustomMousePosition
+        {
+            get { return customMousePosition; }
+            set { customMousePosition = value; }
         }
 
         public AudioSource AudioSource
@@ -291,37 +298,35 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
-            if (enableDefaultUserInterface)
+            // HUD is always first window on stack when ready
+            if (dfUnity.IsPathValidated && !hudSetup)
             {
-                // HUD is always first window on stack when ready
-                if (dfUnity.IsPathValidated && !hudSetup)
+                if (enableHUD)
                 {
-                    if (enableHUD)
-                    {
-                        dfHUD = new DaggerfallHUD(uiManager);
-                        uiManager.PushWindow(dfHUD);
-                        fadeBehaviour.FadeTargetPanel = dfHUD.ParentPanel;
-                        Debug.Log("HUD pushed to stack.");
-                    }
-                    hudSetup = true;
+                    dfHUD = new DaggerfallHUD(uiManager);
+                    uiManager.PushWindow(dfHUD);
+                    fadeBehaviour.FadeTargetPanel = dfHUD.ParentPanel;
+                    Debug.Log("HUD pushed to stack.");
                 }
+                hudSetup = true;
+            }
 
-                // Route messages to top window or handle locally
-                if (uiManager.MessageCount > 0)
-                {
-                    // Top window has first chance at message
-                    if (uiManager.TopWindow != null)
-                        uiManager.TopWindow.ProcessMessages();
-
-                    // Then process locally
-                    ProcessMessages();
-                }
-
-                // Update top window
+            // Route messages to top window or handle locally
+            if (uiManager.MessageCount > 0)
+            {
+                // Top window has first chance at message
                 if (uiManager.TopWindow != null)
-                {
-                    uiManager.TopWindow.Update();
-                }
+                    uiManager.TopWindow.ProcessMessages();
+
+                // Then process locally
+                ProcessMessages();
+            }
+
+            // Update top window
+            if (uiManager.TopWindow != null)
+            {
+                uiManager.TopWindow.ParentPanel.CustomMousePosition = customMousePosition;
+                uiManager.TopWindow.Update();
             }
 
             // Clear key state every frame
@@ -346,8 +351,16 @@ namespace DaggerfallWorkshop.Game
                     lastKeyCode = Event.current.keyCode;
             }
 
-            if (enableDefaultUserInterface && Event.current.type == EventType.Repaint)
+            if (Event.current.type == EventType.Repaint)
             {
+                RenderTexture oldRT = null;
+                if (customRenderTarget)
+                {
+                    oldRT = RenderTexture.active;
+                    RenderTexture.active = customRenderTarget.TargetTexture;
+                    customRenderTarget.Clear();
+                }
+
                 // Draw top window
                 if (uiManager.TopWindow != null)
                 {
@@ -359,6 +372,11 @@ namespace DaggerfallWorkshop.Game
                 {
                     Vector2 versionTextPos = new Vector2(Screen.width - versionTextWidth, 0);
                     versionFont.DrawText(versionText, versionTextPos, versionTextScaleVector2, versionTextColor);
+                }
+
+                if (customRenderTarget)
+                {
+                    RenderTexture.active = oldRT;
                 }
             }
         }

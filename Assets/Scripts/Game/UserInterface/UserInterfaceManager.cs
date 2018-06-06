@@ -196,8 +196,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 if (TopWindow != null)
                     TopWindow.OnReturn();
             }
-            if (windows.Count <= 1 && GameManager.HasInstance)
-                GameManager.Instance.PauseGame(false);
+
+            if (DaggerfallUI.Instance.enableHUD)
+            {
+                if (windows.Count <= 1 && GameManager.HasInstance)
+                    GameManager.Instance.PauseGame(false);
+            }
+            else
+            {
+                if (windows.Count < 1 && GameManager.HasInstance)
+                    GameManager.Instance.PauseGame(false);
+            }
         }
 
         /// <summary>

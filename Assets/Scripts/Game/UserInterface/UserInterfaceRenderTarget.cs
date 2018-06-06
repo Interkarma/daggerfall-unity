@@ -29,7 +29,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         int createCount = 0;
         RenderTexture targetTexture = null;
-        Rect targetRect = new Rect();
+        Vector2 targetSize = new Vector2();
         Color clearColor = Color.clear;
         FilterMode filterMode;
 
@@ -46,11 +46,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         /// <summary>
-        /// Gets rectangle of target texture.
+        /// Gets size of target texture.
         /// </summary>
-        public Rect TargetRect
+        public Vector2 TargetSize
         {
-            get { return targetRect; }
+            get { return targetSize; }
         }
 
         /// <summary>
@@ -197,13 +197,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Use either screen or custom dimensions
             int width = (customWidth == 0) ? Screen.width : customWidth;
             int height = (customHeight == 0) ? Screen.height : customHeight;
+            targetSize = new Vector2(width, height);
 
             // Set custom panel root size and scale
             // Unity likes to scale drawing to render texture by current screen dimensions
             // This is a hack to use panel scaling to compensate
             float scaleX = (float)Screen.width / (float)CustomWidth;
             float scaleY = (float)Screen.height / (float)CustomHeight;
-            parentPanel.RootSize = new Vector2(width, height);
+            parentPanel.RootSize = targetSize;
             parentPanel.Scale = new Vector2(scaleX, scaleY);
             parentPanel.AutoSize = AutoSizeModes.None;
 
@@ -211,7 +212,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (!IsReady() || targetTexture.width != width || targetTexture.height != height)
             {
                 // Create target texture matching screen dimensions
-                targetRect = new Rect(0, 0, width, height);
                 targetTexture = new RenderTexture(width, height, 0, RenderTextureFormat.ARGB32);
                 targetTexture.filterMode = filterMode;
                 targetTexture.name = string.Format("DaggerfallUI RenderTexture {0}", createCount++);
