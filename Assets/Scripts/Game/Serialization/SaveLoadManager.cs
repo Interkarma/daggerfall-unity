@@ -892,6 +892,9 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         void RestoreEscortingFacesData(FaceDetails[] escortingFaces)
         {
+            if (DaggerfallUI.Instance.DaggerfallHUD == null)
+                return;
+
             if (escortingFaces == null)
                 DaggerfallUI.Instance.DaggerfallHUD.EscortingFaces.ClearFaces();
             else
