@@ -16,6 +16,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         private HealthChangeDetector healthDetector;
         private HUDFlickerFast flickerFast;
         private HUDFlickerSlow flickerSlow;
+        private HUDFlickerFlash flickerFlash;
         private float newAlpha;
 
         private const float injuredThreshold = 0.4f; // Health percentage that flicker is triggered at.
@@ -25,6 +26,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             healthDetector = GameManager.Instance.HealthChangeDetector;
             flickerFast = new HUDFlickerFast();
             flickerSlow = new HUDFlickerSlow();
+            flickerFlash = new HUDFlickerFlash();
         }
         private PlayerCondition GetPlayerCondition()
         {
@@ -50,7 +52,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 && flickerFast.IsBurnedOut)
             {
                 flickerFast.Reset();
-                //Debug.Log("Fast Flicker RESET");
             }
 
             // should the slow flicker be reset?
@@ -60,12 +61,20 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 && flickerSlow.IsBurnedOut)
             {
                 flickerSlow.Reset();
-                //Debug.Log("Slow Flicker RESET");
+            }
+
+            // should the flash flicker be reset?
+            if ( condition == PlayerCondition.Normal
+                && healthDetector.HealthLost > 0
+                && flickerFlash.IsBurnedOut)
+            {
+                flickerFlash.Reset();
             }
 
             if (condition == PlayerCondition.Normal)
             {
-                newAlpha = 0;
+                flickerFlash.Cycle();
+                newAlpha = ReplaceAlphaWithIfBurntOut(flickerFlash, 0);
             }
             else if (condition == PlayerCondition.Injured)
             {
@@ -81,8 +90,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 // if Flicker fast is burnt out, use flicker slow value
                 newAlpha = ReplaceAlphaWithIfBurntOut(flickerFast, flickerSlow.AlphaValue);
             }
-
-            Parent.BackgroundColor = new Color(0, 0, 0, newAlpha);
+            
+            Parent.BackgroundColor = new Color(0.3984f, 0, 0, newAlpha);
             base.Draw();
         }
 

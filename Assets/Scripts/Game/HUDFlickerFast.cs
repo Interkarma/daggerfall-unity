@@ -10,18 +10,19 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public override void Init()
         {
             Reset();
-            alphaSpeed = 3.7f;
-            alphaLower = 0.0f;
-            alphaUpper = 0.4f;
+            alphaSpeed = 3.9f;
+            alphaLower = 0.15f;
+            alphaUpper = 0.6f;
             reversalCountThreshold = 7;
+            InitAlphaDirection(AlphaDirection.Increasing);
         }
 
-        public override void SetAlphaDirection(bool randomReversal = true)
+        public override void CheckReverseAlphaDirection(bool randomReversal = true)
         {
             if (reversalCount <= reversalCountThreshold)
             {
                 // do inherited reversal normally
-                base.SetAlphaDirection(randomReversal);
+                base.CheckReverseAlphaDirection(randomReversal);
             }
             else if (IsBurnedOut == false)
             {
