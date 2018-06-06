@@ -17,7 +17,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         protected float alphaSpeed;
         protected float alphaUpper;
         protected float alphaLower;
-        protected float initialAlpha;
+        public float RedValue { get; protected set; }
         public float AlphaValue { get; protected set; }
         protected int reversalCount = 0;
         protected int reversalCountThreshold;
@@ -77,6 +77,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             IsBurnedOut = false;
             reversalCount = 0;
+            AlphaValue = 0;
         }
  
         protected void RandomlyReverseAlphaDirection()

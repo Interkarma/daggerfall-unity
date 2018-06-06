@@ -55,13 +55,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
 
             // should the slow flicker be reset?
-            if ((  condition == PlayerCondition.Injured
+            /*if ((  condition == PlayerCondition.Injured
                 || condition == PlayerCondition.Normal)
                 && healthDetector.HealthLost != 0
                 && flickerSlow.IsBurnedOut)
             {
                 flickerSlow.Reset();
-            }
+            }*/
 
             // should the flash flicker be reset?
             if ( condition == PlayerCondition.Normal
@@ -70,28 +70,37 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 flickerFlash.Reset();
             }
-
-            if (condition == PlayerCondition.Normal)
+            Color backColor = new Color();
+            // Decide what alpha and red to use in background color
+            switch(condition)
             {
-                flickerFlash.Cycle();
-                newAlpha = ReplaceAlphaWithIfBurntOut(flickerFlash, 0);
-            }
-            else if (condition == PlayerCondition.Injured)
-            {
-                flickerFast.Cycle();
-                newAlpha = ReplaceAlphaWithIfBurntOut(flickerFast, 0);
-            }
-            else if (condition == PlayerCondition.Wounded)
-            {
-                flickerFast.Cycle();
-                // Flicker slow runs if flickerFast is burned out, and cannot if it isn't burned out
-                flickerSlow.IsBurnedOut = !flickerFast.IsBurnedOut;
-                flickerSlow.Cycle();
-                // if Flicker fast is burnt out, use flicker slow value
-                newAlpha = ReplaceAlphaWithIfBurntOut(flickerFast, flickerSlow.AlphaValue);
+                case PlayerCondition.Normal:
+                    flickerFlash.Cycle();
+                    backColor.a = ReplaceAlphaWithIfBurntOut(flickerFlash, 0);
+                    backColor.r = flickerFlash.RedValue;
+                    break;
+                case PlayerCondition.Injured:
+                    flickerFast.Cycle();
+                    backColor.a = ReplaceAlphaWithIfBurntOut(flickerFast, 0);
+                    backColor.r = flickerFast.RedValue;
+                    break;
+                case PlayerCondition.Wounded:
+                    flickerFast.Cycle();
+                    // Flicker slow runs if flickerFast is burned out, and cannot if it isn't burned out
+                    flickerSlow.IsBurnedOut = !flickerFast.IsBurnedOut;
+                    flickerSlow.Cycle();
+                    // if Flicker fast is burnt out, use flicker slow value
+                    backColor.a = ReplaceAlphaWithIfBurntOut(flickerFast, flickerSlow.AlphaValue);
+                    if (flickerFast.IsBurnedOut)
+                    {
+                        backColor.r = flickerSlow.RedValue;
+                    }
+                    else
+                        backColor.r = flickerFast.RedValue;
+                    break;
             }
             
-            Parent.BackgroundColor = new Color(0.3984f, 0, 0, newAlpha);
+            Parent.BackgroundColor = new Color(backColor.r, 0, 0, backColor.a);
             base.Draw();
         }
 
