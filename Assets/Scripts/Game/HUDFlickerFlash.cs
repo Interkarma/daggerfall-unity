@@ -14,6 +14,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             alphaSpeed = 2.0f;
             alphaLower = 0.0f;
             alphaUpper = 0.75f;
+            RedValue = 0.3984f;
             reversalCountThreshold = -1;
         }
 
