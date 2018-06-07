@@ -196,6 +196,12 @@ namespace DaggerfallWorkshop.Game
                                         storeClosedMessage = storeClosedMessage.Replace("%d2", closeHours[(int)buildingType].ToString());
                                         DaggerfallUI.Instance.PopupMessage(storeClosedMessage);
                                     }
+
+                                    //// Add debug info
+                                    //if (DaggerfallUI.Instance.DaggerfallHUD.QuestDebugger.State != HUDQuestDebugger.DisplayState.Nothing)
+                                    //{
+                                    //    DaggerfallUI.AddHUDText(string.Format("Debugger: BuildingKey = {0}", building.buildingKey));
+                                    //}
                                 }
 
                                 //// Debug model ID
