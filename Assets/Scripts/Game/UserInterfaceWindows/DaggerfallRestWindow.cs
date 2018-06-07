@@ -63,11 +63,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string hoursPastTextureName = "REST01I0.IMG";         // "Hours past"
         const string hoursRemainingTextureName = "REST02I0.IMG";    // "Hours remaining"
 
+        const int minutesPerTick = 10;
         const float restWaitTimePerHour = 0.75f;
         const float loiterWaitTimePerHour = 1.25f;
         const int cityCampingIllegal = 17;
 
         RestModes currentRestMode = RestModes.Selection;
+        int minutesOfHour = 0;
         int hoursRemaining = 0;
         int totalHours = 0;
         float waitTimer = 0;
@@ -196,6 +198,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.OnPush();
 
             // Reset counters
+            minutesOfHour = 0;
             hoursRemaining = 0;
             totalHours = 0;
             waitTimer = 0;
@@ -266,54 +269,70 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             playerEntity.IsResting = true;
 
             // Loitering runs at a slower rate to rest
-            float waitTime = (currentRestMode == RestModes.Loiter) ? loiterWaitTimePerHour : restWaitTimePerHour;
+            float waitTimePerHour = (currentRestMode == RestModes.Loiter) ? loiterWaitTimePerHour : restWaitTimePerHour;
 
-            // Tick timer by rate and count based on rest type
-            bool finished = false;
-            if (Time.realtimeSinceStartup > waitTimer + waitTime)
+            // Tick through minutesPerTick intervals until one full hour has passed
+            // This allows quest machine to have more time resolution while still counting off rest in hourly increments
+            if (Time.realtimeSinceStartup > waitTimer + waitTimePerHour / minutesPerTick)
             {
                 waitTimer = Time.realtimeSinceStartup;
 
-                // Progress world time by 1 hour and tick quest machine
+                // Progress world time and tick quest machine
                 // This could cause enemies to be spawned
-                totalHours++;
-                DaggerfallUnity.WorldTime.Now.RaiseTime(DaggerfallDateTime.SecondsPerHour);
+                DaggerfallUnity.WorldTime.Now.RaiseTime(minutesPerTick * 60);
                 Questing.QuestMachine.Instance.Tick();
 
-                // Do nothing if another window (e.g. quest popup) has suddenly taken over UI
-                // Checking for second time as quest tick above can perfectly align with rest ending
-                if (uiManager.TopWindow != this)
+                // Count a full hour
+                minutesOfHour += minutesPerTick;
+                if (minutesOfHour < 60)
                     return false;
+                else
+                    minutesOfHour = 0;
+            }
+            else
+            {
+                return false;
+            }
 
-                // Check if enemies nearby
-                if (GameManager.Instance.AreEnemiesNearby())
-                {
-                    enemyBrokeRest = true;
-                    return true;
-                }
+            // Tick timer by rate and count based on rest type
+            bool finished = false;
+            totalHours++;
 
-                if (currentRestMode == RestModes.TimedRest)
-                {
-                    TickVitals();
-                    hoursRemaining--;
-                    if (hoursRemaining < 1)
-                        finished = true;
-                }
-                else if (currentRestMode == RestModes.FullRest)
-                {
-                    if (TickVitals())
-                        finished = true;
-                }
-                else if (currentRestMode == RestModes.Loiter)
-                {
-                    hoursRemaining--;
-                    if (hoursRemaining < 1)
-                        finished = true;
-                }
-                // Check if rent expired
-                if (CheckRent())
+            // Do nothing if another window (e.g. quest popup) has suddenly taken over UI
+            // Checking for second time as quest tick above can perfectly align with rest ending
+            if (uiManager.TopWindow != this)
+                return false;
+
+            // Check if enemies nearby
+            if (GameManager.Instance.AreEnemiesNearby())
+            {
+                enemyBrokeRest = true;
+                return true;
+            }
+
+            // Tick vitals to end
+            if (currentRestMode == RestModes.TimedRest)
+            {
+                TickVitals();
+                hoursRemaining--;
+                if (hoursRemaining < 1)
                     finished = true;
             }
+            else if (currentRestMode == RestModes.FullRest)
+            {
+                if (TickVitals())
+                    finished = true;
+            }
+            else if (currentRestMode == RestModes.Loiter)
+            {
+                hoursRemaining--;
+                if (hoursRemaining < 1)
+                    finished = true;
+            }
+
+            // Check if rent expired
+            if (CheckRent())
+                finished = true;
 
             return finished;
         }
