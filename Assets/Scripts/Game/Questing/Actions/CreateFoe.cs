@@ -73,7 +73,7 @@ namespace DaggerfallWorkshop.Game.Questing
             action.spawnInterval = (uint)Parser.ParseInt(match.Groups["minutes"].Value) * 60;
             action.spawnMaxTimes = Parser.ParseInt(match.Groups["count"].Value);
             action.spawnChance = Parser.ParseInt(match.Groups["percent"].Value);
-            action.lastSpawnTime = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToSeconds();
+            action.lastSpawnTime = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToSeconds() + (uint)UnityEngine.Random.Range(0, action.spawnInterval);
 
             // Handle infinite
             if (!string.IsNullOrEmpty(match.Groups["infinite"].Value))
