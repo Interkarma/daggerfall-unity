@@ -73,7 +73,6 @@ namespace DaggerfallWorkshop.Game.Questing
             action.spawnInterval = (uint)Parser.ParseInt(match.Groups["minutes"].Value) * 60;
             action.spawnMaxTimes = Parser.ParseInt(match.Groups["count"].Value);
             action.spawnChance = Parser.ParseInt(match.Groups["percent"].Value);
-            action.lastSpawnTime = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToSeconds() + (uint)UnityEngine.Random.Range(0, action.spawnInterval);
 
             // Handle infinite
             if (!string.IsNullOrEmpty(match.Groups["infinite"].Value))
@@ -94,6 +93,12 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public override void Update(Task caller)
         {
+            ulong gameSeconds = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToSeconds();
+
+            // Init spawn timer on first update
+            if (lastSpawnTime == 0)
+                lastSpawnTime = gameSeconds + (uint)UnityEngine.Random.Range(0, spawnInterval);
+
             // Do nothing if max foes already spawned
             // This can be cleared on next set/rearm
             if (spawnCounter >= spawnMaxTimes && spawnMaxTimes != -1)
@@ -108,7 +113,6 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             // Check for a new spawn event - only one spawn event can be running at a time
-            ulong gameSeconds = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToSeconds();
             if (gameSeconds > lastSpawnTime + spawnInterval && !spawnInProgress)
             {
                 // Update last spawn time
