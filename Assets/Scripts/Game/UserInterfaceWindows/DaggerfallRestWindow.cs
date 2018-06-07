@@ -76,6 +76,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool enemyBrokeRest = false;
         int remainingHoursRented = -1;
         Vector3 allocatedBed;
+        bool abortRestForEnemySpawn = false;
 
         PlayerEntity playerEntity;
         DaggerfallHUD hud;
@@ -203,6 +204,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             totalHours = 0;
             waitTimer = 0;
             enemyBrokeRest = false;
+            abortRestForEnemySpawn = false;
 
             // Get references
             playerEntity = GameManager.Instance.PlayerEntity;
@@ -214,6 +216,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.OnPop();
 
             Debug.Log(string.Format("Resting raised time by {0} hours total", totalHours));
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Manually abort rest for enemy spawn.
+        /// </summary>
+        public void AbortRestForEnemySpawn()
+        {
+            abortRestForEnemySpawn = true;
         }
 
         #endregion
@@ -260,6 +274,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         bool TickRest()
         {
+            // Abort rest immediately if requested
+            if (abortRestForEnemySpawn)
+            {
+                enemyBrokeRest = true;
+                return true;
+            }
+
             // Do nothing if another window has taken over UI
             // This will stop rest from progressing further until player dismisses top window
             if (uiManager.TopWindow != this)

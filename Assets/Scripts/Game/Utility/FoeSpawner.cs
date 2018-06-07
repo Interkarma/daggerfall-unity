@@ -12,6 +12,7 @@
 using System;
 using UnityEngine;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game.Utility
 {
@@ -65,6 +66,12 @@ namespace DaggerfallWorkshop.Game.Utility
 
             // Try placing foes near player
             PlaceFoeFreely(pendingFoeGameObjects, MinDistance, MaxDistance);
+
+            // Keep breaking rest if spawn in progress
+            if (spawnInProgress && DaggerfallUI.Instance.UserInterfaceManager.TopWindow is DaggerfallRestWindow)
+            {
+                (DaggerfallUI.Instance.UserInterfaceManager.TopWindow as DaggerfallRestWindow).AbortRestForEnemySpawn();
+            }
         }
 
         #region Public Methods
