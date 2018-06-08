@@ -61,6 +61,7 @@ namespace DaggerfallWorkshop.Game.Questing
         const string itemsTableFileName = "Quests-Items";
         const string factionsTableFileName = "Quests-Factions";
         const string foesTableFileName = "Quests-Foes";
+        const string diseasesTableFileName = "Quests-Diseases";
 
         // Data tables
         Table globalVarsTable;
@@ -70,6 +71,7 @@ namespace DaggerfallWorkshop.Game.Questing
         Table itemsTable;
         Table factionsTable;
         Table foesTable;
+        Table diseasesTable;
 
         List<IQuestAction> actionTemplates = new List<IQuestAction>();
         Dictionary<ulong, Quest> quests = new Dictionary<ulong, Quest>();
@@ -179,6 +181,14 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
+        /// Gets the diseases data table.
+        /// </summary>
+        public Table DiseasesTable
+        {
+            get { return diseasesTable; }
+        }
+
+        /// <summary>
         /// Gets or sets StaticNPC last clicked by player.
         /// </summary>
         public StaticNPC LastNPCClicked
@@ -241,6 +251,7 @@ namespace DaggerfallWorkshop.Game.Questing
             itemsTable = new Table(Instance.GetTableSourceText(itemsTableFileName));
             factionsTable = new Table(Instance.GetTableSourceText(factionsTableFileName));
             foesTable = new Table(Instance.GetTableSourceText(foesTableFileName));
+            diseasesTable = new Table(Instance.GetTableSourceText(diseasesTableFileName));
         }
 
         void Start()
@@ -347,11 +358,10 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new ItemUsedDo(null));
             RegisterAction(new TakeItem(null));
             RegisterAction(new TeleportPc(null));
-
-            // In progress - these actions are being actively developed
             RegisterAction(new DialogLink(null));
             RegisterAction(new AddDialog(null));
             RegisterAction(new RumorMill(null));
+            RegisterAction(new MakePcDiseased(null));
 
             // Stubs - these actions are not complete yet
             // Just setting up so certain quests compile for now
