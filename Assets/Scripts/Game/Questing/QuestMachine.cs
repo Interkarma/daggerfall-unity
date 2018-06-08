@@ -1497,7 +1497,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 sw.Write("\r\n");
             }
 
-            Debug.Log(text);
+            Debug.Log(text.Trim());
         }
 
         public static void Log(Quest quest, string text)
