@@ -734,6 +734,8 @@ namespace DaggerfallWorkshop
                     animalsBillboardBatch.Apply();
                     //miscBillboardBatch.Apply();
 
+                    RaiseOnUpdateLocationGameObjectEvent(locationObject, allowYield);
+
                     //// TEST: Store a RAW image of navgrid
                     //string filename = string.Format("{0} [{1}x{2}].raw", location.Name, cityNavigation.CityWidth * 64, cityNavigation.CityHeight * 64);
                     //cityNavigation.SaveTestRawImage(Path.Combine(@"d:\test\navgrids\", filename));
@@ -1574,6 +1576,15 @@ namespace DaggerfallWorkshop
         {
             if (OnCreateLocationGameObject != null)
                 OnCreateLocationGameObject(dfLocation);
+        }
+
+        // OnUpdateLocationGameObject
+        public delegate void OnUpdateLocationGameObjectEventHandler(GameObject locationObject, bool allowYeld);
+        public static event OnUpdateLocationGameObjectEventHandler OnUpdateLocationGameObject;
+        protected virtual void RaiseOnUpdateLocationGameObjectEvent(GameObject locationObject, bool allowYeld)
+        {
+            if (OnUpdateLocationGameObject != null)
+                OnUpdateLocationGameObject(locationObject, allowYeld);
         }
 
         // OnAvailableLocationGameObject
