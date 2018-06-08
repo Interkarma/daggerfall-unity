@@ -200,12 +200,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (DaggerfallUI.Instance.enableHUD)
             {
                 if (windows.Count <= 1 && GameManager.HasInstance)
+                {
                     GameManager.Instance.PauseGame(false);
+                    GameManager.Instance.PlayerActivate.SetClickDelay();
+                }
             }
             else
             {
                 if (windows.Count < 1 && GameManager.HasInstance)
+                {
                     GameManager.Instance.PauseGame(false);
+                    GameManager.Instance.PlayerActivate.SetClickDelay();
+                }
             }
         }
 
