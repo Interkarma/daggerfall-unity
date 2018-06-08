@@ -34,6 +34,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         FilterMode filterMode = FilterMode.Point;
 
+        const int betonyIndex = 19;
+
         const string nativeImgName                          = "TRAV0I00.IMG";
         const string regionPickerImgName                    = "TRAV0I01.IMG";
         const string findAtButtonImgName                    = "TRAV0I03.IMG";
@@ -575,10 +577,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 string mapName = selectedRegionMapNames[mapIndex];
                 Vector2 origin = offsetLookup[mapName];
-                scale = GetRegionMapScale(regionIndex);
+                float scale = GetRegionMapScale(regionIndex);
 
-                int scaledX = (int)((mapPixelX - origin.x) / scale);
-                int scaledY = (int)((mapPixelY - origin.y + regionPanelOffset) / scale);
+                // Manually adjust Betony vertical offset
+                int yAdjust = 0;
+                if (regionIndex == betonyIndex)
+                    yAdjust = -477;
+
+                int scaledX = (int)((mapPixelX - origin.x) * scale);
+                int scaledY = (int)((mapPixelY - origin.y) * scale) + regionPanelOffset + yAdjust;
 
                 if (pixelBuffer == null)
                 {
@@ -1069,7 +1076,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             int x = (int)(coordinates.x / scale);
             int y = (int)(coordinates.y / scale);
             
-            if (selectedRegion == 19) // Manually correct Betony offset
+            if (selectedRegion == betonyIndex) // Manually correct Betony offset
             {
                 x += 60;
                 y += 212;
@@ -1441,7 +1448,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // Gets scale of region map
         float GetRegionMapScale(int region)
         {
-            if (region == 19)//betony
+            if (region == betonyIndex)//betony
                 return 4f;
             else
                 return 1;
