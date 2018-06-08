@@ -493,7 +493,7 @@ namespace DaggerfallWorkshop.Game.Player
                 if (factionDict.ContainsKey(factionData1.parent))
                 {
                     FactionFile.FactionData parentData = factionDict[factionData1.parent];
-                    if (parentData.children.Contains(factionID2))
+                    if (parentData.children != null && parentData.children.Contains(factionID2))
                         return 2;
                 }
 
