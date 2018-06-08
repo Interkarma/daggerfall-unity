@@ -27,7 +27,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
             else if (IsBurnedOut == false)
             {
-                IsBurnedOut = true;
+                BurnOut();
                 alphaDirection = AlphaDirection.Decreasing;
             }
             else if (IsBurnedOut && AlphaValue <= 0 && alphaDirection != AlphaDirection.None)

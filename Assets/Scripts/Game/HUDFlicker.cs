@@ -77,7 +77,19 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             IsBurnedOut = false;
             reversalCount = 0;
+            AlphaValue = alphaLower;
+        }
+        
+        public virtual void ResetIfBurnedOut()
+        {
+            if (IsBurnedOut)
+                Reset();
+        }
+
+        public virtual void BurnOut()
+        {
             AlphaValue = 0;
+            IsBurnedOut = true;
         }
  
         protected void RandomlyReverseAlphaDirection()

@@ -35,7 +35,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             base.Cycle();
             // burns out when alpha reaches lower value
             if (AlphaValue == alphaLower)
-                IsBurnedOut = true;
+                BurnOut();
         }
     }
 }
