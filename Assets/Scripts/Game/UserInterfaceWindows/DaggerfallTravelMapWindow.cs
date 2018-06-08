@@ -1030,14 +1030,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             string mapName = selectedRegionMapNames[mapIndex];
             Vector2 origin = offsetLookup[mapName];
-            scale = GetRegionMapScale(selectedRegion);
 
             Vector2 results = Vector2.zero;
             Vector2 pos = regionTextureOverlayPanel.ScaledMousePosition;
 
             if (zoom)
             {
-                results.x = (int)Math.Floor(pos.x / zoomfactor * scale + zoomOffset.x + origin.x);
+                results.x = (int)Math.Floor(pos.x / zoomfactor + zoomOffset.x + origin.x);
                 float diffy = height / zoomfactor - pos.y;
                 results.y = (int)Math.Floor(height - pos.y / zoomfactor - zoomOffset.y - diffy + origin.y);
             }
@@ -1065,12 +1064,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (lastMousePos.x < 0 || lastMousePos.x > regionTextureOverlayPanelRect.width || lastMousePos.y < regionPanelOffset || lastMousePos.y > regionTextureOverlayPanel.Size.y + regionPanelOffset)
                 return;
 
+            float scale = GetRegionMapScale(selectedRegion);
             Vector2 coordinates = GetCoordinates();
-            int x = (int)coordinates.x;
-            int y = (int)coordinates.y;
-
-            if (selectedRegion == 19) //if betony, add 129 to y value...129 + current y origin seems to be approx. correct map pixel for upper left corner of betony
-                y += 129;
+            int x = (int)(coordinates.x / scale);
+            int y = (int)(coordinates.y / scale);
+            
+            if (selectedRegion == 19) // Manually correct Betony offset
+            {
+                x += 60;
+                y += 212;
+            }
 
             if (selectedRegion == 61) // Fix for Cybiades zoom-in map. Map is more zoomed in than for other regions but the pixel coordinates are not scaled to match.
                                       // The upper right corner of Cybiades (about x=440 y=340) is the same for both Cybiades's zoomed-in map and Sentinel's less zoomed in map,
