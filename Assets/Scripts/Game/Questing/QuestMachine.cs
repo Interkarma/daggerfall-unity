@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Hazelnut
 // 
 // Notes:
 //
@@ -12,8 +12,6 @@
 using UnityEngine;
 using System;
 using System.IO;
-using System.Text;
-using System.Collections;
 using System.Collections.Generic;
 using FullSerializer;
 using DaggerfallConnect.Arena2;
@@ -541,11 +539,12 @@ namespace DaggerfallWorkshop.Game.Questing
 
         /// <summary>
         /// Parses a new quest from name.
+        /// AJRB: Internal use only, use QuestListsManager.GetQuest() instead.
         /// Quest will attempt to load from QuestSourceFolder property path.
         /// </summary>
         /// <param name="questName">Name of quest filename. Extensions .txt is optional.</param>
         /// <returns>Quest object if successfully parsed, otherwise null.</returns>
-        public Quest ParseQuest(string questName)
+        private Quest ParseQuest(string questName)
         {
             string[] source = GetQuestSourceText(questName);
             if (source == null || source.Length == 0)
