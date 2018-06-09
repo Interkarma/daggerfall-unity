@@ -195,6 +195,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 questDebugger.NextState();
             }
 
+            // Cycle next Flicker
+            flicker.NextCycle();
+
             base.Update();
         }
 
