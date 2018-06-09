@@ -5,7 +5,7 @@ using DaggerfallWorkshop.Game;
 namespace DaggerfallWorkshop.Game.UserInterface
 {
 
-    public class HUDFlickerSlow : HUDFlicker
+    public class HUDFlickerSlow : HUDFlickerBase
     {
         public override void Init()
         {

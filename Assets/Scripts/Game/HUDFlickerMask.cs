@@ -44,10 +44,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             return ((GameManager.Instance.PlayerEntity.CurrentHealthPercent) < threshold);
         }
-        public override void Draw()
+        public void NextCycle()
         {
-            PlayerCondition condition = GetPlayerCondition();
+            condition = GetPlayerCondition();
 
+            CheckResetFlickers();
+            CalculateBackgroundColor();
+        }
+        private void CheckResetFlickers()
+        {
             if (healthDetector.HealthLost > 0)
             {
                 // should the fast flicker be reset?
@@ -72,11 +77,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     flickerFlash.ResetIfBurnedOut();
                 }
             }
-            
-
+        }
+        private void CalculateBackgroundColor()
+        {
             Color backColor;
             // Decide what alpha and red to use in background color
-            switch(condition)
+            switch (condition)
             {
                 case PlayerCondition.Normal:
                     flickerFlash.Cycle();
@@ -98,19 +104,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
                         backColor = new Color(flickerFast.RedValue, 0, 0, flickerFast.AlphaValue);
                     break;
                 //case PlayerCondition.Dead:
-                    // Doesn't seem to display the color when dying
-                    //flickerFast.Cycle();
-                    //backColor.a = flickerFast.AlphaValue;
-                    //backColor.r = flickerFast.RedValue;
-                    break;
+                // Doesn't seem to display the color when dying
+                //flickerFast.Cycle();
+                //backColor.a = flickerFast.AlphaValue;
+                //backColor.r = flickerFast.RedValue;
+                //break;
                 default:
                     backColor = new Color();
                     break;
             }
-            
+
             if (condition != PlayerCondition.Dead)
                 Parent.BackgroundColor = new Color(backColor.r, 0, 0, backColor.a);
-            base.Draw();
         }
     }
 }

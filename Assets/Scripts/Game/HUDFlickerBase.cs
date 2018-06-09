@@ -4,7 +4,7 @@ using DaggerfallWorkshop.Game;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
-    public abstract class HUDFlicker
+    public abstract class HUDFlickerBase
     {
         public enum AlphaDirection
         {
@@ -23,7 +23,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         protected int reversalCountThreshold;
         public bool IsBurnedOut { get; set; }
 
-        public HUDFlicker()
+        public HUDFlickerBase()
         {
             Init();
         }
