@@ -316,6 +316,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
             }
 
+            DaggerfallUI.Instance.FadeBehaviour.SmashHUDToBlack();
+            DaggerfallUI.Instance.FadeBehaviour.FadeHUDFromBlack();
+
             DaggerfallUI.Instance.UserInterfaceManager.PopWindow();
             travelWindow.CloseTravelWindows(true);
             GameManager.Instance.PlayerEntity.RaiseSkills();
