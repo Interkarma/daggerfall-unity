@@ -96,7 +96,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     flickerFast.Cycle();
                     // Flicker slow runs if flickerFast is burned out, and cannot if it isn't burned out
                     flickerSlow.IsBurnedOut = !flickerFast.IsBurnedOut;
-                    //BurnOutSwap(flickerSlow, flickerFast);
                     flickerSlow.Cycle();
                     if (flickerFast.IsBurnedOut)
                         backColor = new Color(flickerSlow.RedValue, 0, 0, flickerSlow.AlphaValue);
@@ -114,7 +113,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     break;
             }
 
-            if (condition != PlayerCondition.Dead)
+            if (condition != PlayerCondition.Dead && backColor.a != 0)
                 Parent.BackgroundColor = new Color(backColor.r, 0, 0, backColor.a);
         }
     }
