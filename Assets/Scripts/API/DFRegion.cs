@@ -96,6 +96,8 @@ namespace DaggerfallConnect
             Coven = 13,
             /// <summary>Player ship.</summary>
             HomeYourShips = 14,
+            /// <summary>No location type.</summary>
+            None = 0xffff,
         }
 
         /// <summary>
