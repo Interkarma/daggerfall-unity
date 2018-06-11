@@ -64,11 +64,21 @@ namespace DaggerfallWorkshop.Game
             if (fadeTargetPanel == null || !allowFade)
                 return;
 
-            fadeStartColor = new Color(0.39f, 0, 0, 0.4f);
-            //fadeStartColor = Color.clear;
+            fadeStartColor = Color.clear;
             fadeEndColor = Color.black;
             this.fadeDuration = fadeDuration;
-            //fadeTargetPanel.BackgroundColor = Color.clear;
+            fadeTargetPanel.BackgroundColor = Color.clear;
+            fadeInProgress = true;
+        }
+
+        public void FadeHUDBloodToBlack(float fadeDuration = 0.5f)
+        {
+            if (fadeTargetPanel == null || !allowFade)
+                return;
+
+            fadeStartColor = new Color(0.39f, 0, 0, 0.4f);
+            fadeEndColor = Color.black;
+            this.fadeDuration = fadeDuration;
             fadeInProgress = true;
         }
 
