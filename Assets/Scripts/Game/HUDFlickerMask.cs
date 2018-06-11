@@ -63,14 +63,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     flickerFast.ResetIfBurnedOut();
                 }
 
-                // should the slow flicker be reset?
-                /*if ((  condition == PlayerCondition.Dead)
-                    && healthDetector.HealthLost != 0
-                    && flickerSlow.IsBurnedOut)
-                {
-                    flickerSlow.Reset();
-                }*/
-
                 // should the flash flicker be reset?
                 if ( condition == PlayerCondition.Normal )
                 {
@@ -102,19 +94,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     else
                         backColor = new Color(flickerFast.RedValue, 0, 0, flickerFast.AlphaValue);
                     break;
-                //case PlayerCondition.Dead:
-                // Doesn't seem to display the color when dying
-                //flickerFast.Cycle();
-                //backColor.a = flickerFast.AlphaValue;
-                //backColor.r = flickerFast.RedValue;
-                //break;
+                case PlayerCondition.Dead:
+                    // Doesn't seem to display the color when dying
+                    flickerFast.Cycle();
+                    backColor = new Color(flickerFast.RedValue, 0, 0, flickerFast.AlphaValue);
+                    break;
                 default:
                     backColor = new Color();
                     break;
             }
 
-            if (condition != PlayerCondition.Dead && backColor.a != 0)
-                Parent.BackgroundColor = new Color(backColor.r, 0, 0, backColor.a);
+            if (/*condition != PlayerCondition.Dead && */ backColor.a != 0)
+                Parent.BackgroundColor = backColor;
         }
     }
 }
