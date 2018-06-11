@@ -64,10 +64,11 @@ namespace DaggerfallWorkshop.Game
             if (fadeTargetPanel == null || !allowFade)
                 return;
 
-            fadeStartColor = Color.clear;
+            fadeStartColor = new Color(0.39f, 0, 0, 0.4f);
+            //fadeStartColor = Color.clear;
             fadeEndColor = Color.black;
             this.fadeDuration = fadeDuration;
-            fadeTargetPanel.BackgroundColor = Color.clear;
+            //fadeTargetPanel.BackgroundColor = Color.clear;
             fadeInProgress = true;
         }
 
