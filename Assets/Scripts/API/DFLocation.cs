@@ -547,15 +547,6 @@ namespace DaggerfallConnect
             /// <summary>Unknown.</summary>
             public Byte[] Unknown2;
 
-            /// <summary>Unknown.</summary>
-            public Byte Unknown3;
-
-            /// <summary>ASCII value for first letter in .RMB file name.</summary>
-            public Byte Letter1ForRMBName;
-
-            /// <summary>If non-zero, ships can be purchased at banks here. Also has an unknown use.</summary>
-            public Byte PortTownAndUnknown;
-
             /// <summary>Only first Width*Height elements will have any meaning.</summary>
             public Byte[] BlockIndex;
 
@@ -569,7 +560,7 @@ namespace DaggerfallConnect
             public string[] BlockNames;
             
             /// <summary>Unknown.</summary>
-            public Byte[] Unknown4;
+            public Byte[] Unknown3;
 
             /// <summary>Always 0.</summary>
             public UInt64 NullValue1;
@@ -578,13 +569,13 @@ namespace DaggerfallConnect
             public Byte NullValue2;
 
             /// <summary>Unknown.</summary>
-            public UInt32[] Unknown5;
+            public UInt32[] Unknown4;
 
             /// <summary>Always 0.</summary>
             public Byte[] NullValue3;
 
             /// <summary>Unknown.</summary>
-            public UInt32 Unknown6;
+            public UInt32 Unknown5;
         }
 
         #endregion
