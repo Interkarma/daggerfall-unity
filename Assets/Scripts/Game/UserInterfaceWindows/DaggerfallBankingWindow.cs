@@ -446,7 +446,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             if (DaggerfallBankManager.OwnsShip)
                 GeneratePopup(TransactionResult.ALREADY_OWN_SHIP);
-            //else if not port town
+            else if (GameManager.Instance.PlayerGPS.CurrentLocation.Exterior.ExteriorData.PortTownAndUnknown == 0)
+                GeneratePopup(TransactionResult.NOT_PORT_TOWN);
             else    // Show ships for sale
                 uiManager.PushWindow(new DaggerfallBankPurchasePopUp(uiManager, this));
         }
