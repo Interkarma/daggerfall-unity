@@ -17,8 +17,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         private HealthChangeDetector healthDetector;
         private HUDFlickerFast flickerFast;
         private HUDFlickerSlow flickerSlow;
-        private HUDFlickerFlash flickerFlash;
-        private float newAlpha;
 
         private const float injuredThreshold = 0.4f; // Health percentage that flicker is triggered at.
         private const float woundedThreshold = 0.2f; // Health percentage that throb will continue at.
@@ -27,7 +25,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             healthDetector = GameManager.Instance.HealthChangeDetector;
             flickerFast = new HUDFlickerFast();
             flickerSlow = new HUDFlickerSlow();
-            flickerFlash = new HUDFlickerFlash();
         }
         private PlayerCondition GetPlayerCondition()
         {
@@ -63,11 +60,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     flickerFast.ResetIfBurnedOut();
                 }
 
-                // should the flash flicker be reset?
-                if ( condition == PlayerCondition.Normal )
-                {
-                    flickerFlash.ResetIfBurnedOut();
-                }
             }
         }
         private void CalculateBackgroundColor()
@@ -76,10 +68,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Decide what alpha and red to use in background color
             switch (condition)
             {
-                case PlayerCondition.Normal:
-                    flickerFlash.Cycle();
-                    backColor = new Color(flickerFlash.RedValue, 0, 0, flickerFlash.AlphaValue);
-                    break;
                 case PlayerCondition.Injured:
                     flickerFast.Cycle();
                     backColor = new Color(flickerFast.RedValue, 0, 0, flickerFast.AlphaValue);
@@ -94,17 +82,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     else
                         backColor = new Color(flickerFast.RedValue, 0, 0, flickerFast.AlphaValue);
                     break;
-                case PlayerCondition.Dead:
-                    // Doesn't seem to display the color when dying
-                    flickerFast.Cycle();
-                    backColor = new Color(flickerFast.RedValue, 0, 0, flickerFast.AlphaValue);
-                    break;
                 default:
                     backColor = new Color();
                     break;
             }
 
-            if (/*condition != PlayerCondition.Dead && */ backColor.a != 0)
+            if (condition != PlayerCondition.Dead && backColor.a != 0)
                 Parent.BackgroundColor = backColor;
         }
     }
