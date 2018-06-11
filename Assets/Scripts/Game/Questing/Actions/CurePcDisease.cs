@@ -19,18 +19,18 @@ using FullSerializer;
 namespace DaggerfallWorkshop.Game.Questing.Actions
 {
     /// <summary>
-    /// Inflicts a disease on player through quest system.
+    /// Cure specific disease on player through quest system.
     /// </summary>
-    public class MakePcDiseased : ActionTemplate
+    public class CurePcDisease : ActionTemplate
     {
         Diseases diseaseType = Diseases.None;
 
         public override string Pattern
         {
-            get { return @"make pc ill with (?<aDisease>[a-zA-Z0-9_.']+)"; }
+            get { return @"cure (?<aDisease>[a-zA-Z0-9_.']+)"; }
         }
 
-        public MakePcDiseased(Quest parentQuest)
+        public CurePcDisease(Quest parentQuest)
             : base(parentQuest)
         {
         }
@@ -49,10 +49,10 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             if (diseasesTable.HasValue(name))
                 type = (Diseases)Parser.ParseInt(diseasesTable.GetValue("id", name));
             else
-                throw new Exception(string.Format("make pc ill with <aDisease> could not find disease matching '{0}'. See 'Quests-Diseases' table for valid disease names.", name));
+                throw new Exception(string.Format("cure <aDisease> could not find disease matching '{0}'. See 'Quests-Diseases' table for valid disease names.", name));
 
             // Factory new action
-            MakePcDiseased action = new MakePcDiseased(parentQuest);
+            CurePcDisease action = new CurePcDisease(parentQuest);
             action.diseaseType = type;
 
             return action;
@@ -63,8 +63,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // Inflict disease on player
             if (diseaseType != Diseases.None)
             {
-                EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateDisease(diseaseType);
-                GameManager.Instance.PlayerEffectManager.AssignBundle(bundle);
+                GameManager.Instance.PlayerEffectManager.CureDisease(diseaseType);
             }
 
             SetComplete();

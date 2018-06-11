@@ -42,6 +42,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         #region Properties
 
+        public Diseases ClassicDiseaseType
+        {
+            get { return classicDiseaseType; }
+        }
+
         public bool IncubationOver
         {
             get { return incubationOver; }
