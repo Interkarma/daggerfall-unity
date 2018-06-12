@@ -272,6 +272,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     });
                     break;
 
+                case GuildServices.MakePotions:
+                    CloseWindow();
+                    uiManager.PushWindow(DaggerfallUI.Instance.DfPotionMakerWindow);
+                    break;
+
                 case GuildServices.BuyMagicItems:   // TODO: switch items depending on npcService?
                     CloseWindow();
                     uiManager.PushWindow(new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Buy, this, guild) {
