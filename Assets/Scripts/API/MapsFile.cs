@@ -70,9 +70,9 @@ namespace DaggerfallConnect.Arena2
         };
 
         /// <summary>
-        /// Letters that can form the second part of a .RMB block name. Stored as byte values in FALL.EXE at offset 0x1B3410.
+        /// Letters that form the second part of an RMB block name.
         /// </summary>
-        string[] letter2Array = { "A", "L", "M", "S", "0" };
+        string[] letter2Array = { "A", "L", "M", "S" };
 
         /// <summary>
         /// RDB block letters array.
@@ -779,7 +779,7 @@ namespace DaggerfallConnect.Arena2
                 letter1 = "A";
 
             // Get letter 2
-            letter2 = letter2Array[(2 * blockCharacter) >> 6];
+            letter2 = letter2Array[(byte)(2 * blockCharacter) >> 6];
 
             // Get block number as a string
             string blockNumberString = blockNumber.ToString();
