@@ -18,16 +18,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
     /// </summary>
     public class ItemListScroller : Panel
     {
-        #region UI Rects, Controls, Textures for normal 4 item mode
+        #region UI Rects, Controls, Textures
 
         Rect itemListPanelRect = new Rect(9, 0, 50, 152);
-        Rect[] itemButtonRects4 = new Rect[]
-        {
-            new Rect(0, 0, 50, 38),
-            new Rect(0, 38, 50, 38),
-            new Rect(0, 76, 50, 38),
-            new Rect(0, 114, 50, 38)
-        };
+        Rect[] itemButtonRects = itemButtonRects4;
         Rect upArrowRect = new Rect(0, 0, 9, 16);
         Rect downArrowRect = new Rect(0, 136, 9, 16);
         DFSize arrowsFullSize = new DFSize(9, 152);
@@ -49,9 +43,21 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #endregion
 
+        #region UI Rects for normal 4 item mode
+
+        static Rect[] itemButtonRects4 = new Rect[]
+        {
+            new Rect(0, 0, 50, 38),
+            new Rect(0, 38, 50, 38),
+            new Rect(0, 76, 50, 38),
+            new Rect(0, 114, 50, 38)
+        };
+
+        #endregion
+
         #region UI Rects, Textures for enhanced 16 item mode
 
-        Rect[] itemButtonRects16 = new Rect[]
+        static Rect[] itemButtonRects16 = new Rect[]
         {
             new Rect(0, 0, 25, 19),     new Rect(25, 0, 25, 19),
             new Rect(0, 19, 25, 19),    new Rect(25, 19, 25, 19),
@@ -62,7 +68,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             new Rect(0, 114, 25, 19),   new Rect(25, 114, 25, 19),
             new Rect(0, 133, 25, 19),   new Rect(25, 133, 25, 19)
         };
-        Rect[] itemCutoutRects16 = new Rect[]
+        static Rect[] itemCutoutRects16 = new Rect[]
         {
             new Rect(23, 72, 23, 22),   new Rect(23, 10, 23, 22),
             new Rect(0, 41, 23, 22),    new Rect(23, 41, 23, 22),
@@ -178,6 +184,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 // Configure enhanced mode to display 16 items
                 listDisplayUnits = 16;
+                itemButtonRects = itemButtonRects16;
                 itemButtonMarginSize = 1;
                 textScale = 0.75f;
                 scrollNum = 2;
@@ -245,7 +252,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             itemAnimPanels = new Panel[listDisplayUnits];
             itemStackLabels = new TextLabel[listDisplayUnits];
             itemMiscLabels = new TextLabel[listDisplayUnits];
-            Rect[] itemButtonRects = (enhanced) ? itemButtonRects16 : itemButtonRects4;
 
             for (int i = 0; i < listDisplayUnits; i++)
             {

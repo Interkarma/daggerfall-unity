@@ -98,6 +98,7 @@ namespace DaggerfallWorkshop.Game
         DaggerfallQuestJournalWindow dfQuestJournalWindow;
         DaggerfallSpellBookWindow dfSpellBookWindow;
         DaggerfallSpellMakerWindow dfSpellMakerWindow;
+        DaggerfallPotionMakerWindow dfPotionMakerWindow;
         DaggerfallCourtWindow dfCourtWindow;
 
         DaggerfallFontPlus fontPetrock32;
@@ -227,6 +228,11 @@ namespace DaggerfallWorkshop.Game
             get { return dfSpellMakerWindow; }
         }
 
+        public DaggerfallPotionMakerWindow DfPotionMakerWindow
+        {
+            get { return dfPotionMakerWindow; }
+        }
+
         public string FontsFolder
         {
             get { return Path.Combine(Application.streamingAssetsPath, fontsFolderName); }
@@ -274,6 +280,7 @@ namespace DaggerfallWorkshop.Game
             dfTalkWindow = new DaggerfallTalkWindow(uiManager);
             dfSpellBookWindow = new DaggerfallSpellBookWindow(uiManager);
             dfSpellMakerWindow = new DaggerfallSpellMakerWindow(uiManager);
+            dfPotionMakerWindow = new DaggerfallPotionMakerWindow(uiManager);
             dfCourtWindow = new DaggerfallCourtWindow(uiManager);
             dfExteriorAutomapWindow = new DaggerfallExteriorAutomapWindow(uiManager);
 
