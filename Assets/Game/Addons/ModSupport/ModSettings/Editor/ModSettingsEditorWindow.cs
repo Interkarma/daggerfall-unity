@@ -9,7 +9,6 @@
 // Notes:
 //
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -451,6 +450,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         private void Save()
         {
+            if (IsPreset)
+                data.FillPreset(CurrentPreset, false);
+
             data.Save(SettingsPath);
             data.SavePresets(PresetPath);
         }
