@@ -662,6 +662,30 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             return new EntityEffectBundle(settings, entityBehaviour);
         }
 
+        public void CureDisease(Diseases disease)
+        {
+            // Find specific disease incumbent
+            InstancedBundle[] bundles = GetDiseaseBundles();
+            foreach (InstancedBundle bundle in bundles)
+            {
+                // Must have a live effect
+                if (bundle.liveEffects == null || bundle.liveEffects.Count == 0)
+                    continue;
+
+                // Must be a disease effect
+                if (!(bundle.liveEffects[0] is DiseaseEffect))
+                    continue;
+
+                // Must be correct type of disease effect
+                DiseaseEffect effect = bundle.liveEffects[0] as DiseaseEffect;
+                if (effect.ClassicDiseaseType == disease)
+                {
+                    effect.CureDisease();
+                    Debug.LogFormat("Cured disease {0}", disease);
+                }
+            }
+        }
+
         public void CureAllDiseases()
         {
             // Cure all disease bundles

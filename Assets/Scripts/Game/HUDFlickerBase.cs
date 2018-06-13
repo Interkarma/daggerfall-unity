@@ -37,37 +37,37 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             alphaDirection = direct;
         }
-        public virtual void CheckReverseAlphaDirection(bool randomReversal = true)
+
+        public virtual void CheckReverseAlphaDirection()
         {
             // Alpha Direction Reversal Check
             if ((alphaDirection == AlphaDirection.Increasing && AlphaValue >= alphaUpper) ||
                 (alphaDirection == AlphaDirection.Decreasing && AlphaValue <= alphaLower))
                 ReverseAlphaDirection();
-            else if (randomReversal && AlphaValue >= alphaLower && AlphaValue <= alphaUpper)
+            else if (AlphaValue >= alphaLower && AlphaValue <= alphaUpper)
                 RandomlyReverseAlphaDirection();
+
+            if (reversalCount >= reversalCountThreshold && reversalCountThreshold != -1)
+            {
+                BurnOut();
+            }
         }
         protected void SetAlphaValue()
-        { 
+        {
             // increment alpha depending on State
             if (alphaDirection == AlphaDirection.Decreasing)
-            {
                 AlphaValue -= alphaSpeed * Time.deltaTime;
-            }
             else if (alphaDirection == AlphaDirection.Increasing)
-            {
                 AlphaValue += alphaSpeed * Time.deltaTime;
-            }
             else if (alphaDirection == AlphaDirection.None)
-            {
                 AlphaValue = 0;
-            }
+
             AlphaValue = Mathf.Clamp(AlphaValue, 0, 1);
         }
         public virtual void Cycle()
         {
             if (!IsBurnedOut)
             {
-                //InitAlphaDirection();
                 CheckReverseAlphaDirection();
                 SetAlphaValue();
             }
@@ -79,7 +79,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             reversalCount = 0;
             AlphaValue = alphaLower;
         }
-        
+
         public virtual void ResetIfBurnedOut()
         {
             if (IsBurnedOut)
@@ -91,7 +91,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             AlphaValue = 0;
             IsBurnedOut = true;
         }
- 
+
         protected void RandomlyReverseAlphaDirection()
         {
             const float minChance = -0.01f; // negative so it takes a little while before it can reverse at least.
@@ -117,8 +117,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 alphaDirection = AlphaDirection.Decreasing;
             else if (alphaDirection == AlphaDirection.Decreasing)
                 alphaDirection = AlphaDirection.Increasing;
-            reversalCount++;
-            //Debug.Log("Reversed AlphaState");
+
+            if (reversalCount != -1)
+                reversalCount++;
         }
     }
 }
