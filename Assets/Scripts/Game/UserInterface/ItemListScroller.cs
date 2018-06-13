@@ -224,7 +224,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 throw new ArgumentException();
 
             listDisplayUnits = listRows;
-            this.listWidth = listCols;
+            listWidth = listCols;
             itemListPanelRect = itemListRect;
             itemButtonRects = itemsRects;
             itemButtonMargin = itemMarginSize;

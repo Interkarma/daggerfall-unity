@@ -277,6 +277,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     uiManager.PushWindow(DaggerfallUI.Instance.DfPotionMakerWindow);
                     break;
 
+/*                case GuildServices.BuySpells:
+                    uiManager.PushWindow(new DaggerfallBankingWindow(uiManager, this));
+                    break;
+*/
+                case GuildServices.MakeSpells:
+                    CloseWindow();
+                    uiManager.PushWindow(DaggerfallUI.Instance.DfSpellMakerWindow);
+                    break;
+
                 case GuildServices.BuyMagicItems:   // TODO: switch items depending on npcService?
                     CloseWindow();
                     uiManager.PushWindow(new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Buy, this, guild) {
@@ -284,19 +293,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     });
                     break;
 
+                case GuildServices.MakeMagicItems:
+                    CloseWindow();
+                    uiManager.PushWindow(DaggerfallUI.Instance.DfItemMakerWindow);
+                    break;
+
+/*                case GuildServices.SellMagicItems:
+                    CloseWindow();
+                    uiManager.PushWindow(DaggerfallUI.Instance.DfPotionMakerWindow);
+                    break;
+*/
                 case GuildServices.Teleport:
                     CloseWindow();
                     DaggerfallUI.Instance.DfTravelMapWindow.ActivateTeleportationTravel();
                     uiManager.PushWindow(DaggerfallUI.Instance.DfTravelMapWindow);
-                    break;
-
-                //case GuildServices.BuySpells:
-                //uiManager.PushWindow(new DaggerfallBankingWindow(uiManager, this));
-                //break;
-
-                case GuildServices.MakeSpells:
-                    CloseWindow();
-                    uiManager.PushWindow(DaggerfallUI.Instance.DfSpellMakerWindow);
                     break;
 
                 case GuildServices.ReceiveArmor:
