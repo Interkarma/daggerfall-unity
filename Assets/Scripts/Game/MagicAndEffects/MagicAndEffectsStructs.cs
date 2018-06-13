@@ -49,7 +49,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     [Serializable]
     public struct PotionProperties
     {
-        public PotionRecipe Recipe;                                 // Potion recipe for effect
+        public PotionRecipe[] Recipes;                              // Potion recipe for effect
     }
 
     /// <summary>

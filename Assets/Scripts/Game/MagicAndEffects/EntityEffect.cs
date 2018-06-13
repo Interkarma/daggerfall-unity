@@ -165,10 +165,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             properties.MagicSkill = DFCareer.MagicSkills.None;
 
             // Set default settings
-            settings = GetDefaultSettings();
+            settings = DefaultEffectSettings();
 
             // Allow effect to set own properties
             SetProperties();
+            SetPotionProperties();
         }
 
         #endregion
@@ -232,6 +233,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         #region IEntityEffect Virtual Methods
 
         public abstract void SetProperties();
+
+        public virtual void SetPotionProperties()
+        {
+        }
 
         /// <summary>
         /// Starts effect running when first attached to an entity.
@@ -367,34 +372,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             skillMods[(int)skill] += amount;
         }
 
+        protected void AssignPotionRecipes(params PotionRecipe[] recipes)
+        {
+            if (recipes == null || recipes.Length == 0)
+                return;
+
+            potionProperties.Recipes = recipes;
+        }
+
         #endregion
 
         #region Private Methods
-
-        // Applies default settings when not specified
-        EffectSettings GetDefaultSettings()
-        {
-            EffectSettings defaultSettings = new EffectSettings();
-
-            // Default duration is 1 + 1 per level
-            defaultSettings.DurationBase = 1;
-            defaultSettings.DurationPlus = 1;
-            defaultSettings.DurationPerLevel = 1;
-
-            // Default chance is 1 + 1 per level
-            defaultSettings.ChanceBase = 1;
-            defaultSettings.ChancePlus = 1;
-            defaultSettings.ChancePerLevel = 1;
-
-            // Default magnitude is 1-1 + 1-1 per level
-            defaultSettings.MagnitudeBaseMin = 1;
-            defaultSettings.MagnitudeBaseMax = 1;
-            defaultSettings.MagnitudePlusMin = 1;
-            defaultSettings.MagnitudePlusMax = 1;
-            defaultSettings.MagnitudePerLevel = 1;
-
-            return defaultSettings;
-        }
 
         string GetDisplayName()
         {
@@ -446,6 +434,59 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         #endregion
 
         #region Static Methods
+
+        public static EffectSettings DefaultEffectSettings()
+        {
+            EffectSettings defaultSettings = new EffectSettings();
+
+            // Default duration is 1 + 1 per level
+            defaultSettings.DurationBase = 1;
+            defaultSettings.DurationPlus = 1;
+            defaultSettings.DurationPerLevel = 1;
+
+            // Default chance is 1 + 1 per level
+            defaultSettings.ChanceBase = 1;
+            defaultSettings.ChancePlus = 1;
+            defaultSettings.ChancePerLevel = 1;
+
+            // Default magnitude is 1-1 + 1-1 per level
+            defaultSettings.MagnitudeBaseMin = 1;
+            defaultSettings.MagnitudeBaseMax = 1;
+            defaultSettings.MagnitudePlusMin = 1;
+            defaultSettings.MagnitudePlusMax = 1;
+            defaultSettings.MagnitudePerLevel = 1;
+
+            return defaultSettings;
+        }
+
+        public static EffectSettings SetEffectDuration(EffectSettings settings, int durationBase, int durationPlus, int durationPerLevel)
+        {
+            settings.DurationBase = durationBase;
+            settings.DurationPlus = durationPlus;
+            settings.DurationPerLevel = durationPerLevel;
+
+            return settings;
+        }
+
+        public static EffectSettings SetEffectChance(EffectSettings settings, int chanceBase, int chancePlus, int chancePerLevel)
+        {
+            settings.ChanceBase = chanceBase;
+            settings.ChancePlus = chancePlus;
+            settings.ChancePerLevel = chancePerLevel;
+
+            return settings;
+        }
+
+        public static EffectSettings SetEffectMagnitude(EffectSettings settings, int magnitudeBaseMin, int magnitudeBaseMax, int magnitudePlusMin, int magnitudePlusMax, int magnitudePerLevel)
+        {
+            settings.MagnitudeBaseMin = magnitudeBaseMin;
+            settings.MagnitudeBaseMax = magnitudeBaseMax;
+            settings.MagnitudePlusMin = magnitudePlusMin;
+            settings.MagnitudePlusMax = magnitudePlusMax;
+            settings.MagnitudePerLevel = magnitudePerLevel;
+
+            return settings;
+        }
 
         public static int MakeClassicKey(byte groupIndex, byte subgroupIndex)
         {

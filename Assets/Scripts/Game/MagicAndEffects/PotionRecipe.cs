@@ -23,11 +23,21 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     {
         #region Fields
 
+        EffectSettings settings;
         Ingredient[] ingredients = null;
 
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// Gets or sets effect settings for this recipe.
+        /// </summary>
+        public EffectSettings Settings
+        {
+            get { return settings; }
+            set { settings = value; }
+        }
 
         /// <summary>
         /// Gets or sets potion recipe ingredients.
@@ -47,23 +57,28 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// </summary>
         public PotionRecipe()
         {
+            settings = BaseEntityEffect.DefaultEffectSettings();
         }
 
         /// <summary>
         /// Ingredient[] array constructor.
         /// </summary>
+        /// <param name="settings">Settings for this potion recipe.</param>
         /// <param name="ingredients">Ingredient array.</param>
-        public PotionRecipe(params Ingredient[] ingredients)
+        public PotionRecipe(EffectSettings settings, params Ingredient[] ingredients)
         {
+            this.settings = settings;
             this.ingredients = ingredients;
         }
 
         /// <summary>
         /// int[] array of item template IDs constructor.
         /// </summary>
+        /// <param name="settings">Settings for this potion recipe.</param>
         /// <param name="ids">Array of item template IDs.</param>
-        public PotionRecipe(int[] ids)
+        public PotionRecipe(EffectSettings settings, params int[] ids)
         {
+            this.settings = settings;
             if (ids != null && ids.Length > 0)
             {
                 Ingredient[] ingredients = new Ingredient[ids.Length];
