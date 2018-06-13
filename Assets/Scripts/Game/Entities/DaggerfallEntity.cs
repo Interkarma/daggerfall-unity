@@ -120,6 +120,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public ItemEquipTable ItemEquipTable { get { return equipTable; } }
         public int MaxHealth { get { return maxHealth; } set { maxHealth = value; } }
         public int CurrentHealth { get { return GetCurrentHealth(); } set { SetHealth(value); } }
+        public float CurrentHealthPercent { get { return GetCurrentHealth() / (float)maxHealth; } }
         public int MaxFatigue { get { return (stats.LiveStrength + stats.LiveEndurance) * 64; } }
         public int CurrentFatigue { get { return GetCurrentFatigue(); } set { SetFatigue(value); } }
         public int MaxMagicka { get { return FormulaHelper.SpellPoints(stats.LiveIntelligence, career.SpellPointMultiplierValue); } }
