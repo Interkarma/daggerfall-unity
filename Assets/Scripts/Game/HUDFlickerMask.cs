@@ -51,16 +51,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
         private void CheckResetFlickers()
         {
             if (healthDetector.HealthLost > 0)
-            {
-                // should the fast flicker be reset?
-                if (  condition == PlayerCondition.Injured 
-                    || condition == PlayerCondition.Wounded
-                    || condition == PlayerCondition.Dead)
-                {
-                    flickerFast.ResetIfBurnedOut();
-                }
+                flickerFast.ResetIfBurnedOut();
 
-            }
+            if (healthDetector.HealthGain > 0)
+                flickerSlow.BurnOut();
         }
         private void CalculateBackgroundColor()
         {
@@ -87,7 +81,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     break;
             }
 
-            if (condition != PlayerCondition.Dead && backColor.a != 0)
+            if (condition != PlayerCondition.Dead && backColor != Parent.BackgroundColor)
                 Parent.BackgroundColor = backColor;
         }
     }
