@@ -44,6 +44,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         int magicRoundsSinceStartup = 0;
         float roundTimer = 0f;
         Dictionary<string, BaseEntityEffect> magicEffectTemplates = new Dictionary<string, BaseEntityEffect>();
+        Dictionary<int, BaseEntityEffect> potionEffectTemplates = new Dictionary<int, BaseEntityEffect>();
 
         #endregion
 
@@ -70,6 +71,25 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             foreach(BaseEntityEffect effect in effectTemplates)
             {
                 magicEffectTemplates.Add(effect.Key, effect);
+
+                // Link effect to potion recipe lookup if supported
+                PotionRecipe recipe = GetEffectPotionRecipe(effect);
+                if (recipe != null)
+                {
+                    // Add potion effect or log error if collision
+                    int recipeKey = recipe.GetHashCode();
+                    if (!potionEffectTemplates.ContainsKey(recipeKey))
+                    {
+                        potionEffectTemplates.Add(recipeKey, effect);
+
+                        // TEMP: Output something just to show potion recipe was registered
+                        Debug.LogFormat("EnityEffectBroker: Registered effect '{0}' with recipe key '{1}'. Potion ingredients are: {2}", effect.Key, recipeKey, recipe.ToString());
+                    }
+                    else
+                    {
+                        Debug.LogErrorFormat("EnityEffectBroker: Already contains potion recipe key {0} for ingredients: {1}", recipeKey, recipe.ToString());
+                    }
+                }
             }
         }
 
@@ -92,6 +112,42 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// Gets PotionRecipe from IEntityEffect.
+        /// Effect must allow the potion maker crafting station and define a potion recipe.
+        /// </summary>
+        /// <param name="effect">Input effect.</param>
+        /// <returns>PotionRecipe if the effect has one, otherwise null.</returns>
+        public PotionRecipe GetEffectPotionRecipe(IEntityEffect effect)
+        {
+            if (effect != null &&
+                (effect.Properties.AllowedCraftingStations & MagicCraftingStations.PotionMaker) == MagicCraftingStations.PotionMaker &&
+                effect.PotionProperties.Recipe != null &&
+                effect.PotionProperties.Recipe.HasRecipe())
+            {
+                return effect.PotionProperties.Recipe;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Gets IEntityEffect from PotionRecipe.
+        /// </summary>
+        /// <param name="recipe">Input recipe.</param>
+        /// <returns>IEntityEffect if this recipe is linked to an effect, otherwise null.</returns>
+        public IEntityEffect GetPotionRecipeEffect(PotionRecipe recipe)
+        {
+            if (recipe != null)
+            {
+                int recipeKey = recipe.GetHashCode();
+                if (!potionEffectTemplates.ContainsKey(recipeKey))
+                    return potionEffectTemplates[recipeKey];
+            }
+
+            return null;
+        }
 
         /// <summary>
         /// Gets group names of registered effects.

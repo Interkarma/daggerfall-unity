@@ -31,9 +31,18 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.SupportMagnitude = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_All;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
-            properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
+            properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker | MagicCraftingStations.PotionMaker;
             properties.MagicSkill = DFCareer.MagicSkills.Restoration;
             properties.MagnitudeCosts = MakeEffectCosts(20, 28);
+
+            // Assign recipe for example and testing purposes
+            // Could also generate ingredient array for recipe from helper connected to PotionRecipes.txt JSON file
+            // Note: PotionProperties likely to expand in future to more than just recipe
+            potionProperties.Recipe = new PotionRecipe(new int[] {
+                (int)Items.MiscellaneousIngredients1.Elixir_vitae,
+                (int)Items.PlantIngredients1.Yellow_berries,
+                (int)Items.MetalIngredients.Mercury,
+                (int)Items.CreatureIngredients1.Troll_blood });
         }
 
         public override void MagicRound()

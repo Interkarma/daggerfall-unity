@@ -43,6 +43,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     }
 
     /// <summary>
+    /// Defines properties intrinsic to a potion.
+    /// Note: Under early development. Subject to change.
+    /// </summary>
+    [Serializable]
+    public struct PotionProperties
+    {
+        public PotionRecipe Recipe;                                 // Potion recipe for effect
+    }
+
+    /// <summary>
     /// Allows tuning of cost per setting.
     /// </summary>
     [Serializable]

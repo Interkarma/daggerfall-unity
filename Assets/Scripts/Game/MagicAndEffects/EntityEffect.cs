@@ -36,6 +36,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         EffectSettings Settings { get; set; }
 
         /// <summary>
+        /// Gets effect potion properties (if any).
+        /// </summary>
+        PotionProperties PotionProperties { get; }
+
+        /// <summary>
         /// Gets the caster entity behaviour of this effect (can return null).
         /// </summary>
         DaggerfallEntityBehaviour Caster { get; }
@@ -129,6 +134,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         protected EffectProperties properties = new EffectProperties();
         protected EffectSettings settings = new EffectSettings();
+        protected PotionProperties potionProperties = new PotionProperties();
         protected DaggerfallEntityBehaviour caster = null;
         protected EntityEffectManager manager = null;
 
@@ -178,6 +184,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             get { return settings; }
             set { settings = value; }
+        }
+
+        public PotionProperties PotionProperties
+        {
+            get { return potionProperties; }
         }
 
         public DaggerfallEntityBehaviour Caster
