@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Items;
+using System;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -22,6 +23,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         Rect itemListPanelRect = new Rect(9, 0, 50, 152);
         Rect[] itemButtonRects = itemButtonRects4;
+
         Rect upArrowRect = new Rect(0, 0, 9, 16);
         Rect downArrowRect = new Rect(0, 136, 9, 16);
         DFSize arrowsFullSize = new DFSize(9, 152);
@@ -174,6 +176,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #region Constructors, Public methods
 
+        /// <summary>
+        /// Initializes a new instance of the ItemListScroller using default values setup for DF inventory screens.
+        /// Switches to advanced display of 16 items instead of 4 if user enables enhanced item lists.
+        /// </summary>
+        /// <param name="toolTip">Tool tip class to use if items should display tooltips.</param>
+        /// <param name="disableEnhanced">If set to <c>true</c> disable enhanced regardless of user settings.</param>
         public ItemListScroller(ToolTip toolTip, bool disableEnhanced = false)
             : base()
         {
@@ -192,7 +200,38 @@ namespace DaggerfallWorkshop.Game.UserInterface
             LoadTextures(enhanced);
             SetupScrollBar();
             SetupScrollButtons();
-            SetupItemsList(enhanced);
+            SetupItemsList(enhanced, Vector2.zero);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DaggerfallWorkshop.Game.UserInterface.ItemListScroller"/> class.
+        /// </summary>
+        /// <param name="listDisplayUnits">Number of items this list will display at a time.</param>
+        /// <param name="listWidth">Number of items displayed per row. (should be a factor of listDisplayUnits)</param>
+        /// <param name="itemListRect">Item list coordinate rect.</param>
+        /// <param name="itemRects">Individual item display coordinate rects. (1 per list display)</param>
+        /// <param name="miscLabelPos">Misc label relative position. (Vector2.zero for default)</param>
+        /// <param name="itemMarginSize">Individual item display margin size.</param>
+        /// <param name="textScale">Text scale factor.</param>
+        /// <param name="toolTip">Tool tip class to use if items should display tooltips.</param>
+        public ItemListScroller(int listDisplay, int listWidth, Rect itemListRect, Rect[] itemRects, Vector2 miscLabelPos, int itemMarginSize = 1, float textScale = 1f, ToolTip toolTip = null)
+            : base()
+        {
+            if (itemRects.Length != listDisplayUnits || listDisplay % listWidth > 0)
+                throw new ArgumentException();
+            
+            listDisplayUnits = listDisplay;
+            scrollNum = listWidth;
+            itemListPanelRect = itemListRect;
+            itemButtonRects = itemRects;
+            itemButtonMarginSize = itemMarginSize;
+            this.textScale = textScale;
+            this.toolTip = toolTip;
+
+            LoadTextures(false);
+            SetupScrollBar();
+            SetupScrollButtons();
+            SetupItemsList(false, miscLabelPos);
         }
 
         public void ResetScroll()
@@ -239,7 +278,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             itemListDownButton.OnMouseClick += ItemsDownButton_OnMouseClick;
         }
 
-        void SetupItemsList(bool enhanced)
+        void SetupItemsList(bool enhanced, Vector2 miscLabelPos)
         {
             // List panel for scrolling behaviour
             Panel itemsListPanel = DaggerfallUI.AddPanel(itemListPanelRect, this);
@@ -289,7 +328,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 itemStackLabels[i].TextColor = DaggerfallUI.DaggerfallUnityDefaultToolTipTextColor;
 
                 // Misc labels
-                itemMiscLabels[i] = DaggerfallUI.AddTextLabel(DaggerfallUI.Instance.Font4, Vector2.zero, string.Empty, itemButtons[i]);
+                itemMiscLabels[i] = DaggerfallUI.AddTextLabel(DaggerfallUI.Instance.Font4, miscLabelPos, string.Empty, itemButtons[i]);
                 itemMiscLabels[i].HorizontalAlignment = HorizontalAlignment.Left;
                 itemMiscLabels[i].VerticalAlignment = VerticalAlignment.Top;
                 itemMiscLabels[i].TextScale = textScale;
