@@ -92,10 +92,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const string redArrowsTextureName = "INVE07I0.IMG";     // Red up/down arrows when no more items available
         const string baseInvTextureName = "INVE00I0.IMG";       // Main inventory texture for cutting small item backgrounds
 
-        int listDisplayUnits = 4;       // Number of items displayed in scrolling areas
-        int itemButtonMarginSize = 2;   // Margin of item buttons
-        float textScale = 1f;           // Scale of text on item buttons
-        int scrollNum = 1;              // Number of items on each scroll tick
+        int listDisplayUnits = 4;   // Number of item rows displayed in scrolling areas
+        int listWidth = 1;          // Number of items on each row
+        int listDisplayTotal;       // Total number of items displayed in scrolling areas
+        int itemButtonMargin = 2;   // Margin of item buttons
+        float textScale = 1f;       // Scale of text on item buttons
 
         float foregroundAnimationDelay = 0.2f;    
         float backgroundAnimationDelay = 0.2f;
@@ -191,12 +192,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (enhanced)
             {
                 // Configure enhanced mode to display 16 items
-                listDisplayUnits = 16;
+                listDisplayUnits = 8;
+                listWidth = 2;
                 itemButtonRects = itemButtonRects16;
-                itemButtonMarginSize = 1;
+                itemButtonMargin = 1;
                 textScale = 0.75f;
-                scrollNum = 2;
             }
+            listDisplayTotal = listDisplayUnits * listWidth;
             LoadTextures(enhanced);
             SetupScrollBar();
             SetupScrollButtons();
@@ -206,25 +208,26 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// <summary>
         /// Initializes a new instance of the <see cref="DaggerfallWorkshop.Game.UserInterface.ItemListScroller"/> class.
         /// </summary>
-        /// <param name="listDisplayUnits">Number of items this list will display at a time.</param>
-        /// <param name="listWidth">Number of items displayed per row. (should be a factor of listDisplayUnits)</param>
-        /// <param name="itemListRect">Item list coordinate rect.</param>
-        /// <param name="itemRects">Individual item display coordinate rects. (1 per list display)</param>
+        /// <param name="listRows">Number of rows of items this list will display at one time.</param>
+        /// <param name="listCols">Number of items displayed per row.</param>
+        /// <param name="itemListRect">Item list coordinate rect, excluding scrollbar.</param>
+        /// <param name="itemsRects">Individual items display coordinate rects. (1 per width*height)</param>
         /// <param name="miscLabelPos">Misc label relative position. (Vector2.zero for default)</param>
         /// <param name="itemMarginSize">Individual item display margin size.</param>
         /// <param name="textScale">Text scale factor.</param>
         /// <param name="toolTip">Tool tip class to use if items should display tooltips.</param>
-        public ItemListScroller(int listDisplay, int listWidth, Rect itemListRect, Rect[] itemRects, Vector2 miscLabelPos, int itemMarginSize = 1, float textScale = 1f, ToolTip toolTip = null)
+        public ItemListScroller(int listRows, int listCols, Rect itemListRect, Rect[] itemsRects, Vector2 miscLabelPos, int itemMarginSize = 1, float textScale = 1f, ToolTip toolTip = null)
             : base()
         {
-            if (itemRects.Length != listDisplayUnits || listDisplay % listWidth > 0)
+            listDisplayTotal = listRows * listCols;
+            if (itemsRects.Length != listDisplayTotal)
                 throw new ArgumentException();
-            
-            listDisplayUnits = listDisplay;
-            scrollNum = listWidth;
+
+            listDisplayUnits = listRows;
+            this.listWidth = listCols;
             itemListPanelRect = itemListRect;
-            itemButtonRects = itemRects;
-            itemButtonMarginSize = itemMarginSize;
+            itemButtonRects = itemsRects;
+            itemButtonMargin = itemMarginSize;
             this.textScale = textScale;
             this.toolTip = toolTip;
 
@@ -286,13 +289,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             itemsListPanel.OnMouseScrollDown += ItemsListPanel_OnMouseScrollDown;
 
             // Setup buttons
-            itemButtons = new Button[listDisplayUnits];
-            itemIconPanels = new Panel[listDisplayUnits];
-            itemAnimPanels = new Panel[listDisplayUnits];
-            itemStackLabels = new TextLabel[listDisplayUnits];
-            itemMiscLabels = new TextLabel[listDisplayUnits];
+            itemButtons = new Button[listDisplayTotal];
+            itemIconPanels = new Panel[listDisplayTotal];
+            itemAnimPanels = new Panel[listDisplayTotal];
+            itemStackLabels = new TextLabel[listDisplayTotal];
+            itemMiscLabels = new TextLabel[listDisplayTotal];
 
-            for (int i = 0; i < listDisplayUnits; i++)
+            for (int i = 0; i < listDisplayTotal; i++)
             {
                 // Panel - for backing button in enhanced mode
                 if (enhanced) {
@@ -301,7 +304,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 }
                 // Buttons (also handle highlight colours)
                 itemButtons[i] = DaggerfallUI.AddButton(itemButtonRects[i], itemsListPanel);
-                itemButtons[i].SetMargins(Margins.All, itemButtonMarginSize);
+                itemButtons[i].SetMargins(Margins.All, itemButtonMargin);
                 itemButtons[i].ToolTip = toolTip;
                 itemButtons[i].Tag = i;
                 itemButtons[i].OnMouseClick += ItemButton_OnMouseClick;
@@ -337,7 +340,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void ClearItemsList()
         {
-            for (int i = 0; i < listDisplayUnits; i++)
+            for (int i = 0; i < listDisplayTotal; i++)
             {
                 itemStackLabels[i].Text = string.Empty;
                 itemMiscLabels[i].Text = string.Empty;
@@ -360,14 +363,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 return;
 
             // Update scrollbar
-            itemListScrollBar.TotalUnits = items.Count;
+            int rows = (items.Count + listWidth - 1) / listWidth;
+            itemListScrollBar.TotalUnits = rows;
             int scrollIndex = GetSafeScrollIndex(itemListScrollBar);
 
             // Update scroller buttons
-            UpdateListScrollerButtons(scrollIndex, items.Count);
+            UpdateListScrollerButtons(scrollIndex, rows);
 
+            // Convert scroller index to item based scroll index
+            scrollIndex *= listWidth;
             // Update images and tooltips
-            for (int i = 0; i < listDisplayUnits; i++)
+            for (int i = 0; i < listDisplayTotal; i++)
             {
                 // Skip if out of bounds
                 if (scrollIndex + i >= items.Count)
@@ -457,7 +463,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             if (enhanced)
             {
-                itemListTextures = new Texture2D[listDisplayUnits];
+                itemListTextures = new Texture2D[listDisplayTotal];
                 Texture2D baseInvTexture = ImageReader.GetTexture(baseInvTextureName);
                 for (int i = 0; i < itemCutoutRects16.Length; i++)
                     itemListTextures[i] = ImageReader.GetSubTexture(baseInvTexture, itemCutoutRects16[i], new DFSize(320, 200));
@@ -471,7 +477,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         void ItemButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             // Get index
-            int index = itemListScrollBar.ScrollIndex + (int)sender.Tag;
+            int index = (itemListScrollBar.ScrollIndex * listWidth) + (int)sender.Tag;
             if (index >= items.Count)
                 return;
 
@@ -486,7 +492,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         void ItemButton_OnMouseEnter(BaseScreenComponent sender)
         {
             // Get index
-            int index = itemListScrollBar.ScrollIndex + (int)sender.Tag;
+            int index = (itemListScrollBar.ScrollIndex * listWidth) + (int)sender.Tag;
             if (index >= items.Count)
                 return;
 
@@ -503,22 +509,22 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void ItemsUpButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            itemListScrollBar.ScrollIndex -= scrollNum;
+            itemListScrollBar.ScrollIndex--;
         }
 
         void ItemsDownButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            itemListScrollBar.ScrollIndex += scrollNum;
+            itemListScrollBar.ScrollIndex++;
         }
 
         void ItemsListPanel_OnMouseScrollUp(BaseScreenComponent sender)
         {
-            itemListScrollBar.ScrollIndex -= scrollNum;
+            itemListScrollBar.ScrollIndex--;
         }
 
         void ItemsListPanel_OnMouseScrollDown(BaseScreenComponent sender)
         {
-            itemListScrollBar.ScrollIndex += scrollNum;
+            itemListScrollBar.ScrollIndex++;
         }
 
         #endregion
