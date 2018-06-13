@@ -23,7 +23,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region UI Controls
 
-        Panel mainPanel = new Panel();
         Button recipesButton;
         Button mixButton;
         Button exitButton;
@@ -49,7 +48,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Setup Methods
 
-        // guildrank DarkBrotherHood 3
         protected override void Setup()
         {
             // Load textures
@@ -59,7 +57,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ParentPanel.BackgroundColor = ScreenDimColor;
 
             // Setup native panel background
-            NativePanel.BackgroundColor = new Color(0, 0, 0, 0.75f);
+            NativePanel.BackgroundColor = new Color(0, 0, 0, 0.60f);
             NativePanel.BackgroundTexture = baseTexture;
 
             // Setup buttons

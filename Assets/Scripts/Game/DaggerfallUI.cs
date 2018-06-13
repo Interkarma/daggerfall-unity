@@ -98,6 +98,7 @@ namespace DaggerfallWorkshop.Game
         DaggerfallQuestJournalWindow dfQuestJournalWindow;
         DaggerfallSpellBookWindow dfSpellBookWindow;
         DaggerfallSpellMakerWindow dfSpellMakerWindow;
+        DaggerfallItemMakerWindow dfItemMakerWindow;
         DaggerfallPotionMakerWindow dfPotionMakerWindow;
         DaggerfallCourtWindow dfCourtWindow;
 
@@ -228,6 +229,11 @@ namespace DaggerfallWorkshop.Game
             get { return dfSpellMakerWindow; }
         }
 
+        public DaggerfallItemMakerWindow DfItemMakerWindow
+        {
+            get { return dfItemMakerWindow; }
+        }
+
         public DaggerfallPotionMakerWindow DfPotionMakerWindow
         {
             get { return dfPotionMakerWindow; }
@@ -280,6 +286,7 @@ namespace DaggerfallWorkshop.Game
             dfTalkWindow = new DaggerfallTalkWindow(uiManager);
             dfSpellBookWindow = new DaggerfallSpellBookWindow(uiManager);
             dfSpellMakerWindow = new DaggerfallSpellMakerWindow(uiManager);
+            dfItemMakerWindow = new DaggerfallItemMakerWindow(uiManager);
             dfPotionMakerWindow = new DaggerfallPotionMakerWindow(uiManager);
             dfCourtWindow = new DaggerfallCourtWindow(uiManager);
             dfExteriorAutomapWindow = new DaggerfallExteriorAutomapWindow(uiManager);
