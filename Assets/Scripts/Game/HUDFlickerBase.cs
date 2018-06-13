@@ -37,6 +37,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             alphaDirection = direct;
         }
+
         public virtual void CheckReverseAlphaDirection()
         {
             // Alpha Direction Reversal Check

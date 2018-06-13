@@ -11,6 +11,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             Reset();
             alphaSpeed = 0.2f;
+
             alphaLower = 0.1f;
             alphaUpper = 0.4f;
             RedValue = 0.0f;
