@@ -8,6 +8,9 @@
 using UnityEngine;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Game.Entity;
+using System.Collections.Generic;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -19,6 +22,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Rect mixButtonRect = new Rect(169, 42, 36, 16);
         Rect exitButtonRect = new Rect(290, 178, 24, 16);
 
+        Rect ingredientsListScrollerRect = new Rect(5, 30, 151, 142);
+        Rect ingredientsListRect = new Rect(11, 0, 140, 142);
+
+        static Rect[] ingredientButtonRects = new Rect[]
+        {
+            new Rect(0, 0, 28, 28),     new Rect(56, 0, 28, 28),    new Rect(112, 0, 28, 28),
+            new Rect(0, 38, 28, 28),    new Rect(56, 38, 28, 28),   new Rect(112, 38, 28, 28),
+            new Rect(0, 76, 28, 28),    new Rect(56, 76, 28, 28),   new Rect(112, 76, 28, 28),
+            new Rect(0, 114, 28, 28),   new Rect(56, 114, 28, 28),  new Rect(112, 114, 28, 28)
+        };
+
+
         #endregion
 
         #region UI Controls
@@ -26,6 +41,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button recipesButton;
         Button mixButton;
         Button exitButton;
+
+        ItemListScroller ingredientsListScroller;
 
         #endregion
 
@@ -36,6 +53,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int alternateAlphaIndex = 12;
 
         #endregion
+
+        List<DaggerfallUnityItem> ingredients = new List<DaggerfallUnityItem>();
 
         #region Constructors
 
@@ -62,6 +81,30 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Setup buttons
             SetupButtons();
+            SetupItemListScrollers();
+            Refresh();
+        }
+
+        public override void OnPush()
+        {
+            if (!IsSetup)
+                return;
+
+            Refresh();
+        }
+
+        void Refresh()
+        {
+            // Add ingredient items to list
+            ingredients.Clear();
+            ItemCollection playerItems = GameManager.Instance.PlayerEntity.Items;
+            for (int i = 0; i < playerItems.Count; i++)
+            {
+                DaggerfallUnityItem item = playerItems.GetItem(i);
+                if (item.IsIngredient)
+                    ingredients.Add(item);
+            }
+            ingredientsListScroller.Items = ingredients;
         }
 
         #endregion
@@ -80,9 +123,27 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
         }
 
+        protected void SetupItemListScrollers()
+        {
+
+            // Setup item list scroller for ingredients
+            ingredientsListScroller = new ItemListScroller(4, 3, ingredientsListRect, ingredientButtonRects, Vector2.down, defaultToolTip)
+            {
+                Position = new Vector2(ingredientsListScrollerRect.x, ingredientsListScrollerRect.y),
+                Size = new Vector2(ingredientsListScrollerRect.width, ingredientsListScrollerRect.height),
+            };
+            NativePanel.Components.Add(ingredientsListScroller);
+            ingredientsListScroller.OnItemClick += IngredientsListScroller_OnItemClick;
+        }
+
         #endregion
 
         #region Event Handlers
+
+        protected virtual void IngredientsListScroller_OnItemClick(DaggerfallUnityItem item)
+        {
+            Debug.Log("click");
+        }
 
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {

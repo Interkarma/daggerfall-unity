@@ -213,10 +213,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// <param name="itemListRect">Item list coordinate rect, excluding scrollbar.</param>
         /// <param name="itemsRects">Individual items display coordinate rects. (1 per width*height)</param>
         /// <param name="miscLabelPos">Misc label relative position. (Vector2.zero for default)</param>
+        /// <param name="toolTip">Tool tip class to use if items should display tooltips.</param>
         /// <param name="itemMarginSize">Individual item display margin size.</param>
         /// <param name="textScale">Text scale factor.</param>
-        /// <param name="toolTip">Tool tip class to use if items should display tooltips.</param>
-        public ItemListScroller(int listRows, int listCols, Rect itemListRect, Rect[] itemsRects, Vector2 miscLabelPos, int itemMarginSize = 1, float textScale = 1f, ToolTip toolTip = null)
+        public ItemListScroller(int listRows, int listCols, Rect itemListRect, Rect[] itemsRects, Vector2 miscLabelPos, ToolTip toolTip = null, int itemMarginSize = 1, float textScale = 1f)
             : base()
         {
             listDisplayTotal = listRows * listCols;
@@ -252,7 +252,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             itemListScrollBar = new VerticalScrollBar
             {
                 Position = new Vector2(1, 18),
-                Size = new Vector2(6, 117),
+                Size = new Vector2(6, itemListPanelRect.height - 35),
                 DisplayUnits = listDisplayUnits
             };
             Components.Add(itemListScrollBar);
@@ -273,7 +273,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             itemListDownButton = new Button
             {
-                Position = new Vector2(0, 136),
+                Position = new Vector2(0, itemListPanelRect.height - 16),
                 Size = new Vector2(9, 16),
                 BackgroundTexture = redDownArrow
             };
