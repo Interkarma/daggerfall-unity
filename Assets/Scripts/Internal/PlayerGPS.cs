@@ -270,7 +270,6 @@ namespace DaggerfallWorkshop
 
                 lastMapPixelX = pos.X;
                 lastMapPixelY = pos.Y;
-                isPlayerInLocationRect = false;
             }
 
             // Raise other events

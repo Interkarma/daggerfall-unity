@@ -31,9 +31,33 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.SupportMagnitude = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_All;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
-            properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
+            properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker | MagicCraftingStations.PotionMaker;
             properties.MagicSkill = DFCareer.MagicSkills.Restoration;
             properties.MagnitudeCosts = MakeEffectCosts(20, 28);
+        }
+
+        public override void SetPotionProperties()
+        {
+            // First recipe variant: Magnitude 5-5 + 9-9 per 1 levels
+            EffectSettings recipe1Settings = SetEffectMagnitude(DefaultEffectSettings(), 5, 5, 9, 9, 1);
+            PotionRecipe recipe1 = new PotionRecipe(
+                recipe1Settings,
+                (int)Items.MiscellaneousIngredients1.Elixir_vitae,
+                (int)Items.PlantIngredients1.Yellow_berries,
+                (int)Items.MetalIngredients.Mercury,
+                (int)Items.CreatureIngredients1.Troll_blood);
+
+            // Second recipe variant: Magnitude 5-5 + 19-19 per 1 levels
+            EffectSettings recipe2Settings = SetEffectMagnitude(DefaultEffectSettings(), 5, 5, 19, 19, 1);
+            PotionRecipe recipe2 = new PotionRecipe(
+                recipe2Settings,
+                (int)Items.PlantIngredients1.Pine_branch,
+                (int)Items.PlantIngredients1.Red_berries,
+                (int)Items.CreatureIngredients3.Unicorn_horn,
+                (int)Items.MiscellaneousIngredients1.Pure_water);
+
+            // Assign recipes
+            AssignPotionRecipes(recipe1, recipe2);
         }
 
         public override void MagicRound()

@@ -830,12 +830,10 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         /// <summary>
-        /// Seek albedo and, if isEmissive is set, emission from cache, loose files and mods.
+        /// Seek albedo and, if requested, emission map from cache, loose files and mods.
         /// </summary>
-        /// <remarks>
-        /// Import textures from modding locations and cache them. If isEmissive is true, emissionMap is always set
-        /// with imported texture or, if missing, with albedo for a full-emissive surface.
-        /// </remarks>
+        /// <param name="isEmissive">Request emission map. If missing, albedo is used as a fully emissive surface.</param>
+        /// <returns>True if textures found and loaded.</returns>
         private static bool LoadFromCacheOrImport(
             int archive,
             int record,
@@ -850,13 +848,16 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             albedo = null;
             emission = null;
 
+            // Try to load from cache
             if (materialReader.GetCachedMaterialCustomBillboard(archive, record, frame, out cachedMaterial))
             {
                 albedo = cachedMaterial.albedoMap;
                 emission = cachedMaterial.emissionMap;
                 return true;
             }
-            else if (TryImportTexture(archive, record, frame, out albedo))
+
+            // Try to import and save in cache
+            if (TryImportTexture(archive, record, frame, out albedo))
             {
                 var filterMode = MainFilterMode;
 
@@ -865,7 +866,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
                 if (isEmissive)
                 {
-                    if (!TryImportTexture(archive, record, frame++, TextureMap.Emission, out emission))
+                    if (!TryImportTexture(archive, record, frame, TextureMap.Emission, out emission))
                         emission = albedo;
                     emission.filterMode = filterMode;
                     cachedMaterial.emissionMap = emission;

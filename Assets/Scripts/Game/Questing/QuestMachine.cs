@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Hazelnut
 // 
 // Notes:
 //
@@ -12,8 +12,6 @@
 using UnityEngine;
 using System;
 using System.IO;
-using System.Text;
-using System.Collections;
 using System.Collections.Generic;
 using FullSerializer;
 using DaggerfallConnect.Arena2;
@@ -63,6 +61,7 @@ namespace DaggerfallWorkshop.Game.Questing
         const string itemsTableFileName = "Quests-Items";
         const string factionsTableFileName = "Quests-Factions";
         const string foesTableFileName = "Quests-Foes";
+        const string diseasesTableFileName = "Quests-Diseases";
 
         // Data tables
         Table globalVarsTable;
@@ -72,6 +71,7 @@ namespace DaggerfallWorkshop.Game.Questing
         Table itemsTable;
         Table factionsTable;
         Table foesTable;
+        Table diseasesTable;
 
         List<IQuestAction> actionTemplates = new List<IQuestAction>();
         Dictionary<ulong, Quest> quests = new Dictionary<ulong, Quest>();
@@ -181,6 +181,14 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
+        /// Gets the diseases data table.
+        /// </summary>
+        public Table DiseasesTable
+        {
+            get { return diseasesTable; }
+        }
+
+        /// <summary>
         /// Gets or sets StaticNPC last clicked by player.
         /// </summary>
         public StaticNPC LastNPCClicked
@@ -243,6 +251,7 @@ namespace DaggerfallWorkshop.Game.Questing
             itemsTable = new Table(Instance.GetTableSourceText(itemsTableFileName));
             factionsTable = new Table(Instance.GetTableSourceText(factionsTableFileName));
             foesTable = new Table(Instance.GetTableSourceText(foesTableFileName));
+            diseasesTable = new Table(Instance.GetTableSourceText(diseasesTableFileName));
         }
 
         void Start()
@@ -297,6 +306,7 @@ namespace DaggerfallWorkshop.Game.Questing
             //RegisterAction(new JuggleAction(null));
 
             // Register trigger conditions
+            RegisterAction(new WhenPcEntersExits(null));
             RegisterAction(new WhenNpcIsAvailable(null));
             RegisterAction(new WhenReputeWith(null));
             RegisterAction(new WhenSkillLevel(null));
@@ -349,11 +359,11 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new ItemUsedDo(null));
             RegisterAction(new TakeItem(null));
             RegisterAction(new TeleportPc(null));
-
-            // In progress - these actions are being actively developed
             RegisterAction(new DialogLink(null));
             RegisterAction(new AddDialog(null));
             RegisterAction(new RumorMill(null));
+            RegisterAction(new MakePcDiseased(null));
+            RegisterAction(new CurePcDisease(null));
 
             // Stubs - these actions are not complete yet
             // Just setting up so certain quests compile for now
@@ -541,11 +551,12 @@ namespace DaggerfallWorkshop.Game.Questing
 
         /// <summary>
         /// Parses a new quest from name.
+        /// AJRB: Internal use only, use QuestListsManager.GetQuest() instead.
         /// Quest will attempt to load from QuestSourceFolder property path.
         /// </summary>
         /// <param name="questName">Name of quest filename. Extensions .txt is optional.</param>
         /// <returns>Quest object if successfully parsed, otherwise null.</returns>
-        public Quest ParseQuest(string questName)
+        private Quest ParseQuest(string questName)
         {
             string[] source = GetQuestSourceText(questName);
             if (source == null || source.Length == 0)
@@ -1498,7 +1509,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 sw.Write("\r\n");
             }
 
-            Debug.Log(text);
+            Debug.Log(text.Trim());
         }
 
         public static void Log(Quest quest, string text)

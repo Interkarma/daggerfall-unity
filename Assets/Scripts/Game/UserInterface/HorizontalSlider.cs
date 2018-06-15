@@ -326,9 +326,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Color color = GUI.color;
             if (TintColor.HasValue)
                 GUI.color = TintColor.Value;
-            DaggerfallUI.Instance.RenderTarget.DrawTexture(leftRect, hScrollThumbLeft, ScaleMode.StretchToFill);
-            DaggerfallUI.Instance.RenderTarget.DrawTexture(bodyRect, hScrollThumbBody, ScaleMode.StretchToFill);
-            DaggerfallUI.Instance.RenderTarget.DrawTexture(rightRect, hScrollThumbRight, ScaleMode.StretchToFill);
+            GUI.DrawTexture(leftRect, hScrollThumbLeft, ScaleMode.StretchToFill);
+            GUI.DrawTexture(bodyRect, hScrollThumbBody, ScaleMode.StretchToFill);
+            GUI.DrawTexture(rightRect, hScrollThumbRight, ScaleMode.StretchToFill);
             GUI.color = color;
         }
 

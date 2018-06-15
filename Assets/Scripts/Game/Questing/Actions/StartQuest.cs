@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -62,7 +62,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 questName = string.Format("S{0:0000000}", questIndex1);
 
             // Attempt to parse quest
-            Quest quest = QuestMachine.Instance.ParseQuest(questName);
+            Quest quest = GameManager.Instance.QuestListsManager.GetQuest(questName);
             if (quest != null)
             {
                 QuestMachine.Instance.ScheduleQuest(quest);
@@ -93,10 +93,10 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public override void RestoreSaveData(object dataIn)
         {
-            SaveData_v1 data = (SaveData_v1)dataIn;
             if (dataIn == null)
                 return;
 
+            SaveData_v1 data = (SaveData_v1)dataIn;
             questIndex1 = data.questIndex1;
             questIndex2 = data.questIndex2;
             questName = data.questName;

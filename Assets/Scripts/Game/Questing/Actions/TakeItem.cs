@@ -21,10 +21,12 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
     public class TakeItem : ActionTemplate
     {
         Symbol itemSymbol;
+        int textId;
 
         public override string Pattern
         {
-            get { return @"take (?<anItem>[a-zA-Z0-9_.]+) from pc"; }
+            get { return @"take (?<anItem>[a-zA-Z0-9_.]+) from pc saying (?<id>\d+)|" +
+                         @"take (?<anItem>[a-zA-Z0-9_.]+) from pc"; }
         }
 
         public TakeItem(Quest parentQuest)
@@ -42,6 +44,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // Factory new action
             TakeItem action = new TakeItem(parentQuest);
             action.itemSymbol = new Symbol(match.Groups["anItem"].Value);
+            action.textId = Parser.ParseInt(match.Groups["id"].Value);
 
             return action;
         }
@@ -62,6 +65,12 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // Now item is not associated with any collections and will just be garbage collected
             GameManager.Instance.PlayerEntity.ReleaseQuestItemForReoffer(item.DaggerfallUnityItem);
 
+            // "saying" popup
+            if (textId != 0)
+            {
+                ParentQuest.ShowMessagePopup(textId);
+            }
+
             SetComplete();
         }
 
@@ -71,23 +80,26 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         public struct SaveData_v1
         {
             public Symbol itemSymbol;
+            public int textId;
         }
 
         public override object GetSaveData()
         {
             SaveData_v1 data = new SaveData_v1();
             data.itemSymbol = itemSymbol;
+            data.textId = textId;
 
             return data;
         }
 
         public override void RestoreSaveData(object dataIn)
         {
-            SaveData_v1 data = (SaveData_v1)dataIn;
             if (dataIn == null)
                 return;
 
+            SaveData_v1 data = (SaveData_v1)dataIn;
             itemSymbol = data.itemSymbol;
+            textId = data.textId;
         }
 
         #endregion

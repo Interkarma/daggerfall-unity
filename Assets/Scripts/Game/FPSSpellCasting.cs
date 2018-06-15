@@ -115,8 +115,8 @@ namespace DaggerfallWorkshop.Game
                 int frameIndex = frameIndices[currentFrame];
 
                 // Draw spell cast texture behind other HUD elements
-                DaggerfallUI.Instance.RenderTarget.DrawTextureWithTexCoords(leftHandPosition, currentAnims[frameIndex], leftHandAnimRect);
-                DaggerfallUI.Instance.RenderTarget.DrawTextureWithTexCoords(rightHandPosition, currentAnims[frameIndex], rightHandAnimRect);
+                GUI.DrawTextureWithTexCoords(leftHandPosition, currentAnims[frameIndex], leftHandAnimRect);
+                GUI.DrawTextureWithTexCoords(rightHandPosition, currentAnims[frameIndex], rightHandAnimRect);
             }
         }
 

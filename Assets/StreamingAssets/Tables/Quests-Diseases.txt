@@ -1,0 +1,21 @@
+-- Diseases for "make pc ill with aDisease" and "cure aDisease"
+
+schema: id,*name
+
+0,      Witches'_Pox
+1,      Plague
+2,      Yellow_Fever
+3,      Stomach_Rot
+4,      Consumption
+5,      Brain_Fever
+6,      Swamp_Rot
+7,      Caliron's_Curse
+8,      Cholera
+9,      Leprosy
+10,     Wound_Rot
+11,     Red_Death
+12,     Blood_Rot
+13,     Typhoid_Fever
+14,     Dementia
+15,     Chrondiasis
+16,     Wizard_Fever

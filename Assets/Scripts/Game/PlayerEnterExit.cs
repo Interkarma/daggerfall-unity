@@ -279,27 +279,38 @@ namespace DaggerfallWorkshop.Game
                 ShowHolidayText();
             }
 
-            // NOTE: Player's y value in DF unity is 0.95 units off from classic, so subtracting it to get correct comparison
-            if (blockWaterLevel == 10000 || (player.transform.position.y + (50 * MeshReader.GlobalScale) - 0.95f) >= (blockWaterLevel * -1 * MeshReader.GlobalScale))
+            // Underwater swimming logic should only be processed in dungeons at this time
+            if (isPlayerInsideDungeon)
             {
+                // NOTE: Player's y value in DF unity is 0.95 units off from classic, so subtracting it to get correct comparison
+                if (blockWaterLevel == 10000 || (player.transform.position.y + (50 * MeshReader.GlobalScale) - 0.95f) >= (blockWaterLevel * -1 * MeshReader.GlobalScale))
+                {
+                    isPlayerSwimming = false;
+                    levitateMotor.IsSwimming = false;
+                }
+                else
+                {
+                    if (!isPlayerSwimming)
+                        SendMessage("PlayLargeSplash", SendMessageOptions.DontRequireReceiver);
+                    isPlayerSwimming = true;
+                    levitateMotor.IsSwimming = true;
+                }
+
+                // Check if player is submerged and needs to start holding breath
+                if (blockWaterLevel == 10000 || (player.transform.position.y + (76 * MeshReader.GlobalScale) - 0.95f) >= (blockWaterLevel * -1 * MeshReader.GlobalScale))
+                {
+                    isPlayerSubmerged = false;
+                }
+                else
+                    isPlayerSubmerged = true;
+            }
+            else
+            {
+                // Clear flags when not in a dungeon
                 isPlayerSwimming = false;
+                isPlayerSubmerged = false;
                 levitateMotor.IsSwimming = false;
             }
-            else
-            {
-                if (!isPlayerSwimming)
-                    SendMessage("PlayLargeSplash", SendMessageOptions.DontRequireReceiver);
-                isPlayerSwimming = true;
-                levitateMotor.IsSwimming = true;
-            }
-
-            // Check if player is submerged and needs to start holding breath
-            if (blockWaterLevel == 10000 || (player.transform.position.y + (76 * MeshReader.GlobalScale) - 0.95f) >= (blockWaterLevel * -1 * MeshReader.GlobalScale))
-            {
-                isPlayerSubmerged = false;
-            }
-            else
-                isPlayerSubmerged = true;
         }
 
         #region Public Methods

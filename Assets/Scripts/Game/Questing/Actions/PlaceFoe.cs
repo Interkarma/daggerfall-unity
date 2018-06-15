@@ -106,10 +106,10 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
         public override void RestoreSaveData(object dataIn)
         {
-            SaveData_v1 data = (SaveData_v1)dataIn;
             if (dataIn == null)
                 return;
 
+            SaveData_v1 data = (SaveData_v1)dataIn;
             foeSymbol = data.foeSymbol;
             placeSymbol = data.placeSymbol;
             marker = data.marker;

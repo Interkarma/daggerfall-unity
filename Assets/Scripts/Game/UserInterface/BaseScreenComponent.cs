@@ -32,6 +32,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         BaseScreenComponent parent;
         Vector2 position;
         Vector2 size;
+        Vector2 rootSize;
         bool useFocus = false;
 
         ToolTip toolTip = null;
@@ -64,6 +65,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Vector2 mousePosition;
         Vector2 lastScaledMousePosition;
         Vector2 scaledMousePosition;
+        Vector2? customMousePosition = null;
 
         Color backgroundColor = Color.clear;
         Color mouseOverBackgroundColor = Color.clear;
@@ -196,6 +198,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         /// <summary>
+        /// Gets or sets root size when no parent is avaialable.
+        /// Should only be set for root panel in UI stack.
+        /// If root size is not set then screen dimensions will be used.
+        /// </summary>
+        public Vector2 RootSize
+        {
+            get { return rootSize; }
+            set { rootSize = value; }
+        }
+
+        /// <summary>
         /// Gets parent panel.
         /// </summary>
         public virtual BaseScreenComponent Parent
@@ -243,6 +256,20 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
+        /// <summary>
+        /// Gets or sets custom mouse position.
+        /// When null the screen mouse position will be used from Input system as normal.
+        /// When non-null this value will be used in place of mouse coordinates from Input system.
+        /// Will propagate down through Panel hierarchy from root to leaf controls.
+        /// Allows for custom pointer input from rays and other sources.
+        /// Input must be in "pixel coordinates" relatve to root panel dimensions.
+        /// For example, if root panel is 256x256 pixels then coordinates are between 0,0 and 255,255.
+        /// </summary>
+        public Vector2? CustomMousePosition
+        {
+            get { return customMousePosition; }
+            set { customMousePosition = value; }
+        }
 
         /// <summary>
         /// Gets current mouse position from recent update.
@@ -475,9 +502,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
             lastUpdateTime = updateTime;
             updateTime = Time.realtimeSinceStartup;
 
-            // Update raw mouse pos - must invert mouse position Y as Unity 0,0 is bottom-left
+            // Get new mouse position
             lastMousePosition = mousePosition;
-            mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
+            if (customMousePosition != null)
+            {
+                // Use custom mouse position
+                mousePosition = customMousePosition.Value;
+            }
+            else
+            {
+                // Update raw mouse screen position from Input - must invert mouse position Y as Unity 0,0 is bottom-left
+                mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
+            }
             scaledMousePosition = -Vector2.one;
 
             // Check if mouse is inside rectangle
@@ -688,14 +724,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 Color color = GUI.color;
                 GUI.color = mouseOverBackgroundColor;
-                DaggerfallUI.Instance.RenderTarget.DrawTexture(myRect, backgroundColorTexture, ScaleMode.StretchToFill);
+                GUI.DrawTexture(myRect, backgroundColorTexture, ScaleMode.StretchToFill);
                 GUI.color = color;
             }
             else if (backgroundColor != Color.clear && backgroundColorTexture)
             {
                 Color color = GUI.color;
                 GUI.color = backgroundColor;
-                DaggerfallUI.Instance.RenderTarget.DrawTexture(myRect, backgroundColorTexture, ScaleMode.StretchToFill);
+                GUI.DrawTexture(myRect, backgroundColorTexture, ScaleMode.StretchToFill);
                 GUI.color = color;
             }
 
@@ -706,15 +742,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 {
                     case BackgroundLayout.Tile:
                         backgroundTexture.wrapMode = TextureWrapMode.Repeat;
-                        DaggerfallUI.Instance.RenderTarget.DrawTextureWithTexCoords(myRect, backgroundTexture, new Rect(0, 0, myRect.width / backgroundTexture.width, myRect.height / backgroundTexture.height));
+                        GUI.DrawTextureWithTexCoords(myRect, backgroundTexture, new Rect(0, 0, myRect.width / backgroundTexture.width, myRect.height / backgroundTexture.height));
                         break;
                     case BackgroundLayout.StretchToFill:
                         backgroundTexture.wrapMode = TextureWrapMode.Clamp;
-                        DaggerfallUI.Instance.RenderTarget.DrawTexture(myRect, backgroundTexture, ScaleMode.StretchToFill);
+                        GUI.DrawTexture(myRect, backgroundTexture, ScaleMode.StretchToFill);
                         break;
                     case BackgroundLayout.ScaleToFit:
                         backgroundTexture.wrapMode = TextureWrapMode.Clamp;
-                        DaggerfallUI.Instance.RenderTarget.DrawTexture(myRect, backgroundTexture, ScaleMode.ScaleToFit);
+                        GUI.DrawTexture(myRect, backgroundTexture, ScaleMode.ScaleToFit);
                         break;
                 }
             }
@@ -1000,9 +1036,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Rect parentRect = new Rect();
 
             if (parent != null)
+            {
                 parentRect = parent.Rectangle;
+            }
             else
-                parentRect = new Rect(0, 0, Screen.width, Screen.height);
+            {
+                if (rootSize == Vector2.zero)
+                    parentRect = new Rect(0, 0, Screen.width, Screen.height);
+                else
+                    parentRect = new Rect(0, 0, rootSize.x, rootSize.y);
+            }
 
             return parentRect;
         }

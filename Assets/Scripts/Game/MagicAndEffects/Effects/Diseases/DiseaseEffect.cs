@@ -42,6 +42,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         #region Properties
 
+        public Diseases ClassicDiseaseType
+        {
+            get { return classicDiseaseType; }
+        }
+
         public bool IncubationOver
         {
             get { return incubationOver; }
@@ -285,10 +290,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         public override void RestoreSaveData(object dataIn)
         {
-            SaveData_v1 data = (SaveData_v1)dataIn;
             if (dataIn == null)
                 return;
 
+            SaveData_v1 data = (SaveData_v1)dataIn;
             forcedRoundsRemaining = data.forcedRoundsRemaining;
             incubationOver = data.incubationOver;
             lastDay = data.lastDay;

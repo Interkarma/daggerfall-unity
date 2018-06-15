@@ -4,7 +4,8 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    ifkopifko
+// Contributors:    Hazelnut
+//                  ifkopifko
 // 
 // Notes:
 //
@@ -17,6 +18,7 @@ using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using System.Collections.Generic;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop.Game.Formulas
 {
@@ -33,7 +35,7 @@ namespace DaggerfallWorkshop.Game.Formulas
         public delegate int Formula_2i(int a, int b);
         public delegate int Formula_3i(int a, int b, int c);
         public delegate int Formula_1i_1f(int a, float b);
-        public delegate int Formula_2de(DaggerfallEntity de1, DaggerfallEntity de2);
+        public delegate int Formula_2de_2i(DaggerfallEntity de1, DaggerfallEntity de2 = null, int a = 0, int b = 0);
         public delegate bool Formula_1pe_1sk(PlayerEntity pe, DFCareer.Skills sk);
 
         // Registries for overridden formula
@@ -41,7 +43,7 @@ namespace DaggerfallWorkshop.Game.Formulas
         public static Dictionary<string, Formula_2i>        formula_2i = new Dictionary<string, Formula_2i>();
         public static Dictionary<string, Formula_3i>        formula_3i = new Dictionary<string, Formula_3i>();
         public static Dictionary<string, Formula_1i_1f>     formula_1i_1f = new Dictionary<string, Formula_1i_1f>();
-        public static Dictionary<string, Formula_2de>       formula_2de = new Dictionary<string, Formula_2de>();
+        public static Dictionary<string, Formula_2de_2i>    formula_2de_2i = new Dictionary<string, Formula_2de_2i>();
         public static Dictionary<string, Formula_1pe_1sk>   formula_1pe_1sk = new Dictionary<string, Formula_1pe_1sk>();
 
         #region Basic Formulas
@@ -136,9 +138,9 @@ namespace DaggerfallWorkshop.Game.Formulas
         // Calculate how much health the player should recover per hour of rest
         public static int CalculateHealthRecoveryRate(PlayerEntity player)
         {
-            Formula_2de del;
-            if (formula_2de.TryGetValue("CalculateHealthRecoveryRate", out del))
-                return del(player, null);
+            Formula_2de_2i del;
+            if (formula_2de_2i.TryGetValue("CalculateHealthRecoveryRate", out del))
+                return del(player);
 
             short medical = player.Skills.GetLiveSkillValue(DFCareer.Skills.Medical);
             int endurance = player.Stats.LiveEndurance;
@@ -209,8 +211,8 @@ namespace DaggerfallWorkshop.Game.Formulas
         // Calculate chance of successfully pickpocketing a target
         public static int CalculatePickpocketingChance(PlayerEntity player, EnemyEntity target)
         {
-            Formula_2de del;
-            if (formula_2de.TryGetValue("CalculatePickpocketingChance", out del))
+            Formula_2de_2i del;
+            if (formula_2de_2i.TryGetValue("CalculatePickpocketingChance", out del))
                 return del(player, target);
 
             int chance = player.Skills.GetLiveSkillValue(DFCareer.Skills.Pickpocket);
@@ -242,9 +244,9 @@ namespace DaggerfallWorkshop.Game.Formulas
         // Calculate hit points player gains per level.
         public static int CalculateHitPointsPerLevelUp(PlayerEntity player)
         {
-            Formula_2de del;
-            if (formula_2de.TryGetValue("CalculateHitPointsPerLevelUp", out del))
-                return del(player, null);
+            Formula_2de_2i del;
+            if (formula_2de_2i.TryGetValue("CalculateHitPointsPerLevelUp", out del))
+                return del(player);
 
             int minRoll = player.Career.HitPointsPerLevel / 2;
             int maxRoll = player.Career.HitPointsPerLevel + 1; // Adding +1 as Unity Random.Range(int,int) is exclusive of maximum value
@@ -323,14 +325,18 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (attacker == null || target == null)
                 return 0;
 
+            Formula_2de_2i del;
+            if (formula_2de_2i.TryGetValue("CalculateAttackDamage", out del))
+                return del(attacker, target, weaponEquipSlot, enemyAnimStateRecord);
+
             int minBaseDamage = 0;
             int maxBaseDamage = 0;
             int damageModifiers = 0;
             int damage = 0;
             int chanceToHitMod = 0;
-            int backstabbingLevel = 0;
+            int backstabChance = 0;
             PlayerEntity player = GameManager.Instance.PlayerEntity;
-            Items.DaggerfallUnityItem weapon = attacker.ItemEquipTable.GetItem((Items.EquipSlots)weaponEquipSlot);
+            DaggerfallUnityItem weapon = attacker.ItemEquipTable.GetItem((EquipSlots)weaponEquipSlot);
             short skillID = 0;
 
             // Choose whether weapon-wielding enemies use their weapons or weaponless attacks.
@@ -355,16 +361,14 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (weapon != null)
             {
                 // If the attacker is using a weapon, check if the material is high enough to damage the target
-                if (target.MinMetalToHit > (Items.WeaponMaterialTypes)weapon.NativeMaterialValue)
+                if (target.MinMetalToHit > (WeaponMaterialTypes)weapon.NativeMaterialValue)
                 {
                     if (attacker == player)
                     {
                         DaggerfallUI.Instance.PopupMessage(UserInterfaceWindows.HardStrings.materialIneffective);
                     }
-
                     return 0;
                 }
-
                 // Get weapon skill used
                 skillID = weapon.GetWeaponSkillIDAsShort();
             }
@@ -374,12 +378,6 @@ namespace DaggerfallWorkshop.Game.Formulas
             }
 
             chanceToHitMod = attacker.Skills.GetLiveSkillValue(skillID);
-
-            EnemyEntity AITarget = null;
-            if (target != player)
-            {
-                AITarget = target as EnemyEntity;
-            }
 
             if (attacker == player)
             {
@@ -451,25 +449,19 @@ namespace DaggerfallWorkshop.Game.Formulas
                     }
                 }
 
-                // Apply backstabbing
-                if (enemyAnimStateRecord % 5 > 2) // Facing away from player
-                {
-                    chanceToHitMod += attacker.Skills.GetLiveSkillValue(DFCareer.Skills.Backstabbing);
-                    attacker.TallySkill(DFCareer.Skills.Backstabbing, 1); // backstabbing
-                    backstabbingLevel = attacker.Skills.GetLiveSkillValue(DFCareer.Skills.Backstabbing);
-                }
+                backstabChance = CalculateBackstabChance(player, null, enemyAnimStateRecord);
+                chanceToHitMod += backstabChance;
             }
 
             // Choose struck body part
-            int[] bodyParts = { 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 6 };
-            int struckBodyPart = bodyParts[UnityEngine.Random.Range(0, bodyParts.Length)];
+            int struckBodyPart = CalculateStruckBodyPart();
 
             // Get damage for weaponless attacks
             if (skillID == (short)DFCareer.Skills.HandToHand)
             {
                 if (attacker == player)
                 {
-                    if (CalculateSuccessfulHit(attacker, target, chanceToHitMod, null, struckBodyPart))
+                    if (CalculateSuccessfulHit(attacker, target, chanceToHitMod, struckBodyPart) > 0)
                     {
                         minBaseDamage = CalculateHandToHandMinDamage(attacker.Skills.GetLiveSkillValue(DFCareer.Skills.HandToHand));
                         maxBaseDamage = CalculateHandToHandMaxDamage(attacker.Skills.GetLiveSkillValue(DFCareer.Skills.HandToHand));
@@ -479,14 +471,8 @@ namespace DaggerfallWorkshop.Game.Formulas
                         damage += damageModifiers;
                         // Apply strength modifier. It is not applied in classic despite what the in-game description for the Strength attribute says.
                         damage += DamageModifier(attacker.Stats.LiveStrength);
-
                         // Handle backstabbing
-                        if (backstabbingLevel > 0 && UnityEngine.Random.Range(1, 101) <= backstabbingLevel)
-                        {
-                            damage *= 3;
-                            string backstabMessage = UserInterfaceWindows.HardStrings.successfulBackstab;
-                            DaggerfallUI.Instance.PopupMessage(backstabMessage);
-                        }
+                        damage = CalculateBackstabDamage(damage, backstabChance);
                     }
                 }
                 else // attacker is monster
@@ -511,7 +497,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                             maxBaseDamage = AIAttacker.MobileEnemy.MaxDamage3;
                         }
 
-                        if (DFRandom.rand() % 100 < 50 && minBaseDamage > 0 && CalculateSuccessfulHit(attacker, target, chanceToHitMod, null, struckBodyPart))
+                        if (DFRandom.rand() % 100 < 50 && minBaseDamage > 0 && CalculateSuccessfulHit(attacker, target, chanceToHitMod, struckBodyPart) > 0)
                         {
                             int hitDamage = UnityEngine.Random.Range(minBaseDamage, maxBaseDamage + 1);
                             // Apply special monster attack effects
@@ -522,7 +508,6 @@ namespace DaggerfallWorkshop.Game.Formulas
 
                             damage += hitDamage;
                         }
-
                         ++attackNumber;
                     }
                 }
@@ -530,49 +515,104 @@ namespace DaggerfallWorkshop.Game.Formulas
             // Handle weapon attacks
             else
             {
-                if (CalculateSuccessfulHit(attacker, target, chanceToHitMod, weapon, struckBodyPart))
+                // Apply weapon material modifier.
+                if (weapon.GetWeaponMaterialModifier() > 0)
                 {
-                    damage = UnityEngine.Random.Range(weapon.GetBaseDamageMin(), weapon.GetBaseDamageMax() + 1);
-                    damage += damageModifiers;
+                    chanceToHitMod += (weapon.GetWeaponMaterialModifier() * 10);
+                }
+                if (CalculateSuccessfulHit(attacker, target, chanceToHitMod, struckBodyPart) > 0)
+                {
+                    damage = CalculateWeaponAttackDamage(attacker, target, damageModifiers, weapon);
 
-                    if (AITarget != null && AITarget.CareerIndex == (int)MonsterCareers.SkeletalWarrior)
-                    {
-                        // Apply edged-weapon damage modifier for Skeletal Warrior
-                        if ((weapon.flags & 0x10) == 0)
-                            damage /= 2;
-
-                        // Apply silver weapon damage modifier for Skeletal Warrior
-                        // Arena applies a silver weapon damage bonus for undead enemies, which
-                        // is probably where this comes from.
-                        if (weapon.NativeMaterialValue == (int)Items.WeaponMaterialTypes.Silver)
-                            damage *= 2;
-                    }
-
-                    // TODO: Apply strength bonus from Mace of Molag Bal
-
-                    // Apply strength modifier
-                    damage += DamageModifier(attacker.Stats.LiveStrength);
-
-                    // Apply material modifier.
-                    // The in-game display in Daggerfall of weapon damages with material modifiers is incorrect. The material modifier is half of what the display suggests.
-                    damage += weapon.GetWeaponMaterialModifier();
-
-                    if (damage < 1)
-                        damage = 0;
-
-                    damage += GetBonusOrPenaltyByEnemyType(attacker, AITarget);
-
-                    if (backstabbingLevel > 1 && UnityEngine.Random.Range(1, 100 + 1) <= backstabbingLevel)
-                    {
-                        damage *= 3;
-                        string backstabMessage = UserInterfaceWindows.HardStrings.successfulBackstab;
-                        DaggerfallUI.Instance.PopupMessage(backstabMessage);
-                    }
+                    damage = CalculateBackstabDamage(damage, backstabChance);
                 }
             }
 
             damage = Mathf.Max(0, damage);
 
+            DamageEquipment(attacker, target, damage, weapon, struckBodyPart);
+
+            return damage;
+        }
+
+        private static int CalculateStruckBodyPart()
+        {
+            Formula_1i del;
+            if (formula_1i.TryGetValue("CalculateStruckBodyPart", out del))
+                return del(0);
+
+            int[] bodyParts = { 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 6 };
+            return bodyParts[UnityEngine.Random.Range(0, bodyParts.Length)];
+        }
+
+        private static int CalculateBackstabChance(PlayerEntity player, DaggerfallEntity target, int enemyAnimStateRecord)
+        {
+            Formula_2de_2i del;
+            if (formula_2de_2i.TryGetValue("CalculateBackstabChance", out del))
+                return del(player, null, enemyAnimStateRecord);
+
+            // If enemy is facing away from player
+            if (enemyAnimStateRecord % 5 > 2)
+            {
+                player.TallySkill(DFCareer.Skills.Backstabbing, 1);
+                return player.Skills.GetLiveSkillValue(DFCareer.Skills.Backstabbing);
+            }
+            else
+                return 0;
+        }
+
+        private static int CalculateBackstabDamage(int damage, int backstabbingLevel)
+        {
+            Formula_2i del;
+            if (formula_2i.TryGetValue("CalculateBackstabDamage", out del))
+                return del(damage, backstabbingLevel);
+
+            if (backstabbingLevel > 1 && UnityEngine.Random.Range(1, 100 + 1) <= backstabbingLevel)
+            {
+                damage *= 3;
+                string backstabMessage = UserInterfaceWindows.HardStrings.successfulBackstab;
+                DaggerfallUI.Instance.PopupMessage(backstabMessage);
+            }
+            return damage;
+        }
+
+        private static int CalculateWeaponAttackDamage(DaggerfallEntity attacker, DaggerfallEntity target, int damageModifier, DaggerfallUnityItem weapon)
+        {
+            int damage = UnityEngine.Random.Range(weapon.GetBaseDamageMin(), weapon.GetBaseDamageMax() + 1) + damageModifier;
+
+            EnemyEntity AITarget = null;
+            if (target != GameManager.Instance.PlayerEntity)
+            {
+                AITarget = target as EnemyEntity;
+                if (AITarget.CareerIndex == (int)MonsterCareers.SkeletalWarrior)
+                {
+                    // Apply edged-weapon damage modifier for Skeletal Warrior
+                    if ((weapon.flags & 0x10) == 0)
+                        damage /= 2;
+
+                    // Apply silver weapon damage modifier for Skeletal Warrior
+                    // Arena applies a silver weapon damage bonus for undead enemies, which is probably where this comes from.
+                    if (weapon.NativeMaterialValue == (int)WeaponMaterialTypes.Silver)
+                        damage *= 2;
+                }
+            }
+            // TODO: Apply strength bonus from Mace of Molag Bal
+
+            // Apply strength modifier
+            damage += DamageModifier(attacker.Stats.LiveStrength);
+
+            // Apply material modifier.
+            // The in-game display in Daggerfall of weapon damages with material modifiers is incorrect. The material modifier is half of what the display suggests.
+            damage += weapon.GetWeaponMaterialModifier();
+            if (damage < 1)
+                damage = 0;
+
+            damage += GetBonusOrPenaltyByEnemyType(attacker, AITarget);
+            return damage;
+        }
+
+        private static void DamageEquipment(DaggerfallEntity attacker, DaggerfallEntity target, int damage, DaggerfallUnityItem weapon, int struckBodyPart)
+        {
             // If damage was done by a weapon, damage the weapon and armor of the hit body part.
             // In classic, shields are never damaged, only armor specific to the hitbody part is.
             // Here, if an equipped shield covers the hit body part, it takes damage instead.
@@ -583,15 +623,15 @@ namespace DaggerfallWorkshop.Game.Formulas
                 // TODO: If attacker is AI, apply Ring of Namira effect
                 weapon.DamageThroughPhysicalHit(damage, attacker);
 
-                Items.DaggerfallUnityItem shield = target.ItemEquipTable.GetItem(Items.EquipSlots.LeftHand);
+                DaggerfallUnityItem shield = target.ItemEquipTable.GetItem(EquipSlots.LeftHand);
                 bool shieldTakesDamage = false;
                 if (shield != null)
                 {
-                    Items.BodyParts[] protectedBodyParts = shield.GetShieldProtectedBodyParts();
+                    BodyParts[] protectedBodyParts = shield.GetShieldProtectedBodyParts();
 
                     for (int i = 0; (i < protectedBodyParts.Length) && !shieldTakesDamage; i++)
                     {
-                        if (protectedBodyParts[i] == (Items.BodyParts)struckBodyPart)
+                        if (protectedBodyParts[i] == (BodyParts)struckBodyPart)
                             shieldTakesDamage = true;
                     }
                 }
@@ -600,14 +640,12 @@ namespace DaggerfallWorkshop.Game.Formulas
                     shield.DamageThroughPhysicalHit(damage, target);
                 else
                 {
-                    Items.EquipSlots hitSlot = Items.DaggerfallUnityItem.GetEquipSlotForBodyPart((Items.BodyParts)struckBodyPart);
-                    Items.DaggerfallUnityItem armor = target.ItemEquipTable.GetItem(hitSlot);
+                    EquipSlots hitSlot = DaggerfallUnityItem.GetEquipSlotForBodyPart((BodyParts)struckBodyPart);
+                    DaggerfallUnityItem armor = target.ItemEquipTable.GetItem(hitSlot);
                     if (armor != null)
                         armor.DamageThroughPhysicalHit(damage, target);
                 }
             }
-
-            return damage;
         }
 
         public static void OnMonsterHit(EnemyEntity attacker, DaggerfallEntity target, int damage)
@@ -680,10 +718,18 @@ namespace DaggerfallWorkshop.Game.Formulas
             }
         }
 
-        public static bool CalculateSuccessfulHit(DaggerfallEntity attacker, DaggerfallEntity target, int chanceToHitMod, Items.DaggerfallUnityItem weapon, int struckBodyPart)
+        /// <summary>
+        /// Calculates whether an attack on a target is successful. Returns 1 on success and 0 otherwise.
+        /// (uses an int instead of bool to fit common override signature)
+        /// </summary>
+        public static int CalculateSuccessfulHit(DaggerfallEntity attacker, DaggerfallEntity target, int chanceToHitMod, int struckBodyPart)
         {
             if (attacker == null || target == null)
-                return false;
+                return 0;
+
+            Formula_2de_2i del;
+            if (formula_2de_2i.TryGetValue("CalculateSuccessfulHit", out del))
+                return del(attacker, target, chanceToHitMod, struckBodyPart);
 
             int chanceToHit = chanceToHitMod;
             PlayerEntity player = GameManager.Instance.PlayerEntity;
@@ -722,12 +768,6 @@ namespace DaggerfallWorkshop.Game.Formulas
             // Apply agility modifier.
             chanceToHit += ((attacker.Stats.LiveAgility - target.Stats.LiveAgility) / 10);
 
-            // Apply weapon material modifier.
-            if (weapon != null)
-            {
-                chanceToHit += (weapon.GetWeaponMaterialModifier() * 10);
-            }
-
             // Apply dodging modifier.
             // This modifier is bugged in classic and the attacker's dodging skill is used rather than the target's.
             // DF Chronicles says the dodging calculation is (dodging / 10), but it actually seems to be (dodging / 4).
@@ -753,15 +793,15 @@ namespace DaggerfallWorkshop.Game.Formulas
             int roll = UnityEngine.Random.Range(0, 100 + 1);
 
             if (roll <= chanceToHit)
-                return true;
+                return 1;
             else
-                return false;
+                return 0;
         }
 
         static int GetBonusOrPenaltyByEnemyType(DaggerfallEntity attacker, EnemyEntity AITarget)
         {
-            Formula_2de del;
-            if (formula_2de.TryGetValue("GetBonusOrPenaltyByEnemyType", out del))
+            Formula_2de_2i del;
+            if (formula_2de_2i.TryGetValue("GetBonusOrPenaltyByEnemyType", out del))
                 return del(attacker, AITarget);
 
             if (attacker == null || AITarget == null)

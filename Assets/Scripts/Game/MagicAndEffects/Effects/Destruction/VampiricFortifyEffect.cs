@@ -134,10 +134,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         public override void RestoreSaveData(object dataIn)
         {
-            SaveData_v1 data = (SaveData_v1)dataIn;
             if (dataIn == null)
                 return;
 
+            SaveData_v1 data = (SaveData_v1)dataIn;
             fortifyStat = data.fortifyStat;
             casterStatMods = data.casterStatMods;
             forcedRoundsRemaining = data.forcedRoundsRemaining;

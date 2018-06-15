@@ -103,7 +103,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             Rect rect = Rectangle;
             rect.width = cursorThickness * LocalScale.x;
-            DaggerfallUI.Instance.RenderTarget.DrawTexture(rect, cursorTexture);
+            GUI.DrawTexture(rect, cursorTexture);
         }
 
         void SetThickness(int value)

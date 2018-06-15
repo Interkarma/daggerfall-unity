@@ -892,6 +892,9 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         void RestoreEscortingFacesData(FaceDetails[] escortingFaces)
         {
+            if (DaggerfallUI.Instance.DaggerfallHUD == null)
+                return;
+
             if (escortingFaces == null)
                 DaggerfallUI.Instance.DaggerfallHUD.EscortingFaces.ClearFaces();
             else
@@ -936,7 +939,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             //// Attempt to hide UI for screenshot
             //bool rawImageEnabled = false;
-            //UnityEngine.UI.RawImage rawImage = DaggerfallUI.Instance.RenderTarget.GetDiegeticCanvasRawImage();
+            //UnityEngine.UI.RawImage rawImage = GUI.GetDiegeticCanvasRawImage();
             //if (rawImage)
             //{
             //    rawImageEnabled = rawImage.enabled;

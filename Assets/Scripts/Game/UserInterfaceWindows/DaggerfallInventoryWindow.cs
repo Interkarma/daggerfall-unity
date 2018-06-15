@@ -1300,8 +1300,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Handle quest item transfer
             if (item.IsQuestItem)
             {
+                // Get quest item
+                Item questItem = GetQuestItem(item);
+
                 // Player cannot drop most quest items
-                if (!item.AllowQuestItemRemoval && from == localItems)
+                if (questItem == null | (!questItem.AllowDrop && from == localItems))
                 {
                     DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
                     messageBox.SetText(HardStrings.cannotRemoveThisItem);
@@ -1310,20 +1313,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     return;
                 }
 
-                // Get the quest this item belongs to
-                Quest quest = QuestMachine.Instance.GetQuest(item.QuestUID);
-                if (quest == null)
-                    throw new Exception("DaggerfallUnityItem references a quest that could not be found.");
-
-                // Get quest item
-                Item questItem = quest.GetItem(item.QuestItemSymbol);
-                if (questItem == null)
-                    throw new Exception("DaggerfallUnityItem references a quest item that could not be found.");
-
                 // Dropping or picking up quest item
-                if (item.AllowQuestItemRemoval && from == localItems && remoteTargetType == RemoteTargetTypes.Dropped)
+                if (questItem.AllowDrop && from == localItems && remoteTargetType == RemoteTargetTypes.Dropped)
                     questItem.PlayerDropped = true;
-                else if (item.AllowQuestItemRemoval && from == remoteItems && remoteTargetType == RemoteTargetTypes.Dropped)
+                else if (questItem.AllowDrop && from == remoteItems && remoteTargetType == RemoteTargetTypes.Dropped)
                     questItem.PlayerDropped = false;
             }
 
@@ -1381,6 +1374,27 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     messageBox.Show();
                 }
             }
+        }
+
+        /// <summary>
+        /// Gets virtual quest item from DaggerfallUnityItem.
+        /// </summary>
+        /// <param name="item">Source DaggerfallUnityItem.</param>
+        /// <returns>Quest Item if found.</returns>
+        Item GetQuestItem(DaggerfallUnityItem item)
+        {
+            if (item == null)
+                return null;
+
+            Quest quest = QuestMachine.Instance.GetQuest(item.QuestUID);
+            if (quest == null)
+                throw new Exception("DaggerfallUnityItem references a QuestUID that could not be found.");
+
+            Item questItem = quest.GetItem(item.QuestItemSymbol);
+            if (questItem == null)
+                throw new Exception("DaggerfallUnityItem references a QuestItemSymbol that could not be found.");
+
+            return questItem;
         }
 
         // Moving local and remote Use item clicks to new method

@@ -44,6 +44,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         int magicRoundsSinceStartup = 0;
         float roundTimer = 0f;
         Dictionary<string, BaseEntityEffect> magicEffectTemplates = new Dictionary<string, BaseEntityEffect>();
+        Dictionary<int, BaseEntityEffect> potionEffectTemplates = new Dictionary<int, BaseEntityEffect>();
 
         #endregion
 
@@ -70,6 +71,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             foreach(BaseEntityEffect effect in effectTemplates)
             {
                 magicEffectTemplates.Add(effect.Key, effect);
+                IndexEffectRecipes(effect);
             }
         }
 
@@ -92,6 +94,69 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// Gets number of potion properties assigned to this effect.
+        /// Effect must allow the potion maker crafting station and define potion recipes.
+        /// Effect 
+        /// </summary>
+        /// <param name="effect">Input effect.</param>
+        /// <returns>Number of recipes for this effect.</returns>
+        public int GetEffectPotionRecipeCount(IEntityEffect effect)
+        {
+            // Effect must be valid and support potion crafting
+            if (effect != null && effect.PotionProperties.Recipes != null &&
+                (effect.Properties.AllowedCraftingStations & MagicCraftingStations.PotionMaker) == MagicCraftingStations.PotionMaker)
+            {
+                return effect.PotionProperties.Recipes.Length;
+            }
+
+            return 0;
+        }
+
+        /// <summary>
+        /// Gets PotionRecipe from IEntityEffect.
+        /// Effect must allow the potion maker crafting station and define potion recipes.
+        /// </summary>
+        /// <param name="effect">Input effect.</param>
+        /// <param name="variant">Variant index, if more than one exists.</param>
+        /// <returns>PotionRecipe if the effect has one, otherwise null.</returns>
+        public PotionRecipe GetEffectPotionRecipe(IEntityEffect effect, int variant = 0)
+        {
+            // Effect must be valid and support potion crafting
+            if (effect != null && effect.PotionProperties.Recipes != null &&
+                (effect.Properties.AllowedCraftingStations & MagicCraftingStations.PotionMaker) == MagicCraftingStations.PotionMaker)
+            {
+                // Check variant index does not exceed length of recipes array
+                if (effect.PotionProperties.Recipes.Length - 1 < variant)
+                    return null;
+
+                // Variant index must have a recipe assigned
+                if (!effect.PotionProperties.Recipes[variant].HasRecipe())
+                    return null;
+
+                return effect.PotionProperties.Recipes[variant];
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Gets IEntityEffect from PotionRecipe.
+        /// </summary>
+        /// <param name="recipe">Input recipe.</param>
+        /// <returns>IEntityEffect if this recipe is linked to an effect, otherwise null.</returns>
+        public IEntityEffect GetPotionRecipeEffect(PotionRecipe recipe)
+        {
+            if (recipe != null)
+            {
+                int recipeKey = recipe.GetHashCode();
+                if (!potionEffectTemplates.ContainsKey(recipeKey))
+                    return potionEffectTemplates[recipeKey];
+            }
+
+            return null;
+        }
 
         /// <summary>
         /// Gets group names of registered effects.
@@ -223,6 +288,41 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             effectInstance.Settings = settings;
 
             return effectInstance;
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        void IndexEffectRecipes(BaseEntityEffect effect)
+        {
+            // Must have at least one recipe
+            int recipeCount = GetEffectPotionRecipeCount(effect);
+            if (recipeCount == 0)
+                return;
+
+            Debug.LogFormat("Effect '{0}' has {1} potion recipes:", effect.Key, recipeCount);
+
+            // Index all recipes for this effect
+            for (int i = 0; i < recipeCount; i++)
+            {
+                // Get recipe variant
+                PotionRecipe recipe = GetEffectPotionRecipe(effect, i);
+                if (recipe != null)
+                {
+                    // Add potion effect or log error if collision
+                    int recipeKey = recipe.GetHashCode();
+                    if (!potionEffectTemplates.ContainsKey(recipeKey))
+                    {
+                        potionEffectTemplates.Add(recipeKey, effect);
+                        Debug.LogFormat("'{0}' recipe {1} [key={2}] ingredients: {3}", effect.Key, i, recipeKey, recipe.ToString());
+                    }
+                    else
+                    {
+                        Debug.LogErrorFormat("EnityEffectBroker: Already contains potion recipe key {0} for ingredients: {1}", recipeKey, recipe.ToString());
+                    }
+                }
+            }
         }
 
         #endregion

@@ -41,6 +41,9 @@ namespace DaggerfallWorkshop.Game
         PlayerActivateModes currentMode = PlayerActivateModes.Grab;
         bool castPending = false;
 
+        float clickDelay = 0;
+        float clickDelayStartTime = 0;
+
         public float RayDistance = 0;           // Distance of ray check, tune this to your scale and preference
         public float ActivateDistance = 2.3f;   // Distance within which something must be for player to activate it. Tune as needed.
 
@@ -111,6 +114,17 @@ namespace DaggerfallWorkshop.Game
                 ChangeInteractionMode(PlayerActivateModes.Info);
             else if (InputManager.Instance.ActionStarted(InputManager.Actions.TalkMode))
                 ChangeInteractionMode(PlayerActivateModes.Talk);
+
+            // Handle click delay
+            if (clickDelay > 0 && Time.realtimeSinceStartup < clickDelayStartTime + clickDelay)
+            {
+                return;
+            }
+            else
+            {
+                clickDelay = 0;
+                clickDelayStartTime = 0;
+            }
 
             // Fire ray into scene
             if (InputManager.Instance.ActionStarted(InputManager.Actions.ActivateCenterObject))
@@ -196,6 +210,12 @@ namespace DaggerfallWorkshop.Game
                                         storeClosedMessage = storeClosedMessage.Replace("%d2", closeHours[(int)buildingType].ToString());
                                         DaggerfallUI.Instance.PopupMessage(storeClosedMessage);
                                     }
+
+                                    //// Add debug info
+                                    //if (DaggerfallUI.Instance.DaggerfallHUD.QuestDebugger.State != HUDQuestDebugger.DisplayState.Nothing)
+                                    //{
+                                    //    DaggerfallUI.AddHUDText(string.Format("Debugger: BuildingKey = {0}", building.buildingKey));
+                                    //}
                                 }
 
                                 //// Debug model ID
@@ -467,6 +487,16 @@ namespace DaggerfallWorkshop.Game
                     #endregion
                 }
             }
+        }
+
+        /// <summary>
+        /// Set a click delay before new clicks are accepted, usually when exiting UI.
+        /// </summary>
+        /// <param name="delay">Delay in seconds. Valid range is 0.0 - 1.0</param>
+        public void SetClickDelay(float delay = 0.3f)
+        {
+            clickDelay = Mathf.Clamp01(delay);
+            clickDelayStartTime = Time.realtimeSinceStartup;
         }
 
         private void HandleLootContainer(RaycastHit hit, DaggerfallLoot loot)

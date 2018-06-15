@@ -51,6 +51,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         EntityEffectBundle readySpell = null;
         EntityEffectBundle lastSpell = null;
         bool instantCast = false;
+        bool castInProgress = false;
 
         DaggerfallEntityBehaviour entityBehaviour = null;
         bool isPlayerEntity = false;
@@ -268,8 +269,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             if (SilenceCheck())
                 return;
 
-            // Must have a ready spell
-            if (readySpell == null)
+            // Must have a ready spell and a previous cast must not be in progress
+            if (readySpell == null || castInProgress)
                 return;
 
             // Get spellpoint costs of this spell
@@ -286,6 +287,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Spell is released by event handler PlayerSpellCasting_OnReleaseFrame
             // TODO: Do not need to show spellcasting animations for certain spell effects
             GameManager.Instance.PlayerSpellCasting.PlayOneShot(readySpell.Settings.ElementType);
+
+            // Block further casting attempts until previous cast is complete
+            castInProgress = true;
         }
 
         public void AssignBundle(EntityEffectBundle sourceBundle)
@@ -658,6 +662,30 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             return new EntityEffectBundle(settings, entityBehaviour);
         }
 
+        public void CureDisease(Diseases disease)
+        {
+            // Find specific disease incumbent
+            InstancedBundle[] bundles = GetDiseaseBundles();
+            foreach (InstancedBundle bundle in bundles)
+            {
+                // Must have a live effect
+                if (bundle.liveEffects == null || bundle.liveEffects.Count == 0)
+                    continue;
+
+                // Must be a disease effect
+                if (!(bundle.liveEffects[0] is DiseaseEffect))
+                    continue;
+
+                // Must be correct type of disease effect
+                DiseaseEffect effect = bundle.liveEffects[0] as DiseaseEffect;
+                if (effect.ClassicDiseaseType == disease)
+                {
+                    effect.CureDisease();
+                    Debug.LogFormat("Cured disease {0}", disease);
+                }
+            }
+        }
+
         public void CureAllDiseases()
         {
             // Cure all disease bundles
@@ -923,9 +951,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     missile.Payload = readySpell;
             }
 
+            // Clear ready spell and reset casting
             lastSpell = readySpell;
             readySpell = null;
             instantCast = false;
+            castInProgress = false;
         }
 
         private void EntityEffectBroker_OnNewMagicRound()

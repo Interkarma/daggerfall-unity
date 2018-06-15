@@ -111,7 +111,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     Color guiColor = GUI.color;
 
                     GUI.color = color;
-                    DaggerfallUI.Instance.RenderTarget.DrawTextureWithTexCoords(rect, atlasTexture, atlasRects[asciiBytes[i] - asciiStart]);
+                    GUI.DrawTextureWithTexCoords(rect, atlasTexture, atlasRects[asciiBytes[i] - asciiStart]);
 
                     GUI.color = guiColor;
                 }

@@ -56,6 +56,7 @@ namespace DaggerfallWorkshop.Game.Questing
         public const string QuestListPrefix = "QuestList-";
         private const string QuestListPattern = QuestListPrefix + "*.txt";
         private const string QuestPacksFolderName = "QuestPacks";
+        private const string QExt = ".txt";
 
         // Quest data tables
         private Dictionary<FactionFile.GuildGroups, List<QuestData>> guilds;
@@ -135,7 +136,7 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 // Seek from mods using pattern: QuestList-<packName>.txt
                 TextAsset questListAsset;
-                string fileName = QuestListPrefix + questList + ".txt";
+                string fileName = QuestListPrefix + questList + QExt;
                 if (ModManager.Instance != null && ModManager.Instance.TryGetAsset(fileName, false, out questListAsset))
                 {
                     List<string> lines = ModManager.GetTextAssetLines(questListAsset);
@@ -228,6 +229,44 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
+        /// Get a specific named quest from any registered lists, or from QuestMachine.QuestSourceFolder property path.
+        /// NOTE: Since this is driven from quest name, any duplicate names will result in the first in order of precedence being returned.
+        /// </summary>
+        public Quest GetQuest(string questName, int factionId = 0)
+        {
+            // First check QuestSourceFolder containing classic quests.
+            string questFileName = questName + QExt;
+            string questFile = Path.Combine(QuestMachine.QuestSourceFolder, questFileName);
+            if (File.Exists(questFile))
+                return LoadQuest(questName, QuestMachine.QuestSourceFolder, factionId);
+
+            // Check each registered init quest & containing folder.
+            foreach (QuestData questData in init)
+            {
+                if (questData.name == questName)
+                    return LoadQuest(questData, factionId);
+
+                questFile = Path.Combine(questData.path, questFileName);
+                if (File.Exists(questFile))
+                    return LoadQuest(questName, questData.path, factionId);
+            }
+
+            // Check guild quests.
+            foreach (FactionFile.GuildGroups guildGroup in guilds.Keys)
+                foreach (QuestData questData in guilds[guildGroup])
+                    if (questData.name == questName)
+                        return LoadQuest(questData, factionId);
+
+            // Check social quests.
+            foreach (FactionFile.SocialGroups socialGroup in social.Keys)
+                foreach (QuestData questData in social[socialGroup])
+                    if (questData.name == questName)
+                        return LoadQuest(questData, factionId);
+
+            return null;
+        }
+
+        /// <summary>
         /// Get a random quest for a guild from appropriate subset.
         /// </summary>
         public Quest GetGuildQuest(FactionFile.GuildGroups guildGroup, MembershipStatus status, int factionId, int rep)
@@ -297,12 +336,17 @@ namespace DaggerfallWorkshop.Game.Questing
             return null;
         }
 
+        private Quest LoadQuest(string questName, string questPath, int factionId)
+        {
+            return LoadQuest(new QuestData() { name = questName, path = questPath }, factionId);
+        }
+
         private Quest LoadQuest(QuestData questData, int factionId)
         {
             // Append extension if not present
             string questName = questData.name;
-            if (!questName.EndsWith(".txt"))
-                questName += ".txt";
+            if (!questName.EndsWith(QExt))
+                questName += QExt;
 
             // Attempt to load quest source file
             Quest quest;

@@ -136,8 +136,8 @@ namespace DaggerfallWorkshop.Game
             compassDstRect.width = compassBoxRect.width - (boxOutlineSize * 2) * scale;
             compassDstRect.height = compassTexture.height * scale;
 
-            DaggerfallUI.Instance.RenderTarget.DrawTextureWithTexCoords(compassDstRect, compassTexture, compassSrcRect, false);
-            DaggerfallUI.Instance.RenderTarget.DrawTexture(compassBoxRect, compassBoxTexture, ScaleMode.StretchToFill, true);
+            GUI.DrawTextureWithTexCoords(compassDstRect, compassTexture, compassSrcRect, false);
+            GUI.DrawTexture(compassBoxRect, compassBoxTexture, ScaleMode.StretchToFill, true);
         }
 
         #endregion

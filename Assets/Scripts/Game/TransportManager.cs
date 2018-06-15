@@ -171,7 +171,7 @@ namespace DaggerfallWorkshop.Game
                                     Screen.height - (ridingTexure.height * horseScaleY),
                                     ridingTexure.width * horseScaleY,
                                     ridingTexure.height * horseScaleY);
-                    DaggerfallUI.Instance.RenderTarget.DrawTexture(pos, ridingTexure.texture);
+                    GUI.DrawTexture(pos, ridingTexure.texture);
                 }
             }
         }

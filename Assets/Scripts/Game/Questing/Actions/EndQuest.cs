@@ -19,9 +19,12 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 {
     public class EndQuest : ActionTemplate
     {
+        int textId;
+
         public override string Pattern
         {
-            get { return "end quest"; }
+            get { return @"end quest saying (?<id>\d+)|" +
+                         @"end quest"; }
         }
 
         public EndQuest(Quest parentQuest)
@@ -38,12 +41,19 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
             // Factory new action
             EndQuest action = new EndQuest(parentQuest);
+            action.textId = Parser.ParseInt(match.Groups["id"].Value);
 
             return action;
         }
 
         public override void Update(Task caller)
         {
+            // "saying" popup
+            if (textId != 0)
+            {
+                ParentQuest.ShowMessagePopup(textId);
+            }
+
             // Flag quest over so quest machine can remove it
             //Debug.LogFormat("Ending quest {0}", ParentQuest.UID);
             ParentQuest.QuestBreak = true;
@@ -53,14 +63,27 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
         #region Serialization
 
+        [fsObject("v1")]
+        public struct SaveData_v1
+        {
+            public int textId;
+        }
 
         public override object GetSaveData()
         {
-            return null;
+            SaveData_v1 data = new SaveData_v1();
+            data.textId = textId;
+
+            return data;
         }
 
         public override void RestoreSaveData(object dataIn)
         {
+            if (dataIn == null)
+                return;
+
+            SaveData_v1 data = (SaveData_v1)dataIn;
+            textId = data.textId;
         }
 
         #endregion

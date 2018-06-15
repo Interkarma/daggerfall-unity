@@ -661,12 +661,13 @@ namespace DaggerfallWorkshop.Utility
         }
 
         private static string MagickaMax(IMacroContextProvider mcp)
-        {   // %spc
-            return GameManager.Instance.PlayerEntity.CurrentMagicka.ToString();
-        }
-        private static string Magicka(IMacroContextProvider mcp)
         {   // %spt
             return GameManager.Instance.PlayerEntity.MaxMagicka.ToString();
+            
+        }
+        private static string Magicka(IMacroContextProvider mcp)
+        {   // %spc
+            return GameManager.Instance.PlayerEntity.CurrentMagicka.ToString();
         }
         private static string Skill(IMacroContextProvider mcp)
         {   // %ski

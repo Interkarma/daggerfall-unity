@@ -196,6 +196,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 else
                 {
                     doFastTravel = false;
+                    DaggerfallUI.Instance.FadeBehaviour.SmashHUDToBlack();
                     performFastTravel();
                 }
 
@@ -319,6 +320,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUI.Instance.UserInterfaceManager.PopWindow();
             travelWindow.CloseTravelWindows(true);
             GameManager.Instance.PlayerEntity.RaiseSkills();
+            DaggerfallUI.Instance.FadeBehaviour.FadeHUDFromBlack();
         }
 
         // Return whether player has enough gold for the selected travel options

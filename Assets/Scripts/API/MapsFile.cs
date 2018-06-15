@@ -70,14 +70,9 @@ namespace DaggerfallConnect.Arena2
         };
 
         /// <summary>
-        /// Temple number array.
+        /// Letters that form the second part of an RMB block name.
         /// </summary>
-        private string[] rmbTempleNumbers = { "A0", "B0", "C0", "D0", "E0", "F0", "G0", "H0" };
-
-        /// <summary>
-        /// RMB block letters array.
-        /// </summary>
-        private string[] rmbBlockLetters = { "AA", "BA", "AL", "BL", "AM", "BM", "AS", "BS", "GA", "GL", "GM", "GS" };
+        string[] letter2Array = { "A", "L", "M", "S" };
 
         /// <summary>
         /// RDB block letters array.
@@ -767,52 +762,41 @@ namespace DaggerfallConnect.Arena2
         /// <returns>Block name.</returns>
         public string ResolveRmbBlockName(ref DFLocation dfLocation, byte blockIndex, byte blockNumber, byte blockCharacter)
         {
-            string letters = string.Empty;
+            string letter1 = string.Empty;
+            string letter2 = string.Empty;
             string numbers = string.Empty;
 
             // Get prefix
             string prefix = rmbBlockPrefixes[blockIndex];
 
-            // Get letters and numbers
+            // Get letter 1
+            if ((blockCharacter & 0x10) != 0)
+            {
+                int asciiValue = dfLocation.Exterior.ExteriorData.Letter1ForRMBName;
+                letter1 = char.ConvertFromUtf32(asciiValue);
+            }
+            else
+                letter1 = "A";
+
+            // Get letter 2
+            letter2 = letter2Array[(byte)(2 * blockCharacter) >> 6];
+
+            // Get block number as a string
+            string blockNumberString = blockNumber.ToString();
+
             if (blockIndex == 13 || blockIndex == 14)
             {
-                // Handle temple logic
-                if (7 < blockCharacter) letters = "GA"; else letters = "AA";
-                numbers = rmbTempleNumbers[blockCharacter & 7];
+                // Handle temple numbers
+                int asciivalue = (blockCharacter & 0xF) + 65;
+                numbers = char.ConvertFromUtf32(asciivalue) + blockNumberString;
             }
             else
             {
                 // Numbers are uniform in non-temple blocks
                 numbers = string.Format("{0:00}", blockNumber);
-
-                // Letters have some special cases
-                byte q = (byte)(blockCharacter / 16);
-                if (dfLocation.Name == "Wayrest")
-                {
-                    // Handle Wayrest exceptions
-                    if (prefix == "CUST")
-                        q = 0;
-                    else
-                        if (q > 0) q--;
-                }
-                else if (dfLocation.Name == "Sentinel")
-                {
-                    // Handle Sentinel exceptions
-                    if (prefix == "CUST")
-                        q = 8;
-                }
-                else
-                {
-                    // Default
-                    if (prefix == "CUST")
-                        q = 0;
-                }
-
-                // Resolve letters
-                letters = rmbBlockLetters[q];
             }
 
-            return prefix + letters + numbers + ".RMB";
+            return prefix + letter1 + letter2 + numbers + ".RMB";
         }
 
         /// <summary>
@@ -1060,17 +1044,20 @@ namespace DaggerfallConnect.Arena2
             dfLocation.Exterior.ExteriorData.LocationId = reader.ReadUInt32();
             dfLocation.Exterior.ExteriorData.Width = reader.ReadByte();
             dfLocation.Exterior.ExteriorData.Height = reader.ReadByte();
-            dfLocation.Exterior.ExteriorData.Unknown2 = reader.ReadBytes(7);
+            dfLocation.Exterior.ExteriorData.Unknown2 = reader.ReadBytes(4);
+            dfLocation.Exterior.ExteriorData.Letter1ForRMBName = reader.ReadByte();
+            dfLocation.Exterior.ExteriorData.PortTownAndUnknown = reader.ReadByte();
+            dfLocation.Exterior.ExteriorData.Unknown3 = reader.ReadByte();
             dfLocation.Exterior.ExteriorData.BlockIndex = reader.ReadBytes(64);
             dfLocation.Exterior.ExteriorData.BlockNumber = reader.ReadBytes(64);
             dfLocation.Exterior.ExteriorData.BlockCharacter = reader.ReadBytes(64);
-            dfLocation.Exterior.ExteriorData.Unknown3 = reader.ReadBytes(34);
+            dfLocation.Exterior.ExteriorData.Unknown4 = reader.ReadBytes(34);
             dfLocation.Exterior.ExteriorData.NullValue1 = reader.ReadUInt64();
             dfLocation.Exterior.ExteriorData.NullValue2 = reader.ReadByte();
-            dfLocation.Exterior.ExteriorData.Unknown4 = new UInt32[22];
-            for (int i = 0; i < 22; i++) dfLocation.Exterior.ExteriorData.Unknown4[i] = reader.ReadUInt32();
+            dfLocation.Exterior.ExteriorData.Unknown5 = new UInt32[22];
+            for (int i = 0; i < 22; i++) dfLocation.Exterior.ExteriorData.Unknown5[i] = reader.ReadUInt32();
             dfLocation.Exterior.ExteriorData.NullValue3 = reader.ReadBytes(40);
-            dfLocation.Exterior.ExteriorData.Unknown5 = reader.ReadUInt32();
+            dfLocation.Exterior.ExteriorData.Unknown6 = reader.ReadUInt32();
 
             // Get block names
             int totalBlocks = dfLocation.Exterior.ExteriorData.Width * dfLocation.Exterior.ExteriorData.Height;

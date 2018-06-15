@@ -30,7 +30,6 @@ namespace DaggerfallWorkshop.Game
     /// </summary>
     [RequireComponent(typeof(FadeBehaviour))]
     [RequireComponent(typeof(DaggerfallAudioSource))]
-    [RequireComponent(typeof(UserInterfaceRenderTarget))]
     public class DaggerfallUI : MonoBehaviour
     {
         const string fontsFolderName = "Fonts";
@@ -65,7 +64,8 @@ namespace DaggerfallWorkshop.Game
         DaggerfallAudioSource dfAudioSource;
         DaggerfallSongPlayer dfSongPlayer;
         UserInterfaceManager uiManager = new UserInterfaceManager();
-        UserInterfaceRenderTarget renderTarget = null;
+        UserInterfaceRenderTarget customRenderTarget = null;
+        Vector2? customMousePosition = null;
 
         SpellIconCollection spellIconCollection;
 
@@ -73,7 +73,6 @@ namespace DaggerfallWorkshop.Game
         DaggerfallFont[] daggerfallFonts = new DaggerfallFont[5];
         char lastCharacterTyped;
         KeyCode lastKeyCode;
-        GameObject nonDiegeticUI = null;
         FadeBehaviour fadeBehaviour = null;
 
         string versionText;
@@ -120,9 +119,16 @@ namespace DaggerfallWorkshop.Game
         
         public static IUserInterfaceManager UIManager { get { return Instance.uiManager; } }
 
-        public UserInterfaceRenderTarget RenderTarget
+        public UserInterfaceRenderTarget CustomRenderTarget
         {
-            get { return (renderTarget) ? renderTarget : renderTarget = GetComponent<UserInterfaceRenderTarget>(); }
+            get { return customRenderTarget; }
+            set { customRenderTarget = value; }
+        }
+
+        public Vector2? CustomMousePosition
+        {
+            get { return customMousePosition; }
+            set { customMousePosition = value; }
         }
 
         public AudioSource AudioSource
@@ -226,12 +232,6 @@ namespace DaggerfallWorkshop.Game
             get { return Path.Combine(Application.streamingAssetsPath, fontsFolderName); }
         }
 
-        public GameObject NonDiegeticUIOutput
-        {
-            get { return (nonDiegeticUI) ? nonDiegeticUI : nonDiegeticUI = GameManager.GetGameObjectWithName("NonDiegeticUIOutput"); }
-            set { nonDiegeticUI = value; }
-        }
-
         public enum PopupStyle
         {
             Parchment,
@@ -277,11 +277,7 @@ namespace DaggerfallWorkshop.Game
             dfCourtWindow = new DaggerfallCourtWindow(uiManager);
             dfExteriorAutomapWindow = new DaggerfallExteriorAutomapWindow(uiManager);
 
-            RenderTarget.OnCreateTargetTexture += RenderTarget_OnCreateTargetTexture;
             Questing.Actions.GivePc.OnOfferPending += GivePc_OnOfferPending;
-
-            // We only use our render target for texture clearing, set it well behind everything else
-            RenderTarget.CustomGUIDepth = 10;
 
             SetupSingleton();
         }
@@ -329,6 +325,7 @@ namespace DaggerfallWorkshop.Game
             // Update top window
             if (uiManager.TopWindow != null)
             {
+                uiManager.TopWindow.ParentPanel.CustomMousePosition = customMousePosition;
                 uiManager.TopWindow.Update();
             }
 
@@ -354,22 +351,33 @@ namespace DaggerfallWorkshop.Game
                     lastKeyCode = Event.current.keyCode;
             }
 
-            if (Event.current.type != EventType.Repaint)
-                return;
-
-            //RenderTarget.Clear();
-
-            // Draw top window
-            if (uiManager.TopWindow != null)
+            if (Event.current.type == EventType.Repaint)
             {
-                uiManager.TopWindow.Draw();
-            }
+                RenderTexture oldRT = null;
+                if (customRenderTarget)
+                {
+                    oldRT = RenderTexture.active;
+                    RenderTexture.active = customRenderTarget.TargetTexture;
+                    customRenderTarget.Clear();
+                }
 
-            // Draw version text when paused
-            if (ShowVersionText)
-            {
-                Vector2 versionTextPos = new Vector2(Screen.width - versionTextWidth, 0);
-                versionFont.DrawText(versionText, versionTextPos, versionTextScaleVector2, versionTextColor);
+                // Draw top window
+                if (uiManager.TopWindow != null)
+                {
+                    uiManager.TopWindow.Draw();
+                }
+
+                // Draw version text when paused
+                if (ShowVersionText)
+                {
+                    Vector2 versionTextPos = new Vector2(Screen.width - versionTextWidth, 0);
+                    versionFont.DrawText(versionText, versionTextPos, versionTextScaleVector2, versionTextColor);
+                }
+
+                if (customRenderTarget)
+                {
+                    RenderTexture.active = oldRT;
+                }
             }
         }
 
@@ -1229,41 +1237,6 @@ namespace DaggerfallWorkshop.Game
             }
 
             return false;
-        }
-
-        void RenderTarget_OnCreateTargetTexture()
-        {
-            // Get raw image component
-            UnityEngine.UI.RawImage rawImage = FindNonDiegeticCanvasRawImage();
-            if (!rawImage)
-                return;
-
-            // Set target render texture to raw image output
-            rawImage.texture = RenderTarget.TargetTexture;
-            rawImage.SetNativeSize();
-        }
-
-        /// <summary>
-        /// Gets non-diegetic canvas output raw image (if enabled)
-        /// </summary>
-        /// <returns>RawImage or null.</returns>
-        UnityEngine.UI.RawImage FindNonDiegeticCanvasRawImage()
-        {
-            // Must be able to find output canvas object
-            GameObject nonDiegeticUIOutput = DaggerfallUI.Instance.NonDiegeticUIOutput;
-            if (!nonDiegeticUIOutput)
-                return null;
-
-            // Output canvas object must be active
-            if (!nonDiegeticUIOutput.activeInHierarchy)
-                return null;
-
-            // Get raw image component
-            UnityEngine.UI.RawImage rawImage = nonDiegeticUIOutput.GetComponent<UnityEngine.UI.RawImage>();
-            if (!rawImage)
-                return null;
-
-            return rawImage;
         }
 
         #endregion

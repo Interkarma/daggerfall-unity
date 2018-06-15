@@ -14,6 +14,7 @@ using System;
 using System.Text.RegularExpressions;
 using DaggerfallWorkshop.Utility;
 using FullSerializer;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -73,7 +74,6 @@ namespace DaggerfallWorkshop.Game.Questing
             action.spawnInterval = (uint)Parser.ParseInt(match.Groups["minutes"].Value) * 60;
             action.spawnMaxTimes = Parser.ParseInt(match.Groups["count"].Value);
             action.spawnChance = Parser.ParseInt(match.Groups["percent"].Value);
-            action.lastSpawnTime = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToSeconds();
 
             // Handle infinite
             if (!string.IsNullOrEmpty(match.Groups["infinite"].Value))
@@ -94,6 +94,12 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public override void Update(Task caller)
         {
+            ulong gameSeconds = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToSeconds();
+
+            // Init spawn timer on first update
+            if (lastSpawnTime == 0)
+                lastSpawnTime = gameSeconds + (uint)UnityEngine.Random.Range(0, spawnInterval);
+
             // Do nothing if max foes already spawned
             // This can be cleared on next set/rearm
             if (spawnCounter >= spawnMaxTimes && spawnMaxTimes != -1)
@@ -108,7 +114,6 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             // Check for a new spawn event - only one spawn event can be running at a time
-            ulong gameSeconds = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToSeconds();
             if (gameSeconds > lastSpawnTime + spawnInterval && !spawnInProgress)
             {
                 // Update last spawn time
@@ -127,6 +132,12 @@ namespace DaggerfallWorkshop.Game.Questing
             if (spawnInProgress)
             {
                 TryPlacement();
+            }
+
+            // Keep breaking rest if spawn in progress
+            if (spawnInProgress && DaggerfallUI.Instance.UserInterfaceManager.TopWindow is DaggerfallRestWindow)
+            {
+                (DaggerfallUI.Instance.UserInterfaceManager.TopWindow as DaggerfallRestWindow).AbortRestForEnemySpawn();
             }
         }
 
@@ -373,10 +384,10 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public override void RestoreSaveData(object dataIn)
         {
-            SaveData_v1 data = (SaveData_v1)dataIn;
             if (dataIn == null)
                 return;
 
+            SaveData_v1 data = (SaveData_v1)dataIn;
             foeSymbol = data.foeSymbol;
             lastSpawnTime = data.lastSpawnTime;
             spawnInterval = data.spawnInterval;

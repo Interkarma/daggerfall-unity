@@ -34,11 +34,11 @@ namespace DaggerfallWorkshop
 
             // Get bottom marker
             Vector3 bottomMarker;
-            bool foundBottom = playerEnterExit.Interior.FindMarker(out bottomMarker, DaggerfallInterior.InteriorMarkerTypes.LadderBottom);
+            bool foundBottom = playerEnterExit.Interior.FindClosestMarker(out bottomMarker, DaggerfallInterior.InteriorMarkerTypes.LadderBottom, playerMotor.transform.position);
 
             // Get top marker
             Vector3 topMarker;
-            bool foundTop = playerEnterExit.Interior.FindMarker(out topMarker, DaggerfallInterior.InteriorMarkerTypes.LadderTop);
+            bool foundTop = playerEnterExit.Interior.FindClosestMarker(out topMarker, DaggerfallInterior.InteriorMarkerTypes.LadderTop, playerMotor.transform.position);
 
             // Teleport to top marker
             if (foundTop && playerMotor.transform.position.y < topMarker.y)

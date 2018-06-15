@@ -261,6 +261,43 @@ namespace DaggerfallWorkshop
             return !(markerOut == Vector3.zero);
         }
 
+        /// <summary>
+        /// Finds closest marker to player position.
+        /// </summary>
+        /// <param name="closestMarkerOut">Closest marker of specified type to player if found.</param>
+        /// <param name="type">Marker type.</param>
+        /// <param name="playerPos">Player position.</param>
+        /// <returns>True if successful.</returns>
+        public bool FindClosestMarker(out Vector3 closestMarkerOut, InteriorMarkerTypes type, Vector3 playerPos)
+        {
+            bool foundOne = false;
+            float minDistance = float.MaxValue;
+            closestMarkerOut = Vector3.zero;
+            for (int i = 0; i < markers.Count; i++)
+            {
+                // Exclude markers of incorrect type
+                if (markers[i].type != type)
+                    continue;
+
+                // Refine to closest marker
+                float distance = Vector3.Distance(playerPos, markers[i].gameObject.transform.position);
+                if (distance < minDistance || !foundOne)
+                {
+                    closestMarkerOut = markers[i].gameObject.transform.position;
+                    minDistance = distance;
+                    foundOne = true;
+                }
+            }
+
+            if (!foundOne)
+            {
+                closestMarkerOut = Vector3.zero;
+                return false;
+            }
+
+            return true;
+        }
+
         #region Private Methods
 
         /// <summary>
