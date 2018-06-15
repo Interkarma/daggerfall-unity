@@ -1113,7 +1113,7 @@ namespace DaggerfallWorkshop.Game
 
         public void AddQuestRumorToRumorMill(ulong questID, Message message)
         {
-            if (listRumorMill == null)
+            if (listRumorMill == null || listRumorMill.Count == 0)
                 SetupRumorMill();
 
             RumorMillEntry entry = new RumorMillEntry();
@@ -1131,7 +1131,7 @@ namespace DaggerfallWorkshop.Game
 
         public void AddQuestRumorToRumorMill(ulong questID, List<TextFile.Token[]> listTokens)
         {
-            if (listRumorMill == null)
+            if (listRumorMill == null || listRumorMill.Count == 0)
                 SetupRumorMill();
 
             if (listTokens.Count > 0)
@@ -1147,7 +1147,7 @@ namespace DaggerfallWorkshop.Game
 
         public void AddOrReplaceQuestProgressRumor(ulong questID, Message message)
         {
-            if (listRumorMill == null)
+            if (listRumorMill == null || listRumorMill.Count == 0)
                 SetupRumorMill();
 
             int i;
@@ -2098,7 +2098,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             listRumorMill = data.listRumorMill;
-            if (listRumorMill == null)
+            if (listRumorMill == null || listRumorMill.Count == 0)
             {
                 SetupRumorMill();
             }
@@ -2680,7 +2680,20 @@ namespace DaggerfallWorkshop.Game
                         // only build entries for place quest resources that are in same location as pc
                         if (GameManager.Instance.PlayerGPS.CurrentLocation.MapTableData.MapId != place.SiteDetails.mapId)
                             continue;
-                        DFLocation.BuildingTypes buildingType = GameManager.Instance.TalkManager.GetBuildingTypeForBuildingKey(place.SiteDetails.buildingKey);
+
+                        if (place.SiteDetails.buildingKey == 0)
+                            continue;
+
+                        DFLocation.BuildingTypes buildingType;
+                        try
+                        {
+                            buildingType = GameManager.Instance.TalkManager.GetBuildingTypeForBuildingKey(place.SiteDetails.buildingKey);
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.LogError(string.Format("Error in TalkManager.GetBuildingTypeForBuildingKey: {0}", ex.Message));
+                            continue;
+                        }
 
                         if (RMBLayout.IsResidence(buildingType))
                         {
