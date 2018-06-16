@@ -42,15 +42,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
         public void NextCycle()
         {
+            PlayerCondition condition = GetPlayerCondition();
+
             if (healthDetector.HealthLost > 0)
                 flickerFast.ResetIfBurnedOut();
 
-            if (healthDetector.HealthGain > 0)
-                flickerSlow.BurnOut();
+            if (healthDetector.HealthGain > 0 && condition != PlayerCondition.Wounded)
+                flickerSlow.IsBurnedOut = true;
 
             Color backColor;
-
-            PlayerCondition condition = GetPlayerCondition();
 
             switch (condition)
             {

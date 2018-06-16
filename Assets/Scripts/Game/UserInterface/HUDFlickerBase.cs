@@ -48,7 +48,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             if (reversalCount >= reversalCountThreshold && reversalCountThreshold != -1)
             {
-                BurnOut();
+                IsBurnedOut = true;
             }
         }
         protected void RandomlyReverseAlphaDirection()
@@ -99,6 +99,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 CheckReverseAlphaDirection();
                 SetAlphaValue();
             }
+            else
+                AlphaValue = 0;
         }
 
         public virtual void Reset()
@@ -112,12 +114,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             if (IsBurnedOut)
                 Reset();
-        }
-
-        public virtual void BurnOut()
-        {
-            AlphaValue = 0;
-            IsBurnedOut = true;
         }
     }
 }
