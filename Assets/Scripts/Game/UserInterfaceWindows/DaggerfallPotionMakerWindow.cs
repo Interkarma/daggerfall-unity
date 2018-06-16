@@ -125,15 +125,26 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected void SetupItemListScrollers()
         {
-
+            TextLabel miscLabelTemplate = new TextLabel(DaggerfallUI.Instance.Font3)
+            {
+                Position = new Vector2(0, ingredientButtonRects[0].height),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.None
+            };
             // Setup item list scroller for ingredients
-            ingredientsListScroller = new ItemListScroller(4, 3, ingredientsListRect, ingredientButtonRects, Vector2.down, defaultToolTip)
+            ingredientsListScroller = new ItemListScroller(4, 3, ingredientsListRect, ingredientButtonRects, miscLabelTemplate, defaultToolTip, 2, 0.8f)
             {
                 Position = new Vector2(ingredientsListScrollerRect.x, ingredientsListScrollerRect.y),
                 Size = new Vector2(ingredientsListScrollerRect.width, ingredientsListScrollerRect.height),
+                LabelTextHandler = ItemLabelTextHandler
             };
             NativePanel.Components.Add(ingredientsListScroller);
             ingredientsListScroller.OnItemClick += IngredientsListScroller_OnItemClick;
+        }
+
+        string ItemLabelTextHandler(DaggerfallUnityItem item)
+        {
+            return item.ItemName.ToUpper();
         }
 
         #endregion
