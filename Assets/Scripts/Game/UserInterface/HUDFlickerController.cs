@@ -42,7 +42,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
         public void NextCycle()
         {
-            if (!DaggerfallUnity.Settings.NearDeathWarning)
+            if (  !DaggerfallUnity.Settings.NearDeathWarning 
+                || DaggerfallUI.Instance.FadeBehaviour.FadeInProgress
+                || Parent.BackgroundColor.a > 0.9f) // prevents conflict with fade in from black
                 return;
 
             PlayerCondition condition = GetPlayerCondition();
