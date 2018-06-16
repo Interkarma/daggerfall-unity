@@ -189,7 +189,7 @@ K0C00Y05, Merchants, N, 0,
 K0C00Y06, Merchants, N, 0,
 K0C00Y07, Merchants, N, 0,
 K0C00Y08, Merchants, N, 0,
-K0C00Y09, Merchants, N, 0,
+-K0C00Y09, Merchants, N, 0, FAILED. Requires action "add foe aFoe face" and drop foe aFoe face"
 K0C01Y00, Merchants, N, 1,
 K0C01Y10, Merchants, N, 1,
 K0C0XY01, Merchants, N, 0X,
