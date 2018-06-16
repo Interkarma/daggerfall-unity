@@ -33,6 +33,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         HUDCrosshair crosshair = new HUDCrosshair();
         HUDVitals vitals = new HUDVitals();
         HUDCompass compass = new HUDCompass();
+        HUDFlickerController flickerController = new HUDFlickerController();
         HUDInteractionModeIcon interactionModeIcon = new HUDInteractionModeIcon();
         HUDPlaceMarker placeMarker = new HUDPlaceMarker();
         EscortingNPCFacePanel escortingFaces = new EscortingNPCFacePanel();
@@ -112,6 +113,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ParentPanel.Components.Add(vitals);
             ParentPanel.Components.Add(compass);
             ParentPanel.Components.Add(interactionModeIcon);
+            ParentPanel.Components.Add(flickerController);
         }
 
         protected override void Setup()
@@ -192,6 +194,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 questDebugger.NextState();
             }
+
+            flickerController.NextCycle();
 
             base.Update();
         }

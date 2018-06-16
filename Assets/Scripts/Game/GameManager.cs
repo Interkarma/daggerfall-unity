@@ -44,6 +44,7 @@ namespace DaggerfallWorkshop.Game
         Camera mainCamera = null;
         PlayerMouseLook playerMouseLook = null;
         PlayerHealth playerHealth = null;
+        HealthChangeDetector healthChangeDetector = null;
         StartGameBehaviour startGameBehaviour = null;
         PlayerEntity playerEntity = null;
         DaggerfallEntityBehaviour playerEntityBehaviour = null;
@@ -122,6 +123,12 @@ namespace DaggerfallWorkshop.Game
         {
             get { return (playerHealth) ? playerHealth : playerHealth = GetComponentFromObject<PlayerHealth>(PlayerObject, "Player"); }
             set { playerHealth = value; }
+        }
+
+        public HealthChangeDetector HealthChangeDetector
+        {
+            get { return (healthChangeDetector) ? healthChangeDetector : healthChangeDetector = GetComponentFromObject<HealthChangeDetector>(PlayerObject, "Player"); }
+            set { healthChangeDetector = value; }
         }
 
         public StartGameBehaviour StartGameBehaviour
