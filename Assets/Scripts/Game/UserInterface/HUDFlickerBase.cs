@@ -51,6 +51,35 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 BurnOut();
             }
         }
+        protected void RandomlyReverseAlphaDirection()
+        {
+            const float minChance = -0.01f; // negative so it takes a little while before it can reverse at least.
+            const float chanceStep = 0.008f;
+
+            if (alphaDirection == AlphaDirection.None)
+                return;
+
+            // chance of reversal grows over time.
+            chanceReverseState += chanceStep * Time.deltaTime;
+
+            // randomly reverse alpha
+            if (Random.Range(0f, 1f) < chanceReverseState)
+            {
+                // chance gets reset each time it's randomly reversed.
+                chanceReverseState = minChance;
+                ReverseAlphaDirection();
+            }
+        }
+        private void ReverseAlphaDirection()
+        {
+            if (alphaDirection == AlphaDirection.Increasing)
+                alphaDirection = AlphaDirection.Decreasing;
+            else if (alphaDirection == AlphaDirection.Decreasing)
+                alphaDirection = AlphaDirection.Increasing;
+
+            if (reversalCount != -1)
+                reversalCount++;
+        }
         protected void SetAlphaValue()
         {
             // increment alpha depending on State
@@ -89,36 +118,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             AlphaValue = 0;
             IsBurnedOut = true;
-        }
-
-        protected void RandomlyReverseAlphaDirection()
-        {
-            const float minChance = -0.01f; // negative so it takes a little while before it can reverse at least.
-            const float chanceStep = 0.008f;
-
-            if (alphaDirection == AlphaDirection.None)
-                return;
-
-            // chance of reversal grows over time.
-            chanceReverseState += chanceStep * Time.deltaTime;
-
-            // randomly reverse alpha
-            if (Random.Range(0f, 1f) < chanceReverseState)
-            {
-                // chance gets reset each time it's randomly reversed.
-                chanceReverseState = minChance;
-                ReverseAlphaDirection();
-            }
-        }
-        private void ReverseAlphaDirection()
-        {
-            if (alphaDirection == AlphaDirection.Increasing)
-                alphaDirection = AlphaDirection.Decreasing;
-            else if (alphaDirection == AlphaDirection.Decreasing)
-                alphaDirection = AlphaDirection.Increasing;
-
-            if (reversalCount != -1)
-                reversalCount++;
         }
     }
 }

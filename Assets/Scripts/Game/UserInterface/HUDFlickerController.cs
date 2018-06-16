@@ -13,7 +13,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Wounded,
             Dead
         }
-        private PlayerCondition condition;
         private HealthChangeDetector healthDetector;
         private HUDFlickerFast flickerFast;
         private HUDFlickerSlow flickerSlow;
@@ -43,23 +42,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
         public void NextCycle()
         {
-            condition = GetPlayerCondition();
-
-            CheckResetFlickers();
-            CalculateBackgroundColor();
-        }
-        private void CheckResetFlickers()
-        {
             if (healthDetector.HealthLost > 0)
                 flickerFast.ResetIfBurnedOut();
 
             if (healthDetector.HealthGain > 0)
                 flickerSlow.BurnOut();
-        }
-        private void CalculateBackgroundColor()
-        {
+
             Color backColor;
-            // Decide what alpha and red to use in background color
+
+            PlayerCondition condition = GetPlayerCondition();
+
             switch (condition)
             {
                 case PlayerCondition.Injured:
