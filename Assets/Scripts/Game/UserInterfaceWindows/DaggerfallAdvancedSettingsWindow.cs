@@ -94,6 +94,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox modSystem;
         Checkbox assetImport;
         Checkbox compressModdedTextures;
+        Checkbox nearDeathWarning;
         HorizontalSlider cameraRecoilStrength;
 
         // Video
@@ -206,6 +207,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             modSystem = AddCheckbox(rightPanel, "modSystem", DaggerfallUnity.Settings.LypyL_ModSystem);
             assetImport = AddCheckbox(rightPanel, "assetImport", DaggerfallUnity.Settings.MeshAndTextureReplacement);
             compressModdedTextures = AddCheckbox(rightPanel, "compressModdedTextures", DaggerfallUnity.Settings.CompressModdedTextures);
+            nearDeathWarning = AddCheckbox(rightPanel, "nearDeathWarning", DaggerfallUnity.Settings.NearDeathWarning);
         }
 
         private void Video(Panel leftPanel, Panel rightPanel)
@@ -285,6 +287,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.LypyL_ModSystem = modSystem.IsChecked;
             DaggerfallUnity.Settings.MeshAndTextureReplacement = assetImport.IsChecked;
             DaggerfallUnity.Settings.CompressModdedTextures = compressModdedTextures.IsChecked;
+            DaggerfallUnity.Settings.NearDeathWarning = nearDeathWarning.IsChecked;
             DaggerfallUnity.Settings.CameraRecoilStrength = cameraRecoilStrength.ScrollIndex;
 
             /* Video */

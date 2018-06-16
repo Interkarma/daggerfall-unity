@@ -42,6 +42,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
         public void NextCycle()
         {
+            if (!DaggerfallUnity.Settings.NearDeathWarning)
+                return;
+
             PlayerCondition condition = GetPlayerCondition();
 
             if (healthDetector.HealthLost > 0)

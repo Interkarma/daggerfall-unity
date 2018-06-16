@@ -139,6 +139,7 @@ namespace DaggerfallWorkshop
         public bool LypyL_ModSystem { get; set; }
         public bool MeshAndTextureReplacement { get; set; }
         public bool CompressModdedTextures { get; set; }
+        public bool NearDeathWarning { get; set; }
 
         #endregion
 
@@ -223,6 +224,7 @@ namespace DaggerfallWorkshop
             LypyL_ModSystem = GetBool(sectionEnhancements, "LypyL_ModSystem");
             MeshAndTextureReplacement = GetBool(sectionEnhancements, "MeshAndTextureReplacement");
             CompressModdedTextures = GetBool(sectionEnhancements, "CompressModdedTextures");
+            NearDeathWarning = GetBool(sectionEnhancements, "NearDeathWarning");
         }
 
         /// <summary>
@@ -300,6 +302,7 @@ namespace DaggerfallWorkshop
             SetBool(sectionEnhancements, "LypyL_ModSystem", LypyL_ModSystem);
             SetBool(sectionEnhancements, "MeshAndTextureReplacement", MeshAndTextureReplacement);
             SetBool(sectionEnhancements, "CompressModdedTextures", CompressModdedTextures);
+            SetBool(sectionEnhancements, "NearDeathWarning", NearDeathWarning);
 
             // Write settings to persistent file
             WriteSettingsFile();

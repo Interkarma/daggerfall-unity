@@ -51,6 +51,8 @@ assetImport,                                        Allow Custom Assets
 assetImportInfo,                                    Import assets from enabled mods and loose files.
 compressModdedTextures,                             Compress Modded Textures
 compressModdedTexturesInfo,                         Import textures with a compressed format which uses less graphics memory.
+nearDeathWarning,									Near Death Warning
+nearDeathWarningInfo,								Show blinking/pulsating screen effects to warn when near death.
 
 resolution,                                         Resolution
 resolutionInfo,                                     Screen resolution
