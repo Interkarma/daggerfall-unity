@@ -97,7 +97,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         int listDisplayTotal;       // Total number of items displayed in scrolling areas
         int itemButtonMargin = 2;   // Margin of item buttons
         float textScale = 1f;       // Scale of text on item buttons
-        TextLabel miscLabelTemplate;// Template for misc text labels
 
         float foregroundAnimationDelay = 0.2f;    
         float backgroundAnimationDelay = 0.2f;
@@ -200,7 +199,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 textScale = 0.75f;
             }
             listDisplayTotal = listDisplayUnits * listWidth;
-            miscLabelTemplate = new TextLabel()
+            TextLabel miscLabelTemplate = new TextLabel()
             {
                 Position = Vector2.zero,
                 HorizontalAlignment = HorizontalAlignment.Left,
@@ -211,7 +210,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             LoadTextures(enhanced);
             SetupScrollBar();
             SetupScrollButtons();
-            SetupItemsList(enhanced);
+            SetupItemsList(enhanced, miscLabelTemplate);
         }
 
         /// <summary>
@@ -239,12 +238,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             itemButtonMargin = itemMarginSize;
             this.textScale = textScale;
             this.toolTip = toolTip;
-            this.miscLabelTemplate = miscLabelTemplate;
 
             LoadTextures(false);
             SetupScrollBar();
             SetupScrollButtons();
-            SetupItemsList(false);
+            SetupItemsList(false, miscLabelTemplate);
         }
 
         public void ResetScroll()
@@ -291,7 +289,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             itemListDownButton.OnMouseClick += ItemsDownButton_OnMouseClick;
         }
 
-        void SetupItemsList(bool enhanced)
+        void SetupItemsList(bool enhanced, TextLabel miscLabelTemplate)
         {
             // List panel for scrolling behaviour
             Panel itemsListPanel = DaggerfallUI.AddPanel(itemListPanelRect, this);
