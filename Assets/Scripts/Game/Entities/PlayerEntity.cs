@@ -1693,7 +1693,7 @@ namespace DaggerfallWorkshop.Game.Entity
             FactionFile.FactionData peopleFaction;
             FactionData.FindFactionByTypeAndRegion(15, regionIndex + 1, out peopleFaction);
 
-            FactionData.ChangeReputation(peopleFaction.id, -(reputationLossPerCrime[(int)crimeCommitted] / 2));
+            FactionData.ChangeReputation(peopleFaction.id, -(reputationLossPerCrime[(int)crimeCommitted] / 2), true);
         }
 
         public void RaiseReputationForDoingSentence()
@@ -1705,7 +1705,7 @@ namespace DaggerfallWorkshop.Game.Entity
             FactionData.FindFactionByTypeAndRegion(15, regionIndex + 1, out peopleFaction);
 
             // Classic changes reputation here by (1 - halfOfLegalRepPlayerLostFromCrime) / 2). Probably a bug.
-            FactionData.ChangeReputation(peopleFaction.id, (halfOfLegalRepPlayerLostFromCrime - 1) / 2);
+            FactionData.ChangeReputation(peopleFaction.id, (halfOfLegalRepPlayerLostFromCrime - 1) / 2, true);
         }
 
         public bool SurrenderToCityGuards(bool voluntarySurrender)

@@ -336,24 +336,103 @@ namespace DaggerfallWorkshop.Game.Player
         }
 
         /// <summary>
-        /// Change reputation value by amount.
+        /// Change reputation value by amount. Propagation is matched to classic.
         /// </summary>
         public bool ChangeReputation(int factionID, int amount, bool propagate = false)
         {
             if (factionDict.ContainsKey(factionID))
             {
                 FactionFile.FactionData factionData = factionDict[factionID];
-                factionData.rep = Mathf.Clamp(factionData.rep + amount, minReputation, maxReputation);
-                factionDict[factionID] = factionData;
+                if (!propagate)
+                {
+                    factionData.rep = Mathf.Clamp(factionData.rep + amount, minReputation, maxReputation);
+                    factionDict[factionID] = factionData;
+                }
+
+                if (propagate)
+                {
+                    Guilds.GuildManager guildManager = GameManager.Instance.GuildManager;
+                    Guilds.Guild guild;
+                    int newFactionID = 0;
+
+                    // If factionID is that of the Temple Missionaries, use the faction data of the temple the player belongs to, if it exists
+                    if (factionID == (int)FactionFile.FactionIDs.Temple_Missionaries)
+                    {
+                        if (guildManager.GetJoinedGuildOfGuildGroup(FactionFile.GuildGroups.HolyOrder, out guild))
+                        {
+                            newFactionID = guild.GetFactionId();
+                            if (factionDict.ContainsKey(newFactionID))
+                                factionData = factionDict[newFactionID];
+                        }
+                    }
+
+                    // Move up to the parent faction. If the Dark Brotherhood is found along the way (Dark Brotherhood has parent factions), stop there and change reputation.
+                    while (factionDict.ContainsKey(factionData.parent))
+                    {
+                        if (factionData.id == (int)FactionFile.FactionIDs.The_Dark_Brotherhood)
+                        {
+                            ChangeReputation(factionData.id, amount, false);
+                            break;
+                        }
+                        factionData = factionDict[factionData.parent];
+                    }
+
+                    // If we are at the top parent, and it is not the Generic Knightly Order faction, change reputation
+                    if (!factionDict.ContainsKey(factionData.parent) && factionData.id != (int)FactionFile.FactionIDs.Generic_Knightly_Order)
+                        ChangeReputation(factionData.id, amount, false);
+
+                    // Handle Generic Knightly Order and specific knightly order if player belong to one
+                    if (factionData.id == (int)FactionFile.FactionIDs.Generic_Knightly_Order)
+                    {
+                        // Change reputation for Generic Knightly Order
+                        ChangeReputation(factionData.id, amount, false);
+
+                        if (guildManager.GetJoinedGuildOfGuildGroup(FactionFile.GuildGroups.KnightlyOrder, out guild))
+                            newFactionID = guild.GetFactionId();
+
+                        // Change reputation for specific knightly order if player belongs to one
+                        // Note: Generic Knightly Order will get the reputation mod again if the player doesn't belong to a knightly order
+                        if (factionDict.ContainsKey(newFactionID))
+                            ChangeReputation(factionData.id, amount, false);
+                    }
+
+                    // Do half of the reputation change for all children of the parent, and the full change if it is the specific faction we are calling for
+                    if (factionData.children != null)
+                        ChangeReputationOfChildren(factionData.children, factionID, amount);
+
+                    // Change ally and enemy faction reputations
+                    int[] allies = { factionData.ally1, factionData.ally2, factionData.ally3 };
+                    int[] enemies = { factionData.enemy1, factionData.enemy2, factionData.enemy3 };
+
+                    for (int i = 0; i < 3; ++i)
+                    {
+                        ChangeReputation(allies[i], amount / 2, false);
+                        ChangeReputation(enemies[i], -amount / 2, false);
+                    }
+                }
+
                 return true;
             }
 
-            if (propagate)
-            {
-                // TODO: Propagate reputation changes to related factions
-            }
-
             return false;
+        }
+
+        public void ChangeReputationOfChildren(List<int> children, int factionIDForFullChange, int amount)
+        {
+            foreach (int id in children)
+            {
+                if (id == factionIDForFullChange)
+                    ChangeReputation(id, amount, false);
+                else
+                    ChangeReputation(id, amount / 2, false);
+
+                if (factionDict.ContainsKey(id))
+                {
+                    FactionFile.FactionData factionData = factionDict[id];
+                    if (factionData.children != null)
+                        ChangeReputationOfChildren(factionData.children, factionIDForFullChange, amount);
+                }
+            }
         }
 
         /// <summary>
