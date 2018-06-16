@@ -47,7 +47,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 if (File.Exists(path))
                 {
                     WWW www = new WWW("file://" + path);
-                    movieTexture = www.movie;
+                    movieTexture = www.GetMovieTexture();
                     DaggerfallUnity.Instance.StartCoroutine(LoadMovieTexture(www, movieTexture));
                     return true;
                 }

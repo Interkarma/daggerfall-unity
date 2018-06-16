@@ -48,7 +48,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         BuildTarget[] buildTargets = new BuildTarget[]
         {
             BuildTarget.StandaloneWindows,
-            BuildTarget.StandaloneOSXUniversal,
+            BuildTarget.StandaloneOSX,
             BuildTarget.StandaloneLinux,
         };
 

@@ -87,7 +87,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 if (File.Exists(path))
                 {
                     WWW www = new WWW("file://" + path);
-                    audioClip = www.audioClip;
+                    audioClip = www.GetAudioClip();
                     DaggerfallUnity.Instance.StartCoroutine(LoadAudioData(www, audioClip));
                     return true;
                 }

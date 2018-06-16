@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -46,10 +46,10 @@ namespace AssetInjection
         [Tooltip("Index of emissive material for the MeshRender.")]
         public uint materialIndex;
 
-        [ColorUsage(false, true, 0f, 99f, 0.125f, 3f)]
+        //[ColorUsage(false, true, 0f, 99f, 0.125f, 3f)]
         public Color dayColor;
 
-        [ColorUsage(false, true, 0f, 99f, 0.125f, 3f)]
+        //[ColorUsage(false, true, 0f, 99f, 0.125f, 3f)]
         public Color nightColor;
 
         #endregion
