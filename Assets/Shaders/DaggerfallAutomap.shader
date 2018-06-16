@@ -1,4 +1,6 @@
-﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 
 // Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
@@ -60,7 +62,7 @@ Shader "Daggerfall/Automap"
 
 			void vert(appdata_full v, out v2f OUT)
 			{
-    			OUT.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+    			OUT.pos = UnityObjectToClipPos(v.vertex);
     			OUT.uv = v.texcoord;
 				OUT.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
 			}
@@ -145,7 +147,7 @@ Shader "Daggerfall/Automap"
 
 			void vert(appdata_full v, out v2g OUT)
 			{
-				OUT.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+				OUT.pos = UnityObjectToClipPos(v.vertex);
 				OUT.uv = v.texcoord;
 				OUT.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
 			}
@@ -290,7 +292,7 @@ Shader "Daggerfall/Automap"
 
 			void vert(appdata_full v, out v2f OUT)
 			{
-				OUT.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+				OUT.pos = UnityObjectToClipPos(v.vertex);
 				OUT.uv = v.texcoord;
 				OUT.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
 			}
@@ -363,7 +365,7 @@ Shader "Daggerfall/Automap"
 
 			void vert(appdata_full v, out v2f OUT)
 			{
-				OUT.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+				OUT.pos = UnityObjectToClipPos(v.vertex);
 				OUT.uv = v.texcoord;
 				OUT.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
 			}

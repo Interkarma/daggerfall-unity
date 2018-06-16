@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -16,9 +16,9 @@ public static class VersionInfo
     public const string DaggerfallUnityProductName = "Daggerfall Unity";
     public const string DaggerfallUnityStatus = "pre-alpha";
 
-    // Last updated versions 11-June-2018
-    public const string DaggerfallUnityVersion = "0.5.358";
+    // Last updated versions 16-June-2018
+    public const string DaggerfallUnityVersion = "0.5.371";
     public const string DaggerfallToolsForUnityVersion = "1.7.4";
     
-    public const string RecommendedUnityVersion = "5.5.0f3";
+    public const string RecommendedUnityVersion = "2018.1.2f1";
 }
