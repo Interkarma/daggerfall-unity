@@ -33,6 +33,7 @@ namespace DaggerfallWorkshop
         {
             HeightmapDimension = defaultHeightmapDimension;
             MaxTerrainHeight = 1;
+            MeanTerrainHeightScale = 1;
             OceanElevation = -1;
             BeachElevation = -1;
         }

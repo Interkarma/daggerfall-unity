@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Michael Rauter (Nystul)
 // 
 // Notes:
 //
@@ -43,6 +43,13 @@ namespace DaggerfallWorkshop
         float MaxTerrainHeight { get; set; }
 
         /// <summary>
+        /// Mean scale factor of terrain height. This should return the mean value of the scale factor for terrain heights
+        /// (e.g. multiplication factor of low resolution height map values + multiplication factor of detailed height map values).
+        /// This value can/will be used by terrain-related mods.
+        /// </summary>
+        float MeanTerrainHeightScale { get; set; }        
+
+        /// <summary>
         /// Sea level. Use for clamping min height and texturing with ocean.
         /// </summary>
         float OceanElevation { get; set; }
@@ -51,6 +58,14 @@ namespace DaggerfallWorkshop
         /// Beach line elevation. How far above sea level the beach line extends.
         /// </summary>
         float BeachElevation { get; set; }
+
+        /// <summary>
+        /// get terrain height scale for given x and y position on the world map
+        /// </summary>
+        /// <param name="x">world map x position</param>
+        /// <param name="y">world map y position</param>
+        /// <returns></returns>
+        float TerrainHeightScale(int x, int y);
 
         /// <summary>
         /// Populates a MapPixelData struct using custom height sample generator.
@@ -68,10 +83,14 @@ namespace DaggerfallWorkshop
         protected int defaultHeightmapDimension = 129;
 
         public abstract int Version { get; }
-        public virtual int HeightmapDimension { get; set; }
+        public virtual int HeightmapDimension { get; set; }        
         public virtual float MaxTerrainHeight { get; set; }
+        public virtual float MeanTerrainHeightScale { get; set; }
         public virtual float OceanElevation { get; set; }
         public virtual float BeachElevation { get; set; }
+        
+        //this function may be overriden if terrain sampler implementation creates different height scales for different map pixels
+        public virtual float TerrainHeightScale(int x, int y) { return MeanTerrainHeightScale; } // default implementation returns MeanTerrainHeightScale for every world map position
 
         public abstract void GenerateSamples(ref MapPixelData mapPixel);
     }
