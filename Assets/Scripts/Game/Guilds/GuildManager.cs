@@ -120,6 +120,14 @@ namespace DaggerfallWorkshop.Game.Guilds
             return memberships.ContainsKey(guildGroup);
         }
 
+        public bool GetJoinedGuildOfGuildGroup(FactionFile.GuildGroups guildGroup, out Guild value)
+        {
+            if (memberships.TryGetValue(guildGroup, out value))
+                return true;
+
+            return false;
+        }
+
         public Guild JoinGuild(FactionFile.GuildGroups guildGroup, int buildingFactionId = 0)
         {
             if (memberships.ContainsKey(guildGroup))
