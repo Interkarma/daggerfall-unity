@@ -4,6 +4,10 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Hazelnut
+// Contributors:    Gavin Clayton (interkarma@dfworkshop.net)
+//
+// Notes:
+//
 
 using UnityEngine;
 using DaggerfallWorkshop.Game.UserInterface;
@@ -92,9 +96,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.BackgroundColor = new Color(0, 0, 0, 0.60f);
             NativePanel.BackgroundTexture = baseTexture;
 
-            // Setup buttons
+            // Setup UI
             SetupButtons();
             SetupItemListScrollers();
+
             Refresh();
         }
 
