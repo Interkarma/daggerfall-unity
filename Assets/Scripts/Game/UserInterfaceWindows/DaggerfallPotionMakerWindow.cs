@@ -33,6 +33,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             new Rect(0, 114, 28, 28),   new Rect(56, 114, 28, 28),  new Rect(112, 114, 28, 28)
         };
 
+        Rect cauldronListScrollerRect = new Rect(221, 30, 84, 142);
+        Rect cauldronListRect = new Rect(0, 0, 84, 142);
+
+        static Rect[] cauldronButtonRects = new Rect[]
+        {
+            new Rect(0, 0, 28, 28),     new Rect(56, 0, 28, 28),
+            new Rect(0, 38, 28, 28),    new Rect(56, 38, 28, 28),
+            new Rect(0, 76, 28, 28),    new Rect(56, 76, 28, 28),
+            new Rect(0, 114, 28, 28),   new Rect(56, 114, 28, 28),
+        };
+
 
         #endregion
 
@@ -43,6 +54,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button exitButton;
 
         ItemListScroller ingredientsListScroller;
+        ItemListScroller cauldronListScroller;
 
         #endregion
 
@@ -55,6 +67,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #endregion
 
         List<DaggerfallUnityItem> ingredients = new List<DaggerfallUnityItem>();
+        List<DaggerfallUnityItem> cauldron = new List<DaggerfallUnityItem>();
 
         #region Constructors
 
@@ -93,6 +106,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Refresh();
         }
 
+        public override void OnPop()
+        {
+            // Remove all ingredients from cauldron to restore correct stack sizes
+            while (cauldron.Count > 0)
+                RemoveFromCauldron(cauldron[0]);
+        }
+
         void Refresh()
         {
             // Add ingredient items to list
@@ -105,6 +125,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     ingredients.Add(item);
             }
             ingredientsListScroller.Items = ingredients;
+
+            cauldron.Clear();
+            cauldronListScroller.Items = cauldron;
         }
 
         #endregion
@@ -118,19 +141,29 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void SetupButtons()
         {
+            // Recipes button
+            recipesButton = DaggerfallUI.AddButton(recipesButtonRect, NativePanel);
+            recipesButton.OnMouseClick += RecipesButton_OnMouseClick;
+
+            // Mixing button
+            mixButton = DaggerfallUI.AddButton(mixButtonRect, NativePanel);
+            mixButton.OnMouseClick += MixButton_OnMouseClick;
+
             // Exit button
             exitButton = DaggerfallUI.AddButton(exitButtonRect, NativePanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
         }
 
-        protected void SetupItemListScrollers()
+        void SetupItemListScrollers()
         {
+            // Create misc text label template
             TextLabel miscLabelTemplate = new TextLabel(DaggerfallUI.Instance.Font3)
             {
-                Position = new Vector2(0, ingredientButtonRects[0].height),
+                Position = new Vector2(0, ingredientButtonRects[0].height - 1),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.None
             };
+
             // Setup item list scroller for ingredients
             ingredientsListScroller = new ItemListScroller(4, 3, ingredientsListRect, ingredientButtonRects, miscLabelTemplate, defaultToolTip, 2, 0.8f)
             {
@@ -140,11 +173,87 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             };
             NativePanel.Components.Add(ingredientsListScroller);
             ingredientsListScroller.OnItemClick += IngredientsListScroller_OnItemClick;
+
+            // Setup item list for cauldron, no scrolling
+            cauldronListScroller = new ItemListScroller(4, 2, cauldronListRect, cauldronButtonRects, miscLabelTemplate, defaultToolTip, 2, 1, false)
+            {
+                Position = new Vector2(cauldronListScrollerRect.x, cauldronListScrollerRect.y),
+                Size = new Vector2(cauldronListScrollerRect.width, cauldronListScrollerRect.height),
+                LabelTextHandler = ItemLabelTextHandler
+            };
+            NativePanel.Components.Add(cauldronListScroller);
+            cauldronListScroller.OnItemClick += CauldronListScroller_OnItemClick;
         }
 
         string ItemLabelTextHandler(DaggerfallUnityItem item)
         {
             return item.ItemName.ToUpper();
+        }
+
+        void AddToCauldron(DaggerfallUnityItem item)
+        {
+            if (cauldron.Count < 8)
+            {
+                if (item.stackCount == 1)
+                {
+                    cauldron.Add(item);
+                    ingredients.Remove(item);
+                }
+                else
+                {
+                    item.stackCount--;
+                    DaggerfallUnityItem newItem = item.Clone();
+                    newItem.stackCount = 1;
+                    cauldron.Add(newItem);
+                }
+                ingredientsListScroller.Items = ingredients;
+                cauldronListScroller.Items = cauldron;
+            }
+        }
+
+        void RemoveFromCauldron(DaggerfallUnityItem item)
+        {
+            cauldron.Remove(item);
+            bool stacked = false;
+            foreach (DaggerfallUnityItem checkItem in ingredients)
+            {
+                if (checkItem.ItemGroup == item.ItemGroup && checkItem.GroupIndex == item.GroupIndex)
+                {
+                    checkItem.stackCount++;
+                    stacked = true;
+                    break;
+                }
+            }
+            if (!stacked)
+                ingredients.Add(item);
+
+            ingredientsListScroller.Items = ingredients;
+            cauldronListScroller.Items = cauldron;
+        }
+
+        void MixCauldron()
+        {
+            // TODO: Check recipes and create appropriate potion in player inventory if a match found
+
+            // Remove item from player inventory unless a stack remains.
+            foreach (DaggerfallUnityItem item in cauldron)
+            {
+                bool stacked = false;
+                foreach (DaggerfallUnityItem checkItem in ingredients)
+                {
+                    if (checkItem.ItemGroup == item.ItemGroup && checkItem.GroupIndex == item.GroupIndex)
+                    {
+                        stacked = true;
+                        break;
+                    }
+                }
+                if (!stacked)
+                    GameManager.Instance.PlayerEntity.Items.RemoveItem(item);
+            }
+            // Empty cauldron and update list displays
+            cauldron.Clear();
+            ingredientsListScroller.Items = ingredients;
+            cauldronListScroller.Items = cauldron;
         }
 
         #endregion
@@ -153,20 +262,26 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected virtual void IngredientsListScroller_OnItemClick(DaggerfallUnityItem item)
         {
-            Debug.Log("click");
+            AddToCauldron(item);
         }
 
-        private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void CauldronListScroller_OnItemClick(DaggerfallUnityItem item)
         {
-            CloseWindow();
+            RemoveFromCauldron(item);
         }
 
         private void RecipesButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            // TODO: Present a list of recipes player has.
             CloseWindow();
         }
 
         private void MixButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            MixCauldron();
+        }
+
+        private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             CloseWindow();
         }
