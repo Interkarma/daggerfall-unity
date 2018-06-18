@@ -198,23 +198,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUI.MessageBox(350);
             }
             // Check for magicka restoration (sorcerers)
-            if (guild.GetFactionId() == (int)FactionFile.FactionIDs.The_Mages_Guild 
-                && playerEntity.Career.NoRegenSpellPoints)
+            if (guild.FreeMagickaRecharge() && playerEntity.CurrentMagicka < playerEntity.MaxMagicka)
             {
-                if (playerEntity.CurrentMagicka < playerEntity.MaxMagicka)
-                {
-                    DaggerfallMessageBox msgBox = new DaggerfallMessageBox(uiManager, this);
-                    msgBox.SetText("It is customary for the guild to recharge the magicka of sorcerors.");
-                    //TODO: find ID for GetRandomTokens to replace SetTextMessage above.  
-                    // There's one other message that gets used: 
-                    // "I see your magicka is low. You sorcerors really need to be more careful. Here, let me recharge you."  
-                    //msgBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRandomTokens(RefillMagickaID));
-                    msgBox.ClickAnywhereToClose = true;
-                    msgBox.Show();
+                DaggerfallMessageBox msgBox = new DaggerfallMessageBox(uiManager, this);
+                msgBox.SetText("It is customary for the guild to recharge the magicka of sorcerors.");
+                //TODO: find ID for GetRandomTokens to replace SetTextMessage above.  
+                msgBox.ClickAnywhereToClose = true;
+                msgBox.Show();
 
-                    // Refill magicka
-                    playerEntity.SetMagicka(playerEntity.MaxMagicka);
-                }
+                // Refill magicka
+                playerEntity.SetMagicka(playerEntity.MaxMagicka);
             }
         }
 
