@@ -536,22 +536,26 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void ItemsUpButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            itemListScrollBar.ScrollIndex--;
+            if (scroller)
+                itemListScrollBar.ScrollIndex--;
         }
 
         void ItemsDownButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            itemListScrollBar.ScrollIndex++;
+            if (scroller)
+                itemListScrollBar.ScrollIndex++;
         }
 
         void ItemsListPanel_OnMouseScrollUp(BaseScreenComponent sender)
         {
-            itemListScrollBar.ScrollIndex--;
+            if (scroller)
+                itemListScrollBar.ScrollIndex--;
         }
 
         void ItemsListPanel_OnMouseScrollDown(BaseScreenComponent sender)
         {
-            itemListScrollBar.ScrollIndex++;
+            if (scroller)
+                itemListScrollBar.ScrollIndex++;
         }
 
         #endregion
