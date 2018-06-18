@@ -220,6 +220,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ServiceButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            if (guild.GetFactionId() == (int)FactionFile.FactionIDs.The_Mages_Guild 
+                && GameManager.Instance.PlayerEntity.Career.NoRegenSpellPoints)
+            {
+                if (GameManager.Instance.PlayerEntity.CurrentMagicka < GameManager.Instance.PlayerEntity.MaxMagicka)
+                {
+                    DaggerfallMessageBox msgBox = new DaggerfallMessageBox(uiManager, this);
+                    msgBox.SetText("It is customary for the guild to recharge the magicka of sorcerors.");
+                    //TODO: find ID for GetRandomTokens to replace SetTextMessage above.  
+                    // There's one other message that gets used: 
+                    // "I see your magicka is low. You sorcerors really need to be more careful. Here, let me recharge you."  
+                    //msgBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRandomTokens(RefillMagickaID));
+                    msgBox.ClickAnywhereToClose = true;
+                    msgBox.Show();
+
+                    // Refill magicka
+                    GameManager.Instance.PlayerEntity.CurrentMagicka = GameManager.Instance.PlayerEntity.MaxMagicka;
+                }
+            }
             // Check access to service
             if (!guild.CanAccessService(service))
             {
