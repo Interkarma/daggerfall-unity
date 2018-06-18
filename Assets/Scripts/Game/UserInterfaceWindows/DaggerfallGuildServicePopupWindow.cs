@@ -220,10 +220,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ServiceButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            PlayerEntity player = GameManager.Instance.PlayerEntity;
             if (guild.GetFactionId() == (int)FactionFile.FactionIDs.The_Mages_Guild 
-                && GameManager.Instance.PlayerEntity.Career.NoRegenSpellPoints)
+                && player.Career.NoRegenSpellPoints)
             {
-                if (GameManager.Instance.PlayerEntity.CurrentMagicka < GameManager.Instance.PlayerEntity.MaxMagicka)
+                if (player.CurrentMagicka < player.MaxMagicka)
                 {
                     DaggerfallMessageBox msgBox = new DaggerfallMessageBox(uiManager, this);
                     msgBox.SetText("It is customary for the guild to recharge the magicka of sorcerors.");
@@ -235,7 +236,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     msgBox.Show();
 
                     // Refill magicka
-                    GameManager.Instance.PlayerEntity.CurrentMagicka = GameManager.Instance.PlayerEntity.MaxMagicka;
+                    player.CurrentMagicka = player.MaxMagicka;
                 }
             }
             // Check access to service
