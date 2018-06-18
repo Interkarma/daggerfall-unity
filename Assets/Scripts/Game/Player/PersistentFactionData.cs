@@ -15,6 +15,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Save;
+using DaggerfallWorkshop.Game.Guilds;
 
 namespace DaggerfallWorkshop.Game.Player
 {
@@ -34,10 +35,9 @@ namespace DaggerfallWorkshop.Game.Player
         const int minPower = 1;
         const int maxPower = 100;
 
-        // TEMP: Faction IDs for curated quest givers
-        public const int fightersGuildQuestorFactionID = (int)FactionFile.FactionIDs.Fighter_Questers;
-        public const int magesGuildQuestorFactionID = (int)FactionFile.FactionIDs.The_Mercenary_Mages;
-
+        static HashSet<GuildNpcServices> questorIds = new HashSet<GuildNpcServices>()
+            { GuildNpcServices.MG_Quests, GuildNpcServices.FG_Quests, GuildNpcServices.TG_Quests, GuildNpcServices.DB_Quests, GuildNpcServices.T_Quests, GuildNpcServices.KO_Quests };
+        
         Dictionary<int, FactionFile.FactionData> factionDict = new Dictionary<int, FactionFile.FactionData>();
         Dictionary<string, int> factionNameToIDDict = new Dictionary<string, int>();
 
@@ -343,96 +343,67 @@ namespace DaggerfallWorkshop.Game.Player
             if (factionDict.ContainsKey(factionID))
             {
                 FactionFile.FactionData factionData = factionDict[factionID];
+
                 if (!propagate)
                 {
                     factionData.rep = Mathf.Clamp(factionData.rep + amount, minReputation, maxReputation);
                     factionDict[factionID] = factionData;
                 }
-
-                if (propagate)
+                else
                 {
-                    Guilds.GuildManager guildManager = GameManager.Instance.GuildManager;
-                    Guilds.Guild guild;
-                    int newFactionID = 0;
-
-                    // If factionID is that of the Temple Missionaries, use the faction data of the temple the player belongs to, if it exists
-                    if (factionID == (int)FactionFile.FactionIDs.Temple_Missionaries)
+                    // If a knightly order faction, propagate rep for the generic order only.
+                    // (this is what classic does - assume due to all affiliated nobles being aloof from such matters..)
+                    if (factionData.ggroup == (int)FactionFile.GuildGroups.KnightlyOrder)
                     {
-                        if (guildManager.GetJoinedGuildOfGuildGroup(FactionFile.GuildGroups.HolyOrder, out guild))
+                        ChangeReputation(factionID, amount, false);
+                        // Note: classic doesn't propagate to the generic child factions (smiths etc) which is an (assumed) bug so is done here.
+                        ChangeReputation((int)FactionFile.FactionIDs.Generic_Knightly_Order, amount, true);
+                    }
+                    else
+                    {
+                        // Navigate up to the root faction
+                        while (factionDict.ContainsKey(factionData.parent))
+                            factionData = factionDict[factionData.parent];
+
+                        // Propagate reputation changes for all children of the root
+                        if (factionData.children != null)
+                            PropagateReputationChange(factionData, factionID, amount);
+
+                        // Change ally and enemy faction reputations
+                        int[] allies = { factionData.ally1, factionData.ally2, factionData.ally3 };
+                        int[] enemies = { factionData.enemy1, factionData.enemy2, factionData.enemy3 };
+                        for (int i = 0; i < 3; ++i)
                         {
-                            newFactionID = guild.GetFactionId();
-                            if (factionDict.ContainsKey(newFactionID))
-                                factionData = factionDict[newFactionID];
+                            ChangeReputation(allies[i], amount / 2);
+                            ChangeReputation(enemies[i], -amount / 2);
                         }
-                    }
 
-                    // Move up to the parent faction. If the Dark Brotherhood is found along the way (Dark Brotherhood has parent factions), stop there and change reputation.
-                    while (factionDict.ContainsKey(factionData.parent))
-                    {
-                        if (factionData.id == (int)FactionFile.FactionIDs.The_Dark_Brotherhood)
-                        {
-                            ChangeReputation(factionData.id, amount, false);
-                            break;
-                        }
-                        factionData = factionDict[factionData.parent];
-                    }
-
-                    // If we are at the top parent, and it is not the Generic Knightly Order faction, change reputation
-                    if (!factionDict.ContainsKey(factionData.parent) && factionData.id != (int)FactionFile.FactionIDs.Generic_Knightly_Order)
-                        ChangeReputation(factionData.id, amount, false);
-
-                    // Handle Generic Knightly Order and specific knightly order if player belong to one
-                    if (factionData.id == (int)FactionFile.FactionIDs.Generic_Knightly_Order)
-                    {
-                        // Change reputation for Generic Knightly Order
-                        ChangeReputation(factionData.id, amount, false);
-
-                        if (guildManager.GetJoinedGuildOfGuildGroup(FactionFile.GuildGroups.KnightlyOrder, out guild))
-                            newFactionID = guild.GetFactionId();
-
-                        // Change reputation for specific knightly order if player belongs to one
-                        // Note: Generic Knightly Order will get the reputation mod again if the player doesn't belong to a knightly order
-                        if (factionDict.ContainsKey(newFactionID))
-                            ChangeReputation(factionData.id, amount, false);
-                    }
-
-                    // Do half of the reputation change for all children of the parent, and the full change if it is the specific faction we are calling for
-                    if (factionData.children != null)
-                        ChangeReputationOfChildren(factionData.children, factionID, amount);
-
-                    // Change ally and enemy faction reputations
-                    int[] allies = { factionData.ally1, factionData.ally2, factionData.ally3 };
-                    int[] enemies = { factionData.enemy1, factionData.enemy2, factionData.enemy3 };
-
-                    for (int i = 0; i < 3; ++i)
-                    {
-                        ChangeReputation(allies[i], amount / 2, false);
-                        ChangeReputation(enemies[i], -amount / 2, false);
+                        // If a temple deity faction, also propagate rep for generic temple faction hierarchy.
+                        if (factionData.type == (int)FactionFile.FactionTypes.God)
+                            ChangeReputation((int)FactionFile.FactionIDs.Generic_Temple, amount, true);
                     }
                 }
-
                 return true;
             }
-
             return false;
         }
 
-        public void ChangeReputationOfChildren(List<int> children, int factionIDForFullChange, int amount)
+        /// <summary>
+        /// Recursively propagate reputation changes to affiliated factions using parent/child faction relationships.
+        /// </summary>
+        /// <param name="factionData">Faction data of parent faction node to change rep for it and children.</param>
+        /// <param name="factionID">Faction ID of faction where rep change was initiated.</param>
+        /// <param name="amount">Amount to change reputation. (half applied to all but init & questor factions)</param>
+        private void PropagateReputationChange(FactionFile.FactionData factionData, int factionID, int amount)
         {
-            foreach (int id in children)
-            {
-                if (id == factionIDForFullChange)
-                    ChangeReputation(id, amount, false);
-                else
-                    ChangeReputation(id, amount / 2, false);
+            // Do full reputation change for specific faction & questor npcs, and half reputation change for all other factions in hierarchy.
+            ChangeReputation(factionData.id, (factionData.id == factionID || questorIds.Contains((GuildNpcServices)factionData.id)) ? amount : amount / 2);
 
-                if (factionDict.ContainsKey(id))
-                {
-                    FactionFile.FactionData factionData = factionDict[id];
-                    if (factionData.children != null)
-                        ChangeReputationOfChildren(factionData.children, factionIDForFullChange, amount);
-                }
-            }
+            // Recursively propagate reputation changes to all child factions.
+            if (factionData.children != null)
+                foreach (int id in factionData.children)
+                    if (factionDict.ContainsKey(id))
+                        PropagateReputationChange(factionDict[id], factionID, amount);
         }
 
         /// <summary>
