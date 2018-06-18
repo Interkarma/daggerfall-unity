@@ -338,6 +338,10 @@ namespace DaggerfallWorkshop.Game.Player
         /// <summary>
         /// Change reputation value by amount. Propagation is matched to classic.
         /// </summary>
+        /// <param name="factionID">Faction ID of faction initiate reputation change.</param>
+        /// <param name="amount">Amount to change reputation, positive or negative.</param>
+        /// <param name="propagate">True if reputation change should propagate to affiliated factions and allies/enemies.</param>
+        /// <returns></returns>
         public bool ChangeReputation(int factionID, int amount, bool propagate = false)
         {
             if (factionDict.ContainsKey(factionID))
@@ -351,7 +355,7 @@ namespace DaggerfallWorkshop.Game.Player
                 }
                 else
                 {
-                    // If a knightly order faction, propagate rep for the generic order only.
+                    // If a knightly order faction, propagate rep for the generic order only
                     // (this is what classic does - assume due to all affiliated nobles being aloof from such matters..)
                     if (factionData.ggroup == (int)FactionFile.GuildGroups.KnightlyOrder)
                     {
@@ -378,7 +382,7 @@ namespace DaggerfallWorkshop.Game.Player
                             ChangeReputation(enemies[i], -amount / 2);
                         }
 
-                        // If a temple deity faction, also propagate rep for generic temple faction hierarchy.
+                        // If a temple deity faction, also propagate rep for generic temple faction hierarchy
                         if (factionData.type == (int)FactionFile.FactionTypes.God)
                             ChangeReputation((int)FactionFile.FactionIDs.Generic_Temple, amount, true);
                     }
@@ -393,13 +397,13 @@ namespace DaggerfallWorkshop.Game.Player
         /// </summary>
         /// <param name="factionData">Faction data of parent faction node to change rep for it and children.</param>
         /// <param name="factionID">Faction ID of faction where rep change was initiated.</param>
-        /// <param name="amount">Amount to change reputation. (half applied to all but init & questor factions)</param>
+        /// <param name="amount">Amount to change reputation. (half applied to all but init and questor factions)</param>
         private void PropagateReputationChange(FactionFile.FactionData factionData, int factionID, int amount)
         {
-            // Do full reputation change for specific faction & questor npcs, and half reputation change for all other factions in hierarchy.
+            // Do full reputation change for specific faction & questor npcs, and half reputation change for all other factions in hierarchy
             ChangeReputation(factionData.id, (factionData.id == factionID || questorIds.Contains((GuildNpcServices)factionData.id)) ? amount : amount / 2);
 
-            // Recursively propagate reputation changes to all child factions.
+            // Recursively propagate reputation changes to all child factions
             if (factionData.children != null)
                 foreach (int id in factionData.children)
                     if (factionDict.ContainsKey(id))
