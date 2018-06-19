@@ -59,6 +59,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int InsufficientRankId = 3100;
         const int TooGenerousId = 702;
         const int DonationThanksId = 703;
+        const int SorcerorMagickaRecharge = 465;
 
         Texture2D baseTexture;
         PlayerEntity playerEntity;
@@ -201,8 +202,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (guild.FreeMagickaRecharge() && playerEntity.CurrentMagicka < playerEntity.MaxMagicka)
             {
                 DaggerfallMessageBox msgBox = new DaggerfallMessageBox(uiManager, this);
-                msgBox.SetText("It is customary for the guild to recharge the magicka of sorcerors.");
-                //TODO: find ID for GetRandomTokens to replace SetTextMessage above.  
+                msgBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRandomTokens(SorcerorMagickaRecharge));
                 msgBox.ClickAnywhereToClose = true;
                 msgBox.Show();
 
