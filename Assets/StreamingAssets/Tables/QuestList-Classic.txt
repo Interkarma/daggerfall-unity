@@ -202,7 +202,7 @@ K0C30Y03, Merchants, N, 30,
 -P0B00L04, Vampires, M, 0,
 -P0B00L06, Vampires, M, 0,
 -P0B01L02, Vampires, M, 1,
--P0B10L07, Vampires, M, 10,\
+-P0B10L07, Vampires, M, 10,
 -P0B10L08, Vampires, M, 10, In vanilla DF P0B10L08.QBN file is missing but P0B1XL08.QBN is used instead.
 -P0B10L10, Vampires, M, 10,
 -P0B1XL08, Vampires, M, 1X, BROKEN. QBN file is a counterpart of P0B10L08.QRC
@@ -237,7 +237,7 @@ R0C20Y07, Nobility, N, 20,
 R0C20Y22, Nobility, N, 20,
 R0C30Y25, Nobility, N, 30,
 -R0C40Y23, Nobility, N, 40, BROKEN. QRC file is missing in DF+DFQFIX
--R0C4XY23, Nobility, N, 4X, Needs support for until _thing_ perform:
+-R0C4XY23, Nobility, N, 4X, Needs support for until _thing_ performed:
 R0C60Y24, Nobility, N, 60,
 
 -- Daedra Princes
