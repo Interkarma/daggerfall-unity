@@ -116,7 +116,7 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public override bool FreeMagickaRecharge()
         {
-            if (GameManager.Instance.PlayerEntity.Career.NoRegenSpellPoints)
+            if (IsMember() && GameManager.Instance.PlayerEntity.Career.NoRegenSpellPoints)
                 return true;
             return false;
         }
