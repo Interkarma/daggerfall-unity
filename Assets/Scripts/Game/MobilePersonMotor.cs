@@ -212,13 +212,10 @@ namespace DaggerfallWorkshop.Game
             bool withinIdleDistance = (distanceToPlayer < idleDistance);
             bool playerStandingStill = GameManager.Instance.PlayerMotor.IsStandingStill;
             bool sheathed = GameManager.Instance.WeaponManager.Sheathed;
-            //bool enemiesNearby = GameManager.Instance.AreEnemiesNearby();
-            // NPC shouldn't stop to talk if any of these conditions are true:
-            // TODO: Add these conditions to wantsToStop:
-            // player in beast form
-            // player is invisible
+            bool invisible = GameManager.Instance.PlayerEntity.IsInvisible;
+            bool inBeastForm = GameManager.Instance.PlayerEntity.IsInBeastForm;
 
-            bool wantsToStop = playerStandingStill && withinIdleDistance && sheathed;
+            bool wantsToStop = playerStandingStill && withinIdleDistance && sheathed && !invisible && !inBeastForm;
 
             // greatly reduce # of calls to AreEnemiesNearby() by short-circuit evaluation
             if (wantsToStop && !GameManager.Instance.AreEnemiesNearby())
