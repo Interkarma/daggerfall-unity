@@ -400,8 +400,8 @@ namespace DaggerfallWorkshop.Game.Player
         /// <param name="amount">Amount to change reputation. (half applied to all but init and questor factions)</param>
         public void PropagateReputationChange(FactionFile.FactionData factionData, int factionID, int amount)
         {
-            // Do full reputation change for specific faction & questor npcs, and half reputation change for all other factions in hierarchy
-            ChangeReputation(factionData.id, (factionData.id == factionID || questorIds.Contains((GuildNpcServices)factionData.id)) ? amount : amount / 2);
+            // Do full reputation change for specific faction, a root parent, and questor npcs. Then half reputation change for all other factions in hierarchy
+            ChangeReputation(factionData.id, (factionData.id == factionID || factionData.parent == 0 || questorIds.Contains((GuildNpcServices)factionData.id)) ? amount : amount / 2);
 
             // Recursively propagate reputation changes to all child factions
             if (factionData.children != null)
