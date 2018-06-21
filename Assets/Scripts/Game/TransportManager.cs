@@ -86,7 +86,7 @@ namespace DaggerfallWorkshop.Game
             ridingAudioSource.loop = false;
             ridingAudioSource.dopplerLevel = 0f;
             ridingAudioSource.spatialBlend = 0f;
-            ridingAudioSource.volume = RidingVolumeScale;
+            ridingAudioSource.volume = RidingVolumeScale * DaggerfallUnity.Settings.SoundVolume;
 
             neighClip = dfAudioSource.GetAudioClip((int) horseSound);
 
@@ -110,6 +110,8 @@ namespace DaggerfallWorkshop.Game
             // Handle horse & cart riding animation & sounds.
             if (mode == TransportModes.Horse || mode == TransportModes.Cart)
             {
+                // refresh audio volume to reflect global changes
+                ridingAudioSource.volume = RidingVolumeScale * DaggerfallUnity.Settings.SoundVolume;
                 if (playerMotor.IsStandingStill || !playerMotor.IsGrounded || GameManager.IsGamePaused)
                 {   // Stop animation frames and sound playing.
                     lastFrameTime = 0;
@@ -149,7 +151,7 @@ namespace DaggerfallWorkshop.Game
                 // Time for a whinney?
                 if (neighTime < Time.time)
                 {
-                    dfAudioSource.AudioSource.PlayOneShot(neighClip, RidingVolumeScale);
+                    dfAudioSource.AudioSource.PlayOneShot(neighClip, RidingVolumeScale * DaggerfallUnity.Settings.SoundVolume);
                     neighTime = Time.time + Random.Range(2, 30);
                 }
             }
