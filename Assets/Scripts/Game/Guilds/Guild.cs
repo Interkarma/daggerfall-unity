@@ -193,6 +193,11 @@ namespace DaggerfallWorkshop.Game.Guilds
             return false;
         }
 
+        public virtual bool FreeMagickaRecharge()
+        {
+            return false;
+        }
+
         public virtual int ReducedRepairCost(int price)
         {
             return price;

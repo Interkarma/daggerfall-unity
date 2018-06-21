@@ -177,13 +177,16 @@ namespace DaggerfallWorkshop.Game.Formulas
         }
 
         // Calculate how many spell points the player should recover per hour of rest
-        public static int CalculateSpellPointRecoveryRate(int maxSpellPoints)
+        public static int CalculateSpellPointRecoveryRate(PlayerEntity player)
         {
             Formula_1i del;
             if (formula_1i.TryGetValue("HealingRateModifier", out del))
-                return del(maxSpellPoints);
+                return del(player.MaxMagicka);
 
-            return Mathf.Max((int)Mathf.Floor(maxSpellPoints / 8), 1);
+            if (player.Career.NoRegenSpellPoints)
+                return 0;
+
+            return Mathf.Max((int)Mathf.Floor(player.MaxMagicka / 8), 1);
         }
 
         // Calculate chance of successfully lockpicking a door in an interior (an animating door). If this is higher than a random number between 0 and 100 (inclusive), the lockpicking succeeds.

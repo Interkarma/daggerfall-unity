@@ -1785,7 +1785,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 DaggerfallUnity.Instance.WorldTime.Now.RaiseTime(1 * DaggerfallDateTime.SecondsPerHour);
                 int healthRecoveryRate = FormulaHelper.CalculateHealthRecoveryRate(this);
                 int fatigueRecoveryRate = FormulaHelper.CalculateFatigueRecoveryRate(MaxFatigue);
-                int spellPointRecoveryRate = FormulaHelper.CalculateSpellPointRecoveryRate(MaxMagicka);
+                int spellPointRecoveryRate = FormulaHelper.CalculateSpellPointRecoveryRate(this);
 
                 CurrentHealth += healthRecoveryRate;
                 CurrentFatigue += fatigueRecoveryRate;

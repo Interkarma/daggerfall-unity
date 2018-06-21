@@ -114,6 +114,13 @@ namespace DaggerfallWorkshop.Game.Guilds
             return (rank >= 6);
         }
 
+        public override bool FreeMagickaRecharge()
+        {
+            if (IsMember() && GameManager.Instance.PlayerEntity.Career.NoRegenSpellPoints)
+                return true;
+            return false;
+        }
+
         #endregion
 
         #region Service Access:

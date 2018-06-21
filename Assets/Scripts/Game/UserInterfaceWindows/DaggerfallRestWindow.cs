@@ -414,7 +414,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             int healthRecoveryRate = FormulaHelper.CalculateHealthRecoveryRate(playerEntity);
             int fatigueRecoveryRate = FormulaHelper.CalculateFatigueRecoveryRate(playerEntity.MaxFatigue);
-            int spellPointRecoveryRate = FormulaHelper.CalculateSpellPointRecoveryRate(playerEntity.MaxMagicka);
+            int spellPointRecoveryRate = FormulaHelper.CalculateSpellPointRecoveryRate(playerEntity);
 
             playerEntity.CurrentHealth += healthRecoveryRate;
             playerEntity.CurrentFatigue += fatigueRecoveryRate;
@@ -432,7 +432,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // For example, sorcerers cannot recover magicka from resting
             if (playerEntity.CurrentHealth == playerEntity.MaxHealth &&
                 playerEntity.CurrentFatigue == playerEntity.MaxFatigue &&
-                playerEntity.CurrentMagicka == playerEntity.MaxMagicka)
+                (playerEntity.CurrentMagicka == playerEntity.MaxMagicka || playerEntity.Career.NoRegenSpellPoints))
             {
                 return true;
             }

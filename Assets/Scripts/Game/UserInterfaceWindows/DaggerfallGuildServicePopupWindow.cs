@@ -59,6 +59,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int InsufficientRankId = 3100;
         const int TooGenerousId = 702;
         const int DonationThanksId = 703;
+        const int SorcerorMagickaRecharge = 465;
 
         Texture2D baseTexture;
         PlayerEntity playerEntity;
@@ -197,7 +198,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 playerEntity.SetHealth(playerEntity.MaxHealth);
                 DaggerfallUI.MessageBox(350);
             }
-            // TODO: Check for magicka restoration (sorcerers)
+            // Check for magicka restoration (sorcerers)
+            if (guild.FreeMagickaRecharge() && playerEntity.CurrentMagicka < playerEntity.MaxMagicka)
+            {
+                DaggerfallMessageBox msgBox = new DaggerfallMessageBox(uiManager, this);
+                msgBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRandomTokens(SorcerorMagickaRecharge));
+                msgBox.ClickAnywhereToClose = true;
+                msgBox.Show();
+
+                // Refill magicka
+                playerEntity.SetMagicka(playerEntity.MaxMagicka);
+            }
         }
 
         #endregion
