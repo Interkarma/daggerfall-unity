@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -882,7 +882,7 @@ namespace DaggerfallConnect.Arena2
         {
             // Unmodded faction.txt contains multiples of same id
             // This resolver counter is used to give a faction a unique id if needed
-            int resolverId = 1000;
+            int resolverId = 980;
 
             // Clear existing dictionary
             factionDict.Clear();
