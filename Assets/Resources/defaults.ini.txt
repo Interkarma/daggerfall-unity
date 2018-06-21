@@ -78,3 +78,4 @@ LypyL_GameConsole=True
 LypyL_ModSystem=True
 MeshAndTextureReplacement=False
 CompressModdedTextures=True
+NearDeathWarning=True
