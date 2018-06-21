@@ -365,15 +365,7 @@ namespace DaggerfallWorkshop.Game.Player
                     }
                     else
                     {
-                        // Navigate up to the root faction
-                        while (factionDict.ContainsKey(factionData.parent))
-                            factionData = factionDict[factionData.parent];
-
-                        // Propagate reputation changes for all children of the root
-                        if (factionData.children != null)
-                            PropagateReputationChange(factionData, factionID, amount);
-
-                        // Change ally and enemy faction reputations
+                        // Change ally and enemy faction reputations first (for guild faction or social questgiver npc)
                         int[] allies = { factionData.ally1, factionData.ally2, factionData.ally3 };
                         int[] enemies = { factionData.enemy1, factionData.enemy2, factionData.enemy3 };
                         for (int i = 0; i < 3; ++i)
@@ -381,6 +373,14 @@ namespace DaggerfallWorkshop.Game.Player
                             ChangeReputation(allies[i], amount / 2);
                             ChangeReputation(enemies[i], -amount / 2);
                         }
+
+                        // Navigate up to the root faction (treat Dark Brotherhood faction as a root faction)
+                        while (factionDict.ContainsKey(factionData.parent) && factionData.id != (int)FactionFile.FactionIDs.The_Dark_Brotherhood)
+                            factionData = factionDict[factionData.parent];
+
+                        // Propagate reputation changes for all children of the root
+                        if (factionData.children != null)
+                            PropagateReputationChange(factionData, factionID, amount);
 
                         // If a temple deity faction, also propagate rep for generic temple faction hierarchy
                         if (factionData.type == (int)FactionFile.FactionTypes.God)
