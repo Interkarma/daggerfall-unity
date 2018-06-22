@@ -175,7 +175,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Enums
 
-        protected enum TabPages
+        public enum TabPages
         {
             WeaponsAndArmor,
             MagicItems,
@@ -710,28 +710,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Select new tab page
             selectedTabPage = tabPage;
 
-            // Clear all button selections
-            weaponsAndArmorButton.BackgroundTexture = weaponsAndArmorNotSelected;
-            magicItemsButton.BackgroundTexture = magicItemsNotSelected;
-            clothingAndMiscButton.BackgroundTexture = clothingAndMiscNotSelected;
-            ingredientsButton.BackgroundTexture = ingredientsNotSelected;
+            // Set all buttons to appropriate state
+            weaponsAndArmorButton.BackgroundTexture = (tabPage == TabPages.WeaponsAndArmor) ? weaponsAndArmorSelected : weaponsAndArmorNotSelected;
+            magicItemsButton.BackgroundTexture = (tabPage == TabPages.MagicItems) ? magicItemsSelected : magicItemsNotSelected;
+            clothingAndMiscButton.BackgroundTexture = (tabPage == TabPages.ClothingAndMisc) ? clothingAndMiscSelected : clothingAndMiscNotSelected;
+            ingredientsButton.BackgroundTexture = (tabPage == TabPages.Ingredients) ? ingredientsSelected : ingredientsNotSelected;
 
-            // Set new button selection texture background
-            switch (tabPage)
-            {
-                case TabPages.WeaponsAndArmor:
-                    weaponsAndArmorButton.BackgroundTexture = weaponsAndArmorSelected;
-                    break;
-                case TabPages.MagicItems:
-                    magicItemsButton.BackgroundTexture = magicItemsSelected;
-                    break;
-                case TabPages.ClothingAndMisc:
-                    clothingAndMiscButton.BackgroundTexture = clothingAndMiscSelected;
-                    break;
-                case TabPages.Ingredients:
-                    ingredientsButton.BackgroundTexture = ingredientsSelected;
-                    break;
-            }
             // Clear info panel
             if (itemInfoPanelLabel != null)
                 itemInfoPanelLabel.SetText(new TextFile.Token[0]);

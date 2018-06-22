@@ -143,9 +143,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #endregion
 
-            #region Private Methods
+        #region Private Methods
 
-            void LoadTextures()
+        void LoadTextures()
         {
             ImageData baseData = ImageReader.GetImageData(baseTextureName);
             baseTexture = baseData.texture;
