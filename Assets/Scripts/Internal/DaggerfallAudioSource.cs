@@ -91,6 +91,8 @@ namespace DaggerfallWorkshop
                 bool playerInRange = (Vector3.Distance(transform.position, player.transform.position) <= audioSource.maxDistance);
 
                 audioSource.enabled = playerInRange;
+                // Allows volume to be adjusted without reloading game.
+                audioSource.volume = DaggerfallUnity.Settings.SoundVolume;
 
                 // Handle random play
                 if (audioSource.enabled && playRandomly)
@@ -270,7 +272,7 @@ namespace DaggerfallWorkshop
 
             // Set spatial blend
             audioSource.spatialBlend = spatialBlend;
-            audioSource.volume = DaggerfallUnity.Settings.SoundVolume;
+
             // Apply preset
             switch (Preset)
             {
