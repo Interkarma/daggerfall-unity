@@ -564,7 +564,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     // Change reputation
                     int rep = Math.Abs(playerEntity.FactionData.GetReputation(factionId));
                     if (UnityEngine.Random.Range(1, 101) <= (2 * amount / rep + 1))
-                        playerEntity.FactionData.ChangeReputation(factionId, 1, true); // Does not propagate in classic
+                        playerEntity.FactionData.ChangeReputation(factionId, 1); // Does not propagate in classic
 
                     // Show thanks message
                     DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);

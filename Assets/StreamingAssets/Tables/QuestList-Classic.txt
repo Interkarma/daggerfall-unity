@@ -237,7 +237,7 @@ R0C20Y07, Nobility, N, 20,
 R0C20Y22, Nobility, N, 20,
 R0C30Y25, Nobility, N, 30,
 -R0C40Y23, Nobility, N, 40, BROKEN. QRC file is missing in DF+DFQFIX
-R0C4XY23, Nobility, N, 4X,
+-R0C4XY23, Nobility, N, 4X, Needs support for until _thing_ performed:
 R0C60Y24, Nobility, N, 60,
 
 -- Daedra Princes

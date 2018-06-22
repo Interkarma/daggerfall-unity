@@ -152,7 +152,7 @@ namespace DaggerfallWorkshop.Game.Utility
         {
             int travelTimeInHours = (travelTimeInMinutes + 59) / 60;
             int cost = 0;
-            if (sleepModeInn)
+            if (sleepModeInn && !GameManager.Instance.GuildManager.GetGuild(FactionFile.GuildGroups.KnightlyOrder).FreeTavernRooms())
                 cost = 5 * ((travelTimeInHours - pixelsTraveledOnOcean) / 24) + 5;
             if ((pixelsTraveledOnOcean > 0) && !hasShip && travelShip)
                 cost += 25 * (pixelsTraveledOnOcean / 24 + 1);

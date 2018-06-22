@@ -263,6 +263,8 @@ namespace DaggerfallWorkshop.Game.Guilds
                     return IsMember();
                 case GuildServices.Identify:
                     return true;
+                case GuildServices.BuySpells:
+                    return true;
                 case GuildServices.Donate:
                     return true;
                 case GuildServices.CureDisease:
