@@ -46,10 +46,10 @@ namespace AssetInjection
         [Tooltip("Index of emissive material for the MeshRender.")]
         public uint materialIndex;
 
-        //[ColorUsage(false, true, 0f, 99f, 0.125f, 3f)]
+        [ColorUsage(false, true)]
         public Color dayColor;
 
-        //[ColorUsage(false, true, 0f, 99f, 0.125f, 3f)]
+        [ColorUsage(false, true)]
         public Color nightColor;
 
         #endregion
