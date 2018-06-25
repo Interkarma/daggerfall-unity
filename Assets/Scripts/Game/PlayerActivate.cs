@@ -79,7 +79,7 @@ namespace DaggerfallWorkshop.Game
             playerGPS = GetComponent<PlayerGPS>();
             playerEnterExit = GetComponent<PlayerEnterExit>();
             mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
-            playerLayerMask = LayerMask.NameToLayer("Player");
+            playerLayerMask = ~(1 << LayerMask.NameToLayer("Player"));
         }
 
         void Update()
