@@ -103,6 +103,7 @@ namespace DaggerfallWorkshop
         bool updateLocatations;
 
         DaggerfallLocation currentPlayerLocationObject;
+        int playerTilemapIndex = -1;
 
         #endregion
 
@@ -164,6 +165,21 @@ namespace DaggerfallWorkshop
         public DaggerfallLocation CurrentPlayerLocationObject
         {
             get { return currentPlayerLocationObject; }
+        }
+
+        /// <summary>
+        /// Gets index of tile under player at their current world position.
+        /// There are many different tiles a player can stand on, including corner tiles for roads, etc.
+        /// The main tile types in nature are:
+        /// -1 = Nothing/Error
+        ///  0 = Water
+        ///  1 = Dirt (snow in winter set)
+        ///  2 = Grass (snow in winter set)
+        ///  3 = Stone (snow in winter set)
+        /// </summary>
+        public int PlayerTileMapIndex
+        {
+            get { return playerTilemapIndex; }
         }
 
         #endregion
@@ -284,6 +300,40 @@ namespace DaggerfallWorkshop
 
             // Update last player position
             lastPlayerPos = playerPos;
+
+            // Update index of terrain tile beneath player in world
+            UpdatePlayerTerrainTileIndex();
+        }
+
+        void UpdatePlayerTerrainTileIndex()
+        {
+            playerTilemapIndex = -1;
+
+            // Player must be above a known terrain object
+            DaggerfallTerrain playerTerrain = GetPlayerTerrain();
+            if (!playerTerrain)
+                return;
+
+            // The terrain must have a valid tilemap array
+            if (playerTerrain.TileMap == null || playerTerrain.TileMap.Length == 0)
+                return;
+
+            // Get player relative position from terrain origin
+            Vector3 relativePos = lastPlayerPos - playerTerrain.transform.position;
+
+            // Convert X, Z position into 0-1 domain
+            float dim = MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale;
+            float u = relativePos.x / dim;
+            float v = relativePos.z / dim;
+
+            // Get clamped offset into tilemap array
+            int x = Mathf.Clamp((int)(MapsFile.WorldMapTileDim * u), 0, MapsFile.WorldMapTileDim - 1);
+            int y = Mathf.Clamp((int)(MapsFile.WorldMapTileDim * v), 0, MapsFile.WorldMapTileDim - 1);
+
+            // Update index - divide by 4 to find actual tile base as each tile has 4x variants (flip, rotate, etc.)
+            playerTilemapIndex = playerTerrain.TileMap[y * MapsFile.WorldMapTileDim + x].r / 4;
+
+            //Debug.LogFormat("X={0}, Z={1}, Index={2}", x, y, playerTilemapIndex);
         }
 
         void OnGUI()
@@ -1140,6 +1190,15 @@ namespace DaggerfallWorkshop
         #endregion
 
         #region Player Utility Methods
+
+        private DaggerfallTerrain GetPlayerTerrain()
+        {
+            Transform terrainTransform = GetPlayerTerrainTransform();
+            if (terrainTransform)
+                return terrainTransform.GetComponent<DaggerfallTerrain>();
+
+            return null;
+        }
 
         // Gets transform of the terrain player is standing on
         private Transform GetPlayerTerrainTransform()
