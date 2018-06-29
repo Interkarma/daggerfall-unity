@@ -39,8 +39,6 @@ namespace DaggerfallWorkshop.Game
         private float controllerCrouchHeight = 0.45f;
         private float controllerRideHeight = 2.6f;   // Height of a horse plus seated rider. (1.6m + 1m)
         private float eyeHeight = 0.09f;         // Eye height is 9cm below top of capsule.
-        //private float controllerStandToCrouchDist;
-        //private float controllerStandtoRideDist;
         private float camCrouchToStandDist;
         private float camRideToStandDist;
         private float camCrouchLevel;
@@ -97,7 +95,9 @@ namespace DaggerfallWorkshop.Game
 
                 
         }
-
+        /// <summary>
+        /// Continue calling actions to increment camera towards destination.
+        /// </summary>
         private void Update()
         {
             if (heightAction == HeightChangeAction.DoNothing)
@@ -113,6 +113,7 @@ namespace DaggerfallWorkshop.Game
                 DoDismount();
         }
 
+        #region HeightChangerActions
         private void DoCrouch() // first lower camera, Controller height last 
         {
             timerTick();
@@ -124,7 +125,7 @@ namespace DaggerfallWorkshop.Game
                 ControllerHeightChange(controllerCrouchHeight - controllerStandHeight, -1 * camCrouchToStandDist);
                 UpdateCameraPosition(mainCamera.transform.localPosition.y + camCrouchToStandDist);
 
-                ResetTimerAction();
+                timerResetAction();
                 playerMotor.IsCrouching = true;
             }
         }
@@ -141,7 +142,7 @@ namespace DaggerfallWorkshop.Game
 
             if (camTimer >= timerMax)
             {
-                ResetTimerAction();
+                timerResetAction();
             }
         }
         private void DoMount() // adjust height first, camera last
@@ -161,7 +162,7 @@ namespace DaggerfallWorkshop.Game
 
             if (camTimer >= timerMax)
             {
-                ResetTimerAction();
+                timerResetAction();
             }
         }
         private void DoDismount() // adjust height first, camera last
@@ -179,15 +180,18 @@ namespace DaggerfallWorkshop.Game
 
             if (camTimer >= timerMax)
             {
-                ResetTimerAction();
+                timerResetAction();
             }
         }
+        #endregion
+
+        #region Helpers
         private void timerTick()
         {
             camTimer += Time.deltaTime;
             camLerp_T = Mathf.Clamp((camTimer / timerMax), 0, 1);
         }
-        private void ResetTimerAction()
+        private void timerResetAction()
         {
             camTimer = 0f;
             heightAction = HeightChangeAction.DoNothing;
@@ -215,7 +219,11 @@ namespace DaggerfallWorkshop.Game
             Ray ray = new Ray(controller.transform.position, Vector3.up); 
             return !Physics.SphereCast(ray, controller.radius, distance);
         }
+        #endregion
 
+        /// <summary>
+        /// Immediately crouch/stand to match crouch state.
+        /// </summary>
         private void SnapToggleCrouching()
         {
             if (playerMotor.IsCrouching && controller.height != controllerCrouchHeight)
