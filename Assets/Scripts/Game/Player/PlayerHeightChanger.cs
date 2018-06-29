@@ -19,7 +19,6 @@ namespace DaggerfallWorkshop.Game
         DoDismounting
     }
 
-    //Added the RequireComponent attribute to make sure that following components are indeed on this GameObject, since they are require to make this code work
     [RequireComponent(typeof(PlayerMotor))]
     [RequireComponent(typeof(CharacterController))]
     [RequireComponent(typeof(HeadBobber))]
@@ -45,10 +44,11 @@ namespace DaggerfallWorkshop.Game
         private float camStandLevel;
         private float camRideLevel;
         private float camTimer;
-        private bool toggleRiding;
-        private bool controllerMounted;
         private const float timerMax = 0.1f;
         private float camLerp_T;  // for lerping to new camera position
+        private bool toggleRiding;
+        private bool controllerMounted;
+
 
         private void Start()
         {
@@ -186,22 +186,37 @@ namespace DaggerfallWorkshop.Game
         #endregion
 
         #region Helpers
+        /// <summary>
+        /// Increment timer and camera LERP T value
+        /// </summary>
         private void timerTick()
         {
             camTimer += Time.deltaTime;
             camLerp_T = Mathf.Clamp((camTimer / timerMax), 0, 1);
         }
+        /// <summary>
+        /// Reset the camera timer and action
+        /// </summary>
         private void timerResetAction()
         {
             camTimer = 0f;
             heightAction = HeightChangeAction.DoNothing;
         }
+        /// <summary>
+        /// Set new camera position
+        /// </summary>
+        /// <param name="yPosMod">Y amount to change camera position</param>
         private void UpdateCameraPosition(float yPosMod)
         {
             Vector3 camPos = mainCamera.transform.localPosition;
             headBobber.RestPos = new Vector3(headBobber.RestPos.x, yPosMod);
             mainCamera.transform.localPosition = new Vector3(camPos.x, yPosMod, camPos.z);
         }
+        /// <summary>
+        /// Change controller height and position
+        /// </summary>
+        /// <param name="heightChange">Amount to modify controller height</param>
+        /// <param name="camChangeAmt">Amount to change controller position</param>
         private void ControllerHeightChange(float heightChange, float camChangeAmt)
         {
             controller.height += heightChange;
@@ -221,6 +236,7 @@ namespace DaggerfallWorkshop.Game
         }
         #endregion
 
+        #region Load Game Handling
         /// <summary>
         /// Immediately crouch/stand to match crouch state.
         /// </summary>
@@ -248,5 +264,6 @@ namespace DaggerfallWorkshop.Game
             controllerMounted = playerMotor.IsRiding;
             SnapToggleCrouching();
         }
+        #endregion
     }
 }
