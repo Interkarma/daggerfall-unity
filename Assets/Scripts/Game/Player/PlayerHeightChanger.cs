@@ -17,7 +17,9 @@ namespace DaggerfallWorkshop.Game
         DoStanding,
         DoCrouching,
         DoMounting,
-        DoDismounting
+        DoDismounting,
+        DoSinking,
+        DoUnsinking
     }
 
     [RequireComponent(typeof(PlayerMotor))]
@@ -60,7 +62,7 @@ namespace DaggerfallWorkshop.Game
             headBobber = GetComponent<HeadBobber>();
             mainCamera = GameManager.Instance.MainCamera;
             camCrouchToStandDist = (controllerStandHeight - controllerCrouchHeight) / 2f;
-            camRideToStandDist = (controllerRideHeight - controllerStandHeight) / 2f - eyeHeight;
+            camRideToStandDist = (controllerRideHeight - controllerStandHeight) / 2f;
             camCrouchLevel = controllerCrouchHeight / 2f;
             camStandLevel = controllerStandHeight / 2f;
             camRideLevel = controllerRideHeight / 2f - eyeHeight;
@@ -104,9 +106,9 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         private void Update()
         {
-            if (heightAction == HeightChangeAction.DoNothing)
+            if (heightAction == HeightChangeAction.DoNothing || GameManager.IsGamePaused)
                 return;
-
+            //Debug.LogFormat("IsGrounded = {0}", playerMotor.IsGrounded);
             if (heightAction == HeightChangeAction.DoCrouching)
                 DoCrouch();
             else if (heightAction == HeightChangeAction.DoStanding && CanStand())
@@ -151,10 +153,11 @@ namespace DaggerfallWorkshop.Game
         }
         private void DoMount() // adjust height first, camera last
         {
-            float prevControllerHeight = playerMotor.IsCrouching ? controllerCrouchHeight : controllerStandHeight;
             if (!controllerMounted)
-            { 
-                ControllerHeightChange(controllerRideHeight - prevControllerHeight, camRideToStandDist);
+            {
+                float height = controllerRideHeight - (playerMotor.IsCrouching ? controllerCrouchHeight : controllerStandHeight);
+                float camDist = playerMotor.IsCrouching ? camRideToStandDist + camCrouchToStandDist : camRideToStandDist;
+                ControllerHeightChange(height, camDist);
                 controllerMounted = true;
                 playerMotor.IsCrouching = false;
             }
@@ -191,28 +194,6 @@ namespace DaggerfallWorkshop.Game
 
         #region Helpers
         /// <summary>
-        /// Anti-floating point roundoff
-        /// </summary>
-        /// <param name="value">The value to evaluate</param>
-        /// <returns></returns>
-        private float GetNearbyValue(float value)
-        {
-            if (CloseEnough(value, controllerStandHeight))
-                return controllerStandHeight;
-            else if (CloseEnough(value, controllerCrouchHeight))
-                return controllerCrouchHeight;
-            else if (CloseEnough(value, controllerRideHeight))
-                return controllerRideHeight;
-            else if (CloseEnough(value, controllerSwimHeight))
-                return controllerSwimHeight;
-
-            return 0;
-    }
-        private bool CloseEnough(float value1, float value2, float acceptableDifference = 0.01f)
-        {
-            return Math.Abs(value1 - value2) <= acceptableDifference;
-        }
-        /// <summary>
         /// Increment timer and camera LERP T value
         /// </summary>
         private void timerTick()
@@ -245,7 +226,7 @@ namespace DaggerfallWorkshop.Game
         /// <param name="camChangeAmt">Amount to change controller position</param>
         private void ControllerHeightChange(float heightChange, float camChangeAmt)
         {
-            controller.height = GetNearbyValue(controller.height + heightChange);
+            controller.height += heightChange;
             controller.transform.position += new Vector3(0, camChangeAmt);
         }
 
