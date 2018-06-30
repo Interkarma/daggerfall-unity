@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.Assertions;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -37,12 +38,14 @@ namespace DaggerfallWorkshop.Game
         private float controllerStandHeight = 1.78f;
         private float controllerCrouchHeight = 0.45f;
         private float controllerRideHeight = 2.6f;   // Height of a horse plus seated rider. (1.6m + 1m)
+        private float controllerSwimHeight = 0.30f;
         private float eyeHeight = 0.09f;         // Eye height is 9cm below top of capsule.
         private float camCrouchToStandDist;
         private float camRideToStandDist;
         private float camCrouchLevel;
         private float camStandLevel;
         private float camRideLevel;
+        private float camSwimLevel;
         private float camTimer;
         private const float timerMax = 0.1f;
         private float camLerp_T;  // for lerping to new camera position
@@ -61,6 +64,7 @@ namespace DaggerfallWorkshop.Game
             camCrouchLevel = controllerCrouchHeight / 2f;
             camStandLevel = controllerStandHeight / 2f;
             camRideLevel = controllerRideHeight / 2f - eyeHeight;
+            camSwimLevel = controllerSwimHeight / 2f;
 
             // Use event to set whether player is crouched on load
             SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
@@ -187,6 +191,28 @@ namespace DaggerfallWorkshop.Game
 
         #region Helpers
         /// <summary>
+        /// Anti-floating point roundoff
+        /// </summary>
+        /// <param name="value">The value to evaluate</param>
+        /// <returns></returns>
+        private float GetNearbyValue(float value)
+        {
+            if (CloseEnough(value, controllerStandHeight))
+                return controllerStandHeight;
+            else if (CloseEnough(value, controllerCrouchHeight))
+                return controllerCrouchHeight;
+            else if (CloseEnough(value, controllerRideHeight))
+                return controllerRideHeight;
+            else if (CloseEnough(value, controllerSwimHeight))
+                return controllerSwimHeight;
+
+            return 0;
+    }
+        private bool CloseEnough(float value1, float value2, float acceptableDifference = 0.01f)
+        {
+            return Math.Abs(value1 - value2) <= acceptableDifference;
+        }
+        /// <summary>
         /// Increment timer and camera LERP T value
         /// </summary>
         private void timerTick()
@@ -219,7 +245,7 @@ namespace DaggerfallWorkshop.Game
         /// <param name="camChangeAmt">Amount to change controller position</param>
         private void ControllerHeightChange(float heightChange, float camChangeAmt)
         {
-            controller.height += heightChange;
+            controller.height = GetNearbyValue(controller.height + heightChange);
             controller.transform.position += new Vector3(0, camChangeAmt);
         }
 
