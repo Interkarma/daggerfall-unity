@@ -60,6 +60,7 @@ namespace DaggerfallWorkshop.Game
         private bool toggleSink;
         private bool controllerMounted;
         private bool controllerSink;
+        public bool IsInWaterTile { get; set; }
 
         private void Start()
         {
@@ -246,6 +247,7 @@ namespace DaggerfallWorkshop.Game
 
                 targetCamLevel = ControllerHeightChange(heightLoss);
                 controllerSink = false;
+                IsInWaterTile = false;
                 playerMotor.IsCrouching = false;
             }
 
@@ -290,6 +292,7 @@ namespace DaggerfallWorkshop.Game
 
                 targetCamLevel = ControllerHeightChange(-1 * heightLoss);
                 controllerSink = true;
+                IsInWaterTile = true;
                 playerMotor.IsCrouching = false;
             }
 
@@ -369,32 +372,42 @@ namespace DaggerfallWorkshop.Game
         #endregion
 
         #region Load Game Handling
-        /// <summary>
-        /// Immediately crouch/stand to match crouch state.
-        /// </summary>
-        private void SnapToggleCrouching()
-        {
-            if (playerMotor.IsCrouching && controller.height != controllerCrouchHeight)
-            {
-                controller.height = controllerCrouchHeight;
-                Vector3 pos = controller.transform.position;
-                pos.y -= (controllerStandHeight - controllerCrouchHeight) / 2.0f;
-                controller.transform.position = pos;
-            }
-            else if (!playerMotor.IsCrouching && controller.height != controllerStandHeight)
-            {
-                controller.height = controllerStandHeight;
-                Vector3 pos = controller.transform.position;
-                pos.y += (controllerStandHeight - controllerCrouchHeight) / 2.0f;
-                controller.transform.position = pos;
-            }
-        }
-
         private void SaveLoadManager_OnStartLoad(SaveData_v1 saveData)
         {
-            playerMotor.IsCrouching = saveData.playerData.playerPosition.isCrouching;
+            PlayerPositionData_v1 savePos = saveData.playerData.playerPosition;
             controllerMounted = playerMotor.IsRiding;
-            SnapToggleCrouching();
+            if (!savePos.isInWaterTile)
+            {
+                // save is crouched, but we are not
+                if (savePos.isCrouching && !playerMotor.IsCrouching)
+                {
+                    //ControllerHeightChange(-1 * controllerStandHeight - controllerCrouchHeight);
+                    controller.height = controllerCrouchHeight;
+                    Vector3 pos = controller.transform.position;
+                    pos.y -= (controllerStandHeight - controllerCrouchHeight) / 2.0f;
+                    controller.transform.position = pos;
+                }
+                else if (!savePos.isCrouching && playerMotor.IsCrouching)
+                {
+                    //ControllerHeightChange(controllerStandHeight - controllerCrouchHeight);
+                    controller.height = controllerStandHeight;
+                    Vector3 pos = controller.transform.position;
+                    pos.y += (controllerStandHeight - controllerCrouchHeight) / 2.0f;
+                    controller.transform.position = pos;
+                }
+                
+            }
+            savePos.isCrouching = playerMotor.IsCrouching;
+            // if the save is in water tile, but we weren't in water tile...
+            if (savePos.isInWaterTile && !IsInWaterTile)
+                heightAction = HeightChangeAction.DoSinking;
+            // if the save is Not in water tile, but we were in water tile...
+            else if (!savePos.isInWaterTile && IsInWaterTile)
+                heightAction = HeightChangeAction.DoUnsinking;
+
+
+                
+
         }
         #endregion
     }

@@ -176,6 +176,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public PlayerPositionData_v1 GetPlayerPositionData()
         {
             PlayerPositionData_v1 playerPosition = new PlayerPositionData_v1();
+            PlayerHeightChanger heightChanger = GetComponent<PlayerHeightChanger>();
             playerPosition.position = transform.position;
             playerPosition.worldCompensation = GameManager.Instance.StreamingWorld.WorldCompensation;
             playerPosition.worldContext = playerEnterExit.WorldContext;
@@ -183,6 +184,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             playerPosition.yaw = playerMouseLook.Yaw;
             playerPosition.pitch = playerMouseLook.Pitch;
             playerPosition.isCrouching = playerMotor.IsCrouching;
+            playerPosition.isInWaterTile = heightChanger.IsInWaterTile;
             playerPosition.worldPosX = StreamingWorld.LocalPlayerGPS.WorldX;
             playerPosition.worldPosZ = StreamingWorld.LocalPlayerGPS.WorldZ;
             playerPosition.insideDungeon = playerEnterExit.IsPlayerInsideDungeon;
@@ -376,6 +378,8 @@ namespace DaggerfallWorkshop.Game.Serialization
             playerMouseLook.Yaw = positionData.yaw;
             playerMouseLook.Pitch = positionData.pitch;
             playerMotor.IsCrouching = positionData.isCrouching;
+            PlayerHeightChanger heightChanger = GetComponent<PlayerHeightChanger>();
+            heightChanger.IsInWaterTile = positionData.isInWaterTile;
         }
 
         #endregion

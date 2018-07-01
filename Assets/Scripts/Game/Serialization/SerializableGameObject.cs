@@ -204,6 +204,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public float yaw;
         public float pitch;
         public bool isCrouching;
+        public bool isInWaterTile;
         public int worldPosX;
         public int worldPosZ;
         public bool insideDungeon;
