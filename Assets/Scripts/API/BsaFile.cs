@@ -152,7 +152,8 @@ namespace DaggerfallConnect.Arena2
         {
             // Ensure filename ends with .BSA or .SND
             if (!filePath.EndsWith(".BSA", StringComparison.InvariantCultureIgnoreCase) &&
-                !filePath.EndsWith(".SND", StringComparison.InvariantCultureIgnoreCase))
+                !filePath.EndsWith(".SND", StringComparison.InvariantCultureIgnoreCase) &&
+                !filePath.EndsWith(".SAV", StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
             // Load file into memory
