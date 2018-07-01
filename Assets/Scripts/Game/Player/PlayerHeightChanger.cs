@@ -42,7 +42,7 @@ namespace DaggerfallWorkshop.Game
         private float controllerCrouchHeight = 0.45f;
         private float controllerRideHeight = 2.6f;   // Height of a horse plus seated rider. (1.6m + 1m)
         private float controllerSwimHeight = 0.30f;
-        private float controllerSwimHorseDisplacement = 0.20f; // amount added to swim height if on horse
+        private float controllerSwimHorseDisplacement = 0.30f; // amount added to swim height if on horse
         private float eyeHeight = 0.09f;         // Eye height is 9cm below top of capsule.
         private float targetCamLevel;
         private float prevCamLevel;
@@ -225,7 +225,38 @@ namespace DaggerfallWorkshop.Game
         }
         private void DoUnsinking()
         {
-            throw new NotImplementedException();
+            if (controllerSink)
+            {
+                float baseHeight;
+                float displacement = 0;
+                prevCamLevel = camSwimLevel;
+                if (playerMotor.IsRiding)
+                {
+                    baseHeight = controllerRideHeight;
+                    displacement = controllerSwimHorseDisplacement;
+                    prevCamLevel += displacement;
+                }
+                else
+                {
+                    baseHeight = controllerStandHeight;
+                }
+
+                float height = controllerSwimHeight + displacement;
+                float heightLoss = baseHeight - height;
+
+                targetCamLevel = ControllerHeightChange(heightLoss);
+                controllerSink = false;
+                playerMotor.IsCrouching = false;
+            }
+
+            timerTick();
+
+            UpdateCameraPosition(Mathf.Lerp(prevCamLevel, targetCamLevel, camLerp_T));
+
+            if (camTimer >= timerMax)
+            {
+                timerResetAction();
+            }
         }
         private void DoSinking()
         {
@@ -250,14 +281,14 @@ namespace DaggerfallWorkshop.Game
                 else
                 {
                     baseHeight = controllerCrouchHeight;
-                    prevCamLevel = camStandLevel;
+                    prevCamLevel = camCrouchLevel;
                 }
 
-                // TODO: lower just the camera
-                float heightLoss = controllerSwimHeight + displacement;
-                float height = baseHeight - heightLoss;
-                //controller.radius = 0.05f;
-                targetCamLevel = ControllerHeightChange(-1 * height);
+                
+                float height = controllerSwimHeight + displacement;
+                float heightLoss = baseHeight - height;
+
+                targetCamLevel = ControllerHeightChange(-1 * heightLoss);
                 controllerSink = true;
                 playerMotor.IsCrouching = false;
             }
@@ -309,11 +340,15 @@ namespace DaggerfallWorkshop.Game
         /// <returns>the target height the camera should change to</returns>
         private float ControllerHeightChange(float heightChange)
         {
+            bool dismounting = (heightAction == HeightChangeAction.DoDismounting);
+            bool mounting = (heightAction == HeightChangeAction.DoMounting);
+            //bool horseUnsinking = playerMotor.IsRiding && heightAction == HeightChangeAction.DoUnsinking;
+            //bool horseSinking = playerMotor.IsRiding && heightAction == HeightChangeAction.DoSinking;
             controller.height += heightChange;
             float eyeChange = 0;
-            if (heightAction == HeightChangeAction.DoDismounting)
+            if (dismounting)
                 eyeChange = -1 * eyeHeight;
-            else if (heightAction == HeightChangeAction.DoMounting)
+            else if (mounting)
                 eyeChange = eyeHeight;
 
             controller.transform.position += new Vector3(0, heightChange / 2 + eyeChange);
