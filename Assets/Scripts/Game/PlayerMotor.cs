@@ -247,7 +247,7 @@ namespace DaggerfallWorkshop.Game
             speed = speedChanger.GetBaseSpeed();
             speedChanger.HandleInputSpeedAdjustment(ref speed);
 
-            heightChanger.HandlePlayerInput();
+            heightChanger.DecideHeightAction();
 
             UpdateSmoothFollower();
         }
