@@ -1404,7 +1404,7 @@ namespace Wenzil.Console
         {
             public static readonly string name = "add";
             public static readonly string description = "Adds n inventory items to the character, based on the given keyword. n = 1 by default";
-            public static readonly string usage = "add (book|weapon|armor|cloth|ingr|relig) [n]";
+            public static readonly string usage = "add (book|weapon|armor|cloth|ingr|relig|gold) [n]";
 
             public static string Execute(params string[] args)
             {
@@ -1419,6 +1419,12 @@ namespace Wenzil.Console
                 if (args.Length >= 2)
                 {
                     Int32.TryParse(args[1], out n);
+                }
+
+                if (args[0] == "gold")
+                {
+                    GameManager.Instance.PlayerEntity.GoldPieces += n;
+                    return string.Format("Added {0} gold pieces", n);
                 }
 
                 while (n >= 1)
