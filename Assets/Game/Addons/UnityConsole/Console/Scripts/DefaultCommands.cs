@@ -54,6 +54,8 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(TransitionToExterior.name, TransitionToExterior.description, TransitionToExterior.usage, TransitionToExterior.Execute);
             ConsoleCommandsDatabase.RegisterCommand(SetHealth.name, SetHealth.description, SetHealth.usage, SetHealth.Execute);
 
+            ConsoleCommandsDatabase.RegisterCommand(ResetAssets.name, ResetAssets.description, ResetAssets.usage, ResetAssets.Execute);
+
             ConsoleCommandsDatabase.RegisterCommand(SetWalkSpeed.name, SetWalkSpeed.description, SetWalkSpeed.usage, SetWalkSpeed.Execute);
             ConsoleCommandsDatabase.RegisterCommand(SetMouseSensitivity.name, SetMouseSensitivity.description, SetMouseSensitivity.usage, SetMouseSensitivity.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ToggleMouseSmoothing.name, ToggleMouseSmoothing.description, ToggleMouseSmoothing.usage, ToggleMouseSmoothing.Execute);
@@ -290,6 +292,23 @@ namespace Wenzil.Console
             }
         }
 
+        private static class ResetAssets
+        {
+            public static readonly string name = "reset_assets";
+            public static readonly string error = "Could not reset assets";
+            public static readonly string description = "Clears mesh and material asset caches then reloads game. Warning: Uses QuickSave slot to reload game in-place. The in-place reload will trigger a longer than usual delay.";
+            public static readonly string usage = "reset_assets";
+
+            public static string Execute(params string[] args)
+            {
+                DaggerfallUnity.Instance.MeshReader.ClearCache();
+                DaggerfallUnity.Instance.MaterialReader.ClearCache();
+
+                SaveLoadManager.Instance.QuickSave(true);
+
+                return "Cleared cache and reloaded world.";
+            }
+        }
 
         private static class Suicide
         {

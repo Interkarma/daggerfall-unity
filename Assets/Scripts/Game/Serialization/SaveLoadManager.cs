@@ -331,7 +331,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             EnumerateSaves();
         }
 
-        public void Save(string characterName, string saveName)
+        public void Save(string characterName, string saveName, bool instantReload = false)
         {
             // Must be ready
             if (!IsReady())
@@ -348,12 +348,12 @@ namespace DaggerfallWorkshop.Game.Serialization
                 path = GetSaveFolder(key);
 
             // Save game
-            StartCoroutine(SaveGame(saveName, path));
+            StartCoroutine(SaveGame(saveName, path, instantReload));
         }
 
-        public void QuickSave()
+        public void QuickSave(bool instantReload = false)
         {
-            Save(GameManager.Instance.PlayerEntity.Name, quickSaveName);
+            Save(GameManager.Instance.PlayerEntity.Name, quickSaveName, instantReload);
         }
 
         public void Load(int key)
@@ -905,7 +905,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         #region Utility
 
-        IEnumerator SaveGame(string saveName, string path)
+        IEnumerator SaveGame(string saveName, string path, bool instantReload = false)
         {
             // Build save data
             SaveData_v1 saveData = BuildSaveData();
@@ -1008,6 +1008,10 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             // Notify
             DaggerfallUI.Instance.PopupMessage(HardStrings.gameSaved);
+
+            // Reload this save instantly if requested
+            if (instantReload)
+                Load(saveData.playerData.playerEntity.name, saveName);
         }
 
         IEnumerator LoadGame(string path)
