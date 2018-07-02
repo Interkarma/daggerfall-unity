@@ -127,7 +127,6 @@ namespace DaggerfallWorkshop.Game
         {
             if (heightAction == HeightChangeAction.DoNothing || GameManager.IsGamePaused)
                 return;
-            Debug.LogFormat("IsGrounded = {0}, \nHeight = {1}", playerMotor.IsGrounded, controller.height);
             if (heightAction == HeightChangeAction.DoSinking)
                 DoSinking();
             else if (heightAction == HeightChangeAction.DoUnsinking)
@@ -176,30 +175,29 @@ namespace DaggerfallWorkshop.Game
         }
         private void DoMount() // adjust height first, camera last
         {
-            float prevCamLevel = 0;
             if (!controllerMounted)
             {
-                float height = controllerRideHeight; 
-                if (playerMotor.IsCrouching)
+                float prevHeight = controller.height;
+                float targetHeight;
+                prevCamLevel = prevHeight / 2f;
+                if (OnWater)
                 {
-                    height -= controllerCrouchHeight;
-                    prevCamLevel = camCrouchLevel;
-                }
-                else
+                    targetHeight = controllerSwimHeight + controllerSwimHorseDisplacement;
+                    prevCamLevel = camSwimLevel;
+                }  
+                else // on ground
                 {
-                    height -= controllerStandHeight;
-                    prevCamLevel = camStandLevel;
+                    targetHeight = controllerRideHeight;
                 }
 
-                ControllerHeightChange(height);
+                targetCamLevel = ControllerHeightChange(targetHeight-prevHeight);
                 controllerMounted = true;
                 playerMotor.IsCrouching = false;
             }
 
             timerTick();
 
-            // TODO: can we mount in the water?
-            UpdateCameraPosition(Mathf.Lerp(prevCamLevel, camRideLevel, camLerp_T));
+            UpdateCameraPosition(Mathf.Lerp(prevCamLevel, targetCamLevel, camLerp_T));
 
             if (camTimer >= timerMax)
             {
@@ -210,14 +208,28 @@ namespace DaggerfallWorkshop.Game
         {
             if (controllerMounted)
             {
-                ControllerHeightChange(controllerStandHeight - controllerRideHeight);
+                float prevHeight = controller.height;
+                float targetHeight;
+
+                if (OnWater)
+                {
+                    prevCamLevel = prevHeight / 2f;
+                    targetHeight = controllerSwimHeight;
+                }
+                else
+                {
+                    prevCamLevel = camRideLevel;
+                    targetHeight = controllerStandHeight;
+                }
+
+                targetCamLevel = ControllerHeightChange(targetHeight - prevHeight);
                 controllerMounted = false;
                 playerMotor.IsCrouching = false;
             }
 
             timerTick();
 
-            UpdateCameraPosition(Mathf.Lerp(camRideLevel, camStandLevel, camLerp_T));
+            UpdateCameraPosition(Mathf.Lerp(prevCamLevel, targetCamLevel, camLerp_T));
 
             if (camTimer >= timerMax)
             {
@@ -345,19 +357,46 @@ namespace DaggerfallWorkshop.Game
         {
             bool dismounting = (heightAction == HeightChangeAction.DoDismounting);
             bool mounting = (heightAction == HeightChangeAction.DoMounting);
-            //bool horseUnsinking = playerMotor.IsRiding && heightAction == HeightChangeAction.DoUnsinking;
-            //bool horseSinking = playerMotor.IsRiding && heightAction == HeightChangeAction.DoSinking;
-            controller.height += heightChange;
+            bool horseUnsinking = playerMotor.IsRiding && heightAction == HeightChangeAction.DoUnsinking;
+            bool horseSinking = playerMotor.IsRiding && heightAction == HeightChangeAction.DoSinking;
+            controller.height = GetNearbyFloat(controller.height + heightChange);
             float eyeChange = 0;
-            if (dismounting)
-                eyeChange = -1 * eyeHeight;
-            else if (mounting)
-                eyeChange = eyeHeight;
-
+            if (!OnWater)
+            { 
+                if (dismounting)
+                    eyeChange = -1 * eyeHeight;
+                else if (mounting)
+                    eyeChange = eyeHeight;
+            }
             controller.transform.position += new Vector3(0, heightChange / 2 + eyeChange);
+            Debug.LogFormat("IsGrounded = {0}, \nHeight = {1}", playerMotor.IsGrounded, controller.height);
+
             return controller.height / 2 + eyeChange;
         }
+        /// <summary>
+        /// Anti-floating point roundoff
+        /// </summary>
+        /// <param name="value">The value to evaluate</param>
+        /// <returns></returns>
+        private float GetNearbyFloat(float value)
+        {
+            if (CloseEnough(value, controllerStandHeight))
+                return controllerStandHeight;
+            else if (CloseEnough(value, controllerCrouchHeight))
+                return controllerCrouchHeight;
+            else if (CloseEnough(value, controllerRideHeight))
+                return controllerRideHeight;
+            else if (CloseEnough(value, controllerSwimHeight))
+                return controllerSwimHeight;
+            else if (CloseEnough(value, controllerSwimHeight + controllerSwimHorseDisplacement))
+                return controllerSwimHeight + controllerSwimHorseDisplacement;
 
+            return 0;
+        }
+        private bool CloseEnough(float value1, float value2, float acceptableDifference = 0.01f)
+        {
+            return Math.Abs(value1 - value2) <= acceptableDifference;
+        }
         /// <summary>
         /// Does the player have enough room to stand from crouching position?
         /// </summary>
