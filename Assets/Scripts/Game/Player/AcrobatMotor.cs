@@ -45,8 +45,9 @@ namespace DaggerfallWorkshop.Game
         /// <param name="moveDirection"></param>
         public void HandleJumpInput(ref Vector3 moveDirection)
         {
-            // Cancel jump if player is paralyzed
-            if (GameManager.Instance.PlayerEntity.IsParalyzed)
+            // Cancel jump if player is paralyzed or on a water tile
+            if (GameManager.Instance.PlayerEntity.IsParalyzed ||
+                GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 0)
                 return;
 
             if (InputManager.Instance.HasAction(InputManager.Actions.Jump))
