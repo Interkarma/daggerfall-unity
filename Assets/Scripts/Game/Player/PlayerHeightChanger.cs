@@ -33,7 +33,14 @@ namespace DaggerfallWorkshop.Game
             get { return heightAction; }
             set { heightAction = value; }
         }
-        public bool OnWater { get; private set; }
+        public bool OnWater
+        {
+            get
+            {
+                return ( GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 0 && playerMotor.IsGrounded);
+            }
+        }
+        public bool IsInWaterTile { get; set; }
         private PlayerMotor playerMotor;
         private CharacterController controller;
         private HeadBobber headBobber;
@@ -60,7 +67,6 @@ namespace DaggerfallWorkshop.Game
         private bool toggleSink;
         private bool controllerMounted;
         private bool controllerSink;
-        public bool IsInWaterTile { get; set; }
 
         private void Start()
         {
@@ -85,13 +91,13 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public void DecideHeightAction()
         {
-            OnWater = GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 0 && playerMotor.IsGrounded;
-            if (OnWater && !toggleSink)
+            bool onWater = OnWater;
+            if (onWater && !toggleSink)
             {
                 heightAction = HeightChangeAction.DoSinking;
                 toggleSink = true;
             }
-            else if (!OnWater && toggleSink)
+            else if (!onWater && toggleSink)
             {
                 heightAction = HeightChangeAction.DoUnsinking;
                 toggleSink = false;
@@ -109,16 +115,14 @@ namespace DaggerfallWorkshop.Game
             else if (!playerMotor.IsRiding)
             {
                 // Toggle crouching
-                if (InputManager.Instance.ActionComplete(InputManager.Actions.Crouch))
+                if (!onWater && InputManager.Instance.ActionComplete(InputManager.Actions.Crouch))
                 {
                     if (playerMotor.IsCrouching)
                         heightAction = HeightChangeAction.DoStanding;
                     else
                         heightAction = HeightChangeAction.DoCrouching;
                 }
-            }
-
-                
+            }  
         }
         /// <summary>
         /// Continue calling actions to increment camera towards destination.
@@ -144,13 +148,16 @@ namespace DaggerfallWorkshop.Game
         #region HeightChangerActions
         private void DoCrouch() // first lower camera, Controller height last 
         {
+            float prevHeight = controller.height;
+
             timerTick();
 
-            UpdateCameraPosition(Mathf.Lerp(camStandLevel, camCrouchLevel, camLerp_T));
+            UpdateCameraPosition(Mathf.Lerp(prevHeight/2f, camCrouchLevel, camLerp_T));
 
             if (camTimer >= timerMax)
             {
-                ControllerHeightChange(controllerCrouchHeight - controllerStandHeight);
+                float targetHeight = controllerCrouchHeight;
+                ControllerHeightChange(targetHeight - prevHeight);
                 UpdateCameraPosition(mainCamera.transform.localPosition.y + camCrouchToStandDist);
 
                 timerResetAction();
@@ -159,14 +166,18 @@ namespace DaggerfallWorkshop.Game
         }
         private void DoStand() // adjust height first, camera last
         {
+            float prevHeight = controller.height;
+            
             if (playerMotor.IsCrouching)
             {
-                ControllerHeightChange(controllerStandHeight - controllerCrouchHeight);
+                float targetHeight = controllerStandHeight;
+                prevCamLevel = prevHeight / 2f;
+                targetCamLevel = ControllerHeightChange(targetHeight - prevHeight);
                 playerMotor.IsCrouching = false;
             }
             timerTick();
 
-            UpdateCameraPosition(Mathf.Lerp(camCrouchLevel, camStandLevel, camLerp_T));
+            UpdateCameraPosition(Mathf.Lerp(prevCamLevel, targetCamLevel, camLerp_T));
 
             if (camTimer >= timerMax)
             {
@@ -298,7 +309,6 @@ namespace DaggerfallWorkshop.Game
                     prevCamLevel = camCrouchLevel;
                 }
 
-                
                 float height = controllerSwimHeight + displacement;
                 float heightLoss = baseHeight - height;
 
@@ -357,8 +367,6 @@ namespace DaggerfallWorkshop.Game
         {
             bool dismounting = (heightAction == HeightChangeAction.DoDismounting);
             bool mounting = (heightAction == HeightChangeAction.DoMounting);
-            bool horseUnsinking = playerMotor.IsRiding && heightAction == HeightChangeAction.DoUnsinking;
-            bool horseSinking = playerMotor.IsRiding && heightAction == HeightChangeAction.DoSinking;
             controller.height = GetNearbyFloat(controller.height + heightChange);
             float eyeChange = 0;
             if (!OnWater)
@@ -369,7 +377,7 @@ namespace DaggerfallWorkshop.Game
                     eyeChange = eyeHeight;
             }
             controller.transform.position += new Vector3(0, heightChange / 2 + eyeChange);
-            Debug.LogFormat("IsGrounded = {0}, \nHeight = {1}", playerMotor.IsGrounded, controller.height);
+            //Debug.LogFormat("IsGrounded = {0}, \nHeight = {1}", playerMotor.IsGrounded, controller.height);
 
             return controller.height / 2 + eyeChange;
         }
@@ -414,39 +422,20 @@ namespace DaggerfallWorkshop.Game
         private void SaveLoadManager_OnStartLoad(SaveData_v1 saveData)
         {
             PlayerPositionData_v1 savePos = saveData.playerData.playerPosition;
-            controllerMounted = playerMotor.IsRiding;
-            if (!savePos.isInWaterTile)
+
+            // save is crouched
+            if (!savePos.isCrouching)
             {
-                // save is crouched, but we are not
-                if (savePos.isCrouching && !playerMotor.IsCrouching)
-                {
-                    //ControllerHeightChange(-1 * controllerStandHeight - controllerCrouchHeight);
-                    controller.height = controllerCrouchHeight;
-                    Vector3 pos = controller.transform.position;
-                    pos.y -= (controllerStandHeight - controllerCrouchHeight) / 2.0f;
-                    controller.transform.position = pos;
-                }
-                else if (!savePos.isCrouching && playerMotor.IsCrouching)
-                {
-                    //ControllerHeightChange(controllerStandHeight - controllerCrouchHeight);
-                    controller.height = controllerStandHeight;
-                    Vector3 pos = controller.transform.position;
-                    pos.y += (controllerStandHeight - controllerCrouchHeight) / 2.0f;
-                    controller.transform.position = pos;
-                }
-                
+                heightAction = HeightChangeAction.DoStanding;
             }
-            savePos.isCrouching = playerMotor.IsCrouching;
-            // if the save is in water tile, but we weren't in water tile...
-            if (savePos.isInWaterTile && !IsInWaterTile)
-                heightAction = HeightChangeAction.DoSinking;
-            // if the save is Not in water tile, but we were in water tile...
-            else if (!savePos.isInWaterTile && IsInWaterTile)
-                heightAction = HeightChangeAction.DoUnsinking;
+            else if (savePos.isCrouching)
+            {
+                heightAction = HeightChangeAction.DoCrouching;
+            }              
 
-
-                
-
+            toggleRiding = playerMotor.IsRiding;
+            toggleSink = OnWater;
+            
         }
         #endregion
     }
