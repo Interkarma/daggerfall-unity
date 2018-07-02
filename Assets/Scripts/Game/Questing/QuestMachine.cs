@@ -1025,7 +1025,7 @@ namespace DaggerfallWorkshop.Game.Questing
             ClearMainQuestState();
             if (stage == 1)
             {
-                GameManager.Instance.PlayerEntity.Level = 1;
+                //GameManager.Instance.PlayerEntity.Level = 1;
                 InstantiateQuest("_BRISIEN"); // Also starts backbone S0000999
                 InstantiateQuest("S0000977"); // Normally started by tutorial
             }
