@@ -533,7 +533,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 Debug.LogWarning("LoadMapImage found name null or empty - defaulting to region selection map");
                 name = nativeImgName;
             }
-            loadedImg = new ImgFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, name), FileUsage.UseMemory, false);
+            loadedImg = new ImgFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, name), FileUsage.UseMemory, true);
             loadedImg.LoadPalette(Path.Combine(DaggerfallUnity.Instance.Arena2Path, loadedImg.PaletteName));
             width = loadedImg.GetDFBitmap().Width;
             height = loadedImg.GetDFBitmap().Height;
