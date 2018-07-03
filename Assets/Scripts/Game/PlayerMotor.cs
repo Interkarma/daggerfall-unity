@@ -52,6 +52,7 @@ namespace DaggerfallWorkshop.Game
         private FrictionMotor frictionMotor;
         private AcrobatMotor acrobatMotor;
         private PlayerGroundMotor groundMotor;
+        private PlayerEnterExit playerEnterExit;
 
         private CollisionFlags collisionFlags = 0;
 
@@ -158,6 +159,7 @@ namespace DaggerfallWorkshop.Game
             levitateMotor = GetComponent<LevitateMotor>();
             frictionMotor = GetComponent<FrictionMotor>();
             acrobatMotor = GetComponent<AcrobatMotor>();
+            playerEnterExit = GameManager.Instance.PlayerEnterExit;
 
             // Allow for resetting specific player state on new game or when game starts loading
             SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
@@ -246,6 +248,8 @@ namespace DaggerfallWorkshop.Game
 
             speed = speedChanger.GetBaseSpeed();
             speedChanger.HandleInputSpeedAdjustment(ref speed);
+            if (playerEnterExit.IsPlayerSwimming)
+                speed = speedChanger.GetSwimSpeed(speed);
 
             heightChanger.DecideHeightAction();
 

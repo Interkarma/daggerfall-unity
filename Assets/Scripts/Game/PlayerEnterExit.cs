@@ -142,6 +142,7 @@ namespace DaggerfallWorkshop.Game
         public bool IsPlayerSwimming
         {
             get { return isPlayerSwimming; }
+            set { isPlayerSwimming = value; }
         }
 
         /// <summary>
@@ -307,7 +308,8 @@ namespace DaggerfallWorkshop.Game
             else
             {
                 // Clear flags when not in a dungeon
-                isPlayerSwimming = false;
+                // commenting this out allows player to swim outside - MeteoricDragon
+                //isPlayerSwimming = false;
                 isPlayerSubmerged = false;
                 levitateMotor.IsSwimming = false;
             }

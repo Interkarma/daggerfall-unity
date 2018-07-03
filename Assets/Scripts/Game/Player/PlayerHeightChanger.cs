@@ -25,6 +25,7 @@ namespace DaggerfallWorkshop.Game
     [RequireComponent(typeof(PlayerMotor))]
     [RequireComponent(typeof(CharacterController))]
     [RequireComponent(typeof(HeadBobber))]
+    [RequireComponent(typeof(LevitateMotor))]
     public class PlayerHeightChanger : MonoBehaviour
     {
         private HeightChangeAction heightAction;
@@ -44,6 +45,7 @@ namespace DaggerfallWorkshop.Game
         private PlayerMotor playerMotor;
         private CharacterController controller;
         private HeadBobber headBobber;
+        private LevitateMotor levitateMotor;
         private Camera mainCamera;
         private float controllerStandHeight = 1.78f;
         private float controllerCrouchHeight = 0.45f;
@@ -74,6 +76,7 @@ namespace DaggerfallWorkshop.Game
             controller = GetComponent<CharacterController>();
             headBobber = GetComponent<HeadBobber>();
             mainCamera = GameManager.Instance.MainCamera;
+            levitateMotor = GetComponent<LevitateMotor>();
             camSwimLevel = controllerSwimHeight / 2f;
             camCrouchLevel = controllerCrouchHeight / 2f;
             camStandLevel = controllerStandHeight / 2f;
@@ -272,6 +275,7 @@ namespace DaggerfallWorkshop.Game
                 controllerSink = false;
                 IsInWaterTile = false;
                 playerMotor.IsCrouching = false;
+                GameManager.Instance.PlayerEnterExit.IsPlayerSwimming = false;
             }
 
             timerTick();
@@ -316,6 +320,7 @@ namespace DaggerfallWorkshop.Game
                 controllerSink = true;
                 IsInWaterTile = true;
                 playerMotor.IsCrouching = false;
+                GameManager.Instance.PlayerEnterExit.IsPlayerSwimming = true;
             }
 
             timerTick();
