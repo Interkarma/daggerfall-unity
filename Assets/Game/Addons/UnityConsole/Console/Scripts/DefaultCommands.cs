@@ -1421,6 +1421,9 @@ namespace Wenzil.Console
                     Int32.TryParse(args[1], out n);
                 }
 
+                if (n < 1)
+                    return "Error - see usage";
+
                 if (args[0] == "gold")
                 {
                     GameManager.Instance.PlayerEntity.GoldPieces += n;
