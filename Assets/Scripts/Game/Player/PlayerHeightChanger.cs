@@ -382,7 +382,6 @@ namespace DaggerfallWorkshop.Game
                     eyeChange = eyeHeight;
             }
             controller.transform.position += new Vector3(0, heightChange / 2 + eyeChange);
-            //Debug.LogFormat("IsGrounded = {0}, \nHeight = {1}", playerMotor.IsGrounded, controller.height);
 
             return controller.height / 2 + eyeChange;
         }
