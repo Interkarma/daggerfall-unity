@@ -117,6 +117,9 @@ namespace DaggerfallWorkshop.Game
             if (falling)
             {
                 falling = false;
+                // don't take damage if landing in outdoor water
+                if (GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 0)
+                    return;
                 float fallDistance = fallStartLevel - myTransform.position.y;
                 if (fallDistance > fallingDamageThreshold)
                     FallingDamageAlert(fallDistance);
