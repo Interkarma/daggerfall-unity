@@ -178,6 +178,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 1,
                 HitFrame = 3,
                 Weight = 40,
+                SeesThroughInvisibility = true,
                 LootTableKey = "D",
             },
 
@@ -621,6 +622,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 1,
                 HitFrame = 4,
                 Weight = 80,
+                SeesThroughInvisibility = true,
                 LootTableKey = "H",
             },
 
@@ -715,6 +717,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 1,
                 HitFrame = 3,
                 Weight = 0,
+                SeesThroughInvisibility = true,
                 LootTableKey = "I",
             },
 
@@ -747,6 +750,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 1,
                 HitFrame = 4,
                 Weight = 300,
+                SeesThroughInvisibility = true,
                 LootTableKey = "E",
             },
 
@@ -869,6 +873,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 1,
                 HitFrame = 3,
                 Weight = 0,
+                SeesThroughInvisibility = true,
                 LootTableKey = "I",
             },
 
@@ -931,6 +936,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 0,
                 HitFrame = 3,
                 Weight = 800,
+                SeesThroughInvisibility = true,
                 LootTableKey = "J",
             },
 
@@ -962,6 +968,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 0,
                 HitFrame = 2,
                 Weight = 800,
+                SeesThroughInvisibility = true,
                 LootTableKey = "J",
             },
 
@@ -993,6 +1000,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 0,
                 HitFrame = 3,
                 Weight = 400,
+                SeesThroughInvisibility = true,
                 LootTableKey = "E",
             },
 
@@ -1024,6 +1032,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 3,
                 HitFrame = 4,
                 Weight = 400,
+                SeesThroughInvisibility = true,
                 LootTableKey = "Q",
             },
 
@@ -1055,6 +1064,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 1,
                 HitFrame = 2,
                 Weight = 200,
+                SeesThroughInvisibility = true,
                 LootTableKey = "Q",
             },
 
@@ -1086,6 +1096,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 3,
                 HitFrame = 3,
                 Weight = 400,
+                SeesThroughInvisibility = true,
                 LootTableKey = "Q",
             },
 
@@ -1117,6 +1128,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 0,
                 HitFrame = 3,
                 Weight = 1000,
+                SeesThroughInvisibility = true,
                 LootTableKey = "S",
             },
 
@@ -1149,6 +1161,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 4,
                 HitFrame = 3,
                 Weight = 300,
+                SeesThroughInvisibility = true,
                 LootTableKey = "S",
             },
 

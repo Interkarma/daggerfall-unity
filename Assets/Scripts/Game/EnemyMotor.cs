@@ -178,7 +178,7 @@ namespace DaggerfallWorkshop.Game
 
         private void Move()
         {
-            // Cancel movement and animations if paralyzed, but still allow gavity to take effect
+            // Cancel movement and animations if paralyzed, but still allow gravity to take effect
             // This will have the (intentional for now) side-effect of making paralyzed flying enemies fall out of the air
             // Paralyzed swimming enemies will just freeze in place
             // Freezing anims also prevents the attack from triggering until paralysis cleared
@@ -245,45 +245,20 @@ namespace DaggerfallWorkshop.Game
             if (mobile.IsPlayingOneShot())
                 moveSpeed /= AttackSpeedDivisor;
 
-            // Remain idle when not hostile
-            if (!isHostile)
+            // As long as the player is directly seen/heard,
+            // giveUpTimer is reset to full
+            if (senses.DetectedPlayer)
+                giveUpTimer = 200;
+
+            // Remain idle when not hostile or giving up finding the player
+            if (!isHostile || giveUpTimer == 0)
             {
                 mobile.ChangeEnemyState(MobileStates.Idle);
                 return;
             }
-            // If hostile but the enemy doesn't see the player, run the stealth check
-            else if (senses.LastKnownPlayerPos == EnemySenses.ResetPlayerPos)
-            {
-                if (senses.StealthCheck())
-                {
-                    // Enemy noticed the player
-                    senses.LastKnownPlayerPos = GameManager.Instance.PlayerObject.transform.position;
-                    senses.DetectedPlayer = true;
-                }
-                else
-                {
-                    // Enemy didn't notice the player
-                    mobile.ChangeEnemyState(MobileStates.Idle);
-                    senses.DetectedPlayer = false;
-                    return;
-                }
-            }
-
-            // As long as the player is directly seen/heard,
-            // giveUpTimer is reset to full
-            if (senses.PlayerInSight || senses.PlayerInEarshot)
-            {
-                giveUpTimer = 200;
-            }
-            else if (giveUpTimer == 0)
-            {
-                // Player lost for too long, or wasn't in sight/earshot to begin with. Time to give up
-                senses.LastKnownPlayerPos = EnemySenses.ResetPlayerPos;
-                return;
-            }
 
             // GiveUpTimer value is from classic, so decrease at the speed of classic's update loop
-            if (!senses.PlayerInSight && !senses.PlayerInEarshot
+            if (!senses.DetectedPlayer
                 && giveUpTimer > 0 && classicUpdate)
                 giveUpTimer--;
 
@@ -371,7 +346,7 @@ namespace DaggerfallWorkshop.Game
             //    Spell Cast Animation
             //}
             //}
-            else if (!senses.PlayerInSight && !senses.PlayerInEarshot)
+            else if (!senses.DetectedPlayer && mobile.Summary.EnemyState == MobileStates.Move)
                 mobile.ChangeEnemyState(MobileStates.Idle);
         }
 

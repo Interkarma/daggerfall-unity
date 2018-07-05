@@ -206,7 +206,8 @@ namespace DaggerfallWorkshop
         public string LootTableKey;                 // Key to use when generating loot
         public int HitFrame;                        // Frame of attack animation at which hit on target is attempted
         public int Weight;                          // Weight of this enemy. Affects chance of being knocked back by a hit.
-        public bool CastsMagic;                      // Whether this enemy casts magic. Only used for enemy classes.
+        public bool CastsMagic;                     // Whether this enemy casts magic. Only used for enemy classes.
+        public bool SeesThroughInvisibility;        // Whether this enemy sees through the shade, chameleon and invisibility effects.
     }
 
     /// <summary>

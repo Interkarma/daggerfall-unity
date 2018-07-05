@@ -384,13 +384,13 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             if (attacker == player)
             {
-                // Apply swing modifiers. Not applied to hand-to-hand in classic.
+                // Apply swing modifiers.
                 FPSWeapon onscreenWeapon = GameManager.Instance.WeaponManager.ScreenWeapon;
 
                 if (onscreenWeapon != null)
                 {
                     // The Daggerfall manual groups diagonal slashes to the left and right as if they are the same, but they are different.
-                    // Classic does not apply swing modifiers to hand-to-hand.
+                    // Classic does not apply swing modifiers to unarmed attacks.
                     if (onscreenWeapon.WeaponState == WeaponStates.StrikeUp)
                     {
                         damageModifiers += -4;
@@ -534,6 +534,14 @@ namespace DaggerfallWorkshop.Game.Formulas
             damage = Mathf.Max(0, damage);
 
             DamageEquipment(attacker, target, damage, weapon, struckBodyPart);
+
+            if (attacker == player && damage > 0)
+            {
+                // TODO: Also dispel these for AI entities
+                player.IsAShade = false;
+                player.IsBlending = false;
+                player.IsInvisible = false;
+            }
 
             return damage;
         }

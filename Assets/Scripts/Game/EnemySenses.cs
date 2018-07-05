@@ -40,6 +40,11 @@ namespace DaggerfallWorkshop.Game
         bool hasEncounteredPlayer = false;
         bool detectedPlayer = false;
         uint timeOfLastStealthCheck = 0;
+        bool blockedByIllusionEffect = false;
+        float lastHadLOSTimer = 0f;
+
+        float classicUpdateTimer = 0f;
+        bool classicUpdate = false;
 
         GameObject Player
         {
@@ -102,6 +107,15 @@ namespace DaggerfallWorkshop.Game
 
         void FixedUpdate()
         {
+            classicUpdateTimer += Time.deltaTime;
+            if (classicUpdateTimer >= PlayerEntity.ClassicUpdateInterval)
+            {
+                classicUpdateTimer = 0;
+                classicUpdate = true;
+            }
+            else
+                classicUpdate = false;
+
             if (Player != null)
             {
                 Vector3 toPlayer = Player.transform.position - transform.position;
@@ -110,9 +124,6 @@ namespace DaggerfallWorkshop.Game
 
                 playerInSight = CanSeePlayer();
 
-                if (playerInSight)
-                    detectedPlayer = true;
-
                 // Classic stealth mechanics would be interfered with by hearing, so only enable
                 // hearing if the enemy has detected the player. If player has been seen we can omit hearing.
                 if (detectedPlayer && !playerInSight)
@@ -120,7 +131,39 @@ namespace DaggerfallWorkshop.Game
                 else
                     playerInEarshot = false;
 
-                if ((playerInEarshot || playerInSight) && !hasEncounteredPlayer)
+                // Note: In classic an enemy can continue to track the player as long as their
+                // giveUpTimer is > 0. Since the timer is reset to 200 on every detection this
+                // would make chameleon and shade essentially useless, since the enemy is sure
+                // to detect the player during one of the many AI updates. Here, the enemy has to
+                // successfully see through the illusion spell each classic update to continue
+                // to know where the player is.
+                if (classicUpdate)
+                {
+                    blockedByIllusionEffect = BlockedByIllusionEffect();
+                    if (lastHadLOSTimer > 0)
+                        lastHadLOSTimer--;
+                }
+
+                if (!blockedByIllusionEffect && (playerInSight || playerInEarshot))
+                {
+                    detectedPlayer = true;
+                    lastKnownPlayerPos = Player.transform.position;
+                    lastHadLOSTimer = 200f;
+                }
+                else if (!blockedByIllusionEffect && StealthCheck())
+                {
+                    detectedPlayer = true;
+
+                    // Only get the player's location from the stealth check if we haven't had
+                    // actual LOS for a while. This gives better pursuit behavior since enemies
+                    // will go to the last spot they saw the player instead of walking into walls.
+                    if (lastHadLOSTimer <= 0)
+                        lastKnownPlayerPos = Player.transform.position;
+                }
+                else
+                    detectedPlayer = false;
+
+                if (detectedPlayer && !hasEncounteredPlayer)
                 {
                     hasEncounteredPlayer = true;
 
@@ -169,10 +212,10 @@ namespace DaggerfallWorkshop.Game
             else if (hasEncounteredPlayer)
                 return true;
 
-            Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
+            PlayerEntity player = GameManager.Instance.PlayerEntity;
             if (player.TimeOfLastStealthCheck != gameMinutes)
             {
-                player.TallySkill(DaggerfallConnect.DFCareer.Skills.Stealth, 1);
+                player.TallySkill(DFCareer.Skills.Stealth, 1);
                 player.TimeOfLastStealthCheck = gameMinutes;
             }
             timeOfLastStealthCheck = gameMinutes;
@@ -180,6 +223,35 @@ namespace DaggerfallWorkshop.Game
             int stealthRoll = 2 * ((int)(distanceToPlayer / MeshReader.GlobalScale) * player.Skills.GetLiveSkillValue(DaggerfallConnect.DFCareer.Skills.Stealth) >> 10);
 
             return Random.Range(1, 101) > stealthRoll;
+        }
+
+        public bool BlockedByIllusionEffect()
+        {
+            // Note: These effects only block detection for the player.
+            // In classic if the target is another AI character true is always returned.
+
+            // Some enemy types can see through these effects.
+            if (mobile.Summary.Enemy.SeesThroughInvisibility)
+                return false;
+
+            // If not one of the above enemy types, and player has invisibility,
+            // detection is always blocked.
+            PlayerEntity player = GameManager.Instance.PlayerEntity;
+            if (player.IsInvisible)
+                return true;
+
+            // If player doesn't have any illusion effect, detection is not blocked.
+            if (!player.IsBlending && !player.IsAShade)
+                return false;
+
+            // Player has either chameleon or shade. Try to see through it.
+            int chance;
+            if (player.IsBlending)
+                chance = 8;
+            else // is a shade
+                chance = 4;
+
+            return Random.Range(1, 101) > chance;
         }
 
         public bool TargetIsWithinYawAngle(float targetAngle)
@@ -222,7 +294,6 @@ namespace DaggerfallWorkshop.Game
                         if (hit.transform.gameObject == Player)
                         {
                             seen = true;
-                            lastKnownPlayerPos = Player.transform.position;
                         }
 
                         // Check if hit was an action door
@@ -262,7 +333,6 @@ namespace DaggerfallWorkshop.Game
             if (distanceToPlayer < (HearingRadius * hearingScale) + mobile.Summary.Enemy.HearingModifier)
             {
                 heard = true;
-                lastKnownPlayerPos = Player.transform.position;
             }
 
             return heard;
