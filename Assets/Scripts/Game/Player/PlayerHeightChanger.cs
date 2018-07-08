@@ -428,11 +428,11 @@ namespace DaggerfallWorkshop.Game
             PlayerPositionData_v1 savePos = saveData.playerData.playerPosition;
 
             // save is crouched
-            if (!savePos.isCrouching)
+            if (!savePos.isCrouching && playerMotor.IsCrouching)
             {
                 heightAction = HeightChangeAction.DoStanding;
             }
-            else if (savePos.isCrouching)
+            else if (savePos.isCrouching && !playerMotor.IsCrouching)
             {
                 heightAction = HeightChangeAction.DoCrouching;
             }              
