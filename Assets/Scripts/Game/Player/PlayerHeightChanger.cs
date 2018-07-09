@@ -63,7 +63,10 @@ namespace DaggerfallWorkshop.Game
         private float camCrouchToStandDist;
         private float camStandToRideDist;
         private float camTimer;
-        private const float timerMax = 0.1f;
+        private const float timerFast = 0.10f;
+        private const float timerMedium = 0.25f;
+        private const float timerSlow = 0.4f;
+        private float timerMax = 0.1f;
         private float camLerp_T;  // for lerping to new camera position
         private bool toggleRiding;
         private bool toggleSink;
@@ -95,6 +98,7 @@ namespace DaggerfallWorkshop.Game
         public void DecideHeightAction()
         {
             bool onWater = OnWater;
+            timerMax = timerSlow;
             if (onWater && !toggleSink)
             {
                 heightAction = HeightChangeAction.DoSinking;
@@ -127,6 +131,34 @@ namespace DaggerfallWorkshop.Game
                 }
             }  
         }
+
+        private void SetChangeSpeed(HeightChangeAction action)
+        {
+            switch (action)
+            {
+                case HeightChangeAction.DoNothing:
+                    timerMax = timerSlow;
+                    break;
+                case HeightChangeAction.DoCrouching:
+                    timerMax = timerFast;
+                    break;
+                case HeightChangeAction.DoStanding:
+                    timerMax = timerFast;
+                    break;
+                case HeightChangeAction.DoMounting:
+                    timerMax = timerMedium;
+                    break;
+                case HeightChangeAction.DoDismounting:
+                    timerMax = timerFast;
+                    break;
+                case HeightChangeAction.DoSinking:
+                    timerMax = timerSlow;
+                    break;
+                case HeightChangeAction.DoUnsinking:
+                    timerMax = timerSlow;
+                    break;
+            }
+        }
         /// <summary>
         /// Continue calling actions to increment camera towards destination.
         /// </summary>
@@ -134,6 +166,8 @@ namespace DaggerfallWorkshop.Game
         {
             if (heightAction == HeightChangeAction.DoNothing || GameManager.IsGamePaused)
                 return;
+
+            SetChangeSpeed(heightAction);
             if (heightAction == HeightChangeAction.DoSinking)
                 DoSinking();
             else if (heightAction == HeightChangeAction.DoUnsinking)
