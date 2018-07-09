@@ -146,9 +146,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void SoundBar_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            // make it easier to max out volume
+            // make it easier to max out or mute volume
             if ((position.x / barMaxLength) > 0.99f)
                 position.x = barMaxLength;
+            else if ((position.x / barMaxLength) < 0.01f)
+                position.x = 0;
             // resize panel to where user clicked
             soundBar.Size = new Vector2(position.x, 3.5f);
             DaggerfallUnity.Settings.SoundVolume = (position.x / barMaxLength);
@@ -156,9 +158,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
         private void MusicBar_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            // make it easier to max out volume
+            // make it easier to max out or mute volume
             if ((position.x / barMaxLength) > 0.99f)
                 position.x = barMaxLength;
+            else if ((position.x / barMaxLength) < 0.01f)
+                position.x = 0;
             // resize panel to where user clicked
             musicBar.Size = new Vector2(position.x, 3.5f);
             DaggerfallUnity.Settings.MusicVolume = (position.x / barMaxLength);
