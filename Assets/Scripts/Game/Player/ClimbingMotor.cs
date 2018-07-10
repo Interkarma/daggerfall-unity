@@ -55,6 +55,7 @@ namespace DaggerfallWorkshop.Game
                 || failedClimbingCheck
                 || levitateMotor.IsLevitating
                 || playerMotor.IsRiding
+                || playerMotor.IsCrouching 
                 || Vector2.Distance(lastHorizontalPosition, new Vector2(controller.transform.position.x, controller.transform.position.z)) >= (0.003f)) // Approximation based on observing classic in-game
             {
                 isClimbing = false;
