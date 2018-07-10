@@ -197,39 +197,36 @@ namespace DaggerfallConnect.Save
             if (!saveVars.Open(Path.Combine(saveGameDict[save], SaveVars.Filename)))
                 throw new Exception("Could not open SaveVars for index " + save);
 
-            GameManager.Instance.PlayerGPS.ClearDiscoveryData();
             mapSave = new BsaFile();
             if (!mapSave.Load(Path.Combine(saveGameDict[save], "MAPSAVE.SAV"), FileUsage.UseMemory, true))
                 throw new Exception("Could not open MapSave for index " + save);
-            else
+
+            PlayerGPS gps = GameManager.Instance.PlayerGPS;
+            gps.ClearDiscoveryData();
+            for (int regionIndex = 0; regionIndex < 62; regionIndex++)
             {
-                DaggerfallWorkshop.PlayerGPS gps = GameManager.Instance.PlayerGPS;
-                for (int regionIndex = 0; regionIndex < 62; regionIndex++)
+                // Generate name from region index
+                string name = string.Format("MAPSAVE.{0:000}", regionIndex);
+
+                // Get record index
+                int index = mapSave.GetRecordIndex(name);
+                if (index == -1)
+                    return false;
+
+                // Read MAPSAVE data
+                byte[] data = mapSave.GetRecordBytes(index);
+
+                // Parse MAPSAVE data for discovered locations
+                DFRegion regionData = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegion(regionIndex);
+                for (int i = 0; i < regionData.LocationCount; i++)
                 {
-                    // Generate name from region index
-                    string name = string.Format("MAPSAVE.{0:000}", regionIndex);
-
-                    // Get record index
-                    int index = mapSave.GetRecordIndex(name);
-                    if (index == -1)
-                        return false;
-
-                    // Read MAPSAVE data
-                    byte[] data = mapSave.GetRecordBytes(index);
-
-                    // Parse MAPSAVE data for discovered locations
-                    DFRegion regionData = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegion(regionIndex);
-                    for (int i = 0; i < regionData.LocationCount; i++)
+                    if ((data[i] & 0x40) != 0)
                     {
-                        DFLocation location;
-                        if ((data[i] & 0x40) != 0)
+                        // Discover the location in DF Unity's data
+                        if (regionData.MapTable[i].Discovered == false)
                         {
-                            // Discover the location in DF Unity's data
-                            if (regionData.MapTable[i].Discovered == false)
-                            {
-                                location = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(regionIndex, i);
-                                gps.DiscoverLocation(regionData.Name, location.Name);
-                            }
+                            DFLocation location = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(regionIndex, i);
+                            gps.DiscoverLocation(regionData.Name, location.Name);
                         }
                     }
                 }
