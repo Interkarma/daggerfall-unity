@@ -59,6 +59,7 @@ namespace DaggerfallWorkshop.Game
         SoundClips currentFootstepSound2 = SoundClips.None;
         DaggerfallDateTime.Seasons currentSeason = DaggerfallDateTime.Seasons.Summer;
         bool isInside = false;
+        bool isInOutsideWater = false;
 
         void Start()
         {
@@ -91,12 +92,14 @@ namespace DaggerfallWorkshop.Game
             // Can only do this when PlayerEnterExit is available, otherwise default to true
             bool playerInside = (playerEnterExit == null) ? true : playerEnterExit.IsPlayerInside;
             bool playerInBuilding = (playerEnterExit == null) ? false : playerEnterExit.IsPlayerInsideBuilding;
+            bool playerSwimmingOutside = (GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 0 && playerMotor.IsGrounded);
 
             // Change footstep sounds between winter/summer variants or when player enters/exits an interior space
-            if (dfUnity.WorldTime.Now.SeasonValue != currentSeason || isInside != playerInside)
+            if (dfUnity.WorldTime.Now.SeasonValue != currentSeason || isInside != playerInside || playerSwimmingOutside != isInOutsideWater)
             {
                 currentSeason = dfUnity.WorldTime.Now.SeasonValue;
                 isInside = playerInside;
+                isInOutsideWater = playerSwimmingOutside;
                 if (!isInside)
                     if (currentSeason == DaggerfallDateTime.Seasons.Winter)
                     {
@@ -123,6 +126,15 @@ namespace DaggerfallWorkshop.Game
                 clip2 = null;
             }
 
+            // walking on water tile
+            if (playerSwimmingOutside)
+            {
+                currentFootstepSound1 = FootstepSoundSubmerged;
+                currentFootstepSound2 = FootstepSoundSubmerged;
+                clip1 = null;
+                clip2 = null;
+            }
+
             // Use water sounds if in water
             if (playerEnterExit.blockWaterLevel != 10000)
             {
@@ -145,7 +157,8 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Not in water, reset footsteps to normal
-            if ((currentFootstepSound1 == FootstepSoundSubmerged || currentFootstepSound1 == FootstepSoundShallow)
+            if ((!playerSwimmingOutside) 
+                && (currentFootstepSound1 == FootstepSoundSubmerged || currentFootstepSound1 == FootstepSoundShallow)
                 && (playerEnterExit.blockWaterLevel == 10000 || (playerMotor.transform.position.y - 0.95f) >= (playerEnterExit.blockWaterLevel * -1 * MeshReader.GlobalScale)))
             {
                 currentFootstepSound1 = FootstepSoundDungeon1;

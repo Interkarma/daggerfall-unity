@@ -13,11 +13,13 @@ namespace DaggerfallWorkshop.Game
         Crouching,
         Walking,
         Running,
-        Horse
+        Horse,
+        Swimming
     }
 
     [RequireComponent(typeof(CharacterController))]
     [RequireComponent(typeof(PlayerFootsteps))]
+    [RequireComponent(typeof(PlayerEnterExit))]
     public class HeadBobber : MonoBehaviour
     {
         private BobbingStyle bobStyle = BobbingStyle.Walking;
@@ -27,6 +29,7 @@ namespace DaggerfallWorkshop.Game
         }
         private PlayerMotor playerMotor;
         private Camera mainCamera;
+        private PlayerEnterExit playerEnterExit;
 
         private Vector3 restPos; //local position where your camera would rest when it's not bobbing.
         public Vector3 RestPos
@@ -53,6 +56,7 @@ namespace DaggerfallWorkshop.Game
         void Start()
         {
             playerMotor = GetComponent<PlayerMotor>();
+            playerEnterExit = GetComponent<PlayerEnterExit>();
             
             mainCamera = GameManager.Instance.MainCamera;
             restPos = mainCamera.transform.localPosition;
@@ -80,7 +84,9 @@ namespace DaggerfallWorkshop.Game
 
         protected void GetBobbingStyle()
         {
-            if (playerMotor.IsRunning)
+            if (playerEnterExit.IsPlayerSwimming)
+                bobStyle = BobbingStyle.Swimming;
+            else if (playerMotor.IsRunning)
                 bobStyle = BobbingStyle.Running;
             else if (playerMotor.IsCrouching)
                 bobStyle = BobbingStyle.Crouching;
@@ -123,6 +129,13 @@ namespace DaggerfallWorkshop.Game
                     bobYAmount = 0.115f * bobScalar;
                     nodXAmount = 0.2f;
                     nodYAmount = 0.1f;
+                    break;
+                case BobbingStyle.Swimming:
+                    // lots of swaying side to side
+                    bobXAmount = 0.02f * bobScalar;
+                    bobYAmount = 0.12f * bobScalar;
+                    nodXAmount = -0.3f;
+                    nodYAmount = -0.2f;
                     break;
                 default:
                     // error
