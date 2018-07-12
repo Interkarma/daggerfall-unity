@@ -39,7 +39,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         protected Transform playerCamTransform;
-        protected HealthChangeDetector healthDetector;
+        protected VitalsChangeDetector vitalsDetector;
         protected bool bSwaying; // true if player is reeling from damage
         protected Vector2 swayAxis;
         protected float timerStart;
@@ -49,7 +49,7 @@ namespace DaggerfallWorkshop.Game
         void Start()
         {
             playerCamTransform = GameManager.Instance.MainCamera.transform;
-            healthDetector = GetComponent<HealthChangeDetector>();
+            vitalsDetector = GetComponent<VitalsChangeDetector>();
 
             // Get starting health and max health
             if (GameManager.Instance != null && GameManager.Instance.PlayerEntity != null)
@@ -71,8 +71,8 @@ namespace DaggerfallWorkshop.Game
             else
                 cameraRecoilSetting = GetRecoilSetting(DaggerfallUnity.Settings.CameraRecoilStrength);
 
-            int healthLost = healthDetector.HealthLost;
-            float healthLostPercent = healthDetector.HealthLostPercent;
+            int healthLost = vitalsDetector.HealthLost;
+            float healthLostPercent = vitalsDetector.HealthLostPercent;
             // Detect Health loss
             if (healthLost > 0)
             {

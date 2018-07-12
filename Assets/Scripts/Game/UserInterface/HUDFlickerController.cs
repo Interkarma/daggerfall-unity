@@ -13,7 +13,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Wounded,
             Dead
         }
-        private HealthChangeDetector healthDetector;
+        private VitalsChangeDetector vitalsDetector;
         private HUDFlickerFast flickerFast;
         private HUDFlickerSlow flickerSlow;
 
@@ -21,7 +21,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         private const float woundedThreshold = 0.2f; // Health percentage that throb will continue at.
         public HUDFlickerController()
         {
-            healthDetector = GameManager.Instance.HealthChangeDetector;
+            vitalsDetector = GameManager.Instance.VitalsChangeDetector;
             flickerFast = new HUDFlickerFast();
             flickerSlow = new HUDFlickerSlow();
         }
@@ -49,10 +49,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             PlayerCondition condition = GetPlayerCondition();
 
-            if (healthDetector.HealthLost > 0)
+            if (vitalsDetector.HealthLost > 0)
                 flickerFast.ResetIfBurnedOut();
 
-            if (healthDetector.HealthGain > 0 && condition != PlayerCondition.Wounded)
+            if (vitalsDetector.HealthGain > 0 && condition != PlayerCondition.Wounded)
                 flickerSlow.IsBurnedOut = true;
 
             Color backColor;
