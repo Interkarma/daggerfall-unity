@@ -1239,8 +1239,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected bool CanCarry(DaggerfallUnityItem item)
         {
             // Check weight limit
-            if (GetCarriedWeight() + item.weightInKg > playerEntity.MaxEncumbrance &&
-                item.ItemGroup != ItemGroups.Transportation)
+            if (GetCarriedWeight() + (item.weightInKg * item.stackCount) > playerEntity.MaxEncumbrance &&
+                item.ItemGroup != ItemGroups.Transportation && item.TemplateIndex != (int)Weapons.Arrow)
             {
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
                 messageBox.SetText(HardStrings.cannotCarryAnymore);
@@ -1254,7 +1254,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected bool WagonCanHold(DaggerfallUnityItem item)
         {
             // Check cart weight limit
-            if (remoteItems.GetWeight() + item.weightInKg > ItemHelper.wagonKgLimit &&
+            if (remoteItems.GetWeight() + (item.weightInKg * item.stackCount) > ItemHelper.wagonKgLimit &&
                 item.ItemGroup != ItemGroups.Transportation)
             {
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);

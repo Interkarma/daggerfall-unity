@@ -744,6 +744,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 return parent.buildingDiscoveryData.displayName;
             }
+
+            public override string GuildTitle()
+            {
+                if (parent.guild != null)
+                    return parent.guild.GetTitle();
+                else
+                    return MacroHelper.GetFirstname(GameManager.Instance.PlayerEntity.Name);
+            }
         }
 
         #endregion
