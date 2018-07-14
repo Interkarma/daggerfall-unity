@@ -248,8 +248,11 @@ namespace DaggerfallConnect.Save
             // ParentRecordID
             recordRoot.ParentRecordID = reader.ReadUInt32();
 
+            // Time
+            reader.BaseStream.Position = 43;
+            recordRoot.Time = reader.ReadUInt32();
+
             // ItemObject
-            reader.BaseStream.Position = 47;
             recordRoot.ItemObject = reader.ReadUInt32();
 
             // QuestObjectID

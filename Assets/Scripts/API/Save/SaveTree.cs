@@ -354,6 +354,7 @@ namespace DaggerfallConnect.Save
         public UInt32 RecordID;                 // Unique ID of this record. Called "mapID" and "map identifier" by Fixsave.
         public Byte QuestID;                    // Associated quest ID of this record (0 if no quest)
         public UInt32 ParentRecordID;           // ID of parent record
+        public UInt32 Time;                     // Time in game minutes. Known uses: Time for magically-created items to disappear, time for items under repair to be done being repaired.
         public UInt32 ItemObject;               // chunktcl's description: ItemObject. Active spell/spell book/permanent treasure container
         public UInt32 QuestObjectID;            // chunktcl's description: QuestObjectID
         public UInt32 NextObject;               // chunktcl's description: Link to next object in series

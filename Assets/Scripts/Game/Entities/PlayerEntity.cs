@@ -244,9 +244,10 @@ namespace DaggerfallWorkshop.Game.Entity
                 gameStarted = true;
             if (playerMotor != null)
             {
-                // Every game minute, apply fatigue loss to the player
+                // Apply per-minute events
                 if (lastGameMinutes != gameMinutes)
                 {
+                    // Apply fatigue loss to the player
                     int amount = DefaultFatigueLoss;
                     if (climbingMotor != null && climbingMotor.IsClimbing)
                         amount = ClimbingFatigueLoss;
@@ -260,6 +261,9 @@ namespace DaggerfallWorkshop.Game.Entity
                     }
 
                     DecreaseFatigue(amount);
+
+                    // Make magically-created items that have expired disappear
+                    items.RemoveExpiredItems();
                 }
 
                 // Handle events that are called by classic's update loop
@@ -620,6 +624,13 @@ namespace DaggerfallWorkshop.Game.Entity
                     else
                         newItem.TrappedSoulType = MobileTypes.None;
                 }
+
+                // Add existence time limit if item is flagged as having been made through the "Create Item" effect
+                if (((record as ItemRecord).ParsedData.flags & 0x1000) != 0)
+                {
+                    newItem.TimeForItemToDisappear = record.RecordRoot.Time;
+                }
+
                 // Add to local inventory or wagon
                 if (containerRecord.IsWagon)
                     wagonItems.AddItem(newItem);
