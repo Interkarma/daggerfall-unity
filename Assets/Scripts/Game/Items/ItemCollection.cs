@@ -113,6 +113,35 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
+        /// Removes items that have expired. Used for magically-created items. Only for the player.
+        /// Note: Reverse-engineering suggests this was intended behavior in classic, but classic
+        /// does not correctly set the item flags so magically-created items never disappear.
+        /// </summary>
+        public void RemoveExpiredItems()
+        {
+            uint gameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+            List<DaggerfallUnityItem> itemsToRemove = new List<DaggerfallUnityItem>();
+
+            foreach (DaggerfallUnityItem item in items.Values)
+            {
+                if (item.TimeForItemToDisappear != 0 && item.TimeForItemToDisappear < gameMinutes)
+                {
+                    Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
+                    foreach (EquipSlots slotToCheck in Enum.GetValues(typeof(EquipSlots)))
+                    {
+                        if (player.ItemEquipTable.GetItem(slotToCheck) == item)
+                            player.ItemEquipTable.UnequipItem(slotToCheck);
+                    }
+                    itemsToRemove.Add(item);
+                }
+            }
+            foreach (DaggerfallUnityItem item in itemsToRemove)
+            {
+                RemoveItem(item);
+            }
+        }
+
+        /// <summary>
         /// Check if item exists in this collection.
         /// </summary>
         /// <param name="item">Item to check.</param>

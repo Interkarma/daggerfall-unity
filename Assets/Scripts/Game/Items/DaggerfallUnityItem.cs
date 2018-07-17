@@ -58,6 +58,9 @@ namespace DaggerfallWorkshop.Game.Items
         // Soul trapped
         MobileTypes trappedSoulType = MobileTypes.None;
 
+        // Time for magically-created item to disappear
+        uint timeForItemToDisappear = 0;
+
         // Quest-related fields
         bool isQuestItem = false;
         ulong questUID = 0;
@@ -264,12 +267,21 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
-        /// Gets the soul trapped in a soul trap.
+        /// Gets/sets the soul trapped in a soul trap.
         /// </summary>
         public MobileTypes TrappedSoulType
         {
             get { return trappedSoulType; }
             set { trappedSoulType = value; }
+        }
+
+        /// <summary>
+        /// Gets/sets the time for this item to disappear.
+        /// </summary>
+        public uint TimeForItemToDisappear
+        {
+            get { return timeForItemToDisappear; }
+            set { timeForItemToDisappear = value; }
         }
 
         /// <summary>
@@ -1008,9 +1020,11 @@ namespace DaggerfallWorkshop.Game.Items
                 itemBroke = UserInterfaceWindows.HardStrings.itemHasBroken;
             itemBroke = itemBroke.Replace("%s", LongName);
             DaggerfallUI.Instance.PopupMessage(itemBroke);
-            EquipSlots slot = owner.ItemEquipTable.GetEquipSlot(this);
-            if (owner.ItemEquipTable.GetItem(slot) == this)
-                owner.ItemEquipTable.UnequipItem(slot);
+            foreach (EquipSlots slot in Enum.GetValues(typeof(EquipSlots)))
+            {
+                if (owner.ItemEquipTable.GetItem(slot) == this)
+                    owner.ItemEquipTable.UnequipItem(slot);
+            }
         }
 
         /// <summary>
