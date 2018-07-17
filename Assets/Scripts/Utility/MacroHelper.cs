@@ -232,6 +232,12 @@ namespace DaggerfallWorkshop.Utility
             idFaction1Ruler = -1;
         }
 
+        public static string GetFirstname(string name)
+        {
+            string[] parts = name.Split(' ');
+            return (parts != null && parts.Length > 0) ? parts[0] : name;
+        }
+
         #endregion
 
         // Any punctuation characters that can be on the end of a macro symbol need adding here.
@@ -621,27 +627,26 @@ namespace DaggerfallWorkshop.Utility
 
         private static string PlayerFirstname(IMacroContextProvider mcp)
         {   // %pcf
-            string name = GameManager.Instance.PlayerEntity.Name;
-            string[] parts = name.Split(' ');
-            return (parts != null && parts.Length > 0) ? parts[0] : name;
+            return GetFirstname(GameManager.Instance.PlayerEntity.Name);
         }
-        public static string PlayerPronoun(IMacroContextProvider mcp)
+
+        private static string PlayerPronoun(IMacroContextProvider mcp)
         {   // %pg
             return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? HardStrings.pronounShe : HardStrings.pronounHe;
         }
-        public static string PlayerPronoun1(IMacroContextProvider mcp)
+        private static string PlayerPronoun1(IMacroContextProvider mcp)
         {   // %pg1
             return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? HardStrings.pronounHer : HardStrings.pronounHis;
         }
-        public static string PlayerPronoun2(IMacroContextProvider mcp)
+        private static string PlayerPronoun2(IMacroContextProvider mcp)
         {   // %pg2
             return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? HardStrings.pronounHer : HardStrings.pronounHim;
         }
-        public static string PlayerPronoun2self(IMacroContextProvider mcp)
+        private static string PlayerPronoun2self(IMacroContextProvider mcp)
         {   // %pg2self
             return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? HardStrings.pronounHerself : HardStrings.pronounHimself;
         }
-        public static string PlayerPronoun3(IMacroContextProvider mcp)
+        private static string PlayerPronoun3(IMacroContextProvider mcp)
         {   // %pg3
             return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? HardStrings.pronounHers : HardStrings.pronounHis;
         }
