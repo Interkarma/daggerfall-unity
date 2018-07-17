@@ -99,7 +99,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Full screen
             Button fullScreenButton = DaggerfallUI.AddButton(new Rect(5, 47, 70, 8), optionsPanel);
-            fullScreenButton.BackgroundColor = new Color(1, 0, 0, 0.5f);
+            //fullScreenButton.BackgroundColor = new Color(1, 0, 0, 0.5f);
 
             // Head bobbing
             Button headBobbingButton = DaggerfallUI.AddButton(new Rect(76, 47, 70, 8), optionsPanel);
