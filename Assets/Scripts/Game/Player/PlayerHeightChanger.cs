@@ -1,4 +1,4 @@
-﻿using DaggerfallWorkshop.Game;
+using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Serialization;
 using System.Collections;
 using System.Collections.Generic;
@@ -119,7 +119,7 @@ namespace DaggerfallWorkshop.Game
                 heightAction = HeightChangeAction.DoDismounting;
                 toggleRiding = false;
             }
-            else if (!playerMotor.IsRiding && !playerMotor.IsCrouching)
+            else if (!playerMotor.IsRiding)
             {
                 // Toggle crouching
                 if (!onWater && InputManager.Instance.ActionComplete(InputManager.Actions.Crouch))
