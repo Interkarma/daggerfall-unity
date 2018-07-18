@@ -179,16 +179,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
             }
 
-            // Adjust vitals based on current player state
-            if (playerEntity)
-            {
-                PlayerEntity entity = playerEntity.Entity as PlayerEntity;
-                vitals.Health = (float)entity.CurrentHealth / (float)entity.MaxHealth;
-                vitals.Fatigue = (float)entity.CurrentFatigue / (float)entity.MaxFatigue;
-                vitals.Magicka = (float)entity.CurrentMagicka / (float)entity.MaxMagicka;
-                vitals.Breath = (float)entity.CurrentBreath / (float)entity.MaxBreath;
-            }
-
             // Cycle quest debugger state
             if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.Tab))
             {

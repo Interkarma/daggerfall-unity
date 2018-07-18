@@ -13,6 +13,7 @@ using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.Serialization;
 using UnityEngine;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -40,6 +41,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         VerticalProgress healthProgressGain = new VerticalProgress();
         VerticalProgress fatigueProgressGain = new VerticalProgress();
         VerticalProgress magickaProgressGain = new VerticalProgress();
+        PlayerEntity playerEntity;
 
         Color healthLossColor = new Color(0, 0.22f, 0);
         Color fatigueLossColor = new Color(0.44f, 0, 0);
@@ -86,6 +88,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public HUDVitals()
             :base()
         {
+            playerEntity = GameManager.Instance.PlayerEntity;
             LoadAssets();
 
             BackgroundColor = Color.clear;
@@ -96,20 +99,25 @@ namespace DaggerfallWorkshop.Game.UserInterface
             healthProgress.VerticalAlignment = VerticalAlignment.Bottom;
             fatigueProgress.VerticalAlignment = VerticalAlignment.Bottom;
             magickaProgress.VerticalAlignment = VerticalAlignment.Bottom;
-            healthProgressLoss.VerticalAlignment = VerticalAlignment.Bottom;
-            fatigueProgressLoss.VerticalAlignment = VerticalAlignment.Bottom;
-            magickaProgressLoss.VerticalAlignment = VerticalAlignment.Bottom;
-            healthProgressGain.VerticalAlignment = VerticalAlignment.Bottom;
-            fatigueProgressGain.VerticalAlignment = VerticalAlignment.Bottom;
-            magickaProgressGain.VerticalAlignment = VerticalAlignment.Bottom;
 
-            // to make bar appear behind other bars, add it first.
-            Components.Add(healthProgressGain);
-            Components.Add(fatigueProgressGain);
-            Components.Add(magickaProgressGain);
-            Components.Add(healthProgressLoss);
-            Components.Add(fatigueProgressLoss);
-            Components.Add(magickaProgressLoss);
+            if (DaggerfallUnity.Settings.EnableVitalsIndicators)
+            {
+                healthProgressLoss.VerticalAlignment = VerticalAlignment.Bottom;
+                fatigueProgressLoss.VerticalAlignment = VerticalAlignment.Bottom;
+                magickaProgressLoss.VerticalAlignment = VerticalAlignment.Bottom;
+                healthProgressGain.VerticalAlignment = VerticalAlignment.Bottom;
+                fatigueProgressGain.VerticalAlignment = VerticalAlignment.Bottom;
+                magickaProgressGain.VerticalAlignment = VerticalAlignment.Bottom;
+
+                // to make bar appear behind other bars, add it first.
+                Components.Add(healthProgressGain);
+                Components.Add(fatigueProgressGain);
+                Components.Add(magickaProgressGain);
+                Components.Add(healthProgressLoss);
+                Components.Add(fatigueProgressLoss);
+                Components.Add(magickaProgressLoss);
+            }
+
             Components.Add(healthProgress);
             Components.Add(fatigueProgress);
             Components.Add(magickaProgress);
@@ -127,58 +135,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 float barWidth = nativeBarWidth * Scale.x;
                 float breathBarWidth = nativeBreathBarWidth * Scale.x;
                 float barHeight = nativeBarHeight * Scale.y;
-                float breathBarHeight = GameManager.Instance.PlayerEntity.Stats.LiveEndurance * Scale.y;
+                float breathBarHeight = playerEntity.Stats.LiveEndurance * Scale.y;
 
                 Size = new Vector2(barWidth * 5, barHeight);
-
-                float target;
-                // if there's any change in health... Smooth update the Loss bar, and
-                // decide if should smooth update or instant update the progress bar
-                if (vitalsDetector.HealthLost != 0)
-                {
-                    target = GameManager.Instance.PlayerEntity.CurrentHealthPercent;
-                    healthProgressLoss.BeginSmoothChange(target);
-                    if (vitalsDetector.HealthLost > 0)
-                        healthProgress.Amount = target;
-                    else if (vitalsDetector.HealthGain > 0)
-                        healthProgress.BeginSmoothChange(target);
-                }
-                // if there's any change in fatigue...
-                if (vitalsDetector.FatigueLost != 0)
-                {
-                    target = GameManager.Instance.PlayerEntity.CurrentFatigue / (float)GameManager.Instance.PlayerEntity.MaxFatigue;
-                    fatigueProgressLoss.BeginSmoothChange(target);
-                    if (vitalsDetector.FatigueLost > 0)
-                        fatigueProgress.Amount = target;
-                    else if (vitalsDetector.FatigueGain > 0)
-                        fatigueProgress.BeginSmoothChange(target);
-                }
-                // if there's any change in magicka...
-                if (vitalsDetector.MagickaLost != 0)
-                {
-                    target = GameManager.Instance.PlayerEntity.CurrentMagicka / (float)GameManager.Instance.PlayerEntity.MaxMagicka;
-                    magickaProgressLoss.BeginSmoothChange(target);
-                    if (vitalsDetector.MagickaLost > 0)
-                        magickaProgress.Amount = target;
-                    else if (vitalsDetector.MagickaGain > 0)
-                        magickaProgress.BeginSmoothChange(target);
-                }
-
-                healthProgressLoss.Cycle();
-                fatigueProgressLoss.Cycle();
-                magickaProgressLoss.Cycle();
-                healthProgress.Cycle();
-                fatigueProgress.Cycle();
-                magickaProgress.Cycle();
-
-                healthProgressLoss.Position = new Vector2(0, 0);
-                healthProgressLoss.Size = new Vector2(barWidth, barHeight);
-
-                fatigueProgressLoss.Position = new Vector2(barWidth * 2, 0);
-                fatigueProgressLoss.Size = new Vector2(barWidth, barHeight);
-
-                magickaProgressLoss.Position = new Vector2(barWidth * 4, 0);
-                magickaProgressLoss.Size = new Vector2(barWidth, barHeight);
 
                 healthProgress.Position = new Vector2(0, 0);
                 healthProgress.Size = new Vector2(barWidth, barHeight);
@@ -188,23 +147,89 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                 magickaProgress.Position = new Vector2(barWidth * 4, 0);
                 magickaProgress.Size = new Vector2(barWidth, barHeight);
-                
-                healthProgressGain.Position = new Vector2(0, 0);
-                healthProgressGain.Size = new Vector2(barWidth, barHeight);
-
-                fatigueProgressGain.Position = new Vector2(barWidth * 2, 0);
-                fatigueProgressGain.Size = new Vector2(barWidth, barHeight);
-
-                magickaProgressGain.Position = new Vector2(barWidth * 4, 0);
-                magickaProgressGain.Size = new Vector2(barWidth, barHeight);
 
                 breathProgress.Position = new Vector2(306 * Scale.x, (-60 * Scale.y) - breathBarHeight);
                 breathProgress.Size = new Vector2(breathBarWidth, breathBarHeight);
+
+                if (DaggerfallUnity.Settings.EnableVitalsIndicators)
+                {
+                    UpdateIndicators();
+                }
+                else
+                {
+                    // Adjust vitals based on current player state
+                    healthProgress.Amount = playerEntity.CurrentHealth / (float)playerEntity.MaxHealth;
+                    fatigueProgress.Amount = playerEntity.CurrentFatigue / (float)playerEntity.MaxFatigue;
+                    magickaProgress.Amount = playerEntity.CurrentMagicka / (float)playerEntity.MaxMagicka;
+                }
+                breathProgress.Amount = playerEntity.CurrentBreath / (float)playerEntity.MaxBreath;
             }
         }
 
-        void SetProgressAmounts(VerticalProgress prog)
+        void UpdateIndicators()
         {
+            // these progress bars never smooth-change.
+            healthProgressGain.Amount = playerEntity.CurrentHealth / (float)playerEntity.MaxHealth;
+            fatigueProgressGain.Amount = playerEntity.CurrentFatigue / (float)playerEntity.MaxFatigue;
+            magickaProgressGain.Amount = playerEntity.CurrentMagicka / (float)playerEntity.MaxMagicka;
+
+            float target;
+            // if there's any change in health... Smooth update the Loss bar, and
+            // decide if should smooth update or instant update the progress bar
+            if (vitalsDetector.HealthLost != 0)
+            {
+                target = healthProgressGain.Amount;
+                healthProgressLoss.BeginSmoothChange(target);
+                if (vitalsDetector.HealthLost > 0)
+                    healthProgress.Amount = target;
+                else if (vitalsDetector.HealthGain > 0)
+                    healthProgress.BeginSmoothChange(target);
+            }
+            // if there's any change in fatigue...
+            if (vitalsDetector.FatigueLost != 0)
+            {
+                target = fatigueProgressGain.Amount;
+                fatigueProgressLoss.BeginSmoothChange(target);
+                if (vitalsDetector.FatigueLost > 0)
+                    fatigueProgress.Amount = target;
+                else if (vitalsDetector.FatigueGain > 0)
+                    fatigueProgress.BeginSmoothChange(target);
+            }
+            // if there's any change in magicka...
+            if (vitalsDetector.MagickaLost != 0)
+            {
+                target = magickaProgressGain.Amount;
+                magickaProgressLoss.BeginSmoothChange(target);
+                if (vitalsDetector.MagickaLost > 0)
+                    magickaProgress.Amount = target;
+                else if (vitalsDetector.MagickaGain > 0)
+                    magickaProgress.BeginSmoothChange(target);
+            }
+
+            healthProgressLoss.Cycle();
+            fatigueProgressLoss.Cycle();
+            magickaProgressLoss.Cycle();
+            healthProgress.Cycle();
+            fatigueProgress.Cycle();
+            magickaProgress.Cycle();
+
+            healthProgressLoss.Position = healthProgress.Position;
+            healthProgressLoss.Size = healthProgress.Size;
+
+            fatigueProgressLoss.Position = fatigueProgress.Position;
+            fatigueProgressLoss.Size = fatigueProgress.Size;
+
+            magickaProgressLoss.Position = magickaProgress.Position;
+            magickaProgressLoss.Size = magickaProgress.Size;
+
+            healthProgressGain.Position = healthProgress.Position;
+            healthProgressGain.Size = healthProgress.Size;
+
+            fatigueProgressGain.Position = fatigueProgress.Position;
+            fatigueProgressGain.Size = fatigueProgress.Size;
+
+            magickaProgressGain.Position = magickaProgress.Position;
+            magickaProgressGain.Size = magickaProgress.Size;
 
         }
         void LoadAssets()
