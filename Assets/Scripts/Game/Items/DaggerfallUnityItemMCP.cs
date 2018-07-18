@@ -160,15 +160,14 @@ namespace DaggerfallWorkshop.Game.Items
                 else
                 {
                     // List item powers. 
-                    // TODO: Update once magic effects have been implemented. (just puts "Power number N" for now)
-                    // Pretty sure low numbers are type of application, and higher ones are effects.
-                    // e.g. shield of fortitude is [1, 87] which maps to "Cast when held: Fortitude" in classic.
+                    // TODO: Update once magic effects have been implemented.
                     List<TextFile.Token> magicPowersTokens = new List<TextFile.Token>();
                     for (int i = 0; i < parent.legacyMagic.Length; i++)
                     {
-                        if (parent.legacyMagic[i] == 0xffff)
+                        // Also 65535 to handle saves from when the type was read as an unsigned value
+                        if (parent.legacyMagic[i].type == EnchantmentTypes.None || (int)parent.legacyMagic[i].type == 65535)
                             break;
-                        magicPowersTokens.Add(TextFile.CreateTextToken("Power number " + parent.legacyMagic[i]));
+                        magicPowersTokens.Add(TextFile.CreateTextToken("Type: " + parent.legacyMagic[i].type + " Param: " + parent.legacyMagic[i].param));
                         magicPowersTokens.Add(TextFile.CreateFormatToken(format));
                     }
                     return magicPowersTokens.ToArray();

@@ -42,7 +42,7 @@ namespace DaggerfallWorkshop.Game.Items
         public byte typeDependentData;
         public int enchantmentPoints;
         public int message;
-        public int[] legacyMagic = null;
+        public DaggerfallEnchantment[] legacyMagic = null;
         public int stackCount = 1;
 
         // Private item fields
@@ -473,11 +473,11 @@ namespace DaggerfallWorkshop.Game.Items
 
             // All artifacts have magical effects
             bool foundEnchantment = false;
-            legacyMagic = new int[magicItemTemplate.enchantments.Length];
+            legacyMagic = new DaggerfallEnchantment[magicItemTemplate.enchantments.Length];
             for (int i = 0; i < magicItemTemplate.enchantments.Length; i++)
             {
-                legacyMagic[i] = (ushort)magicItemTemplate.enchantments[i];
-                if (legacyMagic[i] != 0xffff)
+                legacyMagic[i] = magicItemTemplate.enchantments[i];
+                if (legacyMagic[i].type != EnchantmentTypes.None)
                     foundEnchantment = true;
             }
 
@@ -601,7 +601,18 @@ namespace DaggerfallWorkshop.Game.Items
             data.hits3 = (unknown2 & 0xff) | (typeDependentData << 8);
             data.enchantmentPoints = enchantmentPoints;
             data.message = message;
-            data.legacyMagic = legacyMagic;
+            if (legacyMagic != null)
+            {
+                data.legacyMagic = new int[legacyMagic.Length * 2];
+                int j = 0;
+                for (int i = 0; i < legacyMagic.Length; i++)
+                {
+                    data.legacyMagic[j] = (short)(legacyMagic[i].type);
+                    j++;
+                    data.legacyMagic[j] = legacyMagic[i].param;
+                    j++;
+                }
+            }
             data.playerTextureArchive = playerTextureArchive;
             data.playerTextureRecord = playerTextureRecord;
             data.worldTextureArchive = worldTextureArchive;
@@ -1118,7 +1129,7 @@ namespace DaggerfallWorkshop.Game.Items
             message = other.message;
 
             if (other.legacyMagic != null)
-                legacyMagic = (int[])other.legacyMagic.Clone();
+                legacyMagic = (DaggerfallEnchantment[])other.legacyMagic.Clone();
         }
 
         /// <summary>
@@ -1186,11 +1197,11 @@ namespace DaggerfallWorkshop.Game.Items
             bool foundEnchantment = false;
             if (itemRecord.ParsedData.magic != null)
             {
-                legacyMagic = new int[itemRecord.ParsedData.magic.Length];
+                legacyMagic = new DaggerfallEnchantment[itemRecord.ParsedData.magic.Length];
                 for (int i = 0; i < itemRecord.ParsedData.magic.Length; i++)
                 {
                     legacyMagic[i] = itemRecord.ParsedData.magic[i];
-                    if (legacyMagic[i] != 0xffff)
+                    if (legacyMagic[i].type != EnchantmentTypes.None)
                         foundEnchantment = true;
                 }
             }
@@ -1229,7 +1240,19 @@ namespace DaggerfallWorkshop.Game.Items
             typeDependentData = (byte)(data.hits3 >> 8);
             enchantmentPoints = data.enchantmentPoints;
             message = data.message;
-            legacyMagic = data.legacyMagic;
+            // Convert magic data that was saved as int array
+            if (data.legacyMagic != null)
+            {
+                legacyMagic = new DaggerfallEnchantment[data.legacyMagic.Length / 2];
+                int j = 0;
+                for (int i = 0; i < legacyMagic.Length; i++)
+                {
+                    legacyMagic[i].type = (EnchantmentTypes)(data.legacyMagic[j]);
+                    j++;
+                    legacyMagic[i].param = (short)(data.legacyMagic[j]);
+                    j++;
+                }
+            }
             playerTextureArchive = data.playerTextureArchive;
             playerTextureRecord = data.playerTextureRecord;
             worldTextureArchive = data.worldTextureArchive;
@@ -1331,11 +1354,9 @@ namespace DaggerfallWorkshop.Game.Items
                 return false;
 
             // Check for legacy magic effects
-            // A value of 0xffff means no enchantment in that slot
-            // http://www.uesp.net/wiki/Daggerfall:MAGIC.DEF_indices
             for (int i = 0;  i < legacyMagic.Length; i++)
             {
-                if (legacyMagic[i] != 0xffff)
+                if (legacyMagic[i].type != EnchantmentTypes.None)
                     return true;
             }
 

@@ -21,6 +21,7 @@ using DaggerfallWorkshop.Game.Questing;
 using System;
 using DaggerfallWorkshop.Game.Guilds;
 using DaggerfallWorkshop.Game.Formulas;
+using DaggerfallConnect.FallExe;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -114,11 +115,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
                 ItemCollection items = new ItemCollection();
                 DaggerfallUnityItem magicArm = ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race);
-                magicArm.legacyMagic = new int[] { 1, 87, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535 };
+                magicArm.legacyMagic = new DaggerfallEnchantment[1];
+                magicArm.legacyMagic[0].type = EnchantmentTypes.CastWhenHeld;
+                magicArm.legacyMagic[0].param = 87;
                 items.AddItem(magicArm);
                 DaggerfallUnityItem magicWeap = ItemBuilder.CreateRandomWeapon(playerEntity.Level);
-                magicWeap.legacyMagic = new int[] { 1, 87, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535 };
-                items.AddItem(magicWeap);
+                magicWeap.legacyMagic = new DaggerfallEnchantment[1];
+                magicWeap.legacyMagic[0].type = EnchantmentTypes.CastWhenHeld;
+                magicWeap.legacyMagic[0].param = 87;
                 merchantItems = items;
             }
             return merchantItems;

@@ -511,7 +511,7 @@ namespace DaggerfallWorkshop.Game.Items
                         return textProvider.GetRSCTokens(weaponTextId);             // Handle weapons
 
                 case ItemGroups.Books:
-                    if (item.legacyMagic != null && item.legacyMagic[0] == 26)
+                    if (item.legacyMagic != null && item.legacyMagic[0].type == EnchantmentTypes.SpecialArtifactEffect)
                         return textProvider.GetRSCTokens(oghmaInfiniumTextId);      // Handle Oghma Infinium
                     else                                                      
                         return textProvider.GetRSCTokens(bookTextId);               // Handle other books
@@ -541,7 +541,7 @@ namespace DaggerfallWorkshop.Game.Items
                         return textProvider.GetRSCTokens(potionTextId);
 
                     // Handle Azura's Star
-                    if (item.legacyMagic != null && item.legacyMagic[0] == 26 && item.legacyMagic[1] == 9)
+                    if (item.legacyMagic != null && item.legacyMagic[0].type == EnchantmentTypes.SpecialArtifactEffect && item.legacyMagic[0].param == 9)
                         return textProvider.GetRSCTokens(soulTrapTextId);
 
                     // Default fallback if none of the above applied
@@ -644,7 +644,7 @@ namespace DaggerfallWorkshop.Game.Items
             }
 
             // Handle enchanted weapons
-            if (item.legacyMagic != null && item.legacyMagic[0] != -1)
+            if (item.legacyMagic != null && item.legacyMagic[0].type != EnchantmentTypes.None)
             {
                 switch (result)
                 {
