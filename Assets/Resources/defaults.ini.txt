@@ -41,6 +41,7 @@ ShopQualityHUDDelay=4
 ShowQuestJournalClocksAsCountdown=False
 EnableInventoryInfoPanel=True
 EnableEnhancedItemLists=False
+EnableVitalsIndicators=True
 EnableModernConversationStyleInTalkWindow=False
 HelmAndShieldMaterialDisplay=0
 InteractionModeIcon = minimal
