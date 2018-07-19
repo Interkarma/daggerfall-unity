@@ -1442,10 +1442,10 @@ namespace Wenzil.Console
                             newItem = ItemBuilder.CreateRandomWeapon(playerEntity.Level);
                             break;
                         case "armor":
-                            newItem = ItemBuilder.CreateRandomArmor(playerEntity.Level, RandomEnumValue<Genders>(), RandomEnumValue<Races>());
+                            newItem = ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race);
                             break;
                         case "cloth":
-                            newItem = ItemBuilder.CreateRandomClothing(RandomEnumValue<Genders>(), RandomEnumValue<Races>());
+                            newItem = ItemBuilder.CreateRandomClothing(playerEntity.Gender, playerEntity.Race);
                             break;
                         case "ingr":
                             newItem = ItemBuilder.CreateRandomIngredient();
