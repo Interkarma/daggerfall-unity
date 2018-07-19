@@ -35,6 +35,8 @@ inventoryInfoPanel,                                 Inventory Info Panel
 inventoryInfoPanelInfo,                             Inventory Info Panel
 enhancedItemLists,                                  Enhanced Item Lists
 enhancedItemListsInfo,                              Inventory 16x item grid
+vitalsIndicators,									Vitals Indicators
+vitalsIndicatorsInfo,								Show indicators on vitals bars that display changes in vitals
 mouseSensitivity,                                   Mouse Sensitivity
 mouseSensitivityInfo,                               Mouse look sensitivity.
 weaponSensitivity,                                  Weapon Sensitivity

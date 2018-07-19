@@ -6,7 +6,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
     /// <summary>
     /// A vertical progress/indicator bar. Modified to smoothly change
     /// </summary>
-    public class VerticalProgressIndicator : VerticalProgress
+    public class VerticalProgressSmoother : VerticalProgress
     {
         private float prevPercent;
         private float targetPercent;
@@ -20,8 +20,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             timer = -0.5f;
             prevPercent = Amount;
             targetPercent = target;
-            if (targetPercent > prevPercent)
-                timer = timerMax;
         }
 
         public void Cycle()
