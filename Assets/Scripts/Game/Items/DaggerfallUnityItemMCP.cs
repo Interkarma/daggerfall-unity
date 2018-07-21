@@ -160,14 +160,91 @@ namespace DaggerfallWorkshop.Game.Items
                 else
                 {
                     // List item powers. 
-                    // TODO: Update once magic effects have been implemented.
                     List<TextFile.Token> magicPowersTokens = new List<TextFile.Token>();
                     for (int i = 0; i < parent.legacyMagic.Length; i++)
                     {
                         // Also 65535 to handle saves from when the type was read as an unsigned value
                         if (parent.legacyMagic[i].type == EnchantmentTypes.None || (int)parent.legacyMagic[i].type == 65535)
                             break;
-                        magicPowersTokens.Add(TextFile.CreateTextToken("Type: " + parent.legacyMagic[i].type + " Param: " + parent.legacyMagic[i].param));
+
+                        string firstPart = HardStrings.itemPowers[(int)parent.legacyMagic[i].type] + " ";
+
+                        if (parent.legacyMagic[i].type == EnchantmentTypes.SoulBound && parent.legacyMagic[i].param != -1)
+                        {
+                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + HardStrings.enemyNames[parent.legacyMagic[i].param]));
+                        }
+                        else if (parent.legacyMagic[i].type == EnchantmentTypes.ExtraSpellPts)
+                        {
+                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + HardStrings.extraSpellPtsTimes[parent.legacyMagic[i].param]));
+                        }
+                        else if (parent.legacyMagic[i].type == EnchantmentTypes.PotentVs || parent.legacyMagic[i].type == EnchantmentTypes.LowDamageVs)
+                        {
+                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + HardStrings.enemyGroupNames[parent.legacyMagic[i].param]));
+                        }
+                        else if (parent.legacyMagic[i].type == EnchantmentTypes.RegensHealth)
+                        {
+                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + HardStrings.regensHealthTimes[parent.legacyMagic[i].param]));
+                        }
+                        else if (parent.legacyMagic[i].type == EnchantmentTypes.VampiricEffect)
+                        {
+                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + HardStrings.vampiricEffectRanges[parent.legacyMagic[i].param]));
+                        }
+                        else if (parent.legacyMagic[i].type == EnchantmentTypes.IncreasedWeightAllowance)
+                        {
+                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + HardStrings.increasedWeightAllowances[parent.legacyMagic[i].param]));
+                        }
+                        else if (parent.legacyMagic[i].type == EnchantmentTypes.EnhancesSkill)
+                        {
+                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + DaggerfallUnity.Instance.TextProvider.GetSkillName((DaggerfallConnect.DFCareer.Skills)parent.legacyMagic[i].param)));
+                        }
+                        else if (parent.legacyMagic[i].type == EnchantmentTypes.ImprovesTalents)
+                        {
+                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + HardStrings.improvedTalents[parent.legacyMagic[i].param]));
+                        }
+                        else if (parent.legacyMagic[i].type == EnchantmentTypes.GoodRepWith || parent.legacyMagic[i].type == EnchantmentTypes.BadRepWith)
+                        {
+                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + HardStrings.repWithGroups[parent.legacyMagic[i].param]));
+                        }
+
+                        else if (parent.legacyMagic[i].type == EnchantmentTypes.ItemDeteriorates)
+                        {
+                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + HardStrings.itemDeteriorateLocations[parent.legacyMagic[i].param]));
+                        }
+                        else if(parent.legacyMagic[i].type == EnchantmentTypes.UserTakesDamage)
+                        {
+                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + HardStrings.userTakesDamageLocations[parent.legacyMagic[i].param]));
+                        }
+                        else if (parent.legacyMagic[i].type == EnchantmentTypes.HealthLeech)
+                        {
+                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + HardStrings.healthLeechStopConditions[parent.legacyMagic[i].param]));
+                        }
+                        else if (parent.legacyMagic[i].type == EnchantmentTypes.BadReactionsFrom)
+                        {
+                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + HardStrings.healthLeechStopConditions[parent.legacyMagic[i].param]));
+                        }
+                        else if (parent.legacyMagic[i].type <= EnchantmentTypes.CastWhenStrikes)
+                        {
+                            List<DaggerfallConnect.Save.SpellRecord.SpellRecordData> spells = DaggerfallSpellReader.ReadSpellsFile();
+                            bool found = false;
+
+                            foreach (DaggerfallConnect.Save.SpellRecord.SpellRecordData spell in spells)
+                            {
+                                if (spell.index == parent.legacyMagic[i].param)
+                                {
+                                    magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + spell.spellName));
+                                    found = true;
+                                    break;
+                                }
+                            }
+
+                            if (found == false)
+                                magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + "ERROR"));
+                        }
+                        else
+                        {
+                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart));
+                        }
+
                         magicPowersTokens.Add(TextFile.CreateFormatToken(format));
                     }
                     return magicPowersTokens.ToArray();

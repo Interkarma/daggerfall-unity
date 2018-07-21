@@ -251,6 +251,66 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string cannotTravelWithEnemiesNearby = "You cannot travel with enemies nearby.";
 
         public const string powersUnknown = "Powers unknown.";
+
+        public static readonly string[] itemPowers = { "Cast when used:",
+                                                    "Cast when held:",
+                                                    "Cast when strikes:",
+                                                    "Extra spell pts",
+                                                    "Potent vs",
+                                                    "Regens health",
+                                                    "Vampiric effect",
+                                                    "Increased weight allowance",
+                                                    "Repairs objects",
+                                                    "Absorbs spells",
+                                                    "Enhances skill",
+                                                    "Feather weight",
+                                                    "Strengthens armor",
+                                                    "Improves talents",
+                                                    "Good rep with",
+                                                    "Soul bound",
+                                                    "Item deteriorates",
+                                                    "User takes damage",
+                                                    "Vision problems",
+                                                    "Walking problems",
+                                                    "Low damage vs",
+                                                    "Health leech",
+                                                    "Bad reactions from",
+                                                    "Extra weight",
+                                                    "Weakens armor",
+                                                    "Bad rep with" };
+
+        public static readonly string[] enemyNames =  { "Rat", "Imp", "Spriggan",
+                                                       "Giant bat", "Grizzly bear",
+                                                       "Sabretooth tiger", "Spider",
+                                                       "Orc", "Centaur", "Werewolf",
+                                                       "Nymph", "Slaughterfish",
+                                                       "Orc sergeant", "Harpy", "Wereboar",
+                                                       "Skeletal warrior", "Giant",
+                                                       "Zombie", "Ghost", "Mummy",
+                                                       "Giant scorpion", "Orc shaman",
+                                                       "Gargoyle", "Wraith",
+                                                       "Orc warlord", "Frost daedra",
+                                                       "Fire daedra", "Daedroth",
+                                                       "Vampire", "Daedra seducer",
+                                                       "Ancient vampire", "Daedra lord",
+                                                       "Lich", "Ancient lich", "Dragonling",
+                                                       "Fire Atronach", "Iron Atronach",
+                                                       "Flesh Atronach", "Ice Atronach",
+                                                       "Horse", "Dragonling", "Dreugh",
+                                                       "Lamia" };
+
+        public static readonly string[] extraSpellPtsTimes = { "during Winter", "during Spring", "during Summer", "during Fall", "during Full Moon", "during Half Moon", "during New Moon", "near undead", "near daedra", "near humanoids", "near animals" };
+        public static readonly string[] regensHealthTimes = { "all the time", "in sunlight", "in darkness" };
+        public static readonly string[] vampiricEffectRanges = { "at range", "when strikes" };
+        public static readonly string[] increasedWeightAllowances = { "25% additional", "50% additional" };
+        public static readonly string[] improvedTalents = { "hearing", "athleticism", "adrenaline rush" };
+        public static readonly string[] itemDeteriorateLocations = { "all the time", "in sunlight", "in holy places" };
+        public static readonly string[] userTakesDamageLocations = { "in sunlight", "in holy places" };
+        public static readonly string[] enemyGroupNames =  { "undead", "Daedra", "humanoids", "animals" };
+        public static readonly string[] healthLeechStopConditions = { "whenever used", "unless used daily", "unless used weekly" };
+        public static readonly string[] badReactionFromEnemyGroups = { "from humanoids", "from animals", "from Daedra" };
+        public static readonly string[] repWithGroups = { "Commoners", "Merchants", "Scholars", "Nobility", "Underworld", "All" };
+
         public const string repairDone = "DONE";
         public const string repairDays = "%d days";
 
