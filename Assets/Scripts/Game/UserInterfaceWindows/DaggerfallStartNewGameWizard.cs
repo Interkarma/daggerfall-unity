@@ -39,6 +39,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         CreateCharRaceSelect createCharRaceSelectWindow;
         CreateCharGenderSelect createCharGenderSelectWindow;
         CreateCharClassSelect createCharClassSelectWindow;
+        CreateCharCustomClass createCharCustomClassWindow;
         CreateCharNameSelect createCharNameSelectWindow;
         CreateCharFaceSelect createCharFaceSelectWindow;
         CreateCharAddBonusStats createCharAddBonusStatsWindow;
@@ -138,6 +139,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             wizardStage = WizardStages.SelectClassFromList;
             uiManager.PushWindow(createCharClassSelectWindow);
+        }
+
+        void SetCustomClassWindow()
+        {
+            if (createCharCustomClassWindow == null)
+            {
+                createCharCustomClassWindow = new CreateCharCustomClass(uiManager);
+                createCharCustomClassWindow.OnClose += CreateCharCustomClassWindow_OnClose;
+            }
+
+            wizardStage = WizardStages.CustomClassBuilder;
+            uiManager.PushWindow(createCharCustomClassWindow);
         }
 
         void SetNameSelectWindow()
@@ -270,13 +283,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (!createCharClassSelectWindow.Cancelled)
             {
-                characterDocument.career = createCharClassSelectWindow.SelectedClass;
-                SetNameSelectWindow();
+                if (createCharClassSelectWindow.SelectedClass == null) // Custom class
+                {
+                    SetCustomClassWindow();
+                }
+                else
+                {
+                    characterDocument.career = createCharClassSelectWindow.SelectedClass;
+                    SetNameSelectWindow();
+                }
             }
             else
             {
                 SetRaceSelectWindow();
             }
+        }
+
+        void CreateCharCustomClassWindow_OnClose()
+        {
+            // TODO: Go to the next stage of the wizard.
         }
 
         void NameSelectWindow_OnClose()
