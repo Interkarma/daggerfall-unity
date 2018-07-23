@@ -29,9 +29,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class CreateCharCustomClass : DaggerfallPopupWindow
     {
-        const string nativeImgName = "CHAR02I0.IMG";
+        const string nativeImgName = "CUST00I0.IMG";
 
         Texture2D nativeTexture;
+		DaggerfallFont font;
+		StatsRollout statsRollout;
+		TextBox textBox = new TextBox();
 
         public CreateCharCustomClass(IUserInterfaceManager uiManager)
             : base(uiManager)
@@ -50,6 +53,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Setup native panel background
             NativePanel.BackgroundTexture = nativeTexture;
+
+            // Add stats rollout
+            statsRollout = new StatsRollout(false, true);
+            statsRollout.Position = new Vector2(0, 0);
+            NativePanel.Components.Add(statsRollout);
+
+			// Add name textbox
+			textBox.Position = new Vector2(100, 5);
+			textBox.Size = new Vector2(214, 7);
+			NativePanel.Components.Add(textBox);
 
             IsSetup = true;
         }

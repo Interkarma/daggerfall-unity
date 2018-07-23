@@ -67,11 +67,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set { SetStats(startingStats, workingStats, value); }
         }
 
-        public StatsRollout(bool onCharacterSheet = false)
+        public StatsRollout(bool onCharacterSheet = false, bool freeEdit = false)
             : base()
         {
             if (onCharacterSheet)
                 characterSheetPositioning = true;
+			if (freeEdit)
+				modifiedStatTextColor = DaggerfallUI.DaggerfallDefaultTextColor;
 
             // Add stat panels and labels
             font = DaggerfallUI.DefaultFont;
@@ -128,8 +130,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Add up/down spinner
             spinner = new UpDownSpinner();
             this.Components.Add(spinner);
-            spinner.OnUpButtonClicked += Spinner_OnUpButtonClicked;
-            spinner.OnDownButtonClicked += Spinner_OnDownButtonClicked;
+            if (freeEdit) {
+                spinner.OnUpButtonClicked += Spinner_OnUpButtonClicked_FreeEdit;
+                spinner.OnDownButtonClicked += Spinner_OnDownButtonClicked_FreeEdit;
+            }
+            else
+            {
+                spinner.OnUpButtonClicked += Spinner_OnUpButtonClicked;
+                spinner.OnDownButtonClicked += Spinner_OnDownButtonClicked;
+            }
             SelectStat(0);
 
             UpdateStatLabels();
@@ -243,6 +252,41 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Working value cannot reduce below starting value or minWorkingValue
             if (workingValue == startingStats.GetPermanentStatValue(selectedStat) || workingValue == minWorkingValue)
+                return;
+
+            // Remove a point from working stat and assign to pool
+            workingStats.SetPermanentStatValue(selectedStat, workingValue - 1);
+            bonusPool += 1;
+            spinner.Value = bonusPool;
+            UpdateStatLabels();
+            RaiseOnStatChanged();
+        }
+
+        void Spinner_OnUpButtonClicked_FreeEdit()
+        {
+            // Get working stat value
+            int workingValue = workingStats.GetPermanentStatValue(selectedStat);
+
+            // Working value cannot rise above maxWorkingValue and bonus cannot fall below zero
+            if (workingValue == maxWorkingValue || bonusPool == 0)
+                return;
+
+            // Remove a point from pool stat and assign to working stat
+            bonusPool -= 1;
+            workingStats.SetPermanentStatValue(selectedStat, workingValue + 1);
+            spinner.Value = bonusPool;
+            UpdateStatLabels();
+            RaiseOnStatChanged();
+        }
+
+        void Spinner_OnDownButtonClicked_FreeEdit()
+        {
+            const int workingMin = 1;
+            // Get working stat value
+            int workingValue = workingStats.GetPermanentStatValue(selectedStat);
+
+            // Working value cannot reduce below minimum
+            if (workingValue == workingMin)
                 return;
 
             // Remove a point from working stat and assign to pool
