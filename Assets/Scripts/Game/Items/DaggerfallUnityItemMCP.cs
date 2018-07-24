@@ -205,7 +205,6 @@ namespace DaggerfallWorkshop.Game.Items
                         {
                             magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + HardStrings.repWithGroups[parent.legacyMagic[i].param]));
                         }
-
                         else if (parent.legacyMagic[i].type == EnchantmentTypes.ItemDeteriorates)
                         {
                             magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + HardStrings.itemDeteriorateLocations[parent.legacyMagic[i].param]));
@@ -220,7 +219,7 @@ namespace DaggerfallWorkshop.Game.Items
                         }
                         else if (parent.legacyMagic[i].type == EnchantmentTypes.BadReactionsFrom)
                         {
-                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + HardStrings.healthLeechStopConditions[parent.legacyMagic[i].param]));
+                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + HardStrings.badReactionFromEnemyGroups[parent.legacyMagic[i].param]));
                         }
                         else if (parent.legacyMagic[i].type <= EnchantmentTypes.CastWhenStrikes)
                         {
