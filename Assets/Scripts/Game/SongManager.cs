@@ -149,14 +149,6 @@ namespace DaggerfallWorkshop.Game
             if (!songPlayer)
                 return;
 
-            // If streaming world is set, we can ignore track changes before init complete
-            // This helps prevent music starting during first load or on wrong playlist
-            if (StreamingWorld)
-            {
-                if (StreamingWorld.IsInit)
-                    return;
-            }
-
             // Update context
             UpdatePlayerMusicEnvironment();
             UpdatePlayerMusicWeather();
