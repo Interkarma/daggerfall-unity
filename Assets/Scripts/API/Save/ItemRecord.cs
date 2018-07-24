@@ -15,6 +15,7 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect.Utility;
+using DaggerfallConnect.FallExe;
 
 namespace DaggerfallConnect.Save
 {
@@ -64,7 +65,7 @@ namespace DaggerfallConnect.Save
             public UInt32 weight;
             public UInt16 enchantmentPoints;
             public UInt32 message;
-            public UInt16[] magic;
+            public DaggerfallEnchantment[] magic;
         }
 
         /// <summary>
@@ -144,10 +145,11 @@ namespace DaggerfallConnect.Save
 
             // Read magic effect array
             const int effectCount = 10;
-            parsedData.magic = new ushort[effectCount];
+            parsedData.magic = new DaggerfallEnchantment[effectCount];
             for (int i = 0; i < effectCount; i++)
             {
-                parsedData.magic[i] = reader.ReadUInt16();
+                parsedData.magic[i].type = (EnchantmentTypes)reader.ReadInt16();
+                parsedData.magic[i].param = reader.ReadInt16();
             }
 
             // Close stream

@@ -77,11 +77,19 @@ namespace DaggerfallConnect.FallExe
         public MagicItemTypes type;                 // Type of magic item
         public byte group;                          // Group in item templates
         public byte groupIndex;                     // Group index (subgroup) in item templates
-        public int[] enchantments;                  // Array of legacy enchantments on this item
-        public short uses;                          // Number of uses
-        public ushort unknown1;                     // Unknown
-        public byte material;                       // Material?
-        public short unknown2;                      // Unknown
+        public DaggerfallEnchantment[] enchantments;// Array of legacy enchantments on this item
+        public short uses;                          // Number of uses/Item condition
+        public int value;                           // Only used for artifacts
+        public byte material;                       // Material
+    }
+
+    /// <summary>
+    /// Daggerfall enchantment data.
+    /// </summary>
+    public struct DaggerfallEnchantment
+    {
+        public EnchantmentTypes type;
+        public short param;                           // A SPELLS.STD spell ID, an identifier for a unique artifact effect, enemy group affected by bonus to hit, social group affected by reputation modifier
     }
 
     /// <summary>
@@ -92,6 +100,41 @@ namespace DaggerfallConnect.FallExe
         RegularMagicItem,
         ArtifactClass1,
         ArtifactClass2,
+    }
+
+    /// <summary>
+    /// Enchantment types
+    /// </summary>
+    public enum EnchantmentTypes
+    {
+        None = -1,
+        CastWhenUsed = 0,
+        CastWhenHeld = 1,
+        CastWhenStrikes = 2,
+        ExtraSpellPts = 3,
+        PotentVs = 4,
+        RegensHealth = 5,
+        VampiricEffect = 6,
+        IncreasedWeightAllowance = 7,
+        RepairsObjects = 8,
+        AbsorbsSpells = 9,
+        EnhancesSkill = 10,
+        FeatherWeight = 11,
+        StrengthensArmor = 12,
+        ImprovesTalents = 13,
+        GoodRepWith = 14,
+        SoulBound = 15,
+        ItemDeteriorates = 16,
+        UserTakesDamage = 17,
+        VisionProblems = 18,
+        WalkingProblems = 19,
+        LowDamageVs = 20,
+        HealthLeech = 21,
+        BadReactionsFrom = 22,
+        ExtraWeight = 23,
+        WeakensArmor = 24,
+        BadRepWith = 25,
+        SpecialArtifactEffect = 26,
     }
 
     public struct BookMappingTemplate

@@ -16,6 +16,7 @@ using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallConnect.Arena2;
+using DaggerfallConnect.FallExe;
 using FullSerializer;
 
 /*Example patterns:
@@ -306,7 +307,9 @@ namespace DaggerfallWorkshop.Game.Questing
             // This will need to be ported to real magic system in future
             if (isMagicItem)
             {
-                result.legacyMagic = new int[] { 1, 87, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535 };
+                result.legacyMagic = new DaggerfallEnchantment[1];
+                result.legacyMagic[0].type = EnchantmentTypes.CastWhenHeld;
+                result.legacyMagic[0].param = 87;
             }
 
             // Link item to quest
