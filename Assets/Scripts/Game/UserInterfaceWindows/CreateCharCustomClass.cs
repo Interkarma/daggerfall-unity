@@ -32,14 +32,55 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string nativeImgName = "CUST00I0.IMG";
 
         Texture2D nativeTexture;
-		DaggerfallFont font;
-		StatsRollout statsRollout;
-		TextBox textBox = new TextBox();
+        DaggerfallFont font;
+        StatsRollout statsRollout;
+        TextBox textBox = new TextBox();
+        DFCareer createdClass;
+        int lastSkill;
+
+        public DFCareer CreatedClass
+        {
+            get { return createdClass; }
+        }
+
+        #region UI Rects
+
+        Rect[] skillButtonRects = new Rect[]
+        {
+            new Rect(66, 31, 108, 8),
+            new Rect(66, 41, 108, 8),
+            new Rect(66, 51, 108, 8),
+            new Rect(66, 80, 108, 8),
+            new Rect(66, 90, 108, 8),
+            new Rect(66, 100, 108, 8),
+            new Rect(66, 129, 108, 8),
+            new Rect(66, 139, 108, 8),
+            new Rect(66, 149, 108, 8),
+            new Rect(66, 159, 108, 8),
+            new Rect(66, 169, 108, 8),
+            new Rect(66, 179, 108, 8)
+        };
+
+        #endregion
+
+        #region Buttons
+
+        Button[] skillButtons = new Button[12];
+
+        #endregion
+
+        #region Text Labels
+
+        TextLabel[] skillLabels = new TextLabel[12];
+
+        #endregion
 
         public CreateCharCustomClass(IUserInterfaceManager uiManager)
             : base(uiManager)
         {
         }
+
+        #region Setup Methods
 
         protected override void Setup()
         {
@@ -59,13 +100,34 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             statsRollout.Position = new Vector2(0, 0);
             NativePanel.Components.Add(statsRollout);
 
-			// Add name textbox
-			textBox.Position = new Vector2(100, 5);
-			textBox.Size = new Vector2(214, 7);
-			NativePanel.Components.Add(textBox);
+            // Add name textbox
+            textBox.Position = new Vector2(100, 5);
+            textBox.Size = new Vector2(214, 7);
+            NativePanel.Components.Add(textBox);
+
+            // Initialize character class
+            createdClass = new DFCareer();
+
+            // Initiate UI components
+            font = DaggerfallUI.DefaultFont;
+            SetupButtons();
 
             IsSetup = true;
         }
+
+        protected void SetupButtons()
+        {
+            // Add skill selector buttons
+            for (int i = 0; i < skillButtons.Length; i++) 
+            {
+                skillButtons[i] = DaggerfallUI.AddButton(skillButtonRects[i], NativePanel);
+                skillButtons[i].Tag = i;
+                skillButtons[i].OnMouseClick += skillButton_OnMouseClick;
+                skillLabels[i] = DaggerfallUI.AddTextLabel(font, new Vector2(3, 2), string.Empty, skillButtons[i]);
+            }
+        }
+
+        #endregion
 
         public override void Update()
         {
@@ -76,6 +138,26 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.Draw();
         }
+
+        #region Event Handlers
+
+        void skillButton_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
+        {
+            DaggerfallListPickerWindow skillPicker = new DaggerfallListPickerWindow(uiManager, this);
+            skillPicker.OnItemPicked += SkillPicker_OnItemPicked;
+            foreach (DFCareer.Skills skill in Enum.GetValues(typeof(DFCareer.Skills)))
+                skillPicker.ListBox.AddItem(DaggerfallUnity.Instance.TextProvider.GetSkillName(skill));
+            lastSkill = (int)sender.Tag;
+            uiManager.PushWindow(skillPicker);
+        }
+
+        void SkillPicker_OnItemPicked(int index, string skillName)
+        {
+            CloseWindow();
+            skillLabels[lastSkill].Text = skillName;
+        }
+
+        #endregion
 
         #region Public Methods
 
