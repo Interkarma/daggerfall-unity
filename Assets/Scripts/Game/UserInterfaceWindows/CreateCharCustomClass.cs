@@ -36,7 +36,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         StatsRollout statsRollout;
         TextBox textBox = new TextBox();
         DFCareer createdClass;
-        int lastSkill;
+        int lastSkillButtonId;
+        Dictionary<string, DFCareer.Skills> skillsDict;
+        List<string> skillsList;
 
         public DFCareer CreatedClass
         {
@@ -60,12 +62,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             new Rect(66, 169, 108, 8),
             new Rect(66, 179, 108, 8)
         };
+        Rect hitPointsUpButtonRect = new Rect(252, 46, 8, 10);
+        Rect hitPointsDownButtonRect = new Rect(252, 57, 8, 10);
+        Rect specialAdvantageButtonRect = new Rect(249, 98, 66, 22);
+        Rect specialDisadvantageButtonRect = new Rect(249, 122, 66, 22);
+        Rect exitButtonRect = new Rect(263, 172, 38, 21);
 
         #endregion
 
         #region Buttons
 
         Button[] skillButtons = new Button[12];
+        Button hitPointsUpButton;
+        Button hitPointsDownButton;
+        Button specialAdvantageButton;
+        Button specialDisadvantageButton;
+        Button exitButton;
 
         #endregion
 
@@ -112,6 +124,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             font = DaggerfallUI.DefaultFont;
             SetupButtons();
 
+            // Setup skills dictionary
+            skillsDict = new Dictionary<string, DFCareer.Skills>();
+            foreach (DFCareer.Skills skill in Enum.GetValues(typeof(DFCareer.Skills)))
+            {
+                skillsDict.Add(DaggerfallUnity.Instance.TextProvider.GetSkillName(skill), skill);
+            }
+            skillsDict.Remove(string.Empty); // Don't include "none" skill value.
+            skillsList = new List<string>(skillsDict.Keys);
+            skillsList.Sort(); // Sort skills alphabetically a la classic.
+
             IsSetup = true;
         }
 
@@ -125,6 +147,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 skillButtons[i].OnMouseClick += skillButton_OnMouseClick;
                 skillLabels[i] = DaggerfallUI.AddTextLabel(font, new Vector2(3, 2), string.Empty, skillButtons[i]);
             }
+            // Special Advantages/Disadvantages
+            specialAdvantageButton = DaggerfallUI.AddButton(specialAdvantageButtonRect, NativePanel);
+            specialAdvantageButton.OnMouseClick += specialAdvantageButton_OnMouseClick;
+            specialDisadvantageButton = DaggerfallUI.AddButton(specialDisadvantageButtonRect, NativePanel);
+            specialDisadvantageButton.OnMouseClick += specialDisadvantageButton_OnMouseClick;
         }
 
         #endregion
@@ -144,26 +171,80 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void skillButton_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
         {
             DaggerfallListPickerWindow skillPicker = new DaggerfallListPickerWindow(uiManager, this);
+
             skillPicker.OnItemPicked += SkillPicker_OnItemPicked;
-            foreach (DFCareer.Skills skill in Enum.GetValues(typeof(DFCareer.Skills)))
-                skillPicker.ListBox.AddItem(DaggerfallUnity.Instance.TextProvider.GetSkillName(skill));
-            lastSkill = (int)sender.Tag;
+            foreach (string skillName in skillsList)
+            {
+                skillPicker.ListBox.AddItem(skillName);
+            }
+            lastSkillButtonId = (int)sender.Tag;
             uiManager.PushWindow(skillPicker);
         }
 
         void SkillPicker_OnItemPicked(int index, string skillName)
         {
             CloseWindow();
-            skillLabels[lastSkill].Text = skillName;
+            switch (lastSkillButtonId)
+            {
+                case 0:
+                    createdClass.PrimarySkill1 = skillsDict[skillName];
+                    break;
+                case 1:
+                    createdClass.PrimarySkill2 = skillsDict[skillName];
+                    break;
+                case 2:
+                    createdClass.PrimarySkill3 = skillsDict[skillName];
+                    break;
+                case 3:
+                    createdClass.MajorSkill1 = skillsDict[skillName];
+                    break;
+                case 4:
+                    createdClass.MajorSkill2 = skillsDict[skillName];
+                    break;
+                case 5:
+                    createdClass.MajorSkill3 = skillsDict[skillName];
+                    break;
+                case 6:
+                    createdClass.MinorSkill1 = skillsDict[skillName];
+                    break;
+                case 7:
+                    createdClass.MinorSkill2 = skillsDict[skillName];
+                    break;
+                case 8:
+                    createdClass.MinorSkill3 = skillsDict[skillName];
+                    break;
+                case 9:
+                    createdClass.MinorSkill4 = skillsDict[skillName];
+                    break;
+                case 10:
+                    createdClass.MinorSkill5 = skillsDict[skillName];
+                    break;
+                case 11:
+                    createdClass.MinorSkill6 = skillsDict[skillName];
+                    break;
+                default:
+                    return;
+            }
+            skillsList.Remove(skillName);
+            if (skillLabels[lastSkillButtonId].Text != string.Empty)
+            {
+                skillsList.Add(skillLabels [lastSkillButtonId].Text);
+            }
+            skillsList.Sort();
+            skillLabels[lastSkillButtonId].Text = skillName;
         }
 
-        #endregion
+        public void specialAdvantageButton_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
+        {
+            CreateCharSpecialAdvantageWindow createCharSpecialAdvantageWindow = new CreateCharSpecialAdvantageWindow(uiManager, this);
+            uiManager.PushWindow(createCharSpecialAdvantageWindow);
+        }
 
-        #region Public Methods
-
-        #endregion
-
-        #region Private Methods
+        public void specialDisadvantageButton_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
+        {
+            CreateCharSpecialAdvantageWindow createCharSpecialAdvantageWindow = new CreateCharSpecialAdvantageWindow(uiManager, this, true);
+            uiManager.PushWindow(createCharSpecialAdvantageWindow);
+        }
 
         #endregion
     }    

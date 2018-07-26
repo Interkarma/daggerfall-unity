@@ -48,7 +48,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Panel[] statPanels = new Panel[DaggerfallStats.Count];
         TextLabel[] statLabels = new TextLabel[DaggerfallStats.Count];
         bool characterSheetPositioning = false;
-		bool freeEdit = false;
+        bool freeEdit = false;
 
         public DaggerfallStats StartingStats
         {
