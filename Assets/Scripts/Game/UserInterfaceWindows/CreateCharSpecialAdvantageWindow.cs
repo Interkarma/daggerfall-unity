@@ -31,28 +31,34 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     public class CreateCharSpecialAdvantageWindow : DaggerfallPopupWindow
     {
         const string nativeImgName = "CUST01I0.IMG";
-        const string nativeImgOverlayName = "CUST02I0.IMG"; // Overlaying this image makes it Special Advantages instead of Disadvantages
+        const string nativeImgOverlayName = "CUST02I0.IMG";
+        const int maxItems = 7;
 
         Texture2D nativeTexture;
         Texture2D nativeOverlayTexture;
         DaggerfallFont font;
-        Panel popupPanel = new Panel();
+        Panel advantagePanel = new Panel();
         Panel overlayPanel = new Panel();
         bool isDisadvantages;
+        int labelCount = 0;
 
         #region UI Rects
 
+        Rect addAdvantageButtonRect = new Rect(80, 4, 72, 22);
         Rect exitButtonRect = new Rect(6, 179, 155, 13);
 
         #endregion
 
         #region Buttons
 
+        Button addAdvantageButton;
         Button exitButton;
 
         #endregion
 
         #region Text Labels
+
+        TextLabel[] advantageLabels = new TextLabel[7];
 
         #endregion
 
@@ -78,27 +84,36 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 throw new Exception("CreateCharSpecialAdvantage: Could not load native texture.");
 
             // Create panel for window
-            popupPanel.Size = TextureReplacement.GetSize(nativeTexture, nativeImgName);
-            popupPanel.HorizontalAlignment = HorizontalAlignment.Left;
-            popupPanel.VerticalAlignment = VerticalAlignment.Top;
-            popupPanel.BackgroundTexture = nativeTexture;
-            popupPanel.BackgroundTextureLayout = BackgroundLayout.StretchToFill;
-            NativePanel.Components.Add(popupPanel);
+            advantagePanel.Size = TextureReplacement.GetSize(nativeTexture, nativeImgName);
+            advantagePanel.HorizontalAlignment = HorizontalAlignment.Left;
+            advantagePanel.VerticalAlignment = VerticalAlignment.Top;
+            advantagePanel.BackgroundTexture = nativeTexture;
+            advantagePanel.BackgroundTextureLayout = BackgroundLayout.StretchToFill;
+            NativePanel.Components.Add(advantagePanel);
 
-            // Add components for adding advantages
-            if (!isDisadvantages)
+            // Setup UI components
+            font = DaggerfallUI.SmallFont;
+            Panel buttonPanel = NativePanel;
+            if (!isDisadvantages)  // Adding this overlay makes it appear as Special Advantages instead of Disadvantages
             {
                 overlayPanel.Size = TextureReplacement.GetSize(nativeOverlayTexture, nativeImgOverlayName);
                 overlayPanel.HorizontalAlignment = HorizontalAlignment.Left;
                 overlayPanel.VerticalAlignment = VerticalAlignment.Top;
                 overlayPanel.BackgroundTexture = nativeOverlayTexture;
                 overlayPanel.BackgroundTextureLayout = BackgroundLayout.StretchToFill;
-                popupPanel.Components.Add(overlayPanel);
+                advantagePanel.Components.Add(overlayPanel);
+                buttonPanel = overlayPanel;
             }
-
-            // Setup buttons
+            addAdvantageButton = DaggerfallUI.AddButton(addAdvantageButtonRect, buttonPanel);
+            addAdvantageButton.OnMouseClick += AddAdvantageButton_OnMouseClick;
             exitButton = DaggerfallUI.AddButton(exitButtonRect, NativePanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
+            for (int i = 0; i < maxItems; i++)
+            {
+                advantageLabels[i] = DaggerfallUI.AddTextLabel(font, new Vector2(8, 35 + i * 8), "", NativePanel);
+                advantageLabels[i].OnMouseClick += AdvantageLabel_OnMouseClick;
+                advantageLabels[i].Tag = i;
+            }
 
             IsSetup = true;
         }
@@ -116,6 +131,40 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         #region Event Handlers
+
+        void AddAdvantageButton_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
+        {
+            if (labelCount == maxItems)
+            {
+                return;
+            }
+            DaggerfallListPickerWindow advantagePicker = new DaggerfallListPickerWindow(uiManager, this);
+            advantagePicker.OnItemPicked += AdvantagePicker_OnItemPicked;
+            // TODO: Determine location of text for special advantages and disadvantages and implement functionality.
+            advantagePicker.ListBox.AddItem("Placeholder1");
+            advantagePicker.ListBox.AddItem("Placeholder2");
+            advantagePicker.ListBox.AddItem("Placeholder3");
+            uiManager.PushWindow(advantagePicker);
+        }
+
+        void AdvantagePicker_OnItemPicked(int index, string advantageName)
+        {
+            CloseWindow();
+            labelCount++;
+            int labelInd = labelCount - 1;
+            advantageLabels[labelInd].Text = advantageName;
+        }
+
+        void AdvantageLabel_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
+        {
+            // Remove item and update list
+            labelCount--;
+            for (int i = (int)sender.Tag; i < maxItems - 1; i++)
+            {
+                advantageLabels[i].Text = advantageLabels[i + 1].Text;
+            }
+            advantageLabels[maxItems - 1].Text = "";
+        }
 
         void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
         {
