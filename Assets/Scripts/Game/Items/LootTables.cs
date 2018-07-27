@@ -192,15 +192,11 @@ namespace DaggerfallWorkshop.Game.Items
             RandomIngredient(matrix.M1, ItemGroups.MiscellaneousIngredients1, items);
             RandomIngredient(matrix.M2, ItemGroups.MiscellaneousIngredients2, items);
 
-            // TEMP: Magic item chance is just another shot at armor or weapon for now
+            // Random magic item
             chance = matrix.MI;
             while (Random.Range(0, 100) < chance)
             {
-                if (Random.value < 0.5f)
-                    items.Add(ItemBuilder.CreateRandomWeapon(playerEntity.Level));
-                else
-                    items.Add(ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race));
-
+                items.Add(ItemBuilder.CreateRandomMagicItem(playerEntity.Level, playerEntity.Gender, playerEntity.Race));
                 chance *= 0.5f;
             }
 

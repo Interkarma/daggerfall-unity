@@ -10,9 +10,12 @@
 //
 
 using System;
+using System.IO;
+using System.Collections.Generic;
 using UnityEngine;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallConnect.FallExe;
+using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -240,8 +243,6 @@ namespace DaggerfallWorkshop.Game.Items
             return book;
         }
 
-
-
         /// <summary>
         /// Creates a new random religious item.
         /// </summary>
@@ -251,6 +252,32 @@ namespace DaggerfallWorkshop.Game.Items
             Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(ItemGroups.ReligiousItems);
             int groupIndex = UnityEngine.Random.Range(0, enumArray.Length);
             DaggerfallUnityItem newItem = new DaggerfallUnityItem(ItemGroups.ReligiousItems, groupIndex);
+
+            return newItem;
+        }
+
+        /// <summary>
+        /// Creates a new random gem.
+        /// </summary>
+        /// <returns>DaggerfallUnityItem.</returns>
+        public static DaggerfallUnityItem CreateRandomGem()
+        {
+            Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(ItemGroups.Gems);
+            int groupIndex = UnityEngine.Random.Range(0, enumArray.Length);
+            DaggerfallUnityItem newItem = new DaggerfallUnityItem(ItemGroups.Gems, groupIndex);
+
+            return newItem;
+        }
+
+        /// <summary>
+        /// Creates a new random jewellery.
+        /// </summary>
+        /// <returns>DaggerfallUnityItem.</returns>
+        public static DaggerfallUnityItem CreateRandomJewellery()
+        {
+            Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(ItemGroups.Jewellery);
+            int groupIndex = UnityEngine.Random.Range(0, enumArray.Length);
+            DaggerfallUnityItem newItem = new DaggerfallUnityItem(ItemGroups.Jewellery, groupIndex);
 
             return newItem;
         }
@@ -404,6 +431,95 @@ namespace DaggerfallWorkshop.Game.Items
             newItem.dyeColor = DaggerfallUnity.Instance.ItemHelper.GetArmorDyeColor(material);
             FixLeatherHelm(newItem);
             RandomizeArmorVariant(newItem);
+
+            return newItem;
+        }
+
+        /// <summary>
+        /// Creates random magic item in same manner as classic.
+        /// </summary>
+        /// <returns>DaggerfallUnityItem</returns>
+        public static DaggerfallUnityItem CreateRandomMagicItem(int playerLevel, Genders gender, Races race)
+        {
+            byte[] itemGroups0 = { 2, 3, 6, 10, 12, 14, 25 };
+            byte[] itemGroups1 = { 2, 3, 6, 12, 25 };
+
+            DaggerfallUnityItem newItem = null;
+
+            // Get the list of magic item templates read from MAGIC.DEF
+            MagicItemsFile magicItemsFile = new MagicItemsFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, "MAGIC.DEF"));
+            List<MagicItemTemplate> magicItems = magicItemsFile.MagicItemsList;
+
+            // Get the number of non-artifact magic item templates in MAGIC.DEF
+            int numberOfRegularMagicItems = 0;
+            foreach (MagicItemTemplate magicItem in magicItems)
+            {
+                if (magicItem.type == MagicItemTypes.RegularMagicItem)
+                    numberOfRegularMagicItems++;
+            }
+
+            // Choose a random one of the non-artifact magic item templates
+            int chosenItem = UnityEngine.Random.Range(0, numberOfRegularMagicItems);
+
+            // Get the chosen template
+            foreach (MagicItemTemplate magicItem in magicItems)
+            {
+                if (magicItem.type == MagicItemTypes.RegularMagicItem)
+                {
+                    // Proceed when the template is found
+                    if (chosenItem == 0)
+                    {
+                        // Get the item group. The possible groups are determined by the 33rd byte (magicItem.group) of the MAGIC.DEF template being used.
+                        ItemGroups group = 0;
+                        if (magicItem.group == 0)
+                            group = (ItemGroups)itemGroups0[UnityEngine.Random.Range(0, 7)];
+                        else if (magicItem.group == 1)
+                            group = (ItemGroups)itemGroups1[UnityEngine.Random.Range(0, 5)];
+                        else if (magicItem.group == 2)
+                            group = ItemGroups.Weapons;
+
+                        // Create the base item
+                        if (group == ItemGroups.Weapons)
+                        {
+                            newItem = CreateRandomWeapon(playerLevel);
+
+                            // No arrows as enchanted items
+                            while (newItem.GroupIndex == 18)
+                                newItem = CreateRandomWeapon(playerLevel);
+                        }
+                        else if (group == ItemGroups.Armor)
+                            newItem = CreateRandomArmor(playerLevel, gender, race);
+                        else if (group == ItemGroups.MensClothing || group == ItemGroups.WomensClothing)
+                            newItem = CreateRandomClothing(gender, race);
+                        else if (group == ItemGroups.ReligiousItems)
+                            newItem = CreateRandomReligiousItem();
+                        else if (group == ItemGroups.Gems)
+                            newItem = CreateRandomGem();
+                        else // Only other possibility is jewellery
+                            newItem = CreateRandomJewellery();
+
+                        // Replace the regular item name with the magic item name
+                        newItem.shortName = magicItem.name;
+
+                        // Add the enchantments
+                        newItem.legacyMagic = new DaggerfallEnchantment[magicItem.enchantments.Length];
+                        for (int i = 0; i < magicItem.enchantments.Length; ++i )
+                            newItem.legacyMagic[i] = magicItem.enchantments[i];
+
+                        // Set the condition/magic uses
+                        newItem.maxCondition = magicItem.uses;
+                        newItem.currentCondition = magicItem.uses;
+
+                        // TODO: Set value based on value calculation for magic items
+                        break;
+                    }
+
+                    chosenItem--;
+                }
+            }
+
+            if (newItem == null)
+                throw new Exception("CreateRandomMagicItem() failed to create an item.");
 
             return newItem;
         }
