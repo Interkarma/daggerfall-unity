@@ -19,6 +19,8 @@ using DaggerfallWorkshop.Game.MagicAndEffects;
 using System.Collections.Generic;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Utility;
+using DaggerfallConnect.Save;
 
 namespace DaggerfallWorkshop.Game.Formulas
 {
@@ -1412,6 +1414,241 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             //Calculate effect gold cost, spellpoint cost is calculated from gold cost after adding up for duration, chance and magnitude
             goldCost = trunc(costs.OffsetGold + costs.CostA * starting + costs.CostB * trunc(increase / perLevel));
+        }
+
+        /// <summary>
+        /// Reversed from classic. Calculates enchantment point/gold value for a spell being attached to an item.
+        /// </summary>
+        /// <param name="spellIndex">Index of spell in SPELLS.STD.</param>
+        public static int GetSpellEnchantPtCost(int spellIndex)
+        {
+            List<SpellRecord.SpellRecordData> spells = DaggerfallSpellReader.ReadSpellsFile();
+            int cost = 0;
+
+            foreach (SpellRecord.SpellRecordData spell in spells)
+            {
+                if (spell.index == spellIndex)
+                {
+                    cost = 10 * CalculateCastingCost(spell);
+                    break;
+                }
+            }
+
+            return cost;
+        }
+
+        /// <summary>
+        /// Reversed from classic. Calculates cost of casting a spell.
+        /// For now this is only being used for enchanted items, because there is other code for entity-cast spells.
+        /// </summary>
+        /// <param name="spell">Spell record read from SPELLS.STD.</param>
+        public static int CalculateCastingCost(SpellRecord.SpellRecordData spell)
+        {
+            // Indices into effect settings array for each effect and its subtypes
+            byte[] effectIndices = {    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Paralysis
+                                        0x01, 0x02, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Continuous Damage
+                                        0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Create Item
+                                        0x05, 0x05, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Cure
+                                        0x07, 0x07, 0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Damage
+                                        0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Disintegrate
+                                        0x09, 0x08, 0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Dispel
+                                        0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x00, 0x00, 0x00, 0x00, // Drain
+                                        0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Elemental Resistance
+                                        0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x00, 0x00, 0x00, 0x00, // Fortify Attribute
+                                        0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x07, 0x0E, 0x00, 0x00, // Heal
+                                        0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x00, 0x00, // Transfer
+                                        0x26, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Soul Trap
+                                        0x10, 0x11, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Invisibility
+                                        0x12, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Levitate
+                                        0x13, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Light
+                                        0x14, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Lock
+                                        0x28, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Open
+                                        0x15, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Regenerate
+                                        0x16, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Silence
+                                        0x17, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Spell Absorption
+                                        0x17, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Spell Reflection
+                                        0x16, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Spell Resistance
+                                        0x18, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Chameleon
+                                        0x18, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Shadow
+                                        0x14, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Slowfall
+                                        0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Climbing
+                                        0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Jumping
+                                        0x19, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Free Action
+                                        0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x00, 0x00, 0x00, 0x00, 0x00, // Lycanthropy/Polymorph
+                                        0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Water Breathing
+                                        0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Water Walking
+                                        0x1B, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Dimunition
+                                        0x1A, 0x1C, 0x1C, 0x1D, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Calm
+                                        0x1E, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Charm
+                                        0x1F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Shield
+                                        0x27, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Telekinesis
+                                        0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Astral Travel
+                                        0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Etherealness
+                                        0x21, 0x21, 0x22, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Detect
+                                        0x23, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Identify
+                                        0x24, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Wizard Sight
+                                        0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Darkness
+                                        0x25, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Recall
+                                        0x29, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Comprehend Languages
+                                        0x2A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Intensify Fire
+                                        0x2A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Diminish Fire
+                                        0x2A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Wall of Stone?
+                                        0x2A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Wall of Fire?
+                                        0x2A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Wall of Frost?
+                                        0x2A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }; // Wall of Poison?
+
+            // These are coefficients for each effect type and subtype. They affect casting cost, enchantment point cost and magic item worth.
+            // There are 4 coefficients, used together with duration, chance and magnitude settings.
+            // Which one they are used with depends on which "settings type" the effect is classified as.
+            ushort[] effectCoefficients = {
+                                        0x07, 0x19, 0x07, 0x19, // Paralysis / Cure Magic?
+                                        0x07, 0x02, 0x0A, 0x07, // Continuous Damage - Health
+                                        0x05, 0x02, 0x0A, 0x07, // Continuous Damage - Stamina / Climbing / Jumping / Water Breathing / Water Walking
+                                        0x0A, 0x02, 0x0A, 0x07, // Continuous Damage - Spell Points
+                                        0x0F, 0x1E, 0x00, 0x00, // Create Item
+                                        0x02, 0x19, 0x00, 0x00, // Cure Disease / Cure Poison
+                                        0x05, 0x23, 0x00, 0x00, // Cure Paralysis
+                                        0x05, 0x07, 0x00, 0x00, // Damage Health / Damage Stamina / Damage Spell Points / Heal Health / Darkness
+                                        0x14, 0x23, 0x00, 0x00, // Disintegrate / Dispel Undead
+                                        0x1E, 0x2D, 0x00, 0x00, // Dispel Magic / Dispel Daedra
+                                        0x04, 0x19, 0x02, 0x19, // Drain Attribute
+                                        0x19, 0x19, 0x02, 0x19, // Elemental Resistance
+                                        0x07, 0x19, 0x0A, 0x1E, // Fortify Attribute
+                                        0x0A, 0x07, 0x00, 0x00, // Heal Attribute
+                                        0x02, 0x07, 0x00, 0x00, // Heal Stamina
+                                        0x05, 0x05, 0x0F, 0x19, // Transfer
+                                        0x0A, 0x1E, 0x00, 0x00, // Invisibility
+                                        0x0F, 0x23, 0x00, 0x00, // True Invisibility
+                                        0x0F, 0x19, 0x00, 0x00, // Levitate
+                                        0x02, 0x0A, 0x00, 0x00, // Light
+                                        0x05, 0x19, 0x07, 0x1E, // Lock / Slowfall
+                                        0x19, 0x05, 0x02, 0x02, // Regenerate
+                                        0x05, 0x19, 0x05, 0x19, // Silence / Spell Resistance
+                                        0x07, 0x23, 0x07, 0x23, // Spell Absorption / Spell Reflection
+                                        0x05, 0x14, 0x00, 0x00, // Chameleon / Shadow
+                                        0x05, 0x05, 0x00, 0x00, // Free Action
+                                        0x0F, 0x19, 0x0F, 0x19, // Lycanthropy / Polymorph / Calm Animal
+                                        0x0A, 0x14, 0x14, 0x28, // Diminution
+                                        0x0A, 0x05, 0x14, 0x23, // Calm Undead / Calm Humanoid
+                                        0x07, 0x02, 0x0F, 0x1E, // Calm Daedra? (Unused)
+                                        0x05, 0x02, 0x0A, 0x0F, // Charm
+                                        0x07, 0x02, 0x14, 0x0F, // Shield
+                                        0x23, 0x02, 0x0A, 0x19, // Astral Travel / Etherealness
+                                        0x05, 0x02, 0x14, 0x1E, // Detect Magic / Detect Enemy
+                                        0x05, 0x02, 0x0F, 0x19, // Detect Treasure
+                                        0x05, 0x02, 0x0A, 0x19, // Identify
+                                        0x07, 0x0C, 0x05, 0x05, // Wizard Sight
+                                        0x23, 0x2D, 0x00, 0x00, // Recall
+                                        0x0F, 0x11, 0x0A, 0x11, // Soul Trap
+                                        0x14, 0x11, 0x19, 0x23, // Telekinesis
+                                        0x05, 0x19, 0x00, 0x00, // Open
+                                        0x0F, 0x11, 0x0A, 0x11, // Comprehend Languages
+                                        0x0F, 0x0F, 0x05, 0x05 }; // Intensify Fire / Diminish Fire / Wall of --
+
+            // All effects have one of 6 types for their settings depending on which settings (duration, chance, magnitude)
+            // they use, which determine how the coefficient values are used with their data to determine spell casting
+            // cost /magic item value/enchantment point cost.
+            // There is also a 7th type that is supported in classic (see below) but no effect is defined to use it.
+            byte[] settingsTypes = { 1, 2, 3, 4, 5, 4, 4, 2, 1, 6, 5, 6, 1, 3, 3, 3, 1, 4, 2, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 1, 3, 3, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 3, 4, 1, 2, 2, 2, 2, 2, 2, 2 };
+
+            // Modifiers for casting ranges
+            byte[] rangeTypeModifiers = { 2, 2, 3, 4, 5 };
+
+            int cost = 0;
+            int skill = 50;  // 50 is used for item enchantments, which is all this spell is used for now.
+                             // This function could be used as in classic to get casting costs for spells
+                             // cast by entities by replacing skillUsedForEnchantedItemCost with the skill
+                             // of the caster in the effect's spell school.
+
+            for (int i = 0; i < 3; ++i)
+            {
+                if (spell.effects[i].type != -1)
+                {
+                    // Get the coefficients applied to settings for this effect and copy them into the temporary variable
+                    ushort[] coefficientsForThisEffect = new ushort[4];
+
+                    if (spell.effects[i].subType == -1) // No subtype
+                    {
+                        Array.Copy(effectCoefficients, 4 * effectIndices[12 * spell.effects[i].type], coefficientsForThisEffect, 0, 4);
+                    }
+                    else // Subtype exists
+                    {
+                        Array.Copy(effectCoefficients, 4 * effectIndices[12 * spell.effects[i].type + spell.effects[i].subType], coefficientsForThisEffect, 0, 4);
+                    }
+
+                    // Add to the cost based on this effect's settings
+                    cost += getCostFromSettings(settingsTypes[spell.effects[i].type], i, spell, coefficientsForThisEffect) * (110 - skill) / 100;
+                }
+            }
+
+            cost = cost * rangeTypeModifiers[spell.rangeType] >> 1;
+            if (cost < 5)
+                cost = 5;
+
+            return cost;
+        }
+
+        /// <summary>
+        /// Reversed from classic. Used wih calculating cost of casting a spell.
+        /// This uses the spell's settings for chance, duration and magnitude together with coefficients for that effect
+        /// to get the cost of the effect, before the range type modifier is applied.
+        /// </summary>
+        public static int getCostFromSettings(int settingsType, int effectNumber, SpellRecord.SpellRecordData spellData, ushort[] coefficients)
+        {
+            int cost = 0;
+
+            switch (settingsType)
+            {
+                case 1:
+                    // Coefficients used with:
+                    // 0 = durationBase, 1 = durationMod / durationPerLevel, 2 = chanceBase, 3 = chanceMod / chancePerLevel
+                    cost =    coefficients[0] * spellData.effects[effectNumber].durationBase
+                            + spellData.effects[effectNumber].durationMod / spellData.effects[effectNumber].durationPerLevel * coefficients[1]
+                            + coefficients[2] * spellData.effects[effectNumber].chanceBase
+                            + spellData.effects[effectNumber].chanceMod / spellData.effects[effectNumber].chancePerLevel * coefficients[3];
+                    break;
+                case 2:
+                    // Coefficients used with:
+                    // 0 = durationBase, 1 = durationMod / durationPerLevel, 2 = (magnitudeBaseHigh + magnitudeBaseLow) / 2, 3 = (magnitudeLevelBase + magnitudeLevelHigh) / 2 / magnitudePerLevel
+                    cost =    coefficients[0] * spellData.effects[effectNumber].durationBase
+                            + spellData.effects[effectNumber].durationMod / spellData.effects[effectNumber].durationPerLevel * coefficients[1]
+                            + (spellData.effects[effectNumber].magnitudeBaseHigh + spellData.effects[effectNumber].magnitudeBaseLow) / 2 * coefficients[2]
+                            + (spellData.effects[effectNumber].magnitudeLevelBase + spellData.effects[effectNumber].magnitudeLevelHigh) / 2 / spellData.effects[effectNumber].magnitudePerLevel * coefficients[3];
+                    break;
+                case 3:
+                    // Coefficients used with:
+                    // 0 = durationBase, 1 = durationMod / durationPerLevel
+                    cost =    coefficients[0] * spellData.effects[effectNumber].durationBase
+                            + spellData.effects[effectNumber].durationMod / spellData.effects[effectNumber].durationPerLevel * coefficients[1];
+                    break;
+                case 4:
+                    // Coefficients used with:
+                    // 0 = chanceBase, 1 = chanceMod / chancePerLevel
+                    cost =    coefficients[0] * spellData.effects[effectNumber].chanceBase
+                            + spellData.effects[effectNumber].chanceMod / spellData.effects[effectNumber].chancePerLevel * coefficients[1];
+                    break;
+                case 5:
+                    // Coefficients used with:
+                    // 0 = (magnitudeBaseHigh + magnitudeBaseLow) / 2, 1 = (magnitudeLevelBase + magnitudeLevelHigh) / 2 / magnitudePerLevel
+                    cost =    coefficients[0] * ((spellData.effects[effectNumber].magnitudeBaseHigh + spellData.effects[effectNumber].magnitudeBaseLow) / 2)
+                            + (spellData.effects[effectNumber].magnitudeLevelBase + spellData.effects[effectNumber].magnitudeLevelHigh) / 2 / spellData.effects[effectNumber].magnitudePerLevel * coefficients[1];
+                    break;
+                case 6:
+                    // Coefficients used with:
+                    // 0 = durationBase, 1 = durationMod / durationPerLevel, 2 = (magnitudeBaseHigh + magnitudeBaseLow) / 2, 3 = (magnitudeLevelBase + magnitudeLevelHigh) / 2 / magnitudePerLevel
+                    cost =    coefficients[0] * spellData.effects[effectNumber].durationBase
+                            + coefficients[1] * spellData.effects[effectNumber].durationMod / spellData.effects[effectNumber].durationPerLevel
+                            + ((spellData.effects[effectNumber].magnitudeBaseHigh + spellData.effects[effectNumber].magnitudeBaseLow) / 2) * coefficients[2]
+                            + coefficients[3] / spellData.effects[effectNumber].magnitudePerLevel * ((spellData.effects[effectNumber].magnitudeLevelBase + spellData.effects[effectNumber].magnitudeLevelHigh) / 2);
+                    break;
+                case 7: // Not used
+                    // Coefficients used with:
+                    // 0 = (magnitudeBaseHigh + magnitudeBaseLow) / 2, 1 = (magnitudeLevelBase + magnitudeLevelHigh) / 2 / magnitudePerLevel * durationBase / durationMod
+                    cost =    (spellData.effects[effectNumber].magnitudeBaseHigh + spellData.effects[effectNumber].magnitudeBaseLow) / 2 * coefficients[0]
+                            + coefficients[1] * (spellData.effects[effectNumber].magnitudeLevelBase + spellData.effects[effectNumber].magnitudeLevelHigh) / 2 / spellData.effects[effectNumber].magnitudePerLevel * spellData.effects[effectNumber].durationBase / spellData.effects[effectNumber].durationMod;
+                    break;
+            }
+            return cost;
         }
 
         // Just makes formulas more readable

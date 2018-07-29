@@ -50,6 +50,20 @@ namespace DaggerfallWorkshop.Game.Items
         // Value of potions indexed by recipe
         static readonly ushort[] potionValues = { 25, 50, 50, 50, 75, 75, 75, 75, 100, 100, 100, 100, 125, 125, 125, 200, 200, 200, 250, 500 };
 
+        // Enchantment point/gold value data for item powers
+        static readonly int[] extraSpellPtsEnchantPts = { 0x1F4, 0x1F4, 0x1F4, 0x1F4, 0xC8, 0xC8, 0xC8, 0x2BC, 0x320, 0x384, 0x3E8 };
+        static readonly int[] potentVsEnchantPts = { 0x320, 0x384, 0x3E8, 0x4B0 };
+        static readonly int[] regensHealthEnchantPts = { 0x0FA0, 0x0BB8, 0x0BB8 };
+        static readonly int[] vampiricEffectEnchantPts = { 0x7D0, 0x3E8 };
+        static readonly int[] increasedWeightAllowanceEnchantPts = { 0x190, 0x258 };
+        static readonly int[] improvesTalentsEnchantPts = { 0x1F4, 0x258, 0x258 };
+        static readonly int[] goodRepWithEnchantPts = { 0x3E8, 0x3E8, 0x3E8, 0x3E8, 0x3E8, 0x1388 };
+        static readonly int[][] enchantmentPtsForItemPowerArrays = { null, null, null, extraSpellPtsEnchantPts, potentVsEnchantPts, regensHealthEnchantPts,
+                                                                    vampiricEffectEnchantPts, increasedWeightAllowanceEnchantPts, null, null, null, null, null,
+                                                                    improvesTalentsEnchantPts, goodRepWithEnchantPts};
+        static readonly int[] enemySoulPts = { 0, 0x3E8, 0x3E8, 0, 0, 0, 0, 0x3E8, 0x0BB8, 0x3E8, 0x2710, 0, 0x3E8, 0x0BB8, 0x3E8, 0, 0x0BB8, 0, 0x7530, 0x2710, 0, 0x0BB8, 0x0BB8, 0x7530, 0x3E8, 0x0C350 };
+        static readonly ushort[] enchantmentPointCostsForNonParamTypes = { 0, 0x0F448, 0x0F63C, 0x0FF9C, 0x0FD44, 0, 0, 0, 0x384, 0x5DC, 0x384, 0x64, 0x2BC };
+
         private enum BodyMorphology
         {
             Argonian = 0,
@@ -510,7 +524,44 @@ namespace DaggerfallWorkshop.Game.Items
                         newItem.maxCondition = magicItem.uses;
                         newItem.currentCondition = magicItem.uses;
 
-                        // TODO: Set value based on value calculation for magic items
+                        // Set the value of the item. This is determined by the enchantment point cost/spell-casting cost
+                        // of the enchantments on the item.
+                        int value = 0;
+                        for (int i = 0; i < magicItem.enchantments.Length; ++i)
+                        {
+                            if (magicItem.enchantments[i].type != EnchantmentTypes.None
+                                && magicItem.enchantments[i].type < EnchantmentTypes.ItemDeteriorates)
+                            {
+                                switch (magicItem.enchantments[i].type)
+                                {
+                                    // Enchantments that cast a spell. The parameter is the spell index in SPELLS.STD.
+                                    case EnchantmentTypes.CastWhenUsed:
+                                    case EnchantmentTypes.CastWhenHeld:
+                                    case EnchantmentTypes.CastWhenStrikes:
+                                        value += Formulas.FormulaHelper.GetSpellEnchantPtCost(magicItem.enchantments[i].param);
+                                        break;
+                                    // Enchantments that provide an effect that has no parameters
+                                    case EnchantmentTypes.RepairsObjects:
+                                    case EnchantmentTypes.AbsorbsSpells:
+                                    case EnchantmentTypes.EnhancesSkill:
+                                    case EnchantmentTypes.FeatherWeight:
+                                    case EnchantmentTypes.StrengthensArmor:
+                                        value += enchantmentPointCostsForNonParamTypes[(int)magicItem.enchantments[i].type];
+                                        break;
+                                    // Bound soul
+                                    case EnchantmentTypes.SoulBound:
+                                        value += enemySoulPts[magicItem.enchantments[i].param]; // TODO: Not sure about this. Should be negative? Needs to be tested.
+                                        break;
+                                    default:
+                                    // Enchantments that provide a non-spell effect with a parameter (when effect applies, what enemies are affected, etc.)
+                                        value += enchantmentPtsForItemPowerArrays[(int)magicItem.enchantments[i].type][magicItem.enchantments[i].param];
+                                        break;
+                                }
+                            }
+                        }
+
+                        newItem.value = value;
+
                         break;
                     }
 
