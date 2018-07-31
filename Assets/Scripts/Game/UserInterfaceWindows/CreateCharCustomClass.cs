@@ -77,8 +77,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         };
         Rect hitPointsUpButtonRect = new Rect(252, 46, 8, 10);
         Rect hitPointsDownButtonRect = new Rect(252, 57, 8, 10);
+        Rect helpButtonRect = new Rect(249, 74, 66, 22);
         Rect specialAdvantageButtonRect = new Rect(249, 98, 66, 22);
         Rect specialDisadvantageButtonRect = new Rect(249, 122, 66, 22);
+        Rect reputationButtonRect = new Rect(249, 146, 66, 22);
         Rect exitButtonRect = new Rect(263, 172, 38, 21);
 
         #endregion
@@ -88,8 +90,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button[] skillButtons = new Button[12];
         Button hitPointsUpButton;
         Button hitPointsDownButton;
+        Button helpButton;
         Button specialAdvantageButton;
         Button specialDisadvantageButton;
+        Button reputationButton;
         Button exitButton;
 
         #endregion
@@ -178,6 +182,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             specialAdvantageButton.OnMouseClick += specialAdvantageButton_OnMouseClick;
             specialDisadvantageButton = DaggerfallUI.AddButton(specialDisadvantageButtonRect, NativePanel);
             specialDisadvantageButton.OnMouseClick += specialDisadvantageButton_OnMouseClick;
+
+            // Reputations
+            reputationButton = DaggerfallUI.AddButton(reputationButtonRect, NativePanel);
+            reputationButton.OnMouseClick += ReputationButton_OnMouseClick;
         }
 
         #endregion
@@ -289,6 +297,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             CreateCharSpecialAdvantageWindow createCharSpecialAdvantageWindow = new CreateCharSpecialAdvantageWindow(uiManager, this, true);
             uiManager.PushWindow(createCharSpecialAdvantageWindow);
+        }
+
+        void ReputationButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            CreateCharReputationWindow createCharReputationWindow = new CreateCharReputationWindow(uiManager, this);
+            uiManager.PushWindow(createCharReputationWindow);
         }
 
         #endregion
