@@ -86,6 +86,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         HorizontalSlider helmAndShieldMaterialDisplay;
         Checkbox inventoryInfoPanel;
         Checkbox enhancedItemLists;
+        Checkbox vitalsIndicators;
         HorizontalSlider mouseSensitivity;
         HorizontalSlider weaponSensitivity;
         HorizontalSlider movementAcceleration;
@@ -191,6 +192,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUnity.Settings.HelmAndShieldMaterialDisplay, "off", "noLeatChai", "noLeat", "on");
             inventoryInfoPanel = AddCheckbox(leftPanel, "inventoryInfoPanel", DaggerfallUnity.Settings.EnableInventoryInfoPanel); //TODO: better description
             enhancedItemLists = AddCheckbox(leftPanel, "enhancedItemLists", DaggerfallUnity.Settings.EnableEnhancedItemLists);
+            vitalsIndicators = AddCheckbox(leftPanel, "vitalsIndicators", DaggerfallUnity.Settings.EnableVitalsIndicators);
 
             y = 0;
 
@@ -275,6 +277,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.HelmAndShieldMaterialDisplay = helmAndShieldMaterialDisplay.ScrollIndex;
             DaggerfallUnity.Settings.EnableInventoryInfoPanel = inventoryInfoPanel.IsChecked;
             DaggerfallUnity.Settings.EnableEnhancedItemLists = enhancedItemLists.IsChecked;
+            DaggerfallUnity.Settings.EnableVitalsIndicators = vitalsIndicators.IsChecked;
 
             DaggerfallUnity.Settings.MouseLookSensitivity = mouseSensitivity.GetValue();
             DaggerfallUnity.Settings.WeaponSensitivity = weaponSensitivity.GetValue();
