@@ -57,25 +57,36 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     listBox.AddItem(classFile.Career.Name);
                 }
             }
+            // Last option is for creating custom classes
+            // TODO: Get the custom class creator to a usable state before uncommenting the line below.
+            //listBox.AddItem("Custom");
 
             OnItemPicked += DaggerfallClassSelectWindow_OnItemPicked;
         }
 
         void DaggerfallClassSelectWindow_OnItemPicked(int index, string className)
         {
-            selectedClass = classList[index];
+            if (index == classList.Count) // "Custom" option selected
+            {
+                selectedClass = null;
+                CloseWindow();
+            } 
+            else 
+            {
+                selectedClass = classList[index];
 
-            TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(startClassDescriptionID + index);
-            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
-            messageBox.SetTextTokens(textTokens);
-            messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
-            Button noButton = messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
-            noButton.ClickSound = DaggerfallUI.Instance.GetAudioClip(SoundClips.ButtonClick);
-            messageBox.OnButtonClick += ConfirmClassPopup_OnButtonClick;
-            uiManager.PushWindow(messageBox);
+                TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(startClassDescriptionID + index);
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
+                messageBox.SetTextTokens(textTokens);
+                messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
+                Button noButton = messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
+                noButton.ClickSound = DaggerfallUI.Instance.GetAudioClip(SoundClips.ButtonClick);
+                messageBox.OnButtonClick += ConfirmClassPopup_OnButtonClick;
+                uiManager.PushWindow(messageBox);
 
-            AudioClip clip = DaggerfallUnity.Instance.SoundReader.GetAudioClip(SoundClips.SelectClassDrums);
-            DaggerfallUI.Instance.AudioSource.PlayOneShot(clip);
+                AudioClip clip = DaggerfallUnity.Instance.SoundReader.GetAudioClip(SoundClips.SelectClassDrums);
+                DaggerfallUI.Instance.AudioSource.PlayOneShot(clip);
+            }
         }
 
         void ConfirmClassPopup_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
