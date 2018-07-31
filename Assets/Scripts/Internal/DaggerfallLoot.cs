@@ -276,7 +276,7 @@ namespace DaggerfallWorkshop
                     {
                         if (itemGroup == ItemGroups.MagicItems)
                         {
-                            //TODO: Make magic item
+                            item = ItemBuilder.CreateRandomMagicItem(playerEntity.Level, playerEntity.Gender, playerEntity.Race);
                         }
                         else if (itemGroup == ItemGroups.Books)
                         {
