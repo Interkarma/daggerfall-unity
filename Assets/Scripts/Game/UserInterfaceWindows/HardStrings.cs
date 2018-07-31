@@ -308,7 +308,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public static readonly string[] userTakesDamageLocations = { "in sunlight", "in holy places" };
         public static readonly string[] enemyGroupNames =  { "undead", "Daedra", "humanoids", "animals" };
         public static readonly string[] healthLeechStopConditions = { "whenever used", "unless used daily", "unless used weekly" };
-        public static readonly string[] badReactionFromEnemyGroups = { "from humanoids", "from animals", "from Daedra" };
+        public static readonly string[] badReactionFromEnemyGroups = { "humanoids", "animals", "Daedra" };
         public static readonly string[] repWithGroups = { "Commoners", "Merchants", "Scholars", "Nobility", "Underworld", "All" };
 
         public const string repairDone = "DONE";
