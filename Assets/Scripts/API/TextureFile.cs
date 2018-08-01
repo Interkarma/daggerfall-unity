@@ -273,7 +273,7 @@ namespace DaggerfallConnect.Arena2
         /// <param name="usage">Specify if file will be accessed from disk, or loaded into RAM.</param>
         /// <param name="readOnly">File will be read-only if true, read-write if false.</param>
         /// <returns>True if successful, otherwise false.</returns>
-        public override bool Load(string filePath, FileUsage usage, bool readOnly)
+        protected override bool LoadImpl(string filePath, FileUsage usage, bool readOnly)
         {
             // Exit if this file already loaded
             if (managedFile.FilePath == filePath)

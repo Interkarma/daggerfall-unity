@@ -43,7 +43,7 @@ namespace DaggerfallConnect.Save
             get { return 1; }
         }
 
-        public override bool Load(string filePath, FileUsage usage, bool readOnly)
+        protected override bool LoadImpl(string filePath, FileUsage usage, bool readOnly)
         {
             // Validate filename
             string fn = Path.GetFileName(filePath);
