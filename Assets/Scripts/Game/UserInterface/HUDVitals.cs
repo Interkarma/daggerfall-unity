@@ -162,7 +162,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     fatigueProgress.Amount = playerEntity.CurrentFatigue / (float)playerEntity.MaxFatigue;
                     magickaProgress.Amount = playerEntity.CurrentMagicka / (float)playerEntity.MaxMagicka;
                 }
-                breathProgress.Amount = playerEntity.CurrentBreath / (float)playerEntity.MaxBreath;
+                SetRemainingBreath(playerEntity.CurrentBreath / (float)playerEntity.MaxBreath);
             }
         }
 
