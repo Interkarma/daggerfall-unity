@@ -104,7 +104,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Load native texture
             nativeTexture = DaggerfallUI.GetTextureFromImg(nativeImgName);
             if (!nativeTexture)
-                throw new Exception("CreateCharSpecialAdvantage: Could not load native texture.");
+                throw new Exception("CreateCharReputationWindow: Could not load native texture.");
 
             // Create panel for window
             repPanel.Size = TextureReplacement.GetSize(nativeTexture, nativeImgName);

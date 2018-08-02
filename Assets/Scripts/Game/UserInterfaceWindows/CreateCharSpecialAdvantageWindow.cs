@@ -42,6 +42,85 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool isDisadvantages;
         int labelCount = 0;
 
+        #region List picker strings
+        string[] advantageStrings = new string[]
+        {
+            HardStrings.acuteHearing,
+            HardStrings.adrenalineRush,
+            HardStrings.athleticism,
+            HardStrings.bonusToHit,
+            HardStrings.expertiseIn,
+            HardStrings.immunity,
+            HardStrings.increasedMagery,
+            HardStrings.rapidHealing,
+            HardStrings.regenerateHealth,
+            HardStrings.resistance,
+            HardStrings.spellAbsorption
+        };
+        string[] disadvantageStrings = new string[]
+        {
+            HardStrings.criticalWeakness,
+            HardStrings.damage,
+            HardStrings.darknessPoweredMagery,
+            HardStrings.forbiddenArmorType,
+            HardStrings.forbiddenMaterial,
+            HardStrings.forbiddenShieldTypes,
+            HardStrings.forbiddenWeaponry,
+            HardStrings.inabilityToRegen,
+            HardStrings.lightPoweredMagery,
+            HardStrings.lowTolerance,
+            HardStrings.phobia
+        };
+        string[] enemyTypeStrings = new string[]
+        {
+            HardStrings.animals,
+            HardStrings.daedra,
+            HardStrings.humanoid,
+            HardStrings.undead
+        };
+        string[] weaponTypeStrings = new string[]
+        {
+            HardStrings.axe,
+            HardStrings.bluntWeapon,
+            HardStrings.handToHand,
+            HardStrings.longBlade,
+            HardStrings.missileWeapon,
+            HardStrings.shortBlade
+        };
+        string[] effectTypeStrings = new string[]
+        {
+            HardStrings.toDisease,
+            HardStrings.toFire,
+            HardStrings.toFrost,
+            HardStrings.toMagic,
+            HardStrings.toParalysis,
+            HardStrings.toPoison,
+            HardStrings.toShock
+        };
+        string[] increasedMageryStrings = new string[]
+        {
+            HardStrings.intInSpellPoints15,
+            HardStrings.intInSpellPoints175,
+            HardStrings.intInSpellPoints2,
+            HardStrings.intInSpellPoints3,
+            HardStrings.intInSpellPoints
+        };
+        string[] effectEnvStrings = new string[]
+        {
+            HardStrings.general,
+            HardStrings.inDarkness,
+            HardStrings.inLight
+        };
+        string[] regenHealthStrings = new string[]
+        {
+            HardStrings.general,
+            HardStrings.inDarkness,
+            HardStrings.inLight,
+            HardStrings.whileImmersed
+        };
+
+        #endregion
+
         #region UI Rects
 
         Rect addAdvantageButtonRect = new Rect(80, 4, 72, 22);
@@ -58,7 +137,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Text Labels
 
-        TextLabel[] advantageLabels = new TextLabel[7];
+        TextLabel[] advantageLabels = new TextLabel[maxItems];
 
         #endregion
 
@@ -134,16 +213,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void AddAdvantageButton_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
         {
+            string[] items;
+
             if (labelCount == maxItems)
             {
                 return;
             }
+
             DaggerfallListPickerWindow advantagePicker = new DaggerfallListPickerWindow(uiManager, this);
+            advantagePicker.ListBox.Font = DaggerfallUI.SmallFont;
             advantagePicker.OnItemPicked += AdvantagePicker_OnItemPicked;
-            // TODO: Determine location of text for special advantages and disadvantages and implement functionality.
-            advantagePicker.ListBox.AddItem("Placeholder1");
-            advantagePicker.ListBox.AddItem("Placeholder2");
-            advantagePicker.ListBox.AddItem("Placeholder3");
+
+            items = isDisadvantages ? disadvantageStrings : advantageStrings;
+            foreach (string s in items)
+            {
+                advantagePicker.ListBox.AddItem(s);
+            }
+
             uiManager.PushWindow(advantagePicker);
         }
 
