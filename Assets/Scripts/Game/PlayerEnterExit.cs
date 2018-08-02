@@ -308,8 +308,9 @@ namespace DaggerfallWorkshop.Game
             else
             {
                 // Clear flags when not in a dungeon
-                // commenting this out allows player to swim outside - MeteoricDragon
-                //isPlayerSwimming = false;
+                // don't clear swimming if we're outside on a water tile - MeteoricDragon
+                if (GameManager.Instance.StreamingWorld.PlayerTileMapIndex != 0)
+                    isPlayerSwimming = false;
                 isPlayerSubmerged = false;
                 levitateMotor.IsSwimming = false;
             }
