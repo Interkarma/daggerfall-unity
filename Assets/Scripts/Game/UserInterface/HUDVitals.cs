@@ -214,6 +214,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             healthProgress.Cycle();
             fatigueProgress.Cycle();
             magickaProgress.Cycle();
+
+            // disallow non-indicator bars to go above indicators
+            healthProgress.Amount = Mathf.Min(healthProgress.Amount, healthProgressLoss.Amount, healthProgressGain.Amount);
+            fatigueProgress.Amount = Mathf.Min(fatigueProgress.Amount, fatigueProgressLoss.Amount, fatigueProgressGain.Amount);
+            magickaProgress.Amount = Mathf.Min(magickaProgress.Amount, magickaProgressLoss.Amount, magickaProgressGain.Amount);
+
         }
 
         void PositionIndicators()
