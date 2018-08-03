@@ -12,13 +12,20 @@ namespace DaggerfallWorkshop.Game.UserInterface
         private float targetPercent;
         private float timer;
         private const float timerMax = 0.4f;
-        private bool cycleTimer;
+        public bool cycleTimer;
 
+        /// <summary>
+        /// Start a smooth change with delay and target
+        /// </summary>
+        /// <param name="target">Target percent to change bar to</param>
         public void BeginSmoothChange(float target)
         {
-            cycleTimer = true;
-            timer = -0.5f;
-            prevPercent = Amount;
+            if (cycleTimer == false)
+            {
+                cycleTimer = true;
+                prevPercent = Amount;
+                timer = -0.5f;
+            }
             targetPercent = target;
         }
 

@@ -111,12 +111,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 magickaProgressGain.VerticalAlignment = VerticalAlignment.Bottom;
 
                 // to make bar appear behind other bars, add it first.
-                Components.Add(healthProgressGain);
-                Components.Add(fatigueProgressGain);
-                Components.Add(magickaProgressGain);
                 Components.Add(healthProgressLoss);
                 Components.Add(fatigueProgressLoss);
                 Components.Add(magickaProgressLoss);
+                Components.Add(healthProgressGain);
+                Components.Add(fatigueProgressGain);
+                Components.Add(magickaProgressGain);
             }
 
             Components.Add(healthProgress);
@@ -215,11 +215,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             fatigueProgress.Cycle();
             magickaProgress.Cycle();
 
-            // disallow non-indicator bars to go above indicators
+            // disallow non-indicator bars from going above indicators
             healthProgress.Amount = Mathf.Min(healthProgress.Amount, healthProgressLoss.Amount, healthProgressGain.Amount);
             fatigueProgress.Amount = Mathf.Min(fatigueProgress.Amount, fatigueProgressLoss.Amount, fatigueProgressGain.Amount);
             magickaProgress.Amount = Mathf.Min(magickaProgress.Amount, magickaProgressLoss.Amount, magickaProgressGain.Amount);
-
         }
 
         void PositionIndicators()
