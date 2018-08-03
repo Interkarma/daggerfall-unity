@@ -30,9 +30,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class CreateCharSpecialAdvantageWindow : DaggerfallPopupWindow
     {
+        struct SpecialAdvDis 
+        {
+            public string primaryString;
+            public string secondaryString;
+        };
+
         const string nativeImgName = "CUST01I0.IMG";
         const string nativeImgOverlayName = "CUST02I0.IMG";
         const int maxItems = 7;
+        const int maxLabels = maxItems * 2;
+
+        List<SpecialAdvDis> advDisList = new List<SpecialAdvDis>();
 
         Texture2D nativeTexture;
         Texture2D nativeOverlayTexture;
@@ -40,7 +49,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Panel advantagePanel = new Panel();
         Panel overlayPanel = new Panel();
         bool isDisadvantages;
-        int labelCount = 0;
 
         #region List picker strings
         string[] advantageStrings = new string[]
@@ -118,6 +126,47 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             HardStrings.inLight,
             HardStrings.whileImmersed
         };
+        string[] damageEnvStrings = new string[]
+        {
+            HardStrings.fromHolyPlaces,
+            HardStrings.fromSunlight
+        };
+        string[] darknessPoweredStrings = new string[]
+        {
+            HardStrings.lowerMagicAbilityDaylight,
+            HardStrings.unableToUseMagicInDaylight
+        };
+        string[] lightPoweredStrings = new string[]
+        {
+            HardStrings.lowerMagicAbilityDarkness,
+            HardStrings.unableToUseMagicInDarkness
+        };
+        string[] armorTypeStrings = new string[]
+        {
+            HardStrings.chain,
+            HardStrings.leather,
+            HardStrings.plate
+        };
+        string[] materialStrings = new string[]
+        {
+            HardStrings.adamantium,
+            HardStrings.daedric,
+            HardStrings.dwarven,
+            HardStrings.ebony,
+            HardStrings.elven,
+            HardStrings.iron,
+            HardStrings.mithril,
+            HardStrings.orcish,
+            HardStrings.silver,
+            HardStrings.steel
+        };
+        string[] shieldTypeStrings = new string[]
+        {
+            HardStrings.buckler,
+            HardStrings.kiteShield,
+            HardStrings.roundShield,
+            HardStrings.towerShield
+        };
 
         #endregion
 
@@ -137,7 +186,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Text Labels
 
-        TextLabel[] advantageLabels = new TextLabel[maxItems];
+        TextLabel[] advantageLabels = new TextLabel[maxLabels];
 
         #endregion
 
@@ -187,11 +236,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             addAdvantageButton.OnMouseClick += AddAdvantageButton_OnMouseClick;
             exitButton = DaggerfallUI.AddButton(exitButtonRect, NativePanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
-            for (int i = 0; i < maxItems; i++)
+            for (int i = 0; i < maxLabels; i++)
             {
-                advantageLabels[i] = DaggerfallUI.AddTextLabel(font, new Vector2(8, 35 + i * 8), "", NativePanel);
+                advantageLabels[i] = DaggerfallUI.AddTextLabel(font, new Vector2(8, 35 + i * 8), string.Empty, NativePanel);
                 advantageLabels[i].OnMouseClick += AdvantageLabel_OnMouseClick;
-                advantageLabels[i].Tag = i;
+                advantageLabels[i].Tag = -1;
             }
 
             IsSetup = true;
@@ -215,7 +264,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             string[] items;
 
-            if (labelCount == maxItems)
+            if (advDisList.Count == maxItems)
             {
                 return;
             }
@@ -236,25 +285,134 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void AdvantagePicker_OnItemPicked(int index, string advantageName)
         {
             CloseWindow();
-            labelCount++;
-            int labelInd = labelCount - 1;
-            advantageLabels[labelInd].Text = advantageName;
+
+            SpecialAdvDis s = new SpecialAdvDis 
+            {
+                primaryString = advantageName
+                , secondaryString = string.Empty
+            };
+            string[] secondaryList = null;
+            // advantages/disadvantages with secondary options
+            switch (advantageName)
+            {
+                case HardStrings.bonusToHit:
+                case HardStrings.phobia:
+                    secondaryList = enemyTypeStrings;
+                    break;
+                case HardStrings.expertiseIn:
+                case HardStrings.forbiddenWeaponry:
+                    secondaryList = weaponTypeStrings;
+                    break;
+                case HardStrings.immunity:
+                case HardStrings.resistance:
+                case HardStrings.criticalWeakness:
+                    secondaryList = effectTypeStrings;
+                    break;
+                case HardStrings.increasedMagery:
+                    secondaryList = increasedMageryStrings;
+                    break;
+                case HardStrings.rapidHealing:
+                case HardStrings.spellAbsorption:
+                    secondaryList = effectEnvStrings;
+                    break;
+                case HardStrings.regenerateHealth:
+                    secondaryList = regenHealthStrings;
+                    break;
+                case HardStrings.damage:
+                    secondaryList = damageEnvStrings;
+                    break;
+                case HardStrings.darknessPoweredMagery:
+                    secondaryList = darknessPoweredStrings;
+                    break;
+                case HardStrings.forbiddenArmorType:
+                    secondaryList = armorTypeStrings;
+                    break;
+                case HardStrings.forbiddenMaterial:
+                    secondaryList = materialStrings;
+                    break;
+                case HardStrings.forbiddenShieldTypes:
+                    secondaryList = shieldTypeStrings;
+                    break;
+                case HardStrings.lightPoweredMagery:
+                    secondaryList = lightPoweredStrings;
+                    break;
+                case HardStrings.lowTolerance:
+                    secondaryList = effectTypeStrings;
+                    break;
+                default:
+                    break;
+            }
+            advDisList.Add(s);
+            if (secondaryList == null)
+            {
+                UpdateLabels();
+            } 
+            else
+            {
+                DaggerfallListPickerWindow secondaryPicker = new DaggerfallListPickerWindow(uiManager, this);
+                secondaryPicker.ListBox.Font = DaggerfallUI.SmallFont;
+                secondaryPicker.OnItemPicked += SecondaryPicker_OnItemPicked;
+                foreach (string secondaryString in secondaryList)
+                {
+                    secondaryPicker.ListBox.AddItem(secondaryString);
+                }
+                uiManager.PushWindow(secondaryPicker);
+            }
+        }
+
+        void SecondaryPicker_OnItemPicked(int index, string itemString)
+        {
+            CloseWindow();
+            string primary = advDisList[advDisList.Count - 1].primaryString;
+            advDisList[advDisList.Count - 1] = new SpecialAdvDis { primaryString = primary, secondaryString = itemString};
+            UpdateLabels();
         }
 
         void AdvantageLabel_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
         {
-            // Remove item and update list
-            labelCount--;
-            for (int i = (int)sender.Tag; i < maxItems - 1; i++)
+            for (int i = 0; i < advDisList.Count; i++)
             {
-                advantageLabels[i].Text = advantageLabels[i + 1].Text;
+                if (i == (int)sender.Tag)
+                {
+                    advDisList.RemoveAt(i);
+                    sender.Tag = -1;
+                    UpdateLabels();
+                    return;
+                }
             }
-            advantageLabels[maxItems - 1].Text = "";
         }
 
         void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
         {
             CloseWindow();
+        }
+
+        #endregion
+
+        #region Helper methods
+
+        void UpdateLabels()
+        {
+            // Clear all labels
+            for (int i = 0; i < maxLabels; i++)
+            {
+                advantageLabels[i].Text = string.Empty;
+                advantageLabels[i].Tag = -1;
+            }
+            // Insert string(s) at the bottommost label
+            for (int i = 0; i < advDisList.Count; i++)
+            {
+                int j = -1;
+                while (advantageLabels[++j].Text != string.Empty)
+                    ;
+                advantageLabels[j].Text = advDisList[i].primaryString;
+                advantageLabels[j].Tag = i;
+                if (advDisList[i].secondaryString != string.Empty)
+                {
+                    advantageLabels[j + 1].Text = advDisList[i].secondaryString;
+                    advantageLabels[j + 1].Tag = i;
+                }
+            }
         }
 
         #endregion
