@@ -176,7 +176,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public PlayerPositionData_v1 GetPlayerPositionData()
         {
             PlayerPositionData_v1 playerPosition = new PlayerPositionData_v1();
-            PlayerHeightChanger heightChanger = GetComponent<PlayerHeightChanger>();
+            //PlayerHeightChanger heightChanger = GetComponent<PlayerHeightChanger>();
             playerPosition.position = transform.position;
             playerPosition.worldCompensation = GameManager.Instance.StreamingWorld.WorldCompensation;
             playerPosition.worldContext = playerEnterExit.WorldContext;

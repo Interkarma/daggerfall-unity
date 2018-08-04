@@ -39,8 +39,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         EscortingNPCFacePanel escortingFaces = new EscortingNPCFacePanel();
         HUDQuestDebugger questDebugger = new HUDQuestDebugger();
         HUDActiveSpells activeSpells = new HUDActiveSpells();
-        GameObject player;
-        DaggerfallEntityBehaviour playerEntity;
+        //GameObject player;
+        //DaggerfallEntityBehaviour playerEntity;
 
         float midScreenTextTimer = -1;
         float midScreenTextDelay = 1.5f;
@@ -106,8 +106,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ShowActiveSpells = true;
 
             // Get references
-            player = GameObject.FindGameObjectWithTag("Player");
-            playerEntity = player.GetComponent<DaggerfallEntityBehaviour>();
+            //player = GameObject.FindGameObjectWithTag("Player");
+            //playerEntity = player.GetComponent<DaggerfallEntityBehaviour>();
 
             ParentPanel.Components.Add(crosshair);
             ParentPanel.Components.Add(vitals);

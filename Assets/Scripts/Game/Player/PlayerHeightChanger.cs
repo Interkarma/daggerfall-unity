@@ -45,7 +45,7 @@ namespace DaggerfallWorkshop.Game
         private PlayerMotor playerMotor;
         private CharacterController controller;
         private HeadBobber headBobber;
-        private LevitateMotor levitateMotor;
+        //private LevitateMotor levitateMotor;
         private Camera mainCamera;
         private float controllerStandHeight = 1.78f;
         private float controllerCrouchHeight = 0.45f;
@@ -59,9 +59,9 @@ namespace DaggerfallWorkshop.Game
         private float camStandLevel;
         private float camRideLevel;
         private float camSwimLevel;
-        private float camSwimToCrouchDist;
+        //private float camSwimToCrouchDist;
         private float camCrouchToStandDist;
-        private float camStandToRideDist;
+        //private float camStandToRideDist;
         private float camTimer;
         private const float timerFast = 0.10f;
         private const float timerMedium = 0.25f;
@@ -79,14 +79,14 @@ namespace DaggerfallWorkshop.Game
             controller = GetComponent<CharacterController>();
             headBobber = GetComponent<HeadBobber>();
             mainCamera = GameManager.Instance.MainCamera;
-            levitateMotor = GetComponent<LevitateMotor>();
+            //levitateMotor = GetComponent<LevitateMotor>();
             camSwimLevel = controllerSwimHeight / 2f;
             camCrouchLevel = controllerCrouchHeight / 2f;
             camStandLevel = controllerStandHeight / 2f;
             camRideLevel = controllerRideHeight / 2f - eyeHeight;
-            camSwimToCrouchDist = (controllerCrouchHeight - controllerSwimHeight) / 2f;
+            //camSwimToCrouchDist = (controllerCrouchHeight - controllerSwimHeight) / 2f;
             camCrouchToStandDist = (controllerStandHeight - controllerCrouchHeight) / 2f;
-            camStandToRideDist = (controllerRideHeight - controllerStandHeight) / 2f;
+            //camStandToRideDist = (controllerRideHeight - controllerStandHeight) / 2f;
 
             // Use event to set whether player is crouched on load
             SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
