@@ -82,7 +82,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public float Breath
         {
             get { return breathProgress.Amount; }
-            set { SetRemainingBreath(value); }
+            set { breathProgress.Amount = value;
+                  SetRemainingBreathColor(value); }
         }
 
         public HUDVitals()
@@ -110,12 +111,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 magickaProgressGain.VerticalAlignment = VerticalAlignment.Bottom;
 
                 // to make bar appear behind other bars, add it first.
-                Components.Add(healthProgressGain);
-                Components.Add(fatigueProgressGain);
-                Components.Add(magickaProgressGain);
                 Components.Add(healthProgressLoss);
                 Components.Add(fatigueProgressLoss);
                 Components.Add(magickaProgressLoss);
+                Components.Add(healthProgressGain);
+                Components.Add(fatigueProgressGain);
+                Components.Add(magickaProgressGain);
             }
 
             Components.Add(healthProgress);
@@ -153,7 +154,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                 if (DaggerfallUnity.Settings.EnableVitalsIndicators)
                 {
-                    UpdateIndicators();
+                    // these progress bars never smooth-change.
+                    healthProgressGain.Amount = playerEntity.CurrentHealth / (float)playerEntity.MaxHealth;
+                    fatigueProgressGain.Amount = playerEntity.CurrentFatigue / (float)playerEntity.MaxFatigue;
+                    magickaProgressGain.Amount = playerEntity.CurrentMagicka / (float)playerEntity.MaxMagicka;
+                    UpdateSmoothBars();
+                    PositionIndicators();
                 }
                 else
                 {
@@ -163,16 +169,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     magickaProgress.Amount = playerEntity.CurrentMagicka / (float)playerEntity.MaxMagicka;
                 }
                 breathProgress.Amount = playerEntity.CurrentBreath / (float)playerEntity.MaxBreath;
+                SetRemainingBreathColor(breathProgress.Amount);
             }
         }
 
-        void UpdateIndicators()
+        void UpdateSmoothBars()
         {
-            // these progress bars never smooth-change.
-            healthProgressGain.Amount = playerEntity.CurrentHealth / (float)playerEntity.MaxHealth;
-            fatigueProgressGain.Amount = playerEntity.CurrentFatigue / (float)playerEntity.MaxFatigue;
-            magickaProgressGain.Amount = playerEntity.CurrentMagicka / (float)playerEntity.MaxMagicka;
-
             float target;
             // if there's any change in health... Smooth update the Loss bar, and
             // decide if should smooth update or instant update the progress bar
@@ -213,6 +215,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             fatigueProgress.Cycle();
             magickaProgress.Cycle();
 
+            // disallow non-indicator bars from going above indicators
+            healthProgress.Amount = Mathf.Min(healthProgress.Amount, healthProgressLoss.Amount, healthProgressGain.Amount);
+            fatigueProgress.Amount = Mathf.Min(fatigueProgress.Amount, fatigueProgressLoss.Amount, fatigueProgressGain.Amount);
+            magickaProgress.Amount = Mathf.Min(magickaProgress.Amount, magickaProgressLoss.Amount, magickaProgressGain.Amount);
+        }
+
+        void PositionIndicators()
+        {
             healthProgressLoss.Position = healthProgress.Position;
             healthProgressLoss.Size = healthProgress.Size;
 
@@ -230,7 +240,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             magickaProgressGain.Position = magickaProgress.Position;
             magickaProgressGain.Size = magickaProgress.Size;
-
         }
         void LoadAssets()
         {
@@ -257,9 +266,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             magickaProgressGain.Color = magickaGainColor;
         }
 
-        void SetRemainingBreath(float amount)
+        void SetRemainingBreathColor(float amount)
         {
-            breathProgress.Amount = amount;
             int threshold = ((GameManager.Instance.PlayerEntity.Stats.LiveEndurance) >> 3) + 4;
             if (threshold > GameManager.Instance.PlayerEntity.CurrentBreath)
                 breathProgress.Color = new Color32(148, 12, 0, 255);
