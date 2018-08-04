@@ -46,6 +46,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         List<string> skillsList;
         int hpPerLevel = defaultHpPerLevel;
         int difficultyPoints = 0;
+        List<CreateCharSpecialAdvantageWindow.SpecialAdvDis> advantages = new List<CreateCharSpecialAdvantageWindow.SpecialAdvDis>();
+        List<CreateCharSpecialAdvantageWindow.SpecialAdvDis> disadvantages = new List<CreateCharSpecialAdvantageWindow.SpecialAdvDis>();
 
         public DFCareer CreatedClass
         {
@@ -289,13 +291,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public void specialAdvantageButton_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
         {
-            CreateCharSpecialAdvantageWindow createCharSpecialAdvantageWindow = new CreateCharSpecialAdvantageWindow(uiManager, this);
+            CreateCharSpecialAdvantageWindow createCharSpecialAdvantageWindow = new CreateCharSpecialAdvantageWindow(uiManager, advantages, createdClass, this);
             uiManager.PushWindow(createCharSpecialAdvantageWindow);
         }
 
         public void specialDisadvantageButton_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
         {
-            CreateCharSpecialAdvantageWindow createCharSpecialAdvantageWindow = new CreateCharSpecialAdvantageWindow(uiManager, this, true);
+            CreateCharSpecialAdvantageWindow createCharSpecialAdvantageWindow = new CreateCharSpecialAdvantageWindow(uiManager, disadvantages, createdClass, this, true);
             uiManager.PushWindow(createCharSpecialAdvantageWindow);
         }
 

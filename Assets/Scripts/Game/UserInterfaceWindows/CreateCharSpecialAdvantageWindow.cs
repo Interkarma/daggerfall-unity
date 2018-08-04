@@ -30,7 +30,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class CreateCharSpecialAdvantageWindow : DaggerfallPopupWindow
     {
-        struct SpecialAdvDis 
+        public struct SpecialAdvDis 
         {
             public string primaryString;
             public string secondaryString;
@@ -40,8 +40,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string nativeImgOverlayName = "CUST02I0.IMG";
         const int maxItems = 7;
         const int maxLabels = maxItems * 2;
+        const int labelSpacing = 8;
+        const int tandemLabelSpacing = 6;
 
-        List<SpecialAdvDis> advDisList = new List<SpecialAdvDis>();
+        DFCareer advantageData;
+        List<SpecialAdvDis> advDisList;
 
         Texture2D nativeTexture;
         Texture2D nativeOverlayTexture;
@@ -190,10 +193,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #endregion
 
-        public CreateCharSpecialAdvantageWindow(IUserInterfaceManager uiManager, IUserInterfaceWindow previous = null, bool isDisadvantages = false)
+        public CreateCharSpecialAdvantageWindow(IUserInterfaceManager uiManager, List<SpecialAdvDis> advDisList, DFCareer careerData, IUserInterfaceWindow previous = null, bool isDisadvantages = false)
             : base(uiManager, previous)
         {
             this.isDisadvantages = isDisadvantages;
+            this.advDisList = advDisList;
+            this.advantageData = careerData;
         }
 
         #region Setup Methods
@@ -238,10 +243,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
             for (int i = 0; i < maxLabels; i++)
             {
-                advantageLabels[i] = DaggerfallUI.AddTextLabel(font, new Vector2(8, 35 + i * 8), string.Empty, NativePanel);
+                advantageLabels[i] = DaggerfallUI.AddTextLabel(font, new Vector2(8, 35 + i * labelSpacing), string.Empty, NativePanel);
                 advantageLabels[i].OnMouseClick += AdvantageLabel_OnMouseClick;
                 advantageLabels[i].Tag = -1;
             }
+            UpdateLabels();
 
             IsSetup = true;
         }
@@ -342,9 +348,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 default:
                     break;
             }
-            advDisList.Add(s);
             if (secondaryList == null)
             {
+                if (IsDuplicateAdvantage(s))
+                {
+                    return; // advantage/disadvantage already exists, move on
+                }
+                advDisList.Add(s);
                 UpdateLabels();
             } 
             else
@@ -357,6 +367,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     secondaryPicker.ListBox.AddItem(secondaryString);
                 }
                 uiManager.PushWindow(secondaryPicker);
+                advDisList.Add(s);
             }
         }
 
@@ -364,7 +375,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             CloseWindow();
             string primary = advDisList[advDisList.Count - 1].primaryString;
-            advDisList[advDisList.Count - 1] = new SpecialAdvDis { primaryString = primary, secondaryString = itemString};
+            SpecialAdvDis item = new SpecialAdvDis { primaryString = primary, secondaryString = itemString };
+            if (IsDuplicateAdvantage(item))
+            {
+                advDisList.RemoveAt(advDisList.Count - 1); // advantage/disadvantage already exists
+                return;
+            }
+            advDisList[advDisList.Count - 1] = item;
             UpdateLabels();
         }
 
@@ -385,6 +402,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
         {
             CloseWindow();
+            InitializeCareerData(); // clean data before parsing
+            ParseCareerData(); // transfer data from window to career object
         }
 
         #endregion
@@ -411,6 +430,440 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     advantageLabels[j + 1].Text = advDisList[i].secondaryString;
                     advantageLabels[j + 1].Tag = i;
+                    // squish labels together if they represent the same item
+                    advantageLabels[j + 1].Position = new Vector2(advantageLabels[j + 1].Position.x, advantageLabels[j].Position.y + tandemLabelSpacing);
+                    // ensure default label spacing for the rest of the labels
+                    for (int k = j + 1; k < maxLabels - 1; k++)
+                    {
+                        advantageLabels[k + 1].Position = new Vector2(advantageLabels[k + 1].Position.x, advantageLabels[k].Position.y + labelSpacing);
+                    }
+                } 
+                else
+                {
+                    // ensure default label spacing
+                    for (int k = j; k < maxLabels - 1; k++)
+                    {
+                        advantageLabels[k + 1].Position = new Vector2(advantageLabels[k + 1].Position.x, advantageLabels[k].Position.y + labelSpacing);
+                    }
+                }
+            }
+        }
+
+        bool IsDuplicateAdvantage(SpecialAdvDis advDis)
+        {
+            for (int i = 0; i < advDisList.Count; i++)
+            {
+                if (advDis.primaryString == advDisList[i].primaryString && advDis.secondaryString == advDisList[i].secondaryString)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        void SetAttackModifier(DFCareer.AttackModifier mod, string secondary)
+        {
+            switch (secondary)
+            {
+                case HardStrings.undead:
+                    advantageData.UndeadAttackModifier = mod;
+                    break;
+                case HardStrings.daedra:
+                    advantageData.DaedraAttackModifier = mod;
+                    break;
+                case HardStrings.humanoid:
+                    advantageData.HumanoidAttackModifier = mod;
+                    break;
+                case HardStrings.animals:
+                    advantageData.AnimalsAttackModifier = mod;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        void SetProficiency(DFCareer.Proficiency mod, string secondary)
+        {
+            switch (secondary)
+            {
+                case HardStrings.axe:
+                    advantageData.Axes = mod;
+                    break;
+                case HardStrings.bluntWeapon:
+                    advantageData.BluntWeapons = mod;
+                    break;
+                case HardStrings.handToHand:
+                    advantageData.HandToHand = mod;
+                    break;
+                case HardStrings.longBlade:
+                    advantageData.LongBlades = mod;
+                    break;
+                case HardStrings.missileWeapon:
+                    advantageData.MissileWeapons = mod;
+                    break;
+                case HardStrings.shortBlade:
+                    advantageData.ShortBlades = mod;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        void SetTolerance(DFCareer.Tolerance mod, string secondary)
+        {
+            switch (secondary)
+            {
+                case HardStrings.toDisease:
+                    advantageData.Disease = mod;
+                    break;
+                case HardStrings.toFire:
+                    advantageData.Fire = mod;
+                    break;
+                case HardStrings.toFrost:
+                    advantageData.Frost = mod;
+                    break;
+                case HardStrings.toMagic:
+                    advantageData.Magic = mod;
+                    break;
+                case HardStrings.toParalysis:
+                    advantageData.Paralysis = mod;
+                    break;
+                case HardStrings.toPoison:
+                    advantageData.Poison = mod;
+                    break;
+                case HardStrings.toShock:
+                    advantageData.Shock = mod;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        void SetMagery(string secondary)
+        {
+            switch (secondary)
+            {
+                case HardStrings.intInSpellPoints15:
+                    advantageData.SpellPointMultiplier = DFCareer.SpellPointMultipliers.Times_1_50;
+                    break;
+                case HardStrings.intInSpellPoints175:
+                    advantageData.SpellPointMultiplier = DFCareer.SpellPointMultipliers.Times_1_75;
+                    break;
+                case HardStrings.intInSpellPoints2:
+                    advantageData.SpellPointMultiplier = DFCareer.SpellPointMultipliers.Times_2_00;
+                    break;
+                case HardStrings.intInSpellPoints3:
+                    advantageData.SpellPointMultiplier = DFCareer.SpellPointMultipliers.Times_3_00;
+                    break;
+                case HardStrings.intInSpellPoints:
+                    advantageData.SpellPointMultiplier = DFCareer.SpellPointMultipliers.Times_1_00;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        void SetRapidHealing(string secondary)
+        {
+            switch (secondary)
+            {
+                case HardStrings.general:
+                    advantageData.RapidHealing = DFCareer.RapidHealingFlags.Always;
+                    break;
+                case HardStrings.inDarkness:
+                    advantageData.RapidHealing = DFCareer.RapidHealingFlags.InDarkness;
+                    break;
+                case HardStrings.inLight:
+                    advantageData.RapidHealing = DFCareer.RapidHealingFlags.InLight;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        void SetAbsorption(string secondary)
+        {
+            switch (secondary)
+            {
+                case HardStrings.general:
+                    advantageData.SpellAbsorption = DFCareer.SpellAbsorptionFlags.Always;
+                    break;
+                case HardStrings.inDarkness:
+                    advantageData.SpellAbsorption = DFCareer.SpellAbsorptionFlags.InDarkness;
+                    break;
+                case HardStrings.inLight:
+                    advantageData.SpellAbsorption = DFCareer.SpellAbsorptionFlags.InLight;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        void SetRegeneration(string secondary)
+        {
+            switch (secondary)
+            {
+                case HardStrings.general:
+                    advantageData.Regeneration = DFCareer.RegenerationFlags.Always;
+                    break;
+                case HardStrings.inDarkness:
+                    advantageData.Regeneration = DFCareer.RegenerationFlags.InDarkness;
+                    break;
+                case HardStrings.inLight:
+                    advantageData.Regeneration = DFCareer.RegenerationFlags.InLight;
+                    break;
+                case HardStrings.whileImmersed:
+                    advantageData.Regeneration = DFCareer.RegenerationFlags.InWater;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        void SetDarknessMagery(string secondary)
+        {
+            switch(secondary)
+            {
+                case HardStrings.lowerMagicAbilityDaylight:
+                    advantageData.DarknessPoweredMagery = DFCareer.DarknessMageryFlags.ReducedPowerInLight;
+                    break;
+                case HardStrings.unableToUseMagicInDaylight:
+                    advantageData.DarknessPoweredMagery = DFCareer.DarknessMageryFlags.UnableToCastInLight;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        void SetForbiddenArmor(string secondary)
+        {
+            switch (secondary)
+            {
+                case HardStrings.chain:
+                    advantageData.ForbiddenArmors = advantageData.ForbiddenArmors | DFCareer.ArmorFlags.Chain;
+                    break;
+                case HardStrings.leather:
+                    advantageData.ForbiddenArmors = advantageData.ForbiddenArmors | DFCareer.ArmorFlags.Leather;
+                    break;
+                case HardStrings.plate:
+                    advantageData.ForbiddenArmors = advantageData.ForbiddenArmors | DFCareer.ArmorFlags.Plate;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        void SetForbiddenMaterial(string secondary)
+        {
+            switch (secondary)
+            {
+                case HardStrings.adamantium:
+                    advantageData.ForbiddenMaterials = advantageData.ForbiddenMaterials | DFCareer.MaterialFlags.Adamantium;
+                    break;
+                case HardStrings.daedric:
+                    advantageData.ForbiddenMaterials = advantageData.ForbiddenMaterials | DFCareer.MaterialFlags.Daedric;
+                    break;
+                case HardStrings.dwarven:
+                    advantageData.ForbiddenMaterials = advantageData.ForbiddenMaterials | DFCareer.MaterialFlags.Dwarven;
+                    break;
+                case HardStrings.ebony:
+                    advantageData.ForbiddenMaterials = advantageData.ForbiddenMaterials | DFCareer.MaterialFlags.Ebony;
+                    break;
+                case HardStrings.elven:
+                    advantageData.ForbiddenMaterials = advantageData.ForbiddenMaterials | DFCareer.MaterialFlags.Elven;
+                    break;
+                case HardStrings.iron:
+                    advantageData.ForbiddenMaterials = advantageData.ForbiddenMaterials | DFCareer.MaterialFlags.Iron;
+                    break;
+                case HardStrings.mithril:
+                    advantageData.ForbiddenMaterials = advantageData.ForbiddenMaterials | DFCareer.MaterialFlags.Mithril;
+                    break;
+                case HardStrings.orcish:
+                    advantageData.ForbiddenMaterials = advantageData.ForbiddenMaterials | DFCareer.MaterialFlags.Orcish;
+                    break;
+                case HardStrings.silver:
+                    advantageData.ForbiddenMaterials = advantageData.ForbiddenMaterials | DFCareer.MaterialFlags.Silver;
+                    break;
+                case HardStrings.steel:
+                    advantageData.ForbiddenMaterials = advantageData.ForbiddenMaterials | DFCareer.MaterialFlags.Steel;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        void SetForbiddenShields(string secondary)
+        {
+            switch (secondary)
+            {
+                case HardStrings.buckler:
+                    advantageData.ForbiddenShields = advantageData.ForbiddenShields | DFCareer.ShieldFlags.Buckler;
+                    break;
+                case HardStrings.kiteShield:
+                    advantageData.ForbiddenShields = advantageData.ForbiddenShields | DFCareer.ShieldFlags.KiteShield;
+                    break;
+                case HardStrings.roundShield:
+                    advantageData.ForbiddenShields = advantageData.ForbiddenShields | DFCareer.ShieldFlags.RoundShield;
+                    break;
+                case HardStrings.towerShield:
+                    advantageData.ForbiddenShields = advantageData.ForbiddenShields | DFCareer.ShieldFlags.TowerShield;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        void SetLightMagery(string secondary)
+        {
+            switch (secondary)
+            {
+                case HardStrings.lowerMagicAbilityDarkness:
+                    advantageData.LightPoweredMagery = DFCareer.LightMageryFlags.ReducedPowerInDarkness;
+                    break;
+                case HardStrings.unableToUseMagicInDarkness:
+                    advantageData.LightPoweredMagery = DFCareer.LightMageryFlags.UnableToCastInDarkness;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        void SetDamage(string secondary)
+        {
+            switch (secondary)
+            {
+                case HardStrings.fromHolyPlaces:
+                    advantageData.DamageFromHolyPlaces = true;
+                    break;
+                case HardStrings.fromSunlight:
+                    advantageData.DamageFromSunlight = true;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        void InitializeCareerData()
+        {
+            advantageData.Paralysis = DFCareer.Tolerance.Normal;
+            advantageData.Magic = DFCareer.Tolerance.Normal;
+            advantageData.Poison = DFCareer.Tolerance.Normal;
+            advantageData.Fire = DFCareer.Tolerance.Normal;
+            advantageData.Frost = DFCareer.Tolerance.Normal;
+            advantageData.Shock = DFCareer.Tolerance.Normal;
+            advantageData.Disease = DFCareer.Tolerance.Normal;
+
+            advantageData.ShortBlades = DFCareer.Proficiency.Normal;
+            advantageData.LongBlades = DFCareer.Proficiency.Normal;
+            advantageData.HandToHand = DFCareer.Proficiency.Normal;
+            advantageData.Axes = DFCareer.Proficiency.Normal;
+            advantageData.BluntWeapons = DFCareer.Proficiency.Normal;
+            advantageData.MissileWeapons = DFCareer.Proficiency.Normal;
+
+            advantageData.UndeadAttackModifier = DFCareer.AttackModifier.Normal;
+            advantageData.DaedraAttackModifier = DFCareer.AttackModifier.Normal;
+            advantageData.HumanoidAttackModifier = DFCareer.AttackModifier.Normal;
+            advantageData.AnimalsAttackModifier = DFCareer.AttackModifier.Normal;
+
+            advantageData.DarknessPoweredMagery = DFCareer.DarknessMageryFlags.Normal;
+            advantageData.LightPoweredMagery = DFCareer.LightMageryFlags.Normal;
+
+            advantageData.ForbiddenMaterials = (DFCareer.MaterialFlags)0;
+            advantageData.ForbiddenShields = (DFCareer.ShieldFlags)0;
+            advantageData.ForbiddenArmors = (DFCareer.ArmorFlags)0;
+            advantageData.ForbiddenProficiencies = (DFCareer.ProficiencyFlags)0;
+            advantageData.ExpertProficiencies = (DFCareer.ProficiencyFlags)0;
+
+            advantageData.SpellPointMultiplier = DFCareer.SpellPointMultipliers.Times_0_50;
+            advantageData.SpellAbsorption = DFCareer.SpellAbsorptionFlags.None;
+
+            advantageData.NoRegenSpellPoints = false;
+            advantageData.AcuteHearing = false;
+            advantageData.Athleticism = false;
+            advantageData.AdrenalineRush = false;
+
+            advantageData.Regeneration = DFCareer.RegenerationFlags.None;
+            advantageData.RapidHealing = DFCareer.RapidHealingFlags.None;
+
+            advantageData.DamageFromSunlight = false;
+            advantageData.DamageFromHolyPlaces = false;
+        }
+
+        void ParseCareerData()
+        {
+            foreach (SpecialAdvDis advDis in advDisList)
+            {
+                switch (advDis.primaryString)
+                {
+                    case HardStrings.bonusToHit:
+                        SetAttackModifier(DFCareer.AttackModifier.Bonus, advDis.secondaryString);
+                        break;
+                    case HardStrings.phobia:
+                        SetAttackModifier(DFCareer.AttackModifier.Phobia, advDis.secondaryString);
+                        break;
+                    case HardStrings.expertiseIn:
+                        SetAttackModifier(DFCareer.AttackModifier.Bonus, advDis.secondaryString);
+                        break;
+                    case HardStrings.forbiddenWeaponry:
+                        SetProficiency(DFCareer.Proficiency.Forbidden, advDis.secondaryString);
+                        break;
+                    case HardStrings.immunity:
+                        SetTolerance(DFCareer.Tolerance.Immune, advDis.secondaryString);
+                        break;
+                    case HardStrings.resistance:
+                        SetTolerance(DFCareer.Tolerance.Resistant, advDis.secondaryString);
+                        break;
+                    case HardStrings.criticalWeakness:
+                        SetTolerance(DFCareer.Tolerance.CriticalWeakness, advDis.secondaryString);
+                        break;
+                    case HardStrings.increasedMagery:
+                        SetMagery(advDis.secondaryString);
+                        break;
+                    case HardStrings.rapidHealing:
+                        SetRapidHealing(advDis.secondaryString);
+                        break;
+                    case HardStrings.spellAbsorption:
+                        SetAbsorption(advDis.secondaryString);
+                        break;
+                    case HardStrings.regenerateHealth:
+                        SetRegeneration(advDis.secondaryString);
+                        break;
+                    case HardStrings.damage:
+                        SetDamage(advDis.secondaryString);
+                        break;
+                    case HardStrings.darknessPoweredMagery:
+                        SetDarknessMagery(advDis.secondaryString);
+                        break;
+                    case HardStrings.forbiddenArmorType:
+                        SetForbiddenArmor(advDis.secondaryString);
+                        break;
+                    case HardStrings.forbiddenMaterial:
+                        SetForbiddenMaterial(advDis.secondaryString);
+                        break;
+                    case HardStrings.forbiddenShieldTypes:
+                        SetForbiddenShields(advDis.secondaryString);
+                        break;
+                    case HardStrings.lightPoweredMagery:
+                        SetLightMagery(advDis.secondaryString);
+                        break;
+                    case HardStrings.lowTolerance:
+                        SetTolerance(DFCareer.Tolerance.LowTolerance, advDis.secondaryString);
+                        break;
+                    case HardStrings.inabilityToRegen:
+                        advantageData.NoRegenSpellPoints = true;
+                        break;
+                    case HardStrings.acuteHearing:
+                        advantageData.AcuteHearing = true;
+                        break;
+                    case HardStrings.athleticism:
+                        advantageData.Athleticism = true;
+                        break;
+                    case HardStrings.adrenalineRush:
+                        advantageData.AdrenalineRush = true;
+                        break;
+                    default:
+                        break;
                 }
             }
         }
