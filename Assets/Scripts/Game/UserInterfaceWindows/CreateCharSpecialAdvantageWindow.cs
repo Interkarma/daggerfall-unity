@@ -421,8 +421,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
         {
             CloseWindow();
-            InitializeCareerData(); // clean data before parsing
-            ParseCareerData(); // transfer data from window to career object
         }
 
         #endregion
@@ -802,7 +800,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void InitializeCareerData()
+        public void InitializeCareerData()
         {
             advantageData.Paralysis = DFCareer.Tolerance.Normal;
             advantageData.Magic = DFCareer.Tolerance.Normal;
@@ -848,7 +846,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             advantageData.DamageFromHolyPlaces = false;
         }
 
-        void ParseCareerData()
+        public void ParseCareerData()
         {
             foreach (SpecialAdvDis advDis in advDisList)
             {

@@ -35,6 +35,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const float barBottomY = 128f;
         const float barMiddleY = 76f;
         const float barLength = 50f;
+        const int strBalanceMustEqualZero = 303;
 
         Color greenBarColor = new Color(.388f, .549f, .223f);
         Color redBarColor = new Color(.580f, .031f, 0f);
@@ -42,12 +43,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Texture2D nativeTexture;
         DaggerfallFont font;
         Panel repPanel = new Panel();
-        short merchantsRep = 0;
-        short peasantsRep = 0;
-        short scholarsRep = 0;
-        short nobilityRep = 0;
-        short underworldRep = 0;
         short pointsToDistribute = 0;
+        CreateCharCustomClass prevWindow;
 
         #region UI Rects
 
@@ -101,6 +98,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             base.Setup();
 
+            prevWindow = (CreateCharCustomClass)this.PreviousWindow;
+
             // Load native texture
             nativeTexture = DaggerfallUI.GetTextureFromImg(nativeImgName);
             if (!nativeTexture)
@@ -121,24 +120,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
 
             // Setup adjustable bars
-            SetupRepBars(merchantsGreenPanel, merchantsRedPanel, new Vector2(3f, 75f), new Vector2(3f, 77f));
-            SetupRepBars(peasantsGreenPanel, peasantsRedPanel, new Vector2(36f, 75f), new Vector2(36f, 77f));
-            SetupRepBars(scholarsGreenPanel, scholarsRedPanel, new Vector2(69f, 75f), new Vector2(69f, 77f));
-            SetupRepBars(nobilityGreenPanel, nobilityRedPanel, new Vector2(102f, 75f), new Vector2(102f, 77f));
-            SetupRepBars(underworldGreenPanel, underworldRedPanel, new Vector2(135f, 75f), new Vector2(135f, 77f));
+            SetupRepBars(merchantsGreenPanel, merchantsRedPanel, new Vector2(3f, 75f), new Vector2(3f, 77f), prevWindow.MerchantsRep);
+            SetupRepBars(peasantsGreenPanel, peasantsRedPanel, new Vector2(36f, 75f), new Vector2(36f, 77f), prevWindow.PeasantsRep);
+            SetupRepBars(scholarsGreenPanel, scholarsRedPanel, new Vector2(69f, 75f), new Vector2(69f, 77f), prevWindow.ScholarsRep);
+            SetupRepBars(nobilityGreenPanel, nobilityRedPanel, new Vector2(102f, 75f), new Vector2(102f, 77f), prevWindow.NobilityRep);
+            SetupRepBars(underworldGreenPanel, underworldRedPanel, new Vector2(135f, 75f), new Vector2(135f, 77f), prevWindow.UnderworldRep);
 
             // Setup text labels
-            merchantsPtsLabel = DaggerfallUI.AddTextLabel(font, new Vector2(18f, 143f), merchantsRep.ToString(), repPanel);
-            peasantsPtsLabel = DaggerfallUI.AddTextLabel(font, new Vector2(50f, 143f), peasantsRep.ToString(), repPanel);
-            scholarsPtsLabel = DaggerfallUI.AddTextLabel(font, new Vector2(82f, 143f), scholarsRep.ToString(), repPanel);
-            nobilityPtsLabel = DaggerfallUI.AddTextLabel(font, new Vector2(114f, 143f), nobilityRep.ToString(), repPanel);
-            underworldPtsLabel = DaggerfallUI.AddTextLabel(font, new Vector2(146f, 143f), nobilityRep.ToString(), repPanel);
+            merchantsPtsLabel = DaggerfallUI.AddTextLabel(font, new Vector2(18f, 143f), prevWindow.MerchantsRep.ToString(), repPanel);
+            peasantsPtsLabel = DaggerfallUI.AddTextLabel(font, new Vector2(50f, 143f), prevWindow.PeasantsRep.ToString(), repPanel);
+            scholarsPtsLabel = DaggerfallUI.AddTextLabel(font, new Vector2(82f, 143f), prevWindow.ScholarsRep.ToString(), repPanel);
+            nobilityPtsLabel = DaggerfallUI.AddTextLabel(font, new Vector2(114f, 143f), prevWindow.NobilityRep.ToString(), repPanel);
+            underworldPtsLabel = DaggerfallUI.AddTextLabel(font, new Vector2(146f, 143f), prevWindow.UnderworldRep.ToString(), repPanel);
             distributePtsLabel = DaggerfallUI.AddTextLabel(font, new Vector2(64f, 173f), pointsToDistribute.ToString(), repPanel);
 
             IsSetup = true;
         }
-
-
 
         #endregion
 
@@ -160,37 +157,48 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 if (position.x >= 134f) // Underworld
                 {
-                    UpdateRep(position, underworldGreenPanel, underworldRedPanel, underworldPtsLabel, out underworldRep);
+                    prevWindow.UnderworldRep = UpdateRep(position, underworldGreenPanel, underworldRedPanel, underworldPtsLabel);
                 }
                 else if (position.x >= 101f) // Nobility
                 {
-                    UpdateRep(position, nobilityGreenPanel, nobilityRedPanel, nobilityPtsLabel, out nobilityRep);
+                    prevWindow.NobilityRep = UpdateRep(position, nobilityGreenPanel, nobilityRedPanel, nobilityPtsLabel);
                 }
                 else if (position.x >= 68f) // Scholars
                 {
-                    UpdateRep(position, scholarsGreenPanel, scholarsRedPanel, scholarsPtsLabel, out scholarsRep);
+                    prevWindow.ScholarsRep = UpdateRep(position, scholarsGreenPanel, scholarsRedPanel, scholarsPtsLabel);
                 }
                 else if (position.x >= 35f) // Peasants
                 {
-                    UpdateRep(position, peasantsGreenPanel, peasantsRedPanel, peasantsPtsLabel, out peasantsRep);
+                    prevWindow.PeasantsRep = UpdateRep(position, peasantsGreenPanel, peasantsRedPanel, peasantsPtsLabel);
                 }
                 else // Merchants
                 {
-                    UpdateRep(position, merchantsGreenPanel, merchantsRedPanel, merchantsPtsLabel, out merchantsRep);
+                    prevWindow.MerchantsRep = UpdateRep(position, merchantsGreenPanel, merchantsRedPanel, merchantsPtsLabel);
                 }
+                UpdatePointsToDistribute();
             }
         }
 
         void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
         {
-            CloseWindow();
+            if (pointsToDistribute != 0) 
+            {
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
+                messageBox.SetTextTokens(strBalanceMustEqualZero);
+                messageBox.ClickAnywhereToClose = true;
+                messageBox.Show();
+            }
+            else 
+            {
+                CloseWindow();
+            }
         }
 
         #endregion
 
         #region Helper methods
 
-        void SetupRepBars(Panel greenBar, Panel redBar, Vector2 greenBarPos, Vector2 redBarPos)
+        void SetupRepBars(Panel greenBar, Panel redBar, Vector2 greenBarPos, Vector2 redBarPos, short val)
         {
             // Positive rep
             greenBar.Position = greenBarPos;
@@ -203,6 +211,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             redBar.BackgroundColor = redBarColor;
             redBar.Size = repBarSize;
             repPanel.Components.Add(redBar);
+
+            // Initialize value
+            if (val > 0) 
+            {
+                greenBar.Enabled = true;
+                redBar.Enabled = false;
+                greenBar.Position = new Vector2(greenBar.Position.x, barMiddleY - (float)val * 5f);
+                greenBar.Size = new Vector2(greenBar.Size.x, barMiddleY - greenBar.Position.y);
+            }
+            if (val < 0) 
+            {
+                redBar.Enabled = true;
+                greenBar.Enabled = false;
+                redBar.Size = new Vector2(redBar.Size.x, (float)val * -5f);
+            }
         }
 
         int RoundNearestBarHeight(int number)
@@ -223,11 +246,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return ret > maxHeight ? maxHeight : ret; // don't go over the top or bottom
         }
 
-        void UpdateRep(Vector2 mousePos, Panel greenBar, Panel redBar, TextLabel label, out short repVal)
+        short UpdateRep(Vector2 mousePos, Panel greenBar, Panel redBar, TextLabel label)
         {
             float clickedHeight = ((float)Math.Abs(barMiddleY - mousePos.y) / barLength) * barLength;
             int nearestHeight = RoundNearestBarHeight((int)clickedHeight);
             int sign = 1; // positive or negative
+            short repVal;
 
             if (mousePos.y < barMiddleY)
             {
@@ -248,38 +272,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             repVal = (short)(sign * nearestHeight / 5);
             label.Text = repVal.ToString();
 
-            // Update "Points to Distribute"
-            pointsToDistribute = (short)(-merchantsRep - peasantsRep - scholarsRep - nobilityRep - underworldRep);
+            return repVal;
+        }
+
+        void UpdatePointsToDistribute()
+        {
+            pointsToDistribute = (short)(-prevWindow.MerchantsRep - prevWindow.PeasantsRep - prevWindow.ScholarsRep - prevWindow.NobilityRep - prevWindow.UnderworldRep);
             distributePtsLabel.Text = pointsToDistribute.ToString();
-        }
-
-        #endregion
-
-        #region Properties
-
-        public short MerchantsRep
-        {
-            get { return merchantsRep; }
-        }
-
-        public short PeasantsRep
-        {
-            get { return peasantsRep; }
-        }
-
-        public short ScholarsRep
-        {
-            get { return scholarsRep; }
-        }
-
-        public short NobilityRep
-        {
-            get { return nobilityRep; }
-        }
-
-        public short UnderworldRep
-        {
-            get { return underworldRep; }
         }
 
         #endregion

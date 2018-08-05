@@ -34,6 +34,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int maxHpPerLevel = 30;
         const int minHpPerLevel = 4;
         const int defaultHpPerLevel = 8;
+        const int strNameYourClass = 301;
+        const int strSetSkills = 300;
+        const int strDistributeStats = 302;
 
         Texture2D nativeTexture;
         Texture2D nativeDaggerTexture;
@@ -60,6 +63,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         CreateCharReputationWindow createCharReputationWindow;
         CreateCharSpecialAdvantageWindow createCharSpecialAdvantageWindow;
+        CreateCharSpecialAdvantageWindow createCharSpecialDisadvantageWindow;
         DaggerfallListPickerWindow skillPicker;
 
         #endregion
@@ -311,28 +315,57 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public void specialDisadvantageButton_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
         {
-            createCharSpecialAdvantageWindow = new CreateCharSpecialAdvantageWindow(uiManager, disadvantages, createdClass, this, true);
-            uiManager.PushWindow(createCharSpecialAdvantageWindow);
+            createCharSpecialDisadvantageWindow = new CreateCharSpecialAdvantageWindow(uiManager, disadvantages, createdClass, this, true);
+            uiManager.PushWindow(createCharSpecialDisadvantageWindow);
         }
 
         void ReputationButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             createCharReputationWindow = new CreateCharReputationWindow(uiManager, this);
-            createCharReputationWindow.OnClose += CreateCharReputationWindow_OnClose;
             uiManager.PushWindow(createCharReputationWindow);
-        }
-
-        void CreateCharReputationWindow_OnClose()
-        {
-            merchantsRep = createCharReputationWindow.MerchantsRep;
-            peasantsRep = createCharReputationWindow.PeasantsRep;
-            scholarsRep = createCharReputationWindow.ScholarsRep;
-            nobilityRep = createCharReputationWindow.NobilityRep;
-            underworldRep = createCharReputationWindow.UnderworldRep;
         }
 
         void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallMessageBox messageBox;
+
+            // Is the class name set?
+            if (nameTextBox.Text.Length == 0) 
+            {
+                messageBox = new DaggerfallMessageBox(uiManager, this);
+                messageBox.SetTextTokens(strNameYourClass);
+                messageBox.ClickAnywhereToClose = true;
+                messageBox.Show();
+                return;
+            } 
+
+            // Are all skills set?
+            for (int i = 0; i < skillLabels.Length; i++) 
+            {
+                if (skillLabels [i].Text == string.Empty)
+                {
+                    messageBox = new DaggerfallMessageBox(uiManager, this);
+                    messageBox.SetTextTokens(strSetSkills);
+                    messageBox.ClickAnywhereToClose = true;
+                    messageBox.Show();
+                    return;
+                }
+            }
+
+            // Are all attribute points distributed?
+            if (statsRollout.BonusPool > 0) 
+            {
+                messageBox = new DaggerfallMessageBox(uiManager, this);
+                messageBox.SetTextTokens(strDistributeStats);
+                messageBox.ClickAnywhereToClose = true;
+                messageBox.Show();
+            }
+
+            // Set advantages/disadvantages
+            createCharSpecialAdvantageWindow.InitializeCareerData();
+            createCharSpecialAdvantageWindow.ParseCareerData();
+            createCharSpecialDisadvantageWindow.ParseCareerData();
+
             CloseWindow();
         }
 
@@ -391,26 +424,31 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public short MerchantsRep
         {
             get { return merchantsRep; }
+            set { merchantsRep = value; }
         }
 
         public short PeasantsRep
         {
             get { return peasantsRep; }
+            set { peasantsRep = value; }
         }
 
         public short ScholarsRep
         {
             get { return scholarsRep; }
+            set { scholarsRep = value; }
         }
 
         public short NobilityRep
         {
             get { return nobilityRep; }
+            set { nobilityRep = value; }
         }
 
         public short UnderworldRep
         {
             get { return underworldRep; }
+            set { underworldRep = value; }
         }
 
         public DFCareer CreatedClass
@@ -421,6 +459,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public string ClassName
         {
             get { return nameTextBox.Text; }
+        }
+
+        public StatsRollout Stats
+        {
+            get { return statsRollout; }
         }
 
         #endregion
