@@ -357,7 +357,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 default:
                     break;
             }
-            CreateCharCustomClass prevWindow;
             if (secondaryList == null)
             {
                 if (IsDuplicateAdvantage(s))
@@ -798,52 +797,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 default:
                     break;
             }
-        }
-
-        public void InitializeCareerData()
-        {
-            advantageData.Paralysis = DFCareer.Tolerance.Normal;
-            advantageData.Magic = DFCareer.Tolerance.Normal;
-            advantageData.Poison = DFCareer.Tolerance.Normal;
-            advantageData.Fire = DFCareer.Tolerance.Normal;
-            advantageData.Frost = DFCareer.Tolerance.Normal;
-            advantageData.Shock = DFCareer.Tolerance.Normal;
-            advantageData.Disease = DFCareer.Tolerance.Normal;
-
-            advantageData.ShortBlades = DFCareer.Proficiency.Normal;
-            advantageData.LongBlades = DFCareer.Proficiency.Normal;
-            advantageData.HandToHand = DFCareer.Proficiency.Normal;
-            advantageData.Axes = DFCareer.Proficiency.Normal;
-            advantageData.BluntWeapons = DFCareer.Proficiency.Normal;
-            advantageData.MissileWeapons = DFCareer.Proficiency.Normal;
-
-            advantageData.UndeadAttackModifier = DFCareer.AttackModifier.Normal;
-            advantageData.DaedraAttackModifier = DFCareer.AttackModifier.Normal;
-            advantageData.HumanoidAttackModifier = DFCareer.AttackModifier.Normal;
-            advantageData.AnimalsAttackModifier = DFCareer.AttackModifier.Normal;
-
-            advantageData.DarknessPoweredMagery = DFCareer.DarknessMageryFlags.Normal;
-            advantageData.LightPoweredMagery = DFCareer.LightMageryFlags.Normal;
-
-            advantageData.ForbiddenMaterials = (DFCareer.MaterialFlags)0;
-            advantageData.ForbiddenShields = (DFCareer.ShieldFlags)0;
-            advantageData.ForbiddenArmors = (DFCareer.ArmorFlags)0;
-            advantageData.ForbiddenProficiencies = (DFCareer.ProficiencyFlags)0;
-            advantageData.ExpertProficiencies = (DFCareer.ProficiencyFlags)0;
-
-            advantageData.SpellPointMultiplier = DFCareer.SpellPointMultipliers.Times_0_50;
-            advantageData.SpellAbsorption = DFCareer.SpellAbsorptionFlags.None;
-
-            advantageData.NoRegenSpellPoints = false;
-            advantageData.AcuteHearing = false;
-            advantageData.Athleticism = false;
-            advantageData.AdrenalineRush = false;
-
-            advantageData.Regeneration = DFCareer.RegenerationFlags.None;
-            advantageData.RapidHealing = DFCareer.RapidHealingFlags.None;
-
-            advantageData.DamageFromSunlight = false;
-            advantageData.DamageFromHolyPlaces = false;
         }
 
         public void ParseCareerData()

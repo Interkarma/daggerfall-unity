@@ -362,7 +362,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             // Set advantages/disadvantages
-            createCharSpecialAdvantageWindow.InitializeCareerData();
             createCharSpecialAdvantageWindow.ParseCareerData();
             createCharSpecialDisadvantageWindow.ParseCareerData();
 
