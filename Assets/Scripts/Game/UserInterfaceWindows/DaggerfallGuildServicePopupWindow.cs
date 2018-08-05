@@ -106,23 +106,47 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Setup Methods
 
-        // TODO: replace with proper merchant item generation...
-        // classic seems to have a deterministic method for generating magic items being sold
         ItemCollection GetMerchantMagicItems()
         {
             if (merchantItems == null)
             {
                 PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
                 ItemCollection items = new ItemCollection();
-                DaggerfallUnityItem magicArm = ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race);
-                magicArm.legacyMagic = new DaggerfallEnchantment[1];
-                magicArm.legacyMagic[0].type = EnchantmentTypes.CastWhenHeld;
-                magicArm.legacyMagic[0].param = 87;
-                items.AddItem(magicArm);
-                DaggerfallUnityItem magicWeap = ItemBuilder.CreateRandomWeapon(playerEntity.Level);
-                magicWeap.legacyMagic = new DaggerfallEnchantment[1];
-                magicWeap.legacyMagic[0].type = EnchantmentTypes.CastWhenHeld;
-                magicWeap.legacyMagic[0].param = 87;
+                int numOfItems = (buildingDiscoveryData.quality / 2) + 1;
+
+                for ( int i = 0; i <= numOfItems; i++)
+                {
+                    DaggerfallUnityItem magicItem = ItemBuilder.CreateRandomMagicItem(playerEntity.Level, playerEntity.Gender, playerEntity.Race);
+
+                    // Item is already identified
+                    magicItem.flags |= 0x20;
+
+                    items.AddItem(magicItem);
+                }
+
+                items.AddItem(ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Spellbook));
+
+                if (guild.Rank >= 4)
+                {
+                    for (int i = 0; i <= numOfItems; i++)
+                    {
+                        DaggerfallUnityItem magicItem = ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Soul_trap);
+                        magicItem.value = 5000;
+
+                        if (UnityEngine.Random.Range(1, 101) >= 25)
+                            magicItem.TrappedSoulType = MobileTypes.None;
+                        else
+                        {
+                            int id = UnityEngine.Random.Range(0, 43);
+                            magicItem.TrappedSoulType = (MobileTypes)id;
+                            MobileEnemy mobileEnemy = GameObjectHelper.EnemyDict[id];
+                            magicItem.value += mobileEnemy.SoulPts;
+                        }
+
+                        items.AddItem(magicItem);
+                    }
+                }
+
                 merchantItems = items;
             }
             return merchantItems;

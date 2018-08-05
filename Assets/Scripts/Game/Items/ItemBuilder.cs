@@ -16,6 +16,7 @@ using UnityEngine;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallConnect.FallExe;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -61,7 +62,6 @@ namespace DaggerfallWorkshop.Game.Items
         static readonly int[][] enchantmentPtsForItemPowerArrays = { null, null, null, extraSpellPtsEnchantPts, potentVsEnchantPts, regensHealthEnchantPts,
                                                                     vampiricEffectEnchantPts, increasedWeightAllowanceEnchantPts, null, null, null, null, null,
                                                                     improvesTalentsEnchantPts, goodRepWithEnchantPts};
-        static readonly int[] enemySoulPts = { 0, 0x3E8, 0x3E8, 0, 0, 0, 0, 0x3E8, 0x0BB8, 0x3E8, 0x2710, 0, 0x3E8, 0x0BB8, 0x3E8, 0, 0x0BB8, 0, 0x7530, 0x2710, 0, 0x0BB8, 0x0BB8, 0x7530, 0x3E8, 0x0C350 };
         static readonly ushort[] enchantmentPointCostsForNonParamTypes = { 0, 0x0F448, 0x0F63C, 0x0FF9C, 0x0FD44, 0, 0, 0, 0x384, 0x5DC, 0x384, 0x64, 0x2BC };
 
         private enum BodyMorphology
@@ -550,7 +550,8 @@ namespace DaggerfallWorkshop.Game.Items
                                         break;
                                     // Bound soul
                                     case EnchantmentTypes.SoulBound:
-                                        value += enemySoulPts[magicItem.enchantments[i].param]; // TODO: Not sure about this. Should be negative? Needs to be tested.
+                                        MobileEnemy mobileEnemy = GameObjectHelper.EnemyDict[magicItem.enchantments[i].param];
+                                        value += mobileEnemy.SoulPts; // TODO: Not sure about this. Should be negative? Needs to be tested.
                                         break;
                                     default:
                                     // Enchantments that provide a non-spell effect with a parameter (when effect applies, what enemies are affected, etc.)

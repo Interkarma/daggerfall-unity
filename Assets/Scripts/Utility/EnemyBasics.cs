@@ -180,6 +180,7 @@ namespace DaggerfallWorkshop.Utility
                 Weight = 40,
                 SeesThroughInvisibility = true,
                 LootTableKey = "D",
+                SoulPts = 1000,
             },
 
             // Spriggan
@@ -215,6 +216,7 @@ namespace DaggerfallWorkshop.Utility
                 HitFrame = 3,
                 Weight = 240,
                 LootTableKey = "B",
+                SoulPts = 1000,
             },
 
             // Giant Bat
@@ -370,6 +372,7 @@ namespace DaggerfallWorkshop.Utility
                 HitFrame = 3,
                 Weight = 600,
                 LootTableKey = "A",
+                SoulPts = 1000,
             },
 
             // Centaur
@@ -401,6 +404,7 @@ namespace DaggerfallWorkshop.Utility
                 HitFrame = 3,
                 Weight = 1200,
                 LootTableKey = "C",
+                SoulPts = 3000,
             },
 
             // Werewolf
@@ -435,6 +439,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 HitFrame = 2,
                 Weight = 480,
+                SoulPts = 1000,
             },
 
             // Nymph
@@ -466,6 +471,7 @@ namespace DaggerfallWorkshop.Utility
                 HitFrame = 5,
                 Weight = 200,
                 LootTableKey = "C",
+                SoulPts = 10000,
             },
 
             // Slaughterfish
@@ -526,6 +532,7 @@ namespace DaggerfallWorkshop.Utility
                 HitFrame = 2,
                 Weight = 600,
                 LootTableKey = "A",
+                SoulPts = 1000,
             },
 
             // Harpy
@@ -557,6 +564,7 @@ namespace DaggerfallWorkshop.Utility
                 HitFrame = 3,
                 Weight = 200,
                 LootTableKey = "D",
+                SoulPts = 3000,
             },
 
             // Wereboar
@@ -591,6 +599,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 HitFrame = 3,
                 Weight = 560,
+                SoulPts = 1000,
             },
 
             // Skeletal Warrior
@@ -655,6 +664,7 @@ namespace DaggerfallWorkshop.Utility
                 LootTableKey = "F",
                 HitFrame = 3,
                 Weight = 3000,
+                SoulPts = 3000,
             },
 
             // Zombie
@@ -719,6 +729,7 @@ namespace DaggerfallWorkshop.Utility
                 Weight = 0,
                 SeesThroughInvisibility = true,
                 LootTableKey = "I",
+                SoulPts = 30000,
             },
 
             // Mummy
@@ -752,6 +763,7 @@ namespace DaggerfallWorkshop.Utility
                 Weight = 300,
                 SeesThroughInvisibility = true,
                 LootTableKey = "E",
+                SoulPts = 10000,
             },
 
             // Giant Scorpion
@@ -812,6 +824,7 @@ namespace DaggerfallWorkshop.Utility
                 HitFrame = 3,
                 Weight = 400,
                 LootTableKey = "U",
+                SoulPts = 3000,
             },
 
             // Gargoyle
@@ -842,6 +855,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 HitFrame = 3,
                 Weight = 300,
+                SoulPts = 3000,
             },
 
             // Wraith
@@ -875,6 +889,7 @@ namespace DaggerfallWorkshop.Utility
                 Weight = 0,
                 SeesThroughInvisibility = true,
                 LootTableKey = "I",
+                SoulPts = 30000,
             },
 
             // Orc Warlord
@@ -906,6 +921,7 @@ namespace DaggerfallWorkshop.Utility
                 HitFrame = 3,
                 Weight = 700,
                 LootTableKey = "T",
+                SoulPts = 1000,
             },
 
             // Frost Daedra
@@ -938,6 +954,7 @@ namespace DaggerfallWorkshop.Utility
                 Weight = 800,
                 SeesThroughInvisibility = true,
                 LootTableKey = "J",
+                SoulPts = 50000,
             },
 
             // Fire Daedra
@@ -970,6 +987,7 @@ namespace DaggerfallWorkshop.Utility
                 Weight = 800,
                 SeesThroughInvisibility = true,
                 LootTableKey = "J",
+                SoulPts = 50000,
             },
 
             // Daedroth
@@ -1002,6 +1020,7 @@ namespace DaggerfallWorkshop.Utility
                 Weight = 400,
                 SeesThroughInvisibility = true,
                 LootTableKey = "E",
+                SoulPts = 10000,
             },
 
             // Vampire
@@ -1034,6 +1053,7 @@ namespace DaggerfallWorkshop.Utility
                 Weight = 400,
                 SeesThroughInvisibility = true,
                 LootTableKey = "Q",
+                SoulPts = 70000,
             },
 
             // Daedra Seducer
@@ -1066,6 +1086,7 @@ namespace DaggerfallWorkshop.Utility
                 Weight = 200,
                 SeesThroughInvisibility = true,
                 LootTableKey = "Q",
+                SoulPts = 150000,
             },
 
             // Vampire Ancient
@@ -1098,6 +1119,7 @@ namespace DaggerfallWorkshop.Utility
                 Weight = 400,
                 SeesThroughInvisibility = true,
                 LootTableKey = "Q",
+                SoulPts = 100000,
             },
 
             // Daedra Lord
@@ -1130,6 +1152,7 @@ namespace DaggerfallWorkshop.Utility
                 Weight = 1000,
                 SeesThroughInvisibility = true,
                 LootTableKey = "S",
+                SoulPts = 800000,
             },
 
             // Lich
@@ -1163,6 +1186,7 @@ namespace DaggerfallWorkshop.Utility
                 Weight = 300,
                 SeesThroughInvisibility = true,
                 LootTableKey = "S",
+                SoulPts = 100000,
             },
 
             // Ancient Lich
@@ -1195,6 +1219,7 @@ namespace DaggerfallWorkshop.Utility
                 HitFrame = 3,
                 Weight = 300,
                 LootTableKey = "S",
+                SoulPts = 250000,
             },
 
             // TODO: Figure out weights for monsters from here onward.
@@ -1256,6 +1281,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 0,
                 HitFrame = 3,
                 Weight = 1000,
+                SoulPts = 30000,
             },
 
             // Iron Atronach
@@ -1286,6 +1312,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 0,
                 HitFrame = 3,
                 Weight = 1000,
+                SoulPts = 30000,
             },
 
             // Flesh Atronach
@@ -1316,6 +1343,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 0,
                 HitFrame = 3,
                 Weight = 1000,
+                SoulPts = 30000,
             },
 
             // Ice Atronach
@@ -1346,6 +1374,14 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 0,
                 HitFrame = 3,
                 Weight = 1000,
+                SoulPts = 30000,
+            },
+
+            // Horse (unused, but can appear in merchant-sold soul traps)
+            new MobileEnemy()
+            {
+                ID = 39,
+                Name = "Horse",
             },
 
             // Dragonling
@@ -1374,6 +1410,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 MapChance = 0,
                 HitFrame = 2,
+                SoulPts = 500000,
             },
 
             // Dreugh
@@ -1404,6 +1441,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 0,
                 HitFrame = 3,
                 LootTableKey = "R",
+                SoulPts = 10000,
             },
 
             // Lamia
@@ -1434,6 +1472,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 0,
                 LootTableKey = "R",
                 HitFrame = 4,
+                SoulPts = 10000,
             },
 
             // Mage
