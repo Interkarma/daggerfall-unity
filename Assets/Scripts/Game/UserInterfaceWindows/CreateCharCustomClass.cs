@@ -39,20 +39,30 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Texture2D nativeDaggerTexture;
         DaggerfallFont font;
         StatsRollout statsRollout;
-        TextBox textBox = new TextBox();
+        TextBox nameTextBox = new TextBox();
         DFCareer createdClass;
         int lastSkillButtonId;
         Dictionary<string, DFCareer.Skills> skillsDict;
         List<string> skillsList;
         int hpPerLevel = defaultHpPerLevel;
         int difficultyPoints = 0;
+        int advantageAdjust = 0;
+        int disadvantageAdjust = 0;
         List<CreateCharSpecialAdvantageWindow.SpecialAdvDis> advantages = new List<CreateCharSpecialAdvantageWindow.SpecialAdvDis>();
         List<CreateCharSpecialAdvantageWindow.SpecialAdvDis> disadvantages = new List<CreateCharSpecialAdvantageWindow.SpecialAdvDis>();
+        short merchantsRep = 0;
+        short peasantsRep = 0;
+        short scholarsRep = 0;
+        short nobilityRep = 0;
+        short underworldRep = 0;
 
-        public DFCareer CreatedClass
-        {
-            get { return createdClass; }
-        }
+        #region Windows
+
+        CreateCharReputationWindow createCharReputationWindow;
+        CreateCharSpecialAdvantageWindow createCharSpecialAdvantageWindow;
+        DaggerfallListPickerWindow skillPicker;
+
+        #endregion
 
         #region UI Panels
 
@@ -134,9 +144,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.Components.Add(statsRollout);
 
             // Add name textbox
-            textBox.Position = new Vector2(100, 5);
-            textBox.Size = new Vector2(214, 7);
-            NativePanel.Components.Add(textBox);
+            nameTextBox.Position = new Vector2(100, 5);
+            nameTextBox.Size = new Vector2(214, 7);
+            NativePanel.Components.Add(nameTextBox);
 
             // Initialize character class
             createdClass = new DFCareer();
@@ -188,6 +198,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Reputations
             reputationButton = DaggerfallUI.AddButton(reputationButtonRect, NativePanel);
             reputationButton.OnMouseClick += ReputationButton_OnMouseClick;
+
+            // Exit button
+            exitButton = DaggerfallUI.AddButton(exitButtonRect, NativePanel);
+            exitButton.OnMouseClick += ExitButton_OnMouseClick;
         }
 
         #endregion
@@ -206,7 +220,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void skillButton_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
         {
-            DaggerfallListPickerWindow skillPicker = new DaggerfallListPickerWindow(uiManager, this);
+            skillPicker = new DaggerfallListPickerWindow(uiManager, this);
             skillPicker.OnItemPicked += SkillPicker_OnItemPicked;
             foreach (string skillName in skillsList)
             {
@@ -218,7 +232,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void SkillPicker_OnItemPicked(int index, string skillName)
         {
-            CloseWindow();
+            skillPicker.CloseWindow();
             switch (lastSkillButtonId)
             {
                 case 0:
@@ -291,20 +305,35 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public void specialAdvantageButton_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
         {
-            CreateCharSpecialAdvantageWindow createCharSpecialAdvantageWindow = new CreateCharSpecialAdvantageWindow(uiManager, advantages, createdClass, this);
+            createCharSpecialAdvantageWindow = new CreateCharSpecialAdvantageWindow(uiManager, advantages, createdClass, this);
             uiManager.PushWindow(createCharSpecialAdvantageWindow);
         }
 
         public void specialDisadvantageButton_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
         {
-            CreateCharSpecialAdvantageWindow createCharSpecialAdvantageWindow = new CreateCharSpecialAdvantageWindow(uiManager, disadvantages, createdClass, this, true);
+            createCharSpecialAdvantageWindow = new CreateCharSpecialAdvantageWindow(uiManager, disadvantages, createdClass, this, true);
             uiManager.PushWindow(createCharSpecialAdvantageWindow);
         }
 
         void ReputationButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            CreateCharReputationWindow createCharReputationWindow = new CreateCharReputationWindow(uiManager, this);
+            createCharReputationWindow = new CreateCharReputationWindow(uiManager, this);
+            createCharReputationWindow.OnClose += CreateCharReputationWindow_OnClose;
             uiManager.PushWindow(createCharReputationWindow);
+        }
+
+        void CreateCharReputationWindow_OnClose()
+        {
+            merchantsRep = createCharReputationWindow.MerchantsRep;
+            peasantsRep = createCharReputationWindow.PeasantsRep;
+            scholarsRep = createCharReputationWindow.ScholarsRep;
+            nobilityRep = createCharReputationWindow.NobilityRep;
+            underworldRep = createCharReputationWindow.UnderworldRep;
+        }
+
+        void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            CloseWindow();
         }
 
         #endregion
@@ -325,7 +354,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 difficultyPoints = -(2 * (defaultHpPerLevel - hpPerLevel)); // -2 pts for each hp below default
             }
-            // TODO: adjustments for special advantages/disadvantages
+
+            // adjustments for special advantages/disadvantages
+            difficultyPoints += advantageAdjust + disadvantageAdjust;
+
+            // Set level advancement difficulty
+            createdClass.AdvancementMultiplier = 0.3f + (2.7f * (float)(difficultyPoints + 12) / 52f);
 
             // Reposition the difficulty dagger
             int daggerY = 0;
@@ -338,6 +372,55 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 daggerY = (int)(defaultDaggerY + (41 * (-difficultyPoints / 12f)));
             }
             daggerPanel.Position = new Vector2(defaultDaggerX, daggerY);
+        }
+
+        #endregion
+
+        #region Properties
+
+        public int AdvantageAdjust
+        {
+            set { advantageAdjust = value; UpdateDifficulty(); }
+        }
+
+        public int DisadvantageAdjust
+        {
+            set { disadvantageAdjust = value; UpdateDifficulty(); }
+        }
+
+        public short MerchantsRep
+        {
+            get { return merchantsRep; }
+        }
+
+        public short PeasantsRep
+        {
+            get { return peasantsRep; }
+        }
+
+        public short ScholarsRep
+        {
+            get { return scholarsRep; }
+        }
+
+        public short NobilityRep
+        {
+            get { return nobilityRep; }
+        }
+
+        public short UnderworldRep
+        {
+            get { return underworldRep; }
+        }
+
+        public DFCareer CreatedClass
+        {
+            get { return createdClass; }
+        }
+
+        public string ClassName
+        {
+            get { return nameTextBox.Text; }
         }
 
         #endregion

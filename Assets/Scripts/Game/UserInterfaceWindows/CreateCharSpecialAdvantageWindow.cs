@@ -34,6 +34,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             public string primaryString;
             public string secondaryString;
+            public int difficulty;
         };
 
         const string nativeImgName = "CUST01I0.IMG";
@@ -54,6 +55,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool isDisadvantages;
 
         #region List picker strings
+
         string[] advantageStrings = new string[]
         {
             HardStrings.acuteHearing,
@@ -173,6 +175,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #endregion
 
+        #region Difficulty adjustment dictionary
+
+        Dictionary<string, int> difficultyDict;
+
+        #endregion
+
         #region UI Rects
 
         Rect addAdvantageButtonRect = new Rect(80, 4, 72, 22);
@@ -248,6 +256,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 advantageLabels[i].Tag = -1;
             }
             UpdateLabels();
+            InitializeAdjustmentDict();
 
             IsSetup = true;
         }
@@ -348,14 +357,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 default:
                     break;
             }
+            CreateCharCustomClass prevWindow;
             if (secondaryList == null)
             {
                 if (IsDuplicateAdvantage(s))
                 {
                     return; // advantage/disadvantage already exists, move on
                 }
+                s = new SpecialAdvDis 
+                {
+                    primaryString = advantageName
+                    , secondaryString = string.Empty
+                    , difficulty = GetAdvDisAdjustment(advantageName, string.Empty)
+                };
                 advDisList.Add(s);
                 UpdateLabels();
+                UpdateDifficultyAdjustment();
             } 
             else
             {
@@ -375,7 +392,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             CloseWindow();
             string primary = advDisList[advDisList.Count - 1].primaryString;
-            SpecialAdvDis item = new SpecialAdvDis { primaryString = primary, secondaryString = itemString };
+            SpecialAdvDis item = new SpecialAdvDis { primaryString = primary, secondaryString = itemString, difficulty = GetAdvDisAdjustment(primary, itemString) };
             if (IsDuplicateAdvantage(item))
             {
                 advDisList.RemoveAt(advDisList.Count - 1); // advantage/disadvantage already exists
@@ -383,6 +400,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             advDisList[advDisList.Count - 1] = item;
             UpdateLabels();
+            UpdateDifficultyAdjustment();
         }
 
         void AdvantageLabel_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
@@ -394,6 +412,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     advDisList.RemoveAt(i);
                     sender.Tag = -1;
                     UpdateLabels();
+                    UpdateDifficultyAdjustment();
                     return;
                 }
             }
@@ -409,6 +428,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #endregion
 
         #region Helper methods
+
+        int GetAdvDisAdjustment(string primary, string secondary)
+        {
+            switch (primary)
+            {
+                // secondary strings have no effect on the following cases
+                case HardStrings.expertiseIn:
+                case HardStrings.immunity:
+                case HardStrings.resistance:
+                case HardStrings.criticalWeakness:
+                case HardStrings.forbiddenShieldTypes:
+                case HardStrings.forbiddenWeaponry:
+                case HardStrings.lowTolerance:
+                case HardStrings.phobia:
+                    return difficultyDict[primary];
+                default:
+                    return difficultyDict[primary + secondary];
+            }
+        }
 
         void UpdateLabels()
         {
@@ -446,6 +484,26 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         advantageLabels[k + 1].Position = new Vector2(advantageLabels[k + 1].Position.x, advantageLabels[k].Position.y + labelSpacing);
                     }
                 }
+            }
+        }
+
+        void UpdateDifficultyAdjustment()
+        {
+            int total = 0;
+
+            foreach (SpecialAdvDis s in advDisList)
+            {
+                total += s.difficulty;
+            }
+
+            CreateCharCustomClass prevWindow = (CreateCharCustomClass)this.PreviousWindow;
+            if (isDisadvantages)
+            {
+                prevWindow.DisadvantageAdjust = total;
+            } 
+            else 
+            {
+                prevWindow.AdvantageAdjust = total;
             }
         }
 
@@ -866,6 +924,61 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         break;
                 }
             }
+        }
+
+        void InitializeAdjustmentDict()
+        {
+            difficultyDict = new Dictionary<string, int> {
+                { HardStrings.acuteHearing, 1 },
+                { HardStrings.adrenalineRush, 4 },
+                { HardStrings.athleticism, 4 },
+                { HardStrings.bonusToHit + HardStrings.animals, 6 },
+                { HardStrings.bonusToHit + HardStrings.daedra, 3 },
+                { HardStrings.bonusToHit + HardStrings.humanoid, 6 },
+                { HardStrings.expertiseIn, 2 },
+                { HardStrings.immunity, 10 },
+                { HardStrings.increasedMagery + HardStrings.intInSpellPoints, 2 },
+                { HardStrings.increasedMagery + HardStrings.intInSpellPoints15, 4 },
+                { HardStrings.increasedMagery + HardStrings.intInSpellPoints175, 6 },
+                { HardStrings.increasedMagery + HardStrings.intInSpellPoints2, 8 },
+                { HardStrings.increasedMagery + HardStrings.intInSpellPoints3, 10 },
+                { HardStrings.rapidHealing + HardStrings.general, 4 },
+                { HardStrings.rapidHealing + HardStrings.inDarkness, 3 },
+                { HardStrings.rapidHealing + HardStrings.inLight, 2 },
+                { HardStrings.regenerateHealth + HardStrings.general, 14 },
+                { HardStrings.regenerateHealth + HardStrings.inDarkness, 10 },
+                { HardStrings.regenerateHealth + HardStrings.inLight, 6 },
+                { HardStrings.regenerateHealth + HardStrings.whileImmersed, 2 },
+                { HardStrings.resistance, 5 },
+                { HardStrings.spellAbsorption + HardStrings.general, 14 },
+                { HardStrings.spellAbsorption + HardStrings.inDarkness, 12 },
+                { HardStrings.spellAbsorption + HardStrings.inLight, 8 },
+                { HardStrings.criticalWeakness, -14 },
+                { HardStrings.damage + HardStrings.fromHolyPlaces, -6 },
+                { HardStrings.damage + HardStrings.fromSunlight, -10 },
+                { HardStrings.darknessPoweredMagery + HardStrings.lowerMagicAbilityDaylight, -7 },
+                { HardStrings.darknessPoweredMagery + HardStrings.unableToUseMagicInDaylight, -10 },
+                { HardStrings.forbiddenArmorType + HardStrings.chain, -2 },
+                { HardStrings.forbiddenArmorType + HardStrings.leather, -1 },
+                { HardStrings.forbiddenArmorType + HardStrings.plate, -5 },
+                { HardStrings.forbiddenMaterial + HardStrings.adamantium, -5 },
+                { HardStrings.forbiddenMaterial + HardStrings.daedric, -2 },
+                { HardStrings.forbiddenMaterial + HardStrings.dwarven, -7 },
+                { HardStrings.forbiddenMaterial + HardStrings.ebony, -5 },
+                { HardStrings.forbiddenMaterial + HardStrings.elven, -9 },
+                { HardStrings.forbiddenMaterial + HardStrings.iron, -1 },
+                { HardStrings.forbiddenMaterial + HardStrings.mithril, -6 },
+                { HardStrings.forbiddenMaterial + HardStrings.orcish, -3 },
+                { HardStrings.forbiddenMaterial + HardStrings.silver, -6 },
+                { HardStrings.forbiddenMaterial + HardStrings.steel, -10 },
+                { HardStrings.forbiddenShieldTypes, -1 },
+                { HardStrings.forbiddenWeaponry, -2 },
+                { HardStrings.inabilityToRegen, -14 },
+                { HardStrings.lightPoweredMagery + HardStrings.lowerMagicAbilityDarkness, -10 },
+                { HardStrings.lightPoweredMagery + HardStrings.unableToUseMagicInDarkness, -14 },
+                { HardStrings.lowTolerance, -5 },
+                { HardStrings.phobia, -4 }
+            };
         }
 
         #endregion

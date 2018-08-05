@@ -42,12 +42,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Texture2D nativeTexture;
         DaggerfallFont font;
         Panel repPanel = new Panel();
-        int merchantsRep = 0;
-        int peasantsRep = 0;
-        int scholarsRep = 0;
-        int nobilityRep = 0;
-        int underworldRep = 0;
-        int pointsToDistribute = 0;
+        short merchantsRep = 0;
+        short peasantsRep = 0;
+        short scholarsRep = 0;
+        short nobilityRep = 0;
+        short underworldRep = 0;
+        short pointsToDistribute = 0;
 
         #region UI Rects
 
@@ -104,7 +104,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Load native texture
             nativeTexture = DaggerfallUI.GetTextureFromImg(nativeImgName);
             if (!nativeTexture)
-                throw new Exception("CreateCharReputationWindow: Could not load native texture.");
+                throw new Exception("CreateCharSpecialAdvantage: Could not load native texture.");
 
             // Create panel for window
             repPanel.Size = TextureReplacement.GetSize(nativeTexture, nativeImgName);
@@ -223,7 +223,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return ret > maxHeight ? maxHeight : ret; // don't go over the top or bottom
         }
 
-        void UpdateRep(Vector2 mousePos, Panel greenBar, Panel redBar, TextLabel label, out int repVal)
+        void UpdateRep(Vector2 mousePos, Panel greenBar, Panel redBar, TextLabel label, out short repVal)
         {
             float clickedHeight = ((float)Math.Abs(barMiddleY - mousePos.y) / barLength) * barLength;
             int nearestHeight = RoundNearestBarHeight((int)clickedHeight);
@@ -245,12 +245,41 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             // Update distributed points
-            repVal = sign * nearestHeight / 5;
+            repVal = (short)(sign * nearestHeight / 5);
             label.Text = repVal.ToString();
 
             // Update "Points to Distribute"
-            pointsToDistribute = -merchantsRep - peasantsRep - scholarsRep - nobilityRep - underworldRep;
+            pointsToDistribute = (short)(-merchantsRep - peasantsRep - scholarsRep - nobilityRep - underworldRep);
             distributePtsLabel.Text = pointsToDistribute.ToString();
+        }
+
+        #endregion
+
+        #region Properties
+
+        public short MerchantsRep
+        {
+            get { return merchantsRep; }
+        }
+
+        public short PeasantsRep
+        {
+            get { return peasantsRep; }
+        }
+
+        public short ScholarsRep
+        {
+            get { return scholarsRep; }
+        }
+
+        public short NobilityRep
+        {
+            get { return nobilityRep; }
+        }
+
+        public short UnderworldRep
+        {
+            get { return underworldRep; }
         }
 
         #endregion
