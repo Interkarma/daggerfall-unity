@@ -301,7 +301,27 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void CreateCharCustomClassWindow_OnClose()
         {
-            // TODO: Go to the next stage of the wizard.
+            characterDocument.career = createCharCustomClassWindow.CreatedClass;
+            characterDocument.career.Name = createCharCustomClassWindow.ClassName;
+
+            // Set reputation adjustments
+            characterDocument.reputationMerchants = createCharCustomClassWindow.MerchantsRep;
+            characterDocument.reputationCommoners = createCharCustomClassWindow.PeasantsRep;
+            characterDocument.reputationScholars = createCharCustomClassWindow.ScholarsRep;
+            characterDocument.reputationNobility = createCharCustomClassWindow.NobilityRep;
+            characterDocument.reputationUnderworld = createCharCustomClassWindow.UnderworldRep;
+
+            // Set attributes
+            characterDocument.career.Strength = createCharCustomClassWindow.Stats.WorkingStats.LiveStrength;
+            characterDocument.career.Intelligence = createCharCustomClassWindow.Stats.WorkingStats.LiveIntelligence;
+            characterDocument.career.Willpower = createCharCustomClassWindow.Stats.WorkingStats.LiveWillpower;
+            characterDocument.career.Agility = createCharCustomClassWindow.Stats.WorkingStats.LiveAgility;
+            characterDocument.career.Endurance = createCharCustomClassWindow.Stats.WorkingStats.LiveEndurance;
+            characterDocument.career.Personality = createCharCustomClassWindow.Stats.WorkingStats.LivePersonality;
+            characterDocument.career.Speed = createCharCustomClassWindow.Stats.WorkingStats.LiveSpeed;
+            characterDocument.career.Luck = createCharCustomClassWindow.Stats.WorkingStats.LiveLuck;
+
+            SetNameSelectWindow();
         }
 
         void NameSelectWindow_OnClose()

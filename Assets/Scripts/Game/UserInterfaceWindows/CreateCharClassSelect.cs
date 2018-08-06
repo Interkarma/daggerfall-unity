@@ -58,8 +58,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
             }
             // Last option is for creating custom classes
-            // TODO: Get the custom class creator to a usable state before uncommenting the line below.
-            //listBox.AddItem("Custom");
+            listBox.AddItem("Custom");
 
             OnItemPicked += DaggerfallClassSelectWindow_OnItemPicked;
         }
