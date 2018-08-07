@@ -23,9 +23,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (cycleTimer == false)
             {
                 cycleTimer = true;
-                prevPercent = Amount;
                 timer = -0.5f;
             }
+            else
+                timer = -0.25f;
+
+            prevPercent = Amount;
             targetPercent = target;
         }
 
@@ -36,7 +39,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             
             timer += Time.deltaTime;
 
-            if (timer > 0)
+            if (timer >= 0)
             {
                 float t = Mathf.Clamp01(timer / timerMax);
                 Amount = Mathf.Lerp(prevPercent, targetPercent, t);
