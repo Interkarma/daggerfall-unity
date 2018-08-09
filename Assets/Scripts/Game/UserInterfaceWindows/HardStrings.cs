@@ -412,5 +412,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string towerShield = "Tower Shield";
         public const string lowerMagicAbilityDarkness = "Lower Magic Ability In Darkness";
         public const string unableToUseMagicInDarkness = "Unable To Use Magic In Darkness";
+        public const string helpAttributes = "Attributes";
+        public const string helpClassName = "Class Name";
+        public const string helpGeneral = "General";
+        public const string helpReputations = "Reputations";
+        public const string helpSkillAdvancement = "Skill Advancement";
+        public const string helpSkills = "Skills";
+        public const string helpSpecialAdvantages = "Special Advantages";
+        public const string helpSpecialDisadvantages = "Special Disadvantages";
     }
 }

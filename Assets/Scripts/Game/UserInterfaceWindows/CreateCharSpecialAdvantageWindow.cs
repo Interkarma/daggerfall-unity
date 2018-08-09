@@ -247,8 +247,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             addAdvantageButton = DaggerfallUI.AddButton(addAdvantageButtonRect, buttonPanel);
             addAdvantageButton.OnMouseClick += AddAdvantageButton_OnMouseClick;
+            addAdvantageButton.ClickSound = DaggerfallUI.Instance.GetAudioClip(SoundClips.ButtonClick);
             exitButton = DaggerfallUI.AddButton(exitButtonRect, NativePanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
+            exitButton.ClickSound = DaggerfallUI.Instance.GetAudioClip(SoundClips.ButtonClick);
             for (int i = 0; i < maxLabels; i++)
             {
                 advantageLabels[i] = DaggerfallUI.AddTextLabel(font, new Vector2(8, 35 + i * labelSpacing), string.Empty, NativePanel);

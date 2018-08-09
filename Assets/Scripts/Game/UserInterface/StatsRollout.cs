@@ -223,6 +223,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
         void StatButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SelectStat((int)sender.Tag);
+            if (freeEdit)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+            }
         }
 
         void Spinner_OnUpButtonClicked()
@@ -240,6 +244,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             spinner.Value = bonusPool;
             UpdateStatLabels();
             RaiseOnStatChanged();
+            if (freeEdit)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+            }
         }
 
         void Spinner_OnDownButtonClicked()
@@ -260,6 +268,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             spinner.Value = bonusPool;
             UpdateStatLabels();
             RaiseOnStatChanged();
+            if (freeEdit)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+            }
         }
 
         #endregion
