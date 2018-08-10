@@ -66,8 +66,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (reversalCount != -1)
                 reversalCount++;
         }
-        protected void SetAlphaValue()
+        protected void SetAlphaValue(float overrideValue = -1)
         {
+            if (overrideValue != -1)
+            {
+                AlphaValue = overrideValue;
+                return;
+            }
+
             // set alpha depending on State
             if ((reversalCount >= reversalCountThreshold && reversalCountThreshold != -1)
                     || alphaDirection == AlphaDirection.None)
@@ -92,7 +98,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 SetAlphaValue();
             }
             else
-                AlphaValue = 0;
+                SetAlphaValue(0);
         }
     }
 }
