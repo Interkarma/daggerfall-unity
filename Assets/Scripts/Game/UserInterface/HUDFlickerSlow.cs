@@ -9,13 +9,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
     {
         public override void Init()
         {
-            Reset();
+            IsTimedOut = false;
             alphaSpeed = 0.2f;
             alphaLower = 0.1f;
             alphaUpper = 0.4f;
+            AlphaValue = alphaLower;
             RedValue = 0.0f;
+            reversalCount = 0;
             reversalCountThreshold = -1;
-            InitAlphaDirection(AlphaDirection.Increasing);
+            alphaDirection = AlphaDirection.Increasing;
         }
     }
 }

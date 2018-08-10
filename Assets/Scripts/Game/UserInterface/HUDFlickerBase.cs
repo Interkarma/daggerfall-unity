@@ -21,22 +21,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public float AlphaValue { get; protected set; }
         protected int reversalCount = 0;
         protected int reversalCountThreshold;
-        public bool IsBurnedOut { get; set; }
+        public bool IsTimedOut { get; set; }
 
         public HUDFlickerBase()
         {
             Init();
         }
         public abstract void Init();
-        public virtual void InitAlphaDirection(AlphaDirection direct)
-        {
-            if (direct == AlphaDirection.Decreasing)
-                AlphaValue = alphaUpper;
-            else if (direct == AlphaDirection.Increasing)
-                AlphaValue = alphaLower;
-
-            alphaDirection = direct;
-        }
         public virtual void CheckReverseAlphaDirection()
         {
             // Alpha Direction Reversal Check
@@ -45,11 +36,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 ReverseAlphaDirection();
             else if (AlphaValue >= alphaLower && AlphaValue <= alphaUpper)
                 RandomlyReverseAlphaDirection();
-
-            if (reversalCount >= reversalCountThreshold && reversalCountThreshold != -1)
-            {
-                IsBurnedOut = true;
-            }
         }
         protected void RandomlyReverseAlphaDirection()
         {
@@ -82,38 +68,31 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
         protected void SetAlphaValue()
         {
-            // increment alpha depending on State
-            if (alphaDirection == AlphaDirection.Decreasing)
+            // set alpha depending on State
+            if ((reversalCount >= reversalCountThreshold && reversalCountThreshold != -1)
+                    || alphaDirection == AlphaDirection.None)
+                AlphaValue = 0;
+            else if (alphaDirection == AlphaDirection.Decreasing)
                 AlphaValue -= alphaSpeed * Time.deltaTime;
             else if (alphaDirection == AlphaDirection.Increasing)
                 AlphaValue += alphaSpeed * Time.deltaTime;
-            else if (alphaDirection == AlphaDirection.None)
-                AlphaValue = 0;
 
-            AlphaValue = Mathf.Clamp(AlphaValue, 0, 1);
+            AlphaValue = Mathf.Clamp(AlphaValue, 0, alphaUpper); 
         }
         public virtual void Cycle()
         {
-            if (!IsBurnedOut)
+            if (!IsTimedOut)
             {
+                if (reversalCount >= reversalCountThreshold && reversalCountThreshold != -1)
+                {
+                    IsTimedOut = true;
+                }
+
                 CheckReverseAlphaDirection();
                 SetAlphaValue();
             }
             else
                 AlphaValue = 0;
-        }
-
-        public virtual void Reset()
-        {
-            IsBurnedOut = false;
-            reversalCount = 0;
-            AlphaValue = alphaLower;
-        }
-
-        public virtual void ResetIfBurnedOut()
-        {
-            if (IsBurnedOut)
-                Reset();
         }
     }
 }
