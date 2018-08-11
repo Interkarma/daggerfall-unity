@@ -47,6 +47,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         int lastSkillButtonId;
         Dictionary<string, DFCareer.Skills> skillsDict;
         List<string> skillsList;
+        Dictionary<string, int> helpDict;
         int hpPerLevel = defaultHpPerLevel;
         int difficultyPoints = 0;
         int advantageAdjust = 0;
@@ -64,6 +65,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         CreateCharReputationWindow createCharReputationWindow;
         CreateCharSpecialAdvantageWindow createCharSpecialAdvantageWindow;
         CreateCharSpecialAdvantageWindow createCharSpecialDisadvantageWindow;
+        DaggerfallListPickerWindow helpPicker;
         DaggerfallListPickerWindow skillPicker;
 
         #endregion
@@ -164,6 +166,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.Components.Add(daggerPanel);
             UpdateDifficulty();
 
+            // Setup help dictionary
+            helpDict = new Dictionary<string, int> 
+            {
+                { HardStrings.helpAttributes, 2402 },
+                { HardStrings.helpClassName, 2401 },
+                { HardStrings.helpGeneral, 2400 },
+                { HardStrings.helpReputations, 2406 },
+                { HardStrings.helpSkillAdvancement, 2407 },
+                { HardStrings.helpSkills, 2403 },
+                { HardStrings.helpSpecialAdvantages, 2404 },
+                { HardStrings.helpSpecialDisadvantages, 2405 }
+            };
+
             // Setup skills dictionary
             skillsDict = new Dictionary<string, DFCareer.Skills>();
             foreach (DFCareer.Skills skill in Enum.GetValues(typeof(DFCareer.Skills)))
@@ -185,27 +200,39 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 skillButtons[i] = DaggerfallUI.AddButton(skillButtonRects[i], NativePanel);
                 skillButtons[i].Tag = i;
                 skillButtons[i].OnMouseClick += skillButton_OnMouseClick;
+                skillButtons[i].ClickSound = DaggerfallUI.Instance.GetAudioClip(SoundClips.ButtonClick);
                 skillLabels[i] = DaggerfallUI.AddTextLabel(font, new Vector2(3, 2), string.Empty, skillButtons[i]);
             }
             // HP spinners
             hitPointsUpButton = DaggerfallUI.AddButton(hitPointsUpButtonRect, NativePanel);
             hitPointsUpButton.OnMouseClick += HitPointsUpButton_OnMouseClick;
+            hitPointsUpButton.ClickSound = DaggerfallUI.Instance.GetAudioClip(SoundClips.ButtonClick);
             hitPointsDownButton = DaggerfallUI.AddButton(hitPointsDownButtonRect, NativePanel);
             hitPointsDownButton.OnMouseUp += HitPointsDownButton_OnMouseClick;
+            hitPointsDownButton.ClickSound = DaggerfallUI.Instance.GetAudioClip(SoundClips.ButtonClick);
+
+            // Help topics
+            helpButton = DaggerfallUI.AddButton(helpButtonRect, NativePanel);
+            helpButton.OnMouseClick += HelpButton_OnMouseClick;
+            helpButton.ClickSound = DaggerfallUI.Instance.GetAudioClip(SoundClips.ButtonClick);
 
             // Special Advantages/Disadvantages
             specialAdvantageButton = DaggerfallUI.AddButton(specialAdvantageButtonRect, NativePanel);
             specialAdvantageButton.OnMouseClick += specialAdvantageButton_OnMouseClick;
+            specialAdvantageButton.ClickSound = DaggerfallUI.Instance.GetAudioClip(SoundClips.ButtonClick);
             specialDisadvantageButton = DaggerfallUI.AddButton(specialDisadvantageButtonRect, NativePanel);
             specialDisadvantageButton.OnMouseClick += specialDisadvantageButton_OnMouseClick;
+            specialDisadvantageButton.ClickSound = DaggerfallUI.Instance.GetAudioClip(SoundClips.ButtonClick);
 
             // Reputations
             reputationButton = DaggerfallUI.AddButton(reputationButtonRect, NativePanel);
             reputationButton.OnMouseClick += ReputationButton_OnMouseClick;
+            reputationButton.ClickSound = DaggerfallUI.Instance.GetAudioClip(SoundClips.ButtonClick);
 
             // Exit button
             exitButton = DaggerfallUI.AddButton(exitButtonRect, NativePanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
+            exitButton.ClickSound = DaggerfallUI.Instance.GetAudioClip(SoundClips.ButtonClick);
         }
 
         #endregion
@@ -307,6 +334,26 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        void HelpButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            helpPicker = new DaggerfallListPickerWindow(uiManager, this);
+            foreach (string str in helpDict.Keys)
+            {
+                helpPicker.ListBox.AddItem(str);
+            }
+            helpPicker.OnItemPicked += HelpPicker_OnItemPicked;
+            uiManager.PushWindow(helpPicker);
+        }
+
+        void HelpPicker_OnItemPicked(int index, string itemString)
+        {
+            helpPicker.CloseWindow();
+            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
+            messageBox.SetTextTokens(helpDict[itemString]);
+            messageBox.ClickAnywhereToClose = true;
+            messageBox.Show();
+        }
+
         public void specialAdvantageButton_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
         {
             createCharSpecialAdvantageWindow = new CreateCharSpecialAdvantageWindow(uiManager, advantages, createdClass, this);
@@ -359,6 +406,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 messageBox.SetTextTokens(strDistributeStats);
                 messageBox.ClickAnywhereToClose = true;
                 messageBox.Show();
+                return;
             }
 
             // Set advantages/disadvantages

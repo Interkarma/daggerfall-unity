@@ -118,6 +118,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             font = DaggerfallUI.DefaultFont;
             exitButton = DaggerfallUI.AddButton(exitButtonRect, repPanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
+            exitButton.ClickSound = DaggerfallUI.Instance.GetAudioClip(SoundClips.ButtonClick);
 
             // Setup adjustable bars
             SetupRepBars(merchantsGreenPanel, merchantsRedPanel, new Vector2(3f, 75f), new Vector2(3f, 77f), prevWindow.MerchantsRep);
@@ -176,6 +177,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     prevWindow.MerchantsRep = UpdateRep(position, merchantsGreenPanel, merchantsRedPanel, merchantsPtsLabel);
                 }
                 UpdatePointsToDistribute();
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             }
         }
 
