@@ -38,6 +38,7 @@ namespace DaggerfallConnect.Save
         SaveTree saveTree;
         SaveVars saveVars;
         BsaFile mapSave;
+        RumorFile rumorFile;
         SaveImage saveImage;
         string saveName = string.Empty;
 
@@ -231,6 +232,10 @@ namespace DaggerfallConnect.Save
                     }
                 }
             }
+
+            rumorFile = new RumorFile();
+            if (!rumorFile.Load(Path.Combine(saveGameDict[save], "RUMOR.DAT"), FileUsage.UseMemory, true))
+                UnityEngine.Debug.Log("Could not open RUMOR.DAT for index " + save);
 
             return true;
         }
