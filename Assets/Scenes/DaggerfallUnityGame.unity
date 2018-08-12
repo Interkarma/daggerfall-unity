@@ -288,7 +288,6 @@ GameObject:
   - component: {fileID: 97801941}
   - component: {fileID: 97801940}
   - component: {fileID: 97801938}
-  - component: {fileID: 97801942}
   - component: {fileID: 97801944}
   m_Layer: 0
   m_Name: DaggerfallUI
@@ -436,21 +435,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
---- !u!114 &97801942
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 97801937}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45dac7c5c852a8842906a88cc0d3856b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ShowDebugString: 0
-  Gain: 3
-  SongFolder: Songs/
-  Song: -1
 --- !u!114 &97801944
 MonoBehaviour:
   m_ObjectHideFlags: 0
