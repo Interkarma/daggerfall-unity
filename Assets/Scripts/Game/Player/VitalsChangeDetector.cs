@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -38,11 +39,13 @@ namespace DaggerfallWorkshop.Game
         public int HealthGain { get { return -1 * HealthLost; } }
         public int FatigueGain { get { return -1 * FatigueLost; } }
         public int MagickaGain { get { return -1 * MagickaLost; } }
+        PlayerEntity playerEntity;
 
         void Start()
         {
+            playerEntity = GameManager.Instance.PlayerEntity;
             // Get starting health and max health
-            if (GameManager.Instance != null && GameManager.Instance.PlayerEntity != null)
+            if (GameManager.Instance != null && playerEntity != null)
                 ResetVitals();
 
             // Use events to capture a couple of edge cases
@@ -59,12 +62,12 @@ namespace DaggerfallWorkshop.Game
             // Check max vitals hasn't changed - this can indicate user has loaded a different character
             // or current character has levelled up or changed in some way and the cached vital values need to be refreshed.
             // Just reset values and exit for this frame as the current relative vital lost calculation is not valid when Max Vital changes.
-            int maxHealth = GameManager.Instance.PlayerEntity.MaxHealth;
-            int maxFatigue = GameManager.Instance.PlayerEntity.MaxFatigue;
-            int maxMagicka = GameManager.Instance.PlayerEntity.MaxMagicka;
-            int currentHealth = GameManager.Instance.PlayerEntity.CurrentHealth;
-            int currentFatigue = GameManager.Instance.PlayerEntity.CurrentFatigue;
-            int currentMagicka = GameManager.Instance.PlayerEntity.CurrentMagicka;
+            int maxHealth = playerEntity.MaxHealth;
+            int maxFatigue = playerEntity.MaxFatigue;
+            int maxMagicka = playerEntity.MaxMagicka;
+            int currentHealth = playerEntity.CurrentHealth;
+            int currentFatigue = playerEntity.CurrentFatigue;
+            int currentMagicka = playerEntity.CurrentMagicka;
             if (maxHealth != previousMaxHealth || maxFatigue != previousMaxFatigue || maxMagicka != previousMaxMagicka)
             {
                 ResetVitals();
@@ -73,16 +76,13 @@ namespace DaggerfallWorkshop.Game
 
             // Detect Health loss
             HealthLost = previousHealth - currentHealth;
-            if (HealthLost > 0)
-                HealthLostPercent = (float)HealthLost / maxHealth;
+            HealthLostPercent = (float)HealthLost / maxHealth;
 
             FatigueLost = previousFatigue - currentFatigue;
-            if (FatigueLost > 0)
-                FatigueLostPercent = (float)FatigueLost / maxFatigue;
+            FatigueLostPercent = (float)FatigueLost / maxFatigue;
 
             MagickaLost = previousMagicka - currentMagicka;
-            if (MagickaLost > 0)
-                MagickaLostPercent = (float)MagickaLost / maxMagicka;
+            MagickaLostPercent = (float)MagickaLost / maxMagicka;
 
             // reset previous health to detect next health loss
             previousHealth = currentHealth;
@@ -92,13 +92,13 @@ namespace DaggerfallWorkshop.Game
 
         private void ResetVitals()
         {
-            previousMaxHealth = GameManager.Instance.PlayerEntity.MaxHealth;
-            previousMaxFatigue = GameManager.Instance.PlayerEntity.MaxFatigue;
-            previousMaxMagicka = GameManager.Instance.PlayerEntity.MaxMagicka;
+            previousMaxHealth = playerEntity.MaxHealth;
+            previousMaxFatigue = playerEntity.MaxFatigue;
+            previousMaxMagicka = playerEntity.MaxMagicka;
 
-            previousHealth = GameManager.Instance.PlayerEntity.CurrentHealth;
-            previousFatigue = GameManager.Instance.PlayerEntity.CurrentFatigue;
-            previousMagicka = GameManager.Instance.PlayerEntity.CurrentMagicka;
+            previousHealth = playerEntity.CurrentHealth;
+            previousFatigue = playerEntity.CurrentFatigue;
+            previousMagicka = playerEntity.CurrentMagicka;
         }
 
         private void StreamingWorld_OnInitWorld()
