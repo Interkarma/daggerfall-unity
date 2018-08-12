@@ -49,11 +49,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             PlayerCondition condition = GetPlayerCondition();
 
-            if (vitalsDetector.HealthLost > 0)
-                flickerFast.ResetIfBurnedOut();
+            if (vitalsDetector.HealthLost > 0 && flickerFast.IsTimedOut)
+                flickerFast.Init();
 
             if (vitalsDetector.HealthGain > 0 && condition != PlayerCondition.Wounded)
-                flickerSlow.IsBurnedOut = true;
+                flickerSlow.IsTimedOut = true;
 
             Color backColor;
 
@@ -65,10 +65,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     break;
                 case PlayerCondition.Wounded:
                     flickerFast.Cycle();
-                    // Flicker slow runs if flickerFast is burned out, and cannot if it isn't burned out
-                    flickerSlow.IsBurnedOut = !flickerFast.IsBurnedOut;
+                    // Flicker slow runs if flickerFast is timed out, and cannot if it isn't timed out
+                    flickerSlow.IsTimedOut = !flickerFast.IsTimedOut;
                     flickerSlow.Cycle();
-                    if (flickerFast.IsBurnedOut)
+                    if (flickerFast.IsTimedOut)
                         backColor = new Color(flickerSlow.RedValue, 0, 0, flickerSlow.AlphaValue);
                     else
                         backColor = new Color(flickerFast.RedValue, 0, 0, flickerFast.AlphaValue);
