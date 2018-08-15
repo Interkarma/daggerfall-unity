@@ -248,12 +248,12 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
-        /// Restarts a tween in progress. For exmaple, if restoring from save.
+        /// Restarts a tween in progress. For example, if restoring from save.
         /// </summary>
         public void RestartTween(float durationScale = 1)
         {
             if (currentState == ActionState.PlayingForward)
-                Open(OpenDuration * durationScale);
+                Open(OpenDuration, false, false, durationScale);
             else if (currentState == ActionState.PlayingReverse)
                 Close(OpenDuration * durationScale);
             else if (currentState == ActionState.End)
@@ -262,7 +262,7 @@ namespace DaggerfallWorkshop
 
         #region Private Methods
 
-        private void Open(float duration, bool ignoreLocks = false, bool activatedByPlayer = false)
+        private void Open(float duration, bool ignoreLocks = false, bool activatedByPlayer = false, float scale = 1)
         {
             // Handle DoorText actions. On first activation, show the text but don't try to open the door.
             DaggerfallAction action = GetComponent<DaggerfallAction>();
@@ -288,35 +288,28 @@ namespace DaggerfallWorkshop
             if (activatedByPlayer)
                 ExecuteActionOnToggle();
 
-            //// Tween rotation
-            //Hashtable rotateParams = __ExternalAssets.iTween.Hash(
-            //    "rotation", startingRotation.eulerAngles + new Vector3(0, OpenAngle, 0),
-            //    "time", duration,
-            //    "easetype", __ExternalAssets.iTween.EaseType.linear,
-            //    "oncomplete", "OnCompleteOpen");
-            //__ExternalAssets.iTween.RotateTo(gameObject, rotateParams);
-            //currentState = ActionState.PlayingForward;
-
             // Tween rotation
             Hashtable rotateParams = __ExternalAssets.iTween.Hash(
-                "amount", new Vector3(0f, OpenAngle / 360f, 0f),
+                "amount", new Vector3(0f, OpenAngle * scale / 360f, 0f),
                 "space", Space.Self,
-                "time", duration,
+                "time", duration * scale,
                 "easetype", __ExternalAssets.iTween.EaseType.linear,
                 "oncomplete", "OnCompleteOpen");
             __ExternalAssets.iTween.RotateBy(gameObject, rotateParams);
-            currentState = ActionState.PlayingForward;
 
             // Set collider to trigger only
             MakeTrigger(true);
 
             // Play open sound if flagged and ready
-            if (PlaySounds && OpenSound > 0 && duration > 0 && audioSource)
+            if (PlaySounds && OpenSound > 0 && duration * scale > 0 && audioSource
+                && currentState != ActionState.PlayingForward)
             {
                 DaggerfallAudioSource dfAudioSource = GetComponent<DaggerfallAudioSource>();
                 if (dfAudioSource != null)
                     dfAudioSource.PlayOneShot(OpenSound);
             }
+
+            currentState = ActionState.PlayingForward;
 
             // Set flag
             //IsMagicallyHeld = false;
