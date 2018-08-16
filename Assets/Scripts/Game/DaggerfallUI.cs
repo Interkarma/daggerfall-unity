@@ -950,10 +950,10 @@ namespace DaggerfallWorkshop.Game
             offset = new DFPosition();
 
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
-            if (!dfUnity.IsReady)
+            if (!dfUnity.IsReady || !dfUnity.IsPathValidated)
                 return null;
 
-            ImgFile imgFile = new ImgFile(Path.Combine(dfUnity.Arena2Path, name), FileUsage.UseMemory, readOnly);            
+            ImgFile imgFile = new ImgFile(Path.Combine(dfUnity.Arena2Path, name), FileUsage.UseMemory, readOnly);
             Texture2D texture;
             if (!TextureReplacement.TryImportImage(name, out texture))
             {

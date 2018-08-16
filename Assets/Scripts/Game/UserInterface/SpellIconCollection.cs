@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -177,7 +177,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Texture2D spellIconAtlas = DaggerfallUI.GetTextureFromImg(spellIconsFile);
             if (spellIconAtlas == null)
             {
-                Debug.LogError("Could not load spell icons atlas texture.");
+                Debug.LogWarning("SpellIconCollection: Could not load spell icons atlas texture. Arena2 path might not be set yet.");
                 return;
             }
 
@@ -222,7 +222,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Texture2D spellTargetAndElementIconAtlas = DaggerfallUI.GetTextureFromImg(spellTargetAndElementIconsFile, TextureFormat.ARGB32, false);
             if (spellTargetAndElementIconAtlas == null)
             {
-                Debug.LogError("Could not load spell target and element icons atlas texture.");
+                Debug.LogWarning("SpellIconCollection: Could not load spell target and element icons atlas texture.  Arena2 path might not be set yet.");
                 return;
             }
 
