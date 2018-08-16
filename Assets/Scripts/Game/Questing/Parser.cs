@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -195,6 +195,12 @@ namespace DaggerfallWorkshop.Game.Questing
                     List<string> messageLines = new List<string>();
                     while (true)
                     {
+                        // Check for end of lines
+                        // This handles a case where final message block isn't terminated an empty line causing an overflow
+                        if (i + 1 >= lines.Count)
+                            break;
+
+                        // Read line
                         string text = lines[++i].TrimEnd('\r');
                         if (string.IsNullOrEmpty(text))
                         {
