@@ -1007,7 +1007,7 @@ namespace DaggerfallWorkshop.Game.Items
             }
             catch
             {
-                Debug.Log("Could not load ItemTemplates database from Resources. Check file exists and is in correct format.");
+                Debug.LogError("Could not load ItemTemplates database from Resources. Check file exists and is in correct format.");
             }
         }
 
@@ -1032,7 +1032,7 @@ namespace DaggerfallWorkshop.Game.Items
             }
             catch
             {
-                Debug.Log("Could not load MagicItemTemplates database from Resources. Check file exists and is in correct format.");
+                Debug.LogError("Could not load MagicItemTemplates database from Resources. Check file exists and is in correct format.");
             }
         }
 
