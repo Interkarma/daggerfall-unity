@@ -27,7 +27,7 @@ namespace DaggerfallConnect.FallExe
         public long position;                       // Position record was read from FALL.EXE
         public Byte[] name;                         // Display name
         public Int32 baseWeightUnits;               // Base weight in 0.25kg units
-        public Int16 hitPoints;                     // Hit points
+        public UInt16 hitPoints;                    // Hit points
         public Int32 capacityOrTarget;              // Capacity of container or target of effect
         public Int32 basePrice;                     // Base price before material, mercantile, etc. modify value
         public Int16 enchantmentPoints;             // Base enchantment points before material
@@ -435,7 +435,7 @@ namespace DaggerfallConnect.FallExe
             item.position = reader.BaseStream.Position;
             item.name = reader.ReadBytes(nameLength);
             item.baseWeightUnits = reader.ReadInt32();
-            item.hitPoints = reader.ReadInt16();
+            item.hitPoints = reader.ReadUInt16();
             item.capacityOrTarget = reader.ReadInt32();
             item.basePrice = reader.ReadInt32();
             item.enchantmentPoints = reader.ReadInt16();
