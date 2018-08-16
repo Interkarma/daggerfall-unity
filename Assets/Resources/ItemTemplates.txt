@@ -5522,7 +5522,7 @@
     {
         "index": 276,
         "name": "Gold pieces",
-        "baseWeight": 0.25,
+        "baseWeight": 0.0025,
         "hitPoints": 1,
         "capacityOrTarget": 0,
         "basePrice": 0,
