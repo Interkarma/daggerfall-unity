@@ -1,0 +1,3070 @@
+[
+    {
+        "index": 4,
+        "name": "The Masque of Clavicus",
+        "type": "ArtifactClass1",
+        "group": 25,
+        "groupIndex": 2,
+        "enchantments": [
+            {
+                "type": "SpecialArtifactEffect",
+                "param": 0
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 50000,
+        "material": 0
+    },
+    {
+        "index": 66,
+        "name": "The Mehrunes Razor",
+        "type": "ArtifactClass1",
+        "group": 3,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "SpecialArtifactEffect",
+                "param": 1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 50000,
+        "material": 8
+    },
+    {
+        "index": 128,
+        "name": "The Mace of Molag Bal",
+        "type": "ArtifactClass1",
+        "group": 3,
+        "groupIndex": 11,
+        "enchantments": [
+            {
+                "type": "SpecialArtifactEffect",
+                "param": 2
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 50000,
+        "material": 9
+    },
+    {
+        "index": 190,
+        "name": "The Hircine Ring",
+        "type": "ArtifactClass1",
+        "group": 25,
+        "groupIndex": 2,
+        "enchantments": [
+            {
+                "type": "SpecialArtifactEffect",
+                "param": 3
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 50000,
+        "material": 0
+    },
+    {
+        "index": 252,
+        "name": "The Sanguine Rose",
+        "type": "ArtifactClass1",
+        "group": 15,
+        "groupIndex": 11,
+        "enchantments": [
+            {
+                "type": "SpecialArtifactEffect",
+                "param": 4
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 50000,
+        "material": 0
+    },
+    {
+        "index": 314,
+        "name": "Oghma Infinium",
+        "type": "ArtifactClass1",
+        "group": 7,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "SpecialArtifactEffect",
+                "param": 5
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1,
+        "value": 50000,
+        "material": 0
+    },
+    {
+        "index": 376,
+        "name": "The Wabbajack",
+        "type": "ArtifactClass1",
+        "group": 3,
+        "groupIndex": 2,
+        "enchantments": [
+            {
+                "type": "SpecialArtifactEffect",
+                "param": 6
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 50000,
+        "material": 9
+    },
+    {
+        "index": 438,
+        "name": "The Ring of Namira",
+        "type": "ArtifactClass1",
+        "group": 25,
+        "groupIndex": 2,
+        "enchantments": [
+            {
+                "type": "SpecialArtifactEffect",
+                "param": 7
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 50000,
+        "material": 0
+    },
+    {
+        "index": 500,
+        "name": "The Skull of Corruption",
+        "type": "ArtifactClass1",
+        "group": 25,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "SpecialArtifactEffect",
+                "param": 8
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 50000,
+        "material": 0
+    },
+    {
+        "index": 562,
+        "name": "Azura's Star",
+        "type": "ArtifactClass1",
+        "group": 25,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "SpecialArtifactEffect",
+                "param": 9
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 50000,
+        "material": 0
+    },
+    {
+        "index": 624,
+        "name": "Silent %it",
+        "type": "RegularMagicItem",
+        "group": 0,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "CastWhenUsed",
+                "param": 23
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 700,
+        "material": 0
+    },
+    {
+        "index": 686,
+        "name": "%it of the Wise",
+        "type": "RegularMagicItem",
+        "group": 1,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "CastWhenHeld",
+                "param": 83
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 400,
+        "material": 0
+    },
+    {
+        "index": 748,
+        "name": "%it of Wildfire",
+        "type": "RegularMagicItem",
+        "group": 0,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "CastWhenUsed",
+                "param": 33
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 800,
+        "material": 0
+    },
+    {
+        "index": 810,
+        "name": "%it of Force Bolts",
+        "type": "RegularMagicItem",
+        "group": 0,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "CastWhenUsed",
+                "param": 36
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 850,
+        "material": 0
+    },
+    {
+        "index": 872,
+        "name": "Shining %it",
+        "type": "RegularMagicItem",
+        "group": 0,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "CastWhenUsed",
+                "param": 5
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 350,
+        "material": 0
+    },
+    {
+        "index": 934,
+        "name": "%it of the Sealed Door",
+        "type": "RegularMagicItem",
+        "group": 0,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "CastWhenUsed",
+                "param": 19
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 300,
+        "material": 0
+    },
+    {
+        "index": 996,
+        "name": "%it of Undeniable Access",
+        "type": "RegularMagicItem",
+        "group": 0,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "CastWhenUsed",
+                "param": 18
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 500,
+        "material": 0
+    },
+    {
+        "index": 1058,
+        "name": "%it of Venom Antidote",
+        "type": "RegularMagicItem",
+        "group": 0,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "CastWhenUsed",
+                "param": 15
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 450,
+        "material": 0
+    },
+    {
+        "index": 1120,
+        "name": "%it of Life Stealing",
+        "type": "RegularMagicItem",
+        "group": 2,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "VampiricEffect",
+                "param": 1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 1500,
+        "material": 0
+    },
+    {
+        "index": 1182,
+        "name": "%it of Wizard's Fire",
+        "type": "RegularMagicItem",
+        "group": 0,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "CastWhenUsed",
+                "param": 7
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 900,
+        "material": 0
+    },
+    {
+        "index": 1244,
+        "name": "Leaping %it",
+        "type": "RegularMagicItem",
+        "group": 1,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "CastWhenUsed",
+                "param": 4
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 300,
+        "material": 0
+    },
+    {
+        "index": 1306,
+        "name": "%it of Water-walking",
+        "type": "RegularMagicItem",
+        "group": 1,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "CastWhenHeld",
+                "param": 41
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 300,
+        "material": 0
+    },
+    {
+        "index": 1368,
+        "name": "%it of Magicka",
+        "type": "RegularMagicItem",
+        "group": 1,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "AbsorbsSpells",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 600,
+        "material": 0
+    },
+    {
+        "index": 1430,
+        "name": "Never Tiring %it",
+        "type": "RegularMagicItem",
+        "group": 0,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "CastWhenUsed",
+                "param": 40
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 250,
+        "material": 0
+    },
+    {
+        "index": 1492,
+        "name": "%it of Featherweight",
+        "type": "RegularMagicItem",
+        "group": 0,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "CastWhenUsed",
+                "param": 37
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 550,
+        "material": 0
+    },
+    {
+        "index": 1554,
+        "name": "%it, the Protector",
+        "type": "RegularMagicItem",
+        "group": 0,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "CastWhenUsed",
+                "param": 17
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 650,
+        "material": 0
+    },
+    {
+        "index": 1616,
+        "name": "%it of Shocking",
+        "type": "RegularMagicItem",
+        "group": 0,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "CastWhenUsed",
+                "param": 8
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 650,
+        "material": 0
+    },
+    {
+        "index": 1678,
+        "name": "Cursing %it",
+        "type": "RegularMagicItem",
+        "group": 2,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "CastWhenStrikes",
+                "param": 50
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 500,
+        "material": 0
+    },
+    {
+        "index": 1740,
+        "name": "%it of Far Silence",
+        "type": "RegularMagicItem",
+        "group": 0,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "CastWhenUsed",
+                "param": 28
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 850,
+        "material": 0
+    },
+    {
+        "index": 1802,
+        "name": "%it of Venom Spitting",
+        "type": "RegularMagicItem",
+        "group": 0,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "EnhancesSkill",
+                "param": 7
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 500,
+        "material": 0
+    },
+    {
+        "index": 1864,
+        "name": "Blazing %it of Fireballs",
+        "type": "RegularMagicItem",
+        "group": 0,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "CastWhenUsed",
+                "param": 14
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 1000,
+        "material": 0
+    },
+    {
+        "index": 1926,
+        "name": "Frosty %it of Ice Storms",
+        "type": "RegularMagicItem",
+        "group": 0,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "CastWhenUsed",
+                "param": 20
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 900,
+        "material": 0
+    },
+    {
+        "index": 1988,
+        "name": "%it of Lightning",
+        "type": "RegularMagicItem",
+        "group": 0,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "CastWhenUsed",
+                "param": 31
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 900,
+        "material": 0
+    },
+    {
+        "index": 2050,
+        "name": "Deadman's %it",
+        "type": "RegularMagicItem",
+        "group": 0,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "CastWhenUsed",
+                "param": 25
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 800,
+        "material": 0
+    },
+    {
+        "index": 2112,
+        "name": "Healing %it",
+        "type": "RegularMagicItem",
+        "group": 0,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "CastWhenUsed",
+                "param": 64
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 550,
+        "material": 0
+    },
+    {
+        "index": 2174,
+        "name": "%it of the Orc Lord",
+        "type": "RegularMagicItem",
+        "group": 1,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "CastWhenHeld",
+                "param": 82
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 750,
+        "material": 0
+    },
+    {
+        "index": 2236,
+        "name": "Unrestrainable %it",
+        "type": "RegularMagicItem",
+        "group": 0,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "CastWhenUsed",
+                "param": 10
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 500,
+        "material": 0
+    },
+    {
+        "index": 2298,
+        "name": "%it of Iron Will",
+        "type": "RegularMagicItem",
+        "group": 1,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "CastWhenHeld",
+                "param": 84
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 400,
+        "material": 0
+    },
+    {
+        "index": 2360,
+        "name": "%it of Nimbleness",
+        "type": "RegularMagicItem",
+        "group": 1,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "CastWhenHeld",
+                "param": 85
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 400,
+        "material": 0
+    },
+    {
+        "index": 2422,
+        "name": "Torgo's %it",
+        "type": "RegularMagicItem",
+        "group": 1,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "CastWhenHeld",
+                "param": 86
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 700,
+        "material": 0
+    },
+    {
+        "index": 2484,
+        "name": "%it of Fortitude",
+        "type": "RegularMagicItem",
+        "group": 1,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "CastWhenHeld",
+                "param": 87
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 400,
+        "material": 0
+    },
+    {
+        "index": 2546,
+        "name": "%it of Friendship",
+        "type": "RegularMagicItem",
+        "group": 1,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "CastWhenHeld",
+                "param": 88
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 350,
+        "material": 0
+    },
+    {
+        "index": 2608,
+        "name": "%it of Good Luck",
+        "type": "RegularMagicItem",
+        "group": 1,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "CastWhenHeld",
+                "param": 89
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 400,
+        "material": 0
+    },
+    {
+        "index": 2670,
+        "name": "%it of Oblivion",
+        "type": "RegularMagicItem",
+        "group": 2,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "CastWhenStrikes",
+                "param": 55
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 700,
+        "material": 0
+    },
+    {
+        "index": 2732,
+        "name": "%it of Toxic Clouds",
+        "type": "RegularMagicItem",
+        "group": 0,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "CastWhenUsed",
+                "param": 29
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 650,
+        "material": 0
+    },
+    {
+        "index": 2794,
+        "name": "%it of Paralysis",
+        "type": "RegularMagicItem",
+        "group": 0,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "CastWhenUsed",
+                "param": 35
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 600,
+        "material": 0
+    },
+    {
+        "index": 2856,
+        "name": "Volendrung",
+        "type": "ArtifactClass2",
+        "group": 3,
+        "groupIndex": 13,
+        "enchantments": [
+            {
+                "type": "CastWhenStrikes",
+                "param": 50
+            },
+            {
+                "type": "CastWhenStrikes",
+                "param": 52
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 50000,
+        "material": 4
+    },
+    {
+        "index": 2918,
+        "name": "Warlock's Ring",
+        "type": "ArtifactClass2",
+        "group": 25,
+        "groupIndex": 2,
+        "enchantments": [
+            {
+                "type": "CastWhenHeld",
+                "param": 86
+            },
+            {
+                "type": "CastWhenUsed",
+                "param": 64
+            },
+            {
+                "type": "CastWhenUsed",
+                "param": 30
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 50000,
+        "material": 5
+    },
+    {
+        "index": 2980,
+        "name": "Auriel's Bow",
+        "type": "ArtifactClass2",
+        "group": 3,
+        "groupIndex": 17,
+        "enchantments": [
+            {
+                "type": "CastWhenStrikes",
+                "param": 31
+            },
+            {
+                "type": "CastWhenStrikes",
+                "param": 53
+            },
+            {
+                "type": "CastWhenStrikes",
+                "param": 54
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 50000,
+        "material": 3
+    },
+    {
+        "index": 3042,
+        "name": "Necromancer's Amulet",
+        "type": "ArtifactClass2",
+        "group": 25,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "CastWhenHeld",
+                "param": 83
+            },
+            {
+                "type": "CastWhenUsed",
+                "param": 24
+            },
+            {
+                "type": "AbsorbsSpells",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 50000,
+        "material": 6
+    },
+    {
+        "index": 3104,
+        "name": "Chrysamere",
+        "type": "ArtifactClass2",
+        "group": 3,
+        "groupIndex": 9,
+        "enchantments": [
+            {
+                "type": "CastWhenUsed",
+                "param": 64
+            },
+            {
+                "type": "CastWhenUsed",
+                "param": 30
+            },
+            {
+                "type": "CastWhenUsed",
+                "param": 12
+            },
+            {
+                "type": "EnhancesSkill",
+                "param": 29
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 50000,
+        "material": 6
+    },
+    {
+        "index": 3166,
+        "name": "Lord's Mail",
+        "type": "ArtifactClass2",
+        "group": 2,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "RegensHealth",
+                "param": 0
+            },
+            {
+                "type": "CastWhenUsed",
+                "param": 15
+            },
+            {
+                "type": "CastWhenUsed",
+                "param": 22
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 50000,
+        "material": 5
+    },
+    {
+        "index": 3228,
+        "name": "Staff of Magnus",
+        "type": "ArtifactClass2",
+        "group": 3,
+        "groupIndex": 2,
+        "enchantments": [
+            {
+                "type": "CastWhenHeld",
+                "param": 47
+            },
+            {
+                "type": "RegensHealth",
+                "param": 0
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 50000,
+        "material": 9
+    },
+    {
+        "index": 3290,
+        "name": "Ring of Khajiit",
+        "type": "ArtifactClass2",
+        "group": 25,
+        "groupIndex": 2,
+        "enchantments": [
+            {
+                "type": "CastWhenUsed",
+                "param": 6
+            },
+            {
+                "type": "CastWhenHeld",
+                "param": 86
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 50000,
+        "material": 7
+    },
+    {
+        "index": 3352,
+        "name": "Ebony Mail",
+        "type": "ArtifactClass2",
+        "group": 2,
+        "groupIndex": 0,
+        "enchantments": [
+            {
+                "type": "StrengthensArmor",
+                "param": -1
+            },
+            {
+                "type": "CastWhenUsed",
+                "param": 22
+            },
+            {
+                "type": "CastWhenUsed",
+                "param": 12
+            },
+            {
+                "type": "CastWhenUsed",
+                "param": 17
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 50000,
+        "material": 7
+    },
+    {
+        "index": 3414,
+        "name": "Auriel's Shield",
+        "type": "ArtifactClass2",
+        "group": 2,
+        "groupIndex": 10,
+        "enchantments": [
+            {
+                "type": "CastWhenUsed",
+                "param": 12
+            },
+            {
+                "type": "CastWhenHeld",
+                "param": 46
+            },
+            {
+                "type": "CastWhenUsed",
+                "param": 17
+            },
+            {
+                "type": "StrengthensArmor",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 50000,
+        "material": 7
+    },
+    {
+        "index": 3476,
+        "name": "Spell Breaker",
+        "type": "ArtifactClass2",
+        "group": 2,
+        "groupIndex": 10,
+        "enchantments": [
+            {
+                "type": "CastWhenHeld",
+                "param": 46
+            },
+            {
+                "type": "CastWhenUsed",
+                "param": 10
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 50000,
+        "material": 4
+    },
+    {
+        "index": 3538,
+        "name": "Skeleton's Key",
+        "type": "ArtifactClass2",
+        "group": 25,
+        "groupIndex": 5,
+        "enchantments": [
+            {
+                "type": "CastWhenUsed",
+                "param": 18
+            },
+            {
+                "type": "EnhancesSkill",
+                "param": 20
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 50000,
+        "material": 7
+    },
+    {
+        "index": 3600,
+        "name": "Ebony Blade",
+        "type": "ArtifactClass2",
+        "group": 3,
+        "groupIndex": 8,
+        "enchantments": [
+            {
+                "type": "CastWhenStrikes",
+                "param": 52
+            },
+            {
+                "type": "CastWhenStrikes",
+                "param": 67
+            },
+            {
+                "type": "CastWhenUsed",
+                "param": 28
+            },
+            {
+                "type": "EnhancesSkill",
+                "param": 29
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            },
+            {
+                "type": "None",
+                "param": -1
+            }
+        ],
+        "uses": 1500,
+        "value": 50000,
+        "material": 7
+    }
+]
