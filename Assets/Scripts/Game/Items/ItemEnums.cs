@@ -289,15 +289,15 @@ namespace DaggerfallWorkshop.Game.Items
         Champion_straps = 181,
     }
 
-    public enum Books  // modified to conform with real Daggerfall save game - IC112016
+    public enum Books
     {
-        UNKNOWN_BOOK_TYPE = 276,
-        Potion_recipe = 277,
-        Parchment = 279,
-        Book = 279,
+        Book0 = 277,
+        Book1 = 277,
+        Book2 = 277,
+        Book3 = 277,
     }
 
-    public enum Furniture // Index numbers are from ItemTemplates.txt
+    public enum Furniture
     {
         Plain_single_bed = 217,
         Fancy_single_bed = 218,
@@ -337,7 +337,7 @@ namespace DaggerfallWorkshop.Game.Items
         Bandage = 249,
         Oil = 252,
         Candle = 253,
-        Parchment = 278,
+        Parchment = 279,
     }
 
     public enum ReligiousItems  //checked
@@ -575,9 +575,8 @@ namespace DaggerfallWorkshop.Game.Items
         Spellbook = 132,
         Soul_trap = 274,
         Letter_of_credit = 275,
-        //Ruby = 0,
-        UNKNOWN_MISC_ITEM, // modified order to ensure Potion_recipe is index 4 -IC112016
-        Potion_recipe = 277,
+        Ruby = 0,
+        Potion_recipe = 278,
         Dead_Body = 281,
         House_Deed = 285,
         Ship_Deed = 286,

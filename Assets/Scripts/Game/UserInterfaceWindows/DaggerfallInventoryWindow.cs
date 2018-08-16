@@ -1419,16 +1419,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Handle local items
             if (item.ItemGroup == ItemGroups.Books)
             {
-                // Unreadable parchment (the one with a note graphic) is actually in UselessItems2
-                if (item.TemplateIndex == (int)Books.Book || item.TemplateIndex == (int)Books.Parchment)
-                {
-                    DaggerfallUI.Instance.BookReaderWindow.BookTarget = item;
-                    DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenBookReaderWindow);
-                }
-                else if (item.TemplateIndex == (int)Books.Parchment)
-                {
-                    // TODO: implement note viewer? Or is parchment just blank paper? -IC112016
-                }
+                DaggerfallUI.Instance.BookReaderWindow.BookTarget = item;
+                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenBookReaderWindow);
             }
             else if (item.ItemGroup == ItemGroups.MiscItems && item.TemplateIndex == (int)MiscItems.Potion_recipe)
             {
