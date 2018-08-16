@@ -38,6 +38,11 @@ namespace DaggerfallConnect.Arena2
         /// </summary>
         internal FileProxy managedFile = new FileProxy();
 
+        /// <summary>
+        /// Indicates whether file has been loaded.
+        /// </summary>
+        private bool isLoaded = false;
+
         #endregion
 
         #region Class Structures
@@ -134,6 +139,14 @@ namespace DaggerfallConnect.Arena2
             get;
         }
 
+        /// <summary>
+        /// Gets value indicating whether image file has been loaded.
+        /// </summary>
+        public bool IsLoaded
+        {
+            get { return isLoaded; }
+        }
+
         #endregion
 
         #region Public Methods
@@ -145,7 +158,20 @@ namespace DaggerfallConnect.Arena2
         /// <param name="usage">Specify if file will be accessed from disk, or loaded into RAM.</param>
         /// <param name="readOnly">File will be read-only if true, read-write if false.</param>
         /// <returns>True if successful, otherwise false.</returns>
-        public abstract bool Load(string filePath, FileUsage usage, bool readOnly);
+        public bool Load(string filePath, FileUsage usage, bool readOnly)
+        {
+            isLoaded = LoadImpl(filePath, usage, readOnly);
+            return isLoaded;
+        }
+
+        /// <summary>
+        /// Loads an image file.
+        /// </summary>
+        /// <param name="filePath">Absolute path to file</param>
+        /// <param name="usage">Specify if file will be accessed from disk, or loaded into RAM.</param>
+        /// <param name="readOnly">File will be read-only if true, read-write if false.</param>
+        /// <returns>True if successful, otherwise false.</returns>
+        protected abstract bool LoadImpl(string filePath, FileUsage usage, bool readOnly);
 
         /// <summary>
         /// Gets number of frames in specified record.
