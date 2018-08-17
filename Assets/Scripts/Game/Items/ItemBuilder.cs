@@ -170,14 +170,18 @@ namespace DaggerfallWorkshop.Game.Items
         /// </summary>
         /// <param name="item">Item type to generate.</param>
         /// <param name="race">Race of player.</param>
-        /// <param name="variant">Variant to use.</param>
+        /// <param name="variant">Variant to use. If not set, a random variant will be selected.</param>
         /// <param name="dye">Dye to use</param>
         /// <returns>DaggerfallUnityItem.</returns>
-        public static DaggerfallUnityItem CreateMensClothing(MensClothing item, Races race, int variant = 0, DyeColors dye = DyeColors.Blue)
+        public static DaggerfallUnityItem CreateMensClothing(MensClothing item, Races race, int variant = -1, DyeColors dye = DyeColors.Blue)
         {
             // Create item
             int groupIndex = DaggerfallUnity.Instance.ItemHelper.GetGroupIndex(ItemGroups.MensClothing, (int)item);
             DaggerfallUnityItem newItem = new DaggerfallUnityItem(ItemGroups.MensClothing, groupIndex);
+
+            // Random variant
+            if (variant < 0)
+                variant = UnityEngine.Random.Range(0, newItem.ItemTemplate.variants);
 
             // Set race, variant, dye
             SetRace(newItem, race);
@@ -192,14 +196,18 @@ namespace DaggerfallWorkshop.Game.Items
         /// </summary>
         /// <param name="item">Item type to generate.</param>
         /// <param name="race">Race of player.</param>
-        /// <param name="variant">Variant to use.</param>
+        /// <param name="variant">Variant to use. If not set, a random variant will be selected.</param>
         /// <param name="dye">Dye to use</param>
         /// <returns>DaggerfallUnityItem.</returns>
-        public static DaggerfallUnityItem CreateWomensClothing(WomensClothing item, Races race, int variant = 0, DyeColors dye = DyeColors.Blue)
+        public static DaggerfallUnityItem CreateWomensClothing(WomensClothing item, Races race, int variant = -1, DyeColors dye = DyeColors.Blue)
         {
             // Create item
             int groupIndex = DaggerfallUnity.Instance.ItemHelper.GetGroupIndex(ItemGroups.WomensClothing, (int)item);
             DaggerfallUnityItem newItem = new DaggerfallUnityItem(ItemGroups.WomensClothing, groupIndex);
+
+            // Random variant
+            if (variant < 0)
+                variant = UnityEngine.Random.Range(0, newItem.ItemTemplate.variants);
 
             // Set race, variant, dye
             SetRace(newItem, race);
