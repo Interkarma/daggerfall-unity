@@ -486,7 +486,7 @@ namespace DaggerfallWorkshop
                     {
                         if (saveGames.HasSave(i))
                         {
-                            saveGames.OpenSave(i);
+                            saveGames.OpenSave(i, false);
                             saveTrees[i] = saveGames.SaveTree;
                             saveVars[i] = saveGames.SaveVars;
                             saveNames[i] = new GUIContent(saveGames.SaveName);
