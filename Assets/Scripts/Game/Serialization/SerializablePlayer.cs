@@ -153,6 +153,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             // Store weapon state
             data.weaponDrawn = !weaponManager.Sheathed;
+            data.usingLeftHand = !weaponManager.UsingRightHand;
             // Store transport mode
             data.transportMode = transportManager.TransportMode;
             // Store pre boarding ship position
@@ -340,6 +341,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             // Restore sheath state
             weaponManager.Sheathed = !data.weaponDrawn;
+            weaponManager.UsingRightHand = !data.usingLeftHand;
             // Restore transport mode
             transportManager.TransportMode = data.transportMode;
             // Restore pre boarding ship position
