@@ -45,6 +45,7 @@ namespace DaggerfallWorkshop.Game
         private PlayerMotor playerMotor;
         private CharacterController controller;
         private HeadBobber headBobber;
+        private LevitateMotor levitateMotor;
         //private LevitateMotor levitateMotor;
         private Camera mainCamera;
         private float controllerStandHeight = 1.78f;
@@ -76,6 +77,7 @@ namespace DaggerfallWorkshop.Game
         private void Start()
         {
             playerMotor = GetComponent<PlayerMotor>();
+            levitateMotor = GetComponent<LevitateMotor>();
             controller = GetComponent<CharacterController>();
             headBobber = GetComponent<HeadBobber>();
             mainCamera = GameManager.Instance.MainCamera;
@@ -119,7 +121,12 @@ namespace DaggerfallWorkshop.Game
                 heightAction = HeightChangeAction.DoDismounting;
                 toggleRiding = false;
             }
-            else if (!playerMotor.IsRiding)
+            // automatically exit crouch if swimming and crouching
+            else if (levitateMotor.IsSwimming && playerMotor.IsCrouching)
+            {
+                HeightAction = HeightChangeAction.DoStanding;
+            }
+            else if (!playerMotor.IsRiding && !levitateMotor.IsSwimming)
             {
                 // Toggle crouching
                 if (!onWater && InputManager.Instance.ActionComplete(InputManager.Actions.Crouch))
