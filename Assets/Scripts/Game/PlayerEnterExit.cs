@@ -29,7 +29,7 @@ namespace DaggerfallWorkshop.Game
     public class PlayerEnterExit : MonoBehaviour
     {
         const HideFlags defaultHideFlags = HideFlags.None;
-
+        UnderwaterFog underwaterFog;
         DaggerfallUnity dfUnity;
         CharacterController controller;
         bool isPlayerInside = false;
@@ -243,6 +243,7 @@ namespace DaggerfallWorkshop.Game
             // Wire event for when player enters a new location
             PlayerGPS.OnEnterLocationRect += PlayerGPS_OnEnterLocationRect;
             levitateMotor = GetComponent<LevitateMotor>();
+            underwaterFog = new UnderwaterFog();
         }
 
         void Update()
@@ -269,7 +270,16 @@ namespace DaggerfallWorkshop.Game
                     }
                     //Debug.Log(string.Format("Player is now inside block {0}", playerDungeonBlockData.BlockName));
                 }
+                if (playerBlockIndex != -1)
+                {
+                    underwaterFog.UpdateFog(blockWaterLevel);
+                }
             }
+            else if(underwaterFog != null)
+            {
+                underwaterFog.ResetFog();
+            }
+
 
             // Count down holiday text display
             if (holidayTextTimer > 0)

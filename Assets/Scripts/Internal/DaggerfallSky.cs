@@ -72,7 +72,7 @@ namespace DaggerfallWorkshop
         System.Random random = new System.Random(0);
         bool showNightSky = true;
 
-        SkyColors skyColors = new SkyColors();
+        public SkyColors skyColors = new SkyColors();
         float starChance = 0.004f;
         byte[] starColorIndices = new byte[] { 16, 32, 74, 105, 112, 120 };     // Some random sky colour indices
 
@@ -318,6 +318,11 @@ namespace DaggerfallWorkshop
             westTexture.Apply(false, true);
             eastTexture.Apply(false, true);
 
+            SetSkyFogColor(colors);
+        }
+
+        public void SetSkyFogColor(SkyColors colors)
+        {
             // Set camera clear colour
             cameraClearColor = colors.clearColor;
             myCamera.backgroundColor = ((cameraClearColor * SkyTintColor) * 2f) * SkyColorScale;
