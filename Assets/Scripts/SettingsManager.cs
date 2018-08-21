@@ -107,6 +107,7 @@ namespace DaggerfallWorkshop
         public int HelmAndShieldMaterialDisplay { get; set; }
         public bool AccelerateUICopyTexture { get; set; }
         public bool EnableVitalsIndicators { get; set; }
+        public bool SDFFontRendering { get; set; }
 
         // [Spells]
         public bool EnableSpellLighting { get; set; }
@@ -198,6 +199,7 @@ namespace DaggerfallWorkshop
             ShowQuestJournalClocksAsCountdown = GetBool(sectionGUI, "ShowQuestJournalClocksAsCountdown");
             AccelerateUICopyTexture = GetBool(sectionGUI, "AccelerateUICopyTexture");
             EnableVitalsIndicators = GetBool(sectionGUI, "EnableVitalsIndicators");
+            SDFFontRendering = GetBool(sectionGUI, "SDFFontRendering");
 
             EnableSpellLighting = GetBool(sectionSpells, "EnableSpellLighting");
             EnableSpellShadows = GetBool(sectionSpells, "EnableSpellShadows");
@@ -277,6 +279,7 @@ namespace DaggerfallWorkshop
             SetBool(sectionGUI, "ShowQuestJournalClocksAsCountdown", ShowQuestJournalClocksAsCountdown);
             SetBool(sectionGUI, "AccelerateUICopyTexture", AccelerateUICopyTexture);
             SetBool(sectionGUI, "EnableVitalsIndicators", EnableVitalsIndicators);
+            SetBool(sectionGUI, "SDFFontRendering", SDFFontRendering);
 
             SetBool(sectionSpells, "EnableSpellLighting", EnableSpellLighting);
             SetBool(sectionSpells, "EnableSpellShadows", EnableSpellShadows);

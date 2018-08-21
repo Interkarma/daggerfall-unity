@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -32,6 +32,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         const int defaultAsciiStart = 33;
 
+        const int sdfGlyphsWide = 16;
+        const int sdfGlyphsHigh = 16;
+        const int sdfGlyphDimension = 64;
+        const int sdfGlyphCount = sdfGlyphsWide * sdfGlyphsHigh;
+
         //string arena2Path;
         FontName font;
         FntFile fntFile = new FntFile();
@@ -39,6 +44,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Color textColor = Color.white;
         protected Texture2D atlasTexture;
         protected Rect[] atlasRects;
+
+        protected Texture2D sdfAtlasTexture;
+        protected Rect[] sdfAtlasRects;
+        protected int sdfHorzAdjust = 3;
+        protected int sdfVertAdjust = 8;
 
         protected int asciiStart = defaultAsciiStart;
 
@@ -105,18 +115,39 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                 PixelFont.GlyphInfo glyph = GetGlyph(asciiBytes[i]);
 
-                Rect rect = new Rect(x, y, glyph.width * scale.x, GlyphHeight * scale.y);
                 if (asciiBytes[i] != PixelFont.SpaceASCII)
                 {
-                    Color guiColor = GUI.color;
+                    if (DaggerfallUnity.Settings.SDFFontRendering && sdfAtlasTexture && sdfAtlasRects != null)
+                    {
+                        Rect atlasRect = sdfAtlasRects[asciiBytes[i] - asciiStart];
 
-                    GUI.color = color;
-                    GUI.DrawTextureWithTexCoords(rect, atlasTexture, atlasRects[asciiBytes[i] - asciiStart]);
+                        // Draw using SDF shader
+                        //Rect rect = new Rect(x, y, atlasRect.width * (sdfGlyphDimension * sdfGlyphsWide), sdfGlyphDimension);
+                        Rect rect = new Rect(x, y, glyph.width * scale.x, GlyphHeight * scale.y);
+                        Graphics.DrawTexture(rect, sdfAtlasTexture, atlasRect, 0, 0, 0, 0, color, DaggerfallUI.Instance.SDFFontMaterial);
+                        x += rect.width + GlyphSpacing * scale.x;
+                    }
+                    else
+                    {
+                        // Fallback to normal rendering
+                        Rect rect = new Rect(x, y, glyph.width * scale.x, GlyphHeight * scale.y);
 
-                    GUI.color = guiColor;
+                        Color guiColor = GUI.color;
+
+                        GUI.color = color;
+                        GUI.DrawTextureWithTexCoords(rect, atlasTexture, atlasRects[asciiBytes[i] - asciiStart]);
+
+                        GUI.color = guiColor;
+
+                        x += rect.width + GlyphSpacing * scale.x;
+                    }
                 }
-
-                x += rect.width + GlyphSpacing * scale.x;
+                else
+                {
+                    // TODO: Just add space character
+                    Rect rect = new Rect(x, y, glyph.width * scale.x, GlyphHeight * scale.y);
+                    x += rect.width;
+                }
             }
         }
 
@@ -201,8 +232,39 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Create font atlas
             ImageProcessing.CreateFontAtlas(fntFile, Color.clear, Color.white, out atlasTexture, out atlasRects);
             atlasTexture.filterMode = FilterMode;
+
+            // Try to load an SDF font variant
+            if (DaggerfallUnity.Settings.SDFFontRendering)
+                TryLoadSDFFont();
             
             return true;
+        }
+
+        void TryLoadSDFFont()
+        {
+            // Attempt to load an SDF alternative font
+            // Source SDF font atlas must be 512x512 pixels with 32x32 pixel glyphs arranged in 16x16 grid starting from ASCII 33
+            // The image must be pre-processed into an alpha-only SDF format prior to import
+            string sdfFontFilename = string.Format("{0}-SDF.png", font.ToString());
+            string sdfFontPath = Path.Combine(DaggerfallUI.Instance.FontsFolder, sdfFontFilename);
+            if (File.Exists(sdfFontPath))
+            {
+                // Load source image
+                Texture2D texture = new Texture2D(4, 4, TextureFormat.ARGB32, false);
+                if (!texture.LoadImage(File.ReadAllBytes(sdfFontPath), false))
+                {
+                    Debug.LogErrorFormat("Found a possible SDF font variant but was unable to load from path {0}", sdfFontPath);
+                    return;
+                }
+
+                // Discover rects
+                Color32[] colors = texture.GetPixels32();
+                Rect[] rects = GenerateProportionalRects(ref colors, texture.width, texture.height, sdfGlyphsWide, sdfGlyphsHigh, sdfGlyphDimension, sdfGlyphCount);
+
+                // Store settings
+                sdfAtlasTexture = texture;
+                sdfAtlasRects = rects;
+            }
         }
 
         GlyphInfo CreateSpaceGlyph()
@@ -229,6 +291,77 @@ namespace DaggerfallWorkshop.Game.UserInterface
             glyph.width = fntFile.GetGlyphWidth(index);
 
             return glyph;
+        }
+
+        #endregion
+
+        #region Utility
+
+        Rect[] GenerateProportionalRects(ref Color32[] colors, int atlasWidth, int atlasHeight, int glyphsWide, int glyphsHigh, int glyphDimension, int count)
+        {
+            Rect[] rects = new Rect[count];
+
+            int xpos = 0;
+            int ypos = 0;
+            for (int i = 0; i < count; i++)
+            {
+                int x = glyphDimension * xpos;
+                int y = glyphDimension * (glyphsHigh - 1 - ypos);
+
+                Rect innerRect = FindInnerRect(ref colors, atlasWidth, x, y, glyphDimension);
+
+                rects[i] = new Rect(
+                    (float)(x + innerRect.xMin) / (float)atlasWidth,
+                    (float)(y + innerRect.yMin) / (float)atlasHeight,
+                    (float)(innerRect.width) / (float)atlasWidth,
+                    (float)(innerRect.height) / (float)atlasHeight);
+
+                xpos++;
+                if (xpos >= glyphsWide)
+                {
+                    xpos = 0;
+                    ypos++;
+                }
+            }
+
+            return rects;
+        }
+
+        Rect FindInnerRect(ref Color32[] colors, int atlasWidth, int xstart, int ystart, int dimension)
+        {
+            int xMin = dimension;
+            int xMax = 0;
+
+            for (int y = 0; y < dimension; y++)
+            {
+                int ypos = ystart + y;
+                for (int x = 0; x < dimension; x++)
+                {
+                    int xpos = xstart + x;
+                    int offset = ypos * atlasWidth + xpos;
+                    if (colors[offset].a != 0)
+                    {
+                        if (x < xMin)
+                            xMin = x;
+                        if (x > xMax)
+                            xMax = x;
+                    }
+                }
+            }
+
+            // Handle blank glpyhs
+            if (xMin == dimension && xMax == 0)
+            {
+                xMin = 0;
+                xMax = dimension / 2;
+            }
+
+            // Apply kerning
+            xMin += sdfHorzAdjust;
+            xMax -= sdfHorzAdjust;
+            float yMin = -sdfVertAdjust;
+
+            return new Rect(xMin, yMin, xMax + 1 - xMin, dimension - 1 - sdfVertAdjust);
         }
 
         #endregion

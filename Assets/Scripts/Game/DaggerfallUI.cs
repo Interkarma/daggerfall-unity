@@ -103,6 +103,7 @@ namespace DaggerfallWorkshop.Game
         DaggerfallCourtWindow dfCourtWindow;
 
         DaggerfallFontPlus fontPetrock32;
+        Material sdfFontMaterial;
 
         Questing.Actions.GivePc lastPendingOfferSender = null;
 
@@ -120,6 +121,8 @@ namespace DaggerfallWorkshop.Game
         public static DaggerfallFont DefaultFont { get { return Instance.GetFont(4); } }
         
         public static IUserInterfaceManager UIManager { get { return Instance.uiManager; } }
+
+        public Material SDFFontMaterial { get { return sdfFontMaterial; } set { sdfFontMaterial = value; } }
 
         public UserInterfaceRenderTarget CustomRenderTarget
         {
@@ -303,6 +306,10 @@ namespace DaggerfallWorkshop.Game
 
             // Load spell icon collection
             spellIconCollection = new SpellIconCollection();
+
+            // Create SDF font material
+            if (sdfFontMaterial == null)
+                sdfFontMaterial = new Material(Shader.Find(MaterialReader._DaggerfallSDFFontShaderName));
 
             // Set version text
             versionFont = new DaggerfallFontPlus(Resources.Load<Texture2D>("Kingthings-Petrock-Light-PixelFont"), 16, 16, 32);

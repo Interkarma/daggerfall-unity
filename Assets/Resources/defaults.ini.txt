@@ -46,6 +46,7 @@ EnableModernConversationStyleInTalkWindow=False
 HelmAndShieldMaterialDisplay=0
 InteractionModeIcon = minimal
 AccelerateUICopyTexture=False
+SDFFontRendering=False
 
 [Spells]
 EnableSpellLighting=True
