@@ -229,6 +229,10 @@ namespace DaggerfallWorkshop.Game.Questing
                     // Add message to collection
                     quest.AddMessage(messageID, message);
                 }
+                else
+                {
+                    throw new Exception(string.Format("Could not parse message block near '{0}'. Check message header syntax, spelling, and casing are all correct.", lines[i]));
+                }
             }
         }
 

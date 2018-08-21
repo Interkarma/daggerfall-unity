@@ -10,8 +10,12 @@ schema: id,*name
 1004,	QuestComplete
 1005,	RumorsDuringQuest
 1006,	RumorsPostfailure
+1006,	RumorsPostFailure
 1007,	RumorsPostsuccess
+1007,	RumorsPostSuccess
 1008,	QuestorPostsuccess
+1008,	QuestorPostSuccess
 1009,	QuestorPostfailure
+1009,	QuestorPostFailure
 1010,	QuestLogEntry
 1045,	QuestTimeLapse
