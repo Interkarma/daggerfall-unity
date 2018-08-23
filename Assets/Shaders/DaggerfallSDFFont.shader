@@ -1,6 +1,10 @@
 Shader "Daggerfall/SDFFont"
 {
-	Properties { _MainTex ("Texture", any) = "" {} } 
+	Properties
+    {
+        _MainTex ("Texture", any) = "" {}
+        _ScissorRect("Scissor Rectangle", Vector) = (0,1,0,1)   // x=left, y=right, z=bottom, w=top - fullscreen is (0,1,0,1)
+    }
 
 	SubShader {
 
@@ -30,11 +34,12 @@ Shader "Daggerfall/SDFFont"
 				float4 vertex : SV_POSITION;
 				fixed4 color : COLOR;
 				float2 texcoord : TEXCOORD0;
+                float2 screenPos : TEXCOORD1;
 			};
 
 			sampler2D _MainTex;
-
-			uniform float4 _MainTex_ST;
+            uniform float4 _MainTex_ST;
+            float4 _ScissorRect;
 			
 			v2f vert (appdata_t v)
 			{
@@ -42,17 +47,23 @@ Shader "Daggerfall/SDFFont"
 				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.color = v.color;
 				o.texcoord = TRANSFORM_TEX(v.texcoord,_MainTex);
+                o.screenPos = ComputeScreenPos(o.vertex);
 				return o;
 			}
 
 			fixed4 frag (v2f i) : SV_Target
 			{
+                if (i.screenPos.x < _ScissorRect.x || i.screenPos.x > _ScissorRect.y ||
+                    i.screenPos.y < _ScissorRect.z || i.screenPos.y > _ScissorRect.w)
+                    discard;
+
                 float dist = tex2D(_MainTex, i.texcoord).a;
                 float smoothing = fwidth(dist);
                 float alpha = smoothstep(0.5 - smoothing, 0.5 + smoothing, dist);
                 return float4(i.color.rgb, alpha);
 
-                //return float4(float3(1,1,1), 1 - alpha);  // Debug visualisation
+                //return float4(float3(1,1,1), 1 - alpha);  // Glyph visualisation
+                //return float4(float3(i.screenPos.x, i.screenPos.y, 0), 1 - alpha);  // screenPos visualisation
 			}
 			ENDCG 
 		}

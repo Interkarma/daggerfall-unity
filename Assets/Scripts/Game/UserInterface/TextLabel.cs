@@ -237,11 +237,40 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
+        Vector4 GetRestrictedRenderScissorRect()
+        {
+            Rect myRect = Rectangle;
+            Rect screenRect = new Rect(0, 0, Screen.width, Screen.height);
+
+            Rect rectLabel = new Rect(this.Parent.Position + this.Position, this.Size);
+            float leftCut = Mathf.Round(Math.Max(0, rectRestrictedRenderArea.xMin - rectLabel.xMin) / textScale);
+            float rightCut = Mathf.Round(Math.Max(0, rectLabel.xMax - rectRestrictedRenderArea.xMax) / textScale);
+            float topCut = Mathf.Round(Math.Max(0, rectRestrictedRenderArea.yMin - rectLabel.yMin) / textScale);
+            float bottomCut = Mathf.Round(Math.Max(0, rectLabel.yMax - rectRestrictedRenderArea.yMax) / textScale);
+
+            float xMinScreen = myRect.xMin + (Position.x + leftCut * textScale) * LocalScale.x;
+            float xMaxScreen = myRect.xMax + (Position.x - rightCut * textScale) * LocalScale.x;
+            float yMinScreen = myRect.yMin + (topCut * textScale) * LocalScale.y;
+            float yMaxScreen = myRect.yMax - (bottomCut * textScale) * LocalScale.y;
+
+            Vector4 scissorRect;
+            scissorRect.x = xMinScreen / screenRect.width;
+            scissorRect.y = xMaxScreen / screenRect.width;
+            scissorRect.z = 1.0f - yMaxScreen / screenRect.height;
+            scissorRect.w = 1.0f - yMinScreen / screenRect.height;
+
+            return scissorRect;
+        }
+
         void DrawSDFLabel_SingleLineOnly()
         {
             // Exit if label layout not defined
             if (labelLayout.glyphLayout == null || labelLayout.glyphLayout.Length == 0)
                 return;
+
+            // Set render area
+            Vector4 scissorRect = (useRestrictedRenderArea) ? GetRestrictedRenderScissorRect() : new Vector4(0, 1, 0, 1);
+            DaggerfallUI.Instance.SDFFontMaterial.SetVector("_ScissorRect", scissorRect);
 
             // Layout glyphs
             Rect totalRect = Rectangle;
