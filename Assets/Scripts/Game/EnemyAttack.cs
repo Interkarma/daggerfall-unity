@@ -33,8 +33,6 @@ namespace DaggerfallWorkshop.Game
         DaggerfallMobileUnit mobile;
         DaggerfallEntityBehaviour entityBehaviour;
         float meleeTimer = 0;
-        bool isMeleeAttackingPreHitFrame;
-        bool isShootingPreHitFrame;
         int damage = 0;
 
         void Start()
@@ -48,41 +46,17 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
-            // Handle state in progress before hit frame
-            if (mobile.IsPlayingOneShot())
-            {
-                if (mobile.LastFrameAnimated < mobile.Summary.Enemy.HitFrame
-                    && mobile.Summary.EnemyState == MobileStates.PrimaryAttack)
-                {
-                    // Are we melee attacking?
-                    if (mobile.IsAttacking())
-                        isMeleeAttackingPreHitFrame = true;
-
-                    return;
-                }
-                else if (mobile.LastFrameAnimated < 2 // TODO: Animate bow correctly
-                    && (mobile.Summary.EnemyState == MobileStates.RangedAttack1
-                    || mobile.Summary.EnemyState == MobileStates.RangedAttack2))
-                {
-                    // Are we shooting bow?
-                    if (mobile.IsAttacking())
-                        isShootingPreHitFrame = true;
-
-                    return;
-                }
-            }
-
-            // If a melee attack has reached the hit frame we can apply damage
-            if (isMeleeAttackingPreHitFrame && mobile.LastFrameAnimated == mobile.Summary.Enemy.HitFrame)
+            // If a melee attack has reached the damage frame we can run a melee attempt
+            if (mobile.DoMeleeDamage)
             {
                 MeleeDamage();
-                isMeleeAttackingPreHitFrame = false;
+                mobile.DoMeleeDamage = false;
             }
-            // Same for shooting bow
-            else if (isShootingPreHitFrame && mobile.LastFrameAnimated == 2) // TODO: Animate bow correctly
+            // If a bow attack has reached the shoot frame we can shoot an arrow
+            else if (mobile.ShootArrow)
             {
-                BowDamage();
-                isShootingPreHitFrame = false;
+                BowDamage(); // TODO: Shoot 3D projectile instead of doing an instant hit
+                mobile.ShootArrow = false;
 
                 DaggerfallAudioSource dfAudioSource = GetComponent<DaggerfallAudioSource>();
                 if (dfAudioSource)
@@ -107,12 +81,11 @@ namespace DaggerfallWorkshop.Game
             // Are we in range and facing player? Then start attack.
             if (senses.PlayerInSight)
             {
-                // Take the speed of movement during the attack animation and hit frame into account when calculating attack range
+                // Take the speed of movement during the attack animation into account when deciding if to attack
                 EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
                 float attackSpeed = ((entity.Stats.LiveSpeed + PlayerSpeedChanger.dfWalkBase) / PlayerSpeedChanger.classicToUnitySpeedUnitRatio) / EnemyMotor.AttackSpeedDivisor;
-                float timeUntilHit = mobile.Summary.Enemy.HitFrame / DaggerfallWorkshop.Utility.EnemyBasics.PrimaryAttackAnimSpeed;
 
-                if (senses.DistanceToPlayer >= (MeleeDistance + (attackSpeed * timeUntilHit)))
+                if (senses.DistanceToPlayer >= (MeleeDistance + attackSpeed))
                     return;
 
                 // Don't attack if not hostile
