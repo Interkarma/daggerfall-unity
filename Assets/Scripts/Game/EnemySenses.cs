@@ -196,7 +196,7 @@ namespace DaggerfallWorkshop.Game
 
         public bool StealthCheck()
         {
-            if (distanceToPlayer > 1024 * MeshReader.GlobalScale)
+            if (distanceToPlayer > 768 * MeshReader.GlobalScale)
                 return false;
 
             uint gameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
