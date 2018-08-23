@@ -13,7 +13,7 @@ namespace DaggerfallWorkshop.Game
         Color waterFogColor;
         private float fogDensityMin;
         private float fogDensityMax;
-        private FogMode originalFog = FogMode.Linear;
+        public readonly FogMode originalFog = RenderSettings.fogMode;
 
         public UnderwaterFog()
         {
@@ -48,8 +48,6 @@ namespace DaggerfallWorkshop.Game
         { 
             sky.SetSkyFogColor(sky.skyColors);
             RenderSettings.fogMode = originalFog;
-            RenderSettings.fogStartDistance = 0;
-            RenderSettings.fogEndDistance = 2400;
         }
     }
 }

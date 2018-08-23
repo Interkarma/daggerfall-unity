@@ -275,7 +275,7 @@ namespace DaggerfallWorkshop.Game
                     underwaterFog.UpdateFog(blockWaterLevel);
                 }
             }
-            else if(underwaterFog != null)
+            else if(underwaterFog != null && underwaterFog.originalFog != RenderSettings.fogMode)
             {
                 underwaterFog.ResetFog();
             }
