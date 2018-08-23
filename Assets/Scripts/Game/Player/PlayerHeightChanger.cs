@@ -42,10 +42,13 @@ namespace DaggerfallWorkshop.Game
             }
         }
         public bool IsInWaterTile { get; set; }
+        public bool ForcedSwimCrouch { get { return forcedSwimCrouch; } set { } }
+        private bool forcedSwimCrouch = true;
+
         private PlayerMotor playerMotor;
         private CharacterController controller;
         private HeadBobber headBobber;
-        //private LevitateMotor levitateMotor;
+        private LevitateMotor levitateMotor;
         private Camera mainCamera;
         private float controllerStandHeight = 1.78f;
         private float controllerCrouchHeight = 0.45f;
@@ -79,7 +82,7 @@ namespace DaggerfallWorkshop.Game
             controller = GetComponent<CharacterController>();
             headBobber = GetComponent<HeadBobber>();
             mainCamera = GameManager.Instance.MainCamera;
-            //levitateMotor = GetComponent<LevitateMotor>();
+            levitateMotor = GetComponent<LevitateMotor>();
             camSwimLevel = controllerSwimHeight / 2f;
             camCrouchLevel = controllerCrouchHeight / 2f;
             camStandLevel = controllerStandHeight / 2f;
@@ -98,6 +101,10 @@ namespace DaggerfallWorkshop.Game
         public void DecideHeightAction()
         {
             bool onWater = OnWater;
+            bool swimming = levitateMotor.IsSwimming;
+            bool crouching = playerMotor.IsCrouching;
+            bool riding = playerMotor.IsRiding;
+            bool pressedCrouch = InputManager.Instance.ActionComplete(InputManager.Actions.Crouch);
             timerMax = timerSlow;
             if (onWater && !toggleSink)
             {
@@ -109,25 +116,40 @@ namespace DaggerfallWorkshop.Game
                 heightAction = HeightChangeAction.DoUnsinking;
                 toggleSink = false;
             }
-            else if (playerMotor.IsRiding && !toggleRiding)
+            else if (riding && !toggleRiding)
             { 
                 heightAction = HeightChangeAction.DoMounting;
                 toggleRiding = true;
             }   
-            else if (!playerMotor.IsRiding && toggleRiding)
+            else if (!riding && toggleRiding)
             {
                 heightAction = HeightChangeAction.DoDismounting;
                 toggleRiding = false;
             }
-            else if (!playerMotor.IsRiding)
+            else if (!riding && !onWater)
             {
-                // Toggle crouching
-                if (!onWater && InputManager.Instance.ActionComplete(InputManager.Actions.Crouch))
-                {
-                    if (playerMotor.IsCrouching)
+                // if we crouch out of water
+                if (!swimming && pressedCrouch)
+                { 
+                    // Toggle crouching
+                    if (crouching)
                         heightAction = HeightChangeAction.DoStanding;
                     else
                         heightAction = HeightChangeAction.DoCrouching;
+                }
+                // if swimming but not crouching, crouch.
+                else if (swimming && !forcedSwimCrouch)
+                {
+                    if (!crouching)
+                        heightAction = HeightChangeAction.DoCrouching;
+                    forcedSwimCrouch = true;
+                }
+                // if we're in a forced swim crouch, but not swimming, un-force the crouch
+                else if (!swimming && forcedSwimCrouch)
+                {
+                    if (crouching)
+                        heightAction = HeightChangeAction.DoStanding;
+                    forcedSwimCrouch = false;
                 }
             }  
         }
@@ -473,6 +495,7 @@ namespace DaggerfallWorkshop.Game
 
             toggleRiding = playerMotor.IsRiding;
             toggleSink = OnWater;
+            forcedSwimCrouch = levitateMotor.IsSwimming;
             
         }
         #endregion

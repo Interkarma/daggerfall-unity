@@ -14,6 +14,7 @@ namespace DaggerfallWorkshop.Game
         private PlayerMotor playerMotor;
         private LevitateMotor levitateMotor;
         private CharacterController controller;
+        private PlayerHeightChanger heightChanger;
         private bool failedClimbingCheck = false;
         private bool isClimbing = false;
         private float climbingStartTimer = 0;
@@ -31,6 +32,7 @@ namespace DaggerfallWorkshop.Game
             playerMotor = GetComponent<PlayerMotor>();
             levitateMotor = GetComponent<LevitateMotor>();
             controller = GetComponent<CharacterController>();
+            heightChanger = GetComponent<PlayerHeightChanger>();
         }
 
         /// <summary>
@@ -55,7 +57,7 @@ namespace DaggerfallWorkshop.Game
                 || failedClimbingCheck
                 || levitateMotor.IsLevitating
                 || playerMotor.IsRiding
-                || playerMotor.IsCrouching 
+                || (playerMotor.IsCrouching && !heightChanger.ForcedSwimCrouch)
                 || Vector2.Distance(lastHorizontalPosition, new Vector2(controller.transform.position.x, controller.transform.position.z)) >= (0.003f)) // Approximation based on observing classic in-game
             {
                 isClimbing = false;
