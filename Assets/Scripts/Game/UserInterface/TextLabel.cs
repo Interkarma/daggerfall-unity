@@ -255,6 +255,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     glyphLayout.glyphWidth * LocalScale.x,
                     font.GlyphHeight * LocalScale.y);
 
+                // Allow SDF glyph to draw into the "single pixel" empty space normally reserved for classic letter spacing
+                // As SDF fonts are so much more detailed, this single pixel space ends up looking very large and unnecessary
+                // This has the effect of keeping glyphs a bit closer together while using the exact screen rect allowed
+                rect.width += font.GlyphSpacing * LocalScale.x;
+
                 font.DrawSDFGlyph(glyphLayout.glyphRawAscii, rect, textColor, shadowPosition * LocalScale, shadowColor);
             }
         }

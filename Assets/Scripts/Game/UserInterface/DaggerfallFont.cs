@@ -212,9 +212,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     if (IsSDFCapable)
                     {
                         // Draw using SDF shader
-                        Rect rect = new Rect(x, y, glyph.width * scale.x, GlyphHeight * scale.y);
+                        Rect rect = new Rect(x, y, glyph.width * scale.x + GlyphSpacing * scale.x, GlyphHeight * scale.y);
                         DrawSDF(asciiBytes[i], rect, color);
-                        x += rect.width + GlyphSpacing * scale.x;
+                        x += rect.width;
                     }
                     else
                     {
