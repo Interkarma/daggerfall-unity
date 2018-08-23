@@ -769,7 +769,7 @@ namespace DaggerfallWorkshop.Game
             return checkbox;
         }
 
-        public static TextLabel AddTextLabel(PixelFont font, Vector2 position, string text, Panel panel = null, int glyphSpacing = 1)
+        public static TextLabel AddTextLabel(DaggerfallFont font, Vector2 position, string text, Panel panel = null, int glyphSpacing = 1)
         {
             TextLabel textLabel = new TextLabel();
             textLabel.AutoSize = AutoSizeModes.None;

@@ -27,7 +27,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
     {
         const int tabWidth = 35;
 
-        PixelFont font;
+        DaggerfallFont font;
         float textScale = 1.0f; // scale text 
         int rowLeading = 0;
         Vector2 shadowPosition = DaggerfallUI.DaggerfallDefaultShadowPos;
@@ -49,7 +49,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         int minTextureDimTextLabel = TextLabel.limitMinTextureDim; // set this with property MinTextureDim to higher values if you experience scaling issues with small texts (e.g. inventory infopanel)
 
-        public PixelFont Font
+        public DaggerfallFont Font
         {
             get { return GetFont(); }
             set { font = value; }
@@ -179,7 +179,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// <param name="font">Font for this label.</param>
         /// <param name="highlight">True to use DF highlight text color for this label.</param>
         /// <returns>TextLabel.</returns>
-        public TextLabel AddTextLabel(string text, PixelFont font = null, bool highlight = false)
+        public TextLabel AddTextLabel(string text, DaggerfallFont font = null, bool highlight = false)
         {
             if (font == null)
                 font = GetFont();
@@ -324,7 +324,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Size = new Vector2(totalWidth, totalHeight);
         }
 
-        PixelFont GetFont()
+        DaggerfallFont GetFont()
         {
             if (font == null)
                 font = DaggerfallUI.DefaultFont;

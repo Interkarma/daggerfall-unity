@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -31,7 +31,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         #region Fields
 
         int maxCharacters = -1;
-        PixelFont font;
+        DaggerfallFont font;
         int selectedIndex = 0;
         int scrollIndex = 0;
         bool enabledHorizontalScroll = false;
@@ -99,7 +99,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set { maxCharacters = value; }
         }
 
-        public PixelFont Font
+        public DaggerfallFont Font
         {
             get { return font; }
             set { font = value; }
@@ -310,7 +310,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                     currentLine += label.NumTextLines;                
                     label.StartCharacterIndex = horizontalScrollIndex;
-                    label.UpdateLabelTexture();
+                    label.CreateLabelTexture();
                     if (i == selectedIndex)
                     {
                         label.TextColor = listItems[i].selectedTextColor;
@@ -348,7 +348,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                         label.StartCharacterIndex = horizontalScrollIndex;
                     else if (horizontalScrollMode == HorizontalScrollModes.PixelWise)
                         x = -horizontalScrollIndex;
-                    label.UpdateLabelTexture();
+                    label.CreateLabelTexture();
                     if (i == selectedIndex)
                     {
                         label.TextColor = listItems[i].selectedTextColor;

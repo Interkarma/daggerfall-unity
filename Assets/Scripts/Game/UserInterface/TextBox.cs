@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -324,7 +324,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 if (!font.HasGlyph(i))
                     continue;
 
-                PixelFont.GlyphInfo glyph = font.GetGlyph(i);
+                DaggerfallFont.GlyphInfo glyph = font.GetGlyph(i);
                 if (glyph.width > width)
                 {
                     width = glyph.width;
@@ -346,10 +346,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 // Invalid ASCII bytes are cast to a space character
                 if (!font.HasGlyph(asciiBytes[i]))
-                    asciiBytes[i] = PixelFont.SpaceASCII;
+                    asciiBytes[i] = DaggerfallFont.SpaceASCII;
 
                 // Calculate total width
-                PixelFont.GlyphInfo glyph = font.GetGlyph(asciiBytes[i]);
+                DaggerfallFont.GlyphInfo glyph = font.GetGlyph(asciiBytes[i]);
                 width += glyph.width + font.GlyphSpacing;
             }
             return new Vector2(width, font.GlyphHeight);
