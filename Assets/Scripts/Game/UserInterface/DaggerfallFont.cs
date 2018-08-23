@@ -152,14 +152,31 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// Does nothing if this font is not SDF capable or SDF support disabled in settings.
         /// Also ignores out of range ASCII character as nothing to draw.
         /// </summary>
-        public void DrawSDFGlyph(byte ascii, Rect targetRect, Color color)
+        public void DrawSDF(byte rawAscii, Rect targetRect, Color color)
         {
-            if (IsSDFCapable && ascii >= asciiStart)
+            if (IsSDFCapable && rawAscii >= asciiStart)
             {
-                int glyphWidth = GetGlyphWidth(ascii);
-                Rect atlasRect = sdfAtlasRects[ascii];
+                int glyphWidth = GetGlyphWidth(rawAscii);
+                Rect atlasRect = sdfAtlasRects[rawAscii - asciiStart];
                 Graphics.DrawTexture(targetRect, sdfAtlasTexture, atlasRect, 0, 0, 0, 0, color, DaggerfallUI.Instance.SDFFontMaterial);
             }
+        }
+
+        /// <summary>
+        /// Draws SDF glyph with extra call for shadow.
+        /// This is just a quick hack - should be done in shader.
+        /// </summary>
+        public void DrawSDFGlyph(byte rawAscii, Rect targetRect, Color color, Vector2 shadowPosition, Color shadowColor)
+        {
+            if (shadowPosition != Vector2.zero)
+            {
+                Rect shadowRect = targetRect;
+                shadowRect.x += shadowPosition.x / 2;           // Shadow position also hacked by half as classic offset scale too much for smoother fonts
+                shadowRect.y += shadowPosition.y / 2;
+                DrawSDF(rawAscii, shadowRect, shadowColor);
+            }
+
+            DrawSDF(rawAscii, targetRect, color);            
         }
 
         /// <summary>
@@ -196,7 +213,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     {
                         // Draw using SDF shader
                         Rect rect = new Rect(x, y, glyph.width * scale.x, GlyphHeight * scale.y);
-                        DrawSDFGlyph((byte)(asciiBytes[i] - asciiStart), rect, color);
+                        DrawSDF(asciiBytes[i], rect, color);
                         x += rect.width + GlyphSpacing * scale.x;
                     }
                     else

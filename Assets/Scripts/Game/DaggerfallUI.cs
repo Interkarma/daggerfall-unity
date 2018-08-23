@@ -392,7 +392,7 @@ namespace DaggerfallWorkshop.Game
                 if (ShowVersionText)
                 {
                     Vector2 versionTextPos = new Vector2(Screen.width - versionTextWidth, 0);
-                    versionFont.DrawText(versionText, versionTextPos, versionTextScaleVector2, versionTextColor);
+                    //versionFont.DrawText(versionText, versionTextPos, versionTextScaleVector2, versionTextColor);
                 }
 
                 if (customRenderTarget)

@@ -255,7 +255,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     glyphLayout.glyphWidth * LocalScale.x,
                     font.GlyphHeight * LocalScale.y);
 
-                font.DrawSDFGlyph((byte)(glyphLayout.glyphAscii - font.AsciiStart), rect, textColor);
+                font.DrawSDFGlyph(glyphLayout.glyphRawAscii, rect, textColor, shadowPosition * LocalScale, shadowColor);
             }
         }
 
@@ -301,7 +301,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             public int x;                                       // X position of classic glyph in virtual layout area
             public int y;                                       // Y position of classic glyph in virtual layout area
-            public byte glyphAscii;                             // ASCII value of classic glyph
+            public byte glyphRawAscii;                          // Raw ASCII value of classic glyph
             public int glyphWidth;                              // Width of classic glyph
         }
 
@@ -396,7 +396,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 {
                     x = xpos,
                     y = 0,
-                    glyphAscii = asciiBytes[i],
+                    glyphRawAscii = asciiBytes[i],
                     glyphWidth = glyph.width,
                 };
 
