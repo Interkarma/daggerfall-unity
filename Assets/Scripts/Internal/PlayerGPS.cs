@@ -647,7 +647,7 @@ namespace DaggerfallWorkshop
         /// </summary>
         public void DiscoverLocation(string regionName, string locationName)
         {
-            DFLocation location;        
+            DFLocation location;
             bool found = dfUnity.ContentReader.GetLocation(regionName, locationName, out location);
             if (!found)
                 throw new Exception(String.Format("Error finding location {0} : {1}", regionName, locationName));

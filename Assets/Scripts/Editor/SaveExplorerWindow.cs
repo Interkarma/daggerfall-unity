@@ -486,7 +486,7 @@ namespace DaggerfallWorkshop
                     {
                         if (saveGames.HasSave(i))
                         {
-                            saveGames.OpenSave(i);
+                            saveGames.OpenSave(i, false);
                             saveTrees[i] = saveGames.SaveTree;
                             saveVars[i] = saveGames.SaveVars;
                             saveNames[i] = new GUIContent(saveGames.SaveName);
@@ -499,6 +499,35 @@ namespace DaggerfallWorkshop
                             saveVars[i] = null;
                             saveTextures[i] = null;
                             saveNames[i] = new GUIContent("Empty");
+                        }
+                    }
+                }
+
+                // Prevent duplicate names so save games aren't automatically removed from the Save Select GUI
+                for (int i = 0; i < saveNames.Length; i++)
+                {
+                    int duplicateCount = 0;
+                    for (int j = i + 1; j < saveNames.Length; j++)
+                    {
+                        if (saveNames[j].text == saveNames[i].text)
+                        {
+                            bool unique = false;
+                            while (!unique)
+                            {
+                                unique = true;
+                                string replaceText = saveNames[j].text + "(" + ++duplicateCount + ")";
+                                for (int k = 0; k < saveNames.Length; k++)
+                                {
+                                    if (saveNames[k].text == replaceText)
+                                    {
+                                        unique = false;
+                                        break;
+                                    }
+                                }
+
+                                if (unique)
+                                    saveNames[j].text = replaceText;
+                            }
                         }
                     }
                 }

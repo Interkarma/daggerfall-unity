@@ -178,8 +178,9 @@ namespace DaggerfallConnect.Save
         /// Opens the save game index specified.
         /// </summary>
         /// <param name="save">Save index</param>
+        /// <param name="loadingInGame">True if the save game is being loaded for regular play, false if loading for Save Explorer.</param>
         /// <returns>True if successful.</returns>
-        public bool OpenSave(int save)
+        public bool OpenSave(int save, bool loadingInGame = true)
         {
             if (!HasSave(save))
                 return false;
@@ -202,32 +203,39 @@ namespace DaggerfallConnect.Save
             if (!mapSave.Load(Path.Combine(saveGameDict[save], "MAPSAVE.SAV"), FileUsage.UseMemory, true))
                 throw new Exception("Could not open MapSave for index " + save);
 
-            PlayerGPS gps = GameManager.Instance.PlayerGPS;
-            gps.ClearDiscoveryData();
-            for (int regionIndex = 0; regionIndex < 62; regionIndex++)
+            if (loadingInGame) // Only check MAPSAVE if loading in-game, not if viewing in Save Explorer. There is a noticeable delay for
+                               // Save Explorer as the classic saves are loaded, and a null exception if the Save Explorer is opened
+                               // without the game running in the editor, due to PlayerGPS.dfUnity not being instantiated.
+                               // Save Explorer currently has no use for MAPSAVE data. This code should be revisited (speed up MAPSAVE processing,
+                               // fix null exception, remove this bool check) if MAPSAVE-related functionality is added to Save Explorer.
             {
-                // Generate name from region index
-                string name = string.Format("MAPSAVE.{0:000}", regionIndex);
-
-                // Get record index
-                int index = mapSave.GetRecordIndex(name);
-                if (index == -1)
-                    return false;
-
-                // Read MAPSAVE data
-                byte[] data = mapSave.GetRecordBytes(index);
-
-                // Parse MAPSAVE data for discovered locations
-                DFRegion regionData = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegion(regionIndex);
-                for (int i = 0; i < regionData.LocationCount; i++)
+                PlayerGPS gps = GameManager.Instance.PlayerGPS;
+                gps.ClearDiscoveryData();
+                for (int regionIndex = 0; regionIndex < 62; regionIndex++)
                 {
-                    if ((data[i] & 0x40) != 0)
+                    // Generate name from region index
+                    string name = string.Format("MAPSAVE.{0:000}", regionIndex);
+
+                    // Get record index
+                    int index = mapSave.GetRecordIndex(name);
+                    if (index == -1)
+                        return false;
+
+                    // Read MAPSAVE data
+                    byte[] data = mapSave.GetRecordBytes(index);
+
+                    // Parse MAPSAVE data for discovered locations
+                    DFRegion regionData = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegion(regionIndex);
+                    for (int i = 0; i < regionData.LocationCount; i++)
                     {
-                        // Discover the location in DF Unity's data
-                        if (regionData.MapTable[i].Discovered == false)
+                        if ((data[i] & 0x40) != 0)
                         {
-                            DFLocation location = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(regionIndex, i);
-                            gps.DiscoverLocation(regionData.Name, location.Name);
+                            // Discover the location in DF Unity's data
+                            if (regionData.MapTable[i].Discovered == false)
+                            {
+                                DFLocation location = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(regionIndex, i);
+                                gps.DiscoverLocation(regionData.Name, location.Name);
+                            }
                         }
                     }
                 }
