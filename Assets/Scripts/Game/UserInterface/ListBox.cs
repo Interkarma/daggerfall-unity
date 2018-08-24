@@ -362,6 +362,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                         label.ShadowColor = listItems[i].shadowColor;
                     }
 
+                    label.HorzPixelScrollOffset = x;
                     label.Position = new Vector2(x, y);
                     label.Draw();
 

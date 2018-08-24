@@ -177,6 +177,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set { wrapWords = value; CreateLabelTexture(); }
         }
 
+        // Small hack to help horizontal scrolling work with SDF font rendering and pixel-wise list box
+        // Don't want to change how this fundamentally works right now so as not to break classic font layouts
+        public float HorzPixelScrollOffset { get; set; }
+
         /// <summary>
         /// Set a restricted render area for the textlabel - the textlabel's content will only be rendered inside the specified Rect's bounds
         /// </summary>
@@ -279,7 +283,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 GlyphLayoutData glyphLayout = labelLayout.glyphLayout[i];
 
                 Rect rect = new Rect(
-                    totalRect.x + glyphLayout.x * LocalScale.x,
+                    totalRect.x + glyphLayout.x * LocalScale.x + HorzPixelScrollOffset * LocalScale.x,
                     totalRect.y + glyphLayout.y * LocalScale.y,
                     glyphLayout.glyphWidth * LocalScale.x,
                     font.GlyphHeight * LocalScale.y);
