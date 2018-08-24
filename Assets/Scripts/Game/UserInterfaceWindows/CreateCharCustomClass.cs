@@ -48,7 +48,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Dictionary<string, DFCareer.Skills> skillsDict;
         List<string> skillsList;
         Dictionary<string, int> helpDict;
-        int hpPerLevel = defaultHpPerLevel;
         int difficultyPoints = 0;
         int advantageAdjust = 0;
         int disadvantageAdjust = 0;
@@ -156,11 +155,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Initialize character class
             createdClass = new DFCareer();
+            createdClass.HitPointsPerLevel = defaultHpPerLevel;
+            createdClass.SpellPointMultiplierValue = .5f;
 
             // Initiate UI components
             font = DaggerfallUI.DefaultFont;
             SetupButtons();
-            hpLabel = DaggerfallUI.AddTextLabel(font, new Vector2(285, 55), hpPerLevel.ToString(), NativePanel);
+            hpLabel = DaggerfallUI.AddTextLabel(font, new Vector2(285, 55), createdClass.HitPointsPerLevel.ToString(), NativePanel);
             daggerPanel.Size = new Vector2(24, 9);
             daggerPanel.BackgroundTexture = nativeDaggerTexture;
             NativePanel.Components.Add(daggerPanel);
@@ -316,20 +317,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public void HitPointsUpButton_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
         {
-            if (hpPerLevel != maxHpPerLevel)
+            if (createdClass.HitPointsPerLevel != maxHpPerLevel)
             {
-                hpPerLevel++;
-                hpLabel.Text = hpPerLevel.ToString();
+                createdClass.HitPointsPerLevel++;
+                hpLabel.Text = createdClass.HitPointsPerLevel.ToString();
                 UpdateDifficulty();
             }
         }
 
         public void HitPointsDownButton_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
         {
-            if (hpPerLevel != minHpPerLevel)
+            if (createdClass.HitPointsPerLevel != minHpPerLevel)
             {
-                hpPerLevel--;
-                hpLabel.Text = hpPerLevel.ToString();
+                createdClass.HitPointsPerLevel--;
+                hpLabel.Text = createdClass.HitPointsPerLevel.ToString();
                 UpdateDifficulty();
             }
         }
@@ -410,8 +411,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             // Set advantages/disadvantages
-            createCharSpecialAdvantageWindow.ParseCareerData();
-            createCharSpecialDisadvantageWindow.ParseCareerData();
+            if (createCharSpecialAdvantageWindow != null)
+            {
+                createCharSpecialAdvantageWindow.ParseCareerData();
+            }
+            if (createCharSpecialDisadvantageWindow != null)
+            {
+                createCharSpecialDisadvantageWindow.ParseCareerData();
+            }
 
             CloseWindow();
         }
@@ -426,13 +433,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             const int defaultDaggerY = 115;
 
             // hp adjustment
-            if (hpPerLevel >= defaultHpPerLevel)
+            if (createdClass.HitPointsPerLevel >= defaultHpPerLevel)
             {
-                difficultyPoints = hpPerLevel - defaultHpPerLevel; // +1 pt for each hp above default
+                difficultyPoints = createdClass.HitPointsPerLevel - defaultHpPerLevel; // +1 pt for each hp above default
             } 
             else
             {
-                difficultyPoints = -(2 * (defaultHpPerLevel - hpPerLevel)); // -2 pts for each hp below default
+                difficultyPoints = -(2 * (defaultHpPerLevel - createdClass.HitPointsPerLevel)); // -2 pts for each hp below default
             }
 
             // adjustments for special advantages/disadvantages

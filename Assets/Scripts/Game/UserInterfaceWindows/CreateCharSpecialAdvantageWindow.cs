@@ -43,6 +43,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int maxLabels = maxItems * 2;
         const int labelSpacing = 8;
         const int tandemLabelSpacing = 6;
+        const float defaultSpellPointMod = .5f;
 
         DFCareer advantageData;
         List<SpecialAdvDis> advDisList;
@@ -326,6 +327,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     secondaryList = effectTypeStrings;
                     break;
                 case HardStrings.increasedMagery:
+                    // limit to 1 magery increase advantage for the character
+                    bool alreadyAdded = false;
+                    foreach (SpecialAdvDis item in advDisList)
+                    {
+                        if (item.primaryString == HardStrings.increasedMagery)
+                        {
+                            alreadyAdded = true;
+                        }
+                    }
+                    if (alreadyAdded)
+                    {
+                        return;
+                    }
                     secondaryList = increasedMageryStrings;
                     break;
                 case HardStrings.rapidHealing:
@@ -380,6 +394,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallListPickerWindow secondaryPicker = new DaggerfallListPickerWindow(uiManager, this);
                 secondaryPicker.ListBox.Font = DaggerfallUI.SmallFont;
                 secondaryPicker.OnItemPicked += SecondaryPicker_OnItemPicked;
+                secondaryPicker.OnCancel += SecondaryPicker_OnCancel;
                 foreach (string secondaryString in secondaryList)
                 {
                     secondaryPicker.ListBox.AddItem(secondaryString);
@@ -404,12 +419,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             UpdateDifficultyAdjustment();
         }
 
+        void SecondaryPicker_OnCancel(DaggerfallPopupWindow sender)
+        {
+            advDisList.RemoveAt(advDisList.Count - 1);
+        }
+
         void AdvantageLabel_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
         {
             for (int i = 0; i < advDisList.Count; i++)
             {
                 if (i == (int)sender.Tag)
                 {
+                    // set spell point modifier back to default if user removes magery advantage
+                    if (advDisList[i].primaryString == HardStrings.increasedMagery)
+                    {
+                        advantageData.SpellPointMultiplier = DFCareer.SpellPointMultipliers.Times_0_50;
+                        advantageData.SpellPointMultiplierValue = defaultSpellPointMod;
+                    }
                     advDisList.RemoveAt(i);
                     sender.Tag = -1;
                     UpdateLabels();
@@ -603,18 +629,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 case HardStrings.intInSpellPoints15:
                     advantageData.SpellPointMultiplier = DFCareer.SpellPointMultipliers.Times_1_50;
+                    advantageData.SpellPointMultiplierValue = 1.5f;
                     break;
                 case HardStrings.intInSpellPoints175:
                     advantageData.SpellPointMultiplier = DFCareer.SpellPointMultipliers.Times_1_75;
+                    advantageData.SpellPointMultiplierValue = 1.75f;
                     break;
                 case HardStrings.intInSpellPoints2:
                     advantageData.SpellPointMultiplier = DFCareer.SpellPointMultipliers.Times_2_00;
+                    advantageData.SpellPointMultiplierValue = 2f;
                     break;
                 case HardStrings.intInSpellPoints3:
                     advantageData.SpellPointMultiplier = DFCareer.SpellPointMultipliers.Times_3_00;
+                    advantageData.SpellPointMultiplierValue = 3f;
                     break;
                 case HardStrings.intInSpellPoints:
                     advantageData.SpellPointMultiplier = DFCareer.SpellPointMultipliers.Times_1_00;
+                    advantageData.SpellPointMultiplierValue = 1f;
                     break;
                 default:
                     break;
@@ -888,6 +919,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 { HardStrings.bonusToHit + HardStrings.animals, 6 },
                 { HardStrings.bonusToHit + HardStrings.daedra, 3 },
                 { HardStrings.bonusToHit + HardStrings.humanoid, 6 },
+                { HardStrings.bonusToHit + HardStrings.undead, 6 },
                 { HardStrings.expertiseIn, 2 },
                 { HardStrings.immunity, 10 },
                 { HardStrings.increasedMagery + HardStrings.intInSpellPoints, 2 },
