@@ -30,6 +30,7 @@ namespace DaggerfallWorkshop.Game
         private PlayerMotor playerMotor;
         private Camera mainCamera;
         private PlayerEnterExit playerEnterExit;
+        private ClimbingMotor climbingMotor;
 
         private Vector3 restPos; //local position where your camera would rest when it's not bobbing.
         public Vector3 RestPos
@@ -57,7 +58,7 @@ namespace DaggerfallWorkshop.Game
         {
             playerMotor = GetComponent<PlayerMotor>();
             playerEnterExit = GetComponent<PlayerEnterExit>();
-            
+            climbingMotor = GetComponent<ClimbingMotor>();
             mainCamera = GameManager.Instance.MainCamera;
             restPos = mainCamera.transform.localPosition;
             
@@ -69,7 +70,8 @@ namespace DaggerfallWorkshop.Game
         {
             if (DaggerfallUnity.Settings.HeadBobbing == false ||
                 GameManager.Instance.PlayerEntity.CurrentHealth < 1 ||
-                GameManager.IsGamePaused)
+                GameManager.IsGamePaused || 
+                climbingMotor.IsClimbing)
                 return;
 
             GetBobbingStyle();
@@ -200,8 +202,13 @@ namespace DaggerfallWorkshop.Game
         {
             bool isGrounded = playerMotor.IsGrounded;
             bool isSwimming = playerEnterExit.IsPlayerSwimming;
+            bool isClimbing = climbingMotor.IsClimbing;
             float upSpeed = 1f, 
                   downSpeed = 1f;
+
+            if (isClimbing)
+                return;
+
             if (isSwimming)
             {
                 upSpeed = 0.40f;
