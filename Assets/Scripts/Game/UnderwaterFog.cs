@@ -10,7 +10,7 @@ namespace DaggerfallWorkshop.Game
         GlobalFog globalFog;
         DaggerfallSky sky;
         Camera mainCamera;
-        Color waterFogColor;
+        public Color waterFogColor { get; set; }
         private float fogDensityMin;
         private float fogDensityMax;
         public readonly FogMode originalFog = RenderSettings.fogMode;
