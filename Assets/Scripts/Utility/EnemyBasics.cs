@@ -1222,8 +1222,6 @@ namespace DaggerfallWorkshop.Utility
                 SoulPts = 250000,
             },
 
-            // TODO: Figure out weights for monsters from here onward.
-
             // Dragonling
             new MobileEnemy()
             {
@@ -1377,6 +1375,11 @@ namespace DaggerfallWorkshop.Utility
                 SoulPts = 30000,
             },
 
+            // Weights in classic (From offset 0x1BD8D9 in FALL.EXE) only have entries
+            // up through Horse. Dragonling, Dreugh and Lamia use nonsense values from
+            // the adjacent data. For Daggerfall Unity, using values inferred from
+            // other enemy types.
+
             // Horse (unused, but can appear in merchant-sold soul traps)
             new MobileEnemy()
             {
@@ -1410,6 +1413,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 MapChance = 0,
                 HitFrame = 2,
+                Weight = 10000, // Using same value as other dragonling
                 SoulPts = 500000,
             },
 
@@ -1440,6 +1444,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 MapChance = 0,
                 HitFrame = 3,
+                Weight = 600, // Using same value as orc
                 LootTableKey = "R",
                 SoulPts = 10000,
             },
@@ -1472,6 +1477,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 0,
                 LootTableKey = "R",
                 HitFrame = 4,
+                Weight = 200, // Using same value as nymph
                 SoulPts = 10000,
             },
 
