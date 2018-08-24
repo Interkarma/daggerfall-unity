@@ -23,7 +23,7 @@ public class CameraClearManager : MonoBehaviour
     public CameraClearFlags cameraClearExterior = CameraClearFlags.Depth;
     public CameraClearFlags cameraClearInterior = CameraClearFlags.Color;
     public Color cameraClearColor = Color.black;
-    public bool toggleGlobalFog = true;
+    //public bool toggleGlobalFog = true;
 
     GlobalFog globalFog;
     bool lastInside = false;
@@ -53,12 +53,13 @@ public class CameraClearManager : MonoBehaviour
                 mainCamera.backgroundColor = cameraClearColor;
                 //Debug.Log("Camera clear set to inside");
 
+                // Comment this out, We're not Unity 5.5 anymore - MeteoricDragon
                 // Disable global fog inside
                 // This fixes an issue with solid camera clear not working in Unity 5.5
-                if (toggleGlobalFog && globalFog)
-                {
-                    globalFog.enabled = false;
-                }
+                //if (toggleGlobalFog && globalFog)
+                //{
+                //    globalFog.enabled = false;
+                //}
 
                 lastInside = isInside;
             }
@@ -69,10 +70,10 @@ public class CameraClearManager : MonoBehaviour
                 //Debug.Log("Camera clear set to outside");
 
                 // Enable global fog outside
-                if (toggleGlobalFog && globalFog)
-                {
-                    globalFog.enabled = true;
-                }
+                //if (toggleGlobalFog && globalFog)
+                //{
+                //    globalFog.enabled = true;
+                //}
 
                 lastInside = isInside;
             }   

@@ -90,7 +90,8 @@ namespace DaggerfallWorkshop.Game
             {
                 // Do not allow player to swim up out of water, as he would immediately be pulled back in, making jerky movement and playing the splash sound repeatedly
                 if ((direction.y > 0) && (playerMotor.controller.transform.position.y + (50 * MeshReader.GlobalScale) - 0.93f) >=
-                (GameManager.Instance.PlayerEnterExit.blockWaterLevel * -1 * MeshReader.GlobalScale))
+                (GameManager.Instance.PlayerEnterExit.blockWaterLevel * -1 * MeshReader.GlobalScale) &&
+                !playerLevitating)
                     direction.y = 0;
 
                 Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
