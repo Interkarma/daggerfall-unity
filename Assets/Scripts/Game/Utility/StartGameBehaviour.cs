@@ -506,7 +506,8 @@ namespace DaggerfallWorkshop.Game.Utility
             }
 
             // Set whether the player's weapon is drawn
-            GameManager.Instance.WeaponManager.Sheathed = (!saveVars.WeaponDrawn);
+            WeaponManager weaponManager = GameManager.Instance.WeaponManager;
+            weaponManager.Sheathed = (!saveVars.WeaponDrawn);
 
             // Set game time
             DaggerfallUnity.Instance.WorldTime.Now.FromClassicDaggerfallTime(saveVars.GameTime);
@@ -551,6 +552,9 @@ namespace DaggerfallWorkshop.Game.Utility
 
             // Assign gold pieces
             playerEntity.GoldPieces = (int)characterRecord.ParsedData.physicalGold;
+
+            // Assign weapon hand being used
+            weaponManager.UsingRightHand = !saveVars.UsingLeftHandWeapon;
 
             // GodMode setting
             playerEntity.GodMode = saveVars.GodMode;
