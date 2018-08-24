@@ -43,15 +43,15 @@ namespace DaggerfallWorkshop.Game
         private float nodYAmount; 
         private const float bobScalar = 1.0f; // user controlled multiplier for strength of bob
 
-        float landingTimerDown;
-        float landingTimerUp;
+        float bounceTimerDown;
+        float bounceTimerUp;
         float timer = Mathf.PI / 2; //initialized as this value because this is where sin = 1. So, this will make the camera always start at the crest of the sin wave, simulating someone picking up their foot and starting to walk--you experience a bob upwards when you start walking as your foot pushes off the ground, the left and right bobs come as you walk.
         float beginTransitionTimer = 0; // timer for smoothing out beginning of headbob.
         float endTransitionTimer = 0; // timer for smoothing out end of headbob. 
         const float endTimerMax = 0.5f;
         const float beginTimerMax = Mathf.PI;
         private bool bIsStopping;
-        private bool readyToLand;
+        private bool readyToBounce;
 
         void Start()
         {
@@ -131,11 +131,11 @@ namespace DaggerfallWorkshop.Game
                     nodYAmount = 0.1f;
                     break;
                 case BobbingStyle.Swimming:
-                    // lots of swaying side to side
-                    bobXAmount = 0.02f * bobScalar;
-                    bobYAmount = 0.12f * bobScalar;
-                    nodXAmount = -0.3f;
-                    nodYAmount = -0.2f;
+                    
+                    bobXAmount = 0;
+                    bobYAmount = 0;
+                    nodXAmount = 0;
+                    nodYAmount = 0;
                     break;
                 default:
                     // error
@@ -193,37 +193,48 @@ namespace DaggerfallWorkshop.Game
                 timer = 0;
             }
 
-            applyLandingBounce(ref newPosition);
+            ApplySimpleBouncing(ref newPosition);
         }
 
-        protected void applyLandingBounce(ref Vector3 newPosition)
+        protected void ApplySimpleBouncing(ref Vector3 newPosition)
         {
-            if (!playerMotor.IsGrounded)
+            bool isGrounded = playerMotor.IsGrounded;
+            bool isSwimming = playerEnterExit.IsPlayerSwimming;
+            float upSpeed = 1f, 
+                  downSpeed = 1f;
+            if (isSwimming)
             {
-                readyToLand = true;
-                landingTimerUp = 0f;
-                landingTimerDown = 0f;
+                upSpeed = 0.40f;
+                downSpeed = 0.1f;
             }
-            else if (playerMotor.IsGrounded && readyToLand)
+
+            if ((!isGrounded || isSwimming) && !readyToBounce)
+            {
+                readyToBounce = true;
+                bounceTimerUp = 0f;
+                bounceTimerDown = 0f;
+
+            }
+            else if (readyToBounce)
             {
                 const float bounceMax = 0.17f;
                 const float timerMax = 0.10f;
                 float t;
-                // apply landing bob
-                if (landingTimerDown < timerMax)
+                // apply bob
+                if (bounceTimerDown < timerMax)
                 {
-                    landingTimerDown += Time.deltaTime;
-                    t = (landingTimerDown / timerMax);
+                    bounceTimerDown += Time.deltaTime * downSpeed;
+                    t = (bounceTimerDown / timerMax);
                     newPosition += new Vector3(newPosition.x, Mathf.Lerp(restPos.y, restPos.y - bounceMax, t)) - newPosition;
                 }
-                else if (landingTimerUp < timerMax)
+                else if (bounceTimerUp < timerMax)
                 {
-                    landingTimerUp += Time.deltaTime;
-                    t = (landingTimerUp / timerMax);
+                    bounceTimerUp += Time.deltaTime * upSpeed;
+                    t = (bounceTimerUp / timerMax);
                     newPosition += new Vector3(newPosition.x, Mathf.Lerp(restPos.y - bounceMax, restPos.y, t)) - newPosition;
                 }
                 else
-                    readyToLand = false;
+                    readyToBounce = false;
             }
         }
 
