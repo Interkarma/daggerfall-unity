@@ -76,9 +76,8 @@ namespace DaggerfallWorkshop.Game
         FadeBehaviour fadeBehaviour = null;
 
         string versionText;
-        DaggerfallFontPlus versionFont;
-        const float versionTextScale = 1.0f;
-        Vector2 versionTextScaleVector2 = new Vector2(versionTextScale, versionTextScale);
+        DaggerfallFont versionFont;
+        Vector2 versionTextScale = Vector2.one;
         float versionTextWidth;
         Color versionTextColor = new Color(0.6f, 0.6f, 0.6f, 1);
 
@@ -102,7 +101,6 @@ namespace DaggerfallWorkshop.Game
         DaggerfallPotionMakerWindow dfPotionMakerWindow;
         DaggerfallCourtWindow dfCourtWindow;
 
-        DaggerfallFontPlus fontPetrock32;
         Material sdfFontMaterial;
 
         Questing.Actions.GivePc lastPendingOfferSender = null;
@@ -312,9 +310,10 @@ namespace DaggerfallWorkshop.Game
                 sdfFontMaterial = new Material(Shader.Find(MaterialReader._DaggerfallSDFFontShaderName));
 
             // Set version text
-            versionFont = new DaggerfallFontPlus(Resources.Load<Texture2D>("Kingthings-Petrock-Light-PixelFont"), 16, 16, 32);
+            versionFont = DefaultFont;
+            versionTextScale = new Vector2(Screen.width / 320, Screen.height / 200) / 2;
             versionText = string.Format("{0} {1} {2}", VersionInfo.DaggerfallUnityProductName, VersionInfo.DaggerfallUnityStatus, VersionInfo.DaggerfallUnityVersion);
-            versionTextWidth = versionFont.GetCharacterWidth(versionText, -1, versionTextScale);
+            versionTextWidth = versionFont.GetCharacterWidth(versionText, -1, versionTextScale.x);
         }
 
         void Update()
@@ -399,7 +398,7 @@ namespace DaggerfallWorkshop.Game
                 if (ShowVersionText)
                 {
                     Vector2 versionTextPos = new Vector2(Screen.width - versionTextWidth, 0);
-                    //versionFont.DrawText(versionText, versionTextPos, versionTextScaleVector2, versionTextColor);
+                    versionFont.DrawText(versionText, versionTextPos, versionTextScale, versionTextColor);
                 }
 
                 if (customRenderTarget)
@@ -640,19 +639,6 @@ namespace DaggerfallWorkshop.Game
                     daggerfallFonts[4].FilterMode = globalFilterMode;
                     return daggerfallFonts[4];
             }
-        }
-
-        public DaggerfallFontPlus GetHQPixelFont(HQPixelFonts pixelFont)
-        {
-            switch (pixelFont)
-            {
-                case HQPixelFonts.Petrock_32:
-                    if (fontPetrock32 == null)
-                        fontPetrock32 = new DaggerfallFontPlus(Resources.Load<Texture2D>("Kingthings-Petrock-Light-PixelFont"), 16, 16, 32);
-                    return fontPetrock32;
-            }
-
-            return null;
         }
 
         public void SetDaggerfallPopupStyle(PopupStyle style, Panel panel)
