@@ -55,6 +55,8 @@ compressModdedTextures,                             Compress Modded Textures
 compressModdedTexturesInfo,                         Import textures with a compressed format which uses less graphics memory.
 nearDeathWarning,									Near Death Warning
 nearDeathWarningInfo,								Show blinking/pulsating screen effects to warn when near death.
+alternateRandomEnemySelection,						Alternate Random Enemy Selection
+alternateRandomEnemySelectionInfo,					Create random enemies in dungeons with more variability.
 
 resolution,                                         Resolution
 resolutionInfo,                                     Screen resolution

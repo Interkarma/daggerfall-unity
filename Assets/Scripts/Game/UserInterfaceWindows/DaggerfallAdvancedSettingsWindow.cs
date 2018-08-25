@@ -96,6 +96,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox assetImport;
         Checkbox compressModdedTextures;
         Checkbox nearDeathWarning;
+        Checkbox alternateRandomEnemySelection;
         HorizontalSlider cameraRecoilStrength;
 
         // Video
@@ -209,6 +210,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             assetImport = AddCheckbox(rightPanel, "assetImport", DaggerfallUnity.Settings.MeshAndTextureReplacement);
             compressModdedTextures = AddCheckbox(rightPanel, "compressModdedTextures", DaggerfallUnity.Settings.CompressModdedTextures);
             nearDeathWarning = AddCheckbox(rightPanel, "nearDeathWarning", DaggerfallUnity.Settings.NearDeathWarning);
+            alternateRandomEnemySelection = AddCheckbox(rightPanel, "alternateRandomEnemySelection", DaggerfallUnity.Settings.AlternateRandomEnemySelection);
         }
 
         private void Video(Panel leftPanel, Panel rightPanel)
@@ -289,6 +291,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.MeshAndTextureReplacement = assetImport.IsChecked;
             DaggerfallUnity.Settings.CompressModdedTextures = compressModdedTextures.IsChecked;
             DaggerfallUnity.Settings.NearDeathWarning = nearDeathWarning.IsChecked;
+            DaggerfallUnity.Settings.AlternateRandomEnemySelection = alternateRandomEnemySelection.IsChecked;
             DaggerfallUnity.Settings.CameraRecoilStrength = cameraRecoilStrength.ScrollIndex;
 
             /* Video */
