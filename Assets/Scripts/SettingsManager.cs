@@ -133,7 +133,6 @@ namespace DaggerfallWorkshop
         public bool StartInDungeon { get; set; }
 
         // [Experimental]
-        public bool HQTooltips { get; set; }
         public int TerrainDistance { get; set; }
 
         // [Enhancements]
@@ -221,7 +220,6 @@ namespace DaggerfallWorkshop
             StartCellY = GetInt(sectionStartup, "StartCellY", 2, 497);
             StartInDungeon = GetBool(sectionStartup, "StartInDungeon");
 
-            HQTooltips = GetBool(sectionExperimental, "HQTooltips");
             TerrainDistance = GetInt(sectionExperimental, "TerrainDistance", 1, 4);
 
             LypyL_GameConsole = GetBool(sectionEnhancements, "LypyL_GameConsole");
@@ -301,7 +299,6 @@ namespace DaggerfallWorkshop
             SetInt(sectionStartup, "StartCellY", StartCellY);
             SetBool(sectionStartup, "StartInDungeon", StartInDungeon);
 
-            SetBool(sectionExperimental, "HQTooltips", HQTooltips);
             SetInt(sectionExperimental, "TerrainDistance", TerrainDistance);
 
             SetBool(sectionEnhancements, "LypyL_GameConsole", LypyL_GameConsole);

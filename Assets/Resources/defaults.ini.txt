@@ -72,7 +72,6 @@ StartCellY=158
 StartInDungeon=True
 
 [Experimental]
-HQTooltips=False
 TerrainDistance=3
 
 [Enhancements]

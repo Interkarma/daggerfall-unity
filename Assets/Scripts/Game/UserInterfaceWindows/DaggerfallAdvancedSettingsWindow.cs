@@ -82,7 +82,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox startInDungeon;
         HorizontalSlider randomDungeonTextures;
         Checkbox crosshair;
-        HorizontalSlider toolTips;
+        Checkbox toolTips;
         HorizontalSlider helmAndShieldMaterialDisplay;
         Checkbox inventoryInfoPanel;
         Checkbox enhancedItemLists;
@@ -186,8 +186,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // GUI
             AddSectionTitle(leftPanel, "gui");
             crosshair = AddCheckbox(leftPanel, "crosshair", DaggerfallUnity.Settings.Crosshair);
-            int tootipMode = DaggerfallUnity.Settings.EnableToolTips ? DaggerfallUnity.Settings.HQTooltips ? 2 : 1 : 0;
-            toolTips = AddSlider(leftPanel, "toolTips", tootipMode, "Off", "On", "HQ");
+            toolTips = AddCheckbox(leftPanel, "toolTips", DaggerfallUnity.Settings.EnableToolTips);
             helmAndShieldMaterialDisplay = AddSlider(leftPanel, "helmAndShieldMaterialDisplay",
                 DaggerfallUnity.Settings.HelmAndShieldMaterialDisplay, "off", "noLeatChai", "noLeat", "on");
             inventoryInfoPanel = AddCheckbox(leftPanel, "inventoryInfoPanel", DaggerfallUnity.Settings.EnableInventoryInfoPanel); //TODO: better description
@@ -272,8 +271,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.RandomDungeonTextures = randomDungeonTextures.ScrollIndex;
 
             DaggerfallUnity.Settings.Crosshair = crosshair.IsChecked;
-            DaggerfallUnity.Settings.EnableToolTips = toolTips.ScrollIndex != 0;
-            DaggerfallUnity.Settings.HQTooltips = toolTips.ScrollIndex == 2;
+            DaggerfallUnity.Settings.EnableToolTips = toolTips.IsChecked;
             DaggerfallUnity.Settings.HelmAndShieldMaterialDisplay = helmAndShieldMaterialDisplay.ScrollIndex;
             DaggerfallUnity.Settings.EnableInventoryInfoPanel = inventoryInfoPanel.IsChecked;
             DaggerfallUnity.Settings.EnableEnhancedItemLists = enhancedItemLists.IsChecked;
