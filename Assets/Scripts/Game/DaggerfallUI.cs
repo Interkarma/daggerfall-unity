@@ -320,7 +320,7 @@ namespace DaggerfallWorkshop.Game
         void Update()
         {
             // Toggle font rendering between classic and SDF using LeftShift+F
-            if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.F))
+            if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && Input.GetKeyDown(KeyCode.F11))
             {
                 DaggerfallUnity.Settings.SDFFontRendering = !DaggerfallUnity.Settings.SDFFontRendering;
                 Debug.LogFormat("SDFFontRendering={0}", DaggerfallUnity.Settings.SDFFontRendering.ToString());
