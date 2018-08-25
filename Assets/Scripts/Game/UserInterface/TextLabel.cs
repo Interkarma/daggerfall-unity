@@ -282,18 +282,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Classic font rendering will eventually be replaced by a shader
             // using the same layout methods as SDF font rendering
             if (!wrapText)
-                CreateLabelTextureSingleLine();
-            else
-                CreateLabelTextureWrapped();
-
-            // SDF fonts get another step during development
-            // Ideally all label layouts can be unified
-            if (font.IsSDFCapable && !wrapText)
             {
+                CreateLabelTextureSingleLine();
                 CreateNewLabelLayoutSingleLine();
             }
-            else if (font.IsSDFCapable && wrapText)
+            else
             {
+                CreateLabelTextureWrapped();
                 CreateNewLabelLayoutWrapped();
             }
         }

@@ -361,9 +361,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             ImageProcessing.CreateFontAtlas(fntFile, Color.clear, Color.white, out atlasTexture, out atlasRects);
             atlasTexture.filterMode = FilterMode;
 
-            // Try to load an SDF font variant
-            if (DaggerfallUnity.Settings.SDFFontRendering)
-                TryLoadSDFFont();
+            // Load an SDF font variant if one is available
+            TryLoadSDFFont();
 
             return true;
         }
