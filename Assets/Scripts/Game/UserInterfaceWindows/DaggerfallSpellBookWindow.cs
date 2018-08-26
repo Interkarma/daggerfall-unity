@@ -10,10 +10,13 @@
 //
 
 using UnityEngine;
+using System.IO;
+using System.Collections.Generic;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Utility;
+using DaggerfallConnect.Save;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -29,7 +32,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Rect mainPanelRect = new Rect(0, 0, 259, 164);
         Rect spellsListBoxRect = new Rect(5, 13, 110, 130);
-        Rect deleteButtonRect = new Rect(3, 152, 38, 9);
+        Rect deleteOrBuyButtonRect = new Rect(3, 152, 38, 9);
         //Rect upButtonRect = new Rect(48, 152, 38, 9);
         //Rect downButtonRect = new Rect(132, 152, 38, 9);
         //Rect sortButtonRect = new Rect(90, 152, 38, 9);
@@ -59,6 +62,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Button exitButton;
         Button deleteButton;
+        Button buyButton;
         //Button downButton;
         //Button upButton;
         //Button sortButton;
@@ -81,6 +85,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         const string textDatabase = "SpellmakerUI";
         const string spellBookTextureFilename = "SPBK00I0.IMG";
+        const string spellBookBuyModeTextureFilename = "SPBK01I0.IMG";
+        const string spellsFilename = "SPELLS.STD";
 
         const SoundClips openSpellBook = SoundClips.OpenBook;
         const SoundClips closeSpellBook = SoundClips.PageTurn;
@@ -88,6 +94,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool buyMode = false;
         int deleteSpellIndex = -1;
         KeyCode toggleClosedBinding;
+
+        List<SpellRecord.SpellRecordData> standardSpells = null;
 
         #endregion
 
@@ -145,9 +153,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void SetDefaults()
         {
             // Set spell points label
-            int curSpellPoints = GameManager.Instance.PlayerEntity.CurrentMagicka;
-            int maxSpellPoints = GameManager.Instance.PlayerEntity.MaxMagicka;
-            spellPointsLabel.Text = string.Format("{0}/{1}", curSpellPoints, maxSpellPoints);
+            if (!buyMode)
+            {
+                int curSpellPoints = GameManager.Instance.PlayerEntity.CurrentMagicka;
+                int maxSpellPoints = GameManager.Instance.PlayerEntity.MaxMagicka;
+                spellPointsLabel.Text = string.Format("{0}/{1}", curSpellPoints, maxSpellPoints);
+            }
 
             // Default selected spell info
             spellNameLabel.Text = string.Empty;
@@ -174,19 +185,37 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Clear existing list
             spellsListBox.ClearItems();
 
-            // TODO: Display available spells when in buy mode
-
-            // Add player spells to list
-            EffectBundleSettings[] spellbook = GameManager.Instance.PlayerEntity.GetSpells();
-            if (spellbook != null)
+            // Add spells based on mode
+            if (buyMode)
             {
-                for (int i = 0; i < spellbook.Length; i++)
+                // Load spells for sale
+                standardSpells = DaggerfallSpellReader.ReadSpellsFile(Path.Combine(DaggerfallUnity.Arena2Path, spellsFilename));
+                if (standardSpells == null || standardSpells.Count == 0)
                 {
-                    // Show spell name and cost
-                    // Costs can change based on player skills and stats so must be calculated each time
-                    int goldCost, spellPointCost;
-                    FormulaHelper.CalculateTotalEffectCosts(spellbook[i].Effects, spellbook[i].TargetType, out goldCost, out spellPointCost);
-                    spellsListBox.AddItem(string.Format("{0} - {1}", spellPointCost, spellbook[i].Name));
+                    Debug.LogError("Failed to load SPELLS.STD for spellbook in buy mode.");
+                    return;
+                }
+
+                for (int i = 0; i < standardSpells.Count; i++)
+                {
+                    // Just list spell name for now
+                    spellsListBox.AddItem(standardSpells[i].spellName);
+                }
+            }
+            else
+            {
+                // Add player spells to list
+                EffectBundleSettings[] spellbook = GameManager.Instance.PlayerEntity.GetSpells();
+                if (spellbook != null)
+                {
+                    for (int i = 0; i < spellbook.Length; i++)
+                    {
+                        // Show spell name and cost
+                        // Costs can change based on player skills and stats so must be calculated each time
+                        int goldCost, spellPointCost;
+                        FormulaHelper.CalculateTotalEffectCosts(spellbook[i].Effects, spellbook[i].TargetType, out goldCost, out spellPointCost);
+                        spellsListBox.AddItem(string.Format("{0} - {1}", spellPointCost, spellbook[i].Name));
+                    }
                 }
             }
         }
@@ -197,7 +226,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void LoadTextures()
         {
-            baseTexture = DaggerfallUI.GetTextureFromImg(spellBookTextureFilename);
+            if (!buyMode)
+                baseTexture = DaggerfallUI.GetTextureFromImg(spellBookTextureFilename);
+            else
+                baseTexture = DaggerfallUI.GetTextureFromImg(spellBookBuyModeTextureFilename);
         }
 
         void SetupMain()
@@ -250,12 +282,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void SetupButtons()
         {
             // Bottom row buttons
-            deleteButton = DaggerfallUI.AddButton(deleteButtonRect, mainPanel);
-            deleteButton.OnMouseClick += DeleteButton_OnMouseClick;
+            if (!buyMode)
+            {
+                deleteButton = DaggerfallUI.AddButton(deleteOrBuyButtonRect, mainPanel);
+                deleteButton.OnMouseClick += DeleteButton_OnMouseClick;
 
-            //upButton = DaggerfallUI.AddButton(upButtonRect, mainPanel);
-            //sortButton = DaggerfallUI.AddButton(sortButtonRect, mainPanel);
-            //downButton = DaggerfallUI.AddButton(downButtonRect, mainPanel);
+                //upButton = DaggerfallUI.AddButton(upButtonRect, mainPanel);
+                //sortButton = DaggerfallUI.AddButton(sortButtonRect, mainPanel);
+                //downButton = DaggerfallUI.AddButton(downButtonRect, mainPanel);
+            }
+            else
+            {
+                buyButton = DaggerfallUI.AddButton(deleteOrBuyButtonRect, mainPanel);
+                //buyButton.OnMouseClick += ;
+            }
 
             exitButton = DaggerfallUI.AddButton(exitButtonRect, mainPanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
@@ -291,8 +331,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             spellNameLabel.OnMouseClick += SpellNameLabel_OnMouseClick;
 
             // Spell points
-            spellPointsLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, spellPointsLabelPos, string.Empty, mainPanel);
-            spellPointsLabel.ShadowColor = DaggerfallUI.DaggerfallAlternateShadowColor1;
+            if (!buyMode)
+            {
+                spellPointsLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, spellPointsLabelPos, string.Empty, mainPanel);
+                spellPointsLabel.ShadowColor = DaggerfallUI.DaggerfallAlternateShadowColor1;
+            }
 
             // Effect labels
             spellEffectLabels = new TextLabel[spellEffectPanels.Length * 2];
