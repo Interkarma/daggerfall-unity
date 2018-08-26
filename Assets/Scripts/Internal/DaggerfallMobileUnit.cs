@@ -50,7 +50,9 @@ namespace DaggerfallWorkshop
         float enemyFacingAngle;
         int lastOrientation;
         int currentFrame;
-        int lastFrameAnimated;
+        int frameIterator;
+        bool doMeleeDamage = false;
+        bool shootArrow = false;
         bool restartAnims = true;
         bool freezeAnims = false;
 
@@ -64,9 +66,16 @@ namespace DaggerfallWorkshop
             get { return currentFrame; }
         }
 
-        public int LastFrameAnimated
+        public bool DoMeleeDamage
         {
-            get { return lastFrameAnimated; }
+            get { return doMeleeDamage; }
+            set { doMeleeDamage = value; }
+        }
+
+        public bool ShootArrow
+        {
+            get { return shootArrow; }
+            set { shootArrow = value; }
         }
 
         public bool FreezeAnims
@@ -88,6 +97,7 @@ namespace DaggerfallWorkshop
             public MobileAnimation[] StateAnims;                // Animation frames for this state
             public EnemyImportedTextures ImportedTextures;      // Textures imported from mods
             public int AnimStateRecord;                         // Record number of animation state
+            public int[] StateAnimFrames;                       // Sequence of frames to play for this animation. Used for attacks
         }
 
         void Start()
@@ -225,6 +235,47 @@ namespace DaggerfallWorkshop
         {
             // Get state animations
             summary.StateAnims = GetStateAnims(summary.EnemyState);
+            if (summary.EnemyState == MobileStates.PrimaryAttack)
+            {
+                int random = UnityEngine.Random.Range(1, 101);
+
+                if (random <= summary.Enemy.ChanceForAttack2)
+                    summary.StateAnimFrames = summary.Enemy.PrimaryAttackAnimFrames2;
+                else
+                {
+                    random -= summary.Enemy.ChanceForAttack2;
+                    if (random <= summary.Enemy.ChanceForAttack3)
+                        summary.StateAnimFrames = summary.Enemy.PrimaryAttackAnimFrames3;
+                    else
+                    {
+                        random -= summary.Enemy.ChanceForAttack3;
+                        if (random <= summary.Enemy.ChanceForAttack4)
+                            summary.StateAnimFrames = summary.Enemy.PrimaryAttackAnimFrames4;
+                        else
+                        {
+                            random -= summary.Enemy.ChanceForAttack4;
+                            if (random <= summary.Enemy.ChanceForAttack5)
+                                summary.StateAnimFrames = summary.Enemy.PrimaryAttackAnimFrames5;
+                            else
+                                summary.StateAnimFrames = summary.Enemy.PrimaryAttackAnimFrames;
+                        }
+                    }
+                }
+
+                // Set to the first frame of this animation, and prepare frameIterator to start from the second frame when AnimateEnemy() next runs
+                currentFrame = summary.StateAnimFrames[0];
+                frameIterator = 1;
+            }
+
+            if (summary.EnemyState == MobileStates.RangedAttack1 || summary.EnemyState == MobileStates.RangedAttack2)
+            {
+                summary.StateAnimFrames = summary.Enemy.RangedAttackAnimFrames;
+
+                // Set to the first frame of this animation, and prepare frameIterator to start from the second frame when AnimateEnemy() next runs
+                currentFrame = summary.StateAnimFrames[0];
+                frameIterator = 1;
+            }
+
             if (summary.StateAnims == null)
             {
                 // Log error message
@@ -393,9 +444,37 @@ namespace DaggerfallWorkshop
                     // Update enemy and fps
                     OrientEnemy(lastOrientation);
                     fps = summary.StateAnims[lastOrientation].FramePerSecond;
+
+                    bool doingAttackAnimation = (summary.EnemyState == MobileStates.PrimaryAttack ||
+                        summary.EnemyState == MobileStates.RangedAttack1 ||
+                        summary.EnemyState == MobileStates.RangedAttack2);
+
+                    // Reset to idle if frameIterator has finished. Used for attack animations.
+                    if (doingAttackAnimation && frameIterator >= summary.StateAnimFrames.Length)
+                    {
+                        ChangeEnemyState(MobileStates.Idle);
+                        frameIterator = 0;
+                    }
+
                     // Step frame
-                    lastFrameAnimated = currentFrame;
-                    currentFrame++;
+                    if (!doingAttackAnimation)
+                        currentFrame++;
+                    else // Attack animation
+                    {
+                        currentFrame = summary.StateAnimFrames[frameIterator++];
+
+                        // Set boolean if frame to attempt to apply damage or shoot arrow is encountered, and proceed to next frame if it exists
+                        if (currentFrame == -1)
+                        {
+                            if (summary.EnemyState == MobileStates.PrimaryAttack)
+                                doMeleeDamage = true;
+                            else if (summary.EnemyState == MobileStates.RangedAttack1 || summary.EnemyState == MobileStates.RangedAttack2)
+                                shootArrow = true;
+
+                            if (frameIterator < summary.StateAnimFrames.Length)
+                                currentFrame = summary.StateAnimFrames[frameIterator++];
+                        }
+                    }
 
                     if (currentFrame >= summary.StateAnims[lastOrientation].NumFrames)
                     {

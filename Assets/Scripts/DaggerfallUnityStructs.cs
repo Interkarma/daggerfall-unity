@@ -204,11 +204,20 @@ namespace DaggerfallWorkshop
         public bool ParrySounds;                    // Plays parry sounds when attacks against this enemy miss
         public int MapChance;                       // Chance of having a map
         public string LootTableKey;                 // Key to use when generating loot
-        public int HitFrame;                        // Frame of attack animation at which hit on target is attempted
         public int Weight;                          // Weight of this enemy. Affects chance of being knocked back by a hit.
         public bool CastsMagic;                     // Whether this enemy casts magic. Only used for enemy classes.
         public bool SeesThroughInvisibility;        // Whether this enemy sees through the shade, chameleon and invisibility effects.
         public int SoulPts;                         // Number of enchantment points in a trapped soul of this enemy
+        public int[] PrimaryAttackAnimFrames;       // Animation sequence to play when doing primary attack
+        public int ChanceForAttack2;                // Chance to use PrimaryAttackAnimFrames2 for an attack
+        public int[] PrimaryAttackAnimFrames2;      // Alternate animation sequence to play when doing primary attack
+        public int ChanceForAttack3;                // Chance to use PrimaryAttackAnimFrames3 for an attack
+        public int[] PrimaryAttackAnimFrames3;      // Alternate animation sequence to play when doing primary attack
+        public int ChanceForAttack4;                // Chance to use PrimaryAttackAnimFrames3 for an attack
+        public int[] PrimaryAttackAnimFrames4;      // Alternate animation sequence to play when doing primary attack
+        public int ChanceForAttack5;                // Chance to use PrimaryAttackAnimFrames3 for an attack
+        public int[] PrimaryAttackAnimFrames5;      // Alternate animation sequence to play when doing primary attack
+        public int[] RangedAttackAnimFrames;        // Animation sequence to play when doing bow & arrow attack
     }
 
     /// <summary>
