@@ -316,10 +316,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     uiManager.PushWindow(DaggerfallUI.Instance.DfPotionMakerWindow);
                     break;
 
-/*                case GuildServices.BuySpells:
-                    uiManager.PushWindow(new DaggerfallBankingWindow(uiManager, this));
+                case GuildServices.BuySpells:
+                    CloseWindow();
+                    uiManager.PushWindow(new DaggerfallSpellBookWindow(uiManager, this, true));
                     break;
-*/
+
                 case GuildServices.MakeSpells:
                     CloseWindow();
                     uiManager.PushWindow(DaggerfallUI.Instance.DfSpellMakerWindow);

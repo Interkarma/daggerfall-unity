@@ -85,17 +85,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const SoundClips openSpellBook = SoundClips.OpenBook;
         const SoundClips closeSpellBook = SoundClips.PageTurn;
 
+        bool buyMode = false;
         int deleteSpellIndex = -1;
-
         KeyCode toggleClosedBinding;
 
         #endregion
 
         #region Constructors
 
-        public DaggerfallSpellBookWindow(IUserInterfaceManager uiManager, DaggerfallBaseWindow previous = null)
+        public DaggerfallSpellBookWindow(IUserInterfaceManager uiManager, DaggerfallBaseWindow previous = null, bool buyMode = false)
             : base(uiManager, previous)
         {
+            this.buyMode = buyMode;
         }
 
         #endregion
@@ -173,6 +174,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Clear existing list
             spellsListBox.ClearItems();
 
+            // TODO: Display available spells when in buy mode
+
             // Add player spells to list
             EffectBundleSettings[] spellbook = GameManager.Instance.PlayerEntity.GetSpells();
             if (spellbook != null)
@@ -240,6 +243,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             spellEffectPanels[2] = DaggerfallUI.AddPanel(effect3PanelRect, mainPanel);
             spellEffectPanels[2].Name = "effect3Panel";
             spellEffectPanels[2].OnMouseClick += SpellEffectPanelClick;
+
+            // TODO: Prepare UI for spell buy mode
         }
 
         void SetupButtons()
