@@ -548,7 +548,6 @@ namespace DaggerfallWorkshop.Utility
                 },
             },
 
-            /*
             // Cemetery - Index18
             new RandomEncounterTable()
             {
@@ -579,8 +578,8 @@ namespace DaggerfallWorkshop.Utility
                     MobileTypes.Rogue,
                 },
             },
-            */
 
+            /*
             // Cemetery - DF Unity version
             new RandomEncounterTable()
             {
@@ -599,7 +598,7 @@ namespace DaggerfallWorkshop.Utility
                     MobileTypes.VampireAncient,
                     MobileTypes.Lich,
                 },
-            },
+            },*/
 
             // Underwater - Index19
             new RandomEncounterTable()
