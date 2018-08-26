@@ -158,8 +158,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (shadowPosition != Vector2.zero)
             {
                 Rect shadowRect = targetRect;
-                shadowRect.x += shadowPosition.x / 2;           // Shadow position also hacked by half as classic offset scale too much for smoother fonts
-                shadowRect.y += shadowPosition.y / 2;
+                shadowRect.x += shadowPosition.x;
+                shadowRect.y += shadowPosition.y;
                 DrawClassicGlyph(rawAscii, shadowRect, shadowColor);
             }
 
@@ -361,6 +361,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 throw new Exception(invalidAsciiCode + ascii);
 
             glyphs.Remove(ascii);
+        }
+
+        public Material GetMaterial()
+        {
+            return (IsSDFCapable) ? DaggerfallUI.Instance.SDFFontMaterial : DaggerfallUI.Instance.PixelFontMaterial;
         }
 
         #endregion

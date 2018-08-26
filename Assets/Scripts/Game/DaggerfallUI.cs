@@ -328,7 +328,8 @@ namespace DaggerfallWorkshop.Game
             if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && Input.GetKeyDown(KeyCode.F11))
             {
                 DaggerfallUnity.Settings.SDFFontRendering = !DaggerfallUnity.Settings.SDFFontRendering;
-                Debug.LogFormat("SDFFontRendering={0}", DaggerfallUnity.Settings.SDFFontRendering.ToString());
+                DaggerfallUnity.Settings.SaveSettings();
+                //Debug.LogFormat("SDFFontRendering={0}", DaggerfallUnity.Settings.SDFFontRendering.ToString());
             }
 
             // HUD is always first window on stack when ready
