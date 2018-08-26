@@ -132,7 +132,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #endregion
 
-        #region Public Methods
+        #region Glyph Rendering
 
         public int GetSDFGlyphWidth(int ascii)
         {
@@ -147,36 +147,74 @@ namespace DaggerfallWorkshop.Game.UserInterface
             return (int)(atlasRect.width * sdfGlyphDimension);
         }
 
-        /// <summary>
-        /// Draws a single glyph using SDF shader to current render target inside target rect area.
-        /// Does nothing if this font is not SDF capable or SDF support disabled in settings.
-        /// Also ignores out of range ASCII character as nothing to draw.
-        /// </summary>
-        public void DrawSDF(byte rawAscii, Rect targetRect, Color color)
+        void DrawClassicGlyph(byte rawAscii, Rect targetRect, Color color)
         {
-            if (IsSDFCapable && rawAscii >= asciiStart)
-            {
-                int glyphWidth = GetGlyphWidth(rawAscii);
-                Rect atlasRect = sdfAtlasRects[rawAscii - asciiStart];
-                Graphics.DrawTexture(targetRect, sdfAtlasTexture, atlasRect, 0, 0, 0, 0, color, DaggerfallUI.Instance.SDFFontMaterial);
-            }
+            Rect atlasRect = atlasRects[rawAscii - asciiStart];
+            Graphics.DrawTexture(targetRect, atlasTexture, atlasRect, 0, 0, 0, 0, color, DaggerfallUI.Instance.PixelFontMaterial);
         }
 
-        /// <summary>
-        /// Draws SDF glyph with extra call for shadow.
-        /// This is just a quick hack - should be done in shader.
-        /// </summary>
-        public void DrawSDFGlyph(byte rawAscii, Rect targetRect, Color color, Vector2 shadowPosition, Color shadowColor)
+        void DrawClassicGlyphWithShadow(byte rawAscii, Rect targetRect, Color color, Vector2 shadowPosition, Color shadowColor)
         {
             if (shadowPosition != Vector2.zero)
             {
                 Rect shadowRect = targetRect;
                 shadowRect.x += shadowPosition.x / 2;           // Shadow position also hacked by half as classic offset scale too much for smoother fonts
                 shadowRect.y += shadowPosition.y / 2;
-                DrawSDF(rawAscii, shadowRect, shadowColor);
+                DrawClassicGlyph(rawAscii, shadowRect, shadowColor);
             }
 
-            DrawSDF(rawAscii, targetRect, color);            
+            DrawClassicGlyph(rawAscii, targetRect, color);
+        }
+
+        void DrawSDFGlyph(byte rawAscii, Rect targetRect, Color color)
+        {
+            Rect atlasRect = sdfAtlasRects[rawAscii - asciiStart];
+            Graphics.DrawTexture(targetRect, sdfAtlasTexture, atlasRect, 0, 0, 0, 0, color, DaggerfallUI.Instance.SDFFontMaterial);
+        }
+
+        void DrawSDFGlyphWithShadow(byte rawAscii, Rect targetRect, Color color, Vector2 shadowPosition, Color shadowColor)
+        {
+            if (shadowPosition != Vector2.zero)
+            {
+                Rect shadowRect = targetRect;
+                shadowRect.x += shadowPosition.x / 2;           // Shadow position also hacked by half as classic offset scale too much for smoother fonts
+                shadowRect.y += shadowPosition.y / 2;
+                DrawSDFGlyph(rawAscii, shadowRect, shadowColor);
+            }
+
+            DrawSDFGlyph(rawAscii, targetRect, color);
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Draws a glyph.
+        /// </summary>
+        public void DrawGlyph(byte rawAscii, Rect targetRect, Color color)
+        {
+            if (rawAscii < asciiStart)
+                return;
+
+            if (IsSDFCapable)
+                DrawSDFGlyph(rawAscii, targetRect, color);
+            else
+                DrawClassicGlyph(rawAscii, targetRect, color);
+        }
+
+        /// <summary>
+        /// Draws a glyph with a drop-shadow.
+        /// </summary>
+        public void DrawGlyph(byte rawAscii, Rect targetRect, Color color, Vector2 shadowPosition, Color shadowColor)
+        {
+            if (rawAscii < asciiStart)
+                return;
+
+            if (IsSDFCapable)
+                DrawSDFGlyphWithShadow(rawAscii, targetRect, color, shadowPosition, shadowColor);
+            else
+                DrawClassicGlyphWithShadow(rawAscii, targetRect, color, shadowPosition, shadowColor);
         }
 
         /// <summary>
@@ -213,21 +251,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     {
                         // Draw using SDF shader
                         Rect rect = new Rect(x, y, glyph.width * scale.x + GlyphSpacing * scale.x, GlyphHeight * scale.y);
-                        DrawSDF(asciiBytes[i], rect, color);
+                        DrawSDFGlyph(asciiBytes[i], rect, color);
                         x += rect.width;
                     }
                     else
                     {
-                        // Fallback to normal rendering
+                        // Draw using pixel font shader
                         Rect rect = new Rect(x, y, glyph.width * scale.x, GlyphHeight * scale.y);
-
-                        Color guiColor = GUI.color;
-
-                        GUI.color = color;
-                        GUI.DrawTextureWithTexCoords(rect, atlasTexture, atlasRects[asciiBytes[i] - asciiStart]);
-
-                        GUI.color = guiColor;
-
+                        DrawClassicGlyph(asciiBytes[i], rect, color);
                         x += rect.width + GlyphSpacing * scale.x;
                     }
                 }

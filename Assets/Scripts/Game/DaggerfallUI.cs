@@ -101,6 +101,7 @@ namespace DaggerfallWorkshop.Game
         DaggerfallPotionMakerWindow dfPotionMakerWindow;
         DaggerfallCourtWindow dfCourtWindow;
 
+        Material pixelFontMaterial;
         Material sdfFontMaterial;
 
         Questing.Actions.GivePc lastPendingOfferSender = null;
@@ -120,6 +121,7 @@ namespace DaggerfallWorkshop.Game
         
         public static IUserInterfaceManager UIManager { get { return Instance.uiManager; } }
 
+        public Material PixelFontMaterial { get { return pixelFontMaterial; } set { pixelFontMaterial = value; } }
         public Material SDFFontMaterial { get { return sdfFontMaterial; } set { sdfFontMaterial = value; } }
 
         public UserInterfaceRenderTarget CustomRenderTarget
@@ -304,6 +306,10 @@ namespace DaggerfallWorkshop.Game
 
             // Load spell icon collection
             spellIconCollection = new SpellIconCollection();
+
+            // Create standard pixel font material
+            if (pixelFontMaterial == null)
+                pixelFontMaterial = new Material(Shader.Find(MaterialReader._DaggerfallPixelFontShaderName));
 
             // Create SDF font material
             if (sdfFontMaterial == null)

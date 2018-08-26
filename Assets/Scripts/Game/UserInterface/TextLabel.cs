@@ -268,7 +268,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 // This has the effect of keeping glyphs a bit closer together while using the exact screen rect allowed
                 targetRect.width += font.GlyphSpacing * LocalScale.x * textScale;
 
-                font.DrawSDFGlyph(glyphLayout.glyphRawAscii, targetRect, textColor, shadowPosition * LocalScale, shadowColor);
+                font.DrawGlyph(glyphLayout.glyphRawAscii, targetRect, textColor, shadowPosition * LocalScale, shadowColor);
             }
         }
 
