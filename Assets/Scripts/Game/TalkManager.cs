@@ -360,6 +360,7 @@ namespace DaggerfallWorkshop.Game
             public RumorType rumorType;            
             public List<TextFile.Token[]> listRumorVariants;
             public ulong questID; // questID used for RumorType::QuestProgressRumor and RumorType::QuestRumorMill, otherwise not set
+            public ulong timeLimit; // Classic game minute after which this rumor expires
         }
         // list of rumors in rumor mill
         List<RumorMillEntry> listRumorMill = new List<RumorMillEntry>();
@@ -2231,6 +2232,46 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        public void ImportClassicRumor(RumorFile.DaggerfallRumor rumor)
+        {
+            if (listRumorMill == null)
+                listRumorMill = new List<RumorMillEntry>();
+
+            RumorMillEntry entry = new RumorMillEntry();
+
+            TextFile.Token[] tokens = TextFile.ReadTokens(ref rumor.RumorText, 0, TextFile.Formatting.EndOfRecord);
+
+            if ((rumor.Flags & 4) != 0) // A quest rumor, don't import for now
+                return;
+
+            if ((rumor.Flags & 1) != 0) // A sign message, don't import for now
+                return;
+
+            if (rumor.NPCID != 0) // A post-quest greeting specific to a particular NPC. Don't import for now.
+                return;
+
+            entry.rumorType = RumorType.CommonRumor;
+            entry.listRumorVariants = new List<TextFile.Token[]>();
+            entry.listRumorVariants.Add(tokens);
+
+            listRumorMill.Add(entry);
+        }
+
+        public void AddCommonRumor(int textID)
+        {
+            if (listRumorMill == null)
+                listRumorMill = new List<RumorMillEntry>();
+            RumorMillEntry entry = new RumorMillEntry();
+
+            TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(textID);
+
+            entry.rumorType = RumorType.CommonRumor;
+            entry.listRumorVariants = new List<TextFile.Token[]>();
+            entry.listRumorVariants.Add(tokens);
+            entry.timeLimit = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() + 43140;
+
+            listRumorMill.Add(entry);
+        }
 
         private void SetupRumorMill()
         {

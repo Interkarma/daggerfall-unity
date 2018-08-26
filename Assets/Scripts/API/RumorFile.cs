@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -52,7 +52,7 @@ namespace DaggerfallConnect.Arena2
             AllianceSignMessage = 26,
             EnemySignMessage = 27,
             WarSignMessage = 28,
-            Various = 100,
+            FactionRumor = 100,
         }
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace DaggerfallConnect.Arena2
             public uint NPCID;
             public uint TextLength;
             public uint TimeLimit;
-            public string RumorText;
+            public byte[] RumorText;
         }
         #endregion
 
@@ -153,8 +153,7 @@ namespace DaggerfallConnect.Arena2
                 rumor.NPCID = reader.ReadUInt32();
                 rumor.TextLength = reader.ReadUInt32();
                 rumor.TimeLimit = reader.ReadUInt32();
-                rumor.RumorText = managedFile.ReadCString((int)reader.BaseStream.Position, (int)rumor.TextLength);
-                reader.BaseStream.Position += rumor.TextLength;
+                rumor.RumorText = reader.ReadBytes((int)rumor.TextLength);
 
                 rumors.Add(rumor);
             }
