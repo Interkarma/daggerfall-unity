@@ -61,47 +61,58 @@ namespace DaggerfallWorkshop.Game
             // Cancel levitate movement if player is paralyzed
             if (GameManager.Instance.PlayerEntity.IsParalyzed)
                 return;
-
+            Vector3 wasdDirection = Vector3.zero;
             // Forward/backwards
             if (InputManager.Instance.HasAction(InputManager.Actions.MoveForwards))
-                Move(playerCamera.transform.forward);
+                wasdDirection += (playerCamera.transform.forward);
             else if (InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards))
-                Move(-playerCamera.transform.forward);
+                wasdDirection -= (playerCamera.transform.forward);
 
             // Right/left
             if (InputManager.Instance.HasAction(InputManager.Actions.MoveRight))
-                Move(playerCamera.transform.right);
+                wasdDirection += (playerCamera.transform.right);
             else if (InputManager.Instance.HasAction(InputManager.Actions.MoveLeft))
-                Move(-playerCamera.transform.right);
+                wasdDirection -= (playerCamera.transform.right);
 
             // Up/down
-            Vector3 upDownVector = new Vector3 (0, 0, 0);
+            Vector3 upDownDirection = Vector3.zero;
             if (InputManager.Instance.HasAction(InputManager.Actions.Jump) || InputManager.Instance.HasAction(InputManager.Actions.FloatUp))
-                upDownVector = upDownVector + Vector3.up;
+                upDownDirection += Vector3.up;
             if (InputManager.Instance.HasAction(InputManager.Actions.Crouch) || InputManager.Instance.HasAction(InputManager.Actions.FloatDown) ||
                 GameManager.Instance.PlayerEnterExit.IsPlayerSwimming && (GameManager.Instance.PlayerEntity.CarriedWeight * 4) > 250)
-                upDownVector = upDownVector + Vector3.down;
-            Move(upDownVector, true);
+                upDownDirection += Vector3.down;
+
+            Move(wasdDirection, upDownDirection);
         }
 
-        void Move(Vector3 direction, bool upOrDown = false)
+        void Move(Vector3 wasdDirection, Vector3 crouchJumpDirection)
         {
             if (playerSwimming)
             {
                 // Do not allow player to swim up out of water, as he would immediately be pulled back in, making jerky movement and playing the splash sound repeatedly
-                if ((direction.y > 0) && (playerMotor.controller.transform.position.y + (50 * MeshReader.GlobalScale) - 0.93f) >=
+                if ((wasdDirection.y > 0) && (playerMotor.controller.transform.position.y + (50 * MeshReader.GlobalScale) - 0.93f) >=
                 (GameManager.Instance.PlayerEnterExit.blockWaterLevel * -1 * MeshReader.GlobalScale) &&
                 !playerLevitating)
-                    direction.y = 0;
+                    wasdDirection.y = 0;
 
                 Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
                 float baseSpeed = speedChanger.GetBaseSpeed();
                 moveSpeed = speedChanger.GetSwimSpeed(baseSpeed);
             }
 
+            Vector3 wasdFormula = wasdDirection * moveSpeed * Time.deltaTime;
             // There's a fixed speed for up/down movement
-            if (upOrDown)
-                moveSpeed = 80f / PlayerSpeedChanger.classicToUnitySpeedUnitRatio;
+            Vector3 crouchJumpFormula = crouchJumpDirection * 80f / PlayerSpeedChanger.classicToUnitySpeedUnitRatio * Time.deltaTime;
+            Vector3 FinalVector = wasdFormula;
+
+            // use whatever y value is greater for y magnitude
+            if (crouchJumpDirection.y > 0)
+                FinalVector.y = Mathf.Max(FinalVector.y, crouchJumpFormula.y);
+            else if (crouchJumpDirection.y < 0)
+                FinalVector.y = Mathf.Min(FinalVector.y, crouchJumpFormula.y);
+
+            playerMotor.controller.Move(FinalVector);
+
 
             collisionFlags = playerMotor.controller.Move(direction * moveSpeed * Time.deltaTime);
             // Reset to levitate speed in case it has been changed by swimming
