@@ -235,12 +235,7 @@ namespace DaggerfallWorkshop.Game
 
             acrobatMotor.ApplyGravity(ref moveDirection);
 
-            // If we hit something above us AND we are moving up, reverse vertical movement
-            if ((controller.collisionFlags & CollisionFlags.Above) != 0)
-            {
-                if (moveDirection.y > 0)
-                    moveDirection.y = -moveDirection.y;
-            }
+            acrobatMotor.BumpHeadRebound(ref moveDirection);
 
             groundMotor.MoveOnGround(moveDirection, ref grounded);
         }

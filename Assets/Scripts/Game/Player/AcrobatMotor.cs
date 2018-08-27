@@ -13,6 +13,7 @@ namespace DaggerfallWorkshop.Game
         public bool airControl = false;
 
         PlayerMotor playerMotor;
+        CharacterController controller;
         FrictionMotor frictionMotor;
         Transform myTransform;
 
@@ -36,6 +37,7 @@ namespace DaggerfallWorkshop.Game
         {
             playerMotor = GetComponent<PlayerMotor>();
             frictionMotor = GetComponent<FrictionMotor>();
+            controller = GetComponent<CharacterController>();
             myTransform = playerMotor.transform;
         }
 
@@ -101,6 +103,16 @@ namespace DaggerfallWorkshop.Game
             {
                 falling = true;
                 fallStartLevel = myTransform.position.y;
+            }
+        }
+
+        public void BumpHeadRebound(ref Vector3 moveDirection)
+        {
+            // If we hit something above us AND we are moving up, reverse vertical movement
+            if ((controller.collisionFlags & CollisionFlags.Above) != 0)
+            {
+                if (moveDirection.y > 0)
+                    moveDirection.y = -moveDirection.y;
             }
         }
 
