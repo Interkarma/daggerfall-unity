@@ -9,7 +9,7 @@ namespace DaggerfallWorkshop.Game
     //[RequireComponent(typeof(PlayerMotor))]
     public class PlayerGroundMotor : MonoBehaviour
     {
-        //private PlayerMotor playerMotor;
+        private PlayerMotor playerMotor;
         private CharacterController controller;
         // Moving platform support
         Transform activePlatform;
@@ -27,7 +27,7 @@ namespace DaggerfallWorkshop.Game
 
         private void Start()
         {
-            //playerMotor = GameManager.Instance.PlayerMotor;
+            playerMotor = GameManager.Instance.PlayerMotor;
             controller = GetComponent<CharacterController>();
         }
 
@@ -45,9 +45,8 @@ namespace DaggerfallWorkshop.Game
         /// Moves the player on solid ground & floating platforms.
         /// </summary>
         /// <param name="moveDirection">the vector the player should move to</param>
-        /// <param name="collisionFlags"></param>
         /// <param name="grounded">Is the player grounded?</param>
-        public void MoveOnGround(Vector3 moveDirection, ref CollisionFlags collisionFlags, ref bool grounded)
+        public void MoveOnGround(Vector3 moveDirection, ref bool grounded)
         {
             // Moving platform support
             if (activePlatform != null)
@@ -76,9 +75,9 @@ namespace DaggerfallWorkshop.Game
             activePlatform = null;
 
             // Move the controller, and set grounded true or false depending on whether we're standing on something
-            collisionFlags = controller.Move(moveDirection * Time.deltaTime);
-
-            grounded = (collisionFlags & CollisionFlags.Below) != 0;
+            controller.Move(moveDirection * Time.deltaTime);
+            playerMotor.CollisionFlags = controller.collisionFlags;
+            grounded = (playerMotor.CollisionFlags & CollisionFlags.Below) != 0;
 
             // Moving platforms support
             if (activePlatform != null)

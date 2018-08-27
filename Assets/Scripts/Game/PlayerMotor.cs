@@ -63,6 +63,12 @@ namespace DaggerfallWorkshop.Game
         #endregion
 
         #region Properties
+        public CollisionFlags CollisionFlags
+        {
+            get { return collisionFlags; }
+            set { collisionFlags = value; }
+        }
+
         public bool IsGrounded
         {
             get { return grounded; }
@@ -191,7 +197,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Handle climbing
-            climbingMotor.ClimbingCheck(ref collisionFlags);
+            climbingMotor.ClimbingCheck();
 
             if (climbingMotor.IsClimbing)
             {
@@ -236,7 +242,7 @@ namespace DaggerfallWorkshop.Game
                     moveDirection.y = -moveDirection.y;
             }
 
-            groundMotor.MoveOnGround(moveDirection, ref collisionFlags, ref grounded);
+            groundMotor.MoveOnGround(moveDirection, ref grounded);
         }
 
         void Update()

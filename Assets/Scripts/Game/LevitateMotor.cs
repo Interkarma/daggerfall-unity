@@ -27,7 +27,7 @@ namespace DaggerfallWorkshop.Game
         PlayerSpeedChanger speedChanger;
         Camera playerCamera;
         float moveSpeed = 4.0f;
-        CollisionFlags collisionFlags = 0;
+        private ClimbingMotor climbingMotor;
 
         public bool IsLevitating
         {
@@ -41,21 +41,17 @@ namespace DaggerfallWorkshop.Game
             set { SetSwimming(value); }
         }
 
-        public CollisionFlags CollisionFlags
-        {
-            get { return collisionFlags; }
-        }
-
         private void Start()
         {
             playerMotor = GetComponent<PlayerMotor>();
             speedChanger = GetComponent<PlayerSpeedChanger>();
+            climbingMotor = GetComponent<ClimbingMotor>();
             playerCamera = GameManager.Instance.MainCamera;
         }
 
         private void Update()
         {
-            if (!playerMotor || !playerCamera || (!playerLevitating && !playerSwimming))
+            if (!playerMotor || !playerCamera || (!playerLevitating && !playerSwimming) || climbingMotor.IsClimbing)
                 return;
 
             // Cancel levitate movement if player is paralyzed
@@ -112,9 +108,8 @@ namespace DaggerfallWorkshop.Game
                 FinalVector.y = Mathf.Min(FinalVector.y, crouchJumpFormula.y);
 
             playerMotor.controller.Move(FinalVector);
+            playerMotor.CollisionFlags = playerMotor.controller.collisionFlags;
 
-
-            collisionFlags = playerMotor.controller.Move(direction * moveSpeed * Time.deltaTime);
             // Reset to levitate speed in case it has been changed by swimming
             moveSpeed = 4.0f;
         }

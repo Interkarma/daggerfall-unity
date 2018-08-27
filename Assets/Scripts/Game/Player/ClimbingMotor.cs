@@ -38,26 +38,24 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Perform climbing check, and if successful, start climbing movement.
         /// </summary>
-        /// <param name="collisionFlags"></param>
-        public void ClimbingCheck(ref CollisionFlags collisionFlags)
+        public void ClimbingCheck()
         {
             // Get pre-movement position for climbing check
             lastHorizontalPosition = new Vector2(controller.transform.position.x, controller.transform.position.z);
 
             if (isClimbing)
-                collisionFlags = CollisionFlags.Sides;
-            // Get collision flags for swimming as well, so it's possible to climb out of water TODO: Collision flags from swimming aren't working
-            else if (levitateMotor.IsSwimming)
-                collisionFlags = levitateMotor.CollisionFlags;
+                playerMotor.CollisionFlags = CollisionFlags.Sides;
 
+            //if (!GameManager.IsGamePaused)
+            //    Debug.Log("At Climb Check: CollisionFlags: " + playerMotor.CollisionFlags);
             // Climbing
             uint gameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
             if (!InputManager.Instance.HasAction(InputManager.Actions.MoveForwards)
-                || (collisionFlags & CollisionFlags.Sides) == 0
+                || (playerMotor.CollisionFlags & (CollisionFlags.Sides | CollisionFlags.CollidedSides)) == 0
                 || failedClimbingCheck
                 || levitateMotor.IsLevitating
                 || playerMotor.IsRiding
-                || (playerMotor.IsCrouching && !heightChanger.ForcedSwimCrouch)
+                //|| (playerMotor.IsCrouching && !levitateMotor.IsSwimming && !heightChanger.ForcedSwimCrouch)
                 || Vector2.Distance(lastHorizontalPosition, new Vector2(controller.transform.position.x, controller.transform.position.z)) >= (0.003f)) // Approximation based on observing classic in-game
             {
                 isClimbing = false;
