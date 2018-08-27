@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -43,6 +43,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         int magicRoundsSinceStartup = 0;
         float roundTimer = 0f;
+
+        Dictionary<int, string> classicEffectMapping = new Dictionary<int, string>();
         Dictionary<string, BaseEntityEffect> magicEffectTemplates = new Dictionary<string, BaseEntityEffect>();
         Dictionary<int, BaseEntityEffect> potionEffectTemplates = new Dictionary<int, BaseEntityEffect>();
 
@@ -70,8 +72,25 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             IEnumerable<BaseEntityEffect> effectTemplates = ReflectiveEnumerator.GetEnumerableOfType<BaseEntityEffect>();
             foreach(BaseEntityEffect effect in effectTemplates)
             {
+                // Store template
                 magicEffectTemplates.Add(effect.Key, effect);
                 IndexEffectRecipes(effect);
+
+                // Map classic key when defined - output error in case of classic key conflict
+                // NOTE: Mods should also be able to replace classic effect - will need to handle substitutions later
+                if (effect.Properties.ClassicKey != 0)
+                {
+                    if (classicEffectMapping.ContainsKey(effect.Properties.ClassicKey))
+                    {
+                        byte groupIndex, subGroupIndex;
+                        BaseEntityEffect.ReverseClasicKey(effect.Properties.ClassicKey, out groupIndex, out subGroupIndex);
+                        Debug.LogErrorFormat("EntityEffectBroker: Detected duplicate classic effect key for {0} ({1}, {2})", effect.Key, groupIndex, subGroupIndex);
+                    }
+                    else
+                    {
+                        classicEffectMapping.Add(effect.Properties.ClassicKey, effect.Key);
+                    }
+                }
             }
         }
 
@@ -247,6 +266,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         }
 
         /// <summary>
+        /// Determine if a classic key exists in the templates dictionary.
+        /// </summary>
+        /// <param name="classicKey">Classic key for template.</param>
+        /// <returns>True if template exists.</returns>
+        public bool HasEffectTemplate(int classicKey)
+        {
+            return classicEffectMapping.ContainsKey(classicKey);
+        }
+
+        /// <summary>
         /// Gets interface to effect template.
         /// Use this to query properties to all effects with this key.
         /// </summary>
@@ -258,6 +287,19 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 return null;
 
             return magicEffectTemplates[key];
+        }
+
+        /// <summary>
+        /// Gets interface to effect template from classic key.
+        /// </summary>
+        /// <param name="classicKey">Classic key.</param>
+        /// <returns>Interface to effect template only (has default effect settings).</returns>
+        public IEntityEffect GetEffectTemplate(int classicKey)
+        {
+            if (!HasEffectTemplate(classicKey))
+                return null;
+
+            return magicEffectTemplates[classicEffectMapping[classicKey]];
         }
 
         /// <summary>

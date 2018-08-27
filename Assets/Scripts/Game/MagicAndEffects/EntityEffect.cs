@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -490,7 +490,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         public static int MakeClassicKey(byte groupIndex, byte subgroupIndex)
         {
-            return groupIndex << 8 + subgroupIndex;
+            return (groupIndex << 8) + subgroupIndex;
         }
 
         public static void ReverseClasicKey(int key, out byte groupIndex, out byte subgroupIndex)

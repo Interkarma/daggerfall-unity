@@ -94,8 +94,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool buyMode = false;
         int deleteSpellIndex = -1;
         KeyCode toggleClosedBinding;
-
-        List<SpellRecord.SpellRecordData> standardSpells = null;
+        List<SpellRecord.SpellRecordData> offeredSpells = new List<SpellRecord.SpellRecordData>();
 
         #endregion
 
@@ -189,7 +188,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (buyMode)
             {
                 // Load spells for sale
-                standardSpells = DaggerfallSpellReader.ReadSpellsFile(Path.Combine(DaggerfallUnity.Arena2Path, spellsFilename));
+                offeredSpells.Clear();
+                List<SpellRecord.SpellRecordData> standardSpells = DaggerfallSpellReader.ReadSpellsFile(Path.Combine(DaggerfallUnity.Arena2Path, spellsFilename));
                 if (standardSpells == null || standardSpells.Count == 0)
                 {
                     Debug.LogError("Failed to load SPELLS.STD for spellbook in buy mode.");
@@ -198,7 +198,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 for (int i = 0; i < standardSpells.Count; i++)
                 {
-                    // Just list spell name for now
+                    // Filter internal spells starting with exclamation point '!'
+                    if (standardSpells[i].spellName.StartsWith("!"))
+                        continue;
+
+                    // Filter spells with unsupported effects
+                    if (!AllEffectsImplemented(standardSpells[i]))
+                        continue;
+
+                    // NOTE: Classic allows purchase of duplicate spells
+                    // If ever changing this, must ensure spell is an *exact* duplicate (i.e. not a custom spell with same name)
+                    // Just allowing duplicates for now as per classic and let user manage preference
+
+                    // Store offered spell and add to list box
+                    offeredSpells.Add(standardSpells[i]);
                     spellsListBox.AddItem(standardSpells[i].spellName);
                 }
             }
@@ -362,27 +375,40 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             spellsListScrollBar.TotalUnits = spellsListBox.Count;
             spellsListScrollBar.ScrollIndex = spellsListBox.ScrollIndex;
 
-            // Get spell and exit if spell index not found
-            EffectBundleSettings spellSettings;
-            if (!GameManager.Instance.PlayerEntity.GetSpell(spellsListBox.SelectedIndex, out spellSettings))
-                return;
-
-            // Update spell name label
-            spellNameLabel.Text = spellSettings.Name;
-
-            // Update effect labels
-            for (int i = 0; i < 3; i++)
+            if (buyMode)
             {
-                if (i < spellSettings.Effects.Length)
-                    SetEffectLabels(spellSettings.Effects[i].Key, i);
-                else
-                    SetEffectLabels(string.Empty, i);
-            }
+                // Get classic spell record and exit if spell index not found
+                SpellRecord.SpellRecordData spellRecordData;
+                if (!GetSpellRecordData(spellsListBox.SelectedIndex, out spellRecordData))
+                    return;
 
-            // Update spell icons
-            spellIconPanel.BackgroundTexture = GetSpellIcon(spellSettings.IconIndex);
-            spellTargetIconPanel.BackgroundTexture = GetSpellTargetIcon(spellSettings.TargetType);
-            spellElementIconPanel.BackgroundTexture = GetSpellElementIcon(spellSettings.ElementType);
+                // Update spell name label
+                spellNameLabel.Text = spellRecordData.spellName;
+            }
+            else
+            {
+                // Get spell and exit if spell index not found
+                EffectBundleSettings spellSettings;
+                if (!GameManager.Instance.PlayerEntity.GetSpell(spellsListBox.SelectedIndex, out spellSettings))
+                    return;
+
+                // Update spell name label
+                spellNameLabel.Text = spellSettings.Name;
+
+                // Update effect labels
+                for (int i = 0; i < 3; i++)
+                {
+                    if (i < spellSettings.Effects.Length)
+                        SetEffectLabels(spellSettings.Effects[i].Key, i);
+                    else
+                        SetEffectLabels(string.Empty, i);
+                }
+
+                // Update spell icons
+                spellIconPanel.BackgroundTexture = GetSpellIcon(spellSettings.IconIndex);
+                spellTargetIconPanel.BackgroundTexture = GetSpellTargetIcon(spellSettings.TargetType);
+                spellElementIconPanel.BackgroundTexture = GetSpellElementIcon(spellSettings.ElementType);
+            }
         }
 
         void ClearEffectLabels()
@@ -452,6 +478,52 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Texture2D GetSpellElementIcon(ElementTypes elementType)
         {
             return DaggerfallUI.Instance.SpellIconCollection.GetSpellElementIcon(elementType);
+        }
+
+        bool GetSpellRecordData(int index, out SpellRecord.SpellRecordData spellRecordData)
+        {
+            if (index < 0 || index > spellsListBox.Count - 1)
+            {
+                spellRecordData = new SpellRecord.SpellRecordData();
+                return false;
+            }
+            else
+            {
+                spellRecordData = offeredSpells[index];
+                return true;
+            }
+        }
+
+        bool AllEffectsImplemented(SpellRecord.SpellRecordData spellRecordData)
+        {
+            // There are up to 3 effects per spell
+            int foundEffects = 0;
+            for (int i = 0; i < spellRecordData.effects.Length; i++)
+            {
+                // Get effect type/subtype
+                int type, subType;
+                SpellRecord.EffectRecordData effectRecordData = spellRecordData.effects[i];
+                type = effectRecordData.type;
+                subType = (effectRecordData.subType < 0) ? 255 : effectRecordData.subType; // Entity effect keys use 255 instead of -1 for subtype
+
+                // Ignore effects with type=-1, this just means slot is unused
+                if (effectRecordData.type < 0)
+                    continue;
+
+                // Check if effect template is implemented for this slot - instant fail if effect not implemented
+                int classicKey = BaseEntityEffect.MakeClassicKey((byte)type, (byte)subType);
+                if (!GameManager.Instance.EntityEffectBroker.HasEffectTemplate(classicKey))
+                    return false;
+
+                // Otherwise effect is implemented and can be counted
+                foundEffects++;
+            }
+
+            // Must have at least one effect counted (handles all 3 slots being -1/-1)
+            if (foundEffects == 0)
+                return false;
+
+            return true;
         }
 
         #endregion
