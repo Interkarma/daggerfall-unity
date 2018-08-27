@@ -12,6 +12,7 @@ namespace DaggerfallWorkshop.Game
     {
         private PlayerMotor playerMotor;
         private LevitateMotor levitateMotor;
+        private ClimbingMotor climbingMotor;
 
         // If checked, the run key toggles between running and walking. Otherwise player runs if the key is held down and walks otherwise
         // There must be a button set up in the Input Manager called "Run"
@@ -34,6 +35,7 @@ namespace DaggerfallWorkshop.Game
         {
             playerMotor = GameManager.Instance.PlayerMotor;
             levitateMotor = GetComponent<LevitateMotor>();
+            climbingMotor = GetComponent<ClimbingMotor>();
         }
 
         private void Update()
@@ -65,7 +67,7 @@ namespace DaggerfallWorkshop.Game
                     }
                 }
                 // Handle sneak key. Reduces movement speed to half, then subtracts 1 in classic speed units
-                else if(InputManager.Instance.HasAction(InputManager.Actions.Sneak))
+                else if (InputManager.Instance.HasAction(InputManager.Actions.Sneak))
                 {
                     speed /= 2;
                     speed -= (1 / classicToUnitySpeedUnitRatio);
@@ -83,8 +85,8 @@ namespace DaggerfallWorkshop.Game
             float playerSpeed = player.Stats.LiveSpeed;
             if (playerMotor == null) // fixes null reference bug.
                 playerMotor = GameManager.Instance.PlayerMotor;
-            // crouching speed penalty doesn't apply if swimming.
-            if (playerMotor.IsCrouching && !levitateMotor.IsSwimming)
+            // crouching speed penalty doesn't apply if swimming or climbing
+            if (playerMotor.IsCrouching && (!levitateMotor.IsSwimming && !climbingMotor.IsClimbing))
                 baseSpeed = (playerSpeed + dfCrouchBase) / classicToUnitySpeedUnitRatio;
             else if (playerMotor.IsRiding)
                 baseSpeed = (playerSpeed + dfRideBase) / classicToUnitySpeedUnitRatio;
