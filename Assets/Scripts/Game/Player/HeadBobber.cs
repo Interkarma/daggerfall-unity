@@ -41,7 +41,7 @@ namespace DaggerfallWorkshop.Game
         private float bobXAmount; //how dramatic the bob is in side motion.
         private float bobYAmount; //how dramatic the bob is in up/down motion.
         private float nodXAmount; // for the nodding motion
-        private float nodYAmount; 
+        private float nodYAmount;
         private const float bobScalar = 1.0f; // user controlled multiplier for strength of bob
 
         float bounceTimerDown;
@@ -61,7 +61,7 @@ namespace DaggerfallWorkshop.Game
             climbingMotor = GetComponent<ClimbingMotor>();
             mainCamera = GameManager.Instance.MainCamera;
             restPos = mainCamera.transform.localPosition;
-            
+
             bobSpeed = GetComponent<PlayerFootsteps>().WalkStepInterval / 2.0f; // 1.20f;
             bIsStopping = false;
         }
@@ -70,7 +70,7 @@ namespace DaggerfallWorkshop.Game
         {
             if (DaggerfallUnity.Settings.HeadBobbing == false ||
                 GameManager.Instance.PlayerEntity.CurrentHealth < 1 ||
-                GameManager.IsGamePaused || 
+                GameManager.IsGamePaused ||
                 climbingMotor.IsClimbing)
                 return;
 
@@ -100,7 +100,7 @@ namespace DaggerfallWorkshop.Game
         }
         protected void SetParamsForBobbingStyle()
         {
-            
+
             switch (bobStyle)
             {
                 // TODO: adjust bob speed to match player footstep sound better
@@ -133,7 +133,7 @@ namespace DaggerfallWorkshop.Game
                     nodYAmount = 0.1f;
                     break;
                 case BobbingStyle.Swimming:
-                    
+
                     bobXAmount = 0;
                     bobYAmount = 0;
                     nodXAmount = 0;
@@ -146,7 +146,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         protected void getNewPos(ref Vector3 newPosition, ref Vector3 newRotation)
-        { 
+        {
             float velocity = new Vector2(playerMotor.MoveDirection.x, playerMotor.MoveDirection.z).magnitude;
             float timeIncrement = velocity * bobSpeed * Time.deltaTime;
 
@@ -157,12 +157,12 @@ namespace DaggerfallWorkshop.Game
                     endTransitionTimer = 0;
                     timer = Mathf.PI;
                 }
-                    
+
                 timer += timeIncrement;
                 beginTransitionTimer += timeIncrement;
 
                 newPosition = PlotPath();
-                newRotation = PlotRotation();  
+                newRotation = PlotRotation();
 
                 if (beginTransitionTimer <= Mathf.PI)
                 {
@@ -190,7 +190,7 @@ namespace DaggerfallWorkshop.Game
                 bIsStopping = false;
             }
 
-            if (timer > Mathf.PI * 2 ) //completed a full cycle on the unit circle. Reset to 0 to avoid bloated values.
+            if (timer > Mathf.PI * 2) //completed a full cycle on the unit circle. Reset to 0 to avoid bloated values.
             {
                 timer = 0;
             }
@@ -203,7 +203,7 @@ namespace DaggerfallWorkshop.Game
             bool isGrounded = playerMotor.IsGrounded;
             bool isSwimming = playerEnterExit.IsPlayerSwimming;
             bool isClimbing = climbingMotor.IsClimbing;
-            float upSpeed = 1f, 
+            float upSpeed = 1f,
                   downSpeed = 1f;
 
             if (isClimbing)
@@ -222,7 +222,7 @@ namespace DaggerfallWorkshop.Game
                 bounceTimerDown = 0f;
 
             }
-            else if (readyToBounce)
+            else if ((isGrounded || isSwimming) && readyToBounce)
             {
                 const float bounceMax = 0.17f;
                 const float timerMax = 0.10f;
@@ -259,7 +259,7 @@ namespace DaggerfallWorkshop.Game
 
         protected Vector3 InterpolateEndTransition(float endTimer) // interpolates a gradual path from moving to not moving.
         {
-            float t = (endTimer / endTimerMax); 
+            float t = (endTimer / endTimerMax);
             Vector3 camPos = mainCamera.transform.localPosition;
             return Vector3.Lerp(camPos, restPos, t);
         }
@@ -273,5 +273,3 @@ namespace DaggerfallWorkshop.Game
 
     }
 }
-
-
