@@ -10,6 +10,7 @@
 //
 
 using UnityEngine;
+using System;
 using System.IO;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Game.UserInterface;
@@ -29,6 +30,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Vector2 spellNameLabelPos = new Vector2(123, 2);
         Vector2 spellPointsLabelPos = new Vector2(214, 2);
+        Vector2 spellCostLabelPos = new Vector2(76, 154);
 
         Rect mainPanelRect = new Rect(0, 0, 259, 164);
         Rect spellsListBoxRect = new Rect(5, 13, 110, 130);
@@ -71,6 +73,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         TextLabel spellNameLabel;
         TextLabel spellPointsLabel;
+        TextLabel spellCostLabel;
         TextLabel[] spellEffectLabels;
 
         #endregion
@@ -94,7 +97,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool buyMode = false;
         int deleteSpellIndex = -1;
         KeyCode toggleClosedBinding;
-        List<SpellRecord.SpellRecordData> offeredSpells = new List<SpellRecord.SpellRecordData>();
+        List<EffectBundleSettings> offeredSpells = new List<EffectBundleSettings>();
 
         #endregion
 
@@ -202,16 +205,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     if (standardSpells[i].spellName.StartsWith("!"))
                         continue;
 
-                    // Filter spells with unsupported effects
-                    if (!AllEffectsImplemented(standardSpells[i]))
-                        continue;
-
                     // NOTE: Classic allows purchase of duplicate spells
                     // If ever changing this, must ensure spell is an *exact* duplicate (i.e. not a custom spell with same name)
                     // Just allowing duplicates for now as per classic and let user manage preference
 
+                    // Get effect bundle settings from classic spell
+                    EffectBundleSettings bundle;
+                    if (!ClassicSpellRecordDataToEffectBundleSettings(standardSpells[i], BundleTypes.Spell, out bundle))
+                        continue;
+
                     // Store offered spell and add to list box
-                    offeredSpells.Add(standardSpells[i]);
+                    offeredSpells.Add(bundle);
                     spellsListBox.AddItem(standardSpells[i].spellName);
                 }
             }
@@ -252,6 +256,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mainPanel.BackgroundTexture = baseTexture;
             mainPanel.HorizontalAlignment = HorizontalAlignment.Center;
             mainPanel.VerticalAlignment = VerticalAlignment.Middle;
+            if (buyMode)
+                mainPanel.BackgroundColor = Color.black;
 
             // Spells list
             spellsListBox = new ListBox();
@@ -343,6 +349,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             spellNameLabel.MaxCharacters = 18;
             spellNameLabel.OnMouseClick += SpellNameLabel_OnMouseClick;
 
+            // Spell cost
+            if (buyMode)
+            {
+                spellCostLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, spellCostLabelPos, string.Empty, mainPanel);
+                spellCostLabel.ShadowPosition = Vector2.zero;
+            }
+
             // Spell points
             if (!buyMode)
             {
@@ -375,40 +388,45 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             spellsListScrollBar.TotalUnits = spellsListBox.Count;
             spellsListScrollBar.ScrollIndex = spellsListBox.ScrollIndex;
 
+            // Get spell settings selected from player spellbook or offered spells
+            EffectBundleSettings spellSettings;
             if (buyMode)
             {
-                // Get classic spell record and exit if spell index not found
-                SpellRecord.SpellRecordData spellRecordData;
-                if (!GetSpellRecordData(spellsListBox.SelectedIndex, out spellRecordData))
-                    return;
+                spellSettings = offeredSpells[spellsListBox.SelectedIndex];
 
-                // Update spell name label
-                spellNameLabel.Text = spellRecordData.spellName;
+                // TODO: Upate cost
+
+                //// Get costs
+                //int goldCost, spellPointCost;
+                //FormulaHelper.CalculateTotalEffectCosts(bundle.Effects, bundle.TargetType, out goldCost, out spellPointCost);
+
+                //// Update display
+                //spellNameLabel.Text = bundle.Name;
+                //spellCostLabel.Text = goldCost.ToString();
             }
             else
             {
                 // Get spell and exit if spell index not found
-                EffectBundleSettings spellSettings;
                 if (!GameManager.Instance.PlayerEntity.GetSpell(spellsListBox.SelectedIndex, out spellSettings))
                     return;
-
-                // Update spell name label
-                spellNameLabel.Text = spellSettings.Name;
-
-                // Update effect labels
-                for (int i = 0; i < 3; i++)
-                {
-                    if (i < spellSettings.Effects.Length)
-                        SetEffectLabels(spellSettings.Effects[i].Key, i);
-                    else
-                        SetEffectLabels(string.Empty, i);
-                }
-
-                // Update spell icons
-                spellIconPanel.BackgroundTexture = GetSpellIcon(spellSettings.IconIndex);
-                spellTargetIconPanel.BackgroundTexture = GetSpellTargetIcon(spellSettings.TargetType);
-                spellElementIconPanel.BackgroundTexture = GetSpellElementIcon(spellSettings.ElementType);
             }
+
+            // Update spell name label
+            spellNameLabel.Text = spellSettings.Name;
+
+            // Update effect labels
+            for (int i = 0; i < 3; i++)
+            {
+                if (i < spellSettings.Effects.Length)
+                    SetEffectLabels(spellSettings.Effects[i].Key, i);
+                else
+                    SetEffectLabels(string.Empty, i);
+            }
+
+            // Update spell icons
+            spellIconPanel.BackgroundTexture = GetSpellIcon(spellSettings.IconIndex);
+            spellTargetIconPanel.BackgroundTexture = GetSpellTargetIcon(spellSettings.TargetType);
+            spellElementIconPanel.BackgroundTexture = GetSpellElementIcon(spellSettings.ElementType);
         }
 
         void ClearEffectLabels()
@@ -480,40 +498,198 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return DaggerfallUI.Instance.SpellIconCollection.GetSpellElementIcon(elementType);
         }
 
-        bool GetSpellRecordData(int index, out SpellRecord.SpellRecordData spellRecordData)
+        #endregion
+
+        #region Classic Spell Record Conversion Helpers - MOVE TO BROKER
+
+        /// <summary>
+        /// Generate EffectBundleSettings from classic SpellRecordData.
+        /// </summary>
+        /// <param name="spellRecordData">Classic spell record data.</param>
+        /// <param name="bundleType">Type of bundle to create.</param>
+        /// <param name="effectBundleSettingsOut">Effect bundle created by conversion.</param>
+        /// <returns>True if successful, otherwise false.</returns>
+        bool ClassicSpellRecordDataToEffectBundleSettings(SpellRecord.SpellRecordData spellRecordData, BundleTypes bundleType, out EffectBundleSettings effectBundleSettingsOut)
         {
-            if (index < 0 || index > spellsListBox.Count - 1)
+            // Spell record data must have effect records
+            if (spellRecordData.effects == null || spellRecordData.effects.Length == 0)
             {
-                spellRecordData = new SpellRecord.SpellRecordData();
+                effectBundleSettingsOut = new EffectBundleSettings();
                 return false;
             }
-            else
+
+            // Create bundle
+            effectBundleSettingsOut = new EffectBundleSettings()
             {
-                spellRecordData = offeredSpells[index];
-                return true;
+                Version = EntityEffectBroker.CurrentSpellVersion,
+                BundleType = bundleType,
+                TargetType = ClassicTargetIndexToTargetType(spellRecordData.rangeType),
+                ElementType = ClassicElementIndexToElementType(spellRecordData.element),
+                Name = spellRecordData.spellName,
+                IconIndex = spellRecordData.icon,
+            };
+
+            // Assign effects
+            List<EffectEntry> foundEffects = new List<EffectEntry>();
+            for (int i = 0; i < spellRecordData.effects.Length; i++)
+            {
+                // Skip unused effect slots
+                if (spellRecordData.effects[i].type == -1)
+                    continue;
+
+                // Get entry from effect
+                EffectEntry entry;
+                if (!ClassicEffectRecordToEffectEntry(spellRecordData.effects[i], out entry))
+                    continue;
+
+                // Assign to valid effects
+                foundEffects.Add(entry);
+            }
+
+            // Must have assigned at least one valid effect
+            if (foundEffects.Count == 0)
+                return false;
+
+            // Assign effects to bundle
+            effectBundleSettingsOut.Effects = foundEffects.ToArray();
+
+            return true;
+        }
+
+        /// <summary>
+        /// Generate EffectEntry from classic EffectRecordData.
+        /// </summary>
+        /// <param name="effectRecordData">Classic effect record data.</param>
+        /// <returns>EffectEntry.</returns>
+        bool ClassicEffectRecordToEffectEntry(SpellRecord.EffectRecordData effectRecordData, out EffectEntry effectEntryOut)
+        {
+            // Get template
+            IEntityEffect effectTemplate = GetEffectTemplateFromClassicEffectRecordData(effectRecordData);
+            if (effectTemplate == null)
+            {
+                effectEntryOut = new EffectEntry();
+                return false;
+            }
+
+            // Get settings and create entry
+            EffectSettings effectSettings = ClassicEffectRecordToEffectSettings(effectRecordData);
+            effectEntryOut = new EffectEntry(effectTemplate.Key, effectSettings);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Generate EffectSettings from classic EffectRecordData.
+        /// </summary>
+        /// <param name="effectRecordData">Classic effect record data.</param>
+        /// <returns>EffectSettings.</returns>
+        EffectSettings ClassicEffectRecordToEffectSettings(SpellRecord.EffectRecordData effectRecordData)
+        {
+            EffectSettings effectSettings = new EffectSettings()
+            {
+                DurationBase = effectRecordData.durationBase,
+                DurationPlus = effectRecordData.durationMod,
+                DurationPerLevel = effectRecordData.durationPerLevel,
+
+                ChanceBase = effectRecordData.chanceBase,
+                ChancePlus = effectRecordData.chanceMod,
+                ChancePerLevel = effectRecordData.chancePerLevel,
+
+                MagnitudeBaseMin = effectRecordData.magnitudeBaseLow,
+                MagnitudeBaseMax = effectRecordData.magnitudeBaseHigh,
+                MagnitudePlusMin = effectRecordData.magnitudeLevelBase,
+                MagnitudePlusMax = effectRecordData.magnitudeLevelHigh,
+                MagnitudePerLevel = effectRecordData.magnitudePerLevel,
+            };
+
+            return effectSettings;
+        }
+
+        /// <summary>
+        /// Maps classic target index to TargetTypes.
+        /// </summary>
+        /// <param name="targetIndex">Classic target index.</param>
+        /// <returns>TargetTypes.</returns>
+        TargetTypes ClassicTargetIndexToTargetType(int targetIndex)
+        {
+            switch (targetIndex)
+            {
+                case 0:
+                    return TargetTypes.CasterOnly;
+                case 1:
+                    return TargetTypes.ByTouch;
+                case 2:
+                    return TargetTypes.SingleTargetAtRange;
+                case 3:
+                    return TargetTypes.AreaAroundCaster;
+                case 4:
+                    return TargetTypes.AreaAtRange;
+                default:
+                    throw new Exception("ClassicTargetIndexToTargetType() encountered an unknown target index.");
             }
         }
 
+        /// <summary>
+        /// Maps classic element index to ElementTypes enum.
+        /// </summary>
+        /// <param name="elementIndex">Classic element index.</param>
+        /// <returns>ElementTypes.</returns>
+        ElementTypes ClassicElementIndexToElementType(int elementIndex)
+        {
+            switch(elementIndex)
+            {
+                case 0:
+                    return ElementTypes.Fire;
+                case 1:
+                    return ElementTypes.Cold;
+                case 2:
+                    return ElementTypes.Poison;
+                case 3:
+                    return ElementTypes.Shock;
+                case 4:
+                    return ElementTypes.Magic;
+                default:
+                    throw new Exception("ClassicElementIndexToElementType() encountered an unknown element index.");
+            }
+        }
+
+        /// <summary>
+        /// Gets effect template from classic effect record data, if one is available.
+        /// </summary>
+        /// <param name="effectRecordData">Classic effect record data.</param>
+        /// <returns>IEntityEffect of template found or null if no matching template found.</returns>
+        IEntityEffect GetEffectTemplateFromClassicEffectRecordData(SpellRecord.EffectRecordData effectRecordData)
+        {
+            // Ignore unused effect
+            if (effectRecordData.type == -1)
+                return null;
+
+            // Get effect type/subtype
+            int type, subType;
+            type = effectRecordData.type;
+            subType = (effectRecordData.subType < 0) ? 255 : effectRecordData.subType; // Entity effect keys use 255 instead of -1 for subtype
+
+            // Check if effect template is implemented for this slot - instant fail if effect not implemented
+            int classicKey = BaseEntityEffect.MakeClassicKey((byte)type, (byte)subType);
+
+            return GameManager.Instance.EntityEffectBroker.GetEffectTemplate(classicKey);
+        }
+
+        /// <summary>
+        /// Checks if all classic effects map to an implemented IEntityEffect template.
+        /// </summary>
+        /// <param name="spellRecordData">Classic spell record data.</param>
+        /// <returns>True if all classic effects map to an effect template.</returns>
         bool AllEffectsImplemented(SpellRecord.SpellRecordData spellRecordData)
         {
             // There are up to 3 effects per spell
             int foundEffects = 0;
             for (int i = 0; i < spellRecordData.effects.Length; i++)
             {
-                // Get effect type/subtype
-                int type, subType;
-                SpellRecord.EffectRecordData effectRecordData = spellRecordData.effects[i];
-                type = effectRecordData.type;
-                subType = (effectRecordData.subType < 0) ? 255 : effectRecordData.subType; // Entity effect keys use 255 instead of -1 for subtype
-
-                // Ignore effects with type=-1, this just means slot is unused
-                if (effectRecordData.type < 0)
+                // Try to get effect template
+                IEntityEffect effectTemplate = GetEffectTemplateFromClassicEffectRecordData(spellRecordData.effects[i]);
+                if (effectTemplate == null)
                     continue;
-
-                // Check if effect template is implemented for this slot - instant fail if effect not implemented
-                int classicKey = BaseEntityEffect.MakeClassicKey((byte)type, (byte)subType);
-                if (!GameManager.Instance.EntityEffectBroker.HasEffectTemplate(classicKey))
-                    return false;
 
                 // Otherwise effect is implemented and can be counted
                 foundEffects++;
@@ -532,9 +708,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void SpellEffectPanelClick(BaseScreenComponent sender, Vector2 position)
         {
-            // Get spell and exit if spell index not found
+            // Get spell settings
             EffectBundleSettings spellSettings;
-            if (!GameManager.Instance.PlayerEntity.GetSpell(spellsListBox.SelectedIndex, out spellSettings))
+            if (buyMode)
+            {
+                spellSettings = offeredSpells[spellsListBox.SelectedIndex];
+            }
+            else
+            {
+                if (!GameManager.Instance.PlayerEntity.GetSpell(spellsListBox.SelectedIndex, out spellSettings))
+                    return;
+            }
+
+            // Settings must look valid
+            if (spellSettings.Version < EntityEffectBroker.MinimumSupportedSpellVersion)
                 return;
 
             // Get effect index of panel clicked
