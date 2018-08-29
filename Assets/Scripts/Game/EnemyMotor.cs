@@ -24,8 +24,8 @@ namespace DaggerfallWorkshop.Game
     [RequireComponent(typeof(CharacterController))]
     public class EnemyMotor : MonoBehaviour
     {
-        public float OpenDoorDistance = 2f;         // Maximum distance to open door
-        public const float AttackSpeedDivisor = 3f;       // How much to slow down during attack animations
+        public float OpenDoorDistance = 2f;             // Maximum distance to open door
+        public const float AttackSpeedDivisor = 3f;     // How much to slow down during attack animations
 
         EnemySenses senses;
         Vector3 targetPos;
