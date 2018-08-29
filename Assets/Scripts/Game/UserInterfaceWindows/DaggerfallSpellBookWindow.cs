@@ -313,7 +313,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else
             {
                 buyButton = DaggerfallUI.AddButton(deleteOrBuyButtonRect, mainPanel);
-                //buyButton.OnMouseClick += ;
+                buyButton.OnMouseClick += BuyButton_OnMouseClick;
             }
 
             exitButton = DaggerfallUI.AddButton(exitButtonRect, mainPanel);
@@ -394,15 +394,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 spellSettings = offeredSpells[spellsListBox.SelectedIndex];
 
-                // TODO: Upate cost
-
-                //// Get costs
-                //int goldCost, spellPointCost;
-                //FormulaHelper.CalculateTotalEffectCosts(bundle.Effects, bundle.TargetType, out goldCost, out spellPointCost);
-
-                //// Update display
-                //spellNameLabel.Text = bundle.Name;
-                //spellCostLabel.Text = goldCost.ToString();
+                // TODO: Fix spell purchase costs
+                // Just presenting gold cost right now as if it was created at spellmaker
+                // Not sure how purchase costs displayed are calculated
+                // The cost value in SPELLS.STD possibly involved, but data seems suspect (e.g. Frostbite has 0 cost in SPELLS.STD)
+                // The final purchase price is also different to price presented, does mercantile / shop quality apply here? 
+                // Likely will need some help to work this out
+                int goldCost, spellPointCost;
+                FormulaHelper.CalculateTotalEffectCosts(spellSettings.Effects, spellSettings.TargetType, out goldCost, out spellPointCost);
+                spellCostLabel.Text = goldCost.ToString();
             }
             else
             {
@@ -837,6 +837,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
 
             // TODO: Rename spell
+        }
+
+        private void BuyButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            // TODO:
+            //  1. Display yes/no merchant popup with final cost
+            //  2. Assign spell bundle to player's spellbook
+            //  3. Remove final cost from player's gold
         }
 
         #endregion
