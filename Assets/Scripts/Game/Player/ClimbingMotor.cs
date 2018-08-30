@@ -15,6 +15,8 @@ namespace DaggerfallWorkshop.Game
         private LevitateMotor levitateMotor;
         private CharacterController controller;
         private PlayerHeightChanger heightChanger;
+        private PlayerGroundMotor groundMotor;
+        public Vector3 ledgeDirection; // direction of the ledge they can climb onto
         private bool failedClimbingCheck = false;
         private bool isClimbing = false;
         private float climbingStartTimer = 0;
@@ -25,7 +27,10 @@ namespace DaggerfallWorkshop.Game
         public bool IsClimbing
         {
             get { return isClimbing; }
-            set { isClimbing = value; }
+            set
+            {
+                isClimbing = value;
+            }
         }
         void Start()
         {
@@ -33,6 +38,7 @@ namespace DaggerfallWorkshop.Game
             levitateMotor = GetComponent<LevitateMotor>();
             controller = GetComponent<CharacterController>();
             heightChanger = GetComponent<PlayerHeightChanger>();
+            groundMotor = GetComponent<PlayerGroundMotor>();
         }
 
         /// <summary>
@@ -40,14 +46,16 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public void ClimbingCheck()
         {
+            //if (!GameManager.IsGamePaused)
+            //    Debug.Log("At Climb Check: CollisionFlags: " + playerMotor.CollisionFlags);
+
             // Get pre-movement position for climbing check
             lastHorizontalPosition = new Vector2(controller.transform.position.x, controller.transform.position.z);
 
+            // this can be a cause of the player climbing into the air.
             if (isClimbing)
-                playerMotor.CollisionFlags = CollisionFlags.Sides;
+                playerMotor.CollisionFlags |= CollisionFlags.Sides;
 
-            //if (!GameManager.IsGamePaused)
-            //    Debug.Log("At Climb Check: CollisionFlags: " + playerMotor.CollisionFlags);
             // Climbing
             uint gameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
             if (!InputManager.Instance.HasAction(InputManager.Actions.MoveForwards)
@@ -56,16 +64,17 @@ namespace DaggerfallWorkshop.Game
                 || levitateMotor.IsLevitating
                 || playerMotor.IsRiding
                 //|| (playerMotor.IsCrouching && !levitateMotor.IsSwimming && !heightChanger.ForcedSwimCrouch)
-                || Vector2.Distance(lastHorizontalPosition, new Vector2(controller.transform.position.x, controller.transform.position.z)) >= (0.003f)) // Approximation based on observing classic in-game
+                || Vector2.Distance(lastHorizontalPosition, new Vector2(controller.transform.position.x, controller.transform.position.z)) >= (0.003f)// Approximation based on observing classic in-game
+                || (isClimbing && CanWalkOntoLedge())) // isclimbing for short circuit evaluation
             {
-                isClimbing = false;
+                IsClimbing = false;
                 showClimbingModeMessage = true;
                 climbingStartTimer = 0;
                 timeOfLastClimbingCheck = gameMinutes;
             }
             else
             {
-                if (climbingStartTimer <= (playerMotor.systemTimerUpdatesPerSecond* 14))
+                if (climbingStartTimer <= (playerMotor.systemTimerUpdatesPerSecond * 14))
                     climbingStartTimer += Time.deltaTime;
                 else
                 {
@@ -76,7 +85,7 @@ namespace DaggerfallWorkshop.Game
                         // Disable further showing of climbing mode message until current climb attempt is stopped
                         // to keep it from filling message log
                         showClimbingModeMessage = false;
-                        isClimbing = true;
+                        IsClimbing = true;
                     }
 
                     // Initial check to start climbing
@@ -89,7 +98,7 @@ namespace DaggerfallWorkshop.Game
                         {
                             if (UnityEngine.Random.Range(1, 101) > player.Skills.GetLiveSkillValue(DFCareer.Skills.Climbing))
                             {
-                                isClimbing = false;
+                                IsClimbing = false;
                                 failedClimbingCheck = true;
                             }
                         }
@@ -99,6 +108,33 @@ namespace DaggerfallWorkshop.Game
 
             if (isClimbing)
                 ClimbMovement();
+        }
+
+        private bool CanWalkOntoLedge()
+        {
+            RaycastHit hit;
+
+            Vector3 p1 = controller.transform.position + controller.center + Vector3.up * -controller.height * 0.50f;
+            Vector3 p2 = p1 + Vector3.up * controller.height;
+            Vector3 footPosition = controller.center + (Vector3.down * controller.height * 0.45f);
+            float distanceToObstacle = 0;
+
+            // Cast character controller shape forward to see if it is about to hit anything.
+            if (Physics.CapsuleCast(p1, p2, controller.radius * 0.5f, transform.forward, out hit, 0.5f))
+            //if (Physics.Raycast(footPosition, controller.transform.forward, out hit, 0.5f ))
+            {
+                distanceToObstacle = hit.distance;
+                ledgeDirection = -hit.normal;
+            }
+
+            //Debug.Log("DistanceToWall: " + distanceToObstacle);
+
+            bool canWalkOntoLedge = (distanceToObstacle == 0);
+
+            if (canWalkOntoLedge)
+                groundMotor.EnableClimbTimer();
+
+            return canWalkOntoLedge;
         }
 
         private void ClimbMovement()
@@ -116,11 +152,11 @@ namespace DaggerfallWorkshop.Game
                     skill += 30;
                 Mathf.Clamp(skill, 5, 95);
 
-                if ((UnityEngine.Random.Range(1, 101) > 90)
-                    || (UnityEngine.Random.Range(1, 101) > skill))
-                {
-                    isClimbing = false;
-                }
+                //if ((UnityEngine.Random.Range(1, 101) > 90)
+                //    || (UnityEngine.Random.Range(1, 101) > skill))
+                //{
+                //    IsClimbing = false;
+                //}
             }
         }
     }

@@ -41,7 +41,7 @@ namespace DaggerfallWorkshop.Game
         public CharacterController controller;
 
         private Vector3 moveDirection = Vector3.zero;
-        private bool grounded = false;
+        private bool isGrounded = false;
         private float speed;
 
         private bool standingStill = false;
@@ -71,7 +71,8 @@ namespace DaggerfallWorkshop.Game
 
         public bool IsGrounded
         {
-            get { return grounded; }
+            get { return isGrounded; }
+            set { isGrounded = value; }
         }
 
         public float Speed
@@ -211,7 +212,7 @@ namespace DaggerfallWorkshop.Game
             // Player assumed to be in movement for now
             standingStill = false;
 
-            if (grounded)
+            if (isGrounded)
             {
                 // Set standing still while grounded flag
                 // Casting moveDirection to a Vector2 so constant downward force of gravity not included in magnitude
@@ -233,11 +234,14 @@ namespace DaggerfallWorkshop.Game
                 acrobatMotor.CheckAirControl(ref moveDirection, speed);
             }
 
-            acrobatMotor.ApplyGravity(ref moveDirection);
+            // don't use gravity if we're climbing onto platform
+            if (!groundMotor.runClimbTimer)
+            {
+                acrobatMotor.ApplyGravity(ref moveDirection);
+                acrobatMotor.BumpHeadRebound(ref moveDirection);
+            }
 
-            acrobatMotor.BumpHeadRebound(ref moveDirection);
-
-            groundMotor.MoveOnGround(moveDirection, ref grounded);
+            groundMotor.MoveOnGround(moveDirection);
         }
 
         void Update()
