@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Lypyl (lypyldf@gmail.com), Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Allofich, Hazelnut
 // 
 // Notes:
 //
@@ -18,13 +18,14 @@ using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect.Save;
+using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
     /// <summary>
-    /// Spellbook UI.
+    /// Spellbook UI for both casting spells and purchasing spells from guilds.
     /// </summary>
-    public class DaggerfallSpellBookWindow : DaggerfallPopupWindow
+    public class DaggerfallSpellBookWindow : DaggerfallPopupWindow, IMacroContextProvider
     {
         #region UI Rects
 
@@ -92,12 +93,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string spellsFilename = "SPELLS.STD";
 
         const SoundClips openSpellBook = SoundClips.OpenBook;
+        const SoundClips openSpellBookBuyMode = SoundClips.ButtonClick;
         const SoundClips closeSpellBook = SoundClips.PageTurn;
 
         bool buyMode = false;
         int deleteSpellIndex = -1;
         KeyCode toggleClosedBinding;
         List<EffectBundleSettings> offeredSpells = new List<EffectBundleSettings>();
+        PlayerGPS.DiscoveredBuilding buildingDiscoveryData;
+        int presentedCost;
 
         #endregion
 
@@ -138,18 +142,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public override void OnPush()
         {
+            if (buyMode && GameManager.Instance.PlayerEnterExit.IsPlayerInside)
+                buildingDiscoveryData = GameManager.Instance.PlayerEnterExit.BuildingDiscoveryData;
+
             if (IsSetup)
             {
                 RefreshSpellsList();
                 SetDefaults();
             }
 
-            DaggerfallUI.Instance.PlayOneShot(openSpellBook);
+            if (!buyMode)
+                DaggerfallUI.Instance.PlayOneShot(openSpellBook);
+            else
+                DaggerfallUI.Instance.PlayOneShot(openSpellBookBuyMode);
         }
 
         public override void OnPop()
         {
-            DaggerfallUI.Instance.PlayOneShot(closeSpellBook);
+            if (!buyMode)
+                DaggerfallUI.Instance.PlayOneShot(closeSpellBook);
         }
 
         void SetDefaults()
@@ -266,7 +277,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             spellsListBox.RowsDisplayed = 16;
             spellsListBox.MaxCharacters = 22;
             spellsListBox.OnSelectItem += SpellsListBox_OnSelectItem;
-            spellsListBox.OnUseSelectedItem += SpellsListBox_OnUseSelectedItem;
+            if (buyMode)
+                spellsListBox.OnMouseDoubleClick += BuyButton_OnMouseClick;
+            else
+                spellsListBox.OnUseSelectedItem += SpellsListBox_OnUseSelectedItem;
             spellsListBox.OnMouseScrollDown += SpellsListBox_OnMouseScroll;
             spellsListBox.OnMouseScrollUp += SpellsListBox_OnMouseScroll;
             mainPanel.Components.Add(spellsListBox);
@@ -394,15 +408,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 spellSettings = offeredSpells[spellsListBox.SelectedIndex];
 
-                // TODO: Fix spell purchase costs
-                // Just presenting gold cost right now as if it was created at spellmaker
-                // Not sure how purchase costs displayed are calculated
-                // The cost value in SPELLS.STD possibly involved, but data seems suspect (e.g. Frostbite has 0 cost in SPELLS.STD)
-                // The final purchase price is also different to price presented, does mercantile / shop quality apply here? 
-                // Likely will need some help to work this out
+                // The price shown in buy mode is the player casting cost * 4
                 int goldCost, spellPointCost;
                 FormulaHelper.CalculateTotalEffectCosts(spellSettings.Effects, spellSettings.TargetType, out goldCost, out spellPointCost);
-                spellCostLabel.Text = goldCost.ToString();
+                presentedCost = spellPointCost * 4;
+
+                // Presented cost is halved on Witches Festival holiday
+                uint gameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+                int holidayID = FormulaHelper.GetHolidayId(gameMinutes, 0);
+                if (holidayID == (int)DaggerfallConnect.DFLocation.Holidays.Witches_Festival)
+                {
+                    presentedCost >>= 1;
+                    if (presentedCost == 0)
+                        presentedCost = 1;
+                }
+
+                spellCostLabel.Text = presentedCost.ToString();
             }
             else
             {
@@ -572,7 +593,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             // Get settings and create entry
-            EffectSettings effectSettings = ClassicEffectRecordToEffectSettings(effectRecordData);
+            EffectSettings effectSettings = ClassicEffectRecordToEffectSettings(
+                effectRecordData,
+                effectTemplate.Properties.SupportDuration,
+                effectTemplate.Properties.SupportChance,
+                effectTemplate.Properties.SupportMagnitude);
             effectEntryOut = new EffectEntry(effectTemplate.Key, effectSettings);
 
             return true;
@@ -583,24 +608,31 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         /// <param name="effectRecordData">Classic effect record data.</param>
         /// <returns>EffectSettings.</returns>
-        EffectSettings ClassicEffectRecordToEffectSettings(SpellRecord.EffectRecordData effectRecordData)
+        EffectSettings ClassicEffectRecordToEffectSettings(SpellRecord.EffectRecordData effectRecordData, bool supportDuration, bool supportChance, bool supportMagnitude)
         {
-            EffectSettings effectSettings = new EffectSettings()
+            EffectSettings effectSettings = BaseEntityEffect.DefaultEffectSettings();
+            if (supportDuration)
             {
-                DurationBase = effectRecordData.durationBase,
-                DurationPlus = effectRecordData.durationMod,
-                DurationPerLevel = effectRecordData.durationPerLevel,
+                effectSettings.DurationBase = effectRecordData.durationBase;
+                effectSettings.DurationPlus = effectRecordData.durationMod;
+                effectSettings.DurationPerLevel = effectRecordData.durationPerLevel;
+            }
 
-                ChanceBase = effectRecordData.chanceBase,
-                ChancePlus = effectRecordData.chanceMod,
-                ChancePerLevel = effectRecordData.chancePerLevel,
+            if (supportChance)
+            {
+                effectSettings.ChanceBase = effectRecordData.chanceBase;
+                effectSettings.ChancePlus = effectRecordData.chanceMod;
+                effectSettings.ChancePerLevel = effectRecordData.chancePerLevel;
+            }
 
-                MagnitudeBaseMin = effectRecordData.magnitudeBaseLow,
-                MagnitudeBaseMax = effectRecordData.magnitudeBaseHigh,
-                MagnitudePlusMin = effectRecordData.magnitudeLevelBase,
-                MagnitudePlusMax = effectRecordData.magnitudeLevelHigh,
-                MagnitudePerLevel = effectRecordData.magnitudePerLevel,
-            };
+            if (supportMagnitude)
+            {
+                effectSettings.MagnitudeBaseMin = effectRecordData.magnitudeBaseLow;
+                effectSettings.MagnitudeBaseMax = effectRecordData.magnitudeBaseHigh;
+                effectSettings.MagnitudePlusMin = effectRecordData.magnitudeLevelBase;
+                effectSettings.MagnitudePlusMax = effectRecordData.magnitudeLevelHigh;
+                effectSettings.MagnitudePerLevel = effectRecordData.magnitudePerLevel;
+            }
 
             return effectSettings;
         }
@@ -700,6 +732,47 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return false;
 
             return true;
+        }
+
+        int GetTradePrice()
+        {
+            return FormulaHelper.CalculateTradePrice(presentedCost, buildingDiscoveryData.quality, false);
+        }
+
+        #endregion
+
+        #region Macro handling
+
+        public MacroDataSource GetMacroDataSource()
+        {
+            return new TradeMacroDataSource(this);
+        }
+
+        /// <summary>
+        /// MacroDataSource context sensitive methods for trade window.
+        /// </summary>
+        private class TradeMacroDataSource : MacroDataSource
+        {
+            private DaggerfallSpellBookWindow parent;
+            public TradeMacroDataSource(DaggerfallSpellBookWindow spellBookWindow)
+            {
+                this.parent = spellBookWindow;
+            }
+
+            public override string Amount()
+            {
+                return parent.GetTradePrice().ToString();
+            }
+
+            public override string ShopName()
+            {
+                return parent.buildingDiscoveryData.displayName;
+            }
+
+            public override string GuildTitle()
+            {
+                return MacroHelper.GetFirstname(GameManager.Instance.PlayerEntity.Name);
+            }
         }
 
         #endregion
@@ -841,10 +914,45 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void BuyButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            // TODO:
-            //  1. Display yes/no merchant popup with final cost
-            //  2. Assign spell bundle to player's spellbook
-            //  3. Remove final cost from player's gold
+            const int tradeMessageBaseId = 260;
+            const int notEnoughGoldId = 454;
+            int tradePrice = GetTradePrice();
+            int msgOffset = 0;
+
+            if (GameManager.Instance.PlayerEntity.GetGoldAmount() < tradePrice)
+            {
+                DaggerfallUI.MessageBox(notEnoughGoldId);
+            }
+            else
+            {
+                if (presentedCost >> 1 <= tradePrice)
+                {
+                    if (presentedCost - (presentedCost >> 2) <= tradePrice)
+                        msgOffset = 2;
+                    else
+                        msgOffset = 1;
+                }
+
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
+                TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(tradeMessageBaseId + msgOffset);
+                messageBox.SetTextTokens(tokens, this);
+                messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
+                messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
+                messageBox.OnButtonClick += ConfirmTrade_OnButtonClick;
+                uiManager.PushWindow(messageBox);
+            }
+        }
+
+        private void ConfirmTrade_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        {
+            if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
+            {
+                // TODO: Deduct gold
+                //GameManager.Instance.PlayerEntity.DeductGoldAmount(GetTradePrice());
+
+                // TODO: Add spell to player spellbook
+            }
+            CloseWindow();
         }
 
         #endregion
