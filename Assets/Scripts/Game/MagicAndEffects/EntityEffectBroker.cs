@@ -14,6 +14,7 @@ using System;
 using System.Reflection;
 using System.Linq;
 using System.Collections.Generic;
+using DaggerfallConnect.Save;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects
 {
@@ -366,6 +367,221 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     }
                 }
             }
+        }
+
+        #endregion
+
+        #region Classic Spell Record Conversion Helpers
+
+        /// <summary>
+        /// Generate EffectBundleSettings from classic SpellRecordData.
+        /// </summary>
+        /// <param name="spellRecordData">Classic spell record data.</param>
+        /// <param name="bundleType">Type of bundle to create.</param>
+        /// <param name="effectBundleSettingsOut">Effect bundle created by conversion.</param>
+        /// <returns>True if successful, otherwise false.</returns>
+        public bool ClassicSpellRecordDataToEffectBundleSettings(SpellRecord.SpellRecordData spellRecordData, BundleTypes bundleType, out EffectBundleSettings effectBundleSettingsOut)
+        {
+            // Spell record data must have effect records
+            if (spellRecordData.effects == null || spellRecordData.effects.Length == 0)
+            {
+                effectBundleSettingsOut = new EffectBundleSettings();
+                return false;
+            }
+
+            // Create bundle
+            effectBundleSettingsOut = new EffectBundleSettings()
+            {
+                Version = EntityEffectBroker.CurrentSpellVersion,
+                BundleType = bundleType,
+                TargetType = ClassicTargetIndexToTargetType(spellRecordData.rangeType),
+                ElementType = ClassicElementIndexToElementType(spellRecordData.element),
+                Name = spellRecordData.spellName,
+                IconIndex = spellRecordData.icon,
+            };
+
+            // Assign effects
+            List<EffectEntry> foundEffects = new List<EffectEntry>();
+            for (int i = 0; i < spellRecordData.effects.Length; i++)
+            {
+                // Skip unused effect slots
+                if (spellRecordData.effects[i].type == -1)
+                    continue;
+
+                // Get entry from effect
+                EffectEntry entry;
+                if (!ClassicEffectRecordToEffectEntry(spellRecordData.effects[i], out entry))
+                    continue;
+
+                // Assign to valid effects
+                foundEffects.Add(entry);
+            }
+
+            // Must have assigned at least one valid effect
+            if (foundEffects.Count == 0)
+                return false;
+
+            // Assign effects to bundle
+            effectBundleSettingsOut.Effects = foundEffects.ToArray();
+
+            return true;
+        }
+
+        /// <summary>
+        /// Generate EffectEntry from classic EffectRecordData.
+        /// </summary>
+        /// <param name="effectRecordData">Classic effect record data.</param>
+        /// <returns>EffectEntry.</returns>
+        public bool ClassicEffectRecordToEffectEntry(SpellRecord.EffectRecordData effectRecordData, out EffectEntry effectEntryOut)
+        {
+            // Get template
+            IEntityEffect effectTemplate = GetEffectTemplateFromClassicEffectRecordData(effectRecordData);
+            if (effectTemplate == null)
+            {
+                effectEntryOut = new EffectEntry();
+                return false;
+            }
+
+            // Get settings and create entry
+            EffectSettings effectSettings = ClassicEffectRecordToEffectSettings(
+                effectRecordData,
+                effectTemplate.Properties.SupportDuration,
+                effectTemplate.Properties.SupportChance,
+                effectTemplate.Properties.SupportMagnitude);
+            effectEntryOut = new EffectEntry(effectTemplate.Key, effectSettings);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Generate EffectSettings from classic EffectRecordData.
+        /// </summary>
+        /// <param name="effectRecordData">Classic effect record data.</param>
+        /// <returns>EffectSettings.</returns>
+        public EffectSettings ClassicEffectRecordToEffectSettings(SpellRecord.EffectRecordData effectRecordData, bool supportDuration, bool supportChance, bool supportMagnitude)
+        {
+            EffectSettings effectSettings = BaseEntityEffect.DefaultEffectSettings();
+            if (supportDuration)
+            {
+                effectSettings.DurationBase = effectRecordData.durationBase;
+                effectSettings.DurationPlus = effectRecordData.durationMod;
+                effectSettings.DurationPerLevel = effectRecordData.durationPerLevel;
+            }
+
+            if (supportChance)
+            {
+                effectSettings.ChanceBase = effectRecordData.chanceBase;
+                effectSettings.ChancePlus = effectRecordData.chanceMod;
+                effectSettings.ChancePerLevel = effectRecordData.chancePerLevel;
+            }
+
+            if (supportMagnitude)
+            {
+                effectSettings.MagnitudeBaseMin = effectRecordData.magnitudeBaseLow;
+                effectSettings.MagnitudeBaseMax = effectRecordData.magnitudeBaseHigh;
+                effectSettings.MagnitudePlusMin = effectRecordData.magnitudeLevelBase;
+                effectSettings.MagnitudePlusMax = effectRecordData.magnitudeLevelHigh;
+                effectSettings.MagnitudePerLevel = effectRecordData.magnitudePerLevel;
+            }
+
+            return effectSettings;
+        }
+
+        /// <summary>
+        /// Maps classic target index to TargetTypes.
+        /// </summary>
+        /// <param name="targetIndex">Classic target index.</param>
+        /// <returns>TargetTypes.</returns>
+        public TargetTypes ClassicTargetIndexToTargetType(int targetIndex)
+        {
+            switch (targetIndex)
+            {
+                case 0:
+                    return TargetTypes.CasterOnly;
+                case 1:
+                    return TargetTypes.ByTouch;
+                case 2:
+                    return TargetTypes.SingleTargetAtRange;
+                case 3:
+                    return TargetTypes.AreaAroundCaster;
+                case 4:
+                    return TargetTypes.AreaAtRange;
+                default:
+                    throw new Exception("ClassicTargetIndexToTargetType() encountered an unknown target index.");
+            }
+        }
+
+        /// <summary>
+        /// Maps classic element index to ElementTypes enum.
+        /// </summary>
+        /// <param name="elementIndex">Classic element index.</param>
+        /// <returns>ElementTypes.</returns>
+        public ElementTypes ClassicElementIndexToElementType(int elementIndex)
+        {
+            switch (elementIndex)
+            {
+                case 0:
+                    return ElementTypes.Fire;
+                case 1:
+                    return ElementTypes.Cold;
+                case 2:
+                    return ElementTypes.Poison;
+                case 3:
+                    return ElementTypes.Shock;
+                case 4:
+                    return ElementTypes.Magic;
+                default:
+                    throw new Exception("ClassicElementIndexToElementType() encountered an unknown element index.");
+            }
+        }
+
+        /// <summary>
+        /// Gets effect template from classic effect record data, if one is available.
+        /// </summary>
+        /// <param name="effectRecordData">Classic effect record data.</param>
+        /// <returns>IEntityEffect of template found or null if no matching template found.</returns>
+        public IEntityEffect GetEffectTemplateFromClassicEffectRecordData(SpellRecord.EffectRecordData effectRecordData)
+        {
+            // Ignore unused effect
+            if (effectRecordData.type == -1)
+                return null;
+
+            // Get effect type/subtype
+            int type, subType;
+            type = effectRecordData.type;
+            subType = (effectRecordData.subType < 0) ? 255 : effectRecordData.subType; // Entity effect keys use 255 instead of -1 for subtype
+
+            // Check if effect template is implemented for this slot - instant fail if effect not implemented
+            int classicKey = BaseEntityEffect.MakeClassicKey((byte)type, (byte)subType);
+
+            return GameManager.Instance.EntityEffectBroker.GetEffectTemplate(classicKey);
+        }
+
+        /// <summary>
+        /// Checks if all classic effects map to an implemented IEntityEffect template.
+        /// </summary>
+        /// <param name="spellRecordData">Classic spell record data.</param>
+        /// <returns>True if all classic effects map to an effect template.</returns>
+        public bool AllEffectsImplemented(SpellRecord.SpellRecordData spellRecordData)
+        {
+            // There are up to 3 effects per spell
+            int foundEffects = 0;
+            for (int i = 0; i < spellRecordData.effects.Length; i++)
+            {
+                // Try to get effect template
+                IEntityEffect effectTemplate = GetEffectTemplateFromClassicEffectRecordData(spellRecordData.effects[i]);
+                if (effectTemplate == null)
+                    continue;
+
+                // Otherwise effect is implemented and can be counted
+                foundEffects++;
+            }
+
+            // Must have at least one effect counted (handles all 3 slots being -1/-1)
+            if (foundEffects == 0)
+                return false;
+
+            return true;
         }
 
         #endregion
