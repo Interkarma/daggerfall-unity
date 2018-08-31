@@ -123,7 +123,7 @@ namespace DaggerfallWorkshop
         static void CreateStartingSpellsJSON(string fallExePath, string outputPath)
         {
             const int recordLength = 6;                        // Length of starting spells record per career
-            const int recordCount = 18;                        // Number of career spell records
+            const int casterRecordCount = 7;                   // Number of caster career spell records
 
             const long startingSpellsOffset = 0x1B064F;        // Offset into FALL.EXE for starting spell data (can be different based on .EXE version)
             /*
@@ -151,10 +151,6 @@ namespace DaggerfallWorkshop
                 }
             }
 
-            // Throw a warning if an unexpected number of class files are found - there should be recordCount (18)
-            if (classList.Count != recordCount)
-                Debug.LogWarningFormat("CreateStartingSpellsJSON found an unexpected number of career files - should equal {0}", recordCount);
-
             // Get list of spells
             List<SpellRecord.SpellRecordData> standardSpells = DaggerfallSpellReader.ReadSpellsFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, spellsStd));
 
@@ -163,7 +159,7 @@ namespace DaggerfallWorkshop
             FileProxy exeFile = new FileProxy(fallExePath, FileUsage.UseDisk, true);
             BinaryReader reader = exeFile.GetReader(startingSpellsOffset);
             List<CareerStartingSpells> careerList = new List<CareerStartingSpells>();
-            for (int i = 0; i < recordCount; i++)
+            for (int i = 0; i < casterRecordCount; i++)
             {
                 CareerStartingSpells careerItem = new CareerStartingSpells()
                 {
