@@ -1,0 +1,274 @@
+[
+    {
+        "CareerIndex": 0,
+        "CareerName": "Mage",
+        "SpellsList": [
+            {
+                "SpellID": 1,
+                "SpellName": "Fenrik's Door Jam"
+            },
+            {
+                "SpellID": 37,
+                "SpellName": "Slowfalling"
+            },
+            {
+                "SpellID": 2,
+                "SpellName": "Buoyancy"
+            },
+            {
+                "SpellID": 97,
+                "SpellName": "Balyna's Balm"
+            },
+            {
+                "SpellID": 8,
+                "SpellName": "Shock"
+            }
+        ]
+    },
+    {
+        "CareerIndex": 1,
+        "CareerName": "Spellsword",
+        "SpellsList": [
+            {
+                "SpellID": 8,
+                "SpellName": "Shock"
+            },
+            {
+                "SpellID": 44,
+                "SpellName": "Chameleon"
+            },
+            {
+                "SpellID": 37,
+                "SpellName": "Slowfalling"
+            }
+        ]
+    },
+    {
+        "CareerIndex": 2,
+        "CareerName": "Battlemage",
+        "SpellsList": [
+            {
+                "SpellID": 8,
+                "SpellName": "Shock"
+            },
+            {
+                "SpellID": 2,
+                "SpellName": "Buoyancy"
+            },
+            {
+                "SpellID": 37,
+                "SpellName": "Slowfalling"
+            }
+        ]
+    },
+    {
+        "CareerIndex": 3,
+        "CareerName": "Sorcerer",
+        "SpellsList": [
+            {
+                "SpellID": 1,
+                "SpellName": "Fenrik's Door Jam"
+            },
+            {
+                "SpellID": 37,
+                "SpellName": "Slowfalling"
+            },
+            {
+                "SpellID": 2,
+                "SpellName": "Buoyancy"
+            },
+            {
+                "SpellID": 97,
+                "SpellName": "Balyna's Balm"
+            },
+            {
+                "SpellID": 8,
+                "SpellName": "Shock"
+            }
+        ]
+    },
+    {
+        "CareerIndex": 4,
+        "CareerName": "Healer",
+        "SpellsList": [
+            {
+                "SpellID": 97,
+                "SpellName": "Balyna's Balm"
+            },
+            {
+                "SpellID": 2,
+                "SpellName": "Buoyancy"
+            },
+            {
+                "SpellID": 1,
+                "SpellName": "Fenrik's Door Jam"
+            },
+            {
+                "SpellID": 37,
+                "SpellName": "Slowfalling"
+            }
+        ]
+    },
+    {
+        "CareerIndex": 5,
+        "CareerName": "Nightblade",
+        "SpellsList": [
+            {
+                "SpellID": 44,
+                "SpellName": "Chameleon"
+            },
+            {
+                "SpellID": 2,
+                "SpellName": "Buoyancy"
+            }
+        ]
+    },
+    {
+        "CareerIndex": 6,
+        "CareerName": "Bard",
+        "SpellsList": [
+            {
+                "SpellID": 37,
+                "SpellName": "Slowfalling"
+            }
+        ]
+    },
+    {
+        "CareerIndex": 7,
+        "CareerName": "Burglar",
+        "SpellsList": [
+            {
+                "SpellID": 97,
+                "SpellName": "Balyna's Balm"
+            }
+        ]
+    },
+    {
+        "CareerIndex": 8,
+        "CareerName": "Rogue",
+        "SpellsList": [
+            {
+                "SpellID": 30,
+                "SpellName": "Shalidor's Mirror"
+            },
+            {
+                "SpellID": 3,
+                "SpellName": "Frostbite"
+            }
+        ]
+    },
+    {
+        "CareerIndex": 9,
+        "CareerName": "Acrobat",
+        "SpellsList": [
+            {
+                "SpellID": 97,
+                "SpellName": "Balyna's Balm"
+            },
+            {
+                "SpellID": 84,
+                "SpellName": "Iron Will"
+            }
+        ]
+    },
+    {
+        "CareerIndex": 10,
+        "CareerName": "Thief",
+        "SpellsList": [
+            {
+                "SpellID": 3,
+                "SpellName": "Frostbite"
+            },
+            {
+                "SpellID": 97,
+                "SpellName": "Balyna's Balm"
+            }
+        ]
+    },
+    {
+        "CareerIndex": 11,
+        "CareerName": "Assassin",
+        "SpellsList": [
+            {
+                "SpellID": 3,
+                "SpellName": "Frostbite"
+            }
+        ]
+    },
+    {
+        "CareerIndex": 12,
+        "CareerName": "Monk",
+        "SpellsList": [
+            {
+                "SpellID": 97,
+                "SpellName": "Balyna's Balm"
+            },
+            {
+                "SpellID": 99,
+                "SpellName": "Tame"
+            }
+        ]
+    },
+    {
+        "CareerIndex": 13,
+        "CareerName": "Archer",
+        "SpellsList": [
+            {
+                "SpellID": 3,
+                "SpellName": "Frostbite"
+            },
+            {
+                "SpellID": 97,
+                "SpellName": "Balyna's Balm"
+            }
+        ]
+    },
+    {
+        "CareerIndex": 14,
+        "CareerName": "Ranger",
+        "SpellsList": [
+            {
+                "SpellID": 19,
+                "SpellName": "Wizard Lock"
+            },
+            {
+                "SpellID": 3,
+                "SpellName": "Frostbite"
+            }
+        ]
+    },
+    {
+        "CareerIndex": 15,
+        "CareerName": "Barbarian",
+        "SpellsList": [
+            {
+                "SpellID": 97,
+                "SpellName": "Balyna's Balm"
+            }
+        ]
+    },
+    {
+        "CareerIndex": 16,
+        "CareerName": "Warrior",
+        "SpellsList": [
+            {
+                "SpellID": 3,
+                "SpellName": "Frostbite"
+            },
+            {
+                "SpellID": 97,
+                "SpellName": "Balyna's Balm"
+            }
+        ]
+    },
+    {
+        "CareerIndex": 17,
+        "CareerName": "Knight",
+        "SpellsList": [
+            {
+                "SpellID": 3,
+                "SpellName": "Frostbite"
+            }
+        ]
+    }
+]

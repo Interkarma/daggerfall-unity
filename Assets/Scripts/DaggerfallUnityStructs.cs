@@ -502,4 +502,26 @@ namespace DaggerfallWorkshop
         public int faceIndex;
         public int factionFaceIndex;
     }
+
+    /// <summary>
+    /// List of starting spells for a specific career.
+    /// Custom careers use the same starting spells as Spellsword (CareerIndex=1) if any primary or major skills are a magic skill)
+    /// </summary>
+    [Serializable]
+    public struct CareerStartingSpells
+    {
+        public int CareerIndex;                 // Career index of starting character - referenced by character creation
+        public string CareerName;               // Display name of career - only used to make file more human readable
+        public StartingSpell[] SpellsList;      // List of starting spells for this career
+    }
+
+    /// <summary>
+    /// A single starting spell.
+    /// </summary>
+    [Serializable]
+    public struct StartingSpell
+    {
+        public int SpellID;                     // ID of spell inside SPELLS.STD - used to reference spell itself
+        public string SpellName;                // Display name of spell - only used to make file more human readable
+    }
 }
