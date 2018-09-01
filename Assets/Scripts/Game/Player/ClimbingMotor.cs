@@ -107,7 +107,9 @@ namespace DaggerfallWorkshop.Game
             // This helps player smoothly mantle the top of whatever they are climbing
             // Horizontal distance check in ClimbingCheck() will cancel climb once player mantles
             // This has the happy side effect of fixing issue where player climbs endlessly into sky or starting to climb when not facing wall
-            Vector3 moveDirection = Vector3.up + GameManager.Instance.MainCameraObject.transform.forward;
+            Vector3 moveDirection = GameManager.Instance.MainCameraObject.transform.forward;
+            moveDirection.y = Vector3.up.y;
+
             controller.Move(moveDirection * Time.deltaTime);
 
             if (climbingContinueTimer <= (playerMotor.systemTimerUpdatesPerSecond * 15))

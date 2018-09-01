@@ -42,6 +42,7 @@ namespace DaggerfallWorkshop.Game
         private CharacterController controller;
         private HeadBobber headBobber;
         private LevitateMotor levitateMotor;
+        private ClimbingMotor climbingMotor;
         private Camera mainCamera;
         private float controllerStandHeight = 1.78f;
         private float controllerCrouchHeight = 0.45f;
@@ -76,6 +77,7 @@ namespace DaggerfallWorkshop.Game
             headBobber = GetComponent<HeadBobber>();
             mainCamera = GameManager.Instance.MainCamera;
             levitateMotor = GetComponent<LevitateMotor>();
+            climbingMotor = GetComponent<ClimbingMotor>();
             camSwimLevel = controllerSwimHeight / 2f;
             camCrouchLevel = controllerCrouchHeight / 2f;
             camStandLevel = controllerStandHeight / 2f;
@@ -98,24 +100,29 @@ namespace DaggerfallWorkshop.Game
             bool crouching = playerMotor.IsCrouching;
             bool riding = playerMotor.IsRiding;
             bool pressedCrouch = InputManager.Instance.ActionComplete(InputManager.Actions.Crouch);
+            bool climbing = climbingMotor.IsClimbing;
             timerMax = timerSlow;
             if (onWater && !toggleSink)
             {
+                timerMax = timerSlow;
                 heightAction = HeightChangeAction.DoSinking;
                 toggleSink = true;
             }
             else if (!onWater && toggleSink)
             {
+                timerMax = timerSlow;
                 heightAction = HeightChangeAction.DoUnsinking;
                 toggleSink = false;
             }
             else if (riding && !toggleRiding)
-            { 
+            {
+                timerMax = timerMedium;
                 heightAction = HeightChangeAction.DoMounting;
                 toggleRiding = true;
             }   
             else if (!riding && toggleRiding)
             {
+                timerMax = timerFast;
                 heightAction = HeightChangeAction.DoDismounting;
                 toggleRiding = false;
             }
@@ -123,16 +130,26 @@ namespace DaggerfallWorkshop.Game
             {
                 // if we crouch out of water
                 if (!swimming && pressedCrouch)
-                { 
+                {
+                    timerMax = timerFast;
                     // Toggle crouching
                     if (crouching)
                         heightAction = HeightChangeAction.DoStanding;
                     else
                         heightAction = HeightChangeAction.DoCrouching;
                 }
+                // if climbing, force into standing
+                else if (climbing)
+                {
+                    timerMax = timerMedium;
+                    if (crouching)
+                        heightAction = HeightChangeAction.DoStanding;
+                    forcedSwimCrouch = false;
+                }
                 // if swimming but not crouching, crouch.
                 else if (swimming && !forcedSwimCrouch)
                 {
+                    timerMax = timerMedium;
                     if (!crouching)
                         heightAction = HeightChangeAction.DoCrouching;
                     forcedSwimCrouch = true;
@@ -140,6 +157,7 @@ namespace DaggerfallWorkshop.Game
                 // if we're in a forced swim crouch, but not swimming, un-force the crouch
                 else if (!swimming && forcedSwimCrouch)
                 {
+                    timerMax = timerMedium;
                     if (crouching)
                         heightAction = HeightChangeAction.DoStanding;
                     forcedSwimCrouch = false;
@@ -147,33 +165,6 @@ namespace DaggerfallWorkshop.Game
             }  
         }
 
-        private void SetChangeSpeed(HeightChangeAction action)
-        {
-            switch (action)
-            {
-                case HeightChangeAction.DoNothing:
-                    timerMax = timerSlow;
-                    break;
-                case HeightChangeAction.DoCrouching:
-                    timerMax = timerFast;
-                    break;
-                case HeightChangeAction.DoStanding:
-                    timerMax = timerFast;
-                    break;
-                case HeightChangeAction.DoMounting:
-                    timerMax = timerMedium;
-                    break;
-                case HeightChangeAction.DoDismounting:
-                    timerMax = timerFast;
-                    break;
-                case HeightChangeAction.DoSinking:
-                    timerMax = timerSlow;
-                    break;
-                case HeightChangeAction.DoUnsinking:
-                    timerMax = timerSlow;
-                    break;
-            }
-        }
         /// <summary>
         /// Continue calling actions to increment camera towards destination.
         /// </summary>
@@ -182,7 +173,6 @@ namespace DaggerfallWorkshop.Game
             if (heightAction == HeightChangeAction.DoNothing || GameManager.IsGamePaused)
                 return;
 
-            SetChangeSpeed(heightAction);
             if (heightAction == HeightChangeAction.DoSinking)
                 DoSinking();
             else if (heightAction == HeightChangeAction.DoUnsinking)
