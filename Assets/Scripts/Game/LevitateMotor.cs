@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -27,7 +27,7 @@ namespace DaggerfallWorkshop.Game
         PlayerSpeedChanger speedChanger;
         Camera playerCamera;
         float moveSpeed = 4.0f;
-        CollisionFlags collisionFlags = 0;
+        Vector3 moveDirection = Vector3.zero;
 
         public bool IsLevitating
         {
@@ -39,11 +39,6 @@ namespace DaggerfallWorkshop.Game
         {
             get { return playerSwimming; }
             set { SetSwimming(value); }
-        }
-
-        public CollisionFlags CollisionFlags
-        {
-            get { return collisionFlags; }
         }
 
         private void Start()
@@ -64,15 +59,15 @@ namespace DaggerfallWorkshop.Game
 
             // Forward/backwards
             if (InputManager.Instance.HasAction(InputManager.Actions.MoveForwards))
-                Move(playerCamera.transform.forward);
+                AddMovement(playerCamera.transform.forward);
             else if (InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards))
-                Move(-playerCamera.transform.forward);
+                AddMovement(-playerCamera.transform.forward);
 
             // Right/left
             if (InputManager.Instance.HasAction(InputManager.Actions.MoveRight))
-                Move(playerCamera.transform.right);
+                AddMovement(playerCamera.transform.right);
             else if (InputManager.Instance.HasAction(InputManager.Actions.MoveLeft))
-                Move(-playerCamera.transform.right);
+                AddMovement(-playerCamera.transform.right);
 
             // Up/down
             Vector3 upDownVector = new Vector3 (0, 0, 0);
@@ -81,10 +76,17 @@ namespace DaggerfallWorkshop.Game
             if (InputManager.Instance.HasAction(InputManager.Actions.Crouch) || InputManager.Instance.HasAction(InputManager.Actions.FloatDown) ||
                 GameManager.Instance.PlayerEnterExit.IsPlayerSwimming && (GameManager.Instance.PlayerEntity.CarriedWeight * 4) > 250)
                 upDownVector = upDownVector + Vector3.down;
-            Move(upDownVector, true);
+            AddMovement(upDownVector, true);
+
+            // Execute movement
+            if (moveDirection != Vector3.zero)
+            {
+                GameManager.Instance.PlayerMotor.CollisionFlags = playerMotor.controller.Move(moveDirection * Time.deltaTime);
+                moveDirection = Vector3.zero;
+            }
         }
 
-        void Move(Vector3 direction, bool upOrDown = false)
+        void AddMovement(Vector3 direction, bool upOrDown = false)
         {
             if (playerSwimming)
             {
@@ -103,7 +105,8 @@ namespace DaggerfallWorkshop.Game
             if (upOrDown)
                 moveSpeed = 80f / PlayerSpeedChanger.classicToUnitySpeedUnitRatio;
 
-            collisionFlags = playerMotor.controller.Move(direction * moveSpeed * Time.deltaTime);
+            moveDirection += direction * moveSpeed;
+
             // Reset to levitate speed in case it has been changed by swimming
             moveSpeed = 4.0f;
         }

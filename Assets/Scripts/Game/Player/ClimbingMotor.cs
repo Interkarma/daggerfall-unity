@@ -25,7 +25,6 @@ namespace DaggerfallWorkshop.Game
         public bool IsClimbing
         {
             get { return isClimbing; }
-            set { isClimbing = value; }
         }
         void Start()
         {
@@ -41,14 +40,8 @@ namespace DaggerfallWorkshop.Game
         /// <param name="collisionFlags"></param>
         public void ClimbingCheck(ref CollisionFlags collisionFlags)
         {
-            // Get pre-movement position for climbing check
-            lastHorizontalPosition = new Vector2(controller.transform.position.x, controller.transform.position.z);
-
             if (isClimbing)
                 collisionFlags = CollisionFlags.Sides;
-            // Get collision flags for swimming as well, so it's possible to climb out of water TODO: Collision flags from swimming aren't working
-            else if (levitateMotor.IsSwimming)
-                collisionFlags = levitateMotor.CollisionFlags;
 
             // Climbing
             uint gameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
@@ -58,12 +51,15 @@ namespace DaggerfallWorkshop.Game
                 || levitateMotor.IsLevitating
                 || playerMotor.IsRiding
                 || (playerMotor.IsCrouching && !heightChanger.ForcedSwimCrouch)
-                || Vector2.Distance(lastHorizontalPosition, new Vector2(controller.transform.position.x, controller.transform.position.z)) >= (0.003f)) // Approximation based on observing classic in-game
+                || Vector2.Distance(lastHorizontalPosition, new Vector2(controller.transform.position.x, controller.transform.position.z)) >= (0.05f))
             {
                 isClimbing = false;
                 showClimbingModeMessage = true;
                 climbingStartTimer = 0;
                 timeOfLastClimbingCheck = gameMinutes;
+
+                // Update position for horizontal movement check
+                lastHorizontalPosition = new Vector2(controller.transform.position.x, controller.transform.position.z);
             }
             else
             {
@@ -91,6 +87,10 @@ namespace DaggerfallWorkshop.Game
                         {
                             if (UnityEngine.Random.Range(1, 101) > player.Skills.GetLiveSkillValue(DFCareer.Skills.Climbing))
                             {
+                                if (isClimbing)
+                                {
+                                    Debug.Log("Stopping climb because failed initial skill check");
+                                }
                                 isClimbing = false;
                                 failedClimbingCheck = true;
                             }
@@ -105,7 +105,13 @@ namespace DaggerfallWorkshop.Game
 
         private void ClimbMovement()
         {
-            controller.Move(Vector3.up * Time.deltaTime);
+            // Try to move up and forwards at same time
+            // This helps player smoothly mantle the top of whatever they are climbing
+            // Horizontal distance check in ClimbingCheck() will cancel climb once player mantles
+            // This has the happy side effect of fixing issue where player climbs endlessly into sky or starting to climb when not facing wall
+            Vector3 moveDirection = Vector3.up + GameManager.Instance.MainCameraObject.transform.forward;
+            controller.Move(moveDirection * Time.deltaTime);
+
             if (climbingContinueTimer <= (playerMotor.systemTimerUpdatesPerSecond * 15))
                 climbingContinueTimer += Time.deltaTime;
             else

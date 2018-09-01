@@ -104,6 +104,17 @@ namespace DaggerfallWorkshop.Game
             set { isRiding = value; }
         }
 
+        public bool IsClimbing
+        {
+            get { return (climbingMotor) ? climbingMotor.IsClimbing : false; }
+        }
+
+        public CollisionFlags CollisionFlags
+        {
+            get { return collisionFlags; }
+            set { collisionFlags = value; }
+        }
+
         public bool IsMovingLessThanHalfSpeed
         {
             get
