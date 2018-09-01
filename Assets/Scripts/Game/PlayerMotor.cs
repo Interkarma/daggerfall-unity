@@ -385,8 +385,8 @@ namespace DaggerfallWorkshop.Game
         {
             const float rayDistance = 1.0f;
 
-            // Must be outside and grounded over a water tile
-            if (GameManager.Instance.PlayerEnterExit.IsPlayerInside || !IsGrounded || GameManager.Instance.StreamingWorld.PlayerTileMapIndex != 0)
+            // Must be outside and over a water tile
+            if (GameManager.Instance.PlayerEnterExit.IsPlayerInside || GameManager.Instance.StreamingWorld.PlayerTileMapIndex != 0)
                 return false;
 
             // Must actually be standing on a terrain object not some other object (e.g. player ship)
