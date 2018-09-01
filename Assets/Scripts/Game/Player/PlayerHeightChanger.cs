@@ -42,6 +42,7 @@ namespace DaggerfallWorkshop.Game
         private CharacterController controller;
         private HeadBobber headBobber;
         private LevitateMotor levitateMotor;
+        private ClimbingMotor climbingMotor;
         private Camera mainCamera;
         private float controllerStandHeight = 1.78f;
         private float controllerCrouchHeight = 0.45f;
@@ -76,6 +77,7 @@ namespace DaggerfallWorkshop.Game
             headBobber = GetComponent<HeadBobber>();
             mainCamera = GameManager.Instance.MainCamera;
             levitateMotor = GetComponent<LevitateMotor>();
+            climbingMotor = GetComponent<ClimbingMotor>();
             camSwimLevel = controllerSwimHeight / 2f;
             camCrouchLevel = controllerCrouchHeight / 2f;
             camStandLevel = controllerStandHeight / 2f;
@@ -98,6 +100,7 @@ namespace DaggerfallWorkshop.Game
             bool crouching = playerMotor.IsCrouching;
             bool riding = playerMotor.IsRiding;
             bool pressedCrouch = InputManager.Instance.ActionComplete(InputManager.Actions.Crouch);
+            bool climbing = climbingMotor.IsClimbing;
             timerMax = timerSlow;
             if (onWater && !toggleSink)
             {
@@ -123,12 +126,19 @@ namespace DaggerfallWorkshop.Game
             {
                 // if we crouch out of water
                 if (!swimming && pressedCrouch)
-                { 
+                {
                     // Toggle crouching
                     if (crouching)
                         heightAction = HeightChangeAction.DoStanding;
                     else
                         heightAction = HeightChangeAction.DoCrouching;
+                }
+                // if climbing, force into standing
+                else if (climbing)
+                {
+                    if (crouching)
+                        heightAction = HeightChangeAction.DoStanding;
+                    forcedSwimCrouch = false;
                 }
                 // if swimming but not crouching, crouch.
                 else if (swimming && !forcedSwimCrouch)
