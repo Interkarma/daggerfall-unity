@@ -47,7 +47,7 @@ namespace DaggerfallWorkshop.Game
         {
             // Cancel jump if player is paralyzed or on a water tile
             if (GameManager.Instance.PlayerEntity.IsParalyzed ||
-                GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 0)
+                GameManager.Instance.PlayerMotor.OnWater)
                 return;
 
             if (InputManager.Instance.HasAction(InputManager.Actions.Jump))

@@ -34,13 +34,6 @@ namespace DaggerfallWorkshop.Game
             get { return heightAction; }
             set { heightAction = value; }
         }
-        public bool OnWater
-        {
-            get
-            {
-                return ( GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 0 && playerMotor.IsGrounded);
-            }
-        }
         public bool IsInWaterTile { get; set; }
         public bool ForcedSwimCrouch { get { return forcedSwimCrouch; } set { } }
         private bool forcedSwimCrouch = true;
@@ -100,7 +93,7 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public void DecideHeightAction()
         {
-            bool onWater = OnWater;
+            bool onWater = GameManager.Instance.PlayerMotor.OnWater;
             bool swimming = levitateMotor.IsSwimming;
             bool crouching = playerMotor.IsCrouching;
             bool riding = playerMotor.IsRiding;
@@ -250,7 +243,7 @@ namespace DaggerfallWorkshop.Game
                 float prevHeight = controller.height;
                 float targetHeight;
                 prevCamLevel = prevHeight / 2f;
-                if (OnWater)
+                if (GameManager.Instance.PlayerMotor.OnWater)
                 {
                     targetHeight = controllerSwimHeight + controllerSwimHorseDisplacement;
                     prevCamLevel = camSwimLevel;
@@ -281,7 +274,7 @@ namespace DaggerfallWorkshop.Game
                 float prevHeight = controller.height;
                 float targetHeight;
 
-                if (OnWater)
+                if (GameManager.Instance.PlayerMotor.OnWater)
                 {
                     prevCamLevel = prevHeight / 2f;
                     targetHeight = controllerSwimHeight;
@@ -430,7 +423,7 @@ namespace DaggerfallWorkshop.Game
             bool mounting = (heightAction == HeightChangeAction.DoMounting);
             controller.height = GetNearbyFloat(controller.height + heightChange);
             float eyeChange = 0;
-            if (!OnWater)
+            if (!GameManager.Instance.PlayerMotor.OnWater)
             { 
                 if (dismounting)
                     eyeChange = -1 * eyeHeight;
@@ -494,7 +487,7 @@ namespace DaggerfallWorkshop.Game
             }              
 
             toggleRiding = playerMotor.IsRiding;
-            toggleSink = OnWater;
+            toggleSink = GameManager.Instance.PlayerMotor.OnWater;
             forcedSwimCrouch = levitateMotor.IsSwimming;
             
         }

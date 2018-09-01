@@ -92,7 +92,7 @@ namespace DaggerfallWorkshop.Game
             // Can only do this when PlayerEnterExit is available, otherwise default to true
             bool playerInside = (playerEnterExit == null) ? true : playerEnterExit.IsPlayerInside;
             bool playerInBuilding = (playerEnterExit == null) ? false : playerEnterExit.IsPlayerInsideBuilding;
-            bool playerSwimmingOutside = (GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 0 && playerMotor.IsGrounded);
+            bool playerSwimmingOutside = GameManager.Instance.PlayerMotor.OnWater;
 
             // Change footstep sounds between winter/summer variants or when player enters/exits an interior space
             if (dfUnity.WorldTime.Now.SeasonValue != currentSeason || isInside != playerInside || playerSwimmingOutside != isInOutsideWater)

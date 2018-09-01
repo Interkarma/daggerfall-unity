@@ -18,6 +18,7 @@ namespace DaggerfallWorkshop.Game
     public class PlayerMotor : MonoBehaviour
     {
         #region Fields
+
         bool isCrouching = false;
 
         // TODO: Placeholder integration of horse & cart riding - using same speed for cart to simplify PlayerMotor integration
@@ -60,9 +61,12 @@ namespace DaggerfallWorkshop.Game
 
         LevitateMotor levitateMotor;
         float freezeMotor = 0;
+        bool onExteriorWater = false;
+
         #endregion
 
         #region Properties
+
         public bool IsGrounded
         {
             get { return grounded; }
@@ -145,9 +149,19 @@ namespace DaggerfallWorkshop.Game
                 return moveDirection;
             }
         }
+
+        /// <summary>
+        /// True if player is standing on exterior water tile.
+        /// </summary>
+        public bool OnWater
+        {
+            get { return onExteriorWater; }
+        }
+
         #endregion
 
         #region Event Handlers
+
         void Start()
         {
             controller = GetComponent<CharacterController>();
@@ -241,6 +255,9 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
+            // Update on water check
+            onExteriorWater = CheckOnExteriorWater();
+
             // Do nothing if player levitating - replacement motor will take over movement.
             // Don't return here for swimming because player should still be able to crouch when swimming.
             if (levitateMotor && levitateMotor.IsLevitating)
@@ -285,6 +302,7 @@ namespace DaggerfallWorkshop.Game
         #endregion
 
         #region Public Methods
+
         /// <summary>
         /// Attempts to find the ground position below player, even if player is jumping/falling
         /// </summary>
@@ -320,6 +338,7 @@ namespace DaggerfallWorkshop.Game
         {
             return Vector3.Distance(transform.position, position);
         }
+
         #endregion
 
         #region Private Methods
@@ -354,6 +373,36 @@ namespace DaggerfallWorkshop.Game
             // This prevents levitation flag carrying over and effect system can still restore it if needed
             if (levitateMotor)
                 levitateMotor.IsLevitating = false;
+        }
+
+        /// <summary>
+        /// Check if player is really standing on an outdoor water tile, not just positioned above one.
+        /// For example when player is on their ship they are standing above water but should not be swimming.
+        /// Same when player is levitating above water they should not hear splash sounds.
+        /// </summary>
+        /// <returns>True if player is physically in range of an outdoor water tile.</returns>
+        bool CheckOnExteriorWater()
+        {
+            const float rayDistance = 1.0f;
+
+            // Must be outside and grounded over a water tile
+            if (GameManager.Instance.PlayerEnterExit.IsPlayerInside || !IsGrounded || GameManager.Instance.StreamingWorld.PlayerTileMapIndex != 0)
+                return false;
+
+            // Must actually be standing on a terrain object not some other object (e.g. player ship)
+            RaycastHit hit;
+            if (!Physics.Raycast(transform.position, Vector3.down, out hit, rayDistance))
+            {
+                return false;
+            }
+            else
+            {
+                DaggerfallTerrain terrain = hit.transform.GetComponent<DaggerfallTerrain>();
+                if (!terrain)
+                    return false;
+            }
+
+            return true;
         }
 
         #endregion
