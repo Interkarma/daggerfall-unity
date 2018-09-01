@@ -502,7 +502,9 @@ namespace DaggerfallWorkshop.Game.Formulas
                             maxBaseDamage = AIAttacker.MobileEnemy.MaxDamage3;
                         }
 
-                        if (DFRandom.rand() % 100 < 50 && minBaseDamage > 0 && CalculateSuccessfulHit(attacker, target, chanceToHitMod, struckBodyPart) > 0)
+                        int reflexesChance = 50 - (10 * ((int)player.Reflexes - 2));
+
+                        if (DFRandom.rand() % 100 < reflexesChance && minBaseDamage > 0 && CalculateSuccessfulHit(attacker, target, chanceToHitMod, struckBodyPart) > 0)
                         {
                             int hitDamage = UnityEngine.Random.Range(minBaseDamage, maxBaseDamage + 1);
                             // Apply special monster attack effects

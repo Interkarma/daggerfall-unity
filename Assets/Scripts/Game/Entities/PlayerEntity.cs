@@ -887,7 +887,10 @@ namespace DaggerfallWorkshop.Game.Entity
                 int skillAdvancementMultiplier = DaggerfallSkills.GetAdvancementMultiplier((DFCareer.Skills)i);
                 float careerAdvancementMultiplier = Career.AdvancementMultiplier;
                 int usesNeededForAdvancement = FormulaHelper.CalculateSkillUsesForAdvancement(skills.GetPermanentSkillValue(i), skillAdvancementMultiplier, careerAdvancementMultiplier, level);
-                if (skillUses[i] >= usesNeededForAdvancement)
+                int reflexesMod = 0x10000 - (((int)reflexes - 2) << 13);
+                int calculatedSkillUses = (skillUses[i] * reflexesMod) >> 16;
+
+                if (calculatedSkillUses >= usesNeededForAdvancement)
                 {
                     skillUses[i] = 0;
 
