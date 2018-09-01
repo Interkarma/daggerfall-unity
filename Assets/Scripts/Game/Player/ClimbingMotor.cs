@@ -52,7 +52,7 @@ namespace DaggerfallWorkshop.Game
                 || failedClimbingCheck
                 || levitateMotor.IsLevitating
                 || playerMotor.IsRiding
-                || (playerMotor.IsCrouching && !heightChanger.ForcedSwimCrouch)
+                //|| (playerMotor.IsCrouching && !heightChanger.ForcedSwimCrouch)
                 || Vector2.Distance(lastHorizontalPosition, new Vector2(controller.transform.position.x, controller.transform.position.z)) > stopClimbingDistance)
             {
                 isClimbing = false;
