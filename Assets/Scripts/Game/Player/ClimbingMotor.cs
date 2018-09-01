@@ -89,10 +89,6 @@ namespace DaggerfallWorkshop.Game
                         {
                             if (UnityEngine.Random.Range(1, 101) > player.Skills.GetLiveSkillValue(DFCareer.Skills.Climbing))
                             {
-                                if (isClimbing)
-                                {
-                                    Debug.Log("Stopping climb because failed initial skill check");
-                                }
                                 isClimbing = false;
                                 failedClimbingCheck = true;
                             }
@@ -129,7 +125,11 @@ namespace DaggerfallWorkshop.Game
                 if ((UnityEngine.Random.Range(1, 101) > 90)
                     || (UnityEngine.Random.Range(1, 101) > skill))
                 {
-                    isClimbing = false;
+                    // Don't allow skill check to break climbing while swimming
+                    // This is another reason player can't climb out of water - any slip in climb will throw them back into swim mode
+                    // For now just pretend water is supporting player while they climb
+                    if (!GameManager.Instance.PlayerEnterExit.IsPlayerSwimming)
+                        isClimbing = false;
                 }
             }
         }
