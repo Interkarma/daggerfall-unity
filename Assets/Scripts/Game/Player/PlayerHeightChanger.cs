@@ -173,7 +173,6 @@ namespace DaggerfallWorkshop.Game
             if (heightAction == HeightChangeAction.DoNothing || GameManager.IsGamePaused)
                 return;
 
-            SetChangeSpeed(heightAction);
             if (heightAction == HeightChangeAction.DoSinking)
                 DoSinking();
             else if (heightAction == HeightChangeAction.DoUnsinking)
