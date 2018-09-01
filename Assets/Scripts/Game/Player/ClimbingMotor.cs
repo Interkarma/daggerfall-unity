@@ -14,7 +14,7 @@ namespace DaggerfallWorkshop.Game
         private PlayerMotor playerMotor;
         private LevitateMotor levitateMotor;
         private CharacterController controller;
-        private PlayerHeightChanger heightChanger;
+        //private PlayerHeightChanger heightChanger;
         private bool failedClimbingCheck = false;
         private bool isClimbing = false;
         private float climbingStartTimer = 0;
@@ -31,7 +31,7 @@ namespace DaggerfallWorkshop.Game
             playerMotor = GetComponent<PlayerMotor>();
             levitateMotor = GetComponent<LevitateMotor>();
             controller = GetComponent<CharacterController>();
-            heightChanger = GetComponent<PlayerHeightChanger>();
+            //heightChanger = GetComponent<PlayerHeightChanger>();
         }
 
         /// <summary>

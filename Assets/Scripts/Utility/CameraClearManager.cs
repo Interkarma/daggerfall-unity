@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -25,7 +25,7 @@ public class CameraClearManager : MonoBehaviour
     public Color cameraClearColor = Color.black;
     //public bool toggleGlobalFog = true;
 
-    GlobalFog globalFog;
+    //GlobalFog globalFog;
     bool lastInside = false;
 
     void Start()
@@ -35,10 +35,10 @@ public class CameraClearManager : MonoBehaviour
         if (mainCamera == null)
             mainCamera = GameManager.Instance.MainCamera;
 
-        if (mainCamera != null)
-        {
-            globalFog = mainCamera.GetComponent<GlobalFog>();
-        }
+        //if (mainCamera != null)
+        //{
+        //    globalFog = mainCamera.GetComponent<GlobalFog>();
+        //}
     }
 
     void Update()
