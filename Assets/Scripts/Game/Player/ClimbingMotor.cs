@@ -40,6 +40,8 @@ namespace DaggerfallWorkshop.Game
         /// <param name="collisionFlags"></param>
         public void ClimbingCheck(ref CollisionFlags collisionFlags)
         {
+            float stopClimbingDistance = 0.08f;
+
             if (isClimbing)
                 collisionFlags = CollisionFlags.Sides;
 
@@ -51,14 +53,14 @@ namespace DaggerfallWorkshop.Game
                 || levitateMotor.IsLevitating
                 || playerMotor.IsRiding
                 || (playerMotor.IsCrouching && !heightChanger.ForcedSwimCrouch)
-                || Vector2.Distance(lastHorizontalPosition, new Vector2(controller.transform.position.x, controller.transform.position.z)) >= (0.05f))
+                || Vector2.Distance(lastHorizontalPosition, new Vector2(controller.transform.position.x, controller.transform.position.z)) > stopClimbingDistance)
             {
                 isClimbing = false;
                 showClimbingModeMessage = true;
                 climbingStartTimer = 0;
                 timeOfLastClimbingCheck = gameMinutes;
 
-                // Update position for horizontal movement check
+                // Reset position for horizontal distance check
                 lastHorizontalPosition = new Vector2(controller.transform.position.x, controller.transform.position.z);
             }
             else
