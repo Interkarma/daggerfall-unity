@@ -135,8 +135,8 @@ namespace DaggerfallWorkshop.Game
                 clip2 = null;
             }
 
-            // Use water sounds if in water
-            if (playerEnterExit.blockWaterLevel != 10000)
+            // Use water sounds if in dungeon water
+            if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon && playerEnterExit.blockWaterLevel != 10000)
             {
                 // In water, deep depth
                 if ((currentFootstepSound1 != FootstepSoundSubmerged) && playerEnterExit.IsPlayerSwimming)
