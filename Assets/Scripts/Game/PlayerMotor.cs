@@ -109,6 +109,11 @@ namespace DaggerfallWorkshop.Game
             get { return (climbingMotor) ? climbingMotor.IsClimbing : false; }
         }
 
+        public bool IsSwimming
+        {
+            get { return (levitateMotor) ? levitateMotor.IsSwimming : false; }
+        }
+
         public CollisionFlags CollisionFlags
         {
             get { return collisionFlags; }
