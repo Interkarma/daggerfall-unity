@@ -121,7 +121,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
         /// <summary>
         /// Gets or sets magical concealment state.
-        /// Player can have multiple types of magical concealment running as same time.
+        /// Player can have multiple types of magical concealment running at same time.
         /// Note: This value is intentionally not serialized. It should only be set by live effects.
         /// </summary>
         public MagicalConcealmentFlags MagicalConcealmentFlags

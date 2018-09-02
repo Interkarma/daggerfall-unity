@@ -1276,6 +1276,8 @@ namespace DaggerfallWorkshop.Game.Formulas
             // Multipliers for target type
             totalGoldCostOut = ApplyTargetCostMultiplier(totalGoldCostOut, targetType);
             totalSpellPointCostOut = ApplyTargetCostMultiplier(totalSpellPointCostOut, targetType);
+            if (totalSpellPointCostOut < 5)
+                totalSpellPointCostOut = 5;
         }
 
         /// <summary>
