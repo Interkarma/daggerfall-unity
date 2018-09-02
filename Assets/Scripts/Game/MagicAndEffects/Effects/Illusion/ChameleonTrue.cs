@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -18,7 +18,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// <summary>
     /// Chameleon - True
     /// </summary>
-    public class ChameleonTrue : BaseEntityEffect
+    public class ChameleonTrue : ConcealmentEffect
     {
         public override void SetProperties()
         {
@@ -32,21 +32,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.SupportDuration = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_All;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
-            properties.AllowedCraftingStations = EntityEffectBroker.MagicCraftingFlags_None;
+            properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
             properties.MagicSkill = DFCareer.MagicSkills.Illusion;
             properties.DurationCosts = MakeEffectCosts(40, 120);
+            concealmentFlag = MagicalConcealmentFlags.BlendingTrue;
         }
 
-        public override void MagicRound()
+        protected override bool IsLikeKind(IncumbentEffect other)
         {
-            base.MagicRound();
-
-            //// Get peered entity gameobject
-            //DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
-            //if (!entityBehaviour)
-            //    return;
-
-            // TODO: Implement effect
+            return (other is ChameleonTrue);
         }
     }
 }
