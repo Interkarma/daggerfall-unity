@@ -114,8 +114,8 @@ namespace DaggerfallWorkshop.Game.Entity
         /// </summary>
         public bool IsWaterBreathing
         {
-            get { return IsWaterBreathing; }
-            set { IsWaterBreathing = value; }
+            get { return isWaterBreathing; }
+            set { isWaterBreathing = value; }
         }
 
         /// Gets or sets world context of this entity for floating origin support.

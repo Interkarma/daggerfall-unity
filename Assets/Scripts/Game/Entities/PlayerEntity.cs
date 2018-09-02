@@ -273,8 +273,8 @@ namespace DaggerfallWorkshop.Game.Entity
                     if (playerMotor.IsRunning && !playerMotor.IsRiding)
                         TallySkill(DFCareer.Skills.Running, 1);
 
-                    // Handle breath when underwater
-                    if (GameManager.Instance.PlayerEnterExit.IsPlayerSubmerged)
+                    // Handle breath when underwater and not water breathing
+                    if (GameManager.Instance.PlayerEnterExit.IsPlayerSubmerged && !GameManager.Instance.PlayerEntity.IsWaterBreathing)
                     {
                         if (currentBreath == 0)
                         {
