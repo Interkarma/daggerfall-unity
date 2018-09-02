@@ -1186,7 +1186,7 @@ dark buxom wench
 ?2
 -1
 7
-373
+362
 
 184 34
 man on horseback
@@ -1403,7 +1403,7 @@ Lady Northbridge
 2
 0
 0
-0
+493
 
 357 15
 Queen Akouithi
@@ -1503,4 +1503,142 @@ blue-cloaked woman (court wayrest)
 11
 447
 
+334 16
+guard
+1
+16
+9
+404
 
+346 20
+guard
+1
+16
+9
+404
+
+357 13
+guard
+1
+16
+9
+404
+
+334 6
+jester
+2
+15
+5
+486
+
+346 3
+jester
+2
+15
+5
+486
+
+334 3
+jester
+1
+15
+5
+487
+
+334 10
+adventuresome woman
+2
+-1
+9
+370
+
+334 11
+lutist
+1
+15
+13
+496
+
+334 20
+stylish fat man
+1
+-2
+12
+376
+
+334 7
+bearded old man
+1
+15
+5
+443
+
+334 9
+page boy
+1
+16
+19
+490
+
+334 15
+guard
+1
+16
+9
+403
+
+346 19
+guard
+1
+16
+9
+403
+
+357 12
+guard
+1
+16
+9
+403
+
+346 14
+wise-looking man
+1
+11
+10
+477
+
+357 5
+flute player
+1
+15
+13
+454
+
+357 2
+woman in gray
+2
+16
+15
+433
+
+357 4
+scruffy sailor
+1
+27
+16
+453
+
+357 10
+nearly naked man
+1
+-3
+7
+500
+
+334 14
+blacksmith
+1
+2
+4
+364
