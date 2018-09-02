@@ -183,14 +183,15 @@ namespace DaggerfallWorkshop.Game.Entity
     /// <summary>
     /// Varying visibility type for entities.
     /// </summary>
-    public enum EntityVisibilityTypes
+    [Flags]
+    public enum MagicalConcealmentFlags
     {
-        Standard,
-        InvisibleNormal,
-        InvisibleTrue,
-        BlendingNormal,
-        BlendingTrue,
-        ShadeNormal,
-        ShadeTrue,
+        None = 0,
+        InvisibleNormal = 1,
+        InvisibleTrue = 2,
+        BlendingNormal = 4,
+        BlendingTrue = 8,
+        ShadeNormal = 16,
+        ShadeTrue = 32,
     }
 }

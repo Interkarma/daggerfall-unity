@@ -58,7 +58,7 @@ namespace DaggerfallWorkshop.Game.Entity
         protected bool isSilenced;
         protected bool isWaterWalking;
         protected bool isWaterBreathing;
-        protected EntityVisibilityTypes visibilityState;
+        protected MagicalConcealmentFlags magicalConcealmentFlags;
 
         bool quiesce = false;
 
@@ -120,13 +120,14 @@ namespace DaggerfallWorkshop.Game.Entity
         }
 
         /// <summary>
-        /// Gets or sets visibility state.
+        /// Gets or sets magical concealment state.
+        /// Player can have multiple types of magical concealment running as same time.
         /// Note: This value is intentionally not serialized. It should only be set by live effects.
         /// </summary>
-        public EntityVisibilityTypes Visibility
+        public MagicalConcealmentFlags MagicalConcealmentFlags
         {
-            get { return visibilityState; }
-            set { visibilityState = value; }
+            get { return magicalConcealmentFlags; }
+            set { magicalConcealmentFlags = value; }
         }
 
         /// <summary>
@@ -134,7 +135,7 @@ namespace DaggerfallWorkshop.Game.Entity
         /// </summary>
         public bool IsInvisible
         {
-            get { return (visibilityState == EntityVisibilityTypes.InvisibleNormal || visibilityState == EntityVisibilityTypes.InvisibleTrue); }
+            get { return (HasConcealment(MagicalConcealmentFlags.InvisibleNormal) || HasConcealment(MagicalConcealmentFlags.InvisibleTrue)); }
         }
 
         /// <summary>
@@ -142,7 +143,7 @@ namespace DaggerfallWorkshop.Game.Entity
         /// </summary>
         public bool IsBlending
         {
-            get { return (visibilityState == EntityVisibilityTypes.BlendingNormal || visibilityState == EntityVisibilityTypes.BlendingTrue); } 
+            get { return (HasConcealment(MagicalConcealmentFlags.BlendingNormal) || HasConcealment(MagicalConcealmentFlags.BlendingTrue)); } 
         }
 
         /// <summary>
@@ -150,7 +151,7 @@ namespace DaggerfallWorkshop.Game.Entity
         /// </summary>
         public bool IsAShade
         {
-            get { return (visibilityState == EntityVisibilityTypes.ShadeNormal || visibilityState == EntityVisibilityTypes.ShadeTrue); }
+            get { return (HasConcealment(MagicalConcealmentFlags.ShadeNormal) || HasConcealment(MagicalConcealmentFlags.ShadeTrue)); }
         }
 
         /// <summary>
@@ -158,23 +159,33 @@ namespace DaggerfallWorkshop.Game.Entity
         /// </summary>
         public bool IsMagicallyConcealed
         {
-            get { return visibilityState != EntityVisibilityTypes.Standard; }
+            get { return magicalConcealmentFlags != MagicalConcealmentFlags.None; }
         }
 
         /// <summary>
         /// True if entity is magically concealed by invisibility/chameleon/shadow (normal only).
         /// </summary>
-        public bool IsMagicallyConcealedNormalStrength
+        public bool IsMagicallyConcealedNormalPower
         {
-            get { return (visibilityState == EntityVisibilityTypes.InvisibleNormal || visibilityState == EntityVisibilityTypes.BlendingNormal || visibilityState == EntityVisibilityTypes.ShadeNormal); }
+            get
+            {
+                return (HasConcealment(MagicalConcealmentFlags.InvisibleNormal) ||
+                        HasConcealment(MagicalConcealmentFlags.BlendingNormal) ||
+                        HasConcealment(MagicalConcealmentFlags.ShadeNormal));
+            }
         }
 
         /// <summary>
         /// True if entity is magically concealed by invisibility/chameleon/shadow (true only).
         /// </summary>
-        public bool IsMagicallyConcealedTrueStrength
+        public bool IsMagicallyConcealedTruePower
         {
-            get { return (visibilityState == EntityVisibilityTypes.InvisibleTrue || visibilityState == EntityVisibilityTypes.BlendingTrue || visibilityState == EntityVisibilityTypes.ShadeTrue); }
+            get
+            {
+                return (HasConcealment(MagicalConcealmentFlags.InvisibleTrue) ||
+                        HasConcealment(MagicalConcealmentFlags.BlendingTrue) ||
+                        HasConcealment(MagicalConcealmentFlags.ShadeTrue));
+            }
         }
 
         /// Gets or sets world context of this entity for floating origin support.
@@ -477,6 +488,16 @@ namespace DaggerfallWorkshop.Game.Entity
             }
         }
 
+        /// <summary>
+        /// Helper to check if specific magical concealment flags are active on player.
+        /// </summary>
+        /// <param name="flags">Comparison flags.</param>
+        /// <returns>True if matching.</returns>
+        bool HasConcealment(MagicalConcealmentFlags flags)
+        {
+            return ((magicalConcealmentFlags & flags) == flags) ? true : false;
+        }
+
         #endregion
 
         #region Temp Spellbook Helpers
@@ -562,7 +583,7 @@ namespace DaggerfallWorkshop.Game.Entity
             isSilenced = false;
             isWaterWalking = false;
             isWaterBreathing = false;
-            visibilityState = EntityVisibilityTypes.Standard;
+            magicalConcealmentFlags = MagicalConcealmentFlags.None;
             SetEntityDefaults();
         }
 
