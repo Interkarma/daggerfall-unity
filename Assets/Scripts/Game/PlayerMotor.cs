@@ -299,7 +299,7 @@ namespace DaggerfallWorkshop.Game
 
             speed = speedChanger.GetBaseSpeed();
             speedChanger.HandleInputSpeedAdjustment(ref speed);
-            if (playerEnterExit.IsPlayerSwimming)
+            if (playerEnterExit.IsPlayerSwimming && !GameManager.Instance.PlayerEntity.IsWaterWalking)
                 speed = speedChanger.GetSwimSpeed(speed);
 
             heightChanger.DecideHeightAction();

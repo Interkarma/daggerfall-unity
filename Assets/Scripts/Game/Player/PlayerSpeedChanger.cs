@@ -1,4 +1,4 @@
-﻿using DaggerfallConnect;
+using DaggerfallConnect;
 using DaggerfallWorkshop.Game;
 using System;
 using System.Collections;

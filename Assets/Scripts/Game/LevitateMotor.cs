@@ -21,12 +21,14 @@ namespace DaggerfallWorkshop.Game
     /// </summary>
     public class LevitateMotor : MonoBehaviour
     {
+        const float levitateMoveSpeed = 4.0f;
+
         bool playerLevitating = false;
         bool playerSwimming = false;
         PlayerMotor playerMotor;
         PlayerSpeedChanger speedChanger;
         Camera playerCamera;
-        float moveSpeed = 4.0f;
+        float moveSpeed = levitateMoveSpeed;
         Vector3 moveDirection = Vector3.zero;
 
         public bool IsLevitating
@@ -88,7 +90,14 @@ namespace DaggerfallWorkshop.Game
 
         void AddMovement(Vector3 direction, bool upOrDown = false)
         {
-            if (playerSwimming)
+            if (playerSwimming && GameManager.Instance.PlayerEntity.IsWaterWalking)
+            {
+                // Swimming with water walking on makes player move at normal speed in water
+                moveSpeed = GameManager.Instance.PlayerMotor.Speed;
+                moveDirection += direction * moveSpeed;
+                return;
+            }
+            else if (playerSwimming)
             {
                 // Do not allow player to swim up out of water, as he would immediately be pulled back in, making jerky movement and playing the splash sound repeatedly
                 if ((direction.y > 0) && (playerMotor.controller.transform.position.y + (50 * MeshReader.GlobalScale) - 0.93f) >=
@@ -108,7 +117,7 @@ namespace DaggerfallWorkshop.Game
             moveDirection += direction * moveSpeed;
 
             // Reset to levitate speed in case it has been changed by swimming
-            moveSpeed = 4.0f;
+            moveSpeed = levitateMoveSpeed;
         }
 
         void SetLevitating(bool levitating)
