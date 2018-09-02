@@ -58,6 +58,7 @@ namespace DaggerfallWorkshop.Game.Entity
         protected bool isSilenced;
         protected bool isWaterWalking;
         protected bool isWaterBreathing;
+        protected EntityVisibilityTypes visibilityState;
 
         bool quiesce = false;
 
@@ -116,6 +117,64 @@ namespace DaggerfallWorkshop.Game.Entity
         {
             get { return isWaterBreathing; }
             set { isWaterBreathing = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets visibility state.
+        /// Note: This value is intentionally not serialized. It should only be set by live effects.
+        /// </summary>
+        public EntityVisibilityTypes Visibility
+        {
+            get { return visibilityState; }
+            set { visibilityState = value; }
+        }
+
+        /// <summary>
+        /// True if entity is invisible (normal or true).
+        /// </summary>
+        public bool IsInvisible
+        {
+            get { return (visibilityState == EntityVisibilityTypes.InvisibleNormal || visibilityState == EntityVisibilityTypes.InvisibleTrue); }
+        }
+
+        /// <summary>
+        /// True if entity is blending (normal or true).
+        /// </summary>
+        public bool IsBlending
+        {
+            get { return (visibilityState == EntityVisibilityTypes.BlendingNormal || visibilityState == EntityVisibilityTypes.BlendingTrue); } 
+        }
+
+        /// <summary>
+        /// True if entity is a shadow (normal or true).
+        /// </summary>
+        public bool IsAShade
+        {
+            get { return (visibilityState == EntityVisibilityTypes.ShadeNormal || visibilityState == EntityVisibilityTypes.ShadeTrue); }
+        }
+
+        /// <summary>
+        /// True if entity is magically concealed by invisibility/chameleon/shadow (normal or true).
+        /// </summary>
+        public bool IsMagicallyConcealed
+        {
+            get { return visibilityState != EntityVisibilityTypes.Standard; }
+        }
+
+        /// <summary>
+        /// True if entity is magically concealed by invisibility/chameleon/shadow (normal only).
+        /// </summary>
+        public bool IsMagicallyConcealedNormalStrength
+        {
+            get { return (visibilityState == EntityVisibilityTypes.InvisibleNormal || visibilityState == EntityVisibilityTypes.BlendingNormal || visibilityState == EntityVisibilityTypes.ShadeNormal); }
+        }
+
+        /// <summary>
+        /// True if entity is magically concealed by invisibility/chameleon/shadow (true only).
+        /// </summary>
+        public bool IsMagicallyConcealedTrueStrength
+        {
+            get { return (visibilityState == EntityVisibilityTypes.InvisibleTrue || visibilityState == EntityVisibilityTypes.BlendingTrue || visibilityState == EntityVisibilityTypes.ShadeTrue); }
         }
 
         /// Gets or sets world context of this entity for floating origin support.
@@ -503,6 +562,7 @@ namespace DaggerfallWorkshop.Game.Entity
             isSilenced = false;
             isWaterWalking = false;
             isWaterBreathing = false;
+            visibilityState = EntityVisibilityTypes.Standard;
             SetEntityDefaults();
         }
 

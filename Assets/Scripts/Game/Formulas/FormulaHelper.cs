@@ -539,12 +539,10 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             DamageEquipment(attacker, target, damage, weapon, struckBodyPart);
 
-            if (attacker == player && damage > 0)
+            if (attacker == player && damage > 0 && player.IsMagicallyConcealedNormalStrength)
             {
                 // TODO: Also dispel these for AI entities
-                player.IsAShade = false;
-                player.IsBlending = false;
-                player.IsInvisible = false;
+                player.Visibility = EntityVisibilityTypes.Standard;
             }
 
             return damage;

@@ -90,10 +90,6 @@ namespace DaggerfallWorkshop.Game.Entity
 
         private List<RoomRental_v1> rentedRooms = new List<RoomRental_v1>();
 
-        protected bool isInvisible = false;
-        protected bool isBlending = false;
-        protected bool isAShade = false;
-
         // Fatigue loss per in-game minute
         public const int DefaultFatigueLoss = 11;
         public const int ClimbingFatigueLoss = 22;
@@ -158,9 +154,6 @@ namespace DaggerfallWorkshop.Game.Entity
         public bool HaveShownSurrenderToGuardsDialogue { get { return haveShownSurrenderToGuardsDialogue; } set { haveShownSurrenderToGuardsDialogue = value; } }
         public bool Arrested { get { return arrested; } set { arrested = value; } }
         public bool IsInBeastForm { get; set; }
-        public bool IsInvisible { get { return isInvisible; } set { isInvisible = value; } }
-        public bool IsBlending { get { return isBlending; } set { isBlending = value; } }
-        public bool IsAShade { get { return isAShade; } set { isAShade = value; } }
 
         #endregion
 

@@ -179,4 +179,18 @@ namespace DaggerfallWorkshop.Game.Entity
         Low = 3,
         VeryLow = 4,
     }
+
+    /// <summary>
+    /// Varying visibility type for entities.
+    /// </summary>
+    public enum EntityVisibilityTypes
+    {
+        Standard,
+        InvisibleNormal,
+        InvisibleTrue,
+        BlendingNormal,
+        BlendingTrue,
+        ShadeNormal,
+        ShadeTrue,
+    }
 }
