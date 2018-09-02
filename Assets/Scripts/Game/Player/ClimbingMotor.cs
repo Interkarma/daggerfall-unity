@@ -40,7 +40,7 @@ namespace DaggerfallWorkshop.Game
         /// <param name="collisionFlags"></param>
         public void ClimbingCheck(ref CollisionFlags collisionFlags)
         {
-            float stopClimbingDistance = 0.08f;
+            float stopClimbingDistance = 0.12f;
 
             if (isClimbing)
                 collisionFlags = CollisionFlags.Sides;
