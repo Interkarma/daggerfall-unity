@@ -95,7 +95,7 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public void DecideHeightAction()
         {
-            bool onWater = GameManager.Instance.PlayerMotor.OnWater;
+            bool onWater = (GameManager.Instance.PlayerMotor.OnExteriorWater == PlayerMotor.OnExteriorWaterMethod.Swimming);
             bool swimming = levitateMotor.IsSwimming;
             bool crouching = playerMotor.IsCrouching;
             bool riding = playerMotor.IsRiding;
@@ -233,7 +233,7 @@ namespace DaggerfallWorkshop.Game
                 float prevHeight = controller.height;
                 float targetHeight;
                 prevCamLevel = prevHeight / 2f;
-                if (GameManager.Instance.PlayerMotor.OnWater)
+                if (GameManager.Instance.PlayerMotor.OnExteriorWater == PlayerMotor.OnExteriorWaterMethod.Swimming)
                 {
                     targetHeight = controllerSwimHeight + controllerSwimHorseDisplacement;
                     prevCamLevel = camSwimLevel;
@@ -264,7 +264,7 @@ namespace DaggerfallWorkshop.Game
                 float prevHeight = controller.height;
                 float targetHeight;
 
-                if (GameManager.Instance.PlayerMotor.OnWater)
+                if (GameManager.Instance.PlayerMotor.OnExteriorWater == PlayerMotor.OnExteriorWaterMethod.Swimming)
                 {
                     prevCamLevel = prevHeight / 2f;
                     targetHeight = controllerSwimHeight;
@@ -413,7 +413,7 @@ namespace DaggerfallWorkshop.Game
             bool mounting = (heightAction == HeightChangeAction.DoMounting);
             controller.height = GetNearbyFloat(controller.height + heightChange);
             float eyeChange = 0;
-            if (!GameManager.Instance.PlayerMotor.OnWater)
+            if (!(GameManager.Instance.PlayerMotor.OnExteriorWater == PlayerMotor.OnExteriorWaterMethod.Swimming))
             { 
                 if (dismounting)
                     eyeChange = -1 * eyeHeight;
@@ -477,7 +477,7 @@ namespace DaggerfallWorkshop.Game
             }              
 
             toggleRiding = playerMotor.IsRiding;
-            toggleSink = GameManager.Instance.PlayerMotor.OnWater;
+            toggleSink = GameManager.Instance.PlayerMotor.OnExteriorWater == PlayerMotor.OnExteriorWaterMethod.Swimming;
             forcedSwimCrouch = levitateMotor.IsSwimming;
             
         }

@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -92,14 +92,16 @@ namespace DaggerfallWorkshop.Game
             // Can only do this when PlayerEnterExit is available, otherwise default to true
             bool playerInside = (playerEnterExit == null) ? true : playerEnterExit.IsPlayerInside;
             bool playerInBuilding = (playerEnterExit == null) ? false : playerEnterExit.IsPlayerInsideBuilding;
-            bool playerSwimmingOutside = GameManager.Instance.PlayerMotor.OnWater;
+
+            // Play splash footsteps whether player is walking on or swimming in exterior water
+            bool playerOnExteriorWater = (GameManager.Instance.PlayerMotor.OnExteriorWater == PlayerMotor.OnExteriorWaterMethod.Swimming || GameManager.Instance.PlayerMotor.OnExteriorWater == PlayerMotor.OnExteriorWaterMethod.WaterWalking);
 
             // Change footstep sounds between winter/summer variants or when player enters/exits an interior space
-            if (dfUnity.WorldTime.Now.SeasonValue != currentSeason || isInside != playerInside || playerSwimmingOutside != isInOutsideWater)
+            if (dfUnity.WorldTime.Now.SeasonValue != currentSeason || isInside != playerInside || playerOnExteriorWater != isInOutsideWater)
             {
                 currentSeason = dfUnity.WorldTime.Now.SeasonValue;
                 isInside = playerInside;
-                isInOutsideWater = playerSwimmingOutside;
+                isInOutsideWater = playerOnExteriorWater;
                 if (!isInside)
                     if (currentSeason == DaggerfallDateTime.Seasons.Winter)
                     {
@@ -127,7 +129,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             // walking on water tile
-            if (playerSwimmingOutside)
+            if (playerOnExteriorWater)
             {
                 currentFootstepSound1 = FootstepSoundSubmerged;
                 currentFootstepSound2 = FootstepSoundSubmerged;
@@ -157,7 +159,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Not in water, reset footsteps to normal
-            if ((!playerSwimmingOutside) 
+            if ((!playerOnExteriorWater) 
                 && (currentFootstepSound1 == FootstepSoundSubmerged || currentFootstepSound1 == FootstepSoundShallow)
                 && (playerEnterExit.blockWaterLevel == 10000 || (playerMotor.transform.position.y - 0.95f) >= (playerEnterExit.blockWaterLevel * -1 * MeshReader.GlobalScale)))
             {
@@ -179,7 +181,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Check whether player is on foot and abort playing footsteps if not.
-            if (!transportManager.IsOnFoot)
+            if (!transportManager.IsOnFoot && GameManager.Instance.PlayerMotor.OnExteriorWater == PlayerMotor.OnExteriorWaterMethod.None)
             {
                 distance = 0f;
                 return;

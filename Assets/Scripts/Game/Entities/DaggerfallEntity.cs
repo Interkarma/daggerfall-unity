@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -56,6 +56,8 @@ namespace DaggerfallWorkshop.Game.Entity
         protected sbyte[] armorValues = new sbyte[NumberBodyParts];
         protected bool isParalyzed;
         protected bool isSilenced;
+        protected bool isWaterWalking;
+        protected bool isWaterBreathing;
 
         bool quiesce = false;
 
@@ -94,6 +96,26 @@ namespace DaggerfallWorkshop.Game.Entity
         {
             get { return isSilenced; }
             set { isSilenced = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets water walking flag.
+        /// Note: This value is intentionally not serialized. It should only be set by live effects.
+        /// </summary>
+        public bool IsWaterWalking
+        {
+            get { return isWaterWalking; }
+            set { isWaterWalking = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets water breathing flag.
+        /// Note: This value is intentionally not serialized. It should only be set by live effects.
+        /// </summary>
+        public bool IsWaterBreathing
+        {
+            get { return IsWaterBreathing; }
+            set { IsWaterBreathing = value; }
         }
 
         /// Gets or sets world context of this entity for floating origin support.
@@ -479,6 +501,8 @@ namespace DaggerfallWorkshop.Game.Entity
         {
             isParalyzed = false;
             isSilenced = false;
+            isWaterWalking = false;
+            isWaterBreathing = false;
             SetEntityDefaults();
         }
 

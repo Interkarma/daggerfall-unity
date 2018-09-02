@@ -61,7 +61,25 @@ namespace DaggerfallWorkshop.Game
 
         LevitateMotor levitateMotor;
         float freezeMotor = 0;
-        bool onExteriorWater = false;
+        OnExteriorWaterMethod onExteriorWaterMethod = OnExteriorWaterMethod.None;
+
+        #endregion
+
+        #region Enums
+
+        /// <summary>
+        /// Defines the way player can interact with exterior water tiles.
+        /// Unrelated to deep water swimming such as in dungeons.
+        /// </summary>
+        public enum OnExteriorWaterMethod
+        {
+            /// <summary>Player not touching exterior water at all.</summary>
+            None,
+            /// <summary>Player is swimming in exterior water.</summary>
+            Swimming,
+            /// <summary>Player is walking on exterior water.</summary>
+            WaterWalking,
+        }
 
         #endregion
 
@@ -167,11 +185,11 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-        /// True if player is standing on exterior water tile.
+        /// The method by which player is standing on exterior water.
         /// </summary>
-        public bool OnWater
+        public OnExteriorWaterMethod OnExteriorWater
         {
-            get { return onExteriorWater; }
+            get { return onExteriorWaterMethod; }
         }
 
         #endregion
@@ -272,7 +290,7 @@ namespace DaggerfallWorkshop.Game
         void Update()
         {
             // Update on water check
-            onExteriorWater = CheckOnExteriorWater();
+            onExteriorWaterMethod = GetOnExteriorWaterMethod();
 
             // Do nothing if player levitating - replacement motor will take over movement.
             // Don't return here for swimming because player should still be able to crouch when swimming.
@@ -397,28 +415,35 @@ namespace DaggerfallWorkshop.Game
         /// Same when player is levitating above water they should not hear splash sounds.
         /// </summary>
         /// <returns>True if player is physically in range of an outdoor water tile.</returns>
-        bool CheckOnExteriorWater()
+        OnExteriorWaterMethod GetOnExteriorWaterMethod()
         {
-            const float rayDistance = 1.0f;
+            const float walkingRayDistance = 1.0f;
+            const float ridingRayDistance = 2.0f;
+
+            float rayDistance = (GameManager.Instance.TransportManager.IsOnFoot) ? walkingRayDistance : ridingRayDistance;
 
             // Must be outside and over a water tile
             if (GameManager.Instance.PlayerEnterExit.IsPlayerInside || GameManager.Instance.StreamingWorld.PlayerTileMapIndex != 0)
-                return false;
+                return OnExteriorWaterMethod.None;
 
             // Must actually be standing on a terrain object not some other object (e.g. player ship)
             RaycastHit hit;
             if (!Physics.Raycast(transform.position, Vector3.down, out hit, rayDistance))
             {
-                return false;
+                return OnExteriorWaterMethod.None;
             }
             else
             {
                 DaggerfallTerrain terrain = hit.transform.GetComponent<DaggerfallTerrain>();
                 if (!terrain)
-                    return false;
+                    return OnExteriorWaterMethod.None;
             }
 
-            return true;
+            // Handle swimming/waterwalking
+            if (GameManager.Instance.PlayerEntity.IsWaterWalking)
+                return OnExteriorWaterMethod.WaterWalking;
+            else
+                return OnExteriorWaterMethod.Swimming;
         }
 
         #endregion
