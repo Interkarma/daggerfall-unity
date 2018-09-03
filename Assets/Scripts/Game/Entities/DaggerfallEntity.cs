@@ -493,7 +493,7 @@ namespace DaggerfallWorkshop.Game.Entity
         /// </summary>
         /// <param name="flags">Comparison flags.</param>
         /// <returns>True if matching.</returns>
-        bool HasConcealment(MagicalConcealmentFlags flags)
+        public bool HasConcealment(MagicalConcealmentFlags flags)
         {
             return ((magicalConcealmentFlags & flags) == flags) ? true : false;
         }

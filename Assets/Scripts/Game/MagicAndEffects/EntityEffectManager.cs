@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -719,6 +719,30 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
 
             return diseaseBundles.ToArray();
+        }
+
+        #endregion
+
+        #region Static Helpers
+
+        public static void BreakNormalPowerConcealmentEffects(DaggerfallEntityBehaviour entityBehaviour)
+        {
+            // Get entity effect manager
+            EntityEffectManager manager = entityBehaviour.GetComponent<EntityEffectManager>();
+            if (!manager)
+                return;
+
+            // End Chameleon-Normal
+            if (entityBehaviour.Entity.HasConcealment(MagicalConcealmentFlags.BlendingNormal))
+                manager.EndIncumbentEffect<ChameleonNormal>();
+
+            // End Invisibility-Normal
+            if (entityBehaviour.Entity.HasConcealment(MagicalConcealmentFlags.InvisibleNormal))
+                manager.EndIncumbentEffect<InvisibilityNormal>();
+
+            // End Shadow-Normal
+            if (entityBehaviour.Entity.HasConcealment(MagicalConcealmentFlags.ShadeNormal))
+                manager.EndIncumbentEffect<ShadowNormal>();
         }
 
         #endregion

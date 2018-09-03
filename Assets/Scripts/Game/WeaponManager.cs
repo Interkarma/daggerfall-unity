@@ -18,6 +18,7 @@ using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Formulas;
+using DaggerfallWorkshop.Game.MagicAndEffects;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -630,6 +631,10 @@ namespace DaggerfallWorkshop.Game
                             damage = FormulaHelper.CalculateAttackDamage(playerEntity, enemyEntity, (int)(EquipSlots.RightHand), entityMobileUnit.Summary.AnimStateRecord);
                         else
                             damage = FormulaHelper.CalculateAttackDamage(playerEntity, enemyEntity, (int)(EquipSlots.LeftHand), entityMobileUnit.Summary.AnimStateRecord);
+
+                        // Break any "normal power" concealment effects on player
+                        if (playerEntity.IsMagicallyConcealedNormalPower && damage > 0)
+                            EntityEffectManager.BreakNormalPowerConcealmentEffects(GameManager.Instance.PlayerEntityBehaviour);
 
                         EnemyMotor enemyMotor = hit.transform.GetComponent<EnemyMotor>();
                         EnemySounds enemySounds = hit.transform.GetComponent<EnemySounds>();

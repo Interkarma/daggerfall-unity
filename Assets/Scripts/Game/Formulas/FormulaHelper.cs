@@ -539,12 +539,6 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             DamageEquipment(attacker, target, damage, weapon, struckBodyPart);
 
-            if (attacker == player && damage > 0)
-            {
-                // TODO: Dispel normal power effects when entity attacks something
-                // This should be moved to either effect itself or somewhere more universal to player and monsters
-            }
-
             return damage;
         }
 

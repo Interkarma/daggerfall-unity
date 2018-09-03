@@ -15,6 +15,7 @@ using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Game.MagicAndEffects;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -190,6 +191,10 @@ namespace DaggerfallWorkshop.Game
 
             // Calculate damage
             damage = FormulaHelper.CalculateAttackDamage(entity, playerEntity, (int)(Items.EquipSlots.RightHand), -1);
+
+            // Break any "normal power" concealment effects on enemy
+            if (entity.IsMagicallyConcealedNormalPower && damage > 0)
+                EntityEffectManager.BreakNormalPowerConcealmentEffects(entityBehaviour);
 
             // Tally player's dodging skill
             playerEntity.TallySkill(DFCareer.Skills.Dodging, 1);
