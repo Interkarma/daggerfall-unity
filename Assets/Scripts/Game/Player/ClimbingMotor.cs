@@ -14,6 +14,7 @@ namespace DaggerfallWorkshop.Game
         private PlayerMotor playerMotor;
         private LevitateMotor levitateMotor;
         private CharacterController controller;
+        private PlayerEnterExit playerEnterExit;
         //private PlayerHeightChanger heightChanger;
         private bool failedClimbingCheck = false;
         private bool isClimbing = false;
@@ -22,6 +23,7 @@ namespace DaggerfallWorkshop.Game
         private uint timeOfLastClimbingCheck = 0;
         private bool showClimbingModeMessage = true;
         private Vector2 lastHorizontalPosition = Vector2.zero;
+        private Vector3 ledgeDirection = Vector3.zero;
         public bool IsClimbing
         {
             get { return isClimbing; }
@@ -31,6 +33,7 @@ namespace DaggerfallWorkshop.Game
             playerMotor = GetComponent<PlayerMotor>();
             levitateMotor = GetComponent<LevitateMotor>();
             controller = GetComponent<CharacterController>();
+            playerEnterExit = GetComponent<PlayerEnterExit>();
             //heightChanger = GetComponent<PlayerHeightChanger>();
         }
 
@@ -52,8 +55,10 @@ namespace DaggerfallWorkshop.Game
                 || failedClimbingCheck
                 || levitateMotor.IsLevitating
                 || playerMotor.IsRiding
+                || (isClimbing && CanWalkOntoLedge()) // Don't check for ledge walk unless climbing.
                 //|| (playerMotor.IsCrouching && !heightChanger.ForcedSwimCrouch)
-                || Vector2.Distance(lastHorizontalPosition, new Vector2(controller.transform.position.x, controller.transform.position.z)) > stopClimbingDistance)
+                // don't do horizontal position check if already climbing
+                || (!isClimbing && Vector2.Distance(lastHorizontalPosition, new Vector2(controller.transform.position.x, controller.transform.position.z)) > stopClimbingDistance))
             {
                 isClimbing = false;
                 showClimbingModeMessage = true;
@@ -99,6 +104,36 @@ namespace DaggerfallWorkshop.Game
 
             if (isClimbing)
                 ClimbMovement();
+            else
+                ledgeDirection = Vector3.zero;
+        }
+
+        private bool CanWalkOntoLedge()
+        {
+            RaycastHit hit;
+
+            Vector3 p1 = controller.transform.position + controller.center + Vector3.up * -controller.height * 0.40f;
+            Vector3 p2 = p1 + Vector3.up * controller.height;
+            float distanceToObstacle = 0;
+
+            // Cast character controller shape forward to see if it is about to hit anything.
+            if (Physics.CapsuleCast(p1, p2, controller.radius, controller.transform.forward, out hit, 0.15f))
+            {
+                distanceToObstacle = hit.distance;
+                //ledgeDirection = -hit.normal;
+            }
+
+            bool canWalkOntoLedge = (distanceToObstacle == 0);
+
+            // evalate the ledge direction only once when starting to climb
+            if (ledgeDirection == Vector3.zero)
+                ledgeDirection = -hit.normal;
+            else if (canWalkOntoLedge)
+                ledgeDirection = Vector3.zero;
+
+            //Debug.Log("DistanceToWall: " + distanceToObstacle);
+
+            return canWalkOntoLedge;
         }
 
         private void ClimbMovement()
@@ -107,7 +142,8 @@ namespace DaggerfallWorkshop.Game
             // This helps player smoothly mantle the top of whatever they are climbing
             // Horizontal distance check in ClimbingCheck() will cancel climb once player mantles
             // This has the happy side effect of fixing issue where player climbs endlessly into sky or starting to climb when not facing wall
-            Vector3 moveDirection = GameManager.Instance.MainCameraObject.transform.forward * playerMotor.Speed;
+            Vector3 moveDirection = ledgeDirection * playerMotor.Speed;
+            //Vector3 moveDirection = GameManager.Instance.MainCameraObject.transform.forward * playerMotor.Speed;
             moveDirection.y = Vector3.up.y;
 
             controller.Move(moveDirection * Time.deltaTime);
@@ -130,7 +166,11 @@ namespace DaggerfallWorkshop.Game
                     // Don't allow skill check to break climbing while swimming
                     // This is another reason player can't climb out of water - any slip in climb will throw them back into swim mode
                     // For now just pretend water is supporting player while they climb
-                    if (!GameManager.Instance.PlayerEnterExit.IsPlayerSwimming)
+                    // It's not enough to check if they are swimming, need to check if their feet are above water. - MeteoricDragon
+                    var playerPos = controller.transform.position.y + (76 * MeshReader.GlobalScale) - 0.95f;
+                    var playerFootPos = playerPos - (controller.height / 2) - 1.20f; // to prevent player from failing to climb out of water
+                    var waterPos = playerEnterExit.blockWaterLevel * -1 * MeshReader.GlobalScale;
+                    if (playerFootPos >= waterPos)
                         isClimbing = false;
                 }
             }
