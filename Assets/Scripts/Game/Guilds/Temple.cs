@@ -302,6 +302,11 @@ namespace DaggerfallWorkshop.Game.Guilds
             this.deity = deity;
         }
 
+        public static bool IsDivine(int factionId)
+        {
+            return (Enum.IsDefined(typeof(Divines), factionId));
+        }
+
         public static Divines GetDivine(int factionId)
         {
             // Temple hall:
@@ -316,7 +321,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                 if (Enum.IsDefined(typeof(Divines), factionData.parent))
                     return (Divines) factionData.parent;
             }
-            throw new ArgumentOutOfRangeException("There is no Divine that matches the factionId: "+ factionId);
+            throw new ArgumentOutOfRangeException("There is no Divine that matches the factionId: " + factionId);
         }
 
         public void Blessing(PlayerEntity playerEntity, int donationAmount)
