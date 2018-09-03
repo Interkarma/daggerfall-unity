@@ -9,39 +9,38 @@
 // Notes:
 //
 
-using UnityEngine;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
     /// <summary>
-    /// Chameleon - True
+    /// Invisibility - Normal
     /// </summary>
-    public class ChameleonTrue : ConcealmentEffect
+    public class InvisibilityNormal : ConcealmentEffect
     {
         public override void SetProperties()
         {
-            properties.Key = "Chameleon-True";
-            properties.ClassicKey = MakeClassicKey(23, 1);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "chameleon");
-            properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "true");
+            properties.Key = "Invisibility-Normal";
+            properties.ClassicKey = MakeClassicKey(13, 0);
+            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "invisibility");
+            properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "normal");
             properties.DisplayName = string.Format("{0} ({1})", properties.GroupName, properties.SubGroupName);
-            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1572);
-            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1272);
+            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1560);
+            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1260);
             properties.SupportDuration = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_All;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
             properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
             properties.MagicSkill = DFCareer.MagicSkills.Illusion;
             properties.DurationCosts = MakeEffectCosts(40, 120);
-            concealmentFlag = MagicalConcealmentFlags.BlendingTrue;
-            startConcealmentMessageKey = "youAreBlending";
+            concealmentFlag = MagicalConcealmentFlags.InvisibleNormal;
+            startConcealmentMessageKey = "youAreInvisible";
         }
 
         protected override bool IsLikeKind(IncumbentEffect other)
         {
-            return (other is ChameleonTrue);
+            return (other is InvisibilityNormal);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -16,10 +16,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
     /// <summary>
     /// Some effects in Daggerfall add to the state an existing like-kind effect (the incumbent)
-    /// rather than become intantiated as a new effect on the host entity.
+    /// rather than become instantiated as a new effect on the host entity.
     /// One example is a drain effect which only adds to the magnitude of incumbent drain for same stat.
     /// Another example is an effect which tops up the duration of same effect in progress.
-    /// This classes establishes a base for these incumbent effects to coordinate.
+    /// This class establishes a base for these incumbent effects to coordinate.
     /// NOTES:
     ///  Unflagged incumbent effects (IsIncumbent == false) do not persist beyond AddState() call.
     ///  They will never receive a single MagicRound() call and are never saved/loaded.

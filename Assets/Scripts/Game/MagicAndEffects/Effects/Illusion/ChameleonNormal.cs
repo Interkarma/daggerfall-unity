@@ -35,6 +35,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.MagicSkill = DFCareer.MagicSkills.Illusion;
             properties.DurationCosts = MakeEffectCosts(20, 80);
             concealmentFlag = MagicalConcealmentFlags.BlendingNormal;
+            startConcealmentMessageKey = "youAreBlending";
         }
 
         protected override bool IsLikeKind(IncumbentEffect other)

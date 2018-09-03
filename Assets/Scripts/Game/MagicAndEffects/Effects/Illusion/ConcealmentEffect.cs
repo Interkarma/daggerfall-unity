@@ -24,6 +24,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         const string textDatabase = "ClassicEffects";
 
         protected MagicalConcealmentFlags concealmentFlag = MagicalConcealmentFlags.None;
+        protected string startConcealmentMessageKey = string.Empty;
+        bool awakeAlert = true;
 
         public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
         {
@@ -57,6 +59,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 return;
 
             entityBehaviour.Entity.MagicalConcealmentFlags |= concealmentFlag;
+
+            if (!string.IsNullOrEmpty(startConcealmentMessageKey))
+            {
+                // Output start of concealment message if the host manager is player (e.g. "You are invisible.")
+                if (IsIncumbent && awakeAlert && entityBehaviour == GameManager.Instance.PlayerEntityBehaviour)
+                {
+                    DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, startConcealmentMessageKey), 1.5f);
+                    awakeAlert = false;
+                }
+            }
         }
 
         protected virtual void StopConcealment()
