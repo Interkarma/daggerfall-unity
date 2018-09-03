@@ -22,7 +22,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void SetProperties()
         {
             properties.Key = "Shadow-True";
-            properties.ClassicKey = MakeClassicKey(24, 0);
+            properties.ClassicKey = MakeClassicKey(24, 1);
             properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "shadow");
             properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "true");
             properties.DisplayName = string.Format("{0} ({1})", properties.GroupName, properties.SubGroupName);
