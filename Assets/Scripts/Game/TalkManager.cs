@@ -836,7 +836,11 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
-            if (GameManager.Instance.GuildManager.GetGuild(npcData.guildGroup, (int)GameManager.Instance.PlayerEnterExit.FactionID).IsMember())
+            // check if npc is member of a guild            
+            Guild guild = GameManager.Instance.GuildManager.GetGuild((int)GameManager.Instance.PlayerEnterExit.FactionID);
+            FactionFile.FactionData factionData;
+            if (DaggerfallUnity.Instance.ContentReader.FactionFileReader.GetFactionData(guild.GetFactionId(), out factionData) && // first check is important to rule out merchants that are assigned to fighters guild (see this bug report: https://forums.dfworkshop.net/viewtopic.php?f=24&t=1240)
+                GameManager.Instance.GuildManager.GetGuild(npcData.guildGroup, (int)GameManager.Instance.PlayerEnterExit.FactionID).IsMember())            
             {
                 if (npcData.guildGroup == FactionFile.GuildGroups.HolyOrder) // holy orders use message 8553, 8554
                 {
