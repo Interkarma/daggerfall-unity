@@ -1348,8 +1348,10 @@ namespace DaggerfallWorkshop.Utility
                 if (serialize)
                     loadID = (ulong)(blockData.Position + obj.Position);
 
+                byte classicSpawnDistanceType = obj.Resources.FlatResource.SoundIndex;
+
                 // Add enemy
-                AddEnemy(obj, type, parent, loadID);
+                AddEnemy(obj, type, parent, loadID, classicSpawnDistanceType);
             }
             else
             {
@@ -1406,8 +1408,10 @@ namespace DaggerfallWorkshop.Utility
                 else
                     type = DungeonNonWaterEnemiesToPlace[slot];
 
+                byte classicSpawnDistanceType = obj.Resources.FlatResource.SoundIndex;
+
                 // Add enemy
-                AddEnemy(obj, type, parent, loadID);
+                AddEnemy(obj, type, parent, loadID, classicSpawnDistanceType);
             }
             else
             {
@@ -1465,14 +1469,17 @@ namespace DaggerfallWorkshop.Utility
             // Cast to enum
             MobileTypes type = (MobileTypes)(obj.Resources.FlatResource.FactionOrMobileId & 0xff);
 
-            AddEnemy(obj, type, parent, loadID);
+            byte classicSpawnDistanceType = obj.Resources.FlatResource.SoundIndex;
+
+            AddEnemy(obj, type, parent, loadID, classicSpawnDistanceType);
         }
 
         private static void AddEnemy(
             DFBlock.RdbObject obj,
             MobileTypes type,
             Transform parent = null,
-            ulong loadID = 0)
+            ulong loadID = 0,
+            byte classicSpawnDistanceType = 0)
         {
             // Get default reaction
             MobileReactions reaction = MobileReactions.Hostile;
@@ -1495,7 +1502,7 @@ namespace DaggerfallWorkshop.Utility
             if (setupEnemy != null)
             {
                 // Configure enemy
-                setupEnemy.ApplyEnemySettings(type, reaction, gender);
+                setupEnemy.ApplyEnemySettings(type, reaction, gender, classicSpawnDistanceType);
 
                 // Align non-flying units with ground
                 DaggerfallMobileUnit mobileUnit = setupEnemy.GetMobileBillboardChild();

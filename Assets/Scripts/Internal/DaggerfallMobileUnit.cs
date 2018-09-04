@@ -98,6 +98,7 @@ namespace DaggerfallWorkshop
             public EnemyImportedTextures ImportedTextures;      // Textures imported from mods
             public int AnimStateRecord;                         // Record number of animation state
             public int[] StateAnimFrames;                       // Sequence of frames to play for this animation. Used for attacks
+            public byte ClassicSpawnDistanceType;               // 0 through 6 value read from spawn marker that determines distance at which enemy spawns/despawns in classic.
         }
 
         void Start()
@@ -143,7 +144,7 @@ namespace DaggerfallWorkshop
         /// </summary>
         /// <param name="dfUnity">DaggerfallUnity singleton. Required for content readers and settings.</param>
         /// <param name="enemyType">Enemy type.</param>
-        public void SetEnemy(DaggerfallUnity dfUnity, MobileEnemy enemy, MobileReactions reaction)
+        public void SetEnemy(DaggerfallUnity dfUnity, MobileEnemy enemy, MobileReactions reaction, byte classicSpawnDistanceType)
         {
             // Initial enemy settings
             summary.Enemy = enemy;
@@ -158,6 +159,9 @@ namespace DaggerfallWorkshop
             // Apply enemy state and update orientation
             lastOrientation = -1;
             ApplyEnemyState();
+
+            // Set initial contact range
+            summary.ClassicSpawnDistanceType = classicSpawnDistanceType;
 
             // Raise setup flag
             summary.IsSetup = true;

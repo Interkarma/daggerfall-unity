@@ -38,6 +38,7 @@ namespace DaggerfallWorkshop.Game
         DaggerfallActionDoor actionDoor;
         float distanceToActionDoor;
         bool hasEncounteredPlayer = false;
+        bool wouldBeSpawnedInClassic = false;
         bool detectedPlayer = false;
         uint timeOfLastStealthCheck = 0;
         bool blockedByIllusionEffect = false;
@@ -45,6 +46,13 @@ namespace DaggerfallWorkshop.Game
 
         float classicUpdateTimer = 0f;
         bool classicUpdate = false;
+
+        float classicSpawnDespawnExterior = 4096 * MeshReader.GlobalScale;
+        float classicSpawnXZDist = 0f;
+        float classicSpawnYDistUpper = 0f;
+        float classicSpawnYDistLower = 0f;
+        float classicDespawnXZDist = 0f;
+        float classicDespawnYDist = 0f;
 
         GameObject Player
         {
@@ -103,6 +111,20 @@ namespace DaggerfallWorkshop.Game
         {
             mobile = GetComponentInChildren<DaggerfallMobileUnit>();
             lastKnownPlayerPos = ResetPlayerPos;
+
+            short[] classicSpawnXZDistArray = { 1024, 384, 640, 768, 768, 768, 768 };
+            short[] classicSpawnYDistUpperArray = { 128, 128, 128, 384, 768, 128, 256 };
+            short[] classicSpawnYDistLowerArray = { 0, 0, 0, 0, -128, -768, 0 };
+            short[] classicDespawnXZDistArray = { 1024, 1024, 1024, 1024, 768, 768, 768 };
+            short[] classicDespawnYDistArray = { 384, 384, 384, 384, 768, 768, 768 };
+
+            byte index = mobile.Summary.ClassicSpawnDistanceType;
+
+            classicSpawnXZDist = classicSpawnXZDistArray[index] * MeshReader.GlobalScale;
+            classicSpawnYDistUpper = classicSpawnYDistUpperArray[index] * MeshReader.GlobalScale;
+            classicSpawnYDistLower = classicSpawnYDistLowerArray[index] * MeshReader.GlobalScale;
+            classicDespawnXZDist = classicDespawnXZDistArray[index] * MeshReader.GlobalScale;
+            classicDespawnYDist = classicDespawnYDistArray[index] * MeshReader.GlobalScale;
         }
 
         void FixedUpdate()
@@ -115,6 +137,52 @@ namespace DaggerfallWorkshop.Game
             }
             else
                 classicUpdate = false;
+
+            // Update whether enemy would be spawned or not in classic.
+            // Only check if within the maximum possible distance (Just under 1094 classic units)
+            if (classicUpdate && distanceToPlayer < 1094 * MeshReader.GlobalScale)
+            {
+                float upperXZ = 0;
+                float upperY = 0;
+                float lowerY = 0;
+                bool playerInside = GameManager.Instance.PlayerGPS.GetComponent<PlayerEnterExit>().IsPlayerInside;
+
+                if (!playerInside)
+                {
+                    upperXZ = classicSpawnDespawnExterior;
+                }
+                else
+                {
+                    if (!wouldBeSpawnedInClassic)
+                    {
+                        upperXZ = classicSpawnXZDist;
+                        upperY = classicSpawnYDistUpper;
+                        lowerY = classicSpawnYDistLower;
+                    }
+                    else
+                    {
+                        upperXZ = classicDespawnXZDist;
+                        upperY = classicDespawnYDist;
+                    }
+                }
+
+                float YDiffToPlayer = transform.position.y - Player.transform.position.y;
+                float YDiffToPlayerAbs = Mathf.Abs(YDiffToPlayer);
+                float distanceToPlayerXZ = Mathf.Sqrt(distanceToPlayer * distanceToPlayer - YDiffToPlayerAbs * YDiffToPlayerAbs);
+
+                wouldBeSpawnedInClassic = true;
+
+                if (distanceToPlayerXZ > upperXZ)
+                    wouldBeSpawnedInClassic = false;
+
+                if (playerInside)
+                {
+                    if (lowerY == 0 && YDiffToPlayerAbs > upperY)
+                        wouldBeSpawnedInClassic = false;
+                    else if (YDiffToPlayer < lowerY || YDiffToPlayer > upperY)
+                        wouldBeSpawnedInClassic = false;
+                }
+            }
 
             if (Player != null)
             {
@@ -196,7 +264,10 @@ namespace DaggerfallWorkshop.Game
 
         public bool StealthCheck()
         {
-            if (distanceToPlayer > 768 * MeshReader.GlobalScale)
+            if (!wouldBeSpawnedInClassic)
+                return false;
+
+            if (distanceToPlayer > 1024 * MeshReader.GlobalScale)
                 return false;
 
             uint gameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
