@@ -1040,6 +1040,10 @@ namespace DaggerfallConnect.Arena2
                         break;
                     case "region":
                         faction.region = ParseInt(value);
+
+                        // Convert from 1-based to 0-based. This is also done in classic.
+                        if (faction.region != -1)
+                            faction.region--;
                         break;
                     case "type":
                         faction.type = ParseInt(value);

@@ -702,7 +702,7 @@ namespace DaggerfallWorkshop.Game.Player
             {
                 for (int i = 0; i < 11; ++i)
                 {
-                    if (borderRegions[11 * (faction1.region - 1) + i] == faction2.region)
+                    if (borderRegions[11 * faction1.region + i] == faction2.region)
                         return true;
                 }
             }
