@@ -241,11 +241,6 @@ namespace DaggerfallWorkshop.Game
             // Handle climbing
             climbingMotor.ClimbingCheck(ref collisionFlags);
 
-            if (climbingMotor.IsClimbing)
-            {
-                acrobatMotor.Falling = false;
-            }
-
             // Do nothing if player levitating/swimming or climbing - replacement motor will take over movement for levitating/swimming
             if (levitateMotor && (levitateMotor.IsLevitating || levitateMotor.IsSwimming) || climbingMotor.IsClimbing)
                 return;

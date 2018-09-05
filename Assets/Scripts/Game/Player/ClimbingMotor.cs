@@ -16,8 +16,10 @@ namespace DaggerfallWorkshop.Game
         private LevitateMotor levitateMotor;
         private CharacterController controller;
         private PlayerEnterExit playerEnterExit;
+        private AcrobatMotor acrobatMotor;
         private bool failedClimbingCheck = false;
         private bool isClimbing = false;
+        private bool isSlipping = false;
         private float climbingStartTimer = 0;
         private float climbingContinueTimer = 0;
         private uint timeOfLastClimbingCheck = 0;
@@ -28,6 +30,10 @@ namespace DaggerfallWorkshop.Game
         {
             get { return isClimbing; }
         }
+        public bool IsSlipping
+        {
+            get { return isSlipping; }
+        }
         void Start()
         {
             player = GameManager.Instance.PlayerEntity;
@@ -35,7 +41,7 @@ namespace DaggerfallWorkshop.Game
             levitateMotor = GetComponent<LevitateMotor>();
             controller = GetComponent<CharacterController>();
             playerEnterExit = GetComponent<PlayerEnterExit>();
-            //heightChanger = GetComponent<PlayerHeightChanger>();
+            acrobatMotor = GetComponent<AcrobatMotor>();
         }
 
         /// <summary>
@@ -47,7 +53,10 @@ namespace DaggerfallWorkshop.Game
             float stopClimbingDistance = 0.12f;
 
             if (isClimbing)
+            {
                 collisionFlags = CollisionFlags.Sides;
+                acrobatMotor.Falling = false;
+            }
 
             // Should we stop climbing?
             uint gameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
