@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -37,9 +37,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.DurationCosts = MakeEffectCosts(60, 100);
         }
 
-        public override void MagicRound()
+        public override void ConstantEffect()
         {
-            base.MagicRound();
+            base.ConstantEffect();
+            StartLevitating();
         }
 
         public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)

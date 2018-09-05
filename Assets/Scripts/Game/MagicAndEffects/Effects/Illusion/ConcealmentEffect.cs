@@ -27,6 +27,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         protected string startConcealmentMessageKey = string.Empty;
         bool awakeAlert = true;
 
+        public override void ConstantEffect()
+        {
+            base.ConstantEffect();
+            StartConcealment();
+        }
+
         public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
         {
             base.Start(manager, caster);

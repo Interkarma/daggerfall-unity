@@ -92,6 +92,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         BundleTypes BundleGroup { get; set; }
 
         /// <summary>
+        /// True if effect has ended by calling End();
+        /// </summary>
+        bool HasEnded { get; }
+
+        /// <summary>
         /// Called by an EntityEffectManager when parent bundle is attached to host entity.
         /// Use this for setup or immediate work performed only once.
         /// </summary>
@@ -101,6 +106,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// Called by an EntityEffect manage when parent bundle is resumed from save.
         /// </summary>
         void Resume(EntityEffectManager.EffectSaveData_v1 effectData, EntityEffectManager manager, DaggerfallEntityBehaviour caster = null);
+
+        /// <summary>
+        /// Use this for work performed every frame.
+        /// </summary>
+        void ConstantEffect();
 
         /// <summary>
         /// Use this for any work performed every magic round.
@@ -148,6 +158,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         int[] statMods = new int[DaggerfallStats.Count];
         int[] skillMods = new int[DaggerfallSkills.Count];
         BundleTypes bundleGroup = BundleTypes.None;
+        bool effectEnded = false;
 
         #endregion
 
@@ -240,6 +251,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             set { bundleGroup = value; }
         }
 
+        public bool HasEnded
+        {
+            get { return effectEnded; }
+            protected set { effectEnded = value; }
+        }
+
         #endregion
 
         #region IEntityEffect Virtual Methods
@@ -282,6 +299,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// Called to perform any cleanup at end of lifetime, or when manually removed from host.
         /// </summary>
         public virtual void End()
+        {
+            effectEnded = true;
+        }
+
+        /// <summary>
+        /// Called for effects that need to perform work each frame, such as setting a toggle in entity.
+        /// </summary>
+        public virtual void ConstantEffect()
         {
         }
 

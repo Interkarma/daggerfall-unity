@@ -35,9 +35,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.DurationCosts = MakeEffectCosts(20, 8);
         }
 
-        public override void MagicRound()
+        public override void ConstantEffect()
         {
-            base.MagicRound();
+            base.ConstantEffect();
+            StartWaterWalking();
         }
 
         public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)

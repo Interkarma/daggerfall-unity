@@ -61,7 +61,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         List<InstancedBundle> instancedBundles = new List<InstancedBundle>();
         List<InstancedBundle> bundlesToRemove = new List<InstancedBundle>();
-        List<InstancedBundle> bundlesToInstantlyRemove = new List<InstancedBundle>();
         bool wipeAllBundles = false;
 
         int[] directStatMods = new int[DaggerfallStats.Count];
@@ -182,16 +181,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             if (!entityBehaviour)
                 return;
 
-            // Remove any bundles pending instant deletion
-            if (bundlesToInstantlyRemove.Count > 0)
-            {
-                foreach (InstancedBundle bundle in bundlesToInstantlyRemove)
-                {
-                    RemoveBundle(bundle);
-                    Debug.LogFormat("Removing bundle {0} instantly", bundle.GetHashCode());
-                }
-                bundlesToInstantlyRemove.Clear();
-            }
+            // Remove any bundles pending deletion
+            RemovePendingBundles();
+
+            // Run any per-frame constant effects
+            DoConstantEffects();
 
             // Refresh mods more frequently than magic rounds, but not too frequently
             refreshModsTimer += Time.deltaTime;
@@ -519,16 +513,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     bundlesToRemove.Add(bundle);
             }
 
-            // Remove any bundles pending deletion
-            if (bundlesToRemove.Count > 0)
-            {
-                foreach (InstancedBundle bundle in bundlesToRemove)
-                {
-                    RemoveBundle(bundle);
-                    Debug.LogFormat("Removing bundle {0}", bundle.GetHashCode());
-                }
-                bundlesToRemove.Clear();
-            }
+            RemovePendingBundles();
         }
 
         /// <summary>
@@ -587,7 +572,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             foreach (InstancedBundle bundle in instancedBundles)
             {
                 if (bundle.sourceItem != null && bundle.sourceItem.UID == item.UID)
-                    bundlesToInstantlyRemove.Add(bundle);
+                    bundlesToRemove.Add(bundle);
             }
         }
 
@@ -830,6 +815,26 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         #region Private Methods
 
         /// <summary>
+        /// Tick constant effects on instanced bundles for this entity.
+        /// </summary>
+        void DoConstantEffects()
+        {
+            // Do nothing further if entity has perished or object disabled
+            if (entityBehaviour.Entity.CurrentHealth <= 0 || !entityBehaviour.enabled)
+                return;
+
+            foreach (InstancedBundle bundle in instancedBundles)
+            {
+                foreach (IEntityEffect effect in bundle.liveEffects)
+                {
+                    // Update constant effects until ended
+                    if (!effect.HasEnded)
+                        effect.ConstantEffect();
+                }
+            }
+        }
+
+        /// <summary>
         /// Tick new "magic round" on all instanced bundles for this entity.
         /// </summary>
         void DoMagicRound()
@@ -868,16 +873,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     bundlesToRemove.Add(bundle);
             }
 
-            // Remove any bundles pending deletion
-            if (bundlesToRemove.Count > 0)
-            {
-                foreach (InstancedBundle bundle in bundlesToRemove)
-                {
-                    RemoveBundle(bundle);
-                    Debug.LogFormat("Removing bundle {0}", bundle.GetHashCode());
-                }
-                bundlesToRemove.Clear();
-            }
+            RemovePendingBundles();
         }
 
         void RemoveBundle(InstancedBundle bundle)
@@ -888,6 +884,19 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             instancedBundles.Remove(bundle);
             RaiseOnRemoveBundle();
             //Debug.LogFormat("Expired bundle {0} with {1} effects", bundle.settings.Name, bundle.settings.Effects.Length);
+        }
+
+        void RemovePendingBundles()
+        {
+            if (bundlesToRemove.Count > 0)
+            {
+                foreach (InstancedBundle bundle in bundlesToRemove)
+                {
+                    RemoveBundle(bundle);
+                    Debug.LogFormat("Removing bundle {0}", bundle.GetHashCode());
+                }
+                bundlesToRemove.Clear();
+            }
         }
 
         void ClearReadySpellHistory()

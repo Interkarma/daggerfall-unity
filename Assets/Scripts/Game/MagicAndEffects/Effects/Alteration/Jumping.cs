@@ -35,6 +35,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.DurationCosts = MakeEffectCosts(20, 8);
         }
 
+        public override void ConstantEffect()
+        {
+            base.ConstantEffect();
+            StartJumping();
+        }
+
         public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
         {
             base.Start(manager, caster);
