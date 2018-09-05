@@ -68,18 +68,21 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         IncumbentEffect FindIncumbent()
         {
-            // Search for any incumbents on this host
+            // Search for any incumbents on this host matching group
             EntityEffectManager.InstancedBundle[] bundles = manager.EffectBundles;
             foreach (EntityEffectManager.InstancedBundle bundle in bundles)
             {
-                foreach (IEntityEffect effect in bundle.liveEffects)
+                if (bundle.bundleType == BundleGroup)
                 {
-                    if (effect is IncumbentEffect)
+                    foreach (IEntityEffect effect in bundle.liveEffects)
                     {
-                        // Effect must be flagged incumbent and agree with like-kind test
-                        IncumbentEffect other = effect as IncumbentEffect;
-                        if (other.IsIncumbent && other.IsLikeKind(this))
-                            return other;
+                        if (effect is IncumbentEffect)
+                        {
+                            // Effect must be flagged incumbent and agree with like-kind test
+                            IncumbentEffect other = effect as IncumbentEffect;
+                            if (other.IsIncumbent && other.IsLikeKind(this))
+                                return other;
+                        }
                     }
                 }
             }

@@ -87,6 +87,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         int[] SkillMods { get; }
 
         /// <summary>
+        /// Gets or sets bundle type for grouping effects.
+        /// </summary>
+        BundleTypes BundleGroup { get; set; }
+
+        /// <summary>
         /// Called by an EntityEffectManager when parent bundle is attached to host entity.
         /// Use this for setup or immediate work performed only once.
         /// </summary>
@@ -142,6 +147,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         bool chanceSuccess = false;
         int[] statMods = new int[DaggerfallStats.Count];
         int[] skillMods = new int[DaggerfallSkills.Count];
+        BundleTypes bundleGroup = BundleTypes.None;
 
         #endregion
 
@@ -228,6 +234,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             get { return GetDisplayName(); }
         }
 
+        public BundleTypes BundleGroup
+        {
+            get { return bundleGroup; }
+            set { bundleGroup = value; }
+        }
+
         #endregion
 
         #region IEntityEffect Virtual Methods
@@ -263,6 +275,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             chanceSuccess = effectData.chanceSuccess;
             statMods = effectData.statMods;
             skillMods = effectData.skillMods;
+            bundleGroup = effectData.bundleGroup;
         }
 
         /// <summary>

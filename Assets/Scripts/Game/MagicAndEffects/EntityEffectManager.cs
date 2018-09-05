@@ -345,6 +345,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     continue;
                 }
 
+                // Set bundle group
+                effect.BundleGroup = sourceBundle.Settings.BundleType;
+
                 // Spell absorption - must have a caster entity set
                 if (sourceBundle.CasterEntityBehaviour)
                 {
@@ -1116,6 +1119,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             public int iconIndex;
             public EntityTypes casterEntityType;
             public ulong casterLoadID;
+            public ulong sourceItemID;
             public EffectSaveData_v1[] liveEffects;
         }
 
@@ -1128,6 +1132,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             public bool chanceSuccess;
             public int[] statMods;
             public int[] skillMods;
+            public BundleTypes bundleGroup;
             public bool isIncumbent;
             public object effectSpecific;
         }
@@ -1149,6 +1154,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 bundleData.iconIndex = bundle.iconIndex;
                 bundleData.casterEntityType = bundle.casterEntityType;
                 bundleData.casterLoadID = bundle.casterLoadID;
+                if (bundle.sourceItem != null) bundleData.sourceItemID = bundle.sourceItem.UID;
 
                 List<EffectSaveData_v1> liveEffectsSaveData = new List<EffectSaveData_v1>();
                 foreach (IEntityEffect effect in bundle.liveEffects)
@@ -1176,6 +1182,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             effectData.chanceSuccess = effect.ChanceSuccess;
             effectData.statMods = effect.StatMods;
             effectData.skillMods = effect.SkillMods;
+            effectData.bundleGroup = effect.BundleGroup;
             effectData.isIncumbent = (effect is IncumbentEffect) ? (effect as IncumbentEffect).IsIncumbent : false;
             effectData.effectSpecific = effect.GetSaveData();
 
@@ -1205,6 +1212,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 instancedBundle.casterLoadID = bundleData.casterLoadID;
                 instancedBundle.liveEffects = new List<IEntityEffect>();
                 instancedBundle.caster = GetCasterReference(bundleData.casterEntityType, bundleData.casterLoadID);
+                if (instancedBundle.caster)
+                    instancedBundle.sourceItem = instancedBundle.caster.Entity.Items.GetItem(bundleData.sourceItemID);
+
+                // If bundle is supposed to be a held item, and we did not find that item, then do not restore bundle
+                if (instancedBundle.bundleType == BundleTypes.HeldMagicItem && instancedBundle.sourceItem == null)
+                    continue;
 
                 // Resume effects
                 foreach(EffectSaveData_v1 effectData in bundleData.liveEffects)
