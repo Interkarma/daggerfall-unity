@@ -503,7 +503,8 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         ModDescriptionMessageBox.ClickAnywhereToClose = true;
         ModDescriptionMessageBox.ParentPanel.BackgroundTexture = null;
 
-        string[] modDescription = modSettings[currentSelection].modInfo.ModDescription.Split('\n');
+        Mod mod = ModManager.Instance.GetMod(modSettings[currentSelection].modInfo.ModTitle);
+        string[] modDescription = (mod.TryLocalize("Mod", "Description") ?? mod.ModInfo.ModDescription).Split('\n');
         ModDescriptionMessageBox.SetText(modDescription);
         uiManager.PushWindow(ModDescriptionMessageBox);
     }

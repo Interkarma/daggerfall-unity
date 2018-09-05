@@ -29,6 +29,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         const int titleMaxChars = 20;
         const int descriptionMaxChars = 35;
 
+        readonly Mod mod;
         readonly ModSettingsData settings;
 
         Panel mainPanel                 = new Panel();
@@ -76,9 +77,10 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         #region Constructors
 
-        public PresetPicker(IUserInterfaceManager uiManager, DaggerfallBaseWindow previousWindow, ModSettingsData settings)
+        public PresetPicker(IUserInterfaceManager uiManager, DaggerfallBaseWindow previousWindow, Mod mod, ModSettingsData settings)
             : base(uiManager, previousWindow)
         {
+            this.mod = mod;
             this.settings = settings;
         }
 
@@ -272,10 +274,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// </summary>
         private void RegisterPreset(Preset preset, int position = -1)
         {
-            if (string.IsNullOrEmpty(preset.Title))
-                preset.Title = ModManager.GetText("missingTitle");
-            if (string.IsNullOrEmpty(preset.Description))
-                preset.Description = ModManager.GetText("missingDescription");
+            string title = preset.Title;
+            preset.Title = !string.IsNullOrEmpty(preset.Title) ?
+                 mod.TryLocalize("Presets", title, "Title") ?? preset.Title : ModManager.GetText("missingTitle");
+            preset.Description = !string.IsNullOrEmpty(preset.Description) ?
+                mod.TryLocalize("Presets", title, "Description") ?? preset.Description : ModManager.GetText("missingDescription");
 
             ListBox.ListItem itemOut;
             listBox.AddItem(preset.Title, out itemOut, position);
