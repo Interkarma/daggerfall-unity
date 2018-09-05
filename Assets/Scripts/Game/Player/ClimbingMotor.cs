@@ -84,22 +84,6 @@ namespace DaggerfallWorkshop.Game
                         showClimbingModeMessage = false;
                         isClimbing = true;
                     }
-
-                    // Initial check to start climbing
-                    if ((gameMinutes - timeOfLastClimbingCheck) > 18)
-                    {
-                        Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
-                        player.TallySkill(DFCareer.Skills.Climbing, 1);
-                        timeOfLastClimbingCheck = gameMinutes;
-                        if (UnityEngine.Random.Range(1, 101) > 95)
-                        {
-                            if (UnityEngine.Random.Range(1, 101) > player.Skills.GetLiveSkillValue(DFCareer.Skills.Climbing))
-                            {
-                                isClimbing = false;
-                                failedClimbingCheck = true;
-                            }
-                        }
-                    }
                 }
             }
 
