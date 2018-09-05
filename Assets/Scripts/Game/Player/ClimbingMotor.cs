@@ -11,11 +11,11 @@ namespace DaggerfallWorkshop.Game
     [RequireComponent(typeof(CharacterController))]
     public class ClimbingMotor : MonoBehaviour
     {
+        private Entity.PlayerEntity player;
         private PlayerMotor playerMotor;
         private LevitateMotor levitateMotor;
         private CharacterController controller;
         private PlayerEnterExit playerEnterExit;
-        //private PlayerHeightChanger heightChanger;
         private bool failedClimbingCheck = false;
         private bool isClimbing = false;
         private float climbingStartTimer = 0;
@@ -30,6 +30,7 @@ namespace DaggerfallWorkshop.Game
         }
         void Start()
         {
+            player = GameManager.Instance.PlayerEntity;
             playerMotor = GetComponent<PlayerMotor>();
             levitateMotor = GetComponent<LevitateMotor>();
             controller = GetComponent<CharacterController>();
@@ -48,7 +49,7 @@ namespace DaggerfallWorkshop.Game
             if (isClimbing)
                 collisionFlags = CollisionFlags.Sides;
 
-            // Climbing
+            // Should we stop climbing?
             uint gameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
             if (!InputManager.Instance.HasAction(InputManager.Actions.MoveForwards)
                 || (collisionFlags & CollisionFlags.Sides) == 0
@@ -108,6 +109,10 @@ namespace DaggerfallWorkshop.Game
                 ledgeDirection = Vector3.zero;
         }
 
+        /// <summary>
+        /// Physically check for wall in front of player and Set horizontal direction of that wall 
+        /// </summary>
+        /// <returns>true if a wall was hit</returns>
         private bool CanWalkOntoLedge()
         {
             RaycastHit hit;
@@ -136,10 +141,11 @@ namespace DaggerfallWorkshop.Game
             return canWalkOntoLedge;
         }
 
+        /// <summary>
+        /// Perform Climbing Movement and Schedule/call Skill Checks
+        /// </summary>
         private void ClimbMovement()
         {
-            Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
-
             // Try to move up and forwards at same time
             // This helps player smoothly mantle the top of whatever they are climbing
             // Horizontal distance check in ClimbingCheck() will cancel climb once player mantles
@@ -158,32 +164,43 @@ namespace DaggerfallWorkshop.Game
             else
             {
                 climbingContinueTimer = 0;
-                player.TallySkill(DFCareer.Skills.Climbing, 1);
-                int skill = player.Skills.GetLiveSkillValue(DFCareer.Skills.Climbing);
-                if (player.Race == Entity.Races.Khajiit)
-                    skill += 30;
-
-                // Climbing effect states "target can climb twice as well" - doubling effective skill after racial applied
-                if (player.IsEnhancedClimbing)
-                    skill *= 2;
-
-                // Clamp skill range
-                skill = Mathf.Clamp(skill, 5, 95);
-
-                if ((UnityEngine.Random.Range(1, 101) > 90)
-                    || (UnityEngine.Random.Range(1, 101) > skill))
-                {
-                    // Don't allow skill check to break climbing while swimming
-                    // This is another reason player can't climb out of water - any slip in climb will throw them back into swim mode
-                    // For now just pretend water is supporting player while they climb
-                    // It's not enough to check if they are swimming, need to check if their feet are above water. - MeteoricDragon
-                    var playerPos = controller.transform.position.y + (76 * MeshReader.GlobalScale) - 0.95f;
-                    var playerFootPos = playerPos - (controller.height / 2) - 1.20f; // to prevent player from failing to climb out of water
-                    var waterPos = playerEnterExit.blockWaterLevel * -1 * MeshReader.GlobalScale;
-                    if (playerFootPos >= waterPos)
-                        isClimbing = false;
-                }
+                isClimbing = SkillCheck();
             }
+        }
+
+        /// <summary>
+        /// See if the player can pass a climbing skill check
+        /// </summary>
+        /// <returns>true if player passed climbing skill check</returns>
+        private bool SkillCheck()
+        {
+            player.TallySkill(DFCareer.Skills.Climbing, 1);
+            int skill = player.Skills.GetLiveSkillValue(DFCareer.Skills.Climbing);
+            if (player.Race == Entity.Races.Khajiit)
+                skill += 30;
+
+            // Climbing effect states "target can climb twice as well" - doubling effective skill after racial applied
+            if (player.IsEnhancedClimbing)
+                skill *= 2;
+
+            // Clamp skill range
+            skill = Mathf.Clamp(skill, 5, 95);
+
+            // Skill Check
+            if ((UnityEngine.Random.Range(1, 101) > 90)
+                || (UnityEngine.Random.Range(1, 101) > skill))
+            {
+                // Don't allow skill check to break climbing while swimming
+                // This is another reason player can't climb out of water - any slip in climb will throw them back into swim mode
+                // For now just pretend water is supporting player while they climb
+                // It's not enough to check if they are swimming, need to check if their feet are above water. - MeteoricDragon
+                var playerPos = controller.transform.position.y + (76 * MeshReader.GlobalScale) - 0.95f;
+                var playerFootPos = playerPos - (controller.height / 2) - 1.20f; // to prevent player from failing to climb out of water
+                var waterPos = playerEnterExit.blockWaterLevel * -1 * MeshReader.GlobalScale;
+                if (playerFootPos >= waterPos)
+                    return false;
+            }
+            return true;
         }
     }
 }
