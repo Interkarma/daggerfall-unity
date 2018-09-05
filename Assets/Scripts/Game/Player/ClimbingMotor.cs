@@ -138,13 +138,18 @@ namespace DaggerfallWorkshop.Game
 
         private void ClimbMovement()
         {
+            Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
+
             // Try to move up and forwards at same time
             // This helps player smoothly mantle the top of whatever they are climbing
             // Horizontal distance check in ClimbingCheck() will cancel climb once player mantles
             // This has the happy side effect of fixing issue where player climbs endlessly into sky or starting to climb when not facing wall
             Vector3 moveDirection = ledgeDirection * playerMotor.Speed;
-            //Vector3 moveDirection = GameManager.Instance.MainCameraObject.transform.forward * playerMotor.Speed;
             moveDirection.y = Vector3.up.y;
+
+            // Climbing effect states "target can climb twice as well" - doubling climbing speed
+            if (player.IsEnhancedClimbing)
+                moveDirection.y *= 2;
 
             controller.Move(moveDirection * Time.deltaTime);
 
@@ -153,12 +158,17 @@ namespace DaggerfallWorkshop.Game
             else
             {
                 climbingContinueTimer = 0;
-                Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
                 player.TallySkill(DFCareer.Skills.Climbing, 1);
                 int skill = player.Skills.GetLiveSkillValue(DFCareer.Skills.Climbing);
                 if (player.Race == Entity.Races.Khajiit)
                     skill += 30;
-                Mathf.Clamp(skill, 5, 95);
+
+                // Climbing effect states "target can climb twice as well" - doubling effective skill after racial applied
+                if (player.IsEnhancedClimbing)
+                    skill *= 2;
+
+                // Clamp skill range
+                skill = Mathf.Clamp(skill, 5, 95);
 
                 if ((UnityEngine.Random.Range(1, 101) > 90)
                     || (UnityEngine.Random.Range(1, 101) > skill))

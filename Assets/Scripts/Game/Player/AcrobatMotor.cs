@@ -52,7 +52,15 @@ namespace DaggerfallWorkshop.Game
 
             if (InputManager.Instance.HasAction(InputManager.Actions.Jump))
             {
-                moveDirection.y = jumpSpeed;
+                // Jumping effect states "causes target to jump at twice natural capacity" - multiplying jump speed for more height
+                // Not quite double here, as it feels too high and all character have same base jump height anyway
+                // This is just temporary as jump height currently not modified by jumping skill or any other bonuses
+                // Ideally this spell would double jump skill which in turn increases height (classic matched jumping is todo on roadmap)
+                float jumpSpeedMultiplier = 1.0f;
+                if (GameManager.Instance.PlayerEntity.IsEnhancedJumping)
+                    jumpSpeedMultiplier = 1.6f;
+
+                moveDirection.y = jumpSpeed * jumpSpeedMultiplier;
                 jumping = true;
 
                 // Modify crouching jump speed

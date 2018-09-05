@@ -15,52 +15,47 @@ using DaggerfallWorkshop.Game.Entity;
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
     /// <summary>
-    /// Water Breathing.
+    /// Climbing
     /// </summary>
-    public class WaterBreathing : IncumbentEffect
+    public class Climbing : IncumbentEffect
     {
         public override void SetProperties()
         {
-            properties.Key = "WaterBreathing";
-            properties.ClassicKey = MakeClassicKey(30, 255);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "waterBreathing");
+            properties.Key = "Climbing";
+            properties.ClassicKey = MakeClassicKey(26, 255);
+            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "climbing");
             properties.SubGroupName = string.Empty;
-            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1582);
-            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1282);
+            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1578);
+            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1278);
             properties.SupportDuration = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_All;
             properties.AllowedElements = ElementTypes.Magic;
             properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
-            properties.MagicSkill = DFCareer.MagicSkills.Thaumaturgy;
-            properties.DurationCosts = MakeEffectCosts(20, 8);
-        }
-
-        public override void MagicRound()
-        {
-            base.MagicRound();
+            properties.MagicSkill = DFCareer.MagicSkills.Alteration;
+            properties.DurationCosts = MakeEffectCosts(20, 20);
         }
 
         public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
         {
             base.Start(manager, caster);
-            StartWaterBreathing();
+            StartClimbing();
         }
 
         public override void Resume(EntityEffectManager.EffectSaveData_v1 effectData, EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
         {
             base.Resume(effectData, manager, caster);
-            StartWaterBreathing();
+            StartClimbing();
         }
 
         public override void End()
         {
             base.End();
-            StopWaterBreathing();
+            StopClimbing();
         }
 
         protected override bool IsLikeKind(IncumbentEffect other)
         {
-            return (other is WaterBreathing);
+            return (other is Climbing);
         }
 
         protected override void AddState(IncumbentEffect incumbent)
@@ -69,24 +64,24 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             incumbent.RoundsRemaining += RoundsRemaining;
         }
 
-        void StartWaterBreathing()
+        void StartClimbing()
         {
             // Get peered entity gameobject
             DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
             if (!entityBehaviour)
                 return;
 
-            entityBehaviour.Entity.IsWaterBreathing = true;
+            entityBehaviour.Entity.IsEnhancedClimbing = true;
         }
 
-        void StopWaterBreathing()
+        void StopClimbing()
         {
             // Get peered entity gameobject
             DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
             if (!entityBehaviour)
                 return;
 
-            entityBehaviour.Entity.IsWaterBreathing = false;
+            entityBehaviour.Entity.IsEnhancedClimbing = false;
         }
     }
 }

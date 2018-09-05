@@ -59,6 +59,8 @@ namespace DaggerfallWorkshop.Game.Entity
         protected bool isWaterWalking;
         protected bool isWaterBreathing;
         protected MagicalConcealmentFlags magicalConcealmentFlags;
+        protected bool isEnhancedClimbing;
+        protected bool isEnhancedJumping;
 
         bool quiesce = false;
 
@@ -186,6 +188,22 @@ namespace DaggerfallWorkshop.Game.Entity
                         HasConcealment(MagicalConcealmentFlags.BlendingTrue) ||
                         HasConcealment(MagicalConcealmentFlags.ShadeTrue));
             }
+        }
+
+        /// Gets or sets enhanced climbing flag.
+        /// Note: This value is intentionally not serialized. It should only be set by live effects.
+        public bool IsEnhancedClimbing
+        {
+            get { return isEnhancedClimbing; }
+            set { isEnhancedClimbing = value; }
+        }
+
+        /// Gets or sets enhanced jumping flag.
+        /// Note: This value is intentionally not serialized. It should only be set by live effects.
+        public bool IsEnhancedJumping
+        {
+            get { return isEnhancedJumping; }
+            set { isEnhancedJumping = value; }
         }
 
         /// Gets or sets world context of this entity for floating origin support.
@@ -584,6 +602,8 @@ namespace DaggerfallWorkshop.Game.Entity
             isWaterWalking = false;
             isWaterBreathing = false;
             magicalConcealmentFlags = MagicalConcealmentFlags.None;
+            isEnhancedClimbing = false;
+            isEnhancedJumping = false;
             SetEntityDefaults();
         }
 
