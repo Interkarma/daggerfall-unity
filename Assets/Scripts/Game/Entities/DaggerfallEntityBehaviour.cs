@@ -232,10 +232,10 @@ namespace DaggerfallWorkshop.Game.Entity
                     Entity = null;
                     break;
                 case EntityTypes.Player:
-                    Entity = new PlayerEntity();
+                    Entity = new PlayerEntity(this);
                     break;
                 case EntityTypes.CivilianNPC:
-                    Entity = new CivilianEntity();
+                    Entity = new CivilianEntity(this);
                     break; 
             }
 

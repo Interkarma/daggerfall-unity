@@ -13,8 +13,10 @@ using UnityEngine;
 using System;
 using System.Reflection;
 using System.Linq;
+using System.IO;
 using System.Collections.Generic;
 using DaggerfallConnect.Save;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects
 {
@@ -49,6 +51,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         Dictionary<int, string> classicEffectMapping = new Dictionary<int, string>();
         Dictionary<string, BaseEntityEffect> magicEffectTemplates = new Dictionary<string, BaseEntityEffect>();
         Dictionary<int, BaseEntityEffect> potionEffectTemplates = new Dictionary<int, BaseEntityEffect>();
+        Dictionary<int, SpellRecord.SpellRecordData> classicSpells = new Dictionary<int, SpellRecord.SpellRecordData>();
 
         #endregion
 
@@ -68,6 +71,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         void Start()
         {
+            // Create a dictionary of classic spells
+            RebuildClassicSpellsDict();
+
             // Enumerate classes implementing an effect and create an instance to use as factory
             // TODO: Provide an external method for mods to register custom effects without reflections
             magicEffectTemplates.Clear();
@@ -334,9 +340,49 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             return effectInstance;
         }
 
+        /// <summary>
+        /// Gets classic spell record data.
+        /// </summary>
+        /// <param name="id">ID of spell.</param>
+        /// <param name="spellOut">Spell record data (if found).</param>
+        /// <returns>True if spell found, otherwise false.</returns>
+        public bool GetClassicSpellRecord(int id, out SpellRecord.SpellRecordData spellOut)
+        {
+            if (classicSpells.ContainsKey(id))
+            {
+                spellOut = classicSpells[id];
+                return true;
+            }
+
+            spellOut = new SpellRecord.SpellRecordData();
+            return false;
+        }
+
         #endregion
 
         #region Private Methods
+
+        /// <summary>
+        /// Rebuilds dictionary of classic spells by re-reading SPELLS.STD.
+        /// </summary>
+        void RebuildClassicSpellsDict()
+        {
+            classicSpells.Clear();
+
+            List<SpellRecord.SpellRecordData> spells = DaggerfallSpellReader.ReadSpellsFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, DaggerfallSpellReader.DEFAULT_FILENAME));
+            foreach (SpellRecord.SpellRecordData spell in spells)
+            {
+                // "Holy Touch" and "Holy Word" have same ID but different properties
+                // Not sure of best way to handle - just ignoring duplicate for now
+                if (classicSpells.ContainsKey(spell.index))
+                {
+                    //Debug.LogErrorFormat("RebuildClassicSpellsDict found duplicate key {0} for spell {1}. Existing spell={2}", spell.index, spell.spellName, classicSpells[spell.index].spellName);
+                    continue;
+                }
+
+                classicSpells.Add(spell.index, spell);
+            }
+        }
 
         void IndexEffectRecipes(BaseEntityEffect effect)
         {

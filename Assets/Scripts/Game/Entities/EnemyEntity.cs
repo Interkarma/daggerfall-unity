@@ -77,6 +77,15 @@ namespace DaggerfallWorkshop.Game.Entity
 
         #endregion
 
+        #region Constructors
+
+        public EnemyEntity(DaggerfallEntityBehaviour entityBehaviour)
+            : base(entityBehaviour)
+        {
+        }
+
+        #endregion
+
         #region Public Methods
 
         /// <summary>

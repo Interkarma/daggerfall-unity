@@ -37,6 +37,8 @@ namespace DaggerfallWorkshop.Game.Entity
         public const int NumberBodyParts = 7;
         public const int FatigueMultiplier = 64;
 
+        protected DaggerfallEntityBehaviour entityBehaviour;
+
         protected Genders gender;
         protected DFCareer career = new DFCareer();
         protected string name;
@@ -45,7 +47,7 @@ namespace DaggerfallWorkshop.Game.Entity
         protected DaggerfallSkills skills = new DaggerfallSkills();
         protected DaggerfallResistances resistances = new DaggerfallResistances();
         protected ItemCollection items = new ItemCollection();
-        protected ItemEquipTable equipTable = new ItemEquipTable();
+        protected ItemEquipTable equipTable;
         protected WorldContext worldContext = WorldContext.Nothing;
         protected int maxHealth;
         protected int currentHealth;
@@ -70,6 +72,14 @@ namespace DaggerfallWorkshop.Game.Entity
         #endregion
 
         #region Class Properties
+
+        /// <summary>
+        /// Gets the DaggerfallEntityBehaviour related to this DaggerfallEntity.
+        /// </summary>
+        public DaggerfallEntityBehaviour EntityBehaviour
+        {
+            get { return entityBehaviour; }
+        }
 
         /// <summary>
         /// Set true to suppress events during state restore.
@@ -250,8 +260,11 @@ namespace DaggerfallWorkshop.Game.Entity
 
         #region Constructors
 
-        public DaggerfallEntity()
+        public DaggerfallEntity(DaggerfallEntityBehaviour entityBehaviour)
         {
+            this.entityBehaviour = entityBehaviour;
+            equipTable = new ItemEquipTable(this);
+
             // Allow for resetting specific player state on new game or when game starts loading
             SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
             StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;

@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -10,6 +10,7 @@
 //
 
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects
 {
@@ -22,6 +23,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         EffectBundleSettings settings;
         DaggerfallEntityBehaviour casterEntityBehaviour = null;
+        DaggerfallUnityItem sourceItem = null;
 
         #endregion
 
@@ -46,6 +48,23 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             set { settings = value; }
         }
 
+        /// <summary>
+        /// True if bundle is from an equipped source item.
+        /// These bundles will last until player unequips or item breaks (which also unequips item).
+        /// </summary>
+        public bool IsFromEquippedItem
+        {
+            get { return (sourceItem != null); }
+        }
+
+        /// <summary>
+        /// Gets the source item for this bundle.
+        /// </summary>
+        public DaggerfallUnityItem SourceItem
+        {
+            get { return sourceItem; }
+        }
+
         #endregion
 
         #region Constructor
@@ -62,10 +81,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// </summary>
         /// <param name="settings">Settings of this effect bundle.</param>
         /// <param name="casterEntityBehaviour">Caster of this effect bundle (optional).</param>
-        public EntityEffectBundle(EffectBundleSettings settings, DaggerfallEntityBehaviour casterEntityBehaviour = null)
+        public EntityEffectBundle(EffectBundleSettings settings, DaggerfallEntityBehaviour casterEntityBehaviour = null, DaggerfallUnityItem sourceItem = null)
         {
             this.settings = settings;
             this.casterEntityBehaviour = casterEntityBehaviour;
+            this.sourceItem = sourceItem;
         }
 
         #endregion

@@ -9,15 +9,10 @@
 // Notes:
 //
 
-using System;
 using System.Collections.Generic;
-using UnityEngine;
 using DaggerfallConnect.FallExe;
-using DaggerfallConnect.Save;
-using DaggerfallConnect.Arena2;
-using DaggerfallWorkshop.Utility;
-using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.MagicAndEffects;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -31,6 +26,7 @@ namespace DaggerfallWorkshop.Game.Items
 
         const int equipTableLength = 27;
 
+        DaggerfallEntity parentEntity = null;
         DaggerfallUnityItem[] equipTable = new DaggerfallUnityItem[equipTableLength];
 
         #endregion
@@ -51,6 +47,15 @@ namespace DaggerfallWorkshop.Game.Items
         public DaggerfallUnityItem[] EquipTable
         {
             get { return equipTable; }
+        }
+
+        #endregion
+
+        #region Constructors
+
+        public ItemEquipTable(DaggerfallEntity parentEntity)
+        {
+            this.parentEntity = parentEntity;
         }
 
         #endregion
@@ -140,6 +145,9 @@ namespace DaggerfallWorkshop.Game.Items
             if (playEquipSounds)
                 DaggerfallUI.Instance.PlayOneShot(item.GetEquipSound());
 
+            // Allow entity effect manager to start any enchantments on this item
+            StartEquippedItem(item);
+
             //Debug.Log(string.Format("Equipped {0} to {1}", item.LongName, slot.ToString()));
 
             return unequippedList;
@@ -150,6 +158,9 @@ namespace DaggerfallWorkshop.Game.Items
             DaggerfallUnityItem item = UnequipItem(slot);
             if (item != null)
                 list.Add(item);
+
+            // Allow entity effect manager to stop any enchantments on this item
+            StopEquippedItem(item);
         }
 
         /// <summary>
@@ -187,8 +198,12 @@ namespace DaggerfallWorkshop.Game.Items
                 equipTable[(int)slot].EquipSlot = EquipSlots.None;
                 equipTable[(int)slot] = null;
 
+                // Allow entity effect manager to stop any enchantments on this item
+                StopEquippedItem(item);
+
                 return item;
             }
+
             return null;
         }
 
@@ -211,6 +226,9 @@ namespace DaggerfallWorkshop.Game.Items
                     return true;
                 }
             }
+
+            // Allow entity effect manager to stop any enchantments on this item
+            StopEquippedItem(item);
 
             return false;
         }
@@ -546,6 +564,26 @@ namespace DaggerfallWorkshop.Game.Items
 
                 default:
                     return EquipSlots.None;
+            }
+        }
+
+        void StartEquippedItem(DaggerfallUnityItem item)
+        {
+            if (parentEntity != null && parentEntity.EntityBehaviour)
+            {
+                EntityEffectManager manager = parentEntity.EntityBehaviour.GetComponent<EntityEffectManager>();
+                if (manager)
+                    manager.StartEquippedItem(item);
+            }
+        }
+
+        void StopEquippedItem(DaggerfallUnityItem item)
+        {
+            if (parentEntity != null && parentEntity.EntityBehaviour)
+            {
+                EntityEffectManager manager = parentEntity.EntityBehaviour.GetComponent<EntityEffectManager>();
+                if (manager)
+                    manager.StopEquippedItem(item);
             }
         }
 

@@ -159,8 +159,8 @@ namespace DaggerfallWorkshop.Game.Entity
 
         #region Constructors
 
-        public PlayerEntity()
-            :base()
+        public PlayerEntity(DaggerfallEntityBehaviour entityBehaviour)
+            :base(entityBehaviour)
         {
             StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
             OnExhausted += PlayerEntity_OnExhausted;

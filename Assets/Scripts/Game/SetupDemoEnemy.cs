@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Utility;
@@ -90,7 +90,7 @@ namespace DaggerfallWorkshop.Game
                 // Setup entity
                 if (entityBehaviour)
                 {
-                    EnemyEntity entity = new EnemyEntity();
+                    EnemyEntity entity = new EnemyEntity(entityBehaviour);
                     entityBehaviour.Entity = entity;
 
                     // Enemies are initially added to same world context as player

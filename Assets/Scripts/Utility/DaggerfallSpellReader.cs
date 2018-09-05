@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -28,7 +28,7 @@ namespace DaggerfallWorkshop.Utility
         const int SPELLRECORDSIZE               = 0x59;          //byte size of an individual spell record
         const int EFFECT_DESCR_TEXTINDEX        = 1200;
         const int SPELLMAKER_DESCR_TEXTINDEX    = 1500;
-        const string DEFAULT_FILENAME           = "SPELLS.STD";
+        public const string DEFAULT_FILENAME    = "SPELLS.STD";
 
 
         /// <summary>

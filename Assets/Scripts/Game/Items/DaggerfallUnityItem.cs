@@ -243,6 +243,16 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
+        /// Gets enchantments on this item. Can be null or empty.
+        /// Enchantments on items are stored and generated using the classic enchantment format.
+        /// At runtime this is instantiated to an effect bundle for execution by entity effect manager.
+        /// </summary>
+        public DaggerfallEnchantment[] Enchantments
+        {
+            get { return legacyMagic; }
+        }
+
+        /// <summary>
         /// Checks if this item is an artifact.
         /// </summary>
         public bool IsArtifact
