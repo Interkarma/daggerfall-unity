@@ -33,7 +33,7 @@ namespace DaggerfallWorkshop.Game
         // minimum percent chance to regain hold per skill check if slipping, gets closer to 100 with higher skill
         private const int regainHoldMinChance = 20;
         // minimum percent chance to continue climbing per skill check, gets closer to 100 with higher skill
-        private const int continueClimbMinChance = 80;
+        private const int continueClimbMinChance = 70;
         public bool IsClimbing
         {
             get { return isClimbing; }
