@@ -538,11 +538,11 @@ namespace DaggerfallWorkshop.Game
 
         /// <summary>
         /// Determines if enemies are nearby. Uses include whether player is able to rest or not.
-        /// Based on minimum distance to nearest monster, and if monster can actually sense player.
+        /// Based on distance to nearest monster, and if monster can actually sense player.
         /// </summary>
-        /// <param name="minMonsterDistance">Monsters must be at least this close.</param>
+        /// <param name="minMonsterSpawnerDistance">Monster spawners must be at least this close.</param>
         /// <returns>True if enemies are nearby.</returns>
-        public bool AreEnemiesNearby(float minMonsterDistance = 12f)
+        public bool AreEnemiesNearby(float minMonsterSpawnerDistance = 12f)
         {
             bool areEnemiesNearby = false;
             DaggerfallEntityBehaviour[] entityBehaviours = FindObjectsOfType<DaggerfallEntityBehaviour>();
@@ -551,18 +551,11 @@ namespace DaggerfallWorkshop.Game
                 DaggerfallEntityBehaviour entityBehaviour = entityBehaviours[i];
                 if (entityBehaviour.EntityType == EntityTypes.EnemyMonster || entityBehaviour.EntityType == EntityTypes.EnemyClass)
                 {
-                    // Is a monster inside min distance?
-                    if (Vector3.Distance(entityBehaviour.transform.position, PlayerController.transform.position) < minMonsterDistance)
-                    {
-                        areEnemiesNearby = true;
-                        break;
-                    }
-
-                    // Is monster already aware of player?
                     EnemySenses enemySenses = entityBehaviour.GetComponent<EnemySenses>();
                     if (enemySenses)
                     {
-                        if (enemySenses.PlayerInSight || enemySenses.PlayerInEarshot)
+                        // Is enemy already aware of player or close enough they would be spawned in classic?
+                        if (enemySenses.PlayerInSight || enemySenses.PlayerInEarshot || enemySenses.WouldBeSpawnedInClassic)
                         {
                             areEnemiesNearby = true;
                             break;
@@ -576,7 +569,7 @@ namespace DaggerfallWorkshop.Game
             for (int i = 0; i < spawners.Length; i++)
             {
                 // Is a spawner inside min distance?
-                if (Vector3.Distance(spawners[i].transform.position, PlayerController.transform.position) < minMonsterDistance)
+                if (Vector3.Distance(spawners[i].transform.position, PlayerController.transform.position) < minMonsterSpawnerDistance)
                 {
                     areEnemiesNearby = true;
                     break;

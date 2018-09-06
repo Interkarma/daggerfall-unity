@@ -107,6 +107,12 @@ namespace DaggerfallWorkshop.Game
             set { hasEncounteredPlayer = value; }
         }
 
+        public bool WouldBeSpawnedInClassic
+        {
+            get { return wouldBeSpawnedInClassic; }
+            set { wouldBeSpawnedInClassic = value; }
+        }
+
         void Start()
         {
             mobile = GetComponentInChildren<DaggerfallMobileUnit>();
