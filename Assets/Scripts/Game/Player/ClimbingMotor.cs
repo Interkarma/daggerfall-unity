@@ -163,7 +163,7 @@ namespace DaggerfallWorkshop.Game
             if (!isSlipping)
             {
                 moveDirection = ledgeDirection * playerMotor.Speed;
-                moveDirection.y = Vector3.up.y * climbingBoost;
+                moveDirection.y = Vector3.up.y * (playerMotor.Speed / 3) * climbingBoost;
             }
             else
             {
