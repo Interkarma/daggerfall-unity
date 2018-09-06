@@ -55,6 +55,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         EntityEffectBundle lastSpell = null;
         bool instantCast = false;
         bool castInProgress = false;
+        bool readySpellIsMagicItem = false;
 
         DaggerfallEntityBehaviour entityBehaviour = null;
         bool isPlayerEntity = false;
@@ -247,7 +248,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// Assigns a new spell to be cast.
         /// For player entity, this will display "press button to fire spell" message.
         /// </summary>
-        public void SetReadySpell(EntityEffectBundle spell)
+        public void SetReadySpell(EntityEffectBundle spell, bool isMagicItem = false)
         {
             // Do nothing if silenced
             if (SilenceCheck())
@@ -259,6 +260,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
             // Assign spell - caster only spells are cast instantly
             readySpell = spell;
+            readySpellIsMagicItem = isMagicItem;
             if (readySpell.Settings.TargetType == TargetTypes.CasterOnly)
                 instantCast = true;
 
@@ -271,6 +273,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public void AbortReadySpell()
         {
             readySpell = null;
+            readySpellIsMagicItem = false;
         }
 
         public void CastReadySpell()
@@ -290,8 +293,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // TODO: Enforce spellpoint costs - all spells are free to cast right now, even at 0 mana
             // This is to allow for easier testing during build-out stages
 
-            // Deduct spellpoint cost from entity
-            entityBehaviour.Entity.DecreaseMagicka(totalSpellPointCost);
+            // Deduct spellpoint cost from entity if not using a magic item
+            if (!readySpellIsMagicItem)
+                entityBehaviour.Entity.DecreaseMagicka(totalSpellPointCost);
 
             // Play casting animation based on element type
             // Spell is released by event handler PlayerSpellCasting_OnReleaseFrame
@@ -553,6 +557,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
                         // TODO: Use correct icon - the index in spell record data is the not the icon displayed by classic
                         // Not sure how this is determined by classic for equipped items, but it is consistent
+
+                        // TODO: Apply durability loss to equipped item on equip and over time
+                        // http://en.uesp.net/wiki/Daggerfall:Magical_Items#Durability_of_Magical_Items
                     }
                 }
             }
@@ -573,6 +580,47 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             {
                 if (bundle.sourceItem != null && bundle.sourceItem.UID == item.UID)
                     bundlesToRemove.Add(bundle);
+            }
+        }
+
+        /// <summary>
+        /// Offers item to effect manager when used by player in inventory.
+        /// </summary>
+        /// <param name="item"></param>
+        public void UseItem(DaggerfallUnityItem item)
+        {
+            // Item must have enchancements
+            if (item == null || !item.IsEnchanted)
+                return;
+
+            // Cast first "cast when used" enchantment
+            // This works by sending effect to readySpell which currently cannot queue more than one spell
+            // Not sure how classic handles multiple "cast when used" effects, especially for "press to release" styled spells
+            DaggerfallEnchantment[] enchantments = item.Enchantments;
+            foreach (DaggerfallEnchantment enchantment in enchantments)
+            {
+                if (enchantment.type == EnchantmentTypes.CastWhenUsed)
+                {
+                    SpellRecord.SpellRecordData spell;
+                    if (GameManager.Instance.EntityEffectBroker.GetClassicSpellRecord(enchantment.param, out spell))
+                    {
+                        Debug.LogFormat("EntityEffectManager.UseItem: Found CastWhenUsed enchantment '{0}'", spell.spellName);
+
+                        // Create effect bundle settings from classic spell
+                        EffectBundleSettings bundleSettings = new EffectBundleSettings();
+                        if (!GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spell, BundleTypes.HeldMagicItem, out bundleSettings))
+                            continue;
+
+                        // Assign bundle to ready spell 
+                        EntityEffectBundle bundle = new EntityEffectBundle(bundleSettings, entityBehaviour, item);
+                        SetReadySpell(bundle, true);
+
+                        // TODO: Apply durability loss to used item on use
+                        // http://en.uesp.net/wiki/Daggerfall:Magical_Items#Durability_of_Magical_Items
+                    }
+
+                    break;
+                }
             }
         }
 
@@ -903,6 +951,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             lastSpell = null;
             readySpell = null;
+            readySpellIsMagicItem = false;
         }
         
         int GetCastSoundID(ElementTypes elementType)
@@ -1078,11 +1127,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     missile.Payload = readySpell;
             }
 
-            // Clear ready spell and reset casting
-            lastSpell = readySpell;
+            // Clear ready spell and reset casting - do not store last spell if casting from item
+            lastSpell = (readySpellIsMagicItem) ? null : readySpell;
             readySpell = null;
             instantCast = false;
             castInProgress = false;
+            readySpellIsMagicItem = false;
         }
 
         private void EntityEffectBroker_OnNewMagicRound()

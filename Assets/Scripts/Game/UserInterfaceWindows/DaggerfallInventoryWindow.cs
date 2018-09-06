@@ -1443,6 +1443,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 NextVariant(item);
             }
+
+            // Handle enchanted item on use clicks - setup spell and pop back to HUD
+            // Classic does not close inventory window like this, but this way feels better to me
+            // Will see what feedback is like and revert to classic behaviour if widely preferred
+            if (item.IsEnchanted)
+            {
+                GameManager.Instance.PlayerEffectManager.UseItem(item);
+                DaggerfallUI.Instance.PopToHUD();
+                return;
+            }
         }
 
         void RecordLocationFromMap(DaggerfallUnityItem item)
