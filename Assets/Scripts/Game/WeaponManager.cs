@@ -591,6 +591,7 @@ namespace DaggerfallWorkshop.Game
         private void WeaponDamage(FPSWeapon weapon, out bool hitEnemy)
         {
             hitEnemy = false;
+            DaggerfallUnityItem strikingWeapon = null;
 
             if (!mainCamera || !weapon)
                 return;
@@ -628,9 +629,15 @@ namespace DaggerfallWorkshop.Game
                         // Calculate damage
                         int damage;
                         if (usingRightHand)
+                        {
                             damage = FormulaHelper.CalculateAttackDamage(playerEntity, enemyEntity, (int)(EquipSlots.RightHand), entityMobileUnit.Summary.AnimStateRecord);
+                            strikingWeapon = currentRightHandWeapon;
+                        }
                         else
+                        {
                             damage = FormulaHelper.CalculateAttackDamage(playerEntity, enemyEntity, (int)(EquipSlots.LeftHand), entityMobileUnit.Summary.AnimStateRecord);
+                            strikingWeapon = currentLeftHandWeapon;
+                        }
 
                         // Break any "normal power" concealment effects on player
                         if (playerEntity.IsMagicallyConcealedNormalPower && damage > 0)
@@ -694,6 +701,14 @@ namespace DaggerfallWorkshop.Game
                         // Remove health
                         enemyEntity.DecreaseHealth(damage);
                         hitEnemy = true;
+
+                        // Assign "cast when strikes" to target entity
+                        if (strikingWeapon != null && strikingWeapon.IsEnchanted)
+                        {
+                            EntityEffectManager enemyEffectManager = enemyEntity.EntityBehaviour.GetComponent<EntityEffectManager>();
+                            if (enemyEffectManager)
+                                enemyEffectManager.StrikeWithItem(strikingWeapon, GameManager.Instance.PlayerEntityBehaviour);
+                        }
 
                         // Make foe attack their aggressor
                         // Currently this is just player, but should be expanded later

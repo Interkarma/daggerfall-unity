@@ -306,7 +306,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             castInProgress = true;
         }
 
-        public void AssignBundle(EntityEffectBundle sourceBundle)
+        public void AssignBundle(EntityEffectBundle sourceBundle, bool showNonPlayerFailures = false)
         {
             // Source bundle must have one or more effects
             if (sourceBundle.Settings.Effects == null || sourceBundle.Settings.Effects.Length == 0)
@@ -376,7 +376,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                         // Output "Spell effect failed." for caster only spells
                         DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "spellEffectFailed"));
                     }
-                    else if (isPlayerEntity)
+                    else if (isPlayerEntity || showNonPlayerFailures)
                     {
                         // Output "Save versus spell made." for external contact spells
                         DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "saveVersusSpellMade"));
@@ -586,7 +586,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// <summary>
         /// Offers item to effect manager when used by player in inventory.
         /// </summary>
-        /// <param name="item"></param>
+        /// <param name="item">Item just used.</param>
         public void UseItem(DaggerfallUnityItem item)
         {
             // Item must have enchancements
@@ -604,7 +604,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     SpellRecord.SpellRecordData spell;
                     if (GameManager.Instance.EntityEffectBroker.GetClassicSpellRecord(enchantment.param, out spell))
                     {
-                        Debug.LogFormat("EntityEffectManager.UseItem: Found CastWhenUsed enchantment '{0}'", spell.spellName);
+                        //Debug.LogFormat("EntityEffectManager.UseItem: Found CastWhenUsed enchantment '{0}'", spell.spellName);
 
                         // Create effect bundle settings from classic spell
                         EffectBundleSettings bundleSettings = new EffectBundleSettings();
@@ -621,6 +621,52 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
                     break;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Assigns "cast when strikes" effects to this manager.
+        /// </summary>
+        /// <param name="item">Item striking this entity.</param>
+        /// <param name="caster">Entity attacking with item.</param>
+        public void StrikeWithItem(DaggerfallUnityItem item, DaggerfallEntityBehaviour caster)
+        {
+            // Item must have enchancements
+            if (item == null || !item.IsEnchanted)
+                return;
+
+            // Create bundle for every "cast when strikes" enchantment
+            List<EntityEffectBundle> bundles = new List<EntityEffectBundle>();
+            DaggerfallEnchantment[] enchantments = item.Enchantments;
+            foreach (DaggerfallEnchantment enchantment in enchantments)
+            {
+                if (enchantment.type == EnchantmentTypes.CastWhenStrikes)
+                {
+                    SpellRecord.SpellRecordData spell;
+                    if (GameManager.Instance.EntityEffectBroker.GetClassicSpellRecord(enchantment.param, out spell))
+                    {
+                        //Debug.LogFormat("EntityEffectManager.StrikeWithItem: Found CastWhenStrikes enchantment '{0}'", spell.spellName);
+
+                        // Create effect bundle settings from classic spell
+                        EffectBundleSettings bundleSettings = new EffectBundleSettings();
+                        if (!GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spell, BundleTypes.HeldMagicItem, out bundleSettings))
+                            continue;
+
+                        // Assign bundle to list
+                        EntityEffectBundle bundle = new EntityEffectBundle(bundleSettings, entityBehaviour, item);
+                        bundle.CasterEntityBehaviour = caster;
+                        bundles.Add(bundle);
+
+                        // TODO: Apply durability loss to used item on strike
+                        // http://en.uesp.net/wiki/Daggerfall:Magical_Items#Durability_of_Magical_Items
+                    }
+                }
+            }
+
+            // Assign bundles to this entity
+            foreach (EntityEffectBundle bundle in bundles)
+            {
+                AssignBundle(bundle, true);
             }
         }
 
