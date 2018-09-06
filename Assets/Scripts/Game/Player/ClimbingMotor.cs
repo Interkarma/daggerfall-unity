@@ -17,7 +17,6 @@ namespace DaggerfallWorkshop.Game
         private CharacterController controller;
         private PlayerEnterExit playerEnterExit;
         private AcrobatMotor acrobatMotor;
-        private bool failedClimbingCheck = false;
         private bool isClimbing = false;
         private bool isSlipping = false;
         private float climbingStartTimer = 0;
@@ -26,6 +25,15 @@ namespace DaggerfallWorkshop.Game
         private bool showClimbingModeMessage = true;
         private Vector2 lastHorizontalPosition = Vector2.zero;
         private Vector3 ledgeDirection = Vector3.zero;
+        private Vector3 moveDirection = Vector3.zero;
+        // how long it takes before we do another skill check to see if we can continue climbing
+        private const int continueClimbingSkillCheckFrequency = 15; 
+        // how long it takes before we try to regain hold if slipping
+        private readonly float regainHoldSkillCheckFrequency = continueClimbingSkillCheckFrequency * 0.37f; 
+        // minimum percent chance to regain hold per skill check if slipping, gets closer to 100 with higher skill
+        private const int regainHoldMinChance = 20;
+        // minimum percent chance to continue climbing per skill check, gets closer to 100 with higher skill
+        private const int continueClimbMinChance = 80;
         public bool IsClimbing
         {
             get { return isClimbing; }
@@ -48,29 +56,23 @@ namespace DaggerfallWorkshop.Game
         /// Perform climbing check, and if successful, start climbing movement.
         /// </summary>
         /// <param name="collisionFlags"></param>
-        public void ClimbingCheck(ref CollisionFlags collisionFlags)
+        public void ClimbingCheck()
         {
             float stopClimbingDistance = 0.12f;
-
-            if (isClimbing)
-            {
-                collisionFlags = CollisionFlags.Sides;
-                acrobatMotor.Falling = false;
-            }
 
             // Should we stop climbing?
             uint gameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
             if (!InputManager.Instance.HasAction(InputManager.Actions.MoveForwards)
-                || (collisionFlags & CollisionFlags.Sides) == 0
-                || failedClimbingCheck
+                || (playerMotor.CollisionFlags & CollisionFlags.Sides) == 0
                 || levitateMotor.IsLevitating
                 || playerMotor.IsRiding
-                || (isClimbing && CanWalkOntoLedge()) // Don't check for ledge walk unless climbing.
-                //|| (playerMotor.IsCrouching && !heightChanger.ForcedSwimCrouch)
+                // if we slipped and struck the ground
+                || (isSlipping && ((playerMotor.CollisionFlags & CollisionFlags.Below) != 0)
                 // don't do horizontal position check if already climbing
-                || (!isClimbing && Vector2.Distance(lastHorizontalPosition, new Vector2(controller.transform.position.x, controller.transform.position.z)) > stopClimbingDistance))
+                || (!isClimbing && Vector2.Distance(lastHorizontalPosition, new Vector2(controller.transform.position.x, controller.transform.position.z)) > stopClimbingDistance)))
             {
                 isClimbing = false;
+                isSlipping = false;
                 showClimbingModeMessage = true;
                 climbingStartTimer = 0;
                 timeOfLastClimbingCheck = gameMinutes;
@@ -78,8 +80,9 @@ namespace DaggerfallWorkshop.Game
                 // Reset position for horizontal distance check
                 lastHorizontalPosition = new Vector2(controller.transform.position.x, controller.transform.position.z);
             }
-            else
+            else // schedule climbing events
             {
+                // schedule climbing start
                 if (climbingStartTimer <= (playerMotor.systemTimerUpdatesPerSecond* 14))
                     climbingStartTimer += Time.deltaTime;
                 else
@@ -94,48 +97,58 @@ namespace DaggerfallWorkshop.Game
                         isClimbing = true;
                     }
                 }
+
+                // schedule climbing continues, Faster updates if slipping
+                if (climbingContinueTimer <= (playerMotor.systemTimerUpdatesPerSecond * (isSlipping ? regainHoldSkillCheckFrequency : continueClimbingSkillCheckFrequency)))
+                    climbingContinueTimer += Time.deltaTime;
+                else
+                {
+                    climbingContinueTimer = 0;
+                    // it's harder to regain hold while slipping than it is to continue climbing with a good hold on wall
+                    if (isSlipping)
+                        isSlipping = !SkillCheck(regainHoldMinChance);
+                    else
+                        isSlipping = !SkillCheck(continueClimbMinChance);
+                }
             }
 
+            // execute schedule
             if (isClimbing)
+            {
+                // evalate the ledge direction only once when starting to climb
+                if (ledgeDirection == Vector3.zero)
+                    GetLedgeDirection();
+
                 ClimbMovement();
-            else
+
+                // both variables represent similar situations, but different context
+                acrobatMotor.Falling = isSlipping;
+            }
+            else if (!isSlipping)
                 ledgeDirection = Vector3.zero;
         }
 
         /// <summary>
         /// Physically check for wall in front of player and Set horizontal direction of that wall 
         /// </summary>
-        /// <returns>true if a wall was hit</returns>
-        private bool CanWalkOntoLedge()
+        private void GetLedgeDirection()
         {
             RaycastHit hit;
 
             Vector3 p1 = controller.transform.position + controller.center + Vector3.up * -controller.height * 0.40f;
             Vector3 p2 = p1 + Vector3.up * controller.height;
-            float distanceToObstacle = 0;
 
             // Cast character controller shape forward to see if it is about to hit anything.
             if (Physics.CapsuleCast(p1, p2, controller.radius, controller.transform.forward, out hit, 0.15f))
             {
-                distanceToObstacle = hit.distance;
-                //ledgeDirection = -hit.normal;
-            }
-
-            bool canWalkOntoLedge = (distanceToObstacle == 0);
-
-            // evalate the ledge direction only once when starting to climb
-            if (ledgeDirection == Vector3.zero)
                 ledgeDirection = -hit.normal;
-            else if (canWalkOntoLedge)
+            }
+            else
                 ledgeDirection = Vector3.zero;
-
-            //Debug.Log("DistanceToWall: " + distanceToObstacle);
-
-            return canWalkOntoLedge;
         }
 
         /// <summary>
-        /// Perform Climbing Movement and Schedule/call Skill Checks
+        /// Perform Climbing Movement and call Skill Checks
         /// </summary>
         private void ClimbMovement()
         {
@@ -143,29 +156,30 @@ namespace DaggerfallWorkshop.Game
             // This helps player smoothly mantle the top of whatever they are climbing
             // Horizontal distance check in ClimbingCheck() will cancel climb once player mantles
             // This has the happy side effect of fixing issue where player climbs endlessly into sky or starting to climb when not facing wall
-            Vector3 moveDirection = ledgeDirection * playerMotor.Speed;
-            moveDirection.y = Vector3.up.y;
 
             // Climbing effect states "target can climb twice as well" - doubling climbing speed
-            if (player.IsEnhancedClimbing)
-                moveDirection.y *= 2;
+            float climbingBoost = player.IsEnhancedClimbing ? 2f : 1f;
 
-            controller.Move(moveDirection * Time.deltaTime);
-
-            if (climbingContinueTimer <= (playerMotor.systemTimerUpdatesPerSecond * 15))
-                climbingContinueTimer += Time.deltaTime;
+            if (!isSlipping)
+            {
+                moveDirection = ledgeDirection * playerMotor.Speed;
+                moveDirection.y = Vector3.up.y * climbingBoost;
+            }
             else
             {
-                climbingContinueTimer = 0;
-                isClimbing = SkillCheck();
+                acrobatMotor.CheckInitFall();
+                acrobatMotor.ApplyGravity(ref moveDirection);
             }
+
+            controller.Move(moveDirection * Time.deltaTime);
+            playerMotor.CollisionFlags = controller.collisionFlags;
         }
 
         /// <summary>
         /// See if the player can pass a climbing skill check
         /// </summary>
         /// <returns>true if player passed climbing skill check</returns>
-        private bool SkillCheck()
+        private bool SkillCheck(int basePercentSuccess)
         {
             player.TallySkill(DFCareer.Skills.Climbing, 1);
             int skill = player.Skills.GetLiveSkillValue(DFCareer.Skills.Climbing);
@@ -180,8 +194,9 @@ namespace DaggerfallWorkshop.Game
             skill = Mathf.Clamp(skill, 5, 95);
 
             // Skill Check
-            if ((UnityEngine.Random.Range(1, 101) > 90)
-                || (UnityEngine.Random.Range(1, 101) > skill))
+            float percentRolled = Mathf.Lerp(basePercentSuccess, 101, skill * .01f);
+
+            if (percentRolled < UnityEngine.Random.Range(1, 101)) // Failed Check?
             {
                 // Don't allow skill check to break climbing while swimming
                 // This is another reason player can't climb out of water - any slip in climb will throw them back into swim mode
@@ -190,7 +205,7 @@ namespace DaggerfallWorkshop.Game
                 var playerPos = controller.transform.position.y + (76 * MeshReader.GlobalScale) - 0.95f;
                 var playerFootPos = playerPos - (controller.height / 2) - 1.20f; // to prevent player from failing to climb out of water
                 var waterPos = playerEnterExit.blockWaterLevel * -1 * MeshReader.GlobalScale;
-                if (playerFootPos >= waterPos)
+                if (playerFootPos >= waterPos) // prevent fail underwater
                     return false;
             }
             return true;
