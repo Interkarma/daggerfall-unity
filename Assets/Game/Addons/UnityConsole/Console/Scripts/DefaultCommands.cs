@@ -1404,7 +1404,7 @@ namespace Wenzil.Console
         {
             public static readonly string name = "add";
             public static readonly string description = "Adds n inventory items to the character, based on the given keyword. n = 1 by default";
-            public static readonly string usage = "add (book|weapon|armor|cloth|ingr|relig|gold) [n]";
+            public static readonly string usage = "add (book|weapon|armor|cloth|ingr|relig|gold|magic) [n]";
 
             public static string Execute(params string[] args)
             {
@@ -1452,6 +1452,9 @@ namespace Wenzil.Console
                             break;
                         case "relig":
                             newItem = ItemBuilder.CreateRandomReligiousItem();
+                            break;
+                        case "magic":
+                            newItem = ItemBuilder.CreateRandomMagicItem(playerEntity.Level, playerEntity.Gender, playerEntity.Race);
                             break;
                         default:
                             return "unrecognized keyword. see usage";

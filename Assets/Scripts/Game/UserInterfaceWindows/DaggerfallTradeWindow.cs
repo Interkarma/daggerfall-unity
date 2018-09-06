@@ -96,6 +96,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         bool usingWagon = false;
         int cost = 0;
+        bool usingIdentifySpell = false;
 
         static Dictionary<DFLocation.BuildingTypes, List<ItemGroups>> storeBuysItemType = new Dictionary<DFLocation.BuildingTypes, List<ItemGroups>>()
         {
@@ -137,6 +138,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             get { return merchantItems; }
             set { merchantItems = value; }
+        }
+
+        public bool UsingIdentifySpell
+        {
+            get { return usingIdentifySpell; }
+            set { usingIdentifySpell = value; }
         }
 
         #endregion
@@ -278,12 +285,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public override void OnPush()
         {
-            // Get building info, message if invalid, otherwise setup acccepted item list
-            buildingDiscoveryData = GameManager.Instance.PlayerEnterExit.BuildingDiscoveryData;
-            if (buildingDiscoveryData.buildingKey <= 0)
-                DaggerfallUI.MessageBox(HardStrings.oldSaveNoTrade, true);
-            else if (windowMode == WindowModes.Sell)
-                itemTypesAccepted = storeBuysItemType[buildingDiscoveryData.buildingType];
+            // Identify spell can run anywhere - only get building info when not using spell
+            if (!usingIdentifySpell)
+            {
+                // Get building info, message if invalid, otherwise setup acccepted item list
+                buildingDiscoveryData = GameManager.Instance.PlayerEnterExit.BuildingDiscoveryData;
+                if (buildingDiscoveryData.buildingKey <= 0)
+                    DaggerfallUI.MessageBox(HardStrings.oldSaveNoTrade, true);
+                else if (windowMode == WindowModes.Sell)
+                    itemTypesAccepted = storeBuysItemType[buildingDiscoveryData.buildingType];
+            }
 
             // Local items starts pointing to player inventory
             localItems = PlayerEntity.Items;
@@ -325,6 +336,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void UpdateCostAndGold()
         {
             cost = 0;
+
+            // Identify spell remains free
+            if (usingIdentifySpell)
+            {
+                costLabel.Text = cost.ToString();
+                goldLabel.Text = PlayerEntity.GetGoldAmount().ToString();
+                return;
+            }
+
             if (windowMode == WindowModes.Buy && basketItems != null)
             {
                 for (int i = 0; i < basketItems.Count; i++)
