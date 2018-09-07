@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using FullSerializer;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Questing;
+using DaggerfallWorkshop.Game.MagicAndEffects;
 
 namespace DaggerfallWorkshop.Game.Serialization
 {
@@ -116,6 +117,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.mobileGender = mobileEnemy.Summary.Enemy.Gender;
             data.items = entity.Items.SerializeItems();
             data.equipTable = entity.ItemEquipTable.SerializeEquipTable();
+            data.instancedEffectBundles = GetComponent<EntityEffectManager>().GetInstancedBundlesSaveData();
 
             // Add quest resource data if present
             QuestResourceBehaviour questResourceBehaviour = GetComponent<QuestResourceBehaviour>();
@@ -195,6 +197,9 @@ namespace DaggerfallWorkshop.Game.Serialization
                 QuestResourceBehaviour questResourceBehaviour = entityBehaviour.gameObject.AddComponent<QuestResourceBehaviour>();
                 questResourceBehaviour.RestoreSaveData(data.questResource);
             }
+
+            // Restore instanced effect bundles
+            GetComponent<EntityEffectManager>().RestoreInstancedBundleSaveData(data.instancedEffectBundles);
 
             // Resume entity
             entity.Quiesce = false;

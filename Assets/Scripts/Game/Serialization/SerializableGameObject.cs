@@ -337,6 +337,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public ItemData_v1[] items;
         public ulong[] equipTable;
         public QuestResourceBehaviour.QuestResourceSaveData_v1 questResource;
+        public EntityEffectManager.EffectBundleSaveData_v1[] instancedEffectBundles;
     }
 
     #endregion

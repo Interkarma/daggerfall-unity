@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -112,7 +112,7 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public void MakeEnemyHostileToPlayer(GameObject player)
         {
-            if (player)
+            if (player && senses)
             {
                 senses.LastKnownPlayerPos = player.transform.position;
                 giveUpTimer = 200;
