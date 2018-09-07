@@ -15,6 +15,7 @@ using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Banking;
 using DaggerfallWorkshop.Utility;
 using System.Collections.Generic;
+using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -83,7 +84,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             inventoryAmount                 = new TextLabel();
             inventoryAmount.Position        = new Vector2(156, 24);
-            inventoryAmount.Size            = new Vector2(60, 13);
+            inventoryAmount.Size            = new Vector2(64, 13);
             inventoryAmount.Name            = "inv_total_label";
             inventoryAmount.MaxCharacters   = 11;
             mainPanel.Components.Add(inventoryAmount);
@@ -242,6 +243,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
         void UpdateLabels()
         {
             inventoryAmount.Text    = playerEntity.GetGoldAmount().ToString();
+            if (playerEntity.WagonItems.Contains(ItemGroups.Currency, (int)Currency.Gold_pieces))
+            {
+                int wagonGold = playerEntity.WagonItems.GetItem(ItemGroups.Currency, (int)Currency.Gold_pieces).stackCount;
+                inventoryAmount.Text += " (+" + wagonGold + ")";
+            }
             accountAmount.Text      = DaggerfallBankManager.GetAccountTotal(regionIndex).ToString();
             loanAmountDue.Text      = DaggerfallBankManager.GetLoanedTotal(regionIndex).ToString();
             loanDueBy.Text          = DaggerfallBankManager.GetLoanDueDateString(regionIndex);
