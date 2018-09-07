@@ -9,7 +9,6 @@
 // Notes:
 //
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -21,9 +20,20 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 {
     public class ModSettingsEditorWindow : EditorWindow
     {
+        #region Prefs
+
+        private static class Prefs
+        {
+            public const string SaveOnExit      = "ModSettings_SaveOnExit";
+            public const string CurrentTarget   = "ModSettings_CurrentTarget";
+        }
+
+        #endregion
+
         #region Fields
 
         static string rootPath;
+        static bool saveOnExit;
 
         // Data
         string targetPath;
@@ -48,8 +58,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         List<ReorderableList> keys = new List<ReorderableList>();
         Dictionary<string, float> keysSizes = new Dictionary<string, float>();
         List<List<string>> keyNames = new List<List<string>>();
-        List<string> cachedChoices;
-        //Dictionary<string, ReorderableList> multipleChoices = new Dictionary<string, ReorderableList>();
         bool duplicateKeys = false;
 
         // Layout
@@ -82,10 +90,14 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         private void OnEnable()
         {
-            targetPath = rootPath = Path.Combine(Path.Combine(Application.dataPath, "Game"), "Addons");
-
             minSize = new Vector2(1000, 500);
-            Load();
+
+            saveOnExit = EditorPrefs.GetBool(Prefs.SaveOnExit, true);
+            rootPath = Path.Combine(Path.Combine(Application.dataPath, "Game"), "Addons");
+            targetPath = EditorPrefs.GetString(Prefs.CurrentTarget, rootPath);
+
+            if (targetPath != rootPath)
+                Load();
         }
 
         private void OnGUI()
@@ -124,6 +136,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                             if (IconButton("d_P4_CheckOutLocal", "Save settings to disk"))
                                 Save();
                     });
+
+                    saveOnExit = EditorGUILayout.ToggleLeft(new GUIContent("Save on Exit", "Save automatically when window is closed."), saveOnExit);
 
                     if (modName == "None")
                         EditorGUILayout.HelpBox("Select a folder to store settings.", MessageType.Info);
@@ -219,7 +233,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         private void OnDisable()
         {
-            Save();
+            if (saveOnExit)
+                Save();
+
+            EditorPrefs.SetBool(Prefs.SaveOnExit, saveOnExit);
+            EditorPrefs.SetString(Prefs.CurrentTarget, targetPath);
         }
 
         #endregion
@@ -432,6 +450,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         private void Save()
         {
+            if (IsPreset)
+                data.FillPreset(CurrentPreset, false);
+
             data.Save(SettingsPath);
             data.SavePresets(PresetPath);
         }
