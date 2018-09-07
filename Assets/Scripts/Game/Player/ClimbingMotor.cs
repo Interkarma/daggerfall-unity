@@ -61,7 +61,6 @@ namespace DaggerfallWorkshop.Game
             float stopClimbingDistance = 0.12f;
 
             // Should we stop climbing?
-            uint gameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
             if (!InputManager.Instance.HasAction(InputManager.Actions.MoveForwards)
                 || (playerMotor.CollisionFlags & CollisionFlags.Sides) == 0
                 || levitateMotor.IsLevitating
@@ -75,7 +74,6 @@ namespace DaggerfallWorkshop.Game
                 isSlipping = false;
                 showClimbingModeMessage = true;
                 climbingStartTimer = 0;
-                timeOfLastClimbingCheck = gameMinutes;
 
                 // Reset position for horizontal distance check
                 lastHorizontalPosition = new Vector2(controller.transform.position.x, controller.transform.position.z);
