@@ -23,7 +23,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         EffectBundleSettings settings;
         DaggerfallEntityBehaviour casterEntityBehaviour = null;
-        DaggerfallUnityItem sourceItem = null;
+        DaggerfallUnityItem fromEquippedItem = null;
 
         #endregion
 
@@ -54,15 +54,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// </summary>
         public bool IsFromEquippedItem
         {
-            get { return (sourceItem != null); }
+            get { return (fromEquippedItem != null); }
         }
 
         /// <summary>
-        /// Gets the source item for this bundle.
+        /// Gets or sets the equipped item providing this bundle.
         /// </summary>
-        public DaggerfallUnityItem SourceItem
+        public DaggerfallUnityItem FromEquippedItem
         {
-            get { return sourceItem; }
+            get { return fromEquippedItem; }
+            set { fromEquippedItem = value; }
         }
 
         #endregion
@@ -81,11 +82,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// </summary>
         /// <param name="settings">Settings of this effect bundle.</param>
         /// <param name="casterEntityBehaviour">Caster of this effect bundle (optional).</param>
-        public EntityEffectBundle(EffectBundleSettings settings, DaggerfallEntityBehaviour casterEntityBehaviour = null, DaggerfallUnityItem sourceItem = null)
+        public EntityEffectBundle(EffectBundleSettings settings, DaggerfallEntityBehaviour casterEntityBehaviour = null)
         {
             this.settings = settings;
             this.casterEntityBehaviour = casterEntityBehaviour;
-            this.sourceItem = sourceItem;
         }
 
         #endregion

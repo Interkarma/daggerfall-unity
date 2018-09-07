@@ -90,7 +90,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             public DaggerfallEntityBehaviour caster;
             public EntityTypes casterEntityType;
             public ulong casterLoadID;
-            public DaggerfallUnityItem sourceItem;
+            public DaggerfallUnityItem fromEquippedItem;
             public List<IEntityEffect> liveEffects;
         }
 
@@ -323,7 +323,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             instancedBundle.elementType = sourceBundle.Settings.ElementType;
             instancedBundle.name = sourceBundle.Settings.Name;
             instancedBundle.iconIndex = sourceBundle.Settings.IconIndex;
-            instancedBundle.sourceItem = sourceBundle.SourceItem;
+            instancedBundle.fromEquippedItem = sourceBundle.FromEquippedItem;
             instancedBundle.liveEffects = new List<IEntityEffect>();
             if (sourceBundle.CasterEntityBehaviour)
             {
@@ -520,6 +520,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             RemovePendingBundles();
         }
 
+        #endregion
+
+        #region Magic Items
+
         /// <summary>
         /// Handles any magic-related work of equipping an item to this entity.
         /// Does nothing if item contains no "cast when held" enchantments.
@@ -533,7 +537,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
             // Equipped items must have "cast when held" enchantments
             DaggerfallEnchantment[] enchantments = item.Enchantments;
-            foreach(DaggerfallEnchantment enchantment in enchantments)
+            foreach (DaggerfallEnchantment enchantment in enchantments)
             {
                 if (enchantment.type == EnchantmentTypes.CastWhenHeld)
                 {
@@ -548,7 +552,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                             continue;
 
                         // Assign bundle
-                        EntityEffectBundle bundle = new EntityEffectBundle(bundleSettings, entityBehaviour, item);
+                        EntityEffectBundle bundle = new EntityEffectBundle(bundleSettings, entityBehaviour);
+                        bundle.FromEquippedItem = item;
                         AssignBundle(bundle);
 
                         // Play cast sound on equip for player only
@@ -578,7 +583,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Check all running bundles for any linked to this item and schedule instant removal
             foreach (InstancedBundle bundle in instancedBundles)
             {
-                if (bundle.sourceItem != null && bundle.sourceItem.UID == item.UID)
+                if (bundle.fromEquippedItem != null && bundle.fromEquippedItem.UID == item.UID)
                     bundlesToRemove.Add(bundle);
             }
         }
@@ -608,11 +613,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
                         // Create effect bundle settings from classic spell
                         EffectBundleSettings bundleSettings = new EffectBundleSettings();
-                        if (!GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spell, BundleTypes.HeldMagicItem, out bundleSettings))
+                        if (!GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spell, BundleTypes.Spell, out bundleSettings))
                             continue;
 
                         // Assign bundle to ready spell 
-                        EntityEffectBundle bundle = new EntityEffectBundle(bundleSettings, entityBehaviour, item);
+                        EntityEffectBundle bundle = new EntityEffectBundle(bundleSettings, entityBehaviour);
                         SetReadySpell(bundle, true);
 
                         // TODO: Apply durability loss to used item on use
@@ -649,11 +654,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
                         // Create effect bundle settings from classic spell
                         EffectBundleSettings bundleSettings = new EffectBundleSettings();
-                        if (!GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spell, BundleTypes.HeldMagicItem, out bundleSettings))
+                        if (!GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spell, BundleTypes.Spell, out bundleSettings))
                             continue;
 
                         // Assign bundle to list
-                        EntityEffectBundle bundle = new EntityEffectBundle(bundleSettings, entityBehaviour, item);
+                        EntityEffectBundle bundle = new EntityEffectBundle(bundleSettings, entityBehaviour);
                         bundle.CasterEntityBehaviour = caster;
                         bundles.Add(bundle);
 
@@ -954,7 +959,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 }
 
                 // If bundle has an item source keep it alive until item breaks or is unequipped
-                if (bundle.sourceItem != null)
+                if (bundle.fromEquippedItem != null)
                 {
                     hasRemainingEffectRounds = true;
 
@@ -1224,7 +1229,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             public int iconIndex;
             public EntityTypes casterEntityType;
             public ulong casterLoadID;
-            public ulong sourceItemID;
+            public ulong fromEquippedItemID;
             public EffectSaveData_v1[] liveEffects;
         }
 
@@ -1259,7 +1264,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 bundleData.iconIndex = bundle.iconIndex;
                 bundleData.casterEntityType = bundle.casterEntityType;
                 bundleData.casterLoadID = bundle.casterLoadID;
-                if (bundle.sourceItem != null) bundleData.sourceItemID = bundle.sourceItem.UID;
+                if (bundle.fromEquippedItem != null) bundleData.fromEquippedItemID = bundle.fromEquippedItem.UID;
 
                 List<EffectSaveData_v1> liveEffectsSaveData = new List<EffectSaveData_v1>();
                 foreach (IEntityEffect effect in bundle.liveEffects)
@@ -1318,10 +1323,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 instancedBundle.liveEffects = new List<IEntityEffect>();
                 instancedBundle.caster = GetCasterReference(bundleData.casterEntityType, bundleData.casterLoadID);
                 if (instancedBundle.caster)
-                    instancedBundle.sourceItem = instancedBundle.caster.Entity.Items.GetItem(bundleData.sourceItemID);
+                    instancedBundle.fromEquippedItem = instancedBundle.caster.Entity.Items.GetItem(bundleData.fromEquippedItemID);
 
-                // If bundle is supposed to be a held item, and we did not find that item, then do not restore bundle
-                if (instancedBundle.bundleType == BundleTypes.HeldMagicItem && instancedBundle.sourceItem == null)
+                // If bundle is supposed to be an equipped item, and we did not find that item, then do not restore bundle
+                if (instancedBundle.bundleType == BundleTypes.HeldMagicItem && instancedBundle.fromEquippedItem == null)
                     continue;
 
                 // Resume effects
