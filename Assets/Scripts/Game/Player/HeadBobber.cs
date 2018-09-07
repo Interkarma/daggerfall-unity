@@ -222,7 +222,7 @@ namespace DaggerfallWorkshop.Game
                 bounceTimerDown = 0f;
 
             }
-            else if (readyToBounce)
+            else if (readyToBounce && (isGrounded || isSwimming))
             {
                 const float bounceMax = 0.17f;
                 const float timerMax = 0.10f;
