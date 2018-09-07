@@ -192,7 +192,7 @@ namespace DaggerfallWorkshop.Game
             skill = Mathf.Clamp(skill, 5, 95);
 
             // Skill Check
-            float percentRolled = Mathf.Lerp(basePercentSuccess, 101, skill * .01f);
+            float percentRolled = Mathf.Lerp(basePercentSuccess, 100, skill * .01f);
 
             if (percentRolled < UnityEngine.Random.Range(1, 101)) // Failed Check?
             {
