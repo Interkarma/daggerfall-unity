@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -872,7 +872,7 @@ namespace DaggerfallWorkshop.Game
                             newBuildingNameplate.uniqueIndex = uniqueIndex++;
                             newBuildingNameplate.anchorPoint.x = xPosBuilding;
                             newBuildingNameplate.anchorPoint.y = yPosBuilding;
-                            newBuildingNameplate.textLabel = DaggerfallUI.AddTextLabel(customFont, Vector2.zero, newBuildingNameplate.name);
+                            newBuildingNameplate.textLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, newBuildingNameplate.name);
                             newBuildingNameplate.gameObject = new GameObject(String.Format("building name plate for [{0}]+", newBuildingNameplate.name));
                             MeshFilter meshFilter = (MeshFilter)newBuildingNameplate.gameObject.AddComponent(typeof(MeshFilter));
                             meshFilter.mesh = CreateLeftAlignedMesh(newBuildingNameplate.textLabel.Texture.width, newBuildingNameplate.textLabel.Texture.height); // create left aligned (in relation to gameobject position) quad with normal facing into positive y-direction
@@ -884,7 +884,12 @@ namespace DaggerfallWorkshop.Game
                                 // Doing nothing just to suppress warning
                             }
 
-                            renderer.material.shader = Shader.Find("Unlit/Transparent");
+                            //renderer.material.shader = Shader.Find("Unlit/Transparent");
+                            //renderer.material.mainTexture = newBuildingNameplate.textLabel.Texture;
+                            if (DaggerfallUI.Instance.SDFFontMaterial != null)
+                                renderer.material = DaggerfallUI.Instance.SDFFontMaterial;
+                            else
+                                renderer.material = DaggerfallUI.Instance.PixelFontMaterial;
                             renderer.material.mainTexture = newBuildingNameplate.textLabel.Texture;
                             renderer.enabled = true;
 
