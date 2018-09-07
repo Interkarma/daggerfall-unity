@@ -210,7 +210,25 @@ namespace DaggerfallWorkshop.Game.Serialization
         public void RestoreFactionData(FactionData_v2 factionData)
         {
             PlayerEntity entity = playerEntityBehaviour.Entity as PlayerEntity;
-            entity.FactionData.FactionDict = factionData.factionDict;
+            // There are a mixture of saved games that were made using the 1-based region IDs
+            // straight from FACTION.TXT, while others made earlier used 0-based IDs.
+            // Here we convert saves with 1-based to be 0-based. 0-based is assumed by code using these IDs.
+            if (factionData.factionDict[201].region == 18) // To check for 1-based, see if Daggerfall is 18 rather than 17
+            {
+                Debug.Log("Updating 1-based faction region IDs to 0-based.");
+                entity.FactionData.FactionDict = new Dictionary<int, DaggerfallConnect.Arena2.FactionFile.FactionData>();
+                foreach (int key in factionData.factionDict.Keys)
+                {
+                    var dict = factionData.factionDict[key];
+                    if (factionData.factionDict[key].region != -1)
+                        dict.region--;
+
+                    entity.FactionData.FactionDict.Add(key, dict);
+                }
+            }
+            else
+                entity.FactionData.FactionDict = factionData.factionDict;
+
             entity.FactionData.FactionNameToIDDict = factionData.factionNameToIDDict;
             // Add any registered custom factions
             entity.FactionData.AddCustomFactions();

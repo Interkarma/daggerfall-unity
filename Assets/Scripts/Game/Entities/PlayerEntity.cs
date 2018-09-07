@@ -1272,21 +1272,21 @@ namespace DaggerfallWorkshop.Game.Entity
                             FactionFile.FactionData warEnemy;
                             if (FactionData.GetFactionData(warEnemyID, out warEnemy))
                             {
-                                if (regionData[factionData.FactionDict[key].region - 1].Flags[(int)RegionDataFlags.WarWon] || regionData[factionData.FactionDict[key].region - 1].Flags[(int)RegionDataFlags.WarLost])
+                                if (regionData[factionData.FactionDict[key].region].Flags[(int)RegionDataFlags.WarWon] || regionData[factionData.FactionDict[key].region].Flags[(int)RegionDataFlags.WarLost])
                                 {
                                     ResetWarDataForRegion(factionData.FactionDict[key].id);
                                     ResetWarDataForRegion(warEnemyID);
 
                                     factionData.EndFactionEnemies(factionData.FactionDict[key].id, warEnemyID);
                                 }
-                                else if (regionData[factionData.FactionDict[key].region - 1].Flags[(int)RegionDataFlags.WarBeginning])
+                                else if (regionData[factionData.FactionDict[key].region].Flags[(int)RegionDataFlags.WarBeginning])
                                 {
                                     //AddNewRumor 1479
                                     //AddNewRumor 1479
-                                    TurnOnConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.WarOngoing);
-                                    TurnOnConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.WarOngoing);
+                                    TurnOnConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.WarOngoing);
+                                    TurnOnConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.WarOngoing);
                                 }
-                                else if (regionData[factionData.FactionDict[key].region - 1].Flags[(int)RegionDataFlags.WarOngoing])
+                                else if (regionData[factionData.FactionDict[key].region].Flags[(int)RegionDataFlags.WarOngoing])
                                 {
                                     if (UnityEngine.Random.Range(1, 100 + 1) > 5)
                                     {
@@ -1317,23 +1317,23 @@ namespace DaggerfallWorkshop.Game.Entity
                                         {
                                             // AddNewRumor 1408
                                             factionData.ChangePower(factionData.FactionDict[key].id, warEnemy.power / 2);
-                                            TurnOnConditionFlag(warEnemy.region - 1, RegionDataFlags.WarLost);
-                                            TurnOnConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.WarWon);
+                                            TurnOnConditionFlag(warEnemy.region, RegionDataFlags.WarLost);
+                                            TurnOnConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.WarWon);
                                         }
                                         else if (combinedEnemyPower - combinedPower > combinedPower)
                                         {
                                             // AddNewRumor 1408
                                             factionData.ChangePower(warEnemy.id, factionData.FactionDict[key].power / 2);
-                                            TurnOnConditionFlag(warEnemy.region - 1, RegionDataFlags.WarWon);
-                                            TurnOnConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.WarLost);
+                                            TurnOnConditionFlag(warEnemy.region, RegionDataFlags.WarWon);
+                                            TurnOnConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.WarLost);
                                         }
                                         //else
                                         //AddNewRumor 1407
                                     }
                                     else
                                     {
-                                        TurnOffConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.WarOngoing);
-                                        TurnOffConditionFlag(warEnemy.region - 1, RegionDataFlags.WarOngoing);
+                                        TurnOffConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.WarOngoing);
+                                        TurnOffConditionFlag(warEnemy.region, RegionDataFlags.WarOngoing);
                                     }
                                 }
                             }
@@ -1393,8 +1393,8 @@ namespace DaggerfallWorkshop.Game.Entity
                                                 // AddNewRumor 1407
                                                 // AddNewRumor 1479
                                                 // AddNewRumor 1479
-                                                TurnOnConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.WarBeginning);
-                                                TurnOnConditionFlag(random.region - 1, RegionDataFlags.WarBeginning);
+                                                TurnOnConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.WarBeginning);
+                                                TurnOnConditionFlag(random.region, RegionDataFlags.WarBeginning);
                                             }
                                         }
                                     }
@@ -1432,41 +1432,41 @@ namespace DaggerfallWorkshop.Game.Entity
                             alliesPowerMod = alliesPower / 10;
 
                             // Famine
-                            if (regionData[factionData.FactionDict[key].region - 1].Flags[(int)RegionDataFlags.FamineEnding] == true)
-                                TurnOffConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.FamineEnding);
-                            else if (regionData[factionData.FactionDict[key].region - 1].Flags[(int)RegionDataFlags.FamineOngoing] == true)
+                            if (regionData[factionData.FactionDict[key].region].Flags[(int)RegionDataFlags.FamineEnding] == true)
+                                TurnOffConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.FamineEnding);
+                            else if (regionData[factionData.FactionDict[key].region].Flags[(int)RegionDataFlags.FamineOngoing] == true)
                             {
                                 if (UnityEngine.Random.Range(0, 100 + 1) < factionData.FactionDict[key].rulerPowerBonus / 5 + alliesPowerMod + factionData.FactionDict[key].power / 5)
-                                    TurnOnConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.FamineEnding);
+                                    TurnOnConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.FamineEnding);
                             }
-                            else if (regionData[factionData.FactionDict[key].region - 1].Flags[(int)RegionDataFlags.FamineBeginning] == true)
-                                TurnOnConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.FamineOngoing);
+                            else if (regionData[factionData.FactionDict[key].region].Flags[(int)RegionDataFlags.FamineBeginning] == true)
+                                TurnOnConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.FamineOngoing);
                             else if (UnityEngine.Random.Range(1, 100 + 1) <= 2)
                             {
                                 if (UnityEngine.Random.Range(0, 100 + 1) > factionData.FactionDict[key].rulerPowerBonus + alliesPowerMod)
-                                    TurnOnConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.FamineBeginning);
+                                    TurnOnConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.FamineBeginning);
                             }
 
                             // Plague
                             FactionFile.FactionData temple;
-                            FactionData.GetFactionData(TemplesAssociatedWithRegions[factionData.FactionDict[key].region - 1], out temple);
+                            FactionData.GetFactionData(TemplesAssociatedWithRegions[factionData.FactionDict[key].region], out temple);
 
-                            if (regionData[factionData.FactionDict[key].region - 1].Flags[(int)RegionDataFlags.PlagueEnding] == true)
-                                TurnOffConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.PlagueEnding);
-                            else if (regionData[factionData.FactionDict[key].region - 1].Flags[(int)RegionDataFlags.PlagueOngoing] == true)
+                            if (regionData[factionData.FactionDict[key].region].Flags[(int)RegionDataFlags.PlagueEnding] == true)
+                                TurnOffConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.PlagueEnding);
+                            else if (regionData[factionData.FactionDict[key].region].Flags[(int)RegionDataFlags.PlagueOngoing] == true)
                             {
                                 if (temple.id != 0)
                                     factionData.ChangePower(temple.id, -1);
                                 factionData.ChangePower(factionData.FactionDict[key].id, -1);
                                 if (UnityEngine.Random.Range(0, 100 + 1) < factionData.FactionDict[key].power / 5 + factionData.FactionDict[key].rulerPowerBonus / 5 + alliesPowerMod)
-                                    TurnOnConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.PlagueEnding);
+                                    TurnOnConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.PlagueEnding);
                             }
-                            else if (regionData[factionData.FactionDict[key].region - 1].Flags[(int)RegionDataFlags.PlagueBeginning] == true)
+                            else if (regionData[factionData.FactionDict[key].region].Flags[(int)RegionDataFlags.PlagueBeginning] == true)
                             {
                                 if (temple.id != 0)
                                     factionData.ChangePower(temple.id, -1);
                                 factionData.ChangePower(factionData.FactionDict[key].id, -1);
-                                TurnOnConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.PlagueOngoing);
+                                TurnOnConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.PlagueOngoing);
                             }
                             else if (UnityEngine.Random.Range(1, 100 + 1) <= 2)
                             {
@@ -1475,27 +1475,27 @@ namespace DaggerfallWorkshop.Game.Entity
                                     if (temple.id != 0)
                                         factionData.ChangePower(temple.id, -1);
                                     factionData.ChangePower(factionData.FactionDict[key].id, -1);
-                                    TurnOnConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.PlagueBeginning);
+                                    TurnOnConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.PlagueBeginning);
                                 }
                             }
 
                             // Persecuted temple
-                            if (TemplesAssociatedWithRegions[factionData.FactionDict[key].region - 1] != 0)
+                            if (TemplesAssociatedWithRegions[factionData.FactionDict[key].region] != 0)
                             {
                                 if (UnityEngine.Random.Range(0, 100 + 1) >= (temple.power - factionData.FactionDict[key].power + 5) / 5)
-                                    TurnOffConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.PersecutedTemple);
+                                    TurnOffConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.PersecutedTemple);
                                 else if (temple.power >= 2 * factionData.FactionDict[key].power)
-                                    TurnOffConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.PersecutedTemple);
+                                    TurnOffConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.PersecutedTemple);
                                 else
                                 {
-                                    regionData[factionData.FactionDict[key].region - 1].IDOfPersecutedTemple = (ushort)temple.id;
-                                    TurnOnConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.PersecutedTemple);
+                                    regionData[factionData.FactionDict[key].region].IDOfPersecutedTemple = (ushort)temple.id;
+                                    TurnOnConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.PersecutedTemple);
                                     factionData.ChangePower(temple.id, -1);
                                 }
                             }
 
                             // Crime wave
-                            if (regionData[factionData.FactionDict[key].region - 1].Flags[(int)RegionDataFlags.CrimeWave] == true)
+                            if (regionData[factionData.FactionDict[key].region].Flags[(int)RegionDataFlags.CrimeWave] == true)
                                 factionData.ChangePower(factionData.FactionDict[key].id, -1);
 
                             FactionFile.FactionData thievesGuild;
@@ -1505,25 +1505,25 @@ namespace DaggerfallWorkshop.Game.Entity
                             FactionData.GetFactionData((int)FactionFile.FactionIDs.The_Dark_Brotherhood, out darkBrotherhood);
 
                             if (UnityEngine.Random.Range(0, 101) >= ((thievesGuild.power + darkBrotherhood.power) / 2 - factionData.FactionDict[key].power + 5) / 5)
-                                TurnOffConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.CrimeWave);
+                                TurnOffConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.CrimeWave);
                             else
                             {
-                                TurnOnConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.CrimeWave);
+                                TurnOnConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.CrimeWave);
                                 factionData.ChangePower(factionData.FactionDict[key].id, -1);
                             }
 
                             // Witch burnings
                             FactionFile.FactionData witches;
                             FactionData.FindFactionByTypeAndRegion(8, factionData.FactionDict[key].region, out witches);
-                            if (regionData[factionData.FactionDict[key].region - 1].Flags[(int)RegionDataFlags.WitchBurnings] == true)
+                            if (regionData[factionData.FactionDict[key].region].Flags[(int)RegionDataFlags.WitchBurnings] == true)
                                 factionData.ChangePower(witches.id, -1);
                             if (witches.id != 0)
                             {
                                 if (UnityEngine.Random.Range(0, 101) >= (witches.power - factionData.FactionDict[key].power + 5) / 5)
-                                    TurnOffConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.WitchBurnings);
+                                    TurnOffConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.WitchBurnings);
                                 else
                                 {
-                                    TurnOnConditionFlag(factionData.FactionDict[key].region - 1, RegionDataFlags.WitchBurnings);
+                                    TurnOnConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.WitchBurnings);
                                     factionData.ChangePower(witches.id, -1);
                                 }
                             }
@@ -1537,15 +1537,15 @@ namespace DaggerfallWorkshop.Game.Entity
 
                         if (factionData.FactionDict[key].region != -1 && factionData.FactionDict[key].type == (int)FactionFile.FactionTypes.Province)
                         {
-                            if (regionData[factionData.FactionDict[key].region - 1].Flags[(int)RegionDataFlags.CrimeWave] == true)
+                            if (regionData[factionData.FactionDict[key].region].Flags[(int)RegionDataFlags.CrimeWave] == true)
                                 ++numberOfCrimeWaves;
-                            if (regionData[factionData.FactionDict[key].region - 1].Flags[(int)RegionDataFlags.PricesHigh] == true)
+                            if (regionData[factionData.FactionDict[key].region].Flags[(int)RegionDataFlags.PricesHigh] == true)
                                 ++numberOfPricesHigh;
-                            if (regionData[factionData.FactionDict[key].region - 1].Flags[(int)RegionDataFlags.PricesLow] == true)
+                            if (regionData[factionData.FactionDict[key].region].Flags[(int)RegionDataFlags.PricesLow] == true)
                                 ++numberOfPricesLow;
-                            if (regionData[factionData.FactionDict[key].region - 1].Flags2[2])
+                            if (regionData[factionData.FactionDict[key].region].Flags2[2])
                                 ++numberOfFamines;
-                            if (regionData[factionData.FactionDict[key].region - 1].Flags2[0])
+                            if (regionData[factionData.FactionDict[key].region].Flags2[0])
                                 ++numberOfWars;
                         }
 
