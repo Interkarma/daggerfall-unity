@@ -32,6 +32,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         const int toolTipDelay = 1; // delay in seconds before button tooltips are shown
 
+        const float minTextScaleNameplates = 1.4f; // minimum text scale for nameplates
+        const float textScaleNameplates = 60.0f; // text scale factor to specify how large in general nameplates' text is rendered (text size is also affected by zoom level)
+
         const float scrollLeftRightSpeed = 100.0f; // left mouse on button arrow left/right makes geometry move with this speed
         const float scrollUpDownSpeed = 100.0f; // left mouse on button arrow up/down makes geometry move with this speed
         const float moveUpstairsDownstairsSpeed = 500.0f; // left mouse on button upstairs/downstairs makes geometry move with this speed
@@ -210,7 +213,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         int renderTextureExteriorAutomapDepth = 16;
         int oldRenderTextureExteriorAutomapWidth; // used to store previous width of exterior automap render texture to react to changes to NativePanel's size and react accordingly by setting texture up with new widht and height again
         int oldRenderTextureExteriorAutomapHeight; // used to store previous height of exterior automap render texture to react to changes to NativePanel's size and react accordingly by setting texture up with new widht and height again
-		
+
+        ToolTip nameplateToolTip = null; // used for tooltip when hovering over building nameplates
+
         bool isSetup = false;        
 
         public Panel PanelRenderAutomap
@@ -331,6 +336,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             panelRenderAutomap.OnRightMouseDown += PanelAutomap_OnRightMouseDown;
             panelRenderAutomap.OnRightMouseUp += PanelAutomap_OnRightMouseUp;
 
+            defaultToolTip.Parent = dummyPanelAutomap;
+
             // Grid button (toggle 2D <-> 3D view)
             gridButton = DaggerfallUI.AddButton(new Rect(78, 171, 27, 19), NativePanel);
             gridButton.OnMouseClick += GridButton_OnMouseClick;
@@ -362,7 +369,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             leftButton.OnMouseUp += LeftButton_OnMouseUp;
             leftButton.OnRightMouseDown += LeftButton_OnRightMouseDown;
             leftButton.OnRightMouseUp += LeftButton_OnRightMouseUp;
-            leftButton.ToolTip = defaultToolTip;
+            leftButton.ToolTip = defaultToolTip;           
             leftButton.ToolTipText = "left click: move to the left (hotkey: left arrow)\rright click: move to west location border (hotkey: shift+left arrow)";
 
             // right button
@@ -511,6 +518,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             exteriorAutomap.updateAutomapStateOnWindowPop(); // signal ExteriorAutomap script that exterior automap window was closed
+        }
+
+        public override void Draw()
+        {
+            base.Draw();
+
+            // Draw nameplate tooltip last
+            if (nameplateToolTip != null)
+                nameplateToolTip.Draw();
         }
 
         /// <summary>
@@ -786,6 +802,61 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             RenderTexture.active = null;
 
             panelRenderAutomap.BackgroundTexture = textureExteriorAutomap;
+
+            panelRenderAutomap.Components.Clear();
+
+            Rect restrictionRect = panelRenderAutomap.Rectangle;
+            for (int i=0; i < exteriorAutomap.buildingNameplates.Length; i++)
+            {
+                float posX = exteriorAutomap.buildingNameplates[i].anchorPoint.x - exteriorAutomap.LocationWidth * exteriorAutomap.BlockSizeWidth * 0.5f;
+                float posY = exteriorAutomap.buildingNameplates[i].anchorPoint.y - exteriorAutomap.LocationHeight * exteriorAutomap.BlockSizeHeight * 0.5f;
+                Vector3 transformedPosition = exteriorAutomap.CameraExteriorAutomap.WorldToScreenPoint(new Vector3(posX, 0, posY));
+                exteriorAutomap.buildingNameplates[i].textLabel.TextScale = Math.Max(minTextScaleNameplates, textScaleNameplates / cameraExteriorAutomap.orthographicSize * dummyPanelAutomap.LocalScale.x);
+                exteriorAutomap.buildingNameplates[i].textLabel.Position = new Vector2(transformedPosition.x, dummyPanelAutomap.InteriorHeight * dummyPanelAutomap.LocalScale.x - transformedPosition.y - exteriorAutomap.buildingNameplates[i].textLabel.TextHeight * 0.5f);
+                exteriorAutomap.buildingNameplates[i].textLabel.RectRestrictedRenderArea = restrictionRect;
+                exteriorAutomap.buildingNameplates[i].textLabel.RestrictedRenderAreaCoordinateType = TextLabel.RestrictedRenderArea_CoordinateType.ScreenCoordinates;
+                if (nameplateToolTip == null)
+                    nameplateToolTip = new ToolTip();
+                exteriorAutomap.buildingNameplates[i].textLabel.ToolTip = nameplateToolTip;
+                exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.ToolTipDelay = 0;
+                exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.BackgroundColor = DaggerfallUnity.Settings.ToolTipBackgroundColor;
+                exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.TextColor = DaggerfallUnity.Settings.ToolTipTextColor;                
+                exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.Parent = NativePanel;
+                exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.Position /= NativePanel.LocalScale;                
+                exteriorAutomap.buildingNameplates[i].textLabel.ToolTipText = exteriorAutomap.buildingNameplates[i].name;
+                panelRenderAutomap.Components.Add(exteriorAutomap.buildingNameplates[i].textLabel);
+
+                exteriorAutomap.buildingNameplates[i].gameObject.name = String.Format("building name plate for [{0}]+", exteriorAutomap.buildingNameplates[i].name);
+                exteriorAutomap.buildingNameplates[i].textLabel.Text = exteriorAutomap.buildingNameplates[i].name; // use long name
+                exteriorAutomap.buildingNameplates[i].width = exteriorAutomap.buildingNameplates[i].textLabel.TextWidth;
+                exteriorAutomap.buildingNameplates[i].height = exteriorAutomap.buildingNameplates[i].textLabel.TextHeight;
+                exteriorAutomap.buildingNameplates[i].offset = Vector2.zero;
+                exteriorAutomap.buildingNameplates[i].upperLeftCorner = exteriorAutomap.buildingNameplates[i].textLabel.Position + new Vector2(0.0f, -exteriorAutomap.buildingNameplates[i].height * 0.5f);
+                exteriorAutomap.buildingNameplates[i].upperRightCorner = exteriorAutomap.buildingNameplates[i].textLabel.Position + new Vector2(exteriorAutomap.buildingNameplates[i].width, -exteriorAutomap.buildingNameplates[i].height * 0.5f);
+                exteriorAutomap.buildingNameplates[i].lowerLeftCorner = exteriorAutomap.buildingNameplates[i].textLabel.Position + new Vector2(0.0f, +exteriorAutomap.buildingNameplates[i].height * 0.5f);
+                exteriorAutomap.buildingNameplates[i].lowerRightCorner = exteriorAutomap.buildingNameplates[i].textLabel.Position + new Vector2(exteriorAutomap.buildingNameplates[i].width, +exteriorAutomap.buildingNameplates[i].height * 0.5f);
+                exteriorAutomap.buildingNameplates[i].placed = false;
+                exteriorAutomap.buildingNameplates[i].nameplateReplaced = false;
+                exteriorAutomap.buildingNameplates[i].numCollisionsDetected = 0;
+            }
+
+            exteriorAutomap.computeNameplateOffsets();
+
+            for (int i = 0; i < exteriorAutomap.buildingNameplates.Length; i++)
+            {
+                if (exteriorAutomap.buildingNameplates[i].nameplateReplaced) // if not replaced
+                {
+                    exteriorAutomap.buildingNameplates[i].textLabel.Text = "*"; // else use "*"
+                    exteriorAutomap.buildingNameplates[i].gameObject.name = exteriorAutomap.buildingNameplates[i].gameObject.name.Substring(0, exteriorAutomap.buildingNameplates[i].gameObject.name.Length - 1) + "*";
+                }
+
+                exteriorAutomap.buildingNameplates[i].textLabel.Position += exteriorAutomap.buildingNameplates[i].offset;
+                exteriorAutomap.buildingNameplates[i].upperLeftCorner = exteriorAutomap.buildingNameplates[i].textLabel.Position + new Vector2(0.0f, -exteriorAutomap.buildingNameplates[i].height * 0.5f);
+                exteriorAutomap.buildingNameplates[i].upperRightCorner = exteriorAutomap.buildingNameplates[i].textLabel.Position + new Vector2(exteriorAutomap.buildingNameplates[i].width, -exteriorAutomap.buildingNameplates[i].height * 0.5f);
+                exteriorAutomap.buildingNameplates[i].lowerLeftCorner = exteriorAutomap.buildingNameplates[i].textLabel.Position + new Vector2(0.0f, +exteriorAutomap.buildingNameplates[i].height * 0.5f);
+                exteriorAutomap.buildingNameplates[i].lowerRightCorner = exteriorAutomap.buildingNameplates[i].textLabel.Position + new Vector2(exteriorAutomap.buildingNameplates[i].width, +exteriorAutomap.buildingNameplates[i].height * 0.5f);
+                exteriorAutomap.buildingNameplates[i].textLabel.Update();
+            }
         }
 
         #region Private Methods

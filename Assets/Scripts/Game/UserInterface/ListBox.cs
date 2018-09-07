@@ -449,6 +449,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (useRestrictedRenderArea)
             {
                 textLabel.RectRestrictedRenderArea = this.rectRestrictedRenderArea;
+                textLabel.RestrictedRenderAreaCoordinateType = TextLabel.RestrictedRenderArea_CoordinateType.DaggerfallNativeCoordinates;
             }
             if (horizontalScrollMode == HorizontalScrollModes.CharWise)
                 textLabel.MaxWidth = (int)Size.x;

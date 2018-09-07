@@ -112,6 +112,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             get { return (DaggerfallUnity.Settings.SDFFontRendering && sdfAtlasTexture && sdfAtlasRects != null); }
         }
 
+        public int SDFGlyphDimension
+        {
+            get { return sdfGlyphDimension; }
+        }
+
         #endregion
 
         #region Constructors
@@ -133,19 +138,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         #endregion
 
         #region Glyph Rendering
-
-        public int GetSDFGlyphWidth(int ascii)
-        {
-            if (!HasGlyph(ascii))
-                throw new Exception(invalidAsciiCode + ascii);
-
-            if (sdfAtlasRects == null || sdfAtlasRects.Length == 0)
-                return 0;
-
-            Rect atlasRect = sdfAtlasRects[ascii - asciiStart];
-
-            return (int)(atlasRect.width * sdfGlyphDimension);
-        }
 
         void DrawClassicGlyph(byte rawAscii, Rect targetRect, Color color)
         {
