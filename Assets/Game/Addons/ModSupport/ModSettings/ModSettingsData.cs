@@ -394,8 +394,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             // TODO: remove support for old ini files.
             return (mod.AssetBundle.Contains("modsettings.json")
                 || mod.AssetBundle.Contains(mod.Title + ".ini.txt")
-                || mod.AssetBundle.Contains("modsettings.ini.txt")
-                || mod.AssetBundle.Contains(mod.FileName + ".ini.txt"));
+                || mod.AssetBundle.Contains("modsettings.ini.txt"));
         }
 
         /// <summary>
@@ -411,19 +410,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             }
             else if (mod.AssetBundle.Contains(mod.Title + ".ini.txt"))
             {
-                Debug.LogFormat("{0} is using a legacy modsettings format.", mod.Title);
+                Debug.LogWarningFormat("{0} is using an obsolete modsettings format!", mod.Title);
                 LoadLegacySettingsFromMod(mod, mod.Title + ".ini.txt", ref instance);
             }
             else if (mod.AssetBundle.Contains("modsettings.ini.txt"))
             {
-                Debug.LogFormat("{0} is using a legacy modsettings format.", mod.Title);
+                Debug.LogWarningFormat("{0} is using an obsolete modsettings format!", mod.Title);
                 LoadLegacySettingsFromMod(mod, "modsettings.ini.txt", ref instance);
-            }
-            else if (mod.AssetBundle.Contains(mod.FileName + ".ini.txt"))
-            {
-                // Note: this is unsafe because file name can be changed by user.
-                Debug.LogWarningFormat("{0} is using an obsolete modsettings filename!", mod.Title);
-                LoadLegacySettingsFromMod(mod, mod.FileName + ".ini.txt", ref instance);
             }
 
             if (instance != null)
