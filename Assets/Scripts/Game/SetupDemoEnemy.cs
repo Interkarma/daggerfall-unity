@@ -17,6 +17,7 @@ namespace DaggerfallWorkshop.Game
         public MobileTypes EnemyType = MobileTypes.SkeletalWarrior;
         public MobileReactions EnemyReaction = MobileReactions.Hostile;
         public MobileGender EnemyGender = MobileGender.Unspecified;
+        public byte ClassicSpawnDistanceType = 0;
 
         DaggerfallEntityBehaviour entityBehaviour;
 
@@ -54,7 +55,7 @@ namespace DaggerfallWorkshop.Game
                 // Setup mobile billboard
                 Vector2 size = Vector2.one;
                 mobileEnemy.Gender = gender;
-                dfMobile.SetEnemy(dfUnity, mobileEnemy, EnemyReaction);
+                dfMobile.SetEnemy(dfUnity, mobileEnemy, EnemyReaction, ClassicSpawnDistanceType);
 
                 // Setup controller
                 CharacterController controller = GetComponent<CharacterController>();
@@ -119,10 +120,11 @@ namespace DaggerfallWorkshop.Game
         /// Change enemy settings and configure in a single call.
         /// </summary>
         /// <param name="enemyType">Enemy type.</param>
-        public void ApplyEnemySettings(MobileTypes enemyType, MobileReactions enemyReaction, MobileGender gender)
+        public void ApplyEnemySettings(MobileTypes enemyType, MobileReactions enemyReaction, MobileGender gender, byte classicSpawnDistanceType = 0)
         {
             EnemyType = enemyType;
             EnemyReaction = enemyReaction;
+            ClassicSpawnDistanceType = classicSpawnDistanceType;
             ApplyEnemySettings(gender);
         }
 
