@@ -83,8 +83,8 @@ namespace DaggerfallWorkshop.Game.Entity
 
         protected RegionDataRecord[] regionData = new RegionDataRecord[62];
 
-        protected Crimes crimeCommitted = 0; // TODO: Save/load
-        protected bool haveShownSurrenderToGuardsDialogue = false; // TODO: Save/load
+        protected Crimes crimeCommitted = 0;
+        protected bool haveShownSurrenderToGuardsDialogue = false;
         protected bool arrested = false;
         protected short halfOfLegalRepPlayerLostFromCrime = 0;
 
@@ -1642,6 +1642,11 @@ namespace DaggerfallWorkshop.Game.Entity
                 regionData[i].Flags2 = new bool[14];
                 for (int j = 0; j < 14; j++)
                     regionData[i].Flags2[j] = false;
+
+                regionData[i].LegalRep = 0;
+                regionData[i].PrecipitationOverride = 0;
+                regionData[i].SeverePunishmentFlags = 0;
+                regionData[i].IDOfPersecutedTemple = 0;
             }
 
             for (int i = 0; i < 12; ++i)
