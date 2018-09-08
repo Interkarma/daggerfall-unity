@@ -144,6 +144,10 @@ namespace DaggerfallWorkshop.Game
             else
                 classicUpdate = false;
 
+            // Reset whether enemy would be spawned or not in classic.
+            if (classicUpdate)
+                wouldBeSpawnedInClassic = false;
+
             // Update whether enemy would be spawned or not in classic.
             // Only check if within the maximum possible distance (Just under 1094 classic units)
             if (classicUpdate && distanceToPlayer < 1094 * MeshReader.GlobalScale)
