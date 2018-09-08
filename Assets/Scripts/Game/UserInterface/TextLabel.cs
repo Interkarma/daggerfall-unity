@@ -708,12 +708,28 @@ namespace DaggerfallWorkshop.Game.UserInterface
             int xpos = (int)alignmentOffset;
             for (int i = startCharacterIndex; i < asciiBytes.Length; i++)
             {
-                DaggerfallFont.GlyphInfo glyph = font.GetGlyph(asciiBytes[i]);
-                if (xpos + glyph.width >= totalWidth)
+                int glyphWidth;
+                Color[] colors;
+
+                //DaggerfallFont.GlyphInfo glyph = font.GetGlyph(asciiBytes[i]);
+                if (DaggerfallUI.Instance.SDFFontMaterial != null)
+                {
+                    
+                    glyphWidth = font.GetSDFGlyphWidth(asciiBytes[i]);
+                    colors = new Color[glyphWidth * font.GlyphHeight];
+                    font.GetSDFGlyphColors(ref colors, asciiBytes[i]);
+                } else
+                {
+                    glyphWidth = font.GetGlyphWidth(asciiBytes[i]);
+                    colors = new Color[glyphWidth * font.GlyphHeight];
+                    font.GetSDFGlyphColors(ref colors, asciiBytes[i]);
+                }
+
+                if (xpos + glyphWidth >= totalWidth)
                     break;
 
-                singleLineLabelTexture.SetPixels32(xpos, 0, glyph.width, totalHeight, glyph.colors);
-                xpos += glyph.width + font.GlyphSpacing;
+                singleLineLabelTexture.SetPixels(xpos, 0, glyphWidth, totalHeight, colors);
+                xpos += glyphWidth + font.GlyphSpacing;
             }
             singleLineLabelTexture.Apply(false, makeTextureNoLongerReadable);
             singleLineLabelTexture.filterMode = font.FilterMode;
