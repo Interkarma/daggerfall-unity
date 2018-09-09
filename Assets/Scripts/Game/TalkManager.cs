@@ -637,9 +637,9 @@ namespace DaggerfallWorkshop.Game
 
             // Get NPC faction
             FactionFile.FactionData NPCfaction;
-            int oneBasedPlayerRegion = GameManager.Instance.PlayerGPS.CurrentOneBasedRegionIndex;
+            int currentRegionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
             FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(
-                (int)FactionFile.FactionTypes.Province, -1, -1, oneBasedPlayerRegion);
+                (int)FactionFile.FactionTypes.Province, -1, -1, currentRegionIndex);
 
             // Should always find a region
             if (factions == null || factions.Length == 0)
@@ -647,7 +647,7 @@ namespace DaggerfallWorkshop.Game
 
             // Warn if more than 1 region is found
             if (factions.Length > 1)
-                Debug.LogWarningFormat("GetReactionToPlayer() found more than 1 matching NPC faction for region {0}.", oneBasedPlayerRegion);
+                Debug.LogWarningFormat("GetReactionToPlayer() found more than 1 matching NPC faction for region {0}.", currentRegionIndex);
 
             NPCfaction = factions[0];
             
@@ -2353,7 +2353,7 @@ namespace DaggerfallWorkshop.Game
                                     // Get regional people faction id
                                     FactionFile.FactionData[] factionsData = factions.FindFactions(
                                         (int)FactionFile.FactionTypes.People, (int)FactionFile.SocialGroups.Commoners,
-                                        -1, GameManager.Instance.PlayerGPS.CurrentOneBasedRegionIndex);
+                                        -1, GameManager.Instance.PlayerGPS.CurrentRegionIndex);
                                     if (factionsData.Length == 1)
                                         factionData = factionsData[0];
                                     else

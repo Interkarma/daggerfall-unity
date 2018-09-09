@@ -132,15 +132,6 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
-        /// Gets one-based region index for faction data based on player world position.
-        /// Equivalent to CurrentRegionIndex + 1.
-        /// </summary>
-        public int CurrentOneBasedRegionIndex
-        {
-            get { return currentPoliticIndex - 127; }
-        }
-
-        /// <summary>
         /// Gets current location index.
         /// Returns -1 when HasCurrentLocation=false
         /// </summary>
@@ -359,7 +350,7 @@ namespace DaggerfallWorkshop
                 (int)FactionFile.FactionTypes.People,
                 (int)FactionFile.SocialGroups.Commoners,
                 (int)FactionFile.GuildGroups.GeneralPopulace,
-                CurrentOneBasedRegionIndex);
+                CurrentRegionIndex);
 
             // Should always find a single people of
             if (factions == null || factions.Length != 1)
@@ -374,7 +365,7 @@ namespace DaggerfallWorkshop
         int GetCurrentRegionFaction()
         {
             FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(
-                (int)FactionFile.FactionTypes.Province, -1, -1, CurrentOneBasedRegionIndex);
+                (int)FactionFile.FactionTypes.Province, -1, -1, CurrentRegionIndex);
 
             // Should always find a single region
             if (factions == null || factions.Length != 1)
@@ -393,7 +384,7 @@ namespace DaggerfallWorkshop
                 (int)FactionFile.FactionTypes.Courts,
                 (int)FactionFile.SocialGroups.Nobility,
                 (int)FactionFile.GuildGroups.Region,
-                CurrentOneBasedRegionIndex);
+                CurrentRegionIndex);
 
             // Should always find a single court
             if (factions == null || factions.Length != 1)
