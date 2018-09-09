@@ -131,7 +131,7 @@ namespace DaggerfallWorkshop.Game
                 if (GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 0)
                     return;
                 float fallDistance = fallStartLevel - myTransform.position.y;
-                // TODO: make sure this doesn't break falls
+
                 if (!climbingMotor.IsClimbing || climbingMotor.IsSlipping)
                 { 
                     if (fallDistance > fallingDamageThreshold)

@@ -95,7 +95,6 @@ namespace DaggerfallWorkshop.Game
             // reset for next use
             WallEject = false;
 
-            // TODO: Fix bug where landing from slipping causes no damage
             // Should we abort climbing?
             if (inputAbortCondition
                 || (playerMotor.CollisionFlags & CollisionFlags.Sides) == 0
@@ -122,7 +121,7 @@ namespace DaggerfallWorkshop.Game
                 if (climbingStartTimer <= (playerMotor.systemTimerUpdatesPerSecond * startClimbSkillCheckFrequency))
                     climbingStartTimer += Time.deltaTime;
                 else
-                {   // TODO: Why can I only jump and catch the wall once?
+                {
                     // automatic success if not falling
                     if (!airborneGraspWall)
                         StartClimbing();
