@@ -248,6 +248,12 @@ namespace DaggerfallWorkshop.Game
             // Player assumed to be in movement for now
             standingStill = false;
 
+
+            if (climbingMotor.WallEject)
+            {   // True in terms of the player having their feet on solid surface.
+                grounded = true;
+            }
+
             if (grounded)
             {
                 // Set standing still while grounded flag

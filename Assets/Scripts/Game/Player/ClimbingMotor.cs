@@ -29,19 +29,28 @@ namespace DaggerfallWorkshop.Game
         // how long it takes before we do another skill check to see if we can continue climbing
         private const int continueClimbingSkillCheckFrequency = 15; 
         // how long it takes before we try to regain hold if slipping
-        private readonly float regainHoldSkillCheckFrequency = continueClimbingSkillCheckFrequency * 0.37f; 
+        private readonly float regainHoldSkillCheckFrequency = 5; 
         // minimum percent chance to regain hold per skill check if slipping, gets closer to 100 with higher skill
         private const int regainHoldMinChance = 20;
         // minimum percent chance to continue climbing per skill check, gets closer to 100 with higher skill
         private const int continueClimbMinChance = 70;
+        private const int graspWallMinChance = 50;
         public bool IsClimbing
         {
             get { return isClimbing; }
         }
+        /// <summary>
+        /// true if player is climbing but trying to regain hold of wall
+        /// </summary>
         public bool IsSlipping
         {
             get { return isSlipping; }
         }
+        /// <summary>
+        /// True if player just jumped from a wall
+        /// </summary>
+        public bool WallEject { get; private set; }
+
         void Start()
         {
             player = GameManager.Instance.PlayerEntity;
@@ -57,7 +66,20 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public void ClimbingCheck()
         {
-            float stopClimbingDistance = 0.12f;
+            float startClimbHorizontalTolerance;
+            float startClimbSkillCheckFrequency;
+            bool airborneGraspWall = (!isClimbing && !isSlipping && acrobatMotor.Falling);
+            
+            if (airborneGraspWall)
+            {
+                startClimbHorizontalTolerance = 0.90f;
+                startClimbSkillCheckFrequency = 5;
+            }
+            else
+            {
+                startClimbHorizontalTolerance = 0.12f;
+                startClimbSkillCheckFrequency = 14;
+            }
 
             bool inputAbortCondition;
 
@@ -69,6 +91,9 @@ namespace DaggerfallWorkshop.Game
             }
             else
                 inputAbortCondition = !InputManager.Instance.HasAction(InputManager.Actions.MoveForwards);
+            
+            // reset for next use
+            WallEject = false;
 
             // TODO: Fix bug where landing from slipping causes no damage
             // Should we abort climbing?
@@ -79,8 +104,10 @@ namespace DaggerfallWorkshop.Game
                 // if we slipped and struck the ground
                 || (isSlipping && ((playerMotor.CollisionFlags & CollisionFlags.Below) != 0)
                 // don't do horizontal position check if already climbing
-                || (!isClimbing && Vector2.Distance(lastHorizontalPosition, new Vector2(controller.transform.position.x, controller.transform.position.z)) > stopClimbingDistance)))
+                || (!isClimbing && Vector2.Distance(lastHorizontalPosition, new Vector2(controller.transform.position.x, controller.transform.position.z)) > startClimbHorizontalTolerance)))
             {
+                if (isClimbing && inputAbortCondition && advancedClimbing)
+                    WallEject = true;
                 isClimbing = false;
                 isSlipping = false;
                 showClimbingModeMessage = true;
@@ -92,19 +119,18 @@ namespace DaggerfallWorkshop.Game
             else // schedule climbing events
             {
                 // schedule climbing start
-                if (climbingStartTimer <= (playerMotor.systemTimerUpdatesPerSecond* 14))
+                if (climbingStartTimer <= (playerMotor.systemTimerUpdatesPerSecond * startClimbSkillCheckFrequency))
                     climbingStartTimer += Time.deltaTime;
                 else
-                {
-                    if (!isClimbing)
-                    {
-                        if (showClimbingModeMessage)
-                            DaggerfallUI.AddHUDText(UserInterfaceWindows.HardStrings.climbingMode);
-                        // Disable further showing of climbing mode message until current climb attempt is stopped
-                        // to keep it from filling message log
-                        showClimbingModeMessage = false;
-                        isClimbing = true;
-                    }
+                {   // TODO: Why can I only jump and catch the wall once?
+                    // automatic success if not falling
+                    if (!airborneGraspWall)
+                        StartClimbing();
+                    // skill check to see if we catch the wall 
+                    else if (SkillCheck(graspWallMinChance))
+                        StartClimbing();
+                    else
+                        climbingStartTimer = 0;
                 }
 
                 // schedule climbing continues, Faster updates if slipping
@@ -116,7 +142,7 @@ namespace DaggerfallWorkshop.Game
                     // it's harder to regain hold while slipping than it is to continue climbing with a good hold on wall
                     if (isSlipping)
                         isSlipping = !SkillCheck(regainHoldMinChance);
-                    else
+                    else // TODO: skill check High success rate if stationary?
                         isSlipping = !SkillCheck(continueClimbMinChance);
                 }
             }
@@ -137,6 +163,21 @@ namespace DaggerfallWorkshop.Game
                 ledgeDirection = Vector3.zero;
         }
 
+        /// <summary>
+        /// Set climbing to true and show climbing mode message once
+        /// </summary>
+        private void StartClimbing()
+        {
+            if (!isClimbing)
+            {
+                if (showClimbingModeMessage)
+                    DaggerfallUI.AddHUDText(UserInterfaceWindows.HardStrings.climbingMode);
+                // Disable further showing of climbing mode message until current climb attempt is stopped
+                // to keep it from filling message log
+                showClimbingModeMessage = false;
+                isClimbing = true;
+            }
+        }
         /// <summary>
         /// Physically check for wall in front of player and Set horizontal direction of that wall 
         /// </summary>

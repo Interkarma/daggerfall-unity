@@ -14,6 +14,7 @@ namespace DaggerfallWorkshop.Game
 
         PlayerMotor playerMotor;
         FrictionMotor frictionMotor;
+        ClimbingMotor climbingMotor;
         Transform myTransform;
 
         private float fallStartLevel;
@@ -36,6 +37,7 @@ namespace DaggerfallWorkshop.Game
         {
             playerMotor = GetComponent<PlayerMotor>();
             frictionMotor = GetComponent<FrictionMotor>();
+            climbingMotor = GetComponent<ClimbingMotor>();
             myTransform = playerMotor.transform;
         }
 
@@ -129,10 +131,14 @@ namespace DaggerfallWorkshop.Game
                 if (GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 0)
                     return;
                 float fallDistance = fallStartLevel - myTransform.position.y;
-                if (fallDistance > fallingDamageThreshold)
-                    FallingDamageAlert(fallDistance);
-                else if (fallDistance > fallingDamageThreshold / 2f)
-                    BadFallDetected(fallDistance);
+                // TODO: make sure this doesn't break falls
+                if (!climbingMotor.IsClimbing || climbingMotor.IsSlipping)
+                { 
+                    if (fallDistance > fallingDamageThreshold)
+                        FallingDamageAlert(fallDistance);
+                    else if (fallDistance > fallingDamageThreshold / 2f)
+                        BadFallDetected(fallDistance);
+                }
             }
         }
 
