@@ -518,7 +518,8 @@ namespace DaggerfallWorkshop.Game.Items
 
                 case ItemGroups.Paintings:
                     // TODO: Show painting. Uses file paint.dat.
-                    return textProvider.GetRSCTokens(paintingTextId);
+                    return textProvider.GetRandomTokens(paintingTextId, 7);
+                    //return textProvider.GetRSCTokens(paintingTextId);
 
                 case ItemGroups.MiscItems:
                     // A few items in the MiscItems group have their own text display

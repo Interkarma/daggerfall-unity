@@ -12,6 +12,8 @@ using System.Collections.Generic;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using UnityEngine;
 using DaggerfallConnect.FallExe;
+using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -19,9 +21,62 @@ namespace DaggerfallWorkshop.Game.Items
     {
         private Recipe[] recipeArray;
 
+        private struct PaintingInfo
+        {
+            public string filename;
+            public uint fileIdx;
+            public string artist;   // for %an macro
+            public string sub;      // for %sub macro
+            public string adj;      // for %adj macro
+            public string pp1;      // for %pp1 macro
+            public string pp2;      // for %pp2 macro
+        }
+
+        private PaintingInfo paintingInfo;
+
         public MacroDataSource GetMacroDataSource()
         {
             return new ItemMacroDataSource(this);
+        }
+
+        private void InitPaintingInfo()
+        {
+            if (ItemGroup == ItemGroups.Paintings && paintingInfo.filename == null)
+            {
+                DFRandom.srand(message);
+                uint paintingIndex = DFRandom.rand() % 180;
+                paintingInfo.fileIdx = paintingIndex & 7;
+                char paintingFileChar = (char)((paintingIndex >> 3) + 97);
+                paintingInfo.filename = paintingFileChar + "paint.cif";
+
+                byte[] paintingRecord = DaggerfallUnity.Instance.ContentReader.PaintFileReader.Read(paintingIndex);
+                Debug.LogFormat("painting file: {0}, index: {1}, cif idx: {2}", paintingInfo.filename, paintingIndex, paintingInfo.fileIdx);
+
+                int sub = GetPaintingRecordPart(paintingRecord, 0, 9) + 6100; // for %sub macro
+                int adj = GetPaintingRecordPart(paintingRecord, 10, 19) + 6200; // for %adj macro
+                int pp1 = GetPaintingRecordPart(paintingRecord, 20, 29) + 6300; // for %pp1 macro
+                int pp2 = GetPaintingRecordPart(paintingRecord, 30, 39) + 6400; // for %pp2 macro
+
+                ITextProvider textProvider = DaggerfallUnity.Instance.TextProvider;
+                paintingInfo.sub = textProvider.GetRandomTokens(sub, (message & 0xF0) >> 4)[0].text;
+                paintingInfo.adj = textProvider.GetRandomTokens(adj, (message & 0xF))[0].text;
+                paintingInfo.pp1 = textProvider.GetRandomTokens(pp1, (message & 0xF00) >> 8)[0].text;
+                paintingInfo.pp2 = textProvider.GetRandomTokens(pp2, (message & 0xF000) >> 12)[0].text;
+
+                DFRandom.srand(message);
+                NameHelper.BankTypes type = (NameHelper.BankTypes) DFRandom.random_range_inclusive(0, 7);
+                Genders gender = (Genders) DFRandom.random_range_inclusive(0, 1);
+                paintingInfo.artist = DaggerfallUnity.Instance.NameHelper.FullName(type, gender);
+
+            }
+        }
+
+        private int GetPaintingRecordPart(byte[] paintingRecord, int start, int end)
+        {
+            int i = start;
+            while (i <= end && paintingRecord[i] != 0xFF)
+                i++;
+            return (i - start == 1) ? paintingRecord[i-1] : paintingRecord[DFRandom.random_range_inclusive(start, i - 1)];
         }
 
         /// <summary>
@@ -99,6 +154,32 @@ namespace DaggerfallWorkshop.Game.Items
                 bookFile.OpenBook(DaggerfallUnity.Instance.Arena2Path, BookFile.messageToBookFilename(parent.message));
                 // Should the bookfile get closed?
                 return bookFile.Author;
+            }
+
+            public override string PaintingAdjective()
+            {   // %adj
+                parent.InitPaintingInfo();
+                return parent.paintingInfo.adj;
+            }
+            public override string ArtistName()
+            {   // %an
+                parent.InitPaintingInfo();
+                return parent.paintingInfo.artist;
+            }
+            public override string PaintingPrefix1()
+            {   // %pp1
+                parent.InitPaintingInfo();
+                return parent.paintingInfo.pp1;
+            }
+            public override string PaintingPrefix2()
+            {   // %pp2
+                parent.InitPaintingInfo();
+                return parent.paintingInfo.pp2;
+            }
+            public override string PaintingSubject()
+            {   // %sub
+                parent.InitPaintingInfo();
+                return parent.paintingInfo.sub;
             }
 
             public override string HeldSoul()

@@ -49,7 +49,9 @@ namespace DaggerfallWorkshop.Utility
             { "%a", Amount },   // Cost of somthing.
             { "%ach", ChancePlus }, // + Chance plus
             { "%adr", DurationPlus }, // + Duration plus
+            { "%adj", PaintingAdjective }, // Painting adjective
             { "%agi", Agi }, //  Amount of Agility
+            { "%an", ArtistName }, //  Artist name (of a painting)
             { "%ark", AttributeRating }, // What property attribute is considered
             { "%arm", ItemName }, //  Armour
             { "%ba", BookAuthor },  // Book Author
@@ -152,8 +154,8 @@ namespace DaggerfallWorkshop.Utility
             { "%plq", null }, // Place of something in log.
             { "%pnq", null }, // Person of something in log
             { "%po", Potion }, //  Potion
-            { "%pp1", null }, // ?
-            { "%pp2", null }, // ?
+            { "%pp1", PaintingPrefix1 }, // ?
+            { "%pp2", PaintingPrefix2 }, // ?
             { "%pqn", PotentialQuestorName }, // Potential Quest Giver
             { "%pqp", PotentialQuestorLocation }, // Potential Quest Giver's Location
             { "%ptm", null }, // An enemy of the current region (?)
@@ -187,7 +189,7 @@ namespace DaggerfallWorkshop.Utility
             { "%spd", Spd }, // Speed
             { "%spt", MagickaMax }, // Max spell points
             { "%str", Str }, // Amount of strength
-            { "%sub", null }, // ?
+            { "%sub", PaintingSubject }, // Painting subject
             { "%t", RegentTitle },  // Regent's Title
             { "%tcn", null }, // Travel city name
             { "%thd", ToHitMod }, // Combat odds
@@ -1083,6 +1085,27 @@ namespace DaggerfallWorkshop.Utility
         public static string BookAuthor(IMacroContextProvider mcp)
         {   // %ba
             return mcp.GetMacroDataSource().BookAuthor();
+        }
+
+        public static string PaintingAdjective(IMacroContextProvider mcp)
+        {   // %adj
+            return mcp.GetMacroDataSource().PaintingAdjective();
+        }
+        public static string ArtistName(IMacroContextProvider mcp)
+        {   // %an
+            return mcp.GetMacroDataSource().ArtistName();
+        }
+        public static string PaintingPrefix1(IMacroContextProvider mcp)
+        {   // %pp1
+            return mcp.GetMacroDataSource().PaintingPrefix1();
+        }
+        public static string PaintingPrefix2(IMacroContextProvider mcp)
+        {   // %pp2
+            return mcp.GetMacroDataSource().PaintingPrefix2();
+        }
+        public static string PaintingSubject(IMacroContextProvider mcp)
+        {   // %sub
+            return mcp.GetMacroDataSource().PaintingSubject();
         }
 
         public static string HeldSoul(IMacroContextProvider mcp)

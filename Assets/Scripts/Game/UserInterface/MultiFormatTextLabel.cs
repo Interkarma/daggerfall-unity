@@ -35,7 +35,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Color shadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
         HorizontalAlignment textAlignment = HorizontalAlignment.None;
         List<TextLabel> labels = new List<TextLabel>();
-        TextLabel lastLabel;
+        TextLabel lastLabel = new TextLabel();
 
         int totalWidth = 0;
         int totalHeight = 0;
