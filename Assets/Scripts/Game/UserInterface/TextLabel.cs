@@ -670,7 +670,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 if (DaggerfallUnity.Settings.SDFFontRendering == true)
                 {
                     // Calculate total width
-                    width += font.SDFGlyphDimension + font.GlyphSpacing;
+                    width += font.SDFGlyphDimension;// + font.GlyphSpacing;
                 }
                 else
                 {

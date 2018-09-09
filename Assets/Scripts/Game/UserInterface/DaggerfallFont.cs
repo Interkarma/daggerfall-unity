@@ -240,7 +240,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             blockWidth = (int)(atlasRect.width * sdfAtlasTexture.width);
             blockHeight = (int)(atlasRect.height * sdfAtlasTexture.height);
             int blockMinX = (int)(atlasRect.xMin * sdfAtlasTexture.width);
-            int blockMinY = (int)(atlasRect.yMin * sdfAtlasTexture.height - blockHeight);
+            int blockMinY = (int)(atlasRect.yMin * sdfAtlasTexture.height);
             colors = sdfAtlasTexture.GetPixels(blockMinX, blockMinY, blockWidth, blockHeight);
         }
 

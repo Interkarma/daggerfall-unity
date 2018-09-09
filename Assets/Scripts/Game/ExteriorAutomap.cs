@@ -887,10 +887,16 @@ namespace DaggerfallWorkshop.Game
                             //renderer.material.shader = Shader.Find("Unlit/Transparent");
                             //renderer.material.mainTexture = newBuildingNameplate.textLabel.Texture;
                             //if (DaggerfallUI.Instance.SDFFontMaterial != null)
-                            if (DaggerfallUnity.Settings.SDFFontRendering == true)                           
-                                renderer.material = DaggerfallUI.Instance.SDFFontMaterial;                            
+                            if (DaggerfallUnity.Settings.SDFFontRendering == true)
+                            {
+                                renderer.material = DaggerfallUI.Instance.SDFFontMaterial;
+                                newBuildingNameplate.scale = 0.125f;
+                            }
                             else
+                            {
                                 renderer.material = DaggerfallUI.Instance.PixelFontMaterial;
+                                newBuildingNameplate.scale = 1.0f;
+                            }
                             renderer.material.mainTexture = newBuildingNameplate.textLabel.Texture;
                             renderer.enabled = true;
 
@@ -899,7 +905,7 @@ namespace DaggerfallWorkshop.Game
 
                             float posX = newBuildingNameplate.anchorPoint.x - locationWidth * blockSizeWidth * 0.5f;
                             float posY = newBuildingNameplate.anchorPoint.y - locationHeight * blockSizeHeight * 0.5f;                            
-                            newBuildingNameplate.scale = 0.5f;
+                            
                             newBuildingNameplate.width = newBuildingNameplate.textLabel.Texture.width * newBuildingNameplate.scale;
                             newBuildingNameplate.height = newBuildingNameplate.textLabel.Texture.height * newBuildingNameplate.scale;
                             newBuildingNameplate.gameObject.transform.position = new Vector3(posX, nameplatesPlacementDepth, posY);
@@ -923,7 +929,7 @@ namespace DaggerfallWorkshop.Game
                         }
                     }
                 }
-            }
+            }            
 
             // convert the list of building nameplates to an array for performance reasons
             buildingNameplates = new BuildingNameplate[buildingNameplatesList.Count];
@@ -931,10 +937,13 @@ namespace DaggerfallWorkshop.Game
             {
                 buildingNameplates[i] = buildingNameplatesList[i];
             }
-            buildingNameplatesList.Clear();            
+            buildingNameplatesList.Clear();
 
             computeNameplateOffsets();
             applyNameplateOffsets();
+
+            if (cameraExteriorAutomap != null)
+                rotateBuildingNameplates(cameraExteriorAutomap.transform.rotation.eulerAngles.y);
         }
 
         private void deleteBuildingNameplates()
