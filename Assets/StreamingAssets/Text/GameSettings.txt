@@ -57,6 +57,8 @@ nearDeathWarning,									Near Death Warning
 nearDeathWarningInfo,								Show blinking/pulsating screen effects to warn when near death.
 alternateRandomEnemySelection,						Alternate Random Enemy Selection
 alternateRandomEnemySelectionInfo,					Create random enemies in dungeons with more variability.
+advancedClimbing,									Advanced Climbing System
+advancedClimbingInfo,								Climb walls in all directions & jump off them and grab them.
 
 resolution,                                         Resolution
 resolutionInfo,                                     Screen resolution

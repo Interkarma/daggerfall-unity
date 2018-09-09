@@ -17,7 +17,6 @@ namespace DaggerfallWorkshop.Game
         private CharacterController controller;
         private PlayerEnterExit playerEnterExit;
         private AcrobatMotor acrobatMotor;
-        private bool advancedClimbing = true;
         private bool isClimbing = false;
         private bool isSlipping = false;
         private float climbingStartTimer = 0;
@@ -83,7 +82,7 @@ namespace DaggerfallWorkshop.Game
 
             bool inputAbortCondition;
 
-            if (advancedClimbing)
+            if (DaggerfallUnity.Settings.AdvancedClimbing)
             {
                 // TODO: prevent crouch from toggling crouch when aborting climb
                 inputAbortCondition = (InputManager.Instance.HasAction(InputManager.Actions.Crouch)
@@ -105,7 +104,7 @@ namespace DaggerfallWorkshop.Game
                 // don't do horizontal position check if already climbing
                 || (!isClimbing && Vector2.Distance(lastHorizontalPosition, new Vector2(controller.transform.position.x, controller.transform.position.z)) > startClimbHorizontalTolerance)))
             {
-                if (isClimbing && inputAbortCondition && advancedClimbing)
+                if (isClimbing && inputAbortCondition && DaggerfallUnity.Settings.AdvancedClimbing)
                     WallEject = true;
                 isClimbing = false;
                 isSlipping = false;
@@ -219,7 +218,7 @@ namespace DaggerfallWorkshop.Game
                 float climbScalar = (playerMotor.Speed / 3) * climbingBoost;
                 moveDirection = ledgeDirection * playerMotor.Speed;
 
-                if (advancedClimbing)
+                if (DaggerfallUnity.Settings.AdvancedClimbing)
                 {
                     if (InputManager.Instance.HasAction(InputManager.Actions.MoveForwards))
                         moveDirection.y = Vector3.up.y * climbScalar;

@@ -97,6 +97,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox compressModdedTextures;
         Checkbox nearDeathWarning;
         Checkbox alternateRandomEnemySelection;
+        Checkbox advancedClimbing;
         HorizontalSlider cameraRecoilStrength;
 
         // Video
@@ -211,6 +212,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             compressModdedTextures = AddCheckbox(rightPanel, "compressModdedTextures", DaggerfallUnity.Settings.CompressModdedTextures);
             nearDeathWarning = AddCheckbox(rightPanel, "nearDeathWarning", DaggerfallUnity.Settings.NearDeathWarning);
             alternateRandomEnemySelection = AddCheckbox(rightPanel, "alternateRandomEnemySelection", DaggerfallUnity.Settings.AlternateRandomEnemySelection);
+            advancedClimbing = AddCheckbox(rightPanel, "advancedClimbing", DaggerfallUnity.Settings.AdvancedClimbing);
         }
 
         private void Video(Panel leftPanel, Panel rightPanel)
@@ -293,6 +295,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.NearDeathWarning = nearDeathWarning.IsChecked;
             DaggerfallUnity.Settings.AlternateRandomEnemySelection = alternateRandomEnemySelection.IsChecked;
             DaggerfallUnity.Settings.CameraRecoilStrength = cameraRecoilStrength.ScrollIndex;
+            DaggerfallUnity.Settings.AdvancedClimbing = advancedClimbing.IsChecked;
 
             /* Video */
 

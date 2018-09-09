@@ -80,4 +80,5 @@ LypyL_ModSystem=True
 MeshAndTextureReplacement=False
 CompressModdedTextures=True
 NearDeathWarning=True
+AdvancedClimbing=True
 AlternateRandomEnemySelection=False
