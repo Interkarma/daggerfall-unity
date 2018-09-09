@@ -140,9 +140,14 @@ namespace DaggerfallWorkshop.Game
                 {
                     climbingContinueTimer = 0;
                     // it's harder to regain hold while slipping than it is to continue climbing with a good hold on wall
-                    if (isSlipping)
+                    if (!InputManager.Instance.HasAction(InputManager.Actions.MoveForwards)
+                            && !InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards)
+                            && !InputManager.Instance.HasAction(InputManager.Actions.MoveLeft)
+                            && !InputManager.Instance.HasAction(InputManager.Actions.MoveRight))
+                        isSlipping = false;
+                    else if (isSlipping)
                         isSlipping = !SkillCheck(regainHoldMinChance);
-                    else // TODO: skill check High success rate if stationary?
+                    else
                         isSlipping = !SkillCheck(continueClimbMinChance);
                 }
             }
