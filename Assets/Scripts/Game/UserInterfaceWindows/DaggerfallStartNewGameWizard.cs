@@ -40,6 +40,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         CreateCharGenderSelect createCharGenderSelectWindow;
         CreateCharClassSelect createCharClassSelectWindow;
         CreateCharCustomClass createCharCustomClassWindow;
+        CreateCharChooseBio createCharChooseBioWindow;
+        CreateCharBiography createCharBiographyWindow;
         CreateCharNameSelect createCharNameSelectWindow;
         CreateCharFaceSelect createCharFaceSelectWindow;
         CreateCharAddBonusStats createCharAddBonusStatsWindow;
@@ -58,8 +60,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SelectGender,
             SelectClassMethod,      // Class questions not implemented, goes straight to SelectClassFromList
             SelectClassFromList,
-            CustomClassBuilder,     // Custom class not implemented
-            SelectBiographyMethod,  // Biography not implemented
+            CustomClassBuilder,
+            SelectBiographyMethod,
+            BiographyQuestions,
             SelectName,
             SelectFace,
             AddBonusStats,
@@ -151,6 +154,30 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             wizardStage = WizardStages.CustomClassBuilder;
             uiManager.PushWindow(createCharCustomClassWindow);
+        }
+
+        void SetChooseBioWindow()
+        {
+            if (createCharChooseBioWindow == null)
+            {
+                createCharChooseBioWindow = new CreateCharChooseBio(uiManager, createCharRaceSelectWindow);
+                createCharChooseBioWindow.OnClose += CreateCharChooseBioWindow_OnClose;
+            }
+
+            wizardStage = WizardStages.SelectBiographyMethod;
+            uiManager.PushWindow(createCharChooseBioWindow);
+        }
+
+        void SetBiographyWindow()
+        {
+            if (createCharBiographyWindow == null)
+            {
+                createCharBiographyWindow = new CreateCharBiography(uiManager);
+                createCharBiographyWindow.OnClose += CreateCharBiographyWindow_OnClose;
+            }
+
+            wizardStage = WizardStages.BiographyQuestions;
+            uiManager.PushWindow(createCharBiographyWindow);
         }
 
         void SetNameSelectWindow()
@@ -290,7 +317,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 else
                 {
                     characterDocument.career = createCharClassSelectWindow.SelectedClass;
-                    SetNameSelectWindow();
+                    SetChooseBioWindow();
                 }
             }
             else
@@ -322,6 +349,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             characterDocument.career.Luck = createCharCustomClassWindow.Stats.WorkingStats.LiveLuck;
 
             SetNameSelectWindow();
+        }
+
+        void CreateCharChooseBioWindow_OnClose()
+        {
+            if (!createCharChooseBioWindow.ChoseQuestions)
+            {
+                SetNameSelectWindow();
+            } 
+            else
+            {
+                SetBiographyWindow();
+            }
+        }
+
+        void CreateCharBiographyWindow_OnClose()
+        {
+
         }
 
         void NameSelectWindow_OnClose()
