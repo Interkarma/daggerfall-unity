@@ -886,8 +886,9 @@ namespace DaggerfallWorkshop.Game
 
                             //renderer.material.shader = Shader.Find("Unlit/Transparent");
                             //renderer.material.mainTexture = newBuildingNameplate.textLabel.Texture;
-                            if (DaggerfallUI.Instance.SDFFontMaterial != null)
-                                renderer.material = DaggerfallUI.Instance.SDFFontMaterial;
+                            //if (DaggerfallUI.Instance.SDFFontMaterial != null)
+                            if (DaggerfallUnity.Settings.SDFFontRendering == true)                           
+                                renderer.material = DaggerfallUI.Instance.SDFFontMaterial;                            
                             else
                                 renderer.material = DaggerfallUI.Instance.PixelFontMaterial;
                             renderer.material.mainTexture = newBuildingNameplate.textLabel.Texture;

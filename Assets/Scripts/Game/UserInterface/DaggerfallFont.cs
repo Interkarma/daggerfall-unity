@@ -112,6 +112,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             get { return (DaggerfallUnity.Settings.SDFFontRendering && sdfAtlasTexture && sdfAtlasRects != null); }
         }
 
+        public int SDFGlyphDimension
+        {
+            get { return sdfGlyphDimension; }
+        }
+
         #endregion
 
         #region Constructors
@@ -136,13 +141,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public int GetSDFGlyphWidth(int ascii)
         {
+            if (ascii < asciiStart)
+                return 0;
+
             if (!HasGlyph(ascii))
                 throw new Exception(invalidAsciiCode + ascii);
 
             if (sdfAtlasRects == null || sdfAtlasRects.Length == 0)
                 return 0;
 
-            Rect atlasRect = sdfAtlasRects[ascii - asciiStart + 1];
+            Rect atlasRect = sdfAtlasRects[ascii - asciiStart];
 
             return (int)(atlasRect.width * sdfGlyphDimension);
         }
@@ -207,23 +215,32 @@ namespace DaggerfallWorkshop.Game.UserInterface
         //    texture.SetPixels(x, y, blockWidth, blockHeight, colors);
         //}
 
-        public void GetClassicGlyphColors(ref Color[] colors, byte rawAscii)
+        public void GetClassicGlyphColors(ref Color[] colors, byte rawAscii, out int blockWidth, out int blockHeight)
         {
+            blockWidth = 0; blockHeight = 0;
+            if (rawAscii < asciiStart)
+                return;
+
             Rect atlasRect = atlasRects[rawAscii - asciiStart];
+            blockWidth = (int)(Math.Abs(atlasRect.width) * atlasTexture.width);
+            blockHeight = (int)(Math.Abs(atlasRect.height) * atlasTexture.height);
             int blockMinX = (int)(atlasRect.xMin * atlasTexture.width);
-            int blockMinY = (int)(atlasRect.yMin * atlasTexture.height);
-            int blockWidth = (int)(atlasRect.width * atlasTexture.width);
-            int blockHeight = (int)(atlasRect.height * atlasTexture.height);
-            colors = sdfAtlasTexture.GetPixels(blockMinX, blockMinY, blockWidth, blockHeight);
+            int blockMinY = (int)((atlasRect.yMin) * atlasTexture.height - blockHeight);
+            colors = atlasTexture.GetPixels(blockMinX, blockMinY, blockWidth, blockHeight);
+            //Color[] tmp = atlasTexture.GetPixels(0, 0, atlasTexture.width, atlasTexture.height);
         }
 
-        public void GetSDFGlyphColors(ref Color[] colors, byte rawAscii)
+        public void GetSDFGlyphColors(ref Color[] colors, byte rawAscii, out int blockWidth, out int blockHeight)
         {
-            Rect atlasRect = sdfAtlasRects[rawAscii - asciiStart + 1];
-            int blockMinX = (int)(atlasRect.xMin * atlasTexture.width);
-            int blockMinY = (int)(atlasRect.yMin * atlasTexture.height);
-            int blockWidth = (int)(atlasRect.width * atlasTexture.width);
-            int blockHeight = (int)(atlasRect.height * atlasTexture.height);
+            blockWidth = 0; blockHeight = 0;
+            if (rawAscii < asciiStart)
+                return;
+
+            Rect atlasRect = sdfAtlasRects[rawAscii - asciiStart];
+            blockWidth = (int)(atlasRect.width * sdfAtlasTexture.width);
+            blockHeight = (int)(atlasRect.height * sdfAtlasTexture.height);
+            int blockMinX = (int)(atlasRect.xMin * sdfAtlasTexture.width);
+            int blockMinY = (int)(atlasRect.yMin * sdfAtlasTexture.height - blockHeight);
             colors = sdfAtlasTexture.GetPixels(blockMinX, blockMinY, blockWidth, blockHeight);
         }
 
