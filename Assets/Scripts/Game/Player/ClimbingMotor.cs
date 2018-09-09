@@ -17,11 +17,11 @@ namespace DaggerfallWorkshop.Game
         private CharacterController controller;
         private PlayerEnterExit playerEnterExit;
         private AcrobatMotor acrobatMotor;
+        private bool advancedClimbing = true;
         private bool isClimbing = false;
         private bool isSlipping = false;
         private float climbingStartTimer = 0;
         private float climbingContinueTimer = 0;
-        private uint timeOfLastClimbingCheck = 0;
         private bool showClimbingModeMessage = true;
         private Vector2 lastHorizontalPosition = Vector2.zero;
         private Vector3 ledgeDirection = Vector3.zero;
@@ -59,8 +59,20 @@ namespace DaggerfallWorkshop.Game
         {
             float stopClimbingDistance = 0.12f;
 
-            // Should we stop climbing?
-            if (!InputManager.Instance.HasAction(InputManager.Actions.MoveForwards)
+            bool inputAbortCondition;
+
+            if (advancedClimbing)
+            {
+                // TODO: prevent crouch from toggling crouch when aborting climb
+                inputAbortCondition = (InputManager.Instance.HasAction(InputManager.Actions.Crouch)
+                                      || InputManager.Instance.HasAction(InputManager.Actions.Jump));
+            }
+            else
+                inputAbortCondition = !InputManager.Instance.HasAction(InputManager.Actions.MoveForwards);
+
+            // TODO: Fix bug where landing from slipping causes no damage
+            // Should we abort climbing?
+            if (inputAbortCondition
                 || (playerMotor.CollisionFlags & CollisionFlags.Sides) == 0
                 || levitateMotor.IsLevitating
                 || playerMotor.IsRiding
@@ -159,8 +171,23 @@ namespace DaggerfallWorkshop.Game
 
             if (!isSlipping)
             {
+                float climbScalar = (playerMotor.Speed / 3) * climbingBoost;
                 moveDirection = ledgeDirection * playerMotor.Speed;
-                moveDirection.y = Vector3.up.y * (playerMotor.Speed / 3) * climbingBoost;
+
+                if (advancedClimbing)
+                {
+                    if (InputManager.Instance.HasAction(InputManager.Actions.MoveForwards))
+                        moveDirection.y = Vector3.up.y * climbScalar;
+                    else if (InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards))
+                        moveDirection.y = Vector3.down.y * climbScalar;
+
+                    if (InputManager.Instance.HasAction(InputManager.Actions.MoveRight))
+                        moveDirection += Vector3.Cross(Vector3.up, ledgeDirection).normalized * climbScalar;
+                    else if (InputManager.Instance.HasAction(InputManager.Actions.MoveLeft))
+                        moveDirection += Vector3.Cross(ledgeDirection, Vector3.up).normalized * climbScalar;
+                }
+                else
+                    moveDirection.y = Vector3.up.y * climbScalar;
             }
             else
             {
