@@ -55,7 +55,6 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Perform climbing check, and if successful, start climbing movement.
         /// </summary>
-        /// <param name="collisionFlags"></param>
         public void ClimbingCheck()
         {
             float stopClimbingDistance = 0.12f;
