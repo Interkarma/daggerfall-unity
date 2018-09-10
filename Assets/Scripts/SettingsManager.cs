@@ -142,6 +142,7 @@ namespace DaggerfallWorkshop
         public bool CompressModdedTextures { get; set; }
         public bool NearDeathWarning { get; set; }
         public bool AlternateRandomEnemySelection { get; set; }
+        public bool AdvancedClimbing { get; set; }
 
         #endregion
 
@@ -229,6 +230,7 @@ namespace DaggerfallWorkshop
             CompressModdedTextures = GetBool(sectionEnhancements, "CompressModdedTextures");
             NearDeathWarning = GetBool(sectionEnhancements, "NearDeathWarning");
             AlternateRandomEnemySelection = GetBool(sectionEnhancements, "AlternateRandomEnemySelection");
+            AdvancedClimbing = GetBool(sectionEnhancements, "AdvancedClimbing");
         }
 
         /// <summary>
@@ -309,6 +311,7 @@ namespace DaggerfallWorkshop
             SetBool(sectionEnhancements, "CompressModdedTextures", CompressModdedTextures);
             SetBool(sectionEnhancements, "NearDeathWarning", NearDeathWarning);
             SetBool(sectionEnhancements, "AlternateRandomEnemySelection", AlternateRandomEnemySelection);
+            SetBool(sectionEnhancements, "AdvancedClimbing", AdvancedClimbing);
 
             // Write settings to persistent file
             WriteSettingsFile();
