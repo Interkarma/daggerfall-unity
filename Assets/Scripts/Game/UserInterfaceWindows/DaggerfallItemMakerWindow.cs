@@ -3,12 +3,13 @@
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
-// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    Hazelnut
+// Original Author: Hazelnut, Gavin Clayton (interkarma@dfworkshop.net)
+// Contributors:    
 //
 // Notes:
 //
 
+using System;
 using UnityEngine;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Utility;
@@ -16,6 +17,7 @@ using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Game.Items;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.MagicAndEffects;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -70,6 +72,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         ItemListScroller itemsListScroller;
 
+        DaggerfallListPickerWindow effectGroupPicker;
+        DaggerfallListPickerWindow effectSubGroupPicker;
+
         #endregion
 
         #region UI Textures
@@ -89,6 +94,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #endregion
 
         #region Fields
+
+        const MagicCraftingStations thisMagicStation = MagicCraftingStations.ItemMaker;
 
         const string baseTextureName = "ITEM00I0.IMG";
         const string goldTextureName = "ITEM01I0.IMG";
@@ -131,6 +138,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Setup UI
             SetupLabels();
             SetupButtons();
+            SetupPickers();
             SetupItemListScrollers();
 
             SelectTabPage(selectedTabPage);
@@ -241,6 +249,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             selectedItemPanel.MaxAutoScale = 1f;
         }
 
+        void SetupPickers()
+        {
+            // Use a picker for effect group
+            effectGroupPicker = new DaggerfallListPickerWindow(uiManager, this, DaggerfallUI.SmallFont, 12);
+            effectGroupPicker.ListBox.OnUseSelectedItem += AddEffectGroupListBox_OnUseSelectedItem;
+
+            // Use another picker for effect subgroup
+            // This allows user to hit escape and return to effect group list, unlike classic which dumps whole spellmaker UI
+            effectSubGroupPicker = new DaggerfallListPickerWindow(uiManager, this, DaggerfallUI.SmallFont, 12);
+            effectSubGroupPicker.ListBox.OnUseSelectedItem += AddEffectSubGroup_OnUseSelectedItem;
+        }
+
         void SetupItemListScrollers()
         {
             itemsListScroller = new ItemListScroller(4, 1, itemListPanelRect, itemButtonRects, new TextLabel(), defaultToolTip)
@@ -317,7 +337,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void PowersButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            Debug.Log("Add powers");
+            //Debug.Log("Add powers");
+
+            // TODO: Must have an item selected to be enchanted
+            // Just working on populating lists for now
+
+            effectGroupPicker.ListBox.ClearItems();
+
+            // Populate group names
+            string[] groupNames = GameManager.Instance.EntityEffectBroker.GetGroupNames(true, thisMagicStation);
+            effectGroupPicker.ListBox.AddItems(groupNames);
+            effectGroupPicker.ListBox.SelectedIndex = 0;
+
+            // Show effect group picker
+            uiManager.PushWindow(effectGroupPicker);
         }
 
         private void SideeffectsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -353,6 +386,61 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             CloseWindow();
+        }
+
+        #endregion
+
+        #region #Effect Picker Events
+
+        private void AddEffectGroupListBox_OnUseSelectedItem()
+        {
+            List<IEntityEffect> enumeratedEffectTemplates = new List<IEntityEffect>();
+
+            // Clear existing
+            effectSubGroupPicker.ListBox.ClearItems();
+            enumeratedEffectTemplates.Clear();
+
+            // Enumerate subgroup effect key name pairs
+            enumeratedEffectTemplates = GameManager.Instance.EntityEffectBroker.GetEffectTemplates(effectGroupPicker.ListBox.SelectedItem, thisMagicStation);
+            if (enumeratedEffectTemplates.Count < 1)
+                throw new Exception(string.Format("Could not find any effect templates for group {0}", effectGroupPicker.ListBox.SelectedItem));
+
+            //// If this is a solo effect without any subgroups names defined (e.g. "Regenerate") then go straight to effect editor
+            //if (enumeratedEffectTemplates.Count == 1 && string.IsNullOrEmpty(enumeratedEffectTemplates[0].Properties.SubGroupName))
+            //{
+            //    effectGroupPicker.CloseWindow();
+            //    AddAndEditSlot(enumeratedEffectTemplates[0]);
+            //    //uiManager.PushWindow(effectEditor);
+            //    return;
+            //}
+
+            //// Sort list by subgroup name
+            //enumeratedEffectTemplates.Sort((s1, s2) => s1.Properties.SubGroupName.CompareTo(s2.Properties.SubGroupName));
+
+            // Populate subgroup names in list box
+            foreach (IEntityEffect effect in enumeratedEffectTemplates)
+            {
+                effectSubGroupPicker.ListBox.AddItem(effect.Properties.SubGroupName);
+            }
+            effectSubGroupPicker.ListBox.SelectedIndex = 0;
+
+            // Show effect subgroup picker
+            uiManager.PushWindow(effectSubGroupPicker);
+        }
+
+        private void AddEffectSubGroup_OnUseSelectedItem()
+        {
+            // Close effect pickers
+            effectGroupPicker.CloseWindow();
+            effectSubGroupPicker.CloseWindow();
+
+            //// Get selected effect from those on offer
+            //IEntityEffect effectTemplate = enumeratedEffectTemplates[effectSubGroupPicker.ListBox.SelectedIndex];
+            //if (effectTemplate != null)
+            //{
+            //    AddAndEditSlot(effectTemplate);
+            //    //Debug.LogFormat("Selected effect {0} {1} with key {2}", effectTemplate.GroupName, effectTemplate.SubGroupName, effectTemplate.Key);
+            //}
         }
 
         #endregion

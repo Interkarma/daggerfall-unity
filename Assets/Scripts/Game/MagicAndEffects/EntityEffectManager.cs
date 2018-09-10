@@ -1335,7 +1335,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     IEntityEffect effect = GameManager.Instance.EntityEffectBroker.InstantiateEffect(effectData.key, effectData.effectSettings);
                     if (effect == null)
                     {
-                        Debug.LogWarningFormat("RestoreInstancedBundleSaveData() could not restore effect as key '{0}' was not found by broker.");
+                        Debug.LogWarningFormat("RestoreInstancedBundleSaveData() could not restore effect as key '{0}' was not found by broker.", effectData.key);
                         continue;
                     }
 
