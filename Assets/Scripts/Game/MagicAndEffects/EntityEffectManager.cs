@@ -128,6 +128,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             get { return instancedBundles.ToArray(); }
         }
 
+        public int EffectCount
+        {
+            get { return instancedBundles.Count; }
+        }
+
         public int DiseaseCount
         {
             get { return GetDiseaseCount(); }

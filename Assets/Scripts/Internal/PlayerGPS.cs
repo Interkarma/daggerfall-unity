@@ -11,7 +11,7 @@
 
 using UnityEngine;
 using System;
-using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
@@ -20,10 +20,10 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Utility;
-using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Banking;
+using DaggerfallWorkshop.Game.MagicAndEffects;
 
 namespace DaggerfallWorkshop
 {
@@ -34,6 +34,8 @@ namespace DaggerfallWorkshop
     public class PlayerGPS : MonoBehaviour
     {
         #region Fields
+
+        const float refreshNearbyObjectsInterval = 0.33f;
 
         // Default location is outside Privateer's Hold
         [Range(0, 32735232)]
@@ -65,6 +67,9 @@ namespace DaggerfallWorkshop
 
         string locationRevealedByMapItem;
 
+        float nearbyObjectsUpdateTimer = 0f;
+        List<NearbyObject> nearbyObjects = new List<NearbyObject>();
+
         Dictionary<int, DiscoveredLocation> discoveredLocations = new Dictionary<int, DiscoveredLocation>();
 
         #endregion
@@ -90,6 +95,26 @@ namespace DaggerfallWorkshop
             public int factionID;
             public int quality;
             public DFLocation.BuildingTypes buildingType;
+        }
+
+        public struct NearbyObject
+        {
+            public GameObject gameObject;
+            public NearbyObjectFlags flags;
+            public float distance;
+        }
+
+        [Flags]
+        public enum NearbyObjectFlags
+        {
+            None = 0,
+            Enemy = 1,
+            Treasure = 2,
+            Magic = 4,
+            Undead = 8,
+            Daedra = 16,
+            Humanoid = 32,
+            Animal = 64,
         }
 
         #endregion
@@ -268,6 +293,14 @@ namespace DaggerfallWorkshop
 
             // Check if player is inside actual location rect
             PlayerLocationRectCheck();
+
+            // Update nearby objects
+            nearbyObjectsUpdateTimer += Time.deltaTime;
+            if (nearbyObjectsUpdateTimer > refreshNearbyObjectsInterval)
+            {
+                UpdateNearbyObjects();
+                nearbyObjectsUpdateTimer = 0;
+            }
         }
 
         #endregion
@@ -601,6 +634,115 @@ namespace DaggerfallWorkshop
                 return false;
 
             return true;
+        }
+
+        #endregion
+
+        #region Nearby Objects
+
+        /// <summary>
+        /// Refresh list of nearby objects to service related systems.
+        /// </summary>
+        void UpdateNearbyObjects()
+        {
+            nearbyObjects.Clear();
+
+            // Get entities
+            DaggerfallEntityBehaviour[] entities = FindObjectsOfType<DaggerfallEntityBehaviour>();
+            if (entities != null)
+            {
+                for (int i = 0; i < entities.Length; i++)
+                {
+                    if (entities[i] == GameManager.Instance.PlayerEntityBehaviour)
+                        continue;
+
+                    NearbyObject no = new NearbyObject()
+                    {
+                        gameObject = entities[i].gameObject,
+                        distance = Vector3.Distance(transform.position, entities[i].transform.position),
+                    };
+
+                    no.flags = GetEntityFlags(entities[i]);
+                    nearbyObjects.Add(no);
+                }
+            }
+
+            // Get treasure - this assumes loot containers will never carry entity component
+            DaggerfallLoot[] lootContainers = FindObjectsOfType<DaggerfallLoot>();
+            if (lootContainers != null)
+            {
+                for (int i = 0; i < lootContainers.Length; i++)
+                {
+                    NearbyObject no = new NearbyObject()
+                    {
+                        gameObject = lootContainers[i].gameObject,
+                        distance = Vector3.Distance(transform.position, lootContainers[i].transform.position),
+                    };
+
+                    no.flags = GetLootFlags(lootContainers[i]);
+                    nearbyObjects.Add(no);
+                }
+            }
+        }
+
+        public NearbyObjectFlags GetEntityFlags(DaggerfallEntityBehaviour entity)
+        {
+            NearbyObjectFlags result = NearbyObjectFlags.None;
+            if (!entity)
+                return result;
+
+            if (entity.EntityType == EntityTypes.EnemyClass || entity.EntityType == EntityTypes.EnemyMonster)
+            {
+                result |= NearbyObjectFlags.Enemy;
+                EnemyEntity enemyEntity = entity.Entity as EnemyEntity;
+                switch (enemyEntity.MobileEnemy.Affinity)
+                {
+                    case MobileAffinity.Undead:
+                        result |= NearbyObjectFlags.Undead;
+                        break;
+                    case MobileAffinity.Daedra:
+                        result |= NearbyObjectFlags.Daedra;
+                        break;
+                    case MobileAffinity.Human:
+                        result |= NearbyObjectFlags.Humanoid;
+                        break;
+                    case MobileAffinity.Animal:
+                        result |= NearbyObjectFlags.Animal;
+                        break;
+                }
+            }
+            else if (entity.EntityType == EntityTypes.CivilianNPC)
+            {
+                result |= NearbyObjectFlags.Humanoid;
+            }
+
+            // Set magic flag
+            // Not completely sure what conditions should flag entity for "detect magic"
+            // Currently just assuming entity has active effects
+            EntityEffectManager manager = entity.GetComponent<EntityEffectManager>();
+            if (manager && manager.EffectCount > 0)
+            {
+                result |= NearbyObjectFlags.Magic;
+            }
+
+            return result;
+        }
+
+        public NearbyObjectFlags GetLootFlags(DaggerfallLoot loot)
+        {
+            NearbyObjectFlags result = NearbyObjectFlags.None;
+            if (!loot)
+                return result;
+
+            // Set treasure flag when container not empty
+            // Are any other conditions required?
+            // Should corspes loot container be filtered out?
+            if (loot.Items.Count > 0)
+            {
+                result |= NearbyObjectFlags.Treasure;
+            }
+
+            return result;
         }
 
         #endregion
