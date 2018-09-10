@@ -1107,7 +1107,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
         int GetCurrentRegionFaction()
         {
-            int oneBasedPlayerRegion = GameManager.Instance.PlayerGPS.CurrentOneBasedRegionIndex;
+            int oneBasedPlayerRegion = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
             FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(
                 (int)FactionFile.FactionTypes.Province, -1, -1, oneBasedPlayerRegion);
 
@@ -1122,7 +1122,7 @@ namespace DaggerfallWorkshop.Game.Questing
         int GetCourtOfCurrentRegion()
         {
             // Find court in current region
-            int oneBasedPlayerRegion = GameManager.Instance.PlayerGPS.CurrentOneBasedRegionIndex;
+            int oneBasedPlayerRegion = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
             FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(
                 (int)FactionFile.FactionTypes.Courts,
                 (int)FactionFile.SocialGroups.Nobility,

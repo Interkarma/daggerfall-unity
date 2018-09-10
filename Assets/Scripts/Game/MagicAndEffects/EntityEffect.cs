@@ -97,6 +97,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         bool HasEnded { get; }
 
         /// <summary>
+        /// Gets total number of variants for multi-effects.
+        /// </summary>
+        int VariantCount { get; }
+
+        /// <summary>
+        /// Sets current variant for multi-effects.
+        /// </summary>
+        int CurrentVariant { get; set; }
+
+        /// <summary>
         /// Called by an EntityEffectManager when parent bundle is attached to host entity.
         /// Use this for setup or immediate work performed only once.
         /// </summary>
@@ -152,6 +162,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         protected PotionProperties potionProperties = new PotionProperties();
         protected DaggerfallEntityBehaviour caster = null;
         protected EntityEffectManager manager = null;
+        protected int variantCount = 1;
+        protected int currentVariant = 0;
 
         int roundsRemaining;
         bool chanceSuccess = false;
@@ -159,6 +171,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         int[] skillMods = new int[DaggerfallSkills.Count];
         BundleTypes bundleGroup = BundleTypes.None;
         bool effectEnded = false;
+
+        #endregion
+
+        #region Enums
+
+        public enum ClassicEffectFamily
+        {
+            Spells,
+            PowersAndSideEffects,
+        }
 
         #endregion
 
@@ -193,7 +215,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         #region IEntityEffect Properties
 
-        public EffectProperties Properties
+        public virtual EffectProperties Properties
         {
             get { return properties; }
         }
@@ -237,7 +259,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         public string Key
         {
-            get { return properties.Key; }
+            get { return Properties.Key; }
         }
 
         public string DisplayName
@@ -255,6 +277,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             get { return effectEnded; }
             protected set { effectEnded = value; }
+        }
+
+        public int VariantCount
+        {
+            get { return variantCount; }
+        }
+
+        public int CurrentVariant
+        {
+            get { return currentVariant; }
+            set { currentVariant = Mathf.Clamp(value, 0, variantCount - 1); }
         }
 
         #endregion
@@ -348,10 +381,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         protected int GetMagnitude(DaggerfallEntityBehaviour caster = null)
         {
             if (caster == null)
-                Debug.LogWarningFormat("GetMagnitude() for {0} has no caster.", properties.Key);
+                Debug.LogWarningFormat("GetMagnitude() for {0} has no caster.", Properties.Key);
 
             int magnitude = 0;
-            if (properties.SupportMagnitude)
+            if (Properties.SupportMagnitude)
             {
                 int casterLevel = (caster) ? caster.Entity.Level : 1;
                 int baseMagnitude = UnityEngine.Random.Range(settings.MagnitudeBaseMin, settings.MagnitudeBaseMax + 1);
@@ -425,9 +458,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         string GetDisplayName()
         {
             // Get display name or manufacture a default from group names
-            if (!string.IsNullOrEmpty(properties.DisplayName))
+            if (!string.IsNullOrEmpty(Properties.DisplayName))
             {
-                return properties.DisplayName;
+                return Properties.DisplayName;
             }
             else
             {
@@ -443,7 +476,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         void SetDuration()
         {
             int casterLevel = (caster) ? caster.Entity.Level : 1;
-            if (properties.SupportDuration)
+            if (Properties.SupportDuration)
                 roundsRemaining = settings.DurationBase + settings.DurationPlus * (int)Mathf.Floor(casterLevel / settings.DurationPerLevel);
             else
                 roundsRemaining = 0;
@@ -453,12 +486,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         void SetChance()
         {
-            if (!properties.SupportChance)
+            if (!Properties.SupportChance)
                 return;
 
             int chance = 0;
             int casterLevel = (caster) ? caster.Entity.Level : 1;
-            if (properties.SupportChance)
+            if (Properties.SupportChance)
                 chance = settings.ChanceBase + settings.ChancePlus * (int)Mathf.Floor(casterLevel / settings.ChancePerLevel);
             else
                 roundsRemaining = 0;
@@ -526,13 +559,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             return settings;
         }
 
-        public static int MakeClassicKey(byte groupIndex, byte subgroupIndex)
+        public static int MakeClassicKey(byte groupIndex, byte subgroupIndex, ClassicEffectFamily family = ClassicEffectFamily.Spells)
         {
-            return (groupIndex << 8) + subgroupIndex;
+            return ((int)family << 16) + (groupIndex << 8) + subgroupIndex;
         }
 
-        public static void ReverseClasicKey(int key, out byte groupIndex, out byte subgroupIndex)
+        public static void ReverseClasicKey(int key, out byte groupIndex, out byte subgroupIndex, out ClassicEffectFamily family)
         {
+            family = (ClassicEffectFamily)(key >> 16);
             groupIndex = (byte)(key >> 8);
             subgroupIndex = (byte)(key & 0xff);
         }

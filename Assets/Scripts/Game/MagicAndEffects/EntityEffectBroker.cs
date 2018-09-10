@@ -80,18 +80,40 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             IEnumerable<BaseEntityEffect> effectTemplates = ReflectiveEnumerator.GetEnumerableOfType<BaseEntityEffect>();
             foreach(BaseEntityEffect effect in effectTemplates)
             {
+                // Effect must present a key
+                if (string.IsNullOrEmpty(effect.Key))
+                    continue;
+
                 // Store template
-                magicEffectTemplates.Add(effect.Key, effect);
-                IndexEffectRecipes(effect);
+                // TODO: Allow effect overwrite for modded effects
+                if (effect.VariantCount > 1)
+                {
+                    // Store one template per variant for multi-effects
+                    for (int i = 0; i < effect.VariantCount; i++)
+                    {
+                        BaseEntityEffect variantEffect = CloneEffect(effect) as BaseEntityEffect;
+                        variantEffect.CurrentVariant = i;
+                        magicEffectTemplates.Add(variantEffect.Key, variantEffect);
+                        IndexEffectRecipes(variantEffect);
+                    }
+                }
+                else
+                {
+                    // Just store singleton effect
+                    magicEffectTemplates.Add(effect.Key, effect);
+                    IndexEffectRecipes(effect);
+                }
 
                 // Map classic key when defined - output error in case of classic key conflict
                 // NOTE: Mods should also be able to replace classic effect - will need to handle substitutions later
-                if (effect.Properties.ClassicKey != 0)
+                // NOTE: Not mapping effect keys for non spell effects at this time
+                byte groupIndex, subGroupIndex;
+                BaseEntityEffect.ClassicEffectFamily family;
+                BaseEntityEffect.ReverseClasicKey(effect.Properties.ClassicKey, out groupIndex, out subGroupIndex, out family);
+                if (effect.Properties.ClassicKey != 0 && family == BaseEntityEffect.ClassicEffectFamily.Spells)
                 {
                     if (classicEffectMapping.ContainsKey(effect.Properties.ClassicKey))
                     {
-                        byte groupIndex, subGroupIndex;
-                        BaseEntityEffect.ReverseClasicKey(effect.Properties.ClassicKey, out groupIndex, out subGroupIndex);
                         Debug.LogErrorFormat("EntityEffectBroker: Detected duplicate classic effect key for {0} ({1}, {2})", effect.Key, groupIndex, subGroupIndex);
                     }
                     else
@@ -338,6 +360,19 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             effectInstance.Settings = settings;
 
             return effectInstance;
+        }
+
+        /// <summary>
+        /// Clone an effect and its settings.
+        /// </summary>
+        /// <param name="effect">Effect to clone.</param>
+        /// <returns>Interface to cloned effect.</returns>
+        public IEntityEffect CloneEffect(IEntityEffect effect)
+        {
+            IEntityEffect clone = Activator.CreateInstance(effect.GetType()) as IEntityEffect;
+            clone.Settings = effect.Settings;
+
+            return clone;
         }
 
         /// <summary>

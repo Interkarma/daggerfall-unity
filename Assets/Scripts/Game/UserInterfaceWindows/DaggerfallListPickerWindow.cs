@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -34,10 +34,26 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected Panel pickerPanel = new Panel();
         protected ListBox listBox = new ListBox();
         protected VerticalScrollBar scrollBar;
+        protected DaggerfallFont font = null;
+        protected int rowsDisplayed = 0;
 
-        public DaggerfallListPickerWindow(IUserInterfaceManager uiManager, IUserInterfaceWindow previous = null)
+        public DaggerfallFont Font
+        {
+            get { return listBox.Font; }
+            set { listBox.Font = (value != null) ? value : DaggerfallUI.DefaultFont; }
+        }
+
+        public int RowsDisplayed
+        {
+            get { return listBox.RowsDisplayed; }
+            set { listBox.RowsDisplayed = (value > 0) ? value : listBox.RowsDisplayed; }
+        }
+
+        public DaggerfallListPickerWindow(IUserInterfaceManager uiManager, IUserInterfaceWindow previous = null, DaggerfallFont font = null, int rowsDisplayed = 0)
             : base(uiManager, previous)
         {
+            Font = font;
+            RowsDisplayed = rowsDisplayed;
         }
 
         public ListBox ListBox
