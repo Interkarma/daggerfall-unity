@@ -890,11 +890,13 @@ namespace DaggerfallWorkshop.Game
                             if (DaggerfallUnity.Settings.SDFFontRendering == true)
                             {
                                 renderer.material = DaggerfallUI.Instance.SDFFontMaterial;
+                                renderer.material.renderQueue = 4000;
                                 newBuildingNameplate.scale = 0.125f;
                             }
                             else
                             {
                                 renderer.material = DaggerfallUI.Instance.PixelFontMaterial;
+                                renderer.material.renderQueue = 4000;
                                 newBuildingNameplate.scale = 1.0f;
                             }
                             renderer.material.mainTexture = newBuildingNameplate.textLabel.Texture;

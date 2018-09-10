@@ -152,7 +152,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             Rect atlasRect = sdfAtlasRects[ascii - asciiStart];
 
-            return (int)(atlasRect.width * sdfGlyphDimension);
+            return (int)(atlasRect.width * sdfAtlasTexture.width);
         }
 
         void DrawClassicGlyph(byte rawAscii, Rect targetRect, Color color)
@@ -242,6 +242,62 @@ namespace DaggerfallWorkshop.Game.UserInterface
             int blockMinX = (int)(atlasRect.xMin * sdfAtlasTexture.width);
             int blockMinY = (int)(atlasRect.yMin * sdfAtlasTexture.height);
             colors = sdfAtlasTexture.GetPixels(blockMinX, blockMinY, blockWidth, blockHeight);
+        }
+
+        /// <summary>
+        /// Get expected bounding box of a text render (used for future rendering)
+        /// </summary>
+        public void GetBoundingBoxText(
+            string text,
+            Vector2 position,
+            Vector2 scale,
+            out Rect boundingBox)
+        {
+            boundingBox = new Rect(position.x, position.y, 0, 0);
+
+            if (!fntFile.IsLoaded)
+                throw new Exception("DaggerfallFont: DrawText() font not loaded.");
+
+            atlasTexture.filterMode = FilterMode;
+
+            byte[] asciiBytes = Encoding.ASCII.GetBytes(text);
+            if (asciiBytes == null || asciiBytes.Length == 0)
+                return;
+
+            float x = position.x;
+            float y = position.y;
+            for (int i = 0; i < asciiBytes.Length; i++)
+            {
+                // Invalid ASCII bytes are cast to a space character
+                if (!HasGlyph(asciiBytes[i]))
+                    asciiBytes[i] = SpaceASCII;
+
+                GlyphInfo glyph = GetGlyph(asciiBytes[i]);
+
+                if (asciiBytes[i] != SpaceASCII)
+                {
+                    if (IsSDFCapable)
+                    {
+                        // determine Rect of glyph (SDF shader)
+                        Rect rect = new Rect(x, y, glyph.width * scale.x + GlyphSpacing * scale.x, GlyphHeight * scale.y);                        
+                        x += rect.width;
+                    }
+                    else
+                    {
+                        // determine Rect of glyph (pixel shader)
+                        Rect rect = new Rect(x, y, glyph.width * scale.x, GlyphHeight * scale.y);                        
+                        x += rect.width + GlyphSpacing * scale.x;
+                    }
+                }
+                else
+                {
+                    // TODO: Just add space character
+                    Rect rect = new Rect(x, y, glyph.width * scale.x, GlyphHeight * scale.y);
+                    x += rect.width;
+                }
+            }
+            boundingBox.width = x - boundingBox.xMin;
+            boundingBox.height = GlyphHeight * scale.y;
         }
 
         #endregion

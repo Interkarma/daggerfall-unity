@@ -667,16 +667,29 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 if (!font.HasGlyph(asciiBytes[i]))
                     asciiBytes[i] = DaggerfallFont.SpaceASCII;
 
-                if (DaggerfallUnity.Settings.SDFFontRendering == true)
+                if (asciiBytes[i] == DaggerfallFont.SpaceASCII)
                 {
-                    // Calculate total width
-                    width += font.GetSDFGlyphWidth(asciiBytes[i]) * font.SDFGlyphDimension; //font.SDFGlyphDimension;// + font.GlyphSpacing;
+                    int glyphWidth;
+                    if (DaggerfallUnity.Settings.SDFFontRendering == true)
+                        glyphWidth = font.SDFGlyphDimension / 3;
+                    else
+                        glyphWidth = font.GetGlyphWidth(asciiBytes[i]);
+                    //glyphWidth = font.GetGlyph(asciiBytes[i]).width;
+                    width += glyphWidth;
                 }
                 else
                 {
-                    // Calculate total width
-                    DaggerfallFont.GlyphInfo glyph = font.GetGlyph(asciiBytes[i]);
-                    width += glyph.width + font.GlyphSpacing;
+                    if (DaggerfallUnity.Settings.SDFFontRendering == true)
+                    {
+                        // Calculate total width
+                        width += font.GetSDFGlyphWidth(asciiBytes[i]); //font.SDFGlyphDimension;// + font.GlyphSpacing;
+                    }
+                    else
+                    {
+                        // Calculate total width
+                        DaggerfallFont.GlyphInfo glyph = font.GetGlyph(asciiBytes[i]);
+                        width += glyph.width + font.GlyphSpacing;
+                    }
                 }
             }
 
@@ -724,26 +737,39 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                 int glyphRectWidth, glyphRectHeight;
 
-                //DaggerfallFont.GlyphInfo glyph = font.GetGlyph(asciiBytes[i]);
-                //if (DaggerfallUI.Instance.SDFFontMaterial != null)
+                if (asciiBytes[i] == DaggerfallFont.SpaceASCII)
+                {
+                    if (DaggerfallUnity.Settings.SDFFontRendering == true)
+                        glyphWidth = font.SDFGlyphDimension / 3;
+                    else
+                        glyphWidth = font.GetGlyphWidth(asciiBytes[i]);
+                    //glyphWidth = font.GetGlyph(asciiBytes[i]).width;
+                    xpos += glyphWidth;
+                    continue;
+                }
+
+                //DaggerfallFont.GlyphInfo glyph = font.GetGlyph(asciiBytes
+                int spacing;
                 if (DaggerfallUnity.Settings.SDFFontRendering == true)
                 {
-                    glyphWidth = font.GetSDFGlyphWidth(asciiBytes[i]) * font.SDFGlyphDimension; //font.GetSDFGlyphWidth(asciiBytes[i]);
+                    glyphWidth = font.GetSDFGlyphWidth(asciiBytes[i]); //font.GetSDFGlyphWidth(asciiBytes[i]);
                     colors = new Color[glyphWidth * font.SDFGlyphDimension];
                     font.GetSDFGlyphColors(ref colors, asciiBytes[i], out glyphRectWidth, out glyphRectHeight);
+                    spacing = 0;
                 }
                 else
                 {
                     glyphWidth = font.GetGlyphWidth(asciiBytes[i]);
                     colors = new Color[glyphWidth * font.GlyphHeight];
                     font.GetClassicGlyphColors(ref colors, asciiBytes[i], out glyphRectWidth, out glyphRectHeight);
+                    spacing = font.GlyphSpacing;
                 }
 
                 if (xpos + glyphWidth >= totalWidth)
                     break;
 
                 singleLineLabelTexture.SetPixels(xpos, 0, glyphRectWidth, glyphRectHeight, colors);
-                xpos += glyphWidth + font.GlyphSpacing;
+                xpos += glyphWidth + spacing;
             }
             singleLineLabelTexture.Apply(false, makeTextureNoLongerReadable);
             singleLineLabelTexture.filterMode = font.FilterMode;
