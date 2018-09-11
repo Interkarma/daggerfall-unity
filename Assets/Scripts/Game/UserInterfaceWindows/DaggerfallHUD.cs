@@ -71,6 +71,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             get { return vitals; }
         }
 
+        public HUDCompass HUDCompass
+        {
+            get { return compass; }
+        }
+
         public EscortingNPCFacePanel EscortingFaces
         {
             get { return escortingFaces; }
