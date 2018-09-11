@@ -15,29 +15,29 @@ using DaggerfallWorkshop.Game.Entity;
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
     /// <summary>
-    /// Detect Treasure
+    /// Detect Magic
     /// </summary>
-    public class DetectTreasure : DetectEffect
+    public class DetectMagic : DetectEffect
     {
         public override void SetProperties()
         {
-            properties.Key = "Detect-Treasure";
-            properties.ClassicKey = MakeClassicKey(39, 2);
+            properties.Key = "Detect-Magic";
+            properties.ClassicKey = MakeClassicKey(39, 0);
             properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "detect");
-            properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "treasure");
-            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1598);
-            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1298);
+            properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "magic");
+            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1596);
+            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1296);
             properties.SupportDuration = true;
             properties.AllowedTargets = TargetTypes.CasterOnly;
             properties.AllowedElements = ElementTypes.Magic;
             properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
             properties.MagicSkill = DFCareer.MagicSkills.Thaumaturgy;
-            properties.DurationCosts = MakeEffectCosts(20, 8, 160);
+            properties.DurationCosts = MakeEffectCosts(20, 8, 200);
         }
 
         protected override bool IsLikeKind(IncumbentEffect other)
         {
-            return (other is DetectTreasure);
+            return (other is DetectMagic);
         }
 
         protected override void AddState(IncumbentEffect incumbent)
@@ -62,7 +62,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             base.MagicRound();
 
-            DetectedObjects = GameManager.Instance.PlayerGPS.GetNearbyObjects(PlayerGPS.NearbyObjectFlags.Treasure);
+            DetectedObjects = GameManager.Instance.PlayerGPS.GetNearbyObjects(PlayerGPS.NearbyObjectFlags.Magic);
         }
     }
 }
