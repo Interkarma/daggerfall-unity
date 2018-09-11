@@ -56,22 +56,26 @@ namespace DaggerfallWorkshop.Game.Entity
         protected int currentBreath;
         protected WeaponMaterialTypes minMetalToHit;
         protected sbyte[] armorValues = new sbyte[NumberBodyParts];
-        protected bool isParalyzed;
-        protected bool isSilenced;
-        protected bool isWaterWalking;
-        protected bool isWaterBreathing;
-        protected MagicalConcealmentFlags magicalConcealmentFlags;
-        protected bool isEnhancedClimbing;
-        protected bool isEnhancedJumping;
 
         bool quiesce = false;
+        bool isParalyzed = false;
 
         // Temp entity spellbook
         List<EffectBundleSettings> spellbook = new List<EffectBundleSettings>();
 
         #endregion
 
-        #region Class Properties
+        #region Properties
+
+        // Entity magic effect flags
+        // Note: These properties are intentionally not serialized. They should only be set by live effects.
+        public bool IsImmuneToParalysis { get; set; }
+        public bool IsSilenced { get; set; }
+        public bool IsWaterWalking { get; set; }
+        public bool IsWaterBreathing { get; set; }
+        public MagicalConcealmentFlags MagicalConcealmentFlags { get; set; }
+        public bool IsEnhancedClimbing { get; set; }
+        public bool IsEnhancedJumping { get; set; }
 
         /// <summary>
         /// Gets the DaggerfallEntityBehaviour related to this DaggerfallEntity.
@@ -91,63 +95,15 @@ namespace DaggerfallWorkshop.Game.Entity
         }
 
         /// <summary>
-        /// Gets or set paralyzation flag.
+        /// Gets or sets paralyzation flag.
+        /// Always returns false when isImmuneToParalysis is true.
         /// Each entity type will need to act on paralyzation in their own unique way.
         /// Note: This value is intentionally not serialized. It should only be set by live effects.
         /// </summary>
         public bool IsParalyzed
         {
-            get { return isParalyzed; }
+            get { return (!IsImmuneToParalysis) ? isParalyzed : false; }
             set { isParalyzed = value; }
-        }
-
-        /// <summary>
-        /// Gets or sets silenced flag.
-        /// Note: This value is intentionally not serialized. It should only be set by live effects.
-        /// </summary>
-        public bool IsSilenced
-        {
-            get { return isSilenced; }
-            set { isSilenced = value; }
-        }
-
-        /// <summary>
-        /// Gets or sets water walking flag.
-        /// Note: This value is intentionally not serialized. It should only be set by live effects.
-        /// </summary>
-        public bool IsWaterWalking
-        {
-            get { return isWaterWalking; }
-            set { isWaterWalking = value; }
-        }
-
-        /// <summary>
-        /// Gets or sets water breathing flag.
-        /// Note: This value is intentionally not serialized. It should only be set by live effects.
-        /// </summary>
-        public bool IsWaterBreathing
-        {
-            get { return isWaterBreathing; }
-            set { isWaterBreathing = value; }
-        }
-
-        /// <summary>
-        /// Gets or sets magical concealment state.
-        /// Player can have multiple types of magical concealment running at same time.
-        /// Note: This value is intentionally not serialized. It should only be set by live effects.
-        /// </summary>
-        public MagicalConcealmentFlags MagicalConcealmentFlags
-        {
-            get { return magicalConcealmentFlags; }
-            set { magicalConcealmentFlags = value; }
-        }
-
-        /// <summary>
-        /// True if entity is invisible (normal or true).
-        /// </summary>
-        public bool IsInvisible
-        {
-            get { return (HasConcealment(MagicalConcealmentFlags.InvisibleNormal) || HasConcealment(MagicalConcealmentFlags.InvisibleTrue)); }
         }
 
         /// <summary>
@@ -167,11 +123,19 @@ namespace DaggerfallWorkshop.Game.Entity
         }
 
         /// <summary>
+        /// True if entity is invisible (normal or true).
+        /// </summary>
+        public bool IsInvisible
+        {
+            get { return (HasConcealment(MagicalConcealmentFlags.InvisibleNormal) || HasConcealment(MagicalConcealmentFlags.InvisibleTrue)); }
+        }
+
+        /// <summary>
         /// True if entity is magically concealed by invisibility/chameleon/shadow (normal or true).
         /// </summary>
         public bool IsMagicallyConcealed
         {
-            get { return magicalConcealmentFlags != MagicalConcealmentFlags.None; }
+            get { return MagicalConcealmentFlags != MagicalConcealmentFlags.None; }
         }
 
         /// <summary>
@@ -198,22 +162,6 @@ namespace DaggerfallWorkshop.Game.Entity
                         HasConcealment(MagicalConcealmentFlags.BlendingTrue) ||
                         HasConcealment(MagicalConcealmentFlags.ShadeTrue));
             }
-        }
-
-        /// Gets or sets enhanced climbing flag.
-        /// Note: This value is intentionally not serialized. It should only be set by live effects.
-        public bool IsEnhancedClimbing
-        {
-            get { return isEnhancedClimbing; }
-            set { isEnhancedClimbing = value; }
-        }
-
-        /// Gets or sets enhanced jumping flag.
-        /// Note: This value is intentionally not serialized. It should only be set by live effects.
-        public bool IsEnhancedJumping
-        {
-            get { return isEnhancedJumping; }
-            set { isEnhancedJumping = value; }
         }
 
         /// Gets or sets world context of this entity for floating origin support.
@@ -526,7 +474,7 @@ namespace DaggerfallWorkshop.Game.Entity
         /// <returns>True if matching.</returns>
         public bool HasConcealment(MagicalConcealmentFlags flags)
         {
-            return ((magicalConcealmentFlags & flags) == flags) ? true : false;
+            return ((MagicalConcealmentFlags & flags) == flags) ? true : false;
         }
 
         #endregion
@@ -610,13 +558,14 @@ namespace DaggerfallWorkshop.Game.Entity
         /// </summary>
         protected virtual void ResetEntityState()
         {
-            isParalyzed = false;
-            isSilenced = false;
-            isWaterWalking = false;
-            isWaterBreathing = false;
-            magicalConcealmentFlags = MagicalConcealmentFlags.None;
-            isEnhancedClimbing = false;
-            isEnhancedJumping = false;
+            IsParalyzed = false;
+            IsImmuneToParalysis = false;
+            IsSilenced = false;
+            IsWaterWalking = false;
+            IsWaterBreathing = false;
+            MagicalConcealmentFlags = MagicalConcealmentFlags.None;
+            IsEnhancedClimbing = false;
+            IsEnhancedJumping = false;
             SetEntityDefaults();
         }
 
