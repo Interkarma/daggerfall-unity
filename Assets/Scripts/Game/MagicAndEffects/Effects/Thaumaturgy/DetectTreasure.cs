@@ -39,7 +39,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         protected override bool IsLikeKind(IncumbentEffect other)
         {
-            return (other is DetectEffect);
+            return (other is DetectTreasure);
         }
 
         protected override void AddState(IncumbentEffect incumbent)
