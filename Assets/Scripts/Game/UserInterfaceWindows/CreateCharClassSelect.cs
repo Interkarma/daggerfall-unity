@@ -31,6 +31,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         List<DFCareer> classList = new List<DFCareer>();
         DFCareer selectedClass;
+        int selectedClassIndex = 0;
 
         public DFCareer SelectedClass
         {
@@ -73,6 +74,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else 
             {
                 selectedClass = classList[index];
+                selectedClassIndex = index;
 
                 TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(startClassDescriptionID + index);
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
@@ -100,6 +102,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 selectedClass = null;
                 sender.CancelWindow();
             }
+        }
+
+        public int SelectedClassIndex
+        {
+            get { return selectedClassIndex; }
         }
     }
 }

@@ -26,8 +26,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     public class CreateCharBiography : DaggerfallPopupWindow
     {
         const string nativeImgName = "BIOG00I0.IMG";
+        const int questionLines = 2;
+        const int questionLineSpace = 11;
+        const int questionLeft = 30;
+        const int questionTop = 23;
+        const int questionWidth = 156;
+        const int questionHeight = 45;
+        const int buttonCount = 10;
+        const int buttonsLeft = 10;
+        const int buttonsTop = 71;
+        const int buttonWidth = 149;
+        const int buttonHeight = 24;
 
+        int classIndex = 0;
+        int questionIndex = 0;
         Texture2D nativeTexture;
+        TextLabel[] questionLabels = new TextLabel[questionLines];
+        Button[] answerButtons = new Button[buttonCount];
+        TextLabel[] answerLabels = new TextLabel[buttonCount];
+        BiogFile biogFile;
 
         public CreateCharBiography(IUserInterfaceManager uiManager)
             : base(uiManager)
@@ -36,19 +53,87 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected override void Setup()
         {
-            base.Setup();
+            if (IsSetup)
+                return;
             
             // Load native texture
             nativeTexture = DaggerfallUI.GetTextureFromImg(nativeImgName);
             if (!nativeTexture)
                 throw new Exception("CreateCharBiography: Could not load native texture.");
 
+            // Load question data
+            biogFile = new BiogFile(classIndex);
+
+            // Set background
             NativePanel.BackgroundTexture = nativeTexture;
+
+            // Set question text
+            questionLabels[0] = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont,
+                                                          new Vector2(questionLeft, questionTop),
+                                                          string.Empty,
+                                                          NativePanel);
+            questionLabels[1] = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont,
+                                                          new Vector2(questionLeft, questionTop + questionLineSpace),
+                                                          string.Empty,
+                                                          NativePanel);
+            // Setup buttons
+            for (int i = 0; i < buttonCount; i++)
+            {
+                int left = i % 2 == 0 ? buttonsLeft : buttonsLeft + buttonWidth;
+
+                answerButtons[i] = DaggerfallUI.AddButton(new Rect((float)left,
+                                                                   (float)(buttonsTop + (i / 2) * buttonHeight),
+                                                                   (float)buttonWidth,
+                                                                   (float)buttonHeight), NativePanel);
+                answerButtons[i].Tag = i;
+                answerButtons[i].OnMouseClick += AnswerButton_OnMouseClick;
+                answerLabels[i] = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont,
+                                                            new Vector2(21f, 5f),
+                                                            string.Empty,
+                                                            answerButtons[i]);
+            }
+
+            PopulateControls(biogFile.Questions[questionIndex]);
+
+            IsSetup = true;
+        }
+
+        private void PopulateControls(BiogFile.Question question)
+        {
+            questionLabels[0].Text = question.Text[0];
+            questionLabels[1].Text = question.Text[1];
+            for (int i = 0; i < question.Answers.Count; i++)
+            {
+                answerLabels[i].Text = question.Answers[i].Text;
+            }
+            // blank out remaining labels
+            for (int i = question.Answers.Count; i < buttonCount; i++)
+            {
+                answerLabels[i].Text = string.Empty;
+            }
+        }
+
+        void AnswerButton_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
+        {
+            questionIndex++;
+            if (questionIndex < biogFile.Questions.Length)
+            {
+                PopulateControls(biogFile.Questions[questionIndex]);
+            }
+            else
+            {
+                CloseWindow();
+            }
         }
 
         public override void Update()
         {
             base.Update();
+        }
+
+        public int ClassIndex
+        {
+            set { classIndex = value; }
         }
     }
 }
