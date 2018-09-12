@@ -17,6 +17,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -45,6 +46,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button[] answerButtons = new Button[buttonCount];
         TextLabel[] answerLabels = new TextLabel[buttonCount];
         BiogFile biogFile;
+        List<string> playerEffects = new List<string>();
 
         public CreateCharBiography(IUserInterfaceManager uiManager)
             : base(uiManager)
@@ -115,13 +117,28 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void AnswerButton_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
         {
-            questionIndex++;
-            if (questionIndex < biogFile.Questions.Length)
+            int answerIndex = (int)sender.Tag;
+            List<BiogFile.Answer> curAnswers = biogFile.Questions[questionIndex].Answers;
+
+            if (answerIndex >= curAnswers.Count)
             {
+                return; // not an answer for this question
+            }
+            else if (questionIndex < biogFile.Questions.Length - 1)
+            {
+                foreach (string effect in curAnswers[answerIndex].Effects)
+                {
+                    playerEffects.Add(effect);
+                }
+                questionIndex++;
                 PopulateControls(biogFile.Questions[questionIndex]);
             }
             else
             {
+                foreach (string effect in playerEffects)
+                {
+                    ApplyPlayerEffect(GameManager.Instance.PlayerEntity, effect);
+                }
                 CloseWindow();
             }
         }
@@ -129,6 +146,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void Update()
         {
             base.Update();
+        }
+
+        protected void ApplyPlayerEffect(PlayerEntity playerEntity, string effect)
+        {
+            string[] tokens = effect.Split(' ');
+            int parseResult;
+
+            // Skill modifier effect
+            if (int.TryParse(tokens[0], out parseResult))
+            {
+                short modValue;
+                DFCareer.Skills skill = (DFCareer.Skills)parseResult;
+                if (short.TryParse(tokens[1], out modValue))
+                {
+                    short startValue = GameManager.Instance.PlayerEntity.Skills.GetPermanentSkillValue(skill);
+                    GameManager.Instance.PlayerEntity.Skills.SetPermanentSkillValue(skill, (short)(startValue + modValue));
+                }
+            }
         }
 
         public int ClassIndex
