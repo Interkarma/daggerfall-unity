@@ -390,17 +390,8 @@ namespace DaggerfallWorkshop
             // Check if orientation flip needed
             bool flip = summary.StateAnims[orientation].FlipLeftRight;
 
-            // Some characters' idle animations need to be inverted. Add as needed.
-            if ((summary.Enemy.ID == (int)MobileTypes.GiantBat
-                || summary.Enemy.ID == (int)MobileTypes.Imp
-                || summary.Enemy.ID == (int)MobileTypes.Dreugh
-                || summary.Enemy.ID == (int)MobileTypes.Lamia)
-                && summary.EnemyState == MobileStates.Idle)
-                flip = !flip;
-
-            // Scorpion Idle and Move animations need to be inverted
-            if (summary.Enemy.ID == (int)MobileTypes.GiantScorpion &&
-                summary.EnemyState == MobileStates.Idle || summary.EnemyState == MobileStates.Move)
+            // Scorpion animations need to be inverted
+            if (summary.Enemy.ID == (int)MobileTypes.GiantScorpion)
                 flip = !flip;
 
             // Update Record/Frame texture
@@ -650,16 +641,35 @@ namespace DaggerfallWorkshop
             switch (state)
             {
                 case MobileStates.Move:
-                    anims = (MobileAnimation[])EnemyBasics.MoveAnims.Clone();
+                    if ((MobileTypes)summary.Enemy.ID == MobileTypes.Ghost ||
+                        (MobileTypes)summary.Enemy.ID == MobileTypes.Wraith)
+                        anims = (MobileAnimation[])EnemyBasics.GhostWraithMoveAnims.Clone();
+                    else
+                        anims = (MobileAnimation[])EnemyBasics.MoveAnims.Clone();
                     break;
                 case MobileStates.PrimaryAttack:
-                    anims = (MobileAnimation[])EnemyBasics.PrimaryAttackAnims.Clone();
+                    if ((MobileTypes)summary.Enemy.ID == MobileTypes.Ghost ||
+                        (MobileTypes)summary.Enemy.ID == MobileTypes.Wraith)
+                        anims = (MobileAnimation[])EnemyBasics.GhostWraithAttackAnims.Clone();
+                    else
+                        anims = (MobileAnimation[])EnemyBasics.PrimaryAttackAnims.Clone();
                     break;
                 case MobileStates.Hurt:
                     anims = (MobileAnimation[])EnemyBasics.HurtAnims.Clone();
                     break;
                 case MobileStates.Idle:
-                    anims = (summary.Enemy.HasIdle) ? (MobileAnimation[])EnemyBasics.IdleAnims.Clone() : (MobileAnimation[])EnemyBasics.MoveAnims.Clone();
+                    if ((MobileTypes)summary.Enemy.ID == MobileTypes.Ghost ||
+                        (MobileTypes)summary.Enemy.ID == MobileTypes.Wraith)
+                        anims = (MobileAnimation[])EnemyBasics.GhostWraithMoveAnims.Clone();
+                    else if ((MobileTypes)summary.Enemy.ID == MobileTypes.Thief &&
+                        summary.Enemy.Gender == MobileGender.Female)
+                        anims = (MobileAnimation[])EnemyBasics.FemaleThiefIdleAnims.Clone();
+                    else if ((MobileTypes)summary.Enemy.ID == MobileTypes.Rat)
+                        anims = (MobileAnimation[])EnemyBasics.RatIdleAnims.Clone();
+                    else if (!summary.Enemy.HasIdle)
+                        anims = (MobileAnimation[])EnemyBasics.MoveAnims.Clone();
+                    else
+                        anims = (MobileAnimation[])EnemyBasics.IdleAnims.Clone();
                     break;
                 case MobileStates.RangedAttack1:
                     anims = (summary.Enemy.HasRangedAttack1) ? (MobileAnimation[])EnemyBasics.RangedAttack1Anims.Clone() : null;
