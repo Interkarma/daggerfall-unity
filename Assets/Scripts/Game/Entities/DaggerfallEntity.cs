@@ -76,6 +76,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public MagicalConcealmentFlags MagicalConcealmentFlags { get; set; }
         public bool IsEnhancedClimbing { get; set; }
         public bool IsEnhancedJumping { get; set; }
+        public bool IsSlowFalling { get; set; }
 
         /// <summary>
         /// Gets the DaggerfallEntityBehaviour related to this DaggerfallEntity.
@@ -566,6 +567,7 @@ namespace DaggerfallWorkshop.Game.Entity
             MagicalConcealmentFlags = MagicalConcealmentFlags.None;
             IsEnhancedClimbing = false;
             IsEnhancedJumping = false;
+            IsSlowFalling = false;
             SetEntityDefaults();
         }
 
