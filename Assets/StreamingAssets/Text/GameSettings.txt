@@ -5,13 +5,15 @@ schema: *key,text
 - Tabs and section titles
 
 gamePlay,                                           GamePlay
+enhancements,                                       Enhancements
 video,                                              Video
 theme,                                              Theme
 
 game,                                               Game
 gui,                                                GUI
 controls,                                           Controls
-enhancements,                                       Enhancements
+audio,                                              Audio
+modSystem,											Mod System
 basic,                                              Basic
 advanced,                                           Advanced
 tooltips,                                           Tooltips
@@ -45,6 +47,12 @@ movementAccelerationInfo,                           Movement acceleration/decele
 weaponSensitivityInfo,                              Sensitivity of weapon swings to mouse movements
 weaponAttackThreshold,                              WeaponAttackThreshold
 weaponAttackThresholdInfo,                          Minimum mouse gesture travel distance for an attack
+soundFont,                                          SoundFont
+soundFontInfo,                                      Active soundfont
+soundVolume,                                        Sound volume
+soundVolumeInfo,                                    Volume of sound.
+musicVolume,                                        Music volume
+musicVolumeInfo,                                    Volume of music.
 gameConsole,                                        Game Console
 gameConsoleInfo,                                    Enable input for console commands
 modSystem,                                          Mod System

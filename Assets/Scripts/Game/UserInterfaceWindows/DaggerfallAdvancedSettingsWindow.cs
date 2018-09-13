@@ -91,6 +91,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         HorizontalSlider weaponSensitivity;
         HorizontalSlider movementAcceleration;
         TextBox weaponAttackThreshold;
+        HorizontalSlider soundVolume;
+        HorizontalSlider musicVolume;
+
+        // Enhancements
         Checkbox gameConsole;
         Checkbox modSystem;
         Checkbox assetImport;
@@ -171,6 +175,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void LoadSettings()
         {
             AddPage("gamePlay", Gameplay);
+            AddPage("enhancements", Enhancements);
             AddPage("video", Video);
             AddPage("theme", Theme);
         }
@@ -204,15 +209,28 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             movementAcceleration = AddSlider(rightPanel, "movementAcceleration", InputManager.minAcceleration, InputManager.maxAcceleration, DaggerfallUnity.Settings.MovementAcceleration);
             weaponAttackThreshold = AddTextbox(rightPanel, "weaponAttackThreshold", DaggerfallUnity.Settings.WeaponAttackThreshold.ToString());
 
-            // Enhancements
-            AddSectionTitle(rightPanel, "enhancements");
-            gameConsole = AddCheckbox(rightPanel, "gameConsole", DaggerfallUnity.Settings.LypyL_GameConsole);
-            modSystem = AddCheckbox(rightPanel, "modSystem", DaggerfallUnity.Settings.LypyL_ModSystem);
-            assetImport = AddCheckbox(rightPanel, "assetImport", DaggerfallUnity.Settings.MeshAndTextureReplacement);
-            compressModdedTextures = AddCheckbox(rightPanel, "compressModdedTextures", DaggerfallUnity.Settings.CompressModdedTextures);
-            nearDeathWarning = AddCheckbox(rightPanel, "nearDeathWarning", DaggerfallUnity.Settings.NearDeathWarning);
-            alternateRandomEnemySelection = AddCheckbox(rightPanel, "alternateRandomEnemySelection", DaggerfallUnity.Settings.AlternateRandomEnemySelection);
-            advancedClimbing = AddCheckbox(rightPanel, "advancedClimbing", DaggerfallUnity.Settings.AdvancedClimbing);
+            // Audio
+            AddSectionTitle(rightPanel, "audio");
+            TextBox soundFont = AddTextbox(rightPanel, "soundFont", !string.IsNullOrEmpty(DaggerfallUnity.Settings.SoundFont) ? DaggerfallUnity.Settings.SoundFont : "default");
+            soundFont.ReadOnly = true;
+            soundVolume = AddSlider(rightPanel, "soundVolume", 0, 1, DaggerfallUnity.Settings.SoundVolume);
+            musicVolume = AddSlider(rightPanel, "musicVolume", 0, 1, DaggerfallUnity.Settings.MusicVolume);
+        }
+
+        private void Enhancements(Panel leftPanel, Panel rightPanel)
+        {
+            // Mod System
+            AddSectionTitle(leftPanel, "modSystem");
+            gameConsole = AddCheckbox(leftPanel, "gameConsole", DaggerfallUnity.Settings.LypyL_GameConsole);
+            modSystem = AddCheckbox(leftPanel, "modSystem", DaggerfallUnity.Settings.LypyL_ModSystem);
+            assetImport = AddCheckbox(leftPanel, "assetImport", DaggerfallUnity.Settings.MeshAndTextureReplacement);
+            compressModdedTextures = AddCheckbox(leftPanel, "compressModdedTextures", DaggerfallUnity.Settings.CompressModdedTextures);
+
+            // Game
+            AddSectionTitle(leftPanel, "game");
+            nearDeathWarning = AddCheckbox(leftPanel, "nearDeathWarning", DaggerfallUnity.Settings.NearDeathWarning);
+            alternateRandomEnemySelection = AddCheckbox(leftPanel, "alternateRandomEnemySelection", DaggerfallUnity.Settings.AlternateRandomEnemySelection);
+            advancedClimbing = AddCheckbox(leftPanel, "advancedClimbing", DaggerfallUnity.Settings.AdvancedClimbing);
         }
 
         private void Video(Panel leftPanel, Panel rightPanel)
@@ -288,10 +306,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (float.TryParse(weaponAttackThreshold.Text, out weaponAttackThresholdValue))
                 DaggerfallUnity.Settings.WeaponAttackThreshold = Mathf.Clamp(weaponAttackThresholdValue, 0.001f, 1.0f);
 
+            DaggerfallUnity.Settings.SoundVolume = soundVolume.GetValue();
+            DaggerfallUnity.Settings.MusicVolume = soundVolume.GetValue();
+
+            /* Enhancements */
+
             DaggerfallUnity.Settings.LypyL_GameConsole = gameConsole.IsChecked;
             DaggerfallUnity.Settings.LypyL_ModSystem = modSystem.IsChecked;
             DaggerfallUnity.Settings.MeshAndTextureReplacement = assetImport.IsChecked;
             DaggerfallUnity.Settings.CompressModdedTextures = compressModdedTextures.IsChecked;
+
             DaggerfallUnity.Settings.NearDeathWarning = nearDeathWarning.IsChecked;
             DaggerfallUnity.Settings.AlternateRandomEnemySelection = alternateRandomEnemySelection.IsChecked;
             DaggerfallUnity.Settings.CameraRecoilStrength = cameraRecoilStrength.ScrollIndex;
