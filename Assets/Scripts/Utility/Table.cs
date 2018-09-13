@@ -13,6 +13,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -87,6 +88,15 @@ namespace DaggerfallWorkshop.Utility
         public Table(string[] lines)
         {
             LoadTable(lines);
+        }
+
+        /// <summary>
+        /// Load constructor.
+        /// </summary>
+        /// <param name="text">Text of data file.</param>
+        public Table(string text)
+        {
+            LoadTable(text.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None));
         }
 
         #endregion
@@ -372,6 +382,20 @@ namespace DaggerfallWorkshop.Utility
             }
 
             return result;
+        }
+
+        #endregion
+
+        #region Public Helpers
+
+        /// <summary>
+        /// Ensures that a string can be used as a value for a table entry.
+        /// </summary>
+        /// <param name="text">A candidate for an entry value.</param>
+        /// <returns>A safe string.</returns>
+        public static string SanitizeEntryValue(string text)
+        {
+            return text != null ? text.Replace(",", string.Empty) : string.Empty;
         }
 
         #endregion

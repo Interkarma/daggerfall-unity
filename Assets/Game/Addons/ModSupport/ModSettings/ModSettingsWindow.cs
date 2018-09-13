@@ -188,13 +188,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
                 // Description
                 if (!string.IsNullOrEmpty(section.Description))
-                    AddSectionDescriptionBox(section.Description);
+                    AddSectionDescriptionBox(mod.TryLocalize("Settings", section.Name, "Description") ?? section.Description);
 
                 // Add keys to window with corrispective controls
                 foreach (Key key in section.Keys)
                 {
                     int height = 6;
-                    TextLabel keyLabel = GetKeyLabel(key, height);
+                    TextLabel keyLabel = GetKeyLabel(section, key, height);
                     BaseScreenComponent control = key.OnWindow(this, x, y, ref height);
                     uiControls.Add(key, control);
                     AddAtNextPosition(height, keyLabel, control);
@@ -302,7 +302,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             AddAtNextPosition((int)background.Size.y, background);
 
             TextLabel textLabel = new TextLabel(DaggerfallUI.Instance.Font5);
-            textLabel.Text = ModSettingsData.FormattedName(section.Name);
+            textLabel.Text = ModSettingsData.FormattedName(mod.TryLocalize("Settings", section.Name, "Name") ?? section.Name);
             textLabel.TextColor = sectionTitleColor;
             textLabel.ShadowColor = sectionTitleShadow;
             textLabel.TextScale = 0.9f;
@@ -335,16 +335,16 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             AddAtNextPosition(height, background);
         }
 
-        private TextLabel GetKeyLabel(Key key, int height)
+        private TextLabel GetKeyLabel(Section section, Key key, int height)
         {
             TextLabel textLabel = new TextLabel();
-            textLabel.Text = ModSettingsData.FormattedName(key.Name);
+            textLabel.Text = ModSettingsData.FormattedName(mod.TryLocalize("Settings", section.Name, key.Name, "Name") ?? key.Name);
             textLabel.ShadowColor = Color.clear;
             textLabel.TextScale = textScale;
             textLabel.HorizontalAlignment = HorizontalAlignment.None;
             textLabel.Position = new Vector2(x, y + (float)(height - textLabel.TextHeight) / 2);         
             textLabel.ToolTip = defaultToolTip;
-            textLabel.ToolTipText = key.Description;
+            textLabel.ToolTipText = mod.TryLocalize("Settings", section.Name, key.Name, "Description") ?? key.Description;
             return textLabel;
         }
 
@@ -443,7 +443,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             if (!settings.HasLoadedPresets)
                 settings.LoadPresets();
 
-            presetPicker = new PresetPicker(uiManager, this, settings);
+            presetPicker = new PresetPicker(uiManager, this, mod, settings);
             presetPicker.ApplyChangesCallback = RefreshControls;
             uiManager.PushWindow(presetPicker);
         }
