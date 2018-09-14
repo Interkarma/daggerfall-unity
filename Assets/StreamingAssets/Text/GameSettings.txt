@@ -5,17 +5,20 @@ schema: *key,text
 - Tabs and section titles
 
 gamePlay,                                           GamePlay
+interface,                                          Interface
+enhancements,                                       Enhancements
 video,                                              Video
-theme,                                              Theme
 
 game,                                               Game
-gui,                                                GUI
 controls,                                           Controls
-enhancements,                                       Enhancements
+audio,                                              Audio
+spells,                                             Spells
+tooltips,                                           Tooltips
+hud,                                                HUD
+gui,                                                GUI
+modSystem,											Mod System
 basic,                                              Basic
 advanced,                                           Advanced
-tooltips,                                           Tooltips
-others,                                             Others
 
 - Settings and tooltip descriptions
 
@@ -25,34 +28,58 @@ randomDungeonTextures,                              Dungeon Textures
 randomDungeonTexturesInfo,                          Generates dungeon texture table from random seed
 cameraRecoilStrength,                               Camera Recoil Strength
 cameraRecoilStrengthInfo,                           Strength of screen recoil when player takes damage. Scales with damage.
-crosshair,                                          Crosshair
-crosshairInfo,                                      Enable Crosshair on HUD
+mouseSensitivity,                                   Mouse Sensitivity
+mouseSensitivityInfo,                               Mouse look sensitivity.
+weaponSensitivity,                                  Weapon Sensitivity
+weaponSensitivityInfo,                              Sensitivity of weapon swings to mouse movements
+movementAcceleration,                               Movement Acceleration
+movementAccelerationInfo,                           Movement acceleration/deceleration rate (max=instant)
+weaponAttackThreshold,                              WeaponAttackThreshold
+weaponAttackThresholdInfo,                          Minimum mouse gesture travel distance for an attack
+soundFont,                                          SoundFont
+soundFontInfo,                                      Active soundfont
+soundVolume,                                        Sound volume
+soundVolumeInfo,                                    Volume of sound.
+musicVolume,                                        Music volume
+musicVolumeInfo,                                    Volume of music.
+spellLighting,                                      Spell lighting
+spellLightingInfo,                                  Enable spell lighting
+spellShadows,                                       Spell shadows
+spellShadowsInfo,                                   Enable spell shadows
+
 toolTips,                                           Tool Tips
 toolTipsInfo,                                       Shows informations about GUI items
-helmAndShieldMaterialDisplay,                       Helm and Shield Material Display
-helmAndShieldMaterialDisplayInfo,                   Show material for helms and shields in info popups and tooltips
+toolTipDelayInSeconds,                              Delay
+toolTipDelayInSecondsInfo,                          Tooltip delay in seconds
+toolTipTextColor,                                   Text Color
+toolTipTextColorInfo,                               Font color for tooltips text
+toolTipBackgroundColor,                             Background Color
+toolTipBackgroundColorInfo,                         Background color for tooltips
+crosshair,                                          Crosshair
+crosshairInfo,                                      Enable Crosshair on HUD
+vitalsIndicators,									Vitals Indicators
+vitalsIndicatorsInfo,								Show indicators on vitals bars that display changes in vitals
+interactionModeIcon,                                Interaction Mode Icon
+interactionModeIconInfo,                            Style of contex icon for interaction mode
+showQuestJournalClocksAsCountdown,                  Countdown quest journal clocks
+showQuestJournalClocksAsCountdownInfo,              Show the remaining time instead of the time from start
 inventoryInfoPanel,                                 Inventory Info Panel
 inventoryInfoPanelInfo,                             Inventory Info Panel
 enhancedItemLists,                                  Enhanced Item Lists
 enhancedItemListsInfo,                              Inventory 16x item grid
-vitalsIndicators,									Vitals Indicators
-vitalsIndicatorsInfo,								Show indicators on vitals bars that display changes in vitals
-mouseSensitivity,                                   Mouse Sensitivity
-mouseSensitivityInfo,                               Mouse look sensitivity.
-weaponSensitivity,                                  Weapon Sensitivity
-movementAcceleration,                               Movement Acceleration
-movementAccelerationInfo,                           Movement acceleration/deceleration rate (max=instant)
-weaponSensitivityInfo,                              Sensitivity of weapon swings to mouse movements
-weaponAttackThreshold,                              WeaponAttackThreshold
-weaponAttackThresholdInfo,                          Minimum mouse gesture travel distance for an attack
-gameConsole,                                        Game Console
-gameConsoleInfo,                                    Enable input for console commands
+enableModernConversationStyleInTalkWindow,          TalkWindow Modern Style
+enableModernConversationStyleInTalkWindowInfo,      Modern Conversation Style In TalkWindow
+helmAndShieldMaterialDisplay,                       Helm and Shield Material Display
+helmAndShieldMaterialDisplayInfo,                   Show material for helms and shields in info popups and tooltips
+
 modSystem,                                          Mod System
 modSystemInfo,                                      Enable support for mods.
 assetImport,                                        Allow Custom Assets
 assetImportInfo,                                    Import assets from enabled mods and loose files.
 compressModdedTextures,                             Compress Modded Textures
 compressModdedTexturesInfo,                         Import textures with a compressed format which uses less graphics memory.
+gameConsole,                                        Game Console
+gameConsoleInfo,                                    Enable input for console commands
 nearDeathWarning,									Near Death Warning
 nearDeathWarningInfo,								Show blinking/pulsating screen effects to warn when near death.
 alternateRandomEnemySelection,						Alternate Random Enemy Selection
@@ -84,17 +111,6 @@ interiorLightShadows,                               Interior Light Shadows
 interiorLightShadowsInfo,                           Interior lights cast shadows
 useLegacyDeferred,                                  Use Legacy Deferred
 useLegacyDeferredInfo,                              Legacy rendering path
-
-toolTipDelayInSeconds,                              Delay
-toolTipDelayInSecondsInfo,                          Tooltip delay in seconds
-toolTipTextColor,                                   Text Color
-toolTipTextColorInfo,                               Font color for tooltips text
-toolTipBackgroundColor,                             Background Color
-toolTipBackgroundColorInfo,                         Background color for tooltips
-enableModernConversationStyleInTalkWindow,          TalkWindow Modern Style
-enableModernConversationStyleInTalkWindowInfo,      Modern Conversation Style In TalkWindow
-interactionModeIcon,                                Interaction Mode Icon
-interactionModeIconInfo,                            Style of contex icon for interaction mode
 
 - Options shared among sliders. Missing keys use default text.
 
