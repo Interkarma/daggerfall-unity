@@ -35,12 +35,16 @@ namespace DaggerfallWorkshop.Utility
     {
         #region Fields
 
+        readonly string stringLiteralWrapper = "\"";
+        readonly string rowSeparator = ",";
+
         string[] inlineCommentSeparator = new string[] { "//" };
 
         int columnCount;
         int primaryColumnIndex;
         Column[] columns;
         Dictionary<string, int> columnIndexDict;
+        bool hasStringLiteralInSchema = false;
 
         #endregion
 
@@ -68,6 +72,7 @@ namespace DaggerfallWorkshop.Utility
             public string name;
             public List<string> values;
             public Dictionary<string, int> keyIndexDict;
+            public bool isStringLiteral;
         }
 
         #endregion
@@ -433,7 +438,12 @@ namespace DaggerfallWorkshop.Utility
                 column.name = name;
                 column.values = new List<string>();
                 column.keyIndexDict = new Dictionary<string, int>();
+                column.isStringLiteral = name.StartsWith("$");
                 columns[i] = column;
+
+                // Tag this schema as having a string literal
+                if (column.isStringLiteral)
+                    hasStringLiteralInSchema = true;
 
                 // Add column to index dict
                 columnIndexDict.Add(name, i);
@@ -444,12 +454,121 @@ namespace DaggerfallWorkshop.Utility
                 throw new Exception("Table must tag at least one column as primary using *.");
         }
 
+        // Special handling to split row into values with support for string literals in schema
+        string[] SplitLine(string text, int lineNumber)
+        {
+            int position = 0;
+            List<string> substrings = new List<string>();
+
+            // Break line into rows based on schema
+            for (int row = 0; row < columnCount; row++)
+            {
+                string result = string.Empty;
+
+                if (columns[row].isStringLiteral)
+                {
+                    // Scan for first literal wrapper character
+                    bool openedLiteral = false;
+                    while (++position < text.Length)
+                    {
+                        if (text.Substring(position, 1) == stringLiteralWrapper)
+                        {
+                            openedLiteral = true;
+                            break;
+                        }
+                    }
+
+                    // Accept reaching end of line without finding opening literal
+                    // This can happen when row ends on separator indicating empty next value
+                    if (openedLiteral)
+                    {
+                        // Scan to closing literal wrapper character
+                        int literalStart = ++position;
+                        bool closedLiteral = false;
+                        while (++position < text.Length)
+                        {
+                            if (text.Substring(position, 1) == stringLiteralWrapper)
+                            {
+                                result = text.Substring(literalStart, position - literalStart);
+                                closedLiteral = true;
+                                break;
+                            }
+                        }
+
+                        if (closedLiteral)
+                        {
+                            // Scan to next separator or end of line text
+                            int dataStart = position;
+                            while (++position < text.Length)
+                            {
+                                if (text.Substring(position, 1) == rowSeparator)
+                                {
+                                    position++;
+                                    break;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // Must close with literal wrapper - log line contents to debug
+                            Debug.LogErrorFormat("Table read error on line '{0}'. Expected closing string literal and reached end of line instead. Ensure string literals are enclosed {1}like so{1}", text, stringLiteralWrapper);
+                        }
+                    }
+                }
+                else
+                {
+                    // Scan to next separator or end of line text
+                    int dataStart = position;
+                    while (++position < text.Length)
+                    {
+                        if (text.Substring(position, 1) == rowSeparator)
+                        {
+                            position++;
+                            break;
+                        }
+                    }
+
+                    // Read text
+                    int length = position - dataStart;
+                    if (dataStart + length < text.Length)
+                        result = text.Substring(dataStart, length - 1);      // More data to read, must remove trailing seperator
+                    else if (dataStart + length == text.Length)
+                        result = text.Substring(dataStart, length);          // Reached end of line exactly, no separator to remove
+                    else
+                        result = string.Empty;                               // Overflow, can happen when line terminates with separator indicating empty next value
+
+                    // Handle edge case where separator is included with final second-last value when final value is empty
+                    if (result.EndsWith(rowSeparator))
+                        result = result.Substring(0, result.Length - 1);
+                }
+
+                // Trim non-literal data elements
+                if (!columns[row].isStringLiteral)
+                    result = result.Trim();
+
+                substrings.Add(result);
+            }
+
+            return substrings.ToArray();
+        }
+
         void LoadRow(string text, int lineNumber)
         {
-            // Split line by commas
-            string[] parts = text.Split(',');
-            if (parts.Length != columnCount)
-                throw new Exception(string.Format("Row on line {0} does not match schema.", lineNumber));
+            // Use custom split for schema containing string literals
+            // Otherwise use string.Split() as it will be faster overall
+            string[] parts;
+            if (hasStringLiteralInSchema)
+            {
+                // Split line with one or more string literals
+                parts = SplitLine(text, lineNumber); 
+            }
+            else
+            {
+                // Split line by commas
+                parts = text.Split(','); 
+                if (parts.Length != columnCount)
+                    throw new Exception(string.Format("Row on line {0} does not match schema.", lineNumber));
+            }
 
             // Add values to columns
             for (int i = 0; i < parts.Length; i++)
