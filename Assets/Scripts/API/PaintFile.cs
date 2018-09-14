@@ -3,19 +3,14 @@
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
-// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
+// Original Author: Hazelnut
 // Contributors:    
 // 
 // Notes:
 //
 
-#region Using Statements
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.IO;
 using DaggerfallConnect.Utility;
-#endregion
 
 namespace DaggerfallConnect.Arena2
 {
@@ -101,7 +96,6 @@ namespace DaggerfallConnect.Arena2
         /// </summary>
         public byte[] Read(uint recordIndex)
         {
-            BinaryReader reader = managedFile.GetReader();
             return managedFile.GetBytes(recordIndex * recordLength, recordLength);
         }
 

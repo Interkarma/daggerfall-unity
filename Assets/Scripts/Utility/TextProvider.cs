@@ -40,9 +40,9 @@ namespace DaggerfallWorkshop.Utility
         /// Gets tokens from a randomly selected subrecord.
         /// </summary>
         /// <param name="id">Text resource ID.</param>
-        /// <param name="index">Specify required index, overriding random selection.</param>
+        /// <param name="dfRand">Use Daggerfall rand() for random selection.</param>
         /// <returns>Text resource tokens.</returns>
-        TextFile.Token[] GetRandomTokens(int id, int index = -1);
+        TextFile.Token[] GetRandomTokens(int id, bool dfRand = false);
 
         /// <summary>
         /// Gets random string from separated token array.
@@ -241,7 +241,7 @@ namespace DaggerfallWorkshop.Utility
             return TextFile.ReadTokens(ref buffer, 0, TextFile.Formatting.EndOfRecord);
         }
 
-        public virtual TextFile.Token[] GetRandomTokens(int id, int index = -1)
+        public virtual TextFile.Token[] GetRandomTokens(int id, bool dfRand = false)
         {
             TextFile.Token[] sourceTokens = GetRSCTokens(id);
 
@@ -265,9 +265,8 @@ namespace DaggerfallWorkshop.Utility
             // Complete final stream
             tokenStreams.Add(currentStream.ToArray());
 
-            // Select a random token stream if not passed in
-            if (index < 0)
-                index = UnityEngine.Random.Range(0, tokenStreams.Count);
+            // Select a random token stream
+            int index = dfRand ? (int)(DFRandom.rand() % tokenStreams.Count) : UnityEngine.Random.Range(0, tokenStreams.Count);
 
             // Select the next to last item from the array if the length of the last one is zero
             index = (tokenStreams[index].Length == 0 ? index - 1 : index);

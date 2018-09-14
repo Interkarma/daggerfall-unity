@@ -15,6 +15,7 @@ using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using UnityEngine;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -85,8 +86,8 @@ namespace DaggerfallWorkshop.Utility
             { "%fea", null }, // ?
             { "%fl1", LordOfFaction1 }, // Lord of _fx1
             { "%fl2", LordOfFaction2 }, // Lord of _fx2
-            { "%fn", null },  // Random first(?) name (Female?)
-            { "%fn2", null }, // Same as _mn2 (?)
+            { "%fn", FemaleName },  // Random first name (Female)
+            { "%fn2", FemaleFullname }, // Random full name (Female)
             { "%fnpc", GuildNPC }, // faction of npc that is dialog partner
             { "%fon", FactionOrderName }, // Faction order name
             { "%fpa", FactionName }, // faction name? of dialog partner - should return "Kynareth" for npc that are members of "Temple of Kynareth"
@@ -133,8 +134,8 @@ namespace DaggerfallWorkshop.Utility
             { "%mat", Material }, // Material
             { "%mit", null }, // Item
             { "%ml", MaxLoan },  // Max loan amount
-            { "%mn", null },  // Random First(?) name (Male?)
-            { "%mn2", null }, // Same as _mn (?)
+            { "%mn", MaleName },  // Random First name (Male)
+            { "%mn2", MaleFullname }, // Random Full name (Male)
             { "%mod", ArmourMod }, // Modification
             { "%n", NameDialogPartner },   // A random female first name (comment Nystul: I think it is just a random name - or maybe this is the reason that in vanilla all male mobile npcs have female names...)
             { "%nam", null }, // A random full name
@@ -226,7 +227,7 @@ namespace DaggerfallWorkshop.Utility
 
         #endregion
 
-        #region Public Functions
+        #region Public Utility Functions
 
         public static void ResetFactionAndRulerIds()
         {
@@ -240,7 +241,50 @@ namespace DaggerfallWorkshop.Utility
             return (parts != null && parts.Length > 0) ? parts[0] : name;
         }
 
+        public static NameHelper.BankTypes GetRandomNameBank()
+        {
+            // TODO: How should bank type be randomised?
+            Races race = (Races) DFRandom.random_range_inclusive(0, 8);
+            return GetNameBank(race);
+        }
+
+        public static string GetLordNameForFaction(int factionId)
+        {
+            PersistentFactionData factions = GameManager.Instance.PlayerEntity.FactionData;
+            FactionFile.FactionData fd;
+            factions.GetFactionData(factionId, out fd);
+
+            Genders gender = (Genders) ((fd.ruler + 1) % 2); // even entries are female titles/genders, odd entries are male ones
+            Races race = (Races) fd.race;
+
+            return DaggerfallUnity.Instance.NameHelper.FullName(GetNameBank(race), gender);
+        }
+
+        public static NameHelper.BankTypes GetNameBank(Races race)
+        {
+            switch (race)
+            {
+                case Races.Argonian:
+                case Races.Breton:
+                case Races.Khajiit:
+                default:
+                    return NameHelper.BankTypes.Breton;
+                case Races.DarkElf:
+                    return NameHelper.BankTypes.DarkElf;
+                case Races.HighElf:
+                    return NameHelper.BankTypes.HighElf;
+                case Races.WoodElf:
+                    return NameHelper.BankTypes.WoodElf;
+                case Races.Nord:
+                    return NameHelper.BankTypes.Nord;
+                case Races.Redguard:
+                    return NameHelper.BankTypes.Redguard;
+            }
+        }
+
         #endregion
+
+        #region Macro Expansion Code
 
         // Any punctuation characters that can be on the end of a macro symbol need adding here.
         static char[] PUNCTUATION = { '.', ',', '\'', '?', '!' };
@@ -394,6 +438,8 @@ namespace DaggerfallWorkshop.Utility
             errorToken.formatting = TextFile.Formatting.Text;
             return new TextFile.Token[] { errorToken };
         }
+
+        #endregion
 
 
         //
@@ -789,44 +835,6 @@ namespace DaggerfallWorkshop.Utility
             return TalkManager.Instance.GetOldLeaderFateString(index);
         }
 
-        private static string HelperCreateLordNameForFaction(int factionId)
-        {
-            PersistentFactionData factions = GameManager.Instance.PlayerEntity.FactionData;
-            FactionFile.FactionData fd;
-            factions.GetFactionData(factionId, out fd);
-
-            Genders gender = (Genders)((fd.ruler + 1) % 2); // even entries are female titles/genders, odd entries are male ones
-
-            Races race = (Races)fd.race;
-
-            Game.Utility.NameHelper.BankTypes nameBankType;
-            switch (race)
-            {
-                case Races.Argonian:
-                case Races.Breton:
-                case Races.Khajiit:
-                default:
-                    nameBankType = Game.Utility.NameHelper.BankTypes.Breton;
-                    break;
-                case Races.DarkElf:
-                    nameBankType = Game.Utility.NameHelper.BankTypes.DarkElf;
-                    break;
-                case Races.HighElf:
-                    nameBankType = Game.Utility.NameHelper.BankTypes.HighElf;
-                    break;
-                case Races.WoodElf:
-                    nameBankType = Game.Utility.NameHelper.BankTypes.WoodElf;
-                    break;
-                case Races.Nord:
-                    nameBankType = Game.Utility.NameHelper.BankTypes.Nord;
-                    break;
-                case Races.Redguard:
-                    nameBankType = Game.Utility.NameHelper.BankTypes.Redguard;
-                    break;
-            }
-            return DaggerfallUnity.Instance.NameHelper.FullName(nameBankType, gender);
-        }
-
         public static string OldLordOfFaction1(IMacroContextProvider mcp)
         {   // %ol1                    
             int id;
@@ -839,7 +847,7 @@ namespace DaggerfallWorkshop.Utility
             {
                 id = idFaction1Ruler;
             }
-            return HelperCreateLordNameForFaction((int)TalkManager.factionsUsedForRulers[id]);
+            return GetLordNameForFaction((int)TalkManager.factionsUsedForRulers[id]);
         }
 
         public static string LordOfFaction1(IMacroContextProvider mcp)
@@ -854,7 +862,7 @@ namespace DaggerfallWorkshop.Utility
             {
                 id = idFaction1Ruler;
             }
-            return HelperCreateLordNameForFaction((int)TalkManager.factionsUsedForRulers[id]);
+            return GetLordNameForFaction((int)TalkManager.factionsUsedForRulers[id]);
         }
 
         public static string LordOfFaction2(IMacroContextProvider mcp)
@@ -863,7 +871,7 @@ namespace DaggerfallWorkshop.Utility
             int id = UnityEngine.Random.Range(0, TalkManager.factionsUsedForRulers.Count - 2);
             if (id >= idFaction1Ruler) // make sure to create an id != idFaction1Ruler
                 id += 1; // by just adding 1 if id >= idFaction1InNews -> so we will end up with an id in ranges [0, idFaction1Ruler) union (idFaction1InNews, factionsUsedForFactionRulers.Count]
-            return HelperCreateLordNameForFaction((int)TalkManager.factionsUsedForRulers[id]);
+            return GetLordNameForFaction((int)TalkManager.factionsUsedForRulers[id]);
         }
 
         public static string TitleOfLordOfFaction1(IMacroContextProvider mcp)
@@ -955,23 +963,38 @@ namespace DaggerfallWorkshop.Utility
         }
 
         private static string MarkLocationOnMap(IMacroContextProvider mcp)
-        {
-            // %loc
+        {   // %loc
             if (GameManager.Instance.TalkManager.MarkLocationOnMap)
                 GameManager.Instance.TalkManager.MarkKeySubjectLocationOnMap();
             return GameManager.Instance.TalkManager.CurrentKeySubject;
         }
 
         private static string LocationRevealedByMapItem(IMacroContextProvider mcp)
-        {
-            // %map
+        {   // %map
             return GameManager.Instance.PlayerGPS.LocationRevealedByMapItem;
         }
 
         private static string LocationOfRegionalBuilding(IMacroContextProvider mcp)
-        {
-            // %fcn
+        {   // %fcn
             return GameManager.Instance.TalkManager.LocationOfRegionalBuilding;
+        }
+
+        private static string FemaleName(IMacroContextProvider mcp)
+        {   // %fn
+            return DaggerfallUnity.Instance.NameHelper.FirstName(GetRandomNameBank(), Genders.Female);
+        }
+        private static string FemaleFullname(IMacroContextProvider mcp)
+        {   // %fn2
+            return DaggerfallUnity.Instance.NameHelper.FullName(GetRandomNameBank(), Genders.Female);
+        }
+
+        private static string MaleName(IMacroContextProvider mcp)
+        {   // %mn
+            return DaggerfallUnity.Instance.NameHelper.FirstName(GetRandomNameBank(), Genders.Male);
+        }
+        private static string MaleFullname(IMacroContextProvider mcp)
+        {   // %mn2
+            return DaggerfallUnity.Instance.NameHelper.FullName(GetRandomNameBank(), Genders.Male);
         }
 
         #endregion
