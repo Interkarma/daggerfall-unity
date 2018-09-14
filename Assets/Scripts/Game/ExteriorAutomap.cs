@@ -563,6 +563,7 @@ namespace DaggerfallWorkshop.Game
                 }
 
                 daggerfallUI.ExteriorAutomapWindow.updateAutomapView();
+
                 return;
             }
         }
@@ -892,6 +893,7 @@ namespace DaggerfallWorkshop.Game
                                 renderer.material = DaggerfallUI.Instance.SDFFontMaterial;
                                 renderer.material.renderQueue = 4000;
                                 newBuildingNameplate.scale = 0.125f;
+                                //newBuildingNameplate.textLabel.Texture.filterMode = FilterMode.Bilinear;
                             }
                             else
                             {

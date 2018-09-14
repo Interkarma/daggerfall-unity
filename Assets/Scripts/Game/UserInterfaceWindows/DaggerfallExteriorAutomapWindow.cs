@@ -785,7 +785,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             textureExteriorAutomap.Apply(false);
             RenderTexture.active = null;
 
-            panelRenderAutomap.BackgroundTexture = textureExteriorAutomap;
+            panelRenderAutomap.BackgroundTexture = textureExteriorAutomap;            
         }
 
         #region Private Methods
