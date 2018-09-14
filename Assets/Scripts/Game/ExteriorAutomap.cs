@@ -506,10 +506,13 @@ namespace DaggerfallWorkshop.Game
                 if (Physics.Raycast(ray, out hit, layerAutomap))
                 {
                     string currentNameplateName = "";
+                    string gameObjectName = hit.collider.gameObject.name;
+                    if (gameObjectName == "pop-up nameplate")
+                        return;
+
                     //Debug.Log(hit.collider.gameObject.name);
                     int lengthSkipStart = ("building name plate for [").Length;
-                    int lengthSkipEnd = ("]").Length + 1; // +1 for the "+" resp "*" character at the end to indicate if nameplate was placed with name or "*" on the map
-                    string gameObjectName = hit.collider.gameObject.name;
+                    int lengthSkipEnd = ("]").Length + 1; // +1 for the "+" resp "*" character at the end to indicate if nameplate was placed with name or "*" on the map                    
                     string nameplateName = gameObjectName.Substring(lengthSkipStart, gameObjectName.Length - lengthSkipStart - lengthSkipEnd);
                     
                     bool shortFormUsed = gameObjectName.Substring(gameObjectName.Length - 1, 1) == "*";
@@ -518,21 +521,23 @@ namespace DaggerfallWorkshop.Game
 
                     if (popUpNameplate == null)
                     {
-                        TextLabel textLabel = DaggerfallUI.AddTextLabel(customFont, Vector2.zero, nameplateName);
-                        textLabel.BackgroundColor = Color.blue; // not working right now - always black background (have to look into this if I can make it work...)
-                        textLabel.TextColor = Color.yellow;
+                        //TextLabel textLabel = DaggerfallUI.AddTextLabel(customFont, Vector2.zero, nameplateName);
                         popUpNameplate = new GameObject("pop-up nameplate");
-                        MeshFilter meshFilter = (MeshFilter)popUpNameplate.AddComponent(typeof(MeshFilter));
-                        meshFilter.mesh = CreateLeftAlignedMesh(textLabel.Texture.width, textLabel.Texture.height); // create left aligned (in relation to gameobject position) quad with normal facing into positive y-direction
-                        MeshRenderer renderer = popUpNameplate.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
-                        renderer.material.shader = Shader.Find("Unlit/Texture");
-                        renderer.material.mainTexture = textLabel.Texture;
-                        renderer.enabled = true;
+                        float scale = 0.5f;
+                        TextLabel textLabel = createOrUpdateTextLabelBuildingNamePlate(popUpNameplate, nameplateName, out scale);
+                        //textLabel.BackgroundColor = Color.blue; // not working right now - always black background (have to look into this if I can make it work...)
+                        //textLabel.TextColor = Color.yellow;                        
+                        //MeshFilter meshFilter = (MeshFilter)popUpNameplate.AddComponent(typeof(MeshFilter));
+                        //meshFilter.mesh = CreateLeftAlignedMesh(textLabel.Texture.width, textLabel.Texture.height); // create left aligned (in relation to gameobject position) quad with normal facing into positive y-direction
+                        //MeshRenderer renderer = popUpNameplate.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
+                        //renderer.material.shader = Shader.Find("Unlit/Texture");
+                        //renderer.material.mainTexture = textLabel.Texture;
+                        //renderer.enabled = true;
 
                         SetLayerRecursively(popUpNameplate, layerAutomap);
                         popUpNameplate.transform.SetParent(gameObjectBuildingNameplates.transform);
 
-                        float scale = 0.5f;
+
                         popUpNameplate.transform.position = new Vector3(hit.point.x, nameplatesPlacementDepth + 2.0f, hit.point.z);
                         popUpNameplate.transform.rotation = hit.collider.gameObject.transform.rotation;
                         popUpNameplate.transform.localScale = new Vector3(scale, scale, scale);
@@ -541,11 +546,13 @@ namespace DaggerfallWorkshop.Game
                     }
                     else if (popUpNameplate && currentNameplateName != nameplateName)
                     {
-                        TextLabel textLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, nameplateName);
-                        MeshFilter meshFilter = popUpNameplate.GetComponent<MeshFilter>();
-                        meshFilter.mesh = CreateLeftAlignedMesh(textLabel.Texture.width, textLabel.Texture.height); // create left aligned (in relation to gameobject position) quad with normal facing into positive y-direction                        
-                        MeshRenderer renderer = popUpNameplate.GetComponent<MeshRenderer>();
-                        renderer.material.mainTexture = textLabel.Texture;
+                        //TextLabel textLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, nameplateName);
+                        float tmpScale;
+                        TextLabel textLabel = createOrUpdateTextLabelBuildingNamePlate(popUpNameplate, nameplateName, out tmpScale);
+                        //MeshFilter meshFilter = popUpNameplate.GetComponent<MeshFilter>();
+                        //meshFilter.mesh = CreateLeftAlignedMesh(textLabel.Texture.width, textLabel.Texture.height); // create left aligned (in relation to gameobject position) quad with normal facing into positive y-direction                        
+                        //MeshRenderer renderer = popUpNameplate.GetComponent<MeshRenderer>();
+                        //renderer.material.mainTexture = textLabel.Texture;
 
                         popUpNameplate.transform.position = new Vector3(hit.point.x, nameplatesPlacementDepth + 2.0f, hit.point.z);
                         popUpNameplate.transform.rotation = hit.collider.gameObject.transform.rotation;
