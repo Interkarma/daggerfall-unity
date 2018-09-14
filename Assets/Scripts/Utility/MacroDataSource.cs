@@ -145,6 +145,27 @@ namespace DaggerfallWorkshop.Utility
             throw new NotImplementedException();
         }
 
+        public virtual string PaintingAdjective()
+        {   // %adj
+            throw new NotImplementedException();
+        }
+        public virtual string ArtistName()
+        {   // %an
+            throw new NotImplementedException();
+        }
+        public virtual string PaintingPrefix1()
+        {   // %pp1
+            throw new NotImplementedException();
+        }
+        public virtual string PaintingPrefix2()
+        {   // %pp2
+            throw new NotImplementedException();
+        }
+        public virtual string PaintingSubject()
+        {   // %sub
+            throw new NotImplementedException();
+        }
+
         public virtual string HeldSoul()
         {   // %hs
             throw new NotImplementedException();
