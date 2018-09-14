@@ -146,6 +146,7 @@ namespace DaggerfallWorkshop
         public float DungeonAmbientLightScale { get; set; }
         public float NightAmbientLightScale { get; set; }
         public float PlayerTorchLightScale { get; set; }
+        public bool CombatVoices { get; set; }
 
         #endregion
 
@@ -237,6 +238,7 @@ namespace DaggerfallWorkshop
             DungeonAmbientLightScale = GetFloat(sectionEnhancements, "DungeonAmbientLightScale", 0.0f, 1.0f);
             NightAmbientLightScale = GetFloat(sectionEnhancements, "NightAmbientLightScale", 0.0f, 1.0f);
             PlayerTorchLightScale = GetFloat(sectionEnhancements, "PlayerTorchLightScale", 0.0f, 1.0f);
+            CombatVoices = GetBool(sectionEnhancements, "CombatVoices");
         }
 
         /// <summary>
@@ -262,7 +264,7 @@ namespace DaggerfallWorkshop
             SetBool(sectionVideo, "EnableTextureArrays", EnableTextureArrays);
             SetInt(sectionVideo, "RandomDungeonTextures", RandomDungeonTextures);
 
-            SetString (sectionAudio, "SoundFont", SoundFont);
+            SetString(sectionAudio, "SoundFont", SoundFont);
 
             SetBool(sectionChildGuard, "PlayerNudity", PlayerNudity);
 
@@ -321,6 +323,7 @@ namespace DaggerfallWorkshop
             SetFloat(sectionEnhancements, "DungeonAmbientLightScale", DungeonAmbientLightScale);
             SetFloat(sectionEnhancements, "NightAmbientLightScale", NightAmbientLightScale);
             SetFloat(sectionEnhancements, "PlayerTorchLightScale", PlayerTorchLightScale);
+            SetBool(sectionEnhancements, "CombatVoices", CombatVoices);
 
             // Write settings to persistent file
             WriteSettingsFile();

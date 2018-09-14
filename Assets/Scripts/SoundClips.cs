@@ -499,7 +499,7 @@ namespace DaggerfallWorkshop
         HighElfMalePain1 = 402,
         HighElfMalePain2 = 403,
         HighElfMalePain3 = 404,
-        PlayerDeath = 405, // or WoodElfMalePain1
+        WoodElfMalePain1 = 405,
         WoodElfMalePain2 = 406,
         WoodElfMalePain3 = 407,
         KhajiitMalePain1 = 408,

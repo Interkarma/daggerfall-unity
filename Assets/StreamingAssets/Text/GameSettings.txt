@@ -94,6 +94,8 @@ nightAmbientLightScale,								Night ambient light
 nightAmbientLightScaleInfo,							Scale of the ambient light at night in interiors and exteriors
 playerTorchLightScale,								Player torch light 
 playerTorchLightScaleInfo,							Scale of player personal light
+combatVoices,										Combat vocalizations
+combatVoicesInfo,									Player and NPCs will vocalize when attacking or being hit
 
 resolution,                                         Resolution
 resolutionInfo,                                     Screen resolution

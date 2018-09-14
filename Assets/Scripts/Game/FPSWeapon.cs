@@ -19,6 +19,7 @@ using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -186,6 +187,19 @@ namespace DaggerfallWorkshop.Game
             {
                 dfAudioSource.AudioSource.pitch = 1f * AttackSpeedScale;
                 dfAudioSource.PlayOneShot(SwingWeaponSound, 0, 1.1f);
+            }
+        }
+
+        public void PlayAttackVoice()
+        {
+            if (dfAudioSource)
+            {
+                PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+                SoundClips sound = DaggerfallEntity.GetRaceGenderAttackSound(playerEntity.Race, playerEntity.Gender);
+                float pitch = dfAudioSource.AudioSource.pitch;
+                dfAudioSource.AudioSource.pitch = pitch + UnityEngine.Random.Range(0, 0.3f);
+                dfAudioSource.PlayOneShot(sound, 0, 1f);
+                dfAudioSource.AudioSource.pitch = pitch;
             }
         }
 

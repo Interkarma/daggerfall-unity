@@ -334,9 +334,9 @@ namespace DaggerfallWorkshop.Game
             }
             else if (!isDamageFinished && ScreenWeapon.GetCurrentFrame() == ScreenWeapon.GetHitFrame())
             {
-                // The attack has reached the hit frame.
-                // Attempt to transfer damage based on last attack hand.
-                // Get attack hand weapon
+                // Chance to play attack voice
+                if (DaggerfallUnity.Settings.CombatVoices && ScreenWeapon.WeaponType != WeaponTypes.Bow && UnityEngine.Random.Range(1, 101) <= 20)
+                    ScreenWeapon.PlayAttackVoice();
 
                 // Transfer damage.
                 bool hitEnemy = false;
@@ -688,6 +688,17 @@ namespace DaggerfallWorkshop.Game
                                     enemyMotor.KnockBackSpeed = knockBackSpeed;
                                     enemyMotor.KnockBackDirection = mainCamera.transform.forward;
                                 }
+                            }
+
+                            if (DaggerfallUnity.Settings.CombatVoices && entityBehaviour.EntityType == EntityTypes.EnemyClass && UnityEngine.Random.Range(1, 101) <= 40)
+                            {
+                                Genders gender;
+                                if (enemyEntity.MobileEnemy.Gender == MobileGender.Male || enemyEntity.MobileEnemy.ID == (int)MobileTypes.Knight_CityWatch)
+                                    gender = Genders.Male;
+                                else
+                                    gender = Genders.Female;
+
+                                enemySounds.PlayPainVoice(gender, damage);
                             }
                         }
                         else
