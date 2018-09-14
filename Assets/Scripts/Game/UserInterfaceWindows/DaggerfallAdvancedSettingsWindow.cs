@@ -43,6 +43,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         readonly Vector2 offset = new Vector2(10, 20);
         const float columnHeight = 140;
 
+        const int topBarButtonsLength = 60;
+
         const float itemTextScale = 0.9f;
         const float sectionSpacing = 12f;
         const float itemSpacing = 10f;
@@ -406,9 +408,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             Button pageButton = new Button();
             pageButton.Name = title;
-            pageButton.Size = new Vector2(50, 9);
+            pageButton.Size = new Vector2(topBarButtonsLength, 9);
             pageButton.HorizontalAlignment = HorizontalAlignment.None;
-            pageButton.Position = new Vector2((pages.Count - 1) * 50, 0);
+            pageButton.Position = new Vector2((pages.Count - 1) * topBarButtonsLength, 0);
             pageButton.VerticalAlignment = VerticalAlignment.Middle;
             pageButton.BackgroundColor = Color.clear;
             pageButton.Outline.Enabled = false;
