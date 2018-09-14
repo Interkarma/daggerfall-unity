@@ -334,8 +334,16 @@ namespace DaggerfallWorkshop.Game
 
                 if (DaggerfallUnity.Settings.AdvancedClimbing)
                 {
-                    if (InputManager.Instance.HasAction(InputManager.Actions.MoveForwards))
+                    RaycastHit hit = new RaycastHit();
+                    if (InputManager.Instance.HasAction(InputManager.Actions.MoveForwards) 
+                        // don't stop if almost done climbing, prevents Climbing Teleportation bug
+                        // only raycasts if player released forward key 
+                        // make sure we aren't hitting a meshcollider
+                        || (!Physics.Raycast(controller.transform.position, ledgeDirection, out hit, 0.3f) 
+                        || !hit.collider.gameObject.GetComponent<MeshCollider>()))
+                    {
                         moveDirection.y = Vector3.up.y * climbScalar;
+                    }
                     else if (InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards))
                         moveDirection.y = Vector3.down.y * climbScalar;
 
