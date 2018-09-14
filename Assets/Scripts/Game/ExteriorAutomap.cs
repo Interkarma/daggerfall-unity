@@ -683,8 +683,7 @@ namespace DaggerfallWorkshop.Game
                 new Vector2 (0, 0)
             };
             m.triangles = new int[] { 0, 1, 2, 0, 2, 3 };
-            m.RecalculateNormals();
-
+            m.RecalculateNormals();            
             return m;
         }
 
@@ -724,6 +723,52 @@ namespace DaggerfallWorkshop.Game
                 MeshRenderer renderer = gameobjectCustomCanvas.GetComponent<MeshRenderer>();
                 renderer.material.mainTexture = exteriorLayoutTexture;
             }
+        }
+
+        private TextLabel createOrUpdateTextLabelBuildingNamePlate(GameObject namePlateGameObject, string textLabelText, out float scale)
+        {
+            TextLabel textLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, textLabelText);
+            MeshFilter meshFilter = namePlateGameObject.GetComponent<MeshFilter>();
+            if (meshFilter == null)
+                meshFilter = (MeshFilter)namePlateGameObject.AddComponent(typeof(MeshFilter));
+            
+            meshFilter.mesh = CreateLeftAlignedMesh(textLabel.Texture.width, textLabel.Texture.height); // create left aligned (in relation to gameobject position) quad with normal facing into positive y-direction
+
+            // set vertex colors so that font rendering is in the correct text color
+            Color[] vertexColors = new Color[meshFilter.mesh.vertexCount];
+            for (int i = 0; i < vertexColors.Length; i++)
+                vertexColors[i] = DaggerfallUI.DaggerfallDefaultTextColor;
+            meshFilter.mesh.colors = vertexColors;
+
+            MeshRenderer mr = namePlateGameObject.GetComponent<MeshRenderer>();
+            if (mr == null)
+                mr = namePlateGameObject.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
+
+            MeshCollider collider = namePlateGameObject.AddComponent<MeshCollider>();
+            if (collider)
+            {
+                // Doing nothing just to suppress warning
+            }
+
+            //renderer.material.shader = Shader.Find("Unlit/Transparent");
+            //renderer.material.mainTexture = newBuildingNameplate.textLabel.Texture;
+            //if (DaggerfallUI.Instance.SDFFontMaterial != null)
+            if (DaggerfallUnity.Settings.SDFFontRendering == true)
+            {
+                mr.material = DaggerfallUI.Instance.SDFFontMaterial; //new Material(DaggerfallUI.Instance.SDFFontMaterial);                               
+                mr.material.renderQueue = 4000;
+                scale = 0.125f;
+            }
+            else
+            {
+                mr.material = DaggerfallUI.Instance.PixelFontMaterial;
+                mr.material.renderQueue = 4000;
+                scale = 1.0f;
+            }
+            mr.material.mainTexture = textLabel.Texture;
+            mr.enabled = true;
+
+            return textLabel;
         }
 
         private void createBuildingNameplates(DFLocation location)
@@ -872,37 +917,44 @@ namespace DaggerfallWorkshop.Game
                         {
                             newBuildingNameplate.uniqueIndex = uniqueIndex++;
                             newBuildingNameplate.anchorPoint.x = xPosBuilding;
-                            newBuildingNameplate.anchorPoint.y = yPosBuilding;
-                            newBuildingNameplate.textLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, newBuildingNameplate.name);
+                            newBuildingNameplate.anchorPoint.y = yPosBuilding;                            
                             newBuildingNameplate.gameObject = new GameObject(String.Format("building name plate for [{0}]+", newBuildingNameplate.name));
-                            MeshFilter meshFilter = (MeshFilter)newBuildingNameplate.gameObject.AddComponent(typeof(MeshFilter));
-                            meshFilter.mesh = CreateLeftAlignedMesh(newBuildingNameplate.textLabel.Texture.width, newBuildingNameplate.textLabel.Texture.height); // create left aligned (in relation to gameobject position) quad with normal facing into positive y-direction
-                            MeshRenderer renderer = newBuildingNameplate.gameObject.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
+                            newBuildingNameplate.textLabel = createOrUpdateTextLabelBuildingNamePlate(newBuildingNameplate.gameObject, newBuildingNameplate.name, out newBuildingNameplate.scale);
+                            //newBuildingNameplate.textLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, newBuildingNameplate.name);
+                            //MeshFilter meshFilter = (MeshFilter)newBuildingNameplate.gameObject.AddComponent(typeof(MeshFilter));
+                            //meshFilter.mesh = CreateLeftAlignedMesh(newBuildingNameplate.textLabel.Texture.width, newBuildingNameplate.textLabel.Texture.height); // create left aligned (in relation to gameobject position) quad with normal facing into positive y-direction
 
-                            MeshCollider collider = newBuildingNameplate.gameObject.AddComponent<MeshCollider>();
-                            if (collider)
-                            {
-                                // Doing nothing just to suppress warning
-                            }
+                            //// set vertex colors so that font rendering is in the correct text color
+                            //Color[] vertexColors = new Color[meshFilter.mesh.vertexCount];
+                            //for (int i = 0; i < vertexColors.Length; i++)
+                            //    vertexColors[i] = DaggerfallUI.DaggerfallDefaultTextColor;
+                            //meshFilter.mesh.colors = vertexColors;
 
-                            //renderer.material.shader = Shader.Find("Unlit/Transparent");
+                            //MeshRenderer renderer = newBuildingNameplate.gameObject.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
+
+                            //MeshCollider collider = newBuildingNameplate.gameObject.AddComponent<MeshCollider>();
+                            //if (collider)
+                            //{
+                            //    // Doing nothing just to suppress warning
+                            //}
+
+                            ////renderer.material.shader = Shader.Find("Unlit/Transparent");
+                            ////renderer.material.mainTexture = newBuildingNameplate.textLabel.Texture;
+                            ////if (DaggerfallUI.Instance.SDFFontMaterial != null)
+                            //if (DaggerfallUnity.Settings.SDFFontRendering == true)
+                            //{
+                            //    renderer.material = DaggerfallUI.Instance.SDFFontMaterial; //new Material(DaggerfallUI.Instance.SDFFontMaterial);                               
+                            //    renderer.material.renderQueue = 4000;
+                            //    newBuildingNameplate.scale = 0.125f;                                
+                            //}
+                            //else
+                            //{
+                            //    renderer.material = DaggerfallUI.Instance.PixelFontMaterial;
+                            //    renderer.material.renderQueue = 4000;
+                            //    newBuildingNameplate.scale = 1.0f;
+                            //}
                             //renderer.material.mainTexture = newBuildingNameplate.textLabel.Texture;
-                            //if (DaggerfallUI.Instance.SDFFontMaterial != null)
-                            if (DaggerfallUnity.Settings.SDFFontRendering == true)
-                            {
-                                renderer.material = DaggerfallUI.Instance.SDFFontMaterial;
-                                renderer.material.renderQueue = 4000;
-                                newBuildingNameplate.scale = 0.125f;
-                                //newBuildingNameplate.textLabel.Texture.filterMode = FilterMode.Bilinear;
-                            }
-                            else
-                            {
-                                renderer.material = DaggerfallUI.Instance.PixelFontMaterial;
-                                renderer.material.renderQueue = 4000;
-                                newBuildingNameplate.scale = 1.0f;
-                            }
-                            renderer.material.mainTexture = newBuildingNameplate.textLabel.Texture;
-                            renderer.enabled = true;
+                            //renderer.enabled = true;
 
                             SetLayerRecursively(newBuildingNameplate.gameObject, layerAutomap);
                             newBuildingNameplate.gameObject.transform.SetParent(gameObjectBuildingNameplates.transform);
@@ -1407,16 +1459,16 @@ namespace DaggerfallWorkshop.Game
                 {        
                     buildingNameplate.placed = true;
 
-                    TextLabel newTextLabel = DaggerfallUI.AddTextLabel(customFont, Vector2.zero, "*");
-                    buildingNameplate.textLabel = newTextLabel;
-                    //MeshRenderer renderer = buildingNameplate.gameObject.GetComponent<MeshRenderer>();                    
-                    MeshFilter meshFilter = buildingNameplate.gameObject.GetComponent<MeshFilter>();
+                    //TextLabel newTextLabel = DaggerfallUI.AddTextLabel(customFont, Vector2.zero, "*");
+                    TextLabel newTextLabel = createOrUpdateTextLabelBuildingNamePlate(buildingNameplate.gameObject, "*", out buildingNameplate.scale);
+                    buildingNameplate.textLabel = newTextLabel;                    
+                    /*MeshFilter meshFilter = buildingNameplate.gameObject.GetComponent<MeshFilter>();
                     meshFilter.mesh = CreateLeftAlignedMesh(buildingNameplate.textLabel.Texture.width, buildingNameplate.textLabel.Texture.height); // create left aligned (in relation to gameobject position) quad with normal facing into positive y-direction
-                    MeshCollider meshCollider = buildingNameplate.gameObject.GetComponent<MeshCollider>(); 
+                    MeshCollider meshCollider = buildingNameplate.gameObject.GetComponent<MeshCollider>();
                     meshCollider.sharedMesh = meshFilter.mesh;
                     MeshRenderer renderer = buildingNameplate.gameObject.GetComponent<MeshRenderer>();
                     renderer.material.mainTexture = newTextLabel.Texture;
-
+                    */
                     buildingNameplate.gameObject.name = buildingNameplate.gameObject.name.Substring(0, buildingNameplate.gameObject.name.Length - 1) + "*";
                     buildingNameplate.gameObject.transform.position = new Vector3(buildingNameplate.gameObject.transform.position.x, nameplatesPlacementDepth + 1.0f, buildingNameplate.gameObject.transform.position.z); // set a bit higher than other nameplates so that it will get mouse over pop-up
                     buildingNameplate.nameplateReplaced = true;
@@ -1490,14 +1542,15 @@ namespace DaggerfallWorkshop.Game
 
                 if (buildingNameplate.nameplateReplaced)
                 {
-                    TextLabel newTextLabel = DaggerfallUI.AddTextLabel(customFont, Vector2.zero, buildingNameplate.name);
+                    //TextLabel newTextLabel = DaggerfallUI.AddTextLabel(customFont, Vector2.zero, buildingNameplate.name);
+                    TextLabel newTextLabel = createOrUpdateTextLabelBuildingNamePlate(buildingNameplate.gameObject, buildingNameplate.name, out buildingNameplate.scale);                    
                     buildingNameplate.textLabel = newTextLabel;                    
-                    MeshFilter meshFilter = buildingNameplate.gameObject.GetComponent<MeshFilter>();
-                    meshFilter.mesh = CreateLeftAlignedMesh(buildingNameplate.textLabel.Texture.width, buildingNameplate.textLabel.Texture.height); // create left aligned (in relation to gameobject position) quad with normal facing into positive y-direction
-                    MeshCollider meshCollider = buildingNameplate.gameObject.GetComponent<MeshCollider>();
-                    meshCollider.sharedMesh = meshFilter.mesh;
-                    MeshRenderer renderer = buildingNameplate.gameObject.GetComponent<MeshRenderer>();                    
-                    renderer.material.mainTexture = newTextLabel.Texture;
+                    //MeshFilter meshFilter = buildingNameplate.gameObject.GetComponent<MeshFilter>();
+                    //meshFilter.mesh = CreateLeftAlignedMesh(buildingNameplate.textLabel.Texture.width, buildingNameplate.textLabel.Texture.height); // create left aligned (in relation to gameobject position) quad with normal facing into positive y-direction
+                    //MeshCollider meshCollider = buildingNameplate.gameObject.GetComponent<MeshCollider>();
+                    //meshCollider.sharedMesh = meshFilter.mesh;
+                    //MeshRenderer renderer = buildingNameplate.gameObject.GetComponent<MeshRenderer>();                    
+                    //renderer.material.mainTexture = newTextLabel.Texture;
                     buildingNameplate.gameObject.name = buildingNameplate.gameObject.name.Substring(0, buildingNameplate.gameObject.name.Length - 1) + "+";
                     buildingNameplate.gameObject.transform.position = new Vector3(buildingNameplate.gameObject.transform.position.x, nameplatesPlacementDepth, buildingNameplate.gameObject.transform.position.z); // set back to same height as other nameplates
                     buildingNameplate.nameplateReplaced = false;

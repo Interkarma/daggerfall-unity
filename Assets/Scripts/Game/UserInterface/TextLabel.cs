@@ -794,7 +794,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             if (DaggerfallUnity.Settings.SDFFontRendering == true)
             {
-                singleLineLabelTexture.filterMode = FilterMode.Bilinear;
+                singleLineLabelTexture.filterMode = FilterMode.Bilinear;                
             }
             else
             {
