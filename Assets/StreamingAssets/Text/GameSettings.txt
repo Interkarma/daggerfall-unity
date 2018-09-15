@@ -16,7 +16,6 @@ spells,                                             Spells
 tooltips,                                           Tooltips
 hud,                                                HUD
 gui,                                                GUI
-modSystem,											Mod System
 basic,                                              Basic
 advanced,                                           Advanced
 
