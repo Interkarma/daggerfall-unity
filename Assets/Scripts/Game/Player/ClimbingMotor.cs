@@ -239,24 +239,6 @@ namespace DaggerfallWorkshop.Game
                 acrobatMotor.ApplyGravity(ref moveDirection);
             }
 
-            // HACK: Overwrite moveDirection to prevent error where player is shot into air and transformed to tile origin
-            // @MeteoricDragon - This cancels advanced climbing and slipping for now, but I just wanted bug removed from next round of builds
-            // This clears bug without directly changing your logic above, then you can then fix properly when possible :)
-            // This code block can just be removed later once problem is resolved
-            if (InputManager.Instance.HasAction(InputManager.Actions.MoveForwards))
-            {
-                // Climb upwards
-                float climbScalar = (playerMotor.Speed / 3) * climbingBoost;
-                moveDirection.y = Vector3.up.y * climbScalar;
-            }
-            else
-            {
-                // Stop climbing
-                isSlipping = false;
-                isClimbing = false;
-                return;
-            }
-
             controller.Move(moveDirection * Time.deltaTime);
             playerMotor.CollisionFlags = controller.collisionFlags;
         }
