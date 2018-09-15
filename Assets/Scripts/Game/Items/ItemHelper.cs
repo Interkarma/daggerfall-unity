@@ -974,18 +974,6 @@ namespace DaggerfallWorkshop.Game.Items
             equipTable.EquipItem(shortShirt, true, false);
             equipTable.EquipItem(casualPants, true, false);
 
-            // Always add ebony dagger until biography implemented
-            items.AddItem(ItemBuilder.CreateWeapon(Weapons.Dagger, WeaponMaterialTypes.Ebony));
-
-            // Add a cuirass
-            items.AddItem(ItemBuilder.CreateArmor(playerEntity.Gender, playerEntity.Race, Armor.Cuirass, ArmorMaterialTypes.Leather));
-
-            // Add alternate weapons
-            items.AddItem(ItemBuilder.CreateWeapon(Weapons.Longsword, WeaponMaterialTypes.Steel));
-            items.AddItem(ItemBuilder.CreateWeapon(Weapons.Katana, WeaponMaterialTypes.Iron));
-            items.AddItem(ItemBuilder.CreateWeapon(Weapons.Staff, WeaponMaterialTypes.Silver));
-            items.AddItem(ItemBuilder.CreateWeapon(Weapons.Long_Bow, WeaponMaterialTypes.Silver));
-
             // Add some starting gold
             playerEntity.GoldPieces += 100;
         }

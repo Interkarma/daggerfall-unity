@@ -366,6 +366,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void CreateCharBiographyWindow_OnClose()
         {
+            characterDocument.biographyEffects = createCharBiographyWindow.PlayerEffects;
             SetNameSelectWindow();
         }
 

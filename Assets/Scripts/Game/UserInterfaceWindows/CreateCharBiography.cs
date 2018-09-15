@@ -18,6 +18,7 @@ using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -135,10 +136,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else
             {
-                foreach (string effect in playerEffects)
-                {
-                    ApplyPlayerEffect(GameManager.Instance.PlayerEntity, effect);
-                }
                 CloseWindow();
             }
         }
@@ -148,27 +145,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.Update();
         }
 
-        protected void ApplyPlayerEffect(PlayerEntity playerEntity, string effect)
-        {
-            string[] tokens = effect.Split(' ');
-            int parseResult;
-
-            // Skill modifier effect
-            if (int.TryParse(tokens[0], out parseResult))
-            {
-                short modValue;
-                DFCareer.Skills skill = (DFCareer.Skills)parseResult;
-                if (short.TryParse(tokens[1], out modValue))
-                {
-                    short startValue = GameManager.Instance.PlayerEntity.Skills.GetPermanentSkillValue(skill);
-                    GameManager.Instance.PlayerEntity.Skills.SetPermanentSkillValue(skill, (short)(startValue + modValue));
-                }
-            }
-        }
-
         public int ClassIndex
         {
             set { classIndex = value; }
+        }
+
+        public List<string> PlayerEffects
+        {
+            get { return playerEffects; }
         }
     }
 }

@@ -390,6 +390,9 @@ namespace DaggerfallWorkshop.Game.Utility
             // Assign starting gear to player entity
             DaggerfallUnity.Instance.ItemHelper.AssignStartingGear(playerEntity);
 
+            // Apply biography effects to player entity
+            BiogFile.ApplyEffects(characterDocument.biographyEffects, playerEntity);
+
             // Setup bank accounts and houses
             Banking.DaggerfallBankManager.SetupAccounts();
             Banking.DaggerfallBankManager.SetupHouses();
