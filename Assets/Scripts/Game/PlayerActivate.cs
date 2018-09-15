@@ -22,6 +22,7 @@ using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Banking;
 using DaggerfallWorkshop.Game.Guilds;
+using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -338,6 +339,12 @@ namespace DaggerfallWorkshop.Game
                             return;
                         }
 
+                        // Handle lock/open spell effects
+                        if (HandleLockEffect(actionDoor))
+                            return;
+                        //if (HandleOpenEffect(actionDoor))
+                        //    return;
+
                         if (currentMode == PlayerActivateModes.Steal && actionDoor.IsLocked && !actionDoor.IsOpen)
                         {
                             actionDoor.AttemptLockpicking();
@@ -488,6 +495,27 @@ namespace DaggerfallWorkshop.Game
                 }
             }
         }
+
+        bool HandleLockEffect(DaggerfallActionDoor actionDoor)
+        {
+            // Check if player has lock effect running
+            Lock lockEffect = (Lock)GameManager.Instance.PlayerEffectManager.FindIncumbentEffect<Lock>();
+            if (lockEffect == null)
+                return false;
+
+            lockEffect.TriggerLockEffect(actionDoor);
+            return true;
+        }
+
+        //bool HandleOpenEffect(DaggerfallActionDoor actionDoor)
+        //{
+        //    // Check if player has open effect running
+        //    Open openEffect = (Open)GameManager.Instance.PlayerEffectManager.FindIncumbentEffect<Open>();
+        //    if (openEffect == null)
+        //        return false;
+
+        //    return false;
+        //}
 
         /// <summary>
         /// Set a click delay before new clicks are accepted, usually when exiting UI.
