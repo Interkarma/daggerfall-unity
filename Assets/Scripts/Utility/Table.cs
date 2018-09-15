@@ -433,12 +433,23 @@ namespace DaggerfallWorkshop.Utility
                     name = name.Substring(1, name.Length - 1);
                 }
 
+                // Check if string literal
+                // Primary key can become a string literal provided * comes before $
+                // For example - schema: *$key, value
+                // A key literal must also be wrapped in quotes, e.g. "key123"
+                bool isStringLiteral = false;
+                if (name.StartsWith("$"))
+                {
+                    isStringLiteral = true;
+                    name = name.Substring(1, name.Length - 1);
+                }
+
                 // Create new column
                 Column column = new Column();
                 column.name = name;
                 column.values = new List<string>();
                 column.keyIndexDict = new Dictionary<string, int>();
-                column.isStringLiteral = name.StartsWith("$");
+                column.isStringLiteral = isStringLiteral;
                 columns[i] = column;
 
                 // Tag this schema as having a string literal
@@ -469,13 +480,15 @@ namespace DaggerfallWorkshop.Utility
                 {
                     // Scan for first literal wrapper character
                     bool openedLiteral = false;
-                    while (++position < text.Length)
+                    while (position < text.Length)
                     {
                         if (text.Substring(position, 1) == stringLiteralWrapper)
                         {
                             openedLiteral = true;
+                            position++;
                             break;
                         }
+                        position++;
                     }
 
                     // Accept reaching end of line without finding opening literal
@@ -483,29 +496,32 @@ namespace DaggerfallWorkshop.Utility
                     if (openedLiteral)
                     {
                         // Scan to closing literal wrapper character
-                        int literalStart = ++position;
+                        int literalStart = position;
                         bool closedLiteral = false;
-                        while (++position < text.Length)
+                        while (position < text.Length)
                         {
                             if (text.Substring(position, 1) == stringLiteralWrapper)
                             {
                                 result = text.Substring(literalStart, position - literalStart);
                                 closedLiteral = true;
+                                position++;
                                 break;
                             }
+                            position++;
                         }
 
                         if (closedLiteral)
                         {
                             // Scan to next separator or end of line text
                             int dataStart = position;
-                            while (++position < text.Length)
+                            while (position < text.Length)
                             {
                                 if (text.Substring(position, 1) == rowSeparator)
                                 {
                                     position++;
                                     break;
                                 }
+                                position++;
                             }
                         }
                         else
@@ -519,13 +535,14 @@ namespace DaggerfallWorkshop.Utility
                 {
                     // Scan to next separator or end of line text
                     int dataStart = position;
-                    while (++position < text.Length)
+                    while (position < text.Length)
                     {
                         if (text.Substring(position, 1) == rowSeparator)
                         {
                             position++;
                             break;
                         }
+                        position++;
                     }
 
                     // Read text
