@@ -785,7 +785,27 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             textureExteriorAutomap.Apply(false);
             RenderTexture.active = null;
 
-            panelRenderAutomap.BackgroundTexture = textureExteriorAutomap;            
+            panelRenderAutomap.BackgroundTexture = textureExteriorAutomap;
+
+
+            //DaggerfallUI.DefaultFont.DrawText("This is a test...", new Vector2(100,100), Vector2.one * 4, new Color(0.1f, 0.0f, 1.0f));
+            TextLabel testLabel = new TextLabel();
+            testLabel.Text = "This is a test...";
+            testLabel.Position = new Vector2(-40, 100);            
+            testLabel.TextScale = 16;
+            Rect restrictionRect = new Rect(); // = panelRenderAutomap.Rectangle;
+            restrictionRect.position = panelRenderAutomap.Position;            
+            restrictionRect.width = panelRenderAutomap.InteriorWidth;
+            restrictionRect.height = panelRenderAutomap.InteriorHeight;
+            //restrictionRect.yMin = 0;
+            //restrictionRect.xMax = 319;
+            //restrictionRect.yMax = 199;
+            //restrictionRect.position += panelRenderAutomap.Position;
+            testLabel.RectRestrictedRenderArea = restrictionRect; //new Rect(0, 0, panelRenderAutomap.InteriorWidth, panelRenderAutomap.InteriorHeight);
+            Vector2 size = testLabel.Size;
+            //testLabel.MaxCharacters = -1;
+            testLabel.Name = "testLabel";
+            panelRenderAutomap.Components.Add(testLabel);
         }
 
         #region Private Methods

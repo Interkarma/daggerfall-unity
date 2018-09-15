@@ -572,7 +572,7 @@ namespace DaggerfallWorkshop.Game
                 daggerfallUI.ExteriorAutomapWindow.updateAutomapView();
 
                 return;
-            }
+            }          
         }
 
         #endregion
