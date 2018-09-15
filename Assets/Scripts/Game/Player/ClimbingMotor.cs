@@ -24,6 +24,9 @@ namespace DaggerfallWorkshop.Game
         private bool showClimbingModeMessage = true;
         private Vector2 lastHorizontalPosition = Vector2.zero;
         private Vector3 ledgeDirection = Vector3.zero;
+        private Vector3 adjacentLedgeDirection = Vector3.zero;
+        private Ray myWallRay = new Ray();
+        private Ray adjacentWallRay = new Ray();
         private Vector3 moveDirection = Vector3.zero;
         // how long it takes before we do another skill check to see if we can continue climbing
         private const int continueClimbingSkillCheckFrequency = 15; 
@@ -156,7 +159,7 @@ namespace DaggerfallWorkshop.Game
             if (isClimbing)
             {
                 // evalate the ledge direction only once when starting to climb
-                if (ledgeDirection == Vector3.zero)
+                //if (ledgeDirection == Vector3.zero)
                     GetLedgeDirection();
 
                 ClimbMovement();
@@ -164,8 +167,8 @@ namespace DaggerfallWorkshop.Game
                 // both variables represent similar situations, but different context
                 acrobatMotor.Falling = isSlipping;
             }
-            else if (!isSlipping)
-                ledgeDirection = Vector3.zero;
+            //else if (!isSlipping)
+            //    ledgeDirection = Vector3.zero;
         }
 
         /// <summary>
@@ -197,9 +200,15 @@ namespace DaggerfallWorkshop.Game
             if (Physics.CapsuleCast(p1, p2, controller.radius, controller.transform.forward, out hit, 0.15f))
             {
                 ledgeDirection = -hit.normal;
+
+                // align origin of wall ray with y height of controller
+                // direction can be adjusted when we have a side movement direction
+                myWallRay = new Ray(new Vector3(hit.point.x, controller.transform.position.y, hit.point.z), hit.normal);
             }
-            else
-                ledgeDirection = Vector3.zero;
+            //else
+            //    ledgeDirection = Vector3.zero;
+
+            
         }
 
         //Find the line of intersection between two planes.
@@ -263,9 +272,30 @@ namespace DaggerfallWorkshop.Game
 
             return vClosestPoint;
         }
-        
-        // first ray = 90deg, rotate left 90deg
-        //distance = controller.radius + 0.10f;
+        //Calculate the intersection point of two lines. Returns true if lines intersect, otherwise false.
+        //Note that in 3d, two lines do not intersect most of the time. So if the two lines are not in the 
+        //same plane, use ClosestPointsOnTwoLines() instead.
+        public static bool LineLineIntersection(out Vector3 intersection, Vector3 linePoint1, Vector3 lineVec1, Vector3 linePoint2, Vector3 lineVec2)
+        {
+            Vector3 lineVec3 = linePoint2 - linePoint1;
+            Vector3 crossVec1and2 = Vector3.Cross(lineVec1, lineVec2);
+            Vector3 crossVec3and2 = Vector3.Cross(lineVec3, lineVec2);
+
+            float planarFactor = Vector3.Dot(lineVec3, crossVec1and2);
+
+            //is coplanar, and not parrallel
+            if (Mathf.Abs(planarFactor) < 0.01f && crossVec1and2.sqrMagnitude > 0.01f)
+            {
+                float s = Vector3.Dot(crossVec3and2, crossVec1and2) / crossVec1and2.sqrMagnitude;
+                intersection = linePoint1 + (lineVec1 * s);
+                return true;
+            }
+            else
+            {
+                intersection = Vector3.zero;
+                return false;
+            }
+        }
         private bool FindAdjacentWall(Vector3 origin, Vector3 direction, bool searchClockwise)
         {
             RaycastHit hit;
@@ -276,8 +306,19 @@ namespace DaggerfallWorkshop.Game
             if (Physics.Raycast(origin, direction, out hit, distance) 
                 && (hit.collider.gameObject.GetComponent<MeshCollider>() != null))
             {
-                // need to assign the found wall's normal to a member level variable
                 Debug.DrawRay(hit.point, hit.normal);
+
+                // need to assign the found wall's normal to a member level variable
+                adjacentLedgeDirection = -hit.normal;
+
+
+                if (searchClockwise)
+                    adjacentWallRay = new Ray(hit.point, Vector3.Cross(hit.normal, Vector3.up));
+                else
+                    adjacentWallRay = new Ray(hit.point, Vector3.Cross(Vector3.up, hit.normal));
+
+                Debug.DrawRay(adjacentWallRay.origin, adjacentWallRay.direction, Color.cyan);
+
 
                 FindWallLoopCount = 0;
                 return true;
@@ -293,13 +334,9 @@ namespace DaggerfallWorkshop.Game
                     Vector3 nextDirection = Vector3.zero; 
 
                     if (searchClockwise)
-                    {
                         nextDirection = Vector3.Cross(lastOrigin - origin, Vector3.up).normalized * distance;
-                    }
                     else
-                    {
                         nextDirection = Vector3.Cross(Vector3.up, lastOrigin - origin).normalized * distance;
-                    }
 
                     return FindAdjacentWall(origin, nextDirection, searchClockwise);
                 }
@@ -323,7 +360,7 @@ namespace DaggerfallWorkshop.Game
             float climbingBoost = player.IsEnhancedClimbing ? 2f : 1f;
             // if strafing to either side, this will be set so we can check for wrap-around corners.
             Vector3 checkDirection = Vector3.zero;
-            bool cornerFound = false;
+            bool adjacentWallFound = false;
             bool outsideCornerFound = false; // experimental
             bool insideCornerFound = false; // experimental
 
@@ -331,11 +368,15 @@ namespace DaggerfallWorkshop.Game
             {
                 float climbScalar = (playerMotor.Speed / 3) * climbingBoost;
                 moveDirection = ledgeDirection * playerMotor.Speed;
+                bool movedForward = InputManager.Instance.HasAction(InputManager.Actions.MoveForwards);
+                bool movedBackward = InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards);
+                bool movedLeft = InputManager.Instance.HasAction(InputManager.Actions.MoveLeft);
+                bool movedRight = InputManager.Instance.HasAction(InputManager.Actions.MoveRight);
 
                 if (DaggerfallUnity.Settings.AdvancedClimbing)
                 {
                     RaycastHit hit = new RaycastHit();
-                    if (InputManager.Instance.HasAction(InputManager.Actions.MoveForwards) 
+                    if (movedForward 
                         // don't stop if almost done climbing, prevents Climbing Teleportation bug
                         // only raycasts if player released forward key 
                         // make sure we aren't hitting a meshcollider
@@ -344,26 +385,38 @@ namespace DaggerfallWorkshop.Game
                     {
                         moveDirection.y = Vector3.up.y * climbScalar;
                     }
-                    else if (InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards))
+                    else if (movedBackward)
                         moveDirection.y = Vector3.down.y * climbScalar;
 
                     float checkScalar = controller.radius + 0.5f;
                     Vector3 awayAdjustment = ledgeDirection * 0.30f;
-                    if (InputManager.Instance.HasAction(InputManager.Actions.MoveRight))
+
+                    if (movedRight || movedLeft)
                     {
-                        checkDirection = Vector3.Cross(Vector3.up, ledgeDirection).normalized;
+                        if (movedRight)
+                            checkDirection = Vector3.Cross(Vector3.up, ledgeDirection).normalized;
+                        else if (movedLeft)
+                            checkDirection = Vector3.Cross(ledgeDirection, Vector3.up).normalized;
+
+                        // adjust direction so it can intersect with adjacentWallRay
+                        myWallRay.direction = checkDirection;
+                        Debug.DrawRay(myWallRay.origin, myWallRay.direction, Color.red);
+
                         // perform check for adjacent wall
-                        cornerFound = FindAdjacentWall(controller.transform.position, checkDirection * checkScalar, false);
+                        adjacentWallFound = FindAdjacentWall(controller.transform.position, checkDirection * checkScalar, movedLeft);
+
+                        Vector3 intersection;
+                        if (LineLineIntersection(out intersection, myWallRay.origin, myWallRay.direction, adjacentWallRay.origin, adjacentWallRay.direction))
+                        {
+                            Debug.DrawRay(intersection, (-ledgeDirection - adjacentLedgeDirection).normalized, Color.yellow);
+                            if (((myWallRay.origin - intersection).magnitude < 0.01f) )
+                                Debug.Log("At Intersection");
+                        }
+                        // need to check if we should abort the lateral movement to do a rotating movement
 
                         moveDirection += checkDirection * climbScalar;
                     }
-                    else if (InputManager.Instance.HasAction(InputManager.Actions.MoveLeft))
-                    {
-                        checkDirection = Vector3.Cross(ledgeDirection, Vector3.up).normalized;
-                        // perform check for adjacent wall before moving
-                        cornerFound = FindAdjacentWall(controller.transform.position, checkDirection * checkScalar, true);
-                        moveDirection += checkDirection * climbScalar;
-                    }
+
                 }
                 else
                     moveDirection.y = Vector3.up.y * climbScalar;
