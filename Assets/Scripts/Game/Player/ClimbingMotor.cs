@@ -158,17 +158,15 @@ namespace DaggerfallWorkshop.Game
             // execute schedule
             if (isClimbing)
             {
-                // evalate the ledge direction only once when starting to climb
-                //if (ledgeDirection == Vector3.zero)
-                    GetLedgeDirection();
+                // evalate the ledge direction
+                GetClimbedWallInfo();
 
                 ClimbMovement();
 
                 // both variables represent similar situations, but different context
                 acrobatMotor.Falling = isSlipping;
             }
-            //else if (!isSlipping)
-            //    ledgeDirection = Vector3.zero;
+
         }
 
         /// <summary>
@@ -189,7 +187,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Physically check for wall in front of player and Set horizontal direction of that wall 
         /// </summary>
-        private void GetLedgeDirection()
+        private void GetClimbedWallInfo()
         {
             RaycastHit hit;
 
@@ -205,37 +203,9 @@ namespace DaggerfallWorkshop.Game
                 // direction can be adjusted when we have a side movement direction
                 myWallRay = new Ray(new Vector3(hit.point.x, controller.transform.position.y, hit.point.z), hit.normal);
             }
-            //else
-            //    ledgeDirection = Vector3.zero;
-
-            
         }
 
-        //Calculate the intersection point of two lines. Returns true if lines intersect, otherwise false.
-        //Note that in 3d, two lines do not intersect most of the time. So if the two lines are not in the 
-        //same plane, use ClosestPointsOnTwoLines() instead.
-        public static bool LineLineIntersection(out Vector3 intersection, Vector3 linePoint1, Vector3 lineVec1, Vector3 linePoint2, Vector3 lineVec2)
-        {
-            Vector3 lineVec3 = linePoint2 - linePoint1;
-            Vector3 crossVec1and2 = Vector3.Cross(lineVec1, lineVec2);
-            Vector3 crossVec3and2 = Vector3.Cross(lineVec3, lineVec2);
-
-            float planarFactor = Vector3.Dot(lineVec3, crossVec1and2);
-
-            //is coplanar, and not parrallel
-            if (Mathf.Abs(planarFactor) < 0.01f && crossVec1and2.sqrMagnitude > 0.01f)
-            {
-                float s = Vector3.Dot(crossVec3and2, crossVec1and2) / crossVec1and2.sqrMagnitude;
-                intersection = linePoint1 + (lineVec1 * s);
-                return true;
-            }
-            else
-            {
-                intersection = Vector3.zero;
-                return false;
-            }
-        }
-        private bool FindAdjacentWall(Vector3 origin, Vector3 direction, bool searchClockwise)
+        private bool GetAdjacentWallInfo(Vector3 origin, Vector3 direction, bool searchClockwise)
         {
             RaycastHit hit;
             float distance = direction.magnitude;
@@ -277,16 +247,17 @@ namespace DaggerfallWorkshop.Game
                     else
                         nextDirection = Vector3.Cross(Vector3.up, lastOrigin - origin).normalized * distance;
 
-                    return FindAdjacentWall(origin, nextDirection, searchClockwise);
+                    return GetAdjacentWallInfo(origin, nextDirection, searchClockwise);
                 }
                 FindWallLoopCount = 0;
                 return false;
             }
 
         }
+       
 
         /// <summary>
-        /// Perform Climbing Movement and call Skill Checks
+        /// Perform Climbing Movement
         /// </summary>
         private void ClimbMovement()
         {
@@ -327,11 +298,9 @@ namespace DaggerfallWorkshop.Game
                     else if (movedBackward)
                         moveDirection.y = Vector3.down.y * climbScalar;
 
-                    float checkScalar = controller.radius + 0.5f;
-                    Vector3 awayAdjustment = ledgeDirection * 0.30f;
-
                     if (movedRight || movedLeft)
                     {
+                        float checkScalar = controller.radius + 0.5f;
                         if (movedRight)
                             checkDirection = Vector3.Cross(Vector3.up, ledgeDirection).normalized;
                         else if (movedLeft)
@@ -342,14 +311,19 @@ namespace DaggerfallWorkshop.Game
                         Debug.DrawRay(myWallRay.origin, myWallRay.direction, Color.red);
 
                         // perform check for adjacent wall
-                        adjacentWallFound = FindAdjacentWall(controller.transform.position, checkDirection * checkScalar, movedLeft);
+                        adjacentWallFound = GetAdjacentWallInfo(controller.transform.position, checkDirection * checkScalar, movedLeft);
 
                         Vector3 intersection;
-                        if (LineLineIntersection(out intersection, myWallRay.origin, myWallRay.direction, adjacentWallRay.origin, adjacentWallRay.direction))
+                        bool intersectedLines = LineLineIntersection(out intersection, myWallRay.origin, myWallRay.direction, adjacentWallRay.origin, adjacentWallRay.direction);
+                        if (intersectedLines)
                         {
                             Debug.DrawRay(intersection, (-ledgeDirection - adjacentLedgeDirection).normalized, Color.yellow);
-                            if (((myWallRay.origin - intersection).magnitude < 0.01f) )
-                                Debug.Log("At Intersection");
+                            bool atIntersection = ((myWallRay.origin - intersection).magnitude < 0.01f);
+                            if (atIntersection )
+                            {
+                                // perform outside wall wrap
+                            }
+                            // else if against inside corner, inside wall wrap    
                         }
                         // need to check if we should abort the lateral movement to do a rotating movement
 
@@ -371,6 +345,37 @@ namespace DaggerfallWorkshop.Game
 
             controller.Move(moveDirection * Time.deltaTime);
             playerMotor.CollisionFlags = controller.collisionFlags;
+        }
+
+        /// <summary>
+        ///  Calculate the intersection point of two lines. Returns true if lines intersect, otherwise false.
+        /// </summary>
+        /// <param name="intersection">The calculated intersection, if found</param>
+        /// <param name="linePoint1">Origin 1</param>
+        /// <param name="lineVec1">Direction 1</param>
+        /// <param name="linePoint2">Origin 2</param>
+        /// <param name="lineVec2">Direction 2</param>
+        /// <returns>Returns true if lines intersect, otherwise false</returns>
+        public static bool LineLineIntersection(out Vector3 intersection, Vector3 linePoint1, Vector3 lineVec1, Vector3 linePoint2, Vector3 lineVec2)
+        {
+            Vector3 lineVec3 = linePoint2 - linePoint1;
+            Vector3 crossVec1and2 = Vector3.Cross(lineVec1, lineVec2);
+            Vector3 crossVec3and2 = Vector3.Cross(lineVec3, lineVec2);
+
+            float planarFactor = Vector3.Dot(lineVec3, crossVec1and2);
+
+            //is coplanar, and not parrallel
+            if (Mathf.Abs(planarFactor) < 0.01f && crossVec1and2.sqrMagnitude > 0.01f)
+            {
+                float s = Vector3.Dot(crossVec3and2, crossVec1and2) / crossVec1and2.sqrMagnitude;
+                intersection = linePoint1 + (lineVec1 * s);
+                return true;
+            }
+            else
+            {
+                intersection = Vector3.zero;
+                return false;
+            }
         }
 
         /// <summary>
