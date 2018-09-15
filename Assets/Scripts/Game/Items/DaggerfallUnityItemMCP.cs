@@ -155,33 +155,33 @@ namespace DaggerfallWorkshop.Game.Items
 
             public override string PaintingSubject()
             {   // %sub
-                DFRandom.rand(); // Classic uses ever other value.
+                DFRandom.rand(); // Classic uses every other value.
                 TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(paintingSub, true);
                 return (tokens.Length > 0) ? tokens[0].text : "%sub[idxError]";
             }
             public override string PaintingAdjective()
             {   // %adj
-                DFRandom.rand(); // Classic uses ever other value.
+                DFRandom.rand(); // Classic uses every other value.
                 TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(paintingAdj, true);
                 MacroHelper.ExpandMacros(ref tokens);
                 return (tokens.Length > 0) ? tokens[0].text : "%adj[idxError]";
             }
             public override string PaintingPrefix1()
             {   // %pp1
-                DFRandom.rand(); // Classic uses ever other value.
+                DFRandom.rand(); // Classic uses every other value.
                 TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(paintingPp1, true);
                 return (tokens.Length > 0) ? tokens[0].text : "%pp1[idxError]";
             }
             public override string PaintingPrefix2()
             {   // %pp2
-                DFRandom.rand(); // Classic uses ever other value.
+                DFRandom.rand(); // Classic uses every other value.
                 TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(paintingPp2, true);
                 MacroHelper.ExpandMacros(ref tokens);
                 return (tokens.Length > 0) ? tokens[0].text : "%pp2[idxError]";
             }
             public override string ArtistName()
             {   // %an
-                NameHelper.BankTypes type = (NameHelper.BankTypes) MacroHelper.GetRandomNameBank();
+                NameHelper.BankTypes type = MacroHelper.GetRandomNameBank();
                 Genders gender = (Genders)DFRandom.random_range_inclusive(0, 1);
                 return DaggerfallUnity.Instance.NameHelper.FullName(type, gender);
             }

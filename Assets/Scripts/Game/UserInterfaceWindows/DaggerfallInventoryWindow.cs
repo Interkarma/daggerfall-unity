@@ -986,6 +986,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Display info in local target icon panel, replacing justification tokens
             TextFile.Token[] tokens = ItemHelper.GetItemInfo(item, DaggerfallUnity.TextProvider);
             MacroHelper.ExpandMacros(ref tokens, item);
+
+            // Only keep the title part for paintings
+            if (item.ItemGroup == ItemGroups.Paintings)
+                tokens = new TextFile.Token[] { new TextFile.Token() { formatting = TextFile.Formatting.Text, text = tokens[tokens.Length - 1].text.Trim() } };
+
             for (int tokenIdx = 0; tokenIdx < tokens.Length; tokenIdx++)
             {
                 if (tokens[tokenIdx].formatting == TextFile.Formatting.JustifyCenter)
