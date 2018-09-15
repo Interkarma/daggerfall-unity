@@ -29,6 +29,9 @@ namespace DaggerfallWorkshop.Game.Items
             return dataSource;
         }
 
+        public string GetPaintingFilename() { return dataSource.paintingFilename; }
+        public int GetPaintingFileIdx() { return (int) dataSource.paintingFileIdx; }
+
         public TextFile.Token[] InitPaintingInfo(int paintingTextId = 250)
         {
             GetMacroDataSource();
