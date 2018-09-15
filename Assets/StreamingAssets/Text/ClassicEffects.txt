@@ -90,8 +90,8 @@ spellEffectFailed,          Spell effect failed.
 spellAbsorbed,              Spell was absorbed.
 spellReflected,             Spell was reflected.
 spellResisted,              Spell was resisted.
-willLockDoor,               Ready to lock door.
-willUnlockDoor,             Ready to unlock door.
+readyToLock,                Ready to lock.
+readyToOpen,                Ready to open.
 doorLocked,                 Door is now locked.
 doorAlreadyLocked,          Door already locked.
-doorUnlockFailed,           Lock is too powerful.
+openFailed,                 Lock is too powerful.

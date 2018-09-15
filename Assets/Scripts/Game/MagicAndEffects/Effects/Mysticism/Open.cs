@@ -15,9 +15,9 @@ using DaggerfallWorkshop.Game.Entity;
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
     /// <summary>
-    /// Lock
+    /// Open
     /// </summary>
-    public class Lock : IncumbentEffect
+    public class Open : IncumbentEffect
     {
         const string textDatabase = "ClassicEffects";
         int forcedRoundsRemaining = 1;
@@ -25,18 +25,18 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         public override void SetProperties()
         {
-            properties.Key = "Lock";
-            properties.ClassicKey = MakeClassicKey(16, 255);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "lock");
-            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1564);
-            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1264);
+            properties.Key = "Open";
+            properties.ClassicKey = MakeClassicKey(17, 255);
+            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "open");
+            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1565);
+            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1265);
             properties.ShowSpellIcon = false;
             properties.SupportChance = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_Self;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
             properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
             properties.MagicSkill = DFCareer.MagicSkills.Mysticism;
-            properties.ChanceCosts = MakeEffectCosts(28, 120, 120);
+            properties.ChanceCosts = MakeEffectCosts(20, 100);
         }
 
         public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
@@ -63,7 +63,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         protected override bool IsLikeKind(IncumbentEffect other)
         {
-            return other is Lock;
+            return other is Open;
         }
 
         protected override void AddState(IncumbentEffect incumbent)
@@ -79,22 +79,22 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 return;
             }
 
-            // Output "Ready to lock." if the host manager is player
+            // Output "Ready to open." if the host manager is player
             if (awakeAlert && manager.EntityBehaviour == GameManager.Instance.PlayerEntityBehaviour)
             {
-                DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "readyToLock"), 1.5f);
+                DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "readyToOpen"), 1.5f);
                 awakeAlert = false;
             }
         }
 
         /// <summary>
-        /// Called by entity holding Lock incumbent when they activate a door.
+        /// Called by entity holding Open incumbent when they activate a door.
         /// For player this is called by PlayerActivate when opening/closing a door.
         /// Enemies cannot use Lock/Open effects at this time.
-        /// This effect will automatically close door if open when spell triggered.
+        /// This effect will automatically open door if closed when spell triggered.
         /// </summary>
         /// <param name="actionDoor">DaggerfallActionDoor activated by entity.</param>
-        public void TriggerLockEffect(DaggerfallActionDoor actionDoor)
+        public void TriggerOpenEffect(DaggerfallActionDoor actionDoor)
         {
             if (forcedRoundsRemaining == 0)
                 return;
@@ -103,22 +103,20 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             if (actionDoor.IsLocked)
             {
-                // Door already locked
-                if (activatedByPlayer)
-                    DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "doorAlreadyLocked"), 1.5f);
-            }
-            else
-            {
-                // Locks door to level of entity - from spell description "Locks chest or door to lock-level of caster."
-                actionDoor.CurrentLockValue = manager.EntityBehaviour.Entity.Level;
-
-                if (activatedByPlayer)
-                    DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "doorLocked"), 1.5f);
+                // Unlocks door to level of entity - from spell description "Unlocks chest or door to lock-level of caster."
+                if (actionDoor.CurrentLockValue <= manager.EntityBehaviour.Entity.Level)
+                {
+                    actionDoor.CurrentLockValue = 0;
+                }
+                else if (activatedByPlayer)
+                {
+                    DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "openFailed"), 1.5f);
+                }
             }
 
-            if (actionDoor.IsOpen)
+            if (!actionDoor.IsLocked && actionDoor.IsClosed)
             {
-                // Automatically close door if open
+                // Automatically open door if closed and unlocked
                 actionDoor.ToggleDoor(activatedByPlayer);
             }
 

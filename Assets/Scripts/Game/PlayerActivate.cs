@@ -339,11 +339,11 @@ namespace DaggerfallWorkshop.Game
                             return;
                         }
 
-                        // Handle lock/open spell effects
+                        // Handle Lock/Open spell effects (if active)
                         if (HandleLockEffect(actionDoor))
                             return;
-                        //if (HandleOpenEffect(actionDoor))
-                        //    return;
+                        if (HandleOpenEffect(actionDoor))
+                            return;
 
                         if (currentMode == PlayerActivateModes.Steal && actionDoor.IsLocked && !actionDoor.IsOpen)
                         {
@@ -498,7 +498,7 @@ namespace DaggerfallWorkshop.Game
 
         bool HandleLockEffect(DaggerfallActionDoor actionDoor)
         {
-            // Check if player has lock effect running
+            // Check if player has Lock effect running
             Lock lockEffect = (Lock)GameManager.Instance.PlayerEffectManager.FindIncumbentEffect<Lock>();
             if (lockEffect == null)
                 return false;
@@ -507,15 +507,16 @@ namespace DaggerfallWorkshop.Game
             return true;
         }
 
-        //bool HandleOpenEffect(DaggerfallActionDoor actionDoor)
-        //{
-        //    // Check if player has open effect running
-        //    Open openEffect = (Open)GameManager.Instance.PlayerEffectManager.FindIncumbentEffect<Open>();
-        //    if (openEffect == null)
-        //        return false;
+        bool HandleOpenEffect(DaggerfallActionDoor actionDoor)
+        {
+            // Check if player has Open effect running
+            Open openEffect = (Open)GameManager.Instance.PlayerEffectManager.FindIncumbentEffect<Open>();
+            if (openEffect == null)
+                return false;
 
-        //    return false;
-        //}
+            openEffect.TriggerOpenEffect(actionDoor);
+            return true;
+        }
 
         /// <summary>
         /// Set a click delay before new clicks are accepted, usually when exiting UI.
