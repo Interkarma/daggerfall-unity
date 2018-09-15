@@ -143,6 +143,9 @@ namespace DaggerfallWorkshop
         public bool NearDeathWarning { get; set; }
         public bool AlternateRandomEnemySelection { get; set; }
         public bool AdvancedClimbing { get; set; }
+        public float DungeonAmbientLightScale { get; set; }
+        public float NightAmbientLightScale { get; set; }
+        public float PlayerTorchLightScale { get; set; }
 
         #endregion
 
@@ -231,6 +234,9 @@ namespace DaggerfallWorkshop
             NearDeathWarning = GetBool(sectionEnhancements, "NearDeathWarning");
             AlternateRandomEnemySelection = GetBool(sectionEnhancements, "AlternateRandomEnemySelection");
             AdvancedClimbing = GetBool(sectionEnhancements, "AdvancedClimbing");
+            DungeonAmbientLightScale = GetFloat(sectionEnhancements, "DungeonAmbientLightScale", 0.0f, 1.0f);
+            NightAmbientLightScale = GetFloat(sectionEnhancements, "NightAmbientLightScale", 0.0f, 1.0f);
+            PlayerTorchLightScale = GetFloat(sectionEnhancements, "PlayerTorchLightScale", 0.0f, 1.0f);
         }
 
         /// <summary>
@@ -312,6 +318,9 @@ namespace DaggerfallWorkshop
             SetBool(sectionEnhancements, "NearDeathWarning", NearDeathWarning);
             SetBool(sectionEnhancements, "AlternateRandomEnemySelection", AlternateRandomEnemySelection);
             SetBool(sectionEnhancements, "AdvancedClimbing", AdvancedClimbing);
+            SetFloat(sectionEnhancements, "DungeonAmbientLightScale", DungeonAmbientLightScale);
+            SetFloat(sectionEnhancements, "NightAmbientLightScale", NightAmbientLightScale);
+            SetFloat(sectionEnhancements, "PlayerTorchLightScale", PlayerTorchLightScale);
 
             // Write settings to persistent file
             WriteSettingsFile();

@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -75,7 +75,7 @@ namespace DaggerfallWorkshop.Game
                     else if (playerEnterExit.IsPlayerInsideSpecialArea)
                         targetAmbientLight = SpecialAreaLight;
                     else
-                        targetAmbientLight = DungeonAmbientLight;
+                        targetAmbientLight = DungeonAmbientLight * DaggerfallUnity.Settings.DungeonAmbientLightScale;
                 }
 
                 yield return new WaitForSeconds(pollSpeed);
@@ -104,7 +104,11 @@ namespace DaggerfallWorkshop.Game
         {
             float scale = sunlightManager.DaylightScale * sunlightManager.ScaleFactor;
 
-            return Color.Lerp(ExteriorNightAmbientLight, ExteriorNoonAmbientLight, scale);
+            Color startColor = ExteriorNightAmbientLight;
+            if (DaggerfallUnity.Instance.WorldTime.Now.IsNight)
+                startColor *= DaggerfallUnity.Settings.NightAmbientLightScale;
+
+            return Color.Lerp(startColor, ExteriorNoonAmbientLight, scale);
         }
     }
 }
