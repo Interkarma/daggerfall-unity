@@ -100,6 +100,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button toolTipBackgroundColor;
         Checkbox crosshair;
         Checkbox vitalsIndicators;
+        Checkbox freeScaling;
         HorizontalSlider interactionModeIcon;
         Checkbox showQuestJournalClocksAsCountdown;
         Checkbox inventoryInfoPanel;
@@ -116,6 +117,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox nearDeathWarning;
         Checkbox alternateRandomEnemySelection;
         Checkbox advancedClimbing;
+        HorizontalSlider dungeonAmbientLightScale;
+        HorizontalSlider nightAmbientLightScale;
+        HorizontalSlider playerTorchLightScale;
 
         // Video
         HorizontalSlider resolution;
@@ -239,6 +243,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // GUI
             AddSectionTitle(rightPanel, "gui");
+            freeScaling = AddCheckbox(rightPanel, "freeScaling", DaggerfallUnity.Settings.FreeScaling);
             showQuestJournalClocksAsCountdown = AddCheckbox(rightPanel, "showQuestJournalClocksAsCountdown", DaggerfallUnity.Settings.ShowQuestJournalClocksAsCountdown);
             inventoryInfoPanel = AddCheckbox(rightPanel, "inventoryInfoPanel", DaggerfallUnity.Settings.EnableInventoryInfoPanel);
             enhancedItemLists = AddCheckbox(rightPanel, "enhancedItemLists", DaggerfallUnity.Settings.EnableEnhancedItemLists);
@@ -255,14 +260,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             assetImport = AddCheckbox(leftPanel, "assetImport", DaggerfallUnity.Settings.MeshAndTextureReplacement);
             compressModdedTextures = AddCheckbox(leftPanel, "compressModdedTextures", DaggerfallUnity.Settings.CompressModdedTextures);
 
+            // Game
+            AddSectionTitle(leftPanel, "game");
+            gameConsole = AddCheckbox(leftPanel, "gameConsole", DaggerfallUnity.Settings.LypyL_GameConsole);
+            nearDeathWarning = AddCheckbox(leftPanel, "nearDeathWarning", DaggerfallUnity.Settings.NearDeathWarning);
+            alternateRandomEnemySelection = AddCheckbox(leftPanel, "alternateRandomEnemySelection", DaggerfallUnity.Settings.AlternateRandomEnemySelection);
+            advancedClimbing = AddCheckbox(leftPanel, "advancedClimbing", DaggerfallUnity.Settings.AdvancedClimbing);
+
             y = 0;
 
-            // Game
-            AddSectionTitle(rightPanel, "game");
-            gameConsole = AddCheckbox(rightPanel, "gameConsole", DaggerfallUnity.Settings.LypyL_GameConsole);
-            nearDeathWarning = AddCheckbox(rightPanel, "nearDeathWarning", DaggerfallUnity.Settings.NearDeathWarning);
-            alternateRandomEnemySelection = AddCheckbox(rightPanel, "alternateRandomEnemySelection", DaggerfallUnity.Settings.AlternateRandomEnemySelection);
-            advancedClimbing = AddCheckbox(rightPanel, "advancedClimbing", DaggerfallUnity.Settings.AdvancedClimbing);
+            // Light
+            AddSectionTitle(rightPanel, "light");
+            dungeonAmbientLightScale = AddSlider(rightPanel, "dungeonAmbientLightScale", 0, 1, DaggerfallUnity.Settings.DungeonAmbientLightScale);
+            nightAmbientLightScale = AddSlider(rightPanel, "nightAmbientLightScale", 0, 1, DaggerfallUnity.Settings.NightAmbientLightScale);
+            playerTorchLightScale = AddSlider(rightPanel, "playerTorchLightScale", 0, 1, DaggerfallUnity.Settings.PlayerTorchLightScale);
         }
 
         private void Video(Panel leftPanel, Panel rightPanel)
@@ -350,6 +361,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.CameraRecoilStrength = cameraRecoilStrength.ScrollIndex;
             DaggerfallUnity.Settings.AdvancedClimbing = advancedClimbing.IsChecked;
 
+            DaggerfallUnity.Settings.DungeonAmbientLightScale = dungeonAmbientLightScale.GetValue();
+            DaggerfallUnity.Settings.NightAmbientLightScale = nightAmbientLightScale.GetValue();
+            DaggerfallUnity.Settings.PlayerTorchLightScale = playerTorchLightScale.GetValue();
 
             /* Video */
 
