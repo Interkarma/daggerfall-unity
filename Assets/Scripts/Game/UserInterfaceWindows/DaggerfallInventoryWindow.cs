@@ -1399,7 +1399,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // Moving local and remote Use item clicks to new method
         // This ensures the items are handled the same except when needed
         // This will need more work as more usable items are available
-        void UseItem(DaggerfallUnityItem item)
+        void UseItem(DaggerfallUnityItem item, ItemCollection collection)
         {
             const int noSpellsTextId = 12;
 
@@ -1453,6 +1453,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 noSpells.SetTextTokens(textTokens);
                 noSpells.ClickAnywhereToClose = true;
                 noSpells.Show();
+            }
+            else if (item.ItemGroup == ItemGroups.Drugs)
+            {
+                // Drug poison IDs are 8 through 11. Template indexes are 78 through 81, so subtract from that.
+                Formulas.FormulaHelper.InflictPoison(playerEntity, item.TemplateIndex - 70, true);
+                collection.RemoveItem(item);
             }
             else
             {
@@ -1588,7 +1594,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (item.UseItem(localItems))
                     Refresh(false);
                 else
-                    UseItem(item);
+                {
+                    UseItem(item, localItems);
+                    Refresh(false);
+                }
             }
             else if (selectedActionMode == ActionModes.Remove)
             {
@@ -1635,7 +1644,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (item.UseItem(localItems))
                     Refresh(false);
                 else
-                    UseItem(item);
+                {
+                    UseItem(item, remoteItems);
+                    Refresh(false);
+                }
             }
             else if (selectedActionMode == ActionModes.Remove && CanCarry(item))
             {

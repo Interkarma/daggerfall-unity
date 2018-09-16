@@ -44,6 +44,7 @@ namespace DaggerfallWorkshop.Game.Items
         public int message;
         public DaggerfallEnchantment[] legacyMagic = null;
         public int stackCount = 1;
+        public int poisonType = -1;
 
         // Private item fields
         int playerTextureArchive;
