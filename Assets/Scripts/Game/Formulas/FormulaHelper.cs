@@ -229,6 +229,18 @@ namespace DaggerfallWorkshop.Game.Formulas
             return Mathf.Clamp(chance, 5, 95);
         }
 
+        // Calculate chance of being caught shoplifting items
+        public static int CalculateShopliftingChance(PlayerEntity player, DaggerfallEntity na, int shopQuality, int weightAndNumItems)
+        {
+            Formula_2de_2i del;
+            if (formula_2de_2i.TryGetValue("CalculateShopliftingChance", out del))
+                return del(player, null, shopQuality, weightAndNumItems);
+
+            int chance = 100 - player.Skills.GetLiveSkillValue(DFCareer.Skills.Pickpocket);
+            chance += shopQuality + weightAndNumItems;
+            return Mathf.Clamp(chance, 5, 95);
+        }
+
         // Calculate how many uses a skill needs before its value will rise.
         public static int CalculateSkillUsesForAdvancement(int skillValue, int skillAdvancementMultiplier, float careerAdvancementMultiplier, int level)
         {
