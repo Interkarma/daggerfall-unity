@@ -391,20 +391,6 @@ namespace DaggerfallWorkshop.Utility
 
         #endregion
 
-        #region Public Helpers
-
-        /// <summary>
-        /// Ensures that a string can be used as a value for a table entry.
-        /// </summary>
-        /// <param name="text">A candidate for an entry value.</param>
-        /// <returns>A safe string.</returns>
-        public static string SanitizeEntryValue(string text)
-        {
-            return text != null ? text.Replace(",", string.Empty) : string.Empty;
-        }
-
-        #endregion
-
         #region Private Methods
 
         void LoadSchema(string text)
