@@ -17,6 +17,7 @@ namespace DaggerfallWorkshop.Game
         private CharacterController controller;
         private PlayerEnterExit playerEnterExit;
         private AcrobatMotor acrobatMotor;
+        private bool overrideSkillCheck = false;
         private bool isClimbing = false;
         private bool isSlipping = false;
         private bool atOutsideCorner = false;
@@ -189,6 +190,8 @@ namespace DaggerfallWorkshop.Game
                 // both variables represent similar situations, but different context
                 acrobatMotor.Falling = isSlipping;
             }
+            else
+                myLedgeDirection = Vector3.zero;
 
         }
 
@@ -312,15 +315,12 @@ namespace DaggerfallWorkshop.Game
 
                 if (DaggerfallUnity.Settings.AdvancedClimbing)
                 {
-                    RaycastHit hit = new RaycastHit();
+                    RaycastHit hit;
+                    bool hitSomethingInFront = (Physics.Raycast(controller.transform.position, myLedgeDirection, out hit, 0.3f));
                     #region Vertical Climbing
-                    if (!atOutsideCorner &&
-                        (movedForward 
-                        // don't stop if almost done climbing, prevents Climbing Teleportation bug
-                        || (!Physics.Raycast(controller.transform.position, myLedgeDirection, out hit, 0.3f) 
-                        // make sure we aren't hitting a meshcollider
-                        || !hit.collider.gameObject.GetComponent<MeshCollider>())))
+                    if (!atOutsideCorner && (movedForward || !hitSomethingInFront))
                     {
+                        overrideSkillCheck = !hitSomethingInFront;
                         moveDirection.y = Vector3.up.y * climbScalar;
                     }
                     else if (movedBackward)
@@ -353,7 +353,7 @@ namespace DaggerfallWorkshop.Game
                             atOutsideCorner = ((myStrafeRay.origin - intersection).magnitude < 0.01f);
                             if (atOutsideCorner)
                             {
-                                // perform outside wall wrap
+                                // perform outside corner wrap
                                 if (movedRight)
                                     wrapDirection = Vector3.Cross(intersectionOrthogonal, Vector3.up).normalized;
                                 else if (movedLeft)
@@ -451,6 +451,10 @@ namespace DaggerfallWorkshop.Game
         private bool SkillCheck(int basePercentSuccess)
         {
             player.TallySkill(DFCareer.Skills.Climbing, 1);
+
+            if (overrideSkillCheck)
+                return true;
+
             int skill = player.Skills.GetLiveSkillValue(DFCareer.Skills.Climbing);
             if (player.Race == Entity.Races.Khajiit)
                 skill += 30;
