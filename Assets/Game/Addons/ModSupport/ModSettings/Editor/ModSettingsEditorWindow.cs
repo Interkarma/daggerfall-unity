@@ -16,7 +16,6 @@ using System.Text;
 using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
-using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 {
@@ -521,24 +520,26 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             stringBuilder.AppendFormat("- Text database for mod {0}.\n", modName);
             stringBuilder.AppendLine("- how to use: translate and place this file named mod_filename.txt inside StreamingAssets/Text. Note that an english table is NOT mandatory.");
             stringBuilder.AppendLine();
-            stringBuilder.AppendLine("schema: *key, text");
+            stringBuilder.AppendLine("schema: *key, $text");
 
             stringBuilder.AppendLine();
             stringBuilder.AppendLine("- Mod details");
-            stringBuilder.AppendLine("- Mod.Description, description");
+            stringBuilder.AppendLine("- Mod.Description, \"description\"");
 
             stringBuilder.AppendLine();
             stringBuilder.AppendLine("- Settings");
 
             foreach (Section section in data.Sections)
             {
-                stringBuilder.AppendFormat("Settings.{0}.Name, {1}\n", section.Name, section.Name);
-                stringBuilder.AppendFormat("Settings.{0}.Description, {1}\n", section.Name, Table.SanitizeEntryValue(section.Description));
+                stringBuilder.AppendFormat("Settings.{0}.Name, \"{1}\"\n", section.Name, section.Name);
+                if (!string.IsNullOrEmpty(section.Description))
+                    stringBuilder.AppendFormat("Settings.{0}.Description, \"{1}\"\n", section.Name, section.Description);
 
                 foreach (Key key in section.Keys)
                 {
-                    stringBuilder.AppendFormat("Settings.{0}.{1}.Name, {2}\n", section.Name, key.Name, key.Name);
-                    stringBuilder.AppendFormat("Settings.{0}.{1}.Description, {2}\n", section.Name, key.Name, Table.SanitizeEntryValue(key.Description));
+                    stringBuilder.AppendFormat("Settings.{0}.{1}.Name, \"{2}\"\n", section.Name, key.Name, key.Name);
+                    if (!string.IsNullOrEmpty(key.Description))
+                        stringBuilder.AppendFormat("Settings.{0}.{1}.Description, \"{2}\"\n", section.Name, key.Name, key.Description);
                 }
             }
 
@@ -547,8 +548,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
             foreach (Preset preset in data.Presets)
             {
-                stringBuilder.AppendFormat("Presets.{0}.Title, {1}\n", preset.Title, preset.Title);
-                stringBuilder.AppendFormat("Presets.{0}.Description, {1}\n", preset.Title, Table.SanitizeEntryValue(preset.Description));
+                stringBuilder.AppendFormat("Presets.{0}.Title, \"{1}\"\n", preset.Title, preset.Title);
+                stringBuilder.AppendFormat("Presets.{0}.Description, \"{1}\"\n", preset.Title, preset.Description);
             }
 
             stringBuilder.AppendLine();
