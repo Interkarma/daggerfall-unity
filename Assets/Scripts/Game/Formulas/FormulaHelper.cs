@@ -533,6 +533,13 @@ namespace DaggerfallWorkshop.Game.Formulas
 
                     damage = CalculateBackstabDamage(damage, backstabChance);
                 }
+
+                // Handle poisoned weapons
+                if (damage > 0 && weapon.poisonType != -1)
+                {
+                    InflictPoison(target, weapon.poisonType, false);
+                    weapon.poisonType = -1;
+                }
             }
 
             damage = Mathf.Max(0, damage);
@@ -865,8 +872,37 @@ namespace DaggerfallWorkshop.Game.Formulas
             return damage;
         }
 
+        public static void InflictPoison(DaggerfallEntity target, int poisonType, bool bypassResistance)
+        {
+                                            // Poison types. 0-7 are weapon poisons. 8-11 are drugs
+                                            // 0     1    2     3     4     5    6    7     8    9   10   11
+            ushort[] MinMinutesToPoison = {    4,   10,   0,    5,    0,    0,   2,   0,    2,   1,   2,   0};
+            ushort[] MaxMinutesToPoison = {    4,   10,   0,   10,    0,    0,   2,   0,   12,   4,  12,   0};
+            ushort[] MinRoundsOfPoison  = {    3,   20,   1,    5,    2,    1,   5,   1,    2,   2,   1,   5};
+            ushort[] MaxRoundsOfPoison  = {   10, 1000,   4,   30,   10,    2,  20,   3,    6,   2,   4,  20};
+
+            // Note: In classic, AI characters' immunity to poison is ignored, although the level 1 check below still gives rats immunity
+            DFCareer.Tolerance toleranceFlags = target.Career.Poison;
+            if (toleranceFlags == DFCareer.Tolerance.Immune)
+                return;
+
+            if (bypassResistance || SavingThrow(2, DFCareer.EffectFlags.Poison, target, 0) != 0)
+            {
+                if (target.Level != 1)
+                {
+                    int roundsOfPoison = UnityEngine.Random.Range(MinRoundsOfPoison[poisonType], MaxRoundsOfPoison[poisonType] + 1);
+                    int minutesUntilStartingPoison = UnityEngine.Random.Range(MinMinutesToPoison[poisonType], MaxMinutesToPoison[poisonType] + 1);
+                    Debug.Log(target.Name + " afflicted with poison " + poisonType + ", starting in " + minutesUntilStartingPoison
+                        + " minutes, lasting for " + roundsOfPoison + " minutes.");
+                }
+            }
+            else
+                Debug.Log("Poison resisted.");
+        }
+
         static int SavingThrow(int elementType, DFCareer.EffectFlags effectFlags, DaggerfallEntity target, int modifier)
         {
+            // Handle resistances granted by magical effects
             // elementTypes are 0 = fire, 1 = frost, 2 = disease/poison, 3 = shock, 4 = magick
 
             // int[] SavingThrowResistFlags = { 0x02, 0x10000000, 0x20000000, 0x40000000, 0x80000000 }; These map to classic magicEffects 1 through 4 concatenated together as 4 bytes.
@@ -877,6 +913,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             //          return 0;
             //}
 
+            // Magic effect resistances did not stop the effect. Try with career flags and biography modifiers
             int savingThrow = 50;
             DFCareer.Tolerance toleranceFlags = 0;
             int biographyMod = 0;
