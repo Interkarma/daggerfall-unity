@@ -123,6 +123,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string youPinchedGoldPiece = "You pinched 1 gold piece."; // Not in classic.
         public const string youPinchedGoldPieces = "You pinched %d gold pieces.";
         public const string youAreNotSuccessful = "You are not successful...";
+        public const string youAreSuccessful = "You are successful.";
 
         public const string daysUntilFreedom = "%d days until freedom.";
 
