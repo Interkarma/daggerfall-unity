@@ -202,15 +202,19 @@ namespace DaggerfallWorkshop.Game
             Vector3 p1 = controller.transform.position + controller.center + Vector3.up * -controller.height * 0.40f;
             Vector3 p2 = p1 + Vector3.up * controller.height;
 
+            // decide what direction to look towards to get the ledge direction vector
             Vector3 wallDirection;
-            if (!atOutsideCorner)
+            if (ledgeDirection == Vector3.zero)
                 wallDirection = controller.transform.forward;
+            else if (!atOutsideCorner)
+                wallDirection = ledgeDirection;
             else
                 wallDirection = -cornerNormalRay.direction;
             // Cast character controller shape forward to see if it is about to hit anything.
             Debug.DrawRay(controller.transform.position, wallDirection, Color.black);
             if (Physics.CapsuleCast(p1, p2, controller.radius, wallDirection, out hit, 0.20f))
             {
+                // TODO: is ledge direction getting set correctly after wrapping?
                 ledgeDirection = -hit.normal;
 
                 // align origin of wall ray with y height of controller
@@ -300,6 +304,8 @@ namespace DaggerfallWorkshop.Game
 
                 if (DaggerfallUnity.Settings.AdvancedClimbing)
                 {
+
+                    // TODO: something is preventing player from climbing up after wrapping... 
                     RaycastHit hit = new RaycastHit();
                     if (!atOutsideCorner &&
                         (movedForward 
@@ -357,7 +363,8 @@ namespace DaggerfallWorkshop.Game
                             // strafe resume on new wall check here?
                             ledgeDirection = adjacentLedgeDirection;
                             wrapDirection = -adjacentWallRay.direction;
-                            //myStrafeRay.origin.y = 
+                            checkDirection = wrapDirection;
+                            atOutsideCorner = false;
                         }
 
                         // the movement direction needs to update differently at outside corners
