@@ -173,11 +173,11 @@ namespace DaggerfallWorkshop.Utility
             { "%qdat", null },// Quest date of log entry [2]
             { "%qot", null }, // The log comment
             { "%qua", Condition }, // Condition
-            { "%r1", null },  // Commoners rep
-            { "%r2", null },  // Merchants rep
-            { "%r3", null },  // Scholers rep
-            { "%r4", null },  // Nobilitys rep
-            { "%r5", null },  // Underworld rep
+            { "%r1", CommonersRep },  // Commoners rep
+            { "%r2", MerchantsRep },  // Merchants rep
+            { "%r3", ScholarsRep },  // Scholers rep
+            { "%r4", NobilityRep },  // Nobilitys rep
+            { "%r5", UnderworldRep },  // Underworld rep
             { "%ra", PlayerRace },  // Player's race
 			{ "%reg", RegionInContext }, // Region in context
             { "%rn", null },  // Regent's Name
@@ -1233,6 +1233,36 @@ namespace DaggerfallWorkshop.Utility
         {
             // %clm
             return mcp.GetMacroDataSource().MagnitudePerLevel();
+        }
+
+        public static string CommonersRep(IMacroContextProvider mcp)
+        {
+            // %r1
+            return mcp.GetMacroDataSource().CommonersRep();
+        }
+
+        public static string MerchantsRep(IMacroContextProvider mcp)
+        {
+            // %r2
+            return mcp.GetMacroDataSource().MerchantsRep();
+        }
+
+        public static string ScholarsRep(IMacroContextProvider mcp)
+        {
+            // %r3
+            return mcp.GetMacroDataSource().ScholarsRep();
+        }
+
+        public static string NobilityRep(IMacroContextProvider mcp)
+        {
+            // %r4
+            return mcp.GetMacroDataSource().NobilityRep();
+        }
+
+        public static string UnderworldRep(IMacroContextProvider mcp)
+        {
+            // %r5
+            return mcp.GetMacroDataSource().UnderworldRep();
         }
 
         #endregion

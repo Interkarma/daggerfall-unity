@@ -39,6 +39,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int buttonsTop = 71;
         const int buttonWidth = 149;
         const int buttonHeight = 24;
+        const int reputationToken = 35;
 
         int classIndex = 0;
         int questionIndex = 0;
@@ -47,7 +48,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button[] answerButtons = new Button[buttonCount];
         TextLabel[] answerLabels = new TextLabel[buttonCount];
         BiogFile biogFile;
-        List<string> playerEffects = new List<string>();
 
         public CreateCharBiography(IUserInterfaceManager uiManager)
             : base(uiManager)
@@ -129,7 +129,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 foreach (string effect in curAnswers[answerIndex].Effects)
                 {
-                    playerEffects.Add(effect);
+                    biogFile.AnswerEffects.Add(effect);
                 }
                 questionIndex++;
                 PopulateControls(biogFile.Questions[questionIndex]);
@@ -137,6 +137,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else
             {
                 CloseWindow();
+                // Show reputation changes
+                biogFile.DigestRepChanges();
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
+                messageBox.SetTextTokens(reputationToken, biogFile);
+                messageBox.ClickAnywhereToClose = true;
+                messageBox.Show();
             }
         }
 
@@ -152,7 +158,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public List<string> PlayerEffects
         {
-            get { return playerEffects; }
+            get { return biogFile.AnswerEffects; }
         }
     }
 }

@@ -420,5 +420,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string helpSkills = "Skills";
         public const string helpSpecialAdvantages = "Special Advantages";
         public const string helpSpecialDisadvantages = "Special Disadvantages";
+        public const string lower = "Lower";
+        public const string higher = "Higher";
+        public const string unchanged = "Unchanged";
     }
 }

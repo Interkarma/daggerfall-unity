@@ -9,12 +9,15 @@ using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallConnect.Arena2
 {
-    public class BiogFile
+    public partial class BiogFile
     {
         const int questionCount = 12;
+        const int socialGroupCount = 5;
 
         string questionsStr = string.Empty;
         Question[] questions = new Question[questionCount];
+        short[] changedReputations = new short[socialGroupCount];
+        List<string> answerEffects = new List<string>();
 
         public BiogFile(int classIndex)
         {
@@ -68,6 +71,31 @@ namespace DaggerfallConnect.Arena2
                 }
             }
             reader.Close();
+
+            // Initialize reputation changes
+            for (int i = 0; i < changedReputations.Length; i++)
+            {
+                changedReputations[i] = 0;
+            }
+        }
+
+        public void DigestRepChanges()
+        {
+            foreach (string effect in answerEffects)
+            {
+                int amount, id;
+                string[] tokens = effect.Split(' ');
+
+                if (effect[0] != 'r'
+                    || effect[1] == 'f'
+                    || tokens.Length < 2 
+                    || !int.TryParse(tokens[0].Split('r')[1], out id) 
+                    || !int.TryParse(tokens[1], out amount))
+                {
+                    continue;
+                }
+                changedReputations[id] += (short)amount;
+            }
         }
 
         #region Static Methods
@@ -140,6 +168,10 @@ namespace DaggerfallConnect.Arena2
                     // Biography commands treat weapon and armor material types the same
                     newItem = ItemBuilder.CreateArmor(playerEntity.Gender, playerEntity.Race, (Armor)Enum.GetValues(typeof(Armor)).GetValue(templateIndex), WeaponToArmorMaterialType((WeaponMaterialTypes)material));
                 }
+                else if ((ItemGroups)itemGroup == ItemGroups.Books)
+                {
+                    newItem = ItemBuilder.CreateRandomBook();
+                }
                 else
                 {
                     newItem = ItemBuilder.CreateItem((ItemGroups)itemGroup, templateIndex);
@@ -151,7 +183,7 @@ namespace DaggerfallConnect.Arena2
             {
                 int id;
                 int amount;
-                // Adjust for a faction, social group otherwise
+                // Faction
                 if (effect[1] == 'f')
                 {
                     if (!int.TryParse(tokens[0].Split('f')[1], out id) || !int.TryParse(tokens[1], out amount))
@@ -162,6 +194,7 @@ namespace DaggerfallConnect.Arena2
                     // TODO: Not 100% sure if this should propagate or not
                     playerEntity.FactionData.ChangeReputation(id, amount);
                 }
+                // Social group (Merchants, Commoners, etc.)
                 else
                 {
                     if (!int.TryParse(tokens[0].Split('r')[1], out id) || !int.TryParse(tokens[1], out amount))
@@ -346,6 +379,11 @@ namespace DaggerfallConnect.Arena2
             {
                 get { return effects; }
             }
+        }
+
+        public List<string> AnswerEffects
+        {
+            get { return answerEffects; }
         }
 
         #endregion
