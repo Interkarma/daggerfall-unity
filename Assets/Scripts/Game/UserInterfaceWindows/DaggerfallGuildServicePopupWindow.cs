@@ -332,11 +332,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     uiManager.PushWindow(DaggerfallUI.Instance.DfItemMakerWindow);
                     break;
 
-/*                case GuildServices.SellMagicItems:
+                case GuildServices.SellMagicItems:
                     CloseWindow();
-                    uiManager.PushWindow(DaggerfallUI.Instance.DfPotionMakerWindow);
+                    uiManager.PushWindow(new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.SellMagic, this, guild));
                     break;
-*/
+
                 case GuildServices.Teleport:
                     CloseWindow();
                     DaggerfallUI.Instance.DfTravelMapWindow.ActivateTeleportationTravel();

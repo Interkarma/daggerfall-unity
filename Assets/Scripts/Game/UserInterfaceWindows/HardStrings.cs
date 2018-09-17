@@ -141,7 +141,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string serviceTeleport = "Teleportation";
         public const string serviceMakeSpells = "Make Spells";
         public const string serviceBuyMagicItems = "Buy Magic Items";
-        public const string serviceSellMagicItems = "Buy Magic Items";
+        public const string serviceSellMagicItems = "Sell Magic Items";
         public const string serviceDaedraSummon = "Daedra Summoning";
         public const string serviceMakeMagicItems = "Make Magic Items";
         public const string serviceRepairs = "Repairs";
