@@ -21,6 +21,7 @@ namespace DaggerfallWorkshop.Game
         private bool isClimbing = false;
         private bool isSlipping = false;
         private bool atOutsideCorner = false;
+        private bool atInsideCorner = false;
         private float climbingStartTimer = 0;
         private float climbingContinueTimer = 0;
         private bool showClimbingModeMessage = true;
@@ -137,6 +138,7 @@ namespace DaggerfallWorkshop.Game
                 isClimbing = false;
                 isSlipping = false;
                 atOutsideCorner = false;
+                atInsideCorner = false;
                 showClimbingModeMessage = true;
                 climbingStartTimer = 0;
 
@@ -263,6 +265,11 @@ namespace DaggerfallWorkshop.Game
 
                 Debug.DrawRay(adjacentWallRay.origin, adjacentWallRay.direction, Color.cyan);
 
+                if (FindWallLoopCount == 0)
+                {
+                    // The adjacent wall is an inside corner
+                    atInsideCorner = isAtInsideCorner(hit);
+                }
 
                 FindWallLoopCount = 0;
                 return true;
@@ -288,7 +295,26 @@ namespace DaggerfallWorkshop.Game
                 return false;
             }
         }
-       
+        private bool isAtInsideCorner(RaycastHit hit)
+        {
+            // not sure if there's a better way to do this?
+            float myAngle;
+            myAngle = Vector3.Angle(cornerNormalRay.direction, -myStrafeRay.direction);
+            if (hit.distance < controller.radius + 0.17f && hit.distance > controller.radius + 0.15f
+                && myAngle < 68 && myAngle > 66.5f
+                ||
+                hit.distance < controller.radius + 0.07f && hit.distance > controller.radius + 0.045f
+                && myAngle < 45.5f && myAngle > 44.5f
+                )
+            {
+                //Debug.Log("Adjacent wall distance: " + hit.distance);
+                Debug.Log("Dist: " + hit.distance + "Angle = " + myAngle);
+
+                return true;
+            }    
+
+            return false;
+        }
         /// <summary>
         /// Perform Climbing Movement
         /// </summary>
@@ -359,18 +385,18 @@ namespace DaggerfallWorkshop.Game
                                 else if (movedLeft)
                                     wrapDirection = Vector3.Cross(Vector3.up, intersectionOrthogonal).normalized;
                             }
-                            // else if against inside corner, inside wall wrap 
 
                             cornerNormalRay = new Ray(intersection, intersectionOrthogonal);   
                         }
 
                         // exiting outside wall corner?
-                        if (atOutsideCorner && IsAlmostParallel(wrapDirection, adjacentWallRay.direction))
+                        if (atInsideCorner || ( atOutsideCorner && IsAlmostParallel(wrapDirection, adjacentWallRay.direction)))
                         {
                             myLedgeDirection = adjacentLedgeDirection;
                             wrapDirection = -adjacentWallRay.direction;
                             checkDirection = wrapDirection;
                             atOutsideCorner = false;
+                            atInsideCorner = false;
                         }
 
                         // if at outside corner, use corner-updated directions to wrap around it
