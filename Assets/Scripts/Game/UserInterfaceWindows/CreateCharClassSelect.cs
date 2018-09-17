@@ -69,6 +69,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (index == classList.Count) // "Custom" option selected
             {
                 selectedClass = null;
+                selectedClassIndex = -1;
                 CloseWindow();
             } 
             else 
@@ -107,6 +108,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public int SelectedClassIndex
         {
             get { return selectedClassIndex; }
+        }
+
+        public List<DFCareer> ClassList
+        {
+            get { return classList; }
         }
     }
 }

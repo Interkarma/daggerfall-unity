@@ -176,7 +176,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 createCharBiographyWindow.OnClose += CreateCharBiographyWindow_OnClose;
             }
 
-            createCharBiographyWindow.ClassIndex = createCharClassSelectWindow.SelectedClassIndex;
+            if (createCharClassSelectWindow.SelectedClassIndex == -1) // custom class
+            {
+                // Determine the most similar class
+                createCharBiographyWindow.ClassIndex = BiogFile.GetClassAffinityIndex(characterDocument.career, createCharClassSelectWindow.ClassList);
+            } 
+            else
+            {
+                createCharBiographyWindow.ClassIndex = createCharClassSelectWindow.SelectedClassIndex;
+            }
             wizardStage = WizardStages.BiographyQuestions;
             uiManager.PushWindow(createCharBiographyWindow);
         }
@@ -349,7 +357,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             characterDocument.career.Speed = createCharCustomClassWindow.Stats.WorkingStats.LiveSpeed;
             characterDocument.career.Luck = createCharCustomClassWindow.Stats.WorkingStats.LiveLuck;
 
-            SetNameSelectWindow();
+            SetChooseBioWindow();
         }
 
         void CreateCharChooseBioWindow_OnClose()

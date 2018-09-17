@@ -328,6 +328,48 @@ namespace DaggerfallConnect.Arena2
             }
         }
 
+        public static int GetClassAffinityIndex(DFCareer custom, List<DFCareer> classes)
+        {
+            int highestAffinity = 0;
+            int selectedIndex = 0;
+            for (int i = 0; i < classes.Count; i++)
+            {
+                int affinity = 0;
+                List<DFCareer.Skills> classSkills = new List<DFCareer.Skills>();
+                classSkills.Add(classes[i].PrimarySkill1);
+                classSkills.Add(classes[i].PrimarySkill2);
+                classSkills.Add(classes[i].PrimarySkill3);
+                classSkills.Add(classes[i].MajorSkill1);
+                classSkills.Add(classes[i].MajorSkill2);
+                classSkills.Add(classes[i].MajorSkill3);
+                classSkills.Add(classes[i].MinorSkill1);
+                classSkills.Add(classes[i].MinorSkill2);
+                classSkills.Add(classes[i].MinorSkill3);
+                classSkills.Add(classes[i].MinorSkill4);
+                classSkills.Add(classes[i].MinorSkill5);
+                classSkills.Add(classes[i].MinorSkill6);
+                if (classSkills.Contains(custom.PrimarySkill1)) affinity++;
+                if (classSkills.Contains(custom.PrimarySkill2)) affinity++;
+                if (classSkills.Contains(custom.PrimarySkill3)) affinity++;
+                if (classSkills.Contains(custom.MajorSkill1)) affinity++;
+                if (classSkills.Contains(custom.MajorSkill2)) affinity++;
+                if (classSkills.Contains(custom.MajorSkill3)) affinity++;
+                if (classSkills.Contains(custom.MinorSkill1)) affinity++;
+                if (classSkills.Contains(custom.MinorSkill2)) affinity++;
+                if (classSkills.Contains(custom.MinorSkill3)) affinity++;
+                if (classSkills.Contains(custom.MinorSkill4)) affinity++;
+                if (classSkills.Contains(custom.MinorSkill5)) affinity++;
+                if (classSkills.Contains(custom.MinorSkill6)) affinity++;
+                if (affinity > highestAffinity)
+                {
+                    highestAffinity = affinity;
+                    selectedIndex = i;
+                }
+            }
+
+            return selectedIndex;
+        }
+
         #endregion
 
         #region Properties
