@@ -482,6 +482,7 @@ namespace DaggerfallWorkshop.Game
                 return true;
 
             int skill = player.Skills.GetLiveSkillValue(DFCareer.Skills.Climbing);
+            int luck = player.Stats.GetLiveStatValue(DFCareer.Stats.Luck);
             if (player.Race == Entity.Races.Khajiit)
                 skill += 30;
 
@@ -491,9 +492,10 @@ namespace DaggerfallWorkshop.Game
 
             // Clamp skill range
             skill = Mathf.Clamp(skill, 5, 95);
+            float luckFactor = Mathf.Lerp(0, 10, luck * 0.01f);
 
             // Skill Check
-            float percentRolled = Mathf.Lerp(basePercentSuccess, 100, skill * .01f);
+            float percentRolled = Mathf.Lerp(basePercentSuccess, 100, skill * .01f) + luckFactor;
 
             if (percentRolled < UnityEngine.Random.Range(1, 101)) // Failed Check?
             {
