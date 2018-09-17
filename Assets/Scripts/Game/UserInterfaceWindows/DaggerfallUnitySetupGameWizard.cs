@@ -417,10 +417,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             optionsPanel.Size = new Vector2(318, 165);
             NativePanel.Components.Add(optionsPanel);
 
-            // Add options title text
-            TextLabel titleLabel = new TextLabel();
-            titleLabel.Text = GetText("options");
-            titleLabel.Position = new Vector2(0, 2);
+            // Add title text
+            TextLabel titleLabel = new TextLabel(DaggerfallUI.Instance.Font2);
+            titleLabel.Text = "Daggerfall Unity";
+            titleLabel.Position = new Vector2(0, 15);
+            titleLabel.TextScale = 1.8f;
             titleLabel.HorizontalAlignment = HorizontalAlignment.Center;
             optionsPanel.Components.Add(titleLabel);
 
@@ -436,20 +437,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Setup options checkboxes
             float x = 8;
-            optionPos = 20;
+            optionPos = 60;
             alwayShowOptions = AddOption(x, "alwayShowOptions", DaggerfallUnity.Settings.ShowOptionsAtStart);
             vsync = AddOption(x, "vsync", DaggerfallUnity.Settings.VSync);
             swapHealthAndFatigue = AddOption(x, "swapHealthAndFatigue", DaggerfallUnity.Settings.SwapHealthAndFatigueColors);
             invertMouseVertical = AddOption(x, "invertMouseVertical", DaggerfallUnity.Settings.InvertMouseVertical);
             mouseSmoothing = AddOption(x, "mouseSmoothing", DaggerfallUnity.Settings.MouseLookSmoothing);
+
+            x = 165;
+            optionPos = 60;
             leftHandWeapons = AddOption(x, "leftHandWeapons", GetLeftHandWeapons());
             playerNudity = AddOption(x, "playerNudity", DaggerfallUnity.Settings.PlayerNudity);
             clickToAttack = AddOption(x, "clickToAttack", DaggerfallUnity.Settings.ClickToAttack);
 
             // Setup mods checkboxes
             // TODO: Might rework this, but could still be useful for certain core mods later
-            x = 165;
-            optionPos = 20;
             sdfFontRendering = AddOption(x, "sdfFontRendering", DaggerfallUnity.Settings.SDFFontRendering);
             sdfFontRendering.OnToggleState += SDFFontRendering_OnToggleState;
             //bool exampleModCheckbox = AddOption(x, "Example", "Example built-in mod", DaggerfallUnity.Settings.ExampleModOption);
