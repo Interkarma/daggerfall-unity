@@ -151,6 +151,26 @@ namespace DaggerfallWorkshop.Game.Items
         Feet = 6,
     }
 
+    /// <summary>
+    /// Poison IDs. The first 8 are found on enemy weapons. The last 4 are created by ingesting drugs.
+    /// </summary>
+    public enum Poisons
+    {
+        None = -1,
+        Nux_Vomica = 128,
+        Arsenic = 129,
+        Moonseed = 130,
+        Drothweed = 131,
+        Somnalius = 132,
+        Pyrrhic_Acid = 133,
+        Magebane = 134,
+        Thyrwort = 135,
+        Indulcet = 136,
+        Sursum = 137,
+        Quaesto_Vil = 138,
+        Aegrotat = 139,
+    }
+
     public enum Drugs //checked
     {
         Indulcet = 78,
