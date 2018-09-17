@@ -49,6 +49,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
         float textScale = 1.0f; // scale text
         LabelLayoutData labelLayout = new LabelLayoutData();
 
+        public enum RestrictedRenderArea_CoordinateType
+        {
+            ScreenCoordinates = 0,
+            DaggerfallNativeCoordinates = 1
+        };
+        protected RestrictedRenderArea_CoordinateType restrictedRenderAreaCoordinateType = RestrictedRenderArea_CoordinateType.ScreenCoordinates;
+
         #endregion
 
         #region Structs & Enums
@@ -232,6 +239,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 Font = font;
         }
 
+        /// <summary>
+        /// get/set the type of coordinate specification (e.g. absolute) of the restricted render area
+        /// </summary>
+        public RestrictedRenderArea_CoordinateType RestrictedRenderAreaCoordinateType
+        {
+            get { return restrictedRenderAreaCoordinateType; }
+            set
+            {
+                restrictedRenderAreaCoordinateType = value;
+            }
+        }
+
         #endregion
 
         #region Overrides
@@ -312,19 +331,29 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         protected Vector4 GetRestrictedRenderScissorRect()
         {
-            Rect myRect = Rectangle;
+            Rect myRect = this.Rectangle;
             Rect screenRect = new Rect(0, 0, Screen.width, Screen.height);
+            float xMinScreen = 0.0f, xMaxScreen = 0.0f, yMinScreen = 0.0f, yMaxScreen = 0.0f;
+            if (restrictedRenderAreaCoordinateType == RestrictedRenderArea_CoordinateType.ScreenCoordinates)
+            {
+                xMinScreen = rectRestrictedRenderArea.xMin;
+                xMaxScreen = rectRestrictedRenderArea.xMax;
+                yMinScreen = rectRestrictedRenderArea.yMin;
+                yMaxScreen = rectRestrictedRenderArea.yMax;
+            }
+            else if (restrictedRenderAreaCoordinateType == RestrictedRenderArea_CoordinateType.DaggerfallNativeCoordinates)
+            {
+                Rect rectLabel = new Rect(this.Parent.Position + this.Position, this.Size);
+                float leftCut = Mathf.Round(Math.Max(0, rectRestrictedRenderArea.xMin - rectLabel.xMin));
+                float rightCut = Mathf.Round(Math.Max(0, rectLabel.xMax - rectRestrictedRenderArea.xMax));
+                float topCut = Mathf.Round(Math.Max(0, rectRestrictedRenderArea.yMin - rectLabel.yMin));
+                float bottomCut = Mathf.Round(Math.Max(0, rectLabel.yMax - rectRestrictedRenderArea.yMax));
 
-            Rect rectLabel = new Rect(this.Parent.Position + this.Position, this.Size);
-            float leftCut = Mathf.Round(Math.Max(0, rectRestrictedRenderArea.xMin - rectLabel.xMin) / textScale);
-            float rightCut = Mathf.Round(Math.Max(0, rectLabel.xMax - rectRestrictedRenderArea.xMax) / textScale);
-            float topCut = Mathf.Round(Math.Max(0, rectRestrictedRenderArea.yMin - rectLabel.yMin) / textScale);
-            float bottomCut = Mathf.Round(Math.Max(0, rectLabel.yMax - rectRestrictedRenderArea.yMax) / textScale);
-
-            float xMinScreen = myRect.xMin + (Position.x + leftCut * textScale) * LocalScale.x;
-            float xMaxScreen = myRect.xMax + (Position.x - rightCut * textScale) * LocalScale.x;
-            float yMinScreen = myRect.yMin + (topCut * textScale) * LocalScale.y;
-            float yMaxScreen = myRect.yMax - (bottomCut * textScale) * LocalScale.y;
+                xMinScreen = myRect.xMin + (this.Position.x + leftCut) * this.LocalScale.x;
+                xMaxScreen = myRect.xMax + (this.Position.x - rightCut) * this.LocalScale.x;
+                yMinScreen = myRect.yMin + (topCut) * this.LocalScale.y;
+                yMaxScreen = myRect.yMax - (bottomCut) * this.LocalScale.y;
+            } 
 
             Vector4 scissorRect;
             scissorRect.x = xMinScreen / screenRect.width;
