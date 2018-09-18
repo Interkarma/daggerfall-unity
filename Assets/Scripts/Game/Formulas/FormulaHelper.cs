@@ -902,11 +902,11 @@ namespace DaggerfallWorkshop.Game.Formulas
             {
                 if (target.Level != 1)
                 {
-                    int index = (int)poisonType - 128;
-                    int roundsOfPoison = UnityEngine.Random.Range(MinRoundsOfPoison[index], MaxRoundsOfPoison[index] + 1);
-                    int minutesUntilStartingPoison = UnityEngine.Random.Range(MinMinutesToPoison[index], MaxMinutesToPoison[index] + 1);
-                    Debug.Log(target.Name + " afflicted with " + poisonType + ", starting in " + minutesUntilStartingPoison
-                        + " minutes, lasting for " + roundsOfPoison + " minutes.");
+                    //int index = (int)poisonType - 128;
+                    //int roundsOfPoison = UnityEngine.Random.Range(MinRoundsOfPoison[index], MaxRoundsOfPoison[index] + 1);
+                    //int minutesUntilStartingPoison = UnityEngine.Random.Range(MinMinutesToPoison[index], MaxMinutesToPoison[index] + 1);
+                    //Debug.Log(target.Name + " afflicted with " + poisonType + ", starting in " + minutesUntilStartingPoison
+                    //    + " minutes, lasting for " + roundsOfPoison + " minutes.");
                 }
             }
             else
