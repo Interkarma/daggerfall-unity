@@ -50,10 +50,11 @@ namespace DaggerfallWorkshop.Game
         public void HandleJumpInput(ref Vector3 moveDirection)
         {
             // Cancel jump if player is paralyzed or swimming on a water tile
-            // Jump is also ignored when player is slowfalling
+            // Jump is also ignored when player is slowfalling or riding cart
             if (GameManager.Instance.PlayerEntity.IsParalyzed ||
                 GameManager.Instance.PlayerMotor.OnExteriorWater == PlayerMotor.OnExteriorWaterMethod.Swimming ||
-                GameManager.Instance.PlayerEntity.IsSlowFalling)
+                GameManager.Instance.PlayerEntity.IsSlowFalling ||
+                GameManager.Instance.TransportManager.TransportMode == TransportModes.Cart)
                 return;
 
             if (InputManager.Instance.HasAction(InputManager.Actions.Jump))
