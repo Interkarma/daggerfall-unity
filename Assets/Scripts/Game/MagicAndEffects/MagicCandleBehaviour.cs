@@ -11,6 +11,8 @@
 
 using UnityEngine;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects
 {
@@ -39,6 +41,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
             startLocalPosition = transform.localPosition;
             lastOffsetPosition = startLocalPosition;
+
+            SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
+            StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
         }
 
         private void Update()
@@ -56,6 +61,24 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 lastOffsetPosition = nextOffsetPosition;
                 nextOffsetPosition = Vector3.zero;
             }
+        }
+
+        public void DestroyCandle()
+        {
+            SaveLoadManager.OnStartLoad -= SaveLoadManager_OnStartLoad;
+            StartGameBehaviour.OnNewGame -= StartGameBehaviour_OnNewGame;
+            if (gameObject != null)
+                Destroy(gameObject);
+        }
+
+        private void StartGameBehaviour_OnNewGame()
+        {
+            DestroyCandle();
+        }
+
+        private void SaveLoadManager_OnStartLoad(SaveData_v1 saveData)
+        {
+            DestroyCandle();
         }
     }
 }

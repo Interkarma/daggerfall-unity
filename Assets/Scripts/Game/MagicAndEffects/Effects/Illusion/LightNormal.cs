@@ -14,10 +14,10 @@ using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
-    public class Light : IncumbentEffect
+    public class LightNormal : IncumbentEffect
     {
-        UnityEngine.GameObject candleObject = null;
         bool lightStarted = false;
+        MagicCandleBehaviour magicCandle = null;
 
         public override void SetProperties()
         {
@@ -28,7 +28,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1563);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1263);
             properties.SupportDuration = true;
-            properties.AllowedTargets = EntityEffectBroker.TargetFlags_All;
+            properties.AllowedTargets = EntityEffectBroker.TargetFlags_Self;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
             properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
             properties.MagicSkill = DFCareer.MagicSkills.Illusion;
@@ -38,28 +38,31 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
         {
             base.Start(manager, caster);
+            StartLight();
         }
 
         public override void Resume(EntityEffectManager.EffectSaveData_v1 effectData, EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
         {
             base.Resume(effectData, manager, caster);
+            StartLight();
+        }
+
+        public override void End()
+        {
+            base.End();
+            EndLight();
         }
 
         protected override bool IsLikeKind(IncumbentEffect other)
         {
-            return other is Light;
+            return other is LightNormal;
         }
 
         protected override void AddState(IncumbentEffect incumbent)
         {
             // Stack my rounds onto incumbent
             incumbent.RoundsRemaining += RoundsRemaining;
-        }
-
-        public override void MagicRound()
-        {
-            base.MagicRound();
-            StartLight();
+            lightStarted = true;
         }
 
         void StartLight()
@@ -90,11 +93,21 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             candlePosition.y += GameManager.Instance.PlayerController.height * 0.25f;
 
             // Instantiate magic candle prefab
-            candleObject = UnityEngine.Object.Instantiate(
+            UnityEngine.GameObject candleObject = UnityEngine.Object.Instantiate(
                 UnityEngine.Resources.Load<UnityEngine.GameObject>("MagicCandle"),
                 candlePosition,
                 UnityEngine.Quaternion.identity,
                 GameManager.Instance.PlayerObject.transform);
+
+            // Get behaviour script
+            if (candleObject)
+                magicCandle = candleObject.GetComponent<MagicCandleBehaviour>();
+        }
+
+        void EndLight()
+        {
+            if (magicCandle != null)
+                magicCandle.DestroyCandle();
         }
     }
 }
