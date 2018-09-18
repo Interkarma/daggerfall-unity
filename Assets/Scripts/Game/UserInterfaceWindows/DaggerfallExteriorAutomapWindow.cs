@@ -835,8 +835,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 float posY = exteriorAutomap.buildingNameplates[i].anchorPoint.y - exteriorAutomap.LocationHeight * exteriorAutomap.BlockSizeHeight * 0.5f;
                 Vector3 transformedPosition = exteriorAutomap.CameraExteriorAutomap.WorldToScreenPoint(new Vector3(posX, 0, posY));
                 //transformedPosition *= Vector2.one / dummyPanelAutomap.LocalScale;
-                exteriorAutomap.buildingNameplates[i].textLabel.Position = new Vector2(transformedPosition.x, /*(1.0f - 0.0254f)*/ (dummyPanelAutomap.LocalScale.y / 3.04f) * exteriorAutomap.NumMaxBlocksY * exteriorAutomap.BlockSizeHeight - transformedPosition.y);
-                exteriorAutomap.buildingNameplates[i].textLabel.TextScale = 160.0f / cameraExteriorAutomap.orthographicSize;
+                exteriorAutomap.buildingNameplates[i].textLabel.Position = new Vector2(transformedPosition.x, /*(1.0f - 0.0254f)*/ (dummyPanelAutomap.LocalScale.x / 3.04f) * (exteriorAutomap.NumMaxBlocksY * exteriorAutomap.BlockSizeHeight - transformedPosition.y));
+                exteriorAutomap.buildingNameplates[i].textLabel.TextScale = 60.0f / cameraExteriorAutomap.orthographicSize * dummyPanelAutomap.LocalScale.x;
                 exteriorAutomap.buildingNameplates[i].textLabel.RectRestrictedRenderArea = restrictionRect;
                 exteriorAutomap.buildingNameplates[i].textLabel.RestrictedRenderAreaCoordinateType = TextLabel.RestrictedRenderArea_CoordinateType.ScreenCoordinates;
                 if (nameplateToolTip == null)
@@ -849,6 +849,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.Position /= dummyPanelAutomap.LocalScale;
                 exteriorAutomap.buildingNameplates[i].textLabel.ToolTipText = exteriorAutomap.buildingNameplates[i].textLabel.Text;
                 panelRenderAutomap.Components.Add(exteriorAutomap.buildingNameplates[i].textLabel);
+
+                exteriorAutomap.buildingNameplates[i].gameObject.transform.position = new Vector3(posX, 4.0f, posY + exteriorAutomap.buildingNameplates[i].textLabel.TextHeight / exteriorAutomap.buildingNameplates[i].textLabel.TextScale);
+                float scaleX = exteriorAutomap.buildingNameplates[i].textLabel.TextWidth / exteriorAutomap.buildingNameplates[i].textLabel.TextScale * 0.75f;
+                float scaleY = exteriorAutomap.buildingNameplates[i].textLabel.TextHeight / exteriorAutomap.buildingNameplates[i].textLabel.TextScale * 0.75f;
+                exteriorAutomap.buildingNameplates[i].gameObject.transform.localScale = new Vector3(scaleX, 1, scaleY);
+
+                exteriorAutomap.buildingNameplates[i].width = exteriorAutomap.buildingNameplates[i].textLabel.TextWidth;
+                exteriorAutomap.buildingNameplates[i].height = exteriorAutomap.buildingNameplates[i].textLabel.TextHeight;
             }
 
             //dummyPanelAutomap.Components.Clear();

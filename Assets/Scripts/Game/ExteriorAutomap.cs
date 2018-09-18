@@ -370,7 +370,7 @@ namespace DaggerfallWorkshop.Game
 
         public void rotateBuildingNameplates(float angle)
         {
-            undoNameplateOffsets();
+            //undoNameplateOffsets();
             for (int i = 0; i < buildingNameplates.Length; i++)
             {
                 BuildingNameplate buildingNameplate = buildingNameplates[i];
@@ -393,13 +393,13 @@ namespace DaggerfallWorkshop.Game
 
                 buildingNameplates[i] = buildingNameplate;
             }
-            computeNameplateOffsets();
-            applyNameplateOffsets();
+            //computeNameplateOffsets();
+            //applyNameplateOffsets();
         }
 
         public void resetRotationBuildingNameplates()
         {
-            undoNameplateOffsets();
+            //undoNameplateOffsets();
             for (int i = 0; i < buildingNameplates.Length; i++)
             {
                 BuildingNameplate buildingNameplate = buildingNameplates[i];
@@ -411,8 +411,8 @@ namespace DaggerfallWorkshop.Game
                 buildingNameplate.lowerRightCorner = new Vector2(buildingNameplate.width, -buildingNameplate.height * 0.5f);
                 buildingNameplates[i] = buildingNameplate;
             }
-            computeNameplateOffsets();
-            applyNameplateOffsets();
+            //computeNameplateOffsets();
+            //applyNameplateOffsets();
         }
 
         #endregion
@@ -754,7 +754,7 @@ namespace DaggerfallWorkshop.Game
         private TextLabel createOrUpdateTextLabelBuildingNamePlate(GameObject namePlateGameObject, string textLabelText, out float scale)
         {
             TextLabel textLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, textLabelText);
-            textLabel.TextScale = 2.0f;
+            textLabel.TextScale = 1.0f;
             textLabel.MaxCharacters = -1;
             textLabel.Name = textLabelText;
             //MeshFilter meshFilter = namePlateGameObject.GetComponent<MeshFilter>();
@@ -796,7 +796,7 @@ namespace DaggerfallWorkshop.Game
             //}
             //mr.material.mainTexture = textLabel.Texture;
             //mr.enabled = true;
-            scale = 0.0125f; // 0.0125f;
+            scale = 1.0f; // 0.0125f;
             return textLabel;
         }
 
@@ -950,31 +950,30 @@ namespace DaggerfallWorkshop.Game
                             newBuildingNameplate.gameObject = new GameObject(String.Format("building name plate for [{0}]+", newBuildingNameplate.name));
                             newBuildingNameplate.textLabel = createOrUpdateTextLabelBuildingNamePlate(newBuildingNameplate.gameObject, newBuildingNameplate.name, out newBuildingNameplate.scale);
                             //newBuildingNameplate.textLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, newBuildingNameplate.name);
-                            //MeshFilter meshFilter = (MeshFilter)newBuildingNameplate.gameObject.AddComponent(typeof(MeshFilter));
-                            //meshFilter.mesh = CreateLeftAlignedMesh(newBuildingNameplate.textLabel.Texture.width, newBuildingNameplate.textLabel.Texture.height); // create left aligned (in relation to gameobject position) quad with normal facing into positive y-direction
+                            MeshFilter meshFilter = (MeshFilter)newBuildingNameplate.gameObject.AddComponent(typeof(MeshFilter));
+                            meshFilter.mesh = CreateLeftAlignedMesh(1, 1); // create left aligned (in relation to gameobject position) quad with normal facing into positive y-direction
 
-                            //// set vertex colors so that font rendering is in the correct text color
-                            //Color[] vertexColors = new Color[meshFilter.mesh.vertexCount];
-                            //for (int i = 0; i < vertexColors.Length; i++)
-                            //    vertexColors[i] = DaggerfallUI.DaggerfallDefaultTextColor;
-                            //meshFilter.mesh.colors = vertexColors;
+                            // set vertex colors so that font rendering is in the correct text color
+                            Color[] vertexColors = new Color[meshFilter.mesh.vertexCount];
+                            for (int i = 0; i < vertexColors.Length; i++)
+                                vertexColors[i] = DaggerfallUI.DaggerfallDefaultTextColor;
+                            meshFilter.mesh.colors = vertexColors;
 
-                            //MeshRenderer renderer = newBuildingNameplate.gameObject.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
+                            MeshRenderer renderer = newBuildingNameplate.gameObject.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
 
-                            //MeshCollider collider = newBuildingNameplate.gameObject.AddComponent<MeshCollider>();
-                            //if (collider)
-                            //{
-                            //    // Doing nothing just to suppress warning
-                            //}
+                            MeshCollider collider = newBuildingNameplate.gameObject.AddComponent<MeshCollider>();
+                            if (collider)
+                            {
+                                // Doing nothing just to suppress warning
+                            }
 
-                            ////renderer.material.shader = Shader.Find("Unlit/Transparent");
-                            ////renderer.material.mainTexture = newBuildingNameplate.textLabel.Texture;
-                            ////if (DaggerfallUI.Instance.SDFFontMaterial != null)
+                            renderer.material.shader = Shader.Find("Unlit/Color");
+                            //if (DaggerfallUI.Instance.SDFFontMaterial != null)
                             //if (DaggerfallUnity.Settings.SDFFontRendering == true)
                             //{
                             //    renderer.material = DaggerfallUI.Instance.SDFFontMaterial; //new Material(DaggerfallUI.Instance.SDFFontMaterial);                               
                             //    renderer.material.renderQueue = 4000;
-                            //    newBuildingNameplate.scale = 0.125f;                                
+                            //    newBuildingNameplate.scale = 0.125f;
                             //}
                             //else
                             //{
@@ -983,23 +982,27 @@ namespace DaggerfallWorkshop.Game
                             //    newBuildingNameplate.scale = 1.0f;
                             //}
                             //renderer.material.mainTexture = newBuildingNameplate.textLabel.Texture;
-                            //renderer.enabled = true;
+                            renderer.enabled = true;
 
                             SetLayerRecursively(newBuildingNameplate.gameObject, layerAutomap);
                             newBuildingNameplate.gameObject.transform.SetParent(gameObjectBuildingNameplates.transform);
 
                             float posX = newBuildingNameplate.anchorPoint.x - locationWidth * blockSizeWidth * 0.5f;
                             float posY = newBuildingNameplate.anchorPoint.y - locationHeight * blockSizeHeight * 0.5f;
-                            
-                            newBuildingNameplate.width = newBuildingNameplate.textLabel.Texture.width * newBuildingNameplate.scale;
-                            newBuildingNameplate.height = newBuildingNameplate.textLabel.Texture.height * newBuildingNameplate.scale;
-                            newBuildingNameplate.gameObject.transform.position = new Vector3(posX, nameplatesPlacementDepth, posY);
-                            newBuildingNameplate.gameObject.transform.localScale = new Vector3(newBuildingNameplate.scale, newBuildingNameplate.scale, newBuildingNameplate.scale);
+
+                            newBuildingNameplate.width = 0.0f; // newBuildingNameplate.textLabel.TextWidth; // * newBuildingNameplate.scale;
+                            newBuildingNameplate.height = 0.0f; // newBuildingNameplate.textLabel.TextHeight; // * newBuildingNameplate.scale;
+                            //newBuildingNameplate.gameObject.transform.position = new Vector3(posX, nameplatesPlacementDepth, posY);
+                            //newBuildingNameplate.gameObject.transform.localScale = new Vector3(newBuildingNameplate.scale, newBuildingNameplate.scale, newBuildingNameplate.scale);
                             newBuildingNameplate.offset = Vector2.zero;
                             newBuildingNameplate.upperLeftCorner = new Vector2(0.0f, +newBuildingNameplate.height * 0.5f);
                             newBuildingNameplate.upperRightCorner = new Vector2(newBuildingNameplate.width, +newBuildingNameplate.height * 0.5f);
                             newBuildingNameplate.lowerLeftCorner = new Vector2(0.0f, -newBuildingNameplate.height * 0.5f);
                             newBuildingNameplate.lowerRightCorner = new Vector2(newBuildingNameplate.width, -newBuildingNameplate.height * 0.5f);
+                            //newBuildingNameplate.upperLeftCorner = new Vector2(0.0f, 0.0f);
+                            //newBuildingNameplate.upperRightCorner = new Vector2(newBuildingNameplate.width, 0.0f);
+                            //newBuildingNameplate.lowerLeftCorner = new Vector2(0.0f, newBuildingNameplate.height);
+                            //newBuildingNameplate.lowerRightCorner = new Vector2(newBuildingNameplate.width, newBuildingNameplate.height);
                             newBuildingNameplate.placed = false;
                             newBuildingNameplate.nameplateReplaced = false;
                             newBuildingNameplate.numCollisionsDetected = 0;                            
@@ -1024,8 +1027,8 @@ namespace DaggerfallWorkshop.Game
             }
             buildingNameplatesList.Clear();
 
-            computeNameplateOffsets();
-            applyNameplateOffsets();
+            //computeNameplateOffsets();
+            //applyNameplateOffsets();
 
             if (cameraExteriorAutomap != null)
                 rotateBuildingNameplates(cameraExteriorAutomap.transform.rotation.eulerAngles.y);
