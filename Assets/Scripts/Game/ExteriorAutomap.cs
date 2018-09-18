@@ -509,90 +509,90 @@ namespace DaggerfallWorkshop.Game
         }
         */
 
-        void Update()
-        {
-            if ((GameManager.Instance.StateManager.CurrentState == StateManager.StateTypes.UI) && cameraExteriorAutomap)            
-            {
-                DaggerfallUI daggerfallUI;
-                DaggerfallUI.FindDaggerfallUI(out daggerfallUI);
+        //void Update()
+        //{
+            //if ((GameManager.Instance.StateManager.CurrentState == StateManager.StateTypes.UI) && cameraExteriorAutomap)            
+            //{
+                //DaggerfallUI daggerfallUI;
+                //DaggerfallUI.FindDaggerfallUI(out daggerfallUI);
 
-                Panel panelExteriorAutomap = daggerfallUI.ExteriorAutomapWindow.PanelRenderAutomap;
-                Vector2 mousePosition = new Vector2(panelExteriorAutomap.MousePosition.x - panelExteriorAutomap.Position.x, panelExteriorAutomap.InteriorHeight - 1 - (panelExteriorAutomap.MousePosition.y - panelExteriorAutomap.Position.y)); // Input.mousePosition
+                //Panel panelExteriorAutomap = daggerfallUI.ExteriorAutomapWindow.PanelRenderAutomap;
+                //Vector2 mousePosition = new Vector2(panelExteriorAutomap.MousePosition.x - panelExteriorAutomap.Position.x, panelExteriorAutomap.InteriorHeight - 1 - (panelExteriorAutomap.MousePosition.y - panelExteriorAutomap.Position.y)); // Input.mousePosition
 
-                Ray ray = cameraExteriorAutomap.ScreenPointToRay(mousePosition);
+                //Ray ray = cameraExteriorAutomap.ScreenPointToRay(mousePosition);
                 //Debug.Log(String.Format("ox: {0}, oy: {1}, oz: {2}; dx: {3}, dy: {4}, dz: {5}", ray.origin.x, ray.origin.y, ray.origin.z, ray.direction.x, ray.direction.y, ray.direction.z));                
-                RaycastHit hit;
-                if (Physics.Raycast(ray, out hit, layerAutomap))
-                {
-                    string currentNameplateName = "";
-                    string gameObjectName = hit.collider.gameObject.name;
-                    if (gameObjectName == "pop-up nameplate")
-                        return;
+                //RaycastHit hit;
+                //if (Physics.Raycast(ray, out hit, layerAutomap))
+                //{
+                //    string currentNameplateName = "";
+                //    string gameObjectName = hit.collider.gameObject.name;
+                //    if (gameObjectName == "pop-up nameplate")
+                //        return;
 
-                    //Debug.Log(hit.collider.gameObject.name);
-                    int lengthSkipStart = ("building name plate for [").Length;
-                    int lengthSkipEnd = ("]").Length + 1; // +1 for the "+" resp "*" character at the end to indicate if nameplate was placed with name or "*" on the map                    
-                    string nameplateName = gameObjectName.Substring(lengthSkipStart, gameObjectName.Length - lengthSkipStart - lengthSkipEnd);
+                //    //Debug.Log(hit.collider.gameObject.name);
+                //    int lengthSkipStart = ("building name plate for [").Length;
+                //    int lengthSkipEnd = ("]").Length + 1; // +1 for the "+" resp "*" character at the end to indicate if nameplate was placed with name or "*" on the map                    
+                //    string nameplateName = gameObjectName.Substring(lengthSkipStart, gameObjectName.Length - lengthSkipStart - lengthSkipEnd);
                     
-                    bool shortFormUsed = gameObjectName.Substring(gameObjectName.Length - 1, 1) == "*";
-                    if (!shortFormUsed)
-                        return;
+                //    bool shortFormUsed = gameObjectName.Substring(gameObjectName.Length - 1, 1) == "*";
+                //    if (!shortFormUsed)
+                //        return;
 
-                    if (popUpNameplate == null)
-                    {
-                        //TextLabel textLabel = DaggerfallUI.AddTextLabel(customFont, Vector2.zero, nameplateName);
-                        popUpNameplate = new GameObject("pop-up nameplate");
-                        float scale = 0.5f;
-                        TextLabel textLabel = createOrUpdateTextLabelBuildingNamePlate(popUpNameplate, nameplateName, out scale);
-                        //textLabel.BackgroundColor = Color.blue; // not working right now - always black background (have to look into this if I can make it work...)
-                        //textLabel.TextColor = Color.yellow;                        
-                        //MeshFilter meshFilter = (MeshFilter)popUpNameplate.AddComponent(typeof(MeshFilter));
-                        //meshFilter.mesh = CreateLeftAlignedMesh(textLabel.Texture.width, textLabel.Texture.height); // create left aligned (in relation to gameobject position) quad with normal facing into positive y-direction
-                        //MeshRenderer renderer = popUpNameplate.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
-                        //renderer.material.shader = Shader.Find("Unlit/Texture");
-                        //renderer.material.mainTexture = textLabel.Texture;
-                        //renderer.enabled = true;
+                //    if (popUpNameplate == null)
+                //    {
+                //        //TextLabel textLabel = DaggerfallUI.AddTextLabel(customFont, Vector2.zero, nameplateName);
+                //        popUpNameplate = new GameObject("pop-up nameplate");
+                //        float scale = 0.5f;
+                //        TextLabel textLabel = createOrUpdateTextLabelBuildingNamePlate(popUpNameplate, nameplateName, out scale);
+                //        //textLabel.BackgroundColor = Color.blue; // not working right now - always black background (have to look into this if I can make it work...)
+                //        //textLabel.TextColor = Color.yellow;                        
+                //        //MeshFilter meshFilter = (MeshFilter)popUpNameplate.AddComponent(typeof(MeshFilter));
+                //        //meshFilter.mesh = CreateLeftAlignedMesh(textLabel.Texture.width, textLabel.Texture.height); // create left aligned (in relation to gameobject position) quad with normal facing into positive y-direction
+                //        //MeshRenderer renderer = popUpNameplate.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
+                //        //renderer.material.shader = Shader.Find("Unlit/Texture");
+                //        //renderer.material.mainTexture = textLabel.Texture;
+                //        //renderer.enabled = true;
 
-                        SetLayerRecursively(popUpNameplate, layerAutomap);
-                        popUpNameplate.transform.SetParent(gameObjectBuildingNameplates.transform);
+                //        SetLayerRecursively(popUpNameplate, layerAutomap);
+                //        popUpNameplate.transform.SetParent(gameObjectBuildingNameplates.transform);
 
 
-                        popUpNameplate.transform.position = new Vector3(hit.point.x, nameplatesPlacementDepth + 2.0f, hit.point.z);
-                        popUpNameplate.transform.rotation = hit.collider.gameObject.transform.rotation;
-                        popUpNameplate.transform.localScale = new Vector3(scale, scale, scale);
+                //        popUpNameplate.transform.position = new Vector3(hit.point.x, nameplatesPlacementDepth + 2.0f, hit.point.z);
+                //        popUpNameplate.transform.rotation = hit.collider.gameObject.transform.rotation;
+                //        popUpNameplate.transform.localScale = new Vector3(scale, scale, scale);
                         
-                        currentNameplateName = nameplateName;
-                    }
-                    else if (popUpNameplate && currentNameplateName != nameplateName)
-                    {
-                        //TextLabel textLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, nameplateName);
-                        float tmpScale;
-                        TextLabel textLabel = createOrUpdateTextLabelBuildingNamePlate(popUpNameplate, nameplateName, out tmpScale);
-                        //MeshFilter meshFilter = popUpNameplate.GetComponent<MeshFilter>();
-                        //meshFilter.mesh = CreateLeftAlignedMesh(textLabel.Texture.width, textLabel.Texture.height); // create left aligned (in relation to gameobject position) quad with normal facing into positive y-direction                        
-                        //MeshRenderer renderer = popUpNameplate.GetComponent<MeshRenderer>();
-                        //renderer.material.mainTexture = textLabel.Texture;
+                //        currentNameplateName = nameplateName;
+                //    }
+                //    else if (popUpNameplate && currentNameplateName != nameplateName)
+                //    {
+                //        //TextLabel textLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, nameplateName);
+                //        float tmpScale;
+                //        TextLabel textLabel = createOrUpdateTextLabelBuildingNamePlate(popUpNameplate, nameplateName, out tmpScale);
+                //        //MeshFilter meshFilter = popUpNameplate.GetComponent<MeshFilter>();
+                //        //meshFilter.mesh = CreateLeftAlignedMesh(textLabel.Texture.width, textLabel.Texture.height); // create left aligned (in relation to gameobject position) quad with normal facing into positive y-direction                        
+                //        //MeshRenderer renderer = popUpNameplate.GetComponent<MeshRenderer>();
+                //        //renderer.material.mainTexture = textLabel.Texture;
 
-                        popUpNameplate.transform.position = new Vector3(hit.point.x, nameplatesPlacementDepth + 2.0f, hit.point.z);
-                        popUpNameplate.transform.rotation = hit.collider.gameObject.transform.rotation;
-                        popUpNameplate.SetActive(true);
+                //        popUpNameplate.transform.position = new Vector3(hit.point.x, nameplatesPlacementDepth + 2.0f, hit.point.z);
+                //        popUpNameplate.transform.rotation = hit.collider.gameObject.transform.rotation;
+                //        popUpNameplate.SetActive(true);
 
-                        currentNameplateName = nameplateName;
-                    }
-                }
-                else
-                {
-                    if (popUpNameplate != null)
-                    {
-                        popUpNameplate.SetActive(false);                        
-                    }
-                }
+                //        currentNameplateName = nameplateName;
+                //    }
+                //}
+                //else
+                //{
+                //    if (popUpNameplate != null)
+                //    {
+                //        popUpNameplate.SetActive(false);                        
+                //    }
+                //}
 
-                daggerfallUI.ExteriorAutomapWindow.updateAutomapView();
+                //daggerfallUI.ExteriorAutomapWindow.updateAutomapView();
 
-                return;
-            }          
-        }
+            //    return;
+            //}          
+        //}
 
         #endregion
 

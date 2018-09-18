@@ -210,7 +210,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         int renderTextureExteriorAutomapDepth = 16;
         int oldRenderTextureExteriorAutomapWidth; // used to store previous width of exterior automap render texture to react to changes to NativePanel's size and react accordingly by setting texture up with new widht and height again
         int oldRenderTextureExteriorAutomapHeight; // used to store previous height of exterior automap render texture to react to changes to NativePanel's size and react accordingly by setting texture up with new widht and height again
-		
+
+        ToolTip nameplateToolTip = null; // used for tooltip when hovering over building nameplates
+
         bool isSetup = false;        
 
         public Panel PanelRenderAutomap
@@ -331,6 +333,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             panelRenderAutomap.OnRightMouseDown += PanelAutomap_OnRightMouseDown;
             panelRenderAutomap.OnRightMouseUp += PanelAutomap_OnRightMouseUp;
 
+            defaultToolTip.Parent = dummyPanelAutomap;
+
             // Grid button (toggle 2D <-> 3D view)
             gridButton = DaggerfallUI.AddButton(new Rect(78, 171, 27, 19), NativePanel);
             gridButton.OnMouseClick += GridButton_OnMouseClick;
@@ -362,7 +366,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             leftButton.OnMouseUp += LeftButton_OnMouseUp;
             leftButton.OnRightMouseDown += LeftButton_OnRightMouseDown;
             leftButton.OnRightMouseUp += LeftButton_OnRightMouseUp;
-            leftButton.ToolTip = defaultToolTip;
+            leftButton.ToolTip = defaultToolTip;           
             leftButton.ToolTipText = "left click: move to the left (hotkey: left arrow)\rright click: move to west location border (hotkey: shift+left arrow)";
 
             // right button
@@ -511,6 +515,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             exteriorAutomap.updateAutomapStateOnWindowPop(); // signal ExteriorAutomap script that exterior automap window was closed
+        }
+
+        public override void Draw()
+        {
+            base.Draw();
+
+            // Draw nameplate tooltip last
+            if (nameplateToolTip != null)
+                nameplateToolTip.Draw();
         }
 
         /// <summary>
@@ -821,12 +834,53 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 float posX = exteriorAutomap.buildingNameplates[i].anchorPoint.x - exteriorAutomap.LocationWidth * exteriorAutomap.BlockSizeWidth * 0.5f;
                 float posY = exteriorAutomap.buildingNameplates[i].anchorPoint.y - exteriorAutomap.LocationHeight * exteriorAutomap.BlockSizeHeight * 0.5f;
                 Vector3 transformedPosition = exteriorAutomap.CameraExteriorAutomap.WorldToScreenPoint(new Vector3(posX, 0, posY));
-                exteriorAutomap.buildingNameplates[i].textLabel.Position = new Vector2(transformedPosition.x, (1.0f - 0.0254f) * exteriorAutomap.NumMaxBlocksY * exteriorAutomap.BlockSizeHeight - transformedPosition.y);
+                //transformedPosition *= Vector2.one / dummyPanelAutomap.LocalScale;
+                exteriorAutomap.buildingNameplates[i].textLabel.Position = new Vector2(transformedPosition.x, /*(1.0f - 0.0254f)*/ (dummyPanelAutomap.LocalScale.y / 3.04f) * exteriorAutomap.NumMaxBlocksY * exteriorAutomap.BlockSizeHeight - transformedPosition.y);
                 exteriorAutomap.buildingNameplates[i].textLabel.TextScale = 160.0f / cameraExteriorAutomap.orthographicSize;
                 exteriorAutomap.buildingNameplates[i].textLabel.RectRestrictedRenderArea = restrictionRect;
                 exteriorAutomap.buildingNameplates[i].textLabel.RestrictedRenderAreaCoordinateType = TextLabel.RestrictedRenderArea_CoordinateType.ScreenCoordinates;
+                if (nameplateToolTip == null)
+                    nameplateToolTip = new ToolTip();
+                exteriorAutomap.buildingNameplates[i].textLabel.ToolTip = nameplateToolTip;
+                exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.ToolTipDelay = 0;
+                exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.BackgroundColor = DaggerfallUnity.Settings.ToolTipBackgroundColor;
+                exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.TextColor = DaggerfallUnity.Settings.ToolTipTextColor;
+                exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.Parent = dummyPanelAutomap; //panelRenderAutomap;
+                exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.Position /= dummyPanelAutomap.LocalScale;
+                exteriorAutomap.buildingNameplates[i].textLabel.ToolTipText = exteriorAutomap.buildingNameplates[i].textLabel.Text;
                 panelRenderAutomap.Components.Add(exteriorAutomap.buildingNameplates[i].textLabel);
             }
+
+            //dummyPanelAutomap.Components.Clear();
+
+            //Rect restrictionRect = new Rect(); // = panelRenderAutomap.Rectangle;
+            //restrictionRect.position = panelRenderAutomap.Position;
+            //restrictionRect.width = panelRenderAutomap.InteriorWidth;
+            //restrictionRect.height = panelRenderAutomap.InteriorHeight;
+            //for (int i = 0; i < exteriorAutomap.buildingNameplates.Length; i++)
+            //{
+            //    //float posX = exteriorAutomap.buildingNameplates[i].gameObject.transform.position.x;
+            //    //float posY = exteriorAutomap.buildingNameplates[i].gameObject.transform.position.z;
+            //    float posX = exteriorAutomap.buildingNameplates[i].anchorPoint.x - 300; //(exteriorAutomap.LocationWidth * exteriorAutomap.BlockSizeWidth * 0.5f) * dummyPanelAutomap.LocalScale.x;
+            //    float posY = exteriorAutomap.buildingNameplates[i].anchorPoint.y - 400; //(exteriorAutomap.LocationHeight * exteriorAutomap.BlockSizeHeight * 0.5f) * dummyPanelAutomap.LocalScale.y;
+            //    Vector3 transformedPosition = exteriorAutomap.CameraExteriorAutomap.WorldToScreenPoint(new Vector3(posX, 0, posY));
+            //    transformedPosition.y = -transformedPosition.y; ///*(1.0f - 0.0254f) */ exteriorAutomap.NumMaxBlocksY * exteriorAutomap.BlockSizeHeight - transformedPosition.y;
+            //    transformedPosition /= dummyPanelAutomap.LocalScale.x;
+            //    //transformedPosition *= Vector2.one / dummyPanelAutomap.LocalScale;
+            //    //float ratioX = .InteriorWidth / dummyPanelAutomap.InteriorWidth;
+            //    //float ratioY = panelRenderAutomap.InteriorHeight / dummyPanelAutomap.InteriorHeight;
+            //    exteriorAutomap.buildingNameplates[i].textLabel.Position = new Vector2(transformedPosition.x, transformedPosition.y);
+            //    exteriorAutomap.buildingNameplates[i].textLabel.TextScale = 160.0f / cameraExteriorAutomap.orthographicSize / dummyPanelAutomap.LocalScale.x;
+            //    exteriorAutomap.buildingNameplates[i].textLabel.RectRestrictedRenderArea = restrictionRect;
+            //    exteriorAutomap.buildingNameplates[i].textLabel.RestrictedRenderAreaCoordinateType = TextLabel.RestrictedRenderArea_CoordinateType.ScreenCoordinates;
+            //    exteriorAutomap.buildingNameplates[i].textLabel.ToolTip = defaultToolTip; // new ToolTip();
+            //    //exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.ToolTipDelay = 0;
+            //    //exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.BackgroundColor = DaggerfallUnity.Settings.ToolTipBackgroundColor;
+            //    //exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.TextColor = DaggerfallUnity.Settings.ToolTipTextColor;
+            //    //exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.Parent = panelRenderAutomap;
+            //    exteriorAutomap.buildingNameplates[i].textLabel.ToolTipText = exteriorAutomap.buildingNameplates[i].textLabel.Text;
+            //    dummyPanelAutomap.Components.Add(exteriorAutomap.buildingNameplates[i].textLabel);
+            //}
         }
 
         #region Private Methods
