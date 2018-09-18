@@ -17,6 +17,7 @@ namespace DaggerfallWorkshop.Game
         private CharacterController controller;
         private PlayerEnterExit playerEnterExit;
         private AcrobatMotor acrobatMotor;
+        private PlayerSpeedChanger speedChanger;
         private bool overrideSkillCheck = false;
         private bool isClimbing = false;
         private bool isSlipping = false;
@@ -87,6 +88,7 @@ namespace DaggerfallWorkshop.Game
             controller = GetComponent<CharacterController>();
             playerEnterExit = GetComponent<PlayerEnterExit>();
             acrobatMotor = GetComponent<AcrobatMotor>();
+            speedChanger = GetComponent<PlayerSpeedChanger>();
         }
 
         /// <summary>
@@ -323,16 +325,13 @@ namespace DaggerfallWorkshop.Game
             // Try to move along wall and forwards at same time
             // This helps player maintain collision checks with the wall and step onto the ledge once it's found
 
-            // Climbing effect states "target can climb twice as well" - doubling climbing speed
-            float climbingBoost = player.IsEnhancedClimbing ? 2f : 1f;
-
             // if strafing to either side, this will be set so we can check for wrap-around corners.
             Vector3 checkDirection = Vector3.zero;
             bool adjacentWallFound = false;
 
             if (!isSlipping)
             {
-                float climbScalar = (playerMotor.Speed / 3) * climbingBoost;
+                float climbScalar = speedChanger.GetClimbingSpeed();
                 moveDirection = Vector3.zero;
                 bool movedForward = InputManager.Instance.HasAction(InputManager.Actions.MoveForwards);
                 bool movedBackward = InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards);

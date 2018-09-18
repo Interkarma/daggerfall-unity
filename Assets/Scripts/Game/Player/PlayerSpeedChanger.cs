@@ -129,5 +129,13 @@ namespace DaggerfallWorkshop.Game
             float swimSpeed = (baseSpeed * (player.Skills.GetLiveSkillValue(DFCareer.Skills.Swimming) / 200f)) + (baseSpeed / 4);
             return swimSpeed;
         }
+
+        public float GetClimbingSpeed()
+        {
+            // Climbing effect states "target can climb twice as well" - doubling climbing speed
+            Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
+            float climbingBoost = player.IsEnhancedClimbing ? 2f : 1f;
+            return (playerMotor.Speed / 3) * climbingBoost;
+        }
     }
 }
