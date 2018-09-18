@@ -223,6 +223,11 @@ namespace DaggerfallWorkshop.Utility
             throw new NotImplementedException();
         }
 
+        public virtual string Daedra()
+        {   // %dae
+            throw new NotImplementedException();
+        }
+
         public virtual string LocationDirection()
         {   // %di
             throw new NotImplementedException();

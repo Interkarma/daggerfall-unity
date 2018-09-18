@@ -1123,13 +1123,8 @@ namespace DaggerfallWorkshop.Game.Formulas
             else
                 cost = 7 * daysToRent;
 
-            // If player is member of region's knightly order, or rank 4 or higher in any knightly order
-            // DaggerfallUI.MessageBox(UserInterfaceWindows.HardStrings.roomFreeForKnightSuchAsYou);
-            // cost = 0;
             if (cost == 0) // Only renting for Heart's Day
-            {
                 DaggerfallUI.MessageBox(UserInterfaceWindows.HardStrings.roomFreeDueToHeartsDay);
-            }
 
             return cost;
         }
@@ -1189,6 +1184,15 @@ namespace DaggerfallWorkshop.Game.Formulas
                 cost = guild.ReducedIdentifyCost(cost);
 
             return cost;
+        }
+
+        public static int CalculateDaedraSummoningCost(int npcRep)
+        {
+            Formula_1i del;
+            if (formula_1i.TryGetValue("CalculateDaedraSummoningCost", out del))
+                return del(npcRep);
+
+            return 200000 - (npcRep * 1000);
         }
 
         public static int CalculateTradePrice(int cost, int shopQuality, bool selling)

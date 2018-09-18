@@ -153,6 +153,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void SummonButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             CloseWindow();
+            new DaggerfallDaedraSummoning(uiManager, witchNPC.Data.factionID);
         }
 
         private void QuestButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)

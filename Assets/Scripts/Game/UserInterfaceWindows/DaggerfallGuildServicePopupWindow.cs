@@ -343,6 +343,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     uiManager.PushWindow(DaggerfallUI.Instance.DfTravelMapWindow);
                     break;
 
+                case GuildServices.DaedraSummoning:
+                    CloseWindow();
+                    new DaggerfallDaedraSummoning(uiManager, (int) npcService);
+                    break;
+
                 case GuildServices.ReceiveArmor:
                     ReceiveArmorService();
                     break;
@@ -681,7 +686,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     playerEntity.DeductGoldAmount(curingCost);
                     GameManager.Instance.PlayerEffectManager.CureAllDiseases();
                     playerEntity.TimeToBecomeVampireOrWerebeast = 0;
-                    DaggerfallUI.MessageBox("You are cured.");
+                    DaggerfallUI.MessageBox(HardStrings.serviceCured);
                 }
                 else
                     DaggerfallUI.MessageBox(NotEnoughGoldId);

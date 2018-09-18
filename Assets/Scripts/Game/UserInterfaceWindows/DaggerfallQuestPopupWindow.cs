@@ -13,7 +13,6 @@ using UnityEngine;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Questing;
-using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {

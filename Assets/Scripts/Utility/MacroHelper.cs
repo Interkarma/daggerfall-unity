@@ -70,7 +70,7 @@ namespace DaggerfallWorkshop.Utility
             { "%cri", Crime }, // Accused crime
             { "%crn", CurrentRegion }, // Current Region
             { "%ct", CityType }, // City type? e.g city, town, village?
-            { "%dae", null }, // A daedra
+            { "%dae", Daedra }, // A daedra
             { "%dam", DmgMod }, // Damage modifyer
             { "%dat", Date }, // Date
             { "%di", LocationDirection },  // Direction
@@ -1178,10 +1178,14 @@ namespace DaggerfallWorkshop.Utility
         {   // %gdd
             return mcp.GetMacroDataSource().GodDesc();
         }
-
         public static string God(IMacroContextProvider mcp)
         {   // %god
             return mcp.GetMacroDataSource().God();
+        }
+
+        public static string Daedra(IMacroContextProvider mcp)
+        {   // %dae
+            return mcp.GetMacroDataSource().Daedra();
         }
 
         public static string LocationDirection(IMacroContextProvider mcp)
@@ -1205,80 +1209,59 @@ namespace DaggerfallWorkshop.Utility
         }
 
         public static string PotentialQuestorName(IMacroContextProvider mcp)
-        {
-            // %pqn
+        {   // %pqn
             return mcp.GetMacroDataSource().PotentialQuestorName();
         }
 
         public static string PotentialQuestorLocation(IMacroContextProvider mcp)
-        {
-            // %pqp
+        {   // %pqp
             return mcp.GetMacroDataSource().PotentialQuestorLocation();
         }
 
         public static string DurationBase(IMacroContextProvider mcp)
-        {
-            // %bdr
+        {   // %bdr
             return mcp.GetMacroDataSource().DurationBase();
         }
-
         public static string DurationPlus(IMacroContextProvider mcp)
-        {
-            // %adr
+        {   // %adr
             return mcp.GetMacroDataSource().DurationPlus();
         }
-
         public static string DurationPerLevel(IMacroContextProvider mcp)
-        {
-            // %cld
+        {   // %cld
             return mcp.GetMacroDataSource().DurationPerLevel();
         }
 
         public static string ChanceBase(IMacroContextProvider mcp)
-        {
-            // %bch
+        {   // %bch
             return mcp.GetMacroDataSource().ChanceBase();
         }
-
         public static string ChancePlus(IMacroContextProvider mcp)
-        {
-            // %ach
+        {   // %ach
             return mcp.GetMacroDataSource().ChancePlus();
         }
-
         public static string ChancePerLevel(IMacroContextProvider mcp)
-        {
-            // %clc
+        {   // %clc
             return mcp.GetMacroDataSource().ChancePerLevel();
         }
 
         public static string MagnitudeBaseMin(IMacroContextProvider mcp)
-        {
-            // %1bm
+        {   // %1bm
             return mcp.GetMacroDataSource().MagnitudeBaseMin();
         }
-
         public static string MagnitudeBaseMax(IMacroContextProvider mcp)
-        {
-            // %2bm
+        {   // %2bm
             return mcp.GetMacroDataSource().MagnitudeBaseMax();
         }
-
         public static string MagnitudePlusMin(IMacroContextProvider mcp)
-        {
-            // %1am
+        {   // %1am
             return mcp.GetMacroDataSource().MagnitudePlusMin();
         }
-
         public static string MagnitudePlusMax(IMacroContextProvider mcp)
-        {
-            // %2am
+        {   // %2am
             return mcp.GetMacroDataSource().MagnitudePlusMax();
         }
-
         public static string MagnitudePerLevel(IMacroContextProvider mcp)
-        {
-            // %clm
+        {   // %clm
             return mcp.GetMacroDataSource().MagnitudePerLevel();
         }
 
