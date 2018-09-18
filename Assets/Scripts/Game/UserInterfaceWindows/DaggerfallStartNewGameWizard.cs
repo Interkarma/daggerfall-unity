@@ -364,6 +364,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (!createCharChooseBioWindow.ChoseQuestions)
             {
+                // Choose answers at random
+                System.Random rand = new System.Random(System.DateTime.Now.Millisecond);
+                BiogFile autoBiog = new BiogFile(createCharClassSelectWindow.SelectedClassIndex);
+                for (int i = 0; i < autoBiog.Questions.Length; i++)
+                {
+                    List<BiogFile.Answer> answers;
+                    answers = autoBiog.Questions[i].Answers;
+                    int index = rand.Next(0, answers.Count);
+                    for (int j = 0; j < answers[index].Effects.Count; j++)
+                    {
+                        autoBiog.AnswerEffects.Add(answers[index].Effects[j]);
+                    }
+                }
+
                 SetNameSelectWindow();
             } 
             else
@@ -375,6 +389,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void CreateCharBiographyWindow_OnClose()
         {
             characterDocument.biographyEffects = createCharBiographyWindow.PlayerEffects;
+            characterDocument.classIndex = createCharBiographyWindow.ClassIndex;
             SetNameSelectWindow();
         }
 

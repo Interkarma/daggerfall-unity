@@ -57,6 +57,7 @@ namespace DaggerfallWorkshop.Game.Player
         public uint lastTimePlayerAteOrDrankAtTavern;
         public sbyte biographyReactionMod;
         public List<string> biographyEffects;
+        public int classIndex;
 
         public CharacterDocument()
         {

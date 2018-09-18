@@ -154,6 +154,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public int ClassIndex
         {
             set { classIndex = value; }
+            get { return classIndex; }
         }
 
         public List<string> PlayerEffects

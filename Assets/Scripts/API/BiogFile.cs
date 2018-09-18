@@ -268,8 +268,14 @@ namespace DaggerfallConnect.Arena2
             // Adjust to-hit
             else if (effect.StartsWith("TH"))
             {
-                // TODO: Apply to-hit modifier when implemented
-                Debug.Log("CreateCharBiography: Biography to-hit modifier not yet implemented.");
+                if (!int.TryParse(tokens[1], out parseResult))
+                {
+                    playerEntity.BiographyAvoidHitMod = parseResult;
+                }
+                else
+                {
+                    Debug.LogError("CreateCharBiography: TH - invalid argument.");
+                }
             }
             else if (effect[0] == '#' || effect[0] == '!')
             {

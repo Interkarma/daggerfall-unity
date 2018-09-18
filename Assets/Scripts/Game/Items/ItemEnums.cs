@@ -525,8 +525,8 @@ namespace DaggerfallWorkshop.Game.Items
 
     public enum MiscellaneousIngredients2 //checked
     {
-        Ivory,
-        Pearl,
+        Ivory = 76,
+        Pearl = 77,
     }
 
     public enum Transportation  //Checked

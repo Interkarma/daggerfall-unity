@@ -941,7 +941,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// <summary>
         /// Assigns basic starting gear to a new character.
         /// </summary>
-        public void AssignStartingGear(PlayerEntity playerEntity)
+        public void AssignStartingGear(PlayerEntity playerEntity, int classIndex)
         {
             // Get references
             ItemCollection items = playerEntity.Items;
@@ -973,6 +973,11 @@ namespace DaggerfallWorkshop.Game.Items
             items.AddItem(casualPants);
             equipTable.EquipItem(shortShirt, true, false);
             equipTable.EquipItem(casualPants, true, false);
+
+            // Add class-specific starting weapon
+            byte[] StartingWeaponTypesByClass      = { 3, 6, 6, 3, 11, 3, 3, 1, 6, 3, 3, 7, 2, 254, 14, 13, 5, 7, 7 };
+            byte[] StartingWeaponMaterialsByClass  = { 1, 0, 0, 1,  0, 0, 0, 1, 0, 0, 0, 0, 1, 254,  1,  0, 0, 0, 0 };
+            items.AddItem(ItemBuilder.CreateWeapon((Weapons)StartingWeaponTypesByClass[classIndex], (WeaponMaterialTypes)StartingWeaponMaterialsByClass[classIndex]));
 
             // Add some starting gold
             playerEntity.GoldPieces += 100;
