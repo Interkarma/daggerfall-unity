@@ -1328,7 +1328,7 @@ namespace DaggerfallWorkshop.Utility
                 }
 
                 // Get base monster index into table
-                int baseMonsterIndex = (int)((float)table.Enemies.Length * monsterPower);
+                int baseMonsterIndex = (int)(table.Enemies.Length * monsterPower);
 
                 // Set min index
                 int minMonsterIndex = baseMonsterIndex - monsterVariance;
@@ -1338,7 +1338,7 @@ namespace DaggerfallWorkshop.Utility
                 // Set max index
                 int maxMonsterIndex = baseMonsterIndex + monsterVariance;
                 if (maxMonsterIndex >= table.Enemies.Length)
-                    maxMonsterIndex = table.Enemies.Length;
+                    maxMonsterIndex = table.Enemies.Length - 1;
 
                 // Get random monster from table
                 MobileTypes type = table.Enemies[UnityEngine.Random.Range(minMonsterIndex, maxMonsterIndex + 1)];

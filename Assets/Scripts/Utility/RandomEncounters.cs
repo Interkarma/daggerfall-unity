@@ -573,9 +573,6 @@ namespace DaggerfallWorkshop.Utility
                     MobileTypes.Rogue,
                     MobileTypes.Rat,
                     MobileTypes.Rat,
-                    MobileTypes.Bard,
-                    MobileTypes.Monk,
-                    MobileTypes.Rogue,
                 },
             },
 
