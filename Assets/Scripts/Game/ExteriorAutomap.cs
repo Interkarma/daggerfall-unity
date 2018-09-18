@@ -751,55 +751,6 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        private TextLabel createOrUpdateTextLabelBuildingNamePlate(GameObject namePlateGameObject, string textLabelText, out float scale)
-        {
-            TextLabel textLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, textLabelText);
-            textLabel.TextScale = 1.0f;
-            textLabel.MaxCharacters = -1;
-            textLabel.Name = textLabelText;
-            //MeshFilter meshFilter = namePlateGameObject.GetComponent<MeshFilter>();
-            //if (meshFilter == null)
-            //    meshFilter = (MeshFilter)namePlateGameObject.AddComponent(typeof(MeshFilter));
-
-            //meshFilter.mesh = CreateLeftAlignedMesh(textLabel.Texture.width, textLabel.Texture.height); // create left aligned (in relation to gameobject position) quad with normal facing into positive y-direction
-
-            //// set vertex colors so that font rendering is in the correct text color
-            //Color[] vertexColors = new Color[meshFilter.mesh.vertexCount];
-            //for (int i = 0; i < vertexColors.Length; i++)
-            //    vertexColors[i] = DaggerfallUI.DaggerfallDefaultTextColor;
-            //meshFilter.mesh.colors = vertexColors;
-
-            //MeshRenderer mr = namePlateGameObject.GetComponent<MeshRenderer>();
-            //if (mr == null)
-            //    mr = namePlateGameObject.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
-
-            //MeshCollider collider = namePlateGameObject.AddComponent<MeshCollider>();
-            //if (collider)
-            //{
-            //    // Doing nothing just to suppress warning
-            //}
-
-            ////renderer.material.shader = Shader.Find("Unlit/Transparent");
-            ////renderer.material.mainTexture = newBuildingNameplate.textLabel.Texture;
-            ////if (DaggerfallUI.Instance.SDFFontMaterial != null)
-            //if (DaggerfallUnity.Settings.SDFFontRendering == true)
-            //{
-            //    mr.material = DaggerfallUI.Instance.SDFFontMaterial; //new Material(DaggerfallUI.Instance.SDFFontMaterial);                               
-            //    mr.material.renderQueue = 4000;
-            //    scale = 0.125f;
-            //}
-            //else
-            //{
-            //    mr.material = DaggerfallUI.Instance.PixelFontMaterial;
-            //    mr.material.renderQueue = 4000;
-            //    scale = 1.0f;
-            //}
-            //mr.material.mainTexture = textLabel.Texture;
-            //mr.enabled = true;
-            scale = 1.0f; // 0.0125f;
-            return textLabel;
-        }
-
         private void createBuildingNameplates(DFLocation location)
         {
             deleteBuildingNameplates();
@@ -948,41 +899,45 @@ namespace DaggerfallWorkshop.Game
                             newBuildingNameplate.anchorPoint.x = xPosBuilding;
                             newBuildingNameplate.anchorPoint.y = yPosBuilding;                            
                             newBuildingNameplate.gameObject = new GameObject(String.Format("building name plate for [{0}]+", newBuildingNameplate.name));
-                            newBuildingNameplate.textLabel = createOrUpdateTextLabelBuildingNamePlate(newBuildingNameplate.gameObject, newBuildingNameplate.name, out newBuildingNameplate.scale);
-                            //newBuildingNameplate.textLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, newBuildingNameplate.name);
-                            MeshFilter meshFilter = (MeshFilter)newBuildingNameplate.gameObject.AddComponent(typeof(MeshFilter));
-                            meshFilter.mesh = CreateLeftAlignedMesh(1, 1); // create left aligned (in relation to gameobject position) quad with normal facing into positive y-direction
+                            newBuildingNameplate.textLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, newBuildingNameplate.name);
+                            newBuildingNameplate.textLabel.TextScale = 1.0f;
+                            newBuildingNameplate.textLabel.MaxCharacters = -1;
+                            newBuildingNameplate.textLabel.Name = newBuildingNameplate.name;
+                            newBuildingNameplate.scale = 1.0f;
+                            ////newBuildingNameplate.textLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, newBuildingNameplate.name);
+                            //MeshFilter meshFilter = (MeshFilter)newBuildingNameplate.gameObject.AddComponent(typeof(MeshFilter));
+                            //meshFilter.mesh = CreateLeftAlignedMesh(1, 1); // create left aligned (in relation to gameobject position) quad with normal facing into positive y-direction
 
-                            // set vertex colors so that font rendering is in the correct text color
-                            Color[] vertexColors = new Color[meshFilter.mesh.vertexCount];
-                            for (int i = 0; i < vertexColors.Length; i++)
-                                vertexColors[i] = DaggerfallUI.DaggerfallDefaultTextColor;
-                            meshFilter.mesh.colors = vertexColors;
+                            //// set vertex colors so that font rendering is in the correct text color
+                            //Color[] vertexColors = new Color[meshFilter.mesh.vertexCount];
+                            //for (int i = 0; i < vertexColors.Length; i++)
+                            //    vertexColors[i] = DaggerfallUI.DaggerfallDefaultTextColor;
+                            //meshFilter.mesh.colors = vertexColors;
 
-                            MeshRenderer renderer = newBuildingNameplate.gameObject.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
+                            //MeshRenderer renderer = newBuildingNameplate.gameObject.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
 
-                            MeshCollider collider = newBuildingNameplate.gameObject.AddComponent<MeshCollider>();
-                            if (collider)
-                            {
-                                // Doing nothing just to suppress warning
-                            }
-
-                            renderer.material.shader = Shader.Find("Unlit/Color");
-                            //if (DaggerfallUI.Instance.SDFFontMaterial != null)
-                            //if (DaggerfallUnity.Settings.SDFFontRendering == true)
+                            //MeshCollider collider = newBuildingNameplate.gameObject.AddComponent<MeshCollider>();
+                            //if (collider)
                             //{
-                            //    renderer.material = DaggerfallUI.Instance.SDFFontMaterial; //new Material(DaggerfallUI.Instance.SDFFontMaterial);                               
-                            //    renderer.material.renderQueue = 4000;
-                            //    newBuildingNameplate.scale = 0.125f;
+                            //    // Doing nothing just to suppress warning
                             //}
-                            //else
-                            //{
-                            //    renderer.material = DaggerfallUI.Instance.PixelFontMaterial;
-                            //    renderer.material.renderQueue = 4000;
-                            //    newBuildingNameplate.scale = 1.0f;
-                            //}
-                            //renderer.material.mainTexture = newBuildingNameplate.textLabel.Texture;
-                            renderer.enabled = true;
+
+                            //renderer.material.shader = Shader.Find("Unlit/Color");
+                            ////if (DaggerfallUI.Instance.SDFFontMaterial != null)
+                            ////if (DaggerfallUnity.Settings.SDFFontRendering == true)
+                            ////{
+                            ////    renderer.material = DaggerfallUI.Instance.SDFFontMaterial; //new Material(DaggerfallUI.Instance.SDFFontMaterial);                               
+                            ////    renderer.material.renderQueue = 4000;
+                            ////    newBuildingNameplate.scale = 0.125f;
+                            ////}
+                            ////else
+                            ////{
+                            ////    renderer.material = DaggerfallUI.Instance.PixelFontMaterial;
+                            ////    renderer.material.renderQueue = 4000;
+                            ////    newBuildingNameplate.scale = 1.0f;
+                            ////}
+                            ////renderer.material.mainTexture = newBuildingNameplate.textLabel.Texture;
+                            //renderer.enabled = true;
 
                             SetLayerRecursively(newBuildingNameplate.gameObject, layerAutomap);
                             newBuildingNameplate.gameObject.transform.SetParent(gameObjectBuildingNameplates.transform);
@@ -990,19 +945,13 @@ namespace DaggerfallWorkshop.Game
                             float posX = newBuildingNameplate.anchorPoint.x - locationWidth * blockSizeWidth * 0.5f;
                             float posY = newBuildingNameplate.anchorPoint.y - locationHeight * blockSizeHeight * 0.5f;
 
-                            newBuildingNameplate.width = 0.0f; // newBuildingNameplate.textLabel.TextWidth; // * newBuildingNameplate.scale;
-                            newBuildingNameplate.height = 0.0f; // newBuildingNameplate.textLabel.TextHeight; // * newBuildingNameplate.scale;
-                            //newBuildingNameplate.gameObject.transform.position = new Vector3(posX, nameplatesPlacementDepth, posY);
-                            //newBuildingNameplate.gameObject.transform.localScale = new Vector3(newBuildingNameplate.scale, newBuildingNameplate.scale, newBuildingNameplate.scale);
+                            newBuildingNameplate.width = 0.0f;
+                            newBuildingNameplate.height = 0.0f;
                             newBuildingNameplate.offset = Vector2.zero;
-                            newBuildingNameplate.upperLeftCorner = new Vector2(0.0f, +newBuildingNameplate.height * 0.5f);
-                            newBuildingNameplate.upperRightCorner = new Vector2(newBuildingNameplate.width, +newBuildingNameplate.height * 0.5f);
-                            newBuildingNameplate.lowerLeftCorner = new Vector2(0.0f, -newBuildingNameplate.height * 0.5f);
-                            newBuildingNameplate.lowerRightCorner = new Vector2(newBuildingNameplate.width, -newBuildingNameplate.height * 0.5f);
-                            //newBuildingNameplate.upperLeftCorner = new Vector2(0.0f, 0.0f);
-                            //newBuildingNameplate.upperRightCorner = new Vector2(newBuildingNameplate.width, 0.0f);
-                            //newBuildingNameplate.lowerLeftCorner = new Vector2(0.0f, newBuildingNameplate.height);
-                            //newBuildingNameplate.lowerRightCorner = new Vector2(newBuildingNameplate.width, newBuildingNameplate.height);
+                            newBuildingNameplate.upperLeftCorner = Vector2.zero;
+                            newBuildingNameplate.upperRightCorner = Vector2.zero;
+                            newBuildingNameplate.lowerLeftCorner = Vector2.zero;
+                            newBuildingNameplate.lowerRightCorner = Vector2.zero;
                             newBuildingNameplate.placed = false;
                             newBuildingNameplate.nameplateReplaced = false;
                             newBuildingNameplate.numCollisionsDetected = 0;                            
@@ -1026,9 +975,6 @@ namespace DaggerfallWorkshop.Game
                 buildingNameplates[i] = buildingNameplatesList[i];
             }
             buildingNameplatesList.Clear();
-
-            //computeNameplateOffsets();
-            //applyNameplateOffsets();
 
             if (cameraExteriorAutomap != null)
                 rotateBuildingNameplates(cameraExteriorAutomap.transform.rotation.eulerAngles.y);
@@ -1072,7 +1018,7 @@ namespace DaggerfallWorkshop.Game
         /// <returns> returns true if nameplates with given offsets intersect/collide, otherwise false </returns>
         private bool checkIntersectionOfNameplates(BuildingNameplate nameplate1, Vector2 tryOffset1, BuildingNameplate nameplate2, Vector2 tryOffset2, out Vector2 vectorNameplate1VerticalOffset, out Vector2 vectorNameplate2VerticalOffset, out float ySize, out float distanceVertical)
         {        
-            Vector2 vectorBetweenNamePlates = (new Vector2(nameplate2.gameObject.transform.position.x, nameplate2.gameObject.transform.position.z) + nameplate2.offset + tryOffset2) - (new Vector2(nameplate1.gameObject.transform.position.x, nameplate1.gameObject.transform.position.z) + nameplate1.offset + tryOffset1);
+            Vector2 vectorBetweenNamePlates = (nameplate2.textLabel.Position + nameplate2.offset + tryOffset2) - (nameplate1.textLabel.Position + nameplate1.offset + tryOffset1);
 
             Vector2 p;
             Vector2 posNameplate1 = Vector2.zero;
@@ -1237,7 +1183,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// this is the main function for computing offsets of nameplates
         /// </summary>
-        private void computeNameplateOffsets()
+        public void computeNameplateOffsets()
         {
             for (int t = 0; t < 3; t++) // main loop max n times (then everything should either be solved or is considered unsolveable)
             {
@@ -1492,8 +1438,8 @@ namespace DaggerfallWorkshop.Game
                     buildingNameplate.placed = true;
 
                     //TextLabel newTextLabel = DaggerfallUI.AddTextLabel(customFont, Vector2.zero, "*");
-                    TextLabel newTextLabel = createOrUpdateTextLabelBuildingNamePlate(buildingNameplate.gameObject, "*", out buildingNameplate.scale);
-                    buildingNameplate.textLabel = newTextLabel;                    
+                    //TextLabel newTextLabel = createOrUpdateTextLabelBuildingNamePlate(buildingNameplate.gameObject, "*", out buildingNameplate.scale);
+                    //buildingNameplate.textLabel.Text = "*";
                     /*MeshFilter meshFilter = buildingNameplate.gameObject.GetComponent<MeshFilter>();
                     meshFilter.mesh = CreateLeftAlignedMesh(buildingNameplate.textLabel.Texture.width, buildingNameplate.textLabel.Texture.height); // create left aligned (in relation to gameobject position) quad with normal facing into positive y-direction
                     MeshCollider meshCollider = buildingNameplate.gameObject.GetComponent<MeshCollider>();
@@ -1501,8 +1447,8 @@ namespace DaggerfallWorkshop.Game
                     MeshRenderer renderer = buildingNameplate.gameObject.GetComponent<MeshRenderer>();
                     renderer.material.mainTexture = newTextLabel.Texture;
                     */
-                    buildingNameplate.gameObject.name = buildingNameplate.gameObject.name.Substring(0, buildingNameplate.gameObject.name.Length - 1) + "*";
-                    buildingNameplate.gameObject.transform.position = new Vector3(buildingNameplate.gameObject.transform.position.x, nameplatesPlacementDepth + 1.0f, buildingNameplate.gameObject.transform.position.z); // set a bit higher than other nameplates so that it will get mouse over pop-up
+                    //buildingNameplate.gameObject.name = buildingNameplate.gameObject.name.Substring(0, buildingNameplate.gameObject.name.Length - 1) + "*";
+                    //buildingNameplate.gameObject.transform.position = new Vector3(buildingNameplate.gameObject.transform.position.x, nameplatesPlacementDepth + 1.0f, buildingNameplate.gameObject.transform.position.z); // set a bit higher than other nameplates so that it will get mouse over pop-up
                     buildingNameplate.nameplateReplaced = true;
                 }
                 // store changes to nameplates array
@@ -1510,88 +1456,88 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        private void applyNameplateOffsets()
-        {
-            for (int i = 0; i < buildingNameplates.Length; i++)
-            {
-                BuildingNameplate buildingNameplate = buildingNameplates[i];
-                //buildingNameplate.gameObject.transform.position.Set(buildingNameplate.gameObject.transform.position.x + buildingNameplate.offset.x, buildingNameplate.gameObject.transform.position.y, buildingNameplate.gameObject.transform.position.z + buildingNameplate.offset.y);
-                buildingNameplate.gameObject.transform.Translate(buildingNameplate.offset.x, 0.0f, buildingNameplate.offset.y, Space.World);
+//        private void applyNameplateOffsets()
+//        {
+//            for (int i = 0; i < buildingNameplates.Length; i++)
+//            {
+//                BuildingNameplate buildingNameplate = buildingNameplates[i];
+//                //buildingNameplate.gameObject.transform.position.Set(buildingNameplate.gameObject.transform.position.x + buildingNameplate.offset.x, buildingNameplate.gameObject.transform.position.y, buildingNameplate.gameObject.transform.position.z + buildingNameplate.offset.y);
+//                buildingNameplate.gameObject.transform.Translate(buildingNameplate.offset.x, 0.0f, buildingNameplate.offset.y, Space.World);
 
-#if DEBUG_Nameplates
-                Vector3 posAnchor = buildingNameplate.gameObject.transform.position;
-                Vector3 posNameplate = buildingNameplate.gameObject.transform.position - new Vector3(buildingNameplate.offset.x, 0.0f, buildingNameplate.offset.y);
-                if (buildingNameplate.anchorLine != null)
-                {
-                    buildingNameplate.anchorLine.SetActive(false); // hide old line gameobject immediately (since destroy seems to be delayed this is necessary)                    
-                    GameObject.Destroy(buildingNameplate.anchorLine);
-                    buildingNameplate.anchorLine = null;
-                }
-                buildingNameplate.anchorLine = DrawLine(posAnchor, posNameplate, Color.yellow, 0.5f, 0.5f);
-                buildingNameplate.anchorLine.hideFlags = HideFlags.HideAndDontSave;
+//#if DEBUG_Nameplates
+//                Vector3 posAnchor = buildingNameplate.gameObject.transform.position;
+//                Vector3 posNameplate = buildingNameplate.gameObject.transform.position - new Vector3(buildingNameplate.offset.x, 0.0f, buildingNameplate.offset.y);
+//                if (buildingNameplate.anchorLine != null)
+//                {
+//                    buildingNameplate.anchorLine.SetActive(false); // hide old line gameobject immediately (since destroy seems to be delayed this is necessary)                    
+//                    GameObject.Destroy(buildingNameplate.anchorLine);
+//                    buildingNameplate.anchorLine = null;
+//                }
+//                buildingNameplate.anchorLine = DrawLine(posAnchor, posNameplate, Color.yellow, 0.5f, 0.5f);
+//                buildingNameplate.anchorLine.hideFlags = HideFlags.HideAndDontSave;
 
-                buildingNameplates[i] = buildingNameplate;
+//                buildingNameplates[i] = buildingNameplate;
 
-                Vector3 start1 = buildingNameplate.gameObject.transform.position + new Vector3(buildingNameplate.upperLeftCorner.x, 0.5f, buildingNameplate.upperLeftCorner.y);
-                Vector3 end1 = buildingNameplate.gameObject.transform.position + new Vector3(buildingNameplate.lowerRightCorner.x, 0.5f, buildingNameplate.lowerRightCorner.y);
-                Vector3 start2 = buildingNameplate.gameObject.transform.position + new Vector3(buildingNameplate.lowerLeftCorner.x, 0.5f, buildingNameplate.lowerLeftCorner.y);
-                Vector3 end2 = buildingNameplate.gameObject.transform.position + new Vector3(buildingNameplate.upperRightCorner.x, 0.5f, buildingNameplate.upperRightCorner.y);
+//                Vector3 start1 = buildingNameplate.gameObject.transform.position + new Vector3(buildingNameplate.upperLeftCorner.x, 0.5f, buildingNameplate.upperLeftCorner.y);
+//                Vector3 end1 = buildingNameplate.gameObject.transform.position + new Vector3(buildingNameplate.lowerRightCorner.x, 0.5f, buildingNameplate.lowerRightCorner.y);
+//                Vector3 start2 = buildingNameplate.gameObject.transform.position + new Vector3(buildingNameplate.lowerLeftCorner.x, 0.5f, buildingNameplate.lowerLeftCorner.y);
+//                Vector3 end2 = buildingNameplate.gameObject.transform.position + new Vector3(buildingNameplate.upperRightCorner.x, 0.5f, buildingNameplate.upperRightCorner.y);
 
-                if (buildingNameplate.debugLine1 != null)
-                {
-                    buildingNameplate.debugLine1.SetActive(false); // hide old line gameobject immediately (since destroy seems to be delayed this is necessary)                    
-                    GameObject.Destroy(buildingNameplate.debugLine1);
-                    buildingNameplate.debugLine1 = null;
-                }
-                if (buildingNameplate.debugLine2 != null)
-                {
-                    buildingNameplate.debugLine2.SetActive(false); // hide old line gameobject immediately (since destroy seems to be delayed this is necessary)                    
-                    GameObject.Destroy(buildingNameplate.debugLine2);
-                    buildingNameplate.debugLine2 = null;
-                }
+//                if (buildingNameplate.debugLine1 != null)
+//                {
+//                    buildingNameplate.debugLine1.SetActive(false); // hide old line gameobject immediately (since destroy seems to be delayed this is necessary)                    
+//                    GameObject.Destroy(buildingNameplate.debugLine1);
+//                    buildingNameplate.debugLine1 = null;
+//                }
+//                if (buildingNameplate.debugLine2 != null)
+//                {
+//                    buildingNameplate.debugLine2.SetActive(false); // hide old line gameobject immediately (since destroy seems to be delayed this is necessary)                    
+//                    GameObject.Destroy(buildingNameplate.debugLine2);
+//                    buildingNameplate.debugLine2 = null;
+//                }
 
-                buildingNameplate.debugLine1 = DrawLine(start1, end1, Color.blue);
-                buildingNameplate.debugLine2 = DrawLine(start2, end2, Color.red);
-                buildingNameplate.debugLine1.hideFlags = HideFlags.HideAndDontSave;
-                buildingNameplate.debugLine2.hideFlags = HideFlags.HideAndDontSave;
+//                buildingNameplate.debugLine1 = DrawLine(start1, end1, Color.blue);
+//                buildingNameplate.debugLine2 = DrawLine(start2, end2, Color.red);
+//                buildingNameplate.debugLine1.hideFlags = HideFlags.HideAndDontSave;
+//                buildingNameplate.debugLine2.hideFlags = HideFlags.HideAndDontSave;
 
-                buildingNameplates[i] = buildingNameplate;
-#endif
-            }
-        }
+//                buildingNameplates[i] = buildingNameplate;
+//#endif
+//            }
+//        }
 
-        private void undoNameplateOffsets()
-        {
-            for (int i = 0; i < buildingNameplates.Length; i++)
-            {
-                BuildingNameplate buildingNameplate = buildingNameplates[i];
-                //buildingNameplate.gameObject.transform.position.Set(buildingNameplate.gameObject.transform.position.x - buildingNameplate.offset.x, buildingNameplate.gameObject.transform.position.y, buildingNameplate.gameObject.transform.position.z - buildingNameplate.offset.y);
-                buildingNameplate.gameObject.transform.Translate(-buildingNameplate.offset.x, 0.0f, -buildingNameplate.offset.y, Space.World);
-                buildingNameplate.offset = Vector2.zero;
+        //private void undoNameplateOffsets()
+        //{
+        //    for (int i = 0; i < buildingNameplates.Length; i++)
+        //    {
+        //        BuildingNameplate buildingNameplate = buildingNameplates[i];
+        //        //buildingNameplate.gameObject.transform.position.Set(buildingNameplate.gameObject.transform.position.x - buildingNameplate.offset.x, buildingNameplate.gameObject.transform.position.y, buildingNameplate.gameObject.transform.position.z - buildingNameplate.offset.y);
+        //        buildingNameplate.gameObject.transform.Translate(-buildingNameplate.offset.x, 0.0f, -buildingNameplate.offset.y, Space.World);
+        //        buildingNameplate.offset = Vector2.zero;
                 
-                buildingNameplate.placed = false;
-                buildingNameplate.gameObject.SetActive(true);
+        //        buildingNameplate.placed = false;
+        //        buildingNameplate.gameObject.SetActive(true);
 
-                if (buildingNameplate.nameplateReplaced)
-                {
-                    //TextLabel newTextLabel = DaggerfallUI.AddTextLabel(customFont, Vector2.zero, buildingNameplate.name);
-                    TextLabel newTextLabel = createOrUpdateTextLabelBuildingNamePlate(buildingNameplate.gameObject, buildingNameplate.name, out buildingNameplate.scale);                    
-                    buildingNameplate.textLabel = newTextLabel;                    
-                    //MeshFilter meshFilter = buildingNameplate.gameObject.GetComponent<MeshFilter>();
-                    //meshFilter.mesh = CreateLeftAlignedMesh(buildingNameplate.textLabel.Texture.width, buildingNameplate.textLabel.Texture.height); // create left aligned (in relation to gameobject position) quad with normal facing into positive y-direction
-                    //MeshCollider meshCollider = buildingNameplate.gameObject.GetComponent<MeshCollider>();
-                    //meshCollider.sharedMesh = meshFilter.mesh;
-                    //MeshRenderer renderer = buildingNameplate.gameObject.GetComponent<MeshRenderer>();                    
-                    //renderer.material.mainTexture = newTextLabel.Texture;
-                    buildingNameplate.gameObject.name = buildingNameplate.gameObject.name.Substring(0, buildingNameplate.gameObject.name.Length - 1) + "+";
-                    buildingNameplate.gameObject.transform.position = new Vector3(buildingNameplate.gameObject.transform.position.x, nameplatesPlacementDepth, buildingNameplate.gameObject.transform.position.z); // set back to same height as other nameplates
-                    buildingNameplate.nameplateReplaced = false;
-                }
+        //        if (buildingNameplate.nameplateReplaced)
+        //        {
+        //            //TextLabel newTextLabel = DaggerfallUI.AddTextLabel(customFont, Vector2.zero, buildingNameplate.name);
+        //            TextLabel newTextLabel = createOrUpdateTextLabelBuildingNamePlate(buildingNameplate.gameObject, buildingNameplate.name, out buildingNameplate.scale);                    
+        //            buildingNameplate.textLabel = newTextLabel;                    
+        //            //MeshFilter meshFilter = buildingNameplate.gameObject.GetComponent<MeshFilter>();
+        //            //meshFilter.mesh = CreateLeftAlignedMesh(buildingNameplate.textLabel.Texture.width, buildingNameplate.textLabel.Texture.height); // create left aligned (in relation to gameobject position) quad with normal facing into positive y-direction
+        //            //MeshCollider meshCollider = buildingNameplate.gameObject.GetComponent<MeshCollider>();
+        //            //meshCollider.sharedMesh = meshFilter.mesh;
+        //            //MeshRenderer renderer = buildingNameplate.gameObject.GetComponent<MeshRenderer>();                    
+        //            //renderer.material.mainTexture = newTextLabel.Texture;
+        //            buildingNameplate.gameObject.name = buildingNameplate.gameObject.name.Substring(0, buildingNameplate.gameObject.name.Length - 1) + "+";
+        //            buildingNameplate.gameObject.transform.position = new Vector3(buildingNameplate.gameObject.transform.position.x, nameplatesPlacementDepth, buildingNameplate.gameObject.transform.position.z); // set back to same height as other nameplates
+        //            buildingNameplate.nameplateReplaced = false;
+        //        }
 
-                // store changes to nameplates array
-                buildingNameplates[i] = buildingNameplate;
-            }
-        }
+        //        // store changes to nameplates array
+        //        buildingNameplates[i] = buildingNameplate;
+        //    }
+        //}
 
         private void updatePlayerMarker()
         {

@@ -843,51 +843,46 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 exteriorAutomap.buildingNameplates[i].textLabel.ToolTip = nameplateToolTip;
                 exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.ToolTipDelay = 0;
                 exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.BackgroundColor = DaggerfallUnity.Settings.ToolTipBackgroundColor;
-                exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.TextColor = DaggerfallUnity.Settings.ToolTipTextColor;
-                exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.Parent = dummyPanelAutomap; //panelRenderAutomap;
-                exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.Position /= dummyPanelAutomap.LocalScale;
-                exteriorAutomap.buildingNameplates[i].textLabel.ToolTipText = exteriorAutomap.buildingNameplates[i].textLabel.Text;
+                exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.TextColor = DaggerfallUnity.Settings.ToolTipTextColor;                
+                exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.Parent = NativePanel;
+                exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.Position /= NativePanel.LocalScale;
+                exteriorAutomap.buildingNameplates[i].textLabel.ToolTipText = exteriorAutomap.buildingNameplates[i].name;
                 panelRenderAutomap.Components.Add(exteriorAutomap.buildingNameplates[i].textLabel);
 
-                exteriorAutomap.buildingNameplates[i].gameObject.transform.position = new Vector3(posX, 4.0f, posY + exteriorAutomap.buildingNameplates[i].textLabel.TextHeight / exteriorAutomap.buildingNameplates[i].textLabel.TextScale);
-                float scaleX = exteriorAutomap.buildingNameplates[i].textLabel.TextWidth / exteriorAutomap.buildingNameplates[i].textLabel.TextScale * 0.75f;
-                float scaleY = exteriorAutomap.buildingNameplates[i].textLabel.TextHeight / exteriorAutomap.buildingNameplates[i].textLabel.TextScale * 0.75f;
-                exteriorAutomap.buildingNameplates[i].gameObject.transform.localScale = new Vector3(scaleX, 1, scaleY);
+                //exteriorAutomap.buildingNameplates[i].gameObject.transform.position = new Vector3(posX, 4.0f, posY + exteriorAutomap.buildingNameplates[i].textLabel.TextHeight / exteriorAutomap.buildingNameplates[i].textLabel.TextScale);
+                //float scaleX = exteriorAutomap.buildingNameplates[i].textLabel.TextWidth / exteriorAutomap.buildingNameplates[i].textLabel.TextScale;
+                //float scaleY = exteriorAutomap.buildingNameplates[i].textLabel.TextHeight / exteriorAutomap.buildingNameplates[i].textLabel.TextScale;
+                //exteriorAutomap.buildingNameplates[i].gameObject.transform.localScale = new Vector3(scaleX, 1, scaleY);
 
                 exteriorAutomap.buildingNameplates[i].width = exteriorAutomap.buildingNameplates[i].textLabel.TextWidth;
                 exteriorAutomap.buildingNameplates[i].height = exteriorAutomap.buildingNameplates[i].textLabel.TextHeight;
+                exteriorAutomap.buildingNameplates[i].offset = Vector2.zero;
+                exteriorAutomap.buildingNameplates[i].upperLeftCorner = new Vector2(0.0f, +exteriorAutomap.buildingNameplates[i].height * 0.5f);
+                exteriorAutomap.buildingNameplates[i].upperRightCorner = new Vector2(exteriorAutomap.buildingNameplates[i].width, +exteriorAutomap.buildingNameplates[i].height * 0.5f);
+                exteriorAutomap.buildingNameplates[i].lowerLeftCorner = new Vector2(0.0f, -exteriorAutomap.buildingNameplates[i].height * 0.5f);
+                exteriorAutomap.buildingNameplates[i].lowerRightCorner = new Vector2(exteriorAutomap.buildingNameplates[i].width, -exteriorAutomap.buildingNameplates[i].height * 0.5f);
+                exteriorAutomap.buildingNameplates[i].placed = false;
+                exteriorAutomap.buildingNameplates[i].nameplateReplaced = false;
+                exteriorAutomap.buildingNameplates[i].numCollisionsDetected = 0;
             }
 
-            //dummyPanelAutomap.Components.Clear();
+            exteriorAutomap.computeNameplateOffsets();
 
-            //Rect restrictionRect = new Rect(); // = panelRenderAutomap.Rectangle;
-            //restrictionRect.position = panelRenderAutomap.Position;
-            //restrictionRect.width = panelRenderAutomap.InteriorWidth;
-            //restrictionRect.height = panelRenderAutomap.InteriorHeight;
-            //for (int i = 0; i < exteriorAutomap.buildingNameplates.Length; i++)
-            //{
-            //    //float posX = exteriorAutomap.buildingNameplates[i].gameObject.transform.position.x;
-            //    //float posY = exteriorAutomap.buildingNameplates[i].gameObject.transform.position.z;
-            //    float posX = exteriorAutomap.buildingNameplates[i].anchorPoint.x - 300; //(exteriorAutomap.LocationWidth * exteriorAutomap.BlockSizeWidth * 0.5f) * dummyPanelAutomap.LocalScale.x;
-            //    float posY = exteriorAutomap.buildingNameplates[i].anchorPoint.y - 400; //(exteriorAutomap.LocationHeight * exteriorAutomap.BlockSizeHeight * 0.5f) * dummyPanelAutomap.LocalScale.y;
-            //    Vector3 transformedPosition = exteriorAutomap.CameraExteriorAutomap.WorldToScreenPoint(new Vector3(posX, 0, posY));
-            //    transformedPosition.y = -transformedPosition.y; ///*(1.0f - 0.0254f) */ exteriorAutomap.NumMaxBlocksY * exteriorAutomap.BlockSizeHeight - transformedPosition.y;
-            //    transformedPosition /= dummyPanelAutomap.LocalScale.x;
-            //    //transformedPosition *= Vector2.one / dummyPanelAutomap.LocalScale;
-            //    //float ratioX = .InteriorWidth / dummyPanelAutomap.InteriorWidth;
-            //    //float ratioY = panelRenderAutomap.InteriorHeight / dummyPanelAutomap.InteriorHeight;
-            //    exteriorAutomap.buildingNameplates[i].textLabel.Position = new Vector2(transformedPosition.x, transformedPosition.y);
-            //    exteriorAutomap.buildingNameplates[i].textLabel.TextScale = 160.0f / cameraExteriorAutomap.orthographicSize / dummyPanelAutomap.LocalScale.x;
-            //    exteriorAutomap.buildingNameplates[i].textLabel.RectRestrictedRenderArea = restrictionRect;
-            //    exteriorAutomap.buildingNameplates[i].textLabel.RestrictedRenderAreaCoordinateType = TextLabel.RestrictedRenderArea_CoordinateType.ScreenCoordinates;
-            //    exteriorAutomap.buildingNameplates[i].textLabel.ToolTip = defaultToolTip; // new ToolTip();
-            //    //exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.ToolTipDelay = 0;
-            //    //exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.BackgroundColor = DaggerfallUnity.Settings.ToolTipBackgroundColor;
-            //    //exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.TextColor = DaggerfallUnity.Settings.ToolTipTextColor;
-            //    //exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.Parent = panelRenderAutomap;
-            //    exteriorAutomap.buildingNameplates[i].textLabel.ToolTipText = exteriorAutomap.buildingNameplates[i].textLabel.Text;
-            //    dummyPanelAutomap.Components.Add(exteriorAutomap.buildingNameplates[i].textLabel);
-            //}
+            for (int i = 0; i < exteriorAutomap.buildingNameplates.Length; i++)
+            {
+                if (!exteriorAutomap.buildingNameplates[i].nameplateReplaced) // if not replaced
+                {
+                    exteriorAutomap.buildingNameplates[i].textLabel.Text = exteriorAutomap.buildingNameplates[i].name; // use long name
+                    exteriorAutomap.buildingNameplates[i].gameObject.name = exteriorAutomap.buildingNameplates[i].gameObject.name.Substring(0, exteriorAutomap.buildingNameplates[i].gameObject.name.Length - 1) + "+";
+                }
+                else
+                {
+                    exteriorAutomap.buildingNameplates[i].textLabel.Text = "*"; // else use "*"
+                    exteriorAutomap.buildingNameplates[i].gameObject.name = exteriorAutomap.buildingNameplates[i].gameObject.name.Substring(0, exteriorAutomap.buildingNameplates[i].gameObject.name.Length - 1) + "*";
+                }
+
+                exteriorAutomap.buildingNameplates[i].textLabel.Position += exteriorAutomap.buildingNameplates[i].offset;
+            }
         }
 
         #region Private Methods
