@@ -83,7 +83,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         // Classic "magic candle" for player object only
         void StartMagicCandle()
         {
-            const float candleDistance = 2.0f;
+            const float candleDistance = 1.4f;
 
             // Create candle position out in front of player - candle is intentionally placed closer to player than classic
             // Classic is more like 4.5 units which is often on other side of walls (especially in dungeons), reducing usefulness

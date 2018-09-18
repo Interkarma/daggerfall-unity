@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -237,9 +237,12 @@ namespace DaggerfallWorkshop.Utility
         public static bool IsExteriorWindow(int archive, int record)
         {
             // Exclude ranges which return a false-positive from this method but actually use normal emission
-            // Currently just spells, but may need to be expanded later
-            if (archive >= 375 && archive <= 379)
+            // Currently spells and lights
+            if (archive >= 375 && archive <= 379 ||
+                archive == 210)
+            {
                 return false;
+            }
 
             // Normalise archive index
             archive = (archive - (archive / 100) * 100);
