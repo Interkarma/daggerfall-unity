@@ -106,61 +106,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Setup Methods
 
-        ItemCollection GetMerchantMagicItems()
-        {
-            if (merchantItems == null)
-            {
-                PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
-                ItemCollection items = new ItemCollection();
-                int numOfItems = (buildingDiscoveryData.quality / 2) + 1;
-
-                for ( int i = 0; i <= numOfItems; i++)
-                {
-                    DaggerfallUnityItem magicItem = ItemBuilder.CreateRandomMagicItem(playerEntity.Level, playerEntity.Gender, playerEntity.Race);
-
-                    // Item is already identified
-                    magicItem.flags |= 0x20;
-
-                    items.AddItem(magicItem);
-                }
-
-                items.AddItem(ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Spellbook));
-
-                if (guild.Rank >= 4)
-                {
-                    for (int i = 0; i <= numOfItems; i++)
-                    {
-                        DaggerfallUnityItem magicItem = ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Soul_trap);
-                        magicItem.value = 5000;
-
-                        if (UnityEngine.Random.Range(1, 101) >= 25)
-                            magicItem.TrappedSoulType = MobileTypes.None;
-                        else
-                        {
-                            int id = UnityEngine.Random.Range(0, 43);
-                            magicItem.TrappedSoulType = (MobileTypes)id;
-                            MobileEnemy mobileEnemy = GameObjectHelper.EnemyDict[id];
-                            magicItem.value += mobileEnemy.SoulPts;
-                        }
-
-                        items.AddItem(magicItem);
-                    }
-                }
-
-                merchantItems = items;
-            }
-            return merchantItems;
-        }
-
-        // TODO: classic seems to generate each time player select buy potions.. should we make more persistent for DFU?
-        ItemCollection GetMerchantPotions()
-        {
-            ItemCollection potions = new ItemCollection();
-            for (int n = UnityEngine.Random.Range(12, 20); n > 0; n--)
-                potions.AddItem(ItemBuilder.CreateRandomPotion());
-            return potions;
-        }
-
         protected override void Setup()
         {
             // Ascertain guild membership status, exempt Thieves Guild and Dark Brotherhood since should never find em until a member
@@ -242,6 +187,55 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #endregion
 
         #region Private Methods
+
+        // TODO: Classic seems deterministic so when re-visiting each mages guildhall, player sees same stuff.
+        // Does it change with level? Is it always generated but uses a consistent seed? How should DFU do this?
+        ItemCollection GetMerchantMagicItems()
+        {
+            PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+            ItemCollection items = new ItemCollection();
+            int numOfItems = (buildingDiscoveryData.quality / 2) + 1;
+
+            for (int i = 0; i <= numOfItems; i++)
+            {
+                // Create magic item which is already identified
+                DaggerfallUnityItem magicItem = ItemBuilder.CreateRandomMagicItem(playerEntity.Level, playerEntity.Gender, playerEntity.Race);
+                magicItem.IdentifyItem();
+                items.AddItem(magicItem);
+            }
+
+            items.AddItem(ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Spellbook));
+
+            if (guild.CanAccessService(GuildServices.BuySoulgems))
+            {
+                for (int i = 0; i <= numOfItems; i++)
+                {
+                    DaggerfallUnityItem magicItem = ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Soul_trap);
+                    magicItem.value = 5000;
+
+                    if (UnityEngine.Random.Range(1, 101) >= 25)
+                        magicItem.TrappedSoulType = MobileTypes.None;
+                    else
+                    {
+                        int id = UnityEngine.Random.Range(0, 43);
+                        magicItem.TrappedSoulType = (MobileTypes)id;
+                        MobileEnemy mobileEnemy = GameObjectHelper.EnemyDict[id];
+                        magicItem.value += mobileEnemy.SoulPts;
+                    }
+                    items.AddItem(magicItem);
+                }
+            }
+            return items;
+        }
+
+        // TODO: classic seems to generate each time player select buy potions.. should we make more persistent for DFU?
+        ItemCollection GetMerchantPotions()
+        {
+            ItemCollection potions = new ItemCollection();
+            for (int n = UnityEngine.Random.Range(12, 20); n > 0; n--)
+                potions.AddItem(ItemBuilder.CreateRandomPotion());
+            return potions;
+        }
 
         void LoadTextures(bool member)
         {
@@ -338,11 +332,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     uiManager.PushWindow(DaggerfallUI.Instance.DfItemMakerWindow);
                     break;
 
-/*                case GuildServices.SellMagicItems:
+                case GuildServices.SellMagicItems:
                     CloseWindow();
-                    uiManager.PushWindow(DaggerfallUI.Instance.DfPotionMakerWindow);
+                    uiManager.PushWindow(new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.SellMagic, this, guild));
                     break;
-*/
+
                 case GuildServices.Teleport:
                     CloseWindow();
                     DaggerfallUI.Instance.DfTravelMapWindow.ActivateTeleportationTravel();

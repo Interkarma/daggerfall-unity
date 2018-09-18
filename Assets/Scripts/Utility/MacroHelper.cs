@@ -243,7 +243,8 @@ namespace DaggerfallWorkshop.Utility
 
         public static NameHelper.BankTypes GetRandomNameBank()
         {
-            // TODO: How should bank type be randomised?
+            // TODO: How should bank type be randomised? This line results in blank names sometimes, so using race instead.
+            //return (NameHelper.BankTypes) DFRandom.random_range_inclusive(0, 8);
             Races race = (Races) DFRandom.random_range_inclusive(0, 8);
             return GetNameBank(race);
         }

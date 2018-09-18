@@ -152,7 +152,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                     return IsMember();
                 case GuildServices.Quests:
                     return true;
-                case GuildServices.BuyMagicItems:
+                case GuildServices.SellMagicItems:
                     return (rank >= 2);
                 case GuildServices.Spymaster:
                     return (rank >= 4);

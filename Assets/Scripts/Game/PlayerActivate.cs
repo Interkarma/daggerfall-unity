@@ -22,6 +22,7 @@ using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Banking;
 using DaggerfallWorkshop.Game.Guilds;
+using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -244,9 +245,12 @@ namespace DaggerfallWorkshop.Game
                                 // Discover building
                                 GameManager.Instance.PlayerGPS.DiscoverBuilding(building.buildingKey);
 
+                                // Handle clicking exterior door with Open spell active
+                                bool magicallyOpened = HandleOpenEffectOnExteriorDoor();
+
                                 // TODO: Implement lockpicking and door bashing for exterior doors
                                 // For now, any locked building door can be entered by using steal mode
-                                if (!buildingUnlocked)
+                                if (!buildingUnlocked && !magicallyOpened)
                                 {
                                     if (currentMode != PlayerActivateModes.Steal)
                                     {
@@ -337,6 +341,12 @@ namespace DaggerfallWorkshop.Game
                             DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
                             return;
                         }
+
+                        // Handle Lock/Open spell effects (if active)
+                        if (HandleLockEffect(actionDoor))
+                            return;
+                        if (HandleOpenEffect(actionDoor))
+                            return;
 
                         if (currentMode == PlayerActivateModes.Steal && actionDoor.IsLocked && !actionDoor.IsOpen)
                         {
@@ -487,6 +497,43 @@ namespace DaggerfallWorkshop.Game
                     #endregion
                 }
             }
+        }
+
+        bool HandleLockEffect(DaggerfallActionDoor actionDoor)
+        {
+            // Check if player has Lock effect running
+            Lock lockEffect = (Lock)GameManager.Instance.PlayerEffectManager.FindIncumbentEffect<Lock>();
+            if (lockEffect == null)
+                return false;
+
+            lockEffect.TriggerLockEffect(actionDoor);
+            return true;
+        }
+
+        bool HandleOpenEffect(DaggerfallActionDoor actionDoor)
+        {
+            // Check if player has Open effect running
+            Open openEffect = (Open)GameManager.Instance.PlayerEffectManager.FindIncumbentEffect<Open>();
+            if (openEffect == null)
+                return false;
+
+            openEffect.TriggerOpenEffect(actionDoor);
+            return true;
+        }
+
+        // NOTE: Open effect currently ALWAYS works on exterior doors, should operate on lock level
+        // Lockpick and lock level not fully implemented on exterior doors
+        bool HandleOpenEffectOnExteriorDoor()
+        {
+            // Check if player has Open effect running
+            Open openEffect = (Open)GameManager.Instance.PlayerEffectManager.FindIncumbentEffect<Open>();
+            if (openEffect == null)
+                return false;
+
+            // Cancel effect
+            openEffect.CancelEffect();
+
+            return true;
         }
 
         /// <summary>

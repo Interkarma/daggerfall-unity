@@ -107,24 +107,4 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         Chrondiasis = 15,
         WizardFever = 16,
     }
-
-    /// <summary>
-    /// Poison spell indices. These are just hidden spells in SPELLS.STD.
-    /// They are mostly Continuous Damage or Drain effects. QuestroVil heals stamina.
-    /// </summary>
-    public enum Poisons
-    {
-        None = 0,
-        NuxVomica = 71,
-        Arsenic = 72,
-        Moonseed = 73,
-        Drothweed = 74,
-        Somnalius = 75,
-        PhyrricAcid = 76,
-        Magebane = 77,
-        Thyrwort = 78,
-        Indulcet = 79,
-        Sursum = 80,
-        QuestroVil = 81,
-    }
 }

@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -24,11 +24,20 @@ namespace DaggerfallWorkshop.Game
 
         DaggerfallUnity dfUnity;
         PlayerEnterExit playerEnterExit;
+        Light torchLight;
+        float torchIntensity;
 
         void Start()
         {
             dfUnity = DaggerfallUnity.Instance;
             playerEnterExit = GetComponent<PlayerEnterExit>();
+
+            if (PlayerTorch)
+            {
+                torchLight = PlayerTorch.GetComponent<Light>();
+                if (torchLight)
+                    torchIntensity = torchLight.intensity;
+            }
         }
 
         void Update()
@@ -41,6 +50,9 @@ namespace DaggerfallWorkshop.Game
                 enableTorch = true;
             if (playerEnterExit.IsPlayerInsideDungeon && !playerEnterExit.IsPlayerInsideDungeonCastle)
                 enableTorch = true;
+
+            if (torchLight)
+                torchLight.intensity = torchIntensity * DaggerfallUnity.Settings.PlayerTorchLightScale;
 
             PlayerTorch.SetActive(enableTorch);
         }

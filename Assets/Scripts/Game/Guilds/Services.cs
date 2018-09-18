@@ -249,7 +249,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                     return GuildServices.MakeMagicItems;
 
                 case GuildNpcServices.TG_SellMagicItems:
-                    return GuildServices.BuyMagicItems;
+                    return GuildServices.SellMagicItems;
 
                 case GuildNpcServices.MG_Teleportation:
                     return GuildServices.Teleport;
@@ -320,7 +320,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                 case GuildServices.MakeMagicItems:
                     return HardStrings.serviceMakeMagicItems;
                 case GuildServices.SellMagicItems:
-                    return HardStrings.serviceBuyMagicItems;
+                    return HardStrings.serviceSellMagicItems;
                 case GuildServices.Teleport:
                     return HardStrings.serviceTeleport;
                 case GuildServices.DaedraSummoning:

@@ -82,3 +82,7 @@ CompressModdedTextures=True
 NearDeathWarning=True
 AdvancedClimbing=True
 AlternateRandomEnemySelection=False
+DungeonAmbientLightScale=1.0
+NightAmbientLightScale=1.0
+PlayerTorchLightScale=1.0
+CombatVoices=True

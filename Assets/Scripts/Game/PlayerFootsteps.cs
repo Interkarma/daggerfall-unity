@@ -293,6 +293,20 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        // Capture this message so we can play pain voice
+        public void RemoveHealth(int amount)
+        {
+            if (dfAudioSource && DaggerfallUnity.Settings.CombatVoices && Random.Range(1, 101) <= 40)
+            {
+                Entity.PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+                SoundClips sound = Entity.DaggerfallEntity.GetRaceGenderPainSound(playerEntity.Race, playerEntity.Gender, amount);
+                float pitch = dfAudioSource.AudioSource.pitch;
+                dfAudioSource.AudioSource.pitch = pitch + Random.Range(0, 0.3f);
+                dfAudioSource.PlayOneShot((int)sound, 0, 1f);
+                dfAudioSource.AudioSource.pitch = pitch;
+            }
+        }
+
         // Capture this message so we can play enemies' arrow sounds on player
         public void PlayArrowSound()
         {

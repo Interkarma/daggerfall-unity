@@ -161,6 +161,17 @@ namespace DaggerfallWorkshop.Game
 
                 if (damage <= 0)
                     sounds.PlayMissSound(weapon);
+
+                if (DaggerfallUnity.Settings.CombatVoices && entity.EntityType == EntityTypes.EnemyClass && Random.Range(1, 101) <= 20)
+                {
+                    Genders gender;
+                    if (entity.MobileEnemy.Gender == MobileGender.Male || entity.MobileEnemy.ID == (int)MobileTypes.Knight_CityWatch)
+                        gender = Genders.Male;
+                    else
+                        gender = Genders.Female;
+
+                    sounds.PlayAttackVoice(gender);
+                }
             }
         }
 

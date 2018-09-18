@@ -123,6 +123,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string youPinchedGoldPiece = "You pinched 1 gold piece."; // Not in classic.
         public const string youPinchedGoldPieces = "You pinched %d gold pieces.";
         public const string youAreNotSuccessful = "You are not successful...";
+        public const string youAreSuccessful = "You are successful.";
 
         public const string daysUntilFreedom = "%d days until freedom.";
 
@@ -140,7 +141,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string serviceTeleport = "Teleportation";
         public const string serviceMakeSpells = "Make Spells";
         public const string serviceBuyMagicItems = "Buy Magic Items";
-        public const string serviceSellMagicItems = "Buy Magic Items";
+        public const string serviceSellMagicItems = "Sell Magic Items";
         public const string serviceDaedraSummon = "Daedra Summoning";
         public const string serviceMakeMagicItems = "Make Magic Items";
         public const string serviceRepairs = "Repairs";
