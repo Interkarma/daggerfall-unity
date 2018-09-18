@@ -698,7 +698,8 @@ namespace DaggerfallWorkshop.Game
                                 else
                                     gender = Genders.Female;
 
-                                enemySounds.PlayPainVoice(gender, damage);
+                                bool heavyDamage = damage >= enemyEntity.MaxHealth / 4;
+                                enemySounds.PlayCombatVoice(gender, false, heavyDamage);
                             }
                         }
                         else
