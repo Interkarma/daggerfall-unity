@@ -369,7 +369,7 @@ namespace DaggerfallWorkshop.Game.Entity
                     if (UnityEngine.Random.Range(1, 101) < chanceToPoison)
                     {
                         // Apply poison
-                        weapon.poisonType = UnityEngine.Random.Range(0, 8);
+                        //weapon.poisonType = UnityEngine.Random.Range(0, 8);
                     }
                 }
             }
