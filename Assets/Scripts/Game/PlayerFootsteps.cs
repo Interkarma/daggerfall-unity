@@ -299,7 +299,8 @@ namespace DaggerfallWorkshop.Game
             if (dfAudioSource && DaggerfallUnity.Settings.CombatVoices && Random.Range(1, 101) <= 40)
             {
                 Entity.PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
-                SoundClips sound = Entity.DaggerfallEntity.GetRaceGenderPainSound(playerEntity.Race, playerEntity.Gender, amount);
+                bool heavyDamage = amount >= playerEntity.MaxHealth / 4;
+                SoundClips sound = Entity.DaggerfallEntity.GetRaceGenderPainSound(playerEntity.Race, playerEntity.Gender, heavyDamage);
                 float pitch = dfAudioSource.AudioSource.pitch;
                 dfAudioSource.AudioSource.pitch = pitch + Random.Range(0, 0.3f);
                 dfAudioSource.PlayOneShot((int)sound, 0, 1f);

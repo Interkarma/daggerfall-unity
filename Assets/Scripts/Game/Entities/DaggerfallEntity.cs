@@ -674,6 +674,7 @@ namespace DaggerfallWorkshop.Game.Entity
                             return SoundClips.BretonFemalePain2;
                         else
                             return SoundClips.DarkElfFemalePain2;
+                    case Races.DarkElf:
                     case Races.HighElf:
                     case Races.WoodElf:
                         random = UnityEngine.Random.Range(0, 2);
@@ -699,7 +700,7 @@ namespace DaggerfallWorkshop.Game.Entity
             }
         }
 
-        public static SoundClips GetRaceGenderPainSound(Races race, Genders gender, int damage)
+        public static SoundClips GetRaceGenderPainSound(Races race, Genders gender, bool heavyDamage)
         {
             if (gender == Genders.Male)
             {
@@ -735,7 +736,7 @@ namespace DaggerfallWorkshop.Game.Entity
                     case Races.DarkElf:
                     case Races.Argonian:
                     case Races.HighElf:
-                        if (damage >= 15)
+                        if (heavyDamage)
                             return SoundClips.NordFemalePain2;
                         else
                         {
@@ -747,7 +748,7 @@ namespace DaggerfallWorkshop.Game.Entity
                         }
                     case Races.WoodElf:
                     case Races.Khajiit:
-                        if (damage >= 15)
+                        if (heavyDamage)
                             return SoundClips.WoodElfFemalePain2;
                         else
                         {

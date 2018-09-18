@@ -266,7 +266,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public Symbol questItemSymbol;
         public MobileTypes trappedSoulType;
         public string className;
-        public Items.Poisons poisonType;
+        public Poisons poisonType = Poisons.None;
     }
 
     #endregion
