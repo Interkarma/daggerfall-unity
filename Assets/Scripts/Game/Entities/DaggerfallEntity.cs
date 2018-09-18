@@ -634,6 +634,131 @@ namespace DaggerfallWorkshop.Game.Entity
             return monsterFile.GetMonsterClass((int)career);
         }
 
+        public static SoundClips GetRaceGenderAttackSound(Races race, Genders gender)
+        {
+            if (gender == Genders.Male)
+            {
+                switch (race)
+                {
+                    case Races.Breton:
+                        return SoundClips.BretonMalePain1;
+                    case Races.Redguard:
+                        return SoundClips.RedguardMalePain1;
+                    case Races.Nord:
+                        return SoundClips.NordMalePain1;
+                    case Races.DarkElf:
+                        return SoundClips.DarkElfMalePain1;
+                    case Races.HighElf:
+                        return SoundClips.HighElfMalePain1;
+                    case Races.WoodElf:
+                        return SoundClips.WoodElfMalePain1;
+                    case Races.Khajiit:
+                        return SoundClips.KhajiitMalePain1;
+                    case Races.Argonian:
+                        return SoundClips.ArgonianMalePain1;
+                    default:
+                        return SoundClips.None;
+                }
+            }
+            else
+            {
+                switch (race)
+                {
+                    case Races.Breton:
+                    case Races.Redguard:
+                    case Races.Nord:
+                        int random = UnityEngine.Random.Range(0, 3);
+                        if (random == 0)
+                            return SoundClips.BretonFemalePain1;
+                        else if (random == 1)
+                            return SoundClips.BretonFemalePain2;
+                        else
+                            return SoundClips.DarkElfFemalePain2;
+                    case Races.HighElf:
+                    case Races.WoodElf:
+                        random = UnityEngine.Random.Range(0, 2);
+                        if (random == 0)
+                            return SoundClips.HighElfFemalePain1;
+                        else
+                            return SoundClips.HighElfFemalePain2;
+                    case Races.Khajiit:
+                        random = UnityEngine.Random.Range(0, 2);
+                        if (random == 0)
+                            return SoundClips.KhajiitFemalePain1;
+                        else
+                            return SoundClips.KhajiitFemalePain2;
+                    case Races.Argonian:
+                        random = UnityEngine.Random.Range(0, 2);
+                        if (random == 0)
+                            return SoundClips.ArgonianFemalePain1;
+                        else
+                            return SoundClips.ArgonianFemalePain2;
+                    default:
+                        return SoundClips.None;
+                }
+            }
+        }
+
+        public static SoundClips GetRaceGenderPainSound(Races race, Genders gender, int damage)
+        {
+            if (gender == Genders.Male)
+            {
+                switch (race)
+                {
+                    case Races.Breton:
+                        return SoundClips.BretonMalePain2;
+                    case Races.Redguard:
+                        return SoundClips.RedguardMalePain2;
+                    case Races.Nord:
+                        return SoundClips.NordMalePain2;
+                    case Races.DarkElf:
+                        return SoundClips.DarkElfMalePain2;
+                    case Races.HighElf:
+                        return SoundClips.HighElfMalePain2;
+                    case Races.WoodElf:
+                        return SoundClips.WoodElfMalePain2;
+                    case Races.Khajiit:
+                        return SoundClips.KhajiitMalePain2;
+                    case Races.Argonian:
+                        return SoundClips.ArgonianMalePain2;
+                    default:
+                        return SoundClips.None;
+                }
+            }
+            else
+            {
+                switch (race)
+                {
+                    case Races.Breton:
+                    case Races.Redguard:
+                    case Races.Nord:
+                    case Races.DarkElf:
+                    case Races.Argonian:
+                    case Races.HighElf:
+                        if (damage >= 15)
+                            return SoundClips.NordFemalePain2;
+                        else
+                        {
+                            int random = UnityEngine.Random.Range(0, 2);
+                            if (random == 0)
+                                return SoundClips.RedguardFemalePain1;
+                            else
+                                return SoundClips.DarkElfFemalePain1;
+                        }
+                    case Races.WoodElf:
+                    case Races.Khajiit:
+                        if (damage >= 15)
+                            return SoundClips.WoodElfFemalePain2;
+                        else
+                        {
+                            return SoundClips.WoodElfFemalePain1;
+                        }
+                    default:
+                        return SoundClips.None;
+                }
+            }
+        }
+
         #endregion
 
         #region Event Handlers

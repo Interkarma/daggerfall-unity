@@ -30,6 +30,7 @@ namespace DaggerfallWorkshop.Game
         public SoundClips MoveSound;
         public SoundClips BarkSound;
         public SoundClips AttackSound;
+        public Entity.Races RaceForSounds;
 
         AudioClip moveClip;
         AudioClip barkClip;
@@ -65,6 +66,8 @@ namespace DaggerfallWorkshop.Game
                 BarkSound = (SoundClips)mobile.Summary.Enemy.BarkSound;
                 AttackSound = (SoundClips)mobile.Summary.Enemy.AttackSound;
             }
+
+            RaceForSounds = (Entity.Races)Random.Range(1, 6);
 
             // Start attrack timer
             StartWaiting();
@@ -155,6 +158,30 @@ namespace DaggerfallWorkshop.Game
                 {
                     dfAudioSource.PlayOneShot(SoundClips.SwingHighPitch);
                 }
+            }
+        }
+
+        public void PlayAttackVoice(Entity.Genders gender)
+        {
+            if (IsReady())
+            {
+                SoundClips sound = Entity.DaggerfallEntity.GetRaceGenderAttackSound(RaceForSounds, gender);
+                float pitch = dfAudioSource.AudioSource.pitch;
+                dfAudioSource.AudioSource.pitch = pitch + Random.Range(0, 0.3f);
+                dfAudioSource.PlayOneShot(sound);
+                dfAudioSource.AudioSource.pitch = pitch;
+            }
+        }
+
+        public void PlayPainVoice(Entity.Genders gender, int damage)
+        {
+            if (IsReady())
+            {
+                SoundClips sound = Entity.DaggerfallEntity.GetRaceGenderPainSound(RaceForSounds, gender, damage);
+                float pitch = dfAudioSource.AudioSource.pitch;
+                dfAudioSource.AudioSource.pitch = pitch + Random.Range(0, 0.3f);
+                dfAudioSource.PlayOneShot(sound);
+                dfAudioSource.AudioSource.pitch = pitch;
             }
         }
 
