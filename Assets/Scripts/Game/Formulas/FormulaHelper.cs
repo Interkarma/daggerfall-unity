@@ -885,7 +885,20 @@ namespace DaggerfallWorkshop.Game.Formulas
         }
 
         public static void InflictPoison(DaggerfallEntity target, Poisons poisonType, bool bypassResistance)
-        {   
+        {
+            // Target must have an entity behaviour and effect manager
+            EntityEffectManager effectManager = null;
+            if (target.EntityBehaviour != null)
+            {
+                effectManager = target.EntityBehaviour.GetComponent<EntityEffectManager>();
+                if (effectManager == null)
+                    return;
+            }
+            else
+            {
+                return;
+            }
+
             // Note: In classic, AI characters' immunity to poison is ignored, although the level 1 check below still gives rats immunity
             DFCareer.Tolerance toleranceFlags = target.Career.Poison;
             if (toleranceFlags == DFCareer.Tolerance.Immune)
@@ -895,13 +908,15 @@ namespace DaggerfallWorkshop.Game.Formulas
             {
                 if (target.Level != 1)
                 {
-                    // Infect player
+                    // Infect target
                     EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreatePoison(poisonType);
-                    GameManager.Instance.PlayerEffectManager.AssignBundle(bundle);
+                    effectManager.AssignBundle(bundle);
                 }
             }
             else
-                Debug.Log("Poison resisted.");
+            {
+                Debug.LogFormat("Poison resisted by {0}.", target.EntityBehaviour.name);
+            }
         }
 
         static int SavingThrow(int elementType, DFCareer.EffectFlags effectFlags, DaggerfallEntity target, int modifier)

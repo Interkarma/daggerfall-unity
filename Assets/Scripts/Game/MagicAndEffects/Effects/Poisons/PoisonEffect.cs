@@ -114,8 +114,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Store first minute of infection - poisons operate in 1-minute ticks
             lastMinute = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
 
-            DaggerfallEntityBehaviour host = GetPeeredEntityBehaviour(manager);
-
                                          // Poison types. 0-7 are weapon poisons. 8-11 are drugs
                                          // 0     1    2     3     4     5    6    7     8    9   10   11
             ushort[] MinMinutesToPoison = { 4,   10,   0,    5,    0,    0,   2,   0,    2,   1,   2,   0 };
@@ -123,10 +121,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             ushort[] MinRoundsOfPoison = {  3,   20,   1,    5,    2,    1,   5,   1,    2,   2,   1,   5 };
             ushort[] MaxRoundsOfPoison = { 10, 1000,   4,   30,   10,    2,  20,   3,    6,   2,   4,  20 };
 
-            int index = (int)PoisonType - 128;
+            int index = (int)PoisonType - startValue;
             minutesToStart = Random.Range(MinMinutesToPoison[index], MaxMinutesToPoison[index] + 1);
             minutesActive = Random.Range(MinRoundsOfPoison[index], MaxRoundsOfPoison[index] + 1);
 
+            DaggerfallEntityBehaviour host = GetPeeredEntityBehaviour(manager);
             Debug.Log(host.Entity.Name + " afflicted with " + PoisonType + ", starting in " + minutesToStart + " minutes, lasting for " + minutesActive + " minutes.");
         }
 
@@ -160,10 +159,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // TODO:
             //  - Track game minutes until poison begins
             //  - Tick poison effect each minute
-            //  * Track poison minutes remaining
+            //  - Track poison minutes remaining
             //  * End poison once completed
             //  * Attribute drains will be permanent until poison cured
             //  * Buffs will end once poison has finished
+            //  * Implement CurePoison effect
+            //  * Allow HealAttribute effects to cure damage from poisons similar to Drain
+            //  * Show "you have been poisoned" on player info popup
 
             // Do nothing until poison set
             if (PoisonType == Poisons.None)
@@ -272,12 +274,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         void SetVariantProperties(Poisons poisonType)
         {
-            //int variant = (int)poisonType - startValue;
-            //EffectProperties props = properties;
-            //props.Key = GetClassicPoisonEffectKey(poisonType);
-            //props.ShowSpellIcon = false;
-            //variantProperties[variant] = props;
-
             int variant = (int)poisonType - startValue;
             VariantProperties vp = new VariantProperties();
             vp.effectProperties = properties;
