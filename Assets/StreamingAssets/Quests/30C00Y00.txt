@@ -71,18 +71,6 @@ I don't care if that vampire did conquer its bloodlust: I'm glad it's dead.
 <--->
 The stars of Namira burned bright last night. Always hungry, never satisfied.
 
-QuestorPostsuccess:  [1008]
-Error: Quest 30c00y00.q tried to display text
-
-QuestorPostsuccess:  [1008]
-<ce>                                   
-
-QuestorPostfailure:  [1009]
-Error: Quest 30c00y00.q tried to display text
-
-QuestorPostfailure:  [1009]
-<ce>                                   
-
 Message:  1011
 _qgfriend_ is that =qgfriend_ over in __qgfriend_, I think. Yes, %di of here.
 <--->

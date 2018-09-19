@@ -81,18 +81,6 @@ Good riddance on the battlemage =monster_ in ___mondung_. I hear %g was mad as a
 <--->
 So, someone finally killed that mad battlemage in ___mondung_. Thank %god.
 
-QuestorPostsuccess:  [1008]
-Error: Quest 60c00y00.q tried to display text
-
-QuestorPostsuccess:  [1008]
-<ce>                                   
-
-QuestorPostfailure:  [1009]
-Error: Quest 60c00y00.q tried to display text
-
-QuestorPostfailure:  [1009]
-<ce>                                   
-
 Message:  1011
 _qgfriend_ is that mad, slobbering =qgfriend_ who lives in ___contactdung_.
 <--->

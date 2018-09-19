@@ -641,13 +641,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 if (UnityEngine.Random.Range(0, 101) > chance)
                 {
-                    DaggerfallUI.Instance.PopupMessage(HardStrings.youAreSuccessful);
+                    DaggerfallUI.AddHUDText(HardStrings.youAreSuccessful, 2);
                     PlayerEntity.Items.TransferAll(basketItems);
                     PlayerEntity.TallyCrimeGuildRequirements(true, 1);
                 }
                 else
                 {   // Register crime and start spawning guards.
-                    DaggerfallUI.Instance.PopupMessage(HardStrings.youAreNotSuccessful);
+                    DaggerfallUI.AddHUDText(HardStrings.youAreNotSuccessful, 2);
                     PlayerEntity.CrimeCommitted = PlayerEntity.Crimes.Theft;
                     PlayerEntity.SpawnCityGuards(true);
                 }

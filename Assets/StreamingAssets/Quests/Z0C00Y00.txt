@@ -71,18 +71,6 @@ _enemy_ must have been too close to finding the location of Nightside Asylum.
 <--->
 I guess the Dark Brotherhood heard about _enemy_ and %g3 ambitions.
 
-QuestorPostsuccess:  [1008]
-Error z0c00y00.q tried to display text
-
-QuestorPostsuccess:  [1008]
-<ce>                                   .
-
-QuestorPostfailure:  [1009]
-Error z0c00y00.q tried to display text
-
-QuestorPostfailure:  [1009]
-<ce>                                   .
-
 Message:  1011
 _qgfriend_ is that snobby =qgfriend_ slumming in __qgfriend_, %di of here.
 <--->

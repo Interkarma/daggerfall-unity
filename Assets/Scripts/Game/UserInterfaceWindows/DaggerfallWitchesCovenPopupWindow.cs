@@ -152,8 +152,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void SummonButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            CloseWindow();
-            new DaggerfallDaedraSummoning(uiManager, witchNPC.Data.factionID);
+            DaedraSummoningService(witchNPC.Data.factionID);
         }
 
         private void QuestButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -167,5 +166,36 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         #endregion
+
+        #region Macro handling
+
+        public override MacroDataSource GetMacroDataSource()
+        {
+            return new WitchCovenMacroDataSource(this);
+        }
+
+        /// <summary>
+        /// MacroDataSource context sensitive methods for guild services window.
+        /// </summary>
+        private class WitchCovenMacroDataSource : MacroDataSource
+        {
+            private DaggerfallWitchesCovenPopupWindow parent;
+            public WitchCovenMacroDataSource(DaggerfallWitchesCovenPopupWindow witchCovenWindow)
+            {
+                this.parent = witchCovenWindow;
+            }
+
+            public override string Daedra()
+            {
+                FactionFile.FactionData factionData;
+                if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(parent.daedraToSummon.factionId, out factionData))
+                    return factionData.name;
+                else
+                    return "%dae[error]";
+            }
+        }
+
+        #endregion
+
     }
 }

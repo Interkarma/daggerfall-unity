@@ -24,9 +24,9 @@ namespace DaggerfallWorkshop.Utility
      * Helper class for context sensitive macros like '%abc' that're used in following Daggerfall files:
      * arena2\text.rsc, fall.exe, arena2\*.qrc, or arena2\bio*.txt
      * </summary>
-     * 
+     *
      * See http://forums.dfworkshop.net/viewtopic.php?f=23&t=673 for details about adding new macro handlers.
-     * 
+     *
      */
     public static class MacroHelper
     {
@@ -397,11 +397,16 @@ namespace DaggerfallWorkshop.Utility
                 if (svp != null)
                 {
                     try {
-                        return svp.Invoke(mcp);
+                        string try1 = svp.Invoke(mcp);
+                        if (try1 != null)
+                            return try1;
+                        return symbolStr + "[nullMCP]";
                     } catch (NotImplementedException) {
-                        if (mcp2 != null) {
-                            try { return svp.Invoke(mcp2); } catch (NotImplementedException) { }
-                        }
+                        try {
+                            string try2 = svp.Invoke(mcp2);
+                            if (try2 != null)
+                                return try2;
+                        } catch (NotImplementedException) { }
                         return symbolStr + "[srcDataUnknown]";
                     }
                 } else {
@@ -717,7 +722,7 @@ namespace DaggerfallWorkshop.Utility
         private static string MagickaMax(IMacroContextProvider mcp)
         {   // %spt
             return GameManager.Instance.PlayerEntity.MaxMagicka.ToString();
-            
+
         }
         private static string Magicka(IMacroContextProvider mcp)
         {   // %spc
@@ -837,7 +842,7 @@ namespace DaggerfallWorkshop.Utility
         }
 
         public static string OldLordOfFaction1(IMacroContextProvider mcp)
-        {   // %ol1                    
+        {   // %ol1
             int id;
             if (idFaction1Ruler == -1)
             {
@@ -1007,262 +1012,320 @@ namespace DaggerfallWorkshop.Utility
 
         private static string GuildTitle(IMacroContextProvider mcp)
         {   // %lev %pct
+            if (mcp == null)
+                return GameManager.Instance.PlayerEntity.Name;
             return mcp.GetMacroDataSource().GuildTitle();
         }
 
         private static string FactionOrderName(IMacroContextProvider mcp)
         {   // %fon
+            if (mcp == null) return null;
             return mcp.GetMacroDataSource().FactionOrderName();
         }
 
         public static string Dungeon(IMacroContextProvider mcp)
         {   // %dng
-            return mcp.GetMacroDataSource().Dungeon();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().Dungeon();
         }
 
         private static string Amount(IMacroContextProvider mcp)
         {   // %a
-            return mcp.GetMacroDataSource().Amount();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().Amount();
         }
         private static string ShopName(IMacroContextProvider mcp)
         {   // %cpn
-            return mcp.GetMacroDataSource().ShopName();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().ShopName();
         }
         private static string MaxLoan(IMacroContextProvider mcp)
         {   // %ml
-            return mcp.GetMacroDataSource().MaxLoan();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().MaxLoan();
         }
 
         private static string Str(IMacroContextProvider mcp)
         {   // %str
-            return mcp.GetMacroDataSource().Str();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().Str();
         }
         private static string Int(IMacroContextProvider mcp)
         {   // %int
-            return mcp.GetMacroDataSource().Int();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().Int();
         }
         private static string Wil(IMacroContextProvider mcp)
         {   // %wil
-            return mcp.GetMacroDataSource().Wil();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().Wil();
         }
         private static string Agi(IMacroContextProvider mcp)
         {   // %agi
-            return mcp.GetMacroDataSource().Agi();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().Agi();
         }
         private static string End(IMacroContextProvider mcp)
         {   // %end
-            return mcp.GetMacroDataSource().End();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().End();
         }
         private static string Per(IMacroContextProvider mcp)
         {   // %per
-            return mcp.GetMacroDataSource().Per();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().Per();
         }
         private static string Spd(IMacroContextProvider mcp)
         {   // %spd
-            return mcp.GetMacroDataSource().Spd();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().Spd();
         }
         private static string Luck(IMacroContextProvider mcp)
         {   // %luc
-            return mcp.GetMacroDataSource().Luck();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().Luck();
         }
 
         private static string AttributeRating(IMacroContextProvider mcp)
         {   // %ark
-            return mcp.GetMacroDataSource().AttributeRating();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().AttributeRating();
         }
 
         public static string ItemName(IMacroContextProvider mcp)
         {   // %wep, %arm, %it
-            return mcp.GetMacroDataSource().ItemName();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().ItemName();
         }
 
         public static string Worth(IMacroContextProvider mcp)
         {   // %wth
-            return mcp.GetMacroDataSource().Worth();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().Worth();
         }
 
         public static string Material(IMacroContextProvider mcp)
         {   // %mat
-            return mcp.GetMacroDataSource().Material();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().Material();
         }
 
         public static string Condition(IMacroContextProvider mcp)
         {   // %qua
-            return mcp.GetMacroDataSource().Condition();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().Condition();
         }
 
         public static string Weight(IMacroContextProvider mcp)
         {   // %kg
-            return mcp.GetMacroDataSource().Weight();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().Weight();
         }
 
         public static string WeaponDamage(IMacroContextProvider mcp)
         {   // %wdm
-            return mcp.GetMacroDataSource().WeaponDamage();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().WeaponDamage();
         }
 
         public static string ArmourMod(IMacroContextProvider mcp)
         {   // %mod
-            return mcp.GetMacroDataSource().ArmourMod();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().ArmourMod();
         }
 
         public static string BookAuthor(IMacroContextProvider mcp)
         {   // %ba
-            return mcp.GetMacroDataSource().BookAuthor();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().BookAuthor();
         }
 
         public static string PaintingAdjective(IMacroContextProvider mcp)
         {   // %adj
-            return mcp.GetMacroDataSource().PaintingAdjective();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().PaintingAdjective();
         }
         public static string ArtistName(IMacroContextProvider mcp)
         {   // %an
-            return mcp.GetMacroDataSource().ArtistName();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().ArtistName();
         }
         public static string PaintingPrefix1(IMacroContextProvider mcp)
         {   // %pp1
-            return mcp.GetMacroDataSource().PaintingPrefix1();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().PaintingPrefix1();
         }
         public static string PaintingPrefix2(IMacroContextProvider mcp)
         {   // %pp2
-            return mcp.GetMacroDataSource().PaintingPrefix2();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().PaintingPrefix2();
         }
         public static string PaintingSubject(IMacroContextProvider mcp)
         {   // %sub
-            return mcp.GetMacroDataSource().PaintingSubject();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().PaintingSubject();
         }
 
         public static string HeldSoul(IMacroContextProvider mcp)
         {   // %hs
-            return mcp.GetMacroDataSource().HeldSoul();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().HeldSoul();
         }
 
         public static string Potion(IMacroContextProvider mcp)
         {   // %po
-            return mcp.GetMacroDataSource().Potion();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().Potion();
         }
 
         public static string Pronoun(IMacroContextProvider mcp)
         {   // %g & %g1
-            return mcp.GetMacroDataSource().Pronoun();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().Pronoun();
         }
         public static string Pronoun2(IMacroContextProvider mcp)
         {   // %g2
-            return mcp.GetMacroDataSource().Pronoun2();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().Pronoun2();
         }
         public static string Pronoun2self(IMacroContextProvider mcp)
         {   // %g2self
-            return mcp.GetMacroDataSource().Pronoun2self();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().Pronoun2self();
         }
         public static string Pronoun3(IMacroContextProvider mcp)
         {   // %g3
-            return mcp.GetMacroDataSource().Pronoun3();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().Pronoun3();
         }
 
         public static string QuestDate(IMacroContextProvider mcp)
         {   // %qdt
-            return mcp.GetMacroDataSource().QuestDate();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().QuestDate();
         }
 
         public static string Oath(IMacroContextProvider mcp)
         {   // %oth
-            return mcp.GetMacroDataSource().Oath();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().Oath();
         }
 
         public static string HomeRegion(IMacroContextProvider mcp)
         {   // %hrn
-            return mcp.GetMacroDataSource().HomeRegion();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().HomeRegion();
         }
 
         public static string GodDesc(IMacroContextProvider mcp)
         {   // %gdd
-            return mcp.GetMacroDataSource().GodDesc();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().GodDesc();
         }
         public static string God(IMacroContextProvider mcp)
         {   // %god
-            return mcp.GetMacroDataSource().God();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().God();
         }
 
         public static string Daedra(IMacroContextProvider mcp)
         {   // %dae
-            return mcp.GetMacroDataSource().Daedra();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().Daedra();
         }
 
         public static string LocationDirection(IMacroContextProvider mcp)
         {   // %di
-            return mcp.GetMacroDataSource().LocationDirection();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().LocationDirection();
         }
 
         public static string DialogHint(IMacroContextProvider mcp)
         {   // %hnt
-            return mcp.GetMacroDataSource().DialogHint();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().DialogHint();
         }
 
         public static string DialogHint2(IMacroContextProvider mcp)
         {   // %hnt2
-            return mcp.GetMacroDataSource().DialogHint2();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().DialogHint2();
         }
 
         public static string RoomHoursLeft(IMacroContextProvider mcp)
         {   // %dwr
-            return mcp.GetMacroDataSource().RoomHoursLeft();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().RoomHoursLeft();
         }
 
         public static string PotentialQuestorName(IMacroContextProvider mcp)
         {   // %pqn
-            return mcp.GetMacroDataSource().PotentialQuestorName();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().PotentialQuestorName();
         }
 
         public static string PotentialQuestorLocation(IMacroContextProvider mcp)
         {   // %pqp
-            return mcp.GetMacroDataSource().PotentialQuestorLocation();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().PotentialQuestorLocation();
         }
 
         public static string DurationBase(IMacroContextProvider mcp)
         {   // %bdr
-            return mcp.GetMacroDataSource().DurationBase();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().DurationBase();
         }
         public static string DurationPlus(IMacroContextProvider mcp)
         {   // %adr
-            return mcp.GetMacroDataSource().DurationPlus();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().DurationPlus();
         }
         public static string DurationPerLevel(IMacroContextProvider mcp)
         {   // %cld
-            return mcp.GetMacroDataSource().DurationPerLevel();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().DurationPerLevel();
         }
 
         public static string ChanceBase(IMacroContextProvider mcp)
         {   // %bch
-            return mcp.GetMacroDataSource().ChanceBase();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().ChanceBase();
         }
         public static string ChancePlus(IMacroContextProvider mcp)
         {   // %ach
-            return mcp.GetMacroDataSource().ChancePlus();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().ChancePlus();
         }
         public static string ChancePerLevel(IMacroContextProvider mcp)
         {   // %clc
-            return mcp.GetMacroDataSource().ChancePerLevel();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().ChancePerLevel();
         }
 
         public static string MagnitudeBaseMin(IMacroContextProvider mcp)
         {   // %1bm
-            return mcp.GetMacroDataSource().MagnitudeBaseMin();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().MagnitudeBaseMin();
         }
         public static string MagnitudeBaseMax(IMacroContextProvider mcp)
         {   // %2bm
-            return mcp.GetMacroDataSource().MagnitudeBaseMax();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().MagnitudeBaseMax();
         }
         public static string MagnitudePlusMin(IMacroContextProvider mcp)
         {   // %1am
-            return mcp.GetMacroDataSource().MagnitudePlusMin();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().MagnitudePlusMin();
         }
         public static string MagnitudePlusMax(IMacroContextProvider mcp)
         {   // %2am
-            return mcp.GetMacroDataSource().MagnitudePlusMax();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().MagnitudePlusMax();
         }
         public static string MagnitudePerLevel(IMacroContextProvider mcp)
         {   // %clm
-            return mcp.GetMacroDataSource().MagnitudePerLevel();
+            if (mcp == null) return null;
+			return mcp.GetMacroDataSource().MagnitudePerLevel();
         }
 
         #endregion

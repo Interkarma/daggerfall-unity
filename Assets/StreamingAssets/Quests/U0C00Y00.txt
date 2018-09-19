@@ -72,18 +72,6 @@ It's a tragedy for all of %reg. What monster would've killed =monster_?
 <--->
 %oth, I can't believe =monster_'s dead. Such a tragic, horrible waste.
 
-QuestorPostsuccess:  [1008]
-Error: u0c00y00.q tried to display text
-
-QuestorPostsuccess:  [1008]
-<ce>                                   .
-
-QuestorPostfailure:  [1009]
-Error: u0c00y00.q tried to display text
-
-QuestorPostfailure:  [1009]
-<ce>                                   .
-
 Message:  1011
 _qgfriend_ is the name of that tough-talking =qgfriend_ over at __qgfriend_.
 <--->
