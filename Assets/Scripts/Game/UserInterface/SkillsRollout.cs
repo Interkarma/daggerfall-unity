@@ -29,10 +29,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
     /// </summary>
     public class SkillsRollout : Panel
     {
-        // This value is normally 6
-        // Increased to 10 temporarily to compensate for biography bonuses
-        // This will be reverted to 6 once biographies implemented
-        const int bonusPoolPerSkillGroup = 10;
+        const int bonusPoolPerSkillGroup = 6;
 
         const int minPrimarySkill = 28;
         const int minMajorSkill = 18;

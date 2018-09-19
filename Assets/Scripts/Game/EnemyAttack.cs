@@ -170,7 +170,7 @@ namespace DaggerfallWorkshop.Game
                     else
                         gender = Genders.Female;
 
-                    sounds.PlayAttackVoice(gender);
+                    sounds.PlayCombatVoice(gender, true);
                 }
             }
         }

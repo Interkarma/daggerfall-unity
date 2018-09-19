@@ -547,10 +547,10 @@ namespace DaggerfallWorkshop.Game.Formulas
                 }
 
                 // Handle poisoned weapons
-                if (damage > 0 && weapon.poisonType != Items.Poisons.None)
+                if (damage > 0 && weapon.poisonType != Poisons.None)
                 {
                     InflictPoison(target, weapon.poisonType, false);
-                    weapon.poisonType = Items.Poisons.None;
+                    weapon.poisonType = Poisons.None;
                 }
             }
 
@@ -884,7 +884,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             return damage;
         }
 
-        public static void InflictPoison(DaggerfallEntity target, Items.Poisons poisonType, bool bypassResistance)
+        public static void InflictPoison(DaggerfallEntity target, Poisons poisonType, bool bypassResistance)
         {
                                             // Poison types. 0-7 are weapon poisons. 8-11 are drugs
                                             // 0     1    2     3     4     5    6    7     8    9   10   11
