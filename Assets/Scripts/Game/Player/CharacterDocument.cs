@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Numidium
 // 
 // Notes:
 //
@@ -14,6 +14,7 @@ using System.IO;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
+using System.Collections.Generic;
 
 namespace DaggerfallWorkshop.Game.Player
 {
@@ -55,6 +56,8 @@ namespace DaggerfallWorkshop.Game.Player
         public uint timeToBecomeVampireOrWerebeast;
         public uint lastTimePlayerAteOrDrankAtTavern;
         public sbyte biographyReactionMod;
+        public List<string> biographyEffects;
+        public int classIndex;
 
         public CharacterDocument()
         {
