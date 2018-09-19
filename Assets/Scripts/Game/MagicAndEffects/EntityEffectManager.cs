@@ -91,7 +91,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             public EntityTypes casterEntityType;
             public ulong casterLoadID;
             public DaggerfallUnityItem fromEquippedItem;
-            public bool fromPoison;
             public List<IEntityEffect> liveEffects;
         }
 
@@ -330,7 +329,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             instancedBundle.name = sourceBundle.Settings.Name;
             instancedBundle.iconIndex = sourceBundle.Settings.IconIndex;
             instancedBundle.fromEquippedItem = sourceBundle.FromEquippedItem;
-            instancedBundle.fromPoison = sourceBundle.FromPoison;
             instancedBundle.liveEffects = new List<IEntityEffect>();
             if (sourceBundle.CasterEntityBehaviour)
             {
@@ -796,6 +794,27 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         #endregion
 
+        #region Poisons
+
+        /// <summary>
+        /// Helper to create a classic poison effect bundle.
+        /// </summary>
+        /// <param name="poisonType">Classic poison type.</param>
+        /// <returns>EntityEffectBundle.</returns>
+        public EntityEffectBundle CreatePoison(Poisons poisonType)
+        {
+            EffectBundleSettings settings = new EffectBundleSettings()
+            {
+                Version = EntityEffectBroker.CurrentSpellVersion,
+                BundleType = BundleTypes.Poison,
+                Effects = new EffectEntry[] { new EffectEntry(PoisonEffect.GetClassicPoisonEffectKey(poisonType)) },
+            };
+
+            return new EntityEffectBundle(settings, entityBehaviour);
+        }
+
+        #endregion
+
         #region Diseases
 
         /// <summary>
@@ -1252,6 +1271,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             public int[] skillMods;
             public BundleTypes bundleGroup;
             public bool isIncumbent;
+            public int variantCount;
+            public int currentVariant;
+            public bool effectEnded;
             public object effectSpecific;
         }
 
@@ -1273,7 +1295,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 bundleData.casterEntityType = bundle.casterEntityType;
                 bundleData.casterLoadID = bundle.casterLoadID;
                 if (bundle.fromEquippedItem != null) bundleData.fromEquippedItemID = bundle.fromEquippedItem.UID;
-                bundleData.fromPoison = bundle.fromPoison;
 
                 List<EffectSaveData_v1> liveEffectsSaveData = new List<EffectSaveData_v1>();
                 foreach (IEntityEffect effect in bundle.liveEffects)
@@ -1303,6 +1324,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             effectData.skillMods = effect.SkillMods;
             effectData.bundleGroup = effect.BundleGroup;
             effectData.isIncumbent = (effect is IncumbentEffect) ? (effect as IncumbentEffect).IsIncumbent : false;
+            effectData.variantCount = effect.VariantCount;
+            effectData.currentVariant = effect.CurrentVariant;
+            effectData.effectEnded = effect.HasEnded;
             effectData.effectSpecific = effect.GetSaveData();
 
             return effectData;
@@ -1333,7 +1357,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 instancedBundle.caster = GetCasterReference(bundleData.casterEntityType, bundleData.casterLoadID);
                 if (instancedBundle.caster)
                     instancedBundle.fromEquippedItem = instancedBundle.caster.Entity.Items.GetItem(bundleData.fromEquippedItemID);
-                instancedBundle.fromPoison = bundleData.fromPoison;
 
                 // If bundle is supposed to be an equipped item, and we did not find that item, then do not restore bundle
                 if (instancedBundle.bundleType == BundleTypes.HeldMagicItem && instancedBundle.fromEquippedItem == null)

@@ -67,6 +67,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         None,
         Spell,
         Disease,
+        Poison,
         HeldMagicItem,
     }
 
