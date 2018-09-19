@@ -854,13 +854,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 //float scaleY = exteriorAutomap.buildingNameplates[i].textLabel.TextHeight / exteriorAutomap.buildingNameplates[i].textLabel.TextScale;
                 //exteriorAutomap.buildingNameplates[i].gameObject.transform.localScale = new Vector3(scaleX, 1, scaleY);
 
+                exteriorAutomap.buildingNameplates[i].gameObject.name = String.Format("building name plate for [{0}]+", exteriorAutomap.buildingNameplates[i].name);
+                exteriorAutomap.buildingNameplates[i].textLabel.Text = exteriorAutomap.buildingNameplates[i].name; // use long name
                 exteriorAutomap.buildingNameplates[i].width = exteriorAutomap.buildingNameplates[i].textLabel.TextWidth;
                 exteriorAutomap.buildingNameplates[i].height = exteriorAutomap.buildingNameplates[i].textLabel.TextHeight;
                 exteriorAutomap.buildingNameplates[i].offset = Vector2.zero;
-                exteriorAutomap.buildingNameplates[i].upperLeftCorner = new Vector2(0.0f, +exteriorAutomap.buildingNameplates[i].height * 0.5f);
-                exteriorAutomap.buildingNameplates[i].upperRightCorner = new Vector2(exteriorAutomap.buildingNameplates[i].width, +exteriorAutomap.buildingNameplates[i].height * 0.5f);
-                exteriorAutomap.buildingNameplates[i].lowerLeftCorner = new Vector2(0.0f, -exteriorAutomap.buildingNameplates[i].height * 0.5f);
-                exteriorAutomap.buildingNameplates[i].lowerRightCorner = new Vector2(exteriorAutomap.buildingNameplates[i].width, -exteriorAutomap.buildingNameplates[i].height * 0.5f);
+                exteriorAutomap.buildingNameplates[i].upperLeftCorner = exteriorAutomap.buildingNameplates[i].textLabel.Position + new Vector2(0.0f, -exteriorAutomap.buildingNameplates[i].height * 0.5f);
+                exteriorAutomap.buildingNameplates[i].upperRightCorner = exteriorAutomap.buildingNameplates[i].textLabel.Position + new Vector2(exteriorAutomap.buildingNameplates[i].width, -exteriorAutomap.buildingNameplates[i].height * 0.5f);
+                exteriorAutomap.buildingNameplates[i].lowerLeftCorner = exteriorAutomap.buildingNameplates[i].textLabel.Position + new Vector2(0.0f, +exteriorAutomap.buildingNameplates[i].height * 0.5f);
+                exteriorAutomap.buildingNameplates[i].lowerRightCorner = exteriorAutomap.buildingNameplates[i].textLabel.Position + new Vector2(exteriorAutomap.buildingNameplates[i].width, +exteriorAutomap.buildingNameplates[i].height * 0.5f);
                 exteriorAutomap.buildingNameplates[i].placed = false;
                 exteriorAutomap.buildingNameplates[i].nameplateReplaced = false;
                 exteriorAutomap.buildingNameplates[i].numCollisionsDetected = 0;
@@ -870,18 +872,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             for (int i = 0; i < exteriorAutomap.buildingNameplates.Length; i++)
             {
-                if (!exteriorAutomap.buildingNameplates[i].nameplateReplaced) // if not replaced
-                {
-                    exteriorAutomap.buildingNameplates[i].textLabel.Text = exteriorAutomap.buildingNameplates[i].name; // use long name
-                    exteriorAutomap.buildingNameplates[i].gameObject.name = exteriorAutomap.buildingNameplates[i].gameObject.name.Substring(0, exteriorAutomap.buildingNameplates[i].gameObject.name.Length - 1) + "+";
-                }
-                else
+                if (exteriorAutomap.buildingNameplates[i].nameplateReplaced) // if not replaced
                 {
                     exteriorAutomap.buildingNameplates[i].textLabel.Text = "*"; // else use "*"
                     exteriorAutomap.buildingNameplates[i].gameObject.name = exteriorAutomap.buildingNameplates[i].gameObject.name.Substring(0, exteriorAutomap.buildingNameplates[i].gameObject.name.Length - 1) + "*";
                 }
 
                 exteriorAutomap.buildingNameplates[i].textLabel.Position += exteriorAutomap.buildingNameplates[i].offset;
+                exteriorAutomap.buildingNameplates[i].upperLeftCorner = exteriorAutomap.buildingNameplates[i].textLabel.Position + new Vector2(0.0f, -exteriorAutomap.buildingNameplates[i].height * 0.5f);
+                exteriorAutomap.buildingNameplates[i].upperRightCorner = exteriorAutomap.buildingNameplates[i].textLabel.Position + new Vector2(exteriorAutomap.buildingNameplates[i].width, -exteriorAutomap.buildingNameplates[i].height * 0.5f);
+                exteriorAutomap.buildingNameplates[i].lowerLeftCorner = exteriorAutomap.buildingNameplates[i].textLabel.Position + new Vector2(0.0f, +exteriorAutomap.buildingNameplates[i].height * 0.5f);
+                exteriorAutomap.buildingNameplates[i].lowerRightCorner = exteriorAutomap.buildingNameplates[i].textLabel.Position + new Vector2(exteriorAutomap.buildingNameplates[i].width, +exteriorAutomap.buildingNameplates[i].height * 0.5f);
+                exteriorAutomap.buildingNameplates[i].textLabel.Update();
             }
         }
 
