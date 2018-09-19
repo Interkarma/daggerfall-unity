@@ -52,11 +52,11 @@ namespace DaggerfallWorkshop.Game
             // Moving platform support
             if (activePlatform != null)
             {
-                var newGlobalPlatformPoint = activePlatform.TransformPoint(activeLocalPlatformPoint);
-                var moveDistance = (newGlobalPlatformPoint - activeGlobalPlatformPoint);
+                Vector3 newGlobalPlatformPoint = activePlatform.TransformPoint(activeLocalPlatformPoint);
+                Vector3 adhesionDirection = (newGlobalPlatformPoint - activeGlobalPlatformPoint);
                 // Platform movement of player is performed here
-                if (moveDistance != Vector3.zero)
-                    controller.Move(moveDistance);
+                if (adhesionDirection != Vector3.zero)
+                    moveDirection += adhesionDirection;
                 //lastPlatformVelocity = (newGlobalPlatformPoint - activeGlobalPlatformPoint) / Time.deltaTime;
 
                 // If you want to support moving platform rotation as well:

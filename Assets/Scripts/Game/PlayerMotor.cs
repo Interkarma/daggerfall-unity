@@ -45,8 +45,6 @@ namespace DaggerfallWorkshop.Game
         private bool grounded = false;
         private float speed;
 
-        private bool standingStill = false;
-
         private ClimbingMotor climbingMotor;
         private PlayerHeightChanger heightChanger;
         private PlayerSpeedChanger speedChanger;
@@ -102,7 +100,16 @@ namespace DaggerfallWorkshop.Game
 
         public bool IsStandingStill
         {
-            get { return standingStill; }
+            get
+            {
+                if (grounded)
+                {
+                    // Set standing still while grounded flag
+                    // Casting moveDirection to a Vector2 so constant downward force of gravity not included in magnitude
+                    return (new Vector2(moveDirection.x, moveDirection.z).magnitude == 0);
+                }
+                return false;
+            }
         }
 
         public bool IsJumping
@@ -250,10 +257,6 @@ namespace DaggerfallWorkshop.Game
             if (levitateMotor && (levitateMotor.IsLevitating || levitateMotor.IsSwimming) || climbingMotor.IsClimbing)
                 return;
 
-            // Player assumed to be in movement for now
-            standingStill = false;
-
-
             if (climbingMotor.WallEject)
             {   // True in terms of the player having their feet on solid surface.
                 grounded = true;
@@ -261,10 +264,6 @@ namespace DaggerfallWorkshop.Game
 
             if (grounded)
             {
-                // Set standing still while grounded flag
-                // Casting moveDirection to a Vector2 so constant downward force of gravity not included in magnitude
-                standingStill = (new Vector2(moveDirection.x, moveDirection.z).magnitude == 0);
-
                 acrobatMotor.Jumping = false;
 
                 acrobatMotor.CheckFallingDamage();
@@ -283,12 +282,7 @@ namespace DaggerfallWorkshop.Game
 
             acrobatMotor.ApplyGravity(ref moveDirection);
 
-            // If we hit something above us AND we are moving up, reverse vertical movement
-            if ((controller.collisionFlags & CollisionFlags.Above) != 0)
-            {
-                if (moveDirection.y > 0)
-                    moveDirection.y = -moveDirection.y;
-            }
+            acrobatMotor.HitHead(ref moveDirection);
 
             groundMotor.MoveOnGround(moveDirection, ref collisionFlags, ref grounded);
         }
