@@ -1404,7 +1404,7 @@ namespace DaggerfallWorkshop.Game.Entity
                         }
 
                         // Chance for new ruler
-                        if ((factionData.FactionDict[key].flags & 0x10) == 0)
+                        if (factionData.GetFlag(key, FactionFile.Flags.NewRuler))
                         {
                             int mod = factionData.FactionDict[key].rulerPowerBonus / 3;
                             if (UnityEngine.Random.Range(0, 100 + 1) > mod + 70)

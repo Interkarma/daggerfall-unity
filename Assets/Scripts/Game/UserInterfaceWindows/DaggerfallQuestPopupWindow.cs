@@ -165,16 +165,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
             }
             // Select appropriate Daedra for summoning attempt.
-            if (summonerFactionData.id == (int)FactionFile.FactionIDs.The_Glenmoril_Witches)
+            if (summonerFactionData.id == (int) FactionFile.FactionIDs.The_Glenmoril_Witches)
             {   // Always Hircine at Glenmoril witches.
                 daedraToSummon = daedraData[0];
             }
-            else if ((FactionFile.FactionTypes)summonerFactionData.type == FactionFile.FactionTypes.WitchesCoven)
+            else if ((FactionFile.FactionTypes) summonerFactionData.type == FactionFile.FactionTypes.WitchesCoven)
             {   // Witches covens summon a random Daedra.
                 daedraToSummon = daedraData[Random.Range(1, daedraData.Length)];
             }
             else
-            {   // TODO - Sheogorath 5%/15% chance to replace
+            {   // TODO - Sheogorath 5%/15% chance to replace days' daedra.
                 int dayOfYear = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.DayOfYear;
                 foreach (DaedraData dd in daedraData)
                 {
@@ -185,10 +185,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     }
                 }
             }
-            // Display message.
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
             if (daedraToSummon.factionId == 0)
-            {
+            {   // Display no summoning message.
                 TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(SummonNotToday);
                 messageBox.SetTextTokens(tokens, this);
                 messageBox.ClickAnywhereToClose = true;
@@ -221,21 +220,31 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                     Debug.Log("Start the summoning! Offer the quest.");
 
-                    // Offer the quest to player.
-                    offeredQuest = GameManager.Instance.QuestListsManager.GetQuest(daedraToSummon.quest);
-                    if (offeredQuest != null)
+                    // Check then record the summoning.
+                    if (playerEntity.FactionData.GetFlag(daedraToSummon.factionId, FactionFile.Flags.Summoned))
                     {
-                        // Need to use DaggerfallDaedraSummoningWindow here...
+                        DaggerfallUI.MessageBox(SummonBefore, this);  // TODO - play vid with this message
+                    }
+                    else
+                    {
+                        playerEntity.FactionData.SetFlag(daedraToSummon.factionId, FactionFile.Flags.Summoned);
 
-                        DaggerfallMessageBox messageBox = QuestMachine.Instance.CreateMessagePrompt(offeredQuest, (int) QuestMachine.QuestMessages.QuestorOffer);
-                        if (messageBox != null)
+                        // Offer the quest to player.
+                        offeredQuest = GameManager.Instance.QuestListsManager.GetQuest(daedraToSummon.quest);
+                        if (offeredQuest != null)
                         {
-                            messageBox.OnButtonClick += OfferQuest_OnButtonClick;
-                            messageBox.Show();
-                        }
+                            // Need to use DaggerfallDaedraSummoningWindow here...
 
-                        //Quest quest = QuestMachine.Instance.ParseQuest(daedraToSummon.quest);
-                        //uiManager.PushWindow(new DaggerfallDaedraSummoning(uiManager, daedraToSummon));
+                            DaggerfallMessageBox messageBox = QuestMachine.Instance.CreateMessagePrompt(offeredQuest, (int) QuestMachine.QuestMessages.QuestorOffer);
+                            if (messageBox != null)
+                            {
+                                messageBox.OnButtonClick += OfferQuest_OnButtonClick;
+                                messageBox.Show();
+                            }
+
+                            //Quest quest = QuestMachine.Instance.ParseQuest(daedraToSummon.quest);
+                            //uiManager.PushWindow(new DaggerfallDaedraSummoning(uiManager, daedraToSummon));
+                        }
                     }
                 }
                 else
