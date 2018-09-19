@@ -208,7 +208,7 @@ namespace DaggerfallConnect.Arena2
             // Adjust poison resistance
             else if (effect.StartsWith("RP"))
             {
-                if (!int.TryParse(tokens[1], out parseResult))
+                if (int.TryParse(tokens[1], out parseResult))
                 {
                     playerEntity.BiographyResistPoisonMod = parseResult;
                 }
@@ -220,7 +220,7 @@ namespace DaggerfallConnect.Arena2
             // Adjust fatigue
             else if (effect.StartsWith("FT"))
             {
-                if (!int.TryParse(tokens[1], out parseResult))
+                if (int.TryParse(tokens[1], out parseResult))
                 {
                     playerEntity.BiographyFatigueMod = parseResult;
                 }
@@ -232,7 +232,7 @@ namespace DaggerfallConnect.Arena2
             // Adjust reaction roll
             else if (effect.StartsWith("RR"))
             {
-                if (!int.TryParse(tokens[1], out parseResult))
+                if (int.TryParse(tokens[1], out parseResult))
                 {
                     playerEntity.BiographyReactionMod = parseResult;
                 }
@@ -244,7 +244,7 @@ namespace DaggerfallConnect.Arena2
             // Adjust disease resistance
             else if (effect.StartsWith("RD"))
             {
-                if (!int.TryParse(tokens[1], out parseResult))
+                if (int.TryParse(tokens[1], out parseResult))
                 {
                     playerEntity.BiographyResistDiseaseMod = parseResult;
                 }
@@ -256,7 +256,7 @@ namespace DaggerfallConnect.Arena2
             // Adjust magic resistance
             else if (effect.StartsWith("MR"))
             {
-                if (!int.TryParse(tokens[1], out parseResult))
+                if (int.TryParse(tokens[1], out parseResult))
                 {
                     playerEntity.BiographyResistMagicMod = parseResult;
                 }
@@ -268,7 +268,7 @@ namespace DaggerfallConnect.Arena2
             // Adjust to-hit
             else if (effect.StartsWith("TH"))
             {
-                if (!int.TryParse(tokens[1], out parseResult))
+                if (int.TryParse(tokens[1], out parseResult))
                 {
                     playerEntity.BiographyAvoidHitMod = parseResult;
                 }
@@ -282,14 +282,18 @@ namespace DaggerfallConnect.Arena2
                 // TODO: Implement biography history text commands
                 Debug.Log("CreateCharBiography: Biography history text commands not yet implemented.");
             }
-            // Unknown commands
+            // Unimplemented commands
             else if (effect.StartsWith("AE"))
             {
-                Debug.Log("CreateCharBiography: AE - command function unknown.");
+                Debug.Log("CreateCharBiography: AE - command unimplemented.");
             }
             else if (effect.StartsWith("AF"))
             {
-                Debug.Log("CreateCharBiography: AF - command function unknown.");
+                Debug.Log("CreateCharBiography: AF - command unimplemented.");
+            }
+            else if (effect.StartsWith("AO"))
+            {
+                Debug.Log("CreateCharBiography: AO - command unimplemented.");
             }
             else
             {
