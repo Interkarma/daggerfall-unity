@@ -32,6 +32,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         const int toolTipDelay = 1; // delay in seconds before button tooltips are shown
 
+        const float minTextScaleNameplates = 1.4f; // minimum text scale for nameplates
+        const float textScaleNameplates = 60.0f; // text scale factor to specify how large in general nameplates' text is rendered (text size is also affected by zoom level)
+
         const float scrollLeftRightSpeed = 100.0f; // left mouse on button arrow left/right makes geometry move with this speed
         const float scrollUpDownSpeed = 100.0f; // left mouse on button arrow up/down makes geometry move with this speed
         const float moveUpstairsDownstairsSpeed = 500.0f; // left mouse on button upstairs/downstairs makes geometry move with this speed
@@ -800,41 +803,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             panelRenderAutomap.BackgroundTexture = textureExteriorAutomap;
 
-
-            //DaggerfallUI.DefaultFont.DrawText("This is a test...", new Vector2(100,100), Vector2.one * 4, new Color(0.1f, 0.0f, 1.0f));
-            //TextLabel testLabel = new TextLabel();
-            //testLabel.Text = "This is a test...";
-            //testLabel.Position = new Vector2(-40, 100);            
-            //testLabel.TextScale = 16;
-            ////testLabel.Scale = new Vector2(16, 16);
-            //Rect restrictionRect = new Rect(); // = panelRenderAutomap.Rectangle;
-            //restrictionRect.position = panelRenderAutomap.Position;            
-            //restrictionRect.width = panelRenderAutomap.InteriorWidth;
-            //restrictionRect.height = panelRenderAutomap.InteriorHeight;
-            ////restrictionRect.yMin = 0;
-            ////restrictionRect.xMax = 319;
-            ////restrictionRect.yMax = 199;
-            ////restrictionRect.position += panelRenderAutomap.Position;
-            //testLabel.RectRestrictedRenderArea = restrictionRect; //new Rect(0, 0, panelRenderAutomap.InteriorWidth, panelRenderAutomap.InteriorHeight);
-            //testLabel.RestrictedRenderAreaCoordinateType = TextLabel.RestrictedRenderArea_CoordinateType.ScreenCoordinates;
-            //Vector2 size = testLabel.Size;
-            ////testLabel.MaxCharacters = -1;
-            //testLabel.Name = "testLabel";
-            //panelRenderAutomap.Components.Add(testLabel);
             panelRenderAutomap.Components.Clear();
 
-            Rect restrictionRect = new Rect(); // = panelRenderAutomap.Rectangle;
-            restrictionRect.position = panelRenderAutomap.Position;
-            restrictionRect.width = panelRenderAutomap.InteriorWidth;
-            restrictionRect.height = panelRenderAutomap.InteriorHeight;
+            Rect restrictionRect = panelRenderAutomap.Rectangle;
             for (int i=0; i < exteriorAutomap.buildingNameplates.Length; i++)
             {
-                //float posX = exteriorAutomap.buildingNameplates[i].gameObject.transform.position.x;
-                //float posY = exteriorAutomap.buildingNameplates[i].gameObject.transform.position.z;
                 float posX = exteriorAutomap.buildingNameplates[i].anchorPoint.x - exteriorAutomap.LocationWidth * exteriorAutomap.BlockSizeWidth * 0.5f;
                 float posY = exteriorAutomap.buildingNameplates[i].anchorPoint.y - exteriorAutomap.LocationHeight * exteriorAutomap.BlockSizeHeight * 0.5f;
                 Vector3 transformedPosition = exteriorAutomap.CameraExteriorAutomap.WorldToScreenPoint(new Vector3(posX, 0, posY));
-                exteriorAutomap.buildingNameplates[i].textLabel.TextScale = 60.0f / cameraExteriorAutomap.orthographicSize * dummyPanelAutomap.LocalScale.x;
+                exteriorAutomap.buildingNameplates[i].textLabel.TextScale = Math.Max(minTextScaleNameplates, textScaleNameplates / cameraExteriorAutomap.orthographicSize * dummyPanelAutomap.LocalScale.x);
                 exteriorAutomap.buildingNameplates[i].textLabel.Position = new Vector2(transformedPosition.x, dummyPanelAutomap.InteriorHeight * dummyPanelAutomap.LocalScale.x - transformedPosition.y - exteriorAutomap.buildingNameplates[i].textLabel.TextHeight * 0.5f);
                 exteriorAutomap.buildingNameplates[i].textLabel.RectRestrictedRenderArea = restrictionRect;
                 exteriorAutomap.buildingNameplates[i].textLabel.RestrictedRenderAreaCoordinateType = TextLabel.RestrictedRenderArea_CoordinateType.ScreenCoordinates;
@@ -845,14 +822,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.BackgroundColor = DaggerfallUnity.Settings.ToolTipBackgroundColor;
                 exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.TextColor = DaggerfallUnity.Settings.ToolTipTextColor;                
                 exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.Parent = NativePanel;
-                exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.Position /= NativePanel.LocalScale;
+                exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.Position /= NativePanel.LocalScale;                
                 exteriorAutomap.buildingNameplates[i].textLabel.ToolTipText = exteriorAutomap.buildingNameplates[i].name;
                 panelRenderAutomap.Components.Add(exteriorAutomap.buildingNameplates[i].textLabel);
-
-                //exteriorAutomap.buildingNameplates[i].gameObject.transform.position = new Vector3(posX, 4.0f, posY + exteriorAutomap.buildingNameplates[i].textLabel.TextHeight / exteriorAutomap.buildingNameplates[i].textLabel.TextScale);
-                //float scaleX = exteriorAutomap.buildingNameplates[i].textLabel.TextWidth / exteriorAutomap.buildingNameplates[i].textLabel.TextScale;
-                //float scaleY = exteriorAutomap.buildingNameplates[i].textLabel.TextHeight / exteriorAutomap.buildingNameplates[i].textLabel.TextScale;
-                //exteriorAutomap.buildingNameplates[i].gameObject.transform.localScale = new Vector3(scaleX, 1, scaleY);
 
                 exteriorAutomap.buildingNameplates[i].gameObject.name = String.Format("building name plate for [{0}]+", exteriorAutomap.buildingNameplates[i].name);
                 exteriorAutomap.buildingNameplates[i].textLabel.Text = exteriorAutomap.buildingNameplates[i].name; // use long name

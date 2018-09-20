@@ -139,22 +139,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #region Glyph Rendering
 
-        public int GetSDFGlyphWidth(int ascii)
-        {
-            if (ascii < asciiStart)
-                return 0;
-
-            if (!HasGlyph(ascii))
-                throw new Exception(invalidAsciiCode + ascii);
-
-            if (sdfAtlasRects == null || sdfAtlasRects.Length == 0)
-                return 0;
-
-            Rect atlasRect = sdfAtlasRects[ascii - asciiStart];
-
-            return (int)(atlasRect.width * sdfAtlasTexture.width);
-        }
-
         void DrawClassicGlyph(byte rawAscii, Rect targetRect, Color color)
         {
             Rect atlasRect = atlasRects[rawAscii - asciiStart];
@@ -191,113 +175,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
 
             DrawSDFGlyph(rawAscii, targetRect, color);
-        }
-
-        //void DrawClassicGlyphIntoTexture2D(ref Texture2D texture, int width, int height, int x, int y, byte rawAscii, Rect targetRect, Color color)
-        //{
-        //    Rect atlasRect = atlasRects[rawAscii - asciiStart];
-        //    int blockMinX = (int)(atlasRect.xMin * atlasTexture.width);
-        //    int blockMinY = (int)(atlasRect.yMin * atlasTexture.height);
-        //    int blockWidth = (int)(atlasRect.width * atlasTexture.width);
-        //    int blockHeight = (int)(atlasRect.height * atlasTexture.height);
-        //    Color[] colors = sdfAtlasTexture.GetPixels(blockMinX, blockMinY, blockWidth, blockHeight);
-        //    texture.SetPixels(x, y, blockWidth, blockHeight, colors);
-        //}
-
-        //void DrawSDFGlyphIntoTexture2D(ref Texture2D texture, int width, int height, int x, int y, byte rawAscii, Rect targetRect, Color color)
-        //{
-        //    Rect atlasRect = sdfAtlasRects[rawAscii - asciiStart];
-        //    int blockMinX = (int)(atlasRect.xMin * atlasTexture.width);
-        //    int blockMinY = (int)(atlasRect.yMin * atlasTexture.height);
-        //    int blockWidth = (int)(atlasRect.width * atlasTexture.width);
-        //    int blockHeight = (int)(atlasRect.height * atlasTexture.height);
-        //    Color[] colors = sdfAtlasTexture.GetPixels(blockMinX, blockMinY, blockWidth, blockHeight);
-        //    texture.SetPixels(x, y, blockWidth, blockHeight, colors);
-        //}
-
-        public void GetClassicGlyphColors(ref Color[] colors, byte rawAscii, out int blockWidth, out int blockHeight)
-        {
-            blockWidth = 0; blockHeight = 0;
-            if (rawAscii < asciiStart)
-                return;
-
-            Rect atlasRect = atlasRects[rawAscii - asciiStart];
-            blockWidth = (int)(Math.Abs(atlasRect.width) * atlasTexture.width);
-            blockHeight = (int)(Math.Abs(atlasRect.height) * atlasTexture.height);
-            int blockMinX = (int)(atlasRect.xMin * atlasTexture.width);
-            int blockMinY = (int)((atlasRect.yMin) * atlasTexture.height - blockHeight);
-            colors = atlasTexture.GetPixels(blockMinX, blockMinY, blockWidth, blockHeight);
-            //Color[] tmp = atlasTexture.GetPixels(0, 0, atlasTexture.width, atlasTexture.height);
-        }
-
-        public void GetSDFGlyphColors(ref Color[] colors, byte rawAscii, out int blockWidth, out int blockHeight)
-        {
-            blockWidth = 0; blockHeight = 0;
-            if (rawAscii < asciiStart)
-                return;
-
-            Rect atlasRect = sdfAtlasRects[rawAscii - asciiStart];
-            blockWidth = (int)(atlasRect.width * sdfAtlasTexture.width);
-            blockHeight = (int)(atlasRect.height * sdfAtlasTexture.height);
-            int blockMinX = (int)(atlasRect.xMin * sdfAtlasTexture.width);
-            int blockMinY = (int)(atlasRect.yMin * sdfAtlasTexture.height);
-            colors = sdfAtlasTexture.GetPixels(blockMinX, blockMinY, blockWidth, blockHeight);
-        }
-
-        /// <summary>
-        /// Get expected bounding box of a text render (used for future rendering)
-        /// </summary>
-        public void GetBoundingBoxText(
-            string text,
-            Vector2 position,
-            Vector2 scale,
-            out Rect boundingBox)
-        {
-            boundingBox = new Rect(position.x, position.y, 0, 0);
-
-            if (!fntFile.IsLoaded)
-                throw new Exception("DaggerfallFont: DrawText() font not loaded.");
-
-            atlasTexture.filterMode = FilterMode;
-
-            byte[] asciiBytes = Encoding.ASCII.GetBytes(text);
-            if (asciiBytes == null || asciiBytes.Length == 0)
-                return;
-
-            float x = position.x;
-            float y = position.y;
-            for (int i = 0; i < asciiBytes.Length; i++)
-            {
-                // Invalid ASCII bytes are cast to a space character
-                if (!HasGlyph(asciiBytes[i]))
-                    asciiBytes[i] = SpaceASCII;
-
-                GlyphInfo glyph = GetGlyph(asciiBytes[i]);
-
-                if (asciiBytes[i] != SpaceASCII)
-                {
-                    if (IsSDFCapable)
-                    {
-                        // determine Rect of glyph (SDF shader)
-                        Rect rect = new Rect(x, y, glyph.width * scale.x + GlyphSpacing * scale.x, GlyphHeight * scale.y);                        
-                        x += rect.width;
-                    }
-                    else
-                    {
-                        // determine Rect of glyph (pixel shader)
-                        Rect rect = new Rect(x, y, glyph.width * scale.x, GlyphHeight * scale.y);                        
-                        x += rect.width + GlyphSpacing * scale.x;
-                    }
-                }
-                else
-                {
-                    // TODO: Just add space character
-                    Rect rect = new Rect(x, y, glyph.width * scale.x, GlyphHeight * scale.y);
-                    x += rect.width;
-                }
-            }
-            boundingBox.width = x - boundingBox.xMin;
-            boundingBox.height = GlyphHeight * scale.y;
         }
 
         #endregion
