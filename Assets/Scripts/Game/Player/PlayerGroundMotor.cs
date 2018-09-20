@@ -56,7 +56,7 @@ namespace DaggerfallWorkshop.Game
                 Vector3 adhesionDirection = (newGlobalPlatformPoint - activeGlobalPlatformPoint);
                 // Platform movement of player is performed here
                 if (adhesionDirection != Vector3.zero)
-                    moveDirection += adhesionDirection;
+                    controller.Move(adhesionDirection);
                 //lastPlatformVelocity = (newGlobalPlatformPoint - activeGlobalPlatformPoint) / Time.deltaTime;
 
                 // If you want to support moving platform rotation as well:
