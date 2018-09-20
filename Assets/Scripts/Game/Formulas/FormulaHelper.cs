@@ -547,10 +547,10 @@ namespace DaggerfallWorkshop.Game.Formulas
                 }
 
                 // Handle poisoned weapons
-                if (damage > 0 && weapon.poisonType != Items.Poisons.None)
+                if (damage > 0 && weapon.poisonType != Poisons.None)
                 {
                     InflictPoison(target, weapon.poisonType, false);
-                    weapon.poisonType = Items.Poisons.None;
+                    weapon.poisonType = Poisons.None;
                 }
             }
 
@@ -884,7 +884,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             return damage;
         }
 
-        public static void InflictPoison(DaggerfallEntity target, Items.Poisons poisonType, bool bypassResistance)
+        public static void InflictPoison(DaggerfallEntity target, Poisons poisonType, bool bypassResistance)
         {
                                             // Poison types. 0-7 are weapon poisons. 8-11 are drugs
                                             // 0     1    2     3     4     5    6    7     8    9   10   11
@@ -902,11 +902,11 @@ namespace DaggerfallWorkshop.Game.Formulas
             {
                 if (target.Level != 1)
                 {
-                    //int index = (int)poisonType - 128;
-                    //int roundsOfPoison = UnityEngine.Random.Range(MinRoundsOfPoison[index], MaxRoundsOfPoison[index] + 1);
-                    //int minutesUntilStartingPoison = UnityEngine.Random.Range(MinMinutesToPoison[index], MaxMinutesToPoison[index] + 1);
-                    //Debug.Log(target.Name + " afflicted with " + poisonType + ", starting in " + minutesUntilStartingPoison
-                    //    + " minutes, lasting for " + roundsOfPoison + " minutes.");
+                    int index = (int)poisonType - 128;
+                    int roundsOfPoison = UnityEngine.Random.Range(MinRoundsOfPoison[index], MaxRoundsOfPoison[index] + 1);
+                    int minutesUntilStartingPoison = UnityEngine.Random.Range(MinMinutesToPoison[index], MaxMinutesToPoison[index] + 1);
+                    Debug.Log(target.Name + " afflicted with " + poisonType + ", starting in " + minutesUntilStartingPoison
+                        + " minutes, lasting for " + roundsOfPoison + " minutes.");
                 }
             }
             else

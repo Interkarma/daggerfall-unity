@@ -1456,8 +1456,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else if (item.ItemGroup == ItemGroups.Drugs)
             {
-                // Drug poison IDs are 8 through 11. Template indexes are 78 through 81, so subtract from that.
-                //Formulas.FormulaHelper.InflictPoison(playerEntity, item.TemplateIndex - 70, true);
+                // Drug poison IDs are 136 through 139. Template indexes are 78 through 81, so add to that.
+                Formulas.FormulaHelper.InflictPoison(playerEntity, (Poisons)item.TemplateIndex + 66, true);
                 collection.RemoveItem(item);
             }
             else
