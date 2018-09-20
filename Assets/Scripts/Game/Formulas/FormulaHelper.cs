@@ -1195,6 +1195,16 @@ namespace DaggerfallWorkshop.Game.Formulas
             return 200000 - (npcRep * 1000);
         }
 
+        public static int CalculateDaedraSummoningChance(int daedraRep, int bonus)
+        {
+            Formula_2i del;
+            if (formula_2i.TryGetValue("CalculateDaedraSummoningChance", out del))
+                return del(daedraRep, bonus);
+
+            int chance = 30 + daedraRep + bonus;
+            return Mathf.Clamp(chance, 5, 95);
+        }
+
         public static int CalculateTradePrice(int cost, int shopQuality, bool selling)
         {
             Formula_3i del;

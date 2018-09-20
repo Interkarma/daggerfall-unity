@@ -301,11 +301,9 @@ namespace DaggerfallWorkshop.Utility
             string tokenText;
             int multilineIdx = 0;
             TextFile.Token[] multilineTokens = null;
-
-            // this dictionary is used check for previous resolving of a specific macro in the current call to ExpandMacros before expanding macros
-            // if macro (macro string used as dict key) has been expanded before use previous expanded string (value of this dict) as result
-            // this dict is newly created (and thus empty) for every new call to this function call so macros will be expanded in future calls to ExpandMacros
-            Dictionary<string, string> macrosExpandedAlready = new Dictionary<string, string>();
+            // Initialise macro cache - used to ensure macros are only evaluated once per ExpandMacros() call.
+            // Important since some macros evaluate differently each time. (e.g. macros with random generated names like %fx1 & %fx2)
+            Dictionary<string, string> macroCache = new Dictionary<string, string>();
 
             for (int tokenIdx = 0; tokenIdx < tokens.Length; tokenIdx++)
             {
@@ -332,29 +330,25 @@ namespace DaggerfallWorkshop.Utility
                                 string prefix = words[wordIdx].Substring(0, pos);
                                 string macro = words[wordIdx].Substring(pos);
 
-                                // don't expand macros several times in same expand macro command (when still in one run of this function)
-                                // since some macros produce different results when expanded several times (macros with random generated names, e.g. %fx1, %fx2)
-                                if (macrosExpandedAlready.ContainsKey(macro))
-                                {
-                                    words[wordIdx] = prefix + macrosExpandedAlready[macro];
-                                    continue;
-                                }
-
                                 if (macro.StartsWith("%"))
                                 {
                                     int macroLen;
-                                    if ((macroLen = macro.IndexOfAny(PUNCTUATION)) > 0)
+                                    if (macroCache.ContainsKey(macro))
+                                    {
+                                        words[wordIdx] = prefix + macroCache[macro];
+                                    }
+                                    else if ((macroLen = macro.IndexOfAny(PUNCTUATION)) > 0)
                                     {
                                         string symbolStr = macro.Substring(0, macroLen);
                                         string expandedString = GetValue(symbolStr, mcp);
                                         words[wordIdx] = prefix + expandedString + macro.Substring(macroLen);
-                                        macrosExpandedAlready[macro] = expandedString;
+                                        macroCache[macro] = expandedString;
                                     }
                                     else
                                     {
                                         string expandedString = GetValue(macro, mcp);
                                         words[wordIdx] = prefix + expandedString;
-                                        macrosExpandedAlready[macro] = expandedString;
+                                        macroCache[macro] = expandedString;
                                     }
                                 }
                             }

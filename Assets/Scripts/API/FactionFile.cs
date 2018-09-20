@@ -624,7 +624,7 @@ namespace DaggerfallConnect.Arena2
         /// </summary>
         public enum Flags
         {
-            NewRuler = 0x10,
+            RulerImmune = 0x10,
             Summoned = 0x40,
         }
 
