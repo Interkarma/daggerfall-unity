@@ -638,6 +638,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Calculate the weight of all items picked from shelves, then get chance of shoplifting success.
                 int weightAndNumItems = (int) basketItems.GetWeight() + basketItems.Count;
                 int chance = FormulaHelper.CalculateShopliftingChance(PlayerEntity, null, buildingDiscoveryData.quality, weightAndNumItems);
+                PlayerEntity.TallySkill(DFCareer.Skills.Pickpocket, 1);
 
                 if (UnityEngine.Random.Range(0, 101) > chance)
                 {

@@ -232,6 +232,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     int sheoChance = (weatherManager.IsStorming) ? 15 : 5;
                     int roll = Random.Range(1, 101);
                     Debug.LogFormat("Summoning {0} with chance = {1}%, Sheogorath chance = {2}%, roll = {3}", daedraToSummon.vidFile, chance, sheoChance, roll);
+
                     if (roll > chance + sheoChance)
                     {   // Daedra stood you up!
                         DaggerfallUI.MessageBox(SummonFailed, this);
@@ -242,7 +243,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         daedraToSummon = daedraData[8];
                     }
 
-                    Debug.Log("Summoning success! Offer the quest.");
+                    Debug.Log("Summoning success! Offer the quest...");
 
                     // Has this Daedra already been summoned by the player?
                     if (playerEntity.FactionData.GetFlag(daedraToSummon.factionId, FactionFile.Flags.Summoned))
