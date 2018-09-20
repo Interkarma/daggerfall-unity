@@ -1243,6 +1243,10 @@ namespace DaggerfallWorkshop
                 // Clear falling damage so player doesn't take damage after reposition
                 GameManager.Instance.AcrobatMotor.ClearFallingDamage();
 
+                // Perform another pass at collecting loose objects as sometimes they don't clean up properly after fast travel
+                // This is more common the more loose objects are present in scene, such as with a greater TerrainDistance
+                CollectLooseObjects();
+
                 ResyncWorldCoordinates();
             }
             else

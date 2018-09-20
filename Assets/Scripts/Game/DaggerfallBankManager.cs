@@ -311,12 +311,12 @@ namespace DaggerfallWorkshop.Game.Banking
         {
             PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
             DaggerfallUnityItem wagonGold = playerEntity.WagonItems.GetItem(ItemGroups.Currency, (int)Currency.Gold_pieces);
-            if (amount > playerEntity.GoldPieces + wagonGold.stackCount)
+            if (amount > playerEntity.GoldPieces + (wagonGold != null ? wagonGold.stackCount : 0))
                 return TransactionResult.NOT_ENOUGH_GOLD;
 
             BankAccounts[regionIndex].accountGold += amount;
 
-            if (amount > playerEntity.GoldPieces)
+            if (amount > playerEntity.GoldPieces && wagonGold != null)
             {
                 wagonGold.stackCount -= (amount - playerEntity.GoldPieces);
                 playerEntity.GoldPieces = 0;

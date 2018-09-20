@@ -28,6 +28,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         const string buttonsFilename = "BUTTONS.RCI";
 
+        Panel imagePanel = new Panel();
         Panel messagePanel = new Panel();
         Panel buttonPanel = new Panel();
         MultiFormatTextLabel label = new MultiFormatTextLabel();
@@ -105,6 +106,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             set { extraProceedBinding = value; }
         }
 
+        public Panel ImagePanel
+        {
+            get { return imagePanel; }
+        }
+
         public DaggerfallMessageBox(IUserInterfaceManager uiManager, IUserInterfaceWindow previous = null, bool wrapText = false, int posY = -1)
             : base(uiManager, previous)
         {
@@ -165,6 +171,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             buttonPanel.HorizontalAlignment = HorizontalAlignment.Center;
             buttonPanel.VerticalAlignment = VerticalAlignment.None;
             messagePanel.Components.Add(buttonPanel);
+
+            imagePanel.HorizontalAlignment = HorizontalAlignment.Center;
+            imagePanel.VerticalAlignment = VerticalAlignment.Top;
+            messagePanel.Components.Add(imagePanel);
 
             IsSetup = true;
         }

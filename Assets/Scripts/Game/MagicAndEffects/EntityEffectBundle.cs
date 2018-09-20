@@ -24,6 +24,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         EffectBundleSettings settings;
         DaggerfallEntityBehaviour casterEntityBehaviour = null;
         DaggerfallUnityItem fromEquippedItem = null;
+        bool fromPoison = false;
 
         #endregion
 
@@ -64,6 +65,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             get { return fromEquippedItem; }
             set { fromEquippedItem = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets flag stating if this bundle originated from poison application.
+        /// </summary>
+        public bool FromPoison
+        {
+            get { return fromPoison; }
+            set { fromPoison = value; }
         }
 
         #endregion

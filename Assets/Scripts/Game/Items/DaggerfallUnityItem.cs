@@ -44,6 +44,7 @@ namespace DaggerfallWorkshop.Game.Items
         public int message;
         public DaggerfallEnchantment[] legacyMagic = null;
         public int stackCount = 1;
+        public Poisons poisonType = Poisons.None;
 
         // Private item fields
         int playerTextureArchive;
@@ -432,7 +433,7 @@ namespace DaggerfallWorkshop.Game.Items
             unknown2 = 0;
             typeDependentData = 0;
             enchantmentPoints = itemTemplate.enchantmentPoints;
-            message = 0;
+            message = (itemGroup == ItemGroups.Paintings) ? UnityEngine.Random.Range(0, 65535) : 0;
             stackCount = 1;
         }
         
@@ -635,6 +636,7 @@ namespace DaggerfallWorkshop.Game.Items
             data.questUID = questUID;
             data.questItemSymbol = questItemSymbol;
             data.trappedSoulType = trappedSoulType;
+            data.poisonType = poisonType;
 
             return data;
         }
@@ -1275,6 +1277,7 @@ namespace DaggerfallWorkshop.Game.Items
             questUID = data.questUID;
             questItemSymbol = data.questItemSymbol;
             trappedSoulType = data.trappedSoulType;
+            poisonType = data.poisonType;
         }
 
         /// <summary>

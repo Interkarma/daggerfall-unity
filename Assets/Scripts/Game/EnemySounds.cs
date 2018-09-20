@@ -30,6 +30,7 @@ namespace DaggerfallWorkshop.Game
         public SoundClips MoveSound;
         public SoundClips BarkSound;
         public SoundClips AttackSound;
+        public Entity.Races RaceForSounds;
 
         AudioClip moveClip;
         AudioClip barkClip;
@@ -66,7 +67,9 @@ namespace DaggerfallWorkshop.Game
                 AttackSound = (SoundClips)mobile.Summary.Enemy.AttackSound;
             }
 
-            // Start attrack timer
+            RaceForSounds = (Entity.Races)Random.Range(1, 6);
+
+            // Start attract timer
             StartWaiting();
         }
 
@@ -155,6 +158,27 @@ namespace DaggerfallWorkshop.Game
                 {
                     dfAudioSource.PlayOneShot(SoundClips.SwingHighPitch);
                 }
+            }
+        }
+
+        public void PlayCombatVoice(Entity.Genders gender, bool isAttack, bool heavyDamage = false)
+        {
+            // Male high elf sounds sound odd when coming from NPCs. Switch out for wood elf.
+            if (gender == Entity.Genders.Male && RaceForSounds == Entity.Races.HighElf)
+                RaceForSounds = Entity.Races.WoodElf;
+
+            if (IsReady())
+            {
+                SoundClips sound;
+                if (isAttack)
+                    sound = Entity.DaggerfallEntity.GetRaceGenderAttackSound(RaceForSounds, gender);
+                else
+                    sound = Entity.DaggerfallEntity.GetRaceGenderPainSound(RaceForSounds, gender, heavyDamage);
+
+                float pitch = dfAudioSource.AudioSource.pitch;
+                dfAudioSource.AudioSource.pitch = pitch + Random.Range(0, 0.3f);
+                dfAudioSource.PlayOneShot(sound);
+                dfAudioSource.AudioSource.pitch = pitch;
             }
         }
 

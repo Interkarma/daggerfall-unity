@@ -354,6 +354,25 @@ namespace DaggerfallWorkshop.Game.Entity
                     }
                 }
             }
+
+            // Chance for poisoned weapon
+            if (player.Level > 1)
+            {
+                Items.DaggerfallUnityItem weapon = ItemEquipTable.GetItem(Game.Items.EquipSlots.RightHand);
+                if (weapon != null && (entityType == EntityTypes.EnemyClass || mobileEnemy.ID == (int)MobileTypes.Orc
+                        || mobileEnemy.ID == (int)MobileTypes.Centaur || mobileEnemy.ID == (int)MobileTypes.OrcSergeant))
+                {
+                    int chanceToPoison = 5;
+                    if (mobileEnemy.ID == (int)MobileTypes.Assassin)
+                        chanceToPoison = 60;
+
+                    if (UnityEngine.Random.Range(1, 101) < chanceToPoison)
+                    {
+                        // Apply poison
+                        weapon.poisonType = (Items.Poisons)UnityEngine.Random.Range(128, 136);
+                    }
+                }
+            }
         }
 
         public void SetEnemySpells(byte[] spellList)

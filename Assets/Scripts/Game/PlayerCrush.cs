@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,7 +22,10 @@ namespace DaggerfallWorkshop.Game
 	    void Update ()
         {
             if (GameManager.Instance.PlayerEntity.CurrentHealth < 1 
-                || GameManager.IsGamePaused)
+                || GameManager.IsGamePaused
+                || GameManager.Instance.PlayerMotor.IsSwimming
+                || GameManager.Instance.PlayerMotor.IsLevitating
+                || GameManager.Instance.PlayerMotor.OnExteriorWater == PlayerMotor.OnExteriorWaterMethod.Swimming)
                 return;
 
             float distance;

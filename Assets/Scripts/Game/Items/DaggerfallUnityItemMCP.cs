@@ -12,17 +12,59 @@ using System.Collections.Generic;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using UnityEngine;
 using DaggerfallConnect.FallExe;
+using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.Items
 {
     public partial class DaggerfallUnityItem : IMacroContextProvider
     {
-        private Recipe[] recipeArray;
+        [NonSerializedAttribute]
+        private ItemMacroDataSource dataSource;
 
         public MacroDataSource GetMacroDataSource()
         {
-            return new ItemMacroDataSource(this);
+            if (dataSource == null)
+                dataSource = new ItemMacroDataSource(this);
+            return dataSource;
         }
+
+        public string GetPaintingFilename() { return dataSource.paintingFilename; }
+        public int GetPaintingFileIdx() { return (int) dataSource.paintingFileIdx; }
+
+        public TextFile.Token[] InitPaintingInfo(int paintingTextId = 250)
+        {
+            GetMacroDataSource();
+            if (ItemGroup == ItemGroups.Paintings && dataSource.paintingInfo == null)
+            {
+                DFRandom.srand(message);
+                uint paintingIndex = DFRandom.rand() % 180;
+                dataSource.paintingFileIdx = paintingIndex & 7;
+                char paintingFileChar = (char)((paintingIndex >> 3) + 97);
+                dataSource.paintingFilename = paintingFileChar + "paint.cif";
+
+                byte[] paintingRecord = DaggerfallUnity.Instance.ContentReader.PaintFileReader.Read(paintingIndex);
+                Debug.LogFormat("painting file: {0}, index: {1}, cif idx: {2}, record: {3} {4} {5}", dataSource.paintingFilename, paintingIndex, dataSource.paintingFileIdx, paintingRecord[0], paintingRecord[1], paintingRecord[2]);
+
+                dataSource.paintingSub = GetPaintingRecordPart(paintingRecord, 0, 9) + 6100; // for %sub macro
+                dataSource.paintingAdj = GetPaintingRecordPart(paintingRecord, 10, 19) + 6200; // for %adj macro
+                dataSource.paintingPp1 = GetPaintingRecordPart(paintingRecord, 20, 29) + 6300; // for %pp1 macro
+                dataSource.paintingPp2 = GetPaintingRecordPart(paintingRecord, 30, 39) + 6400; // for %pp2 macro
+
+                ITextProvider textProvider = DaggerfallUnity.Instance.TextProvider;
+                dataSource.paintingInfo = textProvider.GetRandomTokens(paintingTextId, true);
+            }
+            return dataSource.paintingInfo;
+        }
+
+        private int GetPaintingRecordPart(byte[] paintingRecord, int start, int end)
+        {
+            int i = start;
+            while (i <= end && paintingRecord[i] != 0xFF)
+                i++;
+            return (i - start == 1) ? paintingRecord[i - 1] : paintingRecord[DFRandom.random_range_inclusive(start, i - 1)];
+        }
+
 
         /// <summary>
         /// MacroDataSource context sensitive methods for items in Daggerfall Unity.
@@ -31,6 +73,16 @@ namespace DaggerfallWorkshop.Game.Items
         {
             private string[] conditions = new string[] { HardStrings.Broken, HardStrings.Useless, HardStrings.Battered, HardStrings.Worn, HardStrings.Used, HardStrings.SlightlyUsed, HardStrings.AlmostNew, HardStrings.New };
             private int[] conditionThresholds = new int[] {1, 5, 15, 40, 60, 75, 91, 101};
+
+            private Recipe[] recipeArray;
+
+            public string paintingFilename;
+            public uint paintingFileIdx;
+            public TextFile.Token[] paintingInfo;
+            public int paintingSub;     // for %sub macro
+            public int paintingAdj;     // for %adj macro
+            public int paintingPp1;     // for %pp1 macro
+            public int paintingPp2;     // for %pp2 macro
 
             private DaggerfallUnityItem parent;
             public ItemMacroDataSource(DaggerfallUnityItem item)
@@ -101,6 +153,39 @@ namespace DaggerfallWorkshop.Game.Items
                 return bookFile.Author;
             }
 
+            public override string PaintingSubject()
+            {   // %sub
+                DFRandom.rand(); // Classic uses every other value.
+                TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(paintingSub, true);
+                return (tokens.Length > 0) ? tokens[0].text : "%sub[idxError]";
+            }
+            public override string PaintingAdjective()
+            {   // %adj
+                DFRandom.rand(); // Classic uses every other value.
+                TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(paintingAdj, true);
+                MacroHelper.ExpandMacros(ref tokens);
+                return (tokens.Length > 0) ? tokens[0].text : "%adj[idxError]";
+            }
+            public override string PaintingPrefix1()
+            {   // %pp1
+                DFRandom.rand(); // Classic uses every other value.
+                TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(paintingPp1, true);
+                return (tokens.Length > 0) ? tokens[0].text : "%pp1[idxError]";
+            }
+            public override string PaintingPrefix2()
+            {   // %pp2
+                DFRandom.rand(); // Classic uses every other value.
+                TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(paintingPp2, true);
+                MacroHelper.ExpandMacros(ref tokens);
+                return (tokens.Length > 0) ? tokens[0].text : "%pp2[idxError]";
+            }
+            public override string ArtistName()
+            {   // %an
+                NameHelper.BankTypes type = MacroHelper.GetRandomNameBank();
+                Genders gender = (Genders)DFRandom.random_range_inclusive(0, 1);
+                return DaggerfallUnity.Instance.NameHelper.FullName(type, gender);
+            }
+
             public override string HeldSoul()
             {   // %hs
                 if (parent.trappedSoulType == MobileTypes.None)
@@ -113,14 +198,13 @@ namespace DaggerfallWorkshop.Game.Items
             public override string Potion()
             {   // %po
                 KeyValuePair<string, Recipe[]> mapping = DaggerfallUnity.Instance.ItemHelper.getPotionRecipesByID(parent.typeDependentData);
-                parent.recipeArray = mapping.Value;
+                recipeArray = mapping.Value;
                 if (parent.TemplateIndex == (int)MiscItems.Potion_recipe)
                     return mapping.Key;                                          // "Potion recipe for %po"
                 else if (parent.TemplateIndex == (int)UselessItems1.Glass_Bottle)
                     return HardStrings.potionOf.Replace("%po", mapping.Key);     // "Potion of %po"
                 throw new NotImplementedException();
             }
-
 
             public override TextFile.Token[] PotionRecipeIngredients(TextFile.Formatting format)
             {
@@ -129,7 +213,7 @@ namespace DaggerfallWorkshop.Game.Items
                 // The actual variation could be stored in the currentVariation field, but I haven't been able find any recipes
                 // in the game that aren't just the first recipe in the list; for now we'll just pick the first one here
                 List<TextFile.Token> ingredientsTokens = new List<TextFile.Token>();
-                Ingredient[] ingredients = parent.recipeArray[0].ingredients;
+                Ingredient[] ingredients = recipeArray[0].ingredients;
                 for (int i = 0; i < ingredients.Length; ++i)
                 {
                     ingredientsTokens.Add(TextFile.CreateTextToken(ingredients[i].name));

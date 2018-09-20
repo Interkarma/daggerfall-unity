@@ -128,6 +128,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Buy,
             Repair,
             Identify,
+            SellMagic
         }
 
         #endregion
@@ -363,6 +364,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         case WindowModes.Sell:
                             cost += FormulaHelper.CalculateCost(item.value, buildingDiscoveryData.quality) * item.stackCount;
                             break;
+                        case WindowModes.SellMagic: // TODO: Fencing base price higher and guild rep affects it. Implement new formula or can this be used?
+                            cost += FormulaHelper.CalculateCost(item.value, buildingDiscoveryData.quality);
+                            break;
                         case WindowModes.Repair:
                             cost += FormulaHelper.CalculateItemRepairCost(item.value, buildingDiscoveryData.quality, item.currentCondition, item.maxCondition, guild) * item.stackCount;
                             break;
@@ -379,7 +383,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private int GetTradePrice()
         {
-            if (windowMode == WindowModes.Sell)
+            if (windowMode == WindowModes.Sell || windowMode == WindowModes.SellMagic)
                 return FormulaHelper.CalculateTradePrice(cost, buildingDiscoveryData.quality, true);
             else if (windowMode == WindowModes.Identify)
                 return cost;
@@ -451,6 +455,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 default:
                 case WindowModes.Sell:
+                case WindowModes.SellMagic:
                     containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(InventoryContainerImages.Merchant);
                     break;
                 case WindowModes.Buy:
@@ -488,7 +493,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     // Add if not equipped & accepted for selling
                     DaggerfallUnityItem item = localItems.GetItem(i);
-                    if (!item.IsEquipped && (windowMode != WindowModes.Sell || itemTypesAccepted.Contains(item.ItemGroup)))
+                    if (!item.IsEquipped &&
+                        ((windowMode == WindowModes.Sell && itemTypesAccepted.Contains(item.ItemGroup)) ||
+                         (windowMode == WindowModes.SellMagic && item.IsEnchanted)))
                         AddLocalItem(item);
                 }
             }
@@ -516,7 +523,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.LoadTextures();
 
             // Load special button texture.
-            if (windowMode == WindowModes.Sell) {
+            if (windowMode == WindowModes.Sell || windowMode == WindowModes.SellMagic) {
                 actionButtonsTexture = ImageReader.GetTexture(sellButtonsTextureName);
             } else if (windowMode == WindowModes.Buy) {
                 actionButtonsTexture = ImageReader.GetTexture(buyButtonsTextureName);
@@ -545,6 +552,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 switch (windowMode)
                 {
                     case WindowModes.Sell:
+                    case WindowModes.SellMagic:
                         if (remoteItems != null)
                             TransferItem(item, localItems, remoteItems);
                         break;
@@ -627,7 +635,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (windowMode == WindowModes.Buy)
             {
-                // TODO
+                // Calculate the weight of all items picked from shelves, then get chance of shoplifting success.
+                int weightAndNumItems = (int) basketItems.GetWeight() + basketItems.Count;
+                int chance = FormulaHelper.CalculateShopliftingChance(PlayerEntity, null, buildingDiscoveryData.quality, weightAndNumItems);
+
+                if (UnityEngine.Random.Range(0, 101) > chance)
+                {
+                    DaggerfallUI.Instance.PopupMessage(HardStrings.youAreSuccessful);
+                    PlayerEntity.Items.TransferAll(basketItems);
+                    PlayerEntity.TallyCrimeGuildRequirements(true, 1);
+                }
+                else
+                {   // Register crime and start spawning guards.
+                    DaggerfallUI.Instance.PopupMessage(HardStrings.youAreNotSuccessful);
+                    PlayerEntity.CrimeCommitted = PlayerEntity.Crimes.Theft;
+                    PlayerEntity.SpawnCityGuards(true);
+                }
+                CloseWindow();
             }
         }
 
@@ -651,6 +675,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 switch (windowMode)
                 {
                     case WindowModes.Sell:
+                    case WindowModes.SellMagic:
                         int goldAmount = GetTradePrice();
                         float goldWeight = (float)goldAmount / DaggerfallBankManager.gold1kg;
                         if (PlayerEntity.CarriedWeight + goldWeight <= PlayerEntity.MaxEncumbrance)
@@ -705,7 +730,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             int msgOffset = 0;
             int tradePrice = GetTradePrice();
 
-            if (windowMode != WindowModes.Sell && PlayerEntity.GetGoldAmount() < tradePrice)
+            if (windowMode != WindowModes.Sell && windowMode != WindowModes.SellMagic && PlayerEntity.GetGoldAmount() < tradePrice)
             {
                 DaggerfallUI.MessageBox(notEnoughGoldId);
             }
@@ -718,7 +743,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     else
                         msgOffset = 1;
                 }
-                if (windowMode == WindowModes.Sell)
+                if (windowMode == WindowModes.Sell || windowMode == WindowModes.SellMagic)
                     msgOffset += 3;
 
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);

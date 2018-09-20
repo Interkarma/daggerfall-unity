@@ -593,4 +593,20 @@ namespace DaggerfallWorkshop
         QuestSpawn = 11,        // Quest spawn marker (Foe/Person resources)
         QuestItem = 18,         // Quest item marker (Item resource)
     }
+
+    /// <summary>
+    /// Phases of the moons.
+    /// </summary>
+    public enum LunarPhases
+    {
+        None = -1,
+        New = 0,
+        OneWax = 1,
+        HalfWax = 2,
+        ThreeWax = 3,
+        Full = 4,
+        ThreeWane = 5,
+        HalfWane = 6,
+        OneWane = 7,
+    }
 }

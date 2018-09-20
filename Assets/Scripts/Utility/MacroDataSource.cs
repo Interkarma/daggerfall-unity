@@ -145,6 +145,27 @@ namespace DaggerfallWorkshop.Utility
             throw new NotImplementedException();
         }
 
+        public virtual string PaintingAdjective()
+        {   // %adj
+            throw new NotImplementedException();
+        }
+        public virtual string ArtistName()
+        {   // %an
+            throw new NotImplementedException();
+        }
+        public virtual string PaintingPrefix1()
+        {   // %pp1
+            throw new NotImplementedException();
+        }
+        public virtual string PaintingPrefix2()
+        {   // %pp2
+            throw new NotImplementedException();
+        }
+        public virtual string PaintingSubject()
+        {   // %sub
+            throw new NotImplementedException();
+        }
+
         public virtual string HeldSoul()
         {   // %hs
             throw new NotImplementedException();
@@ -346,5 +367,34 @@ namespace DaggerfallWorkshop.Utility
             throw new NotImplementedException();
         }
 
+        public virtual string CommonersRep()
+        {
+            // %r1
+            throw new NotImplementedException();
+        }
+
+        public virtual string MerchantsRep()
+        {
+            // %r2
+            throw new NotImplementedException();
+        }
+
+        public virtual string ScholarsRep()
+        {
+            // %r3
+            throw new NotImplementedException();
+        }
+
+        public virtual string NobilityRep()
+        {
+            // %r4
+            throw new NotImplementedException();
+        }
+
+        public virtual string UnderworldRep()
+        {
+            // %r5
+            throw new NotImplementedException();
+        }
     }
 }

@@ -125,7 +125,12 @@ namespace DaggerfallConnect.Save
 
             // Read native item data
             parsedData = new ItemRecordData();
-            parsedData.name = FileProxy.ReadCString(reader, 32);
+
+            // Item names should only be read until the null terminator.
+            long pos = reader.BaseStream.Position;
+            parsedData.name = FileProxy.ReadCString(reader, 0);
+            reader.BaseStream.Position = pos + 32;
+
             parsedData.group = reader.ReadUInt16();
             parsedData.index = reader.ReadUInt16();
             parsedData.value = reader.ReadUInt32();

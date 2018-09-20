@@ -31,7 +31,7 @@ namespace DaggerfallWorkshop.Game.Guilds
         protected const int PromotionFreeRoomsId = 5238;
         protected const int PromotionFreeShipsId = 5239;
         protected const int PromotionHouseId = 5240;
-        protected const int PromotionNoHouseId = 5241;  // TODO: Use if already own a house
+        protected const int PromotionNoHouseId = 5241;
         protected const int ArmorId = 463;
         protected const int HouseId = 462;
         protected const int NoArmorId = 461;
@@ -149,7 +149,7 @@ namespace DaggerfallWorkshop.Game.Guilds
             if (rank == 6)
                 return PromotionFreeShipsId;
             if (rank == 9)
-                return PromotionHouseId;
+                return DaggerfallBankManager.OwnsHouse ? PromotionNoHouseId : PromotionHouseId;
 
             return PromotionMsgId;
         }
@@ -234,7 +234,7 @@ namespace DaggerfallWorkshop.Game.Guilds
             else
             {   // Give a house if one availiable
                 if (DaggerfallBankManager.OwnsHouse)
-                    DaggerfallUI.MessageBox((int)TransactionResult.ALREADY_OWN_HOUSE);
+                    DaggerfallUI.MessageBox((int) TransactionResult.ALREADY_OWN_HOUSE);
                 else
                 {
                     BuildingDirectory buildingDirectory = GameManager.Instance.StreamingWorld.GetCurrentBuildingDirectory();

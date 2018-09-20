@@ -11,9 +11,11 @@
 
 using UnityEngine;
 using System;
-using System.Collections.Generic;
-using System.Reflection;
 using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.Utility.ModSupport
 {
@@ -32,6 +34,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         private List<System.Reflection.Assembly> assemblies;         //compiled source code for this mod
         private Dictionary<string, LoadedAsset> loadedAssets;
         private DFModMessageReceiver messageReceiver;
+        private Table textdatabase;
+        private bool textdatabaseLoaded;
 
         #region properties
         [SerializeField]
@@ -188,6 +192,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
         }
 
+        #region Public Methods
 
         public T GetAsset<T>(string assetname, bool clone = false) where T : UnityEngine.Object
         {
@@ -343,6 +348,66 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         {
             return new ModSettings.ModSettings(this);
         }
+
+        /// <summary>
+        /// Gets a localized string from the text table associated with this mod.
+        /// </summary>
+        /// <param name="key">Key used in the text table.</param>
+        /// <returns>Localized string.</returns>
+        public string Localize(string key)
+        {
+            return TryLocalize(key) ?? string.Format("{0} - MissingText", Title);
+        }
+
+        /// <summary>
+        /// Gets a localized string from the text table associated with this mod.
+        /// </summary>
+        /// <param name="keyParts">Key used in the text table as a concatenation of names.</param>
+        /// <returns>Localized string.</returns>
+        public string Localize(params string[] keyParts)
+        {
+            return Localize(string.Join(".", keyParts));
+        }
+
+        #endregion
+
+        #region Internal Methods
+
+        /// <summary>
+        /// Gets a localized string from the text table associated with this mod.
+        /// </summary>
+        /// <param name="key">Key used in the text table.</param>
+        /// <returns>Localized string or null.</returns>
+        internal string TryLocalize(string key)
+        {
+            // Read from StreamingAssets/Text
+            string databaseName = string.Format("mod_{0}", fileName);
+            if (TextManager.Instance.HasText(databaseName, key))
+                return TextManager.Instance.GetText(databaseName, key);
+
+            // Get fallback table from mod
+            if (!textdatabaseLoaded)
+            {
+                if (assetBundle.Contains("textdatabase.txt"))
+                    textdatabase = new Table(GetAsset<TextAsset>("textdatabase.txt").ToString());
+                textdatabaseLoaded = true;
+            }
+
+            return textdatabase != null && textdatabase.HasValue(key) ?
+                textdatabase.GetValue("text", key) : null;
+        }
+
+        /// <summary>
+        /// Gets a localized string from the text table associated with this mod.
+        /// </summary>
+        /// <param name="keyParts">Key used in the text table as a concatenation of names.</param>
+        /// <returns>Localized string or null.</returns>
+        internal string TryLocalize(params string[] keyParts)
+        {
+            return TryLocalize(string.Join(".", keyParts));
+        }
+
+        #endregion
 
         #region setup
 

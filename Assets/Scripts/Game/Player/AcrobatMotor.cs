@@ -6,6 +6,8 @@ namespace DaggerfallWorkshop.Game
     [RequireComponent(typeof(CharacterController))]
     public class AcrobatMotor : MonoBehaviour
     {
+        const float slowFallSpeed = 105f;
+
         public float jumpSpeed = 8.0f;
         public float gravity = 20.0f;
         public float crouchingJumpDelta = 0.8f;
@@ -14,6 +16,7 @@ namespace DaggerfallWorkshop.Game
 
         PlayerMotor playerMotor;
         FrictionMotor frictionMotor;
+        ClimbingMotor climbingMotor;
         Transform myTransform;
 
         private float fallStartLevel;
@@ -36,6 +39,7 @@ namespace DaggerfallWorkshop.Game
         {
             playerMotor = GetComponent<PlayerMotor>();
             frictionMotor = GetComponent<FrictionMotor>();
+            climbingMotor = GetComponent<ClimbingMotor>();
             myTransform = playerMotor.transform;
         }
 
@@ -46,8 +50,11 @@ namespace DaggerfallWorkshop.Game
         public void HandleJumpInput(ref Vector3 moveDirection)
         {
             // Cancel jump if player is paralyzed or swimming on a water tile
+            // Jump is also ignored when player is slowfalling or riding cart
             if (GameManager.Instance.PlayerEntity.IsParalyzed ||
-                GameManager.Instance.PlayerMotor.OnExteriorWater == PlayerMotor.OnExteriorWaterMethod.Swimming)
+                GameManager.Instance.PlayerMotor.OnExteriorWater == PlayerMotor.OnExteriorWaterMethod.Swimming ||
+                GameManager.Instance.PlayerEntity.IsSlowFalling ||
+                GameManager.Instance.TransportManager.TransportMode == TransportModes.Cart)
                 return;
 
             if (InputManager.Instance.HasAction(InputManager.Actions.Jump))
@@ -114,7 +121,18 @@ namespace DaggerfallWorkshop.Game
 
         public void ApplyGravity(ref Vector3 moveDirection)
         {
-            moveDirection.y -= gravity * Time.deltaTime;
+            // Slowfalling makes player fall at a constant speed with no acceleration
+            // Also resets start fall position each tick so that if effect expires during fall
+            // then fall damage will only take place from vertical position effect was lost
+            if (falling && GameManager.Instance.PlayerEntity.IsSlowFalling)
+            {
+                fallStartLevel = myTransform.position.y;
+                moveDirection.y = -slowFallSpeed * Time.deltaTime;
+            }
+            else
+            {
+                moveDirection.y -= gravity * Time.deltaTime;
+            }
         } 
                        
         /// <summary>
@@ -129,10 +147,14 @@ namespace DaggerfallWorkshop.Game
                 if (GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 0)
                     return;
                 float fallDistance = fallStartLevel - myTransform.position.y;
-                if (fallDistance > fallingDamageThreshold)
-                    FallingDamageAlert(fallDistance);
-                else if (fallDistance > fallingDamageThreshold / 2f)
-                    BadFallDetected(fallDistance);
+
+                if (!climbingMotor.IsClimbing || climbingMotor.IsSlipping)
+                { 
+                    if (fallDistance > fallingDamageThreshold)
+                        FallingDamageAlert(fallDistance);
+                    else if (fallDistance > fallingDamageThreshold / 2f)
+                        BadFallDetected(fallDistance);
+                }
             }
         }
 

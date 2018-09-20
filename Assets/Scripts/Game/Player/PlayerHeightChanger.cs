@@ -405,7 +405,6 @@ namespace DaggerfallWorkshop.Game
         /// Change controller height and position and return target height for camera to change to
         /// </summary>
         /// <param name="heightChange">Amount to modify controller height</param>
-        /// <param name="camChangeAmt">Amount to change controller position</param>
         /// <returns>the target height the camera should change to</returns>
         private float ControllerHeightChange(float heightChange)
         {

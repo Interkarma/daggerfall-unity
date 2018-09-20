@@ -43,6 +43,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         readonly Vector2 offset = new Vector2(10, 20);
         const float columnHeight = 140;
 
+        const int topBarButtonsLength = 60;
+
         const float itemTextScale = 0.9f;
         const float sectionSpacing = 12f;
         const float itemSpacing = 10f;
@@ -81,23 +83,44 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // GamePlay
         Checkbox startInDungeon;
         HorizontalSlider randomDungeonTextures;
-        Checkbox crosshair;
-        Checkbox toolTips;
-        HorizontalSlider helmAndShieldMaterialDisplay;
-        Checkbox inventoryInfoPanel;
-        Checkbox enhancedItemLists;
-        Checkbox vitalsIndicators;
+        HorizontalSlider cameraRecoilStrength;
         HorizontalSlider mouseSensitivity;
         HorizontalSlider weaponSensitivity;
         HorizontalSlider movementAcceleration;
         TextBox weaponAttackThreshold;
-        Checkbox gameConsole;
+        HorizontalSlider soundVolume;
+        HorizontalSlider musicVolume;
+        Checkbox spellLighting;
+        Checkbox spellShadows;
+
+        // Interface
+        Checkbox toolTips;
+        HorizontalSlider toolTipDelayInSeconds;
+        Button toolTipTextColor;
+        Button toolTipBackgroundColor;
+        Checkbox crosshair;
+        Checkbox vitalsIndicators;
+        Checkbox freeScaling;
+        HorizontalSlider interactionModeIcon;
+        Checkbox showQuestJournalClocksAsCountdown;
+        Checkbox inventoryInfoPanel;
+        Checkbox enhancedItemLists;  
+        Checkbox enableModernConversationStyleInTalkWindow;
+        HorizontalSlider helmAndShieldMaterialDisplay;
+        
+
+        // Enhancements
         Checkbox modSystem;
         Checkbox assetImport;
         Checkbox compressModdedTextures;
+        Checkbox gameConsole;
         Checkbox nearDeathWarning;
         Checkbox alternateRandomEnemySelection;
-        HorizontalSlider cameraRecoilStrength;
+        Checkbox advancedClimbing;
+        Checkbox combatVoices;
+        HorizontalSlider dungeonAmbientLightScale;
+        HorizontalSlider nightAmbientLightScale;
+        HorizontalSlider playerTorchLightScale;
 
         // Video
         HorizontalSlider resolution;
@@ -112,13 +135,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox dungeonLightShadows;
         Checkbox interiorLightShadows;
         Checkbox useLegacyDeferred;
-
-        // Theme
-        HorizontalSlider toolTipDelayInSeconds;
-        Button toolTipTextColor;
-        Button toolTipBackgroundColor;
-        Checkbox enableModernConversationStyleInTalkWindow;
-        HorizontalSlider interactionModeIcon;
 
         #endregion
 
@@ -170,8 +186,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void LoadSettings()
         {
             AddPage("gamePlay", Gameplay);
+            AddPage("interface", Interface);
+            AddPage("enhancements", Enhancements);
             AddPage("video", Video);
-            AddPage("theme", Theme);
         }
 
         private void Gameplay(Panel leftPanel, Panel rightPanel)
@@ -184,33 +201,81 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             cameraRecoilStrength = AddSlider(leftPanel, "cameraRecoilStrength",
                 DaggerfallUnity.Settings.CameraRecoilStrength, "Off", "Low (25%)", "Medium (50%)", "High (75%)", "V. High(100%)");
 
-            // GUI
-            AddSectionTitle(leftPanel, "gui");
-            crosshair = AddCheckbox(leftPanel, "crosshair", DaggerfallUnity.Settings.Crosshair);
-            toolTips = AddCheckbox(leftPanel, "toolTips", DaggerfallUnity.Settings.EnableToolTips);
-            helmAndShieldMaterialDisplay = AddSlider(leftPanel, "helmAndShieldMaterialDisplay",
-                DaggerfallUnity.Settings.HelmAndShieldMaterialDisplay, "off", "noLeatChai", "noLeat", "on");
-            inventoryInfoPanel = AddCheckbox(leftPanel, "inventoryInfoPanel", DaggerfallUnity.Settings.EnableInventoryInfoPanel); //TODO: better description
-            enhancedItemLists = AddCheckbox(leftPanel, "enhancedItemLists", DaggerfallUnity.Settings.EnableEnhancedItemLists);
-            vitalsIndicators = AddCheckbox(leftPanel, "vitalsIndicators", DaggerfallUnity.Settings.EnableVitalsIndicators);
+            // Controls
+            AddSectionTitle(leftPanel, "controls");
+            mouseSensitivity = AddSlider(leftPanel, "mouseSensitivity", 0.1f, 4.0f, DaggerfallUnity.Settings.MouseLookSensitivity);
+            weaponSensitivity = AddSlider(leftPanel, "weaponSensitivity", 0.1f, 10.0f, DaggerfallUnity.Settings.WeaponSensitivity);
+            movementAcceleration = AddSlider(leftPanel, "movementAcceleration", InputManager.minAcceleration, InputManager.maxAcceleration, DaggerfallUnity.Settings.MovementAcceleration);
+            weaponAttackThreshold = AddTextbox(leftPanel, "weaponAttackThreshold", DaggerfallUnity.Settings.WeaponAttackThreshold.ToString());
 
             y = 0;
 
-            // Controls
-            AddSectionTitle(rightPanel, "controls");
-            mouseSensitivity = AddSlider(rightPanel, "mouseSensitivity", 0.1f, 4.0f, DaggerfallUnity.Settings.MouseLookSensitivity);
-            weaponSensitivity = AddSlider(rightPanel, "weaponSensitivity", 0.1f, 10.0f, DaggerfallUnity.Settings.WeaponSensitivity);
-            movementAcceleration = AddSlider(rightPanel, "movementAcceleration", InputManager.minAcceleration, InputManager.maxAcceleration, DaggerfallUnity.Settings.MovementAcceleration);
-            weaponAttackThreshold = AddTextbox(rightPanel, "weaponAttackThreshold", DaggerfallUnity.Settings.WeaponAttackThreshold.ToString());
+            // Audio
+            AddSectionTitle(rightPanel, "audio");
+            TextBox soundFont = AddTextbox(rightPanel, "soundFont", !string.IsNullOrEmpty(DaggerfallUnity.Settings.SoundFont) ? DaggerfallUnity.Settings.SoundFont : "default");
+            soundFont.ReadOnly = true;
+            soundVolume = AddSlider(rightPanel, "soundVolume", 0, 1, DaggerfallUnity.Settings.SoundVolume);
+            musicVolume = AddSlider(rightPanel, "musicVolume", 0, 1, DaggerfallUnity.Settings.MusicVolume);
 
-            // Enhancements
-            AddSectionTitle(rightPanel, "enhancements");
-            gameConsole = AddCheckbox(rightPanel, "gameConsole", DaggerfallUnity.Settings.LypyL_GameConsole);
-            modSystem = AddCheckbox(rightPanel, "modSystem", DaggerfallUnity.Settings.LypyL_ModSystem);
-            assetImport = AddCheckbox(rightPanel, "assetImport", DaggerfallUnity.Settings.MeshAndTextureReplacement);
-            compressModdedTextures = AddCheckbox(rightPanel, "compressModdedTextures", DaggerfallUnity.Settings.CompressModdedTextures);
-            nearDeathWarning = AddCheckbox(rightPanel, "nearDeathWarning", DaggerfallUnity.Settings.NearDeathWarning);
-            alternateRandomEnemySelection = AddCheckbox(rightPanel, "alternateRandomEnemySelection", DaggerfallUnity.Settings.AlternateRandomEnemySelection);
+            // Spells
+            AddSectionTitle(rightPanel, "spells");
+            spellLighting = AddCheckbox(rightPanel, "spellLighting", DaggerfallUnity.Settings.EnableSpellLighting);
+            spellShadows = AddCheckbox(rightPanel, "spellShadows", DaggerfallUnity.Settings.EnableSpellShadows);
+        }
+
+        private void Interface(Panel leftPanel, Panel rightPanel)
+        {
+            // Tooltips
+            AddSectionTitle(leftPanel, "tooltips");
+            toolTips = AddCheckbox(leftPanel, "toolTips", DaggerfallUnity.Settings.EnableToolTips);
+            toolTipDelayInSeconds = AddSlider(leftPanel, "toolTipDelayInSeconds", 0, 10, DaggerfallUnity.Settings.ToolTipDelayInSeconds);
+            toolTipTextColor = AddColorPicker(leftPanel, "toolTipTextColor", DaggerfallUnity.Settings.ToolTipTextColor);
+            toolTipBackgroundColor = AddColorPicker(leftPanel, "toolTipBackgroundColor", DaggerfallUnity.Settings.ToolTipBackgroundColor);
+
+            // HUD
+            AddSectionTitle(leftPanel, "hud");
+            crosshair = AddCheckbox(leftPanel, "crosshair", DaggerfallUnity.Settings.Crosshair);
+            vitalsIndicators = AddCheckbox(leftPanel, "vitalsIndicators", DaggerfallUnity.Settings.EnableVitalsIndicators);
+            interactionModeIcon = AddSlider(leftPanel, "interactionModeIcon",
+                Enum.IsDefined(typeof(InteractionModeIconModes), DaggerfallUnity.Settings.InteractionModeIcon) ? (int)Enum.Parse(typeof(InteractionModeIconModes), DaggerfallUnity.Settings.InteractionModeIcon) : 0,
+                Enum.GetNames(typeof(InteractionModeIconModes)));
+
+            y = 0;
+
+            // GUI
+            AddSectionTitle(rightPanel, "gui");
+            freeScaling = AddCheckbox(rightPanel, "freeScaling", DaggerfallUnity.Settings.FreeScaling);
+            showQuestJournalClocksAsCountdown = AddCheckbox(rightPanel, "showQuestJournalClocksAsCountdown", DaggerfallUnity.Settings.ShowQuestJournalClocksAsCountdown);
+            inventoryInfoPanel = AddCheckbox(rightPanel, "inventoryInfoPanel", DaggerfallUnity.Settings.EnableInventoryInfoPanel);
+            enhancedItemLists = AddCheckbox(rightPanel, "enhancedItemLists", DaggerfallUnity.Settings.EnableEnhancedItemLists);
+            enableModernConversationStyleInTalkWindow = AddCheckbox(rightPanel, "enableModernConversationStyleInTalkWindow", DaggerfallUnity.Settings.EnableModernConversationStyleInTalkWindow);
+            helmAndShieldMaterialDisplay = AddSlider(rightPanel, "helmAndShieldMaterialDisplay",
+                DaggerfallUnity.Settings.HelmAndShieldMaterialDisplay, "off", "noLeatChai", "noLeat", "on");
+        }
+
+        private void Enhancements(Panel leftPanel, Panel rightPanel)
+        {
+            // Mod System
+            AddSectionTitle(leftPanel, "modSystem");
+            modSystem = AddCheckbox(leftPanel, "modSystem", DaggerfallUnity.Settings.LypyL_ModSystem);
+            assetImport = AddCheckbox(leftPanel, "assetImport", DaggerfallUnity.Settings.MeshAndTextureReplacement);
+            compressModdedTextures = AddCheckbox(leftPanel, "compressModdedTextures", DaggerfallUnity.Settings.CompressModdedTextures);
+
+            // Game
+            AddSectionTitle(leftPanel, "game");
+            gameConsole = AddCheckbox(leftPanel, "gameConsole", DaggerfallUnity.Settings.LypyL_GameConsole);
+            nearDeathWarning = AddCheckbox(leftPanel, "nearDeathWarning", DaggerfallUnity.Settings.NearDeathWarning);
+            alternateRandomEnemySelection = AddCheckbox(leftPanel, "alternateRandomEnemySelection", DaggerfallUnity.Settings.AlternateRandomEnemySelection);
+            advancedClimbing = AddCheckbox(leftPanel, "advancedClimbing", DaggerfallUnity.Settings.AdvancedClimbing);
+            combatVoices = AddCheckbox(leftPanel, "combatVoices", DaggerfallUnity.Settings.CombatVoices);
+
+            y = 0;
+
+            // Light
+            AddSectionTitle(rightPanel, "light");
+            dungeonAmbientLightScale = AddSlider(rightPanel, "dungeonAmbientLightScale", 0, 1, DaggerfallUnity.Settings.DungeonAmbientLightScale);
+            nightAmbientLightScale = AddSlider(rightPanel, "nightAmbientLightScale", 0, 1, DaggerfallUnity.Settings.NightAmbientLightScale);
+            playerTorchLightScale = AddSlider(rightPanel, "playerTorchLightScale", 0, 1, DaggerfallUnity.Settings.PlayerTorchLightScale);
         }
 
         private void Video(Panel leftPanel, Panel rightPanel)
@@ -249,35 +314,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             AddInfo(rightPanel, textureArrayLabel, "Improved implementation of terrain textures, with better performance and modding support");
         }
 
-        private void Theme(Panel leftPanel, Panel rightPanel)
-        {
-            // Tooltips
-            AddSectionTitle(leftPanel, "tooltips");
-            toolTipDelayInSeconds = AddSlider(leftPanel, "toolTipDelayInSeconds", 0, 10, DaggerfallUnity.Settings.ToolTipDelayInSeconds);
-            toolTipTextColor = AddColorPicker(leftPanel, "toolTipTextColor", DaggerfallUnity.Settings.ToolTipTextColor);
-            toolTipBackgroundColor = AddColorPicker(leftPanel, "toolTipBackgroundColor", DaggerfallUnity.Settings.ToolTipBackgroundColor);
-
-            // Others
-            AddSectionTitle(leftPanel, "others");
-            enableModernConversationStyleInTalkWindow = AddCheckbox(leftPanel, "enableModernConversationStyleInTalkWindow", DaggerfallUnity.Settings.EnableModernConversationStyleInTalkWindow);
-            interactionModeIcon = AddSlider(leftPanel, "interactionModeIcon",
-                Enum.IsDefined(typeof(InteractionModeIconModes), DaggerfallUnity.Settings.InteractionModeIcon) ? (int)Enum.Parse(typeof(InteractionModeIconModes), DaggerfallUnity.Settings.InteractionModeIcon) : 0,
-                Enum.GetNames(typeof(InteractionModeIconModes)));
-        }
-
         private void SaveSettings()
         {
             /* GamePlay */
 
             DaggerfallUnity.Settings.StartInDungeon = startInDungeon.IsChecked;
             DaggerfallUnity.Settings.RandomDungeonTextures = randomDungeonTextures.ScrollIndex;
-
-            DaggerfallUnity.Settings.Crosshair = crosshair.IsChecked;
-            DaggerfallUnity.Settings.EnableToolTips = toolTips.IsChecked;
-            DaggerfallUnity.Settings.HelmAndShieldMaterialDisplay = helmAndShieldMaterialDisplay.ScrollIndex;
-            DaggerfallUnity.Settings.EnableInventoryInfoPanel = inventoryInfoPanel.IsChecked;
-            DaggerfallUnity.Settings.EnableEnhancedItemLists = enhancedItemLists.IsChecked;
-            DaggerfallUnity.Settings.EnableVitalsIndicators = vitalsIndicators.IsChecked;
 
             DaggerfallUnity.Settings.MouseLookSensitivity = mouseSensitivity.GetValue();
             DaggerfallUnity.Settings.WeaponSensitivity = weaponSensitivity.GetValue();
@@ -286,13 +328,45 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (float.TryParse(weaponAttackThreshold.Text, out weaponAttackThresholdValue))
                 DaggerfallUnity.Settings.WeaponAttackThreshold = Mathf.Clamp(weaponAttackThresholdValue, 0.001f, 1.0f);
 
+            DaggerfallUnity.Settings.SoundVolume = soundVolume.GetValue();
+            DaggerfallUnity.Settings.MusicVolume = soundVolume.GetValue();
+
+            DaggerfallUnity.Settings.EnableSpellLighting = spellLighting.IsChecked;
+            DaggerfallUnity.Settings.EnableSpellShadows = spellShadows.IsChecked;
+
+            /* GUI */
+
+            DaggerfallUnity.Settings.EnableToolTips = toolTips.IsChecked;
+            DaggerfallUnity.Settings.ToolTipDelayInSeconds = toolTipDelayInSeconds.GetValue();
+            DaggerfallUnity.Settings.ToolTipTextColor = toolTipTextColor.BackgroundColor;
+            DaggerfallUnity.Settings.ToolTipBackgroundColor = toolTipBackgroundColor.BackgroundColor;
+
+            DaggerfallUnity.Settings.Crosshair = crosshair.IsChecked;
+            DaggerfallUnity.Settings.InteractionModeIcon = ((InteractionModeIconModes)interactionModeIcon.Value).ToString();
+            DaggerfallUnity.Settings.EnableVitalsIndicators = vitalsIndicators.IsChecked;
+
+            DaggerfallUnity.Settings.ShowQuestJournalClocksAsCountdown = showQuestJournalClocksAsCountdown.IsChecked;
+            DaggerfallUnity.Settings.EnableInventoryInfoPanel = inventoryInfoPanel.IsChecked;
+            DaggerfallUnity.Settings.EnableEnhancedItemLists = enhancedItemLists.IsChecked;
+            DaggerfallUnity.Settings.EnableModernConversationStyleInTalkWindow = enableModernConversationStyleInTalkWindow.IsChecked;
+            DaggerfallUnity.Settings.HelmAndShieldMaterialDisplay = helmAndShieldMaterialDisplay.ScrollIndex;        
+
+            /* Enhancements */
+
             DaggerfallUnity.Settings.LypyL_GameConsole = gameConsole.IsChecked;
             DaggerfallUnity.Settings.LypyL_ModSystem = modSystem.IsChecked;
             DaggerfallUnity.Settings.MeshAndTextureReplacement = assetImport.IsChecked;
             DaggerfallUnity.Settings.CompressModdedTextures = compressModdedTextures.IsChecked;
+
             DaggerfallUnity.Settings.NearDeathWarning = nearDeathWarning.IsChecked;
             DaggerfallUnity.Settings.AlternateRandomEnemySelection = alternateRandomEnemySelection.IsChecked;
             DaggerfallUnity.Settings.CameraRecoilStrength = cameraRecoilStrength.ScrollIndex;
+            DaggerfallUnity.Settings.AdvancedClimbing = advancedClimbing.IsChecked;
+            DaggerfallUnity.Settings.CombatVoices = combatVoices.IsChecked;
+
+            DaggerfallUnity.Settings.DungeonAmbientLightScale = dungeonAmbientLightScale.GetValue();
+            DaggerfallUnity.Settings.NightAmbientLightScale = nightAmbientLightScale.GetValue();
+            DaggerfallUnity.Settings.PlayerTorchLightScale = playerTorchLightScale.GetValue();
 
             /* Video */
 
@@ -317,15 +391,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.DungeonLightShadows = dungeonLightShadows.IsChecked;
             DaggerfallUnity.Settings.InteriorLightShadows = interiorLightShadows.IsChecked;
             DaggerfallUnity.Settings.UseLegacyDeferred = useLegacyDeferred.IsChecked;
-
-            /* Theme */
-
-            DaggerfallUnity.Settings.ToolTipDelayInSeconds = toolTipDelayInSeconds.GetValue();
-            DaggerfallUnity.Settings.ToolTipTextColor = toolTipTextColor.BackgroundColor;
-            DaggerfallUnity.Settings.ToolTipBackgroundColor = toolTipBackgroundColor.BackgroundColor;
-
-            DaggerfallUnity.Settings.EnableModernConversationStyleInTalkWindow = enableModernConversationStyleInTalkWindow.IsChecked;
-            DaggerfallUnity.Settings.InteractionModeIcon = ((InteractionModeIconModes)interactionModeIcon.Value).ToString();
 
             DaggerfallUnity.Settings.SaveSettings();
         }
@@ -360,9 +425,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             Button pageButton = new Button();
             pageButton.Name = title;
-            pageButton.Size = new Vector2(50, 9);
+            pageButton.Size = new Vector2(topBarButtonsLength, 9);
             pageButton.HorizontalAlignment = HorizontalAlignment.None;
-            pageButton.Position = new Vector2((pages.Count - 1) * 50, 0);
+            pageButton.Position = new Vector2((pages.Count - 1) * topBarButtonsLength, 0);
             pageButton.VerticalAlignment = VerticalAlignment.Middle;
             pageButton.BackgroundColor = Color.clear;
             pageButton.Outline.Enabled = false;

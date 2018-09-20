@@ -12,6 +12,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
@@ -39,6 +40,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         string targetPath;
         string modName = "None";
         string localPath;
+        string textPath;
         ModSettingsData data;
 
         // Presets
@@ -95,6 +97,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             saveOnExit = EditorPrefs.GetBool(Prefs.SaveOnExit, true);
             rootPath = Path.Combine(Path.Combine(Application.dataPath, "Game"), "Addons");
             targetPath = EditorPrefs.GetString(Prefs.CurrentTarget, rootPath);
+            textPath = Path.Combine(Path.Combine(Application.dataPath, "StreamingAssets"), "Text");
 
             if (targetPath != rootPath)
                 Load();
@@ -176,6 +179,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                         string path;
                         if (!string.IsNullOrEmpty(path = EditorUtility.OpenFilePanel("Select preset file", rootPath, "json")))
                             data.LoadPresets(path, true);
+                    }
+                    else if (GUILayout.Button("Export localization table"))
+                    {
+                        string path;
+                        if (!string.IsNullOrEmpty(path = EditorUtility.OpenFolderPanel("Select a folder", textPath, "")))
+                            MakeTextDatabase(Path.Combine(path, string.Format("mod_{0}.txt", modName)));
                     }
 
                     EditorGUILayout.Space();
@@ -502,6 +511,52 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         {
             return new Rect(right ? rect.x + rect.width / 2 : rect.x,
                 rect.y + line * lineHeight, rect.width / 2, EditorGUIUtility.singleLineHeight);
+        }
+
+        private void MakeTextDatabase(string path)
+        {
+            var stringBuilder = new StringBuilder();
+
+            stringBuilder.AppendFormat("- Text database for mod {0}.\n", modName);
+            stringBuilder.AppendLine("- how to use: translate and place this file named mod_filename.txt inside StreamingAssets/Text. Note that an english table is NOT mandatory.");
+            stringBuilder.AppendLine();
+            stringBuilder.AppendLine("schema: *key, $text");
+
+            stringBuilder.AppendLine();
+            stringBuilder.AppendLine("- Mod details");
+            stringBuilder.AppendLine("- Mod.Description, \"description\"");
+
+            stringBuilder.AppendLine();
+            stringBuilder.AppendLine("- Settings");
+
+            foreach (Section section in data.Sections)
+            {
+                stringBuilder.AppendFormat("Settings.{0}.Name, \"{1}\"\n", section.Name, section.Name);
+                if (!string.IsNullOrEmpty(section.Description))
+                    stringBuilder.AppendFormat("Settings.{0}.Description, \"{1}\"\n", section.Name, section.Description);
+
+                foreach (Key key in section.Keys)
+                {
+                    stringBuilder.AppendFormat("Settings.{0}.{1}.Name, \"{2}\"\n", section.Name, key.Name, key.Name);
+                    if (!string.IsNullOrEmpty(key.Description))
+                        stringBuilder.AppendFormat("Settings.{0}.{1}.Description, \"{2}\"\n", section.Name, key.Name, key.Description);
+                }
+            }
+
+            stringBuilder.AppendLine();
+            stringBuilder.AppendLine("- Presets");
+
+            foreach (Preset preset in data.Presets)
+            {
+                stringBuilder.AppendFormat("Presets.{0}.Title, \"{1}\"\n", preset.Title, preset.Title);
+                stringBuilder.AppendFormat("Presets.{0}.Description, \"{1}\"\n", preset.Title, preset.Description);
+            }
+
+            stringBuilder.AppendLine();
+            stringBuilder.AppendLine("- Additional strings which can be accessed from Mod.Localize().");
+            stringBuilder.AppendLine("- Default values can be provided with a table named textdatabase.txt inside the mod bundle.");
+
+            File.WriteAllText(path, stringBuilder.ToString());
         }
 
         #endregion

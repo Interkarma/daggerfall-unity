@@ -60,54 +60,69 @@ AudioSource:
   rolloffCustomCurve:
     serializedVersion: 2
     m_Curve:
-    - serializedVersion: 2
+    - serializedVersion: 3
       time: 0
       value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
-    - serializedVersion: 2
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
       time: 1
       value: 0
       inSlope: 0
       outSlope: 0
       tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
   panLevelCustomCurve:
     serializedVersion: 2
     m_Curve:
-    - serializedVersion: 2
+    - serializedVersion: 3
       time: 0
       value: 0
       inSlope: 0
       outSlope: 0
       tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
   spreadCustomCurve:
     serializedVersion: 2
     m_Curve:
-    - serializedVersion: 2
+    - serializedVersion: 3
       time: 0
       value: 0
       inSlope: 0
       outSlope: 0
       tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
   reverbZoneMixCustomCurve:
     serializedVersion: 2
     m_Curve:
-    - serializedVersion: 2
+    - serializedVersion: 3
       time: 0
       value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
@@ -124,7 +139,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowDebugString: 0
   Gain: 2
-  SoundBank: TimGM6mb.sf2
   SongFolder: Songs/
   Song: -1
 --- !u!1001 &100100000
@@ -152,10 +166,12 @@ MonoBehaviour:
   LocalPlayerGPS: {fileID: 0}
   StreamingWorld: {fileID: 0}
   DungeonInteriorSongs: 4300000044000000450000004600000047000000480000006a0000006b0000006c0000006d00000004000000060000000b000000180000002a000000
-  DaySongs: 690000008200000077000000810000000000000002000000240000002b000000140000001600000072000000
-  WeatherRainSongs: 790000007a0000007c0000000d000000
-  WeatherSnowSongs: 20000000760000007b0000007f000000
-  TempleSongs: 6f0000006700000071000000
+  SunnySongs: 69000000820000007700000081000000000000000200000024000000
+  CloudySongs: 690000008200000077000000810000000000000002000000240000002b00000014000000
+  OvercastSongs: 2b00000014000000160000007200000079000000
+  RainSongs: 7a0000007c0000000d000000
+  SnowSongs: 20000000760000007b0000007f000000
+  TempleSongs: 6f000000670000006f00000071000000670000006f000000670000007100000071000000
   TavernSongs: 8000000083000000600000006100000062000000
   NightSongs: 1100000012000000680000006e000000730000001e00000022000000
   ShopSongs: 74000000

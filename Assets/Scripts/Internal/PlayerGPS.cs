@@ -455,6 +455,27 @@ namespace DaggerfallWorkshop
             return false;
         }
 
+        /// <summary>
+        /// Gets nearby objects matching flags and within maxRange.
+        /// Can be used as needed, does not trigger a scene search.
+        /// This only searches pre-populated list of nearby objects which is updated at low frequency.
+        /// </summary>
+        /// <param name="flags">Flags to search for.</param>
+        /// <param name="maxRange">Max range for search. Not matched to classic range at this time.</param>
+        /// <returns>NearbyObject list. Can be null or empty.</returns>
+        public List<NearbyObject> GetNearbyObjects(NearbyObjectFlags flags, float maxRange = 14f)
+        {
+            if (flags == NearbyObjectFlags.None)
+                return null;
+
+            var query =
+                from no in nearbyObjects
+                where ((no.flags & flags) == flags) && no.distance < maxRange
+                select no;
+
+            return query.ToList();
+        }
+
         #endregion
 
         #region Private Methods
