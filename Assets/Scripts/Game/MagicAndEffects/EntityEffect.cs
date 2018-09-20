@@ -326,6 +326,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             statMods = effectData.statMods;
             skillMods = effectData.skillMods;
             bundleGroup = effectData.bundleGroup;
+            variantCount = effectData.variantCount;
+            currentVariant = effectData.currentVariant;
+            effectEnded = effectData.effectEnded;
         }
 
         /// <summary>

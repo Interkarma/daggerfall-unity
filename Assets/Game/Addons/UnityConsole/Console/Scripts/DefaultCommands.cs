@@ -79,6 +79,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(StartQuest.name, StartQuest.usage, StartQuest.description, StartQuest.Execute);
 
             ConsoleCommandsDatabase.RegisterCommand(DiseasePlayer.name, DiseasePlayer.usage, DiseasePlayer.description, DiseasePlayer.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(PoisonPlayer.name, PoisonPlayer.usage, PoisonPlayer.description, PoisonPlayer.Execute);
 
             ConsoleCommandsDatabase.RegisterCommand(DumpBlock.name, DumpBlock.description, DumpBlock.usage, DumpBlock.Execute);
             ConsoleCommandsDatabase.RegisterCommand(DumpLocBlocks.name, DumpLocBlocks.description, DumpLocBlocks.usage, DumpLocBlocks.Execute);
@@ -1575,6 +1576,32 @@ namespace Wenzil.Console
                 GameManager.Instance.PlayerEffectManager.AssignBundle(bundle);
                 
                 return string.Format("Player infected with {0}", disease.ToString());
+            }
+        }
+
+        private static class PoisonPlayer
+        {
+            public static readonly string name = "poisonplayer";
+            public static readonly string description = "Infect player with a classic poison.";
+            public static readonly string usage = "poisonplayer index (a number 0-11)";
+
+            public static string Execute(params string[] args)
+            {
+                if (args == null || args.Length != 1)
+                    return usage;
+
+                // Get index and validate range
+                int index;
+                if (!int.TryParse(args[0], out index))
+                    return string.Format("Could not parse argument `{0}` to a number", args[0]);
+                if (index < 0 || index > 11)
+                    return string.Format("Index {0} is out range. Must be 0-11.", index);
+
+                // Poison player
+                Poisons poisonType = (Poisons)index + 128;
+                DaggerfallWorkshop.Game.Formulas.FormulaHelper.InflictPoison(GameManager.Instance.PlayerEntity, poisonType, true);
+
+                return string.Format("Player poisoned with {0}", poisonType.ToString());
             }
         }
 

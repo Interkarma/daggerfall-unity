@@ -358,6 +358,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             IEntityEffect effectTemplate = magicEffectTemplates[key];
             IEntityEffect effectInstance = Activator.CreateInstance(effectTemplate.GetType()) as IEntityEffect;
             effectInstance.Settings = settings;
+            effectInstance.CurrentVariant = effectTemplate.CurrentVariant;
 
             return effectInstance;
         }
