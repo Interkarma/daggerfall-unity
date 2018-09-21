@@ -794,7 +794,7 @@ namespace DaggerfallWorkshop.Game
                             newBuildingNameplate.textLabel.TextScale = 1.0f;
                             newBuildingNameplate.textLabel.MaxCharacters = -1;
                             newBuildingNameplate.textLabel.Name = newBuildingNameplate.name;
-                            newBuildingNameplate.scale = 1.0f;                           
+                            newBuildingNameplate.scale = 1.0f;
 
                             SetLayerRecursively(newBuildingNameplate.gameObject, layerAutomap);
                             newBuildingNameplate.gameObject.transform.SetParent(gameObjectBuildingNameplates.transform);
