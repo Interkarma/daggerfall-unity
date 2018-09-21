@@ -447,15 +447,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             int factionId = (guildGroup == FactionFile.GuildGroups.HolyOrder || guildGroup == FactionFile.GuildGroups.KnightlyOrder) ? buildingFactionId : guildManager.GetGuildFactionId(guildGroup);
 
             // Select a quest at random from appropriate pool
-            offeredQuest = GameManager.Instance.QuestListsManager.GetGuildQuest(guildGroup, status, factionId, guild.GetReputation(playerEntity));
-            if (offeredQuest != null)
+            quest = GameManager.Instance.QuestListsManager.GetGuildQuest(guildGroup, status, factionId, guild.GetReputation(playerEntity));
+            if (quest != null)
             {
                 // Log offered quest
-                Debug.LogFormat("Offering quest {0} from Guild {1} affecting factionId {2}", offeredQuest.QuestName, guildGroup, offeredQuest.FactionId);
+                Debug.LogFormat("Offering quest {0} from Guild {1} affecting factionId {2}", quest.QuestName, guildGroup, quest.FactionId);
 
                 // Offer the quest to player, setting external context provider to guild
-                offeredQuest.ExternalMCP = guild;
-                DaggerfallMessageBox messageBox = QuestMachine.Instance.CreateMessagePrompt(offeredQuest, (int)QuestMachine.QuestMessages.QuestorOffer);
+                quest.ExternalMCP = guild;
+                DaggerfallMessageBox messageBox = QuestMachine.Instance.CreateMessagePrompt(quest, (int)QuestMachine.QuestMessages.QuestorOffer);
                 if (messageBox != null)
                 {
                     messageBox.OnButtonClick += OfferQuest_OnButtonClick;
