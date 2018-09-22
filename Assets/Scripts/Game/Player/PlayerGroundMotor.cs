@@ -27,7 +27,7 @@ namespace DaggerfallWorkshop.Game
 
         private void Start()
         {
-            //playerMotor = GameManager.Instance.PlayerMotor;
+            playerMotor = GameManager.Instance.PlayerMotor;
             controller = GetComponent<CharacterController>();
         }
 
