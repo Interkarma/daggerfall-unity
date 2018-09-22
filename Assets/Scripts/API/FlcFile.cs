@@ -1,141 +1,141 @@
-﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2015 Daggerfall Workshop
+// Project:         Daggerfall Tools For Unity
+// Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Lypyl (Lypyl@dfworkshop.net)
-// Contributors:    
+// Contributors:    Gavin Clayton (interkarma@dfworkshop.net)
 // 
 // Notes:
 //
 
 using UnityEngine;
-using System.Collections;
 using System;
 using System.IO;
 using DaggerfallConnect.Utility;
 
 namespace DaggerfallConnect.Arena2
 {
-
     /// <summary>
-    /// Loads Daggerfall FLC files and reads them into a Color32 buffer.
+    /// Connects to a *.FLC file to extract animation frames.
     /// </summary>
-    public class DaggerfallFLCReader
+    public class FlcFile
     {
+        #region Fields
+
         const int FRAMEHEADERSIZE = 16;
         const int CHUNKHEADERSIZE = 6;
 
-        public FLICHeader header;
-        FileProxy flcFile;
+        FLICHeader header;
+        FileProxy managedFile = new FileProxy();
         BinaryReader reader;
-
-
-        #region Properties
-
-        public Color32[] FrameBuffer        { get; private set; }
-        public Color32[] Palette            { get; private set; }
-        public FrameHeader[] FrameHeaders   { get; private set; }
-        public int CurrentFrame             { get; private set; }
-        public int ColorCount               { get; private set; }
-        public float FrameDelay             { get; private set; }
-        public bool FLC_HeaderSet           { get; private set; }
-        public bool ReadyToPlay             { get; private set; }
-        public FLIC_Format FlicType         { get; private set; }
-
 
         #endregion
 
+        #region Properties
 
-
-
-        //Constructors
-        public DaggerfallFLCReader()
+        public FLICHeader Header
         {
-
-
+            get { return header; }
         }
 
+        public Color32[] FrameBuffer { get; private set; }
+        public Color32[] Palette { get; private set; }
+        public FrameHeader[] FrameHeaders { get; private set; }
+        public int CurrentFrame { get; private set; }
+        public int ColorCount { get; private set; }
+        public float FrameDelay { get; private set; }
+        public bool FLC_HeaderSet { get; private set; }
+        public bool ReadyToPlay { get; private set; }
+        public FLIC_Format FlicType { get; private set; }
 
-        public DaggerfallFLCReader(string filename)
+        #endregion
+
+        #region Constructors
+
+        public FlcFile()
         {
-            Open(filename);
         }
+
+        public FlcFile(string filePath)
+        {
+            Load(filePath);
+        }
+
+        #endregion
+
+        #region Public Methods
 
         /// <summary>
-        /// Open file
+        /// Loads a *.FLC file.
         /// </summary>
-        /// <param name="fullPath"></param>
-        /// <returns></returns>
-        public bool Open(string fullPath)
+        /// <param name="fullPath">Absolute path to *.FLC file</param>
+        /// <returns>True if file loaded successfully and is ready to use frame data.</returns>
+        public bool Load(string filePath)
         {
-            if (string.IsNullOrEmpty(fullPath))
-            {
-                Debug.LogError("Invalid file name - was null");
+            // Exit if this file already loaded
+            if (managedFile.FilePath == filePath)
+                return true;
+
+            // Validate filename
+            string fn = Path.GetFileName(filePath);
+            if (!fn.EndsWith(".FLC", StringComparison.InvariantCultureIgnoreCase))
                 return false;
-            }
 
-             flcFile = new FileProxy();
-
-            // Open file proxy
-            if (!flcFile.Load(fullPath, DaggerfallConnect.FileUsage.UseMemory, true))
+            // Load file
+            if (!managedFile.Load(filePath, FileUsage.UseMemory, true))
                 return false;
 
             // Close existing reader
             if (reader != null)
                 reader.Close();
 
-            // Read header
-            reader = flcFile.GetReader(0);
+            // Start new reader
+            reader = managedFile.GetReader(0);
 
-            return Setup();
-
-
+            return Read();
         }
 
+        #endregion
 
-        /// <summary>
-        /// Read headers, create buffers
-        /// </summary>
-        /// <returns></returns>
-        bool Setup()
+        #region Private Methods
+
+        // Read headers, create buffers
+        bool Read()
         {
-            //Read in the main header
+            // Read header
             ReadHeader();
-            FLC_HeaderSet   = true;
-            FlicType        = (FLIC_Format)header.FileID;
-            ColorCount      = (int)Math.Pow(2, header.PixelDepth);
+            FLC_HeaderSet = true;
+            FlicType = (FLIC_Format)header.FileID;
+            ColorCount = (int)Math.Pow(2, header.PixelDepth);
 
+            // Initialise buffers
+            Palette = new Color32[ColorCount];
+            FrameBuffer = new Color32[header.Width * header.Height];
+            FrameHeaders = new FrameHeader[header.NumOfFrames + 1];
 
-            //init buffers
-            Palette         = new Color32[ColorCount];
-            FrameBuffer     = new Color32[header.Width * header.Height];
-            FrameHeaders    = new FrameHeader[header.NumOfFrames + 1];
-
-            //Read the frame headers and add to frameHeaders array
+            // Read frame headers
             if (!ReadFrameHeaders())
             {
-                Debug.LogWarning("Incompatible format, cannot play");
+                Debug.LogWarning("Incompatible format, cannot read");
                 ReadyToPlay = false;
                 return false;
             }
             else
+            {
                 ReadyToPlay = true;
+            }
 
-            //set frame delay
-            FrameDelay      = (float)(header.FrameDelay / (float)CinematicSpeed.FLIC);
+            // Set frame delay
+            FrameDelay = (float)(header.FrameDelay / (float)CinematicSpeed.FLIC);
 
-            //Store frame 0 in frame buffer
+            // Store frame 0 in frame buffer
             BufferNextFrame();
 
             return ReadyToPlay;
         }
 
-
-        /// <summary>
-        /// Read & check all the frame headers
-        /// </summary>
-        /// <returns>False if any frames are invalid</returns>
+        // Read & check all the frame headers
         bool ReadFrameHeaders()
         {
             if (!FLC_HeaderSet)
@@ -160,17 +160,10 @@ namespace DaggerfallConnect.Arena2
                     break;
             }
 
-
             return true;
-
-
         }
 
-
-
-        /// <summary>
-        /// Parse the Main flic header
-        /// </summary>
+        // Parse the Main flic header
         void ReadHeader()
         {
             header.FileSize = reader.ReadInt32();
@@ -201,18 +194,12 @@ namespace DaggerfallConnect.Arena2
             header.Frame2Offset = reader.ReadInt32();
             reader.BaseStream.Seek(40, SeekOrigin.Current);
 
-            //if fli keep reading after header, if flc jump to frame0 offset
+            // If fli keep reading after header, if flc jump to frame0 offset
             if (header.FileID == (int)FLIC_Format.FLIC)
                 reader.BaseStream.Seek(header.Frame1Offset, SeekOrigin.Begin);
-
         }
 
-
-        /// <summary>
-        /// Reads next frame into buffer.
-        /// </summary>
-        /// <param name="frameNum">Optional frame to buffer</param>
-        /// <returns></returns>
+        // Reads next frame into buffer
         public bool BufferNextFrame(int frameNum = -1)
         {
             if (!ReadyToPlay)
@@ -223,8 +210,7 @@ namespace DaggerfallConnect.Arena2
 
             frameNum = (frameNum >= 0 && frameNum <= header.NumOfFrames) ? frameNum : CurrentFrame;
             FrameHeader fh = FrameHeaders[frameNum];
-            reader.BaseStream.Seek(fh.posInFile + FRAMEHEADERSIZE, SeekOrigin.Begin);  //go to frame start, skip over header
-
+            reader.BaseStream.Seek(fh.posInFile + FRAMEHEADERSIZE, SeekOrigin.Begin);  // Go to frame start, skip over header
 
             for (int i = 0; i < fh.numSubChunks; i++)
             {
@@ -238,50 +224,38 @@ namespace DaggerfallConnect.Arena2
                 {
                     //Debug.Log("Chunk Type: " + ch.type.ToString());
 
-                    switch (ch.type)    //Daggerfall .flc's only uses Color_256, Delta_FLC, Byte_Run, PSTAMP chunk types
-                    {                   
+                    switch (ch.type)    // Daggerfall .flc's only uses Color_256, Delta_FLC, Byte_Run, PSTAMP chunk types
+                    {
                         case ChunkType.COLOR_256:
-                            {
-                                Decode_COLOR();
-                            }
+                            Decode_COLOR();
                             break;
                         case ChunkType.COLOR_64:
-                            {
-                                Decode_COLOR(true);
-                            }
+                            Decode_COLOR(true);
                             break;
                         case ChunkType.DELTA_FLC:
-                            {
-                                Decode_Delta_FLC();
-                            }
+                            Decode_Delta_FLC();
                             break;
                         case ChunkType.DELTA_FLI:
-                            {
-                                Decode_Delta_FLI();
-                            }
+                            Decode_Delta_FLI();
                             break;
                         case ChunkType.BYTE_RUN:
-                            {
-                                Decode_BYTE_RUN();
-                            }
+                            Decode_BYTE_RUN();
                             break;
-                        case ChunkType.PSTAMP://skip over PSTAMP type - usually first chunk of first frame
-                            {
-                                reader.BaseStream.Seek(ch.size - CHUNKHEADERSIZE, SeekOrigin.Current);
-                            }
+                        case ChunkType.PSTAMP: // Skip over PSTAMP type - usually first chunk of first frame
+                            reader.BaseStream.Seek(ch.size - CHUNKHEADERSIZE, SeekOrigin.Current);
                             break;
-                        default: //skip over unsupported chunk types
+                        default: // Skip over unsupported chunk types
+                            var skip = reader.BaseStream.Position + ch.size - CHUNKHEADERSIZE;
+                            if (skip > header.FileSize)
                             {
-                                var skip = reader.BaseStream.Position + ch.size - CHUNKHEADERSIZE;
-                                if (skip > header.FileSize)
-                                {
-                                    Debug.LogError("Read error - tried to skip past the end of file");
-                                    ReadyToPlay = false;
-                                    return false;
+                                Debug.LogError("Read error - tried to skip past the end of file");
+                                ReadyToPlay = false;
+                                return false;
 
-                                }
-                                else
-                                    reader.BaseStream.Seek(skip, SeekOrigin.Current);
+                            }
+                            else
+                            {
+                                reader.BaseStream.Seek(skip, SeekOrigin.Current);
                             }
                             break;
                     }
@@ -289,19 +263,13 @@ namespace DaggerfallConnect.Arena2
                 }
             }
 
-            //use ++frameNum for next frame if not at last frame; or skip over frame 0
+            // Use ++frameNum for next frame if not at last frame; or skip over frame 0
             CurrentFrame = (++frameNum <= header.NumOfFrames) ? frameNum : 1;
 
             return true;
-
         }
 
-
-        /// <summary>
-        /// Read a frame header, returns false if it does't match a known type
-        /// </summary>
-        /// <param name="fh"></param>
-        /// <returns></returns>
+        // Read a frame header, returns false if it does't match a known type
         bool ReadFrameHeader(out FrameHeader fh)
         {
             fh = new FrameHeader();
@@ -321,13 +289,7 @@ namespace DaggerfallConnect.Arena2
             return true;
         }
 
-
-        /// <summary>
-        /// Reads headers of sub-chunks that make up the frames
-        /// Returns false if the type doesn't match a known chunk type
-        /// </summary>
-        /// <param name="ch"></param>
-        /// <returns></returns>
+        // Reads headers of sub-chunks that make up the frames
         bool ReadChunkHeader(out ChunkHeader ch)
         {
             ch = new ChunkHeader();
@@ -336,11 +298,7 @@ namespace DaggerfallConnect.Arena2
             return Enum.IsDefined(typeof(ChunkType), ch.type);
         }
 
-        /// <summary>
-        /// Decodes a COLOR256 & COLOR64 palette chunk into the color buffer
-        /// </summary>
-        /// <param name="COLOR_64"></param>
-        /// <returns></returns>
+        // Decodes a BRUN type chunk and reads the data into the frame buffer
         bool Decode_COLOR(bool COLOR_64 = false)
         {
             int scale = 1;
@@ -351,7 +309,7 @@ namespace DaggerfallConnect.Arena2
             int colorInd = 0;
             for (int i = 0; i < numOfPackets; i++)
             {
-                reader.BaseStream.Seek(reader.ReadByte() * 3, SeekOrigin.Current);      //color skip count
+                reader.BaseStream.Seek(reader.ReadByte() * 3, SeekOrigin.Current);      // Color skip count
                 int numOfColorsToChange = reader.ReadByte();
 
                 if (numOfColorsToChange == 0)
@@ -367,48 +325,40 @@ namespace DaggerfallConnect.Arena2
 
                 }
             }
+
             return true;
         }
 
-
-        /// <summary>
-        /// Decodes a BRUN type chunk and reads the data into the frame buffer
-        /// </summary>
+        // Decodes a BRUN type chunk and reads the data into the frame buffer
         void Decode_BYTE_RUN()
         {
             for (int y = 0; y < header.Height; y++)
             {
-                //this value is only used in older FLI files
+                // This value is only used in older FLI files
                 int numOfPackets = reader.ReadByte();
 
                 int x = 0;
                 while (x < header.Width)
                 {
                     int size_type = reader.ReadSByte();
-                   
 
-                    if (size_type < 0)          //If the packet type is negative, it is a count of pixels to be copied from the packet to the animation image.
+
+                    if (size_type < 0)          // If the packet type is negative, it is a count of pixels to be copied from the packet to the animation image.
                     {
                         size_type = -size_type;
                         Screen_Copy_Seg(x, y, size_type);
 
                     }
-                    else if (size_type > 0)   //If the packet type is positive, it contains a single pixel that is to be replicated
-                    {                           //the absolute value of the packet type is the number of times the pixel is to be replicated.
+                    else if (size_type > 0)     // If the packet type is positive, it contains a single pixel that is to be replicated
+                    {                           // The absolute value of the packet type is the number of times the pixel is to be replicated.
                         Screen_Repeat_One(x, y, size_type);
                     }
                     x += size_type;
-
                 }
-
             }
         }
 
-
-
-        /// <summary>
-        /// Decodes a Delta FLC type chunk and reads the data into the frame buffer
-        /// </summary>
+        // Decodes a Delta FLC type chunk and reads the data into the frame buffer
         void Decode_Delta_FLC()
         {
             var lineCount = reader.ReadUInt16();
@@ -418,29 +368,21 @@ namespace DaggerfallConnect.Arena2
 
             for (int i = 0; i < lineCount; i++)
             {
-
                 while (true)
                 {
                     var opcode = reader.ReadInt16();
-
                     if ((opcode & (1 << 15)) > 0)
                     {
-                        if ((opcode & (1 << 14)) > 0) //line skip
-                        {
+                        if ((opcode & (1 << 14)) > 0)   // Line skip
                             y += Math.Abs(opcode);
-                        }
-                        else                            //Last pixel
-                        {
+                        else                            // Last pixel
                             break;
-                        }
-
                     }
-                    else if ((opcode & (1 << 14)) == 0) //Packet count
+                    else if ((opcode & (1 << 14)) == 0) // Packet count
                     {
                         packetCount = (uint)opcode;
                         break;
                     }
-
                 }
 
                 for (int n = 0; n < packetCount; n++)
@@ -450,95 +392,70 @@ namespace DaggerfallConnect.Arena2
                     int size_type = reader.ReadSByte();
                     x += colSkipCount;
 
-                    if (size_type > 0) //copy segment
-                    {
-                        
+                    if (size_type > 0) // Copy segment
                         Screen_Copy_TwoSeg(x, y, size_type);
-                    }
 
-                    else if (size_type < 0) //repeat pixel
+                    else if (size_type < 0) // Repeat pixel
                     {
                         size_type = -size_type;
                         Screen_Repeat_Two(x, y, size_type);
                     }
 
                     x += size_type * 2;
-
                 }
-               
+
                 y++;
                 x = 0;
             }
-
         }
 
-        /// <summary>
-        /// Decodes a Delta FLI type chunk and reads the data into the frame buffer
-        /// </summary>
+        // Decodes a Delta FLI type chunk and reads the data into the frame buffer
         void Decode_Delta_FLI()
         {
-            var firstLine = reader.ReadInt16(); //contains pos of first line in chunk to start changing
-            var numOfLines = reader.ReadInt16(); //num of total lines in chunk
+            var firstLine = reader.ReadInt16(); // Contains pos of first line in chunk to start changing
+            var numOfLines = reader.ReadInt16(); // Num of total lines in chunk
 
             for (int y = firstLine; y < numOfLines; y++)
             {
-                var numOfPackets = reader.ReadByte();   //this is used unlike BRUN
+                var numOfPackets = reader.ReadByte();   // This is used unlike BRUN
                 int x = 0;
 
                 for (int packetCnt = 0; packetCnt < numOfPackets; packetCnt++)
                 {
-                    var colSkip = reader.ReadByte();    //num of columns to skip
+                    var colSkip = reader.ReadByte();    // Num of columns to skip
                     int size_type = reader.ReadSByte();
-                    x += colSkip;                           
+                    x += colSkip;
 
-
-                    if (size_type > 0)          //This is reversed from byte run - pos == seg. copy, neg == pixel copy
+                    if (size_type > 0)          // This is reversed from byte run - pos == seg. copy, neg == pixel copy
                     {
                         Screen_Copy_Seg(x, y, size_type);
-
                     }
-                    else if (size_type < 0)   
-                    {                           
+                    else if (size_type < 0)
+                    {
                         size_type = -size_type;
                         Screen_Repeat_One(x, y, size_type);
                     }
 
                     x += size_type;
-
                 }
-
-
-
-
             }
-
         }
 
-        /// <summary>
-        /// Set all pixels in buffer to black
-        /// </summary>
+        // Set all pixels in buffer to black
         void Decode_Black()
         {
-            for(int i = 0; i < FrameBuffer.Length; i++)
+            for (int i = 0; i < FrameBuffer.Length; i++)
             {
                 FrameBuffer[i] = Color.black;
             }
-
-
-
-
         }
 
-        /// <summary>
-        /// Reads count size segment into the buffer
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="size"></param>
+        // Reads count size segment into the buffer
         void Screen_Copy_Seg(int x, int y, int count)
         {
-            int pos = x + (y * header.Width);
-            
+            //int pos = x + (y * header.Width);
+            int pos = x + ((header.Height - 1) * header.Width) - (y * header.Width);
+
             for (int i = 0; i < count; i++)
             {
                 var p = reader.ReadByte();
@@ -546,98 +463,81 @@ namespace DaggerfallConnect.Arena2
                 FrameBuffer[pos] = color;
                 pos++;
             }
-
         }
 
-
-        /// <summary>
-        /// Repeats single pixel count times
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="count"></param>
+        // Repeats single pixel count times
         void Screen_Repeat_One(int x, int y, int count)
         {
-            var p         = reader.ReadByte();
-            var pos       = x + (y * header.Width);
+            var p = reader.ReadByte();
             Color32 color = Palette[p];
-            
+
+            //int pos = x + (y * header.Width);
+            int pos = x + ((header.Height - 1) * header.Width) - (y * header.Width);
+
             for (int i = 0; i < count; i++)
             {
-
                 FrameBuffer[pos] = color;
                 pos++;
             }
-
         }
 
-
-        /// <summary>
-        /// Repeats two pixels count times
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="count"></param>
+        // Repeats two pixels count times
         void Screen_Repeat_Two(int x, int y, int count)
         {
-            var p1          = reader.ReadByte();
-            var p2          = reader.ReadByte();
-            var pos         = x + (y * header.Width);
-            Color32 color1  = Palette[p1];
-            Color32 color2  = Palette[p2];
-            
+            var p1 = reader.ReadByte();
+            var p2 = reader.ReadByte();
+            Color32 color1 = Palette[p1];
+            Color32 color2 = Palette[p2];
+
+            //int pos = x + (y * header.Width);
+            int pos = x + ((header.Height - 1) * header.Width) - (y * header.Width);
+
             for (int i = 0; i < count; i++)
             {
-                FrameBuffer[pos]    = color1;
-                FrameBuffer[pos+1]  = color2;
-                pos+=2;
+                FrameBuffer[pos] = color1;
+                FrameBuffer[pos + 1] = color2;
+                pos += 2;
             }
-
         }
 
-
-        /// <summary>
-        /// Reads count size segment into the buffer
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="size"></param>
+        // Reads count size segment into the buffer
         void Screen_Copy_TwoSeg(int x, int y, int count)
         {
-            int pos = x + (y * header.Width);
+            //int pos = x + (y * header.Width);
+            int pos = x + ((header.Height - 1) * header.Width) - (y * header.Width);
+
             for (int i = 0; i < count; i++)
             {
-                var p1          = reader.ReadByte();
-                var p2          = reader.ReadByte();
-                Color32 color1  = Palette[p1];
-                Color32 color2  = Palette[p2];
+                var p1 = reader.ReadByte();
+                var p2 = reader.ReadByte();
+                Color32 color1 = Palette[p1];
+                Color32 color2 = Palette[p2];
                 FrameBuffer[pos] = color1;
-                FrameBuffer[pos+1] = color2;
-                pos+=2;
+                FrameBuffer[pos + 1] = color2;
+                pos += 2;
             }
-
         }
 
+        #endregion
 
         #region Structures
 
         [Serializable]
         public struct FLICHeader
         {
-
             public int FileSize { get; internal set; }
             public int FileID { get; internal set; }
-            public int NumOfFrames { get; internal set; } //total # of animation frames; max 4000; doesn't include ring frame
-            public int Width { get; internal set; } //frame width
-            public int Height { get; internal set; } //frame height
+            public int NumOfFrames { get; internal set; } // Total # of animation frames; max 4000; doesn't include ring frame
+            public int Width { get; internal set; } // Frame width
+            public int Height { get; internal set; } // Frame height
             public int PixelDepth { get; internal set; }
-            public int Flags { get; internal set; }//always 3 or 0
-            public int FrameDelay { get; internal set; } //time in 1/1000 between frames (1/70 in older FLI type files)
+            public int Flags { get; internal set; }// Always 3 or 0
+            public int FrameDelay { get; internal set; } // Time in 1/1000 between frames (1/70 in older FLI type files)
 
-            public int DateCreated { get; internal set; } //MS-DOS date stamp
-            public int CreatorSN { get; internal set; } //SN or Compiler ID of program used to create animation
-            public int LastUpdate { get; internal set; } //MS-DOS date stamp
-            public int UpdaterSN { get; internal set; } //SN or Compiler ID of program used to create animation
+            public int DateCreated { get; internal set; } // MS-DOS date stamp
+            public int CreatorSN { get; internal set; } // SN or Compiler ID of program used to create animation
+            public int LastUpdate { get; internal set; } // MS-DOS date stamp
+            public int UpdaterSN { get; internal set; } // SN or Compiler ID of program used to create animation
             public int XAspect { get; internal set; }
             public int YAspect { get; internal set; }
 
@@ -647,11 +547,10 @@ namespace DaggerfallConnect.Arena2
             public int ReqMemory { get; internal set; }
             public int MaxRegions { get; internal set; }
             public int TranspLevels { get; internal set; }
-            public int Frame1Offset { get; internal set; } //offset to the first frame
-            public int Frame2Offset { get; internal set; } //offset to the second frame
+            public int Frame1Offset { get; internal set; } // Offset to the first frame
+            public int Frame2Offset { get; internal set; } // Offset to the second frame
 
         }
-
 
         [Serializable]
         public struct FrameHeader
@@ -660,9 +559,7 @@ namespace DaggerfallConnect.Arena2
             public ChunkType type;
             public int numSubChunks;
 
-            //pos in file stream
-            internal long posInFile;
-
+            internal long posInFile;        // Pos in file stream
         }
 
         [Serializable]
@@ -672,20 +569,17 @@ namespace DaggerfallConnect.Arena2
             public ChunkType type;
         }
 
-
         public enum FLIC_Format
         {
             FLI = -20719,
             FLIC = -20718
         }
 
-
         public enum CinematicSpeed
         {
             FLI = 70,
             FLIC = 1000
         }
-
 
         public enum ChunkType
         {
@@ -716,14 +610,10 @@ namespace DaggerfallConnect.Arena2
             SHIFT = 42,
             PATHMAP = 43,
 
-            PREFIX_TYPE = -3600,  
-            FRAME_TYPE = -3590, 
+            PREFIX_TYPE = -3600,
+            FRAME_TYPE = -3590,
         }
 
-
-
-
         #endregion
-
     }
 }

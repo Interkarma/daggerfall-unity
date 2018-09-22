@@ -84,6 +84,8 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(DumpBlock.name, DumpBlock.description, DumpBlock.usage, DumpBlock.Execute);
             ConsoleCommandsDatabase.RegisterCommand(DumpLocBlocks.name, DumpLocBlocks.description, DumpLocBlocks.usage, DumpLocBlocks.Execute);
             ConsoleCommandsDatabase.RegisterCommand(DumpBuilding.name, DumpBuilding.description, DumpBuilding.usage, DumpBuilding.Execute);
+
+            ConsoleCommandsDatabase.RegisterCommand(PlayFLC.name, PlayFLC.description, PlayFLC.usage, PlayFLC.Execute);
         }
 
         private static class DumpBlock
@@ -1679,6 +1681,25 @@ namespace Wenzil.Console
                 {
                     return ex.Message;
                 }
+            }
+        }
+
+        private static class PlayFLC
+        {
+            public static readonly string name = "playflc";
+            public static readonly string description = "Play the specified .FLC file";
+            public static readonly string usage = "playflc {filename.flc} (e.g. playflc azura.flc)";
+
+            public static string Execute(params string[] args)
+            {
+                if (args == null || args.Length < 1)
+                    return usage;
+
+                DaggerfallWorkshop.Game.UserInterfaceWindows.DemoFLCWindow window = new DaggerfallWorkshop.Game.UserInterfaceWindows.DemoFLCWindow(DaggerfallUI.Instance.UserInterfaceManager);
+                window.Filename = args[0];
+                DaggerfallUI.Instance.UserInterfaceManager.PushWindow(window);
+
+                return "Finished";
             }
         }
 
