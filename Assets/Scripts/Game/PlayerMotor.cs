@@ -284,7 +284,8 @@ namespace DaggerfallWorkshop.Game
 
             acrobatMotor.HitHead(ref moveDirection);
 
-            groundMotor.MoveOnGround(moveDirection, ref collisionFlags, ref grounded);
+            groundMotor.MoveOnGround(moveDirection);
+            grounded = (collisionFlags & CollisionFlags.Below) != 0;
         }
 
         void Update()
