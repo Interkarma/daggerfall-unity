@@ -363,20 +363,11 @@ namespace DaggerfallWorkshop.Game
 
         public void rotateBuildingNameplates(float angle)
         {
-            //undoNameplateOffsets();
             for (int i = 0; i < buildingNameplates.Length; i++)
             {
                 BuildingNameplate buildingNameplate = buildingNameplates[i];
 
                 buildingNameplate.gameObject.transform.Rotate(new Vector3(0.0f, angle, 0.0f));
-
-                /*
-                // rotate stored corners of nameplates (they are used for collision computations)
-                buildingNameplate.upperLeftCorner = Quaternion.Euler(0, 0, -angle) * buildingNameplate.upperLeftCorner;
-                buildingNameplate.upperRightCorner = Quaternion.Euler(0, 0, -angle) * buildingNameplate.upperRightCorner;
-                buildingNameplate.lowerLeftCorner = Quaternion.Euler(0, 0, -angle) * buildingNameplate.lowerLeftCorner;
-                buildingNameplate.lowerRightCorner = Quaternion.Euler(0, 0, -angle) * buildingNameplate.lowerRightCorner;
-                */
 
                 // rotate stored corners of nameplates (used for collision computations)
                 buildingNameplate.upperLeftCorner = Quaternion.AngleAxis(-angle, Vector3.forward) * buildingNameplate.upperLeftCorner;
@@ -386,13 +377,10 @@ namespace DaggerfallWorkshop.Game
 
                 buildingNameplates[i] = buildingNameplate;
             }
-            //computeNameplateOffsets();
-            //applyNameplateOffsets();
         }
 
         public void resetRotationBuildingNameplates()
         {
-            //undoNameplateOffsets();
             for (int i = 0; i < buildingNameplates.Length; i++)
             {
                 BuildingNameplate buildingNameplate = buildingNameplates[i];
@@ -404,8 +392,6 @@ namespace DaggerfallWorkshop.Game
                 buildingNameplate.lowerRightCorner = new Vector2(buildingNameplate.width, -buildingNameplate.height * 0.5f);
                 buildingNameplates[i] = buildingNameplate;
             }
-            //computeNameplateOffsets();
-            //applyNameplateOffsets();
         }
 
         #endregion
@@ -817,7 +803,7 @@ namespace DaggerfallWorkshop.Game
                         }
                     }
                 }
-            }            
+            }
 
             // convert the list of building nameplates to an array for performance reasons
             buildingNameplates = new BuildingNameplate[buildingNameplatesList.Count];
