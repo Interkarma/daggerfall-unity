@@ -171,9 +171,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         ToolTip buttonToolTip = null;
 
         // these boolean flags are used to indicate which mouse button was pressed over which gui button/element - these are set in the event callbacks
-#pragma warning disable 414
-        bool leftMouseClickedOnPanelAutomap = false; // used for debug teleport mode clicks
-#pragma warning restore 414
         bool leftMouseDownOnPanelAutomap = false;
         bool rightMouseDownOnPanelAutomap = false;
         bool leftMouseDownOnForwardButton = false;
@@ -1262,8 +1259,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (alreadyInMouseDown)
                 return;
 
-            leftMouseClickedOnPanelAutomap = true; // used for debug teleport mode clicks
-
             Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
             oldMousePosition = mousePosition;
             leftMouseDownOnPanelAutomap = true;
@@ -1272,7 +1267,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void PanelAutomap_OnMouseUp(BaseScreenComponent sender, Vector2 position)
         {
-            leftMouseClickedOnPanelAutomap = false; // used for debug teleport mode clicks
             leftMouseDownOnPanelAutomap = false;
             alreadyInMouseDown = false;
         }
