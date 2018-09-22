@@ -74,18 +74,6 @@ Real quiet around ___mondung_ lately.
 <--->
 Wonder what happened to that pig-thing that used to run around these parts.
 
-QuestorPostsuccess:  [1008]
-Error: x0c00y00.q tried to display text
-
-QuestorPostsuccess:  [1008]
-<ce>                                   .
-
-QuestorPostfailure:  [1009]
-Error: x0c00y00.q tried to display text
-
-QuestorPostfailure:  [1009]
-<ce>                                   .
-
 Message:  1011
 The least of the daedra princes. He is their Master of the Hunt.
 <--->
@@ -143,31 +131,31 @@ Clock _delay_ 01:00 0 flag 1 range 0 1
 Foe _monster_ is Wereboar
 
 --	Quest start-up:
-	start timer _1stparton_ 
-	reveal _mondung_ 
-	log 1020 step 0 
-	place foe _monster_ at _mondung_ 
+	start timer _1stparton_
+	reveal _mondung_
+	log 1020 step 0
+	place foe _monster_ at _mondung_
 
 _pcgetsgold_ task:
-	when _mondead_ and _qgclicked_ 
-	give pc _artifact_ 
-	start timer _delay_ 
+	when _mondead_ and _qgclicked_
+	give pc _artifact_
+	start timer _delay_
 
 _mondead_ task:
-	killed 1 _monster_ 
-	say 1030 
-	create npc _contact_ 
+	killed 1 _monster_
+	say 1030
+	create npc _contact_
 
 _qgclicked_ task:
-	clicked npc _contact_ 
+	clicked npc _contact_
 
 _1stparton_ task:
-	end quest 
+	end quest
 
 variable _2ndparton_
 _clearclick_ task:
-	when not _mondead_ and _qgclicked_ 
-	clear _qgclicked_ _clearclick_ 
+	when not _mondead_ and _qgclicked_
+	clear _qgclicked_ _clearclick_
 
 _delay_ task:
-	end quest 
+	end quest

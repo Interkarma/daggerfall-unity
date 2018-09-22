@@ -79,18 +79,6 @@ I hear %god sent us an angel to rid ___mondung_ of that accursed lich.
 <--->
 We may never know who destroyed that lich in ___mondung_, but he's in our prayers.
 
-QuestorPostsuccess:  [1008]
-Error: Quest 90c00y00.q tried to display text
-
-QuestorPostsuccess:  [1008]
-<ce>                                   
-
-QuestorPostfailure:  [1009]
-Error: Quest 90c00y00.q tried to display text
-
-QuestorPostfailure:  [1009]
-<ce>                                   
-
 Message:  1011
 _qgfriend_ is that creepy =qgfriend_ over at __qgfriend_ to the %di.
 <--->

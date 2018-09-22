@@ -7,6 +7,7 @@ using UnityEngine;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -91,6 +92,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (menu) {
                 CloseWindow();
             }
+        }
+
+        // Not required for this class.
+        public override MacroDataSource GetMacroDataSource()
+        {
+            throw new System.NotImplementedException();
         }
 
         #endregion

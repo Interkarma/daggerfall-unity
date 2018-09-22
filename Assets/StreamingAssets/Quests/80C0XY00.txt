@@ -72,18 +72,6 @@ I hear that seducer was murdered by her master's agents for falling in love.
 <--->
 Made me nervous -- that seducer just sitting in that hole, waiting for something.
 
-QuestorPostsuccess:  [1008]
-Error: Quest 80c00y00.q tried to display text
-
-QuestorPostsuccess:  [1008]
-<ce>                                   
-
-QuestorPostfailure:  [1009]
-Error: Quest 80c00y00.q tried to display text
-
-QuestorPostfailure:  [1009]
-<ce>                                   
-
 Message:  1011
 _qgfriend_ is a noble, rumored to have had a secret romance with a dark lady.
 <--->

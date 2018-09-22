@@ -72,18 +72,6 @@ Lots of people are happy about =monster_'s death. Just desserts for %g3 ilk.
 <--->
 The orgies have started up again now that =monster_'s out of the picture.
 
-QuestorPostsuccess:  [1008]
-Error: Quest 70c00y00.q tried to display text
-
-QuestorPostsuccess:  [1008]
-<ce>                                   
-
-QuestorPostfailure:  [1009]
-Error: Quest 70c00y00.q tried to display text
-
-QuestorPostfailure:  [1009]
-<ce>                                   
-
 Message:  1011
 Sanguine is the Daedra Prince of Lust. Anything in excess is his motto.
 <--->

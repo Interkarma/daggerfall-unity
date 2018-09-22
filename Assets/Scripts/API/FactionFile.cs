@@ -619,6 +619,15 @@ namespace DaggerfallConnect.Arena2
             Fey = 19,           // Only used on #513 "The Fey"
         }
 
+        /// <summary>
+        /// Faction flags bitmask values.
+        /// </summary>
+        public enum Flags
+        {
+            RulerImmune = 0x10,
+            Summoned = 0x40,
+        }
+
         #endregion
 
         #region Structures

@@ -84,18 +84,6 @@ RumorsPostsuccess:  [1007]
 <--->
 =monster_ got its reward for boasting about its power over life and death.
 
-QuestorPostsuccess:  [1008]
-Error: Quest 50c00y00.q tried to display text
-
-QuestorPostsuccess:  [1008]
-<ce>                                   
-
-QuestorPostfailure:  [1009]
-Error: Quest 50c00y00.q tried to display text
-
-QuestorPostfailure:  [1009]
-<ce>                                   
-
 Message:  1011
 They say _qgfriend_ is a very pleasant and charming =qgfriend_, who is also a daedra-worshipper.
 <--->

@@ -14,20 +14,72 @@ using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
     /// <summary>
-    /// Abstract class for popup windows that can offer quests.
+    /// Abstract class for popup windows that can offer quests, including from summoned Daedra.
     /// </summary>
-    public abstract class DaggerfallQuestPopupWindow : DaggerfallPopupWindow
+    public abstract class DaggerfallQuestPopupWindow : DaggerfallPopupWindow, IMacroContextProvider
     {
+        protected const int NotEnoughGoldId = 454;
+        protected const int SummonNotToday = 480;
+        protected const int SummonAreYouSure = 481;
+        protected const int SummonBefore = 482;
+        protected const int SummonFailed = 484;
+
+        public struct DaedraData
+        {
+            public readonly int factionId;
+            public readonly int dayOfYear;
+            public readonly string quest;
+            public readonly string vidFile;
+            public readonly Weather.WeatherType bonusCond;
+
+            public DaedraData(int factionId, string quest, int dayOfYear, string vidFile, Weather.WeatherType bonusCond)
+            {
+                this.factionId = factionId;
+                this.quest = quest;
+                this.dayOfYear = dayOfYear;
+                this.vidFile = vidFile;
+                this.bonusCond = bonusCond;
+            }
+        }
+
+        public static DaedraData[] daedraData = new DaedraData[] {
+            new DaedraData((int) FactionFile.FactionIDs.Hircine, "X0C00Y00", 155, "HIRCINE.FLC", Weather.WeatherType.None),  // Restrict to only glenmoril witches?
+            new DaedraData((int) FactionFile.FactionIDs.Clavicus_Vile, "V0C00Y00", 1, "CLAVICUS.FLC", Weather.WeatherType.None),
+            new DaedraData((int) FactionFile.FactionIDs.Mehrunes_Dagon, "Y0C00Y00", 320, "MEHRUNES.FLC", Weather.WeatherType.None),
+            new DaedraData((int) FactionFile.FactionIDs.Molag_Bal, "20C00Y00", 350, "MOLAGBAL.FLC", Weather.WeatherType.None),
+            new DaedraData((int) FactionFile.FactionIDs.Sanguine, "70C00Y00", 46, "SANGUINE.FLC", Weather.WeatherType.Rain),
+            new DaedraData((int) FactionFile.FactionIDs.Peryite, "50C00Y00", 99, "PERYITE.FLC", Weather.WeatherType.Rain),
+            new DaedraData((int) FactionFile.FactionIDs.Malacath, "80C00Y00", 278, "MALACATH.FLC", Weather.WeatherType.None),
+            new DaedraData((int) FactionFile.FactionIDs.Hermaeus_Mora, "W0C00Y00", 65, "HERMAEUS.FLC", Weather.WeatherType.None),
+            new DaedraData((int) FactionFile.FactionIDs.Sheogorath, "60C00Y00", 32, "SHEOGRTH.FLC", Weather.WeatherType.Thunder),
+            new DaedraData((int) FactionFile.FactionIDs.Boethiah, "U0C00Y00", 302, "BOETHIAH.FLC", Weather.WeatherType.Rain),
+            new DaedraData((int) FactionFile.FactionIDs.Namira, "30C00Y00", 129, "NAMIRA.FLC", Weather.WeatherType.None),
+            new DaedraData((int) FactionFile.FactionIDs.Meridia, "10C00Y00", 13, "MERIDIA.FLC", Weather.WeatherType.None),
+            new DaedraData((int) FactionFile.FactionIDs.Vaernima, "90C00Y00", 190, "VAERNIMA.FLC", Weather.WeatherType.None),
+            new DaedraData((int) FactionFile.FactionIDs.Nocturnal, "40C00Y00", 248, "NOCTURNA.FLC", Weather.WeatherType.Rain),
+            new DaedraData((int) FactionFile.FactionIDs.Mephala, "Z0C00Y00", 283, "MEPHALA.FLC", Weather.WeatherType.None),
+            new DaedraData((int) FactionFile.FactionIDs.Azura, "T0C00Y00", 81, "AZURA.FLC", Weather.WeatherType.None),
+        };
+
         protected Quest offeredQuest = null;
+
+        protected DaedraData daedraToSummon;
+        protected FactionFile.FactionData summonerFactionData;
 
         public DaggerfallQuestPopupWindow(IUserInterfaceManager uiManager, IUserInterfaceWindow previousWindow = null)
             : base(uiManager, previousWindow)
         {
         }
+
+        public abstract MacroDataSource GetMacroDataSource();
+
+        #region Service Handling: Quests
 
         protected abstract void GetQuest();
         
@@ -62,7 +114,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             messageBox.AllowCancel = true;
             messageBox.ParentPanel.BackgroundColor = Color.clear;
 
-            // Exit on close if requested
+            // Exit menu on close if requested
             if (exitOnClose)
                 messageBox.OnClose += QuestPopupMessage_OnClose;
 
@@ -102,5 +154,130 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             CloseWindow();
         }
+
+        #endregion
+
+        #region Service Handling: Daedra Summoning
+
+        protected void DaedraSummoningService(int npcFactionId)
+        {
+            if (!GameManager.Instance.PlayerEntity.FactionData.GetFactionData(npcFactionId, out summonerFactionData))
+            {
+                DaggerfallUnity.LogMessage("Error no faction data for NPC FactionId: " + npcFactionId);
+                return;
+            }
+            // Select appropriate Daedra for summoning attempt.
+            if (summonerFactionData.id == (int) FactionFile.FactionIDs.The_Glenmoril_Witches)
+            {   // Always Hircine at Glenmoril witches.
+                daedraToSummon = daedraData[0];
+            }
+            else if ((FactionFile.FactionTypes) summonerFactionData.type == FactionFile.FactionTypes.WitchesCoven)
+            {   // Witches covens summon a random Daedra.
+                daedraToSummon = daedraData[Random.Range(1, daedraData.Length)];
+            }
+            else
+            {
+                int dayOfYear = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.DayOfYear;
+                foreach (DaedraData dd in daedraData)
+                {
+                    if (dd.dayOfYear == dayOfYear)
+                    {
+                        daedraToSummon = dd;
+                        break;
+                    }
+                }
+            }
+            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
+            if (daedraToSummon.factionId == 0)
+            {   // Display no summoning message.
+                TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(SummonNotToday);
+                messageBox.SetTextTokens(tokens, this);
+                messageBox.ClickAnywhereToClose = true;
+            }
+            else
+            {   // Ask player if they really want to risk the summoning.
+                messageBox.SetTextTokens(SummonAreYouSure, this);
+                messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
+                messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
+                messageBox.OnButtonClick += ConfirmSummon_OnButtonClick;
+            }
+            uiManager.PushWindow(messageBox);
+        }
+
+        private void ConfirmSummon_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        {
+            sender.CloseWindow();
+            if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
+            {
+                PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+                int summonCost = FormulaHelper.CalculateDaedraSummoningCost(summonerFactionData.rep);
+
+                Debug.LogFormat("rep: {0}  cost: {1}", summonerFactionData.rep, summonCost);
+
+                if (playerEntity.GetGoldAmount() >= summonCost)
+                {
+                    playerEntity.DeductGoldAmount(summonCost);
+
+                    // Default 30% bonus is only applicable to some Daedra in specific weather conditions.
+                    WeatherManager weatherManager = GameManager.Instance.WeatherManager;
+                    int bonus = 0;
+                    if (daedraToSummon.bonusCond == Weather.WeatherType.Rain && weatherManager.IsRaining ||
+                        daedraToSummon.bonusCond == Weather.WeatherType.Thunder && weatherManager.IsStorming ||
+                        daedraToSummon.bonusCond == Weather.WeatherType.None)
+                        bonus = 30;
+
+                    // Get summoning chance for selected daedra.
+                    int chance = FormulaHelper.CalculateDaedraSummoningChance(playerEntity.FactionData.GetReputation(daedraToSummon.factionId), bonus);
+                    // Sheogorath has a 5% (15% if stormy) chance to replace selected daedra.
+                    int sheoChance = (weatherManager.IsStorming) ? 15 : 5;
+                    int roll = Random.Range(1, 101);
+                    Debug.LogFormat("Summoning {0} with chance = {1}%, Sheogorath chance = {2}%, roll = {3}", daedraToSummon.vidFile, chance, sheoChance, roll);
+
+                    if (roll > chance + sheoChance)
+                    {   // Daedra stood you up!
+                        DaggerfallUI.MessageBox(SummonFailed, this);
+                        return;
+                    }
+                    else if (roll > chance)
+                    {   // Sheogorath appears instead.
+                        daedraToSummon = daedraData[8];
+                    }
+
+                    Debug.Log("Summoning success! Offer the quest...");
+
+                    // Has this Daedra already been summoned by the player?
+                    if (playerEntity.FactionData.GetFlag(daedraToSummon.factionId, FactionFile.Flags.Summoned))
+                    {
+                        DaggerfallUI.MessageBox(SummonBefore, this);  // TODO - play vid with this message
+                    }
+                    else
+                    {   // Record the summoning.
+                        playerEntity.FactionData.SetFlag(daedraToSummon.factionId, FactionFile.Flags.Summoned);
+
+                        // Offer the quest to player.
+                        offeredQuest = GameManager.Instance.QuestListsManager.GetQuest(daedraToSummon.quest, summonerFactionData.id);
+                        if (offeredQuest != null)
+                        {
+                            // Need to use DaggerfallDaedraSummoningWindow here for vid...
+
+                            DaggerfallMessageBox messageBox = QuestMachine.Instance.CreateMessagePrompt(offeredQuest, (int) QuestMachine.QuestMessages.QuestorOffer);
+                            if (messageBox != null)
+                            {
+                                messageBox.OnButtonClick += OfferQuest_OnButtonClick;
+                                messageBox.Show();
+                            }
+
+                            //Quest quest = QuestMachine.Instance.ParseQuest(daedraToSummon.quest);
+                            //uiManager.PushWindow(new DaggerfallDaedraSummoning(uiManager, daedraToSummon));
+                        }
+                    }
+                }
+                else
+                    DaggerfallUI.MessageBox(NotEnoughGoldId);
+            }
+        }
+
+        #endregion
+
     }
 }

@@ -73,18 +73,6 @@ It's considerably warmer than it has been lately.
 <--->
 The weather isn't as biting as it used to be.
 
-QuestorPostsuccess:  [1008]
-Error: y0c00y00.q tried to display text
-
-QuestorPostsuccess:  [1008]
-<ce>                                   .
-
-QuestorPostfailure:  [1009]
-Error: y0c00y00.q tried to display text
-
-QuestorPostfailure:  [1009]
-<ce>                                   .
-
 Message:  1011
 Mehrunes Dagon is the Lord of Destruction, the most violent of the Daedra.
 <--->
