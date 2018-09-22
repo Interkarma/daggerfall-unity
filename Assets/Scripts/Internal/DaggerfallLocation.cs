@@ -296,6 +296,39 @@ namespace DaggerfallWorkshop
 
         #region Private Methods
 
+        /// <summary>
+        /// Helper to get location rect in world coordinates.
+        /// </summary>
+        /// <param name="location">Target location.</param>
+        /// <returns>Location rect in world space. xMin,yMin is SW corner. xMax,yMax is NE corner.</returns>
+        public static Rect GetLocationRect(DFLocation location)
+        {
+            // This finds the absolute SW origin of map pixel in world coords
+            DFPosition mapPixel = MapsFile.LongitudeLatitudeToMapPixel(location.MapTableData.Longitude, location.MapTableData.Latitude);
+            DFPosition worldOrigin = MapsFile.MapPixelToWorldCoord(mapPixel.X, mapPixel.Y);
+
+            // Find tile offset point using same logic as terrain helper
+            DFPosition tileOrigin = TerrainHelper.GetLocationTerrainTileOrigin(location);
+
+            // Adjust world origin by tileorigin*2 in world units
+            worldOrigin.X += (tileOrigin.X * 2) * MapsFile.WorldMapTileDim;
+            worldOrigin.Y += (tileOrigin.Y * 2) * MapsFile.WorldMapTileDim;
+
+            // Get width and height of location in world units
+            int width = location.Exterior.ExteriorData.Width * MapsFile.WorldMapRMBDim;
+            int height = location.Exterior.ExteriorData.Height * MapsFile.WorldMapRMBDim;
+
+            // Create location rect in world coordinates
+            Rect locationRect = new Rect() {
+                xMin = worldOrigin.X,
+                xMax = worldOrigin.X + width,
+                yMin = worldOrigin.Y,
+                yMax = worldOrigin.Y + height,
+            };
+
+            return locationRect;
+        }
+
         void SetLocationRect()
         {
             // Convert world coords to map pixel coords then back again

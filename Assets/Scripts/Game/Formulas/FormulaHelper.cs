@@ -886,12 +886,18 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         public static void InflictPoison(DaggerfallEntity target, Poisons poisonType, bool bypassResistance)
         {
-                                            // Poison types. 0-7 are weapon poisons. 8-11 are drugs
-                                            // 0     1    2     3     4     5    6    7     8    9   10   11
-            ushort[] MinMinutesToPoison = {    4,   10,   0,    5,    0,    0,   2,   0,    2,   1,   2,   0};
-            ushort[] MaxMinutesToPoison = {    4,   10,   0,   10,    0,    0,   2,   0,   12,   4,  12,   0};
-            ushort[] MinRoundsOfPoison  = {    3,   20,   1,    5,    2,    1,   5,   1,    2,   2,   1,   5};
-            ushort[] MaxRoundsOfPoison  = {   10, 1000,   4,   30,   10,    2,  20,   3,    6,   2,   4,  20};
+            // Target must have an entity behaviour and effect manager
+            EntityEffectManager effectManager = null;
+            if (target.EntityBehaviour != null)
+            {
+                effectManager = target.EntityBehaviour.GetComponent<EntityEffectManager>();
+                if (effectManager == null)
+                    return;
+            }
+            else
+            {
+                return;
+            }
 
             // Note: In classic, AI characters' immunity to poison is ignored, although the level 1 check below still gives rats immunity
             DFCareer.Tolerance toleranceFlags = target.Career.Poison;
@@ -902,15 +908,15 @@ namespace DaggerfallWorkshop.Game.Formulas
             {
                 if (target.Level != 1)
                 {
-                    int index = (int)poisonType - 128;
-                    int roundsOfPoison = UnityEngine.Random.Range(MinRoundsOfPoison[index], MaxRoundsOfPoison[index] + 1);
-                    int minutesUntilStartingPoison = UnityEngine.Random.Range(MinMinutesToPoison[index], MaxMinutesToPoison[index] + 1);
-                    Debug.Log(target.Name + " afflicted with " + poisonType + ", starting in " + minutesUntilStartingPoison
-                        + " minutes, lasting for " + roundsOfPoison + " minutes.");
+                    // Infect target
+                    EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreatePoison(poisonType);
+                    effectManager.AssignBundle(bundle);
                 }
             }
             else
-                Debug.Log("Poison resisted.");
+            {
+                Debug.LogFormat("Poison resisted by {0}.", target.EntityBehaviour.name);
+            }
         }
 
         static int SavingThrow(int elementType, DFCareer.EffectFlags effectFlags, DaggerfallEntity target, int modifier)
