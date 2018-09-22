@@ -99,7 +99,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 messageTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(textId);
                 MacroHelper.ExpandMacros(ref messageTokens, mcp);
             }
-
             idx = 0;
             DisplayNextTextChunk();     
         }
@@ -124,7 +123,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void HandleAnswer(QuestMachine.QuestMessages qMessage)
         {
-            Debug.Log("press");
             lastChunk = false;
             answerGiven = true;
             idx = 0;
@@ -154,7 +152,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void PlayerPanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            Debug.Log("click " + sender);
             // If done, close window on click after last chunk, else display next chunk of text.
             if (lastChunk && answerGiven)
                 CloseWindow();

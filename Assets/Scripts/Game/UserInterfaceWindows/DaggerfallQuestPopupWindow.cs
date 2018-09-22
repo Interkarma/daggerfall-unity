@@ -29,7 +29,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected const int SummonAreYouSure = 481;
         protected const int SummonBefore = 482;
         protected const int SummonFailed = 484;
-
+        
         public struct DaedraData
         {
             public readonly int factionId;
@@ -176,7 +176,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 daedraToSummon = daedraData[Random.Range(1, daedraData.Length)];
             }
             else
-            {
+            {   // Is this a summoning day?
                 int dayOfYear = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.DayOfYear;
                 foreach (DaedraData dd in daedraData)
                 {
@@ -189,7 +189,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
             if (daedraToSummon.factionId == 0)
-            {   // Display no summoning message.
+            {   // Display not summoning day message.
                 TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(SummonNotToday);
                 messageBox.SetTextTokens(tokens, this);
                 messageBox.ClickAnywhereToClose = true;
@@ -212,8 +212,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
                 int summonCost = FormulaHelper.CalculateDaedraSummoningCost(summonerFactionData.rep);
 
-                Debug.LogFormat("rep: {0}  cost: {1}", summonerFactionData.rep, summonCost);
-
                 if (playerEntity.GetGoldAmount() >= summonCost)
                 {
                     playerEntity.DeductGoldAmount(summonCost);
@@ -226,13 +224,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         daedraToSummon.bonusCond == Weather.WeatherType.None)
                         bonus = 30;
 
-                    // Get summoning chance for selected daedra.
-                    int chance = FormulaHelper.CalculateDaedraSummoningChance(playerEntity.FactionData.GetReputation(daedraToSummon.factionId), bonus);
                     // Sheogorath has a 5% (15% if stormy) chance to replace selected daedra.
                     int sheoChance = (weatherManager.IsStorming) ? 15 : 5;
+                    // Get summoning chance for selected daedra and roll.
+                    int chance = FormulaHelper.CalculateDaedraSummoningChance(playerEntity.FactionData.GetReputation(daedraToSummon.factionId), bonus);
                     int roll = Random.Range(1, 101);
-                    Debug.LogFormat("Summoning {0} with chance = {1}%, Sheogorath chance = {2}%, roll = {3}",
-                        daedraToSummon.vidFile.Substring(0, daedraToSummon.vidFile.Length-4), chance, sheoChance, roll);
+                    Debug.LogFormat("Summoning {0} with chance = {1}%, Sheogorath chance = {2}%, roll = {3}, summoner rep = {4}, cost: {5}",
+                        daedraToSummon.vidFile.Substring(0, daedraToSummon.vidFile.Length-4), chance, sheoChance, roll, summonerFactionData.rep, summonCost);
 
                     if (roll > chance + sheoChance)
                     {   // Daedra stood you up!
@@ -266,7 +264,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     }
                 }
                 else
-                    DaggerfallUI.MessageBox(NotEnoughGoldId);
+                {   // Display customised not enough gold message so players don't need to guess the cost.
+                    TextFile.Token[] notEnoughGold = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(NotEnoughGoldId);
+                    TextFile.Token[] msg = new TextFile.Token[] {
+                        new TextFile.Token() { formatting = TextFile.Formatting.Text, text = HardStrings.serviceSummonCost1 },
+                        new TextFile.Token() { formatting = TextFile.Formatting.JustifyCenter },
+                        new TextFile.Token() { formatting = TextFile.Formatting.Text, text = HardStrings.serviceSummonCost2 + summonCost + HardStrings.serviceSummonCost3 },
+                        new TextFile.Token() { formatting = TextFile.Formatting.JustifyCenter },
+                        new TextFile.Token() { formatting = TextFile.Formatting.NewLine },
+                        notEnoughGold[0],
+                        new TextFile.Token() { formatting = TextFile.Formatting.JustifyCenter },
+                    };
+                    DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
+                    messageBox.SetTextTokens(msg, this);
+                    messageBox.ClickAnywhereToClose = true;
+                    uiManager.PushWindow(messageBox);
+                }
             }
         }
 
