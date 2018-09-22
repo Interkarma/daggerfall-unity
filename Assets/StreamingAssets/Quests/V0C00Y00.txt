@@ -78,18 +78,6 @@ A lot of people feel safer knowing that werewolf is dead.
 <--->
 You heard about that werewolf some %ra hunted down?
 
-QuestorPostsuccess:  [1008]
-Error: v0c00y00.q tried to display text
-
-QuestorPostsuccess:  [1008]
-<ce>                                   .
-
-QuestorPostfailure:  [1009]
-Error: v0c00y00.q tried to display text
-
-QuestorPostfailure:  [1009]
-<ce>                                   .
-
 Message:  1011
 Clavicus Vile is the consummate politician of Oblivion.
 <--->

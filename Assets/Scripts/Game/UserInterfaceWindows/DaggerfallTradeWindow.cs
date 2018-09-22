@@ -638,16 +638,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Calculate the weight of all items picked from shelves, then get chance of shoplifting success.
                 int weightAndNumItems = (int) basketItems.GetWeight() + basketItems.Count;
                 int chance = FormulaHelper.CalculateShopliftingChance(PlayerEntity, null, buildingDiscoveryData.quality, weightAndNumItems);
+                PlayerEntity.TallySkill(DFCareer.Skills.Pickpocket, 1);
 
                 if (UnityEngine.Random.Range(0, 101) > chance)
                 {
-                    DaggerfallUI.Instance.PopupMessage(HardStrings.youAreSuccessful);
+                    DaggerfallUI.AddHUDText(HardStrings.youAreSuccessful, 2);
                     PlayerEntity.Items.TransferAll(basketItems);
                     PlayerEntity.TallyCrimeGuildRequirements(true, 1);
                 }
                 else
                 {   // Register crime and start spawning guards.
-                    DaggerfallUI.Instance.PopupMessage(HardStrings.youAreNotSuccessful);
+                    DaggerfallUI.AddHUDText(HardStrings.youAreNotSuccessful, 2);
                     PlayerEntity.CrimeCommitted = PlayerEntity.Crimes.Theft;
                     PlayerEntity.SpawnCityGuards(true);
                 }

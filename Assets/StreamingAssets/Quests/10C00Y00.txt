@@ -58,12 +58,6 @@ They say that some creature from =monster_'s collection rose up and killed %g2.
 <--->
 =monster_ was apparently killed by someone interested in %g3 vast collection.
 
-QuestorPostsuccess:  [1008]
-<ce>             Error: Tried to call questtext 1008. Whoopsy!
-
-QuestorPostfailure:  [1009]
-<ce>             Error: Tried to call questtext 1009. Ye Gods!
-
 Message:  1011
 _qgfriend_ is the name of that =qgfriend_ at __qgfriend_, just %di of here.
 <--->

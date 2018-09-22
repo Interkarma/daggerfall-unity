@@ -56,7 +56,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int TrainingTooSkilledId = 4022;
         const int TrainingToSoonId = 4023;
         const int TrainSkillId = 5221;
-        const int NotEnoughGoldId = 454;
         const int InsufficientRankId = 3100;
         const int TooGenerousId = 702;
         const int DonationThanksId = 703;
@@ -343,6 +342,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     uiManager.PushWindow(DaggerfallUI.Instance.DfTravelMapWindow);
                     break;
 
+                case GuildServices.DaedraSummoning:
+                    DaedraSummoningService((int) npcService);
+                    break;
+
                 case GuildServices.ReceiveArmor:
                     ReceiveArmorService();
                     break;
@@ -429,7 +432,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // Just exit if this NPC already involved in an active quest
             // If quest conditions are complete the quest system should pickup ending
-            if (QuestMachine.Instance.IsLastNPCClickedAnActiveQuestor())
+            if (QuestMachine.Instance.IsLastNPCClickedAnActiveQuestor(guild))
             {
                 CloseWindow();
                 return;
@@ -681,7 +684,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     playerEntity.DeductGoldAmount(curingCost);
                     GameManager.Instance.PlayerEffectManager.CureAllDiseases();
                     playerEntity.TimeToBecomeVampireOrWerebeast = 0;
-                    DaggerfallUI.MessageBox("You are cured.");
+                    DaggerfallUI.MessageBox(HardStrings.serviceCured);
                 }
                 else
                     DaggerfallUI.MessageBox(NotEnoughGoldId);
@@ -720,7 +723,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Macro handling
 
-        public MacroDataSource GetMacroDataSource()
+        public override MacroDataSource GetMacroDataSource()
         {
             return new GuildServiceMacroDataSource(this);
         }
@@ -754,6 +757,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             public override string GodDesc()
             {
                 return Temple.GetDeityDesc((Temple.Divines) parent.buildingFactionId);
+            }
+
+            public override string Daedra()
+            {
+                FactionFile.FactionData factionData;
+                if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(parent.daedraToSummon.factionId, out factionData))
+                    return factionData.name;
+                else
+                    return "%dae[error]";
             }
         }
 

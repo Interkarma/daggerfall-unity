@@ -571,7 +571,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <summary>
         /// Instantiate a new quest from source text array.
         /// </summary>
-        /// <param name="questSource">Array of lines from quuest source file.</param>
+        /// <param name="questSource">Array of lines from quest source file.</param>
         /// <returns>Quest.</returns>
         public Quest ParseQuest(string questName, string[] questSource)
         {
@@ -779,8 +779,9 @@ namespace DaggerfallWorkshop.Game.Questing
         /// Checks if last NPC clicked is questor for any quests.
         /// This is used for quest turn-in and reward process.
         /// </summary>
+        /// <param name="mcp">External secondary context provider for quest macro expansion. (optional)</param>
         /// <returns>True if this NPC is a questor in any quest.</returns>
-        public bool IsLastNPCClickedAnActiveQuestor()
+        public bool IsLastNPCClickedAnActiveQuestor(IMacroContextProvider mcp = null)
         {
             foreach(Quest quest in quests.Values)
             {
@@ -795,6 +796,8 @@ namespace DaggerfallWorkshop.Game.Questing
                         if (IsNPCDataEqual(person.QuestorData, lastNPCClicked.Data))
                         {
                             LogFormat(quest, "This person is used in quest as Person {1}", person.ParentQuest.UID, person.Symbol.Original);
+                            if (mcp != null)
+                                quest.ExternalMCP = mcp;
                             return true;
                         }
                     }

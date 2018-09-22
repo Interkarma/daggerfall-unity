@@ -61,18 +61,6 @@ Real quiet around ___mondung_ lately.
 <--->
 There was a lot of excitement around ___mondung_, but it's all calmed down.
 
-QuestorPostsuccess:  [1008]
-Error: Quest 20c00y00.q tried to display text
-
-QuestorPostsuccess:  [1008]
-<ce>                                   
-
-QuestorPostfailure:  [1009]
-Error: Quest 20c00y00.q tried to display text
-
-QuestorPostfailure:  [1009]
-<ce>                                   
-
 Message:  1011
 A regal Daedra Prince, said to be the most power-mad of all daedra.
 <--->

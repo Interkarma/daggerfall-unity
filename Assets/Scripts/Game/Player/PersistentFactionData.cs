@@ -428,6 +428,32 @@ namespace DaggerfallWorkshop.Game.Player
 
         #endregion
 
+        #region Flags
+
+        public bool GetFlag(int factionID, FactionFile.Flags flag)
+        {
+            if (factionDict.ContainsKey(factionID))
+            {
+                FactionFile.FactionData factionData = factionDict[factionID];
+                return (factionData.flags & (int) flag) > 0;
+            }
+            return false;
+        }
+
+        public bool SetFlag(int factionID, FactionFile.Flags flag)
+        {
+            if (factionDict.ContainsKey(factionID))
+            {
+                FactionFile.FactionData factionData = factionDict[factionID];
+                factionData.flags = factionData.flags | (int) flag;
+                factionDict[factionID] = factionData;
+                return true;
+            }
+            return false;
+        }
+
+        #endregion
+
         #region Power
 
         /// <summary>

@@ -5,7 +5,6 @@ schema: *key,text
 resolution,                 Resolution
 fullscreen,                 Fullscreen
 quality,                    Quality
-options,                    Options
 play,                       Play
 mods,                       Mods
 advanced,                   Advanced

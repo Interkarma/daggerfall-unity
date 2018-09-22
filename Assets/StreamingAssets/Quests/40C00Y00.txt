@@ -77,18 +77,6 @@ Well, I can't say I'm surprised about =monster_; %g3 past caught up to %g2.
 <--->
 I don't even think the Archmagister is sad to hear of the death of =monster_.
 
-QuestorPostsuccess:  [1008]
-Error: Quest 40c00y00.q tried to display text
-
-QuestorPostsuccess:  [1008]
-<ce>                                    
-
-QuestorPostfailure:  [1009]
-Error: Quest 40c00y00.q tried to display text
-
-QuestorPostfailure:  [1009]
-<ce>                                    
-
 Message:  1011
 _qgfriend_ is one of the regulars at __qgfriend_, just %di of here.
 <--->

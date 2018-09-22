@@ -1063,28 +1063,28 @@ namespace DaggerfallWorkshop.Game
             return tex;
         }
 
-        public static DaggerfallMessageBox MessageBox(string message, bool wrapText = false, IMacroContextProvider mds = null)
+        public static DaggerfallMessageBox MessageBox(string message, bool wrapText = false, IMacroContextProvider mcp = null)
         {
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(Instance.uiManager, Instance.uiManager.TopWindow, wrapText);
-            messageBox.SetText(message);
+            messageBox.SetText(message, mcp);
             messageBox.ClickAnywhereToClose = true;
             messageBox.Show();
             return messageBox;
         }
 
-        public static DaggerfallMessageBox MessageBox(string[] message, IMacroContextProvider mds = null)
+        public static DaggerfallMessageBox MessageBox(string[] message, IMacroContextProvider mcp = null)
         {
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(Instance.uiManager, Instance.uiManager.TopWindow);
-            messageBox.SetText(message);
+            messageBox.SetText(message, mcp);
             messageBox.ClickAnywhereToClose = true;
             messageBox.Show();
             return messageBox;
         }
 
-        public static DaggerfallMessageBox MessageBox(int id, IMacroContextProvider mds = null)
+        public static DaggerfallMessageBox MessageBox(int id, IMacroContextProvider mcp = null)
         {
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(Instance.uiManager, Instance.uiManager.TopWindow);
-            messageBox.SetTextTokens(id);
+            messageBox.SetTextTokens(id, mcp);
             messageBox.ClickAnywhereToClose = true;
             messageBox.Show();
             return messageBox;
