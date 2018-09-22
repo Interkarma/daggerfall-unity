@@ -231,7 +231,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     // Sheogorath has a 5% (15% if stormy) chance to replace selected daedra.
                     int sheoChance = (weatherManager.IsStorming) ? 15 : 5;
                     int roll = Random.Range(1, 101);
-                    Debug.LogFormat("Summoning {0} with chance = {1}%, Sheogorath chance = {2}%, roll = {3}", daedraToSummon.vidFile, chance, sheoChance, roll);
+                    Debug.LogFormat("Summoning {0} with chance = {1}%, Sheogorath chance = {2}%, roll = {3}",
+                        daedraToSummon.vidFile.Substring(0, daedraToSummon.vidFile.Length-4), chance, sheoChance, roll);
 
                     if (roll > chance + sheoChance)
                     {   // Daedra stood you up!
@@ -243,12 +244,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         daedraToSummon = daedraData[8];
                     }
 
-                    Debug.Log("Summoning success! Offer the quest...");
-
                     // Has this Daedra already been summoned by the player?
                     if (playerEntity.FactionData.GetFlag(daedraToSummon.factionId, FactionFile.Flags.Summoned))
                     {
-                        DaggerfallUI.MessageBox(SummonBefore, this);  // TODO - play vid with this message
+                        // Close menu and push DaggerfallDaedraSummoningWindow here for video and dismissal..
+                        CloseWindow();
+                        uiManager.PushWindow(new DaggerfallDaedraSummonedWindow(uiManager, daedraToSummon, SummonBefore, this));
                     }
                     else
                     {   // Record the summoning.
@@ -261,17 +262,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                             // Close menu and push DaggerfallDaedraSummoningWindow here for video and custom quest offer..
                             CloseWindow();
                             uiManager.PushWindow(new DaggerfallDaedraSummonedWindow(uiManager, daedraToSummon, quest));
-
-                            /*
-                            DaggerfallMessageBox messageBox = QuestMachine.Instance.CreateMessagePrompt(offeredQuest, (int) QuestMachine.QuestMessages.QuestorOffer);
-                            if (messageBox != null)
-                            {
-                                messageBox.OnButtonClick += OfferQuest_OnButtonClick;
-                                messageBox.Show();
-                            }
-                            */
-                            //Quest quest = QuestMachine.Instance.ParseQuest(daedraToSummon.quest);
-                            //uiManager.PushWindow(new DaggerfallDaedraSummoning(uiManager, daedraToSummon));
                         }
                     }
                 }

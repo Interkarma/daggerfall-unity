@@ -24,27 +24,38 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class DaggerfallDaedraSummonedWindow : DaggerfallBaseWindow
     {
-        private const int TextLinesPerChunk = 4;
-        private const int TokensPerChunk = TextLinesPerChunk * 2;
+        protected const int TextLinesPerChunk = 4;
+        protected const int TokensPerChunk = TextLinesPerChunk * 2;
 
-        Rect messagePanelRect = new Rect(60, 150, 200, 40);
-
-        Panel messagePanel = new Panel();
+        FLCPlayer playerPanel;
         MultiFormatTextLabel messageLabel;
 
         DaggerfallQuestPopupWindow.DaedraData daedraSummoned;
-        Quest quest;
-        TextFile.Token[] messageTokens;
-        int idx = 0;
-        bool lastChunk = false;
-        bool done = false;
+        Quest daedraQuest;
 
-        public DaggerfallDaedraSummonedWindow(IUserInterfaceManager uiManager, DaggerfallQuestPopupWindow.DaedraData daedraSummoned, Quest quest)
+        int textId;
+        IMacroContextProvider mcp;
+
+        TextFile.Token[] messageTokens;
+
+        bool lastChunk = false;
+        bool answerGiven = false;
+        int idx = 0;
+
+        public DaggerfallDaedraSummonedWindow(IUserInterfaceManager uiManager, DaggerfallQuestPopupWindow.DaedraData daedraSummoned, Quest daedraQuest)
             : base(uiManager)
         {
-            ParentPanel.BackgroundColor = Color.clear;
             this.daedraSummoned = daedraSummoned;
-            this.quest = quest;
+            this.daedraQuest = daedraQuest;
+        }
+
+        public DaggerfallDaedraSummonedWindow(IUserInterfaceManager uiManager, DaggerfallQuestPopupWindow.DaedraData daedraSummoned, int textId, IMacroContextProvider mcp)
+            : base(uiManager)
+        {
+            this.daedraSummoned = daedraSummoned;
+            this.textId = textId;
+            this.mcp = mcp;
+            answerGiven = true;
         }
 
         protected override void Setup()
@@ -52,19 +63,43 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (IsSetup)
                 return;
 
+            // Initialise the video panel.
+            playerPanel = new FLCPlayer()
+            {
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Middle,
+                Size = new Vector2(320, 200),
+                BottomMargin = 13
+            };
+            NativePanel.Components.Add(playerPanel);
+
+            // Start video playing.
+            playerPanel.Load(daedraSummoned.vidFile);
+            if (playerPanel.FLCFile.ReadyToPlay)
+                playerPanel.Start();
+
+            // Add text message area.
             messageLabel = new MultiFormatTextLabel()
             {
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Bottom,
                 ExtraLeading = 3,
-                BottomMargin = 100,
             };
-            NativePanel.Components.Add(messageLabel);
-            NativePanel.OnMouseClick += NativePanel_OnMouseClick;
+            playerPanel.Components.Add(messageLabel);
+            playerPanel.OnMouseClick += PlayerPanel_OnMouseClick;
 
-            // Initialise with the quest offer message.
-            Message message = quest.GetMessage((int) QuestMachine.QuestMessages.QuestorOffer);
-            messageTokens = message.GetTextTokens();
+            // Initialise message to display,
+            if (daedraQuest != null)
+            {   // with the quest offer message.
+                Message message = daedraQuest.GetMessage((int)QuestMachine.QuestMessages.QuestorOffer);
+                messageTokens = message.GetTextTokens();
+            }
+            else
+            {   // with the textId message evaluated with mcp provided.
+                messageTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(textId);
+                MacroHelper.ExpandMacros(ref messageTokens, mcp);
+            }
+
             idx = 0;
             DisplayNextTextChunk();     
         }
@@ -73,13 +108,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.Update();
 
-            if (lastChunk)
+            if (lastChunk && !answerGiven)
             {
-                idx = 0;
                 if (Input.GetKey(KeyCode.Y))
                 {
                     HandleAnswer(QuestMachine.QuestMessages.AcceptQuest);
-                    QuestMachine.Instance.InstantiateQuest(quest);
+                    QuestMachine.Instance.InstantiateQuest(daedraQuest);
                 }
                 else if (Input.GetKey(KeyCode.N))
                 {
@@ -90,12 +124,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void HandleAnswer(QuestMachine.QuestMessages qMessage)
         {
+            Debug.Log("press");
             lastChunk = false;
-            done = true;
+            answerGiven = true;
             idx = 0;
-            Message message = quest.GetMessage((int) qMessage);
+            Message message = daedraQuest.GetMessage((int) qMessage);
             messageTokens = message.GetTextTokens();
-            NativePanel.OnMouseClick += NativePanel_OnMouseClick;
+            playerPanel.OnMouseClick += PlayerPanel_OnMouseClick;
             DisplayNextTextChunk();
         }
 
@@ -104,25 +139,26 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             TextFile.Token[] chunk = new TextFile.Token[TokensPerChunk];
             int len = Math.Min(TokensPerChunk, messageTokens.Length - idx);
             Array.Copy(messageTokens, idx, chunk, 0, len);
-            idx += TokensPerChunk;
             messageLabel.SetText(chunk);
             // Is this the last chunk?
             if (len < TokensPerChunk || idx + len == messageTokens.Length)
             {
                 lastChunk = true;
-                if (!done)
+                if (!answerGiven)
                 {   // Disable click and listen for Y/N keypress.
-                    NativePanel.OnMouseClick -= NativePanel_OnMouseClick;
+                    playerPanel.OnMouseClick -= PlayerPanel_OnMouseClick;
                 }
             }
+            idx += TokensPerChunk;
         }
 
-        private void NativePanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void PlayerPanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            // If done, close window on click, else display next chunk of text.
-            if (lastChunk && done)
+            Debug.Log("click " + sender);
+            // If done, close window on click after last chunk, else display next chunk of text.
+            if (lastChunk && answerGiven)
                 CloseWindow();
-            else
+            else if (!lastChunk)
                 DisplayNextTextChunk();
         }
 
