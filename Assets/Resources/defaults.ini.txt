@@ -86,3 +86,4 @@ DungeonAmbientLightScale=1.0
 NightAmbientLightScale=1.0
 PlayerTorchLightScale=1.0
 CombatVoices=True
+EnemyInfighting=True
