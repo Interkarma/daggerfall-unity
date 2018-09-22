@@ -321,6 +321,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 if (createCharClassSelectWindow.SelectedClass == null) // Custom class
                 {
+                    characterDocument.isCustom = true;
                     SetCustomClassWindow();
                 }
                 else
