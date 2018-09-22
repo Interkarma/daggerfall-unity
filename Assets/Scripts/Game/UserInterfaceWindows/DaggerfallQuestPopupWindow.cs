@@ -67,6 +67,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             new DaedraData((int) FactionFile.FactionIDs.Azura, "T0C00Y00", 81, "AZURA.FLC", Weather.WeatherType.None),
         };
 
+        public static MobileTypes[] daedricFoes = new MobileTypes[] {
+            MobileTypes.DaedraLord, MobileTypes.DaedraSeducer, MobileTypes.Daedroth, MobileTypes.FireDaedra, MobileTypes.FrostDaedra
+        };
+
         protected Quest quest = null;
 
         protected DaedraData daedraToSummon;
@@ -235,6 +239,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     if (roll > chance + sheoChance)
                     {   // Daedra stood you up!
                         DaggerfallUI.MessageBox(SummonFailed, this);
+                        // Spawn daedric foes if failed at a witches coven.
+                        if (summonerFactionData.ggroup == (int) FactionFile.GuildGroups.Witches)
+                            GameObjectHelper.CreateFoeSpawner(true, daedricFoes[Random.Range(0, 5)], Random.Range(1, 4), 4, 64);
                         return;
                     }
                     else if (roll > chance)

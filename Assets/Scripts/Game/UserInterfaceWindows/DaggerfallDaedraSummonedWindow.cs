@@ -15,7 +15,6 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using System;
 using DaggerfallWorkshop.Game.Questing;
-using System.Collections.Generic;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -117,6 +116,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 else if (Input.GetKey(KeyCode.N))
                 {
                     HandleAnswer(QuestMachine.QuestMessages.RefuseQuest);
+                    GameObjectHelper.CreateFoeSpawner(true, DaggerfallQuestPopupWindow.daedricFoes[UnityEngine.Random.Range(0, 5)], UnityEngine.Random.Range(3, 6), 8, 64);
                 }
             }
         }
