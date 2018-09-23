@@ -388,7 +388,7 @@ namespace DaggerfallWorkshop.Game.Utility
             }
 
             // Assign starting gear to player entity
-            DaggerfallUnity.Instance.ItemHelper.AssignStartingGear(playerEntity, characterDocument.classIndex);
+            DaggerfallUnity.Instance.ItemHelper.AssignStartingGear(playerEntity, characterDocument.classIndex, characterDocument.isCustom);
 
             // Apply biography effects to player entity
             BiogFile.ApplyEffects(characterDocument.biographyEffects, playerEntity);
