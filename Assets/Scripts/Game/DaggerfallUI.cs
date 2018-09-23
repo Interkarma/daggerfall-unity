@@ -95,6 +95,7 @@ namespace DaggerfallWorkshop.Game
         DaggerfallBookReaderWindow dfBookReaderWindow;
         DaggerfallTalkWindow dfTalkWindow;
         DaggerfallQuestJournalWindow dfQuestJournalWindow;
+        DaggerfallPlayerHistoryWindow dfPlayerHistoryWindow;
         DaggerfallSpellBookWindow dfSpellBookWindow;
         DaggerfallSpellMakerWindow dfSpellMakerWindow;
         DaggerfallItemMakerWindow dfItemMakerWindow;
@@ -286,6 +287,7 @@ namespace DaggerfallWorkshop.Game
             dfAutomapWindow = new DaggerfallAutomapWindow(uiManager);
             dfBookReaderWindow = new DaggerfallBookReaderWindow(uiManager);
             dfQuestJournalWindow = new DaggerfallQuestJournalWindow(uiManager);
+            dfPlayerHistoryWindow = new DaggerfallPlayerHistoryWindow(uiManager);
             dfTalkWindow = new DaggerfallTalkWindow(uiManager);
             dfSpellBookWindow = new DaggerfallSpellBookWindow(uiManager);
             dfSpellMakerWindow = new DaggerfallSpellMakerWindow(uiManager);
@@ -524,6 +526,9 @@ namespace DaggerfallWorkshop.Game
                     break;
                 case DaggerfallUIMessages.dfuiOpenQuestJournalWindow:
                     uiManager.PushWindow(dfQuestJournalWindow);
+                    break;
+                case DaggerfallUIMessages.dfuiOpenPlayerHistoryWindow:
+                    uiManager.PushWindow(dfPlayerHistoryWindow);
                     break;
                 case DaggerfallUIMessages.dfuiStatusInfo:
                     DisplayStatusInfo();

@@ -163,7 +163,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // History button
             Button historyButton = DaggerfallUI.AddButton(new Rect(69, 165, 65, 12), NativePanel);
-            historyButton.BackgroundColor = DaggerfallUI.DaggerfallUnityNotImplementedColor;
+            historyButton.OnMouseClick += HistoryButton_OnMouseClick;
 
             // Exit button
             Button exitButton = DaggerfallUI.AddButton(new Rect(50, 179, 39, 19), NativePanel);
@@ -507,6 +507,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void LogBookButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             uiManager.PostMessage(DaggerfallUIMessages.dfuiOpenQuestJournalWindow);
+        }
+
+        void HistoryButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            uiManager.PostMessage(DaggerfallUIMessages.dfuiOpenPlayerHistoryWindow);
         }
 
         private void StatButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
