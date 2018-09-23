@@ -22,10 +22,10 @@ namespace DaggerfallWorkshop.Game.Entity
         #region Fields
 
         public EntityTypes EntityType = EntityTypes.None;
-
         EntityTypes lastEntityType = EntityTypes.None;
         DaggerfallEntity entity = null;
         DaggerfallLoot corpseLootContainer = null;
+        DaggerfallEntityBehaviour target = null;
 
         #endregion
 
@@ -38,6 +38,12 @@ namespace DaggerfallWorkshop.Game.Entity
         {
             get { return entity; }
             set { SetEntityValue(value); }
+        }
+
+        public DaggerfallEntityBehaviour Target
+        {
+            get { return target; }
+            set { target = value; }
         }
 
         /// <summary>
@@ -214,7 +220,7 @@ namespace DaggerfallWorkshop.Game.Entity
                         {
                             GameManager.Instance.MakeEnemiesHostile();
                         }
-                        enemyMotor.MakeEnemyHostileToPlayer(GameManager.Instance.PlayerObject);
+                        enemyMotor.MakeEnemyHostileToAttacker(GameManager.Instance.PlayerEntityBehaviour);
                     }
                 }
             }
@@ -236,7 +242,7 @@ namespace DaggerfallWorkshop.Game.Entity
                     break;
                 case EntityTypes.CivilianNPC:
                     Entity = new CivilianEntity(this);
-                    break; 
+                    break;
             }
 
             lastEntityType = type;

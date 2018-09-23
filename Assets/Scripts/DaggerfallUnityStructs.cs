@@ -218,6 +218,7 @@ namespace DaggerfallWorkshop
         public int ChanceForAttack5;                // Chance to use PrimaryAttackAnimFrames3 for an attack
         public int[] PrimaryAttackAnimFrames5;      // Alternate animation sequence to play when doing primary attack
         public int[] RangedAttackAnimFrames;        // Animation sequence to play when doing bow & arrow attack
+        public MobileTeams Team;                    // Team that this enemy uses if enemy in-fighting is on
     }
 
     /// <summary>

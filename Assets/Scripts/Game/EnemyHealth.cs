@@ -45,7 +45,7 @@ namespace DaggerfallWorkshop.Game
 
             // Aggro this enemy
             // To enhance, use a script that "shouts" to other enemies in range and make them hostile to player also
-            motor.MakeEnemyHostileToPlayer(sendingPlayer);
+            motor.MakeEnemyHostileToAttacker(GameManager.Instance.PlayerEntityBehaviour);
 
             if (mobile != null)
             {

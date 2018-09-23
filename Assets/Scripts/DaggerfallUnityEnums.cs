@@ -255,6 +255,34 @@ namespace DaggerfallWorkshop
     }
 
     /// <summary>
+    /// Mobile teams.
+    /// </summary>
+    public enum MobileTeams
+    {
+        PlayerAlly,
+        Vermin,
+        Spriggans,
+        Bears,
+        Tigers,
+        Spiders,
+        Orcs,
+        Centaurs,
+        Werecreatures,
+        Nymphs,
+        Aquatic,
+        Harpies,
+        Undead,
+        Giants,
+        Scorpions,
+        Magic,
+        Daedra,
+        Dragonlings,
+        KnightsAndMages,
+        Criminals,
+        CityWatch,
+    }
+
+    /// <summary>
     /// Mobile gender.
     /// All monsters have an unspecified gender and no male/female variations.
     /// When specifying gender for humanoids, a value of unspecified will randomly choose between male/female.
