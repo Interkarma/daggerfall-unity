@@ -71,7 +71,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             MobileTypes.DaedraLord, MobileTypes.DaedraSeducer, MobileTypes.Daedroth, MobileTypes.FireDaedra, MobileTypes.FrostDaedra
         };
 
-        protected Quest quest = null;
+        protected Quest offeredQuest = null;
 
         protected DaedraData daedraToSummon;
         protected FactionFile.FactionData summonerFactionData;
@@ -113,7 +113,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Setup popup message
             TextFile.Token[] tokens = message.GetTextTokens();
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
-            messageBox.SetTextTokens(tokens, this.quest.ExternalMCP);
+            messageBox.SetTextTokens(tokens, this.offeredQuest.ExternalMCP);
             messageBox.ClickAnywhereToClose = true;
             messageBox.AllowCancel = true;
             messageBox.ParentPanel.BackgroundColor = Color.clear;
@@ -132,25 +132,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 // Show accept message, add quest
                 sender.CloseWindow();
-                ShowQuestPopupMessage(quest, (int)QuestMachine.QuestMessages.AcceptQuest);
-                QuestMachine.Instance.InstantiateQuest(quest);
+                ShowQuestPopupMessage(offeredQuest, (int)QuestMachine.QuestMessages.AcceptQuest);
+                QuestMachine.Instance.InstantiateQuest(offeredQuest);
             }
             else
             {
                 // inform TalkManager so that it can remove the quest topics that have been added
                 // (note by Nystul: I know it is a bit ugly that it is added in the first place at all, but didn't find a good way to do it differently -
                 // may revisit this later)
-                GameManager.Instance.TalkManager.RemoveQuestInfoTopicsForSpecificQuest(quest.UID);
+                GameManager.Instance.TalkManager.RemoveQuestInfoTopicsForSpecificQuest(offeredQuest.UID);
 
                 // remove quest rumors (rumor mill command) for this quest from talk manager
-                GameManager.Instance.TalkManager.RemoveQuestRumorsFromRumorMill(quest.UID);
+                GameManager.Instance.TalkManager.RemoveQuestRumorsFromRumorMill(offeredQuest.UID);
 
                 // remove quest progress rumors for this quest from talk manager
-                GameManager.Instance.TalkManager.RemoveQuestProgressRumorsFromRumorMill(quest.UID);
+                GameManager.Instance.TalkManager.RemoveQuestProgressRumorsFromRumorMill(offeredQuest.UID);
 
                 // Show refuse message
                 sender.CloseWindow();
-                ShowQuestPopupMessage(quest, (int)QuestMachine.QuestMessages.RefuseQuest, false);
+                ShowQuestPopupMessage(offeredQuest, (int)QuestMachine.QuestMessages.RefuseQuest, false);
             }
         }
 
@@ -261,12 +261,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         playerEntity.FactionData.SetFlag(daedraToSummon.factionId, FactionFile.Flags.Summoned);
 
                         // Offer the quest to player.
-                        quest = GameManager.Instance.QuestListsManager.GetQuest(daedraToSummon.quest, summonerFactionData.id);
-                        if (quest != null)
+                        offeredQuest = GameManager.Instance.QuestListsManager.GetQuest(daedraToSummon.quest, summonerFactionData.id);
+                        if (offeredQuest != null)
                         {
                             // Close menu and push DaggerfallDaedraSummoningWindow here for video and custom quest offer..
                             CloseWindow();
-                            uiManager.PushWindow(new DaggerfallDaedraSummonedWindow(uiManager, daedraToSummon, quest));
+                            uiManager.PushWindow(new DaggerfallDaedraSummonedWindow(uiManager, daedraToSummon, offeredQuest));
                         }
                     }
                 }
