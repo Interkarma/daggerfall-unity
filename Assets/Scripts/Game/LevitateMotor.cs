@@ -27,6 +27,7 @@ namespace DaggerfallWorkshop.Game
         bool playerSwimming = false;
         PlayerMotor playerMotor;
         PlayerSpeedChanger speedChanger;
+        PlayerGroundMotor groundMotor;
         Camera playerCamera;
         float moveSpeed = levitateMoveSpeed;
         Vector3 moveDirection = Vector3.zero;
@@ -46,6 +47,7 @@ namespace DaggerfallWorkshop.Game
         private void Start()
         {
             playerMotor = GetComponent<PlayerMotor>();
+            groundMotor = GetComponent<PlayerGroundMotor>();
             speedChanger = GetComponent<PlayerSpeedChanger>();
             playerCamera = GameManager.Instance.MainCamera;
         }
@@ -81,11 +83,20 @@ namespace DaggerfallWorkshop.Game
             AddMovement(upDownVector, true);
 
             // Execute movement
-            if (moveDirection != Vector3.zero)
-            {
-                GameManager.Instance.PlayerMotor.CollisionFlags = playerMotor.controller.Move(moveDirection * Time.deltaTime);
-                moveDirection = Vector3.zero;
+            if (moveDirection == Vector3.zero)
+            {  
+                // Hack to make sure that the player can get pushed by moving objects if he's not moving
+                const float pos = 0.0001f;
+                groundMotor.MoveOnGround(Vector3.up * pos);
+                groundMotor.MoveOnGround(Vector3.down * pos);
+                groundMotor.MoveOnGround(Vector3.left * pos);
+                groundMotor.MoveOnGround(Vector3.right * pos);
+                groundMotor.MoveOnGround(Vector3.forward * pos);
+                groundMotor.MoveOnGround(Vector3.back * pos);
             }
+
+            groundMotor.MoveOnGround(moveDirection);
+            moveDirection = Vector3.zero;
         }
 
         void AddMovement(Vector3 direction, bool upOrDown = false)
