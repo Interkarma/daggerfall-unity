@@ -158,6 +158,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string accessMembersOnly = "You need to be a member of sufficient rank to access this.";
         public const string serviceDonateHowMuch = "Donate how much money : ";
         public const string serviceCured = "You are cured.";
+        public const string serviceSummonCost1 = "%pcn, the cost for me to attempt a";
+        public const string serviceSummonCost2 = "summoning of %dae is ";
+        public const string serviceSummonCost3 = " gold.";
 
         public const string roomFreeForKnightSuchAsYou = "The room is free for a knight such as you.";
         public const string roomFreeDueToHeartsDay = "Room is free due to Heart's Day.";
