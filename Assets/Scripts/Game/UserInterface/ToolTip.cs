@@ -137,8 +137,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 Position = newPosition;
             }
 
-            // check if mouse position is in parent's rectangle (to prevent tooltips out of panel's rectangle to be displayed)
-            if (this.Parent.Rectangle.Contains(Parent.MousePosition))
+            // Check if mouse position is in parent's rectangle (to prevent tooltips out of panel's rectangle to be displayed)
+            if (Parent != null && (Parent.Rectangle.Contains(Parent.MousePosition)))
             {
                 // Raise flag to draw tooltip
                 drawToolTip = true;
