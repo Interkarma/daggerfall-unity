@@ -380,6 +380,23 @@ namespace DaggerfallConnect.Arena2
             return selectedIndex;
         }
 
+        public static List<string> GenerateBackstory(int classIndex)
+        {
+            const int tokensStart = 4116;
+
+            List<string> backStory = new List<string>();
+            TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(tokensStart + classIndex);
+            foreach (TextFile.Token token in tokens)
+            {
+                if (token.formatting == TextFile.Formatting.Text)
+                {
+                    backStory.Add(token.text);
+                }
+            }
+
+            return backStory;
+        }
+
         #endregion
 
         #region Properties

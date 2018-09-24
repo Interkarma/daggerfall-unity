@@ -15,6 +15,8 @@ using System.Collections.Generic;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Items;
+using System.IO;
+using System.Text.RegularExpressions;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -24,14 +26,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int extraLeading = 0;
         const int maxPageLines = 21;
 
-        public int tokenID = 4116;
-        DaggerfallUnity dfUnity;
         Texture2D nativeTexture;
         DaggerfallFont currentFont;
         List<TextLabel> pageLabels = new List<TextLabel>();
         int pageLines;
-        int tokenIndex = 0;
-        TextFile.Token[] tokens;
+        int pageStartLine = 0;
+        List<string> lines;
+
+        public int ClassId { get; protected set; }
 
         public DaggerfallPlayerHistoryWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
@@ -40,8 +42,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected override void Setup()
         {
-            dfUnity = DaggerfallUnity.Instance;
-
             // Load native texture
             nativeTexture = DaggerfallUI.GetTextureFromImg(nativeImgName);
             if (!nativeTexture)
@@ -63,7 +63,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Button exitButton = DaggerfallUI.AddButton(new Rect(277, 187, 32, 10), NativePanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
 
-            tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(tokenID);
+            // Setup text
+            lines = GameManager.Instance.PlayerEntity.BackStory;
+
             LayoutPage();
             DaggerfallUI.Instance.PlayOneShot(SoundClips.OpenBook);
         }
@@ -86,12 +88,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            pageStartLine = 0; // Go back to the first page
             CloseWindow();
         }
 
         public override void OnPush()
         {
-            if (IsSetup && tokenID != -1)
+            if (IsSetup)
             {
                 LayoutPage();
                 DaggerfallUI.Instance.PlayOneShot(SoundClips.OpenBook);
@@ -104,40 +107,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             pageLines = 0;
 
             int x = 10, y = 25;
-            HorizontalAlignment horizontalAlignment = HorizontalAlignment.None;
-            for (int i = tokenIndex; i < tokens.Length; i++)
+            for (int i = pageStartLine; i < lines.Count; i++)
             {
-                
-                switch (tokens[i].formatting)
-                {
-                case TextFile.Formatting.JustifyLeft: // Acts as a newline in this context
-                    if (i > tokenIndex)
-                    {
-                        y += currentFont.GlyphHeight + extraLeading;
-                        horizontalAlignment = HorizontalAlignment.None;
-                    }
-                    break;
-                case TextFile.Formatting.FirstCharacter:
-                    // We can ignore these tokens
-                    break;
-                case TextFile.Formatting.Text:
-                    TextLabel label = DaggerfallUI.AddTextLabel(currentFont, new Vector2(x, y), tokens[i].text, NativePanel);
-                    label.HorizontalAlignment = horizontalAlignment;
-                    label.TextColor = DaggerfallUI.DaggerfallDefaultTextColor;
-                    label.ShadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
-                    label.ShadowPosition = DaggerfallUI.DaggerfallDefaultShadowPos;
-                    pageLabels.Add(label);
-                    pageLines++;
-                    break;
-                default:
-                    Debug.Log("DaggerfallPlayerHistoryWindow: Unknown formatting token: " + (int)tokens[i].formatting);
-                    break;
-                }
+                TextLabel label = DaggerfallUI.AddTextLabel(currentFont, new Vector2(x, y), lines[i], NativePanel);
+                label.HorizontalAlignment = HorizontalAlignment.None;
+                label.TextColor = DaggerfallUI.DaggerfallDefaultTextColor;
+                label.ShadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
+                label.ShadowPosition = DaggerfallUI.DaggerfallDefaultShadowPos;
+                pageLabels.Add(label);
+                pageLines++;
 
                 if (pageLines == maxPageLines)
                 {
                     break;
                 }
+
+                y += currentFont.GlyphHeight + extraLeading;
             }
         }
 
@@ -157,45 +142,26 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         bool MoveNextPage()
         {
-            int deltaLines = 0;
-            int deltaTokens = 0;
-            // Jump past a page's worth of text tokens
-            while (deltaLines < maxPageLines)
+            if (pageStartLine + maxPageLines < lines.Count)
             {
-                int index = tokenIndex + deltaTokens;
-                if (++deltaTokens + tokenIndex >= tokens.Length)
-                {
-                    return false;
-                }
-                if (tokens[index].formatting == TextFile.Formatting.Text) 
-                {
-                    deltaLines++;
-                }
-            }
-            tokenIndex += deltaTokens;
+                pageStartLine += maxPageLines;
 
-            return true;
+                return true;
+            }
+
+            return false;
         }
 
         bool MovePreviousPage()
         {
-            if (tokenIndex == 0)
+            if (pageStartLine != 0)
             {
-                return false;
+                pageStartLine -= maxPageLines;
+
+                return true;
             }
 
-            int deltaLines = 0;
-            // Jump backwards until we pass by a page's worth of text tokens
-            while (tokenIndex > 0 && deltaLines < maxPageLines)
-            {
-                tokenIndex--;
-                if (tokens[tokenIndex].formatting == TextFile.Formatting.Text)
-                {
-                    deltaLines++;
-                }
-            }
-
-            return true;
+            return false;
         }
     }
 }

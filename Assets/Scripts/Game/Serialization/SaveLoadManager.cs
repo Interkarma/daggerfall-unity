@@ -47,6 +47,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         const string conversationDataFilename = "ConversationData.txt";
         const string automapDataFilename = "AutomapData.txt";
         const string screenshotFilename = "Screenshot.jpg";
+        const string bioFileName = "bio.txt";
         const string notReadyExceptionText = "SaveLoad not ready.";
 
         // Serializable state manager for stateful game objects
@@ -968,6 +969,17 @@ namespace DaggerfallWorkshop.Game.Serialization
             WriteSaveFile(Path.Combine(path, discoveryDataFilename), discoveryDataJson);
             WriteSaveFile(Path.Combine(path, conversationDataFilename), conversationDataJson);
 
+            // Save backstory text
+            if (!File.Exists(Path.Combine(path, bioFileName)))
+            {
+                StreamWriter file = new StreamWriter(Path.Combine(path, bioFileName).ToString());
+                foreach (string line in GameManager.Instance.PlayerEntity.BackStory)
+                {
+                    file.WriteLine(line);
+                }
+                file.Close();
+            }
+
             // Save automap state
             try
             {
@@ -1028,6 +1040,19 @@ namespace DaggerfallWorkshop.Game.Serialization
             string questDataJson = ReadSaveFile(Path.Combine(path, questDataFilename));
             string discoveryDataJson = ReadSaveFile(Path.Combine(path, discoveryDataFilename));
             string conversationDataJson = ReadSaveFile(Path.Combine(path, conversationDataFilename));
+
+            // Load backstory text
+            GameManager.Instance.PlayerEntity.BackStory = new List<string>();
+            if (File.Exists(Path.Combine(path, bioFileName)))
+            {
+                StreamReader file = new StreamReader(Path.Combine(path, bioFileName).ToString());
+                string line;
+                while ((line = file.ReadLine()) != null)
+                {
+                    GameManager.Instance.PlayerEntity.BackStory.Add(line);
+                }
+                file.Close();
+            }
 
             // Deserialize JSON strings
             SaveData_v1 saveData = Deserialize(typeof(SaveData_v1), saveDataJson) as SaveData_v1;

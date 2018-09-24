@@ -175,16 +175,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 createCharBiographyWindow = new CreateCharBiography(uiManager);
                 createCharBiographyWindow.OnClose += CreateCharBiographyWindow_OnClose;
             }
-
-            if (createCharClassSelectWindow.SelectedClassIndex == -1) // custom class
-            {
-                // Determine the most similar class
-                createCharBiographyWindow.ClassIndex = BiogFile.GetClassAffinityIndex(characterDocument.career, createCharClassSelectWindow.ClassList);
-            } 
-            else
-            {
-                createCharBiographyWindow.ClassIndex = createCharClassSelectWindow.SelectedClassIndex;
-            }
+                
+            createCharBiographyWindow.ClassIndex = characterDocument.classIndex;
             wizardStage = WizardStages.BiographyQuestions;
             uiManager.PushWindow(createCharBiographyWindow);
         }
@@ -326,6 +318,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 else
                 {
                     characterDocument.career = createCharClassSelectWindow.SelectedClass;
+                    characterDocument.classIndex = createCharClassSelectWindow.SelectedClassIndex;
                     SetChooseBioWindow();
                 }
             }
@@ -339,6 +332,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             characterDocument.career = createCharCustomClassWindow.CreatedClass;
             characterDocument.career.Name = createCharCustomClassWindow.ClassName;
+
+            // Determine the most similar class so that we can choose the biography quiz
+            characterDocument.classIndex = BiogFile.GetClassAffinityIndex(characterDocument.career, createCharClassSelectWindow.ClassList);
 
             // Set reputation adjustments
             characterDocument.reputationMerchants = createCharCustomClassWindow.MerchantsRep;
@@ -378,6 +374,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     }
                 }
 
+                characterDocument.biographyEffects = autoBiog.AnswerEffects;
+                characterDocument.backStory = BiogFile.GenerateBackstory(characterDocument.classIndex);
                 SetNameSelectWindow();
             } 
             else
@@ -389,7 +387,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void CreateCharBiographyWindow_OnClose()
         {
             characterDocument.biographyEffects = createCharBiographyWindow.PlayerEffects;
-            characterDocument.classIndex = createCharBiographyWindow.ClassIndex;
+            characterDocument.backStory = BiogFile.GenerateBackstory(characterDocument.classIndex);
             SetNameSelectWindow();
         }
 

@@ -154,6 +154,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public bool HaveShownSurrenderToGuardsDialogue { get { return haveShownSurrenderToGuardsDialogue; } set { haveShownSurrenderToGuardsDialogue = value; } }
         public bool Arrested { get { return arrested; } set { arrested = value; } }
         public bool IsInBeastForm { get; set; }
+        public List<string> BackStory { get; set; }
 
         #endregion
 
@@ -556,6 +557,8 @@ namespace DaggerfallWorkshop.Game.Entity
             this.timeForDarkBrotherhoodLetter = character.timeForDarkBrotherhoodLetter;
             this.darkBrotherhoodRequirementTally = character.darkBrotherhoodRequirementTally;
             this.thievesGuildRequirementTally = character.thievesGuildRequirementTally;
+
+            BackStory = character.backStory;
 
             SetCurrentLevelUpSkillSum();
 
