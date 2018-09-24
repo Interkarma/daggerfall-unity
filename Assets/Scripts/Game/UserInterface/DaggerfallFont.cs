@@ -347,6 +347,19 @@ namespace DaggerfallWorkshop.Game.UserInterface
             return glyphs[ascii].width;
         }
 
+        public int GetSDFGlyphWidth(int ascii)
+        {
+            if (!HasGlyph(ascii))
+                throw new Exception(invalidAsciiCode + ascii);
+
+            if (sdfAtlasRects == null || sdfAtlasRects.Length == 0)
+                return 0;
+
+            Rect atlasRect = sdfAtlasRects[ascii - asciiStart];
+
+            return (int)(atlasRect.width * sdfGlyphDimension);
+        }
+
         public void RemoveGlyph(int ascii)
         {
             if (!glyphs.ContainsKey(ascii))
