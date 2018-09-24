@@ -15,6 +15,7 @@ namespace DaggerfallWorkshop.Game
         public bool airControl = false;
 
         PlayerMotor playerMotor;
+        CharacterController controller;
         FrictionMotor frictionMotor;
         ClimbingMotor climbingMotor;
         Transform myTransform;
@@ -38,6 +39,7 @@ namespace DaggerfallWorkshop.Game
         void Start()
         {
             playerMotor = GetComponent<PlayerMotor>();
+            controller = GetComponent<CharacterController>();
             frictionMotor = GetComponent<FrictionMotor>();
             climbingMotor = GetComponent<ClimbingMotor>();
             myTransform = playerMotor.transform;
@@ -107,10 +109,21 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        /// <summary>
-        /// If we stepped over a cliff or something, set the height at which we started falling
-        /// </summary>
-        public void CheckInitFall()
+        public void HitHead(ref Vector3 moveDirection)
+        {
+            // If we hit something above us AND we are moving up, reverse vertical movement
+            if ((controller.collisionFlags & CollisionFlags.Above) != 0)
+            {
+                if (moveDirection.y > 0)
+                    moveDirection.y = -moveDirection.y;
+            }
+        }
+
+
+    /// <summary>
+    /// If we stepped over a cliff or something, set the height at which we started falling
+    /// </summary>
+    public void CheckInitFall()
         {
             if (!falling)
             {
