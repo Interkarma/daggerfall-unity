@@ -80,7 +80,7 @@ namespace DaggerfallWorkshop.Game
         /// True if player just jumped from a wall
         /// </summary>
         public bool WallEject { get; private set; }
-
+        public bool IsRappelling { get; private set; }
         void Start()
         {
             player = GameManager.Instance.PlayerEntity;
@@ -119,7 +119,8 @@ namespace DaggerfallWorkshop.Game
             
             if (airborneGraspWall)
             {
-                if (ShouldRappel())
+                IsRappelling = ShouldRappel();
+                if (IsRappelling)
                 {
                     float speed = speedChanger.GetBaseSpeed() * 1.25f;
                     overrideSkillCheck = true;

@@ -142,6 +142,10 @@ namespace DaggerfallWorkshop.Game
                 fallStartLevel = myTransform.position.y;
                 moveDirection.y = -slowFallSpeed * Time.deltaTime;
             }
+            else if (climbingMotor.IsRappelling)
+            {
+                moveDirection.y -= gravity / 3 * Time.deltaTime;
+            }
             else
             {
                 moveDirection.y -= gravity * Time.deltaTime;
