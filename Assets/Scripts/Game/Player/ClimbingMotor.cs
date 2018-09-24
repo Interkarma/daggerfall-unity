@@ -12,6 +12,7 @@ namespace DaggerfallWorkshop.Game
     public class ClimbingMotor : MonoBehaviour
     {
         private Entity.PlayerEntity player;
+        private PlayerGroundMotor groundMotor;
         private PlayerMotor playerMotor;
         private LevitateMotor levitateMotor;
         private CharacterController controller;
@@ -84,11 +85,27 @@ namespace DaggerfallWorkshop.Game
         {
             player = GameManager.Instance.PlayerEntity;
             playerMotor = GetComponent<PlayerMotor>();
+            groundMotor = GetComponent<PlayerGroundMotor>();
             levitateMotor = GetComponent<LevitateMotor>();
             controller = GetComponent<CharacterController>();
             playerEnterExit = GetComponent<PlayerEnterExit>();
             acrobatMotor = GetComponent<AcrobatMotor>();
             speedChanger = GetComponent<PlayerSpeedChanger>();
+        }
+
+        /// <summary>
+        /// Figure out if the player wants to rappel down a wall and apply forward impulse to catch wall if true
+        /// </summary>
+        private bool ShouldRappel()
+        {
+            bool movingBackward = InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards);
+            bool autoRappelCondition = (!isClimbing && playerMotor.IsCrouching && movingBackward
+                 && acrobatMotor.Falling && !acrobatMotor.Jumping);
+            if (autoRappelCondition)
+            {
+                return true;
+            }
+            return false;
         }
 
         /// <summary>
@@ -102,6 +119,16 @@ namespace DaggerfallWorkshop.Game
             
             if (airborneGraspWall)
             {
+                if (ShouldRappel())
+                {
+                    float speed = speedChanger.GetBaseSpeed() * 1.25f;
+                    overrideSkillCheck = true;
+                    if (myLedgeDirection != Vector3.zero)
+                        groundMotor.MoveOnGround(myLedgeDirection * speed);
+                    else
+                        groundMotor.MoveOnGround(controller.transform.forward * speed);
+                }
+
                 startClimbHorizontalTolerance = 0.90f;
                 startClimbSkillCheckFrequency = 5;
             }
@@ -310,7 +337,7 @@ namespace DaggerfallWorkshop.Game
                 )
             {
                 //Debug.Log("Adjacent wall distance: " + hit.distance);
-                Debug.Log("Dist: " + hit.distance + "Angle = " + myAngle);
+                //Debug.Log("Dist: " + hit.distance + "Angle = " + myAngle);
 
                 return true;
             }    
