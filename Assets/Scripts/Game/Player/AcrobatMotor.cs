@@ -72,6 +72,12 @@ namespace DaggerfallWorkshop.Game
                 moveDirection.y = jumpSpeed * jumpSpeedMultiplier;
                 jumping = true;
 
+                // HACK: Also adds a small amount of forward boost to player when they jump while moving
+                // This (very) loosely simulates classic where player receives more forward momentum than in DFUnity at present
+                // TODO: This should be revisited when jumping and gravity are tuned to be more like classic
+                if (!GameManager.Instance.PlayerMotor.IsStandingStill)
+                    moveDirection += (transform.forward * jumpSpeed) * 0.1f;
+
                 // Modify crouching jump speed
                 if (playerMotor.IsCrouching)
                     moveDirection.y *= crouchingJumpDelta;
