@@ -507,7 +507,7 @@ namespace DaggerfallWorkshop.Game
         bool hudDisabledByPause = false;
         public void PauseGame(bool pause, bool hideHUD = false)
         {
-            DaggerfallUI.Instance.ShowVersionText = pause;
+            DaggerfallUI.Instance.ShowVersionText = false;
 
             if (pause && !isGamePaused)
             {
