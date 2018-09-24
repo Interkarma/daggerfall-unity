@@ -49,6 +49,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
         float textScale = 1.0f; // scale text
         LabelLayoutData labelLayout = new LabelLayoutData();
 
+        public enum RestrictedRenderArea_CoordinateType
+        {
+            ScreenCoordinates = 0,
+            DaggerfallNativeCoordinates = 1
+        };
+        protected RestrictedRenderArea_CoordinateType restrictedRenderAreaCoordinateType = RestrictedRenderArea_CoordinateType.ScreenCoordinates;
+
         #endregion
 
         #region Structs & Enums
@@ -145,14 +152,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set { horizontalTextAlignment = value; RefreshLayout(); }
         }
 
-        /// <summary>
-        /// Maintaining this only for backwards compatibility with exterior automatap.
-        /// Deprecated and will be removed once exterior automap supports SDF fonts.
-        /// </summary>
-        public Texture2D Texture
-        {
-            get { return GetSingleLineLabelTexture(); }
-        }
+        ///// <summary>
+        ///// Maintaining this only for backwards compatibility with exterior automatap.
+        ///// Deprecated and will be removed once exterior automap supports SDF fonts.
+        ///// </summary>
+        //public Texture2D Texture
+        //{
+        //    get { return GetSingleLineLabelTexture(); }
+        //}
 
         public int TextWidth
         {
@@ -221,7 +228,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             get { return textScale; }
             set
             {
-                textScale = Math.Max(0.1f, Math.Min(2.0f, value));
+                textScale = Math.Max(0.1f, value); // Math.Min(2.0f, value));
                 RefreshLayout();
             }
         }
@@ -230,6 +237,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             if (font != null)
                 Font = font;
+        }
+
+        /// <summary>
+        /// get/set the type of coordinate specification (e.g. absolute) of the restricted render area
+        /// </summary>
+        public RestrictedRenderArea_CoordinateType RestrictedRenderAreaCoordinateType
+        {
+            get { return restrictedRenderAreaCoordinateType; }
+            set
+            {
+                restrictedRenderAreaCoordinateType = value;
+            }
         }
 
         #endregion
@@ -312,19 +331,29 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         protected Vector4 GetRestrictedRenderScissorRect()
         {
-            Rect myRect = Rectangle;
+            Rect myRect = this.Rectangle;
             Rect screenRect = new Rect(0, 0, Screen.width, Screen.height);
+            float xMinScreen = 0.0f, xMaxScreen = 0.0f, yMinScreen = 0.0f, yMaxScreen = 0.0f;
+            if (restrictedRenderAreaCoordinateType == RestrictedRenderArea_CoordinateType.ScreenCoordinates)
+            {
+                xMinScreen = rectRestrictedRenderArea.xMin;
+                xMaxScreen = rectRestrictedRenderArea.xMax;
+                yMinScreen = rectRestrictedRenderArea.yMin;
+                yMaxScreen = rectRestrictedRenderArea.yMax;
+            }
+            else if (restrictedRenderAreaCoordinateType == RestrictedRenderArea_CoordinateType.DaggerfallNativeCoordinates)
+            {
+                Rect rectLabel = new Rect(this.Parent.Position + this.Position, this.Size);
+                float leftCut = Mathf.Round(Math.Max(0, rectRestrictedRenderArea.xMin - rectLabel.xMin));
+                float rightCut = Mathf.Round(Math.Max(0, rectLabel.xMax - rectRestrictedRenderArea.xMax));
+                float topCut = Mathf.Round(Math.Max(0, rectRestrictedRenderArea.yMin - rectLabel.yMin));
+                float bottomCut = Mathf.Round(Math.Max(0, rectLabel.yMax - rectRestrictedRenderArea.yMax));
 
-            Rect rectLabel = new Rect(this.Parent.Position + this.Position, this.Size);
-            float leftCut = Mathf.Round(Math.Max(0, rectRestrictedRenderArea.xMin - rectLabel.xMin) / textScale);
-            float rightCut = Mathf.Round(Math.Max(0, rectLabel.xMax - rectRestrictedRenderArea.xMax) / textScale);
-            float topCut = Mathf.Round(Math.Max(0, rectRestrictedRenderArea.yMin - rectLabel.yMin) / textScale);
-            float bottomCut = Mathf.Round(Math.Max(0, rectLabel.yMax - rectRestrictedRenderArea.yMax) / textScale);
-
-            float xMinScreen = myRect.xMin + (Position.x + leftCut * textScale) * LocalScale.x;
-            float xMaxScreen = myRect.xMax + (Position.x - rightCut * textScale) * LocalScale.x;
-            float yMinScreen = myRect.yMin + (topCut * textScale) * LocalScale.y;
-            float yMaxScreen = myRect.yMax - (bottomCut * textScale) * LocalScale.y;
+                xMinScreen = myRect.xMin + (this.Position.x + leftCut) * this.LocalScale.x;
+                xMaxScreen = myRect.xMax + (this.Position.x - rightCut) * this.LocalScale.x;
+                yMinScreen = myRect.yMin + (topCut) * this.LocalScale.y;
+                yMaxScreen = myRect.yMax - (bottomCut) * this.LocalScale.y;
+            } 
 
             Vector4 scissorRect;
             scissorRect.x = xMinScreen / screenRect.width;
@@ -367,7 +396,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                 // Calculate total width
                 DaggerfallFont.GlyphInfo glyph = font.GetGlyph(asciiBytes[i]);
-                width += glyph.width + font.GlyphSpacing;
+                width += glyph.width + font.GlyphSpacing;               
             }
 
             // Trim width
@@ -634,109 +663,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             labelLayout.glyphLayout = glyphLayout.ToArray();
             this.Size = new Vector2(totalWidth * textScale, totalHeight * textScale);
-        }
-
-        #endregion
-
-        #region Legacy Label Texture Methods
-
-        Texture2D GetSingleLineLabelTexture()
-        {
-            if (singleLineLabelTexture)
-                return singleLineLabelTexture;
-            else
-                CreateLabelTextureSingleLine();
-
-            return singleLineLabelTexture;
-        }
-
-        void CreateLabelTextureSingleLine()
-        {
-            if (font == null)
-                font = DaggerfallUI.DefaultFont;
-
-            // set a local maxWidth that compensates for textScale
-            int maxWidth = (int)(this.maxWidth / textScale);
-
-            // First pass encodes ASCII and calculates final dimensions
-            int width = 0;
-            asciiBytes = Encoding.Convert(Encoding.UTF8, Encoding.GetEncoding("ISO-8859-1"), Encoding.Default.GetBytes(text));
-            for (int i = startCharacterIndex; i < asciiBytes.Length; i++)
-            {
-                // Invalid ASCII bytes are cast to a space character
-                if (!font.HasGlyph(asciiBytes[i]))
-                    asciiBytes[i] = DaggerfallFont.SpaceASCII;
-
-                // Calculate total width
-                DaggerfallFont.GlyphInfo glyph = font.GetGlyph(asciiBytes[i]);
-                width += glyph.width + font.GlyphSpacing;
-            }
-
-            if (maxWidth > 0 && width > maxWidth)
-                width = maxWidth;
-
-            // Destroy old texture
-            if (singleLineLabelTexture)
-                UnityEngine.Object.Destroy(singleLineLabelTexture);
-
-            // Create target label texture
-            totalWidth = width;
-            totalHeight = (int)(font.GlyphHeight);
-            numTextLines = 1;
-            singleLineLabelTexture = CreateLabelTexture(totalWidth, totalHeight);
-            if (singleLineLabelTexture == null)
-                throw new Exception("TextLabel failed to create single line labelTexture.");
-
-            float alignmentOffset;
-            switch (horizontalTextAlignment)
-            {
-                default:
-                case HorizontalTextAlignmentSetting.None:
-                case HorizontalTextAlignmentSetting.Left:
-                case HorizontalTextAlignmentSetting.Justify:
-                    alignmentOffset = 0.0f;
-                    break;
-                case HorizontalTextAlignmentSetting.Center:
-                    alignmentOffset = (totalWidth - width) * 0.5f;
-                    break;
-                case HorizontalTextAlignmentSetting.Right:
-                    alignmentOffset = totalWidth - width;
-                    break;
-            }
-
-            // Second pass adds glyphs to label texture
-            int xpos = (int)alignmentOffset;
-            for (int i = startCharacterIndex; i < asciiBytes.Length; i++)
-            {
-                DaggerfallFont.GlyphInfo glyph = font.GetGlyph(asciiBytes[i]);
-                if (xpos + glyph.width >= totalWidth)
-                    break;
-
-                singleLineLabelTexture.SetPixels32(xpos, 0, glyph.width, totalHeight, glyph.colors);
-                xpos += glyph.width + font.GlyphSpacing;
-            }
-            singleLineLabelTexture.Apply(false, makeTextureNoLongerReadable);
-            singleLineLabelTexture.filterMode = font.FilterMode;
-            this.Size = new Vector2(totalWidth * textScale, totalHeight * textScale);
-        }
-
-        protected virtual Texture2D CreateLabelTexture(int width, int height)
-        {
-            // Enforce minimum texture dimensions of 8x8 to avoid "degenerate image" error in Unity 5.2
-            textureWidth = (width < minTextureDim) ? minTextureDim : width;
-            textureHeight = (height < minTextureDim) ? minTextureDim : height;
-
-            // Create target texture and init to clear
-            Texture2D texture = new Texture2D(textureWidth, textureHeight, TextureFormat.ARGB32, false);
-            Color32[] colors = texture.GetPixels32();
-            for (int i = 0; i < colors.Length; i++)
-            {
-                colors[i] = Color.clear;
-            }
-            texture.SetPixels32(colors);
-            texture.Apply(false);
-
-            return texture;
         }
 
         #endregion

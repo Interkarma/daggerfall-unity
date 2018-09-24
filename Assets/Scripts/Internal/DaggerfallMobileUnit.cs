@@ -661,7 +661,7 @@ namespace DaggerfallWorkshop
                     if ((MobileTypes)summary.Enemy.ID == MobileTypes.Ghost ||
                         (MobileTypes)summary.Enemy.ID == MobileTypes.Wraith)
                         anims = (MobileAnimation[])EnemyBasics.GhostWraithMoveAnims.Clone();
-                    else if ((MobileTypes)summary.Enemy.ID == MobileTypes.Thief &&
+                    else if (summary.Enemy.FemaleTexture == 483 &&
                         summary.Enemy.Gender == MobileGender.Female)
                         anims = (MobileAnimation[])EnemyBasics.FemaleThiefIdleAnims.Clone();
                     else if ((MobileTypes)summary.Enemy.ID == MobileTypes.Rat)

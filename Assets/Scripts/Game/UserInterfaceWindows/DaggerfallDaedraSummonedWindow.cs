@@ -13,79 +13,151 @@ using UnityEngine;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
+using System;
+using DaggerfallWorkshop.Game.Questing;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
     /// <summary>
     /// Class for handling Daedra summoning.
     /// </summary>
-    public class DaggerfallDaedraSummonedWindow : DaggerfallBaseWindow, IMacroContextProvider
+    public class DaggerfallDaedraSummonedWindow : DaggerfallBaseWindow
     {
+        protected const int TextLinesPerChunk = 4;
+        protected const int TokensPerChunk = TextLinesPerChunk * 2;
 
-        Panel messagePanel = new Panel();
-        MultiFormatTextLabel label = new MultiFormatTextLabel();
+        FLCPlayer playerPanel;
+        MultiFormatTextLabel messageLabel;
 
         DaggerfallQuestPopupWindow.DaedraData daedraSummoned;
+        Quest daedraQuest;
 
-        public DaggerfallDaedraSummonedWindow(IUserInterfaceManager uiManager, DaggerfallQuestPopupWindow.DaedraData daedraSummoned)
+        int textId;
+        IMacroContextProvider mcp;
+
+        TextFile.Token[] messageTokens;
+
+        bool lastChunk = false;
+        bool answerGiven = false;
+        int idx = 0;
+
+        public DaggerfallDaedraSummonedWindow(IUserInterfaceManager uiManager, DaggerfallQuestPopupWindow.DaedraData daedraSummoned, Quest daedraQuest)
             : base(uiManager)
         {
-            ParentPanel.BackgroundColor = Color.clear;
             this.daedraSummoned = daedraSummoned;
+            this.daedraQuest = daedraQuest;
         }
 
-        #region Setup Methods
+        public DaggerfallDaedraSummonedWindow(IUserInterfaceManager uiManager, DaggerfallQuestPopupWindow.DaedraData daedraSummoned, int textId, IMacroContextProvider mcp)
+            : base(uiManager)
+        {
+            this.daedraSummoned = daedraSummoned;
+            this.textId = textId;
+            this.mcp = mcp;
+            answerGiven = true;
+        }
 
         protected override void Setup()
         {
             if (IsSetup)
                 return;
 
-            messagePanel.HorizontalAlignment = HorizontalAlignment.Center;
-            messagePanel.VerticalAlignment = VerticalAlignment.Bottom;
-            NativePanel.Components.Add(messagePanel);
-            messagePanel.BackgroundColor = new Color(1, 0.5f, 0.5f);
-
-            label.HorizontalAlignment = HorizontalAlignment.Center;
-            label.VerticalAlignment = VerticalAlignment.Middle;
-            messagePanel.Components.Add(label);
-        }
-
-        #endregion
-
-        #region Service Handling: Daedra Summoning
-
-
-        #endregion
-
-        #region Macro handling
-
-        public virtual MacroDataSource GetMacroDataSource()
-        {
-            return new DaedraSummonedMacroDataSource(this);
-        }
-
-        /// <summary>
-        /// MacroDataSource context sensitive methods for quest popup windows.
-        /// </summary>
-        protected class DaedraSummonedMacroDataSource : MacroDataSource
-        {
-            private DaggerfallDaedraSummonedWindow parent;
-            public DaedraSummonedMacroDataSource(DaggerfallDaedraSummonedWindow daedraSummoning)
+            // Initialise the video panel.
+            playerPanel = new FLCPlayer()
             {
-                this.parent = daedraSummoning;
-            }
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Middle,
+                Size = new Vector2(320, 200),
+                BottomMargin = 13
+            };
+            NativePanel.Components.Add(playerPanel);
 
-            public override string Daedra()
+            // Start video playing.
+            playerPanel.Load(daedraSummoned.vidFile);
+            if (playerPanel.FLCFile.ReadyToPlay)
+                playerPanel.Start();
+
+            // Add text message area.
+            messageLabel = new MultiFormatTextLabel()
             {
-                FactionFile.FactionData factionData;
-                if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(parent.daedraSummoned.factionId, out factionData))
-                    return factionData.name;
-                else
-                    return "%dae[error]";
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Bottom,
+                ExtraLeading = 3,
+            };
+            playerPanel.Components.Add(messageLabel);
+            playerPanel.OnMouseClick += PlayerPanel_OnMouseClick;
+
+            // Initialise message to display,
+            if (daedraQuest != null)
+            {   // with the quest offer message.
+                Message message = daedraQuest.GetMessage((int)QuestMachine.QuestMessages.QuestorOffer);
+                messageTokens = message.GetTextTokens();
+            }
+            else
+            {   // with the textId message evaluated with mcp provided.
+                messageTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(textId);
+                MacroHelper.ExpandMacros(ref messageTokens, mcp);
+            }
+            idx = 0;
+            DisplayNextTextChunk();     
+        }
+
+        public override void Update()
+        {
+            base.Update();
+
+            if (lastChunk && !answerGiven)
+            {
+                if (Input.GetKey(KeyCode.Y))
+                {
+                    HandleAnswer(QuestMachine.QuestMessages.AcceptQuest);
+                    QuestMachine.Instance.InstantiateQuest(daedraQuest);
+                }
+                else if (Input.GetKey(KeyCode.N))
+                {
+                    HandleAnswer(QuestMachine.QuestMessages.RefuseQuest);
+                    GameObjectHelper.CreateFoeSpawner(true, DaggerfallQuestPopupWindow.daedricFoes[UnityEngine.Random.Range(0, 5)], UnityEngine.Random.Range(3, 6), 8, 64);
+                }
             }
         }
 
-        #endregion
+        private void HandleAnswer(QuestMachine.QuestMessages qMessage)
+        {
+            lastChunk = false;
+            answerGiven = true;
+            idx = 0;
+            Message message = daedraQuest.GetMessage((int) qMessage);
+            messageTokens = message.GetTextTokens();
+            playerPanel.OnMouseClick += PlayerPanel_OnMouseClick;
+            DisplayNextTextChunk();
+        }
+
+        private void DisplayNextTextChunk()
+        {
+            TextFile.Token[] chunk = new TextFile.Token[TokensPerChunk];
+            int len = Math.Min(TokensPerChunk, messageTokens.Length - idx);
+            Array.Copy(messageTokens, idx, chunk, 0, len);
+            messageLabel.SetText(chunk);
+            // Is this the last chunk?
+            if (len < TokensPerChunk || idx + len == messageTokens.Length)
+            {
+                lastChunk = true;
+                if (!answerGiven)
+                {   // Disable click and listen for Y/N keypress.
+                    playerPanel.OnMouseClick -= PlayerPanel_OnMouseClick;
+                }
+            }
+            idx += TokensPerChunk;
+        }
+
+        private void PlayerPanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            // If done, close window on click after last chunk, else display next chunk of text.
+            if (lastChunk && answerGiven)
+                CloseWindow();
+            else if (!lastChunk)
+                DisplayNextTextChunk();
+        }
+
     }
 }

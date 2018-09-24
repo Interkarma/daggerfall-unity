@@ -941,7 +941,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// <summary>
         /// Assigns basic starting gear to a new character.
         /// </summary>
-        public void AssignStartingGear(PlayerEntity playerEntity, int classIndex)
+        public void AssignStartingGear(PlayerEntity playerEntity, int classIndex, bool isCustom)
         {
             // Get references
             ItemCollection items = playerEntity.Items;
@@ -974,38 +974,46 @@ namespace DaggerfallWorkshop.Game.Items
             equipTable.EquipItem(shortShirt, true, false);
             equipTable.EquipItem(casualPants, true, false);
 
-            // Add class-specific starting weapon
-            Weapons[] StartingWeaponTypesByClass = { Weapons.Staff,      // Mage
-                                                     Weapons.Saber,      // Spellsword
-                                                     Weapons.Saber,      // Battlemage
-                                                     Weapons.Shortsword, // Sorcerer
-                                                     Weapons.Mace,       // Healer
-                                                     Weapons.Shortsword, // Nightblade
-                                                     Weapons.Shortsword, // Bard
-                                                     Weapons.Tanto,      // Burglar
-                                                     Weapons.Saber,      // Rogue
-                                                     Weapons.Shortsword, // Acrobat
-                                                     Weapons.Shortsword, // Thief
-                                                     Weapons.Longsword,  // Assassin
-                                                     Weapons.Staff,      // Monk
-                                                     Weapons.Long_Bow,   // Archer
-                                                     Weapons.Battle_Axe, // Ranger
-                                                     Weapons.Warhammer,  // Barbarian
-                                                     Weapons.Broadsword, // Warrior
-                                                     Weapons.Longsword   // Knight
-                                                     };
-            byte[] StartingWeaponMaterialsByClass  = { 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0 }; // 0 = iron, 1 = steel
-            items.AddItem(ItemBuilder.CreateWeapon(StartingWeaponTypesByClass[classIndex], (WeaponMaterialTypes)StartingWeaponMaterialsByClass[classIndex]));
-
-            // Archer also gets a steel battleaxe and some arrows
-            const int archerIndex = 13;
-            const int archerArrows = 24;
-            if (classIndex == archerIndex)
+            if (!isCustom)
             {
-                items.AddItem(ItemBuilder.CreateWeapon(Weapons.Battle_Axe, WeaponMaterialTypes.Steel));
-                DaggerfallUnityItem arrowPile = ItemBuilder.CreateWeapon(Weapons.Arrow, WeaponMaterialTypes.Iron);
-                arrowPile.stackCount = archerArrows;
-                items.AddItem(arrowPile);
+                // Add class-specific starting weapon
+                Weapons[] StartingWeaponTypesByClass = { Weapons.Shortsword, // Mage
+                                                         Weapons.Saber,      // Spellsword
+                                                         Weapons.Saber,      // Battlemage
+                                                         Weapons.Shortsword, // Sorcerer
+                                                         Weapons.Mace,       // Healer
+                                                         Weapons.Shortsword, // Nightblade
+                                                         Weapons.Shortsword, // Bard
+                                                         Weapons.Tanto,      // Burglar
+                                                         Weapons.Saber,      // Rogue
+                                                         Weapons.Shortsword, // Acrobat
+                                                         Weapons.Shortsword, // Thief
+                                                         Weapons.Longsword,  // Assassin
+                                                         Weapons.Staff,      // Monk
+                                                         Weapons.Long_Bow,   // Archer
+                                                         Weapons.Battle_Axe, // Ranger
+                                                         Weapons.Warhammer,  // Barbarian
+                                                         Weapons.Broadsword, // Warrior
+                                                         Weapons.Longsword   // Knight
+                };
+                byte[] StartingWeaponMaterialsByClass = { 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0 }; // 0 = iron, 1 = steel
+                items.AddItem(ItemBuilder.CreateWeapon(StartingWeaponTypesByClass[classIndex], (WeaponMaterialTypes)StartingWeaponMaterialsByClass[classIndex]));
+
+                // Archer also gets a steel battleaxe and some arrows
+                const int archerIndex = 13;
+                const int archerArrows = 24;
+                if (classIndex == archerIndex)
+                {
+                    items.AddItem(ItemBuilder.CreateWeapon(Weapons.Battle_Axe, WeaponMaterialTypes.Steel));
+                    DaggerfallUnityItem arrowPile = ItemBuilder.CreateWeapon(Weapons.Arrow, WeaponMaterialTypes.Iron);
+                    arrowPile.stackCount = archerArrows;
+                    items.AddItem(arrowPile);
+                }
+            }
+            else
+            {
+                // Custom classes only get an iron longsword
+                items.AddItem(ItemBuilder.CreateWeapon(Weapons.Longsword, WeaponMaterialTypes.Iron));
             }
 
             // Add some starting gold
