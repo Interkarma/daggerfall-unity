@@ -23,7 +23,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         #region Fields
 
         public const int startValue = 128;
-        public const int totalVariants = 12;
+        const int totalVariants = 12;
 
         VariantProperties[] variantProperties = new VariantProperties[totalVariants];
 
@@ -181,6 +181,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 for (int i = 0; i < minutesPassed; i++)
                 {
                     IncrementPoisonEffects();
+                    if (currentState == PoisonStates.Complete)
+                        break;
                 }
             }
 
