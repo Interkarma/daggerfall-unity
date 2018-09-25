@@ -108,6 +108,7 @@ namespace DaggerfallWorkshop.Game.Entity
         ClimbingMotor climbingMotor = null;
         protected uint lastGameMinutes = 0;         // Being tracked in order to perform updates based on changes in the current game minute
         private bool gameStarted = false;
+        bool displayingExhaustedPopup = false;
 
         #endregion
 
@@ -1772,6 +1773,14 @@ namespace DaggerfallWorkshop.Game.Entity
             const int youDropToTheGround1 = 1071;
             const int youDropToTheGround2 = 1072;
 
+            // Do nothing if already displaying exhausted popup
+            // This prevents rapid-fire exhaustion events from stacking multiple windows
+            // Example is Somnalius poison after first exhaustion drop
+            // Subsequent exhaustion events would otherwise stack on popup per poison round remaining
+            // This can make player think game has stalled until they click through all stacked popups
+            if (displayingExhaustedPopup)
+                return;
+
             bool enemiesNearby = GameManager.Instance.AreEnemiesNearby();
 
             ITextProvider textProvider = DaggerfallUnity.Instance.TextProvider;
@@ -1797,6 +1806,8 @@ namespace DaggerfallWorkshop.Game.Entity
             }
             messageBox.ClickAnywhereToClose = true;
             messageBox.ParentPanel.BackgroundColor = Color.clear;
+            messageBox.OnClose += ExhaustedMessageBox_OnClose;
+            displayingExhaustedPopup = true;
             messageBox.Show();
 
             if (!enemiesNearby && !GameManager.Instance.PlayerEnterExit.IsPlayerSwimming)
@@ -1815,6 +1826,11 @@ namespace DaggerfallWorkshop.Game.Entity
             }
             else
                 SetHealth(0);
+        }
+
+        private void ExhaustedMessageBox_OnClose()
+        {
+            displayingExhaustedPopup = false;
         }
 
         #endregion

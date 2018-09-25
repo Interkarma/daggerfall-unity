@@ -175,15 +175,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             uint currentMinute = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
             int minutesPassed = (int)(currentMinute - lastMinute);
 
-            // Increment poison effect for each game minute passed
-            if (currentState != PoisonStates.Complete)
+            // Increment poison effect for each game minute passed or until poison is complete
+            while (minutesPassed-- > 0 && minutesRemaining > 0 && currentState == PoisonStates.Active)
             {
-                for (int i = 0; i < minutesPassed; i++)
-                {
-                    IncrementPoisonEffects();
-                    if (currentState == PoisonStates.Complete)
-                        break;
-                }
+                IncrementPoisonEffects();
             }
 
             // Update minute tracking
