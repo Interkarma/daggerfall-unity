@@ -597,6 +597,9 @@ namespace DaggerfallWorkshop.Game.Utility
             }
             GameManager.Instance.WeatherManager.PlayerWeather.ClimateWeathers = climateWeathers;
 
+            // Load character biography text
+            playerEntity.BackStory = saveGames.BioFile.Lines;
+
             // Start game
             DaggerfallUI.Instance.PopToHUD();
             GameManager.Instance.PauseGame(false);
