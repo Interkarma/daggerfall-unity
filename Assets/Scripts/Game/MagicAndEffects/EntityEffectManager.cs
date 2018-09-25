@@ -344,7 +344,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 IEntityEffect effect = GameManager.Instance.EntityEffectBroker.InstantiateEffect(sourceBundle.Settings.Effects[i]);
                 if (effect == null)
                 {
-                    Debug.LogWarningFormat("AssignBundle() could not add effect as key '{0}' was not found by broker.");
+                    Debug.LogWarningFormat("AssignBundle() could not add effect as key '{0}' was not found by broker.", sourceBundle.Settings.Effects[i].Key);
                     continue;
                 }
 
