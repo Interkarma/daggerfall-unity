@@ -371,6 +371,68 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         #endregion
 
+        #region Public Methods
+
+        /// <summary>
+        /// Gets the attribute modifier of this effect.
+        /// </summary>
+        /// <param name="stat">Attribute to query.</param>
+        /// <returns>Current attribute modifier.</returns>
+        public int GetAttributeMod(DFCareer.Stats stat)
+        {
+            if (stat == DFCareer.Stats.None)
+                return 0;
+
+            return statMods[(int)stat];
+        }
+
+        /// <summary>
+        /// Gets the skill modifier of the effect.
+        /// </summary>
+        /// <param name="skill">Skill to query.</param>
+        /// <returns>Current skill modifier.</returns>
+        protected int GetSkillMod(DFCareer.Skills skill)
+        {
+            if (skill == DFCareer.Skills.None)
+                return 0;
+
+            return skillMods[(int)skill];
+        }
+
+        /// <summary>
+        /// Heal attribute damage by amount (must be positive value).
+        /// Does nothing if this effect does not damage attributes.
+        /// Attribute will not heal past 0.
+        /// </summary>
+        /// <param name="stat">Attribute to heal.</param>
+        /// <param name="amount">Amount to heal.</param>
+        public void HealAttributeDamage(DFCareer.Stats stat, uint amount)
+        {
+            int result = GetAttributeMod(stat) + (int)amount;
+            if (result > 0)
+                result = 0;
+
+            SetStatMod(stat, result);
+        }
+
+        /// <summary>
+        /// Heal skill damage by amount (must be positive value).
+        /// Does nothing if this effect does not damage skills.
+        /// Skill will not heal past 0.
+        /// </summary>
+        /// <param name="skill">Skill to heal.</param>
+        /// <param name="amount">Amount to heal.</param>
+        public void HealSkillDamage(DFCareer.Skills skill, uint amount)
+        {
+            int result = GetSkillMod(skill) + (int)amount;
+            if (result > 0)
+                result = 0;
+
+            SetSkillMod(skill, result);
+        }
+
+        #endregion
+
         #region Protected Helpers
 
         protected DaggerfallEntityBehaviour GetPeeredEntityBehaviour(EntityEffectManager manager)
