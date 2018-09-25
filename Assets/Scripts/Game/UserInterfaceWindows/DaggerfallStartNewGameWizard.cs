@@ -375,7 +375,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
 
                 characterDocument.biographyEffects = autoBiog.AnswerEffects;
-                characterDocument.backStory = BiogFile.GenerateBackstory(characterDocument.classIndex);
+                characterDocument.backStory = autoBiog.GenerateBackstory(characterDocument.classIndex);
                 SetNameSelectWindow();
             } 
             else
@@ -387,7 +387,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void CreateCharBiographyWindow_OnClose()
         {
             characterDocument.biographyEffects = createCharBiographyWindow.PlayerEffects;
-            characterDocument.backStory = BiogFile.GenerateBackstory(characterDocument.classIndex);
             SetNameSelectWindow();
         }
 

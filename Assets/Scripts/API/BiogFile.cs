@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using DaggerfallWorkshop.Game.Entity;
 using UnityEngine;
 using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Game.Player;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallConnect.Arena2
 {
@@ -77,6 +79,20 @@ namespace DaggerfallConnect.Arena2
             {
                 changedReputations[i] = 0;
             }
+
+            // Initialize question token lists
+            Q1Tokens = new List<int>();
+            Q2Tokens = new List<int>();
+            Q3Tokens = new List<int>();
+            Q4Tokens = new List<int>();
+            Q5Tokens = new List<int>();
+            Q6Tokens = new List<int>();
+            Q7Tokens = new List<int>();
+            Q8Tokens = new List<int>();
+            Q9Tokens = new List<int>();
+            Q10Tokens = new List<int>();
+            Q11Tokens = new List<int>();
+            Q12Tokens = new List<int>();
         }
 
         public void DigestRepChanges()
@@ -96,6 +112,63 @@ namespace DaggerfallConnect.Arena2
                 }
                 changedReputations[id] += (short)amount;
             }
+        }
+
+        public List<string> GenerateBackstory(int classIndex)
+        {
+            const int tokensStart = 4116;
+
+            #region Parse answer tokens
+            List<int>[] tokenLists = new List<int>[questionCount * 2];
+            tokenLists[0] = Q1Tokens;
+            tokenLists[1] = Q2Tokens;
+            tokenLists[2] = Q3Tokens;
+            tokenLists[3] = Q4Tokens;
+            tokenLists[4] = Q5Tokens;
+            tokenLists[5] = Q6Tokens;
+            tokenLists[6] = Q7Tokens;
+            tokenLists[7] = Q8Tokens;
+            tokenLists[8] = Q9Tokens;
+            tokenLists[9] = Q10Tokens;
+            tokenLists[10] = Q11Tokens;
+            tokenLists[11] = Q12Tokens;
+
+            for (int i = 0; i < questionCount; i++)
+            {
+                foreach (string effect in questions[0].Answers)
+                {
+                    if (effect[0] == '#')
+                    {
+                        string[] splitStr = effect.Split('#');
+                        if (splitStr.Length > 1)
+                        {
+                            tokenLists[i].Add(int.Parse(splitStr[1]));
+                        }
+                    }
+                    if (effect[1] == '!')
+                    {
+                        string[] splitStr = effect.Split('!');
+                        if (splitStr.Length > 1)
+                        {
+                            tokenLists[i].Add(int.Parse(splitStr[1]));
+                        }
+                    }
+                }
+            }
+            #endregion
+
+            List<string> backStory = new List<string>();
+            TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(tokensStart + classIndex);
+            MacroHelper.ExpandMacros(ref tokens, (IMacroContextProvider)this);
+            foreach (TextFile.Token token in tokens)
+            {
+                if (token.formatting == TextFile.Formatting.Text)
+                {
+                    backStory.Add(token.text);
+                }
+            }
+
+            return backStory;
         }
 
         #region Static Methods
@@ -380,7 +453,7 @@ namespace DaggerfallConnect.Arena2
             return selectedIndex;
         }
 
-        public static List<string> GenerateBackstory(int classIndex)
+        public static List<string> GenerateBackstory(int classIndex, CharacterDocument document)
         {
             const int tokensStart = 4116;
 
@@ -454,6 +527,19 @@ namespace DaggerfallConnect.Arena2
         {
             get { return answerEffects; }
         }
+
+        public List<int> Q1Tokens { get; set; }
+        public List<int> Q2Tokens { get; set; }
+        public List<int> Q3Tokens { get; set; }
+        public List<int> Q4Tokens { get; set; }
+        public List<int> Q5Tokens { get; set; }
+        public List<int> Q6Tokens { get; set; }
+        public List<int> Q7Tokens { get; set; }
+        public List<int> Q8Tokens { get; set; }
+        public List<int> Q9Tokens { get; set; }
+        public List<int> Q10Tokens { get; set; }
+        public List<int> Q11Tokens { get; set; }
+        public List<int> Q12Tokens { get; set; }
 
         #endregion
     }

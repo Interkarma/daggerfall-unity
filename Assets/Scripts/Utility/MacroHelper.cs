@@ -172,6 +172,18 @@ namespace DaggerfallWorkshop.Utility
             { "%q10", null },
             { "%q11", null },
             { "%q12", null },
+            { "%q1a", null },  // secondary effects of questions answered in bio
+            { "%q2a", null },
+            { "%q3a", null },
+            { "%q4a", null },
+            { "%q5a", null },
+            { "%q6a", null },
+            { "%q7a", null },
+            { "%q8a", null },
+            { "%q9a", null },
+            { "%q10a", null },
+            { "%q11a", null },
+            { "%q12a", null },
             { "%qdt", QuestDate }, // Quest date of log entry
             { "%qdat", null },// Quest date of log entry [2]
             { "%qot", null }, // The log comment
@@ -1350,6 +1362,12 @@ namespace DaggerfallWorkshop.Utility
         {
             // %r5
             return mcp.GetMacroDataSource().UnderworldRep();
+        }
+
+        public static string Q1(IMacroContextProvider mcp)
+        {
+            // %q1
+            return mcp.GetMacroDataSource().Q1();
         }
 
         #endregion

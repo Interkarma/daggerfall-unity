@@ -130,6 +130,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 foreach (string effect in curAnswers[answerIndex].Effects)
                 {
                     biogFile.AnswerEffects.Add(effect);
+                    // TODO: text tokens need to go in a special container
                 }
                 questionIndex++;
                 PopulateControls(biogFile.Questions[questionIndex]);
@@ -137,6 +138,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else
             {
                 CloseWindow();
+
+                // Create text biography
+                biogFile.GenerateBackstory(classIndex);
+
                 // Show reputation changes
                 biogFile.DigestRepChanges();
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
