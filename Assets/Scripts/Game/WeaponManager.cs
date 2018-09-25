@@ -693,7 +693,7 @@ namespace DaggerfallWorkshop.Game
                             if (DaggerfallUnity.Settings.CombatVoices && entityBehaviour.EntityType == EntityTypes.EnemyClass && UnityEngine.Random.Range(1, 101) <= 40)
                             {
                                 Genders gender;
-                                if (enemyEntity.MobileEnemy.Gender == MobileGender.Male || enemyEntity.MobileEnemy.ID == (int)MobileTypes.Knight_CityWatch)
+                                if (entityMobileUnit.Summary.Enemy.Gender == MobileGender.Male || enemyEntity.MobileEnemy.ID == (int)MobileTypes.Knight_CityWatch)
                                     gender = Genders.Male;
                                 else
                                     gender = Genders.Female;

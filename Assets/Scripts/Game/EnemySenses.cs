@@ -15,6 +15,7 @@ using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Game.Questing;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -31,9 +32,11 @@ namespace DaggerfallWorkshop.Game
 
         DaggerfallMobileUnit mobile;
         DaggerfallEntityBehaviour entityBehaviour;
+        QuestResourceBehaviour questBehaviour;
         EnemyMotor motor;
         EnemyEntity enemyEntity;
         bool targetInSight;
+        bool playerInSight;
         bool targetInEarshot;
         Vector3 directionToTarget;
         float distanceToPlayer;
@@ -124,12 +127,19 @@ namespace DaggerfallWorkshop.Game
             set { wouldBeSpawnedInClassic = value; }
         }
 
+        public QuestResourceBehaviour QuestBehaviour
+        {
+            get { return questBehaviour; }
+            set { questBehaviour = value; }
+        }
+
         void Start()
         {
             mobile = GetComponentInChildren<DaggerfallMobileUnit>();
             entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
             enemyEntity = entityBehaviour.Entity as EnemyEntity;
             motor = GetComponent<EnemyMotor>();
+            questBehaviour = GetComponent<QuestResourceBehaviour>();
             lastKnownTargetPos = ResetPlayerPos;
 
             short[] classicSpawnXZDistArray = { 1024, 384, 640, 768, 768, 768, 768 };
@@ -222,12 +232,15 @@ namespace DaggerfallWorkshop.Game
                 if ((GameManager.Instance.PlayerEntity.NoTargetMode || !motor.IsHostile) && entityBehaviour.Target == Player)
                     entityBehaviour.Target = null;
 
+                if (entityBehaviour.Target == null)
+                    lastKnownTargetPos = ResetPlayerPos;
+
                 if ((motor.IsHostile && entityBehaviour.Target == null) || classicTargetUpdateTimer > 10) // Timing is 200 in classic, about 10 seconds.
                 {
                     classicTargetUpdateTimer = 0f;
 
-                    // Is enemy in area around player?
-                    if (wouldBeSpawnedInClassic)
+                    // Is enemy in area around player or can see player?
+                    if (wouldBeSpawnedInClassic || playerInSight)
                     {
                         entityBehaviour.Target = GetTarget();
                     }
@@ -245,6 +258,15 @@ namespace DaggerfallWorkshop.Game
                 // Get distance to player
                 Vector3 toPlayer = Player.transform.position - transform.position;
                 distanceToPlayer = toPlayer.magnitude;
+
+                // If out of classic spawn range, still check for direct LOS to player so that enemies who see player will
+                // try to attack.
+                if (!wouldBeSpawnedInClassic)
+                {
+                    distanceToTarget = distanceToPlayer;
+                    directionToTarget = toPlayer.normalized;
+                    playerInSight = CanSeeTarget(Player);
+                }
 
                 Vector3 toTarget = ResetPlayerPos;
                 if (entityBehaviour.Target != null)
@@ -466,6 +488,14 @@ namespace DaggerfallWorkshop.Game
                         if (!targetSenses.WouldBeSpawnedInClassic && !see)
                             continue;
                     }
+
+                    // For now, quest AI only targets player
+                    if (questBehaviour && targetBehaviour != Player)
+                        continue;
+
+                    // For now, quest AI can't be targeted
+                    if (targetSenses && targetSenses.QuestBehaviour)
+                        continue;
 
                     // Can't target ally
                     if (DaggerfallUnity.Settings.EnemyInfighting)
