@@ -32,6 +32,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         int minutesRemaining;
         PoisonStates currentState;
         int forcedRoundsRemaining = 1;
+        bool positiveStatsRemoved = false;
 
         #endregion
 
@@ -62,6 +63,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public Poisons PoisonType
         {
             get { return variantProperties[currentVariant].poisonType; }
+        }
+
+        public bool IsDrug
+        {
+            get { return IsDrugType(); }
         }
 
         #endregion
@@ -101,7 +107,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void MagicRound()
         {
             base.MagicRound();
-            UpdatePoison();
+
+            if (currentState != PoisonStates.Complete)
+                UpdatePoison();
+            else
+                CompletePoison();
         }
 
         public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
@@ -150,6 +160,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             return string.Format("Poison-{0}", poisonType.ToString());
         }
 
+        public void CurePoison()
+        {
+            forcedRoundsRemaining = 0;
+            minutesRemaining = 0;
+            currentState = PoisonStates.Complete;
+            ResignAsIncumbent();
+        }
+
         #endregion
 
         #region Protected Methods
@@ -160,9 +178,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             //  - Track game minutes until poison begins
             //  - Tick poison effect each minute
             //  - Track poison minutes remaining
-            //  * End poison once completed
-            //  * Attribute drains will be permanent until poison cured
-            //  * Buffs will end once poison has finished
+            //  - End poison once completed
+            //  - Attribute drains will be permanent until poison cured
+            //  - Buffs will end once poison has finished
             //  * Implement CurePoison effect
             //  * Allow HealAttribute effects to cure damage from poisons similar to Drain
             //  * Show "you have been poisoned" on player info popup
@@ -183,6 +201,18 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             // Update minute tracking
             lastMinute = currentMinute;
+        }
+
+        protected void CompletePoison()
+        {
+            // All positive attribute effects from drugs are removed when poison complete
+            if (IsDrug && !positiveStatsRemoved)
+                RemovePositiveStats();
+
+            // Attribute damage from poisons will persist until player heals attributes or cures poison
+            // If poison has completed and all attribute damage is healed then outcome is identical to just curing poison directly
+            if (AllStatModsZero())
+                CurePoison();
         }
 
         #endregion
@@ -280,6 +310,41 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             variantProperties[variant] = vp;
         }
 
+        void RemovePositiveStats()
+        {
+            for (int i = 0; i < StatMods.Length; i++)
+            {
+                if (StatMods[i] > 0)
+                    StatMods[i] = 0;
+            }
+            positiveStatsRemoved = true;
+        }
+
+        bool AllStatModsZero()
+        {
+            for (int i = 0; i < StatMods.Length; i++)
+            {
+                if (StatMods[i] != 0)
+                    return false;
+            }
+
+            return true;
+        }
+
+        bool IsDrugType()
+        {
+            switch(PoisonType)
+            {
+                case Poisons.Indulcet:
+                case Poisons.Sursum:
+                case Poisons.Quaesto_Vil:
+                case Poisons.Aegrotat:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
         #endregion
 
         #region Serialization
@@ -292,6 +357,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             public int minutesRemaining;
             public PoisonStates currentState;
             public int forcedRoundsRemaining;
+            public bool positiveStatsRemoved;
         }
 
         public override object GetSaveData()
@@ -302,6 +368,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             data.minutesRemaining = minutesRemaining;
             data.currentState = currentState;
             data.forcedRoundsRemaining = forcedRoundsRemaining;
+            data.positiveStatsRemoved = positiveStatsRemoved;
 
             return data;
         }
@@ -317,6 +384,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             minutesRemaining = data.minutesRemaining;
             currentState = data.currentState;
             forcedRoundsRemaining = data.forcedRoundsRemaining;
+            positiveStatsRemoved = data.positiveStatsRemoved;
         }
 
         #endregion
