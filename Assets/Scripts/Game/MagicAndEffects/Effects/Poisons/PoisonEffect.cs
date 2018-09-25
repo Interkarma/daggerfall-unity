@@ -29,7 +29,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         uint lastMinute;
         int minutesToStart;
-        int minutesActive;
+        int minutesRemaining;
         PoisonStates currentState;
         int forcedRoundsRemaining = 1;
 
@@ -123,10 +123,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             int index = (int)PoisonType - startValue;
             minutesToStart = Random.Range(MinMinutesToPoison[index], MaxMinutesToPoison[index] + 1);
-            minutesActive = Random.Range(MinRoundsOfPoison[index], MaxRoundsOfPoison[index] + 1);
+            minutesRemaining = Random.Range(MinRoundsOfPoison[index], MaxRoundsOfPoison[index] + 1);
 
             DaggerfallEntityBehaviour host = GetPeeredEntityBehaviour(manager);
-            Debug.Log(host.Entity.Name + " afflicted with " + PoisonType + ", starting in " + minutesToStart + " minutes, lasting for " + minutesActive + " minutes.");
+            Debug.Log(host.Entity.Name + " afflicted with " + PoisonType + ", starting in " + minutesToStart + " minutes, lasting for " + minutesRemaining + " minutes.");
         }
 
         protected override void AddState(IncumbentEffect incumbent)
@@ -268,7 +268,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             }
 
             DaggerfallUI.AddHUDText(HardStrings.youFeelSomewhatBad);
-            if (--minutesActive > 0)
+            if (--minutesRemaining > 0)
                 return;
             else
                 currentState = PoisonStates.Complete;
@@ -288,6 +288,42 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         #endregion
 
         #region Serialization
+
+        [fsObject("v1")]
+        public struct SaveData_v1
+        {
+            public uint lastMinute;
+            public int minutesToStart;
+            public int minutesRemaining;
+            public PoisonStates currentState;
+            public int forcedRoundsRemaining;
+        }
+
+        public override object GetSaveData()
+        {
+            SaveData_v1 data = new SaveData_v1();
+            data.lastMinute = lastMinute;
+            data.minutesToStart = minutesToStart;
+            data.minutesRemaining = minutesRemaining;
+            data.currentState = currentState;
+            data.forcedRoundsRemaining = forcedRoundsRemaining;
+
+            return data;
+        }
+
+        public override void RestoreSaveData(object dataIn)
+        {
+            if (dataIn == null)
+                return;
+
+            SaveData_v1 data = (SaveData_v1)dataIn;
+            lastMinute = data.lastMinute;
+            minutesToStart = data.minutesToStart;
+            minutesRemaining = data.minutesRemaining;
+            currentState = data.currentState;
+            forcedRoundsRemaining = data.forcedRoundsRemaining;
+        }
+
         #endregion
 
         #region TEMP
