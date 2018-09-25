@@ -22,8 +22,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     {
         #region Fields
 
-        const int startValue = 128;
-        const int totalVariants = 12;
+        public const int startValue = 128;
+        public const int totalVariants = 12;
 
         VariantProperties[] variantProperties = new VariantProperties[totalVariants];
 
