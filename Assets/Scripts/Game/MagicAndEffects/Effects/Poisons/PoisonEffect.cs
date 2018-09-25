@@ -70,6 +70,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             get { return IsDrugType(); }
         }
 
+        public PoisonStates CurrentState
+        {
+            get { return currentState; }
+        }
+
         #endregion
 
         #region Overrides
@@ -182,8 +187,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             //  - Attribute drains will be permanent until poison cured
             //  - Buffs will end once poison has finished
             //  * Implement CurePoison effect
-            //  * Allow HealAttribute effects to cure damage from poisons similar to Drain
-            //  * Show "you have been poisoned" on player info popup
+            //  - Allow HealAttribute effects to cure damage from poisons similar to Drain
+            //  - Show "you have been poisoned" on player info popup
+            //  - Show travel warning when poisoned
 
             // Do nothing until poison set
             if (PoisonType == Poisons.None)

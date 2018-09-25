@@ -143,6 +143,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             get { return GetDiseaseBundles(); }
         }
 
+        public int PoisonCount
+        {
+            get { return GetPoisonCount(); }
+        }
+
+        public InstancedBundle[] PoisonBundles
+        {
+            get { return GetPoisonBundles(); }
+        }
+
         #endregion
 
         #region Unity
@@ -926,6 +936,30 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
 
             return diseaseBundles.ToArray();
+        }
+
+        int GetPoisonCount()
+        {
+            int count = 0;
+            foreach (InstancedBundle bundle in instancedBundles)
+            {
+                if (bundle.bundleType == BundleTypes.Poison)
+                    count++;
+            }
+
+            return count;
+        }
+
+        InstancedBundle[] GetPoisonBundles()
+        {
+            List<InstancedBundle> poisonBundles = new List<InstancedBundle>();
+            foreach (InstancedBundle bundle in instancedBundles)
+            {
+                if (bundle.bundleType == BundleTypes.Poison)
+                    poisonBundles.Add(bundle);
+            }
+
+            return poisonBundles.ToArray();
         }
 
         #endregion
