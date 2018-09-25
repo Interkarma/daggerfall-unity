@@ -1351,7 +1351,7 @@ namespace DaggerfallWorkshop.Utility
                 byte classicSpawnDistanceType = obj.Resources.FlatResource.SoundIndex;
 
                 // Add enemy
-                AddEnemy(obj, type, parent, loadID, classicSpawnDistanceType);
+                AddEnemy(obj, type, parent, loadID, classicSpawnDistanceType, false);
             }
             else
             {
@@ -1411,7 +1411,7 @@ namespace DaggerfallWorkshop.Utility
                 byte classicSpawnDistanceType = obj.Resources.FlatResource.SoundIndex;
 
                 // Add enemy
-                AddEnemy(obj, type, parent, loadID, classicSpawnDistanceType);
+                AddEnemy(obj, type, parent, loadID, classicSpawnDistanceType, false);
             }
             else
             {
@@ -1479,20 +1479,22 @@ namespace DaggerfallWorkshop.Utility
             MobileTypes type,
             Transform parent = null,
             ulong loadID = 0,
-            byte classicSpawnDistanceType = 0)
+            byte classicSpawnDistanceType = 0,
+            bool useGenderFlag = true)
         {
             // Get default reaction
             MobileReactions reaction = MobileReactions.Hostile;
             if (obj.Resources.FlatResource.Action == (int)DFBlock.EnemyReactionTypes.Passive)
                 reaction = MobileReactions.Passive;
 
-            // TODO: Review gender assignment from this flag data is always consistent
-            // Check against other usage of this flag byte for NPCs in interiors
             MobileGender gender = MobileGender.Unspecified;
-            if (obj.Resources.FlatResource.Flags == (int)DFBlock.EnemyGenders.Female)
-                gender = MobileGender.Female;
-            if (obj.Resources.FlatResource.Flags == (int)DFBlock.EnemyGenders.Male)
-                gender = MobileGender.Male;
+            if ((int)type > 43 && useGenderFlag)
+            {
+                if (obj.Resources.FlatResource.Flags == (int)DFBlock.EnemyGenders.Female)
+                    gender = MobileGender.Female;
+                if (obj.Resources.FlatResource.Flags == (int)DFBlock.EnemyGenders.Male)
+                    gender = MobileGender.Male;
+            }
 
             // Just setup demo enemies at this time
             string name = string.Format("DaggerfallEnemy [{0}]", type.ToString());
