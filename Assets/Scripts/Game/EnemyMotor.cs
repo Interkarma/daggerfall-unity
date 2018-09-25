@@ -114,7 +114,9 @@ namespace DaggerfallWorkshop.Game
         {
             if (attacker && senses)
             {
-                entityBehaviour.Target = attacker;
+                // Only assign target if don't already have target
+                if (entityBehaviour.Target == null)
+                    entityBehaviour.Target = attacker;
                 senses.LastKnownTargetPos = attacker.transform.position;
                 giveUpTimer = 200;
             }
