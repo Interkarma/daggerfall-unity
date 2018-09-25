@@ -433,26 +433,43 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         }
 
         /// <summary>
-        /// Searches all effects in all bundles to find DrainEffect incumbent for a specific stat.
+        /// Searches all effects in all bundles to heal an amount of attribute loss.
+        /// Will spread healing amount across multiple effects if required.
         /// </summary>
-        /// <param name="drainStat">The stat being drained.</param>
-        /// <returns>DrainEffect incumbent for drainStat, or null if not found.</returns>
-        public DrainEffect FindDrainStatIncumbent(DFCareer.Stats drainStat)
+        /// <param name="stat">Attribute to heal.</param>
+        /// <param name="amount">Amount to heal. Must be a positive value.</param>
+        public void HealAttribute(DFCareer.Stats stat, int amount)
         {
+            if (amount < 0)
+            {
+                Debug.LogWarning("EntityEffectManager.HealDamagedAttribute() received a negative value for amount - ignoring.");
+                return;
+            }
+
+            int remaining = amount;
             foreach (InstancedBundle bundle in instancedBundles)
             {
-                foreach (IEntityEffect effect in bundle.liveEffects)
+                foreach (BaseEntityEffect effect in bundle.liveEffects)
                 {
-                    if (effect is DrainEffect)
+                    // Get attribute modifier of this effect and ignore if attribute not damaged
+                    int mod = effect.GetAttributeMod(stat);
+                    if (mod >= 0)
+                        continue;
+
+                    // Heal all or part of damage depending on how much healing remains
+                    int damage = Mathf.Abs(mod);
+                    if (remaining > damage)
                     {
-                        DrainEffect drainEffect = effect as DrainEffect;
-                        if (drainEffect.IsIncumbent && drainEffect.DrainStat == drainStat)
-                            return drainEffect;
+                        effect.HealAttributeDamage(stat, remaining - damage);
+                        remaining -= damage;
+                    }
+                    else
+                    {
+                        effect.HealAttributeDamage(stat, remaining);
+                        return;
                     }
                 }
             }
-
-            return null;
         }
 
         /// <summary>

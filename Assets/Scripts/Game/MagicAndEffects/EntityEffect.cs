@@ -400,35 +400,79 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         }
 
         /// <summary>
-        /// Heal attribute damage by amount (must be positive value).
+        /// Heal attribute damage by amount.
         /// Does nothing if this effect does not damage attributes.
         /// Attribute will not heal past 0.
         /// </summary>
         /// <param name="stat">Attribute to heal.</param>
-        /// <param name="amount">Amount to heal.</param>
-        public void HealAttributeDamage(DFCareer.Stats stat, uint amount)
+        /// <param name="amount">Amount to heal. Must be positive value.</param>
+        public virtual void HealAttributeDamage(DFCareer.Stats stat, int amount)
         {
-            int result = GetAttributeMod(stat) + (int)amount;
+            if (amount < 0)
+            {
+                Debug.LogWarning("EntityEffect.HealAttributeDamage() received a negative value for amount - ignoring.");
+                return;
+            }
+
+            int result = GetAttributeMod(stat) + amount;
             if (result > 0)
                 result = 0;
 
             SetStatMod(stat, result);
+            Debug.LogFormat("Healed {0}'s {1} by {2} points", GetPeeredEntityBehaviour(manager).name, stat.ToString(), amount);
         }
 
         /// <summary>
-        /// Heal skill damage by amount (must be positive value).
+        /// Heal skill damage by amount.
         /// Does nothing if this effect does not damage skills.
         /// Skill will not heal past 0.
         /// </summary>
         /// <param name="skill">Skill to heal.</param>
-        /// <param name="amount">Amount to heal.</param>
-        public void HealSkillDamage(DFCareer.Skills skill, uint amount)
+        /// <param name="amount">Amount to heal. Must be positive value.</param>
+        public virtual void HealSkillDamage(DFCareer.Skills skill, int amount)
         {
-            int result = GetSkillMod(skill) + (int)amount;
+            if (amount < 0)
+            {
+                Debug.LogWarning("EntityEffect.HealSkillDamage() received a negative value for amount - ignoring.");
+                return;
+            }
+
+            int result = GetSkillMod(skill) + amount;
             if (result > 0)
                 result = 0;
 
             SetSkillMod(skill, result);
+            Debug.LogFormat("Healed {0}'s {1} by {2} points", GetPeeredEntityBehaviour(manager).name, skill.ToString(), amount);
+        }
+
+        /// <summary>
+        /// Checks if all damaged attributes are healed back to 0.
+        /// </summary>
+        /// <returns>True if all attributes have returned to baseline.</returns>
+        public bool AllAttributesHealed()
+        {
+            for (int i = 0; i < StatMods.Length; i++)
+            {
+                if (StatMods[i] < 0)
+                    return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Checks if all damaged skills are healed back to 0.
+        /// </summary>
+        /// <returns>True if all skills have returned to baseline.</returns>
+        public bool AllSkillsHealed()
+        {
+            for (int i = 0; i < SkillMods.Length; i++)
+            {
+                if (SkillMods[i] < 0)
+                    return false;
+            }
+
+            return false;
         }
 
         #endregion

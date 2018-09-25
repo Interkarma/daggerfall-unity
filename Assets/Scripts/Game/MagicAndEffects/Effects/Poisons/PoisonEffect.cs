@@ -194,7 +194,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             int minutesPassed = (int)(currentMinute - lastMinute);
 
             // Increment poison effect for each game minute passed or until poison is complete
-            while (minutesPassed-- > 0 && minutesRemaining > 0 && currentState == PoisonStates.Active)
+            while (minutesPassed-- > 0 && minutesRemaining > 0 && currentState != PoisonStates.Complete)
             {
                 IncrementPoisonEffects();
             }
@@ -211,7 +211,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             // Attribute damage from poisons will persist until player heals attributes or cures poison
             // If poison has completed and all attribute damage is healed then outcome is identical to just curing poison directly
-            if (AllStatModsZero())
+            if (AllAttributesHealed())
                 CurePoison();
         }
 
@@ -318,17 +318,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                     StatMods[i] = 0;
             }
             positiveStatsRemoved = true;
-        }
-
-        bool AllStatModsZero()
-        {
-            for (int i = 0; i < StatMods.Length; i++)
-            {
-                if (StatMods[i] != 0)
-                    return false;
-            }
-
-            return true;
         }
 
         bool IsDrugType()
