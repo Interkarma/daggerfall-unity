@@ -38,6 +38,7 @@ namespace DaggerfallWorkshop.Game.Formulas
         public delegate int Formula_3i(int a, int b, int c);
         public delegate int Formula_1i_1f(int a, float b);
         public delegate int Formula_2de_2i(DaggerfallEntity de1, DaggerfallEntity de2 = null, int a = 0, int b = 0);
+        public delegate int Formula_2de_1dui_1i(DaggerfallEntity de1, DaggerfallEntity de2 = null, DaggerfallUnityItem a = null, int b = 0);
         public delegate bool Formula_1pe_1sk(PlayerEntity pe, DFCareer.Skills sk);
 
         // Registries for overridden formula
@@ -46,6 +47,7 @@ namespace DaggerfallWorkshop.Game.Formulas
         public static Dictionary<string, Formula_3i>        formula_3i = new Dictionary<string, Formula_3i>();
         public static Dictionary<string, Formula_1i_1f>     formula_1i_1f = new Dictionary<string, Formula_1i_1f>();
         public static Dictionary<string, Formula_2de_2i>    formula_2de_2i = new Dictionary<string, Formula_2de_2i>();
+        public static Dictionary<string, Formula_2de_1dui_1i> formula_2de_1dui_1i = new Dictionary<string, Formula_2de_1dui_1i>();
         public static Dictionary<string, Formula_1pe_1sk>   formula_1pe_1sk = new Dictionary<string, Formula_1pe_1sk>();
 
         #region Basic Formulas
@@ -337,14 +339,14 @@ namespace DaggerfallWorkshop.Game.Formulas
             return (handToHandSkill / 5) + 1;
         }
 
-        public static int CalculateAttackDamage(DaggerfallEntity attacker, DaggerfallEntity target, int weaponEquipSlot, int enemyAnimStateRecord)
+        public static int CalculateAttackDamage(DaggerfallEntity attacker, DaggerfallEntity target, DaggerfallUnityItem weapon, int enemyAnimStateRecord)
         {
             if (attacker == null || target == null)
                 return 0;
 
-            Formula_2de_2i del;
-            if (formula_2de_2i.TryGetValue("CalculateAttackDamage", out del))
-                return del(attacker, target, weaponEquipSlot, enemyAnimStateRecord);
+            Formula_2de_1dui_1i del;
+            if (formula_2de_1dui_1i.TryGetValue("CalculateAttackDamage", out del))
+                return del(attacker, target, weapon, enemyAnimStateRecord);
 
             int minBaseDamage = 0;
             int maxBaseDamage = 0;
@@ -353,7 +355,6 @@ namespace DaggerfallWorkshop.Game.Formulas
             int chanceToHitMod = 0;
             int backstabChance = 0;
             PlayerEntity player = GameManager.Instance.PlayerEntity;
-            DaggerfallUnityItem weapon = attacker.ItemEquipTable.GetItem((EquipSlots)weaponEquipSlot);
             short skillID = 0;
 
             // Choose whether weapon-wielding enemies use their weapons or weaponless attacks.
@@ -476,7 +477,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             // Get damage for weaponless attacks
             if (skillID == (short)DFCareer.Skills.HandToHand)
             {
-                if (attacker == player)
+                if (attacker == player || (AIAttacker != null && AIAttacker.EntityType == EntityTypes.EnemyClass))
                 {
                     if (CalculateSuccessfulHit(attacker, target, chanceToHitMod, struckBodyPart) > 0)
                     {
@@ -487,7 +488,8 @@ namespace DaggerfallWorkshop.Game.Formulas
                         // Apply damage modifiers.
                         damage += damageModifiers;
                         // Apply strength modifier. It is not applied in classic despite what the in-game description for the Strength attribute says.
-                        damage += DamageModifier(attacker.Stats.LiveStrength);
+                        if (attacker == player)
+                            damage += DamageModifier(attacker.Stats.LiveStrength);
                         // Handle backstabbing
                         damage = CalculateBackstabDamage(damage, backstabChance);
                     }

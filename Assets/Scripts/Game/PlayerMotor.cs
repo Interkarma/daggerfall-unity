@@ -29,8 +29,8 @@ namespace DaggerfallWorkshop.Game
         // If true, diagonal speed (when strafing + moving forward or back) can't exceed normal move speed; otherwise it's about 1.4 times faster
         public bool limitDiagonalSpeed = true;
 
-        public float systemTimerUpdatesPerSecond = .055f; // Number of updates per second by the system timer at memory location 0x46C.
-                                                          // Used for timing various things in classic.
+        public float systemTimerUpdatesDivisor = .0549254f; // Divisor for updates by the system timer at memory location 0x46C.
+                                                            // Used for timing various things in classic.
 
         // FixedUpdate is too choppy to give smooth camera movement. This handles a smooth following child transform.
         public Transform smoothFollower;                // The Transform that follows; will lerp to this Transform's position.

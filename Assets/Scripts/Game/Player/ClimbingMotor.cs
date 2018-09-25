@@ -150,7 +150,7 @@ namespace DaggerfallWorkshop.Game
             else // schedule climbing events
             {
                 // schedule climbing start
-                if (climbingStartTimer <= (playerMotor.systemTimerUpdatesPerSecond * startClimbSkillCheckFrequency))
+                if (climbingStartTimer <= (playerMotor.systemTimerUpdatesDivisor * startClimbSkillCheckFrequency))
                     climbingStartTimer += Time.deltaTime;
                 else
                 {
@@ -165,7 +165,7 @@ namespace DaggerfallWorkshop.Game
                 }
 
                 // schedule climbing continues, Faster updates if slipping
-                if (climbingContinueTimer <= (playerMotor.systemTimerUpdatesPerSecond * (isSlipping ? regainHoldSkillCheckFrequency : continueClimbingSkillCheckFrequency)))
+                if (climbingContinueTimer <= (playerMotor.systemTimerUpdatesDivisor * (isSlipping ? regainHoldSkillCheckFrequency : continueClimbingSkillCheckFrequency)))
                     climbingContinueTimer += Time.deltaTime;
                 else
                 {

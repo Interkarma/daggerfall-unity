@@ -35,6 +35,7 @@ namespace DaggerfallWorkshop.Game.Entity
         #region Fields
 
         bool godMode = false;
+        bool noTargetMode = false;
         bool preventEnemySpawns = false;
         bool preventNormalizingReputations = false;
         bool isResting = false;
@@ -113,6 +114,7 @@ namespace DaggerfallWorkshop.Game.Entity
         #region Properties
 
         public bool GodMode { get { return godMode; } set { godMode = value; } }
+        public bool NoTargetMode { get { return noTargetMode; } set { noTargetMode = value; } }
         public bool PreventEnemySpawns { get { return preventEnemySpawns; } set { preventEnemySpawns = value; } }
         public bool PreventNormalizingReputations { get { return preventNormalizingReputations; } set { preventNormalizingReputations = value; } }
         public bool IsResting { get { return isResting; } set { isResting = value; } }

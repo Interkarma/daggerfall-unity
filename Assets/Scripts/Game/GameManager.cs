@@ -554,8 +554,8 @@ namespace DaggerfallWorkshop.Game
                     EnemySenses enemySenses = entityBehaviour.GetComponent<EnemySenses>();
                     if (enemySenses)
                     {
-                        // Is enemy already aware of player or close enough they would be spawned in classic?
-                        if (enemySenses.PlayerInSight || enemySenses.PlayerInEarshot || enemySenses.WouldBeSpawnedInClassic)
+                        // Can enemy see player or is close enough they would be spawned in classic?
+                        if ((entityBehaviour.Target == Instance.PlayerEntityBehaviour && enemySenses.TargetInSight) || enemySenses.WouldBeSpawnedInClassic)
                         {
                             areEnemiesNearby = true;
                             break;

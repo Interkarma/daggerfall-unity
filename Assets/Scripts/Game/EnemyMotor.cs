@@ -108,16 +108,18 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-        /// Immediately become hostile towards player and know player's location.
+        /// Immediately become hostile towards attacker and know attacker's location.
         /// </summary>
-        public void MakeEnemyHostileToPlayer(GameObject player)
+        public void MakeEnemyHostileToAttacker(DaggerfallEntityBehaviour attacker)
         {
-            if (player && senses)
+            if (attacker && senses)
             {
-                senses.LastKnownPlayerPos = player.transform.position;
+                entityBehaviour.Target = attacker;
+                senses.LastKnownTargetPos = attacker.transform.position;
                 giveUpTimer = 200;
             }
-            isHostile = true;
+            if (attacker == GameManager.Instance.PlayerEntityBehaviour)
+                isHostile = true;
         }
 
         /// <summary>
@@ -245,34 +247,34 @@ namespace DaggerfallWorkshop.Game
             if (mobile.IsPlayingOneShot())
                 moveSpeed /= AttackSpeedDivisor;
 
-            // As long as the player is directly seen/heard,
+            // As long as the target is detected,
             // giveUpTimer is reset to full
-            if (senses.DetectedPlayer)
+            if (senses.DetectedTarget)
                 giveUpTimer = 200;
 
-            // Remain idle when not hostile or giving up finding the player
-            if (!isHostile || giveUpTimer == 0)
+            // Remain idle if no target or after giving up finding the target
+            if (giveUpTimer == 0)
             {
                 mobile.ChangeEnemyState(MobileStates.Idle);
                 return;
             }
 
             // GiveUpTimer value is from classic, so decrease at the speed of classic's update loop
-            if (!senses.DetectedPlayer
+            if (!senses.DetectedTarget
                 && giveUpTimer > 0 && classicUpdate)
                 giveUpTimer--;
 
-            // Enemy will keep moving towards last known player position
-            targetPos = senses.LastKnownPlayerPos;
+            // Enemy will keep moving towards last known target position
+            targetPos = senses.LastKnownTargetPos;
 
-            // Flying enemies and slaughterfish aim for player face
+            // Flying enemies and slaughterfish aim for target face
             if (flies || isLevitating || (swims && mobile.Summary.Enemy.ID == (int)MonsterCareers.Slaughterfish))
                 targetPos.y += 0.9f;
             else
             {
                 // Ground enemies target at their own height
-                // This avoids short enemies from stepping on each other as they approach the player
-                // Otherwise, their target vector aims up towards the player
+                // This avoids short enemies from stepping on each other as they approach the target
+                // Otherwise, their target vector aims up towards the target
                 var playerController = GameManager.Instance.PlayerController;
                 var deltaHeight = (playerController.height - controller.height) / 2;
                 targetPos.y -= deltaHeight;
@@ -282,7 +284,7 @@ namespace DaggerfallWorkshop.Game
             var direction = targetPos - transform.position;
             float distance = direction.magnitude;
 
-            // If attacking, randomly follow player with attack.
+            // If attacking, randomly follow target with attack.
             if (mobile.Summary.EnemyState == MobileStates.PrimaryAttack)
             {
                 if (!isAttackFollowsPlayerSet)
@@ -298,7 +300,7 @@ namespace DaggerfallWorkshop.Game
                 transform.forward = direction.normalized;
 
             // Bow attack for enemies that have the appropriate animation
-            if (senses.PlayerInSight && 360 * MeshReader.GlobalScale < distance && distance < 2048 * MeshReader.GlobalScale)
+            if (senses.TargetInSight && 360 * MeshReader.GlobalScale < distance && distance < 2048 * MeshReader.GlobalScale)
             {
                 if (senses.TargetIsWithinYawAngle(22.5f))
                 {
@@ -346,7 +348,7 @@ namespace DaggerfallWorkshop.Game
             //    Spell Cast Animation
             //}
             //}
-            else if (!senses.DetectedPlayer && mobile.Summary.EnemyState == MobileStates.Move)
+            else if (!senses.DetectedTarget && mobile.Summary.EnemyState == MobileStates.Move)
                 mobile.ChangeEnemyState(MobileStates.Idle);
         }
 
@@ -406,7 +408,7 @@ namespace DaggerfallWorkshop.Game
             // Can we open doors?
             if (mobile.Summary.Enemy.CanOpenDoors)
             {
-                // Is there a door blocking path to player?
+                // Is there a door blocking path to target?
                 if (senses.LastKnownDoor != null && senses.DistanceToDoor < OpenDoorDistance)
                 {
                     // Is the door closed? Try to open it!

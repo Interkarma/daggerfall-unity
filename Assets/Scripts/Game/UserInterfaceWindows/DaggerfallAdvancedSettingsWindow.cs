@@ -118,6 +118,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox alternateRandomEnemySelection;
         Checkbox advancedClimbing;
         Checkbox combatVoices;
+        Checkbox enemyInfighting;
         HorizontalSlider dungeonAmbientLightScale;
         HorizontalSlider nightAmbientLightScale;
         HorizontalSlider playerTorchLightScale;
@@ -268,6 +269,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             alternateRandomEnemySelection = AddCheckbox(leftPanel, "alternateRandomEnemySelection", DaggerfallUnity.Settings.AlternateRandomEnemySelection);
             advancedClimbing = AddCheckbox(leftPanel, "advancedClimbing", DaggerfallUnity.Settings.AdvancedClimbing);
             combatVoices = AddCheckbox(leftPanel, "combatVoices", DaggerfallUnity.Settings.CombatVoices);
+            enemyInfighting = AddCheckbox(leftPanel, "enemyInfighting", DaggerfallUnity.Settings.EnemyInfighting);
 
             y = 0;
 
@@ -363,6 +365,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.CameraRecoilStrength = cameraRecoilStrength.ScrollIndex;
             DaggerfallUnity.Settings.AdvancedClimbing = advancedClimbing.IsChecked;
             DaggerfallUnity.Settings.CombatVoices = combatVoices.IsChecked;
+            DaggerfallUnity.Settings.EnemyInfighting = enemyInfighting.IsChecked;
 
             DaggerfallUnity.Settings.DungeonAmbientLightScale = dungeonAmbientLightScale.GetValue();
             DaggerfallUnity.Settings.NightAmbientLightScale = nightAmbientLightScale.GetValue();

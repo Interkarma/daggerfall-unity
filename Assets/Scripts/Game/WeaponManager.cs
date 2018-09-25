@@ -630,13 +630,13 @@ namespace DaggerfallWorkshop.Game
                         int damage;
                         if (usingRightHand)
                         {
-                            damage = FormulaHelper.CalculateAttackDamage(playerEntity, enemyEntity, (int)(EquipSlots.RightHand), entityMobileUnit.Summary.AnimStateRecord);
                             strikingWeapon = currentRightHandWeapon;
+                            damage = FormulaHelper.CalculateAttackDamage(playerEntity, enemyEntity, strikingWeapon, entityMobileUnit.Summary.AnimStateRecord);
                         }
                         else
                         {
-                            damage = FormulaHelper.CalculateAttackDamage(playerEntity, enemyEntity, (int)(EquipSlots.LeftHand), entityMobileUnit.Summary.AnimStateRecord);
                             strikingWeapon = currentLeftHandWeapon;
+                            damage = FormulaHelper.CalculateAttackDamage(playerEntity, enemyEntity, strikingWeapon, entityMobileUnit.Summary.AnimStateRecord);
                         }
 
                         // Break any "normal power" concealment effects on player
@@ -732,7 +732,7 @@ namespace DaggerfallWorkshop.Game
                             {
                                 GameManager.Instance.MakeEnemiesHostile();
                             }
-                            enemyMotor.MakeEnemyHostileToPlayer(gameObject);
+                            enemyMotor.MakeEnemyHostileToAttacker(GameManager.Instance.PlayerEntityBehaviour);
                         }
                     }
                 }
