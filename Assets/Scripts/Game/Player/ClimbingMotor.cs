@@ -24,7 +24,7 @@ namespace DaggerfallWorkshop.Game
         private bool isSlipping = false;
         private bool atOutsideCorner = false;
         private bool atInsideCorner = false;
-        private bool autoForward = false;
+        private bool backedUpRappel = false;
         private float climbingStartTimer = 0;
         private float climbingContinueTimer = 0;
         private float rappelTimer;
@@ -107,7 +107,10 @@ namespace DaggerfallWorkshop.Game
                 {
                     // should rappelling start?
                     bool movingBackward = InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards);
+
                     IsRappelling = (movingBackward && !acrobatMotor.Jumping);
+                    if (IsRappelling)
+                        DaggerfallUI.AddHUDText(UserInterfaceWindows.HardStrings.rappelMode);
                     lastPosition = controller.transform.position;
                     rappelTimer = 0f;
                 }
@@ -142,7 +145,7 @@ namespace DaggerfallWorkshop.Game
                             rappelDirection = myLedgeDirection;
                         else
                             rappelDirection = controller.transform.forward;
-                        rappelDirection *= speed;
+                        rappelDirection *= speed * 1.25f;
                         groundMotor.MoveOnGround(rappelDirection);
                     }
                     
@@ -170,7 +173,7 @@ namespace DaggerfallWorkshop.Game
                 if (IsRappelling)
                 {   // very lenient because we're trying to attach
                     startClimbHorizontalTolerance = 2f;
-                    startClimbSkillCheckFrequency = 0.1f;
+                    startClimbSkillCheckFrequency = 0.0f;
                 }
                 else
                 {   // more lenient because we could not jump really straight onto the wall
@@ -179,7 +182,7 @@ namespace DaggerfallWorkshop.Game
                 }
             }
             else
-            {   // least leniency because we want it to be very intentional here
+            {   // least leniency because we want climbing to be very intentional here
                 startClimbHorizontalTolerance = 0.12f;
                 startClimbSkillCheckFrequency = 14;
             }
