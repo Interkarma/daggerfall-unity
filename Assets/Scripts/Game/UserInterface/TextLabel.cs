@@ -45,7 +45,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         int maxWidth = -1;
         bool wrapText = false; // wrap text - but will tear words that are reaching
         bool wrapWords = false; // wrap words - no word tearing
-        bool makeTextureNoLongerReadable = true; // in pixel-wise scroll mode with restricted render area this flag is set to false since textures must be readable for this mode to work        
         float textScale = 1.0f; // scale text
         LabelLayoutData labelLayout = new LabelLayoutData();
 
@@ -216,7 +215,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set
             {
                 ((BaseScreenComponent)this).RectRestrictedRenderArea = value;
-                makeTextureNoLongerReadable = false;
             }
         }
 
