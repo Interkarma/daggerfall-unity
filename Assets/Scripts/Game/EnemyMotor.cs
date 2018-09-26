@@ -114,7 +114,9 @@ namespace DaggerfallWorkshop.Game
         {
             if (attacker && senses)
             {
-                entityBehaviour.Target = attacker;
+                // Only assign target if don't already have target
+                if (entityBehaviour.Target == null)
+                    entityBehaviour.Target = attacker;
                 senses.LastKnownTargetPos = attacker.transform.position;
                 giveUpTimer = 200;
             }
@@ -252,13 +254,6 @@ namespace DaggerfallWorkshop.Game
             if (senses.DetectedTarget)
                 giveUpTimer = 200;
 
-            // Remain idle if no target or after giving up finding the target
-            if (giveUpTimer == 0)
-            {
-                mobile.ChangeEnemyState(MobileStates.Idle);
-                return;
-            }
-
             // GiveUpTimer value is from classic, so decrease at the speed of classic's update loop
             if (!senses.DetectedTarget
                 && giveUpTimer > 0 && classicUpdate)
@@ -266,6 +261,15 @@ namespace DaggerfallWorkshop.Game
 
             // Enemy will keep moving towards last known target position
             targetPos = senses.LastKnownTargetPos;
+
+            // Remain idle after finishing any attacks if no target or after giving up finding the target
+            if (entityBehaviour.Target == null || giveUpTimer == 0 || targetPos == EnemySenses.ResetPlayerPos)
+            {
+                if (!mobile.IsPlayingOneShot())
+                    mobile.ChangeEnemyState(MobileStates.Idle);
+
+                return;
+            }
 
             // Flying enemies and slaughterfish aim for target face
             if (flies || isLevitating || (swims && mobile.Summary.Enemy.ID == (int)MonsterCareers.Slaughterfish))

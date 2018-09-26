@@ -61,9 +61,6 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
-            if (entityBehaviour.Target == null)
-                return;
-
             // If a melee attack has reached the damage frame we can run a melee attempt
             if (mobile.DoMeleeDamage)
             {
@@ -147,7 +144,7 @@ namespace DaggerfallWorkshop.Game
                 EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
                 EnemyEntity targetEntity = null;
 
-                if (entityBehaviour.Target != GameManager.Instance.PlayerEntityBehaviour)
+                if (entityBehaviour.Target != null && entityBehaviour.Target != GameManager.Instance.PlayerEntityBehaviour)
                     targetEntity = entityBehaviour.Target.Entity as EnemyEntity;
 
                 // Switch to hand-to-hand if enemy is immune to weapon
@@ -161,21 +158,22 @@ namespace DaggerfallWorkshop.Game
                 damage = 0;
 
                 // Are we still in range and facing target? Then apply melee damage.
-                if (senses.DistanceToTarget < MeleeDistance && senses.TargetInSight)
+                if (entityBehaviour.Target != null && senses.DistanceToTarget < MeleeDistance && senses.TargetInSight)
                 {
                     if (entityBehaviour.Target == GameManager.Instance.PlayerEntityBehaviour)
                         damage = ApplyDamageToPlayer(weapon);
                     else
                         damage = ApplyDamageToNonPlayer(weapon);
                 }
-
-                if (damage <= 0)
+                else
+                {
                     sounds.PlayMissSound(weapon);
+                }
 
                 if (DaggerfallUnity.Settings.CombatVoices && entity.EntityType == EntityTypes.EnemyClass && Random.Range(1, 101) <= 20)
                 {
                     Genders gender;
-                    if (entity.MobileEnemy.Gender == MobileGender.Male || entity.MobileEnemy.ID == (int)MobileTypes.Knight_CityWatch)
+                    if (mobile.Summary.Enemy.Gender == MobileGender.Male || entity.MobileEnemy.ID == (int)MobileTypes.Knight_CityWatch)
                         gender = Genders.Male;
                     else
                         gender = Genders.Female;
@@ -196,7 +194,7 @@ namespace DaggerfallWorkshop.Game
                     if (entityBehaviour.Target == GameManager.Instance.PlayerEntityBehaviour)
                         damage = ApplyDamageToPlayer(entity.ItemEquipTable.GetItem(Items.EquipSlots.RightHand));
                     else
-                        damage = ApplyDamageToNonPlayer(entity.ItemEquipTable.GetItem(Items.EquipSlots.RightHand));
+                        damage = ApplyDamageToNonPlayer(entity.ItemEquipTable.GetItem(Items.EquipSlots.RightHand), true);
 
                     // Play arrow sound and add arrow to target inventory
                     if (entityBehaviour.Target == GameManager.Instance.PlayerEntityBehaviour)
@@ -260,7 +258,7 @@ namespace DaggerfallWorkshop.Game
             return damage;
         }
 
-        private int ApplyDamageToNonPlayer(Items.DaggerfallUnityItem weapon)
+        private int ApplyDamageToNonPlayer(Items.DaggerfallUnityItem weapon, bool bowAttack = false)
         {
             // TODO: Merge with hit code in WeaponManager to eliminate duplicate code
             EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
@@ -312,6 +310,19 @@ namespace DaggerfallWorkshop.Game
                         targetMotor.KnockBackDirection = transform.forward;
                     }
                 }
+
+                if (DaggerfallUnity.Settings.CombatVoices && entityBehaviour.Target.EntityType == EntityTypes.EnemyClass && Random.Range(1, 101) <= 40)
+                {
+                    DaggerfallMobileUnit targetMobileUnit = entityBehaviour.Target.GetComponentInChildren<DaggerfallMobileUnit>();
+                    Genders gender;
+                    if (targetMobileUnit.Summary.Enemy.Gender == MobileGender.Male || targetEntity.MobileEnemy.ID == (int)MobileTypes.Knight_CityWatch)
+                        gender = Genders.Male;
+                    else
+                        gender = Genders.Female;
+
+                    bool heavyDamage = damage >= targetEntity.MaxHealth / 4;
+                    targetSounds.PlayCombatVoice(gender, false, heavyDamage);
+                }
             }
             else
             {
@@ -319,7 +330,7 @@ namespace DaggerfallWorkshop.Game
                 if (weapon != null)
                     weaponType = DaggerfallUnity.Instance.ItemHelper.ConvertItemToAPIWeaponType(weapon);
 
-                if ((weaponType != WeaponTypes.Bow && !targetEntity.MobileEnemy.ParrySounds) || weaponType == WeaponTypes.Melee)
+                if ((!bowAttack && !targetEntity.MobileEnemy.ParrySounds) || weaponType == WeaponTypes.Melee)
                     sounds.PlayMissSound(weapon);
                 else if (targetEntity.MobileEnemy.ParrySounds)
                     targetSounds.PlayParrySound();
