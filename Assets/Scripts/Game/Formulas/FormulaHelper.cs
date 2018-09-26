@@ -906,7 +906,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (toleranceFlags == DFCareer.Tolerance.Immune)
                 return;
 
-            if (bypassResistance || SavingThrow(2, DFCareer.EffectFlags.Poison, target, 0) != 0)
+            if (bypassResistance || SavingThrow(ElementTypes.Poison, DFCareer.EffectFlags.Poison, target, 0) != 0)
             {
                 if (target.Level != 1)
                 {
@@ -921,7 +921,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             }
         }
 
-        static int SavingThrow(int elementType, DFCareer.EffectFlags effectFlags, DaggerfallEntity target, int modifier)
+        public static int SavingThrow(ElementTypes elementType, DFCareer.EffectFlags effectFlags, DaggerfallEntity target, int modifier)
         {
             // Handle resistances granted by magical effects
             // elementTypes are 0 = fire, 1 = frost, 2 = disease/poison, 3 = shock, 4 = magick
@@ -977,9 +977,9 @@ namespace DaggerfallWorkshop.Game.Formulas
                 savingThrow = 75;
 
             savingThrow += biographyMod + modifier;
-            if (elementType == 1 && target == playerEntity && playerEntity.Race == Races.Nord)
+            if (elementType == ElementTypes.Cold && target == playerEntity && playerEntity.Race == Races.Nord)
                 savingThrow += 30;
-            else if (elementType == 4 && target == playerEntity && playerEntity.Race == Races.Breton)
+            else if (elementType == ElementTypes.Magic && target == playerEntity && playerEntity.Race == Races.Breton)
                 savingThrow += 30;
 
             Mathf.Clamp(savingThrow, 5, 95);
@@ -999,6 +999,31 @@ namespace DaggerfallWorkshop.Game.Formulas
                 percentDamageOrDuration = 100;
 
             return percentDamageOrDuration;
+        }
+
+        /// <summary>
+        /// Converts classic element index to ElementTypes value.
+        /// </summary>
+        /// <param name="elementType">Classic element index.</param>
+        /// <returns>ElementTypes.</returns>
+        public static ElementTypes ClassicElementIndexToElementType(int elementIndex)
+        {
+            // Classic element indices are 0 = fire, 1 = frost, 2 = disease/poison, 3 = shock, 4 = magic
+            switch (elementIndex)
+            {
+                case 0:
+                    return ElementTypes.Fire;
+                case 1:
+                    return ElementTypes.Cold;
+                case 2:
+                    return ElementTypes.Poison;
+                case 3:
+                    return ElementTypes.Shock;
+                case 4:
+                    return ElementTypes.Magic;
+                default:
+                    throw new Exception(string.Format("ClassicElementIndexToElementType() unknown elementIndex {0}.", elementIndex));
+            }
         }
 
         #endregion
@@ -1025,7 +1050,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (playerEntity.Level != 1)
             {
                 // Return if disease resisted
-                if (SavingThrow(2, DFCareer.EffectFlags.Disease, target, 0) == 0)
+                if (SavingThrow(ElementTypes.Poison, DFCareer.EffectFlags.Disease, target, 0) == 0)
                     return;
 
                 // Select a random disease from disease array and validate range
