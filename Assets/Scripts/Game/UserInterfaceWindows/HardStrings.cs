@@ -344,6 +344,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string pressButtonToFireSpell = "Press button to fire spell.";
 
         public const string climbingMode = "Climbing mode.";
+        public const string rappelMode = "Rappel mode.";
 
         public const string acuteHearing = "Acute Hearing";
         public const string adrenalineRush = "Adrenaline Rush";

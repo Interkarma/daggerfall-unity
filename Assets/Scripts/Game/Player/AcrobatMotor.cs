@@ -107,7 +107,7 @@ namespace DaggerfallWorkshop.Game
 
             float inputModifyFactor = (inputX != 0.0f && inputY != 0.0f && playerMotor.limitDiagonalSpeed) ? .7071f : 1.0f;
 
-            if (airControl && frictionMotor.PlayerControl)
+            if ((climbingMotor.IsRappelling || airControl) && frictionMotor.PlayerControl)
             {
                 moveDirection.x = inputX * speed * inputModifyFactor;
                 moveDirection.z = inputY * speed * inputModifyFactor;
@@ -148,7 +148,7 @@ namespace DaggerfallWorkshop.Game
                 fallStartLevel = myTransform.position.y;
                 moveDirection.y = -slowFallSpeed * Time.deltaTime;
             }
-            else
+            else if (!climbingMotor.IsRappelling)
             {
                 moveDirection.y -= gravity * Time.deltaTime;
             }
