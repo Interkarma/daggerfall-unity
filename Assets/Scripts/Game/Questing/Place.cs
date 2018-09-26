@@ -1300,6 +1300,11 @@ namespace DaggerfallWorkshop.Game.Questing
             // Check if player inside the building matching this site
             if (playerEnterExit.IsPlayerInside && playerEnterExit.IsPlayerInsideBuilding)
             {
+                // Compare mapId of site and current location
+                DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
+                if (location.MapTableData.MapId != place.SiteDetails.mapId)
+                    return false;
+
                 // Must have at least one exterior door for building check
                 StaticDoor[] exteriorDoors = playerEnterExit.ExteriorDoors;
                 if (exteriorDoors == null || exteriorDoors.Length < 1)
