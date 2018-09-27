@@ -158,10 +158,11 @@ namespace DaggerfallWorkshop.Game
             float startClimbHorizontalTolerance;
             float startClimbSkillCheckFrequency;
             bool airborneGraspWall = (!isClimbing && !isSlipping && acrobatMotor.Falling);
+            bool movingBack = InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards);
 
-            // short circuit evaluate the raycast if not needed. also, prevents some bugs
-            bool groundCancelsClimbOrRappel = ((isClimbing || airborneGraspWall) && InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards)   
-                && Physics.Raycast(controller.transform.position, Vector3.down, controller.height / 2 + 0.10f));
+            // short circuit evaluate the raycast in case not needed. also, prevents some bugs
+            bool groundCancelsClimbOrRappel = (((isClimbing && (movingBack || isSlipping)) || airborneGraspWall)  
+                && Physics.Raycast(controller.transform.position, Vector3.down, controller.height / 2 + 0.12f));
 
             if (DaggerfallUnity.Settings.AdvancedClimbing && !groundCancelsClimbOrRappel)
                 RappelChecks(airborneGraspWall);
