@@ -335,7 +335,7 @@ namespace DaggerfallConnect.Arena2
             for (int y = 0; y < header.Height; y++)
             {
                 // This value is only used in older FLI files
-                int numOfPackets = reader.ReadByte();
+                /*int numOfPackets =*/reader.ReadByte();
 
                 int x = 0;
                 while (x < header.Width)
