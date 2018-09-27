@@ -15,6 +15,7 @@ using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Game.Questing;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -30,22 +31,30 @@ namespace DaggerfallWorkshop.Game
         public float FieldOfView = 180f;        // Enemy field of view
 
         DaggerfallMobileUnit mobile;
+        DaggerfallEntityBehaviour entityBehaviour;
+        QuestResourceBehaviour questBehaviour;
+        EnemyMotor motor;
+        EnemyEntity enemyEntity;
+        bool targetInSight;
         bool playerInSight;
-        bool playerInEarshot;
-        Vector3 directionToPlayer;
+        bool targetInEarshot;
+        Vector3 directionToTarget;
         float distanceToPlayer;
-        Vector3 lastKnownPlayerPos;
+        float distanceToTarget;
+        Vector3 lastKnownTargetPos;
         DaggerfallActionDoor actionDoor;
         float distanceToActionDoor;
         bool hasEncounteredPlayer = false;
         bool wouldBeSpawnedInClassic = false;
-        bool detectedPlayer = false;
+        bool detectedTarget = false;
         uint timeOfLastStealthCheck = 0;
         bool blockedByIllusionEffect = false;
         float lastHadLOSTimer = 0f;
 
         float classicUpdateTimer = 0f;
         bool classicUpdate = false;
+        float classicTargetUpdateTimer = 0f;
+        float systemTimerUpdatesDivisor = .0549254f;  // Divisor for updates per second by the system timer at memory location 0x46C.
 
         float classicSpawnDespawnExterior = 4096 * MeshReader.GlobalScale;
         float classicSpawnXZDist = 0f;
@@ -54,30 +63,30 @@ namespace DaggerfallWorkshop.Game
         float classicDespawnXZDist = 0f;
         float classicDespawnYDist = 0f;
 
-        GameObject Player
+        DaggerfallEntityBehaviour Player
         {
-            get { return GameManager.Instance.PlayerObject; }
+            get { return GameManager.Instance.PlayerEntityBehaviour; }
         }
 
-        public bool PlayerInSight
+        public bool TargetInSight
         {
-            get { return playerInSight; }
+            get { return targetInSight; }
         }
 
-        public bool DetectedPlayer
+        public bool DetectedTarget
         {
-            get { return detectedPlayer; }
-            set { detectedPlayer = value; }
+            get { return detectedTarget; }
+            set { detectedTarget = value; }
         }
 
-        public bool PlayerInEarshot
+        public bool TargetInEarshot
         {
-            get { return playerInEarshot; }
+            get { return targetInEarshot; }
         }
 
-        public Vector3 DirectionToPlayer
+        public Vector3 DirectionToTarget
         {
-            get { return directionToPlayer; }
+            get { return directionToTarget; }
         }
 
         public float DistanceToPlayer
@@ -85,10 +94,15 @@ namespace DaggerfallWorkshop.Game
             get { return distanceToPlayer; }
         }
 
-        public Vector3 LastKnownPlayerPos
+        public float DistanceToTarget
         {
-            get { return lastKnownPlayerPos; }
-            set { lastKnownPlayerPos = value; }
+            get { return distanceToTarget; }
+        }
+
+        public Vector3 LastKnownTargetPos
+        {
+            get { return lastKnownTargetPos; }
+            set { lastKnownTargetPos = value; }
         }
 
         public DaggerfallActionDoor LastKnownDoor
@@ -113,10 +127,20 @@ namespace DaggerfallWorkshop.Game
             set { wouldBeSpawnedInClassic = value; }
         }
 
+        public QuestResourceBehaviour QuestBehaviour
+        {
+            get { return questBehaviour; }
+            set { questBehaviour = value; }
+        }
+
         void Start()
         {
             mobile = GetComponentInChildren<DaggerfallMobileUnit>();
-            lastKnownPlayerPos = ResetPlayerPos;
+            entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
+            enemyEntity = entityBehaviour.Entity as EnemyEntity;
+            motor = GetComponent<EnemyMotor>();
+            questBehaviour = GetComponent<QuestResourceBehaviour>();
+            lastKnownTargetPos = ResetPlayerPos;
 
             short[] classicSpawnXZDistArray = { 1024, 384, 640, 768, 768, 768, 768 };
             short[] classicSpawnYDistUpperArray = { 128, 128, 128, 384, 768, 128, 256 };
@@ -187,27 +211,88 @@ namespace DaggerfallWorkshop.Game
 
                 if (playerInside)
                 {
-                    if (lowerY == 0 && YDiffToPlayerAbs > upperY)
-                        wouldBeSpawnedInClassic = false;
+                    if (lowerY == 0)
+                    {
+                        if (YDiffToPlayerAbs > upperY)
+                            wouldBeSpawnedInClassic = false;
+                    }
                     else if (YDiffToPlayer < lowerY || YDiffToPlayer > upperY)
                         wouldBeSpawnedInClassic = false;
                 }
             }
 
+            if (classicUpdate)
+            {
+                classicTargetUpdateTimer += Time.deltaTime / systemTimerUpdatesDivisor;
+
+                if (entityBehaviour.Target != null && entityBehaviour.Target.Entity.CurrentHealth <= 0)
+                    entityBehaviour.Target = null;
+
+                // NoTarget mode
+                if ((GameManager.Instance.PlayerEntity.NoTargetMode || !motor.IsHostile) && entityBehaviour.Target == Player)
+                    entityBehaviour.Target = null;
+
+                if (entityBehaviour.Target == null)
+                    lastKnownTargetPos = ResetPlayerPos;
+
+                if ((motor.IsHostile && entityBehaviour.Target == null) || classicTargetUpdateTimer > 10) // Timing is 200 in classic, about 10 seconds.
+                {
+                    classicTargetUpdateTimer = 0f;
+
+                    // Is enemy in area around player or can see player?
+                    if (wouldBeSpawnedInClassic || playerInSight)
+                    {
+                        entityBehaviour.Target = GetTarget();
+                    }
+
+                    // Make targeted character also target this character if it doesn't have a target yet.
+                    if (entityBehaviour.Target != null && entityBehaviour.Target.Target == null)
+                    {
+                        entityBehaviour.Target.Target = entityBehaviour;
+                    }
+                }
+            }
+
             if (Player != null)
             {
+                // Get distance to player
                 Vector3 toPlayer = Player.transform.position - transform.position;
-                directionToPlayer = toPlayer.normalized;
                 distanceToPlayer = toPlayer.magnitude;
 
-                playerInSight = CanSeePlayer();
+                // If out of classic spawn range, still check for direct LOS to player so that enemies who see player will
+                // try to attack.
+                if (!wouldBeSpawnedInClassic)
+                {
+                    distanceToTarget = distanceToPlayer;
+                    directionToTarget = toPlayer.normalized;
+                    playerInSight = CanSeeTarget(Player);
+                }
+
+                Vector3 toTarget = ResetPlayerPos;
+                if (entityBehaviour.Target != null)
+                    toTarget = entityBehaviour.Target.transform.position - transform.position;
+
+                if (toTarget != ResetPlayerPos)
+                {
+                    distanceToTarget = toTarget.magnitude;
+                    directionToTarget = toTarget.normalized;
+                }
+
+                if (entityBehaviour.Target == null)
+                {
+                    targetInSight = false;
+                    detectedTarget = false;
+                    return;
+                }
+
+                targetInSight = CanSeeTarget(entityBehaviour.Target);
 
                 // Classic stealth mechanics would be interfered with by hearing, so only enable
-                // hearing if the enemy has detected the player. If player has been seen we can omit hearing.
-                if (detectedPlayer && !playerInSight)
-                    playerInEarshot = CanHearPlayer();
+                // hearing if the enemy has detected the target. If target is visible we can omit hearing.
+                if (detectedTarget && !targetInSight)
+                    targetInEarshot = CanHearTarget(entityBehaviour.Target);
                 else
-                    playerInEarshot = false;
+                    targetInEarshot = false;
 
                 // Note: In classic an enemy can continue to track the player as long as their
                 // giveUpTimer is > 0. Since the timer is reset to 200 on every detection this
@@ -222,36 +307,34 @@ namespace DaggerfallWorkshop.Game
                         lastHadLOSTimer--;
                 }
 
-                if (!blockedByIllusionEffect && (playerInSight || playerInEarshot))
+                if (!blockedByIllusionEffect && (targetInSight || targetInEarshot))
                 {
-                    detectedPlayer = true;
-                    lastKnownPlayerPos = Player.transform.position;
+                    detectedTarget = true;
+                    lastKnownTargetPos = entityBehaviour.Target.transform.position;
                     lastHadLOSTimer = 200f;
                 }
                 else if (!blockedByIllusionEffect && StealthCheck())
                 {
-                    detectedPlayer = true;
+                    detectedTarget = true;
 
-                    // Only get the player's location from the stealth check if we haven't had
+                    // Only get the target's location from the stealth check if we haven't had
                     // actual LOS for a while. This gives better pursuit behavior since enemies
                     // will go to the last spot they saw the player instead of walking into walls.
                     if (lastHadLOSTimer <= 0)
-                        lastKnownPlayerPos = Player.transform.position;
+                        lastKnownTargetPos = entityBehaviour.Target.transform.position;
                 }
                 else
-                    detectedPlayer = false;
+                    detectedTarget = false;
 
-                if (detectedPlayer && !hasEncounteredPlayer)
+                if (detectedTarget && !hasEncounteredPlayer && entityBehaviour.Target == Player)
                 {
                     hasEncounteredPlayer = true;
 
                     // Check appropriate language skill to see if player can pacify enemy
                     DaggerfallEntityBehaviour entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
-                    EnemyMotor motor = GetComponent<EnemyMotor>();
                     if (entityBehaviour && motor &&
                         (entityBehaviour.EntityType == EntityTypes.EnemyMonster || entityBehaviour.EntityType == EntityTypes.EnemyClass))
                     {
-                        EnemyEntity enemyEntity = entityBehaviour.Entity as EnemyEntity;
                         DFCareer.Skills languageSkill = enemyEntity.GetLanguageSkill();
                         if (languageSkill != DFCareer.Skills.None)
                         {
@@ -277,67 +360,77 @@ namespace DaggerfallWorkshop.Game
             if (!wouldBeSpawnedInClassic)
                 return false;
 
-            if (distanceToPlayer > 1024 * MeshReader.GlobalScale)
-                return false;
+            if (distanceToTarget > 1024 * MeshReader.GlobalScale)
+                    return false;
 
             uint gameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
             if (gameMinutes == timeOfLastStealthCheck)
-                return detectedPlayer;
+                return detectedTarget;
 
-            PlayerMotor playerMotor = GameManager.Instance.PlayerMotor;
-            if (playerMotor.IsMovingLessThanHalfSpeed)
+            if (entityBehaviour.Target == Player)
             {
-                if ((gameMinutes & 1) == 1)
-                    return detectedPlayer;
-            }
-            else if (hasEncounteredPlayer)
-                return true;
+                PlayerMotor playerMotor = GameManager.Instance.PlayerMotor;
+                if (playerMotor.IsMovingLessThanHalfSpeed)
+                {
+                    if ((gameMinutes & 1) == 1)
+                        return detectedTarget;
+                }
+                else if (hasEncounteredPlayer)
+                    return true;
 
-            PlayerEntity player = GameManager.Instance.PlayerEntity;
-            if (player.TimeOfLastStealthCheck != gameMinutes)
-            {
-                player.TallySkill(DFCareer.Skills.Stealth, 1);
-                player.TimeOfLastStealthCheck = gameMinutes;
+                PlayerEntity player = GameManager.Instance.PlayerEntity;
+                if (player.TimeOfLastStealthCheck != gameMinutes)
+                {
+                    player.TallySkill(DFCareer.Skills.Stealth, 1);
+                    player.TimeOfLastStealthCheck = gameMinutes;
+                }
             }
+
             timeOfLastStealthCheck = gameMinutes;
 
-            int stealthRoll = 2 * ((int)(distanceToPlayer / MeshReader.GlobalScale) * player.Skills.GetLiveSkillValue(DaggerfallConnect.DFCareer.Skills.Stealth) >> 10);
+            int stealthRoll = 2 * ((int)(distanceToTarget / MeshReader.GlobalScale) * entityBehaviour.Target.Entity.Skills.GetLiveSkillValue(DFCareer.Skills.Stealth) >> 10);
 
             return Random.Range(1, 101) > stealthRoll;
         }
 
         public bool BlockedByIllusionEffect()
         {
-            // Note: These effects only block detection for the player.
             // In classic if the target is another AI character true is always returned.
 
             // Some enemy types can see through these effects.
             if (mobile.Summary.Enemy.SeesThroughInvisibility)
                 return false;
 
-            // If not one of the above enemy types, and player has invisibility,
-            // detection is always blocked.
-            PlayerEntity player = GameManager.Instance.PlayerEntity;
-            if (player.IsInvisible)
-                return true;
+            if (entityBehaviour.Target == Player)
+            {
+                // If not one of the above enemy types, and player has invisibility,
+                // detection is always blocked.
+                PlayerEntity player = GameManager.Instance.PlayerEntity;
+                if (player.IsInvisible)
+                    return true;
 
-            // If player doesn't have any illusion effect, detection is not blocked.
-            if (!player.IsBlending && !player.IsAShade)
+                // If player doesn't have any illusion effect, detection is not blocked.
+                if (!player.IsBlending && !player.IsAShade)
+                    return false;
+
+                // Player has either chameleon or shade. Try to see through it.
+                int chance;
+                if (player.IsBlending)
+                    chance = 8;
+                else // is a shade
+                    chance = 4;
+
+                return Random.Range(1, 101) > chance;
+            }
+            else // TODO: Apply these effects for concealed AI characers.
+            {
                 return false;
-
-            // Player has either chameleon or shade. Try to see through it.
-            int chance;
-            if (player.IsBlending)
-                chance = 8;
-            else // is a shade
-                chance = 4;
-
-            return Random.Range(1, 101) > chance;
+            }
         }
 
         public bool TargetIsWithinYawAngle(float targetAngle)
         {
-            Vector3 toTarget = lastKnownPlayerPos - transform.position;
+            Vector3 toTarget = lastKnownTargetPos - transform.position;
             Vector3 directionToLastKnownTarget2D = toTarget.normalized;
             directionToLastKnownTarget2D.y = 0;
 
@@ -355,27 +448,124 @@ namespace DaggerfallWorkshop.Game
 
         #region Private Methods
 
-        private bool CanSeePlayer()
+        DaggerfallEntityBehaviour GetTarget()
+        {
+            DaggerfallEntityBehaviour highestPriorityTarget = null;
+            float highestPriority = -1;
+            bool sawSelectedTarget = false;
+            Vector3 directionToTargetHolder = directionToTarget;
+            float distanceToTargetHolder = distanceToTarget;
+
+            DaggerfallEntityBehaviour[] entityBehaviours = FindObjectsOfType<DaggerfallEntityBehaviour>();
+            for (int i = 0; i < entityBehaviours.Length; i++)
+            {
+                DaggerfallEntityBehaviour targetBehaviour = entityBehaviours[i];
+                EnemyEntity targetEntity = null;
+                if (targetBehaviour != Player)
+                    targetEntity = targetBehaviour.Entity as EnemyEntity;
+
+                // Can't target self
+                if (targetBehaviour == entityBehaviour)
+                    continue;
+
+                // Evaluate potential targets
+                if (targetBehaviour.EntityType == EntityTypes.EnemyMonster || targetBehaviour.EntityType == EntityTypes.EnemyClass
+                    || targetBehaviour.EntityType == EntityTypes.Player)
+                {
+                    Vector3 toTarget = targetBehaviour.transform.position - transform.position;
+                    directionToTarget = toTarget.normalized;
+                    distanceToTarget = toTarget.magnitude;
+
+                    EnemySenses targetSenses = null;
+                    if (targetBehaviour.EntityType == EntityTypes.EnemyMonster || targetBehaviour.EntityType == EntityTypes.EnemyClass)
+                        targetSenses = targetBehaviour.GetComponent<EnemySenses>();
+
+                    bool see = CanSeeTarget(targetBehaviour);
+
+                    if (targetSenses)
+                    {
+                        // Is potential target neither visible nor in area around player? If so, reject as target.
+                        if (!targetSenses.WouldBeSpawnedInClassic && !see)
+                            continue;
+                    }
+
+                    // For now, quest AI only targets player
+                    if (questBehaviour && targetBehaviour != Player)
+                        continue;
+
+                    // For now, quest AI can't be targeted
+                    if (targetSenses && targetSenses.QuestBehaviour)
+                        continue;
+
+                    // Can't target ally
+                    if (DaggerfallUnity.Settings.EnemyInfighting)
+                    {
+                        if (targetEntity != null && targetEntity.MobileEnemy.Team == enemyEntity.MobileEnemy.Team)
+                            continue;
+                    }
+                    else // TODO: Support player-summoned allies, even without infighting option
+                    {
+                        if (targetBehaviour != Player)
+                            continue;
+                    }
+
+                    // NoTarget mode
+                    if ((GameManager.Instance.PlayerEntity.NoTargetMode || !motor.IsHostile) && targetBehaviour == Player)
+                        continue;
+
+                    float priority = 0;
+
+                    // Add 5 priority if this potential target isn't already targeting someone
+                    if (targetBehaviour.Target == null)
+                        priority += 5;
+
+                    if (see)
+                        priority += 20;
+
+                    // Add distance priority
+                    float distancePriority = 30 - distanceToTarget;
+                    if (distancePriority < 0)
+                        distancePriority = 0;
+
+                    priority += distancePriority;
+                    if (priority > highestPriority)
+                    {
+                        highestPriority = priority;
+                        highestPriorityTarget = targetBehaviour;
+                        sawSelectedTarget = see;
+                    }
+                }
+            }
+
+            // Restore direction and distance values
+            directionToTarget = directionToTargetHolder;
+            distanceToTarget = distanceToTargetHolder;
+
+            targetInSight = sawSelectedTarget;
+            return highestPriorityTarget;
+        }
+
+
+        private bool CanSeeTarget(DaggerfallEntityBehaviour target)
         {
             bool seen = false;
             actionDoor = null;
 
-            if (distanceToPlayer < SightRadius + mobile.Summary.Enemy.SightModifier)
+            if (distanceToTarget < SightRadius + mobile.Summary.Enemy.SightModifier)
             {
-                // Check if player in field of view
-                float angle = Vector3.Angle(directionToPlayer, transform.forward);
+                // Check if target in field of view
+                float angle = Vector3.Angle(directionToTarget, transform.forward);
                 if (angle < FieldOfView * 0.5f)
                 {
-                    // Check if line of sight to player
+                    // Check if line of sight to target
                     RaycastHit hit;
-                    Ray ray = new Ray(transform.position, directionToPlayer);
+                    Ray ray = new Ray(transform.position, directionToTarget);
                     if (Physics.Raycast(ray, out hit, SightRadius))
                     {
-                        // Check if hit was player
-                        if (hit.transform.gameObject == Player)
-                        {
+                        // Check if hit was target
+                        DaggerfallEntityBehaviour entity = hit.transform.gameObject.GetComponent<DaggerfallEntityBehaviour>();
+                        if (entity == target)
                             seen = true;
-                        }
 
                         // Check if hit was an action door
                         DaggerfallActionDoor door = hit.transform.gameObject.GetComponent<DaggerfallActionDoor>();
@@ -394,24 +584,25 @@ namespace DaggerfallWorkshop.Game
             return seen;
         }
 
-        private bool CanHearPlayer()
+        private bool CanHearTarget(DaggerfallEntityBehaviour target)
         {
             bool heard = false;
             float hearingScale = 1f;
 
-            // If something is between enemy and player then return false (was reduce hearingScale by half), to minimize
+            // If something is between enemy and target then return false (was reduce hearingScale by half), to minimize
             // enemies walking against walls.
             // Hearing is not impeded by doors or other non-static objects
             RaycastHit hit;
-            Ray ray = new Ray(transform.position, directionToPlayer);
+            Ray ray = new Ray(transform.position, directionToTarget);
             if (Physics.Raycast(ray, out hit))
             {
-                if (hit.transform.gameObject != Player && hit.transform.gameObject.isStatic)
+                DaggerfallEntityBehaviour entity = hit.transform.gameObject.GetComponent<DaggerfallEntityBehaviour>();
+                if (entity != target && hit.transform.gameObject.isStatic)
                     return false;
             }
 
-            // TODO: Modify this by how much noise the player is making
-            if (distanceToPlayer < (HearingRadius * hearingScale) + mobile.Summary.Enemy.HearingModifier)
+            // TODO: Modify this by how much noise the target is making
+            if (distanceToTarget < (HearingRadius * hearingScale) + mobile.Summary.Enemy.HearingModifier)
             {
                 heard = true;
             }

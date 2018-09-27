@@ -87,6 +87,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         int[] SkillMods { get; }
 
         /// <summary>
+        /// Gets array DaggerfallResistances.Count items wide.
+        /// Array items represent Fire, Cold, Poison/Disease, Shock, Magic.
+        /// Effect implementation should set modifier values for resistances when part of payload.
+        /// For example, a "Resist Fire" effect would set the current modifier for Fire resistance (such as +30 to Fire resistance).
+        /// Use (int)DFCareer.Resistances.ResistanceName to get index.
+        /// </summary>
+        int[] ResistanceMods { get; }
+
+        /// <summary>
         /// Gets or sets bundle type for grouping effects.
         /// </summary>
         BundleTypes BundleGroup { get; set; }
@@ -169,6 +178,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         bool chanceSuccess = false;
         int[] statMods = new int[DaggerfallStats.Count];
         int[] skillMods = new int[DaggerfallSkills.Count];
+        int[] resistanceMods = new int[DaggerfallResistances.Count];
         BundleTypes bundleGroup = BundleTypes.None;
         bool effectEnded = false;
 
@@ -255,6 +265,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public int[] SkillMods
         {
             get { return skillMods; }
+        }
+
+        public int[] ResistanceMods
+        {
+            get { return resistanceMods; }
         }
 
         public string Key
@@ -367,6 +382,112 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 return 0;
             else
                 return --roundsRemaining;
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Gets the attribute modifier of this effect.
+        /// </summary>
+        /// <param name="stat">Attribute to query.</param>
+        /// <returns>Current attribute modifier.</returns>
+        public int GetAttributeMod(DFCareer.Stats stat)
+        {
+            if (stat == DFCareer.Stats.None)
+                return 0;
+
+            return statMods[(int)stat];
+        }
+
+        /// <summary>
+        /// Gets the skill modifier of the effect.
+        /// </summary>
+        /// <param name="skill">Skill to query.</param>
+        /// <returns>Current skill modifier.</returns>
+        protected int GetSkillMod(DFCareer.Skills skill)
+        {
+            if (skill == DFCareer.Skills.None)
+                return 0;
+
+            return skillMods[(int)skill];
+        }
+
+        /// <summary>
+        /// Heal attribute damage by amount.
+        /// Does nothing if this effect does not damage attributes.
+        /// Attribute will not heal past 0.
+        /// </summary>
+        /// <param name="stat">Attribute to heal.</param>
+        /// <param name="amount">Amount to heal. Must be positive value.</param>
+        public virtual void HealAttributeDamage(DFCareer.Stats stat, int amount)
+        {
+            if (amount < 0)
+            {
+                Debug.LogWarning("EntityEffect.HealAttributeDamage() received a negative value for amount - ignoring.");
+                return;
+            }
+
+            int result = GetAttributeMod(stat) + amount;
+            if (result > 0)
+                result = 0;
+
+            SetStatMod(stat, result);
+            Debug.LogFormat("Healed {0}'s {1} by {2} points", GetPeeredEntityBehaviour(manager).name, stat.ToString(), amount);
+        }
+
+        /// <summary>
+        /// Heal skill damage by amount.
+        /// Does nothing if this effect does not damage skills.
+        /// Skill will not heal past 0.
+        /// </summary>
+        /// <param name="skill">Skill to heal.</param>
+        /// <param name="amount">Amount to heal. Must be positive value.</param>
+        public virtual void HealSkillDamage(DFCareer.Skills skill, int amount)
+        {
+            if (amount < 0)
+            {
+                Debug.LogWarning("EntityEffect.HealSkillDamage() received a negative value for amount - ignoring.");
+                return;
+            }
+
+            int result = GetSkillMod(skill) + amount;
+            if (result > 0)
+                result = 0;
+
+            SetSkillMod(skill, result);
+            Debug.LogFormat("Healed {0}'s {1} by {2} points", GetPeeredEntityBehaviour(manager).name, skill.ToString(), amount);
+        }
+
+        /// <summary>
+        /// Checks if all damaged attributes are healed back to 0.
+        /// </summary>
+        /// <returns>True if all attributes have returned to baseline.</returns>
+        public bool AllAttributesHealed()
+        {
+            for (int i = 0; i < StatMods.Length; i++)
+            {
+                if (StatMods[i] < 0)
+                    return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Checks if all damaged skills are healed back to 0.
+        /// </summary>
+        /// <returns>True if all skills have returned to baseline.</returns>
+        public bool AllSkillsHealed()
+        {
+            for (int i = 0; i < SkillMods.Length; i++)
+            {
+                if (SkillMods[i] < 0)
+                    return false;
+            }
+
+            return false;
         }
 
         #endregion

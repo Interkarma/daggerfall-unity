@@ -637,6 +637,8 @@ namespace DaggerfallWorkshop.Game.Items
             data.questItemSymbol = questItemSymbol;
             data.trappedSoulType = trappedSoulType;
             data.poisonType = poisonType;
+            if ((int)poisonType < MagicAndEffects.MagicEffects.PoisonEffect.startValue)
+                data.poisonType = Poisons.None;
 
             return data;
         }
@@ -1278,6 +1280,8 @@ namespace DaggerfallWorkshop.Game.Items
             questItemSymbol = data.questItemSymbol;
             trappedSoulType = data.trappedSoulType;
             poisonType = data.poisonType;
+            if ((int)data.poisonType < MagicAndEffects.MagicEffects.PoisonEffect.startValue)
+                poisonType = Poisons.None;
         }
 
         /// <summary>

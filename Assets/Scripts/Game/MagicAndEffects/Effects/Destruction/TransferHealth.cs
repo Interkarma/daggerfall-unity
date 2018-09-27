@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -49,7 +49,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             // Damage health on target and heal health of caster
             int magnitude = GetMagnitude(caster);
-            entityBehaviour.Entity.DecreaseHealth(magnitude);
+            entityBehaviour.DamageHealthFromSource(this, magnitude, false, Vector3.zero);
             caster.Entity.IncreaseHealth(magnitude);
             PlayerAggro();
         }

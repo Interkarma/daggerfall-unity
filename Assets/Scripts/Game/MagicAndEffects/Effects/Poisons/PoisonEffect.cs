@@ -22,16 +22,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     {
         #region Fields
 
-        const int startValue = 128;
+        public const int startValue = 128;
         const int totalVariants = 12;
 
         VariantProperties[] variantProperties = new VariantProperties[totalVariants];
 
         uint lastMinute;
         int minutesToStart;
-        int minutesActive;
+        int minutesRemaining;
         PoisonStates currentState;
         int forcedRoundsRemaining = 1;
+        bool positiveStatsRemoved = false;
 
         #endregion
 
@@ -62,6 +63,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public Poisons PoisonType
         {
             get { return variantProperties[currentVariant].poisonType; }
+        }
+
+        public bool IsDrug
+        {
+            get { return IsDrugType(); }
+        }
+
+        public PoisonStates CurrentState
+        {
+            get { return currentState; }
         }
 
         #endregion
@@ -101,7 +112,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void MagicRound()
         {
             base.MagicRound();
-            UpdatePoison();
+
+            if (currentState != PoisonStates.Complete)
+                UpdatePoison();
+            else
+                CompletePoison();
         }
 
         public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
@@ -123,10 +138,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             int index = (int)PoisonType - startValue;
             minutesToStart = Random.Range(MinMinutesToPoison[index], MaxMinutesToPoison[index] + 1);
-            minutesActive = Random.Range(MinRoundsOfPoison[index], MaxRoundsOfPoison[index] + 1);
+            minutesRemaining = Random.Range(MinRoundsOfPoison[index], MaxRoundsOfPoison[index] + 1);
 
             DaggerfallEntityBehaviour host = GetPeeredEntityBehaviour(manager);
-            Debug.Log(host.Entity.Name + " afflicted with " + PoisonType + ", starting in " + minutesToStart + " minutes, lasting for " + minutesActive + " minutes.");
+            Debug.Log(host.Entity.Name + " afflicted with " + PoisonType + ", starting in " + minutesToStart + " minutes, lasting for " + minutesRemaining + " minutes.");
         }
 
         protected override void AddState(IncumbentEffect incumbent)
@@ -150,6 +165,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             return string.Format("Poison-{0}", poisonType.ToString());
         }
 
+        public void CurePoison()
+        {
+            forcedRoundsRemaining = 0;
+            minutesRemaining = 0;
+            currentState = PoisonStates.Complete;
+            ResignAsIncumbent();
+        }
+
         #endregion
 
         #region Protected Methods
@@ -160,12 +183,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             //  - Track game minutes until poison begins
             //  - Tick poison effect each minute
             //  - Track poison minutes remaining
-            //  * End poison once completed
-            //  * Attribute drains will be permanent until poison cured
-            //  * Buffs will end once poison has finished
+            //  - End poison once completed
+            //  - Attribute drains will be permanent until poison cured
+            //  - Buffs will end once poison has finished
             //  * Implement CurePoison effect
-            //  * Allow HealAttribute effects to cure damage from poisons similar to Drain
-            //  * Show "you have been poisoned" on player info popup
+            //  - Allow HealAttribute effects to cure damage from poisons similar to Drain
+            //  - Show "you have been poisoned" on player info popup
+            //  - Show travel warning when poisoned
 
             // Do nothing until poison set
             if (PoisonType == Poisons.None)
@@ -175,17 +199,26 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             uint currentMinute = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
             int minutesPassed = (int)(currentMinute - lastMinute);
 
-            // Increment poison effect for each game minute passed
-            if (currentState != PoisonStates.Complete)
+            // Increment poison effect for each game minute passed or until poison is complete
+            while (minutesPassed-- > 0 && minutesRemaining > 0 && currentState != PoisonStates.Complete)
             {
-                for (int i = 0; i < minutesPassed; i++)
-                {
-                    IncrementPoisonEffects();
-                }
+                IncrementPoisonEffects();
             }
 
             // Update minute tracking
             lastMinute = currentMinute;
+        }
+
+        protected void CompletePoison()
+        {
+            // All positive attribute effects from drugs are removed when poison complete
+            if (IsDrug && !positiveStatsRemoved)
+                RemovePositiveStats();
+
+            // Attribute damage from poisons will persist until player heals attributes or cures poison
+            // If poison has completed and all attribute damage is healed then outcome is identical to just curing poison directly
+            if (AllAttributesHealed())
+                CurePoison();
         }
 
         #endregion
@@ -266,7 +299,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             }
 
             DaggerfallUI.AddHUDText(HardStrings.youFeelSomewhatBad);
-            if (--minutesActive > 0)
+            if (--minutesRemaining > 0)
                 return;
             else
                 currentState = PoisonStates.Complete;
@@ -283,9 +316,72 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             variantProperties[variant] = vp;
         }
 
+        void RemovePositiveStats()
+        {
+            for (int i = 0; i < StatMods.Length; i++)
+            {
+                if (StatMods[i] > 0)
+                    StatMods[i] = 0;
+            }
+            positiveStatsRemoved = true;
+        }
+
+        bool IsDrugType()
+        {
+            switch(PoisonType)
+            {
+                case Poisons.Indulcet:
+                case Poisons.Sursum:
+                case Poisons.Quaesto_Vil:
+                case Poisons.Aegrotat:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
         #endregion
 
         #region Serialization
+
+        [fsObject("v1")]
+        public struct SaveData_v1
+        {
+            public uint lastMinute;
+            public int minutesToStart;
+            public int minutesRemaining;
+            public PoisonStates currentState;
+            public int forcedRoundsRemaining;
+            public bool positiveStatsRemoved;
+        }
+
+        public override object GetSaveData()
+        {
+            SaveData_v1 data = new SaveData_v1();
+            data.lastMinute = lastMinute;
+            data.minutesToStart = minutesToStart;
+            data.minutesRemaining = minutesRemaining;
+            data.currentState = currentState;
+            data.forcedRoundsRemaining = forcedRoundsRemaining;
+            data.positiveStatsRemoved = positiveStatsRemoved;
+
+            return data;
+        }
+
+        public override void RestoreSaveData(object dataIn)
+        {
+            if (dataIn == null)
+                return;
+
+            SaveData_v1 data = (SaveData_v1)dataIn;
+            lastMinute = data.lastMinute;
+            minutesToStart = data.minutesToStart;
+            minutesRemaining = data.minutesRemaining;
+            currentState = data.currentState;
+            forcedRoundsRemaining = data.forcedRoundsRemaining;
+            positiveStatsRemoved = data.positiveStatsRemoved;
+        }
+
         #endregion
 
         #region TEMP

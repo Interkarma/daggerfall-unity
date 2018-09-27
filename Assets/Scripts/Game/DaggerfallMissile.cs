@@ -376,7 +376,7 @@ namespace DaggerfallWorkshop.Game
                 EnemySenses enemySenses = caster.GetComponent<EnemySenses>();
                 if (enemySenses)
                 {
-                    aimDirection = enemySenses.DirectionToPlayer;
+                    aimDirection = enemySenses.DirectionToTarget;
                 }
             }
 

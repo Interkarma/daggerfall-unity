@@ -227,7 +227,7 @@ namespace DaggerfallWorkshop.Game
             else // schedule climbing events
             {
                 // schedule climbing start
-                if (climbingStartTimer <= (playerMotor.systemTimerUpdatesPerSecond * startClimbSkillCheckFrequency))
+                if (climbingStartTimer <= (playerMotor.systemTimerUpdatesDivisor * startClimbSkillCheckFrequency))
                     climbingStartTimer += Time.deltaTime;
                 else
                 {
@@ -242,7 +242,7 @@ namespace DaggerfallWorkshop.Game
                 }
 
                 // schedule climbing continues, Faster updates if slipping
-                if (climbingContinueTimer <= (playerMotor.systemTimerUpdatesPerSecond * (isSlipping ? regainHoldSkillCheckFrequency : continueClimbingSkillCheckFrequency)))
+                if (climbingContinueTimer <= (playerMotor.systemTimerUpdatesDivisor * (isSlipping ? regainHoldSkillCheckFrequency : continueClimbingSkillCheckFrequency)))
                     climbingContinueTimer += Time.deltaTime;
                 else
                 {
@@ -408,7 +408,7 @@ namespace DaggerfallWorkshop.Game
 
             // if strafing to either side, this will be set so we can check for wrap-around corners.
             Vector3 checkDirection = Vector3.zero;
-            bool adjacentWallFound = false;
+            //bool adjacentWallFound = false;
 
             if (!isSlipping)
             {
@@ -435,7 +435,7 @@ namespace DaggerfallWorkshop.Game
                     #region Horizontal Climbing
                     if (movedRight || movedLeft)
                     {
-                        float checkScalar = controller.radius + 0.5f;
+                        //float checkScalar = controller.radius + 0.5f;
                         if (movedRight)
                             checkDirection = Vector3.Cross(Vector3.up, myLedgeDirection).normalized;
                         else if (movedLeft)
@@ -446,7 +446,7 @@ namespace DaggerfallWorkshop.Game
                         Debug.DrawRay(myStrafeRay.origin, myStrafeRay.direction, Color.red);
 
                         // perform check for adjacent wall
-                        adjacentWallFound = GetAdjacentWallInfo(controller.transform.position, checkDirection * checkScalar, movedLeft);
+                        //adjacentWallFound = GetAdjacentWallInfo(controller.transform.position, checkDirection * checkScalar, movedLeft);
 
                         Vector3 intersection;
                         Vector3 intersectionOrthogonal;

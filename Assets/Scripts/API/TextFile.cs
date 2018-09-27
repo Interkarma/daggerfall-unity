@@ -400,6 +400,38 @@ namespace DaggerfallConnect.Arena2
             return lines.ToArray();
         }
 
+        /// <summary>
+        /// Appends new tokens to an existing token array and optionally injects newline between current tokens and appended tokens.
+        /// </summary>
+        /// <param name="current">Current tokens.</param>
+        /// <param name="extra">New tokens to append.</param>
+        /// <param name="newLine">True to inject newline between current and extra tokens.</param>
+        /// <returns>Resultant Token[] array.</returns>
+        public static Token[] AppendTokens(Token[] current, Token[] extra, bool newLine = true)
+        {
+            // Return current tokens if extra is null or empty
+            if (extra == null || extra.Length == 0)
+                return current;
+
+            // Return extra tokens if current is null or empty
+            if (current == null || current.Length == 0)
+                return extra;
+
+            // Expand array (with optional newline) and copy current tokens
+            int newLineTokenCount = (newLine) ? 1 : 0;
+            Token[] result = new Token[current.Length + extra.Length + newLineTokenCount];
+            current.CopyTo(result, 0);
+
+            // Append optional newline
+            if (newLine)
+                result[current.Length] = NewLineToken;
+
+            // Append new tokens
+            extra.CopyTo(result, current.Length + newLineTokenCount);
+
+            return result;
+        }
+
         private static Token ReadFormattingToken(ref byte[] buffer, int position, out int endPosition)
         {
             Formatting formatting = (Formatting)buffer[position++];
