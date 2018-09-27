@@ -244,7 +244,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         /// <summary>
-        /// set a restricted render area for background rendering - the background will only be rendered inside the specified Rect's bounds
+        /// get/set a restricted render area for background rendering - the background will only be rendered inside the specified Rect's bounds
         /// </summary>
         public Rect RectRestrictedRenderArea
         {

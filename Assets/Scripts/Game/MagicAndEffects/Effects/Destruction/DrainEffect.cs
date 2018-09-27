@@ -81,14 +81,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             ShowPlayerDrained();
         }
 
-        public virtual void Heal(int amount)
+        public override void HealAttributeDamage(DFCareer.Stats stat, int amount)
         {
-            // Can only heal incumbent
-            if (!IsIncumbent)
+            // Can only heal incumbent matching drain
+            if (!IsIncumbent || stat != drainStat)
                 return;
 
+            // Heal attribute
+            base.HealAttributeDamage(stat, amount);
+
             // Reduce magnitude and cancel effect once reduced to 0
-            if (DecreaseMagnitude(amount) == 0)
+            if (DecreaseMagnitude((int)amount) == 0)
                 forcedRoundsRemaining = 0;
         }
 
@@ -121,8 +124,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             magnitude -= amount;
             if (magnitude < 0)
                 magnitude = 0;
-
-            SetStatMod(drainStat, -magnitude);
 
             return magnitude;
         }

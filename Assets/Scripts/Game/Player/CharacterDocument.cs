@@ -59,6 +59,7 @@ namespace DaggerfallWorkshop.Game.Player
         public List<string> biographyEffects;
         public int classIndex;
         public List<string> backStory;
+        public bool isCustom = false;
 
         public CharacterDocument()
         {

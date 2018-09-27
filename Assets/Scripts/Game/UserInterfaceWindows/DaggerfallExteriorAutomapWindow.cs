@@ -30,7 +30,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class DaggerfallExteriorAutomapWindow : DaggerfallPopupWindow
     {
-        const int toolTipDelay = 1; // delay in seconds before button tooltips are shown
+        const int toolTipDelay = 1; // delay in seconds before button tooltips are shown        
+
+        const float minTextScaleNameplates = 1.4f; // minimum text scale for nameplates
+        const float textScaleNameplates = 60.0f; // text scale factor to specify how large in general nameplates' text is rendered (text size is also affected by zoom level)
 
         const float scrollLeftRightSpeed = 100.0f; // left mouse on button arrow left/right makes geometry move with this speed
         const float scrollUpDownSpeed = 100.0f; // left mouse on button arrow up/down makes geometry move with this speed
@@ -165,10 +168,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Panel panelCaption = null; // used to place and show caption label
 
+        ToolTip buttonToolTip = null;
+
         // these boolean flags are used to indicate which mouse button was pressed over which gui button/element - these are set in the event callbacks
-#pragma warning disable 414
-        bool leftMouseClickedOnPanelAutomap = false; // used for debug teleport mode clicks
-#pragma warning restore 414
         bool leftMouseDownOnPanelAutomap = false;
         bool rightMouseDownOnPanelAutomap = false;
         bool leftMouseDownOnForwardButton = false;
@@ -210,7 +212,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         int renderTextureExteriorAutomapDepth = 16;
         int oldRenderTextureExteriorAutomapWidth; // used to store previous width of exterior automap render texture to react to changes to NativePanel's size and react accordingly by setting texture up with new widht and height again
         int oldRenderTextureExteriorAutomapHeight; // used to store previous height of exterior automap render texture to react to changes to NativePanel's size and react accordingly by setting texture up with new widht and height again
-		
+
+        ToolTip nameplateToolTip = null; // used for tooltip when hovering over building nameplates
+
         bool isSetup = false;        
 
         public Panel PanelRenderAutomap
@@ -331,11 +335,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             panelRenderAutomap.OnRightMouseDown += PanelAutomap_OnRightMouseDown;
             panelRenderAutomap.OnRightMouseUp += PanelAutomap_OnRightMouseUp;
 
+            buttonToolTip = defaultToolTip;
+            buttonToolTip.Parent = NativePanel; // attach to native panel - in daggerfall's native resolution (320x200) - whole panel used as reference (buttonToolTip is used for button elements)
+
             // Grid button (toggle 2D <-> 3D view)
             gridButton = DaggerfallUI.AddButton(new Rect(78, 171, 27, 19), NativePanel);
             gridButton.OnMouseClick += GridButton_OnMouseClick;
             gridButton.OnRightMouseClick += GridButton_OnRightMouseClick;
-            gridButton.ToolTip = defaultToolTip;
+            gridButton.ToolTip = buttonToolTip;
             gridButton.ToolTipText = "left click: switch to next view mode (hotkey: enter key)\ravailable view modes are:\r- original (hotkey F2)\r- extra: includes extra buildings (hotkey F3)\r- all: includes extra buildings, ground flats (hotkey F4)\rswitch background texture with F5-F8";
 
             // forward button
@@ -344,7 +351,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             forwardButton.OnMouseUp += ForwardButton_OnMouseUp;
             forwardButton.OnRightMouseDown += ForwardButton_OnRightMouseDown;
             forwardButton.OnRightMouseUp += ForwardButton_OnRightMouseUp;
-            forwardButton.ToolTip = defaultToolTip;
+            forwardButton.ToolTip = buttonToolTip;
             forwardButton.ToolTipText = "left click: move up (hotkey: up arrow)\rright click: move to north location border (hotkey: shift+up arrow)";
 
             // backward button
@@ -353,7 +360,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             backwardButton.OnMouseUp += BackwardButton_OnMouseUp;
             backwardButton.OnRightMouseDown += BackwardButton_OnRightMouseDown;
             backwardButton.OnRightMouseUp += BackwardButton_OnRightMouseUp;
-            backwardButton.ToolTip = defaultToolTip;
+            backwardButton.ToolTip = buttonToolTip;
             backwardButton.ToolTipText = "left click: move down (hotkey: down arrow)\rright click: move to south location border (hotkey: shift+down arrow)";
 
             // left button
@@ -362,7 +369,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             leftButton.OnMouseUp += LeftButton_OnMouseUp;
             leftButton.OnRightMouseDown += LeftButton_OnRightMouseDown;
             leftButton.OnRightMouseUp += LeftButton_OnRightMouseUp;
-            leftButton.ToolTip = defaultToolTip;
+            leftButton.ToolTip = buttonToolTip;           
             leftButton.ToolTipText = "left click: move to the left (hotkey: left arrow)\rright click: move to west location border (hotkey: shift+left arrow)";
 
             // right button
@@ -371,7 +378,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rightButton.OnMouseUp += RightButton_OnMouseUp;
             rightButton.OnRightMouseDown += RightButton_OnRightMouseDown;
             rightButton.OnRightMouseUp += RightButton_OnRightMouseUp;
-            rightButton.ToolTip = defaultToolTip;
+            rightButton.ToolTip = buttonToolTip;
             rightButton.ToolTipText = "left click: move to the right (hotkey: right arrow)\rright click: move to east location border (hotkey: shift+right arrow)";
 
             // rotate left button
@@ -380,7 +387,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rotateLeftButton.OnMouseUp += RotateLeftButton_OnMouseUp;
             rotateLeftButton.OnRightMouseDown += RotateLeftButton_OnRightMouseDown;
             rotateLeftButton.OnRightMouseUp += RotateLeftButton_OnRightMouseUp;
-            rotateLeftButton.ToolTip = defaultToolTip;
+            rotateLeftButton.ToolTip = buttonToolTip;
             rotateLeftButton.ToolTipText = "left click: rotate map to the left (hotkey: control+right arrow)\rright click: rotate map around the player position\rto the left  (hotkey: alt+right arrow)";
 
             // rotate right button
@@ -389,7 +396,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rotateRightButton.OnMouseUp += RotateRightButton_OnMouseUp;
             rotateRightButton.OnRightMouseDown += RotateRightButton_OnRightMouseDown;
             rotateRightButton.OnRightMouseUp += RotateRightButton_OnRightMouseUp;
-            rotateRightButton.ToolTip = defaultToolTip;
+            rotateRightButton.ToolTip = buttonToolTip;
             rotateRightButton.ToolTipText = "left click: rotate map to the right (hotkey: control+right arrow)\rright click: rotate map around the player position\rto the right (hotkey: alt+right arrow)";
 
             // upstairs button
@@ -398,7 +405,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             upstairsButton.OnMouseUp += UpstairsButton_OnMouseUp;
             upstairsButton.OnRightMouseDown += UpstairsButton_OnRightMouseDown;
             upstairsButton.OnRightMouseUp += UpstairsButton_OnRightMouseUp;
-            upstairsButton.ToolTip = defaultToolTip;
+            upstairsButton.ToolTip = buttonToolTip;
             upstairsButton.ToolTipText = "left click: zoom in (hotkey: page up)\rright click: apply maximum zoom";
 
             // downstairs button
@@ -407,7 +414,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             downstairsButton.OnMouseUp += DownstairsButton_OnMouseUp;
             downstairsButton.OnRightMouseDown += DownstairsButton_OnRightMouseDown;
             downstairsButton.OnRightMouseUp += DownstairsButton_OnRightMouseUp;
-            downstairsButton.ToolTip = defaultToolTip;
+            downstairsButton.ToolTip = buttonToolTip;
             downstairsButton.ToolTipText = "left click: zoom out (hotkey: page down\rright click: apply minimum zoom)";
 
             // Exit button
@@ -421,10 +428,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             dummyPanelCompass = DaggerfallUI.AddPanel(rectDummyPanelCompass, NativePanel);
             dummyPanelCompass.OnMouseClick += Compass_OnMouseClick;
             dummyPanelCompass.OnRightMouseClick += Compass_OnRightMouseClick;
-            dummyPanelCompass.ToolTip = defaultToolTip;
+            dummyPanelCompass.ToolTip = buttonToolTip;
             dummyPanelCompass.ToolTipText = "left click: focus player position (hotkey: tab)\rright click: reset view (hotkey: backspace)";
 
-            if (defaultToolTip != null)
+            if (buttonToolTip != null)
             {
                 gridButton.ToolTip.ToolTipDelay = toolTipDelay;
                 forwardButton.ToolTip.ToolTipDelay = toolTipDelay;
@@ -511,6 +518,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             exteriorAutomap.updateAutomapStateOnWindowPop(); // signal ExteriorAutomap script that exterior automap window was closed
+        }
+
+        public override void Draw()
+        {
+            base.Draw();
+
+            // Draw nameplate tooltip last
+            if (nameplateToolTip != null)
+                nameplateToolTip.Draw();
         }
 
         /// <summary>
@@ -786,6 +802,61 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             RenderTexture.active = null;
 
             panelRenderAutomap.BackgroundTexture = textureExteriorAutomap;
+
+            panelRenderAutomap.Components.Clear();
+
+            Rect restrictionRect = panelRenderAutomap.Rectangle;
+            for (int i=0; i < exteriorAutomap.buildingNameplates.Length; i++)
+            {
+                float posX = exteriorAutomap.buildingNameplates[i].anchorPoint.x - exteriorAutomap.LocationWidth * exteriorAutomap.BlockSizeWidth * 0.5f;
+                float posY = exteriorAutomap.buildingNameplates[i].anchorPoint.y - exteriorAutomap.LocationHeight * exteriorAutomap.BlockSizeHeight * 0.5f;
+                Vector3 transformedPosition = exteriorAutomap.CameraExteriorAutomap.WorldToScreenPoint(new Vector3(posX, 0, posY));
+                exteriorAutomap.buildingNameplates[i].textLabel.TextScale = Math.Max(minTextScaleNameplates, textScaleNameplates / cameraExteriorAutomap.orthographicSize * dummyPanelAutomap.LocalScale.x);
+                exteriorAutomap.buildingNameplates[i].textLabel.Position = new Vector2(transformedPosition.x, dummyPanelAutomap.InteriorHeight * dummyPanelAutomap.LocalScale.x - transformedPosition.y - exteriorAutomap.buildingNameplates[i].textLabel.TextHeight * 0.5f);
+                exteriorAutomap.buildingNameplates[i].textLabel.RectRestrictedRenderArea = restrictionRect;
+                exteriorAutomap.buildingNameplates[i].textLabel.RestrictedRenderAreaCoordinateType = TextLabel.RestrictedRenderArea_CoordinateType.ScreenCoordinates;
+                if (nameplateToolTip == null)
+                    nameplateToolTip = new ToolTip();
+                exteriorAutomap.buildingNameplates[i].textLabel.ToolTip = nameplateToolTip;
+                exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.ToolTipDelay = 0;
+                exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.BackgroundColor = DaggerfallUnity.Settings.ToolTipBackgroundColor;
+                exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.TextColor = DaggerfallUnity.Settings.ToolTipTextColor;                
+                exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.Parent = dummyPanelAutomap; // use dummyPanelAutomap (the render panel in native daggerfall resolution)
+                exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.Position /= dummyPanelAutomap.LocalScale;                
+                exteriorAutomap.buildingNameplates[i].textLabel.ToolTipText = exteriorAutomap.buildingNameplates[i].name;
+                panelRenderAutomap.Components.Add(exteriorAutomap.buildingNameplates[i].textLabel);
+
+                exteriorAutomap.buildingNameplates[i].gameObject.name = String.Format("building name plate for [{0}]+", exteriorAutomap.buildingNameplates[i].name);
+                exteriorAutomap.buildingNameplates[i].textLabel.Text = exteriorAutomap.buildingNameplates[i].name; // use long name
+                exteriorAutomap.buildingNameplates[i].width = exteriorAutomap.buildingNameplates[i].textLabel.TextWidth;
+                exteriorAutomap.buildingNameplates[i].height = exteriorAutomap.buildingNameplates[i].textLabel.TextHeight;
+                exteriorAutomap.buildingNameplates[i].offset = Vector2.zero;
+                exteriorAutomap.buildingNameplates[i].upperLeftCorner = exteriorAutomap.buildingNameplates[i].textLabel.Position + new Vector2(0.0f, -exteriorAutomap.buildingNameplates[i].height * 0.5f);
+                exteriorAutomap.buildingNameplates[i].upperRightCorner = exteriorAutomap.buildingNameplates[i].textLabel.Position + new Vector2(exteriorAutomap.buildingNameplates[i].width, -exteriorAutomap.buildingNameplates[i].height * 0.5f);
+                exteriorAutomap.buildingNameplates[i].lowerLeftCorner = exteriorAutomap.buildingNameplates[i].textLabel.Position + new Vector2(0.0f, +exteriorAutomap.buildingNameplates[i].height * 0.5f);
+                exteriorAutomap.buildingNameplates[i].lowerRightCorner = exteriorAutomap.buildingNameplates[i].textLabel.Position + new Vector2(exteriorAutomap.buildingNameplates[i].width, +exteriorAutomap.buildingNameplates[i].height * 0.5f);
+                exteriorAutomap.buildingNameplates[i].placed = false;
+                exteriorAutomap.buildingNameplates[i].nameplateReplaced = false;
+                exteriorAutomap.buildingNameplates[i].numCollisionsDetected = 0;
+            }
+
+            exteriorAutomap.computeNameplateOffsets();
+
+            for (int i = 0; i < exteriorAutomap.buildingNameplates.Length; i++)
+            {
+                if (exteriorAutomap.buildingNameplates[i].nameplateReplaced) // if not replaced
+                {
+                    exteriorAutomap.buildingNameplates[i].textLabel.Text = "*"; // else use "*"
+                    exteriorAutomap.buildingNameplates[i].gameObject.name = exteriorAutomap.buildingNameplates[i].gameObject.name.Substring(0, exteriorAutomap.buildingNameplates[i].gameObject.name.Length - 1) + "*";
+                }
+
+                exteriorAutomap.buildingNameplates[i].textLabel.Position += exteriorAutomap.buildingNameplates[i].offset;
+                exteriorAutomap.buildingNameplates[i].upperLeftCorner = exteriorAutomap.buildingNameplates[i].textLabel.Position + new Vector2(0.0f, -exteriorAutomap.buildingNameplates[i].height * 0.5f);
+                exteriorAutomap.buildingNameplates[i].upperRightCorner = exteriorAutomap.buildingNameplates[i].textLabel.Position + new Vector2(exteriorAutomap.buildingNameplates[i].width, -exteriorAutomap.buildingNameplates[i].height * 0.5f);
+                exteriorAutomap.buildingNameplates[i].lowerLeftCorner = exteriorAutomap.buildingNameplates[i].textLabel.Position + new Vector2(0.0f, +exteriorAutomap.buildingNameplates[i].height * 0.5f);
+                exteriorAutomap.buildingNameplates[i].lowerRightCorner = exteriorAutomap.buildingNameplates[i].textLabel.Position + new Vector2(exteriorAutomap.buildingNameplates[i].width, +exteriorAutomap.buildingNameplates[i].height * 0.5f);
+                exteriorAutomap.buildingNameplates[i].textLabel.Update();
+            }
         }
 
         #region Private Methods
@@ -1188,8 +1259,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (alreadyInMouseDown)
                 return;
 
-            leftMouseClickedOnPanelAutomap = true; // used for debug teleport mode clicks
-
             Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
             oldMousePosition = mousePosition;
             leftMouseDownOnPanelAutomap = true;
@@ -1198,7 +1267,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void PanelAutomap_OnMouseUp(BaseScreenComponent sender, Vector2 position)
         {
-            leftMouseClickedOnPanelAutomap = false; // used for debug teleport mode clicks
             leftMouseDownOnPanelAutomap = false;
             alreadyInMouseDown = false;
         }

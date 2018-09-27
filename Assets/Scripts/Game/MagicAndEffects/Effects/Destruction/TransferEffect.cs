@@ -43,9 +43,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             if (caster)
             {
-                DrainEffect incumbentDrain = caster.GetComponent<EntityEffectManager>().FindDrainStatIncumbent(drainStat);
-                if (incumbentDrain != null)
-                    incumbentDrain.Heal(lastMagnitudeIncreaseAmount);
+                caster.GetComponent<EntityEffectManager>().HealAttribute(drainStat, lastMagnitudeIncreaseAmount);
             }
         }
     }

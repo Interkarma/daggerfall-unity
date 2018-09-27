@@ -485,8 +485,6 @@ namespace DaggerfallConnect
             Poison = 2,
             Shock = 3,
             Magic = 4,
-            Disease = 5,
-            Paralysis = 6,
         }
 
         /// <summary>

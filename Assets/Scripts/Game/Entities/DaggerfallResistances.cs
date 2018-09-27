@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -23,7 +23,7 @@ namespace DaggerfallWorkshop.Game.Entity
     {
         #region Fields
 
-        public const int Count = 7;
+        public const int Count = 5;
 
         // Current permanent resistance values
         [SerializeField] int Fire;
@@ -31,8 +31,6 @@ namespace DaggerfallWorkshop.Game.Entity
         [SerializeField] int Poison;
         [SerializeField] int Shock;
         [SerializeField] int Magic;
-        [SerializeField] int Disease;
-        [SerializeField] int Paralysis;
 
         // Mods are temporary changes to resistance values from effects
         // Default is 0 - effects can raise/lower mod values during their lifecycle
@@ -48,17 +46,12 @@ namespace DaggerfallWorkshop.Game.Entity
         public int LivePoison { get { return GetLiveResistanceValue(DFCareer.Resistances.Poison); } }
         public int LiveShock { get { return GetLiveResistanceValue(DFCareer.Resistances.Shock); } }
         public int LiveMagic { get { return GetLiveResistanceValue(DFCareer.Resistances.Magic); } }
-        public int LiveDisease { get { return GetLiveResistanceValue(DFCareer.Resistances.Disease); } }
-        public int LiveParalysis { get { return GetLiveResistanceValue(DFCareer.Resistances.Paralysis); } }
 
         public int PermanentFire { get { return GetPermanentResistanceValue(DFCareer.Resistances.Fire); } }
         public int PermanentCold { get { return GetPermanentResistanceValue(DFCareer.Resistances.Cold); } }
         public int PermanentPoison { get { return GetPermanentResistanceValue(DFCareer.Resistances.Poison); } }
         public int PermanentShock { get { return GetPermanentResistanceValue(DFCareer.Resistances.Shock); } }
         public int PermanentMagic { get { return GetPermanentResistanceValue(DFCareer.Resistances.Magic); } }
-        public int PermanentDisease { get { return GetPermanentResistanceValue(DFCareer.Resistances.Disease); } }
-        public int PermanentParalysis { get { return GetPermanentResistanceValue(DFCareer.Resistances.Paralysis); } }
-
 
         #endregion
 
@@ -80,8 +73,6 @@ namespace DaggerfallWorkshop.Game.Entity
             Poison = 0;
             Shock = 0;
             Magic = 0;
-            Disease = 0;
-            Paralysis = 0;
             Array.Clear(mods, 0, Count);
         }
 
@@ -92,8 +83,6 @@ namespace DaggerfallWorkshop.Game.Entity
             Poison = other.Poison;
             Shock = other.Shock;
             Magic = other.Magic;
-            Disease = other.Disease;
-            Paralysis = other.Paralysis;
         }
 
         #endregion
@@ -138,10 +127,6 @@ namespace DaggerfallWorkshop.Game.Entity
                     return Shock;
                 case DFCareer.Resistances.Magic:
                     return Magic;
-                case DFCareer.Resistances.Disease:
-                    return Disease;
-                case DFCareer.Resistances.Paralysis:
-                    return Paralysis;
                 default:
                     return 0;
             }
@@ -170,12 +155,6 @@ namespace DaggerfallWorkshop.Game.Entity
                 case DFCareer.Resistances.Magic:
                     Magic = value;
                     break;
-                case DFCareer.Resistances.Disease:
-                    Disease = value;
-                    break;
-                case DFCareer.Resistances.Paralysis:
-                    Paralysis = value;
-                    break;
                 default:
                     return;
             }
@@ -184,6 +163,14 @@ namespace DaggerfallWorkshop.Game.Entity
         public void SetPermanentResistanceValue(int index, int value)
         {
             SetPermanentResistanceValue((DFCareer.Resistances)index, value);
+        }
+
+        /// <summary>
+        /// Assign mods from effect manager.
+        /// </summary>
+        public void AssignMods(int[] resistanceMods)
+        {
+            Array.Copy(resistanceMods, mods, Count);
         }
 
         #endregion

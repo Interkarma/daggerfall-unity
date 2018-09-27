@@ -143,6 +143,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             get { return GetDiseaseBundles(); }
         }
 
+        public int PoisonCount
+        {
+            get { return GetPoisonCount(); }
+        }
+
+        public InstancedBundle[] PoisonBundles
+        {
+            get { return GetPoisonBundles(); }
+        }
+
         #endregion
 
         #region Unity
@@ -344,7 +354,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 IEntityEffect effect = GameManager.Instance.EntityEffectBroker.InstantiateEffect(sourceBundle.Settings.Effects[i]);
                 if (effect == null)
                 {
-                    Debug.LogWarningFormat("AssignBundle() could not add effect as key '{0}' was not found by broker.");
+                    Debug.LogWarningFormat("AssignBundle() could not add effect as key '{0}' was not found by broker.", sourceBundle.Settings.Effects[i].Key);
                     continue;
                 }
 
@@ -433,26 +443,43 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         }
 
         /// <summary>
-        /// Searches all effects in all bundles to find DrainEffect incumbent for a specific stat.
+        /// Searches all effects in all bundles to heal an amount of attribute loss.
+        /// Will spread healing amount across multiple effects if required.
         /// </summary>
-        /// <param name="drainStat">The stat being drained.</param>
-        /// <returns>DrainEffect incumbent for drainStat, or null if not found.</returns>
-        public DrainEffect FindDrainStatIncumbent(DFCareer.Stats drainStat)
+        /// <param name="stat">Attribute to heal.</param>
+        /// <param name="amount">Amount to heal. Must be a positive value.</param>
+        public void HealAttribute(DFCareer.Stats stat, int amount)
         {
+            if (amount < 0)
+            {
+                Debug.LogWarning("EntityEffectManager.HealDamagedAttribute() received a negative value for amount - ignoring.");
+                return;
+            }
+
+            int remaining = amount;
             foreach (InstancedBundle bundle in instancedBundles)
             {
-                foreach (IEntityEffect effect in bundle.liveEffects)
+                foreach (BaseEntityEffect effect in bundle.liveEffects)
                 {
-                    if (effect is DrainEffect)
+                    // Get attribute modifier of this effect and ignore if attribute not damaged
+                    int mod = effect.GetAttributeMod(stat);
+                    if (mod >= 0)
+                        continue;
+
+                    // Heal all or part of damage depending on how much healing remains
+                    int damage = Mathf.Abs(mod);
+                    if (remaining > damage)
                     {
-                        DrainEffect drainEffect = effect as DrainEffect;
-                        if (drainEffect.IsIncumbent && drainEffect.DrainStat == drainStat)
-                            return drainEffect;
+                        effect.HealAttributeDamage(stat, remaining - damage);
+                        remaining -= damage;
+                    }
+                    else
+                    {
+                        effect.HealAttributeDamage(stat, remaining);
+                        return;
                     }
                 }
             }
-
-            return null;
         }
 
         /// <summary>
@@ -911,6 +938,30 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             return diseaseBundles.ToArray();
         }
 
+        int GetPoisonCount()
+        {
+            int count = 0;
+            foreach (InstancedBundle bundle in instancedBundles)
+            {
+                if (bundle.bundleType == BundleTypes.Poison)
+                    count++;
+            }
+
+            return count;
+        }
+
+        InstancedBundle[] GetPoisonBundles()
+        {
+            List<InstancedBundle> poisonBundles = new List<InstancedBundle>();
+            foreach (InstancedBundle bundle in instancedBundles)
+            {
+                if (bundle.bundleType == BundleTypes.Poison)
+                    poisonBundles.Add(bundle);
+            }
+
+            return poisonBundles.ToArray();
+        }
+
         #endregion
 
         #region Static Helpers
@@ -1074,6 +1125,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Clear all mods
             Array.Clear(combinedStatMods, 0, DaggerfallStats.Count);
             Array.Clear(combinedSkillMods, 0, DaggerfallSkills.Count);
+            Array.Clear(combinedResistanceMods, 0, DaggerfallResistances.Count);
 
             // Add together every mod for every live effect
             foreach (InstancedBundle bundle in instancedBundles)
@@ -1082,6 +1134,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 {
                     MergeStatMods(effect, ref combinedStatMods);
                     MergeSkillMods(effect, ref combinedSkillMods);
+                    MergeResistanceMods(effect, ref combinedResistanceMods);
                 }
             }
 
@@ -1091,6 +1144,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Assign to host entity
             entityBehaviour.Entity.Stats.AssignMods(combinedStatMods);
             entityBehaviour.Entity.Skills.AssignMods(combinedSkillMods);
+            entityBehaviour.Entity.Resistances.AssignMods(combinedResistanceMods);
 
             // Kill host if any stat is reduced to 1
             for (int i = 0; i < DaggerfallStats.Count; i++)
@@ -1116,6 +1170,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             for (int i = 0; i < effect.SkillMods.Length; i++)
             {
                 combinedSkillMods[i] += effect.SkillMods[i];
+            }
+        }
+
+        void MergeResistanceMods(IEntityEffect effect, ref int[] combinedResistanceMods)
+        {
+            for (int i = 0; i < effect.ResistanceMods.Length; i++)
+            {
+                combinedResistanceMods[i] += effect.ResistanceMods[i];
             }
         }
 

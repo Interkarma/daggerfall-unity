@@ -421,7 +421,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             TextLabel titleLabel = new TextLabel(DaggerfallUI.Instance.Font2);
             titleLabel.Text = "Daggerfall Unity";
             titleLabel.Position = new Vector2(0, 15);
-            titleLabel.TextScale = 1.8f;
+            titleLabel.TextScale = 1.4f;
             titleLabel.HorizontalAlignment = HorizontalAlignment.Center;
             optionsPanel.Components.Add(titleLabel);
 

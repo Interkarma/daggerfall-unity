@@ -499,7 +499,6 @@ namespace DaggerfallWorkshop.Utility
                         if (closedLiteral)
                         {
                             // Scan to next separator or end of line text
-                            int dataStart = position;
                             while (position < text.Length)
                             {
                                 if (text.Substring(position, 1) == rowSeparator)

@@ -100,7 +100,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button toolTipBackgroundColor;
         Checkbox crosshair;
         Checkbox vitalsIndicators;
-        Checkbox freeScaling;
+        //Checkbox freeScaling;
         HorizontalSlider interactionModeIcon;
         Checkbox showQuestJournalClocksAsCountdown;
         Checkbox inventoryInfoPanel;
@@ -118,6 +118,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox alternateRandomEnemySelection;
         Checkbox advancedClimbing;
         Checkbox combatVoices;
+        Checkbox enemyInfighting;
         HorizontalSlider dungeonAmbientLightScale;
         HorizontalSlider nightAmbientLightScale;
         HorizontalSlider playerTorchLightScale;
@@ -205,7 +206,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             AddSectionTitle(leftPanel, "controls");
             mouseSensitivity = AddSlider(leftPanel, "mouseSensitivity", 0.1f, 4.0f, DaggerfallUnity.Settings.MouseLookSensitivity);
             weaponSensitivity = AddSlider(leftPanel, "weaponSensitivity", 0.1f, 10.0f, DaggerfallUnity.Settings.WeaponSensitivity);
-            movementAcceleration = AddSlider(leftPanel, "movementAcceleration", InputManager.minAcceleration, InputManager.maxAcceleration, DaggerfallUnity.Settings.MovementAcceleration);
+            movementAcceleration = AddSlider(leftPanel, "moveSpeedAcceleration", InputManager.minAcceleration, InputManager.maxAcceleration, DaggerfallUnity.Settings.MoveSpeedAcceleration);
             weaponAttackThreshold = AddTextbox(leftPanel, "weaponAttackThreshold", DaggerfallUnity.Settings.WeaponAttackThreshold.ToString());
 
             y = 0;
@@ -244,7 +245,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // GUI
             AddSectionTitle(rightPanel, "gui");
-            freeScaling = AddCheckbox(rightPanel, "freeScaling", DaggerfallUnity.Settings.FreeScaling);
+            //freeScaling = AddCheckbox(rightPanel, "freeScaling", DaggerfallUnity.Settings.FreeScaling);
             showQuestJournalClocksAsCountdown = AddCheckbox(rightPanel, "showQuestJournalClocksAsCountdown", DaggerfallUnity.Settings.ShowQuestJournalClocksAsCountdown);
             inventoryInfoPanel = AddCheckbox(rightPanel, "inventoryInfoPanel", DaggerfallUnity.Settings.EnableInventoryInfoPanel);
             enhancedItemLists = AddCheckbox(rightPanel, "enhancedItemLists", DaggerfallUnity.Settings.EnableEnhancedItemLists);
@@ -268,6 +269,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             alternateRandomEnemySelection = AddCheckbox(leftPanel, "alternateRandomEnemySelection", DaggerfallUnity.Settings.AlternateRandomEnemySelection);
             advancedClimbing = AddCheckbox(leftPanel, "advancedClimbing", DaggerfallUnity.Settings.AdvancedClimbing);
             combatVoices = AddCheckbox(leftPanel, "combatVoices", DaggerfallUnity.Settings.CombatVoices);
+            enemyInfighting = AddCheckbox(leftPanel, "enemyInfighting", DaggerfallUnity.Settings.EnemyInfighting);
 
             y = 0;
 
@@ -323,13 +325,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             DaggerfallUnity.Settings.MouseLookSensitivity = mouseSensitivity.GetValue();
             DaggerfallUnity.Settings.WeaponSensitivity = weaponSensitivity.GetValue();
-            DaggerfallUnity.Settings.MovementAcceleration = movementAcceleration.GetValue();
+            DaggerfallUnity.Settings.MoveSpeedAcceleration = movementAcceleration.GetValue();
             float weaponAttackThresholdValue;
             if (float.TryParse(weaponAttackThreshold.Text, out weaponAttackThresholdValue))
                 DaggerfallUnity.Settings.WeaponAttackThreshold = Mathf.Clamp(weaponAttackThresholdValue, 0.001f, 1.0f);
 
             DaggerfallUnity.Settings.SoundVolume = soundVolume.GetValue();
-            DaggerfallUnity.Settings.MusicVolume = soundVolume.GetValue();
+            DaggerfallUnity.Settings.MusicVolume = musicVolume.GetValue();
 
             DaggerfallUnity.Settings.EnableSpellLighting = spellLighting.IsChecked;
             DaggerfallUnity.Settings.EnableSpellShadows = spellShadows.IsChecked;
@@ -363,6 +365,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.CameraRecoilStrength = cameraRecoilStrength.ScrollIndex;
             DaggerfallUnity.Settings.AdvancedClimbing = advancedClimbing.IsChecked;
             DaggerfallUnity.Settings.CombatVoices = combatVoices.IsChecked;
+            DaggerfallUnity.Settings.EnemyInfighting = enemyInfighting.IsChecked;
 
             DaggerfallUnity.Settings.DungeonAmbientLightScale = dungeonAmbientLightScale.GetValue();
             DaggerfallUnity.Settings.NightAmbientLightScale = nightAmbientLightScale.GetValue();

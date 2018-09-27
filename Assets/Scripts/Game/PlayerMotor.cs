@@ -29,8 +29,8 @@ namespace DaggerfallWorkshop.Game
         // If true, diagonal speed (when strafing + moving forward or back) can't exceed normal move speed; otherwise it's about 1.4 times faster
         public bool limitDiagonalSpeed = true;
 
-        public float systemTimerUpdatesPerSecond = .055f; // Number of updates per second by the system timer at memory location 0x46C.
-                                                          // Used for timing various things in classic.
+        public float systemTimerUpdatesDivisor = .0549254f; // Divisor for updates by the system timer at memory location 0x46C.
+                                                            // Used for timing various things in classic.
 
         // FixedUpdate is too choppy to give smooth camera movement. This handles a smooth following child transform.
         public Transform smoothFollower;                // The Transform that follows; will lerp to this Transform's position.
@@ -44,8 +44,6 @@ namespace DaggerfallWorkshop.Game
         private Vector3 moveDirection = Vector3.zero;
         private bool grounded = false;
         private float speed;
-
-        private bool standingStill = false;
 
         private ClimbingMotor climbingMotor;
         private PlayerHeightChanger heightChanger;
@@ -102,7 +100,16 @@ namespace DaggerfallWorkshop.Game
 
         public bool IsStandingStill
         {
-            get { return standingStill; }
+            get
+            {
+                if (grounded)
+                {
+                    // Set standing still while grounded flag
+                    // Casting moveDirection to a Vector2 so constant downward force of gravity not included in magnitude
+                    return (new Vector2(moveDirection.x, moveDirection.z).magnitude == 0);
+                }
+                return false;
+            }
         }
 
         public bool IsJumping
@@ -250,10 +257,6 @@ namespace DaggerfallWorkshop.Game
             if (levitateMotor && (levitateMotor.IsLevitating || levitateMotor.IsSwimming) || climbingMotor.IsClimbing)
                 return;
 
-            // Player assumed to be in movement for now
-            standingStill = false;
-
-
             if (climbingMotor.WallEject)
             {   // True in terms of the player having their feet on solid surface.
                 grounded = true;
@@ -261,10 +264,6 @@ namespace DaggerfallWorkshop.Game
 
             if (grounded)
             {
-                // Set standing still while grounded flag
-                // Casting moveDirection to a Vector2 so constant downward force of gravity not included in magnitude
-                standingStill = (new Vector2(moveDirection.x, moveDirection.z).magnitude == 0);
-
                 acrobatMotor.Jumping = false;
 
                 acrobatMotor.CheckFallingDamage();
@@ -283,14 +282,10 @@ namespace DaggerfallWorkshop.Game
 
             acrobatMotor.ApplyGravity(ref moveDirection);
 
-            // If we hit something above us AND we are moving up, reverse vertical movement
-            if ((controller.collisionFlags & CollisionFlags.Above) != 0)
-            {
-                if (moveDirection.y > 0)
-                    moveDirection.y = -moveDirection.y;
-            }
+            acrobatMotor.HitHead(ref moveDirection);
 
-            groundMotor.MoveOnGround(moveDirection, ref collisionFlags, ref grounded);
+            groundMotor.MoveOnGround(moveDirection);
+            grounded = (collisionFlags & CollisionFlags.Below) != 0;
         }
 
         void Update()

@@ -15,6 +15,7 @@ namespace DaggerfallWorkshop.Game
         public bool airControl = false;
 
         PlayerMotor playerMotor;
+        CharacterController controller;
         FrictionMotor frictionMotor;
         ClimbingMotor climbingMotor;
         Transform myTransform;
@@ -38,6 +39,7 @@ namespace DaggerfallWorkshop.Game
         void Start()
         {
             playerMotor = GetComponent<PlayerMotor>();
+            controller = GetComponent<CharacterController>();
             frictionMotor = GetComponent<FrictionMotor>();
             climbingMotor = GetComponent<ClimbingMotor>();
             myTransform = playerMotor.transform;
@@ -70,6 +72,12 @@ namespace DaggerfallWorkshop.Game
                 moveDirection.y = jumpSpeed * jumpSpeedMultiplier;
                 jumping = true;
 
+                // HACK: Also adds a small amount of forward boost to player when they jump while moving
+                // This (very) loosely simulates classic where player receives more forward momentum than in DFUnity at present
+                // TODO: This should be revisited when jumping and gravity are tuned to be more like classic
+                if (!GameManager.Instance.PlayerMotor.IsStandingStill)
+                    moveDirection += (transform.forward * jumpSpeed) * 0.1f;
+
                 // Modify crouching jump speed
                 if (playerMotor.IsCrouching)
                     moveDirection.y *= crouchingJumpDelta;
@@ -99,7 +107,7 @@ namespace DaggerfallWorkshop.Game
 
             float inputModifyFactor = (inputX != 0.0f && inputY != 0.0f && playerMotor.limitDiagonalSpeed) ? .7071f : 1.0f;
 
-            if (airControl && frictionMotor.PlayerControl)
+            if ((climbingMotor.IsRappelling || airControl) && frictionMotor.PlayerControl)
             {
                 moveDirection.x = inputX * speed * inputModifyFactor;
                 moveDirection.z = inputY * speed * inputModifyFactor;
@@ -107,10 +115,21 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        /// <summary>
-        /// If we stepped over a cliff or something, set the height at which we started falling
-        /// </summary>
-        public void CheckInitFall()
+        public void HitHead(ref Vector3 moveDirection)
+        {
+            // If we hit something above us AND we are moving up, reverse vertical movement
+            if ((controller.collisionFlags & CollisionFlags.Above) != 0)
+            {
+                if (moveDirection.y > 0)
+                    moveDirection.y = -moveDirection.y;
+            }
+        }
+
+
+    /// <summary>
+    /// If we stepped over a cliff or something, set the height at which we started falling
+    /// </summary>
+    public void CheckInitFall()
         {
             if (!falling)
             {
@@ -129,7 +148,7 @@ namespace DaggerfallWorkshop.Game
                 fallStartLevel = myTransform.position.y;
                 moveDirection.y = -slowFallSpeed * Time.deltaTime;
             }
-            else
+            else if (!climbingMotor.IsRappelling)
             {
                 moveDirection.y -= gravity * Time.deltaTime;
             }

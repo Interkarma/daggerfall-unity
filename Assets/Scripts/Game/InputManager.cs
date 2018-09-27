@@ -231,7 +231,7 @@ namespace DaggerfallWorkshop.Game
         void Start()
         {
             // Read acceleration/deceleration setting
-            acceleration = DaggerfallUnity.Settings.MovementAcceleration;
+            acceleration = DaggerfallUnity.Settings.MoveSpeedAcceleration;
 
             try
             {

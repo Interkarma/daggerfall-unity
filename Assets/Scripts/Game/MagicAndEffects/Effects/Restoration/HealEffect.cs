@@ -28,17 +28,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             base.MagicRound();
 
-            DrainEffect incumbentDrain = manager.FindDrainStatIncumbent(healStat);
-            if (incumbentDrain != null)
-            {
-                int magnitude = GetMagnitude(caster);
-                incumbentDrain.Heal(magnitude);
-                Debug.LogFormat("Healed {0} Drain {1} by {2} points", GetPeeredEntityBehaviour(manager).name, incumbentDrain.DrainStat.ToString(), magnitude);
-            }
-            else
-            {
-                Debug.LogFormat("Could not find incumbent Drain {0} on target", healStat.ToString());
-            }
+            int magnitude = GetMagnitude(caster);
+            manager.HealAttribute(healStat, magnitude);
         }
     }
 }

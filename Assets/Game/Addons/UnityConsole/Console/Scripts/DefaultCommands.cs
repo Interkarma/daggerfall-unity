@@ -31,6 +31,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(HelpCommand.name, HelpCommand.description, HelpCommand.usage, HelpCommand.Execute);
             ConsoleCommandsDatabase.RegisterCommand(LoadCommand.name, LoadCommand.description, LoadCommand.usage, LoadCommand.Execute);
             ConsoleCommandsDatabase.RegisterCommand(GodCommand.name, GodCommand.description, GodCommand.usage, GodCommand.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(NoTargetCommand.name, NoTargetCommand.description, NoTargetCommand.usage, NoTargetCommand.Execute);
             ConsoleCommandsDatabase.RegisterCommand(Suicide.name, Suicide.description, Suicide.usage, Suicide.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ShowDebugStrings.name, ShowDebugStrings.description, ShowDebugStrings.usage, ShowDebugStrings.Execute);
             ConsoleCommandsDatabase.RegisterCommand(SetWeather.name, SetWeather.description, SetWeather.usage, SetWeather.Execute);
@@ -228,6 +229,26 @@ namespace Wenzil.Console
                     PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
                     playerEntity.GodMode = !playerEntity.GodMode;
                     return string.Format("Godmode enabled: {0}", playerEntity.GodMode);
+                }
+                else
+                    return error;
+            }
+        }
+
+        private static class NoTargetCommand
+        {
+            public static readonly string name = "nt";
+            public static readonly string error = "Failed to set NoTarget mode";
+            public static readonly string usage = "nt";
+            public static readonly string description = "Toggle NoTarget mode";
+
+            public static string Execute(params string[] args)
+            {
+                PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+                if (playerEntity != null)
+                {
+                    playerEntity.NoTargetMode = !playerEntity.NoTargetMode;
+                    return string.Format("NoTarget enabled: {0}", playerEntity.NoTargetMode);
                 }
                 else
                     return error;

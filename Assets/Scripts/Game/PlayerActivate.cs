@@ -1131,7 +1131,7 @@ namespace DaggerfallWorkshop.Game
                     {
                         GameManager.Instance.MakeEnemiesHostile();
                     }
-                    enemyMotor.MakeEnemyHostileToPlayer(gameObject);
+                    enemyMotor.MakeEnemyHostileToAttacker(GameManager.Instance.PlayerEntityBehaviour);
                 }
             }
         }       

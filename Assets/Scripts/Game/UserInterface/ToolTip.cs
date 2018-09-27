@@ -137,8 +137,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 Position = newPosition;
             }
 
-            // Raise flag to draw tooltip
-            drawToolTip = true;
+            // Check if mouse position is in parent's rectangle (to prevent tooltips out of panel's rectangle to be displayed)
+            if (Parent != null && (Parent.Rectangle.Contains(Parent.MousePosition)))
+            {
+                // Raise flag to draw tooltip
+                drawToolTip = true;
+            }
         }
 
         public override void Draw()
@@ -149,6 +153,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (drawToolTip)
             {
                 base.Draw();
+
+                // Set render area for tooltip to whole screen (material might have been changed by other component, i.e. _ScissorRect might have been set to a subarea of screen (e.g. by TextLabel class))
+                Material material = font.GetMaterial();
+                Vector4 scissorRect = new Vector4(0, 1, 0, 1);
+                material.SetVector("_ScissorRect", scissorRect);
 
                 // Determine text position
                 Rect rect = Rectangle;
