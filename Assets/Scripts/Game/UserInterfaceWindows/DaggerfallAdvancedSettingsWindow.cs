@@ -331,7 +331,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUnity.Settings.WeaponAttackThreshold = Mathf.Clamp(weaponAttackThresholdValue, 0.001f, 1.0f);
 
             DaggerfallUnity.Settings.SoundVolume = soundVolume.GetValue();
-            DaggerfallUnity.Settings.MusicVolume = soundVolume.GetValue();
+            DaggerfallUnity.Settings.MusicVolume = musicVolume.GetValue();
 
             DaggerfallUnity.Settings.EnableSpellLighting = spellLighting.IsChecked;
             DaggerfallUnity.Settings.EnableSpellShadows = spellShadows.IsChecked;
