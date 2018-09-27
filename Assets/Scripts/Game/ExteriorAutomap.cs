@@ -117,7 +117,7 @@ namespace DaggerfallWorkshop.Game
 
         GameObject gameObjectBuildingNameplates = null; // parent gameobject for all building name plates
 
-        GameObject popUpNameplate = null; // the pop-up nameplate used to expand "*" nameplates
+        //GameObject popUpNameplate = null; // the pop-up nameplate used to expand "*" nameplates
 
         public struct Rectangle
         {
