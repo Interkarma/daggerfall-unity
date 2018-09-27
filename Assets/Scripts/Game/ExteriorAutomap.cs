@@ -785,8 +785,8 @@ namespace DaggerfallWorkshop.Game
                             SetLayerRecursively(newBuildingNameplate.gameObject, layerAutomap);
                             newBuildingNameplate.gameObject.transform.SetParent(gameObjectBuildingNameplates.transform);
 
-                            float posX = newBuildingNameplate.anchorPoint.x - locationWidth * blockSizeWidth * 0.5f;
-                            float posY = newBuildingNameplate.anchorPoint.y - locationHeight * blockSizeHeight * 0.5f;
+                            //float posX = newBuildingNameplate.anchorPoint.x - locationWidth * blockSizeWidth * 0.5f;
+                            //float posY = newBuildingNameplate.anchorPoint.y - locationHeight * blockSizeHeight * 0.5f;
 
                             newBuildingNameplate.width = 0.0f;
                             newBuildingNameplate.height = 0.0f;
