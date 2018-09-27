@@ -28,7 +28,7 @@ namespace DaggerfallWorkshop.Game
         public float MeleeAttackSpeed = 1.25f;      // Number of seconds between melee attacks
         public float MeleeDistance = 3.2f;          // Maximum distance for melee attack
 
-        EnemyMotor motor;
+        //EnemyMotor motor;
         EnemySenses senses;
         EnemySounds sounds;
         DaggerfallMobileUnit mobile;
@@ -40,7 +40,7 @@ namespace DaggerfallWorkshop.Game
 
         void Start()
         {
-            motor = GetComponent<EnemyMotor>();
+            //motor = GetComponent<EnemyMotor>();
             senses = GetComponent<EnemySenses>();
             sounds = GetComponent<EnemySounds>();
             mobile = GetComponentInChildren<DaggerfallMobileUnit>();
