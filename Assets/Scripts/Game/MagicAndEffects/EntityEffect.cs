@@ -87,6 +87,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         int[] SkillMods { get; }
 
         /// <summary>
+        /// Gets array DaggerfallResistances.Count items wide.
+        /// Array items represent Fire, Cold, Poison/Disease, Shock, Magic.
+        /// Effect implementation should set modifier values for resistances when part of payload.
+        /// For example, a "Resist Fire" effect would set the current modifier for Fire resistance (such as +30 to Fire resistance).
+        /// Use (int)DFCareer.Resistances.ResistanceName to get index.
+        /// </summary>
+        int[] ResistanceMods { get; }
+
+        /// <summary>
         /// Gets or sets bundle type for grouping effects.
         /// </summary>
         BundleTypes BundleGroup { get; set; }
@@ -169,6 +178,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         bool chanceSuccess = false;
         int[] statMods = new int[DaggerfallStats.Count];
         int[] skillMods = new int[DaggerfallSkills.Count];
+        int[] resistanceMods = new int[DaggerfallResistances.Count];
         BundleTypes bundleGroup = BundleTypes.None;
         bool effectEnded = false;
 
@@ -255,6 +265,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public int[] SkillMods
         {
             get { return skillMods; }
+        }
+
+        public int[] ResistanceMods
+        {
+            get { return resistanceMods; }
         }
 
         public string Key

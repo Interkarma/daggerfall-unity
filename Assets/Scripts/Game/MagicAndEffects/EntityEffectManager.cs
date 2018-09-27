@@ -1125,6 +1125,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Clear all mods
             Array.Clear(combinedStatMods, 0, DaggerfallStats.Count);
             Array.Clear(combinedSkillMods, 0, DaggerfallSkills.Count);
+            Array.Clear(combinedResistanceMods, 0, DaggerfallResistances.Count);
 
             // Add together every mod for every live effect
             foreach (InstancedBundle bundle in instancedBundles)
@@ -1133,6 +1134,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 {
                     MergeStatMods(effect, ref combinedStatMods);
                     MergeSkillMods(effect, ref combinedSkillMods);
+                    MergeResistanceMods(effect, ref combinedResistanceMods);
                 }
             }
 
@@ -1142,6 +1144,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Assign to host entity
             entityBehaviour.Entity.Stats.AssignMods(combinedStatMods);
             entityBehaviour.Entity.Skills.AssignMods(combinedSkillMods);
+            entityBehaviour.Entity.Resistances.AssignMods(combinedResistanceMods);
 
             // Kill host if any stat is reduced to 1
             for (int i = 0; i < DaggerfallStats.Count; i++)
@@ -1167,6 +1170,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             for (int i = 0; i < effect.SkillMods.Length; i++)
             {
                 combinedSkillMods[i] += effect.SkillMods[i];
+            }
+        }
+
+        void MergeResistanceMods(IEntityEffect effect, ref int[] combinedResistanceMods)
+        {
+            for (int i = 0; i < effect.ResistanceMods.Length; i++)
+            {
+                combinedResistanceMods[i] += effect.ResistanceMods[i];
             }
         }
 
