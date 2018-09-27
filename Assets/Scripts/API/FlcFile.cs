@@ -26,7 +26,7 @@ namespace DaggerfallConnect.Arena2
         const int FRAMEHEADERSIZE = 16;
         const int CHUNKHEADERSIZE = 6;
 
-        FLICHeader header;
+        FLICHeader header = new FLICHeader();
         FileProxy managedFile = new FileProxy();
         BinaryReader reader;
 
