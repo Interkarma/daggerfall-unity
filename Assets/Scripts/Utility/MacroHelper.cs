@@ -160,30 +160,30 @@ namespace DaggerfallWorkshop.Utility
             { "%pqn", PotentialQuestorName }, // Potential Quest Giver
             { "%pqp", PotentialQuestorLocation }, // Potential Quest Giver's Location
             { "%ptm", null }, // An enemy of the current region (?)
-            { "%q1", null },  // q1 to q12 Effects of questions answered in bio.
-            { "%q2", null },
-            { "%q3", null },
-            { "%q4", null },
-            { "%q5", null },
-            { "%q6", null },
-            { "%q7", null },
-            { "%q8", null },
-            { "%q9", null },
-            { "%q10", null },
-            { "%q11", null },
-            { "%q12", null },
-            { "%q1a", null },  // secondary effects of questions answered in bio
-            { "%q2a", null },
-            { "%q3a", null },
-            { "%q4a", null },
-            { "%q5a", null },
-            { "%q6a", null },
-            { "%q7a", null },
-            { "%q8a", null },
-            { "%q9a", null },
-            { "%q10a", null },
-            { "%q11a", null },
-            { "%q12a", null },
+            { "%q1", Q1 },  // q1 to q12 Effects of questions answered in bio.
+            { "%q2", Q2 },
+            { "%q3", Q3 },
+            { "%q4", Q4 },
+            { "%q5", Q5 },
+            { "%q6", Q6 },
+            { "%q7", Q7 },
+            { "%q8", Q8 },
+            { "%q9", Q9 },
+            { "%q10", Q10 },
+            { "%q11", Q11 },
+            { "%q12", Q12 },
+            { "%q1a", Q1a },  // secondary effects of questions answered in bio
+            { "%q2a", Q2a },
+            { "%q3a", Q3a },
+            { "%q4a", Q4a },
+            { "%q5a", Q5a },
+            { "%q6a", Q6a },
+            { "%q7a", Q7a },
+            { "%q8a", Q8a },
+            { "%q9a", Q9a },
+            { "%q10a", Q10a },
+            { "%q11a", Q11a },
+            { "%q12a", Q12a },
             { "%qdt", QuestDate }, // Quest date of log entry
             { "%qdat", null },// Quest date of log entry [2]
             { "%qot", null }, // The log comment
@@ -1368,6 +1368,144 @@ namespace DaggerfallWorkshop.Utility
         {
             // %q1
             return mcp.GetMacroDataSource().Q1();
+        }
+
+        public static string Q2(IMacroContextProvider mcp)
+        {
+            // %q2
+            return mcp.GetMacroDataSource().Q2();
+        }
+
+        public static string Q3(IMacroContextProvider mcp)
+        {
+            // %q3
+            return mcp.GetMacroDataSource().Q3();
+        }
+
+        public static string Q4(IMacroContextProvider mcp)
+        {
+            // %q4
+            return mcp.GetMacroDataSource().Q4();
+        }
+
+        public static string Q5(IMacroContextProvider mcp)
+        {
+            // %q5
+            return mcp.GetMacroDataSource().Q5();
+        }
+
+        public static string Q6(IMacroContextProvider mcp)
+        {
+            // %q6
+            return mcp.GetMacroDataSource().Q6();
+        }
+
+        public static string Q7(IMacroContextProvider mcp)
+        {
+            // %q7
+            return mcp.GetMacroDataSource().Q7();
+        }
+
+        public static string Q8(IMacroContextProvider mcp)
+        {
+            // %q8
+            return mcp.GetMacroDataSource().Q8();
+        }
+
+        public static string Q9(IMacroContextProvider mcp)
+        {
+            // %q9
+            return mcp.GetMacroDataSource().Q9();
+        }
+
+        public static string Q10(IMacroContextProvider mcp)
+        {
+            // %q10
+            return mcp.GetMacroDataSource().Q10();
+        }
+
+        public static string Q11(IMacroContextProvider mcp)
+        {
+            // %q11
+            return mcp.GetMacroDataSource().Q11();
+        }
+
+        public static string Q12(IMacroContextProvider mcp)
+        {
+            // %q12
+            return mcp.GetMacroDataSource().Q12();
+        }
+
+        public static string Q1a(IMacroContextProvider mcp)
+        {
+            // %q1a
+            return mcp.GetMacroDataSource().Q1a();
+        }
+
+        public static string Q2a(IMacroContextProvider mcp)
+        {
+            // %q2a
+            return mcp.GetMacroDataSource().Q2a();
+        }
+
+        public static string Q3a(IMacroContextProvider mcp)
+        {
+            // %q3a
+            return mcp.GetMacroDataSource().Q3a();
+        }
+
+        public static string Q4a(IMacroContextProvider mcp)
+        {
+            // %q4a
+            return mcp.GetMacroDataSource().Q4a();
+        }
+
+        public static string Q5a(IMacroContextProvider mcp)
+        {
+            // %q5a
+            return mcp.GetMacroDataSource().Q5a();
+        }
+
+        public static string Q6a(IMacroContextProvider mcp)
+        {
+            // %q6a
+            return mcp.GetMacroDataSource().Q6a();
+        }
+
+        public static string Q7a(IMacroContextProvider mcp)
+        {
+            // %q7a
+            return mcp.GetMacroDataSource().Q7a();
+        }
+
+        public static string Q8a(IMacroContextProvider mcp)
+        {
+            // %q8a
+            return mcp.GetMacroDataSource().Q8a();
+        }
+
+        public static string Q9a(IMacroContextProvider mcp)
+        {
+            // %q9a
+            return mcp.GetMacroDataSource().Q9a();
+        }
+
+        public static string Q10a(IMacroContextProvider mcp)
+        {
+            // %q10a
+            return mcp.GetMacroDataSource().Q10a();
+        }
+
+        public static string Q11a(IMacroContextProvider mcp)
+        {
+            // %q11a
+            return mcp.GetMacroDataSource().Q11a();
+        }
+
+        public static string Q12a(IMacroContextProvider mcp)
+        {
+            // %q12a
+            return mcp.GetMacroDataSource().Q12a();
         }
 
         #endregion

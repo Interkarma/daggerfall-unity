@@ -370,7 +370,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     int index = rand.Next(0, answers.Count);
                     for (int j = 0; j < answers[index].Effects.Count; j++)
                     {
-                        autoBiog.AnswerEffects.Add(answers[index].Effects[j]);
+                        if (answers[index].Effects[j][0] == '#' || answers[index].Effects[j][0] == '!')
+                        {
+                            autoBiog.AnswerEffects.Add(answers[index].Effects[j] + " " + i);
+                        }
+                        else
+                        {
+                            autoBiog.AnswerEffects.Add(answers[index].Effects[j]);
+                        }
                     }
                 }
 
@@ -386,6 +393,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void CreateCharBiographyWindow_OnClose()
         {
+            characterDocument.backStory = createCharBiographyWindow.BackStory;
             characterDocument.biographyEffects = createCharBiographyWindow.PlayerEffects;
             SetNameSelectWindow();
         }

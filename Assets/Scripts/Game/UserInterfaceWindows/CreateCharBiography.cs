@@ -129,8 +129,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 foreach (string effect in curAnswers[answerIndex].Effects)
                 {
-                    biogFile.AnswerEffects.Add(effect);
-                    // TODO: text tokens need to go in a special container
+                    if (effect[0] == '#' || effect[0] == '!')
+                    {
+                        biogFile.AnswerEffects.Add(effect + " " + questionIndex); // Tag text macros with question numbers
+                    }
+                    else
+                    {
+                        biogFile.AnswerEffects.Add(effect);
+                    }
                 }
                 questionIndex++;
                 PopulateControls(biogFile.Questions[questionIndex]);
@@ -140,7 +146,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 CloseWindow();
 
                 // Create text biography
-                biogFile.GenerateBackstory(classIndex);
+                BackStory = biogFile.GenerateBackstory(classIndex);
 
                 // Show reputation changes
                 biogFile.DigestRepChanges();
@@ -166,5 +172,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             get { return biogFile.AnswerEffects; }
         }
+
+        public List<string> BackStory { get; set; }
     }
 }

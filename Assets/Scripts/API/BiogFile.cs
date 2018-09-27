@@ -133,25 +133,27 @@ namespace DaggerfallConnect.Arena2
             tokenLists[10] = Q11Tokens;
             tokenLists[11] = Q12Tokens;
 
-            for (int i = 0; i < questionCount; i++)
+            // Setup tokens for macro handler
+            foreach (string effect in answerEffects)
             {
-                foreach (string effect in questions[0].Answers)
+                char prefix = effect[0];
+
+                if (prefix == '#' || prefix == '!')
                 {
-                    if (effect[0] == '#')
+                    int questionInd;
+                    string[] effectSplit = effect.Split(' ');
+                    string command = effectSplit[0];
+                    string index = effectSplit[1];
+                    if (!int.TryParse(index, out questionInd))
                     {
-                        string[] splitStr = effect.Split('#');
-                        if (splitStr.Length > 1)
-                        {
-                            tokenLists[i].Add(int.Parse(splitStr[1]));
-                        }
+                        Debug.LogError("GenerateBackstory: Invalid question index.");
+                        continue;
                     }
-                    if (effect[1] == '!')
+
+                    string[] splitStr = command.Split(prefix);
+                    if (splitStr.Length > 1)
                     {
-                        string[] splitStr = effect.Split('!');
-                        if (splitStr.Length > 1)
-                        {
-                            tokenLists[i].Add(int.Parse(splitStr[1]));
-                        }
+                        tokenLists[questionInd].Add(int.Parse(splitStr[1]));
                     }
                 }
             }
@@ -264,8 +266,7 @@ namespace DaggerfallConnect.Arena2
                         Debug.LogError("CreateCharBiography: rf - invalid argument.");
                         return;
                     }
-                    // TODO: Not 100% sure if this should propagate or not
-                    playerEntity.FactionData.ChangeReputation(id, amount);
+                    playerEntity.FactionData.ChangeReputation(id, amount, true);
                 }
                 // Social group (Merchants, Commoners, etc.)
                 else
@@ -451,23 +452,6 @@ namespace DaggerfallConnect.Arena2
             }
 
             return selectedIndex;
-        }
-
-        public static List<string> GenerateBackstory(int classIndex, CharacterDocument document)
-        {
-            const int tokensStart = 4116;
-
-            List<string> backStory = new List<string>();
-            TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(tokensStart + classIndex);
-            foreach (TextFile.Token token in tokens)
-            {
-                if (token.formatting == TextFile.Formatting.Text)
-                {
-                    backStory.Add(token.text);
-                }
-            }
-
-            return backStory;
         }
 
         #endregion
