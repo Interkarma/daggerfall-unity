@@ -402,6 +402,18 @@ namespace DaggerfallWorkshop.Utility
             throw new NotImplementedException();
         }
 
+        public virtual string HomeProvinceName()
+        {
+            // %hpn
+            throw new NotImplementedException();
+        }
+
+        public virtual string GeographicalFeature()
+        {
+            // %hpw
+            throw new NotImplementedException();
+        }
+
         public virtual string Q1()
         {
             // %q1
@@ -543,6 +555,78 @@ namespace DaggerfallWorkshop.Utility
         public virtual string Q12a()
         {
             // %q12a
+            throw new NotImplementedException();
+        }
+
+        public virtual string Q1b()
+        {
+            // %q1b
+            throw new NotImplementedException();
+        }
+
+        public virtual string Q2b()
+        {
+            // %q2b
+            throw new NotImplementedException();
+        }
+
+        public virtual string Q3b()
+        {
+            // %q3b
+            throw new NotImplementedException();
+        }
+
+        public virtual string Q4b()
+        {
+            // %q4b
+            throw new NotImplementedException();
+        }
+
+        public virtual string Q5b()
+        {
+            // %q5b
+            throw new NotImplementedException();
+        }
+
+        public virtual string Q6b()
+        {
+            // %q6b
+            throw new NotImplementedException();
+        }
+
+        public virtual string Q7b()
+        {
+            // %q7b
+            throw new NotImplementedException();
+        }
+
+        public virtual string Q8b()
+        {
+            // %q8b
+            throw new NotImplementedException();
+        }
+
+        public virtual string Q9b()
+        {
+            // %q9b
+            throw new NotImplementedException();
+        }
+
+        public virtual string Q10b()
+        {
+            // %q10b
+            throw new NotImplementedException();
+        }
+
+        public virtual string Q11b()
+        {
+            // %q11b
+            throw new NotImplementedException();
+        }
+
+        public virtual string Q12b()
+        {
+            // %q12b
             throw new NotImplementedException();
         }
     }

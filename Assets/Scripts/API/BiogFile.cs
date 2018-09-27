@@ -20,11 +20,15 @@ namespace DaggerfallConnect.Arena2
         Question[] questions = new Question[questionCount];
         short[] changedReputations = new short[socialGroupCount];
         List<string> answerEffects = new List<string>();
+        CharacterDocument characterDocument;
 
-        public BiogFile(int classIndex)
+        public BiogFile(CharacterDocument characterDocument)
         {
+            // Store reference to character document
+            this.characterDocument = characterDocument;
+            
             // Load text file
-            string fileName = "BIOG" + classIndex.ToString("D" + 2) + "T0.TXT";
+            string fileName = "BIOG" + characterDocument.classIndex.ToString("D" + 2) + "T0.TXT";
             FileProxy txtFile = new FileProxy(Path.Combine(DaggerfallUnity.Instance.Arena2Path, fileName), FileUsage.UseDisk, true);
             questionsStr = System.Text.Encoding.UTF8.GetString(txtFile.GetBytes());
 
@@ -138,7 +142,7 @@ namespace DaggerfallConnect.Arena2
             {
                 char prefix = effect[0];
 
-                if (prefix == '#' || prefix == '!')
+                if (prefix == '#' || prefix == '!' || prefix == '?')
                 {
                     int questionInd;
                     string[] effectSplit = effect.Split(' ');
@@ -171,6 +175,18 @@ namespace DaggerfallConnect.Arena2
             }
 
             return backStory;
+        }
+
+        public void AddEffect(string effect, int index)
+        {
+            if (effect[0] == '#' || effect[0] == '!' || effect[0] == '?')
+            {
+                AnswerEffects.Add(effect + " " + index); // Tag text macros with question numbers
+            }
+            else
+            {
+                AnswerEffects.Add(effect);
+            }
         }
 
         #region Static Methods
@@ -351,10 +367,9 @@ namespace DaggerfallConnect.Arena2
                     Debug.LogError("CreateCharBiography: TH - invalid argument.");
                 }
             }
-            else if (effect[0] == '#' || effect[0] == '!')
+            else if (effect[0] == '#' || effect[0] == '!' || effect[0] == '?')
             {
-                // TODO: Implement biography history text commands
-                Debug.Log("CreateCharBiography: Biography history text commands not yet implemented.");
+                Debug.Log("CreateCharBiography: Detected biography text command.");
             }
             // Unimplemented commands
             else if (effect.StartsWith("AE"))

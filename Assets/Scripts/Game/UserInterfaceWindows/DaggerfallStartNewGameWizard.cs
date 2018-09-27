@@ -172,7 +172,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (createCharBiographyWindow == null)
             {
-                createCharBiographyWindow = new CreateCharBiography(uiManager);
+                characterDocument.classIndex = createCharClassSelectWindow.SelectedClassIndex;
+                createCharBiographyWindow = new CreateCharBiography(uiManager, characterDocument);
                 createCharBiographyWindow.OnClose += CreateCharBiographyWindow_OnClose;
             }
                 
@@ -362,7 +363,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 // Choose answers at random
                 System.Random rand = new System.Random(System.DateTime.Now.Millisecond);
-                BiogFile autoBiog = new BiogFile(createCharClassSelectWindow.SelectedClassIndex);
+                characterDocument.classIndex = createCharClassSelectWindow.SelectedClassIndex;
+                BiogFile autoBiog = new BiogFile(characterDocument);
                 for (int i = 0; i < autoBiog.Questions.Length; i++)
                 {
                     List<BiogFile.Answer> answers;
@@ -370,14 +372,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     int index = rand.Next(0, answers.Count);
                     for (int j = 0; j < answers[index].Effects.Count; j++)
                     {
-                        if (answers[index].Effects[j][0] == '#' || answers[index].Effects[j][0] == '!')
-                        {
-                            autoBiog.AnswerEffects.Add(answers[index].Effects[j] + " " + i);
-                        }
-                        else
-                        {
-                            autoBiog.AnswerEffects.Add(answers[index].Effects[j]);
-                        }
+                        autoBiog.AddEffect(answers[index].Effects[j], i);
                     }
                 }
 
