@@ -453,8 +453,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Log offered quest
                 Debug.LogFormat("Offering quest {0} from Guild {1} affecting factionId {2}", offeredQuest.QuestName, guildGroup, offeredQuest.FactionId);
 
-                // Offer the quest to player, setting external context provider to guild
-                offeredQuest.ExternalMCP = guild;
+                // Offer the quest to player, setting external context provider to guild if a member
+                if (guild.IsMember())
+                    offeredQuest.ExternalMCP = guild;
                 DaggerfallMessageBox messageBox = QuestMachine.Instance.CreateMessagePrompt(offeredQuest, (int)QuestMachine.QuestMessages.QuestorOffer);
                 if (messageBox != null)
                 {
