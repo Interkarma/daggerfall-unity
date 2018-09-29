@@ -181,9 +181,12 @@ namespace DaggerfallWorkshop.Game.Items
             }
             public override string ArtistName()
             {   // %an
-                NameHelper.BankTypes type = MacroHelper.GetRandomNameBank();
-                Genders gender = (Genders)DFRandom.random_range_inclusive(0, 1);
-                return DaggerfallUnity.Instance.NameHelper.FullName(type, gender);
+                DFRandom.rand(); // Classic uses every other value.
+                uint rand = DFRandom.rand() & 1;
+                Genders gender = (Genders)rand;
+                rand = DFRandom.rand();
+                NameHelper.BankTypes race = (NameHelper.BankTypes)(rand & 7);
+                return DaggerfallUnity.Instance.NameHelper.FullName(race, gender);
             }
 
             public override string HeldSoul()

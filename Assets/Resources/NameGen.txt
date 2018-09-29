@@ -332,193 +332,7 @@
             }
         ]
     },
-    "Noble": {
-        "setCount": 4,
-        "sets": [
-            {
-                "setIndex": 0,
-                "parts": [
-                    "Lord",
-                    "Count",
-                    "Baron",
-                    "Viscount",
-                    "Marquis",
-                    "Duke"
-                ]
-            },
-            {
-                "setIndex": 1,
-                "parts": [
-                    "Vlad",
-                    "Mor",
-                    "Gar",
-                    "Balth",
-                    "Nebuch",
-                    "Ver",
-                    "Dark",
-                    "Magn",
-                    "Lith",
-                    "Stad",
-                    "Bar",
-                    "Inver",
-                    "Corr",
-                    "Necrom"
-                ]
-            },
-            {
-                "setIndex": 2,
-                "parts": [
-                    "im",
-                    "eh",
-                    "el",
-                    "ez",
-                    "en",
-                    "ob",
-                    "ul",
-                    "iv",
-                    "ing",
-                    "ivar",
-                    "ogh",
-                    "om",
-                    "ov",
-                    "an"
-                ]
-            },
-            {
-                "setIndex": 3,
-                "parts": [
-                    "on",
-                    "aus",
-                    "eon",
-                    "ar",
-                    "ezzar",
-                    "am",
-                    "or",
-                    "us",
-                    "oth",
-                    "ius",
-                    "ulon",
-                    "yth",
-                    "an",
-                    "ion"
-                ]
-            }
-        ]
-    },
-    "Imperial": {
-        "setCount": 6,
-        "sets": [
-            {
-                "setIndex": 0,
-                "parts": [
-                    "Tib",
-                    "Claud",
-                    "August",
-                    "Calig",
-                    "Ner",
-                    "German",
-                    "Pil",
-                    "Dioclet",
-                    "Antigon",
-                    "Demetr",
-                    "Alex",
-                    "Jul",
-                    "Her"
-                ]
-            },
-            {
-                "setIndex": 1,
-                "parts": [
-                    "erius",
-                    "ius",
-                    "us",
-                    "ula",
-                    "os",
-                    "icus",
-                    "ate",
-                    "ian",
-                    "ides",
-                    "ios",
-                    "andros",
-                    "iar",
-                    "acles"
-                ]
-            },
-            {
-                "setIndex": 2,
-                "parts": [
-                    "Tab",
-                    "Per",
-                    "Ter",
-                    "Art",
-                    "Aph",
-                    "Jud",
-                    "Her",
-                    "Ath",
-                    "Dem",
-                    "Tyr",
-                    "Hec",
-                    "Nik",
-                    "Maced"
-                ]
-            },
-            {
-                "setIndex": 3,
-                "parts": [
-                    "ia",
-                    "icla",
-                    "iana",
-                    "emis",
-                    "ina",
-                    "ithea",
-                    "rodite",
-                    "ena",
-                    "etera",
-                    "osyna",
-                    "atea",
-                    "omeda",
-                    "onia"
-                ]
-            },
-            {
-                "setIndex": 4,
-                "parts": [
-                    "Cae",
-                    "Andro",
-                    "Augus",
-                    "Cali",
-                    "Per",
-                    "Mag",
-                    "Theo",
-                    "Xer",
-                    "Gal",
-                    "Tiber",
-                    "Ca",
-                    "Me",
-                    "Ni"
-                ]
-            },
-            {
-                "setIndex": 5,
-                "parts": [
-                    "sar",
-                    "cles",
-                    "tus",
-                    "gulus",
-                    "seus",
-                    "mus",
-                    "dorus",
-                    "nes",
-                    "lus",
-                    "sion",
-                    "ssius",
-                    "des",
-                    "mean"
-                ]
-            }
-        ]
-    },
-    "DarkElf": {
+	"DarkElf": {
         "setCount": 6,
         "sets": [
             {
@@ -834,7 +648,7 @@
             }
         ]
     },
-    "Location1": {
+    "Khajiit": {
         "setCount": 6,
         "sets": [
             {
@@ -960,7 +774,120 @@
             }
         ]
     },
-    "Location2": {
+    "Imperial": {
+        "setCount": 6,
+        "sets": [
+            {
+                "setIndex": 0,
+                "parts": [
+                    "Tib",
+                    "Claud",
+                    "August",
+                    "Calig",
+                    "Ner",
+                    "German",
+                    "Pil",
+                    "Dioclet",
+                    "Antigon",
+                    "Demetr",
+                    "Alex",
+                    "Jul",
+                    "Her"
+                ]
+            },
+            {
+                "setIndex": 1,
+                "parts": [
+                    "erius",
+                    "ius",
+                    "us",
+                    "ula",
+                    "os",
+                    "icus",
+                    "ate",
+                    "ian",
+                    "ides",
+                    "ios",
+                    "andros",
+                    "iar",
+                    "acles"
+                ]
+            },
+            {
+                "setIndex": 2,
+                "parts": [
+                    "Tab",
+                    "Per",
+                    "Ter",
+                    "Art",
+                    "Aph",
+                    "Jud",
+                    "Her",
+                    "Ath",
+                    "Dem",
+                    "Tyr",
+                    "Hec",
+                    "Nik",
+                    "Maced"
+                ]
+            },
+            {
+                "setIndex": 3,
+                "parts": [
+                    "ia",
+                    "icla",
+                    "iana",
+                    "emis",
+                    "ina",
+                    "ithea",
+                    "rodite",
+                    "ena",
+                    "etera",
+                    "osyna",
+                    "atea",
+                    "omeda",
+                    "onia"
+                ]
+            },
+            {
+                "setIndex": 4,
+                "parts": [
+                    "Cae",
+                    "Andro",
+                    "Augus",
+                    "Cali",
+                    "Per",
+                    "Mag",
+                    "Theo",
+                    "Xer",
+                    "Gal",
+                    "Tiber",
+                    "Ca",
+                    "Me",
+                    "Ni"
+                ]
+            },
+            {
+                "setIndex": 5,
+                "parts": [
+                    "sar",
+                    "cles",
+                    "tus",
+                    "gulus",
+                    "seus",
+                    "mus",
+                    "dorus",
+                    "nes",
+                    "lus",
+                    "sion",
+                    "ssius",
+                    "des",
+                    "mean"
+                ]
+            }
+        ]
+    },
+    "Monster1": {
         "setCount": 3,
         "sets": [
             {
@@ -1046,7 +973,7 @@
             }
         ]
     },
-    "MonsterName": {
+    "Monster2": {
         "setCount": 4,
         "sets": [
             {
@@ -1117,6 +1044,79 @@
                     "iva"
                 ]
             }
+        ]
+    },
+    "Monster3": {
+        "setCount": 4,
+        "sets": [
+            {
+                "setIndex": 0,
+                "parts": [
+                    "Vlad",
+                    "Mor",
+                    "Gar",
+                    "Balth",
+                    "Nebuch",
+                    "Ver",
+                    "Dark",
+                    "Magn",
+                    "Lith",
+                    "Stad",
+                    "Bar",
+                    "Inver",
+                    "Corr",
+                    "Necrom"
+                ]
+            },
+            {
+                "setIndex": 1,
+                "parts": [
+                    "im",
+                    "eh",
+                    "el",
+                    "ez",
+                    "en",
+                    "ob",
+                    "ul",
+                    "iv",
+                    "ing",
+                    "ivar",
+                    "ogh",
+                    "om",
+                    "ov",
+                    "an"
+                ]
+            },
+            {
+                "setIndex": 2,
+                "parts": [
+                    "on",
+                    "aus",
+                    "eon",
+                    "ar",
+                    "ezzar",
+                    "am",
+                    "or",
+                    "us",
+                    "oth",
+                    "ius",
+                    "ulon",
+                    "yth",
+                    "an",
+                    "ion"
+                ]
+            }
+			{
+                "setIndex": 3,
+                "parts": [
+                    "Lord",
+                    "Count",
+                    "Baron",
+                    "Viscount",
+                    "Marquis",
+                    "Duke"
+                ]
+            },
         ]
     }
 }
