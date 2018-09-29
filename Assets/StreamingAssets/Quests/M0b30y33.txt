@@ -1,0 +1,248 @@
+-- From "Live by the Sword" quest pack by GhanBuriGhan
+-- Quest: c:\quests\lbsword\M0b30y33.qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: fighter
+-- Repute: 30
+-- QuestId: 33
+Messages: 82
+Quest: M0b30y33
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                   %pcf, seems we have a giant-alarm
+<ce>               once again. This time we don't know where
+<ce>             they are hiding. You will have to ambush them
+<ce>                    in __palace_. What do you say?
+                                     <--->
+<ce>                   The town of __palace_ is troubled
+<ce>               by a family of giants that have taken to
+<ce>               destroying houses, stealing livestock and
+<ce>              causing general mayhem. Would you go there
+<ce>                        and take care of them?
+
+RefuseQuest:  [1001]
+<ce>                     %oth, I had expected a little
+<ce>                       more dedication from you!
+
+AcceptQuest:  [1002]
+<ce>                  Thought I could count on you, %pcf.
+<ce>            you should meet with _noble_ in the _palace_ of
+<ce>              __palace_, %g will tell you how to proceed.
+<ce>        I promised %g2 we would have the problem resolved soon,
+<ce>                  so be back here in =queston_ days!
+<ce>                      Hey, you better get going!
+
+QuestFail:  [1003]
+<ce>                We have nothing more to discuss, %pcn.
+<ce>                You should be off to __palace_ by now!
+
+QuestComplete:  [1004]
+<ce>                So the Giants had some pets with them?.
+<ce>              I never heard of them keeping pets before.
+<ce>              Well you surely earned your _reward_ gold.
+                                     <--->
+<ce>                  I heard that _noble_ was impressed
+<ce>                  by your fight against those giants.
+<ce>                            Good job, %pcf.
+
+RumorsDuringQuest:  [1005]
+ Giants are destroying the fields of __palace_.
+ Why is nobody doing anything?
+
+RumorsPostfailure:  [1006]
+ Giants are still destroying the fields and towns.
+ Wasn't the fighters guild supposed to solve this?
+
+RumorsPostsuccess:  [1007]
+<ce>   You did a great job finishing off those giants in __palace_ %pcf
+                                     <--->
+<ce>        No more giants have been seen since the fighters guild
+<ce>                     chased them out of __palace_
+
+QuestorPostsuccess:  [1008]
+<ce>                   Good job with those giants, %pcf
+
+QuestorPostfailure:  [1009]
+<ce>        Can't handle giants! When I was your age, I tell you...
+
+Message:  1020
+%qdt:
+ _questgiver_ of the fighters guild
+ in ___questgiver_ asked me to go 
+ to the _palace_ in __palace_ to chase off 
+ some giants there. 
+ First I should talk to _noble_, who
+ called us to help him in this matter.
+ %g will tell me how to find the giants.
+ I have =queston_ days to do my job.
+
+Message:  1021
+%qdt:
+ I met with _noble_, and
+ it looks like the six giants %g spoke of 
+ are interrupting our little meeting! I can 
+ hear them chasing townsfolk in the park outside.
+
+Message:  1041
+<ce>         "Ah you are the %pct from the fighters guild, right?
+<ce>            I am glad you are here. Now, a band of 6 giants
+<ce>            Have been destroying fields and stealing cattle
+<ce>          every day last week, usually coming from the east.
+<ce>          So I suggest that is where you should start loo..."
+<ce>                                    
+<ce>     Heavy footsteps and screams of panic are heard from outside,
+<ce>              and your host turns to flee up the stairs.
+<ce>                                    
+<ce>                 "Well, seems they are right outside!
+<ce>                      Go and do your duty, %ra! "
+
+Message:  1042
+<ce>                            Hrrrrrm! Lunch!
+
+Message:  1043
+<ce>             The giants puts his big fingers in his mouth
+<ce>                        and whistles two times.
+
+Message:  1044
+<ce>             The last giant dies. "All dead", he murmurs,
+<ce>                          tears in his eyes.
+                                     <--->
+<ce>         The last Giant brakes down, muttering curses at you.
+
+QuestTimeLapse:  [1045]
+<ce>                   You remember that _questgiver_ of
+<ce>                 the fighters guild asked you to take
+<ce>                  care of some giants. He will not be
+<ce>                pleased that you didn't return in time.
+
+Message:  1050
+<ce>                   _noble_ approaches you, smiling.
+<ce>                                    
+<ce>            "I have watched you fighting from the windows.
+<ce>              I am very impressed. Take this holy dagger
+<ce>                    as a token of my appreciation."
+
+Message:  1080
+ _noble_ can't get %g3 own people to slay the Giants.
+ They are on strike since %g is not paying them enough.
+<--->
+ _noble_ is organizing the resistance against 
+ those giants in __palace_.
+<--->
+ _noble_ hired a %ra to fight those giants. Is that you?
+
+Message:  1081
+<ce>                     That is _noble_'s Residence.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 4 times.
+--               %g2 occurs 1 time.
+--               %g3 occurs 1 time.
+--              %oth occurs 1 time.
+--              %pcf occurs 37 times.
+--              %pcn occurs 1 time.
+--              %pct occurs 1 time.
+--              %qdt occurs 2 times.
+--               %ra occurs 6 times.
+--         =queston_ occurs 4 times.
+--    ___questgiver_ occurs 1 time.
+--         __palace_ occurs 15 times.
+--           _noble_ occurs 11 times.
+--          _palace_ occurs 2 times.
+--      _questgiver_ occurs 2 times.
+--          _reward_ occurs 2 times.
+
+QBN:
+Item _reward_ gold
+Item _thiefplace_ item class 10 subclass 11
+
+Person _questgiver_ group Questor male
+Person _noble_ face 1 group Noble anyInfo 1080
+
+Place _palace_ remote palace anyInfo 1081
+
+Clock _queston_ 14.00:00 0 flag 1 range 0 1
+Clock _lover_ 00:01 0 flag 1 range 0 1
+Clock _S.07_ 00:01 0 flag 1 range 0 1
+Clock _S.12_ 00:02 0 flag 1 range 0 1
+
+Foe _F.00_ is Giant
+Foe _F.01_ is Giant
+Foe _F.02_ is 4 Giant
+Foe _rats_ is 4 Sabretooth_tiger
+
+--	Quest start-up:
+	start timer _queston_ 
+	log 1020 step 0 
+	pc at _palace_ set _S.01_ 
+	place npc _noble_ at _palace_ 
+
+_S.00_ task:
+	when _S.10_ and not _S.09_ 
+	log 1021 step 1 
+	hide npc _noble_ 
+	say 1041 
+	play sound Giant_1 every 2 minutes 3 times 
+
+variable _S.01_
+_S.02_ task:
+	when _S.00_ and not _S.01_ 
+	create foe _F.00_ every 1 minutes 1 times with 100% success msg 1042 
+	clear _S.00_ 
+
+_mages_ task:
+	killed 1 _F.00_ 
+	start timer _lover_ 
+
+_lover_ task:
+	create foe _F.01_ every 1 minutes 1 times with 100% success 
+
+_S.05_ task:
+	killed 1 _F.01_ 
+	start timer _S.07_ 
+
+_S.06_ task:
+	injured _F.01_ 
+	create foe _rats_ every 1 minutes 1 times with 100% success 
+	say 1043 
+
+_S.07_ task:
+	create foe _F.02_ every 1 minutes 1 times with 100% success 
+
+_S.08_ task:
+	killed 4 _F.02_ 
+
+_S.09_ task:
+	when _mages_ and _S.05_ and _S.08_ 
+	start timer _S.12_ 
+	say 1044 
+
+_S.10_ task:
+	clicked npc _noble_ 
+
+_qgclicked_ task:
+	clicked npc _questgiver_ 
+
+_S.12_ task:
+	get item _thiefplace_ saying 1050 
+	make _thiefplace_ permanent 
+	change repute with _noble_ by +10 
+
+_clearclick_ task:
+	when _qgclicked_ and not _S.09_ 
+	say QuestFail 
+	clear _qgclicked_ _clearclick_ 
+
+_questdone_ task:
+	when _qgclicked_ and _S.09_ 
+	give pc _reward_ 
+	end quest 
+
+_queston_ task:
+	say 1045 
+	change repute with _questgiver_ by -5 
+	end quest 

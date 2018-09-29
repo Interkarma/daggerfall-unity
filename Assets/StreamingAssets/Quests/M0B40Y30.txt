@@ -1,0 +1,461 @@
+-- From "Live by the Sword" quest pack by GhanBuriGhan
+-- Quest: c:\quests\lbsword\M0B40Y30.qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: fighter
+-- Repute: 40
+-- QuestId: 30
+Messages: 64
+Quest: M0B40Y30
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                     Hello, %pcn, you need a job?
+<ce>             If you were available for a little guard duty
+<ce>                you could earn yourself some goldpieces
+<ce>             tonight. One of the local nobles has invited
+<ce>          friends for a feast, and they need someone to guard
+<ce>              the valuables, including the pretty ladies!
+<ce>                   Are you available tonight, %pcf?
+                                     <--->
+<ce>               %pcn! Would you be available to play the
+<ce>                   bouncer at _partyhouse_ tonight?
+<ce>                 Pay is the usual, you might meet some
+<ce>              interesting people there! You want the job?
+                                     <--->
+<ce>                 Hey I have an easy job for you, %pcf!
+<ce>               There is a some sort of celebration going
+<ce>               on tonight, and they need someone to keep
+<ce>                 watch at the door. That's easy money,
+<ce>                don't you think? For =gold_ goldpieces?
+
+RefuseQuest:  [1001]
+<ce>          No? I should have mentioned that there is free beer
+<ce>                    for guards after duty, I guess.
+
+AcceptQuest:  [1002]
+<ce>                Ok. The party starts at 18:00 tonight,
+<ce>                 and you are expected there no later!
+<ce>                      Talk to _partyman_, %g will
+<ce>                         explain your duties.
+<ce>                      The venue is _partyhouse_.
+                                     <--->
+<ce>                        You will do it? Great!
+<ce>                       Go to _partyhouse_ at 6pm
+<ce>                   to meet _partyman_, he will give
+<ce>                 you instructions. Not that the job is
+<ce>                          very complicated...
+
+QuestComplete:  [1004]
+<ce>                  Some trouble at the party, I heard?
+<ce>             Well, good that they had a professional guard
+<ce>                       from the fighters guild!
+
+RumorsDuringQuest:  [1005]
+ There is a great party at _partyhouse_ tonight, but I am not invited
+<--->
+ A lot of rich people came along the main road yesterday, they are 
+ going to _partyman_'s celebration.
+<--->
+ All __partyhouse_ is in uproar, because of _partyman_s party!
+
+RumorsPostfailure:  [1006]
+ There was a terrible riot at _partyman_s party.
+<--->
+_partyman_ is angry with the fighters guild, because they could not
+protect his celebration.
+
+RumorsPostsuccess:  [1007]
+ It was a great party at _partyhouse_, I hear.
+<--->
+ You were at the party! Tell me, did you see 
+ _partyman_? He is incredibly famous.
+
+QuestorPostsuccess:  [1008]
+ You helped us to improve our standing with 
+ _partyman_. What may I do for you?
+
+QuestorPostfailure:  [1009]
+ That party didn't work out quite the
+ way it was planned, right, %pcf?
+
+QuestLogEntry:  [1010]
+___qgiver_, %qdt:
+ I was hired as a guard for a party at 
+ _partyhouse_ by _qgiver_
+ of the fighters guild.
+ I should be there at 6pm tonight 
+ and talk to _partyman_ 
+ who will explain my duties.
+
+Message:  1011
+<ce>                      _partyman_ approaches you:
+<ce>           Not a very exiting party! Everybody left already!
+<ce>             Well thank you for keeping an eye on things.
+<ce>                      _qgiver_ will pay you and I
+<ce>                   will recommend you to my friends.
+                                     <--->
+<ce>                      _partyman_ approaches you:
+<ce>               Well I had a great evening! Not the least
+<ce>                  thanks to your watchfulness, %pcf.
+<ce>                              Well done!
+
+Message:  1012
+<ce>           Ah the guard has arrived! Well, you know how this
+<ce>         works, right? If any aggressive do no goods show up,
+<ce>         You ask them to leave. If they don´t leave you throw
+<ce>        them out, if you cant throw them out, use your weapon.
+                                     <--->
+<ce>              So you are the bouncer? Well get over there
+<ce>             and watch the door. Don't let anyone in that
+<ce>             does not have an invitation! And don't let me
+<ce>                 catch you being rough with my guests!
+
+Message:  1013
+<ce>                       _partyman_ yells at you:
+<ce>              Cant you deal with such things swiftly and
+<ce>                            quietly, %oth!
+<ce>              Now all my friends have fled _partyhouse_.
+<ce>             I will not pay for such an amateurish guard!
+
+Message:  1014
+<ce>          In fact I was impressed with the way you fulfilled
+<ce>              Your duty. Take this ring and buy yourself
+<ce>                               a drink!
+
+Message:  1015
+<ce>                     You missed your assignment at
+<ce>                             _partyhouse_.
+<ce>               _qgiver_ will not be pleased about this.
+
+Message:  1016
+<ce>                          All quiet, so far.
+
+Message:  1020
+ I have to bring _guest_ to 
+ _hospital_.It seems %g is very sick,
+ I have to hurry!
+
+Message:  1040
+<ce>                      The party will begin soon!
+
+Message:  1050
+<ce>                 Gettouttada way... Where whereiss...
+<ce>               Whereiss m' free beer? You stole my beer!
+                                     <--->
+<ce>               Halt, halt, halt! Thats what they always
+<ce>                   yell. You are one of those right?
+<ce>              Well you cant stop me from having some fun!
+
+Message:  1051
+<ce>                       Damn, they hired a guard!
+<ce>                   I am sorry, but if you dont want
+<ce>                   to let me go, I will have to cut
+<ce>                             your throat.
+<ce>                                   -
+<ce>                    Are you letting the thief flee?
+
+Message:  1052
+<ce>                You wanna stop me? YOU wanna stop me???
+<ce>                  I come all this way to _partyhouse_
+<ce>                for some fun and now YOU WANNA STOP ME?
+<ce>                      That's a bad idea, stupid!
+
+Message:  1053
+<ce>                            Die then, fool!
+
+Message:  1055
+<ce>                     The old monk screams in pain.
+<ce>                "Hey, that was just a misunderstanding,
+<ce>                        I didn't mean no harm!
+<ce>              Please, let an old beggarman stay here and
+<ce>                    beg, Its doing no one no harm."
+
+Message:  1056
+<ce>                Thank you so much! May %god bless you!
+<ce>                 I will just stay there in the shadows
+<ce>               and remain out of your sights, good lord.
+
+Message:  1057
+<ce>              No? well, I will make you feel the wrath of
+<ce>                          %god, you imbecile!
+
+Message:  1058
+<ce>                  _partyman_ approaches you, looking
+<ce>                  quite distraught. %pcf, one of the
+<ce>                     guest, _guest_, has collpsed!
+<ce>                   Probably just too much drink, but
+<ce>                          %g looks all pale.
+<ce>                  Would you carry %g2 to _hospital_?
+<ce>                I would be very grateful if you could.
+<ce>                I think none of us is strong enough to
+<ce>                  carry %g2 all the way. Hurry, %pcf!
+                                     <--->
+<ce>              Suddenly you notice that one of the guests
+<ce>            is in trouble. _guest_ suddenly starts to sway
+<ce>                 and falls to his knees moments later.
+<ce>             As you bend down to him he grabs your sleeve.
+<ce>                "I ate too much of those mushrooms from
+<ce>             Morrowind... Please help me! I cant breathe!"
+<ce>              The host, _partyman_ looks at the fainting
+<ce>                        figure and than at you:
+<ce>                    "Quick! get him to _hospital_!"
+
+Message:  1059
+<ce>                    You wont? I will remember that.
+
+Message:  1060
+<ce>                One of the priest takes _guest_ out of
+<ce>                              your arms.
+<ce>                "Whatever %g took it was strong stuff,
+<ce>                     too strong for %g2 it seems.
+<ce>                    And too much wine on top of it!
+<ce>             Well, I believe we will be able to heal %g2."
+
+Message:  1061
+<ce>              _guest_s breath comes in gasps and %g3 eyes
+<ce>          glaze over. Suddenly %g shudders and falls silent.
+<ce>                           _guest_ is dead.
+<ce>                    _partyman_ steps up behind you.
+<ce>                "%oth. Well the party is over, I guess.
+<ce>                      You can go home now, %pcf.
+<ce>                   I wish you could have run faster
+<ce>                      and we might have made it."
+
+Message:  1063
+<ce>                  Right behind you _partyman_ enters.
+<ce>               After a brief discussion with the priest.
+<ce>                           %g turns to you.
+<ce>                 "I am indeed grateful for your help,
+<ce>                      %pcn. I hope I can count on
+<ce>                   your discretion too. Take this as
+<ce>                  gold as payment for your troubles,
+<ce>             and this gem for saving the life of a friend,
+<ce>               I hope our paths will cross again, %pcf."
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 9 times.
+--               %g2 occurs 6 times.
+--               %g3 occurs 1 time.
+--              %god occurs 2 times.
+--              %oth occurs 1 time.
+--              %pcf occurs 16 times.
+--              %pcn occurs 3 times.
+--              %qdt occurs 1 time.
+--            =gold_ occurs 2 times.
+--        ___qgiver_ occurs 1 time.
+--     __partyhouse_ occurs 2 times.
+--           _guest_ occurs 7 times.
+--        _hospital_ occurs 4 times.
+--      _partyhouse_ occurs 10 times.
+--        _partyman_ occurs 17 times.
+--          _qgiver_ occurs 3 times.
+
+QBN:
+Item _gold_ gold
+Item _I.01_ ring
+Item _I.02_ gem
+
+Person _qgiver_ group Questor male
+Person _partyman_ group Jeweler
+Person _guest_ group Resident1
+
+Place _partyhouse_ local tavern
+Place _L.01_ local dungeon
+Place _hospital_ local temple
+
+Clock _queston_ 1.00:00 0 flag 1 range 0 1
+Clock _S.13_ 00:20 0 flag 1 range 0 1
+Clock _out_ 06:00 0 flag 1 range 0 1
+Clock _delay_ 00:30 0 flag 1 range 0 1
+Clock _S.32_ 00:03 0 flag 1 range 0 1
+Clock _S.15_ 00:30 0 flag 1 range 0 1
+Clock _S.16_ 00:45 0 flag 1 range 0 1
+Clock _S.35_ 00:50 0 flag 1 range 0 1
+Clock _S.40_ 00:10 0 flag 1 range 0 1
+Clock _S.33_ 00:10 0 flag 1 range 0 1
+
+Foe _F.00_ is Monk
+Foe _F.01_ is Warrior
+Foe _F.02_ is Thief
+Foe _F.03_ is Barbarian
+
+--	Quest start-up:
+	start timer _queston_ 
+	log 1010 step 0 
+
+_queston_ task:
+	change repute with _partyman_ by -5 
+	change repute with _qgiver_ by -5 
+	end quest 
+
+variable _S.01_
+_S.02_ task:
+	daily from 18:00 to 24:00 
+	pc at _partyhouse_ set _S.10_ 
+	start timer _delay_ 
+	say 1040 
+	create npc at _partyhouse_ 
+	place npc _partyman_ at _partyhouse_ 
+
+_delay_ task:
+	say 1015 
+	change repute with _partyman_ by -5 
+	end quest 
+
+_reward_ task:
+	when _qgclicked_ and _out_ 
+	give pc _gold_ 
+	change repute with _partyman_ by +5 
+	end quest 
+
+_S.02_ task:
+	when _qgclicked_ and not _out_ 
+	clear _qgclicked_ _S.02_ 
+
+_out_ task:
+	pick one of _S.07_ _S.08_ _S.08_ 
+	hide npc _partyman_ saying 1011 
+	clear _S.10_ 
+
+_S.07_ task:
+	when _dungeon_ 
+	get item _I.01_ saying 1014 
+	make _I.01_ permanent 
+
+variable _S.08_
+_qgclicked_ task:
+	clicked npc _qgiver_ 
+
+_S.10_ task:
+	play sound laughter_loud every 1 minutes 100 times 
+	play sound meal_background every 2 minutes 100 times 
+
+variable _S.11_
+_S.12_ task:
+	clicked npc _partyman_ 
+	start timer _S.13_ 
+	start timer _out_ 
+	stop timer _delay_ 
+	say 1012 
+
+_S.13_ task:
+	pick one of _how2_ _rogue_ _S.26_ _how2_ 
+
+_rogue_ task:
+	create foe _F.01_ every 120 minutes 1 times with 70% success 
+	start timer _S.15_ 
+
+_S.15_ task:
+	create foe _F.02_ every 110 minutes 1 times with 60% success 
+	start timer _S.16_ 
+
+_S.16_ task:
+	create foe _F.03_ every 50 minutes 1 times with 30% success 
+
+_S.17_ task:
+	injured _F.01_ saying 1050 
+	start timer _S.32_ 
+
+variable _S.18_
+_S.19_ task:
+	killed 1 _F.01_ 
+	stop timer _S.32_ 
+
+_S.20_ task:
+	injured _F.02_ 
+	start timer _S.32_ 
+	prompt 1051 yes _S.21_ no _S.22_ 
+
+_S.21_ task:
+	stop timer _S.32_ 
+	place foe _F.02_ at _L.01_ 
+
+_S.22_ task:
+	say 1053 
+
+variable _S.23_
+_S.24_ task:
+	killed 1 _F.02_ 
+	stop timer _S.32_ 
+
+_S.25_ task:
+	injured _F.03_ saying 1052 
+
+_S.26_ task:
+	create foe _F.03_ every 120 minutes 1 times with 20% success 
+	create foe _F.00_ every 70 minutes 1 times with 100% success 
+
+_S.27_ task:
+	injured _F.00_ 
+	start timer _S.32_ 
+	prompt 1055 yes _S.28_ no _S.29_ 
+
+_S.28_ task:
+	stop timer _S.32_ 
+	say 1056 
+	place foe _F.00_ at _L.01_ 
+
+_S.29_ task:
+	say 1057 
+
+variable _S.30_
+_S.31_ task:
+	killed 1 _F.00_ 
+	stop timer _S.32_ 
+
+_S.32_ task:
+	start timer _S.33_ 
+	hide npc _partyman_ 
+	say 1013 
+
+_S.33_ task:
+	end quest 
+
+_how2_ task:
+	start timer _S.35_ 
+	say 1016 
+
+_S.35_ task:
+	prompt 1058 yes _S.36_ no _S.37_ 
+
+_S.36_ task:
+	pc at _hospital_ set _S.38_ 
+	start timer _S.40_ 
+	log 1020 step 1 
+	hide npc _partyman_ 
+	add _guest_ face 
+
+_S.37_ task:
+	say 1059 
+	change repute with _partyman_ by -5 
+
+variable _S.38_
+_S.39_ task:
+	when _S.38_ and not _S.40_ 
+	get item _gold_ 
+	get item _I.02_ 
+	say 1063 
+	say 1060 
+	make _gold_ permanent 
+	make _I.02_ permanent 
+	drop _guest_ face 
+	change repute with _partyman_ by +10 
+	change repute with _qgiver_ by +10 
+	change repute with _guest_ by +5 
+	end quest 
+
+_S.40_ task:
+	say 1061 
+	drop _guest_ face 
+	change repute with _partyman_ by -5 
+	end quest 
+
+variable _dungeon_
+_S.42_ task:
+	killed 1 _F.01_ 
+	when _S.27_ 
+	when _S.21_ 
