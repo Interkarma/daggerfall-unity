@@ -269,7 +269,7 @@ namespace DaggerfallWorkshop.Game
                 acrobatMotor.CheckFallingDamage();
 
                 // checks if sliding and applies movement to moveDirection if true
-                frictionMotor.MoveIfSliding(ref moveDirection);
+                frictionMotor.GroundedMovement(ref moveDirection);
 
                 acrobatMotor.HandleJumpInput(ref moveDirection);
             }
@@ -284,7 +284,7 @@ namespace DaggerfallWorkshop.Game
 
             acrobatMotor.HitHead(ref moveDirection);
 
-            groundMotor.MoveOnGround(moveDirection);
+            groundMotor.MoveWithMovingPlatform(moveDirection);
             grounded = (collisionFlags & CollisionFlags.Below) != 0;
         }
 
