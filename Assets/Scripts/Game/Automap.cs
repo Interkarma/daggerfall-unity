@@ -1645,6 +1645,22 @@ namespace DaggerfallWorkshop.Game
             gameobjectBeaconEntrancePosition.SetActive(false);
         }
 
+        /// <summary>
+        /// The percentage of dungeon explored.
+        /// </summary>
+        public int ExploredPercentage()
+        {
+            int explored = 0;
+            if (!gameobjectGeometry)
+                return explored;
+            MeshRenderer[] meshRenderers = gameobjectGeometry.GetComponentsInChildren<MeshRenderer>(true);
+            foreach (MeshRenderer meshRenderer in meshRenderers)
+                if (meshRenderer.enabled)
+                    explored++;
+
+            return (int)(((double) explored / meshRenderers.Length) * 100);
+        }
+
         void InitWhenInInteriorOrDungeon(StaticDoor? door = null, bool initFromLoadingSave = false)
         {
             if ((GameManager.Instance.IsPlayerInsideBuilding) && (door.HasValue))
