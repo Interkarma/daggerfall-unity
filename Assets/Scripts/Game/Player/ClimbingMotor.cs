@@ -65,7 +65,7 @@ namespace DaggerfallWorkshop.Game
         // minimum percent chance to continue climbing per skill check, gets closer to 100 with higher skill
         private const int continueClimbMinChance = 70;
         private const int graspWallMinChance = 50;
-        private int FindWallLoopCount;
+        //private int FindWallLoopCount;
 
         public bool IsClimbing
         {
@@ -355,7 +355,7 @@ namespace DaggerfallWorkshop.Game
                     atInsideCorner = isAtInsideCorner(hit);
                 //}
 
-                FindWallLoopCount = 0;
+                //FindWallLoopCount = 0;
                 return true;
             }
             else
@@ -412,7 +412,7 @@ namespace DaggerfallWorkshop.Game
 
             // if strafing to either side, this will be set so we can check for wrap-around corners.
             Vector3 checkDirection = Vector3.zero;
-            bool adjacentWallFound = false;
+            //bool adjacentWallFound = false;
 
             if (!isSlipping)
             {
@@ -450,7 +450,7 @@ namespace DaggerfallWorkshop.Game
                         Debug.DrawRay(myStrafeRay.origin, myStrafeRay.direction, Color.red);
 
                         // perform check for adjacent wall
-                        adjacentWallFound = GetAdjacentWallInfo(controller.transform.position, checkDirection * checkScalar, movedLeft);
+                        /*adjacentWallFound =*/ GetAdjacentWallInfo(controller.transform.position, checkDirection * checkScalar, movedLeft);
 
                         Vector3 intersection;
                         Vector3 intersectionOrthogonal;
