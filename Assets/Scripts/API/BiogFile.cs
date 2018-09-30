@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using DaggerfallWorkshop.Game.Entity;
 using UnityEngine;
 using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Game.Player;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallConnect.Arena2
 {
@@ -18,11 +20,15 @@ namespace DaggerfallConnect.Arena2
         Question[] questions = new Question[questionCount];
         short[] changedReputations = new short[socialGroupCount];
         List<string> answerEffects = new List<string>();
+        CharacterDocument characterDocument;
 
-        public BiogFile(int classIndex)
+        public BiogFile(CharacterDocument characterDocument)
         {
+            // Store reference to character document
+            this.characterDocument = characterDocument;
+            
             // Load text file
-            string fileName = "BIOG" + classIndex.ToString("D" + 2) + "T0.TXT";
+            string fileName = "BIOG" + characterDocument.classIndex.ToString("D" + 2) + "T0.TXT";
             FileProxy txtFile = new FileProxy(Path.Combine(DaggerfallUnity.Instance.Arena2Path, fileName), FileUsage.UseDisk, true);
             questionsStr = System.Text.Encoding.UTF8.GetString(txtFile.GetBytes());
 
@@ -77,6 +83,20 @@ namespace DaggerfallConnect.Arena2
             {
                 changedReputations[i] = 0;
             }
+
+            // Initialize question token lists
+            Q1Tokens = new List<int>();
+            Q2Tokens = new List<int>();
+            Q3Tokens = new List<int>();
+            Q4Tokens = new List<int>();
+            Q5Tokens = new List<int>();
+            Q6Tokens = new List<int>();
+            Q7Tokens = new List<int>();
+            Q8Tokens = new List<int>();
+            Q9Tokens = new List<int>();
+            Q10Tokens = new List<int>();
+            Q11Tokens = new List<int>();
+            Q12Tokens = new List<int>();
         }
 
         public void DigestRepChanges()
@@ -95,6 +115,77 @@ namespace DaggerfallConnect.Arena2
                     continue;
                 }
                 changedReputations[id] += (short)amount;
+            }
+        }
+
+        public List<string> GenerateBackstory(int classIndex)
+        {
+            const int tokensStart = 4116;
+
+            #region Parse answer tokens
+            List<int>[] tokenLists = new List<int>[questionCount * 2];
+            tokenLists[0] = Q1Tokens;
+            tokenLists[1] = Q2Tokens;
+            tokenLists[2] = Q3Tokens;
+            tokenLists[3] = Q4Tokens;
+            tokenLists[4] = Q5Tokens;
+            tokenLists[5] = Q6Tokens;
+            tokenLists[6] = Q7Tokens;
+            tokenLists[7] = Q8Tokens;
+            tokenLists[8] = Q9Tokens;
+            tokenLists[9] = Q10Tokens;
+            tokenLists[10] = Q11Tokens;
+            tokenLists[11] = Q12Tokens;
+
+            // Setup tokens for macro handler
+            foreach (string effect in answerEffects)
+            {
+                char prefix = effect[0];
+
+                if (prefix == '#' || prefix == '!' || prefix == '?')
+                {
+                    int questionInd;
+                    string[] effectSplit = effect.Split(' ');
+                    string command = effectSplit[0];
+                    string index = effectSplit[1];
+                    if (!int.TryParse(index, out questionInd))
+                    {
+                        Debug.LogError("GenerateBackstory: Invalid question index.");
+                        continue;
+                    }
+
+                    string[] splitStr = command.Split(prefix);
+                    if (splitStr.Length > 1)
+                    {
+                        tokenLists[questionInd].Add(int.Parse(splitStr[1]));
+                    }
+                }
+            }
+            #endregion
+
+            List<string> backStory = new List<string>();
+            TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(tokensStart + classIndex);
+            MacroHelper.ExpandMacros(ref tokens, (IMacroContextProvider)this);
+            foreach (TextFile.Token token in tokens)
+            {
+                if (token.formatting == TextFile.Formatting.Text)
+                {
+                    backStory.Add(token.text);
+                }
+            }
+
+            return backStory;
+        }
+
+        public void AddEffect(string effect, int index)
+        {
+            if (effect[0] == '#' || effect[0] == '!' || effect[0] == '?')
+            {
+                AnswerEffects.Add(effect + " " + index); // Tag text macros with question numbers
+            }
+            else
+            {
+                AnswerEffects.Add(effect);
             }
         }
 
@@ -191,8 +282,7 @@ namespace DaggerfallConnect.Arena2
                         Debug.LogError("CreateCharBiography: rf - invalid argument.");
                         return;
                     }
-                    // TODO: Not 100% sure if this should propagate or not
-                    playerEntity.FactionData.ChangeReputation(id, amount);
+                    playerEntity.FactionData.ChangeReputation(id, amount, true);
                 }
                 // Social group (Merchants, Commoners, etc.)
                 else
@@ -277,10 +367,9 @@ namespace DaggerfallConnect.Arena2
                     Debug.LogError("CreateCharBiography: TH - invalid argument.");
                 }
             }
-            else if (effect[0] == '#' || effect[0] == '!')
+            else if (effect[0] == '#' || effect[0] == '!' || effect[0] == '?')
             {
-                // TODO: Implement biography history text commands
-                Debug.Log("CreateCharBiography: Biography history text commands not yet implemented.");
+                Debug.Log("CreateCharBiography: Detected biography text command.");
             }
             // Unimplemented commands
             else if (effect.StartsWith("AE"))
@@ -437,6 +526,19 @@ namespace DaggerfallConnect.Arena2
         {
             get { return answerEffects; }
         }
+
+        public List<int> Q1Tokens { get; set; }
+        public List<int> Q2Tokens { get; set; }
+        public List<int> Q3Tokens { get; set; }
+        public List<int> Q4Tokens { get; set; }
+        public List<int> Q5Tokens { get; set; }
+        public List<int> Q6Tokens { get; set; }
+        public List<int> Q7Tokens { get; set; }
+        public List<int> Q8Tokens { get; set; }
+        public List<int> Q9Tokens { get; set; }
+        public List<int> Q10Tokens { get; set; }
+        public List<int> Q11Tokens { get; set; }
+        public List<int> Q12Tokens { get; set; }
 
         #endregion
     }

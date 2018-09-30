@@ -38,6 +38,7 @@ namespace DaggerfallConnect.Save
         SaveTree saveTree;
         SaveVars saveVars;
         BsaFile mapSave;
+        BioFile bioFile;
         RumorFile rumorFile;
         SaveImage saveImage;
         string saveName = string.Empty;
@@ -82,6 +83,14 @@ namespace DaggerfallConnect.Save
         public SaveVars SaveVars
         {
             get { return saveVars; }
+        }
+
+        /// <summary>
+        /// Gets the bio file from the current save's directory.
+        /// </summary>
+        public BioFile BioFile
+        {
+            get { return bioFile; }
         }
 
         /// <summary>
@@ -244,6 +253,10 @@ namespace DaggerfallConnect.Save
             rumorFile = new RumorFile();
             if (!rumorFile.Load(Path.Combine(saveGameDict[save], "RUMOR.DAT"), FileUsage.UseMemory, true))
                 UnityEngine.Debug.Log("Could not open RUMOR.DAT for index " + save);
+
+            bioFile = new BioFile();
+            if (!bioFile.Load (Path.Combine(saveGameDict[save], "BIO.DAT")))
+                UnityEngine.Debug.Log("Could not open BIO.DAT for index " + save);
 
             return true;
         }

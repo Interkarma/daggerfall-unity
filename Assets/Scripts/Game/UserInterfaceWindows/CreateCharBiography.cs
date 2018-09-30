@@ -19,6 +19,7 @@ using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Game.Player;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -41,7 +42,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int buttonHeight = 24;
         const int reputationToken = 35;
 
-        int classIndex = 0;
         int questionIndex = 0;
         Texture2D nativeTexture;
         TextLabel[] questionLabels = new TextLabel[questionLines];
@@ -49,9 +49,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextLabel[] answerLabels = new TextLabel[buttonCount];
         BiogFile biogFile;
 
-        public CreateCharBiography(IUserInterfaceManager uiManager)
+        public CreateCharBiography(IUserInterfaceManager uiManager, CharacterDocument document)
             : base(uiManager)
         {
+            Document = document;
         }
 
         protected override void Setup()
@@ -65,7 +66,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 throw new Exception("CreateCharBiography: Could not load native texture.");
 
             // Load question data
-            biogFile = new BiogFile(classIndex);
+            biogFile = new BiogFile(Document);
 
             // Set background
             NativePanel.BackgroundTexture = nativeTexture;
@@ -129,20 +130,30 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 foreach (string effect in curAnswers[answerIndex].Effects)
                 {
-                    biogFile.AnswerEffects.Add(effect);
+                    biogFile.AddEffect(effect, questionIndex);
                 }
                 questionIndex++;
                 PopulateControls(biogFile.Questions[questionIndex]);
             }
             else
             {
-                CloseWindow();
+                // Add final effects
+                foreach (string effect in curAnswers[answerIndex].Effects)
+                {
+                    biogFile.AddEffect(effect, questionIndex);
+                }
+
+                // Create text biography
+                BackStory = biogFile.GenerateBackstory(Document.classIndex);
+
                 // Show reputation changes
                 biogFile.DigestRepChanges();
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
                 messageBox.SetTextTokens(reputationToken, biogFile);
                 messageBox.ClickAnywhereToClose = true;
                 messageBox.Show();
+
+                CloseWindow();
             }
         }
 
@@ -151,15 +162,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.Update();
         }
 
+        public CharacterDocument Document { get; set; }
+
         public int ClassIndex
         {
-            set { classIndex = value; }
-            get { return classIndex; }
+            set { Document.classIndex = value; }
+            get { return Document.classIndex; }
         }
 
         public List<string> PlayerEffects
         {
             get { return biogFile.AnswerEffects; }
         }
+
+        public List<string> BackStory { get; set; }
     }
 }

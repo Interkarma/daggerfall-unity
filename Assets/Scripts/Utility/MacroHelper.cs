@@ -109,12 +109,12 @@ namespace DaggerfallWorkshop.Utility
             { "%hnt", DialogHint }, // context "Tell Me About": anyInfo message, context place: Direction of location. (comment Nystul: it is either a location direction hint or a map reveal)
             { "%hnt2", DialogHint2 }, // context "Tell Me About": rumors message
             { "%hol", null }, // Holiday
-            { "%hpn", null }, // ?
-            { "%hpw", null }, // ?
+            { "%hpn", HomeProvinceName }, // Home province name
+            { "%hpw", GeographicalFeature }, // Geographical feature of home province
             { "%hrg", null }, // House region
             { "%hs", HeldSoul },  //  Holding Soul type
             { "%htwn", null },// House town
-            { "%imp", null }, // ?
+            { "%imp", MaleFullname }, // Emperor's son's name
             { "%int", Int }, // Amount of Intelligence
             { "%it", ItemName },  //  Item
             { "%jok", Joke }, // A joke
@@ -160,18 +160,42 @@ namespace DaggerfallWorkshop.Utility
             { "%pqn", PotentialQuestorName }, // Potential Quest Giver
             { "%pqp", PotentialQuestorLocation }, // Potential Quest Giver's Location
             { "%ptm", null }, // An enemy of the current region (?)
-            { "%q1", null },  // q1 to q12 Effects of questions answered in bio.
-            { "%q2", null },
-            { "%q3", null },
-            { "%q4", null },
-            { "%q5", null },
-            { "%q6", null },
-            { "%q7", null },
-            { "%q8", null },
-            { "%q9", null },
-            { "%q10", null },
-            { "%q11", null },
-            { "%q12", null },
+            { "%q1", Q1 },  // q1 to q12 Effects of questions answered in bio.
+            { "%q2", Q2 },
+            { "%q3", Q3 },
+            { "%q4", Q4 },
+            { "%q5", Q5 },
+            { "%q6", Q6 },
+            { "%q7", Q7 },
+            { "%q8", Q8 },
+            { "%q9", Q9 },
+            { "%q10", Q10 },
+            { "%q11", Q11 },
+            { "%q12", Q12 },
+            { "%q1a", Q1a },  // secondary effects of questions answered in bio
+            { "%q2a", Q2a },
+            { "%q3a", Q3a },
+            { "%q4a", Q4a },
+            { "%q5a", Q5a },
+            { "%q6a", Q6a },
+            { "%q7a", Q7a },
+            { "%q8a", Q8a },
+            { "%q9a", Q9a },
+            { "%q10a", Q10a },
+            { "%q11a", Q11a },
+            { "%q12a", Q12a },
+            { "%q1b", Q1b },  // tertiary effects of questions answered in bio
+            { "%q2b", Q2b },
+            { "%q3b", Q3b },
+            { "%q4b", Q4b },
+            { "%q5b", Q5b },
+            { "%q6b", Q6b },
+            { "%q7b", Q7b },
+            { "%q8b", Q8b },
+            { "%q9b", Q9b },
+            { "%q10b", Q10b },
+            { "%q11b", Q11b },
+            { "%q12b", Q12b },
             { "%qdt", QuestDate }, // Quest date of log entry
             { "%qdat", null },// Quest date of log entry [2]
             { "%qot", null }, // The log comment
@@ -1325,31 +1349,302 @@ namespace DaggerfallWorkshop.Utility
         public static string CommonersRep(IMacroContextProvider mcp)
         {
             // %r1
+            if (mcp == null) return null;
             return mcp.GetMacroDataSource().CommonersRep();
         }
 
         public static string MerchantsRep(IMacroContextProvider mcp)
         {
             // %r2
+            if (mcp == null) return null;
             return mcp.GetMacroDataSource().MerchantsRep();
         }
 
         public static string ScholarsRep(IMacroContextProvider mcp)
         {
             // %r3
+            if (mcp == null) return null;
             return mcp.GetMacroDataSource().ScholarsRep();
         }
 
         public static string NobilityRep(IMacroContextProvider mcp)
         {
             // %r4
+            if (mcp == null) return null;
             return mcp.GetMacroDataSource().NobilityRep();
         }
 
         public static string UnderworldRep(IMacroContextProvider mcp)
         {
             // %r5
+            if (mcp == null) return null;
             return mcp.GetMacroDataSource().UnderworldRep();
+        }
+
+        private static string HomeProvinceName(IMacroContextProvider mcp)
+        {
+            // %hpn
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().HomeProvinceName();
+        }
+
+        private static string GeographicalFeature(IMacroContextProvider mcp)
+        {
+            // %hpw
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().GeographicalFeature();
+        }
+
+        public static string Q1(IMacroContextProvider mcp)
+        {
+            // %q1
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Q1();
+        }
+
+        public static string Q2(IMacroContextProvider mcp)
+        {
+            // %q2
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Q2();
+        }
+
+        public static string Q3(IMacroContextProvider mcp)
+        {
+            // %q3
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Q3();
+        }
+
+        public static string Q4(IMacroContextProvider mcp)
+        {
+            // %q4
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Q4();
+        }
+
+        public static string Q5(IMacroContextProvider mcp)
+        {
+            // %q5
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Q5();
+        }
+
+        public static string Q6(IMacroContextProvider mcp)
+        {
+            // %q6
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Q6();
+        }
+
+        public static string Q7(IMacroContextProvider mcp)
+        {
+            // %q7
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Q7();
+        }
+
+        public static string Q8(IMacroContextProvider mcp)
+        {
+            // %q8
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Q8();
+        }
+
+        public static string Q9(IMacroContextProvider mcp)
+        {
+            // %q9
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Q9();
+        }
+
+        public static string Q10(IMacroContextProvider mcp)
+        {
+            // %q10
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Q10();
+        }
+
+        public static string Q11(IMacroContextProvider mcp)
+        {
+            // %q11
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Q11();
+        }
+
+        public static string Q12(IMacroContextProvider mcp)
+        {
+            // %q12
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Q12();
+        }
+
+        public static string Q1a(IMacroContextProvider mcp)
+        {
+            // %q1a
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Q1a();
+        }
+
+        public static string Q2a(IMacroContextProvider mcp)
+        {
+            // %q2a
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Q2a();
+        }
+
+        public static string Q3a(IMacroContextProvider mcp)
+        {
+            // %q3a
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Q3a();
+        }
+
+        public static string Q4a(IMacroContextProvider mcp)
+        {
+            // %q4a
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Q4a();
+        }
+
+        public static string Q5a(IMacroContextProvider mcp)
+        {
+            // %q5a
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Q5a();
+        }
+
+        public static string Q6a(IMacroContextProvider mcp)
+        {
+            // %q6a
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Q6a();
+        }
+
+        public static string Q7a(IMacroContextProvider mcp)
+        {
+            // %q7a
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Q7a();
+        }
+
+        public static string Q8a(IMacroContextProvider mcp)
+        {
+            // %q8a
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Q8a();
+        }
+
+        public static string Q9a(IMacroContextProvider mcp)
+        {
+            // %q9a
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Q9a();
+        }
+
+        public static string Q10a(IMacroContextProvider mcp)
+        {
+            // %q10a
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Q10a();
+        }
+
+        public static string Q11a(IMacroContextProvider mcp)
+        {
+            // %q11a
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Q11a();
+        }
+
+        public static string Q12a(IMacroContextProvider mcp)
+        {
+            // %q12a
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Q12a();
+        }
+
+        public static string Q1b(IMacroContextProvider mcp)
+        {
+            // %q1b
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Q1b();
+        }
+
+        public static string Q2b(IMacroContextProvider mcp)
+        {
+            // %q2b
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Q2b();
+        }
+
+        public static string Q3b(IMacroContextProvider mcp)
+        {
+            // %q3b
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Q3b();
+        }
+
+        public static string Q4b(IMacroContextProvider mcp)
+        {
+            // %q4b
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Q4b();
+        }
+
+        public static string Q5b(IMacroContextProvider mcp)
+        {
+            // %q5b
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Q5b();
+        }
+
+        public static string Q6b(IMacroContextProvider mcp)
+        {
+            // %q6b
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Q6b();
+        }
+
+        public static string Q7b(IMacroContextProvider mcp)
+        {
+            // %q7b
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Q7b();
+        }
+
+        public static string Q8b(IMacroContextProvider mcp)
+        {
+            // %q8b
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Q8b();
+        }
+
+        public static string Q9b(IMacroContextProvider mcp)
+        {
+            // %q9b
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Q9b();
+        }
+
+        public static string Q10b(IMacroContextProvider mcp)
+        {
+            // %q10b
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Q10b();
+        }
+
+        public static string Q11b(IMacroContextProvider mcp)
+        {
+            // %q11b
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Q11b();
+        }
+
+        public static string Q12b(IMacroContextProvider mcp)
+        {
+            // %q12b
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Q12b();
         }
 
         #endregion
