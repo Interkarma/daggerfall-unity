@@ -51,38 +51,10 @@ namespace DaggerfallWorkshop.Game
             rayDistance = controller.height * .5f + controller.radius;
         }
 
-        private void Update()
+        public void GroundedMovement(ref Vector3 moveDirection)
         {
+            SetSliding();
 
-        }
-
-        public void MoveIfSliding(ref Vector3 moveDirection)
-        {
-            CheckFooting();
-            SlideMovement(ref moveDirection);
-        }
-
-        private void CheckFooting()
-        {
-            sliding = false;
-            // See if surface immediately below should be slid down. We use this normally rather than a ControllerColliderHit point,
-            // because that interferes with step climbing amongst other annoyances
-            if (Physics.Raycast(myTransform.position, -Vector3.up, out hit, rayDistance))
-            {
-                if (Vector3.Angle(hit.normal, Vector3.up) > slideLimit)
-                    sliding = true;
-            }
-            // However, just raycasting straight down from the center can fail when on steep slopes
-            // So if the above raycast didn't catch anything, raycast down from the stored ControllerColliderHit point instead
-            else
-            {
-                Physics.Raycast(contactPoint + Vector3.up, -Vector3.up, out hit);
-                if (Vector3.Angle(hit.normal, Vector3.up) > slideLimit)
-                    sliding = true;
-            }
-        }
-        private void SlideMovement(ref Vector3 moveDirection)
-        {
             // If sliding (and it's allowed), or if we're on an object tagged "Slide", get a vector pointing down the slope we're on
             if ((sliding && slideWhenOverSlopeLimit) || (slideOnTaggedObjects && hit.collider.tag == "Slide"))
             {
@@ -111,7 +83,26 @@ namespace DaggerfallWorkshop.Game
                 moveDirection = myTransform.TransformDirection(moveDirection) * playerMotor.Speed;
                 playerControl = true;
             }
+        }
 
+        private void SetSliding()
+        {
+            sliding = false;
+            // See if surface immediately below should be slid down. We use this normally rather than a ControllerColliderHit point,
+            // because that interferes with step climbing amongst other annoyances
+            if (Physics.Raycast(myTransform.position, -Vector3.up, out hit, rayDistance))
+            {
+                if (Vector3.Angle(hit.normal, Vector3.up) > slideLimit)
+                    sliding = true;
+            }
+            // However, just raycasting straight down from the center can fail when on steep slopes
+            // So if the above raycast didn't catch anything, raycast down from the stored ControllerColliderHit point instead
+            else
+            {
+                Physics.Raycast(contactPoint + Vector3.up, -Vector3.up, out hit);
+                if (Vector3.Angle(hit.normal, Vector3.up) > slideLimit)
+                    sliding = true;
+            }
         }
     }
 }

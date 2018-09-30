@@ -24,7 +24,6 @@ namespace DaggerfallWorkshop.Game
         private bool isSlipping = false;
         private bool atOutsideCorner = false;
         private bool atInsideCorner = false;
-        //private bool backedUpRappel = false;
         private float climbingStartTimer = 0;
         private float climbingContinueTimer = 0;
         private float rappelTimer;
@@ -117,27 +116,26 @@ namespace DaggerfallWorkshop.Game
 
                 if (IsRappelling)
                 {
-                    const float firstRappelTimer = 0.7f;
+                    const float firstTimerMax = 0.7f;
                     overrideSkillCheck = true;
 
                     rappelTimer += Time.deltaTime;
 
-                    if (rappelTimer <= firstRappelTimer)
+                    if (rappelTimer <= firstTimerMax)
                     {
                         Vector3 rappelPosition = Vector3.zero;
                         // create C-shaped movement to plant self against wall beneath
                         Vector3 pos = lastPosition;
                         float yDist = 0.92f;
                         float xzDist = 0.13f;
-                        rappelPosition.x = Mathf.Lerp(pos.x, pos.x - (controller.transform.forward.x * xzDist), Mathf.Sin(Mathf.PI * (rappelTimer / firstRappelTimer)));
-                        rappelPosition.z = Mathf.Lerp(pos.z, pos.z - (controller.transform.forward.z * xzDist), Mathf.Sin(Mathf.PI * (rappelTimer / firstRappelTimer)));
-                        rappelPosition.y = Mathf.Lerp(pos.y, pos.y - yDist, rappelTimer / firstRappelTimer);
+                        rappelPosition.x = Mathf.Lerp(pos.x, pos.x - (controller.transform.forward.x * xzDist), Mathf.Sin(Mathf.PI * (rappelTimer / firstTimerMax)));
+                        rappelPosition.z = Mathf.Lerp(pos.z, pos.z - (controller.transform.forward.z * xzDist), Mathf.Sin(Mathf.PI * (rappelTimer / firstTimerMax)));
+                        rappelPosition.y = Mathf.Lerp(pos.y, pos.y - yDist, rappelTimer / firstTimerMax);
 
                         controller.transform.position = rappelPosition;
                     }
                     else
                     {
-                        // TODO: figure out why not going forward after rappel
                         Vector3 rappelDirection = Vector3.zero;
                         // Auto forward to grab wall
                         float speed = speedChanger.GetBaseSpeed();
@@ -146,14 +144,9 @@ namespace DaggerfallWorkshop.Game
                         else
                             rappelDirection = controller.transform.forward;
                         rappelDirection *= speed * 1.25f;
-                        groundMotor.MoveOnGround(rappelDirection);
+                        groundMotor.MoveWithMovingPlatform(rappelDirection);
                     }
-                    
                 }
-            }
-            else
-            {
-                IsRappelling = false;
             }
         }
 
@@ -165,13 +158,19 @@ namespace DaggerfallWorkshop.Game
             float startClimbHorizontalTolerance;
             float startClimbSkillCheckFrequency;
             bool airborneGraspWall = (!isClimbing && !isSlipping && acrobatMotor.Falling);
+            bool movingBack = InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards);
 
-            RappelChecks(airborneGraspWall);
+            // short circuit evaluate the raycast in case not needed. also, prevents some bugs
+            bool groundCancelsClimbOrRappel = (((isClimbing && (movingBack || isSlipping)) || airborneGraspWall)  
+                && Physics.Raycast(controller.transform.position, Vector3.down, controller.height / 2 + 0.12f));
 
-            if (airborneGraspWall)
+            if (DaggerfallUnity.Settings.AdvancedClimbing && !groundCancelsClimbOrRappel)
+                RappelChecks(airborneGraspWall);
+
+            if (DaggerfallUnity.Settings.AdvancedClimbing && airborneGraspWall)
             {
                 if (IsRappelling)
-                {   // very lenient because we're trying to attach
+                {   // very lenient because we're trying to attach to wall with guarunteed success
                     startClimbHorizontalTolerance = 2f;
                     startClimbSkillCheckFrequency = 0.0f;
                 }
@@ -188,7 +187,6 @@ namespace DaggerfallWorkshop.Game
             }
 
             bool inputAbortCondition;
-
             if (DaggerfallUnity.Settings.AdvancedClimbing)
             {
                 // TODO: prevent crouch from toggling crouch when aborting climb
@@ -198,6 +196,7 @@ namespace DaggerfallWorkshop.Game
             else
                 inputAbortCondition = !InputManager.Instance.HasAction(InputManager.Actions.MoveForwards);
             
+
             // reset for next use
             WallEject = false;
 
@@ -207,9 +206,11 @@ namespace DaggerfallWorkshop.Game
                 || levitateMotor.IsLevitating
                 || playerMotor.IsRiding
                 // if we slipped and struck the ground
-                || (isSlipping && ((playerMotor.CollisionFlags & CollisionFlags.Below) != 0)
+                || (isSlipping && (playerMotor.CollisionFlags & CollisionFlags.Below) != 0
                 // don't do horizontal position check if already climbing
-                || (!isClimbing && Vector2.Distance(lastHorizontalPosition, new Vector2(controller.transform.position.x, controller.transform.position.z)) > startClimbHorizontalTolerance)))
+                || (!isClimbing && Vector2.Distance(lastHorizontalPosition, new Vector2(controller.transform.position.x, controller.transform.position.z)) > startClimbHorizontalTolerance))
+                // quit climbing if climbing down and ground is really close, prevents teleportation bug
+                || groundCancelsClimbOrRappel)
             {
                 if (isClimbing && inputAbortCondition && DaggerfallUnity.Settings.AdvancedClimbing)
                     WallEject = true;
@@ -262,6 +263,10 @@ namespace DaggerfallWorkshop.Game
             // execute schedule
             if (isClimbing)
             {
+                // "rappelling" only happens while moving the player into climbing position 
+                // from the ledge he backstepped off and doesn't happen while climbing
+                IsRappelling = false;
+
                 // evalate the ledge direction
                 GetClimbedWallInfo();
 
@@ -343,18 +348,22 @@ namespace DaggerfallWorkshop.Game
 
                 Debug.DrawRay(adjacentWallRay.origin, adjacentWallRay.direction, Color.cyan);
 
-                if (FindWallLoopCount == 0)
-                {
+                // Commented out for now because it doesn't seem neccessary to do recursion to find the adjacent wall
+                //if (FindWallLoopCount == 0)
+                //{
                     // The adjacent wall is an inside corner
                     atInsideCorner = isAtInsideCorner(hit);
-                }
+                //}
 
                 FindWallLoopCount = 0;
                 return true;
             }
             else
             {
-                FindWallLoopCount++;
+                /* Commented out for now because apparently it's not neccessary to perform 
+                 * recursive checks for the adjacent wall.  
+                 * 
+                 * FindWallLoopCount++;
                 if (FindWallLoopCount < 3)
                 {
                     // find next vector info now
@@ -369,7 +378,7 @@ namespace DaggerfallWorkshop.Game
 
                     return GetAdjacentWallInfo(origin, nextDirection, searchClockwise);
                 }
-                FindWallLoopCount = 0;
+                FindWallLoopCount = 0;*/
                 return false;
             }
         }
@@ -403,7 +412,7 @@ namespace DaggerfallWorkshop.Game
 
             // if strafing to either side, this will be set so we can check for wrap-around corners.
             Vector3 checkDirection = Vector3.zero;
-            //bool adjacentWallFound = false;
+            bool adjacentWallFound = false;
 
             if (!isSlipping)
             {
@@ -430,7 +439,7 @@ namespace DaggerfallWorkshop.Game
                     #region Horizontal Climbing
                     if (movedRight || movedLeft)
                     {
-                        //float checkScalar = controller.radius + 0.5f;
+                        float checkScalar = controller.radius + 0.5f;
                         if (movedRight)
                             checkDirection = Vector3.Cross(Vector3.up, myLedgeDirection).normalized;
                         else if (movedLeft)
@@ -441,7 +450,7 @@ namespace DaggerfallWorkshop.Game
                         Debug.DrawRay(myStrafeRay.origin, myStrafeRay.direction, Color.red);
 
                         // perform check for adjacent wall
-                        //adjacentWallFound = GetAdjacentWallInfo(controller.transform.position, checkDirection * checkScalar, movedLeft);
+                        adjacentWallFound = GetAdjacentWallInfo(controller.transform.position, checkDirection * checkScalar, movedLeft);
 
                         Vector3 intersection;
                         Vector3 intersectionOrthogonal;

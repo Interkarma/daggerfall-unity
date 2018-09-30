@@ -45,7 +45,7 @@ namespace DaggerfallWorkshop.Game
         /// Moves the player on solid ground & floating platforms.
         /// </summary>
         /// <param name="moveDirection">the vector the player should move to</param>
-        public void MoveOnGround(Vector3 moveDirection)
+        public void MoveWithMovingPlatform(Vector3 moveDirection)
         {
             // Moving platform support
             if (activePlatform != null)
