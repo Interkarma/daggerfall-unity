@@ -19,8 +19,6 @@ namespace DaggerfallWorkshop.Game.Utility
 {
     /// <summary>
     /// Generates names for Daggerfall NPCs and locations.
-    /// Based on an incomplete understanding of NAMEGEN.DAT.
-    /// This code should be considered experimental for now.
     /// </summary>
     public class NameHelper
     {
@@ -42,14 +40,14 @@ namespace DaggerfallWorkshop.Game.Utility
             Breton,
             Redguard,
             Nord,
-            Noble,
-            Imperial,
             DarkElf,
             HighElf,
             WoodElf,
-            Location1,      // These banks not fully understood yet
-            Location2,
-            MonsterName,    // Have observed this used as a monster name for quests (e.g. mummy name in N0B00Y06)
+            Khajiit,
+            Imperial,       // Imperial names appear where one would expect Argonian names.
+            Monster1,
+            Monster2,
+            Monster3,
         }
 
         /// <summary>
@@ -85,7 +83,7 @@ namespace DaggerfallWorkshop.Game.Utility
 
         /// <summary>
         /// Gets random full name (first name + surname) for an NPC.
-        /// Supports Breton, Redguard, Nord, Imperial, DarkElf, HighElf, WoodElf.
+        /// Supports Breton, Redguard, Nord, DarkElf, HighElf, WoodElf, Khajiit, Imperial.
         /// All other types return empty string.
         /// </summary>
         public string FullName(BankTypes type, Genders gender)
@@ -104,8 +102,7 @@ namespace DaggerfallWorkshop.Game.Utility
 
         /// <summary>
         /// Gets random first name for an NPC.
-        /// Supports Breton, Redguard, Nord, Imperial, DarkElf, HighElf, WoodElf.
-        /// All other types return empty string.
+        /// Supports Breton, Redguard, Nord, DarkElf, HighElf, WoodElf, Khajiit, Imperial.
         /// </summary>
         public string FirstName(BankTypes type, Genders gender)
         {
@@ -120,10 +117,11 @@ namespace DaggerfallWorkshop.Game.Utility
             {
                 case BankTypes.Breton:                                                  // These banks all work the same
                 case BankTypes.Nord:
-                case BankTypes.Imperial:
                 case BankTypes.DarkElf:
                 case BankTypes.HighElf:
                 case BankTypes.WoodElf:
+                case BankTypes.Khajiit:
+                case BankTypes.Imperial:
                     firstName = GetRandomFirstName(nameBank, gender);
                     break;
 
@@ -137,8 +135,7 @@ namespace DaggerfallWorkshop.Game.Utility
 
         /// <summary>
         /// Gets random surname for an NPC.
-        /// Supports Breton, Nord, Imperial, DarkElf, HighElf, WoodElf.
-        /// All other types return empty string.
+        /// Supports Breton, Nord, DarkElf, HighElf, WoodElf, Khajiit, Imperial.
         /// </summary>
         public string Surname(BankTypes type)
         {
@@ -152,15 +149,16 @@ namespace DaggerfallWorkshop.Game.Utility
             switch (type)
             {
                 case BankTypes.Breton:                                                  // These banks all work the same
-                case BankTypes.Imperial:
                 case BankTypes.DarkElf:
                 case BankTypes.HighElf:
                 case BankTypes.WoodElf:
+                case BankTypes.Khajiit:
+                case BankTypes.Imperial:
                     lastName = GetRandomSurname(nameBank);
                     break;
 
                 case BankTypes.Nord:
-                    lastName = GetRandomSurname(bankDict[BankTypes.Breton]);            // Nords appear to share Breton surnames
+                    lastName = GetRandomNordSurname(nameBank);
                     break;
             }
 
@@ -183,61 +181,6 @@ namespace DaggerfallWorkshop.Game.Utility
 
         #region Name Generation
 
-        //
-        // -= Rules For Name Generation, By Bank =-
-        //
-        // Breton:
-        //  Male FirstName          : Sets 0 + 1
-        //  Female FirstName        : Sets 2 + 3
-        //  Surname                 : Sets 4 + 5
-        //
-        // Redguard:
-        //  Male FullName           : Sets 0 + 1 + 2 + 3
-        //  Female FullName         : Sets 0 + 1 + 2 + 4
-        //
-        // Nord:
-        //  Male FirstName          : Sets 0 + 1
-        //  Female FirstName        : Sets 2 + 3
-        //  Surname (Use Breton)    : Sets 4 + 5
-        //
-        // Noble:
-        //  Title                   : Sets 0
-        //  FullName                : Sets 1 + 2 + 3
-        //
-        // Imperial:
-        //  Male FirstName          : Sets 0 + 1
-        //  Female FirstName        : Sets 2 + 3
-        //  Surname                 : Sets 4 + 5
-        //
-        // DarkElf:
-        //  Male FirstName          : Sets 0 + 1
-        //  Female FirstName        : Sets 2 + 3
-        //  Surname                 : Sets 4 + 5
-        //
-        // HighElf:
-        //  Male FirstName          : Sets 0 + 1
-        //  Female FirstName        : Sets 2 + 3
-        //  Surname                 : Sets 4 + 5
-        //
-        // WoodElf:
-        //  Male FirstName          : Sets 0 + 1
-        //  Female FirstName        : Sets 2 + 3
-        //  Surname                 : Sets 4 + 5
-        //
-        // Location1:
-        //  Masculine FirstName     : Sets 0 + 1
-        //  Feminine FirstName      : Sets 2 + 3
-        //  Surname                 : Sets 4 + 5
-        //
-        // Location2:
-        //  FullName                : Sets 0 + 1 + 2
-        //
-        // MonsterName:
-        //  Masculine FullName      : Sets 0 + 1 + (50% +2)
-        //
-        // -= END =-
-        //
-
         // Gets random first name by gender for names that follow 0+1 (male), 2+3 (female) pattern
         string GetRandomFirstName(NameBank nameBank, Genders gender)
         {
@@ -255,8 +198,11 @@ namespace DaggerfallWorkshop.Game.Utility
             }
 
             // Generate strings
-            string stringA = partsA[DFRandom.random_range(partsA.Length)];
-            string stringB = partsB[DFRandom.random_range(partsB.Length)];
+            uint index = DFRandom.rand() % (uint)partsA.Length;
+            string stringA = partsA[index];
+
+            index = DFRandom.rand() % (uint)partsB.Length;
+            string stringB = partsB[index];
 
             return stringA + stringB;
         }
@@ -270,13 +216,34 @@ namespace DaggerfallWorkshop.Game.Utility
             partsB = nameBank.sets[5].parts;
 
             // Generate strings
-            string stringA = partsA[DFRandom.random_range(partsA.Length)];
-            string stringB = partsB[DFRandom.random_range(partsB.Length)];
+            uint index = DFRandom.rand() % (uint)partsA.Length;
+            string stringA = partsA[index];
+
+            index = DFRandom.rand() % (uint)partsB.Length;
+            string stringB = partsB[index];
 
             return stringA + stringB;
         }
 
-        // Gets random Redguard name which follows 0+1+2+3 (male), 0+1+2+4 (female) pattern
+        // Gets random surname for Nord names that follow 0+1+"sen" pattern
+        string GetRandomNordSurname(NameBank nameBank)
+        {
+            // Get set parts
+            string[] partsA, partsB;
+            partsA = nameBank.sets[0].parts;
+            partsB = nameBank.sets[1].parts;
+
+            // Generate strings
+            uint index = DFRandom.rand() % (uint)partsA.Length;
+            string stringA = partsA[index];
+
+            index = DFRandom.rand() % (uint)partsB.Length;
+            string stringB = partsB[index];
+
+            return stringA + stringB + "sen";
+        }
+
+        // Gets random Redguard name which follows 0+1+2+3(75%) (male), 0+1+2+4 (female) pattern
         string GetRandomRedguardName(NameBank nameBank, Genders gender)
         {
             // Get set parts
@@ -297,31 +264,99 @@ namespace DaggerfallWorkshop.Game.Utility
             }
 
             // Generate strings
-            string stringA = partsA[DFRandom.random_range(partsA.Length)];
-            string stringB = partsB[DFRandom.random_range(partsB.Length)];
-            string stringC = partsC[DFRandom.random_range(partsC.Length)];
-            string stringD = partsD[DFRandom.random_range(partsD.Length)];
+            uint index = DFRandom.rand() % (uint)partsA.Length;
+            string stringA = partsA[index];
+
+            index = DFRandom.rand() % (uint)partsB.Length;
+            string stringB = partsB[index];
+
+            index = DFRandom.rand() % (uint)partsC.Length;
+            string stringC = partsC[index];
+
+            string stringD = string.Empty;
+            if (gender == Genders.Female || (DFRandom.rand() % 100 < 75))
+            {
+                index = DFRandom.rand() % (uint)partsD.Length;
+                stringD = partsD[index];
+            }
 
             return stringA + stringB + stringC + stringD;
         }
 
-        // Get random monster name which follows 0+1 (50% +2)
+        // Get random monster name.
+        // Monster1: 0+(50% +1)+2
+        // Monster2: 0+(50% +1)+2+(if female, +3)
+        // Monster3: (if male, 25% +3 + " ")+0+1+2
         string GetRandomMonsterName(Genders gender)
         {
-            NameBank nameBank = bankDict[BankTypes.MonsterName];
+            BankTypes type = (BankTypes)UnityEngine.Random.Range(8, 10); // Get random Monster1 or Monster2 for now.
+            NameBank nameBank = bankDict[type];
 
             // Get set parts
-            string[] partsA, partsB, partsC;
+            string[] partsA, partsB, partsC, partsD;
             partsA = nameBank.sets[0].parts;
             partsB = nameBank.sets[1].parts;
             partsC = nameBank.sets[2].parts;
+            partsD = null;
+
+            string stringA = string.Empty;
+            string stringB = string.Empty;
+            string stringC = string.Empty;
+            string stringD = string.Empty;
+
+            uint index = 0;
+
+            // Additional set for Monster2 and Monster3
+            if (nameBank.sets.Length >= 4)
+                partsD = nameBank.sets[3].parts;
 
             // Generate strings
-            string stringA = partsA[DFRandom.random_range(partsA.Length)];
-            string stringB = partsB[DFRandom.random_range(partsB.Length)];
-            string stringC = (UnityEngine.Random.Range(0f, 1f) < 0.5f) ? partsC[DFRandom.random_range(partsC.Length)] : string.Empty;
+            if (type != BankTypes.Monster3) // Monster1 or Monster2
+            {
+                index = DFRandom.rand() % (uint)partsA.Length;
+                stringA = partsA[index];
 
-            return stringA + stringB + stringC;
+                stringB = string.Empty;
+                if (DFRandom.rand() % 50 < 25)
+                {
+                    index = DFRandom.rand() % (uint)partsB.Length;
+                    stringB = partsB[index];
+                }
+
+                index = DFRandom.rand() % (uint)partsC.Length;
+                stringC = partsC[index];
+
+                // Additional set for Monster2 female
+                if (partsD != null && gender == Genders.Female)
+                {
+                    index = DFRandom.rand() % (uint)partsD.Length;
+                    stringD = partsD[index];
+                }
+            }
+            else // Monster3
+            {
+                if (gender == Genders.Female || DFRandom.rand() % 100 >= 25)
+                {
+                    index = DFRandom.rand() % (uint)partsA.Length;
+                    stringA = partsA[index];
+                }
+                else
+                {
+                    index = DFRandom.rand() % (uint)partsD.Length;
+                    stringA = partsD[index] + " ";
+
+                    index = DFRandom.rand() % (uint)partsA.Length;
+                    stringB = partsA[index];
+                }
+
+                index = DFRandom.rand() % (uint)partsB.Length;
+                stringC = partsB[index];
+
+                index = DFRandom.rand() % (uint)partsC.Length;
+                stringD = partsC[index];
+            }
+
+            return stringA + stringB + stringC + stringD;
         }
 
         #endregion
