@@ -11,12 +11,10 @@
 
 using UnityEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
-using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Serialization;
@@ -807,6 +805,8 @@ namespace DaggerfallWorkshop.Game
             const int isInSameHolyOrderLikePlayerGreetingTextId = 8553;
             const int isInSameHolyOrderNeutralPlayerGreetingTextId = 8554;
 
+            Guild guild = GameManager.Instance.GuildManager.GetGuild((int) GameManager.Instance.PlayerEnterExit.FactionID);
+
             // note Nystul: did not find any use of text record ids 8556 - 8569 in my testing - but some of them might be used by nobles of the courtyards
 
             if (currentNPCType == NPCType.Static)
@@ -826,9 +826,12 @@ namespace DaggerfallWorkshop.Game
                             {
                                 TextFile.Token[] tokens = dictQuestorPostQuestMessage[questID];
 
+                                // Set external context to guild if player is a member
+                                if (guild.IsMember())
+                                    quest.ExternalMCP = guild;
                                 // expand tokens and reveal dialog-linked resources
                                 QuestMacroHelper macroHelper = new QuestMacroHelper();
-                                macroHelper.ExpandQuestMessage(GameManager.Instance.QuestMachine.GetQuest(questID), ref tokens, true);
+                                macroHelper.ExpandQuestMessage(quest, ref tokens, true);
                                 return TokensToString(tokens);
                             }
                         }
@@ -837,7 +840,6 @@ namespace DaggerfallWorkshop.Game
             }
 
             // check if npc is member of a guild            
-            Guild guild = GameManager.Instance.GuildManager.GetGuild((int)GameManager.Instance.PlayerEnterExit.FactionID);
             FactionFile.FactionData factionData;
             if (DaggerfallUnity.Instance.ContentReader.FactionFileReader.GetFactionData(guild.GetFactionId(), out factionData) && // first check is important to rule out merchants that are assigned to fighters guild (see this bug report: https://forums.dfworkshop.net/viewtopic.php?f=24&t=1240)
                 GameManager.Instance.GuildManager.GetGuild(npcData.guildGroup, (int)GameManager.Instance.PlayerEnterExit.FactionID).IsMember())            
