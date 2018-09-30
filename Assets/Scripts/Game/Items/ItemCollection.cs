@@ -216,7 +216,7 @@ namespace DaggerfallWorkshop.Game.Items
             // Add the item based on stack behaviour
             // TODO: Look at implementing proper stacking with max limits, split, merge, etc.
             DaggerfallUnityItem stack = FindExistingStack(item);
-            if (stack != null && !item.IsQuestItem && !noStack)
+            if (stack != null && !stack.IsQuestItem && !item.IsQuestItem && !noStack)
             {
                 // Add to stack count
                 stack.stackCount += item.stackCount;
