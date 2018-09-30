@@ -170,7 +170,7 @@ namespace DaggerfallWorkshop.Game
             if (DaggerfallUnity.Settings.AdvancedClimbing && airborneGraspWall)
             {
                 if (IsRappelling)
-                {   // very lenient because we're trying to attach
+                {   // very lenient because we're trying to attach to wall with guarunteed success
                     startClimbHorizontalTolerance = 2f;
                     startClimbSkillCheckFrequency = 0.0f;
                 }
@@ -348,18 +348,22 @@ namespace DaggerfallWorkshop.Game
 
                 Debug.DrawRay(adjacentWallRay.origin, adjacentWallRay.direction, Color.cyan);
 
-                if (FindWallLoopCount == 0)
-                {
+                // Commented out for now because it doesn't seem neccessary to do recursion to find the adjacent wall
+                //if (FindWallLoopCount == 0)
+                //{
                     // The adjacent wall is an inside corner
                     atInsideCorner = isAtInsideCorner(hit);
-                }
+                //}
 
                 FindWallLoopCount = 0;
                 return true;
             }
             else
             {
-                FindWallLoopCount++;
+                /* Commented out for now because apparently it's not neccessary to perform 
+                 * recursive checks for the adjacent wall.  
+                 * 
+                 * FindWallLoopCount++;
                 if (FindWallLoopCount < 3)
                 {
                     // find next vector info now
@@ -374,7 +378,7 @@ namespace DaggerfallWorkshop.Game
 
                     return GetAdjacentWallInfo(origin, nextDirection, searchClockwise);
                 }
-                FindWallLoopCount = 0;
+                FindWallLoopCount = 0;*/
                 return false;
             }
         }
@@ -408,7 +412,7 @@ namespace DaggerfallWorkshop.Game
 
             // if strafing to either side, this will be set so we can check for wrap-around corners.
             Vector3 checkDirection = Vector3.zero;
-            //bool adjacentWallFound = false;
+            bool adjacentWallFound = false;
 
             if (!isSlipping)
             {
@@ -435,7 +439,7 @@ namespace DaggerfallWorkshop.Game
                     #region Horizontal Climbing
                     if (movedRight || movedLeft)
                     {
-                        //float checkScalar = controller.radius + 0.5f;
+                        float checkScalar = controller.radius + 0.5f;
                         if (movedRight)
                             checkDirection = Vector3.Cross(Vector3.up, myLedgeDirection).normalized;
                         else if (movedLeft)
@@ -446,7 +450,7 @@ namespace DaggerfallWorkshop.Game
                         Debug.DrawRay(myStrafeRay.origin, myStrafeRay.direction, Color.red);
 
                         // perform check for adjacent wall
-                        //adjacentWallFound = GetAdjacentWallInfo(controller.transform.position, checkDirection * checkScalar, movedLeft);
+                        adjacentWallFound = GetAdjacentWallInfo(controller.transform.position, checkDirection * checkScalar, movedLeft);
 
                         Vector3 intersection;
                         Vector3 intersectionOrthogonal;
