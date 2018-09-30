@@ -11,10 +11,3 @@ schema: *name, group, membership, minRep, notes
 
 -Interkarma
 CUSTOM01, FightersGuild, M, 40, New quest exclusive to Daggerfall Unity
-
--GhanBuriGhan
-M0B30Y33, FightersGuild, M, 30, From "Live by the Sword" quest pack by GhanBuriGhan
-M0B40Y30, FightersGuild, M, 40, From "Live by the Sword" quest pack by GhanBuriGhan
-M0B50Y32, FightersGuild, M, 50, From "Live by the Sword" quest pack by GhanBuriGhan
-M0B50Y34, FightersGuild, M, 50, From "Live by the Sword" quest pack by GhanBuriGhan
-M0B60Y31, FightersGuild, M, 60, From "Live by the Sword" quest pack by GhanBuriGhan
