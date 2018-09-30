@@ -673,37 +673,40 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
             {
                 // Proceed with trade.
+                int tradePrice = GetTradePrice();
                 switch (windowMode)
                 {
                     case WindowModes.Sell:
                     case WindowModes.SellMagic:
-                        int goldAmount = GetTradePrice();
-                        float goldWeight = (float)goldAmount / DaggerfallBankManager.gold1kg;
+                        float goldWeight = (float)tradePrice / DaggerfallBankManager.gold1kg;
                         if (PlayerEntity.CarriedWeight + goldWeight <= PlayerEntity.MaxEncumbrance)
                         {
-                            PlayerEntity.GoldPieces += goldAmount;
+                            PlayerEntity.GoldPieces += tradePrice;
                         }
                         else
                         {
                             DaggerfallUnityItem loc = ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Letter_of_credit);
-                            loc.value = goldAmount;
+                            loc.value = tradePrice;
                             GameManager.Instance.PlayerEntity.Items.AddItem(loc, Items.ItemCollection.AddPosition.Front);
                         }
+                        RaiseOnTradeHandler(remoteItems.GetNumItems(), tradePrice);
                         remoteItems.Clear();
                         break;
 
                     case WindowModes.Buy:
-                        PlayerEntity.DeductGoldAmount(GetTradePrice());
+                        PlayerEntity.DeductGoldAmount(tradePrice);
+                        RaiseOnTradeHandler(basketItems.GetNumItems(), tradePrice);
                         PlayerEntity.Items.TransferAll(basketItems);
                         break;
 
                     case WindowModes.Repair:
-                        PlayerEntity.DeductGoldAmount(GetTradePrice());
+                        PlayerEntity.DeductGoldAmount(tradePrice);
                         for (int i = 0; i < remoteItems.Count; i++)
                         {
                             DaggerfallUnityItem item = remoteItems.GetItem(i);
                             item.currentCondition = item.maxCondition;
                         }
+                        RaiseOnTradeHandler(remoteItems.GetNumItems(), tradePrice);
                         break;
 
                     case WindowModes.Identify:
@@ -713,6 +716,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                             DaggerfallUnityItem item = remoteItems.GetItem(i);
                             item.IdentifyItem();
                         }
+                        RaiseOnTradeHandler(remoteItems.GetNumItems(), tradePrice);
                         break;
                 }
                 DaggerfallUI.Instance.PlayOneShot(SoundClips.GoldPieces);
@@ -723,6 +727,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         #endregion
+
+        #region Misc Events & Helpers
 
         void ShowTradePopup()
         {
@@ -757,11 +763,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        // OnTrade event
+        public delegate void OnTradeHandler(WindowModes mode, int numItems, int value);
+        public event OnTradeHandler OnTrade;
+        protected virtual void RaiseOnTradeHandler(int numItems, int value)
+        {
+            if (OnTrade != null)
+                OnTrade(windowMode, numItems, value);
+        }
 
         protected override void StartGameBehaviour_OnNewGame()
         {
             // Do nothing when game starts, as this window class is not used in a persisted manner like its parent.
         }
+
+        #endregion
 
         #region Macro handling
 

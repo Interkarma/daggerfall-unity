@@ -77,6 +77,17 @@ namespace DaggerfallWorkshop.Game.Items
         #region Public Methods
 
         /// <summary>
+        /// Gets number of items in collection, including item stack sizes.
+        /// </summary>
+        public int GetNumItems()
+        {
+            int num = 0;
+            foreach (DaggerfallUnityItem item in items.Values)
+                num += item.stackCount;
+            return num;
+        }
+
+        /// <summary>
         /// Gets the combined weight of all the items in this collection. (ignoring arrows like classic)
         /// </summary>
         /// <returns>Weight in kg</returns>
