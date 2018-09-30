@@ -100,7 +100,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button toolTipBackgroundColor;
         Checkbox crosshair;
         Checkbox vitalsIndicators;
-        //Checkbox freeScaling;
+        Checkbox freeScaling;
         HorizontalSlider interactionModeIcon;
         Checkbox showQuestJournalClocksAsCountdown;
         Checkbox inventoryInfoPanel;
@@ -245,7 +245,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // GUI
             AddSectionTitle(rightPanel, "gui");
-            //freeScaling = AddCheckbox(rightPanel, "freeScaling", DaggerfallUnity.Settings.FreeScaling);
+            freeScaling = AddCheckbox(rightPanel, "freeScaling", DaggerfallUnity.Settings.FreeScaling);
             showQuestJournalClocksAsCountdown = AddCheckbox(rightPanel, "showQuestJournalClocksAsCountdown", DaggerfallUnity.Settings.ShowQuestJournalClocksAsCountdown);
             inventoryInfoPanel = AddCheckbox(rightPanel, "inventoryInfoPanel", DaggerfallUnity.Settings.EnableInventoryInfoPanel);
             enhancedItemLists = AddCheckbox(rightPanel, "enhancedItemLists", DaggerfallUnity.Settings.EnableEnhancedItemLists);
@@ -347,6 +347,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.InteractionModeIcon = ((InteractionModeIconModes)interactionModeIcon.Value).ToString();
             DaggerfallUnity.Settings.EnableVitalsIndicators = vitalsIndicators.IsChecked;
 
+            DaggerfallUnity.Settings.FreeScaling = freeScaling.IsChecked;
             DaggerfallUnity.Settings.ShowQuestJournalClocksAsCountdown = showQuestJournalClocksAsCountdown.IsChecked;
             DaggerfallUnity.Settings.EnableInventoryInfoPanel = inventoryInfoPanel.IsChecked;
             DaggerfallUnity.Settings.EnableEnhancedItemLists = enhancedItemLists.IsChecked;
