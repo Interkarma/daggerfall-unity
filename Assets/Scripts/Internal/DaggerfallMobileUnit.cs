@@ -402,6 +402,24 @@ namespace DaggerfallWorkshop
 
                 // Assign imported texture
                 meshRenderer.material.mainTexture = summary.ImportedTextures.Textures[record][currentFrame];
+
+                // Update UVs on mesh
+                Vector2[] uvs = new Vector2[4];
+                if (flip)
+                {
+                    uvs[0] = new Vector2(1, 1);
+                    uvs[1] = new Vector2(0, 1);
+                    uvs[2] = new Vector2(1, 0);
+                    uvs[3] = new Vector2(0, 0);
+                }
+                else
+                {
+                    uvs[0] = new Vector2(0, 1);
+                    uvs[1] = new Vector2(1, 1);
+                    uvs[2] = new Vector2(0, 0);
+                    uvs[3] = new Vector2(1, 0);
+                }
+                meshFilter.sharedMesh.uv = uvs;
             }
             else
             {
