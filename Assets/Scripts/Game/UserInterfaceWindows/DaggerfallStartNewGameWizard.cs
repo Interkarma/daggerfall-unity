@@ -172,7 +172,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (createCharBiographyWindow == null)
             {
-                characterDocument.classIndex = createCharClassSelectWindow.SelectedClassIndex;
+                if (!characterDocument.isCustom)
+                {
+                    characterDocument.classIndex = createCharClassSelectWindow.SelectedClassIndex;
+                }
                 createCharBiographyWindow = new CreateCharBiography(uiManager, characterDocument);
                 createCharBiographyWindow.OnClose += CreateCharBiographyWindow_OnClose;
             }
@@ -364,7 +367,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 // Choose answers at random
                 System.Random rand = new System.Random(System.DateTime.Now.Millisecond);
-                characterDocument.classIndex = createCharClassSelectWindow.SelectedClassIndex;
+                if (!characterDocument.isCustom)
+                {
+                    characterDocument.classIndex = createCharClassSelectWindow.SelectedClassIndex;
+                }
                 BiogFile autoBiog = new BiogFile(characterDocument);
                 for (int i = 0; i < autoBiog.Questions.Length; i++)
                 {
