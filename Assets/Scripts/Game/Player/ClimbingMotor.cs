@@ -102,6 +102,7 @@ namespace DaggerfallWorkshop.Game
         {
             if (airborneGraspWall)
             {
+                // TODO: prevent rappelling if small falls
                 if (!IsRappelling)
                 {
                     // should rappelling start?

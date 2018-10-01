@@ -18,9 +18,6 @@ namespace DaggerfallWorkshop.Game
 
         public float slideSpeed = 12.0f;
 
-        // Small amounts of this results in bumping when walking down slopes, but large amounts results in falling too fast
-        public float antiBumpFactor = .75f;
-
         private PlayerMotor playerMotor;
         private Transform myTransform;
         private RaycastHit hit;
@@ -79,7 +76,7 @@ namespace DaggerfallWorkshop.Game
                 }
 
                 float inputModifyFactor = (inputX != 0.0f && inputY != 0.0f && playerMotor.limitDiagonalSpeed) ? .7071f : 1.0f;
-                moveDirection = new Vector3(inputX * inputModifyFactor, -antiBumpFactor, inputY * inputModifyFactor);
+                moveDirection = new Vector3(inputX * inputModifyFactor, 0, inputY * inputModifyFactor);
                 moveDirection = myTransform.TransformDirection(moveDirection) * playerMotor.Speed;
                 playerControl = true;
             }

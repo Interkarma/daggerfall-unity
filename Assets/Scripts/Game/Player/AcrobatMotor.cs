@@ -126,10 +126,10 @@ namespace DaggerfallWorkshop.Game
         }
 
 
-    /// <summary>
-    /// If we stepped over a cliff or something, set the height at which we started falling
-    /// </summary>
-    public void CheckInitFall()
+        /// <summary>
+        /// If we stepped over a cliff or something, set the height at which we started falling
+        /// </summary>
+        public void CheckInitFall()
         {
             if (!falling)
             {
@@ -150,7 +150,27 @@ namespace DaggerfallWorkshop.Game
             }
             else if (!climbingMotor.IsRappelling)
             {
-                moveDirection.y -= gravity * Time.deltaTime;
+                const float antiBumpFactor = .75f;
+                float minRange = (controller.height / 2f);
+                float maxRange = minRange + 0.90f;
+                Vector3 checkRayOriginDisplacement = Vector3.ProjectOnPlane(moveDirection, Vector3.up).normalized * 0.10f;
+                Ray checkSlopeRay = new Ray(myTransform.position + checkRayOriginDisplacement, Vector3.down * maxRange);
+
+                RaycastHit hit;
+                float distance = Vector3.Distance(checkSlopeRay.origin, checkSlopeRay.direction);
+
+                if (!jumping && Physics.SphereCast(checkSlopeRay, 0.10f, out hit, distance))
+                {
+                    if (hit.distance > minRange && hit.distance < maxRange)
+                    {
+                        Debug.DrawRay(checkSlopeRay.origin, checkSlopeRay.direction, Color.cyan);
+                        moveDirection.y -= antiBumpFactor;
+                    }
+                }
+                //else
+                //{
+                    moveDirection.y -= gravity * Time.deltaTime;
+                //}
             }
         } 
                        
