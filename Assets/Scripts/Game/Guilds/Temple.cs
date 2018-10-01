@@ -503,7 +503,7 @@ namespace DaggerfallWorkshop.Game.Guilds
         public override TextFile.Token[] TokensIneligible(PlayerEntity playerEntity)
         {
             int msgId = (GetReputation(playerEntity) < 0) ? IneligibleBadRepId : IneligibleLowSkillId;
-            return DaggerfallUnity.Instance.TextProvider.GetRSCTokens(msgId);
+            return DaggerfallUnity.Instance.TextProvider.GetRandomTokens(msgId);
         }
         public override TextFile.Token[] TokensEligible(PlayerEntity playerEntity)
         {
