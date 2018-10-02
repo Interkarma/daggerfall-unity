@@ -227,7 +227,7 @@ namespace DaggerfallWorkshop.Game.Items
             // Add the item based on stack behaviour
             // TODO: Look at implementing proper stacking with max limits, split, merge, etc.
             DaggerfallUnityItem stack = FindExistingStack(item);
-            if (stack != null && !stack.IsQuestItem && !item.IsQuestItem && !noStack)
+            if (stack != null && !noStack)
             {
                 // Add to stack count
                 stack.stackCount += item.stackCount;
@@ -572,7 +572,7 @@ namespace DaggerfallWorkshop.Game.Items
             int groupIndex = item.GroupIndex;
             foreach (DaggerfallUnityItem checkItem in items.Values)
             {
-                if (checkItem.ItemGroup == itemGroup && checkItem.GroupIndex == groupIndex)
+                if (checkItem.ItemGroup == itemGroup && checkItem.GroupIndex == groupIndex && checkItem.IsStackable())
                     return checkItem;
             }
 

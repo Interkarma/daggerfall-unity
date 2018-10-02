@@ -522,17 +522,22 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// Determines if item is stackable.
-        /// Only ingredients, gold pieces and arrows are stackable.
+        /// Only ingredients, gold pieces and arrows are stackable,
+        /// quest items are not stackable.
         /// </summary>
         /// <returns>True if item stackable.</returns>
         public virtual bool IsStackable()
         {
-            if (IsIngredient || 
-                IsOfTemplate(ItemGroups.Currency, (int) Currency.Gold_pieces) || 
+            // I think some quests are paid in "quest" money,
+            // make them stackable nonetheless
+            if (IsOfTemplate(ItemGroups.Currency, (int) Currency.Gold_pieces))
+                return true;
+            if (IsQuestItem)
+                return false;
+            if (IsIngredient ||
                 IsOfTemplate(ItemGroups.Weapons, (int) Weapons.Arrow))
                 return true;
-            else
-                return false;
+            return false;
         }
 
         /// <summary>
