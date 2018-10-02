@@ -734,7 +734,7 @@ namespace DaggerfallConnect.Arena2
         /// <summary>
         /// Load from FACTION.TXT file.
         /// </summary>
-        /// <param name="path">Absolute path to FACTION.TXT file.</param>
+        /// <param name="filePath">Absolute path to FACTION.TXT file.</param>
         /// <param name="usage">Specify if file will be accessed from disk, or loaded into RAM.</param>
         /// <param name="readOnly">File will be read-only if true, read-write if false.</param>
         public void Load(string filePath, FileUsage usage, bool readOnly)
@@ -773,7 +773,7 @@ namespace DaggerfallConnect.Arena2
 
             // Merge save faction data from savevars
             FactionData[] factions = saveVars.Factions;
-            foreach(var srcFaction in factions)
+            foreach (var srcFaction in factions)
             {
                 if (dict.ContainsKey(srcFaction.id))
                 {
@@ -952,7 +952,7 @@ namespace DaggerfallConnect.Arena2
                 }
                 else if (precedingTabs < lastPrecedingTabs)
                 {
-                    while(parentStack.Count > precedingTabs)
+                    while (parentStack.Count > precedingTabs)
                         parentStack.Pop();
                 }
                 lastPrecedingTabs = precedingTabs;

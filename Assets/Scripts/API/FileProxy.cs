@@ -14,7 +14,6 @@ using UnityEngine;
 using System;
 using System.Text;
 using System.IO;
-using DaggerfallConnect;
 #endregion
 
 namespace DaggerfallConnect
@@ -295,7 +294,7 @@ namespace DaggerfallConnect.Utility
             BinaryReader reader = GetReader(position);
             if (reader == null)
                 return null;
-            
+
             return reader.ReadBytes(length);
         }
 

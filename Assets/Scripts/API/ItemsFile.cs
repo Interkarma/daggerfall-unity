@@ -12,7 +12,6 @@
 using System;
 using System.IO;
 using System.Text;
-using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect.Utility;
 
@@ -151,7 +150,7 @@ namespace DaggerfallConnect.FallExe
 
     public struct Recipe
     {
-       public Ingredient[] ingredients;
+        public Ingredient[] ingredients;
     }
 
     public struct Ingredient

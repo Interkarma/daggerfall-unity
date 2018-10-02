@@ -9,10 +9,6 @@
 // Notes:
 //
 
-#region Using Statements
-using System;
-#endregion
-
 namespace DaggerfallConnect.Utility
 {
 

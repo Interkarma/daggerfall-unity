@@ -10,9 +10,7 @@
 //
 
 using System;
-using System.Text;
 using System.IO;
-using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect.Utility;
 
@@ -150,7 +148,7 @@ namespace DaggerfallConnect.Save
         {
             List<SaveTreeBaseRecord> newList = new List<SaveTreeBaseRecord>();
 
-            foreach(SaveTreeBaseRecord record in source)
+            foreach (SaveTreeBaseRecord record in source)
             {
                 if (record.Parent == null)
                     continue;

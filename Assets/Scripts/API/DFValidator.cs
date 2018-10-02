@@ -10,17 +10,12 @@
 //
 
 #region Using Statements
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
-using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 #endregion
 
 namespace DaggerfallConnect.Utility
 {
-
     /// <summary>
     /// Static methods to validate ARENA2 folder.
     /// Does not verify contents, just that critical files exist in minimum quantities.
@@ -208,5 +203,4 @@ namespace DaggerfallConnect.Utility
         #endregion
 
     }
-
 }

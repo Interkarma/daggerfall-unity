@@ -12,7 +12,6 @@
 #region Using Statements
 using System;
 using System.IO;
-using System.Text;
 using DaggerfallConnect.Utility;
 #endregion
 
@@ -267,7 +266,7 @@ namespace DaggerfallConnect
             int offset = headerLength + Index * 3;
             paletteBuffer[offset] = R;
             paletteBuffer[offset + 1] = G;
-            paletteBuffer[offset + 2]  = B;
+            paletteBuffer[offset + 2] = B;
         }
 
         /// <summary>
@@ -298,7 +297,7 @@ namespace DaggerfallConnect
                 // Check for match
                 if (paletteBuffer[offset] == R && paletteBuffer[offset + 1] == G && paletteBuffer[offset + 2] == B)
                     return i;
-                
+
                 // Increment offset
                 offset += 3;
             }

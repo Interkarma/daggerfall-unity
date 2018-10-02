@@ -1,4 +1,15 @@
-﻿using System;
+﻿// Project:         Daggerfall Tools For Unity
+// Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
+// Web Site:        http://www.dfworkshop.net
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Source Code:     https://github.com/Interkarma/daggerfall-unity
+// Original Author: Numidium
+// Contributors:
+//
+// Notes:
+//
+
+using System;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop;
 using System.IO;
@@ -26,7 +37,7 @@ namespace DaggerfallConnect.Arena2
         {
             // Store reference to character document
             this.characterDocument = characterDocument;
-            
+
             // Load text file
             string fileName = "BIOG" + characterDocument.classIndex.ToString("D" + 2) + "T0.TXT";
             FileProxy txtFile = new FileProxy(Path.Combine(DaggerfallUnity.Instance.Arena2Path, fileName), FileUsage.UseDisk, true);
@@ -46,12 +57,12 @@ namespace DaggerfallConnect.Arena2
                     if (j == 0) // first question line should lead with a number followed by a '.'
                     {
                         questions[i].Text[j] = curLine.Split(new[] { '.' }, 2)[1].Trim();
-                    } 
-                    else if (j > 0 && curLine.IndexOf (".") != 1 && curLine.IndexOf (".") != 2)
+                    }
+                    else if (j > 0 && curLine.IndexOf(".") != 1 && curLine.IndexOf(".") != 2)
                     {
                         questions[i].Text[j] = curLine.Trim();
                     }
-                    else 
+                    else
                     {
                         break;
                     }
@@ -108,8 +119,8 @@ namespace DaggerfallConnect.Arena2
 
                 if (effect[0] != 'r'
                     || effect[1] == 'f'
-                    || tokens.Length < 2 
-                    || !int.TryParse(tokens[0].Split('r')[1], out id) 
+                    || tokens.Length < 2
+                    || !int.TryParse(tokens[0].Split('r')[1], out id)
                     || !int.TryParse(tokens[1], out amount))
                 {
                     continue;
@@ -248,7 +259,7 @@ namespace DaggerfallConnect.Arena2
                     Debug.LogError("CreateCharBiography: IT - invalid argument(s).");
                     return;
                 }
-                    
+
                 DaggerfallUnityItem newItem;
                 if ((ItemGroups)itemGroup == ItemGroups.Weapons)
                 {
@@ -543,4 +554,3 @@ namespace DaggerfallConnect.Arena2
         #endregion
     }
 }
-

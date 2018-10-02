@@ -11,10 +11,8 @@
 
 #region Using Statements
 using System;
-using System.Text;
 using System.IO;
 using UnityEngine;
-using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 #endregion
 

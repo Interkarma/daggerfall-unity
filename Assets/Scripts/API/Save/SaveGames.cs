@@ -11,9 +11,7 @@
 
 #region Using Statements
 using System;
-using System.Text;
 using System.IO;
-using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
@@ -31,6 +29,8 @@ namespace DaggerfallConnect.Save
         public const string SaveNameTxt = "SAVENAME.TXT";
 
         string savesPath = string.Empty;
+        string saveName = string.Empty;
+
         bool isPathOpen = false;
         bool isReadOnly = true;
 
@@ -41,7 +41,6 @@ namespace DaggerfallConnect.Save
         BioFile bioFile;
         RumorFile rumorFile;
         SaveImage saveImage;
-        string saveName = string.Empty;
 
         #region Properties
 
@@ -255,7 +254,7 @@ namespace DaggerfallConnect.Save
                 UnityEngine.Debug.Log("Could not open RUMOR.DAT for index " + save);
 
             bioFile = new BioFile();
-            if (!bioFile.Load (Path.Combine(saveGameDict[save], "BIO.DAT")))
+            if (!bioFile.Load(Path.Combine(saveGameDict[save], "BIO.DAT")))
                 UnityEngine.Debug.Log("Could not open BIO.DAT for index " + save);
 
             return true;
@@ -312,7 +311,7 @@ namespace DaggerfallConnect.Save
             {
                 if (!File.Exists(Path.Combine(saves[i], SaveTree.Filename)) ||
                     !File.Exists(Path.Combine(saves[i], SaveImage.Filename)))
-                    //!File.Exists(Path.Combine(saves[i], SaveVars.Filename)))      // TODO: Restore this once savevars supported
+                //!File.Exists(Path.Combine(saves[i], SaveVars.Filename)))      // TODO: Restore this once savevars supported
                 {
                     continue;
                 }

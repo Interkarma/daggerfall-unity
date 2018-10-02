@@ -61,12 +61,12 @@ namespace DaggerfallConnect.Arena2
         /// Block file prefixes.
         /// </summary>
         private string[] rmbBlockPrefixes = {
-	        "TVRN", "GENR", "RESI", "WEAP", "ARMR", "ALCH", "BANK", "BOOK",
-	        "CLOT", "FURN", "GEMS", "LIBR", "PAWN", "TEMP", "TEMP", "PALA",
-	        "FARM", "DUNG", "CAST", "MANR", "SHRI", "RUIN", "SHCK", "GRVE",
-	        "FILL", "KRAV", "KDRA", "KOWL", "KMOO", "KCAN", "KFLA", "KHOR",
-	        "KROS", "KWHE", "KSCA", "KHAW", "MAGE", "THIE", "DARK", "FIGH",
-	        "CUST", "WALL", "MARK", "SHIP", "WITC"
+            "TVRN", "GENR", "RESI", "WEAP", "ARMR", "ALCH", "BANK", "BOOK",
+            "CLOT", "FURN", "GEMS", "LIBR", "PAWN", "TEMP", "TEMP", "PALA",
+            "FARM", "DUNG", "CAST", "MANR", "SHRI", "RUIN", "SHCK", "GRVE",
+            "FILL", "KRAV", "KDRA", "KOWL", "KMOO", "KCAN", "KFLA", "KHOR",
+            "KROS", "KWHE", "KSCA", "KHAW", "MAGE", "THIE", "DARK", "FIGH",
+            "CUST", "WALL", "MARK", "SHIP", "WITC"
         };
 
         /// <summary>
@@ -344,8 +344,8 @@ namespace DaggerfallConnect.Arena2
         /// <summary>
         /// Converts map pixel to world coord.
         /// </summary>
-        /// <param name="worldX">Map pixel X.</param>
-        /// <param name="worldZ">Map pixel Y.</param>
+        /// <param name="mapPixelX">Map pixel X.</param>
+        /// <param name="mapPixelY">Map pixel Y.</param>
         /// <returns>World position.</returns>
         public static DFPosition MapPixelToWorldCoord(int mapPixelX, int mapPixelY)
         {
@@ -401,82 +401,82 @@ namespace DaggerfallConnect.Arena2
             // Set based on world climate
             switch (worldClimate)
             {
-                case (int) Climates.Ocean:   // Ocean
+                case (int)Climates.Ocean:   // Ocean
                     settings.ClimateType = DFLocation.ClimateBaseType.Swamp;
                     settings.GroundArchive = 402;
-                    settings.NatureArchive = (int) DFLocation.ClimateTextureSet.Nature_TemperateWoodland;
+                    settings.NatureArchive = (int)DFLocation.ClimateTextureSet.Nature_TemperateWoodland;
                     settings.SkyBase = 24;
                     settings.People = FactionFile.FactionRaces.Breton;
                     settings.Names = FactionFile.FactionRaces.Breton;
                     break;
-                case (int) Climates.Desert:
+                case (int)Climates.Desert:
                     settings.ClimateType = DFLocation.ClimateBaseType.Desert;
                     settings.GroundArchive = 2;
-                    settings.NatureArchive = (int) DFLocation.ClimateTextureSet.Nature_Desert;
+                    settings.NatureArchive = (int)DFLocation.ClimateTextureSet.Nature_Desert;
                     settings.SkyBase = 8;
                     settings.People = FactionFile.FactionRaces.Redguard;
                     settings.Names = FactionFile.FactionRaces.Redguard;
                     break;
-                case (int) Climates.Desert2:
+                case (int)Climates.Desert2:
                     settings.ClimateType = DFLocation.ClimateBaseType.Desert;
                     settings.GroundArchive = 2;
-                    settings.NatureArchive = (int) DFLocation.ClimateTextureSet.Nature_Desert;
+                    settings.NatureArchive = (int)DFLocation.ClimateTextureSet.Nature_Desert;
                     settings.SkyBase = 8;
                     settings.People = FactionFile.FactionRaces.Redguard;
                     settings.Names = FactionFile.FactionRaces.Redguard;
                     break;
-                case (int) Climates.Mountain:
+                case (int)Climates.Mountain:
                     settings.ClimateType = DFLocation.ClimateBaseType.Mountain;
                     settings.GroundArchive = 102;
-                    settings.NatureArchive = (int) DFLocation.ClimateTextureSet.Nature_Mountains;
+                    settings.NatureArchive = (int)DFLocation.ClimateTextureSet.Nature_Mountains;
                     settings.SkyBase = 0;
                     settings.People = FactionFile.FactionRaces.Nord;
                     settings.Names = FactionFile.FactionRaces.Nord;
                     break;
-                case (int) Climates.Rainforest:
+                case (int)Climates.Rainforest:
                     settings.ClimateType = DFLocation.ClimateBaseType.Swamp;
                     settings.GroundArchive = 402;
-                    settings.NatureArchive = (int) DFLocation.ClimateTextureSet.Nature_RainForest;
+                    settings.NatureArchive = (int)DFLocation.ClimateTextureSet.Nature_RainForest;
                     settings.SkyBase = 24;
                     settings.People = FactionFile.FactionRaces.Redguard;
                     settings.Names = FactionFile.FactionRaces.Redguard;
                     break;
-                case (int) Climates.Swamp:
+                case (int)Climates.Swamp:
                     settings.ClimateType = DFLocation.ClimateBaseType.Swamp;
                     settings.GroundArchive = 402;
-                    settings.NatureArchive = (int) DFLocation.ClimateTextureSet.Nature_Swamp;
+                    settings.NatureArchive = (int)DFLocation.ClimateTextureSet.Nature_Swamp;
                     settings.SkyBase = 24;
                     settings.People = FactionFile.FactionRaces.Breton;
                     settings.Names = FactionFile.FactionRaces.Redguard;
                     break;
-                case (int) Climates.Subtropical:
+                case (int)Climates.Subtropical:
                     settings.ClimateType = DFLocation.ClimateBaseType.Desert;
                     settings.GroundArchive = 2;
-                    settings.NatureArchive = (int) DFLocation.ClimateTextureSet.Nature_SubTropical;
+                    settings.NatureArchive = (int)DFLocation.ClimateTextureSet.Nature_SubTropical;
                     settings.SkyBase = 24;
                     settings.People = FactionFile.FactionRaces.Breton;
                     settings.Names = FactionFile.FactionRaces.Redguard;
                     break;
-                case (int) Climates.MountainWoods:
+                case (int)Climates.MountainWoods:
                     settings.ClimateType = DFLocation.ClimateBaseType.Mountain;
                     settings.GroundArchive = 102;
-                    settings.NatureArchive = (int) DFLocation.ClimateTextureSet.Nature_TemperateWoodland;
+                    settings.NatureArchive = (int)DFLocation.ClimateTextureSet.Nature_TemperateWoodland;
                     settings.SkyBase = 16;
                     settings.People = FactionFile.FactionRaces.Nord;
                     settings.Names = FactionFile.FactionRaces.Nord;
                     break;
-                case (int) Climates.Woodlands:
+                case (int)Climates.Woodlands:
                     settings.ClimateType = DFLocation.ClimateBaseType.Temperate;
                     settings.GroundArchive = 302;
-                    settings.NatureArchive = (int) DFLocation.ClimateTextureSet.Nature_TemperateWoodland;
+                    settings.NatureArchive = (int)DFLocation.ClimateTextureSet.Nature_TemperateWoodland;
                     settings.SkyBase = 16;
                     settings.People = FactionFile.FactionRaces.Breton;
                     settings.Names = FactionFile.FactionRaces.Breton;
                     break;
-                case (int) Climates.HauntedWoodlands:
+                case (int)Climates.HauntedWoodlands:
                     settings.ClimateType = DFLocation.ClimateBaseType.Temperate;
                     settings.GroundArchive = 302;
-                    settings.NatureArchive = (int) DFLocation.ClimateTextureSet.Nature_HauntedWoodlands;
+                    settings.NatureArchive = (int)DFLocation.ClimateTextureSet.Nature_HauntedWoodlands;
                     settings.SkyBase = 16;
                     settings.People = FactionFile.FactionRaces.Breton;
                     settings.Names = FactionFile.FactionRaces.Breton;
@@ -484,7 +484,7 @@ namespace DaggerfallConnect.Arena2
                 default:
                     settings.ClimateType = DFLocation.ClimateBaseType.Temperate;
                     settings.GroundArchive = 302;
-                    settings.NatureArchive = (int) DFLocation.ClimateTextureSet.Nature_TemperateWoodland;
+                    settings.NatureArchive = (int)DFLocation.ClimateTextureSet.Nature_TemperateWoodland;
                     settings.SkyBase = 16;
                     settings.People = FactionFile.FactionRaces.Breton;
                     settings.Names = FactionFile.FactionRaces.Breton;
@@ -877,7 +877,7 @@ namespace DaggerfallConnect.Arena2
 
                 // Read MapDItem for this location
                 reader = regions[region].MapDItem.GetReader();
-                ReadMapDItem(ref reader, region, location, ref dfLocation);
+                ReadMapDItem(ref reader, region, ref dfLocation);
 
                 // Copy RegionMapTable data to this location
                 dfLocation.MapTableData = regions[region].DFRegion.MapTable[location];
@@ -1120,9 +1120,8 @@ namespace DaggerfallConnect.Arena2
         /// </summary>
         /// <param name="reader">A binary reader to data.</param>
         /// <param name="region">Region index.</param>
-        /// <param name="location">Location index.</param>
         /// <param name="dfLocation">Destination DFLocation.</param>
-        private void ReadMapDItem(ref BinaryReader reader, int region, int location, ref DFLocation dfLocation)
+        private void ReadMapDItem(ref BinaryReader reader, int region, ref DFLocation dfLocation)
         {
             // Exit if no data
             dfLocation.HasDungeon = false;

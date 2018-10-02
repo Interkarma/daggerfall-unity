@@ -11,7 +11,6 @@
 
 #region Using Statements
 using System;
-using System.Text;
 using System.Collections.Generic;
 using System.IO;
 using DaggerfallConnect.Utility;
@@ -276,7 +275,7 @@ namespace DaggerfallConnect.Arena2
         /// </summary>
         public int Count
         {
-            get {return bsaFile.Count;}
+            get { return bsaFile.Count; }
         }
 
         #endregion
@@ -631,7 +630,7 @@ namespace DaggerfallConnect.Arena2
                     uniqueTextureBuffer[uniqueTextureCount].Record = textureRecord;
                     uniqueTextureCount++;
                 }
-                
+
                 // Store texture index for this plane
                 records[record].PureMesh.Planes[plane].TextureIndex.Archive = textureArchive;
                 records[record].PureMesh.Planes[plane].TextureIndex.Record = textureRecord;

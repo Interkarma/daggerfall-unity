@@ -10,7 +10,6 @@
 //
 
 #region Using Statements
-using System;
 using System.IO;
 using DaggerfallConnect.Utility;
 using System.Collections.Generic;

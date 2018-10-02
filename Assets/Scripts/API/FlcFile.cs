@@ -69,7 +69,7 @@ namespace DaggerfallConnect.Arena2
         /// <summary>
         /// Loads a *.FLC file.
         /// </summary>
-        /// <param name="fullPath">Absolute path to *.FLC file</param>
+        /// <param name="filePath">Absolute path to *.FLC file</param>
         /// <returns>True if file loaded successfully and is ready to use frame data.</returns>
         public bool Load(string filePath)
         {

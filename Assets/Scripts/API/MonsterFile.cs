@@ -11,10 +11,7 @@
 
 #region Using Statements
 using System;
-using System.Text;
-using System.Collections.Generic;
 using System.IO;
-using DaggerfallConnect.Utility;
 #endregion
 
 namespace DaggerfallConnect.Arena2

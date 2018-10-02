@@ -11,7 +11,6 @@
 
 #region Using Statements
 using System;
-using System.Text;
 using System.IO;
 using DaggerfallConnect.Utility;
 #endregion
@@ -91,7 +90,7 @@ namespace DaggerfallConnect.Arena2
         /// </summary>
         public override string PaletteName
         {
-            get { return string.Empty;  }
+            get { return string.Empty; }
         }
 
         /// <summary>

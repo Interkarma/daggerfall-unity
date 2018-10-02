@@ -347,7 +347,7 @@ namespace DaggerfallConnect.Arena2
                     dst += string.Format("[0x{0}]", b.ToString("X2"));      // Format control bytes in [0x00] format
                 }
             }
-            
+
             return dst;
         }
 
@@ -375,7 +375,7 @@ namespace DaggerfallConnect.Arena2
                 if (IsFormattingToken(nextByte))
                     tokens.Add(ReadFormattingToken(ref buffer, position, out position));
                 else
-                    tokens.Add(ReadTextToken(ref buffer, position, out position));     
+                    tokens.Add(ReadTextToken(ref buffer, position, out position));
             }
 
             return tokens.ToArray();
@@ -391,7 +391,7 @@ namespace DaggerfallConnect.Arena2
         public static string[] GetTokenLines(Token[] tokens)
         {
             List<string> lines = new List<string>();
-            foreach(Token token in tokens)
+            foreach (Token token in tokens)
             {
                 if (token.formatting == Formatting.Text)
                     lines.Add(token.text);
