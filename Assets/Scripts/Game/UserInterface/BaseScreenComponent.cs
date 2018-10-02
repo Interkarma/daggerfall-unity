@@ -901,6 +901,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         /// <summary>
+        /// Mouse is moving.
+        /// </summary>
+        protected virtual void MouseMove(int x, int y)
+        {
+            if (OnMouseMove != null)
+                OnMouseMove(x, y);
+        }
+
+        /// <summary>
         /// Mouse wheel scrolled up.
         /// </summary>
         protected virtual void MouseScrollUp()
