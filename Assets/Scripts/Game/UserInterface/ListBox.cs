@@ -33,6 +33,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         int maxCharacters = -1;
         DaggerfallFont font;
         int selectedIndex = 0;
+        int highlightedIndex = -1;
         int scrollIndex = 0;
         bool enabledHorizontalScroll = false;
         int horizontalScrollIndex = 0;
@@ -77,6 +78,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             public Color selectedTextColor = DaggerfallUI.DaggerfallDefaultSelectedTextColor;
             public Color shadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
             public Color selectedShadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
+            public Color highlightedTextColor = DaggerfallUI.DaggerfallHighlightTextColor;
 
             public ListItem(TextLabel textLabel)
             {
@@ -269,8 +271,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #endregion
 
-        #region Overrides
+        #region Constructors
+        public ListBox()
+        {
+            OnMouseMove += MouseMove;
+            OnMouseLeave += MouseLeave;
+        }
+        #endregion
 
+        #region Overrides
         public override void Update()
         {
             base.Update();
@@ -314,6 +323,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     if (i == selectedIndex)
                     {
                         label.TextColor = listItems[i].selectedTextColor;
+                        label.ShadowPosition = selectedShadowPosition;
+                        label.ShadowColor = listItems[i].selectedShadowColor;
+                    }
+                    else if (i == highlightedIndex)
+                    {
+                        label.TextColor = listItems[i].highlightedTextColor;
                         label.ShadowPosition = selectedShadowPosition;
                         label.ShadowColor = listItems[i].selectedShadowColor;
                     }
@@ -369,6 +384,43 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     y += label.TextHeight + rowSpacing;
                 }
             }           
+        }
+        protected override void MouseMove(int x, int y)
+        {
+            if (listItems.Count == 0)
+                return;
+            
+            if (verticalScrollMode == VerticalScrollModes.EntryWise)
+            {
+                int row = (y / (font.GlyphHeight + rowSpacing));
+                int index = scrollIndex + row;
+                if (index >= 0 && index < Count)
+                {
+                    highlightedIndex = index;
+                }
+            }
+            else if (verticalScrollMode == VerticalScrollModes.PixelWise)
+            {
+                int yCurrentItem = 0;
+                int yNextItem = 0;
+                for (int i = 0; i < listItems.Count; i++)
+                {
+                    yNextItem = yCurrentItem + listItems[i].textLabel.TextHeight + rowSpacing;
+                    int yVal = scrollIndex + y;
+                    if (yVal >= yCurrentItem - rowSpacing * 0.5 && yVal < yNextItem - rowSpacing * 0.5)
+                    {
+                        highlightedIndex = i;
+                        break;
+                    }
+                    yCurrentItem = yNextItem;
+                }
+
+            }
+        }
+
+        protected override void MouseLeave(BaseScreenComponent sender)
+        {
+            highlightedIndex = -1;
         }
 
         protected override void MouseClick(Vector2 clickPosition)
