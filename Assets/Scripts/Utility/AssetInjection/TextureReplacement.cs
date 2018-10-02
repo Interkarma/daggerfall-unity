@@ -472,11 +472,9 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             button.BackgroundTexture.filterMode = (FilterMode)DaggerfallUnity.Settings.GUIFilterMode;
 
             // Load settings from Xml
-            string path = Path.Combine(texturesPath, colorName);
-            if (XMLManager.XmlFileExists(path))
+            XMLManager xml;
+            if (XMLManager.TryReadXml(texturesPath, colorName, out xml))
             {
-                var xml = new XMLManager(path);
-
                 string value;
                 if (xml.TryGetString("customtext", out value))
                 {
@@ -646,10 +644,9 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             if (allowXml)
             {
                 // Get size from xml
-                string path = Path.Combine(imgPath, textureName);
-                if (XMLManager.XmlFileExists(path))
+                XMLManager xml;
+                if (XMLManager.TryReadXml(imgPath, textureName, out xml))
                 {
-                    var xml = new XMLManager(path);
                     Vector2 size;
                     if (xml.TryGetVector2("width", "height", out size))
                         return size;
