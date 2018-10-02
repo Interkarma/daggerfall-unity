@@ -41,6 +41,7 @@ GameObject:
   - component: {fileID: 114220683863726122}
   - component: {fileID: 114033680799267548}
   - component: {fileID: 114397629012878356}
+  - component: {fileID: 114025923971531530}
   m_Layer: 0
   m_Name: PlayerAdvanced
   m_TagString: Player
@@ -611,7 +612,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   limitDiagonalSpeed: 1
-  systemTimerUpdatesPerSecond: 0.055
+  systemTimerUpdatesDivisor: 0.0549254
   smoothFollower: {fileID: 4832112164805246}
   smoothFollowerLerpSpeed: 25
 --- !u!114 &11400008
@@ -1052,6 +1053,17 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 2
+--- !u!114 &114025923971531530
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6eb00cb2bd49d084ea7ffeed0adfd7fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114033680799267548
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1245,7 +1257,6 @@ MonoBehaviour:
   slideWhenOverSlopeLimit: 0
   slideOnTaggedObjects: 0
   slideSpeed: 12
-  antiBumpFactor: 2.35
 --- !u!114 &114583161180529142
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -19,6 +19,7 @@ namespace DaggerfallWorkshop.Game
         private PlayerEnterExit playerEnterExit;
         private AcrobatMotor acrobatMotor;
         private PlayerSpeedChanger speedChanger;
+        private PlayerStepDetector stepDetector;
         private bool overrideSkillCheck = false;
         private bool isClimbing = false;
         private bool isSlipping = false;
@@ -93,6 +94,7 @@ namespace DaggerfallWorkshop.Game
             playerEnterExit = GetComponent<PlayerEnterExit>();
             acrobatMotor = GetComponent<AcrobatMotor>();
             speedChanger = GetComponent<PlayerSpeedChanger>();
+            stepDetector = GetComponent<PlayerStepDetector>();
         }
 
         /// <summary>
@@ -127,7 +129,7 @@ namespace DaggerfallWorkshop.Game
                         Vector3 rappelPosition = Vector3.zero;
                         // create C-shaped movement to plant self against wall beneath
                         Vector3 pos = lastPosition;
-                        float yDist = 0.92f;
+                        float yDist = 1.40f;
                         float xzDist = 0.13f;
                         rappelPosition.x = Mathf.Lerp(pos.x, pos.x - (controller.transform.forward.x * xzDist), Mathf.Sin(Mathf.PI * (rappelTimer / firstTimerMax)));
                         rappelPosition.z = Mathf.Lerp(pos.z, pos.z - (controller.transform.forward.z * xzDist), Mathf.Sin(Mathf.PI * (rappelTimer / firstTimerMax)));
@@ -161,11 +163,18 @@ namespace DaggerfallWorkshop.Game
             bool airborneGraspWall = (!isClimbing && !isSlipping && acrobatMotor.Falling);
             bool movingBack = InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards);
 
+
+            float minRange = (controller.height / 2f);
+            float maxRange = minRange + 2.00f;
+
+            // are we going to step off something too short for rappel?
+            bool tooShortForRappel = (stepDetector.HitDistance > minRange && stepDetector.HitDistance < maxRange);
+
             // short circuit evaluate the raycast in case not needed. also, prevents some bugs
-            bool groundCancelsClimbOrRappel = (((isClimbing && (movingBack || isSlipping)) || airborneGraspWall)  
+            bool groundCancelsClimbOrRappel = (((isClimbing && (movingBack || isSlipping)) || airborneGraspWall)
                 && Physics.Raycast(controller.transform.position, Vector3.down, controller.height / 2 + 0.12f));
 
-            if (DaggerfallUnity.Settings.AdvancedClimbing && !groundCancelsClimbOrRappel)
+            if (DaggerfallUnity.Settings.AdvancedClimbing && !groundCancelsClimbOrRappel && !tooShortForRappel)
                 RappelChecks(airborneGraspWall);
 
             if (DaggerfallUnity.Settings.AdvancedClimbing && airborneGraspWall)

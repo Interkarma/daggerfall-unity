@@ -19,6 +19,7 @@ namespace DaggerfallWorkshop.Game
         FrictionMotor frictionMotor;
         ClimbingMotor climbingMotor;
         Transform myTransform;
+        PlayerStepDetector stepDetector;
 
         private float fallStartLevel;
         private bool falling;
@@ -42,6 +43,7 @@ namespace DaggerfallWorkshop.Game
             controller = GetComponent<CharacterController>();
             frictionMotor = GetComponent<FrictionMotor>();
             climbingMotor = GetComponent<ClimbingMotor>();
+            stepDetector = GetComponent<PlayerStepDetector>();
             myTransform = playerMotor.transform;
         }
 
@@ -153,24 +155,13 @@ namespace DaggerfallWorkshop.Game
                 const float antiBumpFactor = .75f;
                 float minRange = (controller.height / 2f);
                 float maxRange = minRange + 0.90f;
-                Vector3 checkRayOriginDisplacement = Vector3.ProjectOnPlane(moveDirection, Vector3.up).normalized * 0.10f;
-                Ray checkSlopeRay = new Ray(myTransform.position + checkRayOriginDisplacement, Vector3.down * maxRange);
 
-                RaycastHit hit;
-                float distance = Vector3.Distance(checkSlopeRay.origin, checkSlopeRay.direction);
+                // should we apply anti-bump gravity?
+                if (stepDetector.HitDistance > minRange && stepDetector.HitDistance < maxRange)
+                    moveDirection.y -= antiBumpFactor;
 
-                if (!jumping && Physics.SphereCast(checkSlopeRay, 0.10f, out hit, distance))
-                {
-                    if (hit.distance > minRange && hit.distance < maxRange)
-                    {
-                        Debug.DrawRay(checkSlopeRay.origin, checkSlopeRay.direction, Color.cyan);
-                        moveDirection.y -= antiBumpFactor;
-                    }
-                }
-                //else
-                //{
-                    moveDirection.y -= gravity * Time.deltaTime;
-                //}
+                // apply normal gravity
+                moveDirection.y -= gravity * Time.deltaTime;   
             }
         } 
                        

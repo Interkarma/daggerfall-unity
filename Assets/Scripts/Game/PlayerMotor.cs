@@ -52,6 +52,7 @@ namespace DaggerfallWorkshop.Game
         private AcrobatMotor acrobatMotor;
         private PlayerGroundMotor groundMotor;
         private PlayerEnterExit playerEnterExit;
+        private PlayerStepDetector stepDetector;
 
         private CollisionFlags collisionFlags = 0;
 
@@ -219,6 +220,7 @@ namespace DaggerfallWorkshop.Game
             levitateMotor = GetComponent<LevitateMotor>();
             frictionMotor = GetComponent<FrictionMotor>();
             acrobatMotor = GetComponent<AcrobatMotor>();
+            stepDetector = GetComponent<PlayerStepDetector>();
             playerEnterExit = GameManager.Instance.PlayerEnterExit;
 
             // Allow for resetting specific player state on new game or when game starts loading
@@ -280,6 +282,7 @@ namespace DaggerfallWorkshop.Game
                 acrobatMotor.CheckAirControl(ref moveDirection, speed);
             }
 
+            stepDetector.FindStep(moveDirection);
             acrobatMotor.ApplyGravity(ref moveDirection);
 
             acrobatMotor.HitHead(ref moveDirection);
