@@ -19,6 +19,7 @@ namespace DaggerfallWorkshop.Game
         FrictionMotor frictionMotor;
         ClimbingMotor climbingMotor;
         Transform myTransform;
+        PlayerStepDetector stepDetector;
 
         private float fallStartLevel;
         private bool falling;
@@ -42,6 +43,7 @@ namespace DaggerfallWorkshop.Game
             controller = GetComponent<CharacterController>();
             frictionMotor = GetComponent<FrictionMotor>();
             climbingMotor = GetComponent<ClimbingMotor>();
+            stepDetector = GetComponent<PlayerStepDetector>();
             myTransform = playerMotor.transform;
         }
 
@@ -126,10 +128,10 @@ namespace DaggerfallWorkshop.Game
         }
 
 
-    /// <summary>
-    /// If we stepped over a cliff or something, set the height at which we started falling
-    /// </summary>
-    public void CheckInitFall()
+        /// <summary>
+        /// If we stepped over a cliff or something, set the height at which we started falling
+        /// </summary>
+        public void CheckInitFall()
         {
             if (!falling)
             {
@@ -150,7 +152,16 @@ namespace DaggerfallWorkshop.Game
             }
             else if (!climbingMotor.IsRappelling)
             {
-                moveDirection.y -= gravity * Time.deltaTime;
+                const float antiBumpFactor = .75f;
+                float minRange = (controller.height / 2f);
+                float maxRange = minRange + 0.90f;
+
+                // should we apply anti-bump gravity?
+                if (stepDetector.HitDistance > minRange && stepDetector.HitDistance < maxRange)
+                    moveDirection.y -= antiBumpFactor;
+
+                // apply normal gravity
+                moveDirection.y -= gravity * Time.deltaTime;   
             }
         } 
                        
