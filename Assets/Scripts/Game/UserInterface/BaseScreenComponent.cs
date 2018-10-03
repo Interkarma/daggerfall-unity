@@ -532,7 +532,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 if (mouseOverComponent == true)
                 {
                     // Raise mouse leaving event
-                    MouseExit();
+                    MouseLeave(this);
                     mouseOverComponent = false;
                 }
             }
@@ -894,10 +894,19 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// <summary>
         /// Mouse exited control area.
         /// </summary>
-        protected virtual void MouseExit()
+        protected virtual void MouseLeave(BaseScreenComponent sender)
         {
             if (OnMouseLeave != null)
                 OnMouseLeave(this);
+        }
+
+        /// <summary>
+        /// Mouse is moving.
+        /// </summary>
+        protected virtual void MouseMove(int x, int y)
+        {
+            if (OnMouseMove != null)
+                OnMouseMove(x, y);
         }
 
         /// <summary>
