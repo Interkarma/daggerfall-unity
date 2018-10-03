@@ -79,6 +79,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             public Color shadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
             public Color selectedShadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
             public Color highlightedTextColor = DaggerfallUI.DaggerfallHighlightTextColor;
+            public Color highlightedSelectedTextColor = DaggerfallUI.DaggerfallBrighterSelectedTextColor;
 
             public ListItem(TextLabel textLabel)
             {
@@ -320,24 +321,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     currentLine += label.NumTextLines;                
                     label.StartCharacterIndex = horizontalScrollIndex;
                     label.RefreshLayout();
-                    if (i == selectedIndex)
-                    {
-                        label.TextColor = listItems[i].selectedTextColor;
-                        label.ShadowPosition = selectedShadowPosition;
-                        label.ShadowColor = listItems[i].selectedShadowColor;
-                    }
-                    else if (i == highlightedIndex)
-                    {
-                        label.TextColor = listItems[i].highlightedTextColor;
-                        label.ShadowPosition = selectedShadowPosition;
-                        label.ShadowColor = listItems[i].selectedShadowColor;
-                    }
-                    else
-                    {
-                        label.TextColor = listItems[i].textColor;
-                        label.ShadowPosition = shadowPosition;
-                        label.ShadowColor = listItems[i].shadowColor;
-                    }
+
+                    DecideTextColor(label, i);
 
                     label.Position = new Vector2(x, y);
                     label.Draw();
@@ -364,18 +349,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     else if (horizontalScrollMode == HorizontalScrollModes.PixelWise)
                         x = -horizontalScrollIndex;
                     label.RefreshLayout();
-                    if (i == selectedIndex)
-                    {
-                        label.TextColor = listItems[i].selectedTextColor;
-                        label.ShadowPosition = selectedShadowPosition;
-                        label.ShadowColor = listItems[i].selectedShadowColor;
-                    }
-                    else
-                    {
-                        label.TextColor = listItems[i].textColor;
-                        label.ShadowPosition = shadowPosition;
-                        label.ShadowColor = listItems[i].shadowColor;
-                    }
+
+                    DecideTextColor(label, i);
 
                     label.HorzPixelScrollOffset = x;
                     label.Position = new Vector2(x, y);
@@ -384,6 +359,34 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     y += label.TextHeight + rowSpacing;
                 }
             }           
+        }
+
+        private void DecideTextColor(TextLabel label, int i)
+        {
+            if (i == highlightedIndex && i == selectedIndex)
+            {
+                label.TextColor = listItems[i].highlightedSelectedTextColor;
+                label.ShadowPosition = selectedShadowPosition;
+                label.ShadowColor = listItems[i].selectedShadowColor;
+            }
+            else if (i == selectedIndex)
+            {
+                label.TextColor = listItems[i].selectedTextColor;
+                label.ShadowPosition = selectedShadowPosition;
+                label.ShadowColor = listItems[i].selectedShadowColor;
+            }
+            else if (i == highlightedIndex)
+            {
+                label.TextColor = listItems[i].highlightedTextColor;
+                label.ShadowPosition = selectedShadowPosition;
+                label.ShadowColor = listItems[i].selectedShadowColor;
+            }
+            else
+            {
+                label.TextColor = listItems[i].textColor;
+                label.ShadowPosition = shadowPosition;
+                label.ShadowColor = listItems[i].shadowColor;
+            }
         }
         protected override void MouseMove(int x, int y)
         {
