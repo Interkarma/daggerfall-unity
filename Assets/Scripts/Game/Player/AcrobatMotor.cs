@@ -152,7 +152,7 @@ namespace DaggerfallWorkshop.Game
             }
             else if (!climbingMotor.IsRappelling)
             {
-                const float antiBumpFactor = .75f;
+                const float antiBumpFactor = 20.75f;
                 float minRange = (controller.height / 2f);
                 float maxRange = minRange + 0.90f;
 
