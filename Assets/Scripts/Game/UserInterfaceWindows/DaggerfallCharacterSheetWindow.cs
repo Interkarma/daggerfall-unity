@@ -459,6 +459,236 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        string[] GetClassSpecials()
+        {
+            List<string> specials = new List<string>();
+            DFCareer career = GameManager.Instance.PlayerEntity.Career;
+
+            // Tolerances
+            Dictionary<DFCareer.Tolerance, string> tolerances = new Dictionary<DFCareer.Tolerance, string>
+            {
+                { DFCareer.Tolerance.CriticalWeakness, HardStrings.criticalWeakness },
+                { DFCareer.Tolerance.Immune, HardStrings.immunity },
+                { DFCareer.Tolerance.LowTolerance, HardStrings.lowTolerance },
+                { DFCareer.Tolerance.Resistant, HardStrings.resistance }
+            };
+
+            if (career.Paralysis != DFCareer.Tolerance.Normal)
+                specials.Add(tolerances[career.Paralysis] + " " + HardStrings.toParalysis);
+
+            if (career.Magic != DFCareer.Tolerance.Normal)
+                specials.Add(tolerances[career.Magic] + " " + HardStrings.toMagic);
+
+            if (career.Poison != DFCareer.Tolerance.Normal)
+                specials.Add(tolerances[career.Poison] + " " + HardStrings.toPoison);
+
+            if (career.Fire != DFCareer.Tolerance.Normal)
+                specials.Add(tolerances[career.Fire] + " " + HardStrings.toFire);
+
+            if (career.Frost != DFCareer.Tolerance.Normal)
+                specials.Add(tolerances[career.Frost] + " " + HardStrings.toFrost);
+
+            if (career.Shock != DFCareer.Tolerance.Normal)
+                specials.Add(tolerances[career.Shock] + " " + HardStrings.toShock);
+
+            if (career.Disease != DFCareer.Tolerance.Normal)
+                specials.Add(tolerances[career.Disease] + " " + HardStrings.toDisease);
+
+            // Weapon Proficiencies
+            Dictionary<DFCareer.Proficiency, string> profs = new Dictionary<DFCareer.Proficiency, string>
+            {
+                { DFCareer.Proficiency.Expert, HardStrings.expertiseIn },
+                { DFCareer.Proficiency.Forbidden, HardStrings.forbiddenWeaponry }
+            };
+
+            if (career.ShortBlades != DFCareer.Proficiency.Normal)
+                specials.Add(profs[career.ShortBlades] + " " + HardStrings.shortBlade);
+
+            if (career.LongBlades != DFCareer.Proficiency.Normal)
+                specials.Add(profs[career.LongBlades] + " " + HardStrings.longBlade);
+
+            if (career.HandToHand != DFCareer.Proficiency.Normal)
+                specials.Add(profs[career.HandToHand] + " " + HardStrings.handToHand);
+
+            if (career.Axes != DFCareer.Proficiency.Normal)
+                specials.Add(profs[career.Axes] + " " + HardStrings.axe);
+
+            if (career.BluntWeapons != DFCareer.Proficiency.Normal)
+                specials.Add(profs[career.BluntWeapons] + " " + HardStrings.bluntWeapon);
+
+            if (career.MissileWeapons != DFCareer.Proficiency.Normal)
+                specials.Add(profs[career.MissileWeapons] + " " + HardStrings.missileWeapon);
+
+            // Attack modifiers
+            Dictionary<DFCareer.AttackModifier, string> atkMods = new Dictionary<DFCareer.AttackModifier, string>
+            {
+                { DFCareer.AttackModifier.Bonus, HardStrings.bonusToHit },
+                { DFCareer.AttackModifier.Phobia, HardStrings.phobia }
+            };
+
+            if (career.UndeadAttackModifier != DFCareer.AttackModifier.Normal)
+                specials.Add(atkMods[career.UndeadAttackModifier] + " " + HardStrings.undead);
+
+            if (career.DaedraAttackModifier != DFCareer.AttackModifier.Normal)
+                specials.Add(atkMods[career.DaedraAttackModifier] + " " + HardStrings.daedra);
+
+            if (career.HumanoidAttackModifier != DFCareer.AttackModifier.Normal)
+                specials.Add(atkMods[career.HumanoidAttackModifier] + " " + HardStrings.humanoid);
+
+            if (career.AnimalsAttackModifier != DFCareer.AttackModifier.Normal)
+                specials.Add(atkMods[career.AnimalsAttackModifier] + " " + HardStrings.animals);
+
+            // Darkness/light powered magery
+            if (career.DarknessPoweredMagery != DFCareer.DarknessMageryFlags.Normal)
+            {
+                if ((career.DarknessPoweredMagery & DFCareer.DarknessMageryFlags.ReducedPowerInLight) == DFCareer.DarknessMageryFlags.ReducedPowerInLight)
+                    specials.Add(HardStrings.darknessPoweredMagery + " " + HardStrings.lowerMagicAbilityDaylight);
+                if ((career.DarknessPoweredMagery & DFCareer.DarknessMageryFlags.UnableToCastInLight) == DFCareer.DarknessMageryFlags.UnableToCastInLight)
+                    specials.Add(HardStrings.darknessPoweredMagery + " " + HardStrings.unableToUseMagicInDaylight);
+            }
+
+            if (career.LightPoweredMagery != DFCareer.LightMageryFlags.Normal)
+            {
+                if ((career.LightPoweredMagery & DFCareer.LightMageryFlags.ReducedPowerInDarkness) == DFCareer.LightMageryFlags.ReducedPowerInDarkness)
+                    specials.Add(HardStrings.lightPoweredMagery + " " + HardStrings.lowerMagicAbilityDarkness);
+                if ((career.LightPoweredMagery & DFCareer.LightMageryFlags.UnableToCastInDarkness) == DFCareer.LightMageryFlags.UnableToCastInDarkness)
+                    specials.Add(HardStrings.lightPoweredMagery + " " + HardStrings.unableToUseMagicInDarkness);
+            }
+
+            // Forbidden materials (multiple)
+            if (career.ForbiddenMaterials != 0)
+            {
+                Dictionary<DFCareer.MaterialFlags, string> forbMaterials = new Dictionary<DFCareer.MaterialFlags, string>
+                {
+                    { DFCareer.MaterialFlags.Adamantium, HardStrings.adamantium },
+                    { DFCareer.MaterialFlags.Daedric, HardStrings.daedric },
+                    { DFCareer.MaterialFlags.Dwarven, HardStrings.dwarven },
+                    { DFCareer.MaterialFlags.Ebony, HardStrings.ebony },
+                    { DFCareer.MaterialFlags.Elven, HardStrings.elven },
+                    { DFCareer.MaterialFlags.Iron, HardStrings.iron },
+                    { DFCareer.MaterialFlags.Mithril, HardStrings.mithril },
+                    { DFCareer.MaterialFlags.Orcish, HardStrings.orcish },
+                    { DFCareer.MaterialFlags.Silver, HardStrings.silver },
+                    { DFCareer.MaterialFlags.Steel, HardStrings.steel }
+                };
+                foreach (DFCareer.MaterialFlags flag in Enum.GetValues(typeof(DFCareer.MaterialFlags)))
+                {
+                    if ((career.ForbiddenMaterials & flag) == flag)
+                        specials.Add(HardStrings.forbiddenMaterial + " " + forbMaterials[flag]);
+                }
+            }
+
+            // Forbidden shields (multiple)
+            if (career.ForbiddenShields != 0)
+            {
+                Dictionary<DFCareer.ShieldFlags, string> forbShields = new Dictionary<DFCareer.ShieldFlags, string>
+                {
+                    { DFCareer.ShieldFlags.Buckler, HardStrings.buckler },
+                    { DFCareer.ShieldFlags.KiteShield, HardStrings.kiteShield },
+                    { DFCareer.ShieldFlags.RoundShield, HardStrings.roundShield },
+                    { DFCareer.ShieldFlags.TowerShield, HardStrings.towerShield }
+                };
+                foreach (DFCareer.ShieldFlags flag in Enum.GetValues(typeof(DFCareer.ShieldFlags)))
+                {
+                    if ((career.ForbiddenShields & flag) == flag)
+                        specials.Add(HardStrings.forbiddenShieldTypes + " " + forbShields[flag]);
+                }
+            }
+
+            // Forbidden armor (multiple)
+            if (career.ForbiddenArmors != 0)
+            {
+                Dictionary<DFCareer.ArmorFlags, string> forbArmors = new Dictionary<DFCareer.ArmorFlags, string>
+                {
+                    { DFCareer.ArmorFlags.Chain, HardStrings.chain },
+                    { DFCareer.ArmorFlags.Leather, HardStrings.leather },
+                    { DFCareer.ArmorFlags.Plate, HardStrings.plate }
+                };
+                foreach (DFCareer.ArmorFlags flag in Enum.GetValues(typeof(DFCareer.ArmorFlags)))
+                {
+                    if ((career.ForbiddenArmors & flag) == flag)
+                        specials.Add(HardStrings.forbiddenArmorType + " " + forbArmors[flag]);
+                }
+            }
+
+            // Forbidden proficiencies (flags)
+            // Expert proficiencies (flags)
+            // Omitted - redundant
+
+            // Spell point multiplier
+            if (career.SpellPointMultiplier != DFCareer.SpellPointMultipliers.Times_0_50)
+            {
+                Dictionary<DFCareer.SpellPointMultipliers, string> spellPtMults = new Dictionary<DFCareer.SpellPointMultipliers, string>
+                {
+                    { DFCareer.SpellPointMultipliers.Times_1_00, HardStrings.intInSpellPoints },
+                    { DFCareer.SpellPointMultipliers.Times_1_50, HardStrings.intInSpellPoints15 },
+                    { DFCareer.SpellPointMultipliers.Times_1_75, HardStrings.intInSpellPoints175 },
+                    { DFCareer.SpellPointMultipliers.Times_2_00, HardStrings.intInSpellPoints2 },
+                    { DFCareer.SpellPointMultipliers.Times_3_00, HardStrings.intInSpellPoints3 },
+                };
+                specials.Add(HardStrings.increasedMagery + " " + spellPtMults[career.SpellPointMultiplier]);
+            }
+
+            // Spell absorption
+            if (career.SpellAbsorption != DFCareer.SpellAbsorptionFlags.None)
+            {
+                Dictionary<DFCareer.SpellAbsorptionFlags, string> absorbConds = new Dictionary<DFCareer.SpellAbsorptionFlags, string>
+                {
+                    { DFCareer.SpellAbsorptionFlags.Always, HardStrings.general },
+                    { DFCareer.SpellAbsorptionFlags.InDarkness, HardStrings.inDarkness },
+                    { DFCareer.SpellAbsorptionFlags.InLight, HardStrings.inLight }
+                };
+                specials.Add(HardStrings.spellAbsorption + " " + absorbConds[career.SpellAbsorption]);
+            }
+
+            // Spell point regeneration
+            if (career.NoRegenSpellPoints)
+                specials.Add(HardStrings.inabilityToRegen);
+
+            // Talents
+            if (career.AcuteHearing)
+                specials.Add(HardStrings.acuteHearing);
+
+            if (career.Athleticism)
+                specials.Add(HardStrings.athleticism);
+
+            if (career.AdrenalineRush)
+                specials.Add(HardStrings.adrenalineRush);
+
+            // Regeneration and rapid healing
+            if (career.Regeneration != DFCareer.RegenerationFlags.None)
+            {
+                Dictionary<DFCareer.RegenerationFlags, string> regenConds = new Dictionary<DFCareer.RegenerationFlags, string>
+                {
+                    { DFCareer.RegenerationFlags.Always, HardStrings.general },
+                    { DFCareer.RegenerationFlags.InDarkness, HardStrings.inDarkness },
+                    { DFCareer.RegenerationFlags.InLight, HardStrings.inLight },
+                    { DFCareer.RegenerationFlags.InWater, HardStrings.whileImmersed }
+                };
+                specials.Add(HardStrings.regenerateHealth + " " + regenConds[career.Regeneration]);
+            }
+
+            if (career.RapidHealing != DFCareer.RapidHealingFlags.None)
+            {
+                Dictionary<DFCareer.RapidHealingFlags, string> rapidHealingConds = new Dictionary<DFCareer.RapidHealingFlags, string>
+                {
+                    { DFCareer.RapidHealingFlags.Always, HardStrings.general },
+                    { DFCareer.RapidHealingFlags.InDarkness, HardStrings.inDarkness },
+                    { DFCareer.RapidHealingFlags.InLight, HardStrings.inLight }
+                };
+                specials.Add(HardStrings.rapidHealing + " " + rapidHealingConds[career.RapidHealing]);
+            }
+
+            // Damage
+            if (career.DamageFromSunlight)
+                specials.Add(HardStrings.damage + " " + HardStrings.fromSunlight);
+
+            if (career.DamageFromHolyPlaces)
+                specials.Add(HardStrings.damage + " " + HardStrings.fromHolyPlaces);
+
+            return specials.ToArray();
+        }
+
         #endregion
 
         #region Event Handlers
@@ -510,6 +740,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         void HistoryButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            DaggerfallMessageBox advantageTextBox = DaggerfallUI.MessageBox(GetClassSpecials());
+            advantageTextBox.OnClose += AdvantageTextBox_OnClose;
+        }
+
+        void AdvantageTextBox_OnClose()
         {
             uiManager.PostMessage(DaggerfallUIMessages.dfuiOpenPlayerHistoryWindow);
         }
