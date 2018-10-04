@@ -101,7 +101,7 @@ namespace DaggerfallWorkshop.Game
             bool riding = playerMotor.IsRiding;
             bool pressedCrouch = InputManager.Instance.ActionComplete(InputManager.Actions.Crouch);
             bool climbing = climbingMotor.IsClimbing;
-            timerMax = timerSlow;
+            //timerMax = timerSlow;
             if (onWater && !toggleSink)
             {
                 timerMax = timerSlow;
