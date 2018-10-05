@@ -442,7 +442,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         bool CheckIfDoneLeveling()
         {
-            if (statsRollout.BonusPool > 0)
+            if (statsRollout.BonusPool > 0 && !statsRollout.WorkingStats.IsAll100())
             {
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
                 messageBox.SetText(HardStrings.mustDistributeBonusPoints);
