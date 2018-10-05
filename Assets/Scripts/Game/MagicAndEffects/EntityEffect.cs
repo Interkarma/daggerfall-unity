@@ -94,14 +94,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         int[] ResistanceMods { get; }
 
         /// <summary>
-        /// Gets or sets bundle type for grouping effects.
+        /// Gets or sets parent bundle for this effect.
+        /// Will be null for template effects.
         /// </summary>
-        BundleTypes BundleGroup { get; set; }
-
-        /// <summary>
-        /// Gets or sets element type for calculating resistences.
-        /// </summary>
-        ElementTypes ElementType { get; set; }
+        LiveEffectBundle ParentBundle { get; set; }
 
         /// <summary>
         /// True if effect has ended by calling End();
@@ -182,8 +178,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         int[] statMods = new int[DaggerfallStats.Count];
         int[] skillMods = new int[DaggerfallSkills.Count];
         int[] resistanceMods = new int[DaggerfallResistances.Count];
-        BundleTypes bundleGroup = BundleTypes.None;
-        ElementTypes elementType = ElementTypes.None;
+        LiveEffectBundle parentBundle;
         bool effectEnded = false;
 
         #endregion
@@ -286,16 +281,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             get { return GetDisplayName(); }
         }
 
-        public BundleTypes BundleGroup
+        public LiveEffectBundle ParentBundle
         {
-            get { return bundleGroup; }
-            set { bundleGroup = value; }
-        }
-
-        public ElementTypes ElementType
-        {
-            get { return elementType; }
-            set { elementType = value; }
+            get { return parentBundle; }
+            set { parentBundle = value; }
         }
 
         public bool HasEnded
@@ -350,8 +339,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             chanceSuccess = effectData.chanceSuccess;
             statMods = effectData.statMods;
             skillMods = effectData.skillMods;
-            bundleGroup = effectData.bundleGroup;
-            elementType = effectData.elementType;
             variantCount = effectData.variantCount;
             currentVariant = effectData.currentVariant;
             effectEnded = effectData.effectEnded;

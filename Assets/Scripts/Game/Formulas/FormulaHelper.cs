@@ -1004,14 +1004,20 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         public static int SavingThrow(IEntityEffect sourceEffect, DaggerfallEntity target)
         {
+            if (sourceEffect == null || sourceEffect.ParentBundle == null)
+                return 100;
+
             DFCareer.EffectFlags effectFlags = GetEffectFlags(sourceEffect);
             int modifier = GetResistanceModifier(effectFlags, target);
 
-            return SavingThrow(sourceEffect.ElementType, effectFlags, target, modifier);
+            return SavingThrow(sourceEffect.ParentBundle.elementType, effectFlags, target, modifier);
         }
 
         public static int ModifyEffectAmount(IEntityEffect sourceEffect, DaggerfallEntity target, int amount)
         {
+            if (sourceEffect == null || sourceEffect.ParentBundle == null)
+                return amount;
+
             int percentDamageOrDuration = SavingThrow(sourceEffect, target);
             float percent = percentDamageOrDuration / 100f;
 
@@ -1060,7 +1066,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                 result |= DFCareer.EffectFlags.Disease;
 
             // Elemental
-            switch (effect.ElementType)
+            switch (effect.ParentBundle.elementType)
             {
                 case ElementTypes.Fire:
                     result |= DFCareer.EffectFlags.Fire;

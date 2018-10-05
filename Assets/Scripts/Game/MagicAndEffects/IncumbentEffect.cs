@@ -72,7 +72,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             LiveEffectBundle[] bundles = manager.EffectBundles;
             foreach (LiveEffectBundle bundle in bundles)
             {
-                if (bundle.bundleType == BundleGroup)
+                if (bundle.bundleType == ParentBundle.bundleType)
                 {
                     foreach (IEntityEffect effect in bundle.liveEffects)
                     {
