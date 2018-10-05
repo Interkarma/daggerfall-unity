@@ -38,6 +38,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string cannotCarryAnymore = "You cannot carry anymore stuff.";
         public const string cannotHoldAnymore = "Your cart cannot hold anymore stuff.";
         public const string cannotCarryGold = "You cannot carry that much gold.";
+        public const string cannotFloat = "You are carrying too much to stay afloat.";
         public const string youHaveNoArrows = "You have no arrows.";
 
         public const string enterSaveName = "Enter save name";
