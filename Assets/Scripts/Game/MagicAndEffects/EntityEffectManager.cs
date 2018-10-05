@@ -60,8 +60,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         DaggerfallEntityBehaviour entityBehaviour = null;
         bool isPlayerEntity = false;
 
-        List<InstancedBundle> instancedBundles = new List<InstancedBundle>();
-        List<InstancedBundle> bundlesToRemove = new List<InstancedBundle>();
+        List<LiveEffectBundle> instancedBundles = new List<LiveEffectBundle>();
+        List<LiveEffectBundle> bundlesToRemove = new List<LiveEffectBundle>();
         bool wipeAllBundles = false;
 
         int[] directStatMods = new int[DaggerfallStats.Count];
@@ -71,28 +71,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         int[] combinedResistanceMods = new int[DaggerfallResistances.Count];
         float refreshModsTimer = 0;
         const float refreshModsDelay = 0.2f;
-
-        #endregion
-
-        #region Structs
-
-        /// <summary>
-        /// Stores an instanced effect bundle for executing effects.
-        /// </summary>
-        public struct InstancedBundle
-        {
-            public int version;
-            public BundleTypes bundleType;
-            public TargetTypes targetType;
-            public ElementTypes elementType;
-            public string name;
-            public int iconIndex;
-            public DaggerfallEntityBehaviour caster;
-            public EntityTypes casterEntityType;
-            public ulong casterLoadID;
-            public DaggerfallUnityItem fromEquippedItem;
-            public List<IEntityEffect> liveEffects;
-        }
 
         #endregion
 
@@ -123,7 +101,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             get { return isPlayerEntity; }
         }
 
-        public InstancedBundle[] EffectBundles
+        public LiveEffectBundle[] EffectBundles
         {
             get { return instancedBundles.ToArray(); }
         }
@@ -138,7 +116,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             get { return GetDiseaseCount(); }
         }
 
-        public InstancedBundle[] DiseaseBundles
+        public LiveEffectBundle[] DiseaseBundles
         {
             get { return GetDiseaseBundles(); }
         }
@@ -148,7 +126,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             get { return GetPoisonCount(); }
         }
 
-        public InstancedBundle[] PoisonBundles
+        public LiveEffectBundle[] PoisonBundles
         {
             get { return GetPoisonBundles(); }
         }
@@ -331,7 +309,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
 
             // Create new instanced bundle and copy settings from source bundle
-            InstancedBundle instancedBundle = new InstancedBundle();
+            LiveEffectBundle instancedBundle = new LiveEffectBundle();
             instancedBundle.version = sourceBundle.Settings.Version;
             instancedBundle.bundleType = sourceBundle.Settings.BundleType;
             instancedBundle.targetType = sourceBundle.Settings.TargetType;
@@ -431,7 +409,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// <typeparam name="T">Found incumbent effect of type T or null.</typeparam>
         public IEntityEffect FindIncumbentEffect<T>()
         {
-            foreach (InstancedBundle bundle in instancedBundles)
+            foreach (LiveEffectBundle bundle in instancedBundles)
             {
                 foreach (IEntityEffect effect in bundle.liveEffects)
                 {
@@ -458,7 +436,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
 
             int remaining = amount;
-            foreach (InstancedBundle bundle in instancedBundles)
+            foreach (LiveEffectBundle bundle in instancedBundles)
             {
                 foreach (BaseEntityEffect effect in bundle.liveEffects)
                 {
@@ -543,7 +521,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         public void ClearSpellBundles()
         {
-            foreach (InstancedBundle bundle in instancedBundles)
+            foreach (LiveEffectBundle bundle in instancedBundles)
             {
                 // Expire spell bundles
                 if (bundle.bundleType == BundleTypes.Spell)
@@ -614,7 +592,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 return;
 
             // Check all running bundles for any linked to this item and schedule instant removal
-            foreach (InstancedBundle bundle in instancedBundles)
+            foreach (LiveEffectBundle bundle in instancedBundles)
             {
                 if (bundle.fromEquippedItem != null && bundle.fromEquippedItem.UID == item.UID)
                     bundlesToRemove.Add(bundle);
@@ -883,8 +861,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public void CureDisease(Diseases disease)
         {
             // Find specific disease incumbent
-            InstancedBundle[] bundles = GetDiseaseBundles();
-            foreach (InstancedBundle bundle in bundles)
+            LiveEffectBundle[] bundles = GetDiseaseBundles();
+            foreach (LiveEffectBundle bundle in bundles)
             {
                 // Must have a live effect
                 if (bundle.liveEffects == null || bundle.liveEffects.Count == 0)
@@ -907,8 +885,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public void CureAllDiseases()
         {
             // Cure all disease bundles
-            InstancedBundle[] bundles = GetDiseaseBundles();
-            foreach (InstancedBundle bundle in bundles)
+            LiveEffectBundle[] bundles = GetDiseaseBundles();
+            foreach (LiveEffectBundle bundle in bundles)
             {
                 RemoveBundle(bundle);
                 Debug.LogFormat("Removing disease bundle {0}", bundle.GetHashCode());
@@ -918,7 +896,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         int GetDiseaseCount()
         {
             int count = 0;
-            foreach (InstancedBundle bundle in instancedBundles)
+            foreach (LiveEffectBundle bundle in instancedBundles)
             {
                 if (bundle.bundleType == BundleTypes.Disease)
                     count++;
@@ -927,10 +905,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             return count;
         }
 
-        InstancedBundle[] GetDiseaseBundles()
+        LiveEffectBundle[] GetDiseaseBundles()
         {
-            List<InstancedBundle> diseaseBundles = new List<InstancedBundle>();
-            foreach (InstancedBundle bundle in instancedBundles)
+            List<LiveEffectBundle> diseaseBundles = new List<LiveEffectBundle>();
+            foreach (LiveEffectBundle bundle in instancedBundles)
             {
                 if (bundle.bundleType == BundleTypes.Disease)
                     diseaseBundles.Add(bundle);
@@ -942,7 +920,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         int GetPoisonCount()
         {
             int count = 0;
-            foreach (InstancedBundle bundle in instancedBundles)
+            foreach (LiveEffectBundle bundle in instancedBundles)
             {
                 if (bundle.bundleType == BundleTypes.Poison)
                     count++;
@@ -951,10 +929,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             return count;
         }
 
-        InstancedBundle[] GetPoisonBundles()
+        LiveEffectBundle[] GetPoisonBundles()
         {
-            List<InstancedBundle> poisonBundles = new List<InstancedBundle>();
-            foreach (InstancedBundle bundle in instancedBundles)
+            List<LiveEffectBundle> poisonBundles = new List<LiveEffectBundle>();
+            foreach (LiveEffectBundle bundle in instancedBundles)
             {
                 if (bundle.bundleType == BundleTypes.Poison)
                     poisonBundles.Add(bundle);
@@ -1000,7 +978,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             if (entityBehaviour.Entity.CurrentHealth <= 0 || !entityBehaviour.enabled)
                 return;
 
-            foreach (InstancedBundle bundle in instancedBundles)
+            foreach (LiveEffectBundle bundle in instancedBundles)
             {
                 foreach (IEntityEffect effect in bundle.liveEffects)
                 {
@@ -1021,7 +999,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 return;
 
             // Run all bundles
-            foreach(InstancedBundle bundle in instancedBundles)
+            foreach(LiveEffectBundle bundle in instancedBundles)
             {
                 // Run effects for this bundle
                 bool hasRemainingEffectRounds = false;
@@ -1053,7 +1031,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             RemovePendingBundles();
         }
 
-        void RemoveBundle(InstancedBundle bundle)
+        void RemoveBundle(LiveEffectBundle bundle)
         {
             foreach (IEntityEffect effect in bundle.liveEffects)
                 effect.End();
@@ -1067,7 +1045,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             if (bundlesToRemove.Count > 0)
             {
-                foreach (InstancedBundle bundle in bundlesToRemove)
+                foreach (LiveEffectBundle bundle in bundlesToRemove)
                 {
                     RemoveBundle(bundle);
                     Debug.LogFormat("Removing bundle {0}", bundle.GetHashCode());
@@ -1129,7 +1107,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             Array.Clear(combinedResistanceMods, 0, DaggerfallResistances.Count);
 
             // Add together every mod for every live effect
-            foreach (InstancedBundle bundle in instancedBundles)
+            foreach (LiveEffectBundle bundle in instancedBundles)
             {
                 foreach (IEntityEffect effect in bundle.liveEffects)
                 {
@@ -1347,7 +1325,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public EffectBundleSaveData_v1[] GetInstancedBundlesSaveData()
         {
             List<EffectBundleSaveData_v1> bundlesSaveData = new List<EffectBundleSaveData_v1>();
-            foreach (InstancedBundle bundle in instancedBundles)
+            foreach (LiveEffectBundle bundle in instancedBundles)
             {
                 EffectBundleSaveData_v1 bundleData = new EffectBundleSaveData_v1();
                 bundleData.version = bundle.version;
@@ -1409,7 +1387,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
             foreach(EffectBundleSaveData_v1 bundleData in data)
             {
-                InstancedBundle instancedBundle = new InstancedBundle();
+                LiveEffectBundle instancedBundle = new LiveEffectBundle();
                 instancedBundle.version = bundleData.version;
                 instancedBundle.bundleType = bundleData.bundleType;
                 instancedBundle.targetType = bundleData.targetType;

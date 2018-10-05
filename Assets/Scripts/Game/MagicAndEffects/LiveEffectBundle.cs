@@ -1,0 +1,35 @@
+// Project:         Daggerfall Tools For Unity
+// Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
+// Web Site:        http://www.dfworkshop.net
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Source Code:     https://github.com/Interkarma/daggerfall-unity
+// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
+// Contributors:    
+// 
+// Notes:
+//
+
+using System.Collections.Generic;
+using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Items;
+
+namespace DaggerfallWorkshop.Game.MagicAndEffects
+{
+    /// <summary>
+    /// Stores an instanced effect bundle for executing effects.
+    /// </summary>
+    public class LiveEffectBundle
+    {
+        public int version;
+        public BundleTypes bundleType;
+        public TargetTypes targetType;
+        public ElementTypes elementType;
+        public string name;
+        public int iconIndex;
+        public DaggerfallEntityBehaviour caster;
+        public EntityTypes casterEntityType;
+        public ulong casterLoadID;
+        public DaggerfallUnityItem fromEquippedItem;
+        public List<IEntityEffect> liveEffects;
+    }
+}

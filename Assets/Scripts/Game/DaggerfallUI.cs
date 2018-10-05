@@ -1209,8 +1209,8 @@ namespace DaggerfallWorkshop.Game
 
                 // Get disease descriptions for each disease effect
                 TextFile.Token[] tokens = null;
-                EntityEffectManager.InstancedBundle[] bundles = playerEffectManager.DiseaseBundles;
-                foreach (EntityEffectManager.InstancedBundle bundle in bundles)
+                LiveEffectBundle[] bundles = playerEffectManager.DiseaseBundles;
+                foreach (LiveEffectBundle bundle in bundles)
                 {
                     foreach (IEntityEffect effect in bundle.liveEffects)
                     {
@@ -1234,8 +1234,8 @@ namespace DaggerfallWorkshop.Game
 
                 // Only report poisoning if one or more poisons are active
                 bool poisonActive = false;
-                EntityEffectManager.InstancedBundle[] poisonBundles = playerEffectManager.PoisonBundles;
-                foreach(EntityEffectManager.InstancedBundle poisonBundle in poisonBundles)
+                LiveEffectBundle[] poisonBundles = playerEffectManager.PoisonBundles;
+                foreach(LiveEffectBundle poisonBundle in poisonBundles)
                 {
                     foreach (IEntityEffect effect in poisonBundle.liveEffects)
                     {
