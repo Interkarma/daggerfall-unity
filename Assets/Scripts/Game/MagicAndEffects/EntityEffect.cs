@@ -518,7 +518,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 magnitude = baseMagnitude + plusMagnitude * multiplier;
             }
 
-            magnitude = FormulaHelper.ModifyEffectAmount(this, manager.EntityBehaviour.Entity, magnitude);
+            if (ParentBundle.targetType != TargetTypes.CasterOnly)
+                magnitude = FormulaHelper.ModifyEffectAmount(this, manager.EntityBehaviour.Entity, magnitude);
 
             return magnitude;
         }
