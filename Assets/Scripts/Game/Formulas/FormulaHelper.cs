@@ -972,9 +972,9 @@ namespace DaggerfallWorkshop.Game.Formulas
                 return 0;
             if (toleranceFlags == DFCareer.Tolerance.CriticalWeakness)
                 return 100;
-            if (toleranceFlags == DFCareer.Tolerance.Resistant)
-                savingThrow = 25;
             if (toleranceFlags == DFCareer.Tolerance.LowTolerance)
+                savingThrow = 25;
+            if (toleranceFlags == DFCareer.Tolerance.Resistant)
                 savingThrow = 75;
 
             savingThrow += biographyMod + modifier;
