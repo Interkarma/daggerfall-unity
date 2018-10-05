@@ -129,8 +129,8 @@ namespace DaggerfallWorkshop.Game
                         Vector3 rappelPosition = Vector3.zero;
                         // create C-shaped movement to plant self against wall beneath
                         Vector3 pos = lastPosition;
-                        float yDist = 1.40f;
-                        float xzDist = 0.13f;
+                        float yDist = 1.60f;
+                        float xzDist = 0.17f;
                         rappelPosition.x = Mathf.Lerp(pos.x, pos.x - (controller.transform.forward.x * xzDist), Mathf.Sin(Mathf.PI * (rappelTimer / firstTimerMax)));
                         rappelPosition.z = Mathf.Lerp(pos.z, pos.z - (controller.transform.forward.z * xzDist), Mathf.Sin(Mathf.PI * (rappelTimer / firstTimerMax)));
                         rappelPosition.y = Mathf.Lerp(pos.y, pos.y - yDist, rappelTimer / firstTimerMax);
@@ -158,13 +158,14 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public void ClimbingCheck()
         {
+            bool advancedClimbingOn = DaggerfallUnity.Settings.AdvancedClimbing;
             float startClimbHorizontalTolerance;
             float startClimbSkillCheckFrequency;
             bool airborneGraspWall = (!isClimbing && !isSlipping && acrobatMotor.Falling);
             bool movingBack = InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards);
 
-
             float minRange = (controller.height / 2f);
+            // greater maxRange values mean player won't rappel from longer heights
             float maxRange = minRange + 2.00f;
 
             // are we going to step off something too short for rappel?
@@ -174,10 +175,12 @@ namespace DaggerfallWorkshop.Game
             bool groundCancelsClimbOrRappel = (((isClimbing && (movingBack || isSlipping)) || airborneGraspWall)
                 && Physics.Raycast(controller.transform.position, Vector3.down, controller.height / 2 + 0.12f));
 
-            if (DaggerfallUnity.Settings.AdvancedClimbing && !groundCancelsClimbOrRappel && !tooShortForRappel)
+            if (advancedClimbingOn && !groundCancelsClimbOrRappel && 
+                // if already rappelling, don't evaluate if height from ground is too short for rappel
+                (IsRappelling || (!IsRappelling && !tooShortForRappel)))
                 RappelChecks(airborneGraspWall);
 
-            if (DaggerfallUnity.Settings.AdvancedClimbing && airborneGraspWall)
+            if (advancedClimbingOn && airborneGraspWall)
             {
                 if (IsRappelling)
                 {   // very lenient because we're trying to attach to wall with guarunteed success
@@ -197,7 +200,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             bool inputAbortCondition;
-            if (DaggerfallUnity.Settings.AdvancedClimbing)
+            if (advancedClimbingOn)
             {
                 // TODO: prevent crouch from toggling crouch when aborting climb
                 inputAbortCondition = (InputManager.Instance.HasAction(InputManager.Actions.Crouch)
@@ -222,7 +225,7 @@ namespace DaggerfallWorkshop.Game
                 // quit climbing if climbing down and ground is really close, prevents teleportation bug
                 || groundCancelsClimbOrRappel)
             {
-                if (isClimbing && inputAbortCondition && DaggerfallUnity.Settings.AdvancedClimbing)
+                if (isClimbing && inputAbortCondition && advancedClimbingOn)
                     WallEject = true;
                 isClimbing = false;
                 isSlipping = false;
@@ -328,7 +331,8 @@ namespace DaggerfallWorkshop.Game
             Debug.DrawRay(controller.transform.position, wallDirection, Color.black);
             if (Physics.CapsuleCast(p1, p2, controller.radius, wallDirection, out hit, 0.20f))
             {
-                myLedgeDirection = -hit.normal;
+                // Get the negative horizontal component of the hitnormal, so gabled roofs don't mess it up
+                myLedgeDirection = Vector3.ProjectOnPlane(-hit.normal, Vector3.up).normalized;
 
                 // set origin of strafe ray to y level of controller
                 // direction is set to hitnormal until it can be adjusted when we have a side movement direction
