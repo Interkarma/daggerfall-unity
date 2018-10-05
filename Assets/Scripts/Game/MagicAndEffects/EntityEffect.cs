@@ -13,10 +13,8 @@ using System;
 using UnityEngine;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
-using DaggerfallWorkshop.Game.Serialization;
-using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 using DaggerfallWorkshop.Utility;
-using FullSerializer;
+using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects
 {
@@ -101,6 +99,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         BundleTypes BundleGroup { get; set; }
 
         /// <summary>
+        /// Gets or sets element type for calculating resistences.
+        /// </summary>
+        ElementTypes ElementType { get; set; }
+
+        /// <summary>
         /// True if effect has ended by calling End();
         /// </summary>
         bool HasEnded { get; }
@@ -180,6 +183,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         int[] skillMods = new int[DaggerfallSkills.Count];
         int[] resistanceMods = new int[DaggerfallResistances.Count];
         BundleTypes bundleGroup = BundleTypes.None;
+        ElementTypes elementType = ElementTypes.None;
         bool effectEnded = false;
 
         #endregion
@@ -288,6 +292,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             set { bundleGroup = value; }
         }
 
+        public ElementTypes ElementType
+        {
+            get { return elementType; }
+            set { elementType = value; }
+        }
+
         public bool HasEnded
         {
             get { return effectEnded; }
@@ -341,6 +351,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             statMods = effectData.statMods;
             skillMods = effectData.skillMods;
             bundleGroup = effectData.bundleGroup;
+            elementType = effectData.elementType;
             variantCount = effectData.variantCount;
             currentVariant = effectData.currentVariant;
             effectEnded = effectData.effectEnded;
@@ -507,6 +518,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             if (caster == null)
                 Debug.LogWarningFormat("GetMagnitude() for {0} has no caster.", Properties.Key);
 
+            if (manager == null)
+                Debug.LogWarningFormat("GetMagnitude() for {0} has no parent manager.", Properties.Key);
+
             int magnitude = 0;
             if (Properties.SupportMagnitude)
             {
@@ -516,6 +530,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 int multiplier = (int)Mathf.Floor(casterLevel / settings.MagnitudePerLevel);
                 magnitude = baseMagnitude + plusMagnitude * multiplier;
             }
+
+            magnitude = FormulaHelper.ModifyEffectAmount(this, manager.EntityBehaviour.Entity, magnitude);
 
             return magnitude;
         }

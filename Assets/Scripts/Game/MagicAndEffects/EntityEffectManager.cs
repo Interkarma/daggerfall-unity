@@ -358,8 +358,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     continue;
                 }
 
-                // Set bundle group
+                // Set bundle group and element type
                 effect.BundleGroup = sourceBundle.Settings.BundleType;
+                effect.ElementType = sourceBundle.Settings.ElementType;
 
                 // Spell absorption - must have a caster entity set
                 if (sourceBundle.CasterEntityBehaviour)
@@ -1332,6 +1333,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             public int[] statMods;
             public int[] skillMods;
             public BundleTypes bundleGroup;
+            public ElementTypes elementType;
             public bool isIncumbent;
             public int variantCount;
             public int currentVariant;
@@ -1385,6 +1387,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             effectData.statMods = effect.StatMods;
             effectData.skillMods = effect.SkillMods;
             effectData.bundleGroup = effect.BundleGroup;
+            effectData.elementType = effect.ElementType;
             effectData.isIncumbent = (effect is IncumbentEffect) ? (effect as IncumbentEffect).IsIncumbent : false;
             effectData.variantCount = effect.VariantCount;
             effectData.currentVariant = effect.CurrentVariant;

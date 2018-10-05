@@ -16,6 +16,7 @@ using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Guilds;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.MagicAndEffects;
+using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 using System.Collections.Generic;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Items;
@@ -982,7 +983,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             else if (elementType == ElementTypes.Magic && target == playerEntity && playerEntity.Race == Races.Breton)
                 savingThrow += 30;
 
-            Mathf.Clamp(savingThrow, 5, 95);
+            savingThrow = Mathf.Clamp(savingThrow, 5, 95);
 
             int percentDamageOrDuration = 0;
             int roll = UnityEngine.Random.Range(1, 100 + 1);
@@ -999,6 +1000,22 @@ namespace DaggerfallWorkshop.Game.Formulas
                 percentDamageOrDuration = 100;
 
             return percentDamageOrDuration;
+        }
+
+        public static int SavingThrow(IEntityEffect sourceEffect, DaggerfallEntity target)
+        {
+            DFCareer.EffectFlags effectFlags = GetEffectFlags(sourceEffect);
+            int modifier = GetResistanceModifier(effectFlags, target);
+
+            return SavingThrow(sourceEffect.ElementType, effectFlags, target, modifier);
+        }
+
+        public static int ModifyEffectAmount(IEntityEffect sourceEffect, DaggerfallEntity target, int amount)
+        {
+            int percentDamageOrDuration = SavingThrow(sourceEffect, target);
+            float percent = percentDamageOrDuration / 100f;
+
+            return (int)(amount * percent);
         }
 
         /// <summary>
@@ -1024,6 +1041,67 @@ namespace DaggerfallWorkshop.Game.Formulas
                 default:
                     throw new Exception(string.Format("ClassicElementIndexToElementType() unknown elementIndex {0}.", elementIndex));
             }
+        }
+
+        /// <summary>
+        /// Gets DFCareer.EffectFlags from an effect.
+        /// Note: If effect is not instanced by a bundle then it will not have an element type.
+        /// </summary>
+        /// <param name="effect">Source effect.</param>
+        /// <returns>DFCareer.EffectFlags.</returns>
+        public static DFCareer.EffectFlags GetEffectFlags(IEntityEffect effect)
+        {
+            DFCareer.EffectFlags result = DFCareer.EffectFlags.None;
+
+            // Paralysis/Disease
+            if (effect is Paralyze)
+                result |= DFCareer.EffectFlags.Paralysis;
+            if (effect is DiseaseEffect)
+                result |= DFCareer.EffectFlags.Disease;
+
+            // Elemental
+            switch (effect.ElementType)
+            {
+                case ElementTypes.Fire:
+                    result |= DFCareer.EffectFlags.Fire;
+                    break;
+                case ElementTypes.Cold:
+                    result |= DFCareer.EffectFlags.Frost;
+                    break;
+                case ElementTypes.Poison:
+                    result |= DFCareer.EffectFlags.Poison;
+                    break;
+                case ElementTypes.Shock:
+                    result |= DFCareer.EffectFlags.Shock;
+                    break;
+                case ElementTypes.Magic:
+                    result |= DFCareer.EffectFlags.Magic;
+                    break;
+            }
+
+            return result;
+        }
+
+        public static int GetResistanceModifier(DFCareer.EffectFlags effectFlags, DaggerfallEntity target)
+        {
+            int result = 0;
+
+            // Will only read best matching resistance modifier from flags - priority is given to disease/poison over elemental
+            // Note disease/poison resistance are both the same here for purposes of saving throw
+            if ((effectFlags & DFCareer.EffectFlags.Disease) == DFCareer.EffectFlags.Disease || (effectFlags & DFCareer.EffectFlags.Poison) == DFCareer.EffectFlags.Poison)
+                result = target.Resistances.LivePoison;
+            else if ((effectFlags & DFCareer.EffectFlags.Fire) == DFCareer.EffectFlags.Fire)
+                result = target.Resistances.LiveFire;
+            else if ((effectFlags & DFCareer.EffectFlags.Frost) == DFCareer.EffectFlags.Frost)
+                result = target.Resistances.LiveCold;
+            else if ((effectFlags & DFCareer.EffectFlags.Poison) == DFCareer.EffectFlags.Poison)
+                result = target.Resistances.LivePoison;
+            else if ((effectFlags & DFCareer.EffectFlags.Shock) == DFCareer.EffectFlags.Shock)
+                result = target.Resistances.LiveShock;
+            else if ((effectFlags & DFCareer.EffectFlags.Magic) == DFCareer.EffectFlags.Magic)
+                result = target.Resistances.LiveMagic;
+
+            return result;
         }
 
         #endregion
