@@ -592,10 +592,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
             else
             {
-                if (!string.IsNullOrEmpty(properties.GroupName) && !string.IsNullOrEmpty(properties.SubGroupName))
-                    return properties.DisplayName = string.Format("{0} {1}", properties.GroupName, properties.SubGroupName);
-                else if (!string.IsNullOrEmpty(properties.GroupName) && string.IsNullOrEmpty(properties.SubGroupName))
-                    return properties.DisplayName = properties.GroupName;
+                if (!string.IsNullOrEmpty(Properties.GroupName) && !string.IsNullOrEmpty(Properties.SubGroupName))
+                    return properties.DisplayName = string.Format("{0} {1}", Properties.GroupName, Properties.SubGroupName);
+                else if (!string.IsNullOrEmpty(Properties.GroupName) && string.IsNullOrEmpty(Properties.SubGroupName))
+                    return properties.DisplayName = Properties.GroupName;
                 else
                     return properties.DisplayName = TextManager.Instance.GetText("ClassicEffect", "noName");
             }
