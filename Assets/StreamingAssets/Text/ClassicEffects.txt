@@ -67,8 +67,10 @@ spellPoints,                Spell Points
 disease,                    Disease
 paralyzation,               Paralyzation
 
-daedra,                     Daedra
+animal,                     Animal
 undead,                     Undead
+humanoid,                   Humanoid
+daedra,                     Daedra
 
 normal,                     Normal
 true,                       True
