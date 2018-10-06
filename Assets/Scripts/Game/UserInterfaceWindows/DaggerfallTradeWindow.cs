@@ -493,9 +493,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     // Add if not equipped & accepted for selling
                     DaggerfallUnityItem item = localItems.GetItem(i);
-                    if (!item.IsEquipped &&
-                        ((windowMode == WindowModes.Sell && itemTypesAccepted.Contains(item.ItemGroup)) ||
-                         (windowMode == WindowModes.SellMagic && item.IsEnchanted)))
+                    if (!item.IsEquipped && (
+                            (windowMode != WindowModes.Sell && windowMode != WindowModes.SellMagic) ||
+                            (windowMode == WindowModes.Sell && itemTypesAccepted.Contains(item.ItemGroup)) ||
+                            (windowMode == WindowModes.SellMagic && item.IsEnchanted)
+                       ))
                         AddLocalItem(item);
                 }
             }
@@ -660,7 +662,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ModeActionButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (cost > 0 || ((windowMode == WindowModes.Repair || windowMode == WindowModes.Identify) && remoteItems.Count > 0))
+            if (usingIdentifySpell)
+            {   // No trade when using a spell, just identify immediately
+                for (int i = 0; i < remoteItems.Count; i++)
+                    remoteItems.GetItem(i).IdentifyItem();
+                DaggerfallUI.MessageBox("Items identified.");
+            }
+            else if (cost > 0 || ((windowMode == WindowModes.Repair || windowMode == WindowModes.Identify) && remoteItems.Count > 0))
                 ShowTradePopup();
         }
 
