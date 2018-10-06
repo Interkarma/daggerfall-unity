@@ -41,6 +41,7 @@ namespace DaggerfallWorkshop.Game
         bool isPlayerSubmerged = false;
         bool isRespawning = false;
         bool lastInteriorStartFlag;
+        bool displayAfloatMessage = false;
         DaggerfallInterior interior;
         DaggerfallDungeon dungeon;
         StreamingWorld world;
@@ -305,6 +306,17 @@ namespace DaggerfallWorkshop.Game
                         SendMessage("PlayLargeSplash", SendMessageOptions.DontRequireReceiver);
                     isPlayerSwimming = true;
                     levitateMotor.IsSwimming = true;
+                }
+
+                bool overEncumbered = (GameManager.Instance.PlayerEntity.CarriedWeight * 4 > 250);
+                if ((overEncumbered && levitateMotor.IsSwimming) && !displayAfloatMessage)
+                {
+                    DaggerfallUI.AddHUDText(HardStrings.cannotFloat, 1.75f);
+                    displayAfloatMessage = true;
+                }
+                else if ((!overEncumbered || !levitateMotor.IsSwimming) && displayAfloatMessage)
+                {
+                    displayAfloatMessage = false;
                 }
 
                 // Check if player is submerged and needs to start holding breath

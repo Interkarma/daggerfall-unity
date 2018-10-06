@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -31,7 +31,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         List<TextLabel> pageLabels = new List<TextLabel>();
         int pageLines;
         int pageStartLine = 0;
-        List<string> lines;
 
         public int ClassId { get; protected set; }
 
@@ -62,9 +61,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             Button exitButton = DaggerfallUI.AddButton(new Rect(277, 187, 32, 10), NativePanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
-
-            // Setup text
-            lines = GameManager.Instance.PlayerEntity.BackStory;
 
             LayoutPage();
             DaggerfallUI.Instance.PlayOneShot(SoundClips.OpenBook);
@@ -107,9 +103,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             pageLines = 0;
 
             int x = 10, y = 25;
-            for (int i = pageStartLine; i < lines.Count; i++)
+            for (int i = pageStartLine; i < GameManager.Instance.PlayerEntity.BackStory.Count; i++)
             {
-                TextLabel label = DaggerfallUI.AddTextLabel(currentFont, new Vector2(x, y), lines[i], NativePanel);
+                TextLabel label = DaggerfallUI.AddTextLabel(currentFont, new Vector2(x, y), GameManager.Instance.PlayerEntity.BackStory[i], NativePanel);
                 label.HorizontalAlignment = HorizontalAlignment.None;
                 label.TextColor = DaggerfallUI.DaggerfallDefaultTextColor;
                 label.ShadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
@@ -142,7 +138,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         bool MoveNextPage()
         {
-            if (pageStartLine + maxPageLines < lines.Count)
+            if (pageStartLine + maxPageLines < GameManager.Instance.PlayerEntity.BackStory.Count)
             {
                 pageStartLine += maxPageLines;
 

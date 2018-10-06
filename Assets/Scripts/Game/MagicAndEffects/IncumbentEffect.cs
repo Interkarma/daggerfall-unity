@@ -69,10 +69,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         IncumbentEffect FindIncumbent()
         {
             // Search for any incumbents on this host matching group
-            EntityEffectManager.InstancedBundle[] bundles = manager.EffectBundles;
-            foreach (EntityEffectManager.InstancedBundle bundle in bundles)
+            LiveEffectBundle[] bundles = manager.EffectBundles;
+            foreach (LiveEffectBundle bundle in bundles)
             {
-                if (bundle.bundleType == BundleGroup)
+                if (bundle.bundleType == ParentBundle.bundleType)
                 {
                     foreach (IEntityEffect effect in bundle.liveEffects)
                     {

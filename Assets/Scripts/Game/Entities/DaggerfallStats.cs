@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -75,6 +75,23 @@ namespace DaggerfallWorkshop.Game.Entity
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// Check if all permanent stat values are at 100.
+        /// </summary>
+        /// <returns>True if all at 100.</returns>
+        public bool IsAll100()
+        {
+            return (
+                PermanentStrength == 100 &&
+                PermanentIntelligence == 100 &&
+                PermanentWillpower == 100 &&
+                PermanentAgility == 100 &&
+                PermanentEndurance == 100 &&
+                PermanentPersonality == 100 &&
+                PermanentSpeed == 100 &&
+                PermanentLuck == 100);
+        }
 
         /// <summary>
         /// Set default value to each stat.

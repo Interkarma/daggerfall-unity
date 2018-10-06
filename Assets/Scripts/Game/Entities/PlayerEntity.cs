@@ -362,6 +362,10 @@ namespace DaggerfallWorkshop.Game.Entity
                     if (IntermittentEnemySpawn(l + lastGameMinutes + 1))
                         break;
 
+                    // Confirm regionData is available
+                    if (regionData == null || regionData.Length == 0)
+                        break;
+
                     // Handle guards appearing for low-legal rep player
                     int regionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
                     if (regionData[regionIndex].LegalRep < -10 && UnityEngine.Random.Range(1, 101) < 5)

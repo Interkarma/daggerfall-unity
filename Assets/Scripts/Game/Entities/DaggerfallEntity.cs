@@ -60,6 +60,9 @@ namespace DaggerfallWorkshop.Game.Entity
         bool quiesce = false;
         bool isParalyzed = false;
 
+        bool[] resistanceFlags = new bool[5];     // Indices map to DFCareer.Elements 0-4
+        int[] resistanceChances = new int[5];
+
         // Temp entity spellbook
         List<EffectBundleSettings> spellbook = new List<EffectBundleSettings>();
 
@@ -105,6 +108,56 @@ namespace DaggerfallWorkshop.Game.Entity
         {
             get { return (!IsImmuneToParalysis) ? isParalyzed : false; }
             set { isParalyzed = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets resisting fire flag.
+        /// Note: This value is intentionally not serialized. It should only be set by live effects.
+        /// </summary>
+        public bool IsResistingFire
+        {
+            get { return resistanceFlags[(int)DFCareer.Elements.Fire]; }
+            set { resistanceFlags[(int)DFCareer.Elements.Fire] = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets resisting frost flag.
+        /// Note: This value is intentionally not serialized. It should only be set by live effects.
+        /// </summary>
+        public bool IsResistingFrost
+        {
+            get { return resistanceFlags[(int)DFCareer.Elements.Frost]; }
+            set { resistanceFlags[(int)DFCareer.Elements.Frost] = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets resisting disease or poison flag.
+        /// Note: This value is intentionally not serialized. It should only be set by live effects.
+        /// </summary>
+        public bool IsResistingDiseaseOrPoison
+        {
+            get { return resistanceFlags[(int)DFCareer.Elements.DiseaseOrPoison]; }
+            set { resistanceFlags[(int)DFCareer.Elements.DiseaseOrPoison] = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets resisting shock flag.
+        /// Note: This value is intentionally not serialized. It should only be set by live effects.
+        /// </summary>
+        public bool IsResistingShock
+        {
+            get { return resistanceFlags[(int)DFCareer.Elements.Shock]; }
+            set { resistanceFlags[(int)DFCareer.Elements.Shock] = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets resisting magic flag.
+        /// Note: This value is intentionally not serialized. It should only be set by live effects.
+        /// </summary>
+        public bool IsResistingMagic
+        {
+            get { return resistanceFlags[(int)DFCareer.Elements.Magic]; }
+            set { resistanceFlags[(int)DFCareer.Elements.Magic] = value; }
         }
 
         /// <summary>
@@ -478,6 +531,47 @@ namespace DaggerfallWorkshop.Game.Entity
             return ((MagicalConcealmentFlags & flags) == flags) ? true : false;
         }
 
+        /// <summary>
+        /// Raise or lower a specific resistance flag.
+        /// </summary>
+        /// <param name="elementType">Element type.</param>
+        /// <param name="value">Desired resistance flag.</param>
+        public void SetResistanceFlag(DFCareer.Elements elementType, bool value)
+        {
+            resistanceFlags[(int)elementType] = value;
+        }
+
+        /// <summary>
+        /// Check if entity has a specific resistance flag raised.
+        /// </summary>
+        /// <param name="elementType">Element type.</param>
+        public bool HasResistanceFlag(DFCareer.Elements elementType)
+        {
+            return resistanceFlags[(int)elementType];
+        }
+
+        /// <summary>
+        /// Gets resistance chance as set by ElementalResistance effect.
+        /// This is only used when corresponding element resistance flag is raised by effect.
+        /// </summary>
+        /// <param name="elementType">Element type.</param>
+        /// <returns>Resistance chance.</returns>
+        public int GetResistanceChance(DFCareer.Elements elementType)
+        {
+            return resistanceChances[(int)elementType];
+        }
+
+        /// <summary>
+        /// Sets resistance chance from ElementalResistance effect.
+        /// This is only used when corresponding element resistance flag is raised by effect.
+        /// </summary>
+        /// <param name="elementType">Element type.</param>
+        /// <param name="value">Resist chance.</param>
+        public void SetResistanceChance(DFCareer.Elements elementType, int value)
+        {
+            resistanceChances[(int)elementType] = value;
+        }
+
         #endregion
 
         #region Temp Spellbook Helpers
@@ -568,6 +662,12 @@ namespace DaggerfallWorkshop.Game.Entity
             IsEnhancedClimbing = false;
             IsEnhancedJumping = false;
             IsSlowFalling = false;
+            IsResistingFire = false;
+            IsResistingFrost = false;
+            IsResistingDiseaseOrPoison = false;
+            IsResistingShock = false;
+            IsResistingMagic = false;
+            Array.Clear(resistanceChances, 0, resistanceChances.Length);
             SetEntityDefaults();
         }
 

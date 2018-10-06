@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -135,7 +135,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
-        int GetMaxRoundsRemaining(EntityEffectManager.InstancedBundle bundle)
+        int GetMaxRoundsRemaining(LiveEffectBundle bundle)
         {
             // Get most remaining rounds of all effects
             // A spell can have multiple effects with different round durations
@@ -149,7 +149,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             return maxRoundsRemaining;
         }
 
-        bool HasEffectWithIcon(EntityEffectManager.InstancedBundle bundle)
+        bool HasEffectWithIcon(LiveEffectBundle bundle)
         {
             // At least one effect with remaining rounds must want to show an icon
             foreach (IEntityEffect effect in bundle.liveEffects)
@@ -197,20 +197,25 @@ namespace DaggerfallWorkshop.Game.UserInterface
             activeOtherList.Clear();
         }
 
+        void UpdateIcons(LiveEffectBundle bundleAdded)
+        {
+            UpdateIcons();
+        }
+
         void UpdateIcons()
         {
             ClearIcons();
 
             // Get all effect bundles currently operating on player
             EntityEffectManager playerEffectManager = GameManager.Instance.PlayerEffectManager;
-            EntityEffectManager.InstancedBundle[] effectBundles = playerEffectManager.EffectBundles;
+            LiveEffectBundle[] effectBundles = playerEffectManager.EffectBundles;
             if (effectBundles == null || effectBundles.Length == 0)
                 return;
 
             // Sort icons into active spells in self and other icon lists
             for (int i = 0;  i < effectBundles.Length; i++)
             {
-                EntityEffectManager.InstancedBundle bundle = effectBundles[i];
+                LiveEffectBundle bundle = effectBundles[i];
 
                 // Don't add effect icon for instant spells, must have at least 1 round remaining
                 bool showIcon = HasEffectWithIcon(bundle);

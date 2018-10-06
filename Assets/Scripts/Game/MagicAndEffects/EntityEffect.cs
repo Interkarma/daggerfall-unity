@@ -13,10 +13,8 @@ using System;
 using UnityEngine;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
-using DaggerfallWorkshop.Game.Serialization;
-using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 using DaggerfallWorkshop.Utility;
-using FullSerializer;
+using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects
 {
@@ -96,9 +94,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         int[] ResistanceMods { get; }
 
         /// <summary>
-        /// Gets or sets bundle type for grouping effects.
+        /// Gets or sets parent bundle for this effect.
+        /// Will be null for template effects.
         /// </summary>
-        BundleTypes BundleGroup { get; set; }
+        LiveEffectBundle ParentBundle { get; set; }
 
         /// <summary>
         /// True if effect has ended by calling End();
@@ -179,7 +178,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         int[] statMods = new int[DaggerfallStats.Count];
         int[] skillMods = new int[DaggerfallSkills.Count];
         int[] resistanceMods = new int[DaggerfallResistances.Count];
-        BundleTypes bundleGroup = BundleTypes.None;
+        LiveEffectBundle parentBundle;
         bool effectEnded = false;
 
         #endregion
@@ -282,10 +281,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             get { return GetDisplayName(); }
         }
 
-        public BundleTypes BundleGroup
+        public LiveEffectBundle ParentBundle
         {
-            get { return bundleGroup; }
-            set { bundleGroup = value; }
+            get { return parentBundle; }
+            set { parentBundle = value; }
         }
 
         public bool HasEnded
@@ -326,7 +325,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             this.manager = manager;
             this.caster = caster;
             SetDuration();
-            SetChance();
+            SetChanceSuccess();
         }
 
         /// <summary>
@@ -340,7 +339,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             chanceSuccess = effectData.chanceSuccess;
             statMods = effectData.statMods;
             skillMods = effectData.skillMods;
-            bundleGroup = effectData.bundleGroup;
             variantCount = effectData.variantCount;
             currentVariant = effectData.currentVariant;
             effectEnded = effectData.effectEnded;
@@ -507,6 +505,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             if (caster == null)
                 Debug.LogWarningFormat("GetMagnitude() for {0} has no caster.", Properties.Key);
 
+            if (manager == null)
+                Debug.LogWarningFormat("GetMagnitude() for {0} has no parent manager.", Properties.Key);
+
             int magnitude = 0;
             if (Properties.SupportMagnitude)
             {
@@ -516,6 +517,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 int multiplier = (int)Mathf.Floor(casterLevel / settings.MagnitudePerLevel);
                 magnitude = baseMagnitude + plusMagnitude * multiplier;
             }
+
+            if (ParentBundle.targetType != TargetTypes.CasterOnly)
+                magnitude = FormulaHelper.ModifyEffectAmount(this, manager.EntityBehaviour.Entity, magnitude);
 
             return magnitude;
         }
@@ -567,12 +571,47 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             skillMods[(int)skill] += amount;
         }
 
+        protected void SetResistanceMod(DFCareer.Elements resistance, int amount)
+        {
+            if (resistance == DFCareer.Elements.None)
+                return;
+
+            resistanceMods[(int)resistance] = amount;
+        }
+
+        protected void ChanceResistanceMod(DFCareer.Elements resistance, int amount)
+        {
+            if (resistance == DFCareer.Elements.None)
+                return;
+
+            resistanceMods[(int)resistance] += amount;
+        }
+
         protected void AssignPotionRecipes(params PotionRecipe[] recipes)
         {
             if (recipes == null || recipes.Length == 0)
                 return;
 
             potionProperties.Recipes = recipes;
+        }
+
+        protected int ChanceValue()
+        {
+            int casterLevel = (caster) ? caster.Entity.Level : 1;
+            return settings.ChanceBase + settings.ChancePlus * (int)Mathf.Floor(casterLevel / settings.ChancePerLevel);
+        }
+
+        protected bool RollChance()
+        {
+            if (!Properties.SupportChance)
+                return false;
+
+            int roll = UnityEngine.Random.Range(1, 100);
+            bool outcome = (roll <= ChanceValue());
+
+            //Debug.LogFormat("Effect '{0}' has a {1}% chance of succeeding and rolled {2} for a {3}", Key, chance, roll, (outcome) ? "success" : "fail");
+
+            return outcome;
         }
 
         #endregion
@@ -588,10 +627,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
             else
             {
-                if (!string.IsNullOrEmpty(properties.GroupName) && !string.IsNullOrEmpty(properties.SubGroupName))
-                    return properties.DisplayName = string.Format("{0} {1}", properties.GroupName, properties.SubGroupName);
-                else if (!string.IsNullOrEmpty(properties.GroupName) && string.IsNullOrEmpty(properties.SubGroupName))
-                    return properties.DisplayName = properties.GroupName;
+                if (!string.IsNullOrEmpty(Properties.GroupName) && !string.IsNullOrEmpty(Properties.SubGroupName))
+                    return properties.DisplayName = string.Format("{0} {1}", Properties.GroupName, Properties.SubGroupName);
+                else if (!string.IsNullOrEmpty(Properties.GroupName) && string.IsNullOrEmpty(Properties.SubGroupName))
+                    return properties.DisplayName = Properties.GroupName;
                 else
                     return properties.DisplayName = TextManager.Instance.GetText("ClassicEffect", "noName");
             }
@@ -608,22 +647,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             //Debug.LogFormat("Effect '{0}' will run for {1} magic rounds", Key, roundsRemaining);
         }
 
-        void SetChance()
+        void SetChanceSuccess()
         {
-            if (!Properties.SupportChance)
-                return;
-
-            int chance = 0;
-            int casterLevel = (caster) ? caster.Entity.Level : 1;
-            if (Properties.SupportChance)
-                chance = settings.ChanceBase + settings.ChancePlus * (int)Mathf.Floor(casterLevel / settings.ChancePerLevel);
-            else
-                roundsRemaining = 0;
-
-            int roll = UnityEngine.Random.Range(1, 100);
-            chanceSuccess = (roll <= chance);
-
-            //Debug.LogFormat("Effect '{0}' has a {1}% chance of succeeding and rolled {2} for a {3}", Key, chance, roll, (chanceSuccess) ? "success" : "fail");
+            chanceSuccess = RollChance();
         }
 
         #endregion

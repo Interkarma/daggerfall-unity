@@ -28,6 +28,7 @@ namespace DaggerfallWorkshop.Game
         PlayerMotor playerMotor;
         PlayerSpeedChanger speedChanger;
         PlayerGroundMotor groundMotor;
+        ClimbingMotor climbingMotor;
         Camera playerCamera;
         float moveSpeed = levitateMoveSpeed;
         Vector3 moveDirection = Vector3.zero;
@@ -49,6 +50,7 @@ namespace DaggerfallWorkshop.Game
             playerMotor = GetComponent<PlayerMotor>();
             groundMotor = GetComponent<PlayerGroundMotor>();
             speedChanger = GetComponent<PlayerSpeedChanger>();
+            climbingMotor = GetComponent<ClimbingMotor>();
             playerCamera = GameManager.Instance.MainCamera;
         }
 
@@ -78,7 +80,7 @@ namespace DaggerfallWorkshop.Game
             if (InputManager.Instance.HasAction(InputManager.Actions.Jump) || InputManager.Instance.HasAction(InputManager.Actions.FloatUp))
                 upDownVector = upDownVector + Vector3.up;
             if (InputManager.Instance.HasAction(InputManager.Actions.Crouch) || InputManager.Instance.HasAction(InputManager.Actions.FloatDown) ||
-                GameManager.Instance.PlayerEnterExit.IsPlayerSwimming && (GameManager.Instance.PlayerEntity.CarriedWeight * 4) > 250)
+                !climbingMotor.IsClimbing && GameManager.Instance.PlayerEnterExit.IsPlayerSwimming && (GameManager.Instance.PlayerEntity.CarriedWeight * 4) > 250)
                 upDownVector = upDownVector + Vector3.down;
             AddMovement(upDownVector, true);
 

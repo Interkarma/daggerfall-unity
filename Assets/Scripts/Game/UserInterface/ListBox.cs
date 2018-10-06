@@ -78,7 +78,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             public Color selectedTextColor = DaggerfallUI.DaggerfallDefaultSelectedTextColor;
             public Color shadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
             public Color selectedShadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
-            public Color highlightedTextColor = DaggerfallUI.DaggerfallHighlightTextColor;
+            public Color highlightedTextColor = DaggerfallUI.DaggerfallAlternateHighlightTextColor;
             public Color highlightedSelectedTextColor = DaggerfallUI.DaggerfallBrighterSelectedTextColor;
 
             public ListItem(TextLabel textLabel)
@@ -378,8 +378,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             else if (i == highlightedIndex)
             {
                 label.TextColor = listItems[i].highlightedTextColor;
-                label.ShadowPosition = selectedShadowPosition;
-                label.ShadowColor = listItems[i].selectedShadowColor;
+                label.ShadowPosition = shadowPosition;
+                label.ShadowColor = listItems[i].shadowColor;
             }
             else
             {
@@ -392,7 +392,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             if (listItems.Count == 0)
                 return;
-            
+            highlightedIndex = -1;
             if (verticalScrollMode == VerticalScrollModes.EntryWise)
             {
                 int row = (y / (font.GlyphHeight + rowSpacing));

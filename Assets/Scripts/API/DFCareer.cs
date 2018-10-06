@@ -474,15 +474,15 @@ namespace DaggerfallConnect
         }
 
         /// <summary>
-        /// Combining elemental and other resistances for unified handling.
-        /// These values do not map to any particular classic data.
+        /// Elements for resistances and saving throws.
+        /// Values maps to classic resistance element used in saving throws.
         /// </summary>
-        public enum Resistances
+        public enum Elements
         {
             None = -1,
             Fire = 0,
-            Cold = 1,
-            Poison = 2,
+            Frost = 1,
+            DiseaseOrPoison = 2,
             Shock = 3,
             Magic = 4,
         }
