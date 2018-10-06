@@ -9,7 +9,9 @@
 // Notes:
 //
 
+using UnityEngine;
 using DaggerfallConnect;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
@@ -18,27 +20,48 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class ElementalResistance : IncumbentEffect
     {
+        #region Fields
+
         const int totalVariants = 5;
+        const int savingThrowModifier = 75;
         const string textDatabase = "ClassicEffects";
-        string[] subGroupTextKeys = new string[] { "fire", "frost", "poison", "shock", "magicka" };
+        readonly string[] subGroupTextKeys = new string[] { "fire", "frost", "poison", "shock", "magicka" };
 
         VariantProperties[] variantProperties = new VariantProperties[totalVariants];
 
+        #endregion
+
+        #region Structs
+
         struct VariantProperties
         {
-            public ElementTypes elementResisted;
+            public DFCareer.Resistances elementResisted;
             public EffectProperties effectProperties;
         }
+
+        #endregion
+
+        #region Properties
 
         public override EffectProperties Properties
         {
             get { return variantProperties[currentVariant].effectProperties; }
         }
 
-        public ElementTypes ElementResisted
+        public override bool ChanceSuccess
+        {
+            // Always allow effect to succeed startup - we want to use chance component in a custom way
+            get { return true; }
+        }
+
+        public DFCareer.Resistances ElementResisted
         {
             get { return variantProperties[currentVariant].elementResisted; }
         }
+
+        #endregion
+
+        #region Overrides
 
         public override void SetProperties()
         {
@@ -55,15 +78,48 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             // Set unique variant properties
             variantCount = totalVariants;
-            SetVariantProperties(ElementTypes.Fire, 0);
-            SetVariantProperties(ElementTypes.Cold, 1);
-            SetVariantProperties(ElementTypes.Poison, 2);
-            SetVariantProperties(ElementTypes.Shock, 3);
-            SetVariantProperties(ElementTypes.Magic, 4);
+            SetVariantProperties(DFCareer.Resistances.Fire);
+            SetVariantProperties(DFCareer.Resistances.Cold);
+            SetVariantProperties(DFCareer.Resistances.Poison);
+            SetVariantProperties(DFCareer.Resistances.Shock);
+            SetVariantProperties(DFCareer.Resistances.Magic);
         }
 
-        void SetVariantProperties(ElementTypes element, int variantIndex)
+        protected override bool IsLikeKind(IncumbentEffect other)
         {
+            return (other is ElementalResistance && (other as ElementalResistance).ElementResisted == ElementResisted) ? true : false;
+        }
+
+        protected override void AddState(IncumbentEffect incumbent)
+        {
+            // Stack my rounds onto incumbent
+            incumbent.RoundsRemaining += RoundsRemaining;
+        }
+
+        public override void MagicRound()
+        {
+            base.MagicRound();
+
+            // Get peered entity gameobject
+            DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
+            if (!entityBehaviour)
+                return;
+
+            // Set or remove resistance mod for this magic round
+            DFCareer.Resistances resistance = variantProperties[CurrentVariant].elementResisted;
+            int modifier = RollChance() ? savingThrowModifier : 0;
+            SetResistanceMod(resistance, modifier);
+
+            Debug.LogFormat("{0} modifier is {1} for this magic round", DisplayName, modifier);
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        void SetVariantProperties(DFCareer.Resistances element)
+        {
+            int variantIndex = (int)element;
             string name = TextManager.Instance.GetText("ClassicEffects", subGroupTextKeys[variantIndex]);
 
             VariantProperties vp = new VariantProperties();
@@ -77,19 +133,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             variantProperties[variantIndex] = vp;
         }
 
-        protected override bool IsLikeKind(IncumbentEffect other)
-        {
-            return (other is ElementalResistance && (other as ElementalResistance).ElementResisted == ElementResisted) ? true : false;
-        }
-
-        protected override void BecomeIncumbent()
-        {
-        }
-
-        protected override void AddState(IncumbentEffect incumbent)
-        {
-            // Stack my rounds onto incumbent
-            incumbent.RoundsRemaining += RoundsRemaining;
-        }
+        #endregion  
     }
 }
