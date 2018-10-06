@@ -1095,13 +1095,11 @@ namespace DaggerfallWorkshop.Game.Formulas
             // Will only read best matching resistance modifier from flags - priority is given to disease/poison over elemental
             // Note disease/poison resistance are both the same here for purposes of saving throw
             if ((effectFlags & DFCareer.EffectFlags.Disease) == DFCareer.EffectFlags.Disease || (effectFlags & DFCareer.EffectFlags.Poison) == DFCareer.EffectFlags.Poison)
-                result = target.Resistances.LivePoison;
+                result = target.Resistances.LiveDiseaseOrPoison;
             else if ((effectFlags & DFCareer.EffectFlags.Fire) == DFCareer.EffectFlags.Fire)
                 result = target.Resistances.LiveFire;
             else if ((effectFlags & DFCareer.EffectFlags.Frost) == DFCareer.EffectFlags.Frost)
-                result = target.Resistances.LiveCold;
-            else if ((effectFlags & DFCareer.EffectFlags.Poison) == DFCareer.EffectFlags.Poison)
-                result = target.Resistances.LivePoison;
+                result = target.Resistances.LiveFrost;
             else if ((effectFlags & DFCareer.EffectFlags.Shock) == DFCareer.EffectFlags.Shock)
                 result = target.Resistances.LiveShock;
             else if ((effectFlags & DFCareer.EffectFlags.Magic) == DFCareer.EffectFlags.Magic)

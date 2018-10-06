@@ -35,7 +35,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         struct VariantProperties
         {
-            public DFCareer.Resistances elementResisted;
+            public DFCareer.Elements elementResisted;
             public EffectProperties effectProperties;
         }
 
@@ -54,7 +54,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             get { return true; }
         }
 
-        public DFCareer.Resistances ElementResisted
+        public DFCareer.Elements ElementResisted
         {
             get { return variantProperties[currentVariant].elementResisted; }
         }
@@ -78,11 +78,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             // Set unique variant properties
             variantCount = totalVariants;
-            SetVariantProperties(DFCareer.Resistances.Fire);
-            SetVariantProperties(DFCareer.Resistances.Cold);
-            SetVariantProperties(DFCareer.Resistances.Poison);
-            SetVariantProperties(DFCareer.Resistances.Shock);
-            SetVariantProperties(DFCareer.Resistances.Magic);
+            SetVariantProperties(DFCareer.Elements.Fire);
+            SetVariantProperties(DFCareer.Elements.Frost);
+            SetVariantProperties(DFCareer.Elements.DiseaseOrPoison);
+            SetVariantProperties(DFCareer.Elements.Shock);
+            SetVariantProperties(DFCareer.Elements.Magic);
         }
 
         protected override bool IsLikeKind(IncumbentEffect other)
@@ -106,7 +106,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 return;
 
             // Set or remove resistance mod for this magic round
-            DFCareer.Resistances resistance = variantProperties[CurrentVariant].elementResisted;
+            DFCareer.Elements resistance = variantProperties[CurrentVariant].elementResisted;
             int modifier = RollChance() ? savingThrowModifier : 0;
             SetResistanceMod(resistance, modifier);
 
@@ -117,7 +117,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         #region Private Methods
 
-        void SetVariantProperties(DFCareer.Resistances element)
+        void SetVariantProperties(DFCareer.Elements element)
         {
             int variantIndex = (int)element;
             string name = TextManager.Instance.GetText("ClassicEffects", subGroupTextKeys[variantIndex]);

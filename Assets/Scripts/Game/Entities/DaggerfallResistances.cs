@@ -27,8 +27,8 @@ namespace DaggerfallWorkshop.Game.Entity
 
         // Current permanent resistance values
         [SerializeField] int Fire;
-        [SerializeField] int Cold;
-        [SerializeField] int Poison;
+        [SerializeField] int Frost;
+        [SerializeField] int DiseaseOrPoison;
         [SerializeField] int Shock;
         [SerializeField] int Magic;
 
@@ -41,17 +41,17 @@ namespace DaggerfallWorkshop.Game.Entity
 
         #region Properties
 
-        public int LiveFire { get { return GetLiveResistanceValue(DFCareer.Resistances.Fire); } }
-        public int LiveCold { get { return GetLiveResistanceValue(DFCareer.Resistances.Cold); } }
-        public int LivePoison { get { return GetLiveResistanceValue(DFCareer.Resistances.Poison); } }
-        public int LiveShock { get { return GetLiveResistanceValue(DFCareer.Resistances.Shock); } }
-        public int LiveMagic { get { return GetLiveResistanceValue(DFCareer.Resistances.Magic); } }
+        public int LiveFire { get { return GetLiveResistanceValue(DFCareer.Elements.Fire); } }
+        public int LiveFrost { get { return GetLiveResistanceValue(DFCareer.Elements.Frost); } }
+        public int LiveDiseaseOrPoison { get { return GetLiveResistanceValue(DFCareer.Elements.DiseaseOrPoison); } }
+        public int LiveShock { get { return GetLiveResistanceValue(DFCareer.Elements.Shock); } }
+        public int LiveMagic { get { return GetLiveResistanceValue(DFCareer.Elements.Magic); } }
 
-        public int PermanentFire { get { return GetPermanentResistanceValue(DFCareer.Resistances.Fire); } }
-        public int PermanentCold { get { return GetPermanentResistanceValue(DFCareer.Resistances.Cold); } }
-        public int PermanentPoison { get { return GetPermanentResistanceValue(DFCareer.Resistances.Poison); } }
-        public int PermanentShock { get { return GetPermanentResistanceValue(DFCareer.Resistances.Shock); } }
-        public int PermanentMagic { get { return GetPermanentResistanceValue(DFCareer.Resistances.Magic); } }
+        public int PermanentFire { get { return GetPermanentResistanceValue(DFCareer.Elements.Fire); } }
+        public int PermanentFrost { get { return GetPermanentResistanceValue(DFCareer.Elements.Frost); } }
+        public int PermanentDiseaseOrPoison { get { return GetPermanentResistanceValue(DFCareer.Elements.DiseaseOrPoison); } }
+        public int PermanentShock { get { return GetPermanentResistanceValue(DFCareer.Elements.Shock); } }
+        public int PermanentMagic { get { return GetPermanentResistanceValue(DFCareer.Elements.Magic); } }
 
         #endregion
 
@@ -69,8 +69,8 @@ namespace DaggerfallWorkshop.Game.Entity
         public void SetDefaults()
         {
             Fire = 0;
-            Cold = 0;
-            Poison = 0;
+            Frost = 0;
+            DiseaseOrPoison = 0;
             Shock = 0;
             Magic = 0;
             Array.Clear(mods, 0, Count);
@@ -79,8 +79,8 @@ namespace DaggerfallWorkshop.Game.Entity
         public void Copy(DaggerfallResistances other)
         {
             Fire = other.Fire;
-            Cold = other.Cold;
-            Poison = other.Poison;
+            Frost = other.Frost;
+            DiseaseOrPoison = other.DiseaseOrPoison;
             Shock = other.Shock;
             Magic = other.Magic;
         }
@@ -89,7 +89,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
         #region Getters
 
-        public int GetLiveResistanceValue(DFCareer.Resistances resistance)
+        public int GetLiveResistanceValue(DFCareer.Elements resistance)
         {
             int mod = mods[(int)resistance];
             int value = GetPermanentResistanceValue(resistance) + mod;
@@ -102,7 +102,7 @@ namespace DaggerfallWorkshop.Game.Entity
             if (index < 0 || index >= Count)
                 return 0;
 
-            return GetLiveResistanceValue((DFCareer.Resistances)index);
+            return GetLiveResistanceValue((DFCareer.Elements)index);
         }
 
         public int GetPermanentResistanceValue(int index)
@@ -110,22 +110,22 @@ namespace DaggerfallWorkshop.Game.Entity
             if (index < 0 || index >= Count)
                 return 0;
 
-            return GetPermanentResistanceValue((DFCareer.Resistances)index);
+            return GetPermanentResistanceValue((DFCareer.Elements)index);
         }
 
-        public int GetPermanentResistanceValue(DFCareer.Resistances resistance)
+        public int GetPermanentResistanceValue(DFCareer.Elements resistance)
         {
             switch (resistance)
             {
-                case DFCareer.Resistances.Fire:
+                case DFCareer.Elements.Fire:
                     return Fire;
-                case DFCareer.Resistances.Cold:
-                    return Cold;
-                case DFCareer.Resistances.Poison:
-                    return Poison;
-                case DFCareer.Resistances.Shock:
+                case DFCareer.Elements.Frost:
+                    return Frost;
+                case DFCareer.Elements.DiseaseOrPoison:
+                    return DiseaseOrPoison;
+                case DFCareer.Elements.Shock:
                     return Shock;
-                case DFCareer.Resistances.Magic:
+                case DFCareer.Elements.Magic:
                     return Magic;
                 default:
                     return 0;
@@ -136,23 +136,23 @@ namespace DaggerfallWorkshop.Game.Entity
 
         #region Setters
 
-        public void SetPermanentResistanceValue(DFCareer.Resistances resistance, int value)
+        public void SetPermanentResistanceValue(DFCareer.Elements resistance, int value)
         {
             switch (resistance)
             {
-                case DFCareer.Resistances.Fire:
+                case DFCareer.Elements.Fire:
                     Fire = value;
                     break;
-                case DFCareer.Resistances.Cold:
-                    Cold = value;
+                case DFCareer.Elements.Frost:
+                    Frost = value;
                     break;
-                case DFCareer.Resistances.Poison:
-                    Poison = value;
+                case DFCareer.Elements.DiseaseOrPoison:
+                    DiseaseOrPoison = value;
                     break;
-                case DFCareer.Resistances.Shock:
+                case DFCareer.Elements.Shock:
                     Shock = value;
                     break;
-                case DFCareer.Resistances.Magic:
+                case DFCareer.Elements.Magic:
                     Magic = value;
                     break;
                 default:
@@ -162,7 +162,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public void SetPermanentResistanceValue(int index, int value)
         {
-            SetPermanentResistanceValue((DFCareer.Resistances)index, value);
+            SetPermanentResistanceValue((DFCareer.Elements)index, value);
         }
 
         /// <summary>

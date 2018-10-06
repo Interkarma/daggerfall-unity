@@ -571,17 +571,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             skillMods[(int)skill] += amount;
         }
 
-        protected void SetResistanceMod(DFCareer.Resistances resistance, int amount)
+        protected void SetResistanceMod(DFCareer.Elements resistance, int amount)
         {
-            if (resistance == DFCareer.Resistances.None)
+            if (resistance == DFCareer.Elements.None)
                 return;
 
             resistanceMods[(int)resistance] = amount;
         }
 
-        protected void ChanceResistanceMod(DFCareer.Resistances resistance, int amount)
+        protected void ChanceResistanceMod(DFCareer.Elements resistance, int amount)
         {
-            if (resistance == DFCareer.Resistances.None)
+            if (resistance == DFCareer.Elements.None)
                 return;
 
             resistanceMods[(int)resistance] += amount;
