@@ -940,6 +940,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             return poisonBundles.ToArray();
         }
 
+        public void CureAllPoisons()
+        {
+            // Cure all poison bundles
+            LiveEffectBundle[] bundles = GetPoisonBundles();
+            foreach (LiveEffectBundle bundle in bundles)
+            {
+                RemoveBundle(bundle);
+                Debug.LogFormat("Removing poison bundle {0}", bundle.GetHashCode());
+            }
+        }
+
         #endregion
 
         #region Static Helpers
