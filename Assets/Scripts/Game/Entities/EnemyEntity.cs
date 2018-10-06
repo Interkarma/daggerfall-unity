@@ -9,14 +9,8 @@
 // Notes:
 //
 
-using UnityEngine;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using DaggerfallConnect;
-using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Formulas;
-using DaggerfallWorkshop.Game.Player;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
@@ -102,7 +96,7 @@ namespace DaggerfallWorkshop.Game.Entity
         {
             if (entityType == EntityTypes.EnemyMonster)
             {
-                careerIndex = (int)mobileEnemy.ID;
+                careerIndex = mobileEnemy.ID;
                 career = GetMonsterCareerTemplate((MonsterCareers)careerIndex);
                 stats.SetPermanentFromCareer(career);
 
@@ -117,7 +111,7 @@ namespace DaggerfallWorkshop.Game.Entity
             }
             else if (entityType == EntityTypes.EnemyClass)
             {
-                careerIndex = (int)mobileEnemy.ID - 128;
+                careerIndex = mobileEnemy.ID - 128;
                 career = GetClassCareerTemplate((ClassCareers)careerIndex);
                 stats.SetPermanentFromCareer(career);
 
@@ -226,7 +220,7 @@ namespace DaggerfallWorkshop.Game.Entity
         {
             PlayerEntity player = GameManager.Instance.PlayerEntity;
             int itemLevel = player.Level;
-            Genders gender = player.Gender;
+            Genders playerGender = player.Gender;
             Races race = player.Race;
             int chance = 0;
             if (variant == 0)
@@ -243,7 +237,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 item = UnityEngine.Random.Range((int)Game.Items.Armor.Buckler, (int)(Game.Items.Armor.Round_Shield) + 1);
                 if (UnityEngine.Random.Range(1, 101) <= chance)
                 {
-                    Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(gender, race, (Items.Armor)item, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
+                    Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(playerGender, race, (Items.Armor)item, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
                     ItemEquipTable.EquipItem(armor, true, false);
                     items.AddItem(armor);
                 }
@@ -272,42 +266,42 @@ namespace DaggerfallWorkshop.Game.Entity
             // helm
             if (UnityEngine.Random.Range(1, 101) <= chance)
             {
-                Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(gender, race, Game.Items.Armor.Helm, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
+                Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(playerGender, race, Game.Items.Armor.Helm, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
                 ItemEquipTable.EquipItem(armor, true, false);
                 items.AddItem(armor);
             }
             // right pauldron
             if (UnityEngine.Random.Range(1, 101) <= chance)
             {
-                Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(gender, race, Game.Items.Armor.Right_Pauldron, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
+                Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(playerGender, race, Game.Items.Armor.Right_Pauldron, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
                 ItemEquipTable.EquipItem(armor, true, false);
                 items.AddItem(armor);
             }
             // left pauldron
             if (UnityEngine.Random.Range(1, 101) <= chance)
             {
-                Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(gender, race, Game.Items.Armor.Left_Pauldron, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
+                Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(playerGender, race, Game.Items.Armor.Left_Pauldron, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
                 ItemEquipTable.EquipItem(armor, true, false);
                 items.AddItem(armor);
             }
             // cuirass
             if (UnityEngine.Random.Range(1, 101) <= chance)
             {
-                Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(gender, race, Game.Items.Armor.Cuirass, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
+                Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(playerGender, race, Game.Items.Armor.Cuirass, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
                 ItemEquipTable.EquipItem(armor, true, false);
                 items.AddItem(armor);
             }
             // greaves
             if (UnityEngine.Random.Range(1, 101) <= chance)
             {
-                Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(gender, race, Game.Items.Armor.Greaves, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
+                Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(playerGender, race, Game.Items.Armor.Greaves, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
                 ItemEquipTable.EquipItem(armor, true, false);
                 items.AddItem(armor);
             }
             // boots
             if (UnityEngine.Random.Range(1, 101) <= chance)
             {
-                Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(gender, race, Game.Items.Armor.Boots, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
+                Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(playerGender, race, Game.Items.Armor.Boots, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
                 ItemEquipTable.EquipItem(armor, true, false);
                 items.AddItem(armor);
             }
@@ -386,9 +380,7 @@ namespace DaggerfallWorkshop.Game.Entity
             skills.SetPermanentSkillValue(DFCareer.Skills.Thaumaturgy, 80);
             skills.SetPermanentSkillValue(DFCareer.Skills.Mysticism, 80);
 
-            // Iterate over spellList and assign data from SPELLS.STD
-
-            return;
+            // TODO: Iterate over spellList and assign spells
         }
 
         public DFCareer.EnemyGroups GetEnemyGroup()
