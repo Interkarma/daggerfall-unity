@@ -197,6 +197,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             activeOtherList.Clear();
         }
 
+        void UpdateIcons(LiveEffectBundle bundleAdded)
+        {
+            UpdateIcons();
+        }
+
         void UpdateIcons()
         {
             ClearIcons();

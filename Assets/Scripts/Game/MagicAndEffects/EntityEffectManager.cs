@@ -382,7 +382,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 // But allow for an icon refresh as duration might have changed and we want to update this sooner than next magic round
                 if (effect is IncumbentEffect && !(effect as IncumbentEffect).IsIncumbent)
                 {
-                    RaiseOnAssignBundle();
+                    RaiseOnAssignBundle(instancedBundle);
                     continue;
                 }
 
@@ -397,7 +397,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             if (instancedBundle.liveEffects.Count > 0)
             {
                 instancedBundles.Add(instancedBundle);
-                RaiseOnAssignBundle();
+                RaiseOnAssignBundle(instancedBundle);
                 Debug.LogFormat("Adding bundle {0}", instancedBundle.GetHashCode());
             }
         }
@@ -483,7 +483,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         private void WipeAllBundles()
         {
             instancedBundles.Clear();
-            RaiseOnRemoveBundle();
+            RaiseOnRemoveBundle(null);
         }
 
         /// <summary>
@@ -1036,7 +1036,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 effect.End();
 
             instancedBundles.Remove(bundle);
-            RaiseOnRemoveBundle();
+            RaiseOnRemoveBundle(bundle);
             //Debug.LogFormat("Expired bundle {0} with {1} effects", bundle.settings.Name, bundle.settings.Effects.Length);
         }
 
@@ -1460,21 +1460,21 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         #region Events
 
         // OnAssignBundle
-        public delegate void OnAssignBundleEventHandler();
+        public delegate void OnAssignBundleEventHandler(LiveEffectBundle bundleAdded);
         public event OnAssignBundleEventHandler OnAssignBundle;
-        protected virtual void RaiseOnAssignBundle()
+        protected virtual void RaiseOnAssignBundle(LiveEffectBundle bundleAdded)
         {
             if (OnAssignBundle != null)
-                OnAssignBundle();
+                OnAssignBundle(bundleAdded);
         }
 
         // OnRemoveBundle
-        public delegate void OnRemoveBundleEventHandler();
+        public delegate void OnRemoveBundleEventHandler(LiveEffectBundle bundleRemoved);
         public event OnRemoveBundleEventHandler OnRemoveBundle;
-        protected virtual void RaiseOnRemoveBundle()
+        protected virtual void RaiseOnRemoveBundle(LiveEffectBundle bundleRemoved)
         {
             if (OnRemoveBundle != null)
-                OnRemoveBundle();
+                OnRemoveBundle(bundleRemoved);
         }
 
         // OnAddIncumbentState
