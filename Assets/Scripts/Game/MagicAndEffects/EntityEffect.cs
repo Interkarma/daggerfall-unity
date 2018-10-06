@@ -325,7 +325,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             this.manager = manager;
             this.caster = caster;
             SetDuration();
-            SetChance();
+            SetChanceSuccess();
         }
 
         /// <summary>
@@ -579,6 +579,21 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             potionProperties.Recipes = recipes;
         }
 
+        protected bool RollChance()
+        {
+            if (!Properties.SupportChance)
+                return false;
+
+            int casterLevel = (caster) ? caster.Entity.Level : 1;
+            int chance = settings.ChanceBase + settings.ChancePlus * (int)Mathf.Floor(casterLevel / settings.ChancePerLevel);
+            int roll = UnityEngine.Random.Range(1, 100);
+            bool outcome = (roll <= chance);
+
+            Debug.LogFormat("Effect '{0}' has a {1}% chance of succeeding and rolled {2} for a {3}", Key, chance, roll, (outcome) ? "success" : "fail");
+
+            return outcome;
+        }
+
         #endregion
 
         #region Private Methods
@@ -612,22 +627,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             //Debug.LogFormat("Effect '{0}' will run for {1} magic rounds", Key, roundsRemaining);
         }
 
-        void SetChance()
+        void SetChanceSuccess()
         {
-            if (!Properties.SupportChance)
-                return;
-
-            int chance = 0;
-            int casterLevel = (caster) ? caster.Entity.Level : 1;
-            if (Properties.SupportChance)
-                chance = settings.ChanceBase + settings.ChancePlus * (int)Mathf.Floor(casterLevel / settings.ChancePerLevel);
-            else
-                roundsRemaining = 0;
-
-            int roll = UnityEngine.Random.Range(1, 100);
-            chanceSuccess = (roll <= chance);
-
-            //Debug.LogFormat("Effect '{0}' has a {1}% chance of succeeding and rolled {2} for a {3}", Key, chance, roll, (chanceSuccess) ? "success" : "fail");
+            chanceSuccess = RollChance();
         }
 
         #endregion
