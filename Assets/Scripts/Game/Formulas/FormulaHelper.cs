@@ -907,7 +907,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (toleranceFlags == DFCareer.Tolerance.Immune)
                 return;
 
-            if (bypassResistance || SavingThrow(ElementTypes.Poison, DFCareer.EffectFlags.Poison, target, 0) != 0)
+            if (bypassResistance || SavingThrow(DFCareer.Elements.DiseaseOrPoison, DFCareer.EffectFlags.Poison, target, 0) != 0)
             {
                 if (target.Level != 1)
                 {
@@ -922,11 +922,10 @@ namespace DaggerfallWorkshop.Game.Formulas
             }
         }
 
-        public static int SavingThrow(ElementTypes elementType, DFCareer.EffectFlags effectFlags, DaggerfallEntity target, int modifier)
+        public static int SavingThrow(DFCareer.Elements elementType, DFCareer.EffectFlags effectFlags, DaggerfallEntity target, int modifier)
         {
-            // Handle resistances granted by magical effects
+            // Handle resistances granted by magical effects (classic example)
             // elementTypes are 0 = fire, 1 = frost, 2 = disease/poison, 3 = shock, 4 = magick
-
             // int[] SavingThrowResistFlags = { 0x02, 0x10000000, 0x20000000, 0x40000000, 0x80000000 }; These map to classic magicEffects 1 through 4 concatenated together as 4 bytes.
             // if (target.magicEffects & SavingThrowResistTypes[elementType]
             //{
@@ -934,6 +933,14 @@ namespace DaggerfallWorkshop.Game.Formulas
             //      if (UnityEngine.Random.Range(1, 100 + 1) <= chance)
             //          return 0;
             //}
+
+            // Handle resistances granted by magical effects
+            if (target.HasResistanceFlag(elementType))
+            {
+                int chance = target.GetResistanceChance(elementType);
+                if (UnityEngine.Random.Range(1, 100 + 1) <= chance)
+                    return 0;
+            }
 
             // Magic effect resistances did not stop the effect. Try with career flags and biography modifiers
             int savingThrow = 50;
@@ -978,9 +985,9 @@ namespace DaggerfallWorkshop.Game.Formulas
                 savingThrow = 75;
 
             savingThrow += biographyMod + modifier;
-            if (elementType == ElementTypes.Cold && target == playerEntity && playerEntity.Race == Races.Nord)
+            if (elementType == DFCareer.Elements.Frost && target == playerEntity && playerEntity.Race == Races.Nord)
                 savingThrow += 30;
-            else if (elementType == ElementTypes.Magic && target == playerEntity && playerEntity.Race == Races.Breton)
+            else if (elementType == DFCareer.Elements.Magic && target == playerEntity && playerEntity.Race == Races.Breton)
                 savingThrow += 30;
 
             savingThrow = Mathf.Clamp(savingThrow, 5, 95);
@@ -1008,9 +1015,10 @@ namespace DaggerfallWorkshop.Game.Formulas
                 return 100;
 
             DFCareer.EffectFlags effectFlags = GetEffectFlags(sourceEffect);
+            DFCareer.Elements elementType = GetElementType(sourceEffect);
             int modifier = GetResistanceModifier(effectFlags, target);
 
-            return SavingThrow(sourceEffect.ParentBundle.elementType, effectFlags, target, modifier);
+            return SavingThrow(elementType, effectFlags, target, modifier);
         }
 
         public static int ModifyEffectAmount(IEntityEffect sourceEffect, DaggerfallEntity target, int amount)
@@ -1022,31 +1030,6 @@ namespace DaggerfallWorkshop.Game.Formulas
             float percent = percentDamageOrDuration / 100f;
 
             return (int)(amount * percent);
-        }
-
-        /// <summary>
-        /// Converts classic element index to ElementTypes value.
-        /// </summary>
-        /// <param name="elementType">Classic element index.</param>
-        /// <returns>ElementTypes.</returns>
-        public static ElementTypes ClassicElementIndexToElementType(int elementIndex)
-        {
-            // Classic element indices are 0 = fire, 1 = frost, 2 = disease/poison, 3 = shock, 4 = magic
-            switch (elementIndex)
-            {
-                case 0:
-                    return ElementTypes.Fire;
-                case 1:
-                    return ElementTypes.Cold;
-                case 2:
-                    return ElementTypes.Poison;
-                case 3:
-                    return ElementTypes.Shock;
-                case 4:
-                    return ElementTypes.Magic;
-                default:
-                    throw new Exception(string.Format("ClassicElementIndexToElementType() unknown elementIndex {0}.", elementIndex));
-            }
         }
 
         /// <summary>
@@ -1086,6 +1069,30 @@ namespace DaggerfallWorkshop.Game.Formulas
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Gets a resistance element based on effect element.
+        /// </summary>
+        /// <param name="effect">Source effect.</param>
+        /// <returns>DFCareer.Elements</returns>
+        public static DFCareer.Elements GetElementType(IEntityEffect effect)
+        {
+            switch (effect.ParentBundle.elementType)
+            {
+                case ElementTypes.Fire:
+                    return DFCareer.Elements.Fire;
+                case ElementTypes.Cold:
+                    return DFCareer.Elements.Frost;
+                case ElementTypes.Poison:
+                    return DFCareer.Elements.DiseaseOrPoison;
+                case ElementTypes.Shock:
+                    return DFCareer.Elements.Shock;
+                case ElementTypes.Magic:
+                    return DFCareer.Elements.Magic;
+                default:
+                    return DFCareer.Elements.None;
+            }
         }
 
         public static int GetResistanceModifier(DFCareer.EffectFlags effectFlags, DaggerfallEntity target)
@@ -1132,7 +1139,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (playerEntity.Level != 1)
             {
                 // Return if disease resisted
-                if (SavingThrow(ElementTypes.Poison, DFCareer.EffectFlags.Disease, target, 0) == 0)
+                if (SavingThrow(DFCareer.Elements.DiseaseOrPoison, DFCareer.EffectFlags.Disease, target, 0) == 0)
                     return;
 
                 // Select a random disease from disease array and validate range

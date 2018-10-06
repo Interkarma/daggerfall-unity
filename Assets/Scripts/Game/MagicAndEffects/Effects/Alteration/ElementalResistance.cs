@@ -96,21 +96,28 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             incumbent.RoundsRemaining += RoundsRemaining;
         }
 
-        public override void MagicRound()
+        public override void ConstantEffect()
         {
-            base.MagicRound();
+            base.ConstantEffect();
+            StartResisting();
+        }
 
-            // Get peered entity gameobject
-            DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
-            if (!entityBehaviour)
-                return;
+        public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
+        {
+            base.Start(manager, caster);
+            StartResisting();
+        }
 
-            // Set or remove resistance mod for this magic round
-            DFCareer.Elements resistance = variantProperties[CurrentVariant].elementResisted;
-            int modifier = RollChance() ? savingThrowModifier : 0;
-            SetResistanceMod(resistance, modifier);
+        public override void Resume(EntityEffectManager.EffectSaveData_v1 effectData, EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
+        {
+            base.Resume(effectData, manager, caster);
+            StartResisting();
+        }
 
-            Debug.LogFormat("{0} modifier is {1} for this magic round", DisplayName, modifier);
+        public override void End()
+        {
+            base.End();
+            StopResisting();
         }
 
         #endregion
@@ -131,6 +138,28 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             vp.effectProperties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1227 + variantIndex);
             vp.elementResisted = element;
             variantProperties[variantIndex] = vp;
+        }
+
+        void StartResisting()
+        {
+            // Get peered entity gameobject
+            DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
+            if (!entityBehaviour)
+                return;
+
+            entityBehaviour.Entity.SetResistanceFlag(variantProperties[currentVariant].elementResisted, true);
+            entityBehaviour.Entity.SetResistanceChance(variantProperties[currentVariant].elementResisted, ChanceValue());
+        }
+
+        void StopResisting()
+        {
+            // Get peered entity gameobject
+            DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
+            if (!entityBehaviour)
+                return;
+
+            entityBehaviour.Entity.SetResistanceFlag(variantProperties[currentVariant].elementResisted, false);
+            entityBehaviour.Entity.SetResistanceChance(variantProperties[currentVariant].elementResisted, 0);
         }
 
         #endregion  

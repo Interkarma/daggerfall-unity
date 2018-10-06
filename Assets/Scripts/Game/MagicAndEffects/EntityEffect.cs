@@ -595,15 +595,19 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             potionProperties.Recipes = recipes;
         }
 
+        protected int ChanceValue()
+        {
+            int casterLevel = (caster) ? caster.Entity.Level : 1;
+            return settings.ChanceBase + settings.ChancePlus * (int)Mathf.Floor(casterLevel / settings.ChancePerLevel);
+        }
+
         protected bool RollChance()
         {
             if (!Properties.SupportChance)
                 return false;
 
-            int casterLevel = (caster) ? caster.Entity.Level : 1;
-            int chance = settings.ChanceBase + settings.ChancePlus * (int)Mathf.Floor(casterLevel / settings.ChancePerLevel);
             int roll = UnityEngine.Random.Range(1, 100);
-            bool outcome = (roll <= chance);
+            bool outcome = (roll <= ChanceValue());
 
             //Debug.LogFormat("Effect '{0}' has a {1}% chance of succeeding and rolled {2} for a {3}", Key, chance, roll, (outcome) ? "success" : "fail");
 
