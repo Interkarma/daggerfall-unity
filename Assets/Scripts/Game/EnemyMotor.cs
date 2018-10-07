@@ -38,6 +38,7 @@ namespace DaggerfallWorkshop.Game
         bool isHostile;                             // Is enemy hostile to player
         bool flies;                                 // The enemy can fly
         bool swims;                                 // The enemy can swim
+        bool pausePursuit = true;                // pause to wait for the player to come closer to ground
         int enemyLayerMask;                         // Layer mask for Enemies to optimize collision checks
 
         bool isLevitating;                          // Allow non-flying enemy to levitate
@@ -368,8 +369,8 @@ namespace DaggerfallWorkshop.Game
             }
 
             var motion = transform.forward * moveSpeed;
-
-            if (!senses.TargetIsWithinPitchAngle(45.0f))
+            bool withinPitch = senses.TargetIsWithinPitchAngle(45.0f);
+            if (!pausePursuit && !withinPitch)
             {
                 if (flies || isLevitating || swims)
                 {
@@ -378,10 +379,15 @@ namespace DaggerfallWorkshop.Game
                     else
                         motion = transform.up * moveSpeed;
                 }
-                else
-                    return; // maybe change mobile state to stationary too?
+                // causes a random delay after being out of pitch range. for more realistic movements
+                else if (Random.Range(0, 100) >= 90)
+                    pausePursuit = true; // maybe change mobile state to stationary too?
             }
+            else if (pausePursuit && withinPitch)
+                pausePursuit = false;
 
+            if (pausePursuit)
+                return;
 
             // Prevent rat stacks (enemies don't stand on shorter enemies)
             AvoidEnemies(ref motion);
