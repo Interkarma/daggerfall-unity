@@ -369,6 +369,20 @@ namespace DaggerfallWorkshop.Game
 
             var motion = transform.forward * moveSpeed;
 
+            if (!senses.TargetIsWithinPitchAngle(45.0f))
+            {
+                if (flies || isLevitating || swims)
+                {
+                    if (!senses.TargetIsAbove())
+                        motion = -transform.up * moveSpeed;
+                    else
+                        motion = transform.up * moveSpeed;
+                }
+                else
+                    return; // maybe change mobile state to stationary too?
+            }
+
+
             // Prevent rat stacks (enemies don't stand on shorter enemies)
             AvoidEnemies(ref motion);
 
